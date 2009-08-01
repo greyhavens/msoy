@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.web.server;
+package com.threerings.msoy.facebook.server;
 
 import java.io.IOException;
 import java.util.Map;
@@ -30,6 +30,8 @@ import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.MarkupBuilder;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.WebCreds;
+import com.threerings.msoy.web.server.MemberHelper;
+import com.threerings.msoy.web.server.MsoyHttpServer;
 
 import static com.threerings.msoy.Log.log;
 
