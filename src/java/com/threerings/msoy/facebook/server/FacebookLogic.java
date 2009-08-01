@@ -31,7 +31,6 @@ import com.threerings.msoy.server.persist.ExternalMapRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.web.gwt.ExternalAuther;
 import com.threerings.msoy.web.gwt.FacebookCreds;
-import com.threerings.msoy.web.server.FacebookServlet;
 
 import static com.threerings.msoy.Log.log;
 

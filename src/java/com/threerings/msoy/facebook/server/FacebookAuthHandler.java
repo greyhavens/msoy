@@ -24,7 +24,6 @@ import com.threerings.msoy.web.gwt.ExternalCreds;
 import com.threerings.msoy.web.gwt.FacebookCreds;
 import com.threerings.msoy.web.gwt.ServiceCodes;
 import com.threerings.msoy.web.gwt.ServiceException;
-import com.threerings.msoy.web.server.FacebookServlet;
 
 import com.threerings.msoy.profile.gwt.Profile;
 import com.threerings.msoy.server.ExternalAuthHandler;

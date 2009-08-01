@@ -52,6 +52,7 @@ import com.threerings.msoy.comment.server.CommentServlet;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.facebook.gwt.FacebookService;
 import com.threerings.msoy.facebook.server.FacebookPageServlet;
+import com.threerings.msoy.facebook.server.FacebookServlet;
 import com.threerings.msoy.fora.gwt.ForumService;
 import com.threerings.msoy.fora.gwt.IssueService;
 import com.threerings.msoy.fora.server.ForumServlet;

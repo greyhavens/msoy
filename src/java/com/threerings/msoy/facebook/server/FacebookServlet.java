@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.web.server;
+package com.threerings.msoy.facebook.server;
 
 import java.io.IOException;
 import java.io.PrintStream;
@@ -22,13 +22,13 @@ import com.samskivert.util.StringUtil;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.VisitorInfo;
+
 import com.threerings.msoy.server.MemberLogic;
 import com.threerings.msoy.server.MsoyAuthenticator;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 
-import com.threerings.msoy.facebook.server.FacebookLogic;
 
 import com.threerings.msoy.game.gwt.FacebookInfo;
 import com.threerings.msoy.game.server.persist.GameInfoRecord;
@@ -40,6 +40,10 @@ import com.threerings.msoy.web.gwt.ExternalCreds;
 import com.threerings.msoy.web.gwt.FacebookTemplateCard;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.ServiceException;
+
+import com.threerings.msoy.web.server.AffiliateCookie;
+import com.threerings.msoy.web.server.MsoyHttpServer;
+import com.threerings.msoy.web.server.SwizzleServlet;
 
 import static com.threerings.msoy.Log.log;
 
