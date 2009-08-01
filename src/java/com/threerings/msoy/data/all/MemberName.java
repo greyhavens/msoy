@@ -220,7 +220,7 @@ public class MemberName extends Name
             }
             visible = visible || !isWhitespace(c);
         }
-        return true;
+        return visible;
     }
 
     /** Helper for {@link #isValidNonSupportName}. */
