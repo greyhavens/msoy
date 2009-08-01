@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.facebook.server;
 
 import com.threerings.msoy.web.gwt.ExternalAuther;
