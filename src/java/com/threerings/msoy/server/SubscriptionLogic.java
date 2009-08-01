@@ -12,6 +12,7 @@ import com.samskivert.util.Invoker;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.presents.annotation.BlockingThread;
+import com.threerings.presents.peer.server.CronLogic;
 
 import com.threerings.msoy.server.persist.BatchInvoker;
 import com.threerings.msoy.server.persist.MemberRecord;

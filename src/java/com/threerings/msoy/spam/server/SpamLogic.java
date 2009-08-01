@@ -29,6 +29,7 @@ import com.samskivert.util.RandomUtil;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.presents.annotation.BlockingThread;
+import com.threerings.presents.peer.server.CronLogic;
 
 import com.threerings.util.MessageBundle;
 
@@ -60,7 +61,6 @@ import com.threerings.msoy.person.gwt.FeedMessageType;
 import com.threerings.msoy.person.gwt.MyWhirledData.FeedCategory;
 import com.threerings.msoy.person.server.FeedLogic;
 
-import com.threerings.msoy.server.CronLogic;
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.ServerMessages;
