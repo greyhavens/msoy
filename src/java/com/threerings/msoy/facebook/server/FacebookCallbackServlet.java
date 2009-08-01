@@ -35,8 +35,6 @@ import com.threerings.msoy.game.server.persist.GameInfoRecord;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 
 import com.threerings.msoy.web.gwt.CookieNames;
-import com.threerings.msoy.web.gwt.ExternalAuther;
-import com.threerings.msoy.web.gwt.ExternalCreds;
 import com.threerings.msoy.web.gwt.FacebookTemplateCard;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.ServiceException;
@@ -50,47 +48,8 @@ import static com.threerings.msoy.Log.log;
 /**
  * Handles Facebook callback requests.
  */
-public class FacebookServlet extends HttpServlet
+public class FacebookCallbackServlet extends HttpServlet
 {
-    /**
-     * Credentials for a user authenticating from an iframed Facebook app. These are never sent
-     * over the wire.
-     */
-    public static class FacebookAppCreds extends ExternalCreds
-    {
-        /** The Facebook user id of the user in question. */
-        public String uid;
-
-        /** The API key of the app via which the user is authenticating. */
-        public String apiKey;
-
-        /** The app secret of the app via which the user is authenticating. */
-        public String appSecret;
-
-        /** The session key of the viewing user (may be null). */
-        public String sessionKey;
-
-        @Override // from ExternalCreds
-        public ExternalAuther getAuthSource () {
-            return ExternalAuther.FACEBOOK;
-        }
-
-        @Override // from ExternalCreds
-        public String getUserId () {
-            return uid;
-        }
-
-        @Override // from ExternalCreds
-        public String getPlaceholderAddress () {
-            return uid + "@facebook.com";
-        }
-
-        @Override // from ExternalCreds
-        public String getSessionKey () {
-            return sessionKey;
-        }
-    }
-
     @Override // from HttpServlet
     protected void doHead (HttpServletRequest req, HttpServletResponse rsp)
         throws IOException

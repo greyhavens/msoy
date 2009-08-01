@@ -67,7 +67,7 @@ public class FacebookLogic
     /**
      * Returns a Facebook client for the app represented by the supplied creds.
      */
-    public FacebookJaxbRestClient getFacebookClient (FacebookServlet.FacebookAppCreds creds)
+    public FacebookJaxbRestClient getFacebookClient (FacebookAppCreds creds)
     {
         return getFacebookClient(creds.apiKey, creds.appSecret, creds.sessionKey);
     }

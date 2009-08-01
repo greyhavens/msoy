@@ -52,7 +52,7 @@ import com.threerings.msoy.comment.server.CommentServlet;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.facebook.gwt.FacebookService;
 import com.threerings.msoy.facebook.server.FacebookPageServlet;
-import com.threerings.msoy.facebook.server.FacebookServlet;
+import com.threerings.msoy.facebook.server.FacebookCallbackServlet;
 import com.threerings.msoy.fora.gwt.ForumService;
 import com.threerings.msoy.fora.gwt.IssueService;
 import com.threerings.msoy.fora.server.ForumServlet;
@@ -291,7 +291,7 @@ public class MsoyHttpServer extends Server
         .put(SurveyService.ENTRY_POINT, SurveyServlet.class)
         .put(FacebookService.ENTRY_POINT, FacebookPageServlet.class)
         .put(RemindersService.ENTRY_POINT, RemindersServlet.class)
-        .put("/facebook/*", FacebookServlet.class)
+        .put("/facebook/*", FacebookCallbackServlet.class)
         .put("/ooo", OOOXmlRpcServlet.class)
         .put("/pulse", PulseServlet.class)
         .put("/remixuploadsvc", UploadRemixMediaServlet.class)

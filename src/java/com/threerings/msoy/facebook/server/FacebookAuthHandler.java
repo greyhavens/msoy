@@ -58,8 +58,8 @@ public class FacebookAuthHandler extends ExternalAuthHandler
         FacebookJaxbRestClient fbclient;
         if (creds instanceof FacebookCreds) {
             fbclient = _faceLogic.getFacebookClient((FacebookCreds)creds);
-        } else if (creds instanceof FacebookServlet.FacebookAppCreds) {
-            fbclient = _faceLogic.getFacebookClient((FacebookServlet.FacebookAppCreds)creds);
+        } else if (creds instanceof FacebookAppCreds) {
+            fbclient = _faceLogic.getFacebookClient((FacebookAppCreds)creds);
         } else {
             throw new IllegalArgumentException("Invalid creds: " + creds);
         }
