@@ -90,6 +90,14 @@ public class FacebookCallbackServlet extends HttpServlet
         // parse the credentials and authenticate (may create a new FB connected user account)
         FacebookAppCreds creds = new FacebookAppCreds();
         String authtok = activateSession(info, req, creds);
+
+        // if the user has not authorized our application
+        if (authtok == null) {
+            // redirect to app login page and bail
+            MsoyHttpServer.sendTopRedirect(rsp, getLoginURL(info.apiKey));
+            return;
+        }
+
         SwizzleServlet.setCookie(req, rsp, authtok);
 
         // add the privacy header so we can set some cookies in an iframe
@@ -124,17 +132,22 @@ public class FacebookCallbackServlet extends HttpServlet
 
     /**
      * Activates a session for an existing facebook user or creates a new account and returns the
-     * authentication token. Fills in the given credentials.
+     * authentication token. Returns null if the user has not authorized the application. Fills
+     * in the given credentials.
      */
-    protected String activateSession (ReqInfo app, HttpServletRequest req, FacebookAppCreds creds)
+    protected String activateSession (ReqInfo info, HttpServletRequest req, FacebookAppCreds creds)
         throws ServiceException
     {
+        creds.sessionKey = req.getParameter(FB_SESSION_KEY);
+        if (creds.sessionKey == null) {
+            return null;
+        }
+
         // we should either have 'canvas_user' or 'user'
         creds.uid = StringUtil.getOr(req.getParameter(FB_CANVAS_USER),
             req.getParameter(FB_USER));
-        creds.apiKey = app.apiKey;
-        creds.appSecret = app.appSecret;
-        creds.sessionKey = req.getParameter(FB_SESSION_KEY);
+        creds.apiKey = info.apiKey;
+        creds.appSecret = info.appSecret;
 
         // create a new visitor info which will either be ignored or used shortly
         VisitorInfo vinfo = new VisitorInfo();
@@ -147,7 +160,7 @@ public class FacebookCallbackServlet extends HttpServlet
         // if the member has the same visitor id as the one we just made up, they were just
         // created and we need to note that this is an entry
         if (vinfo.id.equals(mrec.visitorId)) {
-            _memberLogic.noteNewVisitor(vinfo, true, app.vector, req.getHeader("Referrer"));
+            _memberLogic.noteNewVisitor(vinfo, true, info.vector, req.getHeader("Referrer"));
         }
 
         // activate a session for them
