@@ -4,7 +4,6 @@
 package com.threerings.msoy.facebook.server;
 
 import java.io.IOException;
-import java.io.PrintStream;
 import java.util.Collections;
 import java.util.List;
 
@@ -16,7 +15,6 @@ import javax.servlet.http.HttpServletResponse;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 
-import com.samskivert.io.StreamUtil;
 import com.samskivert.servlet.util.ParameterUtil;
 import com.samskivert.util.StringUtil;
 
@@ -67,74 +65,8 @@ public class FacebookCallbackServlet extends HttpServlet
             MsoyHttpServer.dumpParameters(req);
         }
 
-        // determine whether we're in game mode or Whirled mode
         try {
-            AppInfo info = parseAppInfo(req);
-
-            // make sure we have signed facebook data
-            validateSignature(req, info.appSecret);
-
-            // we should either have 'canvas_user' or 'user'
-            FacebookAppCreds creds = new FacebookAppCreds();
-            creds.uid = req.getParameter(FB_CANVAS_USER);
-            if (StringUtil.isBlank(creds.uid)) {
-                creds.uid = req.getParameter(FB_USER);
-            }
-            boolean added = "1".equals(req.getParameter(FB_ADDED));
-            if (StringUtil.isBlank(creds.uid) || !added) {
-                MsoyHttpServer.sendTopRedirect(rsp, getLoginURL(info.apiKey));
-                return;
-            }
-            creds.apiKey = info.apiKey;
-            creds.appSecret = info.appSecret;
-            creds.sessionKey = req.getParameter(FB_SESSION_KEY);
-
-            // create a new visitor info which will either be ignored or used shortly
-            VisitorInfo vinfo = new VisitorInfo();
-
-            // authenticate this member via their external FB creds (this will autocreate their
-            // account if they don't already have one)
-            MemberRecord mrec = _auther.authenticateSession(
-                creds, vinfo, AffiliateCookie.fromWeb(req));
-
-            // if the member has the same visitor id as the one we just made up, they were just
-            // created and we need to note that this is an entry
-            if (vinfo.id.equals(mrec.visitorId)) {
-                _memberLogic.noteNewVisitor(vinfo, true, info.vector, req.getHeader("Referrer"));
-            }
-
-            // activate a session for them
-            String authtok = _memberRepo.startOrJoinSession(mrec.memberId, FBAUTH_DAYS);
-            SwizzleServlet.setCookie(req, rsp, authtok);
-
-            // add the privacy header so we can set some cookies in an iframe
-            MsoyHttpServer.addPrivacyHeader(rsp);
-
-            // if we're not a chromeless game, configure Whirled to run in Facebook mode
-            if (!info.chromeless) {
-                Cookie cookie = new Cookie(CookieNames.EMBED, "fb");
-                cookie.setPath("/");
-                rsp.addCookie(cookie);
-            }
-
-            // and send them to the appropriate page
-            if (info.gameId != 0) {
-                if (info.chromeless) {
-                    // chromeless games must go directly into the game, bugs be damned
-                    rsp.sendRedirect("/#" + Pages.WORLD.makeToken(
-                                         "fbgame", info.gameId, creds.uid, creds.sessionKey));
-                } else {
-                    // all other games go to the game detail page (to work around some strange
-                    // Facebook iframe bug on Mac Firefox, yay)
-                    rsp.sendRedirect("/#" + Pages.GAMES.makeToken("d", info.gameId));
-                }
-            } else if (!StringUtil.isBlank(info.mochiGameTag)) {
-                // straight into the Mochi game
-                rsp.sendRedirect("/#" + Pages.GAMES.makeToken("mochi", info.mochiGameTag));
-
-            } else {
-                rsp.sendRedirect("/#" + Pages.GAMES.makeToken());
-            }
+            tryGet(req, rsp);
 
         } catch (ServiceException se) {
             log.warning("Error in Facebook callback", se);
@@ -146,6 +78,82 @@ public class FacebookCallbackServlet extends HttpServlet
         }
     }
 
+    protected void tryGet (HttpServletRequest req, HttpServletResponse rsp)
+        throws IOException, ServiceException
+    {
+        // determine whether we're in game mode or Whirled mode
+        ReqInfo info = parseReqInfo(req);
+
+        // make sure we have signed facebook data
+        validateSignature(req, info.appSecret);
+
+        // parse the credentials and authenticate (may create a new FB connected user account)
+        FacebookAppCreds creds = new FacebookAppCreds();
+        String authtok = activateSession(info, req, creds);
+        SwizzleServlet.setCookie(req, rsp, authtok);
+
+        // add the privacy header so we can set some cookies in an iframe
+        MsoyHttpServer.addPrivacyHeader(rsp);
+
+        // if we're not a chromeless game, configure Whirled to run in Facebook mode
+        if (!info.chromeless) {
+            Cookie cookie = new Cookie(CookieNames.EMBED, "fb");
+            cookie.setPath("/");
+            rsp.addCookie(cookie);
+        }
+
+        // and send them to the appropriate page
+        if (info.gameId != 0) {
+            if (info.chromeless) {
+                // chromeless games must go directly into the game, bugs be damned
+                rsp.sendRedirect("/#" + Pages.WORLD.makeToken(
+                                     "fbgame", info.gameId, creds.uid, creds.sessionKey));
+            } else {
+                // all other games go to the game detail page (to work around some strange
+                // Facebook iframe bug on Mac Firefox, yay)
+                rsp.sendRedirect("/#" + Pages.GAMES.makeToken("d", info.gameId));
+            }
+        } else if (!StringUtil.isBlank(info.mochiGameTag)) {
+            // straight into the Mochi game
+            rsp.sendRedirect("/#" + Pages.GAMES.makeToken("mochi", info.mochiGameTag));
+
+        } else {
+            rsp.sendRedirect("/#" + Pages.GAMES.makeToken());
+        }
+    }
+
+    /**
+     * Activates a session for an existing facebook user or creates a new account and returns the
+     * authentication token. Fills in the given credentials.
+     */
+    protected String activateSession (ReqInfo app, HttpServletRequest req, FacebookAppCreds creds)
+        throws ServiceException
+    {
+        // we should either have 'canvas_user' or 'user'
+        creds.uid = StringUtil.getOr(req.getParameter(FB_CANVAS_USER),
+            req.getParameter(FB_USER));
+        creds.apiKey = app.apiKey;
+        creds.appSecret = app.appSecret;
+        creds.sessionKey = req.getParameter(FB_SESSION_KEY);
+
+        // create a new visitor info which will either be ignored or used shortly
+        VisitorInfo vinfo = new VisitorInfo();
+
+        // authenticate this member via their external FB creds (this will autocreate their
+        // account if they don't already have one)
+        MemberRecord mrec = _auther.authenticateSession(
+            creds, vinfo, AffiliateCookie.fromWeb(req));
+
+        // if the member has the same visitor id as the one we just made up, they were just
+        // created and we need to note that this is an entry
+        if (vinfo.id.equals(mrec.visitorId)) {
+            _memberLogic.noteNewVisitor(vinfo, true, app.vector, req.getHeader("Referrer"));
+        }
+
+        // activate a session for them
+        return _memberRepo.startOrJoinSession(mrec.memberId, FBAUTH_DAYS);
+    }
+
     @Override // from HttpServlet
     protected void doPost (HttpServletRequest req, HttpServletResponse rsp)
         throws IOException
@@ -154,18 +162,10 @@ public class FacebookCallbackServlet extends HttpServlet
         MsoyHttpServer.dumpParameters(req);
     }
 
-    protected void sendResponse (HttpServletResponse rsp, String message)
-        throws IOException
-    {
-        PrintStream out = null;
-        try {
-            out = new PrintStream(rsp.getOutputStream());
-            out.println(message);
-        } finally {
-            StreamUtil.close(out);
-        }
-    }
-
+    /**
+     * Just checks the fb_sig parameter agress with the fb_sig_ parameters according to the
+     * Facebook documentation.
+     */
     protected void validateSignature (HttpServletRequest req, String secret)
         throws ServiceException
     {
@@ -191,11 +191,17 @@ public class FacebookCallbackServlet extends HttpServlet
         }
     }
 
-    protected AppInfo parseAppInfo (HttpServletRequest req)
+    /**
+     * Determines what has been requested ant associated application parameters. There are 2 basic
+     * modes for our intial facebook entry: the main app or a specific game.
+     */
+    protected ReqInfo parseReqInfo (HttpServletRequest req)
         throws ServiceException
     {
         String path = req.getPathInfo();
-        AppInfo info = new AppInfo();
+        ReqInfo info = new ReqInfo();
+
+        // apps.facebook.com/whirled
         if (path == null || !path.startsWith(GAME_PATH)) {
             info.apiKey = ServerConfig.config.getValue("facebook.api_key", "");
             info.appSecret = ServerConfig.config.getValue("facebook.secret", "");
@@ -211,6 +217,7 @@ public class FacebookCallbackServlet extends HttpServlet
             return info;
         }
 
+        // apps.facebook.com/whirled/game/1234
         int gameId;
         try {
             gameId = Integer.parseInt(path.substring(GAME_PATH.length()));
@@ -242,7 +249,7 @@ public class FacebookCallbackServlet extends HttpServlet
         return "http://www.facebook.com/login.php?api_key=" + key + "&canvas=1&v=1.0";
     }
 
-    protected static class AppInfo
+    protected static class ReqInfo
     {
         public int gameId;
         public String mochiGameTag;
