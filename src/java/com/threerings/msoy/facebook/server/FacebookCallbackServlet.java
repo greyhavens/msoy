@@ -98,9 +98,10 @@ public class FacebookCallbackServlet extends HttpServlet
             return;
         }
 
+        // TODO: this doesn't work on Safari
         SwizzleServlet.setCookie(req, rsp, authtok);
 
-        // add the privacy header so we can set some cookies in an iframe
+        // add the privacy header (for IE) so we can set some cookies in an iframe
         MsoyHttpServer.addPrivacyHeader(rsp);
 
         // if we're not a chromeless game, configure Whirled to run in Facebook mode
@@ -111,23 +112,7 @@ public class FacebookCallbackServlet extends HttpServlet
         }
 
         // and send them to the appropriate page
-        if (info.gameId != 0) {
-            if (info.chromeless) {
-                // chromeless games must go directly into the game, bugs be damned
-                rsp.sendRedirect("/#" + Pages.WORLD.makeToken(
-                                     "fbgame", info.gameId, creds.uid, creds.sessionKey));
-            } else {
-                // all other games go to the game detail page (to work around some strange
-                // Facebook iframe bug on Mac Firefox, yay)
-                rsp.sendRedirect("/#" + Pages.GAMES.makeToken("d", info.gameId));
-            }
-        } else if (!StringUtil.isBlank(info.mochiGameTag)) {
-            // straight into the Mochi game
-            rsp.sendRedirect("/#" + Pages.GAMES.makeToken("mochi", info.mochiGameTag));
-
-        } else {
-            rsp.sendRedirect("/#" + Pages.GAMES.makeToken());
-        }
+        rsp.sendRedirect("/#" + info.getDestinationToken(creds));
     }
 
     /**
@@ -270,6 +255,31 @@ public class FacebookCallbackServlet extends HttpServlet
         public String appSecret;
         public boolean chromeless;
         public String vector;
+
+        /**
+         * Gets the GWT token that the user should be redirected to in the whirled application.
+         * Some creds information may be assembled and passed into a game application.
+         */
+        public String getDestinationToken (FacebookAppCreds creds)
+        {
+            // and send them to the appropriate page
+            if (gameId != 0) {
+                if (chromeless) {
+                    // chromeless games must go directly into the game, bugs be damned
+                    return Pages.WORLD.makeToken("fbgame", gameId, creds.uid, creds.sessionKey);
+                } else {
+                    // all other games go to the game detail page (to work around some strange
+                    // Facebook iframe bug on Mac Firefox, yay)
+                    return Pages.GAMES.makeToken("d", gameId);
+                }
+            } else if (!StringUtil.isBlank(mochiGameTag)) {
+                // straight into the Mochi game
+                return Pages.GAMES.makeToken("mochi", mochiGameTag);
+
+            } else {
+                return Pages.GAMES.makeToken();
+            }
+        }
     }
 
     @Inject protected FacebookLogic _faceLogic;
