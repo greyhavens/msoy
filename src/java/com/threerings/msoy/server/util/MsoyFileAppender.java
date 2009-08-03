@@ -14,6 +14,7 @@ import java.util.regex.Pattern;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.samskivert.util.Comparators;
+import com.samskivert.util.StringUtil;
 import com.threerings.util.OOOFileAppender;
 
 /**
@@ -47,10 +48,17 @@ public class MsoyFileAppender extends OOOFileAppender
     protected StringBuilder summarizeLogToBuffer (File target)
         throws IOException
     {
+        long now = System.currentTimeMillis();
         StringBuilder sumbuf = new StringBuilder();
         MsoyLineFormat format = new MsoyLineFormat();
         summarizeLog(target, format, sumbuf);
         format.summarizeLongUnits(sumbuf);
+        if (sumbuf.length() > 0) {
+            // append footer showing how long the summary took to generate
+            sumbuf.append("\n(Generation time: ");
+            sumbuf.append(StringUtil.intervalToString(System.currentTimeMillis() - now));
+            sumbuf.append(")\n");
+        }
         return sumbuf;
     }
 
