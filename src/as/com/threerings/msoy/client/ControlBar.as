@@ -171,7 +171,7 @@ public class ControlBar extends HBox
     /**
      * Configures the chat input background color.
      */
-    public function setChatColor (color :int) :void
+    public function setChatColor (color :uint) :void
     {
         _chatControl.setChatColor(color);
     }

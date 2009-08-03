@@ -157,6 +157,8 @@ public class ChatTab extends HBox
             return;
         }
 
+        // NOTE: Oh what the fuck? The chat entry box shouldn't be colored here, but rather
+        // wherever we set the selected tab. TODO.
         if (_channel == null || _channel.type == MsoyChatChannel.ROOM_CHANNEL) {
             style += "RoomTab";
             if (state == SELECTED) {
@@ -275,9 +277,9 @@ public class ChatTab extends HBox
 
     protected static const PADDING :int = 5;
 
-    protected static const COLOR_ROOM :int = 0xFFFFFF;
-    protected static const COLOR_TELL :int = 0xFFCE7C;
-    protected static const COLOR_GROUP :int = 0xC7DAEA;
+    protected static const COLOR_ROOM :uint = 0xFFFFFF;
+    protected static const COLOR_TELL :uint = 0xFFCE7C;
+    protected static const COLOR_GROUP :uint = 0xC7DAEA;
 
     protected var _label :Label;
     protected var _channel :MsoyChatChannel;
