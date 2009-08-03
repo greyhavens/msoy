@@ -71,9 +71,9 @@ public interface AuthenticationDomain
     /**
      * Loads up account information for the specified account and checks the supplied password.
      *
-     * @exception ServiceException thrown with {@link MsoyAuthCodes#NO_SUCH_USER} if the account
-     * does not exist or with {@link MsoyAuthCodes#INVALID_PASSWORD} if the provided password
-     * is invalid.
+     * @exception ServiceException thrown with {@link MsoyAuthCodes#INVALID_LOGON} to indicate
+     * that the account doesn't exist OR the password is incorrect. Differentiating between
+     * those is not as secure.
      */
     public Account authenticateAccount (String accountName, String password)
         throws ServiceException;

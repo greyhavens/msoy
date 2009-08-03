@@ -77,7 +77,7 @@ public class OOOAuthenticationDomain
     public void updateAccountName (String accountName, String newAccountName)
         throws ServiceException
     {
-        OOOUser user = requireUser(accountName);
+        OOOUser user = requireUser(accountName, false);
 
         // if they have not yet set their permaname, change their account name to their new email
         // address to keep things in sync
@@ -108,7 +108,7 @@ public class OOOAuthenticationDomain
     public void updatePermaName (String accountName, String newPermaName)
         throws ServiceException
     {
-        OOOUser user = requireUser(accountName);
+        OOOUser user = requireUser(accountName, false);
         try {
             _authrep.changeUsername(user.userId, newPermaName);
         } catch (UserExistsException uee) {
@@ -120,7 +120,7 @@ public class OOOAuthenticationDomain
     public void updatePassword (String accountName, String newPassword)
         throws ServiceException
     {
-        OOOUser user = requireUser(accountName);
+        OOOUser user = requireUser(accountName, false);
         _authrep.changePassword(user.userId, newPassword);
     }
 
@@ -128,11 +128,11 @@ public class OOOAuthenticationDomain
     public Account authenticateAccount (String accountName, String password)
         throws ServiceException
     {
-        OOOUser user = requireUser(accountName);
+        OOOUser user = requireUser(accountName, true);
 
         // now check their password
         if (PASSWORD_BYPASS != password && !user.password.equals(password)) {
-            throw new ServiceException(MsoyAuthCodes.INVALID_PASSWORD);
+            throw new ServiceException(MsoyAuthCodes.INVALID_LOGON);
         }
 
         // create and return an account record
@@ -223,12 +223,17 @@ public class OOOAuthenticationDomain
         return _authrep.getMachineIdentCount(machIdent) == 0;
     }
 
-    protected OOOUser requireUser (String accountName)
+    /**
+     * @param isForLogon if true, throw a ServiceException that doesn't indicate
+     * that the account wasn't found.
+     */
+    protected OOOUser requireUser (String accountName, boolean isForLogon)
         throws ServiceException
     {
         OOOUser user = _authrep.loadUserByEmail(accountName, false);
         if (user == null) {
-            throw new ServiceException(MsoyAuthCodes.NO_SUCH_USER);
+            throw new ServiceException(
+                isForLogon ? MsoyAuthCodes.INVALID_LOGON : MsoyAuthCodes.NO_SUCH_USER);
         }
         return user;
     }        
