@@ -529,7 +529,10 @@ public class ChatOverlay
                 _target.addOverlay(_occupantList, PlaceBox.LAYER_CHAT_LIST);
             }
             _chatContainer = null;
-            _target.addOverlay(_historyOverlay, PlaceBox.LAYER_CHAT_HISTORY);
+                _target.addOverlay(_historyOverlay, PlaceBox.LAYER_CHAT_HISTORY);
+            if (!_target.containsOverlay(_historyOverlay)) {
+                _target.addOverlay(_historyOverlay, PlaceBox.LAYER_CHAT_HISTORY);
+            }
             var showingHistory :Boolean = Prefs.getShowingChatHistory() || (!(_target is PlaceBox));
             if (showingHistory) {
                 _target.addChild(_historyBar);

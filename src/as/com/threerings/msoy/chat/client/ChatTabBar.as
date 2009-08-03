@@ -35,6 +35,7 @@ import com.threerings.crowd.chat.data.SystemMessage;
 import com.threerings.crowd.chat.client.ChatDisplay;
 
 import com.threerings.msoy.client.MemberService;
+import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.MsoyService;
 
@@ -210,19 +211,15 @@ public class ChatTabBar extends HBox
     public function locationDidChange (name :RoomName) :void
     {
         if (name == null) {
-            // we don't need to do anything if we're leaving
-            return;
+            name = createDefaultPlaceName();
         }
 
         var roomTabIx :int = getLocalTypeIndex(ChatCodes.PLACE_CHAT_TYPE);
-        if (roomTabIx >= 0) {
-            // there's already a room tab up, just modify it
-            _tabs[roomTabIx].text = name.toString();
-        } else {
-            // else create our room chat tab, in the leftmost position
-            addTab(new ChatTab(_ctx, this, MsoyChatChannel.makeRoomChannel(name), ""+name), 0);
-            selectedIndex = 0;
+        if (roomTabIx == -1) {
+            log.warning("This shouldn't happen", new Error());
         }
+        // modify the place chat tab, which should always be up
+        _tabs[roomTabIx].text = name.toString();
     }
 
     public function getCurrentChannel () :MsoyChatChannel
@@ -361,6 +358,19 @@ public class ChatTabBar extends HBox
 
         _scrollRepeater = new Timer(SCROLL_REPEAT_DELAY, 0);
         _scrollRepeater.addEventListener(TimerEvent.TIMER, scrollRepeat);
+
+        // and create the default tab, which must be done after setting up   
+        callLater(createPlaceTab);
+    }
+
+    /**
+     * Create the defaultly-named place chat tab, which is up if nothing else is.
+     */
+    protected function createPlaceTab () :void
+    {
+        var name :RoomName = createDefaultPlaceName();
+        addTab(new ChatTab(_ctx, this, MsoyChatChannel.makeRoomChannel(name), ""+name), 0);
+        selectedIndex = 0;
     }
 
     protected function checkScrollTabs () :void
@@ -500,7 +510,7 @@ public class ChatTabBar extends HBox
         }
 
         // default back to location chat when a tab is closed
-        selectedIndex = 0;
+        selectedIndex = 0; // sans underscore, calls the setter
 
         checkScrollTabs();
     }
@@ -513,6 +523,11 @@ public class ChatTabBar extends HBox
             }
         }
         return -1;
+    }
+
+    protected function createDefaultPlaceName () :RoomName
+    {
+        return new RoomName(Msgs.CHAT.get("m.default_place"), 0 /* sceneId 0, "no place" */);
     }
 
     private static const log :Log = Log.getLog(ChatTabBar);

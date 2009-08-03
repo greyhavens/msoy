@@ -23,6 +23,7 @@ import com.threerings.util.ValueEvent;
 import com.threerings.crowd.client.PlaceView;
 import com.threerings.crowd.data.PlaceObject;
 
+import com.threerings.msoy.client.NoPlaceView;
 import com.threerings.msoy.client.PlaceLayer;
 import com.threerings.msoy.client.Snapshottable;
 import com.threerings.msoy.ui.DataPackMediaContainer;
@@ -147,6 +148,12 @@ public class AVRGamePanel extends UIComponent
 
         _ctrl.gameIsReady();
         addChild(_mediaHolder);
+
+        // once we're all loaded up, put us in no place rather than showing the loading thing
+        var wctx :WorldContext = getWorldCtx();
+        if (wctx.getLocationDirector().getPlaceObject() == null) {
+            wctx.setPlaceView(new NoPlaceView());
+        }
     }
 
     protected function handleResize (evt :ResizeEvent) :void
@@ -156,7 +163,7 @@ public class AVRGamePanel extends UIComponent
         }
     }
 
-    protected function getWorldCtx() :WorldContext
+    protected function getWorldCtx () :WorldContext
     {
         return _gctx.getWorldContext();
     }
