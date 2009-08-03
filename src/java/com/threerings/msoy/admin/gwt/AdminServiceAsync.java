@@ -16,7 +16,6 @@ import com.threerings.msoy.admin.gwt.AdminService.ItemTransactionResult;
 import com.threerings.msoy.data.all.CharityInfo;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.facebook.gwt.FacebookTemplate;
-import com.threerings.msoy.facebook.gwt.NotificationStatus;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.web.gwt.Contest;
 import com.threerings.msoy.web.gwt.Promotion;
@@ -184,16 +183,6 @@ public interface AdminServiceAsync
         AsyncCallback<Void> callback);
 
     /**
-     * The asynchronous version of {@link AdminService#sendFacebookNotification}.
-     */
-    void sendFacebookNotification (String id, String text, int delay, AsyncCallback<Void> callback);
-
-    /**
-     * The asynchronous version of {@link AdminService#getFacebookNotificationStatuses}.
-     */
-    void getFacebookNotificationStatuses (AsyncCallback<List<NotificationStatus>> callback);
-
-    /**
      * The asynchronous version of {@link AdminService#loadSavedFacebookNotifications}.
      */
     void loadFacebookNotifications (AsyncCallback<List<FacebookNotification>> callback);
@@ -207,4 +196,9 @@ public interface AdminServiceAsync
      * The asynchronous version of {@link AdminService#deleteFacebookNotification}.
      */
     void deleteFacebookNotification (String id, AsyncCallback<Void> callback);
+
+    /**
+     * The asynchronous version of {@link AdminService#scheduleFacebookNotification}.
+     */
+    void scheduleFacebookNotification (String id, int delay, AsyncCallback<Void> callback);
 }

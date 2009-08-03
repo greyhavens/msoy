@@ -5,14 +5,19 @@ package com.threerings.msoy.facebook.server.persist;
 
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.google.inject.internal.ImmutableMap;
 import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.clause.Where;
+import com.samskivert.depot.expression.ColumnExp;
+import com.samskivert.depot.expression.ValueExp;
 
 /**
  * Manages persistent structures for integrating with Facebook.
@@ -109,20 +114,81 @@ public class FacebookRepository extends DepotRepository
      */
     public void storeNotification (String id, String text)
     {
-        FacebookNotificationRecord notifRec = new FacebookNotificationRecord();
-        notifRec.id = id;
-        notifRec.text = text;
-        store(notifRec);
+        FacebookNotificationRecord notifRec = loadNotification(id);
+        if (notifRec != null) {
+            updatePartial(FacebookNotificationRecord.getKey(id), ImmutableMap.of(
+                FacebookNotificationRecord.TEXT, text));
+
+        } else {
+            notifRec = new FacebookNotificationRecord();
+            notifRec.id = id;
+            notifRec.text = text;
+            insert(notifRec);
+        }
+    }
+
+    /**
+     * Notes that the notification with the given id has been scheduled to run on the given node.
+     */
+    public void noteNotificationScheduled (String id, String node)
+    {
+        updatePartial(FacebookNotificationRecord.getKey(id), ImmutableMap.of(
+            FacebookNotificationRecord.NODE, node));
+    }
+
+    /**
+     * Notes that a notification batch has been kicked off.
+     */
+    public void noteNotificationStarted (String id)
+    {
+        Timestamp now = new Timestamp(System.currentTimeMillis());
+        updatePartial(FacebookNotificationRecord.getKey(id), ImmutableMap.of(
+            FacebookNotificationRecord.STARTED, now,
+            FacebookNotificationRecord.FINISHED, new ValueExp(null),
+            FacebookNotificationRecord.SENT_COUNT, 0,
+            FacebookNotificationRecord.USER_COUNT, 0));
+    }
+
+    /**
+     * Notes a change in the progress of a running notification.
+     */
+    public void noteNotificationProgress (
+        String id, String newProgress, int userCountDelta, int sentCountDelta)
+    {
+        Map<ColumnExp, Object> updates = Maps.newHashMap();
+        if (newProgress != null) {
+            updates.put(FacebookNotificationRecord.PROGRESS, newProgress);
+        }
+        if (userCountDelta != 0) {
+            updates.put(FacebookNotificationRecord.USER_COUNT,
+                FacebookNotificationRecord.USER_COUNT.plus(userCountDelta));
+        }
+        if (sentCountDelta != 0) {
+            updates.put(FacebookNotificationRecord.SENT_COUNT,
+                FacebookNotificationRecord.SENT_COUNT.plus(sentCountDelta));
+        }
+        updatePartial(FacebookNotificationRecord.getKey(id), updates);
+    }
+
+    /**
+     * Notes that a notification batch is now finished executing, setting the finished time and
+     * clearing the node field.
+     */
+    public void noteNotificationFinished (String id)
+    {
+        Timestamp now = new Timestamp(System.currentTimeMillis());
+        updatePartial(FacebookNotificationRecord.getKey(id), ImmutableMap.of(
+            FacebookNotificationRecord.FINISHED, now,
+            FacebookNotificationRecord.NODE, new ValueExp(null)));
     }
 
     /**
      * Loads and returns the text of the notification with the given id, or null if it does not
      * exist.
      */
-    public String getNotification (String id)
+    public FacebookNotificationRecord loadNotification (String id)
     {
-        FacebookNotificationRecord notifRec = load(FacebookNotificationRecord.getKey(id));
-        return notifRec == null ? null : notifRec.text;
+        return load(FacebookNotificationRecord.getKey(id));
     }
 
     /**

@@ -21,7 +21,6 @@ import com.threerings.msoy.web.gwt.WebCreds;
 import com.threerings.msoy.data.all.CharityInfo;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.facebook.gwt.FacebookTemplate;
-import com.threerings.msoy.facebook.gwt.NotificationStatus;
 
 import com.threerings.msoy.item.data.all.ItemFlag;
 import com.threerings.msoy.item.data.all.ItemIdent;
@@ -283,19 +282,6 @@ public interface AdminService extends RemoteService
         throws ServiceException;
 
     /**
-     * Sends a Facebook notification to all our Facebook users after the given delay in minutes.
-     * Users who have removed the application are not addressed.
-     */
-    void sendFacebookNotification (String id, String text, int delay)
-        throws ServiceException;
-
-    /**
-     * Gets the statuses of all registered facebook notifications.
-     */
-    List<NotificationStatus> getFacebookNotificationStatuses ()
-        throws ServiceException;
-
-    /**
      * Gets the saved facebook notifications.
      */
     List<FacebookNotification> loadFacebookNotifications ()
@@ -311,5 +297,12 @@ public interface AdminService extends RemoteService
      * Delets a facebook notification.
      */
     void deleteFacebookNotification (String id)
+        throws ServiceException;
+
+    /**
+     * Sends a Facebook notification to all our Facebook users after the given delay in minutes.
+     * Users who have removed the application are not addressed.
+     */
+    void scheduleFacebookNotification (String id, int delay)
         throws ServiceException;
 }

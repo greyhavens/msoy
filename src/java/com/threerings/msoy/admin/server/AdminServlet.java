@@ -62,7 +62,6 @@ import com.threerings.msoy.web.server.MsoyServiceServlet;
 import com.threerings.msoy.web.server.ServletWaiter;
 
 import com.threerings.msoy.facebook.gwt.FacebookTemplate;
-import com.threerings.msoy.facebook.gwt.NotificationStatus;
 import com.threerings.msoy.facebook.server.FacebookLogic;
 import com.threerings.msoy.facebook.server.persist.FacebookNotificationRecord;
 import com.threerings.msoy.facebook.server.persist.FacebookRepository;
@@ -765,19 +764,11 @@ public class AdminServlet extends MsoyServiceServlet
     }
 
     @Override // from AdminService
-    public void sendFacebookNotification (String id, String text, int delay)
+    public void scheduleFacebookNotification (String id, int delay)
         throws ServiceException
     {
         requireAdminUser();
-        _facebookLogic.scheduleNotification(id, text, delay);
-    }
-
-    @Override // from AdminService
-    public List<NotificationStatus> getFacebookNotificationStatuses ()
-        throws ServiceException
-    {
-        requireAdminUser();
-        return _facebookLogic.getNotificationStatuses();
+        _facebookLogic.scheduleNotification(id, delay);
     }
 
     @Override // from AdminService
@@ -785,6 +776,10 @@ public class AdminServlet extends MsoyServiceServlet
         throws ServiceException
     {
         requireAdminUser();
+        FacebookNotificationRecord notif = _facebookRepo.loadNotification(id);
+        if (notif != null && notif.node != null) {
+            throw new ServiceException("e.notification_cannot_be_deleted");
+        }
         _facebookRepo.deleteNotification(id);
     }
 

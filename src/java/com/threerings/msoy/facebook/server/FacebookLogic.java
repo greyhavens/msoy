@@ -5,7 +5,6 @@ package com.threerings.msoy.facebook.server;
 
 import java.net.URL;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -23,14 +22,16 @@ import com.samskivert.util.StringUtil;
 import com.google.code.facebookapi.FacebookException;
 import com.google.code.facebookapi.FacebookJaxbRestClient;
 
-import com.threerings.msoy.facebook.gwt.NotificationStatus;
+import com.threerings.msoy.facebook.server.persist.FacebookNotificationRecord;
 import com.threerings.msoy.facebook.server.persist.FacebookRepository;
+import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.BatchInvoker;
 import com.threerings.msoy.server.persist.ExternalMapRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.web.gwt.ExternalAuther;
 import com.threerings.msoy.web.gwt.FacebookCreds;
+import com.threerings.msoy.web.gwt.ServiceException;
 
 import static com.threerings.msoy.Log.log;
 
@@ -78,45 +79,28 @@ public class FacebookLogic
      * overwritten.
      * @param delay number of minutes to wait before sending the notification
      */
-    public void scheduleNotification (String id, String content, long delay)
+    public void scheduleNotification (String id, int delay)
+        throws ServiceException
     {
+        // check preconditions
+        FacebookNotificationRecord notifRec = _facebookRepo.loadNotification(id);
+        if (notifRec.node != null && !notifRec.node.equals(_peerMgr.getNodeObject().nodeName)) {
+            throw new ServiceException("e.notification_scheduled_on_other_node");
+        }
+        if (StringUtil.isBlank(notifRec.text)) {
+            throw new ServiceException("e.notification_blank_text");
+        }
+
         // convert to millis
         delay *= 60 * 1000L;
 
+        // insert into map and schedule
         synchronized (_notifications) {
             NotificationBatch notification = _notifications.get(id);
             if (notification == null) {
                 _notifications.put(id, notification = new NotificationBatch(id));
             }
-            notification.schedule(delay, content);
-        }
-    }
-
-    /**
-     * Schedules a notification with text loaded from the database.
-     */
-    public void scheduleNotification (String id, long delay)
-    {
-        String text = _facebookRepo.getNotification(id);
-        if (StringUtil.isBlank(text)) {
-            log.warning("Missing notification", "id", id);
-            return;
-        }
-        scheduleNotification(id, text, delay);
-    }
-
-    /**
-     * Gets the statuses of all scheduled, active or completed notification batches.
-     */
-    public List<NotificationStatus> getNotificationStatuses ()
-    {
-        synchronized (_notifications) {
-            List<NotificationStatus> results =
-                Lists.newArrayListWithCapacity(_notifications.size());
-            for (NotificationBatch notification : _notifications.values()) {
-                results.add(notification.getStatus().clone());
-            }
-            return results;
+            notification.schedule(delay, notifRec.text);
         }
     }
 
@@ -177,7 +161,6 @@ public class FacebookLogic
         public NotificationBatch (String id)
         {
             _id = id;
-            _status = new NotificationStatus(id);
         }
 
         public void schedule (long delay, String content)
@@ -191,18 +174,12 @@ public class FacebookLogic
             }
             _interval.schedule(delay, false);
             _content = content;
-            _status.start = new Date(System.currentTimeMillis() + delay);
-        }
-
-        public NotificationStatus getStatus ()
-        {
-            return _status;
+            _facebookRepo.noteNotificationScheduled(_peerMgr.getNodeObject().nodeName, _id);
         }
 
         protected void send ()
         {
-            _status = new NotificationStatus(_id);
-            _status.start = new Date();
+            _facebookRepo.noteNotificationStarted(_id);
 
             final FacebookJaxbRestClient client = getFacebookBatchClient();
             final int BATCH_SIZE = 100;
@@ -214,9 +191,8 @@ public class FacebookLogic
                     }
                 }, BATCH_SIZE);
 
-            _status.status = "Finished";
-            _status.finished = new Date();
-            log.info("Successfully sent notifications", "id", _id, "count", _status.sentCount);
+            _facebookRepo.noteNotificationFinished(_id);
+            log.info("Successfully sent notifications", "id", _id);
         }
 
         protected void sendBatch (FacebookJaxbRestClient client, List<ExternalMapRecord> batch)
@@ -231,7 +207,7 @@ public class FacebookLogic
         protected void trySendBatch (FacebookJaxbRestClient client, List<ExternalMapRecord> batch)
             throws FacebookException
         {
-            _status.status = "Loading recipients";
+            _facebookRepo.noteNotificationProgress(_id, "Loading recipients", 0, 0);
 
             List<FQL.Exp> uids = Lists.transform(batch,
                 new Function<ExternalMapRecord, FQL.Exp>() {
@@ -255,16 +231,16 @@ public class FacebookLogic
                 return;
             }
 
-            _status.userCount += targetIds.size();
-            _status.status = "Sending";
+            _facebookRepo.noteNotificationProgress(_id, "Sending", targetIds.size(), 0);
             client.notifications_send(targetIds, _content, true);
-            _status.sentCount += targetIds.size();
+            _facebookRepo.noteNotificationProgress(_id, "Sent", 0, targetIds.size());
         }
 
         protected String _id;
         protected String _content;
+        protected int _userCount;
+        protected int _sendCount;
         protected Interval _interval;
-        protected NotificationStatus _status;
     }
 
     protected Map<String, NotificationBatch> _notifications = Maps.newHashMap();
@@ -276,6 +252,7 @@ public class FacebookLogic
     @Inject protected @BatchInvoker Invoker _batchInvoker;
     @Inject protected FacebookRepository _facebookRepo;
     @Inject protected MemberRepository _memberRepo;
+    @Inject protected MsoyPeerManager _peerMgr;
 
     protected static final int CONNECT_TIMEOUT = 15*1000; // in millis
     protected static final int READ_TIMEOUT = 15*1000; // in millis
