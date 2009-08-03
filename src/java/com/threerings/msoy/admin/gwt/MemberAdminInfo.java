@@ -56,7 +56,10 @@ public class MemberAdminInfo
     /** The member that is this player's affiliate, if any. */
     public MemberName affiliate;
 
-    /** The names of members that are affiliates of this member. */
+    /** The total number of members that are affiliates of this member. */
+    public int affiliateOfCount;
+
+    /** The names of some members that are affiliates of this member. */
     public List<MemberName> affiliateOf;
 
     /** True if this member is a charity. */

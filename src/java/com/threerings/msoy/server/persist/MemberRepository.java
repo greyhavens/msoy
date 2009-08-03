@@ -786,13 +786,24 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
-     * Loads the names of the members invited by the specified member.
+     * Gets the number of members that are affiliated to this member.
      */
-    public List<MemberName> loadMembersAffiliatedTo (int memberId)
+    public int countMembersAffiliatedTo (int memberId)
     {
         Where where = new Where(MemberRecord.AFFILIATE_MEMBER_ID, memberId);
+        return load(CountRecord.class, where, new FromOverride(MemberRecord.class)).count;
+    }
+
+    /**
+     * Loads a page of names of the members invited by the specified member.
+     */
+    public List<MemberName> loadMembersAffiliatedTo (int memberId, int offset, int count)
+    {
+        Where where = new Where(MemberRecord.AFFILIATE_MEMBER_ID, memberId);
+        Limit limit = new Limit(offset, count);
+        OrderBy order = OrderBy.ascending(MemberNameRecord.MEMBER_ID);
         List<MemberName> names = Lists.newArrayList();
-        for (MemberNameRecord name : findAll(MemberNameRecord.class, where)) {
+        for (MemberNameRecord name : findAll(MemberNameRecord.class, where, limit, order)) {
             names.add(name.toMemberName());
         }
         return names;

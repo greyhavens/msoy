@@ -99,8 +99,15 @@ public interface AdminService extends RemoteService
 
     /**
      * Returns admin information for the specified member.
+     * @param affiliateOfCount maximum length of returned {@link MemberAdminInfo#affiliateOf}
      */
-    MemberAdminInfo getMemberInfo (int memberId)
+    MemberAdminInfo getMemberInfo (int memberId, int affiliateOfCount)
+        throws ServiceException;
+
+    /**
+     * Gets a page of members that have a given member as their affiliate.
+     */
+    List<MemberName> getAffiliates (int memberId, int offset, int count)
         throws ServiceException;
 
     /**

@@ -107,6 +107,7 @@ import com.threerings.msoy.admin.server.persist.ABTestRecord;
 import com.threerings.msoy.admin.server.persist.ABTestRepository;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.CharityInfo;
+import com.threerings.msoy.data.all.MemberName;
 
 /**
  * Provides the server implementation of {@link AdminService}.
@@ -115,7 +116,7 @@ public class AdminServlet extends MsoyServiceServlet
     implements AdminService
 {
     // from interface AdminService
-    public MemberAdminInfo getMemberInfo (final int memberId)
+    public MemberAdminInfo getMemberInfo (final int memberId, int affiliateOfCount)
         throws ServiceException
     {
         requireSupportUser();
@@ -155,7 +156,8 @@ public class AdminServlet extends MsoyServiceServlet
         if (tgtrec.affiliateMemberId != 0) {
             info.affiliate = _memberRepo.loadMemberName(tgtrec.affiliateMemberId);
         }
-        info.affiliateOf = _memberRepo.loadMembersAffiliatedTo(memberId);
+        info.affiliateOfCount = _memberRepo.countMembersAffiliatedTo(memberId);
+        info.affiliateOf = _memberRepo.loadMembersAffiliatedTo(memberId, 0, affiliateOfCount);
 
         // Check if this member is set as a charity.
         CharityRecord charity = _memberRepo.getCharityRecord(memberId);
@@ -169,6 +171,14 @@ public class AdminServlet extends MsoyServiceServlet
             info.charityDescription = charity.description;
         }
         return info;
+    }
+
+    @Override
+    public List<MemberName> getAffiliates (int memberId, int offset, int count)
+        throws ServiceException
+    {
+        requireSupportUser();
+        return _memberRepo.loadMembersAffiliatedTo(memberId, offset, count);
     }
 
     // from interface AdminService

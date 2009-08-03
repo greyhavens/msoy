@@ -22,7 +22,6 @@ import com.threerings.gwt.ui.Anchor;
 import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.ui.Popups;
 import com.threerings.gwt.ui.SmartTable;
-import com.threerings.gwt.util.SimpleDataModel;
 
 import com.threerings.msoy.admin.gwt.MemberAdminInfo;
 import com.threerings.msoy.data.all.CharityInfo;
@@ -37,6 +36,7 @@ import client.util.BillingUtil;
 import client.util.ClickCallback;
 import client.util.Link;
 import client.util.InfoCallback;
+import client.util.MsoyServiceBackedDataModel;
 
 /**
  * Displays admin info for a particular member.
@@ -47,7 +47,7 @@ public class MemberInfoPanel extends AdminDataPanel<MemberAdminInfo>
     {
         super("memberInfo");
 
-        _adminsvc.getMemberInfo(memberId, createCallback());
+        _adminsvc.getMemberInfo(memberId, AFFILIATE_OF_ROWS * AFFILIATE_OF_COLS, createCallback());
     }
 
     @Override // from AdminDataPanel
@@ -57,6 +57,8 @@ public class MemberInfoPanel extends AdminDataPanel<MemberAdminInfo>
             addNoDataMessage("No member with that id.");
             return;
         }
+
+        _info = info;
 
         final SmartTable table = new SmartTable(5, 0);
         add(table);
@@ -192,13 +194,15 @@ public class MemberInfoPanel extends AdminDataPanel<MemberAdminInfo>
             }
             affiliateOf.add(infoLink(info.affiliateOf.get(ii)));
         }
-        if (info.affiliateOf.size() > maxInline) {
+        if (info.affiliateOfCount > maxInline) {
             final int affiliateOfRow = row;
-            Button more = new Button("More...", new ClickHandler() {
+            Button more = new Button("See All " + info.affiliateOfCount + "...",
+                new ClickHandler() {
                 public void onClick (ClickEvent event) {
-                    table.setWidget(affiliateOfRow, 1, new AffiliateOfGrid(info.affiliateOf));
+                    table.setWidget(affiliateOfRow, 1, new AffiliateOfGrid());
                 }
             });
+            affiliateOf.add(MsoyUI.createHTML(" ", "inline"));
             affiliateOf.add(more);
         }
         table.setWidget(row, 1, affiliateOf);
@@ -274,11 +278,30 @@ public class MemberInfoPanel extends AdminDataPanel<MemberAdminInfo>
         return Link.create("" + name, Pages.ADMINZ, "info", name.getMemberId());
     }
 
-    protected static class AffiliateOfGrid extends PagedGrid<MemberName>
+    protected class AffiliateOfGrid extends PagedGrid<MemberName>
     {
-        public AffiliateOfGrid (List<MemberName> affiliateOf) {
+        public AffiliateOfGrid () {
             super(AFFILIATE_OF_ROWS, AFFILIATE_OF_COLS);
-            setModel(new SimpleDataModel<MemberName>(affiliateOf), 1);
+            setModel(new MsoyServiceBackedDataModel<MemberName, List<MemberName>>() {
+                @Override
+                protected void callFetchService (int start, int count, boolean needCount,
+                    AsyncCallback<List<MemberName>> callback)
+                {
+                    _adminsvc.getAffiliates(_info.name.getMemberId(), start, count, callback);
+                }
+
+                @Override
+                protected int getCount (List<MemberName> result)
+                {
+                    return _info.affiliateOfCount;
+                }
+
+                @Override
+                protected List<MemberName> getRows (List<MemberName> result)
+                {
+                    return result;
+                }
+            }, 1);
             addStyleName("AffiliateOf");
         }
 
@@ -290,6 +313,8 @@ public class MemberInfoPanel extends AdminDataPanel<MemberAdminInfo>
             return "No one";
         }
     }
+
+    protected MemberAdminInfo _info;
 
     protected static final int AFFILIATE_OF_ROWS = 10;
     protected static final int AFFILIATE_OF_COLS = 4;

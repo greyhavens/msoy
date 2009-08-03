@@ -14,6 +14,7 @@ import com.threerings.msoy.admin.gwt.AdminService.ItemFlagsResult;
 import com.threerings.msoy.admin.gwt.AdminService.ItemTransactionResult;
 
 import com.threerings.msoy.data.all.CharityInfo;
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.facebook.gwt.FacebookTemplate;
 import com.threerings.msoy.facebook.gwt.NotificationStatus;
 import com.threerings.msoy.item.data.all.ItemIdent;
@@ -29,7 +30,13 @@ public interface AdminServiceAsync
     /**
      * The asynchronous version of {@link AdminService#getMemberInfo}.
      */
-    void getMemberInfo (int memberId, AsyncCallback<MemberAdminInfo> callback);
+    void getMemberInfo (int memberId, int affiliateCount, AsyncCallback<MemberAdminInfo> callback);
+
+    /**
+     * The asynchronous version of {@link AdminService#getAffiliates}.
+     */
+    void getAffiliates (int memberId, int offset, int count,
+        AsyncCallback<List<MemberName>> callback);
 
     /**
      * The asynchronous version of {@link AdminService#setRole}.
