@@ -449,8 +449,11 @@ public class FeedItemGenerator
 
     protected Media buildMedia (FeedMessage msg, int idx, Pages page, Object... args)
     {
-        return (msg.data.length <= idx) ? null :
-            _builder.createMedia(MediaDesc.stringToMD(msg.data[idx]), page, Args.compose(args));
+        MediaDesc md = (msg.data.length <= idx) ? null : MediaDesc.stringToMD(msg.data[idx]);
+        if (md == null) {
+            return null;
+        }
+        return _builder.createMedia(md, page, Args.compose(args));
     }
 
     /**
