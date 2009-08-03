@@ -157,6 +157,22 @@ public class Args
     }
 
     /**
+     * Looks for an argument of the given name. If it exists and is not the last argument, returns
+     * the value of the subsequent argument and removes both. Otherwise returns null and does not
+     * change the arguments.
+     */
+    public String extractParameter (String name)
+    {
+        for (int ii = 0, ll = _args.size(); ii < ll; ++ii) {
+            if (_args.get(ii).equals(name) && ii + 1 < ll) {
+                _args.remove(ii);
+                return _args.remove(ii);
+            }
+        }
+        return null;
+    }
+
+    /**
      * Recomposes the arguments from the specified index onward with {@link #compose}.
      */
     public Args recompose (int fromIndex)

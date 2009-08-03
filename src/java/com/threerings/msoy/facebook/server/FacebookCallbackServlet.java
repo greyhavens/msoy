@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -32,7 +31,8 @@ import com.threerings.msoy.game.gwt.FacebookInfo;
 import com.threerings.msoy.game.server.persist.GameInfoRecord;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 
-import com.threerings.msoy.web.gwt.CookieNames;
+import com.threerings.msoy.web.gwt.ArgNames;
+import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.FacebookTemplateCard;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.ServiceException;
@@ -103,13 +103,6 @@ public class FacebookCallbackServlet extends HttpServlet
 
         // add the privacy header (for IE) so we can set some cookies in an iframe
         MsoyHttpServer.addPrivacyHeader(rsp);
-
-        // if we're not a chromeless game, configure Whirled to run in Facebook mode
-        if (!info.chromeless) {
-            Cookie cookie = new Cookie(CookieNames.EMBED, "fb");
-            cookie.setPath("/");
-            rsp.addCookie(cookie);
-        }
 
         // and send them to the appropriate page
         rsp.sendRedirect("/#" + info.getDestinationToken(creds));
@@ -262,6 +255,8 @@ public class FacebookCallbackServlet extends HttpServlet
          */
         public String getDestinationToken (FacebookAppCreds creds)
         {
+            Args embed = ArgNames.Embedding.compose(ArgNames.Embedding.FACEBOOK);
+
             // and send them to the appropriate page
             if (gameId != 0) {
                 if (chromeless) {
@@ -270,14 +265,14 @@ public class FacebookCallbackServlet extends HttpServlet
                 } else {
                     // all other games go to the game detail page (to work around some strange
                     // Facebook iframe bug on Mac Firefox, yay)
-                    return Pages.GAMES.makeToken("d", gameId);
+                    return Pages.GAMES.makeToken("d", gameId, embed);
                 }
             } else if (!StringUtil.isBlank(mochiGameTag)) {
                 // straight into the Mochi game
-                return Pages.GAMES.makeToken("mochi", mochiGameTag);
+                return Pages.GAMES.makeToken("mochi", mochiGameTag, embed);
 
             } else {
-                return Pages.GAMES.makeToken();
+                return Pages.GAMES.makeToken(embed);
             }
         }
     }

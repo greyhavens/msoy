@@ -7,6 +7,7 @@ import client.shell.Frame;
 
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Widget;
+import com.threerings.msoy.web.gwt.ArgNames;
 
 /**
  * Handles the layout of our various frame elements (header, content, client).
@@ -26,12 +27,12 @@ public abstract class Layout
      * Creates and returns a layout instance based on what we can figure out about where we're
      * running by inspecting the DOM, or by checking for specific embed values.
      */
-    public static Layout getLayout (FrameHeader header, String embedCookie, ClickHandler onGoHome)
+    public static Layout getLayout (FrameHeader header, String embedValue, ClickHandler onGoHome)
     {
         Layout layout = null;
         Frame.Embedding embedding = Frame.Embedding.NONE;
         if (isFramed()) {
-            if ("fb".equals(embedCookie)) {
+            if (ArgNames.Embedding.FACEBOOK.equals(embedValue)) {
                 embedding = Frame.Embedding.FACEBOOK;
                 layout = new FacebookLayout();
             } else {

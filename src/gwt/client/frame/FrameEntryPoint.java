@@ -29,6 +29,7 @@ import com.threerings.gwt.util.ServiceUtil;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.LaunchConfig;
 import com.threerings.msoy.data.all.VisitorInfo;
+import com.threerings.msoy.web.gwt.ArgNames;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.CookieNames;
 import com.threerings.msoy.web.gwt.Invitation;
@@ -111,7 +112,8 @@ public class FrameEntryPoint
         });
 
         // create our frame layout
-        _layout = Layout.getLayout(_header, CookieUtil.get(CookieNames.EMBED), new ClickHandler() {
+        String embedding = ArgNames.Embedding.extract(Args.fromHistory(_currentToken));
+        _layout = Layout.getLayout(_header, embedding, new ClickHandler() {
             public void onClick (ClickEvent event) {
                 // put the client in in minimized state
                 String args = "memberHome=" + CShell.getMemberId() + "&mini=true";
@@ -169,6 +171,9 @@ public class FrameEntryPoint
                 args = Args.fromToken("places");
             }
         }
+
+        // scrub any cookie-like arguments
+        ArgNames.Embedding.extract(args);
 
         CShell.log("Displaying page", "page", page, "args", args);
 
