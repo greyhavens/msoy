@@ -131,6 +131,8 @@ public class OOOAuthenticationDomain
         OOOUser user = requireUser(accountName, true);
 
         // now check their password
+        // Note that PASSWORD_BYPASS is compared with object equality, to prevent someone
+        // from hacking their credentials and passing the contents of the constant.
         if (PASSWORD_BYPASS != password && !user.password.equals(password)) {
             throw new ServiceException(MsoyAuthCodes.INVALID_LOGON);
         }
