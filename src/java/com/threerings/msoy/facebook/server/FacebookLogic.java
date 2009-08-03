@@ -174,7 +174,7 @@ public class FacebookLogic
             }
             _interval.schedule(delay, false);
             _content = content;
-            _facebookRepo.noteNotificationScheduled(_peerMgr.getNodeObject().nodeName, _id);
+            _facebookRepo.noteNotificationScheduled(_id, _peerMgr.getNodeObject().nodeName);
         }
 
         protected void send ()
