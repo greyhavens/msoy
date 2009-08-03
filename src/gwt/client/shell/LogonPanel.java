@@ -88,43 +88,13 @@ public class LogonPanel extends SmartTable
         case HORIZ: setCellPadding(5); break;
         }
 
-        // make our logon button initiate a logon
-        ClickHandler onLogon = new ClickHandler() {
-            public void onClick (ClickEvent event) {
-                doLogon(_email, _password, new Command() {
-                    public void execute () {
-                        didLogon();
-                    }
-                });
-            }
-        };
-        logon.addClickHandler(onLogon);
-
-        // create the email entry widget
         _email = new TextBox();
-        String who = CookieUtil.get(CookieNames.WHO);
-        if (who != null && !MemberMailUtil.isPermaguest(who)) {
-            _email.setText(who);
-            // since our email is already filled in, we can focus the password field; note: we
-            // don't focus the email field by default because we rely on the unfocused state
-            // explaining what actually goes into the email field
-            DeferredCommand.addCommand(new Command() {
+        _password = new PasswordTextBox();
+        addLogonBehavior(_email, _password, logon, new Command() {
                 public void execute () {
-                    _password.setFocus(true);
+                    didLogon();
                 }
             });
-        } else {
-            DefaultTextListener.configure(_email, _cmsgs.logonEmailDefault());
-        }
-        _email.addKeyPressHandler(new EnterClickAdapter(new ClickHandler() {
-            public void onClick (ClickEvent event) {
-                _password.setFocus(true);
-            }
-        }));
-
-        // create the password entry widget
-        _password = new PasswordTextBox();
-        _password.addKeyPressHandler(new EnterClickAdapter(onLogon));
 
         // create the forgot password tip link
         String lbl = _cmsgs.forgotPassword();
