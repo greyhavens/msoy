@@ -132,6 +132,7 @@ public class FacebookNotificationsPanel extends FlowPanel
                 }
                 @Override public boolean gotResult (Void result) {
                     MsoyUI.info(_msgs.fbNotifsScheduled());
+                    refresh();
                     return true;
                 }
             };
