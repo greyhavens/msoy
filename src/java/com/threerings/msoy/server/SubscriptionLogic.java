@@ -112,7 +112,10 @@ public class SubscriptionLogic
     {
         // Blow away any "barscription" record they may have. Since the billing system does
         // not know about the barscription, they lose any unused time.
-        _subscripRepo.noteBarscriptionEnded(mrec.memberId);
+        if (_subscripRepo.noteBarscriptionEnded(mrec.memberId)) {
+            log.warning("A new subscriber was previously a barscriber. Their extra time was lost.",
+                "memberId", mrec.memberId);
+        }
 
         // make them a subscriber if not already
         if (mrec.updateFlag(MemberRecord.Flag.SUBSCRIBER, true)) {

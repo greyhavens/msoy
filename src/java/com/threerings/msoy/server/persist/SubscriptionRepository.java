@@ -179,9 +179,12 @@ public class SubscriptionRepository extends DepotRepository
         return Lists.transform(keys, Key.<BarscriptionRecord>toInt());
     }
 
-    public void noteBarscriptionEnded (int memberId)
+    /**
+     * Return true if a record was actually deleted.
+     */
+    public boolean noteBarscriptionEnded (int memberId)
     {
-        delete(BarscriptionRecord.getKey(memberId));
+        return (0 < delete(BarscriptionRecord.getKey(memberId)));
     }
 
     @Override
