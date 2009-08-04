@@ -8,13 +8,11 @@ import java.util.List;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.util.Invoker;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.presents.annotation.BlockingThread;
 import com.threerings.presents.peer.server.CronLogic;
 
-import com.threerings.msoy.server.persist.BatchInvoker;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.persist.SubscriptionRecord;
@@ -50,22 +48,9 @@ public class SubscriptionLogic
         // check for bar and special item grants every hour
         _cronLogic.scheduleEvery(1, new Runnable() {
             public void run () {
-                _batchInvoker.postUnit(new Invoker.Unit(toString()) {
-                    public boolean invoke () {
-                        endBarscribers();
-                        grantBars();
-                        grantSpecialItem();
-                        return false;
-                    }
-                });
-                // TODO: due to a bit of a deficiency in the CronLogic system, if we finish
-                // executing too quickly then another node might re-run the same job.
-                // Clog up this Job's thread for 10 minutes, just to be extra frickin sure.
-                try {
-                    Thread.sleep(10L * 60 * 1000); // 10 minutes
-                } catch (InterruptedException ie) {
-                    // no worries
-                }
+                endBarscribers();
+                grantBars();
+                grantSpecialItem();
             }
 
             public String toString () {
@@ -278,5 +263,4 @@ public class SubscriptionLogic
     @Inject protected MoneyLogic _moneyLogic;
     @Inject protected RuntimeConfig _runtime;
     @Inject protected SubscriptionRepository _subscripRepo;
-    @Inject protected @BatchInvoker Invoker _batchInvoker;
 }
