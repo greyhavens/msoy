@@ -24,6 +24,7 @@ import com.threerings.msoy.stuff.gwt.StuffServiceAsync;
 import com.threerings.msoy.stuff.gwt.StuffService.DetailOrIdent;
 import com.threerings.msoy.web.gwt.Args;
 
+import client.util.StringUtil;
 import client.util.events.FlashEvents;
 import client.util.events.ItemUsageEvent;
 import client.util.events.ItemUsageListener;
@@ -206,11 +207,11 @@ public class InventoryModels
         {
             this.memberId = memberId;
             this.type = type;
-            this.query = (query != null && query.length() == 0) ? null : query;
+            this.query = StringUtil.isBlank(query) ? null : query;
             this.mogId = mogId;
         }
 
-        public int hashCode() {
+        public int hashCode () {
             return memberId ^ type ^ (query == null ? 0 : query.hashCode()) ^ mogId;
         }
 
