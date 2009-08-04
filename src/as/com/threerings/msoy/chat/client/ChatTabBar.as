@@ -96,6 +96,8 @@ public class ChatTabBar extends HBox
         _selectedIndex = (ii + _tabs.length) % _tabs.length;
         activeTab = _tabs[_selectedIndex] as ChatTab;
         activeTab.setVisualState(ChatTab.SELECTED);
+        _ctx.getControlBar().setChatColor(getChatColor(activeTab.getChannelType()));
+        _ctx.getControlBar().setChatAllowed(activeTab.isSpeakableChannel());
         var overlay :ChatOverlay = _ctx.getTopPanel().getChatOverlay();
         if (overlay != null) {
             overlay.setLocalType(activeTab.localtype);
@@ -133,7 +135,7 @@ public class ChatTabBar extends HBox
             } else {
                 (_tabs[0] as ChatTab).text = name;
             }
-            selectedIndex = 0;
+            selectedIndex = 0; // trigger setter
         }
     }
 
@@ -219,7 +221,11 @@ public class ChatTabBar extends HBox
             log.warning("This shouldn't happen", new Error());
         }
         // modify the place chat tab, which should always be up
-        _tabs[roomTabIx].text = name.toString();
+        _tabs[roomTabIx].setChannel(MsoyChatChannel.makeRoomChannel(name));
+        // jiggle the selectedIndex to fix any reactions
+        if (roomTabIx == _selectedIndex) {
+            selectedIndex = roomTabIx; // no underscore, use the setter, get the side-effects
+        }
     }
 
     public function getCurrentChannel () :MsoyChatChannel
@@ -530,6 +536,21 @@ public class ChatTabBar extends HBox
         return new RoomName(Msgs.CHAT.get("m.default_place"), 0 /* sceneId 0, "no place" */);
     }
 
+    protected function getChatColor (channelType :int) :uint
+    {
+        switch (channelType) {
+        default:
+            return COLOR_ROOM;
+
+        case MsoyChatChannel.GROUP_CHANNEL:
+            return COLOR_GROUP;
+
+        case MsoyChatChannel.JABBER_CHANNEL: // fall through to MEMBER_CHANNEL
+        case MsoyChatChannel.MEMBER_CHANNEL:
+            return COLOR_TELL;
+        }
+    }
+
     private static const log :Log = Log.getLog(ChatTabBar);
 
     [Embed(source="../../../../../../../rsrc/media/skins/tab/tab_scroll_arrow.swf#arrow")]
@@ -538,6 +559,10 @@ public class ChatTabBar extends HBox
     protected static const LEFT_SCROLL :int = -15;
     protected static const RIGHT_SCROLL :int = 15;
     protected static const SCROLL_REPEAT_DELAY :int = 50;
+
+    protected static const COLOR_ROOM :uint = 0xFFFFFF;
+    protected static const COLOR_TELL :uint = 0xFFCE7C;
+    protected static const COLOR_GROUP :uint = 0xC7DAEA;
 
     protected var _tabs :Array = [];
     protected var _selectedIndex :int = -1;

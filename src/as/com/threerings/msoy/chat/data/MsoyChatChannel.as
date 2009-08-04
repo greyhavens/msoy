@@ -139,6 +139,20 @@ public class MsoyChatChannel extends ChatChannel
         return (type == ROOM_CHANNEL) ? ChatCodes.PLACE_CHAT_TYPE : (type + ":" + getId(ident));
     }
 
+    /**
+     * Are we able to speak on this channel?
+     */
+    public function isSpeakable () :Boolean
+    {
+        switch (type) {
+        case ROOM_CHANNEL:
+            return (RoomName(ident).getSceneId() != 0);
+
+        default:
+            return true;
+        }
+    }
+
     // from ChatChannel
     override public function compareTo (other :Object) :int
     {

@@ -176,6 +176,12 @@ public class ControlBar extends HBox
         _chatControl.setChatColor(color);
     }
 
+    public function setChatAllowed (allowed :Boolean) :void
+    {
+        _chatAllowed = allowed;
+        checkControls();
+    }
+
     // from Container
     override public function setActualSize (uw :Number, uh :Number) :void
     {
@@ -236,7 +242,7 @@ public class ControlBar extends HBox
     {
         const isLoggedOn :Boolean = _ctx.getClient().isLoggedOn();
         chatOptsBtn.enabled = isLoggedOn;
-        _chatControl.enabled = isLoggedOn;
+        _chatControl.enabled = isLoggedOn && _chatAllowed;
 
         // if we're already set up, then we're done
         if (numChildren > 0) {
@@ -410,6 +416,8 @@ public class ControlBar extends HBox
 
     /** Button priority levels. */
     protected var _priorities :Dictionary = new Dictionary(true);
+
+    protected var _chatAllowed :Boolean = true;
 
     /** Our chat control. */
     protected var _chatControl :ChatControl;

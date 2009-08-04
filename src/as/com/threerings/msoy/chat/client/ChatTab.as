@@ -90,7 +90,26 @@ public class ChatTab extends HBox
 
     public function get localtype () :String
     {
-        return _channel != null ? _channel.toLocalType() : ChatCodes.PLACE_CHAT_TYPE;
+        return (_channel != null) ? _channel.toLocalType() : ChatCodes.PLACE_CHAT_TYPE;
+    }
+
+    /**
+     * This is not a setter, because setters are FUCKING EVIL.
+     */
+    public function setChannel (channel :MsoyChatChannel) :void
+    {
+        _channel = channel;
+        text = channel.ident.toString();
+    }
+
+    public function getChannelType () :int
+    {
+        return (_channel != null) ? _channel.type : MsoyChatChannel.ROOM_CHANNEL;
+    }
+
+    public function isSpeakableChannel () :Boolean
+    {
+        return (_channel != null) && _channel.isSpeakable();
     }
 
     /**
@@ -99,12 +118,10 @@ public class ChatTab extends HBox
      */
     public function getTellMemberId () :int
     {
-    	if (_channel == null) {
-    		return 0;
-    	}
-
-    	return _channel.type != MsoyChatChannel.MEMBER_CHANNEL ? 0 :
-    	   (_channel.ident as MemberName).getMemberId();
+        if (getChannelType() == MsoyChatChannel.MEMBER_CHANNEL) {
+            return (_channel.ident as MemberName).getMemberId();
+        }
+        return 0;
     }
 
     public function displayCloseBox (display :Boolean) :void
@@ -136,50 +153,39 @@ public class ChatTab extends HBox
         switch (state) {
         case SELECTED:
             style = "selected";
-            displayShine(false);
-            displayCloseBox(_bar.chatTabIndex(this) != 0);
             break;
 
         case UNSELECTED:
             style = "unselected";
-            displayShine(false);
-            displayCloseBox(false);
             break;
 
         case ATTENTION:
             style = "attention";
-            displayShine(true);
-            displayCloseBox(false);
             break;
 
         default:
             log.warning("Unknown visual state [" + state + "]");
             return;
         }
+        displayShine(state == ATTENTION);
+        displayCloseBox((state == SELECTED) && (_bar.chatTabIndex(this) != 0));
 
-        // NOTE: Oh what the fuck? The chat entry box shouldn't be colored here, but rather
-        // wherever we set the selected tab. TODO.
-        if (_channel == null || _channel.type == MsoyChatChannel.ROOM_CHANNEL) {
+        switch (getChannelType()) {
+        case MsoyChatChannel.ROOM_CHANNEL:
             style += "RoomTab";
-            if (state == SELECTED) {
-                _ctx.getControlBar().setChatColor(COLOR_ROOM);
-            }
-        } else if (_channel.type == MsoyChatChannel.GROUP_CHANNEL) {
+            break;
+
+        case MsoyChatChannel.GROUP_CHANNEL:
             style += "GroupTab";
-            if (state == SELECTED) {
-                _ctx.getControlBar().setChatColor(COLOR_GROUP);
-            }
-        } else if (_channel.type == MsoyChatChannel.MEMBER_CHANNEL ||
-                   _channel.type == MsoyChatChannel.JABBER_CHANNEL) {
+            break;
+
+        case MsoyChatChannel.JABBER_CHANNEL: // fall through to MEMBER_CHANNEL
+        case MsoyChatChannel.MEMBER_CHANNEL:
             style += "TellTab";
-            if (state == SELECTED) {
-                _ctx.getControlBar().setChatColor(COLOR_TELL);
-            }
-        } else {
-            log.warning("Unknown channel type for skinning [" + _channel.type + "]");
-            return;
+            break;
         }
 
+        // finally, assign the stylename
         styleName = style;
     }
 
@@ -276,10 +282,6 @@ public class ChatTab extends HBox
     protected static const CLOSE_SKIN :String = "closeSkin";
 
     protected static const PADDING :int = 5;
-
-    protected static const COLOR_ROOM :uint = 0xFFFFFF;
-    protected static const COLOR_TELL :uint = 0xFFCE7C;
-    protected static const COLOR_GROUP :uint = 0xC7DAEA;
 
     protected var _label :Label;
     protected var _channel :MsoyChatChannel;
