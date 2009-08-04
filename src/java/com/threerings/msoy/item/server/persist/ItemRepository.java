@@ -1438,13 +1438,16 @@ public abstract class ItemRepository<T extends ItemRecord>
      */
     protected SQLExpression makeSearchClause (List<SQLExpression> matches)
     {
-        if (matches.size() == 0) {
+        switch (matches.size()) {
+        case 0:
             return new ValueExp(true);
-        }
-        if (matches.size() == 1) {
+
+        case 1:
             return matches.get(0);
+
+        default:
+            return Ops.or(matches);
         }
-        return Ops.or(matches);
     }
 
     /**
