@@ -22,6 +22,11 @@ import static com.threerings.msoy.Log.log;
 @Singleton
 public class AvatarRepository extends ItemRepository<AvatarRecord>
 {
+    @Entity(name="AvatarMogMarkRecord")
+    public static class AvatarMogMarkRecord extends MogMarkRecord
+    {
+    }
+
     @Entity(name="AvatarTagRecord")
     public static class AvatarTagRecord extends TagRecord
     {
@@ -72,6 +77,12 @@ public class AvatarRepository extends ItemRepository<AvatarRecord>
     protected Class<RatingRecord> getRatingClass ()
     {
         return RatingRepository.coerceRating(AvatarRatingRecord.class);
+    }
+
+    @Override
+    protected MogMarkRecord createMogMarkRecord()
+    {
+        return new AvatarMogMarkRecord();
     }
 
     @Override

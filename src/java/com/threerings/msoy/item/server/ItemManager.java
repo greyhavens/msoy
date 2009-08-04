@@ -4,9 +4,6 @@
 package com.threerings.msoy.item.server;
 
 import java.util.Collections;
-import java.util.List;
-
-import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -225,6 +222,8 @@ public class ItemManager
 
     /**
      * Called when an avatar item is updated.
+     *
+     * TODO: Make MOG aware.
      */
     public void avatarUpdatedOnPeer (MemberObject memObj, Avatar avatar)
     {
@@ -248,6 +247,10 @@ public class ItemManager
 
             } else if (remove) {
                 // nothing, they don't have it in their cache and we want to remove it anyway
+
+            } else if (false) {
+                // TODO: we may need to test if the avatar is MOG-marked here, but this data
+                // TODO: is currently not available in the Avatar object as passed in above.
 
             } else if (memObj.avatarCache.size() < MemberObject.AVATAR_CACHE_SIZE) {
                 memObj.addToAvatarCache(avatar);
@@ -288,28 +291,6 @@ public class ItemManager
         } finally {
             memObj.commitTransaction();
         }
-    }
-
-    /**
-     * Load at most maxCount recently-touched items from the specified user's inventory.
-     */
-    public <T extends Item> void loadRecentlyTouched (
-        final int memberId, byte type, final int maxCount, ResultListener<List<T>> lner)
-    {
-        // locate the appropriate repo
-        final ItemRepository<ItemRecord> repo = getRepository(type, lner);
-        if (repo == null) {
-            return;
-        }
-
-        // load ye items
-        _invoker.postUnit(
-            new RepositoryListenerUnit<List<T>>("loadRecentlyTouched", lner) {
-            public List<T> invokePersistResult () throws Exception {
-                List<ItemRecord> list = repo.loadRecentlyTouched(memberId, maxCount);
-                return Lists.transform(list, new ItemRecord.ToItem<T>());
-            }
-        });
     }
 
     // from ItemProvider

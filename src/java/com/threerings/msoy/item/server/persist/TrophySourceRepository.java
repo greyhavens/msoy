@@ -20,6 +20,11 @@ import com.threerings.msoy.server.persist.TagRecord;
 @Singleton
 public class TrophySourceRepository extends ItemRepository<TrophySourceRecord>
 {
+    @Entity(name="TrophyMogMarkRecord")
+    public static class TrophyMogMarkRecord extends MogMarkRecord
+    {
+    }
+
     @Entity(name="TrophySourceTagRecord")
     public static class TrophySourceTagRecord extends TagRecord
     {
@@ -57,6 +62,12 @@ public class TrophySourceRepository extends ItemRepository<TrophySourceRecord>
     protected Class<RatingRecord> getRatingClass ()
     {
         return RatingRepository.coerceRating(TrophySourceRatingRecord.class);
+    }
+
+    @Override
+    protected MogMarkRecord createMogMarkRecord()
+    {
+        return new TrophyMogMarkRecord();
     }
 
     @Override

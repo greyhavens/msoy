@@ -21,6 +21,11 @@ import com.threerings.msoy.server.persist.TagHistoryRecord;
 @Singleton
 public class FurnitureRepository extends ItemRepository<FurnitureRecord>
 {
+    @Entity(name="FurnitureMogMarkRecord")
+    public static class FurnitureMogMarkRecord extends MogMarkRecord
+    {
+    }
+
     @Entity(name="FurnitureTagRecord")
     public static class FurnitureTagRecord extends TagRecord
     {
@@ -58,6 +63,12 @@ public class FurnitureRepository extends ItemRepository<FurnitureRecord>
     protected Class<RatingRecord> getRatingClass ()
     {
         return RatingRepository.coerceRating(FurnitureRatingRecord.class);
+    }
+
+    @Override
+    protected MogMarkRecord createMogMarkRecord()
+    {
+        return new FurnitureMogMarkRecord();
     }
 
     @Override

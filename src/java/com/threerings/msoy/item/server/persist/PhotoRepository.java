@@ -20,6 +20,11 @@ import com.threerings.msoy.server.persist.TagRecord;
 @Singleton
 public class PhotoRepository extends ItemRepository<PhotoRecord>
 {
+    @Entity(name="PhotoMogMarkRecord")
+    public static class PhotoMogMarkRecord extends MogMarkRecord
+    {
+    }
+
     @Entity(name="PhotoTagRecord")
     public static class PhotoTagRecord extends TagRecord
     {
@@ -57,6 +62,12 @@ public class PhotoRepository extends ItemRepository<PhotoRecord>
     protected Class<RatingRecord> getRatingClass ()
     {
         return RatingRepository.coerceRating(PhotoRatingRecord.class);
+    }
+
+    @Override
+    protected MogMarkRecord createMogMarkRecord ()
+    {
+        return new PhotoMogMarkRecord();
     }
 
     @Override

@@ -34,6 +34,7 @@ import com.threerings.msoy.room.data.RoomCodes;
  * Handles custom scene traversal and extra bits for Whirled.
  */
 public class MsoySceneDirector extends SceneDirector
+    implements MsoySceneService_MsoySceneMoveListener
 {
     private const log :Log = Log.getLog(this);
 
@@ -184,6 +185,16 @@ public class MsoySceneDirector extends SceneDirector
                  sceneVers + ", " + _departingPortalId + ", " + data.destLoc + ").");
         _mssvc.moveTo(_worldctx.getClient(), data.sceneId, sceneVers, _departingPortalId,
                       data.destLoc, this);
+    }
+
+    // from interface MsoySceneService_MsoySceneMoveListener
+    public function moveToBeHandledByAVRG (gameId :int, sceneId :int) :void
+    {
+        // We tried to move into a scene that belongs to a Whirled, and we're not
+        // currently playing that Whirled's AVRG. We fire that game up, and we do
+        // not complete the current move (i.e. we are left in limbo) until the AVRG
+        // issues another explicit move order.
+        
     }
 
     // documentation inherited

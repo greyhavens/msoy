@@ -10,7 +10,6 @@ import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.annotation.Entity;
 
 import com.threerings.msoy.item.data.all.Toy;
-
 import com.threerings.msoy.server.persist.RatingRecord;
 import com.threerings.msoy.server.persist.RatingRepository;
 import com.threerings.msoy.server.persist.TagHistoryRecord;
@@ -22,6 +21,11 @@ import com.threerings.msoy.server.persist.TagRecord;
 @Singleton
 public class ToyRepository extends ItemRepository<ToyRecord>
 {
+    @Entity(name="ToyMogMarkRecord")
+    public static class ToyMogMarkRecord extends MogMarkRecord
+    {
+    }
+
     @Entity(name="ToyTagRecord")
     public static class ToyTagRecord extends TagRecord
     {
@@ -59,6 +63,12 @@ public class ToyRepository extends ItemRepository<ToyRecord>
     protected Class<RatingRecord> getRatingClass ()
     {
         return RatingRepository.coerceRating(ToyRatingRecord.class);
+    }
+
+    @Override
+    protected MogMarkRecord createMogMarkRecord()
+    {
+        return new ToyMogMarkRecord();
     }
 
     @Override

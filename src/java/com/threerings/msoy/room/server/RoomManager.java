@@ -999,8 +999,9 @@ public class RoomManager extends SpotSceneManager
 
         // register ourselves in our peer object
         MsoyScene mscene = (MsoyScene) _scene;
-        _peerMan.roomDidStartup(mscene.getId(), mscene.getName(), mscene.getOwnerId(),
-                                          mscene.getOwnerType(), mscene.getAccessControl());
+        _peerMan.roomDidStartup(
+            mscene.getId(), mscene.getName(), mscene.getMogId(),
+            mscene.getOwnerId(), mscene.getOwnerType(), mscene.getAccessControl());
 
         _roomObj.startTransaction();
         try {
@@ -1327,9 +1328,9 @@ public class RoomManager extends SpotSceneManager
             }
         };
 
+        MsoyScene mScene = (MsoyScene) _scene;
         if (update instanceof SceneAttrsUpdate) {
             SceneAttrsUpdate up = (SceneAttrsUpdate) update;
-            MsoyScene msoyScene = (MsoyScene) _scene;
 
             // massage the room name to make sure it's kosher
             up.name = StringUtil.truncate(up.name, MsoySceneModel.MAX_NAME_LENGTH);
@@ -1339,17 +1340,17 @@ public class RoomManager extends SpotSceneManager
             _roomObj.setAccessControl(up.accessControl);
 
             // if the name or access controls were modified, we need to update our HostedPlace
-            boolean nameChange = !msoyScene.getName().equals(up.name);
-            if (nameChange || msoyScene.getAccessControl() != up.accessControl) {
-                _peerMan.roomUpdated(msoyScene.getId(), up.name,
-                    msoyScene.getOwnerId(), msoyScene.getOwnerType(),
-                    up.accessControl);
+            boolean nameChange = !mScene.getName().equals(up.name);
+            if (nameChange || mScene.getAccessControl() != up.accessControl) {
+                _peerMan.roomUpdated(mScene.getId(), up.name,
+                    mScene.getMogId(), mScene.getOwnerId(),
+                    mScene.getOwnerType(), up.accessControl);
             }
 
             // TODO: if playlistControl changed, remove all inappropriate songs?
 
             // if decor was modified, we should mark new decor as used, and clear the old one
-            Decor decor = msoyScene.getDecor();
+            Decor decor = mScene.getDecor();
             if (decor.itemId != up.decor.itemId) { // modified?
                 _itemMan.updateItemUsage(
                     Item.DECOR, Item.UsedAs.BACKGROUND, memberId, _scene.getId(),
@@ -1368,9 +1369,10 @@ public class RoomManager extends SpotSceneManager
         } else if (update instanceof SceneOwnershipUpdate) {
             SceneOwnershipUpdate sou = (SceneOwnershipUpdate) update;
             byte accessControl = sou.lockToOwner ?
-                MsoySceneModel.ACCESS_OWNER_ONLY : ((MsoyScene) _scene).getAccessControl();
+                MsoySceneModel.ACCESS_OWNER_ONLY : mScene.getAccessControl();
             _peerMan.roomUpdated(
-                _scene.getId(), _scene.getName(), sou.ownerId, sou.ownerType, accessControl);
+                mScene.getId(), mScene.getName(), mScene.getMogId(),
+                sou.ownerId, sou.ownerType, accessControl);
 
             // update our room object
             _roomObj.setOwner(sou.ownerName);
@@ -1382,7 +1384,7 @@ public class RoomManager extends SpotSceneManager
             // mark this item as no longer in use
             FurniData data = ((FurniUpdate)update).data;
             _itemMan.updateItemUsage(
-                data.itemType, Item.UsedAs.NOTHING, memberId, _scene.getId(),
+                data.itemType, Item.UsedAs.NOTHING, memberId, mScene.getId(),
                 data.itemId, 0, new ComplainingListener<Void>(
                     log, "Unable to clear furni item usage"));
 
@@ -1395,7 +1397,7 @@ public class RoomManager extends SpotSceneManager
             // mark this item as in use
             FurniData data = ((FurniUpdate)update).data;
             _itemMan.updateItemUsage(
-                data.itemType, Item.UsedAs.FURNITURE, memberId, _scene.getId(),
+                data.itemType, Item.UsedAs.FURNITURE, memberId, mScene.getId(),
                 0, data.itemId, new ComplainingListener<Void>(
                     log, "Unable to set furni item usage"));
 

@@ -11,7 +11,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
@@ -188,7 +187,7 @@ public class StuffServlet extends MsoyServiceServlet
     }
 
     // from interface StuffService
-    public List<Item> loadInventory (int memberId, byte type, String query)
+    public List<Item> loadInventory (int memberId, byte type, String query, int mogId)
         throws ServiceException
     {
         MemberRecord memrec = requireAuthedUser();
@@ -203,18 +202,14 @@ public class StuffServlet extends MsoyServiceServlet
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
 
-        ItemRepository<ItemRecord> repo = _itemLogic.getRepository(type);
-        List<Item> items = Lists.newArrayList();
-        Function<ItemRecord, Item> toItem = new ItemRecord.ToItem<Item>();
-        if (StringUtil.isBlank(query)) {
-            items.addAll(Lists.transform(repo.loadOriginals(memberId), toItem));
-            items.addAll(Lists.transform(repo.loadClones(memberId), toItem));
-        } else {
-            items.addAll(Lists.transform(repo.findItems(memberId, query), toItem));
-        }
+        List<Item> items = Lists.transform(
+            _itemLogic.getRepository(type).findItems(memberId, query, mogId),
+            new ItemRecord.ToItem<Item>());
+
         Collections.sort(items);
 
-        return items;
+        // return a list class that GWT understands
+        return Lists.newArrayList(items);
     }
 
     // from interface StuffService

@@ -121,7 +121,7 @@ public class GroupRecord extends PersistentRecord
     public Group.Policy policy;
 
     /** This group's forum permissions, see {@link Group#getForumPerms}. */
-    // TODO: split this into two Group.Perm instances? would requite a migration
+    // TODO: split this into two Group.Perm instances? would require a migration
     public byte forumPerms;
 
     /** This group's party permissions. */

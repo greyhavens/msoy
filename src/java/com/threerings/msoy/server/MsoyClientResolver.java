@@ -11,7 +11,6 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 
-import com.samskivert.util.ResultListener;
 import com.samskivert.util.Tuple;
 
 import com.threerings.io.Streamable;
@@ -49,7 +48,6 @@ import com.threerings.msoy.badge.server.persist.InProgressBadgeRecord;
 import com.threerings.msoy.group.data.all.GroupMembership;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.item.data.all.Avatar;
-import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.server.ItemLogic;
 import com.threerings.msoy.item.server.ItemManager;
 import com.threerings.msoy.item.server.persist.AvatarRecord;
@@ -276,22 +274,9 @@ public class MsoyClientResolver extends CrowdClientResolver
     {
         super.finishResolution(clobj);
 
-        final MemberObject user = (MemberObject)clobj;
-        if (user.avatarCache == null) {
-            // load up their recently used avatars
-            _itemMan.loadRecentlyTouched(
-                user.getMemberId(), Item.AVATAR, MemberObject.AVATAR_CACHE_SIZE,
-                new ResultListener<List<Avatar>>() {
-                public void requestCompleted (List<Avatar> items) {
-                    user.setAvatarCache(DSet.newDSet(items));
-                }
-                public void requestFailed (Exception cause) {
-                    log.warning("Failed to load member's avatar cache", "who", user.who(), cause);
-                }
-            });
-        }
+        MemberObject user = (MemberObject)clobj;
 
-        // resolve their party info
+        // resolve this user's party info
         user.setParty(_peerMan.getPartySummary(user.getMemberId()));
     }
 

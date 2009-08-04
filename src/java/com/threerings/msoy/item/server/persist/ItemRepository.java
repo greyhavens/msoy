@@ -59,13 +59,12 @@ import com.samskivert.depot.expression.FunctionExp;
 import com.samskivert.depot.expression.LiteralExp;
 import com.samskivert.depot.expression.SQLExpression;
 import com.samskivert.depot.expression.ValueExp;
+import com.samskivert.depot.operator.And;
 import com.samskivert.depot.operator.Case;
 import com.samskivert.depot.operator.Div;
 import com.samskivert.depot.operator.Exists;
 import com.samskivert.depot.operator.FullText;
 import com.samskivert.depot.operator.Mul;
-import com.samskivert.depot.operator.SQLOperator;
-
 import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.msoy.server.persist.CountRecord;
@@ -142,7 +141,7 @@ public abstract class ItemRepository<T extends ItemRecord>
                                                new ColumnExp[] { TagRecord.TAG_ID }, where));
         }
 
-        public SQLOperator madeByExpression ()
+        public SQLExpression madeByExpression ()
         {
             if (_memberIds.size() == 0) {
                 return null;
@@ -208,6 +207,8 @@ public abstract class ItemRepository<T extends ItemRecord>
                 return ItemRepository.this.getRatingClass();
             }
         };
+
+        _mogMarkClass = createMogMarkRecord().getClass();
 
         // drop the now unused ItemRecord.rating column
         _ctx.registerMigration(getItemClass(), new SchemaMigration.Drop(
@@ -388,12 +389,12 @@ public abstract class ItemRepository<T extends ItemRecord>
 
     /**
      * Finds all (original and cloned) items owned by the specified player that match the supplied
-     * query.
+     * query (if non-null) or the supplied mog (if non-zero).
      */
-    public List<T> findItems (int ownerId, String query)
+    public List<T> findItems (int ownerId, String query, int mogId)
     {
         WordSearch queryContext = buildWordSearch(query);
-        List<SQLOperator> matches = Lists.newArrayList();
+        List<SQLExpression> matches = Lists.newArrayList();
 
         // original items only match on the text and creator (they cannot be tagged)
         if (queryContext != null) {
@@ -401,59 +402,88 @@ public abstract class ItemRepository<T extends ItemRecord>
             addCreatorMatchClause(matches, queryContext);
         }
 
-        // locate all matching original items
-        List<T> results = findAll(getItemClass(), new Where(
-            Ops.and(getItemColumn(ItemRecord.OWNER_ID).eq(ownerId),
-                    makeSearchClause(matches))));
+        QueryClause[] clauses = new QueryClause[0];
+        SQLExpression[] whereBits = new SQLExpression[0];
 
-        // now add the tag match as cloned items can match tags
-        if (queryContext != null) {
-            addTagMatchClause(matches, getCloneColumn(CloneRecord.ORIGINAL_ITEM_ID), queryContext);
+        if (mogId != 0) {
+            clauses = ArrayUtil.append(clauses, new Join(
+                getItemColumn(ItemRecord.ITEM_ID),
+                new ColumnExp(getMogMarkClass(), MogMarkRecord.ITEM_ID.name)));
+            whereBits = ArrayUtil.append(whereBits,
+                new ColumnExp(getMogMarkClass(), MogMarkRecord.GROUP_ID.name).eq(mogId));
         }
 
-        // and add renamed clones to the full text search
-        matches.add(queryContext.cloneTextMatch());
+        SQLExpression[] originalBits = ArrayUtil.append(
+            whereBits, getItemColumn(ItemRecord.OWNER_ID).eq(ownerId));
+        if (matches.size() > 0) {
+            originalBits = ArrayUtil.append(originalBits, makeSearchClause(matches));
+        }
 
-        // add all matching cloned items
-        results.addAll(loadClonedItems(new Where(
-            Ops.and(getCloneColumn(CloneRecord.OWNER_ID).eq(ownerId),
-                    makeSearchClause(matches)))));
+        // locate all matching original items
+        List<T> results = loadAllWithWhere(getItemClass(), originalBits, clauses);
+
+        if (queryContext != null) {
+            // now add the tag match as cloned items can match tags
+            addTagMatchClause(matches, getCloneColumn(CloneRecord.ORIGINAL_ITEM_ID), queryContext);
+            // and add renamed clones to the full text search
+            matches.add(queryContext.cloneTextMatch());
+        }
+
+        SQLExpression[] cloneBits = ArrayUtil.append(
+            whereBits, getCloneColumn(CloneRecord.OWNER_ID).eq(ownerId));
+        if (matches.size() > 0) {
+            cloneBits = ArrayUtil.append(cloneBits, makeSearchClause(matches));
+        }
+        results.addAll(resolveClones(loadAllWithWhere(getCloneClass(), cloneBits,
+            ArrayUtil.insert(clauses, new Join(
+                getCloneColumn(CloneRecord.ORIGINAL_ITEM_ID),
+                getItemColumn(ItemRecord.ITEM_ID)), 0))));
 
         return results;
     }
 
     /**
      * Loads up to maxCount items from a user's inventory that were the most recently touched.
+     * @param maxCount
      */
-    public List<T> loadRecentlyTouched (int ownerId, int maxCount)
+    public List<T> loadRecentlyTouched (int ownerId, int mogId, int maxCount)
     {
-        // Since we don't know how many we'll find of each kind (cloned, orig), we load the max
-        // from each.
-        Limit limit = new Limit(0, maxCount);
-        List<T> originals = findAll(
-            getItemClass(),
-            new Where(getItemColumn(ItemRecord.OWNER_ID), ownerId),
-            OrderBy.descending(getItemColumn(ItemRecord.LAST_TOUCHED)),
-            limit);
-        List<T> clones = loadClonedItems(
-            new Where(getCloneColumn(CloneRecord.OWNER_ID), ownerId),
-            OrderBy.descending(getCloneColumn(CloneRecord.LAST_TOUCHED)), limit);
-        int size = originals.size() + clones.size();
+        QueryClause[] baseClauses = new QueryClause[] {
+            new Limit(0, maxCount)
+        };
+        SQLExpression[] baseWhere = new SQLExpression[0];
 
-        List<T> list = Lists.newArrayListWithCapacity(size);
-        list.addAll(originals);
-        list.addAll(clones);
+        if (mogId != 0) {
+            baseWhere = ArrayUtil.append(baseWhere,
+                new ColumnExp(getMogMarkClass(), MogMarkRecord.GROUP_ID.name).eq(mogId));
+            baseClauses = ArrayUtil.append(baseClauses, new Join(
+                getItemColumn(ItemRecord.ITEM_ID),
+                new ColumnExp(getMogMarkClass(), MogMarkRecord.ITEM_ID.name)));
+        }
+
+        List<CloneRecord> cloneRecords = loadAllWithWhere(
+            getCloneClass(),
+            ArrayUtil.append(baseWhere, getCloneColumn(CloneRecord.OWNER_ID).eq(ownerId)),
+            ArrayUtil.append(baseClauses,
+                OrderBy.descending(getCloneColumn(CloneRecord.LAST_TOUCHED))));
+        List<T> items = resolveClones(cloneRecords);
+
+        items.addAll(loadAllWithWhere(
+            getItemClass(),
+            ArrayUtil.append(baseWhere, getItemColumn(ItemRecord.OWNER_ID).eq(ownerId)),
+            ArrayUtil.append(baseClauses,
+                OrderBy.descending(getItemColumn(ItemRecord.LAST_TOUCHED)))));
 
         // now, sort by their lastTouched time
-        QuickSort.sort(list, new Comparator<T>() {
+        QuickSort.sort(items, new Comparator<T>() {
             public int compare (T o1, T o2) {
                 return o2.lastTouched.compareTo(o1.lastTouched);
             }
         });
 
         // remove any items beyond maxCount
-        CollectionUtil.limit(list, maxCount);
-        return list;
+        CollectionUtil.limit(items, maxCount);
+        return items;
     }
 
     /**
@@ -673,8 +703,8 @@ public abstract class ItemRepository<T extends ItemRecord>
                              getItemColumn(ItemRecord.ITEM_ID)));
 
         // see if there's any where bits to turn into an actual where clause
-        List<SQLOperator> whereBits = Lists.newArrayList();
-        addSearchClause(clauses, whereBits, mature, search, tag, creator, minRating, 0);
+        List<SQLExpression> whereBits = Lists.newArrayList();
+        addSearchClause(clauses, whereBits, mature, search, tag, creator, minRating, 0, 0);
 
         // finally fetch all the catalog records of interest
         return load(CountRecord.class, clauses.toArray(new QueryClause[clauses.size()])).count;
@@ -691,7 +721,7 @@ public abstract class ItemRepository<T extends ItemRecord>
      */
     public List<CatalogRecord> loadCatalog (
         byte sortBy, boolean mature, WordSearch context, int tag, int creator,
-        Float minRating, int gameId, int offset, int rows, float exchangeRate)
+        Float minRating, int mogId, int gameId, int offset, int rows, float exchangeRate)
     {
         LinkedList<QueryClause> clauses = Lists.newLinkedList();
         clauses.add(new Join(getCatalogColumn(CatalogRecord.LISTED_ITEM_ID),
@@ -701,7 +731,7 @@ public abstract class ItemRepository<T extends ItemRecord>
         List<SQLExpression> obExprs = Lists.newArrayList();
         List<OrderBy.Order> obOrders = Lists.newArrayList();
         // and keep track of additional constraints on the query
-        List<SQLOperator> whereBits = Lists.newArrayList();
+        List<SQLExpression> whereBits = Lists.newArrayList();
         switch(sortBy) {
         case CatalogQuery.SORT_BY_LIST_DATE:
             addOrderByListDate(obExprs, obOrders);
@@ -748,7 +778,7 @@ public abstract class ItemRepository<T extends ItemRecord>
 
         // see if there's any where bits to turn into an actual where clause
         boolean significantlyConstrained = addSearchClause(
-            clauses, whereBits, mature, context, tag, creator, minRating, gameId);
+            clauses, whereBits, mature, context, tag, creator, minRating, mogId, gameId);
 
         // finally fetch all the catalog records of interest and resolve their item bits
         List<CatalogRecord> records = findAllWithOffset(getCatalogClass(),
@@ -1297,6 +1327,17 @@ public abstract class ItemRepository<T extends ItemRecord>
     }
 
     /**
+     * Conveniently concatenates an array of expressions into a Where statements and appends
+     * that to the supplied list of clauses, finally executing findAll() on the whole shebang.
+     */
+    protected <U extends PersistentRecord> List<U> loadAllWithWhere (
+        Class<U> itemClass, SQLExpression[] whereBits, QueryClause[] clauses)
+    {
+        return findAll(itemClass,
+            ArrayUtil.append(clauses, new Where(new And(whereBits))));
+    }
+
+    /**
      * Performs the necessary join to load cloned items matching the supplied where clause.
      */
     protected List<T> loadClonedItems (Where where, QueryClause... clauses)
@@ -1352,7 +1393,7 @@ public abstract class ItemRepository<T extends ItemRecord>
     /**
      * Adds a full-text match on item name and description to the supplied list.
      */
-    protected void addTextMatchClause (List<SQLOperator> matches, WordSearch search)
+    protected void addTextMatchClause (List<SQLExpression> matches, WordSearch search)
     {
         // search item name and description
         matches.add(search.fullTextMatch());
@@ -1361,9 +1402,9 @@ public abstract class ItemRepository<T extends ItemRecord>
     /**
      * Adds a match on the name of the creator to the supplied list.
      */
-    protected void addCreatorMatchClause (List<SQLOperator> matches, WordSearch search)
+    protected void addCreatorMatchClause (List<SQLExpression> matches, WordSearch search)
     {
-        SQLOperator op = search.madeByExpression();
+        SQLExpression op = search.madeByExpression();
         if (op != null) {
             matches.add(op);
         }
@@ -1383,10 +1424,10 @@ public abstract class ItemRepository<T extends ItemRecord>
      * are tagged with those tags.
      */
     protected void addTagMatchClause (
-        List<SQLOperator> matches, ColumnExp itemColumn, WordSearch search)
+        List<SQLExpression> matches, ColumnExp itemColumn, WordSearch search)
     {
         // build a query to check tags if one or more tags exists
-        SQLOperator op = search.tagExistsExpression(itemColumn);
+        SQLExpression op = search.tagExistsExpression(itemColumn);
         if (op != null) {
             matches.add(op);
         }
@@ -1395,19 +1436,24 @@ public abstract class ItemRepository<T extends ItemRecord>
     /**
      * Composes the supplied list of search match clauses into a single operator.
      */
-    protected SQLOperator makeSearchClause (List<SQLOperator> matches)
+    protected SQLExpression makeSearchClause (List<SQLExpression> matches)
     {
-        // if we ended up with multiple match clauses, OR them all together
-        return (matches.size() == 1) ? matches.get(0) : Ops.or(matches);
+        if (matches.size() == 0) {
+            return new ValueExp(true);
+        }
+        if (matches.size() == 1) {
+            return matches.get(0);
+        }
+        return Ops.or(matches);
     }
 
     /**
      * Builds a search clause that matches item text, creator name and tags (against listed catalog
      * items).
      */
-    protected SQLOperator buildSearchClause (WordSearch queryContext)
+    protected SQLExpression buildSearchClause (WordSearch queryContext)
     {
-        List<SQLOperator> matches = Lists.newArrayList();
+        List<SQLExpression> matches = Lists.newArrayList();
 
         addTextMatchClause(matches, queryContext);
         addCreatorMatchClause(matches, queryContext);
@@ -1422,8 +1468,8 @@ public abstract class ItemRepository<T extends ItemRecord>
      * match enormous numbers of rows.
      */
     protected boolean addSearchClause (
-        List<QueryClause> clauses, List<SQLOperator> whereBits, boolean mature,
-        WordSearch queryContext, int tag, int creator, Float minRating, int gameId)
+        List<QueryClause> clauses, List<SQLExpression> whereBits, boolean mature,
+        WordSearch queryContext, int tag, int creator, Float minRating, int mogId, int gameId)
     {
         boolean significantlyConstrained = false;
 
@@ -1454,6 +1500,14 @@ public abstract class ItemRepository<T extends ItemRecord>
 
         if (minRating != null) {
             whereBits.add(getRatingExpression().greaterEq(minRating));
+        }
+
+        if (mogId != 0) {
+            clauses.add(new Join(
+                getItemColumn(ItemRecord.ITEM_ID),
+                new ColumnExp(getMogMarkClass(), MogMarkRecord.ITEM_ID.name)));
+            whereBits.add(new ColumnExp(getMogMarkClass(), MogMarkRecord.GROUP_ID.name).eq(mogId));
+            significantlyConstrained = true;
         }
 
         if (gameId != 0 && GameItemRecord.class.isAssignableFrom(getItemClass())) {
@@ -1518,7 +1572,7 @@ public abstract class ItemRepository<T extends ItemRecord>
         // The relevance of a catalog entry is a product of several factors, each chosen
         // to have a tunable impact. The actual value is not important, only the relative
         // sizes.
-        SQLOperator[] ops = new SQLOperator[] {
+        SQLExpression[] ops = new SQLExpression[] {
             // The base value is just the Full Text Search rank value, the scale of which is
             // entirely unknown. We give it a tiny linear shift so that the creator and tag factors
             // below have something non-zero to work with when there is no full text hit at all
@@ -1533,7 +1587,7 @@ public abstract class ItemRepository<T extends ItemRecord>
             new FunctionExp("LOG", getCatalogColumn(CatalogRecord.PURCHASES).plus(1.0)).plus(3.0),
         };
 
-        SQLOperator tagExistsExp =
+        SQLExpression tagExistsExp =
             context.tagExistsExpression(getCatalogColumn(CatalogRecord.LISTED_ITEM_ID));
         if (tagExistsExp != null) {
             // if there is a tag match, immediately boost relevance by 25%
@@ -1541,7 +1595,7 @@ public abstract class ItemRepository<T extends ItemRecord>
                 new Case(tagExistsExp, new ValueExp(1.25), new ValueExp(1.0)));
         }
 
-        SQLOperator madeByExp = context.madeByExpression();
+        SQLExpression madeByExp = context.madeByExpression();
         if (madeByExp != null) {
             // if the item was made by a creator who matches the description, also boost by 50%
             ops = ArrayUtil.append(ops,
@@ -1629,6 +1683,12 @@ public abstract class ItemRepository<T extends ItemRecord>
         classes.add(getItemClass());
         classes.add(getCloneClass());
         classes.add(getCatalogClass());
+        classes.add(getMogMarkClass());
+    }
+
+    protected Class<? extends MogMarkRecord> getMogMarkClass()
+    {
+        return _mogMarkClass;
     }
 
     /**
@@ -1648,6 +1708,12 @@ public abstract class ItemRepository<T extends ItemRecord>
      * record class.
      */
     protected abstract Class<CatalogRecord> getCatalogClass ();
+
+    /**
+     * Specific item repositories override this method and indicate their item's mog mark persistent
+     * record class.
+     */
+    protected abstract MogMarkRecord createMogMarkRecord ();
 
     /**
      * Specific item repositories override this method and indicate their item's rating persistent
@@ -1697,6 +1763,9 @@ public abstract class ItemRepository<T extends ItemRecord>
 
     /** The byte type of our item. */
     protected byte _itemType;
+
+    /** This item type's concrete MogMarkRecord class. */
+    protected Class<? extends MogMarkRecord> _mogMarkClass;
 
     /** Used to manage our item tags. */
     protected TagRepository _tagRepo;

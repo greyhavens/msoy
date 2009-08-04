@@ -20,6 +20,11 @@ import com.threerings.msoy.server.persist.TagRecord;
 @Singleton
 public class LauncherRepository extends ItemRepository<LauncherRecord>
 {
+    @Entity(name="LauncherMogMarkRecord")
+    public static class LauncherMogMarkRecord extends MogMarkRecord
+    {
+    }
+
     @Entity(name="LauncherTagRecord")
     public static class LauncherTagRecord extends TagRecord
     {
@@ -57,6 +62,12 @@ public class LauncherRepository extends ItemRepository<LauncherRecord>
     protected Class<RatingRecord> getRatingClass ()
     {
         return RatingRepository.coerceRating(LauncherRatingRecord.class);
+    }
+
+    @Override
+    protected MogMarkRecord createMogMarkRecord()
+    {
+        return new LauncherMogMarkRecord();
     }
 
     @Override

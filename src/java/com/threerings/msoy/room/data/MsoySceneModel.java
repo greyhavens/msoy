@@ -61,6 +61,9 @@ public class MsoySceneModel extends SceneModel
     /** The name of the owner, either a MemberName or GroupName. */
     public Name ownerName;
 
+    /** The group of the Mog associated with this room, or 0 if none. */
+    public int mogId;
+
     /** The game associated with this room (usually the group's game), or 0 if none. */
     public int gameId;
 
@@ -277,4 +280,5 @@ public class MsoySceneModel extends SceneModel
 
     /** Cached portal info. */
     protected transient HashIntMap<Portal> _portalInfo;
+
 }

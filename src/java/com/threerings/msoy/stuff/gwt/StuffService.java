@@ -82,10 +82,11 @@ public interface StuffService extends RemoteService
         throws ServiceException;
 
     /**
-     * Loads all items in a player's inventory of the specified type and optionally restricted to
-     * items whose name/description/tags match a specified string.
+     * Loads all items in a player's inventory of the specified type. If query is non-null, then
+     * restrict the returned set to items whose name/description/tags match the string. If mogId
+     * is non-null, then further restrict the set to those stamped with the associated mog.
      */
-    List<Item> loadInventory (int memberId, byte type, String query)
+    List<Item> loadInventory (int memberId, byte type, String query, int mogId)
         throws ServiceException;
 
     /**

@@ -10,6 +10,9 @@ import com.threerings.msoy.room.data.MsoySceneModel;
  */
 public class HostedRoom extends HostedPlace
 {
+    /** Mog id, to find out if a peer transition also involves moving into or out of a Mog. */
+    public int mogId;
+
     /** Room owner id, used for access control. */
     public int ownerId;
 
@@ -29,9 +32,12 @@ public class HostedRoom extends HostedPlace
     /**
      * Creates a hosted game record.
      */
-    public HostedRoom (int placeId, String name, int ownerId, byte ownerType, byte accessControl)
+    public HostedRoom (int placeId, String name, int mogId, int ownerId,
+        byte ownerType, byte accessControl)
     {
         super(placeId, name);
+
+        this.mogId = mogId;
         this.ownerId = ownerId;
         this.ownerType = ownerType;
         this.accessControl = accessControl;

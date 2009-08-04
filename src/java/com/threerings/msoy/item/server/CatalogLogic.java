@@ -49,6 +49,7 @@ public class CatalogLogic
         public String search;
         public int creatorId;
         public int gameId;
+        public int mogId;
 
         public Query (byte itemType, byte sortBy) {
             this.itemType = itemType;
@@ -61,6 +62,7 @@ public class CatalogLogic
             this.tag = query.tag;
             this.search = query.search;
             this.creatorId = query.creatorId;
+            this.mogId = query.mogId;
             this.gameId = gameId;
         }
     }
@@ -130,7 +132,7 @@ public class CatalogLogic
         // load the records themselves
         List<CatalogRecord> records = repo.loadCatalog(
             query.sortBy, showMature(mrec), context, query.tagId, query.creatorId, null,
-            query.gameId, offset, rows, _exchange.getRate());
+            query.mogId, query.gameId, offset, rows, _exchange.getRate());
 
         // load the count, if desired
         int count = !loadCount ? 0 :

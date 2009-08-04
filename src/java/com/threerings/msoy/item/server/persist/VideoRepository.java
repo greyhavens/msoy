@@ -20,6 +20,11 @@ import com.threerings.msoy.server.persist.TagHistoryRecord;
 @Singleton
 public class VideoRepository extends ItemRepository<VideoRecord>
 {
+    @Entity(name="VideoMogMarkRecord")
+    public static class VideoMogMarkRecord extends MogMarkRecord
+    {
+    }
+
     @Entity(name="VideoTagRecord")
     public static class VideoTagRecord extends TagRecord
     {
@@ -57,6 +62,12 @@ public class VideoRepository extends ItemRepository<VideoRecord>
     protected Class<RatingRecord> getRatingClass ()
     {
         return RatingRepository.coerceRating(VideoRatingRecord.class);
+    }
+
+    @Override
+    protected MogMarkRecord createMogMarkRecord()
+    {
+        return new VideoMogMarkRecord();
     }
 
     @Override

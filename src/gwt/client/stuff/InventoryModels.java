@@ -97,19 +97,19 @@ public class InventoryModels
     /**
      * Looks up the data model with the specified parameters. Returns null if we have none.
      */
-    public SimpleDataModel<Item> getModel (int memberId, byte type, String query)
+    public SimpleDataModel<Item> getModel (int memberId, byte type, String query, int mogId)
     {
-        return _models.get(new Key(memberId, type, query));
+        return _models.get(new Key(memberId, type, query, 1));
     }
 
     /**
      * Loads a data model for items of the specified type and matching the optionally supplied
-     * query.
+     * query and mog.
      */
-    public void loadModel (int memberId, byte type, String query,
+    public void loadModel (int memberId, byte type, String query, int mogId,
         AsyncCallback<DataModel<Item>> cb)
     {
-        loadModel(new Key(memberId, type, query), cb);
+        loadModel(new Key(memberId, type, query, 1), cb);
     }
 
     /**
@@ -193,29 +193,32 @@ public class InventoryModels
                 cb.onFailure(caught);
             }
         };
-        _stuffsvc.loadInventory(key.memberId, key.type, key.query, callback);
+        _stuffsvc.loadInventory(key.memberId, key.type, key.query, key.mogId, callback);
     }
 
     protected static class Key {
         public final int memberId;
         public final byte type;
         public final String query;
+        public final int mogId;
 
-        public Key (int memberId, byte type, String query)
+        public Key (int memberId, byte type, String query, int mogId)
         {
             this.memberId = memberId;
             this.type = type;
             this.query = (query != null && query.length() == 0) ? null : query;
+            this.mogId = mogId;
         }
 
         public int hashCode() {
-            return memberId ^ type ^ (query == null ? 0 : query.hashCode());
+            return memberId ^ type ^ (query == null ? 0 : query.hashCode()) ^ mogId;
         }
 
         public boolean equals (Object other) {
             Key okey = (Key)other;
             return memberId == okey.memberId && type == okey.type &&
-                ((query != null && query.equals(okey.query)) || query == okey.query);
+                ((query != null && query.equals(okey.query)) || query == okey.query) &&
+                okey.mogId == mogId;
         }
     }
 

@@ -20,6 +20,11 @@ import com.threerings.msoy.server.persist.TagRecord;
 @Singleton
 public class GameRepository extends ItemRepository<GameRecord>
 {
+    @Entity(name="GameMogMarkRecord")
+    public static class GameMogMarkRecord extends MogMarkRecord
+    {
+    }
+
     @Entity(name="GameTagRecord")
     public static class GameTagRecord extends TagRecord
     {
@@ -57,6 +62,12 @@ public class GameRepository extends ItemRepository<GameRecord>
     protected Class<RatingRecord> getRatingClass ()
     {
         return RatingRepository.coerceRating(GameRatingRecord.class);
+    }
+
+    @Override
+    protected MogMarkRecord createMogMarkRecord()
+    {
+        return new GameMogMarkRecord();
     }
 
     @Override // from ItemRepository

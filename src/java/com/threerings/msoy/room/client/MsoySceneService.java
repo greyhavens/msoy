@@ -5,9 +5,8 @@ package com.threerings.msoy.room.client;
 
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
-
 import com.threerings.whirled.client.SceneService;
-
+import com.threerings.whirled.client.SceneService.SceneMoveListener;
 import com.threerings.msoy.room.data.MsoyLocation;
 
 /**
@@ -15,6 +14,16 @@ import com.threerings.msoy.room.data.MsoyLocation;
  */
 public interface MsoySceneService extends InvocationService
 {
+
+    public static interface MsoySceneMoveListener extends SceneMoveListener
+    {
+        /**
+         * Indicates that the client must start up the given AVRG and let it take over,
+         * informing it what scene it was we tried to enter.
+         */
+        public void moveToBeHandledByAVRG (int gameId, int sceneId);
+    }
+
     /**
      * Requests that that this client's body be moved to the specified scene.
      *
@@ -24,5 +33,5 @@ public interface MsoySceneService extends InvocationService
      * @param destLoc the location in the target scene where the client wishes to enter.
      */
     public void moveTo (Client client, int sceneId, int version, int portalId, MsoyLocation destLoc,
-                        SceneService.SceneMoveListener listener);
+                        MsoySceneMoveListener listener);
 }

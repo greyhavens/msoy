@@ -216,14 +216,16 @@ public class StuffPanel extends FlowPanel
         final Predicate<Item> pred = FILTERS.get(_filters.getSelectedIndex());
 
         // maybe we're changing our predicate or changing page on an already loaded model
-        SimpleDataModel<Item> model = _models.getModel(_memberId, _type, query);
+        // TODO: restrict by mogId here when we do UI
+        SimpleDataModel<Item> model = _models.getModel(_memberId, _type, query, 0);
         if (model != null) {
             _contents.setModel(model.filter(pred), page);
             return;
         }
 
         // otherwise we have to load
-        _models.loadModel(_memberId, _type, query, new InfoCallback<DataModel<Item>>() {
+        // TODO: restrict by mogId here when we do UI
+        _models.loadModel(_memberId, _type, query, 0, new InfoCallback<DataModel<Item>>() {
             public void onSuccess (DataModel<Item> result) {
                 SimpleDataModel<Item> model = (SimpleDataModel<Item>)result;
                 _contents.setModel(model.filter(pred), page);

@@ -60,6 +60,9 @@ public class MsoySceneModel extends SceneModel
     /** The name of the owner, either a MemberName or the group's name. */
     public var ownerName :Name;
 
+    /** The group of the Mog associated with this room, or 0 if none. */
+    public var mogId :int;
+
     /** The game associated with this room (usually the group's game), or 0 if none. */
     public var gameId :int;
 
@@ -240,6 +243,7 @@ public class MsoySceneModel extends SceneModel
         ownerType = ins.readByte();
         ownerId = ins.readInt();
         ownerName = Name(ins.readObject());
+        mogId = ins.readInt();
         gameId = ins.readInt();
         furnis = TypedArray(ins.readObject());
         entrance = MsoyLocation(ins.readObject());

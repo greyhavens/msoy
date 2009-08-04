@@ -3,10 +3,13 @@
 
 package com.threerings.msoy.room.server;
 
+import java.util.List;
+
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.Tuple;
@@ -15,6 +18,7 @@ import com.threerings.util.Name;
 
 import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.data.ClientObject;
+import com.threerings.presents.dobj.DSet;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
 
@@ -40,8 +44,14 @@ import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.peer.data.HostedRoom;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 
+import com.threerings.msoy.group.server.persist.GroupRecord;
+import com.threerings.msoy.group.server.persist.GroupRepository;
+import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.ItemIdent;
-import com.threerings.msoy.person.server.persist.FeedRepository;
+import com.threerings.msoy.item.server.ItemLogic;
+import com.threerings.msoy.item.server.persist.AvatarRecord;
+import com.threerings.msoy.item.server.persist.ItemRecord;
+import com.threerings.msoy.room.client.MsoySceneService.MsoySceneMoveListener;
 import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.msoy.room.data.MsoyPortal;
 import com.threerings.msoy.room.data.MsoyScene;
@@ -129,7 +139,7 @@ public class MsoySceneRegistry extends SpotSceneRegistry
                             listener.sceneFailedToResolve(sceneId, reason);
                         }
                         protected void releaseLock () {
-                            _peerMan.releaseLock(MsoyPeerManager.getSceneLock(sceneId), 
+                            _peerMan.releaseLock(MsoyPeerManager.getSceneLock(sceneId),
                                 new ResultListener.NOOP<String>());
                         }
                     });
@@ -236,7 +246,7 @@ public class MsoySceneRegistry extends SpotSceneRegistry
 
     // from interface MsoySceneProvider
     public void moveTo (ClientObject caller, final int sceneId, int version, final int portalId,
-                        final MsoyLocation destLoc, final SceneService.SceneMoveListener listener)
+                        final MsoyLocation destLoc, final MsoySceneMoveListener listener)
         throws InvocationException
     {
         final MsoyBodyObject mover = (MsoyBodyObject)caller;
@@ -280,19 +290,32 @@ public class MsoySceneRegistry extends SpotSceneRegistry
                     return;
                 }
 
-                // first check access control on the remote scene
+                // investigate the remote scene
                 HostedRoom hr = nodeInfo.right;
-                if (memobj.canEnterScene(hr.placeId, hr.ownerId, hr.ownerType, hr.accessControl,
+
+                // check for access control
+                if (!memobj.canEnterScene(hr.placeId, hr.ownerId, hr.ownerType, hr.accessControl,
                         memobj.getLocal(MemberLocal.class).friendIds)) {
-                    log.debug("Going to remote node", "who", mover.who(),
-                        "where", sceneId + "@" + nodeInfo.left);
-                    sendClientToNode(nodeInfo.left, memobj, listener);
-                } else {
                     listener.requestFailed(RoomCodes.E_ENTRANCE_DENIED);
+                    return;
                 }
+
+                if (maybeCrossMogBoundary(hr.mogId, sceneId, memobj, listener)) {
+                    return;
+                }
+
+                log.debug("Going to remote node", "who", mover.who(),
+                    "where", sceneId + "@" + nodeInfo.left);
+                sendClientToNode(nodeInfo.left, memobj, listener);
             }
 
             protected void effectSceneMove (SceneManager scmgr) throws InvocationException {
+                MsoyScene scene = (MsoyScene) scmgr.getScene();
+
+                if (maybeCrossMogBoundary(scene.getMogId(), sceneId, memobj, listener)) {
+                    return;
+                }
+
                 // create a fake "from" portal that contains our destination location
                 MsoyPortal from = new MsoyPortal();
                 from.targetPortalId = (short)-1;
@@ -316,11 +339,30 @@ public class MsoySceneRegistry extends SpotSceneRegistry
                     PetObject petobj = _petMan.getPetObject(memobj.walkingId);
                     if (petobj != null) {
                         moveTo(petobj, sceneId, Integer.MAX_VALUE, portalId, destLoc,
-                               new SceneMoveAdapter());
+                               new MsoySceneMoveAdapter());
+                    }
+                 else {
                     }
                 }
             }
         });
+    }
+
+    // when we move to a new scene, we test its Mogness compared to our current mogness,
+    // returning false if the move should be allowed to complete, true if the AVRG will
+    // take over
+    protected boolean maybeCrossMogBoundary (final int mogId, final int sceneId,
+        final MemberObject user, final MsoySceneMoveListener listener)
+    {
+        if (user.avatarCache != null && mogId == user.mogGroupId) {
+            // nothing to do
+            return false;
+        }
+
+        _invoker.postUnit(new MogRepositoryUnit(mogId, user, sceneId, listener));
+
+        // let our caller know not to finish the move if we're entering a Mog
+        return mogId != 0;
     }
 
     protected void sendClientToNode (String nodeName, MemberObject memobj,
@@ -348,9 +390,74 @@ public class MsoySceneRegistry extends SpotSceneRegistry
 
     // our dependencies
     @Inject protected @MainInvoker Invoker _invoker;
-    @Inject protected FeedRepository _feedRepo;
+    @Inject protected GroupRepository _groupRepo;
     @Inject protected MemberLocator _locator;
+    @Inject protected ItemLogic _itemLogic;
     @Inject protected MsoyEventLogger _eventLog;
     @Inject protected MsoyPeerManager _peerMan;
     @Inject protected PetManager _petMan;
+
+    protected final class MogRepositoryUnit extends RepositoryUnit
+    {
+        private final int mogId;
+        private final MemberObject user;
+        private final int sceneId;
+        private final MsoySceneMoveListener listener;
+        protected List<AvatarRecord> _avatars;
+        protected int _gameId;
+
+        private MogRepositoryUnit (int mogId, MemberObject user, int sceneId,
+                MsoySceneMoveListener listener)
+        {
+            super("crossMogBoundary");
+            this.mogId = mogId;
+            this.user = user;
+            this.sceneId = sceneId;
+            this.listener = listener;
+        }
+
+        @Override public void invokePersist () throws Exception {
+            // reload the avatar cache from recently-touched items in repo
+            _avatars = _itemLogic.getAvatarRepository().loadRecentlyTouched(
+                user.getMemberId(), mogId, MemberObject.AVATAR_CACHE_SIZE);
+
+            // if need be, load the game record for this mog's group
+            if (mogId != 0) {
+                GroupRecord record = _groupRepo.loadGroup(mogId);
+                if (record == null) {
+                    throw new IllegalStateException("Couldn't find Mog group for scene " +
+                        "[sceneId=" + sceneId + ", whirledId=" + mogId + "]");
+                }
+                if (record.gameId == 0) {
+                    throw new IllegalStateException("Mog group has no game registered " +
+                        "[sceneId=" + sceneId + ", whirledId=" + mogId + "]");
+                }
+                _gameId = record.gameId;
+            }
+        }
+
+        @Override public void handleSuccess () {
+            if (mogId != user.mogGroupId) {
+                user.setMogGroupId(mogId);
+            }
+            user.setAvatarCache(DSet.newDSet(
+                Lists.transform(_avatars, new ItemRecord.ToItem<Avatar>())));
+            if (_gameId != 0) {
+                listener.moveToBeHandledByAVRG(_gameId, sceneId);
+            }
+        }
+    }
+
+    /**
+     * Implements MsoySceneMoveListener trivially.
+     */
+    protected static class MsoySceneMoveAdapter extends SceneMoveAdapter
+        implements MsoySceneMoveListener
+    {
+        @Override
+        public void moveToBeHandledByAVRG (int gameId, int sceneId)
+        {
+            // noop
+        }
+    }
 }

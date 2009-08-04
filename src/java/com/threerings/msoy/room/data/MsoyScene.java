@@ -73,6 +73,14 @@ public class MsoyScene extends SceneImpl
     }
 
     /**
+     * Returns the whirled id for this scene, or zero.
+     */
+    public int getMogId ()
+    {
+        return _model.mogId;
+    }
+
+    /**
      * Returns the owner id for the scene.
      */
     public int getOwnerId ()
