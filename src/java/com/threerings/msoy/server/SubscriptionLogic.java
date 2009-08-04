@@ -72,30 +72,6 @@ public class SubscriptionLogic
                 return "SubscriptionLogic.hourly";
             }
         });
-
-//        // TEMP TEMP TEMP
-//        if (DeploymentConfig.devDeployment) {
-//            new Interval(_batchInvoker) {
-//                public void expired () {
-//                    flip = !flip;
-//                    try {
-//                        if (flip) {
-//                            noteSubscriptionBilled("ray@bogocorp.com", 1);
-//                            System.err.println("==== Made ray a subscriber");
-//                        } else {
-//                            noteSubscriptionEnded("ray@bogocorp.com");
-//                            System.err.println("==== Made ray NOT a subscriber");
-//                        }
-//                    } catch (Exception e) {
-//                        log.warning("Test problem", e);
-//                    }
-//                }
-//
-//                protected boolean flip;
-//
-//            }.schedule(15 * 1000, true);
-//        }
-//        // END: TEMP TEMP TEMP
     }
 
     @BlockingThread
