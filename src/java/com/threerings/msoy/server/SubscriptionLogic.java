@@ -58,6 +58,14 @@ public class SubscriptionLogic
                         return false;
                     }
                 });
+                // TODO: due to a bit of a deficiency in the CronLogic system, if we finish
+                // executing too quickly then another node might re-run the same job.
+                // Clog up this Job's thread for 10 minutes, just to be extra frickin sure.
+                try {
+                    Thread.sleep(10L * 60 * 1000); // 10 minutes
+                } catch (InterruptedException ie) {
+                    // no worries
+                }
             }
 
             public String toString () {
