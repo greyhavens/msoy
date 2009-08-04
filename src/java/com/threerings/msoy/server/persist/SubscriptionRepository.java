@@ -46,8 +46,6 @@ public class SubscriptionRepository extends DepotRepository
 
     /**
      * Note a payment made to a new or existing subscription.
-     *
-     * @return Tuple<grantBarsNow, grantItem>
      */
     public SubscriptionRecord noteSubscriptionBilled (int memberId, int barGrantsLeft)
     {
