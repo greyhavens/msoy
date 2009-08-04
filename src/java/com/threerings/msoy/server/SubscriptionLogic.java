@@ -110,6 +110,10 @@ public class SubscriptionLogic
     @BlockingThread
     protected void noteSubscriptionBilled (MemberRecord mrec, int months)
     {
+        // Blow away any "barscription" record they may have. Since the billing system does
+        // not know about the barscription, they lose any unused time.
+        _subscripRepo.noteBarscriptionEnded(mrec.memberId);
+
         // make them a subscriber if not already
         if (mrec.updateFlag(MemberRecord.Flag.SUBSCRIBER, true)) {
             _memberRepo.storeFlags(mrec);
