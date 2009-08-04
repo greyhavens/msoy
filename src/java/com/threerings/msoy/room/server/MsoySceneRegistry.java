@@ -341,8 +341,6 @@ public class MsoySceneRegistry extends SpotSceneRegistry
                         moveTo(petobj, sceneId, Integer.MAX_VALUE, portalId, destLoc,
                                new MsoySceneMoveAdapter());
                     }
-                 else {
-                    }
                 }
             }
         });
