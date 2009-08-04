@@ -65,7 +65,7 @@ public class PrizeRepository extends ItemRepository<PrizeRecord>
     }
 
     @Override
-    protected MogMarkRecord createMogMarkRecord()
+    protected MogMarkRecord createMogMarkRecord ()
     {
         return new PrizeMogMarkRecord();
     }

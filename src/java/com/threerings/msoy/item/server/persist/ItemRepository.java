@@ -1689,7 +1689,7 @@ public abstract class ItemRepository<T extends ItemRecord>
         classes.add(getMogMarkClass());
     }
 
-    protected Class<? extends MogMarkRecord> getMogMarkClass()
+    protected Class<? extends MogMarkRecord> getMogMarkClass ()
     {
         return _mogMarkClass;
     }

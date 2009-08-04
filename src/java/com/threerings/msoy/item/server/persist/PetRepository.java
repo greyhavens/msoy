@@ -66,7 +66,7 @@ public class PetRepository extends ItemRepository<PetRecord>
     }
 
     @Override
-    protected MogMarkRecord createMogMarkRecord()
+    protected MogMarkRecord createMogMarkRecord ()
     {
         return new PetMogMarkRecord();
     }

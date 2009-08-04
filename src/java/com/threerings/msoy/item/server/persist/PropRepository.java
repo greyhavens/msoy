@@ -65,7 +65,7 @@ public class PropRepository extends ItemRepository<PropRecord>
     }
 
     @Override
-    protected MogMarkRecord createMogMarkRecord()
+    protected MogMarkRecord createMogMarkRecord ()
     {
         return new PropMogMarkRecord();
     }

@@ -65,7 +65,7 @@ public class LevelPackRepository extends ItemRepository<LevelPackRecord>
     }
 
     @Override
-    protected MogMarkRecord createMogMarkRecord()
+    protected MogMarkRecord createMogMarkRecord ()
     {
         return new LevelPackMogMarkRecord();
     }

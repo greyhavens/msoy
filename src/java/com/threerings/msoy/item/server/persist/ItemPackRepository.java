@@ -64,7 +64,7 @@ public class ItemPackRepository extends ItemRepository<ItemPackRecord>
     }
 
     @Override
-    protected MogMarkRecord createMogMarkRecord()
+    protected MogMarkRecord createMogMarkRecord ()
     {
         return new ItemPackMogMarkRecord();
     }

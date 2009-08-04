@@ -66,7 +66,7 @@ public class DecorRepository extends ItemRepository<DecorRecord>
     }
 
     @Override
-    protected MogMarkRecord createMogMarkRecord()
+    protected MogMarkRecord createMogMarkRecord ()
     {
         return new DecorMogMarkRecord();
     }

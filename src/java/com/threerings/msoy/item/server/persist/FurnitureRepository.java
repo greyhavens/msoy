@@ -66,7 +66,7 @@ public class FurnitureRepository extends ItemRepository<FurnitureRecord>
     }
 
     @Override
-    protected MogMarkRecord createMogMarkRecord()
+    protected MogMarkRecord createMogMarkRecord ()
     {
         return new FurnitureMogMarkRecord();
     }

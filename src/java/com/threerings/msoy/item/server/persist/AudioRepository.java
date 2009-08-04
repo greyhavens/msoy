@@ -65,7 +65,7 @@ public class AudioRepository extends ItemRepository<AudioRecord>
     }
 
     @Override
-    protected MogMarkRecord createMogMarkRecord()
+    protected MogMarkRecord createMogMarkRecord ()
     {
         return new AudioMogMarkRecord();
     }

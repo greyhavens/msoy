@@ -65,7 +65,7 @@ public class TrophySourceRepository extends ItemRepository<TrophySourceRecord>
     }
 
     @Override
-    protected MogMarkRecord createMogMarkRecord()
+    protected MogMarkRecord createMogMarkRecord ()
     {
         return new TrophyMogMarkRecord();
     }

@@ -66,7 +66,7 @@ public class ToyRepository extends ItemRepository<ToyRecord>
     }
 
     @Override
-    protected MogMarkRecord createMogMarkRecord()
+    protected MogMarkRecord createMogMarkRecord ()
     {
         return new ToyMogMarkRecord();
     }

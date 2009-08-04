@@ -65,7 +65,7 @@ public class LauncherRepository extends ItemRepository<LauncherRecord>
     }
 
     @Override
-    protected MogMarkRecord createMogMarkRecord()
+    protected MogMarkRecord createMogMarkRecord ()
     {
         return new LauncherMogMarkRecord();
     }

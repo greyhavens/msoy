@@ -66,7 +66,7 @@ public class DocumentRepository extends ItemRepository<DocumentRecord>
     }
 
     @Override
-    protected MogMarkRecord createMogMarkRecord()
+    protected MogMarkRecord createMogMarkRecord ()
     {
         return new DocumentMogMarkRecord();
     }

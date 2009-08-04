@@ -65,7 +65,7 @@ public class VideoRepository extends ItemRepository<VideoRecord>
     }
 
     @Override
-    protected MogMarkRecord createMogMarkRecord()
+    protected MogMarkRecord createMogMarkRecord ()
     {
         return new VideoMogMarkRecord();
     }

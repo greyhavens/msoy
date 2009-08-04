@@ -80,7 +80,7 @@ public class AvatarRepository extends ItemRepository<AvatarRecord>
     }
 
     @Override
-    protected MogMarkRecord createMogMarkRecord()
+    protected MogMarkRecord createMogMarkRecord ()
     {
         return new AvatarMogMarkRecord();
     }
