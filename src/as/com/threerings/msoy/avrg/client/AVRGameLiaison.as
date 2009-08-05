@@ -123,7 +123,9 @@ public class AVRGameLiaison extends GameLiaison
         // want to go back? So: home. But home itself could have forced you into an AVRG,
         // perhaps even the one you are trying to quit. Perhaps the ultimate solution is
         // to pop up a little dealy: "where do you want to go today?". For now: go home.
-        if (0 == _wctx.getWorldController().getCurrentSceneId()) {
+        // ...however, don't go anywhere if the client is logged off or about to
+        if (_wctx.getMsoyClient().isConnected() && !_wctx.getMsoyClient().isLogoffPending() &&
+            0 == _wctx.getWorldController().getCurrentSceneId()) {
             _wctx.getWorldController().handleGoScene(_wctx.getMemberObject().homeSceneId);
         }
     }
