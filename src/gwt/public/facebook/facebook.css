@@ -191,3 +191,43 @@
   white-space: normal;
 }
 
+.challengeSelect {
+}
+
+.challengeSelect .Title {
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+  padding-bottom: 40px;
+  width: 400px;
+  font-size: 18px;
+  color: #3b5998;
+}
+
+.challengeSelect .Buttons {
+  width: 100%;
+}
+
+.challengeSelect .Buttons td {
+  width: 33%;
+}
+
+.challengeSelect .easyButton {
+  margin-left: auto;
+  margin-right: auto;
+  width: 210px;
+  height: 35px;
+  background-color: #d8dfea;
+  text-decoration: none;
+  text-align: center;
+  font-size: 14px;
+  font-weight: bold;
+  padding-top: 20px;
+}
+
+.challengeSelect .easyButton-up-hovering, .challengeSelect .easyButton-down-hovering {
+  background-color: #aeb4bd;
+  text-decoration: underline;
+}
+
+

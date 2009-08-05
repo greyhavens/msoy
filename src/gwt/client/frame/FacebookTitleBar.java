@@ -10,6 +10,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.AbsoluteCSSPanel;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
+import com.threerings.msoy.web.gwt.ArgNames;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
@@ -41,7 +42,8 @@ public class FacebookTitleBar extends TitleBar
             _contents.getElement().setAttribute("mode", "normal");
         } else {
             String challenge = "Click here to challenge a friend to beat you in " + gameName;
-            addContextLink(challenge, Pages.FACEBOOK, Args.compose("challenge", gameId), -1);
+            addContextLink(challenge, Pages.FACEBOOK,
+                Args.compose(ArgNames.FB_GAME_CHALLENGE, gameId), -1);
         }
     }
 

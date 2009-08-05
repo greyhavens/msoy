@@ -13,6 +13,21 @@ public class ArgNames
     /** Determines the overall embedding of the web application. */
     public static final String EMBEDDING = "emb";
 
+    /** Subnav for a facebook game challenge. */
+    public static final String FB_GAME_CHALLENGE = "challenge";
+
+    /** Subnav for a facebook mochi game challenge. */
+    public static final String FB_MOCHI_CHALLENGE = "mochichallenge";
+
+    /** Challenge friends. */
+    public static final String FB_CHALLENGE_FRIENDS = "friends";
+
+    /** Challenge friends that are app users. */
+    public static final String FB_CHALLENGE_APP_FRIENDS = "appfriends";
+
+    /** Pick some friends to challenge. */
+    public static final String FB_CHALLENGE_PICK = "pick";
+
     /**
      * Value constants and utility functions for the embedding argument.
      */

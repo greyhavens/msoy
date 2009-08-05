@@ -3,10 +3,21 @@
 
 package client.facebook;
 
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Window;
+
+import com.threerings.msoy.data.all.DeploymentConfig;
+import com.threerings.msoy.facebook.gwt.FacebookService;
+import com.threerings.msoy.facebook.gwt.FacebookServiceAsync;
+import com.threerings.msoy.facebook.gwt.FacebookService.InviteInfo;
+import com.threerings.msoy.web.gwt.ArgNames;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.shell.Page;
+import client.shell.ShellMessages;
+import client.ui.MsoyUI;
+import client.util.InfoCallback;
 
 /**
  * Displays Facebook stuff like a list of friends who have played whirled and some status.
@@ -28,13 +39,11 @@ public class FacebookPage extends Page
         } else if (action.equals("invite")) {
             setContent("Invite", FBInvitePanel.createGeneric());
 
-        } else if (action.equals("challenge")) {
-            int gameId = args.get(1, 0);
-            setContent("Challenge", FBInvitePanel.createChallenge(gameId));
+        } else if (action.equals(ArgNames.FB_GAME_CHALLENGE)) {
+            showChallenge(args, false);
 
-        } else if (action.equals("mochichallenge")) {
-            String tag = args.get(1, "");
-            setContent("Challenge", FBInvitePanel.createMochiChallenge(tag));
+        } else if (action.equals(ArgNames.FB_MOCHI_CHALLENGE)) {
+            showChallenge(args, true);
         }
     }
 
@@ -43,4 +52,62 @@ public class FacebookPage extends Page
     {
         return Pages.FACEBOOK;
     }
+
+    protected void showChallenge (final Args args, final boolean mochi)
+    {
+        String gameSpec = (mochi ? "m" : "w") + ":" + args.get(1, "");
+        if (_gameInviteInfo == null || !_gameInviteSpec.equals(gameSpec)) {
+            setContent(MsoyUI.createLabel(_cmsgs.tagLoading(), "Loading"));
+            _gameInviteSpec = gameSpec;
+            _gameInviteInfo = null;
+            _fbsvc.getInviteInfo(gameSpec, new InfoCallback<InviteInfo>() {
+                public void onSuccess (InviteInfo info) {
+                    _gameInviteInfo = info;
+                    showChallenge(args, mochi);
+                }
+            });
+            return;
+        }
+
+        // see which phase of the challenge flow we are in and show the appropriate screen
+        // in production, we just go straight to pick mode and show a request form for now
+        // TODO: finish the other options and enable in production
+
+        String mode = args.get(2, "");
+        Args gameArgs = args.recomposeWithout(2, 99);
+
+        if (mode.equals(ArgNames.FB_CHALLENGE_FRIENDS)) {
+            // TODO
+        } else if (mode.equals(ArgNames.FB_CHALLENGE_APP_FRIENDS)) {
+            Window.alert("About to call the popupTest!");
+            popupTest();
+        } else if (!DeploymentConfig.devDeployment || mode.equals(ArgNames.FB_CHALLENGE_PICK)) {
+            setContent("Challenge", mochi ?
+                FBInvitePanel.createMochiChallenge(_gameInviteInfo, args.get(1, "")) :
+                FBInvitePanel.createChallenge(_gameInviteInfo, args.get(1, 0)));
+        } else {
+            setContent(new FBChallengeSelectPanel(gameArgs, _gameInviteInfo.gameName));
+        }
+    }
+
+    /**
+     * Temp: test code for Facebook dialogs. We'd like to show a Facebooko-styled confirm/cancel
+     * popup for the challenge spam.
+     */
+    protected static native void popupTest () /*-{
+        try {
+            $wnd.FB_PopupTest();
+        } catch (e) {
+            if ($wnd.console) {
+                $wnd.console.log("Failed to show popup: " + e);
+            }
+        }
+    }-*/;
+
+    // we just need to query this once
+    protected String _gameInviteSpec;
+    protected InviteInfo _gameInviteInfo;
+
+    protected FacebookServiceAsync _fbsvc = GWT.create(FacebookService.class);
+    protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
 }

@@ -54,22 +54,18 @@ public class FBInvitePanel extends ServerFBMLPanel
      * populating it once the appropriate invite information is returned.
      * TODO: high scores?
      */
-    public static Widget createChallenge (final int gameId)
+    public static Widget createChallenge (InviteInfo info, int gameId)
     {
         // TOOD: some loading message
         final FlowPanel div = new FlowPanel();
-        _fbsvc.getInviteInfo("w:" + gameId, new InfoCallback<InviteInfo>() {
-            public void onSuccess (InviteInfo result) {
-                // {0} just played {1} on {2} and challenges you to beat {3} high score!
-                String app = DeploymentConfig.facebookApplicationName;
-                String invite = _msgs.inviteChallenge(
-                    result.username, result.gameName, app, getPronoun(result.gender));
-                String tip = _msgs.inviteChallengeTip();
-                String accept = _msgs.inviteChallengeAccept(result.gameName);
-                div.add(new FBInvitePanel(
-                    result.excludeIds, invite, tip, accept, "game=" + gameId, result.gameName));
-            }
-        });
+        // {0} just played {1} on {2} and challenges you to beat {3} high score!
+        String app = DeploymentConfig.facebookApplicationName;
+        String invite = _msgs.inviteChallenge(
+            info.username, info.gameName, app, getPronoun(info.gender));
+        String tip = _msgs.inviteChallengeTip();
+        String accept = _msgs.inviteChallengeAccept(info.gameName);
+        div.add(new FBInvitePanel(
+            info.excludeIds, invite, tip, accept, "game=" + gameId, info.gameName));
         return div;
     }
 
@@ -77,22 +73,18 @@ public class FBInvitePanel extends ServerFBMLPanel
      * Creates a panel to contain a challenge request for the given mopchi game tag, automatically
      * populating it once the appropriate invite information is returned.
      */
-    public static Widget createMochiChallenge (final String mochiTag)
+    public static Widget createMochiChallenge (InviteInfo info, String mochiTag)
     {
         // TOOD: some loading message
         final FlowPanel div = new FlowPanel();
-        _fbsvc.getInviteInfo("m:" + mochiTag, new InfoCallback<InviteInfo>() {
-            public void onSuccess (InviteInfo result) {
-                // {0} just played {1} on {2} and challenges you to beat {3} high score!
-                String app = DeploymentConfig.facebookApplicationName;
-                String invite = _msgs.inviteChallenge(
-                    result.username, result.gameName, app, getPronoun(result.gender));
-                String tip = _msgs.inviteChallengeTip();
-                String accept = _msgs.inviteChallengeAccept(result.gameName);
-                div.add(new FBInvitePanel(
-                    result.excludeIds, invite, tip, accept, "mgame=" + mochiTag, result.gameName));
-            }
-        });
+        // {0} just played {1} on {2} and challenges you to beat {3} high score!
+        String app = DeploymentConfig.facebookApplicationName;
+        String invite = _msgs.inviteChallenge(
+            info.username, info.gameName, app, getPronoun(info.gender));
+        String tip = _msgs.inviteChallengeTip();
+        String accept = _msgs.inviteChallengeAccept(info.gameName);
+        div.add(new FBInvitePanel(
+            info.excludeIds, invite, tip, accept, "mgame=" + mochiTag, info.gameName));
         return div;
     }
 
