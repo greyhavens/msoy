@@ -208,7 +208,7 @@ public class FacebookCallbackServlet extends HttpServlet
             return info;
         }
 
-        // apps.facebook.com/whirled/game/1234
+        // apps.facebook.com/<game-app>
         int gameId;
         try {
             gameId = Integer.parseInt(path.substring(GAME_PATH.length()));
