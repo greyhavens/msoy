@@ -164,8 +164,6 @@ public class MsoySceneDirector extends SceneDirector
             _pendingData = null;
             _locdir.leavePlace();
             _sceneId = 0; // not -1
-            // TODO: using the NoPlaceView freaks out the chat. Or something does. Fuck me.
-            //_worldctx.setPlaceView(new NoPlaceView());
             return;
         }
 
