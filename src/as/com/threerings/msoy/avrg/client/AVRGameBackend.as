@@ -16,6 +16,7 @@ import flash.utils.Dictionary;
 import com.threerings.util.Log;
 import com.threerings.util.MessageBundle;
 import com.threerings.util.MethodQueue;
+import com.threerings.util.NetUtil;
 import com.threerings.util.ObjectMarshaller;
 import com.threerings.util.StringUtil;
 
@@ -326,6 +327,7 @@ public class AVRGameBackend extends ControlBackend
         o["roomToLocationAtDepth_v1"] = stageToLocationAtDepth_v1; // backwards compat.
         o["roomToLocationAtHeight_v1"] = stageToLocationAtHeight_v1; // backwards compat.
         o["showPage_v1"] = showPage_v1;
+        o["navigateToURL_v1"] = navigateToURL_v1;
         o["showInvitePage_v1"] = showInvitePage_v1;
         o["getInviteToken_v1"] = getInviteToken_v1;
         o["getInviterMemberId_v1"] = getInviterMemberId_v1;
@@ -867,11 +869,18 @@ public class AVRGameBackend extends ControlBackend
         return null;
     }
 
+    // LocalSubControl
     protected function showPage_v1 (token :String) :Boolean
     {
         // handleViewUrl will do the "right thing"
         _wctx.getMsoyController().handleViewUrl(DeploymentConfig.serverURL + "#" + token);
         return true;
+    }
+
+    // LocalSubControl
+    protected function navigateToURL_v1 (url :Object, target :String) :void
+    {
+        NetUtil.navigateToURL(url, _gameObj.isApproved ? target : null);
     }
 
     // LocalSubControl
