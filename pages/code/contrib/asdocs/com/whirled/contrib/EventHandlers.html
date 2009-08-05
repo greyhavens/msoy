@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
-<meta content="EventHandlers,com.whirled.contrib.EventHandlers,_mgr,conditionalCall,freeAllHandlers,getGlobalManager,registerListener,registerListenerUntil,registerOneShotCallback,registerUnload,unregisterListener" name="keywords">
+<meta content="EventHandlers,com.whirled.contrib.EventHandlers,_mgr,callWhenTrue,freeAllHandlers,getGlobalManager,registerListener,registerListenerUntil,registerOneShotCallback,registerUnload,unregisterListener" name="keywords">
 <title>com.whirled.contrib.EventHandlers</title>
 </head>
 <body>
@@ -70,8 +70,8 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#conditionalCall()">conditionalCall</a>(callback:Function, callNow:Boolean, dispatcher:IEventDispatcher, event:String, useCapture:Boolean = false, priority:int = 0):void</div>
-<div class="summaryTableDescription">[static] 
+<a class="signatureLink" href="#callWhenTrue()">callWhenTrue</a>(callback:Function, callNow:Boolean, dispatcher:IEventDispatcher, event:String, useCapture:Boolean = false, priority:int = 0):void</div>
+<div class="summaryTableDescription">[static]
      Will either call a given function now, or defer it based on the boolean parameter.</div>
 </td><td class="summaryTableOwnerCol">EventHandlers</td>
 </tr>
@@ -156,15 +156,15 @@ showHideInherited();
 </div>
 <a name="methodDetail"></a>
 <div class="detailSectionHeader">Method detail</div>
-<a name="conditionalCall()"></a>
+<a name="callWhenTrue()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">conditionalCall</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
+<td class="detailHeaderName">callWhenTrue</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
 </tr>
 </table>
 <div class="detailBody">
-<code>public static function conditionalCall(callback:Function, callNow:Boolean, dispatcher:IEventDispatcher, event:String, useCapture:Boolean = false, priority:int = 0):void</code><p> 
-     Will either call a given function now, or defer it based on the boolean parameter.  If the 
+<code>public static function callWhenTrue(callback:Function, callNow:Boolean, dispatcher:IEventDispatcher, event:String, useCapture:Boolean = false, priority:int = 0):void</code><p>
+     Will either call a given function now, or defer it based on the boolean parameter.  If the
      parameter is false, the function will be registered as a one-shot callback on the dispatcher
      </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
@@ -292,7 +292,7 @@ showHideInherited();
 <div class="detailBody">
 <code>public static function registerListenerUntil(triggerDispatcher:IEventDispatcher, triggerEvent:String, dispatcher:IEventDispatcher, event:String, listener:Function):void</code><p>
      Will register a listener on a dispatcher for an event until the trigger event has been
-     dispatched on the trigger dispatcher.  Useful for attaching listeners until an object 
+     dispatched on the trigger dispatcher.  Useful for attaching listeners until an object
      has been REMOVED_FROM_STAGE or UNLOADed.
           All associated event listeners use the default useCapture and priority settings.
      </p><span class="label">Parameters</span>

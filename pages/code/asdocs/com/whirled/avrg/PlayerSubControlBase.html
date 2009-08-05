@@ -211,7 +211,8 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summarySignature">
 <a class="signatureLink" href="#moveToRoom()">moveToRoom</a>(roomId:int, exitCoords:Array = null):void</div>
 <div class="summaryTableDescription">
-     Instructs this player's client to move to the specified room.</div>
+     Instructs this player's client to move to the specified room, or pass 0 to put the player
+     in no room.</div>
 </td><td class="summaryTableOwnerCol">PlayerSubControlBase</td>
 </tr>
 <tr class="">
@@ -394,7 +395,7 @@ showHideInherited();
 <div class="detailBody">
 <code>public function getBars():int</code><p>
      Returns this player's current bar balance.
-          </p><p> Note: this funtionality is only allowed for approved games. This method will silently
+          </p><p> Note: this functionality is only allowed for approved games. This method will silently
      fail for unapproved games. The approval process is still being developed. </p>
      <p></p>
 <span class="label">Returns</span>
@@ -413,7 +414,7 @@ showHideInherited();
 <div class="detailBody">
 <code>public function getCoins():int</code><p>
      Returns this player's current coin balance.
-          </p><p> Note: this funtionality is only allowed for approved games. This method will silently
+          </p><p> Note: this functionality is only allowed for approved games. This method will silently
      fail for unapproved games. The approval process is still being developed. </p>
      <p></p>
 <span class="label">Returns</span>
@@ -574,9 +575,10 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public function moveToRoom(roomId:int, exitCoords:Array = null):void</code><p>
-     Instructs this player's client to move to the specified room. The given exit coordinates are
-     a 3-tuple specifying in room coordinates where the avatar should appear to walk to when
-     leaving the room. If not given, the avatar will just disappear.
+     Instructs this player's client to move to the specified room, or pass 0 to put the player
+     in no room. The given exit coordinates are a 3-tuple specifying in room coordinates
+     where the avatar should appear to walk to when leaving the room.
+     If not given, the avatar will just disappear.
           </p><p>Hard-wiring valid room ids should be avoided. Room ids can be obtained from properties
      stored by an admininstrative interface or from a server agent message containing currently
      active rooms.</p>

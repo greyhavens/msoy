@@ -249,7 +249,8 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summarySignature">
 <a class="signatureLink" href="PlayerSubControlBase.html#moveToRoom()">moveToRoom</a>(roomId:int, exitCoords:Array = null):void</div>
 <div class="summaryTableDescription">
-     Instructs this player's client to move to the specified room.</div>
+     Instructs this player's client to move to the specified room, or pass 0 to put the player
+     in no room.</div>
 </td><td class="summaryTableOwnerCol"><a href="PlayerSubControlBase.html">PlayerSubControlBase</a></td>
 </tr>
 <tr class="hideInheritedMethod">
@@ -442,7 +443,7 @@ showHideInherited();
      Consumes the specified item pack for this player. The player must currently own at least one
      copy of the item pack. On success, a GameContentEvent.PLAYER_CONTENT_CONSUMED event will be
      dispatched on this control (on both the client and server).
-          </p><p> Note: this funtionality is only allowed for approved games. This method will silently
+          </p><p> Note: this functionality is only allowed for approved games. This method will silently
      fail for unapproved games. The approval process is still being developed. </p>
           <span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
@@ -508,7 +509,7 @@ showHideInherited();
      purchase cannot be completed due to a lack of funds or other reason the player will be
      notified via chat feedback. A GameContentEvent.PLAYER_CONTENT_ADDED event will be issued if
      the purchase succeeds.
-          </p><p> Note: this funtionality is only allowed for approved games. This method will silently
+          </p><p> Note: this functionality is only allowed for approved games. This method will silently
      fail for unapproved games. The approval process is still being developed. </p>
      <span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">

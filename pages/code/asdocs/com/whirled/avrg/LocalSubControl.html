@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
-<meta content="LocalSubControl,com.whirled.avrg.LocalSubControl,hitPointTester,mobSpriteExporter,feedback,getInviteToken,getInviterMemberId,getPaintableArea,getRoomBounds,locationToPaintable,locationToRoom,paintableToLocationAtDepth,paintableToLocationAtHeight,paintableToRoom,roomToPaintable,setHitPointTester,setMobSpriteExporter,setRoomViewBounds,setShowChrome,showInvitePage,showPage" name="keywords">
+<meta content="LocalSubControl,com.whirled.avrg.LocalSubControl,hitPointTester,mobSpriteExporter,feedback,getInviteToken,getInviterMemberId,getPaintableArea,getRoomBounds,locationToPaintable,locationToRoom,navigateToURL,paintableToLocationAtDepth,paintableToLocationAtHeight,paintableToRoom,roomToPaintable,setHitPointTester,setMobSpriteExporter,setRoomViewBounds,setShowChrome,showInvitePage,showPage" name="keywords">
 <title>com.whirled.avrg.LocalSubControl</title>
 </head>
 <body>
@@ -166,6 +166,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <a class="signatureLink" href="#locationToRoom()">locationToRoom</a>(x:Number, y:Number, z:Number):Point</div>
 <div class="summaryTableDescription">
      Converts a 3D room location coordinate to a 2D decor coordinate.</div>
+</td><td class="summaryTableOwnerCol">LocalSubControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#navigateToURL()">navigateToURL</a>(url:Object, preferredTarget:String = null):void</div>
+<div class="summaryTableDescription">
+     Navigate to the specified url, targetting the specified window/tab.</div>
 </td><td class="summaryTableOwnerCol">LocalSubControl</td>
 </tr>
 <tr class="">
@@ -430,7 +438,7 @@ showHideInherited();
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20"></td><td><code>Rectangle</code> &mdash; a Rectangle containing the bounds of the paintable area, or null if the area is not
-     defined
+     defined, for example if full=false and the player is not in a room.
           </td>
 </tr>
 </table>
@@ -557,6 +565,42 @@ showHideInherited();
 <div class="seeAlso">
 <a href="http://wiki.whirled.com/Coordinate_systems" target="mm_external">http://wiki.whirled.com/Coordinate_systems</a>
 </div>
+</div>
+<a name="navigateToURL()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">navigateToURL</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function navigateToURL(url:Object, preferredTarget:String = null):void</code><p>
+     Navigate to the specified url, targetting the specified window/tab.
+     Normally, the security boundary in which your game runs prevents you from
+     using flash.net.navigateToURL() with a target of "_self" or "_top"
+     (which would unload whirled and your game!), but this method will try to do its
+     best to let you do that. It will fall back to loading the url with a blank target,
+     if possible, or if your game is not 'approved'.
+     </p><p> Note: be extremely careful with how you construct this URL and be aware that if
+     partially based on user input, the input should be thoroughly scrubbed to prevent
+     surprises. </p>
+     <p> Note: using a non-null target is only allowed for approved games, and will silently
+     fall back to null for unapproved games. The approval process is still being developed. </p>
+          <span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">url</span>:Object</code> &mdash; a URLRequest or String.
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">preferredTarget</span>:String</code> (default = <code>null</code>)<code></code> &mdash; the window or tab into which to load. Null will load into a new
+     window/tab, or you specify a name, or use one of the special values: "_top", "_parent",
+     or "_self".
+     </td>
+</tr>
+</table>
 </div>
 <a name="paintableToLocationAtDepth()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
