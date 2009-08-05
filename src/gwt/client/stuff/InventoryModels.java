@@ -100,17 +100,17 @@ public class InventoryModels
      */
     public SimpleDataModel<Item> getModel (int memberId, byte type, String query, int mogId)
     {
-        return _models.get(new Key(memberId, type, query, 1));
+        return _models.get(new Key(memberId, type, query, mogId));
     }
 
     /**
      * Loads a data model for items of the specified type and matching the optionally supplied
      * query and mog.
      */
-    public void loadModel (int memberId, byte type, String query, int mogId,
-        AsyncCallback<DataModel<Item>> cb)
+    public void loadModel (
+        int memberId, byte type, String query, int mogId, AsyncCallback<DataModel<Item>> cb)
     {
-        loadModel(new Key(memberId, type, query, 1), cb);
+        loadModel(new Key(memberId, type, query, mogId), cb);
     }
 
     /**
