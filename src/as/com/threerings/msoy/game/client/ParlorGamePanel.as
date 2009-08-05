@@ -193,7 +193,7 @@ public class ParlorGamePanel extends WhirledGamePanel
             var overlay :ChatOverlay = mctx.getTopPanel().getPlaceChatOverlay();
             overlay.setSuppressSidebar(false);
             _gctx.getChatDirector().removeChatDisplay(overlay);
-            mctx.getTopPanel().getHeaderBar().getChatTabs().locationName = null;
+//            mctx.getTopPanel().getHeaderBar().getChatTabs().locationName = null;
 
         } else {
             var gameChat :GameChatContainer =

@@ -118,24 +118,27 @@ public class ChatTabBar extends HBox
      */
     public function set locationName (name :String) :void
     {
-        // if this function is called with name == null, a separate call will shuffle the
-        // appropriate tab to the front, and we should make sure that if the first tab was a room
-        // tab, it is cleared out.
-        if (name == null && _tabs.length != 0) {
-            for (var ii :int = 0; ii < _tabs.length; ii++) {
-                if ((_tabs[ii] as ChatTab).localtype == ChatCodes.PLACE_CHAT_TYPE) {
-                    removeTabAt(ii);
-                    break;
-                }
-            }
-        } else if (name != null) {
-            if (_tabs.length == 0 ||
-                ((_tabs[0] as ChatTab).localtype != ChatCodes.PLACE_CHAT_TYPE)) {
-                addTab(new ChatTab(_ctx, this, null, name), 0);
-            } else {
-                (_tabs[0] as ChatTab).text = name;
-            }
-            selectedIndex = 0; // trigger setter
+        locationDidChange((name == null) ? null : new RoomName(name, -1));
+    }
+
+    /**
+     * Called by the chat director to let us know when we enter a room.
+     */
+    public function locationDidChange (name :RoomName) :void
+    {
+        if (name == null) {
+            name = createDefaultPlaceName();
+        }
+
+        var roomTabIx :int = getLocalTypeIndex(ChatCodes.PLACE_CHAT_TYPE);
+        if (roomTabIx == -1) {
+            log.warning("This shouldn't happen", new Error());
+        }
+        // modify the place chat tab, which should always be up
+        _tabs[roomTabIx].setChannel(MsoyChatChannel.makeRoomChannel(name));
+        // jiggle the selectedIndex to fix any reactions
+        if (roomTabIx == _selectedIndex) {
+            selectedIndex = roomTabIx; // no underscore, use the setter, get the side-effects
         }
     }
 
@@ -205,27 +208,6 @@ public class ChatTabBar extends HBox
     public function containsTab (channel :MsoyChatChannel) :Boolean
     {
         return getLocalTypeIndex(channel.toLocalType()) != -1;
-    }
-
-    /**
-     * Called by the chat director to let us know when we enter a room.
-     */
-    public function locationDidChange (name :RoomName) :void
-    {
-        if (name == null) {
-            name = createDefaultPlaceName();
-        }
-
-        var roomTabIx :int = getLocalTypeIndex(ChatCodes.PLACE_CHAT_TYPE);
-        if (roomTabIx == -1) {
-            log.warning("This shouldn't happen", new Error());
-        }
-        // modify the place chat tab, which should always be up
-        _tabs[roomTabIx].setChannel(MsoyChatChannel.makeRoomChannel(name));
-        // jiggle the selectedIndex to fix any reactions
-        if (roomTabIx == _selectedIndex) {
-            selectedIndex = roomTabIx; // no underscore, use the setter, get the side-effects
-        }
     }
 
     public function getCurrentChannel () :MsoyChatChannel
