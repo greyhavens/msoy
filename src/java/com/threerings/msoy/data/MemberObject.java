@@ -69,11 +69,11 @@ public class MemberObject extends MsoyBodyObject
     /** The field name of the <code>homeSceneId</code> field. */
     public static final String HOME_SCENE_ID = "homeSceneId";
 
-    /** The field name of the <code>avatar</code> field. */
-    public static final String AVATAR = "avatar";
-
     /** The field name of the <code>mogGroupId</code> field. */
     public static final String MOG_GROUP_ID = "mogGroupId";
+
+    /** The field name of the <code>avatar</code> field. */
+    public static final String AVATAR = "avatar";
 
     /** The field name of the <code>avatarCache</code> field. */
     public static final String AVATAR_CACHE = "avatarCache";
@@ -152,11 +152,11 @@ public class MemberObject extends MsoyBodyObject
     /** The id of the user's home scene. */
     public int homeSceneId;
 
-    /** The avatar that the user has chosen, or null for guests. */
-    public Avatar avatar;
-
     /** The group id of the Mog this user's currently in, or 0 for none. */
     public int mogGroupId;
+
+    /** The avatar that the user has chosen, or null for guests. */
+    public Avatar avatar;
 
     /** A cache of the user's 5 most recently touched avatars. */
     public DSet<Avatar> avatarCache;
@@ -597,22 +597,6 @@ public class MemberObject extends MsoyBodyObject
     }
 
     /**
-     * Requests that the <code>avatar</code> field be set to the
-     * specified value. The local value will be updated immediately and an
-     * event will be propagated through the system to notify all listeners
-     * that the attribute did change. Proxied copies of this object (on
-     * clients) will apply the value change when they received the
-     * attribute changed notification.
-     */
-    public void setAvatar (Avatar value)
-    {
-        Avatar ovalue = this.avatar;
-        requestAttributeChange(
-            AVATAR, value, ovalue);
-        this.avatar = value;
-    }
-
-    /**
      * Requests that the <code>mogGroupId</code> field be set to the
      * specified value. The local value will be updated immediately and an
      * event will be propagated through the system to notify all listeners
@@ -626,6 +610,22 @@ public class MemberObject extends MsoyBodyObject
         requestAttributeChange(
             MOG_GROUP_ID, Integer.valueOf(value), Integer.valueOf(ovalue));
         this.mogGroupId = value;
+    }
+
+    /**
+     * Requests that the <code>avatar</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setAvatar (Avatar value)
+    {
+        Avatar ovalue = this.avatar;
+        requestAttributeChange(
+            AVATAR, value, ovalue);
+        this.avatar = value;
     }
 
     /**
