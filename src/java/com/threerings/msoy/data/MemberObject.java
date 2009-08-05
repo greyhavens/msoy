@@ -12,7 +12,6 @@ import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.data.TokenRing;
 
 import com.threerings.msoy.item.data.all.Avatar;
-import com.threerings.msoy.item.data.all.ItemListInfo;
 
 import com.threerings.msoy.game.data.GameSummary;
 import com.threerings.msoy.group.data.all.GroupMembership;
@@ -96,9 +95,6 @@ public class MemberObject extends MsoyBodyObject
     /** The field name of the <code>game</code> field. */
     public static final String GAME = "game";
 
-    /** The field name of the <code>lists</code> field. */
-    public static final String LISTS = "lists";
-
     /** The field name of the <code>walkingId</code> field. */
     public static final String WALKING_ID = "walkingId";
 
@@ -178,9 +174,6 @@ public class MemberObject extends MsoyBodyObject
 
     /** The game summary for the game that the player is lobbying for or currently playing. */
     public GameSummary game;
-
-    /** The item lists owned by this user. */
-    public DSet<ItemListInfo> lists = new DSet<ItemListInfo>();
 
     /** If this member is currently walking a pet, the id of the pet being walked, else 0. */
     public int walkingId;
@@ -893,53 +886,6 @@ public class MemberObject extends MsoyBodyObject
         requestAttributeChange(
             GAME, value, ovalue);
         this.game = value;
-    }
-
-    /**
-     * Requests that the specified entry be added to the
-     * <code>lists</code> set. The set will not change until the event is
-     * actually propagated through the system.
-     */
-    public void addToLists (ItemListInfo elem)
-    {
-        requestEntryAdd(LISTS, lists, elem);
-    }
-
-    /**
-     * Requests that the entry matching the supplied key be removed from
-     * the <code>lists</code> set. The set will not change until the
-     * event is actually propagated through the system.
-     */
-    public void removeFromLists (Comparable<?> key)
-    {
-        requestEntryRemove(LISTS, lists, key);
-    }
-
-    /**
-     * Requests that the specified entry be updated in the
-     * <code>lists</code> set. The set will not change until the event is
-     * actually propagated through the system.
-     */
-    public void updateLists (ItemListInfo elem)
-    {
-        requestEntryUpdate(LISTS, lists, elem);
-    }
-
-    /**
-     * Requests that the <code>lists</code> field be set to the
-     * specified value. Generally one only adds, updates and removes
-     * entries of a distributed set, but certain situations call for a
-     * complete replacement of the set value. The local value will be
-     * updated immediately and an event will be propagated through the
-     * system to notify all listeners that the attribute did
-     * change. Proxied copies of this object (on clients) will apply the
-     * value change when they received the attribute changed notification.
-     */
-    public void setLists (DSet<ItemListInfo> value)
-    {
-        requestAttributeChange(LISTS, value, this.lists);
-        DSet<ItemListInfo> clone = (value == null) ? null : value.typedClone();
-        this.lists = clone;
     }
 
     /**

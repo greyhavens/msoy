@@ -569,7 +569,6 @@ public class MemberLogic
             _oooAuthRepo.purgeMembers(purgeNames);
         }
 
-        //    ItemListInfoRecord - to be removed?
         //    EventRecord - leave these around?
 
         // fully delete all permaguest records

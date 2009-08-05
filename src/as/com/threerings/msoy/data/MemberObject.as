@@ -167,9 +167,6 @@ public class MemberObject extends MsoyBodyObject
     /* The game summary for the game that the player is lobbying for or currently playing. */
     public var game :GameSummary;
 
-    /** The item lists owned by this user. */
-    public var lists :DSet;
-
     /** If this member is currently walking a pet, the id of the pet being walked, else 0. */
     public var walkingId :int;
 
@@ -345,7 +342,6 @@ public class MemberObject extends MsoyBodyObject
         groups = DSet(ins.readObject());
         newMailCount = ins.readInt();
         game = GameSummary(ins.readObject());
-        lists = DSet(ins.readObject());
         walkingId = ins.readInt();
         headline = ins.readField(String) as String;
         visitorInfo = VisitorInfo(ins.readObject());
