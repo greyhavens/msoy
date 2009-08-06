@@ -97,10 +97,10 @@ public class FacebookLogic
         // insert into map and schedule
         synchronized (_notifications) {
             NotificationBatch notification = _notifications.get(id);
-            if (notification == null) {
-                _notifications.put(id, notification = new NotificationBatch(id));
+            if (notification != null) {
+                notification.cancel();
             }
-            notification.schedule(delay, notifRec.text);
+            _notifications.put(id, notification = new NotificationBatch(notifRec, delay));
         }
     }
 
@@ -158,28 +158,21 @@ public class FacebookLogic
      */
     protected class NotificationBatch
     {
-        public NotificationBatch (String id)
+        public NotificationBatch (FacebookNotificationRecord notifRec, long delay)
         {
-            _id = id;
+            _notifRec = notifRec;
+            _interval.schedule(delay, false);
         }
 
-        public void schedule (long delay, String content)
+        public void cancel ()
+            throws ServiceException
         {
-            if (_interval == null) {
-                _interval = new Interval(_batchInvoker) {
-                    public void expired () {
-                        send();
-                    }
-                };
-            }
-            _interval.schedule(delay, false);
-            _content = content;
-            _facebookRepo.noteNotificationScheduled(_id, _peerMgr.getNodeObject().nodeName);
+            _interval.cancel();
         }
 
         protected void send ()
         {
-            _facebookRepo.noteNotificationStarted(_id);
+            _facebookRepo.noteNotificationStarted(_notifRec.id);
 
             final FacebookJaxbRestClient client = getFacebookBatchClient();
             final int BATCH_SIZE = 100;
@@ -191,8 +184,8 @@ public class FacebookLogic
                     }
                 }, BATCH_SIZE);
 
-            _facebookRepo.noteNotificationFinished(_id);
-            log.info("Successfully sent notifications", "id", _id);
+            _facebookRepo.noteNotificationFinished(_notifRec.id);
+            log.info("Successfully sent notifications", "id", _notifRec.id);
         }
 
         protected void sendBatch (FacebookJaxbRestClient client, List<ExternalMapRecord> batch)
@@ -207,7 +200,7 @@ public class FacebookLogic
         protected void trySendBatch (FacebookJaxbRestClient client, List<ExternalMapRecord> batch)
             throws FacebookException
         {
-            _facebookRepo.noteNotificationProgress(_id, "Loading recipients", 0, 0);
+            _facebookRepo.noteNotificationProgress(_notifRec.id, "Loading recipients", 0, 0);
 
             List<FQL.Exp> uids = Lists.transform(batch,
                 new Function<ExternalMapRecord, FQL.Exp>() {
@@ -231,16 +224,17 @@ public class FacebookLogic
                 return;
             }
 
-            _facebookRepo.noteNotificationProgress(_id, "Sending", targetIds.size(), 0);
-            client.notifications_send(targetIds, _content, true);
-            _facebookRepo.noteNotificationProgress(_id, "Sent", 0, targetIds.size());
+            _facebookRepo.noteNotificationProgress(_notifRec.id, "Sending", targetIds.size(), 0);
+            client.notifications_send(targetIds, _notifRec.text, true);
+            _facebookRepo.noteNotificationProgress(_notifRec.id, "Sent", 0, targetIds.size());
         }
 
-        protected String _id;
-        protected String _content;
-        protected int _userCount;
-        protected int _sendCount;
-        protected Interval _interval;
+        protected FacebookNotificationRecord _notifRec;
+        protected Interval _interval = new Interval(_batchInvoker) {
+            public void expired () {
+                send();
+            }
+        };
     }
 
     protected Map<String, NotificationBatch> _notifications = Maps.newHashMap();
