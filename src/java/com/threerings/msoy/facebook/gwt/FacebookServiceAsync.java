@@ -27,4 +27,9 @@ public interface FacebookServiceAsync
      * The asynchronous version of {@link FacebookService#getInviteInfo}.
      */
     void getInviteInfo (String gameSpec, AsyncCallback<InviteInfo> callback);
+
+    /**
+     * The asynchronous version of {@link FacebookService#sendChallengeNotification}.
+     */
+    void sendChallengeNotification (boolean appOnly, AsyncCallback<Void> callback);
 }

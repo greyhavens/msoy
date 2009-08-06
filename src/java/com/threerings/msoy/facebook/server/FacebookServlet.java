@@ -243,6 +243,14 @@ public class FacebookServlet extends MsoyServiceServlet
         return info;
     }
 
+    @Override // from FacebookService
+    public void sendChallengeNotification (boolean appOnly)
+        throws ServiceException
+    {
+        // TODO
+        log.info("Sending challenge", "appOnly", appOnly);
+    }
+
     protected List<ExternalMapRecord> loadMappedFriends (boolean includeSelf)
         throws ServiceException
     {

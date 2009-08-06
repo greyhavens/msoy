@@ -84,7 +84,7 @@ public class FacebookPage extends Page
                 FBInvitePanel.createMochiChallenge(_gameInviteInfo, args.get(1, "")) :
                 FBInvitePanel.createChallenge(_gameInviteInfo, args.get(1, 0)));
         } else {
-            setContent(new FBChallengeSelectPanel(gameArgs, _gameInviteInfo.gameName));
+            setContent(new FBChallengeSelectPanel(gameArgs, _gameInviteInfo.gameName, mochi));
         }
     }
 
