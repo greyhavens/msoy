@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -37,6 +38,7 @@ import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.facebook.data.FacebookCodes;
 import com.threerings.msoy.facebook.gwt.FacebookFriendInfo;
 import com.threerings.msoy.facebook.gwt.FacebookService;
+import com.threerings.msoy.facebook.server.persist.FacebookRepository;
 
 import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.game.gwt.ArcadeData;
@@ -190,21 +192,8 @@ public class FacebookServlet extends MsoyServiceServlet
                 info.excludeIds.add(Long.valueOf(exRec.externalId));
             }
 
-        } else if (gameSpec.startsWith("w:")) {
-            // whirled game invite
-            GameInfoRecord game = _mgameRepo.loadGame(Integer.parseInt(gameSpec.substring(2)));
-            if (game == null) {
-                throw new ServiceException();
-            }
-            info.gameName = game.name;
-
-        } else if (gameSpec.startsWith("m:")) {
-            // mochi game invite
-            MochiGameInfo game = _mgameRepo.loadMochiGame(gameSpec.substring(2));
-            if (game == null) {
-                throw new ServiceException();
-            }
-            info.gameName = game.name;
+        } else {
+            info.gameName = getGameName(gameSpec);
         }
 
         MemberRecord mrec = requireAuthedUser();
@@ -244,11 +233,34 @@ public class FacebookServlet extends MsoyServiceServlet
     }
 
     @Override // from FacebookService
-    public void sendChallengeNotification (boolean appOnly)
+    public void sendChallengeNotification (String gameSpec, boolean appOnly)
         throws ServiceException
     {
-        // TODO
-        log.info("Sending challenge", "appOnly", appOnly);
+        MemberRecord mrec = requireAuthedUser();
+        _fbLogic.scheduleFriendNotification(mrec.memberId, "challenge",
+            ImmutableMap.of("game", getGameName(gameSpec)), appOnly);
+    }
+
+    protected String getGameName (String gameSpec)
+        throws ServiceException
+    {
+        if (gameSpec.startsWith("w:")) {
+            // whirled game invite
+            GameInfoRecord game = _mgameRepo.loadGame(Integer.parseInt(gameSpec.substring(2)));
+            if (game == null) {
+                throw new ServiceException();
+            }
+            return game.name;
+
+        } else if (gameSpec.startsWith("m:")) {
+            // mochi game invite
+            MochiGameInfo game = _mgameRepo.loadMochiGame(gameSpec.substring(2));
+            if (game == null) {
+                throw new ServiceException();
+            }
+            return game.name;
+        }
+        return null;
     }
 
     protected List<ExternalMapRecord> loadMappedFriends (boolean includeSelf)
@@ -321,6 +333,7 @@ public class FacebookServlet extends MsoyServiceServlet
     }
 
     @Inject protected FacebookLogic _fbLogic;
+    @Inject protected FacebookRepository _facebookRepo;
     @Inject protected MemberRepository _memberRepo;
     @Inject protected MsoyGameRepository _mgameRepo;
     @Inject protected MoneyRepository _moneyRepo;

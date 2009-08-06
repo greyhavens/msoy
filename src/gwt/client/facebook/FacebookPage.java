@@ -39,10 +39,10 @@ public class FacebookPage extends Page
             setContent("Invite", FBInvitePanel.createGeneric());
 
         } else if (action.equals(ArgNames.FB_GAME_CHALLENGE)) {
-            showChallenge(args, false);
+            showChallenge(new FacebookGame(args.get(1, 0)), args.get(2, ""));
 
         } else if (action.equals(ArgNames.FB_MOCHI_CHALLENGE)) {
-            showChallenge(args, true);
+            showChallenge(new FacebookGame(args.get(1, "")), args.get(2, ""));
         }
     }
 
@@ -52,17 +52,16 @@ public class FacebookPage extends Page
         return Pages.FACEBOOK;
     }
 
-    protected void showChallenge (final Args args, final boolean mochi)
+    protected void showChallenge (final FacebookGame game, final String mode)
     {
-        String gameSpec = (mochi ? "m" : "w") + ":" + args.get(1, "");
-        if (_gameInviteInfo == null || !_gameInviteSpec.equals(gameSpec)) {
+        if (_gameInviteInfo == null || !_game.equals(game)) {
             setContent(MsoyUI.createLabel(_cmsgs.tagLoading(), "Loading"));
-            _gameInviteSpec = gameSpec;
+            _game = game;
             _gameInviteInfo = null;
-            _fbsvc.getInviteInfo(gameSpec, new InfoCallback<InviteInfo>() {
+            _fbsvc.getInviteInfo(_game.id, new InfoCallback<InviteInfo>() {
                 public void onSuccess (InviteInfo info) {
                     _gameInviteInfo = info;
-                    showChallenge(args, mochi);
+                    showChallenge(_game, mode);
                 }
             });
             return;
@@ -72,24 +71,20 @@ public class FacebookPage extends Page
         // in production, we just go straight to pick mode and show a request form for now
         // TODO: finish the other options and enable in production
 
-        String mode = args.get(2, "");
-        Args gameArgs = args.recomposeWithout(2, 99);
-
         if (mode.equals(ArgNames.FB_CHALLENGE_FRIENDS)) {
             // TODO
         } else if (mode.equals(ArgNames.FB_CHALLENGE_APP_FRIENDS)) {
             // TODO
         } else if (true || mode.equals(ArgNames.FB_CHALLENGE_PICK)) {
-            setContent("Challenge", mochi ?
-                FBInvitePanel.createMochiChallenge(_gameInviteInfo, args.get(1, "")) :
-                FBInvitePanel.createChallenge(_gameInviteInfo, args.get(1, 0)));
+            setContent("Challenge",
+                FBInvitePanel.createChallenge(game, _gameInviteInfo));
         } else {
-            setContent(new FBChallengeSelectPanel(gameArgs, _gameInviteInfo.gameName, mochi));
+            setContent(new FBChallengeSelectPanel(game, _gameInviteInfo.gameName));
         }
     }
 
     // we just need to query this once
-    protected String _gameInviteSpec;
+    protected FacebookGame _game;
     protected InviteInfo _gameInviteInfo;
 
     protected FacebookServiceAsync _fbsvc = GWT.create(FacebookService.class);

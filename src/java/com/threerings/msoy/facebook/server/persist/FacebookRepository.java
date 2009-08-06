@@ -112,12 +112,13 @@ public class FacebookRepository extends DepotRepository
     /**
      * Updates or adds a new notification.
      */
-    public void storeNotification (String id, String text)
+    public FacebookNotificationRecord storeNotification (String id, String text)
     {
         FacebookNotificationRecord notifRec = loadNotification(id);
         if (notifRec != null) {
             updatePartial(FacebookNotificationRecord.getKey(id), ImmutableMap.of(
                 FacebookNotificationRecord.TEXT, text));
+            notifRec.text = text;
 
         } else {
             notifRec = new FacebookNotificationRecord();
@@ -125,6 +126,7 @@ public class FacebookRepository extends DepotRepository
             notifRec.text = text;
             insert(notifRec);
         }
+        return notifRec;
     }
 
     /**

@@ -70,6 +70,6 @@ public interface FacebookService extends RemoteService
      * Sends a challenge notification to all friends of the logged in user, optionally limiting
      * to only those friends that use the application.
      */
-    void sendChallengeNotification (boolean appOnly)
+    void sendChallengeNotification (String gameSpec, boolean appOnly)
         throws ServiceException;
 }

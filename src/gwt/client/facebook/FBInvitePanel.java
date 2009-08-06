@@ -6,6 +6,7 @@ package client.facebook;
 import java.util.List;
 
 import client.shell.CShell;
+import client.ui.MsoyUI;
 import client.util.InfoCallback;
 import client.util.StringUtil;
 
@@ -50,11 +51,10 @@ public class FBInvitePanel extends ServerFBMLPanel
     }
 
     /**
-     * Creates a panel to contain a challenge request for the given whirled game id, automatically
-     * populating it once the appropriate invite information is returned.
+     * Creates the challenge request panel for the given Facebook game.
      * TODO: high scores?
      */
-    public static Widget createChallenge (InviteInfo info, int gameId)
+    public static Widget createChallenge (FacebookGame game, InviteInfo info)
     {
         // {0} just played {1} on {2} and challenges you to beat {3} high score!
         String app = DeploymentConfig.facebookApplicationName;
@@ -63,23 +63,7 @@ public class FBInvitePanel extends ServerFBMLPanel
         String tip = _msgs.inviteChallengeTip();
         String accept = _msgs.inviteChallengeAccept(info.gameName);
         return new FBInvitePanel(
-            info.excludeIds, invite, tip, accept, "game=" + gameId, info.gameName);
-    }
-
-    /**
-     * Creates a panel to contain a challenge request for the given mopchi game tag, automatically
-     * populating it once the appropriate invite information is returned.
-     */
-    public static Widget createMochiChallenge (InviteInfo info, String mochiTag)
-    {
-        // {0} just played {1} on {2} and challenges you to beat {3} high score!
-        String app = DeploymentConfig.facebookApplicationName;
-        String invite = _msgs.inviteChallenge(
-            info.username, info.gameName, app, getPronoun(info.gender));
-        String tip = _msgs.inviteChallengeTip();
-        String accept = _msgs.inviteChallengeAccept(info.gameName);
-        return new FBInvitePanel(
-            info.excludeIds, invite, tip, accept, "mgame=" + mochiTag, info.gameName);
+            info.excludeIds, invite, tip, accept, game.canvasArgs, info.gameName);
     }
 
     /**
@@ -126,9 +110,8 @@ public class FBInvitePanel extends ServerFBMLPanel
         String url = DeploymentConfig.facebookCanvasUrl + "?" + canvasArgs;
         // weird... the req-choice tag goes inside the content attribute
         FBMLPanel reqChoice = new FBMLPanel("req-choice", "url", url, "label", accept);
-        FlowPanel div = new FlowPanel();
-        div.add(reqChoice);
-        return StringUtil.escapeAttribute(text) + div.getElement().getInnerHTML();
+        return StringUtil.escapeAttribute(text) +
+            MsoyUI.createFlowPanel(null, reqChoice).getElement().getInnerHTML();
     }
 
     protected static String getPronoun (FacebookService.Gender gender)

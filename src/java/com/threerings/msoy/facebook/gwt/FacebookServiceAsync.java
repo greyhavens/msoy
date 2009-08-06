@@ -31,5 +31,6 @@ public interface FacebookServiceAsync
     /**
      * The asynchronous version of {@link FacebookService#sendChallengeNotification}.
      */
-    void sendChallengeNotification (boolean appOnly, AsyncCallback<Void> callback);
+    void sendChallengeNotification (
+        String gameSpec, boolean appOnly, AsyncCallback<Void> callback);
 }

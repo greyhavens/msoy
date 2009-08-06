@@ -21,7 +21,6 @@ import com.google.gwt.user.client.ui.PushButton;
 import com.threerings.msoy.facebook.gwt.FacebookService;
 import com.threerings.msoy.facebook.gwt.FacebookServiceAsync;
 import com.threerings.msoy.web.gwt.ArgNames;
-import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
 /**
@@ -29,26 +28,26 @@ import com.threerings.msoy.web.gwt.Pages;
  */
 public class FBChallengeSelectPanel extends FlowPanel
 {
-    public FBChallengeSelectPanel (Args challengeArgs, String gameName, final boolean mochi)
+    public FBChallengeSelectPanel (FacebookGame game, String gameName)
     {
+        _game = game;
         setStyleName("challengeSelect");
         add(MsoyUI.createLabel(_msgs.challengeSelect(gameName), "Title"));
         HorizontalPanel buttons = new HorizontalPanel();
         buttons.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
         buttons.setStyleName("Buttons");
-        final String gameId = challengeArgs.get(1, "");
         buttons.add(easyButton(_msgs.challengeAllFriendsBtn(), "AllFriends", new ClickHandler() {
             public void onClick (ClickEvent event) {
-                confirmAndSendChallenge(mochi, gameId, false);
+                confirmAndSendChallenge(false);
             }
         }));
         buttons.add(easyButton(_msgs.challengeAppFriendsBtn(), "AppFriends", new ClickHandler() {
             public void onClick (ClickEvent event) {
-                confirmAndSendChallenge(mochi, gameId, true);
+                confirmAndSendChallenge(true);
             }
         }));
         buttons.add(easyButton(_msgs.challengeSomeFriendsBtn(), "SomeFriends",
-            Link.createHandler(Pages.FACEBOOK, challengeArgs, ArgNames.FB_CHALLENGE_PICK)));
+            Link.createHandler(Pages.FACEBOOK, _game.challengeArgs, ArgNames.FB_CHALLENGE_PICK)));
         add(buttons);
     }
 
@@ -60,18 +59,13 @@ public class FBChallengeSelectPanel extends FlowPanel
         return button;
     }
 
-    protected void confirmAndSendChallenge (boolean mochi, String gameId, final boolean appOnly)
+    protected void confirmAndSendChallenge (final boolean appOnly)
     {
-        final Pages page = mochi ? Pages.GAMES : Pages.WORLD;
-        final Args args = mochi ?
-            Args.compose("mochi", gameId) :
-            Args.compose("game", "p", gameId);
-
         final Command send = new Command() {
             @Override public void execute () {
-                _fbsvc.sendChallengeNotification(appOnly, new InfoCallback<Void>() {
+                _fbsvc.sendChallengeNotification(_game.id, appOnly, new InfoCallback<Void>() {
                     @Override public void onSuccess (Void result) {
-                        Link.go(page, args);
+                        Link.go(_game.playPage, _game.playArgs);
                     }
                 });
             }
@@ -89,6 +83,8 @@ public class FBChallengeSelectPanel extends FlowPanel
         };
         confirm.show();
     }
+
+    protected FacebookGame _game;
 
     protected static final FacebookMessages _msgs = GWT.create(FacebookMessages.class);
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
