@@ -202,14 +202,12 @@ public class StuffServlet extends MsoyServiceServlet
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
 
-        List<Item> items = Lists.transform(
+        List<Item> items = Lists.newArrayList(Lists.transform(
             _itemLogic.getRepository(type).findItems(memberId, query, mogId),
-            new ItemRecord.ToItem<Item>());
+            new ItemRecord.ToItem<Item>()));
 
         Collections.sort(items);
-
-        // return a list class that GWT understands
-        return Lists.newArrayList(items);
+        return items;
     }
 
     // from interface StuffService
