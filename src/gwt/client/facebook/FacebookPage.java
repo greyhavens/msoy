@@ -4,15 +4,14 @@
 package client.facebook;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.Window;
 
-import com.threerings.msoy.data.all.DeploymentConfig;
-import com.threerings.msoy.facebook.gwt.FacebookService;
-import com.threerings.msoy.facebook.gwt.FacebookServiceAsync;
-import com.threerings.msoy.facebook.gwt.FacebookService.InviteInfo;
 import com.threerings.msoy.web.gwt.ArgNames;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
+
+import com.threerings.msoy.facebook.gwt.FacebookService;
+import com.threerings.msoy.facebook.gwt.FacebookServiceAsync;
+import com.threerings.msoy.facebook.gwt.FacebookService.InviteInfo;
 
 import client.shell.Page;
 import client.shell.ShellMessages;
@@ -79,9 +78,8 @@ public class FacebookPage extends Page
         if (mode.equals(ArgNames.FB_CHALLENGE_FRIENDS)) {
             // TODO
         } else if (mode.equals(ArgNames.FB_CHALLENGE_APP_FRIENDS)) {
-            Window.alert("About to call the popupTest!");
-            popupTest();
-        } else if (!DeploymentConfig.devDeployment || mode.equals(ArgNames.FB_CHALLENGE_PICK)) {
+            // TODO
+        } else if (true || mode.equals(ArgNames.FB_CHALLENGE_PICK)) {
             setContent("Challenge", mochi ?
                 FBInvitePanel.createMochiChallenge(_gameInviteInfo, args.get(1, "")) :
                 FBInvitePanel.createChallenge(_gameInviteInfo, args.get(1, 0)));
@@ -89,20 +87,6 @@ public class FacebookPage extends Page
             setContent(new FBChallengeSelectPanel(gameArgs, _gameInviteInfo.gameName));
         }
     }
-
-    /**
-     * Temp: test code for Facebook dialogs. We'd like to show a Facebooko-styled confirm/cancel
-     * popup for the challenge spam.
-     */
-    protected static native void popupTest () /*-{
-        try {
-            $wnd.FB_PopupTest();
-        } catch (e) {
-            if ($wnd.console) {
-                $wnd.console.log("Failed to show popup: " + e);
-            }
-        }
-    }-*/;
 
     // we just need to query this once
     protected String _gameInviteSpec;
