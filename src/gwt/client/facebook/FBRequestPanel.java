@@ -21,18 +21,18 @@ import com.threerings.msoy.facebook.gwt.FacebookService.InviteInfo;
 import com.threerings.msoy.web.gwt.CookieNames;
 
 /**
- * Server FBML panel for inviting friends. Currently only deals with site invitations.
- * TODO: name of the inviter in the invitation?
+ * Server FBML panel for sending requests to friends. Currently deals with site invitations and
+ * challenges.
  * TODO: hyperlinked stuff in the invitation
  * TODO: "not right now button" to workaround the "Ignore" button lowering our allocations
  */
-public class FBInvitePanel extends ServerFBMLPanel
+public class FBRequestPanel extends ServerFBMLPanel
 {
     /**
      * Creates a panel to contain a generic invite, automatically populating it once the
      * appropriate invite information is returned.
      */
-    public static Widget createGeneric ()
+    public static Widget createInvite ()
     {
         // TOOD: some loading message
         final FlowPanel div = new FlowPanel();
@@ -44,7 +44,7 @@ public class FBInvitePanel extends ServerFBMLPanel
                     result.username, getPronoun(result.gender), app);
                 String tip = _msgs.inviteGenericTip();
                 String accept = _msgs.inviteChallengeAccept(app);
-                div.add(new FBInvitePanel(result.excludeIds, invite, tip, accept, "", app));
+                div.add(new FBRequestPanel(result.excludeIds, invite, tip, accept, "", app));
             }
         });
         return div;
@@ -62,7 +62,7 @@ public class FBInvitePanel extends ServerFBMLPanel
             info.username, info.gameName, app, getPronoun(info.gender));
         String tip = _msgs.inviteChallengeTip();
         String accept = _msgs.inviteChallengeAccept(info.gameName);
-        return new FBInvitePanel(
+        return new FBRequestPanel(
             info.excludeIds, invite, tip, accept, game.canvasArgs, info.gameName);
     }
 
@@ -75,7 +75,7 @@ public class FBInvitePanel extends ServerFBMLPanel
      * @param canvasArgs "name1=value1&name2=value2" arguments to add to the accept button url
      * @param type the type of invitation shown in the form's "send" button
      */
-    protected FBInvitePanel (List<Long> excludeIds, String text, String tip, String accept,
+    protected FBRequestPanel (List<Long> excludeIds, String text, String tip, String accept,
         String canvasArgs, String type)
     {
         StringBuilder exclude = new StringBuilder();

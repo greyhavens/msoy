@@ -36,7 +36,7 @@ public class FacebookPage extends Page
             setContent("Friends", new FBFriendBar());
 
         } else if (action.equals("invite")) {
-            setContent("Invite", FBInvitePanel.createGeneric());
+            setContent("Invite", FBRequestPanel.createInvite());
 
         } else if (action.equals(ArgNames.FB_GAME_CHALLENGE)) {
             showChallenge(new FacebookGame(args.get(1, 0)), args.get(2, ""));
@@ -77,7 +77,7 @@ public class FacebookPage extends Page
             // TODO
         } else if (true || mode.equals(ArgNames.FB_CHALLENGE_PICK)) {
             setContent("Challenge",
-                FBInvitePanel.createChallenge(game, _gameInviteInfo));
+                FBRequestPanel.createChallenge(game, _gameInviteInfo));
         } else {
             setContent(new FBChallengeSelectPanel(game, _gameInviteInfo.gameName));
         }
