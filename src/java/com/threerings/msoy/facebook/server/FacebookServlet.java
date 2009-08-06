@@ -37,6 +37,7 @@ import com.threerings.msoy.server.persist.MemberRepository;
 
 import com.threerings.msoy.facebook.data.FacebookCodes;
 import com.threerings.msoy.facebook.gwt.FacebookFriendInfo;
+import com.threerings.msoy.facebook.gwt.FacebookGame;
 import com.threerings.msoy.facebook.gwt.FacebookService;
 import com.threerings.msoy.facebook.server.persist.FacebookRepository;
 
@@ -244,17 +245,17 @@ public class FacebookServlet extends MsoyServiceServlet
     protected String getGameName (String gameSpec)
         throws ServiceException
     {
-        if (gameSpec.startsWith("w:")) {
+        if (FacebookGame.isWhirledGame(gameSpec)) {
             // whirled game invite
-            GameInfoRecord game = _mgameRepo.loadGame(Integer.parseInt(gameSpec.substring(2)));
+            GameInfoRecord game = _mgameRepo.loadGame(FacebookGame.getWhirledGameId(gameSpec));
             if (game == null) {
                 throw new ServiceException();
             }
             return game.name;
 
-        } else if (gameSpec.startsWith("m:")) {
+        } else if (FacebookGame.isMochiGame(gameSpec)) {
             // mochi game invite
-            MochiGameInfo game = _mgameRepo.loadMochiGame(gameSpec.substring(2));
+            MochiGameInfo game = _mgameRepo.loadMochiGame(FacebookGame.getMochiGameTag(gameSpec));
             if (game == null) {
                 throw new ServiceException();
             }
