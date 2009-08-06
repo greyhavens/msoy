@@ -56,17 +56,14 @@ public class FBInvitePanel extends ServerFBMLPanel
      */
     public static Widget createChallenge (InviteInfo info, int gameId)
     {
-        // TOOD: some loading message
-        final FlowPanel div = new FlowPanel();
         // {0} just played {1} on {2} and challenges you to beat {3} high score!
         String app = DeploymentConfig.facebookApplicationName;
         String invite = _msgs.inviteChallenge(
             info.username, info.gameName, app, getPronoun(info.gender));
         String tip = _msgs.inviteChallengeTip();
         String accept = _msgs.inviteChallengeAccept(info.gameName);
-        div.add(new FBInvitePanel(
-            info.excludeIds, invite, tip, accept, "game=" + gameId, info.gameName));
-        return div;
+        return new FBInvitePanel(
+            info.excludeIds, invite, tip, accept, "game=" + gameId, info.gameName);
     }
 
     /**
@@ -75,17 +72,14 @@ public class FBInvitePanel extends ServerFBMLPanel
      */
     public static Widget createMochiChallenge (InviteInfo info, String mochiTag)
     {
-        // TOOD: some loading message
-        final FlowPanel div = new FlowPanel();
         // {0} just played {1} on {2} and challenges you to beat {3} high score!
         String app = DeploymentConfig.facebookApplicationName;
         String invite = _msgs.inviteChallenge(
             info.username, info.gameName, app, getPronoun(info.gender));
         String tip = _msgs.inviteChallengeTip();
         String accept = _msgs.inviteChallengeAccept(info.gameName);
-        div.add(new FBInvitePanel(
-            info.excludeIds, invite, tip, accept, "mgame=" + mochiTag, info.gameName));
-        return div;
+        return new FBInvitePanel(
+            info.excludeIds, invite, tip, accept, "mgame=" + mochiTag, info.gameName);
     }
 
     /**
