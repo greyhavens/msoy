@@ -22,6 +22,7 @@ import com.samskivert.util.StringUtil;
 import com.google.code.facebookapi.FacebookException;
 import com.google.code.facebookapi.FacebookJaxbRestClient;
 
+import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.facebook.server.persist.FacebookNotificationRecord;
 import com.threerings.msoy.facebook.server.persist.FacebookRepository;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
@@ -91,16 +92,75 @@ public class FacebookLogic
             throw new ServiceException("e.notification_blank_text");
         }
 
+        insertNotification(notifRec, delay);
+    }
+
+    /**
+     * Schedules a notification to be sent immediately to a subset of the Facebook friends of a
+     * given user. If a notification of the given id is already active for that user, an exception
+     * is thrown.
+     */
+    public void scheduleFriendNotification (
+        int memberId, String notificationId, Map<String, String> replacements, boolean appOnly)
+        throws ServiceException
+    {
+        ExternalMapRecord exRec = _memberRepo.loadExternalMapEntry(
+            ExternalAuther.FACEBOOK, memberId);
+
+        if (exRec == null) {
+            log.warning("User on Facebook has no external map record?", "id", memberId);
+            throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
+        }
+
+        // load up & verify the template
+        FacebookNotificationRecord notifRec = _facebookRepo.loadNotification(notificationId);
+        if (notifRec == null) {
+            log.warning("Unable to load notification", "id", notificationId);
+            return;
+        }
+        if (StringUtil.isBlank(notifRec.text)) {
+            log.warning("Blank notification", "id", notificationId);
+            throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
+        }
+
+        // generate the instance to send
+        String batchId = notificationId + "." + memberId;
+        FacebookNotificationRecord instance = _facebookRepo.loadNotification(batchId);
+        if (instance != null && instance.node != null) {
+            log.warning("Requested notification still sending", "id", instance.id);
+            throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
+        }
+        String text = notifRec.text;
+        for (Map.Entry<String, String> pair : replacements.entrySet()) {
+            String key = "{*" + pair.getKey() + "*}";
+            text = text.replace(key, pair.getValue());
+        }
+        instance = _facebookRepo.storeNotification(batchId, text);
+
+        // TODO: targets
+        // insertNotification(instance, 0);
+    }
+
+    protected void insertNotification (FacebookNotificationRecord notifRec, int delay)
+    {
         // convert to millis
         delay *= 60 * 1000L;
 
         // insert into map and schedule
         synchronized (_notifications) {
-            NotificationBatch notification = _notifications.get(id);
+            NotificationBatch notification = _notifications.get(notifRec.id);
             if (notification != null) {
                 notification.cancel();
             }
-            _notifications.put(id, notification = new NotificationBatch(notifRec, delay));
+            notification = new NotificationBatch(notifRec, delay);
+            _notifications.put(notifRec.id, notification);
+        }
+    }
+
+    protected void removeNotification (String id)
+    {
+        synchronized (_notifications) {
+            _notifications.remove(id);
         }
     }
 
@@ -165,7 +225,6 @@ public class FacebookLogic
         }
 
         public void cancel ()
-            throws ServiceException
         {
             _interval.cancel();
         }
@@ -185,6 +244,7 @@ public class FacebookLogic
                 }, BATCH_SIZE);
 
             _facebookRepo.noteNotificationFinished(_notifRec.id);
+            removeNotification(_notifRec.id);
             log.info("Successfully sent notifications", "id", _notifRec.id);
         }
 
@@ -193,7 +253,7 @@ public class FacebookLogic
             try {
                 trySendBatch(client, batch);
             } catch (Exception e) {
-                log.warning("Failed to send facebook notifications", e);
+                log.warning("Failed to send notifications batch", "size", batch.size(), e);
             }
         }
 
