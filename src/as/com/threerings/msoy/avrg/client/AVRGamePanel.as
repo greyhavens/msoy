@@ -151,7 +151,8 @@ public class AVRGamePanel extends UIComponent
 
         // once we're all loaded up, put us in no place rather than showing the loading thing
         var wctx :WorldContext = getWorldCtx();
-        if (wctx.getLocationDirector().getPlaceObject() == null) {
+        if ((wctx.getLocationDirector().getPlaceObject() == null) &&
+                !wctx.getMsoyClient().isChromeless()) {
             wctx.setPlaceView(new NoPlaceView());
         }
     }
