@@ -7,10 +7,14 @@ import java.net.URL;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -23,12 +27,14 @@ import com.google.code.facebookapi.FacebookException;
 import com.google.code.facebookapi.FacebookJaxbRestClient;
 
 import com.threerings.msoy.data.MsoyAuthCodes;
+import com.threerings.msoy.facebook.data.FacebookCodes;
 import com.threerings.msoy.facebook.server.persist.FacebookNotificationRecord;
 import com.threerings.msoy.facebook.server.persist.FacebookRepository;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.BatchInvoker;
 import com.threerings.msoy.server.persist.ExternalMapRecord;
+import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.web.gwt.ExternalAuther;
 import com.threerings.msoy.web.gwt.FacebookCreds;
@@ -43,11 +49,21 @@ import static com.threerings.msoy.Log.log;
 public class FacebookLogic
 {
     /**
-     * Returns a Facebook client not bound to any particular user's session.
+     * Returns a Facebook client not bound to any particular user's session with the deafault read
+     * timeout.
      */
     public FacebookJaxbRestClient getFacebookClient ()
     {
-        return getFacebookClient((String)null);
+        return getFacebookClient(READ_TIMEOUT);
+    }
+
+    /**
+     * Returns a Facebook client not bound to any particular user's session with the given read
+     * timeout.
+     */
+    public FacebookJaxbRestClient getFacebookClient (int timeout)
+    {
+        return getFacebookClient((String)null, timeout);
     }
 
     /**
@@ -63,7 +79,16 @@ public class FacebookLogic
      */
     public FacebookJaxbRestClient getFacebookClient (String sessionKey)
     {
-        return getFacebookClient(requireAPIKey(), requireSecret(), sessionKey);
+        return getFacebookClient(requireAPIKey(), requireSecret(), sessionKey, READ_TIMEOUT);
+    }
+
+    /**
+     * Returns a Facebook client bound to the supplied user's session with the supplied read
+     * timeout.
+     */
+    public FacebookJaxbRestClient getFacebookClient (String sessionKey, int timeout)
+    {
+        return getFacebookClient(requireAPIKey(), requireSecret(), sessionKey, timeout);
     }
 
     /**
@@ -71,7 +96,7 @@ public class FacebookLogic
      */
     public FacebookJaxbRestClient getFacebookClient (FacebookAppCreds creds)
     {
-        return getFacebookClient(creds.apiKey, creds.appSecret, creds.sessionKey);
+        return getFacebookClient(creds.apiKey, creds.appSecret, creds.sessionKey, READ_TIMEOUT);
     }
 
     /**
@@ -92,7 +117,7 @@ public class FacebookLogic
             throw new ServiceException("e.notification_blank_text");
         }
 
-        insertNotification(notifRec, delay);
+        schedule(id, new NotificationBatch(notifRec), delay);
     }
 
     /**
@@ -100,17 +125,12 @@ public class FacebookLogic
      * given user. If a notification of the given id is already active for that user, an exception
      * is thrown.
      */
-    public void scheduleFriendNotification (
-        int memberId, String notificationId, Map<String, String> replacements, boolean appOnly)
+    public void scheduleFriendNotification (MemberRecord mrec, String notificationId,
+        Map<String, String> replacements, boolean appOnly)
         throws ServiceException
     {
-        ExternalMapRecord exRec = _memberRepo.loadExternalMapEntry(
-            ExternalAuther.FACEBOOK, memberId);
-
-        if (exRec == null) {
-            log.warning("User on Facebook has no external map record?", "id", memberId);
-            throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
-        }
+        // throw if there is no session
+        getSessionInfo(mrec, 0);
 
         // load up & verify the template
         FacebookNotificationRecord notifRec = _facebookRepo.loadNotification(notificationId);
@@ -124,7 +144,7 @@ public class FacebookLogic
         }
 
         // generate the instance to send
-        String batchId = notificationId + "." + memberId;
+        String batchId = notificationId + "." + mrec.memberId;
         FacebookNotificationRecord instance = _facebookRepo.loadNotification(batchId);
         if (instance != null && instance.node != null) {
             log.warning("Requested notification still sending", "id", instance.id);
@@ -137,23 +157,54 @@ public class FacebookLogic
         }
         instance = _facebookRepo.storeNotification(batchId, text);
 
-        // TODO: targets
-        // insertNotification(instance, 0);
+        // kick it off now
+        schedule(batchId, new NotificationBatch(instance, mrec, appOnly), 0);
     }
 
-    protected void insertNotification (FacebookNotificationRecord notifRec, int delay)
+    /**
+     * Loads the map records for all the given member's facebook friends. Throws an exception if
+     * the session isn't valid or if the facebook friends could not be loaded.
+     */
+    public List<ExternalMapRecord> loadMappedFriends (MemberRecord mrec, boolean includeSelf)
+        throws ServiceException
+    {
+        SessionInfo sinf = getSessionInfo(mrec);
+
+        // get facebook friends to seed (more accurate)
+        Set<String> facebookFriendIds = Sets.newHashSet();
+        try {
+            for (Long uid : sinf.client.friends_get().getUid()) {
+                facebookFriendIds.add(String.valueOf(uid));
+            }
+
+        } catch (FacebookException fe) {
+            log.warning("Unable to get facebook friends", "memberId", mrec.memberId, fe);
+            // pass along the translated text for now
+            throw new ServiceException(fe.getMessage());
+        }
+
+        // filter by those hooked up to Whirled and
+        List<ExternalMapRecord> exRecs = _memberRepo.loadExternalAccounts(
+            ExternalAuther.FACEBOOK, facebookFriendIds);
+        if (includeSelf) {
+            exRecs.add(sinf.mapRec);
+        }
+        return exRecs;
+    }
+
+    protected void schedule (String id, NotificationBatch notif, int delay)
     {
         // convert to millis
-        delay *= 60 * 1000L;
+        long millis = delay * 60 * 1000L;
 
         // insert into map and schedule
         synchronized (_notifications) {
-            NotificationBatch notification = _notifications.get(notifRec.id);
-            if (notification != null) {
-                notification.cancel();
+            NotificationBatch prior = _notifications.get(id);
+            if (prior != null) {
+                prior.cancel();
             }
-            notification = new NotificationBatch(notifRec, delay);
-            _notifications.put(notifRec.id, notification);
+            _notifications.put(id, notif);
+            notif.schedule(millis);
         }
     }
 
@@ -165,16 +216,10 @@ public class FacebookLogic
     }
 
     protected FacebookJaxbRestClient getFacebookClient (
-        String apiKey, String appSecret, String sessionKey)
+        String apiKey, String appSecret, String sessionKey, int timeout)
     {
         return new FacebookJaxbRestClient(
-            SERVER_URL, apiKey, appSecret, sessionKey, CONNECT_TIMEOUT, READ_TIMEOUT);
-    }
-
-    protected FacebookJaxbRestClient getFacebookBatchClient ()
-    {
-        return new FacebookJaxbRestClient(SERVER_URL, requireAPIKey(), requireSecret(), null,
-            CONNECT_TIMEOUT, BATCH_READ_TIMEOUT);
+            SERVER_URL, apiKey, appSecret, sessionKey, CONNECT_TIMEOUT, timeout);
     }
 
     protected String requireAPIKey ()
@@ -193,6 +238,74 @@ public class FacebookLogic
             throw new IllegalStateException("Missing facebook.secret server configuration.");
         }
         return secret;
+    }
+
+    protected SessionInfo getSessionInfo (MemberRecord mrec)
+        throws ServiceException
+    {
+        return getSessionInfo(mrec, CONNECT_TIMEOUT);
+    }
+
+    protected SessionInfo getSessionInfo (MemberRecord mrec, int timeout)
+        throws ServiceException
+    {
+        SessionInfo sinf = new SessionInfo();
+        sinf.memRec = mrec;
+        sinf.mapRec = _memberRepo.loadExternalMapEntry(ExternalAuther.FACEBOOK, mrec.memberId);
+        if (sinf.mapRec == null || sinf.mapRec.sessionKey == null) {
+            throw new ServiceException(FacebookCodes.NO_SESSION);
+        }
+        sinf.fbid = Long.valueOf(sinf.mapRec.externalId);
+        if (timeout > 0) {
+            sinf.client = getFacebookClient(sinf.mapRec.sessionKey, timeout);
+        }
+        return sinf;
+    }
+
+    protected List<Long> loadFriends (MemberRecord mrec)
+        throws ServiceException
+    {
+        SessionInfo sinf = getSessionInfo(mrec);
+        try {
+            return sinf.client.friends_get().getUid();
+
+        } catch (FacebookException fe) {
+            log.warning("Unable to get facebook friends", "memberId", mrec.memberId, fe);
+            // pass along the translated text for now
+            throw new ServiceException(fe.getMessage());
+        }
+    }
+
+    protected <T> void sendNotifications (FacebookJaxbRestClient client, String id, String text,
+        List<T> batch, Function<T, FQL.Exp> toUserId, Predicate<FQLQuery.Record> filter)
+    {
+        try {
+            _facebookRepo.noteNotificationProgress(id, "Verifying", 0, 0);
+
+            List<FQL.Exp> uids = Lists.transform(batch, toUserId);
+
+            FQLQuery getUsers = new FQLQuery(USERS_TABLE, new FQL.Field[] {UID, IS_APP_USER},
+                new FQL.Where(UID.in(uids)));
+
+            List<Long> targetIds = Lists.newArrayListWithCapacity(uids.size());
+            for (FQLQuery.Record result : getUsers.run(client)) {
+                if (!filter.apply(result)) {
+                    continue;
+                }
+                targetIds.add(Long.valueOf(result.getField(UID)));
+            }
+
+            if (targetIds.size() == 0) {
+                return;
+            }
+
+            _facebookRepo.noteNotificationProgress(id, "Sending", targetIds.size(), 0);
+            client.notifications_send(targetIds, text, true);
+            _facebookRepo.noteNotificationProgress(id, "Sent", 0, targetIds.size());
+
+        } catch (Exception e) {
+            log.warning("Failed to send notifications", "id", id, "targetCount", batch.size(), e);
+        }
     }
 
     /**
@@ -214,90 +327,128 @@ public class FacebookLogic
     }
 
     /**
+     * Some useful things to be able to pass around when doing things with a user's session.
+     */
+    protected static class SessionInfo
+    {
+        public Long fbid;
+        public ExternalMapRecord mapRec;
+        public MemberRecord memRec;
+        public FacebookJaxbRestClient client;
+    }
+
+    /**
      * A notification batch.
      */
     protected class NotificationBatch
     {
-        public NotificationBatch (FacebookNotificationRecord notifRec, long delay)
+        /**
+         * Creates a global notification batch.
+         */
+        public NotificationBatch (FacebookNotificationRecord notifRec)
+        {
+            this(notifRec, null, false);
+        }
+
+        /**
+         * Creates a notification batch targeting the designated subset of a specific memeber's
+         * friends, or global if the member is null.
+         */
+        public NotificationBatch (FacebookNotificationRecord notifRec, MemberRecord mrec,
+            boolean appFriendsOnly)
         {
             _notifRec = notifRec;
+            _mrec = mrec;
+            _appFriendsOnly = appFriendsOnly;
+        }
+
+        /**
+         * Schedules the batch to run after the given number of milliseconds.
+         */
+        public void schedule (long delay)
+        {
             _interval.schedule(delay, false);
         }
 
+        /**
+         * If the notification is scheduled, removes it and stops it from running.
+         */
         public void cancel ()
         {
             _interval.cancel();
         }
 
         protected void send ()
+            throws ServiceException
         {
             _facebookRepo.noteNotificationStarted(_notifRec.id);
 
-            final FacebookJaxbRestClient client = getFacebookBatchClient();
-            final int BATCH_SIZE = 100;
-            segment(_memberRepo.loadExternalMappings(ExternalAuther.FACEBOOK),
-                new Function<List<ExternalMapRecord>, Void>() {
-                    public Void apply (List<ExternalMapRecord> exRecs) {
-                        sendBatch(client, exRecs);
-                        return null;
+            if (_mrec != null && _appFriendsOnly) {
+                // this will only send to the first N users where N is the "notifications_per_day"
+                // allocation
+                // TODO: fetch the N value on a timer and don't bother sending > N targets
+                // TODO: optimize the first N targets?
+                sendNotifications(getSessionInfo(_mrec, BATCH_READ_TIMEOUT).client,
+                    _notifRec.id, _notifRec.text, loadMappedFriends(_mrec, false),
+                    MAPREC_TO_UID_EXP, APP_USER_FILTER);
+
+            } else if (_mrec != null) {
+                // see above
+                sendNotifications(getSessionInfo(_mrec, BATCH_READ_TIMEOUT).client,
+                    _notifRec.id, _notifRec.text, loadFriends(_mrec),
+                    new Function<Long, FQL.Exp> () {
+                    public FQL.Exp apply (Long uid) {
+                        return FQL.unquoted(uid);
                     }
-                }, BATCH_SIZE);
+                }, Predicates.not(APP_USER_FILTER));
+
+            } else {
+                final FacebookJaxbRestClient client = getFacebookClient(BATCH_READ_TIMEOUT);
+                final int BATCH_SIZE = 100;
+                segment(_memberRepo.loadExternalMappings(ExternalAuther.FACEBOOK),
+                    new Function<List<ExternalMapRecord>, Void>() {
+                        public Void apply (List<ExternalMapRecord> batch) {
+                            sendNotifications(client, _notifRec.id, _notifRec.text,
+                                batch, MAPREC_TO_UID_EXP, APP_USER_FILTER);
+                            return null;
+                        }
+                    }, BATCH_SIZE);
+            }
 
             _facebookRepo.noteNotificationFinished(_notifRec.id);
             removeNotification(_notifRec.id);
             log.info("Successfully sent notifications", "id", _notifRec.id);
         }
 
-        protected void sendBatch (FacebookJaxbRestClient client, List<ExternalMapRecord> batch)
-        {
-            try {
-                trySendBatch(client, batch);
-            } catch (Exception e) {
-                log.warning("Failed to send notifications batch", "size", batch.size(), e);
-            }
-        }
-
-        protected void trySendBatch (FacebookJaxbRestClient client, List<ExternalMapRecord> batch)
-            throws FacebookException
-        {
-            _facebookRepo.noteNotificationProgress(_notifRec.id, "Loading recipients", 0, 0);
-
-            List<FQL.Exp> uids = Lists.transform(batch,
-                new Function<ExternalMapRecord, FQL.Exp>() {
-                public FQL.Exp apply (ExternalMapRecord exRec) {
-                    return FQL.unquoted(exRec.externalId);
-                }
-            });
-
-            FQLQuery getUsers = new FQLQuery(USERS_TABLE, new FQL.Field[] {UID, IS_APP_USER},
-                new FQL.Where(UID.in(uids)));
-
-            List<Long> targetIds = Lists.newArrayListWithCapacity(uids.size());
-            for (FQLQuery.Record result : getUsers.run(client)) {
-                if (!result.getField(IS_APP_USER).equals("1")) {
-                    continue;
-                }
-                targetIds.add(Long.valueOf(result.getField(UID)));
-            }
-
-            if (targetIds.size() == 0) {
-                return;
-            }
-
-            _facebookRepo.noteNotificationProgress(_notifRec.id, "Sending", targetIds.size(), 0);
-            client.notifications_send(targetIds, _notifRec.text, true);
-            _facebookRepo.noteNotificationProgress(_notifRec.id, "Sent", 0, targetIds.size());
-        }
-
         protected FacebookNotificationRecord _notifRec;
+        protected MemberRecord _mrec;
+        protected boolean _appFriendsOnly;
         protected Interval _interval = new Interval(_batchInvoker) {
             public void expired () {
-                send();
+                try {
+                    send();
+                } catch (ServiceException se) {
+                    throw new RuntimeException(se);
+                }
             }
         };
     }
 
     protected Map<String, NotificationBatch> _notifications = Maps.newHashMap();
+
+    protected static final Function<ExternalMapRecord, FQL.Exp> MAPREC_TO_UID_EXP =
+        new Function<ExternalMapRecord, FQL.Exp>() {
+        public FQL.Exp apply (ExternalMapRecord exRec) {
+            return FQL.unquoted(exRec.externalId);
+        }
+    };
+
+    protected static final Predicate<FQLQuery.Record> APP_USER_FILTER =
+        new Predicate<FQLQuery.Record>() {
+        public boolean apply (FQLQuery.Record result) {
+            return result.getField(IS_APP_USER).equals("1");
+        }
+    };
 
     protected static final FQL.Field UID = new FQL.Field("uid");
     protected static final FQL.Field IS_APP_USER = new FQL.Field("is_app_user");

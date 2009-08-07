@@ -189,7 +189,8 @@ public class FacebookServlet extends MsoyServiceServlet
         if (gameSpec.length() == 0) {
             // application invite
             info.excludeIds = Lists.newArrayList();
-            for (ExternalMapRecord exRec : loadMappedFriends(false)) {
+            for (ExternalMapRecord exRec :
+                _fbLogic.loadMappedFriends(requireAuthedUser(), false)) {
                 info.excludeIds.add(Long.valueOf(exRec.externalId));
             }
 
@@ -238,8 +239,9 @@ public class FacebookServlet extends MsoyServiceServlet
         throws ServiceException
     {
         MemberRecord mrec = requireAuthedUser();
-        _fbLogic.scheduleFriendNotification(mrec.memberId, "challenge",
-            ImmutableMap.of("game", getGameName(gameSpec)), appOnly);
+        Map<String, String> replacements = ImmutableMap.of(
+            "game", getGameName(gameSpec));
+        _fbLogic.scheduleFriendNotification(mrec, "challenge", replacements, appOnly);
     }
 
     protected String getGameName (String gameSpec)
@@ -264,41 +266,6 @@ public class FacebookServlet extends MsoyServiceServlet
         return null;
     }
 
-    protected List<ExternalMapRecord> loadMappedFriends (boolean includeSelf)
-        throws ServiceException
-    {
-        MemberRecord mrec = requireAuthedUser();
-
-        // get the session key
-        ExternalMapRecord mapRec = _memberRepo.loadExternalMapEntry(
-            ExternalAuther.FACEBOOK, mrec.memberId);
-        if (mapRec == null || mapRec.sessionKey == null) {
-            throw new ServiceException(FacebookCodes.NO_SESSION);
-        }
-
-        // get facebook friends to seed (more accurate)
-        Set<String> facebookFriendIds = Sets.newHashSet();
-        try {
-            FacebookJaxbRestClient client = _fbLogic.getFacebookClient(mapRec.sessionKey);
-            for (Long uid : client.friends_get().getUid()) {
-                facebookFriendIds.add(String.valueOf(uid));
-            }
-
-        } catch (FacebookException fe) {
-            log.warning("Unable to get facebook friends", "memberId", mrec.memberId, fe);
-            // pass along the translated text for now
-            throw new ServiceException(fe.getMessage());
-        }
-
-        // filter by those hooked up to Whirled and
-        List<ExternalMapRecord> exRecs = _memberRepo.loadExternalAccounts(
-            ExternalAuther.FACEBOOK, facebookFriendIds);
-        if (includeSelf) {
-            exRecs.add(mapRec);
-        }
-        return exRecs;
-    }
-
     /**
      * Builds the mapping keyed by member containing all facebook friends of the authed user who
      * also have Whirled accounts, filling in only the facebook uid and member id fields.
@@ -307,7 +274,7 @@ public class FacebookServlet extends MsoyServiceServlet
         throws ServiceException
     {
         IntMap<FacebookFriendInfo> friendsInfo = IntMaps.newHashIntMap();
-        for (ExternalMapRecord exRec : loadMappedFriends(true)) {
+        for (ExternalMapRecord exRec : _fbLogic.loadMappedFriends(requireAuthedUser(), true)) {
             FacebookFriendInfo info = new FacebookFriendInfo();
             info.facebookUid = Long.valueOf(exRec.externalId);
             info.memberId = exRec.memberId;
