@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.facebook.gwt;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
+
 import com.threerings.msoy.web.gwt.ArgNames;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
@@ -11,65 +13,32 @@ import com.threerings.msoy.web.gwt.Pages;
  * Represents a Whirled or Mochi game on Facebook.
  */
 public class FacebookGame
+    implements IsSerializable
 {
-    /**
-     * Checks if the given game spec designates a Whirled game.
-     */
-    public static boolean isWhirledGame (String spec)
+    public enum Type
+        implements IsSerializable
     {
-        return spec.startsWith(WHIRLED);
+        WHIRLED,
+        MOCHI
     }
 
-    /**
-     * Checks if the given game spec designates a Mochi game.
-     */
-    public static boolean isMochiGame (String spec)
-    {
-        return spec.startsWith(MOCHI);
-    }
+    /** The type of game. */
+    public Type type;
 
     /**
-     * Returns the Whirled game id designated by the given game spec.
+     * Creates a new facebook game for deserializing.
      */
-    public static int getWhirledGameId (String spec)
+    public FacebookGame ()
     {
-        return Integer.parseInt(spec.substring(WHIRLED.length()));
     }
-
-    /**
-     * Returns the Mochi game tag designated by the given game spec.
-     */
-    public static String getMochiGameTag (String spec)
-    {
-        return spec.substring(MOCHI.length());
-    }
-
-    /** The page to go to to play this game. */
-    public Pages playPage;
-
-    /** The token arguments to use to play this game. */
-    public Args playArgs;
-
-    /** The token arguments (on #facebook) to use to issue a challenge for this game. (Further
-     * arguments are appended to designate the mode or phase of the challenge. */
-    public Args challengeArgs;
-
-    /** The arguments to append to the canvas URL to play (or view the details of) this game. */
-    public String canvasArgs;
-
-    /** The unified id of this game (used as gameSpec parameter to servlets). */
-    public String id;
 
     /**
      * Creates a new Whirled Facebook game.
      */
     public FacebookGame (int gameId)
     {
-        playPage = Pages.WORLD;
-        playArgs = Args.compose("game", "p", gameId);
-        id = WHIRLED + gameId;
-        challengeArgs = Args.compose(ArgNames.FB_GAME_CHALLENGE, gameId);
-        canvasArgs = "game=" + gameId;
+        type = Type.WHIRLED;
+        _id = String.valueOf(gameId);
     }
 
     /**
@@ -77,25 +46,81 @@ public class FacebookGame
      */
     public FacebookGame (String mochiTag)
     {
-        playPage = Pages.GAMES;
-        playArgs = Args.compose("mochi", mochiTag);
-        id = MOCHI + mochiTag;
-        challengeArgs = Args.compose(ArgNames.FB_MOCHI_CHALLENGE, mochiTag);
-        canvasArgs = "mgame=" + mochiTag;
+        type = Type.MOCHI;
+        _id = mochiTag;
+    }
+
+    /**
+     * Gets the integral (Whirled) game id.
+     */
+    public int getIntId ()
+    {
+        return Integer.parseInt(_id);
+    }
+
+    /**
+     * Gets the string (Mochi) game id.
+     */
+    public String getStringId ()
+    {
+        return _id;
+    }
+
+    /**
+     * Gets the page on which this game may be played.
+     */
+    public Pages getPlayPage ()
+    {
+        return choose(Pages.WORLD, Pages.GAMES);
+    }
+
+    /**
+     * Gets the arguments to pass to the play page in order to play this game.
+     */
+    public Args getPlayArgs ()
+    {
+        return choose(Args.compose("game", "p", _id), Args.compose("mochi", _id));
+    }
+
+    /**
+     * Gets the arguments to pass to the FACEBOOK page in order to initiate a game challenge.
+     * @return
+     */
+    public Args getChallengeArgs ()
+    {
+        return Args.compose(choose(ArgNames.FB_GAME_CHALLENGE, ArgNames.FB_MOCHI_CHALLENGE), _id);
+    }
+
+    /**
+     * Gets the CGI parameters to append to the canvas (application) url in order to get to this
+     * game.
+     */
+    public String getCanvasArgs ()
+    {
+        return choose("game=", "mgame=") + _id;
+    }
+
+    /**
+     * Returns one of the arguments depending on the type of this game.
+     */
+    protected <T> T choose (T whirled, T mochi)
+    {
+        return type == Type.WHIRLED ? whirled : mochi;
     }
 
     @Override // from Object
     public boolean equals (Object other)
     {
-        return (other instanceof FacebookGame) && id.equals(((FacebookGame)other).id); 
+        return (other instanceof FacebookGame) && type.equals(((FacebookGame)other).type) &&
+            _id.equals(((FacebookGame)other)._id);
     }
 
     @Override // from Object
     public int hashCode ()
     {
-        return id.hashCode(); 
+        return type.hashCode() + _id.hashCode(); 
     }
 
-    protected static final String WHIRLED = "w:";
-    protected static final String MOCHI = "m:";
+    /** The id of the game. */ 
+    protected String _id;
 }

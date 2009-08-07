@@ -37,7 +37,7 @@ public class FBRequestPanel extends ServerFBMLPanel
     {
         // TOOD: some loading message
         final FlowPanel div = new FlowPanel();
-        _fbsvc.getInviteInfo("", new InfoCallback<InviteInfo>() {
+        _fbsvc.getInviteInfo(null, new InfoCallback<InviteInfo>() {
             public void onSuccess (InviteInfo result) {
                 // inviteGeneric = {0} has invited you to join {1} team on {2}.
                 String app = DeploymentConfig.facebookApplicationName;
@@ -64,7 +64,7 @@ public class FBRequestPanel extends ServerFBMLPanel
         String tip = _msgs.inviteChallengeTip();
         String accept = _msgs.inviteChallengeAccept(info.gameName);
         return new FBRequestPanel(
-            info.excludeIds, invite, tip, accept, game.canvasArgs, info.gameName);
+            info.excludeIds, invite, tip, accept, game.getCanvasArgs(), info.gameName);
     }
 
     /**

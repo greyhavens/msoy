@@ -182,11 +182,11 @@ public class FacebookServlet extends MsoyServiceServlet
     }
 
     @Override // from FacebookService
-    public InviteInfo getInviteInfo (String gameSpec)
+    public InviteInfo getInviteInfo (FacebookGame game)
         throws ServiceException
     {
         InviteInfo info = new InviteInfo();
-        if (gameSpec.length() == 0) {
+        if (game == null) {
             // application invite
             info.excludeIds = Lists.newArrayList();
             for (ExternalMapRecord exRec :
@@ -195,7 +195,7 @@ public class FacebookServlet extends MsoyServiceServlet
             }
 
         } else {
-            info.gameName = getGameName(gameSpec);
+            info.gameName = getGameName(game);
         }
 
         MemberRecord mrec = requireAuthedUser();
@@ -235,33 +235,34 @@ public class FacebookServlet extends MsoyServiceServlet
     }
 
     @Override // from FacebookService
-    public void sendChallengeNotification (String gameSpec, boolean appOnly)
+    public void sendChallengeNotification (FacebookGame game, boolean appOnly)
         throws ServiceException
     {
         MemberRecord mrec = requireAuthedUser();
         Map<String, String> replacements = ImmutableMap.of(
-            "game", getGameName(gameSpec));
+            "game", getGameName(game));
         _fbLogic.scheduleFriendNotification(mrec, "challenge", replacements, appOnly);
     }
 
-    protected String getGameName (String gameSpec)
+    protected String getGameName (FacebookGame game)
         throws ServiceException
     {
-        if (FacebookGame.isWhirledGame(gameSpec)) {
+        switch (game.type) {
+        case WHIRLED:
             // whirled game invite
-            GameInfoRecord game = _mgameRepo.loadGame(FacebookGame.getWhirledGameId(gameSpec));
-            if (game == null) {
+            GameInfoRecord info = _mgameRepo.loadGame(game.getIntId());
+            if (info == null) {
                 throw new ServiceException();
             }
-            return game.name;
+            return info.name;
 
-        } else if (FacebookGame.isMochiGame(gameSpec)) {
+        case MOCHI:
             // mochi game invite
-            MochiGameInfo game = _mgameRepo.loadMochiGame(FacebookGame.getMochiGameTag(gameSpec));
-            if (game == null) {
+            MochiGameInfo mochiInfo = _mgameRepo.loadMochiGame(game.getStringId());
+            if (mochiInfo == null) {
                 throw new ServiceException();
             }
-            return game.name;
+            return mochiInfo.name;
         }
         return null;
     }

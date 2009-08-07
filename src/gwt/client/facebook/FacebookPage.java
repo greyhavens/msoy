@@ -40,10 +40,12 @@ public class FacebookPage extends Page
             setContent("Invite", FBRequestPanel.createInvite());
 
         } else if (action.equals(ArgNames.FB_GAME_CHALLENGE)) {
-            showChallenge(new FacebookGame(args.get(1, 0)), args.get(2, ""));
+            int whirledGameId = args.get(1, 0);
+            showChallenge(new FacebookGame(whirledGameId), args.get(2, ""));
 
         } else if (action.equals(ArgNames.FB_MOCHI_CHALLENGE)) {
-            showChallenge(new FacebookGame(args.get(1, "")), args.get(2, ""));
+            String mochiTag = args.get(1, "");
+            showChallenge(new FacebookGame(mochiTag), args.get(2, ""));
         }
     }
 
@@ -59,7 +61,7 @@ public class FacebookPage extends Page
             setContent(MsoyUI.createLabel(_cmsgs.tagLoading(), "Loading"));
             _game = game;
             _gameInviteInfo = null;
-            _fbsvc.getInviteInfo(_game.id, new InfoCallback<InviteInfo>() {
+            _fbsvc.getInviteInfo(_game, new InfoCallback<InviteInfo>() {
                 public void onSuccess (InviteInfo info) {
                     _gameInviteInfo = info;
                     showChallenge(_game, mode);

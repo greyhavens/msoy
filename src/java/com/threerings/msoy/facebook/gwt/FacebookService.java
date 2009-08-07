@@ -61,15 +61,15 @@ public interface FacebookService extends RemoteService
 
     /**
      * Retrieves the information for sending an invite to the given game, or the application if
-     * the game id is 0.
+     * if game is null.
      */
-    InviteInfo getInviteInfo (String gameSpec)
+    InviteInfo getInviteInfo (FacebookGame game)
         throws ServiceException;
 
     /**
      * Sends a challenge notification to all friends of the logged in user, optionally limiting
      * to only those friends that use the application.
      */
-    void sendChallengeNotification (String gameSpec, boolean appOnly)
+    void sendChallengeNotification (FacebookGame game, boolean appOnly)
         throws ServiceException;
 }

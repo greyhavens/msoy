@@ -48,7 +48,8 @@ public class FBChallengeSelectPanel extends FlowPanel
             }
         }));
         buttons.add(easyButton(_msgs.challengeSomeFriendsBtn(), "SomeFriends",
-            Link.createHandler(Pages.FACEBOOK, _game.challengeArgs, ArgNames.FB_CHALLENGE_PICK)));
+            Link.createHandler(Pages.FACEBOOK, _game.getChallengeArgs(),
+                ArgNames.FB_CHALLENGE_PICK)));
         add(buttons);
     }
 
@@ -64,9 +65,9 @@ public class FBChallengeSelectPanel extends FlowPanel
     {
         final Command send = new Command() {
             @Override public void execute () {
-                _fbsvc.sendChallengeNotification(_game.id, appOnly, new InfoCallback<Void>() {
+                _fbsvc.sendChallengeNotification(_game, appOnly, new InfoCallback<Void>() {
                     @Override public void onSuccess (Void result) {
-                        Link.go(_game.playPage, _game.playArgs);
+                        Link.go(_game.getPlayPage(), _game.getPlayArgs());
                     }
                 });
             }
