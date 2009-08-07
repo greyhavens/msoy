@@ -20,6 +20,10 @@ import com.threerings.util.NetUtil;
 import com.threerings.util.ObjectMarshaller;
 import com.threerings.util.StringUtil;
 
+import com.whirled.avrg.UIConstants;
+
+import com.threerings.flex.CommandButton;
+
 import com.threerings.crowd.chat.data.ChatCodes;
 import com.threerings.crowd.data.OccupantInfo;
 
@@ -34,6 +38,7 @@ import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.world.client.WorldContext;
+import com.threerings.msoy.world.client.WorldControlBar;
 
 import com.threerings.msoy.party.client.PartyGameClientHelper;
 
@@ -198,10 +203,6 @@ public class AVRGameBackend extends ControlBackend
         callUserCode("playerMoved_v1", memberId);
     }
 
-    public function gotControl () :void
-    {
-    }
-
     public function signalReceived (name :String, value :ByteArray) :void
     {
         callUserCode("signalReceived_v1", name, ObjectMarshaller.decode(value));
@@ -316,6 +317,9 @@ public class AVRGameBackend extends ControlBackend
         o["getStageSize_v1"] = getPaintableArea_v1; // backwards compat.
         o["getPaintableArea_v1"] = getPaintableArea_v1;
         o["setShowChrome_v1"] = setShowChrome_v1;
+        o["showUI_v1"] = showUI_v1;
+        o["hideUI_v1"] = hideUI_v1;
+        o["isUIShowing_v1"] = isUIShowing_v1;
         o["setOverlay_v1"] = setOverlay_v1;
         o["setRoomViewBounds_v1"] = setRoomViewBounds_v1;
         o["getRoomBounds_v1"] = getRoomBounds_v1;
@@ -761,7 +765,49 @@ public class AVRGameBackend extends ControlBackend
     // LocalSubControl
     protected function setShowChrome_v1 (show :Boolean) :void
     {
-        _wctx.getTopPanel().setShowChrome(show);
+        if (_gameObj.isApproved) {
+            _wctx.getTopPanel().setShowChrome(show);
+        }
+    }
+
+    // LocalSubControl
+    protected function showUI_v1 (element :int, arg :Object) :void
+    {
+        // Loads of TODO here, but lets start small
+        var ui :Object = getUIElement(element);
+
+        if (ui is CommandButton) {
+            var uibtn :CommandButton = CommandButton(ui);
+            if (!uibtn.selected) {
+                uibtn.activate();
+            }
+        }
+    }
+
+    // LocalSubControl
+    protected function hideUI_v1 (element :int) :void
+    {
+        var ui :Object = getUIElement(element);
+
+        if (ui is CommandButton) {
+            var uibtn :CommandButton = CommandButton(ui);
+            if (uibtn.selected) {
+                uibtn.activate();
+            }
+        }
+    }
+
+    // LocalSubControl
+    protected function isUIShowing_v1 (element :int) :Boolean
+    {
+        var ui :Object = getUIElement(element);
+
+        if (ui is CommandButton) {
+            return CommandButton(ui).selected;
+
+        } else {
+            return false;
+        }
     }
 
     // LocalSubControl
@@ -1086,6 +1132,19 @@ public class AVRGameBackend extends ControlBackend
     protected function countPlayerData (type :int, ident :String, playerId :int) :int
     {
         return _playerObj.countGameContent(_ctrl.getGameId(), type, ident);
+    }
+
+    /**
+     * Get some sort of handle on a UI element, and do *something* appropriate with it.
+     */
+    protected function getUIElement (element :int) :Object
+    {
+        switch (element) {
+        case UIConstants.UI_INVENTORY_AVATARS: return "stuff-5"; // TODO?
+        case UIConstants.UI_SHOP_AVATARS: return "shop-5"; // TODO?
+        case UIConstants.UI_FRIENDS_LIST: return WorldControlBar(_wctx.getControlBar()).friendsBtn;
+        default: return null;
+        }
     }
 
     protected var _wctx :WorldContext;
