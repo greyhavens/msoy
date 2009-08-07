@@ -60,7 +60,7 @@ public class SubscriptionRepository extends DepotRepository
         }
 
         rec.subscriber = true;
-        rec.grantsLeft = barGrantsLeft;
+        rec.grantsLeft += barGrantsLeft;
         // do not update their special item information.
         // That will be looked at by SubscriptionLogic
         store(rec);
