@@ -86,13 +86,19 @@ public class FacebookAuthHandler extends ExternalAuthHandler
                     info.profile.sex = Profile.SEX_FEMALE;
                 }
                 String bdstr = user.getBirthday();
-                try {
-                    if (bdstr != null) {
+                if (bdstr != null) {
+                    try {
                         info.profile.birthday = new Date(_bfmt.parse(bdstr).getTime());
+                    } catch (Exception e) {
+                        try {
+                            // this will end up with year set to 1970, but at least we'll get the
+                            // month and day
+                            info.profile.birthday = new Date(_bfmtNoYear.parse(bdstr).getTime());
+                        } catch (Exception e2) {
+                            log.info("Cannot parse Facebook birthday",
+                                     "uid", creds.getUserId(), "bday", bdstr);
+                        }
                     }
-                } catch (Exception e) {
-                    log.info("Cannot parse Facebook birthday",
-                             "uid", creds.getUserId(), "bday", bdstr);
                 }
             }
 
@@ -121,4 +127,5 @@ public class FacebookAuthHandler extends ExternalAuthHandler
 
     /** Used to parse Facebook profile birthdays. */
     protected static SimpleDateFormat _bfmt = new SimpleDateFormat("MMMM dd, yyyy");
+    protected static SimpleDateFormat _bfmtNoYear = new SimpleDateFormat("MMMM dd");
 }
