@@ -36,6 +36,7 @@ import com.threerings.msoy.server.persist.BatchInvoker;
 import com.threerings.msoy.server.persist.ExternalMapRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
+import com.threerings.msoy.web.gwt.CookieNames;
 import com.threerings.msoy.web.gwt.ExternalAuther;
 import com.threerings.msoy.web.gwt.FacebookCreds;
 import com.threerings.msoy.web.gwt.ServiceException;
@@ -130,7 +131,7 @@ public class FacebookLogic
         throws ServiceException
     {
         // throw if there is no session
-        getSessionInfo(mrec, 0);
+        SessionInfo sinf = getSessionInfo(mrec, 0);
 
         // load up & verify the template
         FacebookNotificationRecord notifRec = _facebookRepo.loadNotification(notificationId);
@@ -143,13 +144,24 @@ public class FacebookLogic
             throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
         }
 
-        // generate the instance to send
+        // check we are not already sending a batch from this user
         String batchId = notificationId + "." + mrec.memberId;
         FacebookNotificationRecord instance = _facebookRepo.loadNotification(batchId);
         if (instance != null && instance.node != null) {
             log.warning("Requested notification still sending", "id", instance.id);
             throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
         }
+
+        // add some standard replacements
+        replacements.put("uid", sinf.fbid.toString());
+        String gameUrl = replacements.get("game_url");
+        if (gameUrl != null) {
+            gameUrl += (gameUrl.contains("?") ? "&" : "?");
+            gameUrl += CookieNames.AFFILIATE + "=" + sinf.fbid;
+            replacements.put("game_url", gameUrl); 
+        }
+
+        // do the replacements and create the instance
         String text = notifRec.text;
         for (Map.Entry<String, String> pair : replacements.entrySet()) {
             String key = "{*" + pair.getKey() + "*}";

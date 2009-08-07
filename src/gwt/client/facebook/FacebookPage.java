@@ -71,17 +71,16 @@ public class FacebookPage extends Page
         }
 
         // see which phase of the challenge flow we are in and show the appropriate screen
-        // in production, we just go straight to pick mode and show a request form for now
-        // TODO: finish the other options and enable in production
-
         if (mode.equals(ArgNames.FB_CHALLENGE_FRIENDS)) {
-            // TODO
+            // TODO: this probably isn't needed anymore
         } else if (mode.equals(ArgNames.FB_CHALLENGE_APP_FRIENDS)) {
-            // TODO
-        } else if (true || mode.equals(ArgNames.FB_CHALLENGE_PICK)) {
+            // TODO: this probably isn't needed anymore
+        } else if (mode.equals(ArgNames.FB_CHALLENGE_PICK)) {
+            // pick one or more friends and send a request
             setContent("Challenge",
                 FBRequestPanel.createChallenge(game, _gameInviteInfo));
         } else {
+            // initial phase, select a method
             setContent(new FBChallengeSelectPanel(game, _gameInviteInfo.gameName));
         }
     }

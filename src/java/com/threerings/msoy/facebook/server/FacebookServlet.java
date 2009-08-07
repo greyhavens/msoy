@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -35,6 +34,7 @@ import com.threerings.msoy.server.persist.MemberCardRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 
+import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.facebook.data.FacebookCodes;
 import com.threerings.msoy.facebook.gwt.FacebookFriendInfo;
 import com.threerings.msoy.facebook.gwt.FacebookGame;
@@ -239,8 +239,10 @@ public class FacebookServlet extends MsoyServiceServlet
         throws ServiceException
     {
         MemberRecord mrec = requireAuthedUser();
-        Map<String, String> replacements = ImmutableMap.of(
-            "game", getGameName(game));
+        Map<String, String> replacements = Maps.newHashMap();
+        replacements.put("game", getGameName(game));
+        replacements.put("game_url",
+            DeploymentConfig.facebookCanvasUrl + "?" + game.getCanvasArgs());
         _fbLogic.scheduleFriendNotification(mrec, "challenge", replacements, appOnly);
     }
 
