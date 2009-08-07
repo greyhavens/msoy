@@ -15,10 +15,10 @@ import com.threerings.gwt.util.ServiceUtil;
 import com.threerings.msoy.data.all.DeploymentConfig;
 
 import com.threerings.msoy.web.gwt.FacebookTemplateCard;
-import com.threerings.msoy.web.gwt.FacebookUtil;
 import com.threerings.msoy.web.gwt.WebMemberService;
 import com.threerings.msoy.web.gwt.WebMemberServiceAsync;
 
+import client.facebookbase.FacebookUtil;
 import client.shell.CShell;
 import client.util.InfoCallback;
 import client.util.JavaScriptUtil;

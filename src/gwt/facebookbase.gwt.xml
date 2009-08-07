@@ -1,0 +1,4 @@
+<module>
+  <inherits name="global"/>
+  <source path="client/facebookbase"/>
+</module>

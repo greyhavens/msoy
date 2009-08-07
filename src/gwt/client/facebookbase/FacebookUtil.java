@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.web.gwt;
+package client.facebookbase;
 
 import java.util.ArrayList;
 import java.util.HashMap;
