@@ -3,9 +3,7 @@
 
 package client.frame;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import com.google.gwt.core.client.GWT;
@@ -17,6 +15,7 @@ import com.threerings.gwt.util.ServiceUtil;
 import com.threerings.msoy.data.all.DeploymentConfig;
 
 import com.threerings.msoy.web.gwt.FacebookTemplateCard;
+import com.threerings.msoy.web.gwt.FacebookUtil;
 import com.threerings.msoy.web.gwt.WebMemberService;
 import com.threerings.msoy.web.gwt.WebMemberServiceAsync;
 
@@ -63,13 +62,11 @@ public class ExternalFeeder
         String actionURL =
             DeploymentConfig.facebookCanvasUrl + "?game=" + event.getGameId() + "&vec=" + vector;
 
-        List<Object> images = new ArrayList<Object>();
+        FacebookUtil.FeedStoryImages images = new FacebookUtil.FeedStoryImages();
         if (event.getGameMediaURL() != null) {
-            images.add(createImage(event.getGameMediaURL(), actionURL));
+            images.add(event.getGameMediaURL(), actionURL, ACCESSIBLE_GAME_IMAGE);
         }
-        images.add(createImage(event.getMediaURL(), actionURL));
-
-        setPublicImages(images);
+        images.add(event.getMediaURL(), actionURL, ACCESSIBLE_TROPHY_IMAGE);
 
         Map<String, Object> data = new HashMap<String, Object>();
         data.put("game_id", event.getGameId());
@@ -79,56 +76,10 @@ public class ExternalFeeder
         data.put("descrip", event.getDescription());
         data.put("action_url", actionURL);
         data.put("vector", vector);
-        data.put("images", JavaScriptUtil.createArray(images));
+        data.put("images", images.toArray());
 
         publishTrophy(templateId, event.getGameId(), event.getTrophyIdent(),
             JavaScriptUtil.createDictionaryFromMap(data));
-    }
-
-    /**
-     * Creates a JSNI dictionary referring to the given image source and href.
-     */
-    protected JavaScriptObject createImage (String src, String href)
-    {
-        Map<String, Object> image = new HashMap<String, Object>();
-        image.put("src", src);
-        image.put("href", href);
-        return JavaScriptUtil.createDictionaryFromMap(image);
-    }
-
-    /**
-     * Swaps in some images with arbitrary public URLs here if this is a dev deployment that does
-     * not use media.whirled.com.
-     */
-    protected void setPublicImages (List<Object> images)
-    {
-        String pubRoot = "http://media.whirled.com/";
-        if (!DeploymentConfig.devDeployment || DeploymentConfig.mediaURL.equals(pubRoot)) {
-            return;
-        }
-
-        String pubImages[] = {
-            pubRoot + "708ca91490155abc18f99a74e8bba5129b5033f6.png",  // CC game thumb
-            pubRoot + "240aa9267fa6dc8422588e6818862301fd658e6f.png"}; // CC Freshman trophy
-
-        if (images.size() == 2) {
-            // game and trophy images
-            setImageSrc(images, 0, pubImages[0]);
-            setImageSrc(images, 1, pubImages[1]);
-
-        } else if (images.size() == 1) {
-            // trophy only
-            setImageSrc(images, 0, pubImages[1]);
-        }        
-    }
-
-    /**
-     * Swap in some images with arbitrary public URLs here to satisfy Facebook's validation.
-     */
-    protected void setImageSrc (List<Object> images, int idx, String url)
-    {
-        JavaScriptObject jsobj = (JavaScriptObject)images.get(idx);
-        JavaScriptUtil.setDictionaryEntry(jsobj, "src", url);
     }
 
     /**
@@ -169,6 +120,11 @@ public class ExternalFeeder
               "http://mediacloud.whirled.com/240aa9267fa6dc8422588e6818862301fd658e6f.png",
               "href" : "http://www.whirled.com/go/games-d_827_t"}]}
     */
+
+    protected static final String ACCESSIBLE_GAME_IMAGE =
+        FacebookUtil.PUB_ROOT + "708ca91490155abc18f99a74e8bba5129b5033f6.png"; // CC game thumb
+    protected static final String ACCESSIBLE_TROPHY_IMAGE =
+        FacebookUtil.PUB_ROOT + "240aa9267fa6dc8422588e6818862301fd658e6f.png"; // CC trophy
 
     protected static final WebMemberServiceAsync _membersvc = (WebMemberServiceAsync)
         ServiceUtil.bind(GWT.create(WebMemberService.class), WebMemberService.ENTRY_POINT);
