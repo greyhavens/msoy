@@ -1,4 +1,5 @@
 <module>
   <inherits name="global"/>
   <source path="client/facebookbase"/>
+  <source path="com/threerings/msoy/facebook/gwt"/>
 </module>

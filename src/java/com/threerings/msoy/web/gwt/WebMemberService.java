@@ -161,19 +161,6 @@ public interface WebMemberService extends RemoteService
         throws ServiceException;
 
     /**
-     * Gets a random facebook template from those with a matching code. If none match, null is
-     * returned.
-     */
-    FacebookTemplateCard getFacebookTemplate (String code)
-        throws ServiceException;
-
-    /**
-     * Notes that the user published a trophy on facebook (or at least viewed the publish dialog).
-     */
-    void trophyPublishedToFacebook (int gameId, String ident)
-        throws ServiceException;
-
-    /**
      * Get the price of a barscription.
      */
     PriceQuote getBarscriptionCost ()

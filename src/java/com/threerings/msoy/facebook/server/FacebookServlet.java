@@ -24,6 +24,7 @@ import com.google.code.facebookapi.schema.UsersGetInfoResponse;
 import com.samskivert.util.Comparators;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
+import com.samskivert.util.RandomUtil;
 
 import com.threerings.parlor.rating.server.persist.RatingRecord;
 import com.threerings.parlor.rating.server.persist.RatingRepository;
@@ -39,7 +40,9 @@ import com.threerings.msoy.facebook.data.FacebookCodes;
 import com.threerings.msoy.facebook.gwt.FacebookFriendInfo;
 import com.threerings.msoy.facebook.gwt.FacebookGame;
 import com.threerings.msoy.facebook.gwt.FacebookService;
+import com.threerings.msoy.facebook.gwt.FacebookTemplateCard;
 import com.threerings.msoy.facebook.server.persist.FacebookRepository;
+import com.threerings.msoy.facebook.server.persist.FacebookTemplateRecord;
 
 import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.game.gwt.ArcadeData;
@@ -65,6 +68,26 @@ import static com.threerings.msoy.Log.log;
 public class FacebookServlet extends MsoyServiceServlet
     implements FacebookService
 {
+    @Override // from FacebookService
+    public FacebookTemplateCard getTemplate (String code)
+        throws ServiceException
+    {
+        List<FacebookTemplateRecord> templates = _facebookRepo.loadVariants(code);
+        if (templates.size() == 0) {
+            log.warning("No Facebook templates found for request", "code", code);
+            return null;
+        }
+        return RandomUtil.pickRandom(templates).toTemplateCard();
+    }
+
+    @Override // from FacebookService
+    public void trophyPublished (int gameId, String ident)
+        throws ServiceException
+    {
+        MemberRecord memrec = requireAuthedUser();
+        _facebookRepo.noteTrophyPublished(memrec.memberId, gameId, ident);
+    }
+
     @Override // from FacebookService
     public List<FacebookFriendInfo> getAppFriendsInfo ()
         throws ServiceException

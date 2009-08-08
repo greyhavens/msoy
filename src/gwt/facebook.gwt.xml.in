@@ -1,8 +1,6 @@
 <module>
-  <inherits name="global"/>
+  <inherits name="facebookbase"/>
   <source path="client/facebook"/>
-  <source path="client/facebookbase"/>
-  <source path="com/threerings/msoy/facebook/gwt"/>
   <public path="public/facebook"/>
   <stylesheet src="facebook.css"/>
   <entry-point class="client.facebook.FacebookPage"/>

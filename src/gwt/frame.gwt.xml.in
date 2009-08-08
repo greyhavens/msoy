@@ -1,5 +1,4 @@
 <module>
-  <inherits name="global"/>
   <inherits name="facebookbase"/>
   <source path="client/frame"/>
   <public path="public/frame"/>

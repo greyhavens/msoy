@@ -45,6 +45,20 @@ public interface FacebookService extends RemoteService
     }
 
     /**
+     * Gets a random template variant from those with a matching code. If none match, null is
+     * returned.
+     */
+    FacebookTemplateCard getTemplate (String code)
+        throws ServiceException;
+
+    /**
+     * Notes that the user published a trophy to their feed (or at least viewed the publish
+     * dialog).
+     */
+    void trophyPublished (int gameId, String ident)
+        throws ServiceException;
+
+    /**
      * Retrieves the list of friends and their associated info for the currently logged in user.
      */
     List<FacebookFriendInfo> getAppFriendsInfo ()

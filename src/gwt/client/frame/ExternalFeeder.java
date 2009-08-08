@@ -10,13 +10,12 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-import com.threerings.gwt.util.ServiceUtil;
-
 import com.threerings.msoy.data.all.DeploymentConfig;
 
-import com.threerings.msoy.web.gwt.FacebookTemplateCard;
-import com.threerings.msoy.web.gwt.WebMemberService;
-import com.threerings.msoy.web.gwt.WebMemberServiceAsync;
+import com.threerings.msoy.facebook.gwt.FacebookService;
+import com.threerings.msoy.facebook.gwt.FacebookServiceAsync;
+import com.threerings.msoy.facebook.gwt.FacebookTemplateCard;
+
 
 import client.facebookbase.FacebookUtil;
 import client.shell.CShell;
@@ -41,7 +40,7 @@ public class ExternalFeeder
 
     protected void publishTrophyToFacebook (final TrophyEvent event)
     {
-        _membersvc.getFacebookTemplate("trophy", new InfoCallback<FacebookTemplateCard>() {
+        _fbsvc.getTemplate("trophy", new InfoCallback<FacebookTemplateCard>() {
             @Override public void onSuccess (FacebookTemplateCard result) {
                 if (result != null) {
                     CShell.log("Got template, publishing", "bundle", result.bundleId,
@@ -88,7 +87,7 @@ public class ExternalFeeder
      */
     protected void trophyPublished (int gameId, String trophyIdent)
     {
-        _membersvc.trophyPublishedToFacebook(gameId, trophyIdent, new AsyncCallback<Void>() {
+        _fbsvc.trophyPublished(gameId, trophyIdent, new AsyncCallback<Void>() {
             @Override public void onFailure (Throwable caught) {
                 CShell.log("Failed to contact server for trophy published", caught);
             }
@@ -126,6 +125,5 @@ public class ExternalFeeder
     protected static final String ACCESSIBLE_TROPHY_IMAGE =
         FacebookUtil.PUB_ROOT + "240aa9267fa6dc8422588e6818862301fd658e6f.png"; // CC trophy
 
-    protected static final WebMemberServiceAsync _membersvc = (WebMemberServiceAsync)
-        ServiceUtil.bind(GWT.create(WebMemberService.class), WebMemberService.ENTRY_POINT);
+    protected static final FacebookServiceAsync _fbsvc = GWT.create(FacebookService.class);
 }

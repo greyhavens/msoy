@@ -9,7 +9,7 @@ import com.samskivert.depot.annotation.Entity;
 import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.expression.ColumnExp;
 import com.threerings.msoy.facebook.gwt.FacebookTemplate;
-import com.threerings.msoy.web.gwt.FacebookTemplateCard;
+import com.threerings.msoy.facebook.gwt.FacebookTemplateCard;
 
 /**
  * Describes a story template entered into the Facebook template editor for use at runtime by the
