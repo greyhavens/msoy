@@ -196,12 +196,12 @@ public class FacebookCallbackServlet extends HttpServlet
         if (path == null || !path.startsWith(GAME_PATH)) {
             info.apiKey = ServerConfig.config.getValue("facebook.api_key", "");
             info.appSecret = ServerConfig.config.getValue("facebook.secret", "");
-            String gameId = req.getParameter("game");
+            String gameId = req.getParameter(ArgNames.FB_PARAM_GAME);
             if (!StringUtil.isBlank(gameId)) {
                 info.gameId = Integer.parseInt(gameId);
             }
-            info.mochiGameTag = req.getParameter("mgame");
-            info.vector = req.getParameter("vec");
+            info.mochiGameTag = req.getParameter(ArgNames.FB_PARAM_MOCHI_GAME);
+            info.vector = req.getParameter(ArgNames.VECTOR);
             if (info.vector == null) {
                 info.vector = FacebookTemplateCard.toEntryVector("app", "");
             }

@@ -12,6 +12,9 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
 
+import com.threerings.msoy.web.gwt.ArgNames;
+import com.threerings.msoy.web.gwt.SharedNaviUtil;
+
 import com.threerings.msoy.facebook.gwt.FacebookService;
 import com.threerings.msoy.facebook.gwt.FacebookServiceAsync;
 import com.threerings.msoy.facebook.gwt.FacebookTemplateCard;
@@ -58,8 +61,8 @@ public class ExternalFeeder
 
         // we use it in 3 places, but they all just go to the game detail screen on facebook
         // TODO: link different things to different places? more redirects in FacebookServlet?
-        String actionURL =
-            DeploymentConfig.facebookCanvasUrl + "?game=" + event.getGameId() + "&vec=" + vector;
+        String actionURL = SharedNaviUtil.buildRequest(DeploymentConfig.facebookCanvasUrl,
+            ArgNames.FB_PARAM_GAME, String.valueOf(event.getGameId()), ArgNames.VECTOR, vector);
 
         FacebookUtil.FeedStoryImages images = new FacebookUtil.FeedStoryImages();
         if (event.getGameMediaURL() != null) {

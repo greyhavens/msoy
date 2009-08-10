@@ -12,6 +12,21 @@ package com.threerings.msoy.web.gwt;
  */
 public class SharedNaviUtil
 {
+    /**
+     * Creates a request string for the given url and parameters. Does not do URI escaping.
+     * @param nameValuePairs pairs to append; even number of elements expected
+     */
+    public static String buildRequest (String url, String... nameValuePairs)
+    {
+        if (nameValuePairs.length > 0) {
+            url += url.contains("?") ? "&" : "?";
+            for (int ii = 0; ii <= nameValuePairs.length; ++ii) {
+                url += "&" + nameValuePairs[ii] + "=" + nameValuePairs[ii+1];
+            }
+        }
+        return url;
+    }
+
     public enum GameDetails {
         INSTRUCTIONS("i"), COMMENTS("c"), TROPHIES("t"), MYRANKINGS("mr"),
         TOPRANKINGS("tr"), METRICS("m"), LOGS("l"), DEV_LOGS("d");

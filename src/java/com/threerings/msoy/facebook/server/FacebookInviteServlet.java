@@ -26,6 +26,7 @@ import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.MemberRecord;
 
+import com.threerings.msoy.web.gwt.ArgNames;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.MarkupBuilder;
 import com.threerings.msoy.web.gwt.Pages;
@@ -60,7 +61,7 @@ public class FacebookInviteServlet extends HttpServlet
     
                 int gameId;
                 try {
-                    String gameIdStr = req.getParameter("gameId");
+                    String gameIdStr = req.getParameter(ArgNames.FB_PARAM_GAME);
                     if (gameIdStr == null) {
                         rsp.sendError(HttpServletResponse.SC_NOT_FOUND);
                         return;
@@ -182,7 +183,7 @@ public class FacebookInviteServlet extends HttpServlet
         b.open("script", "type", js).append("\n//<!--\n");
         b.append("window.close();");
         b.append("\n//-->").close();
-    
+
         // send
         rsp.getOutputStream().println(b.finish());
         StreamUtil.close(rsp.getOutputStream());
@@ -226,7 +227,7 @@ public class FacebookInviteServlet extends HttpServlet
         int gameId = 0;
         if (isGame) {
             try {
-                gameId = Integer.parseInt(req.getParameter("gameId"));
+                gameId = Integer.parseInt(req.getParameter(ArgNames.FB_PARAM_GAME));
             } catch (Exception e) {
                 log.warning("Failed to get game id of sent invites", e);
             }

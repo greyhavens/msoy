@@ -95,9 +95,9 @@ public class FacebookGame
      * Gets the CGI parameters to append to the canvas (application) url in order to get to this
      * game.
      */
-    public String getCanvasArgs ()
+    public String[] getCanvasArgs ()
     {
-        return choose("game=", "mgame=") + _id;
+        return new String[] {choose(ArgNames.FB_PARAM_GAME, ArgNames.FB_PARAM_MOCHI_GAME), _id};
     }
 
     /**

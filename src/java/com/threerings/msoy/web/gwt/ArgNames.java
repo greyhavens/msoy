@@ -13,6 +13,9 @@ public class ArgNames
     /** Determines the overall embedding of the web application. */
     public static final String EMBEDDING = "emb";
 
+    /** Parameter or token designating the entry vector, recorded for new users. */
+    public static final String VECTOR = "vec";
+
     /** Subnav for a facebook game challenge. */
     public static final String FB_GAME_CHALLENGE = "challenge";
 
@@ -27,6 +30,12 @@ public class ArgNames
 
     /** Pick some friends to challenge. */
     public static final String FB_CHALLENGE_PICK = "pick";
+
+    /** Parameter passed to canvas/callback for loading a game. */
+    public static final String FB_PARAM_GAME = "game";
+
+    /** Parameter passed to canvas/callback for loading a mochi game. */
+    public static final String FB_PARAM_MOCHI_GAME = "mgame";
 
     /**
      * Value constants and utility functions for the embedding argument.

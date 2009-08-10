@@ -17,6 +17,7 @@ import com.samskivert.util.Tuple;
 import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.server.MemberLogic;
 
+import com.threerings.msoy.web.gwt.ArgNames;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
@@ -99,12 +100,12 @@ public class GoServlet extends HttpServlet
     protected static Tuple<String, String> extractVector (String path)
     {
         path = StringUtil.deNull(path);
-        if (path.indexOf(VEC_ARG) != -1) {
+        if (path.indexOf(ArgNames.VECTOR) != -1) {
             try {
                 Pages page = Pages.fromHistory(path);
                 Args args = Args.fromHistory(path);
                 for (int ii = 0; ii < args.getArgCount(); ii++) {
-                    if (args.get(ii, "").equals(VEC_ARG)) {
+                    if (args.get(ii, "").equals(ArgNames.VECTOR)) {
                         return Tuple.newTuple(args.get(ii+1, (String)null),
                                               page.makeToken(args.recomposeWithout(ii, 2)));
                     }
@@ -117,8 +118,6 @@ public class GoServlet extends HttpServlet
         // if we had no (or a bogus) vector, use the page URL instead
         return Tuple.newTuple(StringUtil.truncate("page." + path, 128), path);
     }
-
-    protected static final String VEC_ARG = "vec";
 
     // our dependencies
     @Inject protected MemberLogic _memberLogic;

@@ -20,6 +20,7 @@ import com.threerings.msoy.facebook.gwt.FacebookService;
 import com.threerings.msoy.facebook.gwt.FacebookServiceAsync;
 import com.threerings.msoy.facebook.gwt.FacebookService.InviteInfo;
 import com.threerings.msoy.web.gwt.CookieNames;
+import com.threerings.msoy.web.gwt.SharedNaviUtil;
 
 /**
  * Server FBML panel for sending requests to friends. Currently deals with site invitations and
@@ -45,7 +46,8 @@ public class FBRequestPanel extends ServerFBMLPanel
                     result.username, getPronoun(result.gender), app);
                 String tip = _msgs.inviteGenericTip();
                 String accept = _msgs.inviteChallengeAccept(app);
-                div.add(new FBRequestPanel(result.excludeIds, invite, tip, accept, "", app));
+                div.add(new FBRequestPanel(
+                    result.excludeIds, invite, tip, accept, new String[0], app));
             }
         });
         return div;
@@ -73,11 +75,11 @@ public class FBRequestPanel extends ServerFBMLPanel
      * @param text the invitation copy, such as "Come Play With Me"
      * @param tip mini-instructions at the top of the form, such "Select some friends to play"
      * @param accept the copy on the accept button of the invitation
-     * @param canvasArgs "name1=value1&name2=value2" arguments to add to the accept button url
+     * @param canvasArgs array of name/value pairs to add to the accept button url
      * @param type the type of invitation shown in the form's "send" button
      */
     protected FBRequestPanel (List<Long> excludeIds, String text, String tip, String accept,
-        String canvasArgs, String type)
+        String[] canvasArgs, String type)
     {
         StringBuilder exclude = new StringBuilder();
         if (excludeIds != null) {
@@ -85,10 +87,9 @@ public class FBRequestPanel extends ServerFBMLPanel
                 exclude.append(id).append(",");
             }
         }
-        if (canvasArgs.length() > 0) {
-            canvasArgs += "&";
-        }
-        canvasArgs += CookieNames.AFFILIATE + "=" + CShell.getMemberId();
+        String url = SharedNaviUtil.buildRequest(DeploymentConfig.facebookCanvasUrl, canvasArgs);
+        url = SharedNaviUtil.buildRequest(url,
+            CookieNames.AFFILIATE, String.valueOf(CShell.getMemberId()));
         FBMLPanel form = new FBMLPanel("request-form",
             // TODO: give the fbinvite servlet enough information to go back to where we were
             "action", DeploymentConfig.serverURL + "fbinvite/ndone",
@@ -96,7 +97,7 @@ public class FBRequestPanel extends ServerFBMLPanel
             "invite", "true",
             // Facebook ignores escapes in here, sanitize instead
             "type", StringUtil.sanitizeAttribute(type),
-            "content", makeContent(text, accept, canvasArgs));
+            "content", makeContent(text, accept, url));
         form.add(new FBMLPanel("multi-friend-selector",
             "showborder", String.valueOf(false),
             "rows", String.valueOf(6),
@@ -106,9 +107,8 @@ public class FBRequestPanel extends ServerFBMLPanel
         add(form);
     }
 
-    protected static String makeContent (String text, String accept, String canvasArgs)
+    protected static String makeContent (String text, String accept, String url)
     {
-        String url = DeploymentConfig.facebookCanvasUrl + "?" + canvasArgs;
         // weird... the req-choice tag goes inside the content attribute
         FBMLPanel reqChoice = new FBMLPanel("req-choice", "url", url, "label", accept);
         return StringUtil.escapeAttribute(text) +

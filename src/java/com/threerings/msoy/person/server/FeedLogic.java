@@ -33,7 +33,9 @@ import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
+import com.threerings.msoy.web.gwt.ArgNames;
 import com.threerings.msoy.web.gwt.ExternalAuther;
+import com.threerings.msoy.web.gwt.SharedNaviUtil;
 
 import com.threerings.msoy.facebook.server.FacebookLogic;
 import com.threerings.msoy.facebook.server.persist.FacebookRepository;
@@ -306,8 +308,9 @@ public class FeedLogic
         FacebookTemplateRecord template = RandomUtil.pickRandom(templates);
 
         // set up the data for the story
-        String actionURL = DeploymentConfig.facebookCanvasUrl;
-        actionURL += "?game=" + gameId + "&vec=" + template.toEntryVector();
+        String actionURL = SharedNaviUtil.buildRequest(DeploymentConfig.facebookCanvasUrl,
+            ArgNames.FB_PARAM_GAME, String.valueOf(gameId),
+            ArgNames.VECTOR, template.toEntryVector());
         Map<String, String> data = Maps.newHashMap();
         data.put("action_url", actionURL);
         data.put("game", gameName);
