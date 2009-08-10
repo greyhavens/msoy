@@ -21,6 +21,7 @@ import com.google.gwt.user.client.ui.PushButton;
 import com.threerings.msoy.facebook.gwt.FacebookGame;
 import com.threerings.msoy.facebook.gwt.FacebookService;
 import com.threerings.msoy.facebook.gwt.FacebookServiceAsync;
+import com.threerings.msoy.facebook.gwt.FacebookService.StoryFields;
 import com.threerings.msoy.web.gwt.ArgNames;
 import com.threerings.msoy.web.gwt.Pages;
 
@@ -32,6 +33,7 @@ public class FBChallengeSelectPanel extends FlowPanel
     public FBChallengeSelectPanel (FacebookGame game, String gameName)
     {
         _game = game;
+        _gameName = gameName;
         setStyleName("challengeSelect");
         add(MsoyUI.createLabel(_msgs.challengeSelect(gameName), "Title"));
         HorizontalPanel buttons = new HorizontalPanel();
@@ -65,9 +67,15 @@ public class FBChallengeSelectPanel extends FlowPanel
     {
         final Command send = new Command() {
             @Override public void execute () {
-                _fbsvc.sendChallengeNotification(_game, appOnly, new InfoCallback<Void>() {
-                    @Override public void onSuccess (Void result) {
-                        Link.go(_game.getPlayPage(), _game.getPlayArgs());
+                _fbsvc.sendChallengeNotification(_game, appOnly, new InfoCallback<StoryFields>() {
+                    @Override public void onSuccess (StoryFields result) {
+                        if (result == null) {
+                            Link.go(_game.getPlayPage(), _game.getPlayArgs());
+                            return;
+                        }
+
+                        // publish to feed
+                        FBChallengeFeeder.publish(_game, _gameName, result);
                     }
                 });
             }
@@ -87,6 +95,7 @@ public class FBChallengeSelectPanel extends FlowPanel
     }
 
     protected FacebookGame _game;
+    protected String _gameName;
 
     protected static final FacebookMessages _msgs = GWT.create(FacebookMessages.class);
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);

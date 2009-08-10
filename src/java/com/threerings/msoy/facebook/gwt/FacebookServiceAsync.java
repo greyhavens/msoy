@@ -6,6 +6,7 @@ package com.threerings.msoy.facebook.gwt;
 import java.util.List;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.threerings.msoy.facebook.gwt.FacebookService.StoryFields;
 import com.threerings.msoy.facebook.gwt.FacebookService.InviteInfo;
 import com.threerings.msoy.web.gwt.WebMemberService;
 
@@ -43,5 +44,5 @@ public interface FacebookServiceAsync
      * The asynchronous version of {@link FacebookService#sendChallengeNotification}.
      */
     void sendChallengeNotification (
-        FacebookGame game, boolean appOnly, AsyncCallback<Void> callback);
+        FacebookGame game, boolean appOnly, AsyncCallback<StoryFields> callback);
 }

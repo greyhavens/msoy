@@ -218,7 +218,7 @@ public class FacebookServlet extends MsoyServiceServlet
             }
 
         } else {
-            info.gameName = getGameName(game);
+            info.gameName = getGameInfo(game).name;
         }
 
         MemberRecord mrec = requireAuthedUser();
@@ -258,18 +258,31 @@ public class FacebookServlet extends MsoyServiceServlet
     }
 
     @Override // from FacebookService
-    public void sendChallengeNotification (FacebookGame game, boolean appOnly)
+    public StoryFields sendChallengeNotification (FacebookGame game, boolean appOnly)
         throws ServiceException
     {
         MemberRecord mrec = requireAuthedUser();
+        GameInfo gameInfo = getGameInfo(game);
         Map<String, String> replacements = Maps.newHashMap();
-        replacements.put("game", getGameName(game));
+        replacements.put("game", gameInfo.name);
         replacements.put("game_url",
             DeploymentConfig.facebookCanvasUrl + "?" + game.getCanvasArgs());
         _fbLogic.scheduleFriendNotification(mrec, "challenge", replacements, appOnly);
+
+        try {
+            StoryFields result = new StoryFields();
+            result.template = getTemplate("challenge");
+            result.description = gameInfo.desc;
+            result.thumbnailURL = gameInfo.thumbURL;
+            return result;
+
+        } catch (Exception e) {
+            log.warning("Could not load challenge template");
+            return null;
+        }
     }
 
-    protected String getGameName (FacebookGame game)
+    protected GameInfo getGameInfo (FacebookGame game)
         throws ServiceException
     {
         switch (game.type) {
@@ -279,15 +292,15 @@ public class FacebookServlet extends MsoyServiceServlet
             if (info == null) {
                 throw new ServiceException();
             }
-            return info.name;
+            return new GameInfo(info);
 
         case MOCHI:
             // mochi game invite
-            MochiGameInfo mochiInfo = _mgameRepo.loadMochiGame(game.getStringId());
-            if (mochiInfo == null) {
+            MochiGameInfo minfo = _mgameRepo.loadMochiGame(game.getStringId());
+            if (minfo == null) {
                 throw new ServiceException();
             }
-            return mochiInfo.name;
+            return new GameInfo(minfo);
         }
         return null;
     }
@@ -324,6 +337,30 @@ public class FacebookServlet extends MsoyServiceServlet
                 return cmp;
             }
         });
+    }
+
+    /**
+     * Common game info fields (from whirled and mochi games).
+     */
+    protected static class GameInfo
+    {
+        public GameInfo (GameInfoRecord info)
+        {
+            name = info.name;
+            desc = info.description;
+            thumbURL = info.getThumbMedia().getMediaPath();
+        }
+
+        public GameInfo (MochiGameInfo info)
+        {
+            name = info.name;
+            desc = info.desc;
+            thumbURL = info.thumbURL;
+        }
+
+        String name;
+        String desc;
+        String thumbURL;
     }
 
     @Inject protected FacebookLogic _fbLogic;

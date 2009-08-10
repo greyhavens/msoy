@@ -45,6 +45,22 @@ public interface FacebookService extends RemoteService
     }
 
     /**
+     * Data required for publishing a simple feed story.
+     */
+    public static class StoryFields
+        implements IsSerializable
+    {
+        /** The template bundle to use, normally a randomly selected variant. */
+        public FacebookTemplateCard template;
+
+        /** The thumbnail to use in the story. */
+        public String thumbnailURL;
+
+        /** The game description, normally used as the body of the story. */
+        public String description;
+    }
+
+    /**
      * Gets a random template variant from those with a matching code. If none match, null is
      * returned.
      */
@@ -82,8 +98,9 @@ public interface FacebookService extends RemoteService
 
     /**
      * Sends a challenge notification to all friends of the logged in user, optionally limiting
-     * to only those friends that use the application.
+     * to only those friends that use the application. Returns data for publishing a challenge
+     * feed story, or null if the data could not be loaded.
      */
-    void sendChallengeNotification (FacebookGame game, boolean appOnly)
+    StoryFields sendChallengeNotification (FacebookGame game, boolean appOnly)
         throws ServiceException;
 }
