@@ -22,7 +22,7 @@ public class FacebookUtil
     public static final String PUB_ROOT = "http://media.whirled.com/";
 
     /** Whether or not the media in this deployment is publicly accessible. This is important
-     * becase facebbok will not publish feed stories with firewalled media. */
+     * because Facebook will not publish feed stories with firewalled media. */
     public static final boolean IS_MEDIA_ACCESSIBLE =
         !DeploymentConfig.devDeployment || DeploymentConfig.mediaURL.equals(PUB_ROOT);
 
