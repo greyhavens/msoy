@@ -30,6 +30,7 @@ import com.threerings.msoy.web.gwt.ArgNames;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.MarkupBuilder;
 import com.threerings.msoy.web.gwt.Pages;
+import com.threerings.msoy.web.gwt.SharedNaviUtil;
 import com.threerings.msoy.web.gwt.WebCreds;
 import com.threerings.msoy.web.server.MemberHelper;
 import com.threerings.msoy.web.server.MsoyHttpServer;
@@ -140,7 +141,8 @@ public class FacebookInviteServlet extends HttpServlet
             .put("gameId", String.valueOf(gameId))
             .put("acceptPath", Pages.WORLD.makeFriendURL(memberId, Args.fromToken(acceptPath)))
             .put("acceptLabel", "Play " + gameName)
-            .put("action", DeploymentConfig.serverURL + "fbinvite/done?gameId=" + gameId)
+            .put("action", SharedNaviUtil.buildRequest(
+                DeploymentConfig.serverURL + "fbinvite/done", ArgNames.FB_PARAM_GAME, "" + gameId),
             .put("message", "I'm playing " + gameName + " on Whirled, join me!")
             .put("apiKey", ServerConfig.config.getValue("facebook.api_key", ""))
             .put("formElemId", FORM_TAG_ID)
