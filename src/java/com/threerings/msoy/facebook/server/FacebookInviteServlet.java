@@ -142,7 +142,7 @@ public class FacebookInviteServlet extends HttpServlet
             .put("acceptPath", Pages.WORLD.makeFriendURL(memberId, Args.fromToken(acceptPath)))
             .put("acceptLabel", "Play " + gameName)
             .put("action", SharedNaviUtil.buildRequest(
-                DeploymentConfig.serverURL + "fbinvite/done", ArgNames.FB_PARAM_GAME, "" + gameId),
+                DeploymentConfig.serverURL + "fbinvite/done", ArgNames.FB_PARAM_GAME, "" + gameId))
             .put("message", "I'm playing " + gameName + " on Whirled, join me!")
             .put("apiKey", ServerConfig.config.getValue("facebook.api_key", ""))
             .put("formElemId", FORM_TAG_ID)
