@@ -452,8 +452,8 @@
         <filter token="recaptcha_public" value="${recaptcha_token}"/>
         <filter token="billing_url" value="${billing_url}"/>
         <filter token="facebook_api_key" value="${facebook.api_key}"/>
-        <filter token="facebook_canvas_url" value="${facebook.canvas_url}"/>
-        <filter token="facebook_application_url" value="${facebook.application_url}"/>
+        <filter token="facebook_canvas_name" value="${facebook.canvas_name}"/>
+        <filter token="facebook_application_id" value="${facebook.application_id}"/>
         <filter token="facebook_application_name" value="${facebook.application_name}"/>
       </filterset>
     </copy>

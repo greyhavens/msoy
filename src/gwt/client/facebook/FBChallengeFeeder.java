@@ -9,8 +9,6 @@ import java.util.Map;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 
-import com.threerings.msoy.data.all.DeploymentConfig;
-
 import com.threerings.msoy.web.gwt.ArgNames;
 import com.threerings.msoy.web.gwt.SharedNaviUtil;
 
@@ -37,7 +35,7 @@ public class FBChallengeFeeder
 
         // action link goes to either the Whirled game detail or the Mochi embed
         String actionURL = SharedNaviUtil.buildRequest(
-            DeploymentConfig.facebookCanvasUrl, game.getCanvasArgs());
+            FacebookUtil.APP_CANVAS, game.getCanvasArgs());
         actionURL = SharedNaviUtil.buildRequest(actionURL, ArgNames.VECTOR, vector);
 
         FacebookUtil.FeedStoryImages images = new FacebookUtil.FeedStoryImages();

@@ -167,8 +167,8 @@ oooauth.access_denied_url = /register/access_denied.wm
 
 # facebook.api_key =
 # facebook.secret =
-# facebook.canvas_url = 
-# facebook.application_url = 
+# facebook.canvas_name = 
+# facebook.application_id = 
 # facebook.application_name = 
 
 #

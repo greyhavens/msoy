@@ -5,6 +5,7 @@ package client.facebook;
 
 import java.util.List;
 
+import client.facebookbase.FacebookUtil;
 import client.shell.CShell;
 import client.ui.MsoyUI;
 import client.util.InfoCallback;
@@ -87,7 +88,7 @@ public class FBRequestPanel extends ServerFBMLPanel
                 exclude.append(id).append(",");
             }
         }
-        String url = SharedNaviUtil.buildRequest(DeploymentConfig.facebookCanvasUrl, canvasArgs);
+        String url = SharedNaviUtil.buildRequest(FacebookUtil.APP_CANVAS, canvasArgs);
         url = SharedNaviUtil.buildRequest(url,
             CookieNames.AFFILIATE, String.valueOf(CShell.getMemberId()));
         FBMLPanel form = new FBMLPanel("request-form",

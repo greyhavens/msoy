@@ -27,6 +27,7 @@ import com.google.code.facebookapi.FacebookException;
 import com.google.code.facebookapi.FacebookJaxbRestClient;
 
 import com.threerings.msoy.data.MsoyAuthCodes;
+import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.facebook.data.FacebookCodes;
 import com.threerings.msoy.facebook.server.persist.FacebookNotificationRecord;
 import com.threerings.msoy.facebook.server.persist.FacebookRepository;
@@ -49,6 +50,14 @@ import static com.threerings.msoy.Log.log;
 @Singleton
 public class FacebookLogic
 {
+    /** URL of the main application entry point. */
+    public static final String WHIRLED_APP_CANVAS =
+        "http://apps.facebook.com/" + DeploymentConfig.facebookCanvasName;
+
+    /** URL of the main application's profile page. */
+    public static final String WHIRLED_APP_PROFILE =
+        "http://www.facebook.com/apps/application.php?id=" + DeploymentConfig.facebookApplicationId;
+
     /**
      * Returns a Facebook client not bound to any particular user's session with the deafault read
      * timeout.

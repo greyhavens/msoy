@@ -35,7 +35,6 @@ import com.threerings.msoy.server.persist.MemberCardRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 
-import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.facebook.data.FacebookCodes;
 import com.threerings.msoy.facebook.gwt.FacebookFriendInfo;
 import com.threerings.msoy.facebook.gwt.FacebookGame;
@@ -58,6 +57,7 @@ import com.threerings.msoy.money.server.persist.MoneyRepository;
 
 import com.threerings.msoy.web.gwt.ExternalAuther;
 import com.threerings.msoy.web.gwt.ServiceException;
+import com.threerings.msoy.web.gwt.SharedNaviUtil;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 
 import static com.threerings.msoy.Log.log;
@@ -265,8 +265,8 @@ public class FacebookServlet extends MsoyServiceServlet
         GameInfo gameInfo = getGameInfo(game);
         Map<String, String> replacements = Maps.newHashMap();
         replacements.put("game", gameInfo.name);
-        replacements.put("game_url",
-            DeploymentConfig.facebookCanvasUrl + "?" + game.getCanvasArgs());
+        replacements.put("game_url", SharedNaviUtil.buildRequest(
+            FacebookLogic.WHIRLED_APP_CANVAS, game.getCanvasArgs()));
         _fbLogic.scheduleFriendNotification(mrec, "challenge", replacements, appOnly);
 
         try {

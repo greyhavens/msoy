@@ -26,6 +26,14 @@ public class FacebookUtil
     public static final boolean IS_MEDIA_ACCESSIBLE =
         !DeploymentConfig.devDeployment || DeploymentConfig.mediaURL.equals(PUB_ROOT);
 
+    /** The URL of the main application's canvas. */
+    public static final String APP_CANVAS = "http://apps.facebook.com/" +
+        DeploymentConfig.facebookCanvasName;
+
+    /** The URL of the main application's profile page. */
+    public static final String APP_PROFILE = "http://www.facebook.com/apps/application.php?id=" +
+        DeploymentConfig.facebookApplicationId;
+
     /**
      * Manages the creation of an array of feed story images.
      */

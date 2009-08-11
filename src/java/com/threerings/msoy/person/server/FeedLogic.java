@@ -308,7 +308,7 @@ public class FeedLogic
         FacebookTemplateRecord template = RandomUtil.pickRandom(templates);
 
         // set up the data for the story
-        String actionURL = SharedNaviUtil.buildRequest(DeploymentConfig.facebookCanvasUrl,
+        String actionURL = SharedNaviUtil.buildRequest(FacebookLogic.WHIRLED_APP_CANVAS,
             ArgNames.FB_PARAM_GAME, String.valueOf(gameId),
             ArgNames.VECTOR, template.toEntryVector());
         Map<String, String> data = Maps.newHashMap();

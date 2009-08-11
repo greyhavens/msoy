@@ -9,11 +9,11 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.AbsoluteCSSPanel;
 
-import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.web.gwt.ArgNames;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
+import client.facebookbase.FacebookUtil;
 import client.shell.CShell;
 import client.shell.DynamicLookup;
 import client.ui.MsoyUI;
@@ -36,7 +36,7 @@ public class FacebookTitleBar extends TitleBar
         _contents.add(MsoyUI.createFlowPanel("Logo"));
         _contents.add(button("Games", Pages.GAMES));
         _contents.add(button("Invite", Pages.FACEBOOK, "invite"));
-        _contents.add(Link.createTop("Fan", DeploymentConfig.facebookApplicationUrl));
+        _contents.add(Link.createTop("Fan", FacebookUtil.APP_PROFILE));
         _contents.add(button("Trophies", Pages.GAMES, "t", CShell.getMemberId()));
         if (gameName == null) {
             _contents.getElement().setAttribute("mode", "normal");

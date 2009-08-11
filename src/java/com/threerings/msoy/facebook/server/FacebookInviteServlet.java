@@ -90,7 +90,7 @@ public class FacebookInviteServlet extends HttpServlet
                 logSentInvites(req, memberId, false);
 
                 // just head back to the facebook app
-                MsoyHttpServer.sendTopRedirect(rsp, DeploymentConfig.facebookCanvasUrl);
+                MsoyHttpServer.sendTopRedirect(rsp, FacebookLogic.WHIRLED_APP_CANVAS);
 
             } else {
                 rsp.sendError(HttpServletResponse.SC_NOT_FOUND);
@@ -120,7 +120,7 @@ public class FacebookInviteServlet extends HttpServlet
             logSentInvites(req, memberId, false);
 
             // just head back to the facebook app
-            MsoyHttpServer.sendTopRedirect(rsp, DeploymentConfig.facebookCanvasUrl);
+            MsoyHttpServer.sendTopRedirect(rsp, FacebookLogic.WHIRLED_APP_CANVAS);
 
         } else {
             rsp.sendError(HttpServletResponse.SC_NOT_FOUND);
