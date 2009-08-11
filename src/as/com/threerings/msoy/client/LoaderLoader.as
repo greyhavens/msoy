@@ -1,5 +1,5 @@
 //
-// $Id$ 
+// $Id: LoaderLoader.as 17792 2009-08-11 01:47:37Z ray $ 
 
 package com.threerings.msoy.client {
 
