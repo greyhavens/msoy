@@ -46,6 +46,10 @@ public class MsoySceneModel extends SceneModel
     /** The maximum length of a room name. */
     public static final int MAX_NAME_LENGTH = 80;
 
+    /** The default decor media. */
+    public static final MediaDesc DEFAULT_DECOR_MEDIA =
+        new DefaultItemMediaDesc(MediaDesc.IMAGE_PNG, Item.DECOR, Item.MAIN_MEDIA);
+
     /** Access control, as one of the ACCESS constants. Limits who can enter the scene. */
     public byte accessControl;
 
@@ -260,8 +264,7 @@ public class MsoySceneModel extends SceneModel
     {
         Decor decor = new Decor();
         decor.itemId = 0; // doesn't correspond to an object
-        decor.setFurniMedia(
-            new DefaultItemMediaDesc(MediaDesc.IMAGE_PNG, Item.DECOR, Item.MAIN_MEDIA));
+        decor.setFurniMedia(DEFAULT_DECOR_MEDIA);
         decor.type = Decor.IMAGE_OVERLAY;
         decor.hideWalls = false;
         decor.width = 800;

@@ -301,6 +301,7 @@ public class MsoyHttpServer extends Server
         .put("/undersvc", MsoyUnderwireServlet.class)
         .put("/uploadsvc", ItemMediaUploadServlet.class)
         .put("/stubdlsvc", StubDownloadServlet.class)
+        .put("/loadersvc", LoaderServlet.class)
         .put("/swizzle/*", SwizzleServlet.class)
         .put("/embed/*", EmbedRouterServlet.class)
         .put("/status/*", StatusServlet.class)
