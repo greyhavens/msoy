@@ -705,6 +705,14 @@ public class WorldController extends MsoyController
             if (sceneId != 0 && inGWTApp()) {
                 // the AVRG is not really a URL, so tell the browser to display the scene
                 // (do it later so the WorldClient javascript method can exit first)
+                // BUG: This causes problems on IE8 if our GWT app is in an iframe. Instead of
+                // quitely changing the URL, it reloads the frame after a short interval, causing
+                // the AVRG to exit. I suspect it is due to GWT 1.7's history implementation not
+                // being updated to remove IE7 hacks and/or include new IE8 hacks. Only facebook-
+                // integrated games that are not roomless seem to be affected. Since there are
+                // currently none of those, I'm leaving it in for the moment because it still
+                // provides a benefit for on-site AVRGs.
+                // TODO: find a minimum test case and submit to GWT issues or maybe just shoot self
                 MethodQueue.callLater(displayPage, ["world", "s" + sceneId]);
             }
             return;
