@@ -44,6 +44,14 @@ public class FacebookInfoEditorPanel extends BaseEditorPanel
             }
         });
 
+        final TextBox canvasName = MsoyUI.createTextBox(
+            info.canvasName, FacebookInfo.CANVAS_NAME_LENGTH, FacebookInfo.CANVAS_NAME_LENGTH);
+        addRow(_msgs.fieCanvasName(), canvasName, new Command() {
+            public void execute () {
+                info.canvasName = canvasName.getText().trim();
+            }
+        });
+
         final CheckBox chromeless = new CheckBox(_msgs.fieChromelessText());
         chromeless.setValue(info.chromeless);
         addRow(_msgs.fieChromeless(), chromeless, new Command() {

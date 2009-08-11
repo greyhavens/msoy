@@ -26,7 +26,7 @@ public class FacebookInfoRecord extends PersistentRecord
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 3;
+    public static final int SCHEMA_VERSION = 4;
 
     /**
      * Converts the supplied runtime record into a persistent record.
@@ -38,6 +38,7 @@ public class FacebookInfoRecord extends PersistentRecord
         record.apiKey = info.apiKey;
         record.appSecret = info.appSecret;
         record.chromeless = info.chromeless;
+        record.canvasName = info.canvasName;
         return record;
     }
 
@@ -56,6 +57,12 @@ public class FacebookInfoRecord extends PersistentRecord
     @Column(defaultValue="false") // TODO: remove default after migration
     public boolean chromeless;
 
+    /** The Facebook canvas name so Whirled can send redirects to the application. NOTE: this would
+    * ideally be obtained instead from the API using the key & secrect, but the getAppProperties
+    * method in the facebook API doesn't work. */
+    @Column(length=FacebookInfo.CANVAS_NAME_LENGTH, defaultValue="''")
+    public String canvasName;
+
     /**
      * Converts this persistent record into a runtime record.
      */
@@ -66,6 +73,7 @@ public class FacebookInfoRecord extends PersistentRecord
         info.apiKey = this.apiKey;
         info.appSecret = this.appSecret;
         info.chromeless = this.chromeless;
+        info.canvasName = this.canvasName;
         return info;
     }
 

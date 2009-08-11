@@ -16,6 +16,9 @@ public class FacebookInfo implements IsSerializable
     /** The length of the Facebook app secret. */
     public static final int SECRET_LENGTH = 32;
 
+    /** The length of the Facebbok canvas name. */
+    public static final int CANVAS_NAME_LENGTH = 40;
+
     /** The game for which we contain metadata. */
     public int gameId;
 
@@ -27,4 +30,7 @@ public class FacebookInfo implements IsSerializable
 
     /** If true Whirled won't display any chrome when in Facebook App mode. */
     public boolean chromeless;
+
+    /** The Facebook canvas name. */
+    public String canvasName;
 }
