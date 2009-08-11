@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 
+import com.samskivert.servlet.util.CookieUtil;
 import com.samskivert.servlet.util.ParameterUtil;
 import com.samskivert.util.StringUtil;
 
@@ -36,6 +37,8 @@ import com.threerings.msoy.web.gwt.ArgNames;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.ServiceException;
+import com.threerings.msoy.web.gwt.SharedNaviUtil;
+import com.threerings.msoy.web.gwt.WebCreds;
 
 import com.threerings.msoy.web.server.AffiliateCookie;
 import com.threerings.msoy.web.server.MsoyHttpServer;
@@ -81,6 +84,32 @@ public class FacebookCallbackServlet extends HttpServlet
     protected void tryGet (HttpServletRequest req, HttpServletResponse rsp)
         throws IOException, ServiceException
     {
+        // if we don't have a signature, then we must be swizzling
+        if (req.getParameter(FB_SIG) == null) {
+            String session = req.getParameter(SESSION);
+            String canvas = req.getParameter(CANVAS);
+            String token = req.getParameter(TOKEN);
+            if (session == null || canvas == null || token == null) {
+                throw new ServiceException("Swizzle parameters not found [" +
+                    session + ", " + canvas + ", " + token + "]?");
+            }
+
+            // double check the session
+            if (_memberRepo.loadMemberForSession(session) == null) {
+                throw new ServiceException("We're a swizzlin' an invalid session, yeehaw");
+            }
+
+            log.info("Swizzling", "session", session, "token", token, "canvas", canvas);
+
+            // set the cookie
+            SwizzleServlet.setCookie(req, rsp, session);
+
+            // redirect back to the application with the token tacked on
+            rsp.sendRedirect(SharedNaviUtil.buildRequest(
+                FacebookLogic.getCanvasUrl(canvas), TOKEN, token));
+            return;
+        }
+
         // determine whether we're in game mode or Whirled mode
         ReqInfo info = parseReqInfo(req);
 
@@ -89,24 +118,43 @@ public class FacebookCallbackServlet extends HttpServlet
 
         // parse the credentials and authenticate (may create a new FB connected user account)
         FacebookAppCreds creds = new FacebookAppCreds();
-        String authtok = activateSession(info, req, creds);
+        String session = activateSession(info, req, creds);
 
         // if the user has not authorized our application
-        if (authtok == null) {
-            // redirect to app login page and bail
+        if (session == null) {
+            // redirect to app login page and bail (parameters aren't retained so don't bother)
+            log.info("Redirecting to login", "key", info.apiKey);
             MsoyHttpServer.sendTopRedirect(rsp, getLoginURL(info.apiKey));
             return;
         }
 
-        // TODO: this doesn't work on Safari
-        SwizzleServlet.setCookie(req, rsp, authtok);
+        // set up the token to redirect to - either the pre-processed one after we've swizzled in
+        // the session cookie, or the one from the original request; NOTE: the TOKEN parameter is
+        // double encoded, but we are careful to avoid confusion and not give it any % characters
+        String token = StringUtil.getOr(req.getParameter(TOKEN), info.getDestinationToken());
 
-        // add the privacy header (for IE) so we can set some cookies in an iframe
-        MsoyHttpServer.addPrivacyHeader(rsp);
+        // is the session already set up?
+        if (session.equals(CookieUtil.getCookieValue(req, WebCreds.credsCookie()))) {
+            // now we can attach some encoded % characters, now that facebook is finished double
+            // encoding the parameters on the way to the callback (I doubt they'll ever fix that)
+            token = StringUtil.encode(info.attachCreds(token, creds));
 
-        // and send them to the appropriate page. we need to encode this since with a chromeless
-        // game, it may contain the "%-" sequence which needs to get translated to "%25-"
-        rsp.sendRedirect("/#" + StringUtil.encode(info.getDestinationToken(creds)));
+            log.info("Redirecting to token", "key", info.apiKey, "token", token);
+
+            // TODO: probably don't need this anymore
+            // add the privacy header (for IE) so we can set some cookies in an iframe
+            MsoyHttpServer.addPrivacyHeader(rsp);
+
+            // and send them to the appropriate page
+            rsp.sendRedirect("/#" + token);
+            return;
+        }
+
+        // otherwise redirect the top frame back to this page with the already-processed tokens
+        log.info("Initiating swizzle", "session", session, "token", token,
+            "canvas", info.canvasName);
+        MsoyHttpServer.sendTopRedirect(rsp, SharedNaviUtil.buildRequest(
+            req.getRequestURI(), SESSION, session, TOKEN, token, CANVAS, info.canvasName));
     }
 
     /**
@@ -197,6 +245,7 @@ public class FacebookCallbackServlet extends HttpServlet
         if (path == null || !path.startsWith(GAME_PATH)) {
             info.apiKey = ServerConfig.config.getValue("facebook.api_key", "");
             info.appSecret = ServerConfig.config.getValue("facebook.secret", "");
+            info.canvasName = ServerConfig.config.getValue("facebook.canvas_name", "");
             String gameId = req.getParameter(ArgNames.FB_PARAM_GAME);
             if (!StringUtil.isBlank(gameId)) {
                 info.gameId = Integer.parseInt(gameId);
@@ -231,6 +280,7 @@ public class FacebookCallbackServlet extends HttpServlet
 
         info.apiKey = fbinfo.apiKey;
         info.appSecret = fbinfo.appSecret;
+        info.canvasName = fbinfo.canvasName;
         info.chromeless = fbinfo.chromeless;
         info.vector = FacebookTemplateCard.toEntryVector("proxygame", "" + info.gameId);
         return info;
@@ -247,6 +297,7 @@ public class FacebookCallbackServlet extends HttpServlet
         public String mochiGameTag;
         public String apiKey;
         public String appSecret;
+        public String canvasName;
         public boolean chromeless;
         public String vector;
 
@@ -254,7 +305,7 @@ public class FacebookCallbackServlet extends HttpServlet
          * Gets the GWT token that the user should be redirected to in the whirled application.
          * Some creds information may be assembled and passed into a game application.
          */
-        public String getDestinationToken (FacebookAppCreds creds)
+        public String getDestinationToken ()
         {
             Args embed = ArgNames.Embedding.compose(ArgNames.Embedding.FACEBOOK);
 
@@ -262,7 +313,7 @@ public class FacebookCallbackServlet extends HttpServlet
             if (gameId != 0) {
                 if (chromeless) {
                     // chromeless games must go directly into the game, bugs be damned
-                    return Pages.WORLD.makeToken("fbgame", gameId, creds.uid, creds.sessionKey);
+                    return Pages.WORLD.makeToken("fbgame", gameId);
                 } else {
                     // all other games go to the game detail page (to work around some strange
                     // Facebook iframe bug on Mac Firefox, yay)
@@ -275,6 +326,20 @@ public class FacebookCallbackServlet extends HttpServlet
             } else {
                 return Pages.GAMES.makeToken(embed);
             }
+        }
+
+        /**
+         * Attaches the facebook uid and and session key to the token, if appropriate. Otherwise,
+         * returns the token unmodified.
+         */
+        public String attachCreds (String token, FacebookAppCreds creds)
+        {
+            if (gameId == 0 || !chromeless) {
+                return token;
+            }
+
+            return Pages.fromHistory(token).makeToken(
+                Args.fromHistory(token), creds.uid, creds.sessionKey);
         }
     }
 
@@ -292,4 +357,7 @@ public class FacebookCallbackServlet extends HttpServlet
     protected static final String FB_SESSION_KEY = FBKEY_PREFIX + "session_key";
     protected static final int FBAUTH_DAYS = 2;
     protected static final String GAME_PATH = "/game/";
+    protected static final String SESSION = "session";
+    protected static final String CANVAS = "canvas";
+    protected static final String TOKEN = "token";
 }

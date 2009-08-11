@@ -52,11 +52,19 @@ public class FacebookLogic
 {
     /** URL of the main application entry point. */
     public static final String WHIRLED_APP_CANVAS =
-        "http://apps.facebook.com/" + DeploymentConfig.facebookCanvasName;
+        getCanvasUrl(DeploymentConfig.facebookCanvasName);
 
     /** URL of the main application's profile page. */
     public static final String WHIRLED_APP_PROFILE =
         "http://www.facebook.com/apps/application.php?id=" + DeploymentConfig.facebookApplicationId;
+
+    /**
+     * Prepends the Facebook application root to get the canvas url of the given name.
+     */
+    public static final String getCanvasUrl (String canvasName)
+    {
+        return "http://apps.facebook.com/" + canvasName;
+    }
 
     /**
      * Returns a Facebook client not bound to any particular user's session with the deafault read
