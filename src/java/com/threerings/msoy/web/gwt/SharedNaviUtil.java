@@ -19,9 +19,10 @@ public class SharedNaviUtil
     public static String buildRequest (String url, String... nameValuePairs)
     {
         if (nameValuePairs.length > 0) {
-            url += url.contains("?") ? "&" : "?";
-            for (int ii = 0; ii <= nameValuePairs.length; ++ii) {
-                url += "&" + nameValuePairs[ii] + "=" + nameValuePairs[ii+1];
+            String join = url.contains("?") ? "&" : "?";
+            for (int ii = 0; ii < nameValuePairs.length; ii += 2) {
+                url += join + nameValuePairs[ii] + "=" + nameValuePairs[ii+1];
+                join = "&";
             }
         }
         return url;
