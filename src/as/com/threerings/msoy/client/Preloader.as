@@ -176,8 +176,10 @@ public class Preloader extends Sprite
     // from IPreloaderDisplay
     public function initialize () :void
     {
-        _spinner.x = (stage.stageWidth - LoadingSpinner.WIDTH) / 2;
-        _spinner.y = (stage.stageHeight - LoadingSpinner.HEIGHT) / 2;
+        if (stage) {
+            _spinner.x = (stage.stageWidth - LoadingSpinner.WIDTH) / 2;
+            _spinner.y = (stage.stageHeight - LoadingSpinner.HEIGHT) / 2;
+        }
     }
 
     /**
