@@ -4,7 +4,6 @@
 package com.threerings.msoy.facebook.server;
 
 import java.io.IOException;
-import java.net.URLEncoder;
 import java.util.Collections;
 import java.util.List;
 
@@ -106,10 +105,8 @@ public class FacebookCallbackServlet extends HttpServlet
         MsoyHttpServer.addPrivacyHeader(rsp);
 
         // and send them to the appropriate page. we need to encode this since with a chromeless
-        // game, it may contain the "%-" sequence which needs to get translated to "%25-". Use
-        // 7-bit ascii because it is more ubiquitous and we shouldn't need anything stronger
-        String token = URLEncoder.encode(info.getDestinationToken(creds), "US-ASCII");
-        rsp.sendRedirect("/#" + token);
+        // game, it may contain the "%-" sequence which needs to get translated to "%25-"
+        rsp.sendRedirect("/#" + StringUtil.encode(info.getDestinationToken(creds)));
     }
 
     /**
