@@ -101,6 +101,9 @@ public class FacebookCallbackServlet extends HttpServlet
 
             log.info("Swizzling", "session", session, "token", token, "canvas", canvas);
 
+            // IE won't give the cookie back on the third request without this
+            MsoyHttpServer.addPrivacyHeader(rsp);
+
             // set the cookie
             SwizzleServlet.setCookie(req, rsp, session);
 
