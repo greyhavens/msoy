@@ -37,6 +37,10 @@ window.FB_PostTrophy = function(templateId, data, callback) {
     FB_PostStory(templateId, data, [], "", callback);
 };
 
+window.FB_PostChallenge = function(templateId, data, callback) {
+    FB_PostStory(templateId, data, [], "", callback);
+};
+
 window.FB_Logout = function() {
     FB_WithInit(function() {
         FB.Connect.logout(null);
