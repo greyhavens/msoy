@@ -53,11 +53,9 @@ public class BrowserTest
         } else if (agent.contains("msie")) {
             message = null;
 
-        // safari/chrome
+        // safari/chrome - passable now that cookies are supported
         } else if (agent.contains("webkit")) {
-            // TEMP: safari doesn't support framed apps *at all* by default
-            // Note we have to check isFramed here because the facebook cookie is not present
-            message = Layout.isFramed() ? _msgs.browserSafariNoCookies() : null;
+            message = null;
 
         // opera
         } else if (agent.contains("opera")) {
