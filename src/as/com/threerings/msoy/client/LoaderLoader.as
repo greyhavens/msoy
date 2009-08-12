@@ -16,6 +16,10 @@ import flash.net.URLRequest;
 import flash.net.URLStream;
 import flash.net.URLVariables;
 
+import flash.system.ApplicationDomain;
+import flash.system.LoaderContext;
+import flash.system.SecurityDomain;
+
 import flash.utils.setTimeout; // function
 
 import com.threerings.display.LoaderUtil;
@@ -75,7 +79,10 @@ public class LoaderLoader extends Sprite
 //            return;
 //        }
         if (url == "ooo") {
-            url = "http://malacca.sea.earth.threerings.net:8080/media/78ba0bf64534ecab9b13af0896f0b921c60a6786.swf";
+            url =
+                //"http://192.168.54.53:8080/media/" +
+                "http://malacca.sea.earth.threerings.net:8080/media/" +
+                "78ba0bf64534ecab9b13af0896f0b921c60a6786.swf";
         }
         closeLoaderIdentifier();
         loadLoader(url);
@@ -86,7 +93,10 @@ public class LoaderLoader extends Sprite
         _loaderLoader = new Loader();
         addChild(_loaderLoader); // we do add this fucker to the stage
         _loaderLoader.contentLoaderInfo.addEventListener(Event.COMPLETE, handleLoaderComplete);
-        _loaderLoader.load(new URLRequest(loaderURL));
+        _loaderLoader.load(new URLRequest(loaderURL),
+            //null);
+            //new LoaderContext(false, new ApplicationDomain(null), null));
+            new LoaderContext(false, new ApplicationDomain(null), SecurityDomain.currentDomain));
     }
 
     protected function handleLoaderComplete (event :Event) :void
