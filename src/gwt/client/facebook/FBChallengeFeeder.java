@@ -23,12 +23,12 @@ import client.util.JavaScriptUtil;
 /**
  * Static methods for popping up a challenge feed story publisher.
  */
-public class FBChallengeFeeder
+public abstract class FBChallengeFeeder
 {
     /**
      * Pops up a challenge feed story confirmation for the given game, game name and story fields.
      */
-    protected static void publish (FacebookGame game, String gameName, StoryFields result)
+    public void publish (FacebookGame game, String gameName, StoryFields result)
     {
         String vector = result.template.toEntryVector("challenge");
         String templateId = String.valueOf(result.template.bundleId);
@@ -48,12 +48,19 @@ public class FBChallengeFeeder
         data.put("action_url", actionURL);
         data.put("images", images.toArray());
 
-        // TODO: redirect the user back to the game after the publish is finished
         publishChallenge(templateId, JavaScriptUtil.createDictionaryFromMap(data));
     }
 
-    protected static native void publishChallenge (String templateId, JavaScriptObject data) /*-{
-        $wnd.FB_PostChallenge(templateId, data, function () {});
+    /**
+     * Takes the user to the next step, if any, after publishing the feed story.
+     */
+    abstract protected void onCompletion ();
+
+    protected native void publishChallenge (String templateId, JavaScriptObject data) /*-{
+        var object = this;
+        $wnd.FB_PostChallenge(templateId, data, function () {
+            object.@client.facebook.FBChallengeFeeder::onCompletion()();
+        });
     }-*/;
 
     // Handy JSON for pasting into Facebook's template editor

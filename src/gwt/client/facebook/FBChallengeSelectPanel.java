@@ -65,17 +65,22 @@ public class FBChallengeSelectPanel extends FlowPanel
 
     protected void confirmAndSendChallenge (final boolean appOnly)
     {
+        final FBChallengeFeeder feeder = new FBChallengeFeeder() {
+            @Override protected void onCompletion () {
+                goPlay();
+            }
+        };
         final Command send = new Command() {
             @Override public void execute () {
                 _fbsvc.sendChallengeNotification(_game, appOnly, new InfoCallback<StoryFields>() {
                     @Override public void onSuccess (StoryFields result) {
-                        if (result == null) {
-                            Link.go(_game.getPlayPage(), _game.getPlayArgs());
+                        if (result == null || result.template == null) {
+                            goPlay();
                             return;
                         }
 
                         // publish to feed
-                        FBChallengeFeeder.publish(_game, _gameName, result);
+                        feeder.publish(_game, _gameName, result);
                     }
                 });
             }
@@ -92,6 +97,11 @@ public class FBChallengeSelectPanel extends FlowPanel
             }
         };
         confirm.show();
+    }
+
+    protected void goPlay ()
+    {
+        Link.go(_game.getPlayPage(), _game.getPlayArgs());
     }
 
     protected FacebookGame _game;
