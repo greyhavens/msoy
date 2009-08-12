@@ -99,12 +99,11 @@ public class ExternalFeeder
 
     protected native void publishTrophy (
         String templateId, int gameId, String ident, JavaScriptObject data) /*-{
-        var trophyPublished = this.@client.frame.ExternalFeeder::trophyPublished(ILjava/lang/String;);
+        var object = this;
         $wnd.FB_PostTrophy(templateId, data, function () {
-            trophyPublished(gameId, ident);
+            object.@client.frame.ExternalFeeder::trophyPublished(ILjava/lang/String;)(gameId, ident);
         });
     }-*/;
-
 
     // Handy JSON for pasting into Facebook's template editor
     /*
