@@ -348,7 +348,8 @@ public class ThaneAVRGameBackend
 
     protected function game_sendMessage_v1 (name :String, value :Object) :void
     {
-        BackendUtils.sendMessage(_gameObj.messageService, ensureGameClient(), name, value, "game");
+        ensureGameClient(); // TODO invChange: this still needed?
+        BackendUtils.sendMessage(_gameObj.messageService, name, value, "game");
     }
 
     protected function isRoomLoaded_v1 (roomId :int) :Boolean
@@ -396,8 +397,8 @@ public class ThaneAVRGameBackend
         if (targetId != 0) {
             throw new UserError("Internal error: unexpected target id");
         }
-        BackendUtils.encodeAndSet(
-            ensureGameClient(), _gameAgentObj, name, value, key, isArray, immediate);
+        ensureGameClient(); // TODO invChange: this still needed?
+        BackendUtils.encodeAndSet(_gameAgentObj, name, value, key, isArray, immediate);
     }
 
     // -------------------- .game.props --------------------
@@ -416,8 +417,8 @@ public class ThaneAVRGameBackend
         if (targetId != 0) {
             throw new UserError("Internal error: unexpected target id");
         }
-        BackendUtils.encodeAndSet(
-            ensureGameClient(), _gameObj, name, value, key, isArray, immediate);
+        ensureGameClient(); // TODO invChange: this still needed?
+        BackendUtils.encodeAndSet(_gameObj, name, value, key, isArray, immediate);
     }
 
     // -------------------- .getRoom() --------------------
@@ -508,8 +509,8 @@ public class ThaneAVRGameBackend
 
         var roomObj :RoomObject = _controller.getRoom(roomId);
         var loc :MsoyLocation = new MsoyLocation(x, y, z);
-        roomObj.roomService.spawnMob(
-            ensureRoomClient(roomId), _controller.getGameId(), mobId, mobName, loc,
+        ensureRoomClient(roomId); // TODO invChange: this still needed?
+        roomObj.roomService.spawnMob(_controller.getGameId(), mobId, mobName, loc,
             BackendUtils.loggingInvocationListener("spawnMob", _controller.outputToUserCode));
     }
 
@@ -520,8 +521,8 @@ public class ThaneAVRGameBackend
         }
 
         var roomObj :RoomObject = _controller.getRoom(roomId);
-        roomObj.roomService.despawnMob(
-            ensureRoomClient(roomId), _controller.getGameId(), mobId,
+        ensureRoomClient(roomId); // TODO invChange: this still needed?
+        roomObj.roomService.despawnMob(_controller.getGameId(), mobId,
             BackendUtils.loggingInvocationListener("despawnMob", _controller.outputToUserCode));
     }
 
@@ -533,24 +534,23 @@ public class ThaneAVRGameBackend
     protected function moveMob_v1 (roomId :int, id :String, x :Number, y :Number, z :Number) :void
     {
         var roomObj :RoomObject = _controller.getRoom(roomId);
-        roomObj.roomService.moveMob(
-            ensureRoomClient(roomId), _controller.getGameId(), id,
-            new MsoyLocation(x, y, z), BackendUtils.loggingConfirmListener(
-                "moveMob", null, _controller.outputToUserCode));
+        ensureRoomClient(roomId); // TODO invChange: this still needed?
+        roomObj.roomService.moveMob(_controller.getGameId(), id, new MsoyLocation(x, y, z),
+            BackendUtils.loggingConfirmListener("moveMob", null, _controller.outputToUserCode));
     }
 
     protected function room_sendMessage_v1 (roomId :int, name :String, value :Object) :void
     {
         var roomProps :RoomPropertiesObject = _controller.getRoomProps(roomId);
-        BackendUtils.sendMessage(
-            roomProps.messageService, ensureRoomClient(roomId), name, value, "room");
+        ensureRoomClient(roomId); // TODO invChange: this still needed?
+        BackendUtils.sendMessage(roomProps.messageService, name, value, "room");
     }
 
     protected function room_sendSignal_v1 (roomId :int, name :String, value :Object) :void
     {
         var roomObj :RoomObject = _controller.getRoom(roomId);
-        roomObj.roomService.sendSpriteSignal(
-            ensureRoomClient(roomId), name, ObjectMarshaller.encode(value) as ByteArray);
+        ensureRoomClient(roomId); // TODO invChange: this still needed?
+        roomObj.roomService.sendSpriteSignal(name, ObjectMarshaller.encode(value) as ByteArray);
     }
 
     protected function getMusicOwner_v1 (roomId :int) :int
@@ -573,8 +573,8 @@ public class ThaneAVRGameBackend
         immediate :Boolean) :void
     {
         var roomProps :RoomPropertiesObject = _controller.getRoomProps(roomId);
-        BackendUtils.encodeAndSet(
-            ensureRoomClient(roomId), roomProps, name, value, key, isArray, immediate);
+        ensureRoomClient(roomId); // TODO invChange: this still needed?
+        BackendUtils.encodeAndSet(roomProps, name, value, key, isArray, immediate);
     }
 
     // -------------------- .getPlayer() --------------------
@@ -655,8 +655,8 @@ public class ThaneAVRGameBackend
         }
 
         payout = Math.max(0, Math.min(payout, 1));
-        _gameObj.avrgService.completeTask(
-            ensureGameClient(), playerId, taskId, payout,
+        ensureGameClient(); // TODO invChange: this still needed?
+        _gameObj.avrgService.completeTask(playerId, taskId, payout,
             BackendUtils.loggingConfirmListener("completeTask", null,
                 _controller.outputToUserCode));
     }
@@ -666,7 +666,8 @@ public class ThaneAVRGameBackend
     {
         PropertySpaceObjectImpl;
 
-        _gameObj.avrgService.loadOfflinePlayer(ensureGameClient(), playerId, new ResultAdapter(
+        ensureGameClient(); // TODO invChange: this still needed?
+        _gameObj.avrgService.loadOfflinePlayer(playerId, new ResultAdapter(
             function (props :PropertySpaceObject) :void {
                 if (props == null) {
                     // this means the player had no existing persistent properties, which means
@@ -706,29 +707,29 @@ public class ThaneAVRGameBackend
         var encoded :Object = PropertySpaceHelper.encodeProperty(value, (key == null));
         var ikey :Integer = (key == null) ? null : new Integer(int(key));
 
-        _gameObj.avrgService.setOfflinePlayerProperty(
-            ensureGameClient(), playerId, name, encoded, ikey, isArray,
+        ensureGameClient(); // TODO invChange: this still needed?
+        _gameObj.avrgService.setOfflinePlayerProperty(playerId, name, encoded, ikey, isArray,
             BackendUtils.loggingConfirmListener("setOfflinePlayerProperty"));
     }
 
     protected function playAvatarAction_v1 (playerId :int, action :String) :void
     {
         resolveRoomAndClient(playerId, function (roomObj :RoomObject, client :Client) :void {
-            BackendUtils.playAvatarAction(_gameObj, roomObj, client, playerId, action);
+            BackendUtils.playAvatarAction(_gameObj, roomObj, playerId, action);
         });
     }
 
     protected function setAvatarState_v1 (playerId :int, state :String) :void
     {
         resolveRoomAndClient(playerId, function (roomObj :RoomObject, client :Client) :void {
-            BackendUtils.setAvatarState(_gameObj, roomObj, client, playerId, state);
+            BackendUtils.setAvatarState(_gameObj, roomObj, playerId, state);
         });
     }
 
     protected function setAvatarMoveSpeed_v1 (playerId :int, pixelsPerSecond :Number) :void
     {
         resolveRoomAndClient(playerId, function (roomObj :RoomObject, client :Client) :void {
-            BackendUtils.setAvatarMoveSpeed(_gameObj, roomObj, client, playerId, pixelsPerSecond);
+            BackendUtils.setAvatarMoveSpeed(_gameObj, roomObj, playerId, pixelsPerSecond);
         });
     }
 
@@ -736,14 +737,14 @@ public class ThaneAVRGameBackend
         playerId :int, x :Number, y :Number, z: Number, orient :Number) :void
     {
         resolveRoomAndClient(playerId, function (roomObj :RoomObject, client :Client) :void {
-            BackendUtils.setAvatarLocation(_gameObj, roomObj, client, playerId, x, y, z, orient);
+            BackendUtils.setAvatarLocation(_gameObj, roomObj, playerId, x, y, z, orient);
         });
     }
 
     protected function setAvatarOrientation_v1 (playerId :int, orient :Number) :void
     {
         resolveRoomAndClient(playerId, function (roomObj :RoomObject, client :Client) :void {
-            BackendUtils.setAvatarOrientation(_gameObj, roomObj, client, playerId, orient);
+            BackendUtils.setAvatarOrientation(_gameObj, roomObj, playerId, orient);
         });
     }
 
@@ -761,14 +762,15 @@ public class ThaneAVRGameBackend
 
     protected function player_sendMessage_v1 (playerId :int, name :String, value :Object) :void
     {
-        BackendUtils.sendPrivateMessage(
-            _gameObj.messageService, ensureGameClient(), playerId, name, value, "room");
+        ensureGameClient(); // TODO invChange: this still needed?
+        BackendUtils.sendPrivateMessage(_gameObj.messageService, playerId, name, value, "room");
     }
 
     protected function purchaseItemPack_v1 (playerId :int, ident :String) :void
     {
-        _gameObj.contentService.purchaseItemPack(
-            ensureGameClient(), playerId, ident, BackendUtils.loggingInvocationListener(
+        ensureGameClient(); // TODO invChange: this still needed?
+        _gameObj.contentService.purchaseItemPack(playerId, ident,
+            BackendUtils.loggingInvocationListener(
                 "purchaseItemPack", _controller.outputToUserCode));
     }
 
@@ -777,8 +779,9 @@ public class ThaneAVRGameBackend
         if (countPlayerData(GameData.ITEM_DATA, ident, playerId) < 1) {
             return false;
         }
-        _gameObj.contentService.consumeItemPack(
-            ensureGameClient(), playerId, ident, BackendUtils.loggingInvocationListener(
+        ensureGameClient(); // TODO invChange: this still needed?
+        _gameObj.contentService.consumeItemPack(playerId, ident,
+            BackendUtils.loggingInvocationListener(
                 "consumeItemPack", _controller.outputToUserCode));
         return true;
     }
@@ -795,8 +798,8 @@ public class ThaneAVRGameBackend
         immediate :Boolean) :void
     {
         var player :PlayerObject = _controller.getPlayerForUser(playerId);
-        BackendUtils.encodeAndSet(
-            ensureGameClient(), player, name, value, key, isArray, immediate);
+        ensureGameClient(); // TODO invChange: this still needed?
+        BackendUtils.encodeAndSet(player, name, value, key, isArray, immediate);
     }
 
     // -------------------- end of versioned methods --------------------
