@@ -135,6 +135,7 @@ public class ParlorGamePanel extends WhirledGamePanel
         if (GAMESTUB_DEBUG_MODE || (mctx.getWidth() < TopPanel.RIGHT_SIDEBAR_WIDTH + GAME_WIDTH)) {
             // set up a button to pop/hide the _playerList
             _showPlayers = new CommandButton();
+            _showPlayers.toggle = true;
             _showPlayers.toolTip = Msgs.GAME.get("i.scores");
             _showPlayers.styleName = "controlBarButtonScores";
             _showPlayers.setCallback(FloatingPanel.createPopper(function () :FloatingPanel {
