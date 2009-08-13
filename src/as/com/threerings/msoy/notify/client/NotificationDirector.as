@@ -277,7 +277,7 @@ public class NotificationDirector extends BasicDirector
 
         // tell the server to go ahead and dispatch any notifications it had saved up.
         const msvc :MsoyService = client.requireService(MsoyService) as MsoyService;
-        msvc.dispatchDeferredNotifications(_ctx.getClient());
+        msvc.dispatchDeferredNotifications();
     }
 
     protected function clearNotifications (... ignored) :void

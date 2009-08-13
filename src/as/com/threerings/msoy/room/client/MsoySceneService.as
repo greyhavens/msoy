@@ -13,6 +13,6 @@ import com.threerings.presents.client.InvocationService;
 public interface MsoySceneService extends InvocationService
 {
     // from Java interface MsoySceneService
-    function moveTo (arg1 :Client, arg2 :int, arg3 :int, arg4 :int, arg5 :MsoyLocation, arg6 :MsoySceneService_MsoySceneMoveListener) :void;
+    function moveTo (arg1 :int, arg2 :int, arg3 :int, arg4 :MsoyLocation, arg5 :MsoySceneService_MsoySceneMoveListener) :void;
 }
 }

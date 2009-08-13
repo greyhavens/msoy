@@ -13,9 +13,9 @@ import com.threerings.presents.client.InvocationService_ResultListener;
 public interface WorldService extends InvocationService
 {
     // from Java interface WorldService
-    function getGroupHomeSceneId (arg1 :Client, arg2 :int, arg3 :InvocationService_ResultListener) :void;
+    function getGroupHomeSceneId (arg1 :int, arg2 :InvocationService_ResultListener) :void;
 
     // from Java interface WorldService
-    function getHomePageGridItems (arg1 :Client, arg2 :InvocationService_ResultListener) :void;
+    function getHomePageGridItems (arg1 :InvocationService_ResultListener) :void;
 }
 }

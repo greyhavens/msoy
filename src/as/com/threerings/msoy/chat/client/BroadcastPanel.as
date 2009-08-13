@@ -47,9 +47,8 @@ public class BroadcastPanel extends FloatingPanel
         _msg = msg;
         open();
 
-        var client :MsoyClient = _ctx.getMsoyClient();
-        var msoySvc :MsoyService = client.requireService(MsoyService) as MsoyService;
-        msoySvc.secureBroadcastQuote(client, new ResultAdapter(gotQuote, handleNoPermission));
+        var msoySvc :MsoyService = _ctx.getMsoyClient().requireService(MsoyService) as MsoyService;
+        msoySvc.secureBroadcastQuote(new ResultAdapter(gotQuote, handleNoPermission));
     }
 
     protected function handleNoPermission (reason :String) :void
@@ -139,9 +138,8 @@ public class BroadcastPanel extends FloatingPanel
             finalMsg += " " + _linkGroup.selectedValue;
         }
 
-        var client :MsoyClient = _ctx.getMsoyClient();
-        var msoySvc :MsoyService = client.requireService(MsoyService) as MsoyService;
-        msoySvc.purchaseAndSendBroadcast(client, authedAmount, finalMsg,
+        var msoySvc :MsoyService = _ctx.getMsoyClient().requireService(MsoyService) as MsoyService;
+        msoySvc.purchaseAndSendBroadcast(authedAmount, finalMsg,
             _ctx.resultListener(broadcastSent, MsoyCodes.GENERAL_MSGS, null, _buyPanel));
     }
 

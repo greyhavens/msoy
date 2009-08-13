@@ -59,8 +59,7 @@ public class GameController extends MsoyController
     protected function joinGameLobby (gameId :int) :void
     {
         var lsvc :LobbyService = (_gctx.getClient().requireService(LobbyService) as LobbyService);
-        lsvc.identifyLobby(_gctx.getClient(), gameId,
-            _mctx.resultListener(gotLobbyOid, MsoyCodes.GAME_MSGS));
+        lsvc.identifyLobby(gameId, _mctx.resultListener(gotLobbyOid, MsoyCodes.GAME_MSGS));
     }
 
     protected function gotLobbyOid (lobbyOid :int) :void

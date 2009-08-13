@@ -431,7 +431,7 @@ public class RoomEditorController
         var successMsg :String = (model.ownerType == MsoySceneModel.OWNER_TYPE_GROUP) ?
             "m.group_home_room_changed" : "m.home_room_changed";
         var svc :MemberService = _ctx.getClient().requireService(MemberService) as MemberService;
-        svc.setHomeSceneId(_ctx.getClient(), model.ownerType, model.ownerId, model.sceneId,
+        svc.setHomeSceneId(model.ownerType, model.ownerId, model.sceneId,
             _ctx.confirmListener(successMsg, MsoyCodes.EDITING_MSGS));
     }
 
@@ -513,7 +513,7 @@ public class RoomEditorController
             updateNameDisplay();
         };
         var svc :ItemService = _ctx.getClient().requireService(ItemService) as ItemService;
-        svc.getItemNames(_ctx.getClient(), idents, _ctx.resultListener(resultHandler));
+        svc.getItemNames(idents, _ctx.resultListener(resultHandler));
     }
 
     /**

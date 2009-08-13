@@ -28,12 +28,12 @@ public class PartyBoardMarshaller extends InvocationMarshaller
     public static const CREATE_PARTY :int = 1;
 
     // from interface PartyBoardService
-    public function createParty (arg1 :Client, arg2 :Currency, arg3 :int, arg4 :String, arg5 :int, arg6 :Boolean, arg7 :PartyBoardService_JoinListener) :void
+    public function createParty (arg1 :Currency, arg2 :int, arg3 :String, arg4 :int, arg5 :Boolean, arg6 :PartyBoardService_JoinListener) :void
     {
-        var listener7 :PartyBoardMarshaller_JoinMarshaller = new PartyBoardMarshaller_JoinMarshaller();
-        listener7.listener = arg7;
-        sendRequest(arg1, CREATE_PARTY, [
-            arg2, Integer.valueOf(arg3), arg4, Integer.valueOf(arg5), langBoolean.valueOf(arg6), listener7
+        var listener6 :PartyBoardMarshaller_JoinMarshaller = new PartyBoardMarshaller_JoinMarshaller();
+        listener6.listener = arg6;
+        sendRequest(CREATE_PARTY, [
+            arg1, Integer.valueOf(arg2), arg3, Integer.valueOf(arg4), langBoolean.valueOf(arg5), listener6
         ]);
     }
 
@@ -41,12 +41,12 @@ public class PartyBoardMarshaller extends InvocationMarshaller
     public static const GET_CREATE_COST :int = 2;
 
     // from interface PartyBoardService
-    public function getCreateCost (arg1 :Client, arg2 :InvocationService_ResultListener) :void
+    public function getCreateCost (arg1 :InvocationService_ResultListener) :void
     {
-        var listener2 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
-        listener2.listener = arg2;
-        sendRequest(arg1, GET_CREATE_COST, [
-            listener2
+        var listener1 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
+        listener1.listener = arg1;
+        sendRequest(GET_CREATE_COST, [
+            listener1
         ]);
     }
 
@@ -54,12 +54,12 @@ public class PartyBoardMarshaller extends InvocationMarshaller
     public static const GET_PARTY_BOARD :int = 3;
 
     // from interface PartyBoardService
-    public function getPartyBoard (arg1 :Client, arg2 :int, arg3 :InvocationService_ResultListener) :void
+    public function getPartyBoard (arg1 :int, arg2 :InvocationService_ResultListener) :void
     {
-        var listener3 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, GET_PARTY_BOARD, [
-            Byte.valueOf(arg2), listener3
+        var listener2 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
+        listener2.listener = arg2;
+        sendRequest(GET_PARTY_BOARD, [
+            Byte.valueOf(arg1), listener2
         ]);
     }
 
@@ -67,12 +67,12 @@ public class PartyBoardMarshaller extends InvocationMarshaller
     public static const GET_PARTY_DETAIL :int = 4;
 
     // from interface PartyBoardService
-    public function getPartyDetail (arg1 :Client, arg2 :int, arg3 :InvocationService_ResultListener) :void
+    public function getPartyDetail (arg1 :int, arg2 :InvocationService_ResultListener) :void
     {
-        var listener3 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, GET_PARTY_DETAIL, [
-            Integer.valueOf(arg2), listener3
+        var listener2 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
+        listener2.listener = arg2;
+        sendRequest(GET_PARTY_DETAIL, [
+            Integer.valueOf(arg1), listener2
         ]);
     }
 
@@ -80,12 +80,12 @@ public class PartyBoardMarshaller extends InvocationMarshaller
     public static const LOCATE_PARTY :int = 5;
 
     // from interface PartyBoardService
-    public function locateParty (arg1 :Client, arg2 :int, arg3 :PartyBoardService_JoinListener) :void
+    public function locateParty (arg1 :int, arg2 :PartyBoardService_JoinListener) :void
     {
-        var listener3 :PartyBoardMarshaller_JoinMarshaller = new PartyBoardMarshaller_JoinMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, LOCATE_PARTY, [
-            Integer.valueOf(arg2), listener3
+        var listener2 :PartyBoardMarshaller_JoinMarshaller = new PartyBoardMarshaller_JoinMarshaller();
+        listener2.listener = arg2;
+        sendRequest(LOCATE_PARTY, [
+            Integer.valueOf(arg1), listener2
         ]);
     }
 }

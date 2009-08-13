@@ -735,7 +735,7 @@ public class MsoyController extends Controller
             var bsvc :BodyService = _mctx.getClient().getService(BodyService) as BodyService;
             // the service may be null if we're in the studio viewer, so just don't worry about it
             if (bsvc != null) {
-                bsvc.setIdle(_mctx.getClient(), nowIdle);
+                bsvc.setIdle(nowIdle);
             }
         }
     }

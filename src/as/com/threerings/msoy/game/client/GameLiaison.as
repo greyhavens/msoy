@@ -180,7 +180,7 @@ public class GameLiaison
             log.info("Resolving location of game [id=" + _gameId + "].");
             var mgsvc :WorldGameService =
                 (_wctx.getClient().requireService(WorldGameService) as WorldGameService);
-            mgsvc.locateGame(_wctx.getClient(), gameId, this);
+            mgsvc.locateGame(gameId, this);
 
         } else {
             log.info("Resolving location of game via HTTP [id=" + _gameId + "].");

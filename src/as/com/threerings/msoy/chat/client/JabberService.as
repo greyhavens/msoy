@@ -15,12 +15,12 @@ import com.threerings.presents.client.InvocationService_ResultListener;
 public interface JabberService extends InvocationService
 {
     // from Java interface JabberService
-    function registerIM (arg1 :Client, arg2 :String, arg3 :String, arg4 :String, arg5 :InvocationService_InvocationListener) :void;
+    function registerIM (arg1 :String, arg2 :String, arg3 :String, arg4 :InvocationService_InvocationListener) :void;
 
     // from Java interface JabberService
-    function sendMessage (arg1 :Client, arg2 :JabberName, arg3 :String, arg4 :InvocationService_ResultListener) :void;
+    function sendMessage (arg1 :JabberName, arg2 :String, arg3 :InvocationService_ResultListener) :void;
 
     // from Java interface JabberService
-    function unregisterIM (arg1 :Client, arg2 :String, arg3 :InvocationService_InvocationListener) :void;
+    function unregisterIM (arg1 :String, arg2 :InvocationService_InvocationListener) :void;
 }
 }

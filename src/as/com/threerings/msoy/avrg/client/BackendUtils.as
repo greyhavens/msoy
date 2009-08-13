@@ -19,7 +19,6 @@ import com.threerings.util.Iterator;
 import com.threerings.util.Log;
 import com.threerings.util.ObjectMarshaller;
 
-import com.threerings.presents.client.Client;
 import com.threerings.presents.client.ConfirmAdapter;
 import com.threerings.presents.client.InvocationAdapter;
 import com.threerings.presents.client.InvocationService_ConfirmListener;
@@ -97,7 +96,7 @@ public class BackendUtils
      * Performs a standard property set.
      */
     public static function encodeAndSet (
-        client :Client, obj :PropertySpaceObject, name :String, value :Object, key :Object,
+        obj :PropertySpaceObject, name :String, value :Object, key :Object,
         isArray :Boolean, immediate :Boolean) :void
     {
         validatePropertyChange(name, value, isArray, key);
@@ -106,8 +105,7 @@ public class BackendUtils
         var ikey :Integer = (key == null) ? null : new Integer(int(key));
 
         obj.getPropService().setProperty(
-            client, name, encoded, ikey, isArray, false, null,
-            loggingConfirmListener("setProperty"));
+            name, encoded, ikey, isArray, false, null, loggingConfirmListener("setProperty"));
 
         if (immediate) {
             // we re-decode so that it looks like it came off the net
@@ -261,23 +259,20 @@ public class BackendUtils
     }
 
     public static function sendMessage (
-        svc :WhirledGameMessageService, client :Client, msgName :String, msgValue :Object,
-        svcName :String) :void
+        svc :WhirledGameMessageService, msgName :String, msgValue :Object, svcName :String) :void
     {
         var encoded :Object = ObjectMarshaller.encode(msgValue, false);
-        svc.sendMessage(
-            client, msgName, encoded, loggingInvocationListener(svcName + " sendMessage"));
+        svc.sendMessage(msgName, encoded, loggingInvocationListener(svcName + " sendMessage"));
     }
 
     public static function sendPrivateMessage (
-        svc :WhirledGameMessageService, client :Client, receiverId :int, msgName :String,
+        svc :WhirledGameMessageService, receiverId :int, msgName :String,
         msgValue :Object, svcName :String) :void
     {
         var encoded :Object = ObjectMarshaller.encode(msgValue, false);
         var targets :TypedArray = TypedArray.create(int);
         targets.push(receiverId);
-        svc.sendPrivateMessage(
-            client, msgName, encoded, targets,
+        svc.sendPrivateMessage(msgName, encoded, targets,
             loggingInvocationListener(svcName + " sendPrivateMessage"));
     }
 
@@ -308,12 +303,12 @@ public class BackendUtils
      * @throws UserError if the player is not in the game or room
      */
     public static function setAvatarLocation (
-        gameObj :AVRGameObject, room :RoomObject, client :Client, playerId :int,
+        gameObj :AVRGameObject, room :RoomObject, playerId :int,
         x :Number, y :Number, z: Number, orient :Number) :void
     {
         resolvePlayerIdent(gameObj, room, playerId, function (ident :ItemIdent) :void {
             var newLoc :MsoyLocation = new MsoyLocation(x, y, z, orient);
-            room.roomService.changeLocation(client, ident, newLoc);
+            room.roomService.changeLocation(ident, newLoc);
         });
     }
 
@@ -322,13 +317,12 @@ public class BackendUtils
      * @throws UserError if the player is not in the game or room
      */
     public static function playAvatarAction (
-        gameObj :AVRGameObject, room :RoomObject, client :Client, playerId :int,
-        action :String) :void
+        gameObj :AVRGameObject, room :RoomObject, playerId :int, action :String) :void
     {
         resolvePlayerIdent(gameObj, room, playerId, function (ident :ItemIdent) :void {
             var data :ByteArray = null;
             var isAction :Boolean = true;
-            room.roomService.sendSpriteMessage(client, ident, action, data, isAction);
+            room.roomService.sendSpriteMessage(ident, action, data, isAction);
         });
     }
 
@@ -337,12 +331,11 @@ public class BackendUtils
      * @throws UserError if the player is not in the game or room
      */
     public static function setAvatarState (
-        gameObj :AVRGameObject, room :RoomObject, client :Client, playerId :int,
-        state :String) :void
+        gameObj :AVRGameObject, room :RoomObject, playerId :int, state :String) :void
     {
         resolvePlayerIdent(gameObj, room, playerId, function (ident :ItemIdent) :void {
             var actorOid :int = resolvePlayerWorldInfo(gameObj, room, playerId).bodyOid;
-            room.roomService.setActorState(client, ident, actorOid, state);
+            room.roomService.setActorState(ident, actorOid, state);
         });
     }
 
@@ -351,8 +344,7 @@ public class BackendUtils
      * @throws UserError if the player is not in the game or room
      */
     public static function setAvatarMoveSpeed (
-        gameObj :AVRGameObject, room :RoomObject, client :Client, playerId :int,
-        pixelsPerSecond :Number) :void
+        gameObj :AVRGameObject, room :RoomObject, playerId :int, pixelsPerSecond :Number) :void
     {
         resolvePlayerIdent(gameObj, room, playerId, function (ident :ItemIdent) :void {
             // todo
@@ -363,8 +355,7 @@ public class BackendUtils
      * Sets the move speed of an avatar.
      */
     public static function setAvatarOrientation (
-        gameObj :AVRGameObject, room :RoomObject, client :Client, playerId :int,
-        orient :Number) :void
+        gameObj :AVRGameObject, room :RoomObject, playerId :int, orient :Number) :void
     {
         resolvePlayerIdent(gameObj, room, playerId, function (ident :ItemIdent) :void {
             // todo

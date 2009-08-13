@@ -6,7 +6,6 @@ package com.threerings.msoy.game.client {
 import com.threerings.flex.FlexUtil;
 import com.threerings.util.StringUtil;
 
-import com.threerings.presents.client.Client;
 
 import com.whirled.game.client.ContentService;
 import com.whirled.game.data.GameData;
@@ -28,7 +27,7 @@ public class ConsumeItemPackDialog extends FloatingPanel
      * showing or the player was known not to own a single copy of the content pack in question.
      */
     public static function show (
-        ctx :MsoyContext, client :Client, contentService :ContentService,
+        ctx :MsoyContext, contentService :ContentService,
         gameData :Array /*of GameData*/, ident :String, msg :String) :Boolean
     {
         // look up the metadata for the item pack
@@ -50,7 +49,7 @@ public class ConsumeItemPackDialog extends FloatingPanel
 
         // display the confirmation dialog
         _consumeDialog = new ConsumeItemPackDialog(ctx, pdata.name, msg, function () :void {
-            contentService.consumeItemPack(client, 0, ident, ctx.listener());
+            contentService.consumeItemPack(0, ident, ctx.listener());
         });
         _consumeDialog.addCloseCallback(function () :void {
             _consumeDialog = null;

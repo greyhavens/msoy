@@ -557,8 +557,7 @@ public class AVRGameBackend extends ControlBackend
             return;
         }
 
-        BackendUtils.encodeAndSet(
-            _gctx.getClient(), _playerObj, propName, value, key, isArray, immediate);
+        BackendUtils.encodeAndSet(_playerObj, propName, value, key, isArray, immediate);
     }
 
     // PlayerSubControl
@@ -649,7 +648,7 @@ public class AVRGameBackend extends ControlBackend
             return false;
         }
         return ConsumeItemPackDialog.show(
-            _wctx, _gctx.getClient(), _gameObj.contentService, _gameObj.gameData, ident, msg);
+            _wctx, _gameObj.contentService, _gameObj.gameData, ident, msg);
     }
 
     // PlayerSubControl
@@ -674,7 +673,7 @@ public class AVRGameBackend extends ControlBackend
         }
 
         _gameObj.avrgService.completeTask(
-            _gctx.getClient(), 0, taskId, Math.max(0, Math.min(1, payout)),
+            0, taskId, Math.max(0, Math.min(1, payout)),
             BackendUtils.loggingConfirmListener("completeTask"));
     }
 
@@ -686,8 +685,7 @@ public class AVRGameBackend extends ControlBackend
         if (sprite != null) {
             sprite.sendMessage(action, null, true);
         } else {
-            BackendUtils.playAvatarAction(
-                _gameObj, _ctrl.getRoom(), _wctx.getClient(), _wctx.getMyId(), action);
+            BackendUtils.playAvatarAction(_gameObj, _ctrl.getRoom(), _wctx.getMyId(), action);
         }
     }
 
@@ -699,8 +697,7 @@ public class AVRGameBackend extends ControlBackend
         if (sprite != null) {
             sprite.setState(state);
         } else {
-            BackendUtils.setAvatarState(
-                _gameObj, _ctrl.getRoom(), _wctx.getClient(), _wctx.getMyId(), state);
+            BackendUtils.setAvatarState(_gameObj, _ctrl.getRoom(), _wctx.getMyId(), state);
         }
     }
 
@@ -718,7 +715,7 @@ public class AVRGameBackend extends ControlBackend
             sprite.setMoveSpeedFromUser(pixelsPerSecond);
         } else {
             BackendUtils.setAvatarMoveSpeed(
-                _gameObj, _ctrl.getRoom(), _wctx.getClient(), _wctx.getMyId(), pixelsPerSecond);
+                _gameObj, _ctrl.getRoom(), _wctx.getMyId(), pixelsPerSecond);
         }
     }
 
@@ -732,7 +729,7 @@ public class AVRGameBackend extends ControlBackend
             sprite.setLocationFromUser(x, y, z, orient);
         } else {
             BackendUtils.setAvatarLocation(
-                _gameObj, _ctrl.getRoom(), _wctx.getClient(), _wctx.getMyId(), x, y, z, orient);
+                _gameObj, _ctrl.getRoom(), _wctx.getMyId(), x, y, z, orient);
         }
     }
 
@@ -749,8 +746,7 @@ public class AVRGameBackend extends ControlBackend
         if (sprite != null) {
             sprite.setOrientationFromUser(orient);
         } else {
-            BackendUtils.setAvatarOrientation(
-                _gameObj, _ctrl.getRoom(), _wctx.getClient(), _wctx.getMyId(), orient);
+            BackendUtils.setAvatarOrientation(_gameObj, _ctrl.getRoom(), _wctx.getMyId(), orient);
         }
     }
 
@@ -958,7 +954,7 @@ public class AVRGameBackend extends ControlBackend
     protected function agent_sendMessage_v1 (name :String, value :Object) :void
     {
         BackendUtils.sendPrivateMessage(
-            _gameObj.messageService, _gctx.getClient(), SERVER_AGENT_ID, name, value, "game");
+            _gameObj.messageService, SERVER_AGENT_ID, name, value, "game");
     }
 
     // MobControl

@@ -24,12 +24,12 @@ public class PetMarshaller extends InvocationMarshaller
     public static const CALL_PET :int = 1;
 
     // from interface PetService
-    public function callPet (arg1 :Client, arg2 :int, arg3 :InvocationService_ConfirmListener) :void
+    public function callPet (arg1 :int, arg2 :InvocationService_ConfirmListener) :void
     {
-        var listener3 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, CALL_PET, [
-            Integer.valueOf(arg2), listener3
+        var listener2 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
+        listener2.listener = arg2;
+        sendRequest(CALL_PET, [
+            Integer.valueOf(arg1), listener2
         ]);
     }
 
@@ -37,12 +37,12 @@ public class PetMarshaller extends InvocationMarshaller
     public static const ORDER_PET :int = 2;
 
     // from interface PetService
-    public function orderPet (arg1 :Client, arg2 :int, arg3 :int, arg4 :InvocationService_ConfirmListener) :void
+    public function orderPet (arg1 :int, arg2 :int, arg3 :InvocationService_ConfirmListener) :void
     {
-        var listener4 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
-        listener4.listener = arg4;
-        sendRequest(arg1, ORDER_PET, [
-            Integer.valueOf(arg2), Integer.valueOf(arg3), listener4
+        var listener3 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
+        listener3.listener = arg3;
+        sendRequest(ORDER_PET, [
+            Integer.valueOf(arg1), Integer.valueOf(arg2), listener3
         ]);
     }
 
@@ -50,12 +50,12 @@ public class PetMarshaller extends InvocationMarshaller
     public static const SEND_CHAT :int = 3;
 
     // from interface PetService
-    public function sendChat (arg1 :Client, arg2 :int, arg3 :int, arg4 :String, arg5 :InvocationService_ConfirmListener) :void
+    public function sendChat (arg1 :int, arg2 :int, arg3 :String, arg4 :InvocationService_ConfirmListener) :void
     {
-        var listener5 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
-        listener5.listener = arg5;
-        sendRequest(arg1, SEND_CHAT, [
-            Integer.valueOf(arg2), Integer.valueOf(arg3), arg4, listener5
+        var listener4 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
+        listener4.listener = arg4;
+        sendRequest(SEND_CHAT, [
+            Integer.valueOf(arg1), Integer.valueOf(arg2), arg3, listener4
         ]);
     }
 }

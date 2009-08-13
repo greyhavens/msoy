@@ -60,7 +60,7 @@ public class AVRGameLiaison extends GameLiaison
         super.clientDidLogon(event);
 
         var svc :AVRService = (_gctx.getClient().requireService(AVRService) as AVRService);
-        svc.activateGame(_gctx.getClient(), _gameId, this);
+        svc.activateGame(_gameId, this);
 
         // Call shutdown when the location is cleared
         var listener :AttributeChangeAdapter;
@@ -143,7 +143,7 @@ public class AVRGameLiaison extends GameLiaison
         // Perhaps deactivating the game causes the connection to drop, and so we never get
         // the response?
         var svc :AVRService = (_gctx.getClient().requireService(AVRService) as AVRService);
-        svc.deactivateGame(_gctx.getClient(), _gameId,
+        svc.deactivateGame(_gameId,
             _gctx.getWorldContext().confirmListener(_gctx.getLocationDirector().leavePlace,
                 null, null, null, "gameId", _gameId));
     }

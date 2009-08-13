@@ -589,8 +589,8 @@ public class ThaneAVRGameBackend
         if (exitCoords != null) {
             exit = new MsoyLocation(exitCoords[0], exitCoords[1], exitCoords[2]);
         }
-        _gameObj.avrgService.movePlayerToRoom(
-            _ctx.getClient(), playerId, roomId, exit, BackendUtils.loggingConfirmListener(
+        _gameObj.avrgService.movePlayerToRoom(playerId, roomId, exit,
+            BackendUtils.loggingConfirmListener(
                 "movePlayerToRoom", null, _controller.outputToUserCode));
     }
 
@@ -617,8 +617,7 @@ public class ThaneAVRGameBackend
             return false;
         }
 
-        _gameObj.prizeService.awardTrophy(
-            _ctx.getClient(), ident, targetId,
+        _gameObj.prizeService.awardTrophy(ident, targetId,
             BackendUtils.loggingConfirmListener("awardTrophy", null,
                 _controller.outputToUserCode));
 
@@ -628,8 +627,7 @@ public class ThaneAVRGameBackend
     protected function awardPrize_v1 (targetId :int, ident :String) :void
     {
         if (!playerOwnsData(GameData.PRIZE_MARKER, ident, targetId)) {
-            _gameObj.prizeService.awardPrize(
-                _ctx.getClient(), ident, targetId,
+            _gameObj.prizeService.awardPrize(ident, targetId,
                 BackendUtils.loggingConfirmListener("awardPrize", null,
                     _controller.outputToUserCode));
         }

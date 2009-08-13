@@ -808,7 +808,7 @@ public class RoomObjectView extends RoomView
     protected function handleMusicStateChanged (event :ValueEvent) :void
     {
         if (event.value == MediaPlayerCodes.STATE_STOPPED) {
-            _roomObj.roomService.songEnded(_ctx.getClient(), _musicPlayCount);
+            _roomObj.roomService.songEnded(_musicPlayCount);
         }
     }
 

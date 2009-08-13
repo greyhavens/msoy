@@ -26,10 +26,10 @@ public class GameGameMarshaller extends InvocationMarshaller
     public static const COMPLAIN_PLAYER :int = 1;
 
     // from interface GameGameService
-    public function complainPlayer (arg1 :Client, arg2 :int, arg3 :String) :void
+    public function complainPlayer (arg1 :int, arg2 :String) :void
     {
-        sendRequest(arg1, COMPLAIN_PLAYER, [
-            Integer.valueOf(arg2), arg3
+        sendRequest(COMPLAIN_PLAYER, [
+            Integer.valueOf(arg1), arg2
         ]);
     }
 
@@ -37,12 +37,12 @@ public class GameGameMarshaller extends InvocationMarshaller
     public static const GET_TROPHIES :int = 2;
 
     // from interface GameGameService
-    public function getTrophies (arg1 :Client, arg2 :int, arg3 :InvocationService_ResultListener) :void
+    public function getTrophies (arg1 :int, arg2 :InvocationService_ResultListener) :void
     {
-        var listener3 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, GET_TROPHIES, [
-            Integer.valueOf(arg2), listener3
+        var listener2 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
+        listener2.listener = arg2;
+        sendRequest(GET_TROPHIES, [
+            Integer.valueOf(arg1), listener2
         ]);
     }
 
@@ -50,12 +50,12 @@ public class GameGameMarshaller extends InvocationMarshaller
     public static const REMOVE_DEVELOPMENT_TROPHIES :int = 3;
 
     // from interface GameGameService
-    public function removeDevelopmentTrophies (arg1 :Client, arg2 :int, arg3 :InvocationService_ConfirmListener) :void
+    public function removeDevelopmentTrophies (arg1 :int, arg2 :InvocationService_ConfirmListener) :void
     {
-        var listener3 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, REMOVE_DEVELOPMENT_TROPHIES, [
-            Integer.valueOf(arg2), listener3
+        var listener2 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
+        listener2.listener = arg2;
+        sendRequest(REMOVE_DEVELOPMENT_TROPHIES, [
+            Integer.valueOf(arg1), listener2
         ]);
     }
 }

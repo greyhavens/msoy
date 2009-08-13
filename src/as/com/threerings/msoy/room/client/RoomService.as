@@ -20,54 +20,54 @@ import flash.utils.ByteArray;
 public interface RoomService extends InvocationService
 {
     // from Java interface RoomService
-    function changeLocation (arg1 :Client, arg2 :ItemIdent, arg3 :Location) :void;
+    function changeLocation (arg1 :ItemIdent, arg2 :Location) :void;
 
     // from Java interface RoomService
-    function despawnMob (arg1 :Client, arg2 :int, arg3 :String, arg4 :InvocationService_InvocationListener) :void;
+    function despawnMob (arg1 :int, arg2 :String, arg3 :InvocationService_InvocationListener) :void;
 
     // from Java interface RoomService
-    function editRoom (arg1 :Client, arg2 :InvocationService_ResultListener) :void;
+    function editRoom (arg1 :InvocationService_ResultListener) :void;
 
     // from Java interface RoomService
-    function jumpToSong (arg1 :Client, arg2 :int, arg3 :InvocationService_ConfirmListener) :void;
+    function jumpToSong (arg1 :int, arg2 :InvocationService_ConfirmListener) :void;
 
     // from Java interface RoomService
-    function modifyPlaylist (arg1 :Client, arg2 :int, arg3 :Boolean, arg4 :InvocationService_ConfirmListener) :void;
+    function modifyPlaylist (arg1 :int, arg2 :Boolean, arg3 :InvocationService_ConfirmListener) :void;
 
     // from Java interface RoomService
-    function moveMob (arg1 :Client, arg2 :int, arg3 :String, arg4 :Location, arg5 :InvocationService_InvocationListener) :void;
+    function moveMob (arg1 :int, arg2 :String, arg3 :Location, arg4 :InvocationService_InvocationListener) :void;
 
     // from Java interface RoomService
-    function publishRoom (arg1 :Client, arg2 :InvocationService_InvocationListener) :void;
+    function publishRoom (arg1 :InvocationService_InvocationListener) :void;
 
     // from Java interface RoomService
-    function rateRoom (arg1 :Client, arg2 :int, arg3 :InvocationService_InvocationListener) :void;
+    function rateRoom (arg1 :int, arg2 :InvocationService_InvocationListener) :void;
 
     // from Java interface RoomService
-    function requestControl (arg1 :Client, arg2 :ItemIdent) :void;
+    function requestControl (arg1 :ItemIdent) :void;
 
     // from Java interface RoomService
-    function sendPostcard (arg1 :Client, arg2 :TypedArray /* of class java.lang.String */, arg3 :String, arg4 :String, arg5 :String, arg6 :InvocationService_ConfirmListener) :void;
+    function sendPostcard (arg1 :TypedArray /* of class java.lang.String */, arg2 :String, arg3 :String, arg4 :String, arg5 :InvocationService_ConfirmListener) :void;
 
     // from Java interface RoomService
-    function sendSpriteMessage (arg1 :Client, arg2 :ItemIdent, arg3 :String, arg4 :ByteArray, arg5 :Boolean) :void;
+    function sendSpriteMessage (arg1 :ItemIdent, arg2 :String, arg3 :ByteArray, arg4 :Boolean) :void;
 
     // from Java interface RoomService
-    function sendSpriteSignal (arg1 :Client, arg2 :String, arg3 :ByteArray) :void;
+    function sendSpriteSignal (arg1 :String, arg2 :ByteArray) :void;
 
     // from Java interface RoomService
-    function setActorState (arg1 :Client, arg2 :ItemIdent, arg3 :int, arg4 :String) :void;
+    function setActorState (arg1 :ItemIdent, arg2 :int, arg3 :String) :void;
 
     // from Java interface RoomService
-    function songEnded (arg1 :Client, arg2 :int) :void;
+    function songEnded (arg1 :int) :void;
 
     // from Java interface RoomService
-    function spawnMob (arg1 :Client, arg2 :int, arg3 :String, arg4 :String, arg5 :Location, arg6 :InvocationService_InvocationListener) :void;
+    function spawnMob (arg1 :int, arg2 :String, arg3 :String, arg4 :Location, arg5 :InvocationService_InvocationListener) :void;
 
     // from Java interface RoomService
-    function updateMemory (arg1 :Client, arg2 :ItemIdent, arg3 :String, arg4 :ByteArray, arg5 :InvocationService_ResultListener) :void;
+    function updateMemory (arg1 :ItemIdent, arg2 :String, arg3 :ByteArray, arg4 :InvocationService_ResultListener) :void;
 
     // from Java interface RoomService
-    function updateRoom (arg1 :Client, arg2 :SceneUpdate, arg3 :InvocationService_InvocationListener) :void;
+    function updateRoom (arg1 :SceneUpdate, arg2 :InvocationService_InvocationListener) :void;
 }
 }

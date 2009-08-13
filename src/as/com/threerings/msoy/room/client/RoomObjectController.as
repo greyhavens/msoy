@@ -249,7 +249,7 @@ public class RoomObjectController extends RoomController
         // that it has control if it does
         if (result == null) {
             // only if nobody currently has control do we issue the request
-            _roomObj.roomService.requestControl(_wdctx.getClient(), ident);
+            _roomObj.roomService.requestControl(ident);
         }
     }
 
@@ -262,7 +262,7 @@ public class RoomObjectController extends RoomController
         if (!checkCanRequest(ident, "requestMove")) {
             return false;
         }
-        throttle(ident, _roomObj.roomService.changeLocation, _wdctx.getClient(), ident, newloc);
+        throttle(ident, _roomObj.roomService.changeLocation, ident, newloc);
         return true;
     }
 
@@ -286,7 +286,7 @@ public class RoomObjectController extends RoomController
         var handleResult :Function = function (result :Object) :void {
             DoorTargetEditController.start(furniData, _wdctx);
         };
-        _roomObj.roomService.editRoom(_wdctx.getClient(), _wdctx.resultListener(handleResult));
+        _roomObj.roomService.editRoom(_wdctx.resultListener(handleResult));
     }
 
     /**
@@ -316,7 +316,7 @@ public class RoomObjectController extends RoomController
         var handleResult :Function = function (result :Object) :void {
             beginRoomEditing();
         };
-        _roomObj.roomService.editRoom(_wdctx.getClient(), _wdctx.resultListener(handleResult));
+        _roomObj.roomService.editRoom(_wdctx.resultListener(handleResult));
     }
 
     /**
@@ -324,7 +324,7 @@ public class RoomObjectController extends RoomController
      */
     public function handleRoomRate (rating :Number) :void
     {
-        _roomObj.roomService.rateRoom(_wdctx.getClient(), rating, _wdctx.listener());
+        _roomObj.roomService.rateRoom(rating, _wdctx.listener());
     }
 
     /**
@@ -332,7 +332,7 @@ public class RoomObjectController extends RoomController
      */
     public function handlePublishRoom () :void
     {
-        _roomObj.roomService.publishRoom(_wdctx.getClient(), _wdctx.listener());
+        _roomObj.roomService.publishRoom(_wdctx.listener());
 
         // TODO: remove this bubbley hint someday?
         BubblePopup.showHelpBubble(_wdctx, _wdctx.getControlBar().shareBtn,
@@ -477,8 +477,7 @@ public class RoomObjectController extends RoomController
     override public function handleOrderPet (petId :int, command :int) :void
     {
         var svc :PetService = (_wdctx.getClient().requireService(PetService) as PetService);
-        svc.orderPet(_wdctx.getClient(), petId, command,
-            _wdctx.confirmListener("m.pet_ordered" + command));
+        svc.orderPet(petId, command, _wdctx.confirmListener("m.pet_ordered" + command));
     }
 
     override public function getEnvironment () :String
@@ -521,13 +520,12 @@ public class RoomObjectController extends RoomController
     override public function deleteItem (ident :ItemIdent) :void
     {
         var svc :ItemService = _wdctx.getClient().requireService(ItemService) as ItemService;
-
-        svc.deleteItem(_wdctx.getClient(), ident, _wdctx.confirmListener());
+        svc.deleteItem(ident, _wdctx.confirmListener());
     }
 
     override public function rateRoom (rating :Number, onSuccess :Function) :void
     {
-        _roomObj.roomService.rateRoom(_wdctx.getClient(), rating, _wdctx.resultListener(onSuccess));
+        _roomObj.roomService.rateRoom(rating, _wdctx.resultListener(onSuccess));
     }
 
     /**
@@ -569,7 +567,7 @@ public class RoomObjectController extends RoomController
         }
         if (itemType == Item.PET) {
             var svc :PetService = _ctx.getClient().requireService(PetService) as PetService;
-            svc.callPet(_wdctx.getClient(), itemId, _wdctx.confirmListener("m.pet_called"));
+            svc.callPet(itemId, _wdctx.confirmListener("m.pet_called"));
             return;
         }
 
@@ -610,7 +608,7 @@ public class RoomObjectController extends RoomController
                 } else if (item.getType() == Item.AUDIO) {
                     // audio is different
                     var rsp :String = "m.music_added" + (canManageRoom(0, false) ? "" : "_temp");
-                    _roomObj.roomService.modifyPlaylist(_wdctx.getClient(), item.itemId, true,
+                    _roomObj.roomService.modifyPlaylist(item.itemId, true,
                         _wdctx.confirmListener(rsp, MsoyCodes.WORLD_MSGS));
 
                 } else {
@@ -639,7 +637,7 @@ public class RoomObjectController extends RoomController
             if (item.isUsed()) {
                 var msg :String = Item.getTypeKey(itemType);
                 (new ItemUsedDialog(_wdctx, Msgs.ITEM.get(msg), function () :void {
-                    isvc.reclaimItem(_wdctx.getClient(), ident,
+                    isvc.reclaimItem(ident,
                         _wdctx.confirmListener(useNewItem, MsoyCodes.EDITING_MSGS,
                             "e.failed_to_remove", null, "Failed to reclaim item", "item", ident));
                 })).open(true);
@@ -648,8 +646,7 @@ public class RoomObjectController extends RoomController
             }
         };
 
-        isvc.peepItem(_wdctx.getClient(), ident,
-            _wdctx.resultListener(gotItem, MsoyCodes.EDITING_MSGS));
+        isvc.peepItem(ident, _wdctx.resultListener(gotItem, MsoyCodes.EDITING_MSGS));
     }
 
     /**
@@ -674,7 +671,7 @@ public class RoomObjectController extends RoomController
         } else if (itemType == Item.AUDIO) {
             // only send a request if it's even here
             if (_roomObj.playlist.containsKey(new ItemIdent(itemType, itemId))) {
-                _roomObj.roomService.modifyPlaylist(_wdctx.getClient(), itemId, false,
+                _roomObj.roomService.modifyPlaylist(itemId, false,
                     _wdctx.confirmListener("m.music_removed", MsoyCodes.WORLD_MSGS));
             }
 
@@ -808,7 +805,7 @@ public class RoomObjectController extends RoomController
      */
     protected function updateRoom (update :SceneUpdate) :void
     {
-        _roomObj.roomService.updateRoom(_wdctx.getClient(), update, _wdctx.listener());
+        _roomObj.roomService.updateRoom(update, _wdctx.listener());
     }
 
     override protected function checkMouse2 (
@@ -832,23 +829,21 @@ public class RoomObjectController extends RoomController
     override protected function setActorState2 (
         ident :ItemIdent, actorOid :int, state :String) :void
     {
-        throttle(ident, _roomObj.roomService.setActorState,
-            _wdctx.getClient(), ident, actorOid, state);
+        throttle(ident, _roomObj.roomService.setActorState, ident, actorOid, state);
     }
 
     // documentation inherited
     override protected function sendSpriteMessage2 (
         ident :ItemIdent, name :String, data :ByteArray, isAction :Boolean) :void
     {
-        throttle(ident, _roomObj.roomService.sendSpriteMessage,
-            _wdctx.getClient(), ident, name, data, isAction);
+        throttle(ident, _roomObj.roomService.sendSpriteMessage, ident, name, data, isAction);
     }
 
     // documentation inherited
     override protected function sendSpriteSignal2 (
         ident :ItemIdent, name :String, data :ByteArray) :void
     {
-        throttle(ident, _roomObj.roomService.sendSpriteSignal, _wdctx.getClient(), name, data);
+        throttle(ident, _roomObj.roomService.sendSpriteSignal, name, data);
     }
 
     // documentation inherited
@@ -856,7 +851,7 @@ public class RoomObjectController extends RoomController
     {
         var svc :PetService = (_wdctx.getClient().requireService(PetService) as PetService);
         throttle(info.getItemIdent(), svc.sendChat,
-            _wdctx.getClient(), info.bodyOid, _scene.getId(), msg, _wdctx.confirmListener());
+            info.bodyOid, _scene.getId(), msg, _wdctx.confirmListener());
     }
 
     // documentation inherited
@@ -875,7 +870,7 @@ public class RoomObjectController extends RoomController
 
         // ship the update request off to the server
         throttle(ident, _roomObj.roomService.updateMemory,
-            _wdctx.getClient(), ident, key, data, _wdctx.resultListener(resultHandler));
+            ident, key, data, _wdctx.resultListener(resultHandler));
     }
 
     // documentation inherited

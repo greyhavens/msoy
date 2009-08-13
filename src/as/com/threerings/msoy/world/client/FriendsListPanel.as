@@ -216,7 +216,7 @@ public class FriendsListPanel extends FlyingPanel
         if (newStatus != _wctx.getMemberObject().headline) {
             var msvc :MemberService =
                 (_wctx.getClient().requireService(MemberService) as MemberService);
-            msvc.updateStatus(_wctx.getClient(), newStatus, new InvocationAdapter(
+            msvc.updateStatus(newStatus, new InvocationAdapter(
                 function (cause :String) :void {
                     _wctx.displayFeedback(null, cause);
                     // revert to old status

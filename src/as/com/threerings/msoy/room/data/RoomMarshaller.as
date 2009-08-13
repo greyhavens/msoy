@@ -35,10 +35,10 @@ public class RoomMarshaller extends InvocationMarshaller
     public static const CHANGE_LOCATION :int = 1;
 
     // from interface RoomService
-    public function changeLocation (arg1 :Client, arg2 :ItemIdent, arg3 :Location) :void
+    public function changeLocation (arg1 :ItemIdent, arg2 :Location) :void
     {
-        sendRequest(arg1, CHANGE_LOCATION, [
-            arg2, arg3
+        sendRequest(CHANGE_LOCATION, [
+            arg1, arg2
         ]);
     }
 
@@ -46,12 +46,12 @@ public class RoomMarshaller extends InvocationMarshaller
     public static const DESPAWN_MOB :int = 2;
 
     // from interface RoomService
-    public function despawnMob (arg1 :Client, arg2 :int, arg3 :String, arg4 :InvocationService_InvocationListener) :void
+    public function despawnMob (arg1 :int, arg2 :String, arg3 :InvocationService_InvocationListener) :void
     {
-        var listener4 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
-        listener4.listener = arg4;
-        sendRequest(arg1, DESPAWN_MOB, [
-            Integer.valueOf(arg2), arg3, listener4
+        var listener3 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
+        listener3.listener = arg3;
+        sendRequest(DESPAWN_MOB, [
+            Integer.valueOf(arg1), arg2, listener3
         ]);
     }
 
@@ -59,12 +59,12 @@ public class RoomMarshaller extends InvocationMarshaller
     public static const EDIT_ROOM :int = 3;
 
     // from interface RoomService
-    public function editRoom (arg1 :Client, arg2 :InvocationService_ResultListener) :void
+    public function editRoom (arg1 :InvocationService_ResultListener) :void
     {
-        var listener2 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
-        listener2.listener = arg2;
-        sendRequest(arg1, EDIT_ROOM, [
-            listener2
+        var listener1 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
+        listener1.listener = arg1;
+        sendRequest(EDIT_ROOM, [
+            listener1
         ]);
     }
 
@@ -72,12 +72,12 @@ public class RoomMarshaller extends InvocationMarshaller
     public static const JUMP_TO_SONG :int = 4;
 
     // from interface RoomService
-    public function jumpToSong (arg1 :Client, arg2 :int, arg3 :InvocationService_ConfirmListener) :void
+    public function jumpToSong (arg1 :int, arg2 :InvocationService_ConfirmListener) :void
     {
-        var listener3 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, JUMP_TO_SONG, [
-            Integer.valueOf(arg2), listener3
+        var listener2 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
+        listener2.listener = arg2;
+        sendRequest(JUMP_TO_SONG, [
+            Integer.valueOf(arg1), listener2
         ]);
     }
 
@@ -85,12 +85,12 @@ public class RoomMarshaller extends InvocationMarshaller
     public static const MODIFY_PLAYLIST :int = 5;
 
     // from interface RoomService
-    public function modifyPlaylist (arg1 :Client, arg2 :int, arg3 :Boolean, arg4 :InvocationService_ConfirmListener) :void
+    public function modifyPlaylist (arg1 :int, arg2 :Boolean, arg3 :InvocationService_ConfirmListener) :void
     {
-        var listener4 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
-        listener4.listener = arg4;
-        sendRequest(arg1, MODIFY_PLAYLIST, [
-            Integer.valueOf(arg2), langBoolean.valueOf(arg3), listener4
+        var listener3 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
+        listener3.listener = arg3;
+        sendRequest(MODIFY_PLAYLIST, [
+            Integer.valueOf(arg1), langBoolean.valueOf(arg2), listener3
         ]);
     }
 
@@ -98,12 +98,12 @@ public class RoomMarshaller extends InvocationMarshaller
     public static const MOVE_MOB :int = 6;
 
     // from interface RoomService
-    public function moveMob (arg1 :Client, arg2 :int, arg3 :String, arg4 :Location, arg5 :InvocationService_InvocationListener) :void
+    public function moveMob (arg1 :int, arg2 :String, arg3 :Location, arg4 :InvocationService_InvocationListener) :void
     {
-        var listener5 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
-        listener5.listener = arg5;
-        sendRequest(arg1, MOVE_MOB, [
-            Integer.valueOf(arg2), arg3, arg4, listener5
+        var listener4 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
+        listener4.listener = arg4;
+        sendRequest(MOVE_MOB, [
+            Integer.valueOf(arg1), arg2, arg3, listener4
         ]);
     }
 
@@ -111,12 +111,12 @@ public class RoomMarshaller extends InvocationMarshaller
     public static const PUBLISH_ROOM :int = 7;
 
     // from interface RoomService
-    public function publishRoom (arg1 :Client, arg2 :InvocationService_InvocationListener) :void
+    public function publishRoom (arg1 :InvocationService_InvocationListener) :void
     {
-        var listener2 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
-        listener2.listener = arg2;
-        sendRequest(arg1, PUBLISH_ROOM, [
-            listener2
+        var listener1 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
+        listener1.listener = arg1;
+        sendRequest(PUBLISH_ROOM, [
+            listener1
         ]);
     }
 
@@ -124,12 +124,12 @@ public class RoomMarshaller extends InvocationMarshaller
     public static const RATE_ROOM :int = 8;
 
     // from interface RoomService
-    public function rateRoom (arg1 :Client, arg2 :int, arg3 :InvocationService_InvocationListener) :void
+    public function rateRoom (arg1 :int, arg2 :InvocationService_InvocationListener) :void
     {
-        var listener3 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, RATE_ROOM, [
-            Byte.valueOf(arg2), listener3
+        var listener2 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
+        listener2.listener = arg2;
+        sendRequest(RATE_ROOM, [
+            Byte.valueOf(arg1), listener2
         ]);
     }
 
@@ -137,10 +137,10 @@ public class RoomMarshaller extends InvocationMarshaller
     public static const REQUEST_CONTROL :int = 9;
 
     // from interface RoomService
-    public function requestControl (arg1 :Client, arg2 :ItemIdent) :void
+    public function requestControl (arg1 :ItemIdent) :void
     {
-        sendRequest(arg1, REQUEST_CONTROL, [
-            arg2
+        sendRequest(REQUEST_CONTROL, [
+            arg1
         ]);
     }
 
@@ -148,12 +148,12 @@ public class RoomMarshaller extends InvocationMarshaller
     public static const SEND_POSTCARD :int = 10;
 
     // from interface RoomService
-    public function sendPostcard (arg1 :Client, arg2 :TypedArray /* of class java.lang.String */, arg3 :String, arg4 :String, arg5 :String, arg6 :InvocationService_ConfirmListener) :void
+    public function sendPostcard (arg1 :TypedArray /* of class java.lang.String */, arg2 :String, arg3 :String, arg4 :String, arg5 :InvocationService_ConfirmListener) :void
     {
-        var listener6 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
-        listener6.listener = arg6;
-        sendRequest(arg1, SEND_POSTCARD, [
-            arg2, arg3, arg4, arg5, listener6
+        var listener5 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
+        listener5.listener = arg5;
+        sendRequest(SEND_POSTCARD, [
+            arg1, arg2, arg3, arg4, listener5
         ]);
     }
 
@@ -161,10 +161,10 @@ public class RoomMarshaller extends InvocationMarshaller
     public static const SEND_SPRITE_MESSAGE :int = 11;
 
     // from interface RoomService
-    public function sendSpriteMessage (arg1 :Client, arg2 :ItemIdent, arg3 :String, arg4 :ByteArray, arg5 :Boolean) :void
+    public function sendSpriteMessage (arg1 :ItemIdent, arg2 :String, arg3 :ByteArray, arg4 :Boolean) :void
     {
-        sendRequest(arg1, SEND_SPRITE_MESSAGE, [
-            arg2, arg3, arg4, langBoolean.valueOf(arg5)
+        sendRequest(SEND_SPRITE_MESSAGE, [
+            arg1, arg2, arg3, langBoolean.valueOf(arg4)
         ]);
     }
 
@@ -172,10 +172,10 @@ public class RoomMarshaller extends InvocationMarshaller
     public static const SEND_SPRITE_SIGNAL :int = 12;
 
     // from interface RoomService
-    public function sendSpriteSignal (arg1 :Client, arg2 :String, arg3 :ByteArray) :void
+    public function sendSpriteSignal (arg1 :String, arg2 :ByteArray) :void
     {
-        sendRequest(arg1, SEND_SPRITE_SIGNAL, [
-            arg2, arg3
+        sendRequest(SEND_SPRITE_SIGNAL, [
+            arg1, arg2
         ]);
     }
 
@@ -183,10 +183,10 @@ public class RoomMarshaller extends InvocationMarshaller
     public static const SET_ACTOR_STATE :int = 13;
 
     // from interface RoomService
-    public function setActorState (arg1 :Client, arg2 :ItemIdent, arg3 :int, arg4 :String) :void
+    public function setActorState (arg1 :ItemIdent, arg2 :int, arg3 :String) :void
     {
-        sendRequest(arg1, SET_ACTOR_STATE, [
-            arg2, Integer.valueOf(arg3), arg4
+        sendRequest(SET_ACTOR_STATE, [
+            arg1, Integer.valueOf(arg2), arg3
         ]);
     }
 
@@ -194,10 +194,10 @@ public class RoomMarshaller extends InvocationMarshaller
     public static const SONG_ENDED :int = 14;
 
     // from interface RoomService
-    public function songEnded (arg1 :Client, arg2 :int) :void
+    public function songEnded (arg1 :int) :void
     {
-        sendRequest(arg1, SONG_ENDED, [
-            Integer.valueOf(arg2)
+        sendRequest(SONG_ENDED, [
+            Integer.valueOf(arg1)
         ]);
     }
 
@@ -205,12 +205,12 @@ public class RoomMarshaller extends InvocationMarshaller
     public static const SPAWN_MOB :int = 15;
 
     // from interface RoomService
-    public function spawnMob (arg1 :Client, arg2 :int, arg3 :String, arg4 :String, arg5 :Location, arg6 :InvocationService_InvocationListener) :void
+    public function spawnMob (arg1 :int, arg2 :String, arg3 :String, arg4 :Location, arg5 :InvocationService_InvocationListener) :void
     {
-        var listener6 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
-        listener6.listener = arg6;
-        sendRequest(arg1, SPAWN_MOB, [
-            Integer.valueOf(arg2), arg3, arg4, arg5, listener6
+        var listener5 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
+        listener5.listener = arg5;
+        sendRequest(SPAWN_MOB, [
+            Integer.valueOf(arg1), arg2, arg3, arg4, listener5
         ]);
     }
 
@@ -218,12 +218,12 @@ public class RoomMarshaller extends InvocationMarshaller
     public static const UPDATE_MEMORY :int = 16;
 
     // from interface RoomService
-    public function updateMemory (arg1 :Client, arg2 :ItemIdent, arg3 :String, arg4 :ByteArray, arg5 :InvocationService_ResultListener) :void
+    public function updateMemory (arg1 :ItemIdent, arg2 :String, arg3 :ByteArray, arg4 :InvocationService_ResultListener) :void
     {
-        var listener5 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
-        listener5.listener = arg5;
-        sendRequest(arg1, UPDATE_MEMORY, [
-            arg2, arg3, arg4, listener5
+        var listener4 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
+        listener4.listener = arg4;
+        sendRequest(UPDATE_MEMORY, [
+            arg1, arg2, arg3, listener4
         ]);
     }
 
@@ -231,12 +231,12 @@ public class RoomMarshaller extends InvocationMarshaller
     public static const UPDATE_ROOM :int = 17;
 
     // from interface RoomService
-    public function updateRoom (arg1 :Client, arg2 :SceneUpdate, arg3 :InvocationService_InvocationListener) :void
+    public function updateRoom (arg1 :SceneUpdate, arg2 :InvocationService_InvocationListener) :void
     {
-        var listener3 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, UPDATE_ROOM, [
-            arg2, listener3
+        var listener2 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
+        listener2.listener = arg2;
+        sendRequest(UPDATE_ROOM, [
+            arg1, listener2
         ]);
     }
 }

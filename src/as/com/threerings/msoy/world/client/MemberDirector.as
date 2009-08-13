@@ -34,8 +34,7 @@ public class MemberDirector extends BasicDirector
      */
     public function inviteToBeFriend (friendId :int) :void
     {
-        _msvc.inviteToBeFriend(_wctx.getClient(), friendId,
-            _wctx.resultListener(handleInviteResult));
+        _msvc.inviteToBeFriend(friendId, _wctx.resultListener(handleInviteResult));
     }
 
     /**
@@ -43,8 +42,8 @@ public class MemberDirector extends BasicDirector
      */
     public function setDisplayName (newName :String) :void
     {
-        _msvc.setDisplayName(_wctx.getClient(), newName, _wctx.confirmListener(
-            _wctx.getWorldController().refreshDisplayName));
+        _msvc.setDisplayName(newName,
+            _wctx.confirmListener(_wctx.getWorldController().refreshDisplayName));
     }
 
     protected function handleInviteResult (automatic :Boolean) : void

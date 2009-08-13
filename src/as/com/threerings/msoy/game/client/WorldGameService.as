@@ -14,12 +14,12 @@ import com.threerings.presents.client.InvocationService_ResultListener;
 public interface WorldGameService extends InvocationService
 {
     // from Java interface WorldGameService
-    function getTablesWaiting (arg1 :Client, arg2 :InvocationService_ResultListener) :void;
+    function getTablesWaiting (arg1 :InvocationService_ResultListener) :void;
 
     // from Java interface WorldGameService
-    function inviteFriends (arg1 :Client, arg2 :int, arg3 :TypedArray /* of int */) :void;
+    function inviteFriends (arg1 :int, arg2 :TypedArray /* of int */) :void;
 
     // from Java interface WorldGameService
-    function locateGame (arg1 :Client, arg2 :int, arg3 :WorldGameService_LocationListener) :void;
+    function locateGame (arg1 :int, arg2 :WorldGameService_LocationListener) :void;
 }
 }

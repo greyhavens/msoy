@@ -55,7 +55,7 @@ public class TourDirector extends BasicDirector
     {
         const roomView :RoomObjectView = _wctx.getPlaceView() as RoomObjectView;
         const loadingDone :Boolean = (roomView != null) && roomView.loadingDone();
-        _tsvc.nextRoom(_ctx.getClient(), loadingDone,
+        _tsvc.nextRoom(loadingDone,
             _wctx.resultListener(handleNextRoomResult, MsoyCodes.WORLD_MSGS, null, button));
     }
 
@@ -65,7 +65,7 @@ public class TourDirector extends BasicDirector
             closeTourDialog(); // will end up calling back to endTour()
 
         } else if (isOnTour()) {
-            _tsvc.endTour(_ctx.getClient());
+            _tsvc.endTour();
         }
     }
 

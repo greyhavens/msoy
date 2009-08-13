@@ -13,12 +13,12 @@ import com.threerings.presents.client.InvocationService_ConfirmListener;
 public interface PetService extends InvocationService
 {
     // from Java interface PetService
-    function callPet (arg1 :Client, arg2 :int, arg3 :InvocationService_ConfirmListener) :void;
+    function callPet (arg1 :int, arg2 :InvocationService_ConfirmListener) :void;
 
     // from Java interface PetService
-    function orderPet (arg1 :Client, arg2 :int, arg3 :int, arg4 :InvocationService_ConfirmListener) :void;
+    function orderPet (arg1 :int, arg2 :int, arg3 :InvocationService_ConfirmListener) :void;
 
     // from Java interface PetService
-    function sendChat (arg1 :Client, arg2 :int, arg3 :int, arg4 :String, arg5 :InvocationService_ConfirmListener) :void;
+    function sendChat (arg1 :int, arg2 :int, arg3 :String, arg4 :InvocationService_ConfirmListener) :void;
 }
 }

@@ -181,8 +181,7 @@ public class MsoySceneDirector extends SceneDirector
         // issue a moveTo request
         log.info("Issuing moveTo(" + data.previousSceneId + "->" + data.sceneId + ", " +
                  sceneVers + ", " + _departingPortalId + ", " + data.destLoc + ").");
-        _mssvc.moveTo(_worldctx.getClient(), data.sceneId, sceneVers, _departingPortalId,
-                      data.destLoc, this);
+        _mssvc.moveTo(data.sceneId, sceneVers, _departingPortalId, data.destLoc, this);
     }
 
     // from interface MsoySceneService_MsoySceneMoveListener

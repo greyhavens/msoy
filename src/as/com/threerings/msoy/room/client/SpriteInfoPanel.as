@@ -70,7 +70,7 @@ public class SpriteInfoPanel extends FloatingPanel
         Prefs.events.addEventListener(Prefs.BLEEPED_MEDIA, bleepChanged);
 
         var svc :ItemService = ctx.getClient().requireService(ItemService) as ItemService;
-        svc.getItemNames(_ctx.getClient(), idents, ctx.resultListener(gotItemNames));
+        svc.getItemNames(idents, ctx.resultListener(gotItemNames));
     }
 
     override public function close () :void

@@ -297,7 +297,7 @@ public class GameDirector extends BasicDirector
 
         var svc :GameGameService =
             getGameContext().getClient().requireService(GameGameService) as GameGameService;
-        svc.removeDevelopmentTrophies(getGameContext().getClient(), _liaison.gameId,
+        svc.removeDevelopmentTrophies(_liaison.gameId,
             getGameContext().getWorldContext().confirmListener(
             "m.trophies_removed", MsoyCodes.GAME_MSGS));
     }

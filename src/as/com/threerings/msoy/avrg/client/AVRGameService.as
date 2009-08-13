@@ -17,18 +17,18 @@ import com.threerings.util.Integer;
 public interface AVRGameService extends InvocationService
 {
     // from Java interface AVRGameService
-    function completeTask (arg1 :Client, arg2 :int, arg3 :String, arg4 :Number, arg5 :InvocationService_ConfirmListener) :void;
+    function completeTask (arg1 :int, arg2 :String, arg3 :Number, arg4 :InvocationService_ConfirmListener) :void;
 
     // from Java interface AVRGameService
-    function loadOfflinePlayer (arg1 :Client, arg2 :int, arg3 :InvocationService_ResultListener) :void;
+    function loadOfflinePlayer (arg1 :int, arg2 :InvocationService_ResultListener) :void;
 
     // from Java interface AVRGameService
-    function movePlayerToRoom (arg1 :Client, arg2 :int, arg3 :int, arg4 :MsoyLocation, arg5 :InvocationService_InvocationListener) :void;
+    function movePlayerToRoom (arg1 :int, arg2 :int, arg3 :MsoyLocation, arg4 :InvocationService_InvocationListener) :void;
 
     // from Java interface AVRGameService
-    function setIdle (arg1 :Client, arg2 :Boolean, arg3 :InvocationService_ConfirmListener) :void;
+    function setIdle (arg1 :Boolean, arg2 :InvocationService_ConfirmListener) :void;
 
     // from Java interface AVRGameService
-    function setOfflinePlayerProperty (arg1 :Client, arg2 :int, arg3 :String, arg4 :Object, arg5 :Integer, arg6 :Boolean, arg7 :InvocationService_ConfirmListener) :void;
+    function setOfflinePlayerProperty (arg1 :int, arg2 :String, arg3 :Object, arg4 :Integer, arg5 :Boolean, arg6 :InvocationService_ConfirmListener) :void;
 }
 }

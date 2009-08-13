@@ -25,12 +25,12 @@ public class AVRMarshaller extends InvocationMarshaller
     public static const ACTIVATE_GAME :int = 1;
 
     // from interface AVRService
-    public function activateGame (arg1 :Client, arg2 :int, arg3 :AVRService_AVRGameJoinListener) :void
+    public function activateGame (arg1 :int, arg2 :AVRService_AVRGameJoinListener) :void
     {
-        var listener3 :AVRMarshaller_AVRGameJoinMarshaller = new AVRMarshaller_AVRGameJoinMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, ACTIVATE_GAME, [
-            Integer.valueOf(arg2), listener3
+        var listener2 :AVRMarshaller_AVRGameJoinMarshaller = new AVRMarshaller_AVRGameJoinMarshaller();
+        listener2.listener = arg2;
+        sendRequest(ACTIVATE_GAME, [
+            Integer.valueOf(arg1), listener2
         ]);
     }
 
@@ -38,12 +38,12 @@ public class AVRMarshaller extends InvocationMarshaller
     public static const DEACTIVATE_GAME :int = 2;
 
     // from interface AVRService
-    public function deactivateGame (arg1 :Client, arg2 :int, arg3 :InvocationService_ConfirmListener) :void
+    public function deactivateGame (arg1 :int, arg2 :InvocationService_ConfirmListener) :void
     {
-        var listener3 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, DEACTIVATE_GAME, [
-            Integer.valueOf(arg2), listener3
+        var listener2 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
+        listener2.listener = arg2;
+        sendRequest(DEACTIVATE_GAME, [
+            Integer.valueOf(arg1), listener2
         ]);
     }
 }

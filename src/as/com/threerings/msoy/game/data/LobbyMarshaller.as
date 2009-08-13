@@ -24,12 +24,12 @@ public class LobbyMarshaller extends InvocationMarshaller
     public static const IDENTIFY_LOBBY :int = 1;
 
     // from interface LobbyService
-    public function identifyLobby (arg1 :Client, arg2 :int, arg3 :InvocationService_ResultListener) :void
+    public function identifyLobby (arg1 :int, arg2 :InvocationService_ResultListener) :void
     {
-        var listener3 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, IDENTIFY_LOBBY, [
-            Integer.valueOf(arg2), listener3
+        var listener2 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
+        listener2.listener = arg2;
+        sendRequest(IDENTIFY_LOBBY, [
+            Integer.valueOf(arg1), listener2
         ]);
     }
 
@@ -37,12 +37,12 @@ public class LobbyMarshaller extends InvocationMarshaller
     public static const PLAY_NOW :int = 2;
 
     // from interface LobbyService
-    public function playNow (arg1 :Client, arg2 :int, arg3 :int, arg4 :InvocationService_ResultListener) :void
+    public function playNow (arg1 :int, arg2 :int, arg3 :InvocationService_ResultListener) :void
     {
-        var listener4 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
-        listener4.listener = arg4;
-        sendRequest(arg1, PLAY_NOW, [
-            Integer.valueOf(arg2), Integer.valueOf(arg3), listener4
+        var listener3 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
+        listener3.listener = arg3;
+        sendRequest(PLAY_NOW, [
+            Integer.valueOf(arg1), Integer.valueOf(arg2), listener3
         ]);
     }
 }

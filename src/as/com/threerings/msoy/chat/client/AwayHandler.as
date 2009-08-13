@@ -46,7 +46,7 @@ public class AwayHandler extends CommandHandler
         // do the change, give feedback
         var feedback :String = (msg == null) ? "m.back" : MessageBundle.tcompose("m.away", msg);
         MemberService(mctx.getClient().requireService(MemberService)).setAway(
-            mctx.getClient(), msg, mctx.confirmListener(feedback));
+            msg, mctx.confirmListener(feedback));
         return ChatCodes.SUCCESS;
     }
 }

@@ -180,8 +180,7 @@ public class AVRGameController extends PlaceController
     public function setIdle (nowIdle :Boolean) :void
     {
         if (_gameObj != null) {
-            _gameObj.avrgService.setIdle(_gctx.getClient(), nowIdle,
-                BackendUtils.loggingConfirmListener("setIdle"));
+            _gameObj.avrgService.setIdle(nowIdle, BackendUtils.loggingConfirmListener("setIdle"));
         }
     }
 

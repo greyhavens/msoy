@@ -63,7 +63,7 @@ public class WarningDialog extends FloatingPanel
     {
         var msvc :MemberService =
             _ctx.getClient().requireService(MemberService) as MemberService;
-        msvc.acknowledgeWarning(_ctx.getClient());
+        msvc.acknowledgeWarning();
     }
 
     protected var _wText :Text;

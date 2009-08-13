@@ -14,18 +14,18 @@ import com.threerings.presents.client.InvocationService_ResultListener;
 public interface PartyBoardService extends InvocationService
 {
     // from Java interface PartyBoardService
-    function createParty (arg1 :Client, arg2 :Currency, arg3 :int, arg4 :String, arg5 :int, arg6 :Boolean, arg7 :PartyBoardService_JoinListener) :void;
+    function createParty (arg1 :Currency, arg2 :int, arg3 :String, arg4 :int, arg5 :Boolean, arg6 :PartyBoardService_JoinListener) :void;
 
     // from Java interface PartyBoardService
-    function getCreateCost (arg1 :Client, arg2 :InvocationService_ResultListener) :void;
+    function getCreateCost (arg1 :InvocationService_ResultListener) :void;
 
     // from Java interface PartyBoardService
-    function getPartyBoard (arg1 :Client, arg2 :int, arg3 :InvocationService_ResultListener) :void;
+    function getPartyBoard (arg1 :int, arg2 :InvocationService_ResultListener) :void;
 
     // from Java interface PartyBoardService
-    function getPartyDetail (arg1 :Client, arg2 :int, arg3 :InvocationService_ResultListener) :void;
+    function getPartyDetail (arg1 :int, arg2 :InvocationService_ResultListener) :void;
 
     // from Java interface PartyBoardService
-    function locateParty (arg1 :Client, arg2 :int, arg3 :PartyBoardService_JoinListener) :void;
+    function locateParty (arg1 :int, arg2 :PartyBoardService_JoinListener) :void;
 }
 }

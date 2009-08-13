@@ -199,8 +199,7 @@ public class ChatTabBar extends HBox
             // we always tell the server that they want to hear it, just in case.
             if (channel.type == MsoyChatChannel.GROUP_CHANNEL) {
                 (_ctx.getClient().getService(MsoyService) as MsoyService).setHearingGroupChat(
-                    _ctx.getClient(), (channel.ident as GroupName).getGroupId(), true,
-                    _ctx.confirmListener());
+                    (channel.ident as GroupName).getGroupId(), true, _ctx.confirmListener());
             }
         }
     }
@@ -461,7 +460,7 @@ public class ChatTabBar extends HBox
         if (tab.channel.type == MsoyChatChannel.GROUP_CHANNEL) {
             tab.displayCloseBox(false);
             (_ctx.getClient().getService(MsoyService) as MsoyService).setHearingGroupChat(
-                _ctx.getClient(), (tab.channel.ident as GroupName).getGroupId(), false,
+                (tab.channel.ident as GroupName).getGroupId(), false,
                 _ctx.confirmListener(function () :void {
                     removeTab(tab);
                     _ctx.getNotificationDirector().addGenericNotification(

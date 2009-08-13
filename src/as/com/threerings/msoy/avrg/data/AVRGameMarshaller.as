@@ -31,12 +31,12 @@ public class AVRGameMarshaller extends InvocationMarshaller
     public static const COMPLETE_TASK :int = 1;
 
     // from interface AVRGameService
-    public function completeTask (arg1 :Client, arg2 :int, arg3 :String, arg4 :Number, arg5 :InvocationService_ConfirmListener) :void
+    public function completeTask (arg1 :int, arg2 :String, arg3 :Number, arg4 :InvocationService_ConfirmListener) :void
     {
-        var listener5 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
-        listener5.listener = arg5;
-        sendRequest(arg1, COMPLETE_TASK, [
-            Integer.valueOf(arg2), arg3, Float.valueOf(arg4), listener5
+        var listener4 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
+        listener4.listener = arg4;
+        sendRequest(COMPLETE_TASK, [
+            Integer.valueOf(arg1), arg2, Float.valueOf(arg3), listener4
         ]);
     }
 
@@ -44,12 +44,12 @@ public class AVRGameMarshaller extends InvocationMarshaller
     public static const LOAD_OFFLINE_PLAYER :int = 2;
 
     // from interface AVRGameService
-    public function loadOfflinePlayer (arg1 :Client, arg2 :int, arg3 :InvocationService_ResultListener) :void
+    public function loadOfflinePlayer (arg1 :int, arg2 :InvocationService_ResultListener) :void
     {
-        var listener3 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, LOAD_OFFLINE_PLAYER, [
-            Integer.valueOf(arg2), listener3
+        var listener2 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
+        listener2.listener = arg2;
+        sendRequest(LOAD_OFFLINE_PLAYER, [
+            Integer.valueOf(arg1), listener2
         ]);
     }
 
@@ -57,12 +57,12 @@ public class AVRGameMarshaller extends InvocationMarshaller
     public static const MOVE_PLAYER_TO_ROOM :int = 3;
 
     // from interface AVRGameService
-    public function movePlayerToRoom (arg1 :Client, arg2 :int, arg3 :int, arg4 :MsoyLocation, arg5 :InvocationService_InvocationListener) :void
+    public function movePlayerToRoom (arg1 :int, arg2 :int, arg3 :MsoyLocation, arg4 :InvocationService_InvocationListener) :void
     {
-        var listener5 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
-        listener5.listener = arg5;
-        sendRequest(arg1, MOVE_PLAYER_TO_ROOM, [
-            Integer.valueOf(arg2), Integer.valueOf(arg3), arg4, listener5
+        var listener4 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
+        listener4.listener = arg4;
+        sendRequest(MOVE_PLAYER_TO_ROOM, [
+            Integer.valueOf(arg1), Integer.valueOf(arg2), arg3, listener4
         ]);
     }
 
@@ -70,12 +70,12 @@ public class AVRGameMarshaller extends InvocationMarshaller
     public static const SET_IDLE :int = 4;
 
     // from interface AVRGameService
-    public function setIdle (arg1 :Client, arg2 :Boolean, arg3 :InvocationService_ConfirmListener) :void
+    public function setIdle (arg1 :Boolean, arg2 :InvocationService_ConfirmListener) :void
     {
-        var listener3 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, SET_IDLE, [
-            langBoolean.valueOf(arg2), listener3
+        var listener2 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
+        listener2.listener = arg2;
+        sendRequest(SET_IDLE, [
+            langBoolean.valueOf(arg1), listener2
         ]);
     }
 
@@ -83,12 +83,12 @@ public class AVRGameMarshaller extends InvocationMarshaller
     public static const SET_OFFLINE_PLAYER_PROPERTY :int = 5;
 
     // from interface AVRGameService
-    public function setOfflinePlayerProperty (arg1 :Client, arg2 :int, arg3 :String, arg4 :Object, arg5 :Integer, arg6 :Boolean, arg7 :InvocationService_ConfirmListener) :void
+    public function setOfflinePlayerProperty (arg1 :int, arg2 :String, arg3 :Object, arg4 :Integer, arg5 :Boolean, arg6 :InvocationService_ConfirmListener) :void
     {
-        var listener7 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
-        listener7.listener = arg7;
-        sendRequest(arg1, SET_OFFLINE_PLAYER_PROPERTY, [
-            Integer.valueOf(arg2), arg3, arg4, arg5, langBoolean.valueOf(arg6), listener7
+        var listener6 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
+        listener6.listener = arg6;
+        sendRequest(SET_OFFLINE_PLAYER_PROPERTY, [
+            Integer.valueOf(arg1), arg2, arg3, arg4, langBoolean.valueOf(arg5), listener6
         ]);
     }
 }

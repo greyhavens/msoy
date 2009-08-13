@@ -263,7 +263,7 @@ public /*abstract*/ class MsoyClient extends CrowdClient
         test :String, logEvent :Boolean, listener :InvocationService_ResultListener) :void
     {
         var msvc :MsoyService = requireService(MsoyService) as MsoyService;
-        msvc.getABTestGroup(this, test, logEvent, listener);
+        msvc.getABTestGroup(test, logEvent, listener);
     }
 
     /**
@@ -327,7 +327,7 @@ public /*abstract*/ class MsoyClient extends CrowdClient
     {
         var msvc :MsoyService = getService(MsoyService) as MsoyService;
         if (msvc != null) {
-            msvc.trackTestAction(this, test, action);
+            msvc.trackTestAction(test, action);
         } else {
             log.warning("Dropping test action", "test", test, "action", action);
         }

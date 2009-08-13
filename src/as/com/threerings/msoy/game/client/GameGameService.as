@@ -14,12 +14,12 @@ import com.threerings.presents.client.InvocationService_ResultListener;
 public interface GameGameService extends InvocationService
 {
     // from Java interface GameGameService
-    function complainPlayer (arg1 :Client, arg2 :int, arg3 :String) :void;
+    function complainPlayer (arg1 :int, arg2 :String) :void;
 
     // from Java interface GameGameService
-    function getTrophies (arg1 :Client, arg2 :int, arg3 :InvocationService_ResultListener) :void;
+    function getTrophies (arg1 :int, arg2 :InvocationService_ResultListener) :void;
 
     // from Java interface GameGameService
-    function removeDevelopmentTrophies (arg1 :Client, arg2 :int, arg3 :InvocationService_ConfirmListener) :void;
+    function removeDevelopmentTrophies (arg1 :int, arg2 :InvocationService_ConfirmListener) :void;
 }
 }

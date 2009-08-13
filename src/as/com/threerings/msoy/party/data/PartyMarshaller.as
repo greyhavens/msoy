@@ -26,12 +26,12 @@ public class PartyMarshaller extends InvocationMarshaller
     public static const ASSIGN_LEADER :int = 1;
 
     // from interface PartyService
-    public function assignLeader (arg1 :Client, arg2 :int, arg3 :InvocationService_InvocationListener) :void
+    public function assignLeader (arg1 :int, arg2 :InvocationService_InvocationListener) :void
     {
-        var listener3 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, ASSIGN_LEADER, [
-            Integer.valueOf(arg2), listener3
+        var listener2 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
+        listener2.listener = arg2;
+        sendRequest(ASSIGN_LEADER, [
+            Integer.valueOf(arg1), listener2
         ]);
     }
 
@@ -39,12 +39,12 @@ public class PartyMarshaller extends InvocationMarshaller
     public static const BOOT_MEMBER :int = 2;
 
     // from interface PartyService
-    public function bootMember (arg1 :Client, arg2 :int, arg3 :InvocationService_InvocationListener) :void
+    public function bootMember (arg1 :int, arg2 :InvocationService_InvocationListener) :void
     {
-        var listener3 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, BOOT_MEMBER, [
-            Integer.valueOf(arg2), listener3
+        var listener2 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
+        listener2.listener = arg2;
+        sendRequest(BOOT_MEMBER, [
+            Integer.valueOf(arg1), listener2
         ]);
     }
 
@@ -52,12 +52,12 @@ public class PartyMarshaller extends InvocationMarshaller
     public static const INVITE_MEMBER :int = 3;
 
     // from interface PartyService
-    public function inviteMember (arg1 :Client, arg2 :int, arg3 :InvocationService_InvocationListener) :void
+    public function inviteMember (arg1 :int, arg2 :InvocationService_InvocationListener) :void
     {
-        var listener3 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, INVITE_MEMBER, [
-            Integer.valueOf(arg2), listener3
+        var listener2 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
+        listener2.listener = arg2;
+        sendRequest(INVITE_MEMBER, [
+            Integer.valueOf(arg1), listener2
         ]);
     }
 
@@ -65,12 +65,12 @@ public class PartyMarshaller extends InvocationMarshaller
     public static const MOVE_PARTY :int = 4;
 
     // from interface PartyService
-    public function moveParty (arg1 :Client, arg2 :int, arg3 :InvocationService_InvocationListener) :void
+    public function moveParty (arg1 :int, arg2 :InvocationService_InvocationListener) :void
     {
-        var listener3 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, MOVE_PARTY, [
-            Integer.valueOf(arg2), listener3
+        var listener2 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
+        listener2.listener = arg2;
+        sendRequest(MOVE_PARTY, [
+            Integer.valueOf(arg1), listener2
         ]);
     }
 
@@ -78,12 +78,12 @@ public class PartyMarshaller extends InvocationMarshaller
     public static const SET_GAME :int = 5;
 
     // from interface PartyService
-    public function setGame (arg1 :Client, arg2 :int, arg3 :int, arg4 :int, arg5 :InvocationService_InvocationListener) :void
+    public function setGame (arg1 :int, arg2 :int, arg3 :int, arg4 :InvocationService_InvocationListener) :void
     {
-        var listener5 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
-        listener5.listener = arg5;
-        sendRequest(arg1, SET_GAME, [
-            Integer.valueOf(arg2), Byte.valueOf(arg3), Integer.valueOf(arg4), listener5
+        var listener4 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
+        listener4.listener = arg4;
+        sendRequest(SET_GAME, [
+            Integer.valueOf(arg1), Byte.valueOf(arg2), Integer.valueOf(arg3), listener4
         ]);
     }
 
@@ -91,12 +91,12 @@ public class PartyMarshaller extends InvocationMarshaller
     public static const UPDATE_DISBAND :int = 6;
 
     // from interface PartyService
-    public function updateDisband (arg1 :Client, arg2 :Boolean, arg3 :InvocationService_InvocationListener) :void
+    public function updateDisband (arg1 :Boolean, arg2 :InvocationService_InvocationListener) :void
     {
-        var listener3 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, UPDATE_DISBAND, [
-            langBoolean.valueOf(arg2), listener3
+        var listener2 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
+        listener2.listener = arg2;
+        sendRequest(UPDATE_DISBAND, [
+            langBoolean.valueOf(arg1), listener2
         ]);
     }
 
@@ -104,12 +104,12 @@ public class PartyMarshaller extends InvocationMarshaller
     public static const UPDATE_RECRUITMENT :int = 7;
 
     // from interface PartyService
-    public function updateRecruitment (arg1 :Client, arg2 :int, arg3 :InvocationService_InvocationListener) :void
+    public function updateRecruitment (arg1 :int, arg2 :InvocationService_InvocationListener) :void
     {
-        var listener3 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, UPDATE_RECRUITMENT, [
-            Byte.valueOf(arg2), listener3
+        var listener2 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
+        listener2.listener = arg2;
+        sendRequest(UPDATE_RECRUITMENT, [
+            Byte.valueOf(arg1), listener2
         ]);
     }
 
@@ -117,12 +117,12 @@ public class PartyMarshaller extends InvocationMarshaller
     public static const UPDATE_STATUS :int = 8;
 
     // from interface PartyService
-    public function updateStatus (arg1 :Client, arg2 :String, arg3 :InvocationService_InvocationListener) :void
+    public function updateStatus (arg1 :String, arg2 :InvocationService_InvocationListener) :void
     {
-        var listener3 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, UPDATE_STATUS, [
-            arg2, listener3
+        var listener2 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
+        listener2.listener = arg2;
+        sendRequest(UPDATE_STATUS, [
+            arg1, listener2
         ]);
     }
 }

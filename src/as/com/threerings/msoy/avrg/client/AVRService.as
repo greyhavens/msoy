@@ -13,9 +13,9 @@ import com.threerings.presents.client.InvocationService_ConfirmListener;
 public interface AVRService extends InvocationService
 {
     // from Java interface AVRService
-    function activateGame (arg1 :Client, arg2 :int, arg3 :AVRService_AVRGameJoinListener) :void;
+    function activateGame (arg1 :int, arg2 :AVRService_AVRGameJoinListener) :void;
 
     // from Java interface AVRService
-    function deactivateGame (arg1 :Client, arg2 :int, arg3 :InvocationService_ConfirmListener) :void;
+    function deactivateGame (arg1 :int, arg2 :InvocationService_ConfirmListener) :void;
 }
 }

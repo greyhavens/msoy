@@ -86,8 +86,7 @@ public class ParlorGameLiaison extends GameLiaison
             return; // it's already showing
         }
         withLobbyService(function (lsvc :LobbyService) :void {
-            lsvc.identifyLobby(
-                _gctx.getClient(), _gameId, new ResultAdapter(gotLobbyOid, onFailure))
+            lsvc.identifyLobby(_gameId, new ResultAdapter(gotLobbyOid, onFailure))
         });
     }
 
@@ -107,7 +106,7 @@ public class ParlorGameLiaison extends GameLiaison
             // requested player or one for ourselves); if it succeeds, it sends back a zero result
             // and we need take no further action; if it fails, it sends back the lobby oid so that
             // we can display the lobby
-            lsvc.playNow(_gctx.getClient(), _gameId, playerId, new ResultAdapter(
+            lsvc.playNow(_gameId, playerId, new ResultAdapter(
                 function (lobbyOid :int) :void {
                     if (lobbyOid != 0) {
                         gotLobbyOid(lobbyOid, playerId);

@@ -24,12 +24,12 @@ public class WorldMarshaller extends InvocationMarshaller
     public static const GET_GROUP_HOME_SCENE_ID :int = 1;
 
     // from interface WorldService
-    public function getGroupHomeSceneId (arg1 :Client, arg2 :int, arg3 :InvocationService_ResultListener) :void
+    public function getGroupHomeSceneId (arg1 :int, arg2 :InvocationService_ResultListener) :void
     {
-        var listener3 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, GET_GROUP_HOME_SCENE_ID, [
-            Integer.valueOf(arg2), listener3
+        var listener2 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
+        listener2.listener = arg2;
+        sendRequest(GET_GROUP_HOME_SCENE_ID, [
+            Integer.valueOf(arg1), listener2
         ]);
     }
 
@@ -37,12 +37,12 @@ public class WorldMarshaller extends InvocationMarshaller
     public static const GET_HOME_PAGE_GRID_ITEMS :int = 2;
 
     // from interface WorldService
-    public function getHomePageGridItems (arg1 :Client, arg2 :InvocationService_ResultListener) :void
+    public function getHomePageGridItems (arg1 :InvocationService_ResultListener) :void
     {
-        var listener2 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
-        listener2.listener = arg2;
-        sendRequest(arg1, GET_HOME_PAGE_GRID_ITEMS, [
-            listener2
+        var listener1 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
+        listener1.listener = arg1;
+        sendRequest(GET_HOME_PAGE_GRID_ITEMS, [
+            listener1
         ]);
     }
 }

@@ -22,10 +22,10 @@ public class AVRGameAgentMarshaller extends InvocationMarshaller
     public static const LEAVE_GAME :int = 1;
 
     // from interface AVRGameAgentService
-    public function leaveGame (arg1 :Client, arg2 :int) :void
+    public function leaveGame (arg1 :int) :void
     {
-        sendRequest(arg1, LEAVE_GAME, [
-            Integer.valueOf(arg2)
+        sendRequest(LEAVE_GAME, [
+            Integer.valueOf(arg1)
         ]);
     }
 
@@ -33,10 +33,10 @@ public class AVRGameAgentMarshaller extends InvocationMarshaller
     public static const ROOM_SUBSCRIPTION_COMPLETE :int = 2;
 
     // from interface AVRGameAgentService
-    public function roomSubscriptionComplete (arg1 :Client, arg2 :int) :void
+    public function roomSubscriptionComplete (arg1 :int) :void
     {
-        sendRequest(arg1, ROOM_SUBSCRIPTION_COMPLETE, [
-            Integer.valueOf(arg2)
+        sendRequest(ROOM_SUBSCRIPTION_COMPLETE, [
+            Integer.valueOf(arg1)
         ]);
     }
 }

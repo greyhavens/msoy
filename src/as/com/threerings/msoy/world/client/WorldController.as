@@ -421,7 +421,7 @@ public class WorldController extends MsoyController
             }
         };
         var isvc :ItemService = _wctx.getClient().requireService(ItemService) as ItemService;
-        isvc.getCatalogId(_wctx.getClient(), ident, _wctx.resultListener(resultHandler));
+        isvc.getCatalogId(ident, _wctx.resultListener(resultHandler));
     }
 
     /**
@@ -750,7 +750,7 @@ public class WorldController extends MsoyController
      */
     public function handleRespondFollow (memberId :int) :void
     {
-        msvc().followMember(_wctx.getClient(), memberId, _wctx.listener());
+        msvc().followMember(memberId, _wctx.listener());
     }
 
     /**
@@ -790,12 +790,12 @@ public class WorldController extends MsoyController
             service = function (complaint :String) :void {
                 var gsvc :GameGameService =
                     (gctx.getClient().requireService(GameGameService) as GameGameService);
-                gsvc.complainPlayer(gctx.getClient(), memberId, complaint);
+                gsvc.complainPlayer(memberId, complaint);
             };
 
         } else {
             service = function (complaint :String) :void {
-                msvc().complainMember(_wctx.getClient(), memberId, complaint);
+                msvc().complainMember(memberId, complaint);
             };
         }
 
@@ -808,7 +808,7 @@ public class WorldController extends MsoyController
     public function handleBootFromPlace (memberId :int) :void
     {
         var svc :MemberService = _wctx.getClient().requireService(MemberService) as MemberService;
-        svc.bootFromPlace(_wctx.getClient(), memberId, _wctx.confirmListener());
+        svc.bootFromPlace(memberId, _wctx.confirmListener());
     }
 
     /**
@@ -1648,7 +1648,7 @@ public class WorldController extends MsoyController
      */
     protected function inviteFollow (memId :int) :void
     {
-        msvc().inviteToFollow(_wctx.getClient(), memId, _wctx.listener());
+        msvc().inviteToFollow(memId, _wctx.listener());
     }
 
     /**
@@ -1657,7 +1657,7 @@ public class WorldController extends MsoyController
      */
     protected function ditchFollower (memId :int = 0) :void
     {
-        msvc().ditchFollower(_wctx.getClient(), memId, _wctx.listener());
+        msvc().ditchFollower(memId, _wctx.listener());
     }
 
     /**

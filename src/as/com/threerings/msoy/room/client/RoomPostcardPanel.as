@@ -166,7 +166,7 @@ public class RoomPostcardPanel extends FloatingPanel
         _buttons[OK_BUTTON].enabled = false;
 
         (_ctx.getLocationDirector().getPlaceObject() as RoomObject).roomService.sendPostcard(
-            _ctx.getClient(), addrs, subject, caption, _snapURL,
+            addrs, subject, caption, _snapURL,
             new ConfirmAdapter(function () :void {
                 _ctx.displayFeedback(MsoyCodes.WORLD_MSGS, "m.rpc_sent");
                 close();

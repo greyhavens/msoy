@@ -231,7 +231,7 @@ public class ThaneAVRGameController
         }
         binding.deactivated = true;
         _transactions.addClient(_ctx.getClient());
-        _gameAgentObj.agentService.leaveGame(_ctx.getClient(), playerId);
+        _gameAgentObj.agentService.leaveGame(playerId);
     }
 
     /**
@@ -401,7 +401,7 @@ public class ThaneAVRGameController
         var thaneSvc :ThaneWorldService =
             window.requireService(ThaneWorldService) as ThaneWorldService;
 
-        thaneSvc.locateRoom(window.getClient(), binding.sceneId, resultListener);
+        thaneSvc.locateRoom(binding.sceneId, resultListener);
     }
 
     protected function gotRoomOid (binding :SceneBinding, oid :int) :void
@@ -504,7 +504,7 @@ public class ThaneAVRGameController
 
         binding.roomProps = propsObj;
 
-        _gameAgentObj.agentService.roomSubscriptionComplete(_ctx.getClient(), binding.sceneId);
+        _gameAgentObj.agentService.roomSubscriptionComplete(binding.sceneId);
     }
 
     protected function wasRemoved (binding :SceneBinding) :Boolean

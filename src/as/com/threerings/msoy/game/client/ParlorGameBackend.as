@@ -103,8 +103,9 @@ public class ParlorGameBackend extends WhirledGameBackend
         if (countPlayerData(GameData.ITEM_DATA, ident, getMyId_v1()) < 1) {
             return false;
         }
-        return ConsumeItemPackDialog.show((_ctx as GameContext).getWorldContext(), _ctx.getClient(),
-                                          _gameObj.contentService, _gameObj.gameData, ident, msg);
+        return ConsumeItemPackDialog.show(
+            (_ctx as GameContext).getWorldContext(), _gameObj.contentService,
+            _gameObj.gameData, ident, msg);
     }
 
     override protected function systemMessage (bundle :String, msg :String) :void

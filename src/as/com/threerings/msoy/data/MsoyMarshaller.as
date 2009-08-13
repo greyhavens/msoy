@@ -28,9 +28,9 @@ public class MsoyMarshaller extends InvocationMarshaller
     public static const DISPATCH_DEFERRED_NOTIFICATIONS :int = 1;
 
     // from interface MsoyService
-    public function dispatchDeferredNotifications (arg1 :Client) :void
+    public function dispatchDeferredNotifications () :void
     {
-        sendRequest(arg1, DISPATCH_DEFERRED_NOTIFICATIONS, [
+        sendRequest(DISPATCH_DEFERRED_NOTIFICATIONS, [
             
         ]);
     }
@@ -39,12 +39,12 @@ public class MsoyMarshaller extends InvocationMarshaller
     public static const EMAIL_SHARE :int = 2;
 
     // from interface MsoyService
-    public function emailShare (arg1 :Client, arg2 :Boolean, arg3 :String, arg4 :int, arg5 :TypedArray /* of class java.lang.String */, arg6 :String, arg7 :Boolean, arg8 :InvocationService_ConfirmListener) :void
+    public function emailShare (arg1 :Boolean, arg2 :String, arg3 :int, arg4 :TypedArray /* of class java.lang.String */, arg5 :String, arg6 :Boolean, arg7 :InvocationService_ConfirmListener) :void
     {
-        var listener8 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
-        listener8.listener = arg8;
-        sendRequest(arg1, EMAIL_SHARE, [
-            langBoolean.valueOf(arg2), arg3, Integer.valueOf(arg4), arg5, arg6, langBoolean.valueOf(arg7), listener8
+        var listener7 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
+        listener7.listener = arg7;
+        sendRequest(EMAIL_SHARE, [
+            langBoolean.valueOf(arg1), arg2, Integer.valueOf(arg3), arg4, arg5, langBoolean.valueOf(arg6), listener7
         ]);
     }
 
@@ -52,12 +52,12 @@ public class MsoyMarshaller extends InvocationMarshaller
     public static const GET_ABTEST_GROUP :int = 3;
 
     // from interface MsoyService
-    public function getABTestGroup (arg1 :Client, arg2 :String, arg3 :Boolean, arg4 :InvocationService_ResultListener) :void
+    public function getABTestGroup (arg1 :String, arg2 :Boolean, arg3 :InvocationService_ResultListener) :void
     {
-        var listener4 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
-        listener4.listener = arg4;
-        sendRequest(arg1, GET_ABTEST_GROUP, [
-            arg2, langBoolean.valueOf(arg3), listener4
+        var listener3 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
+        listener3.listener = arg3;
+        sendRequest(GET_ABTEST_GROUP, [
+            arg1, langBoolean.valueOf(arg2), listener3
         ]);
     }
 
@@ -65,12 +65,12 @@ public class MsoyMarshaller extends InvocationMarshaller
     public static const PURCHASE_AND_SEND_BROADCAST :int = 4;
 
     // from interface MsoyService
-    public function purchaseAndSendBroadcast (arg1 :Client, arg2 :int, arg3 :String, arg4 :InvocationService_ResultListener) :void
+    public function purchaseAndSendBroadcast (arg1 :int, arg2 :String, arg3 :InvocationService_ResultListener) :void
     {
-        var listener4 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
-        listener4.listener = arg4;
-        sendRequest(arg1, PURCHASE_AND_SEND_BROADCAST, [
-            Integer.valueOf(arg2), arg3, listener4
+        var listener3 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
+        listener3.listener = arg3;
+        sendRequest(PURCHASE_AND_SEND_BROADCAST, [
+            Integer.valueOf(arg1), arg2, listener3
         ]);
     }
 
@@ -78,12 +78,12 @@ public class MsoyMarshaller extends InvocationMarshaller
     public static const SECURE_BROADCAST_QUOTE :int = 5;
 
     // from interface MsoyService
-    public function secureBroadcastQuote (arg1 :Client, arg2 :InvocationService_ResultListener) :void
+    public function secureBroadcastQuote (arg1 :InvocationService_ResultListener) :void
     {
-        var listener2 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
-        listener2.listener = arg2;
-        sendRequest(arg1, SECURE_BROADCAST_QUOTE, [
-            listener2
+        var listener1 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
+        listener1.listener = arg1;
+        sendRequest(SECURE_BROADCAST_QUOTE, [
+            listener1
         ]);
     }
 
@@ -91,12 +91,12 @@ public class MsoyMarshaller extends InvocationMarshaller
     public static const SET_HEARING_GROUP_CHAT :int = 6;
 
     // from interface MsoyService
-    public function setHearingGroupChat (arg1 :Client, arg2 :int, arg3 :Boolean, arg4 :InvocationService_ConfirmListener) :void
+    public function setHearingGroupChat (arg1 :int, arg2 :Boolean, arg3 :InvocationService_ConfirmListener) :void
     {
-        var listener4 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
-        listener4.listener = arg4;
-        sendRequest(arg1, SET_HEARING_GROUP_CHAT, [
-            Integer.valueOf(arg2), langBoolean.valueOf(arg3), listener4
+        var listener3 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
+        listener3.listener = arg3;
+        sendRequest(SET_HEARING_GROUP_CHAT, [
+            Integer.valueOf(arg1), langBoolean.valueOf(arg2), listener3
         ]);
     }
 
@@ -104,10 +104,10 @@ public class MsoyMarshaller extends InvocationMarshaller
     public static const TRACK_TEST_ACTION :int = 7;
 
     // from interface MsoyService
-    public function trackTestAction (arg1 :Client, arg2 :String, arg3 :String) :void
+    public function trackTestAction (arg1 :String, arg2 :String) :void
     {
-        sendRequest(arg1, TRACK_TEST_ACTION, [
-            arg2, arg3
+        sendRequest(TRACK_TEST_ACTION, [
+            arg1, arg2
         ]);
     }
 }

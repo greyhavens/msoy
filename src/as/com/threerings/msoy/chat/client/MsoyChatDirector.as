@@ -133,7 +133,7 @@ public class MsoyChatDirector extends BaseChatDirector
     public function registerIM (gateway :String, username :String, password :String) :void
     {
         var svc :JabberService = (_mctx.getClient().requireService(JabberService) as JabberService);
-        svc.registerIM(_mctx.getClient(), gateway, username, password, new InvocationAdapter(
+        svc.registerIM(gateway, username, password, new InvocationAdapter(
             function (cause :String) :void {
                 var msg :String = MessageBundle.compose(
                     "e.im_register_failed", "m." + gateway, cause);
@@ -147,7 +147,7 @@ public class MsoyChatDirector extends BaseChatDirector
     public function unregisterIM (gateway :String) :void
     {
         var svc :JabberService = (_mctx.getClient().requireService(JabberService) as JabberService);
-        svc.unregisterIM(_mctx.getClient(), gateway, new InvocationAdapter(
+        svc.unregisterIM(gateway, new InvocationAdapter(
             function (cause :String) :void {
                 var msg :String = MessageBundle.compose(
                     "e.im_unregister_failed", "m." + gateway, MessageBundle.taint(cause));
@@ -266,7 +266,7 @@ public class MsoyChatDirector extends BaseChatDirector
     protected function requestJabber (
         target :JabberName, msg :String, feedbackLocaltype :String) :void
     {
-        _jservice.sendMessage(_mctx.getClient(), target, msg, new ResultAdapter(
+        _jservice.sendMessage(target, msg, new ResultAdapter(
             function (result :Object) :void {
                 if (result is String) {
                     displaySystem(MsoyCodes.CHAT_MSGS, (result as String), SystemMessage.FEEDBACK,
@@ -286,7 +286,7 @@ public class MsoyChatDirector extends BaseChatDirector
      */
     protected function requestChannelSpeak (channel :MsoyChatChannel, msg :String, mode :int) :void
     {
-        _csservice.speak(_mctx.getClient(), channel, msg, mode);
+        _csservice.speak(channel, msg, mode);
     }
 
     /**

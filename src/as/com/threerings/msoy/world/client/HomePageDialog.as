@@ -95,7 +95,7 @@ public class HomePageDialog extends FlyingPanel
     public function refresh () :void
     {
         var svc :WorldService = _ctx.getClient().requireService(WorldService) as WorldService;
-        svc.getHomePageGridItems(_ctx.getClient(), _ctx.resultListener(gotItems));
+        svc.getHomePageGridItems(_ctx.resultListener(gotItems));
     }
 
     protected function gotItems (items :TypedArray) :void

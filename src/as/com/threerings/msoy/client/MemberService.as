@@ -16,54 +16,54 @@ import com.threerings.presents.client.InvocationService_ResultListener;
 public interface MemberService extends InvocationService
 {
     // from Java interface MemberService
-    function acknowledgeWarning (arg1 :Client) :void;
+    function acknowledgeWarning () :void;
 
     // from Java interface MemberService
-    function bootFromPlace (arg1 :Client, arg2 :int, arg3 :InvocationService_ConfirmListener) :void;
+    function bootFromPlace (arg1 :int, arg2 :InvocationService_ConfirmListener) :void;
 
     // from Java interface MemberService
-    function complainMember (arg1 :Client, arg2 :int, arg3 :String) :void;
+    function complainMember (arg1 :int, arg2 :String) :void;
 
     // from Java interface MemberService
-    function ditchFollower (arg1 :Client, arg2 :int, arg3 :InvocationService_InvocationListener) :void;
+    function ditchFollower (arg1 :int, arg2 :InvocationService_InvocationListener) :void;
 
     // from Java interface MemberService
-    function followMember (arg1 :Client, arg2 :int, arg3 :InvocationService_InvocationListener) :void;
+    function followMember (arg1 :int, arg2 :InvocationService_InvocationListener) :void;
 
     // from Java interface MemberService
-    function getCurrentMemberLocation (arg1 :Client, arg2 :int, arg3 :InvocationService_ResultListener) :void;
+    function getCurrentMemberLocation (arg1 :int, arg2 :InvocationService_ResultListener) :void;
 
     // from Java interface MemberService
-    function getDisplayName (arg1 :Client, arg2 :int, arg3 :InvocationService_ResultListener) :void;
+    function getDisplayName (arg1 :int, arg2 :InvocationService_ResultListener) :void;
 
     // from Java interface MemberService
-    function getHomeId (arg1 :Client, arg2 :int, arg3 :int, arg4 :InvocationService_ResultListener) :void;
+    function getHomeId (arg1 :int, arg2 :int, arg3 :InvocationService_ResultListener) :void;
 
     // from Java interface MemberService
-    function inviteAllToBeFriends (arg1 :Client, arg2 :TypedArray /* of int */, arg3 :InvocationService_ConfirmListener) :void;
+    function inviteAllToBeFriends (arg1 :TypedArray /* of int */, arg2 :InvocationService_ConfirmListener) :void;
 
     // from Java interface MemberService
-    function inviteToBeFriend (arg1 :Client, arg2 :int, arg3 :InvocationService_ResultListener) :void;
+    function inviteToBeFriend (arg1 :int, arg2 :InvocationService_ResultListener) :void;
 
     // from Java interface MemberService
-    function inviteToFollow (arg1 :Client, arg2 :int, arg3 :InvocationService_InvocationListener) :void;
+    function inviteToFollow (arg1 :int, arg2 :InvocationService_InvocationListener) :void;
 
     // from Java interface MemberService
-    function setAvatar (arg1 :Client, arg2 :int, arg3 :InvocationService_ConfirmListener) :void;
+    function setAvatar (arg1 :int, arg2 :InvocationService_ConfirmListener) :void;
 
     // from Java interface MemberService
-    function setAway (arg1 :Client, arg2 :String, arg3 :InvocationService_ConfirmListener) :void;
+    function setAway (arg1 :String, arg2 :InvocationService_ConfirmListener) :void;
 
     // from Java interface MemberService
-    function setDisplayName (arg1 :Client, arg2 :String, arg3 :InvocationService_ConfirmListener) :void;
+    function setDisplayName (arg1 :String, arg2 :InvocationService_ConfirmListener) :void;
 
     // from Java interface MemberService
-    function setHomeSceneId (arg1 :Client, arg2 :int, arg3 :int, arg4 :int, arg5 :InvocationService_ConfirmListener) :void;
+    function setHomeSceneId (arg1 :int, arg2 :int, arg3 :int, arg4 :InvocationService_ConfirmListener) :void;
 
     // from Java interface MemberService
-    function setMuted (arg1 :Client, arg2 :int, arg3 :Boolean, arg4 :InvocationService_ConfirmListener) :void;
+    function setMuted (arg1 :int, arg2 :Boolean, arg3 :InvocationService_ConfirmListener) :void;
 
     // from Java interface MemberService
-    function updateStatus (arg1 :Client, arg2 :String, arg3 :InvocationService_InvocationListener) :void;
+    function updateStatus (arg1 :String, arg2 :InvocationService_InvocationListener) :void;
 }
 }

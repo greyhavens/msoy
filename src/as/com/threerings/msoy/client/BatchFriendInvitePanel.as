@@ -53,7 +53,7 @@ public class BatchFriendInvitePanel extends SelectPlayersPanel
     override protected function okButtonClicked () :void
     {
         var msvc :MemberService = _ctx.getClient().requireService(MemberService) as MemberService;
-        msvc.inviteAllToBeFriends(_ctx.getMsoyClient(), getSelectedMemberIds(),
+        msvc.inviteAllToBeFriends(getSelectedMemberIds(),
             new ConfirmAdapter(invitesSent, invitesFailed));
     }
 

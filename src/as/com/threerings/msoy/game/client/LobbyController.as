@@ -224,8 +224,7 @@ public class LobbyController extends Controller
             var gsvc :WorldGameService =
                 (_mctx.getClient().requireService(WorldGameService) as WorldGameService);
             // TODO: invite friends to party if partyLeader, rather than inviting to table???
-            gsvc.inviteFriends(_mctx.getClient(), gcfg.getGameId(),
-                TypedArray.create(int, friendIds));
+            gsvc.inviteFriends(gcfg.getGameId(), TypedArray.create(int, friendIds));
         }
     }
 

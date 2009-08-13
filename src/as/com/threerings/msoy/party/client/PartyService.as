@@ -13,27 +13,27 @@ import com.threerings.presents.client.InvocationService_InvocationListener;
 public interface PartyService extends InvocationService
 {
     // from Java interface PartyService
-    function assignLeader (arg1 :Client, arg2 :int, arg3 :InvocationService_InvocationListener) :void;
+    function assignLeader (arg1 :int, arg2 :InvocationService_InvocationListener) :void;
 
     // from Java interface PartyService
-    function bootMember (arg1 :Client, arg2 :int, arg3 :InvocationService_InvocationListener) :void;
+    function bootMember (arg1 :int, arg2 :InvocationService_InvocationListener) :void;
 
     // from Java interface PartyService
-    function inviteMember (arg1 :Client, arg2 :int, arg3 :InvocationService_InvocationListener) :void;
+    function inviteMember (arg1 :int, arg2 :InvocationService_InvocationListener) :void;
 
     // from Java interface PartyService
-    function moveParty (arg1 :Client, arg2 :int, arg3 :InvocationService_InvocationListener) :void;
+    function moveParty (arg1 :int, arg2 :InvocationService_InvocationListener) :void;
 
     // from Java interface PartyService
-    function setGame (arg1 :Client, arg2 :int, arg3 :int, arg4 :int, arg5 :InvocationService_InvocationListener) :void;
+    function setGame (arg1 :int, arg2 :int, arg3 :int, arg4 :InvocationService_InvocationListener) :void;
 
     // from Java interface PartyService
-    function updateDisband (arg1 :Client, arg2 :Boolean, arg3 :InvocationService_InvocationListener) :void;
+    function updateDisband (arg1 :Boolean, arg2 :InvocationService_InvocationListener) :void;
 
     // from Java interface PartyService
-    function updateRecruitment (arg1 :Client, arg2 :int, arg3 :InvocationService_InvocationListener) :void;
+    function updateRecruitment (arg1 :int, arg2 :InvocationService_InvocationListener) :void;
 
     // from Java interface PartyService
-    function updateStatus (arg1 :Client, arg2 :String, arg3 :InvocationService_InvocationListener) :void;
+    function updateStatus (arg1 :String, arg2 :InvocationService_InvocationListener) :void;
 }
 }

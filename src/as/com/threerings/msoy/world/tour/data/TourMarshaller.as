@@ -24,9 +24,9 @@ public class TourMarshaller extends InvocationMarshaller
     public static const END_TOUR :int = 1;
 
     // from interface TourService
-    public function endTour (arg1 :Client) :void
+    public function endTour () :void
     {
-        sendRequest(arg1, END_TOUR, [
+        sendRequest(END_TOUR, [
             
         ]);
     }
@@ -35,12 +35,12 @@ public class TourMarshaller extends InvocationMarshaller
     public static const NEXT_ROOM :int = 2;
 
     // from interface TourService
-    public function nextRoom (arg1 :Client, arg2 :Boolean, arg3 :InvocationService_ResultListener) :void
+    public function nextRoom (arg1 :Boolean, arg2 :InvocationService_ResultListener) :void
     {
-        var listener3 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, NEXT_ROOM, [
-            langBoolean.valueOf(arg2), listener3
+        var listener2 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
+        listener2.listener = arg2;
+        sendRequest(NEXT_ROOM, [
+            langBoolean.valueOf(arg1), listener2
         ]);
     }
 }

@@ -13,9 +13,9 @@ import com.threerings.presents.client.InvocationService_ResultListener;
 public interface LobbyService extends InvocationService
 {
     // from Java interface LobbyService
-    function identifyLobby (arg1 :Client, arg2 :int, arg3 :InvocationService_ResultListener) :void;
+    function identifyLobby (arg1 :int, arg2 :InvocationService_ResultListener) :void;
 
     // from Java interface LobbyService
-    function playNow (arg1 :Client, arg2 :int, arg3 :int, arg4 :InvocationService_ResultListener) :void;
+    function playNow (arg1 :int, arg2 :int, arg3 :InvocationService_ResultListener) :void;
 }
 }

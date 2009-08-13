@@ -107,13 +107,13 @@ public class PlaylistRenderer extends HBox
 
     protected function doPlay () :void
     {
-        roomObj.roomService.jumpToSong(wctx.getClient(), Audio(data).itemId,
+        roomObj.roomService.jumpToSong(Audio(data).itemId,
             wctx.confirmListener(null, MsoyCodes.WORLD_MSGS, null, _playBtn));
     }
 
     protected function doRemove () :void
     {
-        roomObj.roomService.modifyPlaylist(wctx.getClient(), Audio(data).itemId, false,
+        roomObj.roomService.modifyPlaylist(Audio(data).itemId, false,
             wctx.confirmListener(null, MsoyCodes.WORLD_MSGS));
         _removeBtn.enabled = false;
     }

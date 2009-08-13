@@ -31,9 +31,9 @@ public class MemberMarshaller extends InvocationMarshaller
     public static const ACKNOWLEDGE_WARNING :int = 1;
 
     // from interface MemberService
-    public function acknowledgeWarning (arg1 :Client) :void
+    public function acknowledgeWarning () :void
     {
-        sendRequest(arg1, ACKNOWLEDGE_WARNING, [
+        sendRequest(ACKNOWLEDGE_WARNING, [
             
         ]);
     }
@@ -42,12 +42,12 @@ public class MemberMarshaller extends InvocationMarshaller
     public static const BOOT_FROM_PLACE :int = 2;
 
     // from interface MemberService
-    public function bootFromPlace (arg1 :Client, arg2 :int, arg3 :InvocationService_ConfirmListener) :void
+    public function bootFromPlace (arg1 :int, arg2 :InvocationService_ConfirmListener) :void
     {
-        var listener3 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, BOOT_FROM_PLACE, [
-            Integer.valueOf(arg2), listener3
+        var listener2 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
+        listener2.listener = arg2;
+        sendRequest(BOOT_FROM_PLACE, [
+            Integer.valueOf(arg1), listener2
         ]);
     }
 
@@ -55,10 +55,10 @@ public class MemberMarshaller extends InvocationMarshaller
     public static const COMPLAIN_MEMBER :int = 3;
 
     // from interface MemberService
-    public function complainMember (arg1 :Client, arg2 :int, arg3 :String) :void
+    public function complainMember (arg1 :int, arg2 :String) :void
     {
-        sendRequest(arg1, COMPLAIN_MEMBER, [
-            Integer.valueOf(arg2), arg3
+        sendRequest(COMPLAIN_MEMBER, [
+            Integer.valueOf(arg1), arg2
         ]);
     }
 
@@ -66,12 +66,12 @@ public class MemberMarshaller extends InvocationMarshaller
     public static const DITCH_FOLLOWER :int = 4;
 
     // from interface MemberService
-    public function ditchFollower (arg1 :Client, arg2 :int, arg3 :InvocationService_InvocationListener) :void
+    public function ditchFollower (arg1 :int, arg2 :InvocationService_InvocationListener) :void
     {
-        var listener3 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, DITCH_FOLLOWER, [
-            Integer.valueOf(arg2), listener3
+        var listener2 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
+        listener2.listener = arg2;
+        sendRequest(DITCH_FOLLOWER, [
+            Integer.valueOf(arg1), listener2
         ]);
     }
 
@@ -79,12 +79,12 @@ public class MemberMarshaller extends InvocationMarshaller
     public static const FOLLOW_MEMBER :int = 5;
 
     // from interface MemberService
-    public function followMember (arg1 :Client, arg2 :int, arg3 :InvocationService_InvocationListener) :void
+    public function followMember (arg1 :int, arg2 :InvocationService_InvocationListener) :void
     {
-        var listener3 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, FOLLOW_MEMBER, [
-            Integer.valueOf(arg2), listener3
+        var listener2 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
+        listener2.listener = arg2;
+        sendRequest(FOLLOW_MEMBER, [
+            Integer.valueOf(arg1), listener2
         ]);
     }
 
@@ -92,12 +92,12 @@ public class MemberMarshaller extends InvocationMarshaller
     public static const GET_CURRENT_MEMBER_LOCATION :int = 6;
 
     // from interface MemberService
-    public function getCurrentMemberLocation (arg1 :Client, arg2 :int, arg3 :InvocationService_ResultListener) :void
+    public function getCurrentMemberLocation (arg1 :int, arg2 :InvocationService_ResultListener) :void
     {
-        var listener3 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, GET_CURRENT_MEMBER_LOCATION, [
-            Integer.valueOf(arg2), listener3
+        var listener2 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
+        listener2.listener = arg2;
+        sendRequest(GET_CURRENT_MEMBER_LOCATION, [
+            Integer.valueOf(arg1), listener2
         ]);
     }
 
@@ -105,12 +105,12 @@ public class MemberMarshaller extends InvocationMarshaller
     public static const GET_DISPLAY_NAME :int = 7;
 
     // from interface MemberService
-    public function getDisplayName (arg1 :Client, arg2 :int, arg3 :InvocationService_ResultListener) :void
+    public function getDisplayName (arg1 :int, arg2 :InvocationService_ResultListener) :void
     {
-        var listener3 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, GET_DISPLAY_NAME, [
-            Integer.valueOf(arg2), listener3
+        var listener2 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
+        listener2.listener = arg2;
+        sendRequest(GET_DISPLAY_NAME, [
+            Integer.valueOf(arg1), listener2
         ]);
     }
 
@@ -118,12 +118,12 @@ public class MemberMarshaller extends InvocationMarshaller
     public static const GET_HOME_ID :int = 8;
 
     // from interface MemberService
-    public function getHomeId (arg1 :Client, arg2 :int, arg3 :int, arg4 :InvocationService_ResultListener) :void
+    public function getHomeId (arg1 :int, arg2 :int, arg3 :InvocationService_ResultListener) :void
     {
-        var listener4 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
-        listener4.listener = arg4;
-        sendRequest(arg1, GET_HOME_ID, [
-            Byte.valueOf(arg2), Integer.valueOf(arg3), listener4
+        var listener3 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
+        listener3.listener = arg3;
+        sendRequest(GET_HOME_ID, [
+            Byte.valueOf(arg1), Integer.valueOf(arg2), listener3
         ]);
     }
 
@@ -131,12 +131,12 @@ public class MemberMarshaller extends InvocationMarshaller
     public static const INVITE_ALL_TO_BE_FRIENDS :int = 9;
 
     // from interface MemberService
-    public function inviteAllToBeFriends (arg1 :Client, arg2 :TypedArray /* of int */, arg3 :InvocationService_ConfirmListener) :void
+    public function inviteAllToBeFriends (arg1 :TypedArray /* of int */, arg2 :InvocationService_ConfirmListener) :void
     {
-        var listener3 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, INVITE_ALL_TO_BE_FRIENDS, [
-            arg2, listener3
+        var listener2 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
+        listener2.listener = arg2;
+        sendRequest(INVITE_ALL_TO_BE_FRIENDS, [
+            arg1, listener2
         ]);
     }
 
@@ -144,12 +144,12 @@ public class MemberMarshaller extends InvocationMarshaller
     public static const INVITE_TO_BE_FRIEND :int = 10;
 
     // from interface MemberService
-    public function inviteToBeFriend (arg1 :Client, arg2 :int, arg3 :InvocationService_ResultListener) :void
+    public function inviteToBeFriend (arg1 :int, arg2 :InvocationService_ResultListener) :void
     {
-        var listener3 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, INVITE_TO_BE_FRIEND, [
-            Integer.valueOf(arg2), listener3
+        var listener2 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
+        listener2.listener = arg2;
+        sendRequest(INVITE_TO_BE_FRIEND, [
+            Integer.valueOf(arg1), listener2
         ]);
     }
 
@@ -157,12 +157,12 @@ public class MemberMarshaller extends InvocationMarshaller
     public static const INVITE_TO_FOLLOW :int = 11;
 
     // from interface MemberService
-    public function inviteToFollow (arg1 :Client, arg2 :int, arg3 :InvocationService_InvocationListener) :void
+    public function inviteToFollow (arg1 :int, arg2 :InvocationService_InvocationListener) :void
     {
-        var listener3 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, INVITE_TO_FOLLOW, [
-            Integer.valueOf(arg2), listener3
+        var listener2 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
+        listener2.listener = arg2;
+        sendRequest(INVITE_TO_FOLLOW, [
+            Integer.valueOf(arg1), listener2
         ]);
     }
 
@@ -170,12 +170,12 @@ public class MemberMarshaller extends InvocationMarshaller
     public static const SET_AVATAR :int = 12;
 
     // from interface MemberService
-    public function setAvatar (arg1 :Client, arg2 :int, arg3 :InvocationService_ConfirmListener) :void
+    public function setAvatar (arg1 :int, arg2 :InvocationService_ConfirmListener) :void
     {
-        var listener3 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, SET_AVATAR, [
-            Integer.valueOf(arg2), listener3
+        var listener2 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
+        listener2.listener = arg2;
+        sendRequest(SET_AVATAR, [
+            Integer.valueOf(arg1), listener2
         ]);
     }
 
@@ -183,12 +183,12 @@ public class MemberMarshaller extends InvocationMarshaller
     public static const SET_AWAY :int = 13;
 
     // from interface MemberService
-    public function setAway (arg1 :Client, arg2 :String, arg3 :InvocationService_ConfirmListener) :void
+    public function setAway (arg1 :String, arg2 :InvocationService_ConfirmListener) :void
     {
-        var listener3 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, SET_AWAY, [
-            arg2, listener3
+        var listener2 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
+        listener2.listener = arg2;
+        sendRequest(SET_AWAY, [
+            arg1, listener2
         ]);
     }
 
@@ -196,12 +196,12 @@ public class MemberMarshaller extends InvocationMarshaller
     public static const SET_DISPLAY_NAME :int = 14;
 
     // from interface MemberService
-    public function setDisplayName (arg1 :Client, arg2 :String, arg3 :InvocationService_ConfirmListener) :void
+    public function setDisplayName (arg1 :String, arg2 :InvocationService_ConfirmListener) :void
     {
-        var listener3 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, SET_DISPLAY_NAME, [
-            arg2, listener3
+        var listener2 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
+        listener2.listener = arg2;
+        sendRequest(SET_DISPLAY_NAME, [
+            arg1, listener2
         ]);
     }
 
@@ -209,12 +209,12 @@ public class MemberMarshaller extends InvocationMarshaller
     public static const SET_HOME_SCENE_ID :int = 15;
 
     // from interface MemberService
-    public function setHomeSceneId (arg1 :Client, arg2 :int, arg3 :int, arg4 :int, arg5 :InvocationService_ConfirmListener) :void
+    public function setHomeSceneId (arg1 :int, arg2 :int, arg3 :int, arg4 :InvocationService_ConfirmListener) :void
     {
-        var listener5 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
-        listener5.listener = arg5;
-        sendRequest(arg1, SET_HOME_SCENE_ID, [
-            Integer.valueOf(arg2), Integer.valueOf(arg3), Integer.valueOf(arg4), listener5
+        var listener4 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
+        listener4.listener = arg4;
+        sendRequest(SET_HOME_SCENE_ID, [
+            Integer.valueOf(arg1), Integer.valueOf(arg2), Integer.valueOf(arg3), listener4
         ]);
     }
 
@@ -222,12 +222,12 @@ public class MemberMarshaller extends InvocationMarshaller
     public static const SET_MUTED :int = 16;
 
     // from interface MemberService
-    public function setMuted (arg1 :Client, arg2 :int, arg3 :Boolean, arg4 :InvocationService_ConfirmListener) :void
+    public function setMuted (arg1 :int, arg2 :Boolean, arg3 :InvocationService_ConfirmListener) :void
     {
-        var listener4 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
-        listener4.listener = arg4;
-        sendRequest(arg1, SET_MUTED, [
-            Integer.valueOf(arg2), langBoolean.valueOf(arg3), listener4
+        var listener3 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
+        listener3.listener = arg3;
+        sendRequest(SET_MUTED, [
+            Integer.valueOf(arg1), langBoolean.valueOf(arg2), listener3
         ]);
     }
 
@@ -235,12 +235,12 @@ public class MemberMarshaller extends InvocationMarshaller
     public static const UPDATE_STATUS :int = 17;
 
     // from interface MemberService
-    public function updateStatus (arg1 :Client, arg2 :String, arg3 :InvocationService_InvocationListener) :void
+    public function updateStatus (arg1 :String, arg2 :InvocationService_InvocationListener) :void
     {
-        var listener3 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, UPDATE_STATUS, [
-            arg2, listener3
+        var listener2 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
+        listener2.listener = arg2;
+        sendRequest(UPDATE_STATUS, [
+            arg1, listener2
         ]);
     }
 }

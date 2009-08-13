@@ -28,12 +28,12 @@ public class ItemMarshaller extends InvocationMarshaller
     public static const ADD_FLAG :int = 1;
 
     // from interface ItemService
-    public function addFlag (arg1 :Client, arg2 :ItemIdent, arg3 :ItemFlag_Kind, arg4 :String, arg5 :InvocationService_ConfirmListener) :void
+    public function addFlag (arg1 :ItemIdent, arg2 :ItemFlag_Kind, arg3 :String, arg4 :InvocationService_ConfirmListener) :void
     {
-        var listener5 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
-        listener5.listener = arg5;
-        sendRequest(arg1, ADD_FLAG, [
-            arg2, arg3, arg4, listener5
+        var listener4 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
+        listener4.listener = arg4;
+        sendRequest(ADD_FLAG, [
+            arg1, arg2, arg3, listener4
         ]);
     }
 
@@ -41,12 +41,12 @@ public class ItemMarshaller extends InvocationMarshaller
     public static const DELETE_ITEM :int = 2;
 
     // from interface ItemService
-    public function deleteItem (arg1 :Client, arg2 :ItemIdent, arg3 :InvocationService_ConfirmListener) :void
+    public function deleteItem (arg1 :ItemIdent, arg2 :InvocationService_ConfirmListener) :void
     {
-        var listener3 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, DELETE_ITEM, [
-            arg2, listener3
+        var listener2 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
+        listener2.listener = arg2;
+        sendRequest(DELETE_ITEM, [
+            arg1, listener2
         ]);
     }
 
@@ -54,12 +54,12 @@ public class ItemMarshaller extends InvocationMarshaller
     public static const GET_CATALOG_ID :int = 3;
 
     // from interface ItemService
-    public function getCatalogId (arg1 :Client, arg2 :ItemIdent, arg3 :InvocationService_ResultListener) :void
+    public function getCatalogId (arg1 :ItemIdent, arg2 :InvocationService_ResultListener) :void
     {
-        var listener3 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, GET_CATALOG_ID, [
-            arg2, listener3
+        var listener2 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
+        listener2.listener = arg2;
+        sendRequest(GET_CATALOG_ID, [
+            arg1, listener2
         ]);
     }
 
@@ -67,12 +67,12 @@ public class ItemMarshaller extends InvocationMarshaller
     public static const GET_ITEM_NAMES :int = 4;
 
     // from interface ItemService
-    public function getItemNames (arg1 :Client, arg2 :TypedArray /* of class com.threerings.msoy.item.data.all.ItemIdent */, arg3 :InvocationService_ResultListener) :void
+    public function getItemNames (arg1 :TypedArray /* of class com.threerings.msoy.item.data.all.ItemIdent */, arg2 :InvocationService_ResultListener) :void
     {
-        var listener3 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, GET_ITEM_NAMES, [
-            arg2, listener3
+        var listener2 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
+        listener2.listener = arg2;
+        sendRequest(GET_ITEM_NAMES, [
+            arg1, listener2
         ]);
     }
 
@@ -80,12 +80,12 @@ public class ItemMarshaller extends InvocationMarshaller
     public static const PEEP_ITEM :int = 5;
 
     // from interface ItemService
-    public function peepItem (arg1 :Client, arg2 :ItemIdent, arg3 :InvocationService_ResultListener) :void
+    public function peepItem (arg1 :ItemIdent, arg2 :InvocationService_ResultListener) :void
     {
-        var listener3 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, PEEP_ITEM, [
-            arg2, listener3
+        var listener2 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
+        listener2.listener = arg2;
+        sendRequest(PEEP_ITEM, [
+            arg1, listener2
         ]);
     }
 
@@ -93,12 +93,12 @@ public class ItemMarshaller extends InvocationMarshaller
     public static const RECLAIM_ITEM :int = 6;
 
     // from interface ItemService
-    public function reclaimItem (arg1 :Client, arg2 :ItemIdent, arg3 :InvocationService_ConfirmListener) :void
+    public function reclaimItem (arg1 :ItemIdent, arg2 :InvocationService_ConfirmListener) :void
     {
-        var listener3 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, RECLAIM_ITEM, [
-            arg2, listener3
+        var listener2 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
+        listener2.listener = arg2;
+        sendRequest(RECLAIM_ITEM, [
+            arg1, listener2
         ]);
     }
 }

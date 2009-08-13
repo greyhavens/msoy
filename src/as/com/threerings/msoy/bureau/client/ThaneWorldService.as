@@ -13,6 +13,6 @@ import com.threerings.presents.client.InvocationService_ResultListener;
 public interface ThaneWorldService extends InvocationService
 {
     // from Java interface ThaneWorldService
-    function locateRoom (arg1 :Client, arg2 :int, arg3 :InvocationService_ResultListener) :void;
+    function locateRoom (arg1 :int, arg2 :InvocationService_ResultListener) :void;
 }
 }

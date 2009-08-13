@@ -72,7 +72,7 @@ public class FlagItemDialog extends FloatingPanel
             comment = "Link: " + _link.text + " " + comment;
         }
         var isvc :ItemService = _ctx.getClient().requireService(ItemService) as ItemService;
-        isvc.addFlag(_ctx.getClient(), _ident, ItemFlag_Kind(_kind.selectedItem), comment,
+        isvc.addFlag(_ident, ItemFlag_Kind(_kind.selectedItem), comment,
             _ctx.confirmListener("m.flag_reported", MsoyCodes.ITEM_MSGS));
     }
 

@@ -35,7 +35,7 @@ public class TrophyPanel extends FloatingPanel
         gameDescription :String) :void
     {
         (ctx.getClient().requireService(GameGameService) as GameGameService).getTrophies(
-            ctx.getClient(), gameId, ctx.getWorldContext().resultListener(
+            gameId, ctx.getWorldContext().resultListener(
                 function (trophies :TypedArray) :void {
                     new TrophyPanel(ctx, trophies, gameName, gameDescription).open();
                 }, MsoyCodes.GAME_MSGS));

@@ -202,8 +202,7 @@ public class PartyDirector extends BasicDirector
     public function getPartyBoard (
         resultHandler :Function, mode :int = PartyCodes.BOARD_NORMAL) :void
     {
-        _pbsvc.getPartyBoard(_wctx.getClient(), mode,
-            _wctx.resultListener(resultHandler, MsoyCodes.PARTY_MSGS));
+        _pbsvc.getPartyBoard(mode, _wctx.resultListener(resultHandler, MsoyCodes.PARTY_MSGS));
     }
 
     /**
@@ -219,8 +218,7 @@ public class PartyDirector extends BasicDirector
             delete _detailRequests[partyId];
             _wctx.displayFeedback(MsoyCodes.PARTY_MSGS, error);
         };
-        _pbsvc.getPartyDetail(_wctx.getClient(), partyId,
-            new ResultAdapter(gotPartyDetail, handleFailure));
+        _pbsvc.getPartyDetail(partyId, new ResultAdapter(gotPartyDetail, handleFailure));
     }
 
     /**
@@ -228,7 +226,7 @@ public class PartyDirector extends BasicDirector
      */
     public function getCreateCost (callback :Function) :void
     {
-        _pbsvc.getCreateCost(_wctx.getClient(), _wctx.resultListener(callback));
+        _pbsvc.getCreateCost(_wctx.resultListener(callback));
     }
 
     /**
@@ -255,7 +253,7 @@ public class PartyDirector extends BasicDirector
             panel.open();
             panel.init(name, groupId, inviteAllFriends);
         };
-        _pbsvc.createParty(_wctx.getClient(), currency, authedCost, name, groupId, inviteAllFriends,
+        _pbsvc.createParty(currency, authedCost, name, groupId, inviteAllFriends,
             new JoinAdapter(handleSuccess, handleNewPrice, handleFailure));
     }
 
@@ -272,7 +270,7 @@ public class PartyDirector extends BasicDirector
         }
 
         // first we have to find out what node is hosting the party in question
-        _pbsvc.locateParty(_wctx.getClient(), id,
+        _pbsvc.locateParty(id,
             new JoinAdapter(connectParty, null, function (cause :String) :void {
                 _wctx.displayFeedback(MsoyCodes.PARTY_MSGS, cause);
             }));
@@ -307,26 +305,22 @@ public class PartyDirector extends BasicDirector
 
     public function assignLeader (memberId :int) :void
     {
-        _partyObj.partyService.assignLeader(_pctx.getClient(), memberId,
-            _wctx.listener(MsoyCodes.PARTY_MSGS));
+        _partyObj.partyService.assignLeader(memberId, _wctx.listener(MsoyCodes.PARTY_MSGS));
     }
 
     public function updateStatus (status :String) :void
     {
-        _partyObj.partyService.updateStatus(_pctx.getClient(), status,
-            _wctx.listener(MsoyCodes.PARTY_MSGS));
+        _partyObj.partyService.updateStatus(status, _wctx.listener(MsoyCodes.PARTY_MSGS));
     }
 
     public function updateRecruitment (recruitment :int) :void
     {
-        _partyObj.partyService.updateRecruitment(_pctx.getClient(), recruitment,
-            _wctx.listener(MsoyCodes.PARTY_MSGS));
+        _partyObj.partyService.updateRecruitment(recruitment, _wctx.listener(MsoyCodes.PARTY_MSGS));
     }
 
     public function updateDisband (disband :Boolean) :void
     {
-        _partyObj.partyService.updateDisband(_pctx.getClient(), disband,
-            _wctx.listener(MsoyCodes.PARTY_MSGS));
+        _partyObj.partyService.updateDisband(disband, _wctx.listener(MsoyCodes.PARTY_MSGS));
     }
 
     /**
@@ -334,14 +328,12 @@ public class PartyDirector extends BasicDirector
      */
     public function bootMember (memberId :int) :void
     {
-        _partyObj.partyService.bootMember(_pctx.getClient(), memberId,
-            _wctx.listener(MsoyCodes.PARTY_MSGS));
+        _partyObj.partyService.bootMember(memberId, _wctx.listener(MsoyCodes.PARTY_MSGS));
     }
 
     public function inviteMember (memberId :int) :void
     {
-        _partyObj.partyService.inviteMember(_pctx.getClient(), memberId,
-            _wctx.listener(MsoyCodes.PARTY_MSGS));
+        _partyObj.partyService.inviteMember(memberId, _wctx.listener(MsoyCodes.PARTY_MSGS));
     }
 
     // from BasicDirector
@@ -508,8 +500,7 @@ public class PartyDirector extends BasicDirector
             var scene :Scene = _wctx.getSceneDirector().getScene();
             var sceneId :int = (scene == null) ? 0 : scene.getId();
             if (sceneId != _partyObj.sceneId) {
-                _partyObj.partyService.moveParty(
-                    _pctx.getClient(), sceneId, _wctx.listener(MsoyCodes.PARTY_MSGS));
+                _partyObj.partyService.moveParty(sceneId, _wctx.listener(MsoyCodes.PARTY_MSGS));
             }
         }
     }
@@ -543,8 +534,7 @@ public class PartyDirector extends BasicDirector
             }
         }
         if ((gameId != _partyObj.gameId) || (gameState != _partyObj.gameState)) {
-            _partyObj.partyService.setGame(
-                _pctx.getClient(), gameId, gameState, gameOid,
+            _partyObj.partyService.setGame(gameId, gameState, gameOid,
                 _wctx.listener(MsoyCodes.PARTY_MSGS));
         }
     }

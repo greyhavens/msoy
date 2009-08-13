@@ -52,7 +52,7 @@ public class TablesWaitingPanel extends FlyingPanel
     {
         _refresh.enabled = false;
         WorldGameService(_ctx.getClient().requireService(WorldGameService)).getTablesWaiting(
-            _ctx.getClient(), _ctx.resultListener(gotTables));
+            _ctx.resultListener(gotTables));
     }
 
     override protected function didOpen () :void

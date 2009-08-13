@@ -26,12 +26,12 @@ public class WorldGameMarshaller extends InvocationMarshaller
     public static const GET_TABLES_WAITING :int = 1;
 
     // from interface WorldGameService
-    public function getTablesWaiting (arg1 :Client, arg2 :InvocationService_ResultListener) :void
+    public function getTablesWaiting (arg1 :InvocationService_ResultListener) :void
     {
-        var listener2 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
-        listener2.listener = arg2;
-        sendRequest(arg1, GET_TABLES_WAITING, [
-            listener2
+        var listener1 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
+        listener1.listener = arg1;
+        sendRequest(GET_TABLES_WAITING, [
+            listener1
         ]);
     }
 
@@ -39,10 +39,10 @@ public class WorldGameMarshaller extends InvocationMarshaller
     public static const INVITE_FRIENDS :int = 2;
 
     // from interface WorldGameService
-    public function inviteFriends (arg1 :Client, arg2 :int, arg3 :TypedArray /* of int */) :void
+    public function inviteFriends (arg1 :int, arg2 :TypedArray /* of int */) :void
     {
-        sendRequest(arg1, INVITE_FRIENDS, [
-            Integer.valueOf(arg2), arg3
+        sendRequest(INVITE_FRIENDS, [
+            Integer.valueOf(arg1), arg2
         ]);
     }
 
@@ -50,12 +50,12 @@ public class WorldGameMarshaller extends InvocationMarshaller
     public static const LOCATE_GAME :int = 3;
 
     // from interface WorldGameService
-    public function locateGame (arg1 :Client, arg2 :int, arg3 :WorldGameService_LocationListener) :void
+    public function locateGame (arg1 :int, arg2 :WorldGameService_LocationListener) :void
     {
-        var listener3 :WorldGameMarshaller_LocationMarshaller = new WorldGameMarshaller_LocationMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, LOCATE_GAME, [
-            Integer.valueOf(arg2), listener3
+        var listener2 :WorldGameMarshaller_LocationMarshaller = new WorldGameMarshaller_LocationMarshaller();
+        listener2.listener = arg2;
+        sendRequest(LOCATE_GAME, [
+            Integer.valueOf(arg1), listener2
         ]);
     }
 }
