@@ -202,8 +202,50 @@ public class FacebookCallbackServlet extends HttpServlet
     protected void doPost (HttpServletRequest req, HttpServletResponse rsp)
         throws IOException
     {
-        log.info("Got POST request " + req.getRequestURL());
-        MsoyHttpServer.dumpParameters(req);
+        if (DeploymentConfig.devDeployment) {
+            log.info("Got POST request " + req.getRequestURL());
+            MsoyHttpServer.dumpParameters(req);
+        }
+
+        try {
+            tryPost(req, rsp);
+
+        } catch (ServiceException se) {
+            log.warning("Error in Facebook POST callback", se);
+            // TODO: we won't need these extra dumps once everything is working well
+            MsoyHttpServer.dumpParameters(req);
+            MsoyHttpServer.dumpCookies(req);
+            MsoyHttpServer.dumpHeaders(req);
+            rsp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    protected void tryPost (HttpServletRequest req, HttpServletResponse rsp)
+        throws IOException, ServiceException
+    {
+        ReqInfo info = parseReqInfo(req);
+        validateSignature(req, info.appSecret);
+
+        if (!info.ping) {
+            throw new ServiceException();
+        }
+
+        boolean added;
+        String truth = "1";
+        if (truth.equals(req.getParameter(FB_INSTALL)) ||
+            truth.equals(req.getParameter(FB_AUTH))) {
+            added = true;
+        } else {
+            added = false;
+            if (!truth.equals(FB_UNINSTALL)) {
+                log.warning("Ping parameter not set, assuming removal");
+                MsoyHttpServer.dumpParameters(req);
+            }
+        }
+
+        // TODO: fire off an event to Kontagent
+        String was = added ? "added" : "removed";
+        log.info("App " + was, "user", req.getParameter(FB_USER), "time", FB_TIME);
     }
 
     /**
@@ -242,14 +284,22 @@ public class FacebookCallbackServlet extends HttpServlet
     protected ReqInfo parseReqInfo (HttpServletRequest req)
         throws ServiceException
     {
-        String path = req.getPathInfo();
+        String path = StringUtil.deNull(req.getPathInfo());
         ReqInfo info = new ReqInfo();
 
-        // apps.facebook.com/whirled
-        if (path == null || !path.startsWith(GAME_PATH)) {
+        if (!path.startsWith(GAME_PATH)) {
+            // fill in the FB creds for this deployment
             info.apiKey = ServerConfig.config.getValue("facebook.api_key", "");
             info.appSecret = ServerConfig.config.getValue("facebook.secret", "");
             info.canvasName = ServerConfig.config.getValue("facebook.canvas_name", "");
+    
+            if (path.startsWith(PING_PATH)) {
+                // pings don't have game and vector data, just return
+                info.ping = true;
+                return info;
+            }
+
+            // this is a normal request for Whirled Games, parse params for redirect
             info.game = _faceLogic.parseGame(req);
             info.vector = req.getParameter(ArgNames.VECTOR);
             if (info.vector == null) {
@@ -259,7 +309,7 @@ public class FacebookCallbackServlet extends HttpServlet
             return info;
         }
 
-        // apps.facebook.com/<game-app>
+        // this is a request from an integrated game's app, fill in game stuff
         int gameId;
         try {
             gameId = Integer.parseInt(path.substring(GAME_PATH.length()));
@@ -301,6 +351,7 @@ public class FacebookCallbackServlet extends HttpServlet
         public boolean chromeless;
         public String vector;
         public boolean challenge;
+        public boolean ping;
 
         /**
          * Gets the GWT token that the user should be redirected to in the whirled application.
@@ -360,8 +411,13 @@ public class FacebookCallbackServlet extends HttpServlet
     protected static final String FB_CANVAS_USER = FBKEY_PREFIX + "canvas_user";
     protected static final String FB_ADDED = FBKEY_PREFIX + "added";
     protected static final String FB_SESSION_KEY = FBKEY_PREFIX + "session_key";
+    protected static final String FB_INSTALL = FBKEY_PREFIX + "install";
+    protected static final String FB_AUTH = FBKEY_PREFIX + "authorize";
+    protected static final String FB_UNINSTALL = FBKEY_PREFIX + "uninstall";
+    protected static final String FB_TIME = FBKEY_PREFIX + "time";
     protected static final int FBAUTH_DAYS = 2;
     protected static final String GAME_PATH = "/game/";
+    protected static final String PING_PATH = "/ping/";
     protected static final String SESSION = "session";
     protected static final String CANVAS = "canvas";
     protected static final String TOKEN = "token";
