@@ -56,6 +56,9 @@ public interface FacebookService extends RemoteService
         /** The thumbnail to use in the story. */
         public String thumbnailURL;
 
+        /** The game name. */
+        public String name;
+
         /** The game description, normally used as the body of the story. */
         public String description;
     }
@@ -102,5 +105,12 @@ public interface FacebookService extends RemoteService
      * feed story, or null if the data could not be loaded.
      */
     StoryFields sendChallengeNotification (FacebookGame game, boolean appOnly)
+        throws ServiceException;
+
+    /**
+     * Returns data for publishing a challenge feed story. Throws an exception if the data could
+     * not be loaded.
+     */
+    StoryFields getStoryFields (FacebookGame game)
         throws ServiceException;
 }

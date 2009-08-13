@@ -45,4 +45,10 @@ public interface FacebookServiceAsync
      */
     void sendChallengeNotification (
         FacebookGame game, boolean appOnly, AsyncCallback<StoryFields> callback);
+
+    /**
+     * The asynchronous version of {@link FacebookService#getStoryFields}.
+     */
+    void getStoryFields (
+        FacebookGame game, AsyncCallback<StoryFields> callback);
 }

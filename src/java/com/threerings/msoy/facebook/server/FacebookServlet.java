@@ -35,6 +35,7 @@ import com.threerings.msoy.server.persist.MemberCardRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 
+import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.facebook.data.FacebookCodes;
 import com.threerings.msoy.facebook.gwt.FacebookFriendInfo;
 import com.threerings.msoy.facebook.gwt.FacebookGame;
@@ -218,7 +219,7 @@ public class FacebookServlet extends MsoyServiceServlet
             }
 
         } else {
-            info.gameName = getGameInfo(game).name;
+            info.gameName = loadStoryFields(game).name;
         }
 
         MemberRecord mrec = requireAuthedUser();
@@ -262,18 +263,15 @@ public class FacebookServlet extends MsoyServiceServlet
         throws ServiceException
     {
         MemberRecord mrec = requireAuthedUser();
-        GameInfo gameInfo = getGameInfo(game);
+        StoryFields result = loadStoryFields(game);
         Map<String, String> replacements = Maps.newHashMap();
-        replacements.put("game", gameInfo.name);
+        replacements.put("game", result.name);
         replacements.put("game_url", SharedNaviUtil.buildRequest(
             FacebookLogic.WHIRLED_APP_CANVAS, game.getCanvasArgs()));
         _fbLogic.scheduleFriendNotification(mrec, "challenge", replacements, appOnly);
 
         try {
-            StoryFields result = new StoryFields();
             result.template = getTemplate("challenge");
-            result.description = gameInfo.desc;
-            result.thumbnailURL = gameInfo.thumbURL;
             return result;
 
         } catch (Exception e) {
@@ -282,27 +280,17 @@ public class FacebookServlet extends MsoyServiceServlet
         }
     }
 
-    protected GameInfo getGameInfo (FacebookGame game)
+    @Override // from FacebookService
+    public StoryFields getStoryFields (FacebookGame game)
         throws ServiceException
     {
-        switch (game.type) {
-        case WHIRLED:
-            // whirled game invite
-            GameInfoRecord info = _mgameRepo.loadGame(game.getIntId());
-            if (info == null) {
-                throw new ServiceException();
-            }
-            return new GameInfo(info);
-
-        case MOCHI:
-            // mochi game invite
-            MochiGameInfo minfo = _mgameRepo.loadMochiGame(game.getStringId());
-            if (minfo == null) {
-                throw new ServiceException();
-            }
-            return new GameInfo(minfo);
+        requireAuthedUser();
+        StoryFields result = loadStoryFields(game);
+        result.template = getTemplate("challenge");
+        if (result.template == null) {
+            throw new ServiceException(MsoyCodes.E_INTERNAL_ERROR);
         }
-        return null;
+        return result;
     }
 
     /**
@@ -339,28 +327,34 @@ public class FacebookServlet extends MsoyServiceServlet
         });
     }
 
-    /**
-     * Common game info fields (from whirled and mochi games).
-     */
-    protected static class GameInfo
+    protected StoryFields loadStoryFields (FacebookGame game)
+        throws ServiceException
     {
-        public GameInfo (GameInfoRecord info)
-        {
-            name = info.name;
-            desc = info.description;
-            thumbURL = info.getThumbMedia().getMediaPath();
-        }
+        StoryFields fields = new StoryFields();
+        switch (game.type) {
+        case WHIRLED:
+            // whirled game invite
+            GameInfoRecord info = _mgameRepo.loadGame(game.getIntId());
+            if (info == null) {
+                throw new ServiceException();
+            }
+            fields.name = info.name;
+            fields.description = info.description;
+            fields.thumbnailURL = info.getThumbMedia().getMediaPath();
+            return fields;
 
-        public GameInfo (MochiGameInfo info)
-        {
-            name = info.name;
-            desc = info.desc;
-            thumbURL = info.thumbURL;
+        case MOCHI:
+            // mochi game invite
+            MochiGameInfo minfo = _mgameRepo.loadMochiGame(game.getStringId());
+            if (minfo == null) {
+                throw new ServiceException();
+            }
+            fields.name = minfo.name;
+            fields.description = minfo.desc;
+            fields.thumbnailURL = minfo.thumbURL;
+            return fields;
         }
-
-        String name;
-        String desc;
-        String thumbURL;
+        throw new ServiceException();
     }
 
     @Inject protected FacebookLogic _fbLogic;
