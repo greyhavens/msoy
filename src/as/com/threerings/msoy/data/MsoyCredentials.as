@@ -49,7 +49,7 @@ public class MsoyCredentials extends Credentials
         visitorId = (ins.readField(String) as String);
         affiliateId = ins.readInt();
         vector = (ins.readField(String) as String);
-        _username = (ins.readObject() as Name);
+        _username = Name(ins.readObject());
     }
 
     // from interface Streamable
