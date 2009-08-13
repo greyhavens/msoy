@@ -726,7 +726,7 @@ public class WorldController extends MsoyController
             handleJoinAVRGame(gameId, sceneId, token, inviterMemberId);
         };
         // remove the observer on failure
-        var changeFailed :Function = function (place :PlaceObject) :void {
+        var changeFailed :Function = function (placeId :int, reason :String) :void {
             _wctx.getLocationDirector().removeLocationObserver(adapter);
         }
         adapter = new LocationAdapter(null, didChange, changeFailed);
