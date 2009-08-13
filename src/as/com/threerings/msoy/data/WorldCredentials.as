@@ -31,15 +31,6 @@ public class WorldCredentials extends MsoyCredentials
     }
 
     // from interface Streamable
-    override public function readObject (ins :ObjectInputStream) :void
-    {
-        super.readObject(ins);
-        ident = (ins.readField(String) as String);
-        featuredPlaceView = ins.readBoolean();
-        _password = (ins.readField(String) as String);
-    }
-
-    // from interface Streamable
     override public function writeObject (out :ObjectOutputStream) :void
     {
         super.writeObject(out);

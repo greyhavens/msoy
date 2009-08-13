@@ -42,17 +42,6 @@ public class MsoyCredentials extends Credentials
     }
 
     // from interface Streamable
-    override public function readObject (ins :ObjectInputStream) :void
-    {
-        super.readObject(ins);
-        sessionToken = (ins.readField(String) as String);
-        visitorId = (ins.readField(String) as String);
-        affiliateId = ins.readInt();
-        vector = (ins.readField(String) as String);
-        _username = Name(ins.readObject());
-    }
-
-    // from interface Streamable
     override public function writeObject (out :ObjectOutputStream) :void
     {
         super.writeObject(out);

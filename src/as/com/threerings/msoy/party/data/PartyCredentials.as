@@ -24,13 +24,6 @@ public class PartyCredentials extends MsoyCredentials
     }
 
     // from interface Streamable
-    override public function readObject (ins :ObjectInputStream) :void
-    {
-        super.readObject(ins);
-        partyId = ins.readInt();
-    }
-
-    // from interface Streamable
     override public function writeObject (out :ObjectOutputStream) :void
     {
         super.writeObject(out);
