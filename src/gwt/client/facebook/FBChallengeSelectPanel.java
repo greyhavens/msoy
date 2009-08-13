@@ -33,7 +33,6 @@ public class FBChallengeSelectPanel extends FlowPanel
     public FBChallengeSelectPanel (FacebookGame game, String gameName)
     {
         _game = game;
-        _gameName = gameName;
         setStyleName("challengeSelect");
         add(MsoyUI.createLabel(_msgs.challengeSelect(gameName), "Title"));
         HorizontalPanel buttons = new HorizontalPanel();
@@ -76,7 +75,7 @@ public class FBChallengeSelectPanel extends FlowPanel
 
                         // publish to feed
                         FBChallengeFeeder feeder = new FBChallengeFeeder(_game);
-                        feeder.publish(_gameName, result);
+                        feeder.publish(result);
                     }
                 });
             }
@@ -101,7 +100,6 @@ public class FBChallengeSelectPanel extends FlowPanel
     }
 
     protected FacebookGame _game;
-    protected String _gameName;
 
     protected static final FacebookMessages _msgs = GWT.create(FacebookMessages.class);
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);

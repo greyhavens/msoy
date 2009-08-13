@@ -37,7 +37,7 @@ public class FBChallengeFeeder
     /**
      * Pops up a challenge feed story confirmation using the given game and story fields.
      */
-    public void publish (String gameName, StoryFields result)
+    public void publish (StoryFields result)
     {
         String vector = result.template.toEntryVector("challenge");
         String templateId = String.valueOf(result.template.bundleId);
@@ -52,7 +52,7 @@ public class FBChallengeFeeder
 
         // TODO: A/B test use of target ids
         Map<String, Object> data = new HashMap<String, Object>();
-        data.put("game", gameName);
+        data.put("game", result.name);
         data.put("game_desc", result.description);
         data.put("action_url", actionURL);
         data.put("images", images.toArray());
