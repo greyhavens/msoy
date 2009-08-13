@@ -326,7 +326,7 @@ public class FacebookCallbackServlet extends HttpServlet
 
                 } else {
                     // other games are "viewed"
-                    return Pages.GAMES.makeToken(game.getViewArgs());
+                    return Pages.GAMES.makeToken(game.getViewArgs(), embed);
                 }
             } else {
                 return Pages.GAMES.makeToken(embed);
