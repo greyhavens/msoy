@@ -8,6 +8,7 @@ import java.util.List;
 import client.facebookbase.FacebookUtil;
 import client.shell.CShell;
 import client.ui.MsoyUI;
+import client.util.ArrayUtil;
 import client.util.InfoCallback;
 import client.util.StringUtil;
 
@@ -20,6 +21,7 @@ import com.threerings.msoy.facebook.gwt.FacebookGame;
 import com.threerings.msoy.facebook.gwt.FacebookService;
 import com.threerings.msoy.facebook.gwt.FacebookServiceAsync;
 import com.threerings.msoy.facebook.gwt.FacebookService.InviteInfo;
+import com.threerings.msoy.web.gwt.ArgNames;
 import com.threerings.msoy.web.gwt.CookieNames;
 import com.threerings.msoy.web.gwt.SharedNaviUtil;
 
@@ -47,8 +49,13 @@ public class FBRequestPanel extends ServerFBMLPanel
                     result.username, getPronoun(result.gender), app);
                 String tip = _msgs.inviteGenericTip();
                 String accept = _msgs.inviteChallengeAccept(app);
+
+                // both accept and submit just go to the main app
+                String[] acceptArgs = new String[0];
+                String[] submitArgs = new String[0];
+
                 div.add(new FBRequestPanel(
-                    result.excludeIds, invite, tip, accept, new String[0], app));
+                    result.excludeIds, invite, tip, accept, acceptArgs, submitArgs, app));
             }
         });
         return div;
@@ -66,8 +73,17 @@ public class FBRequestPanel extends ServerFBMLPanel
             info.username, info.gameName, app, getPronoun(info.gender));
         String tip = _msgs.inviteChallengeTip();
         String accept = _msgs.inviteChallengeAccept(info.gameName);
+
+        // on accept, go to the game (via the invite servlet... this will end up viewing the game,
+        // but okay)
+        String[] acceptArgs = game.getCanvasArgs();
+
+        // on submit, go to the game but in challenge mode so the feed popup is shown
+        String[] submitArgs = ArrayUtil.concatenate(
+            acceptArgs, new String[] {ArgNames.FB_PARAM_CHALLENGE, "y"}, ArrayUtil.STRING_TYPE);
+
         return new FBRequestPanel(
-            info.excludeIds, invite, tip, accept, game.getCanvasArgs(), info.gameName);
+            info.excludeIds, invite, tip, accept, acceptArgs, submitArgs, info.gameName);
     }
 
     /**
@@ -76,11 +92,14 @@ public class FBRequestPanel extends ServerFBMLPanel
      * @param text the invitation copy, such as "Come Play With Me"
      * @param tip mini-instructions at the top of the form, such "Select some friends to play"
      * @param accept the copy on the accept button of the invitation
-     * @param canvasArgs array of name/value pairs to add to the accept button url
+     * @param acceptArgs array of name/value pairs to add to the accept button url; the accept url
+     *        is the one that recipients of the request will go to when they accept the request
+     * @param submitArgs array of name/value pairs to add to the submission url; the submit url
+     *        is where the current user is redirected to after submitting or canceling the form
      * @param type the type of invitation shown in the form's "send" button
      */
     protected FBRequestPanel (List<Long> excludeIds, String text, String tip, String accept,
-        String[] canvasArgs, String type)
+        String[] acceptArgs, String[] submitArgs, String type)
     {
         StringBuilder exclude = new StringBuilder();
         if (excludeIds != null) {
@@ -88,12 +107,11 @@ public class FBRequestPanel extends ServerFBMLPanel
                 exclude.append(id).append(",");
             }
         }
-        String url = SharedNaviUtil.buildRequest(FacebookUtil.APP_CANVAS, canvasArgs);
-        url = SharedNaviUtil.buildRequest(url,
-            CookieNames.AFFILIATE, String.valueOf(CShell.getMemberId()));
+        String url = SharedNaviUtil.buildRequest(SharedNaviUtil.buildRequest(
+            FacebookUtil.APP_CANVAS, acceptArgs), CookieNames.AFFILIATE, "" + CShell.getMemberId());
         FBMLPanel form = new FBMLPanel("request-form",
-            // TODO: give the fbinvite servlet enough information to go back to where we were
-            "action", DeploymentConfig.serverURL + "fbinvite/ndone",
+            "action", SharedNaviUtil.buildRequest(
+                DeploymentConfig.serverURL + "fbinvite/ndone", submitArgs),
             "method", "POST",
             "invite", "true",
             // Facebook ignores escapes in here, sanitize instead

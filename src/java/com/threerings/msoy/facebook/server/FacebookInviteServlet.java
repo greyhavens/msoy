@@ -19,6 +19,9 @@ import com.samskivert.io.StreamUtil;
 import com.samskivert.servlet.util.CookieUtil;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
+
+import com.threerings.msoy.facebook.gwt.FacebookGame;
+
 import com.threerings.msoy.game.server.persist.GameInfoRecord;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 
@@ -82,18 +85,8 @@ public class FacebookInviteServlet extends HttpServlet
                 }
                 outputInvitePage(rsp, gameId, gameName, memberId, acceptPath);
 
-            } else if (req.getPathInfo().equals("/done")) {
-                logSentInvites(req, memberId, true);
-                outputCloseWindowPage(rsp);
-
-            } else if (req.getPathInfo().equals("/ndone")) {
-                logSentInvites(req, memberId, false);
-
-                // just head back to the facebook app
-                MsoyHttpServer.sendTopRedirect(rsp, FacebookLogic.WHIRLED_APP_CANVAS);
-
             } else {
-                rsp.sendError(HttpServletResponse.SC_NOT_FOUND);
+                handleSubmission(req, rsp, memberId);
             }
 
         } catch (Exception e) {
@@ -112,16 +105,39 @@ public class FacebookInviteServlet extends HttpServlet
             return;
         }
 
+        handleSubmission(req, rsp, memberId);
+    }
+
+    protected void handleSubmission (
+        HttpServletRequest req, HttpServletResponse rsp, int memberId)
+        throws IOException
+    {
+        FacebookGame game = _fbLogic.parseGame(req);
         if (req.getPathInfo().equals("/done")) {
-            logSentInvites(req, memberId, true);
+            // this was a FB connect popup invite
+            logSentInvites(req, memberId, game);
             outputCloseWindowPage(rsp);
 
         } else if (req.getPathInfo().equals("/ndone")) {
-            logSentInvites(req, memberId, false);
+            // this was a portal invite, either to the app or a game challenge
+            logSentInvites(req, memberId, game);
 
-            // just head back to the facebook app
-            MsoyHttpServer.sendTopRedirect(rsp, FacebookLogic.WHIRLED_APP_CANVAS);
+            String canvas = FacebookLogic.WHIRLED_APP_CANVAS;
+            if (game == null) {
+                // head back to the facebook app main page
+                MsoyHttpServer.sendTopRedirect(rsp, canvas);
 
+            } else if (req.getParameter(ArgNames.FB_PARAM_CHALLENGE) != null) {
+                // head back to the app and do the final phase of the challenge flow
+                MsoyHttpServer.sendTopRedirect(rsp, SharedNaviUtil.buildRequest(
+                    SharedNaviUtil.buildRequest(canvas, game.getCanvasArgs()),
+                    ArgNames.FB_PARAM_CHALLENGE, "y"));
+
+            } else {
+                // head back to the app and just view the game
+                MsoyHttpServer.sendTopRedirect(rsp,
+                    SharedNaviUtil.buildRequest(canvas, game.getCanvasArgs()));
+            }
         } else {
             rsp.sendError(HttpServletResponse.SC_NOT_FOUND);
         }
@@ -211,7 +227,7 @@ public class FacebookInviteServlet extends HttpServlet
         return member.memberId;
     }
 
-    protected void logSentInvites (HttpServletRequest req, int memberId, boolean isGame)
+    protected void logSentInvites (HttpServletRequest req, int memberId, FacebookGame game)
     {
         if (DeploymentConfig.devDeployment) {
             MsoyHttpServer.dumpParameters(req);
@@ -226,14 +242,8 @@ public class FacebookInviteServlet extends HttpServlet
             return;
         }
 
-        int gameId = 0;
-        if (isGame) {
-            try {
-                gameId = Integer.parseInt(req.getParameter(ArgNames.FB_PARAM_GAME));
-            } catch (Exception e) {
-                log.warning("Failed to get game id of sent invites", e);
-            }
-        }
+        // TODO: record requests to mochi games too
+        int gameId = (game != null && game.type == FacebookGame.Type.WHIRLED) ? game.getIntId() : 0;
 
         // report an invite sent for each id
         for (String id : ids) {
@@ -242,6 +252,7 @@ public class FacebookInviteServlet extends HttpServlet
     }
 
     // dependencies
+    @Inject protected FacebookLogic _fbLogic;
     @Inject protected MemberHelper _mhelper;
     @Inject protected MsoyEventLogger _logger;
     @Inject protected MsoyGameRepository _mgameRepo;
