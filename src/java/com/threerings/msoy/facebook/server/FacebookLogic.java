@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.servlet.http.HttpServletRequest;
+
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
@@ -29,6 +31,7 @@ import com.google.code.facebookapi.FacebookJaxbRestClient;
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.facebook.data.FacebookCodes;
+import com.threerings.msoy.facebook.gwt.FacebookGame;
 import com.threerings.msoy.facebook.server.persist.FacebookNotificationRecord;
 import com.threerings.msoy.facebook.server.persist.FacebookRepository;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
@@ -37,6 +40,7 @@ import com.threerings.msoy.server.persist.BatchInvoker;
 import com.threerings.msoy.server.persist.ExternalMapRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
+import com.threerings.msoy.web.gwt.ArgNames;
 import com.threerings.msoy.web.gwt.CookieNames;
 import com.threerings.msoy.web.gwt.ExternalAuther;
 import com.threerings.msoy.web.gwt.FacebookCreds;
@@ -115,6 +119,21 @@ public class FacebookLogic
     public FacebookJaxbRestClient getFacebookClient (FacebookAppCreds creds)
     {
         return getFacebookClient(creds.apiKey, creds.appSecret, creds.sessionKey, READ_TIMEOUT);
+    }
+
+    /**
+     * Using standard parameter values, returns the whirled or mochi game associated with the given
+     * request, or null if there is not one.
+     */
+    public FacebookGame parseGame (HttpServletRequest req)
+    {
+        if (req.getParameter(ArgNames.FB_PARAM_GAME) != null) {
+            return new FacebookGame(Integer.parseInt(req.getParameter(ArgNames.FB_PARAM_GAME)));
+
+        } else if (req.getParameter(ArgNames.FB_PARAM_MOCHI_GAME) != null) {
+            return new FacebookGame(req.getParameter(ArgNames.FB_PARAM_MOCHI_GAME));
+        }
+        return null;
     }
 
     /**

@@ -83,6 +83,15 @@ public class FacebookGame
     }
 
     /**
+     * Gets the arguments to pass to the GAMES page in order to view this game. Viewing a mochi
+     * game is playing it.
+     */
+    public Args getViewArgs ()
+    {
+        return choose(Args.compose("game", "d", _id), Args.compose("mochi", _id));
+    }
+
+    /**
      * Gets the arguments to pass to the FACEBOOK page in order to initiate a game challenge.
      * @return
      */

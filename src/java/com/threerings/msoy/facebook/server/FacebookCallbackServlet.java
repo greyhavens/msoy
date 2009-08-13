@@ -27,6 +27,7 @@ import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 
+import com.threerings.msoy.facebook.gwt.FacebookGame;
 import com.threerings.msoy.facebook.gwt.FacebookTemplateCard;
 
 import com.threerings.msoy.game.gwt.FacebookInfo;
@@ -249,15 +250,12 @@ public class FacebookCallbackServlet extends HttpServlet
             info.apiKey = ServerConfig.config.getValue("facebook.api_key", "");
             info.appSecret = ServerConfig.config.getValue("facebook.secret", "");
             info.canvasName = ServerConfig.config.getValue("facebook.canvas_name", "");
-            String gameId = req.getParameter(ArgNames.FB_PARAM_GAME);
-            if (!StringUtil.isBlank(gameId)) {
-                info.gameId = Integer.parseInt(gameId);
-            }
-            info.mochiGameTag = req.getParameter(ArgNames.FB_PARAM_MOCHI_GAME);
+            info.game = _faceLogic.parseGame(req);
             info.vector = req.getParameter(ArgNames.VECTOR);
             if (info.vector == null) {
                 info.vector = FacebookTemplateCard.toEntryVector("app", "");
             }
+            info.challenge = req.getParameter(ArgNames.FB_PARAM_CHALLENGE) != null;
             return info;
         }
 
@@ -274,7 +272,7 @@ public class FacebookCallbackServlet extends HttpServlet
             throw new ServiceException("Unknown game: " + gameId);
         }
 
-        info.gameId = ginfo.gameId;
+        info.game = new FacebookGame(ginfo.gameId);
 
         FacebookInfo fbinfo = _mgameRepo.loadFacebookInfo(ginfo.gameId);
         if (fbinfo.apiKey == null) {
@@ -285,7 +283,7 @@ public class FacebookCallbackServlet extends HttpServlet
         info.appSecret = fbinfo.appSecret;
         info.canvasName = fbinfo.canvasName;
         info.chromeless = fbinfo.chromeless;
-        info.vector = FacebookTemplateCard.toEntryVector("proxygame", "" + info.gameId);
+        info.vector = FacebookTemplateCard.toEntryVector("proxygame", "" + ginfo.gameId);
         return info;
     }
 
@@ -296,13 +294,13 @@ public class FacebookCallbackServlet extends HttpServlet
 
     protected static class ReqInfo
     {
-        public int gameId;
-        public String mochiGameTag;
+        public FacebookGame game;
         public String apiKey;
         public String appSecret;
         public String canvasName;
         public boolean chromeless;
         public String vector;
+        public boolean challenge;
 
         /**
          * Gets the GWT token that the user should be redirected to in the whirled application.
@@ -313,19 +311,23 @@ public class FacebookCallbackServlet extends HttpServlet
             Args embed = ArgNames.Embedding.compose(ArgNames.Embedding.FACEBOOK);
 
             // and send them to the appropriate page
-            if (gameId != 0) {
+            if (game != null) {
                 if (chromeless) {
-                    // chromeless games must go directly into the game, bugs be damned
-                    return Pages.WORLD.makeToken("fbgame", gameId);
-                } else {
-                    // all other games go to the game detail page (to work around some strange
-                    // Facebook iframe bug on Mac Firefox, yay)
-                    return Pages.GAMES.makeToken("d", gameId, embed);
-                }
-            } else if (!StringUtil.isBlank(mochiGameTag)) {
-                // straight into the Mochi game
-                return Pages.GAMES.makeToken("mochi", mochiGameTag, embed);
+                    // chromeless games go directly into the game
+                    return Pages.WORLD.makeToken("fbgame", game.getIntId());
 
+                } else if (challenge) {
+                    // completion of the challenge flow (ideally this would just be done in gwt
+                    // but Facebook request submissions work like forms and we therefore route them
+                    // via whirled.com/fbinvite/ndone, which then needs to complete the flow by
+                    // redirecting to the main canvas)
+                    return Pages.FACEBOOK.makeToken(game.getChallengeArgs(),
+                        ArgNames.FB_CHALLENGE_FEED, embed);
+
+                } else {
+                    // other games are "viewed"
+                    return Pages.GAMES.makeToken(game.getViewArgs());
+                }
             } else {
                 return Pages.GAMES.makeToken(embed);
             }
@@ -337,7 +339,7 @@ public class FacebookCallbackServlet extends HttpServlet
          */
         public String attachCreds (String token, FacebookAppCreds creds)
         {
-            if (gameId == 0 || !chromeless) {
+            if (game == null || !chromeless) {
                 return token;
             }
 

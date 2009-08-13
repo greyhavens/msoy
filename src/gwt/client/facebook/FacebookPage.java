@@ -13,6 +13,7 @@ import com.threerings.msoy.facebook.gwt.FacebookGame;
 import com.threerings.msoy.facebook.gwt.FacebookService;
 import com.threerings.msoy.facebook.gwt.FacebookServiceAsync;
 import com.threerings.msoy.facebook.gwt.FacebookService.InviteInfo;
+import com.threerings.msoy.facebook.gwt.FacebookService.StoryFields;
 
 import client.shell.Page;
 import client.shell.ShellMessages;
@@ -57,6 +58,17 @@ public class FacebookPage extends Page
 
     protected void showChallenge (final FacebookGame game, final String mode)
     {
+        if (mode.equals(ArgNames.FB_CHALLENGE_FEED)) {
+            setContent(null);
+            _fbsvc.getStoryFields(game, new InfoCallback<StoryFields>() {
+                @Override public void onSuccess (StoryFields result) {
+                    FBChallengeFeeder feeder = new FBChallengeFeeder(game);
+                    feeder.publish(result);
+                }
+            });
+            return;
+        }
+
         if (_gameInviteInfo == null || !_game.equals(game)) {
             setContent(MsoyUI.createLabel(_cmsgs.tagLoading(), "Loading"));
             _game = game;
@@ -71,11 +83,7 @@ public class FacebookPage extends Page
         }
 
         // see which phase of the challenge flow we are in and show the appropriate screen
-        if (mode.equals(ArgNames.FB_CHALLENGE_FRIENDS)) {
-            // TODO: this probably isn't needed anymore
-        } else if (mode.equals(ArgNames.FB_CHALLENGE_APP_FRIENDS)) {
-            // TODO: this probably isn't needed anymore
-        } else if (mode.equals(ArgNames.FB_CHALLENGE_PICK)) {
+        if (mode.equals(ArgNames.FB_CHALLENGE_PICK)) {
             // pick one or more friends and send a request
             setContent("Challenge",
                 FBRequestPanel.createChallenge(game, _gameInviteInfo));

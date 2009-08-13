@@ -22,20 +22,20 @@ public class ArgNames
     /** Subnav for a facebook mochi game challenge. */
     public static final String FB_MOCHI_CHALLENGE = "mochichallenge";
 
-    /** Challenge friends. */
-    public static final String FB_CHALLENGE_FRIENDS = "friends";
-
-    /** Challenge friends that are app users. */
-    public static final String FB_CHALLENGE_APP_FRIENDS = "appfriends";
-
     /** Pick some friends to challenge. */
     public static final String FB_CHALLENGE_PICK = "pick";
+
+    /** Popup a dialog to publish a challenge to the feed. */
+    public static final String FB_CHALLENGE_FEED = "feed";
 
     /** Parameter passed to canvas/callback for loading a game. */
     public static final String FB_PARAM_GAME = "game";
 
     /** Parameter passed to canvas/callback for loading a mochi game. */
     public static final String FB_PARAM_MOCHI_GAME = "mgame";
+
+    /** Parameter passed to canvas/callback for posting a challenge feed story. */
+    public static final String FB_PARAM_CHALLENGE = "ch";
 
     /**
      * Value constants and utility functions for the embedding argument.
