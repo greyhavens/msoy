@@ -19,23 +19,32 @@ import com.threerings.msoy.facebook.gwt.FacebookService.StoryFields;
 
 import client.facebookbase.FacebookUtil;
 import client.util.JavaScriptUtil;
+import client.util.Link;
 
 /**
- * Static methods for popping up a challenge feed story publisher.
+ * Pops up a game challenge feed story publisher.
  */
-public abstract class FBChallengeFeeder
+public class FBChallengeFeeder
 {
     /**
-     * Pops up a challenge feed story confirmation for the given game, game name and story fields.
+     * Creates a new feeder to publish a challenge for the given game.
      */
-    public void publish (FacebookGame game, String gameName, StoryFields result)
+    public FBChallengeFeeder (FacebookGame game)
+    {
+        _game = game;
+    }
+
+    /**
+     * Pops up a challenge feed story confirmation using the given game and story fields.
+     */
+    public void publish (String gameName, StoryFields result)
     {
         String vector = result.template.toEntryVector("challenge");
         String templateId = String.valueOf(result.template.bundleId);
 
         // action link goes to either the Whirled game detail or the Mochi embed
         String actionURL = SharedNaviUtil.buildRequest(
-            FacebookUtil.APP_CANVAS, game.getCanvasArgs());
+            FacebookUtil.APP_CANVAS, _game.getCanvasArgs());
         actionURL = SharedNaviUtil.buildRequest(actionURL, ArgNames.VECTOR, vector);
 
         FacebookUtil.FeedStoryImages images = new FacebookUtil.FeedStoryImages();
@@ -52,9 +61,13 @@ public abstract class FBChallengeFeeder
     }
 
     /**
-     * Takes the user to the next step, if any, after publishing the feed story.
+     * Callback after the feed form is submitted or cancelled.
      */
-    abstract protected void onCompletion ();
+    protected void onCompletion ()
+    {
+        // go back to playing the game
+        Link.go(_game.getPlayPage(), _game.getPlayArgs());
+    }
 
     protected native void publishChallenge (String templateId, JavaScriptObject data) /*-{
         var object = this;
@@ -74,6 +87,8 @@ public abstract class FBChallengeFeeder
               "http://mediacloud.whirled.com/240aa9267fa6dc8422588e6818862301fd658e6f.png",
               "href" : "http://www.whirled.com/go/games-d_827_t"}]}
     */
+
+    protected FacebookGame _game;
 
     protected static final FacebookServiceAsync _fbsvc = GWT.create(FacebookService.class);
     protected static final String ACCESSIBLE_GAME_IMAGE =

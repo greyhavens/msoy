@@ -65,11 +65,6 @@ public class FBChallengeSelectPanel extends FlowPanel
 
     protected void confirmAndSendChallenge (final boolean appOnly)
     {
-        final FBChallengeFeeder feeder = new FBChallengeFeeder() {
-            @Override protected void onCompletion () {
-                goPlay();
-            }
-        };
         final Command send = new Command() {
             @Override public void execute () {
                 _fbsvc.sendChallengeNotification(_game, appOnly, new InfoCallback<StoryFields>() {
@@ -80,7 +75,8 @@ public class FBChallengeSelectPanel extends FlowPanel
                         }
 
                         // publish to feed
-                        feeder.publish(_game, _gameName, result);
+                        FBChallengeFeeder feeder = new FBChallengeFeeder(_game);
+                        feeder.publish(_gameName, result);
                     }
                 });
             }
