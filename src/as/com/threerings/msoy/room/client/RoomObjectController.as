@@ -369,8 +369,8 @@ public class RoomObjectController extends RoomController
             return;
 
         default:
-            log.warning("Clicked on unhandled furni action type [actionType=" + furni.actionType +
-                        ", actionData=" + furni.actionData + "].");
+            log.warning("Clicked on unhandled furni action type",
+               "actionType", furni.actionType, "actionData", furni.actionData);
             return;
         }
     }
@@ -382,7 +382,7 @@ public class RoomObjectController extends RoomController
     {
         var occInfo :MemberInfo = (avatar.getActorInfo() as MemberInfo);
         if (occInfo == null) {
-            log.info("Clicked on non-MemberInfo sprite [info=" + avatar.getActorInfo() + "].");
+            log.info("Clicked on non-MemberInfo sprite", "info", avatar.getActorInfo());
             return;
         }
 
@@ -429,7 +429,7 @@ public class RoomObjectController extends RoomController
     {
         var occInfo :PetInfo = (pet.getActorInfo() as PetInfo);
         if (occInfo == null) {
-            log.warning("Pet has unexpected ActorInfo [info=" + pet.getActorInfo() + "].");
+            log.warning("Pet has unexpected ActorInfo", "info", pet.getActorInfo());
             return;
         }
 
@@ -896,8 +896,8 @@ public class RoomObjectController extends RoomController
     override protected function checkCanRequest (ident :ItemIdent, from :String) :Boolean
     {
         if (_roomObj == null) {
-            log.warning("Cannot issue request for lack of room object [from=" + from +
-                        ", ident=" + ident + "].");
+            log.warning("Cannot issue request for lack of room object",
+                "from", from, "ident", ident);
             return false;
         }
 
