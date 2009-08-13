@@ -177,13 +177,13 @@ public class GameLiaison
             gameLocated(ghost, gport, false);
 
         } else if (_wctx.getClient().isLoggedOn()) {
-            log.info("Resolving location of game [id=" + _gameId + "].");
+            log.info("Resolving location of game", "id", _gameId);
             var mgsvc :WorldGameService =
                 (_wctx.getClient().requireService(WorldGameService) as WorldGameService);
             mgsvc.locateGame(gameId, this);
 
         } else {
-            log.info("Resolving location of game via HTTP [id=" + _gameId + "].");
+            log.info("Resolving location of game via HTTP", "id", _gameId);
             var loader :URLLoader = new URLLoader();
             loader.addEventListener(Event.COMPLETE, function () :void {
                 loader.removeEventListener(Event.COMPLETE, arguments.callee);
@@ -211,8 +211,8 @@ public class GameLiaison
     // from interface WorldGameService_LocationListener
     public function gameLocated (hostname :String, port :int, isInWorld :Boolean) :void
     {
-        log.info("Game located - logging in", "gameId", _gameId, "host", hostname, "port", port,
-                 "isInWorld", isInWorld);
+        log.info("Game located - logging in",
+            "gameId", _gameId, "host", hostname, "port", port, "isInWorld", isInWorld);
 
         // grab & stash the session details (mainly only important if this is a permaguest login
         // but benign otherwise); the callback will be called after game server logon succeeds
@@ -275,7 +275,7 @@ public class GameLiaison
     public function clientConnectionFailed (event :ClientEvent) :void
     {
         // TODO: report an error message to the user?
-        log.info("Lost connection to game server [cause=" + event.getCause() + "].");
+        log.info("Lost connection to game server", "cause", event.getCause());
         // we'll get a didLogoff in a second where the GameDirector will shut us down
     }
 
@@ -288,7 +288,7 @@ public class GameLiaison
     // from interface ClientObserver
     public function clientDidLogoff (event :ClientEvent) :void
     {
-        log.info("Logged off of game server [id=" + _gameId + "].");
+        log.info("Logged off of game server", "id", _gameId);
         var player :PlayerObject = _gctx.getPlayerObject();
         if (player) {
             player.removeListener(this);
