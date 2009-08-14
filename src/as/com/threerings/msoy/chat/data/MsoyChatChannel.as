@@ -206,7 +206,7 @@ public class MsoyChatChannel extends ChatChannel
             return (name as JabberName).toJID();
 
         } else {
-            log.warning("ChatChannel unable to determine id! [" + name + "]");
+            log.warning("ChatChannel unable to determine id!", "name", name);
             return null;
         }
     }
