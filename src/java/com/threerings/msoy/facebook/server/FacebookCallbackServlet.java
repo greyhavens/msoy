@@ -237,7 +237,7 @@ public class FacebookCallbackServlet extends HttpServlet
             added = true;
         } else {
             added = false;
-            if (!truth.equals(FB_UNINSTALL)) {
+            if (!truth.equals(req.getParameter(FB_UNINSTALL))) {
                 log.warning("Ping parameter not set, assuming removal");
                 MsoyHttpServer.dumpParameters(req);
             }
