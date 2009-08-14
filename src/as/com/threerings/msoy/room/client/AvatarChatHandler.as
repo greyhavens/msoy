@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.world.client {
+package com.threerings.msoy.room.client {
 
 import com.threerings.util.MessageBundle;
 import com.threerings.util.StringUtil;
@@ -16,17 +16,16 @@ import com.threerings.crowd.chat.client.SpeakService;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.data.MsoyCodes;
 
-import com.threerings.msoy.room.client.RoomView;
+import com.threerings.msoy.world.client.WorldContext;
 
 /**
  * Allows users to switch their avatar's state or trigger an action from /slash commands entered in
  * chat.
  */
-public class AvatarActionHandler extends CommandHandler
+public class AvatarChatHandler extends CommandHandler
 {
-    public function AvatarActionHandler (ctx :WorldContext, states :Boolean)
+    public function AvatarChatHandler (states :Boolean)
     {
-        _wctx = ctx;
         _states = states;
     }
 
@@ -37,7 +36,8 @@ public class AvatarActionHandler extends CommandHandler
             return "m.usage_" + cmd;
         }
 
-        var roomView :RoomView = (_wctx.getPlaceView() as RoomView);
+        var wctx :WorldContext = WorldContext(ctx);
+        var roomView :RoomView = (wctx.getPlaceView() as RoomView);
         if (roomView == null) {
             // can't do it, not in a room
             return "e.avatar_only_cmd";
@@ -61,7 +61,7 @@ public class AvatarActionHandler extends CommandHandler
             roomView.getRoomController().doAvatarAction(match);
         }
         history[0] = cmd + " " + match;
-        _wctx.displayFeedback(MsoyCodes.CHAT_MSGS,
+        wctx.displayFeedback(MsoyCodes.CHAT_MSGS,
             MessageBundle.tcompose(_states ? "m.changed_state" : "m.changed_action", match));
         return ChatCodes.SUCCESS;
     }
@@ -90,8 +90,6 @@ public class AvatarActionHandler extends CommandHandler
         }
         return best;
     }
-
-    protected var _wctx :WorldContext;
 
     /** Are we working with states rather than actions? */
     protected var _states :Boolean;

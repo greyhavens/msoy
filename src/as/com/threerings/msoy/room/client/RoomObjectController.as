@@ -715,6 +715,10 @@ public class RoomObjectController extends RoomController
             }
         }
 
+        _wdctx.getChatDirector().registerCommandHandler(
+            Msgs.CHAT, "action", new AvatarChatHandler(false));
+        _wdctx.getChatDirector().registerCommandHandler(
+            Msgs.CHAT, "state", new AvatarChatHandler(true));
         _wdctx.getMuteDirector().addMuteObserver(this);
 
         // deactivate any hot zoneiness
@@ -746,6 +750,8 @@ public class RoomObjectController extends RoomController
             cancelRoomEditing();
         }
 
+        _wdctx.getChatDirector().unregisterCommandHandler(Msgs.CHAT, "action");
+        _wdctx.getChatDirector().unregisterCommandHandler(Msgs.CHAT, "state");
         _wdctx.getMuteDirector().removeMuteObserver(this);
 
         _ctx.getClient().removeEventListener(MsoyClient.MINI_WILL_CHANGE, miniWillChange);
