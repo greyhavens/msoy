@@ -400,6 +400,7 @@ public class FacebookCallbackServlet extends HttpServlet
     }
 
     @Inject protected FacebookLogic _faceLogic;
+    @Inject protected KontagentLogic _tracker;
     @Inject protected MemberLogic _memberLogic;
     @Inject protected MemberRepository _memberRepo;
     @Inject protected MsoyAuthenticator _auther;
