@@ -110,8 +110,8 @@ public class GuestSessionCapture
                 log.warning("Null authdata after login");
 
             } else if (MsoyAuthResponseData(authdata) == null) {
-                log.warning("Non-msoy authdata", "class", ClassUtil.getClassName(authdata),
-                    "data", authdata);
+                log.warning("Non-msoy authdata",
+                    "class", ClassUtil.getClassName(authdata), "data", authdata);
 
             } else {
                 // the server has created an account for us, yippee! let gwt know
