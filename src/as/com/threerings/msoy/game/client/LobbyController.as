@@ -238,7 +238,6 @@ public class LobbyController extends Controller
         if (table == null) {
             return;
         }
-        trace("joining table : " + table.gameOid);
         var tablePartyId :int = MsoyTableConfig(table.tconfig).partyId;
         if ((tablePartyId != 0) && (tablePartyId != _mctx.getPartyDirector().getPartyId())) {
             _mctx.getPartyDirector().joinParty(tablePartyId);
