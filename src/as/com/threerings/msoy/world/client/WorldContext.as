@@ -148,12 +148,6 @@ public class WorldContext extends MsoyContext
         return new WorldControlBar(this);
     }
 
-    // from MsoyContext
-    override protected function createChatDirector () :MsoyChatDirector
-    {
-        return new WorldChatDirector(this);
-    }
-
     override protected function createAdditionalDirectors () :void
     {
         super.createAdditionalDirectors();

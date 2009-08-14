@@ -65,12 +65,7 @@ public class LiaisonGameContext
 
         // create our directors
         _locDtr = new GameLocationDirector(this);
-        _chatDtr = new GameChatDirector(this);
         _parDtr = new ParlorDirector(this);
-        // use all the same chat filters for games
-        for each (var filter :ChatFilter in wctx.getMsoyChatDirector().getChatFilters()) {
-            _chatDtr.addChatFilter(filter);
-        }
     }
 
     // from PresentsContext
@@ -100,7 +95,7 @@ public class LiaisonGameContext
     // from CrowdContext
     public function getChatDirector () :ChatDirector
     {
-        return _chatDtr;
+        return _wctx.getMsoyChatDirector();;
     }
 
     // from CrowdContext
@@ -204,7 +199,6 @@ public class LiaisonGameContext
     protected var _wctx :WorldContext;
     protected var _client :Client;
     protected var _locDtr :LocationDirector;
-    protected var _chatDtr :ChatDirector;
     protected var _parDtr :ParlorDirector;
 }
 }

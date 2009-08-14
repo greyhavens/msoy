@@ -178,9 +178,10 @@ public class HeaderBar extends HBox
         // allow text to center under the whirled logo if its not too long.
         _loc.width = Math.max(WHIRLED_LOGO_WIDTH, _loc.textWidth + TextFieldUtil.WIDTH_PAD);
 
-        if (!(_ctx.getPlaceView() is RoomView)) {
-            _tabs.locationName = name;
-        }
+        // TODO: reinstate this hack? Fuck me. Maybe the LocationDirector should handle this...
+//        if (!(_ctx.getPlaceView() is RoomView)) {
+//            _tabs.locationName = name;
+//        }
 
         // update our window title with the location name
         _ctx.getMsoyClient().setWindowTitle(name);

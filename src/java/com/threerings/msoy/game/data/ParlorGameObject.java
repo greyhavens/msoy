@@ -20,12 +20,18 @@ public class ParlorGameObject extends WhirledGameObject
     implements PartyPlaceObject
 {
     // AUTO-GENERATED: FIELDS START
+    /** The field name of the <code>name</code> field. */
+    public static final String NAME = "name";
+
     /** The field name of the <code>parties</code> field. */
     public static final String PARTIES = "parties";
 
     /** The field name of the <code>partyLeaders</code> field. */
     public static final String PARTY_LEADERS = "partyLeaders";
     // AUTO-GENERATED: FIELDS END
+
+    /** The name of this game. */
+    public String name;
 
     /** Information on the parties presently in this game. */
     public DSet<PartySummary> parties = DSet.newDSet();
@@ -52,6 +58,22 @@ public class ParlorGameObject extends WhirledGameObject
     }
 
     // AUTO-GENERATED: METHODS START
+    /**
+     * Requests that the <code>name</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setName (String value)
+    {
+        String ovalue = this.name;
+        requestAttributeChange(
+            NAME, value, ovalue);
+        this.name = value;
+    }
+
     /**
      * Requests that the specified entry be added to the
      * <code>parties</code> set. The set will not change until the event is

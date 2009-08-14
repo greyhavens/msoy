@@ -21,6 +21,7 @@ import com.threerings.flex.FlexWrapper;
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.Log;
 import com.threerings.util.MessageBundle;
+import com.threerings.util.Name;
 
 import com.threerings.presents.dobj.EntryAddedEvent;
 import com.threerings.presents.dobj.EntryUpdatedEvent;
@@ -104,30 +105,20 @@ public class ChatTabBar extends HBox
         }
     }
 
-    public function get locationName () :String
-    {
-        if (_tabs.length == 0) {
-            return null;
-        }
-        return (_tabs[0] as ChatTab).text;
-    }
-
     /**
-     * Will make sure the first tab in the list is a non-channel based tab (currently just games),
-     * and titles it with the given name.
+     * Called by the chat director to let us know when we enter a primary place.
+     * TODO: listen to the LocationDirector directly? Right now there's one for each client
+     * connection, so that may not make sense.
      */
-    public function set locationName (name :String) :void
-    {
-        locationDidChange((name == null) ? null : new RoomName(name, -1));
-    }
-
-    /**
-     * Called by the chat director to let us know when we enter a room.
-     */
-    public function locationDidChange (name :RoomName) :void
+    public function setPlaceName (name :Name) :void
     {
         if (name == null) {
-            name = createDefaultPlaceName();
+            name = createDefaultPlaceName(); // will end up disabling speaking (sceneId 0)
+
+        } else if (!(name is RoomName)) {
+            // TODO: presently we reuse the same 'place' tab for all primary place chat. ugh
+            // So right here we're taking a game name and shoving it into a room
+            name = new RoomName(name.toString(), 1);
         }
 
         var roomTabIx :int = getLocalTypeIndex(ChatCodes.PLACE_CHAT_TYPE);
@@ -135,7 +126,7 @@ public class ChatTabBar extends HBox
             log.warning("This shouldn't happen", new Error());
         }
         // modify the place chat tab, which should always be up
-        _tabs[roomTabIx].setChannel(MsoyChatChannel.makeRoomChannel(name));
+        _tabs[roomTabIx].setChannel(MsoyChatChannel.makeRoomChannel(RoomName(name)));
         // jiggle the selectedIndex to fix any reactions
         if (roomTabIx == _selectedIndex) {
             selectedIndex = roomTabIx; // no underscore, use the setter, get the side-effects

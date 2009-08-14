@@ -62,7 +62,7 @@ public /*abstract*/ class MsoyContext
 
         _locDir = new LocationDirector(this);
         _occDir = new OccupantDirector(this);
-        _chatDir = createChatDirector();
+        _chatDir = new MsoyChatDirector(this);
         _chatDir.addChatFilter(new CurseFilter(this));
 
         // the top panel's constructor will add it to the app's UI hierarchy
@@ -423,14 +423,6 @@ public /*abstract*/ class MsoyContext
     protected function createControlBar () :ControlBar
     {
         return new ControlBar(this);
-    }
-
-    /**
-     * Creates a potentially custom chat director.
-     */
-    protected function createChatDirector () :MsoyChatDirector
-    {
-        return new MsoyChatDirector(this);
     }
 
     protected var _client :MsoyClient;

@@ -10,6 +10,8 @@ import com.threerings.util.Name;
 
 import com.threerings.whirled.spot.data.SpotSceneObject;
 
+import com.threerings.msoy.data.PrimaryPlace;
+import com.threerings.msoy.data.all.RoomName;
 import com.threerings.msoy.item.data.all.Audio;
 
 import com.threerings.msoy.party.data.PartyLeader;
@@ -24,7 +26,7 @@ import com.threerings.msoy.room.data.RoomPropertiesEntry;
  * Contains the distributed state of a virtual world room.
  */
 public class RoomObject extends SpotSceneObject
-    implements PartyPlaceObject
+    implements PrimaryPlace, PartyPlaceObject
 {
     // AUTO-GENERATED: FIELDS START
     /** The field name of the <code>name</code> field. */
@@ -101,6 +103,15 @@ public class RoomObject extends SpotSceneObject
     /** A monotonically increasing integer used to indicate which song we're playing since
      * the room was first resolved. */
     public var playCount :int;
+
+    // from PrimaryPlace
+    public function getName () :Name
+    {
+        // TODO: return the actual scene id for this room
+        // For now, we can fake it as a non-zero scene id and that turns out to
+        // be good enough for current chat purposes
+        return new RoomName(name, 1);
+    }
 
     // from PartyPlaceObject
     public function getParties () :DSet

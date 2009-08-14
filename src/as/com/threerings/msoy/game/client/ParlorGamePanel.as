@@ -161,7 +161,6 @@ public class ParlorGamePanel extends WhirledGamePanel
             overlay.setSuppressSidebar(true);
             overlay.setLocalType(null);
             gameChatDir.addChatDisplay(overlay);
-            bar.setChatDirector(gameChatDir);
 
         } else {
             mctx.getTopPanel().setLeftPanel(new GameChatContainer(mctx, gameChatDir, _playerList));
@@ -181,8 +180,6 @@ public class ParlorGamePanel extends WhirledGamePanel
         super.didLeavePlace(plobj);
 
         const mctx :MsoyContext = _gctx.getWorldContext();
-        const bar :ControlBar = mctx.getControlBar();
-        bar.setChatDirector(mctx.getMsoyChatDirector());
 
         mctx.getUIState().setInGame(false, false);
 

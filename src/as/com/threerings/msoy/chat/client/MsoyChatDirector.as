@@ -31,6 +31,7 @@ import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.data.PrimaryPlace;
 import com.threerings.msoy.data.all.ChannelName;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.JabberName;
@@ -47,8 +48,6 @@ import com.threerings.msoy.chat.client.JabberService;
  */
 public class MsoyChatDirector extends BaseChatDirector
 {
-    public static const log :Log = Log.getLog(MsoyChatDirector);
-
     // statically reference classes we require
     JabberMarshaller;
     ChannelSpeakMarshaller;
@@ -217,14 +216,24 @@ public class MsoyChatDirector extends BaseChatDirector
 
         // let our occupant list know about our new location
         _roomOccList.setPlaceObject(place);
+        if (place is PrimaryPlace) {
+            _chatTabs.setPlaceName(PrimaryPlace(place).getName());
+        }
     }
 
     // from ChatDirector
     override public function leftLocation (place :PlaceObject) :void
     {
+        // only change the name if it's the place we're actually tracking
+        if (place == _place) {
+            // let our occupant list know that we're nowhere
+            _roomOccList.setPlaceObject(null);
+            if (place is PrimaryPlace) {
+                _chatTabs.setPlaceName(null);
+            }
+        }
+
         super.leftLocation(place);
-        // let our occupant list know that we're nowhere
-        _roomOccList.setPlaceObject(null);
     }
 
     // from ChatDirector
@@ -305,8 +314,8 @@ public class MsoyChatDirector extends BaseChatDirector
         } else if (name is JabberName) {
             return MsoyChatChannel.makeJabberChannel(name as JabberName);
         } else {
-            log.warning("Requested to create unknown type of channel [name=" + name +
-                        ", type=" + ClassUtil.getClassName(name) + "].");
+            Log.getLog(this).warning("Requested to create unknown type of channel",
+                "name", name, "type", ClassUtil.getClassName(name));
             return null;
         }
     }

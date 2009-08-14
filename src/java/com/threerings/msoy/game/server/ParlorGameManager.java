@@ -198,6 +198,7 @@ public class ParlorGameManager extends WhirledGameManager
         super.didStartup();
 
         _gameObj = (ParlorGameObject) _plobj;
+        _gameObj.setName(((ParlorGameConfig)_gameconfig).game.name);
     }
 
     @Override // from PlaceManager
