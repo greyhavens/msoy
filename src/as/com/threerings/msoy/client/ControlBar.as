@@ -33,7 +33,7 @@ import com.threerings.msoy.ui.ScalingMediaContainer;
 import com.threerings.msoy.ui.SliderPopup;
 import com.threerings.msoy.ui.skins.VolumeButton;
 
-import com.threerings.msoy.chat.client.BaseChatDirector;
+import com.threerings.msoy.chat.client.MsoyChatDirector;
 import com.threerings.msoy.notify.client.NotificationDisplay;
 
 import com.threerings.msoy.world.client.WorldController;
@@ -199,7 +199,7 @@ public class ControlBar extends HBox
     {
         _chatControl = new ChatControl(_ctx, Msgs.GENERAL.get("b.chat_send"));
         _chatControl.chatInput.height = HEIGHT - 8;
-        _chatControl.chatInput.maxChars = BaseChatDirector.MAX_CHAT_LENGTH;
+        _chatControl.chatInput.maxChars = MsoyChatDirector.MAX_CHAT_LENGTH;
 
         chatOptsBtn = createButton("controlBarButtonChat", "i.channel");
         chatOptsBtn.toggle = true;
