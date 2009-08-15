@@ -93,9 +93,8 @@ public class ComicOverlay extends ChatOverlay
     }
 
     // from ChatDisplay
-    override public function displayMessage (msg :ChatMessage, alreadyDisplayed :Boolean) :Boolean
+    override public function displayMessage (msg :ChatMessage) :void
     {
-        var displayed :Boolean = false;
         var type :int = getType(msg, false);
 
         // display all system messages if they don't have a custom localtype.
@@ -104,18 +103,18 @@ public class ComicOverlay extends ChatOverlay
                                       msg.localtype == ChatCodes.USER_CHAT_TYPE))) {
             // We simply do not want to display system-type messages in bubbles
             // 2009-02-24  Ray
-            //displayed = displayBubble(msg, type);
+            //displayBubble(msg, type);
         } else if (_ctx is WorldContext) {
             var scene :MsoyScene =
                 (_ctx as WorldContext).getSceneDirector().getScene() as MsoyScene;
             if (scene != null && MsoyChatChannel.typeIsForRoom(msg.localtype, scene.getId())) {
                 if (type != IGNORECHAT) {
-                    displayed = displayBubble(msg, type);
+                    displayBubble(msg, type);
                 }
             }
         }
 
-        return super.displayMessage(msg, alreadyDisplayed) || displayed;
+        super.displayMessage(msg);
     }
 
     public function willEnterPlace (provider :ChatInfoProvider) :void

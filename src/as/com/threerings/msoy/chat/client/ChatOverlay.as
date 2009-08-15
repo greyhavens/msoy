@@ -135,10 +135,10 @@ public class ChatOverlay
     }
 
     // from ChatDisplay
-    public function displayMessage (msg :ChatMessage, alreadyDisp :Boolean) :Boolean
+    public function displayMessage (msg :ChatMessage) :void
     {
         if (!shouldDisplayMessage(msg)) {
-            return false;
+            return;
         }
 
         if (isHistoryMode()) {
@@ -151,7 +151,6 @@ public class ChatOverlay
         } else {
             addSubtitle(createSubtitle(msg, getType(msg, false), true));
         }
-        return true;
     }
 
     public function displayChat (display :Boolean) :void

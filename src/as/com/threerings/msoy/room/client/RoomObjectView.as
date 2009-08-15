@@ -382,14 +382,13 @@ public class RoomObjectView extends RoomView
     }
 
     // from ChatDisplay
-    public function displayMessage (msg :ChatMessage, alreadyDisplayed :Boolean) :Boolean
+    public function displayMessage (msg :ChatMessage) :void
     {
         // we don't do this in snoopChat in case the message was filtered into nothing
         var avatar :MemberSprite = getSpeaker(msg) as MemberSprite;
         if (avatar != null) {
             avatar.performAvatarSpoke();
         }
-        return false; // since we didn't "display" it.
     }
 
     // from ChatSnooper

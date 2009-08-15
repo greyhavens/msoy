@@ -51,13 +51,12 @@ public class HistoryList
     }
 
     // from interface ChatDisplay
-    public function displayMessage (msg :ChatMessage, alreadyDisplayed :Boolean) :Boolean
+    public function displayMessage (msg :ChatMessage) :void
     {
         if (_history.length == MAX_HISTORY) {
             _history.splice(0, PRUNE_HISTORY);
         }
         _history.push(msg);
-        return false;
     }
 
     private const log :Log = Log.getLog(this);

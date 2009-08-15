@@ -241,12 +241,12 @@ public class ChatTabBar extends HBox
         }
     }
 
-    // from ChatDisplay - always returns false, as this ChatDisplay does no actual message display
-    public function displayMessage (msg :ChatMessage, alreadyDisplayed :Boolean) :Boolean
+    // from ChatDisplay
+    public function displayMessage (msg :ChatMessage) :void
     {
         if (_tabs.length == 0) {
             // if we receive any messages before we have any tabs, there's nothing to do here.
-            return false;
+            return;
         }
 
         var index :int = -1;
@@ -273,7 +273,7 @@ public class ChatTabBar extends HBox
         if (index != -1 || !(msg is UserMessage)) {
             // if we already took care of tab state for the new message, or its not a UserMessage
             // we can leave here.
-            return false;
+            return;
         }
 
         // if this is a message from a member or from jabber, we can pop up a new tab, and set it
@@ -292,8 +292,6 @@ public class ChatTabBar extends HBox
             log.info("Dropping unknown user message [msg=" + msg + ", localtype=" +
                       msg.localtype + ", mode=" + umsg.mode + "]");
         }
-
-        return false;
     }
 
     override protected function createChildren () :void
