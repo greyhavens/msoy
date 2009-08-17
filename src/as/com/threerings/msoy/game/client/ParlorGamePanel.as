@@ -166,12 +166,12 @@ public class ParlorGamePanel extends WhirledGamePanel
             mctx.getTopPanel().setLeftPanel(new GameChatContainer(mctx, gameChatDir, _playerList));
         }
 
-        // if we're the first person in a party game, create a twittering link
-        if ((config.getMatchType() == GameConfig.PARTY) && (plobj.occupants.size() == 1)) {
-            mctx.getNotificationDirector().addGenericNotification(
-                MessageBundle.tcompose("m.tweet_game", config.getGameId(), config.game.name),
-                Notification.SYSTEM);
-        }
+//        // if we're the first person in a party game, create a twittering link
+//        if ((config.getMatchType() == GameConfig.PARTY) && (plobj.occupants.size() == 1)) {
+//            mctx.getNotificationDirector().addGenericNotification(
+//                MessageBundle.tcompose("m.tweet_game", config.getGameId(), config.game.name),
+//                Notification.SYSTEM);
+//        }
     }
 
     // from WhirledGamePanel
