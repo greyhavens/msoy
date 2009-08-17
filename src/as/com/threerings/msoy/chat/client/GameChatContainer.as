@@ -22,11 +22,9 @@ public class GameChatContainer extends LayeredContainer
     /**
      * Create a GameChatContainer.
      */
-    public function GameChatContainer (
-        ctx :MsoyContext, chatDtr :ChatDirector, playerList :UIComponent = null)
+    public function GameChatContainer (ctx :MsoyContext, playerList :UIComponent = null)
     {
         _ctx = ctx;
-        _chatDtr = chatDtr;
 
         width = TopPanel.RIGHT_SIDEBAR_WIDTH;
         styleName = "gameChatContainer";
@@ -114,8 +112,6 @@ public class GameChatContainer extends LayeredContainer
     {
         clearOverlay();
         _overlay = new ChatOverlay(_ctx, this, ChatOverlay.SCROLL_BAR_LEFT, false);
-        // this overlay needs to listen on both the msoy and game chat directors
-        _chatDtr.addChatDisplay(_overlay);
         _ctx.getMsoyChatDirector().addChatDisplay(_overlay);
         // the bounds will get set via setActualSize();
     }
@@ -126,14 +122,12 @@ public class GameChatContainer extends LayeredContainer
             return;
         }
 
-        _chatDtr.removeChatDisplay(_overlay);
         _ctx.getMsoyChatDirector().removeChatDisplay(_overlay);
         _overlay = null;
     }
 
     protected var _ctx :MsoyContext;
     protected var _overlay :ChatOverlay;
-    protected var _chatDtr :ChatDirector;
     protected var _playerList :UIComponent;
     protected var _listContainer :HBox;
     protected var _channelOccList :UIComponent;

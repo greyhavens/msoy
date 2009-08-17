@@ -61,7 +61,7 @@ public class ParlorGamePanel extends WhirledGamePanel
 
         const cfg :ParlorGameConfig = ctrl.getPlaceConfig() as ParlorGameConfig;
         if (cfg.groupId != GameUtil.NO_GROUP) {
-            _goBtn = new CommandButton(Msgs.GAME.get("b.game_whirled"),
+            _goBtn = new CommandButton(Msgs.GAME.get("b.game_group_home"),
                 MsoyController.GO_GROUP_HOME, cfg.groupId);
         } else {
             _goBtn = new CommandButton(Msgs.GENERAL.get("b.back"), MsoyController.MOVE_BACK);
@@ -124,7 +124,6 @@ public class ParlorGamePanel extends WhirledGamePanel
 
         const mctx :MsoyContext = _gctx.getWorldContext();
         const bar :ControlBar = mctx.getControlBar();
-        const gameChatDir :ChatDirector = _gctx.getChatDirector();
         const multiplayer :Boolean =
             config.getMatchType() == GameConfig.PARTY || config.players.length > 1;
 
@@ -157,13 +156,13 @@ public class ParlorGamePanel extends WhirledGamePanel
                 bar.addCustomButton(_showPlayers);
             }
 
+            // TODO: fuck the what? setLocalType(null)?
             var overlay :ChatOverlay = mctx.getTopPanel().getPlaceChatOverlay();
             overlay.setSuppressSidebar(true);
             overlay.setLocalType(null);
-            gameChatDir.addChatDisplay(overlay);
 
         } else {
-            mctx.getTopPanel().setLeftPanel(new GameChatContainer(mctx, gameChatDir, _playerList));
+            mctx.getTopPanel().setLeftPanel(new GameChatContainer(mctx, _playerList));
         }
 
         // if we're the first person in a party game, create a twittering link
@@ -191,7 +190,6 @@ public class ParlorGamePanel extends WhirledGamePanel
             var overlay :ChatOverlay = mctx.getTopPanel().getPlaceChatOverlay();
             overlay.setSuppressSidebar(false);
             _gctx.getChatDirector().removeChatDisplay(overlay);
-//            mctx.getTopPanel().getHeaderBar().getChatTabs().locationName = null;
 
         } else {
             var gameChat :GameChatContainer =
