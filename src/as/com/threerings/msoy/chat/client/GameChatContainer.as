@@ -13,7 +13,6 @@ import mx.core.UIComponent;
 
 import com.threerings.crowd.chat.client.ChatDirector;
 
-import com.threerings.msoy.client.ControlBar;
 import com.threerings.msoy.client.LayeredContainer;
 import com.threerings.msoy.client.TopPanel;
 import com.threerings.msoy.client.MsoyContext;
@@ -46,9 +45,6 @@ public class GameChatContainer extends LayeredContainer
         }
 
         _ctx.getTopPanel().getHeaderBar().getChatTabs().width = TopPanel.RIGHT_SIDEBAR_WIDTH;
-
-        var controlBar :ControlBar = _ctx.getControlBar();
-        controlBar.setChatDirector(_chatDtr);
 
         addEventListener(Event.ADDED_TO_STAGE, handleAddRemove);
         addEventListener(Event.REMOVED_FROM_STAGE, handleAddRemove);

@@ -24,8 +24,6 @@ import com.threerings.flex.FlexUtil;
 
 import com.threerings.presents.client.ClientAdapter;
 
-import com.threerings.crowd.chat.client.ChatDirector;
-
 import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.ui.FloatingPanel;
@@ -112,16 +110,6 @@ public class ControlBar extends HBox
 
         _ctx.getUIState().addEventListener(UIState.STATE_CHANGE, handleUIStateChanged);
         _ctx.getStage().addEventListener(FullScreenEvent.FULL_SCREEN, handleFullScreenChanged);
-    }
-
-    /**
-     * Redirects our chat input to the specified chat director.
-     */
-    public function setChatDirector (chatDtr :ChatDirector) :void
-    {
-        if (_chatControl != null) {
-            _chatControl.setChatDirector(chatDtr);
-        }
     }
 
     public function setNotificationDisplay (notificationDisplay :NotificationDisplay) :void
