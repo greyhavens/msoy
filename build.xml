@@ -428,7 +428,7 @@
   <!-- prepares to build our GWT client -->
   <target name="jprepare" depends="prepare">
     <tstamp>
-      <format property="build_time" pattern="yyyy-MM-dd HH:mm:ss"/>
+      <format property="build_time" pattern="yyyy-MM-dd HH:mm:ss" timezone="GMT-07:00"/>
     </tstamp>
     <!-- set default properties -->
     <property name="dev_deployment" value="true"/>
@@ -574,7 +574,7 @@
   <target name="asprepare" depends="prepare">
     <mkdir dir="pages/clients/${version}"/>
     <tstamp>
-      <format property="build_time" pattern="yyyy-MM-dd HH:mm:ss"/>
+      <format property="build_time" pattern="yyyy-MM-dd HH:mm:ss" timezone="GMT-07:00"/>
     </tstamp>
     <!-- set default properties -->
     <property name="dev_deployment" value="true"/>
@@ -651,6 +651,12 @@
   <target name="asclient" depends="asprepare" description="Rebuilds the Flash world client.">
     <antcall target="ascompile">
       <param name="aspath" value="client/world.mxml"/>
+      <!-- 
+      <param name="swfname" value="main-client"/>
+    </antcall>
+    <antcall target="ascompile">
+      <param name="aspath" value="client/LoaderLoader.as"/>
+      -->
       <param name="swfname" value="world-client"/>
     </antcall>
   </target>
