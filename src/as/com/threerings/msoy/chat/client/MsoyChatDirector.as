@@ -66,6 +66,7 @@ public class MsoyChatDirector extends ChatDirector
     public function MsoyChatDirector (ctx :MsoyContext)
     {
         super(ctx, ctx.getMessageManager(), MsoyCodes.CHAT_MSGS);
+        _mctx = ctx;
 
         registerCommandHandler(Msgs.CHAT, "away", new AwayHandler());
         registerCommandHandler(Msgs.CHAT, "bleepall", new BleepAllHandler());
