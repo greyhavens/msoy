@@ -3,6 +3,9 @@
 
 package com.threerings.msoy.web.gwt;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * A place where we can encapsulate the creation of arguments that link to complex pages in Whirled
  * that are required on the server and on the client. We do this here so that we don't have
@@ -18,11 +21,24 @@ public class SharedNaviUtil
      */
     public static String buildRequest (String url, String... nameValuePairs)
     {
-        if (nameValuePairs.length > 0) {
-            String join = url.contains("?") ? "&" : "?";
-            for (int ii = 0; ii < nameValuePairs.length; ii += 2) {
-                url += join + nameValuePairs[ii] + "=" + nameValuePairs[ii+1];
-                join = "&";
+        return buildRequest(url, Arrays.asList(nameValuePairs));
+    }
+
+    /**
+     * Creates a request string for the given url and parameters. Does not do URI escaping.
+     * @param nameValuePairs pairs to append; even number of elements expected
+     */
+    public static String buildRequest (String url, List<String> nameValuePairs)
+    {
+        int size = nameValuePairs.size();
+        if (size % 2 != 0) {
+            throw new IllegalArgumentException("Expected even number of arguments, got " + size);
+        }
+        if (size > 0) {
+            int join = url.contains("?") ? 0 : 2;
+            for (String str : nameValuePairs) {
+                url += JOINERS[join] + str;
+                join = (join + 1) & 1;
             }
         }
         return url;
@@ -59,5 +75,7 @@ public class SharedNaviUtil
         }
 
         protected String _code;
-    }        
+    }
+
+    protected static final String[] JOINERS = {"&", "=", "?"};
 }
