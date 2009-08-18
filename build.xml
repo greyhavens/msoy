@@ -222,7 +222,7 @@
     <!-- these libraries we only need to build -->
     <artifact:dependencies filesetId="build.fileset">
       <remoteRepository refid="ooo.maven.depends.repo"/>
-      <dependency groupId="com.samskivert" artifactId="depot-gwt" version="0.0-SNAPSHOT"/>
+      <dependency groupId="com.samskivert" artifactId="samskivert-gwt" version="0.0-SNAPSHOT"/>
       <dependency groupId="com.threerings.narya" artifactId="narya-tools" version="0.0-SNAPSHOT"/>
       <dependency groupId="com.threerings.underwire" artifactId="underwire-gwt"
                   version="0.0-SNAPSHOT"/>
