@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.facebook.server;
 
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +13,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.inject.Singleton;
 import com.samskivert.util.StringUtil;
+import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.web.gwt.SharedNaviUtil;
 
@@ -62,6 +65,23 @@ public class KontagentLogic
         return SharedNaviUtil.buildRequest(baseUrl, urlParams);
     }
 
+    /**
+     * Tracks the addition of the application.
+     * TODO: tracking tags
+     */
+    public void trackApplicationAdded (long uid)
+    {
+        sendMessage("apa", "s", String.valueOf(uid));
+    }
+
+    /**
+     * Tracks the removal of the application.
+     */
+    public void trackApplicationRemoved (long uid)
+    {
+        sendMessage("apr", "s", String.valueOf(uid));
+    }
+
     protected void sendMessage (String type, String... nameValuePairs)
     {
         String url = buildMessageUrl(MSG_URL + type + "/",
@@ -73,11 +93,21 @@ public class KontagentLogic
             return;
         }
 
-        // TODO
-        log.info("Sending message", "url", url);
+        log.debug("Sending message", "url", url);
+        try {
+            HttpURLConnection conn = (HttpURLConnection)new URL(url).openConnection();
+            if (conn.getResponseCode() != HttpURLConnection.HTTP_OK) {
+                log.warning("Response code not OK", "code", conn.getResponseCode(), "url", url);
+            }
+            conn.disconnect();
+
+        } catch (Exception ex) {
+            log.warning("Failed to send message", "url", url, ex);
+        }
     }
 
-    protected static final String API_URL = "http://api.geo.kontagent.net/api/";
+    protected static final String API_URL = DeploymentConfig.devDeployment ?
+        "http://api.test.kontagent.net/api/" : "http://api.geo.kontagent.net/api/";
     protected static final String VERSION = "v1";
     protected static final String API_KEY = ServerConfig.config.getValue("kontagent.api_key", "");
     protected static final String SECRET = ServerConfig.config.getValue("kontagent.secret", "");
