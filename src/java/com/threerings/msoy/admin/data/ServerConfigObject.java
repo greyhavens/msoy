@@ -44,6 +44,12 @@ public class ServerConfigObject extends ConfigObject
 
     /** The field name of the <code>servletRebootNode</code> field. */
     public static final String SERVLET_REBOOT_NODE = "servletRebootNode";
+
+    /** The field name of the <code>maxInvokerQueueSize</code> field. */
+    public static final String MAX_INVOKER_QUEUE_SIZE = "maxInvokerQueueSize";
+
+    /** The field name of the <code>maxPendingClientResolutions</code> field. */
+    public static final String MAX_PENDING_CLIENT_RESOLUTIONS = "maxPendingClientResolutions";
     // AUTO-GENERATED: FIELDS END
 
     /** Whether or not to allow non-admins to log on. */
@@ -69,6 +75,12 @@ public class ServerConfigObject extends ConfigObject
 
     /** Node on which a servlet reboot was issued (needed to avoid sending multiple mails). */
     public String servletRebootNode;
+
+    /** Authentications are disabled once the the invoker queue reaches this size. */
+    public int maxInvokerQueueSize = 100;
+
+    /** Authentications are disabled if there are more than this many pending logins. */
+    public int maxPendingClientResolutions = 20;
 
     @Override // documentation inherited
     public JPanel getEditor (PresentsContext ctx, Field field)
@@ -228,6 +240,38 @@ public class ServerConfigObject extends ConfigObject
         requestAttributeChange(
             SERVLET_REBOOT_NODE, value, ovalue);
         this.servletRebootNode = value;
+    }
+
+    /**
+     * Requests that the <code>maxInvokerQueueSize</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setMaxInvokerQueueSize (int value)
+    {
+        int ovalue = this.maxInvokerQueueSize;
+        requestAttributeChange(
+            MAX_INVOKER_QUEUE_SIZE, Integer.valueOf(value), Integer.valueOf(ovalue));
+        this.maxInvokerQueueSize = value;
+    }
+
+    /**
+     * Requests that the <code>maxPendingClientResolutions</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setMaxPendingClientResolutions (int value)
+    {
+        int ovalue = this.maxPendingClientResolutions;
+        requestAttributeChange(
+            MAX_PENDING_CLIENT_RESOLUTIONS, Integer.valueOf(value), Integer.valueOf(ovalue));
+        this.maxPendingClientResolutions = value;
     }
     // AUTO-GENERATED: METHODS END
 }
