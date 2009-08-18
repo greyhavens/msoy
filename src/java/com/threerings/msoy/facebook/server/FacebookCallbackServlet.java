@@ -120,6 +120,11 @@ public class FacebookCallbackServlet extends HttpServlet
         // make sure we have signed facebook data
         validateSignature(req, info.appSecret);
 
+        // ping should only POST
+        if (info.ping) {
+            throw new ServiceException();
+        }
+
         // parse the credentials and authenticate (may create a new FB connected user account)
         FacebookAppCreds creds = new FacebookAppCreds();
         String session = activateSession(info, req, creds);
@@ -243,9 +248,13 @@ public class FacebookCallbackServlet extends HttpServlet
             }
         }
 
-        // TODO: fire off an event to Kontagent
-        String was = added ? "added" : "removed";
-        log.info("App " + was, "user", req.getParameter(FB_USER), "time", FB_TIME);
+        long uid = Long.parseLong(req.getParameter(FB_USER));
+        if (added) {
+            // TODO: tracking tags
+            _tracker.trackApplicationAdded(uid);
+        } else {
+            _tracker.trackApplicationRemoved(uid);
+        }
     }
 
     /**
