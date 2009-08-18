@@ -48,6 +48,8 @@ import com.threerings.msoy.chat.data.MsoyChatChannel;
 import com.threerings.msoy.chat.data.JabberMarshaller;
 import com.threerings.msoy.chat.client.JabberService;
 
+import com.threerings.msoy.room.data.RoomObject;
+
 /**
  * Handles the dispatching of chat messages based on their "channel" (room/game, individual, or
  * actual custom channel). Manages chat history tracking for same.
@@ -243,7 +245,9 @@ public class MsoyChatDirector extends ChatDirector
         super.enteredLocation(place);
 
         // let our occupant list know about our new location
-        _roomOccList.setPlaceObject(place);
+        if (place is RoomObject) {
+            _roomOccList.setPlaceObject(place);
+        }
         if (place is PrimaryPlace) {
             _chatTabs.setPlaceName(PrimaryPlace(place).getName());
         }
