@@ -5,7 +5,8 @@ package com.threerings.msoy.facebook.server.persist;
 
 import java.sql.Timestamp;
 
-import com.samskivert.depot.ByteEnum;
+import com.samskivert.util.ByteEnum;
+
 import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.annotation.Column;

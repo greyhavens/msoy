@@ -3,7 +3,7 @@
 
 package com.threerings.msoy.web.gwt;
 
-import com.samskivert.depot.ByteEnum;
+import com.samskivert.util.ByteEnum;
 
 /**
  * Represents an external authentication source.

@@ -25,7 +25,6 @@ import com.google.inject.Singleton;
 import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.DuplicateKeyException;
 import com.samskivert.depot.Key;
-import com.samskivert.depot.util.ByteEnumUtil;
 
 import com.samskivert.depot.PersistenceContext.CacheListener;
 
@@ -53,6 +52,7 @@ import com.samskivert.depot.operator.FullText;
 import com.samskivert.depot.operator.Like;
 
 import com.samskivert.util.ArrayIntSet;
+import com.samskivert.util.ByteEnumUtil;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
 import com.samskivert.util.StringUtil;

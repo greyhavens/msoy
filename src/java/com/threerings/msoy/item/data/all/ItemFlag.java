@@ -6,7 +6,7 @@ package com.threerings.msoy.item.data.all;
 import java.util.Date;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
-import com.samskivert.depot.ByteEnum;
+import com.samskivert.util.ByteEnum;
 
 /**
  * A flag on an item.

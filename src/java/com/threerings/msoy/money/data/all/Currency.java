@@ -3,7 +3,7 @@
 
 package com.threerings.msoy.money.data.all;
 
-import com.samskivert.depot.ByteEnum;
+import com.samskivert.util.ByteEnum;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 

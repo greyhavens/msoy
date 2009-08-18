@@ -3,7 +3,7 @@
 
 package com.threerings.msoy.game.gwt;
 
-import com.samskivert.depot.ByteEnum;
+import com.samskivert.util.ByteEnum;
 
 /**
  * Enumerates our game genres.

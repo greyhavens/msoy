@@ -5,7 +5,7 @@ package com.threerings.msoy.group.data.all;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-import com.samskivert.depot.ByteEnum;
+import com.samskivert.util.ByteEnum;
 
 import com.threerings.io.Streamable;
 import com.threerings.presents.dobj.DSet;
