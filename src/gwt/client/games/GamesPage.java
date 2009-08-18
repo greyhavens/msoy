@@ -6,7 +6,7 @@ package client.games;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.FlowPanel;
 
-import com.samskivert.depot.util.ByteEnumUtil;
+import com.samskivert.util.ByteEnumUtil;
 
 import com.threerings.msoy.game.gwt.ArcadeData;
 import com.threerings.msoy.game.gwt.GameGenre;

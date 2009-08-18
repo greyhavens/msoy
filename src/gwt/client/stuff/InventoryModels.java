@@ -10,7 +10,7 @@ import java.util.Map;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-import com.samskivert.depot.util.ByteEnumUtil;
+import com.samskivert.util.ByteEnumUtil;
 
 import com.threerings.gwt.util.DataModel;
 import com.threerings.gwt.util.Predicate;

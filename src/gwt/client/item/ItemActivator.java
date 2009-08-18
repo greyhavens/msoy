@@ -8,7 +8,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 
-import com.samskivert.depot.util.ByteEnumUtil;
+import com.samskivert.util.ByteEnumUtil;
 
 import com.threerings.msoy.item.data.all.Item;
 
