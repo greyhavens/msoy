@@ -148,6 +148,7 @@ public class ChatTabBar extends HBox
     public function entryUpdated (event :EntryUpdatedEvent) :void
     {
         if (event.getName() == MemberObject.FRIENDS) {
+            // If a friend changes their display name, change the text in the tab
             var newEntry :FriendEntry = event.getEntry() as FriendEntry;
             var oldEntry :FriendEntry = event.getOldEntry() as FriendEntry;
             var newNameStr :String = newEntry.name.toString();

@@ -11,8 +11,6 @@ import mx.containers.HBox;
 
 import mx.core.UIComponent;
 
-import com.threerings.crowd.chat.client.ChatDirector;
-
 import com.threerings.msoy.client.LayeredContainer;
 import com.threerings.msoy.client.TopPanel;
 import com.threerings.msoy.client.MsoyContext;
@@ -42,6 +40,8 @@ public class GameChatContainer extends LayeredContainer
             hh += _playerList.height;
         }
 
+        // TODO
+        // wait, what? Why isn't it always like this?
         _ctx.getTopPanel().getHeaderBar().getChatTabs().width = TopPanel.RIGHT_SIDEBAR_WIDTH;
 
         addEventListener(Event.ADDED_TO_STAGE, handleAddRemove);
@@ -118,12 +118,10 @@ public class GameChatContainer extends LayeredContainer
 
     protected function clearOverlay () :void
     {
-        if (_overlay == null) {
-            return;
+        if (_overlay != null) {
+            _ctx.getMsoyChatDirector().removeChatDisplay(_overlay);
+            _overlay = null;
         }
-
-        _ctx.getMsoyChatDirector().removeChatDisplay(_overlay);
-        _overlay = null;
     }
 
     protected var _ctx :MsoyContext;
