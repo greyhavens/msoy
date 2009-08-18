@@ -8,7 +8,7 @@
 -injars ../dist/lib/samskivert-0.0-SNAPSHOT.jar(
     com/samskivert/Log.class,**/io/**,**/net/**,**/swing/**,**/text/**,**/util/**,
     **/servlet/user/Password.class,**/servlet/user/User.class,**/servlet/user/UserUtil.class)
--injars ../dist/lib/depot-0.0-SNAPSHOT.jar(**/ByteEnum.class)
+-injars ../dist/lib/samskivert-0.0-SNAPSHOT.jar(**/ByteEnum.class)
 -injars ../dist/lib/getdown.jar(!META-INF/*,!**/tools/**)
 -injars ../dist/lib/narya-base-0.0-SNAPSHOT.jar(!META-INF/*,!**/tools/**,!**/server/**)
 -injars ../dist/lib/narya-distrib-0.0-SNAPSHOT.jar(!META-INF/*,!**/tools/**,!**/server/**)
