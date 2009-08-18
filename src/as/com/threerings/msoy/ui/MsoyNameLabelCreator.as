@@ -26,8 +26,7 @@ public class MsoyNameLabelCreator
     public function createLabel (name :Name, extraInfo :Object) :NameLabel
     {
         if (!(name is VizMemberName)) {
-            Log.getLog(this).warning("MsoyNameLabelCreator only supports creating labels " +
-                "for VizMemberNames [" + name + "]");
+            Log.getLog(this).warning("MsoyNameLabelCreator only supports VizMemberName");
             return null;
         }
 
