@@ -86,7 +86,7 @@ public class AuthLogic
     protected boolean isServerBusy ()
     {
         int pendingResolutions = _clmgr.getOutstandingResolutionCount();
-        return true || pendingResolutions >= _runtime.server.maxPendingClientResolutions ||
+        return pendingResolutions >= _runtime.server.maxPendingClientResolutions ||
             _invoker.getPendingUnits() >= _runtime.server.maxInvokerQueueSize;
     }
 
