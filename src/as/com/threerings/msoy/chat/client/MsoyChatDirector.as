@@ -243,27 +243,28 @@ public class MsoyChatDirector extends ChatDirector
     // from ChatDirector
     override public function enteredLocation (place :PlaceObject) :void
     {
+        if (!(place is PrimaryPlace)) {
+            return; // we don't care
+        }
+
         super.enteredLocation(place);
 
         // let our occupant list know about our new location
         if (place is RoomObject) {
             _roomOccList.setPlaceObject(place);
         }
-        if (place is PrimaryPlace) {
-            _chatTabs.setPlaceName(PrimaryPlace(place).getName());
-        }
+        _chatTabs.setPlaceName(PrimaryPlace(place).getName());
     }
 
     // from ChatDirector
     override public function leftLocation (place :PlaceObject) :void
     {
         // only change the name if it's the place we're actually tracking
+        // (Which will filter out non-primary places)
         if (place == _place) {
             // let our occupant list know that we're nowhere
             _roomOccList.setPlaceObject(null);
-            if (place is PrimaryPlace) {
-                _chatTabs.setPlaceName(null);
-            }
+            _chatTabs.setPlaceName(null);
         }
 
         super.leftLocation(place);
