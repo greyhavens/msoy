@@ -22,6 +22,8 @@ public class ItemUsageEvent extends FlashEvent
     {
         _type = JavaScriptUtil.getByteElement(args, 0);
         _id = JavaScriptUtil.getIntElement(args, 1);
+        // Note: in an ideal world we'd translate the byte to an Item.UsedAs value right here,
+        // but then this class, which is pretty darn global, would have to know about Item.
         _usage = JavaScriptUtil.getByteElement(args, 2);
         _loc = JavaScriptUtil.getIntElement(args, 3);
     }
