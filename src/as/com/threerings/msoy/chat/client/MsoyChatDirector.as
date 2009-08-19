@@ -244,7 +244,9 @@ public class MsoyChatDirector extends ChatDirector
     override public function enteredLocation (place :PlaceObject) :void
     {
         if (!(place is PrimaryPlace)) {
-            return; // we don't care
+            return; // here in msoy, we can be in various places at once.
+            // If it's a non-primary place, we don't want to listen on it (for now) and
+            // can safely avoid even calling super.
         }
 
         super.enteredLocation(place);
