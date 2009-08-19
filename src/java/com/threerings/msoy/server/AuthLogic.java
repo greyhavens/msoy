@@ -1,0 +1,73 @@
+//
+// $Id$
+
+package com.threerings.msoy.server;
+
+import com.google.inject.Singleton;
+
+import com.samskivert.util.StringUtil;
+
+import com.threerings.msoy.data.MsoyAuthCodes;
+import com.threerings.msoy.data.MsoyCredentials;
+import com.threerings.msoy.data.all.MemberMailUtil;
+import com.threerings.msoy.data.all.VisitorInfo;
+import com.threerings.msoy.web.gwt.ServiceException;
+
+import static com.threerings.msoy.Log.log;
+
+/**
+ * Provides some common methods for authentication with an msoy server.
+ */
+@Singleton
+public class AuthLogic
+{
+    /**
+     * Verifies that an ident is valid.
+     */
+    public boolean isValidIdent (String ident)
+    {
+        if (ident == null || ident.length() != 48) {
+            return false;
+        }
+        return ident.substring(40, 48).equals(generateIdentChecksum(ident.substring(0, 40)));
+    }
+
+    /**
+     * Checks whether this authentication failure is due to a purged permaguest account. If true,
+     * magicks up a new visitorId for the authenticator because they're going to need it when we
+     * subsequently create them a new permaguest account.
+     */
+    public boolean fixPurgedPermaguest (ServiceException cause, MsoyCredentials creds)
+    {
+        final String aname = creds.getUsername().toString().toLowerCase();
+        if (cause.getMessage().equals(MsoyAuthCodes.NO_SUCH_USER) &&
+            MemberMailUtil.isPermaguest(aname)) {
+            log.info("Coping with expired permaguest", "oldacct", aname);
+            // we need to fake up a new visitor id since the old one is now long gone
+            if (creds.visitorId == null) {
+                creds.visitorId = new VisitorInfo().id;
+            }
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Generate a new unique ident for this flash client.
+     */
+    public String generateIdent (String accountName, int offset)
+    {
+        String seed = StringUtil.sha1hex(
+            Long.toHexString(System.currentTimeMillis() + offset*1000L) + accountName);
+        return seed + generateIdentChecksum(seed);
+    }
+
+    /**
+     * Generates a checksum for an ident.
+     */
+    protected String generateIdentChecksum (final String seed)
+    {
+        return StringUtil.sha1hex(seed.substring(10, 20) + seed.substring(30, 40) +
+            seed.substring(20, 30) + seed.substring(0, 10)).substring(0, 8);
+    }
+}

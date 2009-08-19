@@ -82,7 +82,7 @@ public abstract class AuxAuthenticator<T extends MsoyCredentials> extends Chaine
                         guest = _memberRepo.loadMember(accountName);
                     } catch (ServiceException se) {
                         // purged permaguests fall through and get a new permaguest account
-                        if (!MsoyAuthenticator.fixPurgedPermaguest(se, creds)) {
+                        if (!_authLogic.fixPurgedPermaguest(se, creds)) {
                             throw se;
                         }
                     }
@@ -117,7 +117,7 @@ public abstract class AuxAuthenticator<T extends MsoyCredentials> extends Chaine
 
             // always return the session token (even if they gave it to us in the first place)
             ((MsoyAuthResponseData)rdata).sessionToken = token;
-                
+
             // TODO: other MsoyAuthResponseData fields?
 
             // do our domain specific authentication (if any)
@@ -157,5 +157,6 @@ public abstract class AuxAuthenticator<T extends MsoyCredentials> extends Chaine
     protected Class<T> _credsClass;
 
     @Inject protected AccountLogic _accountLogic;
+    @Inject protected AuthLogic _authLogic;
     @Inject protected MemberRepository _memberRepo;
 }
