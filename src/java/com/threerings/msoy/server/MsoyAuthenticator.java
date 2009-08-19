@@ -248,6 +248,9 @@ public class MsoyAuthenticator extends Authenticator
         }
 
         if (!creds.featuredPlaceView) {
+            // bail if the server is too busy for a guest
+            _authLogic.requireServerAvailabile(null);
+
             // create a new guest account
             MemberRecord mrec = _accountLogic.createGuestAccount(
                 conn.getInetAddress().toString(), creds.visitorId,
@@ -259,6 +262,7 @@ public class MsoyAuthenticator extends Authenticator
         }
 
         // we're a "featured whirled" client so we'll be an ephemeral guest with id 0
+        // TODO: throttle logins for featured place view?
         authenticateGuest(conn, creds, rdata, 0);
         return null;
     }
@@ -313,11 +317,14 @@ public class MsoyAuthenticator extends Authenticator
                 log.warning("Missing member record for authenticated user",
                             "email", account.accountName);
                 throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
-            } else {
-                // if this is their first logon, make a note of it
-                account.firstLogon = (member.sessions == 0);
             }
+
+            // if this is their first logon, make a note of it
+            account.firstLogon = (member.sessions == 0);
         }
+
+        // bail if the server is too busy
+        _authLogic.requireServerAvailabile(member);
 
         if (needSessionToken) {
             rdata.sessionToken = _memberRepo.startOrJoinSession(member.memberId, 1);

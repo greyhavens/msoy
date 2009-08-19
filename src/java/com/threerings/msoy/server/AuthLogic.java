@@ -3,15 +3,20 @@
 
 package com.threerings.msoy.server;
 
+import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.samskivert.util.StringUtil;
 
+import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.MsoyCredentials;
 import com.threerings.msoy.data.all.MemberMailUtil;
 import com.threerings.msoy.data.all.VisitorInfo;
+import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.web.gwt.ServiceException;
+import com.threerings.presents.server.ClientManager;
+import com.threerings.presents.server.PresentsInvoker;
 
 import static com.threerings.msoy.Log.log;
 
@@ -63,6 +68,29 @@ public class AuthLogic
     }
 
     /**
+     * Throws an exception if the server is currently too busy to authenticate the given member. If
+     * the member is null, proceeds as though checking for normal guest member.
+     */
+    public void requireServerAvailabile (MemberRecord member)
+        throws ServiceException
+    {
+        if ((member == null || !member.isSupport()) && isServerBusy()) {
+            throw new ServiceException(MsoyAuthCodes.UNDER_LOAD);
+        }
+    }
+
+    /**
+     * Tests if the number of pending clients or invoker queue size exceed the limits specified in
+     * the runtime configuration.
+     */
+    protected boolean isServerBusy ()
+    {
+        int pendingResolutions = _clmgr.getOutstandingResolutionCount();
+        return true || pendingResolutions >= _runtime.server.maxPendingClientResolutions ||
+            _invoker.getPendingUnits() >= _runtime.server.maxInvokerQueueSize;
+    }
+
+    /**
      * Generates a checksum for an ident.
      */
     protected static String generateIdentChecksum (final String seed)
@@ -70,4 +98,9 @@ public class AuthLogic
         return StringUtil.sha1hex(seed.substring(10, 20) + seed.substring(30, 40) +
             seed.substring(20, 30) + seed.substring(0, 10)).substring(0, 8);
     }
+
+    // dependencies
+    @Inject protected ClientManager _clmgr;
+    @Inject protected PresentsInvoker _invoker;
+    @Inject protected RuntimeConfig _runtime;
 }
