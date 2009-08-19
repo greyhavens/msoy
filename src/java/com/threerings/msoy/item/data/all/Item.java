@@ -127,6 +127,7 @@ public abstract class Item implements Comparable<Item>, Streamable, IsSerializab
          * appropriate). The 'location' field will contain the sceneId. */
         BACKGROUND(4);
 
+        // from ByteEnum
         public byte toByte ()
         {
             return _value;
