@@ -241,7 +241,7 @@ public class MsoyAuthenticator extends Authenticator
             } catch (ServiceException se) {
                 // it's possible that the permaguest account requested has been purged, so instead
                 // of failing the logon, just fall through and create a new permaguest account
-                if (!_authLogic.fixPurgedPermaguest(se, creds)) {
+                if (!AuthLogic.fixPurgedPermaguest(se, creds)) {
                     throw se;
                 }
             }
@@ -290,7 +290,7 @@ public class MsoyAuthenticator extends Authenticator
         boolean newIdent = false;
         // see if we need to generate a new ident
         for (int ii = 0; ii < MAX_TRIES && StringUtil.isBlank(creds.ident); ii++) {
-            String ident = _authLogic.generateIdent(accountName, ii);
+            String ident = AuthLogic.generateIdent(accountName, ii);
             if (domain.isUniqueIdent(ident)) {
                 creds.ident = ident;
                 newIdent = true;

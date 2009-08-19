@@ -154,7 +154,7 @@ public class OOOAuthenticationDomain
 
         // if they gave us an invalid machIdent, ban them
         if (!newIdent && !StringUtil.isBlank(machIdent) &&
-                !_authLogic.isValidIdent(machIdent)) {
+                !AuthLogic.isValidIdent(machIdent)) {
             if (_authrep.ban(OOOUser.METASOY_SITE_ID, user.username)) {
                 _supportLogic.reportAutoBan(user, "AUTO-BAN: supplied invalid machIdent");
             }
@@ -259,6 +259,5 @@ public class OOOAuthenticationDomain
     }
 
     @Inject protected MsoyOOOUserRepository _authrep;
-    @Inject protected AuthLogic _authLogic;
     @Inject protected SupportLogic _supportLogic;
 }

@@ -24,7 +24,7 @@ public class AuthLogic
     /**
      * Verifies that an ident is valid.
      */
-    public boolean isValidIdent (String ident)
+    public static boolean isValidIdent (String ident)
     {
         if (ident == null || ident.length() != 48) {
             return false;
@@ -37,7 +37,7 @@ public class AuthLogic
      * magicks up a new visitorId for the authenticator because they're going to need it when we
      * subsequently create them a new permaguest account.
      */
-    public boolean fixPurgedPermaguest (ServiceException cause, MsoyCredentials creds)
+    public static boolean fixPurgedPermaguest (ServiceException cause, MsoyCredentials creds)
     {
         final String aname = creds.getUsername().toString().toLowerCase();
         if (cause.getMessage().equals(MsoyAuthCodes.NO_SUCH_USER) &&
@@ -55,7 +55,7 @@ public class AuthLogic
     /**
      * Generate a new unique ident for this flash client.
      */
-    public String generateIdent (String accountName, int offset)
+    public static String generateIdent (String accountName, int offset)
     {
         String seed = StringUtil.sha1hex(
             Long.toHexString(System.currentTimeMillis() + offset*1000L) + accountName);
@@ -65,7 +65,7 @@ public class AuthLogic
     /**
      * Generates a checksum for an ident.
      */
-    protected String generateIdentChecksum (final String seed)
+    protected static String generateIdentChecksum (final String seed)
     {
         return StringUtil.sha1hex(seed.substring(10, 20) + seed.substring(30, 40) +
             seed.substring(20, 30) + seed.substring(0, 10)).substring(0, 8);
