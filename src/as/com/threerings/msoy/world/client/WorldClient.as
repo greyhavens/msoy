@@ -141,7 +141,7 @@ public class WorldClient extends MsoyClient
     {
         super.gotClientObject(clobj);
 
-        if (clobj is MemberObject && !_embedding.hasGWT() && !_featuredPlaceView) {
+        if (clobj is MemberObject && _embedding.hasGWT() && !_featuredPlaceView) {
             var member :MemberObject = clobj as MemberObject;
             member.addListener(new AvatarUpdateNotifier(_wctx));
         }
