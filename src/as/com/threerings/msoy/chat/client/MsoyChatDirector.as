@@ -244,9 +244,10 @@ public class MsoyChatDirector extends ChatDirector
     override public function enteredLocation (place :PlaceObject) :void
     {
         if (!(place is PrimaryPlace)) {
-            return; // here in msoy, we can be in various places at once.
-            // If it's a non-primary place, we don't want to listen on it (for now) and
-            // can safely avoid even calling super.
+            // If it's a non-primary place, only add it as an auxiliary source, just to be sure.
+            // TODO: figure out a sensible localtype for non-primary places (presently, only AVRGs)
+            addAuxiliarySource(place, "msoyAux");
+            return; // block non-primary places from super
         }
 
         super.enteredLocation(place);
@@ -261,8 +262,13 @@ public class MsoyChatDirector extends ChatDirector
     // from ChatDirector
     override public function leftLocation (place :PlaceObject) :void
     {
+        if (!(place is PrimaryPlace)) {
+            // See notes in enteredLocation
+            removeAuxiliarySource(place);
+            return;
+        }
+
         // only change the name if it's the place we're actually tracking
-        // (Which will filter out non-primary places)
         if (place == _place) {
             // let our occupant list know that we're nowhere
             _roomOccList.setPlaceObject(null);
