@@ -247,7 +247,8 @@ public class TopPanel extends Canvas
             }
             _leftPanel = null;
             layoutPanels();
-            // HACK ATTACK: jiggle the selected tab...
+            // HACK ATTACK: jiggle the selected tab so that the room occupant list shows up when
+            // we leave a game.
             // TODO: when we have time HAW HAW HAW HAW, clean up the chat overlay/sidebar code
             _headerBar.getChatTabs().selectedIndex = _headerBar.getChatTabs().selectedIndex;
         }
