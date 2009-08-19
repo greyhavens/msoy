@@ -503,7 +503,7 @@ public class MsoyController extends Controller
      */
     public function reconnectClient () :void
     {
-        if (!_mctx.getMsoyClient().getEmbedding().hasGWT() && ExternalInterface.available) {
+        if (_mctx.getMsoyClient().getEmbedding().hasGWT() && ExternalInterface.available) {
             ExternalInterface.call("rebootFlashClient");
         } else {
             _mctx.getClient().logon();
