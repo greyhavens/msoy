@@ -247,6 +247,9 @@ public class TopPanel extends Canvas
             }
             _leftPanel = null;
             layoutPanels();
+            // HACK ATTACK: jiggle the selected tab...
+            // TODO: when we have time HAW HAW HAW HAW, clean up the chat overlay/sidebar code
+            _headerBar.getChatTabs().selectedIndex = _headerBar.getChatTabs().selectedIndex;
         }
     }
 
