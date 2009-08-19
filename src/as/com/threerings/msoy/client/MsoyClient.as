@@ -239,7 +239,7 @@ public /*abstract*/ class MsoyClient extends CrowdClient
                                            loc :int) :void
     {
         // TODO: can the dispatch handle Enum types? We'd have to change it on the GWT side too
-        dispatchEventToGWT("itemUsageChanged", [ itemType, itemId, usage.toInt(), loc ]);
+        dispatchEventToGWT("itemUsageChanged", [ itemType, itemId, usage.toByte(), loc ]);
     }
 
     /**

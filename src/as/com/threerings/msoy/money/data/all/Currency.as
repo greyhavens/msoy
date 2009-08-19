@@ -3,34 +3,35 @@
 
 package com.threerings.msoy.money.data.all {
 
+import com.threerings.util.ByteEnum;
 import com.threerings.util.Enum;
 import com.threerings.util.MessageBundle;
 import com.threerings.util.StringUtil;
 
 import com.threerings.msoy.client.DeploymentConfig;
 
-public final class Currency extends Enum
+public final class Currency extends ByteEnum
 {
     /** Coins are awarded from actions in Whirled and can be used to purchase some items. */
-    public static const COINS :Currency = new Currency("COINS");
+    public static const COINS :Currency = new Currency("COINS", 0);
 
     /**
      * Bars are usually purchased for some real money amount and may be required to purchase some
      * items.
      */
-    public static const BARS :Currency = new Currency("BARS");
+    public static const BARS :Currency = new Currency("BARS", 1);
 
     /**
      * Bling is awarded when other players purchase or use some content created by a content
      * creator. It can be exchanged for real money.
      */
-    public static const BLING :Currency = new Currency("BLING");
+    public static const BLING :Currency = new Currency("BLING", 2);
     finishedEnumerating(Currency);
 
     /** @private this is an enum */
-    public function Currency (name :String)
+    public function Currency (name :String, code :int)
     {
-        super(name);
+        super(name, code);
     }
 
     /**

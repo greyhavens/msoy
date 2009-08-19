@@ -3,12 +3,13 @@
 
 package com.threerings.msoy.item.data.all {
 
+import com.threerings.util.ByteEnum;
 import com.threerings.util.Enum;
 
 /**
  * Enumerates the ways in which an item can be used, stored in the <code>Item.used</code> member.
  */
-public final class Item_UsedAs extends Enum
+public final class Item_UsedAs extends ByteEnum
 {
     /** Indicate that the item is unused. */
     public static const NOTHING :Item_UsedAs = new Item_UsedAs("NOTHING", 0);
@@ -31,20 +32,14 @@ public final class Item_UsedAs extends Enum
     finishedEnumerating(Item_UsedAs);
 
     /** @private */
-    public function Item_UsedAs (name :String, value :int)
+    public function Item_UsedAs (name :String, code :int)
     {
-        super(name);
-        _value = value;
+        super(name, code);
     }
 
     public function forAnything () :Boolean
     {
         return this != NOTHING;
-    }
-
-    public function toInt () :int
-    {
-        return _value;
     }
 
     public static function valueOf (name :String) :Item_UsedAs
@@ -56,8 +51,5 @@ public final class Item_UsedAs extends Enum
     {
         return Enum.values(Item_UsedAs);
     }
-
-    protected var _value :int;
 }
-
 }

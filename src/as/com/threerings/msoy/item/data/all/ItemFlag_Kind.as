@@ -3,22 +3,23 @@
 
 package com.threerings.msoy.item.data.all {
 
+import com.threerings.util.ByteEnum;
 import com.threerings.util.Enum;
 
-public final class ItemFlag_Kind extends Enum
+public final class ItemFlag_Kind extends ByteEnum
 {
-    public static const MATURE :ItemFlag_Kind = new ItemFlag_Kind("MATURE");
-    public static const COPYRIGHT :ItemFlag_Kind = new ItemFlag_Kind("COPYRIGHT");
-    public static const STOLEN :ItemFlag_Kind = new ItemFlag_Kind("STOLEN");
-    public static const UNATTRIBUTED :ItemFlag_Kind = new ItemFlag_Kind("UNATTRIBUTED");
-    public static const SCAM :ItemFlag_Kind = new ItemFlag_Kind("SCAM");
-    public static const BROKEN :ItemFlag_Kind = new ItemFlag_Kind("BROKEN");
+    public static const MATURE :ItemFlag_Kind = new ItemFlag_Kind("MATURE", 0);
+    public static const COPYRIGHT :ItemFlag_Kind = new ItemFlag_Kind("COPYRIGHT", 1);
+    public static const STOLEN :ItemFlag_Kind = new ItemFlag_Kind("STOLEN", 2);
+    public static const UNATTRIBUTED :ItemFlag_Kind = new ItemFlag_Kind("UNATTRIBUTED", 3);
+    public static const SCAM :ItemFlag_Kind = new ItemFlag_Kind("SCAM", 4);
+    public static const BROKEN :ItemFlag_Kind = new ItemFlag_Kind("BROKEN", 5);
     finishedEnumerating(ItemFlag_Kind);
 
     /** @private */
-    public function ItemFlag_Kind (name :String)
+    public function ItemFlag_Kind (name :String, code :int)
     {
-        super(name);
+        super(name, code);
     }
 
     public static function values () :Array
