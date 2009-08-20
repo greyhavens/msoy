@@ -8,6 +8,7 @@ import java.net.URL;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -66,6 +67,19 @@ public class KontagentLogic
     }
 
     /**
+     * Generates a 16 hex digit Kontagent UUID for use in tracking invites etc.
+     */
+    public static String genUUID (long uid)
+    {
+        long salt = System.currentTimeMillis();
+        for (int shift = 60; shift >= 0; shift -= 4, salt >>= 4) {
+            uid ^= (salt & 0xF) << shift;
+        }
+        uid ^= _rand.nextLong();
+        return Long.toHexString(uid);
+    }
+
+    /**
      * Tracks the addition of the application.
      * TODO: tracking tags
      */
@@ -105,6 +119,8 @@ public class KontagentLogic
             log.warning("Failed to send message", "url", url, ex);
         }
     }
+
+    protected static final Random _rand = new Random();
 
     protected static final String API_URL = DeploymentConfig.devDeployment ?
         "http://api.test.kontagent.net/api/" : "http://api.geo.kontagent.net/api/";
