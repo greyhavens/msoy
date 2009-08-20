@@ -236,7 +236,7 @@ public class MsoySceneDirector extends SceneDirector
 
         // if we came here from a scene on another peer, let's go back there
         if (remoteSceneId != -1) {
-            log.info("Returning to remote scene", "sceneId", removeSceneId);
+            log.info("Returning to remote scene", "sceneId", remoteSceneId);
             _postMoveMessage = reason; // remember the error message
             ctrl.handleGoScene(remoteSceneId);
             return;
