@@ -140,9 +140,8 @@ public class FurniSprite extends MsoySprite
             return Msgs.GENERAL.get("i.help_page", String(actionData[0]));
 
         default:
-            log.warning("Tooltip requested for unhandled furni action type " +
-                "[actionType=" + _furni.actionType +
-                ", actionData=" + _furni.actionData + "].");
+            log.warning("Tooltip: unknown furni action type",
+                "actionType", _furni.actionType, "actionData", _furni.actionData);
             return null;
         }
     }
