@@ -256,7 +256,11 @@ public class StuffPanel extends FlowPanel
     };
 
     protected static final List<Predicate<Item>> FILTERS = new ArrayList<Predicate<Item>>(); {
-        FILTERS.add(new Predicate.TRUE<Item>()); // show all
+        FILTERS.add(new Predicate<Item>() { // show all (TODO: use Predicates.alwaysTrue()
+            public boolean apply (Item item) {
+                return true;
+            }
+        });
         FILTERS.add(new Predicate<Item>() { // uploaded
             public boolean apply (Item item) {
                 return item.sourceId == 0;
