@@ -59,21 +59,21 @@ public class MsoySceneDirector extends SceneDirector
         // look up the destination scene and location
         var scene :MsoyScene = (getScene() as MsoyScene);
         if (scene == null) {
-            log.warning("Asked to traverse portal when we have no scene [id=" + portalId + "].");
+            log.warning("Asked to traverse portal when we have no scene", "id", portalId);
             return false;
         }
 
         // find the portal they're talking about
         var dest :MsoyPortal = (scene.getPortal(portalId) as MsoyPortal);
         if (dest == null) {
-            log.warning("Requested to traverse non-existent portal [portalId=" + portalId +
-                        ", portals=" + scene.getPortals() + "].");
+            log.warning("Requested to traverse non-existent portal",
+               "portalId", portalId, "portals", scene.getPortals());
             return false;
         }
 
         // prepare to move to this scene (sets up pending data)
         if (!prepareMoveTo(dest.targetSceneId, null)) {
-            log.info("Portal traversal vetoed [portalId=" + portalId + "].");
+            log.info("Portal traversal vetoed", "portalId", portalId);
             return false;
         }
 
@@ -236,7 +236,7 @@ public class MsoySceneDirector extends SceneDirector
 
         // if we came here from a scene on another peer, let's go back there
         if (remoteSceneId != -1) {
-            log.info("Returning to remote scene [sceneId=" + remoteSceneId + "].");
+            log.info("Returning to remote scene", "sceneId", removeSceneId);
             _postMoveMessage = reason; // remember the error message
             ctrl.handleGoScene(remoteSceneId);
             return;
@@ -245,7 +245,7 @@ public class MsoySceneDirector extends SceneDirector
         // we have nowhere to go back. let's just go home.
         var memberId :int = _worldctx.getMyId();
         if (!MemberName.isViewer(memberId)) {
-            log.info("Scene locked, returning home [memberId=" + memberId + "].");
+            log.info("Scene locked, returning home", "memberId", memberId);
             ctrl.handleGoMemberHome(memberId);
             return;
         }
