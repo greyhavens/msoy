@@ -77,10 +77,10 @@ public class FacebookLogic
     }
 
     /**
-     * Composes a tracking id value for use with {@link ArgNames#FB_PARAM_TRACKING} for an invite
-     * by the given user to the given game, or to the application if the game is null.
+     * Generates a tracking id value and assembles it in the usual format that can be parsed later
+     * when a user requests a page with the {@link ArgNames#FB_PARAM_TRACKING} parameter assigned.
      */
-    public static String composeInviteTrackingId (FacebookGame game, long uid)
+    public static String generateInviteTrackingId (FacebookGame game, long uid)
     {
         return (game == null ? TRACKING_APP_INVITE : TRACKING_GAME_INVITE + "-" +
             game.getStringId()) + "-" + KontagentLogic.genUUID(uid);

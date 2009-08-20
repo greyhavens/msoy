@@ -258,8 +258,8 @@ public class FacebookServlet extends MsoyServiceServlet
             log.warning("Could not get first name and sex, go figure!", "user", userId, fe);
         }
 
-        // assign the tracking id for the invite
-        info.trackingId = FacebookLogic.composeInviteTrackingId(game, userId);
+        // generate the tracking id for the invite
+        info.trackingId = FacebookLogic.generateInviteTrackingId(game, userId);
 
         return info;
     }
