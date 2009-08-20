@@ -131,7 +131,7 @@ public class FacebookInviteServlet extends HttpServlet
                 // head back to the app and do the final phase of the challenge flow
                 MsoyHttpServer.sendTopRedirect(rsp, SharedNaviUtil.buildRequest(
                     SharedNaviUtil.buildRequest(canvas, game.getCanvasArgs()),
-                    ArgNames.FB_PARAM_CHALLENGE, "y"));
+                    ArgNames.fbChallengeArgs()));
 
             } else {
                 // head back to the app and just view the game

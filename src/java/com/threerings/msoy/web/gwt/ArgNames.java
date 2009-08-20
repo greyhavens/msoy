@@ -37,6 +37,18 @@ public class ArgNames
     /** Parameter passed to canvas/callback for posting a challenge feed story. */
     public static final String FB_PARAM_CHALLENGE = "ch";
 
+    /** Parameter passed to canvas/callback for tracking clicks. */
+    public static final String FB_PARAM_TRACKING = "tr";
+
+    /**
+     * Returns an array of the challenge parameter name and value. The value is not needed, its
+     * presence indicates the current request is part of the game challenge flow.
+     */
+    public static String[] fbChallengeArgs ()
+    {
+        return new String[] {FB_PARAM_CHALLENGE, "y"};
+    }
+
     /**
      * Value constants and utility functions for the embedding argument.
      */

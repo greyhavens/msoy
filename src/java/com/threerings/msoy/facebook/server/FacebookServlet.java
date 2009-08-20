@@ -232,6 +232,9 @@ public class FacebookServlet extends MsoyServiceServlet
             throw new ServiceException(FacebookCodes.NO_SESSION);
         }
 
+        // TODO: we don't need this at all! Bite Me successfully used <fb:name> in request text,
+        // using the facebook user id. We just need to expose said id to GWT at large.
+
         // use the facebook name for consistency and the facebook gender in case privacy settings
         // have changed. users will expect this
         FacebookJaxbRestClient client = _fbLogic.getFacebookClient(mapRec.sessionKey);
@@ -254,6 +257,9 @@ public class FacebookServlet extends MsoyServiceServlet
         } catch (FacebookException fe) {
             log.warning("Could not get first name and sex, go figure!", "user", userId, fe);
         }
+
+        // assign the tracking id for the invite
+        info.trackingId = FacebookLogic.composeInviteTrackingId(game, userId);
 
         return info;
     }

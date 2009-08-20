@@ -62,12 +62,28 @@ public class FacebookLogic
     public static final String WHIRLED_APP_PROFILE =
         "http://www.facebook.com/apps/application.php?id=" + DeploymentConfig.facebookApplicationId;
 
+    /** Tracking prefix for a game invite (challenge). */
+    public static final String TRACKING_GAME_INVITE = "invg";
+
+    /** Tracking prefix for an app invite. */
+    public static final String TRACKING_APP_INVITE = "inva";
+
     /**
      * Prepends the Facebook application root to get the canvas url of the given name.
      */
-    public static final String getCanvasUrl (String canvasName)
+    public static String getCanvasUrl (String canvasName)
     {
         return "http://apps.facebook.com/" + canvasName;
+    }
+
+    /**
+     * Composes a tracking id value for use with {@link ArgNames#FB_PARAM_TRACKING} for an invite
+     * by the given user to the given game, or to the application if the game is null.
+     */
+    public static String composeInviteTrackingId (FacebookGame game, long uid)
+    {
+        return (game == null ? TRACKING_APP_INVITE : TRACKING_GAME_INVITE + "-" +
+            game.getStringId()) + "-" + KontagentLogic.genUUID(uid);
     }
 
     /**

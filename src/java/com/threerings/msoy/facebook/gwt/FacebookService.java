@@ -9,6 +9,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
+import com.threerings.msoy.web.gwt.ArgNames;
 import com.threerings.msoy.web.gwt.ServiceException;
 
 /**
@@ -42,6 +43,17 @@ public interface FacebookService extends RemoteService
 
         /** The friends to exclude (ones that are already using the application). */
         public List<Long> excludeIds;
+
+        /** The id to stick into the acceptance URL's tracking parameter. */
+        public String trackingId;
+
+        /**
+         * Returns an array of the tracking parameter name and tracking id.
+         */
+        public String[] trackingArgs ()
+        {
+            return new String[] {ArgNames.FB_PARAM_TRACKING, trackingId};
+        }
     }
 
     /**

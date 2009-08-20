@@ -50,9 +50,11 @@ public class FBRequestPanel extends ServerFBMLPanel
                 String tip = _msgs.inviteGenericTip();
                 String accept = _msgs.inviteChallengeAccept(app);
 
-                // both accept and submit just go to the main app
-                String[] acceptArgs = new String[0];
-                String[] submitArgs = new String[0];
+                // accept goes to the main canvas with tracking info
+                String[] acceptArgs = result.trackingArgs();
+
+                // submit uploads the tracking info along with facebook's invite data
+                String[] submitArgs = result.trackingArgs();
 
                 div.add(new FBRequestPanel(
                     result.excludeIds, invite, tip, accept, acceptArgs, submitArgs, app));
@@ -76,11 +78,12 @@ public class FBRequestPanel extends ServerFBMLPanel
 
         // on accept, go to the game (via the invite servlet... this will end up viewing the game,
         // but okay)
-        String[] acceptArgs = game.getCanvasArgs();
+        String[] acceptArgs = ArrayUtil.concatenate(
+            game.getCanvasArgs(), info.trackingArgs(), ArrayUtil.STRING_TYPE);
 
         // on submit, go to the game but in challenge mode so the feed popup is shown
         String[] submitArgs = ArrayUtil.concatenate(
-            acceptArgs, new String[] {ArgNames.FB_PARAM_CHALLENGE, "y"}, ArrayUtil.STRING_TYPE);
+            acceptArgs, ArgNames.fbChallengeArgs(), ArrayUtil.STRING_TYPE);
 
         return new FBRequestPanel(
             info.excludeIds, invite, tip, accept, acceptArgs, submitArgs, info.gameName);
