@@ -67,6 +67,7 @@ import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.ItemListInfo;
 import com.threerings.msoy.item.data.all.ItemListQuery;
 import com.threerings.msoy.item.data.all.IdentGameItem;
+import com.threerings.msoy.item.data.all.Launcher;
 import com.threerings.msoy.item.gwt.CatalogListing;
 import com.threerings.msoy.item.gwt.ListingCard;
 import com.threerings.msoy.item.gwt.MemberItemInfo;
@@ -257,6 +258,10 @@ public class ItemLogic
                 throw new ServiceException(ServiceCodes.E_ACCESS_DENIED);
             }
         }
+        // Hack in the AVRG-ness of Launchers, the GWT editor code fails completely here.
+        if (item instanceof Launcher) {
+            updateAVRGness((Launcher)item);
+        }
 
         // write the item to the database
         repo.insertOriginalItem(record, false);
@@ -265,6 +270,17 @@ public class ItemLogic
         itemUpdated(null, record);
 
         return record;
+    }
+
+    /**
+     * Update the AVRGness of the Launcher, which is probably incorrect because
+     * GWT item editor is incapable of knowing whether it's an AVRG without passing
+     * some fucking parameter in the url to indicate that it is. Fucking retarded.
+     */
+    public void updateAVRGness (Launcher item)
+    {
+        GameInfoRecord grec = _mgameRepo.loadGame(item.gameId);
+        item.isAVRG = grec.isAVRG;
     }
 
     /**

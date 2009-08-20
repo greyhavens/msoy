@@ -33,6 +33,7 @@ import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.Furniture;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.data.all.Launcher;
 import com.threerings.msoy.item.gwt.ItemDetail;
 import com.threerings.msoy.item.server.ItemLogic;
 import com.threerings.msoy.item.server.persist.CloneRecord;
@@ -119,6 +120,11 @@ public class StuffServlet extends MsoyServiceServlet
         if (((record.ownerId != memrec.memberId) || (record.creatorId != memrec.memberId)) &&
             !memrec.isSupport()) {
             throw new ServiceException(ItemCodes.E_ACCESS_DENIED);
+        }
+
+        // The editor fails completely to update the avrg-ness of the launcher, let's hack it in
+        if (item instanceof Launcher) {
+            _itemLogic.updateAVRGness((Launcher)item);
         }
 
         // make a copy of this for later
