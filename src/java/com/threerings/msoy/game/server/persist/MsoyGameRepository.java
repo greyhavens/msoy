@@ -23,6 +23,7 @@ import com.samskivert.util.StringUtil;
 
 import com.samskivert.depot.CacheInvalidator;
 import com.samskivert.depot.DepotRepository;
+import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.annotation.Computed;
@@ -295,6 +296,13 @@ public class MsoyGameRepository extends DepotRepository
     public GameInfoRecord loadGame (int gameId)
     {
         return load(GameInfoRecord.getKey(Math.abs(gameId)));
+    }
+
+    // TEMP
+    public Collection<Integer> getAVRGameIds ()
+    {
+        return findAllKeys(GameInfoRecord.class, false, new Where(GameInfoRecord.IS_AVRG.eq(true)))
+            .map(Key.<GameInfoRecord>toInt());
     }
 
     /**

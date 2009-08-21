@@ -3,11 +3,19 @@
 
 package com.threerings.msoy.item.server.persist;
 
+import java.util.Collection;
+import java.util.HashSet;
+
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import com.samskivert.depot.DataMigration;
+import com.samskivert.depot.DatabaseException;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.annotation.Entity;
+import com.samskivert.depot.clause.Where;
+
+import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 
 import com.threerings.msoy.server.persist.RatingRecord;
 import com.threerings.msoy.server.persist.RatingRepository;
@@ -38,6 +46,23 @@ public class LauncherRepository extends ItemRepository<LauncherRecord>
     @Inject public LauncherRepository (PersistenceContext ctx)
     {
         super(ctx);
+
+        // TEMP: Remove after a bit
+        registerMigration(new DataMigration("2009_08_20_fixAVRGLaunchers") {
+            @Override public void invoke () throws DatabaseException {
+                Collection<Integer> avrgIds = _mgameRepo.getAVRGameIds();
+                HashSet<Integer> allIds = new HashSet<Integer>();
+                for (Integer id : avrgIds) {
+                    allIds.add(id);
+                    allIds.add(-id);
+                }
+                int count = updatePartial(LauncherRecord.class,
+                    new Where(LauncherRecord.GAME_ID.in(allIds)), null,
+                    LauncherRecord.IS_AVRG, true);
+                System.err.println("Updated " + count + " launchers.");
+            }
+        });
+        // END: TEMP
     }
 
     @Override
@@ -81,4 +106,6 @@ public class LauncherRepository extends ItemRepository<LauncherRecord>
     {
         return new LauncherTagHistoryRecord();
     }
+
+    @Inject protected MsoyGameRepository _mgameRepo;
 }
