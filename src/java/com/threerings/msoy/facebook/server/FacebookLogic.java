@@ -275,6 +275,8 @@ public class FacebookLogic
             _notifications.put(id, notif);
             notif.schedule(millis);
         }
+
+        _facebookRepo.noteNotificationScheduled(id, _peerMgr.getNodeObject().nodeName);
     }
 
     protected void removeNotification (String id)
