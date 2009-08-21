@@ -88,7 +88,7 @@ public class FacebookGame
      */
     public Args getViewArgs ()
     {
-        return choose(Args.compose("game", "d", _id), Args.compose("mochi", _id));
+        return choose(Args.compose("d", _id), Args.compose("mochi", _id));
     }
 
     /**
