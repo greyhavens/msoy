@@ -76,7 +76,11 @@ public class KontagentLogic
             uid ^= (salt & 0xF) << shift;
         }
         uid ^= _rand.nextLong();
-        return Long.toHexString(uid);
+        String hex = Long.toHexString(uid);
+        if (hex.length() < 16) {
+            hex = "0000000000000000".substring(hex.length()) + hex;
+        }
+        return hex;
     }
 
     /**
