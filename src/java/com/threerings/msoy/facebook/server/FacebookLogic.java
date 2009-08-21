@@ -28,6 +28,7 @@ import com.samskivert.util.StringUtil;
 import com.google.code.facebookapi.FacebookException;
 import com.google.code.facebookapi.FacebookJaxbRestClient;
 
+import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.facebook.data.FacebookCodes;
@@ -229,8 +230,10 @@ public class FacebookLogic
     /**
      * Loads the map records for all the given member's facebook friends. Throws an exception if
      * the session isn't valid or if the facebook friends could not be loaded.
+     * @param limit maximum number of friends to retrieve, or 0 to retrieve all
      */
-    public List<ExternalMapRecord> loadMappedFriends (MemberRecord mrec, boolean includeSelf)
+    public List<ExternalMapRecord> loadMappedFriends (
+        MemberRecord mrec, boolean includeSelf, int limit)
         throws ServiceException
     {
         SessionInfo sinf = getSessionInfo(mrec);
@@ -254,7 +257,8 @@ public class FacebookLogic
         if (includeSelf) {
             exRecs.add(sinf.mapRec);
         }
-        return exRecs;
+
+        return limit == 0 ? exRecs : exRecs.subList(0, limit);
     }
 
     protected void schedule (String id, NotificationBatch notif, int delay)
@@ -449,21 +453,25 @@ public class FacebookLogic
             throws ServiceException
         {
             _facebookRepo.noteNotificationStarted(_notifRec.id);
+            int alloc = _runtime.server.fbNotificationsAlloc;
 
             if (_mrec != null && _appFriendsOnly) {
                 // this will only send to the first N users where N is the "notifications_per_day"
                 // allocation
                 // TODO: fetch the N value on a timer and don't bother sending > N targets
                 // TODO: optimize the first N targets?
+                // NOTE: wtf? the facebook api is throwing an exception, perhaps because FB
+                // have changed the documented behavior of this method... try to limit how many we
+                // send, see if exception stops
+                List<ExternalMapRecord> targets = loadMappedFriends(_mrec, false, alloc);
                 sendNotifications(getSessionInfo(_mrec, BATCH_READ_TIMEOUT).client,
-                    _notifRec.id, _notifRec.text, loadMappedFriends(_mrec, false),
-                    MAPREC_TO_UID_EXP, APP_USER_FILTER);
+                    _notifRec.id, _notifRec.text, targets, MAPREC_TO_UID_EXP, APP_USER_FILTER);
 
             } else if (_mrec != null) {
                 // see above
+                List<Long> targets = loadFriends(_mrec).subList(0, alloc);
                 sendNotifications(getSessionInfo(_mrec, BATCH_READ_TIMEOUT).client,
-                    _notifRec.id, _notifRec.text, loadFriends(_mrec),
-                    new Function<Long, FQL.Exp> () {
+                    _notifRec.id, _notifRec.text, targets, new Function<Long, FQL.Exp> () {
                     public FQL.Exp apply (Long uid) {
                         return FQL.unquoted(uid);
                     }
@@ -525,6 +533,7 @@ public class FacebookLogic
     @Inject protected FacebookRepository _facebookRepo;
     @Inject protected MemberRepository _memberRepo;
     @Inject protected MsoyPeerManager _peerMgr;
+    @Inject protected RuntimeConfig _runtime; // temp
 
     protected static final int CONNECT_TIMEOUT = 15*1000; // in millis
     protected static final int READ_TIMEOUT = 15*1000; // in millis

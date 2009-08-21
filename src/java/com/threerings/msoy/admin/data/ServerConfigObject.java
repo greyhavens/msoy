@@ -50,6 +50,9 @@ public class ServerConfigObject extends ConfigObject
 
     /** The field name of the <code>maxPendingClientResolutions</code> field. */
     public static final String MAX_PENDING_CLIENT_RESOLUTIONS = "maxPendingClientResolutions";
+
+    /** The field name of the <code>fbNotificationsAlloc</code> field. */
+    public static final String FB_NOTIFICATIONS_ALLOC = "fbNotificationsAlloc";
     // AUTO-GENERATED: FIELDS END
 
     /** Whether or not to allow non-admins to log on. */
@@ -81,6 +84,11 @@ public class ServerConfigObject extends ConfigObject
 
     /** Authentications are disabled if there are more than this many pending logins. */
     public int maxPendingClientResolutions = 20;
+
+    /** Number of allocations we are allowed by facebook for user-to-user notifications.
+     * TODO: remove when we figure out how to get that dynamically
+     */
+    public int fbNotificationsAlloc = 20;
 
     @Override // documentation inherited
     public JPanel getEditor (PresentsContext ctx, Field field)
@@ -272,6 +280,22 @@ public class ServerConfigObject extends ConfigObject
         requestAttributeChange(
             MAX_PENDING_CLIENT_RESOLUTIONS, Integer.valueOf(value), Integer.valueOf(ovalue));
         this.maxPendingClientResolutions = value;
+    }
+
+    /**
+     * Requests that the <code>fbNotificationsAlloc</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setFbNotificationsAlloc (int value)
+    {
+        int ovalue = this.fbNotificationsAlloc;
+        requestAttributeChange(
+            FB_NOTIFICATIONS_ALLOC, Integer.valueOf(value), Integer.valueOf(ovalue));
+        this.fbNotificationsAlloc = value;
     }
     // AUTO-GENERATED: METHODS END
 }

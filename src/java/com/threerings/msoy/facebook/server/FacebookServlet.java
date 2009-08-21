@@ -214,7 +214,7 @@ public class FacebookServlet extends MsoyServiceServlet
             // application invite
             info.excludeIds = Lists.newArrayList();
             for (ExternalMapRecord exRec :
-                _fbLogic.loadMappedFriends(requireAuthedUser(), false)) {
+                _fbLogic.loadMappedFriends(requireAuthedUser(), false, 0)) {
                 info.excludeIds.add(Long.valueOf(exRec.externalId));
             }
 
@@ -307,7 +307,7 @@ public class FacebookServlet extends MsoyServiceServlet
         throws ServiceException
     {
         IntMap<FacebookFriendInfo> friendsInfo = IntMaps.newHashIntMap();
-        for (ExternalMapRecord exRec : _fbLogic.loadMappedFriends(requireAuthedUser(), true)) {
+        for (ExternalMapRecord exRec : _fbLogic.loadMappedFriends(requireAuthedUser(), true, 0)) {
             FacebookFriendInfo info = new FacebookFriendInfo();
             info.facebookUid = Long.valueOf(exRec.externalId);
             info.memberId = exRec.memberId;
