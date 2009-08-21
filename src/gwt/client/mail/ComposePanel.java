@@ -111,11 +111,9 @@ public class ComposePanel extends FlowPanel
                 return false;
             }
             @Override
-            protected String getConfirmMessage () {
-                if (_payload instanceof PresentPayload) {
-                    return _msgs.composePresentWarning(_recipient.name.toString());
-                }
-                return super.getConfirmMessage();
+            protected void updateConfirmMessage () {
+                setConfirmText(_payload instanceof PresentPayload ?
+                    _msgs.composePresentWarning(_recipient.name.toString()) : null);
             }
             protected int getRecipientId () {
                 return _recipient.name.getMemberId();

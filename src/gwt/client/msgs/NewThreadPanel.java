@@ -119,8 +119,9 @@ public class NewThreadPanel extends TableFooterPanel
                 ((ForumPanel)getParent()).newThreadPosted(result);
                 return false;
             }
-            @Override protected String getConfirmMessage () {
-                return (_spam != null && _spam.getValue()) ? _mmsgs.ntpSpamConfirm() : null;
+            @Override protected void updateConfirmMessage () {
+                boolean spam = _spam != null && _spam.getValue();
+                setConfirmText(spam ? _mmsgs.ntpSpamConfirm() : null);
             }
         };
         addFooterButton(submit);

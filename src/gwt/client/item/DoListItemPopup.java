@@ -283,23 +283,24 @@ public class DoListItemPopup extends VerticalPanel
 
         } else if (repricing) {
             new ClickCallback<Void>(_doIt) {
-                @Override protected String getConfirmMessage () {
+                @Override protected void updateConfirmMessage () {
                     int dcount = listing.derivationCount;
-                    if (dcount > 0) {
-                        int costChange = getCost() - listing.quote.getListedAmount();
-                        if (getCurrency() != listing.quote.getListedCurrency()) {
-                            return dcount > 1 ?
-                                _imsgs.doListChangeBasisCurrencyConfirmN(""+dcount) :
-                                _imsgs.doListChangeBasisCurrencyConfirm1();
-                        } else if (costChange != 0) {
-                            String did = costChange > 0 ? _imsgs.doListUp() : _imsgs.doListDown();
-                            String cstr = ""+Math.abs(costChange);
-                            return dcount > 1 ?
-                                _imsgs.doListRepriceBasisConfirmN(did, cstr, ""+dcount) :
-                                _imsgs.doListRepriceBasisConfirm1(did, cstr);
-                        }
+                    if (dcount == 0) {
+                        setConfirmText(null);
+                        return;
                     }
-                    return null;
+                    int costChange = getCost() - listing.quote.getListedAmount();
+                    if (getCurrency() != listing.quote.getListedCurrency()) {
+                        setConfirmText(dcount > 1 ?
+                            _imsgs.doListChangeBasisCurrencyConfirmN(""+dcount) :
+                            _imsgs.doListChangeBasisCurrencyConfirm1());
+                    } else if (costChange != 0) {
+                        String did = costChange > 0 ? _imsgs.doListUp() : _imsgs.doListDown();
+                        String cstr = ""+Math.abs(costChange);
+                        setConfirmText(dcount > 1 ?
+                            _imsgs.doListRepriceBasisConfirmN(did, cstr, ""+dcount) :
+                            _imsgs.doListRepriceBasisConfirm1(did, cstr));
+                    }
                 }
                 @Override protected boolean callService () {
                     int pricing = getPricing(), salesTarget = getSalesTarget();

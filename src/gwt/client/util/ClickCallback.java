@@ -14,7 +14,9 @@ import client.ui.PromptPopup;
 /**
  * Allows one to wire up a button and a service call into one concisely specified little chunk of
  * code. Be sure to call <code>super.onSuccess()</code> and <code>super.onFailure()</code> if you
- * override those methods so that they can automatically reenable the trigger button.
+ * override those methods so that they can automatically reenable the trigger button. NOTE:
+ * methods {@link #setConfirmChoices()} and {@link #setConfirmHTML()} are not supported in this
+ * subclass and throw an unsupported operation exception.
  */
 public abstract class ClickCallback<T> extends com.threerings.gwt.util.ClickCallback<T>
 {
@@ -37,7 +39,7 @@ public abstract class ClickCallback<T> extends com.threerings.gwt.util.ClickCall
     public ClickCallback (HasClickHandlers trigger, String confirmMessage)
     {
         super(trigger);
-        _confirmMessage = confirmMessage;
+        setConfirmText(confirmMessage);
     }
 
     /**
@@ -49,14 +51,21 @@ public abstract class ClickCallback<T> extends com.threerings.gwt.util.ClickCall
         return null;
     }
 
-    protected String getConfirmMessage ()
-    {
-        return _confirmMessage;
-    }
-
     protected Widget getErrorNear ()
     {
         return null;
+    }
+
+    @Override
+    public ClickCallback<T> setConfirmChoices (String confirm, String abort)
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public ClickCallback<T> setConfirmHTML (String message)
+    {
+        throw new UnsupportedOperationException();
     }
 
     @Override // from ClickCallback
@@ -82,7 +91,7 @@ public abstract class ClickCallback<T> extends com.threerings.gwt.util.ClickCall
     @Override // from ClickCallback
     protected void displayConfirmPopup ()
     {
-        new PromptPopup(getConfirmMessage(), null) {
+        new PromptPopup(_confirmMessage, null) {
             public void onAffirmative () {
                 onConfirmed();
             }
