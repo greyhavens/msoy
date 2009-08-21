@@ -369,7 +369,9 @@ public class FacebookLogic
             _facebookRepo.noteNotificationProgress(id, "Sent", 0, targetIds.size());
 
         } catch (Exception e) {
-            log.warning("Failed to send notifications", "id", id, "targetCount", batch.size(), e);
+            log.warning("Failed to send notifications", "id", id, "targetCount", batch.size(),
+                "rawResponse", client.getRawResponse(), e);
+            _facebookRepo.noteNotificationProgress(id, "Failed", 0, 0);
         }
     }
 
