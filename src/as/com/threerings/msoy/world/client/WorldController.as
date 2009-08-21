@@ -104,6 +104,9 @@ import com.threerings.msoy.room.data.RoomObject;
  */
 public class WorldController extends MsoyController
 {
+    // Testing constant, for the time being...
+    public static const FUCK_THE_URL :Boolean = false;
+
     /** Command to display the chat channel menu. */
     public static const POP_CHANNEL_MENU :String = "PopChannelMenu";
 
@@ -596,11 +599,9 @@ public class WorldController extends MsoyController
      */
     public function handleGoScene (sceneId :int) :void
     {
-        if (!displayPageGWT("world", "s" + sceneId)) {
-            // fall back to breaking the back button
-            log.info("Can't go to scene via GWT. Going direct to " + sceneId + ".");
-            _wctx.getSceneDirector().moveTo(sceneId);
-        }
+// commented out Ray 2009-08-20       if (!displayPageGWT("world", "s" + sceneId)) {
+        // just go straight there, the url will be updated when we arrive
+        _wctx.getSceneDirector().moveTo(sceneId);
     }
 
     /**
@@ -640,7 +641,7 @@ public class WorldController extends MsoyController
      */
     public function handleGoLocation (placeOid :int) :void
     {
-        if (!displayPageGWT("world", "l" + placeOid)) {
+        if (FUCK_THE_URL || !displayPageGWT("world", "l" + placeOid)) {
             // fall back to breaking the back button
             _wctx.getLocationDirector().moveTo(placeOid);
         }
@@ -652,7 +653,7 @@ public class WorldController extends MsoyController
     public function handlePlayGame (gameId :int, ghost :String = null, gport :int = 0) :void
     {
         // if we're running in the GWT app, we need to route through GWT to keep the URL valid
-        if (inGWTApp() && displayPage("world", "game_p_" + gameId)) {
+        if (!FUCK_THE_URL && inGWTApp() && displayPage("world", "game_p_" + gameId)) {
             log.info("Doing play game via URL", "game", gameId, "ghost", ghost, "gport", gport);
         } else {
             // otherwise, play the game directly
@@ -676,7 +677,8 @@ public class WorldController extends MsoyController
     public function handleJoinPlayerGame (gameId :int, playerId :int) :void
     {
         // if we're running in the GWT app, we need to route through GWT to keep the URL valid
-        if (inGWTApp() && displayPage("world", "game_p_" + gameId + "_" + playerId)) {
+        if (!FUCK_THE_URL && inGWTApp() &&
+                displayPage("world", "game_p_" + gameId + "_" + playerId)) {
             log.info("Doing join player via URL", "game", gameId, "player", playerId);
         } else {
             // otherwise, play the game directly
@@ -702,7 +704,7 @@ public class WorldController extends MsoyController
         if (sceneId == getCurrentSceneId()) {
             _wctx.getGameDirector().activateAVRGame(
                 gameId, StringUtil.deNull(token), inviterMemberId);
-            if (sceneId != 0 && inGWTApp()) {
+            if (sceneId != 0 && inGWTApp() && !FUCK_THE_URL) {
                 // the AVRG is not really a URL, so tell the browser to display the scene
                 // (do it later so the WorldClient javascript method can exit first)
                 // BUG: This causes problems on IE8 if our GWT app is in an iframe. Instead of
@@ -947,7 +949,7 @@ public class WorldController extends MsoyController
      */
     public function wentToScene (sceneId :int) :void
     {
-        if (UberClient.isFeaturedPlaceView()) {
+        if (FUCK_THE_URL || UberClient.isFeaturedPlaceView()) {
             return;
         }
         // this will result in another request to move to the scene we're already in, but we'll
