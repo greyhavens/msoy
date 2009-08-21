@@ -258,7 +258,7 @@ public class FacebookLogic
             exRecs.add(sinf.mapRec);
         }
 
-        return limit == 0 ? exRecs : exRecs.subList(0, limit);
+        return (limit == 0 || limit >= exRecs.size()) ? exRecs : exRecs.subList(0, limit);
     }
 
     protected void schedule (String id, NotificationBatch notif, int delay)
