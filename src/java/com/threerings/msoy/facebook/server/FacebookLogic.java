@@ -210,9 +210,8 @@ public class FacebookLogic
         replacements.put("uid", sinf.fbid.toString());
         String gameUrl = replacements.get("game_url");
         if (gameUrl != null) {
-            gameUrl += (gameUrl.contains("?") ? "&" : "?");
-            gameUrl += CookieNames.AFFILIATE + "=" + sinf.fbid;
-            replacements.put("game_url", gameUrl); 
+            replacements.put("game_url", gameUrl = SharedNaviUtil.buildRequest(gameUrl,
+                CookieNames.AFFILIATE, String.valueOf(sinf.memRec.memberId)));
         }
 
         // do the replacements and create the instance
