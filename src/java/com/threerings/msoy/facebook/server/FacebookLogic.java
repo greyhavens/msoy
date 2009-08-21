@@ -45,6 +45,7 @@ import com.threerings.msoy.web.gwt.CookieNames;
 import com.threerings.msoy.web.gwt.ExternalAuther;
 import com.threerings.msoy.web.gwt.FacebookCreds;
 import com.threerings.msoy.web.gwt.ServiceException;
+import com.threerings.msoy.web.gwt.SharedNaviUtil;
 
 import static com.threerings.msoy.Log.log;
 
@@ -59,8 +60,9 @@ public class FacebookLogic
         getCanvasUrl(DeploymentConfig.facebookCanvasName);
 
     /** URL of the main application's profile page. */
-    public static final String WHIRLED_APP_PROFILE =
-        "http://www.facebook.com/apps/application.php?id=" + DeploymentConfig.facebookApplicationId;
+    public static final String WHIRLED_APP_PROFILE = SharedNaviUtil.buildRequest(
+        "http://www.facebook.com/apps/application.php",
+        "id", DeploymentConfig.facebookApplicationId);
 
     /** Tracking prefix for a game invite (challenge). */
     public static final String TRACKING_GAME_INVITE = "invg";
@@ -73,7 +75,7 @@ public class FacebookLogic
      */
     public static String getCanvasUrl (String canvasName)
     {
-        return "http://apps.facebook.com/" + canvasName;
+        return "http://apps.facebook.com/" + canvasName + "/";
     }
 
     /**

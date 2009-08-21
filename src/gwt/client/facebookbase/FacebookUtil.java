@@ -28,7 +28,7 @@ public class FacebookUtil
 
     /** The URL of the main application's canvas. */
     public static final String APP_CANVAS = "http://apps.facebook.com/" +
-        DeploymentConfig.facebookCanvasName;
+        DeploymentConfig.facebookCanvasName + "/";
 
     /** The URL of the main application's profile page. */
     public static final String APP_PROFILE = "http://www.facebook.com/apps/application.php?id=" +
