@@ -85,6 +85,10 @@ public class FacebookCallbackServlet extends HttpServlet
     protected void tryGet (HttpServletRequest req, HttpServletResponse rsp)
         throws IOException, ServiceException
     {
+        // we want to preserve these values across all redirects, stash them here
+        String trackingId = StringUtil.deNull(req.getParameter(TRACKING));
+        String newInstall = StringUtil.deNull(req.getParameter(NEW_INSTALL));
+
         // if we don't have a signature, then we must be swizzling
         if (req.getParameter(FB_SIG) == null) {
             String session = req.getParameter(SESSION);
@@ -109,8 +113,8 @@ public class FacebookCallbackServlet extends HttpServlet
             SwizzleServlet.setCookie(req, rsp, session);
 
             // redirect back to the application with the token tacked on
-            rsp.sendRedirect(SharedNaviUtil.buildRequest(
-                FacebookLogic.getCanvasUrl(canvas), TOKEN, token));
+            rsp.sendRedirect(SharedNaviUtil.buildRequest(FacebookLogic.getCanvasUrl(canvas),
+                TOKEN, token, NEW_INSTALL, newInstall, TRACKING, trackingId));
             return;
         }
 
@@ -133,7 +137,7 @@ public class FacebookCallbackServlet extends HttpServlet
         if (session == null) {
             // redirect to app login page and bail (parameters aren't retained so don't bother)
             log.info("Redirecting to login", "key", info.apiKey);
-            MsoyHttpServer.sendTopRedirect(rsp, getLoginURL(info.apiKey));
+            MsoyHttpServer.sendTopRedirect(rsp, info.getLoginURL());
             return;
         }
 
@@ -147,6 +151,13 @@ public class FacebookCallbackServlet extends HttpServlet
             // now we can attach some encoded % characters, now that facebook is finished double
             // encoding the parameters on the way to the callback (I doubt they'll ever fix that)
             token = StringUtil.encode(info.attachCreds(token, creds));
+
+            // track it
+            // TODO: Kontagent tracking for API games?
+            if (info.mainApp) {
+                _tracker.trackUsage(
+                    Long.parseLong(creds.uid), trackingId, !StringUtil.isBlank(newInstall));
+            }
 
             log.info("Redirecting to token", "key", info.apiKey, "token", token);
 
@@ -162,8 +173,10 @@ public class FacebookCallbackServlet extends HttpServlet
         // otherwise redirect the top frame back to this page with the already-processed tokens
         log.info("Initiating swizzle", "session", session, "token", token,
             "canvas", info.canvasName);
+
         MsoyHttpServer.sendTopRedirect(rsp, SharedNaviUtil.buildRequest(
-            req.getRequestURI(), SESSION, session, TOKEN, token, CANVAS, info.canvasName));
+            req.getRequestURI(), SESSION, session, TOKEN, token, CANVAS, info.canvasName,
+            TRACKING, trackingId, NEW_INSTALL, newInstall));
     }
 
     /**
@@ -248,11 +261,11 @@ public class FacebookCallbackServlet extends HttpServlet
             }
         }
 
+        // NOTE: we currently do not track application additions here, because we don't have access
+        // to the tracking id parameter - instead adds are tracked specially by attaching
+        // NEW_INSTALL to the parameters for the login redirect and checking it later
         long uid = Long.parseLong(req.getParameter(FB_USER));
-        if (added) {
-            // TODO: tracking tags
-            _tracker.trackApplicationAdded(uid);
-        } else {
+        if (!added) {
             _tracker.trackApplicationRemoved(uid);
         }
     }
@@ -301,7 +314,8 @@ public class FacebookCallbackServlet extends HttpServlet
             info.apiKey = ServerConfig.config.getValue("facebook.api_key", "");
             info.appSecret = ServerConfig.config.getValue("facebook.secret", "");
             info.canvasName = ServerConfig.config.getValue("facebook.canvas_name", "");
-    
+            info.mainApp = true;
+
             if (path.startsWith(PING_PATH)) {
                 // pings don't have game and vector data, just return
                 info.ping = true;
@@ -314,7 +328,8 @@ public class FacebookCallbackServlet extends HttpServlet
             if (info.vector == null) {
                 info.vector = FacebookTemplateCard.toEntryVector("app", "");
             }
-            info.challenge = req.getParameter(ArgNames.FB_PARAM_CHALLENGE) != null;
+            info.challenge = req.getParameter(CHALLENGE) != null;
+            info.trackingId = req.getParameter(TRACKING);
             return info;
         }
 
@@ -346,11 +361,6 @@ public class FacebookCallbackServlet extends HttpServlet
         return info;
     }
 
-    protected static String getLoginURL (String key)
-    {
-        return "http://www.facebook.com/login.php?api_key=" + key + "&canvas=1&v=1.0";
-    }
-
     protected static class ReqInfo
     {
         public FacebookGame game;
@@ -361,6 +371,8 @@ public class FacebookCallbackServlet extends HttpServlet
         public String vector;
         public boolean challenge;
         public boolean ping;
+        public String trackingId;
+        public boolean mainApp;
 
         /**
          * Gets the GWT token that the user should be redirected to in the whirled application.
@@ -406,6 +418,22 @@ public class FacebookCallbackServlet extends HttpServlet
             return Pages.fromHistory(token).makeToken(
                 Args.fromHistory(token), creds.uid, creds.sessionKey);
         }
+
+        protected String getLoginURL ()
+        {
+            // pass in an installed flag so we know when the user has arrived for the first time
+            String nextUrl = SharedNaviUtil.buildRequest(
+                FacebookLogic.getCanvasUrl(canvasName), NEW_INSTALL, "y");
+
+            // preserve the tracking id after login
+            if (!StringUtil.isBlank(trackingId)) {
+                nextUrl = SharedNaviUtil.buildRequest(nextUrl, TRACKING, trackingId);
+            }
+
+            // assemble the url with all the parameters
+            return SharedNaviUtil.buildRequest("http://www.facebook.com/login.php",
+                "api_key", apiKey, "canvas", "1", "v", "1.0", "next", StringUtil.encode(nextUrl));
+        }
     }
 
     @Inject protected FacebookLogic _faceLogic;
@@ -431,4 +459,7 @@ public class FacebookCallbackServlet extends HttpServlet
     protected static final String SESSION = "session";
     protected static final String CANVAS = "canvas";
     protected static final String TOKEN = "token";
+    protected static final String TRACKING = ArgNames.FB_PARAM_TRACKING;
+    protected static final String CHALLENGE = ArgNames.FB_PARAM_CHALLENGE;
+    protected static final String NEW_INSTALL = "newuser";
 }

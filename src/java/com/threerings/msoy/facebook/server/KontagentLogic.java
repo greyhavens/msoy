@@ -24,6 +24,101 @@ import static com.threerings.msoy.Log.log;
 public class KontagentLogic
 {
     /**
+     * Kinds of links that we send, on behalf of a user or globally.
+     */
+    public enum LinkType
+    {
+        JOIN_APP("inva", MessageType.INVITE_RESPONSE),
+        PLAY_GAME("invg", MessageType.INVITE_RESPONSE);
+
+        /** The unique id for composing and parsing. */
+        public String id;
+
+        /** The type of message to send to Kontagent on click-through. */
+        public MessageType responseType;
+
+        LinkType (String id, MessageType responseType) {
+            this.id = id;
+            this.responseType = responseType;
+        }
+    }
+
+    /**
+     * A unique instance of a link we've sent out ourselves or on behalf of a user.
+     */
+    public static class SentLink
+    {
+        /** The type of link. */
+        public LinkType type;
+
+        /** The subtype (e.g. a game id). */
+        public String subtype;
+
+        /** The Kontagent tracking tag. */
+        public String uuid;
+
+        /**
+         * Creates a new sent link of the given type, a null subtype and a new uuid using the given
+         * initiator as a seed.
+         */
+        public SentLink (LinkType type, long initiator)
+        {
+            this(type, null, initiator);
+        }
+
+        /**
+         * Creates a new sent link of the given type and subtype and a new uuid using the given
+         * initiator as a seed.
+         */
+        public SentLink (LinkType type, String subtype, long initiator)
+        {
+            this.type = type;
+            this.subtype = subtype;
+            this.uuid = genUUID(initiator);
+        }
+
+        /**
+         * Creates a new sent link from a previosuly composed tracking id. We assume the tracking
+         * id is sent directly from the web, therefore an exception is thrown if it is not in the
+         * expected format.
+         * @throws IllegalArgumentException if the tracking id or any component is invalid
+         */
+        public SentLink (String trackingId)
+        {
+            String[] components = trackingId.split("-");
+            if (components.length < 2 || components.length > 3) {
+                throw new IllegalArgumentException();
+            }
+            for (LinkType type : LinkType.values()) {
+                if (type.id.equals(components[0])) {
+                    this.type = type;
+                    break;
+                }
+            }
+            if (type == null) {
+                throw new IllegalArgumentException();
+            }
+            uuid = components[components.length - 1];
+            if (!uuid.matches("[0-9a-f]{16}")) {
+                throw new IllegalArgumentException();
+            }
+            if (components.length == 3) {
+                subtype = components[1];
+            }
+        }
+
+        /**
+         * Composes a flattened tracking id representing this sent link that can be later picked up
+         * from a URL to reconstruct the instance.
+         */
+        public String composeTrackingId ()
+        {
+            // type-subtype-uuid or type-uuid
+            return type.id + (StringUtil.isBlank(subtype) ? "" : "-" + subtype) + "-" + uuid;
+        }
+    }
+
+    /**
      * Builds the url for sending a kontagent message using the given name/value pairs, type,
      * timestamp and secrect. Blank values are removed. The time stamp and signature are appended
      * as required.
@@ -84,12 +179,41 @@ public class KontagentLogic
     }
 
     /**
-     * Tracks the addition of the application.
-     * TODO: tracking tags
+     * Tracks a visit to the application.
+     * @param uid id of the user visiting
+     * @param trackingId the tracking id given via the canvas url
+     * @param newInstall if this is the user's first visit after the login redirect
      */
-    public void trackApplicationAdded (long uid)
+    public void trackUsage (long uid, String trackingId, boolean newInstall)
     {
-        sendMessage("apa", "s", String.valueOf(uid));
+        SentLink sent;
+        try {
+            sent = StringUtil.isBlank(trackingId) ? null : new SentLink(trackingId);
+        } catch (IllegalArgumentException ex) {
+            log.warning("Invalid tracking id", trackingId);
+            return;
+        }
+
+        String uidStr = String.valueOf(uid);
+        if (newInstall) {
+            if (sent != null) {
+                sendMessage(MessageType.APP_ADDED, "s", uidStr, "u", sent.uuid);
+            } else {
+                sendMessage(MessageType.APP_ADDED, "s", uidStr, "su", ShortTag.UNKNOWN.id);
+            }
+        }
+
+        if (sent == null) {
+            // TODO: hmm, new short tag for different sources? (e.g. app bookmark vs. clicking the
+            // app link in an invite)
+            sendMessage(MessageType.UNDIRECTED, "s", uidStr, "tu", ShortTag.UNKNOWN.id, "i", "1");
+
+        } else if (sent.type.responseType == MessageType.INVITE_RESPONSE) {
+            sendMessage(MessageType.INVITE_RESPONSE, "r", uidStr, "i", "1");
+
+        } else {
+            log.warning("Unhandled response type", "trackingId", trackingId);
+        }
     }
 
     /**
@@ -97,12 +221,12 @@ public class KontagentLogic
      */
     public void trackApplicationRemoved (long uid)
     {
-        sendMessage("apr", "s", String.valueOf(uid));
+        sendMessage(MessageType.APP_REMOVED, "s", String.valueOf(uid));
     }
 
-    protected void sendMessage (String type, String... nameValuePairs)
+    protected void sendMessage (MessageType type, String... nameValuePairs)
     {
-        String url = buildMessageUrl(MSG_URL + type + "/",
+        String url = buildMessageUrl(MSG_URL + type.id + "/",
             String.valueOf(System.currentTimeMillis()), SECRET, nameValuePairs);
 
         if (StringUtil.isBlank(API_KEY)) {
@@ -111,7 +235,7 @@ public class KontagentLogic
             return;
         }
 
-        log.debug("Sending message", "url", url);
+        log.info("Sending message", "url", url);
         try {
             HttpURLConnection conn = (HttpURLConnection)new URL(url).openConnection();
             if (conn.getResponseCode() != HttpURLConnection.HTTP_OK) {
@@ -121,6 +245,37 @@ public class KontagentLogic
 
         } catch (Exception ex) {
             log.warning("Failed to send message", "url", url, ex);
+        }
+    }
+
+    /**
+     * Kontagent message types.
+     */
+    protected enum MessageType
+    {
+        APP_ADDED("apa"),
+        APP_REMOVED("apr"),
+        UNDIRECTED("ucc"),
+        INVITE_RESPONSE("inr");
+
+        public String id;
+
+        MessageType (String id) {
+            this.id = id;
+        }
+    }
+
+    /**
+     * Kontagent short tag types.
+     */
+    protected enum ShortTag
+    {
+        UNKNOWN("unknown");
+
+        public String id;
+
+        ShortTag (String id) {
+            this.id = id;
         }
     }
 

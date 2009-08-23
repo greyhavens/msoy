@@ -80,16 +80,6 @@ public class FacebookLogic
     }
 
     /**
-     * Generates a tracking id value and assembles it in the usual format that can be parsed later
-     * when a user requests a page with the {@link ArgNames#FB_PARAM_TRACKING} parameter assigned.
-     */
-    public static String generateInviteTrackingId (FacebookGame game, long uid)
-    {
-        return (game == null ? TRACKING_APP_INVITE : TRACKING_GAME_INVITE + "-" +
-            game.getStringId()) + "-" + KontagentLogic.genUUID(uid);
-    }
-
-    /**
      * Returns a Facebook client not bound to any particular user's session with the deafault read
      * timeout.
      */

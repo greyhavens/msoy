@@ -41,6 +41,8 @@ import com.threerings.msoy.facebook.gwt.FacebookFriendInfo;
 import com.threerings.msoy.facebook.gwt.FacebookGame;
 import com.threerings.msoy.facebook.gwt.FacebookService;
 import com.threerings.msoy.facebook.gwt.FacebookTemplateCard;
+import com.threerings.msoy.facebook.server.KontagentLogic.SentLink;
+import com.threerings.msoy.facebook.server.KontagentLogic.LinkType;
 import com.threerings.msoy.facebook.server.persist.FacebookRepository;
 import com.threerings.msoy.facebook.server.persist.FacebookTemplateRecord;
 
@@ -259,7 +261,10 @@ public class FacebookServlet extends MsoyServiceServlet
         }
 
         // generate the tracking id for the invite
-        info.trackingId = FacebookLogic.generateInviteTrackingId(game, userId);
+        SentLink tracker = game == null ?
+            new SentLink(LinkType.JOIN_APP, userId) :
+            new SentLink(LinkType.PLAY_GAME, game.getStringId(), userId);
+        info.trackingId = tracker.composeTrackingId();
 
         return info;
     }
@@ -365,6 +370,7 @@ public class FacebookServlet extends MsoyServiceServlet
 
     @Inject protected FacebookLogic _fbLogic;
     @Inject protected FacebookRepository _facebookRepo;
+    @Inject protected KontagentLogic _tracker;
     @Inject protected MemberRepository _memberRepo;
     @Inject protected MsoyGameRepository _mgameRepo;
     @Inject protected MoneyRepository _moneyRepo;
