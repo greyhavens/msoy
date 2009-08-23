@@ -40,6 +40,7 @@ import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.gwt.SharedNaviUtil;
 import com.threerings.msoy.web.gwt.WebCreds;
+import com.threerings.msoy.web.gwt.ArgNames.FBParam;
 
 import com.threerings.msoy.web.server.AffiliateCookie;
 import com.threerings.msoy.web.server.MsoyHttpServer;
@@ -324,7 +325,7 @@ public class FacebookCallbackServlet extends HttpServlet
 
             // this is a normal request for Whirled Games, parse params for redirect
             info.game = _faceLogic.parseGame(req);
-            info.vector = req.getParameter(ArgNames.VECTOR);
+            info.vector = req.getParameter(FBParam.VECTOR.name);
             if (info.vector == null) {
                 info.vector = FacebookTemplateCard.toEntryVector("app", "");
             }
@@ -459,7 +460,7 @@ public class FacebookCallbackServlet extends HttpServlet
     protected static final String SESSION = "session";
     protected static final String CANVAS = "canvas";
     protected static final String TOKEN = "token";
-    protected static final String TRACKING = ArgNames.FB_PARAM_TRACKING;
-    protected static final String CHALLENGE = ArgNames.FB_PARAM_CHALLENGE;
+    protected static final String TRACKING = FBParam.TRACKING.name;
+    protected static final String CHALLENGE = FBParam.CHALLENGE.name;
     protected static final String NEW_INSTALL = "newuser";
 }

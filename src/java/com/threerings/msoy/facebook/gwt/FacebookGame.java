@@ -8,6 +8,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 import com.threerings.msoy.web.gwt.ArgNames;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
+import com.threerings.msoy.web.gwt.ArgNames.FBParam;
 
 /**
  * Represents a Whirled or Mochi game on Facebook.
@@ -106,7 +107,7 @@ public class FacebookGame
      */
     public String[] getCanvasArgs ()
     {
-        return new String[] {choose(ArgNames.FB_PARAM_GAME, ArgNames.FB_PARAM_MOCHI_GAME), _id};
+        return new String[] {choose(FBParam.GAME.name, FBParam.MOCHI_GAME.name), _id};
     }
 
     /**

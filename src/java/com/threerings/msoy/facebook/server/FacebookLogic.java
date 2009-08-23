@@ -41,7 +41,7 @@ import com.threerings.msoy.server.persist.BatchInvoker;
 import com.threerings.msoy.server.persist.ExternalMapRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
-import com.threerings.msoy.web.gwt.ArgNames;
+import com.threerings.msoy.web.gwt.ArgNames.FBParam;
 import com.threerings.msoy.web.gwt.CookieNames;
 import com.threerings.msoy.web.gwt.ExternalAuther;
 import com.threerings.msoy.web.gwt.FacebookCreds;
@@ -136,11 +136,11 @@ public class FacebookLogic
      */
     public FacebookGame parseGame (HttpServletRequest req)
     {
-        if (req.getParameter(ArgNames.FB_PARAM_GAME) != null) {
-            return new FacebookGame(Integer.parseInt(req.getParameter(ArgNames.FB_PARAM_GAME)));
+        if (req.getParameter(FBParam.GAME.name) != null) {
+            return new FacebookGame(Integer.parseInt(req.getParameter(FBParam.GAME.name)));
 
-        } else if (req.getParameter(ArgNames.FB_PARAM_MOCHI_GAME) != null) {
-            return new FacebookGame(req.getParameter(ArgNames.FB_PARAM_MOCHI_GAME));
+        } else if (req.getParameter(FBParam.MOCHI_GAME.name) != null) {
+            return new FacebookGame(req.getParameter(FBParam.MOCHI_GAME.name));
         }
         return null;
     }

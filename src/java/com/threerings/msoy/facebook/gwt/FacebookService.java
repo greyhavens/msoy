@@ -52,7 +52,7 @@ public interface FacebookService extends RemoteService
          */
         public String[] trackingArgs ()
         {
-            return new String[] {ArgNames.FB_PARAM_TRACKING, trackingId};
+            return new String[] {ArgNames.FBParam.TRACKING.name, trackingId};
         }
     }
 

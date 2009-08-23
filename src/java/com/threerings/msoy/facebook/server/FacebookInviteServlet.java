@@ -35,6 +35,7 @@ import com.threerings.msoy.web.gwt.MarkupBuilder;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.SharedNaviUtil;
 import com.threerings.msoy.web.gwt.WebCreds;
+import com.threerings.msoy.web.gwt.ArgNames.FBParam;
 import com.threerings.msoy.web.server.MemberHelper;
 import com.threerings.msoy.web.server.MsoyHttpServer;
 
@@ -65,7 +66,7 @@ public class FacebookInviteServlet extends HttpServlet
     
                 int gameId;
                 try {
-                    String gameIdStr = req.getParameter(ArgNames.FB_PARAM_GAME);
+                    String gameIdStr = req.getParameter(FBParam.GAME.name);
                     if (gameIdStr == null) {
                         rsp.sendError(HttpServletResponse.SC_NOT_FOUND);
                         return;
@@ -127,7 +128,7 @@ public class FacebookInviteServlet extends HttpServlet
                 // head back to the facebook app main page
                 MsoyHttpServer.sendTopRedirect(rsp, canvas);
 
-            } else if (req.getParameter(ArgNames.FB_PARAM_CHALLENGE) != null) {
+            } else if (req.getParameter(FBParam.CHALLENGE.name) != null) {
                 // head back to the app and do the final phase of the challenge flow
                 MsoyHttpServer.sendTopRedirect(rsp, SharedNaviUtil.buildRequest(
                     SharedNaviUtil.buildRequest(canvas, game.getCanvasArgs()),
@@ -158,7 +159,7 @@ public class FacebookInviteServlet extends HttpServlet
             .put("acceptPath", Pages.WORLD.makeFriendURL(memberId, Args.fromToken(acceptPath)))
             .put("acceptLabel", "Play " + gameName)
             .put("action", SharedNaviUtil.buildRequest(
-                DeploymentConfig.serverURL + "fbinvite/done", ArgNames.FB_PARAM_GAME, "" + gameId))
+                DeploymentConfig.serverURL + "fbinvite/done", FBParam.GAME.name, "" + gameId))
             .put("message", "I'm playing " + gameName + " on Whirled, join me!")
             .put("apiKey", ServerConfig.config.getValue("facebook.api_key", ""))
             .put("formElemId", FORM_TAG_ID)

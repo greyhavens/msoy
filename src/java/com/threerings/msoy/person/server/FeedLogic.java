@@ -33,7 +33,7 @@ import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
-import com.threerings.msoy.web.gwt.ArgNames;
+import com.threerings.msoy.web.gwt.ArgNames.FBParam;
 import com.threerings.msoy.web.gwt.ExternalAuther;
 import com.threerings.msoy.web.gwt.SharedNaviUtil;
 
@@ -309,8 +309,7 @@ public class FeedLogic
 
         // set up the data for the story
         String actionURL = SharedNaviUtil.buildRequest(FacebookLogic.WHIRLED_APP_CANVAS,
-            ArgNames.FB_PARAM_GAME, String.valueOf(gameId),
-            ArgNames.VECTOR, template.toEntryVector());
+            FBParam.GAME.name, ""+gameId, FBParam.VECTOR.name, template.toEntryVector());
         Map<String, String> data = Maps.newHashMap();
         data.put("action_url", actionURL);
         data.put("game", gameName);

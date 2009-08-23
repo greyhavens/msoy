@@ -45,7 +45,7 @@ public class FBChallengeFeeder
         // action link goes to either the Whirled game detail or the Mochi embed
         String actionURL = SharedNaviUtil.buildRequest(
             FacebookUtil.APP_CANVAS, _game.getCanvasArgs());
-        actionURL = SharedNaviUtil.buildRequest(actionURL, ArgNames.VECTOR, vector);
+        actionURL = SharedNaviUtil.buildRequest(actionURL, ArgNames.FBParam.VECTOR.name, vector);
 
         FacebookUtil.FeedStoryImages images = new FacebookUtil.FeedStoryImages();
         images.add(result.thumbnailURL, actionURL, ACCESSIBLE_GAME_IMAGE);
