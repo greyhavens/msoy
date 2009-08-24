@@ -224,6 +224,37 @@ public class KontagentLogic
         sendMessage(MessageType.APP_REMOVED, "s", String.valueOf(uid));
     }
 
+    /**
+     * Tracks an invite sent by the user. The tracking id is normally obtained from a previously
+     * constructed {@link SentLink} and passed via the cgi invite submission parameters.
+     */
+    public void trackInviteSent (long senderId, String trackingId, String[] recipients)
+    {
+        SentLink link = parseTrackingId(trackingId, false);
+        if (link == null) {
+            return;
+        }
+
+        sendMessage(MessageType.INVITE_SENT, "s", String.valueOf(senderId),
+            "r", StringUtil.join(recipients, StringUtil.encode(",")), "u", link.uuid,
+            "st1", link.subtype);
+    }
+
+    protected SentLink parseTrackingId (String trackingId, boolean allowBlank)
+    {
+        if (allowBlank && StringUtil.isBlank(trackingId)) {
+            return null;
+        }
+
+        try {
+            return new SentLink(trackingId);
+
+        } catch (IllegalArgumentException ex) {
+            log.warning("Invalid tracking id", trackingId);
+            return null;
+        }
+    }
+
     protected void sendMessage (MessageType type, String... nameValuePairs)
     {
         String url = buildMessageUrl(MSG_URL + type.id + "/",
@@ -256,7 +287,8 @@ public class KontagentLogic
         APP_ADDED("apa"),
         APP_REMOVED("apr"),
         UNDIRECTED("ucc"),
-        INVITE_RESPONSE("inr");
+        INVITE_RESPONSE("inr"),
+        INVITE_SENT("ins");
 
         public String id;
 
