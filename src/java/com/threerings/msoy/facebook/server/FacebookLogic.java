@@ -343,9 +343,13 @@ public class FacebookLogic
     }
 
     protected <T> void sendNotifications (FacebookJaxbRestClient client, String id, String text,
-        List<T> batch, Function<T, FQL.Exp> toUserId, Predicate<FQLQuery.Record> filter)
+        List<T> batch, Function<T, FQL.Exp> toUserId, Predicate<FQLQuery.Record> filter,
+        String logType)
     {
         try {
+            if (logType != null) {
+                log.info("Sending notifications", "type", logType, "batch", batch);
+            }
             _facebookRepo.noteNotificationProgress(id, "Verifying", 0, 0);
 
             List<FQL.Exp> uids = Lists.transform(batch, toUserId);
@@ -361,18 +365,21 @@ public class FacebookLogic
                 targetIds.add(Long.valueOf(result.getField(UID)));
             }
 
+            if (logType != null) {
+                log.info("Resolved targets", "type", logType, "targetIds", targetIds);
+            }
             if (targetIds.size() == 0) {
                 return;
             }
 
             _facebookRepo.noteNotificationProgress(id, "Sending", targetIds.size(), 0);
             client.notifications_send(targetIds, text, true);
+            log.info("Sent notifications", "id", id, "response", client.getRawResponse());
             _facebookRepo.noteNotificationProgress(id, "Sent", 0, targetIds.size());
 
         } catch (Exception e) {
             log.warning("Failed to send notifications", "id", id, "targetCount", batch.size(),
                 "rawResponse", client.getRawResponse(), e);
-            _facebookRepo.noteNotificationProgress(id, "Failed", 0, 0);
         }
     }
 
@@ -446,7 +453,7 @@ public class FacebookLogic
             _interval.cancel();
         }
 
-        protected void send ()
+        protected void trySend ()
             throws ServiceException
         {
             _facebookRepo.noteNotificationStarted(_notifRec.id);
@@ -462,17 +469,19 @@ public class FacebookLogic
                 // send, see if exception stops
                 List<ExternalMapRecord> targets = loadMappedFriends(_mrec, false, alloc);
                 sendNotifications(getSessionInfo(_mrec, BATCH_READ_TIMEOUT).client,
-                    _notifRec.id, _notifRec.text, targets, MAPREC_TO_UID_EXP, APP_USER_FILTER);
+                    _notifRec.id, _notifRec.text, targets, MAPREC_TO_UID_EXP, APP_USER_FILTER,
+                    "friends_using_app");
 
             } else if (_mrec != null) {
                 // see above
-                List<Long> targets = loadFriends(_mrec).subList(0, alloc);
+                List<Long> targets = loadFriends(_mrec);
+                targets = alloc >= targets.size() ? targets : targets.subList(0, alloc);
                 sendNotifications(getSessionInfo(_mrec, BATCH_READ_TIMEOUT).client,
                     _notifRec.id, _notifRec.text, targets, new Function<Long, FQL.Exp> () {
                     public FQL.Exp apply (Long uid) {
                         return FQL.unquoted(uid);
                     }
-                }, Predicates.not(APP_USER_FILTER));
+                }, Predicates.not(APP_USER_FILTER), "friends_not_using_app");
 
             } else {
                 final FacebookJaxbRestClient client = getFacebookClient(BATCH_READ_TIMEOUT);
@@ -481,15 +490,27 @@ public class FacebookLogic
                     new Function<List<ExternalMapRecord>, Void>() {
                         public Void apply (List<ExternalMapRecord> batch) {
                             sendNotifications(client, _notifRec.id, _notifRec.text,
-                                batch, MAPREC_TO_UID_EXP, APP_USER_FILTER);
+                                batch, MAPREC_TO_UID_EXP, APP_USER_FILTER, null);
                             return null;
                         }
                     }, BATCH_SIZE);
             }
+        }
 
-            _facebookRepo.noteNotificationFinished(_notifRec.id);
-            removeNotification(_notifRec.id);
-            log.info("Successfully sent notifications", "id", _notifRec.id);
+        protected void send ()
+        {
+            try {
+                trySend();
+                log.info("Notification sending complete", "id", _notifRec.id);
+
+            } catch (Exception e) {
+                log.warning("Send-level notification failure", "id", _notifRec.id, e);
+
+            } finally {
+                _facebookRepo.noteNotificationProgress(_notifRec.id, "Finished", 0, 0);
+                _facebookRepo.noteNotificationFinished(_notifRec.id);
+                removeNotification(_notifRec.id);
+            }
         }
 
         protected FacebookNotificationRecord _notifRec;
@@ -497,11 +518,7 @@ public class FacebookLogic
         protected boolean _appFriendsOnly;
         protected Interval _interval = new Interval(_batchInvoker) {
             public void expired () {
-                try {
-                    send();
-                } catch (ServiceException se) {
-                    throw new RuntimeException(se);
-                }
+                send();
             }
         };
     }
