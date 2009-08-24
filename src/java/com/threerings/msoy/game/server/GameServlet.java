@@ -734,7 +734,7 @@ public class GameServlet extends MsoyServiceServlet
         }
     }
 
-    // from interface GAmeService
+    // from interface GameService
     public MochiGameInfo getMochiGame (String mochiTag)
         throws ServiceException
     {
