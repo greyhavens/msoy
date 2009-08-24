@@ -5,6 +5,7 @@ package com.threerings.msoy.data.all {
 
 import com.threerings.presents.dobj.DSet_Entry;
 
+import com.threerings.util.Comparators;
 import com.threerings.util.Integer;
 import com.threerings.util.Name;
 
@@ -19,9 +20,7 @@ public class MemberName extends Name
 {
     /** A sort function for sorting Names by their display portion, case insensitively.  */
     public static const BY_DISPLAY_NAME :Function = function (n1 :Name, n2 :Name) :int {
-        var val :int = n1.toString().toLowerCase().localeCompare(n2.toString().toLowerCase());
-        // massage the value into something that a Sort can handle
-        return (val > 0) ? 1 : ((val == 0) ? 0 : -1);
+        return Comparators.compareStringsInsensitively(n1.toString(), n2.toString());
     };
 
     /** Used to reprepsent a member that has been deleted but is still referenced as an item
