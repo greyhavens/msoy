@@ -474,7 +474,7 @@ public class FacebookLogic
                     public FQL.Exp apply (Long uid) {
                         return FQL.unquoted(uid);
                     }
-                }, Predicates.not(APP_USER_FILTER), false);
+                }, Predicates.<FQLQuery.Record>alwaysTrue(), false);
 
             } else {
                 final FacebookJaxbRestClient client = getFacebookClient(BATCH_READ_TIMEOUT);
