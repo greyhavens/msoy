@@ -23,7 +23,7 @@ public class EntityMemories
     public var ident :ItemIdent;
 
     /** The memory key/values. */
-    public var memories :StreamableHashMap;
+    public var memories :StreamableHashMap; // of String
 
     // from interface DSet_Entry
     public function getKey () :Object
