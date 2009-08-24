@@ -40,7 +40,6 @@ import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.gwt.SharedNaviUtil;
 import com.threerings.msoy.web.gwt.WebCreds;
-import com.threerings.msoy.web.gwt.ArgNames.FBParam;
 
 import com.threerings.msoy.web.server.AffiliateCookie;
 import com.threerings.msoy.web.server.MsoyHttpServer;
@@ -87,14 +86,14 @@ public class FacebookCallbackServlet extends HttpServlet
         throws IOException, ServiceException
     {
         // we want to preserve these values across all redirects, stash them here
-        String trackingId = StringUtil.deNull(req.getParameter(TRACKING));
-        String newInstall = StringUtil.deNull(req.getParameter(NEW_INSTALL));
+        String trackingId = StringUtil.deNull(FrameParam.TRACKING.get(req));
+        String newInstall = StringUtil.deNull(FrameParam.NEW_INSTALL.get(req));
 
         // if we don't have a signature, then we must be swizzling
-        if (req.getParameter(FB_SIG) == null) {
-            String session = req.getParameter(SESSION);
-            String canvas = req.getParameter(CANVAS);
-            String token = req.getParameter(TOKEN);
+        if (ConnParam.SIG.get(req) == null) {
+            String session = FrameParam.SESSION.get(req);
+            String canvas = FrameParam.CANVAS.get(req);
+            String token = FrameParam.TOKEN.get(req);
             if (session == null || canvas == null || token == null) {
                 throw new ServiceException("Swizzle parameters not found [" +
                     session + ", " + canvas + ", " + token + "]?");
@@ -115,7 +114,8 @@ public class FacebookCallbackServlet extends HttpServlet
 
             // redirect back to the application with the token tacked on
             rsp.sendRedirect(SharedNaviUtil.buildRequest(FacebookLogic.getCanvasUrl(canvas),
-                TOKEN, token, NEW_INSTALL, newInstall, TRACKING, trackingId));
+                FrameParam.TOKEN.name, token, FrameParam.NEW_INSTALL.name, newInstall,
+                FrameParam.TRACKING.name, trackingId));
             return;
         }
 
@@ -145,7 +145,7 @@ public class FacebookCallbackServlet extends HttpServlet
         // set up the token to redirect to - either the pre-processed one after we've swizzled in
         // the session cookie, or the one from the original request; NOTE: the TOKEN parameter is
         // double encoded, but we are careful to avoid confusion and not give it any % characters
-        String token = StringUtil.getOr(req.getParameter(TOKEN), info.getDestinationToken());
+        String token = StringUtil.getOr(FrameParam.TOKEN.get(req), info.getDestinationToken());
 
         // is the session already set up?
         if (session.equals(CookieUtil.getCookieValue(req, WebCreds.credsCookie()))) {
@@ -176,8 +176,9 @@ public class FacebookCallbackServlet extends HttpServlet
             "canvas", info.canvasName);
 
         MsoyHttpServer.sendTopRedirect(rsp, SharedNaviUtil.buildRequest(
-            req.getRequestURI(), SESSION, session, TOKEN, token, CANVAS, info.canvasName,
-            TRACKING, trackingId, NEW_INSTALL, newInstall));
+            req.getRequestURI(), FrameParam.SESSION.name, session, FrameParam.TOKEN.name, token,
+            FrameParam.CANVAS.name, info.canvasName, FrameParam.TRACKING.name, trackingId,
+            FrameParam.NEW_INSTALL.name, newInstall));
     }
 
     /**
@@ -188,14 +189,13 @@ public class FacebookCallbackServlet extends HttpServlet
     protected String activateSession (ReqInfo info, HttpServletRequest req, FacebookAppCreds creds)
         throws ServiceException
     {
-        creds.sessionKey = req.getParameter(FB_SESSION_KEY);
+        creds.sessionKey = req.getParameter(ConnParam.SESSION_KEY.name);
         if (creds.sessionKey == null) {
             return null;
         }
 
         // we should either have 'canvas_user' or 'user'
-        creds.uid = StringUtil.getOr(req.getParameter(FB_CANVAS_USER),
-            req.getParameter(FB_USER));
+        creds.uid = StringUtil.getOr(ConnParam.CANVAS_USER.get(req), ConnParam.USER.get(req));
         creds.apiKey = info.apiKey;
         creds.appSecret = info.appSecret;
 
@@ -251,12 +251,12 @@ public class FacebookCallbackServlet extends HttpServlet
 
         boolean added;
         String truth = "1";
-        if (truth.equals(req.getParameter(FB_INSTALL)) ||
-            truth.equals(req.getParameter(FB_AUTH))) {
+        if (truth.equals(ConnParam.INSTALL.get(req)) ||
+            truth.equals(ConnParam.AUTH.get(req))) {
             added = true;
         } else {
             added = false;
-            if (!truth.equals(req.getParameter(FB_UNINSTALL))) {
+            if (!truth.equals(ConnParam.UNINSTALL.get(req))) {
                 log.warning("Ping parameter not set, assuming removal");
                 MsoyHttpServer.dumpParameters(req);
             }
@@ -265,7 +265,7 @@ public class FacebookCallbackServlet extends HttpServlet
         // NOTE: we currently do not track application additions here, because we don't have access
         // to the tracking id parameter - instead adds are tracked specially by attaching
         // NEW_INSTALL to the parameters for the login redirect and checking it later
-        long uid = Long.parseLong(req.getParameter(FB_USER));
+        long uid = Long.parseLong(ConnParam.USER.get(req));
         if (!added) {
             _tracker.trackApplicationRemoved(uid);
         }
@@ -278,17 +278,17 @@ public class FacebookCallbackServlet extends HttpServlet
     protected void validateSignature (HttpServletRequest req, String secret)
         throws ServiceException
     {
-        String sig = req.getParameter("fb_sig");
+        String sig = ConnParam.SIG.get(req);
         if (StringUtil.isBlank(sig)) {
-            throw new ServiceException("Missing fb_sig parameter");
+            throw new ServiceException("Missing sig parameter");
         }
 
         // obtain a list of all fb_sig_ keys and sort them alphabetically by key
         List<String> params = Lists.newArrayList();
         for (String pname : ParameterUtil.getParameterNames(req)) {
-            if (pname.startsWith(FBKEY_PREFIX)) {
-                params.add(pname.substring(FBKEY_PREFIX.length()) + "=" +
-                           req.getParameterValues(pname)[0]);
+            String signedName = ConnParam.extractSignedName(pname);
+            if (signedName != null) {
+                params.add(signedName + "=" + req.getParameterValues(pname)[0]);
             }
         }
         Collections.sort(params);
@@ -296,7 +296,7 @@ public class FacebookCallbackServlet extends HttpServlet
         // concatenate them all together (no separator) and MD5 this plus our secret key
         String sigdata = StringUtil.join(params.toArray(new String[params.size()]), "");
         if (!sig.equals(StringUtil.md5hex(sigdata + secret))) {
-            throw new ServiceException("Invalid fb_sig parameter");
+            throw new ServiceException("Invalid sig parameter");
         }
     }
 
@@ -325,12 +325,12 @@ public class FacebookCallbackServlet extends HttpServlet
 
             // this is a normal request for Whirled Games, parse params for redirect
             info.game = _faceLogic.parseGame(req);
-            info.vector = req.getParameter(FBParam.VECTOR.name);
+            info.vector = FrameParam.VECTOR.get(req);
             if (info.vector == null) {
                 info.vector = FacebookTemplateCard.toEntryVector("app", "");
             }
-            info.challenge = req.getParameter(CHALLENGE) != null;
-            info.trackingId = req.getParameter(TRACKING);
+            info.challenge = FrameParam.CHALLENGE.get(req) != null;
+            info.trackingId = FrameParam.TRACKING.get(req);
             return info;
         }
 
@@ -424,16 +424,101 @@ public class FacebookCallbackServlet extends HttpServlet
         {
             // pass in an installed flag so we know when the user has arrived for the first time
             String nextUrl = SharedNaviUtil.buildRequest(
-                FacebookLogic.getCanvasUrl(canvasName), NEW_INSTALL, "y");
+                FacebookLogic.getCanvasUrl(canvasName), FrameParam.NEW_INSTALL.name, "y");
 
             // preserve the tracking id after login
             if (!StringUtil.isBlank(trackingId)) {
-                nextUrl = SharedNaviUtil.buildRequest(nextUrl, TRACKING, trackingId);
+                nextUrl = SharedNaviUtil.buildRequest(nextUrl,
+                    FrameParam.TRACKING.name, trackingId);
             }
 
             // assemble the url with all the parameters
             return SharedNaviUtil.buildRequest("http://www.facebook.com/login.php",
                 "api_key", apiKey, "canvas", "1", "v", "1.0", "next", StringUtil.encode(nextUrl));
+        }
+    }
+
+    /**
+     * Parameters given to us by facebook connect, normally when someone is interacting with our
+     * app from facebook.com.
+     */
+    protected enum ConnParam
+    {
+        USER("user"),
+        CANVAS_USER("canvas_user"),
+        ADDED("added"),
+        SESSION_KEY("session_key"),
+        INSTALL("install"),
+        AUTH("authorize"),
+        UNINSTALL("uninstall"),
+        TIME("time"),
+        SIG("fb_sig", false);
+
+        /** The name of the parameter. */
+        public String name;
+
+        /**
+         * If the given name is a signed parameter name, return the part to use for the signature,
+         * otherwise null.
+         */
+        public static String extractSignedName (String pname)
+        {
+            return pname.startsWith(SIGNED_PREFIX) ?
+                pname.substring(SIGNED_PREFIX.length()) : null;
+        }
+
+        /**
+         * Shortcut to get the value of this parameter from a servlet request.
+         */
+        public String get (HttpServletRequest req)
+        {
+            return req.getParameter(name);
+        }
+
+        /** Prefix used for parameter signing. */
+        protected static final String SIGNED_PREFIX = "fb_sig_";
+
+        ConnParam (String name) {
+            this(name, true);
+        }
+
+        ConnParam (String name, boolean signed) {
+            this.name = signed ? (SIGNED_PREFIX + name) : name;
+        }
+    }
+
+    /**
+     * Parameters that we pass to our own frame, either indirectly through canvas page links (e.g.
+     * app.facebook.com/whired/?tr=...) or directly through redirects. Some parameters are copied
+     * from gwt-accessible parameters and others are purely internal.
+     */
+    protected enum FrameParam
+    {
+        SESSION("session"),
+        CANVAS("canvas"),
+        TOKEN("token"),
+        TRACKING(ArgNames.FBParam.TRACKING),
+        CHALLENGE(ArgNames.FBParam.CHALLENGE),
+        NEW_INSTALL("newuser"),
+        VECTOR(ArgNames.VECTOR);
+
+        /** The name of this parameter. */
+        public String name;
+
+        /**
+         * Shortcut to get the value of this parameter from a servlet request.
+         */
+        public String get (HttpServletRequest req)
+        {
+            return req.getParameter(name);
+        }
+
+        FrameParam (String name) {
+            this.name = name;
+        }
+
+        FrameParam (ArgNames.FBParam fbparam) {
+            this.name = fbparam.name;
         }
     }
 
@@ -444,23 +529,7 @@ public class FacebookCallbackServlet extends HttpServlet
     @Inject protected MsoyAuthenticator _auther;
     @Inject protected MsoyGameRepository _mgameRepo;
 
-    protected static final String FB_SIG = "fb_sig";
-    protected static final String FBKEY_PREFIX = FB_SIG + "_";
-    protected static final String FB_USER = FBKEY_PREFIX + "user";
-    protected static final String FB_CANVAS_USER = FBKEY_PREFIX + "canvas_user";
-    protected static final String FB_ADDED = FBKEY_PREFIX + "added";
-    protected static final String FB_SESSION_KEY = FBKEY_PREFIX + "session_key";
-    protected static final String FB_INSTALL = FBKEY_PREFIX + "install";
-    protected static final String FB_AUTH = FBKEY_PREFIX + "authorize";
-    protected static final String FB_UNINSTALL = FBKEY_PREFIX + "uninstall";
-    protected static final String FB_TIME = FBKEY_PREFIX + "time";
     protected static final int FBAUTH_DAYS = 2;
     protected static final String GAME_PATH = "/game/";
     protected static final String PING_PATH = "/ping/";
-    protected static final String SESSION = "session";
-    protected static final String CANVAS = "canvas";
-    protected static final String TOKEN = "token";
-    protected static final String TRACKING = FBParam.TRACKING.name;
-    protected static final String CHALLENGE = FBParam.CHALLENGE.name;
-    protected static final String NEW_INSTALL = "newuser";
 }
