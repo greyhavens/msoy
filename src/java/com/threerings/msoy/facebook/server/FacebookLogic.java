@@ -249,6 +249,7 @@ public class FacebookLogic
         List<ExternalMapRecord> exRecs = _memberRepo.loadExternalAccounts(
             ExternalAuther.FACEBOOK, facebookFriendIds);
         if (includeSelf) {
+            exRecs = Lists.newArrayList(exRecs);
             exRecs.add(sinf.mapRec);
         }
 
