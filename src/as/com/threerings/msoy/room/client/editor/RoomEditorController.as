@@ -12,8 +12,9 @@ import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.data.MsoyCodes;
 
 import com.threerings.util.ArrayUtil;
-import com.threerings.util.HashMap;
 import com.threerings.util.Log;
+import com.threerings.util.Map;
+import com.threerings.util.Maps;
 import com.threerings.util.StringUtil;
 
 import com.threerings.msoy.client.MemberService;
@@ -101,7 +102,7 @@ public class RoomEditorController
         _view.addEventListener(MouseEvent.MOUSE_DOWN, mouseDown);
 
         // clear out the names cache, and ping the server
-        _names = new HashMap();
+        _names.clear();
         queryServerForNames(this.scene.getFurni());
 
         // make the fake entrance
@@ -603,7 +604,7 @@ public class RoomEditorController
 
         // otherwise, try to find the right sprite in the room, and refresh the target from that
         if (_edit.target != null) {
-            var sprites :HashMap = _view.getFurniSprites();
+            var sprites :Map = _view.getFurniSprites();
             setTarget(sprites.get(_edit.target.getFurniData().id) as FurniSprite, null);
         } else {
             targetSpriteUpdated();
@@ -619,7 +620,7 @@ public class RoomEditorController
 
     /** Mapping from ItemIdents to combo box entries that contain both names and ItemIdents.  This
      * cache is updated once when the editor is opened, and then following each furni update. */
-    protected var _names :HashMap = new HashMap();
+    protected var _names :Map = Maps.newMapOf(ItemIdent);
 
     protected var _entranceSprite :EntranceSprite;
 

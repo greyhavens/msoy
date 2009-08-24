@@ -33,8 +33,9 @@ import com.whirled.ui.PlayerList;
 
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.ConfigValueSetEvent;
-import com.threerings.util.HashMap;
 import com.threerings.util.Log;
+import com.threerings.util.Map;
+import com.threerings.util.Maps;
 import com.threerings.util.Name;
 
 import com.threerings.display.ColorUtil;
@@ -1263,7 +1264,7 @@ public class ChatOverlay
     protected var _filteredMessages :Array = [];
 
     /** Maps localtype to the time we last hid the tab for that localtype. */
-    protected var _lastHidden :HashMap = new HashMap();
+    protected var _lastHidden :Map = Maps.newMapOf(String);
 
     /** If true, the sidebar is being suppressed and we shouldn't show it. */
     protected var _suppressSidebar :Boolean;

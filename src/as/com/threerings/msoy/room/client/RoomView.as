@@ -18,9 +18,10 @@ import flash.utils.ByteArray;
 
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.ConfigValueSetEvent;
-import com.threerings.util.HashMap;
 import com.threerings.util.Iterator;
 import com.threerings.util.Log;
+import com.threerings.util.Map;
+import com.threerings.util.Maps;
 import com.threerings.util.ObjectMarshaller;
 
 import com.threerings.crowd.data.PlaceObject;
@@ -900,7 +901,7 @@ public class RoomView extends Sprite
     /**
      * Sets all sprites in the supplied map to active or non-active.
      */
-    protected function setActive (map :HashMap, active :Boolean) :void
+    protected function setActive (map :Map, active :Boolean) :void
     {
         for each (var sprite :MsoySprite in map.values()) {
             if (sprite != _bg) {
@@ -912,7 +913,7 @@ public class RoomView extends Sprite
     /**
      * Shutdown all the sprites in the specified map.
      */
-    protected function removeAll (map :HashMap) :void
+    protected function removeAll (map :Map) :void
     {
         for each (var sprite :MsoySprite in map.values()) {
             removeSprite(sprite);
@@ -1042,16 +1043,16 @@ public class RoomView extends Sprite
     protected var _loadAllMedia :Boolean = false;
 
     /** A map of bodyOid -> OccupantSprite. */
-    protected var _occupants :HashMap = new HashMap();
+    protected var _occupants :Map = Maps.newMapOf(int);
 
     /** Maps ItemIdent -> MsoySprite for entities (furni, avatars, pets). */
-    protected var _entities :HashMap = new HashMap();
+    protected var _entities :Map = Maps.newMapOf(ItemIdent);
 
     /** The sprite we should center on. */
     protected var _centerSprite :MsoySprite;
 
     /** A map of bodyOid -> OccupantSprite for those that we'll remove when they stop moving. */
-    protected var _pendingRemovals :HashMap = new HashMap();
+    protected var _pendingRemovals :Map = Maps.newMapOf(int);
 
     /** If true, the scrolling should simply jump to the right position. */
     protected var _jumpScroll :Boolean = true;
@@ -1090,7 +1091,7 @@ public class RoomView extends Sprite
     protected var _bg :DecorSprite;
 
     /** A map of id -> Furni. */
-    protected var _furni :HashMap = new HashMap();
+    protected var _furni :Map = Maps.newMapOf(int);
 
     /** A list of other sprites (used during editing). */
     protected var _otherSprites :Array = new Array();

@@ -23,8 +23,9 @@ import mx.core.UIComponent;
 import mx.managers.ISystemManager;
 import mx.managers.ToolTipManager;
 
-import com.threerings.util.HashMap;
 import com.threerings.util.Log;
+import com.threerings.util.Map;
+import com.threerings.util.Maps;
 import com.threerings.util.ObjectMarshaller;
 
 import com.threerings.flex.CommandMenu;
@@ -1015,7 +1016,7 @@ public class RoomController extends SceneController
     protected var _roomView :RoomView;
 
     /** Contains active throttlers. ItemIdent -> Throttler. */
-    protected var _throttlers :HashMap = new HashMap();
+    protected var _throttlers :Map = Maps.newMapOf(ItemIdent);
 
     protected var _throttleChecker :Timer = new Timer(500);
 

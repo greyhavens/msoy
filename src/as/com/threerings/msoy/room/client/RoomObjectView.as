@@ -10,8 +10,8 @@ import flash.geom.Rectangle;
 
 import flash.utils.ByteArray;
 
-import com.threerings.util.HashMap;
 import com.threerings.util.ImmutableProxyObject;
+import com.threerings.util.Map;
 import com.threerings.util.Name;
 import com.threerings.util.Predicates;
 import com.threerings.util.ValueEvent;
@@ -128,7 +128,7 @@ public class RoomObjectView extends RoomView
     /**
      * Called by the editor to have direct access to our sprite list..
      */
-    public function getFurniSprites () :HashMap
+    public function getFurniSprites () :Map
     {
         return _furni;
     }

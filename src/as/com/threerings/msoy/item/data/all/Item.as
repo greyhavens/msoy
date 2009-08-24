@@ -4,8 +4,9 @@
 package com.threerings.msoy.item.data.all {
 
 import com.threerings.util.Comparable;
-import com.threerings.util.HashMap;
 import com.threerings.util.Hashable;
+import com.threerings.util.Map;
+import com.threerings.util.Maps;
 import com.threerings.util.MethodQueue;
 
 import com.threerings.io.ObjectInputStream;
@@ -426,7 +427,7 @@ public /*abstract*/ class Item
     private static function registerItemType (iclass :Class, itype :int) :int
     {
         if (_mapping == null) {
-            _mapping = new HashMap();
+            _mapping = Maps.newMapOf(int);
         }
         _mapping.put(itype, iclass);
         return itype;
@@ -475,6 +476,6 @@ public /*abstract*/ class Item
     protected var _furniMedia :MediaDesc;
 
     staticInit();
-    private static var _mapping :HashMap;
+    private static var _mapping :Map;
 }
 }

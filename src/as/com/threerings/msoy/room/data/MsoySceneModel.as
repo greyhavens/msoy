@@ -5,8 +5,9 @@ package com.threerings.msoy.room.data {
 
 import com.threerings.util.ArrayIterator;
 import com.threerings.util.ArrayUtil;
-import com.threerings.util.HashMap;
 import com.threerings.util.Iterator;
+import com.threerings.util.Map;
+import com.threerings.util.Maps;
 import com.threerings.util.Name;
 import com.threerings.util.Short;
 
@@ -192,7 +193,7 @@ public class MsoySceneModel extends SceneModel
             return;
         }
 
-        _portalInfo = new HashMap();
+        _portalInfo = Maps.newMapOf(int);
         for each (var furni :FurniData in furnis) {
             if (furni.actionType != FurniData.ACTION_PORTAL) {
                 continue;
@@ -280,6 +281,6 @@ public class MsoySceneModel extends SceneModel
     }
 
     /** Cached portal info. Not streamed. */
-    protected var _portalInfo :HashMap;
+    protected var _portalInfo :Map;
 }
 }

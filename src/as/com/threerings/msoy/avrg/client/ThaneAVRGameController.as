@@ -5,9 +5,10 @@ package com.threerings.msoy.avrg.client {
 
 import flash.utils.ByteArray;
 
-import com.threerings.util.HashMap;
 import com.threerings.util.Iterator;
 import com.threerings.util.Log;
+import com.threerings.util.Map;
+import com.threerings.util.Maps;
 import com.threerings.util.ResultAdapter;
 
 import com.threerings.presents.util.SafeObjectManager;
@@ -803,16 +804,17 @@ public class ThaneAVRGameController
     protected var _gameAgent :AVRGameAgent;
     protected var _gameObj :AVRGameObject;
     protected var _gameAgentObj :AVRGameAgentObject;
-    protected var _bindings :HashMap = new HashMap();
+    protected var _bindings :Map = Maps.newMapOf(int);
     protected var _setAdapter :SetAdapter = new SetAdapter(entryAdded, entryUpdated, entryRemoved);
     protected var _playerSubs :SafeObjectManager;
-    protected var _players :HashMap = new HashMap();
+    protected var _players :Map = Maps.newMapOf(int);
     protected var _transactions :Transactions = new Transactions();
 }
 
 }
 
-import com.threerings.util.HashMap;
+import com.threerings.util.Map;
+import com.threerings.util.Maps;
 import com.threerings.util.StringUtil;
 
 import com.threerings.presents.dobj.DEvent;
@@ -844,7 +846,7 @@ class SceneBinding
     public var propsSubscriber :SafeSubscriber;
     public var roomProps :RoomPropertiesObject;
     public var avatarAdapter :BackendAvatarAdapter;
-    public var mobs :HashMap = new HashMap();
+    public var mobs :Map = Maps.newMapOf(String);
 
     public function SceneBinding (ctrl :ThaneAVRGameController)
     {

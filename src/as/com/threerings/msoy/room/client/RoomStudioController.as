@@ -13,7 +13,8 @@ import flash.utils.ByteArray;
 
 import com.threerings.io.TypedArray;
 
-import com.threerings.util.HashMap;
+import com.threerings.util.Map;
+import com.threerings.util.Maps;
 import com.threerings.util.MethodQueue;
 import com.threerings.util.ObjectMarshaller;
 
@@ -241,7 +242,7 @@ public class RoomStudioController extends RoomController
     protected function updateMemory3 (
         ident :ItemIdent, key :String, data :ByteArray, callback :Function) :void
     {
-        var map :HashMap = getMemoryMap(ident);
+        var map :Map = getMemoryMap(ident);
         if (data == null) {
             map.remove(key);
         } else {
@@ -289,7 +290,7 @@ public class RoomStudioController extends RoomController
         if (spr == null) {
             return null;
         }
-        var map :HashMap = getMemoryMap(spr.getItemIdent());
+        var map :Map = getMemoryMap(spr.getItemIdent());
         if (map.isEmpty()) {
             return null;
         }
@@ -311,11 +312,11 @@ public class RoomStudioController extends RoomController
     /**
      * Takes care of initializing any memory sent down from the server.
      */
-    protected function getMemoryMap (ident :ItemIdent) :HashMap
+    protected function getMemoryMap (ident :ItemIdent) :Map
     {
-        var map :HashMap;
+        var map :Map;
         if (_memories == null) { // see if we need to initialize
-            _memories = new HashMap();
+            _memories = Maps.newMapOf(ItemIdent);
             // first things first- we need to set up memories from the server
             try {
                 map = getMemoryMap(_studioView.getTestingSprite().getItemIdent());
@@ -339,9 +340,9 @@ public class RoomStudioController extends RoomController
         }
 
         // after that, just return a map, always
-        map = _memories.get(ident) as HashMap;
+        map = _memories.get(ident) as Map;
         if (map == null) {
-            map = new HashMap();
+            map = Maps.newMapOf(String);
             _memories.put(ident, map);
         }
         return map;
@@ -349,8 +350,8 @@ public class RoomStudioController extends RoomController
 
     protected var _studioView :RoomStudioView;
 
-    /** Maps ItemIdent -> HashMap<String, ByteArray> */
-    protected var _memories :HashMap;
+    /** Maps ItemIdent -> Map<String, ByteArray> */
+    protected var _memories :Map;
 
     /** Have we warned the user that the memories won't save? */
     protected var _warnedMemory :Boolean;

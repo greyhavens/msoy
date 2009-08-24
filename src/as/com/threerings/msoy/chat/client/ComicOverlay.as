@@ -19,8 +19,9 @@ import com.threerings.crowd.chat.data.SystemMessage;
 import com.threerings.crowd.chat.data.UserMessage;
 
 import com.threerings.util.ArrayUtil;
-import com.threerings.util.HashMap;
 import com.threerings.util.Log;
+import com.threerings.util.Map;
+import com.threerings.util.Maps;
 import com.threerings.util.Name;
 
 import com.threerings.display.ColorUtil;
@@ -66,7 +67,7 @@ public class ComicOverlay extends ChatOverlay
         for each (var bubble :BubbleGlyph in _allBubbles) {
             removeGlyph(bubble);
         }
-        _bubbles = new HashMap();
+        _bubbles.clear();
         _allBubbles = [];
 
         var overlays :Array = [ _scrollOverlay /*, _staticOverlay*/ ];
@@ -88,7 +89,7 @@ public class ComicOverlay extends ChatOverlay
         for each (var bubble :BubbleGlyph in _allBubbles) {
             removeGlyph(bubble);
         }
-        _bubbles = new HashMap();
+        _bubbles.clear();
         _allBubbles = [];
     }
 
@@ -573,7 +574,7 @@ public class ComicOverlay extends ChatOverlay
     protected var _newPlacePoint :int = 0;
 
     /** Maps speaker name to BubbleCloud */
-    protected var _bubbles :HashMap = new HashMap();
+    protected var _bubbles :Map = Maps.newMapOf(Name);
 
     protected var _allBubbles :Array = [];
 
