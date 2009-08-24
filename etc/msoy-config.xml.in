@@ -104,7 +104,6 @@
       <library-path>
          <path-element>../dist/lib/ooolib-0.0-SNAPSHOT.swc</path-element>
          <path-element>../dist/lib/naryalib-0.0-SNAPSHOT.swc</path-element>
-         <path-element>../dist/lib/player-env-0.0-SNAPSHOT.swc</path-element>
          <path-element>../dist/lib/vilyalib-0.0-SNAPSHOT.swc</path-element>
          <path-element>../dist/lib/nenyalib-0.0-SNAPSHOT.swc</path-element>
          <path-element>../dist/lib/whirledlib-0.0-SNAPSHOT.swc</path-element>
