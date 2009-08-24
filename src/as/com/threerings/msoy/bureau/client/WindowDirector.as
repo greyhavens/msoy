@@ -4,7 +4,8 @@
 package com.threerings.msoy.bureau.client {
 
 import com.threerings.util.Assert;
-import com.threerings.util.HashMap;
+import com.threerings.util.Map;
+import com.threerings.util.Maps;
 import com.threerings.util.ResultAdapter;
 import com.threerings.util.ResultListener;
 
@@ -34,7 +35,7 @@ public class WindowDirector
      */
     public function addServiceGroup (code :String) :void
     {
-        Assert.isTrue(_windows.size()==0);
+        Assert.isTrue(_windows.isEmpty());
         _serviceGroups.push(code);
     }
 
@@ -50,7 +51,7 @@ public class WindowDirector
         var window :WindowImpl = _windows.get(key) as WindowImpl;
 
         if (window == null) {
-            Assert.isTrue(_windows.get(key)==undefined);
+            Assert.isTrue(_windows.get(key) === undefined);
             window = new WindowImpl(_bureauDir, host, port, _bureauId, _token, _serviceGroups);
             _windows.put(key, window);
         }
@@ -81,13 +82,13 @@ public class WindowDirector
         Assert.isTrue(impl.isLoggedOn());
         if (impl.releaseRef()) {
             var key :String = impl.getHost() + ":" + impl.getPort();
-            Assert.isTrue(_windows.get(key) != undefined);
+            Assert.isTrue(_windows.get(key) !== undefined);
             _windows.remove(key);
             impl.close();
         }
     }
 
-    protected var _windows :HashMap = new HashMap();
+    protected var _windows :Map = Maps.newMapOf(String);
     protected var _bureauDir :BureauDirector;
     protected var _serviceGroups :Array = [];
     protected var _bureauId :String;
