@@ -156,6 +156,10 @@ public class FacebookLogic
     {
         // check preconditions
         FacebookNotificationRecord notifRec = _facebookRepo.loadNotification(id);
+        if (notifRec == null) {
+            log.info("Skipping missing notification", "id", id);
+            return;
+        }
         if (notifRec.node != null && !notifRec.node.equals(_peerMgr.getNodeObject().nodeName)) {
             throw new ServiceException("e.notification_scheduled_on_other_node");
         }

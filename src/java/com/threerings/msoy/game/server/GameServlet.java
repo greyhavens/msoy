@@ -719,8 +719,13 @@ public class GameServlet extends MsoyServiceServlet
 
             _mgameRepo.addMochiGame(info);
 
-            // fire off a notification to get people to come back and play
-            _facebookLogic.scheduleNotification("daily_games_updated", 30);
+            try {
+                // fire off a notification to get people to come back and play
+                _facebookLogic.scheduleNotification("daily_games_updated", 30);
+
+            } catch (ServiceException se) {
+                log.warning("Failed to send game update notification", se);
+            }
 
         } catch (Exception e) {
             log.warning("Problem adding mochi game.", e);
