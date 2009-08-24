@@ -344,12 +344,9 @@ public class FacebookLogic
 
     protected <T> void sendNotifications (FacebookJaxbRestClient client, String id, String text,
         List<T> batch, Function<T, FQL.Exp> toUserId, Predicate<FQLQuery.Record> filter,
-        String logType)
+        boolean global)
     {
         try {
-            if (logType != null) {
-                log.info("Sending notifications", "type", logType, "batch", batch);
-            }
             _facebookRepo.noteNotificationProgress(id, "Verifying", 0, 0);
 
             List<FQL.Exp> uids = Lists.transform(batch, toUserId);
@@ -365,15 +362,12 @@ public class FacebookLogic
                 targetIds.add(Long.valueOf(result.getField(UID)));
             }
 
-            if (logType != null) {
-                log.info("Resolved targets", "type", logType, "targetIds", targetIds);
-            }
             if (targetIds.size() == 0) {
                 return;
             }
 
             _facebookRepo.noteNotificationProgress(id, "Sending", targetIds.size(), 0);
-            client.notifications_send(targetIds, text, true);
+            client.notifications_send(targetIds, text, global);
             log.info("Sent notifications", "id", id, "response", client.getRawResponse());
             _facebookRepo.noteNotificationProgress(id, "Sent", 0, targetIds.size());
 
@@ -468,9 +462,8 @@ public class FacebookLogic
                 // have changed the documented behavior of this method... try to limit how many we
                 // send, see if exception stops
                 List<ExternalMapRecord> targets = loadMappedFriends(_mrec, false, alloc);
-                sendNotifications(getSessionInfo(_mrec, BATCH_READ_TIMEOUT).client,
-                    _notifRec.id, _notifRec.text, targets, MAPREC_TO_UID_EXP, APP_USER_FILTER,
-                    "friends_using_app");
+                sendNotifications(getSessionInfo(_mrec, BATCH_READ_TIMEOUT).client, _notifRec.id,
+                    _notifRec.text, targets, MAPREC_TO_UID_EXP, APP_USER_FILTER, false);
 
             } else if (_mrec != null) {
                 // see above
@@ -481,7 +474,7 @@ public class FacebookLogic
                     public FQL.Exp apply (Long uid) {
                         return FQL.unquoted(uid);
                     }
-                }, Predicates.not(APP_USER_FILTER), "friends_not_using_app");
+                }, Predicates.not(APP_USER_FILTER), false);
 
             } else {
                 final FacebookJaxbRestClient client = getFacebookClient(BATCH_READ_TIMEOUT);
@@ -490,7 +483,7 @@ public class FacebookLogic
                     new Function<List<ExternalMapRecord>, Void>() {
                         public Void apply (List<ExternalMapRecord> batch) {
                             sendNotifications(client, _notifRec.id, _notifRec.text,
-                                batch, MAPREC_TO_UID_EXP, APP_USER_FILTER, null);
+                                batch, MAPREC_TO_UID_EXP, APP_USER_FILTER, true);
                             return null;
                         }
                     }, BATCH_SIZE);
