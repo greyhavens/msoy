@@ -45,9 +45,10 @@ public class KontagentLogic
     }
 
     /**
-     * A unique instance of a link we've sent out ourselves or on behalf of a user.
+     * A unique id for links that we generate. Can be flattened and embedded in a link and later
+     * reconstituted and reported to the Kontagent server.
      */
-    public static class SentLink
+    public static class TrackingId
     {
         /** The type of link. */
         public LinkType type;
@@ -59,19 +60,19 @@ public class KontagentLogic
         public String uuid;
 
         /**
-         * Creates a new sent link of the given type, a null subtype and a new uuid using the given
-         * initiator as a seed.
+         * Creates a new tracking id of the given type, a null subtype and a new uuid seeded by the
+         * given initiator.
          */
-        public SentLink (LinkType type, long initiator)
+        public TrackingId (LinkType type, long initiator)
         {
             this(type, null, initiator);
         }
 
         /**
-         * Creates a new sent link of the given type and subtype and a new uuid using the given
-         * initiator as a seed.
+         * Creates a new tracking id of the given type and subtype and a new uuid seeded by the
+         * given initiator.
          */
-        public SentLink (LinkType type, String subtype, long initiator)
+        public TrackingId (LinkType type, String subtype, long initiator)
         {
             this.type = type;
             this.subtype = subtype;
@@ -79,12 +80,12 @@ public class KontagentLogic
         }
 
         /**
-         * Creates a new sent link from a previosuly composed tracking id. We assume the tracking
-         * id is sent directly from the web, therefore an exception is thrown if it is not in the
-         * expected format.
+         * Creates a new tracking id from a previously flattened one. We assume the id is sent
+         * directly from the web, therefore an exception is thrown if it is not in the expected
+         * format.
          * @throws IllegalArgumentException if the tracking id or any component is invalid
          */
-        public SentLink (String trackingId)
+        public TrackingId (String trackingId)
         {
             String[] components = trackingId.split("-");
             if (components.length < 2 || components.length > 3) {
@@ -109,10 +110,10 @@ public class KontagentLogic
         }
 
         /**
-         * Composes a flattened tracking id representing this sent link that can be later picked up
-         * from a URL to reconstruct the instance.
+         * Flattens the tracking id to a string that can be embedded in a URL and later
+         * reconstructed with {@link #TrackingId(String)}.
          */
-        public String composeTrackingId ()
+        public String flatten ()
         {
             // type-subtype-uuid or type-uuid
             return type.id + (StringUtil.isBlank(subtype) ? "" : "-" + subtype) + "-" + uuid;
@@ -187,34 +188,27 @@ public class KontagentLogic
      */
     public void trackUsage (long uid, String trackingId, boolean newInstall)
     {
-        SentLink sent;
-        try {
-            sent = StringUtil.isBlank(trackingId) ? null : new SentLink(trackingId);
-        } catch (IllegalArgumentException ex) {
-            log.warning("Invalid tracking id", trackingId);
-            return;
-        }
-
+        TrackingId id = parseTrackingId(trackingId, true);
         String uidStr = String.valueOf(uid);
         if (newInstall) {
-            if (sent != null) {
-                sendMessage(MessageType.APP_ADDED, "s", uidStr, "u", sent.uuid);
+            if (id != null) {
+                sendMessage(MessageType.APP_ADDED, "s", uidStr, "u", id.uuid);
             } else {
                 sendMessage(MessageType.APP_ADDED, "s", uidStr, "su", ShortTag.UNKNOWN.id);
             }
         }
 
-        if (sent == null) {
+        if (id == null) {
             // TODO: hmm, new short tag for different sources? (e.g. app bookmark vs. clicking the
             // app link in an invite)
             sendMessage(MessageType.UNDIRECTED, "s", uidStr, "tu", ShortTag.UNKNOWN.id, "i", "1");
 
         } else {
-            switch (sent.type.responseType) {
+            switch (id.type.responseType) {
             case INVITE_RESPONSE:
             case NOTIFICATION_RESPONSE:
-                sendMessage(sent.type.responseType, "r", uidStr, "i", "1", "u", sent.uuid,
-                    "st1", sent.subtype, "tu", sent.type.responseType.id);
+                sendMessage(id.type.responseType, "r", uidStr, "i", "1", "u", id.uuid,
+                    "st1", id.subtype, "tu", id.type.responseType.id);
                 break;
             default:
                 log.warning("Unhandled response type", "trackingId", trackingId);
@@ -233,45 +227,41 @@ public class KontagentLogic
 
     /**
      * Tracks an invite sent by the user. The tracking id is normally obtained from a previously
-     * constructed {@link SentLink} and passed via the cgi invite submission parameters.
+     * constructed {@link TrackingId} and passed via the cgi invite submission parameters.
      */
     public void trackInviteSent (long senderId, String trackingId, String[] recipients)
     {
-        SentLink link = parseTrackingId(trackingId, false);
-        if (link == null) {
+        TrackingId id = parseTrackingId(trackingId, false);
+        if (id == null) {
             return;
         }
 
         sendMessage(MessageType.INVITE_SENT, "s", String.valueOf(senderId),
-            "r", StringUtil.join(recipients, StringUtil.encode(",")), "u", link.uuid,
-            "st1", link.subtype);
+            "r", StringUtil.join(recipients, StringUtil.encode(",")), "u", id.uuid,
+            "st1", id.subtype);
     }
 
     /**
      * Track the sending of a notification. The tracking id is normally generated during the
-     * scheduling of the notification and passed back after it is actually sent.
+     * scheduling of the notification and passed back after it is actually sent, possibly multiple
+     * times for large batches.
      */
     public void trackNotificationSent (
-        long senderId, String trackingId, Collection<String> recipients)
+        long senderId, TrackingId trackingId, Collection<String> recipients)
     {
-        SentLink link = parseTrackingId(trackingId, false);
-        if (link == null) {
-            return;
-        }
-
         sendMessage(MessageType.NOTIFICATION_SENT, "s", String.valueOf(senderId),
-            "r", StringUtil.join(recipients.toArray(), StringUtil.encode(",")), "u", link.uuid,
-            "st1", link.subtype);
+            "r", StringUtil.join(recipients.toArray(), StringUtil.encode(",")),
+            "u", trackingId.uuid, "st1", trackingId.subtype);
     }
 
-    protected SentLink parseTrackingId (String trackingId, boolean allowBlank)
+    protected TrackingId parseTrackingId (String trackingId, boolean allowBlank)
     {
         if (allowBlank && StringUtil.isBlank(trackingId)) {
             return null;
         }
 
         try {
-            return new SentLink(trackingId);
+            return new TrackingId(trackingId);
 
         } catch (IllegalArgumentException ex) {
             log.warning("Invalid tracking id", trackingId);

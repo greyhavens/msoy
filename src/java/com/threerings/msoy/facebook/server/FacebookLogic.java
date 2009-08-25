@@ -34,7 +34,7 @@ import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.facebook.data.FacebookCodes;
 import com.threerings.msoy.facebook.gwt.FacebookGame;
 import com.threerings.msoy.facebook.server.KontagentLogic.LinkType;
-import com.threerings.msoy.facebook.server.KontagentLogic.SentLink;
+import com.threerings.msoy.facebook.server.KontagentLogic.TrackingId;
 import com.threerings.msoy.facebook.server.persist.FacebookNotificationRecord;
 import com.threerings.msoy.facebook.server.persist.FacebookRepository;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
@@ -209,7 +209,7 @@ public class FacebookLogic
     }
 
     protected void updateURL (
-        Map<String, String> replacements, String varName, SessionInfo info, String trackingId)
+        Map<String, String> replacements, String varName, SessionInfo info, TrackingId trackingId)
     {
         String url = replacements.get(varName);
         if (url != null) {
@@ -218,7 +218,7 @@ public class FacebookLogic
                     CookieNames.AFFILIATE, String.valueOf(info.memRec.memberId));
             }
             replacements.put(varName, url = SharedNaviUtil.buildRequest(url,
-                FBParam.TRACKING.name, trackingId));
+                FBParam.TRACKING.name, trackingId.flatten()));
         }
     }
 
@@ -257,8 +257,8 @@ public class FacebookLogic
         }
 
         // grab a tracking id
-        String trackingId = new SentLink(LinkType.NOTIFICATION, notifId,
-            session == null ? 0 : session.fbid).composeTrackingId();
+        TrackingId trackingId = new TrackingId(
+            LinkType.NOTIFICATION, notifId, session == null ? 0 : session.fbid);
 
         // add replacements for <fb:name> etc if we have a user session
         if (session != null) {
@@ -444,7 +444,7 @@ public class FacebookLogic
          * friends, or global if the member is null.
          */
         public NotificationBatch (
-            FacebookNotificationRecord notifRec, String trackingId,
+            FacebookNotificationRecord notifRec, TrackingId trackingId,
             MemberRecord mrec, boolean appFriendsOnly)
         {
             _notifRec = notifRec;
@@ -510,6 +510,9 @@ public class FacebookLogic
                         public Void apply (List<ExternalMapRecord> batch) {
                             Collection<String> recipients = sendNotifications(client, _notifRec.id,
                                 _notifRec.text, batch, MAPREC_TO_UID_EXP, APP_USER_FILTER, true);
+                            // Kontagent doesn't supply a special message for global notifications,
+                            // so just set sender id to 0
+                            // TODO: we may need to do something different for global notifications
                             _tracker.trackNotificationSent(0, _trackingId, recipients);
                             return null;
                         }
@@ -534,7 +537,7 @@ public class FacebookLogic
         }
 
         protected FacebookNotificationRecord _notifRec;
-        protected String _trackingId;
+        protected TrackingId _trackingId;
         protected MemberRecord _mrec;
         protected boolean _appFriendsOnly;
         protected Interval _interval = new Interval(_batchInvoker) {

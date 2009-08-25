@@ -51,45 +51,45 @@ public class KontagentLogicUnitTest
         Assert.assertTrue(uuid2.matches("[0-9a-f]{16}"));
     }
 
-    @Test public void testSentLinks ()
+    @Test public void testTrackingIds ()
     {
-        KontagentLogic.SentLink call1, call2;
         for (LinkType type : LinkType.values()) {
-            call1 = new KontagentLogic.SentLink(type, "subtype", 0);
-            call2 = new KontagentLogic.SentLink(call1.composeTrackingId());
-            Assert.assertEquals(call1.type, call2.type);
-            Assert.assertEquals(call1.subtype, call2.subtype);
-            Assert.assertEquals(call1.uuid, call2.uuid);
+            KontagentLogic.TrackingId
+                id1 = new KontagentLogic.TrackingId(type, "subtype", 0),
+                id2 = new KontagentLogic.TrackingId(id1.flatten());
+            Assert.assertEquals(id1.type, id2.type);
+            Assert.assertEquals(id1.subtype, id2.subtype);
+            Assert.assertEquals(id1.uuid, id2.uuid);
         }
 
         String inv = KontagentLogic.LinkType.INVITE.id;
         try {
-            new KontagentLogic.SentLink(inv);
+            new KontagentLogic.TrackingId(inv);
             Assert.fail("not enough components should throw");
         } catch (IllegalArgumentException ex) { }
 
         try {
-            new KontagentLogic.SentLink(inv + "-X-Y-0000000000000000");
+            new KontagentLogic.TrackingId(inv + "-X-Y-0000000000000000");
             Assert.fail("too many components should throw");
         } catch (IllegalArgumentException ex) { }
 
         try {
-            new KontagentLogic.SentLink("not.a.type-0000000000000000");
+            new KontagentLogic.TrackingId("not.a.type-0000000000000000");
             Assert.fail("invalid link type should throw");
         } catch (IllegalArgumentException ex) { }
 
         try {
-            new KontagentLogic.SentLink(inv + "-not.a.uuid");
+            new KontagentLogic.TrackingId(inv + "-not.a.uuid");
             Assert.fail("invalid uuid should throw");
         } catch (IllegalArgumentException ex) { }
 
         try {
-            new KontagentLogic.SentLink(inv + "-xxx-not.a.uuid");
+            new KontagentLogic.TrackingId(inv + "-xxx-not.a.uuid");
             Assert.fail("invalid uuid type should throw");
         } catch (IllegalArgumentException ex) { }
 
-        new KontagentLogic.SentLink(inv + "-xxx-0000000000000000");
-        new KontagentLogic.SentLink(inv + "--0000000000000000");
-        new KontagentLogic.SentLink(inv + "-0000000000000000");
+        new KontagentLogic.TrackingId(inv + "-xxx-0000000000000000");
+        new KontagentLogic.TrackingId(inv + "--0000000000000000");
+        new KontagentLogic.TrackingId(inv + "-0000000000000000");
     }
 }
