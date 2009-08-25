@@ -135,8 +135,8 @@ public class SceneLogic
         // ensure that the update has been applied
         int targetVers = update.getSceneVersion() + update.getVersionIncrement();
         if (model.version != targetVers) {
-            log.warning("Refusing to apply update, wrong version [want=" + model.version +
-                        ", have=" + targetVers + ", update=" + update + "].");
+            log.warning("Refusing to apply update, wrong version",
+               "want", model.version, "have", targetVers, "update", update);
             return;
         }
         // now pass it to the accumulator who will take it from here
