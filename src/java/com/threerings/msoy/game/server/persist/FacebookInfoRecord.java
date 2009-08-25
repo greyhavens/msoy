@@ -22,6 +22,7 @@ public class FacebookInfoRecord extends PersistentRecord
     public static final ColumnExp API_KEY = colexp(_R, "apiKey");
     public static final ColumnExp APP_SECRET = colexp(_R, "appSecret");
     public static final ColumnExp CHROMELESS = colexp(_R, "chromeless");
+    public static final ColumnExp CANVAS_NAME = colexp(_R, "canvasName");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that
