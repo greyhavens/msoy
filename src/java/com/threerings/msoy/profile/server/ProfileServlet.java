@@ -20,6 +20,7 @@ import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 
 import com.samskivert.util.ArrayIntSet;
+import com.samskivert.util.Calendars;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
 import com.samskivert.util.IntSet;
@@ -225,9 +226,8 @@ public class ProfileServlet extends MsoyServiceServlet
         // TODO: treatment of birthdays/TOS for Facebook imports
         if (profile.birthday != null) {
             // figure out this player's 13th birthday (based on their claim)
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(ProfileRecord.fromDateVec(profile.birthday));
-            cal.add(Calendar.YEAR, 13);
+            Calendar cal = Calendars.at(ProfileRecord.fromDateVec(profile.birthday)).addYears(13).
+                asCalendar();
             // if that's in the future, protest
             if (cal.after(Calendar.getInstance())) {
                 throw new ServiceException(ProfileCodes.E_TOO_YOUNG);

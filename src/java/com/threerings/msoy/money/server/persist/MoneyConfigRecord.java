@@ -4,7 +4,6 @@
 package com.threerings.msoy.money.server.persist;
 
 import java.sql.Date;
-import java.util.Calendar;
 
 import net.jcip.annotations.NotThreadSafe;
 
@@ -13,6 +12,8 @@ import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.annotation.Entity;
 import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.expression.ColumnExp;
+
+import com.samskivert.util.Calendars;
 
 /**
  * Contains current run-time information about the money service.  There will only ever be a single
@@ -55,9 +56,7 @@ public class MoneyConfigRecord extends PersistentRecord
         this.id = RECORD_ID;        // The record will always be ID = 1
 
         // Use the previous day, so we can calculate today's winnings later.
-        Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.DATE, -1);
-        this.lastDistributedBling = new Date(cal.getTimeInMillis());
+        this.lastDistributedBling = Calendars.now().addDays(-1).toSQLDate();
     }
 
     // AUTO-GENERATED: METHODS START

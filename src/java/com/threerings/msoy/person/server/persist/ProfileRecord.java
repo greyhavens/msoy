@@ -8,6 +8,7 @@ import java.util.Calendar;
 
 import com.google.common.base.Preconditions;
 
+import com.samskivert.util.Calendars;
 import com.samskivert.util.StringUtil;
 
 import com.samskivert.depot.Key;
@@ -115,11 +116,9 @@ public class ProfileRecord extends PersistentRecord
      */
     public static Date fromDateVec (int[] datevec)
     {
-        Calendar cal = Calendar.getInstance();
-        cal.set(Calendar.YEAR, datevec[0]);
-        cal.set(Calendar.MONTH, datevec[1]);
-        cal.set(Calendar.DATE, datevec[2]);
-        return new Date(cal.getTimeInMillis());
+        return Calendars.now()
+            .setYear(datevec[0]).setMonth(datevec[1]).setDay(datevec[2])
+            .toSQLDate();
     }
 
     /**
@@ -127,8 +126,7 @@ public class ProfileRecord extends PersistentRecord
      */
     public static int[] toDateVec (Date date)
     {
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(date);
+        Calendar cal = Calendars.at(date).asCalendar();
         return new int[] {
             cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DATE)
         };

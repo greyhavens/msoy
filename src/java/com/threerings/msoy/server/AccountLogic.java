@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.server;
 
-import java.util.Calendar;
 import java.util.Collections;
 
 import com.google.inject.Inject;
@@ -14,6 +13,7 @@ import org.apache.commons.codec.binary.Base64;
 import com.samskivert.depot.DuplicateKeyException;
 
 import com.samskivert.net.MailUtil;
+import com.samskivert.util.Calendars;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.presents.annotation.BlockingThread;
@@ -484,10 +484,8 @@ public class AccountLogic
     {
         // check age restriction
         if (birthdayYMD != null) {
-            Calendar thirteenYearsAgo = Calendar.getInstance();
-            thirteenYearsAgo.add(Calendar.YEAR, -13);
             java.sql.Date bday = ProfileRecord.fromDateVec(birthdayYMD);
-            if (bday.compareTo(thirteenYearsAgo.getTime()) > 0) {
+            if (bday.compareTo(Calendars.now().addYears(-13).toDate()) > 0) {
                 log.warning("User submitted invalid birtdate", "date", bday);
                 throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
             }

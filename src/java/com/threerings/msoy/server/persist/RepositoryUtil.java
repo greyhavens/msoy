@@ -4,10 +4,10 @@
 package com.threerings.msoy.server.persist;
 
 import java.sql.Timestamp;
-import java.util.Calendar;
 
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.StaticConnectionProvider;
+import com.samskivert.util.Calendars;
 import com.samskivert.util.Config;
 import com.samskivert.util.StringUtil;
 import com.threerings.util.PostgresUtil;
@@ -24,14 +24,7 @@ public class RepositoryUtil
      */
     public static Timestamp getCutoff (int days)
     {
-        Calendar cutoff = Calendar.getInstance();
-        cutoff.setTimeInMillis(System.currentTimeMillis());
-        cutoff.add(Calendar.DATE, -days);
-        cutoff.set(Calendar.HOUR_OF_DAY, 0);
-        cutoff.set(Calendar.MINUTE, 0);
-        cutoff.set(Calendar.SECOND, 0);
-        cutoff.set(Calendar.MILLISECOND, 0);
-        return new Timestamp(cutoff.getTimeInMillis());
+        return Calendars.now().zeroTime().addDays(-days).toTimestamp();
     }
 
     public static ConnectionProvider createConnectionProvider (Config config)
