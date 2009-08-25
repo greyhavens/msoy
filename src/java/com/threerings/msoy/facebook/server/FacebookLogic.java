@@ -33,6 +33,8 @@ import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.facebook.data.FacebookCodes;
 import com.threerings.msoy.facebook.gwt.FacebookGame;
+import com.threerings.msoy.facebook.server.KontagentLogic.LinkType;
+import com.threerings.msoy.facebook.server.KontagentLogic.SentLink;
 import com.threerings.msoy.facebook.server.persist.FacebookNotificationRecord;
 import com.threerings.msoy.facebook.server.persist.FacebookRepository;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
@@ -207,7 +209,7 @@ public class FacebookLogic
     }
 
     protected void updateURL (
-        Map<String, String> replacements, String varName, SessionInfo info) //, String trackingId)
+        Map<String, String> replacements, String varName, SessionInfo info, String trackingId)
     {
         String url = replacements.get(varName);
         if (url != null) {
@@ -215,8 +217,8 @@ public class FacebookLogic
                 url = SharedNaviUtil.buildRequest(url,
                     CookieNames.AFFILIATE, String.valueOf(info.memRec.memberId));
             }
-            replacements.put(varName, url);// = SharedNaviUtil.buildRequest(url,
-                //ArgNames.FBParam.TRACKING.name, trackingId));
+            replacements.put(varName, url = SharedNaviUtil.buildRequest(url,
+                FBParam.TRACKING.name, trackingId));
         }
     }
 
@@ -254,14 +256,18 @@ public class FacebookLogic
             throw new ServiceException("e.notification_scheduled_on_other_node");
         }
 
+        // grab a tracking id
+        String trackingId = new SentLink(LinkType.NOTIFICATION, notifId,
+            session == null ? 0 : session.fbid).composeTrackingId();
+
         // add replacements for <fb:name> etc if we have a user session
         if (session != null) {
             replacements.put("uid", session.fbid.toString());
         }
 
         // tack on tracking and affiliate to the urls, if present
-        updateURL(replacements, "game_url", session);
-        updateURL(replacements, "app_url", session);
+        updateURL(replacements, "game_url", session, trackingId);
+        updateURL(replacements, "app_url", session, trackingId);
 
         // do the replacements and create the instance
         String text = template.text;
@@ -272,7 +278,7 @@ public class FacebookLogic
         instance = _facebookRepo.storeNotification(batchId, text);
 
         // create the batch
-        NotificationBatch batch = new NotificationBatch(instance,
+        NotificationBatch batch = new NotificationBatch(instance, trackingId,
             session == null ? null : session.memRec, appOnly);
 
         // insert into map and schedule
@@ -438,9 +444,11 @@ public class FacebookLogic
          * friends, or global if the member is null.
          */
         public NotificationBatch (
-            FacebookNotificationRecord notifRec, MemberRecord mrec, boolean appFriendsOnly)
+            FacebookNotificationRecord notifRec, String trackingId,
+            MemberRecord mrec, boolean appFriendsOnly)
         {
             _notifRec = notifRec;
+            _trackingId = trackingId;
             _mrec = mrec;
             _appFriendsOnly = appFriendsOnly;
         }
@@ -479,6 +487,7 @@ public class FacebookLogic
                 SessionInfo sinf = getSessionInfo(_mrec, BATCH_READ_TIMEOUT);
                 Collection<String> recipients = sendNotifications(sinf.client, _notifRec.id,
                     _notifRec.text, targets, MAPREC_TO_UID_EXP, APP_USER_FILTER, false);
+                _tracker.trackNotificationSent(sinf.fbid, _trackingId, recipients);
 
             } else if (_mrec != null) {
                 // see above
@@ -491,6 +500,7 @@ public class FacebookLogic
                         return FQL.unquoted(uid);
                     }
                 }, Predicates.<FQLQuery.Record>alwaysTrue(), false);
+                _tracker.trackNotificationSent(sinf.fbid, _trackingId, recipients);
 
             } else {
                 final FacebookJaxbRestClient client = getFacebookClient(BATCH_READ_TIMEOUT);
@@ -500,6 +510,7 @@ public class FacebookLogic
                         public Void apply (List<ExternalMapRecord> batch) {
                             Collection<String> recipients = sendNotifications(client, _notifRec.id,
                                 _notifRec.text, batch, MAPREC_TO_UID_EXP, APP_USER_FILTER, true);
+                            _tracker.trackNotificationSent(0, _trackingId, recipients);
                             return null;
                         }
                     }, BATCH_SIZE);
@@ -523,6 +534,7 @@ public class FacebookLogic
         }
 
         protected FacebookNotificationRecord _notifRec;
+        protected String _trackingId;
         protected MemberRecord _mrec;
         protected boolean _appFriendsOnly;
         protected Interval _interval = new Interval(_batchInvoker) {
@@ -554,6 +566,7 @@ public class FacebookLogic
 
     @Inject protected @BatchInvoker Invoker _batchInvoker;
     @Inject protected FacebookRepository _facebookRepo;
+    @Inject protected KontagentLogic _tracker;
     @Inject protected MemberRepository _memberRepo;
     @Inject protected MsoyPeerManager _peerMgr;
     @Inject protected RuntimeConfig _runtime; // temp
