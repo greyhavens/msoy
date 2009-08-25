@@ -8,7 +8,6 @@ import java.util.List;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.threerings.msoy.facebook.gwt.FacebookService.StoryFields;
 import com.threerings.msoy.facebook.gwt.FacebookService.InviteInfo;
-import com.threerings.msoy.web.gwt.WebMemberService;
 
 /**
  * The asynchronous (client-side) version of {@link FacebookService}.
@@ -16,12 +15,12 @@ import com.threerings.msoy.web.gwt.WebMemberService;
 public interface FacebookServiceAsync
 {
     /**
-     * The asynchronous version of {@link WebMemberService#getFacebookTemplate}.
+     * The asynchronous version of {@link FacebookService#getTemplate}.
      */
     void getTemplate (String code, AsyncCallback<FacebookTemplateCard> callback);
 
     /**
-     * The asynchronous version of {@link WebMemberService#trophyPublishedToFacebook}.
+     * The asynchronous version of {@link FacebookService#trophyPublished}.
      */
     void trophyPublished (int gameId, String ident, AsyncCallback<Void> callback);
 
