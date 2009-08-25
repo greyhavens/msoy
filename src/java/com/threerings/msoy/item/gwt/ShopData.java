@@ -16,6 +16,9 @@ public class ShopData
     /** The number of featured items to be provided. */
     public static final int TOP_ITEM_COUNT = 5;
 
+    /** The top-rated jumble of items. TODO: Delete this one or the ones below. */
+    public List<ListingCard> jumbledItems;
+
     /** The top-rated avatars. */
     public List<ListingCard> topAvatars;
 

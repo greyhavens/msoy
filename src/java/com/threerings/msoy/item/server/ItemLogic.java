@@ -78,7 +78,6 @@ import com.threerings.msoy.item.server.persist.CatalogRecord;
 import com.threerings.msoy.item.server.persist.CloneRecord;
 import com.threerings.msoy.item.server.persist.DecorRepository;
 import com.threerings.msoy.item.server.persist.DocumentRepository;
-import com.threerings.msoy.item.server.persist.FavoriteItemRecord;
 import com.threerings.msoy.item.server.persist.FavoritesRepository;
 import com.threerings.msoy.item.server.persist.FurnitureRepository;
 import com.threerings.msoy.item.server.persist.GameRepository;
@@ -99,6 +98,7 @@ import com.threerings.msoy.item.server.persist.PropRepository;
 import com.threerings.msoy.item.server.persist.ToyRepository;
 import com.threerings.msoy.item.server.persist.TrophySourceRepository;
 import com.threerings.msoy.item.server.persist.VideoRepository;
+import com.threerings.msoy.item.server.persist.FavoritesRepository.FavoritedItemResultRecord;
 
 import static com.threerings.msoy.Log.log;
 
@@ -616,12 +616,12 @@ public class ItemLogic
      * Resolves the supplied list of favorited items into properly initialized {@link ListingCard}
      * records.
      */
-    public List<ListingCard> resolveFavorites (List<FavoriteItemRecord> faves)
+    public List<ListingCard> resolveFavorites (List<FavoritedItemResultRecord> faves)
         throws ServiceException
     {
         // break the list up by item type
         SetMultimap<Byte, Integer> typeMap = HashMultimap.create();
-        for (FavoriteItemRecord fave : faves) {
+        for (FavoritedItemResultRecord fave : faves) {
             typeMap.put(fave.itemType, fave.catalogId);
         }
 

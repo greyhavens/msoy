@@ -13,7 +13,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 
-import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.CollectionUtil;
 import com.samskivert.util.RandomUtil;
 import com.samskivert.util.Tuple;
@@ -24,7 +23,6 @@ import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.server.MsoyEventLogger;
-import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.StatLogic;
 import com.threerings.msoy.server.persist.CharityRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
@@ -63,10 +61,10 @@ import com.threerings.msoy.item.gwt.ItemPrices;
 import com.threerings.msoy.item.gwt.ListingCard;
 import com.threerings.msoy.item.gwt.ShopData;
 import com.threerings.msoy.item.server.persist.CatalogRecord;
-import com.threerings.msoy.item.server.persist.FavoriteItemRecord;
 import com.threerings.msoy.item.server.persist.FavoritesRepository;
 import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
+import com.threerings.msoy.item.server.persist.FavoritesRepository.FavoritedItemResultRecord;
 
 /**
  * Provides the server implementation of {@link CatalogService}.
@@ -75,30 +73,38 @@ public class CatalogServlet extends MsoyServiceServlet
     implements CatalogService
 {
     // from interface CatalogService
-    public ShopData loadShopData ()
+    public ShopData loadShopData (boolean jumble)
         throws ServiceException
     {
         ShopData data = new ShopData();
 
-        // these members are our official 'favoriters' (no favoriting mature items!)
-        ArrayIntSet memberIds = new ArrayIntSet(ServerConfig.getShopFavoriteMemberIds());
+        if (jumble) {
+            loadJumbledShopData(data);
+        } else {
+            loadShopData(data);
+        }
+        return data;
+    }
 
+    protected void loadShopData (ShopData data)
+        throws ServiceException
+    {
         // choose random TOP_ITEM_COUNT of TOP_ITEM_COUNT*2 recent favorite avatars & furni
         List<ListingCard> avatars = _itemLogic.resolveFavorites(_faveRepo.loadRecentFavorites(
-            memberIds, ShopData.TOP_ITEM_COUNT * 2, Item.AVATAR));
+            ShopData.TOP_ITEM_COUNT * 2, Item.AVATAR));
         data.topAvatars = (avatars.size() <= ShopData.TOP_ITEM_COUNT) ? avatars
             : CollectionUtil.selectRandomSubset(avatars, ShopData.TOP_ITEM_COUNT);
         List<ListingCard> furniture = _itemLogic.resolveFavorites(_faveRepo.loadRecentFavorites(
-            memberIds, ShopData.TOP_ITEM_COUNT * 2, Item.FURNITURE));
+            ShopData.TOP_ITEM_COUNT * 2, Item.FURNITURE));
         data.topFurniture = (furniture.size() <= ShopData.TOP_ITEM_COUNT) ? furniture
             : CollectionUtil.selectRandomSubset(furniture, ShopData.TOP_ITEM_COUNT);
 
         // choose random 1 of 5 recent favorite pets & toys
         List<ListingCard> pets = _itemLogic.resolveFavorites(_faveRepo.loadRecentFavorites(
-            memberIds, ShopData.TOP_ITEM_COUNT, Item.PET));
+            ShopData.TOP_ITEM_COUNT, Item.PET));
         data.featuredPet = (pets.size() > 0) ? RandomUtil.pickRandom(pets) : null;
         List<ListingCard> toys = _itemLogic.resolveFavorites(_faveRepo.loadRecentFavorites(
-            memberIds, ShopData.TOP_ITEM_COUNT, Item.TOY));
+            ShopData.TOP_ITEM_COUNT, Item.TOY));
         data.featuredToy = (toys.size() > 0) ? RandomUtil.pickRandom(toys) : null;
 
         // resolve the creator names for these listings
@@ -112,8 +118,17 @@ public class CatalogServlet extends MsoyServiceServlet
             allCards.add(data.featuredToy);
         }
         _itemLogic.resolveCardNames(allCards);
+    }
 
-        return data;
+    protected void loadJumbledShopData (ShopData data)
+        throws ServiceException
+    {
+        List<ListingCard> items = _itemLogic.resolveFavorites(
+            _faveRepo.loadRecentFavorites(ShopData.TOP_ITEM_COUNT * 10, Item.NOT_A_TYPE));
+        data.jumbledItems = (items.size() <= ShopData.TOP_ITEM_COUNT * 5) ? items :
+            CollectionUtil.selectRandomSubset(items, ShopData.TOP_ITEM_COUNT * 5);
+
+        _itemLogic.resolveCardNames(items);
     }
 
     // from interface CatalogService
@@ -287,6 +302,7 @@ public class CatalogServlet extends MsoyServiceServlet
 
         int catalogId = _moneyLogic.listItem(
             mrec, listFee, master.name, new MoneyLogic.BuyOperation<Integer>() {
+            @Override
             public Integer create (boolean magicFree, Currency currency, int amountPaid) {
                 // create our new immutable catalog master item
                 repo.insertOriginalItem(master, true);
@@ -589,8 +605,8 @@ public class CatalogServlet extends MsoyServiceServlet
         List<ListingCard> cards = Lists.newArrayList();
         for (CatalogRecord crec : _itemLogic.getRepository(itemType).loadCatalog(
             Lists.transform(_faveRepo.loadFavorites(mrec.memberId, itemType),
-                new Function<FavoriteItemRecord, Integer>() {
-                    public Integer apply (FavoriteItemRecord frec) {
+                new Function<FavoritedItemResultRecord, Integer>() {
+                    public Integer apply (FavoritedItemResultRecord frec) {
                         return frec.catalogId;
                     }
                 }))) {

@@ -97,7 +97,7 @@ public class ShopPanel extends FlowPanel
         add(WidgetUtil.makeShim(15, 15));
 
         // now load up our shop data
-        _catalogsvc.loadShopData(new InfoCallback<ShopData>() {
+        _catalogsvc.loadShopData(false, new InfoCallback<ShopData>() {
             public void onSuccess (ShopData data) {
                 init(data);
             }

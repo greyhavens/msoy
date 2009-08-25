@@ -8,23 +8,30 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.samskivert.depot.DataMigration;
 import com.samskivert.depot.DatabaseException;
 import com.samskivert.depot.DepotRepository;
+import com.samskivert.depot.Ops;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
+import com.samskivert.depot.annotation.Computed;
+import com.samskivert.depot.annotation.Entity;
+import com.samskivert.depot.clause.GroupBy;
+import com.samskivert.depot.clause.Join;
 import com.samskivert.depot.clause.Limit;
 import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.Where;
-import com.samskivert.depot.operator.And;
-import com.samskivert.depot.operator.SQLOperator;
-
+import com.samskivert.depot.expression.FunctionExp;
+import com.samskivert.depot.expression.SQLExpression;
 import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.MemberRecord.Flag;
 
 /**
  * Manages members' favorite item information.
@@ -32,12 +39,20 @@ import com.threerings.msoy.item.data.all.Item;
 @Singleton @BlockingThread
 public class FavoritesRepository extends DepotRepository
 {
+    @Entity @Computed(shadowOf=FavoriteItemRecord.class)
+    public static class FavoritedItemResultRecord extends PersistentRecord
+    {
+        public byte itemType;
+        public int catalogId;
+    }
+
     @Inject public FavoritesRepository (PersistenceContext ctx)
     {
         super(ctx);
 
         // TEMP: may be removed sometime after all servers have been updated past 2009-06-05
         registerMigration(new DataMigration("2009_06_05_migration_game_favorites") {
+            @Override
             public void invoke () throws DatabaseException {
                 updatePartial(FavoriteItemRecord.class,
                     new Where(FavoriteItemRecord.ITEM_TYPE, Item.GAME), null,
@@ -47,27 +62,36 @@ public class FavoritesRepository extends DepotRepository
     }
 
     /**
-     * Loads up to <code>count</code> recently favorited items for the specified member(s). If the
+     * Loads up to <code>count</code> items recently favorited by subscribers. If the
      * type is {@link Item#NOT_A_TYPE}, all types will be returned.
      */
-    public List<FavoriteItemRecord> loadRecentFavorites (Collection<Integer> memberIds,
-        int count, byte itemType)
+    public List<FavoritedItemResultRecord> loadRecentFavorites (int count, byte itemType)
     {
-        SQLOperator memberIn = FavoriteItemRecord.MEMBER_ID.in(memberIds);
-        Where where = (itemType == Item.NOT_A_TYPE) ?
-            new Where(memberIn) :
-            new Where(new And(memberIn, FavoriteItemRecord.ITEM_TYPE.eq(itemType)));
-        return findAll(FavoriteItemRecord.class, where,
-            OrderBy.descending(FavoriteItemRecord.NOTED_ON), new Limit(0, count));
+        List<SQLExpression> conditions = Lists.newArrayList();
+
+        // only care about members with a subscriber bit set
+        int subscriberBits = (Flag.SUBSCRIBER.getBit() | Flag.SUBSCRIBER_PERMANENT.getBit());
+        conditions.add(MemberRecord.FLAGS.bitAnd(subscriberBits).notEq(0));
+
+        if (itemType != Item.NOT_A_TYPE) {
+            // possibly only care about some item types
+            conditions.add(FavoriteItemRecord.ITEM_TYPE.eq(itemType));
+        }
+        return findAll(
+            FavoritedItemResultRecord.class,
+            new Join(FavoriteItemRecord.MEMBER_ID, MemberRecord.MEMBER_ID),
+            new Where(Ops.and(conditions)),
+            new GroupBy(FavoriteItemRecord.ITEM_TYPE, FavoriteItemRecord.CATALOG_ID),
+            OrderBy.descending(new FunctionExp("COUNT", MemberRecord.MEMBER_ID)));
     }
 
     /**
      * Loads up to <code>count</code> recently favorited items for the specified member (of any
      * item type).
      */
-    public List<FavoriteItemRecord> loadRecentFavorites (int memberId, int count)
+    public List<FavoritedItemResultRecord> loadRecentFavorites (int memberId, int count)
     {
-        return findAll(FavoriteItemRecord.class,
+        return findAll(FavoritedItemResultRecord.class,
                        new Where(FavoriteItemRecord.MEMBER_ID, memberId),
                        OrderBy.descending(FavoriteItemRecord.NOTED_ON),
                        new Limit(0, count));
@@ -79,13 +103,13 @@ public class FavoritesRepository extends DepotRepository
      *
      * TODO: paginate if people start favoriting things up a storm.
      */
-    public List<FavoriteItemRecord> loadFavorites (int memberId, byte itemType)
+    public List<FavoritedItemResultRecord> loadFavorites (int memberId, byte itemType)
     {
         Where where = (itemType == Item.NOT_A_TYPE) ?
             new Where(FavoriteItemRecord.MEMBER_ID, memberId) :
             new Where(FavoriteItemRecord.MEMBER_ID, memberId,
                       FavoriteItemRecord.ITEM_TYPE, itemType);
-        return findAll(FavoriteItemRecord.class, where,
+        return findAll(FavoritedItemResultRecord.class, where,
                        OrderBy.descending(FavoriteItemRecord.NOTED_ON));
     }
 
@@ -98,6 +122,7 @@ public class FavoritesRepository extends DepotRepository
         return load(FavoriteItemRecord.class,
                     FavoriteItemRecord.getKey(memberId, itemType, catalogId));
     }
+
 
     /**
      * Notes that the specified member favorited the specified item.

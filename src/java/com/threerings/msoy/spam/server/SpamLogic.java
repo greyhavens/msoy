@@ -5,7 +5,6 @@ package com.threerings.msoy.spam.server;
 
 import java.sql.Date;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -17,7 +16,6 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.samskivert.net.MailUtil;
-import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.ArrayUtil;
 import com.samskivert.util.CollectionUtil;
 import com.samskivert.util.CountHashMap;
@@ -565,7 +563,7 @@ public class SpamLogic
             final Generator generators[] = {
                 new Generator(memberId, new PlainTextBuilder(), _messages),
                 new Generator(memberId, new HTMLBuilder(), _messages)};
-    
+
             // convert to our wrapped categories and items
             List<EmailFeedCategory> ecats = Lists.newArrayList();
             for (FeedCategory category : categories) {
@@ -582,7 +580,7 @@ public class SpamLogic
                 EmailFeedCategory ecat = new EmailFeedCategory(category.category, eitems);
                 ecats.add(ecat);
             }
-    
+
             // Sort to CATEGORIES order
             Collections.sort(ecats);
 
@@ -634,10 +632,9 @@ public class SpamLogic
     protected NewStuff loadFiller ()
     {
         NewStuff filler = new NewStuff();
-        ArrayIntSet memberIds = new ArrayIntSet(ServerConfig.getShopFavoriteMemberIds());
         try {
-            filler.avatars = randomItems(memberIds, Item.AVATAR);
-            filler.games = randomItems(memberIds, Item.LAUNCHER);
+            filler.avatars = randomItems(Item.AVATAR);
+            filler.games = randomItems(Item.LAUNCHER);
 
         } catch (ServiceException e) {
             throw new RuntimeException("Could not create feed mailing filler", e);
@@ -649,7 +646,7 @@ public class SpamLogic
     /**
      * Loads a random set of new & hot and staff pick items for the filler.
      */
-    protected List<EmailListing> randomItems (Collection<Integer> memberIds, byte itemType)
+    protected List<EmailListing> randomItems (byte itemType)
         throws ServiceException
     {
         int count = ITEM_COUNT;
@@ -659,7 +656,7 @@ public class SpamLogic
         resultSet.addAll(_catalogLogic.loadCatalog(
                              null, itemType, CatalogQuery.SORT_BY_NEW_AND_HOT, count));
         resultSet.addAll(_itemLogic.resolveFavorites(
-                             _faveRepo.loadRecentFavorites(memberIds, count * 2, itemType)));
+                             _faveRepo.loadRecentFavorites(count * 2, itemType)));
 
         // get a random subset into a list
         List<ListingCard> result;
@@ -1139,7 +1136,7 @@ public class SpamLogic
     protected static final String A_STYLE = "text-decoration: none;";
 
     /** We want these categories first. */
-    protected static final Category[] CATEGORIES = {Category.ANNOUNCEMENTS, Category.LISTED_ITEMS, 
+    protected static final Category[] CATEGORIES = {Category.ANNOUNCEMENTS, Category.LISTED_ITEMS,
         Category.ROOMS, Category.GAMES, Category.FRIENDINGS};
 
     static

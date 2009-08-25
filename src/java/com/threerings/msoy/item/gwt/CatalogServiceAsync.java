@@ -23,7 +23,7 @@ public interface CatalogServiceAsync
     /**
      * The asynchronous version of {@link CatalogService#loadShopData}.
      */
-    void loadShopData (AsyncCallback<ShopData> callback);
+    void loadShopData (boolean jumble, AsyncCallback<ShopData> callback);
 
     /**
      * The asynchronous version of {@link CatalogService#loadCatalog}.

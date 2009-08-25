@@ -9,6 +9,7 @@ import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.annotation.Entity;
 import com.samskivert.depot.annotation.Id;
+import com.samskivert.depot.annotation.Index;
 import com.samskivert.depot.expression.ColumnExp;
 
 /**
@@ -28,13 +29,16 @@ public class FavoriteItemRecord extends PersistentRecord
     public static final int SCHEMA_VERSION = 1;
 
     /** The member in question. */
-    @Id public int memberId;
+    @Id
+    public int memberId;
 
     /** The type of the item that is favorited. */
-    @Id public byte itemType;
+    @Id @Index(name="ixType")
+    public byte itemType;
 
     /** The catalog listing id of the favorited item. */
-    @Id public int catalogId;
+    @Id
+    public int catalogId;
 
     /** The time at which this favorite was noted. */
     public Timestamp notedOn;
