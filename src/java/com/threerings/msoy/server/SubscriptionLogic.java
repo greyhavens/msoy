@@ -3,12 +3,12 @@
 
 package com.threerings.msoy.server;
 
-import java.util.Calendar;
 import java.util.List;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import com.samskivert.util.Calendars;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.presents.annotation.BlockingThread;
@@ -148,9 +148,8 @@ public class SubscriptionLogic
         // see if they need their monthly bar allowance
         if (rec.grantsLeft > 0) {
             // make sure the last granting was at least a month ago, otherwise they'll get it later
-            Calendar monthAgo = Calendar.getInstance();
-            monthAgo.add(Calendar.MONTH, -1);
-            if ((rec.lastGrant == null) || (rec.lastGrant.getTime() < monthAgo.getTimeInMillis())) {
+            if ((rec.lastGrant == null) ||
+                    (rec.lastGrant.getTime() < Calendars.now().addMonths(-1).toTime())) {
                 try {
                     int bars = _runtime.subscription.monthlyBarGrant;
                     if (bars > 0) {
