@@ -15,8 +15,7 @@ import com.threerings.msoy.web.gwt.SharedNaviUtil;
 
 import com.threerings.msoy.facebook.gwt.FacebookService;
 import com.threerings.msoy.facebook.gwt.FacebookServiceAsync;
-import com.threerings.msoy.facebook.gwt.FacebookTemplateCard;
-
+import com.threerings.msoy.facebook.gwt.FacebookService.StoryFields;
 
 import client.facebookbase.FacebookUtil;
 import client.shell.CShell;
@@ -41,26 +40,25 @@ public class ExternalFeeder
 
     protected void publishTrophyToFacebook (final TrophyEvent event)
     {
-        _fbsvc.getTemplate("trophy", new InfoCallback<FacebookTemplateCard>() {
-            @Override public void onSuccess (FacebookTemplateCard result) {
+        _fbsvc.getTrophyStoryFields(new InfoCallback<StoryFields>() {
+            @Override public void onSuccess (StoryFields result) {
                 if (result != null) {
-                    CShell.log("Got template, publishing", "bundle", result.bundleId,
-                        "variant", result.variant);
                     publishTrophyToFacebook(event, result);
                 } // else oops
             }
         });
     }
 
-    protected void publishTrophyToFacebook (TrophyEvent event, FacebookTemplateCard template)
+    protected void publishTrophyToFacebook (TrophyEvent event, StoryFields fields)
     {
-        String vector = template.toEntryVector("trophy");
-        String templateId = String.valueOf(template.bundleId);
+        String vector = fields.template.toEntryVector("trophy");
+        String templateId = String.valueOf(fields.template.bundleId);
 
         // we use it in 3 places, but they all just go to the game detail screen on facebook
         // TODO: link different things to different places? more redirects in FacebookServlet?
         String actionURL = SharedNaviUtil.buildRequest(FacebookUtil.APP_CANVAS,
-            FBParam.GAME.name, String.valueOf(event.getGameId()), FBParam.VECTOR.name, vector);
+            FBParam.GAME.name, String.valueOf(event.getGameId()), FBParam.VECTOR.name, vector,
+            FBParam.TRACKING.name, fields.trackingId);
 
         FacebookUtil.FeedStoryImages images = new FacebookUtil.FeedStoryImages();
         if (event.getGameMediaURL() != null) {
@@ -78,7 +76,7 @@ public class ExternalFeeder
         data.put("vector", vector);
         data.put("images", images.toArray());
 
-        publishTrophy(templateId, event.getGameId(), event.getTrophyIdent(),
+        publishTrophy(templateId, event.getGameId(), event.getTrophyIdent(), fields.trackingId,
             JavaScriptUtil.createDictionaryFromMap(data));
     }
 
@@ -86,9 +84,9 @@ public class ExternalFeeder
      * Called by facebook.js when the trophy feed publish dialog is closed. There is no guarantee
      * that the user actually chose to do it.
      */
-    protected void trophyPublished (int gameId, String trophyIdent)
+    protected void trophyPublished (int gameId, String trophyIdent, String trackingId)
     {
-        _fbsvc.trophyPublished(gameId, trophyIdent, new AsyncCallback<Void>() {
+        _fbsvc.trophyPublished(gameId, trophyIdent, trackingId, new AsyncCallback<Void>() {
             @Override public void onFailure (Throwable caught) {
                 CShell.log("Failed to contact server for trophy published", caught);
             }
@@ -98,10 +96,10 @@ public class ExternalFeeder
     }
 
     protected native void publishTrophy (
-        String templateId, int gameId, String ident, JavaScriptObject data) /*-{
+        String templateId, int gameId, String ident, String trackingId, JavaScriptObject data) /*-{
         var object = this;
         $wnd.FB_PostTrophy(templateId, data, function () {
-            object.@client.frame.ExternalFeeder::trophyPublished(ILjava/lang/String;)(gameId, ident);
+            object.@client.frame.ExternalFeeder::trophyPublished(ILjava/lang/String;Ljava/lang/String;)(gameId, ident, trackingId);
         });
     }-*/;
 

@@ -8,8 +8,10 @@ import java.util.Map;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.msoy.web.gwt.ArgNames;
+import com.threerings.msoy.web.gwt.CookieNames;
 import com.threerings.msoy.web.gwt.SharedNaviUtil;
 
 import com.threerings.msoy.facebook.gwt.FacebookGame;
@@ -18,6 +20,7 @@ import com.threerings.msoy.facebook.gwt.FacebookServiceAsync;
 import com.threerings.msoy.facebook.gwt.FacebookService.StoryFields;
 
 import client.facebookbase.FacebookUtil;
+import client.shell.CShell;
 import client.util.JavaScriptUtil;
 import client.util.Link;
 
@@ -29,31 +32,35 @@ public class FBChallengeFeeder
     /**
      * Creates a new feeder to publish a challenge for the given game.
      */
-    public FBChallengeFeeder (FacebookGame game)
+    public FBChallengeFeeder (FacebookGame game, StoryFields fields)
     {
         _game = game;
+        _fields = fields;
     }
 
     /**
      * Pops up a challenge feed story confirmation using the given game and story fields.
      */
-    public void publish (StoryFields result)
+    public void publish ()
     {
-        String vector = result.template.toEntryVector("challenge");
-        String templateId = String.valueOf(result.template.bundleId);
+        String vector = _fields.template.toEntryVector("challenge");
+        String templateId = String.valueOf(_fields.template.bundleId);
 
         // action link goes to either the Whirled game detail or the Mochi embed
         String actionURL = SharedNaviUtil.buildRequest(
             FacebookUtil.APP_CANVAS, _game.getCanvasArgs());
-        actionURL = SharedNaviUtil.buildRequest(actionURL, ArgNames.FBParam.VECTOR.name, vector);
+        actionURL = SharedNaviUtil.buildRequest(actionURL,
+            CookieNames.AFFILIATE, String.valueOf(CShell.getMemberId()),
+            ArgNames.FBParam.VECTOR.name, vector,
+            ArgNames.FBParam.TRACKING.name, _fields.trackingId);
 
         FacebookUtil.FeedStoryImages images = new FacebookUtil.FeedStoryImages();
-        images.add(result.thumbnailURL, actionURL, ACCESSIBLE_GAME_IMAGE);
+        images.add(_fields.thumbnailURL, actionURL, ACCESSIBLE_GAME_IMAGE);
 
         // TODO: A/B test use of target ids
         Map<String, Object> data = new HashMap<String, Object>();
-        data.put("game", result.name);
-        data.put("game_desc", result.description);
+        data.put("game", _fields.name);
+        data.put("game_desc", _fields.description);
         data.put("action_url", actionURL);
         data.put("images", images.toArray());
 
@@ -65,7 +72,18 @@ public class FBChallengeFeeder
      */
     protected void onCompletion ()
     {
-        // go back to playing the game
+        _fbsvc.challengePublished(_game, _fields.trackingId, new AsyncCallback<Void>() {
+            @Override public void onFailure (Throwable caught) {
+                goBackToGame();
+            }
+            @Override public void onSuccess (Void result) {
+                goBackToGame();
+            }
+        });
+    }
+
+    protected void goBackToGame ()
+    {
         Link.go(_game.getPlayPage(), _game.getPlayArgs());
     }
 
@@ -89,6 +107,7 @@ public class FBChallengeFeeder
     */
 
     protected FacebookGame _game;
+    protected StoryFields _fields;
 
     protected static final FacebookServiceAsync _fbsvc = GWT.create(FacebookService.class);
     protected static final String ACCESSIBLE_GAME_IMAGE =

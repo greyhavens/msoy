@@ -60,10 +60,10 @@ public class FacebookPage extends Page
     {
         if (mode.equals(ArgNames.FB_CHALLENGE_FEED)) {
             setContent(null);
-            _fbsvc.getStoryFields(game, new InfoCallback<StoryFields>() {
+            _fbsvc.getChallengeStoryFields(game, new InfoCallback<StoryFields>() {
                 @Override public void onSuccess (StoryFields result) {
-                    FBChallengeFeeder feeder = new FBChallengeFeeder(game);
-                    feeder.publish(result);
+                    FBChallengeFeeder feeder = new FBChallengeFeeder(game, result);
+                    feeder.publish();
                 }
             });
             return;

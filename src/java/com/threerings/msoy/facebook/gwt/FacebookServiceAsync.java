@@ -15,14 +15,15 @@ import com.threerings.msoy.facebook.gwt.FacebookService.InviteInfo;
 public interface FacebookServiceAsync
 {
     /**
-     * The asynchronous version of {@link FacebookService#getTemplate}.
+     * The asynchronous version of {@link FacebookService#getTrophyStoryFields}.
      */
-    void getTemplate (String code, AsyncCallback<FacebookTemplateCard> callback);
+    void getTrophyStoryFields (AsyncCallback<StoryFields> callback);
 
     /**
      * The asynchronous version of {@link FacebookService#trophyPublished}.
      */
-    void trophyPublished (int gameId, String ident, AsyncCallback<Void> callback);
+    void trophyPublished (int gameId, String ident, String trackingId,
+        AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link FacebookService#getAppFriendsInfo}.
@@ -46,8 +47,13 @@ public interface FacebookServiceAsync
         FacebookGame game, boolean appOnly, AsyncCallback<StoryFields> callback);
 
     /**
-     * The asynchronous version of {@link FacebookService#getStoryFields}.
+     * The asynchronous version of {@link FacebookService#getChallengeStoryFields}.
      */
-    void getStoryFields (
+    void getChallengeStoryFields (
         FacebookGame game, AsyncCallback<StoryFields> callback);
+
+    /**
+     * The asynchronous version of {@link FacebookService#challengePublished}.
+     */
+    void challengePublished (FacebookGame game, String trackingId, AsyncCallback<Void> callback);
 }

@@ -30,7 +30,9 @@ public class KontagentLogic
     public enum LinkType
     {
         INVITE("inv", MessageType.INVITE_RESPONSE),
-        NOTIFICATION("ntf", MessageType.NOTIFICATION_RESPONSE);
+        NOTIFICATION("ntf", MessageType.NOTIFICATION_RESPONSE),
+        FEED_SHORT("fds", MessageType.POST_RESPONSE),
+        FEED_LONG("fdl", MessageType.POST_RESPONSE);
 
         /** The unique id for composing and parsing. */
         public String id;
@@ -210,6 +212,8 @@ public class KontagentLogic
                 sendMessage(id.type.responseType, "r", uidStr, "i", "1", "u", id.uuid,
                     "st1", id.subtype, "tu", id.type.responseType.id);
                 break;
+            case POST_RESPONSE:
+                // TODO
             default:
                 log.warning("Unhandled response type", "trackingId", trackingId);
                 break;
@@ -307,7 +311,9 @@ public class KontagentLogic
         INVITE_RESPONSE("inr"),
         INVITE_SENT("ins"),
         NOTIFICATION_SENT("nts"),
-        NOTIFICATION_RESPONSE("ntr");
+        NOTIFICATION_RESPONSE("ntr"),
+        POST("pst"),
+        POST_RESPONSE("psr");
 
         public String id;
 

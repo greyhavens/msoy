@@ -65,6 +65,9 @@ public interface FacebookService extends RemoteService
         /** The template bundle to use, normally a randomly selected variant. */
         public FacebookTemplateCard template;
 
+        /** The generated tracking id to embed into the story's links. */
+        public String trackingId;
+
         /** The thumbnail to use in the story. */
         public String thumbnailURL;
 
@@ -76,17 +79,17 @@ public interface FacebookService extends RemoteService
     }
 
     /**
-     * Gets a random template variant from those with a matching code. If none match, null is
-     * returned.
+     * Gets the basic story fields (template and tracking id) for publishing a trophy story. If no
+     * templates are found, returns null.
      */
-    FacebookTemplateCard getTemplate (String code)
+    StoryFields getTrophyStoryFields ()
         throws ServiceException;
 
     /**
      * Notes that the user published a trophy to their feed (or at least viewed the publish
      * dialog).
      */
-    void trophyPublished (int gameId, String ident)
+    void trophyPublished (int gameId, String ident, String trackingId)
         throws ServiceException;
 
     /**
@@ -123,6 +126,12 @@ public interface FacebookService extends RemoteService
      * Returns data for publishing a challenge feed story. Throws an exception if the data could
      * not be loaded.
      */
-    StoryFields getStoryFields (FacebookGame game)
+    StoryFields getChallengeStoryFields (FacebookGame game)
+        throws ServiceException;
+
+    /**
+     * Lets the server know that a challenge feed story has been published.
+     */
+    void challengePublished (FacebookGame game, String trackingId)
         throws ServiceException;
 }

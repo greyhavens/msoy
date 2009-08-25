@@ -36,11 +36,10 @@ import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 
 import com.threerings.msoy.data.MsoyCodes;
-import com.threerings.msoy.facebook.data.FacebookCodes;
 import com.threerings.msoy.facebook.gwt.FacebookFriendInfo;
 import com.threerings.msoy.facebook.gwt.FacebookGame;
 import com.threerings.msoy.facebook.gwt.FacebookService;
-import com.threerings.msoy.facebook.gwt.FacebookTemplateCard;
+import com.threerings.msoy.facebook.server.FacebookLogic.SessionInfo;
 import com.threerings.msoy.facebook.server.KontagentLogic.TrackingId;
 import com.threerings.msoy.facebook.server.KontagentLogic.LinkType;
 import com.threerings.msoy.facebook.server.persist.FacebookRepository;
@@ -58,7 +57,6 @@ import com.threerings.msoy.game.server.persist.TrophyRepository;
 
 import com.threerings.msoy.money.server.persist.MoneyRepository;
 
-import com.threerings.msoy.web.gwt.ExternalAuther;
 import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.gwt.SharedNaviUtil;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
@@ -72,23 +70,23 @@ public class FacebookServlet extends MsoyServiceServlet
     implements FacebookService
 {
     @Override // from FacebookService
-    public FacebookTemplateCard getTemplate (String code)
+    public StoryFields getTrophyStoryFields ()
         throws ServiceException
     {
-        List<FacebookTemplateRecord> templates = _facebookRepo.loadVariants(code);
-        if (templates.size() == 0) {
-            log.warning("No Facebook templates found for request", "code", code);
-            return null;
+        StoryFields fields = loadBasicStoryFields(new StoryFields(), requireSession(), "trophy");
+        if (fields.template == null) {
+            throw new ServiceException(MsoyCodes.E_INTERNAL_ERROR);
         }
-        return RandomUtil.pickRandom(templates).toTemplateCard();
+        return fields;
     }
 
     @Override // from FacebookService
-    public void trophyPublished (int gameId, String ident)
+    public void trophyPublished (int gameId, String ident, String trackingId)
         throws ServiceException
     {
         MemberRecord memrec = requireAuthedUser();
         _facebookRepo.noteTrophyPublished(memrec.memberId, gameId, ident);
+        // TODO: _tracker.trackFeedPost(trackingId);
     }
 
     @Override // from FacebookService
@@ -221,26 +219,18 @@ public class FacebookServlet extends MsoyServiceServlet
             }
 
         } else {
-            info.gameName = loadStoryFields(game).name;
+            info.gameName = loadGameStoryFields(new StoryFields(), game).name;
         }
 
-        MemberRecord mrec = requireAuthedUser();
-
-        // get the session key
-        ExternalMapRecord mapRec = _memberRepo.loadExternalMapEntry(
-            ExternalAuther.FACEBOOK, mrec.memberId);
-
-        if (mapRec == null || mapRec.sessionKey == null) {
-            throw new ServiceException(FacebookCodes.NO_SESSION);
-        }
+        SessionInfo session = requireSession();
 
         // TODO: we don't need this at all! Bite Me successfully used <fb:name> in request text,
         // using the facebook user id. We just need to expose said id to GWT at large.
 
         // use the facebook name for consistency and the facebook gender in case privacy settings
         // have changed. users will expect this
-        FacebookJaxbRestClient client = _fbLogic.getFacebookClient(mapRec.sessionKey);
-        Long userId = Long.valueOf(mapRec.externalId);
+        FacebookJaxbRestClient client = _fbLogic.getFacebookClient(session.mapRec.sessionKey);
+        Long userId = session.fbid;
         List<ProfileField> fields = Lists.newArrayList();
         fields.add(ProfileField.FIRST_NAME);
         fields.add(ProfileField.SEX);
@@ -273,35 +263,35 @@ public class FacebookServlet extends MsoyServiceServlet
     public StoryFields sendChallengeNotification (FacebookGame game, boolean appOnly)
         throws ServiceException
     {
-        MemberRecord mrec = requireAuthedUser();
-        StoryFields result = loadStoryFields(game);
+        SessionInfo session = requireSession();
+        StoryFields result = loadGameStoryFields(loadBasicStoryFields(
+            new StoryFields(), session, "challenge"), game);
         Map<String, String> replacements = Maps.newHashMap();
         replacements.put("game", result.name);
         replacements.put("game_url", SharedNaviUtil.buildRequest(
             FacebookLogic.WHIRLED_APP_CANVAS, game.getCanvasArgs()));
-        _fbLogic.scheduleFriendNotification(mrec, "challenge", replacements, appOnly);
+        _fbLogic.scheduleFriendNotification(session, "challenge", replacements, appOnly);
 
-        try {
-            result.template = getTemplate("challenge");
-            return result;
-
-        } catch (Exception e) {
-            log.warning("Could not load challenge template");
-            return null;
-        }
+        return result.template != null ? result : null;
     }
 
     @Override // from FacebookService
-    public StoryFields getStoryFields (FacebookGame game)
+    public StoryFields getChallengeStoryFields (FacebookGame game)
         throws ServiceException
     {
-        requireAuthedUser();
-        StoryFields result = loadStoryFields(game);
-        result.template = getTemplate("challenge");
+        StoryFields result = loadGameStoryFields(loadBasicStoryFields(
+            new StoryFields(), requireSession(), "challenge"), game);
         if (result.template == null) {
             throw new ServiceException(MsoyCodes.E_INTERNAL_ERROR);
         }
         return result;
+    }
+
+    @Override
+    public void challengePublished (FacebookGame game, String trackingId)
+        throws ServiceException
+    {
+        // TODO: _tracker.trackFeedPost(trackingId);
     }
 
     /**
@@ -338,10 +328,25 @@ public class FacebookServlet extends MsoyServiceServlet
         });
     }
 
-    protected StoryFields loadStoryFields (FacebookGame game)
+    protected StoryFields loadBasicStoryFields (
+        StoryFields fields, SessionInfo session, String template)
+    {
+        List<FacebookTemplateRecord> templates = _facebookRepo.loadVariants(template);
+        if (templates.size() == 0) {
+            log.warning("No Facebook templates found for request", "code", template);
+            return fields;
+        }
+
+        fields.template = RandomUtil.pickRandom(templates).toTemplateCard();
+        TrackingId trackingId = new KontagentLogic.TrackingId(LinkType.FEED_LONG,
+            template + fields.template.variant, session.fbid);
+        fields.trackingId = trackingId.flatten();
+        return fields;
+    }
+
+    protected StoryFields loadGameStoryFields (StoryFields fields, FacebookGame game)
         throws ServiceException
     {
-        StoryFields fields = new StoryFields();
         switch (game.type) {
         case WHIRLED:
             // whirled game invite
@@ -366,6 +371,12 @@ public class FacebookServlet extends MsoyServiceServlet
             return fields;
         }
         throw new ServiceException();
+    }
+
+    protected SessionInfo requireSession ()
+        throws ServiceException
+    {
+        return _fbLogic.loadSessionInfo(requireAuthedUser());
     }
 
     @Inject protected FacebookLogic _fbLogic;

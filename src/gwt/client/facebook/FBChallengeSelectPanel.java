@@ -74,8 +74,8 @@ public class FBChallengeSelectPanel extends FlowPanel
                         }
 
                         // publish to feed
-                        FBChallengeFeeder feeder = new FBChallengeFeeder(_game);
-                        feeder.publish(result);
+                        FBChallengeFeeder feeder = new FBChallengeFeeder(_game, result);
+                        feeder.publish();
                     }
                 });
             }

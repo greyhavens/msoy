@@ -58,6 +58,24 @@ import static com.threerings.msoy.Log.log;
 @Singleton
 public class FacebookLogic
 {
+    /**
+     * Some useful things to be able to pass around when doing things with a user's session.
+     */
+    public static class SessionInfo
+    {
+        /** Facebook user id. */
+        public Long fbid;
+
+        /** The external mapping. */
+        public ExternalMapRecord mapRec;
+
+        /** The member record. */
+        public MemberRecord memRec;
+
+        /** The client, only if requested. */
+        public FacebookJaxbRestClient client;
+    }
+
     /** URL of the main application entry point. */
     public static final String WHIRLED_APP_CANVAS =
         getCanvasUrl(DeploymentConfig.facebookCanvasName);
@@ -127,6 +145,15 @@ public class FacebookLogic
     }
 
     /**
+     * Loads up the session info for the given member, without initializing the jaxb client.
+     */
+    public SessionInfo loadSessionInfo (MemberRecord mrec)
+        throws ServiceException
+    {
+        return loadSessionInfo(mrec, 0);
+    }
+
+    /**
      * Using standard parameter values, returns the whirled or mochi game associated with the given
      * request, or null if there is not one.
      */
@@ -160,11 +187,11 @@ public class FacebookLogic
      * given user. If a notification of the given id is already active for that user, an exception
      * is thrown.
      */
-    public void scheduleFriendNotification (MemberRecord mrec, String notificationId,
+    public void scheduleFriendNotification (SessionInfo session, String notificationId,
         Map<String, String> replacements, boolean appOnly)
         throws ServiceException
     {
-        copyAndSchedule(getSessionInfo(mrec, 0), notificationId, replacements, appOnly, 0);
+        copyAndSchedule(session, notificationId, replacements, appOnly, 0);
     }
 
     /**
@@ -176,7 +203,7 @@ public class FacebookLogic
         MemberRecord mrec, boolean includeSelf, int limit)
         throws ServiceException
     {
-        SessionInfo sinf = getSessionInfo(mrec);
+        SessionInfo sinf = loadSessionInfo(mrec, CONNECT_TIMEOUT);
 
         // get facebook friends to seed (more accurate)
         Set<String> facebookFriendIds = Sets.newHashSet();
@@ -321,20 +348,10 @@ public class FacebookLogic
     }
 
     /**
-     * Loads up the session info for the given member, initializing the jaxb client with the
-     * default timeout.
+     * Loads up the session info for the given member, initializing the jaxb client with the given
+     * timeout if it is not zero, otherwise leaving it set to null.
      */
-    protected SessionInfo getSessionInfo (MemberRecord mrec)
-        throws ServiceException
-    {
-        return getSessionInfo(mrec, CONNECT_TIMEOUT);
-    }
-
-    /**
-     * Loads up the session info for the given member, initializing the jaxb client with the
-     * given timeout if it is not zero, otherwise the client will be left as null.
-     */
-    protected SessionInfo getSessionInfo (MemberRecord mrec, int timeout)
+    protected SessionInfo loadSessionInfo (MemberRecord mrec, int timeout)
         throws ServiceException
     {
         SessionInfo sinf = new SessionInfo();
@@ -353,7 +370,7 @@ public class FacebookLogic
     protected List<Long> loadFriends (MemberRecord mrec)
         throws ServiceException
     {
-        SessionInfo sinf = getSessionInfo(mrec);
+        SessionInfo sinf = loadSessionInfo(mrec, CONNECT_TIMEOUT);
         try {
             return sinf.client.friends_get().getUid();
 
@@ -418,17 +435,6 @@ public class FacebookLogic
     }
 
     /**
-     * Some useful things to be able to pass around when doing things with a user's session.
-     */
-    protected static class SessionInfo
-    {
-        public Long fbid;
-        public ExternalMapRecord mapRec;
-        public MemberRecord memRec;
-        public FacebookJaxbRestClient client;
-    }
-
-    /**
      * A notification batch.
      */
     protected class NotificationBatch
@@ -478,7 +484,7 @@ public class FacebookLogic
                 // have changed the documented behavior of this method... try to limit how many we
                 // send, see if exception stops
                 List<ExternalMapRecord> targets = loadMappedFriends(_mrec, false, alloc);
-                SessionInfo sinf = getSessionInfo(_mrec, BATCH_READ_TIMEOUT);
+                SessionInfo sinf = loadSessionInfo(_mrec, BATCH_READ_TIMEOUT);
                 Collection<String> recipients = sendNotifications(sinf.client, _notifRec.id,
                     _notifRec.text, targets, MAPREC_TO_UID_EXP, APP_USER_FILTER, false);
                 _tracker.trackNotificationSent(sinf.fbid, _trackingId, recipients);
@@ -487,7 +493,7 @@ public class FacebookLogic
                 // see above
                 List<Long> targets = loadFriends(_mrec);
                 targets = alloc >= targets.size() ? targets : targets.subList(0, alloc);
-                SessionInfo sinf = getSessionInfo(_mrec, BATCH_READ_TIMEOUT);
+                SessionInfo sinf = loadSessionInfo(_mrec, BATCH_READ_TIMEOUT);
                 Collection<String> recipients = sendNotifications(sinf.client, _notifRec.id,
                     _notifRec.text, targets, new Function<Long, FQL.Exp> () {
                     public FQL.Exp apply (Long uid) {
