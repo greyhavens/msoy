@@ -45,8 +45,9 @@ public class AuthLogic
     public static boolean fixPurgedPermaguest (ServiceException cause, MsoyCredentials creds)
     {
         final String aname = creds.getUsername().toString().toLowerCase();
-        if (cause.getMessage().equals(MsoyAuthCodes.NO_SUCH_USER) &&
-            MemberMailUtil.isPermaguest(aname)) {
+        boolean userNotFound = cause.getMessage().equals(MsoyAuthCodes.NO_SUCH_USER) ||
+            cause.getMessage().equals(MsoyAuthCodes.INVALID_LOGON);
+        if (userNotFound && MemberMailUtil.isPermaguest(aname)) {
             log.info("Coping with expired permaguest", "oldacct", aname);
             // we need to fake up a new visitor id since the old one is now long gone
             if (creds.visitorId == null) {
