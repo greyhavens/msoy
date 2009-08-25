@@ -67,12 +67,6 @@ public class FacebookLogic
         "http://www.facebook.com/apps/application.php",
         "id", DeploymentConfig.facebookApplicationId);
 
-    /** Tracking prefix for a game invite (challenge). */
-    public static final String TRACKING_GAME_INVITE = "invg";
-
-    /** Tracking prefix for an app invite. */
-    public static final String TRACKING_APP_INVITE = "inva";
-
     /**
      * Prepends the Facebook application root to get the canvas url of the given name.
      */
