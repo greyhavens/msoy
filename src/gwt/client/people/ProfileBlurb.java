@@ -407,11 +407,12 @@ public class ProfileBlurb extends Blurb
             _greeter = _egreeter.getValue() ? GreeterStatus.GREETER : GreeterStatus.NORMAL;
         }
 
-        _profilesvc.updateProfile(_name.getMemberId(), name, _greeter == GreeterStatus.GREETER, _profile,
-            new InfoCallback<Void>() {
+        _profilesvc.updateProfile(_name.getMemberId(), name, _greeter == GreeterStatus.GREETER,
+            _profile, new InfoCallback<Void>() {
                 public void onSuccess (Void result) {
                     displayProfile();
-                    if (!name.equals(CShell.creds.name.toString())) {
+                    if (_name.getMemberId() == CShell.getMemberId() &&
+                        !name.equals(CShell.creds.name.toString())) {
                         CShell.frame.dispatchEvent(new NameChangeEvent(name));
                     }
                 }
