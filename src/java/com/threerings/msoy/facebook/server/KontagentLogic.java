@@ -213,7 +213,9 @@ public class KontagentLogic
                     "st1", id.subtype, "tu", id.type.responseType.id);
                 break;
             case POST_RESPONSE:
-                // TODO
+                sendMessage(id.type.responseType, "r", uidStr, "i", "1", "tu", FEED_CHANNEL,
+                    "st1", id.subtype, "u", id.uuid);
+                break;
             default:
                 log.warning("Unhandled response type", "trackingId", trackingId);
                 break;
@@ -256,6 +258,24 @@ public class KontagentLogic
         sendMessage(MessageType.NOTIFICATION_SENT, "s", String.valueOf(senderId),
             "r", StringUtil.join(recipients.toArray(), StringUtil.encode(",")),
             "u", trackingId.uuid, "st1", trackingId.subtype);
+    }
+
+    /**
+     * Track the posting of a feed story. The tracking id is normally generated when the template
+     * is requested, then passed back when the user presses a button. Note the Facebook API does
+     * not actually tell us whether the user pressed "Cancel" or "Publish", so I guess we just have
+     * to pass cancels through to Kontagent and let them be 0% responses.
+     * TODO: work around lack of cancel/publish distinction
+     */
+    public void trackFeedStoryPosted (long senderId, String trackingId)
+    {
+        TrackingId id = parseTrackingId(trackingId, false);
+        if (id == null) {
+            return;
+        }
+
+        sendMessage(MessageType.POST, "s", String.valueOf(senderId), "tu", FEED_CHANNEL,
+            "u", id.uuid, "st1", id.subtype);
     }
 
     protected TrackingId parseTrackingId (String trackingId, boolean allowBlank)
@@ -344,4 +364,5 @@ public class KontagentLogic
     protected static final String API_KEY = ServerConfig.config.getValue("kontagent.api_key", "");
     protected static final String SECRET = ServerConfig.config.getValue("kontagent.secret", "");
     protected static final String MSG_URL = API_URL + VERSION + "/" + API_KEY + "/";
+    protected static final String FEED_CHANNEL = "feedpub";
 }

@@ -32,7 +32,6 @@ import com.threerings.parlor.rating.server.persist.RatingRepository;
 import com.threerings.msoy.person.server.persist.ProfileRepository;
 import com.threerings.msoy.server.persist.ExternalMapRecord;
 import com.threerings.msoy.server.persist.MemberCardRecord;
-import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 
 import com.threerings.msoy.data.MsoyCodes;
@@ -84,9 +83,9 @@ public class FacebookServlet extends MsoyServiceServlet
     public void trophyPublished (int gameId, String ident, String trackingId)
         throws ServiceException
     {
-        MemberRecord memrec = requireAuthedUser();
-        _facebookRepo.noteTrophyPublished(memrec.memberId, gameId, ident);
-        // TODO: _tracker.trackFeedPost(trackingId);
+        SessionInfo session = requireSession();
+        _facebookRepo.noteTrophyPublished(session.memRec.memberId, gameId, ident);
+        _tracker.trackFeedStoryPosted(session.fbid, trackingId);
     }
 
     @Override // from FacebookService
@@ -291,7 +290,7 @@ public class FacebookServlet extends MsoyServiceServlet
     public void challengePublished (FacebookGame game, String trackingId)
         throws ServiceException
     {
-        // TODO: _tracker.trackFeedPost(trackingId);
+        _tracker.trackFeedStoryPosted(requireSession().fbid, trackingId);
     }
 
     /**
