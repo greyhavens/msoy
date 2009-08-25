@@ -5,7 +5,6 @@ package com.threerings.msoy.server.persist;
 
 import java.sql.Timestamp;
 
-import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -27,6 +26,8 @@ import com.samskivert.depot.expression.SQLExpression;
 import com.samskivert.depot.expression.ValueExp;
 import com.samskivert.depot.operator.And;
 import com.samskivert.depot.operator.Or;
+
+import com.samskivert.util.Calendars;
 
 import com.threerings.presents.annotation.BlockingThread;
 
@@ -94,15 +95,13 @@ public class SubscriptionRepository extends DepotRepository
      */
     public List<Integer> loadSubscribersNeedingBarGrants ()
     {
-        Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.MONTH, -1);
-        Timestamp monthAgo = new Timestamp(cal.getTimeInMillis());
         List<Key<SubscriptionRecord>> keys = findAllKeys(SubscriptionRecord.class, true,
             new Where(new And(
                 SubscriptionRecord.SUBSCRIBER.eq(true),
                 SubscriptionRecord.GRANTS_LEFT.greaterThan(0),
                 new Or(
-                    SubscriptionRecord.LAST_GRANT.lessThan(monthAgo),
+                    SubscriptionRecord.LAST_GRANT.lessThan(
+                        Calendars.now().addMonths(-1).toTimestamp()),
                     SubscriptionRecord.LAST_GRANT.isNull()))));
         return Lists.transform(keys, Key.<SubscriptionRecord>toInt());
     }
@@ -157,14 +156,10 @@ public class SubscriptionRepository extends DepotRepository
      */
     public void noteBarscribed (int memberId)
     {
-        // calculate the expiration time
-        Calendar exp = Calendar.getInstance();
-        exp.add(Calendar.MONTH, 1);
-
-        // save it
+        // save a record with the new expiration time
         BarscriptionRecord rec = new BarscriptionRecord();
         rec.memberId = memberId;
-        rec.expires = new Timestamp(exp.getTimeInMillis());
+        rec.expires = Calendars.now().addMonths(1).toTimestamp();
         store(rec);
     }
 
