@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.bureau.client;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -313,7 +314,7 @@ public class BureauLauncher
     protected void pollForNewHosts ()
     {
         try {
-            final java.util.Collection<NodeRecord> nodes = _nodeRepo.loadNodes();
+            final Collection<NodeRecord> nodes = _nodeRepo.loadNodes();
 
             _runner.postRunnable(new Runnable() {
                 public void run() {
