@@ -312,7 +312,8 @@ public class MsoySceneRegistry extends SpotSceneRegistry
             protected void effectSceneMove (SceneManager scmgr) throws InvocationException {
                 MsoyScene scene = (MsoyScene) scmgr.getScene();
 
-                if (maybeCrossMogBoundary(scene.getMogId(), sceneId, memobj, listener)) {
+                if (memobj != null && maybeCrossMogBoundary(
+                    scene.getMogId(), sceneId, memobj, listener)) {
                     return;
                 }
 
