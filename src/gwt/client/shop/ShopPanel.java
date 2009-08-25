@@ -18,6 +18,7 @@ import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.gwt.util.ServiceUtil;
+import com.threerings.gwt.util.SimpleDataModel;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.gwt.CatalogQuery;
@@ -50,7 +51,7 @@ import client.item.SideBar;
  */
 public class ShopPanel extends FlowPanel
 {
-    public ShopPanel ()
+    public ShopPanel (boolean jumble)
     {
         setStyleName("shopPanel");
 
@@ -96,6 +97,15 @@ public class ShopPanel extends FlowPanel
         add(row);
         add(WidgetUtil.makeShim(15, 15));
 
+        if (jumble) {
+            _catalogsvc.loadShopData(true, new InfoCallback<ShopData>() {
+                public void onSuccess (ShopData data) {
+                    initJumble(data);
+                }
+            });
+            return;
+        }
+
         // now load up our shop data
         _catalogsvc.loadShopData(false, new InfoCallback<ShopData>() {
             public void onSuccess (ShopData data) {
@@ -137,6 +147,27 @@ public class ShopPanel extends FlowPanel
             }
         });
     }
+
+    protected void initJumble (final ShopData data)
+    {
+        _nowLoading.finishing(new Timer() {
+            public void run () {
+
+                ListingGrid grid = new ListingGrid(HEADER_HEIGHT) {
+                    @Override protected String getEmptyMessage () {
+                        // TODO
+                        return "No Items";
+                    }
+                };
+
+                grid.setModel(SimpleDataModel.newModel(data.jumbledItems), 0);
+                _contents.add(grid);
+
+                _nowLoading.hide();
+            }
+        });
+    }
+
 
     protected Widget createTop (String icon, String title, List<ListingCard> listings)
     {
@@ -192,6 +223,9 @@ public class ShopPanel extends FlowPanel
             setText(2, 1, _imsgs.itemBy(card.getListedBy().toString()), 1, "Creator");
         }
     }
+
+    // TODO: this looks out of date
+    protected static final int HEADER_HEIGHT = 15 /* gap */ + 59 /* top tags, etc. */;
 
     protected FlowPanel _contents;
     protected NowLoadingWidget _nowLoading;
