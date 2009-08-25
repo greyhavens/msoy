@@ -5,6 +5,7 @@ package com.threerings.msoy.facebook.server;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -28,8 +29,8 @@ public class KontagentLogic
      */
     public enum LinkType
     {
-        JOIN_APP("inva", MessageType.INVITE_RESPONSE),
-        PLAY_GAME("invg", MessageType.INVITE_RESPONSE);
+        INVITE("inv", MessageType.INVITE_RESPONSE),
+        NOTIFICATION("ntf", MessageType.NOTIFICATION_RESPONSE);
 
         /** The unique id for composing and parsing. */
         public String id;
@@ -208,11 +209,17 @@ public class KontagentLogic
             // app link in an invite)
             sendMessage(MessageType.UNDIRECTED, "s", uidStr, "tu", ShortTag.UNKNOWN.id, "i", "1");
 
-        } else if (sent.type.responseType == MessageType.INVITE_RESPONSE) {
-            sendMessage(MessageType.INVITE_RESPONSE, "r", uidStr, "i", "1");
-
         } else {
-            log.warning("Unhandled response type", "trackingId", trackingId);
+            switch (sent.type.responseType) {
+            case INVITE_RESPONSE:
+            case NOTIFICATION_RESPONSE:
+                sendMessage(sent.type.responseType, "r", uidStr, "i", "1", "u", sent.uuid,
+                    "st1", sent.subtype, "tu", sent.type.responseType.id);
+                break;
+            default:
+                log.warning("Unhandled response type", "trackingId", trackingId);
+                break;
+            }
         }
     }
 
@@ -237,6 +244,23 @@ public class KontagentLogic
 
         sendMessage(MessageType.INVITE_SENT, "s", String.valueOf(senderId),
             "r", StringUtil.join(recipients, StringUtil.encode(",")), "u", link.uuid,
+            "st1", link.subtype);
+    }
+
+    /**
+     * Track the sending of a notification. The tracking id is normally generated during the
+     * scheduling of the notification and passed back after it is actually sent.
+     */
+    public void trackNotificationSent (
+        long senderId, String trackingId, Collection<String> recipients)
+    {
+        SentLink link = parseTrackingId(trackingId, false);
+        if (link == null) {
+            return;
+        }
+
+        sendMessage(MessageType.NOTIFICATION_SENT, "s", String.valueOf(senderId),
+            "r", StringUtil.join(recipients.toArray(), StringUtil.encode(",")), "u", link.uuid,
             "st1", link.subtype);
     }
 
@@ -266,7 +290,10 @@ public class KontagentLogic
             return;
         }
 
-        log.info("Sending message", "url", url);
+        if (DeploymentConfig.devDeployment) {
+            log.info("Sending message", "url", url);
+        }
+
         try {
             HttpURLConnection conn = (HttpURLConnection)new URL(url).openConnection();
             if (conn.getResponseCode() != HttpURLConnection.HTTP_OK) {
@@ -288,7 +315,9 @@ public class KontagentLogic
         APP_REMOVED("apr"),
         UNDIRECTED("ucc"),
         INVITE_RESPONSE("inr"),
-        INVITE_SENT("ins");
+        INVITE_SENT("ins"),
+        NOTIFICATION_SENT("nts"),
+        NOTIFICATION_RESPONSE("ntr");
 
         public String id;
 

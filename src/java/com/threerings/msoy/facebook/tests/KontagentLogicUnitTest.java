@@ -62,13 +62,14 @@ public class KontagentLogicUnitTest
             Assert.assertEquals(call1.uuid, call2.uuid);
         }
 
+        String inv = KontagentLogic.LinkType.INVITE.id;
         try {
-            new KontagentLogic.SentLink("inva");
+            new KontagentLogic.SentLink(inv);
             Assert.fail("not enough components should throw");
         } catch (IllegalArgumentException ex) { }
 
         try {
-            new KontagentLogic.SentLink("inva-X-Y-0000000000000000");
+            new KontagentLogic.SentLink(inv + "-X-Y-0000000000000000");
             Assert.fail("too many components should throw");
         } catch (IllegalArgumentException ex) { }
 
@@ -78,17 +79,17 @@ public class KontagentLogicUnitTest
         } catch (IllegalArgumentException ex) { }
 
         try {
-            new KontagentLogic.SentLink("inva-not.a.uuid");
+            new KontagentLogic.SentLink(inv + "-not.a.uuid");
             Assert.fail("invalid uuid should throw");
         } catch (IllegalArgumentException ex) { }
 
         try {
-            new KontagentLogic.SentLink("inva-xxx-not.a.uuid");
+            new KontagentLogic.SentLink(inv + "-xxx-not.a.uuid");
             Assert.fail("invalid uuid type should throw");
         } catch (IllegalArgumentException ex) { }
 
-        new KontagentLogic.SentLink("inva-xxx-0000000000000000");
-        new KontagentLogic.SentLink("inva--0000000000000000");
-        new KontagentLogic.SentLink("inva-0000000000000000");
+        new KontagentLogic.SentLink(inv + "-xxx-0000000000000000");
+        new KontagentLogic.SentLink(inv + "--0000000000000000");
+        new KontagentLogic.SentLink(inv + "-0000000000000000");
     }
 }

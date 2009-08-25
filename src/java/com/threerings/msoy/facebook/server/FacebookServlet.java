@@ -262,8 +262,8 @@ public class FacebookServlet extends MsoyServiceServlet
 
         // generate the tracking id for the invite
         SentLink tracker = game == null ?
-            new SentLink(LinkType.JOIN_APP, userId) :
-            new SentLink(LinkType.PLAY_GAME, game.getStringId(), userId);
+            new SentLink(LinkType.INVITE, userId) :
+            new SentLink(LinkType.INVITE, game.getStringId(), userId);
         info.trackingId = tracker.composeTrackingId();
 
         return info;
