@@ -6,6 +6,7 @@ package com.threerings.msoy.server;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import com.samskivert.util.Invoker;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;
@@ -15,8 +16,8 @@ import com.threerings.msoy.data.all.MemberMailUtil;
 import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.web.gwt.ServiceException;
+import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.server.ClientManager;
-import com.threerings.presents.server.PresentsInvoker;
 
 import static com.threerings.msoy.Log.log;
 
@@ -102,6 +103,6 @@ public class AuthLogic
 
     // dependencies
     @Inject protected ClientManager _clmgr;
-    @Inject protected PresentsInvoker _invoker;
+    @Inject protected @MainInvoker Invoker _invoker;
     @Inject protected RuntimeConfig _runtime;
 }
