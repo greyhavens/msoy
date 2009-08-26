@@ -54,6 +54,12 @@ import static com.threerings.msoy.Log.log;
 
 /**
  * Centralizes some Facebook API bits.
+ * TODO: write a batch process that does some bookkeeping once a day or something:
+ *   1 - Get each user's info up to once per week and update their profile (if it hasn't been
+ *       updated manually on Whirled)
+ *   2 - Update each user's friend list up to once per week
+ *   3 - Check if the user has removed the app and if so delete the ExternalMapRecord and queue up
+ *       the account for deletion.
  */
 @Singleton
 public class FacebookLogic
@@ -390,6 +396,12 @@ public class FacebookLogic
 
             List<FQL.Exp> uids = Lists.transform(batch, toUserId);
 
+            // we query whether each user in our list is a user of the application so that we
+            // aren't sending out tons of notifications that don't reach anyone
+            // TODO: this is not ideal since one of the callers of this method does not care if
+            // the targets are app users or not
+            // TODO: if we kept our ExternalMapRecord entries up to date as mentioned above in the
+            // class TODO comments, we could probably avoid this query
             FQLQuery getUsers = new FQLQuery(USERS_TABLE, new FQL.Field[] {UID, IS_APP_USER},
                 new FQL.Where(UID.in(uids)));
 
