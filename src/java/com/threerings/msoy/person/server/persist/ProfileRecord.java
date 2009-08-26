@@ -116,9 +116,7 @@ public class ProfileRecord extends PersistentRecord
      */
     public static Date fromDateVec (int[] datevec)
     {
-        return Calendars.now()
-            .setYear(datevec[0]).setMonth(datevec[1]).setDay(datevec[2])
-            .toSQLDate();
+        return Calendars.at(datevec[0], datevec[1], datevec[2]).toSQLDate();
     }
 
     /**
