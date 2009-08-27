@@ -41,6 +41,7 @@ import com.threerings.util.MultiLoader;
 import com.whirled.game.data.WhirledGameObject;
 
 import com.threerings.msoy.client.DeploymentConfig;
+import com.threerings.msoy.client.DisconnectedPanel;
 import com.threerings.msoy.client.GuestSessionCapture;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.PlaceBox;
@@ -260,9 +261,16 @@ public class GameLiaison
     // from interface ClientObserver
     public function clientFailedToLogon (event :ClientEvent) :void
     {
-        // TODO: something fancier?
-        _wctx.displayFeedback(MsoyCodes.GAME_MSGS, "e.internal_error");
-        clientDidClear(null); // abandon ship
+        if (_wctx.getClient().isLoggedOn()) {
+            _wctx.displayFeedback(MsoyCodes.GENERAL_MSGS, event.getCause().message);
+            clientDidClear(null); // abandon ship
+
+        } else {
+            // NOTE: we need to call start instead of logon because the server hosting the game
+            // can change over time or simply go away
+            _wctx.getTopPanel().setPlaceView(new DisconnectedPanel(
+                _gctx.getClient(), event.getCause().message, start));
+        }
     }
 
     // from interface ClientObserver
@@ -274,7 +282,8 @@ public class GameLiaison
     // from interface ClientObserver
     public function clientConnectionFailed (event :ClientEvent) :void
     {
-        // TODO: report an error message to the user?
+        // TODO: report an error message to the user - this should be nearly the same as the
+        // clientFailedToLogon above
         log.info("Lost connection to game server", "cause", event.getCause());
         // we'll get a didLogoff in a second where the GameDirector will shut us down
     }
