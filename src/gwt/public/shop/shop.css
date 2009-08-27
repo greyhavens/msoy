@@ -118,6 +118,14 @@
   margin: 15px 15px 0px 0px;
 }
 
+.shopPanel .pagedGrid .Header .TopLeft {
+  background: #0D496D url(/images/ui/grid_header_left.png) no-repeat left;
+}
+
+.shopPanel .pagedGrid .Header .TopRight {
+  background: #0D496D url(/images/ui/grid_header_right.png) no-repeat right;
+}
+
 /* ------------------------------------
    SHOP CATEGORY PAGE
 -------------------------------------*/
