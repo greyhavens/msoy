@@ -616,7 +616,8 @@ public class ItemLogic
      * Resolves the supplied list of favorited items into properly initialized {@link ListingCard}
      * records.
      */
-    public List<ListingCard> resolveFavorites (List<FavoritedItemResultRecord> faves)
+    public List<ListingCard> resolveFavorites (
+        List<FavoritedItemResultRecord> faves, boolean stripHidden)
         throws ServiceException
     {
         // break the list up by item type
@@ -630,7 +631,9 @@ public class ItemLogic
         for (Map.Entry<Byte, Collection<Integer>> entry : typeMap.asMap().entrySet()) {
             Byte type = entry.getKey();
             for (CatalogRecord rec : getRepository(type).loadCatalog(entry.getValue())) {
-                cardMap.put(Tuple.newTuple(type, rec.catalogId), rec.toListingCard());
+                if (!stripHidden || rec.pricing != CatalogListing.PRICING_HIDDEN) {
+                    cardMap.put(Tuple.newTuple(type, rec.catalogId), rec.toListingCard());
+                }
             }
         }
 

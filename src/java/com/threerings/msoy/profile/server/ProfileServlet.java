@@ -189,7 +189,7 @@ public class ProfileServlet extends MsoyServiceServlet
 
         // load recent favorites
         result.faves = _itemLogic.resolveFavorites(
-            _faveRepo.loadRecentFavorites(memberId, MAX_PROFILE_FAVORITES));
+            _faveRepo.loadRecentFavorites(memberId, MAX_PROFILE_FAVORITES), false);
 
         return result;
     }

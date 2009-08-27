@@ -82,7 +82,7 @@ public class CatalogServlet extends MsoyServiceServlet
         do {
             List<FavoritedItemResultRecord> recs =
                 _faveRepo.loadRecentFavorites(offset, rows, Item.NOT_A_TYPE);
-            List<ListingCard> cards = _itemLogic.resolveFavorites(recs);
+            List<ListingCard> cards = _itemLogic.resolveFavorites(recs, true);
             if (cards.size() != recs.size()) {
                 log.warning("Some database records did not turn into cards",
                     "records", recs.size(), "cards", cards.size(), "offset", offset);
@@ -562,7 +562,8 @@ public class CatalogServlet extends MsoyServiceServlet
         if (result.noter == null) {
             return null;
         }
-        result.favorites = _itemLogic.resolveFavorites(_faveRepo.loadFavorites(memberId, itemType));
+        result.favorites = _itemLogic.resolveFavorites(
+            _faveRepo.loadFavorites(memberId, itemType), false);
         return result;
     }
 
