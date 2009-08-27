@@ -4,6 +4,7 @@
 package com.threerings.msoy.facebook.server.persist;
 
 import java.sql.Timestamp;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -19,6 +20,7 @@ import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.expression.ValueExp;
+import com.samskivert.depot.operator.And;
 
 /**
  * Manages persistent structures for integrating with Facebook.
@@ -86,12 +88,31 @@ public class FacebookRepository extends DepotRepository
     }
 
     /**
-     * Loads all actions performed by the member of the given id.
+     * Records that the server has gathered data for a member. The id for the action is set to a
+     * default value.
+     */
+    public void noteDataGathered (int memberId)
+    {
+        store(createAction(memberId, FacebookActionRecord.Type.GATHERED_DATA, "server"));
+    }
+
+    /**
+     * Loads all Facebook actions related to the member of the given id.
      */
     public List<FacebookActionRecord> loadActions (int memberId)
     {
         return findAll(FacebookActionRecord.class, new Where(
             FacebookActionRecord.MEMBER_ID, memberId));
+    }
+
+    /**
+     * Loads all actions related to a set of members and of the given type.
+     */
+    public List<FacebookActionRecord> loadActions (
+        Collection<Integer> memberIds, FacebookActionRecord.Type type)
+    {
+        return findAll(FacebookActionRecord.class, new Where(new And(
+            FacebookActionRecord.TYPE.eq(type), FacebookActionRecord.MEMBER_ID.in(memberIds))));
     }
 
     /**

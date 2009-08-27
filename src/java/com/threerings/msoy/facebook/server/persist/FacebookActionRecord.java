@@ -15,8 +15,8 @@ import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.expression.ColumnExp;
 
 /**
- * Records a user's action on Facebook for later funnel tuning. Currently only the server requires
- * this record, so there is no runtime version.
+ * Records actions by or on a Facebook user for later funnel tuning. Currently only the server
+ * requires this record, so there is no runtime version.
  * TODO: consider generalizing if and when we need to record actions on other external sites
  */
 @Entity
@@ -41,7 +41,10 @@ public class FacebookActionRecord extends PersistentRecord
         implements ByteEnum
     {
         /** User published a trophy to their feed. */
-        PUBLISHED_TROPHY(1);
+        PUBLISHED_TROPHY(1),
+
+        /** We gathered this user's demographic data. */
+        GATHERED_DATA(2);
 
         @Override // from ByteEnum
         public byte toByte ()
