@@ -5,6 +5,7 @@ package client.shop;
 
 import com.google.gwt.core.client.GWT;
 
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -82,6 +83,10 @@ public class ShopPanel extends FlowPanel
         ListingGrid grid = new ListingGrid(HEADER_HEIGHT) {
             @Override protected String getEmptyMessage () {
                 return _msgs.shopNoFavorites();
+            }
+            @Override protected void addCustomControls (FlexTable controls) {
+                controls.setWidget(
+                    0, 0, Link.create(_msgs.shopClubPicks(), Pages.BILLING, "subsribe"));
             }
         };
 
