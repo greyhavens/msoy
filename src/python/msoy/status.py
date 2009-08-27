@@ -247,7 +247,7 @@ def getState (report, lastState):
 
     ## add up the number of users for each node
     nodes = filter(lambda n: not n.game(), report.nodes())
-    users = reduce(lambda c,n: c + n.summary()['members'] + n.summary()['guests'], nodes, 0)
+    users = reduce(lambda c,n: c + n.summary()['clients'], nodes, 0)
 
     ## create and return the state
     return State(sizes, units, users, lastState)
