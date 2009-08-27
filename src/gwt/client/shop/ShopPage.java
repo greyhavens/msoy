@@ -79,14 +79,10 @@ public class ShopPage extends Page
             });
             setContent(remixer);
 
-        } else if (action.equals("jumble")) {
-            // TODO
-            setContent(_msgs.catalogTitle(), new ShopPanel(true));
-
         } else {
             byte type = getItemType(args, 0, Item.NOT_A_TYPE);
             if (type == Item.NOT_A_TYPE) {
-                setContent(_msgs.catalogTitle(), new ShopPanel(false));
+                setContent(_msgs.catalogTitle(), new ShopPanel());
             } else {
                 if (!_catalog.isAttached()) {
                     setContent(_catalog);

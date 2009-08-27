@@ -31,6 +31,27 @@ import client.util.InfoCallback;
  */
 public class CatalogModels
 {
+    public static class Jumble implements DataModel<ListingCard>
+    {
+        public int getItemCount () {
+            return -1;
+        }
+
+        public void doFetchRows (
+            int start, int count, final AsyncCallback<List<ListingCard>> callback) {
+            _catalogsvc.loadJumble(start, count,
+                new InfoCallback<List<ListingCard>>() {
+                    public void onSuccess (List<ListingCard> cards) {
+                        callback.onSuccess(cards);
+                    }
+                });
+        }
+
+        public void removeItem (ListingCard item) {
+            // do nothing
+        }
+    }
+
     public static class Listings implements DataModel<ListingCard>
     {
         public Listings (CatalogQuery query) {
@@ -67,9 +88,9 @@ public class CatalogModels
         protected int _listingCount = -1;
     }
 
-    public static class Favorites extends LazyDataModel<ListingCard>
+    public static class MemberFavorites extends LazyDataModel<ListingCard>
     {
-        public Favorites (int memberId, byte type) {
+        public MemberFavorites (int memberId, byte type) {
             _memberId = memberId;
             _type = type;
         }
@@ -102,12 +123,12 @@ public class CatalogModels
         return model;
     }
 
-    public Favorites getFavoritesModel (int memberId, byte itemType)
+    public MemberFavorites getFavoritesModel (int memberId, byte itemType)
     {
         String key = memberId + ":" + itemType;
-        Favorites faves = _fmodels.get(key);
+        MemberFavorites faves = _fmodels.get(key);
         if (faves == null) {
-            _fmodels.put(key, faves = new Favorites(memberId, itemType));
+            _fmodels.put(key, faves = new MemberFavorites(memberId, itemType));
         }
         return faves;
     }
@@ -151,7 +172,7 @@ public class CatalogModels
     }
 
     protected Map<CatalogQuery, Listings> _lmodels = new HashMap<CatalogQuery, Listings>();
-    protected Map<String, Favorites> _fmodels = new HashMap<String, Favorites>();
+    protected Map<String, MemberFavorites> _fmodels = new HashMap<String, MemberFavorites>();
     protected Map<ItemIdent, CatalogService.SuiteResult> _suites =
         new HashMap<ItemIdent, CatalogService.SuiteResult>();
 

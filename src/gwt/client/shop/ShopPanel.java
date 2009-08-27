@@ -7,7 +7,6 @@ import java.util.List;
 
 import com.google.gwt.core.client.GWT;
 
-import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -18,14 +17,11 @@ import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.gwt.util.ServiceUtil;
-import com.threerings.gwt.util.SimpleDataModel;
-
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.gwt.CatalogQuery;
 import com.threerings.msoy.item.gwt.CatalogService;
 import com.threerings.msoy.item.gwt.CatalogServiceAsync;
 import com.threerings.msoy.item.gwt.ListingCard;
-import com.threerings.msoy.item.gwt.ShopData;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
@@ -35,14 +31,11 @@ import client.shell.DynamicLookup;
 import client.ui.HeaderBox;
 import client.ui.MoneyLabel;
 import client.ui.MsoyUI;
-import client.ui.NowLoadingWidget;
 import client.ui.SearchBox;
 import client.ui.Stars;
 import client.ui.ThumbBox;
 
 import client.util.Link;
-import client.util.InfoCallback;
-
 import client.item.ItemMessages;
 import client.item.SideBar;
 
@@ -51,12 +44,9 @@ import client.item.SideBar;
  */
 public class ShopPanel extends FlowPanel
 {
-    public ShopPanel (boolean jumble)
+    public ShopPanel ()
     {
         setStyleName("shopPanel");
-
-        _nowLoading = new NowLoadingWidget();
-        _nowLoading.center();
 
         // prepare the search box
         HorizontalPanel search = new HorizontalPanel();
@@ -97,75 +87,15 @@ public class ShopPanel extends FlowPanel
         add(row);
         add(WidgetUtil.makeShim(15, 15));
 
-        if (jumble) {
-            _catalogsvc.loadShopData(true, new InfoCallback<ShopData>() {
-                public void onSuccess (ShopData data) {
-                    initJumble(data);
-                }
-            });
-            return;
-        }
-
-        // now load up our shop data
-        _catalogsvc.loadShopData(false, new InfoCallback<ShopData>() {
-            public void onSuccess (ShopData data) {
-                init(data);
+        ListingGrid grid = new ListingGrid(HEADER_HEIGHT) {
+            @Override protected String getEmptyMessage () {
+                // TODO
+                return "No Items";
             }
-        });
-    }
+        };
 
-    protected void init (final ShopData data)
-    {
-        _nowLoading.finishing(new Timer() {
-            public void run () {
-                SmartTable boxes = new SmartTable(0, 0);
-                boxes.setWidget(0, 0, createTop("avatar", _msgs.shopTopAvatars(), data.topAvatars));
-                boxes.getFlexCellFormatter().setVerticalAlignment(0, 0, HasAlignment.ALIGN_TOP);
-                boxes.getFlexCellFormatter().setRowSpan(0, 0, 3);
-                boxes.setWidget(0, 1, WidgetUtil.makeShim(10, 10));
-                boxes.getFlexCellFormatter().setRowSpan(0, 1, 3);
-                if (data.featuredPet != null) {
-                    boxes.setWidget(0, 2,
-                        createFeatured("pet", _msgs.shopFeatPet(), data.featuredPet));
-                    boxes.getFlexCellFormatter().setVerticalAlignment(0, 2, HasAlignment.ALIGN_TOP);
-                }
-                boxes.setWidget(1, 0, WidgetUtil.makeShim(10, 10));
-                if (data.featuredToy != null) {
-                    boxes.setWidget(2, 0,
-                        createFeatured("toy", _msgs.shopFeatToy(), data.featuredToy));
-                    boxes.getFlexCellFormatter().setVerticalAlignment(2, 2, HasAlignment.ALIGN_TOP);
-                }
-                boxes.setWidget(0, 3, WidgetUtil.makeShim(10, 10));
-                boxes.getFlexCellFormatter().setRowSpan(0, 3, 3);
-                boxes.setWidget(0, 4,
-                    createTop("furni", _msgs.shopTopFurniture(), data.topFurniture));
-                boxes.getFlexCellFormatter().setVerticalAlignment(0, 4, HasAlignment.ALIGN_TOP);
-                boxes.getFlexCellFormatter().setRowSpan(0, 4, 3);
-
-                _contents.add(boxes);
-                _nowLoading.hide();
-            }
-        });
-    }
-
-    protected void initJumble (final ShopData data)
-    {
-        _nowLoading.finishing(new Timer() {
-            public void run () {
-
-                ListingGrid grid = new ListingGrid(HEADER_HEIGHT) {
-                    @Override protected String getEmptyMessage () {
-                        // TODO
-                        return "No Items";
-                    }
-                };
-
-                grid.setModel(SimpleDataModel.newModel(data.jumbledItems), 0);
-                _contents.add(grid);
-
-                _nowLoading.hide();
-            }
-        });
+        grid.setModel(new CatalogModels.Jumble(), 0);
+        _contents.add(grid);
     }
 
 
@@ -228,7 +158,6 @@ public class ShopPanel extends FlowPanel
     protected static final int HEADER_HEIGHT = 15 /* gap */ + 59 /* top tags, etc. */;
 
     protected FlowPanel _contents;
-    protected NowLoadingWidget _nowLoading;
 
     protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
     protected static final ShopMessages _msgs = GWT.create(ShopMessages.class);

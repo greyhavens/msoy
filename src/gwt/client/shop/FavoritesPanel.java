@@ -84,7 +84,7 @@ public class FavoritesPanel extends HorizontalPanel
         }
     }
 
-    protected CatalogModels.Favorites _model;
+    protected CatalogModels.MemberFavorites _model;
 
     protected static final ShopMessages _msgs = GWT.create(ShopMessages.class);
     protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
