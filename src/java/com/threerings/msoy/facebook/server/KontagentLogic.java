@@ -278,6 +278,29 @@ public class KontagentLogic
             "u", id.uuid, "st1", id.subtype);
     }
 
+    /**
+     * Track the user info for demographics. Any null values are considered undefined or
+     * unspecified and will not be sent.
+     */
+    public void trackUserInfo (long uid, Integer birthYear, String gender, String city,
+        String state, String zip, String country, Integer friendCount)
+    {
+        // convert to kontagent gender
+        if ("male".equals(gender) || "female".equals(gender)) {
+            gender = gender.substring(0, 1);
+        } else if (gender != null) {
+            gender = "u";
+        }
+
+        // convert to strings
+        String birthYearStr = birthYear == null ? null : String.valueOf(birthYear);
+        String friendCountStr = friendCount == null ? null : String.valueOf(friendCount);
+
+        // send
+        sendMessage(MessageType.USER_INFO, "s", String.valueOf(uid), "b", birthYearStr,
+            "g", gender, "ly", city, "lc", country, "ls", state, "lp", zip, "f", friendCountStr);
+    }
+
     protected TrackingId parseTrackingId (String trackingId, boolean allowBlank)
     {
         if (allowBlank && StringUtil.isBlank(trackingId)) {
@@ -333,7 +356,8 @@ public class KontagentLogic
         NOTIFICATION_SENT("nts"),
         NOTIFICATION_RESPONSE("ntr"),
         POST("pst"),
-        POST_RESPONSE("psr");
+        POST_RESPONSE("psr"),
+        USER_INFO("cpu");
 
         public String id;
 
