@@ -12,6 +12,7 @@ import mx.controls.Text;
 import com.threerings.flex.CommandButton;
 import com.threerings.util.MessageBundle;
 
+import com.threerings.presents.client.Client;
 import com.threerings.presents.client.ClientAdapter;
 import com.threerings.presents.client.ClientEvent;
 import com.threerings.presents.client.LogonError;
@@ -25,9 +26,9 @@ import com.threerings.crowd.data.PlaceObject;
 public class DisconnectedPanel extends VBox
     implements PlaceView
 {
-    public function DisconnectedPanel (ctx :MsoyContext, msg :String = null)
+    public function DisconnectedPanel (client :Client, msg :String, onReconnect :Function)
     {
-        _ctx = ctx;
+        _client = client;
         _clientObs = new ClientAdapter(
             clientObserver, clientObserver, clientObserver, clientObserver,
             clientObserver, clientObserver, clientObserver);
@@ -42,7 +43,7 @@ public class DisconnectedPanel extends VBox
         addChild(_message);
 
         addChild(new CommandButton(Msgs.GENERAL.get("b.reconnect"),
-                                   _ctx.getMsoyController().reconnectClient));
+            onReconnect != null ? onReconnect : client.logon));
 
         if (msg != null) {
             setMessage(msg);
@@ -54,9 +55,9 @@ public class DisconnectedPanel extends VBox
         super.parentChanged(p);
 
         if (p != null) {
-            _ctx.getClient().addClientObserver(_clientObs);
+            _client.addClientObserver(_clientObs);
         } else {
-            _ctx.getClient().removeClientObserver(_clientObs);
+            _client.removeClientObserver(_clientObs);
         }
     }
 
@@ -117,7 +118,7 @@ public class DisconnectedPanel extends VBox
         return msg;
     }
 
-    protected var _ctx :MsoyContext;
+    protected var _client :Client;
     protected var _clientObs :ClientAdapter;
     protected var _message :Text;
 }

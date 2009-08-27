@@ -532,7 +532,8 @@ public class MsoyController extends Controller
     public function clientDidLogoff (event :ClientEvent) :void
     {
         if (_logoffMessage != null) {
-            _topPanel.setPlaceView(new DisconnectedPanel(_mctx, _logoffMessage));
+            _topPanel.setPlaceView(new DisconnectedPanel(
+                _mctx.getClient(), _logoffMessage, reconnectClient));
             _logoffMessage = null;
         } else {
             _topPanel.setPlaceView(new BlankPlaceView(_mctx));
@@ -542,7 +543,8 @@ public class MsoyController extends Controller
     // from ClientObserver
     public function clientFailedToLogon (event :ClientEvent) :void
     {
-        _topPanel.setPlaceView(new DisconnectedPanel(_mctx, event.getCause().message));
+        _topPanel.setPlaceView(new DisconnectedPanel(
+            _mctx.getClient(), event.getCause().message, reconnectClient));
     }
 
     // from ClientObserver
