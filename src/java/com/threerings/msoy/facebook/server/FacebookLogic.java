@@ -4,8 +4,12 @@
 package com.threerings.msoy.facebook.server;
 
 import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -15,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -22,12 +27,21 @@ import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import com.samskivert.util.Calendars;
+import com.samskivert.util.IntMap;
+import com.samskivert.util.IntMaps;
 import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.StringUtil;
+import com.samskivert.util.Tuple;
 
 import com.google.code.facebookapi.FacebookException;
 import com.google.code.facebookapi.FacebookJaxbRestClient;
+import com.google.code.facebookapi.ProfileField;
+import com.google.code.facebookapi.schema.FriendsGetResponse;
+import com.google.code.facebookapi.schema.Location;
+import com.google.code.facebookapi.schema.User;
+import com.google.code.facebookapi.schema.UsersGetInfoResponse;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.data.all.DeploymentConfig;
@@ -35,6 +49,7 @@ import com.threerings.msoy.facebook.data.FacebookCodes;
 import com.threerings.msoy.facebook.gwt.FacebookGame;
 import com.threerings.msoy.facebook.server.KontagentLogic.LinkType;
 import com.threerings.msoy.facebook.server.KontagentLogic.TrackingId;
+import com.threerings.msoy.facebook.server.persist.FacebookActionRecord;
 import com.threerings.msoy.facebook.server.persist.FacebookNotificationRecord;
 import com.threerings.msoy.facebook.server.persist.FacebookRepository;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
@@ -97,6 +112,37 @@ public class FacebookLogic
     public static String getCanvasUrl (String canvasName)
     {
         return "http://apps.facebook.com/" + canvasName + "/";
+    }
+
+    /**
+     * Parses a Facebook birthday, which may or may not include a year, and returns the year and
+     * date in a tuple. If the year is null, the year in the date is not valid and will just be
+     * the default given by the date format parser. If the year is not null, it will match the year
+     * in the date (using a default local calendar). The date and year may both be null if the
+     * given string could not be parsed as a date.
+     */
+    public static Tuple<Integer, Date> parseBirthday (String bday)
+    {
+        Date date = null;
+        Integer year = null;
+        if (bday != null) {
+            try {
+                date = BDAY_FMT.parse(bday);
+                year = Calendars.at(date).get(Calendar.YEAR);
+
+            } catch (Exception e) {
+                try {
+                    // this will end up with year set to 1970, but at least we'll get the
+                    // month and day
+                    date = BDAY_FMT_NO_YEAR.parse(bday);
+
+                } catch (Exception e2) {
+                    log.info("Could not parse Facebook birthday", "bday", bday);
+                }
+            }
+        }
+
+        return Tuple.newTuple(year, date);
     }
 
     /**
@@ -233,6 +279,16 @@ public class FacebookLogic
         }
 
         return (limit == 0 || limit >= exRecs.size()) ? exRecs : exRecs.subList(0, limit);
+    }
+
+    // TEMP: quick and dirty test for updateDemographics, no batching nor cron nor nothing
+    public void testUpdateDemographics ()
+    {
+        _batchInvoker.postRunnable(new Runnable() {
+            public void run () {
+                updateDemographics(_memberRepo.loadExternalMappings(ExternalAuther.FACEBOOK));
+            }
+        });
     }
 
     protected void updateURL (
@@ -428,6 +484,72 @@ public class FacebookLogic
         return Collections.emptyList();
     }
 
+    protected void updateDemographics (List<ExternalMapRecord> users)
+    {
+        IntMap<ExternalMapRecord> fbusers = IntMaps.newHashIntMap();
+        for (ExternalMapRecord exrec : _memberRepo.loadExternalMappings(ExternalAuther.FACEBOOK)) {
+            fbusers.put(exrec.memberId, exrec);
+        }
+        for (FacebookActionRecord action : _facebookRepo.loadActions(Lists.transform(
+            users, MAPREC_TO_MEMBER_ID), FacebookActionRecord.Type.GATHERED_DATA)) {
+            fbusers.remove(action.memberId);
+        }
+
+        if (fbusers.size() == 0) {
+            return;
+        }
+
+        FacebookJaxbRestClient client = getFacebookClient(BATCH_READ_TIMEOUT);
+        EnumSet<ProfileField> fields = EnumSet.of(
+            ProfileField.SEX, ProfileField.BIRTHDAY, ProfileField.CURRENT_LOCATION);
+        Iterable<Long> uids = Iterables.transform(fbusers.values(), MAPREC_TO_UID);
+        UsersGetInfoResponse uinfo;
+        try {
+            uinfo = (UsersGetInfoResponse)client.users_getStandardInfo(uids, fields);
+        } catch (FacebookException ex) {
+            log.warning("Failed to getStandardInfo", "uids", uids,
+                "rawResponse", client.getRawResponse(), ex);
+            return;
+        }
+
+        for (User user : uinfo.getUser()) {
+            Long uid = user.getUid();
+
+            // gender
+            String gender = user.getSex();
+
+            // location
+            String city = null, state = null, zip = null, country = null;
+            Location location = user.getCurrentLocation();
+            if (location != null) {
+                city = location.getCity();
+                state = location.getState();
+                zip = location.getZip();
+                country = location.getCountry();
+            }
+
+            // birthday
+            Integer birthYear = parseBirthday(user.getBirthday()).left;
+
+            // friend count
+            Integer friendCount = null;
+            try {
+                FriendsGetResponse finfo = (FriendsGetResponse)client.friends_get(uid);
+                friendCount = finfo.getUid().size();
+
+            } catch (FacebookException e) {
+                log.warning("Could not retrieve friend count", "uid", uid,
+                    "rawResponse", client.getRawResponse(), e);
+            }
+
+            _tracker.trackUserInfo(uid, birthYear, gender, city, state, zip, country, friendCount);
+
+            // TODO: _facebookRepo.noteDataGathered(memberId);
+        }
+
+        log.info("Uploaded demographics", "batchSize", users.size(), "sentSize", users.size());
+    }
+
     /**
      * Divides up a list into segements and calls the given function on each one. Returns a list
      * of return values of the segments.
@@ -568,6 +690,20 @@ public class FacebookLogic
         }
     };
 
+    protected static final Function<ExternalMapRecord, Long> MAPREC_TO_UID =
+        new Function<ExternalMapRecord, Long>() {
+        public Long apply (ExternalMapRecord exRec) {
+            return Long.valueOf(exRec.externalId);
+        }
+    };
+
+    public static final Function<ExternalMapRecord, Integer> MAPREC_TO_MEMBER_ID =
+        new Function<ExternalMapRecord, Integer>() {
+        @Override public Integer apply (ExternalMapRecord exrec) {
+            return exrec.memberId;
+        }
+    };
+
     protected static final Predicate<FQLQuery.Record> APP_USER_FILTER =
         new Predicate<FQLQuery.Record>() {
         public boolean apply (FQLQuery.Record result) {
@@ -579,16 +715,11 @@ public class FacebookLogic
     protected static final FQL.Field IS_APP_USER = new FQL.Field("is_app_user");
     protected static final String USERS_TABLE = "user";
 
-    @Inject protected @BatchInvoker Invoker _batchInvoker;
-    @Inject protected FacebookRepository _facebookRepo;
-    @Inject protected KontagentLogic _tracker;
-    @Inject protected MemberRepository _memberRepo;
-    @Inject protected MsoyPeerManager _peerMgr;
-    @Inject protected RuntimeConfig _runtime; // temp
-
     protected static final int CONNECT_TIMEOUT = 15*1000; // in millis
     protected static final int READ_TIMEOUT = 15*1000; // in millis
     protected static final int BATCH_READ_TIMEOUT = 5*60*1000; // 5 minutes
+    protected static final SimpleDateFormat BDAY_FMT = new SimpleDateFormat("MMMM dd, yyyy");
+    protected static final SimpleDateFormat BDAY_FMT_NO_YEAR = new SimpleDateFormat("MMMM dd");
 
     protected static final URL SERVER_URL;
     static {
@@ -598,4 +729,12 @@ public class FacebookLogic
             throw new RuntimeException(e); // MalformedURLException should be unchecked, sigh
         }
     }
+
+    // dependencies
+    @Inject protected @BatchInvoker Invoker _batchInvoker;
+    @Inject protected FacebookRepository _facebookRepo;
+    @Inject protected KontagentLogic _tracker;
+    @Inject protected MemberRepository _memberRepo;
+    @Inject protected MsoyPeerManager _peerMgr;
+    @Inject protected RuntimeConfig _runtime; // temp
 }
