@@ -96,24 +96,6 @@ public class TagDetailPanel extends VerticalPanel
                        HasAlignment.ALIGN_MIDDLE);
             addRow.add(new NewTagBox());
 
-//             addRow.add(_quickTagLabel = new Label(_cmsgs.tagQuickAdd()));
-//             addRow.add(_quickTags = new ListBox());
-//             _quickTags.addChangeListener(new ChangeListener() {
-//                 public void onChange (Widget sender) {
-//                     ListBox box = (ListBox) sender;
-//                     String value = box.getValue(box.getSelectedIndex());
-//                     _service.tag(value, new AsyncCallback<TagHistory>() {
-//                         public void onSuccess (TagHistory result) {
-//                             refreshTags();
-//                         }
-//                         public void onFailure (Throwable caught) {
-//                             GWT.log("tagItem failed", caught);
-//                             MsoyUI.error(CShell.serverError(caught));
-//                         }
-//                     });
-//                 }
-//             });
-
             if (_flagger != null) {
                 InlineLabel flagLabel = new InlineLabel(_cmsgs.tagFlag());
                 new PopupMenu(flagLabel) {
