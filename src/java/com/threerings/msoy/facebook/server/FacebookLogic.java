@@ -41,7 +41,7 @@ import com.google.code.facebookapi.ProfileField;
 import com.google.code.facebookapi.schema.FriendsGetResponse;
 import com.google.code.facebookapi.schema.Location;
 import com.google.code.facebookapi.schema.User;
-import com.google.code.facebookapi.schema.UsersGetInfoResponse;
+import com.google.code.facebookapi.schema.UsersGetStandardInfoResponse;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.data.all.DeploymentConfig;
@@ -503,16 +503,16 @@ public class FacebookLogic
         EnumSet<ProfileField> fields = EnumSet.of(
             ProfileField.SEX, ProfileField.BIRTHDAY, ProfileField.CURRENT_LOCATION);
         Iterable<Long> uids = Iterables.transform(fbusers.values(), MAPREC_TO_UID);
-        UsersGetInfoResponse uinfo;
+        UsersGetStandardInfoResponse uinfo;
         try {
-            uinfo = (UsersGetInfoResponse)client.users_getStandardInfo(uids, fields);
+            uinfo = (UsersGetStandardInfoResponse)client.users_getStandardInfo(uids, fields);
         } catch (FacebookException ex) {
             log.warning("Failed to getStandardInfo", "uids", uids,
                 "rawResponse", client.getRawResponse(), ex);
             return;
         }
 
-        for (User user : uinfo.getUser()) {
+        for (User user : uinfo.getStandardUserInfo()) {
             Long uid = user.getUid();
 
             // gender
@@ -547,7 +547,8 @@ public class FacebookLogic
             // TODO: _facebookRepo.noteDataGathered(memberId);
         }
 
-        log.info("Uploaded demographics", "batchSize", users.size(), "sentSize", users.size());
+        log.info("Uploaded demographics", "batchSize", users.size(),
+            "sentSize", uinfo.getStandardUserInfo().size());
     }
 
     /**
