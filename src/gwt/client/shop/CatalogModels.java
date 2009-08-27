@@ -71,7 +71,7 @@ public class CatalogModels
             _catalogsvc.loadCatalog(_query, start, count, _listingCount == 0,
                 new InfoCallback<CatalogService.CatalogResult>() {
                     public void onSuccess (CatalogService.CatalogResult data) {
-                        if (_listingCount == -1) {
+                        if (_listingCount == 0) {
                             _listingCount = data.listingCount;
                         }
                         callback.onSuccess(data.listings);
