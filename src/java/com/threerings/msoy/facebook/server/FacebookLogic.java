@@ -278,7 +278,13 @@ public class FacebookLogic
             exRecs.add(sinf.mapRec);
         }
 
-        return (limit == 0 || limit >= exRecs.size()) ? exRecs : exRecs.subList(0, limit);
+        if (limit == 0) {
+            return exRecs;
+        }
+
+        // TODO: remove shuffle when we actually optimize target selection
+        Collections.shuffle(exRecs);
+        return limit >= exRecs.size() ? exRecs : exRecs.subList(0, limit);
     }
 
     // TEMP: quick and dirty test for updateDemographics, no batching nor cron nor nothing
@@ -608,13 +614,14 @@ public class FacebookLogic
             throws ServiceException
         {
             _facebookRepo.noteNotificationStarted(_notifRec.id);
+
+            // TODO: fetch the N value on a timer from the API instead of using the runtime config
             int alloc = _runtime.server.fbNotificationsAlloc;
 
             if (_mrec != null && _appFriendsOnly) {
                 // this will only send to the first N users where N is the "notifications_per_day"
                 // allocation
-                // TODO: fetch the N value on a timer and don't bother sending > N targets
-                // TODO: optimize the first N targets?
+                // TODO: optimize the target selection? (remove the shuffle when we do that)
                 // NOTE: wtf? the facebook api is throwing an exception, perhaps because FB
                 // have changed the documented behavior of this method... try to limit how many we
                 // send, see if exception stops
@@ -627,6 +634,7 @@ public class FacebookLogic
             } else if (_mrec != null) {
                 // see above
                 List<Long> targets = loadFriends(_mrec);
+                Collections.shuffle(targets);
                 targets = alloc >= targets.size() ? targets : targets.subList(0, alloc);
                 SessionInfo sinf = loadSessionInfo(_mrec, BATCH_READ_TIMEOUT);
                 Collection<String> recipients = sendNotifications(sinf.client, _notifRec.id,
