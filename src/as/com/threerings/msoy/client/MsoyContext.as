@@ -67,6 +67,7 @@ public /*abstract*/ class MsoyContext
 
         // the top panel's constructor will add it to the app's UI hierarchy
         _topPanel = new TopPanel(this, createControlBar());
+        _topPanel.getPlaceChatOverlay().displayChat(true);
 
         // we create some of our directors in a method that can be overridden
         createAdditionalDirectors();
