@@ -625,18 +625,26 @@ public class ItemLogic
             typeMap.put(fave.itemType, fave.catalogId);
         }
 
-        List<ListingCard> list = Lists.newArrayList();
-
+        Map<Tuple<Byte, Integer>, ListingCard> cardMap = Maps.newHashMap();
         // now go through and resolve the records into listing cards by type
         for (Map.Entry<Byte, Collection<Integer>> entry : typeMap.asMap().entrySet()) {
-            ItemRepository<ItemRecord> repo = getRepository(entry.getKey());
-            list.addAll(Lists.transform(repo.loadCatalog(entry.getValue()), CatalogRecord.TO_CARD));
+            Byte type = entry.getKey();
+            for (CatalogRecord rec : getRepository(type).loadCatalog(entry.getValue())) {
+                cardMap.put(Tuple.newTuple(type, rec.catalogId), rec.toListingCard());
+            }
+        }
+
+        List<ListingCard> list = Lists.newArrayList();
+        // reassemble the list as per the original order
+        for (FavoritedItemResultRecord fave : faves) {
+            ListingCard card = cardMap.get(Tuple.newTuple(fave.itemType, fave.catalogId));
+            if (card != null) {
+                list.add(card);
+            }
         }
 
         // finally resolve all of the member names in our list
         resolveCardNames(list);
-
-        // TODO: restore the original order
 
         return list;
     }
@@ -653,19 +661,19 @@ public class ItemLogic
                     return card.creator.getMemberId();
                 }
             });
-        // finally fill in the listings using the map
+        // fill in the listings using the map
         for (ListingCard card : list) {
             card.creator = memberMap.get(card.creator.getMemberId());
         }
 
-        // look up the names and build a map of memberId -> MemberName
+        // look up the names and build a map of groupId -> GroupName
         IntMap<GroupName> brandMap = _groupRepo.loadGroupNames(
             list, new Function<ListingCard,Integer>() {
                 public Integer apply (ListingCard card) {
                     return (card.brand != null) ? card.brand.getGroupId() : null;
                 }
             });
-        // finally fill in the listings using the map
+        // fill in the listings using the map
         for (ListingCard card : list) {
             if (card.brand != null) {
                 card.brand = brandMap.get(card.brand.getGroupId());

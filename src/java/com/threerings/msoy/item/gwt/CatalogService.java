@@ -72,11 +72,8 @@ public interface CatalogService extends RemoteService
 
     /**
      * Loads the featured items shown on the top-level catalog page.
-     *
-     * TODO: The 'jumble' parameter is an internal switch for evaluating two candidates for
-     * TODO: the shop front, and will be removed soon.
      */
-    ShopData loadShopData (boolean jumble)
+    List<ListingCard> loadJumble (int offset, int rows)
         throws ServiceException;
 
     /**

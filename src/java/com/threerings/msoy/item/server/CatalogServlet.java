@@ -13,8 +13,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 
-import com.samskivert.util.CollectionUtil;
-import com.samskivert.util.RandomUtil;
 import com.samskivert.util.Tuple;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;
@@ -59,7 +57,6 @@ import com.threerings.msoy.item.gwt.CatalogQuery;
 import com.threerings.msoy.item.gwt.CatalogService;
 import com.threerings.msoy.item.gwt.ItemPrices;
 import com.threerings.msoy.item.gwt.ListingCard;
-import com.threerings.msoy.item.gwt.ShopData;
 import com.threerings.msoy.item.server.persist.CatalogRecord;
 import com.threerings.msoy.item.server.persist.FavoritesRepository;
 import com.threerings.msoy.item.server.persist.ItemRecord;
@@ -73,62 +70,34 @@ public class CatalogServlet extends MsoyServiceServlet
     implements CatalogService
 {
     // from interface CatalogService
-    public ShopData loadShopData (boolean jumble)
+    public List<ListingCard> loadJumble (int offset, int rows)
         throws ServiceException
     {
-        ShopData data = new ShopData();
+        // For paging to work correctly, we absolutely must return 'rows' items if there's data
+        // left in the stream. Because ItemLogic.resolveFavorites() can occasionally strip items
+        // that aren't kosher (for any of many complicated reasons), we have to do a bit of
+        // iteration here -- keep requesting records from the database, keep resolving them,
+        // and adding them to the return list.
+        List<ListingCard> result = Lists.newArrayList();
+        do {
+            List<FavoritedItemResultRecord> recs =
+                _faveRepo.loadRecentFavorites(offset, rows, Item.NOT_A_TYPE);
+            List<ListingCard> cards = _itemLogic.resolveFavorites(recs);
+            if (cards.size() != recs.size()) {
+                log.warning("Some database records did not turn into cards",
+                    "records", recs.size(), "cards", cards.size(), "offset", offset);
+            }
+            if (result.size() + cards.size() > rows) {
+                cards = cards.subList(0, rows - result.size());
+            }
+            result.addAll(cards);
+            if (recs.size() < rows) {
+                break;
+            }
+            offset += rows;
+        } while (result.size() < rows);
 
-        if (jumble) {
-            loadJumbledShopData(data);
-        } else {
-            loadShopData(data);
-        }
-        return data;
-    }
-
-    protected void loadShopData (ShopData data)
-        throws ServiceException
-    {
-        // choose random TOP_ITEM_COUNT of TOP_ITEM_COUNT*2 recent favorite avatars & furni
-        List<ListingCard> avatars = _itemLogic.resolveFavorites(_faveRepo.loadRecentFavorites(
-            ShopData.TOP_ITEM_COUNT * 2, Item.AVATAR));
-        data.topAvatars = (avatars.size() <= ShopData.TOP_ITEM_COUNT) ? avatars
-            : CollectionUtil.selectRandomSubset(avatars, ShopData.TOP_ITEM_COUNT);
-        List<ListingCard> furniture = _itemLogic.resolveFavorites(_faveRepo.loadRecentFavorites(
-            ShopData.TOP_ITEM_COUNT * 2, Item.FURNITURE));
-        data.topFurniture = (furniture.size() <= ShopData.TOP_ITEM_COUNT) ? furniture
-            : CollectionUtil.selectRandomSubset(furniture, ShopData.TOP_ITEM_COUNT);
-
-        // choose random 1 of 5 recent favorite pets & toys
-        List<ListingCard> pets = _itemLogic.resolveFavorites(_faveRepo.loadRecentFavorites(
-            ShopData.TOP_ITEM_COUNT, Item.PET));
-        data.featuredPet = (pets.size() > 0) ? RandomUtil.pickRandom(pets) : null;
-        List<ListingCard> toys = _itemLogic.resolveFavorites(_faveRepo.loadRecentFavorites(
-            ShopData.TOP_ITEM_COUNT, Item.TOY));
-        data.featuredToy = (toys.size() > 0) ? RandomUtil.pickRandom(toys) : null;
-
-        // resolve the creator names for these listings
-        List<ListingCard> allCards = Lists.newArrayList();
-        allCards.addAll(data.topAvatars);
-        allCards.addAll(data.topFurniture);
-        if (data.featuredPet != null) {
-            allCards.add(data.featuredPet);
-        }
-        if (data.featuredToy != null) {
-            allCards.add(data.featuredToy);
-        }
-        _itemLogic.resolveCardNames(allCards);
-    }
-
-    protected void loadJumbledShopData (ShopData data)
-        throws ServiceException
-    {
-        List<ListingCard> items = _itemLogic.resolveFavorites(
-            _faveRepo.loadRecentFavorites(ShopData.TOP_ITEM_COUNT * 10, Item.NOT_A_TYPE));
-        data.jumbledItems = (items.size() <= ShopData.TOP_ITEM_COUNT * 5) ? items :
-            CollectionUtil.selectRandomSubset(items, ShopData.TOP_ITEM_COUNT * 5);
-
-        _itemLogic.resolveCardNames(items);
+        return result;
     }
 
     // from interface CatalogService

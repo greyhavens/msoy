@@ -65,7 +65,7 @@ public class FavoritesRepository extends DepotRepository
      * Loads up to <code>count</code> items recently favorited by subscribers. If the
      * type is {@link Item#NOT_A_TYPE}, all types will be returned.
      */
-    public List<FavoritedItemResultRecord> loadRecentFavorites (int count, byte itemType)
+    public List<FavoritedItemResultRecord> loadRecentFavorites (int offset, int rows, byte type)
     {
         List<SQLExpression> conditions = Lists.newArrayList();
 
@@ -73,16 +73,21 @@ public class FavoritesRepository extends DepotRepository
         int subscriberBits = (Flag.SUBSCRIBER.getBit() | Flag.SUBSCRIBER_PERMANENT.getBit());
         conditions.add(MemberRecord.FLAGS.bitAnd(subscriberBits).notEq(0));
 
-        if (itemType != Item.NOT_A_TYPE) {
+        // only look at favoriting done in the past N days
+        conditions.add(FavoriteItemRecord.NOTED_ON.greaterThan(
+            new Timestamp(System.currentTimeMillis() - RECENT_FAVORITE_CUTOFF)));
+
+        if (type != Item.NOT_A_TYPE) {
             // possibly only care about some item types
-            conditions.add(FavoriteItemRecord.ITEM_TYPE.eq(itemType));
+            conditions.add(FavoriteItemRecord.ITEM_TYPE.eq(type));
         }
-        return findAll(
-            FavoritedItemResultRecord.class,
+
+        return findAll(FavoritedItemResultRecord.class,
             new Join(FavoriteItemRecord.MEMBER_ID, MemberRecord.MEMBER_ID),
             new Where(Ops.and(conditions)),
             new GroupBy(FavoriteItemRecord.ITEM_TYPE, FavoriteItemRecord.CATALOG_ID),
-            OrderBy.descending(new FunctionExp("COUNT", MemberRecord.MEMBER_ID)));
+            OrderBy.descending(new FunctionExp("COUNT", MemberRecord.MEMBER_ID)),
+            new Limit(offset, rows));
     }
 
     /**
@@ -160,4 +165,7 @@ public class FavoritesRepository extends DepotRepository
     {
         classes.add(FavoriteItemRecord.class);
     }
+
+    // look at the last 10 days for item favoriting
+    protected static final long RECENT_FAVORITE_CUTOFF = 10 * 24*60*60*1000L;
 }
