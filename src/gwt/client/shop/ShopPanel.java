@@ -89,8 +89,7 @@ public class ShopPanel extends FlowPanel
 
         ListingGrid grid = new ListingGrid(HEADER_HEIGHT) {
             @Override protected String getEmptyMessage () {
-                // TODO
-                return "No Items";
+                return _msgs.shopNoFavorites();
             }
         };
 
