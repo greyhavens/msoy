@@ -20,6 +20,8 @@ import com.google.code.facebookapi.schema.FriendsGetResponse;
 import com.google.code.facebookapi.schema.User;
 import com.google.code.facebookapi.schema.UsersGetInfoResponse;
 
+import com.samskivert.util.StringUtil;
+
 import com.threerings.msoy.web.gwt.ExternalCreds;
 import com.threerings.msoy.web.gwt.FacebookCreds;
 import com.threerings.msoy.web.gwt.ServiceCodes;
@@ -77,29 +79,15 @@ public class FacebookAuthHandler extends ExternalAuthHandler
                 info.displayName = user.getFirstName();
                 info.profile.realName = user.getFirstName() + " " + user.getLastName();
                 if (user.getCurrentLocation() != null) {
-                    String city = user.getCurrentLocation().getCity();
-                    info.profile.location = (city == null) ? "" : city;
+                    info.profile.location = StringUtil.deNull(user.getCurrentLocation().getCity());
                 }
                 if ("male".equalsIgnoreCase(user.getSex())) {
                     info.profile.sex = Profile.SEX_MALE;
                 } else if ("female".equalsIgnoreCase(user.getSex())) {
                     info.profile.sex = Profile.SEX_FEMALE;
                 }
-                String bdstr = user.getBirthday();
-                if (bdstr != null) {
-                    try {
-                        info.profile.birthday = new Date(_bfmt.parse(bdstr).getTime());
-                    } catch (Exception e) {
-                        try {
-                            // this will end up with year set to 1970, but at least we'll get the
-                            // month and day
-                            info.profile.birthday = new Date(_bfmtNoYear.parse(bdstr).getTime());
-                        } catch (Exception e2) {
-                            log.info("Cannot parse Facebook birthday",
-                                     "uid", creds.getUserId(), "bday", bdstr);
-                        }
-                    }
-                }
+                java.util.Date bday = FacebookLogic.parseBirthday(user.getBirthday()).right;
+                info.profile.birthday = bday != null ? new Date(bday.getTime()) : null;
             }
 
             // TODO: we need to somehow fix this: Session key invalid or no longer valid
@@ -124,8 +112,4 @@ public class FacebookAuthHandler extends ExternalAuthHandler
     }
 
     @Inject protected FacebookLogic _faceLogic;
-
-    /** Used to parse Facebook profile birthdays. */
-    protected static SimpleDateFormat _bfmt = new SimpleDateFormat("MMMM dd, yyyy");
-    protected static SimpleDateFormat _bfmtNoYear = new SimpleDateFormat("MMMM dd");
 }
