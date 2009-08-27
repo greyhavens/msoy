@@ -4,7 +4,6 @@
 package com.threerings.msoy.facebook.server;
 
 import java.sql.Date;
-import java.text.SimpleDateFormat;
 
 import java.util.Collections;
 import java.util.EnumSet;
