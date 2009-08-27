@@ -68,7 +68,7 @@ public class CatalogModels
 
         public void doFetchRows (
             int start, int count, final AsyncCallback<List<ListingCard>> callback) {
-            _catalogsvc.loadCatalog(_query, start, count, _listingCount == -1,
+            _catalogsvc.loadCatalog(_query, start, count, _listingCount == 0,
                 new InfoCallback<CatalogService.CatalogResult>() {
                     public void onSuccess (CatalogService.CatalogResult data) {
                         if (_listingCount == -1) {
@@ -85,7 +85,7 @@ public class CatalogModels
         }
 
         protected CatalogQuery _query;
-        protected int _listingCount = -1;
+        protected int _listingCount;
     }
 
     public static class MemberFavorites extends LazyDataModel<ListingCard>
