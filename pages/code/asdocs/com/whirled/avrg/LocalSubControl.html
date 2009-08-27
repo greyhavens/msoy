@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
-<meta content="LocalSubControl,com.whirled.avrg.LocalSubControl,hitPointTester,mobSpriteExporter,feedback,getInviteToken,getInviterMemberId,getPaintableArea,getRoomBounds,locationToPaintable,locationToRoom,navigateToURL,paintableToLocationAtDepth,paintableToLocationAtHeight,paintableToRoom,roomToPaintable,setHitPointTester,setMobSpriteExporter,setRoomViewBounds,setShowChrome,showInvitePage,showPage" name="keywords">
+<meta content="LocalSubControl,com.whirled.avrg.LocalSubControl,hitPointTester,mobSpriteExporter,feedback,getInviteToken,getInviterMemberId,getPaintableArea,getRoomBounds,hideUI,isUIShowing,locationToPaintable,locationToRoom,navigateToURL,paintableToLocationAtDepth,paintableToLocationAtHeight,paintableToRoom,roomToPaintable,setHitPointTester,setMobSpriteExporter,setRoomViewBounds,setShowChrome,showInvitePage,showPage,showUI" name="keywords">
 <title>com.whirled.avrg.LocalSubControl</title>
 </head>
 <body>
@@ -141,6 +141,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
      Get the room bounds in "room pixels".</div>
 </td><td class="summaryTableOwnerCol">LocalSubControl</td>
 </tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#hideUI()">hideUI</a>(element:int):void</div>
+<div class="summaryTableDescription">
+     Request to hide a particular UI element, if showing.</div>
+</td><td class="summaryTableOwnerCol">LocalSubControl</td>
+</tr>
 <tr class="hideInheritedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
@@ -151,6 +159,15 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
      loaded up our SWF by itself?
      </div>
 </td><td class="summaryTableOwnerCol"><a href="../AbstractSubControl.html">AbstractSubControl</a></td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#isUIShowing()">isUIShowing</a>(element:int):Boolean</div>
+<div class="summaryTableDescription">
+     Is the particular UI element showing?
+     </div>
+</td><td class="summaryTableOwnerCol">LocalSubControl</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
@@ -268,6 +285,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <a class="signatureLink" href="#showPage()">showPage</a>(token:String):Boolean</div>
 <div class="summaryTableDescription">
      Shows the Whirled page identified by the supplied token.</div>
+</td><td class="summaryTableOwnerCol">LocalSubControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#showUI()">showUI</a>(element:int, arg:Object = null):void</div>
+<div class="summaryTableDescription">
+     Request to show a particular UI element.</div>
 </td><td class="summaryTableOwnerCol">LocalSubControl</td>
 </tr>
 </table>
@@ -467,6 +492,45 @@ showHideInherited();
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20"></td><td><code>Array</code></td>
+</tr>
+</table>
+</div>
+<a name="hideUI()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">hideUI</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function hideUI(element:int):void</code><p>
+     Request to hide a particular UI element, if showing.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">element</span>:int</code></td>
+</tr>
+</table>
+</div>
+<a name="isUIShowing()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">isUIShowing</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function isUIShowing(element:int):Boolean</code><p>
+     Is the particular UI element showing?
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">element</span>:int</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Boolean</code></td>
 </tr>
 </table>
 </div>
@@ -857,14 +921,10 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public function setShowChrome(show:Boolean):void</code><p>
-     Hide or show the chrome, the UI for Whirled itself. There is no return value, there is
-     no way to check if it's showing or not. Why would you want that? Just set it to what
-     you need and it will no-op if it's already in that mode.
-          TODO: use at your own risk. At present we're not sure how much of the chrome we'll allow
-     you to hide, so while it hides it all now, it's very possible that it will just minimize
-     things in the future. We may also remove this. So, go ahead and use it, but it
-     might not work the same way forever.
-     </p><span class="label">Parameters</span>
+     Hide or show the chrome, the UI for Whirled itself.
+     </p><p> Note: this method is only allowed for approved games, and will silently
+     fail for unapproved games. The approval process is still being developed. </p>
+     <span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">show</span>:Boolean</code></td>
@@ -925,6 +985,39 @@ showHideInherited();
      </td>
 </tr>
 </table>
+</div>
+<a name="showUI()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">showUI</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function showUI(element:int, arg:Object = null):void</code><p>
+     Request to show a particular UI element. Some of this can be accomplished presently
+     by calling showPage, but that might not always work. If we move inventory into an
+     in-flash popup, for example, then this method should always work, but showPage may
+     cease to exist (although maybe we'll analyze the args and make it work).
+          </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">element</span>:int</code> &mdash; a constant from </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">arg</span>:Object</code> (default = <code>null</code>)<code></code> &mdash; an element-specific argument, or an Object hash containing multiple args.
+     See the documentation for each constant in UIConstants.
+     </td>
+</tr>
+</table>
+<p>
+<span class="label">See also</span>
+</p>
+<div class="seeAlso">
+<a href="../avrg/UIConstants.html" target="">com.whirled.avrg.UIConstants</a>
+</div>
 </div>
 <div class="detailSectionHeader">Event detail</div>
 <a name="event:sizeChanged"></a>

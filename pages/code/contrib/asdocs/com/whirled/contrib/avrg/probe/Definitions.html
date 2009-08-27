@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../../../print.css" type="text/css" media="print">
-<meta content="Definitions,com.whirled.contrib.avrg.probe.Definitions,CLIENT_EVENTS,GAME_EVENTS,NET_EVENTS,PARTY_EVENTS,PLAYER_EVENTS,ROOM_EVENTS,_ctrl,_funcs,_makeDecoration,addListenerToAll,createAgentFuncs,createGameFuncs,createLocalFuncs,createMobFuncs,createPartyFuncs,createPlayerFuncs,createRoomFuncs,createServerGameFuncs,createServerMiscFuncs,createServerMobFuncs,createServerPlayerFuncs,createServerRoomFuncs,enumEvents,getFuncKeys,getFuncs,proxy,pushPropsFuncs,pushPropsSetFuncs,removeListenerFromAll" name="keywords">
+<meta content="Definitions,com.whirled.contrib.avrg.probe.Definitions,CLIENT_EVENTS,GAME_EVENTS,NET_EVENTS,PARTY_EVENTS,PLAYER_EVENTS,ROOM_EVENTS,_client,_ctrl,_makeDecoration,_server,addListenerToAll,createAgentFuncs,createGameFuncs,createLocalFuncs,createMobFuncs,createPartyFuncs,createPlayerFuncs,createRoomFuncs,createServerGameFuncs,createServerMiscFuncs,createServerMobFuncs,createServerPlayerFuncs,createServerRoomFuncs,enumEvents,getControls,getFuncs,introspectControl,isFunctionSuppressed,proxy,pushPropsFuncs,pushPropsSetFuncs,removeListenerFromAll" name="keywords">
 <title>com.whirled.contrib.avrg.probe.Definitions</title>
 </head>
 <body>
@@ -61,15 +61,19 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
 </tr>
 <tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_client">_client</a> : Object<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">Definitions</td>
+</tr>
+<tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_ctrl">_ctrl</a> : AVRGameControl<div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">Definitions</td>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_funcs">_funcs</a> : Object<div class="summaryTableDescription"></div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_makeDecoration">_makeDecoration</a> : Function<div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">Definitions</td>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_makeDecoration">_makeDecoration</a> : Function<div class="summaryTableDescription"></div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_server">_server</a> : Object<div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">Definitions</td>
 </tr>
 </table>
@@ -100,7 +104,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#getFuncKeys()">getFuncKeys</a>(server:Boolean):Array</div>
+<a class="signatureLink" href="#getControls()">getControls</a>(server:Boolean):Array</div>
 <div class="summaryTableDescription">
      Get the categories of functions available on the AVRG client.</div>
 </td><td class="summaryTableOwnerCol">Definitions</td>
@@ -108,7 +112,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#getFuncs()">getFuncs</a>(key:String):Array</div>
+<a class="signatureLink" href="#getFuncs()">getFuncs</a>(server:Boolean, ctrlName:String):Array</div>
 <div class="summaryTableDescription">
      Get the functions for a given category.</div>
 </td><td class="summaryTableOwnerCol">Definitions</td>
@@ -224,6 +228,25 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
+<a class="signatureLink" href="#introspectControl()">introspectControl</a>(ctrl:Object):Object</div>
+<div class="summaryTableDescription">
+     TODO
+     My idea was: introspect and figure out all the controls and functions on each.</div>
+</td><td class="summaryTableOwnerCol">Definitions</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#isFunctionSuppressed()">isFunctionSuppressed</a>(name:String):Boolean</div>
+<div class="summaryTableDescription">
+     Would we like to suppress a function with the specified name from our autogenerated list
+     of functions?
+     </div>
+</td><td class="summaryTableOwnerCol">Definitions</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
 <a class="signatureLink" href="#proxy()">proxy</a>(prefix:String, name:String):Function</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">Definitions</td>
@@ -284,23 +307,23 @@ showHideInherited();
 <div class="MainContent">
 <a name="propertyDetail"></a>
 <div class="detailSectionHeader">Property detail</div>
+<a name="_client"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_client</td><td class="detailHeaderType">property</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _client:Object</code>
+</div>
 <a name="_ctrl"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">_ctrl</td><td class="detailHeaderType">property</td>
+<td class="detailHeaderName">_ctrl</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
 </tr>
 </table>
 <div class="detailBody">
 <code>protected var _ctrl:AVRGameControl</code>
-</div>
-<a name="_funcs"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">_funcs</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>protected var _funcs:Object</code>
 </div>
 <a name="_makeDecoration"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -310,6 +333,15 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>protected var _makeDecoration:Function</code>
+</div>
+<a name="_server"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_server</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _server:Object</code>
 </div>
 <a name="constructorDetail"></a>
 <div class="detailSectionHeader">Constructor detail</div>
@@ -561,16 +593,15 @@ showHideInherited();
 </tr>
 </table>
 </div>
-<a name="getFuncKeys()"></a>
+<a name="getControls()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">getFuncKeys</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+<td class="detailHeaderName">getControls</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
 </tr>
 </table>
 <div class="detailBody">
-<code>public function getFuncKeys(server:Boolean):Array</code><p>
-     Get the categories of functions available on the AVRG client. Note that server keys all
-     begin with "server".
+<code>public function getControls(server:Boolean):Array</code><p>
+     Get the categories of functions available on the AVRG client.
      </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
@@ -594,12 +625,18 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function getFuncs(key:String):Array</code><p>
+<code>public function getFuncs(server:Boolean, ctrlName:String):Array</code><p>
      Get the functions for a given category.
      </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20px"></td><td><code><span class="label">key</span>:String</code></td>
+<td width="20px"></td><td><code><span class="label">server</span>:Boolean</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">ctrlName</span>:String</code></td>
 </tr>
 </table>
 <p></p>
@@ -608,6 +645,56 @@ showHideInherited();
 <tr>
 <td width="20"></td><td><code>Array</code> &mdash; an Array of <code>FunctionSpec</code> instances.
      </td>
+</tr>
+</table>
+</div>
+<a name="introspectControl()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">introspectControl</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function introspectControl(ctrl:Object):Object</code><p>
+     TODO
+     My idea was: introspect and figure out all the controls and functions on each.
+     These would be lacking in nice parameter names, but then, where we have methods defined
+     that matched the actual definitions, we could drop in the nice names. Rabbit hole. Punting.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">ctrl</span>:Object</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Object</code></td>
+</tr>
+</table>
+</div>
+<a name="isFunctionSuppressed()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">isFunctionSuppressed</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function isFunctionSuppressed(name:String):Boolean</code><p>
+     Would we like to suppress a function with the specified name from our autogenerated list
+     of functions?
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">name</span>:String</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Boolean</code></td>
 </tr>
 </table>
 </div>

@@ -113,6 +113,13 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("CÂ
 <td width="20"></td><td> Returns the capacity of the RingBuffer.</td>
 </tr>
 <tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/StringUtil.html#capitalize()">capitalize</a>(s) &mdash; Static method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/StringUtil.html">StringUtil</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Returns a version of the supplied string with the first letter capitalized.</td>
+</tr>
+<tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/ui/class-list.html');" href="com/threerings/ui/KeyboardCodes.html#CAPS_LOCK">CAPS_LOCK</a> &mdash; Constant static property in class com.threerings.ui.<a onclick="javascript:loadClassListFrame('com/threerings/ui/class-list.html');" href="com/threerings/ui/KeyboardCodes.html">KeyboardCodes</a></td>
 </tr>
 <tr>
@@ -203,6 +210,13 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("CÂ
 <td width="20"></td><td></td>
 </tr>
 <tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Sets.html#checkSets()">checkSets</a>(a:<a href="com/threerings/util/Set.html" onclick="javascript:loadClassListFrame('com/threerings/util./class-list.html');">com.threerings.util:Set</a>, b:<a href="com/threerings/util/Set.html" onclick="javascript:loadClassListFrame('com/threerings/util./class-list.html');">com.threerings.util:Set</a>, result:<a href="com/threerings/util/Set.html" onclick="javascript:loadClassListFrame('com/threerings/util./class-list.html');">com.threerings.util:Set</a>) &mdash; Static method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Sets.html">Sets</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Helper method for Set operations.</td>
+</tr>
+<tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/ExpiringSet.html#checkTimer()">checkTimer</a>(... rest) &mdash; Method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/ExpiringSet.html">ExpiringSet</a></td>
 </tr>
 <tr>
@@ -240,37 +254,11 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("CÂ
      Calling this function will not expire the elements, it simply removes them.</td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/HashMap.html#clear()">clear</a>() &mdash; Method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/HashMap.html">HashMap</a></td>
-</tr>
-<tr>
-<td width="20"></td><td> 
-     Clear this map, removing all stored elements.</td>
-</tr>
-<tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/HashSet.html#clear()">clear</a>() &mdash; Method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/HashSet.html">HashSet</a></td>
-</tr>
-<tr>
-<td width="20"></td><td></td>
-</tr>
-<tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Map.html#clear()">clear</a>() &mdash; Method in interface com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Map.html">Map</a></td>
 </tr>
 <tr>
 <td width="20"></td><td>
      Clear this map, removing all stored elements.</td>
-</tr>
-<tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/ObjectMap.html#clear()">clear</a>() &mdash; Method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/ObjectMap.html">ObjectMap</a></td>
-</tr>
-<tr>
-<td width="20"></td><td> 
-     Clear this map, removing all stored elements.</td>
-</tr>
-<tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/ObjectSet.html#clear()">clear</a>() &mdash; Method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/ObjectSet.html">ObjectSet</a></td>
-</tr>
-<tr>
-<td width="20"></td><td>  Remove all elements from this set.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/RingBuffer.html#clear()">clear</a>() &mdash; Method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/RingBuffer.html">RingBuffer</a></td>
@@ -282,13 +270,36 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("CÂ
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Set.html#clear()">clear</a>() &mdash; Method in interface com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Set.html">Set</a></td>
 </tr>
 <tr>
-<td width="20"></td><td> Remove all elements from this set.</td>
+<td width="20"></td><td>
+     Remove all elements from this set.</td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/StreamableArrayList.html#clear()">clear</a>() &mdash; Method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/StreamableArrayList.html">StreamableArrayList</a></td>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/maps/class-list.html');" href="com/threerings/util/maps/DictionaryMap.html#clear()">clear</a>() &mdash; Method in class com.threerings.util.maps.<a onclick="javascript:loadClassListFrame('com/threerings/util/maps/class-list.html');" href="com/threerings/util/maps/DictionaryMap.html">DictionaryMap</a></td>
 </tr>
 <tr>
-<td width="20"></td><td></td>
+<td width="20"></td><td>  
+     Clear this map, removing all stored elements.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/maps/class-list.html');" href="com/threerings/util/maps/HashMap.html#clear()">clear</a>() &mdash; Method in class com.threerings.util.maps.<a onclick="javascript:loadClassListFrame('com/threerings/util/maps/class-list.html');" href="com/threerings/util/maps/HashMap.html">HashMap</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>  
+     Clear this map, removing all stored elements.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/maps/class-list.html');" href="com/threerings/util/maps/LRIMap.html#clear()">clear</a>() &mdash; Method in class com.threerings.util.maps.<a onclick="javascript:loadClassListFrame('com/threerings/util/maps/class-list.html');" href="com/threerings/util/maps/LRIMap.html">LRIMap</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>   
+     Clear this map, removing all stored elements.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/sets/class-list.html');" href="com/threerings/util/sets/MapSet.html#clear()">clear</a>() &mdash; Method in class com.threerings.util.sets.<a onclick="javascript:loadClassListFrame('com/threerings/util/sets/class-list.html');" href="com/threerings/util/sets/MapSet.html">MapSet</a></td>
+</tr>
+<tr>
+<td width="20"></td><td> 
+     Remove all elements from this set.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/text/class-list.html');" href="com/threerings/text/ClearingTextField.html">ClearingTextField</a> &mdash; Class in package <a onclick="javascript:loadClassListFrame('com/threerings/text/class-list.html');" href="com/threerings/text/package-detail.html">com.threerings.text</a></td>
@@ -461,7 +472,8 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("CÂ
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Cloneable.html"><i>Cloneable</i></a> &mdash; Interface in package <a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/package-detail.html">com.threerings.util</a></td>
 </tr>
 <tr>
-<td width="20"></td><td></td>
+<td width="20"></td><td>
+ Implemented by objects that support creating a clone.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/DataPack.html#close()">close</a>() &mdash; Method in class com.whirled.<a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/DataPack.html">DataPack</a></td>
@@ -469,6 +481,12 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("CÂ
 <tr>
 <td width="20"></td><td>
      If the DataPack is still loading, stop it, otherwise has no effect.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/ByteEnum.html#_code">_code</a> &mdash; Property in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/ByteEnum.html">ByteEnum</a></td>
+</tr>
+<tr>
+<td width="20"></td><td> The byte value of this ByteEnum.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/PlayerSubControl.html#event:CoinsAwarded">CoinsAwarded</a> &mdash; Event in class com.whirled.game.<a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/PlayerSubControl.html">PlayerSubControl</a></td>
@@ -559,23 +577,29 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("CÂ
      Commits a transaction started with <code>startTransaction_v1</code>.</td>
 </tr>
 <tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/maps/class-list.html');" href="com/threerings/util/maps/MapBuilder.html#comp">comp</a> &mdash; Property in class com.threerings.util.maps.<a onclick="javascript:loadClassListFrame('com/threerings/util/maps/class-list.html');" href="com/threerings/util/maps/MapBuilder.html">MapBuilder</a></td>
+</tr>
+<tr>
+<td width="20"></td><td> Iff sorted=true, the comparator to use, otherwise it's sussed from the key.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/sets/class-list.html');" href="com/threerings/util/sets/SetBuilder.html#comp">comp</a> &mdash; Property in class com.threerings.util.sets.<a onclick="javascript:loadClassListFrame('com/threerings/util/sets/class-list.html');" href="com/threerings/util/sets/SetBuilder.html">SetBuilder</a></td>
+</tr>
+<tr>
+<td width="20"></td><td></td>
+</tr>
+<tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Comparable.html"><i>Comparable</i></a> &mdash; Interface in package <a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/package-detail.html">com.threerings.util</a></td>
 </tr>
 <tr>
-<td width="20"></td><td></td>
-</tr>
-<tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Comparators.html#COMPARABLE()">COMPARABLE</a>(c1:<a href="com/threerings/util/Comparable.html" onclick="javascript:loadClassListFrame('com/threerings/util./class-list.html');">com.threerings.util:Comparable</a>, c2:<a href="com/threerings/util/Comparable.html" onclick="javascript:loadClassListFrame('com/threerings/util./class-list.html');">com.threerings.util:Comparable</a>, ... rest) &mdash; Static method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Comparators.html">Comparators</a></td>
-</tr>
-<tr>
 <td width="20"></td><td>
-     A standard Comparator for comparing Comparable values.</td>
+ Implemented by classes whose instances have a natural ordering with respect to each other.</td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/SortedHashMap.html#COMPARABLE_KEYS">COMPARABLE_KEYS</a> &mdash; Constant static property in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/SortedHashMap.html">SortedHashMap</a></td>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Comparators.html#COMPARABLE">COMPARABLE</a> &mdash; Constant static property in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Comparators.html">Comparators</a></td>
 </tr>
 <tr>
-<td width="20"></td><td></td>
+<td width="20"></td><td> Deprecated </td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Comparators.html">Comparators</a> &mdash; Class in package <a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/package-detail.html">com.threerings.util</a></td>
@@ -585,18 +609,32 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("CÂ
  Contains sorting Comparators.</td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Integer.html#compare()">compare</a>(val1, val2) &mdash; Static method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Integer.html">Integer</a></td>
-</tr>
-<tr>
-<td width="20"></td><td>
-     Compares two int values in an overflow safe manner.</td>
-</tr>
-<tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/StringUtil.html#compare()">compare</a>(s1, s2) &mdash; Static method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/StringUtil.html">StringUtil</a></td>
 </tr>
 <tr>
 <td width="20"></td><td>
      Compares two String values, returning -1, 0, or 1.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Comparators.html#compareBooleans()">compareBooleans</a>(v1, v2, ... rest) &mdash; Static method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Comparators.html">Comparators</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Compares two Boolean values.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Comparators.html#compareComparables()">compareComparables</a>(c1:<a href="com/threerings/util/Comparable.html" onclick="javascript:loadClassListFrame('com/threerings/util./class-list.html');">com.threerings.util:Comparable</a>, c2:<a href="com/threerings/util/Comparable.html" onclick="javascript:loadClassListFrame('com/threerings/util./class-list.html');">com.threerings.util:Comparable</a>, ... rest) &mdash; Static method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Comparators.html">Comparators</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     A standard Comparator for comparing Comparable values.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Comparators.html#compareEnumsByName()">compareEnumsByName</a>(e1:<a href="com/threerings/util/Enum.html" onclick="javascript:loadClassListFrame('com/threerings/util./class-list.html');">com.threerings.util:Enum</a>, e2:<a href="com/threerings/util/Enum.html" onclick="javascript:loadClassListFrame('com/threerings/util./class-list.html');">com.threerings.util:Enum</a>, ... rest) &mdash; Static method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Comparators.html">Comparators</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Compare two Enums by their name().</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/StringUtil.html#compareIgnoreCase()">compareIgnoreCase</a>(s1, s2) &mdash; Static method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/StringUtil.html">StringUtil</a></td>
@@ -606,11 +644,32 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("CÂ
      Compares two String values, returning -1, 0, or 1.</td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Comparators.html#compareInts()">compareInts</a>(val1, val2) &mdash; Static method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Comparators.html">Comparators</a></td>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Comparators.html#compareInts()">compareInts</a>(v1, v2, ... rest) &mdash; Static method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Comparators.html">Comparators</a></td>
 </tr>
 <tr>
 <td width="20"></td><td>
      Compares two int values in an overflow safe manner.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Comparators.html#compareNumbers()">compareNumbers</a>(v1, v2, ... rest) &mdash; Static method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Comparators.html">Comparators</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Compares two Number values, taking into account the intricacies of dealing with NaN.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Comparators.html#compareStrings()">compareStrings</a>(s1, s2, ... rest) &mdash; Static method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Comparators.html">Comparators</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Compare two objects by their toString() values, case sensitively.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Comparators.html#compareStringsInsensitively()">compareStringsInsensitively</a>(s1, s2, ... rest) &mdash; Static method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Comparators.html">Comparators</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Compare two objects by their toString().toLowerCase() values, case insensitively.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Comparable.html#compareTo()">compareTo</a>(other) &mdash; Method in interface com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Comparable.html">Comparable</a></td>
@@ -627,10 +686,11 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("CÂ
 <td width="20"></td><td></td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Name.html#compareTo()">compareTo</a>(other) &mdash; Method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Name.html">Name</a></td>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Comparators.html#compareUnknowns()">compareUnknowns</a>(o1, o2, ... rest) &mdash; Static method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Comparators.html">Comparators</a></td>
 </tr>
 <tr>
-<td width="20"></td><td></td>
+<td width="20"></td><td>
+     Compare two values whose type is not known at compile type.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/display/class-list.html');" href="com/threerings/display/BackgroundJPGEncoder.html#event:complete">complete</a> &mdash; Event in class com.threerings.display.<a onclick="javascript:loadClassListFrame('com/threerings/display/class-list.html');" href="com/threerings/display/BackgroundJPGEncoder.html">BackgroundJPGEncoder</a></td>
@@ -658,12 +718,6 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("CÂ
 <tr>
 <td width="20"></td><td>
  Dispatched when the DataPack has completed loading.</td>
-</tr>
-<tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/ResultAdapter.html#_completed">_completed</a> &mdash; Property in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/ResultAdapter.html">ResultAdapter</a></td>
-</tr>
-<tr>
-<td width="20"></td><td></td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/display/class-list.html');" href="com/threerings/display/JPGEncoder.html#completeEncoding()">completeEncoding</a>() &mdash; Method in class com.threerings.display.<a onclick="javascript:loadClassListFrame('com/threerings/display/class-list.html');" href="com/threerings/display/JPGEncoder.html">JPGEncoder</a></td>
@@ -715,6 +769,18 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("CÂ
 </tr>
 <tr>
 <td width="20"></td><td>Useful collections and utility classes.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/maps/class-list.html');" href="com/threerings/util/maps/package-detail.html">com.threerings.util.maps</a> &mdash; Package</td>
+</tr>
+<tr>
+<td width="20"></td><td>Contains implementations of the com.threerings.util.Map interface. You should create instances using the com.threerings.util.Maps factory.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/sets/class-list.html');" href="com/threerings/util/sets/package-detail.html">com.threerings.util.sets</a> &mdash; Package</td>
+</tr>
+<tr>
+<td width="20"></td><td>Contains implementations of the com.threerings.util.Set interface. You should create instances using the com.threerings.util.Sets factory.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/package-detail.html">com.whirled</a> &mdash; Package</td>
@@ -835,48 +901,24 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("CÂ
 <td width="20"></td><td></td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/HashSet.html#contains()">contains</a>(o) &mdash; Method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/HashSet.html">HashSet</a></td>
-</tr>
-<tr>
-<td width="20"></td><td></td>
-</tr>
-<tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/ObjectSet.html#contains()">contains</a>(o) &mdash; Method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/ObjectSet.html">ObjectSet</a></td>
-</tr>
-<tr>
-<td width="20"></td><td>  Returns true if this set contains the specified element.</td>
-</tr>
-<tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Set.html#contains()">contains</a>(o) &mdash; Method in interface com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Set.html">Set</a></td>
 </tr>
 <tr>
-<td width="20"></td><td> Returns true if this set contains the specified element.</td>
+<td width="20"></td><td>
+     Returns true if this set contains the specified element.</td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/StreamableArrayList.html#contains()">contains</a>(item) &mdash; Method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/StreamableArrayList.html">StreamableArrayList</a></td>
-</tr>
-<tr>
-<td width="20"></td><td></td>
-</tr>
-<tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/HashMap.html#containsKey()">containsKey</a>(key) &mdash; Method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/HashMap.html">HashMap</a></td>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/sets/class-list.html');" href="com/threerings/util/sets/MapSet.html#contains()">contains</a>(o) &mdash; Method in class com.threerings.util.sets.<a onclick="javascript:loadClassListFrame('com/threerings/util/sets/class-list.html');" href="com/threerings/util/sets/MapSet.html">MapSet</a></td>
 </tr>
 <tr>
 <td width="20"></td><td> 
-     Returns true if the specified key exists in the map.</td>
+     Returns true if this set contains the specified element.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Map.html#containsKey()">containsKey</a>(key) &mdash; Method in interface com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Map.html">Map</a></td>
 </tr>
 <tr>
 <td width="20"></td><td>
-     Returns true if the specified key exists in the map.</td>
-</tr>
-<tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/ObjectMap.html#containsKey()">containsKey</a>(key) &mdash; Method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/ObjectMap.html">ObjectMap</a></td>
-</tr>
-<tr>
-<td width="20"></td><td> 
      Returns true if the specified key exists in the map.</td>
 </tr>
 <tr>
@@ -1050,6 +1092,20 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("CÂ
      Create a TextField.</td>
 </tr>
 <tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Comparators.html#createFields()">createFields</a>(sortFields) &mdash; Static method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Comparators.html">Comparators</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Create a Comparator function that sorts according to one or more fields of Objects.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Comparators.html#createFor()">createFor</a>(clazz) &mdash; Static method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Comparators.html">Comparators</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Create a Comparator appropriate for comparing objects of the specified class.</td>
+</tr>
+<tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/text/class-list.html');" href="com/threerings/text/TextFieldUtil.html#createFormat()">createFormat</a>(initProps) &mdash; Static method in class com.threerings.text.<a onclick="javascript:loadClassListFrame('com/threerings/text/class-list.html');" href="com/threerings/text/TextFieldUtil.html">TextFieldUtil</a></td>
 </tr>
 <tr>
@@ -1063,6 +1119,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("CÂ
 <td width="20"></td><td>
      Create a filter that, if applied to a DisplayObject, will shift the hue of that object
      by the given value.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Comparators.html#createNullSafe()">createNullSafe</a>(comparator) &mdash; Static method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Comparators.html">Comparators</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Compose another comparator into one that can compare null and non-null elements
+     safely, sorting the nulls to the bottom.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/display/class-list.html');" href="com/threerings/display/DisplayUtil.html#createPointSorter()">createPointSorter</a>(origin) &mdash; Static method in class com.threerings.display.<a onclick="javascript:loadClassListFrame('com/threerings/display/class-list.html');" href="com/threerings/display/DisplayUtil.html">DisplayUtil</a></td>

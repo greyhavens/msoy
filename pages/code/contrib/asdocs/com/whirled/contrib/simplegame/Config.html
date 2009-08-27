@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../../print.css" type="text/css" media="print">
-<meta content="Config,com.whirled.contrib.simplegame.Config,externalResourceManager,maxAudioChannels" name="keywords">
+<meta content="Config,com.whirled.contrib.simplegame.Config,externalResourceManager,maxAudioChannels,minFrameRate" name="keywords">
 <title>com.whirled.contrib.simplegame.Config</title>
 </head>
 <body>
@@ -60,6 +60,13 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#maxAudioChannels">maxAudioChannels</a> : int = 25<div class="summaryTableDescription"> The number of audio channels the AudioManager will use.</div>
 </td><td class="summaryTableOwnerCol">Config</td>
 </tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#minFrameRate">minFrameRate</a> : Number = 15<div class="summaryTableDescription">
+     If the framerate drops below this value, the MainLoop will artificially reduce the
+     time delta passed to update() functions, causing the game to slow down but animate
+     more smoothly.</div>
+</td><td class="summaryTableOwnerCol">Config</td>
+</tr>
 </table>
 </div>
 <script type="text/javascript" language="javascript">
@@ -89,6 +96,18 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public var maxAudioChannels:int = 25</code><p> The number of audio channels the AudioManager will use. Optional. Defaults to 25. </p></div>
+<a name="minFrameRate"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">minFrameRate</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public var minFrameRate:Number = 15</code><p>
+     If the framerate drops below this value, the MainLoop will artificially reduce the
+     time delta passed to update() functions, causing the game to slow down but animate
+     more smoothly. Defaults to 15.
+     </p></div>
 <br>
 <br>
 <hr>

@@ -37,13 +37,16 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("In
 <tr>
 <td class="classHeaderTableLabel">Interface</td><td class="classSignature">public interface Map</td>
 </tr>
-<tr>
-<td class="classHeaderTableLabel">Implementors</td><td><a href="../util/HashMap.html">HashMap</a>, <a href="../util/ObjectMap.html">ObjectMap</a></td>
-</tr>
 </table>
 <p></p>
  A Map is an object that maps keys to values.
- <p></p>
+  <p></p>
+<p>
+<span class="classHeaderTableLabel">See also</span>
+</p>
+<div class="seeAlso">
+<a href="../util/Maps.html" target="">com.threerings.util.Maps</a>
+</div>
 <br>
 <hr>
 </div>
@@ -75,8 +78,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("In
 <div class="summarySignature">
 <a class="signatureLink" href="#forEach()">forEach</a>(fn:Function):void</div>
 <div class="summaryTableDescription">
-     Call the specified function, which accepts two args: key and value,
-     for every mapping.</div>
+     Call the specified function to iterate over the mappings in this Map.</div>
 </td><td class="summaryTableOwnerCol">Map</td>
 </tr>
 <tr class="">
@@ -185,8 +187,13 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public function forEach(fn:Function):void</code><p>
-     Call the specified function, which accepts two args: key and value,
-     for every mapping.
+     Call the specified function to iterate over the mappings in this Map.
+     Signature:
+     function (key :Object, value :Object) :void
+        or
+     function (key :Object, value :Object) :Boolean
+          If you return a Boolean, you may return <code>true</code> to indicate that you've
+     found what you were looking for, and halt iteration.
      </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>

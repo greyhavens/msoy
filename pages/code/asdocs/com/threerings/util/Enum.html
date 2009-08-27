@@ -40,6 +40,9 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr>
 <td class="classHeaderTableLabel">Implements</td><td><a href="Comparable.html">Comparable</a>, <a href="Hashable.html">Hashable</a></td>
 </tr>
+<tr>
+<td class="classHeaderTableLabel">Subclasses</td><td><a href="../util/ByteEnum.html">ByteEnum</a></td>
+</tr>
 </table>
 <p></p>
  Base enum class for actionscript. Works pretty much like enums in Java, only you've got
@@ -64,13 +67,16 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
          return Enum.values(Foo);
      }
  }
-  Important notes:
+  Important notes for Enum implementors:
   - make your class final
   - create a constructor that calls super(name)
   - declare your enum constants const, and with the same String as their name.
   - call finishedEnumerating() at the end of your constants.
   - your enum objects should be immutable
   - implement a static valueOf() and values() methods for extra points, as above.
+  Note for Enum users: The same Enum class in different ApplicationDomains could cause confusion,
+ as the Enums will not be equal (neither will their Class objects, or in all probabability,
+ the Hashable, Equalable, or Comparable classes, so there could be larger problems.
  <p></p>
 <br>
 <hr>
@@ -248,7 +254,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function equals(other:Object):Boolean</code><span class="label">Parameters</span>
+<code>public final function equals(other:Object):Boolean</code><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">other</span>:Object</code></td>
@@ -286,7 +292,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function hashCode():int</code>
+<code>public final function hashCode():int</code>
 <p></p>
 <span class="label">Returns</span>
 <table border="0" cellspacing="0" cellpadding="0">
@@ -302,7 +308,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function name():String</code><p>
+<code>public final function name():String</code><p>
      Get the name of this enum.
      </p><p></p>
 <span class="label">Returns</span>
@@ -319,7 +325,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function ordinal():int</code><p>
+<code>public final function ordinal():int</code><p>
      Get the ordinal of this enum.
      Note that you should not use the ordinal in normal cases, as it may change if a new
      enum is defined. Ordinals should only be used if you are writing a data structure

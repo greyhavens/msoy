@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../../../print.css" type="text/css" media="print">
-<meta content="WeightedArray,com.whirled.contrib.simplegame.util.WeightedArray,_data,_defaultRandStreamId,_totalChance,_totalChanceCalculated,length,calculateTotalChance,forEach,getAllData,getNextData,push" name="keywords">
+<meta content="WeightedArray,com.whirled.contrib.simplegame.util.WeightedArray,_data,_dataDirty,_defaultRandStreamId,length,forEach,getAllData,getNextData,push,updateData" name="keywords">
 <title>com.whirled.contrib.simplegame.util.WeightedArray</title>
 </head>
 <body>
@@ -68,15 +68,11 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </td><td class="summaryTableOwnerCol">WeightedArray</td>
 </tr>
 <tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_dataDirty">_dataDirty</a> : Boolean<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">WeightedArray</td>
+</tr>
+<tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_defaultRandStreamId">_defaultRandStreamId</a> : int<div class="summaryTableDescription"></div>
-</td><td class="summaryTableOwnerCol">WeightedArray</td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_totalChance">_totalChance</a> : Number<div class="summaryTableDescription"></div>
-</td><td class="summaryTableOwnerCol">WeightedArray</td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_totalChanceCalculated">_totalChanceCalculated</a> : Boolean<div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">WeightedArray</td>
 </tr>
 </table>
@@ -115,7 +111,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#getNextData()">getNextData</a>():*</div>
+<a class="signatureLink" href="#getNextData()">getNextData</a>(randStream:int = -1):*</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">WeightedArray</td>
 </tr>
@@ -138,7 +134,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#calculateTotalChance()">calculateTotalChance</a>():void</div>
+<a class="signatureLink" href="#updateData()">updateData</a>():void</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">WeightedArray</td>
 </tr>
@@ -159,6 +155,15 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>protected var _data:Array</code>
+</div>
+<a name="_dataDirty"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_dataDirty</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _dataDirty:Boolean</code>
 </div>
 <a name="_defaultRandStreamId"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -181,24 +186,6 @@ showHideInherited();
 <code>&nbsp;&nbsp;&nbsp;&nbsp;public function get length():int</code>
 <br>
 </div>
-<a name="_totalChance"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">_totalChance</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>protected var _totalChance:Number</code>
-</div>
-<a name="_totalChanceCalculated"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">_totalChanceCalculated</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>protected var _totalChanceCalculated:Boolean</code>
-</div>
 <a name="constructorDetail"></a>
 <div class="detailSectionHeader">Constructor detail</div>
 <a name="WeightedArray()"></a>
@@ -217,19 +204,10 @@ showHideInherited();
 </div>
 <a name="methodDetail"></a>
 <div class="detailSectionHeader">Method detail</div>
-<a name="calculateTotalChance()"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">calculateTotalChance</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>protected function calculateTotalChance():void</code>
-</div>
 <a name="forEach()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">forEach</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+<td class="detailHeaderName">forEach</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
 </tr>
 </table>
 <div class="detailBody">
@@ -267,7 +245,12 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function getNextData():*</code>
+<code>public function getNextData(randStream:int = -1):*</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">randStream</span>:int</code> (default = <code>-1</code>)<code></code></td>
+</tr>
+</table>
 <p></p>
 <span class="label">Returns</span>
 <table border="0" cellspacing="0" cellpadding="0">
@@ -295,6 +278,15 @@ showHideInherited();
 <td width="20px"></td><td><code><span class="label">chance</span>:Number</code></td>
 </tr>
 </table>
+</div>
+<a name="updateData()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">updateData</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function updateData():void</code>
 </div>
 <br>
 <br>

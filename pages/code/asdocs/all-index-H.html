@@ -320,22 +320,11 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("HÂ
      Detects whether this client is in control.</td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/HashMap_Entry.html#hash">hash</a> &mdash; Property in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/HashMap_Entry.html">HashMap_Entry</a></td>
-</tr>
-<tr>
-<td width="20"></td><td></td>
-</tr>
-<tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/HashMap_KeyWrapper.html#_hash">_hash</a> &mdash; Property in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/HashMap_KeyWrapper.html">HashMap_KeyWrapper</a></td>
-</tr>
-<tr>
-<td width="20"></td><td></td>
-</tr>
-<tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Hashable.html"><i>Hashable</i></a> &mdash; Interface in package <a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/package-detail.html">com.threerings.util</a></td>
 </tr>
 <tr>
-<td width="20"></td><td></td>
+<td width="20"></td><td>
+ Builds upon the Equalable interface to allow instances to be stored efficiently in Maps or Sets.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Enum.html#hashCode()">hashCode</a>() &mdash; Method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Enum.html">Enum</a></td>
@@ -348,20 +337,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("HÂ
 </tr>
 <tr>
 <td width="20"></td><td>
-     Get a hashcode for this Equalable object so that it may be placed
-     in a HashMap.</td>
-</tr>
-<tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/HashMap_KeyWrapper.html#hashCode()">hashCode</a>() &mdash; Method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/HashMap_KeyWrapper.html">HashMap_KeyWrapper</a></td>
-</tr>
-<tr>
-<td width="20"></td><td></td>
-</tr>
-<tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Name.html#hashCode()">hashCode</a>() &mdash; Method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Name.html">Name</a></td>
-</tr>
-<tr>
-<td width="20"></td><td></td>
+     Return a hash code.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/StringUtil.html#hashCode()">hashCode</a>(str) &mdash; Static method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/StringUtil.html">StringUtil</a></td>
@@ -371,64 +347,24 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("HÂ
      Get a reasonable hash code for the specified String.</td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/HashSet.html#_hashMap">_hashMap</a> &mdash; Property in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/HashSet.html">HashSet</a></td>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/maps/class-list.html');" href="com/threerings/util/maps/NullWrapper.html#hashCode()">hashCode</a>() &mdash; Method in class com.threerings.util.maps.<a onclick="javascript:loadClassListFrame('com/threerings/util/maps/class-list.html');" href="com/threerings/util/maps/NullWrapper.html">NullWrapper</a></td>
 </tr>
 <tr>
 <td width="20"></td><td></td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/HashMap.html">HashMap</a> &mdash; Class in package <a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/package-detail.html">com.threerings.util</a></td>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/maps/class-list.html');" href="com/threerings/util/maps/HashMap.html">HashMap</a> &mdash; Class in package <a onclick="javascript:loadClassListFrame('com/threerings/util/maps/class-list.html');" href="com/threerings/util/maps/package-detail.html">com.threerings.util.maps</a></td>
 </tr>
 <tr>
 <td width="20"></td><td>
- An implementation of a HashMap in actionscript.</td>
+ Objects that implement Hashable (and null) may be used as keys.</td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/HashMap.html#HashMap()">HashMap</a>(loadFactor, equalsFn, hashFn) &mdash; Constructor in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/HashMap.html">HashMap</a></td>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/maps/class-list.html');" href="com/threerings/util/maps/HashMap.html#HashMap()">HashMap</a>(loadFactor) &mdash; Constructor in class com.threerings.util.maps.<a onclick="javascript:loadClassListFrame('com/threerings/util/maps/class-list.html');" href="com/threerings/util/maps/HashMap.html">HashMap</a></td>
 </tr>
 <tr>
 <td width="20"></td><td>
      Construct a HashMap
-          </td>
-</tr>
-<tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/HashMap_Entry.html">HashMap_Entry</a> &mdash; Class in package <a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/package-detail.html">com.threerings.util</a></td>
-</tr>
-<tr>
-<td width="20"></td><td> 
- A key/value pair in a HashMap.</td>
-</tr>
-<tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/HashMap_Entry.html#HashMap_Entry()">HashMap_Entry</a>(hash, key:<a href="com/threerings/util/Hashable.html" onclick="javascript:loadClassListFrame('com/threerings/util./class-list.html');">com.threerings.util:Hashable</a>, value, next:<a href="com/threerings/util/HashMap_Entry.html" onclick="javascript:loadClassListFrame('com/threerings/util./class-list.html');">com.threerings.util:HashMap_Entry</a>) &mdash; Constructor in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/HashMap_Entry.html">HashMap_Entry</a></td>
-</tr>
-<tr>
-<td width="20"></td><td></td>
-</tr>
-<tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/HashMap_KeyWrapper.html">HashMap_KeyWrapper</a> &mdash; Class in package <a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/package-detail.html">com.threerings.util</a></td>
-</tr>
-<tr>
-<td width="20"></td><td> 
- A wrapped key object HashMap.</td>
-</tr>
-<tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/HashMap_KeyWrapper.html#HashMap_KeyWrapper()">HashMap_KeyWrapper</a>(key, equalsFn, hashFn) &mdash; Constructor in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/HashMap_KeyWrapper.html">HashMap_KeyWrapper</a></td>
-</tr>
-<tr>
-<td width="20"></td><td></td>
-</tr>
-<tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/HashSet.html">HashSet</a> &mdash; Class in package <a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/package-detail.html">com.threerings.util</a></td>
-</tr>
-<tr>
-<td width="20"></td><td></td>
-</tr>
-<tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/HashSet.html#HashSet()">HashSet</a>(loadFactor, equalsFn, hashFn) &mdash; Constructor in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/HashSet.html">HashSet</a></td>
-</tr>
-<tr>
-<td width="20"></td><td>
-     Construct a HashSet
           </td>
 </tr>
 <tr>
@@ -492,6 +428,13 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("HÂ
      representation of those byts.</td>
 </tr>
 <tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/LocalSubControl.html#hideUI()">hideUI</a>(element) &mdash; Method in class com.whirled.avrg.<a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/LocalSubControl.html">LocalSubControl</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Request to hide a particular UI element, if showing.</td>
+</tr>
+<tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/LocalSubControl.html#hitPointTester">hitPointTester</a> &mdash; Property in class com.whirled.avrg.<a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/LocalSubControl.html">LocalSubControl</a></td>
 </tr>
 <tr>
@@ -532,12 +475,6 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("HÂ
 </tr>
 <tr>
 <td width="20"></td><td></td>
-</tr>
-<tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/TimeUtil.html#HOUR">HOUR</a> &mdash; Constant static property in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/TimeUtil.html">TimeUtil</a></td>
-</tr>
-<tr>
-<td width="20"></td><td> Time unit constant.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/FurniControl.html#event:hoverOut">hoverOut</a> &mdash; Event in class com.whirled.<a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/FurniControl.html">FurniControl</a></td>

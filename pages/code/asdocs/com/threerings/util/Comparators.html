@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
-<meta content="Comparators,com.threerings.util.Comparators,COMPARABLE,compareInts,createReverse" name="keywords">
+<meta content="Comparators,com.threerings.util.Comparators,COMPARABLE,compareBooleans,compareComparables,compareEnumsByName,compareInts,compareNumbers,compareStrings,compareStringsInsensitively,compareUnknowns,createFields,createFor,createNullSafe,createReverse" name="keywords">
 <title>com.threerings.util.Comparators</title>
 </head>
 <body>
@@ -19,7 +19,7 @@
 <td align="left" class="titleTableTitle">Whirled API Documentation</td><td align="right" class="titleTableTopNav"><a onclick="loadClassListFrame('../../../all-classes.html')" href="../../../package-summary.html">All&nbsp;Packages</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../../all-classes.html')" href="../../../class-summary.html">All&nbsp;Classes</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../../index-list.html')" href="../../../all-index-A.html">Index</a>&nbsp;|&nbsp;<a href="../../../index.html?com/threerings/util/Comparators.html&amp;com/threerings/util/class-list.html" id="framesLink1">Frames</a><a onclick="parent.location=document.location" href="" style="display:none" id="noFramesLink1">No&nbsp;Frames</a></td><td rowspan="3" align="right" class="titleTableLogo"><img alt="Adobe Logo" title="Adobe Logo" class="logoImage" src="../../../images/logo.jpg"></td>
 </tr>
 <tr class="titleTableRow2">
-<td align="left" id="subTitle" class="titleTableSubTitle">Class&nbsp;Comparators</td><td align="right" id="subNav" class="titleTableSubNav"><a href="#methodSummary">Methods</a></td>
+<td align="left" id="subTitle" class="titleTableSubTitle">Class&nbsp;Comparators</td><td align="right" id="subNav" class="titleTableSubNav"><a href="#methodSummary">Methods</a>&nbsp;| <a href="#constantSummary">Constants</a></td>
 </tr>
 <tr class="titleTableRow3">
 <td colspan="2">&nbsp;</td>
@@ -27,7 +27,7 @@
 </table>
 <script type="text/javascript" language="javascript">
 <!--
-if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Class Comparators"); titleBar_setSubNav(false,false,false,false,false,false,true,false,false,false,false,false,false,false);}
+if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Class Comparators"); titleBar_setSubNav(true,false,false,false,false,false,true,false,false,false,false,false,false,false);}
 --></script>
 <div class="MainContent">
 <table cellspacing="0" cellpadding="0" class="classHeaderTable">
@@ -40,7 +40,10 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </table>
 <p></p>
  Contains sorting Comparators.
- These functions are suitable for passing to Array.sort(), or with a flex Sort object.
+ These functions take any parameters but require only the first to, so they are suitable
+ for passing to Array.sort(), or with a flex Sort object. Note that returning values other
+ than 1, 0, or -1 confuse a flex Sort object.
+ In general, these functions don't handle sorting undefined, it will be coerced to null.
  <p></p>
 <br>
 <hr>
@@ -55,7 +58,15 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#COMPARABLE()">COMPARABLE</a>(c1:<a href="Comparable.html">Comparable</a>, c2:<a href="Comparable.html">Comparable</a>, ... ignored):int</div>
+<a class="signatureLink" href="#compareBooleans()">compareBooleans</a>(v1:Boolean, v2:Boolean, ... ignored):int</div>
+<div class="summaryTableDescription">[static]
+     Compares two Boolean values.</div>
+</td><td class="summaryTableOwnerCol">Comparators</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#compareComparables()">compareComparables</a>(c1:<a href="Comparable.html">Comparable</a>, c2:<a href="Comparable.html">Comparable</a>, ... ignored):int</div>
 <div class="summaryTableDescription">[static]
      A standard Comparator for comparing Comparable values.</div>
 </td><td class="summaryTableOwnerCol">Comparators</td>
@@ -63,9 +74,74 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#compareInts()">compareInts</a>(val1:int, val2:int):int</div>
+<a class="signatureLink" href="#compareEnumsByName()">compareEnumsByName</a>(e1:<a href="Enum.html">Enum</a>, e2:<a href="Enum.html">Enum</a>, ... ignored):int</div>
+<div class="summaryTableDescription">[static]
+     Compare two Enums by their name().</div>
+</td><td class="summaryTableOwnerCol">Comparators</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#compareInts()">compareInts</a>(v1:int, v2:int, ... ignored):int</div>
 <div class="summaryTableDescription">[static]
      Compares two int values in an overflow safe manner.</div>
+</td><td class="summaryTableOwnerCol">Comparators</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#compareNumbers()">compareNumbers</a>(v1:Number, v2:Number, ... ignored):int</div>
+<div class="summaryTableDescription">[static]
+     Compares two Number values, taking into account the intricacies of dealing with NaN.</div>
+</td><td class="summaryTableOwnerCol">Comparators</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#compareStrings()">compareStrings</a>(s1:String, s2:String, ... ignored):int</div>
+<div class="summaryTableDescription">[static]
+     Compare two objects by their toString() values, case sensitively.</div>
+</td><td class="summaryTableOwnerCol">Comparators</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#compareStringsInsensitively()">compareStringsInsensitively</a>(s1:String, s2:String, ... ignored):int</div>
+<div class="summaryTableDescription">[static]
+     Compare two objects by their toString().toLowerCase() values, case insensitively.</div>
+</td><td class="summaryTableOwnerCol">Comparators</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#compareUnknowns()">compareUnknowns</a>(o1:Object, o2:Object, ... ignored):int</div>
+<div class="summaryTableDescription">[static]
+     Compare two values whose type is not known at compile type.</div>
+</td><td class="summaryTableOwnerCol">Comparators</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#createFields()">createFields</a>(sortFields:Array):Function</div>
+<div class="summaryTableDescription">[static]
+     Create a Comparator function that sorts according to one or more fields of Objects.</div>
+</td><td class="summaryTableOwnerCol">Comparators</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#createFor()">createFor</a>(clazz:Class):Function</div>
+<div class="summaryTableDescription">[static]
+     Create a Comparator appropriate for comparing objects of the specified class.</div>
+</td><td class="summaryTableOwnerCol">Comparators</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#createNullSafe()">createNullSafe</a>(comparator:Function):Function</div>
+<div class="summaryTableDescription">[static]
+     Compose another comparator into one that can compare null and non-null elements
+     safely, sorting the nulls to the bottom.</div>
 </td><td class="summaryTableOwnerCol">Comparators</td>
 </tr>
 <tr class="">
@@ -78,6 +154,19 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </tr>
 </table>
 </div>
+<a name="constantSummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Public Constants</div>
+<table id="summaryTableConstant" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Constant</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#COMPARABLE">COMPARABLE</a> : Function<div class="summaryTableDescription">[static] Deprecated </div>
+</td><td class="summaryTableOwnerCol">Comparators</td>
+</tr>
+</table>
+</div>
 <script type="text/javascript" language="javascript">
 <!--
 showHideInherited();
@@ -85,14 +174,49 @@ showHideInherited();
 <div class="MainContent">
 <a name="methodDetail"></a>
 <div class="detailSectionHeader">Method detail</div>
-<a name="COMPARABLE()"></a>
+<a name="compareBooleans()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">COMPARABLE</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
+<td class="detailHeaderName">compareBooleans</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
 </tr>
 </table>
 <div class="detailBody">
-<code>public static function COMPARABLE(c1:<a href="Comparable.html">Comparable</a>, c2:<a href="Comparable.html">Comparable</a>, ... ignored):int</code><p>
+<code>public static function compareBooleans(v1:Boolean, v2:Boolean, ... ignored):int</code><p>
+     Compares two Boolean values.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">v1</span>:Boolean</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">v2</span>:Boolean</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code>... <span class="label">ignored</span></code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>int</code></td>
+</tr>
+</table>
+</div>
+<a name="compareComparables()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">compareComparables</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function compareComparables(c1:<a href="Comparable.html">Comparable</a>, c2:<a href="Comparable.html">Comparable</a>, ... ignored):int</code><p>
      A standard Comparator for comparing Comparable values.
      </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
@@ -120,25 +244,32 @@ showHideInherited();
 </tr>
 </table>
 </div>
-<a name="compareInts()"></a>
+<a name="compareEnumsByName()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">compareInts</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+<td class="detailHeaderName">compareEnumsByName</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
 </tr>
 </table>
 <div class="detailBody">
-<code>public static function compareInts(val1:int, val2:int):int</code><p>
-     Compares two int values in an overflow safe manner.
+<code>public static function compareEnumsByName(e1:<a href="Enum.html">Enum</a>, e2:<a href="Enum.html">Enum</a>, ... ignored):int</code><p>
+     Compare two Enums by their name().
+     If your Enum doesn't override toString(), then you could just use compareStrings.
      </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20px"></td><td><code><span class="label">val1</span>:int</code></td>
+<td width="20px"></td><td><code><span class="label">e1</span>:<a href="Enum.html">Enum</a></code></td>
 </tr>
 <tr>
 <td class="paramSpacer">&nbsp;</td>
 </tr>
 <tr>
-<td width="20px"></td><td><code><span class="label">val2</span>:int</code></td>
+<td width="20px"></td><td><code><span class="label">e2</span>:<a href="Enum.html">Enum</a></code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code>... <span class="label">ignored</span></code></td>
 </tr>
 </table>
 <p></p>
@@ -148,6 +279,272 @@ showHideInherited();
 <td width="20"></td><td><code>int</code></td>
 </tr>
 </table>
+</div>
+<a name="compareInts()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">compareInts</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function compareInts(v1:int, v2:int, ... ignored):int</code><p>
+     Compares two int values in an overflow safe manner.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">v1</span>:int</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">v2</span>:int</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code>... <span class="label">ignored</span></code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>int</code></td>
+</tr>
+</table>
+</div>
+<a name="compareNumbers()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">compareNumbers</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function compareNumbers(v1:Number, v2:Number, ... ignored):int</code><p>
+     Compares two Number values, taking into account the intricacies of dealing with NaN.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">v1</span>:Number</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">v2</span>:Number</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code>... <span class="label">ignored</span></code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>int</code></td>
+</tr>
+</table>
+</div>
+<a name="compareStrings()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">compareStrings</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function compareStrings(s1:String, s2:String, ... ignored):int</code><p>
+     Compare two objects by their toString() values, case sensitively.
+     Yes, you can pass any objects to this function, and actionscript will coerce them
+     to Strings, calling toString() if not a simple type.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">s1</span>:String</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">s2</span>:String</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code>... <span class="label">ignored</span></code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>int</code></td>
+</tr>
+</table>
+</div>
+<a name="compareStringsInsensitively()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">compareStringsInsensitively</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function compareStringsInsensitively(s1:String, s2:String, ... ignored):int</code><p>
+     Compare two objects by their toString().toLowerCase() values, case insensitively.
+     Yes, you can pass any objects to this function, and actionscript will coerce them
+     to Strings, calling toString() if not a simple type.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">s1</span>:String</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">s2</span>:String</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code>... <span class="label">ignored</span></code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>int</code></td>
+</tr>
+</table>
+</div>
+<a name="compareUnknowns()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">compareUnknowns</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function compareUnknowns(o1:Object, o2:Object, ... ignored):int</code><p>
+     Compare two values whose type is not known at compile type. Tries to figure it out.
+     Also handles nulls.
+     Note that this method may look like it can safely compare heterogeneous types,
+     but <b>it cannot</b>. Consider the array: [ true, "meerkat", false ].
+     compareUnknowns(true, "meerkat") returns -1;
+     compareUnknowns("meerkat", false) returns -1;
+     but compareUnknowns(true, false) returns 1, which violates transitivity.
+     If in doubt, try using createNullSafe(compareStrings), which can safely and consistently
+     sort <b>anything</b>.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">o1</span>:Object</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">o2</span>:Object</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code>... <span class="label">ignored</span></code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>int</code></td>
+</tr>
+</table>
+</div>
+<a name="createFields()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">createFields</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function createFields(sortFields:Array):Function</code><p>
+     Create a Comparator function that sorts according to one or more fields of Objects.
+     Array.sortOn() only works with public variables, and not with public getters. This
+     implementation works with both.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">sortFields</span>:Array</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Function</code></td>
+</tr>
+</table>
+</div>
+<a name="createFor()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">createFor</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function createFor(clazz:Class):Function</code><p>
+     Create a Comparator appropriate for comparing objects of the specified class.
+     If an appropriate comparator cannot be determined, compareUnknowns is returned.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">clazz</span>:Class</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Function</code></td>
+</tr>
+</table>
+</div>
+<a name="createNullSafe()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">createNullSafe</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function createNullSafe(comparator:Function):Function</code><p>
+     Compose another comparator into one that can compare null and non-null elements
+     safely, sorting the nulls to the bottom.
+          </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">comparator</span>:Function</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Function</code></td>
+</tr>
+</table>
+<br>
+<span class="label">Example</span>
+<br>     <div class='listing'><pre>
+     Arrays.sort(myStringArray, Comparators.createNullSafe(Comparators.compareStrings));
+     </pre></div>
+     <p></p>
 </div>
 <a name="createReverse()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -172,6 +569,16 @@ showHideInherited();
 </tr>
 </table>
 </div>
+<a name="constantDetail"></a>
+<div class="detailSectionHeader">Constant detail</div>
+<a name="COMPARABLE"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">COMPARABLE</td><td class="detailHeaderType">constant</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static const COMPARABLE:Function</code><p> Deprecated </p></div>
 <br>
 <br>
 <hr>

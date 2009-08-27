@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
-<meta content="ArrayUtil,com.threerings.util.ArrayUtil,contains,copy,copyOf,create,equals,findIf,indexIf,indexOf,removeAll,removeAllIf,removeFirst,removeFirstIf,removeLast,removeLastIf,shuffle,sort,sortedInsert,stableSort" name="keywords">
+<meta content="ArrayUtil,com.threerings.util.ArrayUtil,contains,copy,copyOf,create,equals,findIf,indexIf,indexOf,removeAll,removeAllIf,removeFirst,removeFirstIf,removeLast,removeLastIf,shuffle,sort,sortOn,sortedInsert,stableSort" name="keywords">
 <title>com.threerings.util.ArrayUtil</title>
 </head>
 <body>
@@ -193,6 +193,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <a class="signatureLink" href="#sortedInsert()">sortedInsert</a>(arr:Array, val:Function, comp:* = null):int</div>
 <div class="summaryTableDescription">[static]
      Inserts an object into a sorted Array in its correct, sorted location.</div>
+</td><td class="summaryTableOwnerCol">ArrayUtil</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#sortOn()">sortOn</a>(arr:Array, sortFields:Array):void</div>
+<div class="summaryTableDescription">[static]
+     Sort the specified array according to one or more fields of the objects in the Array.</div>
 </td><td class="summaryTableOwnerCol">ArrayUtil</td>
 </tr>
 <tr class="">
@@ -704,7 +712,7 @@ showHideInherited();
 <tr>
 <td width="20px"></td><td><code><span class="label">arr</span>:Array</code> &mdash; a function that takes two objects in the array and returns -1 if the first
      object should appear before the second in the container, 1 if it should appear after,
-     and 0 if the order does not matter. If omitted, Comparators.COMPARABLE is used and
+     and 0 if the order does not matter. If omitted, Comparators.compareComparables is used and
      the array elements should be Comparable objects.
           </td>
 </tr>
@@ -730,6 +738,31 @@ showHideInherited();
 </tr>
 </table>
 </div>
+<a name="sortOn()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">sortOn</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function sortOn(arr:Array, sortFields:Array):void</code><p>
+     Sort the specified array according to one or more fields of the objects in the Array.
+          Array.sortOn() only works with public variables, and not with public getters.
+     This implementation works with both.
+          </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">arr</span>:Array</code> &mdash; an Array of Strings, representing the order of fields to sort the array by
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">sortFields</span>:Array</code></td>
+</tr>
+</table>
+</div>
 <a name="stableSort()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -744,7 +777,7 @@ showHideInherited();
 <tr>
 <td width="20px"></td><td><code><span class="label">arr</span>:Array</code> &mdash; a function that takes two objects in the array and returns -1 if the first
      object should appear before the second in the container, 1 if it should appear after,
-     and 0 if the order does not matter. If omitted, Comparators.COMPARABLE is used and
+     and 0 if the order does not matter. If omitted, Comparators.compareComparables is used and
      the array elements should be Comparable objects.
      </td>
 </tr>

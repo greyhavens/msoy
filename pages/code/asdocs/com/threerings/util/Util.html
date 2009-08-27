@@ -39,7 +39,8 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </tr>
 </table>
 <p></p>
-<p></p>
+ Contains a variety of utility functions.
+ <p></p>
 <br>
 <hr>
 </div>
@@ -172,7 +173,7 @@ showHideInherited();
      Return a var-args function that will attempt to pass only the arguments accepted by the
      passed-in function. Does not work if the passed-in function is varargs, and anyway
      then you don't need adapting, do you?
-     </p><span class="label">Parameters</span>
+          </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">fn</span>:Function</code></td>
@@ -185,6 +186,18 @@ showHideInherited();
 <td width="20"></td><td><code>Function</code></td>
 </tr>
 </table>
+<br>
+<span class="label">Example</span>
+<br>     <div class='listing'><pre>
+     // let's say you have this function
+     function printUser (user :User) :void
+     {
+         trace("UserId: " + user.id + ", name: " + user.name);
+     }
+          // and you want to print all your users. (Normally the forEach callback requires 3 params)
+     allUsersArray.forEach(Util.adapt(printUser))
+     </pre></div>
+     <p></p>
 </div>
 <a name="equals()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">

@@ -38,11 +38,12 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("In
 <td class="classHeaderTableLabel">Interface</td><td class="classSignature">public interface Comparable</td>
 </tr>
 <tr>
-<td class="classHeaderTableLabel">Implementors</td><td><a href="../util/Enum.html">Enum</a>, <a href="../util/Name.html">Name</a></td>
+<td class="classHeaderTableLabel">Implementors</td><td><a href="../util/Enum.html">Enum</a></td>
 </tr>
 </table>
 <p></p>
-<p></p>
+ Implemented by classes whose instances have a natural ordering with respect to each other.
+ <p></p>
 <br>
 <hr>
 </div>
@@ -81,6 +82,7 @@ showHideInherited();
 <code>public function compareTo(other:Object):int</code><p>
      Compare this object to the other one, and return 0 if they're equal,
      -1 if this object is less than the other, or 1 if this object is greater.
+     You may throw an Error if compared with null or an object of the wrong type.
      Note: Please use [-1, 0, 1] to be compatible with flex Sort objects.
      </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">

@@ -74,7 +74,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#deserializeHashMap()">deserializeHashMap</a>(input:IDataInput, deserializeKey:Function = null, deserializeValue:Function = null):HashMap</div>
+<a class="signatureLink" href="#deserializeHashMap()">deserializeHashMap</a>(input:IDataInput, deserializeKey:Function = null, deserializeValue:Function = null):Map</div>
 <div class="summaryTableDescription">[static]</div>
 </td><td class="summaryTableOwnerCol">PersistUtil</td>
 </tr>
@@ -116,21 +116,21 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#serializeEnumIntMap()">serializeEnumIntMap</a>(output:IDataOutput, map:HashMap):void</div>
+<a class="signatureLink" href="#serializeEnumIntMap()">serializeEnumIntMap</a>(output:IDataOutput, map:Map):void</div>
 <div class="summaryTableDescription">[static]</div>
 </td><td class="summaryTableOwnerCol">PersistUtil</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#serializeEnumStringMap()">serializeEnumStringMap</a>(output:IDataOutput, map:HashMap):void</div>
+<a class="signatureLink" href="#serializeEnumStringMap()">serializeEnumStringMap</a>(output:IDataOutput, map:Map):void</div>
 <div class="summaryTableDescription">[static]</div>
 </td><td class="summaryTableOwnerCol">PersistUtil</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#serializeHashMap()">serializeHashMap</a>(output:IDataOutput, map:HashMap, serializeKey:Function = null, serializeValue:Function = null):void</div>
+<a class="signatureLink" href="#serializeHashMap()">serializeHashMap</a>(output:IDataOutput, map:Map, serializeKey:Function = null, serializeValue:Function = null):void</div>
 <div class="summaryTableDescription">[static]</div>
 </td><td class="summaryTableOwnerCol">PersistUtil</td>
 </tr>
@@ -241,7 +241,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public static function deserializeHashMap(input:IDataInput, deserializeKey:Function = null, deserializeValue:Function = null):HashMap</code><span class="label">Parameters</span>
+<code>public static function deserializeHashMap(input:IDataInput, deserializeKey:Function = null, deserializeValue:Function = null):Map</code><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">input</span>:IDataInput</code></td>
@@ -263,7 +263,7 @@ showHideInherited();
 <span class="label">Returns</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20"></td><td><code>HashMap</code></td>
+<td width="20"></td><td><code>Map</code></td>
 </tr>
 </table>
 </div>
@@ -378,7 +378,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public static function serializeEnumIntMap(output:IDataOutput, map:HashMap):void</code><span class="label">Parameters</span>
+<code>public static function serializeEnumIntMap(output:IDataOutput, map:Map):void</code><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">output</span>:IDataOutput</code></td>
@@ -387,7 +387,7 @@ showHideInherited();
 <td class="paramSpacer">&nbsp;</td>
 </tr>
 <tr>
-<td width="20px"></td><td><code><span class="label">map</span>:HashMap</code></td>
+<td width="20px"></td><td><code><span class="label">map</span>:Map</code></td>
 </tr>
 </table>
 </div>
@@ -398,7 +398,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public static function serializeEnumStringMap(output:IDataOutput, map:HashMap):void</code><span class="label">Parameters</span>
+<code>public static function serializeEnumStringMap(output:IDataOutput, map:Map):void</code><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">output</span>:IDataOutput</code></td>
@@ -407,7 +407,7 @@ showHideInherited();
 <td class="paramSpacer">&nbsp;</td>
 </tr>
 <tr>
-<td width="20px"></td><td><code><span class="label">map</span>:HashMap</code></td>
+<td width="20px"></td><td><code><span class="label">map</span>:Map</code></td>
 </tr>
 </table>
 </div>
@@ -418,7 +418,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public static function serializeHashMap(output:IDataOutput, map:HashMap, serializeKey:Function = null, serializeValue:Function = null):void</code><span class="label">Parameters</span>
+<code>public static function serializeHashMap(output:IDataOutput, map:Map, serializeKey:Function = null, serializeValue:Function = null):void</code><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">output</span>:IDataOutput</code></td>
@@ -427,7 +427,7 @@ showHideInherited();
 <td class="paramSpacer">&nbsp;</td>
 </tr>
 <tr>
-<td width="20px"></td><td><code><span class="label">map</span>:HashMap</code></td>
+<td width="20px"></td><td><code><span class="label">map</span>:Map</code></td>
 </tr>
 <tr>
 <td class="paramSpacer">&nbsp;</td>

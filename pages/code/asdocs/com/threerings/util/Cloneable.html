@@ -39,7 +39,8 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("In
 </tr>
 </table>
 <p></p>
-<p></p>
+ Implemented by objects that support creating a clone.
+ <p></p>
 <br>
 <hr>
 </div>
@@ -76,13 +77,26 @@ showHideInherited();
 <div class="detailBody">
 <code>public function clone():Object</code><p>
      Create a clone of this object.
-     </p><p></p>
+          </p><p></p>
 <span class="label">Returns</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20"></td><td><code>Object</code></td>
 </tr>
 </table>
+<br>
+<span class="label">Example</span>
+<br>A smart implementation that allows for subclassing.
+     <div class='listing'><pre>
+     public function clone () :Object
+     {
+         var myObj :MyClass = MyClass(ClassUtil.newInstance(this)); // requires 0-arg constructor
+         myObj.someInt = this.someInt; // copy all vars
+         myObj.someArray = this.someArray.concat(); // make a clone of any mutable vars
+         return myObj;
+     }
+     </pre></div>
+     <p></p>
 </div>
 <br>
 <br>

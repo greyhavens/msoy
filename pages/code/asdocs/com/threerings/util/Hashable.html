@@ -38,11 +38,12 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("In
 <td class="classHeaderTableLabel">Interface</td><td class="classSignature">public interface Hashable extends <a href="Equalable.html">Equalable</a></td>
 </tr>
 <tr>
-<td class="classHeaderTableLabel">Implementors</td><td><a href="../util/Enum.html">Enum</a>, <a href="../util/HashMap_KeyWrapper.html">HashMap_KeyWrapper</a>, <a href="../util/Name.html">Name</a></td>
+<td class="classHeaderTableLabel">Implementors</td><td><a href="../util/Enum.html">Enum</a>, <a href="maps/NullWrapper.html">NullWrapper</a></td>
 </tr>
 </table>
 <p></p>
-<p></p>
+ Builds upon the Equalable interface to allow instances to be stored efficiently in Maps or Sets.
+ <p></p>
 <br>
 <hr>
 </div>
@@ -66,8 +67,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("In
 <div class="summarySignature">
 <a class="signatureLink" href="Equalable.html#equals()">equals</a>(other:Object):Boolean</div>
 <div class="summaryTableDescription">
-     Returns true to indicate that the specified object is equal to
-     this instance.</div>
+     Returns true to indicate that the specified object is equal to this instance.</div>
 </td><td class="summaryTableOwnerCol"><a href="Equalable.html">Equalable</a></td>
 </tr>
 <tr class="">
@@ -75,8 +75,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("In
 <div class="summarySignature">
 <a class="signatureLink" href="#hashCode()">hashCode</a>():int</div>
 <div class="summaryTableDescription">
-     Get a hashcode for this Equalable object so that it may be placed
-     in a HashMap.</div>
+     Return a hash code.</div>
 </td><td class="summaryTableOwnerCol">Hashable</td>
 </tr>
 </table>
@@ -96,8 +95,8 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public function hashCode():int</code><p>
-     Get a hashcode for this Equalable object so that it may be placed
-     in a HashMap.
+     Return a hash code. This code must be identical for any two instances that are equals(),
+     but it is not required that every non-equals() instance returns a unique code.
      </p><p></p>
 <span class="label">Returns</span>
 <table border="0" cellspacing="0" cellpadding="0">

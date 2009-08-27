@@ -101,12 +101,12 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_awardedTrophies">_awardedTrophies</a> : <a href="../../../threerings/util/HashSet.html">HashSet</a>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_awardedTrophies">_awardedTrophies</a> : <a href="../../../threerings/util/Set.html">Set</a>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">LoopbackGameControl</td>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_bags">_bags</a> : <a href="../../../threerings/util/HashMap.html">HashMap</a>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_bags">_bags</a> : <a href="../../../threerings/util/Map.html">Map</a>
 <div class="summaryTableDescription">[static]</div>
 </td><td class="summaryTableOwnerCol">LoopbackGameControl</td>
 </tr>
@@ -180,7 +180,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </td><td class="summaryTableOwnerCol">LoopbackGameControl</td>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_tickers">_tickers</a> : <a href="../../../threerings/util/HashMap.html">HashMap</a>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_tickers">_tickers</a> : <a href="../../../threerings/util/Map.html">Map</a>
 <div class="summaryTableDescription">[static]</div>
 </td><td class="summaryTableOwnerCol">LoopbackGameControl</td>
 </tr>
@@ -193,7 +193,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </td><td class="summaryTableOwnerCol">LoopbackGameControl</td>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_userCookies">_userCookies</a> : <a href="../../../threerings/util/HashMap.html">HashMap</a>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_userCookies">_userCookies</a> : <a href="../../../threerings/util/Map.html">Map</a>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">LoopbackGameControl</td>
 </tr>
@@ -924,14 +924,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#updateProp()">updateProp</a>(propName:String, encodedVal:Object, ikey:<a href="../../../threerings/util/Integer.html">Integer</a>, isArray:Boolean):void</div>
+<a class="signatureLink" href="#updateProp()">updateProp</a>(propName:String, encodedVal:Object, ikey:Integer, isArray:Boolean):void</div>
 <div class="summaryTableDescription">[static]</div>
 </td><td class="summaryTableOwnerCol">LoopbackGameControl</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#updatePropLocally()">updatePropLocally</a>(propName:String, encodedVal:Object, ikey:<a href="../../../threerings/util/Integer.html">Integer</a>, isArray:Boolean):void</div>
+<a class="signatureLink" href="#updatePropLocally()">updatePropLocally</a>(propName:String, encodedVal:Object, ikey:Integer, isArray:Boolean):void</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">LoopbackGameControl</td>
 </tr>
@@ -1095,7 +1095,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>protected var _awardedTrophies:<a href="../../../threerings/util/HashSet.html">HashSet</a></code>
+<code>protected var _awardedTrophies:<a href="../../../threerings/util/Set.html">Set</a></code>
 </div>
 <a name="_bags"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -1104,7 +1104,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>protected static var _bags:<a href="../../../threerings/util/HashMap.html">HashMap</a></code>
+<code>protected static var _bags:<a href="../../../threerings/util/Map.html">Map</a></code>
 </div>
 <a name="_curTransaction"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -1266,7 +1266,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>protected static var _tickers:<a href="../../../threerings/util/HashMap.html">HashMap</a></code>
+<code>protected static var _tickers:<a href="../../../threerings/util/Map.html">Map</a></code>
 </div>
 <a name="_transactionCount"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -1293,7 +1293,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>protected var _userCookies:<a href="../../../threerings/util/HashMap.html">HashMap</a></code>
+<code>protected var _userCookies:<a href="../../../threerings/util/Map.html">Map</a></code>
 </div>
 <a name="_userFuncs"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -3216,7 +3216,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>protected static function updateProp(propName:String, encodedVal:Object, ikey:<a href="../../../threerings/util/Integer.html">Integer</a>, isArray:Boolean):void</code><span class="label">Parameters</span>
+<code>protected static function updateProp(propName:String, encodedVal:Object, ikey:Integer, isArray:Boolean):void</code><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">propName</span>:String</code></td>
@@ -3231,7 +3231,7 @@ showHideInherited();
 <td class="paramSpacer">&nbsp;</td>
 </tr>
 <tr>
-<td width="20px"></td><td><code><span class="label">ikey</span>:<a href="../../../threerings/util/Integer.html">Integer</a></code></td>
+<td width="20px"></td><td><code><span class="label">ikey</span>:Integer</code></td>
 </tr>
 <tr>
 <td class="paramSpacer">&nbsp;</td>
@@ -3248,7 +3248,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>protected function updatePropLocally(propName:String, encodedVal:Object, ikey:<a href="../../../threerings/util/Integer.html">Integer</a>, isArray:Boolean):void</code><span class="label">Parameters</span>
+<code>protected function updatePropLocally(propName:String, encodedVal:Object, ikey:Integer, isArray:Boolean):void</code><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">propName</span>:String</code></td>
@@ -3263,7 +3263,7 @@ showHideInherited();
 <td class="paramSpacer">&nbsp;</td>
 </tr>
 <tr>
-<td width="20px"></td><td><code><span class="label">ikey</span>:<a href="../../../threerings/util/Integer.html">Integer</a></code></td>
+<td width="20px"></td><td><code><span class="label">ikey</span>:Integer</code></td>
 </tr>
 <tr>
 <td class="paramSpacer">&nbsp;</td>
