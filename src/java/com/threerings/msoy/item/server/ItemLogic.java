@@ -27,6 +27,7 @@ import com.samskivert.depot.DuplicateKeyException;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.Interval;
+import com.samskivert.util.Invoker;
 import com.samskivert.util.StringUtil;
 import com.samskivert.util.Tuple;
 
@@ -41,6 +42,7 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MemberNodeActions;
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.ServerMessages;
+import com.threerings.msoy.server.persist.BatchInvoker;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.underwire.server.SupportLogic;
@@ -144,12 +146,9 @@ public class ItemLogic
         registerRepository(Item.VIDEO, _videoRepo);
 
         _jumble = buildJumble();
-        _jumbleInvalidator = new Interval(_omgr) {
+        _jumbleInvalidator = new Interval(_batchInvoker) {
             @Override public void expired() {
-                List<ListingCard> newJumble = buildJumble();
-                synchronized (_jumbleLock) {
-                    _jumble = newJumble;
-                }
+                _jumble = buildJumble();
             }
         };
         _jumbleInvalidator.schedule(JUMBLE_REFRESH_PERIOD, true);
@@ -629,9 +628,7 @@ public class ItemLogic
      */
     public List<ListingCard> getJumbleSnapshot ()
     {
-        synchronized (_jumbleLock) {
-            return _jumble;
-        }
+        return _jumble;
     }
 
     /**
@@ -1166,9 +1163,8 @@ public class ItemLogic
     protected List<ListingCard> _jumble;
     /** An interval that updates the shop page jumble every so often. */
     protected Interval _jumbleInvalidator;
-    /** An internal object on which we synchronize to update/get snapshots. */
-    protected final Object _jumbleLock = new Object();
 
+    @Inject protected @BatchInvoker Invoker _batchInvoker;
     @Inject protected FavoritesRepository _faveRepo;
     @Inject protected GameLogic _gameLogic;
     @Inject protected GameNodeActions _gameActions;
