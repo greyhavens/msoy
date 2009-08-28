@@ -619,11 +619,11 @@ public class ItemLogic
     public List<ListingCard> getJumbleSnapshot ()
         throws ServiceException
     {
-        long now = System.currentTimeMillis();
-        if (_jumble == null || (now - _jumbleStamp) > JUMBLE_SNAPSHOT_EXPIRATION) {
+        int now = (int)(System.currentTimeMillis() / 1000);
+        if (_jumble == null || now > _jumbleNextStamp) {
             _jumble = resolveFavorites(
                 _faveRepo.loadRecentFavorites(0, 1000, Item.NOT_A_TYPE), true);
-            _jumbleStamp = now;
+            _jumbleNextStamp = now + JUMBLE_SNAPSHOT_EXPIRATION;
         }
         return _jumble;
     }
@@ -1144,8 +1144,8 @@ public class ItemLogic
 
     /** A current snapshot of items favorited by subscribers. */
     protected List<ListingCard> _jumble;
-    /** The time when the most recent snapshot was taken, in milliseconds. */
-    protected long _jumbleStamp;
+    /** The time when the most recent snapshot was taken, in seconds. */
+    protected int _jumbleNextStamp;
 
     @Inject protected FavoritesRepository _faveRepo;
     @Inject protected GameLogic _gameLogic;
@@ -1181,6 +1181,6 @@ public class ItemLogic
     @Inject protected TrophySourceRepository _tsourceRepo;
     @Inject protected VideoRepository _videoRepo;
 
-    // take a new snapshot every 10 minutes
-    protected static final long JUMBLE_SNAPSHOT_EXPIRATION = 1000L * 60 * 10;
+    // take a new snapshot every 10 minutes (this value is in seconds)
+    protected static final int JUMBLE_SNAPSHOT_EXPIRATION = 60 * 10;
 }
