@@ -73,31 +73,9 @@ public class CatalogServlet extends MsoyServiceServlet
     public List<ListingCard> loadJumble (int offset, int rows)
         throws ServiceException
     {
-        // For paging to work correctly, we absolutely must return 'rows' items if there's data
-        // left in the stream. Because ItemLogic.resolveFavorites() can occasionally strip items
-        // that aren't kosher (for any of many complicated reasons), we have to do a bit of
-        // iteration here -- keep requesting records from the database, keep resolving them,
-        // and adding them to the return list.
-        List<ListingCard> result = Lists.newArrayList();
-        do {
-            List<FavoritedItemResultRecord> recs =
-                _faveRepo.loadRecentFavorites(offset, rows, Item.NOT_A_TYPE);
-            List<ListingCard> cards = _itemLogic.resolveFavorites(recs, true);
-            if (cards.size() != recs.size()) {
-                log.warning("Some database records did not turn into cards",
-                    "records", recs.size(), "cards", cards.size(), "offset", offset);
-            }
-            if (result.size() + cards.size() > rows) {
-                cards = cards.subList(0, rows - result.size());
-            }
-            result.addAll(cards);
-            if (recs.size() < rows) {
-                break;
-            }
-            offset += rows;
-        } while (result.size() < rows);
-
-        return result;
+        List<ListingCard> items = _itemLogic.getJumbleSnapshot();
+        return Lists.newArrayList(items.subList(
+            Math.min(items.size(), offset), Math.min(items.size(), offset + rows)));
     }
 
     // from interface CatalogService

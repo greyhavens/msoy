@@ -31,7 +31,7 @@ public class CacheStatCollector extends NumVecStatCollector
         for (String cname : _cacheMgr.getCacheNames()) {
             Cache cache = _cacheMgr.getCache(cname);
             Statistics stats = cache.getStatistics();
-            vecs.put(cname.substring(cname.lastIndexOf(".")+1),
+            vecs.put(cname,
                      Lists.<Number>newArrayList(cache.getSize(),
                                                 (int)(cache.calculateInMemorySize()/1024),
                                                 stats.getCacheHits(),

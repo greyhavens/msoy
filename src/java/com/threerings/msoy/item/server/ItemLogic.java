@@ -613,6 +613,22 @@ public class ItemLogic
     }
 
     /**
+     * Return a recent snapshot of the all the items recently favorited by subscribers,
+     * ordered by favorite count.
+     */
+    public List<ListingCard> getJumbleSnapshot ()
+        throws ServiceException
+    {
+        long now = System.currentTimeMillis();
+        if (_jumble == null || (now - _jumbleStamp) > JUMBLE_SNAPSHOT_EXPIRATION) {
+            _jumble = resolveFavorites(
+                _faveRepo.loadRecentFavorites(0, 1000, Item.NOT_A_TYPE), true);
+            _jumbleStamp = now;
+        }
+        return _jumble;
+    }
+
+    /**
      * Resolves the supplied list of favorited items into properly initialized {@link ListingCard}
      * records.
      */
@@ -1126,6 +1142,11 @@ public class ItemLogic
     /** Maps byte type ids to repository for all digital item types. */
     protected Map<Byte, ItemRepository<ItemRecord>> _repos = Maps.newHashMap();
 
+    /** A current snapshot of items favorited by subscribers. */
+    protected List<ListingCard> _jumble;
+    /** The time when the most recent snapshot was taken, in milliseconds. */
+    protected long _jumbleStamp;
+
     @Inject protected FavoritesRepository _faveRepo;
     @Inject protected GameLogic _gameLogic;
     @Inject protected GameNodeActions _gameActions;
@@ -1159,4 +1180,7 @@ public class ItemLogic
     @Inject protected ToyRepository _toyRepo;
     @Inject protected TrophySourceRepository _tsourceRepo;
     @Inject protected VideoRepository _videoRepo;
+
+    // take a new snapshot every 10 minutes
+    protected static final long JUMBLE_SNAPSHOT_EXPIRATION = 1000L * 60 * 10;
 }
