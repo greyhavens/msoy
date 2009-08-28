@@ -1144,7 +1144,7 @@ public class ItemLogic
 
     /** A current snapshot of items favorited by subscribers. */
     protected List<ListingCard> _jumble;
-    /** The time when the most recent snapshot was taken, in seconds. */
+    /** When to next recompute the most recent snapshot (in epoch seconds). */
     protected int _jumbleNextStamp;
 
     @Inject protected FavoritesRepository _faveRepo;
