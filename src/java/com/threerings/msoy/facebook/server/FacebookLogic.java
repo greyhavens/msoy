@@ -556,7 +556,7 @@ public class FacebookLogic
         }
 
         // extract and track the data for each user
-        for (User user : uinfo.getStandardUserInfo()) {
+        for (User user : uinfo.getUser()) {
             Long uid = user.getUid();
 
             // gender
