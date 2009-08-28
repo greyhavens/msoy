@@ -296,6 +296,12 @@ public class KontagentLogic
         String birthYearStr = birthYear == null ? null : String.valueOf(birthYear);
         String friendCountStr = friendCount == null ? null : String.valueOf(friendCount);
 
+        // encode
+        city = StringUtil.encode(city);
+        state = StringUtil.encode(state);
+        zip = StringUtil.encode(zip);
+        country = StringUtil.encode(country);
+
         // send
         sendMessage(MessageType.USER_INFO, "s", String.valueOf(uid), "b", birthYearStr,
             "g", gender, "ly", city, "lc", country, "ls", state, "lp", zip, "f", friendCountStr);
