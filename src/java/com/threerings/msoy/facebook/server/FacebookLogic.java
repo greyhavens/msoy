@@ -64,6 +64,7 @@ import com.threerings.msoy.web.gwt.ExternalAuther;
 import com.threerings.msoy.web.gwt.FacebookCreds;
 import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.gwt.SharedNaviUtil;
+import com.threerings.presents.peer.server.CronLogic;
 
 import static com.threerings.msoy.Log.log;
 
@@ -143,6 +144,16 @@ public class FacebookLogic
         }
 
         return Tuple.newTuple(year, date);
+    }
+
+    @Inject public FacebookLogic (CronLogic cronLogic)
+    {
+        // run the demographics update at 4am
+        cronLogic.scheduleAt(4, new Runnable () {
+            public void run () {
+                updateDemographics();
+            }
+        });
     }
 
     /**
@@ -285,16 +296,6 @@ public class FacebookLogic
         // TODO: remove shuffle when we actually optimize target selection
         Collections.shuffle(exRecs);
         return limit >= exRecs.size() ? exRecs : exRecs.subList(0, limit);
-    }
-
-    // TEMP: quick and dirty test for updateDemographics, no batching nor cron nor nothing
-    public void testUpdateDemographics ()
-    {
-        _batchInvoker.postRunnable(new Runnable() {
-            public void run () {
-                updateDemographics(_memberRepo.loadExternalMappings(ExternalAuther.FACEBOOK));
-            }
-        });
     }
 
     protected void updateURL (
@@ -490,21 +491,57 @@ public class FacebookLogic
         return Collections.emptyList();
     }
 
-    protected void updateDemographics (List<ExternalMapRecord> users)
+    protected void updateDemographics ()
     {
+        List<ExternalMapRecord> users = _memberRepo.loadExternalMappings(ExternalAuther.FACEBOOK);
+        log.info("Starting demographics update", "users", users.size());
+
+        final int BATCH_SIZE = 200;
+        List<Integer> results = segment(users, new Function<List<ExternalMapRecord>, Integer> () {
+            public Integer apply (List<ExternalMapRecord> batch) {
+                return updateDemographics(batch);
+            }
+        }, BATCH_SIZE);
+
+        int count = 0;
+        for (int result : results) {
+            count += result;
+        }
+
+        log.info("Finished demographics update", "count", count);
+    }
+
+    /**
+     * Gets demographic data from Facebook and sends it to Kongagent for a given segment of users.
+     * Users whose demographic data has been previously uploaded are culled.
+     */
+    protected int updateDemographics (List<ExternalMapRecord> users)
+    {
+        // create mapping of member id to external record
         IntMap<ExternalMapRecord> fbusers = IntMaps.newHashIntMap();
         for (ExternalMapRecord exrec : _memberRepo.loadExternalMappings(ExternalAuther.FACEBOOK)) {
             fbusers.put(exrec.memberId, exrec);
         }
+
+        // remove ones that we've done before
+        // TODO: should probably limit to records less than a certain age so that data gets
+        // refreshed from time to time... or just prune old records
         for (FacebookActionRecord action : _facebookRepo.loadActions(Lists.transform(
             users, MAPREC_TO_MEMBER_ID), FacebookActionRecord.Type.GATHERED_DATA)) {
             fbusers.remove(action.memberId);
         }
 
         if (fbusers.size() == 0) {
-            return;
+            return 0;
         }
 
+        // create mapping of facebook user id to member id
+        Map<Long, Integer> memberIds = Maps.newHashMap();
+        for (ExternalMapRecord rec : fbusers.values()) {
+            memberIds.put(MAPREC_TO_UID.apply(rec), rec.memberId);
+        }
+
+        // retrieve the data
         FacebookJaxbRestClient client = getFacebookClient(BATCH_READ_TIMEOUT);
         EnumSet<ProfileField> fields = EnumSet.of(
             ProfileField.SEX, ProfileField.BIRTHDAY, ProfileField.CURRENT_LOCATION);
@@ -515,9 +552,10 @@ public class FacebookLogic
         } catch (FacebookException ex) {
             log.warning("Failed to getStandardInfo", "uids", uids,
                 "rawResponse", client.getRawResponse(), ex);
-            return;
+            return 0;
         }
 
+        // extract and track the data for each user
         for (User user : uinfo.getStandardUserInfo()) {
             Long uid = user.getUid();
 
@@ -548,13 +586,12 @@ public class FacebookLogic
                     "rawResponse", client.getRawResponse(), e);
             }
 
+            // send them to the tracker and note that we've done so
             _tracker.trackUserInfo(uid, birthYear, gender, city, state, zip, country, friendCount);
-
-            // TODO: _facebookRepo.noteDataGathered(memberId);
+            _facebookRepo.noteDataGathered(memberIds.get(uid));
         }
 
-        log.info("Uploaded demographics", "batchSize", users.size(),
-            "sentSize", uinfo.getStandardUserInfo().size());
+        return uinfo.getUser().size();
     }
 
     /**
