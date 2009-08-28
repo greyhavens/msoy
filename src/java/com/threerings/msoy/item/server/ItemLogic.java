@@ -26,6 +26,7 @@ import com.samskivert.depot.DuplicateKeyException;
 
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.IntMap;
+import com.samskivert.util.Interval;
 import com.samskivert.util.StringUtil;
 import com.samskivert.util.Tuple;
 
@@ -141,6 +142,17 @@ public class ItemLogic
         registerRepository(Item.TOY, _toyRepo);
         registerRepository(Item.TROPHY_SOURCE, _tsourceRepo);
         registerRepository(Item.VIDEO, _videoRepo);
+
+        _jumble = buildJumble();
+        _jumbleInvalidator = new Interval(_omgr) {
+            @Override public void expired() {
+                List<ListingCard> newJumble = buildJumble();
+                synchronized (_jumbleLock) {
+                    _jumble = newJumble;
+                }
+            }
+        };
+        _jumbleInvalidator.schedule(JUMBLE_REFRESH_PERIOD, true);
     }
 
     /**
@@ -613,19 +625,13 @@ public class ItemLogic
     }
 
     /**
-     * Return a recent snapshot of the all the items recently favorited by subscribers,
-     * ordered by favorite count.
+     * Return the current jumble of catalog items we display on the #shop page.
      */
     public List<ListingCard> getJumbleSnapshot ()
-        throws ServiceException
     {
-        int now = (int)(System.currentTimeMillis() / 1000);
-        if (_jumble == null || now > _jumbleNextStamp) {
-            _jumble = resolveFavorites(
-                _faveRepo.loadRecentFavorites(0, 1000, Item.NOT_A_TYPE), true);
-            _jumbleNextStamp = now + JUMBLE_SNAPSHOT_EXPIRATION;
+        synchronized (_jumbleLock) {
+            return _jumble;
         }
-        return _jumble;
     }
 
     /**
@@ -1106,6 +1112,20 @@ public class ItemLogic
         protected HashMap<Byte, LookupType> _byType = new HashMap<Byte, LookupType>();
     } /* End: class LookupList. */
 
+    /**
+     * Return a recent snapshot of the all the items recently favorited by subscribers,
+     * ordered by favorite count.
+     */
+    protected List<ListingCard> buildJumble ()
+    {
+        try {
+            return resolveFavorites(_faveRepo.loadRecentFavorites(0, 1000, Item.NOT_A_TYPE), true);
+        } catch (ServiceException e) {
+            log.warning("Failed to build jumble", e);
+            return Lists.newArrayList();
+        }
+    }
+
     @SuppressWarnings("unchecked")
     protected void registerRepository (byte itemType, ItemRepository repo)
     {
@@ -1144,8 +1164,10 @@ public class ItemLogic
 
     /** A current snapshot of items favorited by subscribers. */
     protected List<ListingCard> _jumble;
-    /** When to next recompute the most recent snapshot (in epoch seconds). */
-    protected int _jumbleNextStamp;
+    /** An interval that updates the shop page jumble every so often. */
+    protected Interval _jumbleInvalidator;
+    /** An internal object on which we synchronize to update/get snapshots. */
+    protected final Object _jumbleLock = new Object();
 
     @Inject protected FavoritesRepository _faveRepo;
     @Inject protected GameLogic _gameLogic;
@@ -1181,6 +1203,6 @@ public class ItemLogic
     @Inject protected TrophySourceRepository _tsourceRepo;
     @Inject protected VideoRepository _videoRepo;
 
-    // take a new snapshot every 10 minutes (this value is in seconds)
-    protected static final int JUMBLE_SNAPSHOT_EXPIRATION = 60 * 10;
+    // take a new snapshot every 10 minutes
+    protected static final long JUMBLE_REFRESH_PERIOD = 1000L * 60 * 10;
 }
