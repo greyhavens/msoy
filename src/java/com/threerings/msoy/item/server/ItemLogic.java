@@ -148,7 +148,9 @@ public class ItemLogic
         _jumble = buildJumble();
         _jumbleInvalidator = new Interval(_batchInvoker) {
             @Override public void expired() {
-                _jumble = buildJumble();
+                synchronized(_jumbleLock) {
+                    _jumble = buildJumble();
+                }
             }
         };
         _jumbleInvalidator.schedule(JUMBLE_REFRESH_PERIOD, true);
@@ -628,7 +630,9 @@ public class ItemLogic
      */
     public List<ListingCard> getJumbleSnapshot ()
     {
-        return _jumble;
+        synchronized(_jumbleLock) {
+            return _jumble;
+        }
     }
 
     /**
@@ -1163,6 +1167,8 @@ public class ItemLogic
     protected List<ListingCard> _jumble;
     /** An interval that updates the shop page jumble every so often. */
     protected Interval _jumbleInvalidator;
+    /** An internal object on which we synchronize to update/get snapshots. */
+    protected final Object _jumbleLock = new Object();
 
     @Inject protected @BatchInvoker Invoker _batchInvoker;
     @Inject protected FavoritesRepository _faveRepo;
