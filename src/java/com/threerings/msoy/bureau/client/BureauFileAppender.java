@@ -18,6 +18,10 @@ import com.threerings.util.OOOFileAppender;
 
 /**
  * Extends the usual appender to do summaries of the individual "channels" (prefixes) in a log file.
+ * NOTE: it's easy for this code to get out of date because it tests for strings that originate in
+ * other places like avmthane and runavmthane. Also, if it gets out of date, the failure states are
+ * pretty quiet and may not even occur for some time.
+ * TODO: unit tests to at least make simple bugs easier to patch
  */
 public class BureauFileAppender extends OOOFileAppender
 {
@@ -73,6 +77,13 @@ public class BureauFileAppender extends OOOFileAppender
     protected void summarizeLog (File target, StringBuilder summary)
         throws IOException
     {
+        // NOTE: this code scans the log file N + 1 times, where N = the number of bureaus that
+        // wrote to the log. this is very slow, currently about 2 minutes for the whirled production
+        // servers; bureaus cannot be launched during this time
+
+        // TODO: make this faster by scanning the file once and getting all the bureau information
+        // (this will require some revamping of OOOFileAppender)
+
         long nowStamp = System.currentTimeMillis();
 
         // First do the overall summary with no full text, collecting bureau names as we go
@@ -168,7 +179,16 @@ public class BureauFileAppender extends OOOFileAppender
             _line = _line.substring(_pos);
 
             if  (!isProbablyStandardLogLine(_line)) {
-                return true;
+                if (_line.startsWith(AVM_ERROR_PREFIX)) {
+                    _level = "ERROR";
+                    _pos = AVM_ERROR_PREFIX.length() - 2;
+                    return false;
+                } else if (_line.equals(RUN_START_LINE)) {
+                    _level = "DEBUG";
+                    return false;
+                } else {
+                    return true;
+                }
             }
 
             // Now search for end of level string
@@ -253,8 +273,8 @@ public class BureauFileAppender extends OOOFileAppender
             _pos = _prefix.length();
 
             // Ignore stuff from user code, this will get relayed to the database logs
-            if (_pos + 9 <= _line.length() && _line.substring(_pos, _pos + 9).equals(
-                "UserCode-")) {
+            if (_pos + 7 <= _line.length() && _line.substring(_pos, _pos + 7).equals(
+                "Puddle#")) {
                 return false;
             }
 
@@ -266,4 +286,10 @@ public class BureauFileAppender extends OOOFileAppender
 
     /** Observer to be notified when we do a roll. */
     protected static RollObserver _rollObs;
+
+    /** Thane VM errors are printed with this prefix. */
+    protected static final String AVM_ERROR_PREFIX = "Error: ";
+
+    /** First line printed by the run script when a bureau kicks off. */
+    protected static final String RUN_START_LINE = "Running MetaSOY thane client";
 }
