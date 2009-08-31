@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.web.gwt;
 
-import client.shell.Frame;
-
 /**
  * Encapsulates argument names for various whirled pages. We have the Pages enumeration, but
  * everything after that is defined hither and yon. This class is a mere starting point for
