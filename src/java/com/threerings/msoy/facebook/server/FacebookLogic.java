@@ -519,7 +519,7 @@ public class FacebookLogic
     {
         // create mapping of member id to external record
         IntMap<ExternalMapRecord> fbusers = IntMaps.newHashIntMap();
-        for (ExternalMapRecord exrec : _memberRepo.loadExternalMappings(ExternalAuther.FACEBOOK)) {
+        for (ExternalMapRecord exrec : users) {
             fbusers.put(exrec.memberId, exrec);
         }
 
