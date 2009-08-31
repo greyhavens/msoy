@@ -99,8 +99,11 @@ public class FrameEntryPoint
         Session.validate();
 
         // if we are in a frame, set the embedding value to what the server gave us
-        Frame.Embedding embedding = Layout.isFramed() ?
-            ArgNames.Embedding.extract(Args.fromHistory(_currentToken)) : Frame.Embedding.NONE;
+        Frame.Embedding embedding = Frame.Embedding.NONE;
+        if (Layout.isFramed() && ArgNames.Embedding.FACEBOOK.equals(ArgNames.Embedding.extract(
+            Args.fromHistory(_currentToken)))) {
+            embedding = Frame.Embedding.FACEBOOK;
+        }
 
         // create our header
         _header = new FrameHeader(new ClickHandler() {

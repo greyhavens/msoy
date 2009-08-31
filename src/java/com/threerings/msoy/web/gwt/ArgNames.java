@@ -80,10 +80,9 @@ public class ArgNames
         /**
          * Remove and return the embedding from the given arguments.
          */
-        public static Frame.Embedding extract (Args args)
+        public static String extract (Args args)
         {
-            boolean facebook = FACEBOOK.equals(args.extractParameter(EMBEDDING));
-            return facebook ? Frame.Embedding.FACEBOOK : Frame.Embedding.NONE;
+            return args.extractParameter(EMBEDDING);
         }
 
         /**
