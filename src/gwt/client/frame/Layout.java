@@ -24,20 +24,25 @@ public abstract class Layout
     public static final int CONTENT_WIDTH = 700;
 
     /**
+     * Checks if the current web document resides in a frame.
+     */
+    public static boolean isFramed ()
+    {
+        return nativeIsFramed();
+    }
+
+    /**
      * Creates and returns a layout instance based on what we can figure out about where we're
      * running by inspecting the DOM, or by checking for specific embed values.
      */
-    public static Layout getLayout (FrameHeader header, String embedValue, ClickHandler onGoHome)
+    public static Layout getLayout (
+        FrameHeader header, Frame.Embedding embedding, ClickHandler onGoHome)
     {
         Layout layout = null;
-        Frame.Embedding embedding = Frame.Embedding.NONE;
-        if (isFramed()) {
-            if (ArgNames.Embedding.FACEBOOK.equals(embedValue)) {
-                embedding = Frame.Embedding.FACEBOOK;
-                layout = new FacebookLayout();
-            } else {
-                layout = new FramedLayout();
-            }
+        if (embedding == Frame.Embedding.FACEBOOK) {
+            layout = new FacebookLayout();
+        } else if (isFramed()) {
+            layout = new FramedLayout();
         } else {
             layout = new StandardLayout();
         }
@@ -128,7 +133,7 @@ public abstract class Layout
         _onGoHome = onGoHome;
     }
 
-    protected native static boolean isFramed () /*-{
+    protected native static boolean nativeIsFramed () /*-{
         return $wnd.top != $wnd;
     }-*/;
 

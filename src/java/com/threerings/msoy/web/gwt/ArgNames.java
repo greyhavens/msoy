@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.web.gwt;
 
+import client.shell.Frame;
+
 /**
  * Encapsulates argument names for various whirled pages. We have the Pages enumeration, but
  * everything after that is defined hither and yon. This class is a mere starting point for
@@ -76,11 +78,12 @@ public class ArgNames
         public static final String FACEBOOK = "fb";
 
         /**
-         * Remove and return the embedding string from the given arguments.
+         * Remove and return the embedding from the given arguments.
          */
-        public static String extract (Args args)
+        public static Frame.Embedding extract (Args args)
         {
-            return args.extractParameter(EMBEDDING);
+            boolean facebook = FACEBOOK.equals(args.extractParameter(EMBEDDING));
+            return facebook ? Frame.Embedding.FACEBOOK : Frame.Embedding.NONE;
         }
 
         /**

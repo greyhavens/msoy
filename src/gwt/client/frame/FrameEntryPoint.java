@@ -98,6 +98,10 @@ public class FrameEntryPoint
         // validate our session which will dispatch a didLogon or didLogoff
         Session.validate();
 
+        // if we are in a frame, set the embedding value to what the server gave us
+        Frame.Embedding embedding = Layout.isFramed() ?
+            ArgNames.Embedding.extract(Args.fromHistory(_currentToken)) : Frame.Embedding.NONE;
+
         // create our header
         _header = new FrameHeader(new ClickHandler() {
             public void onClick (ClickEvent event) {
@@ -109,10 +113,9 @@ public class FrameEntryPoint
                     Link.go(Pages.WORLD, "m" + CShell.getMemberId());
                 }
             }
-        });
+        }, _kontagentFrame);
 
         // create our frame layout
-        String embedding = ArgNames.Embedding.extract(Args.fromHistory(_currentToken));
         _layout = Layout.getLayout(_header, embedding, new ClickHandler() {
             public void onClick (ClickEvent event) {
                 // put the client in in minimized state
@@ -220,8 +223,8 @@ public class FrameEntryPoint
         // let the frame header update promo text
         _header.tickPromo();
 
-        // convert the page to GA format and report it to Google Analytics
-        _analytics.report(args.toPath(page));
+        // report the page visit
+        reportPageVisit(page, args);
     }
 
     // from interface Session.Observer
@@ -899,6 +902,18 @@ public class FrameEntryPoint
         WorldClient.rebootFlash(_layout.getClientProvider());
     }
 
+    protected void reportPageVisit (Pages page, Args args)
+    {
+        String url = args.toPath(page);
+        // convert the page to GA format and report it to Google Analytics
+        _analytics.report(url);
+    
+        if (_kontagentFrame != null) {
+            // set the kontagent tracking frame too
+            // TODO: _kontagentFrame.setUrl(...);
+        }
+    }
+
     /**
      * Configures top-level functions that can be called by Flash or an iframed
      * {@link client.shell.Page}.
@@ -976,6 +991,7 @@ public class FrameEntryPoint
     protected PageFrame _pageFrame;
     protected PageFrame _bottomFrame;
     protected BorderedDialog _dialog;
+    protected com.google.gwt.user.client.ui.Frame _kontagentFrame;
 
     /** If the user arrived via an invitation, we'll store that here during their session. */
     protected Invitation _activeInvite;
