@@ -6,8 +6,6 @@ package com.threerings.msoy.web.server;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-import java.util.List;
-
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -16,7 +14,6 @@ import com.google.inject.Inject;
 
 import com.samskivert.io.StreamUtil;
 
-import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
