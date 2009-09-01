@@ -32,6 +32,7 @@ import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
 import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
+import com.samskivert.util.Lifecycle;
 import com.samskivert.util.StringUtil;
 import com.samskivert.util.Tuple;
 
@@ -146,12 +147,18 @@ public class FacebookLogic
         return Tuple.newTuple(year, date);
     }
 
-    @Inject public FacebookLogic (CronLogic cronLogic)
+    @Inject public FacebookLogic (CronLogic cronLogic, Lifecycle lifecycle)
     {
         // run the demographics update at 4am
         cronLogic.scheduleAt(4, new Runnable () {
             public void run () {
                 updateDemographics();
+            }
+        });
+
+        lifecycle.addComponent(new Lifecycle.ShutdownComponent() {
+            public void shutdown () {
+                _shutdown = true;
             }
         });
     }
@@ -499,6 +506,9 @@ public class FacebookLogic
         final int BATCH_SIZE = 200;
         List<Integer> results = segment(users, new Function<List<ExternalMapRecord>, Integer> () {
             public Integer apply (List<ExternalMapRecord> batch) {
+                if (_shutdown) {
+                    return 0;
+                }
                 return updateDemographics(batch);
             }
         }, BATCH_SIZE);
@@ -616,6 +626,7 @@ public class FacebookLogic
      * A notification batch.
      */
     protected class NotificationBatch
+        extends Invoker.Unit
     {
         /**
          * Creates a notification batch targeting the designated subset of a specific memeber's
@@ -647,7 +658,10 @@ public class FacebookLogic
             _interval.cancel();
         }
 
-        protected void trySend ()
+        /**
+         * Synchronously sends out notifications to all targets (friends of a member).
+         */
+        protected void trySendFriends ()
             throws ServiceException
         {
             _facebookRepo.noteNotificationStarted(_notifRec.id);
@@ -655,7 +669,7 @@ public class FacebookLogic
             // TODO: fetch the N value on a timer from the API instead of using the runtime config
             int alloc = _runtime.server.fbNotificationsAlloc;
 
-            if (_mrec != null && _appFriendsOnly) {
+            if (_appFriendsOnly) {
                 // this will only send to the first N users where N is the "notifications_per_day"
                 // allocation
                 // TODO: optimize the target selection? (remove the shuffle when we do that)
@@ -667,8 +681,7 @@ public class FacebookLogic
                 Collection<String> recipients = sendNotifications(sinf.client, _notifRec.id,
                     _notifRec.text, targets, MAPREC_TO_UID_EXP, APP_USER_FILTER, false);
                 _tracker.trackNotificationSent(sinf.fbid, _trackingId, recipients);
-
-            } else if (_mrec != null) {
+            } else {
                 // see above
                 List<Long> targets = loadFriends(_mrec);
                 Collections.shuffle(targets);
@@ -681,53 +694,104 @@ public class FacebookLogic
                     }
                 }, Predicates.<FQLQuery.Record>alwaysTrue(), false);
                 _tracker.trackNotificationSent(sinf.fbid, _trackingId, recipients);
-
-            } else {
-                final FacebookJaxbRestClient client = getFacebookClient(BATCH_READ_TIMEOUT);
-                final int BATCH_SIZE = 100;
-                segment(_memberRepo.loadExternalMappings(ExternalAuther.FACEBOOK),
-                    new Function<List<ExternalMapRecord>, Void>() {
-                        public Void apply (List<ExternalMapRecord> batch) {
-                            Collection<String> recipients = sendNotifications(client, _notifRec.id,
-                                _notifRec.text, batch, MAPREC_TO_UID_EXP, APP_USER_FILTER, true);
-                            // Kontagent doesn't supply a special message for global notifications,
-                            // so just set sender id to 0
-                            // TODO: we may need to do something different for global notifications
-                            _tracker.trackNotificationSent(0, _trackingId, recipients);
-                            return null;
-                        }
-                    }, BATCH_SIZE);
             }
         }
 
-        protected void send ()
+        /**
+         * Asynchronously sends to all mapped users by daisy chaining small batches on the invoker.
+         * This is so as not to cause undue delay to other jobs that use the batch invoker.
+         */
+        protected void trySendGlobal (final Runnable onFinish)
         {
-            try {
-                trySend();
-                log.info("Notification sending complete", "id", _notifRec.id);
+            _facebookRepo.noteNotificationStarted(_notifRec.id);
 
-            } catch (Exception e) {
-                log.warning("Send-level notification failure", "id", _notifRec.id, e);
+            final List<ExternalMapRecord> allUsers =
+                _memberRepo.loadExternalMappings(ExternalAuther.FACEBOOK);
+            log.info("Kicking off notifications daisy-chain", "size", allUsers.size());
 
-            } finally {
-                _facebookRepo.noteNotificationProgress(_notifRec.id, "Finished", 0, 0);
-                _facebookRepo.noteNotificationFinished(_notifRec.id);
-                removeNotification(_notifRec.id);
+            final FacebookJaxbRestClient client = getFacebookClient(BATCH_READ_TIMEOUT);
+            final int BATCH_SIZE = 100;
+
+            Invoker.Unit job = new Invoker.Unit("Facebook notification") {
+                int pos;
+                public boolean invoke () {
+                    if (_shutdown) {
+                        log.warning("Server is shutting down, skipping notifications",
+                            "pos", pos, "size", allUsers.size());
+                        onFinish.run();
+                        return false;
+                    }
+                    List<ExternalMapRecord> batch = allUsers.subList(pos,
+                        Math.min(pos + BATCH_SIZE, allUsers.size()));
+                    Collection<String> recipients = sendNotifications(client, _notifRec.id,
+                        _notifRec.text, batch, MAPREC_TO_UID_EXP, APP_USER_FILTER, true);
+
+                    // Kontagent doesn't supply a special message for global notifications,
+                    // so just set sender id to 0
+                    // TODO: we may need to do something different for global notifications
+                    _tracker.trackNotificationSent(0, _trackingId, recipients);
+
+                    pos += BATCH_SIZE;
+                    if (pos < allUsers.size()) {
+                        _batchInvoker.postUnit(this);
+                    } else {
+                        onFinish.run();
+                    }
+                    return false;
+                }
+                @Override public long getLongThreshold () {
+                    return 30 * 1000L;
+                }
+            };
+
+            _batchInvoker.postUnit(job);
+        }
+
+        public boolean invoke ()
+        {
+            Runnable onFinish = new Runnable() {
+                public void run () {
+                    _facebookRepo.noteNotificationProgress(_notifRec.id, "Finished", 0, 0);
+                    _facebookRepo.noteNotificationFinished(_notifRec.id);
+                    removeNotification(_notifRec.id);
+                    log.info("Notification sending complete", "id", _notifRec.id);
+                }
+            };
+
+            if (_mrec != null) {
+                try {
+                    trySendFriends();
+    
+                } catch (Exception e) {
+                    log.warning("Send-level notification failure", "id", _notifRec.id, e);
+    
+                } finally {
+                    onFinish.run();
+                }
+            } else {
+                trySendGlobal(onFinish);
             }
+            return false;
+        }
+
+        public long getLongThreshold ()
+        {
+            return 30 * 1000L;
         }
 
         protected FacebookNotificationRecord _notifRec;
         protected TrackingId _trackingId;
         protected MemberRecord _mrec;
         protected boolean _appFriendsOnly;
-        protected Interval _interval = new Interval(_batchInvoker) {
+        protected Interval _interval = new Interval() {
             public void expired () {
-                send();
+                _batchInvoker.postUnit(NotificationBatch.this);
             }
         };
     }
 
     protected Map<String, NotificationBatch> _notifications = Maps.newHashMap();
+    protected boolean _shutdown;
 
     protected static final Function<ExternalMapRecord, FQL.Exp> MAPREC_TO_UID_EXP =
         new Function<ExternalMapRecord, FQL.Exp>() {
