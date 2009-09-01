@@ -18,14 +18,14 @@ public class FriendshipRecord extends PersistentRecord
     // AUTO-GENERATED: FIELDS END
 
     /** The version of this record. */
-    public static final int SCHEMA_VERSION = 1;
+    public static final int SCHEMA_VERSION = 2;
 
     /** The memberId for whom this record applies. */
     @Id
     public int memberId;
 
     /** The memberId of the other member. */
-    @Id
+    @Id @Index(name="ixFriend")
     public int friendId;
 
     /** If true, the person is our friend, otherwise we've just sent them an invite. */
