@@ -256,7 +256,7 @@ public class RoomObjectView extends RoomView
      */
     public function getPets () :Array /* of PetSprite */
     {
-        return _occupants.values().filter(Predicates.instanceOf(PetSprite));
+        return _occupants.values().filter(Predicates.createIs(PetSprite));
     }
 
     // from interface AttributeChangedListener

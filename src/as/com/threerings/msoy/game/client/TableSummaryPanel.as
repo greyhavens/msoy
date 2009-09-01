@@ -75,7 +75,7 @@ public class TableSummaryPanel extends HBox
             _info.text = Msgs.GAME.get("m.tsp_in_progress",
                 (pcount == 0) ? table.watchers.length : pcount);
         } else if (table.players != null) {
-            var open :int = table.players.filter(Predicates.isNull()).length;
+            var open :int = table.players.filter(Predicates.isNull).length;
             _info.text = Msgs.GAME.get("m.tsp_players", table.players.length, open);
         } else {
             _info.text = Msgs.GAME.get("m.tsp_in_progress"); // can't happen?
