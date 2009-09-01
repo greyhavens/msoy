@@ -255,6 +255,11 @@ public class KontagentLogic
     public void trackNotificationSent (
         long senderId, TrackingId trackingId, Collection<String> recipients)
     {
+        // no need to send if there are no recipients
+        if (recipients.size() == 0) {
+            return;
+        }
+
         sendMessage(MessageType.NOTIFICATION_SENT, "s", String.valueOf(senderId),
             "r", StringUtil.join(recipients.toArray(), StringUtil.encode(",")),
             "u", trackingId.uuid, "st1", trackingId.subtype);
