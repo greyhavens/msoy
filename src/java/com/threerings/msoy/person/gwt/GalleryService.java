@@ -6,6 +6,7 @@ package com.threerings.msoy.person.gwt;
 import java.util.List;
 
 import com.google.gwt.user.client.rpc.RemoteService;
+import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 import com.threerings.msoy.web.gwt.ServiceException;
 
@@ -15,10 +16,14 @@ import com.threerings.msoy.web.gwt.ServiceException;
  * @author mdb
  * @author mjensen
  */
+@RemoteServiceRelativePath(GalleryService.REL_PATH)
 public interface GalleryService extends RemoteService
 {
     /** The entry point for this service. */
     public static final String ENTRY_POINT = "/gallerysvc";
+
+    /** The relative path for this service. */
+    public static final String REL_PATH = "../../.." + GalleryService.ENTRY_POINT;
 
     /**
      * Loads all of the galleries belonging to the given member ID.

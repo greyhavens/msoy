@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.google.gwt.user.client.rpc.RemoteService;
+import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 import com.threerings.msoy.web.gwt.EmailContact;
 import com.threerings.msoy.web.gwt.MemberCard;
@@ -15,10 +16,14 @@ import com.threerings.msoy.web.gwt.ServiceException;
 /**
  * Handles invitation-related functionality.
  */
+@RemoteServiceRelativePath(InviteService.REL_PATH)
 public interface InviteService extends RemoteService
 {
     /** The entry point for this service. */
     public static final String ENTRY_POINT = "/invitesvc";
+
+    /** The relative path for this service. */
+    public static final String REL_PATH = "../../.." + InviteService.ENTRY_POINT;
 
     /**
      * Loads up e-mail addresses from a user's webmail account.

@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
+import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 import com.threerings.msoy.data.all.RatingResult;
 
@@ -22,6 +23,7 @@ import com.threerings.msoy.web.gwt.TagHistory;
 /**
  * Provides digital items related services.
  */
+@RemoteServiceRelativePath(ItemService.REL_PATH)
 public interface ItemService extends RemoteService
 {
     /** Provides results from {@link #loadItemList}. */
@@ -36,6 +38,9 @@ public interface ItemService extends RemoteService
 
     /** The entry point for this service. */
     public static final String ENTRY_POINT = "/itemsvc";
+
+    /** The relative path for this service. */
+    public static final String REL_PATH = "../../.." + ItemService.ENTRY_POINT;
 
     /**
      * Update the persisted scale of an avatar.

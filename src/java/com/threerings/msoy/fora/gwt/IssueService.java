@@ -6,6 +6,7 @@ package com.threerings.msoy.fora.gwt;
 import java.util.List;
 
 import com.google.gwt.user.client.rpc.RemoteService;
+import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 import com.threerings.gwt.util.PagedResult;
 
@@ -16,6 +17,7 @@ import com.threerings.msoy.data.all.MemberName;
 /**
  * Defines issue related services available to the GWT client.
  */
+@RemoteServiceRelativePath(IssueService.REL_PATH)
 public interface IssueService extends RemoteService
 {
     /** Provides results for {@link #loadIssues}. */
@@ -27,6 +29,9 @@ public interface IssueService extends RemoteService
 
     /** The entry point for this service. */
     public static final String ENTRY_POINT = "/issuesvc";
+
+    /** The relative path for this service. */
+    public static final String REL_PATH = "../../.." + IssueService.ENTRY_POINT;
 
     /**
      * Loads the specified issues.

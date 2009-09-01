@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
+import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.RatingResult;
@@ -19,10 +20,14 @@ import com.threerings.msoy.money.data.all.PurchaseResult;
 /**
  * Provides information related to the world.
  */
+@RemoteServiceRelativePath(WebRoomService.REL_PATH)
 public interface WebRoomService extends RemoteService
 {
     /** The entry point for this service. */
     public static final String ENTRY_POINT = "/roomsvc";
+
+    /** The relative path for this service. */
+    public static final String REL_PATH = "../../.." + WebRoomService.ENTRY_POINT;
 
     /** Delivers the respose to {@link #loadGroupRooms}. */
     public static class RoomsResult implements IsSerializable

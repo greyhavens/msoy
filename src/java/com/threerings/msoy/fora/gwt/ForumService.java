@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
+import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 import com.threerings.gwt.util.PagedResult;
 import com.threerings.msoy.web.gwt.ServiceException;
@@ -14,6 +15,7 @@ import com.threerings.msoy.web.gwt.ServiceException;
 /**
  * Defines forum related services available to the GWT client.
  */
+@RemoteServiceRelativePath(ForumService.REL_PATH)
 public interface ForumService extends RemoteService
 {
     /** Maximum length allowed for a message complaint. Note: this must be the same as the maximum
@@ -52,6 +54,9 @@ public interface ForumService extends RemoteService
 
     /** The entry point for this service. */
     public static final String ENTRY_POINT = "/forumsvc";
+
+    /** The relative path for this service. */
+    public static final String REL_PATH = "../../.." + ForumService.ENTRY_POINT;
 
     /**
      * Loads up to <code>maximum</code> threads from groups of which the caller is a member for

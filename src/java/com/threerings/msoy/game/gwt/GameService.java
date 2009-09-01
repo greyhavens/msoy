@@ -8,6 +8,7 @@ import java.util.Set;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
+import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.RatingResult;
@@ -20,6 +21,7 @@ import com.threerings.msoy.web.gwt.ServiceException;
 /**
  * Provides game related services.
  */
+@RemoteServiceRelativePath(GameService.REL_PATH)
 public interface GameService extends RemoteService
 {
     /** Return result for {@link #compareTrophies}. */
@@ -66,6 +68,9 @@ public interface GameService extends RemoteService
 
     /** The entry point for this service. */
     public static final String ENTRY_POINT = "/gamesvc";
+
+    /** The relative path for this service. */
+    public static final String REL_PATH = "../../.." + GameService.ENTRY_POINT;
 
     /**
      * Loads up information for the arcade.

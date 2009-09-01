@@ -7,14 +7,19 @@ import java.util.List;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
+import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 import com.threerings.gwt.util.PagedResult;
 import com.threerings.msoy.web.gwt.ServiceException;
 
 /** Provides operations for viewing, modifying and submitting surveys. */
+@RemoteServiceRelativePath(SurveyService.REL_PATH)
 public interface SurveyService
     extends RemoteService
 {
     public static final String ENTRY_POINT = "/survey";
+
+    /** The relative path for this service. */
+    public static final String REL_PATH = "../../.." + SurveyService.ENTRY_POINT;
 
     /**
      * A summary of all responses to a single question. The interpretation of the fields depends on

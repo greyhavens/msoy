@@ -4,6 +4,7 @@
 package com.threerings.msoy.comment.gwt;
 
 import com.google.gwt.user.client.rpc.RemoteService;
+import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 import com.threerings.gwt.util.PagedResult;
 
@@ -13,10 +14,14 @@ import com.threerings.msoy.web.gwt.ServiceException;
  * Service methods for reading and posting comments on various Whirled entities (items, profiles,
  * rooms, etc.).
  */
+@RemoteServiceRelativePath(CommentService.REL_PATH)
 public interface CommentService extends RemoteService
 {
     /** The entry point for this service. */
     public static final String ENTRY_POINT = "/commentsvc";
+
+    /** The relative path for this service. */
+    public static final String REL_PATH = "../../.." + CommentService.ENTRY_POINT;
 
     /** Maximum length allowed for a comment complaint. Note: this must be the same as the maximum
      * length of {@link com.threerings.underwire.server.persist.EventRecord#subject}, but we cannot

@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
+import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 import com.threerings.gwt.util.PagedResult;
 import com.threerings.msoy.data.all.GroupName;
@@ -25,6 +26,7 @@ import com.threerings.msoy.money.data.all.PurchaseResult;
 /**
  * Defines group services available to the GWT/AJAX web client.
  */
+@RemoteServiceRelativePath(GroupService.REL_PATH)
 public interface GroupService extends RemoteService
 {
     /** Delivers the response to {@link #getGroupInfo}. */
@@ -92,6 +94,9 @@ public interface GroupService extends RemoteService
 
     /** The entry point for this service. */
     public static final String ENTRY_POINT = "/groupsvc";
+
+    /** The relative path for this service. */
+    public static final String REL_PATH = "../../.." + GroupService.ENTRY_POINT;
 
     /**
      * Loads the information displayed on the Galaxy page.

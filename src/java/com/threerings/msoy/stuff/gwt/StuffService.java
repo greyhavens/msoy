@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
+import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 import com.threerings.msoy.web.gwt.ServiceException;
 
@@ -19,6 +20,7 @@ import com.threerings.msoy.item.gwt.ItemDetail;
 /**
  * Provides services used by the stuff page.
  */
+@RemoteServiceRelativePath(StuffService.REL_PATH)
 public interface StuffService extends RemoteService
 {
     /** Provides results for {@link #loadItemDetail}. */
@@ -41,6 +43,9 @@ public interface StuffService extends RemoteService
 
     /** The entry point for this service. */
     public static final String ENTRY_POINT = "/stuffsvc";
+
+    /** The relative path for this service. */
+    public static final String REL_PATH = "../../.." + StuffService.ENTRY_POINT;
 
     /**
      * Publish the specified xml string as 'external media'.

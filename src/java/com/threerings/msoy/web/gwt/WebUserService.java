@@ -4,6 +4,7 @@
 package com.threerings.msoy.web.gwt;
 
 import com.google.gwt.user.client.rpc.RemoteService;
+import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 import com.threerings.msoy.data.all.LaunchConfig;
 import com.threerings.msoy.data.all.VisitorInfo;
@@ -11,10 +12,14 @@ import com.threerings.msoy.data.all.VisitorInfo;
 /**
  * Defines general user services available to the GWT/AJAX web client.
  */
+@RemoteServiceRelativePath(WebUserService.REL_PATH)
 public interface WebUserService extends RemoteService
 {
     /** The entry point for this service. */
     public static final String ENTRY_POINT = "/usersvc";
+
+    /** The relative path for this service. */
+    public static final String REL_PATH = "../../.." + WebUserService.ENTRY_POINT;
 
     /** The default length of a session. */
     public static final int SESSION_DAYS = 3;

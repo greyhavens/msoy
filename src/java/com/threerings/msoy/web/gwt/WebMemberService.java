@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
+import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 import com.threerings.gwt.util.PagedResult;
 
@@ -20,10 +21,14 @@ import com.threerings.msoy.money.data.all.PurchaseResult;
 /**
  * Defines member-specific services available to the GWT/AJAX web client.
  */
+@RemoteServiceRelativePath(WebMemberService.REL_PATH)
 public interface WebMemberService extends RemoteService
 {
     /** The entry point for this service. */
     public static final String ENTRY_POINT = "/membersvc";
+
+    /** The relative path for this service. */
+    public static final String REL_PATH = "../../.." + WebMemberService.ENTRY_POINT;
 
     /** Provides results for {@link #loadFriends}. */
     public static class FriendsResult implements IsSerializable

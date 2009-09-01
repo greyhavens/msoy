@@ -8,6 +8,7 @@ import java.util.Set;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
+import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 import com.threerings.msoy.data.all.Award;
 import com.threerings.msoy.data.all.Friendship;
@@ -29,6 +30,7 @@ import com.threerings.msoy.person.gwt.Interest;
 /**
  * Defines profile-related services available to the GWT/AJAX web client.
  */
+@RemoteServiceRelativePath(ProfileService.REL_PATH)
 public interface ProfileService extends RemoteService
 {
     /** The various greeter states. */
@@ -118,6 +120,9 @@ public interface ProfileService extends RemoteService
 
     /** The entry point for this service. */
     public static final String ENTRY_POINT = "/profilesvc";
+
+    /** The relative path for this service. */
+    public static final String REL_PATH = "../../.." + ProfileService.ENTRY_POINT;
 
     /**
      * Loads the specified member's profile information.

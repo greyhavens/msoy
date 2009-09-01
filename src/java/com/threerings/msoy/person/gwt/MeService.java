@@ -6,6 +6,7 @@ package com.threerings.msoy.person.gwt;
 import java.util.List;
 
 import com.google.gwt.user.client.rpc.RemoteService;
+import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 import com.threerings.msoy.badge.data.all.Badge;
 
@@ -18,10 +19,14 @@ import com.threerings.msoy.web.gwt.ServiceException;
 /**
  * Provides information for the Me page.
  */
+@RemoteServiceRelativePath(MeService.REL_PATH)
 public interface MeService extends RemoteService
 {
     /** The entry point for this service. */
     public static final String ENTRY_POINT = "/mesvc";
+
+    /** The relative path for this service. */
+    public static final String REL_PATH = "../../.." + MeService.ENTRY_POINT;
 
     /**
      * Loads the data for the MyWhirled view for the calling user.

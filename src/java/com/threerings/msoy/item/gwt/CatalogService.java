@@ -8,6 +8,7 @@ import java.util.Map;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
+import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.gwt.ServiceException;
@@ -23,6 +24,7 @@ import com.threerings.msoy.item.gwt.CatalogListing.DerivedItem;
 /**
  * Provides digital items related services.
  */
+@RemoteServiceRelativePath(CatalogService.REL_PATH)
 public interface CatalogService extends RemoteService
 {
     /** Provides results for {@link #loadCatalog}. */
@@ -69,6 +71,9 @@ public interface CatalogService extends RemoteService
 
     /** The entry point for this service. */
     public static final String ENTRY_POINT = "/catalogsvc";
+
+    /** The relative path for this service. */
+    public static final String REL_PATH = "../../.." + CatalogService.ENTRY_POINT;
 
     /**
      * Loads the featured items shown on the top-level catalog page.

@@ -6,6 +6,7 @@ package com.threerings.msoy.money.gwt;
 import java.util.List;
 
 import com.google.gwt.user.client.rpc.RemoteService;
+import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.money.data.all.BlingExchangeResult;
@@ -21,10 +22,14 @@ import com.threerings.msoy.money.data.all.TransactionPageResult;
 /**
  * Provides currency related services.
  */
+@RemoteServiceRelativePath(MoneyService.REL_PATH)
 public interface MoneyService extends RemoteService
 {
     /** The entry point for this service. */
     public static final String ENTRY_POINT = "/moneysvc";
+
+    /** The relative path for this service. */
+    public static final String REL_PATH = "../../.." + MoneyService.ENTRY_POINT;
 
     /**
      * Fetches a player's complete income and spending history, one page at a time.

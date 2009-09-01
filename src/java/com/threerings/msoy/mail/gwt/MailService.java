@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
+import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 import com.threerings.msoy.data.all.MemberName;
 
@@ -15,6 +16,7 @@ import com.threerings.msoy.web.gwt.ServiceException;
 /**
  * Defines mail services available to the GWT/AJAX web client.
  */
+@RemoteServiceRelativePath(MailService.REL_PATH)
 public interface MailService extends RemoteService
 {
     /** Communicates results for {@link #loadConversation}. */
@@ -49,6 +51,9 @@ public interface MailService extends RemoteService
 
     /** The entry point for this service. */
     public static final String ENTRY_POINT = "/mailsvc";
+
+    /** The relative path for this service. */
+    public static final String REL_PATH = "../../.." + MailService.ENTRY_POINT;
 
     /**
      * Loads the specified range of conversations in which the caller is a participant.
