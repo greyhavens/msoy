@@ -12,11 +12,11 @@ import net.sf.ehcache.CacheManager;
 
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.util.Invoker;
-import com.samskivert.util.Lifecycle;
 import com.samskivert.depot.EHCacheAdapter;
 import com.samskivert.depot.PersistenceContext;
 
 import com.threerings.presents.dobj.AccessController;
+import com.threerings.presents.server.PresentsInvoker;
 import com.threerings.presents.server.ReportManager;
 
 import com.threerings.pulse.server.persist.PulseDatabase;
@@ -77,14 +77,8 @@ public abstract class MsoyBaseServer extends WhirledServer
 
         super.init(injector);
 
-        // when we shutdown, the batch invoker needs to do some jockeying
-        _lifecycle.addComponent(new Lifecycle.ShutdownComponent() {
-            public void shutdown () {
-                // queue up a 'shutdown' unit on the batch invoker, after which it will shuttle
-                // further units onto the main invoker instead
-                _batchInvoker.shutdown();
-            }
-        });
+        // when we shutdown, make sure the batch invoker clears its queue first
+        ((PresentsInvoker)_invoker).addInterdependentInvoker(_batchInvoker);
 
         // start the batch invoker thread
         _batchInvoker.start();
@@ -103,6 +97,8 @@ public abstract class MsoyBaseServer extends WhirledServer
     protected void invokerDidShutdown ()
     {
         super.invokerDidShutdown();
+
+        _batchInvoker.shutdown();
 
         // shutdown our persistence context (JDBC connections) and the cache manager
         _perCtx.shutdown();
