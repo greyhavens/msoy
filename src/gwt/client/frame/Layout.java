@@ -23,30 +23,20 @@ public abstract class Layout
     public static final int CONTENT_WIDTH = 700;
 
     /**
-     * Checks if the current web document resides in a frame.
-     */
-    public static boolean isFramed ()
-    {
-        return nativeIsFramed();
-    }
-
-    /**
-     * Creates and returns a layout instance based on what we can figure out about where we're
-     * running by inspecting the DOM, or by checking for specific embed values.
+     * Creates and returns a layout instance based on the given external arguments.
      */
     public static Layout getLayout (
-        FrameHeader header, Frame.Embedding embedding, ClickHandler onGoHome)
+        FrameHeader header, Frame.Embedding embedding, boolean isInnerFrame, ClickHandler onGoHome)
     {
         Layout layout = null;
         if (embedding == Frame.Embedding.FACEBOOK) {
             layout = new FacebookLayout();
-        } else if (isFramed()) {
+        } else if (isInnerFrame) {
             layout = new FramedLayout();
         } else {
             layout = new StandardLayout();
         }
         layout.init(header, onGoHome);
-        layout._embedding = embedding;
         return layout;
     }
 
@@ -118,27 +108,14 @@ public abstract class Layout
         return false;
     }
 
-    /**
-     * Determines the kind of embedding this layout is in.
-     */
-    public Frame.Embedding getEmbedding ()
-    {
-        return _embedding;
-    }
-
     protected void init (FrameHeader header, ClickHandler onGoHome)
     {
         _header = header;
         _onGoHome = onGoHome;
     }
 
-    protected native static boolean nativeIsFramed () /*-{
-        return $wnd.top != $wnd;
-    }-*/;
-
     protected FrameHeader _header;
     protected ClickHandler _onGoHome;
-    protected Frame.Embedding _embedding;
 
     protected static final String PAGE = "page";
 }

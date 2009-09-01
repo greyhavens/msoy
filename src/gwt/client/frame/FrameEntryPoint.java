@@ -98,11 +98,11 @@ public class FrameEntryPoint
         // validate our session which will dispatch a didLogon or didLogoff
         Session.validate();
 
-        // if we are in a frame, set the embedding value to what the server gave us
-        Frame.Embedding embedding = Frame.Embedding.NONE;
-        if (Layout.isFramed() && ArgNames.Embedding.FACEBOOK.equals(ArgNames.Embedding.extract(
+        // if we are in a frame and our token has emb_fb, set the embedding value to facebook
+        _embedding = Frame.Embedding.NONE;
+        if (isFramed() && ArgNames.Embedding.FACEBOOK.equals(ArgNames.Embedding.extract(
             Args.fromHistory(_currentToken)))) {
-            embedding = Frame.Embedding.FACEBOOK;
+            _embedding = Frame.Embedding.FACEBOOK;
         }
 
         // create our header
@@ -116,10 +116,10 @@ public class FrameEntryPoint
                     Link.go(Pages.WORLD, "m" + CShell.getMemberId());
                 }
             }
-        }, _kontagentFrame);
+        });
 
         // create our frame layout
-        _layout = Layout.getLayout(_header, embedding, new ClickHandler() {
+        _layout = Layout.getLayout(_header, _embedding, isFramed(), new ClickHandler() {
             public void onClick (ClickEvent event) {
                 // put the client in in minimized state
                 String args = "memberHome=" + CShell.getMemberId() + "&mini=true";
@@ -426,7 +426,7 @@ public class FrameEntryPoint
     public Embedding getEmbedding ()
     {
         // just delegate to the layout
-        return _layout.getEmbedding();
+        return _embedding;
     }
 
     // from interface Frame
@@ -911,9 +911,8 @@ public class FrameEntryPoint
         // convert the page to GA format and report it to Google Analytics
         _analytics.report(url);
     
-        if (_kontagentFrame != null) {
-            // set the kontagent tracking frame too
-            // TODO: _kontagentFrame.setUrl(...);
+        if (_embedding == Frame.Embedding.FACEBOOK) {
+            // TODO: _membersvc.trackFacebookPageVisit();
         }
     }
 
@@ -982,19 +981,26 @@ public class FrameEntryPoint
         return $wnd.hex_md5(text);
     }-*/;
 
+    /**
+     * Checks if the current web document resides in a frame.
+     */
+    protected native static boolean isFramed () /*-{
+        return $wnd.top != $wnd;
+    }-*/;
+
     protected Pages _page;
     protected String _currentToken = "", _prevToken = "";
     protected String _pageToken = "", _bottomFrameToken = "";
     protected String _closeToken, _closeTitle;
     protected String _facebookId, _facebookSession;
 
+    protected Embedding _embedding;
     protected FrameHeader _header;
     protected Layout _layout;
     protected TitleBar _bar;
     protected PageFrame _pageFrame;
     protected PageFrame _bottomFrame;
     protected BorderedDialog _dialog;
-    protected com.google.gwt.user.client.ui.Frame _kontagentFrame;
 
     /** If the user arrived via an invitation, we'll store that here during their session. */
     protected Invitation _activeInvite;

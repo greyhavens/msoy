@@ -14,7 +14,6 @@ import com.google.gwt.event.dom.client.MouseOutEvent;
 import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
-import com.google.gwt.user.client.ui.Frame;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.PushButton;
@@ -41,10 +40,9 @@ import client.util.NaviUtil;
 public class FrameHeader extends SmartTable
     implements Session.Observer
 {
-    public FrameHeader (ClickHandler onLogoClick, Frame trackingFrame)
+    public FrameHeader (ClickHandler onLogoClick)
     {
         super("frameHeader", 0, 0);
-        _trackingFrame = trackingFrame;
 
         setWidth("100%");
         int col = 0;
@@ -180,7 +178,6 @@ public class FrameHeader extends SmartTable
     protected int _statusCol;
     protected List<NaviButton> _buttons = new ArrayList<NaviButton>();
     protected StatusPanel _status = new StatusPanel();
-    protected Frame _trackingFrame;
 
     protected static final NaviImages _images = (NaviImages)GWT.create(NaviImages.class);
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
