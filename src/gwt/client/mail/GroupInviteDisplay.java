@@ -10,7 +10,6 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.WidgetUtil;
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.group.data.all.GroupMembership.Rank;
 import com.threerings.msoy.group.gwt.GroupService;
@@ -95,6 +94,5 @@ public class GroupInviteDisplay extends MailPayloadDisplay
     protected GroupInvitePayload _invitePayload;
 
     protected static final MailMessages _msgs = GWT.create(MailMessages.class);
-    protected static final GroupServiceAsync _groupsvc = (GroupServiceAsync)
-        ServiceUtil.bind(GWT.create(GroupService.class), GroupService.ENTRY_POINT);
+    protected static final GroupServiceAsync _groupsvc = GWT.create(GroupService.class);
 }

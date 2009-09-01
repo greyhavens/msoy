@@ -12,7 +12,6 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RichTextArea;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.game.gwt.GameDetail;
 import com.threerings.msoy.game.gwt.GameService;
@@ -145,6 +144,5 @@ public class InstructionsPanel extends VerticalPanel
     protected GameDetail _detail;
 
     protected static final GamesMessages _msgs = GWT.create(GamesMessages.class);
-    protected static final GameServiceAsync _gamesvc = (GameServiceAsync)
-        ServiceUtil.bind(GWT.create(GameService.class), GameService.ENTRY_POINT);
+    protected static final GameServiceAsync _gamesvc = GWT.create(GameService.class);
 }

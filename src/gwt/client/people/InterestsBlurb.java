@@ -16,7 +16,6 @@ import com.google.gwt.user.client.ui.TextBox;
 
 import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.SmartTable;
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.person.gwt.Interest;
 import com.threerings.msoy.profile.gwt.ProfileService;
@@ -176,6 +175,5 @@ public class InterestsBlurb extends Blurb
     protected static final PeopleMessages _msgs = GWT.create(PeopleMessages.class);
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
     protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
-    protected static final ProfileServiceAsync _profilesvc = (ProfileServiceAsync)
-        ServiceUtil.bind(GWT.create(ProfileService.class), ProfileService.ENTRY_POINT);
+    protected static final ProfileServiceAsync _profilesvc = GWT.create(ProfileService.class);
 }

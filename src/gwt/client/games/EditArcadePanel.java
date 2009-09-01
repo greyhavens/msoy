@@ -26,7 +26,6 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.WidgetUtil;
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.game.gwt.ArcadeData;
 import com.threerings.msoy.game.gwt.GameInfo;
@@ -287,7 +286,6 @@ public class EditArcadePanel extends FlowPanel
 
     ListBox _pages;
 
-    protected static final GameServiceAsync _gamesvc = (GameServiceAsync)
-        ServiceUtil.bind(GWT.create(GameService.class), GameService.ENTRY_POINT);
+    protected static final GameServiceAsync _gamesvc = GWT.create(GameService.class);
     protected static final GamesMessages _msgs = GWT.create(GamesMessages.class);
 }

@@ -12,7 +12,6 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.web.gwt.Invitation;
 import com.threerings.msoy.web.gwt.Pages;
@@ -103,6 +102,5 @@ public class OptOutPanel extends SmartTable
     }
 
     protected static final AccountMessages _msgs = GWT.create(AccountMessages.class);
-    protected static final WebMemberServiceAsync _membersvc = (WebMemberServiceAsync)
-        ServiceUtil.bind(GWT.create(WebMemberService.class), WebMemberService.ENTRY_POINT);
+    protected static final WebMemberServiceAsync _membersvc = GWT.create(WebMemberService.class);
 }

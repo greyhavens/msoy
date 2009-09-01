@@ -19,7 +19,6 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.ListBox;
 
 import com.threerings.gwt.ui.SmartTable;
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.admin.gwt.AdminService;
 import com.threerings.msoy.admin.gwt.AdminServiceAsync;
@@ -97,6 +96,5 @@ public class PanopticonStatusPanel extends SmartTable
     protected final ListBox _nodeList;
     
     protected static final AdminMessages _msgs = GWT.create(AdminMessages.class);
-    protected static final AdminServiceAsync _adminsvc = (AdminServiceAsync)
-        ServiceUtil.bind(GWT.create(AdminService.class), AdminService.ENTRY_POINT);
+    protected static final AdminServiceAsync _adminsvc = GWT.create(AdminService.class);
 }

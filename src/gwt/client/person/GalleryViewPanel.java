@@ -13,7 +13,6 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.CenteredBox;
 import com.threerings.gwt.ui.InlinePanel;
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Photo;
@@ -231,8 +230,7 @@ public class GalleryViewPanel extends FlowPanel
     }
 
     protected static final PersonMessages _pmsgs = (PersonMessages)GWT.create(PersonMessages.class);
-    protected static final GalleryServiceAsync _gallerysvc = (GalleryServiceAsync)
-        ServiceUtil.bind(GWT.create(GalleryService.class), GalleryService.ENTRY_POINT);
+    protected static final GalleryServiceAsync _gallerysvc = GWT.create(GalleryService.class);
 
     /** List of photos and gallery details */
     protected GalleryData _galleryData;

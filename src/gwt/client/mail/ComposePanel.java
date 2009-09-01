@@ -23,7 +23,6 @@ import com.google.gwt.user.client.ui.TextBox;
 
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.group.gwt.GroupService;
@@ -251,12 +250,8 @@ public class ComposePanel extends FlowPanel
     protected Button _send;
 
     protected static final MailMessages _msgs = GWT.create(MailMessages.class);
-    protected static final WebMemberServiceAsync _membersvc = (WebMemberServiceAsync)
-        ServiceUtil.bind(GWT.create(WebMemberService.class), WebMemberService.ENTRY_POINT);
-    protected static final StuffServiceAsync _stuffsvc = (StuffServiceAsync)
-        ServiceUtil.bind(GWT.create(StuffService.class), StuffService.ENTRY_POINT);
-    protected static final GroupServiceAsync _groupsvc = (GroupServiceAsync)
-        ServiceUtil.bind(GWT.create(GroupService.class), GroupService.ENTRY_POINT);
-    protected static final WebRoomServiceAsync _roomsvc = (WebRoomServiceAsync)
-        ServiceUtil.bind(GWT.create(WebRoomService.class), WebRoomService.ENTRY_POINT);
+    protected static final WebMemberServiceAsync _membersvc = GWT.create(WebMemberService.class);
+    protected static final StuffServiceAsync _stuffsvc = GWT.create(StuffService.class);
+    protected static final GroupServiceAsync _groupsvc = GWT.create(GroupService.class);
+    protected static final WebRoomServiceAsync _roomsvc = GWT.create(WebRoomService.class);
 }

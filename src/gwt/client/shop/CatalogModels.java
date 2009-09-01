@@ -12,7 +12,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.gwt.util.ChainedCallback;
 import com.threerings.gwt.util.DataModel;
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.Item;
@@ -176,6 +175,5 @@ public class CatalogModels
     protected Map<ItemIdent, CatalogService.SuiteResult> _suites =
         new HashMap<ItemIdent, CatalogService.SuiteResult>();
 
-    protected static final CatalogServiceAsync _catalogsvc = (CatalogServiceAsync)
-        ServiceUtil.bind(GWT.create(CatalogService.class), CatalogService.ENTRY_POINT);
+    protected static final CatalogServiceAsync _catalogsvc = GWT.create(CatalogService.class);
 }

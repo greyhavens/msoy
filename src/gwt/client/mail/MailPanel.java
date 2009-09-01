@@ -22,7 +22,6 @@ import com.threerings.gwt.ui.FloatPanel;
 import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.util.DateUtil;
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.mail.gwt.Conversation;
@@ -249,8 +248,7 @@ public class MailPanel extends FlowPanel
 
     protected static final MailMessages _msgs = GWT.create(MailMessages.class);
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
-    protected static final MailServiceAsync _mailsvc = (MailServiceAsync)
-        ServiceUtil.bind(GWT.create(MailService.class), MailService.ENTRY_POINT);
+    protected static final MailServiceAsync _mailsvc = GWT.create(MailService.class);
 
     protected static final int FLUFF = 29 * 2 + 20;
     protected static final int ROW_HEIGHT = 45;

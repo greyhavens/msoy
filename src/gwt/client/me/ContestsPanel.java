@@ -12,7 +12,6 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Image;
 
 import com.threerings.gwt.ui.WidgetUtil;
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.person.gwt.MeService;
 import com.threerings.msoy.person.gwt.MeServiceAsync;
@@ -67,6 +66,5 @@ public class ContestsPanel extends FlowPanel
     }
 
     protected static final MeMessages _msgs = GWT.create(MeMessages.class);
-    protected static final MeServiceAsync _mesvc = (MeServiceAsync)
-        ServiceUtil.bind(GWT.create(MeService.class), MeService.ENTRY_POINT);
+    protected static final MeServiceAsync _mesvc = GWT.create(MeService.class);
 }

@@ -11,7 +11,6 @@ import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.gwt.util.ListenerList;
-import com.threerings.gwt.util.ServiceUtil;
 import com.threerings.gwt.util.SimpleDataModel;
 
 import com.threerings.msoy.data.all.GroupName;
@@ -524,8 +523,7 @@ public class ForumModels
     /** A cached search result. */
     protected Search _search;
 
-    protected static final ForumServiceAsync _forumsvc = (ForumServiceAsync)
-        ServiceUtil.bind(GWT.create(ForumService.class), ForumService.ENTRY_POINT);
+    protected static final ForumServiceAsync _forumsvc = GWT.create(ForumService.class);
 
     /** The maximum number of unread threads we'll download at once. */
     protected static final int MAX_UNREAD_THREADS = 100;

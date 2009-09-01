@@ -8,7 +8,6 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.data.all.Friendship;
 
@@ -97,8 +96,6 @@ public class FriendInviteDisplay extends MailPayloadDisplay
     }
 
     protected static final MailMessages _msgs = GWT.create(MailMessages.class);
-    protected static final WebMemberServiceAsync _membersvc = (WebMemberServiceAsync)
-        ServiceUtil.bind(GWT.create(WebMemberService.class), WebMemberService.ENTRY_POINT);
-    protected static final MailServiceAsync _mailsvc = (MailServiceAsync)
-        ServiceUtil.bind(GWT.create(MailService.class), MailService.ENTRY_POINT);
+    protected static final WebMemberServiceAsync _membersvc = GWT.create(WebMemberService.class);
+    protected static final MailServiceAsync _mailsvc = GWT.create(MailService.class);
 }

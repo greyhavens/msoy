@@ -12,7 +12,6 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.person.gwt.FeedMessage;
 import com.threerings.msoy.person.gwt.FeedMessageAggregator;
@@ -89,6 +88,5 @@ public class FriendsFeedPanel extends FlowPanel
 
     protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
     protected static final PersonMessages _pmsgs = (PersonMessages)GWT.create(PersonMessages.class);
-    protected static final MeServiceAsync _mesvc = (MeServiceAsync)
-        ServiceUtil.bind(GWT.create(MeService.class), MeService.ENTRY_POINT);
+    protected static final MeServiceAsync _mesvc = GWT.create(MeService.class);
 }

@@ -26,7 +26,6 @@ import com.threerings.gwt.ui.EnterClickAdapter;
 import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.data.all.TagCodes;
 
@@ -390,6 +389,5 @@ public class TagDetailPanel extends VerticalPanel
     protected FlexTable _tagHistory;
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
-    protected static final ItemServiceAsync _itemsvc = (ItemServiceAsync)
-        ServiceUtil.bind(GWT.create(ItemService.class), ItemService.ENTRY_POINT);
+    protected static final ItemServiceAsync _itemsvc = GWT.create(ItemService.class);
 }

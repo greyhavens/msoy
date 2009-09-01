@@ -11,7 +11,6 @@ import java.util.Set;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.History;
 
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.item.data.all.GameItem;
 import com.threerings.msoy.item.data.all.IdentGameItem;
@@ -222,8 +221,7 @@ public class StuffPage extends Page
 
     protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
     protected static final StuffMessages _msgs = GWT.create(StuffMessages.class);
-    protected static final StuffServiceAsync _stuffsvc = (StuffServiceAsync)
-        ServiceUtil.bind(GWT.create(StuffService.class), StuffService.ENTRY_POINT);
+    protected static final StuffServiceAsync _stuffsvc = GWT.create(StuffService.class);
 
     /** Denotes item types that might be uploaded in bulk. */
     protected static final Set<Byte> BULK_TYPES = new HashSet<Byte>();

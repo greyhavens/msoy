@@ -16,7 +16,6 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.PagedTable;
 import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.gwt.util.DateUtil;
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.admin.gwt.AdminService;
 import com.threerings.msoy.admin.gwt.AdminServiceAsync;
@@ -129,7 +128,6 @@ public class ItemTransactionsPanel extends VerticalPanel
     protected AdminService.ItemTransactionResult _result;
 
     protected static final AdminMessages _msgs = GWT.create(AdminMessages.class);
-    protected static final AdminServiceAsync _adminsvc = (AdminServiceAsync)
-        ServiceUtil.bind(GWT.create(AdminService.class), AdminService.ENTRY_POINT);
+    protected static final AdminServiceAsync _adminsvc = GWT.create(AdminService.class);
     protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
 }

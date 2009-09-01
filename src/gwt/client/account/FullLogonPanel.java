@@ -8,7 +8,6 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.HasAlignment;
 
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.web.gwt.FacebookCreds;
@@ -68,8 +67,7 @@ public class FullLogonPanel extends LogonPanel
     protected FBConnect _fbconnect = new FBConnect();
 
     protected static final AccountMessages _msgs = GWT.create(AccountMessages.class);
-    protected static final WebUserServiceAsync _usersvc = (WebUserServiceAsync)
-        ServiceUtil.bind(GWT.create(WebUserService.class), WebUserService.ENTRY_POINT);
+    protected static final WebUserServiceAsync _usersvc = GWT.create(WebUserService.class);
 
     protected static final String FBCON_IMG = "/images/account/fbconnect.png";
 }

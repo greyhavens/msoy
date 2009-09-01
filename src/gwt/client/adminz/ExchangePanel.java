@@ -15,7 +15,6 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.PagedTable;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.util.DateUtil;
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.money.data.all.ExchangeData;
 import com.threerings.msoy.money.data.all.ExchangeStatusData;
@@ -115,6 +114,5 @@ public class ExchangePanel extends SmartTable
 
     protected NumberFormat _rateFormat = NumberFormat.getFormat("0.00");
 
-    protected static final MoneyServiceAsync _moneysvc = (MoneyServiceAsync)
-        ServiceUtil.bind(GWT.create(MoneyService.class), MoneyService.ENTRY_POINT);
+    protected static final MoneyServiceAsync _moneysvc = GWT.create(MoneyService.class);
 }

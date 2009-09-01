@@ -19,7 +19,6 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.util.PagedResult;
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.comment.gwt.Comment;
 import com.threerings.msoy.comment.gwt.CommentService;
@@ -291,6 +290,5 @@ public class CommentsPanel extends PagedGrid<Comment>
     protected Button _post;
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
-    protected static final CommentServiceAsync _commentsvc = (CommentServiceAsync)
-        ServiceUtil.bind(GWT.create(CommentService.class), CommentService.ENTRY_POINT);
+    protected static final CommentServiceAsync _commentsvc = GWT.create(CommentService.class);
 }

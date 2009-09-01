@@ -8,7 +8,6 @@ import java.util.List;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.FlowPanel;
 
-import com.threerings.gwt.util.ServiceUtil;
 import com.threerings.gwt.util.SimpleDataModel;
 
 import com.threerings.msoy.profile.gwt.ProfileService;
@@ -90,6 +89,5 @@ public class SearchPanel extends FlowPanel
     protected String _searchString;
 
     protected static final PeopleMessages _msgs = GWT.create(PeopleMessages.class);
-    protected static final ProfileServiceAsync _profilesvc = (ProfileServiceAsync)
-        ServiceUtil.bind(GWT.create(ProfileService.class), ProfileService.ENTRY_POINT);
+    protected static final ProfileServiceAsync _profilesvc = GWT.create(ProfileService.class);
 }

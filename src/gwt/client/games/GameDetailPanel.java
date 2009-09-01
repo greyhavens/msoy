@@ -18,7 +18,6 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.comment.gwt.Comment;
 import com.threerings.msoy.data.all.MediaDesc;
@@ -213,6 +212,5 @@ public class GameDetailPanel extends SmartTable
     protected Map<GameDetails, Integer> _tabmap = new HashMap<GameDetails, Integer>();
 
     protected static final GamesMessages _msgs = GWT.create(GamesMessages.class);
-    protected static final GameServiceAsync _gamesvc = (GameServiceAsync)
-        ServiceUtil.bind(GWT.create(GameService.class), GameService.ENTRY_POINT);
+    protected static final GameServiceAsync _gamesvc = GWT.create(GameService.class);
 }

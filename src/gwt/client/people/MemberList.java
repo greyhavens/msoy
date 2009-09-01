@@ -11,7 +11,6 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.ui.SmartTable;
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.data.all.Friendship;
 
@@ -126,6 +125,5 @@ public class MemberList extends PagedGrid<MemberCard>
     protected String _id; // for event tracking
 
     protected static final PeopleMessages _msgs = GWT.create(PeopleMessages.class);
-    protected static final WebMemberServiceAsync _membersvc = (WebMemberServiceAsync)
-        ServiceUtil.bind(GWT.create(WebMemberService.class), WebMemberService.ENTRY_POINT);
+    protected static final WebMemberServiceAsync _membersvc = GWT.create(WebMemberService.class);
 }

@@ -11,7 +11,6 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.WidgetUtil;
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.game.gwt.GameInfo;
 import com.threerings.msoy.game.gwt.GameService;
@@ -66,6 +65,5 @@ public class MyGamesPanel extends SortedGameListPanel
         Link.go(Pages.GAMES, "m", sort.toToken());
     }
 
-    protected static final GameServiceAsync _gamesvc = (GameServiceAsync)
-        ServiceUtil.bind(GWT.create(GameService.class), GameService.ENTRY_POINT);
+    protected static final GameServiceAsync _gamesvc = GWT.create(GameService.class);
 }

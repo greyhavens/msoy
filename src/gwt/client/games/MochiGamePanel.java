@@ -9,7 +9,6 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.WidgetUtil;
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.game.gwt.GameService;
 import com.threerings.msoy.game.gwt.GameServiceAsync;
@@ -60,6 +59,5 @@ public class MochiGamePanel extends FlowPanel
         CShell.frame.addNavLink("", Pages.GAMES, Args.compose(), -1);
     }
 
-    protected static final GameServiceAsync _gamesvc = (GameServiceAsync)
-        ServiceUtil.bind(GWT.create(GameService.class), GameService.ENTRY_POINT);
+    protected static final GameServiceAsync _gamesvc = GWT.create(GameService.class);
 }

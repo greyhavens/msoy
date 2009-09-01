@@ -12,7 +12,6 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.ui.SmartTable;
-import com.threerings.gwt.util.ServiceUtil;
 import com.threerings.gwt.util.SimpleDataModel;
 
 import com.threerings.msoy.web.gwt.Pages;
@@ -111,6 +110,5 @@ public class RoomsPanel extends FlowPanel
     }
 
     protected static final RoomsMessages _msgs = GWT.create(RoomsMessages.class);
-    protected static final WebRoomServiceAsync _worldsvc = (WebRoomServiceAsync)
-        ServiceUtil.bind(GWT.create(WebRoomService.class), WebRoomService.ENTRY_POINT);
+    protected static final WebRoomServiceAsync _worldsvc = GWT.create(WebRoomService.class);
 }

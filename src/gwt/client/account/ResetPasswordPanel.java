@@ -14,7 +14,6 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 
 import com.threerings.gwt.ui.EnterClickAdapter;
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.WebUserService;
@@ -133,6 +132,5 @@ public class ResetPasswordPanel extends FlexTable
     protected Label _status;
 
     protected static final AccountMessages _msgs = GWT.create(AccountMessages.class);
-    protected static final WebUserServiceAsync _usersvc = (WebUserServiceAsync)
-        ServiceUtil.bind(GWT.create(WebUserService.class), WebUserService.ENTRY_POINT);
+    protected static final WebUserServiceAsync _usersvc = GWT.create(WebUserService.class);
 }

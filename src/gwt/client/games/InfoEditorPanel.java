@@ -11,7 +11,6 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
 
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.game.gwt.GameGenre;
@@ -146,6 +145,5 @@ public class InfoEditorPanel extends BaseEditorPanel
         });
     }
 
-    protected static final GroupServiceAsync _groupsvc = (GroupServiceAsync)
-        ServiceUtil.bind(GWT.create(GroupService.class), GroupService.ENTRY_POINT);
+    protected static final GroupServiceAsync _groupsvc = GWT.create(GroupService.class);
 }

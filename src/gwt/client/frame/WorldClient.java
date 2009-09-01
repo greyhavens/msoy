@@ -8,7 +8,6 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.util.CookieUtil;
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.web.gwt.ConnectConfig;
 import com.threerings.msoy.web.gwt.CookieNames;
@@ -201,6 +200,5 @@ public class WorldClient extends Widget
     protected static String _defaultHost;
     protected static int _defaultPort;
 
-    protected static final WebUserServiceAsync _usersvc = (WebUserServiceAsync)
-        ServiceUtil.bind(GWT.create(WebUserService.class), WebUserService.ENTRY_POINT);
+    protected static final WebUserServiceAsync _usersvc = GWT.create(WebUserService.class);
 }

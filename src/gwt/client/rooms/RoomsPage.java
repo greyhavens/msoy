@@ -5,7 +5,6 @@ package client.rooms;
 
 import com.google.gwt.core.client.GWT;
 
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
@@ -46,6 +45,5 @@ public class RoomsPage extends Page
     }
 
     protected static final RoomsMessages _msgs = GWT.create(RoomsMessages.class);
-    protected static final WebRoomServiceAsync _worldsvc = (WebRoomServiceAsync)
-        ServiceUtil.bind(GWT.create(WebRoomService.class), WebRoomService.ENTRY_POINT);
+    protected static final WebRoomServiceAsync _worldsvc = GWT.create(WebRoomService.class);
 }

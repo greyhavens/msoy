@@ -6,7 +6,6 @@ package client.support;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.ListBox;
 
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.underwire.gwt.client.AccountPopup;
 import com.threerings.underwire.gwt.client.WebContext;
@@ -69,7 +68,5 @@ public class MsoyAccountPopup extends AccountPopup
     
     protected ListBox _status;
 
-    protected static final SupportServiceAsync _supportService = 
-        (SupportServiceAsync)ServiceUtil.bind(GWT.create(SupportService.class),
-        SupportService.ENTRY_POINT);
+    protected static final SupportServiceAsync _supportService = GWT.create(SupportService.class);
 }

@@ -8,7 +8,6 @@ import java.util.List;
 
 import com.google.gwt.core.client.GWT;
 
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.game.gwt.ArcadeData;
 import com.threerings.msoy.game.gwt.GameGenre;
@@ -57,6 +56,5 @@ public class GameGenrePanel extends SortedGameListPanel
     /** Header area with title, games dropdown and search */
     protected GameHeaderPanel _header;
 
-    protected static final GameServiceAsync _gamesvc = (GameServiceAsync)
-        ServiceUtil.bind(GWT.create(GameService.class), GameService.ENTRY_POINT);
+    protected static final GameServiceAsync _gamesvc = GWT.create(GameService.class);
 }

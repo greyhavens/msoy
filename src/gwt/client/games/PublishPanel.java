@@ -10,7 +10,6 @@ import com.google.gwt.user.client.ui.Button;
 
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.util.DateUtil;
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.game.gwt.GameCode;
@@ -87,6 +86,5 @@ public class PublishPanel extends SmartTable
     protected Button _publish = new Button(_msgs.publishPublish());
 
     protected static final GamesMessages _msgs = GWT.create(GamesMessages.class);
-    protected static final GameServiceAsync _gamesvc = (GameServiceAsync)
-        ServiceUtil.bind(GWT.create(GameService.class), GameService.ENTRY_POINT);
+    protected static final GameServiceAsync _gamesvc = GWT.create(GameService.class);
 }

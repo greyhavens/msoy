@@ -8,7 +8,6 @@ import java.util.List;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-import com.threerings.gwt.util.ServiceUtil;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemListQuery;
 import com.threerings.msoy.item.gwt.ItemService;
@@ -113,6 +112,5 @@ public class ItemListDataModel extends MsoyServiceBackedDataModel<Item, ItemList
     protected ItemListQuery _query;
     protected boolean _initialized;
 
-    protected static final ItemServiceAsync _itemsvc = (ItemServiceAsync)
-        ServiceUtil.bind(GWT.create(ItemService.class), ItemService.ENTRY_POINT);
+    protected static final ItemServiceAsync _itemsvc = GWT.create(ItemService.class);
 }

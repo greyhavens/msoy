@@ -14,7 +14,6 @@ import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.TextBox;
 
 import com.threerings.gwt.ui.SmartTable;
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.data.all.MemberMailUtil;
 import com.threerings.msoy.data.all.MemberName;
@@ -131,6 +130,5 @@ public class ConfigAccountPanel extends FlowPanel
     protected PushButton _submit;
 
     protected static final AccountMessages _msgs = GWT.create(AccountMessages.class);
-    protected static final WebUserServiceAsync _usersvc = (WebUserServiceAsync)
-        ServiceUtil.bind(GWT.create(WebUserService.class), WebUserService.ENTRY_POINT);
+    protected static final WebUserServiceAsync _usersvc = GWT.create(WebUserService.class);
 }

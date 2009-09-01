@@ -14,7 +14,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.samskivert.util.ByteEnumUtil;
 
 import com.threerings.gwt.util.DataModel;
-import com.threerings.gwt.util.ServiceUtil;
 import com.threerings.gwt.util.SimpleDataModel;
 
 import com.threerings.msoy.item.data.all.Item;
@@ -225,6 +224,5 @@ public class InventoryModels
 
     protected Map<Key, Stuff> _models = new HashMap<Key, Stuff>();
 
-    protected static final StuffServiceAsync _stuffsvc = (StuffServiceAsync)
-        ServiceUtil.bind(GWT.create(StuffService.class), StuffService.ENTRY_POINT);
+    protected static final StuffServiceAsync _stuffsvc = GWT.create(StuffService.class);
 }

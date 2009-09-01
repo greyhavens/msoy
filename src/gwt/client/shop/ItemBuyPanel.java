@@ -11,7 +11,6 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 
 import com.threerings.gwt.ui.WidgetUtil;
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.IdentGameItem;
@@ -111,6 +110,5 @@ public class ItemBuyPanel extends BuyPanel<Item>
 
     protected static final ShopMessages _msgs = GWT.create(ShopMessages.class);
     protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
-    protected static final CatalogServiceAsync _catalogsvc = (CatalogServiceAsync)
-        ServiceUtil.bind(GWT.create(CatalogService.class), CatalogService.ENTRY_POINT);
+    protected static final CatalogServiceAsync _catalogsvc = GWT.create(CatalogService.class);
 }

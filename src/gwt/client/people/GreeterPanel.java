@@ -10,7 +10,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlowPanel;
 
 import com.threerings.gwt.ui.WidgetUtil;
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.web.gwt.MemberCard;
 import com.threerings.msoy.web.gwt.WebMemberService;
@@ -64,6 +63,5 @@ public class GreeterPanel extends FlowPanel
     }
 
     protected static final PeopleMessages _msgs = GWT.create(PeopleMessages.class);
-    protected static final WebMemberServiceAsync _membersvc = (WebMemberServiceAsync)
-        ServiceUtil.bind(GWT.create(WebMemberService.class), WebMemberService.ENTRY_POINT);
+    protected static final WebMemberServiceAsync _membersvc = GWT.create(WebMemberService.class);
 }

@@ -19,7 +19,6 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.group.gwt.BrandDetail;
 import com.threerings.msoy.item.data.all.Item;
@@ -495,8 +494,7 @@ public class DoListItemPopup extends VerticalPanel
 
     protected static final ItemMessages _imsgs = GWT.create(ItemMessages.class);
     protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
-    protected static final CatalogServiceAsync _catalogsvc = (CatalogServiceAsync)
-        ServiceUtil.bind(GWT.create(CatalogService.class), CatalogService.ENTRY_POINT);
+    protected static final CatalogServiceAsync _catalogsvc = GWT.create(CatalogService.class);
 
     protected static final int DEFAULT_COIN_COST = 1000;
     protected static final int DEFAULT_SALES_TARGET = 50;

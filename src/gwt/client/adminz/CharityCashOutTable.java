@@ -19,7 +19,6 @@ import com.threerings.gwt.ui.Anchor;
 import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.ui.SmartTable;
-import com.threerings.gwt.util.ServiceUtil;
 import com.threerings.gwt.util.SimpleDataModel;
 
 import com.threerings.msoy.money.data.all.CharityBlingInfo;
@@ -166,6 +165,5 @@ public class CharityCashOutTable extends PagedGrid<CharityBlingInfo>
     
     protected static final AdminMessages _msgs = GWT.create(AdminMessages.class);
     
-    protected static final MoneyServiceAsync _moneysvc = (MoneyServiceAsync)
-        ServiceUtil.bind(GWT.create(MoneyService.class), MoneyService.ENTRY_POINT);
+    protected static final MoneyServiceAsync _moneysvc = GWT.create(MoneyService.class);
 }

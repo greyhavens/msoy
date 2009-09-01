@@ -16,7 +16,6 @@ import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 import com.threerings.gwt.ui.InlineLabel;
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.admin.gwt.AdminService;
 import com.threerings.msoy.admin.gwt.AdminServiceAsync;
@@ -236,10 +235,7 @@ public class ReviewItem extends FlowPanel
     protected Button _mark, _delete, _done;
 
     protected static final AdminMessages _msgs = GWT.create(AdminMessages.class);
-    protected static final CatalogServiceAsync _catalogsvc = (CatalogServiceAsync)
-        ServiceUtil.bind(GWT.create(CatalogService.class), CatalogService.ENTRY_POINT);
-    protected static final ItemServiceAsync _itemsvc = (ItemServiceAsync)
-        ServiceUtil.bind(GWT.create(ItemService.class), ItemService.ENTRY_POINT);
-    protected static final AdminServiceAsync _adminsvc = (AdminServiceAsync)
-        ServiceUtil.bind(GWT.create(AdminService.class), AdminService.ENTRY_POINT);
+    protected static final CatalogServiceAsync _catalogsvc = GWT.create(CatalogService.class);
+    protected static final ItemServiceAsync _itemsvc = GWT.create(ItemService.class);
+    protected static final AdminServiceAsync _adminsvc = GWT.create(AdminService.class);
 }

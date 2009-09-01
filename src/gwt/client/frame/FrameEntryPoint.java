@@ -24,7 +24,6 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.gwt.util.CookieUtil;
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.LaunchConfig;
@@ -1023,10 +1022,8 @@ public class FrameEntryPoint
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
     protected static final FrameImages _images = (FrameImages)GWT.create(FrameImages.class);
-    protected static final WebMemberServiceAsync _membersvc = (WebMemberServiceAsync)
-        ServiceUtil.bind(GWT.create(WebMemberService.class), WebMemberService.ENTRY_POINT);
-    protected static final WebUserServiceAsync _usersvc = (WebUserServiceAsync)
-        ServiceUtil.bind(GWT.create(WebUserService.class), WebUserService.ENTRY_POINT);
+    protected static final WebMemberServiceAsync _membersvc = GWT.create(WebMemberService.class);
+    protected static final WebUserServiceAsync _usersvc = GWT.create(WebUserService.class);
 
     // constants for our top-level elements
     protected static final String PAGE = "page";

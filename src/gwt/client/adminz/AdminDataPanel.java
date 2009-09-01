@@ -5,7 +5,6 @@ package client.adminz;
 
 import com.google.gwt.core.client.GWT;
 
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.admin.gwt.AdminService;
 import com.threerings.msoy.admin.gwt.AdminServiceAsync;
@@ -23,6 +22,5 @@ public abstract class AdminDataPanel<T> extends DataPanel<T>
     }
 
     protected static final AdminMessages _msgs = GWT.create(AdminMessages.class);
-    protected static final AdminServiceAsync _adminsvc = (AdminServiceAsync)
-        ServiceUtil.bind(GWT.create(AdminService.class), AdminService.ENTRY_POINT);
+    protected static final AdminServiceAsync _adminsvc = GWT.create(AdminService.class);
 }

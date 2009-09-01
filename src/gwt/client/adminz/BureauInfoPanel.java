@@ -20,7 +20,6 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.util.DateUtil;
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.admin.gwt.AdminService;
 import com.threerings.msoy.admin.gwt.AdminServiceAsync;
@@ -196,6 +195,5 @@ public class BureauInfoPanel extends VerticalPanel
 
     protected AdminMessages _msgs = GWT.create(AdminMessages.class);
 
-    protected AdminServiceAsync _adminSvc = (AdminServiceAsync)
-        ServiceUtil.bind(GWT.create(AdminService.class), AdminService.ENTRY_POINT);
+    protected AdminServiceAsync _adminSvc = GWT.create(AdminService.class);
 }

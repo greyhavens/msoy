@@ -13,7 +13,6 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.util.PagedResult;
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.group.data.all.Group;
@@ -170,6 +169,5 @@ public class GroupMembersPanel extends PagedGrid<GroupMemberCard>
     protected Button _invite;
 
     protected static final GroupsMessages _msgs = GWT.create(GroupsMessages.class);
-    protected static final GroupServiceAsync _groupsvc = (GroupServiceAsync)
-        ServiceUtil.bind(GWT.create(GroupService.class), GroupService.ENTRY_POINT);
+    protected static final GroupServiceAsync _groupsvc = GWT.create(GroupService.class);
 }

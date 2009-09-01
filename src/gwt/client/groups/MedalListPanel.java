@@ -17,7 +17,6 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.gwt.util.ServiceUtil;
 import com.threerings.gwt.util.SimpleDataModel;
 
 import com.threerings.gwt.ui.PagedGrid;
@@ -182,6 +181,5 @@ public class MedalListPanel extends FlowPanel
     protected static final int MEDALS_ROWS = 6;
 
     protected static final GroupsMessages _msgs = GWT.create(GroupsMessages.class);
-    protected static final GroupServiceAsync _groupsvc = (GroupServiceAsync)ServiceUtil.bind(
-        GWT.create(GroupService.class), GroupService.ENTRY_POINT);
+    protected static final GroupServiceAsync _groupsvc = GWT.create(GroupService.class);
 }

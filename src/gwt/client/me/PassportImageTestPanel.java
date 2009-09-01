@@ -9,7 +9,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.PagedGrid;
-import com.threerings.gwt.util.ServiceUtil;
 import com.threerings.gwt.util.SimpleDataModel;
 
 import com.threerings.msoy.badge.data.all.Badge;
@@ -47,8 +46,7 @@ public class PassportImageTestPanel extends PagedGrid<Badge>
         return "ZOMG! The server gave us no badges! Run away!!!!!11one!";
     }
 
-    protected static final MeServiceAsync _mesvc = (MeServiceAsync)
-        ServiceUtil.bind(GWT.create(MeService.class), MeService.ENTRY_POINT);
+    protected static final MeServiceAsync _mesvc = GWT.create(MeService.class);
 
     protected static final int GRID_ROWS = 4;
     protected static final int GRID_COLUMNS = 4;

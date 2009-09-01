@@ -16,7 +16,6 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.survey.gwt.Survey;
 import com.threerings.msoy.survey.gwt.SurveyQuestion;
@@ -304,7 +303,6 @@ public class TakeSurveyPanel extends VerticalPanel
     public QuestionUI _questions[];
     public List<SurveyResponse> _responses = new ArrayList<SurveyResponse>();
 
-    protected static final SurveyServiceAsync _surveySvc = (SurveyServiceAsync)(ServiceUtil.bind(
-        GWT.create(SurveyService.class), SurveyService.ENTRY_POINT));
+    protected static final SurveyServiceAsync _surveySvc = GWT.create(SurveyService.class);
     protected static final SurveyMessages _msgs = GWT.create(SurveyMessages.class);
 }

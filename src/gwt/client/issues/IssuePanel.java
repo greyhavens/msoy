@@ -9,7 +9,6 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.fora.gwt.IssueService;
 import com.threerings.msoy.fora.gwt.IssueServiceAsync;
@@ -66,6 +65,5 @@ public class IssuePanel extends FlowPanel
     protected IssueModels _imodels;
 
     protected static final IssuesMessages _msgs = (IssuesMessages)GWT.create(IssuesMessages.class);
-    protected static final IssueServiceAsync _issuesvc = (IssueServiceAsync)
-        ServiceUtil.bind(GWT.create(IssueService.class), IssueService.ENTRY_POINT);
+    protected static final IssueServiceAsync _issuesvc = GWT.create(IssueService.class);
 }

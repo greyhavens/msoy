@@ -8,7 +8,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.money.data.all.Currency;
@@ -42,6 +41,5 @@ public class RoomBuyPanel extends BuyPanel<RoomInfo>
     }
 
     protected static final PeopleMessages _msgs = GWT.create(PeopleMessages.class);
-    protected static final WebRoomServiceAsync _roomsvc = (WebRoomServiceAsync)
-        ServiceUtil.bind(GWT.create(WebRoomService.class), WebRoomService.ENTRY_POINT);
+    protected static final WebRoomServiceAsync _roomsvc = GWT.create(WebRoomService.class);
 }

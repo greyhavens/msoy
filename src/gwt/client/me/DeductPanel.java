@@ -10,7 +10,6 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.gwt.MoneyService;
@@ -58,6 +57,5 @@ public class DeductPanel extends HorizontalPanel
     protected static final MeMessages _msgs = GWT.create(MeMessages.class);
     protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
 
-    protected static final MoneyServiceAsync _moneysvc = (MoneyServiceAsync)
-        ServiceUtil.bind(GWT.create(MoneyService.class), MoneyService.ENTRY_POINT);
+    protected static final MoneyServiceAsync _moneysvc = GWT.create(MoneyService.class);
 }

@@ -21,7 +21,6 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.util.DateUtil;
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MemberName;
@@ -231,8 +230,7 @@ public class RegisterPanel extends FlowPanel
     protected DateFields _birthday = new DateFields();
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
-    protected static final WebUserServiceAsync _usersvc = (WebUserServiceAsync)
-        ServiceUtil.bind(GWT.create(WebUserService.class), WebUserService.ENTRY_POINT);
+    protected static final WebUserServiceAsync _usersvc = GWT.create(WebUserService.class);
 
     // post-registration beacon URLs: yay for partners!
     protected static final String[][] BEACONS = new String[][] {

@@ -8,7 +8,6 @@ import java.util.List;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.mail.gwt.ConvMessage;
 import com.threerings.msoy.mail.gwt.Conversation;
@@ -122,6 +121,5 @@ public class ConvosModel extends MsoyServiceBackedDataModel<Conversation, MailSe
     /** The total number of unread conversations, on all pages. */
     protected int _unreadCount;
 
-    protected static final MailServiceAsync _mailsvc = (MailServiceAsync)
-        ServiceUtil.bind(GWT.create(MailService.class), MailService.ENTRY_POINT);
+    protected static final MailServiceAsync _mailsvc = GWT.create(MailService.class);
 }

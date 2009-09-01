@@ -18,7 +18,6 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.gwt.util.DateUtil;
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
@@ -334,8 +333,6 @@ public class ConvoPanel extends FlowPanel
 
     protected static final MailMessages _msgs = GWT.create(MailMessages.class);
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
-    protected static final MailServiceAsync _mailsvc = (MailServiceAsync)
-        ServiceUtil.bind(GWT.create(MailService.class), MailService.ENTRY_POINT);
-    protected static final WebMemberServiceAsync _membersvc = (WebMemberServiceAsync)
-        ServiceUtil.bind(GWT.create(WebMemberService.class), WebMemberService.ENTRY_POINT);
+    protected static final MailServiceAsync _mailsvc = GWT.create(MailService.class);
+    protected static final WebMemberServiceAsync _membersvc = GWT.create(WebMemberService.class);
 }

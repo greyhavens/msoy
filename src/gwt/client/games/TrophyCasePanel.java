@@ -6,7 +6,6 @@ package client.games;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.game.gwt.GameService;
 import com.threerings.msoy.game.gwt.GameServiceAsync;
@@ -74,6 +73,5 @@ public class TrophyCasePanel extends VerticalPanel
     }
 
     protected static final GamesMessages _msgs = GWT.create(GamesMessages.class);
-    protected static final GameServiceAsync _gamesvc = (GameServiceAsync)
-        ServiceUtil.bind(GWT.create(GameService.class), GameService.ENTRY_POINT);
+    protected static final GameServiceAsync _gamesvc = GWT.create(GameService.class);
 }

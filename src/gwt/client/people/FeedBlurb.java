@@ -5,7 +5,6 @@ package client.people;
 
 import com.google.gwt.core.client.GWT;
 
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.profile.gwt.ProfileService;
 import com.threerings.msoy.profile.gwt.ProfileServiceAsync;
@@ -32,6 +31,5 @@ public class FeedBlurb extends Blurb
     }
 
     protected static final PeopleMessages _msgs = GWT.create(PeopleMessages.class);
-    protected static final ProfileServiceAsync _profilesvc = (ProfileServiceAsync)
-        ServiceUtil.bind(GWT.create(ProfileService.class), ProfileService.ENTRY_POINT);
+    protected static final ProfileServiceAsync _profilesvc = GWT.create(ProfileService.class);
 }

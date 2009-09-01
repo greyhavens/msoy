@@ -26,7 +26,6 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.PagedTable;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.util.DateUtil;
-import com.threerings.gwt.util.ServiceUtil;
 import com.threerings.gwt.util.SimpleDataModel;
 
 import com.threerings.msoy.web.gwt.Args;
@@ -829,7 +828,6 @@ public class EditSurveyPanel extends VerticalPanel
     /** Our survey and questions cache, used across token changes. */
     protected Cache _cache = new Cache();
 
-    protected static final SurveyServiceAsync _surveySvc = (SurveyServiceAsync)(ServiceUtil.bind(
-        GWT.create(SurveyService.class), SurveyService.ENTRY_POINT));
+    protected static final SurveyServiceAsync _surveySvc = GWT.create(SurveyService.class);
     protected static final SurveyMessages _msgs = GWT.create(SurveyMessages.class);
 }

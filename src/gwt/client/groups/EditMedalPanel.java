@@ -16,7 +16,6 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.group.data.all.Medal;
@@ -172,6 +171,5 @@ public class EditMedalPanel extends FlexTable
     protected static final String ICON_MEDIA_ID = "medalIcon";
 
     protected static final GroupsMessages _msgs = GWT.create(GroupsMessages.class);
-    protected static final GroupServiceAsync _groupsvc = (GroupServiceAsync)ServiceUtil.bind(
-        GWT.create(GroupService.class), GroupService.ENTRY_POINT);
+    protected static final GroupServiceAsync _groupsvc = GWT.create(GroupService.class);
 }

@@ -10,7 +10,6 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.TextBox;
 
 import com.threerings.gwt.ui.SmartTable;
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.stuff.gwt.StuffService;
@@ -94,6 +93,5 @@ public class RenameHandler extends ClickCallback<String>
 
     protected static final StuffMessages _msgs = GWT.create(StuffMessages.class);
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
-    protected static final StuffServiceAsync _stuffsvc = (StuffServiceAsync)
-        ServiceUtil.bind(GWT.create(StuffService.class), StuffService.ENTRY_POINT);
+    protected static final StuffServiceAsync _stuffsvc = GWT.create(StuffService.class);
 }

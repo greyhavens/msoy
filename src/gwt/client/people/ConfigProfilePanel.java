@@ -17,7 +17,6 @@ import com.google.gwt.user.client.ui.TextBox;
 
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.util.DateUtil;
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.data.all.CoinAwards;
 import com.threerings.msoy.data.all.MediaDesc;
@@ -152,6 +151,5 @@ public class ConfigProfilePanel extends FlowPanel
 
     protected static final PeopleMessages _msgs = GWT.create(PeopleMessages.class);
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
-    protected static final ProfileServiceAsync _profilesvc = (ProfileServiceAsync)
-        ServiceUtil.bind(GWT.create(ProfileService.class), ProfileService.ENTRY_POINT);
+    protected static final ProfileServiceAsync _profilesvc = GWT.create(ProfileService.class);
 }

@@ -6,7 +6,6 @@ package client.account;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.FlowPanel;
 
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.web.gwt.SessionData;
 import com.threerings.msoy.web.gwt.WebUserService;
@@ -39,6 +38,5 @@ public class ValidatePanel extends FlowPanel
     }
 
     protected static final AccountMessages _msgs = GWT.create(AccountMessages.class);
-    protected static final WebUserServiceAsync _usersvc = (WebUserServiceAsync)
-        ServiceUtil.bind(GWT.create(WebUserService.class), WebUserService.ENTRY_POINT);
+    protected static final WebUserServiceAsync _usersvc = GWT.create(WebUserService.class);
 }

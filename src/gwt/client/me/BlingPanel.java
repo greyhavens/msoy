@@ -20,7 +20,6 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.money.data.all.BlingExchangeResult;
 import com.threerings.msoy.money.data.all.BlingInfo;
@@ -287,6 +286,5 @@ public class BlingPanel extends FlowPanel
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
     protected static final MeMessages _msgs = GWT.create(MeMessages.class);
-    protected static final MoneyServiceAsync _moneysvc = (MoneyServiceAsync)
-        ServiceUtil.bind(GWT.create(MoneyService.class), MoneyService.ENTRY_POINT);
+    protected static final MoneyServiceAsync _moneysvc = GWT.create(MoneyService.class);
 }

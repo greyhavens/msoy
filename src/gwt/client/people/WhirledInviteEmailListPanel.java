@@ -10,7 +10,6 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.TextBox;
 
 import com.threerings.gwt.ui.SmartTable;
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.data.all.Friendship;
 
@@ -106,6 +105,5 @@ public class WhirledInviteEmailListPanel extends EmailListPanel
 
     protected TextBox _subject;
 
-    protected static final InviteServiceAsync _invitesvc = (InviteServiceAsync)
-        ServiceUtil.bind(GWT.create(InviteService.class), InviteService.ENTRY_POINT);
+    protected static final InviteServiceAsync _invitesvc = GWT.create(InviteService.class);
 }

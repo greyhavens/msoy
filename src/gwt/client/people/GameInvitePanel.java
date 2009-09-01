@@ -21,7 +21,6 @@ import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.game.gwt.GameDetail;
@@ -375,10 +374,8 @@ public class GameInvitePanel extends InvitePanel
         protected MemberCard _card;
     }
 
-    protected static final GameServiceAsync _gamesvc = (GameServiceAsync)
-        ServiceUtil.bind(GWT.create(GameService.class), GameService.ENTRY_POINT);
-    protected static final InviteServiceAsync _invitesvc = (InviteServiceAsync)
-        ServiceUtil.bind(GWT.create(InviteService.class), InviteService.ENTRY_POINT);
+    protected static final GameServiceAsync _gamesvc = GWT.create(GameService.class);
+    protected static final InviteServiceAsync _invitesvc = GWT.create(InviteService.class);
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
 
     protected static final String FBINVITE_WINDOW_NAME = "_whirled_fbinvite";

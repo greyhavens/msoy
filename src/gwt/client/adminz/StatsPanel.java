@@ -24,7 +24,6 @@ import com.google.gwt.gen2.table.client.ScrollTable;
 import com.google.gwt.gen2.table.client.SortableGrid;
 import com.google.gwt.gen2.table.client.TableModelHelper.ColumnSortList;
 
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.admin.gwt.AdminService;
 import com.threerings.msoy.admin.gwt.AdminServiceAsync;
@@ -163,8 +162,7 @@ public class StatsPanel extends FlowPanel
     protected ListBox _types;
 
     protected static final AdminMessages _msgs = GWT.create(AdminMessages.class);
-    protected static final AdminServiceAsync _adminsvc = (AdminServiceAsync)
-        ServiceUtil.bind(GWT.create(AdminService.class), AdminService.ENTRY_POINT);
+    protected static final AdminServiceAsync _adminsvc = GWT.create(AdminService.class);
 
     protected static final int DATA_WIDTH = 50;
 }

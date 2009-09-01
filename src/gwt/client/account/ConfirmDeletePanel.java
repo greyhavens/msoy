@@ -11,7 +11,6 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 
 import com.threerings.gwt.ui.SmartTable;
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.WebUserService;
@@ -72,6 +71,5 @@ public class ConfirmDeletePanel extends FlowPanel
     protected PasswordTextBox _password;
 
     protected static final AccountMessages _msgs = GWT.create(AccountMessages.class);
-    protected static final WebUserServiceAsync _usersvc = (WebUserServiceAsync)
-        ServiceUtil.bind(GWT.create(WebUserService.class), WebUserService.ENTRY_POINT);
+    protected static final WebUserServiceAsync _usersvc = GWT.create(WebUserService.class);
 }

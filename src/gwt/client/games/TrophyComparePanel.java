@@ -11,7 +11,6 @@ import com.google.gwt.user.client.ui.HasAlignment;
 
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.util.DateUtil;
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.game.gwt.GameService;
@@ -110,6 +109,5 @@ public class TrophyComparePanel extends SmartTable
     }
 
     protected static final GamesMessages _msgs = GWT.create(GamesMessages.class);
-    protected static final GameServiceAsync _gamesvc = (GameServiceAsync)
-        ServiceUtil.bind(GWT.create(GameService.class), GameService.ENTRY_POINT);
+    protected static final GameServiceAsync _gamesvc = GWT.create(GameService.class);
 }

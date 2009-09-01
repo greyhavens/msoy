@@ -17,7 +17,6 @@ import com.kisgergely.gwt.canvas.client.Canvas;
 import com.kisgergely.gwt.canvas.client.CanvasRenderingContext2D;
 
 import com.threerings.gwt.ui.WidgetUtil;
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.game.gwt.GameDetail;
 import com.threerings.msoy.game.gwt.GameDistribs;
@@ -221,8 +220,7 @@ public class GameMetricsPanel extends VerticalPanel
     protected GameDetail _detail;
 
     protected static final GamesMessages _msgs = GWT.create(GamesMessages.class);
-    protected static final GameServiceAsync _gamesvc = (GameServiceAsync)
-        ServiceUtil.bind(GWT.create(GameService.class), GameService.ENTRY_POINT);
+    protected static final GameServiceAsync _gamesvc = GWT.create(GameService.class);
 
     protected static final int BAR_WIDTH = 3;
     protected static final int GRAPH_HEIGHT = 100;

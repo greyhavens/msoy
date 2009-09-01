@@ -7,7 +7,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.mail.gwt.ConvMessage;
 import com.threerings.msoy.mail.gwt.MailPayload;
@@ -120,6 +119,5 @@ public class MailPayloadDisplay
     protected int _convoId;
     protected ConvMessage _message;
 
-    protected static final MailServiceAsync _mailsvc = (MailServiceAsync)
-        ServiceUtil.bind(GWT.create(MailService.class), MailService.ENTRY_POINT);
+    protected static final MailServiceAsync _mailsvc = GWT.create(MailService.class);
 }

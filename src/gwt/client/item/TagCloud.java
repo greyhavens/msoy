@@ -12,7 +12,6 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.item.gwt.CatalogService;
 import com.threerings.msoy.item.gwt.CatalogServiceAsync;
@@ -73,6 +72,5 @@ public class TagCloud extends FlowPanel
     protected TagListener _listener;
 
     protected static final ItemMessages _imsgs = GWT.create(ItemMessages.class);
-    protected static final CatalogServiceAsync _catalogsvc = (CatalogServiceAsync)
-        ServiceUtil.bind(GWT.create(CatalogService.class), CatalogService.ENTRY_POINT);
+    protected static final CatalogServiceAsync _catalogsvc = GWT.create(CatalogService.class);
 }

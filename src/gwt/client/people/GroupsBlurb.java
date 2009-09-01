@@ -17,7 +17,6 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.PagedGrid;
-import com.threerings.gwt.util.ServiceUtil;
 import com.threerings.gwt.util.SimpleDataModel;
 
 import com.threerings.msoy.group.gwt.BrandDetail;
@@ -181,8 +180,7 @@ public class GroupsBlurb extends Blurb
     }
 
     protected static final PeopleMessages _msgs = GWT.create(PeopleMessages.class);
-    protected static final GroupServiceAsync _groupsvc = (GroupServiceAsync)
-        ServiceUtil.bind(GWT.create(GroupService.class), GroupService.ENTRY_POINT);
+    protected static final GroupServiceAsync _groupsvc = GWT.create(GroupService.class);
 
     protected static final int GROUP_COLUMNS = 6;
     protected static final int GROUP_ROWS = 2;

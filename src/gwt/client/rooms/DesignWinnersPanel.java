@@ -12,7 +12,6 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.FloatPanel;
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.web.gwt.Pages;
 
@@ -115,6 +114,5 @@ public class DesignWinnersPanel extends FlowPanel
     }
 
     protected static final RoomsMessages _msgs = GWT.create(RoomsMessages.class);
-    protected static final WebRoomServiceAsync _worldsvc = (WebRoomServiceAsync)ServiceUtil.bind(
-        GWT.create(WebRoomService.class), WebRoomService.ENTRY_POINT);
+    protected static final WebRoomServiceAsync _worldsvc = GWT.create(WebRoomService.class);
 }

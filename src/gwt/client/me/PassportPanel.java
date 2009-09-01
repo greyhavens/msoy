@@ -18,7 +18,6 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.badge.data.all.Badge;
 import com.threerings.msoy.badge.data.all.InProgressBadge;
@@ -364,6 +363,5 @@ public class PassportPanel extends FlowPanel
 
     protected static final MeMessages _msgs = GWT.create(MeMessages.class);
     protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
-    protected static final MeServiceAsync _mesvc = (MeServiceAsync)
-        ServiceUtil.bind(GWT.create(MeService.class), MeService.ENTRY_POINT);
+    protected static final MeServiceAsync _mesvc = GWT.create(MeService.class);
 }

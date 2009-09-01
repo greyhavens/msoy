@@ -16,7 +16,6 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.gwt.util.ServiceUtil;
 import com.threerings.gwt.util.SimpleDataModel;
 
 import com.threerings.gwt.ui.PagedGrid;
@@ -221,6 +220,5 @@ public class ImageChooserPopup extends VerticalPanel
     protected AsyncCallback<MediaDesc> _callback;
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
-    protected static final ItemServiceAsync _itemsvc = (ItemServiceAsync)
-        ServiceUtil.bind(GWT.create(ItemService.class), ItemService.ENTRY_POINT);
+    protected static final ItemServiceAsync _itemsvc = GWT.create(ItemService.class);
 }

@@ -16,7 +16,6 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.admin.gwt.AdminService;
 import com.threerings.msoy.admin.gwt.AdminServiceAsync;
@@ -152,8 +151,6 @@ public class DashboardPanel extends SmartTable
     }
 
     protected static final AdminMessages _msgs = GWT.create(AdminMessages.class);
-    protected static final AdminServiceAsync _adminsvc = (AdminServiceAsync)
-        ServiceUtil.bind(GWT.create(AdminService.class), AdminService.ENTRY_POINT);
-    protected static final WebUserServiceAsync _usersvc = (WebUserServiceAsync)
-        ServiceUtil.bind(GWT.create(WebUserService.class), WebUserService.ENTRY_POINT);
+    protected static final AdminServiceAsync _adminsvc = GWT.create(AdminService.class);
+    protected static final WebUserServiceAsync _usersvc = GWT.create(WebUserService.class);
 }

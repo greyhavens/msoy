@@ -13,7 +13,6 @@ import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.gwt.util.CookieUtil;
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.VisitorInfo;
@@ -195,8 +194,6 @@ public class Session
     protected static VisitorInfo _visitor;
     protected static List<Observer> _observers = new ArrayList<Observer>();
 
-    protected static final WebUserServiceAsync _usersvc = (WebUserServiceAsync)
-        ServiceUtil.bind(GWT.create(WebUserService.class), WebUserService.ENTRY_POINT);
-    protected static final WebMemberServiceAsync _membersvc = (WebMemberServiceAsync)
-        ServiceUtil.bind(GWT.create(WebMemberService.class), WebMemberService.ENTRY_POINT);
+    protected static final WebUserServiceAsync _usersvc = GWT.create(WebUserService.class);
+    protected static final WebMemberServiceAsync _membersvc = GWT.create(WebMemberService.class);
 }

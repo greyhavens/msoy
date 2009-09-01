@@ -13,7 +13,6 @@ import com.google.gwt.user.client.ui.PushButton;
 
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.PriceQuote;
@@ -104,6 +103,5 @@ public class SubscribePanel extends BillingPanel
         add(buyPanel.createPromptHost(_msgs.barscribe()));
     }
 
-    protected static final WebMemberServiceAsync _membersvc = (WebMemberServiceAsync)
-        ServiceUtil.bind(GWT.create(WebMemberService.class), WebMemberService.ENTRY_POINT);
+    protected static final WebMemberServiceAsync _membersvc = GWT.create(WebMemberService.class);
 }

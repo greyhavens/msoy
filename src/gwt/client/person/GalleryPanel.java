@@ -9,7 +9,6 @@ import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.FloatPanel;
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.person.gwt.Gallery;
@@ -76,8 +75,7 @@ public class GalleryPanel extends FlowPanel
             _pmsgs.galleryProfileName(owner.toString()) : gallery.name;
     }
 
-    protected static final GalleryServiceAsync _gallerysvc = (GalleryServiceAsync)
-        ServiceUtil.bind(GWT.create(GalleryService.class), GalleryService.ENTRY_POINT);
+    protected static final GalleryServiceAsync _gallerysvc = GWT.create(GalleryService.class);
 
     protected static final PersonMessages _pmsgs = (PersonMessages)GWT.create(PersonMessages.class);
 }

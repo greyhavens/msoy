@@ -11,7 +11,6 @@ import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.group.gwt.GroupCard;
@@ -91,8 +90,7 @@ public class MyGroupsPanel extends FlowPanel
     }
 
     protected static final GroupsMessages _msgs = GWT.create(GroupsMessages.class);
-    protected static final GroupServiceAsync _groupsvc = (GroupServiceAsync)
-        ServiceUtil.bind(GWT.create(GroupService.class), GroupService.ENTRY_POINT);
+    protected static final GroupServiceAsync _groupsvc = GWT.create(GroupService.class);
 
     protected static final int GROUP_COLS = 2;
 }

@@ -21,7 +21,6 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
 
 import com.threerings.gwt.ui.EnterClickAdapter;
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.VizMemberName;
@@ -171,6 +170,5 @@ public class AwardMedalsPanel extends FlowPanel
     protected TextBox _search;
 
     protected static final GroupsMessages _msgs = GWT.create(GroupsMessages.class);
-    protected static final GroupServiceAsync _groupsvc = (GroupServiceAsync)ServiceUtil.bind(
-        GWT.create(GroupService.class), GroupService.ENTRY_POINT);
+    protected static final GroupServiceAsync _groupsvc = GWT.create(GroupService.class);
 }

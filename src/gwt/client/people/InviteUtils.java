@@ -17,7 +17,6 @@ import com.google.gwt.user.client.ui.TextBox;
 
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.person.gwt.InvitationResults;
 import com.threerings.msoy.person.gwt.InviteService;
@@ -187,6 +186,5 @@ public class InviteUtils
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
     protected static final PeopleMessages _msgs = GWT.create(PeopleMessages.class);
-    protected static final InviteServiceAsync _invitesvc = (InviteServiceAsync)
-        ServiceUtil.bind(GWT.create(InviteService.class), InviteService.ENTRY_POINT);
+    protected static final InviteServiceAsync _invitesvc = GWT.create(InviteService.class);
 }

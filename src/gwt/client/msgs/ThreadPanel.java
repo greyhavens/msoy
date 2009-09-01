@@ -18,7 +18,6 @@ import com.google.gwt.user.client.ui.FlexTable;
 
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
-import com.threerings.gwt.util.ServiceUtil;
 import com.threerings.gwt.util.SimpleDataModel;
 
 import com.threerings.msoy.fora.gwt.ForumMessage;
@@ -333,8 +332,7 @@ public class ThreadPanel extends TitledListPanel
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
     protected static final MsgsMessages _mmsgs = (MsgsMessages)GWT.create(MsgsMessages.class);
-    protected static final ForumServiceAsync _forumsvc = (ForumServiceAsync)
-        ServiceUtil.bind(GWT.create(ForumService.class), ForumService.ENTRY_POINT);
+    protected static final ForumServiceAsync _forumsvc = GWT.create(ForumService.class);
 
     protected static final int MAX_RESULTS = 20;
 }

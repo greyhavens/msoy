@@ -21,7 +21,6 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.util.DateUtil;
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.fora.gwt.ForumMessage;
 import com.threerings.msoy.fora.gwt.ForumService;
@@ -376,6 +375,5 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
 
     protected static final MsgsImages _images = GWT.create(MsgsImages.class);
     protected static final MsgsMessages _mmsgs = (MsgsMessages)GWT.create(MsgsMessages.class);
-    protected static final ForumServiceAsync _forumsvc = (ForumServiceAsync)
-        ServiceUtil.bind(GWT.create(ForumService.class), ForumService.ENTRY_POINT);
+    protected static final ForumServiceAsync _forumsvc = GWT.create(ForumService.class);
 }

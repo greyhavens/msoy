@@ -17,7 +17,6 @@ import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.util.DataModel;
 import com.threerings.gwt.util.DateUtil;
-import com.threerings.gwt.util.ServiceUtil;
 import com.threerings.gwt.util.SimpleDataModel;
 
 import com.threerings.msoy.fora.gwt.ForumService;
@@ -269,8 +268,7 @@ public abstract class ThreadListPanel extends PagedGrid<ForumThread>
     protected Object[] _baseArgs;
 
     protected static final MsgsMessages _mmsgs = (MsgsMessages)GWT.create(MsgsMessages.class);
-    protected static final ForumServiceAsync _forumsvc = (ForumServiceAsync)
-        ServiceUtil.bind(GWT.create(ForumService.class), ForumService.ENTRY_POINT);
+    protected static final ForumServiceAsync _forumsvc = GWT.create(ForumService.class);
 
     /** The height used by fixed interface elements (including our header and footer and the
      * FrameHeader). */

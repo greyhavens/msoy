@@ -23,7 +23,6 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.Anchor;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.util.DateUtil;
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.data.all.Award;
 import com.threerings.msoy.data.all.Friendship;
@@ -487,10 +486,8 @@ public class ProfileBlurb extends Blurb
     protected static final PeopleMessages _msgs = GWT.create(PeopleMessages.class);
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
     protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
-    protected static final ProfileServiceAsync _profilesvc = (ProfileServiceAsync)
-        ServiceUtil.bind(GWT.create(ProfileService.class), ProfileService.ENTRY_POINT);
-    protected static final WebMemberServiceAsync _membersvc = (WebMemberServiceAsync)
-        ServiceUtil.bind(GWT.create(WebMemberService.class), WebMemberService.ENTRY_POINT);
+    protected static final ProfileServiceAsync _profilesvc = GWT.create(ProfileService.class);
+    protected static final WebMemberServiceAsync _membersvc = GWT.create(WebMemberService.class);
 
     protected static final long YEAR_MILLIS = (365L * 24L * 60L * 60L * 1000L);
 }

@@ -20,7 +20,6 @@ import com.threerings.gwt.ui.DefaultTextListener;
 import com.threerings.gwt.ui.EnterClickAdapter;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.util.CookieUtil;
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MemberMailUtil;
@@ -212,6 +211,5 @@ public class LogonPanel extends SmartTable
     protected PasswordTextBox _password;
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
-    protected static final WebUserServiceAsync _usersvc = (WebUserServiceAsync)
-        ServiceUtil.bind(GWT.create(WebUserService.class), WebUserService.ENTRY_POINT);
+    protected static final WebUserServiceAsync _usersvc = GWT.create(WebUserService.class);
 }

@@ -10,7 +10,6 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ToggleButton;
 
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.gwt.ItemService;
@@ -52,7 +51,6 @@ public class FavoriteIndicator extends FlowPanel
     protected MemberItemInfo _memberItemInfo;
 
     protected static final ItemMessages _imsgs = GWT.create(ItemMessages.class);
-    protected static final ItemServiceAsync _itemsvc = (ItemServiceAsync) ServiceUtil.bind(
-        GWT.create(ItemService.class), ItemService.ENTRY_POINT);
+    protected static final ItemServiceAsync _itemsvc = GWT.create(ItemService.class);
     protected static final MiscImages _mimgs = GWT.create(MiscImages.class);
 }

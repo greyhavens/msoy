@@ -9,7 +9,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.gwt.util.ListenerList;
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.money.data.all.BlingInfo;
 import com.threerings.msoy.money.data.all.MoneyTransaction;
@@ -89,6 +88,5 @@ public class MoneyTransactionDataModel
     protected ListenerList<AsyncCallback<BlingInfo>> _callbackList;
     protected BlingInfo _blingInfo;
     
-    protected static final MoneyServiceAsync _moneysvc = (MoneyServiceAsync)
-        ServiceUtil.bind(GWT.create(MoneyService.class), MoneyService.ENTRY_POINT);
+    protected static final MoneyServiceAsync _moneysvc = GWT.create(MoneyService.class);
 }

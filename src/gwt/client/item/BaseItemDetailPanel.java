@@ -15,7 +15,6 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.data.all.RatingResult;
 import com.threerings.msoy.item.data.all.Avatar;
@@ -303,6 +302,5 @@ public abstract class BaseItemDetailPanel extends SmartTable
     protected boolean _scaleUpdated;
 
     protected static final ItemMessages _imsgs = GWT.create(ItemMessages.class);
-    protected static final ItemServiceAsync _itemsvc = (ItemServiceAsync)
-        ServiceUtil.bind(GWT.create(ItemService.class), ItemService.ENTRY_POINT);
+    protected static final ItemServiceAsync _itemsvc = GWT.create(ItemService.class);
 }

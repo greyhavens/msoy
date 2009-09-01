@@ -18,7 +18,6 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.DefaultTextListener;
 import com.threerings.gwt.ui.SmartTable;
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.person.gwt.InviteService;
 import com.threerings.msoy.person.gwt.InviteServiceAsync;
@@ -118,6 +117,5 @@ public abstract class WebMailControls extends FlowPanel
         "/images/people/invite/webmail_providers_small_horizontal.png";
 
     protected static final PeopleMessages _msgs = GWT.create(PeopleMessages.class);
-    protected static final InviteServiceAsync _invitesvc = (InviteServiceAsync)
-        ServiceUtil.bind(GWT.create(InviteService.class), InviteService.ENTRY_POINT);
+    protected static final InviteServiceAsync _invitesvc = GWT.create(InviteService.class);
 }

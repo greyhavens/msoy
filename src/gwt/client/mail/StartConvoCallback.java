@@ -8,7 +8,6 @@ import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.mail.gwt.MailPayload;
 import com.threerings.msoy.mail.gwt.MailService;
@@ -57,6 +56,5 @@ public abstract class StartConvoCallback extends ClickCallback<Void>
     protected TextArea _body;
 
     protected static final MailMessages _mmsgs = GWT.create(MailMessages.class);
-    protected static final MailServiceAsync _mailsvc = (MailServiceAsync)
-        ServiceUtil.bind(GWT.create(MailService.class), MailService.ENTRY_POINT);
+    protected static final MailServiceAsync _mailsvc = GWT.create(MailService.class);
 }

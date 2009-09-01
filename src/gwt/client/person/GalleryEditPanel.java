@@ -24,7 +24,6 @@ import com.allen_sauer.gwt.dnd.client.drop.SimpleDropController;
 
 import com.threerings.gwt.ui.CenteredBox;
 import com.threerings.gwt.util.DataModel;
-import com.threerings.gwt.util.ServiceUtil;
 import com.threerings.gwt.util.SimpleDataModel;
 
 import com.threerings.msoy.data.all.MediaDesc;
@@ -365,8 +364,6 @@ public class GalleryEditPanel extends AbsolutePanel // AbsolutePanel needed to s
     protected PickupDragController _dragController;
 
     protected static final PersonMessages _pmsgs = (PersonMessages)GWT.create(PersonMessages.class);
-    protected static final GalleryServiceAsync _gallerysvc = (GalleryServiceAsync)
-        ServiceUtil.bind(GWT.create(GalleryService.class), GalleryService.ENTRY_POINT);
-    protected static final ItemServiceAsync _itemsvc = (ItemServiceAsync)
-        ServiceUtil.bind(GWT.create(ItemService.class), ItemService.ENTRY_POINT);
+    protected static final GalleryServiceAsync _gallerysvc = GWT.create(GalleryService.class);
+    protected static final ItemServiceAsync _itemsvc = GWT.create(ItemService.class);
 }

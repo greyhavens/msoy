@@ -9,7 +9,6 @@ import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.gwt.ui.SmartTable;
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.room.gwt.RoomInfo;
 import com.threerings.msoy.room.gwt.WebRoomService;
@@ -104,8 +103,7 @@ public class RoomsPanel extends FlowPanel
     protected SmartTable _grid;
 
     protected static final PeopleMessages _msgs = GWT.create(PeopleMessages.class);
-    protected static final WebRoomServiceAsync _roomsvc = (WebRoomServiceAsync)
-        ServiceUtil.bind(GWT.create(WebRoomService.class), WebRoomService.ENTRY_POINT);
+    protected static final WebRoomServiceAsync _roomsvc = GWT.create(WebRoomService.class);
 
     protected static final int ROOM_COLUMNS = 3;
 }

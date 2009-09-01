@@ -6,7 +6,6 @@ package client.people;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.gwt.WebMemberService;
@@ -40,6 +39,5 @@ public class FriendRemover extends PromptPopup
     }
 
     protected static final PeopleMessages _msgs = GWT.create(PeopleMessages.class);
-    protected static final WebMemberServiceAsync _membersvc = (WebMemberServiceAsync)
-        ServiceUtil.bind(GWT.create(WebMemberService.class), WebMemberService.ENTRY_POINT);
+    protected static final WebMemberServiceAsync _membersvc = GWT.create(WebMemberService.class);
 }

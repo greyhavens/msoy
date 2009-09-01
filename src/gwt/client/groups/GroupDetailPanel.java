@@ -19,7 +19,6 @@ import com.threerings.gwt.ui.FloatPanel;
 import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.util.DateUtil;
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.group.data.all.Group;
@@ -364,6 +363,5 @@ public class GroupDetailPanel extends FlowPanel
 
     protected static final GroupsMessages _msgs = GWT.create(GroupsMessages.class);
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
-    protected static final GroupServiceAsync _groupsvc = (GroupServiceAsync)ServiceUtil.bind(
-        GWT.create(GroupService.class), GroupService.ENTRY_POINT);
+    protected static final GroupServiceAsync _groupsvc = GWT.create(GroupService.class);
 }

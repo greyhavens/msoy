@@ -10,7 +10,6 @@ import java.util.Map;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.fora.gwt.Issue;
 import com.threerings.msoy.fora.gwt.IssueService;
@@ -158,6 +157,5 @@ public class IssueModels
     /** A cached OwnedIssues data model. */
     protected Map<Boolean, OwnedIssues> _omodels = new HashMap<Boolean, OwnedIssues>();
 
-    protected static final IssueServiceAsync _issuesvc = (IssueServiceAsync)
-        ServiceUtil.bind(GWT.create(IssueService.class), IssueService.ENTRY_POINT);
+    protected static final IssueServiceAsync _issuesvc = GWT.create(IssueService.class);
 }

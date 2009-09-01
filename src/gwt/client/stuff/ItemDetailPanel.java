@@ -15,7 +15,6 @@ import com.google.gwt.user.client.ui.PushButton;
 
 import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.WidgetUtil;
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.GameItem;
@@ -377,8 +376,6 @@ public class ItemDetailPanel extends BaseItemDetailPanel
 
     protected static final StuffMessages _msgs = GWT.create(StuffMessages.class);
     protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
-    protected static final CatalogServiceAsync _catalogsvc = (CatalogServiceAsync)
-        ServiceUtil.bind(GWT.create(CatalogService.class), CatalogService.ENTRY_POINT);
-    protected static final StuffServiceAsync _stuffsvc = (StuffServiceAsync)
-        ServiceUtil.bind(GWT.create(StuffService.class), StuffService.ENTRY_POINT);
+    protected static final CatalogServiceAsync _catalogsvc = GWT.create(CatalogService.class);
+    protected static final StuffServiceAsync _stuffsvc = GWT.create(StuffService.class);
 }

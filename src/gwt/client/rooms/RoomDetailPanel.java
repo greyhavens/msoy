@@ -12,7 +12,6 @@ import com.google.gwt.user.client.ui.HasAlignment;
 import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.comment.gwt.Comment;
 import com.threerings.msoy.data.all.GroupName;
@@ -106,6 +105,5 @@ public class RoomDetailPanel extends SmartTable
     }
 
     protected static final RoomsMessages _msgs = GWT.create(RoomsMessages.class);
-    protected static final WebRoomServiceAsync _roomsvc = (WebRoomServiceAsync)
-        ServiceUtil.bind(GWT.create(WebRoomService.class), WebRoomService.ENTRY_POINT);
+    protected static final WebRoomServiceAsync _roomsvc = GWT.create(WebRoomService.class);
 }

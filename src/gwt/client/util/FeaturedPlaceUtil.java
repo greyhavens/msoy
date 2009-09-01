@@ -6,7 +6,6 @@ package client.util;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Panel;
 
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.web.gwt.ConnectConfig;
 import com.threerings.msoy.web.gwt.WebUserService;
@@ -74,6 +73,5 @@ public class FeaturedPlaceUtil
     /** Our default world server. Configured the first time Flash is used. */
     protected static ConnectConfig _defaultServer;
 
-    protected static final WebUserServiceAsync _usersvc = (WebUserServiceAsync)
-        ServiceUtil.bind(GWT.create(WebUserService.class), WebUserService.ENTRY_POINT);
+    protected static final WebUserServiceAsync _usersvc = GWT.create(WebUserService.class);
 }

@@ -10,7 +10,6 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.WidgetUtil;
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MediaDesc;
@@ -221,8 +220,7 @@ public class ItemRemixer extends FlexTable
     protected static ItemRemixer _singleton;
 
     protected static final EditemMessages _emsgs = GWT.create(EditemMessages.class);
-    protected static final StuffServiceAsync _stuffsvc = (StuffServiceAsync)
-        ServiceUtil.bind(GWT.create(StuffService.class), StuffService.ENTRY_POINT);
+    protected static final StuffServiceAsync _stuffsvc = GWT.create(StuffService.class);
 
     protected static final int WIDTH = 680;
 }

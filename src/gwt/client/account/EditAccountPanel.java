@@ -24,7 +24,6 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.EnterClickAdapter;
 import com.threerings.gwt.ui.SmartTable;
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.data.all.CharityInfo;
 import com.threerings.msoy.data.all.MediaDesc;
@@ -548,6 +547,5 @@ public class EditAccountPanel extends FlowPanel
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
     protected static final AccountMessages _msgs = GWT.create(AccountMessages.class);
-    protected static final WebUserServiceAsync _usersvc = (WebUserServiceAsync)
-        ServiceUtil.bind(GWT.create(WebUserService.class), WebUserService.ENTRY_POINT);
+    protected static final WebUserServiceAsync _usersvc = GWT.create(WebUserService.class);
 }

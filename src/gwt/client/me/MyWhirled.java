@@ -12,7 +12,6 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.person.gwt.MeService;
 import com.threerings.msoy.person.gwt.MeServiceAsync;
@@ -135,8 +134,7 @@ public class MyWhirled extends FlowPanel
 
     protected static final MeMessages _msgs = (MeMessages)GWT.create(MeMessages.class);
     protected static final PersonMessages _pmsgs = (PersonMessages)GWT.create(PersonMessages.class);
-    protected static final MeServiceAsync _mesvc = (MeServiceAsync)
-        ServiceUtil.bind(GWT.create(MeService.class), MeService.ENTRY_POINT);
+    protected static final MeServiceAsync _mesvc = GWT.create(MeService.class);
 
     protected static final NewbieSuggestion[] NEWBIE_SUGS = {
         new NewbieSuggestion(_msgs.newbieGames(), "people/links/125play.png", Pages.GAMES),
