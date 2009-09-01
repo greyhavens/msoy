@@ -704,9 +704,15 @@ public abstract class ItemRepository<T extends ItemRecord>
 
         // see if there's any where bits to turn into an actual where clause
         List<SQLExpression> whereBits = Lists.newArrayList();
-        addSearchClause(clauses, whereBits, mature, search, tag, creator, minRating, 0, 0);
+        boolean significantlyConstrained =
+            addSearchClause(clauses, whereBits, mature, search, tag, creator, minRating, 0, 0);
 
-        // finally fetch all the catalog records of interest
+        // if this is largely unconstrained shop query, we don't perform an actual count, but
+        // instead return -1 to signal that the pager should operate in "page by page" mode.
+        if (!significantlyConstrained) {
+            return -1;
+        }
+        // else finally execute the count
         return load(CountRecord.class, clauses.toArray(new QueryClause[clauses.size()])).count;
     }
 
