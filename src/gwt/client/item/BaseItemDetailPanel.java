@@ -107,7 +107,8 @@ public abstract class BaseItemDetailPanel extends SmartTable
 
         // add our tag business at the bottom
         getFlexCellFormatter().setHeight(1, 0, "10px");
-        setWidget(1, 0, new TagDetailPanel(new TagDetailPanel.TagService() {
+        boolean canEditTags = CShell.isSubscriber() || _item.creatorId == CShell.getMemberId();
+        TagDetailPanel.TagService tagService = new TagDetailPanel.TagService() {
             public void tag (String tag, AsyncCallback<TagHistory> callback) {
                 _itemsvc.tagItem(_item.getIdent(), tag, true, callback);
             }
@@ -123,12 +124,14 @@ public abstract class BaseItemDetailPanel extends SmartTable
             public void addMenuItems (String tag, PopupMenu menu) {
                 addTagMenuItems(tag, menu);
             }
-        }, new TagDetailPanel.FlagService() {
+        };
+        TagDetailPanel.FlagService flagService = new TagDetailPanel.FlagService() {
             public void addFlag (final ItemFlag.Kind kind, String comment) {
                 ItemIdent ident = new ItemIdent(_item.getType(), _item.getMasterId());
                 _itemsvc.addFlag(ident, kind, comment, new NoopAsyncCallback());
             }
-        }, detail.tags, true));
+        };
+        setWidget(1, 0, new TagDetailPanel(tagService, flagService, detail.tags, canEditTags));
 
         configureCallbacks(this);
     }

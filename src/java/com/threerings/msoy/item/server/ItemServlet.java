@@ -249,10 +249,15 @@ public class ItemServlet extends MsoyServiceServlet
             log.warning("Missing item for tagItem", "who", memrec.who(), "ident", iident);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
-        int originalId = (item.sourceId != 0) ? item.sourceId : iident.itemId;
+
+        // only subscribers and the item's creator can tag the item
+        if (!memrec.isSubscriber() && memrec.memberId != item.creatorId) {
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
 
         // map tag to tag id
         TagNameRecord tag = repo.getTagRepository().getOrCreateTag(tagName);
+        int originalId = (item.sourceId != 0) ? item.sourceId : iident.itemId;
 
         // do the actual work
         TagHistoryRecord historyRecord = set ?
