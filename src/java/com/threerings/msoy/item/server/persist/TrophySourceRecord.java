@@ -99,6 +99,14 @@ public class TrophySourceRecord extends IdentGameItemRecord
         return object;
     }
 
+    @Override // from GameItemRecord
+    public boolean isListingOutOfDate (GameItemRecord master)
+    {
+        TrophySourceRecord tmaster = (TrophySourceRecord)master;
+        return super.isListingOutOfDate(master) || secret != tmaster.secret ||
+            sortOrder != tmaster.sortOrder;
+    }
+
     // AUTO-GENERATED: METHODS START
     /**
      * Create and return a primary {@link Key} to identify a {@link TrophySourceRecord}

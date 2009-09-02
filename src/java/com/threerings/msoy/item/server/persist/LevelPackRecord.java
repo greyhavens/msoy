@@ -75,6 +75,12 @@ public class LevelPackRecord extends IdentGameItemRecord
         return object;
     }
 
+    @Override // from GameItemRecord
+    public boolean isListingOutOfDate (GameItemRecord master)
+    {
+        return super.isListingOutOfDate(master) || premium != ((LevelPackRecord)master).premium;
+    }
+
     // AUTO-GENERATED: METHODS START
     /**
      * Create and return a primary {@link Key} to identify a {@link LevelPackRecord}

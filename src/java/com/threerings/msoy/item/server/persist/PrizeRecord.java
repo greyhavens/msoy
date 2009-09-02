@@ -81,6 +81,14 @@ public class PrizeRecord extends IdentGameItemRecord
         return object;
     }
 
+    @Override // from GameItemRecord
+    public boolean isListingOutOfDate (GameItemRecord master)
+    {
+        PrizeRecord pmaster = ((PrizeRecord)master);
+        return super.isListingOutOfDate(master) ||
+            targetType != pmaster.targetType || targetCatalogId != pmaster.targetCatalogId;
+    }
+
     // AUTO-GENERATED: METHODS START
     /**
      * Create and return a primary {@link Key} to identify a {@link PrizeRecord}

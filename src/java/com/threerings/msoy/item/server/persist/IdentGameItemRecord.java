@@ -69,4 +69,11 @@ public abstract class IdentGameItemRecord extends GameItemRecord
         IdentGameItem sitem = (IdentGameItem)item;
         ident = sitem.ident;
     }
+
+    @Override // from GameItemRecord
+    public boolean isListingOutOfDate (GameItemRecord master)
+    {
+        return super.isListingOutOfDate(master) ||
+            !ident.equals(((IdentGameItemRecord)master).ident);
+    }
 }

@@ -69,4 +69,16 @@ public abstract class GameItemRecord extends ItemRecord
         GameItem sitem = (GameItem)item;
         gameId = sitem.gameId;
     }
+
+    /**
+     * Check if this item needs to be relisted to incorporate changes.
+     * TODO: move to base class if useful for items other than those used in games
+     */
+    public boolean isListingOutOfDate (GameItemRecord master)
+    {
+        return master == null ||
+            !name.equals(master.name) || !description.equals(master.description) ||
+            !getThumbMediaDesc().equals(master.getThumbMediaDesc()) ||
+            !getFurniMediaDesc().equals(master.getFurniMediaDesc());
+    }
 }
