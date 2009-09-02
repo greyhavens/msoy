@@ -350,6 +350,16 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
     }
 
     /**
+     * Returns the MediaDesc for the furni media of this item, or the default if the item has
+     * no furni media.
+     */
+    public MediaDesc getFurniMediaDesc ()
+    {
+        return (furniMediaHash == null) ? Item.getDefaultFurniMediaFor(getType()) :
+            new MediaDesc(furniMediaHash, furniMimeType, furniConstraint);
+    }
+
+    /**
      * Return true if the primary media is remixable.
      */
     public boolean isRemixable ()
