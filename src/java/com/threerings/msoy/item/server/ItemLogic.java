@@ -212,6 +212,22 @@ public class ItemLogic
     }
 
     /**
+     * Returns the repository used to manage items of the specified type. Throws a service
+     * exception if the supplied type is invalid or if the given clazz is not assignable from the
+     * repo's item class.
+     */
+    public <T extends ItemRecord> ItemRepository<T> getRepository (Class<T> clazz, byte type)
+        throws ServiceException
+    {
+        @SuppressWarnings("unchecked") ItemRepository<T> repo =
+            (ItemRepository<T>)getRepository(type);
+        if (!clazz.isAssignableFrom(repo.exposeItemClass())) {
+            throw new ServiceException(ItemCodes.E_INTERNAL_ERROR);
+        }
+        return repo;
+    }
+
+    /**
      * Returns an iterator of item types for which we have repositories.
      */
     public Iterable<Byte> getRepositoryTypes ()

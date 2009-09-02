@@ -276,6 +276,14 @@ public abstract class ItemRepository<T extends ItemRecord>
     }
 
     /**
+     * Accesses the normally protected class of ItemRecord this repository is for.
+     */
+    public Class<T> exposeItemClass ()
+    {
+        return getItemClass();
+    }
+
+    /**
      * Converts a runtime item record to an initialized instance of our persistent item record
      * class.
      */
