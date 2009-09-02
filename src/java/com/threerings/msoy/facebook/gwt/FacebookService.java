@@ -134,4 +134,11 @@ public interface FacebookService extends RemoteService
      */
     void challengePublished (FacebookGame game, String trackingId)
         throws ServiceException;
+
+    /**
+     * Lets the server know that a user is loading the given page. The page is in "url" form as
+     * returned by {@link com.threerings.msoy.web.gwt.Args#toPath()}.
+     */
+    void trackPageRequest (String page)
+        throws ServiceException;
 }

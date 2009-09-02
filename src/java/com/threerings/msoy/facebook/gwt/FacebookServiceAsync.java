@@ -56,4 +56,9 @@ public interface FacebookServiceAsync
      * The asynchronous version of {@link FacebookService#challengePublished}.
      */
     void challengePublished (FacebookGame game, String trackingId, AsyncCallback<Void> callback);
+
+    /**
+     * The asynchronous version of {@link FacebookService#trackPageRequest}.
+     */
+    void trackPageRequest (String page, AsyncCallback<Void> callback);
 }

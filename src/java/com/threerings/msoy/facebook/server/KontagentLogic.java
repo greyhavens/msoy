@@ -312,6 +312,12 @@ public class KontagentLogic
             "g", gender, "ly", city, "lc", country, "ls", state, "lp", zip, "f", friendCountStr);
     }
 
+    public void trackPageRequest (long uid, String ipAddress, String page)
+    {
+        sendMessage(MessageType.PAGE_REQUEST, "s", String.valueOf(uid), "ip", ipAddress,
+            "u", StringUtil.encode(page));
+    }
+
     protected TrackingId parseTrackingId (String trackingId, boolean allowBlank)
     {
         if (allowBlank && StringUtil.isBlank(trackingId)) {
@@ -368,7 +374,8 @@ public class KontagentLogic
         NOTIFICATION_RESPONSE("ntr"),
         POST("pst"),
         POST_RESPONSE("psr"),
-        USER_INFO("cpu");
+        USER_INFO("cpu"),
+        PAGE_REQUEST("pgr");
 
         public String id;
 

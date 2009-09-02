@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.servlet.http.HttpServletRequest;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -291,6 +293,15 @@ public class FacebookServlet extends MsoyServiceServlet
         throws ServiceException
     {
         _tracker.trackFeedStoryPosted(requireSession().fbid, trackingId);
+    }
+
+    @Override
+    public void trackPageRequest (String page)
+        throws ServiceException
+    {
+        HttpServletRequest req = getThreadLocalRequest();
+        FacebookLogic.SessionInfo sinfo = _fbLogic.loadSessionInfo(requireAuthedUser());
+        _tracker.trackPageRequest(sinfo.fbid, req.getRemoteAddr(), page);
     }
 
     /**

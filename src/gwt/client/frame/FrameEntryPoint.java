@@ -28,6 +28,8 @@ import com.threerings.gwt.util.CookieUtil;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.LaunchConfig;
 import com.threerings.msoy.data.all.VisitorInfo;
+import com.threerings.msoy.facebook.gwt.FacebookService;
+import com.threerings.msoy.facebook.gwt.FacebookServiceAsync;
 import com.threerings.msoy.web.gwt.ArgNames;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.CookieNames;
@@ -906,12 +908,20 @@ public class FrameEntryPoint
 
     protected void reportPageVisit (Pages page, Args args)
     {
+        // convert the page to a url
         String url = args.toPath(page);
-        // convert the page to GA format and report it to Google Analytics
+
+        // report it to Google Analytics
         _analytics.report(url);
-    
+
+        // and to Kontagent if we are in Facebook mode
         if (_embedding == Frame.Embedding.FACEBOOK) {
-            // TODO: _membersvc.trackFacebookPageVisit();
+            // TODO: we might be able to use the recommended "client pixel" page reporting if the
+            // KAPI secret is not required (question posted to forums). If so, then we'd need to
+            // grab the FBID from somewhere, perhaps in the SessinData (superseding the
+            // #world-fbgame way of doing it), and build a URL here and poke it into an Image in
+            // the title bar or somewhere.
+            _fbsvc.trackPageRequest(url, new NoopAsyncCallback());
         }
     }
 
@@ -1024,6 +1034,7 @@ public class FrameEntryPoint
     protected static final FrameImages _images = (FrameImages)GWT.create(FrameImages.class);
     protected static final WebMemberServiceAsync _membersvc = GWT.create(WebMemberService.class);
     protected static final WebUserServiceAsync _usersvc = GWT.create(WebUserService.class);
+    protected static final FacebookServiceAsync _fbsvc = GWT.create(FacebookService.class);
 
     // constants for our top-level elements
     protected static final String PAGE = "page";
