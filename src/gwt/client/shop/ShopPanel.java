@@ -85,7 +85,7 @@ public class ShopPanel extends FlowPanel
             }
             @Override protected void addCustomControls (FlexTable controls) {
                 controls.setWidget(
-                    0, 0, Link.create(_msgs.shopClubPicks(), Pages.BILLING, "subsribe"));
+                    0, 0, Link.create(_msgs.shopClubPicks(), Pages.BILLING, "subscribe"));
             }
         };
 
