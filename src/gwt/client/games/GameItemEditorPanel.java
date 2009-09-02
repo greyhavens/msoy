@@ -16,7 +16,8 @@ import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.game.gwt.GameInfo;
 import com.threerings.msoy.game.gwt.GameService;
 import com.threerings.msoy.game.gwt.GameServiceAsync;
-import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.game.gwt.GameService.GameItemEditorInfo;
+import com.threerings.msoy.item.data.all.GameItem;
 import com.threerings.msoy.item.data.all.LevelPack;
 import com.threerings.msoy.item.data.all.Prize;
 import com.threerings.msoy.item.data.all.IdentGameItem;
@@ -41,37 +42,39 @@ public class GameItemEditorPanel extends SmartTable
 
         setWidget(0, 0, MsoyUI.createNowLoading());
 
-        _gamesvc.loadGameItems(gameId, itemType, new InfoCallback<List<Item>>() {
-            public void onSuccess (List<Item> items) {
+        _gamesvc.loadGameItems(gameId, itemType, new InfoCallback<List<GameItemEditorInfo>>() {
+            public void onSuccess (List<GameItemEditorInfo> items) {
                 init(gameId, itemType, items);
             }
         });
     }
 
-    protected void init (int gameId, byte itemType, List<Item> items)
+    protected void init (int gameId, byte itemType, List<GameItemEditorInfo> items)
     {
         int row = 0;
         if (items.size() > 0) {
+            GameItem sample = items.get(0).item;
             int col = 0;
             setText(row, col++, ""); // clear out loading...
             setText(row, col++, _msgs.gieName(), 1, "Header");
             col++; // for [view]
             col++; // for [edit]
             setText(row, col++, _msgs.giePublished(), 1, "Header");
-            if (items.get(0) instanceof IdentGameItem) {
+            if (sample instanceof IdentGameItem) {
                 setText(row, col++, _msgs.gieIdent(), 1, "Header");
             }
-            if (items.get(0) instanceof TrophySource) {
+            if (sample instanceof TrophySource) {
                 setText(row, col++, _msgs.gieSecret(), 1, "Header");
-            } else if (items.get(0) instanceof LevelPack) {
+            } else if (sample instanceof LevelPack) {
                 setText(row, col++, _msgs.giePremium(), 1, "Header");
-            } else if (items.get(0) instanceof Prize) {
+            } else if (sample instanceof Prize) {
                 setText(row, col++, _msgs.giePrize(), 1, "Header");
             }
             getRowFormatter().setStyleName(row++, "Row");
         }
 
-        for (Item item : items) {
+        for (GameItemEditorInfo itemInfo : items) {
+            GameItem item = itemInfo.item;
             int col = 0;
             setWidget(row, col++, MediaUtil.createMediaView(
                           item.getThumbnailMedia(), MediaDesc.HALF_THUMBNAIL_SIZE), 1);

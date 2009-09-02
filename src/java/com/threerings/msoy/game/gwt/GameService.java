@@ -13,7 +13,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.RatingResult;
 import com.threerings.msoy.game.data.all.Trophy;
-import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.GameItem;
 
 import com.threerings.msoy.web.gwt.MemberCard;
 import com.threerings.msoy.web.gwt.ServiceException;
@@ -64,6 +64,19 @@ public interface GameService extends RemoteService
 
         /** The ids of the entries that are also featured. */
         public List<Integer> featured;
+    }
+
+    /**
+     * Result element for {@link #loadGameItems}.
+     */
+    public static class GameItemEditorInfo
+        implements IsSerializable
+    {
+        /** The item. */
+        public GameItem item;
+
+        /** Whether the item's listing is out of date. */
+        public boolean listingOutOfDate;
     }
 
     /** The entry point for this service. */
@@ -166,7 +179,7 @@ public interface GameService extends RemoteService
      * Loads a game's original subitems (level pack, prize, etc.). Caller must be the game owner or
      * support+.
      */
-    List<Item> loadGameItems (int gameId, byte type)
+    List<GameItemEditorInfo> loadGameItems (int gameId, byte type)
         throws ServiceException;
 
     /**

@@ -47,8 +47,8 @@ import com.threerings.parlor.rating.util.Percentiler;
 
 import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.item.data.all.GameItem;
-import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.server.ItemLogic;
+import com.threerings.msoy.item.server.persist.GameItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
 import com.threerings.msoy.item.server.persist.TrophySourceRecord;
@@ -447,17 +447,33 @@ public class GameServlet extends MsoyServiceServlet
     }
 
     // from interface GameService
-    public List<Item> loadGameItems (int gameId, byte type)
+    public List<GameItemEditorInfo> loadGameItems (int gameId, byte type)
         throws ServiceException
     {
         MemberRecord mrec = requireAuthedUser();
         GameInfoRecord info = requireIsGameCreator(gameId, mrec);
 
-        ItemRepository<ItemRecord> repo = _itemLogic.getRepository(type);
-        List<Item> items = Lists.newArrayList();
-        items.addAll(Lists.transform(repo.loadGameOriginals(GameInfo.toDevId(info.gameId)),
-                                     new ItemRecord.ToItem<Item>()));
-        Collections.sort(items);
+        ItemRepository<GameItemRecord> repo = _itemLogic.getRepository(GameItemRecord.class, type);
+
+        IntMap<GameItemRecord> masters = IntMaps.newHashIntMap();
+        for (GameItemRecord master : repo.loadGameOriginals(info.gameId)) {
+            masters.put(master.catalogId, master);
+        }
+
+        List<GameItemEditorInfo> items = Lists.newArrayList();
+        for (GameItemRecord original : repo.loadGameOriginals(GameInfo.toDevId(info.gameId))) {
+            GameItemEditorInfo itemInfo = new GameItemEditorInfo();
+            itemInfo.item = (GameItem)original.toItem();
+            itemInfo.listingOutOfDate = original.isListingOutOfDate(
+                masters.get(original.catalogId));
+            items.add(itemInfo);
+        }
+
+        Collections.sort(items, new Comparator<GameItemEditorInfo>() {
+            @Override public int compare (GameItemEditorInfo arg0, GameItemEditorInfo arg1) {
+                return arg0.item.compareTo(arg1.item);
+            }
+        });
         return items;
     }
 
