@@ -389,10 +389,10 @@ public class MsoyAuthenticator extends Authenticator
         }
 
         if (record.banExpires != null) {
-            // figure out how many hours are left on the temp ban
+            // figure out how many seconds are left on the temp ban
             Date now = new Date();
             if (now.before(record.banExpires)) {
-                int expires = (int)((record.banExpires.getTime() - now.getTime())/ONE_HOUR);
+                int expires = (int)((record.banExpires.getTime() - now.getTime())/1000L);
                 throw new BannedException(MsoyAuthCodes.TEMP_BANNED, record.warning, expires);
             }
         }
@@ -433,7 +433,4 @@ public class MsoyAuthenticator extends Authenticator
 
     /** The number of times we'll try generate a unique ident before failing. */
     protected static final int MAX_TRIES = 100;
-
-    /** The number of milliseconds in an hour. */
-    protected static final long ONE_HOUR = 60 * 60 * 1000L;
 }

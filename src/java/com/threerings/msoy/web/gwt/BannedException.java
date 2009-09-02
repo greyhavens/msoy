@@ -18,7 +18,7 @@ public class BannedException extends ServiceException
 
     /**
      * Creates a banned exception with the supplied translation message, warning and time until
-     * ban expires in hours or -1 for permanent ban.
+     * ban expires in seconds or -1 for permanent ban.
      */
     public BannedException (String message, String warning, int expires)
     {

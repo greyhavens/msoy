@@ -154,8 +154,11 @@ public class LogonPanel extends SmartTable
                 String message = null;
                 if (caught instanceof BannedException) {
                     BannedException be = (BannedException)caught;
+                    // add a little so user never sees "0 hours and 0 minutes"
+                    int seconds = be.getExpires() + 59;
                     if (be.getExpires() >= 0) {
-                        message = _cmsgs.tempBan(be.getWarning(), "" + be.getExpires());
+                        message = _cmsgs.tempBan(be.getWarning(), String.valueOf(seconds / 3600),
+                            String.valueOf((seconds / 60) % 60));
                     } else {
                         message = _cmsgs.ban(be.getWarning());
                     }
