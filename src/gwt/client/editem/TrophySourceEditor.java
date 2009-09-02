@@ -39,7 +39,7 @@ public class TrophySourceEditor extends IdentGameItemEditor
         addTip(_emsgs.trophyNameTip());
 
         addSpacer();
-        addRow(_emsgs.trophyOrder(), _order = new NumberTextBox(false, 3, 3));
+        addRow(_emsgs.trophyOrder(), _order = new NumberTextBox(false, 6, 6));
         addTip(_emsgs.trophyOrderTip());
 
         addSpacer();
