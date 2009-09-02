@@ -7,9 +7,10 @@ import flash.system.Capabilities;
 
 import flash.utils.setTimeout; // function
 
-import com.threerings.util.ExpiringSet;
 import com.threerings.util.Log;
 import com.threerings.util.MessageBundle;
+import com.threerings.util.Set;
+import com.threerings.util.Sets;
 import com.threerings.util.StringUtil;
 import com.threerings.util.Util;
 import com.threerings.util.ValueEvent;
@@ -70,9 +71,6 @@ public class NotificationDirector extends BasicDirector
     {
         super(ctx);
         _mctx = ctx;
-        _membersLoggingOff = new ExpiringSet(MEMBER_EXPIRE_TIME);
-        _notifications = new ExpiringSet(NOTIFICATION_EXPIRE_TIME);
-        _statusDelays = new ExpiringSet(STATUS_UPDATE_DELAY, statusDelayExpired);
 
         ctx.getControlBar().setNotificationDisplay(
             _notificationDisplay = new NotificationDisplay(ctx));
@@ -311,9 +309,8 @@ public class NotificationDirector extends BasicDirector
         addGenericNotification(MessageBundle.tcompose("m.new_mail", count), Notification.PERSONAL);
     }
 
-    protected function statusDelayExpired (event :ValueEvent) :void
+    protected function statusDelayExpired (memberId :int) :void
     {
-        var memberId :int = int(event.value);
         var entry :FriendEntry = MemberObject(_mctx.getClient().getClientObject()).friends.get(
             memberId) as FriendEntry;
         if (entry != null) {
@@ -342,14 +339,17 @@ public class NotificationDirector extends BasicDirector
 
     protected var _notificationDisplay :NotificationDisplay;
 
-    /** An ExpiringSet to track members that may only be switching servers. */
-    protected var _membersLoggingOff :ExpiringSet;
+    /** An Expiring Set to track members that may only be switching servers. */
+    protected var _membersLoggingOff :Set = Sets.newBuilder(FriendEntry)
+        .makeExpiring(MEMBER_EXPIRE_TIME).build();
 
-    /** An ExpiringSet to hold our most recent notifications. */
-    protected var _notifications :ExpiringSet;
+    /** An Expiring Set to hold our most recent notifications. */
+    protected var _notifications :Set = Sets.newBuilder(Notification)
+        .makeExpiring(NOTIFICATION_EXPIRE_TIME).build();
 
     /** Tracks when it's ok to show a status update for a member. */
-    protected var _statusDelays :ExpiringSet;
+    protected var _statusDelays :Set = Sets.newBuilder(int)
+        .makeExpiring(STATUS_UPDATE_DELAY, statusDelayExpired).build();
 
     protected var _didStartupNotifs :Boolean;
     protected var _awardPanel :AwardPanel;
