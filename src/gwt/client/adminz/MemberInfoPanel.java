@@ -3,7 +3,6 @@
 
 package client.adminz;
 
-import java.util.EnumSet;
 import java.util.List;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -112,7 +111,7 @@ public class MemberInfoPanel extends AdminDataPanel<MemberAdminInfo>
         table.setText(row, 1, info.permaName == null ? "" : info.permaName);
 
         final ListBox role = new ListBox();
-        for (WebCreds.Role rtype : EnumSet.allOf(WebCreds.Role.class)) {
+        for (WebCreds.Role rtype : WebCreds.Role.values()) {
             role.addItem(rtype.toString());
         }
         role.setSelectedIndex(info.role.ordinal());
