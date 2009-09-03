@@ -54,26 +54,40 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("MÂ
  Utility methods relating to the electronic mails.</td>
 </tr>
 <tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/maps/class-list.html');" href="com/threerings/util/maps/MapBuilder.html#makeExpiring()">makeExpiring</a>(ttl, expireHandler) &mdash; Method in class com.threerings.util.maps.<a onclick="javascript:loadClassListFrame('com/threerings/util/maps/class-list.html');" href="com/threerings/util/maps/MapBuilder.html">MapBuilder</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Make the map auto-expire elements.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/sets/class-list.html');" href="com/threerings/util/sets/SetBuilder.html#makeExpiring()">makeExpiring</a>(ttl, expireHandler) &mdash; Method in class com.threerings.util.sets.<a onclick="javascript:loadClassListFrame('com/threerings/util/sets/class-list.html');" href="com/threerings/util/sets/SetBuilder.html">SetBuilder</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Make the set auto-expire elements.</td>
+</tr>
+<tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/ui/class-list.html');" href="com/threerings/ui/SimpleTextButton.html#makeFace()">makeFace</a>(text, rounded, foreground, background, padding, textFormat) &mdash; Method in class com.threerings.ui.<a onclick="javascript:loadClassListFrame('com/threerings/ui/class-list.html');" href="com/threerings/ui/SimpleTextButton.html">SimpleTextButton</a></td>
 </tr>
 <tr>
 <td width="20"></td><td></td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/maps/class-list.html');" href="com/threerings/util/maps/MapBuilder.html#makeLRI()">makeLRI</a>(keepCount) &mdash; Method in class com.threerings.util.maps.<a onclick="javascript:loadClassListFrame('com/threerings/util/maps/class-list.html');" href="com/threerings/util/maps/MapBuilder.html">MapBuilder</a></td>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/maps/class-list.html');" href="com/threerings/util/maps/MapBuilder.html#makeLR()">makeLR</a>(maxSize, accessOrder) &mdash; Method in class com.threerings.util.maps.<a onclick="javascript:loadClassListFrame('com/threerings/util/maps/class-list.html');" href="com/threerings/util/maps/MapBuilder.html">MapBuilder</a></td>
 </tr>
 <tr>
 <td width="20"></td><td>
-     Make the Map a cache, disposing of the least-recently-inserted mappings
-     whenever size exceeds keepCount.</td>
+     Make the Map a cache, disposing of the least-recently-accessed (or least-recently-inserted)
+     mappings whenever size exceeds maxSize.</td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/sets/class-list.html');" href="com/threerings/util/sets/SetBuilder.html#makeLRI()">makeLRI</a>(keepCount) &mdash; Method in class com.threerings.util.sets.<a onclick="javascript:loadClassListFrame('com/threerings/util/sets/class-list.html');" href="com/threerings/util/sets/SetBuilder.html">SetBuilder</a></td>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/sets/class-list.html');" href="com/threerings/util/sets/SetBuilder.html#makeLR()">makeLR</a>(maxSize, accessOrder) &mdash; Method in class com.threerings.util.sets.<a onclick="javascript:loadClassListFrame('com/threerings/util/sets/class-list.html');" href="com/threerings/util/sets/SetBuilder.html">SetBuilder</a></td>
 </tr>
 <tr>
 <td width="20"></td><td>
-     Make the Set a cache, disposing of the least-recently-inserted value
-     whenever size exceeds keepCount.</td>
+     Make the Set a cache, disposing of the least-recently-accessed (or just inserted) value
+     whenever size exceeds maxSize.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/net/class-list.html');" href="com/whirled/net/NetConstants.html#makePersistent()">makePersistent</a>(name) &mdash; Static method in class com.whirled.net.<a onclick="javascript:loadClassListFrame('com/whirled/net/class-list.html');" href="com/whirled/net/NetConstants.html">NetConstants</a></td>

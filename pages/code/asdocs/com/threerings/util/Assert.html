@@ -49,6 +49,10 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
    Assert.isNotNull(mystack.top());
    Assert.isTrue(mystack.length == 1, "Unexpected number of items on stack!");
  </pre>
+  Deprecation notes:
+ What we really want is a way to turn off assertions at compile time. We don't
+ want folks who happen to be running a debug player to have their player exit.
+ And why wouldn't you always want an exception if something's going to go wrong?
  <p></p>
 <br>
 <hr>
