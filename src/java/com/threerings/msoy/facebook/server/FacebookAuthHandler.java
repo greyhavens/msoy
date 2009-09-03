@@ -69,7 +69,7 @@ public class FacebookAuthHandler extends ExternalAuthHandler
         try {
             // look up information from this user's facebook profile
             Set<Long> ids = Collections.singleton(Long.parseLong(creds.getUserId()));
-            EnumSet<ProfileField> fields = EnumSet.of(
+            Set<ProfileField> fields = EnumSet.of(
                 ProfileField.FIRST_NAME, ProfileField.LAST_NAME, ProfileField.SEX,
                 ProfileField.BIRTHDAY, ProfileField.CURRENT_LOCATION);
             UsersGetInfoResponse uinfo = (UsersGetInfoResponse)fbclient.users_getInfo(ids, fields);

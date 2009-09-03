@@ -10,7 +10,6 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 
 import java.util.Collection;
-import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -270,7 +269,7 @@ public class MoneyRepository extends DepotRepository
     }
 
     public List<MoneyTransactionRecord> getTransactions (
-        int memberId, EnumSet<TransactionType> transactionTypes, Currency currency,
+        int memberId, Set<TransactionType> transactionTypes, Currency currency,
         int start, int count, boolean descending)
     {
         // select * from MemberAccountRecord where type = ? and transactionType in (?)
@@ -290,7 +289,7 @@ public class MoneyRepository extends DepotRepository
     }
 
     public int getTransactionCount (
-        int memberId, EnumSet<TransactionType> transactionTypes, Currency currency)
+        int memberId, Set<TransactionType> transactionTypes, Currency currency)
     {
         List<QueryClause> clauses = Lists.newArrayList();
         clauses.add(new FromOverride(MoneyTransactionRecord.class));
@@ -630,7 +629,7 @@ public class MoneyRepository extends DepotRepository
     /** Helper method to setup a query for a transaction history search. */
     protected void populateSearch (
         List<QueryClause> clauses, int memberId,
-        EnumSet<TransactionType> transactionTypes, Currency currency)
+        Set<TransactionType> transactionTypes, Currency currency)
     {
         List<SQLOperator> where = Lists.newArrayList();
 

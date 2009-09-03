@@ -553,7 +553,7 @@ public class FacebookLogic
 
         // retrieve the data
         FacebookJaxbRestClient client = getFacebookClient(BATCH_READ_TIMEOUT);
-        EnumSet<ProfileField> fields = EnumSet.of(
+        Set<ProfileField> fields = EnumSet.of(
             ProfileField.SEX, ProfileField.BIRTHDAY, ProfileField.CURRENT_LOCATION);
         Iterable<Long> uids = Iterables.transform(fbusers.values(), MAPREC_TO_UID);
         UsersGetStandardInfoResponse uinfo;

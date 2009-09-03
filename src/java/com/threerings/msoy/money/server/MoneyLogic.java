@@ -5,7 +5,6 @@ package com.threerings.msoy.money.server;
 
 import java.text.NumberFormat;
 import java.util.Collections;
-import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -1028,7 +1027,7 @@ public class MoneyLogic
      * @return List of requested past transactions.
      */
     public List<MoneyTransaction> getTransactions (
-        int memberId, EnumSet<TransactionType> transactionTypes, Currency currency,
+        int memberId, Set<TransactionType> transactionTypes, Currency currency,
         int start, int count, boolean descending, boolean support)
     {
         Preconditions.checkArgument(memberId != 0, "Requested transactions for invalid member.");
@@ -1057,7 +1056,7 @@ public class MoneyLogic
      * counted.
      */
     public int getTransactionCount (
-        int memberId, EnumSet<TransactionType> transactionTypes, Currency currency)
+        int memberId, Set<TransactionType> transactionTypes, Currency currency)
     {
         return _repo.getTransactionCount(memberId, transactionTypes, currency);
     }

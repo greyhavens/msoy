@@ -4,6 +4,7 @@
 package com.threerings.msoy.money.data.all;
 
 import java.util.EnumSet;
+import java.util.Set;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
@@ -33,7 +34,7 @@ public enum ReportType
     }
 
     private ReportType (
-        int index, EnumSet<TransactionType> transactions, Currency currency, String icon)
+        int index, Set<TransactionType> transactions, Currency currency, String icon)
     {
         _index = index;
         this.transactions = transactions;
@@ -41,7 +42,7 @@ public enum ReportType
         this.icon = icon;
     }
 
-    public transient EnumSet<TransactionType> transactions;
+    public transient Set<TransactionType> transactions;
     public transient Currency currency;
     public transient String icon;
 
