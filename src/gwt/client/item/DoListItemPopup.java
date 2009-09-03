@@ -333,6 +333,7 @@ public class DoListItemPopup extends VerticalPanel
                 @Override protected boolean gotResult (Void result) {
                     MsoyUI.info(_imsgs.doListUpdated());
                     CShell.frame.clearDialog();
+                    _listener.itemListed(_item, true);
                     return false;
                 }
             };
