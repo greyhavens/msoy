@@ -26,7 +26,7 @@ import org.quartz.spi.TriggerFiredBundle;
 
 import com.google.inject.Inject;
 
-import com.samskivert.util.CalendarUtil;
+import com.samskivert.util.Calendars;
 import com.samskivert.util.Lifecycle;
 
 import com.threerings.util.MessageBundle;
@@ -131,19 +131,14 @@ public class BlingPoolDistributor
             // figure out how much we'll be distributing
             int blingPool = _runtime.money.blingPoolSize * 100;
 
-            Calendar lastRun = Calendar.getInstance();
-            lastRun.setTime(confRecord.lastDistributedBling); // make it lastRun
-
-            Calendar midnight1 = (Calendar) lastRun.clone();
-            CalendarUtil.zeroTime(midnight1); // make it midnight
-            Calendar midnight2 = (Calendar) now.clone();
-            CalendarUtil.zeroTime(midnight2); // make it midnight
-            int days = CalendarUtil.getDaysBetween(midnight1, midnight2);
+            Calendar lastRun = Calendars.at(confRecord.lastDistributedBling).asCalendar();
+            Calendar midnight1 = Calendars.at(lastRun.getTime()).zeroTime().asCalendar();
+            Calendar midnight2 = Calendars.at(now.getTime()).zeroTime().asCalendar();
+            int days = Calendars.getDaysBetween(midnight1, midnight2);
 
             // now set midnight2 to be the day after midnight1,
             // in case we're doing more than one day
-            midnight2 = (Calendar) midnight1.clone();
-            midnight2.add(Calendar.DATE, 1);
+            midnight2 = Calendars.at(midnight1.getTime()).addDays(1).asCalendar();
 
             // We'll repeat this for the number of days since we last executed it (could be 0).
             for (int i = 0; i < days; i++) {
