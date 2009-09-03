@@ -6,6 +6,8 @@ package client.games;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 
@@ -17,6 +19,7 @@ import com.threerings.msoy.game.gwt.GameInfo;
 import com.threerings.msoy.game.gwt.GameService;
 import com.threerings.msoy.game.gwt.GameServiceAsync;
 import com.threerings.msoy.game.gwt.GameService.GameItemEditorInfo;
+import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.GameItem;
 import com.threerings.msoy.item.data.all.LevelPack;
 import com.threerings.msoy.item.data.all.Prize;
@@ -29,6 +32,7 @@ import client.ui.MsoyUI;
 import client.util.InfoCallback;
 import client.util.Link;
 import client.util.MediaUtil;
+import client.item.DoListItemPopup;
 import client.shell.DynamicLookup;
 
 /**
@@ -58,7 +62,7 @@ public class GameItemEditorPanel extends SmartTable
             setText(row, col++, ""); // clear out loading...
             setText(row, col, _msgs.gieName(), 1, "Header");
             getFlexCellFormatter().addStyleName(row, col++, "Name");
-            setText(row, col++, _msgs.gieListing(), 3, "Header");
+            setText(row, col++, _msgs.gieListing(), 4, "Header");
             if (sample instanceof IdentGameItem) {
                 setText(row, col++, _msgs.gieIdent(), 1, "Header");
             }
@@ -78,12 +82,29 @@ public class GameItemEditorPanel extends SmartTable
             setWidget(row, col++, MediaUtil.createMediaView(
                           item.getThumbnailMedia(), MediaDesc.HALF_THUMBNAIL_SIZE));
             setText(row, col++, item.name, 1);
-            setText(row, col++, item.isListedOriginal() ? (itemInfo.listingOutOfDate ?
+            final int statusCol = col++;
+            setText(row, statusCol, item.isListedOriginal() ? (itemInfo.listingOutOfDate ?
                 _msgs.gieOutOfDate() : _msgs.gieUpToDate()) : _msgs.gieNotListed());
             Args dargs = Args.compose("d", item.getType(), item.itemId);
             setWidget(row, col++, Link.create(_msgs.gieView(), Pages.STUFF, dargs));
             Args eargs = Args.compose("e", item.getType(), item.itemId);
             setWidget(row, col++, Link.create(_msgs.gieEdit(), Pages.STUFF, eargs));
+            final int actionCol = col++;
+            if (!item.isListedOriginal() || itemInfo.listingOutOfDate) {
+                final int frow = row;
+                final GameItem fitem = item;
+                String label = item.isListedOriginal() ? _msgs.gieUpdate() : _msgs.gieList();
+                setWidget(row, actionCol, MsoyUI.createActionLabel(label, null, new ClickHandler() {
+                    public void onClick (ClickEvent event) {
+                        DoListItemPopup.show(fitem, null, new DoListItemPopup.ListedListener() {
+                            public void itemListed (Item item, boolean updated) {
+                                setText(frow, statusCol, _msgs.gieUpToDate());
+                                setText(frow, actionCol, "");
+                            }
+                        });
+                    }
+                }));
+            }
             if (item instanceof IdentGameItem) {
                 setText(row, col++, ((IdentGameItem)item).ident);
             }
