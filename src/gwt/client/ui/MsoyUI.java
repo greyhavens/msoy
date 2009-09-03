@@ -30,6 +30,7 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.TextBoxBase;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.gwt.ui.AbsoluteCSSPanel;
 import com.threerings.gwt.ui.Anchor;
 import com.threerings.gwt.ui.WidgetUtil;
 
@@ -139,6 +140,18 @@ public class MsoyUI
         AbsolutePanel panel = new AbsolutePanel();
         if (styleName != null) {
             panel.addStyleName(styleName);
+        }
+        return panel;
+    }
+
+    /**
+     * Creates a AbsoluteCSSPanel with the supplied style and contents
+     */
+    public static AbsoluteCSSPanel createAbsoluteCSSPanel (String styleName, Widget... contents)
+    {
+        AbsoluteCSSPanel panel = new AbsoluteCSSPanel(styleName);
+        for (Widget child : contents) {
+            panel.add(child);
         }
         return panel;
     }
