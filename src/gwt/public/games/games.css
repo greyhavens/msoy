@@ -753,6 +753,11 @@
 
 .gameItemEditor .Header {
   font-weight: bold;
+  width: auto;
+}
+
+.gameItemEditor .Name {
+  width: 45%;
 }
 
 /* ------------------------------------

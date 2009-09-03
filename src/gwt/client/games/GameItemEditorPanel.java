@@ -56,10 +56,9 @@ public class GameItemEditorPanel extends SmartTable
             GameItem sample = items.get(0).item;
             int col = 0;
             setText(row, col++, ""); // clear out loading...
-            setText(row, col++, _msgs.gieName(), 1, "Header");
-            col++; // for [view]
-            col++; // for [edit]
-            setText(row, col++, _msgs.giePublished(), 1, "Header");
+            setText(row, col, _msgs.gieName(), 1, "Header");
+            getFlexCellFormatter().addStyleName(row, col++, "Name");
+            setText(row, col++, _msgs.gieListing(), 3, "Header");
             if (sample instanceof IdentGameItem) {
                 setText(row, col++, _msgs.gieIdent(), 1, "Header");
             }
@@ -77,13 +76,14 @@ public class GameItemEditorPanel extends SmartTable
             GameItem item = itemInfo.item;
             int col = 0;
             setWidget(row, col++, MediaUtil.createMediaView(
-                          item.getThumbnailMedia(), MediaDesc.HALF_THUMBNAIL_SIZE), 1);
+                          item.getThumbnailMedia(), MediaDesc.HALF_THUMBNAIL_SIZE));
             setText(row, col++, item.name, 1);
+            setText(row, col++, item.isListedOriginal() ? (itemInfo.listingOutOfDate ?
+                _msgs.gieOutOfDate() : _msgs.gieUpToDate()) : _msgs.gieNotListed());
             Args dargs = Args.compose("d", item.getType(), item.itemId);
-            setWidget(row, col++, Link.create(_msgs.gieView(), Pages.STUFF, dargs), 1);
+            setWidget(row, col++, Link.create(_msgs.gieView(), Pages.STUFF, dargs));
             Args eargs = Args.compose("e", item.getType(), item.itemId);
             setWidget(row, col++, Link.create(_msgs.gieEdit(), Pages.STUFF, eargs));
-            setText(row, col++, item.isListedOriginal() ? _msgs.gieIsPublished() : "");
             if (item instanceof IdentGameItem) {
                 setText(row, col++, ((IdentGameItem)item).ident);
             }
