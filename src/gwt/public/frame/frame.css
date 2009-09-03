@@ -287,7 +287,7 @@
   background-position: 0 -30px;
 }
 
-.fbpageTitle .Trophies {
+.fbpageTitle > .Trophies {
   background: url(/images/facebook/trophies_button.png) no-repeat;
   width: 104px;
   left: 646px;
@@ -312,6 +312,89 @@
 
 .fbpageTitle .Challenge a:hover {
   text-decoration: underline;
+}
+
+.fbpageTitle .fbstatus {
+  left: 90px;
+  top: 13px;
+}
+
+/** Facebook status bar. */
+
+.fbstatus {
+  width: 156px;
+  height: 27px;
+  color: white;
+  font-size: 10px;
+}
+
+.fbstatus .Top {
+  width: 156px;
+  top: 1px;
+  height: 14px;
+  overflow: hidden;
+}
+
+.fbstatus .Top .Name {
+  left: 1px;
+  width: 55px;
+}
+
+.fbstatus .Top .Level {
+  left: 61px;
+  width: 52px;
+}
+
+.fbstatus .Top .Trophies {
+  right: 1px;
+  width: 24px;
+  text-align: right;
+}
+
+.fbstatus .Top .TrophyIcon {
+  background: transparent url(/images/facebook/trophy.png) no-repeat scroll 0 0;
+  left: 114px;
+  top: 0px;
+  width: 17px;
+  height: 11px;
+}
+
+.fbstatus .LevelProgress {
+  top: 15px;
+}
+
+/** Facebook progress bars */
+
+.fbprogressBar {
+  background: white url(/images/facebook/progress_bg.png) no-repeat;
+  width: 156px;
+  height: 14px;
+  color: black;
+  overflow: hidden;
+}
+
+.fbprogressBar .Meter {
+  background: orange url(/images/facebook/progress.png) no-repeat;
+  left: 1px;
+  top: 1px;
+  height: 12px;
+  width : 100%; /* gets overridden from code */
+}
+
+.fbprogressBar .Label, .fbprogressBar .Detail {
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+.fbprogressBar .Label {
+  left: 11px;
+  width: 73px;
+}
+
+.fbprogressBar .Detail {
+  right: 10px;
+  width: 80px;
+  text-align: right;
 }
 
 /** Home icon shown when we have no client */
