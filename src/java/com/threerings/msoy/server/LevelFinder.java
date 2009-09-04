@@ -9,8 +9,8 @@ import com.google.common.base.Preconditions;
 import com.threerings.msoy.data.all.CoinAwards;
 
 /**
- * Calculates coin values necessary to reach all levels. Provides forward and reverse lookup,
- * caches the results and expands the number of levels dynamically in a thread safe way.
+ * Calculates coin values necessary to reach all levels. Provides forward and reverse lookup and
+ * is read-only therefore thread safe.
  */
 public class LevelFinder
 {
