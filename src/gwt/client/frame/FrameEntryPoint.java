@@ -96,15 +96,15 @@ public class FrameEntryPoint
         History.addValueChangeHandler(this);
         _currentToken = History.getToken();
 
-        // validate our session which will dispatch a didLogon or didLogoff
-        Session.validate();
-
         // if we are in a frame and our token has emb_fb, set the embedding value to facebook
         _embedding = Frame.Embedding.NONE;
         if (isFramed() && ArgNames.Embedding.FACEBOOK.equals(ArgNames.Embedding.extract(
             Args.fromHistory(_currentToken)))) {
             _embedding = Frame.Embedding.FACEBOOK;
         }
+
+        // validate our session which will dispatch a didLogon or didLogoff
+        Session.validate();
 
         // create our header
         _header = new FrameHeader(new ClickHandler() {
