@@ -116,11 +116,7 @@ public class MoneyMessageListener
     // from interface Lifecycle.Component
     public void shutdown ()
     {
-        try {
-            _conn.close();
-        } catch (IOException ioe) {
-            log.warning("Could not close money message listener connection.", ioe);
-        }
+        // Do nothing, the connection is closed from MsoyServer.shutdown()
     }
 
     /**
