@@ -83,7 +83,6 @@ import com.threerings.msoy.item.server.persist.DecorRepository;
 import com.threerings.msoy.item.server.persist.DocumentRepository;
 import com.threerings.msoy.item.server.persist.FavoritesRepository;
 import com.threerings.msoy.item.server.persist.FurnitureRepository;
-import com.threerings.msoy.item.server.persist.GameRepository;
 import com.threerings.msoy.item.server.persist.IdentGameItemRecord;
 import com.threerings.msoy.item.server.persist.ItemFlagRecord;
 import com.threerings.msoy.item.server.persist.ItemFlagRepository;
@@ -133,7 +132,6 @@ public class ItemLogic
         registerRepository(Item.DECOR, _decorRepo);
         registerRepository(Item.DOCUMENT, _documentRepo);
         registerRepository(Item.FURNITURE, _furniRepo);
-        registerRepository(Item.GAME, _gameRepo);
         registerRepository(Item.ITEM_PACK, _ipackRepo);
         registerRepository(Item.LAUNCHER, _launcherRepo);
         registerRepository(Item.LEVEL_PACK, _lpackRepo);
@@ -154,15 +152,6 @@ public class ItemLogic
             }
         };
         _jumbleInvalidator.schedule(JUMBLE_REFRESH_PERIOD, true);
-    }
-
-    /**
-     * Provides a reference to the {@link GameRepository} which is used for nefarious ToyBox
-     * purposes.
-     */
-    public GameRepository getGameRepository ()
-    {
-        return _gameRepo;
     }
 
     /**
@@ -1209,7 +1198,6 @@ public class ItemLogic
     @Inject protected DecorRepository _decorRepo;
     @Inject protected DocumentRepository _documentRepo;
     @Inject protected FurnitureRepository _furniRepo;
-    @Inject protected GameRepository _gameRepo;
     @Inject protected ItemPackRepository _ipackRepo;
     @Inject protected LauncherRepository _launcherRepo;
     @Inject protected LevelPackRepository _lpackRepo;
