@@ -89,11 +89,13 @@ public class TagDetailPanel extends VerticalPanel
         _tags.add(new Label(_cmsgs.tagLoading()));
         add(_tags);
 
-        if (_canEdit) {
+        if (_canEdit || _flagger != null) {
             RowPanel addRow = new RowPanel();
-            addRow.add(new InlineLabel(_cmsgs.tagAddTag(), false, false, false),
-                       HasAlignment.ALIGN_MIDDLE);
-            addRow.add(new NewTagBox());
+            if (_canEdit) {
+                addRow.add(new InlineLabel(_cmsgs.tagAddTag(), false, false, false),
+                           HasAlignment.ALIGN_MIDDLE);
+                addRow.add(new NewTagBox());
+            }
 
             if (_flagger != null) {
                 InlineLabel flagLabel = new InlineLabel(_cmsgs.tagFlag());
