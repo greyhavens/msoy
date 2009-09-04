@@ -19,6 +19,25 @@ public class SessionData implements IsSerializable
     /** Identifies A/B groups assigned to sessions during the validation process. */
     public enum Group { NONE, A, B, C };
 
+    /**
+     * Optional data for displaying more progress information for Facebook.
+     */
+    public static class Extra
+        implements IsSerializable
+    {
+        /** Accumulated flow. */
+        public int accumFlow;
+
+        /** Accumulated flow to reach SessionData.level. */
+        public int levelFlow;
+
+        /** Accumulated flow to reach SessionData.level + 1. */
+        public int nextLevelFlow;
+
+        /** Total number of trophies held. */
+        public int trophyCount;
+    }
+
     /** Our session credentials. */
     public WebCreds creds;
 
@@ -39,6 +58,9 @@ public class SessionData implements IsSerializable
 
     /** A/B test group associated with this session, or NONE. */
     public Group group = Group.NONE;
+
+    /** Optional data for displaying more progress information (facebook). */
+    public Extra extra;
 
     /**
      * Creates and initializes an instance from supplied {@link #flatten}ed string.

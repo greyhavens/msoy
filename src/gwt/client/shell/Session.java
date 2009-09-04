@@ -188,7 +188,8 @@ public class Session
                 didLogoff();
             }
         };
-        _usersvc.validateSession(DeploymentConfig.version, token, 1, onValidate);
+        _usersvc.validateSession(
+            DeploymentConfig.version, token, 1, CShell.isFacebook(), onValidate);
     }
 
     protected static VisitorInfo _visitor;

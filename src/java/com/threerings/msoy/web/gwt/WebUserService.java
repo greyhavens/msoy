@@ -62,9 +62,10 @@ public interface WebUserService extends RemoteService
 
     /**
      * Validates that the supplied session token is still active and refreshes its expiration time
-     * if so.
+     * if so. Optionally loads the extra progress data {@link SessionData#extra}.
      */
-    SessionData validateSession (String clientVersion, String authtok, int expireDays)
+    SessionData validateSession (
+        String clientVersion, String authtok, int expireDays, boolean extra)
         throws ServiceException;
 
     /**

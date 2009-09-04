@@ -82,6 +82,17 @@ public class TrophyRepository extends DepotRepository
     }
 
     /**
+     * Counts the total number of trophies a user has for all games. This ends up getting shown
+     * in the Facebook status panel.
+     * TODO: measure the performance and consider caching in MemberRecord (if FB userbase grows)
+     */
+    public int countTrophies (int memberId)
+    {
+        return load(CountRecord.class, new Where(TrophyRecord.MEMBER_ID.eq(memberId)),
+            new FromOverride(TrophyRecord.class)).count;
+    }
+
+    /**
      * Returns a list of the idents of the trophies owned by the specified player for the specified
      * game.
      */

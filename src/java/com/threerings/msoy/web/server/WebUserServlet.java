@@ -44,7 +44,9 @@ import com.threerings.msoy.server.AccountLogic;
 import com.threerings.msoy.server.ExternalAuthHandler;
 import com.threerings.msoy.server.ExternalAuthLogic;
 import com.threerings.msoy.server.FriendManager;
+import com.threerings.msoy.server.LevelFinder;
 import com.threerings.msoy.server.MemberLogic;
+import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.MsoyAuthenticator;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.ServerMessages;
@@ -55,6 +57,7 @@ import com.threerings.msoy.server.util.MailSender;
 import com.threerings.msoy.server.util.MailSender.By;
 
 import com.threerings.msoy.game.server.GameLogic;
+import com.threerings.msoy.game.server.persist.TrophyRepository;
 import com.threerings.msoy.mail.server.MailLogic;
 import com.threerings.msoy.mail.server.persist.MailRepository;
 import com.threerings.msoy.money.data.all.MemberMoney;
@@ -218,7 +221,8 @@ public class WebUserServlet extends MsoyServiceServlet
     }
 
     // from interface WebUserService
-    public SessionData validateSession (String clientVersion, String authtok, int expireDays)
+    public SessionData validateSession (
+        String clientVersion, String authtok, int expireDays, boolean extra)
         throws ServiceException
     {
         checkClientVersion(clientVersion, authtok);
@@ -233,7 +237,16 @@ public class WebUserServlet extends MsoyServiceServlet
             WebCreds creds = mrec.toCreds(authtok);
             _mhelper.mapMemberId(creds.token, mrec.memberId);
             SessionData data = new SessionData();
-            initSessionData(mrec, creds, _moneyLogic.getMoneyFor(mrec.memberId), data);
+            MemberMoney money = _moneyLogic.getMoneyFor(mrec.memberId);
+            initSessionData(mrec, creds, money, data);
+            if (extra) {
+                data.extra = new SessionData.Extra();
+                data.extra.accumFlow = (int)Math.min(money.accCoins, Integer.MAX_VALUE);
+                LevelFinder levelFinder = _memberMgr.getLevelFinder();
+                data.extra.levelFlow = levelFinder.getCoinsForLevel(data.level);
+                data.extra.nextLevelFlow = levelFinder.getCoinsForLevel(data.level + 1);
+                data.extra.trophyCount = _trophyRepo.countTrophies(mrec.memberId);
+            }
             return data;
 
         } catch (Exception e) {
@@ -625,6 +638,7 @@ public class WebUserServlet extends MsoyServiceServlet
     @Inject protected MailRepository _mailRepo;
     @Inject protected MailSender _mailer;
     @Inject protected MemberLogic _memberLogic;
+    @Inject protected MemberManager _memberMgr;
     @Inject protected MoneyLogic _moneyLogic;
     @Inject protected MsoyAuthenticator _author;
     @Inject protected MsoyPeerManager _peerMan;
@@ -634,4 +648,5 @@ public class WebUserServlet extends MsoyServiceServlet
     @Inject protected RuntimeConfig _runtime;
     @Inject protected ServerMessages _serverMsgs;
     @Inject protected StatLogic _statLogic;
+    @Inject protected TrophyRepository _trophyRepo;
 }

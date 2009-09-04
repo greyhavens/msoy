@@ -35,7 +35,7 @@ public interface WebUserServiceAsync
      * The asynchronous version of {@link WebUserService#validateSession}.
      */
     void validateSession (String clientVersion, String authtok, int expireDays,
-                          AsyncCallback<SessionData> callback);
+        boolean extra, AsyncCallback<SessionData> callback);
 
     /**
      * The asynchronous version of {@link WebUserService#linkExternalAccount}.
