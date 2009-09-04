@@ -121,7 +121,7 @@ public abstract class BaseItemDetailPanel extends SmartTable
             public void getTags (AsyncCallback<List<String>> callback) {
                 _itemsvc.getTags(_item.getIdent(), callback);
             }
-            public void addMenuItems (String tag, PopupMenu menu) {
+            public void addMenuItems (String tag, PopupMenu menu, boolean canEdit) {
                 addTagMenuItems(tag, menu);
             }
         };

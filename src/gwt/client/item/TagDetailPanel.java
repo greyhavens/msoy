@@ -64,7 +64,7 @@ public class TagDetailPanel extends VerticalPanel
          * If additional entries are required on the Menu that pops up when a tag is clicked, this
          * method can add menu items for that purpose.
          */
-        void addMenuItems (String tag, PopupMenu menu);
+        void addMenuItems (String tag, PopupMenu menu, boolean canEdit);
     }
 
     /**
@@ -207,8 +207,10 @@ public class TagDetailPanel extends VerticalPanel
         for (Iterator<String> iter = tags.iterator(); iter.hasNext() ; ) {
             final String tag = iter.next();
             InlineLabel tagLabel = new InlineLabel(tag);
+
+            final Command remove;
             if (_canEdit) {
-                final Command remove = new Command() {
+                remove = new Command() {
                     public void execute () {
                         _service.untag(tag, new InfoCallback<TagHistory>() {
                             public void onSuccess (TagHistory result) {
@@ -218,14 +220,18 @@ public class TagDetailPanel extends VerticalPanel
                         });
                     }
                 };
-                new PopupMenu(tagLabel) {
-                    protected void addMenuItems () {
-                        _service.addMenuItems(tag, this);
+            } else {
+                remove = null;
+            }
+            new PopupMenu(tagLabel) {
+                protected void addMenuItems () {
+                    _service.addMenuItems(tag, this, _canEdit);
+                    if (remove != null) {
                         addMenuItem(_cmsgs.tagRemove(),
                             new PromptPopup(_cmsgs.tagRemoveConfirm(tag), remove));
                     }
-                };
-            }
+                }
+            };
             _tags.add(tagLabel);
             addedTags.add(tag);
             if (iter.hasNext()) {

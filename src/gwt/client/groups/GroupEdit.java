@@ -199,7 +199,7 @@ public class GroupEdit extends FlexTable
                 public void getTags (AsyncCallback<List<String>> cback) {
                     _groupsvc.getTags(_group.groupId, cback);
                 }
-                public void addMenuItems (final String tag, PopupMenu menu) {
+                public void addMenuItems (final String tag, PopupMenu menu, boolean canEdit) {
                     menu.addMenuItem(_msgs.detailTagLink(), new Command() {
                         public void execute () {
                             Link.go(Pages.GROUPS, "tag", "0", tag);
