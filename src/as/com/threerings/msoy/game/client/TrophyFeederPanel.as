@@ -69,6 +69,18 @@ public class TrophyFeederPanel extends FloatingPanel
         new TrophyFeederPanel(ctx, trophies, gameName, gameDescription, MODE_EXISTING).open();
     }
 
+    /**
+     * Assembles the argument list for a GWT trophy event and dispatches it.
+     */
+    public static function postTrophy (ctx :MsoyContext, trophy :Trophy, gameName :String,
+        gameDesc :String, gameThumbnail :String, manual :Boolean) :void
+    {
+        ctx.getMsoyClient().dispatchEventToGWT(TROPHY_EVENT, [
+            trophy.gameId, gameName, trophy.name, trophy.description,
+            trophy.trophyMedia.getMediaPath(), gameDesc, trophy.ident, gameThumbnail,
+            manual ]);
+    }
+
     public function TrophyFeederPanel (
         ctx :MsoyContext, trophies :Array, gameName :String, gameDescription :String, mode :int)
     {
@@ -137,10 +149,7 @@ public class TrophyFeederPanel extends FloatingPanel
     {
         // TODO: get the game thumbnail. ugh
         var gameThumbnail :String = null;
-        _ctx.getMsoyClient().dispatchEventToGWT(TROPHY_EVENT, [
-            trophy.gameId, _gameName, trophy.name, trophy.description,
-            trophy.trophyMedia.getMediaPath(), _gameDescription, trophy.ident, gameThumbnail ]);
-
+        postTrophy(_ctx, trophy, _gameName, _gameDescription, gameThumbnail, true);
         btn.enabled = false;
         if (_mode == MODE_NEW) {
             close();

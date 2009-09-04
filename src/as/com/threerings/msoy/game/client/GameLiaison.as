@@ -328,6 +328,9 @@ public class GameLiaison
                 var trophy :Trophy = (args[0] as Trophy);
                 // store in our list of trophies so we can offer to post a facebook news story later
                 _trophies.push(trophy);
+                // dispatch a GWT event now for passive UI updates
+                TrophyFeederPanel.postTrophy(
+                    _wctx, trophy, gameName, gameDescription, null, false);
             }
 
         } else if (name == WhirledGameObject.COINS_AWARDED_MESSAGE) {

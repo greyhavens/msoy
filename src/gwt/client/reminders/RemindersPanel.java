@@ -127,7 +127,7 @@ public class RemindersPanel extends FlowPanel
                 @Override public void onClick (ClickEvent event) {
                     CShell.frame.dispatchEvent(new TrophyEvent(trophy.gameId, trophyData.gameName,
                         trophyData.gameDesc, trophyData.gameMediaURL, trophy.name, trophy.ident,
-                        trophy.description, trophy.trophyMedia.getMediaPath()));
+                        trophy.description, trophy.trophyMedia.getMediaPath(), true));
                     removeNotification(reminder);
                 }
             }));

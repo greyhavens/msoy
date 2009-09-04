@@ -33,7 +33,10 @@ public class ExternalFeeder
     {
         FlashEvents.addListener(new TrophyEvent.Listener() {
             public void trophyEarned (TrophyEvent event) {
-                publishTrophyToFacebook(event);
+                // only do the manual requests since otherwise the popup will interrupt the game 
+                if (event.isManualPublish()) {
+                    publishTrophyToFacebook(event);
+                }
             }
         });
     }
