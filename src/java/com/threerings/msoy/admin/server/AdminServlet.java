@@ -76,7 +76,6 @@ import com.threerings.msoy.item.gwt.ItemDetail;
 import com.threerings.msoy.item.server.ItemLogic;
 import com.threerings.msoy.item.server.persist.CatalogRecord;
 import com.threerings.msoy.item.server.persist.CloneRecord;
-import com.threerings.msoy.item.server.persist.GameRepository;
 import com.threerings.msoy.item.server.persist.ItemFlagRecord;
 import com.threerings.msoy.item.server.persist.ItemFlagRepository;
 import com.threerings.msoy.item.server.persist.ItemRecord;
@@ -981,7 +980,6 @@ public class AdminServlet extends MsoyServiceServlet
     @Inject protected ContestRepository _contestRepo;
     @Inject protected FacebookLogic _facebookLogic;
     @Inject protected FacebookRepository _facebookRepo;
-    @Inject protected GameRepository _gameRepo;
     @Inject protected ItemFlagRepository _itemFlagRepo;
     @Inject protected ItemLogic _itemLogic;
     @Inject protected MailLogic _mailLogic;

@@ -15,7 +15,6 @@ import com.samskivert.io.StreamUtil;
 
 import com.threerings.msoy.data.all.LaunchConfig;
 import com.threerings.msoy.game.server.GameLogic;
-import com.threerings.msoy.item.server.persist.GameRepository;
 
 import com.threerings.msoy.server.ServerConfig;
 
@@ -70,5 +69,4 @@ public class EmbedRouterServlet extends HttpServlet
     }
 
     @Inject protected GameLogic _gameLogic;
-    @Inject protected GameRepository _gameRepo;
 }
