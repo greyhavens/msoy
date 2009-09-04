@@ -11,9 +11,13 @@ import com.google.gwt.user.client.ui.Label;
 import com.threerings.gwt.ui.AbsoluteCSSPanel;
 import com.threerings.msoy.web.gwt.SessionData;
 
+import client.shell.CShell;
 import client.shell.Session;
 import client.shell.ShellMessages;
 import client.ui.MsoyUI;
+import client.util.events.FlashEvents;
+import client.util.events.StatusChangeEvent;
+import client.util.events.StatusChangeListener;
 
 /**
  * Status panel for the Facebook application. Shows name, current level, number of trophies and
@@ -38,6 +42,31 @@ public class FacebookStatusPanel extends AbsoluteCSSPanel
             @Override public void didLogoff () {
             }
         });
+
+        FlashEvents.addListener(new StatusChangeListener() {
+            public void statusChanged (StatusChangeEvent event) {
+                switch(event.getType()) {
+                case StatusChangeEvent.LEVEL:
+                    // this is a bit hacky, but we need to know whether the didLogon handler
+                    // in StatusPanel is the sender. It always uses 0 as the old value. If we don't
+                    // perform this check we go into an infinite loop, continuously validating the
+                    // session
+                    // TODO: better alternative, perhaps just request the SessionData without
+                    // dispatching a didLogon... or maybe include the information with a new
+                    // LevelChangedEvent
+                    if (event.getOldValue() != 0) {
+                        // revalidate since we need the last and next coin values
+                        //CShell.log("Level change from flash");
+                        //Session.validate();
+                    }
+                    break;
+
+                case StatusChangeEvent.COINS:
+                    _levelProgressBar.setCurrent(event.getValue());
+                    break;
+                }
+            }
+        });
     }
 
     protected void updateSession (SessionData data)
@@ -46,9 +75,8 @@ public class FacebookStatusPanel extends AbsoluteCSSPanel
         _level.setText(_msgs.fbstatusLevel(String.valueOf(data.level)));
         if (data.extra != null) {
             _trophies.setText("" + data.extra.trophyCount);
-            int current = data.extra.accumFlow - data.extra.levelFlow;
-            int total = data.extra.nextLevelFlow - data.extra.levelFlow;
-            _levelProgressBar.set(current, total);
+            _levelProgressBar.set(
+                data.extra.levelFlow, data.extra.nextLevelFlow, data.extra.accumFlow);
         } else {
             _trophies.setText("");
             _levelProgressBar.setVisible(false);
@@ -66,15 +94,32 @@ public class FacebookStatusPanel extends AbsoluteCSSPanel
             add(_detail = MsoyUI.createLabel("", "Detail"));
         }
 
-        public void set (int current, int total)
+        public void setCurrent (int current)
         {
-            float percent = (float)current / total * 100;
-            _detail.setText(_msgs.fbStatusProgress(""+current, ""+total));
+            _current = current;
+            update();
+        }
+
+        public void set (int min, int max, int current)
+        {
+            _min = min;
+            _max = max;
+            _current = current;
+            update();
+        }
+
+        protected void update ()
+        {
+            int range = _max - _min;
+            int progress = _current - _min;
+            float percent = (float)progress / range * 100;
+            _detail.setText(_msgs.fbStatusProgress(""+progress, ""+range));
             DOM.setStyleAttribute(_meter.getElement(), "width", (int)percent + "%");
         }
 
         protected Label _detail;
         protected FlowPanel _meter;
+        protected int _min, _max, _current;
     }
 
     protected Label _name, _level, _trophies;
