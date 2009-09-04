@@ -38,6 +38,7 @@ public class FacebookTitleBar extends TitleBar
         _contents.add(button("Invite", Pages.FACEBOOK, "invite"));
         _contents.add(Link.createTop("Fan", FacebookUtil.APP_PROFILE));
         _contents.add(button("Trophies", Pages.GAMES, "t", CShell.getMemberId()));
+        _contents.add(new FacebookStatusPanel());
         if (gameName == null) {
             _contents.getElement().setAttribute("mode", "normal");
         } else {

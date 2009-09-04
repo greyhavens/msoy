@@ -251,7 +251,7 @@
 .fbpageTitle .Games {
   background: url(/images/facebook/games_button.png) no-repeat;
   width: 79px;
-  left: 264px;
+  left: 97px;
 }
 
 .fbpageTitle .Games-up-hovering, .fbpageTitle .Games-down-hovering {
@@ -261,7 +261,7 @@
 .fbpageTitle .Invite {
   background: url(/images/facebook/invite_button.png) no-repeat;
   width: 149px;
-  left: 347px;
+  left: 180px;
 }
 
 .fbpageTitle .Invite-up-hovering, .fbpageTitle .Invite-down-hovering {
@@ -273,7 +273,7 @@
 }
 
 .fbpageTitle .Fan {
-  left: 500px;
+  left: 333px;
 }
 
 .fbpageTitle .Fan a {
@@ -290,7 +290,7 @@
 .fbpageTitle > .Trophies {
   background: url(/images/facebook/trophies_button.png) no-repeat;
   width: 104px;
-  left: 646px;
+  left: 479px;
 }
 
 .fbpageTitle .Trophies-up-hovering, .fbpageTitle .Trophies-down-hovering {
@@ -315,7 +315,7 @@
 }
 
 .fbpageTitle .fbstatus {
-  left: 90px;
+  right: 9px;
   top: 13px;
 }
 
