@@ -4,7 +4,6 @@
 package com.threerings.msoy.server;
 
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -55,7 +54,6 @@ import com.threerings.msoy.data.MemberExperience;
 import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
-import com.threerings.msoy.data.all.CoinAwards;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.persist.BatchInvoker;
 import com.threerings.msoy.server.persist.MemberRepository;
@@ -131,16 +129,6 @@ public class MemberManager
                 }
             }
         });
-
-        // intialize our internal array of memoized flow values per level.  Start with 256
-        // calculated levels
-        _levelForFlow = new int[256];
-        for (int ii = 0; ii < BEGINNING_FLOW_LEVELS.length; ii++) {
-            // augment the value so the account creation does not cause level 3 to happen
-            _levelForFlow[ii] = BEGINNING_FLOW_LEVELS[ii] +
-                CoinAwards.CREATED_ACCOUNT + CoinAwards.CREATED_PROFILE;
-        }
-        calculateLevelsForFlow(BEGINNING_FLOW_LEVELS.length);
 
         // register a reporter for the clients report
         repMan.registerReporter(CLIENTS_REPORT_TYPE, new ReportManager.Reporter() {
@@ -240,6 +228,14 @@ public class MemberManager
         synchronized (_snapshotLock) {
             return _ppSnapshot;
         }
+    }
+
+    /**
+     * Returns the level finder object.
+     */
+    public LevelFinder getLevelFinder ()
+    {
+        return _levels;
     }
 
     public void addExperience (final MemberObject memObj, final MemberExperience newExp)
@@ -761,26 +757,7 @@ public class MemberManager
      */
     public void checkCurrentLevel (final MemberObject member)
     {
-        int level = Arrays.binarySearch(_levelForFlow, member.accCoins);
-        if (level < 0) {
-            level = -1 * level - 1;
-            final int length = _levelForFlow.length;
-            // if the _levelForFlow array isn't big enough, double its size and flesh out the new
-            // half
-            if (level == length) {
-                final int[] temp = new int[length*2];
-                System.arraycopy(_levelForFlow, 0, temp, 0, length);
-                _levelForFlow = temp;
-                calculateLevelsForFlow(length);
-                checkCurrentLevel(member);
-                return;
-            }
-            // level was equal to what would be the insertion point of accFlow, which is actually
-            // one greater than the real level.
-            level--;
-        }
-        // the flow value at array index ii cooresponds to level ii+1
-        level++;
+        int level = _levels.findLevel(member.accCoins);
 
         if (member.level < level) {
             final int oldLevel = member.level;
@@ -907,21 +884,6 @@ public class MemberManager
         });
     }
 
-    protected void calculateLevelsForFlow (int fromIndex)
-    {
-        // This equation governs the total flow requirement for a given level (n):
-        // flow(n) = flow(n-1) + ((n-1) * 17.8 - 49) * (3000 / 60)
-        // where (n-1) * 17.8 - 49 is the equation discovered by PARC researchers that correlates
-        // to the time (in minutes) it takes the average WoW player to get from level n-1 to level
-        // n, and 3000 is the expected average flow per hour that we hope to drive our system on.
-        for (int ii = fromIndex; ii < _levelForFlow.length; ii++) {
-            // this array gets filled here with values for levels 1 through _levelForFlow.length...
-            // the flow requirement for level n is at array index n-1.  Also, this function will
-            // never be called before _levelForFlow has been inialized with 1+ entries.
-            _levelForFlow[ii] = _levelForFlow[ii-1] + (int)((ii * 17.8 - 49) * (3000 / 60));
-        }
-    }
-
     /**
      * Returns the most recently loaded set of greeter ids, sorted by last session time. This is
      * only used to construct the popular places snapshot, which figures out which greeters are
@@ -951,9 +913,8 @@ public class MemberManager
      * periodically. */
     protected List<Integer> _greeterIdsSnapshot;
 
-    /** The array of memoized flow values for each level.  The first few levels are hard coded, the
-     * rest are calculated according to the equation in calculateLevelsForFlow() */
-    protected int[] _levelForFlow;
+    /** Coins to level lookup. */
+    protected LevelFinder _levels = new LevelFinder();
 
     // dependencies
     @Inject protected @BatchInvoker Invoker _batchInvoker;
@@ -982,9 +943,6 @@ public class MemberManager
     @Inject protected PresentsDObjectMgr _omgr;
     @Inject protected ProfileRepository _profileRepo;
     @Inject protected SupportLogic _supportLogic;
-
-    /** The required flow for the first few levels is hard-coded */
-    protected static final int[] BEGINNING_FLOW_LEVELS = { 0, 300, 900, 1800, 3000, 5100, 8100 };
 
     /** The frequency with which we recalculate our popular places snapshot. */
     protected static final long POP_PLACES_REFRESH_PERIOD = 30*1000;
