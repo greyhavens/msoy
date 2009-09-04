@@ -3,6 +3,9 @@
 
 package client.frame;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -11,13 +14,15 @@ import com.google.gwt.user.client.ui.Label;
 import com.threerings.gwt.ui.AbsoluteCSSPanel;
 import com.threerings.msoy.web.gwt.SessionData;
 
-import client.shell.CShell;
 import client.shell.Session;
 import client.shell.ShellMessages;
 import client.ui.MsoyUI;
+
+import client.util.events.FlashEventListener;
 import client.util.events.FlashEvents;
 import client.util.events.StatusChangeEvent;
 import client.util.events.StatusChangeListener;
+import client.util.events.TrophyEvent;
 
 /**
  * Status panel for the Facebook application. Shows name, current level, number of trophies and
@@ -35,15 +40,15 @@ public class FacebookStatusPanel extends AbsoluteCSSPanel
             _trophies = MsoyUI.createLabel("", "Trophies")));
         add(_levelProgressBar = new ProgressBar("LevelProgress", _msgs.fbStatusNextLevel()));
 
-        Session.addObserver(new Session.Observer() {
+        Session.addObserver(_observer = new Session.Observer() {
             @Override public void didLogon (SessionData data) {
-                updateSession(data);
+                setData(new Data(data));
             }
             @Override public void didLogoff () {
             }
         });
 
-        FlashEvents.addListener(new StatusChangeListener() {
+        _listeners.add(new StatusChangeListener() {
             public void statusChanged (StatusChangeEvent event) {
                 switch(event.getType()) {
                 case StatusChangeEvent.LEVEL:
@@ -62,23 +67,62 @@ public class FacebookStatusPanel extends AbsoluteCSSPanel
                     break;
 
                 case StatusChangeEvent.COINS:
-                    _levelProgressBar.setCurrent(event.getValue());
+                    // hacky... see above
+                    if (event.getOldValue() != 0 && _data != null) {
+                        _data.currCoins += event.getValue() - event.getOldValue();
+                        update();
+                    }
                     break;
                 }
             }
         });
+
+        _listeners.add(new TrophyEvent.Listener() {
+            @Override public void trophyEarned (TrophyEvent event) {
+                if (_data != null) {
+                    _data.trophies++;
+                    update();
+                }
+            }
+        });
+
+        for (FlashEventListener listener : _listeners) {
+            FlashEvents.addListener(listener);
+        }
+
+        if (_data != null) {
+            update();
+        }
     }
 
-    protected void updateSession (SessionData data)
+    @Override
+    protected void onUnload ()
     {
-        _name.setText(data.creds.name.toString());
-        _level.setText(_msgs.fbstatusLevel(String.valueOf(data.level)));
-        if (data.extra != null) {
-            _trophies.setText("" + data.extra.trophyCount);
-            _levelProgressBar.set(
-                data.extra.levelFlow, data.extra.nextLevelFlow, data.extra.accumFlow);
+        super.onUnload();
+        for (FlashEventListener listener : _listeners) {
+            FlashEvents.removeListener(listener);
+        }
+        if (_observer != null) {
+            Session.removeObserver(_observer);
+        }
+        _listeners.clear();
+        _observer = null;
+    }
+
+    protected void setData (Data data)
+    {
+        _data = data;
+        update();
+    }
+
+    protected void update ()
+    {
+        _name.setText(_data.name);
+        _level.setText(_msgs.fbstatusLevel(String.valueOf(_data.level)));
+        _trophies.setText("" + _data.trophies);
+        if (_data.nextCoins != 0) {
+            _levelProgressBar.set(_data.lastCoins, _data.nextCoins, _data.currCoins);
         } else {
-            _trophies.setText("");
             _levelProgressBar.setVisible(false);
         }
     }
@@ -92,12 +136,6 @@ public class FacebookStatusPanel extends AbsoluteCSSPanel
             add(_meter = MsoyUI.createFlowPanel("Meter"));
             add(MsoyUI.createLabel(label, "Label"));
             add(_detail = MsoyUI.createLabel("", "Detail"));
-        }
-
-        public void setCurrent (int current)
-        {
-            _current = current;
-            update();
         }
 
         public void set (int min, int max, int current)
@@ -122,7 +160,35 @@ public class FacebookStatusPanel extends AbsoluteCSSPanel
         protected int _min, _max, _current;
     }
 
+    protected class Data
+    {
+        public String name;
+        public int level;
+        public int trophies;
+        public int lastCoins;
+        public int nextCoins;
+        public int currCoins;
+
+        public Data (SessionData sessionData)
+        {
+            name = sessionData.creds.name.toString();
+            level = sessionData.level;
+            if (sessionData.extra != null) {
+                trophies = sessionData.extra.trophyCount;
+                lastCoins = sessionData.extra.levelFlow;
+                nextCoins = sessionData.extra.nextLevelFlow;
+                currCoins = sessionData.extra.accumFlow;
+            }
+        }
+    }
+
     protected Label _name, _level, _trophies;
     protected ProgressBar _levelProgressBar;
+    protected Session.Observer _observer;
+    protected List<FlashEventListener> _listeners = new ArrayList<FlashEventListener>();
+    // bah, we have to use a static here because the title bar keeps getting re-created but
+    // didLogon is only called the first time
+    // TODO: some day sort this out 
+    protected static Data _data;
     protected static final ShellMessages _msgs = GWT.create(ShellMessages.class); 
 }
