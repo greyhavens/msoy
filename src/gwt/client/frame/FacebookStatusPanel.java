@@ -45,9 +45,15 @@ public class FacebookStatusPanel extends AbsoluteCSSPanel
     {
         _name.setText(data.creds.name.toString());
         _level.setText(_msgs.fbstatusLevel(String.valueOf(data.level)));
-        // TODO: real trophy and level data
-        _trophies.setText("999");
-        _levelProgressBar.set((int)(data.flow * Random.nextDouble()), data.flow);
+        if (data.extra != null) {
+            _trophies.setText("" + data.extra.trophyCount);
+            int current = data.extra.accumFlow - data.extra.levelFlow;
+            int total = data.extra.nextLevelFlow - data.extra.levelFlow;
+            _levelProgressBar.set(current, total);
+        } else {
+            _trophies.setText("");
+            _levelProgressBar.setVisible(false);
+        }
     }
 
     protected static class ProgressBar extends AbsoluteCSSPanel
