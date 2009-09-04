@@ -5,7 +5,6 @@ package client.frame;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Random;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 

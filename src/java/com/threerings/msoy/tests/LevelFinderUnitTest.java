@@ -52,6 +52,7 @@ public class LevelFinderUnitTest
             Assert.assertEquals(0, oldCode.findLevel(coins));
         }
         int MAX_TEST = 1000000;
+        @SuppressWarnings("unused")
         int level = 0;
         for (int coins = STARTING_COINS; coins < MAX_TEST; coins += 100) {
             Assert.assertEquals("level mismatch for coins=" + coins,
