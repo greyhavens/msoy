@@ -349,6 +349,26 @@ public class MsoyGameRepository extends DepotRepository
     }
 
     /**
+     * Loads all the additional thumbnails assigned to the given game.
+     */
+    public List<GameThumbnailRecord> loadAdditionalThumbnails (int gameId)
+    {
+        return findAll(GameThumbnailRecord.class,
+            new Where(GameThumbnailRecord.GAME_ID.eq(gameId)));
+    }
+
+    /**
+     * Saves the additional thumbnails assigned to the given game.
+     */
+    public void saveAdditionalThumbnails (int gameId, List<GameThumbnailRecord> thumbs)
+    {
+        deleteAll(GameThumbnailRecord.class, new Where(GameThumbnailRecord.GAME_ID.eq(gameId)));
+        for (GameThumbnailRecord thumb : thumbs) {
+            insert(thumb);
+        }
+    }
+
+    /**
      * Creates a new game using the data in the supplied info record. A GameMetricsRecord is also
      * created for the new game.
      */
@@ -640,6 +660,7 @@ public class MsoyGameRepository extends DepotRepository
         classes.add(GameInfoRecord.class);
         classes.add(GameMetricsRecord.class);
         classes.add(GamePlayRecord.class);
+        classes.add(GameThumbnailRecord.class);
         classes.add(GameTraceLogRecord.class);
         classes.add(InstructionsRecord.class);
         classes.add(MochiGameInfoRecord.class);
