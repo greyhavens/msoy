@@ -206,7 +206,33 @@ public class MemberName extends Name
     @SuppressWarnings("deprecation")
     protected static boolean isWhitespace (char c)
     {
-        return Character.isSpace(c);
+        if (Character.isSpace(c)) {
+            return true;
+        }
+        /*
+        switch (c) {
+        case '\u0009':
+        case '\u000A':
+        case '\u000B':
+        case '\u000C':
+        case '\u000D':
+        case '\u001C':
+        case '\u001D':
+        case '\u001E':
+        case '\u001F':
+        case ' ':
+            return true;
+        }
+        */
+        /*
+        switch (Character.getType(c)) {
+        case Character.SPACE_SEPARATOR:
+        case Character.LINE_SEPARATOR:
+        case Character.PARAGRAPH_SEPARATOR:
+            return true;
+        }
+        */
+        return false;
     }
 
     /** Helper for {@link #isValidDisplayName}. */
