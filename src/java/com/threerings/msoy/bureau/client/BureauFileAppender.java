@@ -273,8 +273,8 @@ public class BureauFileAppender extends OOOFileAppender
             _pos = _prefix.length();
 
             // Ignore stuff from user code, this will get relayed to the database logs
-            if (_pos + 7 <= _line.length() && _line.substring(_pos, _pos + 7).equals(
-                "Puddle#")) {
+            int end = _pos + USER_CODE_PREFIX_LEN;
+            if (end <= _line.length() && _line.substring(_pos, end).equals(USER_CODE_PREFIX)) {
                 return false;
             }
 
@@ -292,4 +292,10 @@ public class BureauFileAppender extends OOOFileAppender
 
     /** First line printed by the run script when a bureau kicks off. */
     protected static final String RUN_START_LINE = "Running MetaSOY thane client";
+
+    /** String preceding output from within the user code domain (trace calls). */
+    protected static final String USER_CODE_PREFIX = "Puddle#";
+
+    /** Cached length constant. */
+    protected static final int USER_CODE_PREFIX_LEN = USER_CODE_PREFIX.length();
 }
