@@ -3,12 +3,16 @@
 
 package client.games;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.TextBox;
 
 import com.threerings.msoy.game.gwt.FacebookInfo;
+import com.threerings.msoy.game.gwt.GameService;
+import com.threerings.msoy.game.gwt.GameServiceAsync;
 
 import client.ui.MsoyUI;
 import client.util.ClickCallback;
@@ -17,20 +21,21 @@ import client.util.StringUtil;
 /**
  * Displays and allows editing of a game's Facebook info.
  */
-public class FacebookInfoEditorPanel extends EditorTable
+public class FacebookInfoEditorPanel extends FlowPanel
 {
     public FacebookInfoEditorPanel (final FacebookInfo info)
     {
-        addWidget(MsoyUI.createHTML(_msgs.fieIntro(), null), 2);
+        add(_mainFields = new EditorTable());
+        _mainFields.addWidget(MsoyUI.createHTML(_msgs.fieIntro(), null), 2);
 
-        addSpacer();
+        _mainFields.addSpacer();
 
-        _viewRow = addRow("", MsoyUI.createHTML("", null), null);
+        _viewRow = _mainFields.addRow("", MsoyUI.createHTML("", null), null);
         updateAppLink(info);
 
         final TextBox key = MsoyUI.createTextBox(
             info.apiKey, FacebookInfo.KEY_LENGTH, FacebookInfo.KEY_LENGTH);
-        addRow(_msgs.fieKey(), key, new Command() {
+        _mainFields.addRow(_msgs.fieKey(), key, new Command() {
             public void execute () {
                 info.apiKey = key.getText().trim();
             }
@@ -38,7 +43,7 @@ public class FacebookInfoEditorPanel extends EditorTable
 
         final TextBox secret = MsoyUI.createTextBox(
             info.appSecret, FacebookInfo.SECRET_LENGTH, FacebookInfo.SECRET_LENGTH);
-        addRow(_msgs.fieSecret(), secret, new Command() {
+        _mainFields.addRow(_msgs.fieSecret(), secret, new Command() {
             public void execute () {
                 info.appSecret = secret.getText().trim();
             }
@@ -46,7 +51,7 @@ public class FacebookInfoEditorPanel extends EditorTable
 
         final TextBox canvasName = MsoyUI.createTextBox(
             info.canvasName, FacebookInfo.CANVAS_NAME_LENGTH, FacebookInfo.CANVAS_NAME_LENGTH);
-        addRow(_msgs.fieCanvasName(), canvasName, new Command() {
+        _mainFields.addRow(_msgs.fieCanvasName(), canvasName, new Command() {
             public void execute () {
                 info.canvasName = canvasName.getText().trim();
             }
@@ -54,18 +59,18 @@ public class FacebookInfoEditorPanel extends EditorTable
 
         final CheckBox chromeless = new CheckBox(_msgs.fieChromelessText());
         chromeless.setValue(info.chromeless);
-        addRow(_msgs.fieChromeless(), chromeless, new Command() {
+        _mainFields.addRow(_msgs.fieChromeless(), chromeless, new Command() {
             public void execute () {
                 info.chromeless = chromeless.getValue();
             }
         });
 
-        addSpacer();
+        _mainFields.addSpacer();
 
-        Button save = addSaveRow();
+        Button save = _mainFields.addSaveRow();
         new ClickCallback<Void>(save) {
             protected boolean callService () {
-                if (!bindChanges()) {
+                if (!_mainFields.bindChanges()) {
                     return false;
                 }
                 _gamesvc.updateFacebookInfo(info, this);
@@ -81,9 +86,13 @@ public class FacebookInfoEditorPanel extends EditorTable
 
     protected void updateAppLink (FacebookInfo info)
     {
-        setWidget(_viewRow, 1, MsoyUI.createHTML(_msgs.fieViewApp(info.apiKey), null));
-        getRowFormatter().setVisible(_viewRow, !StringUtil.isBlank(info.apiKey));
+        _mainFields.setWidget(_viewRow, 1, MsoyUI.createHTML(_msgs.fieViewApp(info.apiKey), null));
+        _mainFields.getRowFormatter().setVisible(_viewRow, !StringUtil.isBlank(info.apiKey));
     }
 
+    protected EditorTable _mainFields;
     protected int _viewRow;
+
+    protected static final GamesMessages _msgs = GWT.create(GamesMessages.class);
+    protected static final GameServiceAsync _gamesvc = GWT.create(GameService.class);
 }
