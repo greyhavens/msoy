@@ -8,6 +8,8 @@ import java.io.IOException;
 
 import org.apache.mina.common.IoAcceptor;
 
+import com.google.common.base.Predicate;
+
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -58,6 +60,7 @@ import com.whirled.game.server.RepoCookieManager;
 import com.whirled.game.server.persist.GameCookieRepository;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
+import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.admin.server.MsoyAdminManager;
 import com.threerings.msoy.bureau.server.MsoyBureauRegistry;
@@ -430,6 +433,14 @@ public class MsoyServer extends MsoyBaseServer
 
     /** Manages subscriptions. */
     @Inject protected SubscriptionLogic _subscripLogic;
+
+    static {
+        MemberName.isSpacePred = new Predicate<Character>() {
+            public boolean apply (Character c) {
+                return Character.isSpaceChar(c);
+            }
+        };
+    }
 
     /** Prune the feeds once every 3 hours. On all servers at once? @TODO Fix. */
     protected static final long FEED_PRUNING_INTERVAL = 3 * 60 * 60 * 1000;

@@ -5,6 +5,8 @@ package com.threerings.msoy.data.all;
 
 import java.util.Comparator;
 
+import com.google.common.base.Predicate;
+
 import com.threerings.util.Name;
 
 import com.threerings.presents.dobj.DSet;
@@ -53,6 +55,9 @@ public class MemberName extends Name
     /** Used to reprepsent a member that has been deleted but is still referenced as an item
      * creator or mail message sender, etc. */
     public static final MemberName DELETED_MEMBER = new MemberName("", -1);
+
+    /** A Predicate, assigned only on the server, that tests whether a char is whitespace. */
+    public static Predicate<Character> isSpacePred;
 
     /** A comparator for sorting Names by their display portion, case insensitively. */
     public static final Comparator<MemberName> BY_DISPLAY_NAME = new Comparator<MemberName>() {
@@ -206,33 +211,12 @@ public class MemberName extends Name
     @SuppressWarnings("deprecation")
     protected static boolean isWhitespace (char c)
     {
-        if (Character.isSpace(c)) {
-            return true;
+        if (isSpacePred == null) {
+            // we do this in GWT
+            return Character.isSpace(c);
         }
-        /*
-        switch (c) {
-        case '\u0009':
-        case '\u000A':
-        case '\u000B':
-        case '\u000C':
-        case '\u000D':
-        case '\u001C':
-        case '\u001D':
-        case '\u001E':
-        case '\u001F':
-        case ' ':
-            return true;
-        }
-        */
-        /*
-        switch (Character.getType(c)) {
-        case Character.SPACE_SEPARATOR:
-        case Character.LINE_SEPARATOR:
-        case Character.PARAGRAPH_SEPARATOR:
-            return true;
-        }
-        */
-        return false;
+        // we do this on the server
+        return isSpacePred.apply(c);
     }
 
     /** Helper for {@link #isValidDisplayName}. */
