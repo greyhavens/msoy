@@ -760,6 +760,21 @@
   width: 45%;
 }
 
+.editGame .fie .thumbnails {
+  width: 100%;
+}
+
+.editGame .fie .Title {
+  font-weight: bold;
+  width: 90%;
+  padding-left: 10px;
+}
+
+.editGame .fie .Tip {
+  width: 90%;
+  padding-left: 10px;
+}
+
 /* ------------------------------------
    EditArcadePanel
 -------------------------------------*/
