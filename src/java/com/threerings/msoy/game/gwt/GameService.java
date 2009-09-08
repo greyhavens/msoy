@@ -176,6 +176,12 @@ public interface GameService extends RemoteService
         throws ServiceException;
 
     /**
+     * Loads the additional thumbnails for the specified game.
+     */
+    List<GameThumbnail> loadAdditionalThumbnails (int gameId)
+        throws ServiceException;
+
+    /**
      * Loads a game's original subitems (level pack, prize, etc.). Caller must be the game owner or
      * support+.
      */
@@ -226,6 +232,12 @@ public interface GameService extends RemoteService
      * Updates the Facebook info for the supplied game.
      */
     void updateFacebookInfo (FacebookInfo info)
+        throws ServiceException;
+
+    /**
+     * Set the additional thumbnails for the specified game.
+     */
+    void updateAdditionalThumbnails (int gameId, List<GameThumbnail> thumbnails)
         throws ServiceException;
 
     /**

@@ -87,6 +87,11 @@ public interface GameServiceAsync
     void loadGameData (int gameId, AsyncCallback<GameService.GameData> callback);
 
     /**
+     * The asynchronous version of {@link GameService#loadAdditionalThumbnails}.
+     */
+    void loadAdditionalThumbnails (int gameId, AsyncCallback<List<GameThumbnail>> callback);
+
+    /**
      * The asynchronous version of {@link GameService#loadGameItems}.
      */
     void loadGameItems (int gameId, byte type, AsyncCallback<List<GameItemEditorInfo>> callback);
@@ -126,6 +131,12 @@ public interface GameServiceAsync
      * The asynchronous version of {@link GameService#updateFacebookInfo}.
      */
     void updateFacebookInfo (FacebookInfo info, AsyncCallback<Void> callback);
+
+    /**
+     * The asynchronous version of {@link GameService#updateAdditionalThumbnails}.
+     */
+    void updateAdditionalThumbnails (int gameId, List<GameThumbnail> thumbnails,
+        AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link GameService#loadArcadeEntryIds}.

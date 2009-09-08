@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableMap;
@@ -71,11 +72,13 @@ import com.threerings.msoy.game.gwt.GameGenre;
 import com.threerings.msoy.game.gwt.GameInfo;
 import com.threerings.msoy.game.gwt.GameLogs;
 import com.threerings.msoy.game.gwt.GameService;
+import com.threerings.msoy.game.gwt.GameThumbnail;
 import com.threerings.msoy.game.gwt.MochiGameInfo;
 import com.threerings.msoy.game.gwt.PlayerRating;
 import com.threerings.msoy.game.gwt.TrophyCase;
 import com.threerings.msoy.game.server.persist.GameCodeRecord;
 import com.threerings.msoy.game.server.persist.GameInfoRecord;
+import com.threerings.msoy.game.server.persist.GameThumbnailRecord;
 import com.threerings.msoy.game.server.persist.GameTraceLogEnumerationRecord;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 import com.threerings.msoy.game.server.persist.ArcadeEntryRecord;
@@ -84,6 +87,7 @@ import com.threerings.msoy.game.server.persist.TrophyRepository;
 import com.threerings.msoy.group.data.all.GroupMembership;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 
+import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.RatingResult;
@@ -444,6 +448,43 @@ public class GameServlet extends MsoyServiceServlet
         data.devCode = _mgameRepo.loadGameCode(GameInfo.toDevId(info.gameId), false);
         data.pubCode = _mgameRepo.loadGameCode(info.gameId, false);
         return data;
+    }
+
+    // from interface GameService
+    public List<GameThumbnail> loadAdditionalThumbnails (int gameId)
+        throws ServiceException
+    {
+        requireAuthedUser();
+        return Lists.newArrayList(Lists.transform(_mgameRepo.loadAdditionalThumbnails(gameId),
+            new Function<GameThumbnailRecord, GameThumbnail> () {
+            public GameThumbnail apply (GameThumbnailRecord rec) {
+                return rec.toGameThumbnail();
+            }
+        }));
+    }
+
+    // from interface GameService
+    public void updateAdditionalThumbnails (final int gameId, List<GameThumbnail> thumbnails)
+        throws ServiceException
+    {
+        MemberRecord mrec = requireAuthedUser();
+        requireIsGameCreator(gameId, mrec);
+        if (thumbnails.size() > GameThumbnail.MAX_COUNT) {
+            // this should never happen with a legitimate client
+            throw new ServiceException(MsoyCodes.E_INTERNAL_ERROR);
+        }
+        for (GameThumbnail thumb : thumbnails) {
+            if (thumb.media == null || !thumb.media.isImage()) {
+                // this should never happen with a legitimate client
+                throw new ServiceException(MsoyCodes.E_INTERNAL_ERROR);
+            }
+        }
+        _mgameRepo.saveAdditionalThumbnails(gameId, Lists.transform(thumbnails,
+            new Function<GameThumbnail, GameThumbnailRecord>() {
+                public GameThumbnailRecord apply (GameThumbnail thumb) {
+                    return new GameThumbnailRecord(gameId, thumb.media);
+                }
+            }));
     }
 
     // from interface GameService
