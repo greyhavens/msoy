@@ -32,7 +32,7 @@ import client.util.StringUtil;
 /**
  * Displays an interface for editing a game's code and configuration.
  */
-public class CodeEditorPanel extends BaseEditorPanel
+public class CodeEditorPanel extends EditorTable
 {
     public CodeEditorPanel (GameInfo info, final GameCode code)
     {
@@ -112,7 +112,7 @@ public class CodeEditorPanel extends BaseEditorPanel
         };
         addRow(_msgs.egSplash(), _msgs.egSplashTip(), spbox, new Command() {
             public void execute () {
-                code.splashMedia = checkImageMedia(_msgs.egSplash(), spbox.getMedia());
+                code.splashMedia = EditorUtil.checkImageMedia(_msgs.egSplash(), spbox.getMedia());
             }
         });
 
@@ -120,7 +120,7 @@ public class CodeEditorPanel extends BaseEditorPanel
             _msgs.egNoClientCode(), Item.MAIN_MEDIA, code.clientMedia);
         addRow(_msgs.egClientCode(), _msgs.egClientCodeTip(), ccbox, new Command() {
             public void execute () {
-                code.clientMedia = checkClientMedia(ccbox.getMedia());
+                code.clientMedia = EditorUtil.checkClientMedia(ccbox.getMedia());
             }
         });
 
@@ -139,7 +139,7 @@ public class CodeEditorPanel extends BaseEditorPanel
             _msgs.egNoServerCode(), GameCode.SERVER_CODE_MEDIA, code.serverMedia);
         addRow(_msgs.egServerCode(), _msgs.egServerCodeTip(), scbox, new Command() {
             public void execute () {
-                code.serverMedia = checkServerMedia(scbox.getMedia());
+                code.serverMedia = EditorUtil.checkServerMedia(scbox.getMedia());
             }
         });
         addTip(_msgs.egServerCodeNote());
@@ -314,7 +314,7 @@ public class CodeEditorPanel extends BaseEditorPanel
                 // need a valid document (single child element) for parsing to work
                 params = XMLParser.parse("<params>" + config.params + "</params>");
             } catch (DOMException de) {
-                throw new ConfigException(_msgs.errInvalidDefinition(de.getMessage()));
+                throw new EditorUtil.ConfigException(_msgs.errInvalidDefinition(de.getMessage()));
             }
 
             Element pelem = xml.createElement("params");

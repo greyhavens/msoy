@@ -17,7 +17,7 @@ import client.util.StringUtil;
 /**
  * Displays and allows editing of a game's Facebook info.
  */
-public class FacebookInfoEditorPanel extends BaseEditorPanel
+public class FacebookInfoEditorPanel extends EditorTable
 {
     public FacebookInfoEditorPanel (final FacebookInfo info)
     {

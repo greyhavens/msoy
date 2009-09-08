@@ -29,7 +29,7 @@ import client.util.InfoCallback;
 /**
  * Allows for creation and editing of basic game info.
  */
-public class InfoEditorPanel extends BaseEditorPanel
+public class InfoEditorPanel extends EditorTable
 {
     public InfoEditorPanel (final GameService.GameData data)
     {
@@ -37,7 +37,7 @@ public class InfoEditorPanel extends BaseEditorPanel
         final TextBox name = MsoyUI.createTextBox(info.name, GameInfo.MAX_NAME_LENGTH, 40);
         addRow(_msgs.egName(), name, new Command() {
             public void execute () {
-                info.name = checkName(name.getText().trim());
+                info.name = EditorUtil.checkName(name.getText().trim());
             }
         });
 
@@ -53,7 +53,7 @@ public class InfoEditorPanel extends BaseEditorPanel
             public void execute () {
                 GameGenre genre = GameGenre.valueOf(genbox.getValue(genbox.getSelectedIndex()));
                 if (data.pubCode == null && genre != GameGenre.HIDDEN) {
-                    throw new ConfigException(_msgs.errMustHideUnpublished());
+                    throw new EditorUtil.ConfigException(_msgs.errMustHideUnpublished());
                 }
                 info.genre = genre;
             }
@@ -92,7 +92,7 @@ public class InfoEditorPanel extends BaseEditorPanel
             MediaDesc.THUMBNAIL_SIZE, Item.THUMB_MEDIA, info.thumbMedia);
         addRow(_msgs.egThumb(), _msgs.egThumbTip(), tbox, new Command() {
             public void execute () {
-                info.thumbMedia = requireImageMedia(_msgs.egThumb(), tbox.getMedia());
+                info.thumbMedia = EditorUtil.requireImageMedia(_msgs.egThumb(), tbox.getMedia());
             }
         });
 
@@ -111,7 +111,7 @@ public class InfoEditorPanel extends BaseEditorPanel
         };
         addRow(_msgs.egShot(), _msgs.egShotTip(), sbox, new Command() {
             public void execute () {
-                info.shotMedia = checkImageMedia(_msgs.egShot(), sbox.getMedia());
+                info.shotMedia = EditorUtil.checkImageMedia(_msgs.egShot(), sbox.getMedia());
             }
         });
 

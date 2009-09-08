@@ -21,21 +21,18 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.data.all.MediaDesc;
-import com.threerings.msoy.game.gwt.GameInfo;
 import com.threerings.msoy.game.gwt.GameService;
 import com.threerings.msoy.game.gwt.GameServiceAsync;
 
 import client.shell.DynamicLookup;
 import client.ui.MsoyUI;
-import client.util.MediaUploader;
-import client.util.MediaUtil;
 
 /**
  * A base class for game editor panels.
  */
-public class BaseEditorPanel extends SmartTable
+public class EditorTable extends SmartTable
 {
-    public BaseEditorPanel ()
+    public EditorTable ()
     {
         super("baseEditor", 0, 10);
     }
@@ -118,112 +115,23 @@ public class BaseEditorPanel extends SmartTable
         }
     }
 
-    protected String checkName (String name)
-    {
-        if (name.length() == 0 || name.length() > GameInfo.MAX_NAME_LENGTH) {
-            throw new ConfigException(_msgs.errInvalidName(""+GameInfo.MAX_NAME_LENGTH));
-        }
-        return name;
-    }
-
-    protected MediaDesc checkImageMedia (String type, MediaDesc desc)
-    {
-        if (desc != null && !desc.isImage()) {
-            throw new ConfigException(_msgs.errInvalidImage(type));
-        }
-        return desc;
-    }
-
-    protected MediaDesc requireImageMedia (String type, MediaDesc desc)
-    {
-        if (desc == null || !desc.isImage()) {
-            throw new ConfigException(_msgs.errInvalidImage(type));
-        }
-        return desc;
-    }
-
-    protected MediaDesc checkClientMedia (MediaDesc desc)
-    {
-        if (desc == null || !desc.isSWF()) {
-            throw new ConfigException(_msgs.errInvalidClientCode());
-        }
-        return desc;
-    }
-
-    protected MediaDesc checkServerMedia (MediaDesc desc)
-    {
-        if (desc != null && desc.mimeType != MediaDesc.COMPILED_ACTIONSCRIPT_LIBRARY) {
-            throw new ConfigException(_msgs.errInvalidServerCode());
-        }
-        return desc;
-    }
-
-    protected class MediaBox extends SmartTable
-        implements MediaUploader.Listener
+    protected class MediaBox extends EditorUtil.MediaBox
     {
         public MediaBox (int size, String mediaId, MediaDesc media) {
-            super("mediaBox", 0, 0);
-            _size = size;
-            setMedia(media);
-            setWidget(1, 0, new MediaUploader(mediaId, this));
-            getFlexCellFormatter().setVerticalAlignment(0, 2, HasAlignment.ALIGN_BOTTOM);
+            super(size, mediaId, media);
         }
-
-        public void setMedia (MediaDesc media) {
-            if (media == null) {
-                setText(0, 0, "");
-            } else {
-                setWidget(0, 0, MediaUtil.createMediaView(_media = media, _size));
-            }
+        @Override protected void mediaModified () {
+            EditorTable.this.mediaModified();
         }
-
-        public MediaDesc getMedia () {
-            return _media;
-        }
-
-        // from MediaUploader.Listener
-        public void mediaUploaded (String name, MediaDesc desc, int width, int height) {
-            setMedia(desc);
-            mediaModified();
-        }
-
-        protected int _size;
-        protected MediaDesc _media;
     }
 
-    protected class CodeBox extends SmartTable
-        implements MediaUploader.Listener
+    protected class CodeBox extends EditorUtil.CodeBox
     {
         public CodeBox (String emptyMessgae, String mediaId, MediaDesc media) {
-            super("codeBox", 0, 0);
-            _emptyMessage = emptyMessgae;
-            setMedia(media);
-            setWidget(1, 0, new MediaUploader(mediaId, this));
+            super(emptyMessgae, mediaId, media);
         }
-
-        public void setMedia (MediaDesc media) {
-            _media = media;
-            setText(0, 0, (media == null) ? _emptyMessage : media.toString(), 1, "Code");
-        }
-
-        public MediaDesc getMedia () {
-            return _media;
-        }
-
-        // from MediaUploader.Listener
-        public void mediaUploaded (String name, MediaDesc desc, int width, int height) {
-            setMedia(desc);
-            mediaModified();
-        }
-
-        protected String _emptyMessage;
-        protected MediaDesc _media;
-    }
-
-    protected static class ConfigException extends RuntimeException
-    {
-        public ConfigException (String message) {
-            super(message);
+        @Override protected void mediaModified () {
+            EditorTable.this.mediaModified();
         }
     }
 

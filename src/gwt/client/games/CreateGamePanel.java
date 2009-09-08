@@ -20,7 +20,7 @@ import client.util.Link;
 /**
  * Displays an interface for creating a brand new game.
  */
-public class CreateGamePanel extends BaseEditorPanel
+public class CreateGamePanel extends EditorTable
 {
     public CreateGamePanel ()
     {
@@ -41,21 +41,21 @@ public class CreateGamePanel extends BaseEditorPanel
         final TextBox name = MsoyUI.createTextBox("", GameInfo.MAX_NAME_LENGTH, 20);
         addRow(_msgs.egName(), name, new Command() {
             public void execute () {
-                _name = checkName(name.getText().trim());
+                _name = EditorUtil.checkName(name.getText().trim());
             }
         });
 
         final MediaBox tbox = new MediaBox(MediaDesc.THUMBNAIL_SIZE, Item.THUMB_MEDIA, null);
         addRow(_msgs.egThumb(), _msgs.egThumbTip(), tbox, new Command() {
             public void execute () {
-                _thumbMedia = requireImageMedia(_msgs.egThumb(), tbox.getMedia());
+                _thumbMedia = EditorUtil.requireImageMedia(_msgs.egThumb(), tbox.getMedia());
             }
         });
 
         final CodeBox ccbox = new CodeBox(_msgs.egNoClientCode(), Item.MAIN_MEDIA, null);
         addRow(_msgs.egClientCode(), _msgs.egClientCodeTip(), ccbox, new Command() {
             public void execute () {
-                _clientMedia = checkClientMedia(ccbox.getMedia());
+                _clientMedia = EditorUtil.checkClientMedia(ccbox.getMedia());
             }
         });
 
