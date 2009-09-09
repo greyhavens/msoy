@@ -44,6 +44,7 @@ public class TrophyEvent extends FlashEvent
         _descrip = trophyDesc;
         _mediaURL = trophyMediaURL;
         _gameMediaURL = gameMediaURL;
+        _manualPublish = manualPublish;
     }
 
     /**
