@@ -34,7 +34,6 @@ import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.clause.OrderBy.Order;
 import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.expression.SQLExpression;
-import com.samskivert.depot.expression.ValueExp;
 import com.samskivert.depot.operator.Add;
 import com.samskivert.depot.operator.And;
 import com.samskivert.depot.operator.Case;
@@ -688,8 +687,8 @@ public class GroupRepository extends DepotRepository
             if (tagExistsExp != null) {
                 // the rank is (1 + fts rank), boosted by 25% if there's a tag match
                 return OrderBy.descending(new Mul(
-                    search.fullTextRank().plus(new ValueExp(1.0)),
-                    new Case(tagExistsExp, new ValueExp(1.25), new ValueExp(1.0)))).
+                    search.fullTextRank().plus(Exps.value(1.0)),
+                    new Case(tagExistsExp, Exps.value(1.25), Exps.value(1.0)))).
                         thenDescending(GroupRecord.MEMBER_COUNT).
                         thenAscending(GroupRecord.NAME);
 

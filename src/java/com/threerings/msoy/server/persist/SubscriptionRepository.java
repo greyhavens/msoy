@@ -16,6 +16,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.samskivert.depot.DepotRepository;
+import com.samskivert.depot.Exps;
 import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
@@ -23,7 +24,6 @@ import com.samskivert.depot.SchemaMigration;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.expression.SQLExpression;
-import com.samskivert.depot.expression.ValueExp;
 import com.samskivert.depot.operator.And;
 import com.samskivert.depot.operator.Or;
 
@@ -127,7 +127,7 @@ public class SubscriptionRepository extends DepotRepository
     {
         Map<ColumnExp,SQLExpression> updates = Maps.newHashMap();
         updates.put(SubscriptionRecord.LAST_GRANT,
-            new ValueExp(new Timestamp(System.currentTimeMillis())));
+            Exps.value(new Timestamp(System.currentTimeMillis())));
         updates.put(SubscriptionRecord.GRANTS_LEFT, SubscriptionRecord.GRANTS_LEFT.minus(1));
 
         int count = updatePartial(SubscriptionRecord.getKey(memberId), updates);
@@ -142,8 +142,8 @@ public class SubscriptionRepository extends DepotRepository
     public void noteSpecialItemGranted (int memberId, byte type, int itemId)
     {
         Map<ColumnExp,SQLExpression> updates = Maps.newHashMap();
-        updates.put(SubscriptionRecord.SPECIAL_ITEM_TYPE, new ValueExp(type));
-        updates.put(SubscriptionRecord.SPECIAL_ITEM_ID, new ValueExp(itemId));
+        updates.put(SubscriptionRecord.SPECIAL_ITEM_TYPE, Exps.value(type));
+        updates.put(SubscriptionRecord.SPECIAL_ITEM_ID, Exps.value(itemId));
 
         int count = updatePartial(SubscriptionRecord.getKey(memberId), updates);
         if (count == 0) {

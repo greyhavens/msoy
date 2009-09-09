@@ -29,7 +29,6 @@ import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.QueryClause;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.expression.ColumnExp;
-import com.samskivert.depot.expression.LiteralExp;
 import com.samskivert.depot.expression.SQLExpression;
 import com.samskivert.depot.operator.And;
 import com.samskivert.depot.operator.Div;
@@ -493,9 +492,9 @@ public class MsoySceneRepository extends DepotRepository
     /** Order for New & Hot. If you change this, also migrate the {@link SceneRecord} index. */
     protected static final SQLExpression NEW_AND_HOT_ORDER =
         getRatingExpression().plus(
-            Exps.epochSeconds(SceneRecord.LAST_PUBLISHED).div(
+            Funs.dateEpoch(SceneRecord.LAST_PUBLISHED).div(
                 // TODO: PostgreSQL flips out when you CREATE INDEX
                 // using a prepared statement with parameters. So we
                 // trick Depot using a literal expression here. :/
-                new LiteralExp("" + HotnessConfig.DROPOFF_SECONDS)));
+                Exps.literal("" + HotnessConfig.DROPOFF_SECONDS)));
 }

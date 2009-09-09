@@ -57,7 +57,6 @@ import com.samskivert.depot.clause.SelectClause;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.expression.SQLExpression;
-import com.samskivert.depot.expression.ValueExp;
 import com.samskivert.depot.operator.And;
 import com.samskivert.depot.operator.Case;
 import com.samskivert.depot.operator.Div;
@@ -1452,7 +1451,7 @@ public abstract class ItemRepository<T extends ItemRecord>
     {
         switch (matches.size()) {
         case 0:
-            return new ValueExp(true);
+            return Exps.value(true);
 
         case 1:
             return matches.get(0);
@@ -1560,7 +1559,7 @@ public abstract class ItemRepository<T extends ItemRecord>
         // - if the exchange rate was less than 1, this would value coins and bars equally
         //   instead of making bars worth less... that shouldn't happen though.
         exprs.add(getCatalogColumn(CatalogRecord.COST).times(Funs.greatest(
-            new ValueExp(1), getCatalogColumn(CatalogRecord.CURRENCY).times(exchangeRate))));
+            Exps.value(1), getCatalogColumn(CatalogRecord.CURRENCY).times(exchangeRate))));
         orders.add(order);
     }
 
@@ -1574,7 +1573,7 @@ public abstract class ItemRepository<T extends ItemRecord>
     protected void addOrderByNewAndHot (List<SQLExpression> exprs, List<OrderBy.Order> orders)
     {
         exprs.add(getRatingExpression().plus(
-            Exps.epochSeconds(getCatalogColumn(CatalogRecord.LISTED_DATE)).
+            Funs.dateEpoch(getCatalogColumn(CatalogRecord.LISTED_DATE)).
                 div(HotnessConfig.DROPOFF_SECONDS)));
         orders.add(OrderBy.Order.DESC);
     }
@@ -1606,14 +1605,14 @@ public abstract class ItemRepository<T extends ItemRecord>
         if (tagExistsExp != null) {
             // if there is a tag match, immediately boost relevance by 25%
             ops = ArrayUtil.append(ops,
-                new Case(tagExistsExp, new ValueExp(1.25), new ValueExp(1.0)));
+                new Case(tagExistsExp, Exps.value(1.25), Exps.value(1.0)));
         }
 
         SQLExpression madeByExp = context.madeByExpression();
         if (madeByExp != null) {
             // if the item was made by a creator who matches the description, also boost by 50%
             ops = ArrayUtil.append(ops,
-                new Case(madeByExp, new ValueExp(1.5), new ValueExp(1.0)));
+                new Case(madeByExp, Exps.value(1.5), Exps.value(1.0)));
         }
 
         exprs.add(new Mul(ops));

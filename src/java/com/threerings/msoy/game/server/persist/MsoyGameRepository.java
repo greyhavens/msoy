@@ -23,6 +23,7 @@ import com.samskivert.util.StringUtil;
 
 import com.samskivert.depot.CacheInvalidator;
 import com.samskivert.depot.DepotRepository;
+import com.samskivert.depot.Exps;
 import com.samskivert.depot.Funs;
 import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistenceContext;
@@ -37,7 +38,6 @@ import com.samskivert.depot.clause.QueryClause;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.expression.SQLExpression;
-import com.samskivert.depot.expression.ValueExp;
 import com.samskivert.depot.operator.And;
 import com.samskivert.depot.operator.FullText;
 import com.samskivert.depot.operator.GreaterThan;
@@ -174,7 +174,7 @@ public class MsoyGameRepository extends DepotRepository
 
         } else {
             // if we have no search ranking, sort by descending average rating
-            SQLExpression count =  Funs.greatest(GameInfoRecord.RATING_COUNT, new ValueExp(1.0));
+            SQLExpression count =  Funs.greatest(GameInfoRecord.RATING_COUNT, Exps.value(1.0));
             clauses.add(OrderBy.descending(GameInfoRecord.RATING_SUM.div(count)));
         }
 
@@ -447,7 +447,7 @@ public class MsoyGameRepository extends DepotRepository
         updatePartial(GameMetricsRecord.getKey(Math.abs(gprec.gameId)),
                       ImmutableMap.of(GameMetricsRecord.GAMES_PLAYED, add,
                                       GameMetricsRecord.FLOW_TO_NEXT_RECALC, sub,
-                                      GameMetricsRecord.LAST_PAYOUT, new ValueExp(gprec.recorded)));
+                                      GameMetricsRecord.LAST_PAYOUT, Exps.value(gprec.recorded)));
 
         // note that this game has API integration
         updatePartial(GameInfoRecord.getKey(gameId),

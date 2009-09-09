@@ -14,12 +14,12 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.internal.ImmutableMap;
 import com.samskivert.depot.DepotRepository;
+import com.samskivert.depot.Exps;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.expression.ColumnExp;
-import com.samskivert.depot.expression.ValueExp;
 import com.samskivert.depot.operator.And;
 
 /**
@@ -169,7 +169,7 @@ public class FacebookRepository extends DepotRepository
         Timestamp now = new Timestamp(System.currentTimeMillis());
         updatePartial(FacebookNotificationRecord.getKey(id), ImmutableMap.of(
             FacebookNotificationRecord.STARTED, now,
-            FacebookNotificationRecord.FINISHED, new ValueExp(null),
+            FacebookNotificationRecord.FINISHED, Exps.value(null),
             FacebookNotificationRecord.SENT_COUNT, 0,
             FacebookNotificationRecord.USER_COUNT, 0));
     }
@@ -204,7 +204,7 @@ public class FacebookRepository extends DepotRepository
         Timestamp now = new Timestamp(System.currentTimeMillis());
         updatePartial(FacebookNotificationRecord.getKey(id), ImmutableMap.of(
             FacebookNotificationRecord.FINISHED, now,
-            FacebookNotificationRecord.NODE, new ValueExp(null)));
+            FacebookNotificationRecord.NODE, Exps.value(null)));
     }
 
     /**

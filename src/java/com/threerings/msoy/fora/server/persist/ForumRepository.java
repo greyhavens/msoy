@@ -17,6 +17,7 @@ import com.google.inject.Singleton;
 
 import com.samskivert.depot.DatabaseException;
 import com.samskivert.depot.DepotRepository;
+import com.samskivert.depot.Exps;
 import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
@@ -30,7 +31,6 @@ import com.samskivert.depot.clause.QueryClause;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.expression.SQLExpression;
-import com.samskivert.depot.expression.ValueExp;
 import com.samskivert.depot.operator.And;
 import com.samskivert.depot.operator.FullText;
 import com.samskivert.depot.operator.GreaterThan;
@@ -418,9 +418,9 @@ public class ForumRepository extends DepotRepository
                 OrderBy.descending(ForumMessageRecord.CREATED));
             if (lastMsg.size() > 0) {
                 ForumMessageRecord last = lastMsg.get(0);
-                updates.put(ForumThreadRecord.MOST_RECENT_POST_ID, new ValueExp(last.messageId));
-                updates.put(ForumThreadRecord.MOST_RECENT_POSTER_ID, new ValueExp(last.posterId));
-                updates.put(ForumThreadRecord.MOST_RECENT_POST_TIME, new ValueExp(last.created));
+                updates.put(ForumThreadRecord.MOST_RECENT_POST_ID, Exps.value(last.messageId));
+                updates.put(ForumThreadRecord.MOST_RECENT_POSTER_ID, Exps.value(last.posterId));
+                updates.put(ForumThreadRecord.MOST_RECENT_POST_TIME, Exps.value(last.created));
             }
         }
         updatePartial(ForumThreadRecord.getKey(fmr.threadId), updates);
