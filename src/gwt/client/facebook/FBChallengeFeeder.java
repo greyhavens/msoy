@@ -55,7 +55,9 @@ public class FBChallengeFeeder
             ArgNames.FBParam.TRACKING.name, _fields.trackingId);
 
         FacebookUtil.FeedStoryImages images = new FacebookUtil.FeedStoryImages();
-        images.add(_fields.thumbnailURL, actionURL, ACCESSIBLE_GAME_IMAGE);
+        for (String thumbnail : _fields.thumbnails) {
+            images.add(thumbnail, actionURL);
+        }
 
         // TODO: A/B test use of target ids
         Map<String, Object> data = new HashMap<String, Object>();

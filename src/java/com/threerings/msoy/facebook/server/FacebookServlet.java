@@ -37,6 +37,7 @@ import com.threerings.msoy.server.persist.MemberCardRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.facebook.gwt.FacebookFriendInfo;
 import com.threerings.msoy.facebook.gwt.FacebookGame;
 import com.threerings.msoy.facebook.gwt.FacebookService;
@@ -52,6 +53,7 @@ import com.threerings.msoy.game.gwt.GameGenre;
 import com.threerings.msoy.game.gwt.MochiGameInfo;
 import com.threerings.msoy.game.server.persist.ArcadeEntryRecord;
 import com.threerings.msoy.game.server.persist.GameInfoRecord;
+import com.threerings.msoy.game.server.persist.GameThumbnailRecord;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 import com.threerings.msoy.game.server.persist.TrophyRecord;
 import com.threerings.msoy.game.server.persist.TrophyRepository;
@@ -71,10 +73,12 @@ public class FacebookServlet extends MsoyServiceServlet
     implements FacebookService
 {
     @Override // from FacebookService
-    public StoryFields getTrophyStoryFields ()
+    public StoryFields getTrophyStoryFields (int gameId)
         throws ServiceException
     {
-        StoryFields fields = loadBasicStoryFields(new StoryFields(), requireSession(), "trophy");
+        StoryFields fields = loadGameStoryFields(loadBasicStoryFields(
+            new StoryFields(), requireSession(), "trophy"), new FacebookGame(gameId));
+
         if (fields.template == null) {
             throw new ServiceException(MsoyCodes.E_INTERNAL_ERROR);
         }
@@ -366,7 +370,12 @@ public class FacebookServlet extends MsoyServiceServlet
             }
             fields.name = info.name;
             fields.description = info.description;
-            fields.thumbnailURL = info.getThumbMedia().getMediaPath();
+            fields.thumbnails = Lists.newArrayList(info.getThumbMedia().getMediaPath());
+            for (GameThumbnailRecord thumbnail :
+                _mgameRepo.loadAdditionalThumbnails(info.gameId)) {
+                fields.thumbnails.add(MediaDesc.getMediaPath(
+                    thumbnail.hash, thumbnail.mimeType, false));
+            }
             return fields;
 
         case MOCHI:
@@ -377,7 +386,7 @@ public class FacebookServlet extends MsoyServiceServlet
             }
             fields.name = minfo.name;
             fields.description = minfo.desc;
-            fields.thumbnailURL = minfo.thumbURL;
+            fields.thumbnails = Lists.newArrayList(minfo.thumbURL);
             return fields;
         }
         throw new ServiceException();

@@ -43,7 +43,7 @@ public class ExternalFeeder
 
     protected void publishTrophyToFacebook (final TrophyEvent event)
     {
-        _fbsvc.getTrophyStoryFields(new InfoCallback<StoryFields>() {
+        _fbsvc.getTrophyStoryFields(event.getGameId(), new InfoCallback<StoryFields>() {
             @Override public void onSuccess (StoryFields result) {
                 if (result != null) {
                     publishTrophyToFacebook(event, result);
@@ -64,10 +64,10 @@ public class ExternalFeeder
             FBParam.TRACKING.name, fields.trackingId);
 
         FacebookUtil.FeedStoryImages images = new FacebookUtil.FeedStoryImages();
-        if (event.getGameMediaURL() != null) {
-            images.add(event.getGameMediaURL(), actionURL, ACCESSIBLE_GAME_IMAGE);
+        for (String thumbnail : fields.thumbnails) {
+            images.add(thumbnail, actionURL);
         }
-        images.add(event.getMediaURL(), actionURL, ACCESSIBLE_TROPHY_IMAGE);
+        //images.add(event.getMediaURL(), actionURL, ACCESSIBLE_TROPHY_IMAGE);
 
         Map<String, Object> data = new HashMap<String, Object>();
         data.put("game_id", event.getGameId());
@@ -121,8 +121,6 @@ public class ExternalFeeder
               "href" : "http://www.whirled.com/go/games-d_827_t"}]}
     */
 
-    protected static final String ACCESSIBLE_GAME_IMAGE =
-        FacebookUtil.PUB_ROOT + "708ca91490155abc18f99a74e8bba5129b5033f6.png"; // CC game thumb
     protected static final String ACCESSIBLE_TROPHY_IMAGE =
         FacebookUtil.PUB_ROOT + "240aa9267fa6dc8422588e6818862301fd658e6f.png"; // CC trophy
 

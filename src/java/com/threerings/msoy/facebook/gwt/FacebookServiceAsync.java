@@ -17,7 +17,7 @@ public interface FacebookServiceAsync
     /**
      * The asynchronous version of {@link FacebookService#getTrophyStoryFields}.
      */
-    void getTrophyStoryFields (AsyncCallback<StoryFields> callback);
+    void getTrophyStoryFields (int gameId, AsyncCallback<StoryFields> callback);
 
     /**
      * The asynchronous version of {@link FacebookService#trophyPublished}.

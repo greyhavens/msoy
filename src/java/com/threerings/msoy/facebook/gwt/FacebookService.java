@@ -68,8 +68,9 @@ public interface FacebookService extends RemoteService
         /** The generated tracking id to embed into the story's links. */
         public String trackingId;
 
-        /** The thumbnail to use in the story. */
-        public String thumbnailURL;
+        /** The thumbnail URLs to use in the story. */
+        // TODO: we'd like to use MediaDesc here, but it is hard-wired for only s3 hash-based URLs
+        public List<String> thumbnails;
 
         /** The game name. */
         public String name;
@@ -80,9 +81,9 @@ public interface FacebookService extends RemoteService
 
     /**
      * Gets the basic story fields (template and tracking id) for publishing a trophy story. If no
-     * templates are found, returns null.
+     * templates are found, throws an exception.
      */
-    StoryFields getTrophyStoryFields ()
+    StoryFields getTrophyStoryFields (int gameId)
         throws ServiceException;
 
     /**
