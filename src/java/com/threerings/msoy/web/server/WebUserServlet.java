@@ -243,7 +243,9 @@ public class WebUserServlet extends MsoyServiceServlet
                 data.extra = new SessionData.Extra();
                 data.extra.accumFlow = (int)Math.min(money.accCoins, Integer.MAX_VALUE);
                 LevelFinder levelFinder = _memberMgr.getLevelFinder();
-                data.extra.levelFlow = levelFinder.getCoinsForLevel(data.level);
+                // level 1 users should see "1000/1800" instead of "-500/300"
+                data.extra.levelFlow = data.level <= 1 ? 0 :
+                    levelFinder.getCoinsForLevel(data.level);
                 data.extra.nextLevelFlow = levelFinder.getCoinsForLevel(data.level + 1);
                 data.extra.trophyCount = _trophyRepo.countTrophies(mrec.memberId);
             }
