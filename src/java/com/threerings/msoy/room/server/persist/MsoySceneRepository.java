@@ -17,7 +17,7 @@ import com.google.inject.Singleton;
 
 import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.Exps;
-import com.samskivert.depot.Funs;
+import com.samskivert.depot.Funcs;
 import com.samskivert.depot.Key;
 import com.samskivert.depot.KeySet;
 import com.samskivert.depot.PersistenceContext;
@@ -475,7 +475,7 @@ public class MsoySceneRepository extends DepotRepository
         // TODO: PostgreSQL flips out when you CREATE INDEX using a prepared statement
         // TODO: with parameters. So we trick Depot using a literal expression here. :/
         return SceneRecord.RATING_SUM.div(
-            Funs.greatest(SceneRecord.RATING_COUNT, Exps.literal("1.0")));
+            Funcs.greatest(SceneRecord.RATING_COUNT, Exps.literal("1.0")));
     }
 
     @Override // from DepotRepository
@@ -492,7 +492,7 @@ public class MsoySceneRepository extends DepotRepository
     /** Order for New & Hot. If you change this, also migrate the {@link SceneRecord} index. */
     protected static final SQLExpression NEW_AND_HOT_ORDER =
         getRatingExpression().plus(
-            Funs.dateEpoch(SceneRecord.LAST_PUBLISHED).div(
+            Funcs.dateEpoch(SceneRecord.LAST_PUBLISHED).div(
                 // TODO: PostgreSQL flips out when you CREATE INDEX
                 // using a prepared statement with parameters. So we
                 // trick Depot using a literal expression here. :/

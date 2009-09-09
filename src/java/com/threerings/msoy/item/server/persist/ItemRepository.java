@@ -35,7 +35,7 @@ import com.samskivert.util.StringUtil;
 
 import com.samskivert.depot.CacheInvalidator.TraverseWithFilter;
 import com.samskivert.depot.Exps;
-import com.samskivert.depot.Funs;
+import com.samskivert.depot.Funcs;
 import com.samskivert.depot.Ops;
 import com.samskivert.depot.DataMigration;
 import com.samskivert.depot.DatabaseException;
@@ -1558,7 +1558,7 @@ public abstract class ItemRepository<T extends ItemRecord>
         // - We know that Currency.COINS=0, Currency.BARS=1
         // - if the exchange rate was less than 1, this would value coins and bars equally
         //   instead of making bars worth less... that shouldn't happen though.
-        exprs.add(getCatalogColumn(CatalogRecord.COST).times(Funs.greatest(
+        exprs.add(getCatalogColumn(CatalogRecord.COST).times(Funcs.greatest(
             Exps.value(1), getCatalogColumn(CatalogRecord.CURRENCY).times(exchangeRate))));
         orders.add(order);
     }
@@ -1573,7 +1573,7 @@ public abstract class ItemRepository<T extends ItemRecord>
     protected void addOrderByNewAndHot (List<SQLExpression> exprs, List<OrderBy.Order> orders)
     {
         exprs.add(getRatingExpression().plus(
-            Funs.dateEpoch(getCatalogColumn(CatalogRecord.LISTED_DATE)).
+            Funcs.dateEpoch(getCatalogColumn(CatalogRecord.LISTED_DATE)).
                 div(HotnessConfig.DROPOFF_SECONDS)));
         orders.add(OrderBy.Order.DESC);
     }
@@ -1597,7 +1597,7 @@ public abstract class ItemRepository<T extends ItemRecord>
 
             // then boost by (log10(purchases+1) + 3), thus an item that's sold 1,000 copies
             // is rated twice as high as something that's sold 1 copy
-            Funs.log10(getCatalogColumn(CatalogRecord.PURCHASES).plus(1.0)).plus(3.0),
+            Funcs.log10(getCatalogColumn(CatalogRecord.PURCHASES).plus(1.0)).plus(3.0),
         };
 
         SQLExpression tagExistsExp =
@@ -1672,7 +1672,7 @@ public abstract class ItemRepository<T extends ItemRecord>
     protected Div getRatingExpression ()
     {
         return getItemColumn(ItemRecord.RATING_SUM).div(
-            Funs.greatest(getItemColumn(ItemRecord.RATING_COUNT), Exps.value(1.0)));
+            Funcs.greatest(getItemColumn(ItemRecord.RATING_COUNT), Exps.value(1.0)));
     }
 
     protected Key<T> getItemKey (int itemId)

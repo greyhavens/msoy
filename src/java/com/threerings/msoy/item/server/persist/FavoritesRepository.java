@@ -15,7 +15,7 @@ import com.google.inject.Singleton;
 import com.samskivert.depot.DataMigration;
 import com.samskivert.depot.DatabaseException;
 import com.samskivert.depot.DepotRepository;
-import com.samskivert.depot.Funs;
+import com.samskivert.depot.Funcs;
 import com.samskivert.depot.Ops;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
@@ -86,7 +86,7 @@ public class FavoritesRepository extends DepotRepository
             new Join(FavoriteItemRecord.MEMBER_ID, MemberRecord.MEMBER_ID),
             new Where(Ops.and(conditions)),
             new GroupBy(FavoriteItemRecord.ITEM_TYPE, FavoriteItemRecord.CATALOG_ID),
-            OrderBy.descending(Funs.count(MemberRecord.MEMBER_ID)),
+            OrderBy.descending(Funcs.count(MemberRecord.MEMBER_ID)),
             new Limit(offset, rows));
     }
 
