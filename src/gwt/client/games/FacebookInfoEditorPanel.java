@@ -20,7 +20,6 @@ import com.threerings.msoy.game.gwt.FacebookInfo;
 import com.threerings.msoy.game.gwt.GameService;
 import com.threerings.msoy.game.gwt.GameServiceAsync;
 import com.threerings.msoy.game.gwt.GameThumbnail;
-import com.threerings.msoy.item.data.all.Item;
 
 import client.games.EditorUtil.ConfigException;
 import client.games.EditorUtil.MediaBox;
