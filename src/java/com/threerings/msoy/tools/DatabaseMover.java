@@ -25,10 +25,10 @@ import com.google.common.collect.Sets;
 
 import com.samskivert.depot.DatabaseException;
 import com.samskivert.depot.DepotRepository;
+import com.samskivert.depot.Exps;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.clause.Where;
-import com.samskivert.depot.expression.LiteralExp;
 import com.samskivert.depot.annotation.Computed;
 
 import com.threerings.msoy.server.ServerConfig;
@@ -168,7 +168,7 @@ public class DatabaseMover
             insert(record);
         }
         public <T extends PersistentRecord> void clear (Class<T> type) throws DatabaseException {
-            deleteAll(type, new Where(new LiteralExp("true")), null);
+            deleteAll(type, new Where(Exps.value(true)), null);
         }
         protected void getManagedRecords (Set<Class<? extends PersistentRecord>> classes) {
         }
