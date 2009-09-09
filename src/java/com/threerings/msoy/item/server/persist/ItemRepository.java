@@ -34,6 +34,8 @@ import com.samskivert.util.QuickSort;
 import com.samskivert.util.StringUtil;
 
 import com.samskivert.depot.CacheInvalidator.TraverseWithFilter;
+import com.samskivert.depot.Exps;
+import com.samskivert.depot.Funs;
 import com.samskivert.depot.Ops;
 import com.samskivert.depot.DataMigration;
 import com.samskivert.depot.DatabaseException;
@@ -54,9 +56,6 @@ import com.samskivert.depot.clause.QueryClause;
 import com.samskivert.depot.clause.SelectClause;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.expression.ColumnExp;
-import com.samskivert.depot.expression.EpochSeconds;
-import com.samskivert.depot.expression.FunctionExp;
-import com.samskivert.depot.expression.LiteralExp;
 import com.samskivert.depot.expression.SQLExpression;
 import com.samskivert.depot.expression.ValueExp;
 import com.samskivert.depot.operator.And;
@@ -975,15 +974,14 @@ public abstract class ItemRepository<T extends ItemRecord>
             switch (record.pricing) {
             case CatalogListing.PRICING_LIMITED_EDITION:
                 if (purchases >= record.salesTarget) {
-                    updates.put(CatalogRecord.PRICING,
-                                new LiteralExp(""+CatalogListing.PRICING_HIDDEN));
+                    updates.put(CatalogRecord.PRICING, Exps.value(CatalogListing.PRICING_HIDDEN));
                 }
                 break;
 
             case CatalogListing.PRICING_ESCALATE:
                 if (purchases == record.salesTarget) {
                     newCost = CatalogListing.escalatePrice(record.cost);
-                    updates.put(CatalogRecord.COST, new LiteralExp(""+newCost));
+                    updates.put(CatalogRecord.COST, Exps.value(newCost));
                 }
                 break;
             }
@@ -1561,9 +1559,8 @@ public abstract class ItemRepository<T extends ItemRecord>
         // - We know that Currency.COINS=0, Currency.BARS=1
         // - if the exchange rate was less than 1, this would value coins and bars equally
         //   instead of making bars worth less... that shouldn't happen though.
-        exprs.add(getCatalogColumn(CatalogRecord.COST).times(new FunctionExp(
-                          "GREATEST", new ValueExp(1),
-                          getCatalogColumn(CatalogRecord.CURRENCY).times(exchangeRate))));
+        exprs.add(getCatalogColumn(CatalogRecord.COST).times(Funs.greatest(
+            new ValueExp(1), getCatalogColumn(CatalogRecord.CURRENCY).times(exchangeRate))));
         orders.add(order);
     }
 
@@ -1577,8 +1574,8 @@ public abstract class ItemRepository<T extends ItemRecord>
     protected void addOrderByNewAndHot (List<SQLExpression> exprs, List<OrderBy.Order> orders)
     {
         exprs.add(getRatingExpression().plus(
-                      new EpochSeconds(getCatalogColumn(CatalogRecord.LISTED_DATE)).div(
-                          HotnessConfig.DROPOFF_SECONDS)));
+            Exps.epochSeconds(getCatalogColumn(CatalogRecord.LISTED_DATE)).
+                div(HotnessConfig.DROPOFF_SECONDS)));
         orders.add(OrderBy.Order.DESC);
     }
 
@@ -1601,7 +1598,7 @@ public abstract class ItemRepository<T extends ItemRecord>
 
             // then boost by (log10(purchases+1) + 3), thus an item that's sold 1,000 copies
             // is rated twice as high as something that's sold 1 copy
-            new FunctionExp("LOG", getCatalogColumn(CatalogRecord.PURCHASES).plus(1.0)).plus(3.0),
+            Funs.log10(getCatalogColumn(CatalogRecord.PURCHASES).plus(1.0)).plus(3.0),
         };
 
         SQLExpression tagExistsExp =
@@ -1676,7 +1673,7 @@ public abstract class ItemRepository<T extends ItemRecord>
     protected Div getRatingExpression ()
     {
         return getItemColumn(ItemRecord.RATING_SUM).div(
-            new FunctionExp("GREATEST", getItemColumn(ItemRecord.RATING_COUNT), new ValueExp(1.0)));
+            Funs.greatest(getItemColumn(ItemRecord.RATING_COUNT), Exps.value(1.0)));
     }
 
     protected Key<T> getItemKey (int itemId)

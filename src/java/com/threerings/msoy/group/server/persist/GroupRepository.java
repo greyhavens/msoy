@@ -19,6 +19,7 @@ import com.google.inject.Singleton;
 
 import com.samskivert.depot.DatabaseException;
 import com.samskivert.depot.DepotRepository;
+import com.samskivert.depot.Exps;
 import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
@@ -32,7 +33,6 @@ import com.samskivert.depot.clause.SelectClause;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.clause.OrderBy.Order;
 import com.samskivert.depot.expression.ColumnExp;
-import com.samskivert.depot.expression.EpochSeconds;
 import com.samskivert.depot.expression.SQLExpression;
 import com.samskivert.depot.expression.ValueExp;
 import com.samskivert.depot.operator.Add;
@@ -702,7 +702,7 @@ public class GroupRepository extends DepotRepository
             // SORT_BY_NEW_AND_POPULAR: subtract 2 members per day the group has been around
             long membersPerDay = (24 * 60 * 60) / 2;
             return OrderBy.descending(new Add(
-                new EpochSeconds(GroupRecord.CREATION_DATE).div(membersPerDay),
+                Exps.epochSeconds(GroupRecord.CREATION_DATE).div(membersPerDay),
                 GroupRecord.MEMBER_COUNT)).
                     thenAscending(GroupRecord.NAME);
         }

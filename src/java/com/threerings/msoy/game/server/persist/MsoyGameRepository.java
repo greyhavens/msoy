@@ -23,6 +23,7 @@ import com.samskivert.util.StringUtil;
 
 import com.samskivert.depot.CacheInvalidator;
 import com.samskivert.depot.DepotRepository;
+import com.samskivert.depot.Funs;
 import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
@@ -35,7 +36,6 @@ import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.QueryClause;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.expression.ColumnExp;
-import com.samskivert.depot.expression.FunctionExp;
 import com.samskivert.depot.expression.SQLExpression;
 import com.samskivert.depot.expression.ValueExp;
 import com.samskivert.depot.operator.And;
@@ -174,8 +174,7 @@ public class MsoyGameRepository extends DepotRepository
 
         } else {
             // if we have no search ranking, sort by descending average rating
-            FunctionExp count = new FunctionExp(
-                "GREATEST", GameInfoRecord.RATING_COUNT, new ValueExp(1.0));
+            SQLExpression count =  Funs.greatest(GameInfoRecord.RATING_COUNT, new ValueExp(1.0));
             clauses.add(OrderBy.descending(GameInfoRecord.RATING_SUM.div(count)));
         }
 

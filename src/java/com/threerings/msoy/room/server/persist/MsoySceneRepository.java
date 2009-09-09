@@ -16,6 +16,8 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.samskivert.depot.DepotRepository;
+import com.samskivert.depot.Exps;
+import com.samskivert.depot.Funs;
 import com.samskivert.depot.Key;
 import com.samskivert.depot.KeySet;
 import com.samskivert.depot.PersistenceContext;
@@ -27,8 +29,6 @@ import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.QueryClause;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.expression.ColumnExp;
-import com.samskivert.depot.expression.EpochSeconds;
-import com.samskivert.depot.expression.FunctionExp;
 import com.samskivert.depot.expression.LiteralExp;
 import com.samskivert.depot.expression.SQLExpression;
 import com.samskivert.depot.operator.And;
@@ -476,7 +476,7 @@ public class MsoySceneRepository extends DepotRepository
         // TODO: PostgreSQL flips out when you CREATE INDEX using a prepared statement
         // TODO: with parameters. So we trick Depot using a literal expression here. :/
         return SceneRecord.RATING_SUM.div(
-            new FunctionExp("GREATEST", SceneRecord.RATING_COUNT, new LiteralExp("1.0")));
+            Funs.greatest(SceneRecord.RATING_COUNT, Exps.literal("1.0")));
     }
 
     @Override // from DepotRepository
@@ -492,9 +492,10 @@ public class MsoySceneRepository extends DepotRepository
 
     /** Order for New & Hot. If you change this, also migrate the {@link SceneRecord} index. */
     protected static final SQLExpression NEW_AND_HOT_ORDER =
-        getRatingExpression().plus(new EpochSeconds(SceneRecord.LAST_PUBLISHED).div(
-                                       // TODO: PostgreSQL flips out when you CREATE INDEX
-                                       // using a prepared statement with parameters. So we
-                                       // trick Depot using a literal expression here. :/
-                                       new LiteralExp("" + HotnessConfig.DROPOFF_SECONDS)));
+        getRatingExpression().plus(
+            Exps.epochSeconds(SceneRecord.LAST_PUBLISHED).div(
+                // TODO: PostgreSQL flips out when you CREATE INDEX
+                // using a prepared statement with parameters. So we
+                // trick Depot using a literal expression here. :/
+                new LiteralExp("" + HotnessConfig.DROPOFF_SECONDS)));
 }

@@ -6,12 +6,12 @@ package com.threerings.msoy.server.persist;
 import java.sql.Date;
 import java.sql.Timestamp;
 
+import com.samskivert.depot.Funs;
 import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.annotation.*; // for Depot annotations
 import com.samskivert.depot.clause.OrderBy.Order;
 import com.samskivert.depot.expression.ColumnExp;
-import com.samskivert.depot.expression.FunctionExp;
 import com.samskivert.depot.expression.SQLExpression;
 
 import com.samskivert.util.StringUtil;
@@ -55,7 +55,7 @@ public class MemberRecord extends PersistentRecord
         /** A flag denoting that this user has opted to be a whirled greeter. */
         GREETER(1 << 6),
 
-        /** Indicates that this user has been known to make trouble. */ 
+        /** Indicates that this user has been known to make trouble. */
         TROUBLEMAKER(1 << 7),
 
         /** Indicates that the user has validated their email address. */
@@ -186,7 +186,7 @@ public class MemberRecord extends PersistentRecord
     public int sessionMinutes;
 
     /** The time at which the player ended their last session. */
-    @Index(name="ixLastSession") 
+    @Index(name="ixLastSession")
     public Timestamp lastSession;
 
     /** This member's current humanity rating, between 0 and {@link MsoyCodes#MAX_HUMANITY}. */
@@ -225,8 +225,7 @@ public class MemberRecord extends PersistentRecord
     /** Defnies the index on {@link #name} converted to lower case. */
     public static Tuple<SQLExpression, Order> ixLowerName ()
     {
-        return new Tuple<SQLExpression, Order>(
-            new FunctionExp("LOWER", MemberRecord.NAME), Order.ASC);
+        return new Tuple<SQLExpression, Order>(Funs.lower(MemberRecord.NAME), Order.ASC);
     }
 
     /**
