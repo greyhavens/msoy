@@ -14,13 +14,13 @@ import com.google.inject.Singleton;
 
 import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.DuplicateKeyException;
+import com.samskivert.depot.Ops;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.clause.Limit;
 import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.Where;
-import com.samskivert.depot.operator.And;
-import com.samskivert.depot.operator.Equals;
+import com.samskivert.depot.expression.SQLExpression;
 
 import com.threerings.presents.annotation.BlockingThread;
 
@@ -65,9 +65,9 @@ public class MedalRepository extends DepotRepository
      */
     public boolean groupContainsMedalName (int groupId, String name)
     {
-        Equals groupIdEquals = MedalRecord.GROUP_ID.eq(groupId);
-        Equals nameEquals = MedalRecord.NAME.eq(name);
-        return load(MedalRecord.class, new Where(new And(groupIdEquals, nameEquals))) != null;
+        SQLExpression groupIdEquals = MedalRecord.GROUP_ID.eq(groupId);
+        SQLExpression nameEquals = MedalRecord.NAME.eq(name);
+        return load(MedalRecord.class, new Where(Ops.and(groupIdEquals, nameEquals))) != null;
     }
 
     /**

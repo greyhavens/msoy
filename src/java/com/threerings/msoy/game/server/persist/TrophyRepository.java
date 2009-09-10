@@ -20,7 +20,6 @@ import com.samskivert.depot.clause.FromOverride;
 import com.samskivert.depot.clause.Limit;
 import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.Where;
-import com.samskivert.depot.operator.And;
 
 import com.threerings.presents.annotation.BlockingThread;
 
@@ -45,7 +44,7 @@ public class TrophyRepository extends DepotRepository
      */
     public List<TrophyRecord> loadTrophies (int memberId)
     {
-        return findAll(TrophyRecord.class, new Where(new And(
+        return findAll(TrophyRecord.class, new Where(Ops.and(
             TrophyRecord.MEMBER_ID.eq(memberId),
             TrophyRecord.GAME_ID.greaterThan(0))));
     }
@@ -55,7 +54,7 @@ public class TrophyRepository extends DepotRepository
      */
     public List<TrophyRecord> loadRecentTrophies (int memberId, int count)
     {
-        Where whereClause = new Where(new And(
+        Where whereClause = new Where(Ops.and(
             TrophyRecord.MEMBER_ID.eq(memberId),
             TrophyRecord.GAME_ID.greaterThan(0)));
         return findAll(TrophyRecord.class, whereClause,
@@ -117,9 +116,8 @@ public class TrophyRepository extends DepotRepository
             return;
         }
 
-        deleteAll(TrophyRecord.class, new Where(new And(
-            TrophyRecord.MEMBER_ID.eq(memberId),
-            TrophyRecord.GAME_ID.eq(gameId))));
+        deleteAll(TrophyRecord.class, new Where(Ops.and(TrophyRecord.MEMBER_ID.eq(memberId),
+                                                        TrophyRecord.GAME_ID.eq(gameId))));
     }
 
     /**

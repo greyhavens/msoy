@@ -18,11 +18,11 @@ import com.samskivert.depot.DataMigration;
 import com.samskivert.depot.DatabaseException;
 import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.Key;
+import com.samskivert.depot.Ops;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.impl.Modifier;
-import com.samskivert.depot.operator.And;
 
 import com.samskivert.jdbc.DatabaseLiaison;
 
@@ -120,7 +120,7 @@ public class MemoryRepository extends DepotRepository
     public void purgeMemories (byte itemType, Collection<Integer> itemIds)
     {
         deleteAll(MemoriesRecord.class, new Where(
-                      new And(MemoriesRecord.ITEM_TYPE.eq(itemType),
+                      Ops.and(MemoriesRecord.ITEM_TYPE.eq(itemType),
                               MemoriesRecord.ITEM_ID.in(itemIds))));
     }
 

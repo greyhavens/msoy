@@ -20,6 +20,7 @@ import com.samskivert.depot.Exps;
 import com.samskivert.depot.Funcs;
 import com.samskivert.depot.Key;
 import com.samskivert.depot.KeySet;
+import com.samskivert.depot.Ops;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.SchemaMigration;
@@ -29,10 +30,8 @@ import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.QueryClause;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.expression.ColumnExp;
+import com.samskivert.depot.expression.FluentExp;
 import com.samskivert.depot.expression.SQLExpression;
-import com.samskivert.depot.operator.And;
-import com.samskivert.depot.operator.Div;
-import com.samskivert.depot.operator.Not;
 
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
@@ -99,7 +98,7 @@ public class MsoySceneRepository extends DepotRepository
     public int getRoomCount (int memberId)
     {
         Where where = new Where(
-            new And(SceneRecord.OWNER_TYPE.eq(MsoySceneModel.OWNER_TYPE_MEMBER),
+            Ops.and(SceneRecord.OWNER_TYPE.eq(MsoySceneModel.OWNER_TYPE_MEMBER),
                     SceneRecord.OWNER_ID.eq(memberId)));
         return load(CountRecord.class, new FromOverride(SceneRecord.class), where).count;
     }
@@ -109,7 +108,7 @@ public class MsoySceneRepository extends DepotRepository
      */
     public List<SceneRecord> getOwnedScenes (byte ownerType, int memberId)
     {
-        Where where = new Where(new And(SceneRecord.OWNER_TYPE.eq(ownerType),
+        Where where = new Where(Ops.and(SceneRecord.OWNER_TYPE.eq(ownerType),
                                         SceneRecord.OWNER_ID.eq(memberId)));
         return findAll(SceneRecord.class, where);
     }
@@ -199,9 +198,9 @@ public class MsoySceneRepository extends DepotRepository
         List<OrderBy.Order> orders = Lists.newArrayList();
 
         // only load public, published rooms
-        clauses.add(new Where(new And(
-                            new Not(SceneRecord.LAST_PUBLISHED.isNull()),
-                            SceneRecord.ACCESS_CONTROL.eq(MsoySceneModel.ACCESS_EVERYONE))));
+        clauses.add(new Where(Ops.and(
+                                  Ops.not(SceneRecord.LAST_PUBLISHED.isNull()),
+                                  SceneRecord.ACCESS_CONTROL.eq(MsoySceneModel.ACCESS_EVERYONE))));
 
         exprs.add(NEW_AND_HOT_ORDER);
         orders.add(OrderBy.Order.DESC);
@@ -470,7 +469,7 @@ public class MsoySceneRepository extends DepotRepository
         }
     }
 
-    protected static Div getRatingExpression ()
+    protected static FluentExp getRatingExpression ()
     {
         // TODO: PostgreSQL flips out when you CREATE INDEX using a prepared statement
         // TODO: with parameters. So we trick Depot using a literal expression here. :/

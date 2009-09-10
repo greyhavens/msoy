@@ -14,14 +14,9 @@ import com.google.inject.Singleton;
 
 import com.samskivert.depot.CacheInvalidator;
 import com.samskivert.depot.DepotRepository;
+import com.samskivert.depot.Ops;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
-import com.samskivert.depot.operator.And;
-import com.samskivert.depot.operator.Equals;
-import com.samskivert.depot.operator.GreaterThan;
-import com.samskivert.depot.operator.GreaterThanEquals;
-import com.samskivert.depot.operator.LessThan;
-import com.samskivert.depot.operator.LessThanEquals;
 import com.samskivert.depot.clause.FromOverride;
 import com.samskivert.depot.clause.Limit;
 import com.samskivert.depot.clause.OrderBy;
@@ -291,9 +286,9 @@ public class ItemListRepository extends DepotRepository
                 return record.listId == listId && record.sequence >= fromIndex;
             }
         };
-        Equals findList = ItemListElementRecord.LIST_ID.eq(listId);
-        GreaterThanEquals after = ItemListElementRecord.SEQUENCE.greaterEq(fromIndex);
-        And condition = new And(findList, after);
+        SQLExpression findList = ItemListElementRecord.LIST_ID.eq(listId);
+        SQLExpression after = ItemListElementRecord.SEQUENCE.greaterEq(fromIndex);
+        SQLExpression condition = Ops.and(findList, after);
         updatePartial(ItemListElementRecord.class, new Where(condition), invalidator,
                       ItemListElementRecord.SEQUENCE, ItemListElementRecord.SEQUENCE.plus(1));
     }
@@ -305,9 +300,9 @@ public class ItemListRepository extends DepotRepository
      */
     protected void shiftItemsLeft (final int listId, final short fromIndex)
     {
-        Equals findList = ItemListElementRecord.LIST_ID.eq(listId);
-        GreaterThan after = ItemListElementRecord.SEQUENCE.greaterThan(fromIndex);
-        And condition = new And(findList, after);
+        SQLExpression findList = ItemListElementRecord.LIST_ID.eq(listId);
+        SQLExpression after = ItemListElementRecord.SEQUENCE.greaterThan(fromIndex);
+        SQLExpression condition = Ops.and(findList, after);
         CacheInvalidator invalidator =
             new CacheInvalidator.TraverseWithFilter<ItemListElementRecord>(
                 ItemListElementRecord.class) {
@@ -335,9 +330,9 @@ public class ItemListRepository extends DepotRepository
 
         if (fromIndex < toIndex) {
             // shift all affected items to the left
-            GreaterThan min = ItemListElementRecord.SEQUENCE.greaterThan(fromIndex);
-            LessThanEquals max = ItemListElementRecord.SEQUENCE.lessEq(toIndex);
-            range = new And(min, max);
+            SQLExpression min = ItemListElementRecord.SEQUENCE.greaterThan(fromIndex);
+            SQLExpression max = ItemListElementRecord.SEQUENCE.lessEq(toIndex);
+            range = Ops.and(min, max);
             shift = ItemListElementRecord.SEQUENCE.minus(Integer.valueOf(1));
             invalidator = new CacheInvalidator.TraverseWithFilter<ItemListElementRecord>(
                 ItemListElementRecord.class) {
@@ -349,9 +344,9 @@ public class ItemListRepository extends DepotRepository
 
         } else {
             // shift affected items to the right (increment by one)
-            GreaterThanEquals min = ItemListElementRecord.SEQUENCE.greaterEq(toIndex);
-            LessThan max = ItemListElementRecord.SEQUENCE.lessThan(fromIndex);
-            range = new And(min, max);
+            SQLExpression min = ItemListElementRecord.SEQUENCE.greaterEq(toIndex);
+            SQLExpression max = ItemListElementRecord.SEQUENCE.lessThan(fromIndex);
+            range = Ops.and(min, max);
             shift = ItemListElementRecord.SEQUENCE.plus(Integer.valueOf(1));
             invalidator = new CacheInvalidator.TraverseWithFilter<ItemListElementRecord>(
                 ItemListElementRecord.class) {
@@ -362,8 +357,8 @@ public class ItemListRepository extends DepotRepository
             };
         }
 
-        Equals findList = ItemListElementRecord.LIST_ID.eq(listId);
-        And condition = new And(findList, range);
+        SQLExpression findList = ItemListElementRecord.LIST_ID.eq(listId);
+        SQLExpression condition = Ops.and(findList, range);
 
         // update all of the affected items
         updatePartial(ItemListElementRecord.class, new Where(condition), invalidator,

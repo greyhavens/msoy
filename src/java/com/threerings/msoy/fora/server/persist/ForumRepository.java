@@ -19,6 +19,7 @@ import com.samskivert.depot.DatabaseException;
 import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.Exps;
 import com.samskivert.depot.Key;
+import com.samskivert.depot.Ops;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.SchemaMigration;
@@ -31,11 +32,7 @@ import com.samskivert.depot.clause.QueryClause;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.expression.SQLExpression;
-import com.samskivert.depot.operator.And;
 import com.samskivert.depot.operator.FullText;
-import com.samskivert.depot.operator.GreaterThan;
-import com.samskivert.depot.operator.Not;
-import com.samskivert.depot.operator.Or;
 import com.samskivert.util.IntIntMap;
 
 import com.threerings.presents.annotation.BlockingThread;
@@ -148,7 +145,7 @@ public class ForumRepository extends DepotRepository
     {
         return load(CountRecord.class,
             new FromOverride(ForumThreadRecord.class, ForumMessageRecord.class),
-            new Where(new And(
+            new Where(Ops.and(
                 ForumThreadRecord.GROUP_ID.eq(groupId),
                 ForumThreadRecord.THREAD_ID.eq(ForumMessageRecord.THREAD_ID)))
             ).count;
@@ -183,11 +180,12 @@ public class ForumRepository extends DepotRepository
      */
     public List<ForumThreadRecord> findThreads (int groupId, String search, int limit)
     {
-        And where = new And(ForumThreadRecord.GROUP_ID.eq(groupId),
-                            new Or(new FullText(ForumThreadRecord.class,
-                                                ForumThreadRecord.FTS_SUBJECT, search).match(),
-                                   new FullText(ForumMessageRecord.class,
-                                               ForumMessageRecord.FTS_MESSAGE, search).match()));
+        SQLExpression where = Ops.and(
+            ForumThreadRecord.GROUP_ID.eq(groupId),
+            Ops.or(new FullText(ForumThreadRecord.class,
+                                ForumThreadRecord.FTS_SUBJECT, search).match(),
+                   new FullText(ForumMessageRecord.class,
+                                ForumMessageRecord.FTS_MESSAGE, search).match()));
         return findAll(ForumThreadRecord.class,
                        ForumThreadRecord.THREAD_ID.join(ForumMessageRecord.THREAD_ID),
                        new Where(where), new Limit(0, limit));
@@ -204,13 +202,13 @@ public class ForumRepository extends DepotRepository
             return Collections.emptyList();
         }
 
-        SQLExpression cacheJoinAnd = new And(
+        SQLExpression cacheJoinAnd = Ops.and(
             ForumThreadRecord.THREAD_ID.eq(ReadTrackingRecord.THREAD_ID),
             ReadTrackingRecord.MEMBER_ID.eq(memberId)
         );
-        SQLExpression where = new And(
+        SQLExpression where = Ops.and(
             ForumThreadRecord.GROUP_ID.in(groupIds),
-            new Or(new FullText(ForumThreadRecord.class,
+            Ops.or(new FullText(ForumThreadRecord.class,
                                 ForumThreadRecord.FTS_SUBJECT, search).match(),
                    new FullText(ForumMessageRecord.class,
                                 ForumMessageRecord.FTS_MESSAGE, search).match()));
@@ -240,9 +238,9 @@ public class ForumRepository extends DepotRepository
      */
     public List<ForumMessageRecord> findMessages (int threadId, String search, int limit)
     {
-        And where = new And(ForumMessageRecord.THREAD_ID.eq(threadId),
-                            new FullText(ForumMessageRecord.class,
-                                         ForumMessageRecord.FTS_MESSAGE, search).match());
+        SQLExpression where = Ops.and(ForumMessageRecord.THREAD_ID.eq(threadId),
+                                      new FullText(ForumMessageRecord.class,
+                                                   ForumMessageRecord.FTS_MESSAGE, search).match());
         return findAll(ForumMessageRecord.class, new Where(where), new Limit(0, limit));
     }
 
@@ -432,7 +430,7 @@ public class ForumRepository extends DepotRepository
     public List<ReadTrackingRecord> loadLastReadPostInfo (int memberId, Set<Integer> threadIds)
     {
         return findAll(ReadTrackingRecord.class,
-                       new Where(new And(ReadTrackingRecord.MEMBER_ID.eq(memberId),
+                       new Where(Ops.and(ReadTrackingRecord.MEMBER_ID.eq(memberId),
                                          ReadTrackingRecord.THREAD_ID.in(threadIds))));
     }
 
@@ -463,18 +461,18 @@ public class ForumRepository extends DepotRepository
 
     protected List<QueryClause> getUnreadThreadsClauses (int memberId, Set<Integer> groupIds)
     {
-        SQLExpression join = new And(
+        SQLExpression join = Ops.and(
             ForumThreadRecord.THREAD_ID.eq(ReadTrackingRecord.THREAD_ID),
             ReadTrackingRecord.MEMBER_ID.eq(memberId)
         );
-        SQLExpression where = new And(
+        SQLExpression where = Ops.and(
             ForumThreadRecord.GROUP_ID.in(groupIds),
-            new GreaterThan(ForumThreadRecord.MOST_RECENT_POST_TIME,
-                            RepositoryUtil.getCutoff(UNREAD_POSTS_CUTOFF)),
-            new Or(ReadTrackingRecord.THREAD_ID.isNull(),
-                   new And(ReadTrackingRecord.MEMBER_ID.eq(memberId),
-                           new GreaterThan(ForumThreadRecord.MOST_RECENT_POST_ID,
-                                           ReadTrackingRecord.LAST_READ_POST_ID))));
+            ForumThreadRecord.MOST_RECENT_POST_TIME.greaterThan(
+                RepositoryUtil.getCutoff(UNREAD_POSTS_CUTOFF)),
+            Ops.or(ReadTrackingRecord.THREAD_ID.isNull(),
+                   Ops.and(ReadTrackingRecord.MEMBER_ID.eq(memberId),
+                           ForumThreadRecord.MOST_RECENT_POST_ID.greaterThan(
+                               ReadTrackingRecord.LAST_READ_POST_ID))));
         return Lists.newArrayList(
             new Join(ReadTrackingRecord.class, join).setType(Join.Type.LEFT_OUTER),
             new Where(where));
@@ -484,30 +482,31 @@ public class ForumRepository extends DepotRepository
         int memberId, Set<Integer> authorIds, Set<Integer> hiddenGroupIds)
     {
         // join expressions
-        SQLExpression joinRead = new And(
+        SQLExpression joinRead = Ops.and(
             ForumThreadRecord.THREAD_ID.eq(ReadTrackingRecord.THREAD_ID),
             ReadTrackingRecord.MEMBER_ID.eq(memberId));
-        SQLExpression joinThread = new And(
+        SQLExpression joinThread = Ops.and(
             ForumThreadRecord.THREAD_ID.eq(ForumMessageRecord.THREAD_ID));
 
         // filtering expressions
         List<SQLExpression> conditions = Lists.newArrayListWithCapacity(4);
         conditions.add(ForumMessageRecord.POSTER_ID.in(authorIds));
-        conditions.add(new Or(ReadTrackingRecord.THREAD_ID.isNull(),
-            new And(ReadTrackingRecord.MEMBER_ID.eq(memberId), new GreaterThan(
-                ForumMessageRecord.MESSAGE_ID, ReadTrackingRecord.LAST_READ_POST_ID))));
+        conditions.add(Ops.or(ReadTrackingRecord.THREAD_ID.isNull(),
+                              Ops.and(ReadTrackingRecord.MEMBER_ID.eq(memberId),
+                                      ForumMessageRecord.MESSAGE_ID.greaterThan(
+                                          ReadTrackingRecord.LAST_READ_POST_ID))));
         if (hiddenGroupIds.size() > 0) { // no empty In's
-            conditions.add(new Not(ForumThreadRecord.GROUP_ID.in(hiddenGroupIds)));
+            conditions.add(Ops.not(ForumThreadRecord.GROUP_ID.in(hiddenGroupIds)));
         }
-        conditions.add(new GreaterThan(ForumMessageRecord.CREATED,
-                                       RepositoryUtil.getCutoff(UNREAD_POSTS_CUTOFF)));
+        conditions.add(ForumMessageRecord.CREATED.greaterThan(
+                           RepositoryUtil.getCutoff(UNREAD_POSTS_CUTOFF)));
 
         // joins + group + filter
         return Lists.newArrayList(
             new Join(ReadTrackingRecord.class, joinRead).setType(Join.Type.LEFT_OUTER),
             new Join(ForumMessageRecord.class, joinThread).setType(Join.Type.INNER),
             new GroupBy(ForumThreadRecord.THREAD_ID, ForumThreadRecord.MOST_RECENT_POST_ID),
-            new Where(new And(conditions)));
+            new Where(Ops.and(conditions)));
     }
 
     @Override // from DepotRepository

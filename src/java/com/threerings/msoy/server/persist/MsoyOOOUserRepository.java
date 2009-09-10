@@ -12,11 +12,11 @@ import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import com.samskivert.depot.Ops;
 import com.samskivert.depot.PersistenceContext;
+import com.samskivert.depot.expression.SQLExpression;
 import com.samskivert.depot.clause.Join;
 import com.samskivert.depot.clause.Where;
-import com.samskivert.depot.operator.And;
-import com.samskivert.depot.operator.SQLOperator;
 
 import com.samskivert.util.StringUtil;
 
@@ -116,7 +116,7 @@ public class MsoyOOOUserRepository extends DepotUserRepository
         } catch (NumberFormatException nfe) {
             return null;
         }
-        SQLOperator joinCondition = new And(
+        SQLExpression joinCondition = Ops.and(
                 MemberRecord.MEMBER_ID.eq(memberId),
                 OOOUserRecord.EMAIL.eq(MemberRecord.ACCOUNT_NAME));
         return toUser(load(OOOUserRecord.class, new Join(MemberRecord.class, joinCondition)));

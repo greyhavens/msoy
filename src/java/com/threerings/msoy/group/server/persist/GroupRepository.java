@@ -20,29 +20,24 @@ import com.google.inject.Singleton;
 import com.samskivert.depot.DatabaseException;
 import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.Exps;
+import com.samskivert.depot.Funcs;
 import com.samskivert.depot.Key;
+import com.samskivert.depot.Ops;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.SchemaMigration;
 import com.samskivert.depot.annotation.Entity;
 import com.samskivert.depot.clause.FromOverride;
 import com.samskivert.depot.clause.Limit;
+import com.samskivert.depot.clause.OrderBy.Order;
 import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.QueryClause;
 import com.samskivert.depot.clause.SelectClause;
 import com.samskivert.depot.clause.Where;
-import com.samskivert.depot.clause.OrderBy.Order;
 import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.expression.SQLExpression;
-import com.samskivert.depot.operator.Add;
-import com.samskivert.depot.operator.And;
 import com.samskivert.depot.operator.Case;
-import com.samskivert.depot.operator.Exists;
 import com.samskivert.depot.operator.FullText;
-import com.samskivert.depot.operator.Mul;
-import com.samskivert.depot.operator.Not;
-import com.samskivert.depot.operator.Or;
-import com.samskivert.depot.operator.SQLOperator;
 
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.ArrayUtil;
@@ -105,15 +100,15 @@ public class GroupRepository extends DepotRepository
             return _fts.rank();
         }
 
-        public SQLOperator tagExistsExpression ()
+        public SQLExpression tagExistsExpression ()
         {
             if (_tagIds.size() == 0) {
                 return null;
             }
-            Where where = new Where(new And(
+            Where where = new Where(Ops.and(
                 _tagRepo.getTagColumn(GroupTagRecord.TARGET_ID).eq(GroupRecord.GROUP_ID),
                 _tagRepo.getTagColumn(GroupTagRecord.TAG_ID).in(_tagIds)));
-            return new Exists(new SelectClause(GroupTagRecord.class,
+            return Ops.exists(new SelectClause(GroupTagRecord.class,
                                                new ColumnExp[] { TagRecord.TAG_ID }, where));
         }
 
@@ -547,7 +542,7 @@ public class GroupRepository extends DepotRepository
             return Collections.emptyList();
         }
         return findAll(GroupMembershipRecord.class,
-            new Where(new And(GroupMembershipRecord.GROUP_ID.eq(groupId),
+            new Where(Ops.and(GroupMembershipRecord.GROUP_ID.eq(groupId),
                 GroupMembershipRecord.MEMBER_ID.in(memberIds))));
     }
 
@@ -644,15 +639,16 @@ public class GroupRepository extends DepotRepository
         List<QueryClause> clauses = Lists.newArrayList();
 
         List<SQLExpression> conditions = Lists.<SQLExpression>newArrayList(
-            new Not(GroupRecord.POLICY.eq(Group.Policy.EXCLUSIVE)));
+            Ops.not(GroupRecord.POLICY.eq(Group.Policy.EXCLUSIVE)));
 
         if (search != null) {
-            List<SQLOperator> wordBits = Lists.<SQLOperator>newArrayList(search.fullTextMatch());
-            SQLOperator tagOp = search.tagExistsExpression();
+            List<SQLExpression> wordBits =
+                Lists.<SQLExpression>newArrayList(search.fullTextMatch());
+            SQLExpression tagOp = search.tagExistsExpression();
             if (tagOp != null) {
                 wordBits.add(tagOp);
             }
-            conditions.add(new Or(wordBits));
+            conditions.add(Ops.or(wordBits));
 
         } else if (tagId > 0) {
             conditions.add(_tagRepo.getTagColumn(TagRecord.TAG_ID).eq(tagId));
@@ -660,7 +656,7 @@ public class GroupRepository extends DepotRepository
 
         }
         if (conditions.size() > 0) {
-            clauses.add(new Where(new And(conditions)));
+            clauses.add(new Where(Ops.and(conditions)));
         }
         return clauses;
     }
@@ -683,10 +679,10 @@ public class GroupRepository extends DepotRepository
             return OrderBy.descending(GroupRecord.MEMBER_COUNT).thenAscending(GroupRecord.NAME);
 
         } else if (search != null) {
-            SQLOperator tagExistsExp = search.tagExistsExpression();
+            SQLExpression tagExistsExp = search.tagExistsExpression();
             if (tagExistsExp != null) {
                 // the rank is (1 + fts rank), boosted by 25% if there's a tag match
-                return OrderBy.descending(new Mul(
+                return OrderBy.descending(Ops.mul(
                     search.fullTextRank().plus(Exps.value(1.0)),
                     new Case(tagExistsExp, Exps.value(1.25), Exps.value(1.0)))).
                         thenDescending(GroupRecord.MEMBER_COUNT).
@@ -700,10 +696,9 @@ public class GroupRepository extends DepotRepository
         } else {
             // SORT_BY_NEW_AND_POPULAR: subtract 2 members per day the group has been around
             long membersPerDay = (24 * 60 * 60) / 2;
-            return OrderBy.descending(new Add(
-                Exps.epochSeconds(GroupRecord.CREATION_DATE).div(membersPerDay),
-                GroupRecord.MEMBER_COUNT)).
-                    thenAscending(GroupRecord.NAME);
+            return OrderBy.descending(Funcs.dateEpoch(GroupRecord.CREATION_DATE).
+                                      div(membersPerDay).plus(GroupRecord.MEMBER_COUNT)).
+                thenAscending(GroupRecord.NAME);
         }
     }
 
@@ -715,7 +710,7 @@ public class GroupRepository extends DepotRepository
     {
         SQLExpression test = GroupMembershipRecord.GROUP_ID.eq(groupId);
         if (rank != null) {
-            test = new And(test, GroupMembershipRecord.RANK.eq(rank));
+            test = Ops.and(test, GroupMembershipRecord.RANK.eq(rank));
         }
 
         return Lists.transform(findAllKeys(GroupMembershipRecord.class, false, new Where(test)),

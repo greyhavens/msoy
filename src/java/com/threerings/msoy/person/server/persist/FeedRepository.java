@@ -16,6 +16,7 @@ import com.google.inject.Singleton;
 import com.samskivert.util.CollectionUtil;
 
 import com.samskivert.depot.DepotRepository;
+import com.samskivert.depot.Ops;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.annotation.Computed;
@@ -24,9 +25,7 @@ import com.samskivert.depot.clause.FromOverride;
 import com.samskivert.depot.clause.Limit;
 import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.Where;
-import com.samskivert.depot.operator.And;
-import com.samskivert.depot.operator.GreaterThanEquals;
-import com.samskivert.depot.operator.SQLOperator;
+import com.samskivert.depot.expression.SQLExpression;
 
 import com.threerings.presents.annotation.BlockingThread;
 
@@ -61,16 +60,16 @@ public class FeedRepository extends DepotRepository
     public void loadPersonalFeed (int memberId, List<FeedMessageRecord> messages,
                                   Collection<Integer> friendIds, int cutoffDays)
     {
-        SQLOperator self = SelfFeedMessageRecord.TARGET_ID.eq(memberId);
+        SQLExpression self = SelfFeedMessageRecord.TARGET_ID.eq(memberId);
         loadFeedMessages(messages, SelfFeedMessageRecord.class, self, cutoffDays);
         if (!friendIds.isEmpty()) {
-            SQLOperator actors = null;
+            SQLExpression actors = null;
             actors = FriendFeedMessageRecord.ACTOR_ID.in(friendIds);
             loadFeedMessages(messages, FriendFeedMessageRecord.class, actors, cutoffDays);
         }
 
         // include actions the member has performed
-        SQLOperator actor = FriendFeedMessageRecord.ACTOR_ID.eq(memberId);
+        SQLExpression actor = FriendFeedMessageRecord.ACTOR_ID.eq(memberId);
         loadFeedMessages(messages, FriendFeedMessageRecord.class, actor, cutoffDays);
     }
 
@@ -84,7 +83,7 @@ public class FeedRepository extends DepotRepository
     {
         loadFeedMessages(messages, GlobalFeedMessageRecord.class, null, cutoffDays);
         if (!groupIds.isEmpty()) {
-            SQLOperator groups = null;
+            SQLExpression groups = null;
             groups = GroupFeedMessageRecord.GROUP_ID.in(groupIds);
             loadFeedMessages(messages, GroupFeedMessageRecord.class, groups, cutoffDays);
         }
@@ -144,14 +143,14 @@ public class FeedRepository extends DepotRepository
         if (type.getThrottleCount() > 0) {
             Timestamp throttle =
                 new Timestamp(System.currentTimeMillis() - type.getThrottlePeriod());
-            List<SQLOperator> bits = Lists.newArrayList();
+            List<SQLExpression> bits = Lists.newArrayList();
             bits.add(FriendFeedMessageRecord.ACTOR_ID.eq(actorId));
             bits.add(FriendFeedMessageRecord.TYPE.eq(type.getCode()));
             bits.add(FriendFeedMessageRecord.POSTED.greaterThan(throttle));
 
             FeedMessageCount count = load(
                 FeedMessageCount.class, new FromOverride(FriendFeedMessageRecord.class),
-                new Where(new And(bits)));
+                new Where(Ops.and(bits)));
             if (count.count >= type.getThrottleCount()) {
                 return false;
             }
@@ -174,14 +173,14 @@ public class FeedRepository extends DepotRepository
         if (type.getThrottleCount() > 0) {
             Timestamp throttle =
                 new Timestamp(System.currentTimeMillis() - type.getThrottlePeriod());
-            List<SQLOperator> bits = Lists.newArrayList();
+            List<SQLExpression> bits = Lists.newArrayList();
             bits.add(GroupFeedMessageRecord.GROUP_ID.eq(groupId));
             bits.add(GroupFeedMessageRecord.TYPE.eq(type.getCode()));
             bits.add(GroupFeedMessageRecord.POSTED.greaterThan(throttle));
 
             FeedMessageCount count = load(
                 FeedMessageCount.class, new FromOverride(GroupFeedMessageRecord.class),
-                new Where(new And(bits)));
+                new Where(Ops.and(bits)));
             if (count.count >= type.getThrottleCount()) {
                 return false;
             }
@@ -227,15 +226,15 @@ public class FeedRepository extends DepotRepository
 
     protected void loadFeedMessages (List<FeedMessageRecord> messages,
                                      Class<? extends FeedMessageRecord> pClass,
-                                     SQLOperator main, int cutoffDays)
+                                     SQLExpression main, int cutoffDays)
     {
-        List<SQLOperator> whereBits = Lists.newArrayList();
+        List<SQLExpression> whereBits = Lists.newArrayList();
         if (main != null) {
             whereBits.add(main);
         }
-        whereBits.add(new GreaterThanEquals(FeedMessageRecord.POSTED.as(pClass),
-                                            RepositoryUtil.getCutoff(cutoffDays)));
-        messages.addAll(findAll(pClass, new Where(new And(whereBits))));
+        whereBits.add(FeedMessageRecord.POSTED.as(pClass).greaterEq(
+                          RepositoryUtil.getCutoff(cutoffDays)));
+        messages.addAll(findAll(pClass, new Where(Ops.and(whereBits))));
     }
 
     @Override // from DepotRepository

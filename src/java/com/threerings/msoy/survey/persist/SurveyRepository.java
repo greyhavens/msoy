@@ -13,6 +13,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.samskivert.depot.DepotRepository;
+import com.samskivert.depot.Ops;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.SchemaMigration;
@@ -21,7 +22,6 @@ import com.samskivert.depot.clause.Limit;
 import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.QueryClause;
 import com.samskivert.depot.clause.Where;
-import com.samskivert.depot.operator.And;
 
 import com.threerings.presents.annotation.BlockingThread;
 
@@ -244,7 +244,7 @@ public class SurveyRepository extends DepotRepository
     {
         List<QueryClause> clauses = Lists.newArrayList();
         clauses.add(new Where(
-                        new And(SurveyResponseRecord.SURVEY_ID.eq(surveyId),
+                        Ops.and(SurveyResponseRecord.SURVEY_ID.eq(surveyId),
                                 SurveyResponseRecord.QUESTION_INDEX.eq(questionIndex))));
         return clauses;
     }

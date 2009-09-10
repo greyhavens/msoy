@@ -13,9 +13,9 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.samskivert.depot.DepotRepository;
+import com.samskivert.depot.Ops;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
-import com.samskivert.depot.operator.And;
 import com.samskivert.depot.annotation.Computed;
 import com.samskivert.depot.annotation.Entity;
 import com.samskivert.depot.clause.FromOverride;
@@ -121,7 +121,7 @@ public class AVRGameRepository extends DepotRepository
         Set<Integer> propIds = Sets.newHashSet();
         if (!memberIds.isEmpty()) {
             List<QueryClause> clauses = Lists.newArrayList(
-                new Where(new And(PlayerGameStateRecord.GAME_ID.eq(gameId),
+                new Where(Ops.and(PlayerGameStateRecord.GAME_ID.eq(gameId),
                                   PlayerGameStateRecord.MEMBER_ID.in(memberIds))),
                 new GroupBy(PlayerGameStateRecord.MEMBER_ID),
                 new FromOverride(PlayerGameStateRecord.class));

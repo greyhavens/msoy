@@ -18,14 +18,13 @@ import com.google.inject.Singleton;
 import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.Exps;
 import com.samskivert.depot.Key;
+import com.samskivert.depot.Ops;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.SchemaMigration;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.expression.SQLExpression;
-import com.samskivert.depot.operator.And;
-import com.samskivert.depot.operator.Or;
 
 import com.samskivert.util.Calendars;
 
@@ -96,10 +95,10 @@ public class SubscriptionRepository extends DepotRepository
     public List<Integer> loadSubscribersNeedingBarGrants ()
     {
         List<Key<SubscriptionRecord>> keys = findAllKeys(SubscriptionRecord.class, true,
-            new Where(new And(
+            new Where(Ops.and(
                 SubscriptionRecord.SUBSCRIBER.eq(true),
                 SubscriptionRecord.GRANTS_LEFT.greaterThan(0),
-                new Or(
+                Ops.or(
                     SubscriptionRecord.LAST_GRANT.lessThan(
                         Calendars.now().addMonths(-1).toTimestamp()),
                     SubscriptionRecord.LAST_GRANT.isNull()))));
@@ -112,9 +111,9 @@ public class SubscriptionRepository extends DepotRepository
     public List<Integer> loadSubscribersNeedingItem (byte type, int itemId)
     {
         List<Key<SubscriptionRecord>> keys = findAllKeys(SubscriptionRecord.class, true,
-            new Where(new And(
+            new Where(Ops.and(
                 SubscriptionRecord.SUBSCRIBER.eq(true),
-                new Or(
+                Ops.or(
                     SubscriptionRecord.SPECIAL_ITEM_TYPE.notEq(type),
                     SubscriptionRecord.SPECIAL_ITEM_ID.notEq(itemId)))));
         return Lists.transform(keys, Key.<SubscriptionRecord>toInt());

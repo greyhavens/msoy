@@ -18,10 +18,9 @@ import com.samskivert.util.StringUtil;
 
 import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.Key;
+import com.samskivert.depot.Ops;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
-import com.samskivert.depot.operator.And;
-import com.samskivert.depot.operator.GreaterThan;
 import com.samskivert.depot.clause.FromOverride;
 import com.samskivert.depot.clause.Limit;
 import com.samskivert.depot.clause.OrderBy;
@@ -64,12 +63,11 @@ public class MailRepository extends DepotRepository
     public int loadUnreadConvoCount (int memberId)
     {
         SQLExpression isMe = ParticipantRecord.PARTICIPANT_ID.eq(memberId);
-        SQLExpression isNew = new GreaterThan(ConversationRecord.LAST_SENT,
-                                              ParticipantRecord.LAST_READ);
+        SQLExpression isNew = ConversationRecord.LAST_SENT.greaterThan(ParticipantRecord.LAST_READ);
         return load(CountRecord.class,
                     new FromOverride(ParticipantRecord.class),
                     ParticipantRecord.CONVERSATION_ID.join(ConversationRecord.CONVERSATION_ID),
-                    new Where(new And(isMe, isNew))).count;
+                    new Where(Ops.and(isMe, isNew))).count;
     }
 
     /**

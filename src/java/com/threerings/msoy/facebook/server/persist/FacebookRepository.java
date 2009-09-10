@@ -15,12 +15,12 @@ import com.google.inject.Singleton;
 import com.google.inject.internal.ImmutableMap;
 import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.Exps;
+import com.samskivert.depot.Ops;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.expression.ColumnExp;
-import com.samskivert.depot.operator.And;
 
 /**
  * Manages persistent structures for integrating with Facebook.
@@ -111,7 +111,7 @@ public class FacebookRepository extends DepotRepository
     public List<FacebookActionRecord> loadActions (
         Collection<Integer> memberIds, FacebookActionRecord.Type type)
     {
-        return findAll(FacebookActionRecord.class, new Where(new And(
+        return findAll(FacebookActionRecord.class, new Where(Ops.and(
             FacebookActionRecord.TYPE.eq(type), FacebookActionRecord.MEMBER_ID.in(memberIds))));
     }
 

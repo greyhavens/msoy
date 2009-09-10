@@ -11,10 +11,10 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.samskivert.depot.DepotRepository;
+import com.samskivert.depot.Ops;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.clause.Where;
-import com.samskivert.depot.operator.And;
 
 import com.threerings.msoy.web.gwt.Contest;
 
@@ -38,7 +38,7 @@ public class ContestRepository extends DepotRepository
         // to make this query cacheable, round our timestamp to the current hour or so
         Timestamp now = new Timestamp(System.currentTimeMillis() & ~0x1FFFFFL);
         return findAll(ContestRecord.class,
-                       new Where(new And(ContestRecord.STARTS.greaterEq(now),
+                       new Where(Ops.and(ContestRecord.STARTS.greaterEq(now),
                                          ContestRecord.ENDS.lessEq(now))));
     }
 

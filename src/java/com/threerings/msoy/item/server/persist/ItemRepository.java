@@ -34,14 +34,14 @@ import com.samskivert.util.QuickSort;
 import com.samskivert.util.StringUtil;
 
 import com.samskivert.depot.CacheInvalidator.TraverseWithFilter;
-import com.samskivert.depot.Exps;
-import com.samskivert.depot.Funcs;
-import com.samskivert.depot.Ops;
 import com.samskivert.depot.DataMigration;
 import com.samskivert.depot.DatabaseException;
 import com.samskivert.depot.DepotRepository;
+import com.samskivert.depot.Exps;
+import com.samskivert.depot.Funcs;
 import com.samskivert.depot.Key;
 import com.samskivert.depot.KeySet;
+import com.samskivert.depot.Ops;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.SchemaMigration;
@@ -56,13 +56,10 @@ import com.samskivert.depot.clause.QueryClause;
 import com.samskivert.depot.clause.SelectClause;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.expression.ColumnExp;
+import com.samskivert.depot.expression.FluentExp;
 import com.samskivert.depot.expression.SQLExpression;
-import com.samskivert.depot.operator.And;
 import com.samskivert.depot.operator.Case;
-import com.samskivert.depot.operator.Div;
-import com.samskivert.depot.operator.Exists;
 import com.samskivert.depot.operator.FullText;
-import com.samskivert.depot.operator.Mul;
 import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.msoy.server.persist.CountRecord;
@@ -127,7 +124,7 @@ public abstract class ItemRepository<T extends ItemRecord>
             return _cloneFts.rank();
         }
 
-        public Exists tagExistsExpression (ColumnExp itemColumn)
+        public SQLExpression tagExistsExpression (ColumnExp itemColumn)
         {
             if (_tagIds.size() == 0) {
                 return null;
@@ -135,7 +132,7 @@ public abstract class ItemRepository<T extends ItemRecord>
             Where where = new Where(
                 Ops.and(getTagColumn(TagRecord.TARGET_ID).eq(itemColumn),
                         getTagColumn(TagRecord.TAG_ID).in(_tagIds)));
-            return new Exists(new SelectClause(getTagRepository().getTagClass(),
+            return Ops.exists(new SelectClause(getTagRepository().getTagClass(),
                                                new ColumnExp[] { TagRecord.TAG_ID }, where));
         }
 
@@ -1345,7 +1342,7 @@ public abstract class ItemRepository<T extends ItemRecord>
         Class<U> itemClass, SQLExpression[] whereBits, QueryClause[] clauses)
     {
         return findAll(itemClass,
-            ArrayUtil.append(clauses, new Where(new And(whereBits))));
+            ArrayUtil.append(clauses, new Where(Ops.and(whereBits))));
     }
 
     /**
@@ -1615,7 +1612,7 @@ public abstract class ItemRepository<T extends ItemRecord>
                 new Case(madeByExp, Exps.value(1.5), Exps.value(1.0)));
         }
 
-        exprs.add(new Mul(ops));
+        exprs.add(Ops.mul(ops));
         orders.add(OrderBy.Order.DESC);
 
         exprs.add(getRatingExpression());
@@ -1669,7 +1666,7 @@ public abstract class ItemRepository<T extends ItemRecord>
         return new ColumnExp(getTagRepository().getTagClass(), pcol.name);
     }
 
-    protected Div getRatingExpression ()
+    protected FluentExp getRatingExpression ()
     {
         return getItemColumn(ItemRecord.RATING_SUM).div(
             Funcs.greatest(getItemColumn(ItemRecord.RATING_COUNT), Exps.value(1.0)));

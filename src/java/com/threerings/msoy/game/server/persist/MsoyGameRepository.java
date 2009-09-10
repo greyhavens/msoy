@@ -26,6 +26,7 @@ import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.Exps;
 import com.samskivert.depot.Funcs;
 import com.samskivert.depot.Key;
+import com.samskivert.depot.Ops;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.annotation.Computed;
@@ -38,12 +39,7 @@ import com.samskivert.depot.clause.QueryClause;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.expression.SQLExpression;
-import com.samskivert.depot.operator.And;
 import com.samskivert.depot.operator.FullText;
-import com.samskivert.depot.operator.GreaterThan;
-import com.samskivert.depot.operator.LessThan;
-import com.samskivert.depot.operator.Or;
-import com.samskivert.depot.operator.SQLOperator;
 
 import com.threerings.msoy.server.persist.RatingRecord;
 import com.threerings.msoy.server.persist.RatingRepository;
@@ -117,7 +113,7 @@ public class MsoyGameRepository extends DepotRepository
         }
         return findAll(
             GameInfoRecord.class,
-            new Where(new And(GameInfoRecord.GAME_ID.in(gameIds),
+            new Where(Ops.and(GameInfoRecord.GAME_ID.in(gameIds),
                               GameInfoRecord.GENRE.notEq(GameGenre.HIDDEN))));
     }
 
@@ -129,7 +125,7 @@ public class MsoyGameRepository extends DepotRepository
         Map<GameGenre, Integer> counts = Maps.newHashMap();
         for (GenreCountRecord gcr : findAll(
                  GenreCountRecord.class,
-                 new Where(new And(GameInfoRecord.GENRE.notEq(GameGenre.HIDDEN),
+                 new Where(Ops.and(GameInfoRecord.GENRE.notEq(GameGenre.HIDDEN),
                                    GameInfoRecord.INTEGRATED.eq(Boolean.TRUE))),
                  new GroupBy(GameInfoRecord.GENRE))) {
             counts.put(gcr.genre, gcr.count);
@@ -160,7 +156,7 @@ public class MsoyGameRepository extends DepotRepository
         List<QueryClause> clauses = Lists.newArrayList();
 
         // build the where clause with genre and/or search string
-        List<SQLOperator> whereBits = Lists.newArrayList();
+        List<SQLExpression> whereBits = Lists.newArrayList();
         if (genre == GameGenre.ALL || genre == GameGenre.HIDDEN) {
             whereBits.add(GameInfoRecord.GENRE.notEq(GameGenre.HIDDEN));
         } else {
@@ -180,7 +176,7 @@ public class MsoyGameRepository extends DepotRepository
 
         // filter out games that aren't integrated with Whirled
         whereBits.add(GameInfoRecord.INTEGRATED.eq(Boolean.TRUE));
-        clauses.add(new Where(new And(whereBits)));
+        clauses.add(new Where(Ops.and(whereBits)));
 
         // add the limit if specified
         if (limit > 0) {
@@ -257,7 +253,7 @@ public class MsoyGameRepository extends DepotRepository
         boolean featured)
     {
         if (gameIds.size() > 0) {
-            Where where = new Where(new And(ArcadeEntryRecord.PORTAL.eq(portal),
+            Where where = new Where(Ops.and(ArcadeEntryRecord.PORTAL.eq(portal),
                 ArcadeEntryRecord.GAME_ID.in(gameIds)));
             updatePartial(ArcadeEntryRecord.class, where,
                 new CacheInvalidator.TraverseWithFilter<ArcadeEntryRecord>(
@@ -464,7 +460,7 @@ public class MsoyGameRepository extends DepotRepository
     public Collection<GamePlayRecord> getGamePlaysBetween (long start, long end)
     {
         // where recorded >= {start} and recorded < {end}
-        Where where = new Where(new And(
+        Where where = new Where(Ops.and(
             GamePlayRecord.RECORDED.greaterEq(new Timestamp(start)),
             GamePlayRecord.RECORDED.lessThan(new Timestamp(end))
         ));
@@ -616,14 +612,14 @@ public class MsoyGameRepository extends DepotRepository
 
         // Create conditionals for distinguishing dev from listed games
         ColumnExp gameId = GameTraceLogRecord.GAME_ID;
-        LessThan isDev = gameId.lessThan(0);
-        GreaterThan isListed = gameId.greaterThan(0);
+        SQLExpression isDev = gameId.lessThan(0);
+        SQLExpression isListed = gameId.greaterThan(0);
 
         // Perform deletion
         ColumnExp recorded = GameTraceLogRecord.RECORDED;
-        int rows = deleteAll(GameTraceLogRecord.class, new Where(new Or(
-            new And(isDev, recorded.lessThan(devCutoffTimestamp)),
-            new And(isListed, recorded.lessThan(listedCutoffTimestamp)))));
+        int rows = deleteAll(GameTraceLogRecord.class, new Where(Ops.or(
+            Ops.and(isDev, recorded.lessThan(devCutoffTimestamp)),
+            Ops.and(isListed, recorded.lessThan(listedCutoffTimestamp)))));
 
         log.info("Deleted trace logs", "devCutoff", devCutoffTimestamp,
                  "listedCutoff", listedCutoffTimestamp, "rows", rows);

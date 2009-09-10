@@ -30,6 +30,7 @@ import com.samskivert.depot.DatabaseException;
 import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.DuplicateKeyException;
 import com.samskivert.depot.Key;
+import com.samskivert.depot.Ops;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.SchemaMigration;
@@ -40,9 +41,6 @@ import com.samskivert.depot.clause.QueryClause;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.expression.SQLExpression;
-import com.samskivert.depot.operator.And;
-import com.samskivert.depot.operator.LessThan;
-import com.samskivert.depot.operator.SQLOperator;
 import com.samskivert.jdbc.DatabaseLiaison;
 import com.samskivert.util.Logger;
 
@@ -170,9 +168,8 @@ public class MoneyRepository extends DepotRepository
 
         ColumnExp currencyCol = MemberAccountRecord.getColumn(currency);
         Key<MemberAccountRecord> key = MemberAccountRecord.getKey(memberId);
-        Where where = new Where(new And(
-            MemberAccountRecord.MEMBER_ID.eq(memberId),
-            currencyCol.greaterEq(amount)));
+        Where where = new Where(Ops.and(MemberAccountRecord.MEMBER_ID.eq(memberId),
+                                        currencyCol.greaterEq(amount)));
 
         int count = updatePartial(MemberAccountRecord.class, where, key,
                                   currencyCol, currencyCol.minus(amount));
@@ -301,7 +298,7 @@ public class MoneyRepository extends DepotRepository
     {
         Timestamp cutoff = new Timestamp(System.currentTimeMillis() - maxAge);
         Where where = new Where(
-            new And(MoneyTransactionRecord.CURRENCY.eq(currency),
+            Ops.and(MoneyTransactionRecord.CURRENCY.eq(currency),
                     MoneyTransactionRecord.TIMESTAMP.lessThan(cutoff)));
         return deleteAll(MoneyTransactionRecord.class, where, null /* no cache invalidation */);
     }
@@ -395,8 +392,8 @@ public class MoneyRepository extends DepotRepository
     public int deleteOldExchangeRecords (long maxAge)
     {
         final long oldestTimestamp = System.currentTimeMillis() - maxAge;
-        return deleteAll(ExchangeRecord.class, new Where(new LessThan(
-            ExchangeRecord.TIMESTAMP, new Timestamp(oldestTimestamp))));
+        return deleteAll(ExchangeRecord.class, new Where(ExchangeRecord.TIMESTAMP.lessThan(
+                                                             new Timestamp(oldestTimestamp))));
     }
 
     /**
@@ -461,7 +458,7 @@ public class MoneyRepository extends DepotRepository
      */
     public int commitBlingCashOutRequest (int memberId, int actualAmount)
     {
-        Where where = new Where(new And(
+        Where where = new Where(Ops.and(
             BlingCashOutRecord.MEMBER_ID.eq(memberId),
             BlingCashOutRecord.TIME_FINISHED.isNull()));
         return updatePartial(BlingCashOutRecord.class, where,
@@ -481,7 +478,7 @@ public class MoneyRepository extends DepotRepository
      */
     public int cancelBlingCashOutRequest (int memberId, String reason)
     {
-        Where where = new Where(new And(
+        Where where = new Where(Ops.and(
             BlingCashOutRecord.MEMBER_ID.eq(memberId),
             BlingCashOutRecord.TIME_FINISHED.isNull()));
         return updatePartial(BlingCashOutRecord.class, where,
@@ -518,7 +515,7 @@ public class MoneyRepository extends DepotRepository
      */
     public BlingCashOutRecord getCurrentCashOutRequest (int memberId)
     {
-        return load(BlingCashOutRecord.class, new Where(new And(
+        return load(BlingCashOutRecord.class, new Where(Ops.and(
             BlingCashOutRecord.TIME_FINISHED.isNull(),
             BlingCashOutRecord.MEMBER_ID.eq(memberId))));
     }
@@ -631,7 +628,7 @@ public class MoneyRepository extends DepotRepository
         List<QueryClause> clauses, int memberId,
         Set<TransactionType> transactionTypes, Currency currency)
     {
-        List<SQLOperator> where = Lists.newArrayList();
+        List<SQLExpression> where = Lists.newArrayList();
 
         where.add(MoneyTransactionRecord.MEMBER_ID.eq(memberId));
         if (transactionTypes != null) {
@@ -641,17 +638,17 @@ public class MoneyRepository extends DepotRepository
             where.add(MoneyTransactionRecord.CURRENCY.eq(currency));
         }
 
-        clauses.add(new Where(new And(where)));
+        clauses.add(new Where(Ops.and(where)));
     }
 
     protected Where makeSubjectSearch (Object subject)
     {
         MoneyTransactionRecord.Subject subj = new MoneyTransactionRecord.Subject(subject);
-        List<SQLOperator> where = Lists.newArrayList();
+        List<SQLExpression> where = Lists.newArrayList();
         where.add(MoneyTransactionRecord.SUBJECT_TYPE.eq(subj.type));
         where.add(MoneyTransactionRecord.SUBJECT_ID_TYPE.eq(subj.idType));
         where.add(MoneyTransactionRecord.SUBJECT_ID.eq(subj.id));
-        return new Where(new And(where));
+        return new Where(Ops.and(where));
     }
 
     @Override

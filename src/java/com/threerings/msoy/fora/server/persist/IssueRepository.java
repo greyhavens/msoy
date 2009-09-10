@@ -15,18 +15,14 @@ import com.google.inject.Singleton;
 import com.samskivert.util.IntSet;
 
 import com.samskivert.depot.DepotRepository;
+import com.samskivert.depot.Ops;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
-
 import com.samskivert.depot.clause.FromOverride;
 import com.samskivert.depot.clause.Limit;
 import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.Where;
-
 import com.samskivert.depot.expression.SQLExpression;
-
-import com.samskivert.depot.operator.And;
-import com.samskivert.depot.operator.SQLOperator;
 
 import com.threerings.presents.annotation.BlockingThread;
 
@@ -58,7 +54,7 @@ public class IssueRepository extends DepotRepository
      */
     public List<IssueRecord> loadIssues (IntSet states, int ownerId, int offset, int count)
     {
-        List<SQLOperator> whereBits = Lists.newArrayList();
+        List<SQLExpression> whereBits = Lists.newArrayList();
         whereBits.add(IssueRecord.STATE.in(states));
         if (ownerId > 0) {
             whereBits.add(IssueRecord.OWNER_ID.eq(ownerId));
@@ -71,7 +67,7 @@ public class IssueRepository extends DepotRepository
                 new SQLExpression[] { IssueRecord.PRIORITY, IssueRecord.CREATED_TIME },
                 new OrderBy.Order[] { OrderBy.Order.DESC, OrderBy.Order.DESC });
         }
-        return findAll(IssueRecord.class, new Where(new And(whereBits)),
+        return findAll(IssueRecord.class, new Where(Ops.and(whereBits)),
                        new Limit(offset, count), orderBy);
     }
 
@@ -88,12 +84,12 @@ public class IssueRepository extends DepotRepository
      */
     public int loadIssueCount (IntSet states)
     {
-        List<SQLOperator> whereBits = Lists.newArrayList();
+        List<SQLExpression> whereBits = Lists.newArrayList();
         if (states != null) {
             whereBits.add(IssueRecord.STATE.in(states));
         }
         return load(CountRecord.class, new FromOverride(IssueRecord.class),
-                    new Where(new And(whereBits))).count;
+                    new Where(Ops.and(whereBits))).count;
     }
 
     /**

@@ -48,7 +48,6 @@ import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.expression.SQLExpression;
 import com.samskivert.depot.operator.FullText;
-import com.samskivert.depot.operator.Like;
 
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.ByteEnumUtil;
@@ -411,7 +410,7 @@ public class MemberRepository extends DepotRepository
         search = search.toLowerCase();
         Where where = new Where(
             Ops.and(MemberRecord.MEMBER_ID.in(memberIds),
-                    new Like(Funcs.lower(MemberRecord.NAME), "%" + search + "%")));
+                    Ops.like(Funcs.lower(MemberRecord.NAME), "%" + search + "%")));
         return Lists.transform(findAllKeys(MemberRecord.class, false, where),
                                Key.<MemberRecord>toInt());
     }
@@ -1376,7 +1375,7 @@ public class MemberRepository extends DepotRepository
     protected Where weakPermaguestWhere (long now)
     {
         Timestamp cutoff = new Timestamp(now - WEAK_PERMAGUEST_EXPIRE);
-        return new Where(Ops.and(new Like(MemberRecord.ACCOUNT_NAME, PERMA_PATTERN),
+        return new Where(Ops.and(MemberRecord.ACCOUNT_NAME.like(PERMA_PATTERN),
                                  MemberRecord.LEVEL.lessThan(STRONG_PERMAGUEST_LEVEL),
                                  MemberRecord.LAST_SESSION.lessThan(cutoff)));
     }

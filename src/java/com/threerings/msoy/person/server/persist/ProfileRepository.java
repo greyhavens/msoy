@@ -15,6 +15,7 @@ import com.google.inject.Singleton;
 import com.samskivert.depot.DataMigration;
 import com.samskivert.depot.DatabaseException;
 import com.samskivert.depot.DepotRepository;
+import com.samskivert.depot.Ops;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.clause.FieldDefinition;
@@ -23,7 +24,6 @@ import com.samskivert.depot.clause.Join;
 import com.samskivert.depot.clause.Limit;
 import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.Where;
-import com.samskivert.depot.operator.And;
 import com.samskivert.depot.operator.FullText;
 
 import com.threerings.presents.annotation.BlockingThread;
@@ -54,7 +54,7 @@ public class ProfileRepository extends DepotRepository
                 List<MemberRecord> members = findAll(MemberRecord.class,
                     new Join(MemberRecord.MEMBER_ID,
                         ProfileRecord.MEMBER_ID).setType(Join.Type.LEFT_OUTER),
-                    new Where(new And(
+                    new Where(Ops.and(
                         MemberRecord.MEMBER_ID.lessEq(400),
                         ProfileRecord.MEMBER_ID.isNull())
                     ));

@@ -12,11 +12,11 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.samskivert.depot.DepotRepository;
+import com.samskivert.depot.Ops;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.Where;
-import com.samskivert.depot.operator.And;
 
 import com.threerings.msoy.person.gwt.Gallery;
 
@@ -47,7 +47,7 @@ public class GalleryRepository extends DepotRepository
     public GalleryRecord loadMeGallery (int memberId)
     {
         return load(GalleryRecord.class,
-                    new Where(new And(GalleryRecord.OWNER_ID.eq(memberId),
+                    new Where(Ops.and(GalleryRecord.OWNER_ID.eq(memberId),
                                       // a null gallery name indicates the "Me" gallery
                                       GalleryRecord.NAME.isNull())));
     }
