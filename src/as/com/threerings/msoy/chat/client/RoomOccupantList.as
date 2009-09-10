@@ -8,6 +8,7 @@ import mx.core.mx_internal;
 import com.whirled.ui.NameLabelCreator;
 import com.whirled.ui.PlayerList;
 
+import com.threerings.presents.dobj.DSet_Entry;
 import com.threerings.presents.dobj.EntryAddedEvent;
 import com.threerings.presents.dobj.EntryRemovedEvent;
 import com.threerings.presents.dobj.EntryUpdatedEvent;
@@ -16,6 +17,7 @@ import com.threerings.presents.dobj.SetListener;
 import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.data.PlaceObject;
 
+import com.threerings.msoy.data.all.VizMemberName;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.room.data.MemberInfo;
 import com.threerings.msoy.ui.MsoyNameLabelCreator;
@@ -57,7 +59,7 @@ public class RoomOccupantList extends PlayerList
 
             // set up our current occupants
             for each (var occInfo :OccupantInfo in plobj.occupantInfo.toArray()) {
-                addOccupant(occInfo);
+                processOccupant(occInfo, addItem);
             }
         }
     }
@@ -66,7 +68,7 @@ public class RoomOccupantList extends PlayerList
     public function entryAdded (event :EntryAddedEvent) :void
     {
         if (event.getName() == PlaceObject.OCCUPANT_INFO) {
-            addOccupant((event.getEntry() as OccupantInfo));
+            processOccupant(event.getEntry(), addItem);
         }
     }
 
@@ -74,7 +76,7 @@ public class RoomOccupantList extends PlayerList
     public function entryUpdated (event :EntryUpdatedEvent) :void
     {
         if (event.getName() == PlaceObject.OCCUPANT_INFO) {
-            itemUpdated(new RoomOccupantRecord(event.getEntry() as OccupantInfo));
+            processOccupant(event.getEntry(), itemUpdated);
         }
     }
 
@@ -82,15 +84,17 @@ public class RoomOccupantList extends PlayerList
     public function entryRemoved (event :EntryRemovedEvent) :void
     {
         if (event.getName() == PlaceObject.OCCUPANT_INFO) {
-            removeItem(new RoomOccupantRecord(event.getOldEntry() as OccupantInfo));
+            processOccupant(event.getOldEntry(), removeItem);
         }
     }
 
-    protected function addOccupant (occInfo :OccupantInfo) :void
+    /**
+     * Filter out non-members, and puppets.
+     */
+    protected function processOccupant (entry :DSet_Entry, fn :Function) :void
     {
-        // only members get to be in the occupant list (sorry pets...)
-        if (occInfo is MemberInfo) {
-            addItem(new RoomOccupantRecord(occInfo));
+        if ((entry is MemberInfo) && (MemberInfo(entry).username is VizMemberName)) {
+            fn(new RoomOccupantRecord(entry as OccupantInfo));
         }
     }
 

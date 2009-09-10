@@ -26,6 +26,7 @@
     [ResourceBundle("party")]
     [ResourceBundle("studio")]
     [ResourceBundle("homepagegrid")]
+    [ResourceBundle("npc")]
 </mx:Metadata>
 <mx:Script>
     <![CDATA[

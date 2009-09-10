@@ -97,6 +97,7 @@ import com.threerings.msoy.room.client.snapshot.SnapshotPanel;
 import com.threerings.msoy.room.data.MsoyScene;
 import com.threerings.msoy.room.data.MsoySceneModel;
 import com.threerings.msoy.room.data.PetName;
+import com.threerings.msoy.room.data.PuppetName;
 import com.threerings.msoy.room.data.RoomObject;
 
 /**
@@ -1173,6 +1174,7 @@ public class WorldController extends MsoyController
         const us :MemberObject = _wctx.getMemberObject();
         const isUs :Boolean = (memId == us.getMemberId());
         const isMuted :Boolean = !isUs && _wctx.getMuteDirector().isMuted(name);
+        const isPuppet :Boolean = (name is PuppetName);
         const isSupport :Boolean = _wctx.getTokens().isSupport();
         var placeCtrl :Object = null;
         if (addWorldItems) {
@@ -1184,7 +1186,7 @@ public class WorldController extends MsoyController
         }
 
         var followItem :Object = null;
-        if (addWorldItems) {
+        if (addWorldItems && !isPuppet) {
             var followItems :Array = [];
             if (isUs) {
                 // if we have followers, add a menu item for clearing them
@@ -1238,15 +1240,17 @@ public class WorldController extends MsoyController
 //            }
             CommandMenu.addTitle(menuItems, name.toString());
             // whisper
-            menuItems.push({ label: Msgs.GENERAL.get("b.open_channel"), icon: WHISPER_ICON,
-                command: OPEN_CHANNEL, arg: name, enabled: !muted });
+            if (!isPuppet) {
+                menuItems.push({ label: Msgs.GENERAL.get("b.open_channel"), icon: WHISPER_ICON,
+                    command: OPEN_CHANNEL, arg: name, enabled: !muted });
+            }
             // add as friend
             if (!onlineFriend) {
                 menuItems.push({ label: Msgs.GENERAL.get("l.add_as_friend"), icon: ADDFRIEND_ICON,
                     command: INVITE_FRIEND, arg: memId, enabled: !muted });
             }
             // visit
-            if (onlineFriend || isSupport) {
+            if ((onlineFriend || isSupport) && !isPuppet) {
                 var label :String = onlineFriend ?
                     Msgs.GENERAL.get("b.visit_friend") : "Visit (as agent)";
                 menuItems.push({ label: label, icon: VISIT_ICON,
@@ -1263,7 +1267,7 @@ public class WorldController extends MsoyController
                 menuItems.push(followItem);
             }
             // partying
-            if (_wctx.getPartyDirector().canInviteToParty()) {
+            if (!isPuppet && _wctx.getPartyDirector().canInviteToParty()) {
                 menuItems.push({ label: Msgs.PARTY.get("b.invite_member"),
                     command: INVITE_TO_PARTY, arg: memId,
                     enabled: !muted && !_wctx.getPartyDirector().partyContainsPlayer(memId) });
@@ -1276,14 +1280,17 @@ public class WorldController extends MsoyController
                 icon: BLOCK_ICON,
                 callback: _mctx.getMuteDirector().setMuted, arg: [ name, !muted ] });
             // booting
-            if (addWorldItems && isInOurRoom && (placeCtrl is BootablePlaceController) &&
+            if (!isPuppet && addWorldItems && isInOurRoom &&
+                    (placeCtrl is BootablePlaceController) &&
                     BootablePlaceController(placeCtrl).canBoot()) {
                 menuItems.push({ label: Msgs.GENERAL.get("b.boot"),
                     callback: handleBootFromPlace, arg: memId });
             }
             // reporting
-            menuItems.push({ label: Msgs.GENERAL.get("b.complain"), icon: REPORT_ICON,
-                command: COMPLAIN_MEMBER, arg: [ memId, name ] });
+            if (!isPuppet) {
+                menuItems.push({ label: Msgs.GENERAL.get("b.complain"), icon: REPORT_ICON,
+                    command: COMPLAIN_MEMBER, arg: [ memId, name ] });
+            }
         }
 
         // now the items specific to the avatar

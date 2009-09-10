@@ -55,6 +55,9 @@ public interface MsoyCodes extends InvocationCodes
     /** The translation message bundle for our home page grid messages. */
     public static final String HOME_PAGE_GRID_MSGS = "homepagegrid";
 
+    /** The translation message bundle for npc messages. */
+    public static final String NPC_MSGS = "npc";
+
     /** The translation message bundle for our group services. */
     public static final String GROUP_MSGS = "group";
 

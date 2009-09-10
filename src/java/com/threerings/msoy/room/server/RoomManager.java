@@ -22,6 +22,7 @@ import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.Comparators;
 import com.samskivert.util.ComplainingListener;
 import com.samskivert.util.HashIntMap;
+import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.ObjectUtil;
 import com.samskivert.util.QuickSort;
@@ -91,6 +92,8 @@ import com.threerings.msoy.server.BootablePlaceManager;
 import com.threerings.msoy.server.MemberLocal;
 import com.threerings.msoy.server.MemberLocator;
 import com.threerings.msoy.server.MemberManager;
+import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.util.MailSender;
 
@@ -98,9 +101,11 @@ import com.threerings.msoy.bureau.data.WindowClientObject;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 
 import com.threerings.msoy.item.data.all.Audio;
+import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.server.ItemLogic;
 import com.threerings.msoy.item.server.ItemManager;
 
 import com.threerings.msoy.party.server.PartyRegistry;
@@ -120,6 +125,7 @@ import com.threerings.msoy.room.data.MsoyPortal;
 import com.threerings.msoy.room.data.MsoyScene;
 import com.threerings.msoy.room.data.MsoySceneModel;
 import com.threerings.msoy.room.data.ObserverInfo;
+import com.threerings.msoy.room.data.PuppetName;
 import com.threerings.msoy.room.data.RoomCodes;
 import com.threerings.msoy.room.data.RoomLocal;
 import com.threerings.msoy.room.data.RoomObject;
@@ -795,6 +801,11 @@ public class RoomManager extends SpotSceneManager
     @Override // from PlaceManager
     public void bodyWillEnter (BodyObject body)
     {
+        // possibly deactivate the owner puppet
+        if (isOwnerMember(body)) {
+            deactivatePuppet();
+        }
+
         // provide MsoyBodyObject instances with a RoomLocal they can use to determine stoniness
         // and managerness; MsoyBodyObject clears this local out in its didLeavePlace() override
         if (body instanceof MsoyBodyObject && ((MsoyBodyObject)body).isActor()) {
@@ -807,6 +818,14 @@ public class RoomManager extends SpotSceneManager
         if (body instanceof MemberObject) {
             // as we arrive at a room, we entrust it with our memories for broadcast to clients
             body.getLocal(MemberLocal.class).willEnterRoom((MemberObject)body, _roomObj);
+            if (_puppetInRoom) {
+                final int greetOid = body.getOid();
+                new Interval(_omgr) {
+                    public void expired () {
+                        puppetGreet(greetOid);
+                    }
+                }.schedule(5000); // 5 seconds
+            }
         }
         if (body instanceof MsoyUserObject) {
             _partyReg.userEnteringPlace((MsoyUserObject) body, _roomObj);
@@ -831,6 +850,20 @@ public class RoomManager extends SpotSceneManager
 
             if (!isStrictlyManager(member)) {
                 removeVisitorSongs(member);
+            }
+
+            // possibly activate the owner puppet
+            if (isOwnerMember(body)) {
+                MemberObject owner = (MemberObject) body;
+                PuppetName pupName = new PuppetName(
+                    owner.memberName.toString(), owner.memberName.getMemberId());
+                // clone the outgoing owner's memories
+                EntityMemories mems = member.getLocal(MemberLocal.class).memories;
+                if (mems != null) {
+                    mems = (EntityMemories) mems.clone();
+                    mems.modified = false; // clear the modified flag in the clone...
+                }
+                activatePuppet(pupName, owner.avatar, owner.isPermaguest(), mems);
             }
         }
         if (body instanceof MsoyUserObject) {
@@ -864,6 +897,13 @@ public class RoomManager extends SpotSceneManager
     {
         // we want to explicitly disable the standard method calling by name that we allow in more
         // trusted environments
+    }
+
+    @Override // from PlaceManager
+    public void shutdown ()
+    {
+        deactivatePuppet(); // just to see if the memories got modified
+        super.shutdown();
     }
 
     /**
@@ -1023,6 +1063,9 @@ public class RoomManager extends SpotSceneManager
 
         // we're done with our auxiliary scene information, let's let it garbage collect
         _extras = null;
+
+        // add the room owner's puppet, if appropriate
+        activatePuppet();
     }
 
     @Override // from PlaceManager
@@ -1116,8 +1159,11 @@ public class RoomManager extends SpotSceneManager
     protected boolean shouldDeclareEmpty (OccupantInfo leaver)
     {
         for (OccupantInfo info : _plobj.occupantInfo) {
-            if (info instanceof MemberInfo || info instanceof ObserverInfo) {
-                return false; // there's a human still here!
+            // if we find either a real member (not a puppet)
+            if (((info instanceof MemberInfo) && !(info.username instanceof PuppetName)) ||
+                    // or an observer
+                    (info instanceof ObserverInfo)) {
+                return false; // ... then we're not empty! There's a human still here!
             }
         }
         return true;
@@ -1789,6 +1835,137 @@ public class RoomManager extends SpotSceneManager
         }
     }
 
+    /**
+     * Is the specified body that of the owner?
+     * If the owner is a group, this fails, etc.
+     */
+    protected boolean isOwnerMember (BodyObject body)
+    {
+        MsoySceneModel msm = (MsoySceneModel)getScene().getSceneModel();
+        return ((msm.ownerType == MsoySceneModel.OWNER_TYPE_MEMBER) &&
+                msm.ownerName.equals(body.getVisibleName()));
+    }
+
+    /**
+     * Activate the puppet.
+     */
+    protected void activatePuppet ()
+    {
+        MsoySceneModel msm = (MsoySceneModel)getScene().getSceneModel();
+        if (msm.ownerType != MsoySceneModel.OWNER_TYPE_MEMBER) {
+            return;
+        }
+        final int ownerId = msm.ownerId;
+        final PuppetName pupName = new PuppetName(msm.ownerName.toString(), ownerId);
+        _puppetInRoom = true; // assume we're going to add it
+        _invoker.postUnit(new RepositoryUnit("loadPuppetInfo") {
+            public void invokePersist () throws Exception {
+                MemberRecord memrec = _memberRepo.loadMember(ownerId);
+                if (memrec == null) {
+                    return;
+                }
+                _isGuest = memrec.isPermaguest();
+                if (memrec.avatarId != 0) {
+                    _avatar = (Avatar) _itemLogic.getAvatarRepository().loadItem(memrec.avatarId)
+                        .toItem();
+                     MemoriesRecord mrec = _memoryRepo.loadMemory(Item.AVATAR, memrec.avatarId);
+                     if (mrec != null) {
+                         _mem = mrec.toEntry();
+                     }
+                }
+            }
+            public void handleSuccess () {
+                if (_isGuest != null) {
+                    // only if we found the owner member do we proceed
+                    activatePuppet(pupName, _avatar, _isGuest, _mem);
+                } else {
+                    _puppetInRoom = false; // oh, we're not actually going to add it
+                }
+            }
+            protected Avatar _avatar;
+            protected Boolean _isGuest;
+            protected EntityMemories _mem;
+        });
+    }
+
+    /**
+     * Activate the puppet, providing we already know some things from the db.
+     */
+    protected void activatePuppet (
+        PuppetName pupName, Avatar avatar, boolean ownerIsGuest, EntityMemories mem)
+    {
+        _puppetInRoom = true;
+        MemberInfo pupInfo = new MemberInfo();
+        pupInfo.bodyOid = PUPPET_OID;
+        pupInfo.username = pupName;
+        pupInfo.configureAvatar(avatar, ownerIsGuest);
+        _roomObj.startTransaction();
+        try {
+            if (mem != null) {
+                _roomObj.addToMemories(mem);
+            }
+            _roomObj.addToOccupantLocs(new SceneLocation(calcPuppetLocation(), PUPPET_OID));
+            _roomObj.addToOccupantInfo(pupInfo);
+        } finally {
+            _roomObj.commitTransaction();
+        }
+    }
+
+    /**
+     * Calculate a location for the puppet.
+     */
+    protected MsoyLocation calcPuppetLocation ()
+    {
+        MsoyLocation entrance = ((MsoySceneModel)getScene().getSceneModel()).entrance;
+        // if it's near the center, arbitrarily move it to one side, otherwise mirror it
+        float x = (entrance.x > 0.4f && entrance.x < 0.6f) ? 0.1f : (1.0f - entrance.x);
+        // face the avatar 45 degrees forward toward the center
+        short orient = (short) ((x > 0.5f) ? 315 : 45);
+        return new MsoyLocation(x, entrance.y, entrance.z, orient);
+    }
+
+    /**
+     * Deactivate the puppet, if present.
+     */
+    protected void deactivatePuppet ()
+    {
+        MemberInfo info = (MemberInfo) _roomObj.occupantInfo.get(PUPPET_OID);
+        if (info != null) {
+            _roomObj.startTransaction();
+            try {
+                // remove the memory if it is present
+                EntityMemories mems = _roomObj.memories.get(info.getItemIdent());
+                if (mems != null) {
+                    if (mems.modified) {
+                        // This is purely for informational purposes- there's probably no problem.
+                        // This can be removed. (If so, we could probably remove the shutdown())
+                        log.info("Puppet memories have been modified", "ident", mems.ident);
+                    }
+                    _roomObj.removeFromMemories(mems.ident);
+                }
+                _roomObj.removeFromOccupantInfo(PUPPET_OID);
+                _roomObj.removeFromOccupantLocs(PUPPET_OID);
+            } finally {
+                _roomObj.commitTransaction();
+            }
+        }
+        _puppetInRoom = false;
+    }
+
+    /**
+     * Have the puppet greet the specified body.
+     */
+    protected void puppetGreet (int oid)
+    {
+        OccupantInfo puppet = _roomObj.occupantInfo.get(PUPPET_OID);
+        OccupantInfo toGreet = _roomObj.occupantInfo.get(oid);
+        if ((puppet == null) || (toGreet == null)) {
+            return; // the user or puppet has since left
+        }
+        SpeakUtil.sendSpeak(_roomObj, puppet.username, MsoyCodes.NPC_MSGS,
+            MessageBundle.tcompose("m.hello", toGreet.username));
+    }
+
     /** Listens to the room. */
     protected class RoomListener
         implements SetListener<OccupantInfo>
@@ -1886,6 +2063,9 @@ public class RoomManager extends SpotSceneManager
     /** If non-null, a list of memberId blocked from the room. */
     protected ArrayIntSet _booted;
 
+    /** True if the puppet is in the room, OR is believed to be on the way. */
+    protected boolean _puppetInRoom;
+
     /** Listens to the room object. */
     protected RoomListener _roomListener = new RoomListener();
 
@@ -1923,6 +2103,9 @@ public class RoomManager extends SpotSceneManager
     /** The maximum number of songs in the playlist. */
     protected static final int MAX_PLAYLIST_SIZE = 99;
 
+    /** The puppet oid. Global, immutable. */
+    protected static final Integer PUPPET_OID = Integer.valueOf(0);
+
     /**
      * We allow access as in {@link CrowdObjectAccess#PLACE} but also give full subscription
      * powers to {@link WindowClientObject} instances; these are the world server representatives
@@ -1950,11 +2133,13 @@ public class RoomManager extends SpotSceneManager
     };
 
     @Inject protected @MainInvoker Invoker _invoker;
+    @Inject protected ItemLogic _itemLogic;
     @Inject protected ItemManager _itemMan;
     @Inject protected LocationManager _locmgr;
     @Inject protected MailSender _mailer;
     @Inject protected MemberLocator _locator;
     @Inject protected MemberManager _memberMan;
+    @Inject protected MemberRepository _memberRepo;
     @Inject protected MemoryRepository _memoryRepo;
     @Inject protected MsoyEventLogger _eventLog;
     @Inject protected MsoyPeerManager _peerMan;

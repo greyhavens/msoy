@@ -175,6 +175,7 @@ public class MemberInfo extends ActorInfo
     protected void useDynamicMedia (MsoyBodyObject body)
     {
         MemberObject memobj = (MemberObject)body;
+        configureAvatar(memobj.avatar, (memobj.isViewer() || memobj.isPermaguest()));
         if (memobj.avatar != null) {
             _media = memobj.avatar.avatarMedia;
             _ident = memobj.avatar.getIdent();
@@ -186,6 +187,21 @@ public class MemberInfo extends ActorInfo
             _scale = 1f;
         }
         _state = memobj.actorState;
+    }
+
+    // TODO: presently exposed to allow for puppets
+    public void configureAvatar (Avatar avatar, boolean guestDefault)
+    {
+        if (avatar != null) {
+            _media = avatar.avatarMedia;
+            _ident = avatar.getIdent();
+            _scale = avatar.scale;
+        } else {
+            _media = guestDefault ?
+                Avatar.getDefaultGuestAvatarMedia() : Avatar.getDefaultMemberAvatarMedia();
+            _ident = new ItemIdent(Item.OCCUPANT, getBodyOid());
+            _scale = 1f;
+        }
     }
 
     @Override // from SimpleStreamableObject

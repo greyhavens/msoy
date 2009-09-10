@@ -12,8 +12,14 @@ import com.threerings.util.StreamableHashMap;
 
 import com.threerings.msoy.item.data.all.ItemIdent;
 
+/**
+ * Holds the memories of an entity in a room.
+ *
+ * This class is cloneable so that we may clone the memories of a user when they leave the room
+ * and we wish to leave their puppet behind with the latest updates.
+ */
 public class EntityMemories
-    implements DSet.Entry
+    implements DSet.Entry, Cloneable
 {
     public static final int MAX_ENCODED_MEMORY_LENGTH = 4096;
 
@@ -75,6 +81,21 @@ public class EntityMemories
     public String toString ()
     {
         return "[ident=" + ident + ", modified=" + modified + "]";
+    }
+
+    @Override
+    public Object clone ()
+    {
+        try {
+            EntityMemories copy = (EntityMemories) super.clone();
+            // mainly we need to clone the memories so that they can safely be modified in
+            // another room on this same node
+            copy.memories = (StreamableHashMap<String, byte[]>) this.memories.clone();
+            return copy;
+
+        } catch (CloneNotSupportedException cnse) {
+            throw new RuntimeException(cnse); // shouldn't happen
+        }
     }
 
     /**
