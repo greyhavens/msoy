@@ -6,9 +6,9 @@ package com.threerings.msoy.server.persist;
 import java.sql.Date;
 import java.sql.Timestamp;
 
-import com.samskivert.depot.Funcs;
 import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistentRecord;
+import com.samskivert.depot.StringFuncs;
 import com.samskivert.depot.annotation.*; // for Depot annotations
 import com.samskivert.depot.clause.OrderBy.Order;
 import com.samskivert.depot.expression.ColumnExp;
@@ -225,7 +225,7 @@ public class MemberRecord extends PersistentRecord
     /** Defnies the index on {@link #name} converted to lower case. */
     public static Tuple<SQLExpression, Order> ixLowerName ()
     {
-        return new Tuple<SQLExpression, Order>(Funcs.lower(MemberRecord.NAME), Order.ASC);
+        return new Tuple<SQLExpression, Order>(StringFuncs.lower(MemberRecord.NAME), Order.ASC);
     }
 
     /**

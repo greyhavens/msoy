@@ -36,11 +36,13 @@ import com.samskivert.util.StringUtil;
 import com.samskivert.depot.CacheInvalidator.TraverseWithFilter;
 import com.samskivert.depot.DataMigration;
 import com.samskivert.depot.DatabaseException;
+import com.samskivert.depot.DateFuncs;
 import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.Exps;
 import com.samskivert.depot.Funcs;
 import com.samskivert.depot.Key;
 import com.samskivert.depot.KeySet;
+import com.samskivert.depot.MathFuncs;
 import com.samskivert.depot.Ops;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
@@ -1570,7 +1572,7 @@ public abstract class ItemRepository<T extends ItemRecord>
     protected void addOrderByNewAndHot (List<SQLExpression> exprs, List<OrderBy.Order> orders)
     {
         exprs.add(getRatingExpression().plus(
-            Funcs.dateEpoch(getCatalogColumn(CatalogRecord.LISTED_DATE)).
+            DateFuncs.epoch(getCatalogColumn(CatalogRecord.LISTED_DATE)).
                 div(HotnessConfig.DROPOFF_SECONDS)));
         orders.add(OrderBy.Order.DESC);
     }
@@ -1594,7 +1596,7 @@ public abstract class ItemRepository<T extends ItemRecord>
 
             // then boost by (log10(purchases+1) + 3), thus an item that's sold 1,000 copies
             // is rated twice as high as something that's sold 1 copy
-            Funcs.log10(getCatalogColumn(CatalogRecord.PURCHASES).plus(1.0)).plus(3.0),
+            MathFuncs.log10(getCatalogColumn(CatalogRecord.PURCHASES).plus(1.0)).plus(3.0),
         };
 
         SQLExpression tagExistsExp =

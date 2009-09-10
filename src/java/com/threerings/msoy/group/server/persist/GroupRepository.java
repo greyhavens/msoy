@@ -18,9 +18,9 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.samskivert.depot.DatabaseException;
+import com.samskivert.depot.DateFuncs;
 import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.Exps;
-import com.samskivert.depot.Funcs;
 import com.samskivert.depot.Key;
 import com.samskivert.depot.Ops;
 import com.samskivert.depot.PersistenceContext;
@@ -696,7 +696,7 @@ public class GroupRepository extends DepotRepository
         } else {
             // SORT_BY_NEW_AND_POPULAR: subtract 2 members per day the group has been around
             long membersPerDay = (24 * 60 * 60) / 2;
-            return OrderBy.descending(Funcs.dateEpoch(GroupRecord.CREATION_DATE).
+            return OrderBy.descending(DateFuncs.epoch(GroupRecord.CREATION_DATE).
                                       div(membersPerDay).plus(GroupRecord.MEMBER_COUNT)).
                 thenAscending(GroupRecord.NAME);
         }

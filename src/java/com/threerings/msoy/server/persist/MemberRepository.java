@@ -25,7 +25,6 @@ import com.google.inject.Singleton;
 import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.DuplicateKeyException;
 import com.samskivert.depot.Exps;
-import com.samskivert.depot.Funcs;
 import com.samskivert.depot.Key;
 
 import com.samskivert.depot.PersistenceContext.CacheListener;
@@ -33,6 +32,7 @@ import com.samskivert.depot.PersistenceContext.CacheListener;
 import com.samskivert.depot.Ops;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
+import com.samskivert.depot.StringFuncs;
 
 import com.samskivert.depot.annotation.Computed;
 import com.samskivert.depot.annotation.Entity;
@@ -376,7 +376,8 @@ public class MemberRepository extends DepotRepository
     {
         return Lists.transform(
             findAllKeys(MemberRecord.class, false,
-                        new Where(Funcs.lower(MemberRecord.NAME).eq(Funcs.lower(Exps.value(search)))),
+                        new Where(StringFuncs.lower(MemberRecord.NAME).eq(
+                                      StringFuncs.lower(Exps.value(search)))),
                         new Limit(0, limit)), Key.<MemberRecord>toInt());
     }
 
@@ -410,7 +411,7 @@ public class MemberRepository extends DepotRepository
         search = search.toLowerCase();
         Where where = new Where(
             Ops.and(MemberRecord.MEMBER_ID.in(memberIds),
-                    Ops.like(Funcs.lower(MemberRecord.NAME), "%" + search + "%")));
+                    Ops.like(StringFuncs.lower(MemberRecord.NAME), "%" + search + "%")));
         return Lists.transform(findAllKeys(MemberRecord.class, false, where),
                                Key.<MemberRecord>toInt());
     }

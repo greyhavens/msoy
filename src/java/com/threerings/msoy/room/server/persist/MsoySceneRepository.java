@@ -15,6 +15,7 @@ import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import com.samskivert.depot.DateFuncs;
 import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.Exps;
 import com.samskivert.depot.Funcs;
@@ -491,7 +492,7 @@ public class MsoySceneRepository extends DepotRepository
     /** Order for New & Hot. If you change this, also migrate the {@link SceneRecord} index. */
     protected static final SQLExpression NEW_AND_HOT_ORDER =
         getRatingExpression().plus(
-            Funcs.dateEpoch(SceneRecord.LAST_PUBLISHED).div(
+            DateFuncs.epoch(SceneRecord.LAST_PUBLISHED).div(
                 // TODO: PostgreSQL flips out when you CREATE INDEX
                 // using a prepared statement with parameters. So we
                 // trick Depot using a literal expression here. :/
