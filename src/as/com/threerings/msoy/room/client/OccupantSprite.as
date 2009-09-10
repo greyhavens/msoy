@@ -111,7 +111,7 @@ public class OccupantSprite extends MsoySprite
 
         // add the new decoration and stabley sort the list
         _decorations.push(constraints);
-        ArrayUtil.stableSort(_decorations, decorationSort);
+        ArrayUtil.stableSort(_decorations, DECORATION_SORT);
 
         // add it and lay it out
         _extras.addChild(dec);
@@ -694,17 +694,6 @@ public class OccupantSprite extends MsoySprite
     }
 
     /**
-     * Sort function for decoration constraints...
-     */
-    protected function decorationSort (cons1 :Object, cons2 :Object) :int
-    {
-        var w1 :Number = ("weight" in cons1) ? (cons1["weight"] as Number) : 0;
-        var w2 :Number = ("weight" in cons2) ? (cons2["weight"] as Number) : 0;
-        // reverse compare: higher weights have a higher priority
-        return Comparators.compareNumbers(w2, w1);
-    }
-
-    /**
      * Called when this occupant changes orientation or transitions between poses.
      */
     protected function appearanceChanged () :void
@@ -752,6 +741,10 @@ public class OccupantSprite extends MsoySprite
 
     /** The point to center this speaker's bubbles on, in local coords. */
     protected var _bubblePosition :Point;
+
+    /** The sort to use for decorations: reverse by weight, defaulting to 0. */
+    protected static const DECORATION_SORT :Function =
+        Comparators.createReverse(Comparators.createFields(["weight"], [0]));
 
     protected static const DECORATION_PAD :int = 5;
 
