@@ -801,11 +801,6 @@ public class RoomManager extends SpotSceneManager
     @Override // from PlaceManager
     public void bodyWillEnter (BodyObject body)
     {
-        // possibly deactivate the owner puppet
-        if (isOwnerMember(body)) {
-            deactivatePuppet();
-        }
-
         // provide MsoyBodyObject instances with a RoomLocal they can use to determine stoniness
         // and managerness; MsoyBodyObject clears this local out in its didLeavePlace() override
         if (body instanceof MsoyBodyObject && ((MsoyBodyObject)body).isActor()) {
@@ -816,6 +811,12 @@ public class RoomManager extends SpotSceneManager
         }
 
         if (body instanceof MemberObject) {
+            // possibly deactivate the owner puppet
+            if (isOwnerMember(body)) {
+                deactivatePuppet();
+            } else if (!_puppetInRoom && shouldDeclareEmpty(null)) {
+                activatePuppet(); // won't if the room's not the right type
+            }
             // as we arrive at a room, we entrust it with our memories for broadcast to clients
             body.getLocal(MemberLocal.class).willEnterRoom((MemberObject)body, _roomObj);
             if (_puppetInRoom) {
@@ -853,7 +854,7 @@ public class RoomManager extends SpotSceneManager
             }
 
             // possibly activate the owner puppet
-            if (isOwnerMember(body)) {
+            if (isOwnerMember(body) && !shouldDeclareEmpty(null)) {
                 MemberObject owner = (MemberObject) body;
                 PuppetName pupName = new PuppetName(
                     owner.memberName.toString(), owner.memberName.getMemberId());
@@ -1063,9 +1064,6 @@ public class RoomManager extends SpotSceneManager
 
         // we're done with our auxiliary scene information, let's let it garbage collect
         _extras = null;
-
-        // add the room owner's puppet, if appropriate
-        activatePuppet();
     }
 
     @Override // from PlaceManager
