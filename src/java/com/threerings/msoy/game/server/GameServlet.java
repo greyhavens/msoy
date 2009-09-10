@@ -467,9 +467,14 @@ public class GameServlet extends MsoyServiceServlet
     public void updateAdditionalThumbnails (final int gameId, List<GameThumbnail> thumbnails)
         throws ServiceException
     {
-        MemberRecord mrec = requireAuthedUser();
-        requireIsGameCreator(gameId, mrec);
-        if (thumbnails.size() > GameThumbnail.MAX_COUNT) {
+        MemberRecord mrec;
+        if (gameId == 0) {
+            mrec = requireAdminUser();
+        } else {
+            mrec = requireAuthedUser();
+            requireIsGameCreator(gameId, mrec);
+        }
+        if (gameId != 0 && thumbnails.size() > GameThumbnail.Type.GAME.count) {
             // this should never happen with a legitimate client
             throw new ServiceException(MsoyCodes.E_INTERNAL_ERROR);
         }
@@ -482,7 +487,7 @@ public class GameServlet extends MsoyServiceServlet
         _mgameRepo.saveAdditionalThumbnails(gameId, Lists.transform(thumbnails,
             new Function<GameThumbnail, GameThumbnailRecord>() {
                 public GameThumbnailRecord apply (GameThumbnail thumb) {
-                    return new GameThumbnailRecord(gameId, thumb.media);
+                    return new GameThumbnailRecord(gameId, thumb);
                 }
             }));
     }

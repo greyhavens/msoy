@@ -827,6 +827,25 @@
 }
 
 /* ------------------------------------
+   EditFeedThumbsPanel
+-------------------------------------*/
+
+.editFeedThumbs {
+  padding-left: 10px;
+  font-size: 12px;
+}
+
+.editFeedThumbs .Title {
+  font-size: 16px;
+  font-weight: bold;
+  padding-top: 5px;
+}
+
+.editFeedThumbs .Type {
+  padding: 10px;
+}
+
+/* ------------------------------------
    GameBitsPanel
 -------------------------------------*/
 

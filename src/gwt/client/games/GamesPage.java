@@ -74,6 +74,9 @@ public class GamesPage extends Page
         } else if (action.equals("ea")) {
             setContent(new EditArcadePanel());
 
+        } else if (action.equals("eft")) {
+            setContent(new EditFeedThumbsPanel());
+
         } else if (action.equals("aa")) {
             byte portal = args.get(1, ArcadeData.Portal.MAIN.toByte());
             setContent(new AddArcadeEntriesPanel(
