@@ -63,6 +63,7 @@ import com.threerings.msoy.chat.data.MsoyChatCodes;
 
 import com.threerings.msoy.room.data.MsoyScene;
 import com.threerings.msoy.room.data.PetName;
+import com.threerings.msoy.room.data.PuppetName;
 import com.threerings.msoy.world.client.WorldContext;
 
 public class ChatOverlay
@@ -774,6 +775,9 @@ public class ChatOverlay
             if (name is MemberName) {
                 cmd = MsoyController.POP_MEMBER_MENU + "/" + name.toString() + "/" + 
                     String(MemberName(name).getMemberId());
+                if (name is PuppetName) {
+                    cmd += "/t";
+                }
             } else if (name is PetName) {
                 var pname :PetName = PetName(name);
                 cmd = MsoyController.POP_PET_MENU + "/" + name.toString() + "/" + pname.getPetId() +

@@ -11,8 +11,9 @@ import com.threerings.msoy.data.all.MemberName;
 public class PuppetName extends MemberName
 {
     /** Deserialization. */
-    public function PuppetName ()
+    public function PuppetName (dispName :String = "", memberId :int = 0)
     {
+        super(dispName, memberId);
     }
 }
 }

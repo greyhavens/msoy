@@ -60,6 +60,8 @@ import com.threerings.msoy.data.PlaceInfo;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 
+import com.threerings.msoy.room.data.PuppetName;
+
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 
@@ -301,11 +303,13 @@ public class MsoyController extends Controller
     /**
      * Handles the POP_MEMBER_MENU command.
      */
-    public function handlePopMemberMenu (name :String, memberId :int) :void
+    public function handlePopMemberMenu (name :String, memberId :int, puppet :Boolean = false) :void
     {
         var menuItems :Array = [];
         // reconsistute the memberName from args
-        addMemberMenuItems(new MemberName(name, memberId), menuItems);
+        var memName :MemberName = puppet ? new PuppetName(name, memberId)
+                                         : new MemberName(name, memberId);
+        addMemberMenuItems(memName, menuItems);
         CommandMenu.createMenu(menuItems, _mctx.getTopPanel()).popUpAtMouse();
     }
 
