@@ -359,7 +359,7 @@ public class MsoyGameRepository extends DepotRepository
     public List<GameThumbnailRecord> loadThumbnails (GameThumbnail.Type type, int gameId)
     {
         return findAll(GameThumbnailRecord.class, new Where(Ops.and(
-            GameThumbnailRecord.GAME_ID.eq(0),GameThumbnailRecord.TYPE.eq(type))),
+            GameThumbnailRecord.GAME_ID.eq(gameId), GameThumbnailRecord.TYPE.eq(type))),
             OrderBy.ascending(GameThumbnailRecord.POS));
     }
 
