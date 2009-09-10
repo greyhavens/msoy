@@ -488,7 +488,7 @@ public class GameServlet extends MsoyServiceServlet
                 throw new ServiceException(MsoyCodes.E_INTERNAL_ERROR);
             }
         }
-        _mgameRepo.saveAdditionalThumbnails(gameId, Lists.transform(thumbnails,
+        _mgameRepo.saveThumbnails(gameId, Lists.transform(thumbnails,
             new Function<GameThumbnail, GameThumbnailRecord>() {
                 public GameThumbnailRecord apply (GameThumbnail thumb) {
                     return new GameThumbnailRecord(gameId, thumb);

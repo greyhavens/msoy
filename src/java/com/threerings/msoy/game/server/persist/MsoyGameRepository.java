@@ -367,7 +367,7 @@ public class MsoyGameRepository extends DepotRepository
      * Sets the given thumbnails to be the ones assigned to the given game. I.e. DELETES all
      * current thumbnails for the given game then stores the new ones.
      */
-    public void saveAdditionalThumbnails (int gameId, List<GameThumbnailRecord> thumbs)
+    public void saveThumbnails (int gameId, List<GameThumbnailRecord> thumbs)
     {
         deleteAll(GameThumbnailRecord.class, new Where(GameThumbnailRecord.GAME_ID.eq(gameId)));
         for (GameThumbnailRecord thumb : thumbs) {
