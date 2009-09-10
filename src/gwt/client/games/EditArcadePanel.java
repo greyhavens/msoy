@@ -284,7 +284,7 @@ public class EditArcadePanel extends FlowPanel
         protected boolean _featuredChanged;
     }
 
-    ListBox _pages;
+    protected ListBox _pages;
 
     protected static final GameServiceAsync _gamesvc = GWT.create(GameService.class);
     protected static final GamesMessages _msgs = GWT.create(GamesMessages.class);
