@@ -84,6 +84,7 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VizMemberName;
 
 import com.threerings.msoy.ui.MediaWrapper;
+import com.threerings.msoy.ui.MsoyLoadedAsset;
 import com.threerings.msoy.ui.skins.CommentButton;
 
 import com.threerings.msoy.party.data.PartyCodes;
@@ -1222,6 +1223,15 @@ public class WorldController extends MsoyController
             }
         }
 
+        var icon :* = null;
+        if (isUs) {
+            icon = MediaWrapper.createView(
+                us.memberName.getPhoto(), MediaDesc.QUARTER_THUMBNAIL_SIZE);
+//        } else if (name is VizMemberName) {
+//            icon = MediaWrapper.createView(
+//                VizMemberName(name).getPhoto(), MediaDesc.QUARTER_THUMBNAIL_SIZE);
+        }
+        CommandMenu.addTitle(menuItems, name.toString(), icon);
         if (isUs) {
             if (followItem != null) {
                 menuItems.push(followItem);
@@ -1231,14 +1241,6 @@ public class WorldController extends MsoyController
             const onlineFriend :Boolean = us.isOnlineFriend(memId);
             const isInOurRoom :Boolean = (placeCtrl is RoomObjectController) &&
                 RoomObjectController(placeCtrl).containsPlayer(name);
-            // commented out: we are normally constructed from separated names, so we lose the viz
-// TODO: icon if avail?
-//            var icon :* = null;
-//            if (name is VizMemberName) {
-//                icon = MediaWrapper.createView(
-//                    VizMemberName(name).getPhoto(), MediaDesc.QUARTER_THUMBNAIL_SIZE);
-//            }
-            CommandMenu.addTitle(menuItems, name.toString());
             // whisper
             if (!isPuppet) {
                 menuItems.push({ label: Msgs.GENERAL.get("b.open_channel"), icon: WHISPER_ICON,
