@@ -246,7 +246,7 @@ public class MemberObject extends MsoyBodyObject
      */
     public function getSortedGateways () :Array
     {
-        return gateways.toArray().sort(Comparators.COMPARABLE);
+        return gateways.toArray().sort(Comparators.compareComparables);
     }
 
     /**
@@ -259,7 +259,7 @@ public class MemberObject extends MsoyBodyObject
             function (ce :ContactEntry, ... ignored) :Boolean {
                 return ce.getGateway() == gateway;
             });
-        return contacts.sort(Comparators.COMPARABLE);
+        return contacts.sort(Comparators.compareComparables);
     }
 
     // documentation inherited

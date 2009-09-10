@@ -92,7 +92,7 @@ public class PlaylistMusicDialog extends MusicDialog
 
         var cf :ClassFactory = new ClassFactory(PlaylistRenderer);
         cf.properties = { wctx: _ctx, roomObj: _roomObj };
-        _playList = new DSetList(cf, Comparators.createReverse(Comparators.COMPARABLE));
+        _playList = new DSetList(cf, Comparators.createReverse(Comparators.compareComparables));
         _playList.percentWidth = 100;
         _playList.height = 100;
         addChild(_playList);
