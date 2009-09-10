@@ -15,6 +15,7 @@ import flash.geom.Point;
 import flash.geom.Rectangle;
 
 import com.threerings.util.ArrayUtil;
+import com.threerings.util.Comparators;
 
 import com.threerings.display.FilterUtil;
 import com.threerings.text.TextFieldUtil;
@@ -699,17 +700,8 @@ public class OccupantSprite extends MsoySprite
     {
         var w1 :Number = ("weight" in cons1) ? (cons1["weight"] as Number) : 0;
         var w2 :Number = ("weight" in cons2) ? (cons2["weight"] as Number) : 0;
-
-        // higher weights have a higher priority
-        if (w1 > w2) {
-            return -1;
-
-        } else if (w1 < w2) {
-            return 1;
-
-        } else {
-            return 0;
-        }
+        // reverse compare: higher weights have a higher priority
+        return Comparators.compareNumbers(w2, w1);
     }
 
     /**
