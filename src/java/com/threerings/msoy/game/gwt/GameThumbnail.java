@@ -17,7 +17,7 @@ public class GameThumbnail
     public enum Type
         implements ByteEnum
     {
-        GAME(0, 1), TROPHY(1, 2), CHALLENGE(2, 3), LEVELUP(3, 3);
+        GAME_STORY(0, 1), TROPHY(1, 2), CHALLENGE(2, 3), LEVELUP(3, 3);
 
         /** Number of thumbnails required for this type (per variant). */
         public int count;

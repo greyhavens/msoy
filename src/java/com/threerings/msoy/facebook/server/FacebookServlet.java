@@ -371,8 +371,7 @@ public class FacebookServlet extends MsoyServiceServlet
             fields.name = info.name;
             fields.description = info.description;
             fields.thumbnails = Lists.newArrayList(info.getThumbMedia().getMediaPath());
-            for (GameThumbnailRecord thumbnail :
-                _mgameRepo.loadAdditionalThumbnails(info.gameId)) {
+            for (GameThumbnailRecord thumbnail : _mgameRepo.loadAllThumbnails(info.gameId)) {
                 fields.thumbnails.add(MediaDesc.getMediaPath(
                     thumbnail.hash, thumbnail.mimeType, false));
             }

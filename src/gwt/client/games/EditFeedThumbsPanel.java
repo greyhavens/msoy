@@ -44,7 +44,7 @@ public class EditFeedThumbsPanel extends FlowPanel
         setStyleName("editFeedThumbs");
         add(MsoyUI.createLabel(_msgs.editFeedThumbnailsTitle(), "Title"));
         add(MsoyUI.createLabel(_msgs.editFeedThumbnailsTip(), "Tip"));
-        _gamesvc.loadAdditionalThumbnails(0, new InfoCallback<List<GameThumbnail>>() {
+        _gamesvc.loadThumbnails(0, new InfoCallback<List<GameThumbnail>>() {
             public void onSuccess (List<GameThumbnail> result) {
                 init(result);
             }
@@ -81,7 +81,7 @@ public class EditFeedThumbsPanel extends FlowPanel
                     for (ThumbsPanel panel : _panels) {
                         thumbnails.addAll(panel.getThumbnails());
                     }
-                    _gamesvc.updateAdditionalThumbnails(0, thumbnails, this);
+                    _gamesvc.updateThumbnails(0, thumbnails, this);
 
                 } catch (ConfigException e) {
                     MsoyUI.error(e.getMessage());

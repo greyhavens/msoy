@@ -94,7 +94,7 @@ public class FacebookInfoEditorPanel extends FlowPanel
             }
         };
 
-        _gamesvc.loadAdditionalThumbnails(info.gameId, new InfoCallback<List<GameThumbnail>>() {
+        _gamesvc.loadThumbnails(info.gameId, new InfoCallback<List<GameThumbnail>>() {
             @Override public void onSuccess (List<GameThumbnail> result) {
                 setThumbnails(result);
             }
@@ -109,7 +109,7 @@ public class FacebookInfoEditorPanel extends FlowPanel
         new ClickCallback<Void>(saveThumbs) {
             protected boolean callService () {
                 try {
-                    _gamesvc.updateAdditionalThumbnails(info.gameId, getThumbnails(), this);
+                    _gamesvc.updateThumbnails(info.gameId, getThumbnails(), this);
                 } catch (ConfigException e) {
                     MsoyUI.error(e.getMessage());
                     return false;
@@ -129,7 +129,7 @@ public class FacebookInfoEditorPanel extends FlowPanel
         byte pos = 0;
         // TODO: variants?
         String variant = "";
-        GameThumbnail.Type type = GameThumbnail.Type.GAME;
+        GameThumbnail.Type type = GameThumbnail.Type.GAME_STORY;
         for (MediaBox box : _thumbBoxes) {
             if (box.getMedia() != null) {
                 thumbs.add(new GameThumbnail(EditorUtil.checkImageMedia(
@@ -143,7 +143,7 @@ public class FacebookInfoEditorPanel extends FlowPanel
     {
         _thumbsTable.clear();
         final int size = MediaDesc.FB_FEED_SIZE;
-        for (int ii = 0; ii < GameThumbnail.Type.GAME.count; ++ii) {
+        for (int ii = 0; ii < GameThumbnail.Type.GAME_STORY.count; ++ii) {
             EditorUtil.MediaBox box = new EditorUtil.MediaBox(size, "thumb" + ii,
                 ii < thumbnails.size() ? thumbnails.get(ii).media : null) {
                 @Override public void mediaUploaded (String name, MediaDesc desc, int w, int h) {

@@ -451,11 +451,11 @@ public class GameServlet extends MsoyServiceServlet
     }
 
     // from interface GameService
-    public List<GameThumbnail> loadAdditionalThumbnails (int gameId)
+    public List<GameThumbnail> loadThumbnails (int gameId)
         throws ServiceException
     {
         requireAuthedUser();
-        return Lists.newArrayList(Lists.transform(_mgameRepo.loadAdditionalThumbnails(gameId),
+        return Lists.newArrayList(Lists.transform(_mgameRepo.loadAllThumbnails(gameId),
             new Function<GameThumbnailRecord, GameThumbnail> () {
             public GameThumbnail apply (GameThumbnailRecord rec) {
                 return rec.toGameThumbnail();
@@ -464,7 +464,7 @@ public class GameServlet extends MsoyServiceServlet
     }
 
     // from interface GameService
-    public void updateAdditionalThumbnails (final int gameId, List<GameThumbnail> thumbnails)
+    public void updateThumbnails (final int gameId, List<GameThumbnail> thumbnails)
         throws ServiceException
     {
         MemberRecord mrec;
@@ -474,12 +474,16 @@ public class GameServlet extends MsoyServiceServlet
             mrec = requireAuthedUser();
             requireIsGameCreator(gameId, mrec);
         }
-        if (gameId != 0 && thumbnails.size() > GameThumbnail.Type.GAME.count) {
+        if (gameId != 0 && thumbnails.size() > GameThumbnail.Type.GAME_STORY.count) {
             // this should never happen with a legitimate client
             throw new ServiceException(MsoyCodes.E_INTERNAL_ERROR);
         }
         for (GameThumbnail thumb : thumbnails) {
             if (thumb.media == null || !thumb.media.isImage()) {
+                // this should never happen with a legitimate client
+                throw new ServiceException(MsoyCodes.E_INTERNAL_ERROR);
+            }
+            if (gameId != 0 && thumb.type != GameThumbnail.Type.GAME_STORY) {
                 // this should never happen with a legitimate client
                 throw new ServiceException(MsoyCodes.E_INTERNAL_ERROR);
             }

@@ -49,6 +49,7 @@ import com.threerings.msoy.game.gwt.FacebookInfo;
 import com.threerings.msoy.game.gwt.GameCode;
 import com.threerings.msoy.game.gwt.GameGenre;
 import com.threerings.msoy.game.gwt.GameInfo;
+import com.threerings.msoy.game.gwt.GameThumbnail;
 import com.threerings.msoy.game.gwt.MochiGameInfo;
 
 import static com.threerings.msoy.Log.log;
@@ -344,16 +345,27 @@ public class MsoyGameRepository extends DepotRepository
     }
 
     /**
-     * Loads all the additional thumbnails assigned to the given game.
+     * Loads all thumbnails assigned to the given game, sorted by position.
      */
-    public List<GameThumbnailRecord> loadAdditionalThumbnails (int gameId)
+    public List<GameThumbnailRecord> loadAllThumbnails (int gameId)
     {
-        return findAll(GameThumbnailRecord.class,
-            new Where(GameThumbnailRecord.GAME_ID.eq(gameId)));
+        return findAll(GameThumbnailRecord.class, new Where(
+            GameThumbnailRecord.GAME_ID.eq(gameId)), OrderBy.ascending(GameThumbnailRecord.POS));
     }
 
     /**
-     * Saves the additional thumbnails assigned to the given game.
+     * Loads all thumbnails assigned to the given game of the given type, sorted by position.
+     */
+    public List<GameThumbnailRecord> loadThumbnails (GameThumbnail.Type type, int gameId)
+    {
+        return findAll(GameThumbnailRecord.class, new Where(Ops.and(
+            GameThumbnailRecord.GAME_ID.eq(0),GameThumbnailRecord.TYPE.eq(type))),
+            OrderBy.ascending(GameThumbnailRecord.POS));
+    }
+
+    /**
+     * Sets the given thumbnails to be the ones assigned to the given game. I.e. DELETES all
+     * current thumbnails for the given game then stores the new ones.
      */
     public void saveAdditionalThumbnails (int gameId, List<GameThumbnailRecord> thumbs)
     {

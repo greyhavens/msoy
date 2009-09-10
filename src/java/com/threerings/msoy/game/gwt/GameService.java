@@ -176,9 +176,9 @@ public interface GameService extends RemoteService
         throws ServiceException;
 
     /**
-     * Loads the additional thumbnails for the specified game.
+     * Loads all thumbnails for the specified game.
      */
-    List<GameThumbnail> loadAdditionalThumbnails (int gameId)
+    List<GameThumbnail> loadThumbnails (int gameId)
         throws ServiceException;
 
     /**
@@ -235,9 +235,9 @@ public interface GameService extends RemoteService
         throws ServiceException;
 
     /**
-     * Set the additional thumbnails for the specified game.
+     * Updates the thumbnails for the specified game. All prior thumbnails are overwritten.
      */
-    void updateAdditionalThumbnails (int gameId, List<GameThumbnail> thumbnails)
+    void updateThumbnails (int gameId, List<GameThumbnail> thumbnails)
         throws ServiceException;
 
     /**
