@@ -93,6 +93,9 @@ public class MediaDesc implements Streamable, IsSerializable
     /** Identifies the game splash logo size. */
     public static final int GAME_SPLASH_SIZE = 8;
 
+    /** The full size for facbeook feed images. */
+    public static final int FB_FEED_SIZE = 9;
+
     /** The thumbnail image width.  */
     public static final int THUMBNAIL_WIDTH = 80;
 
@@ -716,5 +719,6 @@ public class MediaDesc implements Streamable, IsSerializable
         175, 125, // game screenshots
          40,  23, // tiny snapshots, same width as half thumbnail
         700, 500, // game splash image, same as the game window
+        130, 130, // game splash image, same as the game window
     };
 }
