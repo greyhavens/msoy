@@ -21,6 +21,7 @@ import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.data.MsoyBodyObject;
 import com.threerings.msoy.data.MsoyUserOccupantInfo;
 import com.threerings.msoy.room.data.MemberInfo;
+import com.threerings.msoy.room.data.PuppetName;
 
 public class MsoyNameLabel extends Sprite
 {
@@ -45,7 +46,8 @@ public class MsoyNameLabel extends Sprite
     {
         setName(info.username.toString());
         setSubscriber((info is MsoyUserOccupantInfo) && MsoyUserOccupantInfo(info).isSubscriber());
-        setStatus(info.status, (info is MemberInfo) && MemberInfo(info).isAway(), false);
+        setStatus(info.status, (info is MemberInfo) && MemberInfo(info).isAway(), false,
+            (info.username is PuppetName));
     }
 
     /**
@@ -80,7 +82,8 @@ public class MsoyNameLabel extends Sprite
     /**
      * Updates our member's status (idle, disconnected, etc.).
      */
-    public function setStatus (status :int, away :Boolean, italicize :Boolean) :void
+    public function setStatus (
+        status :int, away :Boolean, italicize :Boolean, isPuppet :Boolean = false) :void
     {
         if (_ignoreStatus) {
             return;
@@ -92,6 +95,8 @@ public class MsoyNameLabel extends Sprite
             _label.textColor = 0x777777;
         } else if (status == OccupantInfo.DISCONNECTED) {
             _label.textColor = 0x80803C;
+        } else if (isPuppet) {
+            _label.textColor = 0xFFBF99;
         } else {
             _label.textColor = 0x99BFFF;
         }
