@@ -16,6 +16,7 @@ import com.threerings.msoy.room.data.MobInfo;
 import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.msoy.room.data.ObserverInfo;
 import com.threerings.msoy.room.data.PetInfo;
+import com.threerings.msoy.room.data.PuppetName;
 import com.threerings.msoy.room.data.SceneAttrsUpdate;
 import com.threerings.msoy.room.data.SceneOwnershipUpdate;
 
@@ -48,6 +49,7 @@ public class Reference
     MobInfo;
     ObserverInfo;
     PetInfo;
+    PuppetName;
     FurniUpdate_Change;
     FurniUpdate_Add;
     FurniUpdate_Remove;
