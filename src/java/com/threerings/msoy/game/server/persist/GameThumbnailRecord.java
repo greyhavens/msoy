@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.game.server.persist;
 
+import com.google.common.base.Function;
+
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.annotation.Column;
 import com.samskivert.depot.annotation.Index;
@@ -29,6 +31,14 @@ public class GameThumbnailRecord extends PersistentRecord
     // AUTO-GENERATED: FIELDS END
 
     public static final int SCHEMA_VERSION = 2;
+
+    /** Functor to get a media path from a thumbnail record. */
+    public static final Function<GameThumbnailRecord, String> TO_MEDIA_PATH =
+        new Function<GameThumbnailRecord, String>() {
+        @Override public String apply (GameThumbnailRecord thumb) {
+            return MediaDesc.getMediaPath(thumb.hash, thumb.mimeType, false);
+        }
+    };
 
     /** The id of the game that this thumbnail is assigned to, or 0 if it is global. */
     @Index public int gameId;

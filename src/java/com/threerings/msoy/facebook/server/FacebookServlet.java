@@ -11,6 +11,8 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -37,7 +39,7 @@ import com.threerings.msoy.server.persist.MemberCardRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 
 import com.threerings.msoy.data.MsoyCodes;
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.facebook.gwt.FacebookFriendInfo;
 import com.threerings.msoy.facebook.gwt.FacebookGame;
 import com.threerings.msoy.facebook.gwt.FacebookService;
@@ -50,6 +52,7 @@ import com.threerings.msoy.facebook.server.persist.FacebookTemplateRecord;
 import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.game.gwt.ArcadeData;
 import com.threerings.msoy.game.gwt.GameGenre;
+import com.threerings.msoy.game.gwt.GameThumbnail;
 import com.threerings.msoy.game.gwt.MochiGameInfo;
 import com.threerings.msoy.game.server.persist.ArcadeEntryRecord;
 import com.threerings.msoy.game.server.persist.GameInfoRecord;
@@ -77,7 +80,8 @@ public class FacebookServlet extends MsoyServiceServlet
         throws ServiceException
     {
         StoryFields fields = loadGameStoryFields(loadBasicStoryFields(
-            new StoryFields(), requireSession(), "trophy"), new FacebookGame(gameId));
+            new StoryFields(), requireSession(), "trophy"), new FacebookGame(gameId),
+            GameThumbnail.Type.TROPHY);
 
         if (fields.template == null) {
             throw new ServiceException(MsoyCodes.E_INTERNAL_ERROR);
@@ -224,7 +228,7 @@ public class FacebookServlet extends MsoyServiceServlet
             }
 
         } else {
-            info.gameName = loadGameStoryFields(new StoryFields(), game).name;
+            info.gameName = loadGameStoryFields(new StoryFields(), game, null).name;
         }
 
         SessionInfo session = requireSession();
@@ -270,7 +274,7 @@ public class FacebookServlet extends MsoyServiceServlet
     {
         SessionInfo session = requireSession();
         StoryFields result = loadGameStoryFields(loadBasicStoryFields(
-            new StoryFields(), session, "challenge"), game);
+            new StoryFields(), session, "challenge"), game, GameThumbnail.Type.CHALLENGE);
         Map<String, String> replacements = Maps.newHashMap();
         replacements.put("game", result.name);
         replacements.put("game_url", SharedNaviUtil.buildRequest(
@@ -285,7 +289,7 @@ public class FacebookServlet extends MsoyServiceServlet
         throws ServiceException
     {
         StoryFields result = loadGameStoryFields(loadBasicStoryFields(
-            new StoryFields(), requireSession(), "challenge"), game);
+            new StoryFields(), requireSession(), "challenge"), game, GameThumbnail.Type.CHALLENGE);
         if (result.template == null) {
             throw new ServiceException(MsoyCodes.E_INTERNAL_ERROR);
         }
@@ -358,7 +362,8 @@ public class FacebookServlet extends MsoyServiceServlet
         return fields;
     }
 
-    protected StoryFields loadGameStoryFields (StoryFields fields, FacebookGame game)
+    protected StoryFields loadGameStoryFields (
+        StoryFields fields, FacebookGame game, GameThumbnail.Type thumbType)
         throws ServiceException
     {
         switch (game.type) {
@@ -370,10 +375,9 @@ public class FacebookServlet extends MsoyServiceServlet
             }
             fields.name = info.name;
             fields.description = info.description;
-            fields.thumbnails = Lists.newArrayList(info.getThumbMedia().getMediaPath());
-            for (GameThumbnailRecord thumbnail : _mgameRepo.loadAllThumbnails(info.gameId)) {
-                fields.thumbnails.add(MediaDesc.getMediaPath(
-                    thumbnail.hash, thumbnail.mimeType, false));
+            if (thumbType != null) {
+                fields.thumbnails = assembleThumbnails(
+                    thumbType, info.getThumbMedia().getMediaPath(), game.getIntId());
             }
             return fields;
 
@@ -385,10 +389,58 @@ public class FacebookServlet extends MsoyServiceServlet
             }
             fields.name = minfo.name;
             fields.description = minfo.desc;
-            fields.thumbnails = Lists.newArrayList(minfo.thumbURL);
+            if (thumbType != null) {
+                fields.thumbnails = assembleThumbnails(thumbType, minfo.thumbURL, 0);
+            }
             return fields;
         }
         throw new ServiceException();
+    }
+
+    protected List<String> assembleThumbnails (
+        GameThumbnail.Type type, String gameMain, int gameId)
+    {
+        List<String> result = loadThumbnails(type, 0);
+        if (result.size() < 3) {
+            if (gameId != 0) {
+                List<String> gameVariants = loadThumbnails(GameThumbnail.Type.GAME_STORY, gameId);
+                if (gameVariants.size() > 0) {
+                    gameMain = gameVariants.get(0);
+                }
+            }
+            if (result.size() == 2) {
+                result.add(1, gameMain);
+            } else {
+                result.add(gameMain);
+            }
+        }
+        if (DeploymentConfig.devDeployment) {
+            log.info("Assembled thumbnails", "type", type, "gameId", gameId, "result", result);
+        }
+        return result;
+    }
+
+    protected List<String> loadThumbnails (GameThumbnail.Type type, int gameId)
+    {
+        List<GameThumbnailRecord> thumbnails = _mgameRepo.loadThumbnails(type, gameId);
+        Set<String> variants = Sets.newHashSet();
+        for (GameThumbnailRecord thumb : thumbnails) {
+            variants.add(thumb.variant);
+        }
+        if (variants.size() == 0) {
+            return Lists.newArrayList();
+        }
+        Iterable<GameThumbnailRecord> result = thumbnails;
+        if (variants.size() > 1) {
+            // TODO: pick the LRU variant based on user history
+            final String variant = RandomUtil.pickRandom(variants);
+            result = Iterables.filter(result, new Predicate<GameThumbnailRecord>() {
+                @Override public boolean apply (GameThumbnailRecord thumb) {
+                    return thumb.variant.equals(variant);
+                }
+            });
+        }
+        return Lists.newArrayList(Iterables.transform(result, GameThumbnailRecord.TO_MEDIA_PATH));
     }
 
     protected SessionInfo requireSession ()
