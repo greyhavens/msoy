@@ -485,6 +485,48 @@ public class MemberLogic
     }
 
     /**
+     * Returns the level finder object.
+     */
+    public LevelFinder getLevelFinder ()
+    {
+        return _levels;
+    }
+
+    /**
+     * Raises a member's level to that designated by the given accumulated coin value if it is
+     * higher than that of the vien old value. Takes care of all updates, dispatches and checks
+     * associated with a level change.
+     */
+    public void maybeIncreaseLevel (int memberId, long oldAccCoins, long newAccCoins)
+    {
+        // TODO: make LevelFinder take long accCoins... hmm
+        synchMemberLevel(memberId, _levels.findLevel((int)oldAccCoins), newAccCoins);
+    }
+
+    /**
+     * Raises a member's level to that designated by the given accumulated coin value if it is
+     * higher than the given level. Takes care of all updates, dispatches and checks associated
+     * with a level change.
+     */
+    public int synchMemberLevel (int memberId, int level, long accCoins)
+    {
+        // TODO: make LevelFinder take long accCoins... hmm
+        int newLevel = _levels.findLevel((int)accCoins);
+
+        if (DeploymentConfig.devDeployment) {
+            log.info("Checking member level", "memberId", memberId, "accCoins", accCoins,
+                "oldLevel", level, "newLevel", newLevel);
+        }
+
+        // level only goes up
+        if (newLevel > level) {
+            updateMemberLevel(memberId, level, newLevel);
+            level = newLevel;
+        }
+        return level;
+    }
+
+    /**
      * Checks if the given friend id who has just leveled up is "real" enough and awards a bar
      * to the inviter, if any.
      */
@@ -599,6 +641,24 @@ public class MemberLogic
         if ((-1 != name.indexOf("nigger")) || (-1 != name.indexOf("faggot"))) {
             throw new ServiceException("e.bad_displayname");
         }
+    }
+
+    /**
+     * Does the various bits of bookkeeping for updating a member's level.
+     */
+    protected void updateMemberLevel (int memberId, int oldLevel, int newLevel)
+    {
+        // record the new level
+        _memberRepo.setUserLevel(memberId, newLevel);
+
+        // mark the level gain in their feed
+        _feedLogic.publishMemberMessage(memberId, FeedMessageType.FRIEND_GAINED_LEVEL, newLevel);
+
+        // see if we should award a bar to anyone
+        maybeAwardFriendBar(memberId, oldLevel, newLevel);
+
+        // dispatch to currently active session(s), if any
+        MemberNodeActions.gainedLevel(memberId, newLevel);
     }
 
     /**
@@ -730,8 +790,6 @@ public class MemberLogic
 
     /**
      * A member experience that has been scored.
-     *
-     * @author Kyle Sampson <kyle@threerings.net>
      */
     protected static class ScoredExperience
     {
@@ -825,6 +883,9 @@ public class MemberLogic
 
         @Inject protected transient FriendManager _friendMan;
     }
+
+    /** Coins to level lookup. */
+    protected LevelFinder _levels = new LevelFinder();
 
     // general dependencies
     @Inject protected BadgeLogic _badgeLogic;
