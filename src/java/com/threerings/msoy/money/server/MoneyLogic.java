@@ -1405,7 +1405,6 @@ public class MoneyLogic
     /**
      * Sends out updates for the given transaction, if not null. The member's level is checked and
      * the session notified if appropriate.
-     * TODO: level check
      */
     protected void dispatchUpdate (MoneyTransactionRecord tx)
     {
@@ -1415,7 +1414,6 @@ public class MoneyLogic
     /**
      * Sends out updates for the given transaction, if not null. The member's level is checked and
      * the session optionally notified if appropriate.
-     * TODO: level check
      */
     protected void dispatchUpdate (
         MoneyTransactionRecord tx, boolean notifySession)
