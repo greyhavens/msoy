@@ -28,12 +28,12 @@ public class MoneyUtil
         }
 
         if (balances.coins != null) {
-            CShell.frame.dispatchEvent(new StatusChangeEvent(StatusChangeEvent.COINS,
-                balances.coins, balances.coins));
+            CShell.frame.dispatchEvent(new StatusChangeEvent(
+                StatusChangeEvent.COINS, balances.coins));
         }
         if (balances.bars != null) {
-            CShell.frame.dispatchEvent(new StatusChangeEvent(StatusChangeEvent.BARS,
-                balances.bars, balances.bars));
+            CShell.frame.dispatchEvent(new StatusChangeEvent(
+                StatusChangeEvent.BARS, balances.bars));
         }
     }
 

@@ -82,7 +82,7 @@ public class BlingPanel extends FlowPanel
                 _exchangeBox.setNumber(null);
                 update(result.blingInfo);
                 CShell.frame.dispatchEvent(
-                    new StatusChangeEvent(StatusChangeEvent.BARS, result.barBalance, 0));
+                    new StatusChangeEvent(StatusChangeEvent.BARS, result.barBalance));
                 return true;
             }
             protected Widget getErrorNear () {

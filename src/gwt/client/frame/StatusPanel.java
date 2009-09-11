@@ -108,8 +108,6 @@ public class StatusPanel extends SmartTable
         FlowPanel links = MsoyUI.createFlowPanel("Links");
         if (!permaguest) {
             links.add(_mail);
-            CShell.frame.dispatchEvent(
-                new StatusChangeEvent(StatusChangeEvent.MAIL, data.newMailCount, 0));
             links.add(MsoyUI.createLabel("|", "Spacer"));
             _namePanel.setWidget(Link.memberView(_creds.name));
             links.add(_namePanel);
@@ -160,10 +158,6 @@ public class StatusPanel extends SmartTable
         // coins, bars, level on bottom
         setWidget(1, 0, _levels, 0);
         getFlexCellFormatter().setHorizontalAlignment(1, 0, HasAlignment.ALIGN_RIGHT);
-
-        CShell.frame.dispatchEvent(new StatusChangeEvent(StatusChangeEvent.COINS, data.flow, 0));
-        CShell.frame.dispatchEvent(new StatusChangeEvent(StatusChangeEvent.BARS, data.gold, 0));
-        CShell.frame.dispatchEvent(new StatusChangeEvent(StatusChangeEvent.LEVEL, data.level, 0));
     }
 
     // from interface Session.Observer
@@ -287,7 +281,7 @@ public class StatusPanel extends SmartTable
     protected LevelsDisplay _levels = new LevelsDisplay();
     protected MailDisplay _mail = new MailDisplay();
     protected SimplePanel _namePanel = MsoyUI.createSimplePanel(null, "Name");
-    PushButton _promoButton;
+    protected PushButton _promoButton;
     protected int _promoCount;
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);

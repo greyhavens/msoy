@@ -22,11 +22,26 @@ public class StatusChangeEvent extends FlashEvent
     {
     }
 
+    /**
+     * Creates a status change event for when we know the old value.
+     */
     public StatusChangeEvent (int type, int value, int oldValue)
     {
         _type = type;
         _value = value;
         _oldValue = oldValue;
+        _initializing = false;
+    }
+
+    /**
+     * Creates a status change event to initialize a value.
+     */
+    public StatusChangeEvent (int type, int value)
+    {
+        _type = type;
+        _value = value;
+        _oldValue = 0;
+        _initializing = true;
     }
 
     @Override // from FlashEvent
@@ -41,6 +56,7 @@ public class StatusChangeEvent extends FlashEvent
         _type = JavaScriptUtil.getIntElement(args, 0);
         _value = JavaScriptUtil.getIntElement(args, 1);
         _oldValue = JavaScriptUtil.getIntElement(args, 2);
+        _initializing = JavaScriptUtil.getBooleanElement(args, 3);
     }
 
     @Override // from FlashEvent
@@ -49,6 +65,7 @@ public class StatusChangeEvent extends FlashEvent
         JavaScriptUtil.setIntElement(args, 0, _type);
         JavaScriptUtil.setIntElement(args, 1, _value);
         JavaScriptUtil.setIntElement(args, 2, _oldValue);
+        JavaScriptUtil.setBooleanElement(args, 3, _initializing);
     }
 
     @Override // from FlashEvent
@@ -74,7 +91,17 @@ public class StatusChangeEvent extends FlashEvent
         return _oldValue;
     }
 
+    /**
+     * Whether this event is intializing the status value. If so, then the old value is not
+     * meaningful and will be set to zero.
+     */
+    public boolean isInitializing ()
+    {
+        return _initializing;
+    }
+
     protected int _type;
     protected int _value;
     protected int _oldValue;
+    protected boolean _initializing;
 }

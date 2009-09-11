@@ -26,6 +26,7 @@ import com.threerings.msoy.web.gwt.WebUserServiceAsync;
 
 import client.util.NoopAsyncCallback;
 import client.util.StringUtil;
+import client.util.events.StatusChangeEvent;
 
 /**
  * A central place where we keep track of whether or not we've logged on or logged off.
@@ -99,6 +100,13 @@ public class Session
                 CShell.log("Observer choked in didLogon [observer=" + observer + "]", e);
             }
         }
+
+        // repeat the session data values
+        Frame frame = CShell.frame;
+        frame.dispatchEvent(new StatusChangeEvent(StatusChangeEvent.MAIL, data.newMailCount));
+        frame.dispatchEvent(new StatusChangeEvent(StatusChangeEvent.COINS, data.flow));
+        frame.dispatchEvent(new StatusChangeEvent(StatusChangeEvent.BARS, data.gold));
+        frame.dispatchEvent(new StatusChangeEvent(StatusChangeEvent.LEVEL, data.level));
     }
 
     /**

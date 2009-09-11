@@ -153,10 +153,7 @@ public class WorldClient extends MsoyClient
             _user.addListener(updater);
 
             // configure our levels to start
-            updater.newLevel(_user.level);
-            // updater.newGold(_user.gold);
-            updater.newCoins(_user.coins);
-            updater.newMail(_user.newMailCount);
+            updater.initStatus(_user.level, _user.bars, _user.coins, _user.newMailCount);
         }
     }
 
@@ -458,19 +455,19 @@ class StatusUpdater implements AttributeChangeListener, SetListener
     {
         switch (event.getName()) {
         case MemberObject.COINS:
-            newCoins(event.getValue() as int, event.getOldValue() as int);
+            updateStatus(STATUS_CHANGE_COINS, event);
             break;
 
         case MemberObject.BARS:
-            newBars(event.getValue() as int, event.getOldValue() as int);
+            updateStatus(STATUS_CHANGE_BARS, event);
             break;
 
         case MemberObject.LEVEL:
-            newLevel(event.getValue() as int, event.getOldValue() as int);
+            updateStatus(STATUS_CHANGE_LEVEL, event);
             break;
 
         case MemberObject.NEW_MAIL_COUNT:
-            newMail(event.getValue() as int, event.getOldValue() as int);
+            updateStatus(STATUS_CHANGE_MAIL, event);
             break;
         }
     }
@@ -501,24 +498,16 @@ class StatusUpdater implements AttributeChangeListener, SetListener
         }
     }
 
-    public function newLevel (level :int, oldLevel :int = 0) :void {
-        sendNotification([STATUS_CHANGE_LEVEL, level, oldLevel]);
+    public function initStatus (level :int, bars: int, coins :int, mail :int) :void {
+        _client.dispatchEventToGWT(STATUS_CHANGE_EVENT, [STATUS_CHANGE_LEVEL, level, 0, true]);
+        _client.dispatchEventToGWT(STATUS_CHANGE_EVENT, [STATUS_CHANGE_COINS, coins, 0, true]);
+        //_client.dispatchEventToGWT(STATUS_CHANGE_EVENT, [STATUS_CHANGE_BARS, bars, 0, true]);
+        _client.dispatchEventToGWT(STATUS_CHANGE_EVENT, [STATUS_CHANGE_MAIL, mail, 0, true]);
     }
 
-    public function newCoins (coins :int, oldCoins :int = 0) :void {
-        sendNotification([STATUS_CHANGE_COINS, coins, oldCoins]);
-    }
-
-    public function newBars (bars :int, oldBars :int = 0) :void {
-        sendNotification([STATUS_CHANGE_BARS, bars, oldBars]);
-    }
-
-    public function newMail (mail :int, oldMail :int = -1) :void {
-        sendNotification([STATUS_CHANGE_MAIL, mail, oldMail]);
-    }
-
-    protected function sendNotification (args :Array) :void {
-        _client.dispatchEventToGWT(STATUS_CHANGE_EVENT, args);
+    public function updateStatus (field :int, event :AttributeChangedEvent) :void {
+        _client.dispatchEventToGWT(STATUS_CHANGE_EVENT, [
+            field, event.getValue() as int, event.getOldValue() as int, false]);
     }
 
     /** Event dispatched to GWT when we've leveled up */

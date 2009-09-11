@@ -115,7 +115,7 @@ public class ConvosModel extends MsoyServiceBackedDataModel<Conversation, MailSe
 
     protected void dispatchUnread ()
     {
-        CShell.frame.dispatchEvent(new StatusChangeEvent(StatusChangeEvent.MAIL, _unreadCount, 0));
+        CShell.frame.dispatchEvent(new StatusChangeEvent(StatusChangeEvent.MAIL, _unreadCount));
     }
 
     /** The total number of unread conversations, on all pages. */
