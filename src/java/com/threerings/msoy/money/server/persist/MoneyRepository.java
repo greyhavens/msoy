@@ -149,8 +149,9 @@ public class MoneyRepository extends DepotRepository
         }
 
         // TODO: be able to get the balance at the same time as the update, pending Depot changes
-        int balance = load(MemberAccountRecord.class, key).getAmount(currency);
-        return new MoneyTransactionRecord(memberId, currency, amount, balance);
+        MemberAccountRecord acct = load(MemberAccountRecord.class, key);
+        return new MoneyTransactionRecord(memberId, currency, amount, acct.getAmount(currency),
+            updateAcc, acct.getAccAmount(currency));
     }
 
     /**
@@ -187,7 +188,8 @@ public class MoneyRepository extends DepotRepository
         }
 
         // Return the amount reserved, or 0 if it didn't work, but allowFree==true
-        return new MoneyTransactionRecord(memberId, currency, (count == 0) ? 0 : -amount, balance);
+        return new MoneyTransactionRecord(memberId, currency, (count == 0) ? 0 : -amount, balance,
+            false, mar.getAccAmount(currency));
     }
 
     /**

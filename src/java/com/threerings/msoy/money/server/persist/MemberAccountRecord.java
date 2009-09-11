@@ -130,6 +130,19 @@ public class MemberAccountRecord extends PersistentRecord
     }
 
     /**
+     * Get the amount of money this account has of the specified currency.
+     */
+    public long getAccAmount (Currency currency)
+    {
+        switch (currency) {
+        case COINS: return accCoins;
+        case BARS: return accBars;
+        case BLING: return accBling;
+        default: throw new IllegalArgumentException();
+        }
+    }
+
+    /**
      * Creates a {@link MemberMoney} object from this record.
      */
     public MemberMoney getMemberMoney ()

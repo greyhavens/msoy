@@ -15,6 +15,7 @@ import com.samskivert.depot.annotation.GeneratedValue;
 import com.samskivert.depot.annotation.GenerationType;
 import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.annotation.Index;
+import com.samskivert.depot.annotation.Transient;
 import com.samskivert.depot.expression.ColumnExp;
 
 import com.threerings.msoy.data.all.MemberName;
@@ -176,17 +177,28 @@ public class MoneyTransactionRecord extends PersistentRecord
     /** For some transactions, there may be a memberId of the other member. */
     public int referenceMemberId;
 
+    /** Set to true if this transaction affected the accumulated total for the type of money. Note
+     * that this field will only be set if the record was obtained during a transaction. */
+    @Transient public boolean accAffected;
+
+    /** The accumulated balance of the type of money affected. Note that this field will only be
+     * set if the record was obtained during a transaction. */
+    @Transient public long accBalance;
+
     /**
      * Create a new MoneyTransactionRecord.
      */
     public MoneyTransactionRecord (
-        int memberId, Currency currency, int amount, int balance)
+        int memberId, Currency currency, int amount, int balance, boolean accAffected,
+        long accBalance)
     {
         this.memberId = memberId;
         this.timestamp = new Timestamp(System.currentTimeMillis());
         this.currency = currency;
         this.amount = amount;
         this.balance = balance;
+        this.accAffected = accAffected;
+        this.accBalance = accBalance;
     }
 
     /**
