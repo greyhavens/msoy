@@ -1423,8 +1423,7 @@ public class MoneyLogic
         if (tx == null) {
             return;
         }
-        // sessions don't care about bling
-        if (notifySession && tx.currency != Currency.BLING) {
+        if (notifySession) {
             _nodeActions.moneyUpdated(tx);
         }
         if (tx.currency == Currency.COINS && tx.amount > 0 && tx.accAffected) {
