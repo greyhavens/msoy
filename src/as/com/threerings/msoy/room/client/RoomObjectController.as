@@ -15,6 +15,7 @@ import com.threerings.util.ArrayUtil;
 import com.threerings.util.MessageBundle;
 import com.threerings.util.Name;
 import com.threerings.util.ObjectMarshaller;
+import com.threerings.util.Predicates;
 import com.threerings.util.ValueEvent;
 
 import com.threerings.presents.dobj.AttributeChangeAdapter;
@@ -80,6 +81,7 @@ import com.threerings.msoy.room.data.MsoyScene;
 import com.threerings.msoy.room.data.MsoySceneModel;
 import com.threerings.msoy.room.data.PetInfo;
 import com.threerings.msoy.room.data.PetName;
+import com.threerings.msoy.room.data.PuppetName;
 import com.threerings.msoy.room.data.RoomObject;
 import com.threerings.msoy.room.data.SceneAttrsUpdate;
 import com.threerings.msoy.room.data.SceneOwnershipUpdate;
@@ -183,6 +185,9 @@ public class RoomObjectController extends RoomController
             if (avatar == null) {
                 return;
             }
+            if (name is PuppetName) {
+                addPuppetMenuItems(avatar, menuItems);
+            }
             var kind :String = Msgs.GENERAL.get(avatar.getDesc());
             var flagItems :Array = [];
             var bleepItem :Object = null;
@@ -215,6 +220,54 @@ public class RoomObjectController extends RoomController
                     children: flagItems });
             }
         }
+    }
+
+    /**
+     * Add special menu items for puppets.
+     */
+    protected function addPuppetMenuItems (avatar :MemberSprite, menuItems :Array) :void
+    {
+        var states :Array = avatar.getAvatarStates();
+        var curState :String = avatar.getState();
+        var dance :String = locateAction(states, ["dance", "dancing"]);
+        var items :Array = [];
+        if (dance != null) {
+            if (dance == curState) {
+                items.push({ label: Msgs.NPC.get("b.stop_dance"),
+                    // wrap the arg in an array in case its null
+                    callback: avatar.setState, arg: [ states[0] ] });
+            } else {
+                items.push({ label: Msgs.NPC.get("b.dance"),
+                    callback: avatar.setState, arg: dance });
+            }
+        }
+        // TODO: should these make our own avatar dance as well??
+
+        // TODO: other actions?
+
+        if (items.length > 0) {
+            CommandMenu.addSeparator(items);
+            // add the items after the first separator (should be right after the title)
+            var dex :int = ArrayUtil.indexIf(menuItems,
+                Predicates.createPropertyEquals("type", "separator"));
+            ArrayUtil.splice(menuItems, dex + 1, 0, items);
+        }
+    }
+
+    /**
+     * Locate an action that matches (case insensitively) the var-args search actions specified.
+     */
+    protected function locateAction (actions :Array, searches :Array) :String
+    {
+        searches = searches.map(function (s :String, ... _) :String {
+            return s.toLowerCase();
+        });
+        for each (var action :String in actions) {
+            if (action != null && searches.indexOf(action.toLowerCase()) >= 0) {
+                return action;
+            }
+        }
+        return null;
     }
 
     /**
@@ -934,6 +987,12 @@ public class RoomObjectController extends RoomController
                     if (winfo.bodyOid == ourOid) {
                         // dispatch got-control to the avatar, it should supress repeats
                         dispatchEntityGotControl(ident);
+                        return true;
+
+                    } else if (winfo.username is PuppetName) {
+                        // Anyone can control the puppet, yet no instance is "in control".
+                        // TODO: shit, shit, shit, shit. We might have to manage control or
+                        // it could freak out avatars. I'm betting that most won't be affected...
                         return true;
 
                     } else {

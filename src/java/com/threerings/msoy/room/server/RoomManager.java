@@ -193,14 +193,22 @@ public class RoomManager extends SpotSceneManager
     /**
      * Forcibly change the state of an actor.
      */
-    public void setState (MsoyBodyObject actor, final String state)
+    public void setState (MsoyBodyObject actor, String state)
     {
         // update the state in their body object
         actor.actorState = state;
+        // and in the occInfo
+        setState(actor.getOid(), state);
+    }
 
+    /**
+     * Part 2 of setting an actor's state. Also used if the actor has no body.
+     */
+    public void setState (int occupantOid, final String state)
+    {
         // TODO: consider, instead of updating the whole dang occInfo, dispatching a custom event
         // that will update just the state and serve as the trigger event to usercode...
-        updateOccupantInfo(actor.getOid(), new ActorInfo.Updater<ActorInfo>() {
+        updateOccupantInfo(occupantOid, new ActorInfo.Updater<ActorInfo>() {
             public boolean update (ActorInfo info) {
                 if (ObjectUtil.equals(info.getState(), state)) {
                     return false; // if there was no change, we're done.
@@ -518,6 +526,16 @@ public class RoomManager extends SpotSceneManager
             if (!_roomObj.occupants.contains(who.getOid())) {
                 return;
             }
+        }
+
+        if (actorOid == PUPPET_OID) {
+            // make sure the ident is correct for the puppet
+            OccupantInfo info = _roomObj.occupantInfo.get(PUPPET_OID);
+            if (info != null && item.equals(((ActorInfo)info).getItemIdent())) {
+                // if the actor is here and all is valid, directly enact the state
+                setState(actorOid, state);
+            } // else: silently ignore
+            return;
         }
 
         // make sure the actor to be state-changed is also in this room
@@ -1907,6 +1925,7 @@ public class RoomManager extends SpotSceneManager
         } finally {
             _roomObj.commitTransaction();
         }
+        _occInfo.put(PUPPET_OID, pupInfo);
     }
 
     /**
@@ -1927,7 +1946,7 @@ public class RoomManager extends SpotSceneManager
      */
     protected void deactivatePuppet ()
     {
-        MemberInfo info = (MemberInfo) _roomObj.occupantInfo.get(PUPPET_OID);
+        MemberInfo info = (MemberInfo) _occInfo.remove(PUPPET_OID);
         if (info != null) {
             _roomObj.startTransaction();
             try {

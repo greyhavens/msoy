@@ -58,6 +58,9 @@ public class MsoyCodes extends InvocationCodes
     /** Identifies our home page grid message bundle. */
     public static const HOME_PAGE_GRID_MSGS :String = "homepagegrid";
 
+    /** Identifies our npc message bundle. */
+    public static const NPC_MSGS :String = "npc";
+
     /** Identifies our help message bundle. */
     public static const HELP_MSGS :String = "help";
 
