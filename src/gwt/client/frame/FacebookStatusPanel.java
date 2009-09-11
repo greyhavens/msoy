@@ -50,28 +50,25 @@ public class FacebookStatusPanel extends AbsoluteCSSPanel
 
         _listeners.add(new StatusChangeListener() {
             public void statusChanged (StatusChangeEvent event) {
+                // we don't care about events that are just setting the value
+                if (event.isInitializing() || _data == null) {
+                    return;
+                }
                 switch(event.getType()) {
                 case StatusChangeEvent.LEVEL:
-                    // this is a bit hacky, but we need to know whether the didLogon handler
-                    // in StatusPanel is the sender. It always uses 0 as the old value. If we don't
-                    // perform this check we go into an infinite loop, continuously validating the
-                    // session
-                    // TODO: better alternative, perhaps just request the SessionData without
-                    // dispatching a didLogon... or maybe include the information with a new
-                    // LevelChangedEvent
-                    if (event.getOldValue() != 0) {
-                        // revalidate since we need the last and next coin values
-                        //CShell.log("Level change from flash");
-                        //Session.validate();
-                    }
+                    _data.level = event.getValue();
+
+                    // approximate the distance to the next level, not 100% accurate but this is
+                    // not going to be a very common event
+                    // TODO: update these fields properly
+                    _data.lastCoins = _data.currCoins = _data.nextCoins;
+                    _data.nextCoins += ((_data.level + 1) * 17.8 - 49) * 50;
+                    update();
                     break;
 
                 case StatusChangeEvent.COINS:
-                    // hacky... see above
-                    if (event.getOldValue() != 0 && _data != null) {
-                        _data.currCoins += event.getValue() - event.getOldValue();
-                        update();
-                    }
+                    _data.currCoins += event.getValue() - event.getOldValue();
+                    update();
                     break;
                 }
             }
