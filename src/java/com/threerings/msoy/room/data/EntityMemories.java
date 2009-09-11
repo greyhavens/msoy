@@ -90,7 +90,10 @@ public class EntityMemories
             EntityMemories copy = (EntityMemories) super.clone();
             // mainly we need to clone the memories so that they can safely be modified in
             // another room on this same node
-            copy.memories = (StreamableHashMap<String, byte[]>) this.memories.clone();
+            @SuppressWarnings("unchecked")
+            StreamableHashMap<String, byte[]> memcopy = 
+                (StreamableHashMap<String, byte[]>) copy.memories.clone();
+            copy.memories = memcopy;
             return copy;
 
         } catch (CloneNotSupportedException cnse) {
