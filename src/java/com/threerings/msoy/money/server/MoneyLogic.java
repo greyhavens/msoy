@@ -1425,9 +1425,10 @@ public class MoneyLogic
         }
         // sessions don't care about bling
         if (notifySession && tx.currency != Currency.BLING) {
-            // change is the only non-accumulating transaction type
-            boolean accumulate = tx.transactionType != TransactionType.CHANGE_IN_COINS;
-            _nodeActions.moneyUpdated(tx, accumulate);
+            _nodeActions.moneyUpdated(tx);
+        }
+        if (tx.currency == Currency.COINS && tx.amount > 0 && tx.accAffected) {
+            _memberLogic.maybeIncreaseLevel(tx.memberId, tx.accBalance - tx.amount, tx.accBalance);
         }
     }
 

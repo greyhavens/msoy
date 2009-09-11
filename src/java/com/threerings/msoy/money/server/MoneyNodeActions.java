@@ -34,37 +34,32 @@ public class MoneyNodeActions
      */
     public void coinsEarned (int memberId, int amount)
     {
-        moneyUpdated(memberId, Currency.COINS, amount, true);
+        moneyUpdated(memberId, Currency.COINS, amount);
     }
 
     /**
      * Dispatches a notification that a member's money count has changed to whichever server they
      * are logged into.
      */
-    public void moneyUpdated (MoneyTransactionRecord tx, boolean updateAcc)
+    public void moneyUpdated (MoneyTransactionRecord tx)
     {
-        moneyUpdated(tx.memberId, tx.currency, tx.amount, updateAcc);
+        moneyUpdated(tx.memberId, tx.currency, tx.amount);
     }
 
-    /**
-     * Dispatches a notification that a member's money count has changed to whichever server they
-     * are logged into.
-     */
-    public void moneyUpdated (int memberId, Currency currency, int amount, boolean updateAcc)
+    protected void moneyUpdated (int memberId, Currency currency, int amount)
     {
         if (currency != Currency.BLING) { // avoid spamming the other nodes
-            _peerMan.invokeNodeAction(new MoneyUpdated(memberId, currency, amount, updateAcc));
+            _peerMan.invokeNodeAction(new MoneyUpdated(memberId, currency, amount));
         }
     }
 
     protected static class MoneyUpdated extends MemberPlayerNodeAction
     {
-        public MoneyUpdated (int memberId, Currency currency, int amount, boolean updateAcc)
+        public MoneyUpdated (int memberId, Currency currency, int amount)
         {
             super(memberId);
             _currency = currency;
             _amount = amount;
-            _updateAcc = updateAcc;
         }
 
         public MoneyUpdated () { }
@@ -77,9 +72,6 @@ public class MoneyNodeActions
                 switch (_currency) {
                 case COINS:
                     memobj.setCoins(memobj.coins + _amount);
-                    if (_amount > 0 && _updateAcc) {
-                        memobj.setAccCoins(memobj.accCoins + _amount);
-                    }
                     break;
                 case BARS:
                     memobj.setBars(memobj.bars + _amount);
@@ -111,7 +103,6 @@ public class MoneyNodeActions
 
         protected Currency _currency;
         protected int _amount;
-        protected boolean _updateAcc;
     }
 
     protected final MsoyPeerManager _peerMan;

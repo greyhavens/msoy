@@ -182,12 +182,21 @@ public class MsoyClientResolver extends CrowdClientResolver
             memobj.headline = precord.headline;
         }
 
-        // configure various bits directly from their member record
+        // the place they call home
         memobj.homeSceneId = member.homeSceneId;
+
+        // runtime money
         memobj.coins = money.coins;
         memobj.accCoins = (int) money.accCoins; // TODO: long? int?
         memobj.bars = money.bars;
-        memobj.level = member.level;
+
+        // assign the level, giving them a chance to level up too; note that we do this even though
+        // the code tries to always keep the level in sync with accCoins. this is necessary because
+        //   1. once upon a time the level was not kept in sync and we did not do a big migration
+        //   2. there could have been bugs or errors with previous accCoins changes that inhibited
+        //      the level up
+        memobj.level = _memberLogic.synchMemberLevel(
+            member.memberId, member.level, money.accCoins);
 
         // load up this member's persistent stats
         MemberLocal local = memobj.getLocal(MemberLocal.class);

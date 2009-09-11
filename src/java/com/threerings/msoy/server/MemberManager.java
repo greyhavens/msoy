@@ -10,7 +10,6 @@ import java.util.List;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.jdbc.WriteOnlyUnit;
 import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
@@ -76,7 +75,6 @@ import com.threerings.msoy.notify.data.GenericNotification;
 import com.threerings.msoy.notify.data.LevelUpNotification;
 import com.threerings.msoy.notify.data.Notification;
 import com.threerings.msoy.notify.server.NotificationManager;
-import com.threerings.msoy.person.gwt.FeedMessageType;
 import com.threerings.msoy.person.server.FeedLogic;
 import com.threerings.msoy.person.server.persist.ProfileRepository;
 import com.threerings.msoy.profile.gwt.Profile;
@@ -230,14 +228,6 @@ public class MemberManager
         }
     }
 
-    /**
-     * Returns the level finder object.
-     */
-    public LevelFinder getLevelFinder ()
-    {
-        return _levels;
-    }
-
     public void addExperience (final MemberObject memObj, final MemberExperience newExp)
     {
         memObj.startTransaction();
@@ -268,18 +258,14 @@ public class MemberManager
             return;
         }
 
-        // add a listener for changes to accumulated flow so that the member's level can be updated
-        // as necessary
+        // add a listener for changes to the member's level
         member.addListener(new AttributeChangeListener() {
             public void attributeChanged (final AttributeChangedEvent event) {
-                if (MemberObject.ACC_COINS.equals(event.getName())) {
-                    checkCurrentLevel(member);
+                if (MemberObject.LEVEL.equals(event.getName())) {
+                    _notifyMan.notify(member, new LevelUpNotification(event.getIntValue()));
                 }
             }
         });
-
-        // check their current level now in case they got flow while they were offline
-        checkCurrentLevel(member);
 
         // update badges
         _badgeMan.updateBadges(member);
@@ -752,44 +738,6 @@ public class MemberManager
     }
 
     /**
-     * Check if the member's accumulated flow level matches up with their current level, and update
-     * their current level if necessary
-     */
-    public void checkCurrentLevel (final MemberObject member)
-    {
-        int level = _levels.findLevel(member.accCoins);
-
-        if (member.level < level) {
-            final int oldLevel = member.level;
-            final int newLevel = level;
-            final int memberId = member.getMemberId();
-
-            // update their level now so that we don't come along and do this again while the
-            // invoker is off writing things to the database
-            member.setLevel(level);
-
-            _invoker.postUnit(new RepositoryUnit("updateLevel") {
-                @Override public void invokePersist () throws Exception {
-                    // record the new level
-                    _memberRepo.setUserLevel(memberId, newLevel);
-                    // mark the level gain in their feed
-                    _feedLogic.publishMemberMessage(
-                        memberId, FeedMessageType.FRIEND_GAINED_LEVEL, newLevel);
-                    // see if we should award a bar to anyone
-                    _memberLogic.maybeAwardFriendBar(memberId, oldLevel, newLevel);
-                }
-                @Override public void handleSuccess () {
-                    _notifyMan.notify(member, new LevelUpNotification(newLevel));
-                }
-                @Override public void handleFailure (final Exception pe) {
-                    log.warning("Unable to set user level.",
-                        "memberId", member.getMemberId(), "level", newLevel);
-                }
-            });
-        }
-    }
-
-    /**
      * Boots a player from the server.  Must be called on the dobjmgr thread.
      *
      * @return true if the player was found and booted successfully
@@ -912,9 +860,6 @@ public class MemberManager
     /** Snapshot of all currently configured greeters, sorted by last online. Refreshed
      * periodically. */
     protected List<Integer> _greeterIdsSnapshot;
-
-    /** Coins to level lookup. */
-    protected LevelFinder _levels = new LevelFinder();
 
     // dependencies
     @Inject protected @BatchInvoker Invoker _batchInvoker;
