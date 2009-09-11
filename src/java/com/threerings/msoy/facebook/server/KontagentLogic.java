@@ -328,7 +328,7 @@ public class KontagentLogic
             return new TrackingId(trackingId);
 
         } catch (IllegalArgumentException ex) {
-            log.warning("Invalid tracking id", trackingId);
+            log.warning("Invalid tracking id", "value", trackingId);
             return null;
         }
     }
