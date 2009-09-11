@@ -36,6 +36,7 @@ import com.threerings.msoy.admin.data.MoneyConfigObject;
 import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.server.MemberLogic;
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.persist.CharityRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
@@ -180,9 +181,7 @@ public class MoneyLogic
         Preconditions.checkArgument(amount >= 0, "amount is invalid: %d", amount);
         MoneyTransactionRecord tx = _repo.accumulateAndStoreTransaction(
             memberId, currency, amount, type, action.description, null, true);
-        if (notify) {
-            _nodeActions.moneyUpdated(tx, true);
-        }
+        dispatchUpdate(tx, notify);
         logAction(action, tx);
         return tx.toMoneyTransaction();
     }
@@ -203,7 +202,7 @@ public class MoneyLogic
         UserAction action = UserAction.boughtBars(memberId, payment);
         MoneyTransactionRecord tx = _repo.accumulateAndStoreTransaction(memberId,
             Currency.BARS, numBars, TransactionType.BARS_BOUGHT, action.description, null, true);
-        _nodeActions.moneyUpdated(tx, true);
+        dispatchUpdate(tx);
         logAction(action, tx);
         return tx.toMoneyTransaction();
     }
@@ -224,7 +223,7 @@ public class MoneyLogic
         MoneyTransactionRecord tx = _repo.accumulateAndStoreTransaction(memberId,
             Currency.BARS, numBars, TransactionType.SUBSCRIBER_GRANT, action.description,
             null, true);
-        _nodeActions.moneyUpdated(tx, true);
+        dispatchUpdate(tx);
         logAction(action, tx);
         return tx.toMoneyTransaction();
     }
@@ -251,7 +250,7 @@ public class MoneyLogic
                 memberId, currency, -delta, TransactionType.SUPPORT_ADJUST, action.description,
                 null);
         }
-        _nodeActions.moneyUpdated(tx, true);
+        dispatchUpdate(tx);
         logAction(action, tx);
     }
 
@@ -402,21 +401,15 @@ public class MoneyLogic
         }
 
         // notify affected members of their money changes
-        _nodeActions.moneyUpdated(buyerTx, true);
-        if (changeTx != null) {
-            _nodeActions.moneyUpdated(changeTx, false); // Don't accumulate
-        }
+        dispatchUpdate(buyerTx);
+        dispatchUpdate(changeTx);
         if (creatorTxs != null) {
             for (MoneyTransactionRecord tx : creatorTxs) {
-                _nodeActions.moneyUpdated(tx, true);
+                dispatchUpdate(tx);
             }
         }
-        if (affiliateTx != null) {
-            _nodeActions.moneyUpdated(affiliateTx, true);
-        }
-        if (charityTx != null) {
-            _nodeActions.moneyUpdated(charityTx, true);
-        }
+        dispatchUpdate(affiliateTx);
+        dispatchUpdate(charityTx);
 
         return new BuyResult<T>(magicFree, buyerTx.toMoneyTransaction(),
                                 (changeTx == null) ? null : changeTx.toMoneyTransaction(),
@@ -533,10 +526,8 @@ public class MoneyLogic
         }
 
         // notify affected members of their money changes
-        _nodeActions.moneyUpdated(buyerTx, true);
-        if (changeTx != null) {
-            _nodeActions.moneyUpdated(changeTx, false); // Don't accumulate
-        }
+        dispatchUpdate(buyerTx);
+        dispatchUpdate(changeTx);
 
         return new BuyResult<T>(ibr.magicFree, buyerTx.toMoneyTransaction(),
                                 (changeTx == null) ? null : changeTx.toMoneyTransaction(),
@@ -851,7 +842,7 @@ public class MoneyLogic
 
         for (MoneyTransactionRecord txRec : updates) {
             // TODO: logAction?
-            _nodeActions.moneyUpdated(txRec, true); // notify members
+            dispatchUpdate(txRec); // notify members
         }
 
         return updates.size();
@@ -879,7 +870,7 @@ public class MoneyLogic
         _repo.commitBlingCashOutRequest(memberId, amount);
 
         // if that didn't throw an exception, we're good to go.
-        _nodeActions.moneyUpdated(deductTx, true);
+        dispatchUpdate(deductTx);
         logAction(UserAction.cashedOutBling(memberId), deductTx);
     }
 
@@ -970,12 +961,12 @@ public class MoneyLogic
             memberId, Currency.BLING, blingAmount * 100,
             TransactionType.SPENT_FOR_EXCHANGE, "m.exchanged_for_bars", null);
         // if that didn't throw an exception, we're good to go.
-        _nodeActions.moneyUpdated(deductTx, true);
+        dispatchUpdate(deductTx);
 
         MoneyTransactionRecord accumTx = _repo.accumulateAndStoreTransaction(
             memberId, Currency.BARS, blingAmount,
             TransactionType.RECEIVED_FROM_EXCHANGE, "m.exchanged_from_bling", null, true);
-        _nodeActions.moneyUpdated(accumTx, true);
+        dispatchUpdate(accumTx);
 
         logAction(UserAction.exchangedCurrency(memberId), deductTx);
         logAction(UserAction.exchangedCurrency(memberId), accumTx);
@@ -1412,6 +1403,35 @@ public class MoneyLogic
     }
 
     /**
+     * Sends out updates for the given transaction, if not null. The member's level is checked and
+     * the session notified if appropriate.
+     * TODO: level check
+     */
+    protected void dispatchUpdate (MoneyTransactionRecord tx)
+    {
+        dispatchUpdate(tx, true);
+    }
+
+    /**
+     * Sends out updates for the given transaction, if not null. The member's level is checked and
+     * the session optionally notified if appropriate.
+     * TODO: level check
+     */
+    protected void dispatchUpdate (
+        MoneyTransactionRecord tx, boolean notifySession)
+    {
+        if (tx == null) {
+            return;
+        }
+        // sessions don't care about bling
+        if (notifySession && tx.currency != Currency.BLING) {
+            // change is the only non-accumulating transaction type
+            boolean accumulate = tx.transactionType != TransactionType.CHANGE_IN_COINS;
+            _nodeActions.moneyUpdated(tx, accumulate);
+        }
+    }
+
+    /**
      * Converts the amount of pennies into a string to display to the user as a valid currency.
      * Note: there are some other utilities around to do this, but they're either in a different
      * project (and there's some concern about exposing them directly), or they don't properly
@@ -1502,6 +1522,7 @@ public class MoneyLogic
 
     // dependencies
     @Inject protected BlingPoolDistributor _blingDistributor;
+    @Inject protected MemberLogic _memberLogic;
     @Inject protected MemberRepository _memberRepo;
     @Inject protected MoneyExchange _exchange;
     @Inject protected MoneyMessageListener _msgReceiver;
