@@ -46,7 +46,6 @@ import com.threerings.msoy.server.ExternalAuthLogic;
 import com.threerings.msoy.server.FriendManager;
 import com.threerings.msoy.server.LevelFinder;
 import com.threerings.msoy.server.MemberLogic;
-import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.MsoyAuthenticator;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.ServerMessages;
@@ -242,7 +241,7 @@ public class WebUserServlet extends MsoyServiceServlet
             if (extra) {
                 data.extra = new SessionData.Extra();
                 data.extra.accumFlow = (int)Math.min(money.accCoins, Integer.MAX_VALUE);
-                LevelFinder levelFinder = _memberMgr.getLevelFinder();
+                LevelFinder levelFinder = _memberLogic.getLevelFinder();
                 // level 1 users should see "1000/1800" instead of "-500/300"
                 data.extra.levelFlow = data.level <= 1 ? 0 :
                     levelFinder.getCoinsForLevel(data.level);
@@ -640,7 +639,6 @@ public class WebUserServlet extends MsoyServiceServlet
     @Inject protected MailRepository _mailRepo;
     @Inject protected MailSender _mailer;
     @Inject protected MemberLogic _memberLogic;
-    @Inject protected MemberManager _memberMgr;
     @Inject protected MoneyLogic _moneyLogic;
     @Inject protected MsoyAuthenticator _author;
     @Inject protected MsoyPeerManager _peerMan;
