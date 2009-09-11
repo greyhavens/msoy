@@ -223,54 +223,6 @@ public class RoomObjectController extends RoomController
     }
 
     /**
-     * Add special menu items for puppets.
-     */
-    protected function addPuppetMenuItems (avatar :MemberSprite, menuItems :Array) :void
-    {
-        var states :Array = avatar.getAvatarStates();
-        var curState :String = avatar.getState();
-        var dance :String = locateAction(states, ["dance", "dancing"]);
-        var items :Array = [];
-        if (dance != null) {
-            if (dance == curState) {
-                items.push({ label: Msgs.NPC.get("b.stop_dance"),
-                    // wrap the arg in an array in case its null
-                    callback: avatar.setState, arg: [ states[0] ] });
-            } else {
-                items.push({ label: Msgs.NPC.get("b.dance"),
-                    callback: avatar.setState, arg: dance });
-            }
-        }
-        // TODO: should these make our own avatar dance as well??
-
-        // TODO: other actions?
-
-        if (items.length > 0) {
-            CommandMenu.addSeparator(items);
-            // add the items after the first separator (should be right after the title)
-            var dex :int = ArrayUtil.indexIf(menuItems,
-                Predicates.createPropertyEquals("type", "separator"));
-            ArrayUtil.splice(menuItems, dex + 1, 0, items);
-        }
-    }
-
-    /**
-     * Locate an action that matches (case insensitively) the var-args search actions specified.
-     */
-    protected function locateAction (actions :Array, searches :Array) :String
-    {
-        searches = searches.map(function (s :String, ... _) :String {
-            return s.toLowerCase();
-        });
-        for each (var action :String in actions) {
-            if (action != null && searches.indexOf(action.toLowerCase()) >= 0) {
-                return action;
-            }
-        }
-        return null;
-    }
-
-    /**
      * Set the specified name hovered or unhovered.
      */
     public function setHoverName (name :MemberName, hovered :Boolean) :void
@@ -1028,6 +980,54 @@ public class RoomObjectController extends RoomController
             var info :MemberInfo = obj as MemberInfo;
             if (info != null && info.getMemberId() == memberId) {
                 return info;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Add special menu items for puppets.
+     */
+    protected function addPuppetMenuItems (avatar :MemberSprite, menuItems :Array) :void
+    {
+        var states :Array = avatar.getAvatarStates();
+        var curState :String = avatar.getState();
+        var dance :String = locateAction(states, ["dance", "dancing"]);
+        var items :Array = [];
+        if (dance != null) {
+            if (dance == curState) {
+                items.push({ label: Msgs.NPC.get("b.stop_dance"),
+                    // wrap the arg in an array in case its null
+                    callback: avatar.setState, arg: [ states[0] ] });
+            } else {
+                items.push({ label: Msgs.NPC.get("b.dance"),
+                    callback: avatar.setState, arg: dance });
+            }
+        }
+        // TODO: should these make our own avatar dance as well??
+
+        // TODO: other actions?
+
+        if (items.length > 0) {
+            CommandMenu.addSeparator(items);
+            // add the items after the first separator (should be right after the title)
+            var dex :int = ArrayUtil.indexIf(menuItems,
+                Predicates.createPropertyEquals("type", "separator"));
+            ArrayUtil.splice(menuItems, dex + 1, 0, items);
+        }
+    }
+
+    /**
+     * Locate an action that matches (case insensitively) the var-args search actions specified.
+     */
+    protected function locateAction (actions :Array, searches :Array) :String
+    {
+        searches = searches.map(function (s :String, ... _) :String {
+            return s.toLowerCase();
+        });
+        for each (var action :String in actions) {
+            if (action != null && searches.indexOf(action.toLowerCase()) >= 0) {
+                return action;
             }
         }
         return null;
