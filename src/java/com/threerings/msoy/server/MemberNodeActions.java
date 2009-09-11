@@ -271,6 +271,14 @@ public class MemberNodeActions
         _peerMan.invokeNodeAction(new ForcedMoveAction(memberId, sceneId, exit));
     }
 
+    /**
+     * Notifies any active connections for this member that they have gained a level. Gratz!
+     */
+    public static void gainedLevel (int memberId, int newLevel)
+    {
+        _peerMan.invokeNodeAction(new LevelChanged(memberId, newLevel));
+    }
+
     protected static class InfoChanged extends MemberNodeAction
     {
         /** Any field may be null to not change it. */
@@ -779,6 +787,25 @@ public class MemberNodeActions
         protected MsoyLocation _exit;
 
         @Inject protected transient PlaceRegistry _plreg;
+    }
+
+    protected static class LevelChanged extends MemberNodeAction
+    {
+        public LevelChanged () {}
+
+        public LevelChanged (int memberId, int newLevel)
+        {
+            super(memberId);
+            _newLevel = newLevel;
+        }
+
+        @Override // from MemberNodeAction
+        protected void execute (MemberObject memobj)
+        {
+            memobj.setLevel(_newLevel);
+        }
+
+        protected int _newLevel;
     }
 
     protected static MsoyPeerManager _peerMan;
