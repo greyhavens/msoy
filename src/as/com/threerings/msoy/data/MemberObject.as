@@ -49,9 +49,6 @@ public class MemberObject extends MsoyBodyObject
     /** The field name of the <code>coins</code> field. */
     public static const COINS :String = "coins";
 
-    /** The field name of the <code>accCoins</code> field. */
-    public static const ACC_COINS :String = "accCoins";
-
     /** The field name of the <code>bars</code> field. */
     public static const BARS :String = "bars";
 
@@ -118,9 +115,6 @@ public class MemberObject extends MsoyBodyObject
 
     /** How many coins we've got jangling around on our person. */
     public var coins :int;
-
-    /** How many coins total we've jangled around on our person. */
-    public var accCoins :int;
 
     /** How many bars total this member has. */
     public var bars :int;
@@ -326,7 +320,6 @@ public class MemberObject extends MsoyBodyObject
 
         memberName = VizMemberName(ins.readObject());
         coins = ins.readInt();
-        accCoins = ins.readInt();
         bars = ins.readInt();
         level = ins.readInt();
         following = MemberName(ins.readObject());

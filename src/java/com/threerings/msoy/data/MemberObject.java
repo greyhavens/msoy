@@ -47,9 +47,6 @@ public class MemberObject extends MsoyBodyObject
     /** The field name of the <code>coins</code> field. */
     public static final String COINS = "coins";
 
-    /** The field name of the <code>accCoins</code> field. */
-    public static final String ACC_COINS = "accCoins";
-
     /** The field name of the <code>bars</code> field. */
     public static final String BARS = "bars";
 
@@ -126,9 +123,6 @@ public class MemberObject extends MsoyBodyObject
 
     /** How many coins we've got jangling around on our person. */
     public int coins;
-
-    /** How many coins total we've jangled around on our person. */
-    public int accCoins;
 
     /** The number of bars the member has currently in their account. */
     public int bars;
@@ -444,22 +438,6 @@ public class MemberObject extends MsoyBodyObject
         requestAttributeChange(
             COINS, Integer.valueOf(value), Integer.valueOf(ovalue));
         this.coins = value;
-    }
-
-    /**
-     * Requests that the <code>accCoins</code> field be set to the
-     * specified value. The local value will be updated immediately and an
-     * event will be propagated through the system to notify all listeners
-     * that the attribute did change. Proxied copies of this object (on
-     * clients) will apply the value change when they received the
-     * attribute changed notification.
-     */
-    public void setAccCoins (int value)
-    {
-        int ovalue = this.accCoins;
-        requestAttributeChange(
-            ACC_COINS, Integer.valueOf(value), Integer.valueOf(ovalue));
-        this.accCoins = value;
     }
 
     /**

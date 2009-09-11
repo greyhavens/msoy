@@ -187,7 +187,6 @@ public class MsoyClientResolver extends CrowdClientResolver
 
         // runtime money
         memobj.coins = money.coins;
-        memobj.accCoins = (int) money.accCoins; // TODO: long? int?
         memobj.bars = money.bars;
 
         // assign the level, giving them a chance to level up too; note that we do this even though
