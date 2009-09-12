@@ -598,7 +598,7 @@ public class FacebookLogic
 
             // send them to the tracker and note that we've done so
             _tracker.trackUserInfo(uid, birthYear, gender, city, state, zip, country, friendCount);
-            _facebookRepo.noteDataGathered(memberIds.get(uid));
+            _facebookRepo.recordAction(FacebookActionRecord.dataGathered(memberIds.get(uid)));
         }
 
         return uinfo.getUser().size();

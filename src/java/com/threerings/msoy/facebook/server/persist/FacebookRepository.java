@@ -18,6 +18,7 @@ import com.samskivert.depot.Exps;
 import com.samskivert.depot.Ops;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
+import com.samskivert.depot.clause.Limit;
 import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.expression.ColumnExp;
@@ -28,14 +29,6 @@ import com.samskivert.depot.expression.ColumnExp;
 @Singleton
 public class FacebookRepository extends DepotRepository
 {
-    /**
-     * Assembles the unique id for a trophy published action.
-     */
-    public static String getTrophyPublishedActionId (int gameId, String trophyIdent)
-    {
-        return gameId + ":" + trophyIdent;
-    }
-
     /**
      * Creates a new repository.
      */
@@ -79,21 +72,22 @@ public class FacebookRepository extends DepotRepository
     }
 
     /**
-     * Records a member having published a trophy with the given identifier and game.
+     * Records an action.
      */
-    public void noteTrophyPublished (int memberId, int gameId, String trophyIdent)
+    public void recordAction (FacebookActionRecord action)
     {
-        store(createAction(memberId, FacebookActionRecord.Type.PUBLISHED_TROPHY,
-            getTrophyPublishedActionId(gameId, trophyIdent)));
+        store(action);
     }
 
     /**
-     * Records that the server has gathered data for a member. The id for the action is set to a
-     * default value.
+     * Gets the most recent record of the given type, or null if there are none.
      */
-    public void noteDataGathered (int memberId)
+    public FacebookActionRecord getLastDailyVisit (int memberId, FacebookActionRecord.Type type)
     {
-        store(createAction(memberId, FacebookActionRecord.Type.GATHERED_DATA, "server"));
+        List<FacebookActionRecord> visits = findAll(FacebookActionRecord.class, new Where(Ops.and(
+            FacebookActionRecord.TYPE.eq(type), FacebookActionRecord.MEMBER_ID.eq(memberId))),
+            new Limit(0, 1), OrderBy.descending(FacebookActionRecord.TIMESTAMP));
+        return visits.size() > 0 ? visits.get(0) : null;
     }
 
     /**
@@ -222,20 +216,6 @@ public class FacebookRepository extends DepotRepository
     public void deleteNotification (String id)
     {
         delete(FacebookNotificationRecord.getKey(id));
-    }
-
-    /**
-     * Creates a new action with the given fields and the current time.
-     */
-    protected FacebookActionRecord createAction (
-        int memberId, FacebookActionRecord.Type type, String id)
-    {
-        FacebookActionRecord action = new FacebookActionRecord();
-        action.memberId = memberId;
-        action.type = type;
-        action.id = id;
-        action.timestamp = new Timestamp(System.currentTimeMillis());
-        return action;
     }
 
     @Override // from DepotRepository

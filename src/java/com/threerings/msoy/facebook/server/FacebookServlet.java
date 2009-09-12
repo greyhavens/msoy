@@ -46,6 +46,7 @@ import com.threerings.msoy.facebook.gwt.FacebookService;
 import com.threerings.msoy.facebook.server.FacebookLogic.SessionInfo;
 import com.threerings.msoy.facebook.server.KontagentLogic.TrackingId;
 import com.threerings.msoy.facebook.server.KontagentLogic.LinkType;
+import com.threerings.msoy.facebook.server.persist.FacebookActionRecord;
 import com.threerings.msoy.facebook.server.persist.FacebookRepository;
 import com.threerings.msoy.facebook.server.persist.FacebookTemplateRecord;
 
@@ -94,7 +95,8 @@ public class FacebookServlet extends MsoyServiceServlet
         throws ServiceException
     {
         SessionInfo session = requireSession();
-        _facebookRepo.noteTrophyPublished(session.memRec.memberId, gameId, ident);
+        _facebookRepo.recordAction(
+            FacebookActionRecord.trophyPublished(session.memRec.memberId, gameId, ident));
         _tracker.trackFeedStoryPosted(session.fbid, trackingId);
     }
 

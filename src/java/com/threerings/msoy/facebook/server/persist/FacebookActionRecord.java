@@ -5,7 +5,9 @@ package com.threerings.msoy.facebook.server.persist;
 
 import java.sql.Timestamp;
 
+import com.google.common.base.Preconditions;
 import com.samskivert.util.ByteEnum;
+import com.samskivert.util.Tuple;
 
 import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistentRecord;
@@ -35,6 +37,44 @@ public class FacebookActionRecord extends PersistentRecord
     public static final int MAX_ID_LENGTH = 255;
 
     /**
+     * Assembles the unique id for a trophy published action.
+     */
+    public static String getTrophyPublishedId (int gameId, String trophyIdent)
+    {
+        return gameId + ":" + trophyIdent;
+    }
+
+    /**
+     * Creates an action representing a daily visit by the given member of the given level for
+     * which the given amount of coins was rewarded.
+     */
+    public static FacebookActionRecord dailyVisit (int memberId, int coinsAwarded, int level)
+    {
+        long now = now();
+        String id = now + ":" + coinsAwarded + ":" + level;
+        return new FacebookActionRecord(memberId, Type.DAILY_VISIT, id, now);
+    }
+
+    /**
+     * Creates an action representing the publishing of the given trophy for the given game by the
+     * given member.
+     */
+    public static FacebookActionRecord trophyPublished (
+        int memberId, int gameId, String trophyIdent)
+    {
+        return new FacebookActionRecord(memberId, Type.PUBLISHED_TROPHY,
+            getTrophyPublishedId(gameId, trophyIdent), now());
+    }
+
+    /**
+     * Creates an action representing the gathering of the given user's data.
+     */
+    public static FacebookActionRecord dataGathered (int memberId)
+    {
+        return new FacebookActionRecord(memberId, Type.GATHERED_DATA, "server", now());
+    }
+
+    /**
      * Types of actions.
      */
     public enum Type
@@ -44,7 +84,10 @@ public class FacebookActionRecord extends PersistentRecord
         PUBLISHED_TROPHY(1),
 
         /** We gathered this user's demographic data. */
-        GATHERED_DATA(2);
+        GATHERED_DATA(2),
+
+        /** The user visited the site. */
+        DAILY_VISIT(3);
 
         @Override // from ByteEnum
         public byte toByte ()
@@ -60,6 +103,25 @@ public class FacebookActionRecord extends PersistentRecord
         protected byte _value;
     }
 
+    /**
+     * Creates a new action with the given fields and the current time.
+     */
+    public FacebookActionRecord (
+        int memberId, FacebookActionRecord.Type type, String id, long timestamp)
+    {
+        this.memberId = memberId;
+        this.type = type;
+        this.id = id;
+        this.timestamp = new Timestamp(timestamp);
+    }
+
+    /**
+     * For deserialization.
+     */
+    public FacebookActionRecord ()
+    {
+    }
+
     /** Member that performed the action. */
     @Id public int memberId;
 
@@ -72,6 +134,17 @@ public class FacebookActionRecord extends PersistentRecord
 
     /** When the action was performed. */
     public Timestamp timestamp;
+
+    /**
+     * For DAILY_VISIT actions, extracts the coins awarded for the visit and the level of the user
+     * at the time.
+     */
+    public Tuple<Integer, Integer> extractCoinAwardAndLevel ()
+    {
+        Preconditions.checkArgument(type == Type.DAILY_VISIT);
+        String[] values = id.split(":");
+        return Tuple.newTuple(Integer.parseInt(values[1]), Integer.parseInt(values[2]));
+    }
 
     // AUTO-GENERATED: METHODS START
     /**
@@ -86,4 +159,9 @@ public class FacebookActionRecord extends PersistentRecord
                 new Comparable[] { memberId, type, id });
     }
     // AUTO-GENERATED: METHODS END
+
+    protected static long now ()
+    {
+        return System.currentTimeMillis();
+    }
 }

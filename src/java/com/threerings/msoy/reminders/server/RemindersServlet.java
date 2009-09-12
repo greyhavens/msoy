@@ -96,7 +96,7 @@ public class RemindersServlet extends MsoyServiceServlet
 
     protected static String toActionId (TrophyRecord trophy)
     {
-        return FacebookRepository.getTrophyPublishedActionId(trophy.gameId, trophy.ident);
+        return FacebookActionRecord.getTrophyPublishedId(trophy.gameId, trophy.ident);
     }
 
     protected static final int MAX_TROPHY_REMINDERS = 10;
