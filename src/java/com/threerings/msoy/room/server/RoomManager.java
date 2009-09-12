@@ -832,7 +832,7 @@ public class RoomManager extends SpotSceneManager
             // possibly deactivate the owner puppet
             if (isOwnerMember(body)) {
                 deactivatePuppet();
-            } else if (!_puppetInRoom && shouldDeclareEmpty(null)) {
+            } else if (!_puppetInRoom) {
                 activatePuppet(); // won't if the room's not the right type
             }
             // as we arrive at a room, we entrust it with our memories for broadcast to clients
@@ -872,7 +872,7 @@ public class RoomManager extends SpotSceneManager
             }
 
             // possibly activate the owner puppet
-            if (isOwnerMember(body) && !shouldDeclareEmpty(null)) {
+            if (isOwnerMember(body)) {
                 MemberObject owner = (MemberObject) body;
                 PuppetName pupName = new PuppetName(
                     owner.memberName.toString(), owner.memberName.getMemberId());
@@ -1891,8 +1891,9 @@ public class RoomManager extends SpotSceneManager
                 }
             }
             public void handleSuccess () {
-                if (_isGuest != null) {
-                    // only if we found the owner member do we proceed
+                // We only proceed if we found the owner member (isGuest != null)
+                // and the owner hasn't since entered the room
+                if ((_isGuest != null) && (null == _roomObj.getOccupantInfo(pupName))) {
                     activatePuppet(pupName, _avatar, _isGuest, _mem);
                 } else {
                     _puppetInRoom = false; // oh, we're not actually going to add it
