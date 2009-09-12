@@ -82,7 +82,7 @@ public class FacebookRepository extends DepotRepository
     /**
      * Gets the most recent record of the given type, or null if there are none.
      */
-    public FacebookActionRecord getLastDailyVisit (int memberId, FacebookActionRecord.Type type)
+    public FacebookActionRecord getLastAction (int memberId, FacebookActionRecord.Type type)
     {
         List<FacebookActionRecord> visits = findAll(FacebookActionRecord.class, new Where(Ops.and(
             FacebookActionRecord.TYPE.eq(type), FacebookActionRecord.MEMBER_ID.eq(memberId))),
