@@ -62,29 +62,24 @@ public class CatalogModels
         }
 
         public int getItemCount () {
-            return _listingCount;
+            return -1;
         }
 
         public void doFetchRows (
             int start, int count, final AsyncCallback<List<ListingCard>> callback) {
-            _catalogsvc.loadCatalog(_query, start, count, _listingCount == 0,
+            _catalogsvc.loadCatalog(_query, start, count,
                 new InfoCallback<CatalogService.CatalogResult>() {
                     public void onSuccess (CatalogService.CatalogResult data) {
-                        if (_listingCount == 0) {
-                            _listingCount = data.listingCount;
-                        }
                         callback.onSuccess(data.listings);
                     }
                 });
         }
 
         public void removeItem (ListingCard item) {
-            // currently we do no internal caching, so just decrement our listing count
-            _listingCount--;
+            // do nothing
         }
 
         protected CatalogQuery _query;
-        protected int _listingCount;
     }
 
     public static class MemberFavorites extends LazyDataModel<ListingCard>

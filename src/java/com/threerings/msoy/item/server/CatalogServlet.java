@@ -13,8 +13,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 
-import com.samskivert.util.Tuple;
-
 import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.StatType;
@@ -79,8 +77,7 @@ public class CatalogServlet extends MsoyServiceServlet
     }
 
     // from interface CatalogService
-    public CatalogResult loadCatalog (
-        CatalogQuery query, int offset, int rows, boolean includeCount)
+    public CatalogResult loadCatalog (CatalogQuery query, int offset, int rows)
         throws ServiceException
     {
         MemberRecord mrec = getAuthedUser();
@@ -93,12 +90,11 @@ public class CatalogServlet extends MsoyServiceServlet
         }
 
         // pass the complexity buck off to the catalog logic
-        Tuple<List<CatalogRecord>, Integer> data = _catalogLogic.loadCatalog(
-            mrec, new CatalogLogic.Query(query, 0), offset, rows, includeCount);
-        result.listingCount = data.right;
+        List<CatalogRecord> data = _catalogLogic.loadCatalog(
+            mrec, new CatalogLogic.Query(query, 0), offset, rows);
 
         // convert the listings to runtime records and resolve their names
-        result.listings.addAll(Lists.transform(data.left, CatalogRecord.TO_CARD));
+        result.listings.addAll(Lists.transform(data, CatalogRecord.TO_CARD));
         _itemLogic.resolveCardNames(result.listings);
 
         // log this for posterity

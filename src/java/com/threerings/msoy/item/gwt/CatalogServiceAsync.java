@@ -28,7 +28,7 @@ public interface CatalogServiceAsync
     /**
      * The asynchronous version of {@link CatalogService#loadCatalog}.
      */
-    void loadCatalog (CatalogQuery query, int offset, int rows, boolean includeCount,
+    void loadCatalog (CatalogQuery query, int offset, int rows,
                       AsyncCallback<CatalogService.CatalogResult> callback);
 
     /**

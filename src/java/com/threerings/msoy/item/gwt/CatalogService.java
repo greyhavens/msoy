@@ -31,9 +31,6 @@ public interface CatalogService extends RemoteService
     public static class CatalogResult
         implements IsSerializable
     {
-        /** The total count of listings matching the query. */
-        public int listingCount;
-
         /** The particular set of listings requested. */
         public List<ListingCard> listings;
     }
@@ -87,7 +84,7 @@ public interface CatalogService extends RemoteService
      * @param includeCount if true, the count of all listings matching the query terms will also be
      * computed and included in the result.
      */
-    CatalogResult loadCatalog (CatalogQuery query, int offset, int rows, boolean includeCount)
+    CatalogResult loadCatalog (CatalogQuery query, int offset, int rows)
         throws ServiceException;
 
     /**

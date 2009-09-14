@@ -9,8 +9,6 @@ import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.util.Tuple;
-
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.web.gwt.ServiceException;
@@ -109,16 +107,6 @@ public class CatalogLogic
     public List<CatalogRecord> loadCatalog (MemberRecord mrec, Query query, int offset, int rows)
         throws ServiceException
     {
-        return loadCatalog(mrec, query, offset, rows, false).left;
-    }
-
-    /**
-     * Loads catalog listings and the total count of matching listings.
-     */
-    public Tuple<List<CatalogRecord>, Integer> loadCatalog (
-        MemberRecord mrec, Query query, int offset, int rows, boolean loadCount)
-        throws ServiceException
-    {
         ItemRepository<ItemRecord> repo = _itemLogic.getRepository(query.itemType);
 
         // resolve the id of the tag if one is needed
@@ -134,11 +122,7 @@ public class CatalogLogic
             query.sortBy, showMature(mrec), context, query.tagId, query.creatorId, null,
             query.mogId, query.gameId, offset, rows, _exchange.getRate());
 
-        // load the count, if desired
-        int count = !loadCount ? 0 :
-            repo.countListings(showMature(mrec), context, query.tagId, query.creatorId, null);
-
-        return Tuple.newTuple(records, count);
+        return records;
     }
 
     protected BuyResult<Item> purchaseItem (

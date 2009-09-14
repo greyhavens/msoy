@@ -645,6 +645,25 @@ public abstract class ItemRepository<T extends ItemRecord>
     }
 
     /**
+     * Loads all owners of a given original item. Please note that this can be a large amount
+     * of data for popular items. This method is intended for migration purposes.
+     */
+    public IntSet loadOwnerIds (int originalItemId)
+    {
+        List<OwnerIdRecord> ownerRecords = findAll(
+            OwnerIdRecord.class, new FromOverride(getCloneClass()),
+            new FieldDefinition("itemId", getCloneColumn(CloneRecord.ITEM_ID)),
+            new FieldDefinition("ownerId", getCloneColumn(CloneRecord.OWNER_ID)),
+            new Where(getCloneColumn(CloneRecord.ITEM_ID).eq(originalItemId)));
+
+        IntSet result = new ArrayIntSet();
+        for (OwnerIdRecord oidrec : ownerRecords) {
+            result.add(oidrec.ownerId);
+        }
+        return result;
+    }
+
+    /**
      * Find a single catalog entry randomly.
      */
     public CatalogRecord pickRandomCatalogEntry ()
@@ -694,31 +713,6 @@ public abstract class ItemRepository<T extends ItemRecord>
         CatalogRecord record = records.get(0);
         record.item = loadOriginalItem(record.listedItemId);
         return record;
-    }
-
-    /**
-     * Counts all items in the catalog that match the supplied query terms.
-     */
-    public int countListings (boolean mature, WordSearch search, int tag, int creator,
-                              Float minRating)
-    {
-        List<QueryClause> clauses = Lists.newArrayList();
-        clauses.add(new FromOverride(getCatalogClass()));
-        clauses.add(new Join(getCatalogColumn(CatalogRecord.LISTED_ITEM_ID),
-                             getItemColumn(ItemRecord.ITEM_ID)));
-
-        // see if there's any where bits to turn into an actual where clause
-        List<SQLExpression> whereBits = Lists.newArrayList();
-        boolean significantlyConstrained =
-            addSearchClause(clauses, whereBits, mature, search, tag, creator, minRating, 0, 0);
-
-        // if this is largely unconstrained shop query, we don't perform an actual count, but
-        // instead return -1 to signal that the pager should operate in "page by page" mode.
-        if (!significantlyConstrained) {
-            return -1;
-        }
-        // else finally execute the count
-        return load(CountRecord.class, clauses.toArray(new QueryClause[clauses.size()])).count;
     }
 
     /**
