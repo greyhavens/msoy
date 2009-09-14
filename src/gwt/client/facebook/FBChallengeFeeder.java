@@ -30,7 +30,7 @@ import client.util.Link;
 public class FBChallengeFeeder
 {
     /**
-     * Creates a new feeder to publish a challenge for the given game.
+     * Creates a new feeder to publish a challenge for the given game and story fields.
      */
     public FBChallengeFeeder (FacebookGame game, StoryFields fields)
     {
@@ -39,7 +39,7 @@ public class FBChallengeFeeder
     }
 
     /**
-     * Pops up a challenge feed story confirmation using the given game and story fields.
+     * Pops up a challenge feed story confirmation using the values given in the constructor.
      */
     public void publish ()
     {
@@ -112,6 +112,4 @@ public class FBChallengeFeeder
     protected StoryFields _fields;
 
     protected static final FacebookServiceAsync _fbsvc = GWT.create(FacebookService.class);
-    protected static final String ACCESSIBLE_GAME_IMAGE =
-        FacebookUtil.PUB_ROOT + "708ca91490155abc18f99a74e8bba5129b5033f6.png"; // CC game thumb
 }
