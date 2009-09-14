@@ -39,7 +39,7 @@ public class UserAction extends SimpleStreamableObject
         CREATED_ITEM(30), BOUGHT_ITEM(31), LISTED_ITEM(32),
 
         // metagame related actions
-        EARNED_BADGE(40), COMPLETED_SURVEY(41),
+        EARNED_BADGE(40), COMPLETED_SURVEY(41), VISITED_FB_APP(42),
 
         // (purely) money related actions
         BOUGHT_BARS(50), RECEIVED_PAYOUT(51), /*obsolete(52),*/ SUPPORT_ADJUST(53),
@@ -197,6 +197,12 @@ public class UserAction extends SimpleStreamableObject
     {
         String descrip = MessageBundle.tcompose("m.completed_survey", surveyName, surveyId);
         return new UserAction(Type.COMPLETED_SURVEY, memberId, descrip);
+    }
+
+    public static UserAction visitedFBApp (int memberId, String appName)
+    {
+        String descrip = MessageBundle.tcompose("m.visited_fb_app", appName);
+        return new UserAction(Type.VISITED_FB_APP, memberId, descrip);
     }
 
     public static UserAction receivedFriendAward (int memberId, int friendId)
