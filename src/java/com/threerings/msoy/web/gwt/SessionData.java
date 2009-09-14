@@ -13,6 +13,7 @@ import com.threerings.msoy.data.all.VisitorInfo;
 
 /**
  * Contains a snapshot of the user's data delivered when they validate their session.
+ * TODO: rename all "flow" members to "coins".
  */
 public class SessionData implements IsSerializable
 {
@@ -36,6 +37,12 @@ public class SessionData implements IsSerializable
 
         /** Total number of trophies held. */
         public int trophyCount;
+
+        /** Flow awarded for this session. */
+        public int flowAwarded;
+
+        /** Levels gained since the last daily visit. */
+        public int levelsGained;
     }
 
     /** Our session credentials. */
@@ -79,6 +86,7 @@ public class SessionData implements IsSerializable
         sdata.newMailCount = Integer.valueOf(data.next());
         sdata.visitor = VisitorInfo.unflatten(data);
         sdata.group = Group.valueOf(data.next());
+        // Note the extra is not included in flattened state
         return sdata;
     }
 
@@ -95,6 +103,7 @@ public class SessionData implements IsSerializable
         data.add(String.valueOf(newMailCount));
         data.addAll(visitor.flatten());
         data.add(String.valueOf(group));
+        // Note the extra is not included in flattened state
         return data;
     }
 }
