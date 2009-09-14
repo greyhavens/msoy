@@ -7,18 +7,26 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Timer;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 
 import com.threerings.gwt.ui.AbsoluteCSSPanel;
+import com.threerings.msoy.facebook.gwt.FacebookService;
+import com.threerings.msoy.facebook.gwt.FacebookServiceAsync;
+import com.threerings.msoy.facebook.gwt.FacebookService.StoryFields;
 import com.threerings.msoy.web.gwt.SessionData;
 
+import client.shell.CShell;
 import client.shell.Session;
 import client.shell.ShellMessages;
+import client.ui.BorderedDialog;
 import client.ui.MsoyUI;
 
+import client.util.InfoCallback;
 import client.util.events.FlashEventListener;
 import client.util.events.FlashEvents;
 import client.util.events.StatusChangeEvent;
@@ -137,14 +145,34 @@ public class FacebookStatusPanel extends AbsoluteCSSPanel
 
     protected void popupDailyVisit (int levelsGained, int flowAwarded)
     {
-        int lacking = _data.nextCoins - _data.currCoins;
-        if (levelsGained == 0 && lacking >= 0) {
-            MsoyUI.info(_msgs.fbStatusCoinAwardPopup(
-                String.valueOf(flowAwarded), String.valueOf(lacking)));
+        BorderedDialog popup = new BorderedDialog() {};
+        if (levelsGained == 0 && _data.nextCoins > _data.currCoins) {
+            popup.setHeaderTitle(_msgs.fbStatusCoinAwardPopupTitle());
+            String text = _msgs.fbStatusCoinAwardPopupText(String.valueOf(flowAwarded),
+                String.valueOf(_data.nextCoins - _data.currCoins)).replace("\n", "<br/>");
+            CShell.log("Text", "value", text);
+            popup.setContents(MsoyUI.createHTML(text, "Text"));
+            popup.addButton(new Button(_msgs.fbStatusCoinAwardPopupBtn(), popup.onAction(null)));
 
         } else if (levelsGained > 0) {
-            MsoyUI.info(_msgs.fbStatusLevelPopup(String.valueOf(_data.level)));
+            popup.setHeaderTitle(_msgs.fbStatusLevelPopupTitle());
+            popup.setContents(MsoyUI.createLabel(_msgs.fbStatusLevelPopupText(
+                String.valueOf(_data.level)), "Content"));
+            popup.addButton(new Button(_msgs.fbStatusLevelPopupBtn(), popup.onAction(
+                new Command() {
+                @Override public void execute () {
+                    _fbsvc.getLevelUpStoryFields(new InfoCallback<StoryFields>() {
+                        @Override public void onSuccess (StoryFields result) {
+                            new LevelUpFeeder(_data.level, result).publish();
+                        }
+                    });
+                }
+            })));
+        } else {
+            return;
         }
+
+        popup.show();
     }
 
     protected static class ProgressBar extends AbsoluteCSSPanel
@@ -211,4 +239,5 @@ public class FacebookStatusPanel extends AbsoluteCSSPanel
     // TODO: some day sort this out 
     protected static Data _data;
     protected static final ShellMessages _msgs = GWT.create(ShellMessages.class); 
+    protected static final FacebookServiceAsync _fbsvc = GWT.create(FacebookService.class);
 }
