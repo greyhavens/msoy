@@ -13,6 +13,7 @@ import com.google.inject.Singleton;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.util.MessageBundle;
+import com.threerings.util.TimeUtil;
 
 import com.threerings.presents.net.AuthRequest;
 import com.threerings.presents.net.AuthResponse;
@@ -217,8 +218,10 @@ public class MsoyAuthenticator extends Authenticator
         } catch (ServiceException se) {
             if (se instanceof BannedException) {
                 BannedException be = (BannedException)se;
-                rdata.code = MessageBundle.tcompose(be.getMessage(),
-                    be.getWarning(), be.getExpires());
+                rdata.code = MessageBundle.compose(be.getMessage(),
+                    MessageBundle.taint(be.getWarning()),
+                    TimeUtil.getTimeOrderString(
+                        be.getExpires() * 1000L, TimeUtil.SECOND, TimeUtil.DAY));
 
             } else {
                 rdata.code = se.getMessage();
