@@ -215,7 +215,14 @@ public class MsoyAuthenticator extends Authenticator
             rsp.authdata = processAuthentication(conn, creds, rdata);
 
         } catch (ServiceException se) {
-            rdata.code = se.getMessage();
+            if (se instanceof BannedException) {
+                BannedException be = (BannedException)se;
+                rdata.code = MessageBundle.tcompose(be.getMessage(),
+                    be.getWarning(), be.getExpires());
+
+            } else {
+                rdata.code = se.getMessage();
+            }
             log.info("Rejecting authentication", "creds", creds, "code", rdata.code);
         }
     }

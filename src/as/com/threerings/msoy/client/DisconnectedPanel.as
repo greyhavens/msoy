@@ -46,7 +46,7 @@ public class DisconnectedPanel extends VBox
             onReconnect != null ? onReconnect : client.logon));
 
         if (msg != null) {
-            setMessage(msg);
+            setMessage(msg, true);
         }
     }
 
