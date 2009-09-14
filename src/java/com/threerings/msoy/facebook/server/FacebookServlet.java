@@ -298,8 +298,27 @@ public class FacebookServlet extends MsoyServiceServlet
         return result;
     }
 
+    @Override // from FacebookService
+    public StoryFields getLevelUpStoryFields ()
+        throws ServiceException
+    {
+        StoryFields result = loadBasicStoryFields(new StoryFields(), requireSession(), "levelup");
+        if (result.template == null) {
+            throw new ServiceException(MsoyCodes.E_INTERNAL_ERROR);
+        }
+        result.thumbnails = assembleThumbnails(GameThumbnail.Type.LEVELUP, null, 0);
+        return result;
+    }
+
     @Override
     public void challengePublished (FacebookGame game, String trackingId)
+        throws ServiceException
+    {
+        _tracker.trackFeedStoryPosted(requireSession().fbid, trackingId);
+    }
+
+    @Override
+    public void levelUpPublished (String trackingId)
         throws ServiceException
     {
         _tracker.trackFeedStoryPosted(requireSession().fbid, trackingId);
@@ -410,10 +429,12 @@ public class FacebookServlet extends MsoyServiceServlet
                     gameMain = gameVariants.get(0);
                 }
             }
-            if (result.size() == 2) {
-                result.add(1, gameMain);
-            } else {
-                result.add(gameMain);
+            if (gameMain != null) {
+                if (result.size() == 2) {
+                    result.add(1, gameMain);
+                } else {
+                    result.add(gameMain);
+                }
             }
         }
         if (DeploymentConfig.devDeployment) {

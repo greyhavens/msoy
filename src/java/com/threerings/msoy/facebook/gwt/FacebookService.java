@@ -131,9 +131,22 @@ public interface FacebookService extends RemoteService
         throws ServiceException;
 
     /**
+     * Returns data for publishing a level-up feed story. Throws an exception if the data could
+     * not be loaded.
+     */
+    StoryFields getLevelUpStoryFields ()
+        throws ServiceException;
+
+    /**
      * Lets the server know that a challenge feed story has been published.
      */
     void challengePublished (FacebookGame game, String trackingId)
+        throws ServiceException;
+
+    /**
+     * Lets the server know that a level-up feed story has been published.
+     */
+    void levelUpPublished (String trackingId)
         throws ServiceException;
 
     /**

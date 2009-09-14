@@ -49,13 +49,22 @@ public interface FacebookServiceAsync
     /**
      * The asynchronous version of {@link FacebookService#getChallengeStoryFields}.
      */
-    void getChallengeStoryFields (
-        FacebookGame game, AsyncCallback<StoryFields> callback);
+    void getChallengeStoryFields (FacebookGame game, AsyncCallback<StoryFields> callback);
+
+    /**
+     * The asynchronous version of {@link FacebookService#getLevelUpStoryFields}.
+     */
+    void getLevelUpStoryFields (AsyncCallback<StoryFields> callback);
 
     /**
      * The asynchronous version of {@link FacebookService#challengePublished}.
      */
     void challengePublished (FacebookGame game, String trackingId, AsyncCallback<Void> callback);
+
+    /**
+     * The asynchronous version of {@link FacebookService#levelUpPublished}.
+     */
+    void levelUpPublished (String trackingId, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link FacebookService#trackPageRequest}.
