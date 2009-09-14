@@ -8,6 +8,7 @@ import java.util.List;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 
@@ -41,8 +42,18 @@ public class FacebookStatusPanel extends AbsoluteCSSPanel
         add(_levelProgressBar = new ProgressBar("LevelProgress", _msgs.fbStatusNextLevel()));
 
         Session.addObserver(_observer = new Session.Observer() {
-            @Override public void didLogon (SessionData data) {
+            @Override public void didLogon (final SessionData data) {
                 setData(new Data(data));
+
+                // do some hot popup action, but later
+                final SessionData.Extra extra = data.extra;
+                if (extra != null && (extra.levelsGained != 0 || extra.flowAwarded != 0)) {
+                    new Timer() {
+                        @Override public void run () {
+                            popupDailyVisit(extra.levelsGained, extra.flowAwarded);
+                        }
+                    }.schedule(250);
+                }
             }
             @Override public void didLogoff () {
             }
@@ -121,6 +132,18 @@ public class FacebookStatusPanel extends AbsoluteCSSPanel
             _levelProgressBar.set(_data.lastCoins, _data.nextCoins, _data.currCoins);
         } else {
             _levelProgressBar.setVisible(false);
+        }
+    }
+
+    protected void popupDailyVisit (int levelsGained, int flowAwarded)
+    {
+        int lacking = _data.nextCoins - _data.currCoins;
+        if (levelsGained == 0 && lacking >= 0) {
+            MsoyUI.info(_msgs.fbStatusCoinAwardPopup(
+                String.valueOf(flowAwarded), String.valueOf(lacking)));
+
+        } else if (levelsGained > 0) {
+            MsoyUI.info(_msgs.fbStatusLevelPopup(String.valueOf(_data.level)));
         }
     }
 
