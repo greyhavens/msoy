@@ -50,6 +50,8 @@ public class FacebookActionRecord extends PersistentRecord
      */
     public static FacebookActionRecord dailyVisit (int memberId, int coinsAwarded, int level)
     {
+        // record the identifying values in slots and include time stamp in case 2 visits occur
+        // with the same award and level
         long now = now();
         String id = now + ":" + coinsAwarded + ":" + level;
         return new FacebookActionRecord(memberId, Type.DAILY_VISIT, id, now);
