@@ -5,6 +5,7 @@ package com.threerings.msoy.facebook.server;
 
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -45,6 +46,7 @@ import com.google.code.facebookapi.schema.User;
 import com.google.code.facebookapi.schema.UsersGetStandardInfoResponse;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;
+import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.facebook.data.FacebookCodes;
 import com.threerings.msoy.facebook.gwt.FacebookGame;
@@ -53,7 +55,12 @@ import com.threerings.msoy.facebook.server.KontagentLogic.TrackingId;
 import com.threerings.msoy.facebook.server.persist.FacebookActionRecord;
 import com.threerings.msoy.facebook.server.persist.FacebookNotificationRecord;
 import com.threerings.msoy.facebook.server.persist.FacebookRepository;
+import com.threerings.msoy.game.server.persist.TrophyRepository;
+import com.threerings.msoy.money.data.all.MemberMoney;
+import com.threerings.msoy.money.server.MoneyLogic;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
+import com.threerings.msoy.server.LevelFinder;
+import com.threerings.msoy.server.MemberLogic;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.BatchInvoker;
 import com.threerings.msoy.server.persist.ExternalMapRecord;
@@ -64,6 +71,7 @@ import com.threerings.msoy.web.gwt.CookieNames;
 import com.threerings.msoy.web.gwt.ExternalAuther;
 import com.threerings.msoy.web.gwt.FacebookCreds;
 import com.threerings.msoy.web.gwt.ServiceException;
+import com.threerings.msoy.web.gwt.SessionData;
 import com.threerings.msoy.web.gwt.SharedNaviUtil;
 import com.threerings.presents.peer.server.CronLogic;
 
@@ -303,6 +311,87 @@ public class FacebookLogic
         // TODO: remove shuffle when we actually optimize target selection
         Collections.shuffle(exRecs);
         return limit >= exRecs.size() ? exRecs : exRecs.subList(0, limit);
+    }
+
+    /**
+     * Sets up the {@link SessionData.Extra} using the given partially filled-in data, member and
+     * money. May also award coins, record this as daily visit, and update relevant fields in money
+     * and data.
+     */
+    public void initSessionData (MemberRecord mrec, MemberMoney money, SessionData data)
+    {
+        data.extra = new SessionData.Extra();
+
+        int memberId = mrec.memberId;
+
+        // determine if an award is due, find lastLevel
+        long now = System.currentTimeMillis();
+        int lastAward = -1; // suppress award by default
+        int lastLevel = 0;
+        if (DeploymentConfig.devDeployment && mrec.created.getTime() < now - NEW_ACCOUNT_TIME) {
+            FacebookActionRecord lastVisit = _facebookRepo.getLastAction(
+                memberId, FacebookActionRecord.Type.DAILY_VISIT);
+            if (lastVisit == null) {
+                lastAward = 0; // trigger a 1st visit award
+                lastLevel = data.level; // trigger level-up if subsequent gain occurs
+
+            } else if (lastVisit.timestamp.getTime() < now - MIN_AWARD_PERIOD) {
+                Tuple<Integer, Integer> lastStuff = lastVisit.extractCoinAwardAndLevel();
+                lastAward = lastStuff.left;
+                lastLevel = lastStuff.right;
+            }
+        }
+
+        // calculate award index, based on last one
+        int awardIdx = -1;
+        if (lastAward == 0) {
+            // 1st visit, grant full award
+            awardIdx = VISIT_AWARDS.length - 1;
+
+        } else if (lastAward > 0) {
+            // bump down 1 level
+            awardIdx = Arrays.binarySearch(VISIT_AWARDS, lastAward);
+            awardIdx = (awardIdx < 0) ? -(awardIdx + 1) : awardIdx;
+            awardIdx = Math.max(awardIdx - 1, 0);
+        }
+
+        int award = awardIdx >= 0 ? VISIT_AWARDS[awardIdx] : 0;
+        if (award > 0) {
+            // award the coins; note this eventually calls synchMemberLevel
+            _moneyLogic.awardCoins(memberId, award, true, UserAction.visitedFBApp(
+                memberId, DeploymentConfig.facebookApplicationName));
+
+            // shortcut, just update changed fields directly rather than reload frmo DB
+            money.coins += award;
+            money.accCoins += award;
+            data.level = _memberLogic.getLevelFinder().findLevel((int)money.accCoins);
+
+            // let the client know
+            data.extra.flowAwarded = award;
+
+            // record the daily visit
+            _facebookRepo.recordAction(
+                FacebookActionRecord.dailyVisit(memberId, award, data.level));
+
+        } else {
+            // update the level (it may have changed due to game play or other stuff)
+            data.level = _memberLogic.synchMemberLevel(memberId, mrec.level, money.accCoins);
+        }
+
+        // set up facebook status fields
+        data.extra.accumFlow = (int)Math.min(money.accCoins, Integer.MAX_VALUE);
+        LevelFinder levelFinder = _memberLogic.getLevelFinder();
+        // level 1 users should see "1000/1800" instead of "-500/300"
+        data.extra.levelFlow = data.level <= 1 ? 0 : levelFinder.getCoinsForLevel(data.level);
+        data.extra.nextLevelFlow = levelFinder.getCoinsForLevel(data.level + 1);
+        data.extra.trophyCount = _trophyRepo.countTrophies(memberId);
+
+        // level-uppance - note we only show this for people who have had a daily visit since the
+        // award system was rolled out *or* gained a level as a result of the award, so older users
+        // don't see something like "you have just reached level 5" when they haven't
+        if (lastLevel != 0 && lastLevel != data.level) {
+            data.extra.levelsGained = data.level - lastLevel;
+        }
     }
 
     protected void updateURL (
@@ -831,6 +920,19 @@ public class FacebookLogic
     protected static final SimpleDateFormat BDAY_FMT = new SimpleDateFormat("MMMM dd, yyyy");
     protected static final SimpleDateFormat BDAY_FMT_NO_YEAR = new SimpleDateFormat("MMMM dd");
 
+    /** Amount of time after the app is installed that we will start granting visit rewards. This
+     *  is because new users automatically get 1000 coins for joining. */
+    protected static final long NEW_ACCOUNT_TIME = 20 * 60 * 60 * 1000; // 20 hours
+
+    /** Minimum amount of time between visit rewards. Use 20 hours so that there is some leeway for
+     *  people to visit at the same approximate time each day but not generally get more than one
+     *  reward per day. */
+    protected static final long MIN_AWARD_PERIOD = 20 * 60 * 60 * 1000; // 20 hours
+
+    /** Coin awards for visiting the app, in reverse order. I.e. 1st visit rewards is in last
+     *  slot. */
+    protected static final int VISIT_AWARDS[] = {200, 400, 600, 800};
+
     protected static final URL SERVER_URL;
     static {
         try {
@@ -844,7 +946,10 @@ public class FacebookLogic
     @Inject protected @BatchInvoker Invoker _batchInvoker;
     @Inject protected FacebookRepository _facebookRepo;
     @Inject protected KontagentLogic _tracker;
+    @Inject protected MemberLogic _memberLogic;
     @Inject protected MemberRepository _memberRepo;
+    @Inject protected MoneyLogic _moneyLogic;
     @Inject protected MsoyPeerManager _peerMgr;
     @Inject protected RuntimeConfig _runtime; // temp
+    @Inject protected TrophyRepository _trophyRepo;
 }

@@ -43,8 +43,6 @@ import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.server.AccountLogic;
 import com.threerings.msoy.server.ExternalAuthHandler;
 import com.threerings.msoy.server.ExternalAuthLogic;
-import com.threerings.msoy.server.FriendManager;
-import com.threerings.msoy.server.LevelFinder;
 import com.threerings.msoy.server.MemberLogic;
 import com.threerings.msoy.server.MsoyAuthenticator;
 import com.threerings.msoy.server.ServerConfig;
@@ -55,8 +53,8 @@ import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.util.MailSender;
 import com.threerings.msoy.server.util.MailSender.By;
 
+import com.threerings.msoy.facebook.server.FacebookLogic;
 import com.threerings.msoy.game.server.GameLogic;
-import com.threerings.msoy.game.server.persist.TrophyRepository;
 import com.threerings.msoy.mail.server.MailLogic;
 import com.threerings.msoy.mail.server.persist.MailRepository;
 import com.threerings.msoy.money.data.all.MemberMoney;
@@ -239,19 +237,17 @@ public class WebUserServlet extends MsoyServiceServlet
             MemberMoney money = _moneyLogic.getMoneyFor(mrec.memberId);
             initSessionData(mrec, creds, money, data);
             if (extra) {
-                data.extra = new SessionData.Extra();
-                data.extra.accumFlow = (int)Math.min(money.accCoins, Integer.MAX_VALUE);
-                LevelFinder levelFinder = _memberLogic.getLevelFinder();
-                // level 1 users should see "1000/1800" instead of "-500/300"
-                data.extra.levelFlow = data.level <= 1 ? 0 :
-                    levelFinder.getCoinsForLevel(data.level);
-                data.extra.nextLevelFlow = levelFinder.getCoinsForLevel(data.level + 1);
-                data.extra.trophyCount = _trophyRepo.countTrophies(mrec.memberId);
+                try {
+                    _facebookLogic.initSessionData(mrec, money, data);
+                } catch (Exception e) {
+                    log.warning("Failed to set up SessionData.Extra",
+                        "memberId", mrec.memberId, e);
+                }
             }
             return data;
 
         } catch (Exception e) {
-            log.warning("Failed to refresh session [tok=" + authtok + "].", e);
+            log.warning("Failed to validate session", "tok", authtok, e);
             throw new ServiceException(MsoyAuthCodes.SERVER_UNAVAILABLE);
         }
     }
@@ -632,7 +628,7 @@ public class WebUserServlet extends MsoyServiceServlet
     @Inject protected ABTestLogic _testLogic;
     @Inject protected AccountLogic _accountLogic;
     @Inject protected ExternalAuthLogic _extLogic;
-    @Inject protected FriendManager _friendMan;
+    @Inject protected FacebookLogic _facebookLogic;
     @Inject protected GameLogic _gameLogic;
     @Inject protected InviteRepository _inviteRepo;
     @Inject protected MailLogic _mailLogic;
@@ -648,5 +644,4 @@ public class WebUserServlet extends MsoyServiceServlet
     @Inject protected RuntimeConfig _runtime;
     @Inject protected ServerMessages _serverMsgs;
     @Inject protected StatLogic _statLogic;
-    @Inject protected TrophyRepository _trophyRepo;
 }
