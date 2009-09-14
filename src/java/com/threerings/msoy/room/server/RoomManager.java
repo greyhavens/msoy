@@ -107,6 +107,7 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.server.ItemLogic;
 import com.threerings.msoy.item.server.ItemManager;
+import com.threerings.msoy.item.server.persist.AvatarRecord;
 
 import com.threerings.msoy.party.server.PartyRegistry;
 
@@ -1881,13 +1882,19 @@ public class RoomManager extends SpotSceneManager
                     return;
                 }
                 _isGuest = memrec.isPermaguest();
-                if (memrec.avatarId != 0) {
-                    _avatar = (Avatar) _itemLogic.getAvatarRepository().loadItem(memrec.avatarId)
-                        .toItem();
-                     MemoriesRecord mrec = _memoryRepo.loadMemory(Item.AVATAR, memrec.avatarId);
-                     if (mrec != null) {
-                         _mem = mrec.toEntry();
-                     }
+                // below here is all success.
+                // we've identified the user, let's see how much avatar we can load.
+                if (memrec.avatarId == 0) {
+                    return;
+                }
+                AvatarRecord avrec = _itemLogic.getAvatarRepository().loadItem(memrec.avatarId);
+                if (avrec == null) {
+                    return;
+                }
+                _avatar = (Avatar) avrec.toItem();
+                MemoriesRecord mrec = _memoryRepo.loadMemory(Item.AVATAR, memrec.avatarId);
+                if (mrec != null) {
+                    _mem = mrec.toEntry();
                 }
             }
             public void handleSuccess () {
