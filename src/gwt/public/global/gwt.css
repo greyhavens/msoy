@@ -662,7 +662,7 @@ img, embed, applet, object {
   width: 16px;
 }
 
-.borderedDialog .Buttons {
+.borderedDialog .Buttons, .borderedDialog .Text {
   padding: 10px;
 }
 

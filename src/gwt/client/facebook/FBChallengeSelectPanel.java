@@ -83,10 +83,9 @@ public class FBChallengeSelectPanel extends FlowPanel
 
         BorderedDialog confirm = new BorderedDialog() {
             /* Constructor() */ {
-                setStyleName("challengeConfirm");
                 setHeaderTitle(_msgs.challengeConfirmTitle());
                 setContents(MsoyUI.createLabel(appOnly ? _msgs.challengeAppFriendsConfirm() :
-                    _msgs.challengeAllFriendsConfirm(), "Content"));
+                    _msgs.challengeAllFriendsConfirm(), "Text"));
                 addButton(new Button(_msgs.challengeSendBtn(), onAction(send)));
                 addButton(new Button(_msgs.challengeCancelBtn(), onAction(null)));
             }
