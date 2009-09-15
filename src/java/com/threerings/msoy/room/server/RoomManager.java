@@ -1516,8 +1516,8 @@ public class RoomManager extends SpotSceneManager
         }
 
         // clear out the old controller mappings
+        _roomObj.startTransaction();
         try {
-            _roomObj.startTransaction();
             for (Controllable item : items) {
                 _roomObj.removeFromControllers(item);
             }
@@ -1537,7 +1537,8 @@ public class RoomManager extends SpotSceneManager
         // determine the available controllers
         HashIntMap<Controller> controllers = new HashIntMap<Controller>();
         for (OccupantInfo info : _roomObj.occupantInfo) {
-            if (info instanceof MemberInfo && info.status != OccupantInfo.DISCONNECTED) {
+            if ((info instanceof MemberInfo) && (info.status != OccupantInfo.DISCONNECTED) &&
+                    !(info.username instanceof PuppetName)) {
                 controllers.put(info.bodyOid, new Controller(info.bodyOid));
             }
         }
