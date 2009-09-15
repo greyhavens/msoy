@@ -406,5 +406,5 @@ public class KontagentLogic
     protected static final String API_KEY = ServerConfig.config.getValue("kontagent.api_key", "");
     protected static final String SECRET = ServerConfig.config.getValue("kontagent.secret", "");
     protected static final String MSG_URL = API_URL + VERSION + "/" + API_KEY + "/";
-    protected static final String FEED_CHANNEL = "feedpub";
+    protected static final String FEED_CHANNEL = "feedstory";
 }
