@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
@@ -38,12 +39,18 @@ public class ListRepository extends DepotRepository
     }
 
     /**
-     * Gets all the items in a list of the given id.
+     * Gets all the items in a list of the given id, using the cache or not as specified.
      */
-    public List<ListItemRecord> getList (String listId)
+    public List<String> getList (String listId, boolean useCache)
     {
-        return findAll(ListItemRecord.class, new Where(ListItemRecord.LIST_ID.eq(listId)),
-            OrderBy.ascending(ListItemRecord.INDEX));
+        CacheStrategy strat = useCache ? CacheStrategy.BEST : CacheStrategy.NONE;
+        return Lists.transform(findAll(ListItemRecord.class, strat,
+            new Where(ListItemRecord.LIST_ID.eq(listId)), OrderBy.ascending(ListItemRecord.INDEX)),
+                new Function<ListItemRecord, String>() {
+                public String apply (ListItemRecord rec) {
+                    return rec.id;
+                }
+            });
     }
 
     /**
