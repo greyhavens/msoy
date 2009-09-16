@@ -15,6 +15,7 @@ import com.samskivert.util.ByteEnumUtil;
 
 import com.threerings.gwt.util.DataModel;
 import com.threerings.gwt.util.SimpleDataModel;
+import com.threerings.gwt.util.StringUtil;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
@@ -23,7 +24,6 @@ import com.threerings.msoy.stuff.gwt.StuffServiceAsync;
 import com.threerings.msoy.stuff.gwt.StuffService.DetailOrIdent;
 import com.threerings.msoy.web.gwt.Args;
 
-import client.util.StringUtil;
 import client.util.events.FlashEvents;
 import client.util.events.ItemUsageEvent;
 import client.util.events.ItemUsageListener;

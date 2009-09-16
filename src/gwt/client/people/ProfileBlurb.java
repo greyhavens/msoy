@@ -23,6 +23,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.Anchor;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.util.DateUtil;
+import com.threerings.gwt.util.StringUtil;
 
 import com.threerings.msoy.data.all.Award;
 import com.threerings.msoy.data.all.Friendship;
@@ -54,7 +55,6 @@ import client.ui.ThumbBox;
 import client.util.Link;
 import client.util.MediaUtil;
 import client.util.InfoCallback;
-import client.util.StringUtil;
 import client.util.events.NameChangeEvent;
 
 /**

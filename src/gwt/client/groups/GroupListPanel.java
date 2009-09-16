@@ -21,6 +21,7 @@ import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.util.PagedResult;
+import com.threerings.gwt.util.StringUtil;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.group.gwt.GroupCard;
@@ -34,7 +35,6 @@ import client.ui.MsoyUI;
 import client.ui.ThumbBox;
 import client.util.Link;
 import client.util.MsoyPagedServiceDataModel;
-import client.util.StringUtil;
 
 /**
  * Displays a list of groups that meet some criteria.

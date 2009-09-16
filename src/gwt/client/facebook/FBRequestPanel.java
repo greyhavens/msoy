@@ -5,16 +5,11 @@ package client.facebook;
 
 import java.util.List;
 
-import client.facebookbase.FacebookUtil;
-import client.shell.CShell;
-import client.ui.MsoyUI;
-import client.util.ArrayUtil;
-import client.util.InfoCallback;
-import client.util.StringUtil;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
+
+import com.threerings.gwt.util.StringUtil;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.facebook.gwt.FacebookGame;
@@ -24,6 +19,13 @@ import com.threerings.msoy.facebook.gwt.FacebookService.InviteInfo;
 import com.threerings.msoy.web.gwt.ArgNames;
 import com.threerings.msoy.web.gwt.CookieNames;
 import com.threerings.msoy.web.gwt.SharedNaviUtil;
+
+import client.facebookbase.FacebookUtil;
+import client.shell.CShell;
+import client.ui.MsoyUI;
+import client.util.ArrayUtil;
+import client.util.InfoCallback;
+
 
 /**
  * Server FBML panel for sending requests to friends. Currently deals with site invitations and

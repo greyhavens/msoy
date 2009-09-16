@@ -11,6 +11,7 @@ import com.google.gwt.user.client.ui.SimplePanel;
 
 import com.threerings.gwt.ui.Anchor;
 import com.threerings.gwt.ui.SmartTable;
+import com.threerings.gwt.util.StringUtil;
 
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.fora.gwt.ForumThread;
@@ -23,7 +24,6 @@ import client.ui.MsoyUI;
 import client.ui.SearchBox;
 import client.util.InfoCallback;
 import client.util.Link;
-import client.util.StringUtil;
 
 /**
  * Displays group threads, unread threads, or new thread starter.

@@ -18,6 +18,7 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.util.DataModel;
 import com.threerings.gwt.util.DateUtil;
 import com.threerings.gwt.util.SimpleDataModel;
+import com.threerings.gwt.util.StringUtil;
 
 import com.threerings.msoy.fora.gwt.ForumService;
 import com.threerings.msoy.fora.gwt.ForumServiceAsync;
@@ -31,7 +32,6 @@ import client.ui.SearchBox;
 import client.util.ArrayUtil;
 import client.util.InfoCallback;
 import client.util.Link;
-import client.util.StringUtil;
 
 /**
  * Displays a list of threads. Subclasses determine the specifics of accessing the threads on the

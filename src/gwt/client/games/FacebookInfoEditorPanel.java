@@ -15,6 +15,8 @@ import com.google.gwt.user.client.ui.TextBox;
 
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
+import com.threerings.gwt.util.StringUtil;
+
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.game.gwt.FacebookInfo;
 import com.threerings.msoy.game.gwt.GameService;
@@ -26,7 +28,6 @@ import client.games.EditorUtil.MediaBox;
 import client.ui.MsoyUI;
 import client.util.ClickCallback;
 import client.util.InfoCallback;
-import client.util.StringUtil;
 
 /**
  * Displays and allows editing of a game's Facebook info.

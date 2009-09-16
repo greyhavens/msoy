@@ -8,6 +8,7 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.util.CookieUtil;
+import com.threerings.gwt.util.StringUtil;
 
 import com.threerings.msoy.web.gwt.ConnectConfig;
 import com.threerings.msoy.web.gwt.CookieNames;
@@ -18,7 +19,6 @@ import com.threerings.msoy.web.gwt.WebUserServiceAsync;
 import client.shell.CShell;
 import client.util.FlashClients;
 import client.util.InfoCallback;
-import client.util.StringUtil;
 
 /**
  * Manages our World client (which also handles Flash games).

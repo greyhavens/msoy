@@ -21,6 +21,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.util.DateUtil;
+import com.threerings.gwt.util.StringUtil;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MemberName;
@@ -37,7 +38,6 @@ import client.ui.DateFields;
 import client.ui.MsoyUI;
 import client.util.ClickCallback;
 import client.util.RecaptchaUtil;
-import client.util.StringUtil;
 
 /**
  * Displays a standard registration UI. Designed to be embedded in either the landing page or

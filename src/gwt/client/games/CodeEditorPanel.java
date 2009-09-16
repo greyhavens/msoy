@@ -18,6 +18,8 @@ import com.google.gwt.xml.client.Node;
 import com.google.gwt.xml.client.NodeList;
 import com.google.gwt.xml.client.XMLParser;
 
+import com.threerings.gwt.util.StringUtil;
+
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.game.gwt.GameCode;
 import com.threerings.msoy.game.gwt.GameInfo;
@@ -27,7 +29,6 @@ import client.shell.CShell;
 import client.ui.MsoyUI;
 import client.ui.NumberTextBox;
 import client.util.ClickCallback;
-import client.util.StringUtil;
 
 /**
  * Displays an interface for editing a game's code and configuration.
