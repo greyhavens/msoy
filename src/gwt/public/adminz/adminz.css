@@ -321,11 +321,15 @@
   font-weight: bold;
 }
 
-.facebookNotifications .Edit .Row {
-  padding: 2px 0 7px 10px;
+.facebookNotifications .Edit, .facebookNotifications .Rotation {
+  margin-left: 10px;
 }
 
-.facebookNotifications .Edit .Row .gwt-Label {
+.facebookNotifications .Row {
+  padding: 2px 0 7px 0;
+}
+
+.facebookNotifications .Row .gwt-Label {
   padding: 3px;
 }
 

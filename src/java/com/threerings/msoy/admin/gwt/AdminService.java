@@ -305,4 +305,10 @@ public interface AdminService extends RemoteService
      */
     void scheduleFacebookNotification (String id, int delay)
         throws ServiceException;
+
+    /**
+     * Sets up the rotating list of daily notifications.
+     */
+    void setDailyNotifications (String[] ids)
+        throws ServiceException;
 }

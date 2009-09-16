@@ -201,4 +201,9 @@ public interface AdminServiceAsync
      * The asynchronous version of {@link AdminService#scheduleFacebookNotification}.
      */
     void scheduleFacebookNotification (String id, int delay, AsyncCallback<Void> callback);
+
+    /**
+     * The asynchronous version of {@link AdminService#setDailyNotifications}.
+     */
+    void setDailyNotifications (String[] ids, AsyncCallback<Void> callback);
 }

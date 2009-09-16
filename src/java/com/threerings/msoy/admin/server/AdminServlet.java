@@ -5,6 +5,7 @@ package com.threerings.msoy.admin.server;
 
 import static com.threerings.msoy.Log.log;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
@@ -800,6 +801,14 @@ public class AdminServlet extends MsoyServiceServlet
     {
         requireAdminUser();
         _facebookRepo.storeNotification(notif.id, notif.text);
+    }
+
+    @Override // from AdminService
+    public void setDailyNotifications (String[] ids)
+        throws ServiceException
+    {
+        requireAdminUser();
+        _facebookLogic.setDailyGamesUpdatedNotifications(Arrays.asList(ids));
     }
 
     protected void sendGotInvitesMail (final int senderId, final int recipientId, final int number)

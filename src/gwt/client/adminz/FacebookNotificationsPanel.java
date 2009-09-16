@@ -63,6 +63,25 @@ public class FacebookNotificationsPanel extends FlowPanel
             makeRow(_msgs.fbNotifsMessageLabel(), _message = MsoyUI.createTextArea("", 50, 6)),
             makeRow("", save)));
 
+        add(MsoyUI.createLabel(_msgs.fbNotifsDailyTitle(), "Title"));
+        final TextArea dailyNotifications = MsoyUI.createTextArea("", 32, 5);
+        Button updateRotation = new Button(_msgs.fbNotifsDailyUpdateBtn());
+        add(MsoyUI.createFlowPanel("Rotation",
+            makeRow(_msgs.fbNotifsDailyLabel(), dailyNotifications),
+            makeRow("", updateRotation)));
+
+        new ClickCallback<Void>(updateRotation) {
+            @Override public boolean callService () {
+                String[] ids = dailyNotifications.getText().split("( |\t|\r|\n)+");
+                _adminsvc.setDailyNotifications(ids, this);
+                return false;
+            }
+            @Override public boolean gotResult (Void result) {
+                MsoyUI.info(_msgs.fbNotifsDailyUpdated());
+                return true;
+            }
+        };
+
         refresh();
     }
 

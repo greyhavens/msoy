@@ -75,6 +75,7 @@ import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.gwt.SessionData;
 import com.threerings.msoy.web.gwt.SharedNaviUtil;
 import com.threerings.presents.peer.server.CronLogic;
+import com.threerings.util.MessageBundle;
 
 import static com.threerings.msoy.Log.log;
 
@@ -158,8 +159,8 @@ public class FacebookLogic
 
     @Inject public FacebookLogic (CronLogic cronLogic, Lifecycle lifecycle)
     {
-        // run the demographics update at 4am
-        cronLogic.scheduleAt(4, new Runnable () {
+        // run the demographics update between 4 and 5 am
+        cronLogic.scheduleAt(4, new Runnable() {
             public void run () {
                 updateDemographics();
             }
@@ -419,6 +420,23 @@ public class FacebookLogic
     public String getCurrentGame (int bucket)
     {
         return _listRepo.getItemId(MOCHI_BUCKETS[bucket -1], MOCHI_CURSOR);
+    }
+
+    /**
+     * Sets the list of notification ids that will be used when sending notifications after the
+     * featured games are updated. Throws an exception is any of the ids do not correspond to a
+     * notification.
+     */
+    public void setDailyGamesUpdatedNotifications (List<String> ids)
+        throws ServiceException
+    {
+        for (String id : ids) {
+            if (_facebookRepo.loadNotification(id) == null) {
+                throw new ServiceException(MessageBundle.tcompose("e.notification_not_found", id));
+            }
+        }
+        _listRepo.setList(DAILY_GAMES_LIST, ids);
+        _listRepo.advanceCursor(DAILY_GAMES_LIST, DAILY_GAMES_CURSOR);
     }
 
     protected void updateURL (
@@ -978,6 +996,10 @@ public class FacebookLogic
     }
 
     protected static final String MOCHI_CURSOR = "";
+
+    protected static final String DAILY_GAMES_LIST = "DailyGamesNotifications";
+
+    protected static final String DAILY_GAMES_CURSOR = "";
 
     // dependencies
     @Inject protected @BatchInvoker Invoker _batchInvoker;
