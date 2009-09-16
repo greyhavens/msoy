@@ -1173,3 +1173,36 @@
   color: #0092f6;
 }
 
+/* ------------------------------------
+   EditMochiGamesPanel
+-------------------------------------*/
+
+.editMochiGames {
+  font-size: 12px;
+  padding: 10px 0 0 10px;
+}
+
+.editMochiGames .Title {
+  font-size: 14px;
+  font-weight: bold;
+  padding: 10px 0 10px 0;
+}
+
+.editMochiGames .Games {
+  width: 95%;
+  padding-left: 5%;
+  padding-top: 10px;
+}
+
+.editMochiGames .Games tr.Header td {
+  font-weight: bold;
+  border-bottom: thin solid lightgrey;
+}
+
+.editMochiGames .Games td {
+  font-size: 10px;
+}
+
+.editMochiGames .gwt-TextArea {
+  margin-top: 10px;
+}
