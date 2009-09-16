@@ -3,8 +3,8 @@
 
 package com.threerings.msoy.data {
 
+import com.threerings.util.Joiner;
 import com.threerings.util.Name;
-import com.threerings.util.StringBuilder;
 
 import com.threerings.presents.net.Credentials;
 
@@ -52,20 +52,10 @@ public class MsoyCredentials extends Credentials
         out.writeObject(_username);
     }
 
-    public function toString () :String
+    override protected function toStringJoiner (j :Joiner) :void
     {
-        var buf :StringBuilder = new StringBuilder("[");
-        toStringBuf(buf);
-        return buf.append("]").toString();
-    }
-
-    protected function toStringBuf (buf :StringBuilder) :void
-    {
-        buf.append("username=").append(_username);
-        buf.append(", token=").append(sessionToken);
-        buf.append(", visitorId=").append(visitorId);
-        buf.append(", affiliateId=").append(affiliateId);
-        buf.append(", vector=").append(vector);
+        super.toStringJoiner(j);
+        j.add("username", _username);
     }
 
     protected var _username :Name;

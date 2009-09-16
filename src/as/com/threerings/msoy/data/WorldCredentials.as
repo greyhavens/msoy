@@ -3,8 +3,8 @@
 
 package com.threerings.msoy.data {
 
+import com.threerings.util.Joiner;
 import com.threerings.util.Name;
-import com.threerings.util.StringBuilder;
 
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
@@ -40,12 +40,10 @@ public class WorldCredentials extends MsoyCredentials
     }
 
     // documentation inherited
-    override protected function toStringBuf (buf :StringBuilder) :void
+    override protected function toStringJoiner (j :Joiner) :void
     {
-        super.toStringBuf(buf);
-        buf.append(", password=").append(_password);
-        buf.append(", ident=").append(ident);
-        buf.append(", featuredPlaceView=").append(featuredPlaceView);
+        super.toStringJoiner(j);
+        j.add("password", _password);
     }
 
     /** Our encrypted password, if one was provided. */

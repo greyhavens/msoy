@@ -6,8 +6,8 @@ package com.threerings.msoy.room.data {
 import flash.utils.ByteArray;
 
 import com.threerings.io.ObjectInputStream;
+import com.threerings.util.Joiner;
 import com.threerings.util.Log;
-import com.threerings.util.StringBuilder;
 
 import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.dobj.DSet;
@@ -47,13 +47,10 @@ public class MemoryChangedEvent extends NamedEvent
         }
     }
 
-    override protected function toStringBuf (buf :StringBuilder) :void
+    override protected function toStringJoiner (j :Joiner) :void
     {
-        buf.append("MEMCHANGE:");
-        super.toStringBuf(buf);
-        buf.append(", ident=", _ident);
-        buf.append(", key=", _key);
-        buf.append(", value=", _value);
+        super.toStringJoiner(j);
+        j.add("ident", _ident, "key", _key, "value", _value);
     }
 
     override public function readObject (ins :ObjectInputStream) :void

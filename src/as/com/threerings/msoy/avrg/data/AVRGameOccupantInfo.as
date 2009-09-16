@@ -5,7 +5,7 @@ package com.threerings.msoy.avrg.data {
 
 import com.threerings.io.ObjectInputStream;
 
-import com.threerings.util.StringBuilder;
+import com.threerings.util.Joiner;
 
 import com.threerings.crowd.data.OccupantInfo;
 
@@ -33,10 +33,10 @@ public class AVRGameOccupantInfo extends OccupantInfo
         _partyId = ins.readInt();
     }
 
-    override protected function toStringBuilder (buf :StringBuilder) :void
+    override protected function toStringJoiner (j :Joiner) :void
     {
-        super.toStringBuilder(buf);
-        buf.append(", partyId=", _partyId);
+        super.toStringJoiner(j);
+        j.add("partyId", _partyId);
     }
 
     protected var _partyId :int;

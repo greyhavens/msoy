@@ -5,7 +5,7 @@ package com.threerings.msoy.game.data {
 
 import com.threerings.io.ObjectInputStream;
 
-import com.threerings.util.StringBuilder;
+import com.threerings.util.Joiner;
 
 import com.whirled.game.data.WhirledGameOccupantInfo;
 
@@ -42,10 +42,10 @@ public class ParlorGameOccupantInfo extends WhirledGameOccupantInfo
         _subscriber = ins.readBoolean();
     }
 
-    override protected function toStringBuilder (buf :StringBuilder) :void
+    override protected function toStringJoiner (j :Joiner) :void
     {
-        super.toStringBuilder(buf);
-        buf.append(", partyId=", _partyId, ", sub=", _subscriber);
+        super.toStringJoiner(j);
+        j.add("partyId", _partyId, "sub", _subscriber);
     }
 
     protected var _partyId :int;
