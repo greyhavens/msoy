@@ -758,12 +758,71 @@ public class GameServlet extends MsoyServiceServlet
         }
     }
 
-    // from interface GAmeService
+    // from interface GameService
     public void addMochiGame (String mochiTag)
         throws ServiceException
     {
         requireSupportUser();
 
+        if (importMochiGame(mochiTag) == null) {
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
+
+        try {
+            // fire off a notification to get people to come back and play
+            _facebookLogic.scheduleNotification("daily_games_updated", 30);
+
+        } catch (ServiceException se) {
+            log.warning("Failed to send game update notification", se);
+        }
+    }
+
+    // from interface GameService
+    public MochiGameInfo getMochiGame (String mochiTag)
+        throws ServiceException
+    {
+        MemberRecord member = getAuthedUser();
+        // make sure we got something before we log something
+        MochiGameInfo info = _mgameRepo.loadMochiGame(mochiTag);
+        if (info == null) {
+            throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
+        }
+        _eventLog.facebookMochiGameEntered((member != null) ? member.memberId : 0, mochiTag);
+        return info;
+    }
+
+    @Override // from GameService
+    public List<String> setMochiBucketTags (int bucket, String[] tags)
+        throws ServiceException
+    {
+        requireSupportUser();
+        List<String> validated = Lists.newArrayListWithCapacity(tags.length);
+        List<String> errors = Lists.newArrayList();
+        for (String tag : tags) {
+            (_mgameRepo.loadMochiGame(tag) == null && importMochiGame(tag) == null ?
+                errors : validated).add(tag);
+        }
+        if (validated.size() == 0) {
+            throw new ServiceException("e.no_mochi_games_found");
+        }
+        _facebookLogic.setMochiGames(bucket, validated);
+        return errors;
+    }
+
+    @Override // from GameService
+    public MochiGameBucket getMochiBucket (int bucket)
+        throws ServiceException
+    {
+        requireSupportUser();
+        MochiGameBucket mbucket = new MochiGameBucket();
+        mbucket.games = Lists.newArrayList(
+            _mgameRepo.loadMochiGamesInOrder(_facebookLogic.getMochiGames(bucket)));
+        mbucket.currentTag = _facebookLogic.getCurrentGame(bucket);
+        return mbucket;
+    }
+
+    protected MochiGameInfo importMochiGame (String mochiTag)
+    {
         try {
             URL url = new URL("http://www.mochiads.com/feeds/games/" +
                 MOCHI_PUBLISHER_ID + "/" + mochiTag + "/?format=json");
@@ -782,33 +841,13 @@ public class GameServlet extends MsoyServiceServlet
             info.swfURL = getJSONStr("swf_url", game, 255);
             info.width = game.getInt("width");
             info.height = game.getInt("height");
-
             _mgameRepo.addMochiGame(info);
-
-            try {
-                // fire off a notification to get people to come back and play
-                _facebookLogic.scheduleNotification("daily_games_updated", 30);
-
-            } catch (ServiceException se) {
-                log.warning("Failed to send game update notification", se);
-            }
+            return info;
 
         } catch (Exception e) {
-            log.warning("Problem adding mochi game.", e);
-            throw (ServiceException)
-                new ServiceException(ServiceCodes.E_INTERNAL_ERROR).initCause(e);
+            log.warning("Problem adding mochi game.", "tag", mochiTag, e);
+            return null;
         }
-    }
-
-    // from interface GameService
-    public MochiGameInfo getMochiGame (String mochiTag)
-        throws ServiceException
-    {
-        MemberRecord member = getAuthedUser();
-        // make sure we got something before we log something
-        MochiGameInfo info = _mgameRepo.loadMochiGame(mochiTag);
-        _eventLog.facebookMochiGameEntered((member != null) ? member.memberId : 0, mochiTag);
-        return info;
     }
 
     /**

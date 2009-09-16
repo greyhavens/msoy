@@ -79,6 +79,19 @@ public interface GameService extends RemoteService
         public boolean listingOutOfDate;
     }
 
+    /**
+     * A mochi game bucket, one for each slot in the Facebook featured games panel, 1-5.
+     */
+    public static class MochiGameBucket
+        implements IsSerializable
+    {
+        /** The games in the bucket. */
+        public List<MochiGameInfo> games;
+
+        /** The currently active tag. */
+        public String currentTag;
+    }
+
     /** The entry point for this service. */
     public static final String ENTRY_POINT = "/gamesvc";
 
@@ -281,5 +294,19 @@ public interface GameService extends RemoteService
      * Get the info on a mochi game.
      */
     MochiGameInfo getMochiGame (String mochiTag)
+        throws ServiceException;
+
+    /**
+     * Get the info on all mochi games for the specified bucket (1-5).
+     */
+    MochiGameBucket getMochiBucket (int bucket)
+        throws ServiceException;
+
+    /**
+     * Sets the tags for the given mochi bucket. Imports the mochi game info for all tags that are
+     * not yet imported. Returns a list of tags that could not be imported, if any. Throws an
+     * exception if none of the tags could be imported.
+     */
+    List<String> setMochiBucketTags (int slot, String[] ids)
         throws ServiceException;
 }

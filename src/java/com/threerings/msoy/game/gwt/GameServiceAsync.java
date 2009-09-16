@@ -12,6 +12,7 @@ import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.RatingResult;
 import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.game.gwt.GameService.GameItemEditorInfo;
+import com.threerings.msoy.game.gwt.GameService.MochiGameBucket;
 
 /**
  * The asynchronous (client-side) version of {@link GameService}.
@@ -174,4 +175,14 @@ public interface GameServiceAsync
      * The asynchronous version of {@link GameService#getMochiGame}.
      */
     void getMochiGame (String mochiTag, AsyncCallback<MochiGameInfo> callback);
+
+    /**
+     * The asynchronous version of {@link GameService#getMochiBucket}.
+     */
+    void getMochiBucket (int bucket, AsyncCallback<MochiGameBucket> callback);
+
+    /**
+     * The asynchronous version of {@link GameService#setMochiBucketTags}.
+     */
+    void setMochiBucketTags (int slot, String[] tags, AsyncCallback<List<String>> callback);
 }

@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -208,12 +209,32 @@ public class MsoyGameRepository extends DepotRepository
     }
 
     /**
-     * Just puke if we can't find it.
+     * Loads the previously stored mochi game with the given tag, or null if it could not be found.
      */
     public MochiGameInfo loadMochiGame (String tag)
     {
-        return load(MochiGameInfoRecord.class, new Where(MochiGameInfoRecord.TAG.eq(tag)))
-            .toGameInfo();
+        MochiGameInfoRecord info = load(
+            MochiGameInfoRecord.class, new Where(MochiGameInfoRecord.TAG.eq(tag)));
+        return info == null ? null : info.toGameInfo();
+    }
+
+    /**
+     * Loads all mochi games with tags in the given list and returns a one-to-one mapped list. The
+     * returned list may not be serializable. Weird it up!
+     */
+    public List<MochiGameInfo> loadMochiGamesInOrder (List<String> tags)
+    {
+        final Map<String, MochiGameInfoRecord> infoMap = Maps.newHashMap();
+        for (MochiGameInfoRecord info : findAll(MochiGameInfoRecord.class,
+            new Where(MochiGameInfoRecord.TAG.in(tags)))) {
+            infoMap.put(info.tag, info);
+        }
+
+        return Lists.transform(tags, new Function<String, MochiGameInfo>() {
+            public MochiGameInfo apply (String tag) {
+                return infoMap.get(tag).toGameInfo();
+            }
+        });
     }
 
     /**

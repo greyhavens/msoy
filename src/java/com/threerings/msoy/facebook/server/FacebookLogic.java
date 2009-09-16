@@ -55,6 +55,7 @@ import com.threerings.msoy.facebook.server.KontagentLogic.TrackingId;
 import com.threerings.msoy.facebook.server.persist.FacebookActionRecord;
 import com.threerings.msoy.facebook.server.persist.FacebookNotificationRecord;
 import com.threerings.msoy.facebook.server.persist.FacebookRepository;
+import com.threerings.msoy.facebook.server.persist.ListRepository;
 import com.threerings.msoy.game.server.persist.TrophyRepository;
 import com.threerings.msoy.money.data.all.MemberMoney;
 import com.threerings.msoy.money.server.MoneyLogic;
@@ -392,6 +393,32 @@ public class FacebookLogic
         if (lastLevel != 0 && lastLevel != data.level) {
             data.extra.levelsGained = data.level - lastLevel;
         }
+    }
+
+    /**
+     * Sets the sequence of mochi game tags to cycle through for the given bucket number.
+     */
+    public void setMochiGames (int bucket, List<String> tags)
+    {
+        String listId = MOCHI_BUCKETS[bucket - 1];
+        _listRepo.setList(listId, tags);
+        _listRepo.advanceCursor(listId, MOCHI_CURSOR);
+    }
+
+    /**
+     * Gets the sequence of mochi game tags being cycled for the given bucket number.
+     */
+    public List<String> getMochiGames (int bucket)
+    {
+        return _listRepo.getList(MOCHI_BUCKETS[bucket -1], false);
+    }
+
+    /**
+     * Gets the tag of the currently featured mochi game for the given bucket.
+     */
+    public String getCurrentGame (int bucket)
+    {
+        return _listRepo.getItemId(MOCHI_BUCKETS[bucket -1], MOCHI_CURSOR);
     }
 
     protected void updateURL (
@@ -942,10 +969,21 @@ public class FacebookLogic
         }
     }
 
+    /** Bucket ids for defining the featured mochi game rotation. */
+    protected static final String[] MOCHI_BUCKETS = new String[5];
+    static {
+        for (int ii = 1; ii <= MOCHI_BUCKETS.length; ++ii) {
+            MOCHI_BUCKETS[ii-1] = "MochiBucket" + ii;
+        }
+    }
+
+    protected static final String MOCHI_CURSOR = "";
+
     // dependencies
     @Inject protected @BatchInvoker Invoker _batchInvoker;
     @Inject protected FacebookRepository _facebookRepo;
     @Inject protected KontagentLogic _tracker;
+    @Inject protected ListRepository _listRepo;
     @Inject protected MemberLogic _memberLogic;
     @Inject protected MemberRepository _memberRepo;
     @Inject protected MoneyLogic _moneyLogic;
