@@ -22,7 +22,6 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.WidgetUtil;
@@ -79,6 +78,11 @@ public class EditArcadePanel extends FlowPanel
             }
         });
 
+        if (portal == ArcadeData.Portal.FACEBOOK) {
+            topBits.add(WidgetUtil.makeShim(5, 5));
+            topBits.add(Link.create("Edit Mochi Games", Pages.GAMES, "emg"));
+        }
+
         if (portal == null) {
             return;
         }
@@ -134,24 +138,6 @@ public class EditArcadePanel extends FlowPanel
                     return true;
                 }
             };
-
-            // Mochi game adding
-            final TextBox mochiTag = new TextBox();
-            final Button addMochi = new Button("add mochi game");
-            new ClickCallback<Void>(addMochi) {
-                @Override protected boolean callService () {
-                    _gamesvc.addMochiGame(mochiTag.getText().trim(), this);
-                    return true;
-                }
-
-                @Override protected boolean gotResult (Void result) {
-                    MsoyUI.info("Game added");
-                    mochiTag.setText("");
-                    return true;
-                }
-            };
-            add(mochiTag);
-            add(addMochi);
         }
 
         protected boolean saveChanges (AsyncCallback<Void> callback)
@@ -191,16 +177,19 @@ public class EditArcadePanel extends FlowPanel
             final int gameId = game.gameId;
             HorizontalPanel moveButtons = new HorizontalPanel();
             moveButtons.setStyleName("MoveButtons");
-            moveButtons.add(MsoyUI.createImageButton("moveUp", new ClickHandler() {
-                @Override public void onClick (ClickEvent event) {
-                    moveGame(index, -1);
-                }
-            }));
-            moveButtons.add(MsoyUI.createImageButton("moveDown", new ClickHandler() {
-                @Override public void onClick (ClickEvent event) {
-                    moveGame(index, 1);
-                }
-            }));
+            // up/down are only relevant if the featured games are from whirled
+            if (_portal.featuresWhirledGames()) {
+                moveButtons.add(MsoyUI.createImageButton("moveUp", new ClickHandler() {
+                    @Override public void onClick (ClickEvent event) {
+                        moveGame(index, -1);
+                    }
+                }));
+                moveButtons.add(MsoyUI.createImageButton("moveDown", new ClickHandler() {
+                    @Override public void onClick (ClickEvent event) {
+                        moveGame(index, 1);
+                    }
+                }));
+            }
             moveButtons.add(MsoyUI.createCloseButton(new ClickHandler() {
                 @Override public void onClick (ClickEvent event) {
                     removeGame(index);
@@ -208,7 +197,11 @@ public class EditArcadePanel extends FlowPanel
             }));
             FlowPanel buttons = new FlowPanel();
             buttons.add(moveButtons);
-            if (_portal.isFiltered()) {
+            // FACEBOOK features mochi games so *no* whirled games are featured
+            // MAIN is unfiltered so the set itself represents *only* featured games...
+            // hence we don't need a featured tick box anymore. leaving the code in case we ditch
+            // mochi, however unlikely that may be
+            if (_portal.featuresWhirledGames() && _portal.isFiltered()) {
                 CheckBox feat = new CheckBox(_msgs.eaeFeatured());
                 feat.setValue(_featured.contains(gameId));
                 feat.addValueChangeHandler(new ValueChangeHandler<Boolean>() {

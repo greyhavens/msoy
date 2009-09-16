@@ -47,6 +47,12 @@ public class ArcadeData
             {
                 return true;
             }
+
+            @Override
+            public boolean featuresWhirledGames ()
+            {
+                return false;
+            }
         };
 
         /**
@@ -63,6 +69,14 @@ public class ArcadeData
         public boolean isFiltered ()
         {
             return false;
+        }
+
+        /**
+         * Tests whether the arcade feature's Whirled (native) games.
+         */
+        public boolean featuresWhirledGames ()
+        {
+            return true;
         }
 
         @Override // from ByteEnum
