@@ -398,7 +398,7 @@ public class FacebookServlet extends MsoyServiceServlet
             fields.description = info.description;
             if (thumbType != null) {
                 fields.thumbnails = assembleThumbnails(
-                    thumbType, info.getThumbMedia().getMediaPath(), game.getIntId());
+                    thumbType, info.getShotMedia().getMediaPath(), game.getIntId());
             }
             return fields;
 

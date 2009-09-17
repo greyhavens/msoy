@@ -248,7 +248,7 @@ public class FeedLogic
 
             if (published) {
                 publishGameStory(playerIds[0], game.gameId, game.name, game.description, "played",
-                    game.getThumbMedia());
+                    game.getShotMedia());
                 // TODO: @Inject KontagentLogic and trackFeedPost(...)
             }
 
