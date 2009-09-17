@@ -426,7 +426,7 @@ public class FacebookLogic
      */
     public String getCurrentGame (int bucket)
     {
-        return _listRepo.getItemId(MOCHI_BUCKETS[bucket -1], MOCHI_CURSOR);
+        return _listRepo.getCursorItem(MOCHI_BUCKETS[bucket -1], MOCHI_CURSOR);
     }
 
     /**
@@ -434,7 +434,7 @@ public class FacebookLogic
      */
     public List<String> getFeaturedGames ()
     {
-        return _listRepo.getItemIds(Arrays.asList(MOCHI_BUCKETS), MOCHI_CURSOR);
+        return _listRepo.getCursorItems(Arrays.asList(MOCHI_BUCKETS), MOCHI_CURSOR);
     }
 
     /**
@@ -760,7 +760,7 @@ public class FacebookLogic
         }
 
         try {
-            scheduleNotification(_listRepo.getItemId(DAILY_GAMES_LIST, DAILY_GAMES_CURSOR), 5);
+            scheduleNotification(_listRepo.getCursorItem(DAILY_GAMES_LIST, DAILY_GAMES_CURSOR), 5);
             _listRepo.advanceCursor(DAILY_GAMES_LIST, DAILY_GAMES_CURSOR);
 
         } catch (ServiceException ex) {

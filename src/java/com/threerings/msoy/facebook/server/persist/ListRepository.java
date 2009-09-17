@@ -73,16 +73,17 @@ public class ListRepository extends DepotRepository
     /**
      * Gets a single item in the given list at the given index, or null if there is no such item.
      */
-    public ListItemRecord getItem (String listId, int index)
+    public String getItem (String listId, int index)
     {
-        return load(ListItemRecord.getKey(listId, index));
+        ListItemRecord item = load(ListItemRecord.getKey(listId, index));
+        return item != null ? item.id : null;
     }
 
     /**
-     * Gets the id from the given list that the given cursor is currently pointing to, or null if
-     * there is no such cursor (or list).
+     * Gets the item from the given list that the given cursor is currently pointing to, or null if
+     * there is no such cursor or list.
      */
-    public String getItemId (String listId, String cursorId)
+    public String getCursorItem (String listId, String cursorId)
     {
         Join join = new Join(ListCursorRecord.class, Ops.and(
             ListCursorRecord.LIST_ID.eq(ListItemRecord.LIST_ID),
@@ -95,12 +96,12 @@ public class ListRepository extends DepotRepository
     }
 
     /**
-     * Gets a list of ids from the given lists that the given cursor is currently pointing to for
-     * each list. This is equivalent to calling {@link #getItemId(String, String)} for each list
-     * id but more efficient. The returned ids are in the same order as the given list ids and will
-     * have the same number of entries.
+     * Gets a list of items from the given lists that the given cursor is currently pointing to for
+     * each list. This is equivalent to calling {@link #getCursorItem(String, String)} for each
+     * list but more efficient. The returned items are in the same order as the given lists and
+     * will have the same number of entries.
      */
-    public List<String> getItemIds (List<String> listIds, String cursorId)
+    public List<String> getCursorItems (List<String> listIds, String cursorId)
     {
         Join join = new Join(ListCursorRecord.class, Ops.and(
             ListCursorRecord.LIST_ID.eq(ListItemRecord.LIST_ID),
@@ -124,9 +125,9 @@ public class ListRepository extends DepotRepository
      * Advances the given cursor on the given list and returns the new current item, or null if the
      * list is empty.
      */
-    public ListItemRecord advanceCursor (String listId, String cursorId)
+    public String advanceCursor (String listId, String cursorId)
     {
-        ListItemRecord first = getItem(listId, 0);
+        String first = getItem(listId, 0);
         if (first == null) {
             return null;
         }
@@ -142,7 +143,7 @@ public class ListRepository extends DepotRepository
         }
 
         cursor.index++;
-        ListItemRecord item = getItem(listId, cursor.index);
+        String item = getItem(listId, cursor.index);
         if (item == null) {
             cursor.index = 0;
             item = first;
