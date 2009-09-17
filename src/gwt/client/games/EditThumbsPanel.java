@@ -98,9 +98,21 @@ class EditThumbsPanel extends FlowPanel
      */
     public EditThumbsPanel (String typeName, Type type, ThumbnailSet thumbnails)
     {
+        this(typeName, type, thumbnails, null);
+    }
+
+    /**
+     * Creates a new thumbnail editor for the given type with the given name, populating the
+     * initial contents with the thumbnails in the given set. If not null, the given runnable will
+     * be run whenever any media changes.
+     */
+    public EditThumbsPanel (String typeName, Type type, ThumbnailSet thumbnails,
+        Runnable onMediaModified)
+    {
         setStyleName("Type");
         _type = type;
         _typeName = typeName;
+        _onMediaModified = onMediaModified;
 
         add(_title = MsoyUI.createLabel("", "Title"));
         add(_variants = MsoyUI.createFlowPanel("Variants"));
@@ -125,7 +137,7 @@ class EditThumbsPanel extends FlowPanel
     {
         List<GameThumbnail> thumbs = new ArrayList<GameThumbnail>();
         Set<String> variants = new HashSet<String>();
-        for (EditThumbsPanel.VariantPanel vpanel : getPanels()) {
+        for (VariantPanel vpanel : getPanels()) {
             if (variants.contains(vpanel.getVariant())) {
                 throw new ConfigException(_msgs.errVariantDuplicate(vpanel.getVariant()));
             }
@@ -134,18 +146,18 @@ class EditThumbsPanel extends FlowPanel
         return thumbs;
     }
 
-    protected List<EditThumbsPanel.VariantPanel> getPanels ()
+    protected List<VariantPanel> getPanels ()
     {
-        List<EditThumbsPanel.VariantPanel> panels = new ArrayList<EditThumbsPanel.VariantPanel>();
+        List<VariantPanel> panels = new ArrayList<VariantPanel>();
         for (int ii = 0; ii < _variants.getWidgetCount(); ++ii) {
-            if (_variants.getWidget(ii) instanceof EditThumbsPanel.VariantPanel) {
-                panels.add((EditThumbsPanel.VariantPanel)_variants.getWidget(ii));
+            if (_variants.getWidget(ii) instanceof VariantPanel) {
+                panels.add((VariantPanel)_variants.getWidget(ii));
             }
         }
         return panels;
     }
 
-    protected void addVariant (final EditThumbsPanel.VariantPanel vpanel)
+    protected void addVariant (final VariantPanel vpanel)
     {
         vpanel.addDeleteButton(MsoyUI.createCloseButton(new ClickHandler() {
             @Override public void onClick (ClickEvent event) {
@@ -175,7 +187,7 @@ class EditThumbsPanel extends FlowPanel
                 _variant = MsoyUI.createTextBox(variant, 8, 4)));
 
             final int size = MediaDesc.FB_FEED_SIZE;
-            for (int ii = 0; ii < _type.count; ++ii) {
+            for (int ii = 0; ii < GameThumbnail.COUNT; ++ii) {
                 String id = _type.toString() + variant + ii;
                 EditorUtil.MediaBox box = new EditorUtil.MediaBox(size, id,
                     content != null && ii < content.size() ? content.get(ii).media : null) {
@@ -188,6 +200,11 @@ class EditThumbsPanel extends FlowPanel
                                 String.valueOf(targetW), String.valueOf(targetH)));
                         } else {
                             super.mediaUploaded(name, desc, w, h);
+                        }
+                    }
+                    @Override protected void mediaModified () {
+                        if (_onMediaModified != null) {
+                            _onMediaModified.run();
                         }
                     }
                 };
@@ -229,6 +246,7 @@ class EditThumbsPanel extends FlowPanel
     protected String _typeName;
     protected Label _title;
     protected FlowPanel _variants;
+    protected Runnable _onMediaModified;
 
     protected static final GamesMessages _msgs = GWT.create(GamesMessages.class);
 }

@@ -474,16 +474,12 @@ public class GameServlet extends MsoyServiceServlet
             mrec = requireAuthedUser();
             requireIsGameCreator(gameId, mrec);
         }
-        if (gameId != 0 && thumbnails.size() > GameThumbnail.Type.GAME_STORY.count) {
-            // this should never happen with a legitimate client
-            throw new ServiceException(MsoyCodes.E_INTERNAL_ERROR);
-        }
         for (GameThumbnail thumb : thumbnails) {
             if (thumb.media == null || !thumb.media.isImage()) {
                 // this should never happen with a legitimate client
                 throw new ServiceException(MsoyCodes.E_INTERNAL_ERROR);
             }
-            if (gameId != 0 && thumb.type != GameThumbnail.Type.GAME_STORY) {
+            if (gameId != 0 && !thumb.type.gameOverridable) {
                 // this should never happen with a legitimate client
                 throw new ServiceException(MsoyCodes.E_INTERNAL_ERROR);
             }

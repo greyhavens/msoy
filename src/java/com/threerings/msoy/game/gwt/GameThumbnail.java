@@ -13,24 +13,32 @@ import com.threerings.msoy.data.all.MediaDesc;
 public class GameThumbnail
     implements IsSerializable
 {
+    public static final int COUNT = 3;
+
     /** The types of thumbnails. */
     public enum Type
         implements ByteEnum
     {
-        GAME_STORY(0, 1), TROPHY(1, 2), CHALLENGE(2, 3), LEVELUP(3, 3);
+        // TODO: get rid of the OBSOLETE type after a release and existing instances are removed
+        OBSOLETE(0), TROPHY(1), CHALLENGE(2), LEVELUP(3, false);
 
-        /** Number of thumbnails required for this type (per variant). */
-        public int count;
+        /** Whether this type of thumbnail can be overridden by a game. */
+        public boolean gameOverridable;
 
         public byte toByte ()
         {
             return _value;
         }
 
-        Type (int value, int count) {
-            _value = (byte)value;
-            this.count = count;
+        Type (int value) {
+            this(value, true);
         };
+
+        Type (int value, boolean gameOverridable) {
+            _value = (byte)value;
+            this.gameOverridable = gameOverridable;
+        };
+
         protected byte _value;
     }
 

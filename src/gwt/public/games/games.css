@@ -770,9 +770,17 @@
   padding-left: 10px;
 }
 
+.editGame .fie .Type .Title {
+  padding-left: 0;
+}
+
 .editGame .fie .Tip {
   width: 90%;
   padding-left: 10px;
+}
+
+.editGame .fie .Type {
+  padding: 10px;
 }
 
 /* ------------------------------------

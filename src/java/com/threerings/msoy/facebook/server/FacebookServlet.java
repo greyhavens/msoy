@@ -25,6 +25,7 @@ import com.google.code.facebookapi.ProfileField;
 import com.google.code.facebookapi.schema.User;
 import com.google.code.facebookapi.schema.UsersGetInfoResponse;
 
+import com.samskivert.util.CollectionUtil;
 import com.samskivert.util.Comparators;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
@@ -421,21 +422,25 @@ public class FacebookServlet extends MsoyServiceServlet
     protected List<String> assembleThumbnails (
         GameThumbnail.Type type, String gameMain, int gameId)
     {
-        List<String> result = loadThumbnails(type, 0);
-        if (result.size() < 3) {
-            if (gameId != 0) {
-                List<String> gameVariants = loadThumbnails(GameThumbnail.Type.GAME_STORY, gameId);
-                if (gameVariants.size() > 0) {
-                    gameMain = gameVariants.get(0);
-                }
-            }
-            if (gameMain != null) {
-                if (result.size() == 2) {
-                    result.add(1, gameMain);
-                } else {
+        List<String> result = loadThumbnails(type, gameId);
+
+        if (result.size() >= 3) {
+            // we have all 3 thumbnails, ship it
+            CollectionUtil.limit(result, 3);
+
+        } else if (gameId != 0) {
+            // the game didn't override, use global ones
+            result = loadThumbnails(type, 0);
+
+            if (result.size() < 3) {
+                // not enough globals, eek, just use nothing or fallback the game's main one!
+                result.clear();
+                if (gameMain != null) {
                     result.add(gameMain);
                 }
             }
+        } else {
+            // not enough globals... not much we can do here
         }
         if (DeploymentConfig.devDeployment) {
             log.info("Assembled thumbnails", "type", type, "gameId", gameId, "result", result);

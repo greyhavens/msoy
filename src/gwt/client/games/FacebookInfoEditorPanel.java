@@ -13,18 +13,17 @@ import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.TextBox;
 
-import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.gwt.util.StringUtil;
 
-import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.game.gwt.FacebookInfo;
 import com.threerings.msoy.game.gwt.GameService;
 import com.threerings.msoy.game.gwt.GameServiceAsync;
 import com.threerings.msoy.game.gwt.GameThumbnail;
+import com.threerings.msoy.game.gwt.GameThumbnail.Type;
 
+import client.games.EditThumbsPanel.ThumbnailSet;
 import client.games.EditorUtil.ConfigException;
-import client.games.EditorUtil.MediaBox;
 import client.ui.MsoyUI;
 import client.util.ClickCallback;
 import client.util.InfoCallback;
@@ -95,18 +94,30 @@ public class FacebookInfoEditorPanel extends FlowPanel
             }
         };
 
+        final EditorTable thumbsEditor = new EditorTable(); // just for the "Save" button
+
         _gamesvc.loadThumbnails(info.gameId, new InfoCallback<List<GameThumbnail>>() {
             @Override public void onSuccess (List<GameThumbnail> result) {
-                setThumbnails(result);
+                Runnable onMediaModified = new Runnable () {
+                    public void run () {
+                        thumbsEditor.mediaModified();
+                    }
+                };
+                ThumbnailSet thumbnails = new ThumbnailSet(result);
+                _thumbsPanels.add(new EditThumbsPanel(_msgs.editFeedThumbnailsTrophy(),
+                    Type.TROPHY, thumbnails, onMediaModified));
+                _thumbsPanels.add(new EditThumbsPanel(_msgs.editFeedThumbnailsChallenge(),
+                    Type.CHALLENGE, thumbnails, onMediaModified));
             }
         });
 
         add(WidgetUtil.makeShim(1, 20));
         add(MsoyUI.createLabel(_msgs.fieThumbnailsTitle(), "Title"));
         add(MsoyUI.createLabel(_msgs.fieThumbnailsTip(), "Tip"));
-        add(_thumbsTable = new SmartTable("thumbnails", 0, 10));
-        add(_thumbsEditor = new EditorTable());
-        Button saveThumbs = _thumbsEditor.addSaveRow();
+        add(_thumbsPanels = new FlowPanel());
+
+        add(thumbsEditor);
+        Button saveThumbs = thumbsEditor.addSaveRow();
         new ClickCallback<Void>(saveThumbs) {
             protected boolean callService () {
                 try {
@@ -126,43 +137,12 @@ public class FacebookInfoEditorPanel extends FlowPanel
 
     protected List<GameThumbnail> getThumbnails ()
     {
-        List<GameThumbnail> thumbs = new ArrayList<GameThumbnail>();
-        byte pos = 0;
-        // TODO: variants?
-        String variant = "";
-        GameThumbnail.Type type = GameThumbnail.Type.GAME_STORY;
-        for (MediaBox box : _thumbBoxes) {
-            if (box.getMedia() != null) {
-                thumbs.add(new GameThumbnail(EditorUtil.checkImageMedia(
-                    _msgs.egShot(), box.getMedia()), type, variant, pos++));
-            }
+        List<GameThumbnail> thumbnails = new ArrayList<GameThumbnail>();
+        for (int ii = 0, ll = _thumbsPanels.getWidgetCount(); ii < ll; ++ii) {
+            EditThumbsPanel panel = (EditThumbsPanel)_thumbsPanels.getWidget(ii);
+            thumbnails.addAll(panel.getThumbnails());
         }
-        return thumbs;
-    }
-
-    protected void setThumbnails (List<GameThumbnail> thumbnails)
-    {
-        _thumbsTable.clear();
-        final int size = MediaDesc.FB_FEED_SIZE;
-        for (int ii = 0; ii < GameThumbnail.Type.GAME_STORY.count; ++ii) {
-            EditorUtil.MediaBox box = new EditorUtil.MediaBox(size, "thumb" + ii,
-                ii < thumbnails.size() ? thumbnails.get(ii).media : null) {
-                @Override public void mediaUploaded (String name, MediaDesc desc, int w, int h) {
-                    int targetW = MediaDesc.getWidth(size), targetH = MediaDesc.getHeight(size);
-                    if (w != targetW || h != targetH) {
-                        MsoyUI.error(_msgs.errInvalidShot(
-                            String.valueOf(targetW), String.valueOf(targetH)));
-                    } else {
-                        super.mediaUploaded(name, desc, w, h);
-                    }
-                }
-                @Override protected void mediaModified () {
-                    _thumbsEditor.mediaModified();
-                }
-            };
-            _thumbsTable.setWidget(ii / THUMB_COLS, ii % THUMB_COLS, box);
-            _thumbBoxes.add(box);
-        }
+        return thumbnails;
     }
 
     protected void updateAppLink (FacebookInfo info)
@@ -172,9 +152,7 @@ public class FacebookInfoEditorPanel extends FlowPanel
     }
 
     protected EditorTable _mainFields;
-    protected SmartTable _thumbsTable;
-    protected EditorTable _thumbsEditor; // just used for the "Save" button
-    protected List<MediaBox> _thumbBoxes = new ArrayList<MediaBox>();
+    FlowPanel _thumbsPanels;
     protected int _viewRow;
 
     protected static final int THUMB_COLS = 2;
