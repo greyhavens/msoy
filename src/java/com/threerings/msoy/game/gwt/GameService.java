@@ -285,12 +285,6 @@ public interface GameService extends RemoteService
         throws ServiceException;
 
     /**
-     * Admin command to add a mochi game to the database.
-     */
-    void addMochiGame (String mochiTag)
-        throws ServiceException;
-
-    /**
      * Get the info on a mochi game.
      */
     MochiGameInfo getMochiGame (String mochiTag)

@@ -759,25 +759,6 @@ public class GameServlet extends MsoyServiceServlet
     }
 
     // from interface GameService
-    public void addMochiGame (String mochiTag)
-        throws ServiceException
-    {
-        requireSupportUser();
-
-        if (importMochiGame(mochiTag) == null) {
-            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
-        }
-
-        try {
-            // fire off a notification to get people to come back and play
-            _facebookLogic.scheduleNotification("daily_games_updated", 30);
-
-        } catch (ServiceException se) {
-            log.warning("Failed to send game update notification", se);
-        }
-    }
-
-    // from interface GameService
     public MochiGameInfo getMochiGame (String mochiTag)
         throws ServiceException
     {

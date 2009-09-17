@@ -13,7 +13,6 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextArea;
-import com.google.gwt.user.client.ui.TextBox;
 
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
@@ -37,32 +36,10 @@ public class EditMochiGamesPanel extends FlowPanel
 
     /**
      * Creates a new panel.
-     * TODO: remove newSkool when the live data is populated and portal is actually using it
      */
-    public EditMochiGamesPanel (boolean newSkool)
+    public EditMochiGamesPanel ()
     {
         setStyleName("editMochiGames");
-
-        if (!newSkool) {
-            // Mochi game adding - old style
-            final TextBox mochiTag = new TextBox();
-            final Button addMochi = new Button("add mochi game");
-            new ClickCallback<Void>(addMochi) {
-                @Override protected boolean callService () {
-                    _gamesvc.addMochiGame(mochiTag.getText().trim(), this);
-                    return true;
-                }
-
-                @Override protected boolean gotResult (Void result) {
-                    MsoyUI.info("Game added");
-                    mochiTag.setText("");
-                    return true;
-                }
-            };
-            add(mochiTag);
-            add(addMochi);
-            return;
-        }
 
         // The new style:
         // mochi games are kept in a series of "buckets". each bucket has a list of games and a

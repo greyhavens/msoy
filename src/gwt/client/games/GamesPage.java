@@ -75,7 +75,7 @@ public class GamesPage extends Page
             setContent(new EditArcadePanel());
 
         } else if (action.equals("emg")) {
-            setContent(new EditMochiGamesPanel(args.get(1, "").equals("n")));
+            setContent(new EditMochiGamesPanel());
 
         } else if (action.equals("eft")) {
             setContent(new EditFeedThumbsPanel());

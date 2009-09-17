@@ -167,11 +167,6 @@ public interface GameServiceAsync
         Set<Integer> featured, Set<Integer> removed, AsyncCallback<Void> callback);
 
     /**
-     * The asynchronous version of {@link GameService#addMochiGame}.
-     */
-    void addMochiGame (String mochiTag, AsyncCallback<Void> callback);
-
-    /**
      * The asynchronous version of {@link GameService#getMochiGame}.
      */
     void getMochiGame (String mochiTag, AsyncCallback<MochiGameInfo> callback);
