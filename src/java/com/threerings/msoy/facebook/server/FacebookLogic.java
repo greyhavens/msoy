@@ -337,7 +337,7 @@ public class FacebookLogic
         long now = System.currentTimeMillis();
         int lastAward = -1; // suppress award by default
         int lastLevel = 0;
-        if (DeploymentConfig.devDeployment && mrec.created.getTime() < now - NEW_ACCOUNT_TIME) {
+        if (mrec.created.getTime() < now - NEW_ACCOUNT_TIME) {
             FacebookActionRecord lastVisit = _facebookRepo.getLastAction(
                 memberId, FacebookActionRecord.Type.DAILY_VISIT);
             if (lastVisit == null) {
