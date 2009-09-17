@@ -172,7 +172,7 @@ public class PlaceBox extends LayeredContainer
         } else if (_placeView is PlaceLayer) {
             PlaceLayer(_placeView).setPlaceSize(w, h);
         } else if (_placeView != null) {
-            Log.getLog(this).warning("PlaceView is not a PlayerLayer or an UIComponent.");
+            Log.getLog(this).warning("PlaceView is not a PlaceLayer or an UIComponent.");
         }
 
         // TODO: bubble chat can currently overflow a restricted placeview size.
