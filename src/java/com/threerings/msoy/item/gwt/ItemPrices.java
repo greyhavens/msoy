@@ -42,7 +42,6 @@ public class ItemPrices
         MIN_PRICES.put(Item.TOY, new int[] { 200, 300, 700, 2500, 5000 });
         MIN_PRICES.put(Item.PET, new int[] { 100, 200, 500, 1500, 5000 });
         MIN_PRICES.put(Item.AVATAR, new int[] { 100, 200, 500, 1500, 5000 });
-        MIN_PRICES.put(Item.GAME, new int[] { 200, 300, 700, 2500, 5000 });
         MIN_PRICES.put(Item.PHOTO, new int[] { 10, 50, 100, 500, 1000 });
         MIN_PRICES.put(Item.VIDEO, new int[] { 10, 50, 100, 500, 1000 });
         MIN_PRICES.put(Item.AUDIO, new int[] { 10, 50, 100, 500, 1000 });

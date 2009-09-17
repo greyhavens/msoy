@@ -28,7 +28,6 @@ public abstract class Item implements Comparable<Item>, Streamable, IsSerializab
     public static final byte PHOTO = registerItemType(Photo.class, 1);
     public static final byte DOCUMENT = registerItemType(Document.class, 2);
     public static final byte FURNITURE = registerItemType(Furniture.class, 3);
-    public static final byte GAME = registerItemType(Game.class, 4);
     public static final byte AVATAR = registerItemType(Avatar.class, 5);
     public static final byte PET = registerItemType(Pet.class, 6);
     public static final byte AUDIO = registerItemType(Audio.class, 7);
@@ -280,8 +279,6 @@ public abstract class Item implements Comparable<Item>, Streamable, IsSerializab
             return "avatar";
         } else if (type == FURNITURE) {
             return "furniture";
-        } else if (type == GAME) {
-            return "game";
         } else if (type == PHOTO) {
             return "photo";
         } else if (type == PET) {
