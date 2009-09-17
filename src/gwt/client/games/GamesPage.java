@@ -78,7 +78,7 @@ public class GamesPage extends Page
             setContent(new EditMochiGamesPanel());
 
         } else if (action.equals("eft")) {
-            setContent(new EditFeedThumbsPanel());
+            setContent(new EditGlobalFeedThumbsPanel());
 
         } else if (action.equals("aa")) {
             byte portal = args.get(1, ArcadeData.Portal.MAIN.toByte());
