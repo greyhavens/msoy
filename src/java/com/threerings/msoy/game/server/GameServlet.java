@@ -998,7 +998,8 @@ public class GameServlet extends MsoyServiceServlet
          */
         public MochiGameInfo[] loadMochiGames ()
         {
-            Collection<MochiGameInfo> games = _mgameRepo.loadLatestMochiGames(5); // TODO 5
+            List<MochiGameInfo> games = _mgameRepo.loadMochiGamesInOrder(
+                _facebookLogic.getFeaturedGames());
             return games.toArray(new MochiGameInfo[games.size()]);
         }
 

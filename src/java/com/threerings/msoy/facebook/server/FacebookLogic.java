@@ -166,6 +166,13 @@ public class FacebookLogic
             }
         });
 
+        // run the featured game update between 11am and 12pm
+        cronLogic.scheduleAt(11, new Runnable() {
+            public void run () {
+                updateFeaturedGames();
+            }
+        });
+
         lifecycle.addComponent(new Lifecycle.ShutdownComponent() {
             public void shutdown () {
                 _shutdown = true;
@@ -420,6 +427,14 @@ public class FacebookLogic
     public String getCurrentGame (int bucket)
     {
         return _listRepo.getItemId(MOCHI_BUCKETS[bucket -1], MOCHI_CURSOR);
+    }
+
+    /**
+     * Gets the 5 games to be featured on the Facebook games portal.
+     */
+    public List<String> getFeaturedGames ()
+    {
+        return _listRepo.getItemIds(Arrays.asList(MOCHI_BUCKETS), MOCHI_CURSOR);
     }
 
     /**
@@ -736,6 +751,21 @@ public class FacebookLogic
         }
 
         return uinfo.getUser().size();
+    }
+
+    protected void updateFeaturedGames ()
+    {
+        for (String bucket : MOCHI_BUCKETS) {
+            _listRepo.advanceCursor(bucket, MOCHI_CURSOR);
+        }
+
+        try {
+            scheduleNotification(_listRepo.getItemId(DAILY_GAMES_LIST, DAILY_GAMES_CURSOR), 5);
+            _listRepo.advanceCursor(DAILY_GAMES_LIST, DAILY_GAMES_CURSOR);
+
+        } catch (ServiceException ex) {
+            log.warning("Could not send daily games notification", ex);
+        }
     }
 
     /**
