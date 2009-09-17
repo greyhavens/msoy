@@ -45,10 +45,9 @@ public class FBRequestPanel extends ServerFBMLPanel
         final FlowPanel div = new FlowPanel();
         _fbsvc.getInviteInfo(null, new InfoCallback<InviteInfo>() {
             public void onSuccess (InviteInfo result) {
-                // inviteGeneric = {0} has invited you to join {1} team on {2}.
+                // inviteGeneric = {0} has invited you to {1}...
                 String app = DeploymentConfig.facebookApplicationName;
-                String invite = _msgs.inviteGeneric(
-                    result.username, getPronoun(result.gender), app);
+                String invite = _msgs.inviteGeneric(result.username, app);
                 String tip = _msgs.inviteGenericTip();
                 String accept = _msgs.inviteChallengeAccept(app);
 
