@@ -82,7 +82,7 @@ public class LevelUpFeeder
     // Handy JSON for pasting into Facebook's template editor
     /*
       {
-          "action_url": "http://apps.whirled.com/whirled/"
+          "action_url": "http://apps.whirled.com/whirled/",
           "level": "19",
           "images" : [ {"src" :
               "http://mediacloud.whirled.com/240aa9267fa6dc8422588e6818862301fd658e6f.png",
