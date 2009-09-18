@@ -45,6 +45,9 @@ import com.google.code.facebookapi.schema.Location;
 import com.google.code.facebookapi.schema.User;
 import com.google.code.facebookapi.schema.UsersGetStandardInfoResponse;
 
+import com.threerings.cron.server.CronLogic;
+import com.threerings.util.MessageBundle;
+
 import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.all.DeploymentConfig;
@@ -74,8 +77,6 @@ import com.threerings.msoy.web.gwt.FacebookCreds;
 import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.gwt.SessionData;
 import com.threerings.msoy.web.gwt.SharedNaviUtil;
-import com.threerings.presents.peer.server.CronLogic;
-import com.threerings.util.MessageBundle;
 
 import static com.threerings.msoy.Log.log;
 
@@ -160,14 +161,14 @@ public class FacebookLogic
     @Inject public FacebookLogic (CronLogic cronLogic, Lifecycle lifecycle)
     {
         // run the demographics update between 4 and 5 am
-        cronLogic.scheduleAt(4, new Runnable() {
+        cronLogic.scheduleAt(4, "FacebookLogic demographics", new Runnable() {
             public void run () {
                 updateDemographics();
             }
         });
 
         // run the featured game update between 11am and 12pm
-        cronLogic.scheduleAt(11, new Runnable() {
+        cronLogic.scheduleAt(11, "FacebookLogic roll games", new Runnable() {
             public void run () {
                 updateFeaturedGames(false);
             }
@@ -775,15 +776,6 @@ public class FacebookLogic
 
         } catch (ServiceException ex) {
             log.warning("Could not send daily games notification", ex);
-        }
-
-        // sleep for 2 minutes to workaround our "misuse" of cron logic. Seems fucking broken to
-        // me, but it says not to hand off to other threads right there in the javadoc, so it must
-        // be an intended feature
-        try {
-            Thread.sleep(120 * 1000L);
-        } catch (InterruptedException ex) {
-            // ok
         }
     }
 

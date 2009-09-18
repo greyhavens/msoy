@@ -18,9 +18,11 @@ import com.samskivert.util.ResultListener;
 import com.samskivert.util.StringUtil;
 
 import com.google.common.collect.Lists;
+
 import com.threerings.underwire.server.persist.EventRecord;
 import com.threerings.underwire.web.data.Event;
 import com.threerings.util.Name;
+import com.threerings.cron.server.CronLogic;
 
 import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.annotation.MainInvoker;
@@ -30,7 +32,6 @@ import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.dobj.AttributeChangeListener;
 import com.threerings.presents.dobj.AttributeChangedEvent;
 import com.threerings.presents.dobj.DSet;
-import com.threerings.presents.peer.server.CronLogic;
 import com.threerings.presents.server.ClientManager;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
@@ -199,12 +200,12 @@ public class MemberManager
         _ppInvalidator.schedule(POP_PLACES_REFRESH_PERIOD, true);
 
         // schedule member-related periodic jobs (note: these run on background threads)
-        _cronLogic.scheduleEvery(1, new Runnable() {
+        _cronLogic.scheduleEvery(1, "MemberManager purge entry vectors", new Runnable() {
             public void run () {
                 _memberRepo.purgeEntryVectors();
             }
         });
-        _cronLogic.scheduleEvery(1, new Runnable() {
+        _cronLogic.scheduleEvery(1, "MemberManager purge permaguests", new Runnable() {
             public void run () {
                 long now = System.currentTimeMillis();
                 List<Integer> weakIds = _memberRepo.loadExpiredWeakPermaguestIds(now);

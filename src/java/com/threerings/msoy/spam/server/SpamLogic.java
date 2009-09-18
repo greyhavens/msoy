@@ -26,8 +26,9 @@ import com.samskivert.util.Invoker;
 import com.samskivert.util.RandomUtil;
 import com.samskivert.util.StringUtil;
 
+import com.threerings.cron.server.CronLogic;
+
 import com.threerings.presents.annotation.BlockingThread;
-import com.threerings.presents.peer.server.CronLogic;
 
 import com.threerings.util.MessageBundle;
 
@@ -339,7 +340,7 @@ public class SpamLogic
     public void init ()
     {
         // run nightly at 1am
-        _cronLogic.scheduleAt(1, new Runnable() {
+        _cronLogic.scheduleAt(1, "SpamLogic retention mailings", new Runnable() {
             public void run () {
                 sendRetentionEmails();
             }

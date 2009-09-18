@@ -11,8 +11,9 @@ import com.google.inject.Singleton;
 import com.samskivert.util.Calendars;
 import com.samskivert.util.StringUtil;
 
+import com.threerings.cron.server.CronLogic;
+
 import com.threerings.presents.annotation.BlockingThread;
-import com.threerings.presents.peer.server.CronLogic;
 
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
@@ -47,7 +48,7 @@ public class SubscriptionLogic
     public void init ()
     {
         // check for bar and special item grants every hour
-        _cronLogic.scheduleEvery(1, new Runnable() {
+        _cronLogic.scheduleEvery(1, "SubscriptionLogic hourly", new Runnable() {
             public void run () {
                 endBarscribers();
                 grantBars();
