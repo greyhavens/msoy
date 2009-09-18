@@ -18,7 +18,6 @@ import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.data.all.RatingResult;
 import com.threerings.msoy.item.data.all.Avatar;
-import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemFlag;
 import com.threerings.msoy.item.data.all.ItemIdent;
@@ -99,11 +98,6 @@ public abstract class BaseItemDetailPanel extends SmartTable
         _indeets.addStyleName("Description");
         _details.add(_indeets);
         _indeets.add(MsoyUI.createRestrictedHTML(ItemUtil.getDescription(_item)));
-
-        if (_item instanceof Game) {
-            _details.add(WidgetUtil.makeShim(10, 10));
-            _details.add(Link.create(_imsgs.bidPlay(), Pages.GAMES, "d" , ((Game)_item).gameId));
-        }
 
         // add our tag business at the bottom
         getFlexCellFormatter().setHeight(1, 0, "10px");

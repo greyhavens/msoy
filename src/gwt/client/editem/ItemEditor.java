@@ -64,7 +64,7 @@ public abstract class ItemEditor extends FlowPanel
 //            _spec = filespec;
 //        }
 //
-//        /** 
+//        /**
 //         * Get the name of this filetype.
 //         */
 //        public String getName ()
@@ -138,8 +138,6 @@ public abstract class ItemEditor extends FlowPanel
             editor = new DocumentEditor();
         } else if (type == Item.FURNITURE) {
             editor = new FurnitureEditor();
-        } else if (type == Item.GAME) {
-            editor = new GameEditor();
         } else if (type == Item.AVATAR) {
             editor = new AvatarEditor();
         } else if (type == Item.PET) {
