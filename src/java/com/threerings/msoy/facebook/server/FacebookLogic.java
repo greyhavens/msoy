@@ -766,6 +766,15 @@ public class FacebookLogic
         } catch (ServiceException ex) {
             log.warning("Could not send daily games notification", ex);
         }
+
+        // sleep for 2 minutes to workaround our "misuse" of cron logic. Seems fucking broken to
+        // me, but it says not to hand off to other threads right there in the javadoc, so it must
+        // be an intended feature
+        try {
+            Thread.sleep(120 * 1000L);
+        } catch (InterruptedException ex) {
+            // ok
+        }
     }
 
     /**
