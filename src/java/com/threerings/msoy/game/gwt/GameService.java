@@ -303,4 +303,10 @@ public interface GameService extends RemoteService
      */
     List<String> setMochiBucketTags (int slot, String[] ids)
         throws ServiceException;
+
+    /**
+     * Tests the advancement of the current featured mochi games.
+     */
+    void testRollFeaturedGames ()
+        throws ServiceException;
 }

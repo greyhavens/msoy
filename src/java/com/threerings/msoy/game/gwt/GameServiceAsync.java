@@ -180,4 +180,9 @@ public interface GameServiceAsync
      * The asynchronous version of {@link GameService#setMochiBucketTags}.
      */
     void setMochiBucketTags (int slot, String[] tags, AsyncCallback<List<String>> callback);
+
+    /**
+     * The asynchronous version of {@link GameService#testRollFeaturedGames}.
+     */
+    void testRollFeaturedGames (AsyncCallback<Void> callback);
 }

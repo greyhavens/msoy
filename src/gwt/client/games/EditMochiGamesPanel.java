@@ -65,6 +65,8 @@ public class EditMochiGamesPanel extends FlowPanel
         topBits.add(MsoyUI.createLabel(_msgs.emgBucketLabel(), null));
         topBits.add(WidgetUtil.makeShim(10, 10));
         topBits.add(buckets);
+        Button test = new Button(_msgs.emgTestUpdateBtn());
+        topBits.add(test);
 
         for (int ii = 1; ii <= BUCKET_COUNT; ++ii) {
             buckets.addItem(_msgs.emgBucketName(String.valueOf(ii)));
@@ -78,6 +80,17 @@ public class EditMochiGamesPanel extends FlowPanel
                 setBucket(buckets.getSelectedIndex() + 1, "");
             }
         });
+
+        new ClickCallback<Void>(test) {
+            @Override protected boolean callService () {
+                _gamesvc.testRollFeaturedGames(this);
+                return true;
+            }
+            @Override protected boolean gotResult (Void result) {
+                setBucket(bucket, "");
+                return true;
+            }
+        };
 
         // a table of the currently selected bucket contents (downloaded asynchronously)
         add(MsoyUI.createLabel(_msgs.emgGamesTitle(""+bucket), "Title"));

@@ -169,7 +169,7 @@ public class FacebookLogic
         // run the featured game update between 11am and 12pm
         cronLogic.scheduleAt(11, new Runnable() {
             public void run () {
-                updateFeaturedGames();
+                updateFeaturedGames(false);
             }
         });
 
@@ -452,6 +452,11 @@ public class FacebookLogic
         }
         _listRepo.setList(DAILY_GAMES_LIST, ids);
         _listRepo.advanceCursor(DAILY_GAMES_LIST, DAILY_GAMES_CURSOR);
+    }
+
+    public void testUpdateFeaturedGames ()
+    {
+        updateFeaturedGames(true);
     }
 
     protected void updateURL (
@@ -753,14 +758,19 @@ public class FacebookLogic
         return uinfo.getUser().size();
     }
 
-    protected void updateFeaturedGames ()
+    protected void updateFeaturedGames (boolean test)
     {
         for (String bucket : MOCHI_BUCKETS) {
             _listRepo.advanceCursor(bucket, MOCHI_CURSOR);
         }
 
+        if (test) {
+            return;
+        }
+
         try {
-            scheduleNotification(_listRepo.getCursorItem(DAILY_GAMES_LIST, DAILY_GAMES_CURSOR), 5);
+            scheduleNotification(
+                _listRepo.getCursorItem(DAILY_GAMES_LIST, DAILY_GAMES_CURSOR), 5);
             _listRepo.advanceCursor(DAILY_GAMES_LIST, DAILY_GAMES_CURSOR);
 
         } catch (ServiceException ex) {

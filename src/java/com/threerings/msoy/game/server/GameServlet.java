@@ -798,6 +798,14 @@ public class GameServlet extends MsoyServiceServlet
         return mbucket;
     }
 
+    @Override
+    public void testRollFeaturedGames ()
+        throws ServiceException
+    {
+        requireAdminUser();
+        _facebookLogic.testUpdateFeaturedGames();
+    }
+
     protected MochiGameInfo importMochiGame (String mochiTag)
     {
         try {
