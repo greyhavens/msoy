@@ -23,7 +23,7 @@ public class ExternalMapRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<ExternalMapRecord> _R = ExternalMapRecord.class;
-    public static final ColumnExp PARTNER_ID = colexp(_R, "partnerId");
+    public static final ColumnExp AUTHER = colexp(_R, "auther");
     public static final ColumnExp EXTERNAL_ID = colexp(_R, "externalId");
     public static final ColumnExp MEMBER_ID = colexp(_R, "memberId");
     public static final ColumnExp SESSION_KEY = colexp(_R, "sessionKey");
@@ -31,10 +31,10 @@ public class ExternalMapRecord extends PersistentRecord
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 3;
+    public static final int SCHEMA_VERSION = 4;
 
-    /** The partner that maintains the external user id. See {@link ExternalAuther}. */
-    @Id public int partnerId;
+    /** The partner that maintains the external user id. */
+    @Id public ExternalAuther auther;
 
     /** The external user identifier. Might be numberic, but we'll store it as a string in case we
      * one day want to support an external site that uses string identifiers. */
@@ -54,7 +54,7 @@ public class ExternalMapRecord extends PersistentRecord
      */
     public static Where getMemberKey (ExternalAuther auther, int memberId)
     {
-        return new Where(PARTNER_ID, auther.toByte(), MEMBER_ID, memberId);
+        return new Where(AUTHER, auther, MEMBER_ID, memberId);
     }
 
     // AUTO-GENERATED: METHODS START
@@ -62,12 +62,12 @@ public class ExternalMapRecord extends PersistentRecord
      * Create and return a primary {@link Key} to identify a {@link ExternalMapRecord}
      * with the supplied key values.
      */
-    public static Key<ExternalMapRecord> getKey (int partnerId, String externalId)
+    public static Key<ExternalMapRecord> getKey (ExternalAuther auther, String externalId)
     {
         return new Key<ExternalMapRecord>(
                 ExternalMapRecord.class,
-                new ColumnExp[] { PARTNER_ID, EXTERNAL_ID },
-                new Comparable[] { partnerId, externalId });
+                new ColumnExp[] { AUTHER, EXTERNAL_ID },
+                new Comparable[] { auther, externalId });
     }
     // AUTO-GENERATED: METHODS END
 }

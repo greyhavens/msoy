@@ -13,10 +13,7 @@ public enum ExternalAuther
 {
     FACEBOOK(1),
     OPEN_SOCIAL(2),
-    OPEN_ID(3),
-
-    // these must fit in a bitmask in MemberRecord so we have to stop here
-    UNUSED(32);
+    OPEN_ID(3);
 
     // from ByteEnum
     public byte toByte () {

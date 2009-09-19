@@ -26,6 +26,7 @@ import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.DuplicateKeyException;
 import com.samskivert.depot.Exps;
 import com.samskivert.depot.Key;
+import com.samskivert.depot.SchemaMigration;
 
 import com.samskivert.depot.PersistenceContext.CacheListener;
 
@@ -50,7 +51,6 @@ import com.samskivert.depot.expression.SQLExpression;
 import com.samskivert.depot.operator.FullText;
 
 import com.samskivert.util.ArrayIntSet;
-import com.samskivert.util.ByteEnumUtil;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
 import com.samskivert.util.StringUtil;
@@ -106,6 +106,11 @@ public class MemberRepository extends DepotRepository
     @Inject public MemberRepository (PersistenceContext ctx)
     {
         super(ctx);
+
+        _ctx.registerMigration(ExternalMapRecord.class,
+            new SchemaMigration.Rename(4, "partnerId", ExternalMapRecord.AUTHER));
+        _ctx.registerMigration(ExternalMapRecord.class,
+            new SchemaMigration.Retype(4, ExternalMapRecord.AUTHER));
 
         // add a cache invalidator that listens to MemberRecord updates
         _ctx.addCacheListener(MemberRecord.class, new CacheListener<MemberRecord>() {
@@ -1042,7 +1047,7 @@ public class MemberRepository extends DepotRepository
      */
     public int lookupExternalAccount (ExternalAuther auther, String externalId)
     {
-        ExternalMapRecord record = load(ExternalMapRecord.getKey(auther.toByte(), externalId));
+        ExternalMapRecord record = load(ExternalMapRecord.getKey(auther, externalId));
         return (record == null) ? 0 : record.memberId;
     }
 
@@ -1056,7 +1061,7 @@ public class MemberRepository extends DepotRepository
         if (externalIds.isEmpty()) {
             return Collections.emptyList();
         }
-        Where where = new Where(Ops.and(ExternalMapRecord.PARTNER_ID.eq(auther.toByte()),
+        Where where = new Where(Ops.and(ExternalMapRecord.AUTHER.eq(auther),
                                         ExternalMapRecord.EXTERNAL_ID.in(externalIds)));
         return findAll(ExternalMapRecord.class, where);
     }
@@ -1080,7 +1085,7 @@ public class MemberRepository extends DepotRepository
     public void mapExternalAccount (ExternalAuther auther, String externalId, int memberId)
     {
         ExternalMapRecord record = new ExternalMapRecord();
-        record.partnerId = auther.toByte();
+        record.auther = auther;
         record.externalId = externalId;
         record.memberId = memberId;
         store(record);
@@ -1094,13 +1099,7 @@ public class MemberRepository extends DepotRepository
         Map<ExternalAuther, String> authers = Maps.newHashMap();
         for (ExternalMapRecord emr : findAll(ExternalMapRecord.class,
                                              new Where(ExternalMapRecord.MEMBER_ID, memberId))) {
-            ExternalAuther auther;
-            try {
-                auther = ByteEnumUtil.fromByte(ExternalAuther.class, (byte)emr.partnerId);
-            } catch (Exception e) {
-                auther = null;
-            }
-            authers.put(auther, emr.externalId);
+            authers.put(emr.auther, emr.externalId);
         }
         return authers;
     }
@@ -1135,7 +1134,7 @@ public class MemberRepository extends DepotRepository
         ExternalMapRecord record = load(
             ExternalMapRecord.class, ExternalMapRecord.getMemberKey(auther, memberId));
         if (record != null) {
-            updatePartial(ExternalMapRecord.getKey(record.partnerId, record.externalId),
+            updatePartial(ExternalMapRecord.getKey(record.auther, record.externalId),
                           ExternalMapRecord.SESSION_KEY, sessionKey);
         }
     }
@@ -1145,8 +1144,7 @@ public class MemberRepository extends DepotRepository
      */
     public List<ExternalMapRecord> loadExternalMappings (ExternalAuther auther)
     {
-        return findAll(ExternalMapRecord.class, new Where(
-            ExternalMapRecord.PARTNER_ID.eq(auther.toByte())));
+        return findAll(ExternalMapRecord.class, new Where(ExternalMapRecord.AUTHER.eq(auther)));
     }
 
     /**
