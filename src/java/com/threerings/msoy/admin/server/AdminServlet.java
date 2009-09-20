@@ -407,6 +407,9 @@ public class AdminServlet extends MsoyServiceServlet
 
         ItemDeletionResult result = new ItemDeletionResult();
         owners.add(item.creatorId);
+        if (item.ownerId != 0) {
+            owners.add(item.ownerId);
+        }
 
         // find the catalog record and remove it, load original if any
         ItemRecord original = null;
