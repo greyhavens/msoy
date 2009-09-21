@@ -96,6 +96,16 @@ public class ListRepository extends DepotRepository
     }
 
     /**
+     * Gets the index the given cursor is currently at, or null if there is no such cursor or
+     * list.
+     */
+    public Integer getCursorIndex (String listId, String cursorId)
+    {
+        ListCursorRecord cursor = load(ListCursorRecord.getKey(listId, cursorId));
+        return cursor != null ? cursor.index : null;
+    }
+
+    /**
      * Gets a list of items from the given lists that the given cursor is currently pointing to for
      * each list. This is equivalent to calling {@link #getCursorItem(String, String)} for each
      * list but more efficient. The returned items are in the same order as the given lists and

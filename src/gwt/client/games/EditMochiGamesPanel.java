@@ -154,16 +154,13 @@ public class EditMochiGamesPanel extends FlowPanel
         _games.setText(0, 4, _msgs.emgNameHeader());
         _games.setText(0, 5, _msgs.emgTagHeader());
         _games.getRowFormatter().setStyleName(0, "Header");
-        int row = 1, col = 0, idx = 1, half = bucket.games.size() / 2 + 1;
+        int idx = 0, half = bucket.games.size() / 2 + 1;
         for (MochiGameInfo game : bucket.games) {
-            boolean current = game.tag.equals(bucket.currentTag);
-            _games.setText(row, col, (idx++) + (current ? "*" : ""));
+            boolean current = bucket.current == idx;
+            int row = 1 + idx % half, col = 3 * (idx / half);
+            _games.setText(row, col, ++idx + (current ? "*" : ""));
             _games.setText(row, col + 1, game.name);
-            _games.setText(row++, col + 2, game.tag);
-            if (col == 0 && row > half) {
-                row = 1;
-                col = 3;
-            }
+            _games.setText(row, col + 2, game.tag);
         }
     }
 

@@ -88,8 +88,8 @@ public interface GameService extends RemoteService
         /** The games in the bucket. */
         public List<MochiGameInfo> games;
 
-        /** The currently active tag. */
-        public String currentTag;
+        /** The index of the currently active game. */
+        public int current;
     }
 
     /** The entry point for this service. */

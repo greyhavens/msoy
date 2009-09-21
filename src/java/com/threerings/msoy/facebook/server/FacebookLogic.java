@@ -425,9 +425,10 @@ public class FacebookLogic
     /**
      * Gets the tag of the currently featured mochi game for the given bucket.
      */
-    public String getCurrentGame (int bucket)
+    public int getCurrentGameIndex (int bucket)
     {
-        return _listRepo.getCursorItem(MOCHI_BUCKETS[bucket -1], MOCHI_CURSOR);
+        Integer index = _listRepo.getCursorIndex(MOCHI_BUCKETS[bucket -1], MOCHI_CURSOR);
+        return index != null ? index : 0;
     }
 
     /**

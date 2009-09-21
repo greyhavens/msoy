@@ -794,7 +794,7 @@ public class GameServlet extends MsoyServiceServlet
         MochiGameBucket mbucket = new MochiGameBucket();
         mbucket.games = Lists.newArrayList(
             _mgameRepo.loadMochiGamesInOrder(_facebookLogic.getMochiGames(bucket)));
-        mbucket.currentTag = _facebookLogic.getCurrentGame(bucket);
+        mbucket.current = _facebookLogic.getCurrentGameIndex(bucket);
         return mbucket;
     }
 
