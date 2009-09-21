@@ -3,7 +3,9 @@
 
 package com.threerings.msoy.server.persist;
 
+import java.sql.Connection;
 import java.sql.Date;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 
 import java.util.Calendar;
@@ -49,6 +51,7 @@ import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.expression.SQLExpression;
 import com.samskivert.depot.operator.FullText;
+import com.samskivert.jdbc.DatabaseLiaison;
 
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.IntMap;
@@ -111,6 +114,23 @@ public class MemberRepository extends DepotRepository
             new SchemaMigration.Rename(4, "partnerId", ExternalMapRecord.AUTHER));
         _ctx.registerMigration(ExternalMapRecord.class,
             new SchemaMigration.Retype(4, ExternalMapRecord.AUTHER));
+
+        // we need an explicit column add here so we get the default value without having it stuck
+        // in the meta data
+        _ctx.registerMigration(ExternalMapRecord.class,
+            new SchemaMigration.Add(5, ExternalMapRecord.SITE_ID, "0"));
+
+        // NOTE: Depot does not update the primary key when a new @Id column is added, so manually
+        // force it to regenerate the pkey index by dropping it first. This may be psql specific.
+        // see http://code.google.com/p/depot/issues/detail?id=8
+        _ctx.registerMigration(ExternalMapRecord.class,
+            new SchemaMigration(5) {
+                @Override protected int invoke (Connection conn, DatabaseLiaison liaison)
+                    throws SQLException {
+                    liaison.dropPrimaryKey(conn, "ExternalMapRecord", "ExternalMapRecord_pkey");
+                    return 1;
+                }
+            });
 
         // add a cache invalidator that listens to MemberRecord updates
         _ctx.addCacheListener(MemberRecord.class, new CacheListener<MemberRecord>() {
@@ -1047,7 +1067,7 @@ public class MemberRepository extends DepotRepository
      */
     public int lookupExternalAccount (ExternalSiteId site, String externalId)
     {
-        ExternalMapRecord record = load(ExternalMapRecord.getKey(site.auther, externalId));
+        ExternalMapRecord record = load(ExternalMapRecord.getKey(site, externalId));
         return (record == null) ? 0 : record.memberId;
     }
 
@@ -1121,8 +1141,7 @@ public class MemberRepository extends DepotRepository
      */
     public ExternalMapRecord loadExternalMapEntry (ExternalSiteId site, int memberId)
     {
-        return load(ExternalMapRecord.class,
-            ExternalMapRecord.getMemberKey(site.auther, memberId));
+        return load(ExternalMapRecord.class, ExternalMapRecord.getMemberKey(site, memberId));
     }
 
     /**
@@ -1132,9 +1151,9 @@ public class MemberRepository extends DepotRepository
     {
         // load the record so that we can do our update using the primary key
         ExternalMapRecord record = load(
-            ExternalMapRecord.class, ExternalMapRecord.getMemberKey(site.auther, memberId));
+            ExternalMapRecord.class, ExternalMapRecord.getMemberKey(site, memberId));
         if (record != null) {
-            updatePartial(ExternalMapRecord.getKey(record.auther, record.externalId),
+            updatePartial(ExternalMapRecord.getKey(site, record.externalId),
                           ExternalMapRecord.SESSION_KEY, sessionKey);
         }
     }

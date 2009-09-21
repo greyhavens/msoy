@@ -24,6 +24,7 @@ public class ExternalMapRecord extends PersistentRecord
     // AUTO-GENERATED: FIELDS START
     public static final Class<ExternalMapRecord> _R = ExternalMapRecord.class;
     public static final ColumnExp AUTHER = colexp(_R, "auther");
+    public static final ColumnExp SITE_ID = colexp(_R, "siteId");
     public static final ColumnExp EXTERNAL_ID = colexp(_R, "externalId");
     public static final ColumnExp MEMBER_ID = colexp(_R, "memberId");
     public static final ColumnExp SESSION_KEY = colexp(_R, "sessionKey");
@@ -31,10 +32,15 @@ public class ExternalMapRecord extends PersistentRecord
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 4;
+    public static final int SCHEMA_VERSION = 5;
 
     /** The partner that maintains the external user id. */
     @Id public ExternalSiteId.Auther auther;
+
+    /** The id of the site. The interpretation depends on the auther and the implemented support
+     * for site variation. (e.g. Whirled Games has a totally different front page to Whirled
+     * Rooms.) */
+    @Id public int siteId;
 
     /** The external user identifier. Might be numberic, but we'll store it as a string in case we
      * one day want to support an external site that uses string identifiers. */
@@ -52,9 +58,17 @@ public class ExternalMapRecord extends PersistentRecord
     /**
      * Returns a where clause that matches the specified (non-primary) key.
      */
-    public static Where getMemberKey (ExternalSiteId.Auther auther, int memberId)
+    public static Where getMemberKey (ExternalSiteId site, int memberId)
     {
-        return new Where(AUTHER, auther, MEMBER_ID, memberId);
+        return new Where(AUTHER, site.auther, SITE_ID, site.siteId, MEMBER_ID, memberId);
+    }
+
+    /**
+     * Gets the primary key for the given site and external user id.
+     */
+    public static Key<ExternalMapRecord> getKey (ExternalSiteId site, String externalId)
+    {
+        return getKey(site.auther, site.siteId, externalId);
     }
 
     // AUTO-GENERATED: METHODS START
@@ -62,12 +76,12 @@ public class ExternalMapRecord extends PersistentRecord
      * Create and return a primary {@link Key} to identify a {@link ExternalMapRecord}
      * with the supplied key values.
      */
-    public static Key<ExternalMapRecord> getKey (ExternalSiteId.Auther auther, String externalId)
+    public static Key<ExternalMapRecord> getKey (ExternalSiteId.Auther auther, int siteId, String externalId)
     {
         return new Key<ExternalMapRecord>(
                 ExternalMapRecord.class,
-                new ColumnExp[] { AUTHER, EXTERNAL_ID },
-                new Comparable[] { auther, externalId });
+                new ColumnExp[] { AUTHER, SITE_ID, EXTERNAL_ID },
+                new Comparable[] { auther, siteId, externalId });
     }
     // AUTO-GENERATED: METHODS END
 }
