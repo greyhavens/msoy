@@ -44,7 +44,17 @@ public class RoomsPanel extends FlowPanel
 
         SmartTable header = new SmartTable(0, 0);
         header.setWidth("100%");
-        String intro = isOwner ? _msgs.roomsMineIntro() : _msgs.roomsIntro(result.owner.toString());
+
+        String intro;
+        if (isOwner) {
+            intro = _msgs.roomsMineIntro();
+        } else {
+            intro = _msgs.roomsIntro(result.owner.toString());
+            if (CShell.isSupport()) {
+                intro += " " + _msgs.roomsIntroSupport();
+            }
+        }
+
         header.setText(0, 0, intro, 1, "TContent");
         if (isOwner) {
             // set up some business for purchasing a room
