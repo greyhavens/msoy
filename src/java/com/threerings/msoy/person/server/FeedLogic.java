@@ -34,7 +34,7 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.web.gwt.ArgNames.FBParam;
-import com.threerings.msoy.web.gwt.ExternalAuther;
+import com.threerings.msoy.web.gwt.ExternalSiteId;
 import com.threerings.msoy.web.gwt.SharedNaviUtil;
 
 import com.threerings.msoy.facebook.server.FacebookLogic;
@@ -294,7 +294,8 @@ public class FeedLogic
         String gameDescription, String templateCode, MediaDesc media, String ...moreData)
     {
         // get the facebook session key - we can't do anything wihout that
-        String sessionKey = _memberRepo.lookupExternalSessionKey(ExternalAuther.FACEBOOK, memberId);
+        String sessionKey = _memberRepo.lookupExternalSessionKey(
+            ExternalSiteId.FB_GAMES, memberId);
         if (sessionKey == null) {
             return;
         }

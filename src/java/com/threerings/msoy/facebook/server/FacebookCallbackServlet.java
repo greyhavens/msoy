@@ -36,6 +36,7 @@ import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 
 import com.threerings.msoy.web.gwt.ArgNames;
 import com.threerings.msoy.web.gwt.Args;
+import com.threerings.msoy.web.gwt.ExternalSiteId;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.gwt.SharedNaviUtil;
@@ -198,6 +199,8 @@ public class FacebookCallbackServlet extends HttpServlet
         creds.uid = StringUtil.getOr(ConnParam.CANVAS_USER.get(req), ConnParam.USER.get(req));
         creds.apiKey = info.apiKey;
         creds.appSecret = info.appSecret;
+        creds.site = info.mainApp ? ExternalSiteId.FB_GAMES :
+            ExternalSiteId.facebookGame(info.game.getIntId());
 
         // create a new visitor info which will either be ignored or used shortly
         VisitorInfo vinfo = new VisitorInfo();
@@ -416,6 +419,7 @@ public class FacebookCallbackServlet extends HttpServlet
                 return token;
             }
 
+            // TODO: verify the credentials are for this game
             return Pages.fromHistory(token).makeToken(
                 Args.fromHistory(token), creds.uid, creds.sessionKey);
         }

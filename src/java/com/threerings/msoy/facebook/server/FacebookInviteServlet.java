@@ -33,7 +33,7 @@ import com.threerings.msoy.server.persist.MemberRepository;
 
 import com.threerings.msoy.web.gwt.ArgNames;
 import com.threerings.msoy.web.gwt.Args;
-import com.threerings.msoy.web.gwt.ExternalAuther;
+import com.threerings.msoy.web.gwt.ExternalSiteId;
 import com.threerings.msoy.web.gwt.MarkupBuilder;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.SharedNaviUtil;
@@ -229,7 +229,7 @@ public class FacebookInviteServlet extends HttpServlet
         }
 
         ExternalMapRecord exRec = _memberRepo.loadExternalMapEntry(
-            ExternalAuther.FACEBOOK, member.memberId);
+            ExternalSiteId.FB_GAMES, member.memberId);
         return new IDPair(member.memberId,
             exRec == null ? 0L : Long.parseLong(exRec.externalId));
     }

@@ -17,8 +17,8 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 public abstract class ExternalCreds
     implements IsSerializable
 {
-    /** Returns the authentication source from whence came these creds. */
-    public abstract ExternalAuther getAuthSource ();
+    /** Returns the external site from whence came these creds. */
+    public abstract ExternalSiteId getSite ();
 
     /** Returns the unique identifier for this user supplied by the external source. */
     public abstract String getUserId ();
@@ -32,6 +32,6 @@ public abstract class ExternalCreds
     @Override // from Object
     public String toString ()
     {
-        return getAuthSource().toString();
+        return getSite().toString();
     }
 }

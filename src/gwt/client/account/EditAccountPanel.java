@@ -29,7 +29,7 @@ import com.threerings.msoy.data.all.CharityInfo;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.gwt.AccountInfo;
-import com.threerings.msoy.web.gwt.ExternalAuther;
+import com.threerings.msoy.web.gwt.ExternalSiteId;
 import com.threerings.msoy.web.gwt.FacebookCreds;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.WebUserService;
@@ -336,7 +336,7 @@ public class EditAccountPanel extends FlowPanel
     protected Widget makeFacebookConnectSection ()
     {
         SmartTable table = new SmartTable(0, 10);
-        if (_accountInfo.externalAuths.containsKey(ExternalAuther.FACEBOOK)) {
+        if (_accountInfo.hasAuther(ExternalSiteId.Auther.FACEBOOK)) {
             table.setText(0, 0, _msgs.fbconnectActive());
             return table;
         }

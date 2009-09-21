@@ -10,7 +10,7 @@ import com.google.inject.Singleton;
 
 import com.samskivert.util.IntSet;
 
-import com.threerings.msoy.web.gwt.ExternalAuther;
+import com.threerings.msoy.web.gwt.ExternalSiteId;
 
 import com.threerings.msoy.facebook.server.FacebookAuthHandler;
 
@@ -26,9 +26,9 @@ public class ExternalAuthLogic
      * Returns the handler for the supplied external authentication source or null if no handler
      * exists for the supplied source.
      */
-    public ExternalAuthHandler getHandler (ExternalAuther auther)
+    public ExternalAuthHandler getHandler (ExternalSiteId site)
     {
-        switch (auther) {
+        switch (site.auther) {
         case FACEBOOK:
             return _faceAuther;
         default:
@@ -40,14 +40,14 @@ public class ExternalAuthLogic
      * Creates friend connections between the specified member and the supplied list of external
      * site friend identifiers.
      */
-    public void wireUpExternalFriends (int memberId, ExternalAuther auther, List<String> friendIds)
+    public void wireUpExternalFriends (int memberId, ExternalSiteId site, List<String> friendIds)
     {
         if (friendIds == null) {
             return; // nothing doing!
         }
 
         IntSet haveIds = _memberRepo.loadFriendIds(memberId);
-        for (int friendId : _memberRepo.lookupExternalAccounts(auther, friendIds)) {
+        for (int friendId : _memberRepo.lookupExternalAccounts(site, friendIds)) {
             if (!haveIds.contains(friendId)) {
                 _memberRepo.noteFriendship(memberId, friendId);
             }

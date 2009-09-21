@@ -70,7 +70,7 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
 import com.threerings.msoy.server.persist.MemberRecord.Flag;
 
-import com.threerings.msoy.web.gwt.ExternalAuther;
+import com.threerings.msoy.web.gwt.ExternalSiteId;
 import com.threerings.msoy.web.gwt.MemberCard;
 
 import com.threerings.presents.annotation.BlockingThread;
@@ -1045,23 +1045,23 @@ public class MemberRepository extends DepotRepository
      * responsible for confirming the authenticity of the external id information) or 0 if no
      * account is associated with that external account.
      */
-    public int lookupExternalAccount (ExternalAuther auther, String externalId)
+    public int lookupExternalAccount (ExternalSiteId site, String externalId)
     {
-        ExternalMapRecord record = load(ExternalMapRecord.getKey(auther, externalId));
+        ExternalMapRecord record = load(ExternalMapRecord.getKey(site.auther, externalId));
         return (record == null) ? 0 : record.memberId;
     }
 
     /**
-     * Loads all external account records for the given auther that match one of the provided
+     * Loads all external account records for the given site that match one of the provided
      * external ids.
      */
     public List<ExternalMapRecord> loadExternalAccounts (
-        ExternalAuther auther, Collection<String> externalIds)
+        ExternalSiteId site, Collection<String> externalIds)
     {
         if (externalIds.isEmpty()) {
             return Collections.emptyList();
         }
-        Where where = new Where(Ops.and(ExternalMapRecord.AUTHER.eq(auther),
+        Where where = new Where(Ops.and(ExternalMapRecord.AUTHER.eq(site.auther),
                                         ExternalMapRecord.EXTERNAL_ID.in(externalIds)));
         return findAll(ExternalMapRecord.class, where);
     }
@@ -1070,48 +1070,48 @@ public class MemberRepository extends DepotRepository
      * Returns the Whirled member ids of any of the supplied external ids that have been mapped to
      * Whirled accounts.
      */
-    public List<Integer> lookupExternalAccounts (ExternalAuther auther, List<String> externalIds)
+    public List<Integer> lookupExternalAccounts (ExternalSiteId site, List<String> externalIds)
     {
         List<Integer> memberIds = Lists.newArrayList();
-        for (ExternalMapRecord record : loadExternalAccounts(auther, externalIds)) {
+        for (ExternalMapRecord record : loadExternalAccounts(site, externalIds)) {
             memberIds.add(record.memberId);
         }
         return memberIds;
     }
 
     /**
-     * Notes that the specified Whirled account is associated with the specified external account.
+     * Notes that the specified Whirled account is associated with the specified external site.
      */
-    public void mapExternalAccount (ExternalAuther auther, String externalId, int memberId)
+    public void mapExternalAccount (ExternalSiteId site, String externalId, int memberId)
     {
         ExternalMapRecord record = new ExternalMapRecord();
-        record.auther = auther;
+        record.auther = site.auther;
         record.externalId = externalId;
         record.memberId = memberId;
         store(record);
     }
 
     /**
-     * Returns a list of all mappings for the specified account to external authentication sources.
+     * Returns a mapping of external sites to external ids for the specified account.
      */
-    public Map<ExternalAuther, String> loadExternalMappings (int memberId)
+    public Map<ExternalSiteId, String> loadExternalMappings (int memberId)
     {
-        Map<ExternalAuther, String> authers = Maps.newHashMap();
+        Map<ExternalSiteId, String> authers = Maps.newHashMap();
         for (ExternalMapRecord emr : findAll(ExternalMapRecord.class,
                                              new Where(ExternalMapRecord.MEMBER_ID, memberId))) {
-            authers.put(emr.auther, emr.externalId);
+            authers.put(new ExternalSiteId(emr.auther, 0), emr.externalId);
         }
         return authers;
     }
 
     /**
      * Loads up and returns the most recently saved external session key for the specified
-     * member. Returns null if the member has no mapping for that authentication source or no saved
+     * member and site. Returns null if the member has no mapping for that site or no saved
      * session key.
      */
-    public String lookupExternalSessionKey (ExternalAuther auther, int memberId)
+    public String lookupExternalSessionKey (ExternalSiteId site, int memberId)
     {
-        ExternalMapRecord record = loadExternalMapEntry(auther, memberId);
+        ExternalMapRecord record = loadExternalMapEntry(site, memberId);
         return (record == null) ? null : record.sessionKey;
     }
 
@@ -1119,20 +1119,20 @@ public class MemberRepository extends DepotRepository
      * Loads up and returns the external map record for the specified member. Returns null if there
      * is no such mapping.
      */
-    public ExternalMapRecord loadExternalMapEntry (ExternalAuther auther, int memberId)
+    public ExternalMapRecord loadExternalMapEntry (ExternalSiteId site, int memberId)
     {
-        return load(ExternalMapRecord.class, ExternalMapRecord.getMemberKey(auther, memberId));
+        return load(ExternalMapRecord.class,
+            ExternalMapRecord.getMemberKey(site.auther, memberId));
     }
 
     /**
-     * Updates the supplied member's session key mapping for the specified external authentication
-     * source.
+     * Updates the supplied member's session key mapping for the specified external site.
      */
-    public void updateExternalSessionKey (ExternalAuther auther, int memberId, String sessionKey)
+    public void updateExternalSessionKey (ExternalSiteId site, int memberId, String sessionKey)
     {
         // load the record so that we can do our update using the primary key
         ExternalMapRecord record = load(
-            ExternalMapRecord.class, ExternalMapRecord.getMemberKey(auther, memberId));
+            ExternalMapRecord.class, ExternalMapRecord.getMemberKey(site.auther, memberId));
         if (record != null) {
             updatePartial(ExternalMapRecord.getKey(record.auther, record.externalId),
                           ExternalMapRecord.SESSION_KEY, sessionKey);
@@ -1142,9 +1142,10 @@ public class MemberRepository extends DepotRepository
     /**
      * Loads all mappings for the given external site.
      */
-    public List<ExternalMapRecord> loadExternalMappings (ExternalAuther auther)
+    public List<ExternalMapRecord> loadExternalMappings (ExternalSiteId site)
     {
-        return findAll(ExternalMapRecord.class, new Where(ExternalMapRecord.AUTHER.eq(auther)));
+        return findAll(ExternalMapRecord.class, new Where(
+            ExternalMapRecord.AUTHER.eq(site.auther)));
     }
 
     /**

@@ -112,7 +112,7 @@ public class MsoyAuthenticator extends Authenticator
         throws ServiceException
     {
         try {
-            ExternalAuthHandler handler = _extLogic.getHandler(creds.getAuthSource());
+            ExternalAuthHandler handler = _extLogic.getHandler(creds.getSite());
             if (handler == null) {
                 log.warning("Asked to auth using unsupported external source", "creds", creds);
                 throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
@@ -123,7 +123,7 @@ public class MsoyAuthenticator extends Authenticator
 
             // see if we've already got member information for this user
             int memberId = _memberRepo.lookupExternalAccount(
-                creds.getAuthSource(), creds.getUserId());
+                creds.getSite(), creds.getUserId());
             if (memberId > 0) {
                 MemberRecord mrec = _memberRepo.loadMember(memberId);
                 if (mrec == null) {
@@ -135,7 +135,7 @@ public class MsoyAuthenticator extends Authenticator
                 // if they have an external session key, update that here
                 if (creds.getSessionKey() != null) {
                     _memberRepo.updateExternalSessionKey(
-                        creds.getAuthSource(), mrec.memberId, creds.getSessionKey());
+                        creds.getSite(), mrec.memberId, creds.getSessionKey());
                 }
                 return mrec;
             }
@@ -147,19 +147,19 @@ public class MsoyAuthenticator extends Authenticator
             // create their account
             MemberRecord mrec = _accountLogic.createExternalAccount(
                 creds.getPlaceholderAddress(), info.displayName, info.profile, vinfo, affiliate,
-                creds.getAuthSource(), creds.getUserId());
+                creds.getSite(), creds.getUserId());
 
             // if they have an external session key, update that here
             if (creds.getSessionKey() != null) {
                 _memberRepo.updateExternalSessionKey(
-                    creds.getAuthSource(), mrec.memberId, creds.getSessionKey());
+                    creds.getSite(), mrec.memberId, creds.getSessionKey());
             }
 
             // wire them up to any friends they might have
             if (info.friendIds != null) {
                 try {
                     _extLogic.wireUpExternalFriends(
-                        mrec.memberId, creds.getAuthSource(), info.friendIds);
+                        mrec.memberId, creds.getSite(), info.friendIds);
                 } catch (Exception e) {
                     log.warning("Failed to connect autocreated external user to friends",
                                 "creds", creds, "friendIds", info.friendIds, e);
@@ -419,7 +419,7 @@ public class MsoyAuthenticator extends Authenticator
     protected void validateExternalCreds (ExternalCreds creds)
         throws ServiceException
     {
-        switch (creds.getAuthSource()) {
+        switch (creds.getSite().auther) {
         case FACEBOOK:
             // FacebookCreds fbcreds = (FacebookCreds)creds;
             // TODO: validate creds

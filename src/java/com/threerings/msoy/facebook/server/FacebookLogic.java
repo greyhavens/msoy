@@ -72,7 +72,7 @@ import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.web.gwt.ArgNames.FBParam;
 import com.threerings.msoy.web.gwt.CookieNames;
-import com.threerings.msoy.web.gwt.ExternalAuther;
+import com.threerings.msoy.web.gwt.ExternalSiteId;
 import com.threerings.msoy.web.gwt.FacebookCreds;
 import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.gwt.SessionData;
@@ -308,7 +308,7 @@ public class FacebookLogic
 
         // filter by those hooked up to Whirled and
         List<ExternalMapRecord> exRecs = _memberRepo.loadExternalAccounts(
-            ExternalAuther.FACEBOOK, facebookFriendIds);
+            ExternalSiteId.FB_GAMES, facebookFriendIds);
         if (includeSelf) {
             exRecs = Lists.newArrayList(exRecs);
             exRecs.add(sinf.mapRec);
@@ -587,7 +587,7 @@ public class FacebookLogic
     {
         SessionInfo sinf = new SessionInfo();
         sinf.memRec = mrec;
-        sinf.mapRec = _memberRepo.loadExternalMapEntry(ExternalAuther.FACEBOOK, mrec.memberId);
+        sinf.mapRec = _memberRepo.loadExternalMapEntry(ExternalSiteId.FB_GAMES, mrec.memberId);
         if (sinf.mapRec == null || sinf.mapRec.sessionKey == null) {
             throw new ServiceException(FacebookCodes.NO_SESSION);
         }
@@ -655,7 +655,7 @@ public class FacebookLogic
 
     protected void updateDemographics ()
     {
-        List<ExternalMapRecord> users = _memberRepo.loadExternalMappings(ExternalAuther.FACEBOOK);
+        List<ExternalMapRecord> users = _memberRepo.loadExternalMappings(ExternalSiteId.FB_GAMES);
         log.info("Starting demographics update", "users", users.size());
 
         final int BATCH_SIZE = 200;
@@ -881,7 +881,7 @@ public class FacebookLogic
             _facebookRepo.noteNotificationStarted(_notifRec.id);
 
             final List<ExternalMapRecord> allUsers =
-                _memberRepo.loadExternalMappings(ExternalAuther.FACEBOOK);
+                _memberRepo.loadExternalMappings(ExternalSiteId.FB_GAMES);
             log.info("Kicking off notifications daisy-chain", "size", allUsers.size());
 
             final FacebookJaxbRestClient client = getFacebookClient(BATCH_READ_TIMEOUT);

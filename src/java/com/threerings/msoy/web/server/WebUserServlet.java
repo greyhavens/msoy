@@ -257,7 +257,7 @@ public class WebUserServlet extends MsoyServiceServlet
         throws ServiceException
     {
         MemberRecord mrec = requireAuthedUser();
-        ExternalAuthHandler handler = _extLogic.getHandler(creds.getAuthSource());
+        ExternalAuthHandler handler = _extLogic.getHandler(creds.getSite());
         if (handler == null) {
             log.warning("Requested to link to unknown external account type", "who", mrec.who(),
                         "creds", creds, "override", override);
@@ -268,19 +268,19 @@ public class WebUserServlet extends MsoyServiceServlet
         handler.validateCredentials(creds);
 
         // determine whether or not this external id is already mapped
-        int memberId = _memberRepo.lookupExternalAccount(creds.getAuthSource(), creds.getUserId());
+        int memberId = _memberRepo.lookupExternalAccount(creds.getSite(), creds.getUserId());
         if (memberId != 0 && !override) {
             return false;
         }
 
         // if we made it this far, then wire things on up
-        _memberRepo.mapExternalAccount(creds.getAuthSource(), creds.getUserId(), mrec.memberId);
+        _memberRepo.mapExternalAccount(creds.getSite(), creds.getUserId(), mrec.memberId);
 
         // look to see if we should map any friends
         ExternalAuthHandler.Info info = null;
         try {
             info = handler.getInfo(creds);
-            _extLogic.wireUpExternalFriends(mrec.memberId, creds.getAuthSource(), info.friendIds);
+            _extLogic.wireUpExternalFriends(mrec.memberId, creds.getSite(), info.friendIds);
         } catch (Exception e) {
             log.warning("Failed to wire up external friends", "for", mrec.who(), "creds", creds,
                         "info", info, e);
@@ -415,7 +415,7 @@ public class WebUserServlet extends MsoyServiceServlet
         }
 
         // load up any external authentication source mappings for this account
-        ainfo.externalAuths = _memberRepo.loadExternalMappings(mrec.memberId);
+        ainfo.externalSites = _memberRepo.loadExternalMappings(mrec.memberId);
 
         return ainfo;
     }

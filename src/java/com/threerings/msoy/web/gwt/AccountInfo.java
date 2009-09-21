@@ -11,7 +11,6 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 import com.threerings.msoy.data.all.CharityInfo;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.web.gwt.ExternalAuther;
 
 /**
  * Contains all account information not already contained in WebCreds.
@@ -39,6 +38,19 @@ public class AccountInfo implements IsSerializable
     /** Map of member ID to charity photos. */
     public Map<Integer, MediaDesc> charityPhotos;
 
-    /** A map of external auth-source connections. */
-    public Map<ExternalAuther, String> externalAuths;
+    /** A map of external site connections. */
+    public Map<ExternalSiteId, String> externalSites;
+
+    /**
+     * Checks if our external sites include one with the given auther.
+     */
+    public boolean hasAuther (ExternalSiteId.Auther auther)
+    {
+        for (ExternalSiteId site : externalSites.keySet()) {
+            if (site.auther == auther) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

@@ -12,7 +12,7 @@ import com.samskivert.depot.annotation.Index;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.expression.ColumnExp;
 
-import com.threerings.msoy.web.gwt.ExternalAuther;
+import com.threerings.msoy.web.gwt.ExternalSiteId;
 
 /**
  * Maps our member accounts to external user ids. Used to integrate with external services like
@@ -34,7 +34,7 @@ public class ExternalMapRecord extends PersistentRecord
     public static final int SCHEMA_VERSION = 4;
 
     /** The partner that maintains the external user id. */
-    @Id public ExternalAuther auther;
+    @Id public ExternalSiteId.Auther auther;
 
     /** The external user identifier. Might be numberic, but we'll store it as a string in case we
      * one day want to support an external site that uses string identifiers. */
@@ -52,7 +52,7 @@ public class ExternalMapRecord extends PersistentRecord
     /**
      * Returns a where clause that matches the specified (non-primary) key.
      */
-    public static Where getMemberKey (ExternalAuther auther, int memberId)
+    public static Where getMemberKey (ExternalSiteId.Auther auther, int memberId)
     {
         return new Where(AUTHER, auther, MEMBER_ID, memberId);
     }
@@ -62,7 +62,7 @@ public class ExternalMapRecord extends PersistentRecord
      * Create and return a primary {@link Key} to identify a {@link ExternalMapRecord}
      * with the supplied key values.
      */
-    public static Key<ExternalMapRecord> getKey (ExternalAuther auther, String externalId)
+    public static Key<ExternalMapRecord> getKey (ExternalSiteId.Auther auther, String externalId)
     {
         return new Key<ExternalMapRecord>(
                 ExternalMapRecord.class,

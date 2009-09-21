@@ -18,7 +18,7 @@ import com.samskivert.util.StringUtil;
 
 import com.threerings.presents.annotation.BlockingThread;
 
-import com.threerings.msoy.web.gwt.ExternalAuther;
+import com.threerings.msoy.web.gwt.ExternalSiteId;
 import com.threerings.msoy.web.gwt.ServiceCodes;
 import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.server.AffiliateCookie;
@@ -194,12 +194,12 @@ public class AccountLogic
      */
     public MemberRecord createExternalAccount (
         String email, String displayName, ProfileRecord profile, VisitorInfo vinfo,
-        AffiliateCookie affiliate, ExternalAuther exAuther, String exAuthUserId)
+        AffiliateCookie affiliate, ExternalSiteId exSite, String exAuthUserId)
         throws ServiceException
     {
         // TODO: handle affiliate.autoFriend
         AccountData data = new AccountData(true, email, "", displayName, vinfo, affiliate);
-        data.exAuther = exAuther;
+        data.exSite = exSite;
         data.exAuthUserId = exAuthUserId;
         // TODO: import more information as long as it is not a privacy violiation
         if (profile != null) {
@@ -421,8 +421,8 @@ public class AccountLogic
             stalerec = mrec;
 
             // if we're coming from an external authentication source, note that
-            if (data.exAuther != null) {
-                _memberRepo.mapExternalAccount(data.exAuther, data.exAuthUserId, mrec.memberId);
+            if (data.exSite != null) {
+                _memberRepo.mapExternalAccount(data.exSite, data.exAuthUserId, mrec.memberId);
             }
 
             // create a blank room for them, store it
@@ -535,7 +535,7 @@ public class AccountLogic
         public String realName;
         public InvitationRecord invite;
         public int[] birthdayYMD;
-        public ExternalAuther exAuther;
+        public ExternalSiteId exSite;
         public String exAuthUserId;
         public String location;
 

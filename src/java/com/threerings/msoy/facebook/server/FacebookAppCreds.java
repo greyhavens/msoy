@@ -3,8 +3,8 @@
 
 package com.threerings.msoy.facebook.server;
 
-import com.threerings.msoy.web.gwt.ExternalAuther;
 import com.threerings.msoy.web.gwt.ExternalCreds;
+import com.threerings.msoy.web.gwt.ExternalSiteId;
 
 /**
  * Credentials for a user authenticating from an iframed Facebook app. These are never sent
@@ -24,9 +24,12 @@ public class FacebookAppCreds extends ExternalCreds
     /** The session key of the viewing user (may be null). */
     public String sessionKey;
 
+    /** The external site these credentials are for. */
+    public ExternalSiteId site;
+
     @Override // from ExternalCreds
-    public ExternalAuther getAuthSource () {
-        return ExternalAuther.FACEBOOK;
+    public ExternalSiteId getSite () {
+        return site;
     }
 
     @Override // from ExternalCreds

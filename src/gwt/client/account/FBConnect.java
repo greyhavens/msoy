@@ -8,6 +8,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.threerings.gwt.util.CookieUtil;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
+import com.threerings.msoy.web.gwt.ExternalSiteId;
 import com.threerings.msoy.web.gwt.FacebookCreds;
 import com.threerings.msoy.web.gwt.SessionData;
 
@@ -34,6 +35,9 @@ public class FBConnect
         String expstr = CookieUtil.get(prefix + "expires");
         creds.expires = (expstr.length() > 0) ? Integer.parseInt(expstr) : 0;
         creds.sig = CookieUtil.get(DeploymentConfig.facebookKey);
+        // FB connect users always sign up as Whirled Games users
+        // TODO: does this make sense?
+        creds.site = ExternalSiteId.FB_GAMES;
         return creds.haveAllFields() ? creds : null;
     }
 

@@ -23,6 +23,9 @@ public class FacebookCreds extends ExternalCreds
     /** The signature computed for these credentials. From the APIKEY cookie. */
     public String sig;
 
+    /** The site that these credentials come from. Normally just FB_GAMES. */
+    public ExternalSiteId site;
+
     /**
      * Returns true if all of our fields have some non-blank value. Note that we can only validate
      * the *actual* validity of the values on the server where we can recompute and verify {@link
@@ -35,9 +38,9 @@ public class FacebookCreds extends ExternalCreds
     }
 
     @Override // from ExternalCreds
-    public ExternalAuther getAuthSource ()
+    public ExternalSiteId getSite ()
     {
-        return ExternalAuther.FACEBOOK;
+        return site;
     }
 
     @Override // from ExternalCreds
@@ -61,7 +64,7 @@ public class FacebookCreds extends ExternalCreds
     @Override // from Object
     public String toString ()
     {
-        return getAuthSource() + "[uid=" + uid + ", key=" + sessionKey + ", ss=" + ss +
+        return getSite() + "[uid=" + uid + ", key=" + sessionKey + ", ss=" + ss +
             ", exp=" + expires + ", sig=" + sig + "]";
     }
 }
