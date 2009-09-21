@@ -45,21 +45,34 @@ public class DailyAccountsCreated
         public int affiliated;
         public int fromAd;
         public int organic;
+        public int fromFacebookAd;
+        public int facebookAffiliated;
 
         @Override
         public void doInit (DayKey key, EventData eventData)
         {
             total = 1;
-
+            String vector = eventData.getString("vector");
+            boolean facebook = vector.startsWith("fb.");
             if (eventData.getInt("affiliateId") > 0) {
-                affiliated = 1;
-            } else if (eventData.getString("vector").startsWith("a.")) {
+                if (facebook) {
+                    facebookAffiliated = 1;
+                } else {
+                    affiliated = 1;
+                }
+
+            } else if (vector.startsWith("a.")) {
                 fromAd = 1;
+
+            } else if (facebook) {
+                // sort of temporary... we want to track facebook ads but there is/was no special
+                // ad vector, so assume non-affiliated facebook vectors are ads
+                fromFacebookAd = 1;
+
             } else {
                 organic = 1;
             }
         }
-
     }
 
     public CountTypes types;
@@ -69,7 +82,9 @@ public class DailyAccountsCreated
     {
         if (key.day.before(_midnight)) {
             writer.write(builder.create("date", key.day, "total", types.total, "affiliated",
-                types.affiliated, "fromAd", types.fromAd, "organic", types.organic));
+                types.affiliated, "fromAd", types.fromAd, "organic", types.organic,
+                "facebookAd", types.fromFacebookAd,
+                "facebookAffiliated", types.facebookAffiliated));
         }
     }
 
