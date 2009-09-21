@@ -270,11 +270,6 @@ public class GroupServlet extends MsoyServiceServlet
             info.rank = _groupRepo.getRank(groupId, mrec.memberId);
         }
 
-        // check visibility
-        if (!isVisible(mrec, grec.policy, info.rank)) {
-            return null;
-        }
-
         return info;
     }
 
