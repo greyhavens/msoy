@@ -30,7 +30,7 @@ public class GroupInviteDisplay extends MailPayloadDisplay
     @Override // from MailPayloadDisplay
     public Widget widgetForRecipient ()
     {
-        return new DisplayWidget(_invitePayload.responded == false);
+        return new DisplayWidget(!_invitePayload.responded);
     }
 
     @Override // from MailPayloadDisplay
@@ -44,7 +44,6 @@ public class GroupInviteDisplay extends MailPayloadDisplay
     {
         public DisplayWidget (boolean enabled)
         {
-            super();
             _enabled = enabled;
             setStyleName("groupInvitation");
             refreshUI();
@@ -74,18 +73,20 @@ public class GroupInviteDisplay extends MailPayloadDisplay
             Button joinButton = new Button(_msgs.groupBtnJoin());
             joinButton.addStyleName("JoinButton");
             joinButton.setEnabled(_enabled);
-            new ClickCallback<Void>(joinButton) {
-                @Override protected boolean callService () {
-                    _groupsvc.joinGroup(_invitePayload.groupId, this);
-                    return true;
-                }
-                @Override protected boolean gotResult (Void result) {
-                    _invitePayload.responded = true;
-                    updateState(_invitePayload, new InfoCallback.NOOP<Void>());
-                    refreshUI();
-                    return true;
-                }
-            };
+            if (_enabled) {
+                new ClickCallback<Void>(joinButton) {
+                    @Override protected boolean callService () {
+                        _groupsvc.joinGroup(_invitePayload.groupId, this);
+                        return true;
+                    }
+                    @Override protected boolean gotResult (Void result) {
+                        _invitePayload.responded = true;
+                        updateState(_invitePayload, new InfoCallback.NOOP<Void>());
+                        refreshUI();
+                        return true;
+                    }
+                };
+            }
             add(joinButton);
             add(WidgetUtil.makeShim(5, 5));
             add(Link.create(_msgs.groupLink(""+_info.name), Pages.GROUPS, "d",
