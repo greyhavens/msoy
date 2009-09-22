@@ -15,10 +15,12 @@ import com.threerings.msoy.group.data.all.GroupMembership.Rank;
 import com.threerings.msoy.group.gwt.GroupService;
 import com.threerings.msoy.group.gwt.GroupServiceAsync;
 import com.threerings.msoy.mail.gwt.GroupInvitePayload;
+import com.threerings.msoy.web.gwt.Pages;
 
 import client.ui.MsoyUI;
 import client.util.ClickCallback;
 import client.util.InfoCallback;
+import client.util.Link;
 
 /**
  * Displays a group invitation payload.
@@ -85,6 +87,9 @@ public class GroupInviteDisplay extends MailPayloadDisplay
                 }
             };
             add(joinButton);
+            add(WidgetUtil.makeShim(5, 5));
+            add(Link.create(_msgs.groupLink(""+_info.name), Pages.GROUPS, "d",
+                _info.name.getGroupId()));
         }
 
         protected boolean _enabled;
