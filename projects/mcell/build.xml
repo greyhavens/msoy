@@ -7,10 +7,11 @@
 
   <property name="deploy.dir" value="cell/dist"/>
   <property name="cell.deploy.dir" value="cell/dist"/>
+  <property name="ooo.configsource" value="ooo.msoyconfig.source"/>
   <import file="cell/build-support.xml"/>
 
   <target name="prepare">
-      <prepare-cell configdir="etc">
+      <prepare-cell configdir="projects/mcell/etc">
         <cell-libs>
             <fileset dir="${base.dir}/dist/lib" includes="narya-base.jar,narya-distrib.jar"/>
             <fileset refid="cell.libs"/>
