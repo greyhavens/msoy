@@ -160,6 +160,7 @@ public class GroupServlet extends MsoyServiceServlet
         detail.homeSnapshot = _sceneRepo.loadSceneSnapshot(grec.homeSceneId);
         detail.creator = _memberRepo.loadMemberName(grec.creatorId);
         detail.memberCount = _groupRepo.countMembers(grec.groupId);
+        detail.myRank = Rank.NON_MEMBER;
 
         // determine our rank info if we're a member
         if (mrec != null) {
