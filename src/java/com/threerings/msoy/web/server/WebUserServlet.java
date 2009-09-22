@@ -280,7 +280,7 @@ public class WebUserServlet extends MsoyServiceServlet
         ExternalAuthHandler.Info info = null;
         try {
             info = handler.getInfo(creds);
-            _extLogic.wireUpExternalFriends(mrec.memberId, creds.getSite(), info.friendIds);
+            _extLogic.wireUpExternalFriends(mrec.memberId, creds.getSite().auther, info.friendIds);
         } catch (Exception e) {
             log.warning("Failed to wire up external friends", "for", mrec.who(), "creds", creds,
                         "info", info, e);

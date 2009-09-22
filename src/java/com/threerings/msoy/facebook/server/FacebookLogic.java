@@ -306,7 +306,7 @@ public class FacebookLogic
             throw new ServiceException(fe.getMessage());
         }
 
-        // filter by those hooked up to Whirled and
+        // filter by those hooked up to Whirled and tack on self if appropriate
         List<ExternalMapRecord> exRecs = _memberRepo.loadExternalAccounts(
             ExternalSiteId.FB_GAMES, facebookFriendIds);
         if (includeSelf) {

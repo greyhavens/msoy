@@ -40,14 +40,15 @@ public class ExternalAuthLogic
      * Creates friend connections between the specified member and the supplied list of external
      * site friend identifiers.
      */
-    public void wireUpExternalFriends (int memberId, ExternalSiteId site, List<String> friendIds)
+    public void wireUpExternalFriends (
+        int memberId, ExternalSiteId.Auther auther, List<String> friendIds)
     {
         if (friendIds == null) {
             return; // nothing doing!
         }
 
         IntSet haveIds = _memberRepo.loadFriendIds(memberId);
-        for (int friendId : _memberRepo.lookupExternalAccounts(site, friendIds)) {
+        for (int friendId : _memberRepo.lookupExternalAccounts(auther, friendIds)) {
             if (!haveIds.contains(friendId)) {
                 _memberRepo.noteFriendship(memberId, friendId);
             }

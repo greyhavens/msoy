@@ -1072,6 +1072,25 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
+     * Returns any mapping that associates the given site or related sites with the given user,
+     * or null if the account is not associated with any related site. An exact site match is
+     * returned if it exists.
+     */
+    public ExternalMapRecord lookupAnyExternalAccount (ExternalSiteId site, String externalId)
+    {
+        ExternalMapRecord record = load(ExternalMapRecord.getKey(site, externalId));
+        if (record == null) {
+            // the order by clause is just for determinism
+            List<ExternalMapRecord> related = findAll(ExternalMapRecord.class, new Where(Ops.and(
+                ExternalMapRecord.AUTHER.eq(site.auther),
+                ExternalMapRecord.EXTERNAL_ID.eq(externalId))),
+                OrderBy.ascending(ExternalMapRecord.SITE_ID), new Limit(0, 1));
+            record = related.size() > 0 ? related.get(0) : null;
+        }
+        return record;
+    }
+
+    /**
      * Loads all external account records for the given site that match one of the provided
      * external ids.
      */
@@ -1082,18 +1101,24 @@ public class MemberRepository extends DepotRepository
             return Collections.emptyList();
         }
         Where where = new Where(Ops.and(ExternalMapRecord.AUTHER.eq(site.auther),
+                                        ExternalMapRecord.SITE_ID.eq(site.siteId),
                                         ExternalMapRecord.EXTERNAL_ID.in(externalIds)));
         return findAll(ExternalMapRecord.class, where);
     }
 
     /**
      * Returns the Whirled member ids of any of the supplied external ids that have been mapped to
-     * Whirled accounts.
+     * Whirled accounts using the given authentication source. This should only be used in
+     * situations where maintaining site-specific data is not required.
      */
-    public List<Integer> lookupExternalAccounts (ExternalSiteId site, List<String> externalIds)
+    public List<Integer> lookupExternalAccounts (ExternalSiteId.Auther auther, List<String> extIds)
     {
+        if (extIds.isEmpty()) {
+            return Collections.emptyList();
+        }
         List<Integer> memberIds = Lists.newArrayList();
-        for (ExternalMapRecord record : loadExternalAccounts(site, externalIds)) {
+        for (ExternalMapRecord record : findAll(ExternalMapRecord.class, new Where(Ops.and(
+            ExternalMapRecord.AUTHER.eq(auther), ExternalMapRecord.EXTERNAL_ID.in(extIds))))) {
             memberIds.add(record.memberId);
         }
         return memberIds;
@@ -1106,6 +1131,7 @@ public class MemberRepository extends DepotRepository
     {
         ExternalMapRecord record = new ExternalMapRecord();
         record.auther = site.auther;
+        record.siteId = site.siteId;
         record.externalId = externalId;
         record.memberId = memberId;
         store(record);
@@ -1119,7 +1145,7 @@ public class MemberRepository extends DepotRepository
         Map<ExternalSiteId, String> authers = Maps.newHashMap();
         for (ExternalMapRecord emr : findAll(ExternalMapRecord.class,
                                              new Where(ExternalMapRecord.MEMBER_ID, memberId))) {
-            authers.put(new ExternalSiteId(emr.auther, 0), emr.externalId);
+            authers.put(emr.getSiteId(), emr.externalId);
         }
         return authers;
     }
@@ -1136,8 +1162,8 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
-     * Loads up and returns the external map record for the specified member. Returns null if there
-     * is no such mapping.
+     * Loads up and returns the external map record for the specified member and external site.
+     * Returns null if there is no such mapping.
      */
     public ExternalMapRecord loadExternalMapEntry (ExternalSiteId site, int memberId)
     {

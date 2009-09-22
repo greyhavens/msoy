@@ -32,6 +32,7 @@ import com.threerings.msoy.data.all.VisitorInfo;
 
 import com.threerings.msoy.server.AuthenticationDomain.Account;
 
+import com.threerings.msoy.server.persist.ExternalMapRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.persist.MemberWarningRecord;
@@ -121,17 +122,22 @@ public class MsoyAuthenticator extends Authenticator
             // make sure the supplied external creds are valid
             handler.validateCredentials(creds);
 
-            // see if we've already got member information for this user
-            int memberId = _memberRepo.lookupExternalAccount(
+            // see if we've already got member information for this user from any related site
+            ExternalMapRecord mapping = _memberRepo.lookupAnyExternalAccount(
                 creds.getSite(), creds.getUserId());
-            if (memberId > 0) {
-                MemberRecord mrec = _memberRepo.loadMember(memberId);
+            if (mapping != null) {
+                MemberRecord mrec = _memberRepo.loadMember(mapping.memberId);
                 if (mrec == null) {
                     log.warning("Missing member record for which we have an extermal mapping",
-                                "creds", creds, "memberId", memberId);
+                                "creds", creds, "memberId", mapping.memberId);
                     throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
                 }
                 checkWarnAndBan(mrec.memberId);
+                if (!mapping.getSiteId().equals(creds.getSite())) {
+                    // insert a new mapping if they are entering from a new site
+                    _memberRepo.mapExternalAccount(
+                        creds.getSite(), creds.getUserId(), mrec.memberId);
+                }
                 // if they have an external session key, update that here
                 if (creds.getSessionKey() != null) {
                     _memberRepo.updateExternalSessionKey(
@@ -159,7 +165,7 @@ public class MsoyAuthenticator extends Authenticator
             if (info.friendIds != null) {
                 try {
                     _extLogic.wireUpExternalFriends(
-                        mrec.memberId, creds.getSite(), info.friendIds);
+                        mrec.memberId, creds.getSite().auther, info.friendIds);
                 } catch (Exception e) {
                     log.warning("Failed to connect autocreated external user to friends",
                                 "creds", creds, "friendIds", info.friendIds, e);

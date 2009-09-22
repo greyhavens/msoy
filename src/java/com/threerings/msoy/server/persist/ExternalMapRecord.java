@@ -56,6 +56,14 @@ public class ExternalMapRecord extends PersistentRecord
     public String sessionKey;
 
     /**
+     * Returns the site identifier for this mapping.
+     */
+    public ExternalSiteId getSiteId ()
+    {
+        return new ExternalSiteId(auther, siteId);
+    }
+
+    /**
      * Returns a where clause that matches the specified (non-primary) key.
      */
     public static Where getMemberKey (ExternalSiteId site, int memberId)
