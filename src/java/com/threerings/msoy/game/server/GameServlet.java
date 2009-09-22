@@ -60,10 +60,11 @@ import com.threerings.msoy.comment.server.persist.CommentRepository;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
 import com.threerings.msoy.person.server.persist.ProfileRepository;
 
+import com.threerings.msoy.facebook.gwt.FacebookInfo;
 import com.threerings.msoy.facebook.server.FacebookLogic;
+import com.threerings.msoy.facebook.server.persist.FacebookRepository;
 import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.game.gwt.ArcadeData;
-import com.threerings.msoy.game.gwt.FacebookInfo;
 import com.threerings.msoy.game.gwt.GameCard;
 import com.threerings.msoy.game.gwt.GameCode;
 import com.threerings.msoy.game.gwt.GameDetail;
@@ -444,7 +445,7 @@ public class GameServlet extends MsoyServiceServlet
         GameInfoRecord info = requireIsGameCreator(gameId, mrec);
         GameData data = new GameData();
         data.info = info.toGameInfo(0);
-        data.facebook = _mgameRepo.loadFacebookInfo(info.gameId);
+        data.facebook = _facebookRepo.loadFacebookInfo(info.gameId);
         data.devCode = _mgameRepo.loadGameCode(GameInfo.toDevId(info.gameId), false);
         data.pubCode = _mgameRepo.loadGameCode(info.gameId, false);
         return data;
@@ -666,7 +667,7 @@ public class GameServlet extends MsoyServiceServlet
     {
         MemberRecord mrec = requireAuthedUser();
         requireIsGameCreator(info.gameId, mrec);
-        _mgameRepo.updateFacebookInfo(info);
+        _facebookRepo.updateFacebookInfo(info);
     }
 
     // from interface GameService
@@ -1156,6 +1157,7 @@ public class GameServlet extends MsoyServiceServlet
     // our dependencies
     @Inject protected CommentRepository _commentRepo;
     @Inject protected FacebookLogic _facebookLogic;
+    @Inject protected FacebookRepository _facebookRepo;
     @Inject protected GameLogic _gameLogic;
     @Inject protected GameNodeActions _gameActions;
     @Inject protected GroupRepository _groupRepo;

@@ -22,6 +22,7 @@ import com.samskivert.depot.clause.Limit;
 import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.expression.ColumnExp;
+import com.threerings.msoy.facebook.gwt.FacebookInfo;
 
 /**
  * Manages persistent structures for integrating with Facebook.
@@ -36,6 +37,29 @@ public class FacebookRepository extends DepotRepository
     public FacebookRepository (PersistenceContext context)
     {
         super(context);
+    }
+
+    /**
+     * Loads the Facebook info for the specified game. If no info is registered for the game in
+     * question a blank record is created with gameId filled in but no key or secret.
+     */
+    public FacebookInfo loadFacebookInfo (int gameId)
+    {
+        FacebookInfoRecord info = load(FacebookInfoRecord.getKey(gameId));
+        if (info != null) {
+            return info.toFacebookInfo();
+        }
+        FacebookInfo blank = new FacebookInfo();
+        blank.gameId = gameId;
+        return blank;
+    }
+
+    /**
+     * Creates or updates the Facebook info for the game referenced by the supplied record.
+     */
+    public void updateFacebookInfo (FacebookInfo info)
+    {
+        store(FacebookInfoRecord.fromFacebookInfo(info));
     }
 
     /**
@@ -224,5 +248,6 @@ public class FacebookRepository extends DepotRepository
         classes.add(FacebookTemplateRecord.class);
         classes.add(FacebookActionRecord.class);
         classes.add(FacebookNotificationRecord.class);
+        classes.add(FacebookInfoRecord.class);
     }
 }

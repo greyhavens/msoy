@@ -12,6 +12,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.RatingResult;
+import com.threerings.msoy.facebook.gwt.FacebookInfo;
 import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.item.data.all.GameItem;
 

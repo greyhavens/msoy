@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.game.server.persist;
+package com.threerings.msoy.facebook.server.persist;
 
 import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistentRecord;
@@ -9,7 +9,7 @@ import com.samskivert.depot.annotation.Column;
 import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.expression.ColumnExp;
 
-import com.threerings.msoy.game.gwt.FacebookInfo;
+import com.threerings.msoy.facebook.gwt.FacebookInfo;
 
 /**
  * Contains information on a game's Facebook app.

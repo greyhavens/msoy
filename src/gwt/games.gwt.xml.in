@@ -3,6 +3,7 @@
   <inherits name="game"/>
   <inherits name="trophy"/>
   <inherits name="reminders"/>
+  <inherits name="facebookbase"/>
 
   <source path="com/kisgergely/gwt/canvas/client"/>
 

@@ -16,7 +16,7 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.gwt.util.StringUtil;
 
-import com.threerings.msoy.game.gwt.FacebookInfo;
+import com.threerings.msoy.facebook.gwt.FacebookInfo;
 import com.threerings.msoy.game.gwt.GameService;
 import com.threerings.msoy.game.gwt.GameServiceAsync;
 import com.threerings.msoy.game.gwt.GameThumbnail;

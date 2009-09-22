@@ -102,6 +102,7 @@ import com.threerings.msoy.avrg.server.persist.AVRGameRepository;
 import com.threerings.msoy.avrg.server.persist.AgentStateRecord;
 import com.threerings.msoy.avrg.server.persist.GameStateRecord;
 
+import com.threerings.msoy.facebook.server.persist.FacebookRepository;
 import com.threerings.msoy.game.data.LobbyObject;
 import com.threerings.msoy.game.data.MsoyGameCodes;
 import com.threerings.msoy.game.data.MsoyGameConfig;
@@ -1091,7 +1092,7 @@ public class GameGameRegistry
         GameContent content = new GameContent();
         content.gameId = gameId;
         content.game = _mgameRepo.loadGame(gameId);
-        content.facebook = _mgameRepo.loadFacebookInfo(gameId);
+        content.facebook = _facebookRepo.loadFacebookInfo(gameId);
         content.metrics = _mgameRepo.loadGameMetrics(gameId);
         content.code = _mgameRepo.loadGameCode(gameId, true);
 
@@ -1285,6 +1286,7 @@ public class GameGameRegistry
 
     // various and sundry repositories for loading persistent data
     @Inject protected AVRGameRepository _avrgRepo;
+    @Inject protected FacebookRepository _facebookRepo;
     @Inject protected ItemPackRepository _ipackRepo;
     @Inject protected LevelPackRepository _lpackRepo;
     @Inject protected MsoyGameRepository _mgameRepo;

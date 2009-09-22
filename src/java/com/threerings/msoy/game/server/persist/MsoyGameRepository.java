@@ -45,8 +45,8 @@ import com.samskivert.depot.operator.FullText;
 import com.threerings.msoy.server.persist.RatingRecord;
 import com.threerings.msoy.server.persist.RatingRepository;
 
+import com.threerings.msoy.facebook.server.persist.FacebookInfoRecord;
 import com.threerings.msoy.game.gwt.ArcadeData;
-import com.threerings.msoy.game.gwt.FacebookInfo;
 import com.threerings.msoy.game.gwt.GameCode;
 import com.threerings.msoy.game.gwt.GameGenre;
 import com.threerings.msoy.game.gwt.GameInfo;
@@ -330,29 +330,6 @@ public class MsoyGameRepository extends DepotRepository
     public GameMetricsRecord loadGameMetrics (int gameId)
     {
         return load(GameMetricsRecord.getKey(Math.abs(gameId)));
-    }
-
-    /**
-     * Loads the Facebook info for the specified game. If no info is registered for the game in
-     * question a blank record is created with gameId filled in but no key or secret.
-     */
-    public FacebookInfo loadFacebookInfo (int gameId)
-    {
-        FacebookInfoRecord info = load(FacebookInfoRecord.getKey(gameId));
-        if (info != null) {
-            return info.toFacebookInfo();
-        }
-        FacebookInfo blank = new FacebookInfo();
-        blank.gameId = gameId;
-        return blank;
-    }
-
-    /**
-     * Creates or updates the Facebook info for the game referenced by the supplied record.
-     */
-    public void updateFacebookInfo (FacebookInfo info)
-    {
-        store(FacebookInfoRecord.fromFacebookInfo(info));
     }
 
     /**
@@ -673,7 +650,6 @@ public class MsoyGameRepository extends DepotRepository
     protected void getManagedRecords (Set<Class<? extends PersistentRecord>> classes)
     {
         classes.add(ArcadeEntryRecord.class);
-        classes.add(FacebookInfoRecord.class);
         classes.add(GameCodeRecord.class);
         classes.add(GameInfoRecord.class);
         classes.add(GameMetricsRecord.class);
