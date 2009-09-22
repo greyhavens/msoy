@@ -1068,7 +1068,7 @@
   </target>
 
   <!-- builds the whirled-specific Panopticion cell -->
-  <target name="distcell" depends="dist">
+  <target name="distcell" depends="prepare,mavendeps,dist">
     <ant dir="projects/mcell" target="dist" inheritRefs="false" inheritAll="false">
         <reference refid="ooo.msoyconfig.source"/>
         <reference refid="ooo.oooconfig.source"/>
