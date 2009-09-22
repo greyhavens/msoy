@@ -16,6 +16,7 @@ import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.mail.gwt.GameInvitePayload;
 
+import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
 /**
@@ -30,7 +31,7 @@ public class GameInviteDisplay extends MailPayloadDisplay
         widget.setText(0, 0, _msgs.gameInvitation(), 0, "rowPanelCell");
         widget.setWidget(0, 1, new Button(_msgs.gameBtnPlay(), new ClickHandler () {
             public void onClick (ClickEvent event) {
-                Link.go(Pages.WORLD, _payload.args);
+                Link.go(Pages.WORLD, Args.fromToken(_payload.args));
             }
         }));
         return widget;
