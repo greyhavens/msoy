@@ -855,6 +855,18 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
+     * Removes all member ids from the give recipient list that have muted the given sender. This
+     * can be used to filter the sending of player-to-player bulk mail messages.
+     */
+    public void filterMuterRecipients (int senderId, Set<Integer> recipientIds)
+    {
+        for (MuteRecord mrec : findAll(MuteRecord.class, new Where(Ops.and(
+            MuteRecord.MUTEE_ID.eq(senderId), MuteRecord.MUTER_ID.in(recipientIds))))) {
+            recipientIds.remove(mrec.muterId);
+        }
+    }
+
+    /**
      * Update the specified mute relationship.
      */
     public void setMuted (int muterId, int muteeId, boolean muted)

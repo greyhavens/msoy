@@ -471,16 +471,11 @@ public class AdminServlet extends MsoyServiceServlet
             result.deletionCount ++;
         }
 
-        // notify the owners of the deletion
-        for (final int ownerId : owners) {
-            if (ownerId == memrec.memberId) {
-                continue; // admin deleting their own item? sure, whatever!
-            }
-            final MemberRecord owner = _memberRepo.loadMember(ownerId);
-            if (owner != null) {
-                _mailLogic.startBulkConversation(memrec, owner, subject, body, null);
-            }
-        }
+        // admin deleting their own item? sure, whatever!
+        owners.remove(memrec.memberId);
+
+        // notify the owners of the deletion, ignoring mute lists
+        _mailLogic.startBulkConversation(memrec, owners, subject, body, null, false);
 
         // now do the refunds
         result.refunds += _moneyLogic.refundAllItemPurchases(new ItemIdent(

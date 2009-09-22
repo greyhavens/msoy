@@ -193,12 +193,11 @@ public class InviteServlet extends MsoyServiceServlet
         throws ServiceException
     {
         MemberRecord mrec = requireAuthedUser();
+        // send the invitation, respecting mute lists
         GameInvitePayload payload = new GameInvitePayload(args);
-        for (int memberId : recipientIds) {
-            MemberRecord recip = _memberRepo.loadMember(memberId);
-            _mailLogic.startBulkConversation(mrec, recip, subject, body, payload);
-            _eventLog.gameInviteSent(gameId, mrec.memberId, recip.memberId + "", "whirled");
-        }
+        _mailLogic.startBulkConversation(mrec, recipientIds, subject, body, payload, true);
+        // TODO: this is really not useful, is it?
+        // _eventLog.gameInviteSent(gameId, mrec.memberId, recip.memberId + "", "whirled");
     }
 
     public int getHomeSceneId ()

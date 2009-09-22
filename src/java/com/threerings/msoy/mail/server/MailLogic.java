@@ -4,6 +4,7 @@
 package com.threerings.msoy.mail.server;
 
 import java.util.List;
+import java.util.Set;
 
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
@@ -79,24 +80,37 @@ public class MailLogic
      * Starts a mail conversation between the specified two parties without filling up the author's
      * inbox.
      */
-    public void startBulkConversation (MemberRecord sender, MemberRecord recip, String subject,
-                                       String body, MailPayload payload)
+    public void startBulkConversation (MemberRecord sender, Set<Integer> recipientIds,
+        String subject, String body, MailPayload payload, boolean checkMuteList)
         throws ServiceException
     {
-        // For a bulk conversation we don't check mutelists, we just deliver.
+        // check mute list if requested (some bulk conversations are for automated message, some
+        // are for player to player spam)
+        if (checkMuteList) {
+            _memberRepo.filterMuterRecipients(sender.memberId, recipientIds);
+        }
 
         // now start the conversation (and deliver the message)
         ConvMessageRecord cmr = serializePayload(payload);
 
-        _mailRepo.startConversation(
-            recip.memberId, sender.memberId, subject, body, cmr, false, true);
+        for (int recipientId : recipientIds) {
+            MemberRecord recip = _memberRepo.loadMember(recipientId);
+            if (recip == null) {
+                log.warning("Null recipient in bulk convo",
+                    "recipient", recipientId, "sender", sender.memberId);
+                continue;
+            }
 
-        // potentially send a real email to the recipient
-        sendMailEmail(sender, recip, subject, body);
-
-        // let recipient know they've got mail
-        MemberNodeActions.reportUnreadMail(
-            recip.memberId, _mailRepo.loadUnreadConvoCount(recip.memberId));
+            _mailRepo.startConversation(
+                recip.memberId, sender.memberId, subject, body, cmr, false, true);
+    
+            // potentially send a real email to the recipient
+            sendMailEmail(sender, recip, subject, body);
+    
+            // let recipient know they've got mail
+            MemberNodeActions.reportUnreadMail(
+                recip.memberId, _mailRepo.loadUnreadConvoCount(recip.memberId));
+        }
     }
 
     /**

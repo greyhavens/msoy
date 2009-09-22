@@ -482,9 +482,11 @@ public class ItemLogic
                     body.append(rec.name).append("\n");
                 }
                 try {
-                    MemberRecord recip = _memberRepo.loadMember(entry.getKey());
-                    _mailLogic.startBulkConversation(
-                        remover, recip, "Delisted Items", body.toString(), null);
+                    // send mail, ignoring mutelists (if you base an item on someone you've muted,
+                    // you'll just have to un-derive it, I'm waiting for the bug report)
+                    _mailLogic.startBulkConversation(remover,
+                        Collections.singleton(entry.getKey()), "Delisted Items", body.toString(),
+                        null, false);
 
                 } catch (RuntimeException re) {
                     log.warning("Failed to send mail message for delisted derived items",
