@@ -191,15 +191,12 @@ public class BlingPoolDistributor
         Map<Integer, Long> minutesPerGame = new HashMap<Integer, Long>();
         for (GamePlayRecord gamePlay : gamePlays) {
             // Ignore if creator is a charity
-            if (gameMap.get(gamePlay.gameId) == null ||
-                    !charityIds.contains(gameMap.get(gamePlay.gameId).creatorId)) {
+            GameInfoRecord gameRec = gameMap.get(gamePlay.gameId);
+            if (gameRec == null || !charityIds.contains(gameRec.creatorId)) {
                 totalMinutes += gamePlay.playerMins;
-                if (minutesPerGame.get(gamePlay.gameId) == null) {
-                    minutesPerGame.put(gamePlay.gameId, (long)gamePlay.playerMins);
-                } else {
-                    minutesPerGame.put(gamePlay.gameId,
-                        minutesPerGame.get(gamePlay.gameId) + gamePlay.playerMins);
-                }
+                Long curMins = minutesPerGame.get(gamePlay.gameId);
+                minutesPerGame.put(gamePlay.gameId,
+                    ((curMins == null) ? 0L : curMins.longValue()) + gamePlay.playerMins);
             }
         }
 
