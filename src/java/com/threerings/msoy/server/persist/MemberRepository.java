@@ -1201,8 +1201,27 @@ public class MemberRepository extends DepotRepository
      */
     public List<ExternalMapRecord> loadExternalMappings (ExternalSiteId site)
     {
-        return findAll(ExternalMapRecord.class, new Where(
-            ExternalMapRecord.AUTHER.eq(site.auther)));
+        // doing an unlimited, cached findAll here is causing ye olde "java.io.IOException: Tried
+        // to send an out-of-range integer as a 2-byte value" in the depot. However, bypassing the
+        // cache could still cause problems. So rather than do that, release and wait to see if
+        // another release is needed, just build up the list manually in batches.
+        // TODO: this should not be so complicated, implement a decent way to just get a full set
+        // of data in cases where speed is not the most important factor
+        List<QueryClause> clauses = Lists.newArrayList();
+        clauses.add(new Where(ExternalMapRecord.AUTHER.eq(site.auther)));
+        // sort so things don't get jumbled
+        clauses.add(OrderBy.ascending(ExternalMapRecord.MEMBER_ID));
+        clauses.add(null);
+
+        List<ExternalMapRecord> records = Lists.newArrayList();
+        int limitSlot = clauses.size() - 1;
+        for (int offset = 0, batchSize = 5000; batchSize > 0; offset += batchSize) {
+            clauses.set(limitSlot, new Limit(offset, batchSize));
+            List<ExternalMapRecord> batch = findAll(ExternalMapRecord.class, clauses);
+            records.addAll(batch);
+            batchSize = batch.size();
+        }
+        return records;
     }
 
     /**
