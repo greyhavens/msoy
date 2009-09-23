@@ -5,7 +5,6 @@
 
   <inherits name="game"/>
   <inherits name="room"/>
-  <inherits name="facebookbase"/>
 
   <source path="com/kisgergely/gwt/canvas/client"/>
 
