@@ -100,6 +100,8 @@ public class LobbyTablePanel extends VBox
         _info.percentWidth = 100;
         addChild(makeVBox(_title, _info));
 
+        const memId :int = _gctx.getMyId(); // ok if guest
+
         var shareLink :String = _gctx.getWorldContext().getMsoyController().createSharableLink(
             "world-game_i_" + _lobj.game.gameId + "_" + memId, true);
 
@@ -107,7 +109,6 @@ public class LobbyTablePanel extends VBox
         var ititle :Label = FlexUtil.createLabel(Msgs.GAME.get("t.invite_link"), "lobbyTitle");
         var isubtitle :Label = FlexUtil.createLabel(Msgs.GAME.get("l.invite_link"));
         var ilink :TextInput = new TextInput();
-        const memId :int = _gctx.getMyId(); // ok if guest
         ilink.text = shareLink;
         addChild(makeVBox(ititle, isubtitle, new CopyableText(ilink)));
 
