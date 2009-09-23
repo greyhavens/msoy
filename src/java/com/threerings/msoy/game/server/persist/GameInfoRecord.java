@@ -61,11 +61,12 @@ public class GameInfoRecord extends PersistentRecord
     public static final ColumnExp RATING_SUM = colexp(_R, "ratingSum");
     public static final ColumnExp RATING_COUNT = colexp(_R, "ratingCount");
     public static final ColumnExp INTEGRATED = colexp(_R, "integrated");
+    public static final ColumnExp BLING_POOL = colexp(_R, "blingPool");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 3;
+    public static final int SCHEMA_VERSION = 4;
 
     /** The default payout factor for newly added games. */
     public static final int DEFAULT_PAYOUT_FACTOR = 128;
@@ -129,6 +130,10 @@ public class GameInfoRecord extends PersistentRecord
 
     /** Whether or not we believe that this game is integrated with the Whirled API. */
     public boolean integrated;
+
+    /** Is this game eligible for the bling pool? */
+    @Column(defaultValue="true")
+    public boolean blingPool;
 
     /** 
      * Calculates this game's average rating from the sum and count.

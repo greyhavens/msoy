@@ -218,7 +218,7 @@ public class BlingPoolDistributor
         // load the records for the gameIds, omitting the charities
         Map<Integer, GameInfoRecord> gameMap = Maps.newHashMap();
         for (GameInfoRecord game : _mgameRepo.loadPublishedGames(gameIds)) {
-            if (!charityIds.contains(game.creatorId)) {
+            if (game.blingPool && !charityIds.contains(game.creatorId)) {
                 gameMap.put(game.gameId, game);
             }
         }

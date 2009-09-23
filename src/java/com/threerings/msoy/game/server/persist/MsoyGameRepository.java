@@ -128,7 +128,8 @@ public class MsoyGameRepository extends DepotRepository
         for (GenreCountRecord gcr : findAll(
                  GenreCountRecord.class,
                  new Where(Ops.and(GameInfoRecord.GENRE.notEq(GameGenre.HIDDEN),
-                                   GameInfoRecord.INTEGRATED.eq(Boolean.TRUE))),
+                                   GameInfoRecord.INTEGRATED.eq(Boolean.TRUE),
+                                   GameInfoRecord.BLING_POOL.eq(Boolean.TRUE))),
                  new GroupBy(GameInfoRecord.GENRE))) {
             counts.put(gcr.genre, gcr.count);
         }
@@ -178,6 +179,7 @@ public class MsoyGameRepository extends DepotRepository
 
         // filter out games that aren't integrated with Whirled
         whereBits.add(GameInfoRecord.INTEGRATED.eq(Boolean.TRUE));
+        whereBits.add(GameInfoRecord.BLING_POOL.eq(Boolean.TRUE));
         clauses.add(new Where(Ops.and(whereBits)));
 
         // add the limit if specified

@@ -8,6 +8,7 @@ import java.util.List;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
 
@@ -23,6 +24,7 @@ import com.threerings.msoy.item.data.all.Item;
 
 import client.ui.LimitedTextArea;
 import client.ui.MsoyUI;
+import client.shell.CShell;
 import client.util.ClickCallback;
 import client.util.InfoCallback;
 
@@ -115,6 +117,11 @@ public class InfoEditorPanel extends EditorTable
             }
         });
 
+        final CheckBox blingBox = new CheckBox();
+        blingBox.setValue(data.blingPool);
+        blingBox.setEnabled(CShell.isSupport());
+        addRow(_msgs.egBlingPool(), blingBox, null); // no binder
+
         addSpacer();
 
         Button save = addSaveRow();
@@ -123,7 +130,7 @@ public class InfoEditorPanel extends EditorTable
                 if (!bindChanges()) {
                     return false;
                 }
-                _gamesvc.updateGameInfo(info, this);
+                _gamesvc.updateGameInfo(info, blingBox.getValue(), this);
                 return true;
             }
             protected boolean gotResult (Void result) {

@@ -101,6 +101,7 @@ public class EditGameServlet extends MsoyServiceServlet
         GameInfoRecord info = requireIsGameCreator(gameId, mrec);
         GameData data = new GameData();
         data.info = info.toGameInfo(0);
+        data.blingPool = info.blingPool;
         data.facebook = _facebookRepo.loadFacebookInfo(info.gameId);
         data.devCode = _mgameRepo.loadGameCode(GameInfo.toDevId(info.gameId), false);
         data.pubCode = _mgameRepo.loadGameCode(info.gameId, false);
@@ -195,6 +196,7 @@ public class EditGameServlet extends MsoyServiceServlet
         grec.thumbMediaHash = MediaDesc.unmakeHash(thumbMedia);
         grec.thumbMimeType = MediaDesc.unmakeMimeType(thumbMedia);
         grec.thumbConstraint = MediaDesc.unmakeConstraint(thumbMedia);
+        grec.blingPool = true;
         _mgameRepo.createGame(grec);
 
         GameCodeRecord crec = new GameCodeRecord();
@@ -249,7 +251,7 @@ public class EditGameServlet extends MsoyServiceServlet
     }
 
     @Override // from interface EditGameService
-    public void updateGameInfo (GameInfo info)
+    public void updateGameInfo (GameInfo info, boolean blingPool)
         throws ServiceException
     {
         MemberRecord mrec = requireAuthedUser();
@@ -273,6 +275,9 @@ public class EditGameServlet extends MsoyServiceServlet
 
         // write the updated game info record to the repository
         grec.update(info);
+        if (mrec.isSupport()) {
+            grec.blingPool = blingPool;
+        }
         _mgameRepo.updateGameInfo(grec);
     }
 

@@ -33,6 +33,7 @@ public interface EditGameService extends RemoteService
     public static class GameData implements IsSerializable
     {
         public GameInfo info;
+        public boolean blingPool; // not in GameInfo- it's private!
         public FacebookInfo facebook;
         public GameCode devCode;
         public GameCode pubCode;
@@ -127,7 +128,7 @@ public interface EditGameService extends RemoteService
     /**
      * Updates the metadata for the supplied game.
      */
-    void updateGameInfo (GameInfo info)
+    void updateGameInfo (GameInfo info, boolean blingPool)
         throws ServiceException;
 
     /**

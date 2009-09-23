@@ -55,7 +55,7 @@ public interface EditGameServiceAsync
     /**
      * The asynchronous version of {@link EditGameService#updateGameInfo}.
      */
-    void updateGameInfo (GameInfo info, AsyncCallback<Void> callback);
+    void updateGameInfo (GameInfo info, boolean blingPool, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link EditGameService#updateGameCode}.
