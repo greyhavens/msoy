@@ -1067,11 +1067,10 @@
     <chmod perm="oug+x" file="dist/lib/avmthane"/>
   </target>
 
-  <!-- builds the whirled-specific Panopticion cell -->
+  <!-- builds the whirled-specific panopticon cell; not part of the standard build -->
   <target name="distcell" depends="prepare,mavendeps,dist">
     <ant dir="projects/mcell" target="dist" inheritRefs="false" inheritAll="false">
         <reference refid="ooo.msoyconfig.source"/>
-        <reference refid="ooo.oooconfig.source"/>
         <reference refid="ooo.maven.depends.repo"/>
     </ant>
   </target>
@@ -1419,10 +1418,12 @@
     </move>
   </target>
 
-  <target name="package-cell" depends="distcell">
+  <target name="package-cell" depends="distcell,prepare-package">
     <ant dir="projects/mcell" target="just-package" inheritAll="false">
+        <property name="cell.package.output" value="${package.output}"/>
         <property name="ooo.architecture" value="${ooo.architecture}"/>
-        <reference refid="ooo.oooconfig.source"/>
+        <property name="ooo.prefix" value="${ooo.prefix}"/>
+        <reference refid="ooo.msoyconfig.source"/>
         <reference refid="ooo.maven.depends.repo"/>
     </ant>
   </target>
