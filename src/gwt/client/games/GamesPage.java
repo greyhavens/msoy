@@ -58,15 +58,11 @@ public class GamesPage extends Page
                 GameInfo.Sort.fromToken(args.get(2, "")), args.get(3, null)));
             showFriendsBar(0);
 
-        } else if (action.equals("m") ||
-                action.equals("c") ||
-                action.equals("e") ||
-                action.equals("ea") ||
-                action.equals("emg") ||
-                action.equals("eft") ||
-                action.equals("aa")) {
-            // redirect to edgames
-            // TODO: fix broken links
+        } else if (action.equals("m") || action.equals("c") || action.equals("e") ||
+            action.equals("ea") || action.equals("emg") || action.equals("eft") ||
+            action.equals("aa")) {
+            // redirect to edgames and log (in case anyone is watching the log and can report it)
+            CShell.log("Broken games link", "action", action);
             Link.go(Pages.EDGAMES, args);
 
         } else if (action.equals("mochi")) {
