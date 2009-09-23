@@ -13,6 +13,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
+import com.google.inject.Inject;
+
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+
 import org.quartz.CronTrigger;
 import org.quartz.Job;
 import org.quartz.JobDetail;
@@ -23,8 +28,6 @@ import org.quartz.SchedulerException;
 import org.quartz.impl.DirectSchedulerFactory;
 import org.quartz.spi.JobFactory;
 import org.quartz.spi.TriggerFiredBundle;
-
-import com.google.inject.Inject;
 
 import com.samskivert.util.Calendars;
 import com.samskivert.util.Lifecycle;
@@ -169,30 +172,14 @@ public class BlingPoolDistributor
         // Get all the game play sessions for that day.
         Collection<GamePlayRecord> gamePlays = _mgameRepo.getGamePlaysBetween(
             midnight1.getTimeInMillis(), midnight2.getTimeInMillis());
-        Set<Integer> gameIds = new HashSet<Integer>();
-        for (GamePlayRecord gamePlay : gamePlays) {
-            gameIds.add(gamePlay.gameId);
-        }
-
-        // Load up all of the games for which we're going to award bling.
-        Map<Integer, GameInfoRecord> gameMap = new HashMap<Integer, GameInfoRecord>();
-        for (GameInfoRecord game : _mgameRepo.loadPublishedGames(gameIds)) {
-            gameMap.put(game.gameId, game);
-        }
-
-        // No bling should be distributed from the pool to charities
-        Set<Integer> charityIds = new HashSet<Integer>();
-        for (CharityRecord charity : _memberRepo.getCharities()) {
-            charityIds.add(charity.memberId);
-        }
+        // get the info records for those that are eligible
+        Map<Integer, GameInfoRecord> gameMap = loadEligibleGames(gamePlays);
 
         // Calculate a total and a map of game ID to the total minutes spent in the game.
         long totalMinutes = 0;
-        Map<Integer, Long> minutesPerGame = new HashMap<Integer, Long>();
+        Map<Integer, Long> minutesPerGame = Maps.newHashMap();
         for (GamePlayRecord gamePlay : gamePlays) {
-            // Ignore if creator is a charity
-            GameInfoRecord gameRec = gameMap.get(gamePlay.gameId);
-            if (gameRec == null || !charityIds.contains(gameRec.creatorId)) {
+            if (gameMap.containsKey(gamePlay.gameId)) {
                 totalMinutes += gamePlay.playerMins;
                 Long curMins = minutesPerGame.get(gamePlay.gameId);
                 minutesPerGame.put(gamePlay.gameId,
@@ -208,6 +195,34 @@ public class BlingPoolDistributor
                 awardBling(entry.getKey(), gameMap.get(entry.getKey()), awardedBling);
             }
         }
+    }
+
+    /**
+     * Return a Map<gameId, GameInfoRecord> for all games specified in the GamePlayRecords
+     * that are elibible for having bling awarded.
+     */
+    protected Map<Integer, GameInfoRecord> loadEligibleGames (Collection<GamePlayRecord> gamePlays)
+    {
+        // make a Set of all gameIds
+        Set<Integer> gameIds = Sets.newHashSet();
+        for (GamePlayRecord gamePlay : gamePlays) {
+            gameIds.add(gamePlay.gameId);
+        }
+
+        // make a Set of all charity ids
+        Set<Integer> charityIds = Sets.newHashSet();
+        for (CharityRecord charity : _memberRepo.getCharities()) {
+            charityIds.add(charity.memberId);
+        }
+
+        // load the records for the gameIds, omitting the charities
+        Map<Integer, GameInfoRecord> gameMap = Maps.newHashMap();
+        for (GameInfoRecord game : _mgameRepo.loadPublishedGames(gameIds)) {
+            if (!charityIds.contains(game.creatorId)) {
+                gameMap.put(game.gameId, game);
+            }
+        }
+        return gameMap;
     }
 
     /**
