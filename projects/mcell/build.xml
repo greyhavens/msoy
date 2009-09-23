@@ -6,7 +6,6 @@
   <property name="libs.dir" value="${base.dir}/extlibs/java"/>
 
   <property name="deploy.dir" value="cell/dist"/>
-  <property name="cell.deploy.dir" value="cell/dist"/>
   <property name="ooo.configsource" value="ooo.msoyconfig.source"/>
   <import file="cell/build-support.xml"/>
 
@@ -44,7 +43,7 @@
       <dist-cell/>
   </target>
 
-  <target name="package" depends="dist">
+  <target name="just-package">
       <package-cell>
           <fileset dir=".">
               <include name="src/webapp/*"/>
