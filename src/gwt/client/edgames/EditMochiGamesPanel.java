@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.games;
+package client.edgames;
 
 import java.util.List;
 
@@ -18,10 +18,10 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.gwt.util.StringUtil;
 
-import com.threerings.msoy.game.gwt.GameService;
-import com.threerings.msoy.game.gwt.GameServiceAsync;
+import com.threerings.msoy.edgame.gwt.EditGameService;
+import com.threerings.msoy.edgame.gwt.EditGameServiceAsync;
+import com.threerings.msoy.edgame.gwt.EditGameService.MochiGameBucket;
 import com.threerings.msoy.game.gwt.MochiGameInfo;
-import com.threerings.msoy.game.gwt.GameService.MochiGameBucket;
 
 import client.ui.MsoyUI;
 import client.util.ClickCallback;
@@ -165,6 +165,6 @@ public class EditMochiGamesPanel extends FlowPanel
     }
 
     protected SmartTable _games;
-    protected static final GameServiceAsync _gamesvc = GWT.create(GameService.class);
-    protected static final GamesMessages _msgs = GWT.create(GamesMessages.class);
+    protected static final EditGameServiceAsync _gamesvc = GWT.create(EditGameService.class);
+    protected static final EditGamesMessages _msgs = GWT.create(EditGamesMessages.class);
 }

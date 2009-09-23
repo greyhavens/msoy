@@ -45,9 +45,9 @@ import com.samskivert.depot.operator.FullText;
 import com.threerings.msoy.server.persist.RatingRecord;
 import com.threerings.msoy.server.persist.RatingRepository;
 
+import com.threerings.msoy.edgame.gwt.GameCode;
 import com.threerings.msoy.facebook.server.persist.FacebookInfoRecord;
 import com.threerings.msoy.game.gwt.ArcadeData;
-import com.threerings.msoy.game.gwt.GameCode;
 import com.threerings.msoy.game.gwt.GameGenre;
 import com.threerings.msoy.game.gwt.GameInfo;
 import com.threerings.msoy.game.gwt.GameThumbnail;

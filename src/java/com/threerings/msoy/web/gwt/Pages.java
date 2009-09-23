@@ -16,6 +16,7 @@ public enum Pages
     CREATE(null), // TODO: Tabs.CREATE
     FAVORITES(Tabs.SHOP),
     GAMES(Tabs.GAMES),
+    EDGAMES(Tabs.GAMES),
     HELP(Tabs.HELP),
     LANDACC(null, "account"), // account with no header
     LANDING(null),

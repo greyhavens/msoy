@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.games;
+package client.edgames;
 
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -21,7 +21,7 @@ import com.google.gwt.xml.client.XMLParser;
 import com.threerings.gwt.util.StringUtil;
 
 import com.threerings.msoy.data.all.MediaDesc;
-import com.threerings.msoy.game.gwt.GameCode;
+import com.threerings.msoy.edgame.gwt.GameCode;
 import com.threerings.msoy.game.gwt.GameInfo;
 import com.threerings.msoy.item.data.all.Item;
 

@@ -50,6 +50,8 @@ import com.threerings.msoy.admin.server.AdminServlet;
 import com.threerings.msoy.comment.gwt.CommentService;
 import com.threerings.msoy.comment.server.CommentServlet;
 import com.threerings.msoy.data.all.DeploymentConfig;
+import com.threerings.msoy.edgame.gwt.EditGameService;
+import com.threerings.msoy.edgame.server.EditGameServlet;
 import com.threerings.msoy.facebook.gwt.FacebookService;
 import com.threerings.msoy.facebook.server.FacebookInviteServlet;
 import com.threerings.msoy.facebook.server.FacebookServlet;
@@ -277,6 +279,7 @@ public class MsoyHttpServer extends Server
         .put(ForumService.ENTRY_POINT, ForumServlet.class)
         .put(GalleryService.ENTRY_POINT, GalleryServlet.class)
         .put(GameService.ENTRY_POINT, GameServlet.class)
+        .put(EditGameService.ENTRY_POINT, EditGameServlet.class)
         .put(GroupService.ENTRY_POINT, GroupServlet.class)
         .put(InviteService.ENTRY_POINT, InviteServlet.class)
         .put(IssueService.ENTRY_POINT, IssueServlet.class)

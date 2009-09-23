@@ -7,8 +7,8 @@ import com.samskivert.util.StringUtil;
 
 import com.threerings.parlor.game.data.GameConfig;
 
+import com.threerings.msoy.edgame.gwt.GameCode;
 import com.threerings.msoy.game.data.MsoyMatchConfig;
-import com.threerings.msoy.game.gwt.GameCode;
 import com.threerings.msoy.game.gwt.GameInfo;
 import com.threerings.msoy.game.xml.MsoyGameParser;
 

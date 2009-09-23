@@ -1,0 +1,1216 @@
+/**
+ * $Id$
+ *
+ * CSS styles for the Game interfaces.
+ */
+
+.playPanel .Title {
+  text-align: center;
+  vertical-align: top;
+  font-size: 18px;
+}
+
+.playPanel .Online {
+  background: url(/images/game/players_bg.png) no-repeat;
+  color: #FFFFFF;
+  width: 134px;
+  height: 21px;
+  font-size: 14px;
+  font-weight: bold;
+  text-align: center;
+  padding-top: 2px;
+}
+
+.playPanel .Button {
+  width: 126px;
+  height: 50px;
+  border: none;
+  cursor: pointer;
+  text-align: center;
+}
+
+.playPanel .Label {
+  font-size: 12px;
+  text-align: center;
+  vertical-align: top;
+  white-space: nowrap;
+  padding-bottom: 5px;
+}
+
+.gameDetail {
+  width: 100%;
+}
+
+.gameDetail .gameBits {
+  font-size: 14px;
+}
+
+.gameDetail .Play {
+  width: 255px;
+}
+
+.instructionsPanel {
+  padding: 5px;
+  border-left: 1px solid #DADADA;
+  border-right: 1px solid #DADADA;
+  border-bottom: 1px solid #DADADA;
+}
+
+.instructionsPanel img {
+  display: inline;
+}
+
+.gameTrophyPanel .Grid {
+  height: 340px;
+}
+
+.trophyDetail {
+  font-size: 12px;
+  width: 100%;
+  padding: 2px;
+
+  background-image: url(/images/whirled/bg_gradient.png);
+  background-repeat: repeat-x;
+  background-color: #F4F3F4;
+}
+
+.trophyDetail .Image {
+  text-align: left;
+  width: 65px;
+  height: 60px;
+}
+
+.trophyDetail .Name {
+  font-weight: bold;
+}
+
+.trophyDetail .Italic {
+  font-style: italic;
+}
+
+.trophyDetail .Earned {
+  font-style: italic;
+  font-weight: bold;
+}
+
+.topRankingPanel .Grid {
+  width: 100%;
+  border-left: 1px solid #DADADA;
+  border-right: 1px solid #DADADA;
+}
+
+.topRankingPanel .Header {
+  background-color: #F4F3F4;
+  font-weight: bold;
+  vertical-align: baseline;
+}
+
+.topRankingPanel .HeaderTip {
+  background-color: #F4F3F4;
+  text-align: right;
+  vertical-align: baseline;
+  font-size: 12px;
+}
+
+.topRankingPanel .Cell {
+  border-top: 1px solid #DADADA;
+}
+
+.topRankingPanel .Self {
+  font-weight: bold;
+}
+
+.topRankingPanel .Photo {
+  width: 20px;
+}
+
+.topRankingPanel .Gap {
+  width: 80px;
+}
+
+.topRankingPanel .Footer {
+  border-top: 1px solid #DADADA;
+  font-size: 12px;
+  text-align: center;
+}
+
+.topRankingPanel .Note {
+  padding: 5px;
+}
+
+.gameMetrics .Header {
+  padding-top: 5px;
+  font-weight: bold;
+}
+
+.gameLogs {
+  width: 100%;
+}
+
+.gameLogs .Table {
+  width: 100%;
+}
+
+.gameLogs .Header {
+  padding-top: 5px;
+  font-weight: bold;
+}
+
+.trophyCase {
+  width: 100%;
+}
+
+.featuredGame {
+  height: 242px;
+  font-size: 14px;
+}
+
+.featuredGame .SashBox {
+  position: relative;
+}
+
+.featuredGame .Sash {
+  position: absolute;
+  left: -10px;
+  top: -10px;
+}
+
+.featuredGame .gameBits {
+  font-size: 12px;
+}
+
+.featuredGame .playPanel {
+  margin-left: 15px;
+}
+
+.featuredGame .gameName .Descrip {
+  width: 285px;
+  height: 65px;
+}
+
+.featuredGame .gameName .Name {
+  width: 285px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.gameEntry {
+  border-bottom: 1px solid #DADADA;
+  border-left: 1px solid #DADADA;
+  border-right: 1px solid #DADADA;
+  width: 100%;
+  height: 68px;
+}
+
+.gameEntry .Thumb {
+  width: 80px;
+  height: 40px;
+  padding-right: 5px;
+}
+
+.gameEntry .Name .actionLabel {
+  font-size: 12px;
+  width: 120px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.gameEntry .Online {
+  font-size: 10px;
+  color: #AABDC8;
+}
+
+.gameEntry .Players {
+  font-size: 10px;
+}
+
+.trophyCompare {
+}
+
+.trophyCompare .Row {
+  border-top: 1px solid;
+}
+
+.trophyCompare .Descrip {
+  font-size: 12px;
+  width: 300px;
+}
+
+.trophyCompare .Descrip .Trophy {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.trophyCompare .Earned {
+  font-size: 14px;
+}
+
+.trophyCompare .Italic {
+  font-style: italic;
+}
+
+
+/* ------------------------------------
+   ARCADE / MAIN GAMES PAGE
+-------------------------------------*/
+
+.arcade {
+  background: #61abd0 url(/images/whirled/bg_gradient_long_blue.png) repeat-x;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  color: #407a9f;
+  width: 100%;
+  height: 1400px;
+}
+
+.arcade .featuredGame {
+  left: 225px;
+  top: 20px;
+}
+
+.arcade .BrowseGenresTitle {
+  position: absolute;
+  left: 225px;
+  top: 340px;
+  width: 450px;
+  text-align: right;
+  background: url(/images/game/browse_genres_title_bg.png) repeat-x bottom center;
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  font-size: 24px;
+  color: #FFFFFF;
+  padding-bottom: 5px;
+}
+
+.arcade .BrowseGenres {
+  background: #bee1f5 url(/images/game/browse_genres_bg.png) no-repeat top center;
+  position: absolute;
+  left: 225px;
+  top: 380px;
+  width: 450px;
+}
+
+.arcade .BrowseGenres .ViewAllGames {
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  font-size: 16px;
+  font-weight: bold;
+  text-decoration: none;
+  color: #1d5884;
+  background: url(/images/game/view_all_games_bg.png) no-repeat center right;
+  padding-right: 20px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  margin-right: 10px;
+  text-align: right;
+  clear: both;
+}
+
+.arcade .BrowseGenres div:hover.ViewAllGames,
+.arcade .BrowseGenres div:active.ViewAllGames  {
+  text-decoration: underline;
+}
+
+.arcade .GenreBox {
+  width: 210px;
+  float: left;
+  margin: 10px 0 0 10px;
+  background-color: #FFFFFF;
+}
+
+.arcade .GenreBox .Header {
+  background-color: #5cace7;
+  height: 25px;
+}
+
+.arcade .GenreBox .Header img {
+  float: left;
+  margin: 2px 5px 0 5px;
+}
+
+.arcade .GenreBox .Header .actionLabel {
+  text-decoration: none;
+  color: #FFFFFF;
+  font-size: 16px;
+  float: left;
+  margin: 3px 0 0 0;
+}
+
+.arcade .GenreBox .GenreGame {
+  height: 37px;
+  padding-top: 5px;
+}
+
+.arcade .GenreBox .GenreGame .thumbBox {
+  margin: 0px 5px 0px 25px;
+  float: left;
+  border: solid #CCCCCC 1px;
+}
+
+.arcade .GenreBox .GenreGame .Name {
+  color: #1a5984;
+  width: 115px;
+  white-space: nowrap;
+  overflow: hidden;
+  font-size: 13px;
+}
+
+.arcade .BrowseGenres .ViewAll {
+  font-size: 11px;
+  text-align: right;
+  padding: 0px 10px 5px 0px;
+}
+
+.arcade .BrowseGenres .ViewAll a {
+  color: #1a5984;
+}
+
+/* ------------------------------------
+   ARCADE - TOP GAMES
+-------------------------------------*/
+
+.arcade .TopGames {
+  width: 200px;
+  position: absolute;
+  left: 10px;
+  top: 100px;
+}
+
+.arcade .TopGames .TopGameWidget {
+  border-right: solid #5d8db1 1px;
+  border-bottom: solid #bfdaef 1px;
+  background-color: white;
+  width: 200px;
+  height: 45px;
+}
+
+.arcade .TopGames .Number {
+  background: url(/images/game/top_games_num_bg.png) repeat-x top center;
+  color: #84b0d3;
+  font-size: 14px;
+  font-weight: bold;
+  text-align: center;
+  width: 25px;
+  height: 30px;
+  float: left;
+  border-left: solid #5d8db1 1px;
+  border-right: solid #5d8db1 1px;
+  padding-top: 15px;
+}
+
+.arcade .TopGames .thumbBox {
+  float: left;
+  width: 40px;
+  height: 31px;
+  text-align: center;
+  padding: 7px;
+}
+
+.arcade .TopGames .Name {
+  width: 110px;
+  color: #1c5988;
+  font-size: 12px;
+  font-weight: bold;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.arcade .TopGames .Name .actionLabel {
+  text-decoration: none;
+}
+
+.arcade .TopGames .TopGameWidget:hover .Name .actionLabel {
+  text-decoration: underline;
+}
+
+/* ------------------------------------
+   FEATURED GAME PANEL
+-------------------------------------*/
+
+.featuredGame {
+  background: url(/images/game/featured_game_bg.png) no-repeat top center;
+  height: 225px;
+  width: 450px;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #FFFFFF;
+  font-size: 13px;
+}
+
+.featuredGame .Online {
+  background: url(/images/game/featured_game_online_bg.png) no-repeat top center;
+  width: 170px;
+  height: 20px;
+  text-align: center;
+  font-size: 14px;
+  padding-top: 1px;
+}
+
+.featuredGame .PrevButton {
+  position: absolute;
+  left: 20px;
+  top: 198px;
+}
+
+.featuredGame .NextButton {
+  position: absolute;
+  left: 120px;
+  top: 198px;
+}
+
+.featuredGame .Name {
+  width: 230px;
+  white-space: nowrap;
+  overflow: hidden;
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.featuredGame .Genre {
+  color: #90b8d1;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.featuredGame .creator,
+.featuredGame .creator a {
+  color: #90b8d1;
+  font-size: 11px;
+  font-weight: normal;
+}
+
+.featuredGame .Description {
+  width: 230px;
+  height: 50px;
+  overflow: hidden;
+}
+
+/* ------------------------------------
+   GameListPanel
+-------------------------------------*/
+
+.gameList {
+  background-color: #1d5884;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  width: 100%;
+  min-height: 100%;
+  color: #407a9f;
+}
+
+.gameList .Games {
+  margin: 15px 10px 0px 10px;
+  width: 665px;
+}
+
+.gameList .Games .Header {
+  background-position: top center;
+}
+
+.gameList .Games .Header .TopLeft,
+.gameList .Games .Header .TopRight {
+  background-color: #1d5884;
+  height: 29px;
+}
+
+.gameList .Games .Header .SortBy {
+  padding-right: 5px;
+  width: 50px;
+}
+
+.gameList .Games .Header td.Info {
+  width: 450px;
+}
+
+.gameList .Games .Titles {
+  background-color: #FFFFFF;
+  height: 25px;
+  border-bottom: solid #aac4d1 1px;
+}
+
+.gameList .Games .Titles div {
+  position: absolute;
+  margin-top: 5px;
+  color: #000000;
+  text-decoration: underline;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.gameList .Games .Titles .NameTitle {
+  left: 108px;
+}
+
+.gameList .Games .Titles .RatingTitle {
+  left: 310px;
+}
+
+.gameList .Games .Titles .CategoryTitle {
+  left: 410px;
+}
+
+.gameList .Games .Titles .NowPlayingTitle {
+  left: 505px;
+}
+
+.gameList .GameInfoPanel {
+  background-color: #FFFFFF;
+  width: 100%;
+  padding: 5px 0;
+}
+
+.gameList .Alternating .GameInfoPanel {
+  background-color: #ddeef8;
+}
+
+.gameList .GameInfoPanel .Thumbnail {
+  width: 90px;
+}
+
+.gameList .GameInfoPanel .NameDesc {
+  width: 200px;
+}
+
+.gameList .GameInfoPanel .Name {
+  width: 180px;
+  white-space: nowrap;
+  overflow: hidden;
+  font-size: 14px;
+  font-weight: bold;
+  color: #000000;
+  margin-bottom: 5px;
+}
+
+.gameList .GameInfoPanel .Description {
+  font-size: 11px;
+  width: 180px;
+  height: 45px;
+  overflow: hidden;
+}
+
+.gameList .GameInfoPanel .Rating {
+  width: 95px;
+}
+
+.gameList .GameInfoPanel .Rating .NumRatings {
+  font-size: 11px;
+  color: #000000;
+  font-style: italic;
+}
+
+.gameList .GameInfoPanel .Category {
+  width: 100px;
+}
+
+.gameList .GameInfoPanel .NowPlaying {
+  text-align: center;
+}
+
+.gameList .GameInfoPanel .PlayButtons {
+  width: 100px;
+}
+
+/* ------------------------------------
+   GAMES PAGES HEADER
+-------------------------------------*/
+
+.gameHeaderPanel .Absolute {
+  height: 59px;
+}
+
+.gameHeaderPanel .GenreTitle {
+  position: absolute;
+  top: 0;
+  left: 10px;
+  width: 233px; /* plus padding */
+  height: 59px;
+  white-space: nowrap;
+  overflow: hidden;
+  background: transparent url(/images/game/genre_title.png) no-repeat top center;
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  font-size: 26px;
+  color: #FFFFFF;
+  text-align: center;
+  padding-top: 5px;
+  padding-right: 55px;
+}
+
+.gameHeaderPanel .FindGame {
+  position: absolute;
+  top: 5px;
+  left: 305px;
+}
+
+.gameHeaderPanel .FindGame .Title,
+.gameHeaderPanel .Search .Title {
+  font-family: Arial, Helvetica, sans-serif;
+  width: 120px;
+  margin-bottom: 3px;
+}
+
+.gameHeaderPanel .FindGame select {
+  width: 160px;
+}
+
+.gameHeaderPanel .Search {
+  position: absolute;
+  top: 5px;
+  left: 470px;
+}
+
+.gameHeaderPanel .Search input {
+  width: 150px;
+}
+
+.gameHeaderPanel .Search .GoButton {
+  position: absolute;
+  bottom: 1px;
+  left: 160px;
+}
+
+.gameHeaderPanel .GenreLinks {
+  width: 100%;
+  text-align: center;
+}
+
+.gameHeaderPanel .Title, .gameHeaderPanel a, .gameHeaderPanel .CreateTip, .gameHeaderPanel .DevTip {
+  color: #B4DDF9;
+  font-size: 12px;
+}
+
+.gameHeaderPanel .GenreLinks a {
+  margin: 0 5px 0 5px;
+}
+
+.gameHeaderPanel .CreateTip {
+  position: absolute;
+  top: 10px;
+  left: 310px;
+  width: 260px;
+}
+
+.gameHeaderPanel .CreateTip, .gameHeaderPanel .DevTip {
+  text-align: center;
+}
+
+.gameHeaderPanel .orangeButton {
+  position: absolute;
+  top: 10px;
+  left: 580px;
+}
+
+/* ------------------------------------
+   CreateGamePanel
+-------------------------------------*/
+
+.createGame .Intro {
+  font-size: 16px;
+  width: 600px;
+  padding-bottom: 10px;
+}
+
+/* ------------------------------------
+   EditGamePanel
+-------------------------------------*/
+
+.editGame .Header {
+  width: 100%;
+}
+
+.editGame .Header .Title, .editGame .Tip, .editGame .Tip a {
+  color: #154D72;
+}
+
+.editGame .Title {
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  font-weight: bold;
+  font-size: 24px;
+  white-space: nowrap;
+}
+
+.editGame .Tip {
+  font-size: 13px;
+}
+
+.baseEditor .mediaBox .gwt-Image, .baseEditor .codeBox .Code {
+  margin: 0px;
+  padding: 0px 0px 5px 0px;
+}
+
+.baseEditor .Label .tipLabel {
+  width: 130px;
+}
+
+.gameItemEditor {
+  width: 100%;
+}
+
+.gameItemEditor .Row {
+  border-bottom: 1px solid #000000;
+}
+
+.gameItemEditor .AltRow {
+  background: #DDDDDD;
+}
+
+.gameItemEditor .Header {
+  font-weight: bold;
+  width: auto;
+}
+
+.gameItemEditor .Name {
+  width: 45%;
+}
+
+.editGame .fie .thumbnails {
+  width: 100%;
+}
+
+.editGame .fie .Title {
+  font-weight: bold;
+  width: 90%;
+  padding-left: 10px;
+}
+
+.editGame .fie .Type .Title {
+  padding-left: 0;
+}
+
+.editGame .fie .Tip {
+  width: 90%;
+  padding-left: 10px;
+}
+
+.editGame .fie .Type {
+  padding: 10px;
+}
+
+/* ------------------------------------
+   EditArcadePanel
+-------------------------------------*/
+
+.editArcadePanel .Pages {
+  padding: 10px;
+}
+
+.editArcadePanel .moveUp {
+  background-image: url(/images/ui/move_up.png);
+  width: 13px;
+  height: 13px;
+}
+
+.editArcadePanel .moveDown {
+  background-image: url(/images/ui/move_down.png);
+  width: 13px;
+  height: 13px;
+}
+
+.editArcadePanel .gameList,
+.editArcadePanel .gameList .Games .Header .TopLeft,
+.editArcadePanel .gameList .Games .Header .TopRight {
+  background-color: white;
+}
+
+.editArcadePanel .gameList .Games {
+  margin: 0;
+}
+
+.editArcadePanel .gameList .Games .Titles div {
+  text-decoration: none;
+}
+
+.editArcadePanel .gameList .PlayButtons {
+  text-align: left;
+  color: black;
+  font-size: 10px;
+}
+
+.editArcadePanel .gameList .PlayButtons table.MoveButtons {
+  width: 60px;
+}
+
+.editArcadePanel .gameList .Tip {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  color: black;
+  font-size: 14px;
+}
+
+/* ------------------------------------
+   EditFeedThumbsPanel
+-------------------------------------*/
+
+.editFeedThumbs {
+  padding-left: 10px;
+  font-size: 12px;
+}
+
+.editFeedThumbs .Title {
+  font-size: 16px;
+  font-weight: bold;
+  padding-top: 5px;
+}
+
+.editFeedThumbs .Type {
+  padding: 10px;
+}
+
+/* ------------------------------------
+   GameBitsPanel
+-------------------------------------*/
+
+.gameBits .Title {
+  padding-top: 10px;
+  font-weight: bold;
+  color: #5F96AC;
+}
+
+.gameBits .Label {
+  padding-right: 5px;
+}
+
+/* ------------------------------------
+   FBArcadePanel
+-------------------------------------*/
+
+.fbarcade {
+  background: #FFFFFF;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  color: black;
+  width: 100%;
+  height: 543px;
+}
+
+.fbarcade .fbfeaturedGame {
+  left: 215px;
+  top: 43px;
+}
+
+.fbarcade .TopGames {
+  top: 43px;
+}
+
+.fbarcade .GameWall {
+  left: 215px;
+  top: 249px;
+}
+
+.fbarcade .tipLabel {
+  color: #3b5998;
+}
+
+/* ------------------------------------
+   FBArcadePanel - top 10 games
+-------------------------------------*/
+
+.fbarcade .TopGames {
+  width: 200px;
+  background: url(/images/facebook/top_games_background.png) #3e5d9e no-repeat;
+}
+
+.fbarcade .TopGames .title {
+  position: relative;
+  top: 5px;
+  width: 200px;
+  height: 30px;
+  vertical-align: middle;
+  text-align: center;
+  font-size: 18px;
+  font-weight: bold;
+  color: #FFFFFF;
+}
+
+.fbarcade .TopGames .TopGameWidget {
+  border-right: solid #94a3c4 1px;
+  border-bottom: solid #94a3c4 1px;
+  background-color: white;
+  width: 200px;
+  height: 47px;
+}
+
+.fbarcade .TopGames .Number {
+  background: url(/images/facebook/top_games_num_bg.png) repeat-x top center;
+  color: #3b5998;
+  font-size: 14px;
+  font-weight: bold;
+  text-align: center;
+  width: 25px;
+  height: 46px;
+  border-left: solid #94a3c4 1px;
+  border-right: solid #94a3c4 1px;
+  vertical-align: middle;
+}
+
+.fbarcade .TopGames .thumbBox {
+  float: left;
+  width: 40px;
+  height: 31px;
+  text-align: center;
+  padding: 7px;
+}
+
+.fbarcade .TopGames .Name {
+  width: 110px;
+  color: #1c5988;
+  font-size: 12px;
+  font-weight: bold;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.fbarcade .TopGames .Name a {
+  text-decoration: none;
+}
+
+.fbarcade .TopGames .TopGameWidget:hover .Name a {
+  text-decoration: underline;
+}
+
+/* ------------------------------------
+   FBArcadePanel - game wall
+-------------------------------------*/
+.fbarcade .GameWall {
+  background: url(/images/facebook/wall_background.png) #FFFFFF no-repeat;
+  width: 545px;
+  height: 293px;
+}
+
+.fbarcade .GameWall .title {
+  position: absolute;
+  width: 159px;
+  height: 36px;
+  top: 7px;
+  text-align: center;
+  font-size: 18px;
+  font-weight: bold;
+  color: #FFFFFF;
+}
+
+.fbarcade .GameWall .WallCell {
+  width: 100px;
+}
+
+.fbarcade .GameWall .WallGameWidget {
+  width: 180px;
+  height: 42px;
+}
+
+.fbarcade .GameWall .thumbBox {
+  float: left;
+  width: 40px;
+  height: 31px;
+  text-align: center;
+  padding-left: 15px;
+}
+
+.fbarcade .GameWall .Name {
+  width: 100px;
+  color: #1c5988;
+  font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.fbarcade .GameWall .Name a {
+  text-decoration: none;
+}
+
+.fbarcade .GameWall .WallGameWidget:hover .Name a {
+  text-decoration: underline;
+}
+
+/* ------------------------------------
+   FBFeaturedGamePanel
+-------------------------------------*/
+
+.fbfeaturedGame {
+  height: 197px;
+  width: 545px;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #FFFFFF;
+  font-size: 13px;
+  background: #d8dfea url(/images/facebook/featured_background.png) no-repeat;
+}
+
+.fbfeaturedGame .title {
+  position: absolute;
+  top: 5px;
+  left: 0px;
+  text-align: center;
+  font-size: 18px;
+  font-weight: bold;
+  width: 545px;
+  height: 30px;
+}
+
+.fbfeaturedGame .thumbBox {
+  border: 1px solid #94a3c4;
+  left: 10px;
+  top: 37px;
+}
+
+.fbfeaturedGame .scroller {
+  margin-top: 5px;
+  left: 10px;
+  top: 165px;
+}
+
+.fbfeaturedGame .bits {
+  color: #3b5998;
+  border: 1px solid #94a3c4;
+  height: 151px;
+  background: #eceff5;
+  left: 198px;
+  top: 37px;
+  width: 336px;
+  height: 150px;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.fbfeaturedGame .bits .Name {
+  font-size: 20px;
+  font-weight: bold;
+  left: 12px;
+  top: 8px;
+  width: 314px;
+  height: 24px;
+}
+
+.fbfeaturedGame .bits .Genre {
+  font-size: 14px;
+  font-weight: bold;
+  width: 196px;
+  height: 18px;
+  left: 12px;
+  top: 32px;
+}
+
+.fbfeaturedGame .bits .stars {
+  right: 10px;
+  top: 34px;
+}
+
+.fbfeaturedGame .bits .creator {
+  font-size: 11px;
+  width: 196px;
+  height: 14px;
+  left: 12px;
+  top: 52px;
+}
+
+.fbfeaturedGame .bits .Online {
+  font-size: 14px;
+  text-align: right;
+  top: 52px;
+  right: 10px;
+}
+
+.fbfeaturedGame .Bottom {
+}
+
+.fbfeaturedGame .Description {
+  color: black;
+  white-space: normal;
+  font-size: 14px;
+  left: 12px;
+  top: 68px;
+  height: 80px;
+  width: 196px;
+}
+
+.fbfeaturedGame .fbplayButton {
+  right: 8px;
+  bottom: 8px;
+}
+
+/* ------------------------------------
+   Blue Play Button
+-------------------------------------*/
+
+.fbplayButton {
+  background: url(/images/facebook/blue_play.png) no-repeat;
+  width: 122px;
+  height: 47px;
+}
+
+.fbplayButton-up-hovering, .fbplayButton-down-hovering {
+  background: url(/images/facebook/blue_play_over.png) no-repeat;
+  cursor: pointer;
+}
+
+/* ------------------------------------
+   FBGameHeaderPanel
+-------------------------------------*/
+
+.fbgameHeaderPanel {
+  padding-top: 8px;
+  padding-bottom: 14px;
+}
+
+.fbgameHeaderPanel table {
+  width: 100%;
+}
+
+.fbgameHeaderPanel td {
+  vertical-align: middle;
+}
+
+.fbgameHeaderPanel .FindGameCell {
+  text-align: right;
+}
+
+.fbgameHeaderPanel .FindGame select {
+  width: 200px;
+}
+
+.fbgameHeaderPanel .GenreLinksCell {
+  text-align: left;
+}
+
+.fbgameHeaderPanel .GenreLinks {
+  color: #3b5998;
+  font-size: 12px;
+}
+
+.fbgameHeaderPanel .GenreLinks a {
+  margin: 0 5px 0 5px;
+  color: #3b5998;
+}
+
+.fbgameHeaderPanel .GenreLinks a:hover {
+  color: #0092f6;
+}
+
+/* ------------------------------------
+   EditMochiGamesPanel
+-------------------------------------*/
+
+.editMochiGames {
+  font-size: 12px;
+  padding: 10px 0 0 10px;
+}
+
+.editMochiGames .Title {
+  font-size: 14px;
+  font-weight: bold;
+  padding: 10px 0 10px 0;
+}
+
+.editMochiGames .Games {
+  width: 95%;
+  padding-left: 5%;
+  padding-top: 10px;
+}
+
+.editMochiGames .Games tr.Header td {
+  font-weight: bold;
+  border-bottom: thin solid lightgrey;
+}
+
+.editMochiGames .Games td {
+  font-size: 10px;
+}
+
+.editMochiGames .gwt-TextArea {
+  margin-top: 10px;
+}

@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.games;
+package client.game;
 
 import java.util.List;
 
@@ -100,7 +100,7 @@ public class GameHeaderPanel extends FlowPanel
         return _searchBox.getText().trim();
     }
 
-    protected void initWithCards (List<GameCard> games)
+    public void initWithCards (List<GameCard> games)
     {
         for (GameCard game : games) {
             _findGameBox.addItem(game.name, game.gameId+"");
@@ -118,6 +118,6 @@ public class GameHeaderPanel extends FlowPanel
     protected ListBox _findGameBox;
     protected TextBox _searchBox;
 
-    protected static final GamesMessages _msgs = GWT.create(GamesMessages.class);
+    protected static final GameMessages _msgs = GWT.create(GameMessages.class);
     protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
 }

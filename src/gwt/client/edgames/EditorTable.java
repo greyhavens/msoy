@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.games;
+package client.edgames;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,8 +21,8 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.data.all.MediaDesc;
-import com.threerings.msoy.game.gwt.GameService;
-import com.threerings.msoy.game.gwt.GameServiceAsync;
+import com.threerings.msoy.edgame.gwt.EditGameService;
+import com.threerings.msoy.edgame.gwt.EditGameServiceAsync;
 
 import client.shell.DynamicLookup;
 import client.ui.MsoyUI;
@@ -139,7 +139,7 @@ public class EditorTable extends SmartTable
     protected CheckBox _confirm;
     protected List<Command> _binders = new ArrayList<Command>();
 
-    protected static final GamesMessages _msgs = GWT.create(GamesMessages.class);
+    protected static final EditGamesMessages _msgs = GWT.create(EditGamesMessages.class);
     protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
-    protected static final GameServiceAsync _gamesvc = GWT.create(GameService.class);
+    protected static final EditGameServiceAsync _gamesvc = GWT.create(EditGameService.class);
 }

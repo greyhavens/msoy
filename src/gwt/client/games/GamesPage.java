@@ -15,9 +15,11 @@ import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.SharedNaviUtil.GameDetails;
 
+import client.game.GameGenrePanel;
 import client.reminders.RemindersPanel;
 import client.shell.CShell;
 import client.shell.Page;
+import client.util.Link;
 
 /**
  * Displays a page that allows a player to play a particular game. If it's single player the game
@@ -56,35 +58,16 @@ public class GamesPage extends Page
                 GameInfo.Sort.fromToken(args.get(2, "")), args.get(3, null)));
             showFriendsBar(0);
 
-        } else if (action.equals("m")) {
-            setContent(new MyGamesPanel(GameInfo.Sort.fromToken(args.get(1, ""))));
-
-        } else if (action.equals("c")) {
-            setContent(_msgs.cgTitle(), new CreateGamePanel());
-
-        } else if (action.equals("e")) {
-            EditGamePanel panel;
-            if (getContent() instanceof EditGamePanel) {
-                panel = (EditGamePanel)getContent();
-            } else {
-                setContent(_msgs.egTitle(), panel = new EditGamePanel());
-            }
-            panel.setGame(args.get(1, 0), args.get(2, 0));
-
-        } else if (action.equals("ea")) {
-            setContent(new EditArcadePanel());
-
-        } else if (action.equals("emg")) {
-            setContent(new EditMochiGamesPanel());
-
-        } else if (action.equals("eft")) {
-            setContent(new EditGlobalFeedThumbsPanel());
-
-        } else if (action.equals("aa")) {
-            byte portal = args.get(1, ArcadeData.Portal.MAIN.toByte());
-            setContent(new AddArcadeEntriesPanel(
-                ByteEnumUtil.fromByte(ArcadeData.Portal.class, portal),
-                GameInfo.Sort.fromToken(args.get(1, "")), args.get(3, null)));
+        } else if (action.equals("m") ||
+                action.equals("c") ||
+                action.equals("e") ||
+                action.equals("ea") ||
+                action.equals("emg") ||
+                action.equals("eft") ||
+                action.equals("aa")) {
+            // redirect to edgames
+            // TODO: fix broken links
+            Link.go(Pages.EDGAMES, args);
 
         } else if (action.equals("mochi")) {
             String mochiTag = args.get(1, "");

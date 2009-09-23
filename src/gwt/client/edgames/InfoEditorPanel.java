@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.games;
+package client.edgames;
 
 import java.util.List;
 
@@ -13,9 +13,9 @@ import com.google.gwt.user.client.ui.TextBox;
 
 
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.edgame.gwt.EditGameService.GameData;
 import com.threerings.msoy.game.gwt.GameGenre;
 import com.threerings.msoy.game.gwt.GameInfo;
-import com.threerings.msoy.game.gwt.GameService;
 import com.threerings.msoy.group.data.all.GroupMembership;
 import com.threerings.msoy.group.gwt.GroupService;
 import com.threerings.msoy.group.gwt.GroupServiceAsync;
@@ -31,7 +31,7 @@ import client.util.InfoCallback;
  */
 public class InfoEditorPanel extends EditorTable
 {
-    public InfoEditorPanel (final GameService.GameData data)
+    public InfoEditorPanel (final GameData data)
     {
         final GameInfo info = data.info;
         final TextBox name = MsoyUI.createTextBox(info.name, GameInfo.MAX_NAME_LENGTH, 40);

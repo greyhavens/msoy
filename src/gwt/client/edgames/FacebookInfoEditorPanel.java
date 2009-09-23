@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.games;
+package client.edgames;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,14 +16,14 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.gwt.util.StringUtil;
 
+import com.threerings.msoy.edgame.gwt.EditGameService;
+import com.threerings.msoy.edgame.gwt.EditGameServiceAsync;
 import com.threerings.msoy.facebook.gwt.FacebookInfo;
-import com.threerings.msoy.game.gwt.GameService;
-import com.threerings.msoy.game.gwt.GameServiceAsync;
 import com.threerings.msoy.game.gwt.GameThumbnail;
 import com.threerings.msoy.game.gwt.GameThumbnail.Type;
 
-import client.games.EditThumbsPanel.ThumbnailSet;
-import client.games.EditorUtil.ConfigException;
+import client.edgames.EditThumbsPanel.ThumbnailSet;
+import client.edgames.EditorUtil.ConfigException;
 import client.ui.MsoyUI;
 import client.util.ClickCallback;
 import client.util.InfoCallback;
@@ -156,6 +156,6 @@ public class FacebookInfoEditorPanel extends FlowPanel
     protected int _viewRow;
 
     protected static final int THUMB_COLS = 2;
-    protected static final GamesMessages _msgs = GWT.create(GamesMessages.class);
-    protected static final GameServiceAsync _gamesvc = GWT.create(GameService.class);
+    protected static final EditGamesMessages _msgs = GWT.create(EditGamesMessages.class);
+    protected static final EditGameServiceAsync _gamesvc = GWT.create(EditGameService.class);
 }

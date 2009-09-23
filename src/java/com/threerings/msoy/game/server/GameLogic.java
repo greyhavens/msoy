@@ -19,6 +19,7 @@ import com.threerings.presents.server.InvocationException;
 
 import com.threerings.msoy.data.all.LaunchConfig;
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.edgame.gwt.GameCode;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.MemberRepository;
 
@@ -36,7 +37,6 @@ import com.threerings.msoy.game.client.WorldGameService;
 import com.threerings.msoy.game.data.GameAuthName;
 import com.threerings.msoy.game.data.MsoyGameDefinition;
 import com.threerings.msoy.game.data.MsoyMatchConfig;
-import com.threerings.msoy.game.gwt.GameCode;
 import com.threerings.msoy.game.server.WorldGameRegistry;
 import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;

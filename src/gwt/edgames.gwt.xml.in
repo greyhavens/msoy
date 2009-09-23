@@ -1,0 +1,15 @@
+<module>
+  <inherits name="com.google.gwt.xml.XML"/>
+  <inherits name="game"/>
+  <inherits name="trophy"/>
+  <inherits name="facebookbase"/>
+
+  <source path="com/threerings/msoy/edgame/gwt"/>
+
+  <source path="client/edgames"/>
+
+  <public path="public/edgames"/>
+  <stylesheet src="edgames.css"/>
+
+  <entry-point class="client.edgames.EditGamesPage"/>
+</module>

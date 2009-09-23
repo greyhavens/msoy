@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.games;
+package client.edgames;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,16 +11,16 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 
 
-import com.threerings.msoy.game.gwt.GameService;
-import com.threerings.msoy.game.gwt.GameServiceAsync;
+import com.threerings.msoy.edgame.gwt.EditGameService;
+import com.threerings.msoy.edgame.gwt.EditGameServiceAsync;
 import com.threerings.msoy.game.gwt.GameThumbnail;
 import com.threerings.msoy.game.gwt.GameThumbnail.Type;
 
 import client.ui.MsoyUI;
 import client.util.ClickCallback;
 import client.util.InfoCallback;
-import client.games.EditThumbsPanel.ThumbnailSet;
-import client.games.EditorUtil.ConfigException;
+import client.edgames.EditThumbsPanel.ThumbnailSet;
+import client.edgames.EditorUtil.ConfigException;
 
 /**
  * Panel for editing Facebook feed story thumbnails.
@@ -80,6 +80,6 @@ public class EditGlobalFeedThumbsPanel extends FlowPanel
 
     protected List<EditThumbsPanel> _panels = new ArrayList<EditThumbsPanel>();
 
-    protected static final GameServiceAsync _gamesvc = GWT.create(GameService.class);
-    protected static final GamesMessages _msgs = GWT.create(GamesMessages.class);
+    protected static final EditGameServiceAsync _gamesvc = GWT.create(EditGameService.class);
+    protected static final EditGamesMessages _msgs = GWT.create(EditGamesMessages.class);
 }

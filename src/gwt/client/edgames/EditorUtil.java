@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.games;
+package client.edgames;
 
 import client.util.MediaUploader;
 import client.util.MediaUtil;
@@ -195,5 +195,5 @@ public class EditorUtil
         return desc;
     }
 
-    protected static final GamesMessages _msgs = GWT.create(GamesMessages.class);
+    protected static final EditGamesMessages _msgs = GWT.create(EditGamesMessages.class);
 }

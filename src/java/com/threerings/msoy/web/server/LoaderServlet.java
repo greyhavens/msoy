@@ -15,10 +15,10 @@ import com.google.inject.Inject;
 import com.samskivert.io.StreamUtil;
 
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.edgame.gwt.GameCode;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 
-import com.threerings.msoy.game.gwt.GameCode;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 
 import com.threerings.msoy.room.data.MsoySceneModel;

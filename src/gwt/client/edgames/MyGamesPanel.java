@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.games;
+package client.edgames;
 
 import java.util.Collections;
 import java.util.List;
@@ -12,12 +12,13 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.WidgetUtil;
 
+import com.threerings.msoy.edgame.gwt.EditGameService;
+import com.threerings.msoy.edgame.gwt.EditGameServiceAsync;
 import com.threerings.msoy.game.gwt.GameInfo;
-import com.threerings.msoy.game.gwt.GameService;
-import com.threerings.msoy.game.gwt.GameServiceAsync;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.game.PlayButton;
+import client.game.SortedGameListPanel;
 import client.ui.MsoyUI;
 import client.util.InfoCallback;
 import client.util.Link;
@@ -65,5 +66,6 @@ public class MyGamesPanel extends SortedGameListPanel
         Link.go(Pages.GAMES, "m", sort.toToken());
     }
 
-    protected static final GameServiceAsync _gamesvc = GWT.create(GameService.class);
+    protected static final EditGameServiceAsync _gamesvc = GWT.create(EditGameService.class);
+    protected static final EditGamesMessages _msgs = GWT.create(EditGamesMessages.class);
 }

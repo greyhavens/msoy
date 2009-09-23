@@ -4,16 +4,11 @@
 package com.threerings.msoy.game.gwt;
 
 import java.util.List;
-import java.util.Set;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.RatingResult;
-import com.threerings.msoy.facebook.gwt.FacebookInfo;
 import com.threerings.msoy.game.data.all.Trophy;
-import com.threerings.msoy.game.gwt.GameService.GameItemEditorInfo;
-import com.threerings.msoy.game.gwt.GameService.MochiGameBucket;
 
 /**
  * The asynchronous (client-side) version of {@link GameService}.
@@ -30,11 +25,6 @@ public interface GameServiceAsync
      */
     void loadGameGenre (ArcadeData.Portal portal, GameGenre genre, String query,
         AsyncCallback<List<GameInfo>> callback);
-
-    /**
-     * The asynchronous version of {@link GameService#loadMyGames}.
-     */
-    void loadMyGames (AsyncCallback<List<GameInfo>> callback);
 
     /**
      * The asynchronous version of {@link GameService#loadGameDetail}.
@@ -84,106 +74,12 @@ public interface GameServiceAsync
     void rateGame (int gameId, byte rating, AsyncCallback<RatingResult> callback);
 
     /**
-     * The asynchronous version of {@link GameService#loadGameData}.
-     */
-    void loadGameData (int gameId, AsyncCallback<GameService.GameData> callback);
-
-    /**
-     * The asynchronous version of {@link GameService#loadThumbnails}.
-     */
-    void loadThumbnails (int gameId, AsyncCallback<List<GameThumbnail>> callback);
-
-    /**
-     * The asynchronous version of {@link GameService#loadGameItems}.
-     */
-    void loadGameItems (int gameId, byte type, AsyncCallback<List<GameItemEditorInfo>> callback);
-
-    /**
-     * The asynchronous version of {@link GameService#createGame}.
-     */
-    void createGame (boolean isAVRG, String name, MediaDesc thumbMedia, MediaDesc clientCode,
-                     AsyncCallback<Integer> callback);
-
-    /**
-     * The asynchronous version of {@link GameService#deleteGame}.
-     */
-    void deleteGame (int gameId, AsyncCallback<Void> callback);
-
-    /**
-     * The asynchronous version of {@link GameService#updateGameInfo}.
-     */
-    void updateGameInfo (GameInfo info, AsyncCallback<Void> callback);
-
-    /**
      * The asynchronous version of {@link GameService#updateGameInstructions}.
      */
     void updateGameInstructions (int gameId, String instructions, AsyncCallback<Void> callback);
 
     /**
-     * The asynchronous version of {@link GameService#updateGameCode}.
-     */
-    void updateGameCode (GameCode code, AsyncCallback<Void> callback);
-
-    /**
-     * The asynchronous version of {@link GameService#publishGameCode}.
-     */
-    void publishGameCode (int gameId, AsyncCallback<Void> callback);
-
-    /**
-     * The asynchronous version of {@link GameService#updateFacebookInfo}.
-     */
-    void updateFacebookInfo (FacebookInfo info, AsyncCallback<Void> callback);
-
-    /**
-     * The asynchronous version of {@link GameService#updateAdditionalThumbnails}.
-     */
-    void updateThumbnails (int gameId, List<GameThumbnail> thumbnails,
-        AsyncCallback<Void> callback);
-
-    /**
-     * The asynchronous version of {@link GameService#loadArcadeEntryIds}.
-     */
-    void loadArcadeEntryIds (ArcadeData.Portal portal, AsyncCallback<int[]> callback);
-
-    /**
-     * The asynchronous version of {@link GameService#loadArcadeEntries}.
-     */
-    void loadArcadeEntries (ArcadeData.Portal portal,
-        AsyncCallback<GameService.ArcadeEntriesResult> callback);
-
-    /**
-     * The asynchronous version of {@link GameService#removeArcadeEntry}.
-     */
-    void removeArcadeEntry (ArcadeData.Portal portal, int gameId, AsyncCallback<Void> callback);
-
-    /**
-     * The asynchronous version of {@link GameService#addArcadeEntry}.
-     */
-    void addArcadeEntry (ArcadeData.Portal portal, int gameId, AsyncCallback<Void> callback);
-
-    /**
-     * The asynchronous version of {@link GameService#updateArcadeEntries}.
-     */
-    void updateArcadeEntries (ArcadeData.Portal portal, List<Integer> entries,
-        Set<Integer> featured, Set<Integer> removed, AsyncCallback<Void> callback);
-
-    /**
      * The asynchronous version of {@link GameService#getMochiGame}.
      */
     void getMochiGame (String mochiTag, AsyncCallback<MochiGameInfo> callback);
-
-    /**
-     * The asynchronous version of {@link GameService#getMochiBucket}.
-     */
-    void getMochiBucket (int bucket, AsyncCallback<MochiGameBucket> callback);
-
-    /**
-     * The asynchronous version of {@link GameService#setMochiBucketTags}.
-     */
-    void setMochiBucketTags (int slot, String[] tags, AsyncCallback<List<String>> callback);
-
-    /**
-     * The asynchronous version of {@link GameService#testRollFeaturedGames}.
-     */
-    void testRollFeaturedGames (AsyncCallback<Void> callback);
 }

@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.game.gwt;
+package com.threerings.msoy.edgame.gwt;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 

@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.games;
+package client.edgames;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -26,14 +26,16 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.WidgetUtil;
 
+import com.threerings.msoy.edgame.gwt.EditGameService;
+import com.threerings.msoy.edgame.gwt.EditGameServiceAsync;
+import com.threerings.msoy.edgame.gwt.EditGameService.ArcadeEntriesResult;
+
 import com.threerings.msoy.game.gwt.ArcadeData;
 import com.threerings.msoy.game.gwt.GameInfo;
-import com.threerings.msoy.game.gwt.GameService;
-import com.threerings.msoy.game.gwt.GameServiceAsync;
-import com.threerings.msoy.game.gwt.GameService.ArcadeEntriesResult;
 
 import com.threerings.msoy.web.gwt.Pages;
 
+import client.game.GameListPanel;
 import client.ui.MsoyUI;
 import client.ui.TongueBox;
 import client.util.ClickCallback;
@@ -279,6 +281,6 @@ public class EditArcadePanel extends FlowPanel
 
     protected ListBox _pages;
 
-    protected static final GameServiceAsync _gamesvc = GWT.create(GameService.class);
-    protected static final GamesMessages _msgs = GWT.create(GamesMessages.class);
+    protected static final EditGameServiceAsync _gamesvc = GWT.create(EditGameService.class);
+    protected static final EditGamesMessages _msgs = GWT.create(EditGamesMessages.class);
 }

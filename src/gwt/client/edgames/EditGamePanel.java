@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.games;
+package client.edgames;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
@@ -12,8 +12,10 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
 
-import com.threerings.msoy.game.gwt.GameService;
-import com.threerings.msoy.game.gwt.GameServiceAsync;
+import com.threerings.msoy.edgame.gwt.EditGameService;
+import com.threerings.msoy.edgame.gwt.EditGameServiceAsync;
+import com.threerings.msoy.edgame.gwt.EditGameService.GameData;
+
 import com.threerings.msoy.item.data.all.GameItem;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
@@ -44,15 +46,15 @@ public class EditGamePanel extends FlowPanel
         }
 
         _gameId = gameId;
-        _gamesvc.loadGameData(gameId, new InfoCallback<GameService.GameData>() {
-            public void onSuccess (GameService.GameData data) {
+        _gamesvc.loadGameData(gameId, new InfoCallback<GameData>() {
+            public void onSuccess (GameData data) {
                 init(data);
                 _tabs.activateTab(tabIdx);
             }
         });
     }
 
-    protected void init (final GameService.GameData data)
+    protected void init (final GameData data)
     {
         clear();
 
@@ -123,8 +125,8 @@ public class EditGamePanel extends FlowPanel
     protected int _gameId;
     protected NaviTabPanel _tabs;
 
-    protected static final GamesMessages _msgs = GWT.create(GamesMessages.class);
+    protected static final EditGamesMessages _msgs = GWT.create(EditGamesMessages.class);
     protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
 
-    protected static final GameServiceAsync _gamesvc = GWT.create(GameService.class);
+    protected static final EditGameServiceAsync _gamesvc = GWT.create(EditGameService.class);
 }

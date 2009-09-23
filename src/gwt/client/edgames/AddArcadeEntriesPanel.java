@@ -1,21 +1,25 @@
 //
 // $Id$
 
-package client.games;
+package client.edgames;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
+import client.game.GameGenrePanel;
 import client.util.ClickCallback;
 import client.util.InfoCallback;
 import client.util.Link;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.msoy.edgame.gwt.EditGameService;
+import com.threerings.msoy.edgame.gwt.EditGameServiceAsync;
 import com.threerings.msoy.game.gwt.ArcadeData;
 import com.threerings.msoy.game.gwt.GameGenre;
 import com.threerings.msoy.game.gwt.GameInfo;
@@ -33,7 +37,7 @@ public class AddArcadeEntriesPanel extends GameGenrePanel
     {
         // we need to use the main, unfiltered portal here so new games can be added
         super(ArcadeData.Portal.MAIN, GameGenre.ALL, sort, query);
-        _gamesvc.loadArcadeEntryIds(_portal = page, new InfoCallback<int[]> () {
+        _edgamesvc.loadArcadeEntryIds(_portal = page, new InfoCallback<int[]> () {
             public void onSuccess (int[] result) {
                 _entryIds = new HashSet<Integer>();
                 for (int gameId : result) {
@@ -79,9 +83,9 @@ public class AddArcadeEntriesPanel extends GameGenrePanel
         new ClickCallback<Void>(button) {
             @Override protected boolean callService () {
                 if (topGame) {
-                    _gamesvc.removeArcadeEntry(_portal, gameId, this);
+                    _edgamesvc.removeArcadeEntry(_portal, gameId, this);
                 } else {
-                    _gamesvc.addArcadeEntry(_portal, gameId, this);
+                    _edgamesvc.addArcadeEntry(_portal, gameId, this);
                 }
                 return true;
             }
@@ -101,4 +105,7 @@ public class AddArcadeEntriesPanel extends GameGenrePanel
     protected ArcadeData.Portal _portal;
     protected Set<Integer> _entryIds;
     protected HashMap<Integer, FlowPanel> _actions = new HashMap<Integer, FlowPanel>();
+
+    protected static final EditGamesMessages _msgs = GWT.create(EditGamesMessages.class);
+    protected static final EditGameServiceAsync _edgamesvc = GWT.create(EditGameService.class);
 }

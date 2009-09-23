@@ -1,5 +1,4 @@
 <module>
-  <inherits name="com.google.gwt.xml.XML"/>
   <inherits name="game"/>
   <inherits name="trophy"/>
   <inherits name="reminders"/>

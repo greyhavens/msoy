@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.games;
+package client.game;
 
 import client.ui.MsoyUI;
 
@@ -46,7 +46,7 @@ public abstract class SortedGameListPanel extends GameListPanel
     @Override // from GameListPanel
     protected int addCustomControls (FlexTable controls, int row)
     {
-        controls.setWidget(row, 0, new InlineLabel(_msgs.genreSortBy(), false, false, false));
+        controls.setWidget(row, 0, new InlineLabel(_gmsgs.genreSortBy(), false, false, false));
         controls.getFlexCellFormatter().setStyleName(row, 0, "SortBy");
         controls.setWidget(row, 1, _sortBox);
         return super.addCustomControls(controls, ++row);
@@ -78,11 +78,11 @@ public abstract class SortedGameListPanel extends GameListPanel
     protected ListBox _sortBox;
 
     protected static final String[] SORT_LABELS = new String[] {
-        _msgs.genreSortByRating(),
-        _msgs.genreSortByNewest(),
-        _msgs.genreSortByAlphabetical(),
-        _msgs.genreSortByCategory(),
-        _msgs.genreSortByNowPlaying()
+        _gmsgs.genreSortByRating(),
+        _gmsgs.genreSortByNewest(),
+        _gmsgs.genreSortByAlphabetical(),
+        _gmsgs.genreSortByCategory(),
+        _gmsgs.genreSortByNowPlaying()
     };
 
     protected static final GameInfo.Sort[] SORT_VALUES = new GameInfo.Sort[] {

@@ -19,6 +19,7 @@ import com.threerings.msoy.game.gwt.GameService;
 import com.threerings.msoy.game.gwt.GameServiceAsync;
 import com.threerings.msoy.web.gwt.Pages;
 
+import client.game.GameHeaderPanel;
 import client.shell.DynamicLookup;
 import client.ui.MsoyUI;
 import client.ui.ThumbBox;

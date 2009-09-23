@@ -12,7 +12,7 @@ import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.expression.ColumnExp;
 
 import com.threerings.msoy.data.all.MediaDesc;
-import com.threerings.msoy.game.gwt.GameCode;
+import com.threerings.msoy.edgame.gwt.GameCode;
 
 /**
  * Contains configuration data for a game (either the published or in-development version).

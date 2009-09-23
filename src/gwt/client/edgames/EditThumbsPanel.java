@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.games;
+package client.edgames;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -11,10 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import client.games.EditorUtil.ConfigException;
-import client.games.EditorUtil.MediaBox;
-import client.ui.MsoyUI;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -23,10 +19,15 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
+
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.game.gwt.GameThumbnail;
 import com.threerings.msoy.game.gwt.GameThumbnail.Type;
+
+import client.edgames.EditorUtil.ConfigException;
+import client.edgames.EditorUtil.MediaBox;
+import client.ui.MsoyUI;
 
 /**
  * Edits a single type of feed thumbnail, organized by variant.
@@ -248,5 +249,5 @@ class EditThumbsPanel extends FlowPanel
     protected FlowPanel _variants;
     protected Runnable _onMediaModified;
 
-    protected static final GamesMessages _msgs = GWT.create(GamesMessages.class);
+    protected static final EditGamesMessages _msgs = GWT.create(EditGamesMessages.class);
 }

@@ -12,9 +12,9 @@ import org.xml.sax.SAXException;
 import org.apache.commons.digester.Digester;
 import org.apache.commons.digester.Rule;
 
+import com.threerings.msoy.edgame.gwt.GameCode;
 import com.threerings.msoy.game.data.MsoyGameDefinition;
 import com.threerings.msoy.game.data.MsoyMatchConfig;
-import com.threerings.msoy.game.gwt.GameCode;
 
 import com.threerings.parlor.game.data.GameConfig;
 

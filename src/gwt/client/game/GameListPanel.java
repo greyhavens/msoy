@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.games;
+package client.game;
 
 import java.util.List;
 
@@ -20,7 +20,6 @@ import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.game.gwt.GameInfo;
 import com.threerings.msoy.web.gwt.Pages;
 
-import client.game.PlayButton;
 import client.shell.DynamicLookup;
 import client.ui.MsoyUI;
 import client.ui.Stars;
@@ -79,7 +78,7 @@ public abstract class GameListPanel extends FlowPanel
      */
     protected String getEmptyMessage ()
     {
-        return _msgs.genreNoGames();
+        return _gmsgs.genreNoGames();
     }
 
     /**
@@ -143,7 +142,7 @@ public abstract class GameListPanel extends FlowPanel
 
                 FlowPanel ratingPanel = new FlowPanel();
                 ratingPanel.add(new Stars(game.rating, true, false, null));
-                ratingPanel.add(MsoyUI.createLabel(_msgs.genreNumRatings(game.ratingCount+""),
+                ratingPanel.add(MsoyUI.createLabel(_gmsgs.genreNumRatings(game.ratingCount+""),
                                 "NumRatings"));
                 setWidget(0, col++, ratingPanel, 1, "Rating");
                 setText(0, col++, _dmsgs.xlate("genre_" + game.genre), 1, "Category");
@@ -155,7 +154,7 @@ public abstract class GameListPanel extends FlowPanel
         }
     }
 
-    protected static final GamesMessages _msgs = GWT.create(GamesMessages.class);
+    protected static final GameMessages _gmsgs = GWT.create(GameMessages.class);
     protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
 
     protected static final int GAMES_PER_PAGE = 10;

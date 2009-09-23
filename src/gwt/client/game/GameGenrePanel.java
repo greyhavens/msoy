@@ -1,13 +1,12 @@
 //
 // $Id$
 
-package client.games;
+package client.game;
 
 import java.util.Collections;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
-
 
 import com.threerings.msoy.game.gwt.ArcadeData;
 import com.threerings.msoy.game.gwt.GameGenre;

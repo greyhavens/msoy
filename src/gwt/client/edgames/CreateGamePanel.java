@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.games;
+package client.edgames;
 
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Button;

@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.games;
+package client.edgames;
 
 import java.util.Date;
 
@@ -12,9 +12,10 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.util.DateUtil;
 
 import com.threerings.msoy.data.all.MediaDesc;
-import com.threerings.msoy.game.gwt.GameCode;
-import com.threerings.msoy.game.gwt.GameService;
-import com.threerings.msoy.game.gwt.GameServiceAsync;
+import com.threerings.msoy.edgame.gwt.EditGameService;
+import com.threerings.msoy.edgame.gwt.EditGameServiceAsync;
+import com.threerings.msoy.edgame.gwt.GameCode;
+import com.threerings.msoy.edgame.gwt.EditGameService.GameData;
 
 import client.ui.MsoyUI;
 import client.util.ClickCallback;
@@ -24,7 +25,7 @@ import client.util.ClickCallback;
  */
 public class PublishPanel extends SmartTable
 {
-    public PublishPanel (final GameService.GameData data)
+    public PublishPanel (final GameData data)
     {
         super("publish", 0, 10);
 
@@ -52,7 +53,7 @@ public class PublishPanel extends SmartTable
         };
     }
 
-    protected int updateData (GameService.GameData data)
+    protected int updateData (GameData data)
     {
         GameCode pubCode = (data.pubCode == null) ? new GameCode() : data.pubCode;
         int row = _dataRow;
@@ -85,6 +86,6 @@ public class PublishPanel extends SmartTable
     protected int _dataRow;
     protected Button _publish = new Button(_msgs.publishPublish());
 
-    protected static final GamesMessages _msgs = GWT.create(GamesMessages.class);
-    protected static final GameServiceAsync _gamesvc = GWT.create(GameService.class);
+    protected static final EditGamesMessages _msgs = GWT.create(EditGamesMessages.class);
+    protected static final EditGameServiceAsync _gamesvc = GWT.create(EditGameService.class);
 }
