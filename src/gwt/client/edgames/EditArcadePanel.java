@@ -82,7 +82,7 @@ public class EditArcadePanel extends FlowPanel
 
         if (portal == ArcadeData.Portal.FACEBOOK) {
             topBits.add(WidgetUtil.makeShim(5, 5));
-            topBits.add(Link.create("Edit Mochi Games", Pages.GAMES, "emg"));
+            topBits.add(Link.create("Edit Mochi Games", Pages.EDGAMES, "emg"));
         }
 
         if (portal == null) {
@@ -127,7 +127,7 @@ public class EditArcadePanel extends FlowPanel
             buttons.setSpacing(10);
             buttons.setStyleName("Buttons");
             buttons.add(_save = new Button(_msgs.eaeSave()));
-            buttons.add(Link.create(_msgs.eaeAdd(), Pages.GAMES, "aa", _portal.toByte()));
+            buttons.add(Link.create(_msgs.eaeAdd(), Pages.EDGAMES, "aa", _portal.toByte()));
             add(buttons);
             new ClickCallback<Void>(_save) {
                 @Override protected boolean callService () {

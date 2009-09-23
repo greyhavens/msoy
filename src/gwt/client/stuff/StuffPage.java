@@ -160,7 +160,7 @@ public class StuffPage extends Page
                     } else if (GAME_TYPES.containsKey(item.getType())) {
                         int gameId = Math.abs(((IdentGameItem)item).gameId);
                         int tabIdx = GAME_TYPES.get(item.getType());
-                        Link.go(Pages.GAMES, "e", gameId, tabIdx);
+                        Link.go(Pages.EDGAMES, "e", gameId, tabIdx);
                     } else {
                         Link.go(Pages.STUFF, "d", item.getType(), item.itemId);
                     }

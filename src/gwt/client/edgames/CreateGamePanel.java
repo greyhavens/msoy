@@ -69,7 +69,7 @@ public class CreateGamePanel extends EditorTable
                 return true;
             }
             protected boolean gotResult (Integer gameId) {
-                Link.go(Pages.GAMES, "e", gameId);
+                Link.go(Pages.EDGAMES, "e", gameId);
                 return true;
             }
         };

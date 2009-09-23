@@ -53,7 +53,7 @@ public class AddArcadeEntriesPanel extends GameGenrePanel
     @Override
     protected void onSortChanged (Sort sort)
     {
-        Link.go(Pages.GAMES, "aa", _portal.toByte(), sort.toToken(), _header.getQuery());
+        Link.go(Pages.EDGAMES, "aa", _portal.toByte(), sort.toToken(), _header.getQuery());
     }
 
     @Override

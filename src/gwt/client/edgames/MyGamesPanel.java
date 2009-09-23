@@ -37,7 +37,7 @@ public class MyGamesPanel extends SortedGameListPanel
         absbits.add(MsoyUI.createLabel(_msgs.myGames(), "GenreTitle"));
         absbits.add(MsoyUI.createHTML(_msgs.myGamesCreateTip(), "CreateTip"));
         absbits.add(MsoyUI.createButton(MsoyUI.SHORT_THIN, _msgs.myGamesCreate(),
-                                        Link.createHandler(Pages.GAMES, "c")));
+                                        Link.createHandler(Pages.EDGAMES, "c")));
         header.add(absbits);
         header.add(MsoyUI.createLabel(_msgs.myGamesDevTip(), "DevTip"));
         add(header);
@@ -57,13 +57,13 @@ public class MyGamesPanel extends SortedGameListPanel
         // we want our play buttons to play the development version
         bits.add(PlayButton.createSmall(GameInfo.toDevId(game.gameId)));
         bits.add(WidgetUtil.makeShim(5, 5));
-        bits.add(Link.create(_msgs.myGamesEdit(), Pages.GAMES, "e", game.gameId));
+        bits.add(Link.create(_msgs.myGamesEdit(), Pages.EDGAMES, "e", game.gameId));
         return bits;
     }
 
     protected void onSortChanged (GameInfo.Sort sort)
     {
-        Link.go(Pages.GAMES, "m", sort.toToken());
+        Link.go(Pages.EDGAMES, "m", sort.toToken());
     }
 
     protected static final EditGameServiceAsync _gamesvc = GWT.create(EditGameService.class);

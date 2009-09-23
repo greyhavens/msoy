@@ -73,13 +73,13 @@ public class EditGamePanel extends FlowPanel
                 return true;
             }
             @Override protected boolean gotResult (Void result) {
-                Link.go(Pages.GAMES, "m");
+                Link.go(Pages.EDGAMES, "m");
                 return true;
             }
         };
 
         // add our giant tab list of doom
-        add(_tabs = new NaviTabPanel(Pages.GAMES) {
+        add(_tabs = new NaviTabPanel(Pages.EDGAMES) {
             protected Args getTabArgs (int tabIdx) {
                 return Args.compose("e", _gameId, tabIdx);
             }
