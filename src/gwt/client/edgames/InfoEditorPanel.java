@@ -40,7 +40,7 @@ public class InfoEditorPanel extends GameEditorTable
         final TextBox name = MsoyUI.createTextBox(info.name, GameInfo.MAX_NAME_LENGTH, 40);
         addRow(_msgs.egName(), name, new Command() {
             public void execute () {
-                info.name = EditorUtil.checkName(name.getText().trim());
+                info.name = EditorUtil.checkName(name.getText().trim(), GameInfo.MAX_NAME_LENGTH);
             }
         });
 

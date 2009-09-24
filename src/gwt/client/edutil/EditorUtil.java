@@ -5,7 +5,6 @@ import com.google.gwt.user.client.ui.HasAlignment;
 
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.msoy.data.all.MediaDesc;
-import com.threerings.msoy.game.gwt.GameInfo;
 
 import client.ui.MsoyUI;
 import client.util.MediaUploader;
@@ -152,10 +151,10 @@ public class EditorUtil
      * Throws a {@link ConfigException} if the name is empty or exceeds the allowed length. For
      * convenience, returns the name if all is well.
      */
-    public static String checkName (String name)
+    public static String checkName (String name, int length)
     {
-        if (name.length() == 0 || name.length() > GameInfo.MAX_NAME_LENGTH) {
-            throw new ConfigException(_msgs.errInvalidName(""+GameInfo.MAX_NAME_LENGTH));
+        if (name.length() == 0 || name.length() > length) {
+            throw new ConfigException(_msgs.errInvalidName(""+length));
         }
         return name;
     }
