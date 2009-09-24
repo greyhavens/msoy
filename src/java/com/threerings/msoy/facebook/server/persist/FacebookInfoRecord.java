@@ -55,13 +55,12 @@ public class FacebookInfoRecord extends PersistentRecord
     public String appSecret;
 
     /** If true Whirled won't display any chrome when in Facebook App mode. */
-    @Column(defaultValue="false") // TODO: remove default after migration
     public boolean chromeless;
 
     /** The Facebook canvas name so Whirled can send redirects to the application. NOTE: this would
     * ideally be obtained instead from the API using the key & secrect, but the getAppProperties
     * method in the facebook API doesn't work. */
-    @Column(length=FacebookInfo.CANVAS_NAME_LENGTH, defaultValue="''")
+    @Column(length=FacebookInfo.CANVAS_NAME_LENGTH)
     public String canvasName;
 
     /**
