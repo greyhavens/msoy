@@ -1,0 +1,11 @@
+<module>
+  <inherits name="edutil"/>
+
+  <source path="com/threerings/msoy/apps/gwt"/>
+  <source path="client/apps"/>
+
+  <public path="public/apps"/>
+  <stylesheet src="apps.css"/>
+
+  <entry-point class="client.apps.AppsPage"/>
+</module>

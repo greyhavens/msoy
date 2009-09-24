@@ -47,6 +47,8 @@ import com.threerings.pulse.web.server.PulseServlet;
 
 import com.threerings.msoy.admin.gwt.AdminService;
 import com.threerings.msoy.admin.server.AdminServlet;
+import com.threerings.msoy.apps.gwt.AppService;
+import com.threerings.msoy.apps.server.AppServlet;
 import com.threerings.msoy.comment.gwt.CommentService;
 import com.threerings.msoy.comment.server.CommentServlet;
 import com.threerings.msoy.data.all.DeploymentConfig;
@@ -295,6 +297,7 @@ public class MsoyHttpServer extends Server
         .put(SurveyService.ENTRY_POINT, SurveyServlet.class)
         .put(FacebookService.ENTRY_POINT, FacebookServlet.class)
         .put(RemindersService.ENTRY_POINT, RemindersServlet.class)
+        .put(AppService.ENTRY_POINT, AppServlet.class)
         .put("/facebook/*", FacebookCallbackServlet.class)
         .put("/ooo", OOOXmlRpcServlet.class)
         .put("/pulse", PulseServlet.class)

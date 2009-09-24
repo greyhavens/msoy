@@ -12,6 +12,7 @@ public enum Pages
 {
     ACCOUNT(Tabs.ME),
     ADMINZ(Tabs.ME),
+    APPS(Tabs.ME),
     BILLING(Tabs.BILLING),
     CREATE(null), // TODO: Tabs.CREATE
     FAVORITES(Tabs.SHOP),
