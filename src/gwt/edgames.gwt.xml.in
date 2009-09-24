@@ -2,6 +2,7 @@
   <inherits name="com.google.gwt.xml.XML"/>
   <inherits name="game"/>
   <inherits name="facebookbase"/>
+  <inherits name="edutil"/>
 
   <source path="com/threerings/msoy/edgame/gwt"/>
   <source path="client/edgames"/>

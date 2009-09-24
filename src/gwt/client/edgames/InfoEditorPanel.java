@@ -22,6 +22,7 @@ import com.threerings.msoy.group.gwt.GroupService;
 import com.threerings.msoy.group.gwt.GroupServiceAsync;
 import com.threerings.msoy.item.data.all.Item;
 
+import client.edutil.EditorUtil;
 import client.ui.LimitedTextArea;
 import client.ui.MsoyUI;
 import client.shell.CShell;
@@ -31,7 +32,7 @@ import client.util.InfoCallback;
 /**
  * Allows for creation and editing of basic game info.
  */
-public class InfoEditorPanel extends EditorTable
+public class InfoEditorPanel extends GameEditorTable
 {
     public InfoEditorPanel (final GameData data)
     {
@@ -101,12 +102,7 @@ public class InfoEditorPanel extends EditorTable
         final MediaBox sbox = new MediaBox(
             MediaDesc.GAME_SHOT_SIZE, Item.AUX_MEDIA, info.shotMedia) {
             @Override public void mediaUploaded (String name, MediaDesc desc, int w, int h) {
-                int targetW = MediaDesc.getWidth(MediaDesc.GAME_SHOT_SIZE);
-                int targetH = MediaDesc.getHeight(MediaDesc.GAME_SHOT_SIZE);
-                if ((w != targetW) || (h != targetH)) {
-                    MsoyUI.error(_msgs.errInvalidShot(
-                        String.valueOf(targetW), String.valueOf(targetH)));
-                } else {
+                if (checkSize(w, h)) {
                     super.mediaUploaded(name, desc, w, h);
                 }
             }

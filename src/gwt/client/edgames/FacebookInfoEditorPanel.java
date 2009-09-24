@@ -23,7 +23,8 @@ import com.threerings.msoy.game.gwt.GameThumbnail;
 import com.threerings.msoy.game.gwt.GameThumbnail.Type;
 
 import client.edgames.EditThumbsPanel.ThumbnailSet;
-import client.edgames.EditorUtil.ConfigException;
+import client.edutil.EditorTable;
+import client.edutil.EditorUtil.ConfigException;
 import client.ui.MsoyUI;
 import client.util.ClickCallback;
 import client.util.InfoCallback;

@@ -1,0 +1,8 @@
+<module>
+  <inherits name="global"/>
+
+  <source path="client/edutil"/>
+
+  <public path="public/edutil"/>
+  <stylesheet src="edutil.css"/>
+</module>

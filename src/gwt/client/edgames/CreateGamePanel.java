@@ -13,6 +13,7 @@ import com.threerings.msoy.game.gwt.GameInfo;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.web.gwt.Pages;
 
+import client.edutil.EditorUtil;
 import client.ui.MsoyUI;
 import client.util.ClickCallback;
 import client.util.Link;
@@ -20,7 +21,7 @@ import client.util.Link;
 /**
  * Displays an interface for creating a brand new game.
  */
-public class CreateGamePanel extends EditorTable
+public class CreateGamePanel extends GameEditorTable
 {
     public CreateGamePanel ()
     {

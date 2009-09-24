@@ -25,6 +25,8 @@ import com.threerings.msoy.edgame.gwt.GameCode;
 import com.threerings.msoy.game.gwt.GameInfo;
 import com.threerings.msoy.item.data.all.Item;
 
+import client.edutil.EditorUtil;
+import client.edutil.EditorUtil.ConfigException;
 import client.shell.CShell;
 import client.ui.MsoyUI;
 import client.ui.NumberTextBox;
@@ -33,7 +35,7 @@ import client.util.ClickCallback;
 /**
  * Displays an interface for editing a game's code and configuration.
  */
-public class CodeEditorPanel extends EditorTable
+public class CodeEditorPanel extends GameEditorTable
 {
     public CodeEditorPanel (GameInfo info, final GameCode code)
     {
@@ -315,7 +317,7 @@ public class CodeEditorPanel extends EditorTable
                 // need a valid document (single child element) for parsing to work
                 params = XMLParser.parse("<params>" + config.params + "</params>");
             } catch (DOMException de) {
-                throw new EditorUtil.ConfigException(_msgs.errInvalidDefinition(de.getMessage()));
+                throw new ConfigException(_msgs.errInvalidDefinition(de.getMessage()));
             }
 
             Element pelem = xml.createElement("params");

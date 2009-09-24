@@ -25,8 +25,9 @@ import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.game.gwt.GameThumbnail;
 import com.threerings.msoy.game.gwt.GameThumbnail.Type;
 
-import client.edgames.EditorUtil.ConfigException;
-import client.edgames.EditorUtil.MediaBox;
+import client.edutil.EditorUtil;
+import client.edutil.EditorUtil.MediaBox;
+import client.edutil.EditorUtil.ConfigException;
 import client.ui.MsoyUI;
 
 /**
@@ -194,12 +195,7 @@ class EditThumbsPanel extends FlowPanel
                     content != null && ii < content.size() ? content.get(ii).media : null) {
                     @Override public void mediaUploaded (
                         String name, MediaDesc desc, int w, int h) {
-                        int targetW = MediaDesc.getWidth(size);
-                        int targetH = MediaDesc.getHeight(size);
-                        if (w != targetW || h != targetH) {
-                            MsoyUI.error(_msgs.errInvalidShot(
-                                String.valueOf(targetW), String.valueOf(targetH)));
-                        } else {
+                        if (checkSize(w, h)) {
                             super.mediaUploaded(name, desc, w, h);
                         }
                     }

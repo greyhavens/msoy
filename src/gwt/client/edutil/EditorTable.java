@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.edgames;
+package client.edutil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,14 +21,11 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.data.all.MediaDesc;
-import com.threerings.msoy.edgame.gwt.EditGameService;
-import com.threerings.msoy.edgame.gwt.EditGameServiceAsync;
 
-import client.shell.DynamicLookup;
 import client.ui.MsoyUI;
 
 /**
- * A base class for game editor panels.
+ * A base class for editor panels.
  */
 public class EditorTable extends SmartTable
 {
@@ -37,12 +34,12 @@ public class EditorTable extends SmartTable
         super("baseEditor", 0, 10);
     }
 
-    protected int addRow (String name, Widget widget, Command binder)
+    public int addRow (String name, Widget widget, Command binder)
     {
         return addRow(name, null, widget, binder);
     }
 
-    protected int addRow (String name, String tip, Widget widget, Command binder)
+    public int addRow (String name, String tip, Widget widget, Command binder)
     {
         int row;
         if (tip == null) {
@@ -62,22 +59,22 @@ public class EditorTable extends SmartTable
         return row;
     }
 
-    protected int addTip (String text)
+    public int addTip (String text)
     {
         int row = getRowCount();
         setWidget(row, 1, MsoyUI.createHTML(text, null), 1, "tipLabel");
         return row;
     }
 
-    protected void addSpacer ()
+    public void addSpacer ()
     {
         addWidget(WidgetUtil.makeShim(10, 10), 2);
     }
 
-    protected Button addSaveRow ()
+    public Button addSaveRow ()
     {
-        _save = new Button(_msgs.egSave());
-        _confirm = new CheckBox(_msgs.egCopyright());
+        _save = new Button(_utilmsgs.save());
+        _confirm = new CheckBox(_utilmsgs.copyright());
         _confirm.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
             public void onValueChange (ValueChangeEvent<Boolean> event) {
                 _save.setEnabled(event.getValue());
@@ -95,14 +92,14 @@ public class EditorTable extends SmartTable
         return _save;
     }
 
-    protected void mediaModified ()
+    public void mediaModified ()
     {
         _save.setEnabled(false);
         _confirm.setValue(false);
         _confirm.setVisible(true);
     }
 
-    protected boolean bindChanges ()
+    public boolean bindChanges ()
     {
         try {
             for (Command binder : _binders) {
@@ -127,8 +124,8 @@ public class EditorTable extends SmartTable
 
     protected class CodeBox extends EditorUtil.CodeBox
     {
-        public CodeBox (String emptyMessgae, String mediaId, MediaDesc media) {
-            super(emptyMessgae, mediaId, media);
+        public CodeBox (String emptyMessage, String mediaId, MediaDesc media) {
+            super(emptyMessage, mediaId, media);
         }
         @Override protected void mediaModified () {
             EditorTable.this.mediaModified();
@@ -139,7 +136,5 @@ public class EditorTable extends SmartTable
     protected CheckBox _confirm;
     protected List<Command> _binders = new ArrayList<Command>();
 
-    protected static final EditGamesMessages _msgs = GWT.create(EditGamesMessages.class);
-    protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
-    protected static final EditGameServiceAsync _gamesvc = GWT.create(EditGameService.class);
+    protected static final EditorUtilMessages _utilmsgs = GWT.create(EditorUtilMessages.class);
 }

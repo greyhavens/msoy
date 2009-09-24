@@ -20,7 +20,7 @@ import client.ui.MsoyUI;
 import client.util.ClickCallback;
 import client.util.InfoCallback;
 import client.edgames.EditThumbsPanel.ThumbnailSet;
-import client.edgames.EditorUtil.ConfigException;
+import client.edutil.EditorUtil.ConfigException;
 
 /**
  * Panel for editing Facebook feed story thumbnails.

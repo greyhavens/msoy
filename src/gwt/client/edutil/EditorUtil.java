@@ -1,22 +1,32 @@
-//
-// $Id$
-
-package client.edgames;
-
-import client.util.MediaUploader;
-import client.util.MediaUtil;
+package client.edutil;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.HasAlignment;
+
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.game.gwt.GameInfo;
 
+import client.ui.MsoyUI;
+import client.util.MediaUploader;
+import client.util.MediaUtil;
+
 /**
- * Utility classes and methods for editing games.
+ * Classes and methods for user-edited content.
  */
 public class EditorUtil
 {
+    /**
+     * Exception to be thrown when an invalid user input is encountered. The contained message is
+     * translated text to be shown directly to the user.
+     */
+    public static class ConfigException extends RuntimeException
+    {
+        public ConfigException (String message) {
+            super(message);
+        }
+    }
+
     /**
      * Basic box for containing media that the user can change by uploading.
      */
@@ -66,6 +76,20 @@ public class EditorUtil
          * Lets this editor box know that the media was just changed as a result of a user action.
          */
         protected void mediaModified () {
+        }
+
+        /**
+         * Checks the width and height of the newly uploaded media. If they match, returns true.
+         * Otherwise shows an error message and returns false.
+         */
+        protected boolean checkSize (int width, int height) {
+            int targetW = MediaDesc.getWidth(_size), targetH = MediaDesc.getHeight(_size);
+            if ((width != targetW) || (height != targetH)) {
+                MsoyUI.error(_msgs.errInvalidShot(
+                    String.valueOf(targetW), String.valueOf(targetH)));
+                return false;
+            }
+            return true;
         }
 
         protected int _size;
@@ -122,17 +146,6 @@ public class EditorUtil
 
         protected String _emptyMessage;
         protected MediaDesc _media;
-    }
-
-    /**
-     * Exception to be thrown when an invalid user input is encountered. The contained message is
-     * translated text to be shown directly to the user.
-     */
-    protected static class ConfigException extends RuntimeException
-    {
-        public ConfigException (String message) {
-            super(message);
-        }
     }
 
     /**
@@ -195,5 +208,5 @@ public class EditorUtil
         return desc;
     }
 
-    protected static final EditGamesMessages _msgs = GWT.create(EditGamesMessages.class);
+    public static final EditorUtilMessages _msgs = GWT.create(EditorUtilMessages.class);
 }
