@@ -19,6 +19,7 @@ public class FacebookInfoRecord extends PersistentRecord
     // AUTO-GENERATED: FIELDS START
     public static final Class<FacebookInfoRecord> _R = FacebookInfoRecord.class;
     public static final ColumnExp GAME_ID = colexp(_R, "gameId");
+    public static final ColumnExp APP_ID = colexp(_R, "appId");
     public static final ColumnExp API_KEY = colexp(_R, "apiKey");
     public static final ColumnExp APP_SECRET = colexp(_R, "appSecret");
     public static final ColumnExp CHROMELESS = colexp(_R, "chromeless");
@@ -27,7 +28,7 @@ public class FacebookInfoRecord extends PersistentRecord
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 4;
+    public static final int SCHEMA_VERSION = 5;
 
     /**
      * Converts the supplied runtime record into a persistent record.
@@ -36,6 +37,7 @@ public class FacebookInfoRecord extends PersistentRecord
     {
         FacebookInfoRecord record = new FacebookInfoRecord();
         record.gameId = info.gameId;
+        record.appId = info.appId;
         record.apiKey = info.apiKey;
         record.appSecret = info.appSecret;
         record.chromeless = info.chromeless;
@@ -43,8 +45,11 @@ public class FacebookInfoRecord extends PersistentRecord
         return record;
     }
 
-    /** The game for which we contain metadata. */
+    /** The game for which we contain metadata, or 0 if this is for an app. */
     @Id public int gameId;
+
+    /** The app for which we contain metadata, or 0 if this is for a game. */
+    @Id public int appId;
 
     /** The Facebook API key for this game's Facebook app. */
     @Column(length=FacebookInfo.KEY_LENGTH)
@@ -70,6 +75,7 @@ public class FacebookInfoRecord extends PersistentRecord
     {
         FacebookInfo info = new FacebookInfo();
         info.gameId = this.gameId;
+        info.appId = this.appId;
         info.apiKey = this.apiKey;
         info.appSecret = this.appSecret;
         info.chromeless = this.chromeless;
@@ -82,12 +88,12 @@ public class FacebookInfoRecord extends PersistentRecord
      * Create and return a primary {@link Key} to identify a {@link FacebookInfoRecord}
      * with the supplied key values.
      */
-    public static Key<FacebookInfoRecord> getKey (int gameId)
+    public static Key<FacebookInfoRecord> getKey (int gameId, int appId)
     {
         return new Key<FacebookInfoRecord>(
                 FacebookInfoRecord.class,
-                new ColumnExp[] { GAME_ID },
-                new Comparable[] { gameId });
+                new ColumnExp[] { GAME_ID, APP_ID },
+                new Comparable[] { gameId, appId });
     }
     // AUTO-GENERATED: METHODS END
 }

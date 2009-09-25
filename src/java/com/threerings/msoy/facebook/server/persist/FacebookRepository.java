@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.facebook.server.persist;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.List;
@@ -18,10 +20,12 @@ import com.samskivert.depot.Exps;
 import com.samskivert.depot.Ops;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
+import com.samskivert.depot.SchemaMigration;
 import com.samskivert.depot.clause.Limit;
 import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.expression.ColumnExp;
+import com.samskivert.jdbc.DatabaseLiaison;
 import com.threerings.msoy.facebook.gwt.FacebookInfo;
 
 /**
@@ -37,21 +41,33 @@ public class FacebookRepository extends DepotRepository
     public FacebookRepository (PersistenceContext context)
     {
         super(context);
+
+        // we need to drop the primary key to force a refresh
+        context.registerMigration(FacebookInfoRecord.class, new SchemaMigration(5) {
+            @Override protected int invoke (Connection conn, DatabaseLiaison liaison)
+                throws SQLException {
+                liaison.dropPrimaryKey(conn, "FacebookInfoRecord", "FacebookInfoRecord_pkey");
+                return 1;
+            }
+        });
     }
 
     /**
      * Loads the Facebook info for the specified game. If no info is registered for the game in
      * question a blank record is created with gameId filled in but no key or secret.
      */
-    public FacebookInfo loadFacebookInfo (int gameId)
+    public FacebookInfo loadGameFacebookInfo (int gameId)
     {
-        FacebookInfoRecord info = load(FacebookInfoRecord.getKey(gameId));
-        if (info != null) {
-            return info.toFacebookInfo();
-        }
-        FacebookInfo blank = new FacebookInfo();
-        blank.gameId = gameId;
-        return blank;
+        return loadFacebookInfo(gameId, 0);
+    }
+
+    /**
+     * Loads the Facebook info for the specified application. If no info is registered for the game
+     * in question a blank record is created with gameId filled in but no key or secret.
+     */
+    public FacebookInfo loadAppFacebookInfo (int appId)
+    {
+        return loadFacebookInfo(0, appId);
     }
 
     /**
@@ -59,7 +75,26 @@ public class FacebookRepository extends DepotRepository
      */
     public void updateFacebookInfo (FacebookInfo info)
     {
+        if (info.appId != 0 && info.gameId != 0) {
+            throw new IllegalArgumentException("Invalid key for facebook info");
+        }
         store(FacebookInfoRecord.fromFacebookInfo(info));
+    }
+
+    /**
+     * Deletes the facebook info for the given game id.
+     */
+    public void deleteGameFacebookInfo (int gameId)
+    {
+        delete(FacebookInfoRecord.getKey(gameId, 0));
+    }
+
+    /**
+     * Deletes the facebook info for the given application id.
+     */
+    public void deleteAppFacebookInfo (int appId)
+    {
+        delete(FacebookInfoRecord.getKey(0, appId));
     }
 
     /**
@@ -240,6 +275,18 @@ public class FacebookRepository extends DepotRepository
     public void deleteNotification (String id)
     {
         delete(FacebookNotificationRecord.getKey(id));
+    }
+
+    protected FacebookInfo loadFacebookInfo (int gameId, int appId)
+    {
+        FacebookInfoRecord info = load(FacebookInfoRecord.getKey(gameId, appId));
+        if (info != null) {
+            return info.toFacebookInfo();
+        }
+        FacebookInfo blank = new FacebookInfo();
+        blank.gameId = gameId;
+        blank.appId = appId;
+        return blank;
     }
 
     @Override // from DepotRepository

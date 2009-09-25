@@ -46,7 +46,6 @@ import com.threerings.msoy.server.persist.RatingRecord;
 import com.threerings.msoy.server.persist.RatingRepository;
 
 import com.threerings.msoy.edgame.gwt.GameCode;
-import com.threerings.msoy.facebook.server.persist.FacebookInfoRecord;
 import com.threerings.msoy.game.gwt.ArcadeData;
 import com.threerings.msoy.game.gwt.GameGenre;
 import com.threerings.msoy.game.gwt.GameInfo;
@@ -635,7 +634,6 @@ public class MsoyGameRepository extends DepotRepository
     public void deleteGame (int gameId)
     {
         deleteAll(ArcadeEntryRecord.class, new Where(ArcadeEntryRecord.GAME_ID, gameId), null);
-        delete(FacebookInfoRecord.getKey(gameId));
         delete(GameCodeRecord.getKey(gameId, true));
         delete(GameCodeRecord.getKey(gameId, false));
         delete(GameInfoRecord.getKey(gameId));

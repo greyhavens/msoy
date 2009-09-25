@@ -102,7 +102,7 @@ public class EditGameServlet extends MsoyServiceServlet
         GameData data = new GameData();
         data.info = info.toGameInfo(0);
         data.blingPool = info.blingPool;
-        data.facebook = _facebookRepo.loadFacebookInfo(info.gameId);
+        data.facebook = _facebookRepo.loadGameFacebookInfo(info.gameId);
         data.devCode = _mgameRepo.loadGameCode(GameInfo.toDevId(info.gameId), false);
         data.pubCode = _mgameRepo.loadGameCode(info.gameId, false);
         return data;
@@ -246,7 +246,8 @@ public class EditGameServlet extends MsoyServiceServlet
         _ratingRepo.purgeGame(-gameId);
         _ratingRepo.purgeGame(gameId);
 
-        // pass the buck onto the repository
+        // pass the buck onto the repositories
+        _facebookRepo.deleteGameFacebookInfo(gameId);
         _mgameRepo.deleteGame(gameId);
     }
 

@@ -353,7 +353,7 @@ public class FacebookCallbackServlet extends HttpServlet
 
         info.game = new FacebookGame(ginfo.gameId);
 
-        FacebookInfo fbinfo = _facebookRepo.loadFacebookInfo(ginfo.gameId);
+        FacebookInfo fbinfo = _facebookRepo.loadGameFacebookInfo(ginfo.gameId);
         if (fbinfo.apiKey == null) {
             throw new ServiceException("Game missing Facebook info: " + ginfo.name);
         }

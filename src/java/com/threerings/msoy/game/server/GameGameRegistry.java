@@ -1092,7 +1092,7 @@ public class GameGameRegistry
         GameContent content = new GameContent();
         content.gameId = gameId;
         content.game = _mgameRepo.loadGame(gameId);
-        content.facebook = _facebookRepo.loadFacebookInfo(gameId);
+        content.facebook = _facebookRepo.loadGameFacebookInfo(gameId);
         content.metrics = _mgameRepo.loadGameMetrics(gameId);
         content.code = _mgameRepo.loadGameCode(gameId, true);
 

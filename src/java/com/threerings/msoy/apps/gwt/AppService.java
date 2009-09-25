@@ -9,6 +9,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
+import com.threerings.msoy.facebook.gwt.FacebookInfo;
 import com.threerings.msoy.web.gwt.ServiceException;
 
 /**
@@ -25,6 +26,7 @@ public interface AppService extends RemoteService
         implements IsSerializable
     {
         public AppInfo info;
+        public FacebookInfo facebook;
     }
 
     /** The entry point for this service. */
@@ -61,5 +63,11 @@ public interface AppService extends RemoteService
      * Updates the mutable parts of the given application info.
      */
     void updateAppInfo (AppInfo appInfo)
+        throws ServiceException;
+
+    /**
+     * Updates the Facebook metadata associated with this application.
+     */
+    void updateFacebookInfo (FacebookInfo info)
         throws ServiceException;
 }

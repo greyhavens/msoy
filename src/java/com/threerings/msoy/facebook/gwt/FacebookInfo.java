@@ -19,8 +19,11 @@ public class FacebookInfo implements IsSerializable
     /** The length of the Facebbok canvas name. */
     public static final int CANVAS_NAME_LENGTH = 40;
 
-    /** The game for which we contain metadata. */
+    /** The game for which we contain metadata, or 0 if this is for an application. */
     public int gameId;
+
+    /** The app for which we contain metadata, or 0 if this is for a game. */
+    public int appId;
 
     /** The Facebook API key for this game's Facebook app. */
     public String apiKey;

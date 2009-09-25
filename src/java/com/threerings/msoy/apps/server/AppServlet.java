@@ -11,6 +11,8 @@ import com.threerings.msoy.apps.gwt.AppInfo;
 import com.threerings.msoy.apps.gwt.AppService;
 import com.threerings.msoy.apps.server.persist.AppInfoRecord;
 import com.threerings.msoy.apps.server.persist.AppRepository;
+import com.threerings.msoy.facebook.gwt.FacebookInfo;
+import com.threerings.msoy.facebook.server.persist.FacebookRepository;
 import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
@@ -47,6 +49,7 @@ public class AppServlet extends MsoyServiceServlet
         requireAdminUser();
         AppData data = new AppData();
         data.info = requireApp(appId).toAppInfo();
+        data.facebook = _facebookRepo.loadAppFacebookInfo(appId);
         return data;
     }
 
@@ -68,6 +71,14 @@ public class AppServlet extends MsoyServiceServlet
         _appRepo.updateAppInfo(updated);
     }
 
+    @Override // from AppService
+    public void updateFacebookInfo (FacebookInfo info)
+        throws ServiceException
+    {
+        requireAdminUser();
+        _facebookRepo.updateFacebookInfo(info);
+    }
+
     protected AppInfoRecord requireApp (int id)
         throws ServiceException
     {
@@ -79,5 +90,7 @@ public class AppServlet extends MsoyServiceServlet
         return app;
     }
 
+    // dependencies
     @Inject AppRepository _appRepo;
+    @Inject FacebookRepository _facebookRepo;
 }
