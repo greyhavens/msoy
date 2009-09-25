@@ -56,7 +56,7 @@ public class ParlorGameBackend extends WhirledGameBackend
     }
 
     // from WhirledGameBackend
-    override public_api function getHeadShot_v2 (occupantId :int) :DisplayObject
+    override protected function getHeadShot_v2 (occupantId :int) :DisplayObject
     {
         validateConnected();
         for each (var info :OccupantInfo in _gameObj.occupantInfo.toArray()) {
@@ -72,35 +72,35 @@ public class ParlorGameBackend extends WhirledGameBackend
 
         log.warning("Unable to find occupant, or username is not a VizMemberName",
             "occId", occupantId);
-        return super.public_api::getHeadShot_v2(occupantId); // return something that works anyway
+        return super.getHeadShot_v2(occupantId); // return something that works anyway
     }
 
     /** @inheritDoc */ // from BaseGameBackend
-    override public_api function isRegistered_v1 (playerId :int = 0 /*unused*/) :Boolean
+    override protected function isRegistered_v1 (playerId :int = 0 /*unused*/) :Boolean
     {
         return !(_ctx as GameContext).getPlayerObject().isPermaguest();
     }
 
     // from WhirledGameBackend
-    override public_api function getSize_v1 () :Point
+    override protected function getSize_v1 () :Point
     {
-        var p :Point = super.public_api::getSize_v1();
+        var p :Point = super.getSize_v1();
         p.x = Math.max(p.x, 700);
         p.y = Math.max(p.y, 500);
         return p;
     }
 
     // from WhirledGameBackend
-    override public_api function isEmbedded_v1 () :Boolean
+    override protected function isEmbedded_v1 () :Boolean
     {
         // NOTE: facebook counts as embedded for the purposes of the API
         return (_ctx as GameContext).getWorldContext().getMsoyClient().isEmbedded();
     }
 
     // from WhirledGameBackend
-    override public_api function requestConsumeItemPack_v1 (ident :String, msg :String) :Boolean
+    override protected function requestConsumeItemPack_v1 (ident :String, msg :String) :Boolean
     {
-        if (countPlayerData(GameData.ITEM_DATA, ident, public_api::getMyId_v1()) < 1) {
+        if (countPlayerData(GameData.ITEM_DATA, ident, getMyId_v1()) < 1) {
             return false;
         }
         return ConsumeItemPackDialog.show(
@@ -124,7 +124,7 @@ public class ParlorGameBackend extends WhirledGameBackend
     }
 
     // from WhirledGameBackend
-    override public_api function showPage_v1 (token :String) :Boolean
+    override protected function showPage_v1 (token :String) :Boolean
     {
         // handleViewUrl will do the "right thing"
         (_ctx as GameContext).getWorldContext().getMsoyController().handleViewUrl(
@@ -133,14 +133,14 @@ public class ParlorGameBackend extends WhirledGameBackend
     }
 
     // from WhirledGameBackend
-    override public_api function showGameLobby_v1 (multiplayer :Boolean) :void
+    override protected function showGameLobby_v1 (multiplayer :Boolean) :void
     {
         // multiplayer is now ignored; it's always multiplayer
         (_ctx as GameContext).showGameLobby();
     }
 
     // from WhirledGameBackend
-    override public_api function showGameShop_v1 (itemType :String, catalogId :int = 0) :void
+    override protected function showGameShop_v1 (itemType :String, catalogId :int = 0) :void
     {
         // hide the integer item codes from the sdk
         var itemTypeCode :int;
@@ -174,31 +174,31 @@ public class ParlorGameBackend extends WhirledGameBackend
     }
 
     // from WhirledGameBackend
-    override public_api function showAllGames_v1 () :void
+    override protected function showAllGames_v1 () :void
     {
         (_ctx as GameContext).getWorldContext().getMsoyController().handleViewGames();
     }
 
     // from WhirledGameBackend
-    override public_api function showInvitePage_v1 (defmsg :String, token :String = "") :void
+    override protected function showInvitePage_v1 (defmsg :String, token :String = "") :void
     {
     	(_ctx as GameContext).showInvitePage(defmsg, token);
     }
 
     // from WhirledGameBackend
-    override public_api function getInviteToken_v1 () :String
+    override protected function getInviteToken_v1 () :String
     {
     	return (_ctx as GameContext).getInviteToken();
     }
 
     // from WhirledGameBackend
-    override public_api function getInviterMemberId_v1 () :int
+    override protected function getInviterMemberId_v1 () :int
     {
     	return (_ctx as GameContext).getInviterMemberId();
     }
 
     // from WhirledGameBackend
-    override public_api function showTrophies_v1 () :void
+    override protected function showTrophies_v1 () :void
     {
         (_ctx as GameContext).showTrophies();
     }

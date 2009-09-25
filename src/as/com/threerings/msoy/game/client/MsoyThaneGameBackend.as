@@ -48,7 +48,7 @@ public class MsoyThaneGameBackend extends ThaneGameBackend
     }
 
     /** @inheritDoc */ // from BaseGameBackend
-    override public_api function isRegistered_v1 (playerId :int = 0) :Boolean
+    override protected function isRegistered_v1 (playerId :int = 0) :Boolean
     {
         var plobj :PlayerObject = (getPlayer(playerId) as PlayerObject);
         return (plobj == null) ? false : !plobj.isPermaguest();
