@@ -9,7 +9,7 @@ import com.samskivert.depot.annotation.Column;
 import com.samskivert.depot.annotation.Entity;
 import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.expression.ColumnExp;
-import com.threerings.msoy.admin.gwt.FacebookNotification;
+import com.threerings.msoy.apps.gwt.FacebookNotification;
 
 /**
  * Records text to be sent to all users in the form of notifications.

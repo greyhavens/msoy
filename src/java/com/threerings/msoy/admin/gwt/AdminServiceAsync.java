@@ -12,6 +12,8 @@ import com.threerings.msoy.admin.gwt.AdminService.BroadcastHistoryResult;
 import com.threerings.msoy.admin.gwt.AdminService.ItemDeletionResult;
 import com.threerings.msoy.admin.gwt.AdminService.ItemFlagsResult;
 import com.threerings.msoy.admin.gwt.AdminService.ItemTransactionResult;
+import com.threerings.msoy.apps.gwt.FacebookNotification;
+import com.threerings.msoy.apps.gwt.FacebookNotificationStatus;
 
 import com.threerings.msoy.data.all.CharityInfo;
 import com.threerings.msoy.data.all.MemberName;

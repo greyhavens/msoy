@@ -12,7 +12,7 @@ import com.samskivert.depot.annotation.Column;
 import com.samskivert.depot.annotation.Entity;
 import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.expression.ColumnExp;
-import com.threerings.msoy.admin.gwt.FacebookNotificationStatus;
+import com.threerings.msoy.apps.gwt.FacebookNotificationStatus;
 
 /**
  * Records the current state of sending a facebook notification.

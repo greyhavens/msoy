@@ -22,8 +22,8 @@ import com.threerings.gwt.util.StringUtil;
 
 import com.threerings.msoy.admin.gwt.AdminService;
 import com.threerings.msoy.admin.gwt.AdminServiceAsync;
-import com.threerings.msoy.admin.gwt.FacebookNotification;
-import com.threerings.msoy.admin.gwt.FacebookNotificationStatus;
+import com.threerings.msoy.apps.gwt.FacebookNotification;
+import com.threerings.msoy.apps.gwt.FacebookNotificationStatus;
 
 import client.ui.MsoyUI;
 import client.util.ClickCallback;

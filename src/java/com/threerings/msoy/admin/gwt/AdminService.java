@@ -18,6 +18,8 @@ import com.threerings.msoy.web.gwt.Promotion;
 import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.gwt.WebCreds;
 
+import com.threerings.msoy.apps.gwt.FacebookNotification;
+import com.threerings.msoy.apps.gwt.FacebookNotificationStatus;
 import com.threerings.msoy.data.all.CharityInfo;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.facebook.gwt.FacebookTemplate;
