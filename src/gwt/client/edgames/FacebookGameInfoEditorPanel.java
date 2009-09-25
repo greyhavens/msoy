@@ -7,14 +7,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.TextBox;
 
 import com.threerings.gwt.ui.WidgetUtil;
-import com.threerings.gwt.util.StringUtil;
 
 import com.threerings.msoy.edgame.gwt.EditGameService;
 import com.threerings.msoy.edgame.gwt.EditGameServiceAsync;
@@ -25,6 +22,7 @@ import com.threerings.msoy.game.gwt.GameThumbnail.Type;
 import client.edgames.EditThumbsPanel.ThumbnailSet;
 import client.edutil.EditorTable;
 import client.edutil.EditorUtil.ConfigException;
+import client.edutil.FacebookInfoEditorPanel;
 import client.ui.MsoyUI;
 import client.util.ClickCallback;
 import client.util.InfoCallback;
@@ -32,68 +30,22 @@ import client.util.InfoCallback;
 /**
  * Displays and allows editing of a game's Facebook info.
  */
-public class FacebookInfoEditorPanel extends FlowPanel
+public class FacebookGameInfoEditorPanel extends FlowPanel
 {
-    public FacebookInfoEditorPanel (final FacebookInfo info)
+    public FacebookGameInfoEditorPanel (final FacebookInfo info)
     {
         setStyleName("fie");
-        add(_mainFields = new EditorTable());
-        _mainFields.addWidget(MsoyUI.createHTML(_msgs.fieIntro(), null), 2);
-
-        _mainFields.addSpacer();
-
-        _viewRow = _mainFields.addRow("", MsoyUI.createHTML("", null), null);
-        updateAppLink(info);
-
-        final TextBox key = MsoyUI.createTextBox(
-            info.apiKey, FacebookInfo.KEY_LENGTH, FacebookInfo.KEY_LENGTH);
-        _mainFields.addRow(_msgs.fieKey(), key, new Command() {
-            public void execute () {
-                info.apiKey = key.getText().trim();
-            }
-        });
-
-        final TextBox secret = MsoyUI.createTextBox(
-            info.appSecret, FacebookInfo.SECRET_LENGTH, FacebookInfo.SECRET_LENGTH);
-        _mainFields.addRow(_msgs.fieSecret(), secret, new Command() {
-            public void execute () {
-                info.appSecret = secret.getText().trim();
-            }
-        });
-
-        final TextBox canvasName = MsoyUI.createTextBox(
-            info.canvasName, FacebookInfo.CANVAS_NAME_LENGTH, FacebookInfo.CANVAS_NAME_LENGTH);
-        _mainFields.addRow(_msgs.fieCanvasName(), canvasName, new Command() {
-            public void execute () {
-                info.canvasName = canvasName.getText().trim();
-            }
-        });
-
-        final CheckBox chromeless = new CheckBox(_msgs.fieChromelessText());
-        chromeless.setValue(info.chromeless);
-        _mainFields.addRow(_msgs.fieChromeless(), chromeless, new Command() {
-            public void execute () {
-                info.chromeless = chromeless.getValue();
-            }
-        });
-
-        _mainFields.addSpacer();
-
-        Button save = _mainFields.addSaveRow();
-        new ClickCallback<Void>(save) {
-            protected boolean callService () {
-                if (!_mainFields.bindChanges()) {
-                    return false;
-                }
-                _gamesvc.updateFacebookInfo(info, this);
+        add(new FacebookInfoEditorPanel(info) {
+            @Override protected boolean showChromeless () {
                 return true;
             }
-            protected boolean gotResult (Void result) {
-                MsoyUI.info(_msgs.fieInfoUpdated());
-                updateAppLink(info);
-                return true;
+            @Override protected void saveInfo (FacebookInfo info, AsyncCallback<Void> callback) {
+                _gamesvc.updateFacebookInfo(info, callback);
             }
-        };
+            @Override protected String getIntro () {
+                return FacebookGameInfoEditorPanel._msgs.fieIntro();
+            }
+        });
 
         final EditorTable thumbsEditor = new EditorTable(); // just for the "Save" button
 
@@ -146,14 +98,7 @@ public class FacebookInfoEditorPanel extends FlowPanel
         return thumbnails;
     }
 
-    protected void updateAppLink (FacebookInfo info)
-    {
-        _mainFields.setWidget(_viewRow, 1, MsoyUI.createHTML(_msgs.fieViewApp(info.apiKey), null));
-        _mainFields.getRowFormatter().setVisible(_viewRow, !StringUtil.isBlank(info.apiKey));
-    }
-
-    protected EditorTable _mainFields;
-    FlowPanel _thumbsPanels;
+    protected FlowPanel _thumbsPanels;
     protected int _viewRow;
 
     protected static final int THUMB_COLS = 2;

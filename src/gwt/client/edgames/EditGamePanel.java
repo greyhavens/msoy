@@ -108,7 +108,7 @@ public class EditGamePanel extends FlowPanel
         }, _msgs.egTabPublish());
         _tabs.add(new LazyPanel() {
             protected Widget createWidget () {
-                return new FacebookInfoEditorPanel(data.facebook);
+                return new FacebookGameInfoEditorPanel(data.facebook);
             }
         }, _msgs.egTabFacebook());
         // NOTE: if you add a tab here, you have to adjust StuffPage.PRE_ITEM_TABS
