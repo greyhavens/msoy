@@ -751,26 +751,26 @@
   width: 45%;
 }
 
-.editGame .fie .thumbnails {
+.editGame .facebookInfo .thumbnails {
   width: 100%;
 }
 
-.editGame .fie .Title {
+.editGame .facebookInfo .Title {
   font-weight: bold;
   width: 90%;
   padding-left: 10px;
 }
 
-.editGame .fie .Type .Title {
+.editGame .facebookInfo .Type .Title {
   padding-left: 0;
 }
 
-.editGame .fie .Tip {
+.editGame .facebookInfo .Tip {
   width: 90%;
   padding-left: 10px;
 }
 
-.editGame .fie .Type {
+.editGame .facebookInfo .Type {
   padding: 10px;
 }
 
