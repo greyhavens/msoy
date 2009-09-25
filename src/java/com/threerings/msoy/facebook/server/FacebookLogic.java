@@ -119,6 +119,9 @@ public class FacebookLogic
         "http://www.facebook.com/apps/application.php",
         "id", DeploymentConfig.facebookApplicationId);
 
+    // TODO: remove this
+    public static final int LEGACY_APP_ID = FacebookRepository.LEGACY_APP_ID;
+
     /**
      * Prepends the Facebook application root to get the canvas url of the given name.
      */
@@ -267,7 +270,7 @@ public class FacebookLogic
     {
         Map<String, String> replacements = Maps.newHashMap();
         replacements.put("app_url", FacebookLogic.WHIRLED_APP_CANVAS);
-        copyAndSchedule(null, id, replacements, false, delay);
+        scheduleNotification(null, id, replacements, false, delay);
     }
 
     /**
@@ -279,7 +282,7 @@ public class FacebookLogic
         Map<String, String> replacements, boolean appOnly)
         throws ServiceException
     {
-        copyAndSchedule(session, notificationId, replacements, appOnly, 0);
+        scheduleNotification(session, notificationId, replacements, appOnly, 0);
     }
 
     /**
@@ -448,7 +451,7 @@ public class FacebookLogic
         throws ServiceException
     {
         for (String id : ids) {
-            if (_facebookRepo.loadNotification(id) == null) {
+            if (_facebookRepo.loadNotification(LEGACY_APP_ID, id) == null) {
                 throw new ServiceException(MessageBundle.tcompose("e.notification_not_found", id));
             }
         }
@@ -476,7 +479,8 @@ public class FacebookLogic
     }
 
     /**
-     * Copies a notification template to a new batch, does replacements and schedules it.
+     * Replaces wildcards in a notification template and schedules it to be sent using a unique
+     * batch id.
      * @param session user session or null if this is a global send
      * @param notifId the id of the template notification
      * @param replacements wildcards to replace in the text of the template
@@ -484,12 +488,13 @@ public class FacebookLogic
      * @param delay time in minutes after which to do the send
      * @throws ServiceException
      */
-    protected void copyAndSchedule (SessionInfo session, String notifId,
+    protected void scheduleNotification (SessionInfo session, String notifId,
         Map<String, String> replacements, boolean appOnly, int delay)
         throws ServiceException
     {
         // load up & verify the template
-        FacebookNotificationRecord template = _facebookRepo.loadNotification(notifId);
+        FacebookNotificationRecord template =
+            _facebookRepo.loadNotification(LEGACY_APP_ID, notifId);
         if (template == null) {
             log.warning("Unable to load notification", "id", notifId);
             return;
@@ -499,14 +504,9 @@ public class FacebookLogic
         }
 
         // generate a batch id
-        String batchId = notifId + "." +
-            (session != null ? String.valueOf(session.memRec.memberId) : "copy");
-
-        // check we are not already sending the batch
-        FacebookNotificationRecord instance = _facebookRepo.loadNotification(batchId);
-        if (instance != null && instance.node != null &&
-            !instance.node.equals(_peerMgr.getNodeObject().nodeName)) {
-            throw new ServiceException("e.notification_scheduled_on_other_node");
+        String batchId = notifId + "." + BATCH_FMT.format(new Date());
+        if (session != null) {
+            batchId += "." + String.valueOf(session.memRec.memberId);
         }
 
         // grab a tracking id
@@ -528,10 +528,9 @@ public class FacebookLogic
             String key = "{*" + pair.getKey() + "*}";
             text = text.replace(key, pair.getValue());
         }
-        instance = _facebookRepo.storeNotification(batchId, text);
 
         // create the batch
-        NotificationBatch batch = new NotificationBatch(instance, trackingId,
+        NotificationBatch batch = new NotificationBatch(batchId, text, trackingId,
             session == null ? null : session.memRec, appOnly);
 
         // insert into map and schedule
@@ -544,7 +543,8 @@ public class FacebookLogic
             batch.schedule(delay * 60 * 1000L);
         }
 
-        _facebookRepo.noteNotificationScheduled(batchId, _peerMgr.getNodeObject().nodeName);
+        long startTime = System.currentTimeMillis() + delay * 60 * 1000L;
+        _facebookRepo.noteNotificationScheduled(LEGACY_APP_ID, batchId, startTime);
     }
 
     protected void removeNotification (String id)
@@ -618,7 +618,7 @@ public class FacebookLogic
         Predicate<FQLQuery.Record> filter, boolean global)
     {
         try {
-            _facebookRepo.noteNotificationProgress(id, "Verifying", 0, 0);
+            _facebookRepo.noteNotificationProgress(LEGACY_APP_ID, id, "Verifying", 0, 0);
 
             List<FQL.Exp> uids = Lists.transform(batch, toUserId);
 
@@ -640,9 +640,11 @@ public class FacebookLogic
             }
 
             if (targetIds.size() > 0) {
-                _facebookRepo.noteNotificationProgress(id, "Sending", targetIds.size(), 0);
+                _facebookRepo.noteNotificationProgress(
+                    LEGACY_APP_ID, id, "Sending", targetIds.size(), 0);
                 Collection<String> sent = client.notifications_send(targetIds, text, global);
-                _facebookRepo.noteNotificationProgress(id, "Sent", 0, sent.size());
+                _facebookRepo.noteNotificationProgress(
+                    LEGACY_APP_ID, id, "Sent", 0, sent.size());
                 return sent;
             }
 
@@ -809,10 +811,11 @@ public class FacebookLogic
          * friends, or global if the member is null.
          */
         public NotificationBatch (
-            FacebookNotificationRecord notifRec, TrackingId trackingId,
+            String batchId, String text, TrackingId trackingId,
             MemberRecord mrec, boolean appFriendsOnly)
         {
-            _notifRec = notifRec;
+            _batchId = batchId;
+            _text = text;
             _trackingId = trackingId;
             _mrec = mrec;
             _appFriendsOnly = appFriendsOnly;
@@ -840,8 +843,6 @@ public class FacebookLogic
         protected void trySendFriends ()
             throws ServiceException
         {
-            _facebookRepo.noteNotificationStarted(_notifRec.id);
-
             // TODO: fetch the N value on a timer from the API instead of using the runtime config
             int alloc = _runtime.server.fbNotificationsAlloc;
 
@@ -854,8 +855,8 @@ public class FacebookLogic
                 // send, see if exception stops
                 List<ExternalMapRecord> targets = loadMappedFriends(_mrec, false, alloc);
                 SessionInfo sinf = loadSessionInfo(_mrec, BATCH_READ_TIMEOUT);
-                Collection<String> recipients = sendNotifications(sinf.client, _notifRec.id,
-                    _notifRec.text, targets, MAPREC_TO_UID_EXP, APP_USER_FILTER, false);
+                Collection<String> recipients = sendNotifications(sinf.client, _batchId,
+                    _text, targets, MAPREC_TO_UID_EXP, APP_USER_FILTER, false);
                 _tracker.trackNotificationSent(sinf.fbid, _trackingId, recipients);
             } else {
                 // see above
@@ -863,8 +864,8 @@ public class FacebookLogic
                 Collections.shuffle(targets);
                 targets = alloc >= targets.size() ? targets : targets.subList(0, alloc);
                 SessionInfo sinf = loadSessionInfo(_mrec, BATCH_READ_TIMEOUT);
-                Collection<String> recipients = sendNotifications(sinf.client, _notifRec.id,
-                    _notifRec.text, targets, new Function<Long, FQL.Exp> () {
+                Collection<String> recipients = sendNotifications(sinf.client, _batchId,
+                    _text, targets, new Function<Long, FQL.Exp> () {
                     public FQL.Exp apply (Long uid) {
                         return FQL.unquoted(uid);
                     }
@@ -879,8 +880,6 @@ public class FacebookLogic
          */
         protected void trySendGlobal (final Runnable onFinish)
         {
-            _facebookRepo.noteNotificationStarted(_notifRec.id);
-
             final List<ExternalMapRecord> allUsers =
                 _memberRepo.loadExternalMappings(ExternalSiteId.FB_GAMES);
             log.info("Kicking off notifications daisy-chain", "size", allUsers.size());
@@ -899,8 +898,8 @@ public class FacebookLogic
                     }
                     List<ExternalMapRecord> batch = allUsers.subList(pos,
                         Math.min(pos + BATCH_SIZE, allUsers.size()));
-                    Collection<String> recipients = sendNotifications(client, _notifRec.id,
-                        _notifRec.text, batch, MAPREC_TO_UID_EXP, APP_USER_FILTER, true);
+                    Collection<String> recipients = sendNotifications(client, _batchId,
+                        _text, batch, MAPREC_TO_UID_EXP, APP_USER_FILTER, true);
 
                     // Kontagent doesn't supply a special message for global notifications,
                     // so just set sender id to 0
@@ -927,10 +926,10 @@ public class FacebookLogic
         {
             Runnable onFinish = new Runnable() {
                 public void run () {
-                    _facebookRepo.noteNotificationProgress(_notifRec.id, "Finished", 0, 0);
-                    _facebookRepo.noteNotificationFinished(_notifRec.id);
-                    removeNotification(_notifRec.id);
-                    log.info("Notification sending complete", "id", _notifRec.id);
+                    _facebookRepo.noteNotificationProgress(
+                        LEGACY_APP_ID, _batchId, "Finished", 0, 0);
+                    removeNotification(_batchId);
+                    log.info("Notification sending complete", "id", _batchId);
                 }
             };
 
@@ -939,7 +938,7 @@ public class FacebookLogic
                     trySendFriends();
     
                 } catch (Exception e) {
-                    log.warning("Send-level notification failure", "id", _notifRec.id, e);
+                    log.warning("Send-level notification failure", "id", _batchId, e);
     
                 } finally {
                     onFinish.run();
@@ -955,7 +954,8 @@ public class FacebookLogic
             return 30 * 1000L;
         }
 
-        protected FacebookNotificationRecord _notifRec;
+        protected String _batchId;
+        protected String _text;
         protected TrackingId _trackingId;
         protected MemberRecord _mrec;
         protected boolean _appFriendsOnly;
@@ -1006,6 +1006,7 @@ public class FacebookLogic
     protected static final int BATCH_READ_TIMEOUT = 5*60*1000; // 5 minutes
     protected static final SimpleDateFormat BDAY_FMT = new SimpleDateFormat("MMMM dd, yyyy");
     protected static final SimpleDateFormat BDAY_FMT_NO_YEAR = new SimpleDateFormat("MMMM dd");
+    protected static final SimpleDateFormat BATCH_FMT = new SimpleDateFormat("yyyy-MM-dd@HH:mm:ss");
 
     /** Amount of time after the app is installed that we will start granting visit rewards. This
      *  is because new users automatically get 1000 coins for joining. */

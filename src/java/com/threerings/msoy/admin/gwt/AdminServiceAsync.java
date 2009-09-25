@@ -188,6 +188,12 @@ public interface AdminServiceAsync
     void loadFacebookNotifications (AsyncCallback<List<FacebookNotification>> callback);
 
     /**
+     * The asynchronous version of {@link AdminService#loadFacebookNotificationStatus}.
+     */
+    void loadFacebookNotificationStatus (
+        AsyncCallback<List<FacebookNotificationStatus>> callback);
+
+    /**
      * The asynchronous version of {@link AdminService#saveFacebookNotification}.
      */
     void saveFacebookNotification (FacebookNotification notif, AsyncCallback<Void> callback);

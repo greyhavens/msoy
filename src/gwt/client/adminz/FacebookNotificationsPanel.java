@@ -18,10 +18,12 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.FloatPanel;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.util.DateUtil;
+import com.threerings.gwt.util.StringUtil;
 
 import com.threerings.msoy.admin.gwt.AdminService;
 import com.threerings.msoy.admin.gwt.AdminServiceAsync;
 import com.threerings.msoy.admin.gwt.FacebookNotification;
+import com.threerings.msoy.admin.gwt.FacebookNotificationStatus;
 
 import client.ui.MsoyUI;
 import client.util.ClickCallback;
@@ -35,10 +37,14 @@ public class FacebookNotificationsPanel extends FlowPanel
 
         add(MsoyUI.createLabel(_msgs.fbNotifsViewTitle(), "Title"));
         add(MsoyUI.createFlowPanel("View",
-            _notifs = new SmartTable("View", 0, 1),
+            _notifs = new SmartTable("View", 0, 1)));
+
+        add(MsoyUI.createLabel(_msgs.fbNotifsStatusTitle(), "Title"));
+        add(MsoyUI.createFlowPanel("View",
+            _statuses = new SmartTable("View", 0, 1),
             new Button(_msgs.fbNotifsRefresh(), new ClickHandler () {
                 public void onClick (ClickEvent event) {
-                    refresh();
+                    refreshStatusList();
                 }
             })));
 
@@ -54,7 +60,7 @@ public class FacebookNotificationsPanel extends FlowPanel
                 return true;
             }
             @Override public boolean gotResult (Void result) {
-                refresh();
+                refreshNotifications();
                 return true;
             }
         };
@@ -82,10 +88,11 @@ public class FacebookNotificationsPanel extends FlowPanel
             }
         };
 
-        refresh();
+        refreshNotifications();
+        refreshStatusList();
     }
 
-    public void refresh (List<FacebookNotification> notifs)
+    protected void setNotifs (List<FacebookNotification> notifs)
     {
         while (_notifs.getRowCount() > 0) {
             _notifs.removeRow(_notifs.getRowCount() - 1);
@@ -96,25 +103,14 @@ public class FacebookNotificationsPanel extends FlowPanel
             return;
         }
 
-        final int ID = 0, PROGRESS = 1, NODE = 2, STARTED = 3, FINISHED = 4, USER_COUNT=5,
-            SENT_COUNT = 6, EDIT_BTN = 7, DELETE_BTN = 8, SEND_BTN = 9;
+        final int ID = 0, TEXT = 1, EDIT_BTN = 2, DELETE_BTN = 3, SEND_BTN = 4;
 
         int row = 0;
         _notifs.setText(row, ID, _msgs.fbNotifsIdHdr());
-        _notifs.setText(row, PROGRESS, _msgs.fbNotifsProgressHdr());
-        _notifs.setText(row, NODE, _msgs.fbNotifsNodeHdr());
-        _notifs.setText(row, STARTED, _msgs.fbNotifsStartedHdr());
-        _notifs.setText(row, FINISHED, _msgs.fbNotifsFinishedHdr());
-        _notifs.setText(row, USER_COUNT, _msgs.fbNotifsUserCountHdr());
-        _notifs.setText(row, SENT_COUNT, _msgs.fbNotifsSentCountHdr());
+        _notifs.setText(row, TEXT, _msgs.fbNotifsTextHdr());
         for (FacebookNotification notif : notifs) {
             _notifs.setText(++row, ID, notif.id, 1);
-            _notifs.setText(row, PROGRESS, notif.progress);
-            _notifs.setText(row, NODE, notif.node == null ? "" : notif.node);
-            _notifs.setText(row, STARTED, fmtDate(notif.started));
-            _notifs.setText(row, FINISHED, fmtDate(notif.finished));
-            _notifs.setText(row, USER_COUNT, String.valueOf(notif.userCount));
-            _notifs.setText(row, SENT_COUNT, String.valueOf(notif.sentCount));
+            _notifs.setText(row, TEXT, StringUtil.truncate(notif.text, 30));
 
             // edit button
             final FacebookNotification fnotif = notif; 
@@ -134,7 +130,7 @@ public class FacebookNotificationsPanel extends FlowPanel
                     return true;
                 }
                 @Override public boolean gotResult (Void result) {
-                    refresh();
+                    refreshNotifications();
                     return false;
                 }
             };
@@ -150,11 +146,39 @@ public class FacebookNotificationsPanel extends FlowPanel
                 }
                 @Override public boolean gotResult (Void result) {
                     MsoyUI.info(_msgs.fbNotifsScheduled());
-                    refresh();
+                    refreshStatusList();
                     return true;
                 }
             };
             _notifs.setWidget(row, SEND_BTN, send);
+        }
+    }
+
+    protected void setStatusList (List<FacebookNotificationStatus> statusList)
+    {
+        while (_statuses.getRowCount() > 0) {
+            _statuses.removeRow(_statuses.getRowCount() - 1);
+        }
+
+        if (statusList.size() == 0) {
+            _statuses.setText(0, 0, _msgs.fbNotifsStatusEmpty());
+            return;
+        }
+
+        final int ID = 0, START_TIME = 1, PROGRESS = 2, USER_COUNT = 3, SENT_COUNT = 4;
+
+        int row = 0;
+        _statuses.setText(row, ID, _msgs.fbNotifsIdHdr());
+        _statuses.setText(row, START_TIME, _msgs.fbNotifsStartedHdr());
+        _statuses.setText(row, PROGRESS, _msgs.fbNotifsProgressHdr());
+        _statuses.setText(row, USER_COUNT, _msgs.fbNotifsUserCountHdr());
+        _statuses.setText(row, SENT_COUNT, _msgs.fbNotifsSentCountHdr());
+        for (FacebookNotificationStatus status : statusList) {
+            _statuses.setText(++row, ID, status.batchId, 1);
+            _statuses.setText(row, PROGRESS, status.progress);
+            _statuses.setText(row, START_TIME, fmtDate(status.startTime));
+            _statuses.setText(row, USER_COUNT, String.valueOf(status.userCount));
+            _statuses.setText(row, SENT_COUNT, String.valueOf(status.sentCount));
         }
     }
 
@@ -201,18 +225,28 @@ public class FacebookNotificationsPanel extends FlowPanel
         return row;
     }
 
-    protected void refresh ()
+    protected void refreshNotifications ()
     {
         _adminsvc.loadFacebookNotifications(new PageCallback<List<FacebookNotification>>(this) {
             @Override public void onSuccess (List<FacebookNotification> result) {
-                refresh(result);
+                setNotifs(result);
+            }
+        });
+    }
+
+    protected void refreshStatusList ()
+    {
+        _adminsvc.loadFacebookNotificationStatus(
+            new PageCallback<List<FacebookNotificationStatus>>(this) {
+            @Override public void onSuccess (List<FacebookNotificationStatus> result) {
+                setStatusList(result);
             }
         });
     }
 
     protected TextBox _delay, _id;
     protected TextArea _message;
-    protected SmartTable _notifs;
+    protected SmartTable _notifs, _statuses;
 
     protected static final AdminMessages _msgs = GWT.create(AdminMessages.class);
     protected static final AdminServiceAsync _adminsvc = GWT.create(AdminService.class);

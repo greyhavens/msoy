@@ -288,6 +288,12 @@ public interface AdminService extends RemoteService
         throws ServiceException;
 
     /**
+     * Gets the current and past progress of sending notifications.
+     */
+    List<FacebookNotificationStatus> loadFacebookNotificationStatus ()
+        throws ServiceException;
+
+    /**
      * Updates or adds a new facebook notification.
      */
     void saveFacebookNotification (FacebookNotification notif)

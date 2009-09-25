@@ -65,6 +65,7 @@ import com.threerings.msoy.web.server.ServletWaiter;
 import com.threerings.msoy.facebook.gwt.FacebookTemplate;
 import com.threerings.msoy.facebook.server.FacebookLogic;
 import com.threerings.msoy.facebook.server.persist.FacebookNotificationRecord;
+import com.threerings.msoy.facebook.server.persist.FacebookNotificationStatusRecord;
 import com.threerings.msoy.facebook.server.persist.FacebookRepository;
 import com.threerings.msoy.facebook.server.persist.FacebookTemplateRecord;
 import com.threerings.msoy.game.server.persist.GameInfoRecord;
@@ -99,6 +100,7 @@ import com.threerings.msoy.admin.gwt.BureauLauncherInfo.BureauInfo;
 import com.threerings.msoy.admin.gwt.BureauLauncherInfo;
 import com.threerings.msoy.admin.gwt.EntrySummary;
 import com.threerings.msoy.admin.gwt.FacebookNotification;
+import com.threerings.msoy.admin.gwt.FacebookNotificationStatus;
 import com.threerings.msoy.admin.gwt.MemberAdminInfo;
 import com.threerings.msoy.admin.gwt.StatsModel;
 import com.threerings.msoy.admin.server.ABTestLogic;
@@ -774,11 +776,12 @@ public class AdminServlet extends MsoyServiceServlet
         throws ServiceException
     {
         requireAdminUser();
-        FacebookNotificationRecord notif = _facebookRepo.loadNotification(id);
-        if (notif != null && notif.node != null) {
+        FacebookNotificationRecord notif = _facebookRepo.loadNotification(
+            FacebookRepository.LEGACY_APP_ID, id);
+        if (notif == null) {
             throw new ServiceException("e.notification_cannot_be_deleted");
         }
-        _facebookRepo.deleteNotification(id);
+        _facebookRepo.deleteNotification(FacebookRepository.LEGACY_APP_ID, id);
     }
 
     @Override // from AdminService
@@ -787,10 +790,24 @@ public class AdminServlet extends MsoyServiceServlet
     {
         requireAdminUser();
         List<FacebookNotification> notifs = Lists.newArrayList();
-        for (FacebookNotificationRecord notif : _facebookRepo.loadNotifications()) {
+        for (FacebookNotificationRecord notif :
+            _facebookRepo.loadNotifications(FacebookRepository.LEGACY_APP_ID)) {
             notifs.add(notif.toNotification());
         }
         return notifs;
+    }
+
+    @Override
+    public List<FacebookNotificationStatus> loadFacebookNotificationStatus ()
+        throws ServiceException
+    {
+        requireAdminUser();
+        List<FacebookNotificationStatus> statusList = Lists.newArrayList();
+        for (FacebookNotificationStatusRecord status :
+            _facebookRepo.loadNotificationStatus(FacebookRepository.LEGACY_APP_ID)) {
+            statusList.add(status.toStatus());
+        }
+        return statusList;
     }
 
     @Override // from AdminService
@@ -798,7 +815,8 @@ public class AdminServlet extends MsoyServiceServlet
         throws ServiceException
     {
         requireAdminUser();
-        _facebookRepo.storeNotification(notif.id, notif.text);
+        _facebookRepo.storeNotification(
+            FacebookRepository.LEGACY_APP_ID, notif.id, notif.text);
     }
 
     @Override // from AdminService
