@@ -1,5 +1,6 @@
 <module>
   <inherits name="edutil"/>
+  <inherits name="facebookbase"/>
 
   <source path="com/threerings/msoy/apps/gwt"/>
   <source path="client/apps"/>

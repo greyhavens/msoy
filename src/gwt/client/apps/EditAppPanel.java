@@ -92,6 +92,12 @@ public class EditAppPanel extends FlowPanel
                 return new AppInfoEditorPanel(data);
             }
         }, _msgs.editAppTabInfo());
+
+        _tabs.add(new LazyPanel() {
+            protected Widget createWidget () {
+                return new FacebookAppInfoEditorPanel(data.facebook);
+            }
+        }, _msgs.editAppTabFacebook());
     }
 
     protected int _appId;
