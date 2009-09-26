@@ -189,6 +189,7 @@ public class FacebookRepository extends DepotRepository
     public List<FacebookNotificationRecord> loadNotifications (int appId)
     {
         return findAll(FacebookNotificationRecord.class,
+            new Where(FacebookNotificationRecord.APP_ID.eq(appId)),
             OrderBy.ascending(FacebookNotificationRecord.ID));
     }
 
