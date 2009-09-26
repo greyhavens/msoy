@@ -9,9 +9,15 @@ import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.threerings.msoy.apps.gwt.AppInfo;
 import com.threerings.msoy.apps.gwt.AppService;
+import com.threerings.msoy.apps.gwt.FacebookNotification;
+import com.threerings.msoy.apps.gwt.FacebookNotificationStatus;
 import com.threerings.msoy.apps.server.persist.AppInfoRecord;
 import com.threerings.msoy.apps.server.persist.AppRepository;
+import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.facebook.gwt.FacebookInfo;
+import com.threerings.msoy.facebook.server.FacebookLogic;
+import com.threerings.msoy.facebook.server.persist.FacebookNotificationRecord;
+import com.threerings.msoy.facebook.server.persist.FacebookNotificationStatusRecord;
 import com.threerings.msoy.facebook.server.persist.FacebookRepository;
 import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.web.gwt.ServiceException;
@@ -79,6 +85,60 @@ public class AppServlet extends MsoyServiceServlet
         _facebookRepo.updateFacebookInfo(info);
     }
 
+    @Override
+    public void deleteNotification (int appId, String id)
+        throws ServiceException
+    {
+        requireAdminUser();
+        FacebookNotificationRecord notif = _facebookRepo.loadNotification(appId, id);
+        if (notif == null) {
+            throw new ServiceException("e.notification_cannot_be_deleted");
+        }
+        _facebookRepo.deleteNotification(appId, id);
+    }
+
+    @Override
+    public List<FacebookNotification> loadNotifications (int appId)
+        throws ServiceException
+    {
+        requireAdminUser();
+        List<FacebookNotification> notifs = Lists.newArrayList();
+        for (FacebookNotificationRecord notif : _facebookRepo.loadNotifications(appId)) {
+            notifs.add(notif.toNotification());
+        }
+        return notifs;
+    }
+
+    @Override
+    public void saveNotification (int appId, FacebookNotification notif)
+        throws ServiceException
+    {
+        requireAdminUser();
+        _facebookRepo.storeNotification(appId, notif.id, notif.text);
+    }
+
+    @Override
+    public void scheduleNotification (int appId, String id, int delay)
+        throws ServiceException
+    {
+        requireAdminUser();
+        // TODO: _facebookLogic.scheduleNotification(appId, id, delay);
+        throw new ServiceException(MsoyCodes.INTERNAL_ERROR);
+    }
+
+    @Override
+    public List<FacebookNotificationStatus> loadNotificationsStatus (int appId)
+        throws ServiceException
+    {
+        requireAdminUser();
+        appId = 0; // TEMP
+        List<FacebookNotificationStatus> statusList = Lists.newArrayList();
+        for (FacebookNotificationStatusRecord rec : _facebookRepo.loadNotificationStatus(appId)) {
+            statusList.add(rec.toStatus());
+        }
+        return statusList;
+    }
+
     protected AppInfoRecord requireApp (int id)
         throws ServiceException
     {
@@ -92,5 +152,6 @@ public class AppServlet extends MsoyServiceServlet
 
     // dependencies
     @Inject AppRepository _appRepo;
+    @Inject FacebookLogic _facebookLogic;
     @Inject FacebookRepository _facebookRepo;
 }

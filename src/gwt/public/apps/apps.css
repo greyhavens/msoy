@@ -4,9 +4,16 @@
  * CSS styles for the Apps interfaces.
  */
 
- 
+/* ------------------------------------
+   AppListPanel
+-------------------------------------*/
+
 .appsList {
 }
+
+/* ------------------------------------
+   EditAppPanel
+-------------------------------------*/
 
 .editApp .Header {
   width: 100%;
@@ -21,4 +28,84 @@
   font-weight: bold;
   font-size: 24px;
   white-space: nowrap;
+}
+
+/* ------------------------------------
+   FacebookNotificationsPanel
+-------------------------------------*/
+
+.facebookNotifications > .Title {
+  padding: 10px;
+}
+
+.facebookNotifications .notificationsList {
+  padding-left: 10px;
+  padding-bottom: 20px;
+}
+
+/* ------------------------------------
+   FacebookNotificationsPanel.NotificationsList
+-------------------------------------*/
+
+.notificationsList {
+  width: 100%;
+}
+
+.notificationsList .Row {
+  border-bottom: 1px solid #000000;
+}
+
+.notificationsList .AltRow {
+  background: #DDDDDD;
+}
+
+.notificationsList .Header {
+  font-weight: bold;
+  width: auto;
+}
+
+.notificationsList .Id {
+  width: 20%;
+}
+
+.notificationsList .Text {
+  width: 60%;
+}
+
+/* ------------------------------------
+   FacebookNotificationStatusPanel
+-------------------------------------*/
+
+.facebookNotificationStatus {
+  padding: 10px;
+}
+
+.facebookNotificationStatus .statusList {
+  padding-left: 10px;
+  padding-bottom: 20px;
+}
+
+/* ------------------------------------
+   FacebookNotificationStatusPanel.StatusList
+-------------------------------------*/
+
+.statusList {
+  width: 100%;
+}
+
+.statusList .Row {
+  border-bottom: 1px solid #000000;
+}
+
+.statusList .AltRow {
+  background: #DDDDDD;
+}
+
+.statusList .Header {
+  font-weight: bold;
+  width: auto;
+}
+
+.statusList .BatchId {
+  width: 45%;
 }

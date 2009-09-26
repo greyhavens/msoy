@@ -70,4 +70,35 @@ public interface AppService extends RemoteService
      */
     void updateFacebookInfo (FacebookInfo info)
         throws ServiceException;
+
+    /**
+     * Loads the Facebook notifications defined for this application.
+     */
+    List<FacebookNotification> loadNotifications (int appId)
+        throws ServiceException;
+
+    /**
+     * Updates or adds a new Facebook notification.
+     */
+    void saveNotification (int appId, FacebookNotification notif)
+        throws ServiceException;
+
+    /**
+     * Deletes the given Facebook notification.
+     */
+    void deleteNotification (int appId, String id)
+        throws ServiceException;
+
+    /**
+     * Sends a Facebook notification to all our Facebook users after the given delay in minutes.
+     * Users who have removed the application are not addressed.
+     */
+    void scheduleNotification (int appId, String id, int delay)
+        throws ServiceException;
+
+    /**
+     * Loads the status of notification batches already sent or scheduled.
+     */
+    List<FacebookNotificationStatus> loadNotificationsStatus (int appId)
+        throws ServiceException;
 }

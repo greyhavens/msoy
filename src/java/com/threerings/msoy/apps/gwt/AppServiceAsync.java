@@ -32,4 +32,20 @@ public interface AppServiceAsync
 
     /** The asynchronous version of {@link AppService#updateFacebookInfo}. */
     void updateFacebookInfo (FacebookInfo info, AsyncCallback<Void> callback);
+
+    /** The asynchronous version of {@link AppService#loadNotifications}. */
+    void loadNotifications (int appId, AsyncCallback<List<FacebookNotification>> callback);
+
+    /** The asynchronous version of {@link AppService#loadNotifications}. */
+    void saveNotification (int appId, FacebookNotification notif, AsyncCallback<Void> callback);
+
+    /** The asynchronous version of {@link AppService#deleteNotification}. */
+    void deleteNotification (int appId, String id, AsyncCallback<Void> callback);
+
+    /** The asynchronous version of {@link AppService#scheduleNotification}. */
+    void scheduleNotification (int appId, String id, int delay, AsyncCallback<Void> callback);
+
+    /** The asynchronous version of {@link AppService#loadNotificationsStatus}. */
+    void loadNotificationsStatus (
+        int appId, AsyncCallback<List<FacebookNotificationStatus>> callback);
 }
