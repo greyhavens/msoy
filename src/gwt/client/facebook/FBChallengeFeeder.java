@@ -65,6 +65,7 @@ public class FBChallengeFeeder
         data.put("game_desc", _fields.description);
         data.put("action_url", actionURL);
         data.put("images", images.toArray());
+        data.put("fbuid", "" + String.valueOf(_fields.fbuid));
 
         publishChallenge(templateId, JavaScriptUtil.createDictionaryFromMap(data));
     }
@@ -100,6 +101,7 @@ public class FBChallengeFeeder
     /*
       {
           "game" : "Corpse Craft",
+          "fbuid" : "loggedinuser",
           "game_desc" :
               "Build an army of corpses to destroy your foes in this puzzle-action hybrid.",
           "action_url": "http://www.whirled.com/go/games-d_827",

@@ -381,6 +381,7 @@ public class FacebookServlet extends MsoyServiceServlet
         TrackingId trackingId = new KontagentLogic.TrackingId(LinkType.FEED_LONG,
             template + fields.template.variant, session.fbid);
         fields.trackingId = trackingId.flatten();
+        fields.fbuid = session.fbid;
         return fields;
     }
 

@@ -60,6 +60,7 @@ public class LevelUpFeeder
         data.put("action_url", actionURL);
         data.put("images", images.toArray());
         data.put("level", "" + _level);
+        data.put("fbuid", "" + String.valueOf(_fields.fbuid));
 
         publishLevelUp(templateId, JavaScriptUtil.createDictionaryFromMap(data));
     }
@@ -84,6 +85,7 @@ public class LevelUpFeeder
       {
           "action_url": "http://apps.whirled.com/whirled/",
           "level": "19",
+          "fbuid" : "loggedinuser",
           "images" : [ {"src" :
               "http://mediacloud.whirled.com/240aa9267fa6dc8422588e6818862301fd658e6f.png",
               "href" : "http://apps.whirled.com/whirled/"}]}

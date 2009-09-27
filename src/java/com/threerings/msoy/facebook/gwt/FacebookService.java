@@ -77,6 +77,9 @@ public interface FacebookService extends RemoteService
 
         /** The game description, normally used as the body of the story. */
         public String description;
+
+        /** The facebook user id of the requesting user. */
+        public long fbuid;
     }
 
     /**
