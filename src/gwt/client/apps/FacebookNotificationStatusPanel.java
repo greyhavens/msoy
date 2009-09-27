@@ -68,7 +68,7 @@ public class FacebookNotificationStatusPanel extends FlowPanel
             }
     
             if (statuses.size() == 0) {
-                setText(0, 0, _msgs.fbNotifsEmpty());
+                setText(0, 0, _msgs.fbNotifStatusEmpty());
                 return;
             }
     
