@@ -739,7 +739,7 @@ public class AdminServlet extends MsoyServiceServlet
     {
         requireAdminUser();
         List<FacebookTemplate> result = Lists.newArrayList(
-            Iterables.transform(_facebookRepo.loadTemplates(),
+            Iterables.transform(_facebookRepo.loadTemplates(FacebookRepository.LEGACY_APP_ID),
                 new Function<FacebookTemplateRecord, FacebookTemplate>() {
                     public FacebookTemplate apply (FacebookTemplateRecord in) {
                         return in.toTemplate();
@@ -756,10 +756,12 @@ public class AdminServlet extends MsoyServiceServlet
     {
         requireAdminUser();
         for (FacebookTemplate templ : removed) {
-            _facebookRepo.deleteTemplate(templ.code, templ.variant);
+            _facebookRepo.deleteTemplate(
+                FacebookRepository.LEGACY_APP_ID, templ.code, templ.variant);
         }
         for (FacebookTemplate templ : templates) {
-            _facebookRepo.storeTemplate(new FacebookTemplateRecord(templ));
+            _facebookRepo.storeTemplate(new FacebookTemplateRecord(
+                FacebookRepository.LEGACY_APP_ID, templ));
         }
     }
 

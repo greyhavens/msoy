@@ -20,13 +20,17 @@ public class FacebookTemplateRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<FacebookTemplateRecord> _R = FacebookTemplateRecord.class;
+    public static final ColumnExp APP_ID = colexp(_R, "appId");
     public static final ColumnExp CODE = colexp(_R, "code");
     public static final ColumnExp VARIANT = colexp(_R, "variant");
     public static final ColumnExp BUNDLE_ID = colexp(_R, "bundleId");
     // AUTO-GENERATED: FIELDS END
 
     /** Determines compatible schema versions. */
-    public static final int SCHEMA_VERSION = 2;
+    public static final int SCHEMA_VERSION = 3;
+
+    /** The id of the application defining this template. */
+    @Id public int appId;
 
     /** Used by msoy to reference the functionality of this template. */
     @Id public String code;
@@ -47,8 +51,9 @@ public class FacebookTemplateRecord extends PersistentRecord
     /**
      * Creates a new template matching the given runtime template.
      */
-    public FacebookTemplateRecord (FacebookTemplate template)
+    public FacebookTemplateRecord (int appId, FacebookTemplate template)
     {
+        this.appId = appId;
         code = template.code;
         bundleId = template.bundleId;
         variant = template.variant;
@@ -91,12 +96,12 @@ public class FacebookTemplateRecord extends PersistentRecord
      * Create and return a primary {@link Key} to identify a {@link FacebookTemplateRecord}
      * with the supplied key values.
      */
-    public static Key<FacebookTemplateRecord> getKey (String code, String variant)
+    public static Key<FacebookTemplateRecord> getKey (int appId, String code, String variant)
     {
         return new Key<FacebookTemplateRecord>(
                 FacebookTemplateRecord.class,
-                new ColumnExp[] { CODE, VARIANT },
-                new Comparable[] { code, variant });
+                new ColumnExp[] { APP_ID, CODE, VARIANT },
+                new Comparable[] { appId, code, variant });
     }
     // AUTO-GENERATED: METHODS END
 }

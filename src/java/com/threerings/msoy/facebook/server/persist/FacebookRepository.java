@@ -57,6 +57,9 @@ public class FacebookRepository extends DepotRepository
         // explicitly add the app id column, it should not have a default value
         context.registerMigration(fnr, new SchemaMigration.Add(
             3, FacebookNotificationRecord.APP_ID, ""+LEGACY_APP_ID));
+
+        // workaround to add the new @Id column properly
+        context.registerMigration(FacebookTemplateRecord.class, new DropPrimaryKey(3));
     }
 
     /**
@@ -115,26 +118,27 @@ public class FacebookRepository extends DepotRepository
     /**
      * Deletes the template record with the given code.
      */
-    public void deleteTemplate (String code, String variant)
+    public void deleteTemplate (int appId, String code, String variant)
     {
-        delete(FacebookTemplateRecord.getKey(code, variant));
+        delete(FacebookTemplateRecord.getKey(appId, code, variant));
     }
 
     /**
      * Loads a list of all saved templates.
      */
-    public List<FacebookTemplateRecord> loadTemplates ()
+    public List<FacebookTemplateRecord> loadTemplates (int appId)
     {
-        return findAll(FacebookTemplateRecord.class, CacheStrategy.NONE);
+        return findAll(FacebookTemplateRecord.class, CacheStrategy.NONE, new Where(
+            FacebookTemplateRecord.APP_ID.eq(appId)));
     }
 
     /**
      * Loads a list of all templates for the given code.
      */
-    public List<FacebookTemplateRecord> loadVariants (String code)
+    public List<FacebookTemplateRecord> loadVariants (int appId, String code)
     {
-        return findAll(FacebookTemplateRecord.class,
-            new Where(FacebookTemplateRecord.CODE.eq(code)));
+        return findAll(FacebookTemplateRecord.class, new Where(Ops.and(
+            FacebookTemplateRecord.CODE.eq(code), FacebookTemplateRecord.APP_ID.eq(appId))));
     }
 
     /**

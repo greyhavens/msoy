@@ -371,7 +371,8 @@ public class FacebookServlet extends MsoyServiceServlet
     protected StoryFields loadBasicStoryFields (
         StoryFields fields, SessionInfo session, String template)
     {
-        List<FacebookTemplateRecord> templates = _facebookRepo.loadVariants(template);
+        List<FacebookTemplateRecord> templates = _facebookRepo.loadVariants(
+            FacebookRepository.LEGACY_APP_ID, template);
         if (templates.size() == 0) {
             log.warning("No Facebook templates found for request", "code", template);
             return fields;

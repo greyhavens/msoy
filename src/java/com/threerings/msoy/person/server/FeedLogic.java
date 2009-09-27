@@ -301,7 +301,8 @@ public class FeedLogic
         }
 
         // lookup a random template variant
-        List<FacebookTemplateRecord> templates = _faceRepo.loadVariants(templateCode);
+        List<FacebookTemplateRecord> templates = _faceRepo.loadVariants(
+            FacebookRepository.LEGACY_APP_ID, templateCode);
         if (templates.size() == 0) {
             log.warning("No facebook templates", "code", templateCode);
             return;
