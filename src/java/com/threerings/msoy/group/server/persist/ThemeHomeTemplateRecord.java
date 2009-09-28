@@ -9,6 +9,7 @@ import com.samskivert.depot.annotation.Entity;
 import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.expression.ColumnExp;
 
+/** Enumerates the home room templates available to a new player in a theme. */
 @Entity
 public class ThemeHomeTemplateRecord extends PersistentRecord
 {

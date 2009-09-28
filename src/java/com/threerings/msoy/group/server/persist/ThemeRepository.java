@@ -105,6 +105,9 @@ public class ThemeRepository extends DepotRepository
     @Override
     protected void getManagedRecords(Set<Class<? extends PersistentRecord>> classes)
     {
+        classes.add(ThemeRecord.class);
         classes.add(ThemeAvatarUseRecord.class);
+        classes.add(ThemeAvatarLineupRecord.class);
+        classes.add(ThemeHomeTemplateRecord.class);
     }
 }

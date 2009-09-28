@@ -11,6 +11,7 @@ import com.samskivert.depot.annotation.Entity;
 import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.expression.ColumnExp;
 
+/** Tracks the most recent avatar used by a player in a themed room. */
 @Entity
 public class ThemeAvatarUseRecord extends PersistentRecord
 {

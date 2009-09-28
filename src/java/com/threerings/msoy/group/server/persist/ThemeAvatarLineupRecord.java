@@ -9,6 +9,7 @@ import com.samskivert.depot.annotation.Entity;
 import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.expression.ColumnExp;
 
+/** Enumerates the avatars available to new players of a theme. */
 @Entity
 public class ThemeAvatarLineupRecord extends PersistentRecord
 {
