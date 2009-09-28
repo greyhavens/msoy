@@ -5,7 +5,7 @@
   <property name="base.dir" value="../.."/>
   <property name="libs.dir" value="${base.dir}/extlibs/java"/>
 
-  <property name="deploy.dir" value="cell/dist"/>
+  <property name="cell.deploy.dir" value="${basedir}/dist"/>
   <property name="ooo.configsource" value="ooo.msoyconfig.source"/>
   <import file="cell/build-support.xml"/>
 
@@ -26,8 +26,8 @@
             <fileset dir="tasks" includes="*.properties"/>
         </cell-files>
       </prepare-cell>
-      <mkdir dir="${deploy.dir}/msoy"/>
-      <copy todir="${deploy.dir}/msoy">
+      <mkdir dir="${cell.deploy.dir}/msoy"/>
+      <copy todir="${cell.deploy.dir}/msoy">
         <!-- Explicitly include used data classes from whirled -->
         <fileset dir="${base.dir}/dist/classes" includesfile="msoy.includes"/>
       </copy>
@@ -53,10 +53,10 @@
   </target>
 
   <target name="clean">
-      <delete dir="${deploy.dir}/classes"/>
+      <delete dir="${cell.deploy.dir}/classes"/>
   </target>
 
   <target name="distclean">
-    <delete dir="${deploy.dir}"/>
+    <delete dir="${cell.deploy.dir}"/>
   </target>
 </project>
