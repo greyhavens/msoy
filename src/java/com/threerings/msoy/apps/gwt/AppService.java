@@ -4,12 +4,14 @@
 package com.threerings.msoy.apps.gwt;
 
 import java.util.List;
+import java.util.Set;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 import com.threerings.msoy.facebook.gwt.FacebookInfo;
+import com.threerings.msoy.facebook.gwt.FacebookTemplate;
 import com.threerings.msoy.web.gwt.ServiceException;
 
 /**
@@ -101,4 +103,19 @@ public interface AppService extends RemoteService
      */
     List<FacebookNotificationStatus> loadNotificationsStatus (int appId)
         throws ServiceException;
+
+    /**
+     * Loads all facebook templates for an application.
+     */
+    List<FacebookTemplate> loadTemplates (int appId)
+        throws ServiceException;
+
+    /**
+     * Saves changes to the given facebook templates and deletes the set of templates specified
+     * by the given codes.
+     */
+    void updateTemplates (
+        int appId, Set<FacebookTemplate> changed, Set<FacebookTemplate> removed)
+        throws ServiceException;
+
 }

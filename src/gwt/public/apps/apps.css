@@ -109,3 +109,42 @@
 .statusList .BatchId {
   width: 45%;
 }
+
+/* ------------------------------------
+   FacebookTemplatesPanel
+-------------------------------------*/
+
+.facebookTemplates > .Title {
+  padding: 10px;
+}
+
+.facebookTemplates .templatesList {
+  padding-left: 10px;
+  padding-bottom: 20px;
+}
+
+/* ------------------------------------
+   FacebookTemplatesPanel.TemplatesList
+-------------------------------------*/
+
+.templatesList {
+  width: 100%;
+}
+
+.templatesList .Row {
+  border-bottom: 1px solid #000000;
+}
+
+.templatesList .AltRow {
+  background: #DDDDDD;
+}
+
+.templatesList .Header {
+  font-weight: bold;
+  width: auto;
+}
+
+.templatesList .Code {
+  width: 20%;
+}
+

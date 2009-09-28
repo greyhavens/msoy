@@ -4,11 +4,13 @@
 package com.threerings.msoy.apps.gwt;
 
 import java.util.List;
+import java.util.Set;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.msoy.apps.gwt.AppService.AppData;
 import com.threerings.msoy.facebook.gwt.FacebookInfo;
+import com.threerings.msoy.facebook.gwt.FacebookTemplate;
 
 /**
  * Methods for the web client to access and update applications.
@@ -48,4 +50,12 @@ public interface AppServiceAsync
     /** The asynchronous version of {@link AppService#loadNotificationsStatus}. */
     void loadNotificationsStatus (
         int appId, AsyncCallback<List<FacebookNotificationStatus>> callback);
+
+    /** The asynchronous version of {@link AppService#loadTemplates}. */
+    void loadTemplates (int appId, AsyncCallback<List<FacebookTemplate>> callback);
+
+    /** The asynchronous version of {@link AppService#updateTemplates}. */
+    void updateTemplates (
+        int appId, Set<FacebookTemplate> changed, Set<FacebookTemplate> removed,
+        AsyncCallback<Void> callback);
 }

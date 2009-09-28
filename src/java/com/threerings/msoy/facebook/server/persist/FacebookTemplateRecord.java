@@ -64,11 +64,7 @@ public class FacebookTemplateRecord extends PersistentRecord
      */
     public FacebookTemplate toTemplate ()
     {
-        FacebookTemplate template = new FacebookTemplate();
-        template.code = code;
-        template.bundleId = bundleId;
-        template.variant = variant;
-        return template;
+        return new FacebookTemplate(code, variant, bundleId);
     }
 
     /**

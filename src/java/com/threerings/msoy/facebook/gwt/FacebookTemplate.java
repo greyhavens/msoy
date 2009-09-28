@@ -21,6 +21,23 @@ public class FacebookTemplate
     public long bundleId;
 
     /**
+     * Creates a template for deserialization.
+     */
+    public FacebookTemplate ()
+    {
+    }
+
+    /**
+     * Creates a new template with the given fields.
+     */
+    public FacebookTemplate (String code, String variant, long bundleId)
+    {
+        this.code = code;
+        this.variant = variant;
+        this.bundleId = bundleId;
+    }
+
+    /**
      * Detects equality with another template.
      */
     public boolean equals (FacebookTemplate other)

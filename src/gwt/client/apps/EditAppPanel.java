@@ -110,6 +110,12 @@ public class EditAppPanel extends FlowPanel
                 return new FacebookNotificationStatusPanel(data.info);
             }
         }, _msgs.editAppTabNotificationStatus());
+
+        _tabs.add(new LazyPanel() {
+            protected Widget createWidget () {
+                return new FacebookTemplatesPanel(data.info);
+            }
+        }, _msgs.editAppTabTemplates());
     }
 
     protected int _appId;
