@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package client.apps;
 
 import java.util.ArrayList;
