@@ -4,12 +4,15 @@
 package client.apps;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.ListBox;
 
 import com.threerings.msoy.apps.gwt.AppInfo;
 import com.threerings.msoy.apps.gwt.AppService;
 import com.threerings.msoy.apps.gwt.AppServiceAsync;
 import com.threerings.msoy.apps.gwt.AppService.AppData;
+import com.threerings.msoy.web.gwt.ClientMode;
 
 import client.edutil.EditorTable;
 import client.ui.MsoyUI;
@@ -28,6 +31,19 @@ public class AppInfoEditorPanel extends EditorTable
     {
         final AppInfo info = data.info;
         AppUtil.addNameBox(this, info);
+
+        final ListBox clientModes = new ListBox();
+        clientModes.addItem(_msgs.editAppInfoClientModeUnspecified(),
+            ClientMode.UNSPECIFIED.toString());
+        clientModes.addItem(_msgs.editAppInfoClientModeGames(), ClientMode.FB_GAMES.toString());
+        clientModes.addItem(_msgs.editAppInfoClientModeRooms(), ClientMode.FB_ROOMS.toString());
+        addRow(_msgs.editAppInfoClientMode(), clientModes, new Command() {
+            @Override public void execute () {
+                String mode = clientModes.getValue(clientModes.getSelectedIndex());
+                info.clientMode = ClientMode.valueOf(mode);
+            }
+        });
+        clientModes.setSelectedIndex(info.clientMode.ordinal());
 
         Button save = addSaveRow();
         new ClickCallback<Void>(save) {

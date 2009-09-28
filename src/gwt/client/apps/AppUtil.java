@@ -26,7 +26,7 @@ public class AppUtil
     {
         final int maxNameLen = AppInfo.MAX_NAME_LENGTH;
         final TextBox name = MsoyUI.createTextBox(info.name, maxNameLen, maxNameLen);
-        editor.addRow(_msgs.editAppName(), name, new Command() {
+        editor.addRow(_msgs.editAppInfoName(), name, new Command() {
             public void execute () {
                 info.name = EditorUtil.checkName(name.getText().trim(), maxNameLen);
             }

@@ -4,6 +4,7 @@
 package com.threerings.msoy.apps.gwt;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
+import com.threerings.msoy.web.gwt.ClientMode;
 
 /**
  * Runtime information for an application.
@@ -19,4 +20,7 @@ public class AppInfo
 
     /** The name of the application. */
     public String name;
+
+    /** The mode for the client when running this app. */
+    public ClientMode clientMode;
 }

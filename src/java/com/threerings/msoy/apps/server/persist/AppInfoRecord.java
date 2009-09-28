@@ -15,6 +15,7 @@ import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.expression.ColumnExp;
 
 import com.threerings.msoy.apps.gwt.AppInfo;
+import com.threerings.msoy.web.gwt.ClientMode;
 
 /**
  * Persistent representation of basic application information.
@@ -26,12 +27,13 @@ public class AppInfoRecord extends PersistentRecord
     public static final Class<AppInfoRecord> _R = AppInfoRecord.class;
     public static final ColumnExp APP_ID = colexp(_R, "appId");
     public static final ColumnExp NAME = colexp(_R, "name");
+    public static final ColumnExp CLIENT_MODE = colexp(_R, "clientMode");
     // AUTO-GENERATED: FIELDS END
 
     /**
      * Depot-inspected field regulating the update of the table's columns and migrations.
      */
-    public static final int SCHEMA_VERSION = 1;
+    public static final int SCHEMA_VERSION = 2;
 
     /**
      * Function to {@link Lists#transform} a record to a runtime instance. 
@@ -51,6 +53,9 @@ public class AppInfoRecord extends PersistentRecord
     @Column(length=AppInfo.MAX_NAME_LENGTH)
     public String name;
 
+    /** The mode the client should be in when accessing this application. */
+    public ClientMode clientMode;
+
     /**
      * Converts this record to a new runtime instance.
      */
@@ -59,6 +64,7 @@ public class AppInfoRecord extends PersistentRecord
         AppInfo appInfo = new AppInfo();
         appInfo.appId = appId;
         appInfo.name = name;
+        appInfo.clientMode = clientMode;
         return appInfo;
     }
 
@@ -68,6 +74,7 @@ public class AppInfoRecord extends PersistentRecord
     public void update (AppInfo appInfo)
     {
         this.name = appInfo.name;
+        this.clientMode = appInfo.clientMode;
     }
 
     // AUTO-GENERATED: METHODS START
