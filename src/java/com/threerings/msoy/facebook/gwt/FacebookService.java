@@ -63,7 +63,7 @@ public interface FacebookService extends RemoteService
         implements IsSerializable
     {
         /** The template bundle to use, normally a randomly selected variant. */
-        public FacebookTemplateCard template;
+        public FacebookTemplate template;
 
         /** The generated tracking id to embed into the story's links. */
         public String trackingId;

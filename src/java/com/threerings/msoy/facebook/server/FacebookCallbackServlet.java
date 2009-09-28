@@ -29,7 +29,7 @@ import com.threerings.msoy.server.persist.MemberRepository;
 
 import com.threerings.msoy.facebook.gwt.FacebookGame;
 import com.threerings.msoy.facebook.gwt.FacebookInfo;
-import com.threerings.msoy.facebook.gwt.FacebookTemplateCard;
+import com.threerings.msoy.facebook.gwt.FacebookTemplate;
 import com.threerings.msoy.facebook.server.persist.FacebookRepository;
 
 import com.threerings.msoy.game.server.persist.GameInfoRecord;
@@ -331,7 +331,7 @@ public class FacebookCallbackServlet extends HttpServlet
             info.game = _faceLogic.parseGame(req);
             info.vector = FrameParam.VECTOR.get(req);
             if (info.vector == null) {
-                info.vector = FacebookTemplateCard.toEntryVector("app", "");
+                info.vector = FacebookTemplate.toEntryVector("app", "");
             }
             info.challenge = FrameParam.CHALLENGE.get(req) != null;
             info.trackingId = FrameParam.TRACKING.get(req);
@@ -362,7 +362,7 @@ public class FacebookCallbackServlet extends HttpServlet
         info.appSecret = fbinfo.appSecret;
         info.canvasName = fbinfo.canvasName;
         info.chromeless = fbinfo.chromeless;
-        info.vector = FacebookTemplateCard.toEntryVector("proxygame", "" + ginfo.gameId);
+        info.vector = FacebookTemplate.toEntryVector("proxygame", "" + ginfo.gameId);
         return info;
     }
 

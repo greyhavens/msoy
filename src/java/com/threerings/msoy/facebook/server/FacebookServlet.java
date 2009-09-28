@@ -378,7 +378,7 @@ public class FacebookServlet extends MsoyServiceServlet
             return fields;
         }
 
-        fields.template = RandomUtil.pickRandom(templates).toTemplateCard();
+        fields.template = RandomUtil.pickRandom(templates).toTemplate();
         TrackingId trackingId = new KontagentLogic.TrackingId(LinkType.FEED_LONG,
             template + fields.template.variant, session.fbid);
         fields.trackingId = trackingId.flatten();

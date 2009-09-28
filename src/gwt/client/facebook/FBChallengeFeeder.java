@@ -43,7 +43,7 @@ public class FBChallengeFeeder
      */
     public void publish ()
     {
-        String vector = _fields.template.toEntryVector("challenge");
+        String vector = _fields.template.toEntryVector();
         String templateId = String.valueOf(_fields.template.bundleId);
 
         // action link goes to either the Whirled game detail or the Mochi embed

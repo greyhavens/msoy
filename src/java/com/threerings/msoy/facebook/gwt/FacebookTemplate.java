@@ -38,6 +38,22 @@ public class FacebookTemplate
     }
 
     /**
+     * Converts this template card to an entry vector based on its code and variant.
+     */
+    public String toEntryVector ()
+    {
+        return toEntryVector(code, variant);
+    }
+
+    /**
+     * Converts the given fields to an entry vector.
+     */
+    public static String toEntryVector (String code, String variant)
+    {
+        return "fb." + code + variant;
+    }
+
+    /**
      * Detects equality with another template.
      */
     public boolean equals (FacebookTemplate other)

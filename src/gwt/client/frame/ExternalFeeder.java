@@ -54,7 +54,7 @@ public class ExternalFeeder
 
     protected void publishTrophyToFacebook (TrophyEvent event, StoryFields fields)
     {
-        String vector = fields.template.toEntryVector("trophy");
+        String vector = fields.template.toEntryVector();
         String templateId = String.valueOf(fields.template.bundleId);
 
         // we use it in 3 places, but they all just go to the game detail screen on facebook

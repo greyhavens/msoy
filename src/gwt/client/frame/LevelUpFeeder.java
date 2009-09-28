@@ -42,7 +42,7 @@ public class LevelUpFeeder
      */
     public void publish ()
     {
-        String vector = _fields.template.toEntryVector("levelup");
+        String vector = _fields.template.toEntryVector();
         String templateId = String.valueOf(_fields.template.bundleId);
 
         // action link goes to the main canvas page
