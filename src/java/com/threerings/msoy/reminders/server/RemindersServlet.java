@@ -51,7 +51,8 @@ public class RemindersServlet extends MsoyServiceServlet
 
         // set up the map of already-published trophies
         Map<String, FacebookActionRecord> published = Maps.newHashMap();
-        for (FacebookActionRecord action : _facebookRepo.loadActions(memrec.memberId)) {
+        for (FacebookActionRecord action : _facebookRepo.loadActions(
+            FacebookRepository.LEGACY_APP_ID, memrec.memberId)) {
             if (action.type == FacebookActionRecord.Type.PUBLISHED_TROPHY) {
                 published.put(action.id, action);
             }

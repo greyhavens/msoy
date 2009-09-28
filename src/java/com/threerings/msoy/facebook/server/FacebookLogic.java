@@ -343,7 +343,7 @@ public class FacebookLogic
         int lastLevel = 0;
         if (mrec.created.getTime() < now - NEW_ACCOUNT_TIME) {
             FacebookActionRecord lastVisit = _facebookRepo.getLastAction(
-                memberId, FacebookActionRecord.Type.DAILY_VISIT);
+                LEGACY_APP_ID, memberId, FacebookActionRecord.Type.DAILY_VISIT);
             if (lastVisit == null) {
                 lastAward = 0; // trigger a 1st visit award
                 lastLevel = data.level; // trigger level-up if subsequent gain occurs
@@ -384,7 +384,7 @@ public class FacebookLogic
 
             // record the daily visit
             _facebookRepo.recordAction(
-                FacebookActionRecord.dailyVisit(memberId, award, data.level));
+                FacebookActionRecord.dailyVisit(LEGACY_APP_ID, memberId, award, data.level));
 
         } else {
             // update the level (it may have changed due to game play or other stuff)
@@ -694,7 +694,8 @@ public class FacebookLogic
         // remove ones that we've done before
         // TODO: should probably limit to records less than a certain age so that data gets
         // refreshed from time to time... or just prune old records
-        for (FacebookActionRecord action : _facebookRepo.loadActions(Lists.transform(
+        for (FacebookActionRecord action : _facebookRepo.loadActions(
+            FacebookRepository.LEGACY_APP_ID, Lists.transform(
             users, MAPREC_TO_MEMBER_ID), FacebookActionRecord.Type.GATHERED_DATA)) {
             fbusers.remove(action.memberId);
         }
@@ -756,7 +757,8 @@ public class FacebookLogic
 
             // send them to the tracker and note that we've done so
             _tracker.trackUserInfo(uid, birthYear, gender, city, state, zip, country, friendCount);
-            _facebookRepo.recordAction(FacebookActionRecord.dataGathered(memberIds.get(uid)));
+            _facebookRepo.recordAction(
+                FacebookActionRecord.dataGathered(LEGACY_APP_ID, memberIds.get(uid)));
         }
 
         return uinfo.getUser().size();

@@ -60,6 +60,9 @@ public class FacebookRepository extends DepotRepository
 
         // workaround to add the new @Id column properly
         context.registerMigration(FacebookTemplateRecord.class, new DropPrimaryKey(3));
+
+        // workaround to add the new @Id column properly
+        context.registerMigration(FacebookActionRecord.class, new DropPrimaryKey(2));
     }
 
     /**
@@ -152,7 +155,8 @@ public class FacebookRepository extends DepotRepository
     /**
      * Gets the most recent record of the given type, or null if there are none.
      */
-    public FacebookActionRecord getLastAction (int memberId, FacebookActionRecord.Type type)
+    public FacebookActionRecord getLastAction (
+        int appId, int memberId, FacebookActionRecord.Type type)
     {
         List<FacebookActionRecord> visits = findAll(FacebookActionRecord.class, new Where(Ops.and(
             FacebookActionRecord.TYPE.eq(type), FacebookActionRecord.MEMBER_ID.eq(memberId))),
@@ -163,7 +167,7 @@ public class FacebookRepository extends DepotRepository
     /**
      * Loads all Facebook actions related to the member of the given id.
      */
-    public List<FacebookActionRecord> loadActions (int memberId)
+    public List<FacebookActionRecord> loadActions (int appId, int memberId)
     {
         return findAll(FacebookActionRecord.class, new Where(
             FacebookActionRecord.MEMBER_ID, memberId));
@@ -173,7 +177,7 @@ public class FacebookRepository extends DepotRepository
      * Loads all actions related to a set of members and of the given type.
      */
     public List<FacebookActionRecord> loadActions (
-        Collection<Integer> memberIds, FacebookActionRecord.Type type)
+        int appId, Collection<Integer> memberIds, FacebookActionRecord.Type type)
     {
         return findAll(FacebookActionRecord.class, new Where(Ops.and(
             FacebookActionRecord.TYPE.eq(type), FacebookActionRecord.MEMBER_ID.in(memberIds))));

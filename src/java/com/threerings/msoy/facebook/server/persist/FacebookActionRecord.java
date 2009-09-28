@@ -32,7 +32,7 @@ public class FacebookActionRecord extends PersistentRecord
     public static final ColumnExp TIMESTAMP = colexp(_R, "timestamp");
     // AUTO-GENERATED: FIELDS END
 
-    public static final int SCHEMA_VERSION = 1;
+    public static final int SCHEMA_VERSION = 2;
 
     public static final int MAX_ID_LENGTH = 255;
 
@@ -45,35 +45,36 @@ public class FacebookActionRecord extends PersistentRecord
     }
 
     /**
-     * Creates an action representing a daily visit by the given member of the given level for
-     * which the given amount of coins was rewarded.
+     * Creates an action representing a daily visit to the given application by the given member
+     * of the given level for which the given amount of coins was rewarded.
      */
-    public static FacebookActionRecord dailyVisit (int memberId, int coinsAwarded, int level)
+    public static FacebookActionRecord dailyVisit (
+        int appId, int memberId, int coinsAwarded, int level)
     {
         // record the identifying values in slots and include time stamp in case 2 visits occur
         // with the same award and level
         long now = now();
         String id = now + ":" + coinsAwarded + ":" + level;
-        return new FacebookActionRecord(memberId, Type.DAILY_VISIT, id, now);
+        return new FacebookActionRecord(appId, memberId, Type.DAILY_VISIT, id, now);
     }
 
     /**
      * Creates an action representing the publishing of the given trophy for the given game by the
-     * given member.
+     * given member and application.
      */
     public static FacebookActionRecord trophyPublished (
-        int memberId, int gameId, String trophyIdent)
+        int appId, int memberId, int gameId, String trophyIdent)
     {
-        return new FacebookActionRecord(memberId, Type.PUBLISHED_TROPHY,
+        return new FacebookActionRecord(appId, memberId, Type.PUBLISHED_TROPHY,
             getTrophyPublishedId(gameId, trophyIdent), now());
     }
 
     /**
-     * Creates an action representing the gathering of the given user's data.
+     * Creates an action representing the gathering of the given user's data for the given app.
      */
-    public static FacebookActionRecord dataGathered (int memberId)
+    public static FacebookActionRecord dataGathered (int appId, int memberId)
     {
-        return new FacebookActionRecord(memberId, Type.GATHERED_DATA, "server", now());
+        return new FacebookActionRecord(appId, memberId, Type.GATHERED_DATA, "server", now());
     }
 
     /**
@@ -109,8 +110,9 @@ public class FacebookActionRecord extends PersistentRecord
      * Creates a new action with the given fields and the current time.
      */
     public FacebookActionRecord (
-        int memberId, FacebookActionRecord.Type type, String id, long timestamp)
+        int appId, int memberId, FacebookActionRecord.Type type, String id, long timestamp)
     {
+        this.appId = appId;
         this.memberId = memberId;
         this.type = type;
         this.id = id;
@@ -123,6 +125,9 @@ public class FacebookActionRecord extends PersistentRecord
     public FacebookActionRecord ()
     {
     }
+
+    /** Application on which the action was performed. */
+    @Id public int appId;
 
     /** Member that performed the action. */
     @Id public int memberId;

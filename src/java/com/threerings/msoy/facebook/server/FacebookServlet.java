@@ -96,8 +96,8 @@ public class FacebookServlet extends MsoyServiceServlet
         throws ServiceException
     {
         SessionInfo session = requireSession();
-        _facebookRepo.recordAction(
-            FacebookActionRecord.trophyPublished(session.memRec.memberId, gameId, ident));
+        _facebookRepo.recordAction(FacebookActionRecord.trophyPublished(
+            FacebookRepository.LEGACY_APP_ID, session.memRec.memberId, gameId, ident));
         _tracker.trackFeedStoryPosted(session.fbid, trackingId);
     }
 
