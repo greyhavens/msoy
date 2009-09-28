@@ -273,7 +273,6 @@ public class GroupRepository extends DepotRepository
             }
         }
         return loadGroupNames(groupIds);
-
     }
 
     /**
