@@ -122,6 +122,12 @@ public class EditAppPanel extends FlowPanel
                 return new FeedThumbnailsPanel(data.info);
             }
         }, _msgs.editAppTabFeedThumbnails());
+
+        _tabs.add(new LazyPanel() {
+            protected Widget createWidget () {
+                return new KontagentInfoPanel(data.info, data.kontagent);
+            }
+        }, _msgs.editAppTabKontagentInfo());
     }
 
     protected int _appId;

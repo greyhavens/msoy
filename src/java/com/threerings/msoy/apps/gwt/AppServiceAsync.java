@@ -12,6 +12,7 @@ import com.threerings.msoy.apps.gwt.AppService.AppData;
 import com.threerings.msoy.facebook.gwt.FacebookInfo;
 import com.threerings.msoy.facebook.gwt.FacebookTemplate;
 import com.threerings.msoy.facebook.gwt.FeedThumbnail;
+import com.threerings.msoy.facebook.gwt.KontagentInfo;
 
 /**
  * Methods for the web client to access and update applications.
@@ -65,4 +66,7 @@ public interface AppServiceAsync
 
     /** The asynchronous version of {@link AppService#updateThumbnails}. */
     void updateThumbnails(int appId, List<FeedThumbnail> thumbnails, AsyncCallback<Void> callback);
+
+    /** The asynchronous version of {@link AppService#updateKontagentInfo}. */
+    void updateKontagentInfo (int appId, KontagentInfo kinfo, AsyncCallback<Void> callback);
 }

@@ -13,6 +13,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 import com.threerings.msoy.facebook.gwt.FacebookInfo;
 import com.threerings.msoy.facebook.gwt.FacebookTemplate;
 import com.threerings.msoy.facebook.gwt.FeedThumbnail;
+import com.threerings.msoy.facebook.gwt.KontagentInfo;
 import com.threerings.msoy.web.gwt.ServiceException;
 
 /**
@@ -30,6 +31,7 @@ public interface AppService extends RemoteService
     {
         public AppInfo info;
         public FacebookInfo facebook;
+        public KontagentInfo kontagent;
     }
 
     /** The entry point for this service. */
@@ -129,5 +131,11 @@ public interface AppService extends RemoteService
      * Sets the feed thumbnails available for posts from the given application.
      */
     void updateThumbnails(int appId, List<FeedThumbnail> thumbnails)
+        throws ServiceException;
+
+    /**
+     * Sets the given application's Kontagent info.
+     */
+    void updateKontagentInfo (int appId, KontagentInfo kinfo)
         throws ServiceException;
 }

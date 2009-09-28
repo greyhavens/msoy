@@ -314,6 +314,22 @@ public class FacebookRepository extends DepotRepository
         saveThumbnails(0, appId, thumbnails);
     }
 
+    /**
+     * Loads the Kontagent info associated with the given application, or null if there is none.
+     */
+    public KontagentInfoRecord loadKontagentInfo (int appId)
+    {
+        return load(KontagentInfoRecord.getKey(appId));
+    }
+
+    /**
+     * Saves the given kontagent info.
+     */
+    public void saveKontagentInfo (KontagentInfoRecord kinfo)
+    {
+        store(kinfo);
+    }
+
     protected FacebookInfo loadFacebookInfo (int gameId, int appId)
     {
         FacebookInfoRecord info = load(FacebookInfoRecord.getKey(gameId, appId));
@@ -350,5 +366,6 @@ public class FacebookRepository extends DepotRepository
         classes.add(FacebookNotificationStatusRecord.class);
         classes.add(FacebookInfoRecord.class);
         classes.add(FeedThumbnailRecord.class);
+        classes.add(KontagentInfoRecord.class);
     }
 }

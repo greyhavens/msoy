@@ -21,12 +21,14 @@ import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.facebook.gwt.FacebookInfo;
 import com.threerings.msoy.facebook.gwt.FacebookTemplate;
 import com.threerings.msoy.facebook.gwt.FeedThumbnail;
+import com.threerings.msoy.facebook.gwt.KontagentInfo;
 import com.threerings.msoy.facebook.server.FacebookLogic;
 import com.threerings.msoy.facebook.server.persist.FacebookNotificationRecord;
 import com.threerings.msoy.facebook.server.persist.FacebookNotificationStatusRecord;
 import com.threerings.msoy.facebook.server.persist.FacebookRepository;
 import com.threerings.msoy.facebook.server.persist.FacebookTemplateRecord;
 import com.threerings.msoy.facebook.server.persist.FeedThumbnailRecord;
+import com.threerings.msoy.facebook.server.persist.KontagentInfoRecord;
 import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
@@ -60,10 +62,11 @@ public class AppServlet extends MsoyServiceServlet
     public AppData getAppData (int appId)
         throws ServiceException
     {
-        requireAdminUser();
         AppData data = new AppData();
         data.info = requireApp(appId).toAppInfo();
         data.facebook = _facebookRepo.loadAppFacebookInfo(appId);
+        KontagentInfoRecord kinfo = _facebookRepo.loadKontagentInfo(appId);
+        data.kontagent = kinfo==null ? new KontagentInfo("", "") : kinfo.toKontagentInfo();
         return data;
     }
 
@@ -71,7 +74,6 @@ public class AppServlet extends MsoyServiceServlet
     public void deleteApp (int appId)
         throws ServiceException
     {
-        requireAdminUser();
         _appRepo.deleteApp(requireApp(appId).appId);
     }
 
@@ -79,7 +81,6 @@ public class AppServlet extends MsoyServiceServlet
     public void updateAppInfo (AppInfo info)
         throws ServiceException
     {
-        requireAdminUser();
         AppInfoRecord updated = requireApp(info.appId);
         updated.update(info);
         _appRepo.updateAppInfo(updated);
@@ -89,7 +90,7 @@ public class AppServlet extends MsoyServiceServlet
     public void updateFacebookInfo (FacebookInfo info)
         throws ServiceException
     {
-        requireAdminUser();
+        requireApp(info.appId);
         _facebookRepo.updateFacebookInfo(info);
     }
 
@@ -97,7 +98,7 @@ public class AppServlet extends MsoyServiceServlet
     public void deleteNotification (int appId, String id)
         throws ServiceException
     {
-        requireAdminUser();
+        requireApp(appId);
         FacebookNotificationRecord notif = _facebookRepo.loadNotification(appId, id);
         if (notif == null) {
             throw new ServiceException("e.notification_cannot_be_deleted");
@@ -109,7 +110,7 @@ public class AppServlet extends MsoyServiceServlet
     public List<FacebookNotification> loadNotifications (int appId)
         throws ServiceException
     {
-        requireAdminUser();
+        requireApp(appId);
         List<FacebookNotification> notifs = Lists.newArrayList();
         for (FacebookNotificationRecord notif : _facebookRepo.loadNotifications(appId)) {
             notifs.add(notif.toNotification());
@@ -121,7 +122,7 @@ public class AppServlet extends MsoyServiceServlet
     public void saveNotification (int appId, FacebookNotification notif)
         throws ServiceException
     {
-        requireAdminUser();
+        requireApp(appId);
         _facebookRepo.storeNotification(appId, notif.id, notif.text);
     }
 
@@ -129,7 +130,7 @@ public class AppServlet extends MsoyServiceServlet
     public void scheduleNotification (int appId, String id, int delay)
         throws ServiceException
     {
-        requireAdminUser();
+        requireApp(appId);
         // TODO: _facebookLogic.scheduleNotification(appId, id, delay);
         throw new ServiceException(MsoyCodes.INTERNAL_ERROR);
     }
@@ -138,7 +139,7 @@ public class AppServlet extends MsoyServiceServlet
     public List<FacebookNotificationStatus> loadNotificationsStatus (int appId)
         throws ServiceException
     {
-        requireAdminUser();
+        requireApp(appId);
         appId = 0; // TEMP
         List<FacebookNotificationStatus> statusList = Lists.newArrayList();
         for (FacebookNotificationStatusRecord rec : _facebookRepo.loadNotificationStatus(appId)) {
@@ -151,7 +152,7 @@ public class AppServlet extends MsoyServiceServlet
     public List<FacebookTemplate> loadTemplates (int appId)
         throws ServiceException
     {
-        requireAdminUser();
+        requireApp(appId);
         List<FacebookTemplate> result = Lists.newArrayList(
             Iterables.transform(_facebookRepo.loadTemplates(appId),
                 new Function<FacebookTemplateRecord, FacebookTemplate>() {
@@ -168,7 +169,7 @@ public class AppServlet extends MsoyServiceServlet
         int appId, Set<FacebookTemplate> templates, Set<FacebookTemplate> removed)
         throws ServiceException
     {
-        requireAdminUser();
+        requireApp(appId);
         for (FacebookTemplate templ : removed) {
             _facebookRepo.deleteTemplate(appId, templ.code, templ.variant);
         }
@@ -181,7 +182,7 @@ public class AppServlet extends MsoyServiceServlet
     public List<FeedThumbnail> loadThumbnails (int appId)
         throws ServiceException
     {
-        requireAdminUser();
+        requireApp(appId);
         return Lists.newArrayList(Lists.transform(
             _facebookRepo.loadAppThumbnails(appId), FeedThumbnailRecord.TO_THUMBNAIL));
     }
@@ -190,13 +191,21 @@ public class AppServlet extends MsoyServiceServlet
     public void updateThumbnails (final int appId, List<FeedThumbnail> thumbnails)
         throws ServiceException
     {
-        requireAdminUser();
+        requireApp(appId);
         _facebookRepo.saveAppThumbnails(appId, Lists.transform(thumbnails,
             new Function<FeedThumbnail, FeedThumbnailRecord>() {
             public FeedThumbnailRecord apply (FeedThumbnail thumb) {
                 return FeedThumbnailRecord.forApp(appId, thumb);
             }
         }));
+    }
+
+    @Override // from AppService
+    public void updateKontagentInfo (int appId, KontagentInfo kinfo)
+        throws ServiceException
+    {
+        requireApp(appId);
+        _facebookRepo.saveKontagentInfo(new KontagentInfoRecord(appId, kinfo));
     }
 
     protected AppInfoRecord requireApp (int id)
