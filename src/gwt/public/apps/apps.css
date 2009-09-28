@@ -148,3 +148,44 @@
   width: 20%;
 }
 
+/* ------------------------------------
+   FeedThumbnailPanel
+-------------------------------------*/
+
+.feedThumbEditor > .Title {
+  padding: 10px;
+}
+
+.feedThumbEditor .templatesList {
+  padding-left: 10px;
+  padding-bottom: 20px;
+}
+
+/* ------------------------------------
+   FeedThumbnailPanel.ThumbnailList
+-------------------------------------*/
+
+.thumbnailList {
+  width: 100%;
+}
+
+.thumbnailList .Row {
+  border-bottom: 1px solid #000000;
+}
+
+.thumbnailList .AltRow {
+  background: #DDDDDD;
+}
+
+.thumbnailList .Header {
+  font-weight: bold;
+  width: auto;
+}
+
+.thumbnailList .Images {
+  width: 60%;
+}
+
+.thumbnailList .Image {
+  width: 20%;
+}
