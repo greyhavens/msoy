@@ -10,6 +10,7 @@ import java.util.List;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.jdbc.WriteOnlyUnit;
 import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
@@ -27,6 +28,7 @@ import com.threerings.cron.server.CronLogic;
 import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.client.InvocationService;
+import com.threerings.presents.client.InvocationService.ConfirmListener;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.dobj.AttributeChangeListener;
@@ -65,6 +67,7 @@ import com.threerings.msoy.admin.server.MsoyAdminManager;
 import com.threerings.msoy.badge.server.BadgeManager;
 import com.threerings.msoy.game.server.PlayerNodeActions;
 import com.threerings.msoy.group.server.persist.GroupRepository;
+import com.threerings.msoy.group.server.persist.ThemeRepository;
 import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;
@@ -100,6 +103,14 @@ public class MemberManager
 {
     /** Identifies a report that contains a dump of client object info. */
     public static final String CLIENTS_REPORT_TYPE = "clients";
+
+    /** A generic feedback interface for setting a player's avatar. */
+    public interface SetAvatarListener
+    {
+        void success();
+        void noSuchItemFailure() throws Exception;
+        void accessDeniedFailure() throws Exception;
+    }
 
     @Inject public MemberManager (InvocationManager invmgr, MsoyPeerManager peerMan,
                                   MemberLocator locator, ReportManager repMan)
@@ -517,13 +528,32 @@ public class MemberManager
     }
 
     // from interface MemberProvider
-    public void setAvatar (final ClientObject caller, final int avatarItemId,
-                           InvocationService.ConfirmListener listener)
+    public void setAvatar (ClientObject caller, int avatarItemId, final ConfirmListener listener)
         throws InvocationException
     {
-        final MemberObject user = (MemberObject) caller;
+        setAvatar((MemberObject) caller, avatarItemId, new SetAvatarListener() {
+            public void success () {
+                listener.requestProcessed();
+            }
+            public void accessDeniedFailure () throws Exception {
+                throw new InvocationException(ItemCodes.E_ACCESS_DENIED);
+            }
+            public void noSuchItemFailure () throws Exception {
+                throw new InvocationException(ItemCodes.E_NO_SUCH_ITEM);
+            }
+        });
+    }
+
+    /**
+     * Cause the given player to wear the given avatar, reporting the results on the
+     * supplied {@link SetAvatarListener} object. An avatarId of zero may be passed to
+     * revert to the default avatar.
+     */
+    public void setAvatar (final MemberObject user, final int avatarItemId,
+        final SetAvatarListener listener)
+    {
         if (avatarItemId == ((user.avatar == null) ? 0 : user.avatar.itemId)) {
-            listener.requestProcessed();
+            listener.success();
             return;
         }
         if (avatarItemId == 0) {
@@ -534,16 +564,18 @@ public class MemberManager
 
         // otherwise, make sure it exists and we own it
         final ItemIdent ident = new ItemIdent(Item.AVATAR, avatarItemId);
-        _invoker.postUnit(new PersistingUnit("setAvatar(" + avatarItemId + ")", listener) {
-            @Override public void invokePersistent () throws Exception {
+        _invoker.postUnit(new RepositoryUnit("setAvatar(" + avatarItemId + ")") {
+            @Override public void invokePersist () throws Exception {
                 _avatar = (Avatar)_itemLogic.loadItem(ident);
                 if (_avatar == null) {
-                    throw new InvocationException(ItemCodes.E_NO_SUCH_ITEM);
+                    listener.noSuchItemFailure();
+                    return;
                 }
                 if (user.getMemberId() != _avatar.ownerId) { // ensure that they own it
                     log.warning("Not user's avatar", "user", user.which(),
                                 "ownerId", _avatar.ownerId);
-                    throw new InvocationException(ItemCodes.E_ACCESS_DENIED);
+                    listener.accessDeniedFailure();
+                    return;
                 }
                 MemoriesRecord memrec = _memoryRepo.loadMemory(_avatar.getType(), _avatar.itemId);
                 _memories = (memrec == null) ? null : memrec.toEntry();
@@ -551,11 +583,10 @@ public class MemberManager
 
             @Override public void handleSuccess () {
                 if (_avatar.equals(user.avatar)) {
-                    ((InvocationService.ConfirmListener)_listener).requestProcessed();
+                    listener.success();
                     return;
                 }
-                finishSetAvatar(user, _avatar, _memories,
-                                (InvocationService.ConfirmListener)_listener);
+                finishSetAvatar(user, _avatar, _memories, listener);
             }
 
             protected EntityMemories _memories;
@@ -762,7 +793,7 @@ public class MemberManager
      */
     protected void finishSetAvatar (
         final MemberObject user, final Avatar avatar, EntityMemories memories,
-        final InvocationService.ConfirmListener listener)
+        final SetAvatarListener listener)
     {
         final Avatar prev = user.avatar;
 
@@ -811,7 +842,7 @@ public class MemberManager
         } finally {
             user.commitTransaction();
         }
-        listener.requestProcessed();
+        listener.success();
 
         // this just fires off an invoker unit, we don't need the result, log it
         _itemMan.updateItemUsage(
@@ -826,6 +857,9 @@ public class MemberManager
             @Override public void invokePersist () throws Exception {
                 _memberRepo.configureAvatarId(
                     user.getMemberId(), (avatar == null) ? 0 : avatar.itemId);
+                if (user.mogGroupId != 0) {
+                    _themeRepo.noteAvatarWorn(user.getMemberId(), user.mogGroupId, avatar.itemId);
+                }
             }
             @Override public void handleFailure (Exception pe) {
                 log.warning("configureAvatarId failed", "user", user.which(), "avatar", avatar, pe);
@@ -889,6 +923,7 @@ public class MemberManager
     @Inject protected PresentsDObjectMgr _omgr;
     @Inject protected ProfileRepository _profileRepo;
     @Inject protected SupportLogic _supportLogic;
+    @Inject protected ThemeRepository _themeRepo;
 
     /** The frequency with which we recalculate our popular places snapshot. */
     protected static final long POP_PLACES_REFRESH_PERIOD = 30*1000;
