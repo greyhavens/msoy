@@ -334,15 +334,6 @@ public class MsoyGameRepository extends DepotRepository
     }
 
     /**
-     * Loads all thumbnails assigned to the given game, sorted by position.
-     */
-    public List<GameThumbnailRecord> loadAllThumbnails (int gameId)
-    {
-        return findAll(GameThumbnailRecord.class, new Where(
-            GameThumbnailRecord.GAME_ID.eq(gameId)), OrderBy.ascending(GameThumbnailRecord.POS));
-    }
-
-    /**
      * Loads all thumbnails assigned to the given game of the given type, sorted by position.
      */
     public List<GameThumbnailRecord> loadThumbnails (GameThumbnail.Type type, int gameId)
@@ -350,18 +341,6 @@ public class MsoyGameRepository extends DepotRepository
         return findAll(GameThumbnailRecord.class, new Where(Ops.and(
             GameThumbnailRecord.GAME_ID.eq(gameId), GameThumbnailRecord.TYPE.eq(type))),
             OrderBy.ascending(GameThumbnailRecord.POS));
-    }
-
-    /**
-     * Sets the given thumbnails to be the ones assigned to the given game. I.e. DELETES all
-     * current thumbnails for the given game then stores the new ones.
-     */
-    public void saveThumbnails (int gameId, List<GameThumbnailRecord> thumbs)
-    {
-        deleteAll(GameThumbnailRecord.class, new Where(GameThumbnailRecord.GAME_ID.eq(gameId)));
-        for (GameThumbnailRecord thumb : thumbs) {
-            insert(thumb);
-        }
     }
 
     /**

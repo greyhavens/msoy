@@ -12,8 +12,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 
 import com.threerings.msoy.edgame.gwt.EditGameService;
 import com.threerings.msoy.edgame.gwt.EditGameServiceAsync;
-import com.threerings.msoy.game.gwt.GameThumbnail;
-import com.threerings.msoy.game.gwt.GameThumbnail.Type;
+import com.threerings.msoy.facebook.gwt.FeedThumbnail;
 
 import client.ui.MsoyUI;
 import client.util.ClickCallback;
@@ -26,35 +25,40 @@ import client.edutil.EditorUtil.ConfigException;
  */
 public class EditGlobalFeedThumbsPanel extends FlowPanel
 {
+    // TODO: move these somewhere shared
+    public static final String TROPHY = "trophy";
+    public static final String CHALLENGE = "challenge";
+    public static final String LEVELUP = "levelup";
+
     public EditGlobalFeedThumbsPanel ()
     {
         setStyleName("editFeedThumbs");
         add(MsoyUI.createLabel(_msgs.editFeedThumbnailsTitle(), "Title"));
         add(MsoyUI.createLabel(_msgs.editFeedThumbnailsTip(), "Tip"));
-        _gamesvc.loadThumbnails(0, new InfoCallback<List<GameThumbnail>>() {
-            public void onSuccess (List<GameThumbnail> result) {
+        _gamesvc.loadFeedThumbnails(0, new InfoCallback<List<FeedThumbnail>>() {
+            public void onSuccess (List<FeedThumbnail> result) {
                 init(result);
             }
         });
     }
 
-    public void init (List<GameThumbnail> result)
+    public void init (List<FeedThumbnail> result)
     {
         ThumbnailSet thumbnails = new ThumbnailSet(result);
-        addPanel(_msgs.editFeedThumbnailsTrophy(), Type.TROPHY, thumbnails);
-        addPanel(_msgs.editFeedThumbnailsChallenge(), Type.CHALLENGE, thumbnails);
-        addPanel(_msgs.editFeedThumbnailsLevelUp(), Type.LEVELUP, thumbnails);
+        addPanel(_msgs.editFeedThumbnailsTrophy(), TROPHY, thumbnails);
+        addPanel(_msgs.editFeedThumbnailsChallenge(), CHALLENGE, thumbnails);
+        addPanel(_msgs.editFeedThumbnailsLevelUp(), LEVELUP, thumbnails);
 
         Button save = new Button(_msgs.editFeedThumbnailsSave());
         add(save);
         new ClickCallback<Void>(save) {
             @Override protected boolean callService () {
                 try {
-                    List<GameThumbnail> thumbnails = new ArrayList<GameThumbnail>();
+                    List<FeedThumbnail> thumbnails = new ArrayList<FeedThumbnail>();
                     for (EditThumbsPanel panel : _panels) {
                         thumbnails.addAll(panel.getThumbnails());
                     }
-                    _gamesvc.updateThumbnails(0, thumbnails, this);
+                    _gamesvc.updateFeedThumbnails(0, thumbnails, this);
 
                 } catch (ConfigException e) {
                     MsoyUI.error(e.getMessage());
@@ -70,9 +74,9 @@ public class EditGlobalFeedThumbsPanel extends FlowPanel
         };
     }
 
-    public void addPanel (String typeName, Type type, ThumbnailSet thumbnails)
+    public void addPanel (String typeName, String code, ThumbnailSet thumbnails)
     {
-        EditThumbsPanel panel = new EditThumbsPanel(typeName, type, thumbnails);
+        EditThumbsPanel panel = new EditThumbsPanel(typeName, code, thumbnails);
         add(panel);
         _panels.add(panel);
     }

@@ -16,8 +16,7 @@ import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.msoy.edgame.gwt.EditGameService;
 import com.threerings.msoy.edgame.gwt.EditGameServiceAsync;
 import com.threerings.msoy.facebook.gwt.FacebookInfo;
-import com.threerings.msoy.game.gwt.GameThumbnail;
-import com.threerings.msoy.game.gwt.GameThumbnail.Type;
+import com.threerings.msoy.facebook.gwt.FeedThumbnail;
 
 import client.edgames.EditThumbsPanel.ThumbnailSet;
 import client.edutil.EditorTable;
@@ -32,6 +31,10 @@ import client.util.InfoCallback;
  */
 public class FacebookGameInfoEditorPanel extends FlowPanel
 {
+    // TODO: move these somewhere shared
+    public static final String TROPHY = "trophy";
+    public static final String CHALLENGE = "challenge";
+
     public FacebookGameInfoEditorPanel (final FacebookInfo info)
     {
         setStyleName("fie");
@@ -49,8 +52,8 @@ public class FacebookGameInfoEditorPanel extends FlowPanel
 
         final EditorTable thumbsEditor = new EditorTable(); // just for the "Save" button
 
-        _gamesvc.loadThumbnails(info.gameId, new InfoCallback<List<GameThumbnail>>() {
-            @Override public void onSuccess (List<GameThumbnail> result) {
+        _gamesvc.loadFeedThumbnails(info.gameId, new InfoCallback<List<FeedThumbnail>>() {
+            @Override public void onSuccess (List<FeedThumbnail> result) {
                 Runnable onMediaModified = new Runnable () {
                     public void run () {
                         thumbsEditor.mediaModified();
@@ -58,9 +61,9 @@ public class FacebookGameInfoEditorPanel extends FlowPanel
                 };
                 ThumbnailSet thumbnails = new ThumbnailSet(result);
                 _thumbsPanels.add(new EditThumbsPanel(_msgs.editFeedThumbnailsTrophy(),
-                    Type.TROPHY, thumbnails, onMediaModified));
+                    TROPHY, thumbnails, onMediaModified));
                 _thumbsPanels.add(new EditThumbsPanel(_msgs.editFeedThumbnailsChallenge(),
-                    Type.CHALLENGE, thumbnails, onMediaModified));
+                    CHALLENGE, thumbnails, onMediaModified));
             }
         });
 
@@ -74,7 +77,7 @@ public class FacebookGameInfoEditorPanel extends FlowPanel
         new ClickCallback<Void>(saveThumbs) {
             protected boolean callService () {
                 try {
-                    _gamesvc.updateThumbnails(info.gameId, getThumbnails(), this);
+                    _gamesvc.updateFeedThumbnails(info.gameId, getThumbnails(), this);
                 } catch (ConfigException e) {
                     MsoyUI.error(e.getMessage());
                     return false;
@@ -88,9 +91,9 @@ public class FacebookGameInfoEditorPanel extends FlowPanel
         };
     }
 
-    protected List<GameThumbnail> getThumbnails ()
+    protected List<FeedThumbnail> getThumbnails ()
     {
-        List<GameThumbnail> thumbnails = new ArrayList<GameThumbnail>();
+        List<FeedThumbnail> thumbnails = new ArrayList<FeedThumbnail>();
         for (int ii = 0, ll = _thumbsPanels.getWidgetCount(); ii < ll; ++ii) {
             EditThumbsPanel panel = (EditThumbsPanel)_thumbsPanels.getWidget(ii);
             thumbnails.addAll(panel.getThumbnails());

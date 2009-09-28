@@ -13,10 +13,10 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 import com.threerings.msoy.data.all.MediaDesc;
 
 import com.threerings.msoy.facebook.gwt.FacebookInfo;
+import com.threerings.msoy.facebook.gwt.FeedThumbnail;
 
 import com.threerings.msoy.game.gwt.ArcadeData;
 import com.threerings.msoy.game.gwt.GameInfo;
-import com.threerings.msoy.game.gwt.GameThumbnail;
 import com.threerings.msoy.game.gwt.MochiGameInfo;
 
 import com.threerings.msoy.item.data.all.GameItem;
@@ -98,9 +98,9 @@ public interface EditGameService extends RemoteService
         throws ServiceException;
 
     /**
-     * Loads all thumbnails for the specified game.
+     * Loads all feed thumbnails for the specified game.
      */
-    List<GameThumbnail> loadThumbnails (int gameId)
+    List<FeedThumbnail> loadFeedThumbnails (int gameId)
         throws ServiceException;
 
     /**
@@ -150,9 +150,9 @@ public interface EditGameService extends RemoteService
         throws ServiceException;
 
     /**
-     * Updates the thumbnails for the specified game. All prior thumbnails are overwritten.
+     * Updates the feed thumbnails for the specified game. All prior thumbnails are overwritten.
      */
-    void updateThumbnails (int gameId, List<GameThumbnail> thumbnails)
+    void updateFeedThumbnails (int gameId, List<FeedThumbnail> thumbnails)
         throws ServiceException;
 
     /**

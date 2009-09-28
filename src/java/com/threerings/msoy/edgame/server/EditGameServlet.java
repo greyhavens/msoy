@@ -16,6 +16,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 
 import org.json.JSONArray;
@@ -44,18 +45,18 @@ import com.threerings.msoy.comment.server.persist.CommentRepository;
 import com.threerings.msoy.edgame.gwt.EditGameService;
 import com.threerings.msoy.edgame.gwt.GameCode;
 import com.threerings.msoy.facebook.gwt.FacebookInfo;
+import com.threerings.msoy.facebook.gwt.FeedThumbnail;
 import com.threerings.msoy.facebook.server.FacebookLogic;
 import com.threerings.msoy.facebook.server.persist.FacebookRepository;
+import com.threerings.msoy.facebook.server.persist.FeedThumbnailRecord;
 import com.threerings.msoy.game.gwt.ArcadeData;
 import com.threerings.msoy.game.gwt.GameGenre;
 import com.threerings.msoy.game.gwt.GameInfo;
 import com.threerings.msoy.game.gwt.GameService;
-import com.threerings.msoy.game.gwt.GameThumbnail;
 import com.threerings.msoy.game.gwt.MochiGameInfo;
 import com.threerings.msoy.game.server.GameNodeActions;
 import com.threerings.msoy.game.server.persist.GameCodeRecord;
 import com.threerings.msoy.game.server.persist.GameInfoRecord;
-import com.threerings.msoy.game.server.persist.GameThumbnailRecord;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 import com.threerings.msoy.game.server.persist.ArcadeEntryRecord;
 import com.threerings.msoy.game.server.persist.TrophyRepository;
@@ -109,22 +110,23 @@ public class EditGameServlet extends MsoyServiceServlet
     }
 
     @Override // from interface EditGameService
-    public List<GameThumbnail> loadThumbnails (int gameId)
+    public List<FeedThumbnail> loadFeedThumbnails (int gameId)
         throws ServiceException
     {
         requireAuthedUser();
-        return Lists.newArrayList(Lists.transform(_mgameRepo.loadAllThumbnails(gameId),
-            new Function<GameThumbnailRecord, GameThumbnail> () {
-            public GameThumbnail apply (GameThumbnailRecord rec) {
-                return rec.toGameThumbnail();
+        return Lists.newArrayList(Lists.transform(_facebookRepo.loadGameThumbnails(gameId),
+            new Function<FeedThumbnailRecord, FeedThumbnail> () {
+            public FeedThumbnail apply (FeedThumbnailRecord rec) {
+                return rec.toFeedThumbnail();
             }
         }));
     }
 
     @Override // from interface EditGameService
-    public void updateThumbnails (final int gameId, List<GameThumbnail> thumbnails)
+    public void updateFeedThumbnails (final int gameId, List<FeedThumbnail> thumbnails)
         throws ServiceException
     {
+        final Set<String> gameOverrideCodes = Sets.newHashSet("trophy", "challenge");
         MemberRecord mrec;
         if (gameId == 0) {
             mrec = requireAdminUser();
@@ -132,20 +134,20 @@ public class EditGameServlet extends MsoyServiceServlet
             mrec = requireAuthedUser();
             requireIsGameCreator(gameId, mrec);
         }
-        for (GameThumbnail thumb : thumbnails) {
+        for (FeedThumbnail thumb : thumbnails) {
             if (thumb.media == null || !thumb.media.isImage()) {
                 // this should never happen with a legitimate client
                 throw new ServiceException(MsoyCodes.E_INTERNAL_ERROR);
             }
-            if (gameId != 0 && !thumb.type.gameOverridable) {
+            if (gameId != 0 && !gameOverrideCodes.contains(thumb.code)) {
                 // this should never happen with a legitimate client
                 throw new ServiceException(MsoyCodes.E_INTERNAL_ERROR);
             }
         }
-        _mgameRepo.saveThumbnails(gameId, Lists.transform(thumbnails,
-            new Function<GameThumbnail, GameThumbnailRecord>() {
-                public GameThumbnailRecord apply (GameThumbnail thumb) {
-                    return new GameThumbnailRecord(gameId, thumb);
+        _facebookRepo.saveGameThumbnails(gameId, Lists.transform(thumbnails,
+            new Function<FeedThumbnail, FeedThumbnailRecord>() {
+                public FeedThumbnailRecord apply (FeedThumbnail thumb) {
+                    return FeedThumbnailRecord.forGame(gameId, thumb);
                 }
             }));
     }

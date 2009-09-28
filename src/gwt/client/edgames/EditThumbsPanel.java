@@ -22,8 +22,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.msoy.data.all.MediaDesc;
-import com.threerings.msoy.game.gwt.GameThumbnail;
-import com.threerings.msoy.game.gwt.GameThumbnail.Type;
+import com.threerings.msoy.facebook.gwt.FeedThumbnail;
 
 import client.edutil.EditorUtil;
 import client.edutil.EditorUtil.MediaBox;
@@ -44,10 +43,10 @@ class EditThumbsPanel extends FlowPanel
         /**
          * Creates a new thumbnail set.
          */
-        public ThumbnailSet (List<GameThumbnail> allThumbnails)
+        public ThumbnailSet (List<FeedThumbnail> allThumbnails)
         {
-            for (GameThumbnail thumb : allThumbnails) {
-                get(thumb.type, thumb.variant).add(thumb);
+            for (FeedThumbnail thumb : allThumbnails) {
+                get(thumb.code, thumb.variant).add(thumb);
             }
         }
 
@@ -55,12 +54,12 @@ class EditThumbsPanel extends FlowPanel
          * Gets a list of thumbnails for a given type and variant, creating the list if it does
          * not exist. Modifications will take effect.
          */
-        public List<GameThumbnail> get (Type type, String variant)
+        public List<FeedThumbnail> get (String code, String variant)
         {
-            Map<String, List<GameThumbnail>> variants = getVariantMap(type);
-            List<GameThumbnail> thumbs = variants.get(variant);
+            Map<String, List<FeedThumbnail>> variants = getVariantMap(code);
+            List<FeedThumbnail> thumbs = variants.get(variant);
             if (thumbs == null) {
-                variants.put(variant, thumbs = new ArrayList<GameThumbnail>());
+                variants.put(variant, thumbs = new ArrayList<FeedThumbnail>());
             }
             return thumbs;
         }
@@ -69,11 +68,11 @@ class EditThumbsPanel extends FlowPanel
          * Gets a map of variant to thumbnail list for a given type, creating the map if it does
          * not exist. Modifications will take effect.
          */
-        public Map<String, List<GameThumbnail>> getVariantMap (Type type)
+        public Map<String, List<FeedThumbnail>> getVariantMap (String code)
         {
-            Map<String, List<GameThumbnail>> variants = _organized.get(type);
+            Map<String, List<FeedThumbnail>> variants = _organized.get(code);
             if (variants == null) {
-                _organized.put(type, variants = new HashMap<String, List<GameThumbnail>>());
+                _organized.put(code, variants = new HashMap<String, List<FeedThumbnail>>());
                 return variants;
             }
             return variants;
@@ -82,25 +81,25 @@ class EditThumbsPanel extends FlowPanel
         /**
          * Gets a sorted list of variants present in the set for the given type.
          */
-        public List<String> getVariants (Type type)
+        public List<String> getVariants (String code)
         {
             List<String> variants = new ArrayList<String>();
-            variants.addAll(getVariantMap(type).keySet());
+            variants.addAll(getVariantMap(code).keySet());
             Collections.sort(variants);
             return variants;
         }
 
-        protected Map<Type, Map<String, List<GameThumbnail>>> _organized =
-            new HashMap<Type, Map<String, List<GameThumbnail>>>();
+        protected Map<String, Map<String, List<FeedThumbnail>>> _organized =
+            new HashMap<String, Map<String, List<FeedThumbnail>>>();
     }
 
     /**
      * Creates a new thumbnail editor for the given type with the given name, populating the
      * initial contents with the thumbnails in the given set.
      */
-    public EditThumbsPanel (String typeName, Type type, ThumbnailSet thumbnails)
+    public EditThumbsPanel (String typeName, String code, ThumbnailSet thumbnails)
     {
-        this(typeName, type, thumbnails, null);
+        this(typeName, code, thumbnails, null);
     }
 
     /**
@@ -108,19 +107,19 @@ class EditThumbsPanel extends FlowPanel
      * initial contents with the thumbnails in the given set. If not null, the given runnable will
      * be run whenever any media changes.
      */
-    public EditThumbsPanel (String typeName, Type type, ThumbnailSet thumbnails,
+    public EditThumbsPanel (String typeName, String code, ThumbnailSet thumbnails,
         Runnable onMediaModified)
     {
         setStyleName("Type");
-        _type = type;
+        _code = code;
         _typeName = typeName;
         _onMediaModified = onMediaModified;
 
         add(_title = MsoyUI.createLabel("", "Title"));
         add(_variants = MsoyUI.createFlowPanel("Variants"));
 
-        for (String variant : thumbnails.getVariants(type)) {
-            addVariant(new VariantPanel(variant, thumbnails.get(type, variant)));
+        for (String variant : thumbnails.getVariants(code)) {
+            addVariant(new VariantPanel(variant, thumbnails.get(code, variant)));
         }
 
         add(new Button(_msgs.editFeedThumbnailsNewVariant(typeName), new ClickHandler() {
@@ -135,9 +134,9 @@ class EditThumbsPanel extends FlowPanel
     /**
      * Gets a list of all thumbnails (of all variations) in the editor.
      */
-    public List<GameThumbnail> getThumbnails ()
+    public List<FeedThumbnail> getThumbnails ()
     {
-        List<GameThumbnail> thumbs = new ArrayList<GameThumbnail>();
+        List<FeedThumbnail> thumbs = new ArrayList<FeedThumbnail>();
         Set<String> variants = new HashSet<String>();
         for (VariantPanel vpanel : getPanels()) {
             if (variants.contains(vpanel.getVariant())) {
@@ -180,7 +179,7 @@ class EditThumbsPanel extends FlowPanel
      */
     protected class VariantPanel extends SmartTable
     {
-        public VariantPanel (String variant, List<GameThumbnail> content)
+        public VariantPanel (String variant, List<FeedThumbnail> content)
         {
             setStyleName("Variant");
 
@@ -189,8 +188,8 @@ class EditThumbsPanel extends FlowPanel
                 _variant = MsoyUI.createTextBox(variant, 8, 4)));
 
             final int size = MediaDesc.FB_FEED_SIZE;
-            for (int ii = 0; ii < GameThumbnail.COUNT; ++ii) {
-                String id = _type.toString() + variant + ii;
+            for (int ii = 0; ii < FeedThumbnail.COUNT; ++ii) {
+                String id = _code + variant + ii;
                 EditorUtil.MediaBox box = new EditorUtil.MediaBox(size, id,
                     content != null && ii < content.size() ? content.get(ii).media : null) {
                     @Override public void mediaUploaded (
@@ -210,17 +209,17 @@ class EditThumbsPanel extends FlowPanel
             }
         }
 
-        public List<GameThumbnail> getThumbnails ()
+        public List<FeedThumbnail> getThumbnails ()
         {
             String variant = _variant.getText();
             if (variant.length() == 0) {
                 throw new ConfigException(_msgs.errVariantNull());
             }
-            List<GameThumbnail> thumbs = new ArrayList<GameThumbnail>();
+            List<FeedThumbnail> thumbs = new ArrayList<FeedThumbnail>();
             byte pos = 0;
             for (MediaBox box : _boxes) {
-                thumbs.add(new GameThumbnail(EditorUtil.requireImageMedia(
-                    _msgs.egShot(), box.getMedia()), _type, variant, pos++));
+                thumbs.add(new FeedThumbnail(EditorUtil.requireImageMedia(
+                    _msgs.egShot(), box.getMedia()), _code, variant, pos++));
             }
             return thumbs;
         }
@@ -239,7 +238,7 @@ class EditThumbsPanel extends FlowPanel
         protected List<MediaBox> _boxes = new ArrayList<MediaBox>();
     }
 
-    protected Type _type;
+    protected String _code;
     protected String _typeName;
     protected Label _title;
     protected FlowPanel _variants;

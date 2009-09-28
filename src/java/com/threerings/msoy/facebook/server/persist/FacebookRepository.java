@@ -280,6 +280,40 @@ public class FacebookRepository extends DepotRepository
         delete(FacebookNotificationRecord.getKey(appId, id));
     }
 
+    /**
+     * Loads all thumbnails assigned to the given game.
+     */
+    public List<FeedThumbnailRecord> loadGameThumbnails (int gameId)
+    {
+        return loadThumbnails(gameId, 0);
+    }
+
+    /**
+     * Sets the given thumbnails to be the ones assigned to the given game. I.e. DELETES all
+     * current thumbnails for the game then stores the new ones.
+     */
+    public void saveGameThumbnails (int gameId, List<FeedThumbnailRecord> thumbnails)
+    {
+        saveThumbnails(gameId, 0, thumbnails);
+    }
+
+    /**
+     * Loads all thumbnails assigned to the given application.
+     */
+    public List<FeedThumbnailRecord> loadAppThumbnails (int appId)
+    {
+        return loadThumbnails(0, appId);
+    }
+
+    /**
+     * Sets the given thumbnails to be the ones assigned to the given application. I.e. DELETES all
+     * current thumbnails for the app then stores the new ones.
+     */
+    public void saveAppThumbnails (int appId, List<FeedThumbnailRecord> thumbnails)
+    {
+        saveThumbnails(0, appId, thumbnails);
+    }
+
     protected FacebookInfo loadFacebookInfo (int gameId, int appId)
     {
         FacebookInfoRecord info = load(FacebookInfoRecord.getKey(gameId, appId));
@@ -292,6 +326,21 @@ public class FacebookRepository extends DepotRepository
         return blank;
     }
 
+    protected List<FeedThumbnailRecord> loadThumbnails (int gameId, int appId)
+    {
+        return findAll(FeedThumbnailRecord.class, new Where(Ops.and(
+            FeedThumbnailRecord.GAME_ID.eq(gameId), FeedThumbnailRecord.APP_ID.eq(appId))));
+    }
+
+    protected void saveThumbnails (int gameId, int appId, List<FeedThumbnailRecord> thumbs)
+    {
+        deleteAll(FeedThumbnailRecord.class, new Where(Ops.and(
+            FeedThumbnailRecord.GAME_ID.eq(gameId), FeedThumbnailRecord.APP_ID.eq(appId))));
+        for (FeedThumbnailRecord thumb : thumbs) {
+            insert(thumb);
+        }
+    }
+
     @Override // from DepotRepository
     protected void getManagedRecords (Set<Class<? extends PersistentRecord>> classes)
     {
@@ -300,5 +349,6 @@ public class FacebookRepository extends DepotRepository
         classes.add(FacebookNotificationRecord.class);
         classes.add(FacebookNotificationStatusRecord.class);
         classes.add(FacebookInfoRecord.class);
+        classes.add(FeedThumbnailRecord.class);
     }
 }

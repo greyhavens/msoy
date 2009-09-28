@@ -12,9 +12,9 @@ import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.edgame.gwt.EditGameService.GameItemEditorInfo;
 import com.threerings.msoy.edgame.gwt.EditGameService.MochiGameBucket;
 import com.threerings.msoy.facebook.gwt.FacebookInfo;
+import com.threerings.msoy.facebook.gwt.FeedThumbnail;
 import com.threerings.msoy.game.gwt.ArcadeData;
 import com.threerings.msoy.game.gwt.GameInfo;
-import com.threerings.msoy.game.gwt.GameThumbnail;
 
 /**
  * The asynchronous (client-side) version of {@link EditGameService}.
@@ -32,9 +32,9 @@ public interface EditGameServiceAsync
     void loadGameData (int gameId, AsyncCallback<EditGameService.GameData> callback);
 
     /**
-     * The asynchronous version of {@link EditGameService#loadThumbnails}.
+     * The asynchronous version of {@link EditGameService#loadFeedThumbnails}.
      */
-    void loadThumbnails (int gameId, AsyncCallback<List<GameThumbnail>> callback);
+    void loadFeedThumbnails (int gameId, AsyncCallback<List<FeedThumbnail>> callback);
 
     /**
      * The asynchronous version of {@link EditGameService#loadGameItems}.
@@ -73,9 +73,9 @@ public interface EditGameServiceAsync
     void updateFacebookInfo (FacebookInfo info, AsyncCallback<Void> callback);
 
     /**
-     * The asynchronous version of {@link EditGameService#updateAdditionalThumbnails}.
+     * The asynchronous version of {@link EditGameService#updateFeedThumbnails}.
      */
-    void updateThumbnails (int gameId, List<GameThumbnail> thumbnails,
+    void updateFeedThumbnails (int gameId, List<FeedThumbnail> thumbnails,
         AsyncCallback<Void> callback);
 
     /**
