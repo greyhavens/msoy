@@ -18,8 +18,8 @@ import com.threerings.msoy.edgame.gwt.EditGameServiceAsync;
 import com.threerings.msoy.facebook.gwt.FacebookInfo;
 import com.threerings.msoy.facebook.gwt.FeedThumbnail;
 
-import client.edgames.EditThumbsPanel.ThumbnailSet;
 import client.edutil.EditorTable;
+import client.edutil.ThumbnailSet;
 import client.edutil.EditorUtil.ConfigException;
 import client.edutil.FacebookInfoEditorPanel;
 import client.ui.MsoyUI;

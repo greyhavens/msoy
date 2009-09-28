@@ -17,7 +17,7 @@ import com.threerings.msoy.facebook.gwt.FeedThumbnail;
 import client.ui.MsoyUI;
 import client.util.ClickCallback;
 import client.util.InfoCallback;
-import client.edgames.EditThumbsPanel.ThumbnailSet;
+import client.edutil.ThumbnailSet;
 import client.edutil.EditorUtil.ConfigException;
 
 /**
