@@ -23,7 +23,6 @@ import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.expression.ColumnExp;
 import com.threerings.msoy.facebook.gwt.FacebookInfo;
-import com.threerings.msoy.facebook.gwt.FeedThumbnailRecord;
 import com.threerings.msoy.server.util.DropPrimaryKey;
 
 /**
@@ -301,6 +300,5 @@ public class FacebookRepository extends DepotRepository
         classes.add(FacebookNotificationRecord.class);
         classes.add(FacebookNotificationStatusRecord.class);
         classes.add(FacebookInfoRecord.class);
-        classes.add(FeedThumbnailRecord.class);
     }
 }
