@@ -41,6 +41,14 @@ public class FeedThumbnailRecord extends PersistentRecord
         }
     };
 
+    /** Functor to get a runtime thumbnail from a thumbnail record. */
+    public static final Function<FeedThumbnailRecord, FeedThumbnail> TO_THUMBNAIL =
+        new Function<FeedThumbnailRecord, FeedThumbnail>() {
+        @Override public FeedThumbnail apply (FeedThumbnailRecord thumb) {
+            return thumb.toFeedThumbnail();
+        }
+    };
+
     /**
      * Creates a thumbnail record for the given game and runtime data.
      */

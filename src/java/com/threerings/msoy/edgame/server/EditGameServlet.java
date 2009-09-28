@@ -114,12 +114,8 @@ public class EditGameServlet extends MsoyServiceServlet
         throws ServiceException
     {
         requireAuthedUser();
-        return Lists.newArrayList(Lists.transform(_facebookRepo.loadGameThumbnails(gameId),
-            new Function<FeedThumbnailRecord, FeedThumbnail> () {
-            public FeedThumbnail apply (FeedThumbnailRecord rec) {
-                return rec.toFeedThumbnail();
-            }
-        }));
+        return Lists.newArrayList(Lists.transform(
+            _facebookRepo.loadGameThumbnails(gameId), FeedThumbnailRecord.TO_THUMBNAIL));
     }
 
     @Override // from interface EditGameService

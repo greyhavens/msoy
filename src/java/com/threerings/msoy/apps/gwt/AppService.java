@@ -12,6 +12,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 import com.threerings.msoy.facebook.gwt.FacebookInfo;
 import com.threerings.msoy.facebook.gwt.FacebookTemplate;
+import com.threerings.msoy.facebook.gwt.FeedThumbnail;
 import com.threerings.msoy.web.gwt.ServiceException;
 
 /**
@@ -118,4 +119,15 @@ public interface AppService extends RemoteService
         int appId, Set<FacebookTemplate> changed, Set<FacebookTemplate> removed)
         throws ServiceException;
 
+    /**
+     * Loads the feed thumbnails available for posts from the given application.
+     */
+    List<FeedThumbnail> loadThumbnails(int appId)
+        throws ServiceException;
+
+    /**
+     * Sets the feed thumbnails available for posts from the given application.
+     */
+    void updateThumbnails(int appId, List<FeedThumbnail> thumbnails)
+        throws ServiceException;
 }

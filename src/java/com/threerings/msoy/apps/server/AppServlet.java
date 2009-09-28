@@ -20,11 +20,13 @@ import com.threerings.msoy.apps.server.persist.AppRepository;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.facebook.gwt.FacebookInfo;
 import com.threerings.msoy.facebook.gwt.FacebookTemplate;
+import com.threerings.msoy.facebook.gwt.FeedThumbnail;
 import com.threerings.msoy.facebook.server.FacebookLogic;
 import com.threerings.msoy.facebook.server.persist.FacebookNotificationRecord;
 import com.threerings.msoy.facebook.server.persist.FacebookNotificationStatusRecord;
 import com.threerings.msoy.facebook.server.persist.FacebookRepository;
 import com.threerings.msoy.facebook.server.persist.FacebookTemplateRecord;
+import com.threerings.msoy.facebook.server.persist.FeedThumbnailRecord;
 import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
@@ -145,7 +147,7 @@ public class AppServlet extends MsoyServiceServlet
         return statusList;
     }
 
-    @Override // from AdminService
+    @Override // from AppService
     public List<FacebookTemplate> loadTemplates (int appId)
         throws ServiceException
     {
@@ -161,7 +163,7 @@ public class AppServlet extends MsoyServiceServlet
         return result;
     }
 
-    @Override // from AdminService
+    @Override // from AppService
     public void updateTemplates (
         int appId, Set<FacebookTemplate> templates, Set<FacebookTemplate> removed)
         throws ServiceException
@@ -173,6 +175,28 @@ public class AppServlet extends MsoyServiceServlet
         for (FacebookTemplate templ : templates) {
             _facebookRepo.storeTemplate(new FacebookTemplateRecord(appId, templ));
         }
+    }
+
+    @Override // from AppService
+    public List<FeedThumbnail> loadThumbnails (int appId)
+        throws ServiceException
+    {
+        requireAdminUser();
+        return Lists.newArrayList(Lists.transform(
+            _facebookRepo.loadAppThumbnails(appId), FeedThumbnailRecord.TO_THUMBNAIL));
+    }
+
+    @Override // from AppService
+    public void updateThumbnails (final int appId, List<FeedThumbnail> thumbnails)
+        throws ServiceException
+    {
+        requireAdminUser();
+        _facebookRepo.saveAppThumbnails(appId, Lists.transform(thumbnails,
+            new Function<FeedThumbnail, FeedThumbnailRecord>() {
+            public FeedThumbnailRecord apply (FeedThumbnail thumb) {
+                return FeedThumbnailRecord.forApp(appId, thumb);
+            }
+        }));
     }
 
     protected AppInfoRecord requireApp (int id)
