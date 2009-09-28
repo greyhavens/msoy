@@ -26,6 +26,7 @@ public class FacebookActionRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<FacebookActionRecord> _R = FacebookActionRecord.class;
+    public static final ColumnExp APP_ID = colexp(_R, "appId");
     public static final ColumnExp MEMBER_ID = colexp(_R, "memberId");
     public static final ColumnExp TYPE = colexp(_R, "type");
     public static final ColumnExp ID = colexp(_R, "id");
@@ -158,12 +159,12 @@ public class FacebookActionRecord extends PersistentRecord
      * Create and return a primary {@link Key} to identify a {@link FacebookActionRecord}
      * with the supplied key values.
      */
-    public static Key<FacebookActionRecord> getKey (int memberId, FacebookActionRecord.Type type, String id)
+    public static Key<FacebookActionRecord> getKey (int appId, int memberId, FacebookActionRecord.Type type, String id)
     {
         return new Key<FacebookActionRecord>(
                 FacebookActionRecord.class,
-                new ColumnExp[] { MEMBER_ID, TYPE, ID },
-                new Comparable[] { memberId, type, id });
+                new ColumnExp[] { APP_ID, MEMBER_ID, TYPE, ID },
+                new Comparable[] { appId, memberId, type, id });
     }
     // AUTO-GENERATED: METHODS END
 
