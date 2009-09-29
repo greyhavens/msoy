@@ -18,6 +18,8 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.web.gwt.Args;
+import com.threerings.msoy.web.gwt.ClientMode;
+import com.threerings.msoy.web.gwt.Embedding;
 import com.threerings.msoy.web.gwt.Invitation;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.SessionData;
@@ -118,7 +120,7 @@ public abstract class Page
                     frameCall(Frame.Calls.TEST_ACTION, test, action);
                 }
                 public Embedding getEmbedding () {
-                    return Enum.valueOf(Embedding.class, frameCall(Frame.Calls.GET_EMBEDDING)[0]);
+                    return Embedding.unflatten(frameCall(Frame.Calls.GET_EMBEDDING));
                 }
                 public boolean isHeaderless () {
                     return Boolean.valueOf(frameCall(Frame.Calls.IS_HEADERLESS)[0]);
@@ -140,8 +142,8 @@ public abstract class Page
             CShell.creds = WebCreds.unflatten(
                 ArrayUtil.toIterator(frameCall(Frame.Calls.GET_WEB_CREDS)));
 
-            // limit the outgoing links created by this page
-            if (CShell.isFacebook()) {
+            // limit the outgoing links created by the games portal app
+            if (CShell.getClientMode().isFacebookGames()) {
                 Link.setValidPages(new Pages[] { Pages.GAMES, Pages.FACEBOOK, Pages.WORLD });
             }
 
@@ -202,7 +204,7 @@ public abstract class Page
                     CShell.log("Test action", "test", test, "action", action);
                 }
                 public Embedding getEmbedding () {
-                    return Embedding.NONE; // test only in non-embedded mode
+                    return new Embedding(ClientMode.UNSPECIFIED, 0);
                 }
                 public boolean isHeaderless () {
                     return false; // we have no header but pretend like we do

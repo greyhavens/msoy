@@ -196,8 +196,9 @@ public class Session
                 didLogoff();
             }
         };
-        _usersvc.validateSession(
-            DeploymentConfig.version, token, 1, CShell.isFacebook(), onValidate);
+        // TODO: we may as well just pass the app id and/or client mode here
+        _usersvc.validateSession(DeploymentConfig.version, token, 1,
+            CShell.getClientMode().isFacebookGames(), onValidate);
     }
 
     protected static VisitorInfo _visitor;

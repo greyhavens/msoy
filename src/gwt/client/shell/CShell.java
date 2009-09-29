@@ -10,6 +10,7 @@ import com.google.gwt.user.client.rpc.IncompatibleRemoteServiceException;
 
 import com.threerings.gwt.util.Console;
 
+import com.threerings.msoy.web.gwt.ClientMode;
 import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.gwt.WebCreds;
 
@@ -169,11 +170,11 @@ public class CShell
     }
 
     /**
-     * Checks if we are embedded as a facebook app.
+     * Gets the client mode given to use when the outer frame was first loaded.
      */
-    public static boolean isFacebook ()
+    public static ClientMode getClientMode ()
     {
-        return frame.getEmbedding() == Frame.Embedding.FACEBOOK;
+        return frame.getEmbedding().mode;
     }
 
     protected static final ServerLookup _smsgs = GWT.create(ServerLookup.class);

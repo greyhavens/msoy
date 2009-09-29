@@ -27,7 +27,7 @@ public class BrowserTest
      */
     public static Widget getWarningDialog (ClickHandler continueClicked)
     {
-        boolean facebook = CShell.isFacebook();
+        boolean facebook = CShell.getClientMode().isFacebook();
 
         // TEMP: clear old cookie
         CookieUtil.clear("/", "BrowserTest_seen");

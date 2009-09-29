@@ -10,9 +10,6 @@ package com.threerings.msoy.web.gwt;
  */
 public class ArgNames
 {
-    /** Determines the overall embedding of the web application. */
-    public static final String EMBEDDING = "emb";
-
     /** Parameter or token designating the entry vector, recorded for new users. */
     public static final String VECTOR = "vec";
 
@@ -65,30 +62,5 @@ public class ArgNames
     public static String[] fbChallengeArgs ()
     {
         return new String[] {FBParam.CHALLENGE.name, "y"};
-    }
-
-    /**
-     * Value constants and utility functions for the embedding argument.
-     */
-    public static class Embedding
-    {
-        /** The facebook application. */
-        public static final String FACEBOOK = "fb";
-
-        /**
-         * Remove and return the embedding from the given arguments.
-         */
-        public static String extract (Args args)
-        {
-            return args.extractParameter(EMBEDDING);
-        }
-
-        /**
-         * Combine the embedding value for inclusion in a token.
-         */
-        public static Args compose (String embedding)
-        {
-            return Args.compose(EMBEDDING, embedding);
-        }
     }
 }

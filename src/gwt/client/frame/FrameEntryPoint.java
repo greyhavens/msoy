@@ -31,9 +31,9 @@ import com.threerings.msoy.data.all.LaunchConfig;
 import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.facebook.gwt.FacebookService;
 import com.threerings.msoy.facebook.gwt.FacebookServiceAsync;
-import com.threerings.msoy.web.gwt.ArgNames;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.CookieNames;
+import com.threerings.msoy.web.gwt.Embedding;
 import com.threerings.msoy.web.gwt.Invitation;
 import com.threerings.msoy.web.gwt.MemberCard;
 import com.threerings.msoy.web.gwt.Pages;
@@ -96,12 +96,8 @@ public class FrameEntryPoint
         History.addValueChangeHandler(this);
         _currentToken = History.getToken();
 
-        // if we are in a frame and our token has emb_fb, set the embedding value to facebook
-        _embedding = Frame.Embedding.NONE;
-        if (isFramed() && ArgNames.Embedding.FACEBOOK.equals(ArgNames.Embedding.extract(
-            Args.fromHistory(_currentToken)))) {
-            _embedding = Frame.Embedding.FACEBOOK;
-        }
+        // assign our client mode and app id if the server gave them to us, otherwise use defaults
+        _embedding = Embedding.extract(Args.fromHistory(_currentToken));
 
         // validate our session which will dispatch a didLogon or didLogoff
         Session.validate();
@@ -120,7 +116,7 @@ public class FrameEntryPoint
         });
 
         // create our frame layout
-        _layout = Layout.getLayout(_header, _embedding, isFramed(), new ClickHandler() {
+        _layout = Layout.getLayout(_header, _embedding.mode, isFramed(), new ClickHandler() {
             public void onClick (ClickEvent event) {
                 // put the client in in minimized state
                 String args = "memberHome=" + CShell.getMemberId() + "&mini=true";
@@ -180,7 +176,7 @@ public class FrameEntryPoint
         }
 
         // scrub any cookie-like arguments
-        ArgNames.Embedding.extract(args);
+        Embedding.extract(args);
 
         CShell.log("Displaying page", "page", page, "args", args);
 
@@ -424,9 +420,14 @@ public class FrameEntryPoint
     }
 
     // from interface Frame
+    public int getAppId ()
+    {
+        return _embedding.appId;
+    }
+
+    // from interface Frame
     public Embedding getEmbedding ()
     {
-        // just delegate to the layout
         return _embedding;
     }
 
@@ -448,15 +449,6 @@ public class FrameEntryPoint
             _bottomFrameToken = bottomFrameToken;
             _layout.setBottomContent(_bottomFrame);
         }
-    }
-
-    /**
-     * Detects if we should only show one thing at a time. That is, either content or client,
-     * not both.
-     */
-    protected boolean isMonoScreen ()
-    {
-        return getEmbedding() == Embedding.FACEBOOK;
     }
 
     protected void setPage (Pages page)
@@ -483,7 +475,7 @@ public class FrameEntryPoint
         _pageFrame = new PageFrame(_page, MAIN_FRAME_ID);
 
         // if we're on a headerless page or we only support one screen, we need to close the client
-        if (isHeaderless() || isMonoScreen()) {
+        if (isHeaderless() || _embedding.mode.isMonoscreen()) {
             closeClient();
         }
 
@@ -628,7 +620,7 @@ public class FrameEntryPoint
         TitleBar bar = TitleBar.createClient(_layout, game);
         if (bar != null) {
             _bar = bar;
-            _bar.setCloseVisible(!isMonoScreen());
+            _bar.setCloseVisible(!_embedding.mode.isMonoscreen());
             _layout.setTitleBar(_bar);
         }
     }
@@ -642,7 +634,7 @@ public class FrameEntryPoint
                 launchGame(result, action, otherId1, token, otherId2);
             }
         });
-        if (CShell.isFacebook()) {
+        if (_embedding.mode.isFacebookGames()) {
             openBottomFrame(Pages.FACEBOOK.makeToken("game", gameId));
         }
     }
@@ -799,7 +791,7 @@ public class FrameEntryPoint
             reportTestAction(args[0], args[1]);
             return null;
         case GET_EMBEDDING:
-            return new String[] { getEmbedding().toString() };
+            return _embedding.flatten();
         case IS_HEADERLESS:
             return new String[] { String.valueOf(isHeaderless()) };
         case OPEN_BOTTOM_FRAME:
@@ -914,11 +906,11 @@ public class FrameEntryPoint
         // report it to Google Analytics
         _analytics.report(url);
 
-        // and to Kontagent if we are in Facebook mode
-        if (_embedding == Frame.Embedding.FACEBOOK) {
+        // and to Kontagent if we are in a Facebook mode
+        if (_embedding.mode.isFacebook()) {
             // TODO: we might be able to use the recommended "client pixel" page reporting if the
             // KAPI secret is not required (question posted to forums). If so, then we'd need to
-            // grab the FBID from somewhere, perhaps in the SessinData (superseding the
+            // grab the FBID from somewhere, perhaps in the SessionData (superseding the
             // #world-fbgame way of doing it), and build a URL here and poke it into an Image in
             // the title bar or somewhere.
             _fbsvc.trackPageRequest(url, new NoopAsyncCallback());
@@ -943,8 +935,8 @@ public class FrameEntryPoint
         $wnd.helloWhirled = function () {
              return true;
         };
-        $wnd.getEmbedding = function () {
-            return entry.@client.frame.FrameEntryPoint::getEmbedding()().toString();
+        $wnd.getClientMode = function () {
+            return entry.@client.frame.FrameEntryPoint::getEmbedding()().mode.toString();
         }
         $wnd.setWindowTitle = function (title) {
             entry.@client.frame.FrameEntryPoint::setTitleFromFlash(Ljava/lang/String;)(title);

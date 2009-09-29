@@ -31,6 +31,31 @@ public enum ClientMode
         return _value;
     }
 
+    /**
+     * Detects if this client mode is within a facebook iframe.
+     */
+    public boolean isFacebook ()
+    {
+        return this == FB_GAMES || this == FB_ROOMS;
+    }
+
+    /**
+     * Detects if this client mode is the facebook games portal.
+     */
+    public boolean isFacebookGames ()
+    {
+        return this == FB_GAMES;
+    }
+
+    /**
+     * Detects if this client mode should only show one thing at a time. That is, either content
+     * or client, not both.
+     */
+    public boolean isMonoscreen ()
+    {
+        return this == FB_GAMES;
+    }
+
     ClientMode (int value, String code) {
         _value = (byte)value;
         this.code = code;

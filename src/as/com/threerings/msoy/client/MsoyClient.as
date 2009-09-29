@@ -402,8 +402,14 @@ public /*abstract*/ class MsoyClient extends CrowdClient
 
         try {
             if (ExternalInterface.call("helloWhirled") as Boolean) {
-                // this will throw an error if our embed values are out of sync with gwt's
-                _embedding = Embedding.valueOf(ExternalInterface.call("getEmbedding"));
+                // TODO: GWT has a ClientMode, we have an Embedding, should they be the same?
+                // TODO: we will also need the app id at some point
+                var clientMode :String = ExternalInterface.call("getClientMode");
+                if (clientMode == "FB_GAMES") {
+                    _embedding = Embedding.FACEBOOK;
+                } else {
+                    _embedding = Embedding.NONE;
+                }
             }
         } catch (err :Error) {
             // we are embedded but not anywhere specific, default to OTHER

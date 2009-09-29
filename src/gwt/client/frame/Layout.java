@@ -3,10 +3,10 @@
 
 package client.frame;
 
-import client.shell.Frame;
-
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Widget;
+
+import com.threerings.msoy.web.gwt.ClientMode;
 
 /**
  * Handles the layout of our various frame elements (header, content, client).
@@ -26,10 +26,11 @@ public abstract class Layout
      * Creates and returns a layout instance based on the given external arguments.
      */
     public static Layout getLayout (
-        FrameHeader header, Frame.Embedding embedding, boolean isInnerFrame, ClickHandler onGoHome)
+        FrameHeader header, ClientMode clientMode, boolean isInnerFrame, ClickHandler onGoHome)
     {
         Layout layout = null;
-        if (embedding == Frame.Embedding.FACEBOOK) {
+        if (clientMode.isFacebookGames()) {
+            // TODO: rename FacebookLayout -> FacebookGamesPortalLayout or something
             layout = new FacebookLayout();
         } else if (isInnerFrame) {
             layout = new FramedLayout();

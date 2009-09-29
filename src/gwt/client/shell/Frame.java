@@ -7,6 +7,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.web.gwt.Args;
+import com.threerings.msoy.web.gwt.Embedding;
 import com.threerings.msoy.web.gwt.Invitation;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.SessionData;
@@ -25,9 +26,6 @@ public interface Frame
         CHECK_FLASH_VERSION, GET_ACTIVE_INVITE, GET_VISITOR_INFO, TEST_ACTION, GET_EMBEDDING,
         IS_HEADERLESS, OPEN_BOTTOM_FRAME
     };
-
-    /** Choice of embeddings the frame is in. */
-    public enum Embedding { NONE, FACEBOOK }
 
     /**
      * Sets the title of the browser window and the page.
@@ -125,7 +123,7 @@ public interface Frame
     void reportTestAction (String test, String action);
 
     /**
-     * Gets the embedding of the frame.
+     * Gets the embedding assigned to us by the server when the frame was created.
      */
     Embedding getEmbedding ();
 

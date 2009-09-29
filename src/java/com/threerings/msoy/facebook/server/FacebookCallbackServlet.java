@@ -37,6 +37,8 @@ import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 
 import com.threerings.msoy.web.gwt.ArgNames;
 import com.threerings.msoy.web.gwt.Args;
+import com.threerings.msoy.web.gwt.ClientMode;
+import com.threerings.msoy.web.gwt.Embedding;
 import com.threerings.msoy.web.gwt.ExternalSiteId;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.ServiceException;
@@ -385,7 +387,9 @@ public class FacebookCallbackServlet extends HttpServlet
          */
         public String getDestinationToken ()
         {
-            Args embed = ArgNames.Embedding.compose(ArgNames.Embedding.FACEBOOK);
+            // TODO: use a different client mode here depending on the application being served
+            Args embed = new Embedding(
+                ClientMode.FB_GAMES, FacebookRepository.LEGACY_APP_ID).compose();
 
             // and send them to the appropriate page
             if (game != null) {

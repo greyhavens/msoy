@@ -71,7 +71,7 @@ public class GamesPage extends Page
             showFriendsBar(0); // just show the generic friends bar for mochi games
 
         } else {
-            if (CShell.isFacebook()
+            if (CShell.getClientMode().isFacebookGames()
                     || action.equals("fb")) { // TEMP: "fb" action added by Ray for testing
                 // show the facebook portal and request to show the friends panel
                 FlowPanel arcade = new FlowPanel();
@@ -94,12 +94,13 @@ public class GamesPage extends Page
 
     protected ArcadeData.Portal getDefaultPortal ()
     {
-        return CShell.isFacebook() ? ArcadeData.Portal.FACEBOOK : ArcadeData.Portal.MAIN;
+        return CShell.getClientMode().isFacebookGames() ?
+            ArcadeData.Portal.FACEBOOK : ArcadeData.Portal.MAIN;
     }
 
     protected void showFriendsBar (int gameId)
     {
-        if (!CShell.isFacebook()) {
+        if (!CShell.getClientMode().isFacebookGames()) {
             return;
         }
 
