@@ -142,7 +142,6 @@ public class AppServlet extends MsoyServiceServlet
         throws ServiceException
     {
         requireApp(appId);
-        appId = 0; // TEMP
         List<FacebookNotificationStatus> statusList = Lists.newArrayList();
         for (FacebookNotificationStatusRecord rec : _facebookRepo.loadNotificationStatus(appId)) {
             statusList.add(rec.toStatus());
