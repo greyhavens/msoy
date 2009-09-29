@@ -179,6 +179,15 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
     }
 
     /**
+     * Returns the id of the item of which this item is a clone, or this item's own item id if it
+     * is an original item.
+     */
+    public int getMasterId ()
+    {
+        return (sourceId == 0) ? itemId : sourceId;
+    }
+
+    /**
      * Returns true if this item is an original item that has been listed in the catalog and now
      * serves as the work-in-progress item from which the listing is generated.
      */
@@ -391,7 +400,7 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
         furniMediaHash = hash;
     }
 
-    /** 
+    /**
      * Calculate this item's average rating from the sum and count.
      */
     public float getRating ()
