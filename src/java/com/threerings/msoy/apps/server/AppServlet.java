@@ -30,6 +30,7 @@ import com.threerings.msoy.facebook.server.persist.FacebookTemplateRecord;
 import com.threerings.msoy.facebook.server.persist.FeedThumbnailRecord;
 import com.threerings.msoy.facebook.server.persist.KontagentInfoRecord;
 import com.threerings.msoy.item.data.ItemCodes;
+import com.threerings.msoy.web.gwt.ClientMode;
 import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 
@@ -54,6 +55,7 @@ public class AppServlet extends MsoyServiceServlet
         requireAdminUser();
         AppInfoRecord app = new AppInfoRecord();
         app.name = name;
+        app.clientMode = ClientMode.UNSPECIFIED;
         _appRepo.createApp(app);
         return app.appId;
     }
