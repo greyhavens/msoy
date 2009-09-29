@@ -22,6 +22,7 @@ import com.threerings.presents.dobj.AttributeChangeAdapter;
 import com.threerings.presents.dobj.AttributeChangedEvent;
 
 import com.threerings.crowd.client.PlaceView;
+import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.data.PlaceConfig;
 import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.util.CrowdContext;
@@ -153,7 +154,8 @@ public class RoomObjectController extends RoomController
      */
     public function containsPlayer (name :MemberName) :Boolean
     {
-        return (null != _roomObj.getOccupantInfo(name));
+        var info :OccupantInfo = _roomObj.getOccupantInfo(name);
+        return (info != null) && !(info.username is PuppetName); 
     }
 
     /**
