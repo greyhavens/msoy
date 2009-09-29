@@ -190,7 +190,7 @@ public class MsoyServer extends MsoyBaseServer
 
         // start up our peer manager
         log.info("Running in cluster mode as node '" + ServerConfig.nodeName + "'.");
-        _peerMan.init(ServerConfig.nodeName, ServerConfig.sharedSecret,
+        _peerMan.init(_sceneReg, ServerConfig.nodeName, ServerConfig.sharedSecret,
                       ServerConfig.backChannelHost, ServerConfig.serverHost, getListenPorts()[0]);
 
         // give the EHCache coordinator access to our peering guts
@@ -369,6 +369,9 @@ public class MsoyServer extends MsoyBaseServer
 
     /** Manages interactions with our peer servers. */
     @Inject protected MsoyPeerManager _peerMan;
+
+    /** Keeps track of our locally resolved scenes and how to resolve them. */
+    @Inject protected MsoySceneRegistry _sceneReg;
 
     /** Manages our parties. */
     @Inject protected PartyRegistry _partyReg;

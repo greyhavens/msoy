@@ -165,6 +165,20 @@ public class MsoyPeerManager extends CrowdPeerManager
     }
 
     /**
+     * Explicitly initialize ourselves with the {@link MsoySceneRegistry} reference. I think
+     * this dependency should be eliminated in favour of {@link NodeAction} use, but that would
+     * require extending the subsystem with callback support so a confirmation call in an action
+     * will be properly sent back all the way to the original invoker.
+     */
+    public void init (MsoySceneRegistry reg, String nodeName, String sharedSecret,
+        String hostName, String publicHostName, int port)
+    {
+        super.init(nodeName, sharedSecret, hostName, publicHostName, port);
+
+        _screg = reg;
+    }
+
+    /**
      * Returns an iterable over all node objects (this and other peers') casted to {@link
      * MsoyNodeObject}.
      */
@@ -853,12 +867,14 @@ public class MsoyPeerManager extends CrowdPeerManager
     /** A cache of forwarded member objects. */
     protected Map<Name,MemObjCacheEntry> _mobjCache = Maps.newHashMap();
 
+    /** Initialized explicitly. The peer manager should really not depend on the scene registry. */
+    protected SceneRegistry _screg;
+
     // dependencies
     @Inject protected ClientManager _clmgr;
     @Inject protected InvocationManager _invmgr;
     @Inject protected ReportManager _reportMan;
     @Inject protected MsoyServer _msoyServer;
-    @Inject protected SceneRegistry _screg;
 
     /** A counter used to assign party ids on this server. */
     protected static int _partyIdCounter;
