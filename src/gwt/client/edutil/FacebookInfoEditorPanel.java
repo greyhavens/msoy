@@ -45,8 +45,19 @@ public abstract class FacebookInfoEditorPanel extends EditorTable
             }
         });
 
+        final TextBox fbUid = MsoyUI.createTextBox(String.valueOf(info.fbUid), 20, 20);
+        addRow(_msgs.infoEditFbUid(), fbUid, new Command() {
+            public void execute () {
+                try {
+                    info.fbUid = Long.valueOf(fbUid.getText().trim());
+                } catch (NumberFormatException nfe) {
+                    info.fbUid = 0;
+                }
+            }
+        });
+
         final TextBox canvasName = MsoyUI.createTextBox(
-            info.canvasName, FacebookInfo.CANVAS_NAME_LENGTH, FacebookInfo.CANVAS_NAME_LENGTH);
+            info.canvasName, FacebookInfo.CANVAS_NAME_LENGTH, 20);
         addRow(_msgs.infoEditCanvasName(), canvasName, new Command() {
             public void execute () {
                 info.canvasName = canvasName.getText().trim();

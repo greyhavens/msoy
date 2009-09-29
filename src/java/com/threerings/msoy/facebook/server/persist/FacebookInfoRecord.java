@@ -22,13 +22,14 @@ public class FacebookInfoRecord extends PersistentRecord
     public static final ColumnExp APP_ID = colexp(_R, "appId");
     public static final ColumnExp API_KEY = colexp(_R, "apiKey");
     public static final ColumnExp APP_SECRET = colexp(_R, "appSecret");
+    public static final ColumnExp FB_UID = colexp(_R, "fbUid");
     public static final ColumnExp CHROMELESS = colexp(_R, "chromeless");
     public static final ColumnExp CANVAS_NAME = colexp(_R, "canvasName");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 5;
+    public static final int SCHEMA_VERSION = 6;
 
     /**
      * Converts the supplied runtime record into a persistent record.
@@ -40,6 +41,7 @@ public class FacebookInfoRecord extends PersistentRecord
         record.appId = info.appId;
         record.apiKey = info.apiKey;
         record.appSecret = info.appSecret;
+        record.fbUid = info.fbUid;
         record.chromeless = info.chromeless;
         record.canvasName = info.canvasName;
         return record;
@@ -58,6 +60,9 @@ public class FacebookInfoRecord extends PersistentRecord
     /** The Facebook app secret for this game's Facebook app. */
     @Column(length=FacebookInfo.SECRET_LENGTH)
     public String appSecret;
+
+    /** The id of the application's facebook user (for profile page). */
+    public long fbUid;
 
     /** If true Whirled won't display any chrome when in Facebook App mode. */
     public boolean chromeless;
@@ -78,6 +83,7 @@ public class FacebookInfoRecord extends PersistentRecord
         info.appId = this.appId;
         info.apiKey = this.apiKey;
         info.appSecret = this.appSecret;
+        info.fbUid = this.fbUid;
         info.chromeless = this.chromeless;
         info.canvasName = this.canvasName;
         return info;
