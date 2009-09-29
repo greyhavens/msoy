@@ -13,7 +13,7 @@ import com.threerings.msoy.item.data.all.Prize;
 import com.threerings.msoy.item.data.all.TrophySource;
 
 import com.threerings.msoy.edgame.gwt.GameCode;
-import com.threerings.msoy.facebook.gwt.FacebookInfo;
+import com.threerings.msoy.facebook.server.persist.FacebookInfoRecord;
 import com.threerings.msoy.game.data.GameSummary;
 import com.threerings.msoy.game.server.GameUtil;
 import com.threerings.msoy.game.server.persist.GameInfoRecord;
@@ -28,7 +28,7 @@ public class GameContent
     public int gameId;
     public boolean isApproved;
     public GameInfoRecord game;
-    public FacebookInfo facebook;
+    public FacebookInfoRecord facebook;
     public GameMetricsRecord metrics;
     public GameCode code;
     public List<LevelPack> lpacks = Lists.newArrayList();

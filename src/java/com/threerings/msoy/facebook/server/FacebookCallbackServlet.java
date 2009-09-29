@@ -28,8 +28,8 @@ import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 
 import com.threerings.msoy.facebook.gwt.FacebookGame;
-import com.threerings.msoy.facebook.gwt.FacebookInfo;
 import com.threerings.msoy.facebook.gwt.FacebookTemplate;
+import com.threerings.msoy.facebook.server.persist.FacebookInfoRecord;
 import com.threerings.msoy.facebook.server.persist.FacebookRepository;
 
 import com.threerings.msoy.game.server.persist.GameInfoRecord;
@@ -355,7 +355,7 @@ public class FacebookCallbackServlet extends HttpServlet
 
         info.game = new FacebookGame(ginfo.gameId);
 
-        FacebookInfo fbinfo = _facebookRepo.loadGameFacebookInfo(ginfo.gameId);
+        FacebookInfoRecord fbinfo = _facebookRepo.loadGameFacebookInfo(ginfo.gameId);
         if (fbinfo.apiKey == null) {
             throw new ServiceException("Game missing Facebook info: " + ginfo.name);
         }

@@ -23,6 +23,7 @@ import com.threerings.msoy.facebook.gwt.FacebookTemplate;
 import com.threerings.msoy.facebook.gwt.FeedThumbnail;
 import com.threerings.msoy.facebook.gwt.KontagentInfo;
 import com.threerings.msoy.facebook.server.FacebookLogic;
+import com.threerings.msoy.facebook.server.persist.FacebookInfoRecord;
 import com.threerings.msoy.facebook.server.persist.FacebookNotificationRecord;
 import com.threerings.msoy.facebook.server.persist.FacebookNotificationStatusRecord;
 import com.threerings.msoy.facebook.server.persist.FacebookRepository;
@@ -66,7 +67,7 @@ public class AppServlet extends MsoyServiceServlet
     {
         AppData data = new AppData();
         data.info = requireApp(appId).toAppInfo();
-        data.facebook = _facebookRepo.loadAppFacebookInfo(appId);
+        data.facebook = _facebookRepo.loadAppFacebookInfo(appId).toFacebookInfo();
         KontagentInfoRecord kinfo = _facebookRepo.loadKontagentInfo(appId);
         data.kontagent = kinfo==null ? new KontagentInfo("", "") : kinfo.toKontagentInfo();
         return data;
@@ -93,7 +94,7 @@ public class AppServlet extends MsoyServiceServlet
         throws ServiceException
     {
         requireApp(info.appId);
-        _facebookRepo.updateFacebookInfo(info);
+        _facebookRepo.updateFacebookInfo(FacebookInfoRecord.fromFacebookInfo(info));
     }
 
     @Override // from AppService

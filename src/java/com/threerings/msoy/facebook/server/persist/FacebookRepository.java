@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -22,7 +23,6 @@ import com.samskivert.depot.clause.Limit;
 import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.expression.ColumnExp;
-import com.threerings.msoy.facebook.gwt.FacebookInfo;
 import com.threerings.msoy.server.util.DropPrimaryKey;
 
 /**
@@ -69,7 +69,7 @@ public class FacebookRepository extends DepotRepository
      * Loads the Facebook info for the specified game. If no info is registered for the game in
      * question a blank record is created with gameId filled in but no key or secret.
      */
-    public FacebookInfo loadGameFacebookInfo (int gameId)
+    public FacebookInfoRecord loadGameFacebookInfo (int gameId)
     {
         return loadFacebookInfo(gameId, 0);
     }
@@ -78,7 +78,7 @@ public class FacebookRepository extends DepotRepository
      * Loads the Facebook info for the specified application. If no info is registered for the game
      * in question a blank record is created with gameId filled in but no key or secret.
      */
-    public FacebookInfo loadAppFacebookInfo (int appId)
+    public FacebookInfoRecord loadAppFacebookInfo (int appId)
     {
         return loadFacebookInfo(0, appId);
     }
@@ -86,12 +86,10 @@ public class FacebookRepository extends DepotRepository
     /**
      * Creates or updates the Facebook info for the game referenced by the supplied record.
      */
-    public void updateFacebookInfo (FacebookInfo info)
+    public void updateFacebookInfo (FacebookInfoRecord info)
     {
-        if (info.appId != 0 && info.gameId != 0) {
-            throw new IllegalArgumentException("Invalid key for facebook info");
-        }
-        store(FacebookInfoRecord.fromFacebookInfo(info));
+        Preconditions.checkArgument(info.appId == 0 ^ info.gameId == 0);
+        store(info);
     }
 
     /**
@@ -334,16 +332,15 @@ public class FacebookRepository extends DepotRepository
         store(kinfo);
     }
 
-    protected FacebookInfo loadFacebookInfo (int gameId, int appId)
+    protected FacebookInfoRecord loadFacebookInfo (int gameId, int appId)
     {
         FacebookInfoRecord info = load(FacebookInfoRecord.getKey(gameId, appId));
-        if (info != null) {
-            return info.toFacebookInfo();
+        if (info == null) {
+            info = new FacebookInfoRecord();
+            info.gameId = gameId;
+            info.appId = appId;
         }
-        FacebookInfo blank = new FacebookInfo();
-        blank.gameId = gameId;
-        blank.appId = appId;
-        return blank;
+        return info;
     }
 
     protected List<FeedThumbnailRecord> loadThumbnails (int gameId, int appId)
