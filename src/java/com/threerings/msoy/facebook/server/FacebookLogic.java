@@ -775,9 +775,11 @@ public class FacebookLogic
         }
 
         try {
-            scheduleNotification(
-                _listRepo.getCursorItem(DAILY_GAMES_LIST, DAILY_GAMES_CURSOR), 5);
-            _listRepo.advanceCursor(DAILY_GAMES_LIST, DAILY_GAMES_CURSOR);
+            String notifId = _listRepo.getCursorItem(DAILY_GAMES_LIST, DAILY_GAMES_CURSOR);
+            if (notifId != null) {
+                scheduleNotification(notifId, 5);
+                _listRepo.advanceCursor(DAILY_GAMES_LIST, DAILY_GAMES_CURSOR);
+            }
 
         } catch (ServiceException ex) {
             log.warning("Could not send daily games notification", ex);
