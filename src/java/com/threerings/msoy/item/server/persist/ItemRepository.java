@@ -394,9 +394,9 @@ public abstract class ItemRepository<T extends ItemRecord>
 
     /**
      * Finds all (original and cloned) items owned by the specified player that match the supplied
-     * query (if non-null) or the supplied mog (if non-zero).
+     * query (if non-null) or the supplied theme (if non-zero).
      */
-    public List<T> findItems (int ownerId, String query, int mogId)
+    public List<T> findItems (int ownerId, String query, int themeId)
     {
         WordSearch queryContext = buildWordSearch(query);
         List<SQLExpression> matches = Lists.newArrayList();
@@ -410,12 +410,12 @@ public abstract class ItemRepository<T extends ItemRecord>
         QueryClause[] clauses = new QueryClause[0];
         SQLExpression[] whereBits = new SQLExpression[0];
 
-        if (mogId != 0) {
+        if (themeId != 0) {
             clauses = ArrayUtil.append(clauses, new Join(
                 getItemColumn(ItemRecord.ITEM_ID),
                 new ColumnExp(getMogMarkClass(), MogMarkRecord.ITEM_ID.name)));
             whereBits = ArrayUtil.append(whereBits,
-                new ColumnExp(getMogMarkClass(), MogMarkRecord.GROUP_ID.name).eq(mogId));
+                new ColumnExp(getMogMarkClass(), MogMarkRecord.GROUP_ID.name).eq(themeId));
         }
 
         SQLExpression[] originalBits = ArrayUtil.append(
@@ -451,33 +451,42 @@ public abstract class ItemRepository<T extends ItemRecord>
      * Loads up to maxCount items from a user's inventory that were the most recently touched.
      * @param maxCount
      */
-    public List<T> loadRecentlyTouched (int ownerId, int mogId, int maxCount)
+    public List<T> loadRecentlyTouched (int ownerId, int themeId, int maxCount)
     {
-        QueryClause[] baseClauses = new QueryClause[] {
-            new Limit(0, maxCount)
-        };
         SQLExpression[] baseWhere = new SQLExpression[0];
-
-        if (mogId != 0) {
+        QueryClause[] cloneClauses = new QueryClause[] {
+            new Limit(0, maxCount),
+            OrderBy.descending(getCloneColumn(CloneRecord.LAST_TOUCHED))
+        };
+        if (themeId != 0) {
             baseWhere = ArrayUtil.append(baseWhere,
-                new ColumnExp(getMogMarkClass(), MogMarkRecord.GROUP_ID.name).eq(mogId));
-            baseClauses = ArrayUtil.append(baseClauses, new Join(
-                getItemColumn(ItemRecord.ITEM_ID),
-                new ColumnExp(getMogMarkClass(), MogMarkRecord.ITEM_ID.name)));
+                new ColumnExp(getMogMarkClass(), MogMarkRecord.GROUP_ID.name).eq(themeId));
+            cloneClauses = ArrayUtil.append(cloneClauses,
+                new Join(getCloneColumn(CloneRecord.ORIGINAL_ITEM_ID),
+                    new ColumnExp(getMogMarkClass(), MogMarkRecord.ITEM_ID.name)));
         }
 
         List<CloneRecord> cloneRecords = loadAllWithWhere(
             getCloneClass(),
             ArrayUtil.append(baseWhere, getCloneColumn(CloneRecord.OWNER_ID).eq(ownerId)),
-            ArrayUtil.append(baseClauses,
-                OrderBy.descending(getCloneColumn(CloneRecord.LAST_TOUCHED))));
+            cloneClauses);
+
         List<T> items = resolveClones(cloneRecords);
+
+        QueryClause[] originalClauses = new QueryClause[] {
+            new Limit(0, maxCount),
+            OrderBy.descending(getItemColumn(ItemRecord.LAST_TOUCHED))
+        };
+        if (themeId != 0) {
+            originalClauses = ArrayUtil.append(originalClauses,
+                new Join(getItemColumn(ItemRecord.ITEM_ID),
+                    new ColumnExp(getMogMarkClass(), MogMarkRecord.ITEM_ID.name)));
+        }
 
         items.addAll(loadAllWithWhere(
             getItemClass(),
             ArrayUtil.append(baseWhere, getItemColumn(ItemRecord.OWNER_ID).eq(ownerId)),
-            ArrayUtil.append(baseClauses,
-                OrderBy.descending(getItemColumn(ItemRecord.LAST_TOUCHED)))));
+            originalClauses));
 
         // now, sort by their lastTouched time
         QuickSort.sort(items, new Comparator<T>() {
@@ -726,7 +735,7 @@ public abstract class ItemRepository<T extends ItemRecord>
      */
     public List<CatalogRecord> loadCatalog (
         byte sortBy, boolean mature, WordSearch context, int tag, int creator,
-        Float minRating, int mogId, int gameId, int offset, int rows, float exchangeRate)
+        Float minRating, int themeId, int gameId, int offset, int rows, float exchangeRate)
     {
         LinkedList<QueryClause> clauses = Lists.newLinkedList();
         clauses.add(new Join(getCatalogColumn(CatalogRecord.LISTED_ITEM_ID),
@@ -783,7 +792,7 @@ public abstract class ItemRepository<T extends ItemRecord>
 
         // see if there's any where bits to turn into an actual where clause
         boolean significantlyConstrained = addSearchClause(
-            clauses, whereBits, mature, context, tag, creator, minRating, mogId, gameId);
+            clauses, whereBits, mature, context, tag, creator, minRating, themeId, gameId);
 
         // finally fetch all the catalog records of interest and resolve their item bits
         List<CatalogRecord> records = findAllWithOffset(getCatalogClass(),
@@ -947,6 +956,17 @@ public abstract class ItemRepository<T extends ItemRecord>
             record.item = load(getItemKey(record.listedItemId));
         }
         return record;
+    }
+
+    /**
+     * Figure out whether a given master item is acceptable in a given theme.
+     */
+    public boolean isThemeStamped (int themeGroupId, int masterItemId)
+    {
+        return null != load(Key.newKey(
+            getMogMarkClass(),
+            new ColumnExp(getMogMarkClass(), MogMarkRecord.GROUP_ID.name), themeGroupId,
+            new ColumnExp(getMogMarkClass(), MogMarkRecord.ITEM_ID.name), masterItemId));
     }
 
     /**
@@ -1476,7 +1496,7 @@ public abstract class ItemRepository<T extends ItemRecord>
      */
     protected boolean addSearchClause (
         List<QueryClause> clauses, List<SQLExpression> whereBits, boolean mature,
-        WordSearch queryContext, int tag, int creator, Float minRating, int mogId, int gameId)
+        WordSearch queryContext, int tag, int creator, Float minRating, int themeId, int gameId)
     {
         boolean significantlyConstrained = false;
 
@@ -1509,11 +1529,11 @@ public abstract class ItemRepository<T extends ItemRecord>
             whereBits.add(getRatingExpression().greaterEq(minRating));
         }
 
-        if (mogId != 0) {
+        if (themeId != 0) {
             clauses.add(new Join(
                 getItemColumn(ItemRecord.ITEM_ID),
                 new ColumnExp(getMogMarkClass(), MogMarkRecord.ITEM_ID.name)));
-            whereBits.add(new ColumnExp(getMogMarkClass(), MogMarkRecord.GROUP_ID.name).eq(mogId));
+            whereBits.add(new ColumnExp(getMogMarkClass(), MogMarkRecord.GROUP_ID.name).eq(themeId));
             significantlyConstrained = true;
         }
 
