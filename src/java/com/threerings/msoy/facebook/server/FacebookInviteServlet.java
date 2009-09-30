@@ -21,21 +21,21 @@ import com.samskivert.servlet.util.CookieUtil;
 import com.threerings.msoy.data.all.DeploymentConfig;
 
 import com.threerings.msoy.facebook.gwt.FacebookGame;
+import com.threerings.msoy.facebook.server.FacebookLogic.SessionInfo;
 
 import com.threerings.msoy.game.server.persist.GameInfoRecord;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.ServerConfig;
-import com.threerings.msoy.server.persist.ExternalMapRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 
 import com.threerings.msoy.web.gwt.ArgNames;
 import com.threerings.msoy.web.gwt.Args;
-import com.threerings.msoy.web.gwt.ExternalSiteId;
 import com.threerings.msoy.web.gwt.MarkupBuilder;
 import com.threerings.msoy.web.gwt.Pages;
+import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.gwt.SharedNaviUtil;
 import com.threerings.msoy.web.gwt.WebCreds;
 import com.threerings.msoy.web.gwt.ArgNames.FBParam;
@@ -126,7 +126,7 @@ public class FacebookInviteServlet extends HttpServlet
             // this was a portal invite, either to the app or a game challenge
             trackSentInvites(req, sender, game);
 
-            String canvas = FacebookLogic.WHIRLED_APP_CANVAS;
+            String canvas = _fbLogic.getCanvasUrl(_fbLogic.getDefaultGamesSite());
             if (game == null) {
                 // head back to the facebook app main page
                 MsoyHttpServer.sendTopRedirect(rsp, canvas);
@@ -228,10 +228,12 @@ public class FacebookInviteServlet extends HttpServlet
             return INVALID;
         }
 
-        ExternalMapRecord exRec = _memberRepo.loadExternalMapEntry(
-            ExternalSiteId.FB_GAMES, member.memberId);
-        return new IDPair(member.memberId,
-            exRec == null ? 0L : Long.parseLong(exRec.externalId));
+        SessionInfo sinf = null;
+        try {
+            sinf = _fbLogic.loadSessionInfo(_fbLogic.getDefaultGamesSite(), member);
+        } catch (ServiceException ex) {
+        }
+        return new IDPair(member.memberId, sinf == null ? 0L : sinf.fbid);
     }
 
     protected void trackSentInvites (HttpServletRequest req, IDPair sender, FacebookGame game)

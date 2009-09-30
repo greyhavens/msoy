@@ -146,10 +146,14 @@ public class FacebookCallbackServlet extends HttpServlet
             return;
         }
 
+        // TODO: use a different client mode here depending on the application being served
+        Args embed = new Embedding(
+            ClientMode.FB_GAMES, _faceLogic.getDefaultGamesSite().getFacebookAppId()).compose();
+
         // set up the token to redirect to - either the pre-processed one after we've swizzled in
         // the session cookie, or the one from the original request; NOTE: the TOKEN parameter is
         // double encoded, but we are careful to avoid confusion and not give it any % characters
-        String token = StringUtil.getOr(FrameParam.TOKEN.get(req), info.getDestinationToken());
+        String token = StringUtil.getOr(FrameParam.TOKEN.get(req), info.getDestinationToken(embed));
 
         // is the session already set up?
         if (session.equals(CookieUtil.getCookieValue(req, WebCreds.credsCookie()))) {
@@ -202,7 +206,7 @@ public class FacebookCallbackServlet extends HttpServlet
         creds.uid = StringUtil.getOr(ConnParam.CANVAS_USER.get(req), ConnParam.USER.get(req));
         creds.apiKey = info.apiKey;
         creds.appSecret = info.appSecret;
-        creds.site = info.mainApp ? ExternalSiteId.FB_GAMES :
+        creds.site = info.mainApp ? _faceLogic.getDefaultGamesSite() :
             ExternalSiteId.facebookGame(info.game.getIntId());
 
         // create a new visitor info which will either be ignored or used shortly
@@ -385,12 +389,8 @@ public class FacebookCallbackServlet extends HttpServlet
          * Gets the GWT token that the user should be redirected to in the whirled application.
          * Some creds information may be assembled and passed into a game application.
          */
-        public String getDestinationToken ()
+        public String getDestinationToken (Args embed)
         {
-            // TODO: use a different client mode here depending on the application being served
-            Args embed = new Embedding(
-                ClientMode.FB_GAMES, FacebookRepository.LEGACY_APP_ID).compose();
-
             // and send them to the appropriate page
             if (game != null) {
                 if (chromeless) {

@@ -15,6 +15,7 @@ import com.google.inject.Inject;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
 
+import com.threerings.msoy.facebook.server.FacebookLogic;
 import com.threerings.msoy.facebook.server.persist.FacebookActionRecord;
 import com.threerings.msoy.facebook.server.persist.FacebookRepository;
 
@@ -52,7 +53,7 @@ public class RemindersServlet extends MsoyServiceServlet
         // set up the map of already-published trophies
         Map<String, FacebookActionRecord> published = Maps.newHashMap();
         for (FacebookActionRecord action : _facebookRepo.loadActions(
-            FacebookRepository.LEGACY_APP_ID, memrec.memberId)) {
+            _facebookLogic.getDefaultGamesSite().getFacebookAppId(), memrec.memberId)) {
             if (action.type == FacebookActionRecord.Type.PUBLISHED_TROPHY) {
                 published.put(action.id, action);
             }
@@ -103,6 +104,7 @@ public class RemindersServlet extends MsoyServiceServlet
     protected static final int MAX_TROPHY_REMINDERS = 10;
     protected static final int MAX_RECENT_TROPHIES = 50;
 
+    protected @Inject FacebookLogic _facebookLogic;
     protected @Inject FacebookRepository _facebookRepo;
     protected @Inject MsoyGameRepository _mgameRepo;
     protected @Inject TrophyRepository _trophyRepo;

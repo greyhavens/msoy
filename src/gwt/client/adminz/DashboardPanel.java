@@ -65,7 +65,6 @@ public class DashboardPanel extends SmartTable
             admin.add(makeLink(_msgs.panopticonStatus(), "panopticonStatus"));
             admin.add(makeLink(_msgs.viewSurveys(), "survey", "e"));
             admin.add(makeLink(_msgs.entriesButton(), "entries"));
-            admin.add(makeLink(_msgs.facebookTemplatesButton(), "fbtemplates"));
             admin.add(makeLink(_msgs.facebookNotificationsButton(), "fbnotifications"));
             setWidget(row, col, admin);
             getFlexCellFormatter().setVerticalAlignment(row, col++, HasAlignment.ALIGN_TOP);

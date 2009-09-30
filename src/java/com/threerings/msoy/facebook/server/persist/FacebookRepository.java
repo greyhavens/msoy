@@ -14,6 +14,8 @@ import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.internal.ImmutableMap;
+import com.samskivert.depot.DataMigration;
+import com.samskivert.depot.DatabaseException;
 import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.Ops;
 import com.samskivert.depot.PersistenceContext;
@@ -31,8 +33,6 @@ import com.threerings.msoy.server.util.DropPrimaryKey;
 @Singleton
 public class FacebookRepository extends DepotRepository
 {
-    public static final int LEGACY_APP_ID = 0;
-
     /**
      * Creates a new repository.
      */
@@ -56,13 +56,25 @@ public class FacebookRepository extends DepotRepository
 
         // explicitly add the app id column, it should not have a default value
         context.registerMigration(fnr, new SchemaMigration.Add(
-            3, FacebookNotificationRecord.APP_ID, ""+LEGACY_APP_ID));
+            3, FacebookNotificationRecord.APP_ID, ""+0));
 
         // workaround to add the new @Id column properly
         context.registerMigration(FacebookTemplateRecord.class, new DropPrimaryKey(3));
 
         // workaround to add the new @Id column properly
         context.registerMigration(FacebookActionRecord.class, new DropPrimaryKey(2));
+
+        registerMigration(new DataMigration("2009-09 FacebookActionRecord appId") {
+            @Override public void invoke ()
+                throws DatabaseException {
+                // change all app id fields from the old default to the new
+                final int OLD_DEFAULT = 0;
+                final int NEW_DEFAULT = 1;
+                updatePartial(FacebookActionRecord.class, new Where(
+                    FacebookActionRecord.APP_ID.eq(OLD_DEFAULT)),
+                    null, FacebookActionRecord.APP_ID, NEW_DEFAULT);
+            }
+        });
     }
 
     /**

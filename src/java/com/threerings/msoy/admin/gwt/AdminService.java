@@ -18,11 +18,8 @@ import com.threerings.msoy.web.gwt.Promotion;
 import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.gwt.WebCreds;
 
-import com.threerings.msoy.apps.gwt.FacebookNotification;
-import com.threerings.msoy.apps.gwt.FacebookNotificationStatus;
 import com.threerings.msoy.data.all.CharityInfo;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.facebook.gwt.FacebookTemplate;
 
 import com.threerings.msoy.item.data.all.ItemFlag;
 import com.threerings.msoy.item.data.all.ItemIdent;
@@ -271,51 +268,8 @@ public interface AdminService extends RemoteService
         throws ServiceException;
 
     /**
-     * Loads all facebook templates.
-     */
-    List<FacebookTemplate> loadFacebookTemplates ()
-        throws ServiceException;
-
-    /**
-     * Saves changes to the given facebook templates and deletes the set of templates specified
-     * by the given codes.
-     */
-    void updateFacebookTemplates (Set<FacebookTemplate> changed, Set<FacebookTemplate> removed)
-        throws ServiceException;
-
-    /**
-     * Gets the saved facebook notifications.
-     */
-    List<FacebookNotification> loadFacebookNotifications ()
-        throws ServiceException;
-
-    /**
-     * Gets the current and past progress of sending notifications.
-     */
-    List<FacebookNotificationStatus> loadFacebookNotificationStatus ()
-        throws ServiceException;
-
-    /**
-     * Updates or adds a new facebook notification.
-     */
-    void saveFacebookNotification (FacebookNotification notif)
-        throws ServiceException;
-
-    /**
-     * Delets a facebook notification.
-     */
-    void deleteFacebookNotification (String id)
-        throws ServiceException;
-
-    /**
-     * Sends a Facebook notification to all our Facebook users after the given delay in minutes.
-     * Users who have removed the application are not addressed.
-     */
-    void scheduleFacebookNotification (String id, int delay)
-        throws ServiceException;
-
-    /**
      * Sets up the rotating list of daily notifications.
+     * TODO: move to AppService
      */
     void setDailyNotifications (String[] ids)
         throws ServiceException;

@@ -38,16 +38,24 @@ public class ExternalSiteId
         protected transient byte _code;
     }
 
-    /** This is the only external site that is fully supported at the moment. */
-    public static final ExternalSiteId FB_GAMES = new ExternalSiteId(Auther.FACEBOOK, 0);
+    /** This is a special site for FB connect. We need to find a way of sending the this to the
+     * client from the database rather than hardwiring the app id to "1". */
+    public static final ExternalSiteId FB_CONNECT_DEFAULT = facebookApp(1);
 
     /**
-     * Gets the identified for the given facebook-integrated game.
-     * TODO: fully support facebook-integration for AVRGs, including MOGs
+     * Creates a site identifier for the given facebook-integrated game.
      */
     public static ExternalSiteId facebookGame (int gameId)
     {
-        return new ExternalSiteId(Auther.FACEBOOK, gameId);
+        return new ExternalSiteId(Auther.FACEBOOK, -gameId);
+    }
+
+    /**
+     * Creates a site identifier for the given facebook application.
+     */
+    public static ExternalSiteId facebookApp (int appId)
+    {
+        return new ExternalSiteId(Auther.FACEBOOK, appId);
     }
 
     /** The authentication source for the site. */
@@ -72,6 +80,24 @@ public class ExternalSiteId
      */
     public ExternalSiteId ()
     {
+    }
+
+    /**
+     * Returns the id of the application that this site refers to, or null if this is not a
+     * Facebook site or is for an integrated game.
+     */
+    public Integer getFacebookAppId ()
+    {
+        return auther == Auther.FACEBOOK && siteId > 0 ? siteId : null;
+    }
+
+    /**
+     * Returns the id of the game that this site refers to, or null if this is not a Facebook site
+     * or is for an application.
+     */
+    public Integer getFacebookGameId ()
+    {
+        return auther == Auther.FACEBOOK && siteId < 0 ? -siteId : null;
     }
 
     @Override // from Object

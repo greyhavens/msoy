@@ -24,6 +24,8 @@ import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import com.samskivert.depot.DataMigration;
+import com.samskivert.depot.DatabaseException;
 import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.DuplicateKeyException;
 import com.samskivert.depot.Exps;
@@ -131,6 +133,19 @@ public class MemberRepository extends DepotRepository
                     return 1;
                 }
             });
+
+        registerMigration(new DataMigration("2009-09 ExternalMapRecord siteId") {
+            @Override public void invoke ()
+                throws DatabaseException {
+                // change all site id fields away from the old default to the new
+                final int OLD_DEFAULT = 0;
+                final int NEW_DEFAULT_APP_ID = 1;
+                final int NEW_DEFAULT = ExternalSiteId.facebookApp(NEW_DEFAULT_APP_ID).siteId;
+                updatePartial(ExternalMapRecord.class, new Where(
+                    ExternalMapRecord.SITE_ID.eq(OLD_DEFAULT)),
+                    null, ExternalMapRecord.SITE_ID, NEW_DEFAULT);
+            }
+        });
 
         // add a cache invalidator that listens to MemberRecord updates
         _ctx.addCacheListener(MemberRecord.class, new CacheListener<MemberRecord>() {

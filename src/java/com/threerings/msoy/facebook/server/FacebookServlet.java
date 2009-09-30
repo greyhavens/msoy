@@ -97,7 +97,8 @@ public class FacebookServlet extends MsoyServiceServlet
     {
         SessionInfo session = requireSession();
         _facebookRepo.recordAction(FacebookActionRecord.trophyPublished(
-            FacebookRepository.LEGACY_APP_ID, session.memRec.memberId, gameId, ident));
+            _fbLogic.getDefaultGamesSite().getFacebookAppId(), session.memRec.memberId,
+            gameId, ident));
         _tracker.trackFeedStoryPosted(session.fbid, trackingId);
     }
 
@@ -225,8 +226,8 @@ public class FacebookServlet extends MsoyServiceServlet
         if (game == null) {
             // application invite
             info.excludeIds = Lists.newArrayList();
-            for (ExternalMapRecord exRec :
-                _fbLogic.loadMappedFriends(requireAuthedUser(), false, 0)) {
+            for (ExternalMapRecord exRec : _fbLogic.loadMappedFriends(
+                _fbLogic.getDefaultGamesSite(), requireAuthedUser(), false, 0)) {
                 info.excludeIds.add(Long.valueOf(exRec.externalId));
             }
 
@@ -241,7 +242,8 @@ public class FacebookServlet extends MsoyServiceServlet
 
         // use the facebook name for consistency and the facebook gender in case privacy settings
         // have changed. users will expect this
-        FacebookJaxbRestClient client = _fbLogic.getFacebookClient(session.mapRec.sessionKey);
+        FacebookJaxbRestClient client = _fbLogic.getFacebookClient(
+            _fbLogic.getDefaultGamesSite(), session.mapRec.sessionKey);
         Long userId = session.fbid;
         List<ProfileField> fields = Lists.newArrayList();
         fields.add(ProfileField.FIRST_NAME);
@@ -281,7 +283,7 @@ public class FacebookServlet extends MsoyServiceServlet
         Map<String, String> replacements = Maps.newHashMap();
         replacements.put("game", result.name);
         replacements.put("game_url", SharedNaviUtil.buildRequest(
-            FacebookLogic.WHIRLED_APP_CANVAS, game.getCanvasArgs()));
+            _fbLogic.getCanvasUrl(session.siteId), game.getCanvasArgs()));
         _fbLogic.scheduleFriendNotification(session, "challenge", replacements, appOnly);
 
         return result.template != null ? result : null;
@@ -330,7 +332,8 @@ public class FacebookServlet extends MsoyServiceServlet
         throws ServiceException
     {
         HttpServletRequest req = getThreadLocalRequest();
-        FacebookLogic.SessionInfo sinfo = _fbLogic.loadSessionInfo(requireAuthedUser());
+        FacebookLogic.SessionInfo sinfo = _fbLogic.loadSessionInfo(
+            _fbLogic.getDefaultGamesSite(), requireAuthedUser());
         _tracker.trackPageRequest(sinfo.fbid, req.getRemoteAddr(), page);
     }
 
@@ -342,7 +345,8 @@ public class FacebookServlet extends MsoyServiceServlet
         throws ServiceException
     {
         IntMap<FacebookFriendInfo> friendsInfo = IntMaps.newHashIntMap();
-        for (ExternalMapRecord exRec : _fbLogic.loadMappedFriends(requireAuthedUser(), true, 0)) {
+        for (ExternalMapRecord exRec : _fbLogic.loadMappedFriends(
+            _fbLogic.getDefaultGamesSite(), requireAuthedUser(), true, 0)) {
             FacebookFriendInfo info = new FacebookFriendInfo();
             info.facebookUid = Long.valueOf(exRec.externalId);
             info.memberId = exRec.memberId;
@@ -372,7 +376,7 @@ public class FacebookServlet extends MsoyServiceServlet
         StoryFields fields, SessionInfo session, String template)
     {
         List<FacebookTemplateRecord> templates = _facebookRepo.loadVariants(
-            FacebookRepository.LEGACY_APP_ID, template);
+            _fbLogic.getDefaultGamesSite().getFacebookAppId(), template);
         if (templates.size() == 0) {
             log.warning("No Facebook templates found for request", "code", template);
             return fields;
@@ -476,7 +480,7 @@ public class FacebookServlet extends MsoyServiceServlet
     protected SessionInfo requireSession ()
         throws ServiceException
     {
-        return _fbLogic.loadSessionInfo(requireAuthedUser());
+        return _fbLogic.loadSessionInfo(_fbLogic.getDefaultGamesSite(), requireAuthedUser());
     }
 
     @Inject protected FacebookLogic _fbLogic;

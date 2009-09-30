@@ -17,7 +17,6 @@ import com.threerings.msoy.apps.gwt.FacebookNotification;
 import com.threerings.msoy.apps.gwt.FacebookNotificationStatus;
 import com.threerings.msoy.apps.server.persist.AppInfoRecord;
 import com.threerings.msoy.apps.server.persist.AppRepository;
-import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.facebook.gwt.FacebookInfo;
 import com.threerings.msoy.facebook.gwt.FacebookTemplate;
 import com.threerings.msoy.facebook.gwt.FeedThumbnail;
@@ -32,6 +31,7 @@ import com.threerings.msoy.facebook.server.persist.FeedThumbnailRecord;
 import com.threerings.msoy.facebook.server.persist.KontagentInfoRecord;
 import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.web.gwt.ClientMode;
+import com.threerings.msoy.web.gwt.ExternalSiteId;
 import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 
@@ -134,8 +134,7 @@ public class AppServlet extends MsoyServiceServlet
         throws ServiceException
     {
         requireApp(appId);
-        // TODO: _facebookLogic.scheduleNotification(appId, id, delay);
-        throw new ServiceException(MsoyCodes.INTERNAL_ERROR);
+        _facebookLogic.scheduleNotification(ExternalSiteId.facebookApp(appId), id, delay);
     }
 
     @Override // from AppService

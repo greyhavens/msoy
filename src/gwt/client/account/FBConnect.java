@@ -34,10 +34,9 @@ public class FBConnect
         creds.ss = CookieUtil.get(prefix + "ss");
         String expstr = CookieUtil.get(prefix + "expires");
         creds.expires = (expstr.length() > 0) ? Integer.parseInt(expstr) : 0;
+        // TODO: gah, we'll need the key & site id of the default connect app here
         creds.sig = CookieUtil.get(DeploymentConfig.facebookKey);
-        // FB connect users always sign up as Whirled Games users
-        // TODO: does this make sense?
-        creds.site = ExternalSiteId.FB_GAMES;
+        creds.site = ExternalSiteId.FB_CONNECT_DEFAULT;
         return creds.haveAllFields() ? creds : null;
     }
 

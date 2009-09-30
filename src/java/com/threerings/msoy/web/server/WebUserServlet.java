@@ -70,6 +70,7 @@ import com.threerings.msoy.web.gwt.AccountInfo;
 import com.threerings.msoy.web.gwt.CaptchaException;
 import com.threerings.msoy.web.gwt.ConnectConfig;
 import com.threerings.msoy.web.gwt.ExternalCreds;
+import com.threerings.msoy.web.gwt.ExternalSiteId;
 import com.threerings.msoy.web.gwt.RegisterInfo;
 import com.threerings.msoy.web.gwt.ServiceCodes;
 import com.threerings.msoy.web.gwt.ServiceException;
@@ -238,7 +239,8 @@ public class WebUserServlet extends MsoyServiceServlet
             initSessionData(mrec, creds, money, data);
             if (extra) {
                 try {
-                    _facebookLogic.initSessionData(mrec, money, data);
+                    _facebookLogic.initSessionData(
+                        _facebookLogic.getDefaultGamesSite(), mrec, money, data);
                 } catch (Exception e) {
                     log.warning("Failed to set up SessionData.Extra",
                         "memberId", mrec.memberId, e);
@@ -267,14 +269,19 @@ public class WebUserServlet extends MsoyServiceServlet
         // make sure the credentials are kosher
         handler.validateCredentials(creds);
 
+        // TODO: expose the default FB connect info to the client
+        ExternalSiteId siteId = creds.getSite();
+        if (siteId.equals(ExternalSiteId.FB_CONNECT_DEFAULT)) {
+            siteId = _facebookLogic.getDefaultGamesSite();
+        }
         // determine whether or not this external id is already mapped
-        int memberId = _memberRepo.lookupExternalAccount(creds.getSite(), creds.getUserId());
+        int memberId = _memberRepo.lookupExternalAccount(siteId, creds.getUserId());
         if (memberId != 0 && !override) {
             return false;
         }
 
         // if we made it this far, then wire things on up
-        _memberRepo.mapExternalAccount(creds.getSite(), creds.getUserId(), mrec.memberId);
+        _memberRepo.mapExternalAccount(siteId, creds.getUserId(), mrec.memberId);
 
         // look to see if we should map any friends
         ExternalAuthHandler.Info info = null;

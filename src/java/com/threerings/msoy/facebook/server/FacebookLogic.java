@@ -18,6 +18,7 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 
 import com.google.common.base.Function;
+import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
@@ -49,6 +50,8 @@ import com.threerings.cron.server.CronLogic;
 import com.threerings.util.MessageBundle;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;
+import com.threerings.msoy.apps.server.persist.AppInfoRecord;
+import com.threerings.msoy.apps.server.persist.AppRepository;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.facebook.data.FacebookCodes;
@@ -56,6 +59,7 @@ import com.threerings.msoy.facebook.gwt.FacebookGame;
 import com.threerings.msoy.facebook.server.KontagentLogic.LinkType;
 import com.threerings.msoy.facebook.server.KontagentLogic.TrackingId;
 import com.threerings.msoy.facebook.server.persist.FacebookActionRecord;
+import com.threerings.msoy.facebook.server.persist.FacebookInfoRecord;
 import com.threerings.msoy.facebook.server.persist.FacebookNotificationRecord;
 import com.threerings.msoy.facebook.server.persist.FacebookRepository;
 import com.threerings.msoy.facebook.server.persist.ListRepository;
@@ -65,7 +69,6 @@ import com.threerings.msoy.money.server.MoneyLogic;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.server.LevelFinder;
 import com.threerings.msoy.server.MemberLogic;
-import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.BatchInvoker;
 import com.threerings.msoy.server.persist.ExternalMapRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
@@ -106,21 +109,12 @@ public class FacebookLogic
         /** The member record. */
         public MemberRecord memRec;
 
+        /** The site we are serving up. */
+        public ExternalSiteId siteId;
+
         /** The client, only if requested. */
         public FacebookJaxbRestClient client;
     }
-
-    /** URL of the main application entry point. */
-    public static final String WHIRLED_APP_CANVAS =
-        getCanvasUrl(DeploymentConfig.facebookCanvasName);
-
-    /** URL of the main application's profile page. */
-    public static final String WHIRLED_APP_PROFILE = SharedNaviUtil.buildRequest(
-        "http://www.facebook.com/apps/application.php",
-        "id", DeploymentConfig.facebookApplicationId);
-
-    // TODO: remove this
-    public static final int LEGACY_APP_ID = FacebookRepository.LEGACY_APP_ID;
 
     /**
      * Prepends the Facebook application root to get the canvas url of the given name.
@@ -188,18 +182,18 @@ public class FacebookLogic
      * Returns a Facebook client not bound to any particular user's session with the deafault read
      * timeout.
      */
-    public FacebookJaxbRestClient getFacebookClient ()
+    public FacebookJaxbRestClient getFacebookClient (ExternalSiteId siteId)
     {
-        return getFacebookClient(READ_TIMEOUT);
+        return getFacebookClient(siteId, READ_TIMEOUT);
     }
 
     /**
      * Returns a Facebook client not bound to any particular user's session with the given read
      * timeout.
      */
-    public FacebookJaxbRestClient getFacebookClient (int timeout)
+    public FacebookJaxbRestClient getFacebookClient (ExternalSiteId siteId, int timeout)
     {
-        return getFacebookClient((String)null, timeout);
+        return getFacebookClient(siteId, (String)null, timeout);
     }
 
     /**
@@ -207,24 +201,33 @@ public class FacebookLogic
      */
     public FacebookJaxbRestClient getFacebookClient (FacebookCreds creds)
     {
-        return getFacebookClient(creds.sessionKey);
+        return getFacebookClient(creds.getSite(), creds.sessionKey);
     }
 
     /**
      * Returns a Facebook client bound to the supplied user's session.
      */
-    public FacebookJaxbRestClient getFacebookClient (String sessionKey)
+    public FacebookJaxbRestClient getFacebookClient (ExternalSiteId siteId, String sessionKey)
     {
-        return getFacebookClient(requireAPIKey(), requireSecret(), sessionKey, READ_TIMEOUT);
+        return getFacebookClient(siteId, sessionKey, 0);
     }
 
     /**
      * Returns a Facebook client bound to the supplied user's session with the supplied read
      * timeout.
      */
-    public FacebookJaxbRestClient getFacebookClient (String sessionKey, int timeout)
+    public FacebookJaxbRestClient getFacebookClient (
+        ExternalSiteId siteId, String sessionKey, int timeout)
     {
-        return getFacebookClient(requireAPIKey(), requireSecret(), sessionKey, timeout);
+        timeout = timeout == 0 ? READ_TIMEOUT : timeout;
+        FacebookInfoRecord fbinfo = loadSiteFacebookInfo(siteId); 
+        if (StringUtil.isBlank(fbinfo.apiKey)) {
+            throw new IllegalStateException("Missing api_key for site " + siteId);
+        }
+        if (StringUtil.isBlank(fbinfo.appSecret)) {
+            throw new IllegalStateException("Missing secrect for site " + siteId);
+        }
+        return getFacebookClient(fbinfo.apiKey, fbinfo.appSecret, sessionKey, timeout);
     }
 
     /**
@@ -236,12 +239,39 @@ public class FacebookLogic
     }
 
     /**
+     * Returns the site that refers to the default games portal site. This is needed for things
+     * like posting game plays from Whirled to FB connect accounts and sending global notifications
+     * when the featured games are updated.
+     */
+    public ExternalSiteId getDefaultGamesSite ()
+    {
+        return _defaultSite;
+    }
+
+    /**
+     * Gets the url of the canvas of the given external site, or null if the site is not a
+     * Facebook site or does not have a canvas name set.
+     */
+    public String getCanvasUrl (ExternalSiteId siteId)
+    {
+        if (siteId.auther != ExternalSiteId.Auther.FACEBOOK) {
+            return null;
+        }
+
+        FacebookInfoRecord fbinfo = loadSiteFacebookInfo(siteId);
+        if (fbinfo == null || StringUtil.isBlank(fbinfo.canvasName)) {
+            return null;
+        }
+        return getCanvasUrl(fbinfo.canvasName);
+    }
+
+    /**
      * Loads up the session info for the given member, without initializing the jaxb client.
      */
-    public SessionInfo loadSessionInfo (MemberRecord mrec)
+    public SessionInfo loadSessionInfo (ExternalSiteId siteId, MemberRecord mrec)
         throws ServiceException
     {
-        return loadSessionInfo(mrec, 0);
+        return loadSessionInfo(siteId, mrec, 0);
     }
 
     /**
@@ -265,12 +295,12 @@ public class FacebookLogic
      * overwritten.
      * @param delay number of minutes to wait before sending the notification
      */
-    public void scheduleNotification (String id, int delay)
+    public void scheduleNotification (ExternalSiteId siteId, String id, int delay)
         throws ServiceException
     {
         Map<String, String> replacements = Maps.newHashMap();
-        replacements.put("app_url", FacebookLogic.WHIRLED_APP_CANVAS);
-        scheduleNotification(null, id, replacements, false, delay);
+        replacements.put("app_url", getCanvasUrl(loadSiteFacebookInfo(siteId).canvasName));
+        scheduleNotification(siteId, null, null, id, replacements, false, delay);
     }
 
     /**
@@ -282,7 +312,8 @@ public class FacebookLogic
         Map<String, String> replacements, boolean appOnly)
         throws ServiceException
     {
-        scheduleNotification(session, notificationId, replacements, appOnly, 0);
+        scheduleNotification(session.siteId, session.memRec, session.fbid,
+            notificationId, replacements, appOnly, 0);
     }
 
     /**
@@ -291,10 +322,10 @@ public class FacebookLogic
      * @param limit maximum number of friends to retrieve, or 0 to retrieve all
      */
     public List<ExternalMapRecord> loadMappedFriends (
-        MemberRecord mrec, boolean includeSelf, int limit)
+        ExternalSiteId siteId, MemberRecord mrec, boolean includeSelf, int limit)
         throws ServiceException
     {
-        SessionInfo sinf = loadSessionInfo(mrec, CONNECT_TIMEOUT);
+        SessionInfo sinf = loadSessionInfo(siteId, mrec, CONNECT_TIMEOUT);
 
         // get facebook friends to seed (more accurate)
         Set<String> facebookFriendIds = Sets.newHashSet();
@@ -309,9 +340,9 @@ public class FacebookLogic
             throw new ServiceException(fe.getMessage());
         }
 
-        // filter by those hooked up to Whirled and tack on self if appropriate
-        List<ExternalMapRecord> exRecs = _memberRepo.loadExternalAccounts(
-            ExternalSiteId.FB_GAMES, facebookFriendIds);
+        // filter by those hooked up to the site and tack on self if appropriate
+        List<ExternalMapRecord> exRecs =
+            _memberRepo.loadExternalAccounts(siteId, facebookFriendIds);
         if (includeSelf) {
             exRecs = Lists.newArrayList(exRecs);
             exRecs.add(sinf.mapRec);
@@ -331,8 +362,14 @@ public class FacebookLogic
      * money. May also award coins, record this as daily visit, and update relevant fields in money
      * and data.
      */
-    public void initSessionData (MemberRecord mrec, MemberMoney money, SessionData data)
+    public void initSessionData (
+        ExternalSiteId siteId, MemberRecord mrec, MemberMoney money, SessionData data)
     {
+        // TODO: is any of this useful for other apps?
+        if (!siteId.equals(getDefaultGamesSite())) {
+            return;
+        }
+
         data.extra = new SessionData.Extra();
 
         int memberId = mrec.memberId;
@@ -343,7 +380,7 @@ public class FacebookLogic
         int lastLevel = 0;
         if (mrec.created.getTime() < now - NEW_ACCOUNT_TIME) {
             FacebookActionRecord lastVisit = _facebookRepo.getLastAction(
-                LEGACY_APP_ID, memberId, FacebookActionRecord.Type.DAILY_VISIT);
+                siteId.getFacebookAppId(), memberId, FacebookActionRecord.Type.DAILY_VISIT);
             if (lastVisit == null) {
                 lastAward = 0; // trigger a 1st visit award
                 lastLevel = data.level; // trigger level-up if subsequent gain occurs
@@ -383,8 +420,8 @@ public class FacebookLogic
             data.extra.flowAwarded = award;
 
             // record the daily visit
-            _facebookRepo.recordAction(
-                FacebookActionRecord.dailyVisit(LEGACY_APP_ID, memberId, award, data.level));
+            _facebookRepo.recordAction(FacebookActionRecord.dailyVisit(
+                siteId.getFacebookAppId(), memberId, award, data.level));
 
         } else {
             // update the level (it may have changed due to game play or other stuff)
@@ -445,13 +482,15 @@ public class FacebookLogic
     /**
      * Sets the list of notification ids that will be used when sending notifications after the
      * featured games are updated. Throws an exception is any of the ids do not correspond to a
-     * notification.
+     * notification. This only applies to the default games application.
+     * @see AppRepository#loadDefaultGamesApp()
      */
     public void setDailyGamesUpdatedNotifications (List<String> ids)
         throws ServiceException
     {
+        int appId = _defaultSite.getFacebookAppId();
         for (String id : ids) {
-            if (_facebookRepo.loadNotification(LEGACY_APP_ID, id) == null) {
+            if (_facebookRepo.loadNotification(appId, id) == null) {
                 throw new ServiceException(MessageBundle.tcompose("e.notification_not_found", id));
             }
         }
@@ -464,14 +503,14 @@ public class FacebookLogic
         updateFeaturedGames(true);
     }
 
-    protected void updateURL (
-        Map<String, String> replacements, String varName, SessionInfo info, TrackingId trackingId)
+    protected void updateURL (Map<String, String> replacements, String varName,
+        MemberRecord memRec, TrackingId trackingId)
     {
         String url = replacements.get(varName);
         if (url != null) {
-            if (info != null) {
+            if (memRec != null) {
                 url = SharedNaviUtil.buildRequest(url,
-                    CookieNames.AFFILIATE, String.valueOf(info.memRec.memberId));
+                    CookieNames.AFFILIATE, String.valueOf(memRec.memberId));
             }
             replacements.put(varName, url = SharedNaviUtil.buildRequest(url,
                 FBParam.TRACKING.name, trackingId.flatten()));
@@ -488,15 +527,18 @@ public class FacebookLogic
      * @param delay time in minutes after which to do the send
      * @throws ServiceException
      */
-    protected void scheduleNotification (SessionInfo session, String notifId,
-        Map<String, String> replacements, boolean appOnly, int delay)
+    protected void scheduleNotification (ExternalSiteId siteId, MemberRecord memRec, Long fbid,
+        String notifId, Map<String, String> replacements, boolean appOnly, int delay)
         throws ServiceException
     {
+        // only apps have notifications
+        Preconditions.checkArgument(siteId.getFacebookAppId() != null);
+
         // load up & verify the template
         FacebookNotificationRecord template =
-            _facebookRepo.loadNotification(LEGACY_APP_ID, notifId);
+            _facebookRepo.loadNotification(siteId.getFacebookAppId(), notifId);
         if (template == null) {
-            log.warning("Unable to load notification", "id", notifId);
+            log.warning("Unable to load notification", "siteId", siteId, "id", notifId);
             return;
         }
         if (StringUtil.isBlank(template.text)) {
@@ -505,22 +547,22 @@ public class FacebookLogic
 
         // generate a batch id
         String batchId = notifId + "." + BATCH_FMT.format(new Date());
-        if (session != null) {
-            batchId += "." + String.valueOf(session.memRec.memberId);
+        if (memRec != null) {
+            batchId += "." + String.valueOf(memRec.memberId);
         }
 
         // grab a tracking id
         TrackingId trackingId = new TrackingId(
-            LinkType.NOTIFICATION, notifId, session == null ? 0 : session.fbid);
+            LinkType.NOTIFICATION, notifId, fbid == null ? 0 : fbid);
 
         // add replacements for <fb:name> etc if we have a user session
-        if (session != null) {
-            replacements.put("uid", session.fbid.toString());
+        if (fbid != null) {
+            replacements.put("uid", fbid.toString());
         }
 
         // tack on tracking and affiliate to the urls, if present
-        updateURL(replacements, "game_url", session, trackingId);
-        updateURL(replacements, "app_url", session, trackingId);
+        updateURL(replacements, "game_url", memRec, trackingId);
+        updateURL(replacements, "app_url", memRec, trackingId);
 
         // do the replacements and create the instance
         String text = template.text;
@@ -530,8 +572,8 @@ public class FacebookLogic
         }
 
         // create the batch
-        NotificationBatch batch = new NotificationBatch(batchId, text, trackingId,
-            session == null ? null : session.memRec, appOnly);
+        NotificationBatch batch = new NotificationBatch(
+            siteId, batchId, text, trackingId, memRec, appOnly);
 
         // insert into map and schedule
         synchronized (_notifications) {
@@ -544,7 +586,7 @@ public class FacebookLogic
         }
 
         long startTime = System.currentTimeMillis() + delay * 60 * 1000L;
-        _facebookRepo.noteNotificationScheduled(LEGACY_APP_ID, batchId, startTime);
+        _facebookRepo.noteNotificationScheduled(siteId.getFacebookAppId(), batchId, startTime);
     }
 
     protected void removeNotification (String id)
@@ -561,48 +603,31 @@ public class FacebookLogic
             SERVER_URL, apiKey, appSecret, sessionKey, CONNECT_TIMEOUT, timeout);
     }
 
-    protected String requireAPIKey ()
-    {
-        String apiKey = ServerConfig.config.getValue("facebook.api_key", "");
-        if (StringUtil.isBlank(apiKey)) {
-            throw new IllegalStateException("Missing facebook.api_key server configuration.");
-        }
-        return apiKey;
-    }
-
-    protected String requireSecret ()
-    {
-        String secret = ServerConfig.config.getValue("facebook.secret", "");
-        if (StringUtil.isBlank(secret)) {
-            throw new IllegalStateException("Missing facebook.secret server configuration.");
-        }
-        return secret;
-    }
-
     /**
      * Loads up the session info for the given member, initializing the jaxb client with the given
      * timeout if it is not zero, otherwise leaving it set to null.
      */
-    protected SessionInfo loadSessionInfo (MemberRecord mrec, int timeout)
+    protected SessionInfo loadSessionInfo (ExternalSiteId siteId, MemberRecord mrec, int timeout)
         throws ServiceException
     {
         SessionInfo sinf = new SessionInfo();
         sinf.memRec = mrec;
-        sinf.mapRec = _memberRepo.loadExternalMapEntry(ExternalSiteId.FB_GAMES, mrec.memberId);
+        sinf.mapRec = _memberRepo.loadExternalMapEntry(siteId, mrec.memberId);
+        sinf.siteId = siteId;
         if (sinf.mapRec == null || sinf.mapRec.sessionKey == null) {
             throw new ServiceException(FacebookCodes.NO_SESSION);
         }
         sinf.fbid = Long.valueOf(sinf.mapRec.externalId);
         if (timeout > 0) {
-            sinf.client = getFacebookClient(sinf.mapRec.sessionKey, timeout);
+            sinf.client = getFacebookClient(siteId, sinf.mapRec.sessionKey, timeout);
         }
         return sinf;
     }
 
-    protected List<Long> loadFriends (MemberRecord mrec)
+    protected List<Long> loadFriends (ExternalSiteId siteId, MemberRecord mrec)
         throws ServiceException
     {
-        SessionInfo sinf = loadSessionInfo(mrec, CONNECT_TIMEOUT);
+        SessionInfo sinf = loadSessionInfo(siteId, mrec, CONNECT_TIMEOUT);
         try {
             return sinf.client.friends_get().getUid();
 
@@ -613,12 +638,12 @@ public class FacebookLogic
         }
     }
 
-    protected <T> Collection<String> sendNotifications (FacebookJaxbRestClient client, String id,
-        String text, List<T> batch, Function<T, FQL.Exp> toUserId,
+    protected <T> Collection<String> sendNotifications (FacebookJaxbRestClient client, int appId,
+        String id, String text, List<T> batch, Function<T, FQL.Exp> toUserId,
         Predicate<FQLQuery.Record> filter, boolean global)
     {
         try {
-            _facebookRepo.noteNotificationProgress(LEGACY_APP_ID, id, "Verifying", 0, 0);
+            _facebookRepo.noteNotificationProgress(appId, id, "Verifying", 0, 0);
 
             List<FQL.Exp> uids = Lists.transform(batch, toUserId);
 
@@ -641,10 +666,10 @@ public class FacebookLogic
 
             if (targetIds.size() > 0) {
                 _facebookRepo.noteNotificationProgress(
-                    LEGACY_APP_ID, id, "Sending", targetIds.size(), 0);
+                    appId, id, "Sending", targetIds.size(), 0);
                 Collection<String> sent = client.notifications_send(targetIds, text, global);
                 _facebookRepo.noteNotificationProgress(
-                    LEGACY_APP_ID, id, "Sent", 0, sent.size());
+                    appId, id, "Sent", 0, sent.size());
                 return sent;
             }
 
@@ -658,32 +683,42 @@ public class FacebookLogic
 
     protected void updateDemographics ()
     {
-        List<ExternalMapRecord> users = _memberRepo.loadExternalMappings(ExternalSiteId.FB_GAMES);
-        log.info("Starting demographics update", "users", users.size());
-
-        final int BATCH_SIZE = 200;
-        List<Integer> results = segment(users, new Function<List<ExternalMapRecord>, Integer> () {
-            public Integer apply (List<ExternalMapRecord> batch) {
-                if (_shutdown) {
-                    return 0;
-                }
-                return updateDemographics(batch);
+        for (AppInfoRecord appInfo : _appRepo.loadApps()) {
+            FacebookInfoRecord fbinfo = _facebookRepo.loadAppFacebookInfo(appInfo.appId);
+            if (fbinfo == null) {
+                continue;
             }
-        }, BATCH_SIZE);
+            final ExternalSiteId siteId = ExternalSiteId.facebookApp(appInfo.appId);
+            List<ExternalMapRecord> users = _memberRepo.loadExternalMappings(siteId);
+            log.info("Starting demographics update", "siteId", siteId, "users", users.size());
 
-        int count = 0;
-        for (int result : results) {
-            count += result;
+            final FacebookJaxbRestClient client = getFacebookClient(siteId);
+            final int BATCH_SIZE = 200;
+            List<Integer> results = segment(users,
+                new Function<List<ExternalMapRecord>, Integer> () {
+                public Integer apply (List<ExternalMapRecord> batch) {
+                    if (_shutdown) {
+                        return 0;
+                    }
+                    return updateDemographics(siteId, client, batch);
+                }
+            }, BATCH_SIZE);
+
+            int count = 0;
+            for (int result : results) {
+                count += result;
+            }
+
+            log.info("Finished demographics update", "siteId", siteId, "count", count);
         }
-
-        log.info("Finished demographics update", "count", count);
     }
 
     /**
      * Gets demographic data from Facebook and sends it to Kongagent for a given segment of users.
      * Users whose demographic data has been previously uploaded are culled.
      */
-    protected int updateDemographics (List<ExternalMapRecord> users)
+    protected int updateDemographics (
+        ExternalSiteId siteId, FacebookJaxbRestClient client, List<ExternalMapRecord> users)
     {
         // create mapping of member id to external record
         IntMap<ExternalMapRecord> fbusers = IntMaps.newHashIntMap();
@@ -695,8 +730,8 @@ public class FacebookLogic
         // TODO: should probably limit to records less than a certain age so that data gets
         // refreshed from time to time... or just prune old records
         for (FacebookActionRecord action : _facebookRepo.loadActions(
-            FacebookRepository.LEGACY_APP_ID, Lists.transform(
-            users, MAPREC_TO_MEMBER_ID), FacebookActionRecord.Type.GATHERED_DATA)) {
+            siteId.getFacebookAppId(), Lists.transform(users, MAPREC_TO_MEMBER_ID),
+            FacebookActionRecord.Type.GATHERED_DATA)) {
             fbusers.remove(action.memberId);
         }
 
@@ -711,7 +746,6 @@ public class FacebookLogic
         }
 
         // retrieve the data
-        FacebookJaxbRestClient client = getFacebookClient(BATCH_READ_TIMEOUT);
         Set<ProfileField> fields = EnumSet.of(
             ProfileField.SEX, ProfileField.BIRTHDAY, ProfileField.CURRENT_LOCATION);
         Iterable<Long> uids = Iterables.transform(fbusers.values(), MAPREC_TO_UID);
@@ -758,7 +792,8 @@ public class FacebookLogic
             // send them to the tracker and note that we've done so
             _tracker.trackUserInfo(uid, birthYear, gender, city, state, zip, country, friendCount);
             _facebookRepo.recordAction(
-                FacebookActionRecord.dataGathered(LEGACY_APP_ID, memberIds.get(uid)));
+                FacebookActionRecord.dataGathered(
+                    siteId.getFacebookAppId(), memberIds.get(uid)));
         }
 
         return uinfo.getUser().size();
@@ -775,15 +810,35 @@ public class FacebookLogic
         }
 
         try {
+            // auto-notifications only go out on the default games app
             String notifId = _listRepo.getCursorItem(DAILY_GAMES_LIST, DAILY_GAMES_CURSOR);
-            if (notifId != null) {
-                scheduleNotification(notifId, 5);
+            FacebookInfoRecord wgames = loadSiteFacebookInfo(_defaultSite);
+            if (notifId != null && wgames != null) {
+                scheduleNotification(ExternalSiteId.facebookApp(wgames.appId), notifId, 5);
                 _listRepo.advanceCursor(DAILY_GAMES_LIST, DAILY_GAMES_CURSOR);
             }
 
         } catch (ServiceException ex) {
             log.warning("Could not send daily games notification", ex);
         }
+    }
+
+    protected FacebookInfoRecord loadSiteFacebookInfo (ExternalSiteId siteId)
+    {
+        Preconditions.checkArgument(siteId.auther == ExternalSiteId.Auther.FACEBOOK);
+        Integer appId = siteId.getFacebookAppId(), gameId = siteId.getFacebookGameId();
+        Preconditions.checkArgument(gameId == null ^ appId == null);
+
+        FacebookInfoRecord fbinfo;
+        if (appId != null) {
+            fbinfo = _facebookRepo.loadAppFacebookInfo(appId);
+        } else {
+            fbinfo = _facebookRepo.loadGameFacebookInfo(gameId);
+        }
+        if (fbinfo == null) {
+            throw new RuntimeException("Facebook info not found [siteId=" + siteId + "]");
+        }
+        return fbinfo;
     }
 
     /**
@@ -815,9 +870,10 @@ public class FacebookLogic
          * friends, or global if the member is null.
          */
         public NotificationBatch (
-            String batchId, String text, TrackingId trackingId,
+            ExternalSiteId siteId, String batchId, String text, TrackingId trackingId,
             MemberRecord mrec, boolean appFriendsOnly)
         {
+            _siteId = siteId;
             _batchId = batchId;
             _text = text;
             _trackingId = trackingId;
@@ -857,19 +913,21 @@ public class FacebookLogic
                 // NOTE: wtf? the facebook api is throwing an exception, perhaps because FB
                 // have changed the documented behavior of this method... try to limit how many we
                 // send, see if exception stops
-                List<ExternalMapRecord> targets = loadMappedFriends(_mrec, false, alloc);
-                SessionInfo sinf = loadSessionInfo(_mrec, BATCH_READ_TIMEOUT);
-                Collection<String> recipients = sendNotifications(sinf.client, _batchId,
-                    _text, targets, MAPREC_TO_UID_EXP, APP_USER_FILTER, false);
+                List<ExternalMapRecord> targets = loadMappedFriends(_siteId, _mrec, false, alloc);
+                SessionInfo sinf = loadSessionInfo(_siteId, _mrec, BATCH_READ_TIMEOUT);
+                Collection<String> recipients = sendNotifications(sinf.client,
+                    _siteId.getFacebookAppId(), _batchId, _text, targets, MAPREC_TO_UID_EXP,
+                    APP_USER_FILTER, false);
                 _tracker.trackNotificationSent(sinf.fbid, _trackingId, recipients);
             } else {
                 // see above
-                List<Long> targets = loadFriends(_mrec);
+                List<Long> targets = loadFriends(_siteId, _mrec);
                 Collections.shuffle(targets);
                 targets = alloc >= targets.size() ? targets : targets.subList(0, alloc);
-                SessionInfo sinf = loadSessionInfo(_mrec, BATCH_READ_TIMEOUT);
-                Collection<String> recipients = sendNotifications(sinf.client, _batchId,
-                    _text, targets, new Function<Long, FQL.Exp> () {
+                SessionInfo sinf = loadSessionInfo(_siteId, _mrec, BATCH_READ_TIMEOUT);
+                Collection<String> recipients = sendNotifications(sinf.client,
+                    _siteId.getFacebookAppId(), _batchId, _text, targets,
+                    new Function<Long, FQL.Exp> () {
                     public FQL.Exp apply (Long uid) {
                         return FQL.unquoted(uid);
                     }
@@ -884,11 +942,10 @@ public class FacebookLogic
          */
         protected void trySendGlobal (final Runnable onFinish)
         {
-            final List<ExternalMapRecord> allUsers =
-                _memberRepo.loadExternalMappings(ExternalSiteId.FB_GAMES);
+            final List<ExternalMapRecord> allUsers = _memberRepo.loadExternalMappings(_siteId);
             log.info("Kicking off notifications daisy-chain", "size", allUsers.size());
 
-            final FacebookJaxbRestClient client = getFacebookClient(BATCH_READ_TIMEOUT);
+            final FacebookJaxbRestClient client = getFacebookClient(_siteId, BATCH_READ_TIMEOUT);
             final int BATCH_SIZE = 100;
 
             Invoker.Unit job = new Invoker.Unit("Facebook notification") {
@@ -902,8 +959,9 @@ public class FacebookLogic
                     }
                     List<ExternalMapRecord> batch = allUsers.subList(pos,
                         Math.min(pos + BATCH_SIZE, allUsers.size()));
-                    Collection<String> recipients = sendNotifications(client, _batchId,
-                        _text, batch, MAPREC_TO_UID_EXP, APP_USER_FILTER, true);
+                    Collection<String> recipients = sendNotifications(client,
+                        _siteId.getFacebookAppId(), _batchId, _text, batch, MAPREC_TO_UID_EXP,
+                        APP_USER_FILTER, true);
 
                     // Kontagent doesn't supply a special message for global notifications,
                     // so just set sender id to 0
@@ -931,7 +989,7 @@ public class FacebookLogic
             Runnable onFinish = new Runnable() {
                 public void run () {
                     _facebookRepo.noteNotificationProgress(
-                        LEGACY_APP_ID, _batchId, "Finished", 0, 0);
+                        _siteId.getFacebookAppId(), _batchId, "Finished", 0, 0);
                     removeNotification(_batchId);
                     log.info("Notification sending complete", "id", _batchId);
                 }
@@ -958,6 +1016,7 @@ public class FacebookLogic
             return 30 * 1000L;
         }
 
+        protected ExternalSiteId _siteId;
         protected String _batchId;
         protected String _text;
         protected TrackingId _trackingId;
@@ -970,6 +1029,8 @@ public class FacebookLogic
         };
     }
 
+    // assume the default Whirled Games app is 1. This is far easier than anything else I tried.
+    protected ExternalSiteId _defaultSite = ExternalSiteId.facebookApp(1);
     protected Map<String, NotificationBatch> _notifications = Maps.newHashMap();
     protected boolean _shutdown;
 
@@ -1049,6 +1110,7 @@ public class FacebookLogic
     protected static final String DAILY_GAMES_CURSOR = "";
 
     // dependencies
+    @Inject protected AppRepository _appRepo;
     @Inject protected @BatchInvoker Invoker _batchInvoker;
     @Inject protected FacebookRepository _facebookRepo;
     @Inject protected KontagentLogic _tracker;

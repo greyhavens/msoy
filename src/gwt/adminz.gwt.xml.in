@@ -22,10 +22,6 @@
 
   <source path="com/threerings/msoy/money/data/all"/>
   <source path="com/threerings/msoy/money/gwt"/>
-  <source path="com/threerings/msoy/facebook/gwt"/>
-
-  <!-- TODO: remove once FB multi-app support is finished -->
-  <source path="com/threerings/msoy/apps/gwt"/>
 
   <source path="client/adminz"/>
 

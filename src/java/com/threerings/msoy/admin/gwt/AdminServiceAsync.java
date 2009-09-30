@@ -12,12 +12,9 @@ import com.threerings.msoy.admin.gwt.AdminService.BroadcastHistoryResult;
 import com.threerings.msoy.admin.gwt.AdminService.ItemDeletionResult;
 import com.threerings.msoy.admin.gwt.AdminService.ItemFlagsResult;
 import com.threerings.msoy.admin.gwt.AdminService.ItemTransactionResult;
-import com.threerings.msoy.apps.gwt.FacebookNotification;
-import com.threerings.msoy.apps.gwt.FacebookNotificationStatus;
 
 import com.threerings.msoy.data.all.CharityInfo;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.facebook.gwt.FacebookTemplate;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.web.gwt.Contest;
 import com.threerings.msoy.web.gwt.Promotion;
@@ -172,43 +169,6 @@ public interface AdminServiceAsync
      * The asynchronous version of {@link AdminService#summarizeEntries}.
      */
     void summarizeEntries (AsyncCallback<List<EntrySummary>> callback);
-
-    /**
-     * The asynchronous version of {@link AdminService#loadFacebookTemplates}.
-     */
-    void loadFacebookTemplates (AsyncCallback<List<FacebookTemplate>> callback);
-    
-    /**
-     * The asynchronous version of {@link AdminService#updateFacebookTemplates}.
-     */
-    void updateFacebookTemplates (Set<FacebookTemplate> changed, Set<FacebookTemplate> removed,
-        AsyncCallback<Void> callback);
-
-    /**
-     * The asynchronous version of {@link AdminService#loadSavedFacebookNotifications}.
-     */
-    void loadFacebookNotifications (AsyncCallback<List<FacebookNotification>> callback);
-
-    /**
-     * The asynchronous version of {@link AdminService#loadFacebookNotificationStatus}.
-     */
-    void loadFacebookNotificationStatus (
-        AsyncCallback<List<FacebookNotificationStatus>> callback);
-
-    /**
-     * The asynchronous version of {@link AdminService#saveFacebookNotification}.
-     */
-    void saveFacebookNotification (FacebookNotification notif, AsyncCallback<Void> callback);
-
-    /**
-     * The asynchronous version of {@link AdminService#deleteFacebookNotification}.
-     */
-    void deleteFacebookNotification (String id, AsyncCallback<Void> callback);
-
-    /**
-     * The asynchronous version of {@link AdminService#scheduleFacebookNotification}.
-     */
-    void scheduleFacebookNotification (String id, int delay, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link AdminService#setDailyNotifications}.

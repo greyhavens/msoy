@@ -34,7 +34,6 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.web.gwt.ArgNames.FBParam;
-import com.threerings.msoy.web.gwt.ExternalSiteId;
 import com.threerings.msoy.web.gwt.SharedNaviUtil;
 
 import com.threerings.msoy.facebook.server.FacebookLogic;
@@ -295,14 +294,14 @@ public class FeedLogic
     {
         // get the facebook session key - we can't do anything wihout that
         String sessionKey = _memberRepo.lookupExternalSessionKey(
-            ExternalSiteId.FB_GAMES, memberId);
+            _faceLogic.getDefaultGamesSite(), memberId);
         if (sessionKey == null) {
             return;
         }
 
         // lookup a random template variant
         List<FacebookTemplateRecord> templates = _faceRepo.loadVariants(
-            FacebookRepository.LEGACY_APP_ID, templateCode);
+            _faceLogic.getDefaultGamesSite().getFacebookAppId(), templateCode);
         if (templates.size() == 0) {
             log.warning("No facebook templates", "code", templateCode);
             return;
@@ -311,7 +310,8 @@ public class FeedLogic
         FacebookTemplateRecord template = RandomUtil.pickRandom(templates);
 
         // set up the data for the story
-        String actionURL = SharedNaviUtil.buildRequest(FacebookLogic.WHIRLED_APP_CANVAS,
+        String actionURL = SharedNaviUtil.buildRequest(
+            _faceLogic.getCanvasUrl(_faceLogic.getDefaultGamesSite()),
             FBParam.GAME.name, ""+gameId, FBParam.VECTOR.name, template.toEntryVector());
         Map<String, String> data = Maps.newHashMap();
         data.put("action_url", actionURL);
@@ -339,8 +339,10 @@ public class FeedLogic
 
         try {
             int storySize = 2; // short story (facebook will auto-reduce if we lack permissions)
-            if (!_faceLogic.getFacebookClient(sessionKey).feed_publishUserAction(template.bundleId,
-                data, images, Collections.<Long>emptyList(), null, storySize)) {
+            if (!_faceLogic.getFacebookClient(_faceLogic.getDefaultGamesSite(), sessionKey).
+                    feed_publishUserAction(
+                        template.bundleId, data, images, Collections.<Long>emptyList(), null,
+                        storySize)) {
                 log.info("Failed to publish trophy story", "storyId", template.bundleId,
                     "for", memberId);
             }

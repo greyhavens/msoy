@@ -6,7 +6,6 @@ package com.threerings.msoy.admin.server;
 import static com.threerings.msoy.Log.log;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -62,12 +61,8 @@ import com.threerings.msoy.web.gwt.WebCreds;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 import com.threerings.msoy.web.server.ServletWaiter;
 
-import com.threerings.msoy.facebook.gwt.FacebookTemplate;
 import com.threerings.msoy.facebook.server.FacebookLogic;
-import com.threerings.msoy.facebook.server.persist.FacebookNotificationRecord;
-import com.threerings.msoy.facebook.server.persist.FacebookNotificationStatusRecord;
 import com.threerings.msoy.facebook.server.persist.FacebookRepository;
-import com.threerings.msoy.facebook.server.persist.FacebookTemplateRecord;
 import com.threerings.msoy.game.server.persist.GameInfoRecord;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 import com.threerings.msoy.item.data.ItemCodes;
@@ -104,8 +99,6 @@ import com.threerings.msoy.admin.gwt.StatsModel;
 import com.threerings.msoy.admin.server.ABTestLogic;
 import com.threerings.msoy.admin.server.persist.ABTestRecord;
 import com.threerings.msoy.admin.server.persist.ABTestRepository;
-import com.threerings.msoy.apps.gwt.FacebookNotification;
-import com.threerings.msoy.apps.gwt.FacebookNotificationStatus;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.CharityInfo;
 import com.threerings.msoy.data.all.MemberName;
@@ -731,94 +724,6 @@ public class AdminServlet extends MsoyServiceServlet
         }
 
         return sums;
-    }
-
-    @Override // from AdminService
-    public List<FacebookTemplate> loadFacebookTemplates ()
-        throws ServiceException
-    {
-        requireAdminUser();
-        List<FacebookTemplate> result = Lists.newArrayList(
-            Iterables.transform(_facebookRepo.loadTemplates(FacebookRepository.LEGACY_APP_ID),
-                new Function<FacebookTemplateRecord, FacebookTemplate>() {
-                    public FacebookTemplate apply (FacebookTemplateRecord in) {
-                        return in.toTemplate();
-                    }
-                }));
-        Collections.sort(result);
-        return result;
-    }
-
-    @Override // from AdminService
-    public void updateFacebookTemplates (
-        Set<FacebookTemplate> templates, Set<FacebookTemplate> removed)
-        throws ServiceException
-    {
-        requireAdminUser();
-        for (FacebookTemplate templ : removed) {
-            _facebookRepo.deleteTemplate(
-                FacebookRepository.LEGACY_APP_ID, templ.code, templ.variant);
-        }
-        for (FacebookTemplate templ : templates) {
-            _facebookRepo.storeTemplate(new FacebookTemplateRecord(
-                FacebookRepository.LEGACY_APP_ID, templ));
-        }
-    }
-
-    @Override // from AdminService
-    public void scheduleFacebookNotification (String id, int delay)
-        throws ServiceException
-    {
-        requireAdminUser();
-        _facebookLogic.scheduleNotification(id, delay);
-    }
-
-    @Override // from AdminService
-    public void deleteFacebookNotification (String id)
-        throws ServiceException
-    {
-        requireAdminUser();
-        FacebookNotificationRecord notif = _facebookRepo.loadNotification(
-            FacebookRepository.LEGACY_APP_ID, id);
-        if (notif == null) {
-            throw new ServiceException("e.notification_cannot_be_deleted");
-        }
-        _facebookRepo.deleteNotification(FacebookRepository.LEGACY_APP_ID, id);
-    }
-
-    @Override // from AdminService
-    public List<FacebookNotification> loadFacebookNotifications ()
-        throws ServiceException
-    {
-        requireAdminUser();
-        List<FacebookNotification> notifs = Lists.newArrayList();
-        for (FacebookNotificationRecord notif :
-            _facebookRepo.loadNotifications(FacebookRepository.LEGACY_APP_ID)) {
-            notifs.add(notif.toNotification());
-        }
-        return notifs;
-    }
-
-    @Override
-    public List<FacebookNotificationStatus> loadFacebookNotificationStatus ()
-        throws ServiceException
-    {
-        requireAdminUser();
-        List<FacebookNotificationStatus> statusList = Lists.newArrayList();
-        for (FacebookNotificationStatusRecord status :
-            _facebookRepo.loadNotificationStatus(FacebookRepository.LEGACY_APP_ID)) {
-            statusList.add(status.toStatus());
-        }
-        return statusList;
-    }
-
-    @Override // from AdminService
-    public void saveFacebookNotification (FacebookNotification notif)
-        throws ServiceException
-    {
-        requireAdminUser();
-        _facebookRepo.storeNotification(
-            FacebookRepository.LEGACY_APP_ID, notif.id, notif.text);
     }
 
     @Override // from AdminService
