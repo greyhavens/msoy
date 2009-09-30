@@ -77,6 +77,7 @@ public class SceneRecord extends PersistentRecord
     public static final ColumnExp OWNER_ID = colexp(_R, "ownerId");
     public static final ColumnExp VERSION = colexp(_R, "version");
     public static final ColumnExp NAME = colexp(_R, "name");
+    public static final ColumnExp THEME_GROUP_ID = colexp(_R, "themeGroupId");
     public static final ColumnExp DECOR_ID = colexp(_R, "decorId");
     public static final ColumnExp PLAYLIST_CONTROL = colexp(_R, "playlistControl");
     public static final ColumnExp CANONICAL_IMAGE_HASH = colexp(_R, "canonicalImageHash");
@@ -94,7 +95,7 @@ public class SceneRecord extends PersistentRecord
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 12;
+    public static final int SCHEMA_VERSION = 13;
 
     /** Define the sort order for the new & hot queries. */
     public static Tuple<SQLExpression, Order> ixNewAndHot_v3 ()
@@ -121,6 +122,9 @@ public class SceneRecord extends PersistentRecord
 
     /** The owner supplied name of this scene. */
     public String name;
+
+    /** The group id of this room's theme, or 0. */
+    public int themeGroupId;
 
     /** The item id of the decord item used for this scene. */
     public int decorId;
@@ -201,6 +205,7 @@ public class SceneRecord extends PersistentRecord
         model.ownerId = ownerId;
         model.version = version;
         model.name = name.intern();
+        model.themeId = themeGroupId;
 
         // create an empty Decor item with just the id
         model.decor = new Decor();
@@ -258,7 +263,7 @@ public class SceneRecord extends PersistentRecord
             new MediaDesc(thumbnailHash, thumbnailType, MediaDesc.NOT_CONSTRAINED);
     }
 
-    /** 
+    /**
      * Calculate this item's average rating from the sum and count.
      */
     public float getRating ()
