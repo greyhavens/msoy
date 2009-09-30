@@ -19,8 +19,8 @@ public interface RemindersService extends RemoteService
     public static final String REL_PATH = "../../.." + RemindersService.ENTRY_POINT;
 
     /**
-     * Gets the current list of reminders for the logged-in user.
+     * Gets the current list of reminders for the logged-in user and given application.
      */
-    public List<Reminder> getReminders ()
+    public List<Reminder> getReminders (int appId)
         throws ServiceException;
 }

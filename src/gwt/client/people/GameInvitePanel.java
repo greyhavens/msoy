@@ -33,6 +33,8 @@ import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.EmailContact;
 import com.threerings.msoy.web.gwt.MemberCard;
 import com.threerings.msoy.web.gwt.Pages;
+import com.threerings.msoy.web.gwt.SharedNaviUtil;
+import com.threerings.msoy.web.gwt.ArgNames.FBParam;
 
 import client.shell.CShell;
 import client.shell.ShellMessages;
@@ -163,7 +165,10 @@ public class GameInvitePanel extends InvitePanel
     {
         // TODO: pass along the default message too. This is complicated because the servlet must
         // convert it to javascript
-        String popupURL = "/fbinvite/do?gameId=" + gameId + "&path=" + acceptPath;
+        // TODO: test the addition of the application id if this gets re-enabled
+        String popupURL = SharedNaviUtil.buildRequest("/fbinvite/do",
+            "gameId", String.valueOf(gameId), "path", acceptPath,
+            FBParam.APP_ID.name, String.valueOf(CShell.getAppId()));
         Window.open(popupURL, FBINVITE_WINDOW_NAME,
             "location=no,status=no,width=655,height=600,left=50,top=50");
     }

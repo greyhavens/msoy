@@ -220,7 +220,7 @@ public class WebUserServlet extends MsoyServiceServlet
 
     // from interface WebUserService
     public SessionData validateSession (
-        String clientVersion, String authtok, int expireDays, boolean extra)
+        String clientVersion, String authtok, int expireDays, int appId)
         throws ServiceException
     {
         checkClientVersion(clientVersion, authtok);
@@ -237,14 +237,12 @@ public class WebUserServlet extends MsoyServiceServlet
             SessionData data = new SessionData();
             MemberMoney money = _moneyLogic.getMoneyFor(mrec.memberId);
             initSessionData(mrec, creds, money, data);
-            if (extra) {
-                try {
-                    _facebookLogic.initSessionData(
-                        _facebookLogic.getDefaultGamesSite(), mrec, money, data);
-                } catch (Exception e) {
-                    log.warning("Failed to set up SessionData.Extra",
-                        "memberId", mrec.memberId, e);
-                }
+            try {
+                _facebookLogic.initSessionData(
+                    ExternalSiteId.facebookApp(appId), mrec, money, data);
+            } catch (Exception e) {
+                log.warning("Failed to set up SessionData.Extra",
+                    "memberId", mrec.memberId, e);
             }
             return data;
 
@@ -271,8 +269,9 @@ public class WebUserServlet extends MsoyServiceServlet
 
         // TODO: expose the default FB connect info to the client
         ExternalSiteId siteId = creds.getSite();
-        if (siteId.equals(ExternalSiteId.FB_CONNECT_DEFAULT)) {
-            siteId = _facebookLogic.getDefaultGamesSite();
+        if (!siteId.equals(ExternalSiteId.FB_CONNECT_DEFAULT)) {
+            log.warning("Non-default external site?", "siteId", siteId);
+            siteId = ExternalSiteId.FB_CONNECT_DEFAULT;
         }
         // determine whether or not this external id is already mapped
         int memberId = _memberRepo.lookupExternalAccount(siteId, creds.getUserId());

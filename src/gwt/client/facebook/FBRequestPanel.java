@@ -19,6 +19,7 @@ import com.threerings.msoy.facebook.gwt.FacebookService.InviteInfo;
 import com.threerings.msoy.web.gwt.ArgNames;
 import com.threerings.msoy.web.gwt.CookieNames;
 import com.threerings.msoy.web.gwt.SharedNaviUtil;
+import com.threerings.msoy.web.gwt.ArgNames.FBParam;
 
 import client.facebookbase.FacebookUtil;
 import client.shell.CShell;
@@ -114,8 +115,9 @@ public class FBRequestPanel extends ServerFBMLPanel
         String url = SharedNaviUtil.buildRequest(SharedNaviUtil.buildRequest(
             FacebookUtil.APP_CANVAS, acceptArgs), CookieNames.AFFILIATE, "" + CShell.getMemberId());
         FBMLPanel form = new FBMLPanel("request-form",
-            "action", SharedNaviUtil.buildRequest(
+            "action", SharedNaviUtil.buildRequest(SharedNaviUtil.buildRequest(
                 DeploymentConfig.serverURL + "fbinvite/ndone", submitArgs),
+                FBParam.APP_ID.name, String.valueOf(CShell.getAppId())),
             "method", "POST",
             "invite", "true",
             // Facebook ignores escapes in here, sanitize instead

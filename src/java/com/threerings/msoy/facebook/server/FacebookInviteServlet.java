@@ -18,21 +18,24 @@ import com.google.inject.Inject;
 import com.samskivert.io.StreamUtil;
 import com.samskivert.servlet.util.CookieUtil;
 
+import com.threerings.gwt.util.StringUtil;
 import com.threerings.msoy.data.all.DeploymentConfig;
 
 import com.threerings.msoy.facebook.gwt.FacebookGame;
 import com.threerings.msoy.facebook.server.FacebookLogic.SessionInfo;
+import com.threerings.msoy.facebook.server.persist.FacebookInfoRecord;
+import com.threerings.msoy.facebook.server.persist.FacebookRepository;
 
 import com.threerings.msoy.game.server.persist.GameInfoRecord;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 
 import com.threerings.msoy.server.MsoyEventLogger;
-import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 
 import com.threerings.msoy.web.gwt.ArgNames;
 import com.threerings.msoy.web.gwt.Args;
+import com.threerings.msoy.web.gwt.ExternalSiteId;
 import com.threerings.msoy.web.gwt.MarkupBuilder;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.ServiceException;
@@ -55,8 +58,8 @@ public class FacebookInviteServlet extends HttpServlet
         throws ServletException, IOException
     {
         try {
-            IDPair memberIds = getMemberIds(req, rsp);
-            if (memberIds.memberId == 0) {
+            IDCard card = getIds(req, rsp);
+            if (card.memberId == 0) {
                 return;
             }
 
@@ -66,7 +69,7 @@ public class FacebookInviteServlet extends HttpServlet
                     rsp.sendError(HttpServletResponse.SC_BAD_REQUEST);
                     return;
                 }
-    
+
                 int gameId;
                 try {
                     String gameIdStr = req.getParameter(FBParam.GAME.name);
@@ -75,22 +78,22 @@ public class FacebookInviteServlet extends HttpServlet
                         return;
                     }
                     gameId = Integer.parseInt(gameIdStr);
-    
+
                 } catch (NumberFormatException nfe) {
                     rsp.sendError(HttpServletResponse.SC_NOT_FOUND);
                     return;
                 }
-    
+
                 GameInfoRecord game = _mgameRepo.loadGame(gameId);
                 String gameName = (game == null) ? null : game.name;
                 if (gameName == null) {
                     rsp.sendError(HttpServletResponse.SC_NOT_FOUND);
                     return;
                 }
-                outputInvitePage(rsp, gameId, gameName, memberIds.memberId, acceptPath);
+                outputInvitePage(rsp, gameId, gameName, card, acceptPath);
 
             } else {
-                handleSubmission(req, rsp, memberIds);
+                handleSubmission(req, rsp, card);
             }
 
         } catch (Exception e) {
@@ -104,29 +107,30 @@ public class FacebookInviteServlet extends HttpServlet
     protected void doPost (HttpServletRequest req, HttpServletResponse rsp)
         throws ServletException, IOException
     {
-        IDPair memberIds = getMemberIds(req, rsp);
-        if (memberIds.memberId == 0) {
+        IDCard card = getIds(req, rsp);
+        if (card.memberId == 0) {
             return;
         }
 
-        handleSubmission(req, rsp, memberIds);
+        handleSubmission(req, rsp, card);
     }
 
     protected void handleSubmission (
-        HttpServletRequest req, HttpServletResponse rsp, IDPair sender)
+        HttpServletRequest req, HttpServletResponse rsp, IDCard card)
         throws IOException
     {
         FacebookGame game = _fbLogic.parseGame(req);
         if (req.getPathInfo().equals("/done")) {
             // this was a FB connect popup invite
-            trackSentInvites(req, sender, game);
+            trackSentInvites(req, card, game);
             outputCloseWindowPage(rsp);
 
         } else if (req.getPathInfo().equals("/ndone")) {
-            // this was a portal invite, either to the app or a game challenge
-            trackSentInvites(req, sender, game);
 
-            String canvas = _fbLogic.getCanvasUrl(_fbLogic.getDefaultGamesSite());
+            // this was a portal invite, either to the app or a game challenge
+            trackSentInvites(req, card, game);
+
+            String canvas = _fbLogic.getCanvasUrl(ExternalSiteId.facebookApp(card.appId));
             if (game == null) {
                 // head back to the facebook app main page
                 MsoyHttpServer.sendTopRedirect(rsp, canvas);
@@ -148,7 +152,7 @@ public class FacebookInviteServlet extends HttpServlet
     }
 
     protected void outputInvitePage (
-        HttpServletResponse rsp, int gameId, String gameName, int memberId, String acceptPath)
+        HttpServletResponse rsp, int gameId, String gameName, IDCard card, String acceptPath)
         throws IOException
     {
         // sanitize the game name, just eliminate ", ', \, <, >
@@ -156,15 +160,18 @@ public class FacebookInviteServlet extends HttpServlet
         gameName = gameName.replace("\\", "").replace("\"", "").replace("<", "").replace(">", "");
         gameName = gameName.replace("'", "");
 
+        FacebookInfoRecord fbinfo = _fbRepo.loadAppFacebookInfo(card.appId);
+
         // javascript variables - squirted below and referenced by the static script INVITE_JS
         Map<String, String> vars = new ImmutableMap.Builder<String, String>()
             .put("gameId", String.valueOf(gameId))
-            .put("acceptPath", Pages.WORLD.makeFriendURL(memberId, Args.fromToken(acceptPath)))
+            .put("acceptPath", Pages.WORLD.makeFriendURL(
+                card.memberId, Args.fromToken(acceptPath)))
             .put("acceptLabel", "Play " + gameName)
             .put("action", SharedNaviUtil.buildRequest(
                 DeploymentConfig.serverURL + "fbinvite/done", FBParam.GAME.name, "" + gameId))
             .put("message", "I'm playing " + gameName + " on Whirled, join me!")
-            .put("apiKey", ServerConfig.config.getValue("facebook.api_key", ""))
+            .put("apiKey", StringUtil.getOr(fbinfo.apiKey, ""))
             .put("formElemId", FORM_TAG_ID)
             .put("gameName", gameName)
             .put("actionText", "Select some Faceook friends to play " + gameName + " with you.")
@@ -211,7 +218,7 @@ public class FacebookInviteServlet extends HttpServlet
         StreamUtil.close(rsp.getOutputStream());
     }
 
-    protected IDPair getMemberIds (HttpServletRequest req, HttpServletResponse rsp)
+    protected IDCard getIds (HttpServletRequest req, HttpServletResponse rsp)
         throws IOException
     {
         // pull out session token from the request header
@@ -228,15 +235,27 @@ public class FacebookInviteServlet extends HttpServlet
             return INVALID;
         }
 
+        String appIdStr = req.getParameter(FBParam.APP_ID.name);
+        if (appIdStr == null) {
+            rsp.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            return INVALID;
+        }
+        int appId;
+        try {
+            appId = Integer.parseInt(appIdStr);
+        } catch (NumberFormatException ex) {
+            rsp.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            return INVALID;
+        }
         SessionInfo sinf = null;
         try {
-            sinf = _fbLogic.loadSessionInfo(_fbLogic.getDefaultGamesSite(), member);
+            sinf = _fbLogic.loadSessionInfo(ExternalSiteId.facebookApp(appId), member);
         } catch (ServiceException ex) {
         }
-        return new IDPair(member.memberId, sinf == null ? 0L : sinf.fbid);
+        return new IDCard(appId, member.memberId, sinf == null ? 0L : sinf.fbid);
     }
 
-    protected void trackSentInvites (HttpServletRequest req, IDPair sender, FacebookGame game)
+    protected void trackSentInvites (HttpServletRequest req, IDCard sender, FacebookGame game)
     {
         if (DeploymentConfig.devDeployment) {
             MsoyHttpServer.dumpParameters(req);
@@ -252,8 +271,7 @@ public class FacebookInviteServlet extends HttpServlet
         }
 
         // fire off to Kontagent
-        int appId = _fbLogic.getDefaultGamesSite().getFacebookAppId();
-        _tracker.trackInviteSent(appId, sender.facebookID,
+        _tracker.trackInviteSent(sender.appId, sender.facebookID,
             req.getParameter(ArgNames.FBParam.TRACKING.name), ids);
 
         // TODO: record requests to mochi games too
@@ -268,13 +286,15 @@ public class FacebookInviteServlet extends HttpServlet
     /**
      * Pair of ids that can parsed once at the beginning of a request and passed around.
      */
-    protected static class IDPair
+    protected static class IDCard
     {
         public int memberId;
         public long facebookID;
+        public int appId;
 
-        public IDPair (int memberId, long fbUID)
+        public IDCard (int appId, int memberId, long fbUID)
         {
+            this.appId = appId;
             this.memberId = memberId;
             this.facebookID = fbUID;
         }
@@ -282,6 +302,7 @@ public class FacebookInviteServlet extends HttpServlet
 
     // dependencies
     @Inject protected FacebookLogic _fbLogic;
+    @Inject protected FacebookRepository _fbRepo;
     @Inject protected KontagentLogic _tracker;
     @Inject protected MemberHelper _mhelper;
     @Inject protected MemberRepository _memberRepo;
@@ -305,5 +326,5 @@ public class FacebookInviteServlet extends HttpServlet
     protected static final String RECEIVER_PATH = "/fbconnect.html";
 
     /** ID pair returned when the required parameters are not found. */
-    protected static final IDPair INVALID = new IDPair(0, 0L);
+    protected static final IDCard INVALID = new IDCard(0, 0, 0L);
 }

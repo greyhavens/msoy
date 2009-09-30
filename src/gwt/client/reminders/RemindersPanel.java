@@ -64,7 +64,7 @@ public class RemindersPanel extends FlowPanel
             _reminders.add(bookmark);
         }
         update();
-        _svc.getReminders(new InfoCallback<List<Reminder>>() {
+        _svc.getReminders(CShell.getAppId(), new InfoCallback<List<Reminder>>() {
             @Override public void onSuccess (List<Reminder> result) {
                 // TODO: do we need to re-sort?
                 if (result != null) {

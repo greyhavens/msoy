@@ -170,11 +170,19 @@ public class CShell
     }
 
     /**
-     * Gets the client mode given to use when the outer frame was first loaded.
+     * Gets the client mode given when the outer frame was first loaded.
      */
     public static ClientMode getClientMode ()
     {
         return frame.getEmbedding().mode;
+    }
+
+    /**
+     * Gets the application id given when the outer frame was first loaded.
+     */
+    public static int getAppId ()
+    {
+        return frame.getEmbedding().appId;
     }
 
     protected static final ServerLookup _smsgs = GWT.create(ServerLookup.class);

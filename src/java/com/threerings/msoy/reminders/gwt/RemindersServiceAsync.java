@@ -15,5 +15,5 @@ public interface RemindersServiceAsync
     /**
      * The asynchronous version of {@link RemindersService#getNotifications}.
      */
-    public void getReminders (AsyncCallback<List<Reminder>> callback);
+    public void getReminders (int appId, AsyncCallback<List<Reminder>> callback);
 }

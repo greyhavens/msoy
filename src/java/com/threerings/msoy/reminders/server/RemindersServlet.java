@@ -44,7 +44,7 @@ public class RemindersServlet extends MsoyServiceServlet
     implements RemindersService
 {
     @Override // from RemindersService
-    public List<Reminder> getReminders ()
+    public List<Reminder> getReminders (int appId)
         throws ServiceException
     {
         MemberRecord memrec = requireAuthedUser();
@@ -52,8 +52,7 @@ public class RemindersServlet extends MsoyServiceServlet
 
         // set up the map of already-published trophies
         Map<String, FacebookActionRecord> published = Maps.newHashMap();
-        for (FacebookActionRecord action : _facebookRepo.loadActions(
-            _facebookLogic.getDefaultGamesSite().getFacebookAppId(), memrec.memberId)) {
+        for (FacebookActionRecord action : _facebookRepo.loadActions(appId, memrec.memberId)) {
             if (action.type == FacebookActionRecord.Type.PUBLISHED_TROPHY) {
                 published.put(action.id, action);
             }

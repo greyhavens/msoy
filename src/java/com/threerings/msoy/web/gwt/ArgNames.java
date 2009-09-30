@@ -45,7 +45,9 @@ public class ArgNames
         TRACKING("tr"),
 
         /** Attaches a tracking vector to be used when creating a new user. */
-        VECTOR(ArgNames.VECTOR);
+        VECTOR(ArgNames.VECTOR),
+        
+        APP_ID("app");
 
         /** The name of the parameter. */
         public String name;

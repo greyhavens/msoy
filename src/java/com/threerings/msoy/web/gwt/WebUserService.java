@@ -65,7 +65,7 @@ public interface WebUserService extends RemoteService
      * if so. Optionally loads the extra progress data {@link SessionData#extra}.
      */
     SessionData validateSession (
-        String clientVersion, String authtok, int expireDays, boolean extra)
+        String clientVersion, String authtok, int expireDays, int appId)
         throws ServiceException;
 
     /**
