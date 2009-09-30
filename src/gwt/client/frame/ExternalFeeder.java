@@ -43,7 +43,8 @@ public class ExternalFeeder
 
     protected void publishTrophyToFacebook (final TrophyEvent event)
     {
-        _fbsvc.getTrophyStoryFields(event.getGameId(), new InfoCallback<StoryFields>() {
+        _fbsvc.getTrophyStoryFields(
+            CShell.getAppId(), event.getGameId(), new InfoCallback<StoryFields>() {
             @Override public void onSuccess (StoryFields result) {
                 if (result != null) {
                     publishTrophyToFacebook(event, result);
@@ -90,7 +91,8 @@ public class ExternalFeeder
      */
     protected void trophyPublished (int gameId, String trophyIdent, String trackingId)
     {
-        _fbsvc.trophyPublished(gameId, trophyIdent, trackingId, new AsyncCallback<Void>() {
+        _fbsvc.trophyPublished(
+            CShell.getAppId(), gameId, trophyIdent, trackingId, new AsyncCallback<Void>() {
             @Override public void onFailure (Throwable caught) {
                 CShell.log("Failed to contact server for trophy published", caught);
             }

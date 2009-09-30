@@ -34,6 +34,7 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.web.gwt.ArgNames.FBParam;
+import com.threerings.msoy.web.gwt.ExternalSiteId;
 import com.threerings.msoy.web.gwt.SharedNaviUtil;
 
 import com.threerings.msoy.facebook.server.FacebookLogic;
@@ -292,16 +293,18 @@ public class FeedLogic
     protected void publishGameStory (int memberId, int gameId, String gameName,
         String gameDescription, String templateCode, MediaDesc media, String ...moreData)
     {
+        // TODO: can game stories be published anywhere but the default site?
+        ExternalSiteId siteId = _faceLogic.getDefaultGamesSite();
+
         // get the facebook session key - we can't do anything wihout that
-        String sessionKey = _memberRepo.lookupExternalSessionKey(
-            _faceLogic.getDefaultGamesSite(), memberId);
+        String sessionKey = _memberRepo.lookupExternalSessionKey(siteId, memberId);
         if (sessionKey == null) {
             return;
         }
 
         // lookup a random template variant
-        List<FacebookTemplateRecord> templates = _faceRepo.loadVariants(
-            _faceLogic.getDefaultGamesSite().getFacebookAppId(), templateCode);
+        List<FacebookTemplateRecord> templates =
+            _faceRepo.loadVariants(siteId.getFacebookAppId(), templateCode);
         if (templates.size() == 0) {
             log.warning("No facebook templates", "code", templateCode);
             return;
@@ -310,8 +313,7 @@ public class FeedLogic
         FacebookTemplateRecord template = RandomUtil.pickRandom(templates);
 
         // set up the data for the story
-        String actionURL = SharedNaviUtil.buildRequest(
-            _faceLogic.getCanvasUrl(_faceLogic.getDefaultGamesSite()),
+        String actionURL = SharedNaviUtil.buildRequest(_faceLogic.getCanvasUrl(siteId),
             FBParam.GAME.name, ""+gameId, FBParam.VECTOR.name, template.toEntryVector());
         Map<String, String> data = Maps.newHashMap();
         data.put("action_url", actionURL);
@@ -339,10 +341,8 @@ public class FeedLogic
 
         try {
             int storySize = 2; // short story (facebook will auto-reduce if we lack permissions)
-            if (!_faceLogic.getFacebookClient(_faceLogic.getDefaultGamesSite(), sessionKey).
-                    feed_publishUserAction(
-                        template.bundleId, data, images, Collections.<Long>emptyList(), null,
-                        storySize)) {
+            if (!_faceLogic.getFacebookClient(siteId, sessionKey).feed_publishUserAction(
+                template.bundleId, data, images, Collections.<Long>emptyList(), null, storySize)) {
                 log.info("Failed to publish trophy story", "storyId", template.bundleId,
                     "for", memberId);
             }

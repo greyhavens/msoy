@@ -86,20 +86,20 @@ public interface FacebookService extends RemoteService
      * Gets the basic story fields (template and tracking id) for publishing a trophy story. If no
      * templates are found, throws an exception.
      */
-    StoryFields getTrophyStoryFields (int gameId)
+    StoryFields getTrophyStoryFields (int appId, int gameId)
         throws ServiceException;
 
     /**
      * Notes that the user published a trophy to their feed (or at least viewed the publish
      * dialog).
      */
-    void trophyPublished (int gameId, String ident, String trackingId)
+    void trophyPublished (int appId, int gameId, String ident, String trackingId)
         throws ServiceException;
 
     /**
      * Retrieves the list of friends and their associated info for the currently logged in user.
      */
-    List<FacebookFriendInfo> getAppFriendsInfo ()
+    List<FacebookFriendInfo> getAppFriendsInfo (int appId)
         throws ServiceException;
 
     /**
@@ -108,14 +108,14 @@ public interface FacebookService extends RemoteService
      * TODO: this is not yet being used because mochi games are totally unintegrated (no ratings or
      * trophies).
      */
-    List<FacebookFriendInfo> getGameFriendsInfo (int gameId)
+    List<FacebookFriendInfo> getGameFriendsInfo (int appId, int gameId)
         throws ServiceException;
 
     /**
      * Retrieves the information for sending an invite to the given game, or the application if
      * if game is null.
      */
-    InviteInfo getInviteInfo (FacebookGame game)
+    InviteInfo getInviteInfo (int appId, FacebookGame game)
         throws ServiceException;
 
     /**
@@ -123,39 +123,39 @@ public interface FacebookService extends RemoteService
      * to only those friends that use the application. Returns data for publishing a challenge
      * feed story, or null if the data could not be loaded.
      */
-    StoryFields sendChallengeNotification (FacebookGame game, boolean appOnly)
+    StoryFields sendChallengeNotification (int appId, FacebookGame game, boolean appOnly)
         throws ServiceException;
 
     /**
      * Returns data for publishing a challenge feed story. Throws an exception if the data could
      * not be loaded.
      */
-    StoryFields getChallengeStoryFields (FacebookGame game)
+    StoryFields getChallengeStoryFields (int appId, FacebookGame game)
         throws ServiceException;
 
     /**
      * Returns data for publishing a level-up feed story. Throws an exception if the data could
      * not be loaded.
      */
-    StoryFields getLevelUpStoryFields ()
+    StoryFields getLevelUpStoryFields (int appId)
         throws ServiceException;
 
     /**
      * Lets the server know that a challenge feed story has been published.
      */
-    void challengePublished (FacebookGame game, String trackingId)
+    void challengePublished (int appId, FacebookGame game, String trackingId)
         throws ServiceException;
 
     /**
      * Lets the server know that a level-up feed story has been published.
      */
-    void levelUpPublished (String trackingId)
+    void levelUpPublished (int appId, String trackingId)
         throws ServiceException;
 
     /**
      * Lets the server know that a user is loading the given page. The page is in "url" form as
      * returned by {@link com.threerings.msoy.web.gwt.Args#toPath()}.
      */
-    void trackPageRequest (String page)
+    void trackPageRequest (int appId, String page)
         throws ServiceException;
 }

@@ -65,6 +65,7 @@ import com.threerings.msoy.game.server.persist.TrophyRepository;
 
 import com.threerings.msoy.money.server.persist.MoneyRepository;
 
+import com.threerings.msoy.web.gwt.ExternalSiteId;
 import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.gwt.SharedNaviUtil;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
@@ -78,11 +79,11 @@ public class FacebookServlet extends MsoyServiceServlet
     implements FacebookService
 {
     @Override // from FacebookService
-    public StoryFields getTrophyStoryFields (int gameId)
+    public StoryFields getTrophyStoryFields (int appId, int gameId)
         throws ServiceException
     {
         StoryFields fields = loadGameStoryFields(loadBasicStoryFields(
-            new StoryFields(), requireSession(), "trophy"), new FacebookGame(gameId),
+            new StoryFields(), requireSession(appId), "trophy"), new FacebookGame(gameId),
             GameThumbnail.Type.TROPHY);
 
         if (fields.template == null) {
@@ -92,22 +93,21 @@ public class FacebookServlet extends MsoyServiceServlet
     }
 
     @Override // from FacebookService
-    public void trophyPublished (int gameId, String ident, String trackingId)
+    public void trophyPublished (int appId, int gameId, String ident, String trackingId)
         throws ServiceException
     {
-        SessionInfo session = requireSession();
-        int appId = _fbLogic.getDefaultGamesSite().getFacebookAppId();
+        SessionInfo session = requireSession(appId);
         _facebookRepo.recordAction(FacebookActionRecord.trophyPublished(
             appId, session.memRec.memberId, gameId, ident));
         _tracker.trackFeedStoryPosted(appId, session.fbid, trackingId);
     }
 
     @Override // from FacebookService
-    public List<FacebookFriendInfo> getAppFriendsInfo ()
+    public List<FacebookFriendInfo> getAppFriendsInfo (int appId)
         throws ServiceException
     {
         // set up return map
-        IntMap<FacebookFriendInfo> friendsInfo = getInitialFriendInfo();
+        IntMap<FacebookFriendInfo> friendsInfo = getInitialFriendInfo(appId);
 
         // insert level
         for (MemberCardRecord friend : _memberRepo.loadMemberCards(friendsInfo.keySet())) {
@@ -152,7 +152,6 @@ public class FacebookServlet extends MsoyServiceServlet
             if (thumbnail == null || thumbnail.media == null) {
                 // no point in returning folks with no last game or whose last game was deleted
                 // or something
-                log.info("Null thing", "thumbnail", thumbnail, "lastGame", lastGame);
                 continue;
             }
             info.lastGame = thumbnail;
@@ -170,11 +169,11 @@ public class FacebookServlet extends MsoyServiceServlet
     }
 
     @Override // from FacebookService
-    public List<FacebookFriendInfo> getGameFriendsInfo (int gameId)
+    public List<FacebookFriendInfo> getGameFriendsInfo (int appId, int gameId)
         throws ServiceException
     {
         // set up return map
-        IntMap<FacebookFriendInfo> friendsInfo = getInitialFriendInfo();
+        IntMap<FacebookFriendInfo> friendsInfo = getInitialFriendInfo(appId);
 
         // find the ratings (single player only)
         IntMap<RatingRecord> ratings = IntMaps.newHashIntMap();
@@ -219,15 +218,17 @@ public class FacebookServlet extends MsoyServiceServlet
     }
 
     @Override // from FacebookService
-    public InviteInfo getInviteInfo (FacebookGame game)
+    public InviteInfo getInviteInfo (int appId, FacebookGame game)
         throws ServiceException
     {
+        SessionInfo session = requireSession(appId);
+
         InviteInfo info = new InviteInfo();
         if (game == null) {
             // application invite
             info.excludeIds = Lists.newArrayList();
             for (ExternalMapRecord exRec : _fbLogic.loadMappedFriends(
-                _fbLogic.getDefaultGamesSite(), requireAuthedUser(), false, 0)) {
+                session.siteId, requireAuthedUser(), false, 0)) {
                 info.excludeIds.add(Long.valueOf(exRec.externalId));
             }
 
@@ -235,15 +236,13 @@ public class FacebookServlet extends MsoyServiceServlet
             info.gameName = loadGameStoryFields(new StoryFields(), game, null).name;
         }
 
-        SessionInfo session = requireSession();
-
         // TODO: we don't need this at all! Bite Me successfully used <fb:name> in request text,
         // using the facebook user id. We just need to expose said id to GWT at large.
 
         // use the facebook name for consistency and the facebook gender in case privacy settings
         // have changed. users will expect this
         FacebookJaxbRestClient client = _fbLogic.getFacebookClient(
-            _fbLogic.getDefaultGamesSite(), session.mapRec.sessionKey);
+            session.siteId, session.mapRec.sessionKey);
         Long userId = session.fbid;
         List<ProfileField> fields = Lists.newArrayList();
         fields.add(ProfileField.FIRST_NAME);
@@ -274,10 +273,10 @@ public class FacebookServlet extends MsoyServiceServlet
     }
 
     @Override // from FacebookService
-    public StoryFields sendChallengeNotification (FacebookGame game, boolean appOnly)
+    public StoryFields sendChallengeNotification (int appId, FacebookGame game, boolean appOnly)
         throws ServiceException
     {
-        SessionInfo session = requireSession();
+        SessionInfo session = requireSession(appId);
         StoryFields result = loadGameStoryFields(loadBasicStoryFields(
             new StoryFields(), session, "challenge"), game, GameThumbnail.Type.CHALLENGE);
         Map<String, String> replacements = Maps.newHashMap();
@@ -290,11 +289,11 @@ public class FacebookServlet extends MsoyServiceServlet
     }
 
     @Override // from FacebookService
-    public StoryFields getChallengeStoryFields (FacebookGame game)
+    public StoryFields getChallengeStoryFields (int appId, FacebookGame game)
         throws ServiceException
     {
-        StoryFields result = loadGameStoryFields(loadBasicStoryFields(
-            new StoryFields(), requireSession(), "challenge"), game, GameThumbnail.Type.CHALLENGE);
+        StoryFields result = loadGameStoryFields(loadBasicStoryFields(new StoryFields(),
+            requireSession(appId), "challenge"), game, GameThumbnail.Type.CHALLENGE);
         if (result.template == null) {
             throw new ServiceException(MsoyCodes.E_INTERNAL_ERROR);
         }
@@ -302,10 +301,11 @@ public class FacebookServlet extends MsoyServiceServlet
     }
 
     @Override // from FacebookService
-    public StoryFields getLevelUpStoryFields ()
+    public StoryFields getLevelUpStoryFields (int appId)
         throws ServiceException
     {
-        StoryFields result = loadBasicStoryFields(new StoryFields(), requireSession(), "levelup");
+        StoryFields result = loadBasicStoryFields(
+            new StoryFields(), requireSession(appId), "levelup");
         if (result.template == null) {
             throw new ServiceException(MsoyCodes.E_INTERNAL_ERROR);
         }
@@ -313,43 +313,40 @@ public class FacebookServlet extends MsoyServiceServlet
         return result;
     }
 
-    @Override
-    public void challengePublished (FacebookGame game, String trackingId)
+    @Override // from FacebookService
+    public void challengePublished (int appId, FacebookGame game, String trackingId)
         throws ServiceException
     {
-        int appId = _fbLogic.getDefaultGamesSite().getFacebookAppId();
-        _tracker.trackFeedStoryPosted(appId, requireSession().fbid, trackingId);
+        _tracker.trackFeedStoryPosted(appId, requireSession(appId).fbid, trackingId);
     }
 
-    @Override
-    public void levelUpPublished (String trackingId)
+    @Override // from FacebookService
+    public void levelUpPublished (int appId, String trackingId)
         throws ServiceException
     {
-        int appId = _fbLogic.getDefaultGamesSite().getFacebookAppId();
-        _tracker.trackFeedStoryPosted(appId, requireSession().fbid, trackingId);
+        _tracker.trackFeedStoryPosted(appId, requireSession(appId).fbid, trackingId);
     }
 
-    @Override
-    public void trackPageRequest (String page)
+    @Override // from FacebookService
+    public void trackPageRequest (int appId, String page)
         throws ServiceException
     {
         HttpServletRequest req = getThreadLocalRequest();
-        int appId = _fbLogic.getDefaultGamesSite().getFacebookAppId();
-        FacebookLogic.SessionInfo sinfo = _fbLogic.loadSessionInfo(
-            _fbLogic.getDefaultGamesSite(), requireAuthedUser());
-        _tracker.trackPageRequest(appId, sinfo.fbid, req.getRemoteAddr(), page);
+        SessionInfo session = requireSession(appId);
+        _tracker.trackPageRequest(appId, session.fbid, req.getRemoteAddr(), page);
     }
 
     /**
      * Builds the mapping keyed by member containing all facebook friends of the authed user who
-     * also have Whirled accounts, filling in only the facebook uid and member id fields.
+     * also have Whirled accounts linked to the given app, filling in only the facebook uid and
+     * member id fields.
      */
-    protected IntMap<FacebookFriendInfo> getInitialFriendInfo ()
+    protected IntMap<FacebookFriendInfo> getInitialFriendInfo (int appId)
         throws ServiceException
     {
         IntMap<FacebookFriendInfo> friendsInfo = IntMaps.newHashIntMap();
         for (ExternalMapRecord exRec : _fbLogic.loadMappedFriends(
-            _fbLogic.getDefaultGamesSite(), requireAuthedUser(), true, 0)) {
+            ExternalSiteId.facebookApp(appId), requireAuthedUser(), true, 0)) {
             FacebookFriendInfo info = new FacebookFriendInfo();
             info.facebookUid = Long.valueOf(exRec.externalId);
             info.memberId = exRec.memberId;
@@ -379,7 +376,7 @@ public class FacebookServlet extends MsoyServiceServlet
         StoryFields fields, SessionInfo session, String template)
     {
         List<FacebookTemplateRecord> templates = _facebookRepo.loadVariants(
-            _fbLogic.getDefaultGamesSite().getFacebookAppId(), template);
+            session.siteId.getFacebookAppId(), template);
         if (templates.size() == 0) {
             log.warning("No Facebook templates found for request", "code", template);
             return fields;
@@ -480,10 +477,10 @@ public class FacebookServlet extends MsoyServiceServlet
         return Lists.newArrayList(Iterables.transform(result, GameThumbnailRecord.TO_MEDIA_PATH));
     }
 
-    protected SessionInfo requireSession ()
+    protected SessionInfo requireSession (int appId)
         throws ServiceException
     {
-        return _fbLogic.loadSessionInfo(_fbLogic.getDefaultGamesSite(), requireAuthedUser());
+        return _fbLogic.loadSessionInfo(ExternalSiteId.facebookApp(appId), requireAuthedUser());
     }
 
     @Inject protected FacebookLogic _fbLogic;

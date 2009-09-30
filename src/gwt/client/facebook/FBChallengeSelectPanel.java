@@ -3,6 +3,7 @@
 
 package client.facebook;
 
+import client.shell.CShell;
 import client.shell.ShellMessages;
 import client.ui.BorderedDialog;
 import client.ui.MsoyUI;
@@ -66,7 +67,8 @@ public class FBChallengeSelectPanel extends FlowPanel
     {
         final Command send = new Command() {
             @Override public void execute () {
-                _fbsvc.sendChallengeNotification(_game, appOnly, new InfoCallback<StoryFields>() {
+                _fbsvc.sendChallengeNotification(
+                    CShell.getAppId(), _game, appOnly, new InfoCallback<StoryFields>() {
                     @Override public void onSuccess (StoryFields result) {
                         if (result == null || result.template == null) {
                             goPlay();

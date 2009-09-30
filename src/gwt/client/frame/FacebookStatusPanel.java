@@ -161,7 +161,8 @@ public class FacebookStatusPanel extends AbsoluteCSSPanel
             popup.addButton(new Button(_msgs.fbStatusLevelPopupBtn(), popup.onAction(
                 new Command() {
                 @Override public void execute () {
-                    _fbsvc.getLevelUpStoryFields(new InfoCallback<StoryFields>() {
+                    _fbsvc.getLevelUpStoryFields(
+                        CShell.getAppId(), new InfoCallback<StoryFields>() {
                         @Override public void onSuccess (StoryFields result) {
                             new LevelUpFeeder(_data.level, result).publish();
                         }

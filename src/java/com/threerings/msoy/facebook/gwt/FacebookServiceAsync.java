@@ -17,57 +17,59 @@ public interface FacebookServiceAsync
     /**
      * The asynchronous version of {@link FacebookService#getTrophyStoryFields}.
      */
-    void getTrophyStoryFields (int gameId, AsyncCallback<StoryFields> callback);
+    void getTrophyStoryFields (int appId, int gameId, AsyncCallback<StoryFields> callback);
 
     /**
      * The asynchronous version of {@link FacebookService#trophyPublished}.
      */
-    void trophyPublished (int gameId, String ident, String trackingId,
+    void trophyPublished (int appId, int gameId, String ident, String trackingId,
         AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link FacebookService#getAppFriendsInfo}.
      */
-    void getAppFriendsInfo (AsyncCallback<List<FacebookFriendInfo>> callback);
+    void getAppFriendsInfo (int appId, AsyncCallback<List<FacebookFriendInfo>> callback);
 
     /**
      * The asynchronous version of {@link FacebookService#getGameFriendsInfo}.
      */
-    void getGameFriendsInfo (int gameId, AsyncCallback<List<FacebookFriendInfo>> callback);
+    void getGameFriendsInfo (int appId, int gameId, AsyncCallback<List<FacebookFriendInfo>> callback);
 
     /**
      * The asynchronous version of {@link FacebookService#getInviteInfo}.
      */
-    void getInviteInfo (FacebookGame game, AsyncCallback<InviteInfo> callback);
+    void getInviteInfo (int appId, FacebookGame game, AsyncCallback<InviteInfo> callback);
 
     /**
      * The asynchronous version of {@link FacebookService#sendChallengeNotification}.
      */
     void sendChallengeNotification (
-        FacebookGame game, boolean appOnly, AsyncCallback<StoryFields> callback);
+        int appId, FacebookGame game, boolean appOnly, AsyncCallback<StoryFields> callback);
 
     /**
      * The asynchronous version of {@link FacebookService#getChallengeStoryFields}.
      */
-    void getChallengeStoryFields (FacebookGame game, AsyncCallback<StoryFields> callback);
+    void getChallengeStoryFields (
+        int appId, FacebookGame game, AsyncCallback<StoryFields> callback);
 
     /**
      * The asynchronous version of {@link FacebookService#getLevelUpStoryFields}.
      */
-    void getLevelUpStoryFields (AsyncCallback<StoryFields> callback);
+    void getLevelUpStoryFields (int appId, AsyncCallback<StoryFields> callback);
 
     /**
      * The asynchronous version of {@link FacebookService#challengePublished}.
      */
-    void challengePublished (FacebookGame game, String trackingId, AsyncCallback<Void> callback);
+    void challengePublished (
+        int appId, FacebookGame game, String trackingId, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link FacebookService#levelUpPublished}.
      */
-    void levelUpPublished (String trackingId, AsyncCallback<Void> callback);
+    void levelUpPublished (int appId, String trackingId, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link FacebookService#trackPageRequest}.
      */
-    void trackPageRequest (String page, AsyncCallback<Void> callback);
+    void trackPageRequest (int appId, String page, AsyncCallback<Void> callback);
 }

@@ -70,7 +70,7 @@ public class LevelUpFeeder
      */
     protected void onCompletion ()
     {
-        _fbsvc.levelUpPublished(_fields.trackingId, new NoopAsyncCallback());
+        _fbsvc.levelUpPublished(CShell.getAppId(), _fields.trackingId, new NoopAsyncCallback());
     }
 
     protected native void publishLevelUp (String templateId, JavaScriptObject data) /*-{

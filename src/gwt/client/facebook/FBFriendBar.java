@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import client.shell.CShell;
 import client.ui.MsoyUI;
 
 import com.google.gwt.core.client.GWT;
@@ -47,7 +48,7 @@ public class FBFriendBar extends AbsoluteCSSPanel
         }));
         _left.setVisible(false);
         _right.setVisible(false);
-        _fbsvc.getAppFriendsInfo(new AsyncCallback<List<FacebookFriendInfo>>() {
+        _fbsvc.getAppFriendsInfo(CShell.getAppId(), new AsyncCallback<List<FacebookFriendInfo>>() {
             @Override public void onSuccess (List<FacebookFriendInfo> result) {
                 init(result);
             }

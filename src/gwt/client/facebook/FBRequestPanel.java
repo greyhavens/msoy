@@ -44,7 +44,7 @@ public class FBRequestPanel extends ServerFBMLPanel
     {
         // TOOD: some loading message
         final FlowPanel div = new FlowPanel();
-        _fbsvc.getInviteInfo(null, new InfoCallback<InviteInfo>() {
+        _fbsvc.getInviteInfo(CShell.getAppId(), null, new InfoCallback<InviteInfo>() {
             public void onSuccess (InviteInfo result) {
                 // inviteGeneric = {0} has invited you to {1}...
                 String app = DeploymentConfig.facebookApplicationName;

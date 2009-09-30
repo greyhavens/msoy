@@ -75,7 +75,8 @@ public class FBChallengeFeeder
      */
     protected void onCompletion ()
     {
-        _fbsvc.challengePublished(_game, _fields.trackingId, new AsyncCallback<Void>() {
+        _fbsvc.challengePublished(
+            CShell.getAppId(), _game, _fields.trackingId, new AsyncCallback<Void>() {
             @Override public void onFailure (Throwable caught) {
                 goBackToGame();
             }

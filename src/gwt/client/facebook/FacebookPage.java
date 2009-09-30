@@ -15,6 +15,7 @@ import com.threerings.msoy.facebook.gwt.FacebookServiceAsync;
 import com.threerings.msoy.facebook.gwt.FacebookService.InviteInfo;
 import com.threerings.msoy.facebook.gwt.FacebookService.StoryFields;
 
+import client.shell.CShell;
 import client.shell.Page;
 import client.shell.ShellMessages;
 import client.ui.MsoyUI;
@@ -60,7 +61,8 @@ public class FacebookPage extends Page
     {
         if (mode.equals(ArgNames.FB_CHALLENGE_FEED)) {
             setContent(null);
-            _fbsvc.getChallengeStoryFields(game, new InfoCallback<StoryFields>() {
+            _fbsvc.getChallengeStoryFields(
+                CShell.getAppId(), game, new InfoCallback<StoryFields>() {
                 @Override public void onSuccess (StoryFields result) {
                     FBChallengeFeeder feeder = new FBChallengeFeeder(game, result);
                     feeder.publish();
@@ -73,7 +75,7 @@ public class FacebookPage extends Page
             setContent(MsoyUI.createLabel(_cmsgs.tagLoading(), "Loading"));
             _game = game;
             _gameInviteInfo = null;
-            _fbsvc.getInviteInfo(_game, new InfoCallback<InviteInfo>() {
+            _fbsvc.getInviteInfo(CShell.getAppId(), _game, new InfoCallback<InviteInfo>() {
                 public void onSuccess (InviteInfo info) {
                     _gameInviteInfo = info;
                     showChallenge(_game, mode);

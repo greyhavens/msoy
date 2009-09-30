@@ -913,7 +913,7 @@ public class FrameEntryPoint
             // grab the FBID from somewhere, perhaps in the SessionData (superseding the
             // #world-fbgame way of doing it), and build a URL here and poke it into an Image in
             // the title bar or somewhere.
-            _fbsvc.trackPageRequest(url, new NoopAsyncCallback());
+            _fbsvc.trackPageRequest(CShell.getAppId(), url, new NoopAsyncCallback());
         }
     }
 
