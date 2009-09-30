@@ -11,6 +11,7 @@ import com.google.inject.Singleton;
 
 import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.util.Invoker;
+import com.samskivert.util.RandomUtil;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.Tuple;
 
@@ -38,18 +39,23 @@ import com.threerings.msoy.data.MsoyBodyObject;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MemberLocal;
 import com.threerings.msoy.server.MemberLocator;
+import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.MemberNodeActions;
 import com.threerings.msoy.server.MsoyEventLogger;
+import com.threerings.msoy.server.persist.MemberRepository;
 
 import com.threerings.msoy.peer.data.HostedRoom;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 
 import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
+import com.threerings.msoy.group.server.persist.ThemeRecord;
+import com.threerings.msoy.group.server.persist.ThemeRepository;
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.server.ItemLogic;
 import com.threerings.msoy.item.server.persist.AvatarRecord;
+import com.threerings.msoy.item.server.persist.AvatarRepository;
 import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.room.client.MsoySceneService.MsoySceneMoveListener;
 import com.threerings.msoy.room.data.MsoyLocation;
@@ -245,8 +251,8 @@ public class MsoySceneRegistry extends SpotSceneRegistry
     // TODO: the other version of moveTo() needs to also become peer-aware
 
     // from interface MsoySceneProvider
-    public void moveTo (ClientObject caller, final int sceneId, int version, final int portalId,
-                        final MsoyLocation destLoc, final MsoySceneMoveListener listener)
+    public void moveTo (ClientObject caller, int sceneId, int version, int portalId,
+                        MsoyLocation destLoc, MsoySceneMoveListener listener)
         throws InvocationException
     {
         final MsoyBodyObject mover = (MsoyBodyObject)caller;
@@ -281,87 +287,8 @@ public class MsoySceneRegistry extends SpotSceneRegistry
         }
 
         // this fellow will handle the nitty gritty of our scene switch
-        resolvePeerScene(sceneId, new PeerSceneMoveHandler(_locman, mover, version, listener) {
-            public void sceneOnNode (Tuple<String, HostedRoom> nodeInfo) {
-                if (memobj == null) {
-                    log.warning("Non-member requested move that requires server switch?",
-                        "who", mover.who(), "info", nodeInfo);
-                    listener.requestFailed(RoomCodes.E_INTERNAL_ERROR);
-                    return;
-                }
-
-                // investigate the remote scene
-                HostedRoom hr = nodeInfo.right;
-
-                // check for access control
-                if (!memobj.canEnterScene(hr.placeId, hr.ownerId, hr.ownerType, hr.accessControl,
-                        memobj.getLocal(MemberLocal.class).friendIds)) {
-                    listener.requestFailed(RoomCodes.E_ENTRANCE_DENIED);
-                    return;
-                }
-
-                if (maybeCrossMogBoundary(hr.mogId, sceneId, memobj, listener)) {
-                    return;
-                }
-
-                log.debug("Going to remote node", "who", mover.who(),
-                    "where", sceneId + "@" + nodeInfo.left);
-                sendClientToNode(nodeInfo.left, memobj, listener);
-            }
-
-            protected void effectSceneMove (SceneManager scmgr) throws InvocationException {
-                MsoyScene scene = (MsoyScene) scmgr.getScene();
-
-                if (memobj != null && maybeCrossMogBoundary(
-                    scene.getMogId(), sceneId, memobj, listener)) {
-                    return;
-                }
-
-                // create a fake "from" portal that contains our destination location
-                MsoyPortal from = new MsoyPortal();
-                from.targetPortalId = (short)-1;
-                from.dest = destLoc;
-
-                // let the destination room manager know that we're coming in "from" that portal
-                RoomManager destmgr = (RoomManager)scmgr;
-                destmgr.mapEnteringBody(mover, from);
-
-                try {
-                    super.effectSceneMove(destmgr);
-                } catch (InvocationException ie) {
-                    // if anything goes haywire, clear out our entering status
-                    destmgr.clearEnteringBody(mover);
-                    throw ie;
-                }
-
-                // for members, check for following entities
-                if (memobj != null) {
-                    // deal with pets
-                    PetObject petobj = _petMan.getPetObject(memobj.walkingId);
-                    if (petobj != null) {
-                        moveTo(petobj, sceneId, Integer.MAX_VALUE, portalId, destLoc,
-                               new MsoySceneMoveAdapter());
-                    }
-                }
-            }
-        });
-    }
-
-    // when we move to a new scene, we test its Mogness compared to our current mogness,
-    // returning false if the move should be allowed to complete, true if the AVRG will
-    // take over
-    protected boolean maybeCrossMogBoundary (final int mogId, final int sceneId,
-        final MemberObject user, final MsoySceneMoveListener listener)
-    {
-        if (user.avatarCache != null && mogId == user.mogGroupId) {
-            // nothing to do
-            return false;
-        }
-
-        _invoker.postUnit(new MogRepositoryUnit(mogId, user, sceneId, listener));
-
-        // let our caller know not to finish the move if we're entering a Mog
-        return mogId != 0;
+        resolvePeerScene(sceneId, new MsoyPeerSceneMoveHandler(
+            _locman, mover, version, portalId, destLoc, listener));
     }
 
     protected void sendClientToNode (String nodeName, MemberObject memobj,
@@ -387,65 +314,248 @@ public class MsoySceneRegistry extends SpotSceneRegistry
         _peerMan.forwardMemberObject(nodeName, memobj);
     }
 
+    protected interface ThemeMoveHandler
+    {
+        void finish ();
+        void puntToGame (int gameId);
+    }
+
+    protected class MsoyPeerSceneMoveHandler extends PeerSceneMoveHandler
+    {
+        protected MsoyPeerSceneMoveHandler (LocationManager locman, MsoyBodyObject mover,
+            int sceneVer, int portalId, MsoyLocation destLoc, MsoySceneMoveListener listener)
+        {
+            super(locman, mover, sceneVer, listener);
+            _portalId = portalId;
+            _destLoc = destLoc;
+            _mover = mover;
+            _memobj = (mover instanceof MemberObject) ? (MemberObject)mover : null;
+        }
+
+        public void sceneOnNode (Tuple<String, HostedRoom> nodeInfo) {
+            if (_memobj == null) {
+                log.warning("Non-member requested move that requires server switch?",
+                    "who", _mover.who(), "info", nodeInfo);
+                _listener.requestFailed(RoomCodes.E_INTERNAL_ERROR);
+                return;
+            }
+
+            // investigate the remote scene
+            HostedRoom hr = nodeInfo.right;
+
+            // check for access control
+            if (!_memobj.canEnterScene(hr.placeId, hr.ownerId, hr.ownerType, hr.accessControl,
+                _memobj.getLocal(MemberLocal.class).friendIds)) {
+                _listener.requestFailed(RoomCodes.E_ENTRANCE_DENIED);
+                return;
+            }
+
+            log.debug("Going to remote node", "who", _mover.who(),
+                "where", hr.placeId + "@" + nodeInfo.left);
+            sendClientToNode(nodeInfo.left, _memobj, _msoyListener);
+        }
+
+        protected void effectSceneMove (SceneManager scmgr) throws InvocationException {
+            final MsoyScene scene = (MsoyScene) scmgr.getScene();
+            final RoomManager destmgr = (RoomManager)scmgr;
+
+            // if we've already got an avatar quicklist and we're not crossing a theme
+            // boundary, we can just finish the move as usual
+            if (_memobj.avatarCache != null && scene.getThemeId() == _memobj.mogGroupId) {
+                finishMove(scene, destmgr);
+                return;
+            }
+
+            // otherwise we need to take an extra trip over the invoker thread
+            _invoker.postUnit(new ThemeRepositoryUnit(scene, _memobj, new ThemeMoveHandler() {
+                public void finish () {
+                    finishMove(scene, destmgr);
+                }
+                public void puntToGame (int gameId) {
+                    _msoyListener.moveToBeHandledByAVRG(gameId, scene.getId());
+                }
+            }));
+        }
+
+        protected void finishMove (MsoyScene scene, RoomManager destmgr)
+        {
+            // create a fake "from" portal that contains our destination location
+            MsoyPortal from = new MsoyPortal();
+            from.targetPortalId = (short)-1;
+            from.dest = _destLoc;
+
+            // let the destination room manager know that we're coming in "from" that portal
+            destmgr.mapEnteringBody(_mover, from);
+
+            try {
+                MsoyPeerSceneMoveHandler.super.effectSceneMove(destmgr);
+
+            } catch (InvocationException ie) {
+                // if anything goes haywire, clear out our entering status
+                destmgr.clearEnteringBody(_mover);
+                log.warning("Scene move failed", "mover", _mover.who(),
+                    "sceneId", scene.getId(), ie);
+                return;
+            }
+
+            // for members, check for following entities
+            if (_memobj != null) {
+                // deal with pets
+                PetObject petobj = _petMan.getPetObject(_memobj.walkingId);
+                if (petobj != null) {
+                    try {
+                        moveTo(petobj, scene.getId(), Integer.MAX_VALUE, _portalId, _destLoc,
+                            new MsoySceneMoveAdapter());
+
+                    } catch (InvocationException ie) {
+                        log.warning("Pet follow failed", "memberId", _memobj.getMemberId(),
+                            "sceneId", scene.getId(), ie);
+                        return;
+                    }
+                }
+            }
+        }
+
+        protected int _portalId;
+        protected MsoyLocation _destLoc;
+        protected MemberObject _memobj;
+        protected MsoyBodyObject _mover;
+        protected MsoySceneMoveListener _msoyListener;
+    }
+
+    protected class ThemeRepositoryUnit extends RepositoryUnit
+    {
+        protected ThemeRepositoryUnit (
+            MsoyScene scene, MemberObject user, ThemeMoveHandler finishMove)
+        {
+            super("crossThemeBoundary");
+            _sceneId = scene.getId();
+            _themeId = scene.getThemeId();
+            _user = user;
+            _memberId = user.getMemberId();
+            _listener = finishMove;
+            _loadQuicklist = (_user.avatarCache == null || _themeId != user.mogGroupId);
+            _avatarId = (_user.avatar != null) ? _user.avatar.getMasterId() : 0;
+        }
+
+        public void invokePersist ()
+            throws Exception
+        {
+            AvatarRepository avaRepo = _itemLogic.getAvatarRepository();
+
+            // if we're moving into a theme, or we just don't have an avatar cache yet, load it
+            if (_loadQuicklist) {
+                // reload the avatar cache from recently-touched items in repo
+                _quicklist = avaRepo.loadRecentlyTouched(
+                    _memberId, _themeId, MemberObject.AVATAR_CACHE_SIZE);
+            }
+
+            if (_themeId != 0) {
+                ThemeRecord tRec = _themeRepo.loadTheme(_themeId);
+                if (tRec == null) {
+                    // internal error, log it and let the move complete
+                    log.warning("Couldn't find theme record for scene", "sceneId", _sceneId,
+                        "themeGroupId", _themeId);
+                    return;
+                }
+
+                GroupRecord record = _groupRepo.loadGroup(_themeId);
+                if (record == null) {
+                    // internal error, log it and let the move complete
+                    log.warning("Couldn't find group record for scene theme", "sceneId", _sceneId,
+                        "themeGroupId", _themeId);
+                    return;
+                }
+
+                if (tRec.playOnEnter) {
+                    _gameId = record.gameId;
+                    if (_gameId == 0) {
+                        log.warning("Play-on-enter theme has no game registered", "sceneId", _sceneId,
+                            "themeGroupId", _themeId);
+                    }
+                }
+            }
+
+            // if we're definitely going, update MemberRecord (even with _themeId == 0)
+            _memberRepo.configureThemeId(_memberId, _themeId);
+
+            // TODO: Change into the most recently used avatar as per ThemeAvatarUseRecord!
+
+            // see if our current avatar is appropriately stamped
+            if (_avatarId == 0 || (_themeId != 0 && !avaRepo.isThemeStamped(_themeId, _avatarId))) {
+                // if not, we will have to display the avatar selection UI; for now choose
+                // a random stamped avatar
+                _avatars = avaRepo.findItems(_memberId, null, _themeId);
+            }
+        }
+
+        public void handleSuccess ()
+        {
+            if (_themeId != _user.mogGroupId) {
+                _user.setMogGroupId(_themeId);
+            }
+            // if we loaded a quicklist (and they weren't set during our thread hopping), set them
+            if (_quicklist != null) {
+                _user.setAvatarCache(DSet.newDSet(
+                    Lists.transform(_quicklist, new ItemRecord.ToItem<Avatar>())));
+            }
+            // if we're not switching avatars, we're done
+            if (_avatars == null) {
+                finishOrPunt();
+            }
+            // otherwise we have to route everything through MemberManager.setAvatar()
+            if (_avatars != null) {
+                int newAvatarId = (_avatars.size() == 0) ? 0 :
+                    _avatars.get(RandomUtil.getInt(_avatars.size())).getMasterId();
+                _memMan.setAvatar(_user, newAvatarId, new MemberManager.SetAvatarListener() {
+                    public void success () {
+                        finishOrPunt();
+                    }
+                    public void accessDeniedFailure () throws Exception {
+                        // let's reluctantly accept this until we see if it happens for real
+                        finishOrPunt();
+                    }
+                    public void noSuchItemFailure () throws Exception {
+                        // let's reluctantly accept this until we see if it happens for real
+                        finishOrPunt();
+                    }
+                });
+                return;
+            }
+        }
+
+        protected void finishOrPunt ()
+        {
+            if (_gameId != 0) {
+                _listener.puntToGame(_gameId);
+            } else {
+                _listener.finish();
+            }
+        }
+
+        protected int _sceneId;
+        protected int _themeId;
+        protected MemberObject _user;
+        protected int _memberId;
+        protected ThemeMoveHandler _listener;
+        protected boolean _loadQuicklist;
+        protected int _avatarId;
+        protected List<AvatarRecord> _quicklist;
+        protected List<AvatarRecord> _avatars;
+        protected int _gameId;
+    }
+
     // our dependencies
     @Inject protected @MainInvoker Invoker _invoker;
     @Inject protected GroupRepository _groupRepo;
+    @Inject protected ThemeRepository _themeRepo;
+    @Inject protected MemberRepository _memberRepo;
     @Inject protected MemberLocator _locator;
     @Inject protected ItemLogic _itemLogic;
     @Inject protected MsoyEventLogger _eventLog;
     @Inject protected MsoyPeerManager _peerMan;
+    @Inject protected MemberManager _memMan;
     @Inject protected PetManager _petMan;
-
-    protected final class MogRepositoryUnit extends RepositoryUnit
-    {
-        private final int mogId;
-        private final MemberObject user;
-        private final int sceneId;
-        private final MsoySceneMoveListener listener;
-        protected List<AvatarRecord> _avatars;
-        protected int _gameId;
-
-        private MogRepositoryUnit (int mogId, MemberObject user, int sceneId,
-                MsoySceneMoveListener listener)
-        {
-            super("crossMogBoundary");
-            this.mogId = mogId;
-            this.user = user;
-            this.sceneId = sceneId;
-            this.listener = listener;
-        }
-
-        @Override public void invokePersist () throws Exception {
-            // reload the avatar cache from recently-touched items in repo
-            _avatars = _itemLogic.getAvatarRepository().loadRecentlyTouched(
-                user.getMemberId(), mogId, MemberObject.AVATAR_CACHE_SIZE);
-
-            // if need be, load the game record for this mog's group
-            if (mogId != 0) {
-                GroupRecord record = _groupRepo.loadGroup(mogId);
-                if (record == null) {
-                    throw new IllegalStateException("Couldn't find Mog group for scene " +
-                        "[sceneId=" + sceneId + ", whirledId=" + mogId + "]");
-                }
-                if (record.gameId == 0) {
-                    throw new IllegalStateException("Mog group has no game registered " +
-                        "[sceneId=" + sceneId + ", whirledId=" + mogId + "]");
-                }
-                _gameId = record.gameId;
-            }
-        }
-
-        @Override public void handleSuccess () {
-            if (mogId != user.mogGroupId) {
-                user.setMogGroupId(mogId);
-            }
-            user.setAvatarCache(DSet.newDSet(
-                Lists.transform(_avatars, new ItemRecord.ToItem<Avatar>())));
-            if (_gameId != 0) {
-                listener.moveToBeHandledByAVRG(_gameId, sceneId);
-            }
-        }
-    }
 
     /**
      * Implements MsoySceneMoveListener trivially.
