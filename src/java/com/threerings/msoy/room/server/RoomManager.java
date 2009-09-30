@@ -1060,7 +1060,7 @@ public class RoomManager extends SpotSceneManager
         // register ourselves in our peer object
         MsoyScene mscene = (MsoyScene) _scene;
         _peerMan.roomDidStartup(
-            mscene.getId(), mscene.getName(), mscene.getMogId(),
+            mscene.getId(), mscene.getName(), mscene.getThemeId(),
             mscene.getOwnerId(), mscene.getOwnerType(), mscene.getAccessControl());
 
         _roomObj.startTransaction();
@@ -1406,7 +1406,7 @@ public class RoomManager extends SpotSceneManager
             boolean nameChange = !mScene.getName().equals(up.name);
             if (nameChange || mScene.getAccessControl() != up.accessControl) {
                 _peerMan.roomUpdated(mScene.getId(), up.name,
-                    mScene.getMogId(), mScene.getOwnerId(),
+                    mScene.getThemeId(), mScene.getOwnerId(),
                     mScene.getOwnerType(), up.accessControl);
             }
 
@@ -1434,7 +1434,7 @@ public class RoomManager extends SpotSceneManager
             byte accessControl = sou.lockToOwner ?
                 MsoySceneModel.ACCESS_OWNER_ONLY : mScene.getAccessControl();
             _peerMan.roomUpdated(
-                mScene.getId(), mScene.getName(), mScene.getMogId(),
+                mScene.getId(), mScene.getName(), mScene.getThemeId(),
                 sou.ownerId, sou.ownerType, accessControl);
 
             // update our room object
