@@ -49,6 +49,7 @@ import com.threerings.msoy.peer.server.MsoyPeerManager;
 
 import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
+import com.threerings.msoy.group.server.persist.ThemeAvatarUseRecord;
 import com.threerings.msoy.group.server.persist.ThemeRecord;
 import com.threerings.msoy.group.server.persist.ThemeRepository;
 import com.threerings.msoy.item.data.all.Avatar;
@@ -479,13 +480,20 @@ public class MsoySceneRegistry extends SpotSceneRegistry
             // if we're definitely going, update MemberRecord (even with _themeId == 0)
             _memberRepo.configureThemeId(_memberId, _themeId);
 
-            // TODO: Change into the most recently used avatar as per ThemeAvatarUseRecord!
+            // if we've been in this theme before, see what we wore last
+            ThemeAvatarUseRecord aRec = _themeRepo.getLastWornAvatar(_memberId, _themeId);
+            if (aRec != null && aRec.itemId != _avatarId) {
+                _avatarId = aRec.itemId;
+                _avatarShouldChange = true;
+            }
 
-            // see if our current avatar is appropriately stamped
             if (_avatarId == 0 || (_themeId != 0 && !avaRepo.isThemeStamped(_themeId, _avatarId))) {
                 // if not, we will have to display the avatar selection UI; for now choose
                 // a random stamped avatar
                 _avatars = avaRepo.findItems(_memberId, null, _themeId);
+                _avatarId = (_avatars.size() == 0) ? 0 :
+                    _avatars.get(RandomUtil.getInt(_avatars.size())).getMasterId();
+                _avatarShouldChange = true;
             }
         }
 
@@ -500,28 +508,23 @@ public class MsoySceneRegistry extends SpotSceneRegistry
                     Lists.transform(_quicklist, new ItemRecord.ToItem<Avatar>())));
             }
             // if we're not switching avatars, we're done
-            if (_avatars == null) {
+            if (!_avatarShouldChange) {
                 finishOrPunt();
             }
             // otherwise we have to route everything through MemberManager.setAvatar()
-            if (_avatars != null) {
-                int newAvatarId = (_avatars.size() == 0) ? 0 :
-                    _avatars.get(RandomUtil.getInt(_avatars.size())).getMasterId();
-                _memMan.setAvatar(_user, newAvatarId, new MemberManager.SetAvatarListener() {
-                    public void success () {
-                        finishOrPunt();
-                    }
-                    public void accessDeniedFailure () throws Exception {
-                        // let's reluctantly accept this until we see if it happens for real
-                        finishOrPunt();
-                    }
-                    public void noSuchItemFailure () throws Exception {
-                        // let's reluctantly accept this until we see if it happens for real
-                        finishOrPunt();
-                    }
-                });
-                return;
-            }
+            _memMan.setAvatar(_user, _avatarId, new MemberManager.SetAvatarListener() {
+                public void success () {
+                    finishOrPunt();
+                }
+                public void accessDeniedFailure () throws Exception {
+                    // let's reluctantly accept this until we see if it happens for real
+                    finishOrPunt();
+                }
+                public void noSuchItemFailure () throws Exception {
+                    // let's reluctantly accept this until we see if it happens for real
+                    finishOrPunt();
+                }
+            });
         }
 
         protected void finishOrPunt ()
@@ -542,6 +545,7 @@ public class MsoySceneRegistry extends SpotSceneRegistry
         protected int _avatarId;
         protected List<AvatarRecord> _quicklist;
         protected List<AvatarRecord> _avatars;
+        protected boolean _avatarShouldChange;
         protected int _gameId;
     }
 
