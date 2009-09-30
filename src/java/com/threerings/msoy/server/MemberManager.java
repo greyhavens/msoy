@@ -855,11 +855,9 @@ public class MemberManager
         // now fire off a unit to update the avatar information in the database
         _invoker.postUnit(new WriteOnlyUnit("updateAvatar") {
             @Override public void invokePersist () throws Exception {
-                _memberRepo.configureAvatarId(
-                    user.getMemberId(), (avatar == null) ? 0 : avatar.itemId);
-                if (user.mogGroupId != 0) {
-                    _themeRepo.noteAvatarWorn(user.getMemberId(), user.mogGroupId, avatar.itemId);
-                }
+                int avatarId = (avatar == null) ? 0 : avatar.itemId;
+                _memberRepo.configureAvatarId(user.getMemberId(), avatarId);
+                _themeRepo.noteAvatarWorn(user.getMemberId(), user.mogGroupId, avatarId);
             }
             @Override public void handleFailure (Exception pe) {
                 log.warning("configureAvatarId failed", "user", user.which(), "avatar", avatar, pe);
