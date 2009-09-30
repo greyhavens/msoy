@@ -381,11 +381,11 @@ public class MsoyPeerManager extends CrowdPeerManager
      * Called by the RoomManager when it is hosting a scene.
      */
     public void roomDidStartup (
-        int sceneId, String name, int mogId, int ownerId, byte ownerType, byte accessControl)
+        int sceneId, String name, int themeId, int ownerId, byte ownerType, byte accessControl)
     {
         log.debug("Hosting scene", "id", sceneId, "name", name);
         _mnobj.addToHostedScenes(new HostedRoom(
-            sceneId, name, mogId, ownerId, ownerType, accessControl));
+            sceneId, name, themeId, ownerId, ownerType, accessControl));
     }
 
     /**
@@ -400,11 +400,11 @@ public class MsoyPeerManager extends CrowdPeerManager
     /**
      * Called by the RoomManager when information pertinent to the HostedRoom has been updated.
      */
-    public void roomUpdated (int sceneId, String name, int mogId, int ownerId, byte ownerType,
+    public void roomUpdated (int sceneId, String name, int themeId, int ownerId, byte ownerType,
         byte accessControl)
     {
         _mnobj.updateHostedScenes(new HostedRoom(
-            sceneId, name, mogId, ownerId, ownerType, accessControl));
+            sceneId, name, themeId, ownerId, ownerType, accessControl));
     }
 
     /**
