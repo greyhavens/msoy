@@ -49,6 +49,8 @@ public class ShopUtil
             args.add("s" + query.search);
         } else if (query.creatorId != 0) {
             args.add("c" + query.creatorId);
+        } else if (query.themeGroupId != 0) {
+            args.add("m" + query.themeGroupId);
         } else {
             args.add("");
         }
@@ -74,6 +76,12 @@ public class ShopUtil
         } else if (action.startsWith("c")) {
             try {
                 query.creatorId = Integer.parseInt(action.substring(1));
+            } catch (Exception e) {
+                // oh well
+            }
+        } else if (action.startsWith("m")) {
+            try {
+                query.themeGroupId = Integer.parseInt(action.substring(1));
             } catch (Exception e) {
                 // oh well
             }

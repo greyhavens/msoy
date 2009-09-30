@@ -104,7 +104,8 @@ public class CatalogLogic
     /**
      * Loads raw catalog listings.
      */
-    public List<CatalogRecord> loadCatalog (MemberRecord mrec, Query query, int offset, int rows)
+    public List<CatalogRecord> loadCatalog (
+        MemberRecord mrec, Query query, int offset, int rows)
         throws ServiceException
     {
         ItemRepository<ItemRecord> repo = _itemLogic.getRepository(query.itemType);
@@ -130,7 +131,7 @@ public class CatalogLogic
         Currency currency, int authedCost, String memories)
         throws ServiceException
     {
-        // load up the parimary listing and its bases
+        // load up the primary listing and its bases
         final List<CatalogRecord> listings = Lists.newArrayList(listing);
         int basisId;
         while ((basisId = listings.get(listings.size() - 1).basisId) > 0) {

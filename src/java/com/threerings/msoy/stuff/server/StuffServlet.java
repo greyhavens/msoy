@@ -193,7 +193,7 @@ public class StuffServlet extends MsoyServiceServlet
     }
 
     // from interface StuffService
-    public List<Item> loadInventory (int memberId, byte type, String query, int themeId)
+    public List<Item> loadInventory (int memberId, byte type, String query)
         throws ServiceException
     {
         MemberRecord memrec = requireAuthedUser();
@@ -209,7 +209,7 @@ public class StuffServlet extends MsoyServiceServlet
         }
 
         List<Item> items = Lists.newArrayList(Lists.transform(
-            _itemLogic.getRepository(type).findItems(memberId, query, themeId),
+            _itemLogic.getRepository(type).findItems(memberId, query, memrec.themeGroupId),
             new ItemRecord.ToItem<Item>()));
 
         Collections.sort(items);

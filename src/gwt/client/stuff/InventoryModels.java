@@ -193,32 +193,29 @@ public class InventoryModels
                 cb.onFailure(caught);
             }
         };
-        _stuffsvc.loadInventory(key.memberId, key.type, key.query, key.mogId, callback);
+        _stuffsvc.loadInventory(key.memberId, key.type, key.query, callback);
     }
 
     protected static class Key {
         public final int memberId;
         public final byte type;
         public final String query;
-        public final int mogId;
 
         public Key (int memberId, byte type, String query, int mogId)
         {
             this.memberId = memberId;
             this.type = type;
             this.query = StringUtil.isBlank(query) ? null : query;
-            this.mogId = mogId;
         }
 
         public int hashCode () {
-            return memberId ^ type ^ (query == null ? 0 : query.hashCode()) ^ mogId;
+            return memberId ^ type ^ (query == null ? 0 : query.hashCode());
         }
 
         public boolean equals (Object other) {
             Key okey = (Key)other;
             return memberId == okey.memberId && type == okey.type &&
-                ((query != null && query.equals(okey.query)) || query == okey.query) &&
-                okey.mogId == mogId;
+                ((query != null && query.equals(okey.query)) || query == okey.query);
         }
     }
 

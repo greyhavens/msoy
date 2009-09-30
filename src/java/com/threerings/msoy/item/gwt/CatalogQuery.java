@@ -47,7 +47,7 @@ public class CatalogQuery
     /** The member id of the creator whose listings we want exclusively to see, or 0. */
     public int creatorId;
 
-    /** The group id of the mog we want to restrict listings to, or 0. */
+    /** The group id of the theme we want to restrict listings to, or 0. */
     public int themeGroupId;
 
     public CatalogQuery ()

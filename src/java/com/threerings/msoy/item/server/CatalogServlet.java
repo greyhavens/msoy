@@ -89,6 +89,11 @@ public class CatalogServlet extends MsoyServiceServlet
             return result;
         }
 
+        // if the query does not explicitly request a theme, use the player's current theme (if any)
+        if (query.themeGroupId == 0) {
+            query.themeGroupId = mrec.themeGroupId;
+        }
+
         // pass the complexity buck off to the catalog logic
         List<CatalogRecord> data = _catalogLogic.loadCatalog(
             mrec, new CatalogLogic.Query(query, 0), offset, rows);
