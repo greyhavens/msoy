@@ -48,7 +48,7 @@ public class CatalogQuery
     public int creatorId;
 
     /** The group id of the mog we want to restrict listings to, or 0. */
-    public int mogId;
+    public int themeGroupId;
 
     public CatalogQuery ()
     {
@@ -61,14 +61,14 @@ public class CatalogQuery
         this.tag = source.tag;
         this.search = source.search;
         this.creatorId = source.creatorId;
-        this.mogId = source.mogId;
+        this.themeGroupId = source.themeGroupId;
     }
 
     @Override // from Object
     public int hashCode ()
     {
         return itemType ^ sortBy ^ (tag == null ? 0 : tag.hashCode()) ^
-            (search == null ? 0 : search.hashCode()) ^ creatorId ^ mogId;
+            (search == null ? 0 : search.hashCode()) ^ creatorId ^ themeGroupId;
     }
 
     @Override // from Object
@@ -76,7 +76,7 @@ public class CatalogQuery
     {
         CatalogQuery oquery = (CatalogQuery)other;
         return (itemType == oquery.itemType && sortBy == oquery.sortBy &&
-                oquery.creatorId == creatorId && oquery.mogId == mogId &&
+                oquery.creatorId == creatorId && oquery.themeGroupId == themeGroupId &&
                 (tag == null ? (oquery.tag == null) : tag.equals(oquery.tag)) &&
                 (search == null ? (oquery.search == null) : search.equals(oquery.search)));
     }
@@ -85,6 +85,6 @@ public class CatalogQuery
     public String toString ()
     {
         return "[type=" + itemType + ", sort=" + sortBy + ", tag=" + tag + ", search=" + search
-            + ", creator=" + creatorId + ", mog=" + mogId + "]";
+            + ", creator=" + creatorId + ", mog=" + themeGroupId + "]";
     }
 }
