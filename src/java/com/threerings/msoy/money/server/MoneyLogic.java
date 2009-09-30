@@ -1519,7 +1519,6 @@ public class MoneyLogic
     protected PriceQuoteCache _priceCache = new PriceQuoteCache();
 
     // dependencies
-    @Inject protected BlingPoolDistributor _blingDistributor;
     @Inject protected MemberLogic _memberLogic;
     @Inject protected MemberRepository _memberRepo;
     @Inject protected MoneyExchange _exchange;
