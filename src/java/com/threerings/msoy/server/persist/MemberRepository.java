@@ -666,6 +666,14 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
+     * Configures a member's current theme.
+     */
+    public void configureThemeId (int memberId, int themeGroupId)
+    {
+        updatePartial(MemberRecord.getKey(memberId), MemberRecord.THEME_GROUP_ID, themeGroupId);
+    }
+
+    /**
      * Updates a member's badgesVersion.
      */
     public void updateBadgesVersion (int memberId, short badgesVersion)

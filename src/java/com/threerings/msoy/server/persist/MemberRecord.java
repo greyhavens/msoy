@@ -132,6 +132,7 @@ public class MemberRecord extends PersistentRecord
     public static final ColumnExp PERMA_NAME = colexp(_R, "permaName");
     public static final ColumnExp HOME_SCENE_ID = colexp(_R, "homeSceneId");
     public static final ColumnExp AVATAR_ID = colexp(_R, "avatarId");
+    public static final ColumnExp THEME_GROUP_ID = colexp(_R, "themeGroupId");
     public static final ColumnExp CREATED = colexp(_R, "created");
     public static final ColumnExp SESSIONS = colexp(_R, "sessions");
     public static final ColumnExp SESSION_MINUTES = colexp(_R, "sessionMinutes");
@@ -152,7 +153,7 @@ public class MemberRecord extends PersistentRecord
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 29;
+    public static final int SCHEMA_VERSION = 30;
 
     /** This member's unique id. */
     @Id @GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -175,6 +176,9 @@ public class MemberRecord extends PersistentRecord
 
     /** The avatar of this user, or 0. */
     public int avatarId;
+
+    /** The themed environment this user is currently in, or 0. */
+    public int themeGroupId;
 
     /** The date on which this member record was created. */
     public Date created;
