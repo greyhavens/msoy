@@ -23,7 +23,6 @@ import com.threerings.msoy.data.all.VisitorInfo;
 
 import com.threerings.msoy.server.MemberLogic;
 import com.threerings.msoy.server.MsoyAuthenticator;
-import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 
@@ -127,7 +126,7 @@ public class FacebookCallbackServlet extends HttpServlet
         ReqInfo info = parseReqInfo(req);
 
         // make sure we have signed facebook data
-        validateSignature(req, info.appSecret);
+        validateSignature(req, info.fb.appSecret);
 
         // ping should only POST
         if (info.ping) {
@@ -141,7 +140,7 @@ public class FacebookCallbackServlet extends HttpServlet
         // if the user has not authorized our application
         if (session == null) {
             // redirect to app login page and bail (parameters aren't retained so don't bother)
-            log.info("Redirecting to login", "key", info.apiKey);
+            log.info("Redirecting to login", "key", info.fb.apiKey);
             MsoyHttpServer.sendTopRedirect(rsp, info.getLoginURL());
             return;
         }
@@ -163,12 +162,13 @@ public class FacebookCallbackServlet extends HttpServlet
 
             // track it
             // TODO: Kontagent tracking for API games?
-            if (info.mainApp) {
-                _tracker.trackUsage(_faceLogic.getDefaultGamesSite().getFacebookAppId(),
-                    Long.parseLong(creds.uid), trackingId, !StringUtil.isBlank(newInstall));
+            Integer appId = info.siteId.getFacebookAppId();
+            if (appId != null) {
+                _tracker.trackUsage(
+                    appId, Long.parseLong(creds.uid), trackingId, !StringUtil.isBlank(newInstall));
             }
 
-            log.info("Redirecting to token", "key", info.apiKey, "token", token);
+            log.info("Redirecting to token", "key", info.fb.apiKey, "token", token);
 
             // TODO: probably don't need this anymore
             // add the privacy header (for IE) so we can set some cookies in an iframe
@@ -181,11 +181,11 @@ public class FacebookCallbackServlet extends HttpServlet
 
         // otherwise redirect the top frame back to this page with the already-processed tokens
         log.info("Initiating swizzle", "session", session, "token", token,
-            "canvas", info.canvasName);
+            "canvas", info.fb.canvasName);
 
         MsoyHttpServer.sendTopRedirect(rsp, SharedNaviUtil.buildRequest(
             req.getRequestURI(), FrameParam.SESSION.name, session, FrameParam.TOKEN.name, token,
-            FrameParam.CANVAS.name, info.canvasName, FrameParam.TRACKING.name, trackingId,
+            FrameParam.CANVAS.name, info.fb.canvasName, FrameParam.TRACKING.name, trackingId,
             FrameParam.NEW_INSTALL.name, newInstall));
     }
 
@@ -204,10 +204,9 @@ public class FacebookCallbackServlet extends HttpServlet
 
         // we should either have 'canvas_user' or 'user'
         creds.uid = StringUtil.getOr(ConnParam.CANVAS_USER.get(req), ConnParam.USER.get(req));
-        creds.apiKey = info.apiKey;
-        creds.appSecret = info.appSecret;
-        creds.site = info.mainApp ? _faceLogic.getDefaultGamesSite() :
-            ExternalSiteId.facebookGame(info.game.getIntId());
+        creds.apiKey = info.fb.apiKey;
+        creds.appSecret = info.fb.appSecret;
+        creds.site = info.siteId;
 
         // create a new visitor info which will either be ignored or used shortly
         VisitorInfo vinfo = new VisitorInfo();
@@ -253,7 +252,7 @@ public class FacebookCallbackServlet extends HttpServlet
         throws IOException, ServiceException
     {
         ReqInfo info = parseReqInfo(req);
-        validateSignature(req, info.appSecret);
+        validateSignature(req, info.fb.appSecret);
 
         if (!info.ping) {
             throw new ServiceException();
@@ -276,9 +275,11 @@ public class FacebookCallbackServlet extends HttpServlet
         // to the tracking id parameter - instead adds are tracked specially by attaching
         // NEW_INSTALL to the parameters for the login redirect and checking it later
         long uid = Long.parseLong(ConnParam.USER.get(req));
-        if (!added && info.mainApp) {
-            _tracker.trackApplicationRemoved(
-                _faceLogic.getDefaultGamesSite().getFacebookAppId(), uid);
+        if (!added) {
+            Integer appId = info.siteId.getFacebookAppId();
+            if (appId != null) {
+                _tracker.trackApplicationRemoved(appId, uid);
+            }
         }
     }
 
@@ -323,10 +324,8 @@ public class FacebookCallbackServlet extends HttpServlet
 
         if (!path.startsWith(GAME_PATH)) {
             // fill in the FB creds for this deployment
-            info.apiKey = ServerConfig.config.getValue("facebook.api_key", "");
-            info.appSecret = ServerConfig.config.getValue("facebook.secret", "");
-            info.canvasName = ServerConfig.config.getValue("facebook.canvas_name", "");
-            info.mainApp = true;
+            info.siteId = _faceLogic.getDefaultGamesSite();
+            info.fb = _facebookRepo.loadAppFacebookInfo(info.siteId.getFacebookAppId());
 
             if (path.startsWith(PING_PATH)) {
                 // pings don't have game and vector data, just return
@@ -358,17 +357,14 @@ public class FacebookCallbackServlet extends HttpServlet
             throw new ServiceException("Unknown game: " + gameId);
         }
 
+        info.siteId = ExternalSiteId.facebookGame(ginfo.gameId);
         info.game = new FacebookGame(ginfo.gameId);
 
-        FacebookInfoRecord fbinfo = _facebookRepo.loadGameFacebookInfo(ginfo.gameId);
-        if (fbinfo.apiKey == null) {
+        info.fb = _facebookRepo.loadGameFacebookInfo(ginfo.gameId);
+        if (StringUtil.isBlank(info.fb.apiKey)) {
             throw new ServiceException("Game missing Facebook info: " + ginfo.name);
         }
 
-        info.apiKey = fbinfo.apiKey;
-        info.appSecret = fbinfo.appSecret;
-        info.canvasName = fbinfo.canvasName;
-        info.chromeless = fbinfo.chromeless;
         info.vector = FacebookTemplate.toEntryVector("proxygame", "" + ginfo.gameId);
         return info;
     }
@@ -376,15 +372,12 @@ public class FacebookCallbackServlet extends HttpServlet
     protected static class ReqInfo
     {
         public FacebookGame game;
-        public String apiKey;
-        public String appSecret;
-        public String canvasName;
-        public boolean chromeless;
+        public FacebookInfoRecord fb;
         public String vector;
         public boolean challenge;
         public boolean ping;
         public String trackingId;
-        public boolean mainApp;
+        public ExternalSiteId siteId;
 
         /**
          * Gets the GWT token that the user should be redirected to in the whirled application.
@@ -394,7 +387,7 @@ public class FacebookCallbackServlet extends HttpServlet
         {
             // and send them to the appropriate page
             if (game != null) {
-                if (chromeless) {
+                if (fb.chromeless) {
                     // chromeless games go directly into the game
                     return Pages.WORLD.makeToken("fbgame", game.getIntId());
 
@@ -421,7 +414,7 @@ public class FacebookCallbackServlet extends HttpServlet
          */
         public String attachCreds (String token, FacebookAppCreds creds)
         {
-            if (game == null || !chromeless) {
+            if (game == null || !fb.chromeless) {
                 return token;
             }
 
@@ -434,7 +427,7 @@ public class FacebookCallbackServlet extends HttpServlet
         {
             // pass in an installed flag so we know when the user has arrived for the first time
             String nextUrl = SharedNaviUtil.buildRequest(
-                FacebookLogic.getCanvasUrl(canvasName), FrameParam.NEW_INSTALL.name, "y");
+                FacebookLogic.getCanvasUrl(fb.canvasName), FrameParam.NEW_INSTALL.name, "y");
 
             // preserve the tracking id after login
             if (!StringUtil.isBlank(trackingId)) {
@@ -444,7 +437,8 @@ public class FacebookCallbackServlet extends HttpServlet
 
             // assemble the url with all the parameters
             return SharedNaviUtil.buildRequest("http://www.facebook.com/login.php",
-                "api_key", apiKey, "canvas", "1", "v", "1.0", "next", StringUtil.encode(nextUrl));
+                "api_key", fb.apiKey, "canvas", "1", "v", "1.0",
+                "next", StringUtil.encode(nextUrl));
         }
     }
 
