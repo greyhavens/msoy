@@ -403,9 +403,10 @@ public class KontagentLogic
         }
     }
 
-    protected static final Random _rand = new Random();
-
+    // dependencies
     @Inject protected FacebookRepository _facebookRepo;
+
+    protected static final Random _rand = new Random();
 
     protected static final String API_URL = DeploymentConfig.devDeployment ?
         "http://api.test.kontagent.net/api/" : "http://api.geo.kontagent.net/api/";
