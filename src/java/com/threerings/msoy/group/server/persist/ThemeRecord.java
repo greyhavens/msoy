@@ -18,15 +18,19 @@ public class ThemeRecord extends PersistentRecord
     // AUTO-GENERATED: FIELDS START
     public static final Class<ThemeRecord> _R = ThemeRecord.class;
     public static final ColumnExp GROUP_ID = colexp(_R, "groupId");
+    public static final ColumnExp PLAY_ON_ENTER = colexp(_R, "playOnEnter");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 1;
+    public static final int SCHEMA_VERSION = 2;
 
     /** The groupId of this theme. */
     @Id
     public int groupId;
+
+    /** Whether or not to start this theme group's associated AVRG upon entering a themed room. */
+    public boolean playOnEnter;
 
     public ThemeRecord ()
     {
