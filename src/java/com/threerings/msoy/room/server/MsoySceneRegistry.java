@@ -502,15 +502,18 @@ public class MsoySceneRegistry extends SpotSceneRegistry
             if (_themeId != _user.mogGroupId) {
                 _user.setMogGroupId(_themeId);
             }
+
             // if we loaded a quicklist (and they weren't set during our thread hopping), set them
             if (_quicklist != null) {
                 _user.setAvatarCache(DSet.newDSet(
                     Lists.transform(_quicklist, new ItemRecord.ToItem<Avatar>())));
             }
+
             // if we're not switching avatars, we're done
             if (!_avatarShouldChange) {
                 finishOrPunt();
             }
+
             // otherwise we have to route everything through MemberManager.setAvatar()
             _memMan.setAvatar(_user, _avatarId, new MemberManager.SetAvatarListener() {
                 public void success () {
