@@ -75,9 +75,9 @@ public class MsoyScene extends SceneImpl
     /**
      * Returns the whirled id for this scene, or zero.
      */
-    public int getMogId ()
+    public int getThemeId ()
     {
-        return _model.mogId;
+        return _model.themeId;
     }
 
     /**

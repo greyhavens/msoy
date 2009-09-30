@@ -66,7 +66,7 @@ public class MsoySceneModel extends SceneModel
     public Name ownerName;
 
     /** The group of the Mog associated with this room, or 0 if none. */
-    public int mogId;
+    public int themeId;
 
     /** The game associated with this room (usually the group's game), or 0 if none. */
     public int gameId;
