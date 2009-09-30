@@ -47,6 +47,8 @@ import com.google.code.facebookapi.schema.User;
 import com.google.code.facebookapi.schema.UsersGetStandardInfoResponse;
 
 import com.threerings.cron.server.CronLogic;
+import com.threerings.facebook.FQL;
+import com.threerings.facebook.FQLQuery;
 import com.threerings.util.MessageBundle;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;
@@ -220,7 +222,7 @@ public class FacebookLogic
         ExternalSiteId siteId, String sessionKey, int timeout)
     {
         timeout = timeout == 0 ? READ_TIMEOUT : timeout;
-        FacebookInfoRecord fbinfo = loadSiteInfo(siteId); 
+        FacebookInfoRecord fbinfo = loadSiteInfo(siteId);
         if (StringUtil.isBlank(fbinfo.apiKey)) {
             throw new IllegalStateException("Missing api_key for site " + siteId);
         }
@@ -1004,10 +1006,10 @@ public class FacebookLogic
             if (_mrec != null) {
                 try {
                     trySendFriends();
-    
+
                 } catch (Exception e) {
                     log.warning("Send-level notification failure", "id", _batchId, e);
-    
+
                 } finally {
                     onFinish.run();
                 }
