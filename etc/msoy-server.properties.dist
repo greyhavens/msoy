@@ -172,12 +172,6 @@ oooauth.access_denied_url = /register/access_denied.wm
 # facebook.application_name = 
 
 #
-# Kontagent Application configuration
-
-# kontagent.api_key =
-# kontagent.secret =
-
-#
 # Connection details for the event log server. The spool directory is relative
 # to the server_root unless it starts with /.
 
