@@ -220,7 +220,7 @@ public class FacebookLogic
         ExternalSiteId siteId, String sessionKey, int timeout)
     {
         timeout = timeout == 0 ? READ_TIMEOUT : timeout;
-        FacebookInfoRecord fbinfo = loadSiteFacebookInfo(siteId); 
+        FacebookInfoRecord fbinfo = loadSiteInfo(siteId); 
         if (StringUtil.isBlank(fbinfo.apiKey)) {
             throw new IllegalStateException("Missing api_key for site " + siteId);
         }
@@ -258,7 +258,7 @@ public class FacebookLogic
             return null;
         }
 
-        FacebookInfoRecord fbinfo = loadSiteFacebookInfo(siteId);
+        FacebookInfoRecord fbinfo = loadSiteInfo(siteId);
         if (fbinfo == null || StringUtil.isBlank(fbinfo.canvasName)) {
             return null;
         }
@@ -272,6 +272,29 @@ public class FacebookLogic
         throws ServiceException
     {
         return loadSessionInfo(siteId, mrec, 0);
+    }
+
+    /**
+     * Loads the facebook application info for the given external site.
+     * @throws IllegalArgumentException if the site is not a facebook site
+     * @throws RuntimeException if the info could not be loaded
+     */
+    public FacebookInfoRecord loadSiteInfo (ExternalSiteId siteId)
+    {
+        Preconditions.checkArgument(siteId.auther == ExternalSiteId.Auther.FACEBOOK);
+        Integer appId = siteId.getFacebookAppId(), gameId = siteId.getFacebookGameId();
+        Preconditions.checkArgument(gameId == null ^ appId == null);
+
+        FacebookInfoRecord fbinfo;
+        if (appId != null) {
+            fbinfo = _facebookRepo.loadAppFacebookInfo(appId);
+        } else {
+            fbinfo = _facebookRepo.loadGameFacebookInfo(gameId);
+        }
+        if (fbinfo == null) {
+            throw new RuntimeException("Facebook info not found [siteId=" + siteId + "]");
+        }
+        return fbinfo;
     }
 
     /**
@@ -299,7 +322,7 @@ public class FacebookLogic
         throws ServiceException
     {
         Map<String, String> replacements = Maps.newHashMap();
-        replacements.put("app_url", getCanvasUrl(loadSiteFacebookInfo(siteId).canvasName));
+        replacements.put("app_url", getCanvasUrl(loadSiteInfo(siteId).canvasName));
         scheduleNotification(siteId, null, null, id, replacements, false, delay);
     }
 
@@ -813,7 +836,7 @@ public class FacebookLogic
         try {
             // auto-notifications only go out on the default games app
             String notifId = _listRepo.getCursorItem(DAILY_GAMES_LIST, DAILY_GAMES_CURSOR);
-            FacebookInfoRecord wgames = loadSiteFacebookInfo(_defaultSite);
+            FacebookInfoRecord wgames = loadSiteInfo(_defaultSite);
             if (notifId != null && wgames != null) {
                 scheduleNotification(ExternalSiteId.facebookApp(wgames.appId), notifId, 5);
                 _listRepo.advanceCursor(DAILY_GAMES_LIST, DAILY_GAMES_CURSOR);
@@ -822,24 +845,6 @@ public class FacebookLogic
         } catch (ServiceException ex) {
             log.warning("Could not send daily games notification", ex);
         }
-    }
-
-    protected FacebookInfoRecord loadSiteFacebookInfo (ExternalSiteId siteId)
-    {
-        Preconditions.checkArgument(siteId.auther == ExternalSiteId.Auther.FACEBOOK);
-        Integer appId = siteId.getFacebookAppId(), gameId = siteId.getFacebookGameId();
-        Preconditions.checkArgument(gameId == null ^ appId == null);
-
-        FacebookInfoRecord fbinfo;
-        if (appId != null) {
-            fbinfo = _facebookRepo.loadAppFacebookInfo(appId);
-        } else {
-            fbinfo = _facebookRepo.loadGameFacebookInfo(gameId);
-        }
-        if (fbinfo == null) {
-            throw new RuntimeException("Facebook info not found [siteId=" + siteId + "]");
-        }
-        return fbinfo;
     }
 
     /**
