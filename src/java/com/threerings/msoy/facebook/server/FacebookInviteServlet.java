@@ -252,7 +252,8 @@ public class FacebookInviteServlet extends HttpServlet
         }
 
         // fire off to Kontagent
-        _tracker.trackInviteSent(sender.facebookID,
+        int appId = _fbLogic.getDefaultGamesSite().getFacebookAppId();
+        _tracker.trackInviteSent(appId, sender.facebookID,
             req.getParameter(ArgNames.FBParam.TRACKING.name), ids);
 
         // TODO: record requests to mochi games too

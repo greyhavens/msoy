@@ -720,6 +720,8 @@ public class FacebookLogic
     protected int updateDemographics (
         ExternalSiteId siteId, FacebookJaxbRestClient client, List<ExternalMapRecord> users)
     {
+        int appId = siteId.getFacebookAppId();
+
         // create mapping of member id to external record
         IntMap<ExternalMapRecord> fbusers = IntMaps.newHashIntMap();
         for (ExternalMapRecord exrec : users) {
@@ -729,9 +731,8 @@ public class FacebookLogic
         // remove ones that we've done before
         // TODO: should probably limit to records less than a certain age so that data gets
         // refreshed from time to time... or just prune old records
-        for (FacebookActionRecord action : _facebookRepo.loadActions(
-            siteId.getFacebookAppId(), Lists.transform(users, MAPREC_TO_MEMBER_ID),
-            FacebookActionRecord.Type.GATHERED_DATA)) {
+        for (FacebookActionRecord action : _facebookRepo.loadActions(appId, Lists.transform(
+            users, MAPREC_TO_MEMBER_ID), FacebookActionRecord.Type.GATHERED_DATA)) {
             fbusers.remove(action.memberId);
         }
 
@@ -790,10 +791,10 @@ public class FacebookLogic
             }
 
             // send them to the tracker and note that we've done so
-            _tracker.trackUserInfo(uid, birthYear, gender, city, state, zip, country, friendCount);
+            _tracker.trackUserInfo(appId, uid, birthYear, gender, city, state, zip, country,
+                friendCount);
             _facebookRepo.recordAction(
-                FacebookActionRecord.dataGathered(
-                    siteId.getFacebookAppId(), memberIds.get(uid)));
+                FacebookActionRecord.dataGathered(appId, memberIds.get(uid)));
         }
 
         return uinfo.getUser().size();
@@ -905,6 +906,7 @@ public class FacebookLogic
         {
             // TODO: fetch the N value on a timer from the API instead of using the runtime config
             int alloc = _runtime.server.fbNotificationsAlloc;
+            int appId = _siteId.getFacebookAppId();
 
             if (_appFriendsOnly) {
                 // this will only send to the first N users where N is the "notifications_per_day"
@@ -915,24 +917,22 @@ public class FacebookLogic
                 // send, see if exception stops
                 List<ExternalMapRecord> targets = loadMappedFriends(_siteId, _mrec, false, alloc);
                 SessionInfo sinf = loadSessionInfo(_siteId, _mrec, BATCH_READ_TIMEOUT);
-                Collection<String> recipients = sendNotifications(sinf.client,
-                    _siteId.getFacebookAppId(), _batchId, _text, targets, MAPREC_TO_UID_EXP,
-                    APP_USER_FILTER, false);
-                _tracker.trackNotificationSent(sinf.fbid, _trackingId, recipients);
+                Collection<String> recipients = sendNotifications(sinf.client, appId, _batchId,
+                    _text, targets, MAPREC_TO_UID_EXP, APP_USER_FILTER, false);
+                _tracker.trackNotificationSent(appId, sinf.fbid, _trackingId, recipients);
             } else {
                 // see above
                 List<Long> targets = loadFriends(_siteId, _mrec);
                 Collections.shuffle(targets);
                 targets = alloc >= targets.size() ? targets : targets.subList(0, alloc);
                 SessionInfo sinf = loadSessionInfo(_siteId, _mrec, BATCH_READ_TIMEOUT);
-                Collection<String> recipients = sendNotifications(sinf.client,
-                    _siteId.getFacebookAppId(), _batchId, _text, targets,
-                    new Function<Long, FQL.Exp> () {
+                Collection<String> recipients = sendNotifications(sinf.client, appId, _batchId,
+                    _text, targets, new Function<Long, FQL.Exp> () {
                     public FQL.Exp apply (Long uid) {
                         return FQL.unquoted(uid);
                     }
                 }, Predicates.<FQLQuery.Record>alwaysTrue(), false);
-                _tracker.trackNotificationSent(sinf.fbid, _trackingId, recipients);
+                _tracker.trackNotificationSent(appId, sinf.fbid, _trackingId, recipients);
             }
         }
 
@@ -966,7 +966,8 @@ public class FacebookLogic
                     // Kontagent doesn't supply a special message for global notifications,
                     // so just set sender id to 0
                     // TODO: we may need to do something different for global notifications
-                    _tracker.trackNotificationSent(0, _trackingId, recipients);
+                    _tracker.trackNotificationSent(
+                        _siteId.getFacebookAppId(), 0, _trackingId, recipients);
 
                     pos += BATCH_SIZE;
                     if (pos < allUsers.size()) {

@@ -13,10 +13,12 @@ import java.util.Random;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.samskivert.util.StringUtil;
 import com.threerings.msoy.data.all.DeploymentConfig;
-import com.threerings.msoy.server.ServerConfig;
+import com.threerings.msoy.facebook.server.persist.FacebookRepository;
+import com.threerings.msoy.facebook.server.persist.KontagentInfoRecord;
 import com.threerings.msoy.web.gwt.SharedNaviUtil;
 
 import static com.threerings.msoy.Log.log;
@@ -188,32 +190,32 @@ public class KontagentLogic
      * @param trackingId the tracking id given via the canvas url
      * @param newInstall if this is the user's first visit after the login redirect
      */
-    public void trackUsage (long uid, String trackingId, boolean newInstall)
+    public void trackUsage (int appId, long uid, String trackingId, boolean newInstall)
     {
         TrackingId id = parseTrackingId(trackingId, true);
         String uidStr = String.valueOf(uid);
         if (newInstall) {
             if (id != null) {
-                sendMessage(MessageType.APP_ADDED, "s", uidStr, "u", id.uuid);
+                sendMessage(appId, MessageType.APP_ADDED, "s", uidStr, "u", id.uuid);
             } else {
-                sendMessage(MessageType.APP_ADDED, "s", uidStr, "su", ShortTag.UNKNOWN.id);
+                sendMessage(appId, MessageType.APP_ADDED, "s", uidStr, "su", ShortTag.UNKNOWN.id);
             }
         }
 
         if (id == null) {
             // TODO: hmm, new short tag for different sources? (e.g. app bookmark vs. clicking the
             // app link in an invite)
-            sendMessage(MessageType.UNDIRECTED, "s", uidStr, "tu", ShortTag.UNKNOWN.id, "i", "1");
+            sendMessage(appId, MessageType.UNDIRECTED, "s", uidStr, "tu", ShortTag.UNKNOWN.id, "i", "1");
 
         } else {
             switch (id.type.responseType) {
             case INVITE_RESPONSE:
             case NOTIFICATION_RESPONSE:
-                sendMessage(id.type.responseType, "r", uidStr, "i", "1", "u", id.uuid,
+                sendMessage(appId, id.type.responseType, "r", uidStr, "i", "1", "u", id.uuid,
                     "st1", id.subtype, "tu", id.type.responseType.id);
                 break;
             case POST_RESPONSE:
-                sendMessage(id.type.responseType, "r", uidStr, "i", "1", "tu", FEED_CHANNEL,
+                sendMessage(appId, id.type.responseType, "r", uidStr, "i", "1", "tu", FEED_CHANNEL,
                     "st1", id.subtype, "u", id.uuid);
                 break;
             default:
@@ -226,23 +228,23 @@ public class KontagentLogic
     /**
      * Tracks the removal of the application.
      */
-    public void trackApplicationRemoved (long uid)
+    public void trackApplicationRemoved (int appId, long uid)
     {
-        sendMessage(MessageType.APP_REMOVED, "s", String.valueOf(uid));
+        sendMessage(appId, MessageType.APP_REMOVED, "s", String.valueOf(uid));
     }
 
     /**
      * Tracks an invite sent by the user. The tracking id is normally obtained from a previously
      * constructed {@link TrackingId} and passed via the cgi invite submission parameters.
      */
-    public void trackInviteSent (long senderId, String trackingId, String[] recipients)
+    public void trackInviteSent (int appId, long senderId, String trackingId, String[] recipients)
     {
         TrackingId id = parseTrackingId(trackingId, false);
         if (id == null) {
             return;
         }
 
-        sendMessage(MessageType.INVITE_SENT, "s", String.valueOf(senderId),
+        sendMessage(appId, MessageType.INVITE_SENT, "s", String.valueOf(senderId),
             "r", StringUtil.join(recipients, StringUtil.encode(",")), "u", id.uuid,
             "st1", id.subtype);
     }
@@ -253,14 +255,14 @@ public class KontagentLogic
      * times for large batches.
      */
     public void trackNotificationSent (
-        long senderId, TrackingId trackingId, Collection<String> recipients)
+        int appId, long senderId, TrackingId trackingId, Collection<String> recipients)
     {
         // no need to send if there are no recipients
         if (recipients.size() == 0) {
             return;
         }
 
-        sendMessage(MessageType.NOTIFICATION_SENT, "s", String.valueOf(senderId),
+        sendMessage(appId, MessageType.NOTIFICATION_SENT, "s", String.valueOf(senderId),
             "r", StringUtil.join(recipients.toArray(), StringUtil.encode(",")),
             "u", trackingId.uuid, "st1", trackingId.subtype);
     }
@@ -272,14 +274,14 @@ public class KontagentLogic
      * to pass cancels through to Kontagent and let them be 0% responses.
      * TODO: work around lack of cancel/publish distinction
      */
-    public void trackFeedStoryPosted (long senderId, String trackingId)
+    public void trackFeedStoryPosted (int appId, long senderId, String trackingId)
     {
         TrackingId id = parseTrackingId(trackingId, false);
         if (id == null) {
             return;
         }
 
-        sendMessage(MessageType.POST, "s", String.valueOf(senderId), "tu", FEED_CHANNEL,
+        sendMessage(appId, MessageType.POST, "s", String.valueOf(senderId), "tu", FEED_CHANNEL,
             "u", id.uuid, "st1", id.subtype);
     }
 
@@ -287,7 +289,7 @@ public class KontagentLogic
      * Track the user info for demographics. Any null values are considered undefined or
      * unspecified and will not be sent.
      */
-    public void trackUserInfo (long uid, Integer birthYear, String gender, String city,
+    public void trackUserInfo (int appId, long uid, Integer birthYear, String gender, String city,
         String state, String zip, String country, Integer friendCount)
     {
         // convert to kontagent gender
@@ -308,13 +310,13 @@ public class KontagentLogic
         country = StringUtil.encode(country);
 
         // send
-        sendMessage(MessageType.USER_INFO, "s", String.valueOf(uid), "b", birthYearStr,
+        sendMessage(appId, MessageType.USER_INFO, "s", String.valueOf(uid), "b", birthYearStr,
             "g", gender, "ly", city, "lc", country, "ls", state, "lp", zip, "f", friendCountStr);
     }
 
-    public void trackPageRequest (long uid, String ipAddress, String page)
+    public void trackPageRequest (int appId, long uid, String ipAddress, String page)
     {
-        sendMessage(MessageType.PAGE_REQUEST, "s", String.valueOf(uid), "ip", ipAddress,
+        sendMessage(appId, MessageType.PAGE_REQUEST, "s", String.valueOf(uid), "ip", ipAddress,
             "u", StringUtil.encode(page));
     }
 
@@ -333,16 +335,19 @@ public class KontagentLogic
         }
     }
 
-    protected void sendMessage (MessageType type, String... nameValuePairs)
+    protected void sendMessage (int appId, MessageType type, String... nameValuePairs)
     {
-        String url = buildMessageUrl(MSG_URL + type.id + "/",
-            String.valueOf(System.currentTimeMillis()), SECRET, nameValuePairs);
-
-        if (StringUtil.isBlank(API_KEY)) {
+        KontagentInfoRecord kinfo = _facebookRepo.loadKontagentInfo(appId);
+        if (kinfo == null || StringUtil.isBlank(kinfo.apiSecret) ||
+                StringUtil.isBlank(kinfo.apiKey)) {
             // this is a dev deployment or kontagent is disabled
-            log.info("Kontagent disabled, skipping message", "url", url);
+            log.info("Kontagent disabled, skipping message", "type", type, "pairs", nameValuePairs);
             return;
         }
+
+        String url = API_URL + VERSION + "/" + kinfo.apiKey + "/";
+        url = buildMessageUrl(url + type.id + "/",
+            String.valueOf(System.currentTimeMillis()), kinfo.apiSecret, nameValuePairs);
 
         if (DeploymentConfig.devDeployment) {
             log.info("Sending message", "url", url);
@@ -400,11 +405,10 @@ public class KontagentLogic
 
     protected static final Random _rand = new Random();
 
+    @Inject protected FacebookRepository _facebookRepo;
+
     protected static final String API_URL = DeploymentConfig.devDeployment ?
         "http://api.test.kontagent.net/api/" : "http://api.geo.kontagent.net/api/";
     protected static final String VERSION = "v1";
-    protected static final String API_KEY = ServerConfig.config.getValue("kontagent.api_key", "");
-    protected static final String SECRET = ServerConfig.config.getValue("kontagent.secret", "");
-    protected static final String MSG_URL = API_URL + VERSION + "/" + API_KEY + "/";
     protected static final String FEED_CHANNEL = "feedstory";
 }

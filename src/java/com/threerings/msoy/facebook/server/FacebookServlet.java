@@ -96,10 +96,10 @@ public class FacebookServlet extends MsoyServiceServlet
         throws ServiceException
     {
         SessionInfo session = requireSession();
+        int appId = _fbLogic.getDefaultGamesSite().getFacebookAppId();
         _facebookRepo.recordAction(FacebookActionRecord.trophyPublished(
-            _fbLogic.getDefaultGamesSite().getFacebookAppId(), session.memRec.memberId,
-            gameId, ident));
-        _tracker.trackFeedStoryPosted(session.fbid, trackingId);
+            appId, session.memRec.memberId, gameId, ident));
+        _tracker.trackFeedStoryPosted(appId, session.fbid, trackingId);
     }
 
     @Override // from FacebookService
@@ -317,14 +317,16 @@ public class FacebookServlet extends MsoyServiceServlet
     public void challengePublished (FacebookGame game, String trackingId)
         throws ServiceException
     {
-        _tracker.trackFeedStoryPosted(requireSession().fbid, trackingId);
+        int appId = _fbLogic.getDefaultGamesSite().getFacebookAppId();
+        _tracker.trackFeedStoryPosted(appId, requireSession().fbid, trackingId);
     }
 
     @Override
     public void levelUpPublished (String trackingId)
         throws ServiceException
     {
-        _tracker.trackFeedStoryPosted(requireSession().fbid, trackingId);
+        int appId = _fbLogic.getDefaultGamesSite().getFacebookAppId();
+        _tracker.trackFeedStoryPosted(appId, requireSession().fbid, trackingId);
     }
 
     @Override
@@ -332,9 +334,10 @@ public class FacebookServlet extends MsoyServiceServlet
         throws ServiceException
     {
         HttpServletRequest req = getThreadLocalRequest();
+        int appId = _fbLogic.getDefaultGamesSite().getFacebookAppId();
         FacebookLogic.SessionInfo sinfo = _fbLogic.loadSessionInfo(
             _fbLogic.getDefaultGamesSite(), requireAuthedUser());
-        _tracker.trackPageRequest(sinfo.fbid, req.getRemoteAddr(), page);
+        _tracker.trackPageRequest(appId, sinfo.fbid, req.getRemoteAddr(), page);
     }
 
     /**

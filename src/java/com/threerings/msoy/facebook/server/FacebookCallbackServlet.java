@@ -164,7 +164,7 @@ public class FacebookCallbackServlet extends HttpServlet
             // track it
             // TODO: Kontagent tracking for API games?
             if (info.mainApp) {
-                _tracker.trackUsage(
+                _tracker.trackUsage(_faceLogic.getDefaultGamesSite().getFacebookAppId(),
                     Long.parseLong(creds.uid), trackingId, !StringUtil.isBlank(newInstall));
             }
 
@@ -276,13 +276,14 @@ public class FacebookCallbackServlet extends HttpServlet
         // to the tracking id parameter - instead adds are tracked specially by attaching
         // NEW_INSTALL to the parameters for the login redirect and checking it later
         long uid = Long.parseLong(ConnParam.USER.get(req));
-        if (!added) {
-            _tracker.trackApplicationRemoved(uid);
+        if (!added && info.mainApp) {
+            _tracker.trackApplicationRemoved(
+                _faceLogic.getDefaultGamesSite().getFacebookAppId(), uid);
         }
     }
 
     /**
-     * Just checks the fb_sig parameter agress with the fb_sig_ parameters according to the
+     * Just checks the fb_sig parameter agrees with the fb_sig_ parameters according to the
      * Facebook documentation.
      */
     protected void validateSignature (HttpServletRequest req, String secret)
