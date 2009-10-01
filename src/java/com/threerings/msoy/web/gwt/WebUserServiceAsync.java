@@ -7,6 +7,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.msoy.data.all.LaunchConfig;
 import com.threerings.msoy.data.all.VisitorInfo;
+import com.threerings.msoy.web.gwt.WebUserService.AppResult;
 
 /**
  * The asynchronous (client-side) version of {@link WebUserService}.
@@ -119,4 +120,14 @@ public interface WebUserServiceAsync
      * The asynchronous version of {@link WebUserService#deleteAccount}.
      */
     void deleteAccount (String password, String code, AsyncCallback<Void> callback);
+
+    /**
+     * The asynchronous version of {@link WebUserService#getApp}.
+     */
+    void getApp (int appId, AsyncCallback<AppResult> callback);
+
+    /**
+     * The asynchronous version of {@link WebUserService#getFBConnectApp}.
+     */
+    void getFBConnectApp (AsyncCallback<AppResult> callback);
 }

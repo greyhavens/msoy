@@ -47,6 +47,12 @@ public interface FacebookService extends RemoteService
         /** The id to stick into the acceptance URL's tracking parameter. */
         public String trackingId;
 
+        /** The name of the application in use. */
+        public String appName;
+
+        /** The facebook canvas name of the application. */ 
+        public String canvasName;
+
         /**
          * Returns an array of the tracking parameter name and tracking id.
          */
@@ -80,6 +86,9 @@ public interface FacebookService extends RemoteService
 
         /** The facebook user id of the requesting user. */
         public long fbuid;
+
+        /** The facebook canvas name of the application. */
+        public String canvasName;
     }
 
     /**

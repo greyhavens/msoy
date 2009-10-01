@@ -166,10 +166,6 @@ oooauth.access_denied_url = /register/access_denied.wm
 # Facebook Application configuration
 
 # facebook.api_key =
-# facebook.secret =
-# facebook.canvas_name = 
-# facebook.application_id = 
-# facebook.application_name = 
 
 #
 # Connection details for the event log server. The spool directory is relative

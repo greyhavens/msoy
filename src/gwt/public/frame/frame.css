@@ -268,22 +268,13 @@
   background-position: 0 -30px;
 }
 
-.fbpageTitle .Invite-up-hovering, .fbpageTitle .Invite-down-hovering {
-  background-position: 0 -30px;
-}
-
 .fbpageTitle .Fan {
+  background: url(/images/facebook/fan_button.png) no-repeat;
+  width: 142px;
   left: 333px;
 }
 
-.fbpageTitle .Fan a {
-  display: block;
-  width: 142px;
-  height: 30px;
-  background: url(/images/facebook/fan_button.png) no-repeat;
-}
-
-.fbpageTitle .Fan a:hover {
+.fbpageTitle .Fan-up-hovering, .fbpageTitle .Fan-down-hovering {
   background-position: 0 -30px;
 }
 

@@ -39,6 +39,8 @@ import com.threerings.msoy.server.persist.ExternalMapRecord;
 import com.threerings.msoy.server.persist.MemberCardRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 
+import com.threerings.msoy.apps.server.persist.AppInfoRecord;
+import com.threerings.msoy.apps.server.persist.AppRepository;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.facebook.gwt.FacebookFriendInfo;
@@ -48,6 +50,7 @@ import com.threerings.msoy.facebook.server.FacebookLogic.SessionInfo;
 import com.threerings.msoy.facebook.server.KontagentLogic.TrackingId;
 import com.threerings.msoy.facebook.server.KontagentLogic.LinkType;
 import com.threerings.msoy.facebook.server.persist.FacebookActionRecord;
+import com.threerings.msoy.facebook.server.persist.FacebookInfoRecord;
 import com.threerings.msoy.facebook.server.persist.FacebookRepository;
 import com.threerings.msoy.facebook.server.persist.FacebookTemplateRecord;
 
@@ -224,6 +227,13 @@ public class FacebookServlet extends MsoyServiceServlet
         SessionInfo session = requireSession(appId);
 
         InviteInfo info = new InviteInfo();
+
+        AppInfoRecord appInfo = _appRepo.loadAppInfo(appId);
+        info.appName = appInfo != null ? appInfo.name : "";
+
+        FacebookInfoRecord fbinfo = _facebookRepo.loadAppFacebookInfo(appId);
+        info.canvasName = fbinfo != null ? fbinfo.canvasName : "";
+
         if (game == null) {
             // application invite
             info.excludeIds = Lists.newArrayList();
@@ -375,13 +385,14 @@ public class FacebookServlet extends MsoyServiceServlet
     protected StoryFields loadBasicStoryFields (
         StoryFields fields, SessionInfo session, String template)
     {
-        List<FacebookTemplateRecord> templates = _facebookRepo.loadVariants(
-            session.siteId.getFacebookAppId(), template);
+        int appId = session.siteId.getFacebookAppId();
+        List<FacebookTemplateRecord> templates = _facebookRepo.loadVariants(appId, template);
         if (templates.size() == 0) {
             log.warning("No Facebook templates found for request", "code", template);
             return fields;
         }
-
+        FacebookInfoRecord fbinfo = _facebookRepo.loadAppFacebookInfo(appId);
+        fields.canvasName = fbinfo != null ? fbinfo.canvasName : "";
         fields.template = RandomUtil.pickRandom(templates).toTemplate();
         TrackingId trackingId = new KontagentLogic.TrackingId(LinkType.FEED_LONG,
             template + fields.template.variant, session.fbid);
@@ -483,6 +494,7 @@ public class FacebookServlet extends MsoyServiceServlet
         return _fbLogic.loadSessionInfo(ExternalSiteId.facebookApp(appId), requireAuthedUser());
     }
 
+    @Inject protected AppRepository _appRepo;
     @Inject protected FacebookLogic _fbLogic;
     @Inject protected FacebookRepository _facebookRepo;
     @Inject protected KontagentLogic _tracker;

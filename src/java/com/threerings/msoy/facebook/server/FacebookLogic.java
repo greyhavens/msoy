@@ -55,7 +55,6 @@ import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.apps.server.persist.AppInfoRecord;
 import com.threerings.msoy.apps.server.persist.AppRepository;
 import com.threerings.msoy.data.UserAction;
-import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.facebook.data.FacebookCodes;
 import com.threerings.msoy.facebook.gwt.FacebookGame;
 import com.threerings.msoy.facebook.server.KontagentLogic.LinkType;
@@ -432,9 +431,11 @@ public class FacebookLogic
 
         int award = awardIdx >= 0 ? VISIT_AWARDS[awardIdx] : 0;
         if (award > 0) {
+            AppInfoRecord appInfo = _appRepo.loadAppInfo(siteId.getFacebookAppId());
+
             // award the coins; note this eventually calls synchMemberLevel
             _moneyLogic.awardCoins(memberId, award, true, UserAction.visitedFBApp(
-                memberId, DeploymentConfig.facebookApplicationName));
+                memberId, appInfo != null ? appInfo.name : ""));
 
             // shortcut, just update changed fields directly rather than reload frmo DB
             money.coins += award;

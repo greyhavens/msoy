@@ -46,7 +46,8 @@ public class LevelUpFeeder
         String templateId = String.valueOf(_fields.template.bundleId);
 
         // action link goes to the main canvas page
-        String actionURL = SharedNaviUtil.buildRequest(FacebookUtil.APP_CANVAS,
+        String actionURL = SharedNaviUtil.buildRequest(
+            FacebookUtil.getCanvasUrl(_fields.canvasName),
             CookieNames.AFFILIATE, String.valueOf(CShell.getMemberId()),
             ArgNames.FBParam.VECTOR.name, vector,
             ArgNames.FBParam.TRACKING.name, _fields.trackingId);

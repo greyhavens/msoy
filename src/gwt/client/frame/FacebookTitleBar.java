@@ -4,7 +4,11 @@
 package client.frame;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.AbsoluteCSSPanel;
@@ -12,6 +16,9 @@ import com.threerings.gwt.ui.AbsoluteCSSPanel;
 import com.threerings.msoy.web.gwt.ArgNames;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
+import com.threerings.msoy.web.gwt.WebUserService;
+import com.threerings.msoy.web.gwt.WebUserServiceAsync;
+import com.threerings.msoy.web.gwt.WebUserService.AppResult;
 
 import client.facebookbase.FacebookUtil;
 import client.shell.CShell;
@@ -36,7 +43,7 @@ public class FacebookTitleBar extends TitleBar
         _contents.add(MsoyUI.createFlowPanel("Logo"));
         _contents.add(button("Games", Pages.GAMES));
         _contents.add(button("Invite", Pages.FACEBOOK, "invite"));
-        _contents.add(Link.createTop("Fan", FacebookUtil.APP_PROFILE));
+        _contents.add(MsoyUI.createImageButton("Fan", new VisitAppProfile()));
         _contents.add(button("Trophies", Pages.GAMES, "t", CShell.getMemberId()));
         _contents.add(new FacebookStatusPanel());
         if (gameName == null) {
@@ -114,8 +121,24 @@ public class FacebookTitleBar extends TitleBar
         return MsoyUI.createImageButton(style, Link.createHandler(page, args));
     }
 
+    protected static class VisitAppProfile
+        implements ClickHandler, AsyncCallback<WebUserService.AppResult>
+    {
+        @Override public void onFailure (Throwable caught) {
+        }
+
+        @Override public void onSuccess (AppResult result) {
+            Window.open(FacebookUtil.getProfileUrl(result.facebookAppId), "_top", "");
+        }
+
+        @Override public void onClick (ClickEvent event) {
+            _websvc.getApp(CShell.getAppId(), this);
+        }
+    }
+
     protected AbsoluteCSSPanel _contents;
     protected Widget _challenge;
 
     protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
+    protected static final WebUserServiceAsync _websvc = GWT.create(WebUserService.class);
 }

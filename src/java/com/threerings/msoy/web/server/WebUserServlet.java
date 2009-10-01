@@ -29,6 +29,8 @@ import com.threerings.presents.server.PresentsDObjectMgr;
 
 import com.threerings.msoy.admin.server.ABTestLogic;
 import com.threerings.msoy.admin.server.RuntimeConfig;
+import com.threerings.msoy.apps.server.persist.AppInfoRecord;
+import com.threerings.msoy.apps.server.persist.AppRepository;
 
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.StatType;
@@ -54,6 +56,8 @@ import com.threerings.msoy.server.util.MailSender;
 import com.threerings.msoy.server.util.MailSender.By;
 
 import com.threerings.msoy.facebook.server.FacebookLogic;
+import com.threerings.msoy.facebook.server.persist.FacebookInfoRecord;
+import com.threerings.msoy.facebook.server.persist.FacebookRepository;
 import com.threerings.msoy.game.server.GameLogic;
 import com.threerings.msoy.mail.server.MailLogic;
 import com.threerings.msoy.mail.server.persist.MailRepository;
@@ -512,6 +516,31 @@ public class WebUserServlet extends MsoyServiceServlet
         _memberLogic.deleteMembers(Collections.singletonList(mrec.memberId));
     }
 
+    @Override // from WebUserService
+    public AppResult getApp (int appId)
+        throws ServiceException
+    {
+        AppResult result = new AppResult();
+        AppInfoRecord appInfo = _appRepo.loadAppInfo(appId);
+        if (appInfo == null) {
+            return null;
+        }
+        FacebookInfoRecord fbinfo = _facebookRepo.loadAppFacebookInfo(appId);
+        result.appId = appId;
+        result.facebookAppId = fbinfo.fbUid;
+        result.facebookApiKey = fbinfo.apiKey;
+        return result;
+    }
+
+    @Override // from WebUserService
+    public AppResult getFBConnectApp ()
+        throws ServiceException
+    {
+        // the fb connect site is the default games site for now
+        // TODO: allow for the fb connect app to be a separate one
+        return getApp(_facebookLogic.getDefaultGamesSite().getFacebookAppId());
+    }
+
     protected void checkClientVersion (String clientVersion, String who)
         throws ServiceException
     {
@@ -633,8 +662,10 @@ public class WebUserServlet extends MsoyServiceServlet
     // our dependencies
     @Inject protected ABTestLogic _testLogic;
     @Inject protected AccountLogic _accountLogic;
+    @Inject protected AppRepository _appRepo;
     @Inject protected ExternalAuthLogic _extLogic;
     @Inject protected FacebookLogic _facebookLogic;
+    @Inject protected FacebookRepository _facebookRepo;
     @Inject protected GameLogic _gameLogic;
     @Inject protected InviteRepository _inviteRepo;
     @Inject protected MailLogic _mailLogic;

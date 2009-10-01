@@ -60,7 +60,8 @@ public class ExternalFeeder
 
         // we use it in 3 places, but they all just go to the game detail screen on facebook
         // TODO: link different things to different places? more redirects in FacebookServlet?
-        String actionURL = SharedNaviUtil.buildRequest(FacebookUtil.APP_CANVAS,
+        String actionURL = SharedNaviUtil.buildRequest(
+            FacebookUtil.getCanvasUrl(fields.canvasName),
             FBParam.GAME.name, String.valueOf(event.getGameId()), FBParam.VECTOR.name, vector,
             FBParam.TRACKING.name, fields.trackingId);
 

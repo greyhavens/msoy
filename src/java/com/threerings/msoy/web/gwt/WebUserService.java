@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.web.gwt;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -29,6 +30,23 @@ public interface WebUserService extends RemoteService
     {
         /** The entry vector associated with this client. */
         public String entryVector;
+    }
+
+    /**
+     * Just enough information about an application to perform basic functions such as linking to
+     * a profile page.
+     */
+    public static class AppResult
+        implements IsSerializable
+    {
+        /** Our internal id for the application. */
+        public int appId;
+
+        /** The application id from Facebook. */
+        public long facebookAppId;
+
+        /** The application's Facebook api key. */
+        public String facebookApiKey;
     }
 
     /**
@@ -169,5 +187,18 @@ public interface WebUserService extends RemoteService
      * {@link #requestAccountDeletion()}.
      */
     void deleteAccount (String password, String code)
+        throws ServiceException;
+
+    /**
+     * Get some basic information about an application given its id. Normally appId will be bound
+     * to {@link client.shell.CShell#getAppId}.
+     */
+    AppResult getApp (int appId)
+        throws ServiceException;
+
+    /**
+     * Get basic information about the application which handle FB connect requests.
+     */
+    AppResult getFBConnectApp ()
         throws ServiceException;
 }

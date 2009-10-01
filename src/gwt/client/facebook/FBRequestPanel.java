@@ -47,10 +47,9 @@ public class FBRequestPanel extends ServerFBMLPanel
         _fbsvc.getInviteInfo(CShell.getAppId(), null, new InfoCallback<InviteInfo>() {
             public void onSuccess (InviteInfo result) {
                 // inviteGeneric = {0} has invited you to {1}...
-                String app = DeploymentConfig.facebookApplicationName;
-                String invite = _msgs.inviteGeneric(result.username, app);
+                String invite = _msgs.inviteGeneric(result.username, result.appName);
                 String tip = _msgs.inviteGenericTip();
-                String accept = _msgs.inviteChallengeAccept(app);
+                String accept = _msgs.inviteChallengeAccept(result.appName);
 
                 // accept goes to the main canvas with tracking info
                 String[] acceptArgs = result.trackingArgs();
@@ -58,8 +57,8 @@ public class FBRequestPanel extends ServerFBMLPanel
                 // submit uploads the tracking info along with facebook's invite data
                 String[] submitArgs = result.trackingArgs();
 
-                div.add(new FBRequestPanel(
-                    result.excludeIds, invite, tip, accept, acceptArgs, submitArgs, app));
+                div.add(new FBRequestPanel(result.excludeIds, invite, tip, accept, acceptArgs,
+                    submitArgs, result.appName, result.canvasName));
             }
         });
         return div;
@@ -72,9 +71,8 @@ public class FBRequestPanel extends ServerFBMLPanel
     public static Widget createChallenge (FacebookGame game, InviteInfo info)
     {
         // {0} just played {1} on {2} and challenges you to beat {3} high score!
-        String app = DeploymentConfig.facebookApplicationName;
         String invite = _msgs.inviteChallenge(
-            info.username, info.gameName, app, getPronoun(info.gender));
+            info.username, info.gameName, info.appName, getPronoun(info.gender));
         String tip = _msgs.inviteChallengeTip();
         String accept = _msgs.inviteChallengeAccept(info.gameName);
 
@@ -87,8 +85,8 @@ public class FBRequestPanel extends ServerFBMLPanel
         String[] submitArgs = ArrayUtil.concatenate(
             acceptArgs, ArgNames.fbChallengeArgs(), ArrayUtil.STRING_TYPE);
 
-        return new FBRequestPanel(
-            info.excludeIds, invite, tip, accept, acceptArgs, submitArgs, info.gameName);
+        return new FBRequestPanel(info.excludeIds, invite, tip, accept, acceptArgs, submitArgs,
+            info.gameName, info.canvasName);
     }
 
     /**
@@ -104,7 +102,7 @@ public class FBRequestPanel extends ServerFBMLPanel
      * @param type the type of invitation shown in the form's "send" button
      */
     protected FBRequestPanel (List<Long> excludeIds, String text, String tip, String accept,
-        String[] acceptArgs, String[] submitArgs, String type)
+        String[] acceptArgs, String[] submitArgs, String type, String canvasName)
     {
         StringBuilder exclude = new StringBuilder();
         if (excludeIds != null) {
@@ -113,7 +111,8 @@ public class FBRequestPanel extends ServerFBMLPanel
             }
         }
         String url = SharedNaviUtil.buildRequest(SharedNaviUtil.buildRequest(
-            FacebookUtil.APP_CANVAS, acceptArgs), CookieNames.AFFILIATE, "" + CShell.getMemberId());
+            FacebookUtil.getCanvasUrl(canvasName), acceptArgs),
+            CookieNames.AFFILIATE, "" + CShell.getMemberId());
         FBMLPanel form = new FBMLPanel("request-form",
             "action", SharedNaviUtil.buildRequest(SharedNaviUtil.buildRequest(
                 DeploymentConfig.serverURL + "fbinvite/ndone", submitArgs),
