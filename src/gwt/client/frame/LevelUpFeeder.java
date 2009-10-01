@@ -52,7 +52,7 @@ public class LevelUpFeeder
             ArgNames.FBParam.VECTOR.name, vector,
             ArgNames.FBParam.TRACKING.name, _fields.trackingId);
 
-        FacebookUtil.FeedStoryImages images = new FacebookUtil.FeedStoryImages();
+        FacebookUtil.FeedStoryImages images = new FacebookUtil.FeedStoryImages(PUB_IMAGES);
         for (String thumbnail : _fields.thumbnails) {
             images.add(thumbnail, actionURL);
         }
@@ -94,6 +94,11 @@ public class LevelUpFeeder
 
     protected int _level;
     protected StoryFields _fields;
+
+    public static final String PUB_IMAGES[] = {
+        FacebookUtil.PUB_ROOT + "5e96a1dd2244f0679834e4d5e6ba886bffabd9ff.png",
+        FacebookUtil.PUB_ROOT + "d540aa4605b1b778f826262209723359d81fa06e.png",
+        FacebookUtil.PUB_ROOT + "7bb4a311f008782516ab77c994ac232357f99547.png" };
 
     protected static final FacebookServiceAsync _fbsvc = GWT.create(FacebookService.class);
 }

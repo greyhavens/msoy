@@ -26,13 +26,6 @@ public class FacebookUtil
     public static final boolean IS_MEDIA_ACCESSIBLE =
         !DeploymentConfig.devDeployment || DeploymentConfig.mediaURL.equals(PUB_ROOT);
 
-    /** Game thumbnails shown on dev deployments. */
-    public static final String ACCESSIBLE_GAME_IMAGES[] = {
-        PUB_ROOT + "708ca91490155abc18f99a74e8bba5129b5033f6.png", // CC
-        PUB_ROOT + "be846a2fe35910c14007710f41d9b8976f57cec0.png", // brawler
-        PUB_ROOT + "68b7869c610d2d17c9d5530f100af08e9fcf7de8.png", // qbeez
-        PUB_ROOT + "b2fe48847324f1c1fc4a219bf8fc425261afe3e5.png" }; // ghosthunters
-
     /**
      * Get the url of an application's profile, given its id.
      */
@@ -54,11 +47,6 @@ public class FacebookUtil
      */
     public static class FeedStoryImages
     {
-        public FeedStoryImages ()
-        {
-            this(ACCESSIBLE_GAME_IMAGES);
-        }
-
         public FeedStoryImages (String[] accessibleImages)
         {
             _accessibleImages = accessibleImages;

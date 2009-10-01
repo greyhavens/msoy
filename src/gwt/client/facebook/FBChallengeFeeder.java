@@ -54,7 +54,7 @@ public class FBChallengeFeeder
             ArgNames.FBParam.VECTOR.name, vector,
             ArgNames.FBParam.TRACKING.name, _fields.trackingId);
 
-        FacebookUtil.FeedStoryImages images = new FacebookUtil.FeedStoryImages();
+        FacebookUtil.FeedStoryImages images = new FacebookUtil.FeedStoryImages(PUB_IMAGES);
         for (String thumbnail : _fields.thumbnails) {
             images.add(thumbnail, actionURL);
         }
@@ -113,6 +113,11 @@ public class FBChallengeFeeder
 
     protected FacebookGame _game;
     protected StoryFields _fields;
+
+    public static final String PUB_IMAGES[] = {
+        FacebookUtil.PUB_ROOT + "db21cc504a1f735f96eb051275c1dd9d394924d2.png",
+        FacebookUtil.PUB_ROOT + "e59ac92a6c497f573fcee451dedb59ce03cadf68.png",
+        FacebookUtil.PUB_ROOT + "af525e4e1b026a46beeaf98ff824aa65e30d800a.png" };
 
     protected static final FacebookServiceAsync _fbsvc = GWT.create(FacebookService.class);
 }

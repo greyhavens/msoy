@@ -11,6 +11,7 @@ import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.msoy.web.gwt.ArgNames.FBParam;
+import com.threerings.msoy.web.gwt.CookieNames;
 import com.threerings.msoy.web.gwt.SharedNaviUtil;
 
 import com.threerings.msoy.facebook.gwt.FacebookService;
@@ -58,18 +59,18 @@ public class ExternalFeeder
         String vector = fields.template.toEntryVector();
         String templateId = String.valueOf(fields.template.bundleId);
 
-        // we use it in 3 places, but they all just go to the game detail screen on facebook
+        // we use this url in 3 places on the post
         // TODO: link different things to different places? more redirects in FacebookServlet?
         String actionURL = SharedNaviUtil.buildRequest(
             FacebookUtil.getCanvasUrl(fields.canvasName),
+            CookieNames.AFFILIATE, String.valueOf(CShell.getMemberId()),
             FBParam.GAME.name, String.valueOf(event.getGameId()), FBParam.VECTOR.name, vector,
             FBParam.TRACKING.name, fields.trackingId);
 
-        FacebookUtil.FeedStoryImages images = new FacebookUtil.FeedStoryImages();
+        FacebookUtil.FeedStoryImages images = new FacebookUtil.FeedStoryImages(PUB_IMAGES);
         for (String thumbnail : fields.thumbnails) {
             images.add(thumbnail, actionURL);
         }
-        //images.add(event.getMediaURL(), actionURL, ACCESSIBLE_TROPHY_IMAGE);
 
         Map<String, Object> data = new HashMap<String, Object>();
         data.put("game_id", event.getGameId());
@@ -126,8 +127,10 @@ public class ExternalFeeder
               "href" : "http://www.whirled.com/go/games-d_827_t"}]}
     */
 
-    protected static final String ACCESSIBLE_TROPHY_IMAGE =
-        FacebookUtil.PUB_ROOT + "240aa9267fa6dc8422588e6818862301fd658e6f.png"; // CC trophy
+    public static final String PUB_IMAGES[] = {
+        FacebookUtil.PUB_ROOT + "88f92c972a7e088dfb71787a37ea3bbb3fed27ce.png",
+        FacebookUtil.PUB_ROOT + "c4fa25346e8ba5773fdd4d0b263b322405fe3eef.png",
+        FacebookUtil.PUB_ROOT + "02d2576b5ea2ef0c07f96712344678b6354fa475.png" };
 
     protected static final FacebookServiceAsync _fbsvc = GWT.create(FacebookService.class);
 }
