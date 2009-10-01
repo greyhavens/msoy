@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.web.server;
 
-import static com.threerings.msoy.Log.log;
-
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -27,6 +25,8 @@ import com.threerings.msoy.facebook.server.FacebookLogic;
 import com.threerings.msoy.facebook.server.persist.FacebookInfoRecord;
 import com.threerings.msoy.facebook.server.persist.FacebookRepository;
 import com.threerings.msoy.web.gwt.ArgNames;
+
+import static com.threerings.msoy.Log.log;
 
 /**
  * Uses velocity to insert application parameters into specific files mapped by the http server.
