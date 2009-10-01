@@ -53,15 +53,14 @@ import com.threerings.msoy.facebook.server.persist.FacebookActionRecord;
 import com.threerings.msoy.facebook.server.persist.FacebookInfoRecord;
 import com.threerings.msoy.facebook.server.persist.FacebookRepository;
 import com.threerings.msoy.facebook.server.persist.FacebookTemplateRecord;
+import com.threerings.msoy.facebook.server.persist.FeedThumbnailRecord;
 
 import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.game.gwt.ArcadeData;
 import com.threerings.msoy.game.gwt.GameGenre;
-import com.threerings.msoy.game.gwt.GameThumbnail;
 import com.threerings.msoy.game.gwt.MochiGameInfo;
 import com.threerings.msoy.game.server.persist.ArcadeEntryRecord;
 import com.threerings.msoy.game.server.persist.GameInfoRecord;
-import com.threerings.msoy.game.server.persist.GameThumbnailRecord;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 import com.threerings.msoy.game.server.persist.TrophyRecord;
 import com.threerings.msoy.game.server.persist.TrophyRepository;
@@ -81,13 +80,22 @@ import static com.threerings.msoy.Log.log;
 public class FacebookServlet extends MsoyServiceServlet
     implements FacebookService
 {
+    /** Hard-wired feed story and thumbnail code for trophy posting. */
+    public static final String TROPHY = "trophy";
+
+    /** Hard-wired feed story and thumbnail code for challenge posts. */
+    public static final String CHALLENGE = "challenge";
+
+    /** Hard-wired feed story and thumbnail code for levl up posts. */
+    public static final String LEVELUP = "levelup";
+
     @Override // from FacebookService
     public StoryFields getTrophyStoryFields (int appId, int gameId)
         throws ServiceException
     {
         StoryFields fields = loadGameStoryFields(loadBasicStoryFields(
-            new StoryFields(), requireSession(appId), "trophy"), new FacebookGame(gameId),
-            GameThumbnail.Type.TROPHY);
+            new StoryFields(), requireSession(appId), TROPHY), appId, new FacebookGame(gameId),
+            TROPHY);
 
         if (fields.template == null) {
             throw new ServiceException(MsoyCodes.E_INTERNAL_ERROR);
@@ -243,7 +251,7 @@ public class FacebookServlet extends MsoyServiceServlet
             }
 
         } else {
-            info.gameName = loadGameStoryFields(new StoryFields(), game, null).name;
+            info.gameName = loadGameStoryFields(new StoryFields(), appId, game, null).name;
         }
 
         // TODO: we don't need this at all! Bite Me successfully used <fb:name> in request text,
@@ -288,12 +296,12 @@ public class FacebookServlet extends MsoyServiceServlet
     {
         SessionInfo session = requireSession(appId);
         StoryFields result = loadGameStoryFields(loadBasicStoryFields(
-            new StoryFields(), session, "challenge"), game, GameThumbnail.Type.CHALLENGE);
+            new StoryFields(), session, CHALLENGE), appId, game, CHALLENGE);
         Map<String, String> replacements = Maps.newHashMap();
         replacements.put("game", result.name);
         replacements.put("game_url", SharedNaviUtil.buildRequest(
             _fbLogic.getCanvasUrl(session.siteId), game.getCanvasArgs()));
-        _fbLogic.scheduleFriendNotification(session, "challenge", replacements, appOnly);
+        _fbLogic.scheduleFriendNotification(session, CHALLENGE, replacements, appOnly);
 
         return result.template != null ? result : null;
     }
@@ -303,7 +311,7 @@ public class FacebookServlet extends MsoyServiceServlet
         throws ServiceException
     {
         StoryFields result = loadGameStoryFields(loadBasicStoryFields(new StoryFields(),
-            requireSession(appId), "challenge"), game, GameThumbnail.Type.CHALLENGE);
+            requireSession(appId), CHALLENGE), appId, game, CHALLENGE);
         if (result.template == null) {
             throw new ServiceException(MsoyCodes.E_INTERNAL_ERROR);
         }
@@ -319,7 +327,7 @@ public class FacebookServlet extends MsoyServiceServlet
         if (result.template == null) {
             throw new ServiceException(MsoyCodes.E_INTERNAL_ERROR);
         }
-        result.thumbnails = assembleThumbnails(GameThumbnail.Type.LEVELUP, null, 0);
+        result.thumbnails = assembleThumbnails(appId, LEVELUP, null, 0);
         return result;
     }
 
@@ -402,7 +410,7 @@ public class FacebookServlet extends MsoyServiceServlet
     }
 
     protected StoryFields loadGameStoryFields (
-        StoryFields fields, FacebookGame game, GameThumbnail.Type thumbType)
+        StoryFields fields, int appId, FacebookGame game, String code)
         throws ServiceException
     {
         switch (game.type) {
@@ -414,9 +422,9 @@ public class FacebookServlet extends MsoyServiceServlet
             }
             fields.name = info.name;
             fields.description = info.description;
-            if (thumbType != null) {
+            if (code != null) {
                 fields.thumbnails = assembleThumbnails(
-                    thumbType, info.getShotMedia().getMediaPath(), game.getIntId());
+                    appId, code, info.getShotMedia().getMediaPath(), game.getIntId());
             }
             return fields;
 
@@ -428,8 +436,8 @@ public class FacebookServlet extends MsoyServiceServlet
             }
             fields.name = minfo.name;
             fields.description = minfo.desc;
-            if (thumbType != null) {
-                fields.thumbnails = assembleThumbnails(thumbType, minfo.thumbURL, 0);
+            if (code != null) {
+                fields.thumbnails = assembleThumbnails(appId, code, minfo.thumbURL, 0);
             }
             return fields;
         }
@@ -437,20 +445,20 @@ public class FacebookServlet extends MsoyServiceServlet
     }
 
     protected List<String> assembleThumbnails (
-        GameThumbnail.Type type, String gameMain, int gameId)
+        int appId, String code, String gameMain, int gameId)
     {
-        List<String> result = loadThumbnails(type, gameId);
+        List<String> result = loadThumbnails(code, gameId, appId);
 
         if (result.size() >= 3) {
             // we have all 3 thumbnails, ship it
             CollectionUtil.limit(result, 3);
 
         } else if (gameId != 0) {
-            // the game didn't override, use global ones
-            result = loadThumbnails(type, 0);
+            // the game didn't override, try the app-defined ones
+            result = loadThumbnails(code, 0, appId);
 
             if (result.size() < 3) {
-                // not enough globals, eek, just use nothing or fallback the game's main one!
+                // eek, not enough app ones, just use nothing or fallback to the game's main one!
                 result.clear();
                 if (gameMain != null) {
                     result.add(gameMain);
@@ -460,32 +468,34 @@ public class FacebookServlet extends MsoyServiceServlet
             // not enough globals... not much we can do here
         }
         if (DeploymentConfig.devDeployment) {
-            log.info("Assembled thumbnails", "type", type, "gameId", gameId, "result", result);
+            log.info("Assembled thumbnails", "code", code, "gameId", gameId, "result", result);
         }
         return result;
     }
 
-    protected List<String> loadThumbnails (GameThumbnail.Type type, int gameId)
+    protected List<String> loadThumbnails (String code, int gameId, int appId)
     {
-        List<GameThumbnailRecord> thumbnails = _mgameRepo.loadThumbnails(type, gameId);
+        List<FeedThumbnailRecord> thumbnails = gameId == 0 ?
+            _facebookRepo.loadAppThumbnails(code, appId) :
+            _facebookRepo.loadGameThumbnails(code, gameId);
         Set<String> variants = Sets.newHashSet();
-        for (GameThumbnailRecord thumb : thumbnails) {
+        for (FeedThumbnailRecord thumb : thumbnails) {
             variants.add(thumb.variant);
         }
         if (variants.size() == 0) {
             return Lists.newArrayList();
         }
-        Iterable<GameThumbnailRecord> result = thumbnails;
+        Iterable<FeedThumbnailRecord> result = thumbnails;
         if (variants.size() > 1) {
             // TODO: pick the LRU variant based on user history
             final String variant = RandomUtil.pickRandom(variants);
-            result = Iterables.filter(result, new Predicate<GameThumbnailRecord>() {
-                @Override public boolean apply (GameThumbnailRecord thumb) {
+            result = Iterables.filter(result, new Predicate<FeedThumbnailRecord>() {
+                @Override public boolean apply (FeedThumbnailRecord thumb) {
                     return thumb.variant.equals(variant);
                 }
             });
         }
-        return Lists.newArrayList(Iterables.transform(result, GameThumbnailRecord.TO_MEDIA_PATH));
+        return Lists.newArrayList(Iterables.transform(result, FeedThumbnailRecord.TO_MEDIA_PATH));
     }
 
     protected SessionInfo requireSession (int appId)

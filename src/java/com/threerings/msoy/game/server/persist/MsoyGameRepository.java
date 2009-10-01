@@ -49,7 +49,6 @@ import com.threerings.msoy.edgame.gwt.GameCode;
 import com.threerings.msoy.game.gwt.ArcadeData;
 import com.threerings.msoy.game.gwt.GameGenre;
 import com.threerings.msoy.game.gwt.GameInfo;
-import com.threerings.msoy.game.gwt.GameThumbnail;
 import com.threerings.msoy.game.gwt.MochiGameInfo;
 
 import static com.threerings.msoy.Log.log;
@@ -331,16 +330,6 @@ public class MsoyGameRepository extends DepotRepository
     public GameMetricsRecord loadGameMetrics (int gameId)
     {
         return load(GameMetricsRecord.getKey(Math.abs(gameId)));
-    }
-
-    /**
-     * Loads all thumbnails assigned to the given game of the given type, sorted by position.
-     */
-    public List<GameThumbnailRecord> loadThumbnails (GameThumbnail.Type type, int gameId)
-    {
-        return findAll(GameThumbnailRecord.class, new Where(Ops.and(
-            GameThumbnailRecord.GAME_ID.eq(gameId), GameThumbnailRecord.TYPE.eq(type))),
-            OrderBy.ascending(GameThumbnailRecord.POS));
     }
 
     /**
@@ -633,7 +622,6 @@ public class MsoyGameRepository extends DepotRepository
         classes.add(GameInfoRecord.class);
         classes.add(GameMetricsRecord.class);
         classes.add(GamePlayRecord.class);
-        classes.add(GameThumbnailRecord.class);
         classes.add(GameTraceLogRecord.class);
         classes.add(InstructionsRecord.class);
         classes.add(MochiGameInfoRecord.class);

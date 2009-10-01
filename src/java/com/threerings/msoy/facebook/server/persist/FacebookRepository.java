@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -25,6 +26,7 @@ import com.samskivert.depot.clause.Limit;
 import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.expression.ColumnExp;
+import com.samskivert.depot.expression.SQLExpression;
 import com.threerings.msoy.server.util.DropPrimaryKey;
 
 /**
@@ -299,7 +301,15 @@ public class FacebookRepository extends DepotRepository
      */
     public List<FeedThumbnailRecord> loadGameThumbnails (int gameId)
     {
-        return loadThumbnails(gameId, 0);
+        return loadThumbnails(null, gameId, 0);
+    }
+
+    /**
+     * Loads all thumbnails assigned to the given game with the given code.
+     */
+    public List<FeedThumbnailRecord> loadGameThumbnails (String code, int gameId)
+    {
+        return loadThumbnails(code, gameId, 0);
     }
 
     /**
@@ -316,7 +326,15 @@ public class FacebookRepository extends DepotRepository
      */
     public List<FeedThumbnailRecord> loadAppThumbnails (int appId)
     {
-        return loadThumbnails(0, appId);
+        return loadThumbnails(null, 0, appId);
+    }
+
+    /**
+     * Loads all thumbnails assigned to the given application with the given code.
+     */
+    public List<FeedThumbnailRecord> loadAppThumbnails(String code, int appId)
+    {
+        return loadThumbnails(code, 0, appId);
     }
 
     /**
@@ -355,10 +373,15 @@ public class FacebookRepository extends DepotRepository
         return info;
     }
 
-    protected List<FeedThumbnailRecord> loadThumbnails (int gameId, int appId)
+    protected List<FeedThumbnailRecord> loadThumbnails (String code, int gameId, int appId)
     {
-        return findAll(FeedThumbnailRecord.class, new Where(Ops.and(
-            FeedThumbnailRecord.GAME_ID.eq(gameId), FeedThumbnailRecord.APP_ID.eq(appId))));
+        List<SQLExpression> conditions = Lists.newArrayList();
+        conditions.add(FeedThumbnailRecord.GAME_ID.eq(gameId));
+        conditions.add(FeedThumbnailRecord.APP_ID.eq(appId));
+        if (code != null) {
+            conditions.add(FeedThumbnailRecord.CODE.eq(code));
+        }
+        return findAll(FeedThumbnailRecord.class, new Where(Ops.and(conditions)));
     }
 
     protected void saveThumbnails (int gameId, int appId, List<FeedThumbnailRecord> thumbs)
