@@ -13,6 +13,9 @@ public class ArgNames
     /** Parameter or token designating the entry vector, recorded for new users. */
     public static final String VECTOR = "vec";
 
+    /** Parameter designating the application id. */
+    public static final String APP = "app";
+
     /** Subnav for a facebook game challenge. */
     public static final String FB_GAME_CHALLENGE = "challenge";
 

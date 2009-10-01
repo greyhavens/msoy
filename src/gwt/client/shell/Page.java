@@ -230,6 +230,9 @@ public abstract class Page
             });
             Session.validate();
         }
+
+        // load up JavaScript source files
+        ScriptSources.inject(CShell.getAppId());
     }
 
     protected void onHistoryChanged (String token)

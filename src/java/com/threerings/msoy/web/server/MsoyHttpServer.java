@@ -320,6 +320,7 @@ public class MsoyHttpServer extends Server
         .put("/friend/*", GoServlet.class)
         .put("/fbinvite/*", FacebookInviteServlet.class)
         .put("/gameframe/*", GameFrameServlet.class)
+        .put("/js/facebook.js", AppInserterServlet.class)
         .put(DeploymentConfig.PROXY_PREFIX + "*", MediaProxyServlet.class)
         // if -Dthrottle=true is set, serve up files as if we were on a slow connection
         .put("/*", (Boolean.getBoolean("throttle") || Boolean.getBoolean("throttleMedia"))

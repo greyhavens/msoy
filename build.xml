@@ -317,7 +317,7 @@
           file="${basedir}/${log4j_bureau_config}"/>
     <copy tofile="${deploy.dir}/ehcache.xml" file="${basedir}/${ehcache_config}"/>
 
-    <!-- generate index.html, crossdomain.xml and js/facebook.js -->
+    <!-- generate index.html and crossdomain.xml-->
     <propertyregex property="server_url_host" input="${server_url}"
                    regexp="http://([^:]*)(:[0-9]+)?/" replace="\1"/>
     <copy file="pages/index.html.in" tofile="pages/index.html" overwrite="true">
@@ -335,11 +335,6 @@
         <filter token="SERVER_URL_HOST" value="${server_url_host}"/>
         <filter token="MEDIA_URL_HOST" value="${media_url_host}"/>
         <filter token="HTTP_PORT" value="${http_port}"/>
-      </filterset>
-    </copy>
-    <copy file="pages/js/facebook.js.in" tofile="pages/js/facebook.js" overwrite="true">
-      <filterset>
-        <filter token="FB_API_KEY" value="${facebook.api_key}"/>
       </filterset>
     </copy>
 
@@ -1103,6 +1098,7 @@
     <delete file="pages/media/MediaStub.swf"/>
     <delete file="pages/index.html"/>
     <delete file="pages/crossdomain.xml"/>
+    <!-- TODO: remove this one after a build or two -->
     <delete file="pages/js/facebook.js"/>
     <delete file="etc/msoy-config.xml"/>
     <delete><fileset dir="${gsrc.dir}" includes="**/*Messages.java"/></delete>

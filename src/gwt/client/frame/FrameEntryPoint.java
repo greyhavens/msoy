@@ -13,7 +13,6 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.DeferredCommand;
-import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -46,6 +45,7 @@ import com.threerings.msoy.web.gwt.WebUserServiceAsync;
 import client.images.frame.FrameImages;
 import client.shell.CShell;
 import client.shell.Frame;
+import client.shell.ScriptSources;
 import client.shell.Session;
 import client.shell.ShellMessages;
 import client.ui.BorderedDialog;
@@ -78,26 +78,21 @@ public class FrameEntryPoint
         // listen for logon/logoff
         Session.addObserver(this);
 
-        // load up various JavaScript dependencies
-        for (int ii = 0; ii < JS_DEPENDS.length; ii += 2) {
-            Element e = DOM.getElementById(JS_DEPENDS[ii]);
-            if (e != null) {
-                DOM.setElementAttribute(e, "src", JS_DEPENDS[ii+1]);
-            }
-        }
-
-        // initialize our GA handler
-        _analytics.init();
-
-        // set up the callbackd that our flash clients can call
-        configureCallbacks(this);
-
         // wire ourselves up to the history-based navigation mechanism
         History.addValueChangeHandler(this);
         _currentToken = History.getToken();
 
         // assign our client mode and app id if the server gave them to us, otherwise use defaults
         _embedding = Embedding.extract(Args.fromHistory(_currentToken));
+
+        // load up various JavaScript sources
+        ScriptSources.inject(_embedding.appId);
+
+        // initialize our GA handler
+        _analytics.init();
+
+        // set up the callbackd that our flash clients can call
+        configureCallbacks(this);
 
         // validate our session which will dispatch a didLogon or didLogoff
         Session.validate();
@@ -1036,12 +1031,4 @@ public class FrameEntryPoint
 
     /** This vector string represents an email invite */
     protected static final String EMAIL_VECTOR = "emailInvite";
-
-    /** Enumerates our Javascript dependencies. */
-    protected static final String[] JS_DEPENDS = {
-        "swfobject", "/js/swfobject.js",
-        "md5", "/js/md5.js",
-        "googanal", "http://www.google-analytics.com/ga.js",
-        "fbhelper", "/js/facebook.js",
-    };
 }
