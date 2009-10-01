@@ -3,7 +3,9 @@
 
 package com.threerings.msoy.facebook.server;
 
+import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
@@ -15,7 +17,11 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+
+import com.samskivert.util.Invoker;
+import com.samskivert.util.Lifecycle;
 import com.samskivert.util.StringUtil;
+
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.facebook.server.persist.FacebookRepository;
 import com.threerings.msoy.facebook.server.persist.KontagentInfoRecord;
@@ -184,6 +190,16 @@ public class KontagentLogic
         return hex;
     }
 
+    @Inject public KontagentLogic (Lifecycle lifecycle)
+    {
+        lifecycle.addComponent(new Lifecycle.ShutdownComponent() {
+            @Override public void shutdown () {
+                _queue.shutdown();
+            }
+        });
+        _queue.start();
+    }
+
     /**
      * Tracks a visit to the application.
      * @param uid id of the user visiting
@@ -196,26 +212,26 @@ public class KontagentLogic
         String uidStr = String.valueOf(uid);
         if (newInstall) {
             if (id != null) {
-                sendMessage(appId, MessageType.APP_ADDED, "s", uidStr, "u", id.uuid);
+                _queue.post(appId, MessageType.APP_ADDED, "s", uidStr, "u", id.uuid);
             } else {
-                sendMessage(appId, MessageType.APP_ADDED, "s", uidStr, "su", ShortTag.UNKNOWN.id);
+                _queue.post(appId, MessageType.APP_ADDED, "s", uidStr, "su", ShortTag.UNKNOWN.id);
             }
         }
 
         if (id == null) {
             // TODO: hmm, new short tag for different sources? (e.g. app bookmark vs. clicking the
             // app link in an invite)
-            sendMessage(appId, MessageType.UNDIRECTED, "s", uidStr, "tu", ShortTag.UNKNOWN.id, "i", "1");
+            _queue.post(appId, MessageType.UNDIRECTED, "s", uidStr, "tu", ShortTag.UNKNOWN.id, "i", "1");
 
         } else {
             switch (id.type.responseType) {
             case INVITE_RESPONSE:
             case NOTIFICATION_RESPONSE:
-                sendMessage(appId, id.type.responseType, "r", uidStr, "i", "1", "u", id.uuid,
+                _queue.post(appId, id.type.responseType, "r", uidStr, "i", "1", "u", id.uuid,
                     "st1", id.subtype, "tu", id.type.responseType.id);
                 break;
             case POST_RESPONSE:
-                sendMessage(appId, id.type.responseType, "r", uidStr, "i", "1", "tu", FEED_CHANNEL,
+                _queue.post(appId, id.type.responseType, "r", uidStr, "i", "1", "tu", FEED_CHANNEL,
                     "st1", id.subtype, "u", id.uuid);
                 break;
             default:
@@ -230,7 +246,7 @@ public class KontagentLogic
      */
     public void trackApplicationRemoved (int appId, long uid)
     {
-        sendMessage(appId, MessageType.APP_REMOVED, "s", String.valueOf(uid));
+        _queue.post(appId, MessageType.APP_REMOVED, "s", String.valueOf(uid));
     }
 
     /**
@@ -244,7 +260,7 @@ public class KontagentLogic
             return;
         }
 
-        sendMessage(appId, MessageType.INVITE_SENT, "s", String.valueOf(senderId),
+        _queue.post(appId, MessageType.INVITE_SENT, "s", String.valueOf(senderId),
             "r", StringUtil.join(recipients, StringUtil.encode(",")), "u", id.uuid,
             "st1", id.subtype);
     }
@@ -262,7 +278,7 @@ public class KontagentLogic
             return;
         }
 
-        sendMessage(appId, MessageType.NOTIFICATION_SENT, "s", String.valueOf(senderId),
+        _queue.post(appId, MessageType.NOTIFICATION_SENT, "s", String.valueOf(senderId),
             "r", StringUtil.join(recipients.toArray(), StringUtil.encode(",")),
             "u", trackingId.uuid, "st1", trackingId.subtype);
     }
@@ -281,7 +297,7 @@ public class KontagentLogic
             return;
         }
 
-        sendMessage(appId, MessageType.POST, "s", String.valueOf(senderId), "tu", FEED_CHANNEL,
+        _queue.post(appId, MessageType.POST, "s", String.valueOf(senderId), "tu", FEED_CHANNEL,
             "u", id.uuid, "st1", id.subtype);
     }
 
@@ -310,13 +326,13 @@ public class KontagentLogic
         country = StringUtil.encode(country);
 
         // send
-        sendMessage(appId, MessageType.USER_INFO, "s", String.valueOf(uid), "b", birthYearStr,
+        _queue.post(appId, MessageType.USER_INFO, "s", String.valueOf(uid), "b", birthYearStr,
             "g", gender, "ly", city, "lc", country, "ls", state, "lp", zip, "f", friendCountStr);
     }
 
     public void trackPageRequest (int appId, long uid, String ipAddress, String page)
     {
-        sendMessage(appId, MessageType.PAGE_REQUEST, "s", String.valueOf(uid), "ip", ipAddress,
+        _queue.post(appId, MessageType.PAGE_REQUEST, "s", String.valueOf(uid), "ip", ipAddress,
             "u", StringUtil.encode(page));
     }
 
@@ -336,32 +352,64 @@ public class KontagentLogic
     }
 
     protected void sendMessage (int appId, MessageType type, String... nameValuePairs)
+        throws MalformedURLException, IOException
     {
         KontagentInfoRecord kinfo = _facebookRepo.loadKontagentInfo(appId);
         if (kinfo == null || StringUtil.isBlank(kinfo.apiSecret) ||
                 StringUtil.isBlank(kinfo.apiKey)) {
             // this is a dev deployment or kontagent is disabled
-            log.info("Kontagent disabled, skipping message", "type", type, "pairs", nameValuePairs);
+            log.info("Disabled, skipping message", "appId", appId, "type", type,
+                "pairs", nameValuePairs);
             return;
         }
 
-        String url = API_URL + VERSION + "/" + kinfo.apiKey + "/";
-        url = buildMessageUrl(url + type.id + "/",
+        String url = buildMessageUrl(API_URL + VERSION + "/" + kinfo.apiKey + "/" + type.id + "/",
             String.valueOf(System.currentTimeMillis()), kinfo.apiSecret, nameValuePairs);
 
         if (DeploymentConfig.devDeployment) {
             log.info("Sending message", "url", url);
         }
 
-        try {
-            HttpURLConnection conn = (HttpURLConnection)new URL(url).openConnection();
-            if (conn.getResponseCode() != HttpURLConnection.HTTP_OK) {
-                log.warning("Response code not OK", "code", conn.getResponseCode(), "url", url);
-            }
-            conn.disconnect();
+        HttpURLConnection conn = (HttpURLConnection)new URL(url).openConnection();
+        if (conn.getResponseCode() != HttpURLConnection.HTTP_OK) {
+            log.warning("Response code not OK",
+                "code", conn.getResponseCode(), "url", url);
+        }
+        conn.disconnect();
+    }
 
-        } catch (Exception ex) {
-            log.warning("Failed to send message", "url", url, ex);
+    /**
+     * Simple invoker thread to send our messages from somewhere besides the servlet threads.
+     */
+    protected class MessageSender extends Invoker
+    {
+        public MessageSender ()
+        {
+            super("Kontagent", null);
+        }
+
+        public void post (final int appId, final MessageType type, final String... nameValuePairs)
+        {
+            if (shutdownRequested()) {
+                log.info("Server shutting down, skipping message", "appId", appId,
+                    "type", type, "pairs", nameValuePairs);
+                return;
+            }
+
+            postUnit(new Invoker.Unit("send") {
+                @Override public boolean invoke () {
+                    try {
+                        sendMessage(appId, type, nameValuePairs);
+                    } catch (Exception ex) {
+                        log.warning("Failed to send", "appId", appId, "type", type,
+                            "pairs", nameValuePairs);
+                    }
+                    return false;
+                }
+                @Override public long getLongThreshold () {
+                    return 3000;
+                }
+            });
         }
     }
 
@@ -402,6 +450,9 @@ public class KontagentLogic
             this.id = id;
         }
     }
+
+    /** A private thread for sending message. */
+    protected MessageSender _queue = new MessageSender();
 
     // dependencies
     @Inject protected FacebookRepository _facebookRepo;
