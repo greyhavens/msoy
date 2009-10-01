@@ -18,6 +18,8 @@ import com.samskivert.servlet.util.CookieUtil;
 import com.samskivert.servlet.util.ParameterUtil;
 import com.samskivert.util.StringUtil;
 
+import com.threerings.msoy.apps.server.persist.AppInfoRecord;
+import com.threerings.msoy.apps.server.persist.AppRepository;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.VisitorInfo;
 
@@ -145,14 +147,10 @@ public class FacebookCallbackServlet extends HttpServlet
             return;
         }
 
-        // TODO: use a different client mode here depending on the application being served
-        Args embed = new Embedding(
-            ClientMode.FB_GAMES, _faceLogic.getDefaultGamesSite().getFacebookAppId()).compose();
-
         // set up the token to redirect to - either the pre-processed one after we've swizzled in
         // the session cookie, or the one from the original request; NOTE: the TOKEN parameter is
         // double encoded, but we are careful to avoid confusion and not give it any % characters
-        String token = StringUtil.getOr(FrameParam.TOKEN.get(req), info.getDestinationToken(embed));
+        String token = StringUtil.getOr(FrameParam.TOKEN.get(req), info.getDestinationToken());
 
         // is the session already set up?
         if (session.equals(CookieUtil.getCookieValue(req, WebCreds.credsCookie()))) {
@@ -322,57 +320,95 @@ public class FacebookCallbackServlet extends HttpServlet
         String path = StringUtil.deNull(req.getPathInfo());
         ReqInfo info = new ReqInfo();
 
-        if (!path.startsWith(GAME_PATH)) {
-            // fill in the FB creds for this deployment
-            info.siteId = _faceLogic.getDefaultGamesSite();
-            info.fb = _facebookRepo.loadAppFacebookInfo(info.siteId.getFacebookAppId());
-
-            if (path.startsWith(PING_PATH)) {
-                // pings don't have game and vector data, just return
-                info.ping = true;
-                return info;
-            }
-
-            // this is a normal request for Whirled Games, parse params for redirect
+        if (path.startsWith(APP_PATH)) {
+            // this is a request from an app that we host
+            info.app = requireApp(path, APP_PATH);
+            info.siteId = ExternalSiteId.facebookApp(info.app.appId);
+            info.fb = validate(_facebookRepo.loadAppFacebookInfo(info.app.appId));
             info.game = _faceLogic.parseGame(req);
-            info.vector = FrameParam.VECTOR.get(req);
-            if (info.vector == null) {
-                info.vector = FacebookTemplate.toEntryVector("app", "");
-            }
+            info.vector = StringUtil.getOr(FrameParam.VECTOR.get(req),
+                FacebookTemplate.toEntryVector("app" + String.valueOf(info.app.appId), ""));
             info.challenge = FrameParam.CHALLENGE.get(req) != null;
             info.trackingId = FrameParam.TRACKING.get(req);
-            return info;
+
+        } else if (path.startsWith(PING_PATH)) {
+            // this is a ping for application add/remove
+            info.app = requireApp(path, PING_PATH);
+            info.siteId = ExternalSiteId.facebookApp(info.app.appId);
+            info.fb = validate(_facebookRepo.loadAppFacebookInfo(info.app.appId));
+            info.ping = true;
+
+        } else if (path.startsWith(GAME_PATH)) {
+            // this is a request from an integrated game's fb app
+            int gameId = requireInt(path.substring(GAME_PATH.length()));
+            GameInfoRecord ginfo = _mgameRepo.loadGame(gameId);
+            if (ginfo == null) {
+                throw new ServiceException("Unknown game: " + gameId);
+            }
+            info.siteId = ExternalSiteId.facebookGame(ginfo.gameId);
+            info.fb = validate(_facebookRepo.loadGameFacebookInfo(ginfo.gameId));
+            info.game = new FacebookGame(ginfo.gameId);
+            info.vector = FacebookTemplate.toEntryVector("proxygame", "" + ginfo.gameId);
+
+        } else {
+            // this is an old skool request for the Whirled Games
+            // TODO: remove after production transitions to the above code
+            info.siteId = _faceLogic.getDefaultGamesSite();
+            info.app = _appRepo.loadAppInfo(info.siteId.getFacebookAppId());
+            info.fb = _facebookRepo.loadAppFacebookInfo(info.siteId.getFacebookAppId());
+            info.game = _faceLogic.parseGame(req);
+            info.vector = StringUtil.getOr(FrameParam.VECTOR.get(req),
+                FacebookTemplate.toEntryVector("app", ""));
+            info.challenge = FrameParam.CHALLENGE.get(req) != null;
+            info.trackingId = FrameParam.TRACKING.get(req);
         }
 
-        // this is a request from an integrated game's app, fill in game stuff
-        int gameId;
-        try {
-            gameId = Integer.parseInt(path.substring(GAME_PATH.length()));
-        } catch (Exception e) {
-            throw new ServiceException("Invalid game URL: " + path);
-        }
-
-        GameInfoRecord ginfo = _mgameRepo.loadGame(gameId);
-        if (ginfo == null) {
-            throw new ServiceException("Unknown game: " + gameId);
-        }
-
-        info.siteId = ExternalSiteId.facebookGame(ginfo.gameId);
-        info.game = new FacebookGame(ginfo.gameId);
-
-        info.fb = _facebookRepo.loadGameFacebookInfo(ginfo.gameId);
-        if (StringUtil.isBlank(info.fb.apiKey)) {
-            throw new ServiceException("Game missing Facebook info: " + ginfo.name);
-        }
-
-        info.vector = FacebookTemplate.toEntryVector("proxygame", "" + ginfo.gameId);
         return info;
+    }
+
+    protected AppInfoRecord requireApp (String path, String prefix)
+        throws ServiceException
+    {
+        AppInfoRecord appInfo = _appRepo.loadAppInfo(requireInt(path.substring(prefix.length())));
+        if (appInfo == null) {
+            throw new ServiceException("Unknown app requested: " + path);
+        }
+        return appInfo;
+    }
+
+    protected static FacebookInfoRecord validate (FacebookInfoRecord fbinfo)
+        throws ServiceException
+    {
+        if (StringUtil.isBlank(fbinfo.apiKey)) {
+            throw new ServiceException("No api key [app=" +
+                fbinfo.appId + ", game=" + fbinfo.gameId + "]");
+        }
+        if (StringUtil.isBlank(fbinfo.appSecret)) {
+            throw new ServiceException("No secret [app=" +
+                fbinfo.appId + ", game=" + fbinfo.gameId + "]");
+        }
+        if (StringUtil.isBlank(fbinfo.canvasName)) {
+            throw new ServiceException("No canvas name [app=" +
+                fbinfo.appId + ", game=" + fbinfo.gameId + "]");
+        }
+        return fbinfo;
+    }
+
+    protected static int requireInt (String str)
+        throws ServiceException
+    {
+        try {
+            return Integer.parseInt(str);
+        } catch (Exception e) {
+            throw new ServiceException("Invalid integer: " + str);
+        }
     }
 
     protected static class ReqInfo
     {
-        public FacebookGame game;
+        public AppInfoRecord app;
         public FacebookInfoRecord fb;
+        public FacebookGame game;
         public String vector;
         public boolean challenge;
         public boolean ping;
@@ -383,8 +419,14 @@ public class FacebookCallbackServlet extends HttpServlet
          * Gets the GWT token that the user should be redirected to in the whirled application.
          * Some creds information may be assembled and passed into a game application.
          */
-        public String getDestinationToken (Args embed)
+        public String getDestinationToken ()
         {
+            // TODO: what mode should integrated games get... set to unspecified for now
+            Embedding embedding = app != null ?
+                new Embedding(app.clientMode, app.appId) :
+                new Embedding(ClientMode.UNSPECIFIED, 0);
+            Args embed = embedding.compose();
+
             // and send them to the appropriate page
             if (game != null) {
                 if (fb.chromeless) {
@@ -526,6 +568,7 @@ public class FacebookCallbackServlet extends HttpServlet
         }
     }
 
+    @Inject protected AppRepository _appRepo;
     @Inject protected FacebookLogic _faceLogic;
     @Inject protected FacebookRepository _facebookRepo;
     @Inject protected KontagentLogic _tracker;
@@ -536,5 +579,6 @@ public class FacebookCallbackServlet extends HttpServlet
 
     protected static final int FBAUTH_DAYS = 2;
     protected static final String GAME_PATH = "/game/";
+    protected static final String APP_PATH = "/app/";
     protected static final String PING_PATH = "/ping/";
 }
