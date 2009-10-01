@@ -532,15 +532,6 @@ public class WebUserServlet extends MsoyServiceServlet
         return result;
     }
 
-    @Override // from WebUserService
-    public AppResult getFBConnectApp ()
-        throws ServiceException
-    {
-        // the fb connect site is the default games site for now
-        // TODO: allow for the fb connect app to be a separate one
-        return getApp(_facebookLogic.getDefaultGamesSite().getFacebookAppId());
-    }
-
     protected void checkClientVersion (String clientVersion, String who)
         throws ServiceException
     {

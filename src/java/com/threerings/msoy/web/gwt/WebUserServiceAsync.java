@@ -125,9 +125,4 @@ public interface WebUserServiceAsync
      * The asynchronous version of {@link WebUserService#getApp}.
      */
     void getApp (int appId, AsyncCallback<AppResult> callback);
-
-    /**
-     * The asynchronous version of {@link WebUserService#getFBConnectApp}.
-     */
-    void getFBConnectApp (AsyncCallback<AppResult> callback);
 }

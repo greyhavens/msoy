@@ -195,10 +195,4 @@ public interface WebUserService extends RemoteService
      */
     AppResult getApp (int appId)
         throws ServiceException;
-
-    /**
-     * Get basic information about the application which handle FB connect requests.
-     */
-    AppResult getFBConnectApp ()
-        throws ServiceException;
 }
