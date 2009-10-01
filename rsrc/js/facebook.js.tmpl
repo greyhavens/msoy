@@ -9,6 +9,10 @@ window.FB_WithInit = function(callback) {
     });
 };
 
+window.FB_GetKey = function () {
+    return "$apiKey";
+}
+
 window.FB_RequireSession = function() {
     FB_WithInit(function() {
         FB.Connect.requireSession(function() {
