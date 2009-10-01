@@ -115,8 +115,8 @@
     <!-- The following are needed for the Facebook client -->
     <file name="${extlibs.dir}/commons-lang.jar"/>
     <file name="${extlibs.dir}/jvnet-runtime.jar"/>
-    <file name="${extlibs.dir}/facebook-java-api-prerelease.jar"/>
-    <file name="${extlibs.dir}/facebook-java-api-schema-prerelease.jar"/>
+    <file name="${extlibs.dir}/facebook-java-api.jar"/>
+    <file name="${extlibs.dir}/facebook-java-api-schema.jar"/>
 
     <!-- The following are used for Panopticon -->
     <file name="${extlibs.dir}/log4j.jar"/>
@@ -1057,7 +1057,7 @@
 
   <target name="copythanebinaries" depends="prepare,distprojects">
     <!-- Run a special target in thane that will copy the right executable file into the -->
-    <!-- thane/dist directory. --> 
+    <!-- thane/dist directory. -->
     <ant dir="projects/thane" target="distbinary"/>
 
     <!-- this is not copied automatically :( -->
