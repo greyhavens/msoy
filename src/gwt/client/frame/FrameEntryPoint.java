@@ -239,12 +239,8 @@ public class FrameEntryPoint
         // (which may get immediately removed if we're going directly into the world)...
         _layout.addNoClientIcon();
 
-        if (data.group == SessionData.Group.A) {
+        if (data.group != SessionData.Group.NONE) {
             Link.go(Pages.PEOPLE, "confprof"); // send them to step 2: configure profile
-        } else if (data.group == SessionData.Group.B) {
-            Link.go(Pages.PEEPLESS, "confprof"); // send them to step 2, frameless
-        } else if (data.group == SessionData.Group.C) {
-            Link.go(Pages.ME); // send them to Me, which has next steps
         } else if (isHeaderless() || (_page == Pages.ACCOUNT && _prevToken.equals(""))) {
             Link.go(Pages.WORLD, "places");
         } else if (_page == Pages.ACCOUNT) {

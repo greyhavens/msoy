@@ -476,13 +476,8 @@ public class WebUserServlet extends MsoyServiceServlet
         // automatically start a session for them
         SessionData data = startSession(mrec, 1); // TODO: expire days?
 
-        // assign them to a post-validation A/B test group
-        switch (_testLogic.getABTestGroup("2009 06 post-validation",
-                                          new VisitorInfo(mrec.visitorId, true), true)) {
-        case 1: data.group = SessionData.Group.A; break;
-        case 2: data.group = SessionData.Group.B; break;
-        case 3: data.group = SessionData.Group.C; break;
-        }
+        // we are not doing a test, but assign them a group to indicate a new account
+        data.group = SessionData.Group.A;
 
         return data;
     }
