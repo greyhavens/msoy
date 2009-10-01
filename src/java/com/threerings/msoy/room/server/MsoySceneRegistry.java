@@ -511,8 +511,9 @@ public class MsoySceneRegistry extends SpotSceneRegistry
             }
 
             // if we're not switching avatars, we're done
-            if (!_avatarShouldChange) {
+            if (true || !_avatarShouldChange) {   // TODO EMERGENCY DISABLE
                 finishOrPunt();
+                return;
             }
 
             // otherwise we have to route everything through MemberManager.setAvatar()
