@@ -442,7 +442,6 @@
         <filter token="dev_deployment" value="${dev_deployment}"/>
         <filter token="recaptcha_public" value="${recaptcha_token}"/>
         <filter token="billing_url" value="${billing_url}"/>
-        <filter token="facebook_api_key" value="${facebook.api_key}"/>
       </filterset>
     </copy>
   </target>

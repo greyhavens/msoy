@@ -7,7 +7,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.gwt.util.CookieUtil;
 
-import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.web.gwt.ExternalSiteId;
 import com.threerings.msoy.web.gwt.FacebookCreds;
 import com.threerings.msoy.web.gwt.SessionData;
@@ -28,14 +27,15 @@ public class FBConnect
     public static FacebookCreds readCreds ()
     {
         FacebookCreds creds = new FacebookCreds();
-        String prefix = DeploymentConfig.facebookKey + "_";
+        String key = getKey();
+        String prefix = key + "_";
         creds.uid = CookieUtil.get(prefix + "user");
         creds.sessionKey = CookieUtil.get(prefix + "session_key");
         creds.ss = CookieUtil.get(prefix + "ss");
         String expstr = CookieUtil.get(prefix + "expires");
         creds.expires = (expstr.length() > 0) ? Integer.parseInt(expstr) : 0;
         // TODO: gah, we'll need the key & site id of the default connect app here
-        creds.sig = CookieUtil.get(DeploymentConfig.facebookKey);
+        creds.sig = CookieUtil.get(key);
         creds.site = ExternalSiteId.FB_CONNECT_DEFAULT;
         return creds.haveAllFields() ? creds : null;
     }
@@ -76,5 +76,9 @@ public class FBConnect
         } catch (e) {
             $wnd.console.log("FBConnect.logoff failure " + e);
         }
+    }-*/;
+
+    protected static native String getKey () /*-{
+        return $wnd.FB_GetKey();
     }-*/;
 }
