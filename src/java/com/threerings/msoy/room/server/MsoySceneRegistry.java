@@ -327,6 +327,7 @@ public class MsoySceneRegistry extends SpotSceneRegistry
             int sceneVer, int portalId, MsoyLocation destLoc, MsoySceneMoveListener listener)
         {
             super(locman, mover, sceneVer, listener);
+            _msoyListener = listener;
             _portalId = portalId;
             _destLoc = destLoc;
             _mover = mover;
