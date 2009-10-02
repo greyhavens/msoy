@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
+import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.RatingResult;
 import com.threerings.msoy.web.gwt.TagHistory;
 
@@ -81,4 +82,14 @@ public interface ItemServiceAsync
      * Loads items from a list that match the given criteria.
      */
     void loadItemList (ItemListQuery query, AsyncCallback<ItemListResult> callback);
+
+    /**
+     * Loads items from a list that match the given criteria.
+     */
+    void loadManagedThemes (AsyncCallback<GroupName[]> callback);
+
+    /**
+     * The asynchronous version of {@link ItemService#stampItem}.
+     */
+    void stampItem (ItemIdent ident, int groupId, AsyncCallback<Void> infoCallback);
 }

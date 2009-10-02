@@ -9,6 +9,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
+import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.RatingResult;
 
 import com.threerings.msoy.item.data.all.Item;
@@ -109,10 +110,22 @@ public interface ItemService extends RemoteService
         throws ServiceException;
 
     /**
+     * Loads the themes the current player is allowed to manage (stamp).
+     */
+    GroupName[] loadManagedThemes ()
+        throws ServiceException;
+
+    /**
      * Loads up all of this member's photo inventory. This exists separate from
      * StuffService.loadInventory because we want to allow photo selection in many places in the
      * website, but we don't want to have to compile in the entire Item hiearchy to do so.
      */
     List<Photo> loadPhotos ()
+        throws ServiceException;
+
+    /**
+     * Stamps the given item with a theme. The item is typically a clone or a listed master.
+     */
+    void stampItem (ItemIdent ident, int groupId)
         throws ServiceException;
 }

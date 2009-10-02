@@ -11,10 +11,13 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 
+import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.IntMap;
+import com.samskivert.util.IntSet;
 import com.samskivert.util.Tuple;
 
 import com.threerings.msoy.data.StatType;
+import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.RatingResult;
 import com.threerings.msoy.server.StatLogic;
@@ -22,6 +25,9 @@ import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.TagHistoryRecord;
 import com.threerings.msoy.server.persist.TagNameRecord;
 
+import com.threerings.msoy.group.data.all.GroupMembership.Rank;
+import com.threerings.msoy.group.server.persist.GroupMembershipRecord;
+import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.item.data.all.ItemFlag;
 import com.threerings.msoy.item.data.all.ItemIdent;
@@ -352,12 +358,40 @@ public class ItemServlet extends MsoyServiceServlet
         return result;
     }
 
+    // from interface ItemService
+    public GroupName[] loadManagedThemes ()
+        throws ServiceException
+    {
+        MemberRecord memrec = requireAuthedUser();
+        IntSet groupIds = new ArrayIntSet();
+        for (GroupMembershipRecord rec : _groupRepo.getMemberships(memrec.memberId, Rank.MANAGER)) {
+            groupIds.add(rec.groupId);
+        }
+        return _groupRepo.loadGroupNames(groupIds).values().toArray(new GroupName[0]);
+    }
+
+    // from interface ItemService
+    public void stampItem (ItemIdent ident, int groupId)
+        throws ServiceException
+    {
+        MemberRecord memrec = requireAuthedUser();
+        if (_groupRepo.getMembership(groupId, memrec.memberId).left != Rank.MANAGER) {
+            throw new ServiceException(ItemCodes.E_ACCESS_DENIED);
+        }
+        if (!_itemLogic.getRepository(ident.type).
+                stampItem(ident.itemId, groupId, memrec.memberId)) {
+            log.warning("Item was already stamped!", "item", ident, "theme", groupId);
+        }
+    }
+
     // our dependencies
     @Inject protected ItemFlagRepository _itemFlagRepo;
     @Inject protected ItemLogic _itemLogic;
     @Inject protected ItemManager _itemMan;
     @Inject protected PhotoRepository _photoRepo;
+    @Inject protected GroupRepository _groupRepo;
     @Inject protected StatLogic _statLogic;
 
     protected static final int MIN_SOLID_RATINGS = 20;
+
 }

@@ -89,9 +89,9 @@ public interface CatalogServiceAsync
     void loadPotentialBasisItems (byte itemType, AsyncCallback<List<ListingCard>> callback);
 
     /**
-     * The asynchronous version of {@link CatalogService#loadBrands}.
+     * The asynchronous version of {@link CatalogService#loadManagedBrands}.
      */
-    void loadBrands (AsyncCallback<List<BrandDetail>> callback);
+    void loadManagedBrands (AsyncCallback<List<BrandDetail>> callback);
 
     /**
      * The asynchronous version of {@link CatalogService#loadSuite}.

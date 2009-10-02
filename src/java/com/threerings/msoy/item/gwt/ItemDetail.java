@@ -9,6 +9,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.io.Streamable;
 
+import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.Item;
 
@@ -39,4 +40,7 @@ public class ItemDetail implements Streamable, IsSerializable
 
     /** Encoded memories, or null if not applicable. */
     public String memories;
+
+    /** If requested, the theme groups that have stamped this item. */
+    public List<GroupName> themes;
 }

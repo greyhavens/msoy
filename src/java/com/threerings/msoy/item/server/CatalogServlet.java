@@ -35,6 +35,7 @@ import com.threerings.msoy.group.gwt.BrandDetail;
 import com.threerings.msoy.group.server.GroupLogic;
 import com.threerings.msoy.group.server.persist.BrandShareRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
+import com.threerings.msoy.group.server.persist.ThemeRepository;
 import com.threerings.msoy.person.gwt.FeedMessageType;
 import com.threerings.msoy.person.server.FeedLogic;
 
@@ -91,7 +92,7 @@ public class CatalogServlet extends MsoyServiceServlet
 
         // if the query does not explicitly request a theme, use the player's current theme (if any)
         if (query.themeGroupId == 0) {
-            query.themeGroupId = mrec.themeGroupId;
+            query.themeGroupId = (mrec != null) ? mrec.themeGroupId : 0;
         }
 
         // pass the complexity buck off to the catalog logic
@@ -322,11 +323,13 @@ public class CatalogServlet extends MsoyServiceServlet
             }
         }
 
+        ItemRepository<ItemRecord> itemRepo = _itemLogic.getRepository(itemType);
+
         // load up the basis item if requested
         CatalogListing.BasisItem basis = null;
         if (forDisplay && record.basisId > 0) {
             CatalogRecord basisRec =
-                _itemLogic.getRepository(itemType).loadListing(record.basisId, true);
+                itemRepo.loadListing(record.basisId, true);
             if (basisRec != null) {
                 basis = new CatalogListing.BasisItem();
                 basis.catalogId = basisRec.catalogId;
@@ -372,8 +375,10 @@ public class CatalogServlet extends MsoyServiceServlet
         // finally convert the listing to a runtime record
         CatalogListing listing = record.toListing();
         listing.detail.creator = _memberRepo.loadMemberName(record.item.creatorId);
-
         listing.detail.memberItemInfo = _itemLogic.getMemberItemInfo(mrec, record.item.toItem());
+        listing.detail.themes = forDisplay ?
+            _itemLogic.loadItemStamps(itemType, record.listedItemId) : null;
+
         listing.quote = quote;
         listing.basis = basis;
         listing.brand = brand;
@@ -567,7 +572,7 @@ public class CatalogServlet extends MsoyServiceServlet
         return cards;
     }
 
-    public List<BrandDetail> loadBrands ()
+    public List<BrandDetail> loadManagedBrands ()
         throws ServiceException
     {
         MemberRecord mrec = requireAuthedUser();
@@ -663,6 +668,7 @@ public class CatalogServlet extends MsoyServiceServlet
     @Inject protected MsoyEventLogger _eventLog;
     @Inject protected MsoyGameRepository _mgameRepo;
     @Inject protected GroupRepository _groupRepo;
+    @Inject protected ThemeRepository _themeRepo;
     @Inject protected RuntimeConfig _runtime;
     @Inject protected StatLogic _statLogic;
     @Inject protected UserActionRepository _userActionRepo;

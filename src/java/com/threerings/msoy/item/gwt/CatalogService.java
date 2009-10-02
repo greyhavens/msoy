@@ -160,7 +160,7 @@ public interface CatalogService extends RemoteService
      * Load the groups where the current player has a non-zero amount of brand shares and return
      * the details for each such brand.
      */
-    List<BrandDetail> loadBrands ()
+    List<BrandDetail> loadManagedBrands ()
         throws ServiceException;
 
     /**

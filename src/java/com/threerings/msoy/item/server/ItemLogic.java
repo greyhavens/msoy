@@ -26,6 +26,7 @@ import com.samskivert.depot.DuplicateKeyException;
 
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.IntMap;
+import com.samskivert.util.IntSet;
 import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.StringUtil;
@@ -93,6 +94,7 @@ import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
 import com.threerings.msoy.item.server.persist.LauncherRepository;
 import com.threerings.msoy.item.server.persist.LevelPackRepository;
+import com.threerings.msoy.item.server.persist.MogMarkRecord;
 import com.threerings.msoy.item.server.persist.PetRepository;
 import com.threerings.msoy.item.server.persist.PhotoRepository;
 import com.threerings.msoy.item.server.persist.PrizeRepository;
@@ -1000,6 +1002,25 @@ public class ItemLogic
 
         return true;
     }
+
+    /**
+     * Construct and return a list of the {@link GroupName} of each theme group which has
+     * stamped the supplied item.
+     */
+    public List<GroupName> loadItemStamps (byte itemType, int itemId)
+        throws ServiceException
+    {
+        List<? extends MogMarkRecord> stampRecs = getRepository(itemType).loadItemStamps(itemId);
+        if (stampRecs.size() > 0) {
+            IntSet themeIds = new ArrayIntSet();
+            for (MogMarkRecord rec : stampRecs) {
+                themeIds.add(rec.groupId);
+            }
+            return Lists.newArrayList(_groupRepo.loadGroupNames(themeIds).values());
+        }
+        return null;
+    }
+
 
     /**
      * A class that helps manage loading or storing a bunch of items that may be spread in

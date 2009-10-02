@@ -988,6 +988,15 @@ public abstract class ItemRepository<T extends ItemRecord>
     }
 
     /**
+     * Stamp the given item with the given theme, noting also who did it. This function
+     * returns true if the item was previously unstamped by this theme.
+     */
+    public boolean stampItem (int itemId, int groupId, int stamperId)
+    {
+         return store(createMogMarkRecord(itemId, groupId, stamperId));
+    }
+
+    /**
      * Update either the 'purchases' or the 'returns' field of a catalog listing, and figure out if
      * it's time to reprice it.
      * @return the newly assigned cost or the original cost if it did not change
@@ -1728,6 +1737,19 @@ public abstract class ItemRepository<T extends ItemRecord>
         classes.add(getCloneClass());
         classes.add(getCatalogClass());
         classes.add(getMogMarkClass());
+    }
+
+    /**
+     * Create and populate an appropriate {@link MogMarkRecord} subclass.
+     */
+    protected MogMarkRecord createMogMarkRecord (int itemId, int groupId, int stamperId)
+    {
+        MogMarkRecord rec = createMogMarkRecord();
+        rec.itemId = itemId;
+        rec.groupId = groupId;
+        rec.stamperId = stamperId;
+        rec.lastStamped = new Timestamp(System.currentTimeMillis());
+        return rec;
     }
 
     protected Class<? extends MogMarkRecord> getMogMarkClass ()
