@@ -24,6 +24,7 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.profile.gwt.Profile;
 import com.threerings.msoy.profile.gwt.ProfileService;
 import com.threerings.msoy.profile.gwt.ProfileServiceAsync;
+import com.threerings.msoy.web.gwt.Pages;
 
 import client.item.ImageChooserPopup;
 import client.shell.CShell;
@@ -132,7 +133,7 @@ public class ConfigProfilePanel extends FlowPanel
             }
             protected boolean gotResult (Void result) {
                 CShell.frame.dispatchEvent(new NameChangeEvent(_dname));
-                Link.go(PeoplePage.getSelf(), "ff");
+                Link.go(Pages.WORLD, "h");
                 return false;
             }
             protected String _dname;
