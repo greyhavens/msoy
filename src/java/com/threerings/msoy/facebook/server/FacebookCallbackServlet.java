@@ -452,7 +452,11 @@ public class FacebookCallbackServlet extends HttpServlet
             Args embed = embedding.compose();
 
             // and send them to the appropriate page
-            if (game != null) {
+            if (app.clientMode == ClientMode.FB_ROOMS) {
+                // go to the home room
+                return Pages.WORLD.makeToken("h", embed);
+
+            } else if (game != null) {
                 if (fb.chromeless) {
                     // chromeless games go directly into the game
                     return Pages.WORLD.makeToken("fbgame", game.getIntId());
