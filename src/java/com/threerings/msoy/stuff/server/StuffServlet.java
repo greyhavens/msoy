@@ -257,6 +257,7 @@ public class StuffServlet extends MsoyServiceServlet
         detail.creator = ((mrec != null) && (record.creatorId == mrec.memberId)) ?
             mrec.getName() : // shortcut for items we created
             _memberRepo.loadMemberName(record.creatorId); // normal lookup
+        detail.themes = _itemLogic.loadItemStamps(iident.type, iident.itemId);
         detail.memberItemInfo = _itemLogic.getMemberItemInfo(mrec, detail.item);
         switch (detail.item.used) {
         case FURNITURE:
