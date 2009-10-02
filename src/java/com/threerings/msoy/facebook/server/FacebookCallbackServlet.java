@@ -39,6 +39,7 @@ import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 import com.threerings.msoy.web.gwt.ArgNames;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.ClientMode;
+import com.threerings.msoy.web.gwt.CookieNames;
 import com.threerings.msoy.web.gwt.Embedding;
 import com.threerings.msoy.web.gwt.ExternalSiteId;
 import com.threerings.msoy.web.gwt.Pages;
@@ -93,6 +94,7 @@ public class FacebookCallbackServlet extends HttpServlet
         // we want to preserve these values across all redirects, stash them here
         String trackingId = StringUtil.deNull(FrameParam.TRACKING.get(req));
         String newInstall = StringUtil.deNull(FrameParam.NEW_INSTALL.get(req));
+        int affiliate = getAffiliate(req);
 
         // if we don't have a signature, then we must be swizzling
         if (ConnParam.SIG.get(req) == null) {
@@ -118,9 +120,14 @@ public class FacebookCallbackServlet extends HttpServlet
             SwizzleServlet.setCookie(req, rsp, session);
 
             // redirect back to the application with the token tacked on
-            rsp.sendRedirect(SharedNaviUtil.buildRequest(FacebookLogic.getCanvasUrl(canvas),
+            String redirect = SharedNaviUtil.buildRequest(FacebookLogic.getCanvasUrl(canvas),
                 FrameParam.TOKEN.name, token, FrameParam.NEW_INSTALL.name, newInstall,
-                FrameParam.TRACKING.name, trackingId));
+                FrameParam.TRACKING.name, trackingId);
+
+            // include the affiliate if we were given one
+            redirect = addAffiliate(redirect, affiliate);
+
+            rsp.sendRedirect(redirect);
             return;
         }
 
@@ -181,10 +188,10 @@ public class FacebookCallbackServlet extends HttpServlet
         log.info("Initiating swizzle", "session", session, "token", token,
             "canvas", info.fb.canvasName);
 
-        MsoyHttpServer.sendTopRedirect(rsp, SharedNaviUtil.buildRequest(
+        MsoyHttpServer.sendTopRedirect(rsp, addAffiliate(SharedNaviUtil.buildRequest(
             req.getRequestURI(), FrameParam.SESSION.name, session, FrameParam.TOKEN.name, token,
             FrameParam.CANVAS.name, info.fb.canvasName, FrameParam.TRACKING.name, trackingId,
-            FrameParam.NEW_INSTALL.name, newInstall));
+            FrameParam.NEW_INSTALL.name, newInstall), affiliate));
     }
 
     /**
@@ -212,7 +219,7 @@ public class FacebookCallbackServlet extends HttpServlet
         // authenticate this member via their external FB creds (this will autocreate their
         // account if they don't already have one)
         MemberRecord mrec = _auther.authenticateSession(
-            creds, vinfo, AffiliateCookie.fromWeb(req));
+            creds, vinfo, AffiliateCookie.fromCreds(info.affiliate));
 
         // if the member has the same visitor id as the one we just made up, they were just
         // created and we need to note that this is an entry
@@ -363,6 +370,7 @@ public class FacebookCallbackServlet extends HttpServlet
             info.trackingId = FrameParam.TRACKING.get(req);
         }
 
+        info.affiliate = getAffiliate(req);
         return info;
     }
 
@@ -404,6 +412,21 @@ public class FacebookCallbackServlet extends HttpServlet
         }
     }
 
+    protected static int getAffiliate (HttpServletRequest req)
+    {
+        String affiliate = req.getParameter(CookieNames.AFFILIATE);
+        return affiliate == null ? 0 : Integer.parseInt(affiliate);
+    }
+
+    protected static String addAffiliate (String url, int affiliate)
+    {
+        if (affiliate != 0) {
+            url = SharedNaviUtil.buildRequest(url,
+                CookieNames.AFFILIATE, String.valueOf(affiliate));
+        }
+        return url;
+    }
+
     protected static class ReqInfo
     {
         public AppInfoRecord app;
@@ -414,6 +437,7 @@ public class FacebookCallbackServlet extends HttpServlet
         public boolean ping;
         public String trackingId;
         public ExternalSiteId siteId;
+        public int affiliate;
 
         /**
          * Gets the GWT token that the user should be redirected to in the whirled application.
@@ -465,7 +489,7 @@ public class FacebookCallbackServlet extends HttpServlet
                 Args.fromHistory(token), creds.uid, creds.sessionKey);
         }
 
-        protected String getLoginURL ()
+        public String getLoginURL ()
         {
             // pass in an installed flag so we know when the user has arrived for the first time
             String nextUrl = SharedNaviUtil.buildRequest(
@@ -476,6 +500,9 @@ public class FacebookCallbackServlet extends HttpServlet
                 nextUrl = SharedNaviUtil.buildRequest(nextUrl,
                     FrameParam.TRACKING.name, trackingId);
             }
+
+            // preserve the affiliate
+            nextUrl = addAffiliate(nextUrl, affiliate);
 
             // assemble the url with all the parameters
             return SharedNaviUtil.buildRequest("http://www.facebook.com/login.php",
