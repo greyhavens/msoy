@@ -169,9 +169,4 @@ public interface AdminServiceAsync
      * The asynchronous version of {@link AdminService#summarizeEntries}.
      */
     void summarizeEntries (AsyncCallback<List<EntrySummary>> callback);
-
-    /**
-     * The asynchronous version of {@link AdminService#setDailyNotifications}.
-     */
-    void setDailyNotifications (String[] ids, AsyncCallback<Void> callback);
 }

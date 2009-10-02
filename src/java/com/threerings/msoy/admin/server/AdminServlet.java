@@ -5,7 +5,6 @@ package com.threerings.msoy.admin.server;
 
 import static com.threerings.msoy.Log.log;
 
-import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -61,8 +60,6 @@ import com.threerings.msoy.web.gwt.WebCreds;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 import com.threerings.msoy.web.server.ServletWaiter;
 
-import com.threerings.msoy.facebook.server.FacebookLogic;
-import com.threerings.msoy.facebook.server.persist.FacebookRepository;
 import com.threerings.msoy.game.server.persist.GameInfoRecord;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 import com.threerings.msoy.item.data.ItemCodes;
@@ -726,14 +723,6 @@ public class AdminServlet extends MsoyServiceServlet
         return sums;
     }
 
-    @Override // from AdminService
-    public void setDailyNotifications (String[] ids)
-        throws ServiceException
-    {
-        requireAdminUser();
-        _facebookLogic.setDailyGamesUpdatedNotifications(Arrays.asList(ids));
-    }
-
     protected void sendGotInvitesMail (final int senderId, final int recipientId, final int number)
     {
         final String subject = _serverMsgs.getBundle("server").get("m.got_invites_subject", number);
@@ -910,8 +899,6 @@ public class AdminServlet extends MsoyServiceServlet
     @Inject protected ABTestRepository _testRepo;
     @Inject protected BureauManager _bureauMgr;
     @Inject protected ContestRepository _contestRepo;
-    @Inject protected FacebookLogic _facebookLogic;
-    @Inject protected FacebookRepository _facebookRepo;
     @Inject protected ItemFlagRepository _itemFlagRepo;
     @Inject protected ItemLogic _itemLogic;
     @Inject protected MailLogic _mailLogic;

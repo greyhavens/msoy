@@ -11,12 +11,15 @@ import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
+
+import com.threerings.msoy.apps.data.AppCodes;
 import com.threerings.msoy.apps.gwt.AppInfo;
 import com.threerings.msoy.apps.gwt.AppService;
 import com.threerings.msoy.apps.gwt.FacebookNotification;
 import com.threerings.msoy.apps.gwt.FacebookNotificationStatus;
 import com.threerings.msoy.apps.server.persist.AppInfoRecord;
 import com.threerings.msoy.apps.server.persist.AppRepository;
+
 import com.threerings.msoy.facebook.gwt.FacebookInfo;
 import com.threerings.msoy.facebook.gwt.FacebookTemplate;
 import com.threerings.msoy.facebook.gwt.FeedThumbnail;
@@ -29,11 +32,12 @@ import com.threerings.msoy.facebook.server.persist.FacebookRepository;
 import com.threerings.msoy.facebook.server.persist.FacebookTemplateRecord;
 import com.threerings.msoy.facebook.server.persist.FeedThumbnailRecord;
 import com.threerings.msoy.facebook.server.persist.KontagentInfoRecord;
-import com.threerings.msoy.item.data.ItemCodes;
+
 import com.threerings.msoy.web.gwt.ClientMode;
 import com.threerings.msoy.web.gwt.ExternalSiteId;
 import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
+import com.threerings.util.MessageBundle;
 
 /**
  * Implements the application service.
@@ -70,6 +74,12 @@ public class AppServlet extends MsoyServiceServlet
         data.facebook = _facebookRepo.loadAppFacebookInfo(appId).toFacebookInfo();
         KontagentInfoRecord kinfo = _facebookRepo.loadKontagentInfo(appId);
         data.kontagent = kinfo==null ? new KontagentInfo("", "") : kinfo.toKontagentInfo();
+        if (appId == _facebookLogic.getDefaultGamesSite().getFacebookAppId()) {
+            data.dailyNotifications = Lists.newArrayList(
+                _facebookLogic.getDailyGamesUpdatedNotifications());
+        } else {
+            data.dailyNotifications = Lists.newArrayList();
+        }
         return data;
     }
 
@@ -104,7 +114,7 @@ public class AppServlet extends MsoyServiceServlet
         requireApp(appId);
         FacebookNotificationRecord notif = _facebookRepo.loadNotification(appId, id);
         if (notif == null) {
-            throw new ServiceException("e.notification_cannot_be_deleted");
+            throw new ServiceException(MessageBundle.tcompose(AppCodes.E_NO_SUCH_NOTIFICATION, id));
         }
         _facebookRepo.deleteNotification(appId, id);
     }
@@ -135,6 +145,17 @@ public class AppServlet extends MsoyServiceServlet
     {
         requireApp(appId);
         _facebookLogic.scheduleNotification(ExternalSiteId.facebookApp(appId), id, delay);
+    }
+
+    @Override // from AppService
+    public void setDailyNotifications (int appId, List<String> ids)
+        throws ServiceException
+    {
+        requireAdminUser();
+        if (appId != _facebookLogic.getDefaultGamesSite().getFacebookAppId()) {
+            throw new ServiceException(AppCodes.E_DAILY_NOTIFICATIONS_NOT_SUPPORTED);
+        }
+        _facebookLogic.setDailyGamesUpdatedNotifications(ids);
     }
 
     @Override // from AppService
@@ -215,13 +236,13 @@ public class AppServlet extends MsoyServiceServlet
         requireAdminUser();
         AppInfoRecord app = _appRepo.loadAppInfo(id);
         if (app == null) {
-            throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
+            throw new ServiceException(AppCodes.E_NO_SUCH_APP);
         }
         return app;
     }
 
     // dependencies
-    @Inject AppRepository _appRepo;
-    @Inject FacebookLogic _facebookLogic;
-    @Inject FacebookRepository _facebookRepo;
+    protected @Inject AppRepository _appRepo;
+    protected @Inject FacebookLogic _facebookLogic;
+    protected @Inject FacebookRepository _facebookRepo;
 }

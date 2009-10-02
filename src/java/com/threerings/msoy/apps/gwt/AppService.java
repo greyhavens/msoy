@@ -32,6 +32,7 @@ public interface AppService extends RemoteService
         public AppInfo info;
         public FacebookInfo facebook;
         public KontagentInfo kontagent;
+        public List<String> dailyNotifications;
     }
 
     /** The entry point for this service. */
@@ -137,5 +138,15 @@ public interface AppService extends RemoteService
      * Sets the given application's Kontagent info.
      */
     void updateKontagentInfo (int appId, KontagentInfo kinfo)
+        throws ServiceException;
+
+    /**
+     * Sets the given application's daily notification rotation to the given set of its. The next
+     * notification to be sent will be the one in the 0th position. Note that daily notification
+     * are currently only supported by the primary games portal app and is synchronized with the
+     * featured game update.
+     * @throws ServiceException if any of the notifications do not exist
+     */
+    void setDailyNotifications (int appId, List<String> notificationIds)
         throws ServiceException;
 }

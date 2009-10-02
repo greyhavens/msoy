@@ -69,4 +69,8 @@ public interface AppServiceAsync
 
     /** The asynchronous version of {@link AppService#updateKontagentInfo}. */
     void updateKontagentInfo (int appId, KontagentInfo kinfo, AsyncCallback<Void> callback);
+
+    /** The asynchronous version of {@link AppService#setDailyNotifications}. */
+    void setDailyNotifications (
+        int appId, List<String> notificationIds, AsyncCallback<Void> callback);
 }

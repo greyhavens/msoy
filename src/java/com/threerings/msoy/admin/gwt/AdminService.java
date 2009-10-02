@@ -266,11 +266,4 @@ public interface AdminService extends RemoteService
      */
     List<EntrySummary> summarizeEntries ()
         throws ServiceException;
-
-    /**
-     * Sets up the rotating list of daily notifications.
-     * TODO: move to AppService
-     */
-    void setDailyNotifications (String[] ids)
-        throws ServiceException;
 }

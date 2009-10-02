@@ -52,6 +52,7 @@ import com.threerings.facebook.FQLQuery;
 import com.threerings.util.MessageBundle;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;
+import com.threerings.msoy.apps.data.AppCodes;
 import com.threerings.msoy.apps.server.persist.AppInfoRecord;
 import com.threerings.msoy.apps.server.persist.AppRepository;
 import com.threerings.msoy.data.UserAction;
@@ -506,10 +507,19 @@ public class FacebookLogic
     }
 
     /**
+     * Gets the list of notification ids that will be used when sending notifications after the
+     * featured games are updated. This only applies to the default games application.
+     */
+    public List<String> getDailyGamesUpdatedNotifications ()
+        throws ServiceException
+    {
+        return _listRepo.getList(DAILY_GAMES_LIST, false);
+    }
+
+    /**
      * Sets the list of notification ids that will be used when sending notifications after the
-     * featured games are updated. Throws an exception is any of the ids do not correspond to a
+     * featured games are updated. Throws an exception if any of the ids do not correspond to a
      * notification. This only applies to the default games application.
-     * @see AppRepository#loadDefaultGamesApp()
      */
     public void setDailyGamesUpdatedNotifications (List<String> ids)
         throws ServiceException
@@ -517,7 +527,8 @@ public class FacebookLogic
         int appId = _defaultSite.getFacebookAppId();
         for (String id : ids) {
             if (_facebookRepo.loadNotification(appId, id) == null) {
-                throw new ServiceException(MessageBundle.tcompose("e.notification_not_found", id));
+                throw new ServiceException(MessageBundle.tcompose(
+                    AppCodes.E_NO_SUCH_NOTIFICATION, id));
             }
         }
         _listRepo.setList(DAILY_GAMES_LIST, ids);
@@ -568,7 +579,7 @@ public class FacebookLogic
             return;
         }
         if (StringUtil.isBlank(template.text)) {
-            throw new ServiceException("e.notification_blank_text");
+            throw new ServiceException(AppCodes.E_NOTIFICATION_BLANK);
         }
 
         // generate a batch id
