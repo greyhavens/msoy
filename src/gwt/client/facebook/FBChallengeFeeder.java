@@ -73,17 +73,19 @@ public class FBChallengeFeeder
     /**
      * Callback after the feed form is submitted or cancelled.
      */
-    protected void onCompletion ()
+    protected void onCompletion (String postId)
     {
-        _fbsvc.challengePublished(
-            CShell.getAppId(), _game, _fields.trackingId, new AsyncCallback<Void>() {
-            @Override public void onFailure (Throwable caught) {
-                goBackToGame();
-            }
-            @Override public void onSuccess (Void result) {
-                goBackToGame();
-            }
-        });
+        if (postId != null) {
+            _fbsvc.challengePublished(
+                CShell.getAppId(), _game, _fields.trackingId, new AsyncCallback<Void>() {
+                @Override public void onFailure (Throwable caught) {
+                    goBackToGame();
+                }
+                @Override public void onSuccess (Void result) {
+                    goBackToGame();
+                }
+            });
+        }
     }
 
     protected void goBackToGame ()
@@ -93,8 +95,8 @@ public class FBChallengeFeeder
 
     protected native void publishChallenge (String templateId, JavaScriptObject data) /*-{
         var object = this;
-        $wnd.FB_PostChallenge(templateId, data, function () {
-            object.@client.facebook.FBChallengeFeeder::onCompletion()();
+        $wnd.FB_PostChallenge(templateId, data, function (postid, exception, data) {
+            object.@client.facebook.FBChallengeFeeder::onCompletion(Ljava/lang/String;)(postid);
         });
     }-*/;
 

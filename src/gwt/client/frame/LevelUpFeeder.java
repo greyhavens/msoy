@@ -69,15 +69,18 @@ public class LevelUpFeeder
     /**
      * Callback after the feed form is submitted or cancelled.
      */
-    protected void onCompletion ()
+    protected void onCompletion (String postId)
     {
-        _fbsvc.levelUpPublished(CShell.getAppId(), _fields.trackingId, new NoopAsyncCallback());
+        if (postId != null) {
+            _fbsvc.levelUpPublished(
+                CShell.getAppId(), _fields.trackingId, new NoopAsyncCallback());
+        }
     }
 
     protected native void publishLevelUp (String templateId, JavaScriptObject data) /*-{
         var object = this;
-        $wnd.FB_PostLevelUp(templateId, data, function () {
-            object.@client.frame.LevelUpFeeder::onCompletion()();
+        $wnd.FB_PostLevelUp(templateId, data, function (postid, exception, data) {
+            object.@client.frame.LevelUpFeeder::onCompletion(Ljava/lang/String;)(postid);
         });
     }-*/;
 

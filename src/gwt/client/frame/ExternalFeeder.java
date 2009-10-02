@@ -91,23 +91,26 @@ public class ExternalFeeder
      * Called by facebook.js when the trophy feed publish dialog is closed. There is no guarantee
      * that the user actually chose to do it.
      */
-    protected void trophyPublished (int gameId, String trophyIdent, String trackingId)
+    protected void trophyPublished (
+        int gameId, String trophyIdent, String trackingId, String postId)
     {
-        _fbsvc.trophyPublished(
-            CShell.getAppId(), gameId, trophyIdent, trackingId, new AsyncCallback<Void>() {
-            @Override public void onFailure (Throwable caught) {
-                CShell.log("Failed to contact server for trophy published", caught);
-            }
-            @Override public void onSuccess (Void result) {
-            }
-        });
+        if (postId != null) {
+            _fbsvc.trophyPublished(
+                CShell.getAppId(), gameId, trophyIdent, trackingId, new AsyncCallback<Void>() {
+                @Override public void onFailure (Throwable caught) {
+                    CShell.log("Failed to contact server for trophy published", caught);
+                }
+                @Override public void onSuccess (Void result) {
+                }
+            });
+        }
     }
 
     protected native void publishTrophy (
         String templateId, int gameId, String ident, String trackingId, JavaScriptObject data) /*-{
         var object = this;
-        $wnd.FB_PostTrophy(templateId, data, function () {
-            object.@client.frame.ExternalFeeder::trophyPublished(ILjava/lang/String;Ljava/lang/String;)(gameId, ident, trackingId);
+        $wnd.FB_PostTrophy(templateId, data, function (postid, exception, data) {
+            object.@client.frame.ExternalFeeder::trophyPublished(ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;)(gameId, ident, trackingId, postid);
         });
     }-*/;
 
