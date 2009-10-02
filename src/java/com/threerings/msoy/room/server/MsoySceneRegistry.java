@@ -397,6 +397,7 @@ public class MsoySceneRegistry extends SpotSceneRegistry
                 destmgr.clearEnteringBody(_mover);
                 log.warning("Scene move failed", "mover", _mover.who(),
                     "sceneId", scene.getId(), ie);
+                _msoyListener.requestFailed(ie.getMessage());
                 return;
             }
 
@@ -412,7 +413,6 @@ public class MsoySceneRegistry extends SpotSceneRegistry
                     } catch (InvocationException ie) {
                         log.warning("Pet follow failed", "memberId", _memobj.getMemberId(),
                             "sceneId", scene.getId(), ie);
-                        return;
                     }
                 }
             }
@@ -437,12 +437,18 @@ public class MsoySceneRegistry extends SpotSceneRegistry
             _memberId = user.getMemberId();
             _listener = finishMove;
             _loadQuicklist = (_user.avatarCache == null || _themeId != user.mogGroupId);
-            _avatarId = (_user.avatar != null) ? _user.avatar.getMasterId() : 0;
+            _oldAvatarId = (_user.avatar != null) ? _user.avatar.itemId : 0;
+            _candidateAvatarId = _oldAvatarId;
         }
 
         public void invokePersist ()
             throws Exception
         {
+            if (_memberId == 0) {
+                log.warning("What's going on? This user's memberId is zero!", "user", _user.who(),
+                    "sceneId", _sceneId, "themeId", _themeId);
+                return;
+            }
             AvatarRepository avaRepo = _itemLogic.getAvatarRepository();
 
             // if we're moving into a theme, or we just don't have an avatar cache yet, load it
@@ -483,18 +489,27 @@ public class MsoySceneRegistry extends SpotSceneRegistry
 
             // if we've been in this theme before, see what we wore last
             ThemeAvatarUseRecord aRec = _themeRepo.getLastWornAvatar(_memberId, _themeId);
-            if (aRec != null && aRec.itemId != _avatarId) {
-                _avatarId = aRec.itemId;
-                _avatarShouldChange = true;
+            if (aRec != null && aRec.itemId != _candidateAvatarId) {
+                _candidateAvatarId = aRec.itemId;
             }
 
-            if (_avatarId == 0 || (_themeId != 0 && !avaRepo.isThemeStamped(_themeId, _avatarId))) {
-                // if not, we will have to display the avatar selection UI; for now choose
-                // a random stamped avatar
+            // if at this point our avatar (either current or most recently worn for theme) is
+            // the ghost or not, in fact, stamped for the theme, we have to do more work
+            if (_themeId != 0 &&
+                    (_candidateAvatarId == 0 ||
+                     !avaRepo.isThemeStamped(_themeId, _candidateAvatarId))) {
+                // see if the player has any existing acceptable avatars in their inventory
                 _avatars = avaRepo.findItems(_memberId, null, _themeId);
-                _avatarId = (_avatars.size() == 0) ? 0 :
-                    _avatars.get(RandomUtil.getInt(_avatars.size())).getMasterId();
-                _avatarShouldChange = true;
+
+                if (_avatars.size() > 0) {
+                    // if so, pick a random one (for now?)
+                    _candidateAvatarId = _avatars.get(RandomUtil.getInt(_avatars.size())).itemId;
+                } else {
+                    // otherwise, this is where we fetch the avatar lineup from the theme
+                    // and fire up the selection UI -- but we're not doing that at the
+                    // moment, so just default to the ghost
+                    _candidateAvatarId = 0;
+                }
             }
         }
 
@@ -511,13 +526,13 @@ public class MsoySceneRegistry extends SpotSceneRegistry
             }
 
             // if we're not switching avatars, we're done
-            if (true || !_avatarShouldChange) {   // TODO EMERGENCY DISABLE
+            if (_candidateAvatarId == _oldAvatarId) {
                 finishOrPunt();
                 return;
             }
 
             // otherwise we have to route everything through MemberManager.setAvatar()
-            _memMan.setAvatar(_user, _avatarId, new MemberManager.SetAvatarListener() {
+            _memMan.setAvatar(_user, _candidateAvatarId, new MemberManager.SetAvatarListener() {
                 public void success () {
                     finishOrPunt();
                 }
@@ -547,10 +562,11 @@ public class MsoySceneRegistry extends SpotSceneRegistry
         protected int _memberId;
         protected ThemeMoveHandler _listener;
         protected boolean _loadQuicklist;
-        protected int _avatarId;
+        protected int _oldAvatarId;
+        protected int _candidateAvatarId;
         protected List<AvatarRecord> _quicklist;
         protected List<AvatarRecord> _avatars;
-        protected boolean _avatarShouldChange;
+
         protected int _gameId;
     }
 
