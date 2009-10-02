@@ -3,19 +3,32 @@
 
 package client.item;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.gwt.ui.InlineLabel;
+import com.threerings.gwt.ui.Popups;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
+import com.threerings.msoy.data.all.DeploymentConfig;
+import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.RatingResult;
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;
@@ -27,7 +40,6 @@ import com.threerings.msoy.item.gwt.ItemService;
 import com.threerings.msoy.item.gwt.ItemServiceAsync;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.TagHistory;
-
 import client.shell.CShell;
 import client.ui.CreatorLabel;
 import client.ui.HeaderBox;
@@ -69,7 +81,7 @@ public abstract class BaseItemDetailPanel extends SmartTable
             bits.add(row);
         }
         setWidget(0, 0, bits);
-        getFlexCellFormatter().setRowSpan(0, 0, 2);
+        getFlexCellFormatter().setRowSpan(0, 0, 3);
         getFlexCellFormatter().setVerticalAlignment(0, 0, HorizontalPanel.ALIGN_TOP);
 
         // a place for details
@@ -99,8 +111,26 @@ public abstract class BaseItemDetailPanel extends SmartTable
         _details.add(_indeets);
         _indeets.add(MsoyUI.createRestrictedHTML(ItemUtil.getDescription(_item)));
 
+        if (DeploymentConfig.devDeployment && !CShell.isGuest()) {
+            _itemsvc.loadManagedThemes(new InfoCallback<GroupName[]>() {
+                public void onSuccess (GroupName[] result) {
+                    _managedThemes = result;
+                    if (_managedThemes == null && _detail.themes == null) {
+                        // don't build an empty UI
+                        return;
+                    }
+
+                    setWidget(1, 0, _themeBits = new RoundBox(RoundBox.BLUE), 1, "Details");
+                    getFlexCellFormatter().setVerticalAlignment(1, 0, HorizontalPanel.ALIGN_TOP);
+                    _themeBits.setWidth("100%");
+                    _themeBits.add(_stampedBy = new FlowPanel());
+                    _themeBits.add(_stampItem = new SmartTable());
+                    updateStamps();
+                }
+            });
+        }
+
         // add our tag business at the bottom
-        getFlexCellFormatter().setHeight(1, 0, "10px");
         boolean canEditTags = CShell.isSubscriber() || _item.creatorId == CShell.getMemberId();
         TagDetailPanel.TagService tagService = new TagDetailPanel.TagService() {
             public void tag (String tag, AsyncCallback<TagHistory> callback) {
@@ -125,7 +155,8 @@ public abstract class BaseItemDetailPanel extends SmartTable
                 _itemsvc.addFlag(ident, kind, comment, new NoopAsyncCallback());
             }
         };
-        setWidget(1, 0, new TagDetailPanel(tagService, flagService, detail.tags, canEditTags));
+        setWidget(2, 0, new TagDetailPanel(tagService, flagService, detail.tags, canEditTags));
+        getFlexCellFormatter().setHeight(2, 0, "10px");
 
         configureCallbacks(this);
     }
@@ -149,6 +180,86 @@ public abstract class BaseItemDetailPanel extends SmartTable
         int row = getRowCount();
         setWidget(row, 0, widget);
         getFlexCellFormatter().setColSpan(row, 0, 3);
+    }
+
+    protected void updateStamps ()
+    {
+        updateStampedBy();
+        updateStampItem();
+    }
+
+    protected void updateStampedBy ()
+    {
+        while (_stampedBy.getWidgetCount() > 0) {
+            _stampedBy.remove(0);
+        }
+        if (_detail.themes.size() == 0) {
+            return;
+        }
+        int cnt = _detail.themes.size();
+        if (_briefStamps) {
+            cnt = Math.min(cnt, BRIEF_STAMP_COUNT);
+        }
+        _stampedBy.add(new InlineLabel(_imsgs.itemStampedBy() + " "));
+        for (int ii = 0; ii < cnt; ii ++) {
+            GroupName theme = _detail.themes.get(ii);
+            if (ii > 0) {
+                _stampedBy.add(new InlineLabel(", "));
+            }
+            _stampedBy.add(Link.groupView(theme));
+        }
+        if (_briefStamps && _detail.themes.size() > BRIEF_STAMP_COUNT) {
+            ClickHandler action = new ClickHandler() {
+                public void onClick (ClickEvent event) {
+                    _briefStamps = false;
+                    updateStamps();
+                }
+            };
+            _stampedBy.add(new InlineLabel(", "));
+            _stampedBy.add(MsoyUI.createActionLabel(_imsgs.itemSeeAllThemes(), "inline", action));
+        }
+    }
+
+    protected void updateStampItem ()
+    {
+        _stampItem.clear();
+        if (_managedThemes == null || _managedThemes.length == 0) {
+            return;
+        }
+
+        _stampItem.setWidget(0, 0, _stampBox = new ListBox(), 1);
+        _stampBox.addItem(_imsgs.itemListNoTheme());
+        _stampBox.addChangeHandler(new ChangeHandler() {
+            public void onChange (ChangeEvent event) {
+                _stampButton.setEnabled(_stampBox.getSelectedIndex() > 0);
+            }
+        });
+
+        Set<GroupName> existing = new HashSet<GroupName>(_detail.themes);
+        for (GroupName theme : _managedThemes) {
+            if (!existing.contains(theme)) {
+                _stampBox.addItem(theme.toString());
+            }
+        }
+        _stampButton = MsoyUI.createTinyButton(_imsgs.itemDoStamp(), new ClickHandler() {
+            public void onClick (ClickEvent event) {
+                int ix = _stampBox.getSelectedIndex();
+                if (ix == 0) {
+                    Popups.errorNear(_imsgs.itemNothingToStamp(), _stampButton);
+                    return;
+                }
+                final GroupName theme = _managedThemes[ix-1];
+                _itemsvc.stampItem(_item.getIdent(), theme.getGroupId(), new InfoCallback<Void>() {
+                    public void onSuccess (Void result) {
+                        _detail.themes.add(theme);
+                        updateStamps();
+                    }
+                });
+            }
+        });
+        _stampButton.setEnabled(false);
+
+        _stampItem.setWidget(0, 2, _stampButton);
     }
 
     /**
@@ -287,11 +398,20 @@ public abstract class BaseItemDetailPanel extends SmartTable
 
     protected Item _item;
     protected ItemDetail _detail;
+    protected GroupName[] _managedThemes;
 
     protected RoundBox _details;
     protected RoundBox _indeets;
+    protected RoundBox _themeBits;
 
     protected CreatorLabel _creator;
+
+    protected FlowPanel _stampedBy;
+    protected boolean _briefStamps = true;
+
+    protected SmartTable _stampItem;
+    protected ListBox _stampBox;
+    protected Button _stampButton;
 
     protected StyledTabPanel _belowTabs;
 
@@ -300,4 +420,6 @@ public abstract class BaseItemDetailPanel extends SmartTable
 
     protected static final ItemMessages _imsgs = GWT.create(ItemMessages.class);
     protected static final ItemServiceAsync _itemsvc = GWT.create(ItemService.class);
+
+    protected static final int BRIEF_STAMP_COUNT = 6;
 }

@@ -124,7 +124,7 @@ public class DoListItemPopup extends VerticalPanel
             brand.setWidget(row, 1, _brandBox = new ListBox(), 1);
             _brandBox.addItem(_imsgs.doListNoBrand());
 
-            _catalogsvc.loadBrands(new InfoCallback<List<BrandDetail>>() {
+            _catalogsvc.loadManagedBrands(new InfoCallback<List<BrandDetail>>() {
                 @Override public void onSuccess (List<BrandDetail> result) {
                     gotBrands(result, listing);
                 }

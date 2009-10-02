@@ -260,11 +260,6 @@ public class ListingDetailPanel extends BaseItemDetailPanel
         return false;
     }
 
-    protected static Widget createSeparator ()
-    {
-        return new HTML("&nbsp;&nbsp;|&nbsp;&nbsp;");
-    }
-
     protected void updateDerivatives ()
     {
         while (_usedBy.getWidgetCount() > 0) {
@@ -297,6 +292,11 @@ public class ListingDetailPanel extends BaseItemDetailPanel
             _usedBy.add(MsoyUI.createActionLabel(
                 _msgs.listingSeeAllDerivatives(), "inline", action));
         }
+    }
+
+    protected static Widget createSeparator ()
+    {
+        return new HTML("&nbsp;&nbsp;|&nbsp;&nbsp;");
     }
 
     /**
