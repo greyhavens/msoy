@@ -555,6 +555,16 @@ public class GroupRepository extends DepotRepository
     }
 
     /**
+     * Fetches the group memberships in which the given member has a certain rank.
+     */
+    public List<GroupMembershipRecord> getMemberships (int memberId, Rank rank)
+    {
+        return findAll(GroupMembershipRecord.class,
+                       new Where(GroupMembershipRecord.MEMBER_ID, memberId,
+                                 GroupMembershipRecord.RANK, rank));
+    }
+
+    /**
      * Fetches the full records of the groups a given member belongs to ordered from most populous
      * to least.
      *
@@ -702,8 +712,8 @@ public class GroupRepository extends DepotRepository
     }
 
     /**
-     * Fetches a page of the membership roster of a given group for a given rank.
-     * @param rank the rank to select, or -1 for all members
+     * Fetches the membership roster of a given group for a given rank.
+     * @param rank the rank to select, or null for all members
      */
     protected List<Integer> getMemberIds (int groupId, Rank rank)
     {
