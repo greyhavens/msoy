@@ -398,6 +398,9 @@ public abstract class ItemRepository<T extends ItemRecord>
      */
     public List<T> findItems (int ownerId, String query, int themeId)
     {
+        if (ownerId == 0) {
+            throw new IllegalArgumentException("Refusing to enumerate inventory of ownerId=0");
+        }
         WordSearch queryContext = buildWordSearch(query);
         List<SQLExpression> matches = Lists.newArrayList();
 
@@ -959,14 +962,29 @@ public abstract class ItemRepository<T extends ItemRecord>
     }
 
     /**
-     * Figure out whether a given master item is acceptable in a given theme.
+     * Figure out whether a given item is acceptable in a given theme.
      */
-    public boolean isThemeStamped (int themeGroupId, int masterItemId)
+    public boolean isThemeStamped (int themeGroupId, int itemId)
     {
-        return null != load(Key.newKey(
-            getMogMarkClass(),
+        if (itemId < 0) {
+            // for clones we have to do a join
+            return null != load(getMogMarkClass(),
+                new Join(new ColumnExp(getMogMarkClass(), MogMarkRecord.ITEM_ID.name),
+                         getCloneColumn(CloneRecord.ORIGINAL_ITEM_ID)),
+                new Where(getCloneColumn(CloneRecord.ORIGINAL_ITEM_ID), itemId));
+        }
+        return null != load(getMogMarkClass(), new Where(
             new ColumnExp(getMogMarkClass(), MogMarkRecord.GROUP_ID.name), themeGroupId,
-            new ColumnExp(getMogMarkClass(), MogMarkRecord.ITEM_ID.name), masterItemId));
+            new ColumnExp(getMogMarkClass(), MogMarkRecord.ITEM_ID.name), itemId));
+    }
+
+    /**
+     * Return all the theme stamp records for a given item.
+     */
+    public List<? extends MogMarkRecord> loadItemStamps (int itemId)
+    {
+        return findAll(getMogMarkClass(),
+            new Where(new ColumnExp(getMogMarkClass(), MogMarkRecord.ITEM_ID.name), itemId));
     }
 
     /**
