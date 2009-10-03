@@ -567,3 +567,50 @@
 .contestsPanel .PastContest a {
   color: #FFFFFF;
 }
+
+/* ------------------------------------
+  HALLOWEEN DESIGN YOUR WHIRLED CONTEST (OCT 2009)
+-------------------------------------*/
+
+.contestOctPanel {
+  background: #000000 url(/images/me/contests/contest_halloween09_header.jpg) center top no-repeat;
+  width: 100%;
+  min-height: 100%;
+}
+
+.contestOctPanel, .contestOctPanel table {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 13px;
+}
+
+.contestOctPanel .Content {
+  width: 634px;
+  padding-top: 370px;
+  margin: 0 auto;
+}
+
+.contestOctPanel .Content .roundBox {
+  margin: 10px 0;
+}
+
+.contestOctPanel .Content .roundBox .Center {
+  padding: 10px;
+}
+
+.contestOctPanel .Content p {
+  margin: 10px 20px;
+  line-height: 20px;
+}
+
+.contestOctPanel .Content .Title,
+.contestOctPanel .Content .TitleAlt {
+  font-size: 26px;
+  font-weight: bold;
+  font-family: "Trebuchet MS",Arial,Helvetica,sans-serif;
+  color: #ff752a;
+  margin: 0 0 10px 0;
+}
+
+.contestOctPanel .Content .TitleAlt {
+  color: #3595b7;
+}
