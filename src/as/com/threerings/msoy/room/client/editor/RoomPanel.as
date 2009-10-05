@@ -16,12 +16,14 @@ import mx.events.ItemClickEvent;
 import com.threerings.flex.CommandButton;
 
 import com.threerings.util.Log;
+import com.threerings.util.Util;
 
 import com.threerings.msoy.client.Msgs;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.world.client.WorldService;
+import com.threerings.msoy.world.client.WorldService_HomeResultListenerAdapter;
 
 import com.threerings.msoy.room.data.FurniData;
 import com.threerings.msoy.room.data.MsoyScene;
@@ -98,7 +100,8 @@ public class RoomPanel extends BasePanel
                 var svc :WorldService =
                     _controller.ctx.getClient().requireService(WorldService) as WorldService;
                 svc.getHomeId(MsoySceneModel.OWNER_TYPE_GROUP, sceneModel.ownerId,
-                    _controller.ctx.resultListener(resultHandler, MsoyCodes.EDITING_MSGS));
+                    new WorldService_HomeResultListenerAdapter(resultHandler, null,
+                        Util.adapt(_controller.ctx.displayFeedback, MsoyCodes.EDITING_MSGS)));
             }
 
         } else {

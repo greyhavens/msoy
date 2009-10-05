@@ -47,6 +47,7 @@ import com.threerings.msoy.server.MemberLocator;
 import com.threerings.msoy.server.MemberLogic;
 import com.threerings.msoy.server.MemberNodeActions;
 import com.threerings.msoy.server.persist.MemberRepository;
+import com.threerings.msoy.world.client.WorldService.HomeResultListener;
 
 import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.group.server.persist.ThemeRepository;
@@ -107,10 +108,11 @@ public class WorldManager
     }
 
     @Override // from interface WorldProvider
-    public void getHomeId (final ClientObject caller, final byte ownerType, final int ownerId,
-                           final InvocationService.ResultListener listener)
+    public void getHomeId (ClientObject caller, final byte ownerType, final int ownerId,
+                           HomeResultListener listener)
         throws InvocationException
     {
+        // TODO: check for gifting of avatars
         _invoker.postUnit(new PersistingUnit("getHomeId", listener) {
             @Override public void invokePersistent () throws Exception {
                 _homeId = _memberLogic.getHomeId(ownerType, ownerId);
@@ -119,7 +121,7 @@ public class WorldManager
                 if (_homeId == null) {
                     handleFailure(new InvocationException("m.no_such_user"));
                 } else {
-                    reportRequestProcessed(_homeId);
+                    ((HomeResultListener)_listener).readyToEnter(_homeId);
                 }
             }
             protected Integer _homeId;

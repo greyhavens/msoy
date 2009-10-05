@@ -21,7 +21,7 @@ public interface WorldService extends InvocationService
     function followMember (arg1 :int, arg2 :InvocationService_InvocationListener) :void;
 
     // from Java interface WorldService
-    function getHomeId (arg1 :int, arg2 :int, arg3 :InvocationService_ResultListener) :void;
+    function getHomeId (arg1 :int, arg2 :int, arg3 :WorldService_HomeResultListener) :void;
 
     // from Java interface WorldService
     function getHomePageGridItems (arg1 :InvocationService_ResultListener) :void;

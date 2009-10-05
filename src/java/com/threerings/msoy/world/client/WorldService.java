@@ -7,12 +7,30 @@ import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 
 import com.threerings.msoy.data.HomePageItem;
+import com.threerings.msoy.item.data.all.Avatar;
 
 /**
  * Provides global services to the world client.
  */
 public interface WorldService extends InvocationService
 {
+    /**
+     * Result listener for {@link #getHomeId()}.
+     */
+    interface HomeResultListener extends InvocationListener
+    {
+        /**
+         * Instructs the client that an avatar selection is required before entering the room. The
+         * client should show the avatar picker, then call {@link MemberService.
+         */
+        void selectGift (Avatar[] avatars);
+
+        /**
+         * Instructs the client that the room may now be entered. All preparations have been made.
+         */
+        void readyToEnter (int sceneId);
+    }
+
     /**
      * Requests the items to populate the home page grid. The expected response is an arry of
      * {@link HomePageItem}. This should eventually take a parameter so that the top 3 "whirled"
@@ -24,7 +42,7 @@ public interface WorldService extends InvocationService
      * Request to know the home scene id for the specified owner.
      * @see {@link com.threerings.msoy.room.data.MsoySceneModel}.
      */
-    void getHomeId (Client client, byte ownerType, int ownerId, ResultListener listener);
+    void getHomeId (Client client, byte ownerType, int ownerId, HomeResultListener listener);
 
     /**
      * Set the given scene as the owner's home scene

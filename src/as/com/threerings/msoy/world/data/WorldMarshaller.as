@@ -4,6 +4,7 @@
 package com.threerings.msoy.world.data {
 
 import com.threerings.msoy.world.client.WorldService;
+import com.threerings.msoy.world.client.WorldService_HomeResultListener;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService_ConfirmListener;
 import com.threerings.presents.client.InvocationService_InvocationListener;
@@ -55,9 +56,9 @@ public class WorldMarshaller extends InvocationMarshaller
     public static const GET_HOME_ID :int = 3;
 
     // from interface WorldService
-    public function getHomeId (arg1 :int, arg2 :int, arg3 :InvocationService_ResultListener) :void
+    public function getHomeId (arg1 :int, arg2 :int, arg3 :WorldService_HomeResultListener) :void
     {
-        var listener3 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
+        var listener3 :WorldMarshaller_HomeResultMarshaller = new WorldMarshaller_HomeResultMarshaller();
         listener3.listener = arg3;
         sendRequest(GET_HOME_ID, [
             Byte.valueOf(arg1), Integer.valueOf(arg2), listener3

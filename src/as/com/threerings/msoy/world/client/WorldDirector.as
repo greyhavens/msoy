@@ -14,6 +14,8 @@ import flash.text.TextField;
 
 import caurina.transitions.Tweener;
 
+import com.threerings.io.TypedArray;
+import com.threerings.util.Util;
 import com.threerings.util.Log;
 import com.threerings.util.MultiLoader;
 
@@ -111,7 +113,12 @@ public class WorldDirector extends BasicDirector
             _wctx.getClient().addClientObserver(waiter);
             return;
         }
-        _wsvc.getHomeId(ownerType, ownerId, _wctx.resultListener(_wctx.getSceneDirector().moveTo));
+        function selectGift (avatars :TypedArray) :void {
+            // TODO
+        }
+        _wsvc.getHomeId(ownerType, ownerId, new WorldService_HomeResultListenerAdapter(
+            _wctx.getSceneDirector().moveTo, selectGift,
+            Util.adapt(_wctx.displayFeedback, Msgs.GENERAL)));
     }
 
     /**

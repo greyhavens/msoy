@@ -29,7 +29,7 @@ public interface WorldProvider extends InvocationProvider
     /**
      * Handles a {@link WorldService#getHomeId} request.
      */
-    void getHomeId (ClientObject caller, byte arg1, int arg2, InvocationService.ResultListener arg3)
+    void getHomeId (ClientObject caller, byte arg1, int arg2, WorldService.HomeResultListener arg3)
         throws InvocationException;
 
     /**

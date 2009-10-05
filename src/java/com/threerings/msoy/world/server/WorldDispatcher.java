@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.world.server;
 
+import com.threerings.msoy.world.client.WorldService;
 import com.threerings.msoy.world.data.WorldMarshaller;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
@@ -49,7 +50,7 @@ public class WorldDispatcher extends InvocationDispatcher<WorldMarshaller>
 
         case WorldMarshaller.GET_HOME_ID:
             ((WorldProvider)provider).getHomeId(
-                source, ((Byte)args[0]).byteValue(), ((Integer)args[1]).intValue(), (InvocationService.ResultListener)args[2]
+                source, ((Byte)args[0]).byteValue(), ((Integer)args[1]).intValue(), (WorldService.HomeResultListener)args[2]
             );
             return;
 

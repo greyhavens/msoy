@@ -3,10 +3,12 @@
 
 package com.threerings.msoy.world.data;
 
+import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.world.client.WorldService;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.InvocationMarshaller;
+import com.threerings.presents.dobj.InvocationResponseEvent;
 
 /**
  * Provides the implementation of the {@link WorldService} interface
@@ -18,6 +20,59 @@ import com.threerings.presents.data.InvocationMarshaller;
 public class WorldMarshaller extends InvocationMarshaller
     implements WorldService
 {
+    /**
+     * Marshalls results to implementations of {@link WorldService.HomeResultListener}.
+     */
+    public static class HomeResultMarshaller extends ListenerMarshaller
+        implements HomeResultListener
+    {
+        /** The method id used to dispatch {@link #readyToEnter}
+         * responses. */
+        public static final int READY_TO_ENTER = 1;
+
+        // from interface HomeResultMarshaller
+        public void readyToEnter (int arg1)
+        {
+            _invId = null;
+            omgr.postEvent(new InvocationResponseEvent(
+                               callerOid, requestId, READY_TO_ENTER,
+                               new Object[] { Integer.valueOf(arg1) }, transport));
+        }
+
+        /** The method id used to dispatch {@link #selectGift}
+         * responses. */
+        public static final int SELECT_GIFT = 2;
+
+        // from interface HomeResultMarshaller
+        public void selectGift (Avatar[] arg1)
+        {
+            _invId = null;
+            omgr.postEvent(new InvocationResponseEvent(
+                               callerOid, requestId, SELECT_GIFT,
+                               new Object[] { arg1 }, transport));
+        }
+
+        @Override // from InvocationMarshaller
+        public void dispatchResponse (int methodId, Object[] args)
+        {
+            switch (methodId) {
+            case READY_TO_ENTER:
+                ((HomeResultListener)listener).readyToEnter(
+                    ((Integer)args[0]).intValue());
+                return;
+
+            case SELECT_GIFT:
+                ((HomeResultListener)listener).selectGift(
+                    (Avatar[])args[0]);
+                return;
+
+            default:
+                super.dispatchResponse(methodId, args);
+                return;
+            }
+        }
+    }
+
     /** The method id used to dispatch {@link #ditchFollower} requests. */
     public static final int DITCH_FOLLOWER = 1;
 
@@ -48,9 +103,9 @@ public class WorldMarshaller extends InvocationMarshaller
     public static final int GET_HOME_ID = 3;
 
     // from interface WorldService
-    public void getHomeId (Client arg1, byte arg2, int arg3, InvocationService.ResultListener arg4)
+    public void getHomeId (Client arg1, byte arg2, int arg3, WorldService.HomeResultListener arg4)
     {
-        InvocationMarshaller.ResultMarshaller listener4 = new InvocationMarshaller.ResultMarshaller();
+        WorldMarshaller.HomeResultMarshaller listener4 = new WorldMarshaller.HomeResultMarshaller();
         listener4.listener = arg4;
         sendRequest(arg1, GET_HOME_ID, new Object[] {
             Byte.valueOf(arg2), Integer.valueOf(arg3), listener4
