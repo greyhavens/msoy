@@ -115,7 +115,7 @@ public class GameInfoRecord extends PersistentRecord
     /** The MIME type of the {@link #shotMediaHash} media. */
     public byte shotMimeType;
 
-    /** Group associated with this game, required */
+    /** Group associated with this game, or 0 for none. */
     public int groupId;
 
     /** The tag used to identify (non-pack) items in this game's shop. */
@@ -135,7 +135,7 @@ public class GameInfoRecord extends PersistentRecord
     @Column(defaultValue="true")
     public boolean blingPool;
 
-    /** 
+    /**
      * Calculates this game's average rating from the sum and count.
      */
     public float getRating ()
