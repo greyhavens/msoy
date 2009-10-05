@@ -13,7 +13,6 @@ import com.threerings.presents.data.InvocationMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ConfirmMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ListenerMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ResultMarshaller;
-import com.threerings.util.Byte;
 import com.threerings.util.Integer;
 import com.threerings.util.langBoolean;
 
@@ -114,21 +113,8 @@ public class MemberMarshaller extends InvocationMarshaller
         ]);
     }
 
-    /** The method id used to dispatch <code>getHomeId</code> requests. */
-    public static const GET_HOME_ID :int = 8;
-
-    // from interface MemberService
-    public function getHomeId (arg1 :int, arg2 :int, arg3 :InvocationService_ResultListener) :void
-    {
-        var listener3 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
-        listener3.listener = arg3;
-        sendRequest(GET_HOME_ID, [
-            Byte.valueOf(arg1), Integer.valueOf(arg2), listener3
-        ]);
-    }
-
     /** The method id used to dispatch <code>inviteAllToBeFriends</code> requests. */
-    public static const INVITE_ALL_TO_BE_FRIENDS :int = 9;
+    public static const INVITE_ALL_TO_BE_FRIENDS :int = 8;
 
     // from interface MemberService
     public function inviteAllToBeFriends (arg1 :TypedArray /* of int */, arg2 :InvocationService_ConfirmListener) :void
@@ -141,7 +127,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch <code>inviteToBeFriend</code> requests. */
-    public static const INVITE_TO_BE_FRIEND :int = 10;
+    public static const INVITE_TO_BE_FRIEND :int = 9;
 
     // from interface MemberService
     public function inviteToBeFriend (arg1 :int, arg2 :InvocationService_ResultListener) :void
@@ -154,7 +140,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch <code>inviteToFollow</code> requests. */
-    public static const INVITE_TO_FOLLOW :int = 11;
+    public static const INVITE_TO_FOLLOW :int = 10;
 
     // from interface MemberService
     public function inviteToFollow (arg1 :int, arg2 :InvocationService_InvocationListener) :void
@@ -167,7 +153,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch <code>setAvatar</code> requests. */
-    public static const SET_AVATAR :int = 12;
+    public static const SET_AVATAR :int = 11;
 
     // from interface MemberService
     public function setAvatar (arg1 :int, arg2 :InvocationService_ConfirmListener) :void
@@ -180,7 +166,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch <code>setAway</code> requests. */
-    public static const SET_AWAY :int = 13;
+    public static const SET_AWAY :int = 12;
 
     // from interface MemberService
     public function setAway (arg1 :String, arg2 :InvocationService_ConfirmListener) :void
@@ -193,7 +179,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch <code>setDisplayName</code> requests. */
-    public static const SET_DISPLAY_NAME :int = 14;
+    public static const SET_DISPLAY_NAME :int = 13;
 
     // from interface MemberService
     public function setDisplayName (arg1 :String, arg2 :InvocationService_ConfirmListener) :void
@@ -205,21 +191,8 @@ public class MemberMarshaller extends InvocationMarshaller
         ]);
     }
 
-    /** The method id used to dispatch <code>setHomeSceneId</code> requests. */
-    public static const SET_HOME_SCENE_ID :int = 15;
-
-    // from interface MemberService
-    public function setHomeSceneId (arg1 :int, arg2 :int, arg3 :int, arg4 :InvocationService_ConfirmListener) :void
-    {
-        var listener4 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
-        listener4.listener = arg4;
-        sendRequest(SET_HOME_SCENE_ID, [
-            Integer.valueOf(arg1), Integer.valueOf(arg2), Integer.valueOf(arg3), listener4
-        ]);
-    }
-
     /** The method id used to dispatch <code>setMuted</code> requests. */
-    public static const SET_MUTED :int = 16;
+    public static const SET_MUTED :int = 14;
 
     // from interface MemberService
     public function setMuted (arg1 :int, arg2 :Boolean, arg3 :InvocationService_ConfirmListener) :void
@@ -232,7 +205,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch <code>updateStatus</code> requests. */
-    public static const UPDATE_STATUS :int = 17;
+    public static const UPDATE_STATUS :int = 15;
 
     // from interface MemberService
     public function updateStatus (arg1 :String, arg2 :InvocationService_InvocationListener) :void

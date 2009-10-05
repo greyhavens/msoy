@@ -35,15 +35,21 @@ public class WorldDispatcher extends InvocationDispatcher<WorldMarshaller>
         throws InvocationException
     {
         switch (methodId) {
-        case WorldMarshaller.GET_GROUP_HOME_SCENE_ID:
-            ((WorldProvider)provider).getGroupHomeSceneId(
-                source, ((Integer)args[0]).intValue(), (InvocationService.ResultListener)args[1]
+        case WorldMarshaller.GET_HOME_ID:
+            ((WorldProvider)provider).getHomeId(
+                source, ((Byte)args[0]).byteValue(), ((Integer)args[1]).intValue(), (InvocationService.ResultListener)args[2]
             );
             return;
 
         case WorldMarshaller.GET_HOME_PAGE_GRID_ITEMS:
             ((WorldProvider)provider).getHomePageGridItems(
                 source, (InvocationService.ResultListener)args[0]
+            );
+            return;
+
+        case WorldMarshaller.SET_HOME_SCENE_ID:
+            ((WorldProvider)provider).setHomeSceneId(
+                source, ((Integer)args[0]).intValue(), ((Integer)args[1]).intValue(), ((Integer)args[2]).intValue(), (InvocationService.ConfirmListener)args[3]
             );
             return;
 

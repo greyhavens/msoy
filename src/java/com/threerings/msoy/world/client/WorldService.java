@@ -14,14 +14,21 @@ import com.threerings.msoy.data.HomePageItem;
 public interface WorldService extends InvocationService
 {
     /**
-     * Get the given group's home scene id.
-     */
-    void getGroupHomeSceneId (Client client, int groupId, ResultListener listener);
-
-    /**
      * Requests the items to populate the home page grid. The expected response is an arry of
      * {@link HomePageItem}. This should eventually take a parameter so that the top 3 "whirled"
      * items are a separate request from the very cachable 6 "what I've done recently" items.
      */
     void getHomePageGridItems (Client client, ResultListener listener);
+
+    /**
+     * Request to know the home scene id for the specified owner.
+     * @see {@link com.threerings.msoy.room.data.MsoySceneModel}.
+     */
+    void getHomeId (Client client, byte ownerType, int ownerId, ResultListener listener);
+
+    /**
+     * Set the given scene as the owner's home scene
+     */
+    void setHomeSceneId (Client client, int ownerType, int ownerId, int sceneId,
+                         ConfirmListener listener);
 }

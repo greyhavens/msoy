@@ -37,9 +37,6 @@ public interface MemberService extends InvocationService
     function getDisplayName (arg1 :int, arg2 :InvocationService_ResultListener) :void;
 
     // from Java interface MemberService
-    function getHomeId (arg1 :int, arg2 :int, arg3 :InvocationService_ResultListener) :void;
-
-    // from Java interface MemberService
     function inviteAllToBeFriends (arg1 :TypedArray /* of int */, arg2 :InvocationService_ConfirmListener) :void;
 
     // from Java interface MemberService
@@ -56,9 +53,6 @@ public interface MemberService extends InvocationService
 
     // from Java interface MemberService
     function setDisplayName (arg1 :String, arg2 :InvocationService_ConfirmListener) :void;
-
-    // from Java interface MemberService
-    function setHomeSceneId (arg1 :int, arg2 :int, arg3 :int, arg4 :InvocationService_ConfirmListener) :void;
 
     // from Java interface MemberService
     function setMuted (arg1 :int, arg2 :Boolean, arg3 :InvocationService_ConfirmListener) :void;

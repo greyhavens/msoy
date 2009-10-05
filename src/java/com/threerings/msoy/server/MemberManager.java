@@ -84,12 +84,9 @@ import com.threerings.msoy.person.server.persist.ProfileRepository;
 import com.threerings.msoy.profile.gwt.Profile;
 import com.threerings.msoy.room.data.EntityMemories;
 import com.threerings.msoy.room.data.MemberInfo;
-import com.threerings.msoy.room.data.MsoySceneModel;
 import com.threerings.msoy.room.data.RoomObject;
 import com.threerings.msoy.room.server.persist.MemoriesRecord;
 import com.threerings.msoy.room.server.persist.MemoryRepository;
-import com.threerings.msoy.room.server.persist.MsoySceneRepository;
-import com.threerings.msoy.room.server.persist.SceneRecord;
 import com.threerings.msoy.underwire.server.SupportLogic;
 
 import static com.threerings.msoy.Log.log;
@@ -263,7 +260,7 @@ public class MemberManager
         }
     }
 
-    // from interface MemberLocator.Observer
+    @Override // from interface MemberLocator.Observer
     public void memberLoggedOn (final MemberObject member)
     {
         if (member.isViewer()) {
@@ -289,13 +286,13 @@ public class MemberManager
         }
     }
 
-    // from interface MemberLocator.Observer
+    @Override // from interface MemberLocator.Observer
     public void memberLoggedOff (final MemberObject member)
     {
         // nada
     }
 
-    // from interface MemberProvider
+    @Override // from interface MemberProvider
     public void inviteToBeFriend (final ClientObject caller, final int friendId,
                                   final InvocationService.ResultListener listener)
         throws InvocationException
@@ -312,7 +309,7 @@ public class MemberManager
         });
     }
 
-    // from interface MemberProvider
+    @Override // from interface MemberProvider
     public void inviteAllToBeFriends (final ClientObject caller, final int memberIds[],
                                       final InvocationService.ConfirmListener listener)
     {
@@ -344,7 +341,7 @@ public class MemberManager
         });
     }
 
-    // from interface MemberProvider
+    @Override // from interface MemberProvider
     public void bootFromPlace (final ClientObject caller, final int booteeId,
                                final InvocationService.ConfirmListener listener)
         throws InvocationException
@@ -372,27 +369,7 @@ public class MemberManager
         }
     }
 
-    // from interface MemberProvider
-    public void getHomeId (final ClientObject caller, final byte ownerType, final int ownerId,
-                           final InvocationService.ResultListener listener)
-        throws InvocationException
-    {
-        _invoker.postUnit(new PersistingUnit("getHomeId", listener) {
-            @Override public void invokePersistent () throws Exception {
-                _homeId = _memberLogic.getHomeId(ownerType, ownerId);
-            }
-            @Override public void handleSuccess () {
-                if (_homeId == null) {
-                    handleFailure(new InvocationException("m.no_such_user"));
-                } else {
-                    reportRequestProcessed(_homeId);
-                }
-            }
-            protected Integer _homeId;
-        });
-    }
-
-    // from interface MemberProvider
+    @Override // from interface MemberProvider
     public void getCurrentMemberLocation (final ClientObject caller, final int memberId,
                                           final InvocationService.ResultListener listener)
         throws InvocationException
@@ -412,7 +389,7 @@ public class MemberManager
         listener.requestProcessed(memloc);
     }
 
-    // from interface MemberProvider
+    @Override // from interface MemberProvider
     public void inviteToFollow (final ClientObject caller, final int memberId,
                                 final InvocationService.InvocationListener listener)
         throws InvocationException
@@ -432,7 +409,7 @@ public class MemberManager
         _notifyMan.notifyFollowInvite(target, user.memberName);
     }
 
-    // from interface MemberProvider
+    @Override // from interface MemberProvider
     public void followMember (final ClientObject caller, final int memberId,
                               final InvocationService.InvocationListener listener)
         throws InvocationException
@@ -462,7 +439,7 @@ public class MemberManager
         user.setFollowing(target.memberName);
     }
 
-    // from interface MemberProvider
+    @Override // from interface MemberProvider
     public void ditchFollower (ClientObject caller, int followerId,
                                InvocationService.InvocationListener listener)
         throws InvocationException
@@ -490,7 +467,7 @@ public class MemberManager
         }
     }
 
-    // from interface MemberProvider
+    @Override // from interface MemberProvider
     public void setAway (
         ClientObject caller, String message, InvocationService.ConfirmListener listener)
         throws InvocationException
@@ -509,7 +486,7 @@ public class MemberManager
         listener.requestProcessed();
     }
 
-    // from interface MemberProvider
+    @Override // from interface MemberProvider
     public void setMuted (
         ClientObject caller, final int muteeId, final boolean muted,
         InvocationService.ConfirmListener listener)
@@ -527,7 +504,7 @@ public class MemberManager
         });
     }
 
-    // from interface MemberProvider
+    @Override // from interface MemberProvider
     public void setAvatar (ClientObject caller, int avatarItemId, final ConfirmListener listener)
         throws InvocationException
     {
@@ -594,7 +571,7 @@ public class MemberManager
         });
     }
 
-    // from interface MemberProvider
+    @Override // from interface MemberProvider
     public void setDisplayName (final ClientObject caller, final String name,
                                 InvocationService.ConfirmListener listener)
         throws InvocationException
@@ -608,7 +585,7 @@ public class MemberManager
         });
     }
 
-    // from interface MemberProvider
+    @Override // from interface MemberProvider
     public void getDisplayName (final ClientObject caller, final int memberId,
                                 final InvocationService.ResultListener listener)
         throws InvocationException
@@ -624,7 +601,7 @@ public class MemberManager
         });
     }
 
-    // from interface MemberProvider
+    @Override // from interface MemberProvider
     public void acknowledgeWarning (final ClientObject caller)
     {
         final MemberObject user = (MemberObject) caller;
@@ -635,44 +612,7 @@ public class MemberManager
         });
     }
 
-    // from interface MemberProvider
-    public void setHomeSceneId (final ClientObject caller, final int ownerType, final int ownerId,
-                                final int sceneId, final InvocationService.ConfirmListener listener)
-        throws InvocationException
-    {
-        final MemberObject member = (MemberObject) caller;
-        _invoker.postUnit(new PersistingUnit("setHomeSceneId", listener, "who", member.who()) {
-            @Override public void invokePersistent () throws Exception {
-                final int memberId = member.getMemberId();
-                final SceneRecord scene = _sceneRepo.loadScene(sceneId);
-                if (scene.ownerType == MsoySceneModel.OWNER_TYPE_MEMBER) {
-                    if (scene.ownerId == memberId) {
-                        _memberRepo.setHomeSceneId(memberId, sceneId);
-                    } else {
-                        throw new InvocationException("e.not_room_owner");
-                    }
-                } else if (scene.ownerType == MsoySceneModel.OWNER_TYPE_GROUP) {
-                    if (member.isGroupManager(scene.ownerId)) {
-                        _groupRepo.setHomeSceneId(scene.ownerId, sceneId);
-                    } else {
-                        throw new InvocationException("e.not_room_manager");
-                    }
-                } else {
-                    log.warning("Unknown scene model owner type [sceneId=" +
-                        scene.sceneId + ", ownerType=" + scene.ownerType + "]");
-                    throw new InvocationException(InvocationCodes.INTERNAL_ERROR);
-                }
-            }
-            @Override public void handleSuccess () {
-                if (ownerType == MsoySceneModel.OWNER_TYPE_MEMBER) {
-                    member.setHomeSceneId(sceneId);
-                }
-                super.handleSuccess();
-            }
-        });
-    }
-
-    // from interface MemberProvider
+    @Override // from interface MemberProvider
     public void complainMember (ClientObject caller, final int memberId, String complaint)
     {
         MemberObject target = _locator.lookupMember(memberId);
@@ -736,7 +676,7 @@ public class MemberManager
         });
     }
 
-    // from interface MemberProvider
+    @Override // from interface MemberProvider
     public void updateStatus (
         ClientObject caller, String status, InvocationService.InvocationListener listener)
         throws InvocationException
@@ -914,7 +854,6 @@ public class MemberManager
     @Inject protected MsoyAdminManager _adminMan;
     @Inject protected MsoyEventLogger _eventLog;
     @Inject protected MsoyPeerManager _peerMan;
-    @Inject protected MsoySceneRepository _sceneRepo;
     @Inject protected NotificationManager _notifyMan;
     @Inject protected PlaceRegistry _placeReg;
     @Inject protected PlayerNodeActions _playerActions;

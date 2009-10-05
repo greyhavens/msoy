@@ -97,7 +97,7 @@ public class RoomPanel extends BasePanel
                 };
                 var svc :WorldService =
                     _controller.ctx.getClient().requireService(WorldService) as WorldService;
-                svc.getGroupHomeSceneId(sceneModel.ownerId,
+                svc.getHomeId(MsoySceneModel.OWNER_TYPE_GROUP, sceneModel.ownerId,
                     _controller.ctx.resultListener(resultHandler, MsoyCodes.EDITING_MSGS));
             }
 

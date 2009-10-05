@@ -17,8 +17,6 @@ import com.threerings.util.Map;
 import com.threerings.util.Maps;
 import com.threerings.util.StringUtil;
 
-import com.threerings.msoy.client.MemberService;
-
 import com.threerings.msoy.item.client.ItemService;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
@@ -26,6 +24,7 @@ import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.whirled.data.SceneUpdate;
 
 import com.threerings.msoy.world.client.WorldContext;
+import com.threerings.msoy.world.client.WorldService;
 
 import com.threerings.msoy.room.client.FurniSprite;
 import com.threerings.msoy.room.client.MsoySprite;
@@ -431,7 +430,7 @@ public class RoomEditorController
         var model :MsoySceneModel = scene.getSceneModel() as MsoySceneModel;
         var successMsg :String = (model.ownerType == MsoySceneModel.OWNER_TYPE_GROUP) ?
             "m.group_home_room_changed" : "m.home_room_changed";
-        var svc :MemberService = _ctx.getClient().requireService(MemberService) as MemberService;
+        var svc :WorldService = _ctx.getClient().requireService(WorldService) as WorldService;
         svc.setHomeSceneId(model.ownerType, model.ownerId, model.sceneId,
             _ctx.confirmListener(successMsg, MsoyCodes.EDITING_MSGS));
     }

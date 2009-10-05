@@ -15,14 +15,20 @@ import com.threerings.presents.server.InvocationProvider;
 public interface WorldProvider extends InvocationProvider
 {
     /**
-     * Handles a {@link WorldService#getGroupHomeSceneId} request.
+     * Handles a {@link WorldService#getHomeId} request.
      */
-    void getGroupHomeSceneId (ClientObject caller, int arg1, InvocationService.ResultListener arg2)
+    void getHomeId (ClientObject caller, byte arg1, int arg2, InvocationService.ResultListener arg3)
         throws InvocationException;
 
     /**
      * Handles a {@link WorldService#getHomePageGridItems} request.
      */
     void getHomePageGridItems (ClientObject caller, InvocationService.ResultListener arg1)
+        throws InvocationException;
+
+    /**
+     * Handles a {@link WorldService#setHomeSceneId} request.
+     */
+    void setHomeSceneId (ClientObject caller, int arg1, int arg2, int arg3, InvocationService.ConfirmListener arg4)
         throws InvocationException;
 }

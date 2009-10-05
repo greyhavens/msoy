@@ -30,11 +30,6 @@ public interface MemberService extends InvocationService
     void bootFromPlace (Client client, int booteeId, ConfirmListener listener);
 
     /**
-     * Request to know the home scene id for the specified owner.
-     */
-    void getHomeId (Client client, byte ownerType, int ownerId, ResultListener listener);
-
-    /**
      * Request to get the current MemberLocation of the specified member.
      *
      * Note: presently the member must be a friend.
@@ -85,12 +80,6 @@ public interface MemberService extends InvocationService
      * Get the display name for the indicated user.
      */
     void getDisplayName (Client client, int memberId, ResultListener listener);
-
-    /**
-     * Set the given scene as the owner's home scene
-     */
-    void setHomeSceneId (Client client, int ownerType, int ownerId, int sceneId,
-                         ConfirmListener listener);
 
     /**
      * Acknowledges that the user has read their warning message.

@@ -77,12 +77,6 @@ public class MemberDispatcher extends InvocationDispatcher<MemberMarshaller>
             );
             return;
 
-        case MemberMarshaller.GET_HOME_ID:
-            ((MemberProvider)provider).getHomeId(
-                source, ((Byte)args[0]).byteValue(), ((Integer)args[1]).intValue(), (InvocationService.ResultListener)args[2]
-            );
-            return;
-
         case MemberMarshaller.INVITE_ALL_TO_BE_FRIENDS:
             ((MemberProvider)provider).inviteAllToBeFriends(
                 source, (int[])args[0], (InvocationService.ConfirmListener)args[1]
@@ -116,12 +110,6 @@ public class MemberDispatcher extends InvocationDispatcher<MemberMarshaller>
         case MemberMarshaller.SET_DISPLAY_NAME:
             ((MemberProvider)provider).setDisplayName(
                 source, (String)args[0], (InvocationService.ConfirmListener)args[1]
-            );
-            return;
-
-        case MemberMarshaller.SET_HOME_SCENE_ID:
-            ((MemberProvider)provider).setHomeSceneId(
-                source, ((Integer)args[0]).intValue(), ((Integer)args[1]).intValue(), ((Integer)args[2]).intValue(), (InvocationService.ConfirmListener)args[3]
             );
             return;
 

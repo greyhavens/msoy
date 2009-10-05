@@ -55,12 +55,6 @@ public interface MemberProvider extends InvocationProvider
         throws InvocationException;
 
     /**
-     * Handles a {@link MemberService#getHomeId} request.
-     */
-    void getHomeId (ClientObject caller, byte arg1, int arg2, InvocationService.ResultListener arg3)
-        throws InvocationException;
-
-    /**
      * Handles a {@link MemberService#inviteAllToBeFriends} request.
      */
     void inviteAllToBeFriends (ClientObject caller, int[] arg1, InvocationService.ConfirmListener arg2)
@@ -94,12 +88,6 @@ public interface MemberProvider extends InvocationProvider
      * Handles a {@link MemberService#setDisplayName} request.
      */
     void setDisplayName (ClientObject caller, String arg1, InvocationService.ConfirmListener arg2)
-        throws InvocationException;
-
-    /**
-     * Handles a {@link MemberService#setHomeSceneId} request.
-     */
-    void setHomeSceneId (ClientObject caller, int arg1, int arg2, int arg3, InvocationService.ConfirmListener arg4)
         throws InvocationException;
 
     /**

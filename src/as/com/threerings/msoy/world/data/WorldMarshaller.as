@@ -5,9 +5,12 @@ package com.threerings.msoy.world.data {
 
 import com.threerings.msoy.world.client.WorldService;
 import com.threerings.presents.client.Client;
+import com.threerings.presents.client.InvocationService_ConfirmListener;
 import com.threerings.presents.client.InvocationService_ResultListener;
 import com.threerings.presents.data.InvocationMarshaller;
+import com.threerings.presents.data.InvocationMarshaller_ConfirmMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ResultMarshaller;
+import com.threerings.util.Byte;
 import com.threerings.util.Integer;
 
 /**
@@ -20,16 +23,16 @@ import com.threerings.util.Integer;
 public class WorldMarshaller extends InvocationMarshaller
     implements WorldService
 {
-    /** The method id used to dispatch <code>getGroupHomeSceneId</code> requests. */
-    public static const GET_GROUP_HOME_SCENE_ID :int = 1;
+    /** The method id used to dispatch <code>getHomeId</code> requests. */
+    public static const GET_HOME_ID :int = 1;
 
     // from interface WorldService
-    public function getGroupHomeSceneId (arg1 :int, arg2 :InvocationService_ResultListener) :void
+    public function getHomeId (arg1 :int, arg2 :int, arg3 :InvocationService_ResultListener) :void
     {
-        var listener2 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
-        listener2.listener = arg2;
-        sendRequest(GET_GROUP_HOME_SCENE_ID, [
-            Integer.valueOf(arg1), listener2
+        var listener3 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
+        listener3.listener = arg3;
+        sendRequest(GET_HOME_ID, [
+            Byte.valueOf(arg1), Integer.valueOf(arg2), listener3
         ]);
     }
 
@@ -43,6 +46,19 @@ public class WorldMarshaller extends InvocationMarshaller
         listener1.listener = arg1;
         sendRequest(GET_HOME_PAGE_GRID_ITEMS, [
             listener1
+        ]);
+    }
+
+    /** The method id used to dispatch <code>setHomeSceneId</code> requests. */
+    public static const SET_HOME_SCENE_ID :int = 3;
+
+    // from interface WorldService
+    public function setHomeSceneId (arg1 :int, arg2 :int, arg3 :int, arg4 :InvocationService_ConfirmListener) :void
+    {
+        var listener4 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
+        listener4.listener = arg4;
+        sendRequest(SET_HOME_SCENE_ID, [
+            Integer.valueOf(arg1), Integer.valueOf(arg2), Integer.valueOf(arg3), listener4
         ]);
     }
 }

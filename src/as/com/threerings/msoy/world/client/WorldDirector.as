@@ -111,7 +111,7 @@ public class WorldDirector extends BasicDirector
             _wctx.getClient().addClientObserver(waiter);
             return;
         }
-        _msvc.getHomeId(ownerType, ownerId, _wctx.resultListener(_wctx.getSceneDirector().moveTo));
+        _wsvc.getHomeId(ownerType, ownerId, _wctx.resultListener(_wctx.getSceneDirector().moveTo));
     }
 
     /**
@@ -182,8 +182,9 @@ public class WorldDirector extends BasicDirector
     {
         super.fetchServices(client);
 
-        // TODO: move the functions we use into a WorldService
+        // TODO: move more of the functions we use into a WorldService
         _msvc = (client.requireService(MemberService) as MemberService);
+        _wsvc = (client.requireService(WorldService) as WorldService);
     }
 
     /**
@@ -238,6 +239,7 @@ public class WorldDirector extends BasicDirector
     }
 
     protected var _wctx :WorldContext;
+    protected var _wsvc :WorldService;
     protected var _msvc :MemberService;
 
     protected var _followingNotifier :FollowingNotifier;
