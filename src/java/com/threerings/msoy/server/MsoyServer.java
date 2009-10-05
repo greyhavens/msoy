@@ -71,6 +71,7 @@ import com.threerings.msoy.game.server.GameGameRegistry;
 import com.threerings.msoy.game.server.WorldGameRegistry;
 import com.threerings.msoy.game.server.persist.MsoyGameCookieRepository;
 import com.threerings.msoy.item.server.ItemManager;
+import com.threerings.msoy.money.server.BlingPoolDistributor;
 import com.threerings.msoy.money.server.MoneyLogic;
 import com.threerings.msoy.party.server.PartyRegistry;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
@@ -427,6 +428,9 @@ public class MsoyServer extends MsoyBaseServer
 
     /** Provides money services. */
     @Inject protected MoneyLogic _moneyLogic;
+
+    /** Distributes Bling once a day; referenced here so it'll load. */
+    @Inject protected BlingPoolDistributor _blingDistributor;
 
     /** The feed repository, so that we may prune. */
     @Inject protected FeedRepository _feedRepo;
