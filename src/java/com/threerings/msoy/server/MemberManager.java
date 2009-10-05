@@ -573,7 +573,7 @@ public class MemberManager
                 }
                 if (user.getMemberId() != _avatar.ownerId) { // ensure that they own it
                     log.warning("Not user's avatar", "user", user.which(),
-                                "ownerId", _avatar.ownerId);
+                                "ownerId", _avatar.ownerId, "avatar.itemId", _avatar.itemId);
                     listener.accessDeniedFailure();
                     return;
                 }
