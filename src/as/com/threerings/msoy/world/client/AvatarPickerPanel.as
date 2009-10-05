@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.world.client {
 
+import flash.events.MouseEvent;
+
 import mx.containers.HBox;
 import mx.controls.Label;
 import mx.core.ScrollPolicy;
@@ -12,6 +14,8 @@ import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.ui.FloatingPanel;
 import com.threerings.msoy.ui.MediaWrapper;
 import com.threerings.msoy.ui.MsoyMediaContainer;
+
+import com.threerings.util.Log;
 
 /**
  * Panel to show a list of avatar buttons, close on click and return the selected one.
@@ -24,6 +28,8 @@ import com.threerings.msoy.ui.MsoyMediaContainer;
  */
 public class AvatarPickerPanel extends FloatingPanel
 {
+    public static const log :Log = Log.getLog(AvatarPickerPanel);
+
     public static function showTest (ctx :WorldContext) :void
     {
         var avatars :Array = new Array();
@@ -34,24 +40,29 @@ public class AvatarPickerPanel extends FloatingPanel
         avatars.push(test);
         avatars.push(test);
         avatars.push(test);
-        show(ctx, avatars);
+        show(ctx, avatars, function (avatar: Avatar) :void {
+            log.info("Avatar selected", "name", avatar.name);
+        });
     }
 
     /**
      * Show the array of avatars.
      */
-    public static function show (ctx :WorldContext, avatars :Array /* of Avatar */) :void
+    public static function show (ctx :WorldContext, avatars :Array /* of Avatar */,
+                                 select :Function) :void
     {
-        new AvatarPickerPanel(ctx, avatars).open();
+        new AvatarPickerPanel(ctx, avatars, select).open();
     }
 
     /**
      * Creats a new picker.
      */
-    public function AvatarPickerPanel (ctx :WorldContext, avatars :Array /* of Avatar */) :void
+    public function AvatarPickerPanel (ctx :WorldContext, avatars :Array /* of Avatar */,
+                                       select :Function) :void
     {
         super(ctx, "Select an avatar");
         _avatars = avatars;
+        _select = select;
     }
 
     override protected function createChildren () :void
@@ -69,12 +80,35 @@ public class AvatarPickerPanel extends FloatingPanel
         addChild(tbox);
 
         for each (var avi :Avatar in _avatars) {
-            tbox.addChild(new MediaWrapper(
-                new MsoyMediaContainer(avi.avatarMedia), AVI_SIZE, AVI_SIZE, true));
+            var container :MsoyMediaContainer = new MsoyMediaContainer(avi.avatarMedia);
+            tbox.addChild(new MediaWrapper(container, AVI_SIZE, AVI_SIZE, true));
         }
+
+        var select :Label = new Label();
+        select.styleName = "avatarPickerSelect";
+        addChild(select);
+
+        // listen on the HBox because listening on the thumbnails doesn't work
+        tbox.addEventListener(MouseEvent.CLICK, function (evt :MouseEvent) :void {
+            var idx :int = evt.localX / AVI_SIZE;
+            if (idx >= 0 && idx < _avatars.length) {
+                close();
+                _select(_avatars[idx]);
+            }
+        });
+
+        tbox.addEventListener(MouseEvent.MOUSE_MOVE, function (evt :MouseEvent) :void {
+            var idx :int = evt.localX / AVI_SIZE;
+            if (idx >= 0 && idx < _avatars.length) {
+                select.text = "Select " + _avatars[idx].name;
+            } else {
+                select.text = "";
+            }
+        });
     }
 
     protected var _avatars :Array /* of Avatar */;
+    protected var _select :Function;
 
     protected static const AVI_SIZE :int = 200; // NB: needs to fit in ~745 width for Facebook
 }
