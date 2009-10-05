@@ -3,6 +3,10 @@
 
 package com.threerings.msoy.world.server;
 
+import java.util.List;
+
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -46,10 +50,12 @@ import com.threerings.msoy.server.MemberLocal;
 import com.threerings.msoy.server.MemberLocator;
 import com.threerings.msoy.server.MemberLogic;
 import com.threerings.msoy.server.MemberNodeActions;
+import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.world.client.WorldService.HomeResultListener;
 
 import com.threerings.msoy.group.server.persist.GroupRepository;
+import com.threerings.msoy.group.server.persist.ThemeAvatarLineupRecord;
 import com.threerings.msoy.group.server.persist.ThemeRepository;
 import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.item.data.all.Avatar;
@@ -57,6 +63,9 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.server.ItemLogic;
 import com.threerings.msoy.item.server.ItemManager;
+import com.threerings.msoy.item.server.persist.AvatarRecord;
+import com.threerings.msoy.item.server.persist.AvatarRepository;
+import com.threerings.msoy.item.server.persist.CatalogRecord;
 
 import static com.threerings.msoy.Log.log;
 
@@ -112,19 +121,30 @@ public class WorldManager
                            HomeResultListener listener)
         throws InvocationException
     {
-        // TODO: check for gifting of avatars
+        final MemberObject memobj = (MemberObject)caller;
+        final boolean tofu = memobj.avatar == null || memobj.avatar.itemId == 0;
+
         _invoker.postUnit(new PersistingUnit("getHomeId", listener) {
             @Override public void invokePersistent () throws Exception {
-                _homeId = _memberLogic.getHomeId(ownerType, ownerId);
+                if (tofu) {
+                    List<Avatar> gifts = getStartupGiftAvatars(memobj.memberName.getMemberId());
+                    _gifts = gifts.toArray(new Avatar[gifts.size()]);
+                }
+                if (_gifts == null) {
+                    _homeId = _memberLogic.getHomeId(ownerType, ownerId);
+                }
             }
             @Override public void handleSuccess () {
-                if (_homeId == null) {
-                    handleFailure(new InvocationException("m.no_such_user"));
-                } else {
+                if (_gifts != null) {
+                    ((HomeResultListener)_listener).selectGift(_gifts);
+                } else if (_homeId != null) {
                     ((HomeResultListener)_listener).readyToEnter(_homeId);
+                } else {
+                    handleFailure(new InvocationException("m.no_such_user"));
                 }
             }
             protected Integer _homeId;
+            protected Avatar[] _gifts;
         });
     }
 
@@ -307,6 +327,50 @@ public class WorldManager
 
             protected EntityMemories _memories;
             protected Avatar _avatar;
+        });
+    }
+
+    /**
+     * Blocks and gets a list of gift avatars for a given member and the server's configured
+     * "startup" pseudo-theme. Returns null if it is not appropriate for the member to receive a
+     * gift or the server does not have a startup theme.
+     */
+    protected List<Avatar> getStartupGiftAvatars (int memberId)
+    {
+        int themeId = ServerConfig.config.getValue("startupGroupId", 0);
+        if (themeId == 0) {
+            return null;
+        }
+        return getGiftAvatars(memberId, themeId);
+    }
+
+    /**
+     * Blocks and gets a list of gift avatars for a given member and theme. Returns null if it is
+     * not appropriate for the member to receive a gift.
+     */
+    protected List<Avatar> getGiftAvatars (int memberId, int themeId)
+    {
+        AvatarRepository repo = _itemLogic.getAvatarRepository();
+
+        // check for the presence of a gifted avatar in their inventoty
+        // TODO: do we need a flag for this instead in case the gift avatars change?
+        List<AvatarRecord> avatars = repo.findItems(memberId, null, themeId);
+        if (avatars.size() > 0) {
+            // they've had a gift and have since changed avatars, just let 'em go
+            return null;
+        }
+
+        // they have not recieved their gift, instruct the client to show picker
+        return Lists.transform(repo.loadCatalog(Lists.transform(
+            _themeRepo.loadAvatarLineup(themeId),
+            new Function<ThemeAvatarLineupRecord, Integer>() {
+            public Integer apply (ThemeAvatarLineupRecord lineupRec) {
+                return lineupRec.catalogId;
+            }
+        })), new Function<CatalogRecord, Avatar>() {
+            public Avatar apply (CatalogRecord catRec) {
+                return (Avatar)(catRec.item.toItem());
+            }
         });
     }
 
