@@ -993,7 +993,16 @@ public abstract class ItemRepository<T extends ItemRecord>
      */
     public boolean stampItem (int itemId, int groupId, int stamperId)
     {
-         return store(createMogMarkRecord(itemId, groupId, stamperId));
+        return store(createMogMarkRecord(itemId, groupId, stamperId));
+    }
+
+    /**
+     * Removes the given item's stamp for the given theme. This function returns true if the
+     * stamp existed.
+     */
+    public boolean unstampItem (int itemId, int groupId)
+    {
+        return 1 == delete(createMogMarkRecord(itemId, groupId, -1));
     }
 
     /**

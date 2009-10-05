@@ -371,16 +371,22 @@ public class ItemServlet extends MsoyServiceServlet
     }
 
     // from interface ItemService
-    public void stampItem (ItemIdent ident, int groupId)
+    public void stampItem (ItemIdent ident, int groupId, boolean doStamp)
         throws ServiceException
     {
         MemberRecord memrec = requireAuthedUser();
         if (_groupRepo.getMembership(groupId, memrec.memberId).left != Rank.MANAGER) {
             throw new ServiceException(ItemCodes.E_ACCESS_DENIED);
         }
-        if (!_itemLogic.getRepository(ident.type).
-                stampItem(ident.itemId, groupId, memrec.memberId)) {
-            log.warning("Item was already stamped!", "item", ident, "theme", groupId);
+        if (doStamp) {
+            if (!_itemLogic.getRepository(ident.type).
+                    stampItem(ident.itemId, groupId, memrec.memberId)) {
+                log.warning("Item was already stamped!", "item", ident, "theme", groupId);
+            }
+        } else {
+            if (!_itemLogic.getRepository(ident.type).unstampItem(ident.itemId, groupId)) {
+                log.warning("Item was not stamped!", "item", ident, "theme", groupId);
+            }
         }
     }
 

@@ -3,6 +3,7 @@
 
 package client.item;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -124,7 +125,7 @@ public abstract class BaseItemDetailPanel extends SmartTable
                     getFlexCellFormatter().setVerticalAlignment(1, 0, HorizontalPanel.ALIGN_TOP);
                     _themeBits.setWidth("100%");
                     _themeBits.add(_stampedBy = new FlowPanel());
-                    _themeBits.add(_stampItem = new SmartTable());
+                    _themeBits.add(_stampPanel = new SmartTable());
                     updateStamps();
                 }
             });
@@ -222,44 +223,88 @@ public abstract class BaseItemDetailPanel extends SmartTable
 
     protected void updateStampItem ()
     {
-        _stampItem.clear();
+        _stampPanel.clear();
         if (_managedThemes == null || _managedThemes.length == 0) {
             return;
         }
 
-        _stampItem.setWidget(0, 0, _stampBox = new ListBox(), 1);
+        _stampBox = new ListBox();
         _stampBox.addItem(_imsgs.itemListNoTheme());
         _stampBox.addChangeHandler(new ChangeHandler() {
             public void onChange (ChangeEvent event) {
                 _stampButton.setEnabled(_stampBox.getSelectedIndex() > 0);
             }
         });
+        _stampEntries = new ArrayList<GroupName>();
+
+        _unstampBox = new ListBox();
+        _unstampBox.addItem(_imsgs.itemListNoTheme());
+        _unstampBox.addChangeHandler(new ChangeHandler() {
+            public void onChange (ChangeEvent event) {
+                _unstampButton.setEnabled(_unstampBox.getSelectedIndex() > 0);
+            }
+        });
+        _unstampEntries = new ArrayList<GroupName>();
 
         Set<GroupName> existing = new HashSet<GroupName>(_detail.themes);
         for (GroupName theme : _managedThemes) {
             if (!existing.contains(theme)) {
                 _stampBox.addItem(theme.toString());
+                _stampEntries.add(theme);
+            } else {
+                _unstampBox.addItem(theme.toString());
+                _unstampEntries.add(theme);
             }
         }
-        _stampButton = MsoyUI.createTinyButton(_imsgs.itemDoStamp(), new ClickHandler() {
-            public void onClick (ClickEvent event) {
-                int ix = _stampBox.getSelectedIndex();
-                if (ix == 0) {
-                    Popups.errorNear(_imsgs.itemNothingToStamp(), _stampButton);
-                    return;
-                }
-                final GroupName theme = _managedThemes[ix-1];
-                _itemsvc.stampItem(_item.getIdent(), theme.getGroupId(), new InfoCallback<Void>() {
-                    public void onSuccess (Void result) {
-                        _detail.themes.add(theme);
-                        updateStamps();
-                    }
-                });
-            }
-        });
-        _stampButton.setEnabled(false);
 
-        _stampItem.setWidget(0, 2, _stampButton);
+        int row = 0;
+        if (_stampBox.getItemCount() > 1) {
+            _stampPanel.setWidget(row, 0, _stampBox, 1);
+            _stampButton = MsoyUI.createTinyButton(_imsgs.itemDoStamp(), new ClickHandler() {
+                public void onClick (ClickEvent event) {
+                    int ix = _stampBox.getSelectedIndex();
+                    if (ix == 0) {
+                        Popups.errorNear(_imsgs.itemNothingToStamp(), _stampButton);
+                        return;
+                    }
+                    final GroupName theme = _stampEntries.get(ix-1);
+                    _itemsvc.stampItem(
+                        _item.getIdent(), theme.getGroupId(), true, new InfoCallback<Void>() {
+                            public void onSuccess (Void result) {
+                                _detail.themes.add(theme);
+                                updateStamps();
+                            }
+                        });
+                }
+            });
+            _stampButton.setEnabled(false);
+            _stampPanel.setWidget(row, 2, _stampButton);
+            row ++;
+        }
+
+        if (_unstampBox.getItemCount() > 1) {
+            _stampPanel.setWidget(row, 0, _unstampBox, 1);
+            _unstampButton = MsoyUI.createTinyButton(_imsgs.itemDoUnstamp(), new ClickHandler() {
+                public void onClick (ClickEvent event) {
+                    int ix = _unstampBox.getSelectedIndex();
+                    if (ix == 0) {
+                        Popups.errorNear(_imsgs.itemNothingToUnstamp(), _unstampButton);
+                        return;
+                    }
+                    final GroupName theme = _unstampEntries.get(ix-1);
+                    _itemsvc.stampItem(
+                        _item.getIdent(), theme.getGroupId(), false, new InfoCallback<Void>() {
+                            public void onSuccess (Void result) {
+                                _detail.themes.remove(theme);
+                                updateStamps();
+                            }
+                        });
+                }
+            });
+            _unstampButton.setEnabled(false);
+            _stampPanel.setWidget(row, 2, _unstampButton);
+            row ++;
+        }
     }
 
     /**
@@ -409,9 +454,11 @@ public abstract class BaseItemDetailPanel extends SmartTable
     protected FlowPanel _stampedBy;
     protected boolean _briefStamps = true;
 
-    protected SmartTable _stampItem;
-    protected ListBox _stampBox;
-    protected Button _stampButton;
+    protected SmartTable _stampPanel;
+
+    protected ListBox _stampBox, _unstampBox;
+    protected Button _stampButton, _unstampButton;
+    protected List<GroupName> _stampEntries, _unstampEntries;
 
     protected StyledTabPanel _belowTabs;
 

@@ -124,8 +124,9 @@ public interface ItemService extends RemoteService
         throws ServiceException;
 
     /**
-     * Stamps the given item with a theme. The item is typically a clone or a listed master.
+     * Stamps the given item with a theme, or removes such a stamp. The item is typically a clone
+     * or a listed master.
      */
-    void stampItem (ItemIdent ident, int groupId)
+    void stampItem (ItemIdent ident, int groupId, boolean doStamp)
         throws ServiceException;
 }

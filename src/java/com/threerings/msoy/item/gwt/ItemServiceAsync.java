@@ -91,5 +91,6 @@ public interface ItemServiceAsync
     /**
      * The asynchronous version of {@link ItemService#stampItem}.
      */
-    void stampItem (ItemIdent ident, int groupId, AsyncCallback<Void> infoCallback);
+    void stampItem (ItemIdent ident, int groupId, boolean doStamp,
+                    AsyncCallback<Void> infoCallback);
 }
