@@ -35,6 +35,18 @@ public class WorldDispatcher extends InvocationDispatcher<WorldMarshaller>
         throws InvocationException
     {
         switch (methodId) {
+        case WorldMarshaller.DITCH_FOLLOWER:
+            ((WorldProvider)provider).ditchFollower(
+                source, ((Integer)args[0]).intValue(), (InvocationService.InvocationListener)args[1]
+            );
+            return;
+
+        case WorldMarshaller.FOLLOW_MEMBER:
+            ((WorldProvider)provider).followMember(
+                source, ((Integer)args[0]).intValue(), (InvocationService.InvocationListener)args[1]
+            );
+            return;
+
         case WorldMarshaller.GET_HOME_ID:
             ((WorldProvider)provider).getHomeId(
                 source, ((Byte)args[0]).byteValue(), ((Integer)args[1]).intValue(), (InvocationService.ResultListener)args[2]
@@ -44,6 +56,18 @@ public class WorldDispatcher extends InvocationDispatcher<WorldMarshaller>
         case WorldMarshaller.GET_HOME_PAGE_GRID_ITEMS:
             ((WorldProvider)provider).getHomePageGridItems(
                 source, (InvocationService.ResultListener)args[0]
+            );
+            return;
+
+        case WorldMarshaller.INVITE_TO_FOLLOW:
+            ((WorldProvider)provider).inviteToFollow(
+                source, ((Integer)args[0]).intValue(), (InvocationService.InvocationListener)args[1]
+            );
+            return;
+
+        case WorldMarshaller.SET_AVATAR:
+            ((WorldProvider)provider).setAvatar(
+                source, ((Integer)args[0]).intValue(), (InvocationService.ConfirmListener)args[1]
             );
             return;
 

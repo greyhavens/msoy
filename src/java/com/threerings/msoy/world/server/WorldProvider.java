@@ -15,6 +15,18 @@ import com.threerings.presents.server.InvocationProvider;
 public interface WorldProvider extends InvocationProvider
 {
     /**
+     * Handles a {@link WorldService#ditchFollower} request.
+     */
+    void ditchFollower (ClientObject caller, int arg1, InvocationService.InvocationListener arg2)
+        throws InvocationException;
+
+    /**
+     * Handles a {@link WorldService#followMember} request.
+     */
+    void followMember (ClientObject caller, int arg1, InvocationService.InvocationListener arg2)
+        throws InvocationException;
+
+    /**
      * Handles a {@link WorldService#getHomeId} request.
      */
     void getHomeId (ClientObject caller, byte arg1, int arg2, InvocationService.ResultListener arg3)
@@ -24,6 +36,18 @@ public interface WorldProvider extends InvocationProvider
      * Handles a {@link WorldService#getHomePageGridItems} request.
      */
     void getHomePageGridItems (ClientObject caller, InvocationService.ResultListener arg1)
+        throws InvocationException;
+
+    /**
+     * Handles a {@link WorldService#inviteToFollow} request.
+     */
+    void inviteToFollow (ClientObject caller, int arg1, InvocationService.InvocationListener arg2)
+        throws InvocationException;
+
+    /**
+     * Handles a {@link WorldService#setAvatar} request.
+     */
+    void setAvatar (ClientObject caller, int arg1, InvocationService.ConfirmListener arg2)
         throws InvocationException;
 
     /**

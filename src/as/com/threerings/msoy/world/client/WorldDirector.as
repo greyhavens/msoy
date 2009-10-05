@@ -94,7 +94,7 @@ public class WorldDirector extends BasicDirector
      */
     public function setAvatar (avatarId :int) :void
     {
-        _msvc.setAvatar(avatarId, _wctx.confirmListener());
+        _wsvc.setAvatar(avatarId, _wctx.confirmListener());
     }
 
     /**

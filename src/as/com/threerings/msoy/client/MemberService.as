@@ -25,12 +25,6 @@ public interface MemberService extends InvocationService
     function complainMember (arg1 :int, arg2 :String) :void;
 
     // from Java interface MemberService
-    function ditchFollower (arg1 :int, arg2 :InvocationService_InvocationListener) :void;
-
-    // from Java interface MemberService
-    function followMember (arg1 :int, arg2 :InvocationService_InvocationListener) :void;
-
-    // from Java interface MemberService
     function getCurrentMemberLocation (arg1 :int, arg2 :InvocationService_ResultListener) :void;
 
     // from Java interface MemberService
@@ -41,12 +35,6 @@ public interface MemberService extends InvocationService
 
     // from Java interface MemberService
     function inviteToBeFriend (arg1 :int, arg2 :InvocationService_ResultListener) :void;
-
-    // from Java interface MemberService
-    function inviteToFollow (arg1 :int, arg2 :InvocationService_InvocationListener) :void;
-
-    // from Java interface MemberService
-    function setAvatar (arg1 :int, arg2 :InvocationService_ConfirmListener) :void;
 
     // from Java interface MemberService
     function setAway (arg1 :String, arg2 :InvocationService_ConfirmListener) :void;

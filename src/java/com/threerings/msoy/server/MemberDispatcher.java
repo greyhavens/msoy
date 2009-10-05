@@ -53,18 +53,6 @@ public class MemberDispatcher extends InvocationDispatcher<MemberMarshaller>
             );
             return;
 
-        case MemberMarshaller.DITCH_FOLLOWER:
-            ((MemberProvider)provider).ditchFollower(
-                source, ((Integer)args[0]).intValue(), (InvocationService.InvocationListener)args[1]
-            );
-            return;
-
-        case MemberMarshaller.FOLLOW_MEMBER:
-            ((MemberProvider)provider).followMember(
-                source, ((Integer)args[0]).intValue(), (InvocationService.InvocationListener)args[1]
-            );
-            return;
-
         case MemberMarshaller.GET_CURRENT_MEMBER_LOCATION:
             ((MemberProvider)provider).getCurrentMemberLocation(
                 source, ((Integer)args[0]).intValue(), (InvocationService.ResultListener)args[1]
@@ -86,18 +74,6 @@ public class MemberDispatcher extends InvocationDispatcher<MemberMarshaller>
         case MemberMarshaller.INVITE_TO_BE_FRIEND:
             ((MemberProvider)provider).inviteToBeFriend(
                 source, ((Integer)args[0]).intValue(), (InvocationService.ResultListener)args[1]
-            );
-            return;
-
-        case MemberMarshaller.INVITE_TO_FOLLOW:
-            ((MemberProvider)provider).inviteToFollow(
-                source, ((Integer)args[0]).intValue(), (InvocationService.InvocationListener)args[1]
-            );
-            return;
-
-        case MemberMarshaller.SET_AVATAR:
-            ((MemberProvider)provider).setAvatar(
-                source, ((Integer)args[0]).intValue(), (InvocationService.ConfirmListener)args[1]
             );
             return;
 

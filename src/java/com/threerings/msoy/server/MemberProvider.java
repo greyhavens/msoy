@@ -31,18 +31,6 @@ public interface MemberProvider extends InvocationProvider
     void complainMember (ClientObject caller, int arg1, String arg2);
 
     /**
-     * Handles a {@link MemberService#ditchFollower} request.
-     */
-    void ditchFollower (ClientObject caller, int arg1, InvocationService.InvocationListener arg2)
-        throws InvocationException;
-
-    /**
-     * Handles a {@link MemberService#followMember} request.
-     */
-    void followMember (ClientObject caller, int arg1, InvocationService.InvocationListener arg2)
-        throws InvocationException;
-
-    /**
      * Handles a {@link MemberService#getCurrentMemberLocation} request.
      */
     void getCurrentMemberLocation (ClientObject caller, int arg1, InvocationService.ResultListener arg2)
@@ -64,18 +52,6 @@ public interface MemberProvider extends InvocationProvider
      * Handles a {@link MemberService#inviteToBeFriend} request.
      */
     void inviteToBeFriend (ClientObject caller, int arg1, InvocationService.ResultListener arg2)
-        throws InvocationException;
-
-    /**
-     * Handles a {@link MemberService#inviteToFollow} request.
-     */
-    void inviteToFollow (ClientObject caller, int arg1, InvocationService.InvocationListener arg2)
-        throws InvocationException;
-
-    /**
-     * Handles a {@link MemberService#setAvatar} request.
-     */
-    void setAvatar (ClientObject caller, int arg1, InvocationService.ConfirmListener arg2)
         throws InvocationException;
 
     /**

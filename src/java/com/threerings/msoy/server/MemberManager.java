@@ -10,12 +10,9 @@ import java.util.List;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.jdbc.WriteOnlyUnit;
 import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
-import com.samskivert.util.ObjectUtil;
-import com.samskivert.util.ResultListener;
 import com.samskivert.util.StringUtil;
 
 import com.google.common.collect.Lists;
@@ -28,12 +25,10 @@ import com.threerings.cron.server.CronLogic;
 import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.client.InvocationService;
-import com.threerings.presents.client.InvocationService.ConfirmListener;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.dobj.AttributeChangeListener;
 import com.threerings.presents.dobj.AttributeChangedEvent;
-import com.threerings.presents.dobj.DSet;
 import com.threerings.presents.server.ClientManager;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
@@ -46,7 +41,6 @@ import com.threerings.crowd.chat.data.ChatMessage;
 import com.threerings.crowd.chat.data.UserMessage;
 import com.threerings.crowd.chat.server.SpeakUtil;
 import com.threerings.crowd.data.BodyObject;
-import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.server.BodyManager;
 import com.threerings.crowd.server.PlaceManager;
 import com.threerings.crowd.server.PlaceRegistry;
@@ -65,28 +59,13 @@ import com.threerings.msoy.peer.server.MsoyPeerManager;
 
 import com.threerings.msoy.admin.server.MsoyAdminManager;
 import com.threerings.msoy.badge.server.BadgeManager;
-import com.threerings.msoy.game.server.PlayerNodeActions;
-import com.threerings.msoy.group.server.persist.GroupRepository;
-import com.threerings.msoy.group.server.persist.ThemeRepository;
-import com.threerings.msoy.item.data.ItemCodes;
-import com.threerings.msoy.item.data.all.Avatar;
-import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.item.data.all.ItemIdent;
-import com.threerings.msoy.item.server.ItemLogic;
-import com.threerings.msoy.item.server.ItemManager;
-import com.threerings.msoy.mail.server.MailLogic;
 import com.threerings.msoy.notify.data.GenericNotification;
 import com.threerings.msoy.notify.data.LevelUpNotification;
 import com.threerings.msoy.notify.data.Notification;
 import com.threerings.msoy.notify.server.NotificationManager;
-import com.threerings.msoy.person.server.FeedLogic;
 import com.threerings.msoy.person.server.persist.ProfileRepository;
 import com.threerings.msoy.profile.gwt.Profile;
-import com.threerings.msoy.room.data.EntityMemories;
 import com.threerings.msoy.room.data.MemberInfo;
-import com.threerings.msoy.room.data.RoomObject;
-import com.threerings.msoy.room.server.persist.MemoriesRecord;
-import com.threerings.msoy.room.server.persist.MemoryRepository;
 import com.threerings.msoy.underwire.server.SupportLogic;
 
 import static com.threerings.msoy.Log.log;
@@ -100,14 +79,6 @@ public class MemberManager
 {
     /** Identifies a report that contains a dump of client object info. */
     public static final String CLIENTS_REPORT_TYPE = "clients";
-
-    /** A generic feedback interface for setting a player's avatar. */
-    public interface SetAvatarListener
-    {
-        void success();
-        void noSuchItemFailure() throws Exception;
-        void accessDeniedFailure() throws Exception;
-    }
 
     @Inject public MemberManager (InvocationManager invmgr, MsoyPeerManager peerMan,
                                   MemberLocator locator, ReportManager repMan)
@@ -390,84 +361,6 @@ public class MemberManager
     }
 
     @Override // from interface MemberProvider
-    public void inviteToFollow (final ClientObject caller, final int memberId,
-                                final InvocationService.InvocationListener listener)
-        throws InvocationException
-    {
-        final MemberObject user = (MemberObject) caller;
-
-        // make sure the target member is online and in the same room as the requester
-        final MemberObject target = _locator.lookupMember(memberId);
-        if (target == null || !ObjectUtil.equals(user.location, target.location)) {
-            throw new InvocationException("e.follow_not_in_room");
-
-        } else if (target.isAway()) {
-            throw new InvocationException("e.follow_not_available");
-        }
-
-        // issue the follow invitation to the target
-        _notifyMan.notifyFollowInvite(target, user.memberName);
-    }
-
-    @Override // from interface MemberProvider
-    public void followMember (final ClientObject caller, final int memberId,
-                              final InvocationService.InvocationListener listener)
-        throws InvocationException
-    {
-        final MemberObject user = (MemberObject) caller;
-
-        // if the caller is requesting to clear their follow, do so
-        if (memberId == 0) {
-            if (user.following != null) {
-                MemberNodeActions.removeFollower(user.following.getMemberId(), user.getMemberId());
-                user.setFollowing(null);
-            }
-            return;
-        }
-
-        // Make sure the target isn't bogus
-        final MemberObject target = _locator.lookupMember(memberId);
-        if (target == null) {
-            throw new InvocationException("e.follow_invite_expired");
-        }
-
-        // Wire up both the leader and follower
-        if (!target.followers.containsKey(user.getMemberId())) {
-            log.debug("Adding follower", "follower", user.who(), "target", target.who());
-            target.addToFollowers(user.memberName);
-        }
-        user.setFollowing(target.memberName);
-    }
-
-    @Override // from interface MemberProvider
-    public void ditchFollower (ClientObject caller, int followerId,
-                               InvocationService.InvocationListener listener)
-        throws InvocationException
-    {
-        MemberObject leader = (MemberObject) caller;
-
-        if (followerId == 0) { // Clear all followers
-            for (MemberName follower : leader.followers) {
-                MemberObject fmo = _locator.lookupMember(follower.getMemberId());
-                if (fmo != null) {
-                    fmo.setFollowing(null);
-                }
-            }
-            leader.setFollowers(new DSet<MemberName>());
-
-        } else { // Ditch a single follower
-            if (leader.followers.containsKey(followerId)) {
-                leader.removeFromFollowers(followerId);
-            }
-            MemberObject follower = _locator.lookupMember(followerId);
-            if (follower != null && follower.following != null &&
-                follower.following.getMemberId() == leader.getMemberId()) {
-                follower.setFollowing(null);
-            }
-        }
-    }
-
-    @Override // from interface MemberProvider
     public void setAway (
         ClientObject caller, String message, InvocationService.ConfirmListener listener)
         throws InvocationException
@@ -501,73 +394,6 @@ public class MemberManager
             @Override public void invokePersistent () throws Exception {
                 _memberLogic.setMuted(muterId, muteeId, muted);
             }
-        });
-    }
-
-    @Override // from interface MemberProvider
-    public void setAvatar (ClientObject caller, int avatarItemId, final ConfirmListener listener)
-        throws InvocationException
-    {
-        setAvatar((MemberObject) caller, avatarItemId, new SetAvatarListener() {
-            public void success () {
-                listener.requestProcessed();
-            }
-            public void accessDeniedFailure () throws Exception {
-                throw new InvocationException(ItemCodes.E_ACCESS_DENIED);
-            }
-            public void noSuchItemFailure () throws Exception {
-                throw new InvocationException(ItemCodes.E_NO_SUCH_ITEM);
-            }
-        });
-    }
-
-    /**
-     * Cause the given player to wear the given avatar, reporting the results on the
-     * supplied {@link SetAvatarListener} object. An avatarId of zero may be passed to
-     * revert to the default avatar.
-     */
-    public void setAvatar (final MemberObject user, final int avatarItemId,
-        final SetAvatarListener listener)
-    {
-        if (avatarItemId == ((user.avatar == null) ? 0 : user.avatar.itemId)) {
-            listener.success();
-            return;
-        }
-        if (avatarItemId == 0) {
-            // a request to return to the default avatar
-            finishSetAvatar(user, null, null, listener);
-            return;
-        }
-
-        // otherwise, make sure it exists and we own it
-        final ItemIdent ident = new ItemIdent(Item.AVATAR, avatarItemId);
-        _invoker.postUnit(new RepositoryUnit("setAvatar(" + avatarItemId + ")") {
-            @Override public void invokePersist () throws Exception {
-                _avatar = (Avatar)_itemLogic.loadItem(ident);
-                if (_avatar == null) {
-                    listener.noSuchItemFailure();
-                    return;
-                }
-                if (user.getMemberId() != _avatar.ownerId) { // ensure that they own it
-                    log.warning("Not user's avatar", "user", user.which(),
-                                "ownerId", _avatar.ownerId, "avatar.itemId", _avatar.itemId);
-                    listener.accessDeniedFailure();
-                    return;
-                }
-                MemoriesRecord memrec = _memoryRepo.loadMemory(_avatar.getType(), _avatar.itemId);
-                _memories = (memrec == null) ? null : memrec.toEntry();
-            }
-
-            @Override public void handleSuccess () {
-                if (_avatar.equals(user.avatar)) {
-                    listener.success();
-                    return;
-                }
-                finishSetAvatar(user, _avatar, _memories, listener);
-            }
-
-            protected EntityMemories _memories;
-            protected Avatar _avatar;
         });
     }
 
@@ -728,84 +554,6 @@ public class MemberManager
     }
 
     /**
-     * Updates the runtime information for an avatar change then finally commits the change to the
-     * database.
-     */
-    protected void finishSetAvatar (
-        final MemberObject user, final Avatar avatar, EntityMemories memories,
-        final SetAvatarListener listener)
-    {
-        final Avatar prev = user.avatar;
-
-        // now we need to make sure that the two avatars have a reasonable touched time
-        user.startTransaction();
-        try {
-            // unset the current avatar to avoid busy-work in avatarUpdatedOnPeer, but
-            // we'll set the new avatar at the bottom...
-            user.avatar = null;
-
-            // NOTE: we are not updating the used/location fields of the cached avatars,
-            // I don't think it's necessary, but it'd be a simple matter here...
-            final long now = System.currentTimeMillis();
-            if (prev != null) {
-                prev.lastTouched = now;
-                _itemMan.avatarUpdatedOnPeer(user, prev);
-            }
-            if (avatar != null) {
-                avatar.lastTouched = now + 1; // the new one should be more recently touched
-                _itemMan.avatarUpdatedOnPeer(user, avatar);
-            }
-
-            // now set the new avatar
-            user.setAvatar(avatar);
-            user.actorState = null; // clear out their state
-            user.getLocal(MemberLocal.class).memories = memories;
-
-            // check if this player is already in a room (should be the case)
-            if (memories != null) {
-                PlaceManager pmgr = _placeReg.getPlaceManager(user.getPlaceOid());
-                if (pmgr != null) {
-                    PlaceObject plobj = pmgr.getPlaceObject();
-                    if (plobj instanceof RoomObject) {
-                        // if so, make absolutely sure the avatar memories are in place in the
-                        // room before we update the occupant info (which triggers the avatar
-                        // media change on the client).
-                        user.getLocal(MemberLocal.class).putAvatarMemoriesIntoRoom(
-                            (RoomObject)plobj);
-                    }
-                    // if the player wasn't in a room, the avatar memories will just sit in
-                    // MemberLocal storage until they do enter a room, which is proper
-                }
-            }
-            _bodyMan.updateOccupantInfo(user, new MemberInfo.AvatarUpdater(user));
-
-        } finally {
-            user.commitTransaction();
-        }
-        listener.success();
-
-        // this just fires off an invoker unit, we don't need the result, log it
-        _itemMan.updateItemUsage(
-            user.getMemberId(), prev, avatar, new ResultListener.NOOP<Void>() {
-            @Override public void requestFailed (final Exception cause) {
-                log.warning("Unable to update usage from an avatar change.");
-            }
-        });
-
-        // now fire off a unit to update the avatar information in the database
-        _invoker.postUnit(new WriteOnlyUnit("updateAvatar") {
-            @Override public void invokePersist () throws Exception {
-                int avatarId = (avatar == null) ? 0 : avatar.itemId;
-                _memberRepo.configureAvatarId(user.getMemberId(), avatarId);
-                _themeRepo.noteAvatarWorn(user.getMemberId(), user.mogGroupId, avatarId);
-            }
-            @Override public void handleFailure (Exception pe) {
-                log.warning("configureAvatarId failed", "user", user.which(), "avatar", avatar, pe);
-            }
-        });
-    }
-
-    /**
      * Returns the most recently loaded set of greeter ids, sorted by last session time. This is
      * only used to construct the popular places snapshot, which figures out which greeters are
      * currently online and sorts and caches a separate list.
@@ -839,28 +587,19 @@ public class MemberManager
     @Inject protected @MainInvoker Invoker _invoker;
     @Inject protected BadgeManager _badgeMan;
     @Inject protected BodyManager _bodyMan;
-    @Inject protected MsoyManager _msoyMan;
     @Inject protected ClientManager _clmgr;
     @Inject protected CronLogic _cronLogic;
-    @Inject protected FeedLogic _feedLogic;
-    @Inject protected GroupRepository _groupRepo;
-    @Inject protected ItemLogic _itemLogic;
-    @Inject protected ItemManager _itemMan;
-    @Inject protected MailLogic _mailLogic;
     @Inject protected MemberLocator _locator;
     @Inject protected MemberLogic _memberLogic;
     @Inject protected MemberRepository _memberRepo;
-    @Inject protected MemoryRepository _memoryRepo;
     @Inject protected MsoyAdminManager _adminMan;
     @Inject protected MsoyEventLogger _eventLog;
     @Inject protected MsoyPeerManager _peerMan;
     @Inject protected NotificationManager _notifyMan;
     @Inject protected PlaceRegistry _placeReg;
-    @Inject protected PlayerNodeActions _playerActions;
     @Inject protected PresentsDObjectMgr _omgr;
     @Inject protected ProfileRepository _profileRepo;
     @Inject protected SupportLogic _supportLogic;
-    @Inject protected ThemeRepository _themeRepo;
 
     /** The frequency with which we recalculate our popular places snapshot. */
     protected static final long POP_PLACES_REFRESH_PERIOD = 30*1000;

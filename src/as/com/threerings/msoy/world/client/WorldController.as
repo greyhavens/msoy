@@ -754,7 +754,8 @@ public class WorldController extends MsoyController
      */
     public function handleRespondFollow (memberId :int) :void
     {
-        msvc().followMember(memberId, _wctx.listener());
+        WorldService(_wctx.getClient().requireService(WorldService)).
+            followMember(memberId, _wctx.listener());
     }
 
     /**
@@ -1659,7 +1660,8 @@ public class WorldController extends MsoyController
      */
     protected function inviteFollow (memId :int) :void
     {
-        msvc().inviteToFollow(memId, _wctx.listener());
+        WorldService(_wctx.getClient().requireService(WorldService)).
+            inviteToFollow(memId, _wctx.listener());
     }
 
     /**
@@ -1668,7 +1670,8 @@ public class WorldController extends MsoyController
      */
     protected function ditchFollower (memId :int = 0) :void
     {
-        msvc().ditchFollower(memId, _wctx.listener());
+        WorldService(_wctx.getClient().requireService(WorldService)).
+            ditchFollower(memId, _wctx.listener());
     }
 
     /**

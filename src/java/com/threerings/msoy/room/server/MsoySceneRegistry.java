@@ -39,10 +39,10 @@ import com.threerings.msoy.data.MsoyBodyObject;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MemberLocal;
 import com.threerings.msoy.server.MemberLocator;
-import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.MemberNodeActions;
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.persist.MemberRepository;
+import com.threerings.msoy.world.server.WorldManager;
 
 import com.threerings.msoy.peer.data.HostedRoom;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
@@ -532,7 +532,7 @@ public class MsoySceneRegistry extends SpotSceneRegistry
             }
 
             // otherwise we have to route everything through MemberManager.setAvatar()
-            _memMan.setAvatar(_user, _candidateAvatarId, new MemberManager.SetAvatarListener() {
+            _worldMan.setAvatar(_user, _candidateAvatarId, new WorldManager.SetAvatarListener() {
                 public void success () {
                     finishOrPunt();
                 }
@@ -579,8 +579,8 @@ public class MsoySceneRegistry extends SpotSceneRegistry
     @Inject protected ItemLogic _itemLogic;
     @Inject protected MsoyEventLogger _eventLog;
     @Inject protected MsoyPeerManager _peerMan;
-    @Inject protected MemberManager _memMan;
     @Inject protected PetManager _petMan;
+    @Inject protected WorldManager _worldMan;
 
     /**
      * Implements MsoySceneMoveListener trivially.
