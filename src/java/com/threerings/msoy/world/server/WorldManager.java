@@ -339,7 +339,7 @@ public class WorldManager
      */
     protected List<Avatar> getStartupGiftAvatars (int memberId)
     {
-        int themeId = ServerConfig.config.getValue("startupGroupId", 0);
+        int themeId = ServerConfig.config.getValue("startup_group_id", 0);
         if (themeId == 0) {
             return null;
         }
