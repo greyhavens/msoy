@@ -34,6 +34,7 @@ import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 
+import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;
 
 import com.threerings.msoy.room.data.MsoySceneModel;
@@ -113,8 +114,13 @@ public class WorldDirector extends BasicDirector
             _wctx.getClient().addClientObserver(waiter);
             return;
         }
-        function selectGift (avatars :TypedArray) :void {
+        function giftSelected (avatar :Avatar) :void {
             // TODO
+            log.info("Avatar selected", "name", avatar.name);
+        }
+        function selectGift (avatars :TypedArray) :void {
+            // TODO: get rid of the "Connecting..." that stays behind the picker
+            AvatarPickerPanel.show(_wctx, avatars, giftSelected);
         }
         _wsvc.getHomeId(ownerType, ownerId, new WorldService_HomeResultListenerAdapter(
             _wctx.getSceneDirector().moveTo, selectGift,
