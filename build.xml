@@ -878,6 +878,7 @@
         <exclude name="**/client/BureauLauncherService.java"/>
       </fileset>
       <adapter service="WorldGameService"/>
+      <adapter service="WorldService"/>
     </genservice>
     <genservice header="lib/SOURCE_HEADER" classpathref="classpath">
       <fileset dir="${src.dir}">
