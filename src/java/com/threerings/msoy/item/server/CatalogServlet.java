@@ -376,8 +376,11 @@ public class CatalogServlet extends MsoyServiceServlet
         CatalogListing listing = record.toListing();
         listing.detail.creator = _memberRepo.loadMemberName(record.item.creatorId);
         listing.detail.memberItemInfo = _itemLogic.getMemberItemInfo(mrec, record.item.toItem());
-        listing.detail.themes = forDisplay ?
-            _itemLogic.loadItemStamps(itemType, record.listedItemId) : null;
+        if (forDisplay) {
+            listing.detail.themes = _itemLogic.loadItemStamps(itemType, record.listedItemId);
+        } else {
+            listing.detail.themes = Lists.newArrayList();
+        }
 
         listing.quote = quote;
         listing.basis = basis;

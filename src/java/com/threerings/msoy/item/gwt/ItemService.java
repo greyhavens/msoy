@@ -110,12 +110,6 @@ public interface ItemService extends RemoteService
         throws ServiceException;
 
     /**
-     * Loads the themes the current player is allowed to manage (stamp).
-     */
-    GroupName[] loadManagedThemes ()
-        throws ServiceException;
-
-    /**
      * Loads up all of this member's photo inventory. This exists separate from
      * StuffService.loadInventory because we want to allow photo selection in many places in the
      * website, but we don't want to have to compile in the entire Item hiearchy to do so.
@@ -124,9 +118,27 @@ public interface ItemService extends RemoteService
         throws ServiceException;
 
     /**
+     * Loads the themes the current player is allowed to manage (stamp).
+     */
+    GroupName[] loadManagedThemes ()
+        throws ServiceException;
+
+    /**
+     * Loads the themes whose lineups include the given avatar.
+     */
+    GroupName[] loadLineups(int avatarId)
+        throws ServiceException;
+
+    /**
      * Stamps the given item with a theme, or removes such a stamp. The item is typically a clone
      * or a listed master.
      */
     void stampItem (ItemIdent ident, int groupId, boolean doStamp)
+        throws ServiceException;
+
+    /**
+     * Adds or removes the given avatar to the given theme's lineup.
+     */
+    void setAvatarInLineup (int catalogId, int groupId, boolean doAdd)
         throws ServiceException;
 }

@@ -89,8 +89,19 @@ public interface ItemServiceAsync
     void loadManagedThemes (AsyncCallback<GroupName[]> callback);
 
     /**
+     * The asynchronous version of {@link ItemService#loadLineups)
+     */
+    void loadLineups(int avatarId, AsyncCallback<GroupName[]> callback);
+
+    /**
      * The asynchronous version of {@link ItemService#stampItem}.
      */
     void stampItem (ItemIdent ident, int groupId, boolean doStamp,
-                    AsyncCallback<Void> infoCallback);
+                    AsyncCallback<Void> callback);
+
+    /**
+     * The asynchronous version of {@link ItemService#setAvatarInLineup}.
+     */
+    void setAvatarInLineup (int catalogId, int groupId, boolean doAdd,
+                            AsyncCallback<Void> callback);
 }

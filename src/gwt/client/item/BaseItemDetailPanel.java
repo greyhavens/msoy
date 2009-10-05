@@ -115,21 +115,16 @@ public abstract class BaseItemDetailPanel extends SmartTable
         if (DeploymentConfig.devDeployment && !CShell.isGuest()) {
             _itemsvc.loadManagedThemes(new InfoCallback<GroupName[]>() {
                 public void onSuccess (GroupName[] result) {
-                    _managedThemes = result;
-                    if (_managedThemes == null && _detail.themes == null) {
-                        // don't build an empty UI
-                        return;
-                    }
+                    ensureThemeBits();
+                    _themeContents.setWidget(0, 0, _stampedBy = new FlowPanel());
+                    _themeContents.setWidget(1, 0, _stampPanel = new SmartTable());
 
-                    setWidget(1, 0, _themeBits = new RoundBox(RoundBox.BLUE), 1, "Details");
-                    getFlexCellFormatter().setVerticalAlignment(1, 0, HorizontalPanel.ALIGN_TOP);
-                    _themeBits.setWidth("100%");
-                    _themeBits.add(_stampedBy = new FlowPanel());
-                    _themeBits.add(_stampPanel = new SmartTable());
+                    gotManagedThemes(result);
                     updateStamps();
                 }
             });
         }
+        addExtraThemeBits();
 
         // add our tag business at the bottom
         boolean canEditTags = CShell.isSubscriber() || _item.creatorId == CShell.getMemberId();
@@ -160,6 +155,21 @@ public abstract class BaseItemDetailPanel extends SmartTable
         getFlexCellFormatter().setHeight(2, 0, "10px");
 
         configureCallbacks(this);
+    }
+
+    protected void gotManagedThemes (GroupName[] themes)
+    {
+        _managedThemes = themes;
+    }
+
+    protected void ensureThemeBits ()
+    {
+        if (_themeBits == null) {
+            setWidget(1, 0, _themeBits = new RoundBox(RoundBox.BLUE), 1, "Details");
+            getFlexCellFormatter().setVerticalAlignment(1, 0, HorizontalPanel.ALIGN_TOP);
+            _themeBits.setWidth("100%");
+            _themeBits.add(_themeContents = new SmartTable());
+        }
     }
 
     protected void addTabBelow (String title, Widget content, boolean select)
@@ -323,6 +333,14 @@ public abstract class BaseItemDetailPanel extends SmartTable
         // nothing in base class
     }
 
+    /**
+     * Adds extra items to the _themeBits widget.
+     */
+    protected void addExtraThemeBits ()
+    {
+        // nothing in base class
+    }
+
     protected void addRatableBits (HorizontalPanel row)
     {
         Rating rating = new Rating(
@@ -448,6 +466,7 @@ public abstract class BaseItemDetailPanel extends SmartTable
     protected RoundBox _details;
     protected RoundBox _indeets;
     protected RoundBox _themeBits;
+    protected SmartTable _themeContents;
 
     protected CreatorLabel _creator;
 
@@ -455,7 +474,6 @@ public abstract class BaseItemDetailPanel extends SmartTable
     protected boolean _briefStamps = true;
 
     protected SmartTable _stampPanel;
-
     protected ListBox _stampBox, _unstampBox;
     protected Button _stampButton, _unstampButton;
     protected List<GroupName> _stampEntries, _unstampEntries;

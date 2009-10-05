@@ -1011,14 +1011,11 @@ public class ItemLogic
         throws ServiceException
     {
         List<? extends MogMarkRecord> stampRecs = getRepository(itemType).loadItemStamps(itemId);
-        if (stampRecs.size() > 0) {
-            IntSet themeIds = new ArrayIntSet();
-            for (MogMarkRecord rec : stampRecs) {
-                themeIds.add(rec.groupId);
-            }
-            return Lists.newArrayList(_groupRepo.loadGroupNames(themeIds).values());
+        IntSet themeIds = new ArrayIntSet();
+        for (MogMarkRecord rec : stampRecs) {
+            themeIds.add(rec.groupId);
         }
-        return null;
+        return Lists.newArrayList(_groupRepo.loadGroupNames(themeIds).values());
     }
 
 

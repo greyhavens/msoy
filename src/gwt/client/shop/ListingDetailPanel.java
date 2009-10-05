@@ -3,22 +3,35 @@
 
 package client.shop;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.History;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.InlineLabel;
+import com.threerings.gwt.ui.Popups;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.util.DateUtil;
 
+import com.threerings.msoy.data.all.DeploymentConfig;
+import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.group.gwt.BrandDetail.BrandShare;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.gwt.CatalogListing;
@@ -208,6 +221,30 @@ public class ListingDetailPanel extends BaseItemDetailPanel
         }
     }
 
+    @Override
+    protected void addExtraThemeBits ()
+    {
+        if (DeploymentConfig.devDeployment && _item.getType() == Item.AVATAR && !CShell.isGuest()) {
+            _itemsvc.loadLineups(_item.itemId, new InfoCallback<GroupName[]>() {
+                public void onSuccess (GroupName[] result) {
+                    CShell.log("Avatar lineup: " + result);
+                    _lineup = Arrays.asList(result);
+                    if (_managedThemes != null) {
+                        buildLineup();
+                    }
+                }
+            });
+        }
+    }
+
+    @Override
+    protected void gotManagedThemes (GroupName[] themes)
+    {
+        super.gotManagedThemes(themes);
+        if (_lineup != null) {
+            buildLineup();
+        }
+    }
     @Override // from BaseItemDetailPanel
     protected void addTagMenuItems (final String tag, PopupMenu menu)
     {
@@ -294,6 +331,101 @@ public class ListingDetailPanel extends BaseItemDetailPanel
         }
     }
 
+    protected void buildLineup ()
+    {
+        // else we wait for that callback
+        ensureThemeBits();
+        _themeContents.setWidget(2, 0, _linePanel = new SmartTable());
+        updateLineup();
+    }
+
+    protected void updateLineup ()
+    {
+        _linePanel.clear();
+        if (_managedThemes.length == 0) {
+            return;
+        }
+
+        _lineBox = new ListBox();
+        _lineBox.addItem(_imsgs.itemListNoTheme());
+        _lineBox.addChangeHandler(new ChangeHandler() {
+            public void onChange (ChangeEvent event) {
+                _lineButton.setEnabled(_lineBox.getSelectedIndex() > 0);
+            }
+        });
+        _lineEntries = new ArrayList<GroupName>();
+
+        _unlineBox = new ListBox();
+        _unlineBox.addItem(_imsgs.itemListNoTheme());
+        _unlineBox.addChangeHandler(new ChangeHandler() {
+            public void onChange (ChangeEvent event) {
+                _unlineButton.setEnabled(_unlineBox.getSelectedIndex() > 0);
+            }
+        });
+        _unlineEntries = new ArrayList<GroupName>();
+
+        Set<GroupName> existing = new HashSet<GroupName>(_lineup);
+        for (GroupName theme : _managedThemes) {
+            if (!existing.contains(theme)) {
+                _lineBox.addItem(theme.toString());
+                _lineEntries.add(theme);
+            } else {
+                _unlineBox.addItem(theme.toString());
+                _unlineEntries.add(theme);
+            }
+        }
+
+        int row = 0;
+        if (_lineBox.getItemCount() > 1) {
+            _linePanel.setWidget(row, 0, _lineBox, 1);
+            _lineButton = MsoyUI.createTinyButton(_imsgs.itemLineupAdd(), new ClickHandler() {
+                public void onClick (ClickEvent event) {
+                    int ix = _lineBox.getSelectedIndex();
+                    if (ix == 0) {
+                        Popups.errorNear(_imsgs.itemNothingToStamp(), _lineButton);
+                        return;
+                    }
+                    final GroupName theme = _lineEntries.get(ix-1);
+                    _itemsvc.setAvatarInLineup(
+                        _item.catalogId, theme.getGroupId(), true, new InfoCallback<Void>() {
+                            public void onSuccess (Void result) {
+                                _lineup.add(theme);
+                                updateLineup();
+                            }
+                        });
+                }
+            });
+            _lineButton.setEnabled(false);
+            _linePanel.setWidget(row, 1, _lineButton);
+            row ++;
+        }
+
+        if (_unlineBox.getItemCount() > 1) {
+            _linePanel.setWidget(row, 0, _unlineBox, 1);
+            _unlineButton = MsoyUI.createTinyButton(_imsgs.itemLineupRemove(), new ClickHandler() {
+                public void onClick (ClickEvent event) {
+                    int ix = _unlineBox.getSelectedIndex();
+                    if (ix == 0) {
+                        Popups.errorNear(_imsgs.itemNothingToUnstamp(), _unlineButton);
+                        return;
+                    }
+                    final GroupName theme = _unlineEntries.get(ix-1);
+                    _itemsvc.setAvatarInLineup(
+                        _item.catalogId, theme.getGroupId(), false, new InfoCallback<Void>() {
+                            public void onSuccess (Void result) {
+                                _lineup.remove(theme);
+                                updateLineup();
+                            }
+                        });
+                }
+            });
+            _unlineButton.setEnabled(false);
+            _linePanel.setWidget(row, 1, _unlineButton);
+            row ++;
+        }
+    }
+
+
     protected static Widget createSeparator ()
     {
         return new HTML("&nbsp;&nbsp;|&nbsp;&nbsp;");
@@ -318,6 +450,12 @@ public class ListingDetailPanel extends BaseItemDetailPanel
 
     protected ConfigButton _configBtn;
     protected FlowPanel _usedBy;
+
+    protected List<GroupName> _lineup;
+    protected SmartTable _linePanel;
+    protected ListBox _lineBox, _unlineBox;
+    protected Button _lineButton, _unlineButton;
+    protected List<GroupName> _lineEntries, _unlineEntries;
 
     protected static ListingDetailPanel _singleton;
 

@@ -28,6 +28,8 @@ import com.threerings.msoy.server.persist.TagNameRecord;
 import com.threerings.msoy.group.data.all.GroupMembership.Rank;
 import com.threerings.msoy.group.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
+import com.threerings.msoy.group.server.persist.ThemeAvatarLineupRecord;
+import com.threerings.msoy.group.server.persist.ThemeRepository;
 import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.item.data.all.ItemFlag;
 import com.threerings.msoy.item.data.all.ItemIdent;
@@ -371,6 +373,17 @@ public class ItemServlet extends MsoyServiceServlet
     }
 
     // from interface ItemService
+    public GroupName[] loadLineups (int catalogId)
+        throws ServiceException
+    {
+        IntSet groupIds = new ArrayIntSet();
+        for (ThemeAvatarLineupRecord rec : _themeRepo.loadAvatarLineup(catalogId)) {
+            groupIds.add(rec.groupId);
+        }
+        return _groupRepo.loadGroupNames(groupIds).values().toArray(new GroupName[0]);
+    }
+
+    // from interface ItemService
     public void stampItem (ItemIdent ident, int groupId, boolean doStamp)
         throws ServiceException
     {
@@ -390,12 +403,33 @@ public class ItemServlet extends MsoyServiceServlet
         }
     }
 
+    // from interface ItemService
+    public void setAvatarInLineup (int catalogId, int groupId, boolean doAdd)
+        throws ServiceException
+    {
+        MemberRecord memrec = requireAuthedUser();
+        if (_groupRepo.getMembership(groupId, memrec.memberId).left != Rank.MANAGER) {
+            throw new ServiceException(ItemCodes.E_ACCESS_DENIED);
+        }
+        if (doAdd) {
+            if (!_themeRepo.setAvatarInLineup(groupId, catalogId)) {
+                log.warning("Avatar was already in lineup!", "avatar", catalogId, "theme", groupId);
+            }
+        } else {
+            if (!_themeRepo.removeAvatarFromLineup(groupId, catalogId)) {
+                log.warning("Avatar was not in lineup!", "avatar", catalogId, "theme", groupId);
+            }
+        }
+    }
+
+
     // our dependencies
     @Inject protected ItemFlagRepository _itemFlagRepo;
     @Inject protected ItemLogic _itemLogic;
     @Inject protected ItemManager _itemMan;
     @Inject protected PhotoRepository _photoRepo;
     @Inject protected GroupRepository _groupRepo;
+    @Inject protected ThemeRepository _themeRepo;
     @Inject protected StatLogic _statLogic;
 
     protected static final int MIN_SOLID_RATINGS = 20;
