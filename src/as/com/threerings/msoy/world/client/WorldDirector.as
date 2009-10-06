@@ -115,8 +115,9 @@ public class WorldDirector extends BasicDirector
             return;
         }
         function giftSelected (avatar :Avatar) :void {
-            // TODO
-            log.info("Avatar selected", "name", avatar.name);
+            log.info("Avatar selected, accepting gift", "name", avatar.name);
+            _wsvc.acceptAndProceed(avatar.catalogId,
+                _wctx.resultListener(_wctx.getSceneDirector().moveTo));
         }
         function selectGift (avatars :TypedArray) :void {
             // TODO: get rid of the "Connecting..." that stays behind the picker
