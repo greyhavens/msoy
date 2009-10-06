@@ -135,15 +135,16 @@ public class WorldManager
                         _gifts = gifts.toArray(new Avatar[gifts.size()]);
                     }
                 }
-                if (_gifts == null) {
+                if (_gifts == null || _gifts.length < 3) {
                     _homeId = _memberLogic.getHomeId(ownerType, ownerId);
+                    _gifts = null;
                 }
             }
             @Override public void handleSuccess () {
-                if (_gifts != null) {
-                    ((HomeResultListener)_listener).selectGift(_gifts);
-                } else if (_homeId != null) {
+                if (_homeId != null) {
                     ((HomeResultListener)_listener).readyToEnter(_homeId);
+                } else if (_gifts != null) {
+                    ((HomeResultListener)_listener).selectGift(_gifts);
                 } else {
                     handleFailure(new InvocationException("m.no_such_user"));
                 }
