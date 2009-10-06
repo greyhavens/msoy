@@ -217,7 +217,7 @@ public class GalleryEditPanel extends AbsolutePanel // AbsolutePanel needed to s
                 @Override public void onPreviewDrop(DragContext context)
                 throws VetoDragException {
                     super.onPreviewDrop(context);
-                    if (context.draggable instanceof PayloadWidget) {
+                    if (context.draggable instanceof PayloadWidget<?>) {
                         PayloadWidget<?> payload = (PayloadWidget<?>) context.draggable;
                         // Veto any attempts to drop photos that came from the "my photos"
                         // panel. This will position them back where they came from rather
