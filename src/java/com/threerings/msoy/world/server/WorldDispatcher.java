@@ -36,6 +36,12 @@ public class WorldDispatcher extends InvocationDispatcher<WorldMarshaller>
         throws InvocationException
     {
         switch (methodId) {
+        case WorldMarshaller.ACCEPT_AND_PROCEED:
+            ((WorldProvider)provider).acceptAndProceed(
+                source, ((Integer)args[0]).intValue(), (InvocationService.ResultListener)args[1]
+            );
+            return;
+
         case WorldMarshaller.DITCH_FOLLOWER:
             ((WorldProvider)provider).ditchFollower(
                 source, ((Integer)args[0]).intValue(), (InvocationService.InvocationListener)args[1]

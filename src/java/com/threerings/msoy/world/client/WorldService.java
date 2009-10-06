@@ -45,6 +45,13 @@ public interface WorldService extends InvocationService
     void getHomeId (Client client, byte ownerType, int ownerId, HomeResultListener listener);
 
     /**
+     * Dresses the user in the avatar of the specified catalog id, adding it to their inventory
+     * and returns the home scene id to go to. The catalog id must be chosen from a previously
+     * returned gift list ({@link HomeResultListener#selectGift()}).
+     */
+    void acceptAndProceed (Client client, int giftCatalogId, ResultListener listener);
+
+    /**
      * Set the given scene as the owner's home scene
      */
     void setHomeSceneId (Client client, int ownerType, int ownerId, int sceneId,

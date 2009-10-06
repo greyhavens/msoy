@@ -15,6 +15,12 @@ import com.threerings.presents.server.InvocationProvider;
 public interface WorldProvider extends InvocationProvider
 {
     /**
+     * Handles a {@link WorldService#acceptAndProceed} request.
+     */
+    void acceptAndProceed (ClientObject caller, int arg1, InvocationService.ResultListener arg2)
+        throws InvocationException;
+
+    /**
      * Handles a {@link WorldService#ditchFollower} request.
      */
     void ditchFollower (ClientObject caller, int arg1, InvocationService.InvocationListener arg2)

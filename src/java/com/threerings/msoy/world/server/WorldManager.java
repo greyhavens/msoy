@@ -150,6 +150,14 @@ public class WorldManager
         });
     }
 
+    @Override
+    public void acceptAndProceed (ClientObject caller, int arg1,
+        com.threerings.presents.client.InvocationService.ResultListener arg2)
+        throws InvocationException
+    {
+        arg2.requestFailed(MsoyCodes.E_INTERNAL_ERROR);
+    }
+
     @Override // from interface WorldProvider
     public void setHomeSceneId (final ClientObject caller, final int ownerType, final int ownerId,
                                 final int sceneId, final InvocationService.ConfirmListener listener)

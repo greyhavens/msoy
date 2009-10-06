@@ -73,8 +73,21 @@ public class WorldMarshaller extends InvocationMarshaller
         }
     }
 
+    /** The method id used to dispatch {@link #acceptAndProceed} requests. */
+    public static final int ACCEPT_AND_PROCEED = 1;
+
+    // from interface WorldService
+    public void acceptAndProceed (Client arg1, int arg2, InvocationService.ResultListener arg3)
+    {
+        InvocationMarshaller.ResultMarshaller listener3 = new InvocationMarshaller.ResultMarshaller();
+        listener3.listener = arg3;
+        sendRequest(arg1, ACCEPT_AND_PROCEED, new Object[] {
+            Integer.valueOf(arg2), listener3
+        });
+    }
+
     /** The method id used to dispatch {@link #ditchFollower} requests. */
-    public static final int DITCH_FOLLOWER = 1;
+    public static final int DITCH_FOLLOWER = 2;
 
     // from interface WorldService
     public void ditchFollower (Client arg1, int arg2, InvocationService.InvocationListener arg3)
@@ -87,7 +100,7 @@ public class WorldMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #followMember} requests. */
-    public static final int FOLLOW_MEMBER = 2;
+    public static final int FOLLOW_MEMBER = 3;
 
     // from interface WorldService
     public void followMember (Client arg1, int arg2, InvocationService.InvocationListener arg3)
@@ -100,7 +113,7 @@ public class WorldMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #getHomeId} requests. */
-    public static final int GET_HOME_ID = 3;
+    public static final int GET_HOME_ID = 4;
 
     // from interface WorldService
     public void getHomeId (Client arg1, byte arg2, int arg3, WorldService.HomeResultListener arg4)
@@ -113,7 +126,7 @@ public class WorldMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #getHomePageGridItems} requests. */
-    public static final int GET_HOME_PAGE_GRID_ITEMS = 4;
+    public static final int GET_HOME_PAGE_GRID_ITEMS = 5;
 
     // from interface WorldService
     public void getHomePageGridItems (Client arg1, InvocationService.ResultListener arg2)
@@ -126,7 +139,7 @@ public class WorldMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #inviteToFollow} requests. */
-    public static final int INVITE_TO_FOLLOW = 5;
+    public static final int INVITE_TO_FOLLOW = 6;
 
     // from interface WorldService
     public void inviteToFollow (Client arg1, int arg2, InvocationService.InvocationListener arg3)
@@ -139,7 +152,7 @@ public class WorldMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #setAvatar} requests. */
-    public static final int SET_AVATAR = 6;
+    public static final int SET_AVATAR = 7;
 
     // from interface WorldService
     public void setAvatar (Client arg1, int arg2, InvocationService.ConfirmListener arg3)
@@ -152,7 +165,7 @@ public class WorldMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #setHomeSceneId} requests. */
-    public static final int SET_HOME_SCENE_ID = 7;
+    public static final int SET_HOME_SCENE_ID = 8;
 
     // from interface WorldService
     public void setHomeSceneId (Client arg1, int arg2, int arg3, int arg4, InvocationService.ConfirmListener arg5)

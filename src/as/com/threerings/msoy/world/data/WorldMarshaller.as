@@ -26,8 +26,21 @@ import com.threerings.util.Integer;
 public class WorldMarshaller extends InvocationMarshaller
     implements WorldService
 {
+    /** The method id used to dispatch <code>acceptAndProceed</code> requests. */
+    public static const ACCEPT_AND_PROCEED :int = 1;
+
+    // from interface WorldService
+    public function acceptAndProceed (arg1 :int, arg2 :InvocationService_ResultListener) :void
+    {
+        var listener2 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
+        listener2.listener = arg2;
+        sendRequest(ACCEPT_AND_PROCEED, [
+            Integer.valueOf(arg1), listener2
+        ]);
+    }
+
     /** The method id used to dispatch <code>ditchFollower</code> requests. */
-    public static const DITCH_FOLLOWER :int = 1;
+    public static const DITCH_FOLLOWER :int = 2;
 
     // from interface WorldService
     public function ditchFollower (arg1 :int, arg2 :InvocationService_InvocationListener) :void
@@ -40,7 +53,7 @@ public class WorldMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch <code>followMember</code> requests. */
-    public static const FOLLOW_MEMBER :int = 2;
+    public static const FOLLOW_MEMBER :int = 3;
 
     // from interface WorldService
     public function followMember (arg1 :int, arg2 :InvocationService_InvocationListener) :void
@@ -53,7 +66,7 @@ public class WorldMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch <code>getHomeId</code> requests. */
-    public static const GET_HOME_ID :int = 3;
+    public static const GET_HOME_ID :int = 4;
 
     // from interface WorldService
     public function getHomeId (arg1 :int, arg2 :int, arg3 :WorldService_HomeResultListener) :void
@@ -66,7 +79,7 @@ public class WorldMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch <code>getHomePageGridItems</code> requests. */
-    public static const GET_HOME_PAGE_GRID_ITEMS :int = 4;
+    public static const GET_HOME_PAGE_GRID_ITEMS :int = 5;
 
     // from interface WorldService
     public function getHomePageGridItems (arg1 :InvocationService_ResultListener) :void
@@ -79,7 +92,7 @@ public class WorldMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch <code>inviteToFollow</code> requests. */
-    public static const INVITE_TO_FOLLOW :int = 5;
+    public static const INVITE_TO_FOLLOW :int = 6;
 
     // from interface WorldService
     public function inviteToFollow (arg1 :int, arg2 :InvocationService_InvocationListener) :void
@@ -92,7 +105,7 @@ public class WorldMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch <code>setAvatar</code> requests. */
-    public static const SET_AVATAR :int = 6;
+    public static const SET_AVATAR :int = 7;
 
     // from interface WorldService
     public function setAvatar (arg1 :int, arg2 :InvocationService_ConfirmListener) :void
@@ -105,7 +118,7 @@ public class WorldMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch <code>setHomeSceneId</code> requests. */
-    public static const SET_HOME_SCENE_ID :int = 7;
+    public static const SET_HOME_SCENE_ID :int = 8;
 
     // from interface WorldService
     public function setHomeSceneId (arg1 :int, arg2 :int, arg3 :int, arg4 :InvocationService_ConfirmListener) :void
