@@ -36,11 +36,13 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.MemberName;
 
+import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.notify.server.NotificationManager;
 import com.threerings.msoy.room.data.EntityMemories;
 import com.threerings.msoy.room.data.MemberInfo;
 import com.threerings.msoy.room.data.MsoySceneModel;
 import com.threerings.msoy.room.data.RoomObject;
+import com.threerings.msoy.room.server.MsoySceneRegistry;
 import com.threerings.msoy.room.server.persist.MemoriesRecord;
 import com.threerings.msoy.room.server.persist.MemoryRepository;
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
@@ -66,6 +68,7 @@ import com.threerings.msoy.item.server.ItemManager;
 import com.threerings.msoy.item.server.persist.AvatarRecord;
 import com.threerings.msoy.item.server.persist.AvatarRepository;
 import com.threerings.msoy.item.server.persist.CatalogRecord;
+import com.threerings.msoy.item.server.persist.ItemRecord;
 
 import static com.threerings.msoy.Log.log;
 
@@ -151,11 +154,11 @@ public class WorldManager
     }
 
     @Override
-    public void acceptAndProceed (ClientObject caller, int arg1,
-        com.threerings.presents.client.InvocationService.ResultListener arg2)
+    public void acceptAndProceed (ClientObject caller, final int giftCatalogId,
+        com.threerings.presents.client.InvocationService.ResultListener listener)
         throws InvocationException
     {
-        arg2.requestFailed(MsoyCodes.E_INTERNAL_ERROR);
+        _invoker.postUnit(new GiftUnit((MemberObject)caller, giftCatalogId, listener));
     }
 
     @Override // from interface WorldProvider
@@ -460,6 +463,145 @@ public class WorldManager
                 log.warning("configureAvatarId failed", "user", user.which(), "avatar", avatar, pe);
             }
         });
+    }
+
+    /**
+     * Unit for giving a user a startup avatar and then returning the id of their home room so
+     * they can go to it.
+     * TODO: share code with {@link MsoySceneRegistry.ThemeRepositoryUnit}
+     */
+    protected class GiftUnit extends PersistingUnit
+        implements SetAvatarListener
+    {
+        public GiftUnit (MemberObject memobj, int giftCatalogId,
+            com.threerings.presents.client.InvocationService.ResultListener listener)
+            throws InvocationException
+        {
+            super("giftAndWearAvatar", listener);
+            _mobj = memobj;
+            _mname = memobj.memberName;
+            _giftCatalogId = giftCatalogId;
+            _cache = _mobj.avatarCache;
+
+            if (_mobj.avatar != null && _mobj.avatar.itemId != 0) {
+                // this should not happen with a legitimate client
+                warn("Attempting double startup gift?");
+                throw new InvocationException(MsoyCodes.E_INTERNAL_ERROR);
+            }
+        }
+
+        @Override // from PersistingUnit
+        public void invokePersistent ()
+            throws Exception
+        {
+            int memberId = _mname.getMemberId();
+            _homeId = _memberLogic.getHomeId(MsoySceneModel.OWNER_TYPE_MEMBER, memberId);
+            if (_homeId == null) {
+                warn("Uh oh, no home id in " + _name);
+                throw new InvocationException(MsoyCodes.E_INTERNAL_ERROR);
+            }
+
+            // this is inefficient if the user's home theme id is != 0, but it should self-correct
+            // when the room loads
+            // TODO: load the real theme id of the home scene
+            _themeId = 0;
+
+            List<Avatar> gifts = getStartupGiftAvatars(memberId);
+            if (gifts == null) {
+                // this should not happen with a legitimate client
+                warn("No gifts found in " + _name);
+                throw new InvocationException(MsoyCodes.E_INTERNAL_ERROR);
+            }
+            for (Avatar avatar : gifts) {
+                if (avatar.catalogId == _giftCatalogId) {
+                    _newAvatar = giveGift(avatar);
+                    if (_cache == null) {
+                        _cache = loadCache();
+                    }
+                    _memberRepo.configureThemeId(memberId, _themeId);
+                    return;
+                }
+            }
+            // this should not happen with a legitimate client
+            warn("No gift found matching id");
+            throw new InvocationException(MsoyCodes.E_INTERNAL_ERROR);
+        }
+
+        @Override // from PersistingUnit
+        public void handleSuccess ()
+        {
+            // special case, we have just gifted this avatar so it cannot have any memories, don't
+            // bother with a miss on the db
+            EntityMemories memories = null;
+
+            // another special case... we know that the avatar cache will be populated later when
+            // the scene is actually entered
+            _mobj.startTransaction();
+            try {
+                if (_mobj.avatarCache != _cache) {
+                    _mobj.setAvatarCache(_cache);
+                    _mobj.setMogGroupId(_themeId);
+                }
+                if (_themeId != _mobj.mogGroupId) {
+                    _mobj.setMogGroupId(_themeId);
+                }
+                finishSetAvatar(_mobj, _newAvatar, memories, this);
+
+            } finally {
+                _mobj.commitTransaction();
+            }
+        }
+
+        protected Avatar giveGift (Avatar avatar)
+        {
+            AvatarRepository repo = _itemLogic.getAvatarRepository();
+            AvatarRecord item = repo.loadItem(avatar.itemId);
+            item = repo.insertClone(item, _mname.getMemberId(), Currency.COINS, 0);
+            log.info("Gifted startup avatar", "member", _mname, "catalogId", _giftCatalogId,
+                "newItemId", item.itemId);
+            return (Avatar)item.toItem();
+        }
+
+        protected DSet<Avatar> loadCache ()
+        {
+            AvatarRepository repo = _itemLogic.getAvatarRepository();
+            return DSet.newDSet(Lists.transform(repo.loadRecentlyTouched(
+                _mname.getMemberId(), _themeId, MemberObject.AVATAR_CACHE_SIZE),
+                new ItemRecord.ToItem<Avatar>()));
+        }
+
+        protected void warn (String message)
+        {
+            log.warning(message, "member", _mname, "giftCatalogId", _giftCatalogId);
+        }
+
+        @Override // from SetAvatarListener
+        public void accessDeniedFailure ()
+            throws Exception
+        {
+            throw new InvocationException(ItemCodes.E_ACCESS_DENIED);
+        }
+
+        @Override // from SetAvatarListener
+        public void noSuchItemFailure ()
+            throws Exception
+        {
+            throw new InvocationException(ItemCodes.E_NO_SUCH_ITEM);
+        }
+
+        @Override // from SetAvatarListener
+        public void success ()
+        {
+            reportRequestProcessed(_homeId);
+        }
+
+        protected MemberName _mname;
+        protected MemberObject _mobj;
+        protected int _giftCatalogId;
+        protected Avatar _newAvatar;
+        protected Integer _homeId;
+        protected int _themeId;
+        protected DSet<Avatar> _cache;
     }
 
     // dependencies
