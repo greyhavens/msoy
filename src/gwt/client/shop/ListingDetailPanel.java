@@ -227,7 +227,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
         if (DeploymentConfig.devDeployment && _item.getType() == Item.AVATAR && !CShell.isGuest()) {
             _itemsvc.loadLineups(_item.catalogId, new InfoCallback<GroupName[]>() {
                 public void onSuccess (GroupName[] result) {
-                    _lineup = Arrays.asList(result);
+                    _lineup = new HashSet(Arrays.asList(result));
                     if (_managedThemes != null) {
                         buildLineup();
                     }
@@ -363,9 +363,8 @@ public class ListingDetailPanel extends BaseItemDetailPanel
         });
         _unlineEntries = new ArrayList<GroupName>();
 
-        Set<GroupName> existing = new HashSet<GroupName>(_lineup);
         for (GroupName theme : _managedThemes) {
-            if (!existing.contains(theme)) {
+            if (!_lineup.contains(theme)) {
                 _lineBox.addItem(theme.toString());
                 _lineEntries.add(theme);
             } else {
@@ -374,7 +373,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
             }
         }
         int row = 0;
-        if (_lineBox.getItemCount() > 1) {
+        if (_lineEntries.size() > 0) {
             _linePanel.setWidget(row, 0, _lineBox);
             _lineButton = MsoyUI.createTinyButton(_imsgs.itemLineupAdd(), new ClickHandler() {
                 public void onClick (ClickEvent event) {
@@ -387,7 +386,9 @@ public class ListingDetailPanel extends BaseItemDetailPanel
                     _itemsvc.setAvatarInLineup(
                         _item.catalogId, theme.getGroupId(), true, new InfoCallback<Void>() {
                             public void onSuccess (Void result) {
+                                CShell.log("Adding " + theme + " to _lineup...");
                                 _lineup.add(theme);
+                                CShell.log("Added " + theme + " to _lineup...");
                                 updateLineup();
                             }
                         });
@@ -398,7 +399,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
             row ++;
         }
 
-        if (_unlineBox.getItemCount() > 1) {
+        if (_unlineEntries.size() > 0) {
             _linePanel.setWidget(row, 0, _unlineBox);
             _unlineButton = MsoyUI.createTinyButton(_imsgs.itemLineupRemove(), new ClickHandler() {
                 public void onClick (ClickEvent event) {
@@ -449,7 +450,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
     protected ConfigButton _configBtn;
     protected FlowPanel _usedBy;
 
-    protected List<GroupName> _lineup;
+    protected Set<GroupName> _lineup;
     protected SmartTable _linePanel;
     protected ListBox _lineBox, _unlineBox;
     protected Button _lineButton, _unlineButton;
