@@ -60,12 +60,23 @@ public class ThemeRepository extends DepotRepository
     }
 
     /**
+     * Fetch the lineups which contain the given avatar.
+     */
+    public List<ThemeAvatarLineupRecord> loadLineups (int catalogId)
+    {
+        return findAll(ThemeAvatarLineupRecord.class,
+            new Where(ThemeAvatarLineupRecord.CATALOG_ID, catalogId));
+    }
+
+
+    /**
      * Add or modify an avatar to a lineup. Returns true if the avatar did not previously
      * exist in the lineup.
      */
-    public boolean setAvatarInLineup (int groupId, int catalogId, byte gender)
+    public boolean setAvatarInLineup (int groupId, int catalogId)
     {
-        return store(new ThemeAvatarLineupRecord(groupId, catalogId, gender));
+        return store(new ThemeAvatarLineupRecord(
+            groupId, catalogId, ThemeAvatarLineupRecord.GENDER_OTHER));
     }
 
     /**

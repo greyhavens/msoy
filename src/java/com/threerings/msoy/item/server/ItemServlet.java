@@ -412,9 +412,7 @@ public class ItemServlet extends MsoyServiceServlet
             throw new ServiceException(ItemCodes.E_ACCESS_DENIED);
         }
         if (doAdd) {
-            // TODO: pass in the gender byte
-            byte gender = ThemeAvatarLineupRecord.GENDER_OTHER;
-            if (!_themeRepo.setAvatarInLineup(groupId, catalogId, gender)) {
+            if (!_themeRepo.setAvatarInLineup(groupId, catalogId)) {
                 log.warning("Avatar was already in lineup!", "avatar", catalogId, "theme", groupId);
             }
         } else {
