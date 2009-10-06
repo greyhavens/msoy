@@ -13,8 +13,8 @@ public class ScalingMediaContainer extends MsoyMediaContainer
     public static function createView (desc :MediaDesc, size :int = MediaDesc.THUMBNAIL_SIZE)
         :ScalingMediaContainer
     {
-        var smc :ScalingMediaContainer = new ScalingMediaContainer(MediaDesc.DIMENSIONS[size * 2],
-            MediaDesc.DIMENSIONS[size * 2 + 1], true);
+        var smc :ScalingMediaContainer = new ScalingMediaContainer(MediaDesc.getWidth(size),
+            MediaDesc.getHeight(size), true);
         smc.setMediaDesc(desc);
         return smc;
     }

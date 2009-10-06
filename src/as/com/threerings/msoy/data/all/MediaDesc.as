@@ -102,6 +102,9 @@ public class MediaDesc
     /** Identifies the game splash logo size. */
     public static const GAME_SPLASH_SIZE :int = 8;
 
+    /** The full size for facebook feed images. */
+    public static const FB_FEED_SIZE :int = 9;
+
     /** The thumbnail image width.  */
     public static const THUMBNAIL_WIDTH :int = 80;
 
@@ -119,6 +122,7 @@ public class MediaDesc
         175, 125, // game screenshots
          40,  23, // tiny snapshots, same width as half thumbnail
         700, 500, // game splash image, same as the min game window
+        130, 130, // facebook feed thumbnail
     ];
 
     /** A constant used to indicate that an image does not exceed half thumbnail size in either
@@ -335,6 +339,22 @@ public class MediaDesc
         var mimeType :int = parseInt(data[1]);
         var constraint :int = parseInt(data[2]);
         return new MediaDesc(hash, mimeType, constraint);
+    }
+
+    /**
+     * Gets the pixel width associated with the given size.
+     */
+    public static function getWidth (size :int) :int
+    {
+        return DIMENSIONS[size * 2];
+    }
+
+    /**
+     * Gets the pixel height associated with the given size.
+     */
+    public static function getHeight (size :int) :int
+    {
+        return DIMENSIONS[size * 2 + 1];
     }
 
     /**

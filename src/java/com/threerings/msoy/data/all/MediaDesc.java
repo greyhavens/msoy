@@ -719,6 +719,6 @@ public class MediaDesc implements Streamable, IsSerializable
         175, 125, // game screenshots
          40,  23, // tiny snapshots, same width as half thumbnail
         700, 500, // game splash image, same as the game window
-        130, 130, // game splash image, same as the game window
+        130, 130, // facebook feed thumbnail
     };
 }
