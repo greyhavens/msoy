@@ -66,7 +66,7 @@ public abstract class Page
 
         // wire ourselves up to the top-level frame
         if (configureCallbacks(this)) {
-            // if we're running in standalone page test mode, we do a bunch of stuff
+            // if we're not running in standalone page test mode, we basically forward requests
             CShell.init(new PageFrame() {
                 public void setTitle (String title) {
                     frameCall(Frame.Calls.SET_TITLE, title);
@@ -126,7 +126,7 @@ public abstract class Page
                     return Boolean.valueOf(frameCall(Frame.Calls.IS_HEADERLESS)[0]);
                 }
                 public void openBottomFrame (String token) {
-                    frameCall(Frame.Calls.OPEN_BOTTOM_FRAME, token); 
+                    frameCall(Frame.Calls.OPEN_BOTTOM_FRAME, token);
                 }
             });
 
@@ -411,7 +411,7 @@ public abstract class Page
     /**
      * Gets the id of our containing iframe (assigned by {@link client.frame.PageFrame}). Browser
      * support is patchy, so returns the best result of several techniques. Returns an empty string
-     * if the id could not be extracted. 
+     * if the id could not be extracted.
      */
     protected static native String getFrameId () /*-{
         try {
