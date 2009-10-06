@@ -225,9 +225,8 @@ public class ListingDetailPanel extends BaseItemDetailPanel
     protected void addExtraThemeBits ()
     {
         if (DeploymentConfig.devDeployment && _item.getType() == Item.AVATAR && !CShell.isGuest()) {
-            _itemsvc.loadLineups(_item.itemId, new InfoCallback<GroupName[]>() {
+            _itemsvc.loadLineups(_item.catalogId, new InfoCallback<GroupName[]>() {
                 public void onSuccess (GroupName[] result) {
-                    CShell.log("Avatar lineup: " + result);
                     _lineup = Arrays.asList(result);
                     if (_managedThemes != null) {
                         buildLineup();
@@ -374,10 +373,9 @@ public class ListingDetailPanel extends BaseItemDetailPanel
                 _unlineEntries.add(theme);
             }
         }
-
         int row = 0;
         if (_lineBox.getItemCount() > 1) {
-            _linePanel.setWidget(row, 0, _lineBox, 1);
+            _linePanel.setWidget(row, 0, _lineBox);
             _lineButton = MsoyUI.createTinyButton(_imsgs.itemLineupAdd(), new ClickHandler() {
                 public void onClick (ClickEvent event) {
                     int ix = _lineBox.getSelectedIndex();
@@ -401,7 +399,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
         }
 
         if (_unlineBox.getItemCount() > 1) {
-            _linePanel.setWidget(row, 0, _unlineBox, 1);
+            _linePanel.setWidget(row, 0, _unlineBox);
             _unlineButton = MsoyUI.createTinyButton(_imsgs.itemLineupRemove(), new ClickHandler() {
                 public void onClick (ClickEvent event) {
                     int ix = _unlineBox.getSelectedIndex();
