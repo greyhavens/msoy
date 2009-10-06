@@ -801,3 +801,8 @@ ChatInput {
 .shareDialogHeader {
   fontSize :12;
 }
+
+.avatarPickerInstructions {
+  fontSize: 12;
+  fontWeight: bold;
+}
