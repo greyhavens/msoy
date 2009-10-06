@@ -377,7 +377,7 @@ public class ItemServlet extends MsoyServiceServlet
         throws ServiceException
     {
         IntSet groupIds = new ArrayIntSet();
-        for (ThemeAvatarLineupRecord rec : _themeRepo.loadAvatarLineup(catalogId)) {
+        for (ThemeAvatarLineupRecord rec : _themeRepo.loadLineups(catalogId)) {
             groupIds.add(rec.groupId);
         }
         return _groupRepo.loadGroupNames(groupIds).values().toArray(new GroupName[0]);
