@@ -1242,8 +1242,7 @@ public abstract class ItemRepository<T extends ItemRecord>
      * with the new owner. Finally, updates {@link CloneRecord#lastTouched} and
      * {@link CloneRecord#purchaseTime}.
      */
-    public ItemRecord insertClone (
-        ItemRecord parent, int newOwnerId, Currency currency, int amountPaid)
+    public T insertClone (T parent, int newOwnerId, Currency currency, int amountPaid)
     {
         CloneRecord record;
         try {
@@ -1254,7 +1253,7 @@ public abstract class ItemRepository<T extends ItemRecord>
         record.initialize(parent, newOwnerId, currency, amountPaid);
         insert(record);
 
-        ItemRecord newClone = (ItemRecord) parent.clone();
+        T newClone = getItemClass().cast(parent.clone());
         newClone.initFromClone(record);
 
         return newClone;
