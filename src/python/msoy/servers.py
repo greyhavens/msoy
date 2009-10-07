@@ -28,7 +28,7 @@ class Server:
 world = map(lambda x: Server("whirled", x, "w", ["world-server"]), [1, 2, 3])
 
 ## Bureau servers
-bureau = map(lambda x: Server("bureau", x, "b",
+bureau = map(lambda x: Server("burl", x, "b",
     ["bureau-launcher", "bureau-merged"]), [1, 2])
 
 msoyhome = "/export/msoy"
