@@ -98,16 +98,6 @@ public class FrameHeader extends SmartTable
         setWidget(0, _statusCol, new SignOrLogonPanel(), 1, "Right");
     }
 
-    /**
-     * Go to the next invite promo text, if any.
-     */
-    public void tickPromo ()
-    {
-        if (_status.isVisible()) {
-            _status.tickPromo();
-        }
-    }
-
     protected void addButton (int col, Pages page, String text, AbstractImagePrototype up,
                               AbstractImagePrototype over, AbstractImagePrototype down) {
         NaviButton button = new NaviButton(page, text, up, over, down);

@@ -127,19 +127,15 @@ public class StatusPanel extends SmartTable
         }
 
         // "sign up" or "invite friends" on top left
-        PushButton action;
+        Widget action;
         if (permaguest) {
             action = new PushButton(_cmsgs.headerSignup(), NaviUtil.onMustRegister());
             action.setStyleName("SignupButton");
             action.addStyleName("Button");
-            _promoButton = null;
         } else {
-            action = new PushButton(
-                _cmsgs.statusInviteFriends(), Link.createHandler(Pages.PEOPLE, "invites"));
-            action.setStyleName("InviteFriends");
-            _promoButton = action;
-            _promoCount = 0;
+            action = MsoyUI.createHTML("", null);
         }
+
         setWidget(0, 0, action);
         getFlexCellFormatter().setRowSpan(0, 0, 2);
         getFlexCellFormatter().setVerticalAlignment(0, 0, HasAlignment.ALIGN_TOP);
@@ -164,19 +160,6 @@ public class StatusPanel extends SmartTable
     public void didLogoff ()
     {
         _creds = null;
-    }
-
-    public void tickPromo ()
-    {
-        if (_promoButton == null) {
-            return;
-        }
-        _promoCount = (_promoCount + 1) % 2;
-        if (_promoCount == 0) {
-            _promoButton.setText(_cmsgs.statusInviteFriends());
-        } else {
-            _promoButton.setText(_cmsgs.statusInviteFriendsGetBars());
-        }
     }
 
     protected static boolean isIncrease (StatusChangeEvent event)
@@ -281,8 +264,6 @@ public class StatusPanel extends SmartTable
     protected LevelsDisplay _levels = new LevelsDisplay();
     protected MailDisplay _mail = new MailDisplay();
     protected SimplePanel _namePanel = MsoyUI.createSimplePanel(null, "Name");
-    protected PushButton _promoButton;
-    protected int _promoCount;
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
     protected static final int MAX_WHO_AGE = 365; // days

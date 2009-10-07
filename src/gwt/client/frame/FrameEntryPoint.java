@@ -215,9 +215,6 @@ public class FrameEntryPoint
             _pageFrame.setToken(_pageToken);
         }
 
-        // let the frame header update promo text
-        _header.tickPromo();
-
         // report the page visit
         reportPageVisit(page, args);
     }
