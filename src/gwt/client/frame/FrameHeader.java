@@ -60,7 +60,8 @@ public class FrameHeader
                   _images.sworlds());
         addButton(col++, Pages.SHOP, _cmsgs.menuShop(), _images.shop(), _images.oshop(),
                   _images.sshop());
-        _statusCol = col;
+
+        _naviPanel.setWidget(0, _statusCol = col, _statusContainer, 1, "Right");
 
         // listen for session state changes
         Session.addObserver(this);
@@ -105,7 +106,7 @@ public class FrameHeader
             0, _statusCol, HasAlignment.ALIGN_RIGHT);
         _naviPanel.getFlexCellFormatter().setVerticalAlignment(
             0, _statusCol, HasAlignment.ALIGN_TOP);
-        _naviPanel.setWidget(0, _statusCol, _status, 1, "Right");
+        _statusContainer.setWidget(_status);
     }
 
     // from Session.Observer
@@ -115,7 +116,7 @@ public class FrameHeader
             0, _statusCol, HasAlignment.ALIGN_CENTER);
         _naviPanel.getFlexCellFormatter().setVerticalAlignment(
             0, _statusCol, HasAlignment.ALIGN_TOP);
-        _naviPanel.setWidget(0, _statusCol, _logonPanel, 1, "Right");
+        _statusContainer.setWidget(_logonPanel);
     }
 
     protected void addButton (int col, Pages page, String text, AbstractImagePrototype up,
@@ -176,6 +177,7 @@ public class FrameHeader
     }
 
     protected SmartTable _naviPanel;
+    protected SimplePanel _statusContainer = new SimplePanel();
     protected StatusPanel _status = new StatusPanel();
     protected SmartTable _logonPanel = makeLogonPanel();
     protected int _statusCol;
