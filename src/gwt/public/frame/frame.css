@@ -32,13 +32,13 @@
   width: 71px;
   margin: 20px 7px 0 3px;
   padding: 6px 0 4px 0;
-  background-color: #3985b6;
   text-align: center;
-  color: white;
+  color: black;
 }
 
 .frameHeader .NaviButtonSelected {
   background-color: #5eaadb;
+  color: white;
 }
 
 .frameHeader .NaviButton .actionLabel {
