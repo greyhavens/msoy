@@ -19,7 +19,6 @@ import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.persist.SubscriptionRecord;
 import com.threerings.msoy.server.persist.SubscriptionRepository;
-
 import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.person.gwt.FeedMessageType;
 import com.threerings.msoy.person.server.FeedLogic;
@@ -27,7 +26,6 @@ import com.threerings.msoy.person.server.FeedLogic;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.server.ItemLogic;
 import com.threerings.msoy.item.server.persist.CatalogRecord;
-
 import com.threerings.msoy.money.server.MoneyLogic;
 
 import static com.threerings.msoy.Log.log;
@@ -47,6 +45,43 @@ public class SubscriptionLogic
      */
     public void init ()
     {
+//        _subscripRepo.registerCorpseCraftMigration(new DataMigration("2009_09_09_corpsecraft") {
+//            @Override public void invoke () throws DatabaseException {
+//                log.info("Enumerating players who bought a Corpse Craft levelpack...");
+//                ItemRepository<ItemRecord> itemRepo;
+//                    try {
+//                        itemRepo = _itemLogic.getRepository(Item.LEVEL_PACK);
+//                    } catch (ServiceException e) {
+//                        log.error("Failed to get item repository in migration");
+//                        return;
+//                    }
+//
+//                    // figure out who the various owners are
+//                    IntSet owners = itemRepo.loadOwnerIds(263); // Weard Academy
+//                    owners.addAll(itemRepo.loadOwnerIds(264)); // The Incident
+//                    owners.addAll(itemRepo.loadOwnerIds(238)); // Compleat
+//
+//                    int total = 0, barscribed = 0, bared = 0;
+//                    // load their records and give the non-subscribers barscriptions
+//                    for (MemberRecord mrec : _memberRepo.loadMembers(owners)) {
+//                        if ((++total % 100) == 0) {
+//                            log.info("Processing Corpse Craft owners...", "total", total,
+//                                "barscribed", barscribed, "reimbursed", bared);
+//                        }
+//                        if (mrec.isSubscriber()) {
+////                            _moneyLogic.boughtBars(memberId, numBars, payment)
+//
+//                        } else {
+//                            try {
+//                                barscribe(mrec);
+//                            } catch (Exception ex) {
+//                                log.warning("Failed to barscribe member", mrec.memberId);
+//                            }
+//                        }
+//                    }
+//            }
+//        });
+
         // check for bar and special item grants every hour
         _cronLogic.scheduleEvery(1, "SubscriptionLogic hourly", new Runnable() {
             public void run () {
