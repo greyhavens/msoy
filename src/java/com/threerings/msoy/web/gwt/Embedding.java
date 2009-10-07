@@ -17,7 +17,7 @@ public class Embedding
         if (value != null && value.equals("fb")) {
             // handle the old "fb" mode in case it crept into anyone's bookmarks
             // TODO: we may need to ditch this when application awareness is complete
-            return new Embedding(ClientMode.FB_GAMES, 0);
+            return new Embedding(ClientMode.FB_GAMES, 1);
 
         } else if (value != null) {
             for (ClientMode mode : ClientMode.values()) {
