@@ -129,7 +129,7 @@ public class StandardLayout extends Layout
         super.init(header, onGoHome);
         RootPanel.get().addStyleName("standardPage");
         _header.setVisible(false);
-        RootPanel.get(PAGE).add(_header);
+        RootPanel.get(PAGE).add(_header.expose());
     }
 
     protected void doAddNoClientIcon ()

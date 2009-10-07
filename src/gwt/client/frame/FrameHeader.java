@@ -34,18 +34,18 @@ import client.util.NaviUtil;
 /**
  * Displays our navigation buttons, member status and/or logon/signup buttons.
  */
-public class FrameHeader extends SmartTable
+public class FrameHeader
     implements Session.Observer
 {
     public FrameHeader (ClickHandler onLogoClick)
     {
-        super("frameHeader", 0, 0);
+        _naviPanel = new SmartTable("frameHeader", 0, 0);
 
-        setWidth("100%");
+        _naviPanel.setWidth("100%");
 
         _logo = MsoyUI.createActionImage(DEFAULT_LOGO_URL, onLogoClick);
         FlowPanel logoHolder = MsoyUI.createFlowPanel("Logo", _logo);
-        setWidget(0, 0, logoHolder);
+        _naviPanel.setWidget(0, 0, logoHolder);
 
         int col = 1;
         addButton(col++, Pages.ME, _cmsgs.menuMe(), _images.me(), _images.ome(), _images.sme());
@@ -67,6 +67,22 @@ public class FrameHeader extends SmartTable
     }
 
     /**
+     * Sets the visibility of all components of the frame header.
+     */
+    public void setVisible (boolean vis)
+    {
+        _naviPanel.setVisible(vis);
+    }
+
+    /**
+     * Returns our underlying table holding all the frame components.
+     */
+    public SmartTable expose ()
+    {
+        return _naviPanel;
+    }
+
+    /**
      * Replace the Whirled logo with the URL identified by the given path, or restore the
      * default if path is null.
      */
@@ -85,23 +101,28 @@ public class FrameHeader extends SmartTable
     // from Session.Observer
     public void didLogon (SessionData data)
     {
-        getFlexCellFormatter().setHorizontalAlignment(0, _statusCol, HasAlignment.ALIGN_RIGHT);
-        getFlexCellFormatter().setVerticalAlignment(0, _statusCol, HasAlignment.ALIGN_TOP);
-        setWidget(0, _statusCol, _status, 1, "Right");
+        _naviPanel.getFlexCellFormatter().setHorizontalAlignment(
+            0, _statusCol, HasAlignment.ALIGN_RIGHT);
+        _naviPanel.getFlexCellFormatter().setVerticalAlignment(
+            0, _statusCol, HasAlignment.ALIGN_TOP);
+        _naviPanel.setWidget(0, _statusCol, _status, 1, "Right");
     }
 
     // from Session.Observer
     public void didLogoff ()
     {
-        getFlexCellFormatter().setHorizontalAlignment(0, _statusCol, HasAlignment.ALIGN_CENTER);
-        getFlexCellFormatter().setVerticalAlignment(0, _statusCol, HasAlignment.ALIGN_TOP);
-        setWidget(0, _statusCol, new SignOrLogonPanel(), 1, "Right");
+        _naviPanel.getFlexCellFormatter().setHorizontalAlignment(
+            0, _statusCol, HasAlignment.ALIGN_CENTER);
+        _naviPanel.getFlexCellFormatter().setVerticalAlignment(
+            0, _statusCol, HasAlignment.ALIGN_TOP);
+        _naviPanel.setWidget(0, _statusCol, _logonPanel, 1, "Right");
     }
 
     protected void addButton (int col, Pages page, String text, AbstractImagePrototype up,
-                              AbstractImagePrototype over, AbstractImagePrototype down) {
+                              AbstractImagePrototype over, AbstractImagePrototype down)
+    {
         NaviButton button = new NaviButton(page, text, up, over, down);
-        setWidget(0, col, button);
+        _naviPanel.setWidget(0, col, button);
         _buttons.add(button);
     }
 
@@ -137,27 +158,28 @@ public class FrameHeader extends SmartTable
         }
     }
 
-    protected static class SignOrLogonPanel extends SmartTable
+    protected static SmartTable makeLogonPanel ()
     {
-        public SignOrLogonPanel () {
-            super(0, 0);
-            PushButton signup = new PushButton(_cmsgs.headerSignup(), NaviUtil.onMustRegister());
-            signup.setStyleName("SignupButton");
-            signup.addStyleName("Button");
-            setWidget(0, 0, signup);
-            getFlexCellFormatter().setVerticalAlignment(0, 0, HasAlignment.ALIGN_TOP);
-            setWidget(0, 1, WidgetUtil.makeShim(10, 10));
-            PushButton logon = new PushButton(_cmsgs.headerLogon(), NaviUtil.onMustRegister());
-            logon.setStyleName("LogonButton");
-            logon.addStyleName("Button");
-            setWidget(0, 2, logon);
-            getFlexCellFormatter().setVerticalAlignment(0, 2, HasAlignment.ALIGN_TOP);
-        }
+        SmartTable panel = new SmartTable(0, 0);
+        PushButton signup = new PushButton(_cmsgs.headerSignup(), NaviUtil.onMustRegister());
+        signup.setStyleName("SignupButton");
+        signup.addStyleName("Button");
+        panel.setWidget(0, 0, signup);
+        panel.getFlexCellFormatter().setVerticalAlignment(0, 0, HasAlignment.ALIGN_TOP);
+        panel.setWidget(0, 1, WidgetUtil.makeShim(10, 10));
+        PushButton logon = new PushButton(_cmsgs.headerLogon(), NaviUtil.onMustRegister());
+        logon.setStyleName("LogonButton");
+        logon.addStyleName("Button");
+        panel.setWidget(0, 2, logon);
+        panel.getFlexCellFormatter().setVerticalAlignment(0, 2, HasAlignment.ALIGN_TOP);
+        return panel;
     }
 
+    protected SmartTable _naviPanel;
+    protected StatusPanel _status = new StatusPanel();
+    protected SmartTable _logonPanel = makeLogonPanel();
     protected int _statusCol;
     protected List<NaviButton> _buttons = new ArrayList<NaviButton>();
-    protected StatusPanel _status = new StatusPanel();
     protected Image _logo;
 
     protected static final NaviImages _images = GWT.create(NaviImages.class);
