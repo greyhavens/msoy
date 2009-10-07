@@ -15,6 +15,7 @@ import com.threerings.msoy.item.data.all.Avatar;
 
 import com.threerings.msoy.game.data.GameSummary;
 import com.threerings.msoy.group.data.all.GroupMembership;
+import com.threerings.msoy.group.data.all.Theme;
 import com.threerings.msoy.group.data.all.GroupMembership.Rank;
 
 import com.threerings.msoy.data.all.ContactEntry;
@@ -65,8 +66,8 @@ public class MemberObject extends MsoyBodyObject
     /** The field name of the <code>homeSceneId</code> field. */
     public static final String HOME_SCENE_ID = "homeSceneId";
 
-    /** The field name of the <code>mogGroupId</code> field. */
-    public static final String MOG_GROUP_ID = "mogGroupId";
+    /** The field name of the <code>theme</code> field. */
+    public static final String THEME = "theme";
 
     /** The field name of the <code>avatar</code> field. */
     public static final String AVATAR = "avatar";
@@ -142,8 +143,8 @@ public class MemberObject extends MsoyBodyObject
     /** The id of the user's home scene. */
     public int homeSceneId;
 
-    /** The group id of the Mog this user's currently in, or 0 for none. */
-    public int mogGroupId;
+    /** The definition of the theme this member is currently in, or null. */
+    public Theme theme;
 
     /** The avatar that the user has chosen, or null for guests. */
     public Avatar avatar;
@@ -568,19 +569,19 @@ public class MemberObject extends MsoyBodyObject
     }
 
     /**
-     * Requests that the <code>mogGroupId</code> field be set to the
+     * Requests that the <code>theme</code> field be set to the
      * specified value. The local value will be updated immediately and an
      * event will be propagated through the system to notify all listeners
      * that the attribute did change. Proxied copies of this object (on
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
-    public void setMogGroupId (int value)
+    public void setTheme (Theme value)
     {
-        int ovalue = this.mogGroupId;
+        Theme ovalue = this.theme;
         requestAttributeChange(
-            MOG_GROUP_ID, Integer.valueOf(value), Integer.valueOf(ovalue));
-        this.mogGroupId = value;
+            THEME, value, ovalue);
+        this.theme = value;
     }
 
     /**

@@ -3,6 +3,9 @@
 
 package client.frame;
 
+import client.util.events.FlashEvents;
+import client.util.events.ThemeChangeEvent;
+
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -74,7 +77,7 @@ public abstract class Layout
 
     /**
      * Adds the home button that is shown when the client is hidden. The click handler should be
-     * the one used to initialize the layout. 
+     * the one used to initialize the layout.
      */
     public abstract void addNoClientIcon ();
 
@@ -95,7 +98,7 @@ public abstract class Layout
     /**
      * Sets the current title bar. Should only be called if the title bar is being shown when there
      * is no web page content. This in turn can only happen if {@link #alwaysShowsTitleBar()}
-     * returns true. 
+     * returns true.
      */
     public void setTitleBar (TitleBar bar)
     {
@@ -113,6 +116,12 @@ public abstract class Layout
     {
         _header = header;
         _onGoHome = onGoHome;
+
+        FlashEvents.addListener(new ThemeChangeEvent.Listener() {
+            public void themeChanged (ThemeChangeEvent event) {
+                _header.setLogoUrl(event.getUrl());
+            }
+        });
     }
 
     protected FrameHeader _header;

@@ -47,6 +47,7 @@ import com.threerings.msoy.world.server.WorldManager;
 import com.threerings.msoy.peer.data.HostedRoom;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 
+import com.threerings.msoy.group.data.all.Theme;
 import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.group.server.persist.ThemeAvatarUseRecord;
@@ -315,6 +316,14 @@ public class MsoySceneRegistry extends SpotSceneRegistry
         _peerMan.forwardMemberObject(nodeName, memobj);
     }
 
+    protected boolean isInTheme (MemberObject user, int groupId)
+    {
+        if (user.theme == null) {
+            return groupId == 0;
+        }
+        return user.theme.groupId == groupId;
+    }
+
     protected interface ThemeMoveHandler
     {
         void finish ();
@@ -363,7 +372,7 @@ public class MsoySceneRegistry extends SpotSceneRegistry
 
             // if we've already got an avatar quicklist and we're not crossing a theme
             // boundary, we can just finish the move as usual
-            if (_memobj.avatarCache != null && scene.getThemeId() == _memobj.mogGroupId) {
+            if (_memobj.avatarCache != null && isInTheme(_memobj, scene.getThemeId())) {
                 finishMove(scene, destmgr);
                 return;
             }
@@ -431,12 +440,13 @@ public class MsoySceneRegistry extends SpotSceneRegistry
             MsoyScene scene, MemberObject user, ThemeMoveHandler finishMove)
         {
             super("crossThemeBoundary");
+            _user = user;
+            _listener = finishMove;
+
             _sceneId = scene.getId();
             _themeId = scene.getThemeId();
-            _user = user;
             _memberId = user.getMemberId();
-            _listener = finishMove;
-            _loadQuicklist = (_user.avatarCache == null || _themeId != user.mogGroupId);
+            _loadQuicklist = (_user.avatarCache == null || !isInTheme(user, _themeId));
             _oldAvatarId = (_user.avatar != null) ? _user.avatar.itemId : 0;
             _candidateAvatarId = _oldAvatarId;
         }
@@ -459,24 +469,26 @@ public class MsoySceneRegistry extends SpotSceneRegistry
             }
 
             if (_themeId != 0) {
-                ThemeRecord tRec = _themeRepo.loadTheme(_themeId);
-                if (tRec == null) {
+                ThemeRecord themeRec = _themeRepo.loadTheme(_themeId);
+                if (themeRec == null) {
                     // internal error, log it and let the move complete
                     log.warning("Couldn't find theme record for scene", "sceneId", _sceneId,
                         "themeGroupId", _themeId);
                     return;
                 }
 
-                GroupRecord record = _groupRepo.loadGroup(_themeId);
-                if (record == null) {
+                GroupRecord groupRec = _groupRepo.loadGroup(_themeId);
+                if (groupRec == null) {
                     // internal error, log it and let the move complete
                     log.warning("Couldn't find group record for scene theme", "sceneId", _sceneId,
                         "themeGroupId", _themeId);
                     return;
                 }
 
-                if (tRec.playOnEnter) {
-                    _gameId = record.gameId;
+                _theme = new Theme(_themeId, groupRec.toLogo());
+
+                if (themeRec.playOnEnter) {
+                    _gameId = groupRec.gameId;
                     if (_gameId == 0) {
                         log.warning("Play-on-enter theme has no game registered", "sceneId", _sceneId,
                             "themeGroupId", _themeId);
@@ -515,14 +527,25 @@ public class MsoySceneRegistry extends SpotSceneRegistry
 
         public void handleSuccess ()
         {
-            if (_themeId != _user.mogGroupId) {
-                _user.setMogGroupId(_themeId);
+            if (!_user.isActive()) {
+                // the user may have logged out while we were fiddling
+                return;
             }
 
-            // if we loaded a quicklist (and they weren't set during our thread hopping), set them
-            if (_quicklist != null) {
-                _user.setAvatarCache(DSet.newDSet(
-                    Lists.transform(_quicklist, new ItemRecord.ToItem<Avatar>())));
+            _user.startTransaction();
+            try {
+                // if we loaded a quicklist (and it wasn't set during our thread hopping), set it
+                if (_quicklist != null) {
+                    _user.setAvatarCache(DSet.newDSet(
+                        Lists.transform(_quicklist, new ItemRecord.ToItem<Avatar>())));
+                }
+
+                // if there's a new theme definition, push that out too
+                if (_theme != null) {
+                    _user.setTheme(_theme);
+                }
+            } finally {
+                _user.commitTransaction();
             }
 
             // if we're not switching avatars, we're done
@@ -556,17 +579,23 @@ public class MsoySceneRegistry extends SpotSceneRegistry
             }
         }
 
+        protected MemberObject _user;
+        protected ThemeMoveHandler _listener;
+
+        // members that mainly communicate dobj thread from the constructor to invokePersist()
         protected int _sceneId;
         protected int _themeId;
-        protected MemberObject _user;
         protected int _memberId;
-        protected ThemeMoveHandler _listener;
         protected boolean _loadQuicklist;
         protected int _oldAvatarId;
+
+        // members that mainly communicate from invokePersist() to handleSuccess()
         protected int _candidateAvatarId;
         protected List<AvatarRecord> _quicklist;
         protected List<AvatarRecord> _avatars;
+        protected Theme _theme;
 
+        // for finishOrPunt()
         protected int _gameId;
     }
 

@@ -458,7 +458,8 @@ public class WorldManager
             @Override public void invokePersist () throws Exception {
                 int avatarId = (avatar == null) ? 0 : avatar.itemId;
                 _memberRepo.configureAvatarId(user.getMemberId(), avatarId);
-                _themeRepo.noteAvatarWorn(user.getMemberId(), user.mogGroupId, avatarId);
+                _themeRepo.noteAvatarWorn(
+                    user.getMemberId(), user.theme != null ? user.theme.groupId : 0, avatarId);
             }
             @Override public void handleFailure (Exception pe) {
                 log.warning("configureAvatarId failed", "user", user.which(), "avatar", avatar, pe);
@@ -504,6 +505,7 @@ public class WorldManager
 
             // this is inefficient if the user's home theme id is != 0, but it should self-correct
             // when the room loads
+
             // TODO: load the real theme id of the home scene
             _themeId = 0;
 
@@ -541,10 +543,11 @@ public class WorldManager
             try {
                 if (_mobj.avatarCache != _cache) {
                     _mobj.setAvatarCache(_cache);
-                    _mobj.setMogGroupId(_themeId);
                 }
-                if (_themeId != _mobj.mogGroupId) {
-                    _mobj.setMogGroupId(_themeId);
+                if (_themeId != ((_mobj.theme != null) ? _mobj.theme.groupId : 0)) {
+                    // TODO: when _themeId != 0, make a real Theme object here,
+                    // TODO: as in MsoySceneRegistry
+                    _mobj.setTheme(null);
                 }
                 finishSetAvatar(_mobj, _newAvatar, memories, this);
 

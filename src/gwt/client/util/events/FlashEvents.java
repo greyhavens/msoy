@@ -55,8 +55,8 @@ public class FlashEvents
 
     /**
      * Internal method used by FrameEntryPoint or Page to dispatch an event to all registered
-     * listeners. Don't use this method, use {@link Frame#dispatchEvent} which properly routes the 
-     * event through the top-level frame and back down to the inner page. 
+     * listeners. Don't use this method, use {@link Frame#dispatchEvent} which properly routes the
+     * event through the top-level frame and back down to the inner page.
      */
     public static void internalDispatchEvent (final FlashEvent event)
     {
@@ -82,6 +82,8 @@ public class FlashEvents
             return FriendEvent.NAME;
         } else if (listener instanceof TrophyEvent.Listener) {
             return TrophyEvent.NAME;
+        } else if (listener instanceof ThemeChangeEvent.Listener) {
+            return ThemeChangeEvent.NAME;
         } else {
             CShell.log("Requested name for unknown listener '" + listener + "'?!");
             return null;
@@ -100,6 +102,8 @@ public class FlashEvents
             return new FriendEvent();
         } else if (TrophyEvent.NAME.equals(eventName)) {
             return new TrophyEvent();
+        } else if (ThemeChangeEvent.NAME.equals(eventName)) {
+            return new ThemeChangeEvent();
         } else {
             CShell.log("Requested event for unknown name '" + eventName + "'?!");
             return null;

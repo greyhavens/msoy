@@ -141,20 +141,26 @@ public class WorldClient extends MsoyClient
     {
         super.gotClientObject(clobj);
 
-        if (clobj is MemberObject && _embedding.hasGWT() && !_featuredPlaceView) {
-            var member :MemberObject = clobj as MemberObject;
+        var member :MemberObject = clobj as MemberObject;
+        if (_featuredPlaceView || member == null) {
+            return;
+        }
+
+        if (_embedding.hasGWT()) {
             member.addListener(new AvatarUpdateNotifier(_wctx));
         }
 
-        if (!_featuredPlaceView) {
-            // listen for coins and bars updates
-            _user = (clobj as MemberObject);
-            var updater :StatusUpdater = new StatusUpdater(this);
-            _user.addListener(updater);
+        // listen for coins and bars updates
+        var statusUpdater :StatusUpdater = new StatusUpdater(this);
+        member.addListener(statusUpdater);
+        // configure our levels to start
+        statusUpdater.initStatus(member.level, member.bars, member.coins, member.newMailCount);
 
-            // configure our levels to start
-            updater.initStatus(_user.level, _user.bars, _user.coins, _user.newMailCount);
-        }
+        // listen for theme changes
+        var themeUpdater :ThemeUpdater = new ThemeUpdater(this);
+        member.addListener(themeUpdater);
+        // configure our levels to start
+        themeUpdater.updateTheme(member.theme);
     }
 
     /**
@@ -390,7 +396,6 @@ public class WorldClient extends MsoyClient
     }
 
     protected var _wctx :WorldContext;
-    protected var _user :MemberObject;
 
     private static const log :Log = Log.getLog(WorldClient);
 }
@@ -414,6 +419,8 @@ import com.threerings.msoy.item.data.all.Item_UsedAs;
 import com.threerings.msoy.client.MsoyClient;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.FriendEntry;
+
+import com.threerings.msoy.group.data.all.Theme;
 
 import com.threerings.msoy.world.client.WorldContext;
 
@@ -442,6 +449,33 @@ class AvatarUpdateNotifier implements AttributeChangeListener
     }
 
     protected var _wctx :WorldContext;
+}
+
+class ThemeUpdater implements AttributeChangeListener
+{
+    public function ThemeUpdater (client :MsoyClient)
+    {
+        _client = client;
+    }
+
+    public function attributeChanged (event :AttributeChangedEvent) :void
+    {
+        if (MemberObject.THEME == event.getName()) {
+            updateTheme(event.getValue() as Theme);
+        }
+    }
+
+    public function updateTheme (theme :Theme) :void
+    {
+        Log.getLog(ThemeUpdater).info("Updating theme: " + theme);
+        _client.dispatchEventToGWT(THEME_CHANGE_EVENT, (theme != null) ?
+            [ theme.groupId, theme.logo.getMediaPath() ] : [ 0, null ]);
+    }
+
+    protected var _client :MsoyClient;
+
+    /** Event dispatched to GWT when our theme changes. */
+    protected static const THEME_CHANGE_EVENT :String = "themeChange";
 }
 
 class StatusUpdater implements AttributeChangeListener, SetListener
@@ -498,14 +532,16 @@ class StatusUpdater implements AttributeChangeListener, SetListener
         }
     }
 
-    public function initStatus (level :int, bars: int, coins :int, mail :int) :void {
+    public function initStatus (level :int, bars: int, coins :int, mail :int) :void
+    {
         _client.dispatchEventToGWT(STATUS_CHANGE_EVENT, [STATUS_CHANGE_LEVEL, level, 0, true]);
         _client.dispatchEventToGWT(STATUS_CHANGE_EVENT, [STATUS_CHANGE_COINS, coins, 0, true]);
         //_client.dispatchEventToGWT(STATUS_CHANGE_EVENT, [STATUS_CHANGE_BARS, bars, 0, true]);
         _client.dispatchEventToGWT(STATUS_CHANGE_EVENT, [STATUS_CHANGE_MAIL, mail, 0, true]);
     }
 
-    public function updateStatus (field :int, event :AttributeChangedEvent) :void {
+    public function updateStatus (field :int, event :AttributeChangedEvent) :void
+    {
         _client.dispatchEventToGWT(STATUS_CHANGE_EVENT, [
             field, event.getValue() as int, event.getOldValue() as int, false]);
     }

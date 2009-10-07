@@ -23,8 +23,8 @@
   height: 50px;
 }
 
-.frameHeader .Logo .gwt-Image {
-  width: 126px;
+.frameHeader .Logo {
+    width: 126px;
 }
 
 .frameHeader .NaviButton {

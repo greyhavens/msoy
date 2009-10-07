@@ -27,6 +27,7 @@ import com.threerings.msoy.game.data.GameSummary;
 
 import com.threerings.msoy.group.data.all.GroupMembership;
 import com.threerings.msoy.group.data.all.GroupMembership_Rank;
+import com.threerings.msoy.group.data.all.Theme;
 
 import com.threerings.msoy.item.data.all.Avatar;
 
@@ -61,8 +62,8 @@ public class MemberObject extends MsoyBodyObject
     /** The field name of the <code>homeSceneId</code> field. */
     public static const HOME_SCENE_ID :String = "homeSceneId";
 
-    /** The field name of the <code>mogGroupId</code> field. */
-    public static const MOG_GROUP_ID :String = "mogGroupId";
+    /** The field name of the <code>theme</code> field. */
+    public static const THEME :String = "theme";
 
     /** The field name of the <code>avatar</code> field. */
     public static const AVATAR :String = "avatar";
@@ -134,8 +135,8 @@ public class MemberObject extends MsoyBodyObject
     /** The id of the user's home scene. */
     public var homeSceneId :int;
 
-    /** The group id of the Mog this user's currently in, or 0 for none. */
-    public var mogGroupId :int;
+    /** The definition of the theme this member is currently in, or null. */
+    public var theme :Theme;
 
     /** The avatar that the user has chosen, or null for guests. */
     public var avatar :Avatar;
@@ -326,7 +327,7 @@ public class MemberObject extends MsoyBodyObject
         followers = DSet(ins.readObject());
         tokens = MsoyTokenRing(ins.readObject());
         homeSceneId = ins.readInt();
-        mogGroupId = ins.readInt();
+        theme = Theme(ins.readObject());
         avatar = Avatar(ins.readObject());
         avatarCache = DSet(ins.readObject());
         friends = DSet(ins.readObject());

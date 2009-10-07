@@ -10,7 +10,9 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimplePanel;
 
@@ -40,10 +42,12 @@ public class FrameHeader extends SmartTable
         super("frameHeader", 0, 0);
 
         setWidth("100%");
-        int col = 0;
 
-        String lpath = "/images/header/header_logo.png";
-        setWidget(0, col++, MsoyUI.createActionImage(lpath, onLogoClick), 1, "Logo");
+        _logo = MsoyUI.createActionImage(DEFAULT_LOGO_URL, onLogoClick);
+        FlowPanel logoHolder = MsoyUI.createFlowPanel("Logo", _logo);
+        setWidget(0, 0, logoHolder);
+
+        int col = 1;
         addButton(col++, Pages.ME, _cmsgs.menuMe(), _images.me(), _images.ome(), _images.sme());
         // TODO: remove the tab images
         addButton(col++, Pages.STUFF, _cmsgs.menuStuff(), _images.stuff(), _images.ostuff(),
@@ -60,6 +64,15 @@ public class FrameHeader extends SmartTable
 
         // listen for session state changes
         Session.addObserver(this);
+    }
+
+    /**
+     * Replace the Whirled logo with the URL identified by the given path, or restore the
+     * default if path is null.
+     */
+    public void setLogoUrl (String path)
+    {
+        _logo.setUrl(path != null ? path : DEFAULT_LOGO_URL);
     }
 
     public void selectTab (Tabs tab)
@@ -155,7 +168,10 @@ public class FrameHeader extends SmartTable
     protected int _statusCol;
     protected List<NaviButton> _buttons = new ArrayList<NaviButton>();
     protected StatusPanel _status = new StatusPanel();
+    protected Image _logo;
 
     protected static final NaviImages _images = GWT.create(NaviImages.class);
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
+
+    protected static final String DEFAULT_LOGO_URL = "/images/header/header_logo.png";
 }
