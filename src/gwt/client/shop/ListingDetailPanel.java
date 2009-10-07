@@ -227,7 +227,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
         if (DeploymentConfig.devDeployment && _item.getType() == Item.AVATAR && !CShell.isGuest()) {
             _itemsvc.loadLineups(_item.catalogId, new InfoCallback<GroupName[]>() {
                 public void onSuccess (GroupName[] result) {
-                    _lineup = new HashSet(Arrays.asList(result));
+                    _lineup = new HashSet<GroupName>(Arrays.asList(result));
                     if (_managedThemes != null) {
                         buildLineup();
                     }
