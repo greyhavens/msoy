@@ -5,11 +5,11 @@
  */
 
 Application {
-  backgroundColor: #b98c3b;
-  backgroundGradientColors: #d7c39d, #403323;
+  backgroundColor: #ffffff;
+  backgroundGradientColors: #ffffff, #ffffff;
   backgroundGradientAlphas: 0.83, 1;
-  themeColor: #54a9da;
-  color: #0b333c;
+  themeColor: #000000;
+  color: #000000;
 }
 
 Panel {
@@ -51,7 +51,7 @@ TitleWindow {
   borderThickness: 0;
   borderSides: "left right bottom";
   cornerRadius: 4;
-  backgroundColor: #000000;
+  backgroundColor: #FFFFFF;
   backgroundAlpha: 0.90;
   backgroundImage: null;
   titleBackgroundSkin: Embed(source="../media/skins/window/sexy_title.png",
@@ -65,7 +65,7 @@ TitleWindow {
   horizontalAlign: center;
 
   /* this cascades to our children */
-  color: white;
+  color: black;
 }
 
 List {
@@ -83,20 +83,20 @@ List {
   backgroundAlpha: 0;
   backgroundColor: #f97527;
   borderStyle: solid;
-  borderColor: #FFFFFF;
+  borderColor: #000000;
   borderThickness: 1;
   horizontalGap: 2;
   horizontalAlign: "center";
-  color: #ffffff;
+  color: #000000;
   tabStyleName: "sexyTab";
 }
 
 .sexyTab {
   borderThickness: 1;
-  borderColor: #FFFFFF;
+  borderColor: #000000;
   cornerRadius: 4;
-  color: #FFFFFF;
-  textRollOverColor: #FFFFFF;
+  color: #000000;
+  textRollOverColor: #000000;
   backgroundAlpha: 1;
   highlightAlphas: 0, 0;
   fillAlphas: 1, 1;
@@ -111,7 +111,7 @@ List {
 }
 
 .topPanel {
-  backgroundColor: #000000;
+  backgroundColor: #ffffff;
 }
 
 /*
@@ -195,6 +195,9 @@ ComboBox {
 
 /** TODO: Get actual radio button art (Circles instead of squares) */
 CheckBox, RadioButton {
+  color: black;
+  textRollOverColor: black;
+  textSelectedColor: black;
   upIcon: Embed(source="../media/skins/checkbox/checkbox.png");
   overIcon: Embed(source="../media/skins/checkbox/checkbox_over.png");
   downIcon: Embed(source="../media/skins/checkbox/checkbox_over.png");
@@ -277,10 +280,10 @@ ButtonBar {
 VScrollBar, HScrollBar {
   highlightAlphas: 0.38, 0;
   fillAlphas: 1, 0.82, 0.79, 0.82;
-  fillColors: #000000, #000000, #000000, #000000;
-  trackColors: #000000, #000000;
-  themeColor: #000000;
-  borderColor: #000000;
+  fillColors: #ffffff, #ffffff, #ffffff, #ffffff;
+  trackColors: #ffffff, #ffffff;
+  themeColor: #ffffff;
+  borderColor: #ffffff;
   iconColor: #cccccc;
   thumbOffset: 0;
 }
@@ -290,13 +293,13 @@ Menu {
   backgroundImage: Embed(source="../media/skins/menu/background.png",
     scaleGridTop="3", scaleGridBottom="26", scaleGridLeft="3", scaleGridRight="26");
   backgroundSize: "100%";
-  backgroundColor: black;
+  backgroundColor: white;
   rollOverColor: #7DBFF8;
   dropShadowEnabled: true;
-  backgroundAlpha: 0.6;
+  backgroundAlpha: 0.8;
   borderStyle: none;
-  color: #C2C2C2;
-  disabledColor: #666666;
+  color: #000000;
+  disabledColor: #808080;
   separatorSkin: Embed(source="../media/skins/menu/separator_skin.png");
   branchIcon: Embed(source="../media/skins/menu/whitearrow.png");
 }
@@ -309,7 +312,7 @@ MenuBar {
   fillColors: #d2d8dc, #9ba8b0;
   rollOverColor: #c8d0d3;
   selectionColor: #54a9da;
-  themeColor: #999999;
+  themeColor: #000000;
 }
 
 HRule {
@@ -346,15 +349,16 @@ Tree {
 TabNavigator, TabBar {
   borderStyle: none;
   borderThickness: 0;
+  borderColor: black;
   tabHeight: 20;
 }
 
 .menuTitle {
-  disabledColor: white;
+  disabledColor: black;
   fontWeight: bold;
 }
 
 .underLink {
-  color: white;
+  color: black;
   textDecoration: underline;
 }

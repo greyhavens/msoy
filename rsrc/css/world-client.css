@@ -67,7 +67,7 @@ GameOverPanel {
 }
 
 .topPanel {
-  backgroundColor: #000000;
+  backgroundColor: #ffffff;
 }
 
 .largeBlueButton {
@@ -371,7 +371,7 @@ ChatInput {
 .locationName {
   fontSize: 12px;
   fontWeight: bold;
-  color: white;
+  color: black;
   textAlign: center;
 }
 
@@ -518,7 +518,7 @@ ChatInput {
 }
 
 .tableSummaryStatus {
-  color: #999999;
+  color: #666666;
 }
 
 .pendingTableList, .runningTableList {
@@ -582,12 +582,12 @@ ChatInput {
 }
 
 .topLevelLabel {
-  color: white;
+  color: black;
 }
 
 .gameChatContainer {
-  backgroundColor: black;
-  borderColor: #666666;
+  backgroundColor: white;
+  borderColor: #aaaaaa;
   borderSides: "right";
   borderStyle: solid;
   borderThickness: 1;
@@ -598,7 +598,7 @@ ChatInput {
 }
 
 .gameListContainer {
-  backgroundColor: black;
+  backgroundColor: white;
   borderStyle: none;
   horizontalGap: 0;
   verticalGap: 0;
@@ -633,7 +633,7 @@ ChatInput {
 */
 
 .noPlaceView {
-  backgroundColor: black;
+  backgroundColor: white;
 }
 
 .panelToggle {
@@ -673,7 +673,7 @@ ChatInput {
 }
 
 .notificationHistoryDisplay {
-  backgroundColor: black;
+  backgroundColor: white;
   borderColor: #408fd9;
   borderStyle: "solid";
   borderThickness: 2;
@@ -685,7 +685,7 @@ ChatInput {
 .notificationHistoryCell {
   backgroundAlpha: 0;
   borderSides: "top";
-  borderColor: #999999;
+  borderColor: #777777;
   borderStyle: "solid";
   borderThickness: 1;
   paddingLeft: 3;
@@ -706,7 +706,7 @@ ChatInput {
 }
 
 .playerLabel {
-  color: white;
+  color: black;
   fontSize: 12;
 }
 
@@ -805,4 +805,7 @@ ChatInput {
 .avatarPickerInstructions {
   fontSize: 12;
   fontWeight: bold;
+}
+
+.avatarPickerGrid {
 }
