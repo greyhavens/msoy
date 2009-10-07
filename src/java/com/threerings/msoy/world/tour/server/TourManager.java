@@ -171,7 +171,6 @@ public class TourManager
     protected void loadNewRoomSet ()
     {
         if (DeploymentConfig.devDeployment) {
-            log.warning("Tour rooms not loaded in development instance.");
             return;
         }
         _invoker.postUnit(new RepositoryUnit("loadTourRooms") {
