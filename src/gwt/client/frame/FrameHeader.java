@@ -10,12 +10,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.MouseOutEvent;
-import com.google.gwt.event.dom.client.MouseOutHandler;
-import com.google.gwt.event.dom.client.MouseOverEvent;
-import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.user.client.ui.HasAlignment;
-import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimplePanel;
 
@@ -50,6 +45,7 @@ public class FrameHeader extends SmartTable
         String lpath = "/images/header/header_logo.png";
         setWidget(0, col++, MsoyUI.createActionImage(lpath, onLogoClick), 1, "Logo");
         addButton(col++, Pages.ME, _cmsgs.menuMe(), _images.me(), _images.ome(), _images.sme());
+        // TODO: remove the tab images
         addButton(col++, Pages.STUFF, _cmsgs.menuStuff(), _images.stuff(), _images.ostuff(),
                   _images.sstuff());
         addButton(col++, Pages.GAMES, _cmsgs.menuGames(), _images.games(), _images.ogames(),
@@ -115,22 +111,7 @@ public class FrameHeader extends SmartTable
             setStyleName("NaviButton");
             this.page = page;
 
-            _upImage = up.createImage();
-            _upImage.addStyleName("actionLabel");
-            _upImage.addMouseOverHandler(new MouseOverHandler() {
-                public void onMouseOver (MouseOverEvent event) {
-                    setWidget(_overImage);
-                }
-            });
-
-            _overImage = over.createImage();
-            _overImage.addStyleName("actionLabel");
-            _overImage.addMouseOutHandler(new MouseOutHandler() {
-                public void onMouseOut (MouseOutEvent event) {
-                    setWidget(_upImage);
-                }
-            });
-            ClickHandler go = new ClickHandler() {
+            setWidget(MsoyUI.createActionLabel(text, new ClickHandler() {
                 public void onClick (ClickEvent event) {
                     // if a guest clicks on "me", send them to create account
                     if (NaviButton.this.page == Pages.ME && CShell.isGuest()) {
@@ -139,22 +120,18 @@ public class FrameHeader extends SmartTable
                         Link.go(NaviButton.this.page, "");
                     }
                 }
-            };
-            _overImage.addClickHandler(go);
-
-            _downImage = down.createImage();
-            _downImage.addStyleName("actionLabel");
-            _downImage.addClickHandler(go);
-
-            setWidget(_upImage);
+            }));
         }
 
         public void setSelected (boolean selected)
         {
-            setWidget(selected ? _downImage : _upImage);
+            String selStyle = "NaviButtonSelected";
+            if (selected) {
+                addStyleName(selStyle);
+            } else {
+                removeStyleName(selStyle);
+            }
         }
-
-        protected Image _upImage, _overImage, _downImage;
     }
 
     protected static class SignOrLogonPanel extends SmartTable
@@ -179,6 +156,6 @@ public class FrameHeader extends SmartTable
     protected List<NaviButton> _buttons = new ArrayList<NaviButton>();
     protected StatusPanel _status = new StatusPanel();
 
-    protected static final NaviImages _images = (NaviImages)GWT.create(NaviImages.class);
+    protected static final NaviImages _images = GWT.create(NaviImages.class);
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
 }

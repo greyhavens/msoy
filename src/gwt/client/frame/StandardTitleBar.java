@@ -36,10 +36,6 @@ public class StandardTitleBar extends TitleBar
         if (framed) {
             // add a style that overrides some bits
             _contents.addStyleName("framedTitle");
-            _contents.setText(0, 0, "", 3);
-
-        } else {
-            _contents.setWidget(0, 0, createImage(tab), 3);
         }
 
         _tab = tab;
@@ -59,9 +55,9 @@ public class StandardTitleBar extends TitleBar
         panel.add(_titleLabel);
 
         _subnavi = new SubNaviPanel(tab);
-        _contents.setWidget(1, 0, panel);
-        _contents.setWidget(1, 2, _subnavi, 1, "SubNavi");
-        _contents.getFlexCellFormatter().setVerticalAlignment(1, 1, HasAlignment.ALIGN_BOTTOM);
+        _contents.setWidget(0, 0, panel);
+        _contents.setWidget(0, 2, _subnavi, 1, "SubNavi");
+        _contents.getFlexCellFormatter().setVerticalAlignment(0, 1, HasAlignment.ALIGN_BOTTOM);
 
         _closeBox = MsoyUI.createActionImage("/images/ui/close.png", onClose);
         _closeBox.addStyleName("Close");

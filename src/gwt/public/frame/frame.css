@@ -6,11 +6,11 @@
 
 /* StandardLayout styles */
 .standardPage {
-  background: #000000;
+  background: white;
 }
 
 .framedPage {
-  background: #FFFFFF;
+  background: white;
 }
 
 /* ------------------------------------
@@ -18,8 +18,8 @@
 -------------------------------------*/
 
 .frameHeader {
-  color: #EAEFF1;
-  background: #000000;
+  color: #000000;
+  background: white;
   height: 50px;
 }
 
@@ -28,14 +28,24 @@
 }
 
 .frameHeader .NaviButton {
-  height: 32px;
-  margin-left: 0px;
-  margin-right: 4px;
-  padding-top: 18px;
+  height: 20px;
+  width: 71px;
+  margin: 20px 7px 0 3px;
+  padding: 6px 0 4px 0;
+  background-color: #3985b6;
+  text-align: center;
+  color: white;
+}
+
+.frameHeader .NaviButtonSelected {
+  background-color: #5eaadb;
+}
+
+.frameHeader .NaviButton .actionLabel {
+  text-decoration: none;
 }
 
 .frameHeader .Right {
-  background: url(/images/header/header_right.png) no-repeat right;
   width: 100%;
   vertical-align: bottom;
 }
@@ -47,6 +57,7 @@
   text-align: center;
   padding: 5px 0px;
   height: 30px;
+  color: white;
 }
 
 .frameHeader .LogonButton {
@@ -79,7 +90,7 @@
   font-size: 12px;
   font-weight: bold;
   text-align: center;
-  background: #4A4A4A;
+  background: #cacaca;
 }
 
 .statusPanel .InviteFriends .html-face {
@@ -127,7 +138,7 @@
 }
 
 .statusPanel .Levels {
-  color: #AAB5B9;
+  color: #474b4d;
   font-family: Helvetica, sans-serif;
   font-size: 11px;
   font-weight: bold;
@@ -153,7 +164,7 @@
 
 .statusPanel .Levels .BuyBars a {
   font-size: 10px;
-  color: #f3a613;
+  color: #99690c;
   padding-left: 5px;
   font-weight: normal;
 }
@@ -169,6 +180,7 @@
 
 .pageTitle {
   background: #000000 url(/images/header/titlebar.png) no-repeat bottom left;
+  width: 700px;
 }
 
 .pageTitle .Title {
