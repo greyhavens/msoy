@@ -26,6 +26,7 @@ import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.StatType;
+import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.server.MemberLocal;
 import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.PopularPlacesSnapshot;
@@ -169,6 +170,10 @@ public class TourManager
 
     protected void loadNewRoomSet ()
     {
+        if (DeploymentConfig.devDeployment) {
+            log.warning("Tour rooms not loaded in development instance.")
+            return;
+        }
         _invoker.postUnit(new RepositoryUnit("loadTourRooms") {
             public void invokePersist ()
                 throws Exception
