@@ -36,15 +36,8 @@ public class StandardLayout extends Layout
     @Override // from Layout
     public void setContent (TitleBar bar, Widget iframe)
     {
-        int contentTop = 0;
-        String contentWidth = null, contentHeight = null;
-
+        _iframe = iframe;
         if (bar == null) {
-            // content takes up whole page
-            contentWidth = "100%";
-            contentHeight = "100%";
-            contentTop = 0;
-
             // the content is just the supplied widget, no extra bits
             _content = iframe;
 
@@ -52,36 +45,16 @@ public class StandardLayout extends Layout
             // squish the client if it's around
             if (_client != null) {
                 WorldClient.setMinimized(true);
-                _client.setWidth(computeClientWidth());
-                RootPanel.get(PAGE).setWidgetPosition(_client, CONTENT_WIDTH, NAVI_HEIGHT);
             }
 
-            // position the content normally
-            contentWidth = CONTENT_WIDTH + "px";
-            contentHeight = (Window.getClientHeight() - NAVI_HEIGHT) + "px";
-            contentTop = NAVI_HEIGHT;
-
-            // add a titlebar to the top of the content
-            FlowPanel content = new FlowPanel();
-            content.add(bar.exposeWidget());
-            iframe.setWidth(contentWidth);
-            iframe.setHeight((Window.getClientHeight() - HEADER_HEIGHT) + "px");
-            content.add(iframe);
-            _content = content;
+            _content = MsoyUI.createFlowPanel(null, bar.exposeWidget(), _iframe);
         }
 
-        // show the header if we have a title bar, hide it if not
-        _header.setVisible(bar != null);
-
-        // size, add and position the content
-        _iframe = iframe;
-        _content.setWidth(contentWidth);
-        _content.setHeight(contentHeight);
+        // add the content
         RootPanel.get(PAGE).add(_content);
-        RootPanel.get(PAGE).setWidgetPosition(_content, 0, contentTop);
 
-        // on frameless pages, we don't listen for resize because the iframe is height 100%
-        setWindowResizerEnabled(_content != iframe);
+        // position 
+        positionElements();
     }
 
     @Override // from Layout
@@ -101,9 +74,7 @@ public class StandardLayout extends Layout
         _content = removeFromPage(_content);
         _iframe = null;
         if (restoreClient && _client != null) {
-            RootPanel.get(PAGE).setWidgetPosition(_client, 0, NAVI_HEIGHT);
-            _client.setWidth("100%");
-            _header.setVisible(true);
+            positionElements();
         }
     }
 
@@ -115,18 +86,13 @@ public class StandardLayout extends Layout
                 // clear out any existing bits
                 _noclient = removeFromPage(_noclient);
                 _client = removeFromPage(_client);
-                _header.setVisible(true);
 
+                // add a new client panel
                 Panel client = makeClientPanel();
-                RootPanel.get(PAGE).add(client);
-                if (_content == null) {
-                    client.setWidth("100%");
-                    RootPanel.get(PAGE).setWidgetPosition(client, 0, NAVI_HEIGHT);
-                } else {
-                    client.setWidth(computeClientWidth());
-                    RootPanel.get(PAGE).setWidgetPosition(client, CONTENT_WIDTH, NAVI_HEIGHT);
-                }
-                _client = client;
+                RootPanel.get(PAGE).add(_client = client);
+
+                // reposition everything
+                positionElements();
                 return client;
             }
         };
@@ -140,32 +106,16 @@ public class StandardLayout extends Layout
         }
 
         _client = removeFromPage(_client);
-        addNoClientIcon(); // TODO
-        if (_content != null) {
-            _content.setWidth(CONTENT_WIDTH + "px");
-            _content.setVisible(true);
-        }
+        doAddNoClientIcon(); // TODO
+        positionElements();
         return true;
     }
 
     @Override // from Layout
     public void addNoClientIcon ()
     {
-        if (CShell.isGuest() || _client != null) {
-            return; // no quick-home link for guests, none if we have a client open
-        }
-
-        FlowPanel bits = MsoyUI.createFlowPanel("Bits");
-        bits.add(MsoyUI.createPushButton(_images.noclient().createImage(),
-                                         _images.noclient_hover().createImage(),
-                                         _images.noclient_hover().createImage(), _onGoHome));
-        bits.add(MsoyUI.createActionLabel(_cmsgs.goHome(), _onGoHome));
-
-        _noclient = MsoyUI.createSimplePanel(bits, "noclient");
-        _noclient.setWidth(computeClientWidth());
-        _noclient.setHeight((Window.getClientHeight() - NAVI_HEIGHT) + "px");
-        RootPanel.get(PAGE).add(_noclient);
-        RootPanel.get(PAGE).setWidgetPosition(_noclient, CONTENT_WIDTH, NAVI_HEIGHT);
+        doAddNoClientIcon();
+        positionElements();
     }
 
     @Override // from Layout
@@ -180,6 +130,22 @@ public class StandardLayout extends Layout
         RootPanel.get().addStyleName("standardPage");
         _header.setVisible(false);
         RootPanel.get(PAGE).add(_header);
+    }
+
+    protected void doAddNoClientIcon ()
+    {
+        if (CShell.isGuest() || _client != null) {
+            return; // no quick-home link for guests, none if we have a client open
+        }
+
+        FlowPanel bits = MsoyUI.createFlowPanel("Bits");
+        bits.add(MsoyUI.createPushButton(_images.noclient().createImage(),
+                                         _images.noclient_hover().createImage(),
+                                         _images.noclient_hover().createImage(), _onGoHome));
+        bits.add(MsoyUI.createActionLabel(_cmsgs.goHome(), _onGoHome));
+
+        _noclient = MsoyUI.createSimplePanel(bits, "noclient");
+        RootPanel.get(PAGE).add(_noclient);
     }
 
     protected Widget removeFromPage (Widget widget)
@@ -213,25 +179,51 @@ public class StandardLayout extends Layout
         } else if (enabled && _resizer == null) {
             _resizer = new ResizeHandler() {
                 public void onResize (ResizeEvent event) {
-                    if (_content != null) {
-                        _content.setHeight((Window.getClientHeight() - NAVI_HEIGHT) + "px");
-                    }
-                    if (_iframe != null) {
-                        _iframe.setHeight((Window.getClientHeight() - HEADER_HEIGHT) + "px");
-                    }
-                    Widget right = (_client == null) ? _noclient : _client;
-                    if (right != null) {
-                        // if we have content, the client is in explicitly sized mode and will need
-                        // its width updated manually; if we have no content, it is width 100%
-                        if (_content != null) {
-                            right.setWidth(computeClientWidth());
-                        }
-                        right.setHeight((Window.getClientHeight() - NAVI_HEIGHT) + "px");
-                    }
+                    positionElements();
                 }
             };
             _resizerRegistration = Window.addResizeHandler(_resizer);
         }
+    }
+
+    protected void positionElements ()
+    {
+        boolean showHeader = _content == null || _content != _iframe;
+        if (!showHeader) {
+            // content takes up whole page (client should not be visible)
+            _content.setWidth("100%");
+            _content.setHeight("100%");
+            RootPanel.get(PAGE).setWidgetPosition(_content, 0, 0);
+
+            _header.setVisible(false);
+            setWindowResizerEnabled(false);
+            return;
+        }
+
+        if (_content != null) {
+            _content.setWidth(CONTENT_WIDTH + "px");
+            _content.setHeight((Window.getClientHeight() - NAVI_HEIGHT) + "px");
+            RootPanel.get(PAGE).setWidgetPosition(_content, 0, NAVI_HEIGHT);
+
+            _iframe.setWidth(CONTENT_WIDTH + "px");
+            _iframe.setHeight((Window.getClientHeight() - HEADER_HEIGHT) + "px");
+        }
+
+        Widget client = _client != null ? _client : _noclient;
+        if (client != null) {
+            if (_content != null) {
+                int width = Math.max(Window.getClientWidth() - CONTENT_WIDTH, MIN_CLIENT_WIDTH);
+                client.setWidth(width + "px");
+                RootPanel.get(PAGE).setWidgetPosition(client, CONTENT_WIDTH, NAVI_HEIGHT);
+            } else {
+                client.setWidth("100%");
+                RootPanel.get(PAGE).setWidgetPosition(client, 0, NAVI_HEIGHT);
+            }
+            client.setHeight((Window.getClientHeight() - NAVI_HEIGHT) + "px");
+        }
+
+        _header.setVisible(true);
+        setWindowResizerEnabled(true);
     }
 
     protected Widget _iframe,  _content, _client, _noclient;
