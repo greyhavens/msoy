@@ -10,6 +10,7 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.WidgetUtil;
+import com.threerings.gwt.ui.WidgetUtil.FlashObject;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.UberClientModes;
@@ -46,11 +47,13 @@ public class FlashClients
      */
     public static HTML createUploader (String mediaIds, String filetypes)
     {
-        String flashVars = "auth=" + URL.encodeComponent(CShell.getAuthToken()) +
+        FlashObject obj = new FlashObject("uploader",
+            "/clients/" + DeploymentConfig.version + "/uploader.swf", 200, 40,
+            "auth=" + URL.encodeComponent(CShell.getAuthToken()) +
             "&mediaIds=" + URL.encodeComponent(mediaIds) +
-            "&filetypes=" + URL.encodeComponent(filetypes);
-        return WidgetUtil.createTransparentFlashContainer("uploader",
-            "/clients/" + DeploymentConfig.version + "/uploader.swf", 200, 40, flashVars);
+            "&filetypes=" + URL.encodeComponent(filetypes));
+        obj.transparent = true;
+        return WidgetUtil.createContainer(obj);
     }
 
     /**
@@ -59,9 +62,11 @@ public class FlashClients
      */
     public static HTML createCameraButton (String mediaIds)
     {
-        String flashVars = "mediaIds=" + URL.encodeComponent(mediaIds);
-        return WidgetUtil.createTransparentFlashContainer("camerabutton",
-            "/clients/" + DeploymentConfig.version + "/camerabutton.swf", 160, 19, flashVars);
+        FlashObject obj = new FlashObject("camerabutton",
+            "/clients/" + DeploymentConfig.version + "/camerabutton.swf", 160, 19,
+            "mediaIds=" + URL.encodeComponent(mediaIds));
+        obj.transparent = true;
+        return WidgetUtil.createContainer(obj);
     }
 
     /**
@@ -72,9 +77,9 @@ public class FlashClients
      */
     public static HTML createVideoPlayer (int width, int height, String path)
     {
-        String flashVars = (path == null) ? null : "video=" + URL.encodeComponent(path);
-        return WidgetUtil.createFlashContainer("videoPlayer",
-            "/clients/" + DeploymentConfig.version + "/videoplayer.swf", width, height, flashVars);
+        return WidgetUtil.createContainer(new FlashObject("videoPlayer",
+            "/clients/" + DeploymentConfig.version + "/videoplayer.swf", width, height,
+            (path == null) ? null : "video=" + URL.encodeComponent(path)));
     }
 
     /**
@@ -82,9 +87,9 @@ public class FlashClients
      */
     public static HTML createAudioPlayer (int width, int height, String path)
     {
-        String flashVars = "audio=" + URL.encodeComponent(path);
-        return WidgetUtil.createFlashContainer("audioPlayer",
-            "/clients/" + DeploymentConfig.version + "/audioplayer.swf", width, height, flashVars);
+        return WidgetUtil.createContainer(new FlashObject("audioPlayer",
+            "/clients/" + DeploymentConfig.version + "/audioplayer.swf", width, height,
+            "audio=" + URL.encodeComponent(path)));
     }
 
     /**
@@ -112,9 +117,9 @@ public class FlashClients
             flashVars += "&" + prefix + "Width=" + maxWidth +
                 "&" + prefix + "Height=" + maxHeight;
         }
-        return WidgetUtil.createFlashContainer("imageEditor",
+        return WidgetUtil.createContainer(new FlashObject("imageEditor",
             "/clients/" + DeploymentConfig.version + "/imageeditor.swf",
-            width, height, flashVars);
+            width, height, flashVars));
     }
 
     /**
@@ -126,13 +131,17 @@ public class FlashClients
         if (!shouldShowFlash(container, 0, 0)) {
             return;
         }
+
+        FlashObject obj = new FlashObject("asclient", "/clients/" +
+            DeploymentConfig.version + "/world-client.swf", "100%", getClientCSSHeight(),
+            flashVars);
+
         if (_chromeless) {
-            flashVars += "&chromeless=true";
+            obj.flashVars += "&chromeless=true";
         }
-        Widget embed = WidgetUtil.embedFlashObject(
-            container, WidgetUtil.createFlashObjectDefinition(
-                "asclient", "/clients/" + DeploymentConfig.version + "/world-client.swf",
-                "100%", getClientCSSHeight(), flashVars));
+        obj.bgcolor = "#ffffff";
+
+        Widget embed = WidgetUtil.embedFlashObject(container, WidgetUtil.createDefinition(obj));
         embed.setHeight("100%");
     }
 
@@ -157,9 +166,9 @@ public class FlashClients
     {
         if (shouldShowFlash(container, FEATURED_PLACE_WIDTH, FEATURED_PLACE_HEIGHT)) {
             WidgetUtil.embedFlashObject(
-                container, WidgetUtil.createFlashObjectDefinition(
+                container, WidgetUtil.createDefinition(new FlashObject(
                     "featuredplace", "/clients/" + DeploymentConfig.version + "/world-client.swf",
-                    FEATURED_PLACE_WIDTH, FEATURED_PLACE_HEIGHT, flashVars));
+                    FEATURED_PLACE_WIDTH, FEATURED_PLACE_HEIGHT, flashVars)));
         }
     }
 
@@ -176,9 +185,9 @@ public class FlashClients
             return;
         }
 
-        html.setHTML(WidgetUtil.createFlashObjectDefinition("decorViewer",
+        html.setHTML(WidgetUtil.createDefinition(new FlashObject("decorViewer",
             "/clients/" + DeploymentConfig.version + "/world-client.swf", 600, 400,
-            "mode=" + UberClientModes.DECOR_EDITOR + "&username=Tester"));
+            "mode=" + UberClientModes.DECOR_EDITOR + "&username=Tester")));
     }
 
     /**
@@ -188,7 +197,7 @@ public class FlashClients
     {
         String definition = CShell.frame.checkFlashVersion(800, 600);
         return definition != null ? definition :
-            WidgetUtil.createFlashObjectDefinition("game", media, 800, 600, null);
+            WidgetUtil.createDefinition(new FlashObject("game", media, 800, 600, null));
     }
 
     /**
