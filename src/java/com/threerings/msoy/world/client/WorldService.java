@@ -21,7 +21,7 @@ public interface WorldService extends InvocationService
     {
         /**
          * Instructs the client that an avatar selection is required before entering the room. The
-         * client should show the avatar picker, then call {@link MemberService.
+         * client should show the avatar picker, then call {@link WorldService.acceptAndProceed}.
          */
         void selectGift (Avatar[] avatars);
 
