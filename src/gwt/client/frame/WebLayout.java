@@ -53,10 +53,12 @@ public abstract class WebLayout extends Layout
         }
 
         // add the content
+        _content.setVisible(false);
         RootPanel.get(PAGE).add(_content);
 
         // position 
         positionElements();
+        _content.setVisible(true);
     }
 
     @Override // from Layout
