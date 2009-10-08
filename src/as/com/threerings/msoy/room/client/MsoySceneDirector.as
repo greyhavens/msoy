@@ -198,10 +198,7 @@ public class MsoySceneDirector extends SceneDirector
     // from interface MsoySceneService_MsoySceneMoveListener
     public function selectGift (lineup :TypedArray) :void
     {
-        // TODO: we have to ignore the parameter sent to the function here, because
-        // acceptAndProceed() currently looks up and passes back the home scene id,
-        // which I think we should change.
-        _worldctx.getWorldDirector().selectAvatar(lineup, function retryMove (ignored :int) :void {
+        _worldctx.getWorldDirector().selectAvatar(lineup, function retryMove () :void {
             // use _pendingData to retry the previous move
             sendMoveRequest();
         });

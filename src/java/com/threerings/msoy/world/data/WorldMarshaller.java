@@ -44,12 +44,12 @@ public class WorldMarshaller extends InvocationMarshaller
         public static final int SELECT_GIFT = 2;
 
         // from interface HomeResultMarshaller
-        public void selectGift (Avatar[] arg1)
+        public void selectGift (Avatar[] arg1, int arg2)
         {
             _invId = null;
             omgr.postEvent(new InvocationResponseEvent(
                                callerOid, requestId, SELECT_GIFT,
-                               new Object[] { arg1 }, transport));
+                               new Object[] { arg1, Integer.valueOf(arg2) }, transport));
         }
 
         @Override // from InvocationMarshaller
@@ -63,7 +63,7 @@ public class WorldMarshaller extends InvocationMarshaller
 
             case SELECT_GIFT:
                 ((HomeResultListener)listener).selectGift(
-                    (Avatar[])args[0]);
+                    (Avatar[])args[0], ((Integer)args[1]).intValue());
                 return;
 
             default:
@@ -77,9 +77,9 @@ public class WorldMarshaller extends InvocationMarshaller
     public static final int ACCEPT_AND_PROCEED = 1;
 
     // from interface WorldService
-    public void acceptAndProceed (Client arg1, int arg2, InvocationService.ResultListener arg3)
+    public void acceptAndProceed (Client arg1, int arg2, InvocationService.ConfirmListener arg3)
     {
-        InvocationMarshaller.ResultMarshaller listener3 = new InvocationMarshaller.ResultMarshaller();
+        InvocationMarshaller.ConfirmMarshaller listener3 = new InvocationMarshaller.ConfirmMarshaller();
         listener3.listener = arg3;
         sendRequest(arg1, ACCEPT_AND_PROCEED, new Object[] {
             Integer.valueOf(arg2), listener3

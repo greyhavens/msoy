@@ -12,6 +12,7 @@ import com.google.inject.Singleton;
 
 import com.threerings.presents.annotation.BlockingThread;
 
+import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.group.server.persist.ThemeAvatarLineupRecord;
 import com.threerings.msoy.group.server.persist.ThemeRepository;
 import com.threerings.msoy.item.data.all.Avatar;
@@ -41,4 +42,5 @@ public class ThemeLogic
     // our dependencies
     @Inject protected ItemLogic _itemLogic;
     @Inject protected ThemeRepository _themeRepo;
+    @Inject protected GroupRepository _groupRepo;
 }

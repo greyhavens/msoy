@@ -15,7 +15,7 @@ import com.threerings.presents.client.InvocationService_ResultListener;
 public interface WorldService extends InvocationService
 {
     // from Java interface WorldService
-    function acceptAndProceed (arg1 :int, arg2 :InvocationService_ResultListener) :void;
+    function acceptAndProceed (arg1 :int, arg2 :InvocationService_ConfirmListener) :void;
 
     // from Java interface WorldService
     function ditchFollower (arg1 :int, arg2 :InvocationService_InvocationListener) :void;

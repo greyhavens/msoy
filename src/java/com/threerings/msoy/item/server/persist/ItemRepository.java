@@ -350,6 +350,18 @@ public abstract class ItemRepository<T extends ItemRecord>
         return clone;
     }
 
+
+    /**
+     * Loads all the clones made from the given original item id that are also owned by
+     * the given member.
+     */
+    public List<T> loadClones (int originalId, int ownerId)
+    {
+        return loadClonedItems(new Where(
+            getCloneColumn(CloneRecord.ORIGINAL_ITEM_ID), originalId,
+            getCloneColumn(CloneRecord.OWNER_ID), ownerId));
+    }
+
     /**
      * Loads all original items owned by the specified member.
      */

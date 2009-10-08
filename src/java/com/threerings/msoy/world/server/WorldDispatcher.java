@@ -38,7 +38,7 @@ public class WorldDispatcher extends InvocationDispatcher<WorldMarshaller>
         switch (methodId) {
         case WorldMarshaller.ACCEPT_AND_PROCEED:
             ((WorldProvider)provider).acceptAndProceed(
-                source, ((Integer)args[0]).intValue(), (InvocationService.ResultListener)args[1]
+                source, ((Integer)args[0]).intValue(), (InvocationService.ConfirmListener)args[1]
             );
             return;
 

@@ -5,7 +5,6 @@ package com.threerings.msoy.world.server;
 
 import java.util.List;
 
-import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -66,8 +65,7 @@ import com.threerings.msoy.item.server.ItemLogic;
 import com.threerings.msoy.item.server.ItemManager;
 import com.threerings.msoy.item.server.persist.AvatarRecord;
 import com.threerings.msoy.item.server.persist.AvatarRepository;
-import com.threerings.msoy.item.server.persist.ItemRecord;
-
+import com.threerings.msoy.item.server.persist.CatalogRecord;
 import static com.threerings.msoy.Log.log;
 
 /**
@@ -133,16 +131,17 @@ public class WorldManager
                         _gifts = gifts.toArray(new Avatar[gifts.size()]);
                     }
                 }
-                if (_gifts == null || _gifts.length < 3) {
-                    _homeId = _memberLogic.getHomeId(ownerType, ownerId);
+                _homeId = _memberLogic.getHomeId(ownerType, ownerId);
+                // TODO: Why this check? What's wrong with 2?
+                if (_gifts != null && _gifts.length < 3) {
                     _gifts = null;
                 }
             }
             @Override public void handleSuccess () {
-                if (_homeId != null) {
+                if (_gifts != null) {
+                    ((HomeResultListener)_listener).selectGift(_gifts, _homeId);
+                } else if (_homeId != null) {
                     ((HomeResultListener)_listener).readyToEnter(_homeId);
-                } else if (_gifts != null) {
-                    ((HomeResultListener)_listener).selectGift(_gifts);
                 } else {
                     handleFailure(new InvocationException("m.no_such_user"));
                 }
@@ -153,8 +152,8 @@ public class WorldManager
     }
 
     @Override
-    public void acceptAndProceed (ClientObject caller, final int giftCatalogId,
-        com.threerings.presents.client.InvocationService.ResultListener listener)
+    public void acceptAndProceed (
+        ClientObject caller, final int giftCatalogId, ConfirmListener listener)
         throws InvocationException
     {
         _invoker.postUnit(new GiftUnit((MemberObject)caller, giftCatalogId, listener));
@@ -162,7 +161,7 @@ public class WorldManager
 
     @Override // from interface WorldProvider
     public void setHomeSceneId (final ClientObject caller, final int ownerType, final int ownerId,
-                                final int sceneId, final InvocationService.ConfirmListener listener)
+                                final int sceneId, final ConfirmListener listener)
         throws InvocationException
     {
         final MemberObject member = (MemberObject) caller;
@@ -463,59 +462,27 @@ public class WorldManager
     protected class GiftUnit extends PersistingUnit
         implements SetAvatarListener
     {
-        public GiftUnit (MemberObject memobj, int giftCatalogId,
-            com.threerings.presents.client.InvocationService.ResultListener listener)
-            throws InvocationException
+        public GiftUnit (MemberObject memobj, int giftCatalogId, ConfirmListener listener)
         {
             super("giftAndWearAvatar", listener);
             _mobj = memobj;
             _mname = memobj.memberName;
             _giftCatalogId = giftCatalogId;
-            _cache = _mobj.avatarCache;
-
-            if (_mobj.avatar != null && _mobj.avatar.itemId != 0) {
-                // this should not happen with a legitimate client
-                warn("Attempting double startup gift?");
-                throw new InvocationException(MsoyCodes.E_INTERNAL_ERROR);
-            }
         }
 
         @Override // from PersistingUnit
         public void invokePersistent ()
             throws Exception
         {
-            int memberId = _mname.getMemberId();
-            _homeId = _memberLogic.getHomeId(MsoySceneModel.OWNER_TYPE_MEMBER, memberId);
-            if (_homeId == null) {
-                warn("Uh oh, no home id in " + _name);
-                throw new InvocationException(MsoyCodes.E_INTERNAL_ERROR);
-            }
-
-            // this is inefficient if the user's home theme id is != 0, but it should self-correct
-            // when the room loads
-
-            // TODO: load the real theme id of the home scene
-            _themeId = 0;
-
-            List<Avatar> gifts = getStartupGiftAvatars(memberId);
-            if (gifts == null) {
+            // find the record for the chosen catalog definition
+            CatalogRecord catRec = _avaRepo.loadListing(_giftCatalogId, true);
+            if (catRec == null) {
                 // this should not happen with a legitimate client
-                warn("No gifts found in " + _name);
+                warn("No gift found matching id");
                 throw new InvocationException(MsoyCodes.E_INTERNAL_ERROR);
             }
-            for (Avatar avatar : gifts) {
-                if (avatar.catalogId == _giftCatalogId) {
-                    _newAvatar = giveGift(avatar);
-                    if (_cache == null) {
-                        _cache = loadCache();
-                    }
-                    _memberRepo.configureThemeId(memberId, _themeId);
-                    return;
-                }
-            }
-            // this should not happen with a legitimate client
-            warn("No gift found matching id");
-            throw new InvocationException(MsoyCodes.E_INTERNAL_ERROR);
+
+            _newAvatar = giveGift((Avatar)catRec.item.toItem());
         }
 
         @Override // from PersistingUnit
@@ -525,23 +492,7 @@ public class WorldManager
             // bother with a miss on the db
             EntityMemories memories = null;
 
-            // another special case... we know that the avatar cache will be populated later when
-            // the scene is actually entered
-            _mobj.startTransaction();
-            try {
-                if (_mobj.avatarCache != _cache) {
-                    _mobj.setAvatarCache(_cache);
-                }
-                if (_themeId != ((_mobj.theme != null) ? _mobj.theme.groupId : 0)) {
-                    // TODO: when _themeId != 0, make a real Theme object here,
-                    // TODO: as in MsoySceneRegistry
-                    _mobj.setTheme(null);
-                }
-                finishSetAvatar(_mobj, _newAvatar, memories, this);
-
-            } finally {
-                _mobj.commitTransaction();
-            }
+            finishSetAvatar(_mobj, _newAvatar, memories, this);
         }
 
         protected Avatar giveGift (Avatar avatar)
@@ -552,14 +503,6 @@ public class WorldManager
             log.info("Gifted startup avatar", "member", _mname, "catalogId", _giftCatalogId,
                 "newItemId", item.itemId);
             return (Avatar)item.toItem();
-        }
-
-        protected DSet<Avatar> loadCache ()
-        {
-            AvatarRepository repo = _itemLogic.getAvatarRepository();
-            return DSet.newDSet(Lists.transform(repo.loadRecentlyTouched(
-                _mname.getMemberId(), _themeId, MemberObject.AVATAR_CACHE_SIZE),
-                new ItemRecord.ToItem<Avatar>()));
         }
 
         protected void warn (String message)
@@ -584,16 +527,13 @@ public class WorldManager
         @Override // from SetAvatarListener
         public void success ()
         {
-            reportRequestProcessed(_homeId);
+            ((ConfirmListener)_listener).requestProcessed();
         }
 
         protected MemberName _mname;
         protected MemberObject _mobj;
         protected int _giftCatalogId;
         protected Avatar _newAvatar;
-        protected Integer _homeId;
-        protected int _themeId;
-        protected DSet<Avatar> _cache;
     }
 
     // dependencies
@@ -608,6 +548,7 @@ public class WorldManager
     @Inject protected MemberRepository _memberRepo;
     @Inject protected MemoryRepository _memoryRepo;
     @Inject protected MsoySceneRepository _sceneRepo;
+    @Inject protected AvatarRepository _avaRepo;
     @Inject protected NotificationManager _notifyMan;
     @Inject protected PlaceRegistry _placeReg;
     @Inject protected ThemeRepository _themeRepo;

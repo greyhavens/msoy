@@ -23,7 +23,7 @@ public interface WorldService extends InvocationService
          * Instructs the client that an avatar selection is required before entering the room. The
          * client should show the avatar picker, then call {@link WorldService.acceptAndProceed}.
          */
-        void selectGift (Avatar[] avatars);
+        void selectGift (Avatar[] avatars, int sceneId);
 
         /**
          * Instructs the client that the room may now be entered. All preparations have been made.
@@ -49,7 +49,7 @@ public interface WorldService extends InvocationService
      * and returns the home scene id to go to. The catalog id must be chosen from a previously
      * returned gift list ({@link HomeResultListener#selectGift()}).
      */
-    void acceptAndProceed (Client client, int giftCatalogId, ResultListener listener);
+    void acceptAndProceed (Client client, int giftCatalogId, ConfirmListener listener);
 
     /**
      * Set the given scene as the owner's home scene

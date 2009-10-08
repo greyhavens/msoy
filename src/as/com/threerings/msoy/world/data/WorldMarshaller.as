@@ -30,9 +30,9 @@ public class WorldMarshaller extends InvocationMarshaller
     public static const ACCEPT_AND_PROCEED :int = 1;
 
     // from interface WorldService
-    public function acceptAndProceed (arg1 :int, arg2 :InvocationService_ResultListener) :void
+    public function acceptAndProceed (arg1 :int, arg2 :InvocationService_ConfirmListener) :void
     {
-        var listener2 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
+        var listener2 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
         listener2.listener = arg2;
         sendRequest(ACCEPT_AND_PROCEED, [
             Integer.valueOf(arg1), listener2

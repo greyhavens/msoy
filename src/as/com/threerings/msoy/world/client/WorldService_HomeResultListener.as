@@ -16,6 +16,6 @@ public interface WorldService_HomeResultListener
     function readyToEnter (arg1 :int) :void
 
     // from Java WorldService_HomeResultListener
-    function selectGift (arg1 :TypedArray /* of class com.threerings.msoy.item.data.all.Avatar */) :void
+    function selectGift (arg1 :TypedArray /* of class com.threerings.msoy.item.data.all.Avatar */, arg2 :int) :void
 }
 }

@@ -17,7 +17,7 @@ public interface WorldProvider extends InvocationProvider
     /**
      * Handles a {@link WorldService#acceptAndProceed} request.
      */
-    void acceptAndProceed (ClientObject caller, int arg1, InvocationService.ResultListener arg2)
+    void acceptAndProceed (ClientObject caller, int arg1, InvocationService.ConfirmListener arg2)
         throws InvocationException;
 
     /**

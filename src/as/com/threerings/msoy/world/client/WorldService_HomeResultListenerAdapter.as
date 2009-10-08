@@ -33,10 +33,10 @@ public class WorldService_HomeResultListenerAdapter
     }
 
     // from Java WorldService_HomeResultListener
-    public function selectGift (arg1 :TypedArray /* of class com.threerings.msoy.item.data.all.Avatar */) :void
+    public function selectGift (arg1 :TypedArray /* of class com.threerings.msoy.item.data.all.Avatar */, arg2 :int) :void
     {
         if (_selectGift != null) {
-            _selectGift(arg1);
+            _selectGift(arg1, arg2);
         }
     }
 

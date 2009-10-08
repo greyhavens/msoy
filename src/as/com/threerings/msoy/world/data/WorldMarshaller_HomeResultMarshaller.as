@@ -30,7 +30,7 @@ public class WorldMarshaller_HomeResultMarshaller
 
         case SELECT_GIFT:
             (listener as WorldService_HomeResultListener).selectGift(
-                (args[0] as TypedArray /* of class com.threerings.msoy.item.data.all.Avatar */));
+                (args[0] as TypedArray /* of class com.threerings.msoy.item.data.all.Avatar */), (args[1] as int));
             return;
 
         default:

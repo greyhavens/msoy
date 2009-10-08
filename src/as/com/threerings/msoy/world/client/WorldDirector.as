@@ -109,7 +109,7 @@ public class WorldDirector extends BasicDirector
         // TODO: get rid of the "Connecting..." that stays behind the picker
         AvatarPickerPanel.show(_wctx, avatars, function giftSelected (avatar :Avatar) :void {
             log.info("Avatar selected, accepting gift", "name", avatar.name);
-            _wsvc.acceptAndProceed(avatar.catalogId, _wctx.resultListener(finish));
+            _wsvc.acceptAndProceed(avatar.catalogId, _wctx.confirmListener(finish));
         });
     }
 
@@ -127,8 +127,10 @@ public class WorldDirector extends BasicDirector
             _wctx.getClient().addClientObserver(waiter);
             return;
         }
-        function selectGift (avatars :TypedArray) :void {
-            selectAvatar(avatars, _wctx.getSceneDirector().moveTo);
+        function selectGift (avatars :TypedArray, homeSceneId :int) :void {
+            selectAvatar(avatars, function () :void {
+                _wctx.getSceneDirector().moveTo(homeSceneId);
+            });
         }
         _wsvc.getHomeId(ownerType, ownerId, new WorldService_HomeResultListenerAdapter(
             _wctx.getSceneDirector().moveTo, selectGift,
