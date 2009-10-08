@@ -46,8 +46,9 @@ public class StandardLayout extends WebLayout
         // take care of header elements
         _header.setVisible(true);
         int logoWidth = 126;
+        int naviLeft = Math.max(MIN_CLIENT_WIDTH, Window.getClientWidth() - CONTENT_WIDTH);
         RootPanel.get(PAGE).setWidgetPosition(_header.getLogo(), 0, 0);
-        RootPanel.get(PAGE).setWidgetPosition(_header.getNaviPanel(), clientWidth, 0);
+        RootPanel.get(PAGE).setWidgetPosition(_header.getNaviPanel(), naviLeft, 0);
         RootPanel.get(PAGE).setWidgetPosition(_header.getStatusPanel(), logoWidth, 0);
 
         // turn on resizer
