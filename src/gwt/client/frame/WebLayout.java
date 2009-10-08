@@ -23,9 +23,11 @@ import client.ui.MsoyUI;
 import client.util.FlashClients;
 
 /**
- * The standard GWT layout, for use when we've got the whole browser to ourselves.
+ * The standard three section layout: client, header and content. The header is further divided
+ * into logo, status and navigation, each of which are positioned indiviually. For use when we've
+ * got the whole browser to ourselves.
  */
-public class StandardLayout extends Layout
+public abstract class WebLayout extends Layout
 {
     @Override // from Layout
     public boolean hasContent ()
@@ -188,51 +190,10 @@ public class StandardLayout extends Layout
         }
     }
 
-    protected void positionElements ()
-    {
-        if (_content != null && _content == _iframe) {
-            // content takes up whole page (client should not be visible)
-            _content.setWidth("100%");
-            _content.setHeight("100%");
-            RootPanel.get(PAGE).setWidgetPosition(_content, 0, 0);
-
-            _header.setVisible(false);
-            setWindowResizerEnabled(false);
-            return;
-        }
-
-        if (_content != null) {
-            _content.setWidth(CONTENT_WIDTH + "px");
-            _content.setHeight((Window.getClientHeight() - NAVI_HEIGHT) + "px");
-            RootPanel.get(PAGE).setWidgetPosition(_content, 0, NAVI_HEIGHT);
-
-            _iframe.setWidth(CONTENT_WIDTH + "px");
-            _iframe.setHeight((Window.getClientHeight() - HEADER_HEIGHT) + "px");
-        }
-
-        Widget client = _client != null ? _client : _noclient;
-        if (client != null) {
-            if (_content != null) {
-                int width = Math.max(Window.getClientWidth() - CONTENT_WIDTH, MIN_CLIENT_WIDTH);
-                client.setWidth(width + "px");
-                RootPanel.get(PAGE).setWidgetPosition(client, CONTENT_WIDTH, NAVI_HEIGHT);
-            } else {
-                client.setWidth("100%");
-                RootPanel.get(PAGE).setWidgetPosition(client, 0, NAVI_HEIGHT);
-            }
-            client.setHeight((Window.getClientHeight() - NAVI_HEIGHT) + "px");
-        }
-
-        // take care of header elements
-        _header.setVisible(true);
-        int logoWidth = 126;
-        RootPanel.get(PAGE).setWidgetPosition(_header.getLogo(), 0, 0);
-        RootPanel.get(PAGE).setWidgetPosition(_header.getNaviPanel(), logoWidth, 0);
-        RootPanel.get(PAGE).setWidgetPosition(_header.getStatusPanel(), CONTENT_WIDTH, 0);
-
-        // turn on resizer
-        setWindowResizerEnabled(true);
-    }
+    /**
+     * Positions all of the page contents, called after anything changes.
+     */
+    protected abstract void positionElements ();
 
     protected Widget _iframe,  _content, _client, _noclient;
 
