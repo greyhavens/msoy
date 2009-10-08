@@ -101,6 +101,19 @@ public class WorldDirector extends BasicDirector
     }
 
     /**
+     * Fire up the selection UI with the given array of avatars and call the callback
+     * when the user makes their choice, passing the chosen avatar.
+     */
+    public function selectAvatar (avatars :Array, finish :Function) :void
+    {
+        // TODO: get rid of the "Connecting..." that stays behind the picker
+        AvatarPickerPanel.show(_wctx, avatars, function giftSelected (avatar :Avatar) :void {
+            log.info("Avatar selected, accepting gift", "name", avatar.name);
+            _wsvc.acceptAndProceed(avatar.catalogId, _wctx.resultListener(finish));
+        });
+    }
+
+    /**
      * Request to go to the home of the specified entity.
      */
     protected function goToHome (ownerType :int, ownerId :int) :void
@@ -114,14 +127,8 @@ public class WorldDirector extends BasicDirector
             _wctx.getClient().addClientObserver(waiter);
             return;
         }
-        function giftSelected (avatar :Avatar) :void {
-            log.info("Avatar selected, accepting gift", "name", avatar.name);
-            _wsvc.acceptAndProceed(avatar.catalogId,
-                _wctx.resultListener(_wctx.getSceneDirector().moveTo));
-        }
         function selectGift (avatars :TypedArray) :void {
-            // TODO: get rid of the "Connecting..." that stays behind the picker
-            AvatarPickerPanel.show(_wctx, avatars, giftSelected);
+            selectAvatar(avatars, _wctx.getSceneDirector().moveTo);
         }
         _wsvc.getHomeId(ownerType, ownerId, new WorldService_HomeResultListenerAdapter(
             _wctx.getSceneDirector().moveTo, selectGift,
