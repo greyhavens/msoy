@@ -5,7 +5,6 @@ package com.threerings.msoy.world.server;
 
 import java.util.List;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -56,8 +55,8 @@ import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.world.client.WorldService.HomeResultListener;
 
+import com.threerings.msoy.group.server.ThemeLogic;
 import com.threerings.msoy.group.server.persist.GroupRepository;
-import com.threerings.msoy.group.server.persist.ThemeAvatarLineupRecord;
 import com.threerings.msoy.group.server.persist.ThemeRepository;
 import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.item.data.all.Avatar;
@@ -67,7 +66,6 @@ import com.threerings.msoy.item.server.ItemLogic;
 import com.threerings.msoy.item.server.ItemManager;
 import com.threerings.msoy.item.server.persist.AvatarRecord;
 import com.threerings.msoy.item.server.persist.AvatarRepository;
-import com.threerings.msoy.item.server.persist.CatalogRecord;
 import com.threerings.msoy.item.server.persist.ItemRecord;
 
 import static com.threerings.msoy.Log.log;
@@ -375,14 +373,7 @@ public class WorldManager
         }
 
         // they have not recieved their gift, instruct the client to show picker
-        List<CatalogRecord> catalogRecords = repo.loadCatalog(Lists.transform(
-            _themeRepo.loadAvatarLineup(themeId), ThemeAvatarLineupRecord.GET_CATALOG_ID));
-
-        return Lists.transform(catalogRecords, new Function<CatalogRecord, Avatar>() {
-            public Avatar apply (CatalogRecord catRec) {
-                return (Avatar)(catRec.item.toItem());
-            }
-        });
+        return _themeLogic.loadLineup(themeId);
     }
 
     /**
@@ -606,10 +597,11 @@ public class WorldManager
     }
 
     // dependencies
+    @Inject protected @MainInvoker Invoker _invoker;
     @Inject protected BodyManager _bodyMan;
     @Inject protected GroupRepository _groupRepo;
-    @Inject protected @MainInvoker Invoker _invoker;
     @Inject protected ItemLogic _itemLogic;
+    @Inject protected ThemeLogic _themeLogic;
     @Inject protected ItemManager _itemMan;
     @Inject protected MemberLocator _locator;
     @Inject protected MemberLogic _memberLogic;
