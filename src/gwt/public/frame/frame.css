@@ -28,10 +28,11 @@
 }
 
 .frameHeaderNavi .NaviButton {
+  font-size: 12px;
+  background-color: #b7cddb;
   height: 20px;
-  width: 71px;
-  margin: 20px 7px 0 3px;
-  padding: 6px 0 4px 0;
+  margin: 24px 8px 0 0;
+  padding: 6px 12px 4px;
   text-align: center;
   color: black;
 }
@@ -156,7 +157,7 @@
 }
 
 .pageTitle {
-  background: #000000 url(/images/header/titlebar.png) no-repeat bottom left;
+  background: transparent url(/images/header/titlebar.png) repeat-x bottom left;
   width: 700px;
 }
 
@@ -164,7 +165,7 @@
   font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
   font-size: 24px;
   font-weight: bold;
-  height: 34px;
+  height: 28px;
   color: white;
   white-space: nowrap;
   max-width: 300px;
@@ -192,8 +193,7 @@
 }
 
 .pageTitle .Close {
-  padding-bottom: 12px;
-  padding-left: 5px;
+  padding-left: 8px;
 }
 
 /** Some adjustments when we're running in a framed layout. */

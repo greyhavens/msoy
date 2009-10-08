@@ -43,7 +43,7 @@ public class StandardTitleBar extends TitleBar
         _titleLabel.setStyleName("Title");
 
         HorizontalPanel panel = new HorizontalPanel();
-        panel.add(WidgetUtil.makeShim(10, 1));
+        panel.add(WidgetUtil.makeShim(3, 1));
         Widget back = MsoyUI.createImageButton("backButton", new ClickHandler() {
             public void onClick (ClickEvent event) {
                 History.back();

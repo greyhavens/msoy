@@ -325,7 +325,9 @@ ChatInput {
   themeColor: #3db8eb;
   fontFamily: "Arial";
   fontSize: 12;
-  borderStyle: "none";
+  borderStyle: "solid";
+  borderThickness: 1px;
+  borderColor: #000000;
   prompt: Embed(source="../media/skins/controlbar/typetochat.png");
 }
 
