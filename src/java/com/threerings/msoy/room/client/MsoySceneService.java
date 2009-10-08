@@ -7,16 +7,24 @@ import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.whirled.client.SceneService;
 import com.threerings.whirled.client.SceneService.SceneMoveListener;
+import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.room.data.MsoyLocation;
+import com.threerings.msoy.world.client.WorldService;
 
 /**
  * Extends the {@link SceneService} with a scene traversal mechanism needed by Whirled.
  */
 public interface MsoySceneService extends InvocationService
 {
-
     public static interface MsoySceneMoveListener extends SceneMoveListener
     {
+        /**
+         * Indicates that the client should display an avatar select UI for the player,
+         * call {@link WorldService#acceptAndProceed} when it's done and then finally retry
+         * this move.
+         */
+        public void selectGift (Avatar[] avatars);
+
         /**
          * Indicates that the client must start up the given AVRG and let it take over,
          * informing it what scene it was we tried to enter.

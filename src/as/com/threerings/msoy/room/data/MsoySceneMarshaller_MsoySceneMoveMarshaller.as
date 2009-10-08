@@ -30,6 +30,9 @@ public class MsoySceneMarshaller_MsoySceneMoveMarshaller
     /** The method id used to dispatch <code>moveToBeHandledByAVRG</code> responses. */
     public static const MOVE_TO_BE_HANDLED_BY_AVRG :int = 5;
 
+    /** The method id used to dispatch <code>selectGift</code> responses. */
+    public static const SELECT_GIFT :int = 6;
+
     // from InvocationMarshaller_ListenerMarshaller
     override public function dispatchResponse (methodId :int, args :Array) :void
     {
@@ -57,6 +60,11 @@ public class MsoySceneMarshaller_MsoySceneMoveMarshaller
         case MOVE_TO_BE_HANDLED_BY_AVRG:
             (listener as MsoySceneService_MsoySceneMoveListener).moveToBeHandledByAVRG(
                 (args[0] as int), (args[1] as int));
+            return;
+
+        case SELECT_GIFT:
+            (listener as MsoySceneService_MsoySceneMoveListener).selectGift(
+                (args[0] as TypedArray /* of class com.threerings.msoy.item.data.all.Avatar */));
             return;
 
         default:

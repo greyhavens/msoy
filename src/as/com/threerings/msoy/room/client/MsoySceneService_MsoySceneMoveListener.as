@@ -28,5 +28,8 @@ public interface MsoySceneService_MsoySceneMoveListener
 
     // from Java MsoySceneService_MsoySceneMoveListener
     function moveToBeHandledByAVRG (arg1 :int, arg2 :int) :void
+
+    // from Java MsoySceneService_MsoySceneMoveListener
+    function selectGift (arg1 :TypedArray /* of class com.threerings.msoy.item.data.all.Avatar */) :void
 }
 }

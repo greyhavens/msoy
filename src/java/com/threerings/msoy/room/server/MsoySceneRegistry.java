@@ -48,6 +48,7 @@ import com.threerings.msoy.peer.data.HostedRoom;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 
 import com.threerings.msoy.group.data.all.Theme;
+import com.threerings.msoy.group.server.ThemeLogic;
 import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.group.server.persist.ThemeAvatarUseRecord;
@@ -328,6 +329,7 @@ public class MsoySceneRegistry extends SpotSceneRegistry
     {
         void finish ();
         void puntToGame (int gameId);
+        void selectGift (Avatar[] avatars);
     }
 
     protected class MsoyPeerSceneMoveHandler extends PeerSceneMoveHandler
@@ -384,6 +386,9 @@ public class MsoySceneRegistry extends SpotSceneRegistry
                 }
                 public void puntToGame (int gameId) {
                     _msoyListener.moveToBeHandledByAVRG(gameId, scene.getId());
+                }
+                public void selectGift (Avatar[] avatars) {
+                    _msoyListener.selectGift(avatars);
                 }
             }));
         }
@@ -511,16 +516,16 @@ public class MsoySceneRegistry extends SpotSceneRegistry
                     (_candidateAvatarId == 0 ||
                      !avaRepo.isThemeStamped(_themeId, _candidateAvatarId))) {
                 // see if the player has any existing acceptable avatars in their inventory
-                _avatars = avaRepo.findItems(_memberId, null, _themeId);
+                List<AvatarRecord> ownedAvatars = avaRepo.findItems(_memberId, null, _themeId);
 
-                if (_avatars.size() > 0) {
-                    // if so, pick a random one (for now?)
-                    _candidateAvatarId = _avatars.get(RandomUtil.getInt(_avatars.size())).itemId;
+                if (ownedAvatars.size() > 0) {
+                    // if so, pick a random one
+                    int rndIx = RandomUtil.getInt(ownedAvatars.size());
+                    _candidateAvatarId = ownedAvatars.get(rndIx).itemId;
+
                 } else {
-                    // otherwise, this is where we fetch the avatar lineup from the theme
-                    // and fire up the selection UI -- but we're not doing that at the
-                    // moment, so just default to the ghost
-                    _candidateAvatarId = 0;
+                    // otherwise, fire up the selection UI
+                    _lineup = _themeLogic.loadLineup(_themeId);
                 }
             }
         }
@@ -547,6 +552,12 @@ public class MsoySceneRegistry extends SpotSceneRegistry
                 }
             } finally {
                 _user.commitTransaction();
+            }
+
+            // if there's a lineup, instruct the client to show the selection UI and exit
+            if (_lineup != null) {
+                _listener.selectGift(_lineup.toArray(new Avatar[_lineup.size()]));
+                return;
             }
 
             // if we're not switching avatars, we're done
@@ -593,7 +604,7 @@ public class MsoySceneRegistry extends SpotSceneRegistry
         // members that mainly communicate from invokePersist() to handleSuccess()
         protected int _candidateAvatarId;
         protected List<AvatarRecord> _quicklist;
-        protected List<AvatarRecord> _avatars;
+        protected List<Avatar> _lineup;
         protected Theme _theme;
 
         // for finishOrPunt()
@@ -607,6 +618,7 @@ public class MsoySceneRegistry extends SpotSceneRegistry
     @Inject protected MemberRepository _memberRepo;
     @Inject protected MemberLocator _locator;
     @Inject protected ItemLogic _itemLogic;
+    @Inject protected ThemeLogic _themeLogic;
     @Inject protected MsoyEventLogger _eventLog;
     @Inject protected MsoyPeerManager _peerMan;
     @Inject protected PetManager _petMan;
@@ -618,9 +630,10 @@ public class MsoySceneRegistry extends SpotSceneRegistry
     protected static class MsoySceneMoveAdapter extends SceneMoveAdapter
         implements MsoySceneMoveListener
     {
-        @Override
-        public void moveToBeHandledByAVRG (int gameId, int sceneId)
-        {
+        public void moveToBeHandledByAVRG (int gameId, int sceneId) {
+            // noop
+        }
+        public void selectGift (Avatar[] avatars) {
             // noop
         }
     }

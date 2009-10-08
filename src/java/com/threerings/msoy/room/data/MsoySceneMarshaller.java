@@ -4,6 +4,7 @@
 package com.threerings.msoy.room.data;
 
 import com.threerings.crowd.data.PlaceConfig;
+import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.room.client.MsoySceneService;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.data.InvocationMarshaller;
@@ -92,6 +93,19 @@ public class MsoySceneMarshaller extends InvocationMarshaller
                                new Object[] { Integer.valueOf(arg1), Integer.valueOf(arg2) }, transport));
         }
 
+        /** The method id used to dispatch {@link #selectGift}
+         * responses. */
+        public static final int SELECT_GIFT = 6;
+
+        // from interface MsoySceneMoveMarshaller
+        public void selectGift (Avatar[] arg1)
+        {
+            _invId = null;
+            omgr.postEvent(new InvocationResponseEvent(
+                               callerOid, requestId, SELECT_GIFT,
+                               new Object[] { arg1 }, transport));
+        }
+
         @Override // from InvocationMarshaller
         public void dispatchResponse (int methodId, Object[] args)
         {
@@ -119,6 +133,11 @@ public class MsoySceneMarshaller extends InvocationMarshaller
             case MOVE_TO_BE_HANDLED_BY_AVRG:
                 ((MsoySceneMoveListener)listener).moveToBeHandledByAVRG(
                     ((Integer)args[0]).intValue(), ((Integer)args[1]).intValue());
+                return;
+
+            case SELECT_GIFT:
+                ((MsoySceneMoveListener)listener).selectGift(
+                    (Avatar[])args[0]);
                 return;
 
             default:

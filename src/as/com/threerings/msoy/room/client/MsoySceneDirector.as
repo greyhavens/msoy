@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.room.client {
 
+import com.threerings.io.TypedArray;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.ClientEvent;
 import com.threerings.presents.dobj.MessageAdapter;
@@ -20,6 +21,7 @@ import com.threerings.whirled.client.persist.SceneRepository;
 import com.threerings.msoy.client.NoPlaceView;
 import com.threerings.msoy.client.UberClient;
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.world.client.WorldContext;
@@ -191,7 +193,18 @@ public class MsoySceneDirector extends SceneDirector
         // currently playing that Whirled's AVRG. We fire that game up, and we do
         // not complete the current move (i.e. we are left in limbo) until the AVRG
         // issues another explicit move order.
-        
+    }
+
+    // from interface MsoySceneService_MsoySceneMoveListener
+    public function selectGift (lineup :TypedArray) :void
+    {
+        // TODO: we have to ignore the parameter sent to the function here, because
+        // acceptAndProceed() currently looks up and passes back the home scene id,
+        // which I think we should change.
+        _worldctx.getWorldDirector().selectAvatar(lineup, function retryMove (ignored :int) :void {
+            // use _pendingData to retry the previous move
+            sendMoveRequest();
+        });
     }
 
     // documentation inherited
