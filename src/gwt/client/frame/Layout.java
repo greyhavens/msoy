@@ -38,7 +38,7 @@ public abstract class Layout
         } else if (isInnerFrame) {
             layout = new FramedLayout();
         } else {
-            layout = new OldStandardLayout();
+            layout = new StandardLayout();
         }
         layout.init(header, onGoHome);
         return layout;
