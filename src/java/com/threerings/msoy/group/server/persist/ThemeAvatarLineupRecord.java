@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.group.server.persist;
 
+import com.google.common.base.Function;
 import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.annotation.Entity;
@@ -27,6 +28,14 @@ public class ThemeAvatarLineupRecord extends PersistentRecord
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
     public static final int SCHEMA_VERSION = 1;
+
+    /** Provides the {@link #catalogId} of a record. */
+    public static final Function<ThemeAvatarLineupRecord, Integer> GET_CATALOG_ID =
+        new Function<ThemeAvatarLineupRecord, Integer>() {
+            public Integer apply (ThemeAvatarLineupRecord record) {
+                return record.catalogId;
+            }
+    };
 
     /** The groupId of the theme for which we're enumerating avatars. */
     @Id

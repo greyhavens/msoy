@@ -375,13 +375,10 @@ public class WorldManager
         }
 
         // they have not recieved their gift, instruct the client to show picker
-        return Lists.transform(repo.loadCatalog(Lists.transform(
-            _themeRepo.loadAvatarLineup(themeId),
-            new Function<ThemeAvatarLineupRecord, Integer>() {
-            public Integer apply (ThemeAvatarLineupRecord lineupRec) {
-                return lineupRec.catalogId;
-            }
-        })), new Function<CatalogRecord, Avatar>() {
+        List<CatalogRecord> catalogRecords = repo.loadCatalog(Lists.transform(
+            _themeRepo.loadAvatarLineup(themeId), ThemeAvatarLineupRecord.GET_CATALOG_ID));
+
+        return Lists.transform(catalogRecords, new Function<CatalogRecord, Avatar>() {
             public Avatar apply (CatalogRecord catRec) {
                 return (Avatar)(catRec.item.toItem());
             }
