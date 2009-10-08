@@ -10,11 +10,11 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.SessionData;
@@ -39,15 +39,14 @@ public class FrameHeader
 {
     public FrameHeader (ClickHandler onLogoClick)
     {
-        _naviPanel = new SmartTable("frameHeader", 0, 0);
-
-        _naviPanel.setWidth("100%");
-
         _logo = MsoyUI.createActionImage(DEFAULT_LOGO_URL, onLogoClick);
-        FlowPanel logoHolder = MsoyUI.createFlowPanel("Logo", _logo);
-        _naviPanel.setWidget(0, 0, logoHolder);
+        _logoContainer = MsoyUI.createSimplePanel(_logo, "frameHeaderLogo");
 
-        int col = 1;
+        _statusContainer = MsoyUI.createSimplePanel(null, "frameHeaderStatus");
+
+        _naviPanel = new SmartTable("frameHeaderNavi", 0, 0);
+
+        int col = 0;
         addButton(col++, Pages.ME, _cmsgs.menuMe(), _images.me(), _images.ome(), _images.sme());
         // TODO: remove the tab images
         addButton(col++, Pages.STUFF, _cmsgs.menuStuff(), _images.stuff(), _images.ostuff(),
@@ -61,8 +60,6 @@ public class FrameHeader
         addButton(col++, Pages.SHOP, _cmsgs.menuShop(), _images.shop(), _images.oshop(),
                   _images.sshop());
 
-        _naviPanel.setWidget(0, _statusCol = col, _statusContainer, 1, "Right");
-
         // listen for session state changes
         Session.addObserver(this);
     }
@@ -73,14 +70,32 @@ public class FrameHeader
     public void setVisible (boolean vis)
     {
         _naviPanel.setVisible(vis);
+        _statusContainer.setVisible(vis);
+        _logoContainer.setVisible(vis);
     }
 
     /**
-     * Returns our underlying table holding all the frame components.
+     * Returns our top-navigation panel (tabs).
      */
-    public SmartTable expose ()
+    public Widget getNaviPanel ()
     {
         return _naviPanel;
+    }
+
+    /**
+     * Returns our status panel.
+     */
+    public Widget getStatusPanel ()
+    {
+        return _statusContainer;
+    }
+
+    /**
+     * Returns our logo.
+     */
+    public Widget getLogo ()
+    {
+        return _logoContainer;
     }
 
     /**
@@ -102,20 +117,12 @@ public class FrameHeader
     // from Session.Observer
     public void didLogon (SessionData data)
     {
-        _naviPanel.getFlexCellFormatter().setHorizontalAlignment(
-            0, _statusCol, HasAlignment.ALIGN_RIGHT);
-        _naviPanel.getFlexCellFormatter().setVerticalAlignment(
-            0, _statusCol, HasAlignment.ALIGN_TOP);
         _statusContainer.setWidget(_status);
     }
 
     // from Session.Observer
     public void didLogoff ()
     {
-        _naviPanel.getFlexCellFormatter().setHorizontalAlignment(
-            0, _statusCol, HasAlignment.ALIGN_CENTER);
-        _naviPanel.getFlexCellFormatter().setVerticalAlignment(
-            0, _statusCol, HasAlignment.ALIGN_TOP);
         _statusContainer.setWidget(_logonPanel);
     }
 
@@ -177,7 +184,8 @@ public class FrameHeader
     }
 
     protected SmartTable _naviPanel;
-    protected SimplePanel _statusContainer = new SimplePanel();
+    protected SimplePanel _statusContainer;
+    protected SimplePanel _logoContainer;
     protected StatusPanel _status = new StatusPanel();
     protected SmartTable _logonPanel = makeLogonPanel();
     protected int _statusCol;

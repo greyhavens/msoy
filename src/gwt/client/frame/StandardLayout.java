@@ -129,7 +129,9 @@ public class StandardLayout extends Layout
         super.init(header, onGoHome);
         RootPanel.get().addStyleName("standardPage");
         _header.setVisible(false);
-        RootPanel.get(PAGE).add(_header.expose());
+        RootPanel.get(PAGE).add(_header.getLogo());
+        RootPanel.get(PAGE).add(_header.getNaviPanel());
+        RootPanel.get(PAGE).add(_header.getStatusPanel());
     }
 
     protected void doAddNoClientIcon ()
@@ -188,8 +190,7 @@ public class StandardLayout extends Layout
 
     protected void positionElements ()
     {
-        boolean showHeader = _content == null || _content != _iframe;
-        if (!showHeader) {
+        if (_content != null && _content == _iframe) {
             // content takes up whole page (client should not be visible)
             _content.setWidth("100%");
             _content.setHeight("100%");
@@ -222,7 +223,14 @@ public class StandardLayout extends Layout
             client.setHeight((Window.getClientHeight() - NAVI_HEIGHT) + "px");
         }
 
+        // take care of header elements
         _header.setVisible(true);
+        int logoWidth = 126;
+        RootPanel.get(PAGE).setWidgetPosition(_header.getLogo(), 0, 0);
+        RootPanel.get(PAGE).setWidgetPosition(_header.getNaviPanel(), logoWidth, 0);
+        RootPanel.get(PAGE).setWidgetPosition(_header.getStatusPanel(), CONTENT_WIDTH, 0);
+
+        // turn on resizer
         setWindowResizerEnabled(true);
     }
 

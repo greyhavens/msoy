@@ -17,17 +17,17 @@
    HEADER
 -------------------------------------*/
 
-.frameHeader {
+.frameHeaderLogo {
+    width: 126px;
+}
+
+.frameHeaderNavi, .frameHeaderStatus {
   color: #000000;
   background: white;
   height: 50px;
 }
 
-.frameHeader .Logo {
-    width: 126px;
-}
-
-.frameHeader .NaviButton {
+.frameHeaderNavi .NaviButton {
   height: 20px;
   width: 71px;
   margin: 20px 7px 0 3px;
@@ -36,21 +36,16 @@
   color: black;
 }
 
-.frameHeader .NaviButtonSelected {
+.frameHeaderNavi .NaviButtonSelected {
   background-color: #5eaadb;
   color: white;
 }
 
-.frameHeader .NaviButton .actionLabel {
+.frameHeaderNavi .NaviButton .actionLabel {
   text-decoration: none;
 }
 
-.frameHeader .Right {
-  width: 100%;
-  vertical-align: bottom;
-}
-
-.frameHeader .Button {
+.frameHeaderStatus .Button {
   font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
   font-size: 24px;
   font-weight: bold;
@@ -60,18 +55,18 @@
   color: white;
 }
 
-.frameHeader .LogonButton {
+.frameHeaderStatus .LogonButton {
   background: url(/images/header/logon_button.png) no-repeat bottom;
   width: 129px;
 }
 
-.frameHeader .SignupButton {
+.frameHeaderStatus .SignupButton {
   background: url(/images/header/signup_button.png) no-repeat bottom;
   width: 155px;
 }
 
-.frameHeader .LogonButton-up-hovering, .frameHeader .LogonButton-down-hovering,
-.frameHeader .SignupButton-up-hovering, .frameHeader .SignupButton-down-hovering {
+.frameHeaderStatus .LogonButton-up-hovering, .frameHeaderStatus .LogonButton-down-hovering,
+.frameHeaderStatus .SignupButton-up-hovering, .frameHeaderStatus .SignupButton-down-hovering {
   padding-top: 10px;
   cursor: pointer;
 }
@@ -83,24 +78,6 @@
 .statusPanel {
   padding-right: 40px;
   height: 100%;
-}
-
-.statusPanel .InviteFriends {
-  font-family: Helvetica, sans-serif;
-  font-size: 12px;
-  font-weight: bold;
-  text-align: center;
-  background: #cacaca;
-}
-
-.statusPanel .InviteFriends .html-face {
-  padding: 3px 5px 1px;
-}
-
-.statusPanel .InviteFriends-up-hovering,
-.statusPanel .InviteFriends-down-hovering {
-  cursor: pointer;
-  background: #E07612;
 }
 
 .statusPanel .TopBoxLinks {
