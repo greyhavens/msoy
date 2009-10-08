@@ -540,8 +540,9 @@ public class MsoySceneRegistry extends SpotSceneRegistry
                         Lists.transform(_quicklist, new ItemRecord.ToItem<Avatar>())));
                 }
 
-                // if there's a new theme definition, push that out too
-                if (_theme != null) {
+                // if the theme really needs changing, do it
+                if ((_theme != null && !_theme.equals(_user.theme)) ||
+                    (_theme == null && _user.theme != null)) {
                     _user.setTheme(_theme);
                 }
             } finally {
