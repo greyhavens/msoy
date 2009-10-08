@@ -132,8 +132,8 @@ public abstract class WebLayout extends Layout
         RootPanel.get().addStyleName("standardPage");
         _header.setVisible(false);
         RootPanel.get(PAGE).add(_header.getLogo());
-        RootPanel.get(PAGE).add(_header.getNaviPanel());
         RootPanel.get(PAGE).add(_header.getStatusPanel());
+        RootPanel.get(PAGE).add(_header.getNaviPanel());
     }
 
     protected void doAddNoClientIcon ()
