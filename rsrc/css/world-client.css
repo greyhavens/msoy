@@ -96,55 +96,14 @@ GameOverPanel {
   fontFamily: Arial;
   fontWeight: bold;
   closeSkin: Embed(source="../media/skins/tab/close_small.png");
-}
-
-.unselectedRoomTab, .attentionRoomTab {
-  color: #8BA1AF;
-}
-
-.unselectedTellTab, .attentionTellTab {
-  color: #B2A696;
-}
-
-.unselectedGroupTab, .attentionGroupTab {
-  color: #8E969D;
+  color: #8bbcdc;
 }
 
 .selectedRoomTab, .selectedTellTab, .selectedGroupTab {
-  color: white;
+  color: #0c61a8;
   fontFamily: Arial;
   fontWeight: bold;
   closeSkin: Embed(source="../media/skins/tab/close_small.png");
-}
-
-.unselectedRoomTab, .attentionRoomTab {
-  buttonSkin: Embed(source="../media/skins/tab/tab_room_unselected.png",
-    scaleGridTop="3", scaleGridBottom="17", scaleGridLeft="3", scaleGridRight="17");
-}
-
-.selectedRoomTab {
-  buttonSkin: Embed(source="../media/skins/tab/tab_room_selected.png",
-    scaleGridTop="3", scaleGridBottom="17", scaleGridLeft="3", scaleGridRight="17");
-}
-
-.unselectedTellTab, .attentionTellTab {
-  buttonSkin: Embed(source="../media/skins/tab/tab_tell_unselected.png",
-    scaleGridTop="3", scaleGridBottom="17", scaleGridLeft="3", scaleGridRight="17");
-}
-
-.selectedTellTab {
-  buttonSkin: Embed(source="../media/skins/tab/tab_tell_selected.png",
-    scaleGridTop="3", scaleGridBottom="17", scaleGridLeft="3", scaleGridRight="17");
-}
-
-.unselectedGroupTab, .attentionGroupTab {
-  buttonSkin: Embed(source="../media/skins/tab/tab_group_unselected.png",
-    scaleGridTop="3", scaleGridBottom="17", scaleGridLeft="3", scaleGridRight="17");
-}
-
-.selectedGroupTab {
-  buttonSkin: Embed(source="../media/skins/tab/tab_group_selected.png",
-    scaleGridTop="3", scaleGridBottom="17", scaleGridLeft="3", scaleGridRight="17");
 }
 
 .controlBar, .headerBar { 
@@ -386,6 +345,7 @@ ChatInput {
 
 .headerLink {
   fontSize: 10px;
+  color: white;
 }
 
 .editButton {

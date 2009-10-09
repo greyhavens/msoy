@@ -39,7 +39,14 @@ import com.threerings.msoy.world.client.WorldController;
 
 public class HeaderBar extends HBox
 {
-    public static const HEIGHT :int = 17;
+    public static function getHeight (client :MsoyClient) :int
+    {
+        if (client.getEmbedding().hasThickHeader()) {
+            return 24;
+        } else {
+            return 17;
+        }
+    }
 
     public function HeaderBar (ctx :MsoyContext, topPanel :TopPanel, chatTabs :ChatTabBar)
     {
@@ -51,7 +58,7 @@ public class HeaderBar extends HBox
         horizontalScrollPolicy = ScrollPolicy.OFF;
 
         percentWidth = 100;
-        height = HEIGHT;
+        height = getHeight(ctx.getMsoyClient());
 
         // listen for loc name/ownership changes if/when we're added to the stage
         addEventListener(Event.ADDED_TO_STAGE, function () :void {
@@ -83,12 +90,6 @@ public class HeaderBar extends HBox
     {
         super.createChildren();
 
-        _goBtn = new CommandButton();
-        _goBtn.toolTip = Msgs.GENERAL.get("i.go");
-        _goBtn.setCommand(MsoyController.POP_GO_MENU, [ _goBtn, false ]);
-        _goBtn.styleName = "headerBarBack";
-        addChild(_goBtn);
-
         _loc = new Label();
         _loc.styleName = "locationName";
         _loc.width = WHIRLED_LOGO_WIDTH;
@@ -117,11 +118,6 @@ public class HeaderBar extends HBox
         _closeBox = new HBox();
         _closeBox.styleName = "headerCloseBox";
         addChild(_closeBox);
-
-        var heightBtn :CommandButton = new CommandButton(null, WorldController.TOGGLE_HEIGHT);
-        heightBtn.toolTip = Msgs.GENERAL.get("i.height");
-        heightBtn.styleName = "heightButton";
-        _closeBox.addChild(heightBtn);
 
         var closeBtn :CommandButton = new CommandButton(null, MsoyController.CLOSE_PLACE_VIEW);
         closeBtn.styleName = "closeButton";
@@ -251,7 +247,6 @@ public class HeaderBar extends HBox
     protected function handleUIStateChange (event :Event) :void
     {
         var state :UIState = _ctx.getUIState();
-        _goBtn.visible = state.inRoom || !state.embedded;
         _tabsContainer.visible = state.showChat;
     }
 
@@ -264,8 +259,6 @@ public class HeaderBar extends HBox
     protected var _spacer :HBox;
 
     protected var _visibles :Dictionary = new Dictionary(true);
-
-    protected var _goBtn :CommandButton;
 
     protected var _closeBox :HBox;
 

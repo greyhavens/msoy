@@ -28,6 +28,9 @@ public final class Embedding extends Enum
     /** Embedded elsewhere, no gwt interface. */
     public static const OTHER :Embedding = new Embedding("OTHER");
 
+    /** Embedded on facebook for rooms app, gwt is available but there are other limits. */
+    public static const FACEBOOK_ROOMS :Embedding = new Embedding("FACEBOOK_ROOMS");
+
     finishedEnumerating(Embedding);
 
     /**
@@ -58,6 +61,11 @@ public final class Embedding extends Enum
     public function hasGWT () :Boolean
     {
         return this != OTHER;
+    }
+
+    public function hasThickHeader () :Boolean
+    {
+        return this == NONE || this == FACEBOOK_ROOMS;
     }
 
     /**

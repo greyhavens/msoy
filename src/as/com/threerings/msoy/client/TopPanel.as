@@ -271,7 +271,7 @@ public class TopPanel extends Canvas
 
     protected function getHeaderBarHeight () :int
     {
-        return _showChrome ? HeaderBar.HEIGHT : 0;
+        return _showChrome ? HeaderBar.getHeight(_ctx.getMsoyClient()) : 0;
     }
 
     protected function layoutPanels () :void
@@ -283,7 +283,7 @@ public class TopPanel extends Canvas
         app.height = _ctx.getHeight();
 
         _controlBar.setStyle("bottom", _showChrome ? 0 : -ControlBar.HEIGHT);
-        _headerBar.setStyle("top", _showChrome ? 0 : -HeaderBar.HEIGHT);
+        _headerBar.setStyle("top", _showChrome ? 0 : -HeaderBar.getHeight(_ctx.getMsoyClient()));
 
         if (_leftPanel != null) {
             _leftPanel.setStyle("top", getHeaderBarHeight());

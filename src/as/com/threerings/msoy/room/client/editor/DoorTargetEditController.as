@@ -86,7 +86,7 @@ public class DoorTargetEditController
         _ui = makeUI();
         _ui.open();
         _ui.x = 5;
-        _ui.y = HeaderBar.HEIGHT + 5;
+        _ui.y = HeaderBar.getHeight(ctx.getMsoyClient()) + 5;
 
         _doorScene = _ctx.getSceneDirector().getScene().getId();
         _doorId = doorData.itemId;

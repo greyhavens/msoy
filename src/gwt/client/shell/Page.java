@@ -288,7 +288,9 @@ public abstract class Page
      */
     public void setContent (String title, Widget content)
     {
-        CShell.frame.setTitle(title == null ? getDefaultTitle(getPageId().getTab()) : title);
+        if (title != null) {
+            CShell.frame.setTitle(title);
+        }
 
         RootPanel contentDiv = RootPanel.get();
         if (_content != null) {

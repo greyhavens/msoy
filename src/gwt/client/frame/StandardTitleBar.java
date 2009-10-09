@@ -21,7 +21,6 @@ import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.Tabs;
 
 import client.shell.DynamicLookup;
-import client.shell.Page;
 import client.ui.MsoyUI;
 
 /**
@@ -39,18 +38,18 @@ public class StandardTitleBar extends TitleBar
         }
 
         _tab = tab;
-        _titleLabel = new Label(Page.getDefaultTitle(tab));
+        _titleLabel = new Label("");
         _titleLabel.setStyleName("Title");
 
         HorizontalPanel panel = new HorizontalPanel();
-        panel.add(WidgetUtil.makeShim(3, 1));
+        panel.add(WidgetUtil.makeShim(7, 1));
         Widget back = MsoyUI.createImageButton("BackButton", new ClickHandler() {
             public void onClick (ClickEvent event) {
                 History.back();
             }
         });
         panel.add(back);
-        panel.add(WidgetUtil.makeShim(12, 1));
+        panel.add(WidgetUtil.makeShim(7, 1));
         panel.setCellVerticalAlignment(back, HorizontalPanel.ALIGN_MIDDLE);
         panel.add(_titleLabel);
 

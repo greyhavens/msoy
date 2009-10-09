@@ -285,19 +285,16 @@ public class MsoyController extends Controller
     /**
      * Handles the POP_GO_MENU command.
      */
-    public function handlePopGoMenu (trigger :CommandButton, fromBottom :Boolean = true) :void
+    public function handlePopGoMenu (trigger :CommandButton) :void
     {
         var menuData :Array = [];
         // add standard items
         populateGoMenu(menuData);
-        if (!fromBottom) {
-            // on the header, add the back link
-            menuData.push({ label: Msgs.GENERAL.get("b.back"), callback: handleMoveBack,
-                enabled: canMoveBack() });
-            menuData.reverse(); // and reverse everything
-        }
+        // on the header, add the back link
+        menuData.push({ label: Msgs.GENERAL.get("b.back"), callback: handleMoveBack,
+            enabled: canMoveBack() });
 
-        popControlBarMenu(menuData, trigger, fromBottom);
+        popControlBarMenu(menuData, trigger);
     }
 
     /**
@@ -630,20 +627,15 @@ public class MsoyController extends Controller
     /**
      * Convenience to pop a menu triggered from a button on the control bar.
      */
-    protected function popControlBarMenu (
-        menuData :Array, trigger :Button, fromBottom :Boolean = true) :void
+    protected function popControlBarMenu (menuData :Array, trigger :Button) :void
     {
         var menu :CommandMenu = CommandMenu.createMenu(menuData, _topPanel);
         menu.setBounds(_mctx.getTopPanel().getMainAreaBounds());
         menu.setTriggerButton(trigger);
         var r :Rectangle = trigger.getBounds(trigger.stage);
         var y :int;
-        if (fromBottom) {
-            y = Math.min(r.top, _mctx.getControlBar().localToGlobal(new Point()).y);
-        } else {
-            y = Math.max(r.bottom, _mctx.getTopPanel().getHeaderBar().localToGlobal(new Point()).y);
-        }
-        menu.popUpAt(r.left, y, fromBottom);
+        y = Math.min(r.top, _mctx.getControlBar().localToGlobal(new Point()).y);
+        menu.popUpAt(r.left, y, true);
     }
 
     /**

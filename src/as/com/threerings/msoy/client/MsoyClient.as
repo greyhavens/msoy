@@ -407,6 +407,8 @@ public /*abstract*/ class MsoyClient extends CrowdClient
                 var clientMode :String = ExternalInterface.call("getClientMode");
                 if (clientMode == "FB_GAMES") {
                     _embedding = Embedding.FACEBOOK;
+                } else if (clientMode == "FB_ROOMS") {
+                    _embedding = Embedding.FACEBOOK_ROOMS;
                 } else {
                     _embedding = Embedding.NONE;
                 }

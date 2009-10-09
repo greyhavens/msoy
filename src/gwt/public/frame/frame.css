@@ -18,28 +18,37 @@
 -------------------------------------*/
 
 .frameHeaderLogo {
-    width: 126px;
+    width: 135px;
 }
 
 .frameHeaderNavi, .frameHeaderStatus {
   color: #000000;
-  background: white;
   height: 50px;
 }
 
+.frameHeaderNavi {
+  background: transparent;
+}
+
+.frameHeaderStatus {
+  background: white;
+}
+
 .frameHeaderNavi .NaviButton {
-  font-size: 12px;
+  font-size: 14px;
+  font-weight: bold;
   background: url(/images/header/navi_button_bg.png) no-repeat;
   height: 20px;
-  margin: 30px 8px 0 0;
-  padding-top: 6px;
+  margin: 26px 5px 0 0;
+  padding-top: 3px;
   text-align: center;
-  color: white;
-  width: 50px;
+  color: #0D496D;
+  width: 71px;
 }
 
 .frameHeaderNavi .NaviButtonSelected {
   background: url(/images/header/navi_button_selected_bg.png) no-repeat;
+  color: white;
 }
 
 .frameHeaderNavi .NaviButton .actionLabel {
@@ -77,14 +86,13 @@
 -------------------------------------*/
 
 .statusPanel {
-  padding-right: 40px;
+  padding-right: 5px;
   height: 100%;
 }
 
 .statusPanel .TopBoxLinks {
   height: 27px;
-  background: url(/images/header/status_bg_middle.png) repeat-x top;
-  color: #a8cbe8;
+  color: #0064b8;
   font-size: 12px;
   padding: 4px 5px 0px;
 }
@@ -163,34 +171,33 @@
 
 .pageTitle .Title {
   font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
-  font-size: 14px;
+  font-size: 20px;
   font-weight: bold;
-  height: 17px;
-  color: white;
+  height: 24px;
+  color: #4287ac;
   white-space: nowrap;
   max-width: 300px;
   overflow: hidden;
-  opacity: 0.6; /* Firefox and Safari */
-  filter: alpha(opacity=60); /* IE */
 }
 
 .pageTitle .BackButton {
   background-image: url(/images/ui/back.png);
-  width: 29px;
-  height: 17px;
+  width: 22px;
+  height: 18px;
 }
 
 .pageTitle .SubNavi {
-  font-size: 10px;
+  font-size: 12px;
   color: white;
   white-space: nowrap;
   vertical-align: bottom;
   text-align: right;
-  padding-right: 5px;
+  padding: 0 5px 3px 0;
 }
 
 .pageTitle .SubNavi a {
   color: white;
+  text-decoration: none;
 }
 
 .pageTitle .SubNavi img, .pageTitle .SubNavi div {

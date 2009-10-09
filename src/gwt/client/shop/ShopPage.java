@@ -81,7 +81,7 @@ public class ShopPage extends Page
         } else {
             byte type = getItemType(args, 0, Item.NOT_A_TYPE);
             if (type == Item.NOT_A_TYPE) {
-                setContent(_msgs.catalogTitle(), new ShopPanel());
+                setContent(null, new ShopPanel());
             } else {
                 if (!_catalog.isAttached()) {
                     setContent(_catalog);

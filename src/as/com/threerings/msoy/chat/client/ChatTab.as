@@ -56,10 +56,10 @@ public class ChatTab extends HBox
 
         // close button is not added until displayCloseBox(true) is called
         _closeButton = new Canvas();
-        _closeButton.width = 10;
-        _closeButton.height = 10;
+        _closeButton.width = 13;
+        _closeButton.height = 13;
 
-        height = HeaderBar.HEIGHT;
+        height = HeaderBar.getHeight(ctx.getMsoyClient());
 
         setStyle("paddingRight", PADDING);
         setStyle("paddingLeft", PADDING);
@@ -224,7 +224,7 @@ public class ChatTab extends HBox
     protected function updateShine (uw :Number, uh :Number) :void
     {
         if (_shine.parent == this) {
-            _shine.setActualSize(uw, uh / 2);
+            _shine.setActualSize(uw, uh);
         }
     }
 
@@ -306,6 +306,7 @@ class Shine extends Canvas
     {
         _shine = new ATTENTION_SHINE() as DisplayObject;
         _naturalWidth = _shine.width;
+        _naturalHeight = _shine.height;
         _shine.y = 0.5;
         _shine.x = 0;
         rawChildren.addChild(_shine);
@@ -320,6 +321,7 @@ class Shine extends Canvas
         height = uh;
         _shine.scaleX = (uw - 3) / _naturalWidth;
         _shine.x = uw / 2;
+        _shine.scaleY = (uh - 5) / _naturalHeight;
     }
 
     [Embed(source="../../../../../../../rsrc/media/skins/tab/tab_attention.swf#attention")]
@@ -327,4 +329,5 @@ class Shine extends Canvas
 
     protected var _shine :DisplayObject;
     protected var _naturalWidth :Number;
+    protected var _naturalHeight :Number;
 }

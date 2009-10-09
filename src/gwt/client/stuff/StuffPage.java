@@ -138,8 +138,7 @@ public class StuffPage extends Page
             memberId = args.get(1, CShell.getMemberId());
             StuffPanel panel = getStuffPanel(memberId, type);
             panel.setArgs(args.get(2, -1), args.get(3, ""));
-            String title = _msgs.stuffTitleMain();
-            setContent(title, panel);
+            setContent(null, panel);
         }
 
         // add a sub-navi link for our active item type

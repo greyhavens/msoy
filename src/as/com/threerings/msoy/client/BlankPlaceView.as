@@ -27,7 +27,7 @@ public class BlankPlaceView extends Canvas
         // during TopPanel's constructor, so we can't ask it how big it is
         var swidth :int = UberClient.getApplication().stage.stageWidth;
         var sheight :int = UberClient.getApplication().stage.stageHeight;
-        var hheight :int = HeaderBar.HEIGHT;
+        var hheight :int = HeaderBar.getHeight(ctx.getMsoyClient());
 //        if (ctx.getMsoyClient().isEmbedded()) {
 //            hheight += EmbedHeader.HEIGHT;
 //        }

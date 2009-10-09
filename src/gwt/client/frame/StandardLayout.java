@@ -1,5 +1,7 @@
 package client.frame;
 
+import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -45,11 +47,14 @@ public class StandardLayout extends WebLayout
 
         // take care of header elements
         _header.setVisible(true);
-        int logoWidth = 126;
         int naviLeft = Math.max(MIN_CLIENT_WIDTH, Window.getClientWidth() - CONTENT_WIDTH);
-        RootPanel.get(PAGE).setWidgetPosition(_header.getLogo(), 0, 0);
+        RootPanel.get(PAGE).setWidgetPosition(_header.getLogo(), 27, 7);
         RootPanel.get(PAGE).setWidgetPosition(_header.getNaviPanel(), naviLeft, 0);
-        RootPanel.get(PAGE).setWidgetPosition(_header.getStatusPanel(), logoWidth, 0);
+
+        Element status = _header.getStatusPanel().getElement();
+        DOM.setStyleAttribute(status, "position", "absolute");
+        DOM.setStyleAttribute(status, "right", "0px");
+        DOM.setStyleAttribute(status, "top", "0px");
 
         // turn on resizer
         setWindowResizerEnabled(true);

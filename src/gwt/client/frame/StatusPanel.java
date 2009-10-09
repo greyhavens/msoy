@@ -48,6 +48,7 @@ import client.util.events.StatusChangeListener;
 
 /**
  * Displays basic player status (name, flow count) and handles logging on and logging off.
+ * TODO: this can possibly be a simpler widget since it no longer uses pieced background graphics
  */
 public class StatusPanel extends SmartTable
     implements Session.Observer
@@ -143,10 +144,10 @@ public class StatusPanel extends SmartTable
         getFlexCellFormatter().setRowSpan(0, 1, 2);
 
         SmartTable lbox = new SmartTable(0, 0);
-        lbox.setWidget(0, 0, new Image("/images/header/status_bg_left.png"));
+        lbox.setText(0, 0, "");
         lbox.setWidget(0, 1, links, 1, "TopBoxLinks");
         lbox.getFlexCellFormatter().setVerticalAlignment(0, 1, HasAlignment.ALIGN_TOP);
-        lbox.setWidget(0, 2, new Image("/images/header/status_bg_right.png"));
+        lbox.setText(0, 2, "");
         setWidget(0, 2, lbox);
         getFlexCellFormatter().setVerticalAlignment(0, 2, HasAlignment.ALIGN_TOP);
         getFlexCellFormatter().setHorizontalAlignment(0, 2, HasAlignment.ALIGN_CENTER);

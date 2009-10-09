@@ -20,7 +20,7 @@ public abstract class Layout
     public static final int NAVI_HEIGHT = 50 /* header */;
 
     /** The height of our frame navigation header and page title bar. */
-    public static final int HEADER_HEIGHT = NAVI_HEIGHT + 17 /* title bar */;
+    public static final int HEADER_HEIGHT = NAVI_HEIGHT + 24 /* title bar */;
 
     /** The maximum width of our content UI, the remainder is used by the world client. */
     public static final int CONTENT_WIDTH = 700;
