@@ -29,17 +29,17 @@
 
 .frameHeaderNavi .NaviButton {
   font-size: 12px;
-  background-color: #b7cddb;
+  background: url(/images/header/navi_button_bg.png) no-repeat;
   height: 20px;
-  margin: 24px 8px 0 0;
-  padding: 6px 12px 4px;
+  margin: 30px 8px 0 0;
+  padding-top: 6px;
   text-align: center;
-  color: black;
+  color: white;
+  width: 50px;
 }
 
 .frameHeaderNavi .NaviButtonSelected {
-  background-color: #5eaadb;
-  color: white;
+  background: url(/images/header/navi_button_selected_bg.png) no-repeat;
 }
 
 .frameHeaderNavi .NaviButton .actionLabel {
@@ -157,15 +157,15 @@
 }
 
 .pageTitle {
-  background: transparent url(/images/header/titlebar.png) repeat-x bottom left;
+  background: transparent url(/images/header/titlebar.png) repeat-x top left;
   width: 700px;
 }
 
 .pageTitle .Title {
   font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
-  font-size: 24px;
+  font-size: 14px;
   font-weight: bold;
-  height: 28px;
+  height: 17px;
   color: white;
   white-space: nowrap;
   max-width: 300px;
@@ -174,13 +174,19 @@
   filter: alpha(opacity=60); /* IE */
 }
 
+.pageTitle .BackButton {
+  background-image: url(/images/ui/back.png);
+  width: 29px;
+  height: 17px;
+}
+
 .pageTitle .SubNavi {
-  font-size: 12px;
+  font-size: 10px;
   color: white;
   white-space: nowrap;
   vertical-align: bottom;
   text-align: right;
-  padding: 0px 5px 5px 0px;
+  padding-right: 5px;
 }
 
 .pageTitle .SubNavi a {

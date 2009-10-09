@@ -93,12 +93,6 @@ img, embed, applet, object {
   white-space: nowrap;
 }
 
-.backButton {
-  background-image: url(/images/ui/back.png);
-  width: 29px;
-  height: 22px;
-}
-
 .backButton-up-hovering {
   background-image: url(/images/ui/back_over.png);
 }
