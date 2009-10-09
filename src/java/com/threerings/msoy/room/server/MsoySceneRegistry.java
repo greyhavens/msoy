@@ -11,6 +11,7 @@ import com.google.inject.Singleton;
 
 import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.util.Invoker;
+import com.samskivert.util.ObjectUtil;
 import com.samskivert.util.RandomUtil;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.Tuple;
@@ -546,8 +547,7 @@ public class MsoySceneRegistry extends SpotSceneRegistry
                 }
 
                 // if the theme really needs changing, do it
-                if ((_theme != null && !_theme.equals(_user.theme)) ||
-                    (_theme == null && _user.theme != null)) {
+                if (!ObjectUtil.equals(_theme, _user.theme)) {
                     _user.setTheme(_theme);
                 }
             } finally {
