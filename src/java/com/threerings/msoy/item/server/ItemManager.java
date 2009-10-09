@@ -19,6 +19,7 @@ import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationCodes;
+import com.threerings.presents.dobj.DSet;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
 import com.threerings.presents.util.ConfirmAdapter;
@@ -222,8 +223,6 @@ public class ItemManager
 
     /**
      * Called when an avatar item is updated.
-     *
-     * TODO: Make MOG aware.
      */
     public void avatarUpdatedOnPeer (MemberObject memObj, Avatar avatar)
     {
@@ -238,7 +237,8 @@ public class ItemManager
             }
 
             // probably we'll update it in their cache, too.
-            if (memObj.avatarCache.contains(avatar)) {
+            DSet<Avatar> avatarCache = memObj.avatarCache;
+            if (avatarCache != null && avatarCache.contains(avatar)) {
                 if (remove) {
                     memObj.removeFromAvatarCache(avatar.getKey());
                 } else {
@@ -248,23 +248,21 @@ public class ItemManager
             } else if (remove) {
                 // nothing, they don't have it in their cache and we want to remove it anyway
 
-            } else if (false) {
-                // TODO: we may need to test if the avatar is MOG-marked here, but this data
-                // TODO: is currently not available in the Avatar object as passed in above.
-
-            } else if (memObj.avatarCache.size() < MemberObject.AVATAR_CACHE_SIZE) {
-                memObj.addToAvatarCache(avatar);
-
-            } else {
-                Avatar oldest = avatar;
-                for (Avatar av : memObj.avatarCache) {
-                    if (oldest.lastTouched > av.lastTouched) {
-                        oldest = av;
-                    }
-                }
-                if (oldest != avatar) {
-                    memObj.removeFromAvatarCache(oldest.getKey());
+            } else if (avatarCache != null) {
+                if (avatarCache.size() < MemberObject.AVATAR_CACHE_SIZE) {
                     memObj.addToAvatarCache(avatar);
+
+                } else {
+                    Avatar oldest = avatar;
+                    for (Avatar av : avatarCache) {
+                        if (oldest.lastTouched > av.lastTouched) {
+                            oldest = av;
+                        }
+                    }
+                    if (oldest != avatar) {
+                        memObj.removeFromAvatarCache(oldest.getKey());
+                        memObj.addToAvatarCache(avatar);
+                    }
                 }
             }
         } finally {
