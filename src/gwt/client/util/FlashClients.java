@@ -411,8 +411,8 @@ public class FlashClients
     /** Whether or not the client is in chromeless mode. */
     protected static boolean _chromeless;
 
-    protected static final int CLIENT_HEIGHT = 545;
-    protected static final int HEADER_HEIGHT = 20;
+    protected static final int CLIENT_HEIGHT = 552;
+    protected static final int HEADER_HEIGHT = 24;
     protected static final int CTRLBAR_HEIGHT = 28;
 
     protected static final String HOOD_SKIN_URL = "/media/static/hood_pastoral.swf";
