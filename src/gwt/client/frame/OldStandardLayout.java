@@ -3,6 +3,8 @@
 
 package client.frame;
 
+import client.util.FlashClients;
+
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -38,7 +40,8 @@ public class OldStandardLayout extends WebLayout
         Widget client = _client != null ? _client : _noclient;
         if (client != null) {
             if (_content != null) {
-                int width = Math.max(Window.getClientWidth() - CONTENT_WIDTH, MIN_CLIENT_WIDTH);
+                int width = Math.max(
+                    Window.getClientWidth() - CONTENT_WIDTH, FlashClients.MIN_WORLD_WIDTH);
                 client.setWidth(width + "px");
                 RootPanel.get(PAGE).setWidgetPosition(client, CONTENT_WIDTH, NAVI_HEIGHT);
             } else {

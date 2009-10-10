@@ -1,5 +1,7 @@
 package client.frame;
 
+import client.util.FlashClients;
+
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Window;
@@ -28,7 +30,7 @@ public class StandardLayout extends WebLayout
 
         int clientWidth = Window.getClientWidth();
         clientWidth -= (_content == null) ? 0 : CONTENT_WIDTH;
-        clientWidth = Math.max(clientWidth, MIN_CLIENT_WIDTH);
+        clientWidth = Math.max(clientWidth, FlashClients.MIN_WORLD_WIDTH);
 
         if (_content != null) {
             _content.setWidth(CONTENT_WIDTH + "px");
@@ -47,7 +49,8 @@ public class StandardLayout extends WebLayout
 
         // take care of header elements
         _header.setVisible(true);
-        int naviLeft = Math.max(MIN_CLIENT_WIDTH, Window.getClientWidth() - CONTENT_WIDTH);
+        int naviLeft = Math.max(
+            FlashClients.MIN_WORLD_WIDTH, Window.getClientWidth() - CONTENT_WIDTH);
         RootPanel.get(PAGE).setWidgetPosition(_header.getLogo(), 27, 7);
         RootPanel.get(PAGE).setWidgetPosition(_header.getNaviPanel(), naviLeft, 0);
 

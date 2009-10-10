@@ -161,8 +161,7 @@ public class ItemMediaUploader extends SmartTable
     public void openImageEditor (MediaDesc desc, boolean takeSnapshot)
     {
         int popWidth = _itemEditor.getOffsetWidth() - 8;
-        int popHeight = Math.max(FlashClients.getClientHeight(),
-            Math.min(_itemEditor.getOffsetHeight() - 8, Window.getClientHeight() - 8));
+        int popHeight = Math.min(_itemEditor.getOffsetHeight() - 8, Window.getClientHeight() - 8);
         String url = (desc == null) ? null : desc.getMediaPath();
         int maxWidth = -1;
         int maxHeight = -1;

@@ -164,7 +164,8 @@ public abstract class WebLayout extends Layout
 
     protected Panel makeClientPanel ()
     {
-        Panel client = (Window.getClientHeight() < (NAVI_HEIGHT + FlashClients.getClientHeight())) ?
+        int minHeight = FlashClients.MIN_WORLD_HEIGHT;
+        Panel client = (Window.getClientHeight() < (NAVI_HEIGHT + minHeight)) ?
             new ScrollPanel() : new SimplePanel();
         client.setHeight((Window.getClientHeight() - NAVI_HEIGHT) + "px");
         return client;
@@ -172,7 +173,8 @@ public abstract class WebLayout extends Layout
 
     protected String computeClientWidth ()
     {
-        return Math.max(Window.getClientWidth() - CONTENT_WIDTH, MIN_CLIENT_WIDTH) + "px";
+        return Math.max(
+            Window.getClientWidth() - CONTENT_WIDTH, FlashClients.MIN_WORLD_WIDTH) + "px";
     }
 
     protected void setWindowResizerEnabled (boolean enabled)
@@ -205,6 +207,4 @@ public abstract class WebLayout extends Layout
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
     protected static final FrameImages _images = (FrameImages)GWT.create(FrameImages.class);
-
-    protected static final int MIN_CLIENT_WIDTH = 300;
 }

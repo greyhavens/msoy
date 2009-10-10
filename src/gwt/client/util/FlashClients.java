@@ -22,17 +22,8 @@ import client.shell.CShell;
  */
 public class FlashClients
 {
-    /**
-     * Returns the target height of the client (does not account for full-height mode).
-     */
-    public static int getClientHeight ()
-    {
-        int height = CLIENT_HEIGHT;
-        if (_chromeless) {
-            height -= (HEADER_HEIGHT + CTRLBAR_HEIGHT);
-        }
-        return height;
-    }
+    public static final int MIN_WORLD_WIDTH = 300;
+    public static final int MIN_WORLD_HEIGHT = 300;
 
     /**
      * Configures whether or not the client is in chromeless mode.
@@ -133,7 +124,7 @@ public class FlashClients
         }
 
         FlashObject obj = new FlashObject("asclient", "/clients/" +
-            DeploymentConfig.version + "/world-client.swf", "100%", getClientCSSHeight(),
+            DeploymentConfig.version + "/world-client.swf", "100%", "100%",
             flashVars);
 
         if (_chromeless) {
@@ -155,7 +146,7 @@ public class FlashClients
             WidgetUtil.embedFlashObject(
                 container, WidgetUtil.createFlashObjectDefinition(
                     "asclient", "/clients/" + DeploymentConfig.version + "/game-client.swf",
-                    "100%", getClientCSSHeight(), flashVars));
+                    "100%", "100%", flashVars));
         }
     }
 
@@ -198,25 +189,6 @@ public class FlashClients
         String definition = CShell.frame.checkFlashVersion(800, 600);
         return definition != null ? definition :
             WidgetUtil.createDefinition(new FlashObject("game", media, 800, 600, null));
-    }
-
-    /**
-     * Toggles the height 100% state of the client.
-     */
-    public static void toggleClientFullHeight ()
-    {
-        setClientFullHeight(!_clientFullHeight);
-    }
-
-    /**
-     * Sets the client to 100% height or not.
-     */
-    public static void setClientFullHeight (boolean fullHeight)
-    {
-        if (_clientFullHeight != fullHeight) {
-            _clientFullHeight = fullHeight;
-            setClientHeightNative(findClient(), getClientCSSHeight());
-        }
     }
 
     /**
@@ -316,14 +288,6 @@ public class FlashClients
     }
 
     /**
-     * Returns the height to use for the world/game client.
-     */
-    protected static String getClientCSSHeight ()
-    {
-        return _clientFullHeight ? "100%" : (getClientHeight() + "px");
-    }
-
-    /**
      * TEMP: Changes the height of the client already embedded in the page.
      */
     protected static native void setClientHeightNative (Element client, String height) /*-{
@@ -404,9 +368,6 @@ public class FlashClients
         }
         return false;
     }-*/;
-
-    /** TEMP: Whether or not the client is in full-height mode. */
-    protected static boolean _clientFullHeight;
 
     /** Whether or not the client is in chromeless mode. */
     protected static boolean _chromeless;

@@ -10,8 +10,6 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import client.util.FlashClients;
-
 /**
  * A slimmed down vertical layout for use when Whirled is embedded in an iframe on another
  * site. *cough* *cough* Facebook *cough*.
@@ -36,7 +34,6 @@ public class FramedLayout extends Layout
         // if we have a client, adjust its height...
         if (_client.getWidget() != null) {
             _client.setHeight("300px");
-            FlashClients.setClientFullHeight(true);
         }
 
         _content.setWidget(content);
@@ -62,7 +59,7 @@ public class FramedLayout extends Layout
         }
         _content.setWidget(null);
         if (_client.getWidget() != null) {
-            _client.setHeight(FlashClients.getClientHeight() + "px");
+            _client.setHeight("100%");
         }
     }
 
@@ -73,7 +70,6 @@ public class FramedLayout extends Layout
             public Panel get () {
                 closeClient();
                 _client.setHeight(null);
-                FlashClients.setClientFullHeight(false);
                 return _client;
             }
         };
@@ -85,7 +81,6 @@ public class FramedLayout extends Layout
         if (_client == null) {
             return false;
         }
-        FlashClients.setClientFullHeight(false);
         _client.setHeight(null);
         _client.setWidget(null);
         return true;
