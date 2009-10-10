@@ -204,6 +204,7 @@
 .pageTitle .SubNavi img, .pageTitle .SubNavi div {
   display: inline;
   vertical-align: bottom;
+  padding-bottom: 2px;
 }
 
 .pageTitle .Close {
