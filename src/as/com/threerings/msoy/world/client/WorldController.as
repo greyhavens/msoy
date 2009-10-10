@@ -187,9 +187,6 @@ public class WorldController extends MsoyController
     /** Command to complain about a member. */
     public static const COMPLAIN_MEMBER :String = "ComplainMember";
 
-    /** Command to toggle the client to full browser height. */
-    public static const TOGGLE_HEIGHT :String = "ToggleHeight";
-
     /** Command to invoke when the featured place was clicked. */
     public static const FEATURED_PLACE_CLICKED :String = "FeaturedPlaceClicked";
 
@@ -814,25 +811,6 @@ public class WorldController extends MsoyController
     {
         var svc :MemberService = _wctx.getClient().requireService(MemberService) as MemberService;
         svc.bootFromPlace(memberId, _wctx.confirmListener());
-    }
-
-    /**
-     * Handles the TOGGLE_HEIGHT command.
-     */
-    public function handleToggleHeight () :void
-    {
-        if (inGWTApp()) {
-            try {
-                if (ExternalInterface.available) {
-                    ExternalInterface.call("toggleClientHeight");
-                    return;
-                }
-            } catch (e :Error) {
-                log.warning("Unable to handleToggleHeight via Javascript", e);
-            }
-        } else {
-            log.warning("Can't access GWT to handleToggleHeight");
-        }
     }
 
     /**
