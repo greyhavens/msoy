@@ -186,7 +186,7 @@ public class ControlBar extends HBox
     protected function createControls () :void
     {
         _chatControl = new ChatControl(_ctx, Msgs.GENERAL.get("b.chat_send"));
-        _chatControl.chatInput.height = HEIGHT - 8;
+        _chatControl.chatInput.height = HEIGHT - 6;
         _chatControl.chatInput.maxChars = MsoyChatDirector.MAX_CHAT_LENGTH;
 
         chatOptsBtn = createButton("controlBarButtonChat", "i.channel");
