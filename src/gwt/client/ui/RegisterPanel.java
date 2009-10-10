@@ -15,6 +15,7 @@ import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Frame;
 import com.google.gwt.user.client.ui.HasAlignment;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -69,7 +70,9 @@ public class RegisterPanel extends FlowPanel
         regi.setWidget(0, 1, _newemail);
         regi.setText(1, 0, _cmsgs.regiRegPass(), 1, "Right");
         regi.setWidget(1, 1, _newpass);
-        regi.setText(2, 0, _cmsgs.regiRegBirth(), 1, "Right");
+        String ageTitle = useAgeNotBirthdate() ? _cmsgs.regiRegAge() : _cmsgs.regiRegBirth();
+        _birthday = useAgeNotBirthdate() ? new AgeDropdown() : new DateFields();
+        regi.setText(2, 0, ageTitle, 1, "Right");
         regi.setWidget(2, 1, _birthday);
         ButtonBase doCreate = MsoyUI.createButton(MsoyUI.SHORT_THIN, _cmsgs.regiRegGo(), null);
         regi.setWidget(3, 1, doCreate);
@@ -85,7 +88,7 @@ public class RegisterPanel extends FlowPanel
                     MsoyUI.errorNear(_cmsgs.regiFillAll(), _newemail);
                 } else if (StringUtil.isBlank(_newpass.getText().trim())) {
                     MsoyUI.errorNear(_cmsgs.regiFillAll(), _newpass);
-                } else if (!checkIsThirteen(_birthday.getDate())) {
+                } else if (!isThirteen()) {
                     MsoyUI.errorNear(_cmsgs.regiNotThirteen(), _birthday);
                 } else {
                     setStepTwo();
@@ -172,6 +175,14 @@ public class RegisterPanel extends FlowPanel
         // nada
     }
 
+    /**
+     * Return true to display a dropdown of ages or false for a day/month/year birthdate.
+     */
+    protected boolean useAgeNotBirthdate ()
+    {
+        return false;
+    }
+
     protected RegisterInfo createRegInfo ()
     {
         RegisterInfo info = new RegisterInfo();
@@ -179,7 +190,7 @@ public class RegisterPanel extends FlowPanel
         info.password = CShell.frame.md5hex(_newpass.getText().trim());
         // info.displayName = _name.getText().trim();
         info.displayName = "???";
-        info.birthday = _birthday.getDate();
+        info.birthday = getBirthday();
         info.info = new AccountInfo();
         // info.info.realName = _rname.getText().trim();
         info.info.realName = "";
@@ -193,8 +204,22 @@ public class RegisterPanel extends FlowPanel
         return info;
     }
 
-    protected static boolean checkIsThirteen (int[] birthday)
+    protected int[] getBirthday ()
     {
+        if (useAgeNotBirthdate()) {
+            return ((AgeDropdown)_birthday).getDate();
+        } else {
+            return ((DateFields)_birthday).getDate();
+        }
+    }
+
+    protected boolean isThirteen ()
+    {
+        if (useAgeNotBirthdate()) {
+            return ((AgeDropdown)_birthday).getAge() >= 13;
+        }
+
+        int[] birthday = getBirthday();
         String[] today = new Date().toString().split(" ");
         String thirteenYearsAgo = "";
         for (int ii = 0; ii < today.length; ii++) {
@@ -225,9 +250,38 @@ public class RegisterPanel extends FlowPanel
         return null;
     }
 
+    /**
+     * Dropdown of ages which produces a date in the same format as the DateFields class.
+     */
+    protected static class AgeDropdown extends FlowPanel
+    {
+        public AgeDropdown () {
+            setStyleName("ageDropdown");
+            int minAge = 13;
+            for (int ii = 0; ii < 100; ii++) {
+                _agelist.addItem("" + (minAge + ii));
+            }
+            add(_agelist);
+        }
+
+        /**
+         * Return January 1st in the estimated year that the person was born. Subtract their age
+         * from the current year, minus one so we are rounding older rather than younger.
+         */
+        public int[] getDate () {
+            int currentYear = DateUtil.getYear(new Date());
+            int year = currentYear - getAge() - 1;
+            return new int[] { year, 0, 1 };
+        }
+        public int getAge () {
+            return Integer.parseInt(_agelist.getItemText(_agelist.getSelectedIndex()));
+        }
+        protected ListBox _agelist = new ListBox();
+    }
+
     protected TextBox _newemail = MsoyUI.createTextBox("", MemberName.MAX_EMAIL_LENGTH, -1);
     protected PasswordTextBox _newpass = new PasswordTextBox();
-    protected DateFields _birthday = new DateFields();
+    protected Widget _birthday;
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
     protected static final WebUserServiceAsync _usersvc = GWT.create(WebUserService.class);
