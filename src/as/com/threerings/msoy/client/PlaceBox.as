@@ -189,7 +189,8 @@ public class PlaceBox extends LayeredContainer
 
         _mask.graphics.clear();
         _mask.graphics.beginFill(0xFFFFFF);
-        _mask.graphics.drawRect(_base.x, _base.y, w, h);
+        //_mask.graphics.drawRect(_base.x, _base.y, w, h);
+        _mask.graphics.drawRect(0, 0, this.width, this.height);
         _mask.graphics.endFill();
 
         // TODO: bubble chat can currently overflow a restricted placeview size.
