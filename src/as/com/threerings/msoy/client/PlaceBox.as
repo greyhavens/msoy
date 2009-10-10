@@ -17,6 +17,8 @@ import com.threerings.display.DisplayUtil;
 
 import com.threerings.crowd.client.PlaceView;
 import com.threerings.msoy.client.MsoyPlaceView;
+import com.threerings.msoy.room.client.RoomObjectView;
+import com.threerings.msoy.room.client.RoomMetrics;
 
 /**
  * A component that holds our place views and sets up a mask to ensure that the place view does not
@@ -123,11 +125,6 @@ public class PlaceBox extends LayeredContainer
     {
         super.setActualSize(width, height);
 
-        _mask.graphics.clear();
-        _mask.graphics.beginFill(0xFFFFFF);
-        _mask.graphics.drawRect(0, 0, width, height);
-        _mask.graphics.endFill();
-
         // any PlaceLayer layers get informed of the size change
         for (var ii :int = 0; ii < numChildren; ii ++) {
             var child :DisplayObject = unwrap(getChildAt(ii));
@@ -145,11 +142,7 @@ public class PlaceBox extends LayeredContainer
     {
         var w :Number = this.width;
         var h :Number = this.height;
-        if (_roomBounds == null) {
-            _base.x = 0;
-            _base.y = 0;
-
-        } else {
+        if (_roomBounds != null) {
             if (CLEAN_BOUNDS) {
                 var p :Point = DisplayUtil.fitRectInRect(_roomBounds, new Rectangle(0, 0, w, h));
                 _base.x = Math.max(0, p.x);
@@ -164,6 +157,25 @@ public class PlaceBox extends LayeredContainer
                 w = _roomBounds.width;
                 h = _roomBounds.height;
             }
+
+        } else if (_placeView is RoomObjectView) {
+            var metrics :RoomMetrics = RoomObjectView(_placeView).layout.metrics;
+            if (metrics.sceneWidth >= w) {
+                _base.x = 0;
+            } else {
+                _base.x = (w - metrics.sceneWidth) / 2;
+                w = metrics.sceneWidth;
+            }
+            if (metrics.sceneHeight >= h) {
+                _base.y = 0;
+            } else {
+                _base.y = (h - metrics.sceneHeight) / 2;
+                h = metrics.sceneHeight;
+            }
+
+        } else {
+            _base.x = 0;
+            _base.y = 0;
         }
 
         // now inform the place view of its new size
@@ -174,6 +186,11 @@ public class PlaceBox extends LayeredContainer
         } else if (_placeView != null) {
             Log.getLog(this).warning("PlaceView is not a PlaceLayer or an UIComponent.");
         }
+
+        _mask.graphics.clear();
+        _mask.graphics.beginFill(0xFFFFFF);
+        _mask.graphics.drawRect(_base.x, _base.y, w, h);
+        _mask.graphics.endFill();
 
         // TODO: bubble chat can currently overflow a restricted placeview size.
         // Fixing it was turning rabbit-holey, so I'm punting.
