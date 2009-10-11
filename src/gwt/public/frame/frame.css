@@ -100,22 +100,18 @@
 .statusPanel .TopBoxLinks .Links {
   white-space: nowrap;
 }
+
 .statusPanel .TopBoxLinks .Links div {
   display: inline;
 }
 
 .statusPanel .TopBoxLinks a {
-  color: #a8cbe8;
+  color: #0064b8;
 }
 
 .statusPanel .TopBoxLinks .Mail img {
   margin-right: 3px;
   display: inline;
-}
-
-.statusPanel .Name,
-.statusPanel .Name a {
-  color: #bddbf4;
 }
 
 .statusPanel .TopBoxLinks .Spacer {
