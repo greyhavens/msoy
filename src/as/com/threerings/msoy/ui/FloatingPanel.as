@@ -329,8 +329,8 @@ public class FloatingPanel extends TitleWindow
 
         var closeBtn :UIComponent = getCloseButton();
         closeBtn.buttonMode = true;
-        closeBtn.explicitWidth = 13;
-        closeBtn.explicitHeight = 14;
+        closeBtn.explicitWidth = 18;
+        closeBtn.explicitHeight = 18;
     }
 
     override protected function layoutChrome (unscaledWidth :Number, unscaledHeight :Number) :void
@@ -339,7 +339,7 @@ public class FloatingPanel extends TitleWindow
 
         var closeBtn :UIComponent = getCloseButton();
         closeBtn.x = unscaledWidth - closeBtn.width - 5;
-        closeBtn.y = 5;
+        closeBtn.y = 3;
     }
 
     /**
