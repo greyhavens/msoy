@@ -36,7 +36,7 @@ public class ChatTab extends HBox
     public static const TAB_CLICK :String = "tabClick";
 
     /** Event that gets fired when this tab's close box is clicked */
-    public static const TAB_CLOSE_CLICK :String = "tabCloseClick"
+    public static const TAB_CLOSE_CLICK :String = "tabCloseClick";
 
     public static const SELECTED :int = 1;
     public static const UNSELECTED :int = 2;
