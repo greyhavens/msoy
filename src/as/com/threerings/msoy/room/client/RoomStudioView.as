@@ -498,6 +498,11 @@ public class RoomStudioView extends RoomView
         }
     }
 
+    override protected function getMargin () :Number
+    {
+        return 0;
+    }
+
     protected var _sctx :StudioContext;
 
     protected var _sctrl :RoomStudioController;

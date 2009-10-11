@@ -721,17 +721,29 @@ public class RoomView extends Sprite
      */
     protected function relayout () :void
     {
-        var scale :Number = computeScale();
+        const preferredHeight :Number = 500;
+        const margin :Number = getMargin();
+        const availHeight :Number = _actualHeight - margin * 2;
+        const availWidth :Number = _actualWidth - margin * 2;
+        var scale :Number = Math.min(preferredHeight, availHeight) / _layout.metrics.sceneHeight;
         scaleY = scale;
         if (UberClient.isRegularClient() && Prefs.isAprilFoolsEnabled()) {
             scaleY *= -1;
         }
         scaleX = scale;
-        // TODO: What is this line of code actually doing? Can I omit in the
+        // TODO: What are these lines of code actually doing? Can I omit in the
         // avatar viewer mode?
         if (!UberClient.isFeaturedPlaceView()) {
             y = (_actualHeight - _layout.metrics.sceneHeight * scaleY) / 2;
+            x = margin + Math.max((availWidth - _layout.metrics.sceneWidth * scaleX) / 2, 0);
         }
+
+        // TODO: set up a room view mask, setting the width and height does not work
+        //width = _actualWidth - x * 2;
+        //height = _actualHeight - y * 2;
+
+        log.info("Laid out room view", "x", x, "y", y, "scale", scale, "width", width,
+            "height", height, "actualw", _actualWidth - x * 2, "actualh", _actualHeight - y * 2);
 
         configureScrollRect();
 
@@ -758,25 +770,6 @@ public class RoomView extends Sprite
     {
         locationUpdated(sprite);
         sprite.roomScaleUpdated();
-    }
-
-    /**
-     * Returns the scale at which to render our room view.
-     */
-    protected function computeScale () :Number
-    {
-        const maxScale :Number = _actualHeight / _layout.metrics.sceneHeight;
-        if (isNaN(_fullSizeActualWidth) || !_ctx.getMsoyClient().isMinimized()) {
-            _fullSizeActualWidth = _actualWidth;
-        }
-        const minScale :Number = _fullSizeActualWidth / _layout.metrics.sceneWidth;
-        if (!UberClient.isFeaturedPlaceView()) {
-            _canScale = maxScale > minScale;
-            if (_canScale) {
-                return minScale + (maxScale - minScale) * getZoom();
-            }
-        }
-        return maxScale;
     }
 
     protected function scrollView () :void
@@ -1034,6 +1027,15 @@ public class RoomView extends Sprite
     protected function removeFromEntityMap (sprite :MsoySprite) :void
     {
         _entities.remove(sprite.getItemIdent()); // could be a no-op
+    }
+
+    /**
+     * Gets the amount of whitespace to leave on the left in right of the room view.
+     */
+    protected function getMargin () :Number
+    {
+        // TODO: return 10 when the width/height assignment code can be fixed in relayout
+        return 0;
     }
 
     /** Our controller. */
