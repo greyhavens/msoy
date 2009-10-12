@@ -10,6 +10,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
+import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.gwt.ServiceException;
 
@@ -33,6 +34,19 @@ public interface CatalogService extends RemoteService
     {
         /** The particular set of listings requested. */
         public List<ListingCard> listings;
+
+        /** The theme, if any, constraining the returned listings. */
+        public GroupName theme;
+
+        public CatalogResult (List<ListingCard> items, GroupName theme)
+        {
+            this.listings = items;
+            this.theme = theme;
+        }
+
+        public CatalogResult ()
+        {
+        }
     }
 
     /** Provides results for {@link #loadFavorites}. */
@@ -75,7 +89,7 @@ public interface CatalogService extends RemoteService
     /**
      * Loads the featured items shown on the top-level catalog page.
      */
-    List<ListingCard> loadJumble (int offset, int rows)
+    CatalogResult loadJumble (int offset, int rows)
         throws ServiceException;
 
     /**

@@ -24,11 +24,13 @@ import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
+import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.item.gwt.CatalogQuery;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.shell.CShell;
 import client.shell.DynamicLookup;
+import client.shop.CatalogModels.Listings;
 import client.item.ShopUtil;
 import client.item.SideBar;
 import client.item.TagCloud;
@@ -95,6 +97,12 @@ public class CatalogPanel extends SmartTable
             }
             @Override protected String getEmptyMessage () {
                 String name = _dmsgs.xlate("itemType" + _query.itemType);
+                if (_model instanceof Listings) {
+                    GroupName theme = ((Listings) _model).theme;
+                    if (theme != null) {
+                        name = theme.toString() + " " + name;
+                    }
+                }
                 if (_query.tag != null) {
                     return _msgs.catalogNoTag(name, _query.tag);
                 } else if (_query.search != null) {

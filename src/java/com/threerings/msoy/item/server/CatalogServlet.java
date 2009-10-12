@@ -69,12 +69,20 @@ public class CatalogServlet extends MsoyServiceServlet
     implements CatalogService
 {
     // from interface CatalogService
-    public List<ListingCard> loadJumble (int offset, int rows)
+    public CatalogResult loadJumble (int offset, int rows)
         throws ServiceException
     {
-        List<ListingCard> items = _itemLogic.getJumbleSnapshot();
-        return Lists.newArrayList(items.subList(
-            Math.min(items.size(), offset), Math.min(items.size(), offset + rows)));
+        MemberRecord mrec = getAuthedUser();
+        if (mrec == null || mrec.themeGroupId == 0) {
+            List<ListingCard> items = _itemLogic.getJumbleSnapshot();
+            items = Lists.newArrayList(items.subList(
+                Math.min(items.size(), offset), Math.min(items.size(), offset + rows)));
+            return new CatalogResult(items, null);
+        }
+
+        return new CatalogResult(
+            _itemLogic.getThemedJumble(mrec.themeGroupId),
+            _groupRepo.loadGroupName(mrec.themeGroupId));
     }
 
     // from interface CatalogService
@@ -93,6 +101,7 @@ public class CatalogServlet extends MsoyServiceServlet
         // if the query does not explicitly request a theme, use the player's current theme (if any)
         if (query.themeGroupId == 0) {
             query.themeGroupId = (mrec != null) ? mrec.themeGroupId : 0;
+            result.theme = _groupRepo.loadGroupName(query.themeGroupId);
         }
 
         // pass the complexity buck off to the catalog logic

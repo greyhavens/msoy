@@ -13,6 +13,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.threerings.gwt.util.ChainedCallback;
 import com.threerings.gwt.util.DataModel;
 
+import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
@@ -21,6 +22,8 @@ import com.threerings.msoy.item.gwt.CatalogQuery;
 import com.threerings.msoy.item.gwt.CatalogService;
 import com.threerings.msoy.item.gwt.CatalogServiceAsync;
 import com.threerings.msoy.item.gwt.ListingCard;
+import com.threerings.msoy.item.gwt.CatalogService.CatalogResult;
+import com.threerings.msoy.item.gwt.CatalogService.FavoritesResult;
 
 import client.util.LazyDataModel;
 import client.util.InfoCallback;
@@ -39,9 +42,9 @@ public class CatalogModels
         public void doFetchRows (
             int start, int count, final AsyncCallback<List<ListingCard>> callback) {
             _catalogsvc.loadJumble(start, count,
-                new InfoCallback<List<ListingCard>>() {
-                    public void onSuccess (List<ListingCard> cards) {
-                        callback.onSuccess(cards);
+                new InfoCallback<CatalogResult>() {
+                    public void onSuccess (CatalogResult result) {
+                        callback.onSuccess(result.listings);
                     }
                 });
         }
@@ -53,6 +56,8 @@ public class CatalogModels
 
     public static class Listings implements DataModel<ListingCard>
     {
+        public GroupName theme;
+
         public Listings (CatalogQuery query) {
             _query = query;
         }
@@ -68,8 +73,9 @@ public class CatalogModels
         public void doFetchRows (
             int start, int count, final AsyncCallback<List<ListingCard>> callback) {
             _catalogsvc.loadCatalog(_query, start, count,
-                new InfoCallback<CatalogService.CatalogResult>() {
-                    public void onSuccess (CatalogService.CatalogResult data) {
+                new InfoCallback<CatalogResult>() {
+                    public void onSuccess (CatalogResult data) {
+                        Listings.this.theme = data.theme;
                         callback.onSuccess(data.listings);
                     }
                 });
@@ -95,8 +101,8 @@ public class CatalogModels
 
         protected void fetchData (AsyncCallback<List<ListingCard>> callback) {
             _catalogsvc.loadFavorites(_memberId, _type,
-                new ChainedCallback<CatalogService.FavoritesResult, List<ListingCard>>(callback) {
-                public void onSuccess (CatalogService.FavoritesResult result) {
+                new ChainedCallback<FavoritesResult, List<ListingCard>>(callback) {
+                public void onSuccess (FavoritesResult result) {
                     _noter = result.noter;
                     forwardSuccess(result.favorites);
                 }

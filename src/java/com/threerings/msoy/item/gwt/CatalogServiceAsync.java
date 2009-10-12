@@ -14,6 +14,7 @@ import com.threerings.msoy.group.gwt.BrandDetail;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.gwt.CatalogListing.DerivedItem;
+import com.threerings.msoy.item.gwt.CatalogService.CatalogResult;
 
 /**
  * The asynchronous (client-side) version of {@link CatalogService}.
@@ -23,7 +24,7 @@ public interface CatalogServiceAsync
     /**
      * The asynchronous version of {@link CatalogService#loadShopData}.
      */
-    void loadJumble (int offset, int rows, AsyncCallback<List<ListingCard>> callback);
+    void loadJumble (int offset, int rows, AsyncCallback<CatalogResult> callback);
 
     /**
      * The asynchronous version of {@link CatalogService#loadCatalog}.
