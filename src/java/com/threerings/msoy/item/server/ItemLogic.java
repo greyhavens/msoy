@@ -11,14 +11,20 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.google.common.base.Function;
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
+import com.google.common.collect.Ordering;
 import com.google.common.collect.SetMultimap;
+import com.google.common.collect.Sets;
+import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -26,6 +32,7 @@ import com.samskivert.depot.DuplicateKeyException;
 
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.IntMap;
+import com.samskivert.util.IntMaps;
 import com.samskivert.util.IntSet;
 import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
@@ -645,6 +652,22 @@ public class ItemLogic
     }
 
     /**
+     * Return, possibly calculating, a jumble relative the given theme. This jumble is not
+     * favourites-based, but rather goes by chronological stamping.
+     */
+    public List<ListingCard> getThemedJumble (int themeGroupId)
+    {
+        synchronized (_themedJumbles) {
+            ThemedJumble jumble = _themedJumbles.get(themeGroupId);
+            if (jumble == null || jumble.nextUpdate > System.currentTimeMillis()/1000) {
+                jumble = new ThemedJumble(buildThemedJumble(themeGroupId, 1000));
+                _themedJumbles.put(themeGroupId, jumble);
+            }
+            return jumble.listings;
+        }
+    }
+
+    /**
      * Resolves the supplied list of favorited items into properly initialized {@link ListingCard}
      * records.
      */
@@ -1152,6 +1175,71 @@ public class ItemLogic
         }
     }
 
+    protected class ThemeJumbleItem implements IsSerializable
+    {
+
+        ListingCard card;
+    }
+
+    protected List<ListingCard> buildThemedJumble (int themeId, int rows)
+    {
+        Set<Tuple<Byte, MogMarkRecord>> records = Sets.newTreeSet(new Ordering<Tuple<Byte, MogMarkRecord>>() {
+            public int compare (Tuple<Byte, MogMarkRecord> o1, Tuple<Byte, MogMarkRecord> o2) {
+                // the first elements should be the most recent, i.e. the greater dates
+                return o2.right.lastStamped.compareTo(o1.right.lastStamped);
+            }
+        });
+        // load theme stamp records for all item types and insert them into our ordered set
+        for (ItemRepository<ItemRecord> repo : _repos.values()) {
+            Byte type = repo.getItemType();
+            for (MogMarkRecord rec : repo.loadThemedCatalog(themeId, rows)) {
+                records.add(Tuple.newTuple(type, rec));
+            }
+        }
+
+        // now pull the first 'rows' items in chronological order
+        ListMultimap<Byte, MogMarkRecord> toLoad = ArrayListMultimap.create();
+        List<MogMarkRecord> toOutput = Lists.newArrayList();
+        for (Tuple<Byte, MogMarkRecord> tuple : records) {
+            // sort into item type buckets
+            toLoad.put(tuple.left, tuple.right);
+            if (toLoad.size() >= rows) {
+                break;
+            }
+            // remember the order in a list, for creating our final result
+            toOutput.add(tuple.right);
+        }
+
+        Map<MogMarkRecord, CatalogRecord> loadedRecords = Maps.newHashMap();
+        // resolve all the catalog records, bucket by bucket, store results in yet another map
+        for (byte itemType : toLoad.keys()) {
+            ItemRepository<ItemRecord> repo;
+            try {
+                repo = getRepository(itemType);
+                List<MogMarkRecord> stampRecs = toLoad.get(itemType);
+                List<CatalogRecord> catalogRecords = repo.loadCatalogByListedItem(
+                    Lists.transform(stampRecs, MogMarkRecord.TO_ITEM_ID));
+                for (int ii = 0; ii < stampRecs.size(); ii ++) {
+                    loadedRecords.put(stampRecs.get(ii), catalogRecords.get(ii));
+                }
+            } catch (ServiceException e) {
+                log.warning("Error resolving themed jumble items", e);
+                // just skip this item type
+            }
+        }
+
+        // iterate over the original sorted jumble, looking up and substituting catalog entries
+        List<ListingCard> result = Lists.newArrayList();
+        for (MogMarkRecord mRec : toOutput) {
+            CatalogRecord cRec = loadedRecords.get(mRec);
+            if (cRec != null) {
+                // should be always true unless we got a mystery error above
+                result.add(cRec.toListingCard());
+            }
+        }
+        return result;
+    }
+
     @SuppressWarnings("unchecked")
     protected void registerRepository (byte itemType, ItemRepository repo)
     {
@@ -1187,6 +1275,8 @@ public class ItemLogic
 
     /** Maps byte type ids to repository for all digital item types. */
     protected Map<Byte, ItemRepository<ItemRecord>> _repos = Maps.newHashMap();
+
+    protected IntMap<ThemedJumble> _themedJumbles = IntMaps.newHashIntMap();
 
     /** A current snapshot of items favorited by subscribers. */
     protected List<ListingCard> _jumble;
@@ -1229,6 +1319,19 @@ public class ItemLogic
     @Inject protected TrophySourceRepository _tsourceRepo;
     @Inject protected VideoRepository _videoRepo;
 
+    protected static class ThemedJumble {
+        public List<ListingCard> listings;
+        public int nextUpdate;
+
+        public ThemedJumble (List<ListingCard> listings) {
+            this.listings = listings;
+            this.nextUpdate = ((int)System.currentTimeMillis()/1000) + THEMED_JUMBLE_REFRESHED_PERIOD;
+        }
+    }
+
     // take a new snapshot every 10 minutes
     protected static final long JUMBLE_REFRESH_PERIOD = 1000L * 60 * 10;
+
+    protected static final int THEMED_JUMBLE_REFRESHED_PERIOD = 600;
+
 }
