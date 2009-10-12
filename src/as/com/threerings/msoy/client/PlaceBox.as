@@ -71,8 +71,10 @@ public class PlaceBox extends LayeredContainer
         setBaseLayer(disp);
         _placeView = view;
 
+        // TODO: why is this type-check here? surely when the place view changes it needs to be
+        // laid out regardless of type
         if (_placeView is MsoyPlaceView) {
-            MsoyPlaceView(_placeView).setPlaceSize(_mask.width, _mask.height);
+            layoutPlaceView();
         }
     }
 
@@ -118,6 +120,18 @@ public class PlaceBox extends LayeredContainer
     }
 
     /**
+     * Informs the place box of whether the client has been minimized (to make room for GWT). Note
+     * that this assumes setActualSize will be called right afterwards, so does not do the updates
+     * therein.
+     * TODO: it would be nicer if LayeredContainer had an abstract update method required to be
+     * called after all setters rather than one setter that does an update
+     */
+    public function setMinimized (minimized :Boolean) :void
+    {
+        _minimized = minimized;
+    }
+
+    /**
      * This must be called on when our size is changed to allow us update our PlaceView mask and
      * resize the PlaceView itself.
      */
@@ -147,7 +161,11 @@ public class PlaceBox extends LayeredContainer
     {
         var w :Number = this.width;
         var h :Number = this.height;
+        _base.x = 0;
+        _base.y = 0;
         if (_roomBounds != null) {
+            // TODO: this is weird, why are we setting x & y of _base, but w & h of _placeView?
+            // TODO: forensics on this feature, I'm not sure if anyone is using it
             if (CLEAN_BOUNDS) {
                 var p :Point = DisplayUtil.fitRectInRect(_roomBounds, new Rectangle(0, 0, w, h));
                 _base.x = Math.max(0, p.x);
@@ -163,14 +181,18 @@ public class PlaceBox extends LayeredContainer
                 h = _roomBounds.height;
             }
 
-        } else {
-            _base.x = 0;
-            _base.y = 0;
         }
 
         // now inform the place view of its new size
         if (_placeView is UIComponent) {
             UIComponent(_placeView).setActualSize(w, h);
+        } else if (_placeView is RoomObjectView) {
+            var view :RoomObjectView = RoomObjectView(_placeView);
+            const margin :Number = _minimized ? 10 : 0;
+            view.setPlaceSize(w - margin * 2, h - margin * 2);
+            var metrics :RoomMetrics = view.layout.metrics;
+            view.y = margin + (h - metrics.sceneHeight * view.scaleY) / 2;
+            view.x = margin + Math.max((w - metrics.sceneWidth * view.scaleX) / 2, 0);
         } else if (_placeView is PlaceLayer) {
             PlaceLayer(_placeView).setPlaceSize(w, h);
         } else if (_placeView != null) {
@@ -188,6 +210,8 @@ public class PlaceBox extends LayeredContainer
     protected var _placeView :PlaceView;
 
     protected var _roomBounds :Rectangle;
+
+    protected var _minimized :Boolean;
 
     protected static const CLEAN_BOUNDS :Boolean = true;
 }

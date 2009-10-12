@@ -722,28 +722,14 @@ public class RoomView extends Sprite
     protected function relayout () :void
     {
         const preferredHeight :Number = 500;
-        const margin :Number = getMargin();
-        const availHeight :Number = _actualHeight - margin * 2;
-        const availWidth :Number = _actualWidth - margin * 2;
-        var scale :Number = Math.min(preferredHeight, availHeight) / _layout.metrics.sceneHeight;
+        var scale :Number = Math.min(preferredHeight, _actualHeight) / _layout.metrics.sceneHeight;
         scaleY = scale;
         if (UberClient.isRegularClient() && Prefs.isAprilFoolsEnabled()) {
             scaleY *= -1;
         }
         scaleX = scale;
-        // TODO: What are these lines of code actually doing? Can I omit in the
-        // avatar viewer mode?
-        if (!UberClient.isFeaturedPlaceView()) {
-            y = (_actualHeight - _layout.metrics.sceneHeight * scaleY) / 2;
-            x = margin + Math.max((availWidth - _layout.metrics.sceneWidth * scaleX) / 2, 0);
-        }
 
-        // TODO: set up a room view mask, setting the width and height does not work
-        //width = _actualWidth - x * 2;
-        //height = _actualHeight - y * 2;
-
-        log.info("Laid out room view", "x", x, "y", y, "scale", scale, "width", width,
-            "height", height, "actualw", _actualWidth - x * 2, "actualh", _actualHeight - y * 2);
+        // TODO: set up a room view mask?
 
         configureScrollRect();
 
