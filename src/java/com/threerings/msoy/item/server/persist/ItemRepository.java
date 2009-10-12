@@ -29,6 +29,8 @@ import com.samskivert.util.ArrayUtil;
 import com.samskivert.util.CollectionUtil;
 import com.samskivert.util.HashIntMap;
 import com.samskivert.util.IntIntMap;
+import com.samskivert.util.IntMap;
+import com.samskivert.util.IntMaps;
 import com.samskivert.util.IntSet;
 import com.samskivert.util.QuickSort;
 import com.samskivert.util.StringUtil;
@@ -893,11 +895,28 @@ public abstract class ItemRepository<T extends ItemRecord>
     /**
      * Load catalog records for a list of original (listed) item ID's.
      */
-    public List<CatalogRecord> loadCatalogByListedItem (Collection<Integer> listedItemIds)
+    public List<CatalogRecord> loadCatalogByListedItems (
+        Collection<Integer> listedItemIds, boolean loadListedItems)
     {
-        return findAll(getCatalogClass(),
+        List<CatalogRecord> cRecs = findAll(getCatalogClass(),
             new Where(getCatalogColumn(CatalogRecord.LISTED_ITEM_ID).in(listedItemIds)));
-        // TODO: must load all the CatalogRecord.item objects here too
+        if (loadListedItems) {
+            // find out the id's of all the listed items
+            IntSet itemIds = new ArrayIntSet();
+            for (CatalogRecord cRec : cRecs) {
+                itemIds.add(cRec.listedItemId);
+            }
+            // load them and associate each one with its id
+            IntMap<T> itemMap = IntMaps.newHashIntMap();
+            for (T iRec : loadAll(getItemClass(), itemIds)) {
+                itemMap.put(iRec.itemId, iRec);
+            }
+            // finally populate the catalog records
+            for (CatalogRecord cRec : cRecs) {
+                cRec.item = itemMap.get(cRec.listedItemId);
+            }
+        }
+        return cRecs;
     }
 
     /**

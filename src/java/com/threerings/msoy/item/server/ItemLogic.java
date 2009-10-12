@@ -1217,8 +1217,8 @@ public class ItemLogic
             try {
                 repo = getRepository(itemType);
                 List<MogMarkRecord> stampRecs = toLoad.get(itemType);
-                List<CatalogRecord> catalogRecords = repo.loadCatalogByListedItem(
-                    Lists.transform(stampRecs, MogMarkRecord.TO_ITEM_ID));
+                List<CatalogRecord> catalogRecords = repo.loadCatalogByListedItems(
+                    Lists.transform(stampRecs, MogMarkRecord.TO_ITEM_ID), true);
                 for (int ii = 0; ii < stampRecs.size(); ii ++) {
                     loadedRecords.put(stampRecs.get(ii), catalogRecords.get(ii));
                 }
