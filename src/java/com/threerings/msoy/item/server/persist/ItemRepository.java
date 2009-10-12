@@ -928,7 +928,7 @@ public abstract class ItemRepository<T extends ItemRecord>
     {
         return findAll(getMogMarkClass(),
             new Join(new ColumnExp(getMogMarkClass(), MogMarkRecord.ITEM_ID.name),
-                getCatalogColumn(CatalogRecord.ORIGINAL_ITEM_ID)),
+                getCatalogColumn(CatalogRecord.LISTED_ITEM_ID)),
             new Where(new ColumnExp(getMogMarkClass(), MogMarkRecord.GROUP_ID.name), themeId),
             OrderBy.descending(new ColumnExp(getMogMarkClass(), MogMarkRecord.LAST_STAMPED.name)),
             new Limit(0, rows));
