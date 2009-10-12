@@ -57,6 +57,7 @@ public class PlaceBox extends LayeredContainer
     {
         mask = (_mask = new Shape());
         rawChildren.addChild(_mask);
+        _masked = this;
     }
 
     public function getPlaceView () :PlaceView
@@ -139,10 +140,12 @@ public class PlaceBox extends LayeredContainer
     {
         super.setActualSize(width, height);
 
-        _mask.graphics.clear();
-        _mask.graphics.beginFill(0xFFFFFF);
-        _mask.graphics.drawRect(0, 0, this.width, this.height);
-        _mask.graphics.endFill();
+        if (!(_placeView is RoomObjectView)) {
+            _mask.graphics.clear();
+            _mask.graphics.beginFill(0xFFFFFF);
+            _mask.graphics.drawRect(0, 0, this.width, this.height);
+            _mask.graphics.endFill();
+        }
 
         // any PlaceLayer layers get informed of the size change
         for (var ii :int = 0; ii < numChildren; ii ++) {
@@ -186,15 +189,30 @@ public class PlaceBox extends LayeredContainer
         // now inform the place view of its new size
         if (_placeView is UIComponent) {
             UIComponent(_placeView).setActualSize(w, h);
+            maskBox();
         } else if (_placeView is RoomObjectView) {
+
+            // center the room view, adding margins if minimized
             var view :RoomObjectView = RoomObjectView(_placeView);
             const margin :Number = _minimized ? 10 : 0;
             view.setPlaceSize(w - margin * 2, h - margin * 2);
             var metrics :RoomMetrics = view.layout.metrics;
-            view.y = margin + (h - metrics.sceneHeight * view.scaleY) / 2;
-            view.x = margin + Math.max((w - metrics.sceneWidth * view.scaleX) / 2, 0);
+            var sceneHeight :Number = metrics.sceneHeight * view.scaleY;
+            var sceneWidth :Number = metrics.sceneWidth * view.scaleX;
+            view.y = margin + (h - sceneHeight) / 2;
+            view.x = margin + Math.max((w - sceneWidth) / 2, 0);
+
+            // mask it so that avatars and items don't bleed out or bounds
+            _mask.graphics.clear();
+            _mask.graphics.beginFill(0xFFFFFF);
+            _mask.graphics.drawRect(view.x, view.y, sceneWidth, sceneHeight);
+            _mask.graphics.endFill();
+
+            maskBase();
+
         } else if (_placeView is PlaceLayer) {
             PlaceLayer(_placeView).setPlaceSize(w, h);
+            maskBox();
         } else if (_placeView != null) {
             Log.getLog(this).warning("PlaceView is not a PlaceLayer or an UIComponent.");
         }
@@ -203,8 +221,37 @@ public class PlaceBox extends LayeredContainer
         // Fixing it was turning rabbit-holey, so I'm punting.
     }
 
-    /** The mask configured on the PlaceView so that it doesn't overlap our other components. */
-    protected var _mask :Shape;
+    protected function setMasked (disp :DisplayObject) :void
+    {
+        if (_masked == disp) {
+            return;
+        }
+        _masked.mask = null;
+        _masked = disp;
+        _masked.mask = _mask;
+    }
+
+    protected function maskBox () :void
+    {
+        setMasked(this);
+    }
+
+    protected function maskBase () :void
+    {
+        // TODO: could we just make place view directly?
+        // we expect the base to be a flex wrapper around the place view, fail if not
+        if (_base == _placeView) {
+            throw new Error("Masking base with unexpected place view type");
+        }
+
+        setMasked(_base);
+    }
+
+    /** The mask configured on the box or view so that it doesn't overlap outside components. */
+    protected var _mask :Shape = new Shape();
+
+    /** The object currently being masked, either this or _placeView. */
+    protected var _masked :DisplayObject;
 
     /** The current place view. */
     protected var _placeView :PlaceView;

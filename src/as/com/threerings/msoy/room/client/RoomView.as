@@ -729,8 +729,6 @@ public class RoomView extends Sprite
         }
         scaleX = scale;
 
-        // TODO: set up a room view mask?
-
         configureScrollRect();
 
         relayoutSprites(_furni.values());
