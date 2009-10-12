@@ -17,11 +17,13 @@ import com.threerings.gwt.util.DataModel;
 import com.threerings.gwt.util.SimpleDataModel;
 import com.threerings.gwt.util.StringUtil;
 
+import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.stuff.gwt.StuffService;
 import com.threerings.msoy.stuff.gwt.StuffServiceAsync;
 import com.threerings.msoy.stuff.gwt.StuffService.DetailOrIdent;
+import com.threerings.msoy.stuff.gwt.StuffService.InventoryResult;
 import com.threerings.msoy.web.gwt.Args;
 
 import client.util.events.FlashEvents;
@@ -38,13 +40,15 @@ public class InventoryModels
     {
         public final byte type;
         public final String query;
+        public final GroupName theme;
 
-        public Stuff (List<Item> items, Key key) {
-            this(items, key.type, key.query);
+        public Stuff (InventoryResult result, Key key) {
+            this(result, key.type, key.query);
         }
 
-        public Stuff (List<Item> items, byte type, String query) {
-            super(items);
+        public Stuff (InventoryResult result, byte type, String query) {
+            super(result.items);
+            this.theme = result.theme;
             this.type = type;
             this.query = query;
         }
@@ -63,8 +67,9 @@ public class InventoryModels
             return "[type=" + type + ", query=" + query + "]";
         }
 
+        @Override
         protected SimpleDataModel<Item> createFilteredModel (List<Item> items) {
-            return new Stuff(items, type, query);
+            return new Stuff(new InventoryResult(items, theme), type, query);
         }
     }
 
@@ -183,8 +188,8 @@ public class InventoryModels
             return;
         }
 
-        AsyncCallback<List<Item>> callback = new AsyncCallback<List<Item>>() {
-            public void onSuccess (List<Item> result) {
+        AsyncCallback<InventoryResult> callback = new AsyncCallback<InventoryResult>() {
+            public void onSuccess (InventoryResult result) {
                 Stuff model = new Stuff(result, key);
                 _models.put(key, model);
                 cb.onSuccess(model);

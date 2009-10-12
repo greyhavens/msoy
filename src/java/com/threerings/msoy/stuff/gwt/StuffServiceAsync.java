@@ -3,14 +3,13 @@
 
 package com.threerings.msoy.stuff.gwt;
 
-import java.util.List;
-
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.msoy.data.all.MediaDesc;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.stuff.gwt.StuffService.InventoryResult;
 
 /**
  * The asynchronous (client-side) version of {@link StuffService}.
@@ -50,7 +49,8 @@ public interface StuffServiceAsync
     /**
      * The asynchronous version of {@link StuffService#loadInventory}.
      */
-    void loadInventory (int memberId, byte type, String query, AsyncCallback<List<Item>> callback);
+    void loadInventory (int memberId, byte type, String query,
+                        AsyncCallback<InventoryResult> callback);
 
     /**
      * Loads the details of a particular item.

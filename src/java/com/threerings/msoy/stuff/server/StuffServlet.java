@@ -193,7 +193,7 @@ public class StuffServlet extends MsoyServiceServlet
     }
 
     // from interface StuffService
-    public List<Item> loadInventory (int memberId, byte type, String query)
+    public InventoryResult loadInventory (int memberId, byte type, String query)
         throws ServiceException
     {
         MemberRecord memrec = requireAuthedUser();
@@ -213,7 +213,9 @@ public class StuffServlet extends MsoyServiceServlet
             new ItemRecord.ToItem<Item>()));
 
         Collections.sort(items);
-        return items;
+
+        return new InventoryResult(items, (memrec.themeGroupId > 0) ?
+            _groupRepo.loadGroupName(memrec.themeGroupId) : null);
     }
 
     // from interface StuffService

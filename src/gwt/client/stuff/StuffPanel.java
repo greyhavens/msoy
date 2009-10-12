@@ -22,6 +22,7 @@ import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.util.DataModel;
 import com.threerings.gwt.util.SimpleDataModel;
 
+import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.web.gwt.Pages;
 
@@ -104,10 +105,20 @@ public class StuffPanel extends FlowPanel
                 return new ItemEntry(item);
             }
             @Override protected String getEmptyMessage () {
-                String query = _model instanceof InventoryModels.Stuff
-                    ? ((InventoryModels.Stuff)_model).query : null;
-                return (query == null) ? _msgs.panelNoItems(_dmsgs.xlate("itemType" + _type)) :
-                    _msgs.panelNoMatches(query);
+                GroupName theme = null;
+                String query = null;
+                if (_model instanceof InventoryModels.Stuff) {
+                    query = ((InventoryModels.Stuff)_model).query;
+                    theme = ((InventoryModels.Stuff)_model).theme;
+                }
+                if (query != null) {
+                    return _msgs.panelNoMatches(query);
+                }
+                String typeDesc = _dmsgs.xlate("itemType" + _type);
+                if (theme != null) {
+                    typeDesc = theme.toString() + " " + typeDesc;
+                }
+                return _msgs.panelNoItems(typeDesc);
             }
             @Override protected boolean displayNavi (int items) {
                 return true;
@@ -216,7 +227,6 @@ public class StuffPanel extends FlowPanel
         final Predicate<Item> pred = FILTERS.get(_filters.getSelectedIndex());
 
         // maybe we're changing our predicate or changing page on an already loaded model
-        // TODO: restrict by mogId here when we do UI
         SimpleDataModel<Item> model = _models.getModel(_memberId, _type, query, 0);
         if (model != null) {
             _contents.setModel(model.filter(pred), page);
@@ -224,7 +234,6 @@ public class StuffPanel extends FlowPanel
         }
 
         // otherwise we have to load
-        // TODO: restrict by mogId here when we do UI
         _models.loadModel(_memberId, _type, query, 0, new InfoCallback<DataModel<Item>>() {
             public void onSuccess (DataModel<Item> result) {
                 SimpleDataModel<Item> model = (SimpleDataModel<Item>)result;

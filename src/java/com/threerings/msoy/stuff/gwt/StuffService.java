@@ -11,6 +11,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 import com.threerings.msoy.web.gwt.ServiceException;
 
+import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MediaDesc;
 
 import com.threerings.msoy.item.data.all.Item;
@@ -38,6 +39,24 @@ public interface StuffService extends RemoteService
         public DetailOrIdent (ItemDetail detail, ItemIdent ident) {
             this.detail = detail;
             this.ident = ident;
+        }
+    }
+
+    /** Provides results for {@link #loadInventory}. */
+    public static class InventoryResult implements IsSerializable
+    {
+        /** The items constituting the inventory requested. */
+        public List<Item> items;
+
+        /** The theme to which the inventory resolution was restricted. */
+        public GroupName theme;
+
+        public InventoryResult () {
+        }
+
+        public InventoryResult (List<Item> items, GroupName theme) {
+            this.items = items;
+            this.theme = theme;
         }
     }
 
@@ -90,7 +109,7 @@ public interface StuffService extends RemoteService
      * Loads all items in a player's inventory of the specified type. If query is non-null, then
      * restrict the returned set to items whose name/description/tags match the string.
      */
-    List<Item> loadInventory (int memberId, byte type, String query)
+    InventoryResult loadInventory (int memberId, byte type, String query)
         throws ServiceException;
 
     /**
