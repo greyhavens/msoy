@@ -194,7 +194,7 @@ public class PlaceBox extends LayeredContainer
 
             // center the room view, adding margins if minimized
             var view :RoomObjectView = RoomObjectView(_placeView);
-            const margin :Number = _minimized ? 10 : 0;
+            const margin :Number = 20;
             view.setPlaceSize(w - margin * 2, h - margin * 2);
             var metrics :RoomMetrics = view.layout.metrics;
             var sceneHeight :Number = metrics.sceneHeight * view.scaleY;
