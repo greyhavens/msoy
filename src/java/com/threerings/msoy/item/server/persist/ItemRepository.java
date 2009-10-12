@@ -891,6 +891,31 @@ public abstract class ItemRepository<T extends ItemRecord>
     }
 
     /**
+     * Load catalog records for a list of original (listed) item ID's.
+     */
+    public List<CatalogRecord> loadCatalogByListedItem (Collection<Integer> listedItemIds)
+    {
+        return findAll(getCatalogClass(),
+            new Where(getCatalogColumn(CatalogRecord.LISTED_ITEM_ID).in(listedItemIds)));
+        // TODO: must load all the CatalogRecord.item objects here too
+    }
+
+    /**
+     * Load markup records for items stamped with a given theme; order them chronologically
+     * by stamping. This could be handled through loadCatalog(), but that thing is turning into
+     * a monster as is.
+     */
+    public List<? extends MogMarkRecord> loadThemedCatalog (int themeId, int rows)
+    {
+        return findAll(getMogMarkClass(),
+            new Join(new ColumnExp(getMogMarkClass(), MogMarkRecord.ITEM_ID.name),
+                getCatalogColumn(CatalogRecord.ORIGINAL_ITEM_ID)),
+            new Where(new ColumnExp(getMogMarkClass(), MogMarkRecord.GROUP_ID.name), themeId),
+            OrderBy.descending(new ColumnExp(getMogMarkClass(), MogMarkRecord.LAST_STAMPED.name)),
+            new Limit(0, rows));
+    }
+
+    /**
      * Loads up the specified catalog records.
      */
     public List<CatalogRecord> loadCatalog (Collection<Integer> catalogIds)
