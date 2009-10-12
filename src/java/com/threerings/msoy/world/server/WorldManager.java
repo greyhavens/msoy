@@ -132,10 +132,6 @@ public class WorldManager
                     }
                 }
                 _homeId = _memberLogic.getHomeId(ownerType, ownerId);
-                // TODO: Why this check? What's wrong with 2?
-                if (_gifts != null && _gifts.length < 3) {
-                    _gifts = null;
-                }
             }
             @Override public void handleSuccess () {
                 if (_gifts != null) {
