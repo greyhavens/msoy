@@ -79,6 +79,8 @@ public class WorldClient extends MsoyClient
             _wctx.getUIState().setEmbedded(true);
         }
 
+        _minimized = params["minimized"] != null;
+
         // if we are going right into a game, do that now and once we get into the game, then we'll
         // be able to logon to a world with our assigned credentials
         if (params["gameId"] || params["gameLobby"] /* legacy */) {

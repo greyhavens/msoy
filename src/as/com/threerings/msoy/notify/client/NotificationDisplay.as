@@ -92,9 +92,9 @@ public class NotificationDisplay extends HBox
     public function updatePopupLocation () :void
     {
         if (_nHistory != null) {
-            var buttonPos :Point = localToGlobal(new Point(_popupBtn.x, _popupBtn.y));
-            _nHistory.x = buttonPos.x;
-            _nHistory.y = buttonPos.y - _nHistory.height;
+            var canvasPos :Point = localToGlobal(new Point(_canvas.x, _canvas.y));
+            _nHistory.x = canvasPos.x;
+            _nHistory.y = canvasPos.y - _nHistory.height;
         }
     }
 
@@ -104,16 +104,18 @@ public class NotificationDisplay extends HBox
         styleName = "notificationDisplay";
         this.percentWidth = 100;
 
-        addChild(_popupBtn = new CommandCheckBox(null, toggleNotificationHistory));
-        _popupBtn.styleName = "panelToggle";
-
         addChild(_canvas = new Canvas());
         _canvas.styleName = "notificationCanvas";
         _canvas.percentWidth = 100;
         _canvas.minWidth = 200;
-        _canvas.height = 19;
+        _canvas.height = 23;
         _canvas.horizontalScrollPolicy = ScrollPolicy.OFF;
         _canvas.verticalScrollPolicy = ScrollPolicy.OFF;
+
+        addChild(_popupBtn = new CommandCheckBox(null, toggleNotificationHistory));
+        _popupBtn.styleName = "notificationToggle";
+
+        _popupBtn.y = 3;
     }
 
     protected function maybeCloseHistory (event :MouseEvent) :void
@@ -137,9 +139,10 @@ public class NotificationDisplay extends HBox
         var notif :Notification = Notification(_pendingNotifications.shift());
         var notification :UIComponent = createDisplay(notif);
         notification.x = _canvas.width;
+        notification.y = 3;
         _canvas.removeAllChildren();
         _canvas.addChild(notification);
-        Tweener.addTween(notification, { x: 0, time: 0.75, transition: "easeoutquart" });
+        Tweener.addTween(notification, { x: 5, time: 0.75, transition: "easeoutquart" });
 
         // set up the min/max display times
         _currentlyAnimating = true;
@@ -265,7 +268,7 @@ public class NotificationDisplay extends HBox
     protected function getColor (notification :Notification) :uint
     {
         switch (notification.getCategory()) {
-        case Notification.SYSTEM: return 0xFFBBBB;
+        case Notification.SYSTEM: return 0x40b86e;
         case Notification.INVITE: return 0xFFA13D;
         case Notification.PERSONAL: return 0x40B8D2;
         case Notification.BUTTSCRATCHING: return 0x999999;

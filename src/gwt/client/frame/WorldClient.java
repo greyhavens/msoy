@@ -60,7 +60,7 @@ public class WorldClient extends Widget
         // create our client if necessary
         if (_flashPanel != null && clientGo("asclient", flashArgs)) {
             _flashArgs = flashArgs; // note our new current flash args
-            clientMinimized(false);
+            setMinimized(false);
 
         } else {
             // flash is not resolved or it's hosed, create or recreate the client
@@ -87,12 +87,13 @@ public class WorldClient extends Widget
             clientWillClose(); // clear out our flash client if we have one
             pprov.get().add(_javaPanel = client);
         } else {
-            clientMinimized(false);
+            setMinimized(false);
         }
     }
 
     public static void setMinimized (boolean minimized)
     {
+        _minimized = minimized;
         clientMinimized(minimized);
     }
 
@@ -134,6 +135,9 @@ public class WorldClient extends Widget
         }
         if (CShell.getAuthToken() != null) {
             flashArgs += "&token=" + CShell.getAuthToken();
+        }
+        if (_minimized) {
+            flashArgs += "&minimized=t";
         }
         flashArgs += getAffiliateArg();
 
@@ -195,6 +199,7 @@ public class WorldClient extends Widget
     protected static String _flashArgs;
     protected static Panel  _flashPanel;
     protected static Widget _javaPanel;
+    protected static boolean _minimized;
 
     /** Our default world server host and port. Configured the first time Flash is used. */
     protected static String _defaultHost;

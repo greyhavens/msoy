@@ -310,9 +310,6 @@ public class FrameEntryPoint
     // from interface Frame
     public void closeContent ()
     {
-        // let the Flash client know that it's being unminimized
-        WorldClient.setMinimized(false);
-
         // clear out the content
         clearContent(true);
 
@@ -459,6 +456,9 @@ public class FrameEntryPoint
             return;
         }
 
+        // tell the flash client we're minimizing it
+        WorldClient.setMinimized(true);
+
         // create our page frame
         _pageFrame = new PageFrame(_page, MAIN_FRAME_ID);
 
@@ -488,6 +488,10 @@ public class FrameEntryPoint
             // restore the title to the last thing flash asked for
             setTitle(_closeTitle);
         }
+
+        // let the Flash client know that it's being unminimized or to start unminimized
+        WorldClient.setMinimized(false);
+
         _pageFrame = null;
         _bottomFrame = null;
         _bottomFrameToken = "";

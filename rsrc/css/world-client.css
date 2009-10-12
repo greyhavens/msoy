@@ -124,7 +124,7 @@ GameOverPanel {
   verticalGap: 8;
   verticalAlign: "middle";
   horizontalAlign: "center";
-  backgroundColor: black;
+  backgroundColor: white;
   backgroundAlphaClosed: 0;
   backgroundAlphaOpen: .85;
 }
@@ -162,9 +162,22 @@ GameOverPanel {
 .controlBarIdleButton, .controlBarScaleButton, .controlBarGameButton, .tickButton,
 .controlBarButtonVolume0, .controlBarButtonVolume1, .controlBarButtonVolume2,
 .controlBarButtonVolume3, .controlBarButtonVolume4, .controlBarHomePageGridButton,
-.controlBarPartyButton, .controlBarConfig,
+.controlBarPartyButton, .controlBarConfig, .notificationToggle,
 .headerBarBack,
-.joinNowButton, .logonButton, .tourNext, .trophyFeedTrophy {
+.joinNowButton, .logonButton, .tourNext, .trophyFeedTrophy,
+.closeButton {
+
+  /** clear out the CheckBox foreground icons too */
+  icon: ClassReference(null);
+  upIcon: ClassReference(null);
+  overIcon: ClassReference(null);
+  downIcon: ClassReference(null);
+  disabledIcon: ClassReference(null);
+  selectedUpIcon: ClassReference(null);
+  selectedOverIcon: ClassReference(null);
+  selectedDownIcon: ClassReference(null);
+  selectedDisabledIcon: ClassReference(null);
+
   upSkin: ClassReference(null);
   downSkin: ClassReference(null);
   overSkin: ClassReference(null);
@@ -245,6 +258,10 @@ GameOverPanel {
   image: Embed(source="../media/skins/controlbar/tick.png");
 }
 
+.notificationToggle {
+  image: Embed(source="../media/skins/controlbar/notifications.png");
+}
+
 .tourNext {
   image: url("/images/rooms/tour_next.png");
 }
@@ -306,14 +323,7 @@ ChatInput {
 .closeButton {
   height: 13px;
   width: 13px;
-  overSkin: Embed(source="../../pages/images/ui/client_close_over.png");
-  disabledSkin: Embed(source="../../pages/images/ui/client_close_default.png");
-  downSkin: Embed(source="../../pages/images/ui/client_close_down.png");
-  upSkin: Embed(source="../../pages/images/ui/client_close_default.png");
-  selectedOverSkin: Embed(source="../../pages/images/ui/client_close_over.png");
-  selectedDisabledSkin: Embed(source="../../pages/images/ui/client_close_default.png");
-  selectedDownSkin: Embed(source="../../pages/images/ui/client_close_down.png");
-  selectedUpSkin: Embed(source="../../pages/images/ui/client_close_default.png");
+  image: Embed(source="../../pages/images/ui/client_close_default.png");
 }
 
 .heightButton {
@@ -629,8 +639,8 @@ ChatInput {
 
 .notificationCanvas {
   backgroundImage: Embed(source="../media/skins/controlbar/notif_display_background.png",
-                         scaleGridTop="4", scaleGridBottom="15", 
-                         scaleGridLeft="4", scaleGridRight="8");
+                         scaleGridTop="14", scaleGridBottom="15",
+                         scaleGridLeft="5", scaleGridRight="19");
   backgroundSize: "100%";
 }
 
