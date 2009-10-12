@@ -1217,8 +1217,11 @@ public class ItemLogic
             try {
                 repo = getRepository(itemType);
                 List<MogMarkRecord> stampRecs = toLoad.get(itemType);
+                // because these listedItemIds come from CatalogRecords just a few lines
+                // above, we should be able to depend on all the listings existing
                 List<CatalogRecord> catalogRecords = repo.loadCatalogByListedItems(
                     Lists.transform(stampRecs, MogMarkRecord.TO_ITEM_ID), true);
+                // so these two lists should be in sync...
                 for (int ii = 0; ii < stampRecs.size(); ii ++) {
                     loadedRecords.put(stampRecs.get(ii), catalogRecords.get(ii));
                 }
