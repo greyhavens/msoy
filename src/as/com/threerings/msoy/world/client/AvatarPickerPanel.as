@@ -16,6 +16,7 @@ import mx.core.UIComponent;
 
 import com.threerings.flex.CommandButton;
 
+import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.ui.FloatingPanel;
@@ -38,12 +39,12 @@ public class AvatarPickerPanel extends FloatingPanel
      * Show the array of avatars.
      */
     public static function show (ctx :WorldContext, avatars :Array /* of Avatar */,
-                                 select :Function) :void
+                                 tip :String, select :Function) :void
     {
         if (_picker != null) {
             return;
         }
-        _picker = new AvatarPickerPanel(ctx, avatars, select);
+        _picker = new AvatarPickerPanel(ctx, avatars, tip, select);
         _picker.open();
         _picker.addEventListener(DID_CLOSE, function (evt :Event) :void {
             _picker = null;
@@ -65,11 +66,12 @@ public class AvatarPickerPanel extends FloatingPanel
      * Creats a new picker.
      */
     public function AvatarPickerPanel (ctx :WorldContext, avatars :Array /* of Avatar */,
-                                       select :Function) :void
+                                       tip :String, select :Function) :void
     {
-        super(ctx, "Select an avatar");
+        super(ctx, Msgs.WORLD.get("t.pick_avatar"));
         _avatars = avatars;
         _select = select;
+        _tip = tip;
     }
 
     override protected function createChildren () :void
@@ -79,7 +81,7 @@ public class AvatarPickerPanel extends FloatingPanel
         var instructions :Label = new Label();
         // TODO: title should get set depending on whether this is showing up for a theme boundary
         // or a home room creation
-        instructions.text = "Welcome to your home on Whirled Rooms, select an avatar to wear.";
+        instructions.text = _tip;
         instructions.styleName = "avatarPickerInstructions";
         addChild(instructions);
 
@@ -102,11 +104,11 @@ public class AvatarPickerPanel extends FloatingPanel
                     avi.getPreviewMedia(), MediaDesc.PREVIEW_SIZE);
             }
 
-            var select :CommandButton = new CommandButton(
-                "Select " + avi.name, function (avatar :Avatar) :void {
-                    close();
-                    _select(avatar);
-                }, avi);
+            var select :CommandButton = new CommandButton(Msgs.WORLD.get("b.pick_avatar", avi.name),
+                function (avatar :Avatar) :void {
+                close();
+                _select(avatar);
+            }, avi);
 
             var cell :VBox = new VBox();
             cell.styleName = "avatarPickerCell";
@@ -119,6 +121,7 @@ public class AvatarPickerPanel extends FloatingPanel
 
     protected var _avatars :Array /* of Avatar */;
     protected var _select :Function;
+    protected var _tip :String;
 
     protected static var _picker :AvatarPickerPanel;
 }
