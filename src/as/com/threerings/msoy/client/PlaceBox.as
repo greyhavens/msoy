@@ -18,8 +18,6 @@ import com.threerings.display.DisplayUtil;
 import com.threerings.crowd.client.PlaceView;
 import com.threerings.msoy.client.MsoyPlaceView;
 import com.threerings.msoy.client.DeploymentConfig;
-import com.threerings.msoy.room.client.RoomObjectView;
-import com.threerings.msoy.room.client.RoomMetrics;
 
 /**
  * A component that holds our place views and sets up a mask to ensure that the place view does not
@@ -70,6 +68,7 @@ public class PlaceBox extends LayeredContainer
         var disp :DisplayObject = DisplayObject(view);
         setBaseLayer(disp);
         _placeView = view;
+        _msoyPlaceView = view as MsoyPlaceView;
 
         // TODO: why is this type-check here? surely when the place view changes it needs to be
         // laid out regardless of type
@@ -139,11 +138,8 @@ public class PlaceBox extends LayeredContainer
     {
         super.setActualSize(width, height);
 
-        if (!(_placeView is RoomObjectView)) {
-            _mask.graphics.clear();
-            _mask.graphics.beginFill(0xFFFFFF);
-            _mask.graphics.drawRect(0, 0, this.width, this.height);
-            _mask.graphics.endFill();
+        if (_msoyPlaceView == null) {
+            setMasked(this, 0, 0, this.width, this.height);
         }
 
         // any PlaceLayer layers get informed of the size change
@@ -186,37 +182,44 @@ public class PlaceBox extends LayeredContainer
         }
 
         // now inform the place view of its new size
-        if (_placeView is UIComponent) {
-            UIComponent(_placeView).setActualSize(w, h);
-            maskBox();
-        } else if (_placeView is RoomObjectView) {
+        if (_msoyPlaceView != null) {
+            // center the view and add margins if a clip size is given
+            var clip :Point = null;
+            var isClipped :Boolean = _msoyPlaceView.isClipped();
+            if (isClipped) {
+                const margin :Number = 20;
+                _msoyPlaceView.setPlaceSize(w - margin * 2, h - margin * 2);
 
-            // center the room view, adding margins if minimized
-            var view :RoomObjectView = RoomObjectView(_placeView);
-            const margin :Number = 20;
-            view.setPlaceSize(w - margin * 2, h - margin * 2);
-            var metrics :RoomMetrics = view.layout.metrics;
-            var sceneHeight :Number = metrics.sceneHeight * view.scaleY;
-            var sceneWidth :Number = metrics.sceneWidth * view.scaleX;
-            view.y = Math.max((h - sceneHeight) / 2, margin);
-            view.x = Math.max((w - sceneWidth) / 2, margin);
-
-            if (DeploymentConfig.devDeployment) {
-                log.info("Layout out place view", "sh", sceneHeight, "sw", sceneWidth,
-                         "vx", view.x, "vy", view.y, "w", w, "h", h);
+                // NOTE: getClipSize must be called after setPlaceSize
+                clip = _msoyPlaceView.getClipSize();
+                if (clip == null || isNaN(clip.x) || isNaN(clip.y)) {
+                    isClipped = false;
+                }
             }
 
-            // mask it so that avatars and items don't bleed out of bounds
-            _mask.graphics.clear();
-            _mask.graphics.beginFill(0xFFFFFF);
-            _mask.graphics.drawRect(view.x, view.y, sceneWidth, sceneHeight);
-            _mask.graphics.endFill();
+            var view :DisplayObject = _msoyPlaceView as DisplayObject;
+            if (isClipped) {
+                view.x = Math.max((w - clip.x) / 2, margin);
+                view.y = Math.max((h - clip.y) / 2, margin);
 
-            maskView();
+                if (DeploymentConfig.devDeployment) {
+                    log.info("Layout place view", "sh", clip.y, "sw", clip.x,
+                             "vx", view.x, "vy", view.y, "w", w, "h", h);
+                }
 
+                // mask it so that avatars and items don't bleed out of bounds
+                clip.x = Math.min(clip.x, w - margin * 2);
+                clip.y = Math.min(clip.y, h - margin * 2);
+                setMasked(view, view.x, view.y, clip.x, clip.y);
+            } else {
+                _msoyPlaceView.setPlaceSize(w, h);
+                setMasked(view, 0, 0, w, h);
+            }
+
+        } else if (_placeView is UIComponent) {
+            UIComponent(_placeView).setActualSize(w, h);
         } else if (_placeView is PlaceLayer) {
             PlaceLayer(_placeView).setPlaceSize(w, h);
-            maskBox();
         } else if (_placeView != null) {
             Log.getLog(this).warning("PlaceView is not a PlaceLayer or an UIComponent.");
         }
@@ -225,28 +228,22 @@ public class PlaceBox extends LayeredContainer
         // Fixing it was turning rabbit-holey, so I'm punting.
     }
 
-    protected function setMasked (disp :DisplayObject) :void
+    protected function setMasked (
+        disp :DisplayObject, x :Number, y : Number, w :Number, h :Number) :void
     {
-        if (_masked == disp) {
-            return;
+        if (_masked != disp) {
+            if (_masked != null) {
+                _masked.mask = null;
+            }
+            _masked = disp;
+            if (_masked != null) {
+                _masked.mask = _mask;
+            }
         }
-        if (_masked != null) {
-            _masked.mask = null;
-        }
-        _masked = disp;
-        if (_masked != null) {
-            _masked.mask = _mask;
-        }
-    }
-
-    protected function maskBox () :void
-    {
-        setMasked(this);
-    }
-
-    protected function maskView () :void
-    {
-        setMasked(_placeView as DisplayObject);
+        _mask.graphics.clear();
+        _mask.graphics.beginFill(0xFFFFFF);
+        _mask.graphics.drawRect(x, y, w, h);
+        _mask.graphics.endFill();
     }
 
     /** The mask configured on the box or view so that it doesn't overlap outside components. */
@@ -257,6 +254,9 @@ public class PlaceBox extends LayeredContainer
 
     /** The current place view. */
     protected var _placeView :PlaceView;
+
+    /** The current msoy place view (may be null if not implemented). */
+    protected var _msoyPlaceView :MsoyPlaceView;
 
     protected var _roomBounds :Rectangle;
 
