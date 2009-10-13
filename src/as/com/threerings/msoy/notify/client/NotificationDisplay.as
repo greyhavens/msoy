@@ -269,11 +269,11 @@ public class NotificationDisplay extends HBox
     {
         switch (notification.getCategory()) {
         case Notification.SYSTEM: return 0x40b86e;
-        case Notification.INVITE: return 0xFFA13D;
-        case Notification.PERSONAL: return 0x40B8D2;
-        case Notification.BUTTSCRATCHING: return 0x999999;
+        case Notification.INVITE: return 0x0d259f;
+        case Notification.PERSONAL: return 0xf17b28;
+        case Notification.BUTTSCRATCHING: return 0x737373;
         case Notification.LOWEST: // fall through to default
-        default: return 0x777777;
+        default: return 0xa0a0a0;
         }
     }
 
