@@ -79,6 +79,10 @@ public class UpsellDirector extends BasicDirector
             return;
         }
 
+        if (_mctx.getClient().getClientObject() == null) {
+            return;
+        }
+
         var placeInfo :PlaceInfo = _mctx.getMsoyController().getPlaceInfo();
         var embed :String = _mctx.getMsoyClient().isEmbedded() ? "embed" : "site";
         var guest :String = MemberObject(_mctx.getClient().getClientObject()).isPermaguest() ?
