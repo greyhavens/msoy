@@ -199,8 +199,13 @@ public class PlaceBox extends LayeredContainer
             var metrics :RoomMetrics = view.layout.metrics;
             var sceneHeight :Number = metrics.sceneHeight * view.scaleY;
             var sceneWidth :Number = metrics.sceneWidth * view.scaleX;
-            view.y = margin + (h - sceneHeight) / 2;
-            view.x = margin + Math.max((w - sceneWidth) / 2, 0);
+            view.y = Math.max((h - sceneHeight) / 2, margin);
+            view.x = Math.max((w - sceneWidth) / 2, margin);
+
+            if (DeploymentConfig.devDeployment) {
+                log.info("Layout out place view", "sh", sceneHeight, "sw", sceneWidth,
+                         "vx", view.x, "vy", view.y, "w", w, "h", h);
+            }
 
             // mask it so that avatars and items don't bleed out or bounds
             _mask.graphics.clear();
