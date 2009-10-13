@@ -63,9 +63,20 @@ public final class Embedding extends Enum
         return this != OTHER;
     }
 
+    /**
+     * Returns true if we have a nice thick header bar for the chat tabs.
+     */
     public function hasThickHeader () :Boolean
     {
         return this == NONE || this == FACEBOOK_ROOMS;
+    }
+
+    /**
+     * Returns true if we have space for white margins around the edges of rooms and games.
+     */
+    public function hasPlaceMargins () :Boolean
+    {
+        return this == NONE;
     }
 
     /**

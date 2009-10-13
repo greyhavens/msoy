@@ -70,7 +70,7 @@ public class TopPanel extends Canvas
         _headerBar.setStyle("right", 0);
         addChild(_headerBar);
 
-        _placeBox = new PlaceBox();
+        _placeBox = new PlaceBox(_ctx);
         _placeBox.autoLayout = false;
         _placeBox.includeInLayout = false;
         addChild(_placeBox);

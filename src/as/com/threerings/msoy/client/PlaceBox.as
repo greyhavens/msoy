@@ -16,6 +16,7 @@ import com.threerings.util.Log;
 import com.threerings.display.DisplayUtil;
 
 import com.threerings.crowd.client.PlaceView;
+import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.MsoyPlaceView;
 import com.threerings.msoy.client.DeploymentConfig;
 
@@ -52,8 +53,9 @@ public class PlaceBox extends LayeredContainer
     /** The layer priority of the clickable featured place overlay. */
     public static const LAYER_FEATURED_PLACE :int = 100;
 
-    public function PlaceBox ()
+    public function PlaceBox (ctx :MsoyContext)
     {
+        _ctx = ctx;
         rawChildren.addChild(_mask = new Shape());
     }
 
@@ -187,7 +189,10 @@ public class PlaceBox extends LayeredContainer
             var clip :Point = null;
             var isClipped :Boolean = _msoyPlaceView.isClipped();
             if (isClipped) {
-                const margin :Number = 20;
+                var margin :Number = 0;
+                if (_ctx.getMsoyClient().getEmbedding().hasPlaceMargins()) {
+                    margin = 20;
+                }
                 _msoyPlaceView.setPlaceSize(w - margin * 2, h - margin * 2);
 
                 // NOTE: getClipSize must be called after setPlaceSize
@@ -245,6 +250,9 @@ public class PlaceBox extends LayeredContainer
         _mask.graphics.drawRect(x, y, w, h);
         _mask.graphics.endFill();
     }
+
+    /** The river of life. */
+    protected var _ctx :MsoyContext;
 
     /** The mask configured on the box or view so that it doesn't overlap outside components. */
     protected var _mask :Shape = new Shape();
