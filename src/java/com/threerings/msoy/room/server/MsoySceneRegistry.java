@@ -330,7 +330,7 @@ public class MsoySceneRegistry extends SpotSceneRegistry
     {
         void finish ();
         void puntToGame (int gameId);
-        void selectGift (Avatar[] avatars);
+        void selectGift (Avatar[] avatars, String groupName);
     }
 
     protected class MsoyPeerSceneMoveHandler extends PeerSceneMoveHandler
@@ -388,8 +388,8 @@ public class MsoySceneRegistry extends SpotSceneRegistry
                 public void puntToGame (int gameId) {
                     _msoyListener.moveToBeHandledByAVRG(gameId, scene.getId());
                 }
-                public void selectGift (Avatar[] avatars) {
-                    _msoyListener.selectGift(avatars);
+                public void selectGift (Avatar[] avatars, String groupName) {
+                    _msoyListener.selectGift(avatars, groupName);
                 }
             }));
         }
@@ -492,6 +492,7 @@ public class MsoySceneRegistry extends SpotSceneRegistry
                 }
 
                 _theme = new Theme(_themeId, groupRec.toLogo());
+                _groupName = groupRec.name;
 
                 if (themeRec.playOnEnter) {
                     _gameId = groupRec.gameId;
@@ -556,7 +557,7 @@ public class MsoySceneRegistry extends SpotSceneRegistry
 
             // if there's a lineup, instruct the client to show the selection UI and exit
             if (_lineup != null) {
-                _listener.selectGift(_lineup.toArray(new Avatar[_lineup.size()]));
+                _listener.selectGift(_lineup.toArray(new Avatar[_lineup.size()]), _groupName);
                 return;
             }
 
@@ -606,6 +607,7 @@ public class MsoySceneRegistry extends SpotSceneRegistry
         protected List<AvatarRecord> _quicklist;
         protected List<Avatar> _lineup;
         protected Theme _theme;
+        protected String _groupName;
 
         // for finishOrPunt()
         protected int _gameId;
@@ -633,7 +635,7 @@ public class MsoySceneRegistry extends SpotSceneRegistry
         public void moveToBeHandledByAVRG (int gameId, int sceneId) {
             // noop
         }
-        public void selectGift (Avatar[] avatars) {
+        public void selectGift (Avatar[] avatars, String groupName) {
             // noop
         }
     }

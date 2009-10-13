@@ -98,12 +98,12 @@ public class MsoySceneMarshaller extends InvocationMarshaller
         public static final int SELECT_GIFT = 6;
 
         // from interface MsoySceneMoveMarshaller
-        public void selectGift (Avatar[] arg1)
+        public void selectGift (Avatar[] arg1, String arg2)
         {
             _invId = null;
             omgr.postEvent(new InvocationResponseEvent(
                                callerOid, requestId, SELECT_GIFT,
-                               new Object[] { arg1 }, transport));
+                               new Object[] { arg1, arg2 }, transport));
         }
 
         @Override // from InvocationMarshaller
@@ -137,7 +137,7 @@ public class MsoySceneMarshaller extends InvocationMarshaller
 
             case SELECT_GIFT:
                 ((MsoySceneMoveListener)listener).selectGift(
-                    (Avatar[])args[0]);
+                    (Avatar[])args[0], (String)args[1]);
                 return;
 
             default:

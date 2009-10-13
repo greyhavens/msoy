@@ -104,11 +104,11 @@ public class WorldDirector extends BasicDirector
      * Fire up the selection UI with the given array of avatars and call the callback
      * when the user makes their choice, passing the chosen avatar.
      */
-    public function selectAvatar (avatars :Array, themeId :int, finish :Function) :void
+    public function selectAvatar (avatars :Array, groupName :String, finish :Function) :void
     {
         // TODO: pass in the theme name?
-        var tip :String = themeId == 0 ? Msgs.WORLD.get("m.pick_avatar") :
-            Msgs.WORLD.get("m.pick_avatar_theme", "Theme " + themeId);
+        var tip :String = groupName == null ? Msgs.WORLD.get("m.pick_avatar") :
+            Msgs.WORLD.get("m.pick_avatar_theme", groupName);
 
         // TODO: get rid of the "Connecting..." that stays behind the picker
         // TODO: we need to cancel the popup if a new room is selected
@@ -133,7 +133,7 @@ public class WorldDirector extends BasicDirector
             return;
         }
         function selectGift (avatars :TypedArray, homeSceneId :int) :void {
-            selectAvatar(avatars, 0, function () :void {
+            selectAvatar(avatars, null, function () :void {
                 _wctx.getSceneDirector().moveTo(homeSceneId);
             });
         }

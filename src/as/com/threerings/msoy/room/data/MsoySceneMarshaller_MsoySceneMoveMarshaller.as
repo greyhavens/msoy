@@ -64,7 +64,7 @@ public class MsoySceneMarshaller_MsoySceneMoveMarshaller
 
         case SELECT_GIFT:
             (listener as MsoySceneService_MsoySceneMoveListener).selectGift(
-                (args[0] as TypedArray /* of class com.threerings.msoy.item.data.all.Avatar */));
+                (args[0] as TypedArray /* of class com.threerings.msoy.item.data.all.Avatar */), (args[1] as String));
             return;
 
         default:

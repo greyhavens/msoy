@@ -196,9 +196,9 @@ public class MsoySceneDirector extends SceneDirector
     }
 
     // from interface MsoySceneService_MsoySceneMoveListener
-    public function selectGift (lineup :TypedArray) :void
+    public function selectGift (lineup :TypedArray, groupName :String) :void
     {
-        _worldctx.getWorldDirector().selectAvatar(lineup, function retryMove () :void {
+        _worldctx.getWorldDirector().selectAvatar(lineup, groupName, function retryMove () :void {
             // use _pendingData to retry the previous move
             sendMoveRequest();
         });

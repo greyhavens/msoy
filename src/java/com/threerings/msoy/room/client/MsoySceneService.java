@@ -21,9 +21,9 @@ public interface MsoySceneService extends InvocationService
         /**
          * Indicates that the client should display an avatar select UI for the player,
          * call {@link WorldService#acceptAndProceed} when it's done and then finally retry
-         * this move.
+         * this move. The group name is passed for describing to the user what is happening.
          */
-        public void selectGift (Avatar[] avatars);
+        public void selectGift (Avatar[] avatars, String groupName);
 
         /**
          * Indicates that the client must start up the given AVRG and let it take over,
