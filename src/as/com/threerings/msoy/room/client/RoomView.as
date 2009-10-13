@@ -138,6 +138,19 @@ public class RoomView extends Sprite
         // work in case everything's not fully set-up when the placeview is first shown.
     }
 
+    // from MsoyPlaceView
+    public function isClipped () :Boolean
+    {
+        return true;
+    }
+
+    // from MsoyPlaceView
+    public function getClipSize () :Point
+    {
+        var metrics :RoomMetrics = layout.metrics;
+        return new Point(metrics.sceneWidth * scaleX, metrics.sceneHeight * scaleY);
+    }
+
     // from Snapshottable
     public function snapshot (
         bitmapData :BitmapData, matrix :Matrix, childPredicate :Function = null) :Boolean

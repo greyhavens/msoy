@@ -7,6 +7,8 @@ import flash.events.Event;
 
 import flash.external.ExternalInterface;
 
+import flash.geom.Point;
+
 import flash.system.Capabilities;
 import flash.system.Security;
 
@@ -114,6 +116,18 @@ public class RoomStudioView extends RoomView
     override public function getZoom () :Number
     {
         return _zoom;
+    }
+
+    // from RoomView
+    override public function isClipped () :Boolean
+    {
+        return false;
+    }
+
+    // from RoomView
+    override public function getClipSize () :Point
+    {
+        return null;
     }
 
     public function setZoom (newZoom :Number) :void

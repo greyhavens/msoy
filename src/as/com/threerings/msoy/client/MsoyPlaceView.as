@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.client {
 
+import flash.geom.Point;
+
 import com.threerings.crowd.client.PlaceView;
 
 import com.threerings.msoy.data.all.MediaDesc;
@@ -32,5 +34,16 @@ public interface MsoyPlaceView extends PlaceView, PlaceLayer
      * Get the place logo, thumbnail media descriptor, or null if none.
      */
     function getPlaceLogo () :MediaDesc;
+
+    /**
+     * Returns true if this place view should be clipped (and centered) in the box.
+     */
+    function isClipped () :Boolean;
+
+    /**
+     * Gets the size of the content to clip for this place view. A point is used as the return
+     * value for convenience. x is width, y is height.
+     */
+    function getClipSize () :Point;
 }
 }

@@ -6,6 +6,7 @@ package com.threerings.msoy.game.client {
 import flash.display.Loader;
 import flash.display.LoaderInfo;
 import flash.events.KeyboardEvent;
+import flash.geom.Point;
 import flash.ui.Mouse;
 import mx.containers.VBox;
 
@@ -96,6 +97,18 @@ public class ParlorGamePanel extends WhirledGamePanel
     public function getPlaceLogo () :MediaDesc
     {
         return (_ctrl.getPlaceConfig() as ParlorGameConfig).game.thumbMedia;
+    }
+
+    // from MsoyPlaceView
+    public function isClipped () :Boolean
+    {
+        return true;
+    }
+
+    // from MsoyPlaceView
+    public function getClipSize () :Point
+    {
+        return new Point(700, 500);
     }
 
     /**
