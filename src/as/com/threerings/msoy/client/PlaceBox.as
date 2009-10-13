@@ -56,9 +56,7 @@ public class PlaceBox extends LayeredContainer
 
     public function PlaceBox ()
     {
-        mask = (_mask = new Shape());
-        rawChildren.addChild(_mask);
-        _masked = this;
+        rawChildren.addChild(_mask = new Shape());
     }
 
     public function getPlaceView () :PlaceView
@@ -208,13 +206,13 @@ public class PlaceBox extends LayeredContainer
                          "vx", view.x, "vy", view.y, "w", w, "h", h);
             }
 
-            // mask it so that avatars and items don't bleed out or bounds
+            // mask it so that avatars and items don't bleed out of bounds
             _mask.graphics.clear();
             _mask.graphics.beginFill(0xFFFFFF);
             _mask.graphics.drawRect(view.x, view.y, sceneWidth, sceneHeight);
             _mask.graphics.endFill();
 
-            maskBase();
+            maskView();
 
         } else if (_placeView is PlaceLayer) {
             PlaceLayer(_placeView).setPlaceSize(w, h);
@@ -232,9 +230,13 @@ public class PlaceBox extends LayeredContainer
         if (_masked == disp) {
             return;
         }
-        _masked.mask = null;
+        if (_masked != null) {
+            _masked.mask = null;
+        }
         _masked = disp;
-        _masked.mask = _mask;
+        if (_masked != null) {
+            _masked.mask = _mask;
+        }
     }
 
     protected function maskBox () :void
@@ -242,15 +244,9 @@ public class PlaceBox extends LayeredContainer
         setMasked(this);
     }
 
-    protected function maskBase () :void
+    protected function maskView () :void
     {
-        // TODO: could we just make place view directly?
-        // we expect the base to be a flex wrapper around the place view, fail if not
-        if (_base == _placeView) {
-            throw new Error("Masking base with unexpected place view type");
-        }
-
-        setMasked(_base);
+        setMasked(_placeView as DisplayObject);
     }
 
     /** The mask configured on the box or view so that it doesn't overlap outside components. */
