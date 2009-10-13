@@ -773,15 +773,15 @@ public class ChatOverlay
             var name :Name = umsg.getSpeakerDisplayName();
             var cmd :String;
             if (name is MemberName) {
-                cmd = MsoyController.POP_MEMBER_MENU + "/" + name.toString() + "/" + 
-                    String(MemberName(name).getMemberId());
+                cmd = "\uFFFC" + MsoyController.POP_MEMBER_MENU + "\uFFFC" + name.toString() +
+                    "\uFFFC" + String(MemberName(name).getMemberId());
                 if (name is PuppetName) {
                     cmd += "/t";
                 }
             } else if (name is PetName) {
                 var pname :PetName = PetName(name);
-                cmd = MsoyController.POP_PET_MENU + "/" + name.toString() + "/" + pname.getPetId() +
-                    "/" + pname.getOwnerId();
+                cmd = "\uFFFC" + MsoyController.POP_PET_MENU + "\uFFFC" + name.toString() +
+                    "\uFFFC" + pname.getPetId() + "\uFFFC" + pname.getOwnerId();
             }
             var texts2 :Array = TextUtil.parseLinks(
                 Msgs.CHAT.get(format, name, cmd) + " ", _defaultFmt, true, true);

@@ -646,14 +646,22 @@ public class MsoyController extends Controller
         var url :String = evt.text;
         if (StringUtil.startsWith(url, COMMAND_URL)) {
             var cmd :String = url.substring(COMMAND_URL.length);
+            var sep :String = "/";
+            // Sometimes we need to parse cmd args that have "/" in them, but we like using "/"
+            // as our normal separator. So if the first character of the command is \uFFFC, then
+            // chop that out and use \uFFFC as our separator.
+            if (cmd.charAt(0) == "\uFFFC") {
+                sep = "\uFFFC";
+                cmd = cmd.substr(1);
+            }
             var argStr :String = null;
-            var slash :int = cmd.indexOf("/");
+            var slash :int = cmd.indexOf(sep);
             if (slash != -1) {
                 argStr = cmd.substring(slash + 1);
                 cmd = cmd.substring(0, slash);
             }
-            var arg :Object = (argStr == null || argStr.indexOf("/") == -1)
-                ? argStr : argStr.split(/\//);
+            var arg :Object = (argStr == null || argStr.indexOf(sep) == -1)
+                ? argStr : argStr.split(sep);
             CommandEvent.dispatch(evt.target as IEventDispatcher, cmd, arg);
 
         } else {
