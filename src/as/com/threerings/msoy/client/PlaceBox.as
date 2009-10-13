@@ -17,6 +17,7 @@ import com.threerings.display.DisplayUtil;
 
 import com.threerings.crowd.client.PlaceView;
 import com.threerings.msoy.client.MsoyPlaceView;
+import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.room.client.RoomObjectView;
 import com.threerings.msoy.room.client.RoomMetrics;
 
