@@ -40,7 +40,9 @@
   </target>
 
   <target name="dist" depends="prepare,compile">
-      <dist-cell/>
+      <dist-cell>
+        <fileset dir="tasks" includes="*.properties"/>
+      </dist-cell>
   </target>
 
   <target name="just-package">
