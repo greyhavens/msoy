@@ -338,7 +338,9 @@ public class ChatOverlay
      */
     protected function shouldUseSidebar () :Boolean
     {
-        return !_suppressSidebar && Prefs.getSidebarChat();
+        // side bar chat is disabled
+        // TODO: remove side-bar related code
+        return false; //!_suppressSidebar && Prefs.getSidebarChat();
     }
 
     protected function createFilteredMessages () :void
@@ -544,15 +546,8 @@ public class ChatOverlay
 
     protected function setOccupantListShowing (showing :Boolean) :void
     {
-        // if we need to ship it off to a game chat container, do that.
+        // if we were not configured to have an occ list, just ignore
         if (!_includeOccList) {
-            var rightPanel :UIComponent = _ctx.getTopPanel().getLeftPanel();
-            if (rightPanel is GameChatContainer) {
-                if (_occupantList != null) {
-                    _occupantList.scrollBarOnLeft = (_scrollBarSide == SCROLL_BAR_LEFT);
-                }
-                (rightPanel as GameChatContainer).displayOccupantList(_occupantList);
-            }
             return;
         }
 

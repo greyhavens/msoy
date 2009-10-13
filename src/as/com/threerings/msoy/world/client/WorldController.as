@@ -299,12 +299,9 @@ public class WorldController extends MsoyController
             menuData.push({ command: TOGGLE_CHAT_HIDE, label: Msgs.GENERAL.get(
                     Prefs.getShowingChatHistory() ? "b.hide_chat" : "b.show_chat") });
         }
-        if (!(place is ParlorGamePanel)) {
-            menuData.push({ command: TOGGLE_CHAT_SIDEBAR, label: Msgs.GENERAL.get(
-                    Prefs.getSidebarChat() ? "b.overlay_chat" : "b.sidebar_chat") });
-            menuData.push({ command: TOGGLE_OCC_LIST, label: Msgs.GENERAL.get(
-                    Prefs.getShowingOccupantList() ? "b.hide_occ_list" : "b.show_occ_list") });
-        }
+        menuData.push({ command: TOGGLE_OCC_LIST, label: Msgs.GENERAL.get(
+            Prefs.getShowingOccupantList() ? "b.hide_occ_list" : "b.show_occ_list") });
+
         CommandMenu.addSeparator(menuData);
 
         // slap your friends in a menu

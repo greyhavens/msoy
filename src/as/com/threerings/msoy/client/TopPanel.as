@@ -21,7 +21,6 @@ import com.threerings.util.ValueEvent;
 import com.threerings.msoy.chat.client.ChatTabBar;
 import com.threerings.msoy.chat.client.ChatOverlay;
 import com.threerings.msoy.chat.client.ComicOverlay;
-import com.threerings.msoy.chat.client.GameChatContainer;
 
 /**
  * Dispatched when the name of our current location changes. The value supplied will be a string
@@ -137,11 +136,7 @@ public class TopPanel extends Canvas
      */
     public function getChatOverlay () :ChatOverlay
     {
-        if (_leftPanel is GameChatContainer) {
-            return (_leftPanel as GameChatContainer).getChatOverlay();
-        } else {
-            return _comicOverlay;
-        }
+        return _comicOverlay;
     }
 
     /**

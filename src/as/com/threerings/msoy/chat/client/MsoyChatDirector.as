@@ -190,8 +190,13 @@ public class MsoyChatDirector extends ChatDirector
      */
     public function getPlayerList (ltype :String) :PlayerList
     {
-        return (ltype == ChatCodes.PLACE_CHAT_TYPE && _roomOccList.havePlace()) ?
-            _roomOccList : null;
+        if (ltype != ChatCodes.PLACE_CHAT_TYPE) {
+            return null;
+        }
+        if (_roomOccList.havePlace()) {
+            return _roomOccList;
+        }
+        return _gamePlayerList;
     }
 
     override public function clientDidLogon (event :ClientEvent) :void
@@ -276,6 +281,29 @@ public class MsoyChatDirector extends ChatDirector
         }
 
         super.leftLocation(place);
+    }
+
+    /**
+     * Sets the player list for a game that has just started up.
+     */
+    public function setGamePlayerList (plobj :PlaceObject, list :PlayerList) :void
+    {
+        _gamePlace = plobj;
+        _gamePlayerList = list;
+    }
+
+    /**
+     * Clears the player list for a game that has just shut down.
+     */
+    public function clearGamePlayerList (plobj :PlaceObject) :void
+    {
+        if (_gamePlace != plobj) {
+            log.warning("Clearing game player list for a different place?",
+                        "plobj", plobj, "gameplace", _gamePlace);
+            return;
+        }
+        _gamePlace = null;
+        _gamePlayerList = null;
     }
 
     // from ChatDirector
@@ -401,6 +429,9 @@ public class MsoyChatDirector extends ChatDirector
     protected var _chatTabs :ChatTabBar;
     protected var _chatHistory :HistoryList;
     protected var _roomOccList :RoomOccupantList;
+
+    protected var _gamePlayerList :PlayerList;
+    protected var _gamePlace :PlaceObject;
 
     protected var _csservice :ChannelSpeakService;
     protected var _jservice :JabberService;

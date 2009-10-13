@@ -15,7 +15,6 @@ import com.threerings.flex.CommandButton;
 import com.threerings.util.MessageBundle;
 import com.threerings.util.ValueEvent;
 
-import com.threerings.crowd.chat.client.ChatDirector;
 import com.threerings.crowd.data.PlaceObject;
 import com.threerings.parlor.game.data.GameConfig;
 
@@ -23,7 +22,6 @@ import com.whirled.game.client.GamePlayerList;
 import com.whirled.game.client.WhirledGamePanel;
 
 import com.threerings.msoy.ui.DataPackMediaContainer;
-import com.threerings.msoy.ui.FloatingPanel;
 import com.threerings.msoy.ui.MsoyNameLabelCreator;
 
 import com.threerings.msoy.client.ControlBar;
@@ -31,11 +29,9 @@ import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.client.MsoyPlaceView;
+import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.client.TopPanel;
 import com.threerings.msoy.data.all.MediaDesc;
-
-import com.threerings.msoy.chat.client.ChatOverlay;
-import com.threerings.msoy.chat.client.GameChatContainer;
 
 import com.threerings.msoy.notify.data.Notification;
 
@@ -84,7 +80,7 @@ public class ParlorGamePanel extends WhirledGamePanel
     // from MsoyPlaceView
     public function shouldUseChatOverlay () :Boolean
     {
-        return (_showPlayers != null);
+        return true;
     }
 
     // from MsoyPlaceView
@@ -108,7 +104,7 @@ public class ParlorGamePanel extends WhirledGamePanel
     // from MsoyPlaceView
     public function getClipSize () :Point
     {
-        return new Point(700, 500);
+        return new Point(GAME_WIDTH, GAME_HEIGHT);
     }
 
     /**
@@ -140,42 +136,13 @@ public class ParlorGamePanel extends WhirledGamePanel
         const multiplayer :Boolean =
             config.getMatchType() == GameConfig.PARTY || config.players.length > 1;
 
+        mctx.getMsoyChatDirector().setGamePlayerList(plobj, _playerList);
         mctx.getUIState().setInGame(true, multiplayer);
         bar.setGameButtonIcon(getPlaceLogo());
 
-        // if we're too small to display chat in a sidebar, do an overlay instead
-        if (GAMESTUB_DEBUG_MODE || (mctx.getWidth() < TopPanel.RIGHT_SIDEBAR_WIDTH + GAME_WIDTH)) {
-            // set up a button to pop/hide the _playerList
-            _showPlayers = new CommandButton();
-            _showPlayers.toggle = true;
-            _showPlayers.toolTip = Msgs.GAME.get("i.scores");
-            _showPlayers.styleName = "controlBarButtonScores";
-            _showPlayers.setCallback(FloatingPanel.createPopper(function () :FloatingPanel {
-                // TODO: create a class for this puppy?
-                var panel :FloatingPanel = new FloatingPanel(mctx, Msgs.GAME.get("t.players"));
-                panel.showCloseButton = true;
-                panel.setStyle("paddingLeft", 0);
-                panel.setStyle("paddingTop", 0);
-                panel.setStyle("paddingRight", 0);
-                panel.setStyle("paddingBottom", 0);
-                var box :VBox = new VBox();
-                box.setStyle("backgroundColor", 0x000000);
-                box.addChild(_playerList);
-                panel.addChild(box);
-                return panel;
-            }, _showPlayers));
-            // March 16, 2009: don't add the players button for single-player games
-            if (multiplayer) {
-                bar.addCustomButton(_showPlayers);
-            }
-
-            // TODO: fuck the what? setLocalType(null)?
-            var overlay :ChatOverlay = mctx.getTopPanel().getPlaceChatOverlay();
-            overlay.setSuppressSidebar(true);
-            overlay.setLocalType(null);
-
-        } else {
-            mctx.getTopPanel().setLeftPanel(new GameChatContainer(mctx, _playerList));
+        if (mctx.getWidth() < TopPanel.RIGHT_SIDEBAR_WIDTH + GAME_WIDTH) {
+            // TODO: don't set the prefs, just override temporarily
+            Prefs.setShowingOccupantList(false);
         }
 
         // if we're the first person in a party game, create a twittering link
@@ -194,24 +161,7 @@ public class ParlorGamePanel extends WhirledGamePanel
         const mctx :MsoyContext = _gctx.getWorldContext();
 
         mctx.getUIState().setInGame(false, false);
-
-        if (_showPlayers != null) { // indicates we're in "gamestub" mode where chat is an overlay
-            if (_showPlayers.parent != null) {
-                _showPlayers.parent.removeChild(_showPlayers);
-            }
-
-            var overlay :ChatOverlay = mctx.getTopPanel().getPlaceChatOverlay();
-            overlay.setSuppressSidebar(false);
-            _gctx.getChatDirector().removeChatDisplay(overlay);
-
-        } else {
-            var gameChat :GameChatContainer =
-                mctx.getTopPanel().getLeftPanel() as GameChatContainer;
-            if (gameChat != null) {
-                gameChat.shutdown();
-                mctx.getTopPanel().clearLeftPanel();
-            }
-        }
+        mctx.getMsoyChatDirector().clearGamePlayerList(plobj);
 
         displayGameOver(false); // shut down any gameover display
 
@@ -304,7 +254,6 @@ public class ParlorGamePanel extends WhirledGamePanel
     /** The game over panel, or null if not being shown. */
     protected var _gameOverPanel :GameOverPanel;
 
-    protected var _showPlayers :CommandButton;
     protected var _goBtn :CommandButton;
 }
 }
