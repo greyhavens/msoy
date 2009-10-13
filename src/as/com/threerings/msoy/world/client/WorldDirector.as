@@ -107,6 +107,7 @@ public class WorldDirector extends BasicDirector
     public function selectAvatar (avatars :Array, finish :Function) :void
     {
         // TODO: get rid of the "Connecting..." that stays behind the picker
+        // TODO: we need to cancel the popup if a new room is selected
         AvatarPickerPanel.show(_wctx, avatars, function giftSelected (avatar :Avatar) :void {
             log.info("Avatar selected, accepting gift", "name", avatar.name);
             _wsvc.acceptAndProceed(avatar.catalogId, _wctx.confirmListener(finish));

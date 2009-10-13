@@ -781,3 +781,7 @@ ChatInput {
 
 .avatarPickerGrid {
 }
+
+.avatarPickerCell {
+  horizontalAlign: "center";
+}
