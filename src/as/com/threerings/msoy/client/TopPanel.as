@@ -336,7 +336,6 @@ public class TopPanel extends Canvas
         }
 
         // w -= ScrollBar.THICKNESS;
-        _placeBox.setMinimized(_ctx.getMsoyClient().isMinimized());
         _placeBox.setStyle("top", top);
         _placeBox.setStyle("bottom", bottom);
         _placeBox.setStyle("right", right);

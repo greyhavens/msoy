@@ -121,18 +121,6 @@ public class PlaceBox extends LayeredContainer
     }
 
     /**
-     * Informs the place box of whether the client has been minimized (to make room for GWT). Note
-     * that this assumes setActualSize will be called right afterwards, so does not do the updates
-     * therein.
-     * TODO: it would be nicer if LayeredContainer had an abstract update method required to be
-     * called after all setters rather than one setter that does an update
-     */
-    public function setMinimized (minimized :Boolean) :void
-    {
-        _minimized = minimized;
-    }
-
-    /**
      * This must be called on when our size is changed to allow us update our PlaceView mask and
      * resize the PlaceView itself.
      */
@@ -162,7 +150,7 @@ public class PlaceBox extends LayeredContainer
         var w :Number = this.width;
         var h :Number = this.height;
 
-        if (!_minimized) {
+        if (!_ctx.getMsoyClient().isMinimized()) {
             _lastFullSize = new Point(w, h);
         }
         var fullSize :Point = _lastFullSize;
@@ -281,8 +269,6 @@ public class PlaceBox extends LayeredContainer
     protected var _msoyPlaceView :MsoyPlaceView;
 
     protected var _roomBounds :Rectangle;
-
-    protected var _minimized :Boolean;
 
     /** The size of the area the last time he had an unminimized layout. */
     protected var _lastFullSize :Point;
