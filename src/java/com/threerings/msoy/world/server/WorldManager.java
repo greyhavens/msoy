@@ -127,7 +127,7 @@ public class WorldManager
             @Override public void invokePersistent () throws Exception {
                 if (tofu) {
                     List<Avatar> gifts = getStartupGiftAvatars(memobj.memberName.getMemberId());
-                    if (gifts != null && gifts.size() > 0) {
+                    if (gifts != null && !gifts.isEmpty()) {
                         _gifts = gifts.toArray(new Avatar[gifts.size()]);
                     }
                 }
@@ -362,14 +362,14 @@ public class WorldManager
         // check for the presence of a gifted avatar in their inventoty
         // TODO: do we need a flag for this instead in case the gift avatars change?
         List<AvatarRecord> avatars = repo.findItems(memberId, null, themeId);
-        if (avatars.size() > 0) {
+        if (!avatars.isEmpty()) {
             // they've had a gift and have since changed avatars, just let 'em go
             return null;
         }
 
         // they have not recieved their gift, instruct the client to show picker
          List<Avatar> lineup = _themeLogic.loadLineup(themeId);
-         return lineup.size() != 0 ? lineup : null;
+         return lineup.isEmpty() ? null : isEmpty;
     }
 
     /**
