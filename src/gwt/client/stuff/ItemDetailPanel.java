@@ -221,6 +221,10 @@ public class ItemDetailPanel extends BaseItemDetailPanel
                 _details.add(WidgetUtil.makeShim(10, 5));
                 _details.add(buttons);
 
+            } else if (_item.isCatalogMaster()) {
+                _details.add(createTipLink(_msgs.detailMasterTip(), _msgs.detailViewListing(),
+                    Pages.SHOP, "l", _item.getType(), _item.catalogId));
+
             } else {
                 // otherwise add a subtler UI letting them know the item can be listed
                 _details.add(createTipLink(_msgs.detailListTip(), _msgs.detailList(), onDoList));
