@@ -146,7 +146,8 @@ public class WorldControlBar extends ControlBar
             return isNotInViewer() && (state.inRoom || state.inAVRGame || !state.embedded);
         }
 
-        addButton(zoomBtn, UberClient.isViewer, GLOBAL_PRIORITY);
+        // TODO: fix zoom
+        // addButton(zoomBtn, UberClient.isViewer, GLOBAL_PRIORITY);
         addButton(friendsBtn, showFriends, GLOBAL_PRIORITY);
         addButton(partyBtn, showParty, GLOBAL_PRIORITY + 1);
         addButton(roomBtn, isInRoom, PLACE_PRIORITY);
