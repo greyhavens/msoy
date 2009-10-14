@@ -161,6 +161,15 @@ public class PlaceBox extends LayeredContainer
     {
         var w :Number = this.width;
         var h :Number = this.height;
+
+        if (!_minimized) {
+            _lastFullSize = new Point(w, h);
+        }
+        var fullSize :Point = _lastFullSize;
+        if (fullSize == null) {
+            fullSize = new Point(w + 700, h);
+        }
+
         _base.x = 0;
         _base.y = 0;
         if (_roomBounds != null) {
@@ -189,11 +198,16 @@ public class PlaceBox extends LayeredContainer
             var clip :Point = null;
             var isClipped :Boolean = _msoyPlaceView.isClipped();
             if (isClipped) {
-                var margin :Number = 0;
+                var wmargin :Number = 0;
+                var hmargin :Number = 0;
                 if (_ctx.getMsoyClient().getEmbedding().hasPlaceMargins()) {
-                    margin = 20;
+                    // set the margins somewhere between 0 and 20, making sure they don't cause
+                    // shrinking of an already small view
+                    // TODO: softwire 700x500
+                    wmargin = Math.max(0, Math.min(20, (fullSize.x - 700) / 2));
+                    hmargin = Math.max(0, Math.min(20, (fullSize.y - 500) / 2));
                 }
-                _msoyPlaceView.setPlaceSize(w - margin * 2, h - margin * 2);
+                _msoyPlaceView.setPlaceSize(w - wmargin * 2, h - hmargin * 2);
 
                 // NOTE: getClipSize must be called after setPlaceSize
                 clip = _msoyPlaceView.getClipSize();
@@ -204,8 +218,8 @@ public class PlaceBox extends LayeredContainer
 
             var view :DisplayObject = _msoyPlaceView as DisplayObject;
             if (isClipped) {
-                view.x = Math.max((w - clip.x) / 2, margin);
-                view.y = Math.max((h - clip.y) / 2, margin);
+                view.x = Math.max((w - clip.x) / 2, wmargin);
+                view.y = Math.max((h - clip.y) / 2, hmargin);
 
                 if (DeploymentConfig.devDeployment) {
                     log.info("Layout place view", "sh", clip.y, "sw", clip.x,
@@ -213,8 +227,8 @@ public class PlaceBox extends LayeredContainer
                 }
 
                 // mask it so that avatars and items don't bleed out of bounds
-                clip.x = Math.min(clip.x, w - margin * 2);
-                clip.y = Math.min(clip.y, h - margin * 2);
+                clip.x = Math.min(clip.x, w - wmargin * 2);
+                clip.y = Math.min(clip.y, h - hmargin * 2);
                 setMasked(view, view.x, view.y, clip.x, clip.y);
             } else {
                 _msoyPlaceView.setPlaceSize(w, h);
@@ -269,6 +283,9 @@ public class PlaceBox extends LayeredContainer
     protected var _roomBounds :Rectangle;
 
     protected var _minimized :Boolean;
+
+    /** The size of the area the last time he had an unminimized layout. */
+    protected var _lastFullSize :Point;
 
     protected static const CLEAN_BOUNDS :Boolean = true;
 }
