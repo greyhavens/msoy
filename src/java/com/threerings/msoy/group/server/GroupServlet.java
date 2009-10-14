@@ -81,6 +81,7 @@ import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.group.server.persist.MedalRecord;
 import com.threerings.msoy.group.server.persist.MedalRepository;
+import com.threerings.msoy.group.server.persist.ThemeRepository;
 import com.threerings.msoy.item.data.ItemCodes;
 
 import static com.threerings.msoy.Log.log;
@@ -159,6 +160,7 @@ public class GroupServlet extends MsoyServiceServlet
         detail.extras = grec.toExtrasObject();
         detail.homeSnapshot = _sceneRepo.loadSceneSnapshot(grec.homeSceneId);
         detail.creator = _memberRepo.loadMemberName(grec.creatorId);
+        detail.isTheme = _themeLogic.isTheme(groupId);
         detail.memberCount = _groupRepo.countMembers(grec.groupId);
         detail.myRank = Rank.NON_MEMBER;
 
@@ -741,6 +743,21 @@ public class GroupServlet extends MsoyServiceServlet
         _groupRepo.setBrandShare(brandId, targetId, shares);
     }
 
+    public void createTheme (int groupId)
+        throws ServiceException
+    {
+        MemberRecord mrec = requireSupportUser();
+
+        // make sure we're allow to administer this group
+        if (!mrec.isSupport() &&
+                _groupRepo.getMembership(groupId, mrec.memberId).left != Rank.MANAGER) {
+            throw new ServiceException(MsoyAuthCodes.ACCESS_DENIED);
+        }
+
+        if (!_themeRepo.createTheme(groupId)) {
+            log.warning("Theme already existed? Whatever, let it go.", "groupId", groupId);
+        }
+    }
 
     /**
      * Fill in the current number of people in rooms (population) and the number of total threads
@@ -832,6 +849,8 @@ public class GroupServlet extends MsoyServiceServlet
     @Inject protected ForumRepository _forumRepo;
     @Inject protected GroupLogic _groupLogic;
     @Inject protected GroupRepository _groupRepo;
+    @Inject protected ThemeLogic _themeLogic;
+    @Inject protected ThemeRepository _themeRepo;
     @Inject protected MedalRepository _medalRepo;
     @Inject protected MemberManager _memberMan;
     @Inject protected MemberRepository _memberRepo;

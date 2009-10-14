@@ -35,6 +35,15 @@ public class ThemeRepository extends DepotRepository
     }
 
     /**
+     * Create a new Theme aspect to the given group. Returns true if the record was created;
+     * false suggests the Theme already existed.
+     */
+    public boolean createTheme (int groupId)
+    {
+        return store(new ThemeRecord(groupId));
+    }
+
+    /**
      * Load the most recently used avatar record a given player and theme.
      */
     public ThemeAvatarUseRecord getLastWornAvatar (int memberId, int groupId)

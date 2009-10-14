@@ -9,6 +9,7 @@ import com.google.gwt.user.client.Command;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PushButton;
@@ -104,11 +105,13 @@ public class GroupDetailPanel extends FlowPanel
         _group = _detail.group;
         _extras = _detail.extras;
 
-        FloatPanel mainDetails = new FloatPanel("MainDetails");
+        SmartTable mainDetails = new SmartTable();
+        mainDetails.getRowFormatter().setVerticalAlign(0, HasAlignment.ALIGN_TOP);
+        mainDetails.setStyleName("MainDetails");
         add(mainDetails);
 
         FlowPanel leftPanel = MsoyUI.createFlowPanel("Left");
-        mainDetails.add(leftPanel);
+        mainDetails.setWidget(0, 0, leftPanel);
 
         // icon, group name, creator, members
         RoundBox titleBox = new RoundBox(RoundBox.MEDIUM_BLUE);
@@ -251,8 +254,29 @@ public class GroupDetailPanel extends FlowPanel
                 }));
         }
 
+        // edit this group & manage rooms
+        if (_detail.myRank == Rank.MANAGER || CShell.isSupport()) {
+            FlowPanel themeActions = MsoyUI.createFlowPanel("ManagerActions");
+            actions.add(themeActions);
+
+            // For now, only support+ can create themes
+            if (!_detail.isTheme && CShell.isSupport()) {
+                themeActions.add(MsoyUI.createActionLabel(
+                    _msgs.detailCreateTheme(), "inline", new ClickHandler() {
+                        public void onClick (ClickEvent event) {
+                            _groupsvc.createTheme(_group.groupId, new InfoCallback<Void>() {
+                                public void onSuccess (Void result) {
+                                    _detail.isTheme = true;
+                                    setGroupDetail(_detail);
+                                }
+                            });
+                        }
+                    }));
+            }
+        }
+
         FlowPanel rightPanel = MsoyUI.createFlowPanel("Right");
-        mainDetails.add(rightPanel);
+        mainDetails.setWidget(0, 1, rightPanel);
 
         // screenshot, #online, blurb
         FlowPanel screenshot = MsoyUI.createFlowPanel("ScreenshotBox");

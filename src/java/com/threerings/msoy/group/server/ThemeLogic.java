@@ -26,17 +26,22 @@ import com.threerings.msoy.item.server.persist.CatalogRecord;
 @BlockingThread @Singleton
 public class ThemeLogic
 {
-    public List<Avatar> loadLineup (int themeId)
+    public List<Avatar> loadLineup (int groupId)
     {
         AvatarRepository repo = _itemLogic.getAvatarRepository();
         List<CatalogRecord> catalogRecords = repo.loadCatalog(Lists.transform(
-            _themeRepo.loadAvatarLineup(themeId), ThemeAvatarLineupRecord.GET_CATALOG_ID));
+            _themeRepo.loadAvatarLineup(groupId), ThemeAvatarLineupRecord.GET_CATALOG_ID));
 
         return Lists.transform(catalogRecords, new Function<CatalogRecord, Avatar>() {
             public Avatar apply (CatalogRecord catRec) {
                 return (Avatar)(catRec.item.toItem());
             }
         });
+    }
+
+    public boolean isTheme (int groupId)
+    {
+        return _themeRepo.loadTheme(groupId) != null;
     }
 
     // our dependencies

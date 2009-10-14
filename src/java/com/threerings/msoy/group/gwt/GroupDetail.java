@@ -40,6 +40,9 @@ public class GroupDetail
     /** The person who created the group. */
     public MemberName creator;
 
+    /** Whether or not this group is also a theme. */
+    public boolean isTheme;
+
     /** The number of members in this group. */
     public int memberCount;
 

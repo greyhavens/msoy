@@ -251,4 +251,10 @@ public interface GroupService extends RemoteService
      */
     void setBrandShares (int brandId, int targetId, int shares)
         throws ServiceException;
+
+    /**
+     * Create a theme aspect to an existing group.
+     */
+    void createTheme (int groupId)
+        throws ServiceException;
 }
