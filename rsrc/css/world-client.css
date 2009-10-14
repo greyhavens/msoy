@@ -303,7 +303,7 @@ ChatInput {
   fontSize: 12;
   borderStyle: "solid";
   borderThickness: 1px;
-  borderColor: #000000;
+  borderColor: #309dc1;
   prompt: Embed(source="../media/skins/controlbar/typetochat.png");
 }
 
