@@ -127,7 +127,7 @@ public class WorldManager
             @Override public void invokePersistent () throws Exception {
                 if (tofu) {
                     List<Avatar> gifts = getStartupGiftAvatars(memobj.memberName.getMemberId());
-                    if (gifts != null) {
+                    if (gifts != null && gifts.size() > 0) {
                         _gifts = gifts.toArray(new Avatar[gifts.size()]);
                     }
                 }
