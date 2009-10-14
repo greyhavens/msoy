@@ -140,7 +140,7 @@ public class MediaControls extends Sprite
         // size and add the timefield
         _timeField = TextFieldUtil.createField("88:88 / 88:88",
             { autoSize: TextFieldAutoSize.CENTER, selectable: false },
-            { color: 0xFFFFFF, font: "_sans", size: 10 });
+            { color: 0x000000, font: "_sans", size: 10 });
         _timeField.height = UNIT;
         baseX -= _timeField.width;
         _timeField.x = baseX;

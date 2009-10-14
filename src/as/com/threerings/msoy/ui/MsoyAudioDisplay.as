@@ -88,7 +88,7 @@ public class MsoyAudioDisplay extends Sprite
 
 //        const text :String = "N/A"; // i18n is not happening here, this is non-flex.
         const textProps :Object = { selectable: false, x: PAD, width: WIDTH - (PAD * 2) };
-        const formatProps :Object = { color: 0xFFFFFF, size: 12, bold: true, italic: true };
+        const formatProps :Object = { color: 0x000000, size: 12, bold: true, italic: true };
 
         _artist = TextFieldUtil.createField("unknown artist", textProps, formatProps);
         addChild(_artist);

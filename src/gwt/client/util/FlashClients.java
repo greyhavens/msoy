@@ -78,9 +78,11 @@ public class FlashClients
      */
     public static HTML createAudioPlayer (int width, int height, String path)
     {
-        return WidgetUtil.createContainer(new FlashObject("audioPlayer",
+        FlashObject player = new FlashObject("audioPlayer",
             "/clients/" + DeploymentConfig.version + "/audioplayer.swf", width, height,
-            "audio=" + URL.encodeComponent(path)));
+            "audio=" + URL.encodeComponent(path));
+        player.bgcolor = "#FFFFFF";
+        return WidgetUtil.createContainer(player);
     }
 
     /**
