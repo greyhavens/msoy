@@ -5,6 +5,7 @@ package com.threerings.msoy.stuff.gwt;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 
@@ -46,7 +47,7 @@ public interface StuffServiceAsync
     /**
      * The async version of {@link StuffService#loadInventory}.
      */
-    void loadInventory (int memberId, byte type, String query, AsyncCallback<StuffService.InventoryResult> callback);
+    void loadInventory (int memberId, byte type, String query, AsyncCallback<StuffService.InventoryResult<Item>> callback);
 
     /**
      * The async version of {@link StuffService#loadItem}.
@@ -62,4 +63,9 @@ public interface StuffServiceAsync
      * The async version of {@link StuffService#deleteItem}.
      */
     void deleteItem (ItemIdent item, AsyncCallback<Void> callback);
+
+    /**
+     * The async version of {@link StuffService#loadThemeLineup}.
+     */
+    void loadThemeLineup (int groupId, AsyncCallback<StuffService.InventoryResult<Avatar>> callback);
 }

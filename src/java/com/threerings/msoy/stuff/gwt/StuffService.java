@@ -14,6 +14,7 @@ import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MediaDesc;
 
+import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.gwt.ItemDetail;
@@ -43,10 +44,10 @@ public interface StuffService extends RemoteService
     }
 
     /** Provides results for {@link #loadInventory}. */
-    public static class InventoryResult implements IsSerializable
+    public static class InventoryResult<T> implements IsSerializable
     {
         /** The items constituting the inventory requested. */
-        public List<Item> items;
+        public List<T> items;
 
         /** The theme to which the inventory resolution was restricted. */
         public GroupName theme;
@@ -54,7 +55,7 @@ public interface StuffService extends RemoteService
         public InventoryResult () {
         }
 
-        public InventoryResult (List<Item> items, GroupName theme) {
+        public InventoryResult (List<T> items, GroupName theme) {
             this.items = items;
             this.theme = theme;
         }
@@ -109,7 +110,7 @@ public interface StuffService extends RemoteService
      * Loads all items in a player's inventory of the specified type. If query is non-null, then
      * restrict the returned set to items whose name/description/tags match the string.
      */
-    InventoryResult loadInventory (int memberId, byte type, String query)
+    InventoryResult<Item> loadInventory (int memberId, byte type, String query)
         throws ServiceException;
 
     /**
@@ -128,5 +129,11 @@ public interface StuffService extends RemoteService
      * Deletes an item from the caller's inventory.
      */
     void deleteItem (ItemIdent item)
+        throws ServiceException;
+
+    /**
+     * Loads a theme group's avatar lineup.
+     */
+    InventoryResult<Avatar> loadThemeLineup (int groupId)
         throws ServiceException;
 }

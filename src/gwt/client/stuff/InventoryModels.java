@@ -42,11 +42,11 @@ public class InventoryModels
         public final String query;
         public final GroupName theme;
 
-        public Stuff (InventoryResult result, Key key) {
+        public Stuff (InventoryResult<Item> result, Key key) {
             this(result, key.type, key.query);
         }
 
-        public Stuff (InventoryResult result, byte type, String query) {
+        public Stuff (InventoryResult<Item> result, byte type, String query) {
             super(result.items);
             this.theme = result.theme;
             this.type = type;
@@ -69,7 +69,7 @@ public class InventoryModels
 
         @Override
         protected SimpleDataModel<Item> createFilteredModel (List<Item> items) {
-            return new Stuff(new InventoryResult(items, theme), type, query);
+            return new Stuff(new InventoryResult<Item>(items, theme), type, query);
         }
     }
 
@@ -188,8 +188,8 @@ public class InventoryModels
             return;
         }
 
-        AsyncCallback<InventoryResult> callback = new AsyncCallback<InventoryResult>() {
-            public void onSuccess (InventoryResult result) {
+        AsyncCallback<InventoryResult<Item>> callback = new AsyncCallback<InventoryResult<Item>>() {
+            public void onSuccess (InventoryResult<Item> result) {
                 Stuff model = new Stuff(result, key);
                 _models.put(key, model);
                 cb.onSuccess(model);

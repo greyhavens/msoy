@@ -26,6 +26,7 @@ import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.TagNameRecord;
 
 import com.threerings.msoy.group.server.GroupLogic;
+import com.threerings.msoy.group.server.ThemeLogic;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.item.data.all.Avatar;
@@ -193,7 +194,7 @@ public class StuffServlet extends MsoyServiceServlet
     }
 
     // from interface StuffService
-    public InventoryResult loadInventory (int memberId, byte type, String query)
+    public InventoryResult<Item> loadInventory (int memberId, byte type, String query)
         throws ServiceException
     {
         MemberRecord memrec = requireAuthedUser();
@@ -214,7 +215,7 @@ public class StuffServlet extends MsoyServiceServlet
 
         Collections.sort(items);
 
-        return new InventoryResult(items, (memrec.themeGroupId > 0) ?
+        return new InventoryResult<Item>(items, (memrec.themeGroupId > 0) ?
             _groupRepo.loadGroupName(memrec.themeGroupId) : null);
     }
 
@@ -289,6 +290,15 @@ public class StuffServlet extends MsoyServiceServlet
         _itemLogic.deleteItem(memrec, iident);
     }
 
+    public InventoryResult<Avatar> loadThemeLineup (int groupId)
+        throws ServiceException
+    {
+        // loadLineup() returns a fancy view List, make it concrete
+        return new InventoryResult<Avatar>(
+                Lists.newArrayList(_themeLogic.loadLineup(groupId)),
+                _groupRepo.loadGroupName(groupId));
+    }
+
     /**
      * Helper method for remixItem and revertRemixedClone.
      * @param item the updated item, or null to revert to the original mix.
@@ -333,6 +343,7 @@ public class StuffServlet extends MsoyServiceServlet
     // our dependencies
     @Inject protected GroupLogic _groupLogic;
     @Inject protected GroupRepository _groupRepo;
+    @Inject protected ThemeLogic _themeLogic;
     @Inject protected ItemLogic _itemLogic;
     @Inject protected MemoryRepository _memoryRepo;
     @Inject protected MsoySceneRepository _sceneRepo;

@@ -132,6 +132,12 @@ public class StuffPage extends Page
             });
             setContent(remixer);
 
+        // or we're showing a theme's lineup
+        } else if ("t".equals(arg0)) {
+            ThemeLineupPanel panel = new ThemeLineupPanel(args.get(1, -1));
+            panel.setArgs(args.get(2, 0));
+            setContent(panel);
+
         // otherwise we're viewing some player's inventory
         } else {
             type = args.get(0, Item.AVATAR);
