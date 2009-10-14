@@ -369,7 +369,7 @@ public class WorldManager
 
         // they have not recieved their gift, instruct the client to show picker
          List<Avatar> lineup = _themeLogic.loadLineup(themeId);
-         return lineup.isEmpty() ? null : isEmpty;
+         return lineup.isEmpty() ? null : lineup;
     }
 
     /**
