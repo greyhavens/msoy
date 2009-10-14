@@ -4,57 +4,50 @@
 package com.threerings.msoy.mail.gwt;
 
 import java.util.List;
-
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-import com.threerings.msoy.group.gwt.GroupService;
-
 /**
- * The asynchronous (client-side) version of {@link GroupService}.
+ * Provides the asynchronous version of {@link MailService}.
  */
 public interface MailServiceAsync
 {
     /**
-     * The asynchronous version of {@link MailService#loadConversations}
+     * The async version of {@link MailService#loadConversations}.
      */
-    public void loadConversations (int offset, int count, boolean needCount,
-                                   AsyncCallback<MailService.ConvosResult> callback);
+    void loadConversations (int offset, int count, boolean needCount, AsyncCallback<MailService.ConvosResult> callback);
 
     /**
-     * The asynchronous version of {@link MailService#loadConversation}
+     * The async version of {@link MailService#loadConversation}.
      */
-    public void loadConversation (int convoId, AsyncCallback<MailService.ConvoResult> callback);
+    void loadConversation (int convoId, AsyncCallback<MailService.ConvoResult> callback);
 
     /**
-     * The asynchronous version of {@link MailService#startConversation}
+     * The async version of {@link MailService#startConversation}.
      */
-    public void startConversation (int recipientId, String subject, String body,
-                                   MailPayload attachment, AsyncCallback<Void> callback);
+    void startConversation (int recipientId, String subject, String body, MailPayload attachment, AsyncCallback<Void> callback);
 
     /**
-     * The asynchronous version of {@link MailService#continueConversation}
+     * The async version of {@link MailService#continueConversation}.
      */
-    public void continueConversation (int convoId, String text, MailPayload attachment,
-                                      AsyncCallback<ConvMessage> callback);
+    void continueConversation (int convoId, String text, MailPayload attachment, AsyncCallback<ConvMessage> callback);
 
     /**
-     * The asynchronous version of {@link MailService#deleteConversation}
+     * The async version of {@link MailService#deleteConversation}.
      */
     void deleteConversation (int convoId, boolean ignoreUnread, AsyncCallback<Boolean> callback);
 
     /**
-     * The asynchronous version of {@link MailService#deleteConversations}
+     * The async version of {@link MailService#deleteConversations}.
      */
     void deleteConversations (List<Integer> convoIds, AsyncCallback<Void> callback);
 
     /**
-     * The asynchronous version of {@link MailService#updatePayload}
+     * The async version of {@link MailService#updatePayload}.
      */
-    public void updatePayload (int convoId, long sent, MailPayload obj,
-                               AsyncCallback<Void> callback);
+    void updatePayload (int convoId, long sent, MailPayload payload, AsyncCallback<Void> callback);
 
     /**
-     * The asynchronous version of {@link MailService#complainConversation}
+     * The async version of {@link MailService#complainConversation}.
      */
     void complainConversation (int convoId, String reason, AsyncCallback<Void> callback);
 }

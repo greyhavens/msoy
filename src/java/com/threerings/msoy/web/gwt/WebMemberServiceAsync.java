@@ -4,125 +4,115 @@
 package com.threerings.msoy.web.gwt;
 
 import java.util.List;
-
 import com.google.gwt.user.client.rpc.AsyncCallback;
-
 import com.threerings.gwt.util.PagedResult;
-
 import com.threerings.msoy.data.all.Friendship;
 import com.threerings.msoy.data.all.VisitorInfo;
-
 import com.threerings.msoy.money.data.all.PriceQuote;
 import com.threerings.msoy.money.data.all.PurchaseResult;
 
 /**
- * The asynchronous (client-side) version of {@link WebMemberService}.
+ * Provides the asynchronous version of {@link WebMemberService}.
  */
 public interface WebMemberServiceAsync
 {
     /**
-     * The asynchronous version of {@link WebMemberService#getMemberCard}.
+     * The async version of {@link WebMemberService#getMemberCard}.
      */
     void getMemberCard (int memberId, AsyncCallback<MemberCard> callback);
 
     /**
-     * The asynchronous version of {@link WebMemberService#getFriendship}.
+     * The async version of {@link WebMemberService#getFriendship}.
      */
     void getFriendship (int memberId, AsyncCallback<Friendship> callback);
 
     /**
-     * The asynchronous version of {@link WebMemberService#loadFriends}.
+     * The async version of {@link WebMemberService#loadFriends}.
      */
-    void loadFriends (int memberId, boolean padWithGreeters,
-                      AsyncCallback<WebMemberService.FriendsResult> callback);
+    void loadFriends (int memberId, boolean padWithGreeters, AsyncCallback<WebMemberService.FriendsResult> callback);
 
     /**
-     * The asynchronous version of {@link WebMemberService#loadGreeters}.
+     * The async version of {@link WebMemberService#loadGreeters}.
      */
-    void loadGreeters (int offset, int limit,
-        AsyncCallback<WebMemberService.FriendsResult> callback);
+    void loadGreeters (int offset, int limit, AsyncCallback<WebMemberService.FriendsResult> callback);
 
     /**
-     * The asynchronous version of {@link WebMemberService#addFriend}.
+     * The async version of {@link WebMemberService#addFriend}.
      */
     void addFriend (int friendId, AsyncCallback<Void> callback);
 
     /**
-     * The asynchronous version of {@link WebMemberService#removeFriend}.
+     * The async version of {@link WebMemberService#removeFriend}.
      */
     void removeFriend (int friendId, AsyncCallback<Void> callback);
 
     /**
-     * The asynchronous version of {@link WebMemberService#isAutomaticFriender}.
+     * The async version of {@link WebMemberService#isAutomaticFriender}.
      */
     void isAutomaticFriender (int friendId, AsyncCallback<Boolean> callback);
 
     /**
-     * The asynchronous version of {@link WebMemberService#loadMutelist}.
+     * The async version of {@link WebMemberService#loadMutelist}.
      */
-    void loadMutelist (int memberId, int offset, int limit,
-        AsyncCallback<PagedResult<MemberCard>> callback);
+    void loadMutelist (int memberId, int offset, int limit, AsyncCallback<PagedResult<MemberCard>> callback);
 
     /**
-     * The asynchronous version of {@link WebMemberService#isAutomaticFriender}.
+     * The async version of {@link WebMemberService#setMuted}.
      */
     void setMuted (int memberId, int muteeId, boolean muted, AsyncCallback<Void> callback);
 
     /**
-     * The asynchronous version of {@link WebMemberService#getInvitation}.
+     * The async version of {@link WebMemberService#getInvitation}.
      */
     void getInvitation (String inviteId, boolean viewing, AsyncCallback<Invitation> callback);
 
     /**
-     * The asynchronous version of {@link WebMemberService#getGameInvitation}.
+     * The async version of {@link WebMemberService#getGameInvitation}.
      */
     void getGameInvitation (String inviteId, AsyncCallback<Invitation> callback);
 
     /**
-     * The asynchronous version of {@link WebMemberService#optOut}.
+     * The async version of {@link WebMemberService#optOut}.
      */
     void optOut (boolean gameInvite, String inviteId, AsyncCallback<Void> callback);
 
     /**
-     * The asynchronous version of {@link WebMemberService#optOutAnnounce}.
+     * The async version of {@link WebMemberService#optOutAnnounce}.
      */
     void optOutAnnounce (int memberId, String hash, AsyncCallback<String> callback);
 
     /**
-     * The asynchronous version of {@link WebMemberService#getLeaderList}.
+     * The async version of {@link WebMemberService#getLeaderList}.
      */
     void getLeaderList (AsyncCallback<List<MemberCard>> callback);
 
     /**
-     * The asynchronous version of {@link WebMemberService#noteNewVisitor}.
+     * The async version of {@link WebMemberService#noteNewVisitor}.
      */
     void noteNewVisitor (VisitorInfo info, String pageToken, AsyncCallback<Void> callback);
 
     /**
-     * The asynchronous version of {@link WebMemberService#getABTestGroup}.
+     * The async version of {@link WebMemberService#getABTestGroup}.
      */
-    void getABTestGroup (VisitorInfo info, String testName, boolean logEvent,
-                         AsyncCallback<Integer> callback);
+    void getABTestGroup (VisitorInfo info, String testName, boolean logEvent, AsyncCallback<Integer> callback);
 
     /**
-     * The asynchronous version of {@link WebMemberService#logLandingABTestGroup}.
+     * The async version of {@link WebMemberService#logLandingABTestGroup}.
      */
-    void logLandingABTestGroup (VisitorInfo info, String testName, int group,
-        AsyncCallback<Void> callback);
+    void logLandingABTestGroup (VisitorInfo info, String testName, int group, AsyncCallback<Void> callback);
 
     /**
-     * The asynchronous version of {@link WebMemberService#trackTestAction}.
+     * The async version of {@link WebMemberService#trackTestAction}.
      */
-    void trackTestAction (String test, String action, VisitorInfo info,
-                          AsyncCallback<Void> callback);
+    void trackTestAction (String test, String action, VisitorInfo info, AsyncCallback<Void> callback);
 
     /**
-     * The asynchronous version of {@link WebMemberService#getBarscriptionCost}.
+     * The async version of {@link WebMemberService#getBarscriptionCost}.
      */
     void getBarscriptionCost (AsyncCallback<PriceQuote> callback);
 
     /**
-     * The asynchronous version of {@link WebMemberService#barscribe}.
+     * The async version of {@link WebMemberService#barscribe}.
      */
     void barscribe (int authedBarCost, AsyncCallback<PurchaseResult<WebCreds.Role>> callback);
 }

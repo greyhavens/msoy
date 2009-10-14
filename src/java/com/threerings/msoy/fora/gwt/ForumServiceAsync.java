@@ -4,93 +4,85 @@
 package com.threerings.msoy.fora.gwt;
 
 import java.util.List;
-
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
- * The asynchronous (client-side) version of {@link ForumService}.
+ * Provides the asynchronous version of {@link ForumService}.
  */
 public interface ForumServiceAsync
 {
     /**
-     * The asynchronous version of {@link ForumService#loadUnreadThreads}.
+     * The async version of {@link ForumService#loadUnreadThreads}.
      */
     void loadUnreadThreads (int maximum, AsyncCallback<List<ForumThread>> callback);
 
     /**
-     * The asynchronous version of {@link ForumService#loadUnreadFriendThreads}.
+     * The async version of {@link ForumService#loadUnreadFriendThreads}.
      */
     void loadUnreadFriendThreads (int maximum, AsyncCallback<List<ForumThread>> callback);
 
     /**
-     * The asynchronous version of {@link ForumService#loadThreads}.
+     * The async version of {@link ForumService#loadThreads}.
      */
-    void loadThreads (int groupId, int offset, int count, boolean needTotalCount,
-                      AsyncCallback<ForumService.ThreadResult> callback);
+    void loadThreads (int groupId, int offset, int count, boolean needTotalCount, AsyncCallback<ForumService.ThreadResult> callback);
 
     /**
-     * The asynchronous version of {@link ForumService#findThreads}.
+     * The async version of {@link ForumService#findThreads}.
      */
-    void findThreads (int groupId, String query, int limit,
-                      AsyncCallback<List<ForumThread>> callback);
+    void findThreads (int groupId, String search, int limit, AsyncCallback<List<ForumThread>> callback);
 
     /**
-     * The asynchronous version of {@link ForumService#findMyThreads}.
+     * The async version of {@link ForumService#findMyThreads}.
      */
-    void findMyThreads (String query, int limit, AsyncCallback<List<ForumThread>> callback);
+    void findMyThreads (String search, int limit, AsyncCallback<List<ForumThread>> callback);
 
     /**
-     * The asynchronous version of {@link ForumService#loadMessages}.
+     * The async version of {@link ForumService#loadMessages}.
      */
-    void loadMessages (int threadId, int lastReadPostId, int offset, int count,
-                       boolean needTotalCount, AsyncCallback<ForumService.MessageResult> callback);
+    void loadMessages (int threadId, int lastReadPostId, int offset, int count, boolean needTotalCount, AsyncCallback<ForumService.MessageResult> callback);
 
     /**
-     * The asynchronous version of {@link ForumService#findMessages}.
+     * The async version of {@link ForumService#findMessages}.
      */
-    void findMessages (int threadId, String search, int limit,
-                       AsyncCallback<List<ForumMessage>> callback);
+    void findMessages (int threadId, String search, int limit, AsyncCallback<List<ForumMessage>> callback);
 
     /**
-     * The asynchronous version of {@link ForumService#createThread}.
+     * The async version of {@link ForumService#createThread}.
      */
-    void createThread (int groupId, int flags, boolean spam, String subject, String message,
-                       AsyncCallback<ForumThread> callback);
+    void createThread (int groupId, int flags, boolean spam, String subject, String message, AsyncCallback<ForumThread> callback);
 
     /**
-     * The asynchronous version of {@link ForumService#updateThread}.
+     * The async version of {@link ForumService#updateThread}.
      */
     void updateThread (int threadId, int flags, String subject, AsyncCallback<Void> callback);
 
     /**
-     * The asynchronous version of {@link ForumService#ignoreThread}.
+     * The async version of {@link ForumService#ignoreThread}.
      */
     void ignoreThread (int threadId, AsyncCallback<Void> callback);
 
     /**
-     * The asynchronous version of {@link ForumService#postMessage}.
+     * The async version of {@link ForumService#postMessage}.
      */
-    void postMessage (int threadId, int inReplyTo, int inReplytoMemberId, String message,
-                      AsyncCallback<ForumMessage> callback);
+    void postMessage (int threadId, int inReplyTo, int inReplyToMemberId, String message, AsyncCallback<ForumMessage> callback);
 
     /**
-     * The asynchronous version of {@link ForumService#editMessage}.
+     * The async version of {@link ForumService#editMessage}.
      */
     void editMessage (int messageId, String message, AsyncCallback<ForumMessage> callback);
 
     /**
-     * The asynchronous version of {@link ForumService#deleteMessage}.
+     * The async version of {@link ForumService#deleteMessage}.
      */
     void deleteMessage (int messageId, AsyncCallback<Void> callback);
 
     /**
-     * The asynchronous version of {@link ForumService#complainMessage}.
+     * The async version of {@link ForumService#complainMessage}.
      */
     void complainMessage (String complaint, int messageId, AsyncCallback<Void> callback);
 
     /**
-     * The asynchronous version of {@link ForumService#sendPreviewEmail}.
+     * The async version of {@link ForumService#sendPreviewEmail}.
      */
-    void sendPreviewEmail (String subject, String message, boolean includeProbeList,
-                           AsyncCallback<Void> callback);
+    void sendPreviewEmail (String subject, String message, boolean includeProbeList, AsyncCallback<Void> callback);
 }

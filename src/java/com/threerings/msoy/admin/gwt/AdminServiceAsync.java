@@ -5,14 +5,7 @@ package com.threerings.msoy.admin.gwt;
 
 import java.util.List;
 import java.util.Set;
-
 import com.google.gwt.user.client.rpc.AsyncCallback;
-
-import com.threerings.msoy.admin.gwt.AdminService.BroadcastHistoryResult;
-import com.threerings.msoy.admin.gwt.AdminService.ItemDeletionResult;
-import com.threerings.msoy.admin.gwt.AdminService.ItemFlagsResult;
-import com.threerings.msoy.admin.gwt.AdminService.ItemTransactionResult;
-
 import com.threerings.msoy.data.all.CharityInfo;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.ItemIdent;
@@ -21,152 +14,147 @@ import com.threerings.msoy.web.gwt.Promotion;
 import com.threerings.msoy.web.gwt.WebCreds;
 
 /**
- * The asynchronous (client-side) version of {@link AdminService}.
+ * Provides the asynchronous version of {@link AdminService}.
  */
 public interface AdminServiceAsync
 {
     /**
-     * The asynchronous version of {@link AdminService#getMemberInfo}.
-     */
-    void getMemberInfo (int memberId, int affiliateCount, AsyncCallback<MemberAdminInfo> callback);
-
-    /**
-     * The asynchronous version of {@link AdminService#getAffiliates}.
-     */
-    void getAffiliates (int memberId, int offset, int count,
-        AsyncCallback<List<MemberName>> callback);
-
-    /**
-     * The asynchronous version of {@link AdminService#setRole}.
-     */
-    void setRole (int memberId, WebCreds.Role role, AsyncCallback<Void> callback);
-
-    /**
-     * The asynchronous version of {@link AdminService#resetHumanity}.
-     */
-    void resetHumanity (int memberId, AsyncCallback<Integer> callback);
-
-    /**
-     * The asynchronous version of {@link AdminService#setDisplayName}.
+     * The async version of {@link AdminService#setDisplayName}.
      */
     void setDisplayName (int memberId, String name, AsyncCallback<Void> callback);
 
     /**
-     * The asynchronous version of {@link AdminService#setValidated}.
+     * The async version of {@link AdminService#getMemberInfo}.
      */
-    void setValidated (int memberId, boolean valid, AsyncCallback<Void> callback);
+    void getMemberInfo (int memberId, int affiliateOfCount, AsyncCallback<MemberAdminInfo> callback);
 
     /**
-     * The asynchronous version of {@link AdminService#getABTests}.
+     * The async version of {@link AdminService#getAffiliates}.
+     */
+    void getAffiliates (int memberId, int offset, int count, AsyncCallback<List<MemberName>> callback);
+
+    /**
+     * The async version of {@link AdminService#setRole}.
+     */
+    void setRole (int memberId, WebCreds.Role role, AsyncCallback<Void> callback);
+
+    /**
+     * The async version of {@link AdminService#resetHumanity}.
+     */
+    void resetHumanity (int memberId, AsyncCallback<Integer> callback);
+
+    /**
+     * The async version of {@link AdminService#setValidated}.
+     */
+    void setValidated (int memberId, boolean value, AsyncCallback<Void> callback);
+
+    /**
+     * The async version of {@link AdminService#getABTests}.
      */
     void getABTests (AsyncCallback<List<ABTest>> callback);
 
     /**
-     * The asynchronous version of {@link AdminService#getABTestSummary}.
+     * The async version of {@link AdminService#getABTestSummary}.
      */
     void getABTestSummary (int testId, AsyncCallback<ABTestSummary> callback);
 
     /**
-     * The asynchronous version of {@link AdminService#getItemFlags}.
+     * The async version of {@link AdminService#getItemFlags}.
      */
-    void getItemFlags (int start, int count, boolean needCount,
-        AsyncCallback<ItemFlagsResult> callback);
+    void getItemFlags (int from, int count, boolean needCount, AsyncCallback<AdminService.ItemFlagsResult> callback);
 
     /**
-     * The asynchronous version of {@link AdminService#getItemTransactions}.
+     * The async version of {@link AdminService#getItemTransactions}.
      */
-    void getItemTransactions (ItemIdent iident, int from, int count, boolean needCount,
-        AsyncCallback<ItemTransactionResult> callback);
+    void getItemTransactions (ItemIdent iident, int from, int count, boolean needCount, AsyncCallback<AdminService.ItemTransactionResult> callback);
 
     /**
-     * The asynchronous version of {@link AdminService#deleteItemAdmin}.
+     * The async version of {@link AdminService#deleteItemAdmin}.
      */
-    void deleteItemAdmin (ItemIdent item, String subject, String body,
-                          AsyncCallback<ItemDeletionResult> callback);
+    void deleteItemAdmin (ItemIdent item, String subject, String body, AsyncCallback<AdminService.ItemDeletionResult> callback);
 
     /**
-     * The asynchronous version of {@link AdminService#getBureauLauncherInfo}.
+     * The async version of {@link AdminService#getBureauLauncherInfo}.
      */
     void getBureauLauncherInfo (AsyncCallback<BureauLauncherInfo[]> callback);
 
     /**
-     * The asynchronous version of {@link AdminService#loadPromotions}.
+     * The async version of {@link AdminService#loadPromotions}.
      */
     void loadPromotions (AsyncCallback<List<Promotion>> callback);
 
     /**
-     * The asynchronous version of {@link AdminService#addPromotion}.
+     * The async version of {@link AdminService#addPromotion}.
      */
     void addPromotion (Promotion promo, AsyncCallback<Void> callback);
 
     /**
-     * The asynchronous version of {@link AdminService#updatePromotion}.
+     * The async version of {@link AdminService#updatePromotion}.
      */
     void updatePromotion (Promotion promo, AsyncCallback<Void> callback);
 
     /**
-     * The asynchronous version of {@link AdminService#deletePromotion}.
+     * The async version of {@link AdminService#deletePromotion}.
      */
     void deletePromotion (String promoId, AsyncCallback<Void> callback);
 
     /**
-     * The asynchronous version of {@link AdminService#loadContests}.
+     * The async version of {@link AdminService#loadContests}.
      */
     void loadContests (AsyncCallback<List<Contest>> callback);
 
     /**
-     * The asynchronous version of {@link AdminService#addContest}.
+     * The async version of {@link AdminService#addContest}.
      */
     void addContest (Contest contest, AsyncCallback<Void> callback);
 
     /**
-     * The asynchronous version of {@link AdminService#updateContest}.
+     * The async version of {@link AdminService#updateContest}.
      */
     void updateContest (Contest contest, AsyncCallback<Void> callback);
 
     /**
-     * The asynchronous version of {@link AdminService#deleteContest}.
+     * The async version of {@link AdminService#deleteContest}.
      */
     void deleteContest (String contestId, AsyncCallback<Void> callback);
 
     /**
-     * The asynchronous version of {@link AdminService#getStatsModel}.
+     * The async version of {@link AdminService#getStatsModel}.
      */
     void getStatsModel (StatsModel.Type type, AsyncCallback<StatsModel> callback);
 
     /**
-     * The asynchronous version of {@link AdminService#setCharityInfo}.
+     * The async version of {@link AdminService#setCharityInfo}.
      */
     void setCharityInfo (CharityInfo charityInfo, AsyncCallback<Void> callback);
 
     /**
-     * The asynchronous version of {@link AdminService#removeCharityStatus}.
+     * The async version of {@link AdminService#removeCharityStatus}.
      */
     void removeCharityStatus (int memberId, AsyncCallback<Void> callback);
 
     /**
-     * The asynchronous version of {@link AdminService#scheduleReboot}.
+     * The async version of {@link AdminService#scheduleReboot}.
      */
     void scheduleReboot (int minutes, String message, AsyncCallback<Void> callback);
 
     /**
-     * The asynchronous version of {@link AdminService#getPeerNodeNames}.
+     * The async version of {@link AdminService#getPeerNodeNames}.
      */
     void getPeerNodeNames (AsyncCallback<Set<String>> callback);
 
     /**
-     * The asynchronous version of {@link AdminService#restartPanopticon}.
+     * The async version of {@link AdminService#restartPanopticon}.
      */
     void restartPanopticon (Set<String> nodeNames, AsyncCallback<Void> callback);
 
     /**
-     * The asynchronous version of {@link AdminService#getBroadcastHistory}.
+     * The async version of {@link AdminService#getBroadcastHistory}.
      */
-    void getBroadcastHistory (int offset, int count, boolean needCount,
-        AsyncCallback<BroadcastHistoryResult> callback);
+    void getBroadcastHistory (int offset, int count, boolean needCount, AsyncCallback<AdminService.BroadcastHistoryResult> callback);
 
     /**
-     * The asynchronous version of {@link AdminService#summarizeEntries}.
+     * The async version of {@link AdminService#summarizeEntries}.
      */
     void summarizeEntries (AsyncCallback<List<EntrySummary>> callback);
 }

@@ -4,47 +4,40 @@
 package com.threerings.msoy.person.gwt;
 
 import java.util.List;
-
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
- * The asynchronous (client-side) version of {@link GalleryService}.
+ * Provides the asynchronous version of {@link GalleryService}.
  */
 public interface GalleryServiceAsync
 {
     /**
-     * The asynchronous version of {@link GalleryService#loadGalleries}.
+     * The async version of {@link GalleryService#loadGalleries}.
      */
-    void loadGalleries (int memberId,
-                        AsyncCallback<GalleryListData> callback);
+    void loadGalleries (int memberId, AsyncCallback<GalleryListData> callback);
 
     /**
-     * The asynchronous version of {@link GalleryService#loadMeGallery}.
+     * The async version of {@link GalleryService#loadMeGallery}.
      */
-    void loadMeGallery (int memberId,
-                        AsyncCallback<GalleryData> callback);
+    void loadMeGallery (int memberId, AsyncCallback<GalleryData> callback);
 
     /**
-     * The asynchronous version of {@link GalleryService#loadGallery}.
+     * The async version of {@link GalleryService#loadGallery}.
      */
-    void loadGallery (int galleryId,
-                      AsyncCallback<GalleryData> callback);
+    void loadGallery (int galleryId, AsyncCallback<GalleryData> callback);
 
     /**
-     * The asynchronous version of {@link GalleryService#createGallery}.
+     * The async version of {@link GalleryService#createGallery}.
      */
-    void createGallery (Gallery gallery, List<Integer> photoItemIds,
-                        AsyncCallback<Gallery> callback);
+    void createGallery (Gallery gallery, List<Integer> photoItemIds, AsyncCallback<Gallery> callback);
 
     /**
-     * The asynchronous version of {@link GalleryService#updateGallery}.
+     * The async version of {@link GalleryService#updateGallery}.
      */
-    void updateGallery (Gallery gallery, List<Integer> photoItemIds,
-                        AsyncCallback<Void> callback);
+    void updateGallery (Gallery gallery, List<Integer> photoItemIds, AsyncCallback<Void> callback);
 
     /**
-     * The asynchronous version of {@link GalleryService#deleteGallery}.
+     * The async version of {@link GalleryService#deleteGallery}.
      */
-    void deleteGallery (int galleryId,
-                        AsyncCallback<Void> callback);
+    void deleteGallery (int galleryId, AsyncCallback<Void> callback);
 }
