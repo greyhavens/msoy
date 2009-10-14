@@ -79,7 +79,7 @@ public class PlaylistRenderer extends HBox
             _name.setStyle("color", "red");
         } else {
             _name.text = audio.name;
-            _name.setStyle("color", "white");
+            _name.setStyle("color", "black");
         }
     }
 
