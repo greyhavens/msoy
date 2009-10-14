@@ -176,7 +176,7 @@ class FontTestArea extends TextArea
         setStyle("fontWeight", tf.bold ? "bold" : "normal");
         setStyle("textAlign", tf.align);
         setStyle("fontStyle", tf.italic ? "italic" : "normal");
-        setStyle("color", 0xFFFFFF);
+        setStyle("color", 0x000000);
         setStyle("fontFamily", tf.font);
     }
 }
