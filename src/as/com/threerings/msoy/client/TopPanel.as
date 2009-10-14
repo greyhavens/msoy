@@ -92,7 +92,7 @@ public class TopPanel extends Canvas
             buildStamp.text = "Build: " + DeploymentConfig.buildTime;
             buildStamp.setStyle("color", "#F7069A");
             buildStamp.setStyle("fontSize", 8);
-            buildStamp.setStyle("bottom", ControlBar.HEIGHT);
+            buildStamp.setStyle("bottom", getFooterHeight());
             // The scrollbar isn't really this thick, but it's pretty close.
             buildStamp.setStyle("right", ScrollBar.THICKNESS);
             addChild(buildStamp);
@@ -112,6 +112,20 @@ public class TopPanel extends Canvas
 
         // display something until someone comes along and sets a real view on us
         setPlaceView(new BlankPlaceView(_ctx));
+    }
+
+    /**
+     * Gets the height of the area at the bottom of the screen that contains the control bar.
+     */
+    public function getFooterHeight () :Number
+    {
+        var height :Number = ControlBar.HEIGHT;
+        // TODO: hasThickFooter? hasThickies?
+        if (_ctx.getMsoyClient().getEmbedding().hasThickHeader()) {
+            // disabled for now...
+            // height *= 2;
+        }
+        return height;
     }
 
     /**
@@ -277,13 +291,15 @@ public class TopPanel extends Canvas
         app.width = _ctx.getWidth();
         app.height = _ctx.getHeight();
 
-        _controlBar.setStyle("bottom", _showChrome ? 0 : -ControlBar.HEIGHT);
+        // center control bar in the "footer". we shall put other things here soon
+        _controlBar.setStyle("bottom", _showChrome ?
+            (getFooterHeight() - ControlBar.HEIGHT) / 2 : -ControlBar.HEIGHT);
         _headerBar.setStyle("top", _showChrome ? 0 : -HeaderBar.getHeight(_ctx.getMsoyClient()));
 
         if (_leftPanel != null) {
             _leftPanel.setStyle("top", getHeaderBarHeight());
             _leftPanel.setStyle("left", 0);
-            _leftPanel.setStyle("bottom", ControlBar.HEIGHT);
+            _leftPanel.setStyle("bottom", getFooterHeight());
 
             // if we have no place view currently, stretch it all the way to the left; otherwise
             // let it be as wide as it wants to be
@@ -311,8 +327,8 @@ public class TopPanel extends Canvas
         var h :int = _ctx.getHeight() - top;
 
         if (_showChrome) {
-            bottom += ControlBar.HEIGHT;
-            h -= ControlBar.HEIGHT;
+            bottom += getFooterHeight();
+            h -= getFooterHeight();
         }
 
         if (_comicOverlay != null) {
