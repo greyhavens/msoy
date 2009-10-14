@@ -363,7 +363,7 @@
   </target>
 
   <!-- runs the GWT debugging shell -->
-  <target name="gshell" depends="config">
+  <target name="gshell" depends="config,genasync">
     <available property="gwtdir.present" file="lib/gwt"/>
     <fail message="You must symlink 'lib/gwt' to a current GWT distribution."
           unless="gwtdir.present"/>
@@ -466,7 +466,7 @@
   </target>
 
   <!-- builds our numerous GWT web clients -->
-  <target name="gclients" depends="jprepare,gmsgs"
+  <target name="gclients" depends="jprepare,gmsgs,genasync"
         description="Rebuilds all GWT clients (use -Dpages to choose which).">
     <pathconvert property="allpages" pathsep=",">
       <path><fileset dir="src/gwt" includes="*.gwt.xml.in"/></path>
@@ -934,6 +934,22 @@
         <include name="**/msoy/chat/data/*.java"/>
       </fileset>
     </genascript>
+  </target>
+
+  <!-- generates our FooServiceAsync interfaces for GWT -->
+  <target name="genasync" description="Regenerates GWT Async interfaces.">
+    <!-- make sure the record class files are all compiled -->
+    <javac srcdir="${src.dir}" destdir="${classes.dir}" includeAntRuntime="false"
+           debug="on" optimize="${build.optimize}" deprecation="on" source="1.5" target="1.5">
+      <classpath refid="classpath"/>
+      <include name="**/gwt/*Service.java"/>
+    </javac>
+    <!-- now actually generate the async interfaces -->
+    <taskdef name="genasync" classname="com.samskivert.asyncgen.AsyncGenTask"
+             classpath="extlibs/java/gwt-asyncgen.jar"/>
+    <genasync classpathref="classpath">
+      <fileset dir="${src.dir}" includes="**/gwt/*Service.java"/>
+    </genasync>
   </target>
 
   <!-- run the unit tests -->
