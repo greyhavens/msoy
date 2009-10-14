@@ -368,7 +368,8 @@ public class WorldManager
         }
 
         // they have not recieved their gift, instruct the client to show picker
-        return _themeLogic.loadLineup(themeId);
+         List<Avatar> lineup = _themeLogic.loadLineup(themeId);
+         return lineup.size() != 0 ? lineup : null;
     }
 
     /**
