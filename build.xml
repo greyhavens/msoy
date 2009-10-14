@@ -363,7 +363,7 @@
   </target>
 
   <!-- runs the GWT debugging shell -->
-  <target name="gshell" depends="config,genasync">
+  <target name="gshell" depends="config">
     <available property="gwtdir.present" file="lib/gwt"/>
     <fail message="You must symlink 'lib/gwt' to a current GWT distribution."
           unless="gwtdir.present"/>
@@ -466,7 +466,7 @@
   </target>
 
   <!-- builds our numerous GWT web clients -->
-  <target name="gclients" depends="jprepare,gmsgs,genasync"
+  <target name="gclients" depends="jprepare,gmsgs"
         description="Rebuilds all GWT clients (use -Dpages to choose which).">
     <pathconvert property="allpages" pathsep=",">
       <path><fileset dir="src/gwt" includes="*.gwt.xml.in"/></path>
