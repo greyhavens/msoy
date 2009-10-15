@@ -281,7 +281,7 @@ VScrollBar, HScrollBar {
   highlightAlphas: 0.38, 0;
   fillAlphas: 1, 0.82, 0.79, 0.82;
   fillColors: #ffffff, #ffffff, #ffffff, #ffffff;
-  trackColors: #e0e0e0, #ffffff;
+  trackColors: #e0e0e0, #f0f0f0;
   themeColor: #ffffff;
   borderColor: #E0E0E0;
   iconColor: #cccccc;
