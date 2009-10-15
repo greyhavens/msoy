@@ -38,6 +38,12 @@ import client.util.InfoCallback;
  */
 public class StuffPage extends Page
 {
+    public static final String DETAIL = "d";
+    public static final String EDIT = "e";
+    public static final String CREATE = "c";
+    public static final String REMIX = "r";
+    public static final String LINEUP = "l";
+
     @Override // from Page
     public void onPageLoad ()
     {
@@ -68,7 +74,7 @@ public class StuffPage extends Page
         int memberId = CShell.getMemberId();
 
         // if we're displaying an item's detail, do that
-        if ("d".equals(arg0)) {
+        if (DETAIL.equals(arg0)) {
             type = args.get(1, Item.AVATAR);
             int itemId = args.get(2, 0);
 
@@ -101,7 +107,7 @@ public class StuffPage extends Page
             }
 
         // if we're editing an item, display that interface
-        } else if ("e".equals(arg0) || "c".equals(arg0)) {
+        } else if (EDIT.equals(arg0) || CREATE.equals(arg0)) {
             if (!MsoyUI.requireRegistered()) {
                 return; // permaguests can't create or edit items
             }
@@ -121,7 +127,7 @@ public class StuffPage extends Page
             setContent(editor);
 
         // or maybe we're remixing an item
-        } else if ("r".equals(arg0)) {
+        } else if (REMIX.equals(arg0)) {
             type = args.get(1, Item.AVATAR);
             int itemId = args.get(2, 0);
             final ItemRemixer remixer = new ItemRemixer();
@@ -133,7 +139,7 @@ public class StuffPage extends Page
             setContent(remixer);
 
         // or we're showing a theme's lineup
-        } else if ("t".equals(arg0)) {
+        } else if (LINEUP.equals(arg0)) {
             ThemeLineupPanel panel = new ThemeLineupPanel(args.get(1, -1));
             panel.setArgs(args.get(2, 0));
             setContent(panel);
@@ -167,7 +173,7 @@ public class StuffPage extends Page
                         int tabIdx = GAME_TYPES.get(item.getType());
                         Link.go(Pages.EDGAMES, "e", gameId, tabIdx);
                     } else {
-                        Link.go(Pages.STUFF, "d", item.getType(), item.itemId);
+                        Link.go(Pages.STUFF, DETAIL, item.getType(), item.itemId);
                     }
                 } else {
                     History.back();

@@ -266,7 +266,7 @@ public class GroupDetailPanel extends FlowPanel
             if (CShell.isSupport()) {
                 if (_detail.isTheme) {
                     themeActions.add(MsoyUI.createActionLabel(_msgs.detailViewLineup(),
-                            Link.createHandler(Pages.STUFF, "t", _detail.group.groupId)));
+                            Link.createHandler(Pages.STUFF, "l", _detail.group.groupId)));
 
                 } else {
                     themeActions.add(MsoyUI.createActionLabel(
