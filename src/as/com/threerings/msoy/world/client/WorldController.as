@@ -404,7 +404,7 @@ public class WorldController extends MsoyController
         // Background color submenu
         if (DeploymentConfig.devDeployment) {
             var backgroundItems :Array = [];
-            backgroundItems.push({ label: "Use Room Default", icon: MENU_CHECK_SELECTED });
+            backgroundItems.push({ label: "Use Room Default", type: "check", toggled: true });
             backgroundItems.push({ label: "Choose color..." });
             menuData.push({ label: "Background Color", children: backgroundItems });
         }
@@ -1736,12 +1736,6 @@ public class WorldController extends MsoyController
 
     [Embed(source="../../../../../../../rsrc/media/skins/controlbar/editroom.png")]
     protected static const ROOM_EDIT_ICON :Class;
-
-    [Embed(source="../../../../../../../rsrc/media/skins/checkbox/tab.png")]
-    protected static const MENU_CHECK_UNSELECTED :Class;
-
-    [Embed(source="../../../../../../../rsrc/media/skins/checkbox/tab_selected.png")]
-    protected static const MENU_CHECK_SELECTED :Class;
 
     [Embed(source="../../../../../../../rsrc/media/skins/controlbar/music.png")]
     protected static const MUSIC_ICON :Class;
