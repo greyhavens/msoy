@@ -80,19 +80,30 @@
 
 .groupDetail .MainDetails .Actions .actionLabel {
   text-decoration: none;
-  width: 135px;
-  border-bottom: solid #5384ad 1px;
   margin-bottom: 5px;
   padding-bottom: 2px;
 }
+
 .groupDetail .MainDetails .Actions .actionLabel:hover,
 .groupDetail .MainDetails .Actions .actionLabel:active {
   text-decoration: underline;
 }
 
-.groupDetail .MainDetails .Actions .ManagerActions .actionLabel {
-  border-bottom: none;
+.groupDetail .MainDetails .Actions .BasicActions .actionLabel {
+  width: 135px;
+  border-bottom: solid #5384ad 1px;
+}
+
+.groupDetail .MainDetails .Actions .ManagerActions {
   width: auto;
+  border-bottom: solid #5384ad 1px;
+  margin-bottom: 5px;
+  padding-bottom: 2px;
+}
+
+.groupDetail .MainDetails .Actions .ThemeActions .actionLabel {
+  width: auto;
+  border-bottom: none;
 }
 
 .groupDetail .MainDetails .ScreenshotBox {

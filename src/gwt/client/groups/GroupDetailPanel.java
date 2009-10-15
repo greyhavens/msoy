@@ -173,9 +173,12 @@ public class GroupDetailPanel extends FlowPanel
         FlowPanel actions = MsoyUI.createFlowPanel("Actions");
         leftPanel.add(actions);
 
+        FlowPanel basicActions = MsoyUI.createFlowPanel("BasicActions");
+        actions.add(basicActions);
+
         // link to the game for this group
         if (_detail.group.gameId != 0) {
-            actions.add(MsoyUI.createActionLabel(_msgs.detailPlayGame(),
+            basicActions.add(MsoyUI.createActionLabel(_msgs.detailPlayGame(),
                             Link.createHandler(Pages.GAMES, "d", _detail.group.gameId)));
         }
 
@@ -198,18 +201,18 @@ public class GroupDetailPanel extends FlowPanel
                         return _msgs.detailJoinContext(_group.name);
                     }
                 };
-                actions.add(join);
+                basicActions.add(join);
             }
 
         } else {
             // leave this group
-            actions.add(MsoyUI.createActionLabel(_msgs.detailLeave(), new PromptPopup(
+            basicActions.add(MsoyUI.createActionLabel(_msgs.detailLeave(), new PromptPopup(
                 _msgs.detailLeavePrompt(_group.name), removeMember(CShell.getMemberId()))));
         }
 
         // invite others to it
         if (Group.canInvite(detail.group.policy, detail.myRank)) {
-            actions.add(MsoyUI.createActionLabel(_msgs.detailInvite(),
+            basicActions.add(MsoyUI.createActionLabel(_msgs.detailInvite(),
                             Link.createHandler(Pages.MAIL, "w", "g", _detail.group.groupId)));
         }
 
@@ -217,12 +220,12 @@ public class GroupDetailPanel extends FlowPanel
         if (_extras.catalogTag != null && !_extras.catalogTag.equals("")) {
             Args args = ShopUtil.composeArgs(
                 _extras.catalogItemType, _extras.catalogTag, null, 0);
-            actions.add(MsoyUI.createActionLabel(
+            basicActions.add(MsoyUI.createActionLabel(
                             _msgs.detailShop(), Link.createHandler(Pages.SHOP, args)));
         }
 
         // read charter
-        actions.add(MsoyUI.createActionLabel(_msgs.detailReadCharter(), new ClickHandler() {
+        basicActions.add(MsoyUI.createActionLabel(_msgs.detailReadCharter(), new ClickHandler() {
             public void onClick (ClickEvent event) {
                 _contentPanel.showCharter();
             }
@@ -256,22 +259,28 @@ public class GroupDetailPanel extends FlowPanel
 
         // edit this group & manage rooms
         if (_detail.myRank == Rank.MANAGER || CShell.isSupport()) {
-            FlowPanel themeActions = MsoyUI.createFlowPanel("ManagerActions");
+            FlowPanel themeActions = MsoyUI.createFlowPanel("ThemeActions");
             actions.add(themeActions);
 
             // For now, only support+ can create themes
-            if (!_detail.isTheme && CShell.isSupport()) {
-                themeActions.add(MsoyUI.createActionLabel(
-                    _msgs.detailCreateTheme(), "inline", new ClickHandler() {
-                        public void onClick (ClickEvent event) {
-                            _groupsvc.createTheme(_group.groupId, new InfoCallback<Void>() {
-                                public void onSuccess (Void result) {
-                                    _detail.isTheme = true;
-                                    setGroupDetail(_detail);
-                                }
-                            });
-                        }
-                    }));
+            if (CShell.isSupport()) {
+                if (_detail.isTheme) {
+                    themeActions.add(MsoyUI.createActionLabel(_msgs.detailViewLineup(),
+                            Link.createHandler(Pages.STUFF, "t", _detail.group.groupId)));
+
+                } else {
+                    themeActions.add(MsoyUI.createActionLabel(
+                        _msgs.detailCreateTheme(), "inline", new ClickHandler() {
+                            public void onClick (ClickEvent event) {
+                                _groupsvc.createTheme(_group.groupId, new InfoCallback<Void>() {
+                                    public void onSuccess (Void result) {
+                                        _detail.isTheme = true;
+                                        setGroupDetail(_detail);
+                                    }
+                                });
+                            }
+                        }));
+                }
             }
         }
 
