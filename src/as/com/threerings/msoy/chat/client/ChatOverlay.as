@@ -338,9 +338,7 @@ public class ChatOverlay
      */
     protected function shouldUseSidebar () :Boolean
     {
-        // side bar chat is disabled
-        // TODO: remove side-bar related code
-        return false; //!_suppressSidebar && Prefs.getSidebarChat();
+        return !_suppressSidebar && Prefs.getSidebarChat();
     }
 
     protected function createFilteredMessages () :void
