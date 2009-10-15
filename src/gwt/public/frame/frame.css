@@ -20,7 +20,12 @@
 .frameHeaderLogo {
 }
 
-.frameHeaderNavi, .frameHeaderStatus {
+.frameHeaderNavi {
+  color: #000000;
+  height: 27px;
+}
+
+.frameHeaderStatus {
   color: #000000;
   height: 50px;
 }
@@ -37,12 +42,12 @@
   font-size: 14px;
   font-weight: bold;
   background: url(/images/header/navi_button_bg.png) no-repeat;
-  height: 20px;
-  margin: 27px 5px 0 0;
-  padding-top: 3px;
+  margin-right: 5px;
+  padding-top: 5px;
   text-align: center;
   color: #0D496D;
   width: 71px;
+  height: 27px;
 }
 
 .frameHeaderNavi .NaviButtonSelected {
