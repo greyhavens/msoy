@@ -107,6 +107,13 @@ public class ParlorGamePanel extends WhirledGamePanel
         return new Point(GAME_WIDTH, GAME_HEIGHT);
     }
 
+    // from MsoyPlaceView
+    public function getBackgroundColor () :uint
+    {
+        // TODO
+        return 0;
+    }
+
     /**
      * Shuttle the specified values to the GameOverPanel, if it exists.
      */

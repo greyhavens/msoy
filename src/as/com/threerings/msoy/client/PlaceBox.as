@@ -12,6 +12,7 @@ import flash.geom.Rectangle;
 import mx.core.UIComponent;
 
 import com.threerings.util.Log;
+import com.threerings.util.StringUtil;
 
 import com.threerings.display.DisplayUtil;
 
@@ -71,6 +72,18 @@ public class PlaceBox extends LayeredContainer
         setBaseLayer(disp);
         _placeView = view;
         _msoyPlaceView = view as MsoyPlaceView;
+
+        if (DeploymentConfig.devDeployment) {
+            var bgColor :uint = 0;
+            if (_msoyPlaceView != null) {
+                if (Prefs.getUseCustomBackgroundColor()) {
+                    bgColor = Prefs.getCustomBackgroundColor();
+                } else {
+                    bgColor = _msoyPlaceView.getBackgroundColor();
+                }
+            }
+            setStyle("backgroundColor", "#" + StringUtil.toHex(bgColor, 6));
+        }
 
         // TODO: why is this type-check here? surely when the place view changes it needs to be
         // laid out regardless of type

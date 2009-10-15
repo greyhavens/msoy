@@ -401,6 +401,14 @@ public class WorldController extends MsoyController
             command: MethodQueue.callLater, arg: [ doShowMusic, [ trigger ] ],
             enabled: (_music != null) }); // pop it later so that it avoids the menu itself
 
+        // Background color submenu
+        if (DeploymentConfig.devDeployment) {
+            var backgroundItems :Array = [];
+            backgroundItems.push({ label: "Use Room Default", icon: MENU_CHECK_SELECTED });
+            backgroundItems.push({ label: "Choose color..." });
+            menuData.push({ label: "Background Color", children: backgroundItems });
+        }
+
         popControlBarMenu(menuData, trigger);
     }
 
@@ -1728,6 +1736,12 @@ public class WorldController extends MsoyController
 
     [Embed(source="../../../../../../../rsrc/media/skins/controlbar/editroom.png")]
     protected static const ROOM_EDIT_ICON :Class;
+
+    [Embed(source="../../../../../../../rsrc/media/skins/checkbox/tab.png")]
+    protected static const MENU_CHECK_UNSELECTED :Class;
+
+    [Embed(source="../../../../../../../rsrc/media/skins/checkbox/tab_selected.png")]
+    protected static const MENU_CHECK_SELECTED :Class;
 
     [Embed(source="../../../../../../../rsrc/media/skins/controlbar/music.png")]
     protected static const MUSIC_ICON :Class;

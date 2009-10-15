@@ -45,5 +45,10 @@ public interface MsoyPlaceView extends PlaceView, PlaceLayer
      * value for convenience. x is width, y is height.
      */
     function getSize () :Point;
+
+    /**
+     * Sets the color to put behind the place view.
+     */
+    function getBackgroundColor () :uint;
 }
 }

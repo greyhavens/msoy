@@ -60,16 +60,22 @@ public class NoPlaceView extends LayeredContainer
         // Nada
     }
 
-    // from RoomView
+    // from MsoyPlaceView
     public function isCentered () :Boolean
     {
         return false;
     }
 
-    // from RoomView
+    // from MsoyPlaceView
     public function getSize () :Point
     {
         return null;
+    }
+
+    // from MsoyPlaceView
+    public function getBackgroundColor () :uint
+    {
+        return 0;
     }
 }
 }

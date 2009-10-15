@@ -151,6 +151,13 @@ public class RoomView extends Sprite
         return new Point(metrics.sceneWidth * scaleX, metrics.sceneHeight * scaleY);
     }
 
+    // from MsoyPlaceView
+    public function getBackgroundColor () :uint
+    {
+        // TODO
+        return 0;
+    }
+
     // from Snapshottable
     public function snapshot (
         bitmapData :BitmapData, matrix :Matrix, childPredicate :Function = null) :Boolean

@@ -50,6 +50,8 @@ public class Prefs
     public static const BLEEPED_MEDIA :String = "bleepedMedia";
     public static const PARTY_GROUP :String = "partyGroup";
     public static const PERMAGUEST_USERNAME :String = "permaguestUsername";
+    public static const USE_CUSTOM_BACKGROUND_COLOR :String = "useCustomBgColor";
+    public static const CUSTOM_BACKGROUND_COLOR :String = "customBgColor";
     public static const AUTOSHOW_PREFIX :String = "autoShow_";
 
     public static const APRIL_FOOLS :String = "aprilFools";
@@ -300,6 +302,26 @@ public class Prefs
     public static function setPartyGroup (groupId :int) :void
     {
         _config.setValue(PARTY_GROUP, groupId);
+    }
+
+    public static function getUseCustomBackgroundColor () :Boolean
+    {
+        return (_config.getValue(USE_CUSTOM_BACKGROUND_COLOR, false) as Boolean);
+    }
+
+    public static function setUseCustomBackgroundColor (value :Boolean) :void
+    {
+        _config.setValue(USE_CUSTOM_BACKGROUND_COLOR, value);
+    }
+
+    public static function getCustomBackgroundColor () :uint
+    {
+        return (_config.getValue(CUSTOM_BACKGROUND_COLOR, 0) as uint);
+    }
+
+    public static function setCustomBackgroundColor (value :uint) :void
+    {
+        _config.setValue(CUSTOM_BACKGROUND_COLOR, value);
     }
 
     /**
