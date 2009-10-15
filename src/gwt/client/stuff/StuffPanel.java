@@ -23,6 +23,7 @@ import com.threerings.gwt.util.DataModel;
 import com.threerings.gwt.util.SimpleDataModel;
 
 import com.threerings.msoy.data.all.GroupName;
+import com.threerings.msoy.item.data.all.IdentGameItem;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.web.gwt.Pages;
 
@@ -102,7 +103,8 @@ public class StuffPanel extends FlowPanel
                 Link.go(Pages.STUFF, ((InventoryModels.Stuff)_model).makeArgs(_memberId, page));
             }
             @Override protected Widget createWidget (Item item) {
-                return new ItemEntry(item);
+                return new ItemEntry(item,  !(item instanceof IdentGameItem));
+
             }
             @Override protected String getEmptyMessage () {
                 GroupName theme = null;

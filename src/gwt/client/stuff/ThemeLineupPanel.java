@@ -47,7 +47,7 @@ public class ThemeLineupPanel extends FlowPanel
                 Link.go(Pages.STUFF, "t",  _groupId, page);
             }
             @Override protected Widget createWidget (Avatar item) {
-                return new ItemEntry(item);
+                return new ItemEntry(item, false);
             }
             @Override protected String getEmptyMessage () {
                 return _msgs.lineupNoLineup(_theme.toString());
