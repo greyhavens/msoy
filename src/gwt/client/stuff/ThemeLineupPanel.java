@@ -59,8 +59,6 @@ public class ThemeLineupPanel extends FlowPanel
         _contents.addStyleName("Contents");
     }
 
-    public int DEFAULT_PAGE = -1;
-
     /**
      * Requests that the (optionally) specified page of items be displayed.
      */
