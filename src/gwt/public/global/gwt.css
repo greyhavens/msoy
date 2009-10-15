@@ -197,8 +197,8 @@ img, embed, applet, object {
 
 .closeButton {
   background-image: url(/images/ui/close.png);
-  width: 13px;
-  height: 13px;
+  width: 18px;
+  height: 18px;
 }
 
 .closeButton-hovering {
