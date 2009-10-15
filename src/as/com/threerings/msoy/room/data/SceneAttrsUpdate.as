@@ -34,6 +34,9 @@ public class SceneAttrsUpdate extends SceneUpdate
     /** The new entrance location. */
     public var entrance :MsoyLocation;
 
+    /** The new background color. */
+    public var backgroundColor :uint;
+
     override public function apply (model :SceneModel) :void
     {
         super.apply(model);
@@ -44,6 +47,7 @@ public class SceneAttrsUpdate extends SceneUpdate
         mmodel.playlistControl = playlistControl;
         mmodel.decor = decor;
         mmodel.entrance = entrance;
+        mmodel.backgroundColor = backgroundColor;
     }
 
     override public function writeObject (out :ObjectOutputStream) :void
@@ -55,6 +59,7 @@ public class SceneAttrsUpdate extends SceneUpdate
         out.writeByte(playlistControl);
         out.writeObject(decor);
         out.writeObject(entrance);
+        out.writeInt(backgroundColor);
     }
 
     override public function readObject (ins :ObjectInputStream) :void
@@ -66,6 +71,7 @@ public class SceneAttrsUpdate extends SceneUpdate
         playlistControl = ins.readByte();
         decor = Decor(ins.readObject());
         entrance = MsoyLocation(ins.readObject());
+        backgroundColor = ins.readInt();
     }
 }
 }

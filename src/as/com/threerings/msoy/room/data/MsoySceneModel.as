@@ -76,6 +76,9 @@ public class MsoySceneModel extends SceneModel
     /** Decor item reference. */
     public var decor :Decor;
 
+    /** Color to use around and under the decor (by default). */
+    public var backgroundColor :uint;
+
     /** Constructor. */
     public function MsoySceneModel ()
     {
@@ -215,6 +218,7 @@ public class MsoySceneModel extends SceneModel
         model.furnis = (furnis.clone() as TypedArray);
         model.entrance = (entrance.clone() as MsoyLocation);
         model.decor = decor;
+        model.backgroundColor = backgroundColor;
         return model;
     }
 
@@ -232,6 +236,7 @@ public class MsoySceneModel extends SceneModel
         out.writeObject(furnis);
         out.writeObject(entrance);
         out.writeObject(decor);
+        out.writeInt(backgroundColor);
     }
 
     // documentation inherited
@@ -249,13 +254,14 @@ public class MsoySceneModel extends SceneModel
         furnis = TypedArray(ins.readObject());
         entrance = MsoyLocation(ins.readObject());
         decor = Decor(ins.readObject());
+        backgroundColor = ins.readInt()
     }
 
     override public function toString () :String
     {
         return "MsoySceneModel[\"" + name + "\" (" + sceneId + ")" +
             ", version=" + version + ", sceneType=" + decor.type +
-            ", decorId=" + decor.itemId + "]";
+            ", decorId=" + decor.itemId + ", bgColor=" + backgroundColor + "]";
     }
 
     /**

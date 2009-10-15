@@ -80,6 +80,9 @@ public class MsoySceneModel extends SceneModel
     /** Decor item reference. */
     public Decor decor;
 
+    /** Color to use around and under the decor (by default). */
+    public int backgroundColor;
+
     /** Constructor. */
     public MsoySceneModel ()
     {

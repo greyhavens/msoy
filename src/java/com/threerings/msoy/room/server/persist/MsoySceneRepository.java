@@ -280,7 +280,8 @@ public class MsoySceneRepository extends DepotRepository
                           SceneRecord.DECOR_ID, scup.decor.itemId,
                           SceneRecord.ENTRANCE_X, scup.entrance.x,
                           SceneRecord.ENTRANCE_Y, scup.entrance.y,
-                          SceneRecord.ENTRANCE_Z, scup.entrance.z);
+                          SceneRecord.ENTRANCE_Z, scup.entrance.z,
+                          SceneRecord.BACKGROUND_COLOR, scup.backgroundColor);
 
         } else if (update instanceof SceneOwnershipUpdate) {
             SceneOwnershipUpdate sou = (SceneOwnershipUpdate)update;

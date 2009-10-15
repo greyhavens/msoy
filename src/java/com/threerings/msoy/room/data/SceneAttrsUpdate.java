@@ -29,6 +29,9 @@ public class SceneAttrsUpdate extends SceneUpdate
     /** The new entrance location. */
     public MsoyLocation entrance;
 
+    /** The new background color. */
+    public int backgroundColor;
+
     @Override
     public void apply (SceneModel model)
     {
@@ -40,6 +43,7 @@ public class SceneAttrsUpdate extends SceneUpdate
         mmodel.playlistControl = playlistControl;
         mmodel.decor = decor;
         mmodel.entrance = entrance;
+        mmodel.backgroundColor = backgroundColor;
     }
 
     @Override

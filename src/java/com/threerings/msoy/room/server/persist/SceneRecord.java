@@ -90,12 +90,13 @@ public class SceneRecord extends PersistentRecord
     public static final ColumnExp RATING_SUM = colexp(_R, "ratingSum");
     public static final ColumnExp RATING_COUNT = colexp(_R, "ratingCount");
     public static final ColumnExp RATING = colexp(_R, "rating");
+    public static final ColumnExp BACKGROUND_COLOR = colexp(_R, "backgroundColor");
     public static final ColumnExp LAST_PUBLISHED = colexp(_R, "lastPublished");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 13;
+    public static final int SCHEMA_VERSION = 14;
 
     /** Define the sort order for the new & hot queries. */
     public static Tuple<SQLExpression, Order> ixNewAndHot_v3 ()
@@ -164,6 +165,9 @@ public class SceneRecord extends PersistentRecord
     /** TODO: Delete when migrations have run. */
     public float rating;
 
+    /** The color to use under and around the decor by default. */
+    public int backgroundColor;
+
     /** When the room was last published, or null if it was never published. */
     @Column(nullable=true) @Index(name="ixLastPublished")
     public Timestamp lastPublished;
@@ -191,6 +195,7 @@ public class SceneRecord extends PersistentRecord
         entranceX = model.entrance.x;
         entranceY = model.entrance.y;
         entranceZ = model.entrance.z;
+        backgroundColor = model.backgroundColor;
     }
 
     /**
@@ -213,6 +218,8 @@ public class SceneRecord extends PersistentRecord
 
         model.playlistControl = playlistControl;
         model.entrance = new MsoyLocation(entranceX, entranceY, entranceZ, 180);
+
+        model.backgroundColor = backgroundColor;
 
         return model;
     }
