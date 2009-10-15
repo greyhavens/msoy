@@ -36,14 +36,14 @@ public interface MsoyPlaceView extends PlaceView, PlaceLayer
     function getPlaceLogo () :MediaDesc;
 
     /**
-     * Returns true if this place view should be clipped (and centered) in the box.
+     * Returns true if this place view should be centered in the box.
      */
-    function isClipped () :Boolean;
+    function isCentered () :Boolean;
 
     /**
-     * Gets the size of the content to clip for this place view. A point is used as the return
+     * Gets the size of the content for this place view. A point is used as the return
      * value for convenience. x is width, y is height.
      */
-    function getClipSize () :Point;
+    function getSize () :Point;
 }
 }

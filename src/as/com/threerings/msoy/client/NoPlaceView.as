@@ -61,13 +61,13 @@ public class NoPlaceView extends LayeredContainer
     }
 
     // from RoomView
-    public function isClipped () :Boolean
+    public function isCentered () :Boolean
     {
         return false;
     }
 
     // from RoomView
-    public function getClipSize () :Point
+    public function getSize () :Point
     {
         return null;
     }

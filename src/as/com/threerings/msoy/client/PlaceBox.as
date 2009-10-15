@@ -183,9 +183,9 @@ public class PlaceBox extends LayeredContainer
         // now inform the place view of its new size
         if (_msoyPlaceView != null) {
             // center the view and add margins if a clip size is given
-            var clip :Point = null;
-            var isClipped :Boolean = _msoyPlaceView.isClipped();
-            if (isClipped) {
+            var size :Point = null;
+            var center :Boolean = _msoyPlaceView.isCentered();
+            if (center) {
                 var wmargin :Number = 0;
                 var hmargin :Number = 0;
                 if (_ctx.getMsoyClient().getEmbedding().hasPlaceMargins()) {
@@ -198,29 +198,29 @@ public class PlaceBox extends LayeredContainer
                 _msoyPlaceView.setPlaceSize(w - wmargin * 2, h - hmargin * 2);
 
                 // NOTE: getClipSize must be called after setPlaceSize
-                clip = _msoyPlaceView.getClipSize();
-                if (clip == null || isNaN(clip.x) || isNaN(clip.y)) {
-                    isClipped = false;
+                size = _msoyPlaceView.getSize();
+                if (size == null || isNaN(size.x) || isNaN(size.y)) {
+                    center = false;
                 }
             }
 
             var view :DisplayObject = _msoyPlaceView as DisplayObject;
-            if (isClipped) {
-                view.x = Math.max((w - clip.x) / 2, wmargin);
-                view.y = Math.max((h - clip.y) / 2, hmargin);
+            if (center) {
+                view.x = Math.max((w - size.x) / 2, wmargin);
+                view.y = Math.max((h - size.y) / 2, hmargin);
 
                 if (DeploymentConfig.devDeployment) {
-                    log.info("Layout place view", "sh", clip.y, "sw", clip.x,
+                    log.info("Layout place view", "sh", size.y, "sw", size.x,
                              "vx", view.x, "vy", view.y, "w", w, "h", h);
                 }
 
                 // mask it so that avatars and items don't bleed out of bounds
-                clip.x = Math.min(clip.x, w - wmargin * 2);
-                clip.y = Math.min(clip.y, h - hmargin * 2);
-                setMasked(view, view.x, view.y, clip.x, clip.y);
+                size.x = Math.min(size.x, w - wmargin * 2);
+                size.y = Math.min(size.y, h - hmargin * 2);
+                setMasked(_base, view.x, view.y, size.x, size.y);
             } else {
                 _msoyPlaceView.setPlaceSize(w, h);
-                setMasked(view, 0, 0, w, h);
+                setMasked(_base, 0, 0, w, h);
             }
 
         } else if (_placeView is UIComponent) {

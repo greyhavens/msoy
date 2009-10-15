@@ -139,13 +139,13 @@ public class RoomView extends Sprite
     }
 
     // from MsoyPlaceView
-    public function isClipped () :Boolean
+    public function isCentered () :Boolean
     {
         return true;
     }
 
     // from MsoyPlaceView
-    public function getClipSize () :Point
+    public function getSize () :Point
     {
         var metrics :RoomMetrics = layout.metrics;
         return new Point(metrics.sceneWidth * scaleX, metrics.sceneHeight * scaleY);

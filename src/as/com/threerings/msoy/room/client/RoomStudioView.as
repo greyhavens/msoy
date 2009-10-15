@@ -119,13 +119,13 @@ public class RoomStudioView extends RoomView
     }
 
     // from RoomView
-    override public function isClipped () :Boolean
+    override public function isCentered () :Boolean
     {
         return false;
     }
 
     // from RoomView
-    override public function getClipSize () :Point
+    override public function getSize () :Point
     {
         return null;
     }
