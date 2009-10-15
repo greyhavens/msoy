@@ -401,11 +401,17 @@ public class WorldController extends MsoyController
             command: MethodQueue.callLater, arg: [ doShowMusic, [ trigger ] ],
             enabled: (_music != null) }); // pop it later so that it avoids the menu itself
 
+        function toggleCustomBkg () :void {
+            Prefs.setUseCustomBackgroundColor(!Prefs.getUseCustomBackgroundColor());
+        }
+
         // Background color submenu
         if (DeploymentConfig.devDeployment) {
             var backgroundItems :Array = [];
-            backgroundItems.push({ label: "Use Room Default", type: "check", toggled: true });
-            backgroundItems.push({ label: "Choose color..." });
+            backgroundItems.push({ label: "Use Room Default", type: "check",
+                toggled: !Prefs.getUseCustomBackgroundColor(), command: toggleCustomBkg });
+            backgroundItems.push({ label: "Choose color...",
+                command: _wctx.getTopPanel().getPlaceContainer().selectBackgroundColor });
             menuData.push({ label: "Background Color", children: backgroundItems });
         }
 

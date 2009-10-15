@@ -6,11 +6,13 @@ package com.threerings.msoy.client {
 import flash.display.DisplayObject;
 import flash.display.InteractiveObject;
 import flash.display.Shape;
+import flash.events.Event;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 
 import mx.core.UIComponent;
 
+import com.threerings.util.ConfigValueSetEvent;
 import com.threerings.util.Log;
 import com.threerings.util.StringUtil;
 
@@ -20,6 +22,8 @@ import com.threerings.crowd.client.PlaceView;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.MsoyPlaceView;
 import com.threerings.msoy.client.DeploymentConfig;
+import com.threerings.msoy.ui.ColorPickerPanel;
+import com.threerings.msoy.ui.FloatingPanel;
 
 /**
  * A component that holds our place views and sets up a mask to ensure that the place view does not
@@ -58,6 +62,10 @@ public class PlaceBox extends LayeredContainer
     {
         _ctx = ctx;
         rawChildren.addChild(_mask = new Shape());
+
+        // use a weak reference
+        Prefs.events.addEventListener(ConfigValueSetEvent.CONFIG_VALUE_SET,
+            handlePrefsUpdated, false, 0, true);
     }
 
     public function getPlaceView () :PlaceView
@@ -74,15 +82,7 @@ public class PlaceBox extends LayeredContainer
         _msoyPlaceView = view as MsoyPlaceView;
 
         if (DeploymentConfig.devDeployment) {
-            var bgColor :uint = 0;
-            if (_msoyPlaceView != null) {
-                if (Prefs.getUseCustomBackgroundColor()) {
-                    bgColor = Prefs.getCustomBackgroundColor();
-                } else {
-                    bgColor = _msoyPlaceView.getBackgroundColor();
-                }
-            }
-            setStyle("backgroundColor", "#" + StringUtil.toHex(bgColor, 6));
+            updateBackgroundColor();
         }
 
         // TODO: why is this type-check here? surely when the place view changes it needs to be
@@ -90,6 +90,48 @@ public class PlaceBox extends LayeredContainer
         if (_placeView is MsoyPlaceView) {
             layoutPlaceView();
         }
+    }
+
+    /**
+     * Gets the background color of the current place, or the user's selected custom color if they
+     * are using one.
+     */
+    public function getBackgroundColor () :uint
+    {
+        var bgColor :uint = 0;
+        if (Prefs.getUseCustomBackgroundColor()) {
+            bgColor = Prefs.getCustomBackgroundColor();
+        } else if (_msoyPlaceView != null) {
+            bgColor = _msoyPlaceView.getBackgroundColor();
+        }
+        return bgColor;
+    }
+
+    /**
+     * Updates the background color.
+     */
+    public function updateBackgroundColor () :void
+    {
+        setStyle("backgroundColor", "#" + StringUtil.toHex(getBackgroundColor(), 6));
+    }
+
+    /**
+     * Shows a color picker panel and sets the user's background color preferences to the result.
+     */
+    public function selectBackgroundColor () :void
+    {
+        if (_picker != null) {
+            return;
+        }
+        _picker = new ColorPickerPanel(_ctx, "Select Background Color", getBackgroundColor(),
+            function (color :uint) :void {
+                Prefs.setCustomBackgroundColor(color);
+                Prefs.setUseCustomBackgroundColor(true);
+            });
+        _picker.addEventListener(FloatingPanel.DID_CLOSE, function (evt :Event) :void {
+            _picker = null;
+        });
+        _picker.open();
     }
 
     public function clearPlaceView (view :PlaceView) :Boolean
@@ -266,6 +308,16 @@ public class PlaceBox extends LayeredContainer
         _mask.graphics.endFill();
     }
 
+    protected function handlePrefsUpdated (evt :ConfigValueSetEvent) :void
+    {
+        switch (evt.name) {
+        case Prefs.USE_CUSTOM_BACKGROUND_COLOR:
+        case Prefs.CUSTOM_BACKGROUND_COLOR:
+            updateBackgroundColor();
+            break;
+        }
+    }
+
     /** The river of life. */
     protected var _ctx :MsoyContext;
 
@@ -285,6 +337,8 @@ public class PlaceBox extends LayeredContainer
 
     /** The size of the area the last time he had an unminimized layout. */
     protected var _lastFullSize :Point;
+
+    protected var _picker :ColorPickerPanel;
 
     protected static const CLEAN_BOUNDS :Boolean = true;
 }
