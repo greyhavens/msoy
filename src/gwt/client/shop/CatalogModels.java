@@ -41,8 +41,7 @@ public class CatalogModels
 
         public void doFetchRows (
             int start, int count, final AsyncCallback<List<ListingCard>> callback) {
-            _catalogsvc.loadJumble(start, count,
-                new InfoCallback<CatalogResult>() {
+            _catalogsvc.loadJumble(start, count, new InfoCallback<CatalogResult>() {
                     public void onSuccess (CatalogResult result) {
                         callback.onSuccess(result.listings);
                     }
@@ -72,8 +71,7 @@ public class CatalogModels
 
         public void doFetchRows (
             int start, int count, final AsyncCallback<List<ListingCard>> callback) {
-            _catalogsvc.loadCatalog(_query, start, count,
-                new InfoCallback<CatalogResult>() {
+            _catalogsvc.loadCatalog(_query, start, count, new InfoCallback<CatalogResult>() {
                     public void onSuccess (CatalogResult data) {
                         Listings.this.theme = data.theme;
                         callback.onSuccess(data.listings);
