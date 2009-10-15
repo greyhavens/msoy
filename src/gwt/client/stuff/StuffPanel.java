@@ -204,6 +204,7 @@ public class StuffPanel extends FlowPanel
                 (_memberId == CShell.getMemberId()) ?
                     _msgs.stuffTitle(_dmsgs.xlate("pItemType" + _type)) :
                         _msgs.stuffTitlePlayer(_dmsgs.xlate("pItemType" + _type));
+
             add(MsoyUI.createLabel(title, "TypeTitle"));
             add(_search);
             HorizontalPanel row = new HorizontalPanel();

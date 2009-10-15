@@ -32,7 +32,7 @@ public class ThemeLineupPanel extends FlowPanel
 
     public ThemeLineupPanel (int groupId)
     {
-        setStyleName("itemPanel");
+        setStyleName("lineupPanel");
 
         _groupId = groupId;
 
@@ -50,7 +50,7 @@ public class ThemeLineupPanel extends FlowPanel
                 return new ItemEntry(item);
             }
             @Override protected String getEmptyMessage () {
-                return _msgs.themeNoLineup(_theme.toString());
+                return _msgs.lineupNoLineup(_theme.toString());
             }
             @Override protected boolean displayNavi (int items) {
                 return true;
@@ -59,18 +59,13 @@ public class ThemeLineupPanel extends FlowPanel
         _contents.addStyleName("Contents");
     }
 
+    public int DEFAULT_PAGE = -1;
+
     /**
      * Requests that the (optionally) specified page of items be displayed.
      */
     public void setArgs (int page)
     {
-        // if we're asked to display the "default" page, display the last page we remember
-        if (page < 0) {
-            page = _mostRecentPage;
-        }
-        _mostRecentPage = page; // now remember this page
-
-        // make sure we're showing and have our data
         showInventory(page);
     }
 
@@ -79,6 +74,10 @@ public class ThemeLineupPanel extends FlowPanel
      */
     protected void showInventory (final int page)
     {
+        if (_contents.getModel() != null) {
+            _contents.displayPage(page, false);
+            return;
+        }
         _stuffsvc.loadThemeLineup(_groupId, new InfoCallback<InventoryResult<Avatar>>() {
             public void onSuccess (InventoryResult<Avatar> result) {
                 _theme = result.theme;
@@ -86,8 +85,9 @@ public class ThemeLineupPanel extends FlowPanel
                 _contents.setModel(model, page);
 
                 clear();
-                String title = _msgs.themeTitleMain(_theme.toString());
+                String title = _msgs.lineupTitle();
                 add(MsoyUI.createLabel(title, "TypeTitle"));
+                add(MsoyUI.createHTML(_msgs.lineupIntro(_theme.toString()), "Intro"));
                 add(_contents);
             }
         });

@@ -25,7 +25,7 @@
   min-height: 100%;
 }
 
-.itemPanel .TypeTitle {
+itemPanel .TypeTitle {
   background: url(/images/whirled/orange_header.png) no-repeat;
   width: 233px;
   height: 38px; /* 41 - padding */
@@ -195,4 +195,72 @@
 .favoritesPanel .Contents {
   margin: 10px;
   width: 650px;
+}
+
+/* ------------------------------------
+   THEME LINEUP PANEL
+-------------------------------------*/
+
+.lineupPanel {
+  width: 100%;
+  background: #61abd0 url(/images/whirled/bg_gradient_long_blue.png) repeat-x;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  min-height: 100%;
+}
+
+.lineupPanel .TypeTitle {
+  background: url(/images/whirled/orange_header.png) no-repeat;
+  width: 233px;
+  height: 38px; /* 41 - padding */
+  margin-left: 7px;
+  color: #FFFFFF;
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  font-size: 26px;
+  text-align: center;
+  padding-top: 3px;
+  margin-bottom: 10px;
+}
+
+.lineupPanel .Intro {
+  margin: 10px 0px 10px 30px;
+  font-size: 14px;
+  color: #9FB2C0;
+}
+
+.lineupPanel .pagedGrid {
+  margin: 0px 0px 10px 30px;
+  width: 560px;
+  min-height: 280px;
+}
+
+.lineupPanel .pagedGrid .Header .TopLeft, 
+.lineupPanel .pagedGrid .Header .TopRight {
+  background-color: #104C6F;
+}
+
+.lineupPanel .pagedGrid .Header .Show {
+  white-space: nowrap;
+  width: 50px;
+  padding-right: 5px;
+}
+
+.lineupPanel .pagedGrid .Grid,
+.lineupPanel .pagedGrid .Empty {
+  background-color: #FFFFFF;
+}
+.lineupPanel .pagedGrid .Empty {
+  padding: 40px 0;
+}
+	
+.lineupPanel .itemDetailPanel .itemActivator .Tip {
+  color: #3776A0;
+}
+
+.lineupPanel .itemBox .Name {
+  text-align: center;
+}
+
+.lineupPanel .itemBox .Activator {
+  padding-top: 3px;
 }
