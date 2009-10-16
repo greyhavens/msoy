@@ -84,6 +84,7 @@ public class FrameEntryPoint
 
         // assign our client mode and app id if the server gave them to us, otherwise use defaults
         _embedding = Embedding.extract(Args.fromHistory(_currentToken));
+        CShell.log("Loading module", "embedding", _embedding);
 
         // load up various JavaScript sources
         ScriptSources.inject(_embedding.appId);
@@ -928,7 +929,9 @@ public class FrameEntryPoint
              return true;
         };
         $wnd.getClientMode = function () {
-            return entry.@client.frame.FrameEntryPoint::getEmbedding()().mode.toString();
+            var emb = entry.@client.frame.FrameEntryPoint::getEmbedding()();
+            var mode = emb.@com.threerings.msoy.web.gwt.Embedding::mode;
+            return mode.@java.lang.Object::toString()();
         }
         $wnd.setWindowTitle = function (title) {
             entry.@client.frame.FrameEntryPoint::setTitleFromFlash(Ljava/lang/String;)(title);
