@@ -79,11 +79,6 @@ public interface ItemServiceAsync
     void loadPhotos (AsyncCallback<List<Photo>> callback);
 
     /**
-     * The async version of {@link ItemService#loadManagedThemes}.
-     */
-    void loadManagedThemes (AsyncCallback<GroupName[]> callback);
-
-    /**
      * The async version of {@link ItemService#loadLineups}.
      */
     void loadLineups (int avatarId, AsyncCallback<GroupName[]> callback);

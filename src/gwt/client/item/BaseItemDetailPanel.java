@@ -41,6 +41,9 @@ import com.threerings.msoy.item.gwt.ItemService;
 import com.threerings.msoy.item.gwt.ItemServiceAsync;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.TagHistory;
+import com.threerings.msoy.web.gwt.WebMemberService;
+import com.threerings.msoy.web.gwt.WebMemberServiceAsync;
+
 import client.shell.CShell;
 import client.ui.CreatorLabel;
 import client.ui.HeaderBox;
@@ -113,7 +116,7 @@ public abstract class BaseItemDetailPanel extends SmartTable
         _indeets.add(MsoyUI.createRestrictedHTML(ItemUtil.getDescription(_item)));
 
         if (DeploymentConfig.devDeployment && !CShell.isGuest()) {
-            _itemsvc.loadManagedThemes(new InfoCallback<GroupName[]>() {
+            _membersvc.loadManagedThemes(new InfoCallback<GroupName[]>() {
                 public void onSuccess (GroupName[] result) {
                     ensureThemeBits();
                     _themeContents.setWidget(0, 0, _stampedBy = new FlowPanel());
@@ -485,6 +488,7 @@ public abstract class BaseItemDetailPanel extends SmartTable
 
     protected static final ItemMessages _imsgs = GWT.create(ItemMessages.class);
     protected static final ItemServiceAsync _itemsvc = GWT.create(ItemService.class);
+    protected static final WebMemberServiceAsync _membersvc = GWT.create(WebMemberService.class);
 
     protected static final int BRIEF_STAMP_COUNT = 6;
 }

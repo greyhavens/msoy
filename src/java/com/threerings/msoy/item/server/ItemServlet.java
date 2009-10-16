@@ -26,7 +26,6 @@ import com.threerings.msoy.server.persist.TagHistoryRecord;
 import com.threerings.msoy.server.persist.TagNameRecord;
 
 import com.threerings.msoy.group.data.all.GroupMembership.Rank;
-import com.threerings.msoy.group.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.group.server.persist.ThemeAvatarLineupRecord;
 import com.threerings.msoy.group.server.persist.ThemeRepository;
@@ -358,18 +357,6 @@ public class ItemServlet extends MsoyServiceServlet
             result.totalCount = _itemLogic.getItemListSize(query.listId, query.itemType);
         }
         return result;
-    }
-
-    // from interface ItemService
-    public GroupName[] loadManagedThemes ()
-        throws ServiceException
-    {
-        MemberRecord memrec = requireAuthedUser();
-        IntSet groupIds = new ArrayIntSet();
-        for (GroupMembershipRecord rec : _groupRepo.getMemberships(memrec.memberId, Rank.MANAGER)) {
-            groupIds.add(rec.groupId);
-        }
-        return _groupRepo.loadGroupNames(groupIds).values().toArray(new GroupName[0]);
     }
 
     // from interface ItemService

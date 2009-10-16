@@ -22,8 +22,12 @@ import com.threerings.gwt.util.PagedResult;
 
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.all.Friendship;
+import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VisitorInfo;
+import com.threerings.msoy.group.data.all.GroupMembership.Rank;
+import com.threerings.msoy.group.server.persist.GroupMembershipRecord;
+import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.server.FriendManager;
 import com.threerings.msoy.server.MemberLogic;
 import com.threerings.msoy.server.MemberManager;
@@ -357,6 +361,19 @@ public class MemberServlet extends MsoyServiceServlet
         return _moneyLogic.barscribe(memrec, authedBarCost, cost, op).toPurchaseResult();
     }
 
+    // from interface WebMemberService
+    public GroupName[] loadManagedThemes ()
+        throws ServiceException
+    {
+        MemberRecord memrec = requireAuthedUser();
+        IntSet groupIds = new ArrayIntSet();
+        for (GroupMembershipRecord rec : _groupRepo.getMemberships(memrec.memberId, Rank.MANAGER)) {
+            groupIds.add(rec.groupId);
+        }
+        return _groupRepo.loadGroupNames(groupIds).values().toArray(new GroupName[0]);
+    }
+
+
     // our dependencies
     @Inject protected ABTestLogic _testLogic;
     @Inject protected FriendManager _friendMan;
@@ -368,6 +385,7 @@ public class MemberServlet extends MsoyServiceServlet
     @Inject protected RuntimeConfig _runtime;
     @Inject protected SpamRepository _spamRepo;
     @Inject protected SubscriptionLogic _subscripLogic;
+    @Inject protected GroupRepository _groupRepo;
 
     /** Maximum number of members to return for the leader board */
     protected static final int MAX_LEADER_MATCHES = 100;

@@ -12,6 +12,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 import com.threerings.gwt.util.PagedResult;
 
 import com.threerings.msoy.data.all.Friendship;
+import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VisitorInfo;
 
@@ -119,7 +120,7 @@ public interface WebMemberService extends RemoteService
 
     /**
      * Adds the email address from the given invite to the opt-out list.
-     * 
+     *
      * @param gameInvite distinguishes between an id from a game invite and that of a normal invite
      */
     void optOut (boolean gameInvite, String inviteId)
@@ -175,5 +176,11 @@ public interface WebMemberService extends RemoteService
      * Purchase a barscription.
      */
     PurchaseResult<WebCreds.Role> barscribe (int authedBarCost)
+        throws ServiceException;
+
+    /**
+     * Loads the themes the current player is allowed to manage (stamp).
+     */
+    GroupName[] loadManagedThemes ()
         throws ServiceException;
 }

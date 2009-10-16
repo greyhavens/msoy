@@ -118,12 +118,6 @@ public interface ItemService extends RemoteService
         throws ServiceException;
 
     /**
-     * Loads the themes the current player is allowed to manage (stamp).
-     */
-    GroupName[] loadManagedThemes ()
-        throws ServiceException;
-
-    /**
      * Loads the themes whose lineups include the given avatar.
      */
     GroupName[] loadLineups(int avatarId)
