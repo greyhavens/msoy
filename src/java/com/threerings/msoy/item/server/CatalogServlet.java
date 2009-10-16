@@ -101,6 +101,8 @@ public class CatalogServlet extends MsoyServiceServlet
         // if the query does not explicitly request a theme, use the player's current theme (if any)
         if (query.themeGroupId == 0) {
             query.themeGroupId = (mrec != null) ? mrec.themeGroupId : 0;
+        }
+        if (query.themeGroupId != 0) {
             result.theme = _groupRepo.loadGroupName(query.themeGroupId);
         }
 
