@@ -442,11 +442,14 @@ public class KontagentLogic
      */
     protected enum ShortTag
     {
-        UNKNOWN("unknown");
+        UNKNOWN("unknown1");
 
         public String id;
 
         ShortTag (String id) {
+            if (id.length() != 8) {
+                throw new IllegalArgumentException();
+            }
             this.id = id;
         }
     }
