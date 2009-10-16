@@ -160,7 +160,7 @@ public class ItemLogic
                 }
             }
         };
-        _jumbleInvalidator.schedule(JUMBLE_REFRESH_PERIOD, true);
+        _jumbleInvalidator.schedule(1000L * JUMBLE_REFRESH_PERIOD, true);
     }
 
     /**
@@ -1332,9 +1332,10 @@ public class ItemLogic
         }
     }
 
-    // take a new snapshot every 10 minutes
-    protected static final long JUMBLE_REFRESH_PERIOD = 1000L * 60 * 10;
+    // take a new jumble snapshot every 10 minutes
+    protected static final long JUMBLE_REFRESH_PERIOD = 600;
 
+    // take a new themed jumble snapshot every 10 minutes
     protected static final int THEMED_JUMBLE_REFRESHED_PERIOD = 600;
 
 }
