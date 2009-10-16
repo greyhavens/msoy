@@ -71,9 +71,14 @@ public class ShopPanel extends FlowPanel
         // display categories on the left, content on the right
         HorizontalPanel row = new HorizontalPanel();
         row.setVerticalAlignment(HorizontalPanel.ALIGN_TOP);
-        SideBar sidebar = new SideBar(new CatalogQueryLinker(new CatalogQuery()), false, null);
+
+        // display a sidebar with a linker that knows which theme we're in
+        CatalogQuery linkerQuery = new CatalogQuery();
+        linkerQuery.themeGroupId = themeId;
+        SideBar sidebar = new SideBar(new CatalogQueryLinker(linkerQuery), false, null);
         sidebar.add(MsoyUI.createImage("/images/shop/shop_bag.png", "Bag"));
         row.add(sidebar);
+
         row.add(_contents = MsoyUI.createFlowPanel("TopContents"));
         _contents.add(MsoyUI.createHTML(_msgs.shopIntro(), "Intro"));
         add(row);
