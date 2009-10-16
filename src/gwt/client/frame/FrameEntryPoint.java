@@ -238,7 +238,7 @@ public class FrameEntryPoint
         _layout.addNoClientIcon();
 
         if (data.group != SessionData.Group.NONE) {
-            Link.go(Pages.PEOPLE, "confprof"); // send them to step 2: configure profile
+            Link.go(Pages.PEEPLESS, "confprof"); // send them to configure profile
         } else if (isHeaderless() || (_page == Pages.ACCOUNT && _prevToken.equals(""))) {
             Link.go(Pages.WORLD, "places");
         } else if (_page == Pages.ACCOUNT) {

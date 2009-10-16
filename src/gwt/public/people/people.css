@@ -515,30 +515,54 @@
  --------------------------------- */
 
 .configProfile {
+  font-family: Arial,Helvetica,sans-serif;
+  font-size: 15px;
 }
 
-.configProfile .Bits {
-  margin-left: 50px;
+.configProfile .Title {
+  font-family: "Trebuchet MS",Arial,Helvetica,sans-serif;
+  font-size: 26px;
+  font-weight: bold;
+  padding: 0 0 15px 30px;
 }
 
-.configProfile .Tip {
-  font-size: 12px;
-  max-width: 520px;
-  padding-top: 5px;
+.configProfile .DynamicContent {
+  padding: 20px 30px 30px 30px;
 }
 
-.configProfile .Card .Name {
+.configProfile .Instructions {
+}
+
+.configProfile .Config {
+  width: 250px;
+  height: 80px;
+  margin: 30px 0 0 20px;
+  font-weight: bold;
+}
+
+.configProfile .PreviewContainer {
+  position: relative;
+  float: right;
+  width: 288px;
+  height: 145px;
+  margin-right: 20px;
+  background: transparent url(/images/people/confprof_preview_bg.png) center center no-repeat;
+}
+
+.configProfile .Preview .Name {
   font-size: 16px;
   font-weight: bold;
 }
 
-.configProfile .Card {
+.configProfile .Preview {
+  position: absolute;
+  top: 35px;
+  left: 19px;
   border: 1px solid;
-  margin-right: 15px;
-  margin-bottom: 10px;
-  float: left;
+  background-color: #FFFFFF;
 }
 
-.configProfile .Config {
-  width: 430px;
+.configProfile .stretchButton .orangeThick {
+  font-size: 18px;
+  margin: 25px auto 0 auto;
 }
