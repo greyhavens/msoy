@@ -7,6 +7,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.util.Name;
 
+import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MediaDesc;
 
 /**
@@ -23,6 +24,9 @@ public class RoomDetail
 
     /** The owner of this room (either a MemberName or a GroupName). */
     public Name owner;
+
+    /** The theme this room is associated with, or null. */
+    public GroupName theme;
 
     /** The rating assigned to the room by this player. */
     public byte memberRating;

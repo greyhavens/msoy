@@ -76,6 +76,9 @@ public class WebRoomServlet extends MsoyServiceServlet
             detail.memberRating =
                 _sceneRepo.getRatingRepository().getRating(sceneId, mrec.memberId);
         }
+        if (screc.themeGroupId != 0) {
+            detail.theme = _groupRepo.loadGroupName(screc.themeGroupId);
+        }
         return detail;
     }
 
