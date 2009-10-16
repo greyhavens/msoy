@@ -72,4 +72,9 @@ public class Embedding
     {
         return new String[] {mode.toString(), String.valueOf(appId)};
     }
+
+    public String toString ()
+    {
+        return "(mode=" + mode + ", appId=" + appId + ")";
+    }
 }
