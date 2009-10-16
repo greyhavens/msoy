@@ -85,6 +85,6 @@ public class CatalogQuery
     public String toString ()
     {
         return "[type=" + itemType + ", sort=" + sortBy + ", tag=" + tag + ", search=" + search
-            + ", creator=" + creatorId + ", mog=" + themeGroupId + "]";
+            + ", creator=" + creatorId + ", theme=" + themeGroupId + "]";
     }
 }
