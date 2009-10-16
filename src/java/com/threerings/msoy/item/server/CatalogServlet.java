@@ -69,11 +69,15 @@ public class CatalogServlet extends MsoyServiceServlet
     implements CatalogService
 {
     // from interface CatalogService
-    public CatalogResult loadJumble (int offset, int rows)
+    public CatalogResult loadJumble (int themeId, int offset, int rows)
         throws ServiceException
     {
         MemberRecord mrec = getAuthedUser();
-        if (mrec == null || mrec.themeGroupId == 0) {
+        // if the caller does not explicitly request a theme, use the player's current one (if any)
+        if (themeId == 0 && mrec != null) {
+            themeId = mrec.themeGroupId;
+        }
+        if (themeId == 0) {
             List<ListingCard> items = _itemLogic.getJumbleSnapshot();
             items = Lists.newArrayList(items.subList(
                 Math.min(items.size(), offset), Math.min(items.size(), offset + rows)));
@@ -81,8 +85,7 @@ public class CatalogServlet extends MsoyServiceServlet
         }
 
         return new CatalogResult(
-            _itemLogic.getThemedJumble(mrec.themeGroupId),
-            _groupRepo.loadGroupName(mrec.themeGroupId));
+            _itemLogic.getThemedJumble(themeId), _groupRepo.loadGroupName(themeId));
     }
 
     // from interface CatalogService
@@ -98,7 +101,7 @@ public class CatalogServlet extends MsoyServiceServlet
             return result;
         }
 
-        // if the query does not explicitly request a theme, use the player's current theme (if any)
+        // if the query does not explicitly request a theme, use the player's current one (if any)
         if (query.themeGroupId == 0) {
             query.themeGroupId = (mrec != null) ? mrec.themeGroupId : 0;
         }

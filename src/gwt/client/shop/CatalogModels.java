@@ -35,13 +35,18 @@ public class CatalogModels
 {
     public static class Jumble implements DataModel<ListingCard>
     {
+        public Jumble (int themeId)
+        {
+            _themeId = themeId;
+        }
+
         public int getItemCount () {
             return -1;
         }
 
         public void doFetchRows (
             int start, int count, final AsyncCallback<List<ListingCard>> callback) {
-            _catalogsvc.loadJumble(start, count, new InfoCallback<CatalogResult>() {
+            _catalogsvc.loadJumble(_themeId, start, count, new InfoCallback<CatalogResult>() {
                     public void onSuccess (CatalogResult result) {
                         callback.onSuccess(result.listings);
                     }
@@ -51,6 +56,8 @@ public class CatalogModels
         public void removeItem (ListingCard item) {
             // do nothing
         }
+
+        protected int _themeId;
     }
 
     public static class Listings implements DataModel<ListingCard>

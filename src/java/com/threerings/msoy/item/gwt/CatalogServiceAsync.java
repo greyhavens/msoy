@@ -20,7 +20,7 @@ public interface CatalogServiceAsync
     /**
      * The async version of {@link CatalogService#loadJumble}.
      */
-    void loadJumble (int offset, int rows, AsyncCallback<CatalogService.CatalogResult> callback);
+    void loadJumble (int themeId, int offset, int rows, AsyncCallback<CatalogService.CatalogResult> callback);
 
     /**
      * The async version of {@link CatalogService#loadCatalog}.

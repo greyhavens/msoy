@@ -87,9 +87,10 @@ public interface CatalogService extends RemoteService
     public static final String REL_PATH = "../../.." + CatalogService.ENTRY_POINT;
 
     /**
-     * Loads the featured items shown on the top-level catalog page.
+     * Loads the featured items shown on the top-level catalog page, possibly constrained
+     * to them given theme.
      */
-    CatalogResult loadJumble (int offset, int rows)
+    CatalogResult loadJumble (int themeId, int offset, int rows)
         throws ServiceException;
 
     /**

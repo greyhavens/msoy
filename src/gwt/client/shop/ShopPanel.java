@@ -89,7 +89,7 @@ public class ShopPanel extends FlowPanel
             }
         };
 
-        grid.setModel(new CatalogModels.Jumble(), 0);
+        grid.setModel(new CatalogModels.Jumble(themeId), 0);
         _contents.add(grid);
     }
 
