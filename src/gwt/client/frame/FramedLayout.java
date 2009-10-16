@@ -33,7 +33,7 @@ public class FramedLayout extends Layout
 
         // if we have a client, adjust its height...
         if (_client.getWidget() != null) {
-            _client.setHeight("300px");
+            _client.setHeight(CLIENT_MINIMIZED_HEIGHT + "px");
         }
 
         _content.setWidget(content);
@@ -59,7 +59,7 @@ public class FramedLayout extends Layout
         }
         _content.setWidget(null);
         if (_client.getWidget() != null) {
-            _client.setHeight("100%");
+            _client.setHeight(CLIENT_HEIGHT + "px");
         }
     }
 
@@ -69,7 +69,9 @@ public class FramedLayout extends Layout
         return new WorldClient.PanelProvider() {
             public Panel get () {
                 closeClient();
-                _client.setHeight(null);
+                _client.setHeight((_content.getWidget() == null ?  CLIENT_HEIGHT :
+                    CLIENT_MINIMIZED_HEIGHT) + "px");
+                updateMainContentHeight();
                 return _client;
             }
         };
@@ -140,7 +142,7 @@ public class FramedLayout extends Layout
             avail -= getTitleBarHeight();
         }
         if (_client.getWidget() != null) {
-            avail -= 300;
+            avail -= CLIENT_MINIMIZED_HEIGHT;
         }
         return avail;
     }
@@ -151,4 +153,6 @@ public class FramedLayout extends Layout
     }
 
     protected SimplePanel _client, _bar, _content;
+    protected static final int CLIENT_HEIGHT = 545;
+    protected static final int CLIENT_MINIMIZED_HEIGHT = 300;
 }
