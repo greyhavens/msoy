@@ -239,8 +239,44 @@
    DESIGN YOUR WHIRLED CONTEST LANDING
 -------------------------------------*/
 
-.designContestPanel .Header {
-  width: 882px;
-  height: 265px;
-  background: url(/images/landing/contests/designcon_header.png) no-repeat top center;
+.designContestPanel {
+  background: #000000 url(/images/me/contests/contest_halloween09_header.jpg) center top no-repeat;
+}
+
+.designContestPanel, .contestOctPanel table {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 13px;
+}
+
+.designContestPanel .Content {
+  background: none;
+  width: 750px;
+  padding-top: 370px;
+  margin: 0 auto;
+}
+
+.designContestPanel .Content .roundBox {
+  margin: 10px 0;
+}
+
+.designContestPanel .Content .roundBox .Center {
+  padding: 10px;
+}
+
+.designContestPanel .Content p {
+  margin: 10px 20px;
+  line-height: 20px;
+}
+
+.designContestPanel .Content .Title,
+.designContestPanel .Content .TitleAlt {
+  font-size: 26px;
+  font-weight: bold;
+  font-family: "Trebuchet MS",Arial,Helvetica,sans-serif;
+  color: #ff752a;
+  margin: 0 0 10px 0;
+}
+
+.designContestPanel .Content .TitleAlt {
+  color: #3595b7;
 }

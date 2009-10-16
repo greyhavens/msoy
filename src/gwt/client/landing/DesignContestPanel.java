@@ -6,9 +6,13 @@ package client.landing;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.FlowPanel;
+
+import com.threerings.gwt.ui.WidgetUtil;
+
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.ui.MsoyUI;
+import client.ui.RoundBox;
 import client.util.Link;
 import client.util.NaviUtil;
 
@@ -21,34 +25,26 @@ public class DesignContestPanel extends FlowPanel
     {
         setStyleName("designContestPanel");
         addStyleName("BlueLandingPage");
-        FlowPanel content = MsoyUI.createFlowPanel("Content");
-        add(content);
 
-        // big bg image with a couple positioned buttons
-        AbsolutePanel header = MsoyUI.createAbsolutePanel("Header");
-        content.add(header);
-        header.add(MsoyUI.createActionImage("/images/landing/blue_landing_whirled_logo.png",
-            Link.createHandler(Pages.LANDING, "")), 20, 10);
-        header.add(MsoyUI.createActionImage("/images/landing/blue_landing_join_now.png",
-            NaviUtil.onSignUp()), 750, 0);
+        RoundBox about = new RoundBox(RoundBox.WHITE);
+        about.add(MsoyUI.createLabel(_msgs.contestOctAboutTitle(), "Title"));
+        about.add(MsoyUI.createHTML(_msgs.contestOctAboutText(), null));
 
-        // instructions etc in white boxes
-        content.add(
-            new WideContentBox(_msgs.designconIntroTitle(), _msgs.designconIntroText(), false));
-        content.add(
-            new WideContentBox(_msgs.designconPrizesTitle(), _msgs.designconPrizesText(), true));
-        
-        FlowPanel enterPanel = MsoyUI.createFlowPanel(null);
-        enterPanel.add(MsoyUI.createHTML(_msgs.designconEnterText(), null));
-        enterPanel.add(MsoyUI.createButton(MsoyUI.MEDIUM_THIN, _msgs.designconSignup(), 
-            NaviUtil.onSignUp()));
-        content.add(new WideContentBox(_msgs.designconEnterTitle(), enterPanel, true));
+        RoundBox prizes = new RoundBox(RoundBox.WHITE);
+        prizes.add(MsoyUI.createLabel(_msgs.contestOctPrizesTitle(), "TitleAlt"));
+        prizes.add(MsoyUI.createHTML(_msgs.contestOctPrizesText(), null));
 
-        content.add(
-            new WideContentBox(_msgs.designconRulesTitle(), _msgs.designconRulesText(), false));
+        RoundBox enter = new RoundBox(RoundBox.WHITE);
+        enter.add(MsoyUI.createLabel(_msgs.contestOctEnterTitle(), "Title"));
+        enter.add(MsoyUI.createHTML(_msgs.contestOctEnterText(), null));
 
-        // footer stretches full width, contains copyright info
-        add(MsoyUI.createSimplePanel(new LandingCopyright(), "Footer"));
+        RoundBox rules = new RoundBox(RoundBox.WHITE);
+        rules.add(MsoyUI.createLabel(_msgs.contestOctRulesTitle(), "TitleAlt"));
+        rules.add(MsoyUI.createHTML(_msgs.contestOctRulesText(), null));
+
+        add(MsoyUI.createFlowPanel("Content", about, prizes, enter, rules));
+
+        add(WidgetUtil.makeShim(20, 20));
     }
 
     protected static final LandingMessages _msgs = GWT.create(LandingMessages.class);
