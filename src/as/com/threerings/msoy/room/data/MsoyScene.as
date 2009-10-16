@@ -150,6 +150,14 @@ public class MsoyScene extends SceneImpl
         return _msoyModel.getNextFurniId(aboveId);
     }
 
+    /**
+     * Get the color to use behind and around the decor.
+     */
+    public function getBackgroundColor () :uint
+    {
+        return _msoyModel.backgroundColor;
+    }
+
     // from SpotScene
     public function addPortal (portal :Portal) :void
     {

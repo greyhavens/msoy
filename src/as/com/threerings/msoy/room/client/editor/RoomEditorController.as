@@ -158,6 +158,7 @@ public class RoomEditorController
             _entranceSprite.update(_entranceSprite.getFurniData());
             _panel.updatePlaylistControl(up.playlistControl);
             _panel.setDecor(up.decor);
+            _panel.setBackgroundColor(up.backgroundColor);
             updateNameDisplay();
 
             refreshTarget();
@@ -438,14 +439,14 @@ public class RoomEditorController
     /**
      * Creates an update for the background color of the scene, obtaining the color from the user's
      * currently set custom background color.
-     * TODO: this is kind of kludgy and should really just be a normal button in the editor panel
      */
-    public function updateBackgroundColor () :void
+    public function updateBackgroundColor (value :uint) :void
     {
         var newscene :MsoyScene = scene.clone() as MsoyScene;
         var newmodel :MsoySceneModel = newscene.getSceneModel() as MsoySceneModel;
-        newmodel.backgroundColor = _ctx.getTopPanel().getPlaceContainer().getBackgroundColor();
+        newmodel.backgroundColor = value;
         updateScene(scene, newscene);
+        _ctx.getTopPanel().getPlaceContainer().updateBackgroundColor();
     }
 
     /**

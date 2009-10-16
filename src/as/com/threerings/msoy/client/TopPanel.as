@@ -22,6 +22,8 @@ import com.threerings.msoy.chat.client.ChatTabBar;
 import com.threerings.msoy.chat.client.ChatOverlay;
 import com.threerings.msoy.chat.client.ComicOverlay;
 
+import com.threerings.msoy.room.client.RoomObjectView;
+
 /**
  * Dispatched when the name of our current location changes. The value supplied will be a string
  * with the new location name.
@@ -271,6 +273,16 @@ public class TopPanel extends Canvas
     public function getLeftPanelWidth () :int
     {
         return (_leftPanel == null ? 0 : _leftPanel.width);
+    }
+
+    /**
+     * Returns true if the current view is a room view and the editor is open.
+     */
+    public function isEditingRoom () :Boolean
+    {
+        var view :PlaceView = getPlaceView();
+        return (view is RoomObjectView) &&
+            RoomObjectView(view).getRoomObjectController().isRoomEditing();
     }
 
     protected function stageResized (event :Event) :void

@@ -122,7 +122,7 @@ public class RoomObjectView extends RoomView
     override public function getBackgroundColor () :uint
     {
         if (_scene != null) {
-            return (_scene.getSceneModel() as MsoySceneModel).backgroundColor;
+            return _scene.getBackgroundColor();
         }
         return 0x000000;
     }

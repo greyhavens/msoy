@@ -81,9 +81,7 @@ public class PlaceBox extends LayeredContainer
         _placeView = view;
         _msoyPlaceView = view as MsoyPlaceView;
 
-        if (DeploymentConfig.devDeployment) {
-            updateBackgroundColor();
-        }
+        updateBackgroundColor();
 
         // TODO: why is this type-check here? surely when the place view changes it needs to be
         // laid out regardless of type
@@ -99,7 +97,9 @@ public class PlaceBox extends LayeredContainer
     public function getBackgroundColor () :uint
     {
         var bgColor :uint = 0;
-        if (Prefs.getUseCustomBackgroundColor()) {
+        var editingRoom :Boolean =
+            _ctx.getTopPanel() != null && _ctx.getTopPanel().isEditingRoom();
+        if (!editingRoom && Prefs.getUseCustomBackgroundColor()) {
             bgColor = Prefs.getCustomBackgroundColor();
         } else if (_msoyPlaceView != null) {
             bgColor = _msoyPlaceView.getBackgroundColor();

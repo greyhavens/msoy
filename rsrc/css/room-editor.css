@@ -51,6 +51,11 @@ BasePanel {
   paddingRight: 8;
 }
 
+.roomEditBackgroundColorRow {
+  paddingTop: 2;
+  paddingBottom: 2;
+}
+
 .roomEditButtonBar { 
   borderStyle: "none";
   paddingBottom: 0;

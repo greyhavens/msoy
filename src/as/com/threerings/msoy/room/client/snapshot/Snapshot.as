@@ -145,8 +145,8 @@ public class Snapshot extends EventDispatcher
     {
         cancelEncoding();
 
-        // first let's fill the bitmap with black or something
-        bitmap.fillRect(_frame, 0x000000);
+        // first let's fill the bitmap with the room's background color
+        bitmap.fillRect(_frame, 0xff000000 | _view.getScene().getBackgroundColor());
 
         var occPredicate :Function = null;
         if (!includeOccupants) {

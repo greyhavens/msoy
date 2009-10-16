@@ -11,11 +11,13 @@ import mx.containers.Box;
 import mx.containers.Grid;
 import mx.containers.HBox;
 import mx.containers.VBox;
+import mx.controls.ColorPicker;
 import mx.controls.HRule;
 import mx.controls.Label;
 import mx.controls.Text;
 import mx.core.Container;
 import mx.core.UIComponent;
+import mx.events.ColorPickerEvent;
 
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.CommandComboBox;
@@ -145,6 +147,11 @@ public class RoomEditorPanel extends FlyingPanel
     public function updatePlaylistControl (playlistControl :int) :void
     {
         _playlistControl.selected = (playlistControl == MsoySceneModel.ACCESS_EVERYONE);
+    }
+
+    public function setBackgroundColor (color :uint) :void
+    {
+        _backgroundColor.selectedColor = color;
     }
 
     public function setHomeButtonEnabled (enabled :Boolean) :void
@@ -313,6 +320,22 @@ public class RoomEditorPanel extends FlyingPanel
         decorBox.addChild(new CommandButton(
             Msgs.EDITING.get("b.change"), WorldController.VIEW_STUFF, Item.DECOR));
         GridUtil.addRow(contents, decorBox, [3, 1]);
+
+        // background color
+        var colorBox :Box = new HBox();
+        colorBox.styleName = "roomEditBackgroundColorRow";
+        colorBox.percentWidth = 100;
+        var colorLabel :Label = FlexUtil.createLabel("Background color");
+        colorBox.addChild(colorLabel);
+        colorLabel.width = 200;
+        _backgroundColor = new ColorPicker();
+        _backgroundColor.selectedColor = _controller.scene.getBackgroundColor();
+        colorBox.addChild(_backgroundColor);
+        _backgroundColor.addEventListener(ColorPickerEvent.CHANGE,
+            function (evt :ColorPickerEvent) :void {
+                _controller.updateBackgroundColor(evt.color);
+            });
+        GridUtil.addRow(contents, colorBox, [3, 1]);
 
         // item name combo box
         var box :Box = new HBox();
@@ -497,7 +520,6 @@ public class RoomEditorPanel extends FlyingPanel
     override protected function buttonClicked (id :int) :void
     {
         if (id == DONE_BUTTON) {
-            _controller.updateBackgroundColor();
             close();
         } else {
             super.buttonClicked(id);
@@ -506,7 +528,6 @@ public class RoomEditorPanel extends FlyingPanel
 
     override protected function okButtonClicked () :void
     {
-        _controller.updateBackgroundColor();
         new PublishPanel(_wctx, _controller.roomView);
     }
 
@@ -543,6 +564,8 @@ public class RoomEditorPanel extends FlyingPanel
     protected var _playlistControl :CommandCheckBox;
 
     protected var _decorLabel :Label;
+
+    protected var _backgroundColor :ColorPicker;
 
     protected var _curTarget :FurniSprite;
 
