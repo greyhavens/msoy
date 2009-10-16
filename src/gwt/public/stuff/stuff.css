@@ -25,7 +25,7 @@
   min-height: 100%;
 }
 
-itemPanel .TypeTitle {
+.itemPanel .TypeTitle {
   background: url(/images/whirled/orange_header.png) no-repeat;
   width: 233px;
   height: 38px; /* 41 - padding */
