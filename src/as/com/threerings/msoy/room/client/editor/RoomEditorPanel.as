@@ -477,7 +477,9 @@ public class RoomEditorPanel extends FlyingPanel
         box.addChild(new CommandCheckBox(
             Msgs.EDITING.get("l.advanced_editing"), _controller.actionAdvancedEditing));
 
-        addButtons(OK_BUTTON, CANCEL_BUTTON);
+        addButtons(OK_BUTTON, DONE_BUTTON);
+        showCloseButton = true;
+
         // we have no border so we need to manually give our buttons some breathing room
         _buttonBar.setStyle("paddingRight", 5);
         _buttonBar.setStyle("paddingBottom", 5);
@@ -487,13 +489,24 @@ public class RoomEditorPanel extends FlyingPanel
     {
         switch (buttonId) {
         case OK_BUTTON: return Msgs.EDITING.get("b.publish");
-        case CANCEL_BUTTON: return Msgs.EDITING.get("b.end_editing");
+        case DONE_BUTTON: return Msgs.EDITING.get("b.end_editing");
         default: return super.getButtonLabel(buttonId);
+        }
+    }
+
+    override protected function buttonClicked (id :int) :void
+    {
+        if (id == DONE_BUTTON) {
+            _controller.updateBackgroundColor();
+            close();
+        } else {
+            super.buttonClicked(id);
         }
     }
 
     override protected function okButtonClicked () :void
     {
+        _controller.updateBackgroundColor();
         new PublishPanel(_wctx, _controller.roomView);
     }
 
@@ -510,6 +523,8 @@ public class RoomEditorPanel extends FlyingPanel
     protected static const Y_DELTA :Number = 0.1;
     protected static const ROTATE_DELTA :Number = 45;
     protected static const SCALEMULTI :Number = 1.2;
+
+    protected static const DONE_BUTTON :int = 1;
 
     protected var _wctx :WorldContext;
 

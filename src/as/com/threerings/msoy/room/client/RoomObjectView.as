@@ -74,6 +74,7 @@ import com.threerings.msoy.room.data.MemoryChangedListener;
 import com.threerings.msoy.room.data.MobInfo;
 import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.msoy.room.data.MsoyScene;
+import com.threerings.msoy.room.data.MsoySceneModel;
 import com.threerings.msoy.room.data.RoomCodes;
 import com.threerings.msoy.room.data.RoomObject;
 import com.threerings.msoy.room.data.SceneAttrsUpdate;
@@ -117,6 +118,15 @@ public class RoomObjectView extends RoomView
         updateEditingOverlay();
     }
 
+    // from MsoyPlaceView, via RoomView
+    override public function getBackgroundColor () :uint
+    {
+        if (_scene != null) {
+            return (_scene.getSceneModel() as MsoySceneModel).backgroundColor;
+        }
+        return 0x000000;
+    }
+
     /**
      * (Re)set our scene to the one the scene director knows about.
      */
@@ -137,6 +147,9 @@ public class RoomObjectView extends RoomView
     {
         super.setScene(scene);
         updateEditingOverlay();
+
+        // let the place box know that the background color may have changed
+        _ctx.getTopPanel().getPlaceContainer().updateBackgroundColor();
     }
 
     /**

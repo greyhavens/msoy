@@ -436,6 +436,19 @@ public class RoomEditorController
     }
 
     /**
+     * Creates an update for the background color of the scene, obtaining the color from the user's
+     * currently set custom background color.
+     * TODO: this is kind of kludgy and should really just be a normal button in the editor panel
+     */
+    public function updateBackgroundColor () :void
+    {
+        var newscene :MsoyScene = scene.clone() as MsoyScene;
+        var newmodel :MsoySceneModel = newscene.getSceneModel() as MsoySceneModel;
+        newmodel.backgroundColor = _ctx.getTopPanel().getPlaceContainer().getBackgroundColor();
+        updateScene(scene, newscene);
+    }
+
+    /**
      * Handles mouse presses, starts editing furniture.
      */
     protected function mouseDown (event :MouseEvent) :void
