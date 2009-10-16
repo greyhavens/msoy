@@ -36,7 +36,7 @@ import client.item.SideBar;
  */
 public class ShopPanel extends FlowPanel
 {
-    public ShopPanel ()
+    public ShopPanel (int themeId)
     {
         setStyleName("shopPanel");
 

@@ -265,8 +265,12 @@ public class GroupDetailPanel extends FlowPanel
             // For now, only support+ can create themes
             if (CShell.isSupport()) {
                 if (_detail.isTheme) {
-                    themeActions.add(MsoyUI.createActionLabel(_msgs.detailViewLineup(),
+                    themeActions.add(MsoyUI.createActionLabel(_msgs.detailViewLineup(), "inline",
                             Link.createHandler(Pages.STUFF, "l", _detail.group.groupId)));
+
+                    themeActions.add(new InlineLabel(" | "));
+                    themeActions.add(MsoyUI.createActionLabel(_msgs.detailViewShop(), "inline",
+                        Link.createHandler(Pages.SHOP, "j", _detail.group.groupId)));
 
                 } else {
                     themeActions.add(MsoyUI.createActionLabel(

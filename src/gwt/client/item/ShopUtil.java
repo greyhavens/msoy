@@ -3,6 +3,8 @@
 
 package client.item;
 
+import client.shell.CShell;
+
 import com.threerings.msoy.item.gwt.CatalogQuery;
 import com.threerings.msoy.web.gwt.Args;
 
@@ -49,10 +51,11 @@ public class ShopUtil
             args.add("s" + query.search);
         } else if (query.creatorId != 0) {
             args.add("c" + query.creatorId);
-        } else if (query.themeGroupId != 0) {
-            args.add("m" + query.themeGroupId);
         } else {
             args.add("");
+        }
+        if (query.themeGroupId != 0) {
+            args.add("t" + query.themeGroupId);
         }
         if (page > 0) {
             args.add(page);
@@ -61,11 +64,11 @@ public class ShopUtil
     }
 
     /**
-     * Parses args previously composed via {@link #composeArgs}.
+     * Parses args previously composed via {@link #composeArgs}, populating the supplied
+     * {@link CatalogQuery} and returning the page number (defaulting to zero).
      */
-    public static CatalogQuery parseArgs (Args args)
+    public static int parseArgs (Args args, CatalogQuery query)
     {
-        CatalogQuery query = new CatalogQuery();
         query.itemType = args.get(0,  query.itemType);
         query.sortBy = args.get(1, query.sortBy);
         String action = args.get(2, "");
@@ -79,13 +82,25 @@ public class ShopUtil
             } catch (Exception e) {
                 // oh well
             }
-        } else if (action.startsWith("m")) {
+        }
+        // if there is a third argument and it begins with 't', it adds a theme restriction
+        // to whatever else may be going on in the query --the page, if any, will be fourth
+        int page;
+        String third = args.get(3, "");
+        CShell.log("Third argument", "arg", third);
+        if (third.length() > 0 && third.startsWith("t")) {
             try {
-                query.themeGroupId = Integer.parseInt(action.substring(1));
+                query.themeGroupId = Integer.parseInt(third.substring(1));
+                CShell.log("Extracted theme", "groupId", query.themeGroupId);
             } catch (Exception e) {
                 // oh well
             }
+            page = args.get(4, 0);
+            CShell.log("Got page from 4th arg", "page", page);
+        } else {
+            page = args.get(3, 0);
+            CShell.log("Got page from 3rd arg", "page", page);
         }
-        return query;
+        return page;
     }
 }

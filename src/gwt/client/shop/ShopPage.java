@@ -11,6 +11,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.gwt.CatalogListing;
+import com.threerings.msoy.item.gwt.CatalogQuery;
 import com.threerings.msoy.item.gwt.CatalogService;
 import com.threerings.msoy.item.gwt.CatalogServiceAsync;
 import com.threerings.msoy.stuff.gwt.StuffService;
@@ -37,6 +38,7 @@ public class ShopPage extends Page
     public static final String SUITE = "s";
     public static final String GAME = "g";
     public static final String REMIX = "r";
+    public static final String JUMBLE = "j";
 
     @Override // from Page
     public void onHistoryChanged (Args args)
@@ -78,16 +80,19 @@ public class ShopPage extends Page
             });
             setContent(remixer);
 
+        } else if (action.equals(JUMBLE)) {
+            setContent(null, new ShopPanel(args.get(1, 0)));
+
+        } else if (getItemType(args, 0, Item.NOT_A_TYPE) == Item.NOT_A_TYPE) {
+            setContent(null, new ShopPanel(args.get(0, 0)));
+
         } else {
-            byte type = getItemType(args, 0, Item.NOT_A_TYPE);
-            if (type == Item.NOT_A_TYPE) {
-                setContent(null, new ShopPanel());
-            } else {
-                if (!_catalog.isAttached()) {
-                    setContent(_catalog);
-                }
-                _catalog.display(ShopUtil.parseArgs(args), args.get(3, 0));
+            if (!_catalog.isAttached()) {
+                setContent(_catalog);
             }
+            CatalogQuery query = new CatalogQuery();
+            int page = ShopUtil.parseArgs(args, query);
+            _catalog.display(query, page);
         }
     }
 
