@@ -408,7 +408,8 @@ public class WorldController extends MsoyController
         }
 
         // Background color submenu (only show if we are not editing)
-        if (!editing) {
+        // Disabled for the moment... Zell doesn't think it is a good idea
+        if (false && !editing) {
             var backgroundItems :Array = [];
             backgroundItems.push({ label: "Use Room Default", type: "check",
                 toggled: !Prefs.getUseCustomBackgroundColor(), command: toggleCustomBkg });
