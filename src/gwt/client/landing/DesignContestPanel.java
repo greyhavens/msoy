@@ -4,16 +4,12 @@
 package client.landing;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 
 import com.threerings.gwt.ui.WidgetUtil;
 
-import com.threerings.msoy.web.gwt.Pages;
-
 import client.ui.MsoyUI;
 import client.ui.RoundBox;
-import client.util.Link;
 import client.util.NaviUtil;
 
 /**
@@ -26,6 +22,9 @@ public class DesignContestPanel extends FlowPanel
         setStyleName("designContestPanel");
         addStyleName("BlueLandingPage");
 
+        FlowPanel joinButton = MsoyUI.createFlowPanel("JoinButton", MsoyUI.createActionImage(
+            "/images/landing/blue_landing_join_now.png", NaviUtil.onSignUp()));
+
         RoundBox about = new RoundBox(RoundBox.WHITE);
         about.add(MsoyUI.createLabel(_msgs.contestOctAboutTitle(), "Title"));
         about.add(MsoyUI.createHTML(_msgs.contestOctAboutText(), null));
@@ -37,12 +36,14 @@ public class DesignContestPanel extends FlowPanel
         RoundBox enter = new RoundBox(RoundBox.WHITE);
         enter.add(MsoyUI.createLabel(_msgs.contestOctEnterTitle(), "Title"));
         enter.add(MsoyUI.createHTML(_msgs.contestOctEnterText(), null));
+        enter.add(MsoyUI.createButton(MsoyUI.MEDIUM_THIN, _msgs.contestOctSignup(),
+            NaviUtil.onSignUp()));
 
         RoundBox rules = new RoundBox(RoundBox.WHITE);
         rules.add(MsoyUI.createLabel(_msgs.contestOctRulesTitle(), "TitleAlt"));
         rules.add(MsoyUI.createHTML(_msgs.contestOctRulesText(), null));
 
-        add(MsoyUI.createFlowPanel("Content", about, prizes, enter, rules));
+        add(MsoyUI.createFlowPanel("Content", joinButton, about, prizes, enter, rules));
 
         add(WidgetUtil.makeShim(20, 20));
     }

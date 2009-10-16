@@ -249,10 +249,17 @@
 }
 
 .designContestPanel .Content {
+  position: relative;
   background: none;
   width: 750px;
   padding-top: 370px;
   margin: 0 auto;
+}
+
+.designContestPanel .Content .JoinButton {
+  position: absolute;
+  top: 0;
+  right: 50px;
 }
 
 .designContestPanel .Content .roundBox {
