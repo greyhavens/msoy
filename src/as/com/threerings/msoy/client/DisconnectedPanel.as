@@ -4,6 +4,7 @@
 package com.threerings.msoy.client {
 
 import flash.display.DisplayObjectContainer;
+import flash.filters.GlowFilter;
 
 import mx.containers.VBox;
 
@@ -37,13 +38,17 @@ public class DisconnectedPanel extends VBox
         setStyle("verticalAlign", "middle");
 
         _message = new Text();
+        _message.setStyle("color", "white");
         _message.setStyle("fontSize", 12);
         _message.setStyle("fontWeight", "bold");
         _message.styleName = "topLevelLabel";
+        _message.filters = [new GlowFilter(0x000000, 1, 2, 2, 255)];
         addChild(_message);
 
-        addChild(new CommandButton(Msgs.GENERAL.get("b.reconnect"),
-            onReconnect != null ? onReconnect : client.logon));
+        if (msg == null || !msg.match(/^m.version_mismatch.*/)) {
+            addChild(new CommandButton(Msgs.GENERAL.get("b.reconnect"),
+                onReconnect != null ? onReconnect : client.logon));
+        }
 
         if (msg != null) {
             setMessage(msg, true);
