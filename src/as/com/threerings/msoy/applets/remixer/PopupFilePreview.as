@@ -135,7 +135,7 @@ public class PopupFilePreview extends TitleWindow
         var hrule :HRule = new HRule();
         hrule.percentWidth = 100;
         hrule.setStyle("strokeWidth", 1);
-        hrule.setStyle("strokeColor", 0xFFFFFF);
+        hrule.setStyle("strokeColor", 0x000000);
         box.addChild(hrule);
 
         var buttonBar :ButtonBar = new ButtonBar();
