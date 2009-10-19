@@ -81,10 +81,10 @@ public class ShopPage extends Page
             setContent(remixer);
 
         } else if (action.equals(JUMBLE)) {
-            setContent(null, new ShopPanel(args.get(1, 0)));
+            setContent(_msgs.catalogTitle(), new ShopPanel(args.get(1, 0)));
 
         } else if (getItemType(args, 0, Item.NOT_A_TYPE) == Item.NOT_A_TYPE) {
-            setContent(null, new ShopPanel(args.get(0, 0)));
+            setContent(_msgs.catalogTitle(), new ShopPanel(args.get(0, 0)));
 
         } else {
             if (!_catalog.isAttached()) {
