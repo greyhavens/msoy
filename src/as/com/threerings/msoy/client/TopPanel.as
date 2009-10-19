@@ -292,7 +292,8 @@ public class TopPanel extends Canvas
 
     protected function getHeaderBarHeight () :int
     {
-        return _showChrome ? HeaderBar.getHeight(_ctx.getMsoyClient()) : 0;
+        return _showChrome && !UberClient.isViewer() ?
+            HeaderBar.getHeight(_ctx.getMsoyClient()) : 0;
     }
 
     protected function layoutPanels () :void
@@ -306,7 +307,8 @@ public class TopPanel extends Canvas
         // center control bar in the "footer". we shall put other things here soon
         _controlBar.setStyle("bottom", _showChrome ?
             (getFooterHeight() - ControlBar.HEIGHT) / 2 : -ControlBar.HEIGHT);
-        _headerBar.setStyle("top", _showChrome ? 0 : -HeaderBar.getHeight(_ctx.getMsoyClient()));
+        _headerBar.setStyle("top", _showChrome || UberClient.isViewer() ? 0 :
+            -HeaderBar.getHeight(_ctx.getMsoyClient()));
 
         if (_leftPanel != null) {
             _leftPanel.setStyle("top", getHeaderBarHeight());
