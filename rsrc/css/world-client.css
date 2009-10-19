@@ -702,7 +702,7 @@ ChatInput {
 }
 
 .panelBottom {
-  backgroundColor: #185B81;
+  backgroundColor: #64b3e0;
   backgroundAlpha: 0.5;
   borderThickness: 0;
   verticalGap: 0;
@@ -715,7 +715,7 @@ ChatInput {
 .sexyTextInput, .statusEdit, .statusEditHover, .partyStatus {
   backgroundAlpha: 0;
   borderStyle: "none";
-  color: #568EAF;
+  color: #22668d;
 }
 
 .partyStatus, .statusEdit, .statusEditHover {

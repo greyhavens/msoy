@@ -79,15 +79,15 @@ public class PartyDirector extends BasicDirector
         var color :uint;
         switch (statusType) {
         default:
-            color = 0x568EAF;
+            color = 0x22668d;
             break;
 
         case PartyCodes.STATUS_TYPE_LOBBY:
-            color = 0xAF8E56;
+            color = 0x426733;
             break;
 
         case PartyCodes.STATUS_TYPE_USER:
-            color = 0x999999;
+            color = 0x666666;
             break;
         }
         label.setStyle("color", color);
