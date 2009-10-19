@@ -647,6 +647,20 @@
     <antcall target="ascompile"><param name="flex.extra-arg" value="-compiler.debug"/></antcall>
   </target>
 
+  <!-- build the viewer, for inclusion in the SDK -->
+  <target name="viewer" description="Build the viewer for the SDK.">
+    <antcall target="asprepare">
+      <param name="dev_deployment" value="false"/>
+    </antcall>
+    <antcall target="ascompile">
+      <param name="aspath" value="client/world.mxml"/>
+      <param name="swfname" value="viewer"/>
+      <param name="copydir" value="/export/whirled/lib"/>
+      <param name="dev_deployment" value="false"/>
+      <param name="flex.extra-arg" value="-static-link-runtime-shared-libraries=true"/>
+    </antcall>
+  </target>
+
   <!-- builds our thane game client -->
   <target name="thane-client" depends="asprepare" description="Rebuilds the thane game client.">
     <dirname property="abs.flexsdk.dir" file="${flexsdk.dir}/somefile.txt"/>
