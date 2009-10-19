@@ -26,6 +26,7 @@ import com.threerings.msoy.server.persist.TagHistoryRecord;
 import com.threerings.msoy.server.persist.TagNameRecord;
 
 import com.threerings.msoy.group.data.all.GroupMembership.Rank;
+import com.threerings.msoy.group.server.ThemeLogic;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.group.server.persist.ThemeAvatarLineupRecord;
 import com.threerings.msoy.group.server.persist.ThemeRepository;
@@ -375,7 +376,8 @@ public class ItemServlet extends MsoyServiceServlet
         throws ServiceException
     {
         MemberRecord memrec = requireAuthedUser();
-        if (_groupRepo.getMembership(groupId, memrec.memberId).left != Rank.MANAGER) {
+        if (!_themeLogic.isTheme(groupId) ||
+                _groupRepo.getMembership(groupId, memrec.memberId).left != Rank.MANAGER) {
             throw new ServiceException(ItemCodes.E_ACCESS_DENIED);
         }
         if (doStamp) {
@@ -417,6 +419,7 @@ public class ItemServlet extends MsoyServiceServlet
     @Inject protected PhotoRepository _photoRepo;
     @Inject protected GroupRepository _groupRepo;
     @Inject protected ThemeRepository _themeRepo;
+    @Inject protected ThemeLogic _themeLogic;
     @Inject protected StatLogic _statLogic;
 
     protected static final int MIN_SOLID_RATINGS = 20;
