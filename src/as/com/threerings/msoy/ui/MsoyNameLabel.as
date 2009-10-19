@@ -29,9 +29,11 @@ public class MsoyNameLabel extends Sprite
     {
         _ignoreStatus = ignoreStatus;
 
+        // TODO: the outline trick just barely works here, perhaps it is time to consider a
+        // different solution, including using different code for avatars and occupant list
         _label = TextFieldUtil.createField("",
             { textColor: 0xFFFFFF, selectable: false, autoSize :TextFieldAutoSize.LEFT,
-            outlineColor: 0x000000 });
+            outlineColor: 0x000000, outlineWidth: 5, outlineStrength: 12 });
 
         // It's ok that we modify this later, as it gets cloned anyway when assigned to the field.
         _label.defaultTextFormat = FORMAT;
@@ -112,7 +114,7 @@ public class MsoyNameLabel extends Sprite
     protected var _subscriberIcon :GlowSprite;
 
     protected static const FORMAT :TextFormat =
-        TextFieldUtil.createFormat({ font: "_sans", size: 12, bold: true });
+        TextFieldUtil.createFormat({ font: "_sans", size: 12, letterSpacing: .6 });
 
     [Embed(source="../../../../../../pages/images/ui/clubwhirled.png")]
     protected static const SUBSCRIBER :Class;
