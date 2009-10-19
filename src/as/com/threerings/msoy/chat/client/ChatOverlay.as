@@ -162,6 +162,12 @@ public class ChatOverlay
             return;
         }
 
+        // reset the sidebar state so that the below "if (display)" block will work
+        // TODO: use the full side bar state - this will require careful analysis of all the other
+        // spaghetti in and around the chat code
+        putInSidebar(false);
+        setOccupantListShowing(false);
+
         if (display) {
             if (!_target.containsOverlay(_historyOverlay)) {
                 _target.addOverlay(_historyOverlay, PlaceBox.LAYER_CHAT_HISTORY);
@@ -174,9 +180,6 @@ public class ChatOverlay
             setOccupantListShowing(Prefs.getShowingOccupantList());
 
         } else {
-            putInSidebar(false);
-            setOccupantListShowing(false);
-
             if (_target.containsOverlay(_historyOverlay)) {
                 _target.removeOverlay(_historyOverlay);
             }
@@ -530,7 +533,7 @@ public class ChatOverlay
                 _target.addOverlay(_occupantList, PlaceBox.LAYER_CHAT_LIST);
             }
             _chatContainer = null;
-                _target.addOverlay(_historyOverlay, PlaceBox.LAYER_CHAT_HISTORY);
+            _target.addOverlay(_historyOverlay, PlaceBox.LAYER_CHAT_HISTORY);
             if (!_target.containsOverlay(_historyOverlay)) {
                 _target.addOverlay(_historyOverlay, PlaceBox.LAYER_CHAT_HISTORY);
             }
