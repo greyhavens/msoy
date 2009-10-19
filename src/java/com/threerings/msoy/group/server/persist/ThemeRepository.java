@@ -10,6 +10,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.samskivert.depot.DepotRepository;
+import com.samskivert.depot.Ops;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.clause.Join;
@@ -44,7 +45,9 @@ public class ThemeRepository extends DepotRepository
     {
         return findAll(ThemeRecord.class,
             new Join(ThemeRecord.GROUP_ID, GroupMembershipRecord.GROUP_ID),
-            new Where(GroupMembershipRecord.RANK.greaterEq(rank)));
+            new Where(Ops.and(
+                GroupMembershipRecord.RANK.greaterEq(rank),
+                GroupMembershipRecord.MEMBER_ID.eq(memberId))));
     }
 
     /**
