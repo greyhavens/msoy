@@ -439,7 +439,7 @@ ChatInput {
 
 .lobbyTitle {
   fontSize: 18px;
-  color: #A1D3EE;
+  color: #628191;
 }
 
 /** Lobby splash panel */
@@ -481,7 +481,7 @@ ChatInput {
 
 .tableList {
   borderStyle: none;
-  alternatingItemColors: #233C50, #000000; /* second color is not used; see TableList code */
+  alternatingItemColors: #8eb1cc, #000000; /* second color is not used; see TableList code */
 }
 
 .tableSummaryTitle, .createTip, .playlistTitle {
@@ -511,7 +511,7 @@ ChatInput {
 }
 
 .seatsGrid {
-  backgroundColor: #233C50;
+  backgroundColor: #8eb1cc;
   backgroundAlpha: 1;
   paddingLeft: 5px;
   paddingRight: 5px;
