@@ -114,8 +114,6 @@ public interface RoomService extends InvocationService
 
     /**
      * Requests the removal of a MOB from the current scene location.
-     *
-     * @see MobInfo
      */
     void despawnMob (Client caller, int gameId, String mobId, InvocationListener listener);
 
@@ -131,4 +129,5 @@ public interface RoomService extends InvocationService
      */
     void sendPostcard (Client caller, String[] recips, String subject, String caption,
                        String snapURL, ConfirmListener listener);
+
 }

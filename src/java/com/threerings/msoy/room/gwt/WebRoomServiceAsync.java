@@ -53,4 +53,9 @@ public interface WebRoomServiceAsync
      * The async version of {@link WebRoomService#purchaseRoom}.
      */
     void purchaseRoom (Currency currency, int authedCost, AsyncCallback<PurchaseResult<RoomInfo>> callback);
+
+    /**
+     * The async version of {@link WebRoomService#stampRoom}.
+     */
+    void stampRoom (int sceneId, int groupId, boolean doStamp, AsyncCallback<Void> callback);
 }

@@ -31,7 +31,11 @@ import com.threerings.msoy.web.server.MsoyServiceServlet;
 import com.threerings.msoy.admin.data.CostsConfigObject;
 import com.threerings.msoy.admin.server.RuntimeConfig;
 
+import com.threerings.msoy.group.data.all.GroupMembership.Rank;
+import com.threerings.msoy.group.server.ThemeLogic;
 import com.threerings.msoy.group.server.persist.GroupRepository;
+import com.threerings.msoy.group.server.persist.ThemeRepository;
+import com.threerings.msoy.item.data.ItemCodes;
 
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.PriceQuote;
@@ -202,6 +206,32 @@ public class WebRoomServlet extends MsoyServiceServlet
         }).toPurchaseResult();
     }
 
+
+    // from interface WebRoomService
+    public void stampRoom (int sceneId, int groupId, boolean doStamp)
+        throws ServiceException
+    {
+        MemberRecord mrec = requireAuthedUser();
+        if (!_themeLogic.isTheme(groupId) ||
+                _groupRepo.getMembership(groupId, mrec.memberId).left != Rank.MANAGER) {
+            throw new ServiceException(ItemCodes.E_ACCESS_DENIED);
+        }
+        SceneRecord sceneRec = _sceneRepo.loadScene(sceneId);
+        if (sceneRec == null) {
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
+        if (sceneRec.themeGroupId != (doStamp ? 0 : groupId)) {
+            log.warning("Unexpected scene theme", "scene", sceneId, "theme", groupId,
+                "scene.theme", sceneRec.themeGroupId, "doStamp", doStamp);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
+        if (!_sceneRepo.stampRoom(sceneId, doStamp ? groupId : 0)) {
+            log.warning("No room was stamped!", "sceneId", sceneId, "groupId", groupId);
+            // let it go
+        }
+    }
+
+
     /**
      * Get a price quote for a new room.
      */
@@ -253,6 +283,8 @@ public class WebRoomServlet extends MsoyServiceServlet
     @Inject protected MoneyLogic _moneyLogic;
     @Inject protected MsoySceneRepository _sceneRepo;
     @Inject protected RoomLogic _roomLogic;
+    @Inject protected ThemeRepository _themeRepo;
+    @Inject protected ThemeLogic _themeLogic;
     @Inject protected RuntimeConfig _runtime;
     @Inject protected ServerMessages _serverMsgs;
 }

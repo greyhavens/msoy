@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 import java.sql.Timestamp;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
@@ -410,6 +411,15 @@ public class MsoySceneRepository extends DepotRepository
         }
         // delete all scene ratings by these members
         _ratingRepo.purgeMembers(memberIds);
+    }
+
+    /**
+     * Link the given scene with the given theme. Returns true if a room was stamped.
+     */
+    public boolean stampRoom (int sceneId, int groupId)
+    {
+        return 1 == updatePartial(SceneRecord.getKey(sceneId), ImmutableMap.of(
+            SceneRecord.THEME_GROUP_ID, groupId));
     }
 
     /**

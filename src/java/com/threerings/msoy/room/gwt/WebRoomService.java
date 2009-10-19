@@ -80,7 +80,7 @@ public interface WebRoomService extends RemoteService
     /**
      * Can the current user gift this particular room?
      */
-    void canGiftRoom (int sceneId) 
+    void canGiftRoom (int sceneId)
         throws ServiceException;
 
     /**
@@ -117,5 +117,12 @@ public interface WebRoomService extends RemoteService
      * Purchase a new room.
      */
     PurchaseResult<RoomInfo> purchaseRoom (Currency currency, int authedCost)
+        throws ServiceException;
+
+    /**
+     * Associate or dissociate a room with a theme. Unlike items, which can be stamped by any
+     * number of themes, rooms can either belong to one or not.
+     */
+    void stampRoom (int sceneId, int groupId, boolean doStamp)
         throws ServiceException;
 }
