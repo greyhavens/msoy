@@ -26,8 +26,9 @@ import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.group.data.all.GroupMembership.Rank;
-import com.threerings.msoy.group.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
+import com.threerings.msoy.group.server.persist.ThemeRecord;
+import com.threerings.msoy.group.server.persist.ThemeRepository;
 import com.threerings.msoy.server.FriendManager;
 import com.threerings.msoy.server.MemberLogic;
 import com.threerings.msoy.server.MemberManager;
@@ -367,7 +368,8 @@ public class MemberServlet extends MsoyServiceServlet
     {
         MemberRecord memrec = requireAuthedUser();
         IntSet groupIds = new ArrayIntSet();
-        for (GroupMembershipRecord rec : _groupRepo.getMemberships(memrec.memberId, Rank.MANAGER)) {
+
+        for (ThemeRecord rec : _themeRepo.getManagedThemes(memrec.memberId, Rank.MANAGER)) {
             groupIds.add(rec.groupId);
         }
         return _groupRepo.loadGroupNames(groupIds).values().toArray(new GroupName[0]);
@@ -386,6 +388,7 @@ public class MemberServlet extends MsoyServiceServlet
     @Inject protected SpamRepository _spamRepo;
     @Inject protected SubscriptionLogic _subscripLogic;
     @Inject protected GroupRepository _groupRepo;
+    @Inject protected ThemeRepository _themeRepo;
 
     /** Maximum number of members to return for the leader board */
     protected static final int MAX_LEADER_MATCHES = 100;
