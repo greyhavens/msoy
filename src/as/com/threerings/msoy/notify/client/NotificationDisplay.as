@@ -108,14 +108,12 @@ public class NotificationDisplay extends HBox
         _canvas.styleName = "notificationCanvas";
         _canvas.percentWidth = 100;
         _canvas.minWidth = 200;
-        _canvas.height = 23;
+        _canvas.height = 22;
         _canvas.horizontalScrollPolicy = ScrollPolicy.OFF;
         _canvas.verticalScrollPolicy = ScrollPolicy.OFF;
 
         addChild(_popupBtn = new CommandCheckBox(null, toggleNotificationHistory));
         _popupBtn.styleName = "notificationToggle";
-
-        _popupBtn.y = 3;
     }
 
     protected function maybeCloseHistory (event :MouseEvent) :void
@@ -139,7 +137,6 @@ public class NotificationDisplay extends HBox
         var notif :Notification = Notification(_pendingNotifications.shift());
         var notification :UIComponent = createDisplay(notif);
         notification.x = _canvas.width;
-        notification.y = 3;
         _canvas.removeAllChildren();
         _canvas.addChild(notification);
         Tweener.addTween(notification, { x: 5, time: 0.75, transition: "easeoutquart" });

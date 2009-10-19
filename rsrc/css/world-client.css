@@ -116,8 +116,8 @@ GameOverPanel {
 }
 
 .buttonPalette {
-  paddingBottom: 5;
-  paddingTop: 5;
+  paddingBottom: 2;
+  paddingTop: 2;
   paddingLeft: 5;
   paddingRight: 5;
   horizontalGap: 8;
@@ -148,10 +148,9 @@ GameOverPanel {
 .controlBar {
   backgroundImage: Embed(source="../media/skins/controlbar/bg.png");
   backgroundSize: "100%";
-  horizontalGap: 10;
-  verticalAlign: "bottom";
+  horizontalGap: 8;
+  verticalAlign: "middle";
   paddingLeft: 8;
-  paddingBottom: 1;
 }
 
 /** All these buttons use the ImageButtonSkin and need the per-state skins cleared out. */
@@ -288,11 +287,7 @@ GameOverPanel {
 }
 
 .chatControl {  
-  paddingLeft: 0;
-  paddingRight: 0;
-  paddingTop: 0;
-  paddingBottom: 2;
-  verticalAlign: "center";
+  verticalAlign: "middle";
   backgroundAlpha: 0;
 }
 
@@ -635,11 +630,12 @@ ChatInput {
   paddingRight: 10px;
   paddingBottom: 4px;
   paddingLeft: 20px;
+  paddingTop: 3px;
 }
 
 .notificationCanvas {
   backgroundImage: Embed(source="../media/skins/controlbar/notif_display_background.png",
-                         scaleGridTop="14", scaleGridBottom="15",
+                         scaleGridTop="9", scaleGridBottom="10",
                          scaleGridLeft="5", scaleGridRight="19");
   backgroundSize: "100%";
 }
