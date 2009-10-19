@@ -17,7 +17,9 @@
    HEADER
 -------------------------------------*/
 
-.frameHeaderLogo {
+.frameHeaderLogo, .frameHeaderLogo img {
+  width: 143px;
+  height: 40px;
 }
 
 .frameHeaderNavi {
