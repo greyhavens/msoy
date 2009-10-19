@@ -49,10 +49,10 @@ public class GroupRoomsPanel extends VerticalPanel
     {
         _myRooms = rooms.callerRooms;
         add(new TongueBox(null, _msgs.detailRoomsDetail(_detail.group.name), false));
-        _roomsGrid = new SmartTable(0, 0);
+        _roomsGrid = new SmartTable("RoomsTable", 0, 0);
         for (int ii = 0; ii < rooms.groupRooms.size(); ii++) {
             int row = ii / ROOM_COLUMNS, col = ii % ROOM_COLUMNS;
-            _roomsGrid.setWidget(row, col, new RoomWidget(rooms.groupRooms.get(ii)));
+            _roomsGrid.cell(row, col).widget(new RoomWidget(rooms.groupRooms.get(ii))).alignTop();
         }
         add(new TongueBox(_msgs.detailRoomsTitle(_detail.group.name), _roomsGrid));
 

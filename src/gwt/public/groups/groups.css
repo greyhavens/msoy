@@ -327,6 +327,24 @@
 }
 
 /* ------------------------------------
+   GroupRoomsPanel
+-------------------------------------*/
+
+.groupDetail .RoomsTable {
+  width: 100%;
+}
+
+.groupDetail .RoomsTable .Room {
+  padding: 10px;
+  text-align: center;
+}
+
+.groupDetail .RoomsTable .Room .stars {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ------------------------------------
    GALAXY GROUP LIST
 -------------------------------------*/
 
