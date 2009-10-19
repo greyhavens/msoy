@@ -12,7 +12,9 @@ import com.google.inject.Singleton;
 import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
+import com.samskivert.depot.clause.Join;
 import com.samskivert.depot.clause.Where;
+import com.threerings.msoy.group.data.all.GroupMembership.Rank;
 import com.threerings.presents.annotation.BlockingThread;
 
 /**
@@ -32,6 +34,17 @@ public class ThemeRepository extends DepotRepository
     public ThemeRecord loadTheme (int groupId)
     {
         return load(ThemeRecord.class, ThemeRecord.getKey(groupId));
+    }
+
+    /**
+     * Load the themes in which the given member has at least the given rank. This warrants
+     * a repository function because the quick way to do it is through a join.
+     */
+    public List<ThemeRecord> getManagedThemes (int memberId, Rank rank)
+    {
+        return findAll(ThemeRecord.class,
+            new Join(ThemeRecord.GROUP_ID, GroupMembershipRecord.GROUP_ID),
+            new Where(GroupMembershipRecord.RANK.greaterEq(rank)));
     }
 
     /**
