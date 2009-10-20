@@ -6,7 +6,7 @@ package com.threerings.msoy.applets.remixer {
 import mx.validators.Validator;
 import mx.validators.ValidationResult;
 
-import com.threerings.util.Util;
+import com.threerings.util.XmlUtil;
 
 public class XMLValidator extends Validator
 {
@@ -21,7 +21,7 @@ public class XMLValidator extends Validator
         var results :Array = super.doValidation(value);
 
         try {
-            Util.newXML(value);
+            XmlUtil.newXML(value);
         } catch (e :Error) {
             results.push(
                 new ValidationResult(true, null, "notXML", _ctx.REMIX.get("e.notXML", e.message)));
