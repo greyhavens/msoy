@@ -115,7 +115,6 @@ public abstract class BaseItemDetailPanel extends SmartTable
         _details.add(_indeets);
         _indeets.add(MsoyUI.createRestrictedHTML(ItemUtil.getDescription(_item)));
 
-
         _themeContents = new SmartTable();
 
         if (DeploymentConfig.devDeployment && !CShell.isGuest()) {
