@@ -28,10 +28,13 @@ import com.threerings.flex.FlexUtil;
 
 public class ButtonPalette extends Canvas
 {
-    public function ButtonPalette (parent :UIComponent)
+    public function ButtonPalette (parent :UIComponent, controlBarHeight: int, tileSize :int)
     {
+        _controlBarHeight = controlBarHeight;
+        _toggleWidth = tileSize;
+
         percentWidth = 100;
-        height = ControlBar.HEIGHT;
+        height = _controlBarHeight;
 
         _toggle = new CommandCheckBox(null, showAll);
         _toggle.styleName = "panelToggle";
@@ -39,8 +42,9 @@ public class ButtonPalette extends Canvas
         addChild(_toggle);
 
         _tile = new Tile();
-        _tile.tileWidth = 22;
-        _tile.tileHeight = 23;
+        _tile.tileWidth = tileSize;
+        // TODO: why add "1"? do we need to pass in tileWidth & tileHeight?
+        _tile.tileHeight = tileSize + 1;
         _tile.styleName = "buttonPalette";
         _tile.owner = DisplayObjectContainer(Application.application.systemManager);
 
@@ -50,7 +54,7 @@ public class ButtonPalette extends Canvas
         addEventListener(Event.ADDED_TO_STAGE, handleAddRemove);
         addEventListener(Event.REMOVED_FROM_STAGE, handleAddRemove);
 
-        minWidth = TOGGLE_WIDTH + _tile.tileWidth + int(_tile.getStyle("paddingLeft")) +
+        minWidth = _toggleWidth + _tile.tileWidth + int(_tile.getStyle("paddingLeft")) +
             int(_tile.getStyle("paddingRight"));
 
         addEventListener(Event.RENDER, handleRender);
@@ -73,7 +77,7 @@ public class ButtonPalette extends Canvas
         const hPad :int = int(_tile.getStyle("paddingLeft")) + int(_tile.getStyle("paddingRight"));
         const vPad :int = int(_tile.getStyle("paddingTop")) + int(_tile.getStyle("paddingBottom"));
         const hGap :int = int(_tile.getStyle("horizontalGap"));
-        const adjustedWidth :int = this.width - TOGGLE_WIDTH - hPad;
+        const adjustedWidth :int = this.width - _toggleWidth - hPad;
         const tileW :int = _tile.tileWidth;
         var w :int = tileW;
         while ((w + hGap + tileW) <= adjustedWidth) {
@@ -98,7 +102,7 @@ public class ButtonPalette extends Canvas
         const visChildren :int = FlexUtil.countLayoutChildren(_tile);
 
         // figure a maxWidth, so that the notification display can take the rest of the space
-        maxWidth = TOGGLE_WIDTH + hPad + (visChildren * _tile.tileWidth) +
+        maxWidth = _toggleWidth + hPad + (visChildren * _tile.tileWidth) +
             ((visChildren - 1) * hGap);
     }
 
@@ -108,12 +112,12 @@ public class ButtonPalette extends Canvas
         if (_up) {
             y = -_tile.height + this.height;
         } else {
-            y = (ControlBar.HEIGHT - (_tile.tileHeight + int(_tile.getStyle("paddingTop")))) / 2;
+            y = (_controlBarHeight - (_tile.tileHeight + int(_tile.getStyle("paddingTop")))) / 2;
         }
         const downAlpha :Number = Number(_tile.getStyle("backgroundAlphaClosed"));
         const upAlpha :Number = Number(_tile.getStyle("backgroundAlphaOpen"));
 
-        var p :Point = localToGlobal(new Point(TOGGLE_WIDTH, y));
+        var p :Point = localToGlobal(new Point(_toggleWidth, y));
         p = _tile.owner.globalToLocal(p);
 
         if (animate) {
@@ -197,6 +201,10 @@ public class ButtonPalette extends Canvas
         _tile.visible = DisplayObjectContainer(event.relatedObject).contains(this);
     }
 
+    protected var _controlBarHeight :int;
+
+    protected var _toggleWidth :int;
+
     protected var _toggle :CommandCheckBox;
 
     protected var _tile :Tile;
@@ -204,7 +212,5 @@ public class ButtonPalette extends Canvas
     protected var _up :Boolean;
 
     protected var _lastPoint :Point = new Point(0, 0);
-
-    protected static const TOGGLE_WIDTH :int = 20;
 }
 }

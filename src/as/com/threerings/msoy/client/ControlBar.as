@@ -41,14 +41,14 @@ import com.threerings.msoy.world.client.WorldController;
  */
 public class ControlBar extends HBox
 {
-    /** The height of the control bar. This is fixed. */
-    public static const HEIGHT :int = 28; // if you feel like changing this, don't.
-
     /** Button priorities */
     public static const VOLUME_PRIORITY :int = 0;
     public static const GLOBAL_PRIORITY :int = 100;
     public static const DEFAULT_PRIORITY :int = 200;
     public static const PLACE_PRIORITY :int = 300;
+
+    /** TEMP: flag to test big mode, doubling the control bar height when not embedded. */
+    public static const ENABLE_BIG_MODE :Boolean = false;
 
     /** The chat preferences button. */
     public var chatOptsBtn :CommandButton;
@@ -86,6 +86,10 @@ public class ControlBar extends HBox
     public function ControlBar (ctx :MsoyContext)
     {
         _ctx = ctx;
+
+        // use "hasThickHeader" to make sure we only set _big when there's enough room
+        // TODO: hasBigControlBar?
+        _big = ENABLE_BIG_MODE && ctx.getMsoyClient().getEmbedding().hasThickHeader();
         // the rest is in init()
 
         Prefs.events.addEventListener(ConfigValueSetEvent.CONFIG_VALUE_SET, handleConfigValueSet);
@@ -96,20 +100,29 @@ public class ControlBar extends HBox
         styleName = "controlBar";
         verticalScrollPolicy = ScrollPolicy.OFF;
         horizontalScrollPolicy = ScrollPolicy.OFF;
-        height = HEIGHT;
+        height = getBarHeight();
         percentWidth = 100;
 
         _ctx.getClient().addClientObserver(
             new ClientAdapter(null, checkControls, checkControls, null, checkControls, null, null,
                 checkControls));
 
-        _buttons = new ButtonPalette(top);
+        _buttons = new ButtonPalette(top, getBarHeight(), getBarHeight() - PADDING * 2);
 
         createControls();
         checkControls();
 
         _ctx.getUIState().addEventListener(UIState.STATE_CHANGE, handleUIStateChanged);
         _ctx.getStage().addEventListener(FullScreenEvent.FULL_SCREEN, handleFullScreenChanged);
+    }
+
+    /**
+     * Returns the expected height of the control bar given our current mode. This should normally
+     * match the "height" property but is more explicit and valid regardless of display state.
+     */
+    public function getBarHeight () :int
+    {
+        return _big ? 56 : 28;
     }
 
     public function setNotificationDisplay (notificationDisplay :NotificationDisplay) :void
@@ -186,7 +199,7 @@ public class ControlBar extends HBox
     protected function createControls () :void
     {
         _chatControl = new ChatControl(_ctx, Msgs.GENERAL.get("b.chat_send"));
-        _chatControl.chatInput.height = HEIGHT - 6;
+        _chatControl.chatInput.height = getBarHeight() - PADDING * 2;
         _chatControl.chatInput.maxChars = MsoyChatDirector.MAX_CHAT_LENGTH;
 
         chatOptsBtn = createButton("controlBarButtonChat", "i.channel");
@@ -399,6 +412,9 @@ public class ControlBar extends HBox
     /** Our clientside context. */
     protected var _ctx :MsoyContext;
 
+    /** If we are in the expanded large-button mode */
+    protected var _big :Boolean;
+
     /** Button visibility conditions. */
     protected var _conditions :Dictionary = new Dictionary(true);
 
@@ -415,5 +431,8 @@ public class ControlBar extends HBox
 
     /** Displays incoming notifications. */
     protected var _notificationDisplay :NotificationDisplay;
+
+    /** Space around buttons and chat controls. */
+    protected static const PADDING :int = 3;
 }
 }
