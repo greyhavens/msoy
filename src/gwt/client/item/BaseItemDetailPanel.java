@@ -115,10 +115,12 @@ public abstract class BaseItemDetailPanel extends SmartTable
         _details.add(_indeets);
         _indeets.add(MsoyUI.createRestrictedHTML(ItemUtil.getDescription(_item)));
 
+
+        _themeContents = new SmartTable();
+
         if (DeploymentConfig.devDeployment && !CShell.isGuest()) {
             _membersvc.loadManagedThemes(new InfoCallback<GroupName[]>() {
                 public void onSuccess (GroupName[] result) {
-                    ensureThemeBits();
                     _themeContents.setWidget(0, 0, _stampedBy = new FlowPanel());
                     _themeContents.setWidget(1, 0, _stampPanel = new SmartTable());
 
@@ -171,7 +173,7 @@ public abstract class BaseItemDetailPanel extends SmartTable
             setWidget(1, 0, _themeBits = new RoundBox(RoundBox.BLUE), 1, "Details");
             getFlexCellFormatter().setVerticalAlignment(1, 0, HorizontalPanel.ALIGN_TOP);
             _themeBits.setWidth("100%");
-            _themeBits.add(_themeContents = new SmartTable());
+            _themeBits.add(_themeContents);
         }
     }
 
@@ -207,10 +209,14 @@ public abstract class BaseItemDetailPanel extends SmartTable
         while (_stampedBy.getWidgetCount() > 0) {
             _stampedBy.remove(0);
         }
-        if (_detail.themes.size() == 0) {
+        int cnt = _detail.themes.size();
+        if (cnt == 0) {
             return;
         }
-        int cnt = _detail.themes.size();
+
+        // now that we know we're drawing something, make sure the UI is showing the theme box
+        ensureThemeBits();
+
         if (_briefStamps) {
             cnt = Math.min(cnt, BRIEF_STAMP_COUNT);
         }
@@ -240,6 +246,9 @@ public abstract class BaseItemDetailPanel extends SmartTable
         if (_managedThemes == null || _managedThemes.length == 0) {
             return;
         }
+
+        // now that we know we're drawing something, make sure the UI is showing the theme box
+        ensureThemeBits();
 
         _stampBox = new ListBox();
         _stampBox.addItem(_imsgs.itemListNoTheme());
