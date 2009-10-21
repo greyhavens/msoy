@@ -44,9 +44,10 @@ import com.threerings.msoy.notify.data.Notification;
 
 public class NotificationDisplay extends HBox
 {
-    public function NotificationDisplay (ctx :MsoyContext) :void
+    public function NotificationDisplay (ctx :MsoyContext, canvasHeight :int) :void
     {
         _ctx = ctx;
+        _canvasHeight = canvasHeight;
         _clearTimer.addEventListener(TimerEvent.TIMER, clearCurrentNotification);
     }
 
@@ -108,7 +109,7 @@ public class NotificationDisplay extends HBox
         _canvas.styleName = "notificationCanvas";
         _canvas.percentWidth = 100;
         _canvas.minWidth = 200;
-        _canvas.height = 22;
+        _canvas.height = _canvasHeight;
         _canvas.horizontalScrollPolicy = ScrollPolicy.OFF;
         _canvas.verticalScrollPolicy = ScrollPolicy.OFF;
 
@@ -137,6 +138,7 @@ public class NotificationDisplay extends HBox
         var notif :Notification = Notification(_pendingNotifications.shift());
         var notification :UIComponent = createDisplay(notif);
         notification.x = _canvas.width;
+        notification.y = (_canvasHeight - notification.height) / 2;
         _canvas.removeAllChildren();
         _canvas.addChild(notification);
         Tweener.addTween(notification, { x: 5, time: 0.75, transition: "easeoutquart" });
@@ -277,6 +279,7 @@ public class NotificationDisplay extends HBox
     protected static const log :Log = Log.getLog(NotificationDisplay);
 
     protected var _ctx :MsoyContext;
+    protected var _canvasHeight :int;
     protected var _canvas :Canvas;
     protected var _popupBtn :CommandCheckBox;
     protected var _pendingNotifications :Array = [];
