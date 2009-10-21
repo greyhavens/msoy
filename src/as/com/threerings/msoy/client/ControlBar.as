@@ -48,7 +48,7 @@ public class ControlBar extends HBox
     public static const PLACE_PRIORITY :int = 300;
 
     /** TEMP: flag to test big mode, doubling the control bar height when not embedded. */
-    public static const ENABLE_BIG_MODE :Boolean = false;
+    public static const ENABLE_BIG_MODE :Boolean = true;
 
     /** The chat preferences button. */
     public var chatOptsBtn :CommandButton;
@@ -107,7 +107,7 @@ public class ControlBar extends HBox
             new ClientAdapter(null, checkControls, checkControls, null, checkControls, null, null,
                 checkControls));
 
-        _buttons = new ButtonPalette(top, getBarHeight(), getBarHeight() - PADDING * 2);
+        _buttons = new ButtonPalette(top, getBarHeight(), getControlHeight());
 
         createControls();
         checkControls();
@@ -123,6 +123,15 @@ public class ControlBar extends HBox
     public function getBarHeight () :int
     {
         return _big ? 56 : 28;
+    }
+
+    /**
+     * Returns the expected height for the controls in the bar.
+     */
+    public function getControlHeight () :int
+    {
+        const PADDING :int = 3;
+        return getBarHeight() - PADDING * 2;
     }
 
     public function setNotificationDisplay (notificationDisplay :NotificationDisplay) :void
@@ -199,7 +208,7 @@ public class ControlBar extends HBox
     protected function createControls () :void
     {
         _chatControl = new ChatControl(_ctx, Msgs.GENERAL.get("b.chat_send"));
-        _chatControl.chatInput.height = getBarHeight() - PADDING * 2;
+        _chatControl.chatInput.height = getControlHeight();
         _chatControl.chatInput.maxChars = MsoyChatDirector.MAX_CHAT_LENGTH;
 
         chatOptsBtn = createButton("controlBarButtonChat", "i.channel");
@@ -431,8 +440,5 @@ public class ControlBar extends HBox
 
     /** Displays incoming notifications. */
     protected var _notificationDisplay :NotificationDisplay;
-
-    /** Space around buttons and chat controls. */
-    protected static const PADDING :int = 3;
 }
 }
