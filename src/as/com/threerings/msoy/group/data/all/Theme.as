@@ -23,6 +23,9 @@ public class Theme extends SimpleStreamableObject
     /** The media of the theme's Whirled logo replacement image. */
     public var logo :MediaDesc;
 
+    /** Whether or not we start playing this group's associated AVRG upon room entry. */
+    public var playOnEnter :Boolean;
+
     public function Theme ()
     {
     }
@@ -38,6 +41,7 @@ public class Theme extends SimpleStreamableObject
     {
         groupId = ins.readInt();
         logo = MediaDesc(ins.readObject());
+        playOnEnter = ins.readBoolean();
     }
 }
 
