@@ -3,8 +3,8 @@
 
 package com.threerings.msoy.room.client {
 
+import com.threerings.util.DelayUtil;
 import com.threerings.util.Log;
-import com.threerings.util.MethodQueue;
 import com.threerings.util.Util;
 
 import com.threerings.crowd.data.OccupantInfo;
@@ -144,7 +144,7 @@ public class ActorSprite extends OccupantSprite
                 view.getRoomController().clearEntityPopup(this);
                 // indicate that the old entity has left, the new one arrives
                 view.dispatchEntityLeft(oldIdent);
-                MethodQueue.callLater(view.dispatchEntityLeft, [ newIdent ]);
+                DelayUtil.delayFrame(view.dispatchEntityLeft, [ newIdent ]);
             }
 
             // and set the new ident

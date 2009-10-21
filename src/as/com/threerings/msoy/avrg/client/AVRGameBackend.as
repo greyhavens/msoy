@@ -13,9 +13,9 @@ import flash.geom.Rectangle;
 import flash.utils.ByteArray;
 import flash.utils.Dictionary;
 
+import com.threerings.util.DelayUtil;
 import com.threerings.util.Log;
 import com.threerings.util.MessageBundle;
-import com.threerings.util.MethodQueue;
 import com.threerings.util.NetUtil;
 import com.threerings.util.ObjectMarshaller;
 import com.threerings.util.StringUtil;
@@ -121,7 +121,7 @@ public class AVRGameBackend extends ControlBackend
 
     public function panelResized () :void
     {
-        MethodQueue.callLater(callUserCode, [ "panelResized_v1" ]);
+        DelayUtil.delayFrame(callUserCode, [ "panelResized_v1" ]);
     }
 
     public function requestMobSprite (id :String) :DisplayObject
@@ -227,7 +227,7 @@ public class AVRGameBackend extends ControlBackend
     {
         super.handleUserCodeConnect(evt);
 
-        MethodQueue.callLater(_ctrl.backendConnected);
+        DelayUtil.delayFrame(_ctrl.backendConnected);
     }
 
     override public function callUserCode (name :String, ... args) :*

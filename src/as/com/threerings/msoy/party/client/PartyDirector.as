@@ -8,9 +8,9 @@ import flash.utils.Dictionary;
 
 import mx.core.UIComponent;
 
+import com.threerings.util.DelayUtil;
 import com.threerings.util.Log;
 import com.threerings.util.MessageBundle;
-import com.threerings.util.MethodQueue;
 import com.threerings.util.Util;
 
 import com.threerings.flex.CommandButton;
@@ -584,7 +584,7 @@ public class PartyDirector extends BasicDirector
         var assignedPartyId :int = _wctx.getMemberObject().partyId;
         if (assignedPartyId != 0) {
             // join it!
-            MethodQueue.callLater(joinParty, [ assignedPartyId ]);
+            DelayUtil.delayFrame(joinParty, [ assignedPartyId ]);
         }
     }
 

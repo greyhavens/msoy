@@ -19,8 +19,8 @@ import flash.net.URLRequest;
 import flash.system.ApplicationDomain;
 import flash.system.LoaderContext;
 
+import com.threerings.util.DelayUtil;
 import com.threerings.util.Log;
-import com.threerings.util.MethodQueue;
 import com.threerings.util.ValueEvent;
 
 import com.threerings.display.LoaderUtil;
@@ -172,7 +172,7 @@ public class YouTubePlayer extends EventDispatcher
     {
         if (_lc != null) {
             send("doUnload");
-            MethodQueue.callLater(MethodQueue.callLater, [ LoaderUtil.unload, [ _loader ] ]);
+            DelayUtil.delayFrames(2, LoaderUtil.unload, [ _loader ]);
             _lc.removeEventListener(StatusEvent.STATUS, handleConnStatus);
             _lc = null;
             _stubId = null;

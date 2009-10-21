@@ -32,7 +32,6 @@ import com.threerings.util.CommandEvent;
 import com.threerings.util.Controller;
 import com.threerings.util.Log;
 import com.threerings.util.MessageBundle;
-import com.threerings.util.MethodQueue;
 import com.threerings.util.NetUtil;
 import com.threerings.util.StringUtil;
 

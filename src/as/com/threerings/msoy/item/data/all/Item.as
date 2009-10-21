@@ -4,10 +4,10 @@
 package com.threerings.msoy.item.data.all {
 
 import com.threerings.util.Comparable;
+import com.threerings.util.DelayUtil;
 import com.threerings.util.Hashable;
 import com.threerings.util.Map;
 import com.threerings.util.Maps;
-import com.threerings.util.MethodQueue;
 
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
@@ -466,7 +466,7 @@ public /*abstract*/ class Item
 
     private static function staticInit () :void
     {
-        MethodQueue.callLater(registerAll);
+        DelayUtil.delayFrame(registerAll);
     }
 
     /** The media used to display this item's thumbnail representation. */

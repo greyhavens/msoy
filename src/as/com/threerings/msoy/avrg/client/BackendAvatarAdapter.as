@@ -3,7 +3,7 @@
 
 package com.threerings.msoy.avrg.client {
 
-import com.threerings.util.MethodQueue;
+import com.threerings.util.DelayUtil;
 import com.threerings.util.Util;
 
 import com.threerings.presents.dobj.SetAdapter;
@@ -113,7 +113,7 @@ public class BackendAvatarAdapter
                 if (info.status != oldInfo.status ||
                     !Util.equals(info.getMedia(), oldInfo.getMedia())) {
                     // Call later so that sprites are sure to have updated
-                    MethodQueue.callLater(function () :void {
+                    DelayUtil.delayFrame(function () :void {
                         if (_targetId != 0) {
                             callUserCode(_actorAppearanceChanged, _targetId, memberId);
                         } else {
@@ -125,7 +125,7 @@ public class BackendAvatarAdapter
                 var state :String = info.getState();
                 if (state != oldInfo.getState()) {
                     // Call later so that sprites are sure to have updated
-                    MethodQueue.callLater(function () :void {
+                    DelayUtil.delayFrame(function () :void {
                         if (_targetId != 0) {
                             callUserCode(_actorStateChanged, _targetId, memberId, state);
                         } else {

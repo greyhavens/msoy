@@ -14,9 +14,9 @@ import mx.controls.Button;
 import mx.styles.StyleManager;
 
 import com.threerings.util.ConfigValueSetEvent;
+import com.threerings.util.DelayUtil;
 import com.threerings.util.Log;
 import com.threerings.util.MessageBundle;
-import com.threerings.util.MethodQueue;
 import com.threerings.util.Name;
 import com.threerings.util.StringUtil;
 import com.threerings.util.ValueEvent;
@@ -398,7 +398,7 @@ public class WorldController extends MsoyController
             command: Prefs.setZoom, arg: 1 - Math.round(Prefs.getZoom()),
             enabled: roomView.canScale() });
         menuData.push({ label: Msgs.GENERAL.get("b.music"), icon: MUSIC_ICON,
-            command: MethodQueue.callLater, arg: [ doShowMusic, [ trigger ] ],
+            command: DelayUtil.delayFrame, arg: [ doShowMusic, [ trigger ] ],
             enabled: (_music != null) }); // pop it later so that it avoids the menu itself
 
         var editing :Boolean = _topPanel.isEditingRoom();
@@ -731,7 +731,7 @@ public class WorldController extends MsoyController
                 // currently none of those, I'm leaving it in for the moment because it still
                 // provides a benefit for on-site AVRGs.
                 // TODO: find a minimum test case and submit to GWT issues or maybe just shoot self
-                MethodQueue.callLater(displayPage, ["world", "s" + sceneId]);
+                DelayUtil.delayFrame(displayPage, ["world", "s" + sceneId]);
             }
             return;
         }

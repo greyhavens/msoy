@@ -13,9 +13,9 @@ import flash.utils.ByteArray;
 
 import com.threerings.io.TypedArray;
 
+import com.threerings.util.DelayUtil;
 import com.threerings.util.Map;
 import com.threerings.util.Maps;
-import com.threerings.util.MethodQueue;
 import com.threerings.util.ObjectMarshaller;
 
 import com.threerings.crowd.client.PlaceView;
@@ -87,7 +87,7 @@ public class RoomStudioController extends RoomController
     override public function requestMove (ident :ItemIdent, newLoc :MsoyLocation) :Boolean
     {
         // move it one frame later
-        throttle(ident, MethodQueue.callLater, _studioView.doEntityMove, [ ident, newLoc ]);
+        throttle(ident, DelayUtil.delayFrame, _studioView.doEntityMove, [ ident, newLoc ]);
         return true;
     }
 
@@ -212,7 +212,7 @@ public class RoomStudioController extends RoomController
     override protected function sendSpriteMessage2 (
         ident :ItemIdent, name :String, data :ByteArray, isAction :Boolean) :void
     {
-        throttle(ident, MethodQueue.callLater,
+        throttle(ident, DelayUtil.delayFrame,
             _studioView.dispatchSpriteMessage, [ ident, name, data, isAction ]);
     }
 
@@ -220,7 +220,7 @@ public class RoomStudioController extends RoomController
     override protected function sendSpriteSignal2 (
         ident :ItemIdent, name :String, data :ByteArray) :void
     {
-        throttle(ident, MethodQueue.callLater, _studioView.dispatchSpriteSignal, [ name, data ]);
+        throttle(ident, DelayUtil.delayFrame, _studioView.dispatchSpriteSignal, [ name, data ]);
     }
 
     // documentation inherited
@@ -249,9 +249,9 @@ public class RoomStudioController extends RoomController
             map.put(key, data);
         }
 
-        MethodQueue.callLater(_studioView.dispatchMemoryChanged, [ ident, key, data ]);
+        DelayUtil.delayFrame(_studioView.dispatchMemoryChanged, [ ident, key, data ]);
         if (callback != null) {
-            MethodQueue.callLater(callback, [ true ]);
+            DelayUtil.delayFrame(callback, [ true ]);
         }
 
         // perhaps show a little message...
