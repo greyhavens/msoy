@@ -48,7 +48,7 @@ public class ControlBar extends HBox
     public static const PLACE_PRIORITY :int = 300;
 
     /** TEMP: flag to test big mode, doubling the control bar height when not embedded. */
-    public static const ENABLE_BIG_MODE :Boolean = true;
+    public static const ENABLE_BIG_MODE :Boolean = false;
 
     /** The chat preferences button. */
     public var chatOptsBtn :CommandButton;
