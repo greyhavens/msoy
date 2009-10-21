@@ -4,6 +4,7 @@
 package com.threerings.msoy.group.server.persist;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.google.inject.Inject;
@@ -15,6 +16,7 @@ import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.clause.Join;
 import com.samskivert.depot.clause.Where;
+import com.samskivert.depot.expression.ColumnExp;
 import com.threerings.msoy.group.data.all.GroupMembership.Rank;
 import com.threerings.presents.annotation.BlockingThread;
 
@@ -54,9 +56,17 @@ public class ThemeRepository extends DepotRepository
      * Create a new Theme aspect to the given group. Returns true if the record was created;
      * false suggests the Theme already existed.
      */
-    public boolean createTheme (int groupId)
+    public boolean createTheme (ThemeRecord trec)
     {
-        return store(new ThemeRecord(groupId));
+        return store(trec);
+    }
+
+    /**
+     * Updates the specified theme record with supplied field/value mapping.
+     */
+    public void updateTheme (int groupId, Map<ColumnExp, Object> updates)
+    {
+        updatePartial(ThemeRecord.getKey(groupId), updates);
     }
 
     /**

@@ -244,6 +244,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
             buildLineup();
         }
     }
+
     @Override // from BaseItemDetailPanel
     protected void addTagMenuItems (final String tag, PopupMenu menu)
     {

@@ -11,6 +11,7 @@ import com.threerings.msoy.group.data.all.Group;
 import com.threerings.msoy.group.data.all.GroupMembership;
 
 import com.threerings.msoy.group.data.all.Medal;
+import com.threerings.msoy.group.data.all.Theme;
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.PriceQuote;
 import com.threerings.msoy.money.data.all.PurchaseResult;
@@ -67,9 +68,24 @@ public interface GroupServiceAsync
     void quoteCreateGroup (AsyncCallback<PriceQuote> callback);
 
     /**
+     * The async version of {@link GroupService#quoteCreateTheme}.
+     */
+    void quoteCreateTheme (AsyncCallback<PriceQuote> callback);
+
+    /**
+     * The async version of {@link GroupService#createTheme}.
+     */
+    void createTheme (Theme theme, Currency currency, int authedAmount, AsyncCallback<PurchaseResult<Theme>> callback);
+
+    /**
      * The async version of {@link GroupService#updateGroup}.
      */
     void updateGroup (Group group, GroupExtras extras, AsyncCallback<Void> callback);
+
+    /**
+     * The async version of {@link GroupService#updateTheme}.
+     */
+    void updateTheme (Theme theme, AsyncCallback<Void> callback);
 
     /**
      * The async version of {@link GroupService#leaveGroup}.
@@ -145,9 +161,4 @@ public interface GroupServiceAsync
      * The async version of {@link GroupService#setBrandShares}.
      */
     void setBrandShares (int brandId, int targetId, int shares, AsyncCallback<Void> callback);
-
-    /**
-     * The async version of {@link GroupService#createTheme}.
-     */
-    void createTheme (int groupId, AsyncCallback<Void> callback);
 }

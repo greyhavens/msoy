@@ -32,6 +32,7 @@ import com.threerings.msoy.group.gwt.GroupServiceAsync;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
+import client.groups.GroupsPage.Nav;
 import client.item.ShopUtil;
 
 import client.room.SceneUtil;
@@ -62,6 +63,14 @@ public class GroupDetailPanel extends FlowPanel
         if (_group == null || _group.groupId != groupId || refresh) {
             loadGroup(groupId);
         }
+    }
+
+    /**
+     * Returns the currently loaded group detail.
+     */
+    public GroupDetail getGroupDetail ()
+    {
+        return _detail;
     }
 
     /**
@@ -264,24 +273,24 @@ public class GroupDetailPanel extends FlowPanel
 
             // For now, only support+ can create themes
             if (CShell.isSupport()) {
-                if (_detail.isTheme) {
+                final int groupId = _detail.group.groupId;
+                if (_detail.theme != null) {
+                    themeActions.add(MsoyUI.createActionLabel(_msgs.detailEditTheme(), "inline",
+                        Link.createHandler(Pages.GROUPS, Nav.THEME_EDIT.composeArgs(groupId))));
+
+                    themeActions.add(new InlineLabel(" | "));
                     themeActions.add(MsoyUI.createActionLabel(_msgs.detailViewLineup(), "inline",
-                            Link.createHandler(Pages.STUFF, "l", _detail.group.groupId)));
+                            Link.createHandler(Pages.STUFF, "l", groupId)));
 
                     themeActions.add(new InlineLabel(" | "));
                     themeActions.add(MsoyUI.createActionLabel(_msgs.detailViewShop(), "inline",
-                        Link.createHandler(Pages.SHOP, "j", _detail.group.groupId)));
+                        Link.createHandler(Pages.SHOP, "j", groupId)));
 
                 } else {
                     themeActions.add(MsoyUI.createActionLabel(
                         _msgs.detailCreateTheme(), "inline", new ClickHandler() {
                             public void onClick (ClickEvent event) {
-                                _groupsvc.createTheme(_group.groupId, new InfoCallback<Void>() {
-                                    public void onSuccess (Void result) {
-                                        _detail.isTheme = true;
-                                        setGroupDetail(_detail);
-                                    }
-                                });
+                                Link.go(Pages.GROUPS, Nav.THEME_EDIT.composeArgs(groupId));
                             }
                         }));
                 }

@@ -491,7 +491,7 @@ public class MsoySceneRegistry extends SpotSceneRegistry
                     return;
                 }
 
-                _theme = new Theme(_themeId, groupRec.toLogo());
+                _theme = new Theme(_themeId, themeRec.playOnEnter, themeRec.toLogo());
                 _groupName = groupRec.name;
 
                 if (themeRec.playOnEnter) {

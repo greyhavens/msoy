@@ -65,6 +65,7 @@ import com.threerings.msoy.room.server.persist.MsoySceneRepository;
 
 import com.threerings.msoy.group.data.all.Group;
 import com.threerings.msoy.group.data.all.GroupMembership;
+import com.threerings.msoy.group.data.all.Theme;
 import com.threerings.msoy.group.data.all.GroupMembership.Rank;
 import com.threerings.msoy.group.data.all.Medal;
 import com.threerings.msoy.group.gwt.GalaxyData;
@@ -160,7 +161,7 @@ public class GroupServlet extends MsoyServiceServlet
         detail.extras = grec.toExtrasObject();
         detail.homeSnapshot = _sceneRepo.loadSceneSnapshot(grec.homeSceneId);
         detail.creator = _memberRepo.loadMemberName(grec.creatorId);
-        detail.isTheme = _themeLogic.isTheme(groupId);
+        detail.theme = _themeLogic.loadTheme(grec.groupId);
         detail.memberCount = _groupRepo.countMembers(grec.groupId);
         detail.myRank = Rank.NON_MEMBER;
 
@@ -312,6 +313,13 @@ public class GroupServlet extends MsoyServiceServlet
         return _groupLogic.quoteCreateGroup(requireAuthedUser());
     }
 
+    @Override
+    public PriceQuote quoteCreateTheme ()
+        throws ServiceException
+    {
+        return _themeLogic.quoteCreateTheme(requireAuthedUser());
+    }
+
     // from interface GroupService
     public PurchaseResult<Group> createGroup (
         Group group, GroupExtras extras, Currency currency, int authedAmount)
@@ -321,11 +329,25 @@ public class GroupServlet extends MsoyServiceServlet
             requireValidatedUser(), group, extras, currency, authedAmount);
     }
 
+    @Override
+    public PurchaseResult<Theme> createTheme (Theme theme, Currency currency, int authedAmount)
+        throws ServiceException
+    {
+        return _themeLogic.createTheme(requireValidatedUser(), theme, currency, authedAmount);
+    }
+
     // from interface GroupService
     public void updateGroup (Group group, GroupExtras extras)
         throws ServiceException
     {
         _groupLogic.updateGroup(requireAuthedUser(), group, extras);
+    }
+
+    @Override
+    public void updateTheme (Theme theme)
+        throws ServiceException
+    {
+        _themeLogic.updateTheme(requireAuthedUser(), theme);
     }
 
     // from interface GroupService
@@ -743,22 +765,6 @@ public class GroupServlet extends MsoyServiceServlet
         _groupRepo.setBrandShare(brandId, targetId, shares);
     }
 
-    public void createTheme (int groupId)
-        throws ServiceException
-    {
-        MemberRecord mrec = requireSupportUser();
-
-        // make sure we're allow to administer this group
-        if (!mrec.isSupport() &&
-                _groupRepo.getMembership(groupId, mrec.memberId).left != Rank.MANAGER) {
-            throw new ServiceException(MsoyAuthCodes.ACCESS_DENIED);
-        }
-
-        if (!_themeRepo.createTheme(groupId)) {
-            log.warning("Theme already existed? Whatever, let it go.", "groupId", groupId);
-        }
-    }
-
     /**
      * Fill in the current number of people in rooms (population) and the number of total threads
      * for a list of group cards.
@@ -821,6 +827,7 @@ public class GroupServlet extends MsoyServiceServlet
     {
         return mrec.isSupport() || _groupRepo.getRank(groupId, mrec.memberId) == Rank.MANAGER;
     }
+
 
     protected static List<VizMemberName> toVizMemberNames (Iterable<MemberCardRecord> records)
     {

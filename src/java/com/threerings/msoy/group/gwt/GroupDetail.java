@@ -15,6 +15,7 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.fora.gwt.ForumThread;
 
 import com.threerings.msoy.group.data.all.Group;
+import com.threerings.msoy.group.data.all.Theme;
 import com.threerings.msoy.group.data.all.GroupMembership.Rank;
 
 /**
@@ -40,8 +41,8 @@ public class GroupDetail
     /** The person who created the group. */
     public MemberName creator;
 
-    /** Whether or not this group is also a theme. */
-    public boolean isTheme;
+    /** The theme aspect of this group, if it exists, or null. */
+    public Theme theme;
 
     /** The number of members in this group. */
     public int memberCount;

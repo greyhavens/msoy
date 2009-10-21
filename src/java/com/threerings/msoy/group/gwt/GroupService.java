@@ -15,6 +15,7 @@ import com.threerings.msoy.data.all.VizMemberName;
 import com.threerings.msoy.group.data.all.Group;
 import com.threerings.msoy.group.data.all.GroupMembership;
 import com.threerings.msoy.group.data.all.Medal;
+import com.threerings.msoy.group.data.all.Theme;
 import com.threerings.msoy.group.data.all.GroupMembership.Rank;
 import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.gwt.TagHistory;
@@ -148,6 +149,12 @@ public interface GroupService extends RemoteService
         throws ServiceException;
 
     /**
+     * Return a PriceQuote for creating a new theme.
+     */
+    PriceQuote quoteCreateTheme ()
+        throws ServiceException;
+
+    /**
      * Create a new group in the system, with data supplied in the {@link Group} argument.
      */
     PurchaseResult<Group> createGroup (
@@ -155,9 +162,21 @@ public interface GroupService extends RemoteService
         throws ServiceException;
 
     /**
+     * Create a new theme in the system, with data supplied in the {@link Theme} argument.
+     */
+    PurchaseResult<Theme> createTheme (Theme theme, Currency currency, int authedAmount)
+        throws ServiceException;
+
+    /**
      * Update the data for a group according to the supplied {@link Group} argument.
      */
     void updateGroup (Group group, GroupExtras extras)
+        throws ServiceException;
+
+    /**
+     * Update the data for a theme according to the supplied {@link Theme} argument.
+     */
+    void updateTheme (Theme theme)
         throws ServiceException;
 
     /**
@@ -250,11 +269,5 @@ public interface GroupService extends RemoteService
      * Change a member's share count in a brand.
      */
     void setBrandShares (int brandId, int targetId, int shares)
-        throws ServiceException;
-
-    /**
-     * Create a theme aspect to an existing group.
-     */
-    void createTheme (int groupId)
         throws ServiceException;
 }

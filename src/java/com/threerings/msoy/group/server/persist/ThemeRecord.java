@@ -5,9 +5,12 @@ package com.threerings.msoy.group.server.persist;
 
 import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistentRecord;
+import com.samskivert.depot.annotation.Column;
 import com.samskivert.depot.annotation.Entity;
 import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.expression.ColumnExp;
+import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.group.data.all.Theme;
 
 /**
  *  Contains data specific to the theme aspect of a group.
@@ -19,11 +22,14 @@ public class ThemeRecord extends PersistentRecord
     public static final Class<ThemeRecord> _R = ThemeRecord.class;
     public static final ColumnExp GROUP_ID = colexp(_R, "groupId");
     public static final ColumnExp PLAY_ON_ENTER = colexp(_R, "playOnEnter");
+    public static final ColumnExp LOGO_MEDIA_HASH = colexp(_R, "logoMediaHash");
+    public static final ColumnExp LOGO_MIME_TYPE = colexp(_R, "logoMimeType");
+    public static final ColumnExp LOGO_MEDIA_CONSTRAINT = colexp(_R, "logoMediaConstraint");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 2;
+    public static final int SCHEMA_VERSION = 3;
 
     /** The groupId of this theme. */
     @Id
@@ -32,6 +38,16 @@ public class ThemeRecord extends PersistentRecord
     /** Whether or not to start this theme group's associated AVRG upon entering a themed room. */
     public boolean playOnEnter;
 
+    /** A hash code identifying the media for this theme's logo. */
+    @Column(nullable=true)
+    public byte[] logoMediaHash;
+
+    /** The MIME type of this theme's logo. */
+    public byte logoMimeType;
+
+    /** The constraint for the logo image. */
+    public byte logoMediaConstraint;
+
     public ThemeRecord ()
     {
     }
@@ -39,6 +55,25 @@ public class ThemeRecord extends PersistentRecord
     public ThemeRecord (int groupId)
     {
         this.groupId = groupId;
+    }
+
+    /**
+     * Creates a Theme of this record.
+     */
+    public Theme toTheme ()
+    {
+        return new Theme(groupId, playOnEnter, toLogo());
+    }
+
+    /**
+     * Creates a MediaDesc of the theme logo, or returns null if there is none.
+     */
+    public MediaDesc toLogo ()
+    {
+        if (logoMediaHash == null) {
+            return null;
+        }
+        return new MediaDesc(logoMediaHash, logoMimeType, logoMediaConstraint);
     }
 
     // AUTO-GENERATED: METHODS START

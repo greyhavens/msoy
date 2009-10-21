@@ -18,9 +18,9 @@ import client.ui.MsoyUI;
 public class GroupsPage extends Page
 {
     public enum Nav {
-        DETAIL("d"), EDIT("edit"), MYGROUPS("mygroups"), UNREAD("unread"),
+        DETAIL("d"), EDIT("edit"), THEME_EDIT("themed"), MYGROUPS("mygroups"), UNREAD("unread"),
         FRIENDS("friends"), FORUM("f"), POST("p"), THREAD("t"), MEDALS("m"),
-        CREATEMEDAL("cm"), EDITMEDAL("em"), DEFAULT("");
+        CREATEMEDAL("cm"), EDITMEDAL("em"),  DEFAULT("");
 
         public static Nav getGroupPage (Args args)
         {
@@ -74,6 +74,20 @@ public class GroupsPage extends Page
                 }
                 setContent(new GroupEdit(group, _detail.getGroupExtras()));
             }
+
+        } else if (page == Nav.THEME_EDIT) {
+            int groupId = args.get(1, 0);
+            if (groupId == 0) {
+                MsoyUI.error("Need a group to edit theme.");
+                return;
+            }
+            Group group = _detail.getGroup();
+            if (group == null || group.groupId != groupId) {
+                MsoyUI.error("ZOMG! That's not supported yet."); // pants! TODO
+                return;
+            }
+
+            setContent(new ThemeEdit(group, _detail.getGroupDetail().theme));
 
         } else if (page == Nav.MYGROUPS) {
             setContent(_msgs.myGroupsTitle(), new MyGroupsPanel());
