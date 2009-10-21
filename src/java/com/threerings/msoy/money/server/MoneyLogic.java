@@ -464,6 +464,20 @@ public class MoneyLogic
     }
 
     /**
+     * Process the purchase of a theme.
+     */
+    public <T> BuyResult<T> buyTheme (
+        MemberRecord buyerRec, Object groupKey, Currency buyCurrency, int authedAmount,
+        Currency listCurrency, int listAmount, BuyOperation<T> buyOp)
+        throws ServiceException
+    {
+        return buyFromOOO(
+            buyerRec, groupKey, buyCurrency, authedAmount, listCurrency, listAmount, buyOp,
+            UserAction.Type.BOUGHT_THEME, "m.theme_created",
+            TransactionType.THEME_PURCHASE, "m.change_rcvd_group");
+    }
+
+    /**
      * Processes the fee charged when listing an item.
      */
     public <T> BuyResult<T> listItem (

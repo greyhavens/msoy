@@ -38,6 +38,7 @@ public enum TransactionType
     BASIS_CREATOR_PAYOUT(23),
     SUBSCRIBER_GRANT(24),
     SUBSCRIPTION_PURCHASE(25),
+    THEME_PURCHASE(26),
     ;
 
     // from ByteEnum
