@@ -117,11 +117,9 @@ public class RoomDetailPanel extends SmartTable
         }
 
         if (DeploymentConfig.devDeployment && !CShell.isGuest()) {
-            CShell.log("Loading managed themes");
             _membersvc.loadManagedThemes(new InfoCallback<GroupName[]>() {
                 public void onSuccess (GroupName[] result) {
                     _managedThemes = new LinkedHashSet<GroupName>(Arrays.asList(result));
-                    CShell.log("Sorted managed themes: " + _managedThemes);
                     updateStamps();
                 }
             });
@@ -176,14 +174,12 @@ public class RoomDetailPanel extends SmartTable
 
         if (_detail.theme == null) {
             if (_themeBits == null) {
-                CShell.log("Initializing theme bits");
                 _bits.add(_themeBits = new RoundBox(RoundBox.BLUE));
                 _themeBits.setWidth("100%");
                 _themeBits.add(_themeContents = new SmartTable());
             }
             _themeContents.setWidget(0, 0, _stampPanel = new SmartTable());
 
-            CShell.log("Building stamp UI");
             buildStampUI();
         }
     }
@@ -200,7 +196,6 @@ public class RoomDetailPanel extends SmartTable
         _stampEntries = new ArrayList<GroupName>();
 
         for (GroupName theme : _managedThemes) {
-            CShell.log("Adding to drop down: " + theme);
             _stampBox.addItem(theme.toString());
             _stampEntries.add(theme);
         }
