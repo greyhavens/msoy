@@ -1027,7 +1027,7 @@ public abstract class ItemRepository<T extends ItemRecord>
             return null != load(getMogMarkClass(),
                 new Join(new ColumnExp(getMogMarkClass(), MogMarkRecord.ITEM_ID.name),
                          getCloneColumn(CloneRecord.ORIGINAL_ITEM_ID)),
-                new Where(getCloneColumn(CloneRecord.ORIGINAL_ITEM_ID), itemId));
+                new Where(getCloneColumn(CloneRecord.ITEM_ID), itemId));
         }
         return null != load(getMogMarkClass(), new Where(
             new ColumnExp(getMogMarkClass(), MogMarkRecord.GROUP_ID.name), themeGroupId,
