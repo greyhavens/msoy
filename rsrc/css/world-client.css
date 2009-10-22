@@ -106,6 +106,12 @@ GameOverPanel {
   closeSkin: Embed(source="../media/skins/tab/close_small.png");
 }
 
+.tabShine {
+  borderStyle: none;
+  backgroundColor: #8F8DF9;
+  maxAlpha: 0.5;
+}
+
 .controlBar, .headerBar { 
   horizontalGap: 0;
   verticalGap: 0;
