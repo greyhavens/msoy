@@ -296,21 +296,33 @@ public class ChatTab extends HBox
 }
 }
 
-import flash.display.DisplayObject;
+import flash.events.Event;
 
 import mx.containers.Canvas;
+
+import caurina.transitions.Tweener;
+
+import com.threerings.util.Util;
 
 class Shine extends Canvas
 {
     public function Shine ()
     {
-        _shine = new ATTENTION_SHINE() as DisplayObject;
-        _naturalWidth = _shine.width;
-        _naturalHeight = _shine.height;
-        _shine.y = 0.5;
-        _shine.x = 0;
-        rawChildren.addChild(_shine);
-        setStyle("borderStyle", "none");
+        styleName = "tabShine";
+        alpha = 0;
+        addEventListener(Event.ADDED_TO_STAGE, Util.adapt(stopGo));
+    }
+
+    protected function stopGo () :void
+    {
+        Tweener.removeTweens(this);
+        if (parent != null) {
+            var maxAlpha :Number = getStyle("maxAlpha") as Number;
+            Tweener.addTween(this, { alpha: maxAlpha, time: .5, delay: 0,
+                                                transition: "easeinsine" });
+            Tweener.addTween(this, { alpha: 0, time: .5, delay: .5, transition: "easeinsine",
+                                                onComplete: stopGo });
+        }
     }
 
     override public function setActualSize (uw :Number, uh :Number) :void
@@ -319,15 +331,5 @@ class Shine extends Canvas
         y = 0;
         width = uw;
         height = uh;
-        _shine.scaleX = (uw - 3) / _naturalWidth;
-        _shine.x = uw / 2;
-        _shine.scaleY = (uh - 5) / _naturalHeight;
     }
-
-    [Embed(source="../../../../../../../rsrc/media/skins/tab/tab_attention.swf#attention")]
-    protected static const ATTENTION_SHINE :Class;
-
-    protected var _shine :DisplayObject;
-    protected var _naturalWidth :Number;
-    protected var _naturalHeight :Number;
 }
