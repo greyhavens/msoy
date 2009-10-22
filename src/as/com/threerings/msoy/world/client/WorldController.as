@@ -1698,12 +1698,14 @@ public class WorldController extends MsoyController
 
         // TODO: i18n
         var backgroundItems :Array = [];
-        backgroundItems.push({ label: game ? "Use Game Default" : "Use Room Default",
-            type: "check", toggled: !Prefs.getUseCustomBackgroundColor(),
-            command: toggleCustomBkg });
-        backgroundItems.push({ label: "Customize...",
+        var defaultOption :String = game ?
+            "l.frame_color_use_game_default" : "l.frame_color_use_room_default";
+        backgroundItems.push({ label: Msgs.GENERAL.get(defaultOption), type: "check",
+            toggled: !Prefs.getUseCustomBackgroundColor(), command: toggleCustomBkg });
+        backgroundItems.push({ label: Msgs.GENERAL.get("l.frame_color_select_custom"),
             command: _wctx.getTopPanel().getPlaceContainer().selectFrameBackgroundColor });
-        menuData.push({ label: "Frame Color", children: backgroundItems });
+        menuData.push({ label: Msgs.GENERAL.get("l.frame_color_submenu"),
+            children: backgroundItems });
     }
 
     /** Giver of life, context. */
