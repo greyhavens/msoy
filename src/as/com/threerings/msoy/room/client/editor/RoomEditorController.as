@@ -446,7 +446,6 @@ public class RoomEditorController
         var newmodel :MsoySceneModel = newscene.getSceneModel() as MsoySceneModel;
         newmodel.backgroundColor = value;
         updateScene(scene, newscene);
-        _ctx.getTopPanel().getPlaceContainer().updateBackgroundColor();
     }
 
     /**

@@ -806,13 +806,11 @@ public class RoomObjectController extends RoomController
         // this function will be called when the edit panel is closing
         var wrapupFn :Function = function () :void {
             _editor = null;
-            _wdctx.getTopPanel().getPlaceContainer().updateBackgroundColor();
         }
 
         _editor = new RoomEditorController(_wdctx, _roomObjectView);
         _editor.startEditing(wrapupFn);
         _editor.updateUndoStatus(_updates.length != 0);
-        _wdctx.getTopPanel().getPlaceContainer().updateBackgroundColor();
     }
 
     /**

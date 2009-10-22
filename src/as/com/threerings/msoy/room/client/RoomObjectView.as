@@ -148,8 +148,9 @@ public class RoomObjectView extends RoomView
         super.setScene(scene);
         updateEditingOverlay();
 
-        // let the place box know that the background color may have changed
-        _ctx.getTopPanel().getPlaceContainer().updateBackgroundColor();
+        // let the place box know that the frame background color may have changed (if using the
+        // room background as frame background)
+        _ctx.getTopPanel().getPlaceContainer().updateFrameBackgroundColor();
     }
 
     /**

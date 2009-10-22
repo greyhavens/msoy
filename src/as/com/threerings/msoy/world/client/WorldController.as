@@ -401,22 +401,8 @@ public class WorldController extends MsoyController
             command: DelayUtil.delayFrame, arg: [ doShowMusic, [ trigger ] ],
             enabled: (_music != null) }); // pop it later so that it avoids the menu itself
 
-        var editing :Boolean = _topPanel.isEditingRoom();
-
-        function toggleCustomBkg () :void {
-            Prefs.setUseCustomBackgroundColor(!Prefs.getUseCustomBackgroundColor());
-        }
-
-        // Background color submenu (only show if we are not editing)
-        // Disabled for the moment... Zell doesn't think it is a good idea
-        if (false && !editing) {
-            var backgroundItems :Array = [];
-            backgroundItems.push({ label: "Use Room Default", type: "check",
-                toggled: !Prefs.getUseCustomBackgroundColor(), command: toggleCustomBkg });
-            backgroundItems.push({ label: "Choose color...",
-                command: _wctx.getTopPanel().getPlaceContainer().selectBackgroundColor });
-            menuData.push({ label: "Background Color", children: backgroundItems });
-        }
+        // Frame color submenu
+        addFrameColorOptions(menuData, false);
 
         popControlBarMenu(menuData, trigger);
     }
@@ -884,6 +870,9 @@ public class WorldController extends MsoyController
     {
         var menuData :Array = [];
         if (_wctx.getGameDirector().populateGameMenu(menuData)) {
+            if (!_wctx.getGameDirector().isAVRGame()) {
+                addFrameColorOptions(menuData, true);
+            }
             popControlBarMenu(menuData, trigger);
         }
     }
@@ -1699,6 +1688,22 @@ public class WorldController extends MsoyController
             });
             _musicDialog.open();
         }
+    }
+
+    protected function addFrameColorOptions (menuData :Array, game :Boolean) :void
+    {
+        function toggleCustomBkg () :void {
+            Prefs.setUseCustomBackgroundColor(!Prefs.getUseCustomBackgroundColor());
+        }
+
+        // TODO: i18n
+        var backgroundItems :Array = [];
+        backgroundItems.push({ label: game ? "Use Game Default" : "Use Room Default",
+            type: "check", toggled: !Prefs.getUseCustomBackgroundColor(),
+            command: toggleCustomBkg });
+        backgroundItems.push({ label: "Customize...",
+            command: _wctx.getTopPanel().getPlaceContainer().selectFrameBackgroundColor });
+        menuData.push({ label: "Frame Color", children: backgroundItems });
     }
 
     /** Giver of life, context. */

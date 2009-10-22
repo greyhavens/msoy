@@ -751,6 +751,13 @@ public class RoomView extends Sprite
 
         configureScrollRect();
 
+        // fill in the entire scene area with the background color so it underlays the decor
+        // TODO: opaqueBackground doesn't work, is this a limitation of scrollRect?
+        // opaqueBackground = getBackgroundColor() as Number;
+        graphics.beginFill(getBackgroundColor());
+        graphics.drawRect(0, 0, _layout.metrics.sceneWidth, _layout.metrics.sceneHeight);
+        graphics.endFill();
+
         relayoutSprites(_furni.values());
         relayoutSprites(_otherSprites);
         relayoutSprites(_occupants.values());

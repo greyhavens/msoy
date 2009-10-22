@@ -81,7 +81,7 @@ public class PlaceBox extends LayeredContainer
         _placeView = view;
         _msoyPlaceView = view as MsoyPlaceView;
 
-        updateBackgroundColor();
+        updateFrameBackgroundColor();
 
         // TODO: why is this type-check here? surely when the place view changes it needs to be
         // laid out regardless of type
@@ -91,39 +91,48 @@ public class PlaceBox extends LayeredContainer
     }
 
     /**
-     * Gets the background color of the current place, or the user's selected custom color if they
-     * are using one.
+     * Gets the background color of the current place or black if it is not an msoy view.
      */
-    public function getBackgroundColor () :uint
+    public function getPlaceBackgroundColor () :uint
     {
-        var bgColor :uint = 0;
-        var editingRoom :Boolean =
-            _ctx.getTopPanel() != null && _ctx.getTopPanel().isEditingRoom();
-        if (!editingRoom && Prefs.getUseCustomBackgroundColor()) {
-            bgColor = Prefs.getCustomBackgroundColor();
-        } else if (_msoyPlaceView != null) {
-            bgColor = _msoyPlaceView.getBackgroundColor();
+        if (_msoyPlaceView != null) {
+            return _msoyPlaceView.getBackgroundColor();
+        } else {
+            return 0x000000;
         }
-        return bgColor;
+    }
+
+    /**
+     * Gets the background color of the frame, taking into account the user settings.
+     */
+    public function getFrameBackgroundColor () :uint
+    {
+        if (Prefs.getUseCustomBackgroundColor()) {
+            return Prefs.getCustomBackgroundColor();
+        } else if (_msoyPlaceView != null) {
+            return _msoyPlaceView.getBackgroundColor();
+        } else {
+            return 0xffffff;
+        }
     }
 
     /**
      * Updates the background color.
      */
-    public function updateBackgroundColor () :void
+    public function updateFrameBackgroundColor () :void
     {
-        setStyle("backgroundColor", "#" + StringUtil.toHex(getBackgroundColor(), 6));
+        setStyle("backgroundColor", "#" + StringUtil.toHex(getFrameBackgroundColor(), 6));
     }
 
     /**
-     * Shows a color picker panel and sets the user's background color preferences to the result.
+     * Shows a color picker panel and sets the user's frame color preferences to the result.
      */
-    public function selectBackgroundColor () :void
+    public function selectFrameBackgroundColor () :void
     {
         if (_picker != null) {
             return;
         }
-        _picker = new ColorPickerPanel(_ctx, "Select Background Color", getBackgroundColor(),
+        _picker = new ColorPickerPanel(_ctx, "Select Background Color", getFrameBackgroundColor(),
             function (color :uint) :void {
                 Prefs.setCustomBackgroundColor(color);
                 Prefs.setUseCustomBackgroundColor(true);
@@ -252,7 +261,7 @@ public class PlaceBox extends LayeredContainer
                 }
                 _msoyPlaceView.setPlaceSize(w - wmargin * 2, h - hmargin * 2);
 
-                // NOTE: getClipSize must be called after setPlaceSize
+                // NOTE: getSize must be called after setPlaceSize
                 size = _msoyPlaceView.getSize();
                 if (size == null || isNaN(size.x) || isNaN(size.y)) {
                     center = false;
@@ -268,6 +277,9 @@ public class PlaceBox extends LayeredContainer
                     log.info("Layout place view", "sh", size.y, "sw", size.x,
                              "vx", view.x, "vy", view.y, "w", w, "h", h);
                 }
+
+                // TODO: the scrollRect in the room view takes care of cropping, we only require
+                // masking if the view does *not* scroll - complicated!
 
                 // mask it so that avatars and items don't bleed out of bounds
                 size.x = Math.min(size.x, w - wmargin * 2);
@@ -313,7 +325,7 @@ public class PlaceBox extends LayeredContainer
         switch (evt.name) {
         case Prefs.USE_CUSTOM_BACKGROUND_COLOR:
         case Prefs.CUSTOM_BACKGROUND_COLOR:
-            updateBackgroundColor();
+            updateFrameBackgroundColor();
             break;
         }
     }

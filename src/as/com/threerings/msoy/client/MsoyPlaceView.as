@@ -47,7 +47,7 @@ public interface MsoyPlaceView extends PlaceView, PlaceLayer
     function getSize () :Point;
 
     /**
-     * Sets the color to put behind the place view.
+     * Gets the color being used behind the place view.
      */
     function getBackgroundColor () :uint;
 }

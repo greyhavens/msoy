@@ -63,6 +63,8 @@ public class ParlorGamePanel extends WhirledGamePanel
         } else {
             _goBtn = new CommandButton(Msgs.GENERAL.get("b.back"), MsoyController.MOVE_BACK);
         }
+
+        opaqueBackground = getBackgroundColor();
     }
 
     // from MsoyPlaceView
@@ -110,7 +112,7 @@ public class ParlorGamePanel extends WhirledGamePanel
     // from MsoyPlaceView
     public function getBackgroundColor () :uint
     {
-        // TODO
+        // TODO: return color from game config
         return 0;
     }
 
