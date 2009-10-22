@@ -64,7 +64,9 @@ public class ParlorGamePanel extends WhirledGamePanel
             _goBtn = new CommandButton(Msgs.GENERAL.get("b.back"), MsoyController.MOVE_BACK);
         }
 
-        opaqueBackground = getBackgroundColor();
+        graphics.beginFill(getBackgroundColor());
+        graphics.drawRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
+        graphics.endFill();
     }
 
     // from MsoyPlaceView
