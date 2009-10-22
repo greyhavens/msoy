@@ -100,6 +100,7 @@ import com.threerings.msoy.server.util.MailSender;
 import com.threerings.msoy.bureau.data.WindowClientObject;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 
+import com.threerings.msoy.group.server.persist.ThemeRepository;
 import com.threerings.msoy.item.data.all.Audio;
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Decor;
@@ -1376,7 +1377,7 @@ public class RoomManager extends SpotSceneManager
         // TODO: complicated verification of changes, including verifying that the user owns any
         // item they're adding, etc.
 
-        Runnable doUpdateScene = new Runnable() {
+        final Runnable doUpdateScene = new Runnable() {
             public void run () {
                 // initialize and record this update to the scene management system (which will
                 // persist it, send it to the client for application to the scene, etc.)
@@ -1390,7 +1391,7 @@ public class RoomManager extends SpotSceneManager
             }
         };
 
-        MsoyScene mScene = (MsoyScene) _scene;
+        final MsoyScene mScene = (MsoyScene) _scene;
         if (update instanceof SceneAttrsUpdate) {
             SceneAttrsUpdate up = (SceneAttrsUpdate) update;
 
@@ -1456,16 +1457,32 @@ public class RoomManager extends SpotSceneManager
             }
 
         } else if (update instanceof FurniUpdate.Add) {
-            // mark this item as in use
-            FurniData data = ((FurniUpdate)update).data;
-            _itemMan.updateItemUsage(
-                data.itemType, Item.UsedAs.FURNITURE, memberId, mScene.getId(),
-                0, data.itemId, new ComplainingListener<Void>(
-                    log, "Unable to set furni item usage"));
+            final FurniData data = ((FurniUpdate)update).data;
 
-            // and resolve any memories it may have, calling the scene updater when it's done
-            resolveMemories(data.getItemIdent(), doUpdateScene);
-            // don't fall through here
+            Runnable markAndResolve = new Runnable() {
+                public void run () {
+                    // mark this item as in use
+                    _itemMan.updateItemUsage(
+                        data.itemType, Item.UsedAs.FURNITURE, memberId, mScene.getId(),
+                        0, data.itemId, new ComplainingListener<Void>(
+                            log, "Unable to set furni item usage"));
+
+                    // and resolve any memories it may have, calling the scene updater when it's done
+                    resolveMemories(data.getItemIdent(), doUpdateScene);
+                    // don't fall through here
+                }
+            };
+
+
+            // if the scene is themed, make sure the item is stamped
+            final int themeId = mScene.getThemeId();
+            if (themeId != 0) {
+                validateStamp(themeId, data.itemType, data.itemId, markAndResolve);
+                return;
+            }
+
+            // otherwise just proceed to usage marking & memory resolution
+            markAndResolve.run();
             return;
         }
 
@@ -1581,6 +1598,27 @@ public class RoomManager extends SpotSceneManager
             _roomObj.commitTransaction();
         }
         return true;
+    }
+
+    /**
+     * Checks if an item is stamped for a theme, and if so, runs the given callback. We log
+     * a generic error otherwise (this should only happened with hacked clients or internal
+     * errors).
+     */
+    protected void validateStamp (
+        final int themeId, final byte itemType, final int itemId, final Runnable onSuccess)
+    {
+        _invoker.postUnit(new RepositoryUnit("validateStamp") {
+            public void invokePersist () throws Exception {
+                _success = _itemLogic.getRepository(itemType).isThemeStamped(themeId, itemId);
+            }
+            public void handleSuccess () {
+                if (_success && onSuccess != null) {
+                    onSuccess.run();
+                }
+            }
+            protected boolean _success;
+        });
     }
 
     /**
@@ -2172,4 +2210,5 @@ public class RoomManager extends SpotSceneManager
     @Inject protected PartyRegistry _partyReg;
     @Inject protected PetManager _petMan;
     @Inject protected SceneRegistry _screg;
+    @Inject protected ThemeRepository _themeRepo;
 }
