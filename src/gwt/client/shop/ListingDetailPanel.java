@@ -30,7 +30,6 @@ import com.threerings.gwt.ui.Popups;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.util.DateUtil;
 
-import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.group.gwt.BrandDetail.BrandShare;
 import com.threerings.msoy.item.data.all.Item;
@@ -224,7 +223,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
     @Override
     protected void addExtraThemeBits ()
     {
-        if (DeploymentConfig.devDeployment && _item.getType() == Item.AVATAR && !CShell.isGuest()) {
+        if (_item.getType() == Item.AVATAR && !CShell.isGuest()) {
             _itemsvc.loadLineups(_item.catalogId, new InfoCallback<GroupName[]>() {
                 public void onSuccess (GroupName[] result) {
                     _lineup = new HashSet<GroupName>(Arrays.asList(result));

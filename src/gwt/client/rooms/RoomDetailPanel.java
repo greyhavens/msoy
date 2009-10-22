@@ -25,7 +25,6 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.comment.gwt.Comment;
-import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
@@ -116,7 +115,7 @@ public class RoomDetailPanel extends SmartTable
             // TODO: verbiage about gifting: all items, bla bla bla?
         }
 
-        if (DeploymentConfig.devDeployment && !CShell.isGuest()) {
+        if (!CShell.isGuest()) {
             _membersvc.loadManagedThemes(new InfoCallback<GroupName[]>() {
                 public void onSuccess (GroupName[] result) {
                     _managedThemes = new LinkedHashSet<GroupName>(Arrays.asList(result));

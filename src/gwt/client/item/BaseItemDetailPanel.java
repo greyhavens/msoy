@@ -28,7 +28,6 @@ import com.threerings.gwt.ui.Popups;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
-import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.RatingResult;
 import com.threerings.msoy.item.data.all.Avatar;
@@ -117,7 +116,7 @@ public abstract class BaseItemDetailPanel extends SmartTable
 
         _themeContents = new SmartTable();
 
-        if (DeploymentConfig.devDeployment && !CShell.isGuest()) {
+        if (!CShell.isGuest()) {
             _membersvc.loadManagedThemes(new InfoCallback<GroupName[]>() {
                 public void onSuccess (GroupName[] result) {
                     _themeContents.setWidget(0, 0, _stampedBy = new FlowPanel());
