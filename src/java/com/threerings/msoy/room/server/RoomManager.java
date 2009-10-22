@@ -1383,8 +1383,7 @@ public class RoomManager extends SpotSceneManager
                 update.init(_scene.getId(), _scene.getVersion());
                 recordUpdate(update);
 
-                // let the registry know that rooms be gettin' updated (TODO: don't do this on
-                // every fucking update, it's super expensive)
+                // let the registry know that rooms be gettin' updated
                 if (user != null) {
                     ((MsoySceneRegistry)_screg).memberUpdatedRoom(user, (MsoyScene)_scene);
                 }
