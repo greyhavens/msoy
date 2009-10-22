@@ -697,7 +697,8 @@ public class MsoySprite extends DataPackMediaContainer
      */
     public function getEnvironment () :String
     {
-        return getController().getEnvironment();
+        var ctrl :RoomController = getController();
+        return (ctrl != null) ? ctrl.getEnvironment() : null;
     }
 
     /**
