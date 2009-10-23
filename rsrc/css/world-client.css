@@ -788,3 +788,22 @@ ChatInput {
 .avatarPickerCell {
   horizontalAlign: "center";
 }
+
+.tutorialPanel {
+  backgroundImage: Embed(source="../media/skins/tutorial/background.png",
+                         scaleGridTop="17", scaleGridBottom="24",
+                         scaleGridLeft="20", scaleGridRight="33");
+  backgroundSize: "100%";
+  verticalAlign: middle;
+}
+
+.tutorialProfessor {
+}
+
+.tutorialText {
+  color: #0d496d;
+  fontSize: 18;
+}
+
+.tutorialIcon {
+}

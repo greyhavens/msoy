@@ -293,6 +293,12 @@ public class MsoyController extends Controller
         menuData.push({ label: Msgs.GENERAL.get("b.back"), callback: handleMoveBack,
             enabled: canMoveBack() });
 
+        // test menu option to look at the tutorial panel on dev
+        if (DeploymentConfig.devDeployment) {
+            menuData.push({ label: "Test tutorial",
+                command: _mctx.getTutorialDirector().test });
+        }
+
         popControlBarMenu(menuData, trigger);
     }
 

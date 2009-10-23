@@ -34,6 +34,9 @@ public class PlaceBox extends LayeredContainer
     /** The layer priority of help text bubbles. */
     public static const LAYER_HELP_BUBBLES :int = 5;
 
+    /** The layer priority of tutorial panel. */
+    public static const LAYER_TUTORIAL :int = 7;
+
     /** The layer priority of the loading spinner. */
     public static const LAYER_ROOM_SPINNER :int = 10;
 
@@ -305,6 +308,10 @@ public class PlaceBox extends LayeredContainer
     protected function setMasked (
         disp :DisplayObject, x :Number, y : Number, w :Number, h :Number) :void
     {
+        if (DeploymentConfig.devDeployment) {
+            log.info("Masking", "disp", disp, "x", x, "y", y, "w", w, "h", h);
+        }
+
         if (_masked != disp) {
             if (_masked != null) {
                 _masked.mask = null;

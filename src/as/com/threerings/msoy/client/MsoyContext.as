@@ -45,6 +45,8 @@ import com.threerings.msoy.chat.client.MsoyMuteDirector;
 
 import com.threerings.msoy.notify.client.NotificationDirector;
 
+import com.threerings.msoy.tutorial.client.TutorialDirector;
+
 /**
  * Provides services shared by all clients.
  */
@@ -313,6 +315,11 @@ public /*abstract*/ class MsoyContext
         return _socialDir;
     }
 
+    public function getTutorialDirector () :TutorialDirector
+    {
+        return _tutorialDir;
+    }
+
     /**
      * Get the message manager.
      */
@@ -415,6 +422,7 @@ public /*abstract*/ class MsoyContext
         _muteDir.setChatDirector(_chatDir);
         _upsellDir = new UpsellDirector(this);
         _socialDir = new SocialDirector(this);
+        _tutorialDir = new TutorialDirector(this);
     }
 
     /**
@@ -437,5 +445,6 @@ public /*abstract*/ class MsoyContext
     protected var _notifyDir :NotificationDirector;
     protected var _upsellDir :UpsellDirector;
     protected var _socialDir :SocialDirector;
+    protected var _tutorialDir :TutorialDirector;
 }
 }
