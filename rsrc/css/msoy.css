@@ -193,11 +193,13 @@ ComboBox {
           scaleGridLeft="5", scaleGridRight="40");
 }
 
-/** TODO: Get actual radio button art (Circles instead of squares) */
 CheckBox, RadioButton {
   color: black;
   textRollOverColor: black;
   textSelectedColor: black;
+}
+
+CheckBox {
   upIcon: Embed(source="../media/skins/checkbox/checkbox.png");
   overIcon: Embed(source="../media/skins/checkbox/checkbox_over.png");
   downIcon: Embed(source="../media/skins/checkbox/checkbox_over.png");
