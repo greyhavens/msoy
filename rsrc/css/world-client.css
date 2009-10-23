@@ -108,8 +108,9 @@ GameOverPanel {
 
 .tabShine {
   borderStyle: none;
-  backgroundColor: #8F8DF9;
-  maxAlpha: 0.5;
+  backgroundColor: #188ab5;
+  maxAlpha: 0.3;
+  period: 2.0;
 }
 
 .controlBar, .headerBar { 
