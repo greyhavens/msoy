@@ -129,7 +129,7 @@ public class NotificationDirector extends BasicDirector
 
     public function getCurrentNotifications () :Array
     {
-        return _notifications.toArray().reverse();
+        return _notifications.toArray();
     }
 
     /**
