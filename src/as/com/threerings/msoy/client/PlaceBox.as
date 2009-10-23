@@ -23,7 +23,6 @@ import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.MsoyPlaceView;
 import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.ui.ColorPickerPanel;
-import com.threerings.msoy.ui.FloatingPanel;
 
 /**
  * A component that holds our place views and sets up a mask to ensure that the place view does not
@@ -140,7 +139,7 @@ public class PlaceBox extends LayeredContainer
                 Prefs.setCustomBackgroundColor(color);
                 Prefs.setUseCustomBackgroundColor(true);
             });
-        _picker.addEventListener(FloatingPanel.DID_CLOSE, function (evt :Event) :void {
+        _picker.addCloseCallback(function () :void {
             _picker = null;
         });
         _picker.open();
