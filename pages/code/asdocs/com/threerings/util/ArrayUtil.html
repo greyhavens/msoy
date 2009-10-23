@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
-<meta content="ArrayUtil,com.threerings.util.ArrayUtil,contains,copy,copyOf,create,equals,findIf,indexIf,indexOf,removeAll,removeAllIf,removeFirst,removeFirstIf,removeLast,removeLastIf,shuffle,sort,sortOn,sortedInsert,stableSort" name="keywords">
+<meta content="ArrayUtil,com.threerings.util.ArrayUtil,contains,copy,copyOf,create,equals,findIf,indexIf,indexOf,removeAll,removeAllIf,removeFirst,removeFirstIf,removeLast,removeLastIf,shuffle,sort,sortOn,sortedInsert,splice,stableSort" name="keywords">
 <title>com.threerings.util.ArrayUtil</title>
 </head>
 <body>
@@ -201,6 +201,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <a class="signatureLink" href="#sortOn()">sortOn</a>(arr:Array, sortFields:Array):void</div>
 <div class="summaryTableDescription">[static]
      Sort the specified array according to one or more fields of the objects in the Array.</div>
+</td><td class="summaryTableOwnerCol">ArrayUtil</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#splice()">splice</a>(arr:Array, index:int, deleteCount:int, insertions:Array = null):Array</div>
+<div class="summaryTableDescription">[static]
+     A splice that takes an optional Array of elements to splice in.</div>
 </td><td class="summaryTableOwnerCol">ArrayUtil</td>
 </tr>
 <tr class="">
@@ -760,6 +768,49 @@ showHideInherited();
 </tr>
 <tr>
 <td width="20px"></td><td><code><span class="label">sortFields</span>:Array</code></td>
+</tr>
+</table>
+</div>
+<a name="splice()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">splice</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function splice(arr:Array, index:int, deleteCount:int, insertions:Array = null):Array</code><p>
+     A splice that takes an optional Array of elements to splice in.
+     The function on Array is fairly useless unless you know exactly what you're splicing
+     in at compile time. Fucking varargs.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">arr</span>:Array</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">index</span>:int</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">deleteCount</span>:int</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">insertions</span>:Array</code> (default = <code>null</code>)<code></code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Array</code></td>
 </tr>
 </table>
 </div>

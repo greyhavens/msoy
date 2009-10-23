@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../../print.css" type="text/css" media="print">
-<meta content="SetBuilder,com.threerings.util.sets.SetBuilder,build,makeExpiring,makeLR,makeSorted" name="keywords">
+<meta content="SetBuilder,com.threerings.util.sets.SetBuilder,add,build,makeExpiring,makeImmutable,makeLR,makeSorted" name="keywords">
 <title>com.threerings.util.sets.SetBuilder</title>
 </head>
 <body>
@@ -71,6 +71,15 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
+<a class="signatureLink" href="#add()">add</a>(value:Object):<a href="../sets/SetBuilder.html">SetBuilder</a>
+</div>
+<div class="summaryTableDescription">
+     Add a value to the Set, once built.</div>
+</td><td class="summaryTableOwnerCol">SetBuilder</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
 <a class="signatureLink" href="#build()">build</a>():<a href="../../util/Set.html">Set</a>
 </div>
 <div class="summaryTableDescription">
@@ -84,7 +93,16 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <a class="signatureLink" href="#makeExpiring()">makeExpiring</a>(ttl:int, expireHandler:Function = null):<a href="../sets/SetBuilder.html">SetBuilder</a>
 </div>
 <div class="summaryTableDescription">
-     Make the set auto-expire elements.</div>
+     Make the Set auto-expire elements.</div>
+</td><td class="summaryTableOwnerCol">SetBuilder</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#makeImmutable()">makeImmutable</a>():<a href="../sets/SetBuilder.html">SetBuilder</a>
+</div>
+<div class="summaryTableDescription">
+     Make the Set immutable.</div>
 </td><td class="summaryTableOwnerCol">SetBuilder</td>
 </tr>
 <tr class="">
@@ -131,10 +149,33 @@ showHideInherited();
 </div>
 <a name="methodDetail"></a>
 <div class="detailSectionHeader">Method detail</div>
+<a name="add()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">add</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function add(value:Object):<a href="../sets/SetBuilder.html">SetBuilder</a></code><p>
+     Add a value to the Set, once built.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">value</span>:Object</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code><a href="../sets/SetBuilder.html">SetBuilder</a></code></td>
+</tr>
+</table>
+</div>
 <a name="build()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">build</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
+<td class="detailHeaderName">build</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
 </tr>
 </table>
 <div class="detailBody">
@@ -156,7 +197,7 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public function makeExpiring(ttl:int, expireHandler:Function = null):<a href="../sets/SetBuilder.html">SetBuilder</a></code><p>
-     Make the set auto-expire elements.
+     Make the Set auto-expire elements.
           </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
@@ -181,6 +222,23 @@ showHideInherited();
      
                         
                      </td>
+</tr>
+</table>
+</div>
+<a name="makeImmutable()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">makeImmutable</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function makeImmutable():<a href="../sets/SetBuilder.html">SetBuilder</a></code><p>
+     Make the Set immutable.
+     </p><p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code><a href="../sets/SetBuilder.html">SetBuilder</a></code></td>
 </tr>
 </table>
 </div>

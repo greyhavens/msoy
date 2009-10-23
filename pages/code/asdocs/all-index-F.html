@@ -162,14 +162,6 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("FÂ
      or observers will see it.</td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/StringUtil.html#fieldsToString()">fieldsToString</a>(buf:<a href="com/threerings/util/StringBuilder.html" onclick="javascript:loadClassListFrame('com/threerings/util./class-list.html');">com.threerings.util:StringBuilder</a>, obj, fieldNames) &mdash; Static method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/StringUtil.html">StringUtil</a></td>
-</tr>
-<tr>
-<td width="20"></td><td>
-     Return a string containing all the public fields of the object
-          </td>
-</tr>
-<tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/FileUtil.html">FileUtil</a> &mdash; Class in package <a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/package-detail.html">com.threerings.util</a></td>
 </tr>
 <tr>
@@ -211,6 +203,13 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("FÂ
      Find a component with the specified name in the specified display hierarchy.</td>
 </tr>
 <tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Maps.html#findKey()">findKey</a>(map:<a href="com/threerings/util/Map.html" onclick="javascript:loadClassListFrame('com/threerings/util./class-list.html');">com.threerings.util:Map</a>, value) &mdash; Static method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Maps.html">Maps</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Return the first key found for the specified value, or undefined if not found.</td>
+</tr>
+<tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Enum.html#finishedEnumerating()">finishedEnumerating</a>(clazz) &mdash; Static method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Enum.html">Enum</a></td>
 </tr>
 <tr>
@@ -220,6 +219,12 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("FÂ
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/RingBuffer.html#_firstIndex">_firstIndex</a> &mdash; Property in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/RingBuffer.html">RingBuffer</a></td>
+</tr>
+<tr>
+<td width="20"></td><td></td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/TimeBuffer.html#_firstIndex">_firstIndex</a> &mdash; Property in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/TimeBuffer.html">TimeBuffer</a></td>
 </tr>
 <tr>
 <td width="20"></td><td></td>
@@ -298,31 +303,38 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("FÂ
      Call the specified function, which accepts an element as an argument.</td>
 </tr>
 <tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/TimeBuffer.html#forEach()">forEach</a>(callback) &mdash; Method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/TimeBuffer.html">TimeBuffer</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Executes a function on each item in the buffer.</td>
+</tr>
+<tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/maps/class-list.html');" href="com/threerings/util/maps/DictionaryMap.html#forEach()">forEach</a>(fn) &mdash; Method in class com.threerings.util.maps.<a onclick="javascript:loadClassListFrame('com/threerings/util/maps/class-list.html');" href="com/threerings/util/maps/DictionaryMap.html">DictionaryMap</a></td>
 </tr>
 <tr>
-<td width="20"></td><td>  
+<td width="20"></td><td> 
      Call the specified function to iterate over the mappings in this Map.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/maps/class-list.html');" href="com/threerings/util/maps/HashMap.html#forEach()">forEach</a>(fn) &mdash; Method in class com.threerings.util.maps.<a onclick="javascript:loadClassListFrame('com/threerings/util/maps/class-list.html');" href="com/threerings/util/maps/HashMap.html">HashMap</a></td>
 </tr>
 <tr>
-<td width="20"></td><td>  
+<td width="20"></td><td> 
      Call the specified function to iterate over the mappings in this Map.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/maps/class-list.html');" href="com/threerings/util/maps/SortedMap.html#forEach()">forEach</a>(fn) &mdash; Method in class com.threerings.util.maps.<a onclick="javascript:loadClassListFrame('com/threerings/util/maps/class-list.html');" href="com/threerings/util/maps/SortedMap.html">SortedMap</a></td>
 </tr>
 <tr>
-<td width="20"></td><td>   
+<td width="20"></td><td>  
      Call the specified function to iterate over the mappings in this Map.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/maps/class-list.html');" href="com/threerings/util/maps/WeakValueMap.html#forEach()">forEach</a>(fn) &mdash; Method in class com.threerings.util.maps.<a onclick="javascript:loadClassListFrame('com/threerings/util/maps/class-list.html');" href="com/threerings/util/maps/WeakValueMap.html">WeakValueMap</a></td>
 </tr>
 <tr>
-<td width="20"></td><td>   
+<td width="20"></td><td>  
      Call the specified function to iterate over the mappings in this Map.</td>
 </tr>
 <tr>
@@ -331,6 +343,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("FÂ
 <tr>
 <td width="20"></td><td> 
      Call the specified function, which accepts an element as an argument.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Joiner.html#format()">format</a>(pairs, s, args) &mdash; Static method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Joiner.html">Joiner</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Format the args into a String: a0=a1, a2=a3, a4=a5, a6
+     </td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Log.html#formatMessage()">formatMessage</a>(level, args) &mdash; Method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Log.html">Log</a></td>
@@ -346,6 +366,18 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("FÂ
      Format the specified number, nicely, with commas.</td>
 </tr>
 <tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Framerate.html#_fpsBuffer">_fpsBuffer</a> &mdash; Property in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Framerate.html">Framerate</a></td>
+</tr>
+<tr>
+<td width="20"></td><td></td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Framerate.html#fpsCur">fpsCur</a> &mdash; Property in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Framerate.html">Framerate</a></td>
+</tr>
+<tr>
+<td width="20"></td><td></td>
+</tr>
+<tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/text/class-list.html');" href="com/threerings/text/FPSDisplay.html">FPSDisplay</a> &mdash; Class in package <a onclick="javascript:loadClassListFrame('com/threerings/text/class-list.html');" href="com/threerings/text/package-detail.html">com.threerings.text</a></td>
 </tr>
 <tr>
@@ -353,6 +385,24 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("FÂ
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/text/class-list.html');" href="com/threerings/text/FPSDisplay.html#FPSDisplay()">FPSDisplay</a>(framesToTrack) &mdash; Constructor in class com.threerings.text.<a onclick="javascript:loadClassListFrame('com/threerings/text/class-list.html');" href="com/threerings/text/FPSDisplay.html">FPSDisplay</a></td>
+</tr>
+<tr>
+<td width="20"></td><td></td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Framerate.html#fpsMax">fpsMax</a> &mdash; Property in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Framerate.html">Framerate</a></td>
+</tr>
+<tr>
+<td width="20"></td><td></td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Framerate.html#fpsMean">fpsMean</a> &mdash; Property in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Framerate.html">Framerate</a></td>
+</tr>
+<tr>
+<td width="20"></td><td></td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Framerate.html#fpsMin">fpsMin</a> &mdash; Property in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Framerate.html">Framerate</a></td>
 </tr>
 <tr>
 <td width="20"></td><td></td>
@@ -372,6 +422,18 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("FÂ
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/display/class-list.html');" href="com/threerings/display/AnimationManager.html#_framer">_framer</a> &mdash; Static property in class com.threerings.display.<a onclick="javascript:loadClassListFrame('com/threerings/display/class-list.html');" href="com/threerings/display/AnimationManager.html">AnimationManager</a></td>
+</tr>
+<tr>
+<td width="20"></td><td></td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Framerate.html">Framerate</a> &mdash; Class in package <a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/package-detail.html">com.threerings.util</a></td>
+</tr>
+<tr>
+<td width="20"></td><td></td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Framerate.html#Framerate()">Framerate</a>(disp, timeWindow) &mdash; Constructor in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Framerate.html">Framerate</a></td>
 </tr>
 <tr>
 <td width="20"></td><td></td>
@@ -403,7 +465,31 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("FÂ
 <td width="20"></td><td> The number of running frames we track.</td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/display/class-list.html');" href="com/threerings/display/AlphaFade.html#_from">_from</a> &mdash; Property in class com.threerings.display.<a onclick="javascript:loadClassListFrame('com/threerings/display/class-list.html');" href="com/threerings/display/AlphaFade.html">AlphaFade</a></td>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/EventHandlerManager.html#freeAllHandlers()">freeAllHandlers</a>(... rest) &mdash; Method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/EventHandlerManager.html">EventHandlerManager</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Free all handlers that have been added via this registerListener() and have not been
+     freed already via unregisterListener()
+     </td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/EventHandlers.html#freeAllHandlers()">freeAllHandlers</a>(... rest) &mdash; Static method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/EventHandlers.html">EventHandlers</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Free all handlers that have been added via this registerListener() and have not been
+     freed already via unregisterListener()
+     </td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/EventHandlerManager.html#freeAllOn()">freeAllOn</a>(dispatcher) &mdash; Method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/EventHandlerManager.html">EventHandlerManager</a></td>
+</tr>
+<tr>
+<td width="20"></td><td></td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/display/class-list.html');" href="com/threerings/display/LinearAnimation.html#_from">_from</a> &mdash; Property in class com.threerings.display.<a onclick="javascript:loadClassListFrame('com/threerings/display/class-list.html');" href="com/threerings/display/LinearAnimation.html">LinearAnimation</a></td>
 </tr>
 <tr>
 <td width="20"></td><td></td>

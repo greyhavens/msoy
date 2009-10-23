@@ -96,6 +96,12 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("EÂ
 <td width="20"></td><td> Returns true if the RingBuffer contains 0 elements.</td>
 </tr>
 <tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/TimeBuffer.html#empty">empty</a> &mdash; Property in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/TimeBuffer.html">TimeBuffer</a></td>
+</tr>
+<tr>
+<td width="20"></td><td> Returns true if the TimeBuffer contains 0 elements.</td>
+</tr>
+<tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/display/class-list.html');" href="com/threerings/display/DisablingButton.html#enabled">enabled</a> &mdash; Property in class com.threerings.display.<a onclick="javascript:loadClassListFrame('com/threerings/display/class-list.html');" href="com/threerings/display/DisablingButton.html">DisablingButton</a></td>
 </tr>
 <tr>
@@ -271,6 +277,12 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("EÂ
      An event dispatched when an actor begins and ends walking within the room.</td>
 </tr>
 <tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/TimeBuffer.html#entryAt()">entryAt</a>(index) &mdash; Method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/TimeBuffer.html">TimeBuffer</a></td>
+</tr>
+<tr>
+<td width="20"></td><td></td>
+</tr>
+<tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Enum.html">Enum</a> &mdash; Class in package <a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/package-detail.html">com.threerings.util</a></td>
 </tr>
 <tr>
@@ -367,17 +379,26 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("EÂ
 <td width="20"></td><td></td>
 </tr>
 <tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Maps.html#equals()">equals</a>(map1:<a href="com/threerings/util/Map.html" onclick="javascript:loadClassListFrame('com/threerings/util./class-list.html');">com.threerings.util:Map</a>, map2:<a href="com/threerings/util/Map.html" onclick="javascript:loadClassListFrame('com/threerings/util./class-list.html');">com.threerings.util:Map</a>) &mdash; Static method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Maps.html">Maps</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Do the two Maps contain the same keys and values?
+     </td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Sets.html#equals()">equals</a>(a:<a href="com/threerings/util/Set.html" onclick="javascript:loadClassListFrame('com/threerings/util./class-list.html');">com.threerings.util:Set</a>, b:<a href="com/threerings/util/Set.html" onclick="javascript:loadClassListFrame('com/threerings/util./class-list.html');">com.threerings.util:Set</a>) &mdash; Static method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Sets.html">Sets</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Return true if the two sets are equal.</td>
+</tr>
+<tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Util.html#equals()">equals</a>(obj1, obj2) &mdash; Static method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Util.html">Util</a></td>
 </tr>
 <tr>
 <td width="20"></td><td>
      A nice utility method for testing equality in a better way.</td>
-</tr>
-<tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/maps/class-list.html');" href="com/threerings/util/maps/NullWrapper.html#equals()">equals</a>(other) &mdash; Method in class com.threerings.util.maps.<a onclick="javascript:loadClassListFrame('com/threerings/util/maps/class-list.html');" href="com/threerings/util/maps/NullWrapper.html">NullWrapper</a></td>
-</tr>
-<tr>
-<td width="20"></td><td></td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/media/class-list.html');" href="com/threerings/media/MediaPlayer.html#event:error">error</a> &mdash; Event in interface com.threerings.media.<a onclick="javascript:loadClassListFrame('com/threerings/media/class-list.html');" href="com/threerings/media/MediaPlayer.html">MediaPlayer</a></td>
@@ -419,7 +440,36 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("EÂ
 <td width="20"></td><td></td>
 </tr>
 <tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/EventHandlerManager.html">EventHandlerManager</a> &mdash; Class in package <a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/package-detail.html">com.threerings.util</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+ A class for keeping track of event listeners and freeing them all at a given time.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/EventHandlerManager.html#_eventHandlers">_eventHandlers</a> &mdash; Property in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/EventHandlerManager.html">EventHandlerManager</a></td>
+</tr>
+<tr>
+<td width="20"></td><td></td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/EventHandlers.html">EventHandlers</a> &mdash; Class in package <a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/package-detail.html">com.threerings.util</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+ A class for keeping track of event listeners and freeing them all at a given time.</td>
+</tr>
+<tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/RingBuffer.html#every()">every</a>(callback, thisObject) &mdash; Method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/RingBuffer.html">RingBuffer</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Executes a test function on each item in the ring buffer
+     until an item is reached that returns false for the specified
+     function.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/TimeBuffer.html#every()">every</a>(callback) &mdash; Method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/TimeBuffer.html">TimeBuffer</a></td>
 </tr>
 <tr>
 <td width="20"></td><td>

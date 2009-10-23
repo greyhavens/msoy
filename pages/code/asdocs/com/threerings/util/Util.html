@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
-<meta content="Util,com.threerings.util.Util,XMLtoString,XMLtoXMLString,adapt,equals,init,isPlainObject,isSimple,keys,newXML,safeXMLOp,unfuckVarargs,values" name="keywords">
+<meta content="Util,com.threerings.util.Util,adapt,equals,getDefault,init,isPlainObject,isSimple,keys,unfuckVarargs,values" name="keywords">
 <title>com.threerings.util.Util</title>
 </head>
 <body>
@@ -54,7 +54,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#adapt()">adapt</a>(fn:Function):Function</div>
+<a class="signatureLink" href="#adapt()">adapt</a>(fn:Function, ... prepend):Function</div>
 <div class="summaryTableDescription">[static]
      Return a var-args function that will attempt to pass only the arguments accepted by the
      passed-in function.</div>
@@ -66,6 +66,15 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <a class="signatureLink" href="#equals()">equals</a>(obj1:Object, obj2:Object):Boolean</div>
 <div class="summaryTableDescription">[static]
      A nice utility method for testing equality in a better way.</div>
+</td><td class="summaryTableOwnerCol">Util</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#getDefault()">getDefault</a>(props:Object, name:String, defaultValue:Object):Object</div>
+<div class="summaryTableDescription">[static]
+     Returns a property of an object by name if the object contains the property, otherwise
+     returns a default value.</div>
 </td><td class="summaryTableOwnerCol">Util</td>
 </tr>
 <tr class="">
@@ -105,23 +114,6 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#newXML()">newXML</a>(value:Object, settings:Object = null):XML</div>
-<div class="summaryTableDescription">[static]
-     Parse the 'value' object into XML safely.</div>
-</td><td class="summaryTableOwnerCol">Util</td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="#safeXMLOp()">safeXMLOp</a>(fn:Function, settings:Object = null):*</div>
-<div class="summaryTableDescription">[static]
-     Perform an operation on XML that takes place using the specified settings, and
-     restores the XML settings to their previous values.</div>
-</td><td class="summaryTableOwnerCol">Util</td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
 <a class="signatureLink" href="#unfuckVarargs()">unfuckVarargs</a>(args:Array):Array</div>
 <div class="summaryTableDescription">[static]
      If you call a varargs method by passing it an array, the array
@@ -135,22 +127,6 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summaryTableDescription">[static]
      Get an array containing the property values of the specified object, in their
      natural iteration order.</div>
-</td><td class="summaryTableOwnerCol">Util</td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="#XMLtoString()">XMLtoString</a>(xml:XML, settings:Object = null):String</div>
-<div class="summaryTableDescription">[static]
-     Call toString() on the specified XML object safely.</div>
-</td><td class="summaryTableOwnerCol">Util</td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="#XMLtoXMLString()">XMLtoXMLString</a>(xml:XML, settings:Object = null):String</div>
-<div class="summaryTableDescription">[static]
-     Call toXMLString() on the specified XML object safely.</div>
 </td><td class="summaryTableOwnerCol">Util</td>
 </tr>
 </table>
@@ -169,14 +145,21 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public static function adapt(fn:Function):Function</code><p>
+<code>public static function adapt(fn:Function, ... prepend):Function</code><p>
      Return a var-args function that will attempt to pass only the arguments accepted by the
      passed-in function. Does not work if the passed-in function is varargs, and anyway
-     then you don't need adapting, do you?
-          </p><span class="label">Parameters</span>
+     then you don't need adapting, do you? An array of arguments to prepend to each call may also
+     be given.
+               </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">fn</span>:Function</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code>... <span class="label">prepend</span></code></td>
 </tr>
 </table>
 <p></p>
@@ -196,6 +179,13 @@ showHideInherited();
      }
           // and you want to print all your users. (Normally the forEach callback requires 3 params)
      allUsersArray.forEach(Util.adapt(printUser))
+          // now let's say you have this function
+     function printUser (indent :String, user :User) :void
+     {
+         trace(indent + "UserId: " + user.id + ", name: " + user.name);
+     }
+          // and you want to print all your users with some spaces before each line:
+     allUsersArray.forEach(Util.adapt(printUser, "   "))
      </pre></div>
      <p></p>
 </div>
@@ -228,6 +218,42 @@ showHideInherited();
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20"></td><td><code>Boolean</code></td>
+</tr>
+</table>
+</div>
+<a name="getDefault()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getDefault</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function getDefault(props:Object, name:String, defaultValue:Object):Object</code><p>
+     Returns a property of an object by name if the object contains the property, otherwise
+     returns a default value.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">props</span>:Object</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">name</span>:String</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">defaultValue</span>:Object</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Object</code></td>
 </tr>
 </table>
 </div>
@@ -352,83 +378,6 @@ showHideInherited();
 </tr>
 </table>
 </div>
-<a name="newXML()"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">newXML</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>public static function newXML(value:Object, settings:Object = null):XML</code><p>
-     Parse the 'value' object into XML safely. This is equivalent to <code>new XML(value)</code>
-     but offers protection from other code that may have changing the default settings
-     used for parsing XML. Also, if you would like to use non-standard parsing settings
-     this method will protect other code from being broken by you.
-          </p><span class="label">Parameters</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20px"></td><td><code><span class="label">value</span>:Object</code> &mdash; the value to parse into XML.
-     </td>
-</tr>
-<tr>
-<td class="paramSpacer">&nbsp;</td>
-</tr>
-<tr>
-<td width="20px"></td><td><code><span class="label">settings</span>:Object</code> (default = <code>null</code>)<code></code> &mdash; an Object containing your desired XML settings, or null (or omitted) to
-     use the default settings.
-     </td>
-</tr>
-</table>
-<p></p>
-<span class="label">Returns</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20"></td><td><code>XML</code></td>
-</tr>
-</table>
-<p>
-<span class="label">See also</span>
-</p>
-<div class="seeAlso">XML.setSettings()</div>
-</div>
-<a name="safeXMLOp()"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">safeXMLOp</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>public static function safeXMLOp(fn:Function, settings:Object = null):*</code><p>
-     Perform an operation on XML that takes place using the specified settings, and
-     restores the XML settings to their previous values.
-          </p><span class="label">Parameters</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20px"></td><td><code><span class="label">fn</span>:Function</code> &mdash; a function to be called with no arguments.
-     </td>
-</tr>
-<tr>
-<td class="paramSpacer">&nbsp;</td>
-</tr>
-<tr>
-<td width="20px"></td><td><code><span class="label">settings</span>:Object</code> (default = <code>null</code>)<code></code> &mdash; an Object containing your desired XML settings, or null (or omitted) to
-     use the default settings.
-          </td>
-</tr>
-</table>
-<p></p>
-<span class="label">Returns</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20"></td><td><code>*</code> &mdash; the return value of your function, if any.
-     </td>
-</tr>
-</table>
-<p>
-<span class="label">See also</span>
-</p>
-<div class="seeAlso">XML.setSettings()<br>XML.settings()</div>
-</div>
 <a name="unfuckVarargs()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -476,86 +425,6 @@ showHideInherited();
 <td width="20"></td><td><code>Array</code></td>
 </tr>
 </table>
-</div>
-<a name="XMLtoString()"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">XMLtoString</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>public static function XMLtoString(xml:XML, settings:Object = null):String</code><p>
-     Call toString() on the specified XML object safely. This is equivalent to
-     <code>xml.toString()</code> but offers protection from other code that may have changed
-     the default settings used for stringing XML. Also, if you would like to use the
-     non-standard printing settings this method will protect other code from being
-     broken by you.
-          </p><span class="label">Parameters</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20px"></td><td><code><span class="label">xml</span>:XML</code> &mdash; the xml value to Stringify.
-     </td>
-</tr>
-<tr>
-<td class="paramSpacer">&nbsp;</td>
-</tr>
-<tr>
-<td width="20px"></td><td><code><span class="label">settings</span>:Object</code> (default = <code>null</code>)<code></code> &mdash; an Object containing your desired XML settings, or null (or omitted) to
-     use the default settings.
-     </td>
-</tr>
-</table>
-<p></p>
-<span class="label">Returns</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20"></td><td><code>String</code></td>
-</tr>
-</table>
-<p>
-<span class="label">See also</span>
-</p>
-<div class="seeAlso">XML.toString()<br>XML.setSettings()</div>
-</div>
-<a name="XMLtoXMLString()"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">XMLtoXMLString</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>public static function XMLtoXMLString(xml:XML, settings:Object = null):String</code><p>
-     Call toXMLString() on the specified XML object safely. This is equivalent to
-     <code>xml.toXMLString()</code> but offers protection from other code that may have changed
-     the default settings used for stringing XML. Also, if you would like to use the
-     non-standard printing settings this method will protect other code from being
-     broken by you.
-          </p><span class="label">Parameters</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20px"></td><td><code><span class="label">xml</span>:XML</code> &mdash; the xml value to Stringify.
-     </td>
-</tr>
-<tr>
-<td class="paramSpacer">&nbsp;</td>
-</tr>
-<tr>
-<td width="20px"></td><td><code><span class="label">settings</span>:Object</code> (default = <code>null</code>)<code></code> &mdash; an Object containing your desired XML settings, or null (or omitted) to
-     use the default settings.
-     </td>
-</tr>
-</table>
-<p></p>
-<span class="label">Returns</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20"></td><td><code>String</code></td>
-</tr>
-</table>
-<p>
-<span class="label">See also</span>
-</p>
-<div class="seeAlso">XML.toXMLString()<br>XML.setSettings()</div>
 </div>
 <br>
 <br>

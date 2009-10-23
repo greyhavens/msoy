@@ -94,7 +94,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
  }
  </pre>
   <p>One more note: this class creates a timer and registers the TimerEvent.TIMER listener with
- com.whirled.contrib.EventHandlers.  To make sure that this class stops checking the timer when
+ com.threerings.util.EventHandlers.  To make sure that this class stops checking the timer when
  your game is unloaded, call EventHandlers.freeAllHandlers() when your game receives the
  Event.UNLOAD event.</p>
  <p></p>
@@ -148,7 +148,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#UserCookie()">UserCookie</a>(eventMgr:<a href="EventHandlerManager.html">EventHandlerManager</a> = null)</div>
+<a class="signatureLink" href="#UserCookie()">UserCookie</a>(eventMgr:EventHandlerManager = null)</div>
 <div class="summaryTableDescription">
      This function should not be called directly.</div>
 </td><td class="summaryTableOwnerCol">UserCookie</td>
@@ -172,7 +172,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#getCookie()">getCookie</a>(wgc:GameControl, validCallback:Function, cookieDef:Array, eventMgr:<a href="EventHandlerManager.html">EventHandlerManager</a> = null, enableDebugLogging:Boolean = false, occId:int = -1):void</div>
+<a class="signatureLink" href="#getCookie()">getCookie</a>(wgc:GameControl, validCallback:Function, cookieDef:Array, eventMgr:EventHandlerManager = null, enableDebugLogging:Boolean = false, occId:int = -1):void</div>
 <div class="summaryTableDescription">[static]
      Get a player's user cookie via GameControl.getUserCookie, wrapped in a UserCookie
      object.</div>
@@ -362,12 +362,12 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function UserCookie(eventMgr:<a href="EventHandlerManager.html">EventHandlerManager</a> = null)</code><p>
+<code>public function UserCookie(eventMgr:EventHandlerManager = null)</code><p>
      This function should not be called directly.  Instead, call UserCookie.getCookie().
      </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20px"></td><td><code><span class="label">eventMgr</span>:<a href="EventHandlerManager.html">EventHandlerManager</a></code> (default = <code>null</code>)<code></code></td>
+<td width="20px"></td><td><code><span class="label">eventMgr</span>:EventHandlerManager</code> (default = <code>null</code>)<code></code></td>
 </tr>
 </table>
 </div>
@@ -492,7 +492,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public static function getCookie(wgc:GameControl, validCallback:Function, cookieDef:Array, eventMgr:<a href="EventHandlerManager.html">EventHandlerManager</a> = null, enableDebugLogging:Boolean = false, occId:int = -1):void</code><p>
+<code>public static function getCookie(wgc:GameControl, validCallback:Function, cookieDef:Array, eventMgr:EventHandlerManager = null, enableDebugLogging:Boolean = false, occId:int = -1):void</code><p>
      Get a player's user cookie via GameControl.getUserCookie, wrapped in a UserCookie
      object.
           </p><span class="label">Parameters</span>
@@ -521,7 +521,7 @@ showHideInherited();
 <td class="paramSpacer">&nbsp;</td>
 </tr>
 <tr>
-<td width="20px"></td><td><code><span class="label">eventMgr</span>:<a href="EventHandlerManager.html">EventHandlerManager</a></code> (default = <code>null</code>)<code></code> &mdash; If an EventHandlerManager is provided, it will be used to register all event
+<td width="20px"></td><td><code><span class="label">eventMgr</span>:EventHandlerManager</code> (default = <code>null</code>)<code></code> &mdash; If an EventHandlerManager is provided, it will be used to register all event
                        listeners.  If not provided, EventHandlers will be used instead.
      </td>
 </tr>

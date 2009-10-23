@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../../print.css" type="text/css" media="print">
-<meta content="DictionaryMap,com.threerings.util.maps.DictionaryMap,clear,forEach,keys,put,remove,values,get" name="keywords">
+<meta content="DictionaryMap,com.threerings.util.maps.DictionaryMap,clear,containsKey,forEach,keys,put,remove,values,get" name="keywords">
 <title>com.threerings.util.maps.DictionaryMap</title>
 </head>
 <body>
@@ -40,6 +40,9 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr>
 <td class="classHeaderTableLabel">Inheritance</td><td class="inheritanceList">DictionaryMap <img class="inheritArrow" alt="Inheritance" title="Inheritance" src="../../../../images/inherit-arrow.gif"> com.threerings.util.maps.AbstractMap</td>
 </tr>
+<tr>
+<td class="classHeaderTableLabel">Implements</td><td><a href="../Map.html">Map</a></td>
+</tr>
 </table>
 <p></p>
  An implemention of Map that uses a Dictionary internally for storage. Any Object (and null)
@@ -59,15 +62,23 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
 <a class="signatureLink" href="#clear()">clear</a>():void</div>
-<div class="summaryTableDescription">  
+<div class="summaryTableDescription"> 
      Clear this map, removing all stored elements.</div>
 </td><td class="summaryTableOwnerCol">DictionaryMap</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
+<a class="signatureLink" href="#containsKey()">containsKey</a>(key:Object):Boolean</div>
+<div class="summaryTableDescription"> 
+     Returns true if the specified key exists in the map.</div>
+</td><td class="summaryTableOwnerCol">DictionaryMap</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
 <a class="signatureLink" href="#forEach()">forEach</a>(fn:Function):void</div>
-<div class="summaryTableDescription">  
+<div class="summaryTableDescription"> 
      Call the specified function to iterate over the mappings in this Map.</div>
 </td><td class="summaryTableOwnerCol">DictionaryMap</td>
 </tr>
@@ -75,14 +86,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
 <a class="signatureLink" href="#get()">get</a>(key:Object):*</div>
-<div class="summaryTableDescription">  </div>
+<div class="summaryTableDescription"> </div>
 </td><td class="summaryTableOwnerCol">DictionaryMap</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
 <a class="signatureLink" href="#keys()">keys</a>():Array</div>
-<div class="summaryTableDescription">  
+<div class="summaryTableDescription"> 
      Return all the unique keys in this Map, in Array form.</div>
 </td><td class="summaryTableOwnerCol">DictionaryMap</td>
 </tr>
@@ -90,7 +101,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
 <a class="signatureLink" href="#put()">put</a>(key:Object, value:Object):*</div>
-<div class="summaryTableDescription">  
+<div class="summaryTableDescription"> 
      Store a value in the map associated with the specified key.</div>
 </td><td class="summaryTableOwnerCol">DictionaryMap</td>
 </tr>
@@ -98,7 +109,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
 <a class="signatureLink" href="#remove()">remove</a>(key:Object):*</div>
-<div class="summaryTableDescription">  
+<div class="summaryTableDescription"> 
      Removes the mapping for the specified key.</div>
 </td><td class="summaryTableOwnerCol">DictionaryMap</td>
 </tr>
@@ -106,7 +117,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
 <a class="signatureLink" href="#values()">values</a>():Array</div>
-<div class="summaryTableDescription">  
+<div class="summaryTableDescription"> 
      Return all the values in this Map, in Array form.</div>
 </td><td class="summaryTableOwnerCol">DictionaryMap</td>
 </tr>
@@ -126,9 +137,32 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public override function clear():void</code><p>  
+<code>public function clear():void</code><p> 
      Clear this map, removing all stored elements.
      </p></div>
+<a name="containsKey()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">containsKey</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function containsKey(key:Object):Boolean</code><p> 
+     Returns true if the specified key exists in the map.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">key</span>:Object</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Boolean</code></td>
+</tr>
+</table>
+</div>
 <a name="forEach()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -136,7 +170,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public override function forEach(fn:Function):void</code><p>  
+<code>public function forEach(fn:Function):void</code><p> 
      Call the specified function to iterate over the mappings in this Map.
      Signature:
      function (key :Object, value :Object) :void
@@ -158,7 +192,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public override function get(key:Object):*</code><p>  </p><span class="label">Parameters</span>
+<code>public function get(key:Object):*</code><p> </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">key</span>:Object</code></td>
@@ -179,7 +213,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public override function keys():Array</code><p>  
+<code>public function keys():Array</code><p> 
      Return all the unique keys in this Map, in Array form.
      The Array is not a 'view': it can be modified without disturbing
      the Map from whence it came.
@@ -198,7 +232,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public override function put(key:Object, value:Object):*</code><p>  
+<code>public function put(key:Object, value:Object):*</code><p> 
      Store a value in the map associated with the specified key.
      Returns the previous value stored for that key, or undefined.
      </p><span class="label">Parameters</span>
@@ -228,7 +262,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public override function remove(key:Object):*</code><p>  
+<code>public function remove(key:Object):*</code><p> 
      Removes the mapping for the specified key.
      Returns the value that had been stored, or undefined.
      </p><span class="label">Parameters</span>
@@ -252,7 +286,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public override function values():Array</code><p>  
+<code>public function values():Array</code><p> 
      Return all the values in this Map, in Array form.
      The Array is not a 'view': it can be modified without disturbing
      the Map from whence it came.
