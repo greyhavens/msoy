@@ -320,9 +320,9 @@ class Shine extends Canvas
             var maxAlpha :Number = getStyle("maxAlpha") as Number;
             var hperiod :Number = (getStyle("period") as Number) / 2;
             Tweener.addTween(this, { alpha: maxAlpha, time: hperiod, delay: 0,
-                                                transition: "easeinsine" });
+                                                transition: "easeinoutsine" });
             Tweener.addTween(this, { alpha: 0, time: hperiod, delay: hperiod,
-                                                transition: "easeinsine", onComplete: stopGo });
+                                                transition: "easeinoutsine", onComplete: stopGo });
         }
     }
 
