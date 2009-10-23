@@ -3,10 +3,23 @@
 
 package com.threerings.msoy.ui {
 
+import flash.events.Event;
+
 import mx.controls.ColorPicker;
+import mx.controls.RadioButton;
+import mx.controls.RadioButtonGroup;
+
+import mx.containers.Grid;
+
 import mx.events.ColorPickerEvent;
 
+import mx.binding.utils.BindingUtils;
+
+import com.threerings.flex.GridUtil;
+
+import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;
+import com.threerings.msoy.client.Prefs;
 
 /**
  * A chincy color picker panel. Ideally this would just pop up off of the menu where it is invoked
@@ -15,49 +28,50 @@ import com.threerings.msoy.client.MsoyContext;
 public class ColorPickerPanel extends FloatingPanel
 {
     /**
-     * Creates a new color picker panel with the given context, title and starting selection.
-     * When the user presses the "select" button, the given function will be called with the
-     * selected color.
-     * <listing version="3.0">
-     * function onSelect (color :uint) :void {}
-     * </listing>
      */
-    public function ColorPickerPanel (
-        ctx :MsoyContext, title :String, selectedColor :uint, onSelect :Function)
+    public function ColorPickerPanel (ctx :MsoyContext)
     {
-        super(ctx, title);
+        super(ctx, Msgs.GENERAL.get("t.frame_color"));
+        showCloseButton = true;
         styleName = "colorPickerPanel";
-        _selected = selectedColor;
-        _onSelect = onSelect;
     }
 
     override protected function createChildren () :void
     {
         super.createChildren();
-        _picker = new ColorPicker();
-        _picker.selectedColor = _selected;
-        _picker.addEventListener(ColorPickerEvent.CHANGE, function (evt :ColorPickerEvent) :void {
-            _selected = evt.color;
+
+        var useCustom :Boolean = Prefs.getUseCustomBackgroundColor();
+
+        var picker :ColorPicker = new ColorPicker();
+        picker.selectedColor = Prefs.getCustomBackgroundColor();
+        picker.enabled = useCustom;
+
+        var frameGroup :RadioButtonGroup = new RadioButtonGroup();
+        frameGroup.selectedValue = useCustom;
+
+        var defaultBtn :RadioButton = new RadioButton();
+        defaultBtn.value = false;
+        defaultBtn.label = Msgs.GENERAL.get("b.frame_color_default");
+        defaultBtn.group = frameGroup;
+
+        var customBtn :RadioButton = new RadioButton();
+        customBtn.value = true;
+        customBtn.label = Msgs.GENERAL.get("b.frame_color_custom");
+        customBtn.group = frameGroup;
+
+        var grid :Grid = new Grid();
+        GridUtil.addRow(grid, defaultBtn);
+        GridUtil.addRow(grid, customBtn, picker);
+        addChild(grid);
+
+        BindingUtils.bindSetter(Prefs.setUseCustomBackgroundColor, frameGroup, "selectedValue");
+        BindingUtils.bindProperty(picker, "enabled", frameGroup, "selectedValue");
+
+        picker.addEventListener(ColorPickerEvent.CHANGE, function (evt :ColorPickerEvent) :void {
+            Prefs.setCustomBackgroundColor(evt.color);
         });
-        addChild(_picker);
-        addButtons(OK_BUTTON, CANCEL_BUTTON);
-    }
 
-    override protected function getButtonLabel(buttonId :int) :String
-    {
-        if (buttonId == OK_BUTTON) {
-            return "Select Color";
-        }
-        return super.getButtonLabel(buttonId);
+        addButtons(OK_BUTTON);
     }
-
-    override protected function okButtonClicked () :void
-    {
-        _onSelect(_selected);
-    }
-
-    protected var _picker :ColorPicker;
-    protected var _selected :uint;
-    protected var _onSelect :Function;
 }
 }

@@ -83,6 +83,7 @@ import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VizMemberName;
 
+import com.threerings.msoy.ui.ColorPickerPanel;
 import com.threerings.msoy.ui.MediaWrapper;
 import com.threerings.msoy.ui.MsoyLoadedAsset;
 import com.threerings.msoy.ui.skins.CommentButton;
@@ -388,6 +389,9 @@ public class WorldController extends MsoyController
         CommandMenu.addSeparator(menuData);
         menuData.push({ label: Msgs.GENERAL.get("b.editScene"), icon: ROOM_EDIT_ICON,
             command: ROOM_EDIT, enabled: roomView.getRoomController().canManageRoom() });
+
+        addFrameColorOption(menuData);
+
         menuData.push({ label: Msgs.GENERAL.get("b.viewItems"),
             callback: roomView.viewRoomItems });
         menuData.push({ label: Msgs.GENERAL.get("b.comment"), icon: CommentButton,
@@ -400,9 +404,6 @@ public class WorldController extends MsoyController
         menuData.push({ label: Msgs.GENERAL.get("b.music"), icon: MUSIC_ICON,
             command: DelayUtil.delayFrame, arg: [ doShowMusic, [ trigger ] ],
             enabled: (_music != null) }); // pop it later so that it avoids the menu itself
-
-        // Frame color submenu
-        addFrameColorOptions(menuData, false);
 
         popControlBarMenu(menuData, trigger);
     }
@@ -871,7 +872,7 @@ public class WorldController extends MsoyController
         var menuData :Array = [];
         if (_wctx.getGameDirector().populateGameMenu(menuData)) {
             if (!_wctx.getGameDirector().isAVRGame()) {
-                addFrameColorOptions(menuData, true);
+                addFrameColorOption(menuData);
             }
             popControlBarMenu(menuData, trigger);
         }
@@ -1690,22 +1691,21 @@ public class WorldController extends MsoyController
         }
     }
 
-    protected function addFrameColorOptions (menuData :Array, game :Boolean) :void
+    protected function addFrameColorOption (menuData :Array) :void
     {
-        function toggleCustomBkg () :void {
-            Prefs.setUseCustomBackgroundColor(!Prefs.getUseCustomBackgroundColor());
-        }
+        menuData.push({ label: Msgs.GENERAL.get("b.frame_color"),
+            command: doShowColorPicker });
+    }
 
-        // TODO: i18n
-        var backgroundItems :Array = [];
-        var defaultOption :String = game ?
-            "l.frame_color_use_game_default" : "l.frame_color_use_room_default";
-        backgroundItems.push({ label: Msgs.GENERAL.get(defaultOption), type: "check",
-            toggled: !Prefs.getUseCustomBackgroundColor(), command: toggleCustomBkg });
-        backgroundItems.push({ label: Msgs.GENERAL.get("l.frame_color_select_custom"),
-            command: _wctx.getTopPanel().getPlaceContainer().selectFrameBackgroundColor });
-        menuData.push({ label: Msgs.GENERAL.get("l.frame_color_submenu"),
-            children: backgroundItems });
+    protected function doShowColorPicker () :void
+    {
+        if (_picker == null) {
+            _picker = new ColorPickerPanel(_wctx);
+            _picker.addCloseCallback(function () :void {
+                _picker = null;
+            });
+            _picker.open();
+        }
     }
 
     /** Giver of life, context. */
@@ -1728,6 +1728,8 @@ public class WorldController extends MsoyController
     protected var _snapPanel :SnapshotPanel;
 
     protected var _tablesPanel :TablesWaitingPanel;
+
+    protected var _picker :ColorPickerPanel;
 
     /** Tracks whether we've done our first-logon movement so that we avoid trying to redo it as we
      * subsequently move between servers (and log off and on in the process). */

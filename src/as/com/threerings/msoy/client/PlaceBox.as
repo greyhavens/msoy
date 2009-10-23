@@ -22,7 +22,6 @@ import com.threerings.crowd.client.PlaceView;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.MsoyPlaceView;
 import com.threerings.msoy.client.DeploymentConfig;
-import com.threerings.msoy.ui.ColorPickerPanel;
 
 /**
  * A component that holds our place views and sets up a mask to ensure that the place view does not
@@ -124,25 +123,6 @@ public class PlaceBox extends LayeredContainer
     public function updateFrameBackgroundColor () :void
     {
         setStyle("backgroundColor", "#" + StringUtil.toHex(getFrameBackgroundColor(), 6));
-    }
-
-    /**
-     * Shows a color picker panel and sets the user's frame color preferences to the result.
-     */
-    public function selectFrameBackgroundColor () :void
-    {
-        if (_picker != null) {
-            return;
-        }
-        _picker = new ColorPickerPanel(_ctx, "Select Background Color", getFrameBackgroundColor(),
-            function (color :uint) :void {
-                Prefs.setCustomBackgroundColor(color);
-                Prefs.setUseCustomBackgroundColor(true);
-            });
-        _picker.addCloseCallback(function () :void {
-            _picker = null;
-        });
-        _picker.open();
     }
 
     public function clearPlaceView (view :PlaceView) :Boolean
@@ -355,8 +335,6 @@ public class PlaceBox extends LayeredContainer
 
     /** The size of the area the last time he had an unminimized layout. */
     protected var _lastFullSize :Point;
-
-    protected var _picker :ColorPickerPanel;
 
     protected static const CLEAN_BOUNDS :Boolean = true;
 }
