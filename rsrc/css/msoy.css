@@ -199,6 +199,8 @@ CheckBox, RadioButton {
   textSelectedColor: black;
 }
 
+/** Note: we could remove this style and revert to the default flex skin, which works fine.
+    But our custom images look really nice. */
 CheckBox {
   upIcon: Embed(source="../media/skins/checkbox/checkbox.png");
   overIcon: Embed(source="../media/skins/checkbox/checkbox_over.png");
