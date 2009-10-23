@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.google.gwt.user.client.rpc.IncompatibleRemoteServiceException;
+import com.google.gwt.user.client.rpc.SerializationException;
 import com.google.gwt.user.server.rpc.RPC;
 import com.google.gwt.user.server.rpc.RPCRequest;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
@@ -189,7 +190,8 @@ public class MsoyServiceServlet extends RemoteServiceServlet
         }
 
         String errmsg;
-        if (e instanceof IncompatibleRemoteServiceException) {
+        if (e instanceof IncompatibleRemoteServiceException ||
+            e instanceof SerializationException) {
             log.info("Rejecting out of date client", "servlet", path);
             errmsg = "This application is out of date, please click the refresh button on " +
                 "your browser.";
@@ -206,7 +208,7 @@ public class MsoyServiceServlet extends RemoteServiceServlet
             rsp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             rsp.getWriter().write(errmsg);
         } catch (IOException ioe) {
-            log.warning("Failed writing faiure response", ioe);
+            log.warning("Failed writing failure response", ioe);
         }
     }
 
