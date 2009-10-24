@@ -31,6 +31,7 @@ import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.client.MsoyPlaceView;
 import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.client.TopPanel;
+import com.threerings.msoy.client.Zoomable;
 import com.threerings.msoy.data.all.MediaDesc;
 
 import com.threerings.msoy.notify.data.Notification;
@@ -116,6 +117,12 @@ public class ParlorGamePanel extends WhirledGamePanel
     {
         // TODO: return color from game config
         return 0;
+    }
+
+    // from MsoyPlaceView
+    public function asZoomable () :Zoomable
+    {
+        return null;
     }
 
     /**

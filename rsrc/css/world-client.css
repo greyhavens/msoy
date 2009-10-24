@@ -169,7 +169,7 @@ GameOverPanel {
 .controlBarButtonVolume0, .controlBarButtonVolume1, .controlBarButtonVolume2,
 .controlBarButtonVolume3, .controlBarButtonVolume4, .controlBarHomePageGridButton,
 .controlBarPartyButton, .controlBarConfig, .notificationToggle,
-.headerBarBack,
+.headerBarBack, .placeZoomButton,
 .joinNowButton, .logonButton, .tourNext, .trophyFeedTrophy,
 .closeButton {
 
@@ -266,6 +266,10 @@ GameOverPanel {
 
 .notificationToggle {
   image: Embed(source="../media/skins/controlbar/notifications.png");
+}
+
+.placeZoomButton {
+  image: Embed(source="../media/skins/place/zoom.png");
 }
 
 .tourNext {

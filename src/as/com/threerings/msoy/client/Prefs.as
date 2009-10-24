@@ -39,7 +39,6 @@ public class Prefs
     public static const SESSION_TOKEN :String = "sessionTok";
     public static const MACHINE_IDENT :String = "machIdent";
     public static const VOLUME :String = "volume";
-    public static const ZOOM :String = "zoom";
     public static const CHAT_FONT_SIZE :String = "chatFontSize";
     public static const CHAT_DECAY :String = "chatDecay";
     public static const CHAT_FILTER :String = "chatFilter";
@@ -84,6 +83,12 @@ public class Prefs
             if (oldVal != null) {
                 _config.remove("gridAutoshow");
                 setAutoshow("grid", Boolean(oldVal));
+            }
+            // END: TEMP TODO
+
+            // TEMP code: please to remove someday TODO
+            if (_config.getValue("zoom", null) != null) {
+                _config.remove("zoom");
             }
             // END: TEMP TODO
             return true;
@@ -187,16 +192,6 @@ public class Prefs
     {
         _config.setValue(VOLUME, vol);
         useSoundVolume();
-    }
-
-    public static function getZoom () :Number
-    {
-        return (_config.getValue(ZOOM, 1) as Number);
-    }
-
-    public static function setZoom (zoom :Number) :void
-    {
-        _config.setValue(ZOOM, zoom);
     }
 
     /**

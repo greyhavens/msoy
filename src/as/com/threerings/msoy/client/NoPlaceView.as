@@ -7,6 +7,7 @@ import flash.geom.Point;
 
 import com.threerings.crowd.data.PlaceObject;
 
+import com.threerings.msoy.client.Zoomable;
 import com.threerings.msoy.data.all.MediaDesc;
 
 /**
@@ -76,6 +77,12 @@ public class NoPlaceView extends LayeredContainer
     public function getBackgroundColor () :uint
     {
         return 0;
+    }
+
+    // from MsoyPlaceView
+    public function asZoomable () :Zoomable
+    {
+        return null;
     }
 }
 }

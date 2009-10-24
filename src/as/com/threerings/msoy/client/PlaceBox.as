@@ -12,6 +12,9 @@ import flash.geom.Rectangle;
 
 import mx.core.UIComponent;
 
+import com.threerings.flex.CommandButton
+
+import com.threerings.util.ArrayUtil;
 import com.threerings.util.ConfigValueSetEvent;
 import com.threerings.util.Log;
 import com.threerings.util.StringUtil;
@@ -32,9 +35,6 @@ public class PlaceBox extends LayeredContainer
     /** The layer priority of help text bubbles. */
     public static const LAYER_HELP_BUBBLES :int = 5;
 
-    /** The layer priority of tutorial panel. */
-    public static const LAYER_TUTORIAL :int = 7;
-
     /** The layer priority of the loading spinner. */
     public static const LAYER_ROOM_SPINNER :int = 10;
 
@@ -52,6 +52,12 @@ public class PlaceBox extends LayeredContainer
 
     /** The layer priority of history chat messages. */
     public static const LAYER_CHAT_HISTORY :int = 35;
+
+    /** The layer priority of tutorial panel. */
+    public static const LAYER_TUTORIAL :int = 40;
+
+    /** The layer priority of place buttons. */
+    public static const LAYER_PLACE_CONTROL :int = 45;
 
     /** The layer priority of the trophy award, avatar intro, and chat tip. */
     public static const LAYER_TRANSIENT :int = 50;
@@ -195,6 +201,7 @@ public class PlaceBox extends LayeredContainer
     {
         var w :Number = this.width;
         var h :Number = this.height;
+        var bounds :Rectangle = new Rectangle(0, 0, w, h);
 
         if (!_ctx.getMsoyClient().isMinimized()) {
             _lastFullSize = new Point(w, h);
@@ -228,7 +235,7 @@ public class PlaceBox extends LayeredContainer
 
         // now inform the place view of its new size
         if (_msoyPlaceView != null) {
-            // center the view and add margins if a clip size is given
+            // center the view and add margins if view is centered
             var size :Point = null;
             var center :Boolean = _msoyPlaceView.isCentered();
             if (center) {
@@ -267,6 +274,10 @@ public class PlaceBox extends LayeredContainer
                 size.x = Math.min(size.x, w - wmargin * 2);
                 size.y = Math.min(size.y, h - hmargin * 2);
                 setMasked(_base, view.x, view.y, size.x, size.y);
+                bounds.left = view.x;
+                bounds.top = view.y;
+                bounds.size = size;
+
             } else {
                 _msoyPlaceView.setPlaceSize(w, h);
                 setMasked(_base, 0, 0, w, h);
@@ -280,8 +291,42 @@ public class PlaceBox extends LayeredContainer
             Log.getLog(this).warning("PlaceView is not a PlaceLayer or an UIComponent.");
         }
 
+        updateZoom(bounds);
         // TODO: bubble chat can currently overflow a restricted placeview size.
         // Fixing it was turning rabbit-holey, so I'm punting.
+    }
+
+    /**
+     * Create and position the zoom button in the top right of the given bounds.
+     */
+    protected function updateZoom (bounds: Rectangle) :void
+    {
+        if (_zoomBtn != null) {
+            removeOverlay(_zoomBtn);
+            _zoomBtn = null;
+        }
+
+        var zoomable :Zoomable = _msoyPlaceView != null ? _msoyPlaceView.asZoomable() : null;
+        if (zoomable == null) {
+            return;
+        }
+
+        var zooms :Array = zoomable.defineZooms();
+        var idx :int = ArrayUtil.indexOf(zooms, zoomable.getZoom());
+        idx = (idx + 1) % zooms.length;
+
+        _zoomBtn = new CommandButton();
+        _zoomBtn.styleName = "placeZoomButton";
+        _zoomBtn.toolTip = zoomable.translateZoom();
+        addOverlay(_zoomBtn, LAYER_PLACE_CONTROL);
+        _zoomBtn.x = bounds.right - 12;
+        _zoomBtn.y = bounds.top + 1;
+
+        _zoomBtn.setCallback(function () :void {
+            zoomable.setZoom(zooms[idx]);
+            log.info("Zoom", "value", zooms[idx]);
+            layoutPlaceView();
+        });
     }
 
     protected function setMasked (
@@ -335,6 +380,9 @@ public class PlaceBox extends LayeredContainer
 
     /** The size of the area the last time he had an unminimized layout. */
     protected var _lastFullSize :Point;
+
+    /** The button for changing the zoom, if supported by the place. */
+    protected var _zoomBtn :CommandButton;
 
     protected static const CLEAN_BOUNDS :Boolean = true;
 }

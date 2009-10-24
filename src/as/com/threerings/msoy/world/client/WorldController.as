@@ -398,9 +398,6 @@ public class WorldController extends MsoyController
             command: MsoyController.VIEW_COMMENT_PAGE });
         menuData.push({ label: Msgs.GENERAL.get("b.snapshot"), icon: SNAPSHOT_ICON,
             command: doSnapshot });
-        menuData.push({ label: Msgs.GENERAL.get("b.zoom"), icon: ZOOM_ICON,
-            command: Prefs.setZoom, arg: 1 - Math.round(Prefs.getZoom()),
-            enabled: roomView.canScale() });
         menuData.push({ label: Msgs.GENERAL.get("b.music"), icon: MUSIC_ICON,
             command: DelayUtil.delayFrame, arg: [ doShowMusic, [ trigger ] ],
             enabled: (_music != null) }); // pop it later so that it avoids the menu itself
@@ -1757,9 +1754,6 @@ public class WorldController extends MsoyController
 
     [Embed(source="../../../../../../../rsrc/media/skins/controlbar/music.png")]
     protected static const MUSIC_ICON :Class;
-
-    [Embed(source="../../../../../../../rsrc/media/skins/controlbar/zoom.png")]
-    public static const ZOOM_ICON :Class;
 
     [Embed(source="../../../../../../../rsrc/media/skins/controlbar/snapshot.png")]
     protected static const SNAPSHOT_ICON :Class;

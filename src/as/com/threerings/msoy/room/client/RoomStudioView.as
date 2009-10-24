@@ -112,28 +112,22 @@ public class RoomStudioView extends RoomView
         return _avatar;
     }
 
-    // from RoomView
-    override public function getZoom () :Number
-    {
-        return _zoom;
-    }
-
-    // from RoomView
-    override public function isCentered () :Boolean
-    {
-        return false;
-    }
-
-    // from RoomView
+    // from MsoyPlaceView via RoomView
     override public function getSize () :Point
     {
         return null;
     }
 
-    public function setZoom (newZoom :Number) :void
+    // from MsoyPlaceView via RoomView
+    override public function getBackgroundColor () :uint
     {
-        _zoom = newZoom;
-        relayout();
+        return 0xffffff;
+    }
+
+    // from Zoomable via RoomView
+    override public function defineZooms () :Array /* of String */
+    {
+        return [ FULL_HEIGHT, FIT_WIDTH ];
     }
 
     public function doEntityMove (ident :ItemIdent, newLoc :MsoyLocation) :void
@@ -520,8 +514,6 @@ public class RoomStudioView extends RoomView
     protected var _sctx :StudioContext;
 
     protected var _sctrl :RoomStudioController;
-
-    protected var _zoom :Number = 1;
 
     protected var _testingSprite :MsoySprite;
     protected var _avatar :MemberSprite;

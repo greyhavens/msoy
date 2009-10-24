@@ -40,6 +40,7 @@ import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.client.Snapshottable;
 import com.threerings.msoy.client.SnapshotUtil;
 import com.threerings.msoy.client.UberClient;
+import com.threerings.msoy.client.Zoomable;
 
 import com.threerings.msoy.data.all.MediaDesc;
 
@@ -59,7 +60,7 @@ import com.threerings.msoy.room.data.RoomObject;
  * The base room view. Should not contain any RoomObject or other network-specific crap.
  */
 public class RoomView extends Sprite
-    implements MsoyPlaceView, ContextMenuProvider, Snapshottable
+    implements MsoyPlaceView, ContextMenuProvider, Snapshottable, Zoomable
 {
     /** Logging facilities. */
     protected static const log :Log = Log.getLog(RoomView);
@@ -73,7 +74,7 @@ public class RoomView extends Sprite
         _ctrl = ctrl;
         _layout = RoomLayoutFactory.createLayout(null, this);
 
-        // listen for preferences changes, update zoom
+        // listen for preferences changes (for April fool's day setting)
         Prefs.events.addEventListener(ConfigValueSetEvent.CONFIG_VALUE_SET,
             handlePrefsUpdated, false, 0, true);
     }
@@ -84,14 +85,6 @@ public class RoomView extends Sprite
     public function getRoomController () :RoomController
     {
         return _ctrl;
-    }
-
-    /**
-     * Can we zoom in and out?
-     */
-    public function canScale () :Boolean
-    {
-        return _canScale;
     }
 
     /**
@@ -158,11 +151,45 @@ public class RoomView extends Sprite
         return 0;
     }
 
+    // from MsoyPlaceView
+    public function asZoomable () :Zoomable
+    {
+        return this;
+    }
+
     // from Snapshottable
     public function snapshot (
         bitmapData :BitmapData, matrix :Matrix, childPredicate :Function = null) :Boolean
     {
         return SnapshotUtil.snapshot(this, bitmapData, matrix, childPredicate);
+    }
+
+    // from Zoomable
+    public function defineZooms () :Array /* of String */
+    {
+        return [ LETTERBOX, FULL_HEIGHT, FIT_WIDTH ];
+    }
+
+    // from Zoomable
+    public function getZoom () :String
+    {
+        if (_zoom == null) {
+            _zoom = defineZooms()[0];
+        }
+        return _zoom;
+    }
+
+    // from Zoomable
+    public function setZoom (zoom :String) :void
+    {
+        _zoom = zoom;
+    }
+
+    // from Zoomable
+    public function translateZoom () :String
+    {
+        // TODO: i18n
+        return _zoom;
     }
 
     /**
@@ -246,14 +273,6 @@ public class RoomView extends Sprite
     {
         // see subclasses
         return null;
-    }
-
-    /**
-     * Get the zoom level of the room.
-     */
-    public function getZoom () :Number
-    {
-        return Prefs.getZoom();
     }
 
     /**
@@ -729,7 +748,6 @@ public class RoomView extends Sprite
     protected function handlePrefsUpdated (event :ConfigValueSetEvent) :void
     {
         switch (event.name) {
-        case Prefs.ZOOM:
         case Prefs.APRIL_FOOLS:
             relayout();
             break;
@@ -741,8 +759,21 @@ public class RoomView extends Sprite
      */
     protected function relayout () :void
     {
-        const preferredHeight :Number = 500;
-        var scale :Number = Math.min(preferredHeight, _actualHeight) / _layout.metrics.sceneHeight;
+        const letterboxHeight :int = 500;
+        var scale :Number;
+        switch (getZoom()) {
+        case LETTERBOX:
+            scale = Math.min(letterboxHeight, _actualHeight) / _layout.metrics.sceneHeight;
+            break;
+        case FULL_HEIGHT:
+            scale = _actualHeight / _layout.metrics.sceneHeight;
+            break;
+        case FIT_WIDTH:
+            scale = Math.min(_actualHeight / _layout.metrics.sceneHeight,
+                             _actualWidth / _layout.metrics.sceneWidth);
+            break;
+        }
+
         scaleY = scale;
         if (UberClient.isRegularClient() && Prefs.isAprilFoolsEnabled()) {
             scaleY *= -1;
@@ -1077,9 +1108,6 @@ public class RoomView extends Sprite
     /** Are we actually showing? */
     protected var _showing :Boolean = true;
 
-    /** Can we zoom in and out? */
-    protected var _canScale :Boolean = false;
-
     /** The model of the current scene. */
     protected var _scene :MsoyScene;
 
@@ -1116,8 +1144,19 @@ public class RoomView extends Sprite
     /** A popup showing item info. */
     protected var _spriteInfoPanel :SpriteInfoPanel;
 
+    protected var _zoom :String;
+
     /** The maximum number of pixels to autoscroll per frame. */
     protected static const MAX_AUTO_SCROLL :int = 15;
+
+    /** Fixed height of 500 (if available). */
+    protected static const LETTERBOX :String = "letter_box";
+
+    /** Scale up or down to consume all height available. */
+    protected static const FULL_HEIGHT :String = "full_height";
+
+    /** Fit the width of the room in the width of the view. */
+    protected static const FIT_WIDTH :String = "fit_width";
 }
 }
 

@@ -50,5 +50,10 @@ public interface MsoyPlaceView extends PlaceView, PlaceLayer
      * Gets the color being used behind the place view.
      */
     function getBackgroundColor () :uint;
+
+    /**
+     * Gets the zoomable interface for this view, or null if not supported.
+     */
+    function asZoomable () :Zoomable;
 }
 }
