@@ -7,12 +7,17 @@ import flash.display.DisplayObject;
 import flash.display.InteractiveObject;
 import flash.display.Shape;
 import flash.events.Event;
+import flash.filters.GlowFilter;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 
+import mx.controls.Label;
 import mx.core.UIComponent;
 
-import com.threerings.flex.CommandButton
+import caurina.transitions.Tweener;
+
+import com.threerings.flex.CommandButton;
+import com.threerings.flex.FlexUtil;
 
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.ConfigValueSetEvent;
@@ -306,6 +311,12 @@ public class PlaceBox extends LayeredContainer
             _zoomBtn = null;
         }
 
+        if (_zoomLbl != null) {
+            removeOverlay(_zoomLbl);
+            Tweener.removeTweens(_zoomLbl);
+            _zoomLbl = null;
+        }
+
         var zoomable :Zoomable = _msoyPlaceView != null ? _msoyPlaceView.asZoomable() : null;
         if (zoomable == null) {
             return;
@@ -317,10 +328,25 @@ public class PlaceBox extends LayeredContainer
 
         _zoomBtn = new CommandButton();
         _zoomBtn.styleName = "placeZoomButton";
-        _zoomBtn.toolTip = zoomable.translateZoom();
-        addOverlay(_zoomBtn, LAYER_PLACE_CONTROL);
+        _zoomBtn.toolTip = Msgs.GENERAL.get("l.change_zoom");
         _zoomBtn.x = bounds.right - 12;
         _zoomBtn.y = bounds.top + 1;
+        addOverlay(_zoomBtn, LAYER_PLACE_CONTROL);
+
+        _zoomLbl = FlexUtil.createLabel(zoomable.translateZoom(), "placeZoomLabel");
+        _zoomLbl.filters = [new GlowFilter(0xffffff, 1, 8, 8, 4)];
+        // TODO: WTF? why do I have to specify the width and height? Grrr
+        _zoomLbl.width = 150;
+        _zoomLbl.height = 20;
+        _zoomLbl.x = bounds.right - 170;
+        _zoomLbl.y = bounds.top - 1;
+        addOverlay(_zoomLbl, LAYER_PLACE_CONTROL);
+
+        Tweener.addTween(_zoomLbl, {alpha: 0, time: _zoomLbl.getStyle("fade") as Number,
+            delay: _zoomLbl.getStyle("delay") as Number, onComplete: function () :void {
+            removeOverlay(_zoomLbl);
+            _zoomLbl = null;
+        }} );
 
         _zoomBtn.setCallback(function () :void {
             zoomable.setZoom(zooms[idx]);
@@ -383,6 +409,9 @@ public class PlaceBox extends LayeredContainer
 
     /** The button for changing the zoom, if supported by the place. */
     protected var _zoomBtn :CommandButton;
+
+    /** The label of the current zoom, shown when the zoom changes, then quickly faded. */
+    protected var _zoomLbl :Label;
 
     protected static const CLEAN_BOUNDS :Boolean = true;
 }

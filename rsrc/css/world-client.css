@@ -379,6 +379,15 @@ ChatInput {
   icon: Embed(source="../media/skins/button/roomeditor/rollout_minus.png");
 }
 
+.placeZoomLabel {
+  fontSize: 10;
+  fontWeight: bold;
+  color: black;
+  textAlign: right;
+  delay: 3;
+  fade: 1;
+}
+
 .roomToolTip {
   /** Sheeit I still can't force these tips to look good with a bigger font, even
     though I can hack it for gameInfoTip. Another time.
