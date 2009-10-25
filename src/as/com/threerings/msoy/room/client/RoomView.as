@@ -188,7 +188,11 @@ public class RoomView extends Sprite
     // from Zoomable
     public function translateZoom () :String
     {
-        // TODO: i18n
+        switch (getZoom()) {
+        case LETTERBOX: return Msgs.WORLD.get("l.zoom_letterbox");
+        case FULL_HEIGHT: return Msgs.WORLD.get("l.full_height");
+        case FIT_WIDTH: return Msgs.WORLD.get("l.fit_width");
+        }
         return _zoom;
     }
 
