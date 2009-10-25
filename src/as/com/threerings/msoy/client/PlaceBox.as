@@ -333,26 +333,30 @@ public class PlaceBox extends LayeredContainer
         _zoomBtn.y = bounds.top + 1;
         addOverlay(_zoomBtn, LAYER_PLACE_CONTROL);
 
-        _zoomLbl = FlexUtil.createLabel(zoomable.translateZoom(), "placeZoomLabel");
-        _zoomLbl.filters = [new GlowFilter(0xffffff, 1, 8, 8, 4)];
-        // TODO: WTF? why do I have to specify the width and height? Grrr
-        _zoomLbl.width = 150;
-        _zoomLbl.height = 20;
-        _zoomLbl.x = bounds.right - 170;
-        _zoomLbl.y = bounds.top - 1;
-        addOverlay(_zoomLbl, LAYER_PLACE_CONTROL);
-
-        Tweener.addTween(_zoomLbl, {alpha: 0, time: _zoomLbl.getStyle("fade") as Number,
-            delay: _zoomLbl.getStyle("delay") as Number, onComplete: function () :void {
-            removeOverlay(_zoomLbl);
-            _zoomLbl = null;
-        }} );
-
         _zoomBtn.setCallback(function () :void {
             zoomable.setZoom(zooms[idx]);
             log.info("Zoom", "value", zooms[idx]);
+            _zoomChanged = true;
             layoutPlaceView();
         });
+
+        if (_zoomChanged) {
+            _zoomChanged = false;
+            _zoomLbl = FlexUtil.createLabel(zoomable.translateZoom(), "placeZoomLabel");
+            _zoomLbl.filters = [new GlowFilter(0xffffff, 1, 8, 8, 4)];
+            // TODO: WTF? why do I have to specify the width and height? Grrr
+            _zoomLbl.width = 150;
+            _zoomLbl.height = 20;
+            _zoomLbl.x = bounds.right - 170;
+            _zoomLbl.y = bounds.top - 1;
+            addOverlay(_zoomLbl, LAYER_PLACE_CONTROL);
+
+            Tweener.addTween(_zoomLbl, {alpha: 0, time: _zoomLbl.getStyle("fade") as Number,
+                delay: _zoomLbl.getStyle("delay") as Number, onComplete: function () :void {
+                removeOverlay(_zoomLbl);
+                _zoomLbl = null;
+            }} );
+        }
     }
 
     protected function setMasked (
@@ -412,6 +416,9 @@ public class PlaceBox extends LayeredContainer
 
     /** The label of the current zoom, shown when the zoom changes, then quickly faded. */
     protected var _zoomLbl :Label;
+
+    /** Whether the zoom has changed (means we should flash the text. */
+    protected var _zoomChanged :Boolean;
 
     protected static const CLEAN_BOUNDS :Boolean = true;
 }
