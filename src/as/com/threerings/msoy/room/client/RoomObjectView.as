@@ -54,6 +54,7 @@ import com.threerings.msoy.client.MsoyClient;
 import com.threerings.msoy.client.PlaceLoadingDisplay;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;
+import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.client.UberClient;
 
 import com.threerings.msoy.data.MsoyCodes;
@@ -125,6 +126,22 @@ public class RoomObjectView extends RoomView
             return _scene.getBackgroundColor();
         }
         return 0x000000;
+    }
+
+    // from Zoomable, via RoomView
+    override public function getZoom () :String
+    {
+        if (_zoom == null) {
+            _zoom = Prefs.getRoomZoom();
+        }
+        return super.getZoom();
+    }
+
+    // from Zoomable, via RoomView
+    override public function setZoom (zoom :String) :void
+    {
+        Prefs.setRoomZoom(zoom);
+        super.setZoom(zoom);
     }
 
     /**

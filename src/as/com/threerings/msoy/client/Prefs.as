@@ -52,6 +52,7 @@ public class Prefs
     public static const USE_CUSTOM_BACKGROUND_COLOR :String = "useCustomBgColor";
     public static const CUSTOM_BACKGROUND_COLOR :String = "customBgColor";
     public static const AUTOSHOW_PREFIX :String = "autoShow_";
+    public static const ROOM_ZOOM :String = "roomZoom";
 
     public static const APRIL_FOOLS :String = "aprilFools";
 
@@ -192,6 +193,22 @@ public class Prefs
     {
         _config.setValue(VOLUME, vol);
         useSoundVolume();
+    }
+
+    /**
+     * Returns the last set value for the room zoom or null if not set.
+     */
+    public static function getRoomZoom () :String
+    {
+        return _config.getValue(ROOM_ZOOM, null) as String;
+    }
+
+    /**
+     * Sets the room zoom default.
+     */
+    public static function setRoomZoom (value :String) :void
+    {
+        _config.setValue(ROOM_ZOOM, value);
     }
 
     /**
