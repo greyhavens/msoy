@@ -113,12 +113,6 @@ public class RoomStudioView extends RoomView
     }
 
     // from MsoyPlaceView via RoomView
-    override public function getSize () :Point
-    {
-        return null;
-    }
-
-    // from MsoyPlaceView via RoomView
     override public function getBackgroundColor () :uint
     {
         return 0xffffff;
