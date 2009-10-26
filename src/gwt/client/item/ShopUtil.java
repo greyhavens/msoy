@@ -3,8 +3,6 @@
 
 package client.item;
 
-import client.shell.CShell;
-
 import com.threerings.msoy.item.gwt.CatalogQuery;
 import com.threerings.msoy.web.gwt.Args;
 
@@ -87,19 +85,15 @@ public class ShopUtil
         // to whatever else may be going on in the query --the page, if any, will be fourth
         int page;
         String third = args.get(3, "");
-        CShell.log("Third argument", "arg", third);
         if (third.length() > 0 && third.startsWith("t")) {
             try {
                 query.themeGroupId = Integer.parseInt(third.substring(1));
-                CShell.log("Extracted theme", "groupId", query.themeGroupId);
             } catch (Exception e) {
                 // oh well
             }
             page = args.get(4, 0);
-            CShell.log("Got page from 4th arg", "page", page);
         } else {
             page = args.get(3, 0);
-            CShell.log("Got page from 3rd arg", "page", page);
         }
         return page;
     }

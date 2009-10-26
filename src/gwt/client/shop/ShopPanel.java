@@ -20,6 +20,7 @@ import com.threerings.msoy.item.gwt.ListingCard;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
+import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MediaDesc;
 
 import client.shell.DynamicLookup;
@@ -36,9 +37,11 @@ import client.item.SideBar;
  */
 public class ShopPanel extends FlowPanel
 {
-    public ShopPanel (int themeId)
+    public ShopPanel (final GroupName theme)
     {
         setStyleName("shopPanel");
+
+        int themeId = (theme != null) ? theme.getGroupId() : 0;
 
         // prepare the search box
         HorizontalPanel search = new HorizontalPanel();
@@ -65,7 +68,8 @@ public class ShopPanel extends FlowPanel
         search.add(MsoyUI.createImageButton("GoButton", searchBox.makeSearchListener()));
 
         // display static header and search across the top
-        add(MsoyUI.createLabel(_msgs.shopMarquee(), "ShopTitle"));
+        String title = (theme != null) ? _msgs.themeShopMarquee() : _msgs.shopMarquee();
+        add(MsoyUI.createLabel(title, "ShopTitle"));
         add(search);
 
         // display categories on the left, content on the right
@@ -86,18 +90,24 @@ public class ShopPanel extends FlowPanel
 
         ListingGrid grid = new ListingGrid(HEADER_HEIGHT) {
             @Override protected String getEmptyMessage () {
+                if (theme != null) {
+                    return _msgs.themeShopNoItems();
+                }
                 return _msgs.shopNoFavorites();
             }
             @Override protected void addCustomControls (FlexTable controls) {
-                controls.setWidget(
-                    0, 0, Link.create(_msgs.shopClubPicks(), Pages.BILLING, "subscribe"));
+                if (theme != null) {
+                    controls.setText(0, 0, _msgs.themeShopHeader(theme.toString()));
+                } else {
+                    controls.setWidget(0, 0, Link.create(
+                        _msgs.shopClubPicks(), Pages.BILLING, "subscribe"));
+                }
             }
         };
 
         grid.setModel(new CatalogModels.Jumble(themeId), 0);
         _contents.add(grid);
     }
-
 
     protected static Args makeShopArgs (ListingCard card)
     {

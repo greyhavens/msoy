@@ -8,6 +8,10 @@ import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 
+import com.threerings.msoy.data.all.GroupName;
+import com.threerings.msoy.group.gwt.GroupService;
+import com.threerings.msoy.group.gwt.GroupServiceAsync;
+import com.threerings.msoy.group.gwt.GroupService.GroupInfo;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.gwt.CatalogListing;
@@ -45,6 +49,7 @@ public class ShopPage extends Page
     {
         String action = args.get(0, "");
 
+        Integer themeId = null;
         if (action.equals(LOAD_LISTING)) {
             byte type = getItemType(args, 1, Item.NOT_A_TYPE);
             int catalogId = args.get(2, 0);
@@ -81,10 +86,10 @@ public class ShopPage extends Page
             setContent(remixer);
 
         } else if (action.equals(JUMBLE)) {
-            setContent(_msgs.catalogTitle(), new ShopPanel(args.get(1, 0)));
+            themeId = args.get(1, 0);
 
         } else if (getItemType(args, 0, Item.NOT_A_TYPE) == Item.NOT_A_TYPE) {
-            setContent(_msgs.catalogTitle(), new ShopPanel(args.get(0, 0)));
+            themeId = args.get(0, 0);
 
         } else {
             if (!_catalog.isAttached()) {
@@ -93,6 +98,18 @@ public class ShopPage extends Page
             CatalogQuery query = new CatalogQuery();
             int page = ShopUtil.parseArgs(args, query);
             _catalog.display(query, page);
+        }
+
+        if (themeId != null) {
+            if (themeId != 0) {
+                _groupsvc.getGroupInfo(themeId, new InfoCallback<GroupInfo>() {
+                    public void onSuccess (GroupInfo result) {
+                        loadShopPage(result != null ? result.name : null);
+                    }
+                });
+                return;
+            }
+            loadShopPage(null);
         }
     }
 
@@ -106,6 +123,11 @@ public class ShopPage extends Page
     {
         CShell.frame.addNavLink(
             _dmsgs.xlate("pItemType" + type), Pages.SHOP, Args.compose(type), 1);
+    }
+
+    protected void loadShopPage (GroupName theme)
+    {
+        setContent(null, new ShopPanel(theme));
     }
 
     protected RemixerHost createRemixerHost (
@@ -146,7 +168,6 @@ public class ShopPage extends Page
     {
         byte type = args.get(index, deftype);
         if (Item.getClassForType(type) == null) {
-            CShell.log("Rejecting invalid item type", "type", type, "args", args);
             return deftype;
         }
         return type;
@@ -159,4 +180,5 @@ public class ShopPage extends Page
     protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
     protected static final CatalogServiceAsync _catalogsvc = GWT.create(CatalogService.class);
     protected static final StuffServiceAsync _stuffsvc = GWT.create(StuffService.class);
+    protected static final GroupServiceAsync _groupsvc = GWT.create(GroupService.class);
 }
