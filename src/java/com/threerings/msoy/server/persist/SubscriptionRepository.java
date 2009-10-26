@@ -45,11 +45,11 @@ public class SubscriptionRepository extends DepotRepository
             new SchemaMigration.Retype(2, SubscriptionRecord.LAST_GRANT));
     }
 
-    // TODO: A one-shot migration for production, remove after next release, Zell 9/9/2009
-    public void registerCorpseCraftMigration (DataMigration migration)
-    {
-        registerMigration(migration);
-    }
+//    // TODO: A one-shot migration for production, remove after next release, Zell 9/9/2009
+//    public void registerCorpseCraftMigration (DataMigration migration)
+//    {
+//        registerMigration(migration);
+//    }
 
     /**
      * Note a payment made to a new or existing subscription.
