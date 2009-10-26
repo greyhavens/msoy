@@ -21,11 +21,14 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
-
+import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
 import com.threerings.gwt.ui.EnterClickAdapter;
 import com.threerings.gwt.ui.InlineLabel;
+import com.threerings.gwt.ui.PagedWidget;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
+import com.threerings.gwt.util.SimpleDataModel;
 
 import com.threerings.msoy.data.all.TagCodes;
 
@@ -157,49 +160,87 @@ public class TagDetailPanel extends VerticalPanel
              return;
          }
 
+         final PagedWidget<TagHistory> pager = new PagedWidget<TagHistory>(12) {
+             @Override public void displayPage (final int page, boolean forceRefresh) {
+                 super.displayPage(page, forceRefresh);
+                 if (page == 0) {
+                     _tagHistory.center();
+                 }
+             }
+
+            protected Widget createContents (int start, int count, List<TagHistory> list) {
+                FlexTable contents = new FlexTable();
+                contents.setStyleName("tagHistory");
+                contents.getColumnFormatter().setWidth(0, "150px");
+                contents.getColumnFormatter().setWidth(1, "150px");
+                contents.getColumnFormatter().setWidth(2, "20px");
+                contents.getColumnFormatter().setWidth(3, "150px");
+                contents.setBorderWidth(1);
+                contents.setCellSpacing(0);
+                contents.setCellPadding(5);
+                FlexCellFormatter formatter = contents.getFlexCellFormatter();
+
+                int tRow = 0;
+                for (TagHistory history : list) {
+                    String fullDate = history.time.toString();
+                    // Fri Sep 2006 12:46:12 GMT 2006
+                    String date = fullDate.substring(4, 20) + fullDate.substring(26);
+                    contents.setText(tRow, 0, date);
+                    formatter.setHorizontalAlignment(tRow, 0, HasAlignment.ALIGN_LEFT);
+
+                    String memName = "[" + history.member.getMemberId() + "] " +
+                        history.member.toString();
+                    if (memName.length() > MAX_NAME_LENGTH-3) {
+                        memName = memName.substring(0, MAX_NAME_LENGTH) + "...";
+                    }
+                    contents.setText(tRow, 1, memName);
+                    formatter.setHorizontalAlignment(tRow, 1, HasAlignment.ALIGN_LEFT);
+
+                    String actionString;
+                    switch(history.action) {
+                    case TagHistory.ACTION_ADDED:
+                        actionString = "A";
+                        break;
+                    case TagHistory.ACTION_COPIED:
+                        actionString = "C";
+                        break;
+                    case TagHistory.ACTION_REMOVED:
+                        actionString = "R";
+                        break;
+                    default:
+                        actionString = "?";
+                        break;
+                    }
+                    contents.setText(tRow, 2, actionString);
+                    contents.setText(
+                        tRow, 3, history.tag == null ? "N/A" : "'" + history.tag + "'");
+                    formatter.setHorizontalAlignment(tRow, 3, HasAlignment.ALIGN_LEFT);
+                    tRow ++;
+                }
+                return contents;
+            }
+
+            protected String getEmptyMessage () {
+                return "No known tag history.";
+            }
+         };
+
+         // while it's not, let this pager pretend to be a pagedGrid because our CSS is
+         // so oddly organized
+         pager.setStyleName("pagedGrid");
+
+
+         _tagHistory = new BorderedPopup(true);
+         _tagHistory.setWidget(pager);
+
+         // kick off the request to load the history
          _service.getTagHistory(new InfoCallback<List<TagHistory>>() {
              public void onSuccess (List<TagHistory> result) {
-                 _tagHistory = new BorderedPopup(true);
-
-                 FlexTable contents = new FlexTable();
-                 _tagHistory.setWidget(contents);
-                 contents.setBorderWidth(0);
-                 contents.setCellSpacing(0);
-                 contents.setCellPadding(2);
-
-                 int tRow = 0;
-                 Iterator<TagHistory> iterator = result.iterator();
-                 while (iterator.hasNext()) {
-                     TagHistory history = iterator.next();
-                     String date = history.time.toGMTString();
-                     // Fri Sep 29 2006 12:46:12
-                     date = date.substring(0, 23);
-                     contents.setText(tRow, 0, date);
-                     contents.setText(tRow, 1, history.member.toString());
-                     String actionString;
-                     switch(history.action) {
-                     case TagHistory.ACTION_ADDED:
-                         actionString = "added";
-                         break;
-                     case TagHistory.ACTION_COPIED:
-                         actionString = "copied";
-                         break;
-                     case TagHistory.ACTION_REMOVED:
-                         actionString = "removed";
-                         break;
-                     default:
-                         actionString = "???";
-                         break;
-                     }
-                     contents.setText(tRow, 2, actionString);
-                     contents.setText(
-                         tRow, 3, history.tag == null ? "N/A" : "'" + history.tag + "'");
-                     tRow ++;
-                 }
-                 // now call ourselves back to actually pop into existence
-                 toggleTagHistory();
+                 pager.setModel(new SimpleDataModel<TagHistory>(result), 0);
              }
          });
+
+         // we don't actually show ourselves until we receive the data (bad UI)
     }
 
     protected void refreshTags ()
@@ -387,4 +428,6 @@ public class TagDetailPanel extends VerticalPanel
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
     protected static final ItemServiceAsync _itemsvc = GWT.create(ItemService.class);
+
+    protected static final int MAX_NAME_LENGTH = 22;
 }

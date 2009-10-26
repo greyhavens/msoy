@@ -23,6 +23,7 @@ import com.samskivert.depot.clause.FromOverride;
 import com.samskivert.depot.clause.GroupBy;
 import com.samskivert.depot.clause.Limit;
 import com.samskivert.depot.clause.OrderBy;
+import com.samskivert.depot.clause.QueryClause;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.impl.Modifier;
@@ -145,10 +146,16 @@ public abstract class TagRepository extends DepotRepository
      */
     public List<TagHistoryRecord> getTagHistoryByTarget (int targetId, int offset, int rows)
     {
-        return findAll(getTagHistoryClass(),
-                       new Where(getTagHistoryColumn(TagHistoryRecord.TARGET_ID), targetId),
-                       OrderBy.descending(getTagHistoryColumn(TagHistoryRecord.TIME)),
-                       new Limit(offset, rows));
+        List<QueryClause> clauses = Lists.newArrayList(
+            new Where(getTagHistoryColumn(TagHistoryRecord.TARGET_ID), targetId),
+            OrderBy.descending(getTagHistoryColumn(TagHistoryRecord.TIME)));
+
+        if (rows != 0) {
+            clauses.add(new Limit(offset, rows));
+        }
+
+        return findAll(getTagHistoryClass(), clauses);
+
     }
 
     /**

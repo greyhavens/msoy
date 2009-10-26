@@ -36,6 +36,11 @@
   background: #FFFFFF;
 }
 
+.tagHistory {
+    font-size: 10px;
+    font-family: "Lucida Console", monospace;
+}
+
 .tagCloud {
   background: url(/images/item/top_tags.png) no-repeat top;
   font-size: 12px;

@@ -488,7 +488,7 @@ public class GroupServlet extends MsoyServiceServlet
     public List<TagHistory> getTagHistory (int groupId)
         throws ServiceException
     {
-        return _tagLogic.getTagHistory(groupId, _groupRepo.getTagRepository(), 0, 12);
+        return _tagLogic.getTagHistory(groupId, _groupRepo.getTagRepository(), 0, 0);
     }
 
     // from interface GroupService

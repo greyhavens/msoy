@@ -191,7 +191,7 @@ public class ItemServlet extends MsoyServiceServlet
         throws ServiceException
     {
         TagRepository tagRepo = _itemLogic.getRepository(iident.type).getTagRepository();
-        return _tagLogic.getTagHistory(iident.itemId, tagRepo, 0, 12);
+        return _tagLogic.getTagHistory(iident.itemId, tagRepo, 0, 0);
     }
 
     // from interface ItemService
