@@ -774,7 +774,8 @@ public class RoomView extends Sprite
             break;
         case FIT_WIDTH:
             scale = Math.min(_actualHeight / _layout.metrics.sceneHeight,
-                             _actualWidth / _layout.metrics.sceneWidth);
+                             _actualWidth / _layout.metrics.sceneWidth,
+                             letterboxHeight / _layout.metrics.sceneHeight);
             break;
         }
 
