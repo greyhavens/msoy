@@ -10,6 +10,8 @@ import flash.display.Sprite;
 
 import flash.events.Event;
 
+import flash.filters.GlowFilter;
+
 import flash.text.TextField;
 import flash.text.TextFormat;
 
@@ -45,6 +47,7 @@ public class LoadingSpinner extends Sprite
         _label.width = WIDTH;
         _label.defaultTextFormat = makeTextFormat(16);
         _label.y = HEIGHT;
+        _label.filters = [new GlowFilter(0x000000, 1, 6, 6, 12)];
         addChild(_label);
     }
 
