@@ -11,7 +11,6 @@ import mx.core.UIComponent;
 
 import caurina.transitions.Tweener;
 
-import com.threerings.util.Log;
 import com.threerings.util.Util;
 
 import com.threerings.msoy.client.MsoyContext;
@@ -104,16 +103,18 @@ public class TutorialDirector
             queueTip("test2", "This is test tip #2", null, null, null);
             queueTip("test3", "This is test tip #3", null, null, null);
             queueTip("test4", "This is test tip #4", null, null, null);
+            _ctx.getChatDirector().displayFeedback(null, "Test: added 4 tips.");
         }
 
-        var wait :Number = TIP_DELAY + (Math.random() - .5) * TIP_DELAY * .5;
+        var delay :Number = TIP_DELAY + (Math.random() - .5) * TIP_DELAY * .5;
         var id :int = getTimer();
         setTimeout(function () :void {
             queueSuggestion("This is a test suggestion (id " + id + ")", null, "Sure, OK",
                             function () :void {});
-        }, wait);
+        }, delay);
 
-        Log.getLog(this).info("Queued suggestion for later", "delay", wait, "id", id);
+        _ctx.getChatDirector().displayFeedback(null, "Test: queued suggestion id " + id +
+            " for display in " + int(delay / 1000) + " seconds.");
     }
 
     protected function isShowing () :Boolean
