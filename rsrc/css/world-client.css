@@ -171,7 +171,7 @@ GameOverPanel {
 .controlBarPartyButton, .controlBarConfig, .notificationToggle,
 .headerBarBack, .placeZoomButton,
 .joinNowButton, .logonButton, .tourNext, .trophyFeedTrophy,
-.closeButton {
+.closeButton, .tutorialNextButton, .tutorialCloseButton {
 
   /** clear out the CheckBox foreground icons too */
   icon: ClassReference(null);
@@ -274,6 +274,14 @@ GameOverPanel {
 
 .tourNext {
   image: url("/images/rooms/tour_next.png");
+}
+
+.tutorialCloseButton {
+  image: Embed(source="../media/skins/tutorial/close.png");
+}
+
+.tutorialNextButton {
+  image: Embed(source="../media/skins/tutorial/next.png");
 }
 
 .attentionLabel {
