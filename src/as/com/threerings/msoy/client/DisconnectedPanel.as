@@ -42,7 +42,7 @@ public class DisconnectedPanel extends VBox
         _message.setStyle("fontSize", 12);
         _message.setStyle("fontWeight", "bold");
         _message.styleName = "topLevelLabel";
-        _message.filters = [new GlowFilter(0x000000, 1, 2, 2, 255)];
+        _message.filters = [new GlowFilter(0x000000, 1, 5, 5, 12)];
         addChild(_message);
 
         if (msg == null || !msg.match(/^m.version_mismatch.*/)) {
