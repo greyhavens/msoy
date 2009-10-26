@@ -210,7 +210,7 @@ public abstract class TagRepository extends DepotRepository
     }
 
     /**
-     * Find the tag record for a certain tag id.
+     * Find the tag records for a certain set of tag id's.
      */
     public Map<Integer, TagNameRecord> getTags (Set<Integer> tagIds)
     {
