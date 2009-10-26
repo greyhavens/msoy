@@ -56,6 +56,12 @@ public class Prefs
 
     public static const APRIL_FOOLS :String = "aprilFools";
 
+    /** List of cookies (that the user may see and clear). */
+    public static const ALL_KEYS :Array = [
+        VOLUME, CHAT_FONT_SIZE, CHAT_DECAY, CHAT_FILTER, CHAT_HISTORY, CHAT_SIDEBAR, OCCUPANT_LIST,
+        LOG_TO_CHAT, BLEEPED_MEDIA, PARTY_GROUP, USE_CUSTOM_BACKGROUND_COLOR,
+        CUSTOM_BACKGROUND_COLOR, ROOM_ZOOM];
+
     public static const CHAT_FONT_SIZE_MIN :int = 10;
     public static const CHAT_FONT_SIZE_MAX :int = 24;
 
@@ -352,6 +358,24 @@ public class Prefs
     public static function setAutoshow (dialogName :String, show :Boolean) :void
     {
         _config.setValue(AUTOSHOW_PREFIX + dialogName, show);
+    }
+
+    /**
+     * Gets a cookie value by name.
+     */
+    public static function getByName (name :String) :Object
+    {
+        return _config.getValue(name, null);
+    }
+
+    /**
+     * Removes all cookies with names in the given array.
+     */
+    public static function removeAll (names :Array) :void
+    {
+        for each (var name :String in names) {
+            _config.remove(name);
+        }
     }
 
     protected static function checkLoadBleepedMedia () :void

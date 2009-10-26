@@ -87,6 +87,8 @@ public class MsoyChatDirector extends ChatDirector
                 "find them incredibly useful."));
         }));
 
+        registerCommandHandler(Msgs.CHAT, "wipe", new WipeHandler());
+
         addChatDisplay(_chatHistory = new HistoryList(this));
 
         // create our room occupant list
