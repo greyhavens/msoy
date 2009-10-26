@@ -4,22 +4,38 @@
 package com.threerings.msoy.tutorial.client {
 
 import flash.display.Sprite;
+import flash.events.TimerEvent;
+import flash.utils.Timer;
 
 import mx.core.UIComponent;
 
 import caurina.transitions.Tweener;
 
+import com.threerings.util.Log;
 import com.threerings.util.Util;
 
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.PlaceBox;
 import com.threerings.msoy.client.TopPanel;
 
+import flash.utils.setTimeout; // function import
+import flash.utils.getTimer; // function import
+
+/**
+ * Director for the tutorial popup panel. Manages two kinds of tutorial items: tips and
+ * suggestions. Tips are normally added during intialization and shown at various times when
+ * requested or after some time where no suggestions are happening. Suggestions are context-
+ * dependent and popup immediately if the panel is not showing. Otherwise, the next button flashes
+ * and the suggestion is next in line.
+ */
 public class TutorialDirector
 {
     public function TutorialDirector (ctx :MsoyContext)
     {
         _ctx = ctx;
+        _timer = new Timer(TIP_DELAY, 1);
+        _timer.addEventListener(TimerEvent.TIMER, handleTimer);
+
         _panel = new TutorialPanel(_ctx, onNextTip, onPanelClose);
 
         // set the width and height for all time
@@ -51,8 +67,7 @@ public class TutorialDirector
     public function queueSuggestion (text :String, availableFn :Function, buttonText :String,
                                      buttonFn :Function) :void
     {
-        // TODO: queue etc.
-        popup(new Item(null, text, availableFn, buttonText, buttonFn));
+        queue(new Item(null, text, availableFn, buttonText, buttonFn));
     }
 
     /**
@@ -79,15 +94,38 @@ public class TutorialDirector
     public function queueTip (id :String, text :String, availableFn :Function, buttonText :String,
                               buttonFn :Function) :void
     {
-        // TODO: queue etc.
-        popup(new Item(id, text, availableFn, buttonText, buttonFn));
+        queue(new Item(id, text, availableFn, buttonText, buttonFn));
     }
 
     public function test () :void
     {
-        var test :String = "The quick brown fox jumps over the lazy dog. ";
-        test = "1... 2... 3... testing 1... 2... 3... " + test + test;
-        queueSuggestion(test, null, "Press Here", function () :void {});
+        if (_tips.length == 0) {
+            queueTip("test1", "This is test tip #1", null, null, null);
+            queueTip("test2", "This is test tip #2", null, null, null);
+            queueTip("test3", "This is test tip #3", null, null, null);
+            queueTip("test4", "This is test tip #4", null, null, null);
+        }
+
+        var wait :Number = TIP_DELAY + (Math.random() - .5) * TIP_DELAY * .5;
+        var id :int = getTimer();
+        setTimeout(function () :void {
+            queueSuggestion("This is a test suggestion (id " + id + ")", null, "Sure, OK",
+                            function () :void {});
+        }, wait);
+
+        Log.getLog(this).info("Queued suggestion for later", "delay", wait, "id", id);
+    }
+
+    protected function isShowing () :Boolean
+    {
+        return _panel.parent != null;
+    }
+
+    protected function handleTimer (evt :TimerEvent) :void
+    {
+        if (!isShowing()) {
+            onNextTip();
+        }
     }
 
     protected function placeBox () :PlaceBox
@@ -97,19 +135,44 @@ public class TutorialDirector
 
     protected function onNextTip () :void
     {
+        if (_suggestions.length > 0) {
+            popup(_suggestions.shift());
+        } else if (_tips.length > 0) {
+            _lastTip = (_lastTip + 1) % _tips.length;
+            popup(_tips[_lastTip]);
+        }
     }
 
     protected function onPanelClose () :void
     {
         Tweener.addTween(_panel, {y :-_panel.height, time: 0.6, transition: "easeinquart",
             onComplete: Util.adapt(placeBox().removeChild, _panel)});
+
+        _timer.start();
+    }
+
+    protected function queue (item :Item) :void
+    {
+        if (item.isSuggestion()) {
+            if (isShowing()) {
+                _suggestions.push(item);
+                _panel.flashNext();
+            } else {
+                popup(item);
+            }
+        } else {
+            _tips.push(item);
+            if (!isShowing() && !_timer.running) {
+                _timer.start();
+            }
+        }
     }
 
     protected function popup (item :Item) :void
     {
         Tweener.removeTweens(_panel);
 
-        if (_panel.parent == null) {
+        if (!isShowing()) {
             placeBox().addOverlay(_panel, PlaceBox.LAYER_TUTORIAL);
             _panel.x = TopPanel.RIGHT_SIDEBAR_WIDTH;
             _panel.y = -_panel.height;
@@ -120,10 +183,18 @@ public class TutorialDirector
         if (_panel.y != 0) {
             Tweener.addTween(_panel, {y :0, time: 0.6, transition: "easeoutquart"});
         }
+
+        _timer.reset();
     }
 
     protected var _ctx :MsoyContext;
     protected var _panel :TutorialPanel;
+    protected var _timer :Timer;
+    protected var _suggestions :Array = [];
+    protected var _tips :Array = [];
+    protected var _lastTip :int = -1;
+
+    protected var TIP_DELAY :Number = 60 * 1000;
 }
 }
 
@@ -146,6 +217,11 @@ class Item
         this.availableFn = availableFn;
         this.buttonText = buttonText;
         this.buttonFn = buttonFn;
+    }
+
+    public function isSuggestion () :Boolean
+    {
+        return id == null;
     }
 
     public function isAvailable () :Boolean

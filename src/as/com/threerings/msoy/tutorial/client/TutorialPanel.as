@@ -5,6 +5,7 @@ package com.threerings.msoy.tutorial.client {
 
 import flash.display.DisplayObject;
 import flash.display.Sprite;
+import flash.filters.GlowFilter;
 
 import mx.core.Container;
 import mx.core.ScrollPolicy;
@@ -31,6 +32,7 @@ public class TutorialPanel extends HBox
 
     public function setContent (message :String, buttonText :String, buttonFn :Function) :void
     {
+        _next.filters = [];
         _text.text = message;
 
         if (buttonText == null) {
@@ -42,6 +44,15 @@ public class TutorialPanel extends HBox
         }
     }
 
+    /**
+     * Flashes the next button, so that the user knows something more important is pending.
+     */
+    public function flashNext () :void
+    {
+        // TODO: better flash, this looks terrible
+        _next.filters = [new GlowFilter(0x888888, 1, 6, 6, 12)];
+    }
+
     override protected function createChildren () :void
     {
         super.createChildren();
@@ -51,7 +62,7 @@ public class TutorialPanel extends HBox
         addChild(style(_text = new Text(), "tutorialText"));
         addChild(right = FlexUtil.createVBox(
             FlexUtil.createHBox(
-                imgButton("tutorialNextButton", _onNext, "i.tutorial_next"),
+                _next = imgButton("tutorialNextButton", _onNext, "i.tutorial_next"),
                 imgButton("tutorialCloseButton", _onClose, "i.tutorial_close")),
             FlexUtil.createSpacer(1, 20),
             _action = new CommandButton()));
@@ -82,6 +93,7 @@ public class TutorialPanel extends HBox
     protected var _onClose :Function;
     protected var _action :CommandButton;
     protected var _text :Text;
+    protected var _next :UIComponent;
 
     [Embed(source="../../../../../../../rsrc/media/skins/tutorial/professor.png")]
     protected static const PROFESSOR :Class;
