@@ -36,6 +36,7 @@ import com.threerings.msoy.item.data.all.ItemFlag;
 import com.threerings.msoy.item.gwt.ItemService;
 import com.threerings.msoy.item.gwt.ItemServiceAsync;
 
+import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.TagHistory;
 
 import client.shell.CShell;
@@ -46,6 +47,7 @@ import client.ui.PopupMenu;
 import client.ui.PromptPopup;
 import client.ui.RowPanel;
 import client.util.InfoCallback;
+import client.util.Link;
 import client.shell.ShellMessages;
 
 /**
@@ -172,7 +174,7 @@ public class TagDetailPanel extends VerticalPanel
                 FlexTable contents = new FlexTable();
                 contents.setStyleName("tagHistory");
                 contents.getColumnFormatter().setWidth(0, "150px");
-                contents.getColumnFormatter().setWidth(1, "150px");
+                contents.getColumnFormatter().setWidth(1, "180px");
                 contents.getColumnFormatter().setWidth(2, "20px");
                 contents.getColumnFormatter().setWidth(3, "150px");
                 contents.setBorderWidth(1);
@@ -193,7 +195,8 @@ public class TagDetailPanel extends VerticalPanel
                     if (memName.length() > MAX_NAME_LENGTH-3) {
                         memName = memName.substring(0, MAX_NAME_LENGTH) + "...";
                     }
-                    contents.setText(tRow, 1, memName);
+                    contents.setWidget(tRow, 1, Link.create(
+                        memName, Pages.PEOPLE, history.member.getMemberId()));
                     formatter.setHorizontalAlignment(tRow, 1, HasAlignment.ALIGN_LEFT);
 
                     String actionString;
