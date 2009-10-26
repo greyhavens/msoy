@@ -138,6 +138,10 @@ public class TutorialDirector
     {
         if (_suggestions.length > 0) {
             popup(_suggestions.shift());
+            if (_suggestions.length > 0) {
+                _panel.flashNext();
+            }
+
         } else if (_tips.length > 0) {
             _lastTip = (_lastTip + 1) % _tips.length;
             popup(_tips[_lastTip]);
