@@ -324,7 +324,7 @@ public class Prefs
 
     public static function getUseCustomBackgroundColor () :Boolean
     {
-        return (_config.getValue(USE_CUSTOM_BACKGROUND_COLOR, false) as Boolean);
+        return (_config.getValue(USE_CUSTOM_BACKGROUND_COLOR, true) as Boolean);
     }
 
     public static function setUseCustomBackgroundColor (value :Boolean) :void
@@ -334,7 +334,7 @@ public class Prefs
 
     public static function getCustomBackgroundColor () :uint
     {
-        return (_config.getValue(CUSTOM_BACKGROUND_COLOR, 0) as uint);
+        return (_config.getValue(CUSTOM_BACKGROUND_COLOR, 0xffffff) as uint);
     }
 
     public static function setCustomBackgroundColor (value :uint) :void
