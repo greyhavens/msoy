@@ -101,7 +101,7 @@ public class SubscriptionLogic
     {
         // insert a record saying they're paid up for a month
         _subscripRepo.noteBarscribed(mrec.memberId);
-        noteSubscriptionBilled(mrec, 0 /* no bar granting! */);
+        noteSubscriptionBilled(mrec, 0 /* no bar granting! */, false /* not from billing */);
     }
 
     /**
@@ -119,7 +119,7 @@ public class SubscriptionLogic
         if (mrec == null) {
             throw new Exception("Could not locate MemberRecord");
         }
-        noteSubscriptionBilled(mrec, months);
+        noteSubscriptionBilled(mrec, months, true);
     }
 
     /**
@@ -145,11 +145,14 @@ public class SubscriptionLogic
      * @throws Exception We freak the fuck out if anything goes wrong.
      */
     @BlockingThread
-    protected void noteSubscriptionBilled (MemberRecord mrec, int months)
+    protected void noteSubscriptionBilled (MemberRecord mrec, int months, boolean fromBilling)
     {
-        // Blow away any "barscription" record they may have. Since the billing system does
-        // not know about the barscription, they lose any unused time.
-        if (_subscripRepo.noteBarscriptionEnded(mrec.memberId)) {
+        // If coming from billing, blow away any "barscription" record they may have.
+        // Since the billing system does not know about the barscription,
+        // they lose any unused time.
+        // TODO: we could add complexity sauce and have the billing server query us for remaining
+        // barscription time and add that to their first month of subscription... ugh.
+        if (fromBilling && _subscripRepo.noteBarscriptionEnded(mrec.memberId)) {
             log.warning("A new subscriber was previously a barscriber. Their extra time was lost.",
                 "memberId", mrec.memberId);
         }
