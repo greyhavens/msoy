@@ -248,6 +248,11 @@ public class EntityBackend extends ControlBackend
 
     protected function showPage_v1 (token :String) :Boolean
     {
+        if (this is ActorBackend) {
+            // TODO: just move showPage to FurniControl
+            return false;
+        }
+
         // handleViewUrl will do the "right thing"
         _ctx.getMsoyController().handleViewUrl(DeploymentConfig.serverURL + "#" + token);
         return true;
