@@ -27,11 +27,11 @@ import com.threerings.gwt.util.PagedResult;
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MediaDesc;
-import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VizMemberName;
 import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.MemberNodeActions;
 import com.threerings.msoy.server.PopularPlacesSnapshot;
+import com.threerings.msoy.server.TagLogic;
 import com.threerings.msoy.server.persist.MemberCardRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
@@ -84,7 +84,6 @@ import com.threerings.msoy.group.server.persist.MedalRecord;
 import com.threerings.msoy.group.server.persist.MedalRepository;
 import com.threerings.msoy.group.server.persist.ThemeRepository;
 import com.threerings.msoy.item.data.ItemCodes;
-
 import static com.threerings.msoy.Log.log;
 
 /**
@@ -486,23 +485,10 @@ public class GroupServlet extends MsoyServiceServlet
     }
 
     // from interface GroupService
-    public List<TagHistory> getRecentTags () throws ServiceException
+    public List<TagHistory> getTagHistory (int groupId)
+        throws ServiceException
     {
-        MemberRecord mrec = requireAuthedUser();
-        MemberName memName = mrec.getName();
-        TagRepository tagRepo = _groupRepo.getTagRepository();
-        List<TagHistory> list = Lists.newArrayList();
-        for (TagHistoryRecord record : tagRepo.getTagHistoryByMember(mrec.memberId)) {
-            TagNameRecord tag = record.tagId == -1 ? null :
-                tagRepo.getTag(record.tagId);
-            TagHistory history = new TagHistory();
-            history.member = memName;
-            history.tag = tag == null ? null : tag.tag;
-            history.action = record.action;
-            history.time = new Date(record.time.getTime());
-            list.add(history);
-        }
-        return list;
+        return _tagLogic.getTagHistory(groupId, _groupRepo.getTagRepository(), 0, 12);
     }
 
     // from interface GroupService
@@ -864,6 +850,7 @@ public class GroupServlet extends MsoyServiceServlet
     @Inject protected MsoyChatChannelManager _channelMan;
     @Inject protected MsoySceneRepository _sceneRepo;
     @Inject protected RoomLogic _roomLogic;
+    @Inject protected TagLogic _tagLogic;
 
     /** The number of matches to return when searching against all display names in the database. */
     protected static int MAX_MEMBER_MATCHES = 100;

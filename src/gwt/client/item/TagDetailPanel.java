@@ -37,6 +37,7 @@ import com.threerings.msoy.web.gwt.TagHistory;
 
 import client.shell.CShell;
 import client.ui.BorderedDialog;
+import client.ui.BorderedPopup;
 import client.ui.MsoyUI;
 import client.ui.PopupMenu;
 import client.ui.PromptPopup;
@@ -57,7 +58,7 @@ public class TagDetailPanel extends VerticalPanel
     {
         void tag (String tag, AsyncCallback<TagHistory> callback);
         void untag (String tag, AsyncCallback<TagHistory> callback);
-        void getRecentTags (AsyncCallback<List<TagHistory>> callback);
+        void getTagHistory (AsyncCallback<List<TagHistory>> callback);
         void getTags (AsyncCallback<List<String>> callback);
 
         /**
@@ -89,7 +90,7 @@ public class TagDetailPanel extends VerticalPanel
         _tags.add(new Label(_cmsgs.tagLoading()));
         add(_tags);
 
-        if (_canEdit || _flagger != null) {
+        if (_canEdit || _flagger != null || CShell.isSupport()) {
             RowPanel addRow = new RowPanel();
             if (_canEdit) {
                 addRow.add(new InlineLabel(_cmsgs.tagAddTag(), false, false, false),
@@ -115,6 +116,17 @@ public class TagDetailPanel extends VerticalPanel
                 addRow.add(flagLabel, HasAlignment.ALIGN_MIDDLE);
             }
 
+            if (CShell.isSupport()) {
+                InlineLabel historyLabel = new InlineLabel(_cmsgs.tagHistory());
+                historyLabel.addStyleName("LabelLink");
+                historyLabel.addClickHandler(new ClickHandler() {
+                    public void onClick (ClickEvent event) {
+                        toggleTagHistory();
+                    }
+                });
+                addRow.add(historyLabel, HasAlignment.ALIGN_MIDDLE);
+            }
+
             add(WidgetUtil.makeShim(5, 5));
             add(addRow);
         }
@@ -136,61 +148,58 @@ public class TagDetailPanel extends VerticalPanel
 
     protected void toggleTagHistory ()
     {
-        // TODO: if this is used again, it will need to be abstracted like everything else in this
-        // class
-//         if (_tagHistory != null) {
-//             if (_content.getWidgetDirection(_tagHistory) == null) {
-//                 _content.add(_tagHistory, DockPanel.EAST);
-//             } else {
-//                 _content.remove(_tagHistory);
-//             }
-//             return;
-//         }
+         if (_tagHistory != null) {
+             if (_tagHistory.isShowing()) {
+                 _tagHistory.hide();
+             } else {
+                 _tagHistory.show();
+             }
+             return;
+         }
 
-//         _itemsvc.getTagHistory(_itemId, new AsyncCallback<List<TagHistory>>() {
-//             public void onSuccess (List<TagHistory> result) {
-//                 _tagHistory = new FlexTable();
-//                 _tagHistory.setBorderWidth(0);
-//                 _tagHistory.setCellSpacing(0);
-//                 _tagHistory.setCellPadding(2);
+         _service.getTagHistory(new InfoCallback<List<TagHistory>>() {
+             public void onSuccess (List<TagHistory> result) {
+                 _tagHistory = new BorderedPopup(true);
 
-//                 int tRow = 0;
-//                 Iterator<TagHistory> iterator = result.iterator();
-//                 while (iterator.hasNext()) {
-//                     TagHistory history = iterator.next();
-//                     String date = history.time.toGMTString();
-//                     // Fri Sep 29 2006 12:46:12
-//                     date = date.substring(0, 23);
-//                     _tagHistory.setText(tRow, 0, date);
-//                     _tagHistory.setText(tRow, 1, history.member.toString());
-//                     String actionString;
-//                     switch(history.action) {
-//                     case TagHistory.ACTION_ADDED:
-//                         actionString = "added";
-//                         break;
-//                     case TagHistory.ACTION_COPIED:
-//                         actionString = "copied";
-//                         break;
-//                     case TagHistory.ACTION_REMOVED:
-//                         actionString = "removed";
-//                         break;
-//                     default:
-//                         actionString = "???";
-//                         break;
-//                     }
-//                     _tagHistory.setText(tRow, 2, actionString);
-//                     _tagHistory.setText(
-//                         tRow, 3, history.tag == null ? "N/A" : "'" + history.tag + "'");
-//                     tRow ++;
-//                 }
-//                 _content.add(_tagHistory, DockPanel.EAST);
-//             }
+                 FlexTable contents = new FlexTable();
+                 _tagHistory.setWidget(contents);
+                 contents.setBorderWidth(0);
+                 contents.setCellSpacing(0);
+                 contents.setCellPadding(2);
 
-//             public void onFailure (Throwable caught) {
-//                 GWT.log("getTagHistory failed", caught);
-//                 MsoyUI.error("Internal error fetching item tag history: " + caught.getMessage());
-//             }
-//         });
+                 int tRow = 0;
+                 Iterator<TagHistory> iterator = result.iterator();
+                 while (iterator.hasNext()) {
+                     TagHistory history = iterator.next();
+                     String date = history.time.toGMTString();
+                     // Fri Sep 29 2006 12:46:12
+                     date = date.substring(0, 23);
+                     contents.setText(tRow, 0, date);
+                     contents.setText(tRow, 1, history.member.toString());
+                     String actionString;
+                     switch(history.action) {
+                     case TagHistory.ACTION_ADDED:
+                         actionString = "added";
+                         break;
+                     case TagHistory.ACTION_COPIED:
+                         actionString = "copied";
+                         break;
+                     case TagHistory.ACTION_REMOVED:
+                         actionString = "removed";
+                         break;
+                     default:
+                         actionString = "???";
+                         break;
+                     }
+                     contents.setText(tRow, 2, actionString);
+                     contents.setText(
+                         tRow, 3, history.tag == null ? "N/A" : "'" + history.tag + "'");
+                     tRow ++;
+                 }
+                 // now call ourselves back to actually pop into existence
+                 toggleTagHistory();
+             }
+         });
     }
 
     protected void refreshTags ()
@@ -242,26 +251,6 @@ public class TagDetailPanel extends VerticalPanel
         if (addedTags.size() == 0) {
             _tags.add(new InlineLabel("none"));
         }
-
-//         if (!CShell.isGuest()) {
-//             _service.getRecentTags(new InfoCallback<List<TagHistory>>() {
-//                 public void onSuccess (List<TagHistory> result) {
-//                     _quickTags.clear();
-//                     _quickTags.addItem(_cmsgs.tagSelectOne());
-//                     for (TagHistory history : result) {
-//                         String tag = history.tag;
-//                         if (tag != null && !addedTags.contains(tag) &&
-//                             history.member.getMemberId() == CShell.getMemberId()) {
-//                             _quickTags.addItem(tag);
-//                             addedTags.add(tag);
-//                         }
-//                     }
-//                     boolean visible = _quickTags.getItemCount() > 1;
-//                     _quickTags.setVisible(visible);
-//                     _quickTagLabel.setVisible(visible);
-//                 }
-//             });
-//         }
     }
 
     protected class NewTagBox extends TextBox
@@ -394,7 +383,7 @@ public class TagDetailPanel extends VerticalPanel
     protected FlowPanel _tags;
     protected ListBox _quickTags;
     protected Label _quickTagLabel;
-    protected FlexTable _tagHistory;
+    protected BorderedPopup _tagHistory;
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
     protected static final ItemServiceAsync _itemsvc = GWT.create(ItemService.class);

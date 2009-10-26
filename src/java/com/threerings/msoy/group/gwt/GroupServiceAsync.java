@@ -108,9 +108,9 @@ public interface GroupServiceAsync
     void tagGroup (int groupId, String tag, boolean set, AsyncCallback<TagHistory> callback);
 
     /**
-     * The async version of {@link GroupService#getRecentTags}.
+     * The async version of {@link GroupService#getTagHistory}.
      */
-    void getRecentTags (AsyncCallback<List<TagHistory>> callback);
+    void getTagHistory (int groupId, AsyncCallback<List<TagHistory>> callback);
 
     /**
      * The async version of {@link GroupService#getTags}.

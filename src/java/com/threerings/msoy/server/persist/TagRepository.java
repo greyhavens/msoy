@@ -10,6 +10,7 @@ import java.sql.Timestamp;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.google.common.collect.Lists;
@@ -27,7 +28,8 @@ import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.impl.Modifier;
 import com.samskivert.jdbc.DatabaseLiaison;
 import com.samskivert.jdbc.JDBCUtil;
-
+import com.samskivert.util.HashIntMap;
+import com.samskivert.util.IntMap;
 import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
@@ -141,10 +143,12 @@ public abstract class TagRepository extends DepotRepository
     /**
      * Loads all the tag history records for a given target.
      */
-    public List<TagHistoryRecord> getTagHistoryByTarget (int targetId)
+    public List<TagHistoryRecord> getTagHistoryByTarget (int targetId, int offset, int rows)
     {
         return findAll(getTagHistoryClass(),
-                       new Where(getTagHistoryColumn(TagHistoryRecord.TARGET_ID), targetId));
+                       new Where(getTagHistoryColumn(TagHistoryRecord.TARGET_ID), targetId),
+                       OrderBy.descending(getTagHistoryColumn(TagHistoryRecord.TIME)),
+                       new Limit(offset, rows));
     }
 
     /**
@@ -203,6 +207,18 @@ public abstract class TagRepository extends DepotRepository
     public TagNameRecord getTag (int tagId)
     {
         return load(TagNameRecord.getKey(tagId));
+    }
+
+    /**
+     * Find the tag record for a certain tag id.
+     */
+    public Map<Integer, TagNameRecord> getTags (Set<Integer> tagIds)
+    {
+        IntMap<TagNameRecord> result = new HashIntMap<TagNameRecord>();
+        for (TagNameRecord rec : loadAll(TagNameRecord.class, tagIds)) {
+            result.put(rec.tagId, rec);
+        }
+        return result;
     }
 
     /**

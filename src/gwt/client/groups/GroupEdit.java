@@ -193,8 +193,8 @@ public class GroupEdit extends FlexTable
                 public void untag (String tag, AsyncCallback<TagHistory> cback) {
                     _groupsvc.tagGroup(_group.groupId, tag, false, cback);
                 }
-                public void getRecentTags (AsyncCallback<List<TagHistory>> cback) {
-                    _groupsvc.getRecentTags(cback);
+                public void getTagHistory (AsyncCallback<List<TagHistory>> cback) {
+                    _groupsvc.getTagHistory(_group.groupId, cback);
                 }
                 public void getTags (AsyncCallback<List<String>> cback) {
                     _groupsvc.getTags(_group.groupId, cback);

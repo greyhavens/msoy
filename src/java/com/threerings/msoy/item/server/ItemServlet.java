@@ -6,24 +6,23 @@ package com.threerings.msoy.item.server;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 
 import com.samskivert.util.ArrayIntSet;
-import com.samskivert.util.IntMap;
 import com.samskivert.util.IntSet;
 import com.samskivert.util.Tuple;
 
 import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.all.GroupName;
-import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.RatingResult;
 import com.threerings.msoy.server.StatLogic;
+import com.threerings.msoy.server.TagLogic;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.TagHistoryRecord;
 import com.threerings.msoy.server.persist.TagNameRecord;
+import com.threerings.msoy.server.persist.TagRepository;
 
 import com.threerings.msoy.group.data.all.GroupMembership.Rank;
 import com.threerings.msoy.group.server.ThemeLogic;
@@ -191,48 +190,8 @@ public class ItemServlet extends MsoyServiceServlet
     public List<TagHistory> getTagHistory (final ItemIdent iident)
         throws ServiceException
     {
-        ItemRepository<ItemRecord> repo = _itemLogic.getRepository(iident.type);
-        List<TagHistoryRecord> records =
-            repo.getTagRepository().getTagHistoryByTarget(iident.itemId);
-        IntMap<MemberName> names = _memberRepo.loadMemberNames(
-            records, TagHistoryRecord.GET_MEMBER_ID);
-
-        List<TagHistory> list = Lists.newArrayList();
-        for (TagHistoryRecord threc : records) {
-            TagNameRecord tag = repo.getTagRepository().getTag(threc.tagId);
-            TagHistory history = new TagHistory();
-            history.member = names.get(threc.memberId);
-            history.tag = tag.tag;
-            history.action = threc.action;
-            history.time = new Date(threc.time.getTime());
-            list.add(history);
-        }
-        return list;
-    }
-
-    // from interface ItemService
-    public List<TagHistory> getRecentTags ()
-        throws ServiceException
-    {
-        MemberRecord memrec = requireAuthedUser();
-        MemberName name = memrec.getName();
-
-        List<TagHistory> list = Lists.newArrayList();
-        for (byte type : _itemLogic.getRepositoryTypes()) {
-            ItemRepository<ItemRecord> repo = _itemLogic.getRepository(type);
-            for (TagHistoryRecord record :
-                     repo.getTagRepository().getTagHistoryByMember(memrec.memberId)) {
-                TagNameRecord tag = (record.tagId == -1) ? null :
-                    repo.getTagRepository().getTag(record.tagId);
-                TagHistory history = new TagHistory();
-                history.member = name;
-                history.tag = (tag == null) ? null : tag.tag;
-                history.action = record.action;
-                history.time = new Date(record.time.getTime());
-                list.add(history);
-            }
-        }
-        return list;
+        TagRepository tagRepo = _itemLogic.getRepository(iident.type).getTagRepository();
+        return _tagLogic.getTagHistory(iident.itemId, tagRepo, 0, 12);
     }
 
     // from interface ItemService
@@ -411,7 +370,6 @@ public class ItemServlet extends MsoyServiceServlet
         }
     }
 
-
     // our dependencies
     @Inject protected ItemFlagRepository _itemFlagRepo;
     @Inject protected ItemLogic _itemLogic;
@@ -421,6 +379,7 @@ public class ItemServlet extends MsoyServiceServlet
     @Inject protected ThemeRepository _themeRepo;
     @Inject protected ThemeLogic _themeLogic;
     @Inject protected StatLogic _statLogic;
+    @Inject protected TagLogic _tagLogic;
 
     protected static final int MIN_SOLID_RATINGS = 20;
 

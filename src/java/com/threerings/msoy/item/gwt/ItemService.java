@@ -68,12 +68,6 @@ public interface ItemService extends RemoteService
         throws ServiceException;
 
     /**
-     * Fetches the recently used tags for the calling member.
-     */
-    List<TagHistory> getRecentTags ()
-        throws ServiceException;
-
-    /**
      * Associates or disassociates a tag with an item.
      */
     TagHistory tagItem (ItemIdent item, String tag, boolean set)

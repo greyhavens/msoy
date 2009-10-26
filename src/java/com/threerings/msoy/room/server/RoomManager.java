@@ -1473,7 +1473,6 @@ public class RoomManager extends SpotSceneManager
                 }
             };
 
-
             // if the scene is themed, make sure the item is stamped
             final int themeId = mScene.getThemeId();
             if (themeId != 0) {

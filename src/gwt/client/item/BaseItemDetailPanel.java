@@ -138,8 +138,8 @@ public abstract class BaseItemDetailPanel extends SmartTable
             public void untag (String tag, AsyncCallback<TagHistory> callback) {
                 _itemsvc.tagItem(_item.getIdent(), tag, false, callback);
             }
-            public void getRecentTags (AsyncCallback<List<TagHistory>> callback) {
-                _itemsvc.getRecentTags(callback);
+            public void getTagHistory (AsyncCallback<List<TagHistory>> callback) {
+                _itemsvc.getTagHistory(_item.getIdent(), callback);
             }
             public void getTags (AsyncCallback<List<String>> callback) {
                 _itemsvc.getTags(_item.getIdent(), callback);

@@ -24,9 +24,9 @@ public interface ItemServiceAsync
     void addFlag (ItemIdent item, ItemFlag.Kind kind, String comment, AsyncCallback<Void> callback);
 
     /**
-     * The async version of {@link ItemService#getRecentTags}.
+     * The async version of {@link ItemService#getTagHistory}.
      */
-    void getRecentTags (AsyncCallback<List<TagHistory>> callback);
+    void getTagHistory (ItemIdent item, AsyncCallback<List<TagHistory>> callback);
 
     /**
      * The async version of {@link ItemService#getTags}.
@@ -42,11 +42,6 @@ public interface ItemServiceAsync
      * The async version of {@link ItemService#rateItem}.
      */
     void rateItem (ItemIdent item, byte rating, AsyncCallback<RatingResult> callback);
-
-    /**
-     * The async version of {@link ItemService#getTagHistory}.
-     */
-    void getTagHistory (ItemIdent item, AsyncCallback<List<TagHistory>> callback);
 
     /**
      * The async version of {@link ItemService#tagItem}.

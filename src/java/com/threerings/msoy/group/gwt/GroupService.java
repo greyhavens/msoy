@@ -204,9 +204,9 @@ public interface GroupService extends RemoteService
         throws ServiceException;
 
     /**
-     * Gets the tags recently used by the user.
+     * Fetches the tagging history for a given group.
      */
-    List<TagHistory> getRecentTags ()
+    List<TagHistory> getTagHistory (int groupId)
         throws ServiceException;
 
     /**
