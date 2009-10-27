@@ -474,7 +474,7 @@ public class MoneyLogic
         return buyFromOOO(
             buyerRec, groupKey, buyCurrency, authedAmount, listCurrency, listAmount, buyOp,
             UserAction.Type.BOUGHT_THEME, "m.theme_created",
-            TransactionType.THEME_PURCHASE, "m.change_rcvd_group");
+            TransactionType.THEME_PURCHASE, "m.change_rcvd_theme");
     }
 
     /**
