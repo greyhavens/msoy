@@ -373,6 +373,12 @@ public class MsoySceneRegistry extends SpotSceneRegistry
             final MsoyScene scene = (MsoyScene) scmgr.getScene();
             final RoomManager destmgr = (RoomManager)scmgr;
 
+            // if we're not going to be let into the room, skip all the fancy stuff and flake now
+            if (scmgr.ratifyBodyEntry(_memobj) != null) {
+                finishMove(scene, destmgr);
+                return;
+            }
+
             // if we've already got an avatar quicklist and we're not crossing a theme
             // boundary, we can just finish the move as usual
             if (_memobj.avatarCache != null && isInTheme(_memobj, scene.getThemeId())) {
