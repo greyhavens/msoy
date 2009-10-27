@@ -1,6 +1,5 @@
 <html>
 <head>
-<base href="$server_url"/>
 <style type="text/css">
 <!--
 body {
@@ -39,11 +38,11 @@ style="text-decoration: none;">Whirled</a>... come on back and get in the game!
 <table cellpadding=0 cellspacing=0 width="700px">
 	<tr style="background: #E0E0F0; padding-bottom: 3px;">
     <td colspan=3 style="padding: 1px 0 3px 5px;">New & Popular Games</td>
-    <td colspan=2 style="text-align: right; padding: 1px 5px 3px 0;"><i><a href="$server_url#games"
-        style="font-size: 12px;">See More</a></i></td>
+    <td colspan=2 style="text-align: right; padding: 1px 5px 3px 0;"><i><a
+        href="${server_url}go/games" style="font-size: 12px;">See More</a></i></td>
 </tr><tr>
     #foreach ($item in $games)
-        <td style="$itemCellStyle"><a href="$server_url#games-d_$item.gameId"
+        <td style="$itemCellStyle"><a href="${server_url}go/games-d_$item.gameId"
             style="text-decoration: none;"><img src="$item.thumbnail"
             style="border: 0px;"/><br>$item.name
         </a></td>
@@ -57,12 +56,12 @@ style="text-decoration: none;">Whirled</a>... come on back and get in the game!
 <table cellpadding=0 cellspacing=0 width="700px">
 	<tr style="background: #E0E0F0; padding-bottom: 3px;">
     <td colspan=3 style="padding: 1px 0 3px 5px;">New & Popular Avatars</td>
-    <td colspan=2 style="text-align: right; padding: 1px 5px 3px 0;"><i><a href="$server_url#shop"
-        style="font-size: 12px;">Go To Shop</a></i> | <i><a href="$server_url#shop-5_7_"
-        style="font-size: 12px;">See More Avatars</a></i></td>
+    <td colspan=2 style="text-align: right; padding: 1px 5px 3px 0;"><i><a
+        href="${server_url}go/shop" style="font-size: 12px;">Go To Shop</a></i> | <i><a
+        href="${server_url}go/shop-5_7_" style="font-size: 12px;">See More Avatars</a></i></td>
 </tr><tr>
     #foreach ($item in $avatars)
-        <td style="$itemCellStyle"><a href="$server_url#shop-l_5_$item.catalogId"
+        <td style="$itemCellStyle"><a href="${server_url}go/shop-l_5_$item.catalogId"
             style="text-decoration: none;"><img src="$item.thumbnail"
             style="border: 0px;"/><br>$item.name
         </a></td>
@@ -80,7 +79,7 @@ style="text-decoration: none;">Whirled</a>... come on back and get in the game!
 	    New Forum Posts From Your Friends
 	    </td>
 	    <td style="text-align: right; padding: 1px 5px 3px 0;"><i>
-	    	<a href="$server_url#groups-friends" style="font-size: 12px;">See All</a></i>
+	    	<a href="${server_url}go/groups-friends" style="font-size: 12px;">See All</a></i>
 	  	</td>
 	</tr></table>
 	<ul style="list-style-type: none; padding=0px;">
@@ -106,7 +105,7 @@ style="text-decoration: none;">Whirled</a>... come on back and get in the game!
 	    Your News Feed
 	    </td>
 	    <td style="text-align: right; padding: 1px 5px 3px 0;"><i>
-	    	<a href="$server_url#me" style="font-size: 12px;">Home Page</a></i>
+	    	<a href="${server_url}go/me" style="font-size: 12px;">Home Page</a></i>
 	  	</td>
 	</tr></table>
     #foreach ($cat in $feed)

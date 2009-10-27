@@ -784,7 +784,7 @@ public class SpamLogic
 
         protected static String link (Pages page, Args args)
         {
-            return page.makeLink(args);
+            return page.makeURL(args);
         }
 
         protected static String imgStyle (Dimensions dim)
