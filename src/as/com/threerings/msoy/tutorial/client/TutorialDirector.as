@@ -36,10 +36,6 @@ public class TutorialDirector
         _timer.addEventListener(TimerEvent.TIMER, handleTimer);
 
         _panel = new TutorialPanel(_ctx, onNextTip, onPanelClose);
-
-        // set the width and height for all time
-        _panel.width = 600;
-        _panel.height = 120;
     }
 
     /**
@@ -96,21 +92,24 @@ public class TutorialDirector
         queue(new Item(id, text, availableFn, buttonText, buttonFn));
     }
 
-    public function test () :void
+    public function test (delayMultiplier :Number) :void
     {
+        var gibberish :String = "The quick brown fox jumped over the lazy dog.";
+        gibberish = gibberish + " " + gibberish;
         if (_tips.length == 0) {
-            queueTip("test1", "This is test tip #1", null, null, null);
-            queueTip("test2", "This is test tip #2", null, null, null);
-            queueTip("test3", "This is test tip #3", null, null, null);
-            queueTip("test4", "This is test tip #4", null, null, null);
+            queueTip("test1", "This is test tip #1. " + gibberish, null, null, null);
+            queueTip("test2", "This is test tip #2. " + gibberish, null, null, null);
+            queueTip("test3", "This is test tip #3. " + gibberish, null, null, null);
+            queueTip("test4", "This is test tip #4. " + gibberish, null, null, null);
             _ctx.getChatDirector().displayFeedback(null, "Test: added 4 tips.");
         }
 
         var delay :Number = TIP_DELAY + (Math.random() - .5) * TIP_DELAY * .5;
+        delay *= delayMultiplier;
         var id :int = getTimer();
         setTimeout(function () :void {
-            queueSuggestion("This is a test suggestion (id " + id + ")", null, "Sure, OK",
-                            function () :void {});
+            queueSuggestion("This is a test suggestion (id " + id + "). " + gibberish, null,
+                            "Take me somewhere", function () :void {});
         }, delay);
 
         _ctx.getChatDirector().displayFeedback(null, "Test: queued suggestion id " + id +

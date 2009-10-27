@@ -295,8 +295,10 @@ public class MsoyController extends Controller
 
         // test menu option to look at the tutorial panel on dev
         if (DeploymentConfig.devDeployment) {
-            menuData.push({ label: "Activate tutorial test",
-                command: _mctx.getTutorialDirector().test });
+            menuData.push({ label: "Simulate tutorial",
+                command: _mctx.getTutorialDirector().test, arg: 1.0 });
+            menuData.push({ label: "Popup tutorial",
+                command: _mctx.getTutorialDirector().test, arg: 0.0 });
         }
 
         popControlBarMenu(menuData, trigger);

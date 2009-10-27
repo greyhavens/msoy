@@ -171,7 +171,7 @@ GameOverPanel {
 .controlBarPartyButton, .controlBarConfig, .notificationToggle,
 .headerBarBack, .placeZoomButton,
 .joinNowButton, .logonButton, .tourNext, .trophyFeedTrophy,
-.closeButton, .tutorialNextButton, .tutorialCloseButton {
+.closeButton {
 
   /** clear out the CheckBox foreground icons too */
   icon: ClassReference(null);
@@ -274,14 +274,6 @@ GameOverPanel {
 
 .tourNext {
   image: url("/images/rooms/tour_next.png");
-}
-
-.tutorialCloseButton {
-  image: Embed(source="../media/skins/tutorial/close.png");
-}
-
-.tutorialNextButton {
-  image: Embed(source="../media/skins/tutorial/next.png");
 }
 
 .attentionLabel {
@@ -811,11 +803,6 @@ ChatInput {
 }
 
 .tutorialPanel {
-  backgroundImage: Embed(source="../media/skins/tutorial/background.png",
-                         scaleGridTop="17", scaleGridBottom="24",
-                         scaleGridLeft="20", scaleGridRight="33");
-  backgroundSize: "100%";
-  verticalAlign: middle;
 }
 
 .tutorialProfessor {
@@ -823,8 +810,19 @@ ChatInput {
 
 .tutorialText {
   color: #0d496d;
-  fontSize: 18;
+  fontSize: 16;
 }
 
 .tutorialIcon {
+}
+
+.tutorialActionButton {
+}
+
+.tutorialActionText {
+  color: white;
+  paddingLeft: 7;
+  paddingRight: 7;
+  fontSize: 14;
+  textAlign: center;
 }
