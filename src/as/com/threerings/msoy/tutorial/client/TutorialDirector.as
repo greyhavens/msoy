@@ -178,7 +178,6 @@ public class TutorialDirector
 
         if (!isShowing()) {
             placeBox().addOverlay(_panel, PlaceBox.LAYER_TUTORIAL);
-            _panel.x = TopPanel.RIGHT_SIDEBAR_WIDTH;
             _panel.y = -_panel.height;
         }
 

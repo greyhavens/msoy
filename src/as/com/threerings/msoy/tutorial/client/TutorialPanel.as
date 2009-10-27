@@ -18,8 +18,10 @@ import com.threerings.flex.FlexUtil;
 
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;
+import com.threerings.msoy.client.PlaceLayer;
 
 public class TutorialPanel extends Canvas
+    implements PlaceLayer
 {
     public static const WIDTH :int = 600;
     public static const HEIGHT :int = 120;
@@ -51,6 +53,16 @@ public class TutorialPanel extends Canvas
      */
     public function flashNext () :void
     {
+    }
+
+    // from PlaceLayer
+    public function setPlaceSize (unscaledWidth :Number, unscaledHeight :Number) :void
+    {
+        // clip width to avoid a scroll bar showing up in the place box
+        width = Math.min(WIDTH, unscaledWidth);
+
+        // the director controls our y coordinate, but we need to center in x
+        x = (unscaledWidth - width) / 2;
     }
 
     override protected function createChildren () :void
