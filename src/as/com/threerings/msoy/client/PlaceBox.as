@@ -102,6 +102,16 @@ public class PlaceBox extends LayeredContainer
         }
     }
 
+    override public function addOverlay (overlay :DisplayObject, layer :int) :void
+    {
+        super.addOverlay(overlay, layer);
+
+        // inform the new child of the place size if it implement the layer interface
+        if (overlay is PlaceLayer) {
+            PlaceLayer(overlay).setPlaceSize(width, height);
+        }
+    }
+
     /**
      * Gets the background color of the current place or black if it is not an msoy view.
      */
