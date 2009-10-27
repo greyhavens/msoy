@@ -447,10 +447,9 @@ public class ProfileServlet extends MsoyServiceServlet
 
         // fetch our managed groups from DB
         IntSet managedGroups = new ArrayIntSet();
-        for (GroupMembershipRecord grec : _groupRepo.getMemberships(reqrec.memberId)) {
-            if (grec.rank == Rank.MANAGER) {
-                managedGroups.add(grec.groupId);
-            }
+        for (GroupMembershipRecord grec :
+                _groupRepo.getMemberships(reqrec.memberId, Rank.MANAGER)) {
+            managedGroups.add(grec.groupId);
         }
 
         // any group the target's in and which we admin, we can grant/revoke shares
