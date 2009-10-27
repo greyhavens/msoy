@@ -24,8 +24,8 @@ import flash.utils.getTimer; // function import
  * Director for the tutorial popup panel. Manages two kinds of tutorial items: tips and
  * suggestions. Tips are normally added during intialization and shown at various times when
  * requested or after some time where no suggestions are happening. Suggestions are context-
- * dependent and popup immediately if the panel is not showing. Otherwise, the next button flashes
- * and the suggestion is next in line.
+ * dependent and popup immediately if the panel is not showing. Otherwise, the close button flashes
+ * and the suggestion is shown shortly after the user closes the dialog.
  */
 public class TutorialDirector
 {
@@ -35,7 +35,7 @@ public class TutorialDirector
         _timer = new Timer(TIP_DELAY, 1);
         _timer.addEventListener(TimerEvent.TIMER, handleTimer);
 
-        _panel = new TutorialPanel(_ctx, onNextTip, onPanelClose);
+        _panel = new TutorialPanel(_ctx, onPanelClose);
     }
 
     /**
@@ -124,7 +124,13 @@ public class TutorialDirector
     protected function handleTimer (evt :TimerEvent) :void
     {
         if (!isShowing()) {
-            onNextTip();
+            if (_suggestions.length > 0) {
+                popup(_suggestions.shift());
+
+            } else if (_tips.length > 0) {
+                _lastTip = (_lastTip + 1) % _tips.length;
+                popup(_tips[_lastTip]);
+            }
         }
     }
 
@@ -133,36 +139,23 @@ public class TutorialDirector
         return _ctx.getTopPanel().getPlaceContainer();
     }
 
-    protected function onNextTip () :void
-    {
-        if (_suggestions.length > 0) {
-            popup(_suggestions.shift());
-            if (_suggestions.length > 0) {
-                _panel.flashNext();
-            }
-
-        } else if (_tips.length > 0) {
-            _lastTip = (_lastTip + 1) % _tips.length;
-            popup(_tips[_lastTip]);
-        }
-    }
-
     protected function onPanelClose () :void
     {
-        Tweener.addTween(_panel, {y :-_panel.height, time: 0.6, transition: "easeinquart",
+        Tweener.addTween(_panel, {y :-_panel.height, time: ROLL_TIME, transition: "easeinquart",
             onComplete: Util.adapt(placeBox().removeChild, _panel)});
 
+        _timer.delay = _suggestions.length > 0 ? SUGGESTION_DELAY : TIP_DELAY;
         _timer.start();
     }
 
     protected function queue (item :Item) :void
     {
         if (item.isSuggestion()) {
+            _suggestions.push(item);
             if (isShowing()) {
-                _suggestions.push(item);
-                _panel.flashNext();
+                _panel.flashCloseButton();
             } else {
-                popup(item);
+                handleTimer(null);
             }
         } else {
             _tips.push(item);
@@ -184,10 +177,14 @@ public class TutorialDirector
         _panel.setContent(item.text, item.buttonText, item.buttonFn);
 
         if (_panel.y != 0) {
-            Tweener.addTween(_panel, {y :0, time: 0.6, transition: "easeoutquart"});
+            Tweener.addTween(_panel, {y :0, time: ROLL_TIME, transition: "easeoutquart"});
         }
 
         _timer.reset();
+
+        if (_suggestions.length > 0) {
+            _panel.flashCloseButton();
+        }
     }
 
     protected var _ctx :MsoyContext;
@@ -197,7 +194,9 @@ public class TutorialDirector
     protected var _tips :Array = [];
     protected var _lastTip :int = -1;
 
+    protected var ROLL_TIME :Number = 0.6;
     protected var TIP_DELAY :Number = 60 * 1000;
+    protected var SUGGESTION_DELAY :Number = (ROLL_TIME + .25) * 1000;
 }
 }
 

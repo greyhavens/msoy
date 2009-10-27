@@ -13,6 +13,8 @@ import mx.core.UIComponent;
 import mx.controls.Text;
 import mx.containers.Canvas;
 
+import caurina.transitions.Tweener;
+
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.FlexUtil;
 
@@ -26,17 +28,21 @@ public class TutorialPanel extends Canvas
     public static const WIDTH :int = 600;
     public static const HEIGHT :int = 120;
 
-    public function TutorialPanel (ctx :MsoyContext, onNext :Function, onClose :Function)
+    public function TutorialPanel (ctx :MsoyContext, onClose :Function)
     {
         styleName = "tutorialPanel";
         verticalScrollPolicy = ScrollPolicy.OFF;
         horizontalScrollPolicy = ScrollPolicy.OFF;
-        _onNext = onNext;
         _onClose = onClose;
     }
 
     public function setContent (message :String, buttonText :String, buttonFn :Function) :void
     {
+        Tweener.removeTweens(_glower);
+        _glower.reset();
+
+        _close.toolTip = Msgs.GENERAL.get("i.tutorial_close");
+
         _text.text = message;
 
         if (buttonText == null) {
@@ -53,8 +59,13 @@ public class TutorialPanel extends Canvas
     /**
      * Flashes the next button, so that the user knows something more important is pending.
      */
-    public function flashNext () :void
+    public function flashCloseButton () :void
     {
+        _glower.level = 0;
+        _close.toolTip = Msgs.GENERAL.get("i.tutorial_close_pending");
+        Tweener.addTween(_glower, {level: 1, time: .5, transition: "easeinoutsine"});
+        Tweener.addTween(_glower, {level: 0, delay: .5, time: .5,
+            transition: "easeinoutsine", onComplete: flashCloseButton });
     }
 
     // from PlaceLayer
@@ -67,6 +78,13 @@ public class TutorialPanel extends Canvas
         x = (unscaledWidth - width) / 2;
     }
 
+    protected function handleClose () :void
+    {
+        Tweener.removeTweens(_glower);
+        _glower.reset();
+        _onClose();
+    }
+
     override protected function createChildren () :void
     {
         super.createChildren();
@@ -74,7 +92,7 @@ public class TutorialPanel extends Canvas
         addCentered(PROFESSOR_X, "tutorialProfessor", new PROFESSOR as DisplayObject);
         addCentered(BUBBLE_X, null, makeSpeechBubble());
         addCentered(TEXT_X, "tutorialText", _text = new Text());
-        add(CLOSE_X, CLOSE_Y, "closeButton", imgButton(_onClose, "i.tutorial_close"));
+        add(CLOSE_X, CLOSE_Y, "closeButton", _close = imgButton(handleClose, "i.tutorial_close"));
         addCentered(BUTTON_X, "tutorialActionButton", _action = new CommandButton());
 
         _text.selectable = false;
@@ -82,6 +100,8 @@ public class TutorialPanel extends Canvas
 
         _action.width = BUTTON_WIDTH;
         _action.height = BUTTON_HEIGHT;
+
+        _glower = new Glower(_close);
 
         // set the width and height for all time
         width = WIDTH;
@@ -157,9 +177,10 @@ public class TutorialPanel extends Canvas
     }
 
     protected var _ctx :MsoyContext;
-    protected var _onNext :Function;
     protected var _onClose :Function;
     protected var _action :CommandButton;
+    protected var _close :CommandButton
+    protected var _glower :Glower;
     protected var _text :Text;
 
     [Embed(source="../../../../../../../rsrc/media/skins/tutorial/professor.png")]
@@ -187,4 +208,47 @@ public class TutorialPanel extends Canvas
     protected static const CLOSE_X :int = WIDTH - 25;
     protected static const CLOSE_Y :int = 15;
 }
+}
+
+import flash.display.DisplayObject;
+import flash.filters.GlowFilter;
+
+class Glower
+{
+    public function Glower (target :DisplayObject)
+    {
+        _target = target;
+        _level = 0;
+    }
+
+    public function reset () :void
+    {
+        _level = 0;
+        _target.filters = [];
+    }
+
+    public function set level (value :Number) :void
+    {
+        _level = value;
+        var filters :Array = _target.filters;
+        var glow :GlowFilter;
+        if (filters != null && filters.length > 0) {
+            glow = filters[0] as GlowFilter;
+        } else {
+            glow = new GlowFilter(0x94c7e3, 1, 6, 6, 12);
+        }
+
+        glow.blurX = 4 + 4 * level;
+        glow.blurY = 4 + 4 * level;
+        glow.strength = 2 + 4 * level;
+        _target.filters = [glow];
+    }
+
+    public function get level () :Number
+    {
+        return _level;
+    }
+
+    protected var _target :DisplayObject;
+    protected var _level :Number;
 }
