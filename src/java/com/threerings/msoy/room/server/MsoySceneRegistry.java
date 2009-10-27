@@ -417,7 +417,7 @@ public class MsoySceneRegistry extends SpotSceneRegistry
                 // if anything goes haywire, clear out our entering status
                 destmgr.clearEnteringBody(_mover);
                 log.warning("Scene move failed", "mover", _mover.who(),
-                    "sceneId", scene.getId(), ie);
+                    "sceneId", scene.getId(), "msg", ie.getMessage());
                 _msoyListener.requestFailed(ie.getMessage());
                 return;
             }
