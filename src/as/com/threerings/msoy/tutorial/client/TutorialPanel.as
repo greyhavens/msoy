@@ -41,10 +41,12 @@ public class TutorialPanel extends Canvas
 
         if (buttonText == null) {
             _action.setVisible(false);
+            _text.width = TEXT_FULL_WIDTH;
         } else {
             _action.setVisible(true);
             _action.setCallback(buttonFn);
             _action.label = buttonText;
+            _text.width = TEXT_WIDTH;
         }
     }
 
@@ -69,17 +71,17 @@ public class TutorialPanel extends Canvas
     {
         super.createChildren();
 
-        addCentered(0, "tutorialProfessor", new PROFESSOR as DisplayObject);
-        addCentered(100, null, makeSpeechBubble());
-        addCentered(110, "tutorialText", _text = new Text());
-        add(575, 15, "closeButton", imgButton(_onClose, "i.tutorial_close"));
-        addCentered(480, "tutorialActionButton", _action = new CommandButton());
+        addCentered(PROFESSOR_X, "tutorialProfessor", new PROFESSOR as DisplayObject);
+        addCentered(BUBBLE_X, null, makeSpeechBubble());
+        addCentered(TEXT_X, "tutorialText", _text = new Text());
+        add(CLOSE_X, CLOSE_Y, "closeButton", imgButton(_onClose, "i.tutorial_close"));
+        addCentered(BUTTON_X, "tutorialActionButton", _action = new CommandButton());
 
         _text.selectable = false;
-        _text.width = 370;
+        _text.width = TEXT_WIDTH;
 
-        _action.width = 110;
-        _action.height = 40;
+        _action.width = BUTTON_WIDTH;
+        _action.height = BUTTON_HEIGHT;
 
         // set the width and height for all time
         width = WIDTH;
@@ -126,20 +128,20 @@ public class TutorialPanel extends Canvas
         var g :Graphics = s.graphics;
 
         // rectangle outline
-        g.lineStyle(1, OUTLINE);
-        g.beginFill(FILL);
-        g.drawRoundRect(0, 0, BUBBLE_WIDTH, BUBBLE_HEIGHT, ROUNDING);
+        g.lineStyle(1, BUBBLE_OUTLINE);
+        g.beginFill(BUBBLE_FILL);
+        g.drawRoundRect(0, 0, BUBBLE_WIDTH, BUBBLE_HEIGHT, BUBBLE_ROUNDING);
         g.endFill();
 
         // tail interior
-        g.lineStyle(1, FILL);
-        g.beginFill(FILL);
+        g.lineStyle(1, BUBBLE_FILL);
+        g.beginFill(BUBBLE_FILL);
         g.drawRect(0, TAIL_BASE_Y + 1, 1, TAIL_BASE_HEIGHT - 2);
         drawBubbleTail(g);
         g.endFill();
 
         // tail exterior
-        g.lineStyle(1, OUTLINE);
+        g.lineStyle(1, BUBBLE_OUTLINE);
         drawBubbleTail(g);
 
         // make sure our children get the alpha setting too (contrary to flash documentation)
@@ -165,13 +167,24 @@ public class TutorialPanel extends Canvas
 
     protected static const BUBBLE_WIDTH :int = 500;
     protected static const BUBBLE_HEIGHT :int = HEIGHT - 20;
-    protected static const ROUNDING :int = 35;
-    protected static const OUTLINE :int = 0x000000;
-    protected static const FILL :int = 0xffffff;
+    protected static const BUBBLE_ROUNDING :int = 35;
+    protected static const BUBBLE_OUTLINE :int = 0x000000;
+    protected static const BUBBLE_FILL :int = 0xffffff;
 
     protected static const TAIL_BASE_Y :int = 20;
     protected static const TAIL_BASE_HEIGHT :int = 20;
     protected static const TAIL_TIP_Y :int = 45;
     protected static const TAIL_WIDTH :int = 30;
+
+    protected static const PROFESSOR_X :int = 0;
+    protected static const BUBBLE_X :int = PROFESSOR_X + 100;
+    protected static const TEXT_X :int = BUBBLE_X + 10;
+    protected static const TEXT_WIDTH :int = 370;
+    protected static const BUTTON_X :int = TEXT_X + TEXT_WIDTH;
+    protected static const BUTTON_WIDTH :int = WIDTH - 10 - BUTTON_X;
+    protected static const BUTTON_HEIGHT :int = 40;
+    protected static const TEXT_FULL_WIDTH :int = BUTTON_X + BUTTON_WIDTH - TEXT_X;
+    protected static const CLOSE_X :int = WIDTH - 25;
+    protected static const CLOSE_Y :int = 15;
 }
 }
