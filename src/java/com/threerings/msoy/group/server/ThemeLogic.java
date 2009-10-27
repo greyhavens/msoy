@@ -74,7 +74,7 @@ public class ThemeLogic
         throws ServiceException
     {
         return _moneyLogic.securePrice(mrec.memberId, THEME_PURCHASE_KEY,
-            Currency.COINS, getThemeCoinCost());
+            Currency.BARS, getThemeBarCost());
     }
 
     /**
@@ -84,7 +84,10 @@ public class ThemeLogic
         final MemberRecord mrec, Theme theme, Currency currency, int authedAmount)
         throws ServiceException
     {
-        // TODO: Check if group exists
+        if (_groupRepo.loadGroup(theme.groupId) == null) {
+            log.warning("Attempt to create theme for non-existent group", "group", theme.groupId);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
 
         final ThemeRecord trec = new ThemeRecord();
         trec.groupId = theme.groupId;
@@ -97,7 +100,7 @@ public class ThemeLogic
 
         // execute the purchase
         PurchaseResult<Theme> result = _moneyLogic.buyTheme(
-            mrec, THEME_PURCHASE_KEY, currency, authedAmount, Currency.COINS, getThemeCoinCost(),
+            mrec, THEME_PURCHASE_KEY, currency, authedAmount, Currency.BARS, getThemeBarCost(),
             new MoneyLogic.BuyOperation<Theme>() {
             public Theme create (boolean magicFree, Currency currency, int amountPaid)
                 throws ServiceException
@@ -106,13 +109,6 @@ public class ThemeLogic
                 return trec.toTheme();
             }
         }).toPurchaseResult();
-
-//        // if the group is non-private, publish that they created it in their feed
-//        if (grec.policy != Group.Policy.EXCLUSIVE) {
-//            _feedLogic.publishMemberMessage(
-//                mrec.memberId, FeedMessageType.FRIEND_CREATED_GROUP,
-//                grec.groupId, grec.name, MediaDesc.mdToString(grec.toLogo()));
-//        }
 
         return result;
     }
@@ -152,10 +148,9 @@ public class ThemeLogic
     /**
      * Return the current cost of forming a new group, in coins.
      */
-    protected int getThemeCoinCost ()
+    protected int getThemeBarCost ()
     {
-        // TODO: NEW_THEME, not NEW_GROUP
-        return _runtime.getCoinCost(CostsConfigObject.NEW_GROUP);
+        return _runtime.getBarCost(CostsConfigObject.NEW_THEME);
     }
 
     /** An arbitrary key for quoting group creation (purchase). */

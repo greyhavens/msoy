@@ -21,6 +21,9 @@ public class CostsConfigObject extends ConfigObject
     /** The field name of the <code>newGroup</code> field. */
     public static final String NEW_GROUP = "newGroup";
 
+    /** The field name of the <code>newTheme</code> field. */
+    public static final String NEW_THEME = "newTheme";
+
     /** The field name of the <code>broadcastBase</code> field. */
     public static final String BROADCAST_BASE = "broadcastBase";
 
@@ -36,6 +39,9 @@ public class CostsConfigObject extends ConfigObject
 
     /** The cost of new group. */
     public int newGroup = -3;
+
+    /** The cost of new theme. */
+    public int newTheme = -100;
 
     /** The base cost of a paid broadcast. */
     public int broadcastBase = -10;
@@ -77,6 +83,22 @@ public class CostsConfigObject extends ConfigObject
         requestAttributeChange(
             NEW_GROUP, Integer.valueOf(value), Integer.valueOf(ovalue));
         this.newGroup = value;
+    }
+
+    /**
+     * Requests that the <code>newTheme</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setNewTheme (int value)
+    {
+        int ovalue = this.newTheme;
+        requestAttributeChange(
+            NEW_THEME, Integer.valueOf(value), Integer.valueOf(ovalue));
+        this.newTheme = value;
     }
 
     /**
