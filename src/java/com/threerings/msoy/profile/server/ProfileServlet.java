@@ -440,6 +440,8 @@ public class ProfileServlet extends MsoyServiceServlet
     protected Set<Integer> resolveBrandInvites (
         List<GroupCard> groups, MemberRecord reqrec, MemberRecord tgtrec)
     {
+        Set<Integer> result = Sets.newHashSet();
+
         // bail early we are not logged in
         if (reqrec == null) {
             return result;
@@ -453,7 +455,6 @@ public class ProfileServlet extends MsoyServiceServlet
         }
 
         // any group the target's in and which we admin, we can grant/revoke shares
-        Set<Integer> result = Sets.newHashSet();
         for (GroupCard card : groups) {
             int groupId = card.name.getGroupId();
             if (managedGroups.contains(groupId)) {
