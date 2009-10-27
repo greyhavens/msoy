@@ -373,9 +373,10 @@ public class MsoySceneRegistry extends SpotSceneRegistry
             final MsoyScene scene = (MsoyScene) scmgr.getScene();
             final RoomManager destmgr = (RoomManager)scmgr;
 
-            // if we're not going to be let into the room, skip all the fancy stuff and flake now
-            if (scmgr.ratifyBodyEntry(_memobj) != null) {
-                finishMove(scene, destmgr);
+            // if we're not going to be let into the room, let our listener know now
+            String accessMsg = scmgr.ratifyBodyEntry(_memobj);
+            if (accessMsg != null) {
+                _msoyListener.requestFailed(accessMsg);
                 return;
             }
 
@@ -417,7 +418,7 @@ public class MsoySceneRegistry extends SpotSceneRegistry
                 // if anything goes haywire, clear out our entering status
                 destmgr.clearEnteringBody(_mover);
                 log.warning("Scene move failed", "mover", _mover.who(),
-                    "sceneId", scene.getId(), "msg", ie.getMessage());
+                    "sceneId", scene.getId(), ie);
                 _msoyListener.requestFailed(ie.getMessage());
                 return;
             }
