@@ -442,6 +442,11 @@ public class ProfileServlet extends MsoyServiceServlet
     {
         Set<Integer> result = Sets.newHashSet();
 
+        // bail early we are not logged in
+        if (reqrec == null) {
+            return result;
+        }
+
         // fetch our managed groups from DB
         IntSet managedGroups = new ArrayIntSet();
         for (GroupMembershipRecord grec : _groupRepo.getMemberships(reqrec.memberId)) {
