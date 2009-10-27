@@ -74,7 +74,7 @@ public class ThemeLogic
         throws ServiceException
     {
         return _moneyLogic.securePrice(mrec.memberId, THEME_PURCHASE_KEY,
-            Currency.BARS, getThemeBarCost());
+            Currency.BARS, getThemeBarCost(), false);
     }
 
     /**
