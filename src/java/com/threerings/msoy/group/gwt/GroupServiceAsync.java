@@ -9,9 +9,10 @@ import com.threerings.gwt.util.PagedResult;
 import com.threerings.msoy.data.all.VizMemberName;
 import com.threerings.msoy.group.data.all.Group;
 import com.threerings.msoy.group.data.all.GroupMembership;
-
 import com.threerings.msoy.group.data.all.Medal;
-import com.threerings.msoy.group.data.all.Theme;
+
+import com.threerings.msoy.data.all.Theme;
+
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.PriceQuote;
 import com.threerings.msoy.money.data.all.PurchaseResult;
@@ -41,6 +42,11 @@ public interface GroupServiceAsync
      * The async version of {@link GroupService#getGroupInfo}.
      */
     void getGroupInfo (int groupId, AsyncCallback<GroupService.GroupInfo> callback);
+
+    /**
+     * The async version of {@link GroupService#getTheme}.
+     */
+    void getTheme (int groupId, AsyncCallback<Theme> callback);
 
     /**
      * The async version of {@link GroupService#getMembershipGroups}.

@@ -3,6 +3,9 @@
 
 package com.threerings.msoy.data.all;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.util.Name;
@@ -67,6 +70,25 @@ public class GroupName extends Name
     public int getGroupId ()
     {
         return _groupId;
+    }
+
+    /**
+     * Flattens this instance into a string that can be passed between JavaScript apps.
+     */
+    public List<String> flatten ()
+    {
+        List<String> data = new ArrayList<String>();
+        data.add(_name);
+        data.add(Integer.toString(_groupId));
+        return data;
+    }
+
+    /**
+     * Creates and initializes an instance from supplied strings.
+     */
+    public static GroupName unflatten (String groupName, String idStr)
+    {
+        return new GroupName(groupName, Integer.parseInt(idStr));
     }
 
     @Override // from Object

@@ -11,11 +11,11 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 import com.threerings.gwt.util.PagedResult;
 import com.threerings.msoy.data.all.GroupName;
+import com.threerings.msoy.data.all.Theme;
 import com.threerings.msoy.data.all.VizMemberName;
 import com.threerings.msoy.group.data.all.Group;
 import com.threerings.msoy.group.data.all.GroupMembership;
 import com.threerings.msoy.group.data.all.Medal;
-import com.threerings.msoy.group.data.all.Theme;
 import com.threerings.msoy.group.data.all.GroupMembership.Rank;
 import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.gwt.TagHistory;
@@ -115,6 +115,12 @@ public interface GroupService extends RemoteService
      * Returns information on the specified group.
      */
     GroupInfo getGroupInfo (int groupId)
+        throws ServiceException;
+
+    /**
+     * Returns information on the specified theme.
+     */
+    Theme getTheme (int groupId)
         throws ServiceException;
 
     /**

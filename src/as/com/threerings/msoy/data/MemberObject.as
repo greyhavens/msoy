@@ -20,6 +20,7 @@ import com.threerings.msoy.data.all.GatewayEntry;
 import com.threerings.msoy.data.all.MemberMailUtil;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.PlayerEntry;
+import com.threerings.msoy.data.all.Theme;
 import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.data.all.VizMemberName;
 
@@ -27,7 +28,6 @@ import com.threerings.msoy.game.data.GameSummary;
 
 import com.threerings.msoy.group.data.all.GroupMembership;
 import com.threerings.msoy.group.data.all.GroupMembership_Rank;
-import com.threerings.msoy.group.data.all.Theme;
 
 import com.threerings.msoy.item.data.all.Avatar;
 

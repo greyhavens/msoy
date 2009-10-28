@@ -21,10 +21,10 @@ public class ThemeChangeEvent extends FlashEvent
     {
     }
 
-    public ThemeChangeEvent (int groupId, String url)
+    public ThemeChangeEvent (int groupId, String logoUrl)
     {
         _groupId = groupId;
-        _url = url;
+        _logoUrl = logoUrl;
     }
 
     @Override // from FlashEvent
@@ -37,14 +37,14 @@ public class ThemeChangeEvent extends FlashEvent
     public void fromJSObject (JavaScriptObject args)
     {
         _groupId = JavaScriptUtil.getIntElement(args, 0);
-        _url = JavaScriptUtil.getStringElement(args, 1);
+        _logoUrl = JavaScriptUtil.getStringElement(args, 1);
     }
 
     @Override // from FlashEvent
     public void toJSObject (JavaScriptObject args)
     {
         JavaScriptUtil.setIntElement(args, 0, _groupId);
-        JavaScriptUtil.setStringElement(args, 1, _url);
+        JavaScriptUtil.setStringElement(args, 1, _logoUrl);
     }
 
     @Override // from FlashEvent
@@ -60,11 +60,11 @@ public class ThemeChangeEvent extends FlashEvent
         return _groupId;
     }
 
-    public String getUrl ()
+    public String getLogoUrl ()
     {
-        return _url;
+        return _logoUrl;
     }
 
     protected int _groupId;
-    protected String _url;
+    protected String _logoUrl;
 }

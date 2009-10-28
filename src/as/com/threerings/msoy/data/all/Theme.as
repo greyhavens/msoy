@@ -1,7 +1,7 @@
 //
 // $Id: $
 
-package com.threerings.msoy.group.data.all {
+package com.threerings.msoy.data.all {
 
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
@@ -9,6 +9,7 @@ import com.threerings.io.SimpleStreamableObject;
 
 import com.threerings.presents.dobj.DSet_Entry;
 
+import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MediaDesc;
 
 /**
@@ -18,7 +19,7 @@ public class Theme extends SimpleStreamableObject
     implements DSet_Entry
 {
     /** The group id of this theme. */
-    public var groupId :int;
+    public var group :GroupName;
 
     /** The media of the theme's Whirled logo replacement image. */
     public var logo :MediaDesc;
@@ -30,16 +31,21 @@ public class Theme extends SimpleStreamableObject
     {
     }
 
+    public function getGroupId () :int
+    {
+        return (group != null) ? group.getGroupId() : 0;
+    }
+
     // from DSet_Entry
     public function getKey () :Object
     {
-        return groupId;
+        return group.getGroupId();
     }
 
     // from Streamable
     override public function readObject (ins :ObjectInputStream) :void
     {
-        groupId = ins.readInt();
+        group = GroupName(ins.readObject());
         logo = MediaDesc(ins.readObject());
         playOnEnter = ins.readBoolean();
     }

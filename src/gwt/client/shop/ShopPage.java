@@ -9,9 +9,9 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 
 import com.threerings.msoy.data.all.GroupName;
+import com.threerings.msoy.data.all.Theme;
 import com.threerings.msoy.group.gwt.GroupService;
 import com.threerings.msoy.group.gwt.GroupServiceAsync;
-import com.threerings.msoy.group.gwt.GroupService.GroupInfo;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.gwt.CatalogListing;
@@ -102,9 +102,9 @@ public class ShopPage extends Page
 
         if (themeId != null) {
             if (themeId != 0) {
-                _groupsvc.getGroupInfo(themeId, new InfoCallback<GroupInfo>() {
-                    public void onSuccess (GroupInfo result) {
-                        loadShopPage(result != null ? result.name : null);
+                _groupsvc.getTheme(themeId, new InfoCallback<Theme>() {
+                    public void onSuccess (Theme result) {
+                        loadShopPage(result != null ? result.group : null);
                     }
                 });
                 return;

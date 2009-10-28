@@ -48,7 +48,7 @@ import com.threerings.msoy.world.server.WorldManager;
 import com.threerings.msoy.peer.data.HostedRoom;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 
-import com.threerings.msoy.group.data.all.Theme;
+import com.threerings.msoy.data.all.Theme;
 import com.threerings.msoy.group.server.ThemeLogic;
 import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
@@ -323,7 +323,7 @@ public class MsoySceneRegistry extends SpotSceneRegistry
         if (user.theme == null) {
             return groupId == 0;
         }
-        return user.theme.groupId == groupId;
+        return user.theme.getGroupId() == groupId;
     }
 
     protected interface ThemeMoveHandler
@@ -498,7 +498,7 @@ public class MsoySceneRegistry extends SpotSceneRegistry
                     return;
                 }
 
-                _theme = new Theme(_themeId, themeRec.playOnEnter, themeRec.toLogo());
+                _theme = themeRec.toTheme(groupRec.toGroupName());
                 _groupName = groupRec.name;
 
                 if (themeRec.playOnEnter) {

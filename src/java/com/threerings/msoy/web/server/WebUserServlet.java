@@ -59,6 +59,7 @@ import com.threerings.msoy.facebook.server.FacebookLogic;
 import com.threerings.msoy.facebook.server.persist.FacebookInfoRecord;
 import com.threerings.msoy.facebook.server.persist.FacebookRepository;
 import com.threerings.msoy.game.server.GameLogic;
+import com.threerings.msoy.group.server.ThemeLogic;
 import com.threerings.msoy.mail.server.MailLogic;
 import com.threerings.msoy.mail.server.persist.MailRepository;
 import com.threerings.msoy.money.data.all.MemberMoney;
@@ -140,7 +141,7 @@ public class WebUserServlet extends MsoyServiceServlet
             verifyCaptcha(info.captchaChallenge, info.captchaResponse);
         }
 
-        final MemberRecord mrec = (info.permaguestId > 0) ? 
+        final MemberRecord mrec = (info.permaguestId > 0) ?
             _accountLogic.savePermaguestAccount(
                 info.permaguestId, info.email, info.password, info.displayName, info.info.realName,
                 invite, info.visitor, info.birthday) :
@@ -637,6 +638,8 @@ public class WebUserServlet extends MsoyServiceServlet
         } catch (Exception e) {
             log.warning("Failed to load new mail count [id=" + mrec.memberId + "].", e);
         }
+
+        data.theme = (mrec.themeGroupId != 0) ? _themeLogic.loadTheme(mrec.themeGroupId) : null;
     }
 
     protected static String generateDeleteSecret (MemberRecord mrec)
@@ -667,4 +670,5 @@ public class WebUserServlet extends MsoyServiceServlet
     @Inject protected RuntimeConfig _runtime;
     @Inject protected ServerMessages _serverMsgs;
     @Inject protected StatLogic _statLogic;
+    @Inject protected ThemeLogic _themeLogic;
 }

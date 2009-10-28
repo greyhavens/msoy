@@ -27,6 +27,7 @@ import com.threerings.msoy.web.gwt.WebUserServiceAsync;
 
 import client.util.NoopAsyncCallback;
 import client.util.events.StatusChangeEvent;
+import client.util.events.ThemeChangeEvent;
 
 /**
  * A central place where we keep track of whether or not we've logged on or logged off.
@@ -107,6 +108,11 @@ public class Session
         frame.dispatchEvent(new StatusChangeEvent(StatusChangeEvent.COINS, data.flow));
         frame.dispatchEvent(new StatusChangeEvent(StatusChangeEvent.BARS, data.gold));
         frame.dispatchEvent(new StatusChangeEvent(StatusChangeEvent.LEVEL, data.level));
+
+        if (data.theme != null) {
+            frame.dispatchEvent(new ThemeChangeEvent(
+                data.theme.getGroupId(), data.theme.logo.getMediaPath()));
+        }
     }
 
     /**

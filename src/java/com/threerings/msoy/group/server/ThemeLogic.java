@@ -17,7 +17,7 @@ import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.msoy.admin.data.CostsConfigObject;
 import com.threerings.msoy.admin.server.RuntimeConfig;
-import com.threerings.msoy.group.data.all.Theme;
+import com.threerings.msoy.data.all.Theme;
 import com.threerings.msoy.group.data.all.GroupMembership.Rank;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.group.server.persist.ThemeAvatarLineupRecord;
@@ -64,7 +64,7 @@ public class ThemeLogic
     public Theme loadTheme (int groupId)
     {
         ThemeRecord rec = _themeRepo.loadTheme(groupId);
-        return (rec != null) ? rec.toTheme() : null;
+        return (rec != null) ? rec.toTheme(_groupRepo.loadGroupName(groupId)) : null;
     }
 
     /**
@@ -84,13 +84,13 @@ public class ThemeLogic
         final MemberRecord mrec, Theme theme, Currency currency, int authedAmount)
         throws ServiceException
     {
-        if (_groupRepo.loadGroup(theme.groupId) == null) {
-            log.warning("Attempt to create theme for non-existent group", "group", theme.groupId);
+        if (_groupRepo.loadGroup(theme.getGroupId()) == null) {
+            log.warning("Attempt to create theme for non-existent group", "group", theme.group);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
 
         final ThemeRecord trec = new ThemeRecord();
-        trec.groupId = theme.groupId;
+        trec.groupId = theme.getGroupId();
         if (theme.logo != null) {
             trec.logoMimeType = theme.logo.mimeType;
             trec.logoMediaHash = theme.logo.hash;
@@ -106,7 +106,8 @@ public class ThemeLogic
                 throws ServiceException
             {
                 _themeRepo.createTheme(trec);
-                return trec.toTheme();
+
+                return trec.toTheme(_groupRepo.loadGroupName(trec.groupId));
             }
         }).toPurchaseResult();
 
@@ -120,14 +121,14 @@ public class ThemeLogic
         throws ServiceException
     {
         if (!mrec.isSupport() &&
-                _groupRepo.getRank(theme.groupId, mrec.memberId) != Rank.MANAGER) {
+                _groupRepo.getRank(theme.getGroupId(), mrec.memberId) != Rank.MANAGER) {
             log.warning("in updateGroup, invalid permissions");
             throw new ServiceException("m.invalid_permissions");
         }
 
-        ThemeRecord trec = _themeRepo.loadTheme(theme.groupId);
+        ThemeRecord trec = _themeRepo.loadTheme(theme.getGroupId());
         if (trec == null) {
-            log.warning("Cannot update non-existent theme", "id", theme.groupId);
+            log.warning("Cannot update non-existent theme", "id", theme.group);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
 
@@ -141,7 +142,7 @@ public class ThemeLogic
             updates.put(ThemeRecord.LOGO_MEDIA_CONSTRAINT, theme.logo.constraint);
         }
         if (updates.size() > 0) {
-            _themeRepo.updateTheme(theme.groupId, updates);
+            _themeRepo.updateTheme(theme.getGroupId(), updates);
         }
     }
 

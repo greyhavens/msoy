@@ -442,8 +442,8 @@ public class WorldManager
             @Override public void invokePersist () throws Exception {
                 int avatarId = (avatar == null) ? 0 : avatar.itemId;
                 _memberRepo.configureAvatarId(user.getMemberId(), avatarId);
-                _themeRepo.noteAvatarWorn(
-                    user.getMemberId(), user.theme != null ? user.theme.groupId : 0, avatarId);
+                _themeRepo.noteAvatarWorn(user.getMemberId(),
+                    (user.theme != null) ? user.theme.getGroupId() : 0, avatarId);
             }
             @Override public void handleFailure (Exception pe) {
                 log.warning("configureAvatarId failed", "user", user.which(), "avatar", avatar, pe);

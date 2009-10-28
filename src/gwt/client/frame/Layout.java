@@ -10,6 +10,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.web.gwt.ClientMode;
+import com.threerings.msoy.web.gwt.Pages;
 
 /**
  * Handles the layout of our various frame elements (header, content, client).
@@ -119,7 +120,8 @@ public abstract class Layout
 
         FlashEvents.addListener(new ThemeChangeEvent.Listener() {
             public void themeChanged (ThemeChangeEvent event) {
-                _header.setLogoUrl(event.getUrl());
+                _header.setLogoUrl(event.getLogoUrl());
+                _header.setHidden(Pages.ROOMS, event.getGroupId() != 0);
             }
         });
     }

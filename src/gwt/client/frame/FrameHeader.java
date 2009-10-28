@@ -4,7 +4,9 @@
 package client.frame;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
@@ -46,22 +48,27 @@ public class FrameHeader
 
         _naviPanel = new SmartTable("frameHeaderNavi", 0, 0);
 
-        int col = 0;
-        addButton(col++, Pages.ME, _cmsgs.menuMe(), _images.me(), _images.ome(), _images.sme());
-        // TODO: remove the tab images
-        addButton(col++, Pages.STUFF, _cmsgs.menuStuff(), _images.stuff(), _images.ostuff(),
-                  _images.sstuff());
-        addButton(col++, Pages.GAMES, _cmsgs.menuGames(), _images.games(), _images.ogames(),
-                  _images.sgames());
-        addButton(col++, Pages.ROOMS, _cmsgs.menuRooms(), _images.rooms(), _images.orooms(),
-                  _images.srooms());
-        addButton(col++, Pages.GROUPS, _cmsgs.menuWorlds(), _images.worlds(), _images.oworlds(),
-                  _images.sworlds());
-        addButton(col++, Pages.SHOP, _cmsgs.menuShop(), _images.shop(), _images.oshop(),
-                  _images.sshop());
+        updateTabs();
 
         // listen for session state changes
         Session.addObserver(this);
+    }
+
+    /**
+     * Determine whether a page (tab) should be hidden or not. By default, all our tabs show.
+     */
+    public boolean setHidden (Pages page, boolean hidden)
+    {
+        boolean changed;
+        if (hidden) {
+            changed = _hidden.add(page);
+        } else {
+            changed = _hidden.remove(page);
+        }
+        if (changed) {
+            updateTabs();
+        }
+        return changed;
     }
 
     /**
@@ -126,12 +133,35 @@ public class FrameHeader
         _statusContainer.setWidget(_logonPanel);
     }
 
-    protected void addButton (int col, Pages page, String text, AbstractImagePrototype up,
+    protected void updateTabs ()
+    {
+        _naviPanel.clear();
+    
+        int col = 0;
+        col += addButton(col, Pages.ME, _cmsgs.menuMe(), _images.me(), _images.ome(), _images.sme());
+        // TODO: remove the tab images
+        col += addButton(col, Pages.STUFF, _cmsgs.menuStuff(), _images.stuff(), _images.ostuff(),
+                  _images.sstuff());
+        col += addButton(col, Pages.GAMES, _cmsgs.menuGames(), _images.games(), _images.ogames(),
+                  _images.sgames());
+        col += addButton(col, Pages.ROOMS, _cmsgs.menuRooms(), _images.rooms(), _images.orooms(),
+                  _images.srooms());
+        col += addButton(col, Pages.GROUPS, _cmsgs.menuWorlds(), _images.worlds(), _images.oworlds(),
+                  _images.sworlds());
+        col += addButton(col, Pages.SHOP, _cmsgs.menuShop(), _images.shop(), _images.oshop(),
+                  _images.sshop());
+    }
+
+    protected int addButton (int col, Pages page, String text, AbstractImagePrototype up,
                               AbstractImagePrototype over, AbstractImagePrototype down)
     {
         NaviButton button = new NaviButton(page, text, up, over, down);
-        _naviPanel.setWidget(0, col, button);
         _buttons.add(button);
+        if (_hidden.contains(page)) {
+            return 0;
+        }
+        _naviPanel.setWidget(0, col, button);
+        return 1;
     }
 
     protected static class NaviButton extends SimplePanel
@@ -190,6 +220,7 @@ public class FrameHeader
     protected SmartTable _logonPanel = makeLogonPanel();
     protected int _statusCol;
     protected List<NaviButton> _buttons = new ArrayList<NaviButton>();
+    protected Set<Pages> _hidden = new HashSet<Pages>();
     protected Image _logo;
 
     protected static final NaviImages _images = GWT.create(NaviImages.class);

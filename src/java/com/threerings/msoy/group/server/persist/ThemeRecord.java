@@ -9,8 +9,9 @@ import com.samskivert.depot.annotation.Column;
 import com.samskivert.depot.annotation.Entity;
 import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.expression.ColumnExp;
+import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MediaDesc;
-import com.threerings.msoy.group.data.all.Theme;
+import com.threerings.msoy.data.all.Theme;
 
 /**
  *  Contains data specific to the theme aspect of a group.
@@ -60,9 +61,9 @@ public class ThemeRecord extends PersistentRecord
     /**
      * Creates a Theme of this record.
      */
-    public Theme toTheme ()
+    public Theme toTheme (GroupName group)
     {
-        return new Theme(groupId, playOnEnter, toLogo());
+        return new Theme(group, playOnEnter, toLogo());
     }
 
     /**

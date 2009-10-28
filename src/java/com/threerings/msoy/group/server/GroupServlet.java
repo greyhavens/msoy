@@ -26,6 +26,7 @@ import com.threerings.gwt.util.PagedResult;
 
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.all.GroupName;
+import com.threerings.msoy.data.all.Theme;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.VizMemberName;
 import com.threerings.msoy.server.MemberManager;
@@ -65,7 +66,6 @@ import com.threerings.msoy.room.server.persist.MsoySceneRepository;
 
 import com.threerings.msoy.group.data.all.Group;
 import com.threerings.msoy.group.data.all.GroupMembership;
-import com.threerings.msoy.group.data.all.Theme;
 import com.threerings.msoy.group.data.all.GroupMembership.Rank;
 import com.threerings.msoy.group.data.all.Medal;
 import com.threerings.msoy.group.gwt.GalaxyData;
@@ -274,6 +274,13 @@ public class GroupServlet extends MsoyServiceServlet
         }
 
         return info;
+    }
+
+    // from interface GroupService
+    public Theme getTheme (int groupId)
+        throws ServiceException
+    {
+        return _themeLogic.loadTheme(groupId);
     }
 
     // from interface GroupService

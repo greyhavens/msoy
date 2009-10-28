@@ -31,7 +31,6 @@ import com.threerings.whirled.data.Scene;
 
 import com.threerings.msoy.client.ContextMenuProvider;
 import com.threerings.msoy.client.DeploymentConfig;
-//import com.threerings.msoy.client.EmbedHeader;
 import com.threerings.msoy.client.GuestSessionCapture;
 import com.threerings.msoy.client.MsoyClient;
 import com.threerings.msoy.client.MsoyContext;
@@ -46,6 +45,7 @@ import com.threerings.msoy.data.WorldCredentials;
 import com.threerings.msoy.data.all.ChannelName;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.data.all.Theme;
 import com.threerings.msoy.data.all.VisitorInfo;
 
 import com.threerings.msoy.chat.data.MsoyChatChannel;
@@ -421,8 +421,7 @@ import com.threerings.msoy.item.data.all.Item_UsedAs;
 import com.threerings.msoy.client.MsoyClient;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.FriendEntry;
-
-import com.threerings.msoy.group.data.all.Theme;
+import com.threerings.msoy.data.all.Theme;
 
 import com.threerings.msoy.world.client.WorldContext;
 
@@ -471,7 +470,7 @@ class ThemeUpdater implements AttributeChangeListener
     {
         Log.getLog(ThemeUpdater).info("Updating theme: " + theme);
         _client.dispatchEventToGWT(THEME_CHANGE_EVENT, (theme != null) ?
-            [ theme.groupId, theme.logo.getMediaPath() ] : [ 0, null ]);
+            [ theme.getGroupId(), theme.logo.getMediaPath() ] : [ 0, null ]);
     }
 
     protected var _client :MsoyClient;

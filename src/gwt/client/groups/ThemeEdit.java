@@ -16,8 +16,8 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.WidgetUtil;
 
+import com.threerings.msoy.data.all.Theme;
 import com.threerings.msoy.group.data.all.Group;
-import com.threerings.msoy.group.data.all.Theme;
 import com.threerings.msoy.group.gwt.GroupService;
 import com.threerings.msoy.group.gwt.GroupServiceAsync;
 import com.threerings.msoy.web.gwt.Pages;
@@ -65,7 +65,7 @@ public class ThemeEdit extends FlexTable
 
         boolean isCreate;
         if (theme == null) {
-            theme = new Theme(group.groupId);
+            theme = new Theme(group.getName());
             isCreate = true;
         } else {
             isCreate = false;
@@ -91,7 +91,7 @@ public class ThemeEdit extends FlexTable
         HorizontalPanel footer = new HorizontalPanel();
         footer.add(_cancel = new Button(_cmsgs.cancel(), new ClickHandler() {
             public void onClick (ClickEvent event) {
-                Link.go(Pages.GROUPS, Nav.DETAIL.composeArgs(_theme.groupId));
+                Link.go(Pages.GROUPS, Nav.DETAIL.composeArgs(_theme.getGroupId()));
             }
         }));
         footer.add(WidgetUtil.makeShim(5, 5));
@@ -141,7 +141,7 @@ public class ThemeEdit extends FlexTable
         if (commitEdits()) {
             _groupsvc.updateTheme(_theme, new InfoCallback<Void>(_submit) {
                 public void onSuccess (Void result) {
-                    Link.go(Pages.GROUPS, "d", _theme.groupId, "r");
+                    Link.go(Pages.GROUPS, "d", _theme.getGroupId(), "r");
                 }
             });
         }
@@ -155,7 +155,7 @@ public class ThemeEdit extends FlexTable
                 public void onSuccess (PriceQuote quote) {
                     init(quote, new AsyncCallback<Theme>() {
                         public void onSuccess (Theme theme) {
-                            Link.go(Pages.GROUPS, "d", theme.groupId, "r");
+                            Link.go(Pages.GROUPS, "d", theme.getGroupId(), "r");
                         }
                         public void onFailure (Throwable t) {} /* not used */
                     });

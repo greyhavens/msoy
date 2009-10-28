@@ -10,6 +10,7 @@ import java.util.List;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.msoy.data.all.VisitorInfo;
+import com.threerings.msoy.data.all.Theme;
 
 /**
  * Contains a snapshot of the user's data delivered when they validate their session.
@@ -66,6 +67,9 @@ public class SessionData implements IsSerializable
     /** A/B test group associated with this session, or NONE. */
     public Group group = Group.NONE;
 
+    /** The Theme this user logged into, or null. */
+    public Theme theme;
+
     /** Optional data for displaying more progress information (facebook). */
     public Extra extra;
 
@@ -86,6 +90,8 @@ public class SessionData implements IsSerializable
         sdata.newMailCount = Integer.valueOf(data.next());
         sdata.visitor = VisitorInfo.unflatten(data);
         sdata.group = Group.valueOf(data.next());
+        sdata.theme = Theme.unflatten(data);
+
         // Note the extra is not included in flattened state
         return sdata;
     }
@@ -103,6 +109,12 @@ public class SessionData implements IsSerializable
         data.add(String.valueOf(newMailCount));
         data.addAll(visitor.flatten());
         data.add(String.valueOf(group));
+
+        if (theme != null) {
+            data.addAll(theme.flatten());
+        } else {
+            data.add(null);
+        }
         // Note the extra is not included in flattened state
         return data;
     }
