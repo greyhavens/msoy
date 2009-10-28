@@ -75,7 +75,7 @@ public class FBChallengeFeeder
      */
     protected void onCompletion (String postId)
     {
-        if (postId != null) {
+        if (postId != null && !postId.equals("null")) {
             _fbsvc.challengePublished(
                 CShell.getAppId(), _game, _fields.trackingId, new AsyncCallback<Void>() {
                 @Override public void onFailure (Throwable caught) {

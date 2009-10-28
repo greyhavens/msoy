@@ -94,7 +94,7 @@ public class ExternalFeeder
     protected void trophyPublished (
         int gameId, String trophyIdent, String trackingId, String postId)
     {
-        if (postId != null) {
+        if (postId != null && !postId.equals("null")) {
             _fbsvc.trophyPublished(
                 CShell.getAppId(), gameId, trophyIdent, trackingId, new AsyncCallback<Void>() {
                 @Override public void onFailure (Throwable caught) {

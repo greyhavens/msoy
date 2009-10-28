@@ -71,7 +71,7 @@ public class LevelUpFeeder
      */
     protected void onCompletion (String postId)
     {
-        if (postId != null) {
+        if (postId != null && !postId.equals("null")) {
             _fbsvc.levelUpPublished(
                 CShell.getAppId(), _fields.trackingId, new NoopAsyncCallback());
         }
