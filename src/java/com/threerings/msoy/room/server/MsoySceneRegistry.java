@@ -20,6 +20,7 @@ import com.threerings.util.Name;
 
 import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.data.ClientObject;
+import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.dobj.DSet;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
@@ -385,6 +386,12 @@ public class MsoySceneRegistry extends SpotSceneRegistry
             if (_memobj.avatarCache != null && isInTheme(_memobj, scene.getThemeId())) {
                 finishMove(scene, destmgr);
                 return;
+            }
+
+            // temporarily forbid anybody but subscribers to enter a theme from the mundane world
+            if (_memobj.theme == null && scene.getThemeId() != 0 &&
+                    !_memobj.tokens.isSubscriberPlus()) {
+                _msoyListener.requestFailed(InvocationCodes.E_ACCESS_DENIED);
             }
 
             // otherwise we need to take an extra trip over the invoker thread
