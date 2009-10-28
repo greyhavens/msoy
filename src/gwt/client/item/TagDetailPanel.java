@@ -190,8 +190,7 @@ public class TagDetailPanel extends VerticalPanel
                     contents.setText(tRow, 0, date);
                     formatter.setHorizontalAlignment(tRow, 0, HasAlignment.ALIGN_LEFT);
 
-                    String memName = "[" + history.member.getMemberId() + "] " +
-                        history.member.toString();
+                    String memName = history.member.toString();
                     if (memName.length() > MAX_NAME_LENGTH-3) {
                         memName = memName.substring(0, MAX_NAME_LENGTH) + "...";
                     }
