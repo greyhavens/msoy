@@ -82,7 +82,7 @@ public class ThemeEdit extends FlexTable
 
         CShell.frame.setTitle(isCreate ? _msgs.editCreateTitle() : _name);
 
-        addRow(_msgs.editLogo(), _logo = new PhotoChoiceBox(true, null));
+        addRow(_msgs.editLogo(), _logo = new PhotoChoiceBox(false, null));
         _logo.setMedia(_theme.getLogo());
 
         addRow(_msgs.editPlayOnEnter(), _playOnEnter = new CheckBox());
