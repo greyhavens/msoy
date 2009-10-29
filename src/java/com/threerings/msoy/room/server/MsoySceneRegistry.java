@@ -570,7 +570,7 @@ public class MsoySceneRegistry extends SpotSceneRegistry
             }
 
             // if there's a lineup, instruct the client to show the selection UI and exit
-            if (_lineup != null) {
+            if (_lineup != null && !_lineup.isEmpty()) {
                 _listener.selectGift(_lineup.toArray(new Avatar[_lineup.size()]), _groupName);
                 return;
             }
