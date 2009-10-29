@@ -94,7 +94,7 @@ public class StoryFeeder
         data.put("action_url", actionURL);
         data.put("vector", vector);
         data.put("images", images.toArray());
-        data.put("fbuid", "" + String.valueOf(_fields.fbuid));
+        data.put("fbuid", String.valueOf(_fields.fbuid));
         addMoreWildcards(data);
 
         doPublish(templateId, JavaScriptUtil.createDictionaryFromMap(data));
