@@ -59,10 +59,10 @@ public class TutorialDirector
      *            function buttonFn () :void;
      *        </listing>
      */
-    public function queueSuggestion (text :String, availableFn :Function, buttonText :String,
-                                     buttonFn :Function) :void
+    public function queueSuggestion (id :String, text :String, availableFn :Function,
+                                     buttonText :String, buttonFn :Function) :void
     {
-        queue(new Item(null, text, availableFn, buttonText, buttonFn));
+        queue(new Item(id, true, text, availableFn, buttonText, buttonFn));
     }
 
     /**
@@ -89,7 +89,7 @@ public class TutorialDirector
     public function queueTip (id :String, text :String, availableFn :Function, buttonText :String,
                               buttonFn :Function) :void
     {
-        queue(new Item(id, text, availableFn, buttonText, buttonFn));
+        queue(new Item(id, false, text, availableFn, buttonText, buttonFn));
     }
 
     public function test (delayMultiplier :Number) :void
@@ -108,8 +108,8 @@ public class TutorialDirector
         delay *= delayMultiplier;
         var id :int = getTimer();
         setTimeout(function () :void {
-            queueSuggestion("This is a test suggestion (id " + id + "). " + gibberish, null,
-                            "Take me somewhere", function () :void {});
+            queueSuggestion("test" + id, "This is a test suggestion (id " + id + "). " +
+                            gibberish, null, "Take me somewhere", function () :void {});
         }, delay);
 
         _ctx.getChatDirector().displayFeedback(null, "Test: queued suggestion id " + id +
@@ -134,6 +134,24 @@ public class TutorialDirector
         }
     }
 
+    protected function update () :void
+    {
+        var showing :Boolean = isShowing();
+        if (showing) {
+            _timer.reset();
+
+        } else {
+            _timer.delay = _suggestions.length > 0 ? SUGGESTION_DELAY : TIP_DELAY;
+            if (!_timer.running && (_tips.length > 0 || _suggestions.length > 0)) {
+                _timer.start();
+            }
+        }
+
+        if (isShowing() && _suggestions.length > 0) {
+            _panel.flashCloseButton();
+        }
+    }
+
     protected function placeBox () :PlaceBox
     {
         return _ctx.getTopPanel().getPlaceContainer();
@@ -142,26 +160,20 @@ public class TutorialDirector
     protected function onPanelClose () :void
     {
         Tweener.addTween(_panel, {y :-_panel.height, time: ROLL_TIME, transition: "easeinquart",
-            onComplete: Util.adapt(placeBox().removeChild, _panel)});
-
-        _timer.delay = _suggestions.length > 0 ? SUGGESTION_DELAY : TIP_DELAY;
-        _timer.start();
+            onComplete: Util.sequence(
+                Util.adapt(placeBox().removeChild, _panel),
+                Util.adapt(update))});
     }
 
     protected function queue (item :Item) :void
     {
         if (item.isSuggestion()) {
             _suggestions.push(item);
-            if (isShowing()) {
-                _panel.flashCloseButton();
-            } else {
-                handleTimer(null);
-            }
+            update();
+
         } else {
             _tips.push(item);
-            if (!isShowing() && !_timer.running) {
-                _timer.start();
-            }
+            update();
         }
     }
 
@@ -180,11 +192,7 @@ public class TutorialDirector
             Tweener.addTween(_panel, {y :0, time: ROLL_TIME, transition: "easeoutquart"});
         }
 
-        _timer.reset();
-
-        if (_suggestions.length > 0) {
-            _panel.flashCloseButton();
-        }
+        update();
     }
 
     protected var _ctx :MsoyContext;
@@ -206,15 +214,17 @@ public class TutorialDirector
 class Item
 {
     public var id :String;
+    public var suggestion :Boolean;
     public var text :String;
     public var availableFn :Function;
     public var buttonText :String;
     public var buttonFn :Function;
 
-    public function Item (id :String, text :String, availableFn :Function, buttonText :String,
-                          buttonFn :Function)
+    public function Item (id :String, suggestion :Boolean, text :String, availableFn :Function,
+                          buttonText :String, buttonFn :Function)
     {
         this.id = id;
+        this.suggestion = suggestion;
         this.text = text;
         this.availableFn = availableFn;
         this.buttonText = buttonText;
@@ -223,7 +233,7 @@ class Item
 
     public function isSuggestion () :Boolean
     {
-        return id == null;
+        return suggestion;
     }
 
     public function isAvailable () :Boolean
