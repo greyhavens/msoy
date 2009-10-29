@@ -53,6 +53,7 @@ public class Prefs
     public static const CUSTOM_BACKGROUND_COLOR :String = "customBgColor";
     public static const AUTOSHOW_PREFIX :String = "autoShow_";
     public static const ROOM_ZOOM :String = "roomZoom";
+    public static const TUTORIAL :String = "tutorialEnabled";
 
     public static const APRIL_FOOLS :String = "aprilFools";
 
@@ -60,7 +61,7 @@ public class Prefs
     public static const ALL_KEYS :Array = [
         VOLUME, CHAT_FONT_SIZE, CHAT_DECAY, CHAT_FILTER, CHAT_HISTORY, CHAT_SIDEBAR, OCCUPANT_LIST,
         LOG_TO_CHAT, BLEEPED_MEDIA, PARTY_GROUP, USE_CUSTOM_BACKGROUND_COLOR,
-        CUSTOM_BACKGROUND_COLOR, ROOM_ZOOM];
+        CUSTOM_BACKGROUND_COLOR, ROOM_ZOOM, TUTORIAL];
 
     public static const CHAT_FONT_SIZE_MIN :int = 10;
     public static const CHAT_FONT_SIZE_MAX :int = 24;
@@ -340,6 +341,16 @@ public class Prefs
     public static function setCustomBackgroundColor (value :uint) :void
     {
         _config.setValue(CUSTOM_BACKGROUND_COLOR, value);
+    }
+
+    public static function getTutorial () :Boolean
+    {
+        return (_config.getValue(TUTORIAL, true) as Boolean);
+    }
+
+    public static function setTutorial (value :Boolean) :void
+    {
+        _config.setValue(TUTORIAL, value);
     }
 
     /**
