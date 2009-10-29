@@ -17,7 +17,7 @@
    HEADER
 -------------------------------------*/
 
-.frameHeaderLogo, .frameHeaderLogo img {
+.frameHeaderLogo {
   width: 143px;
   height: 40px;
 }
