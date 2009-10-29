@@ -99,9 +99,9 @@ public class AvatarPickerPanel extends FloatingPanel
                 icon.graphics.beginFill(0xff0000);
                 icon.graphics.drawRect(0, 0, w, h);
                 icon.graphics.endFill();
+
             } else {
-                icon = MediaWrapper.createView(
-                    avi.getPreviewMedia(), MediaDesc.PREVIEW_SIZE);
+                icon = MediaWrapper.createView(avi.getPreviewMedia(), MediaDesc.PREVIEW_SIZE);
             }
 
             var select :CommandButton = new CommandButton(Msgs.WORLD.get("b.pick_avatar", avi.name),
