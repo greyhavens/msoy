@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -15,6 +16,8 @@ import com.samskivert.depot.Ops;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.clause.Join;
+import com.samskivert.depot.clause.Limit;
+import com.samskivert.depot.clause.QueryClause;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.expression.ColumnExp;
 import com.threerings.msoy.group.data.all.GroupMembership.Rank;
@@ -86,12 +89,16 @@ public class ThemeRepository extends DepotRepository
     }
 
     /**
-     * Fetch the avatar lineup for a given theme.
+     * Fetch the avatar lineup for a given theme, limited to count results.
      */
-    public List<ThemeAvatarLineupRecord> loadAvatarLineup (int groupId)
+    public List<ThemeAvatarLineupRecord> loadAvatarLineup (int groupId, int offset, int count)
     {
-        return findAll(ThemeAvatarLineupRecord.class,
-            new Where(ThemeAvatarLineupRecord.GROUP_ID, groupId));
+        List<QueryClause> clauses = Lists.newArrayList();
+        clauses.add(new Where(ThemeAvatarLineupRecord.GROUP_ID, groupId));
+        if (count != -1) {
+            clauses.add(new Limit(offset, count));
+        }
+        return findAll(ThemeAvatarLineupRecord.class, clauses);
     }
 
     /**

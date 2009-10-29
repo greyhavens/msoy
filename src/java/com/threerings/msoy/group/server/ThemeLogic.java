@@ -45,9 +45,15 @@ public class ThemeLogic
 {
     public List<Avatar> loadLineup (int groupId)
     {
+        return loadLineup(groupId, 0, -1);
+    }
+
+    public List<Avatar> loadLineup (int groupId, int offset, int count)
+    {
         AvatarRepository repo = _itemLogic.getAvatarRepository();
         List<CatalogRecord> catalogRecords = repo.loadCatalog(Lists.transform(
-            _themeRepo.loadAvatarLineup(groupId), ThemeAvatarLineupRecord.GET_CATALOG_ID));
+            _themeRepo.loadAvatarLineup(groupId, offset, count),
+            ThemeAvatarLineupRecord.GET_CATALOG_ID));
 
         return Lists.transform(catalogRecords, new Function<CatalogRecord, Avatar>() {
             public Avatar apply (CatalogRecord catRec) {
