@@ -208,27 +208,6 @@ public class MsoySceneRegistry extends SpotSceneRegistry
         });
     }
 
-//    // HERE
-//    public void reclaimItemSoftly (
-//        int sceneId, int memberId, ItemIdent item, ResultListener<Void> listener)
-//    {
-//        // check to see if the destination scene is already hosted on a server
-//        Tuple<String, HostedRoom> nodeInfo = _peerMan.getSceneHost(sceneId);
-//        if (nodeInfo == null) {
-//            // not hosted-- no problemo
-//            listener.requestCompleted(null);
-//            return;
-//        }
-//
-//        // it's hosted on this server! It should already be resolved...
-//        if (_peerMan.getNodeObject().nodeName.equals(nodeInfo.left)) {
-//            super.resolveScene(sceneId, listener);
-//        } else {
-//            _peerMan.reclaimItem(nodeInfo.left, sceneId, memberId, item, listener);
-//            listener.sceneOnNode(nodeInfo); // somewhere else, pass the buck
-//        }
-//    }
-
     /**
      * Transfer room ownership.
      */
