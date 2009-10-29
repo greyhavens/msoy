@@ -18,6 +18,8 @@ import caurina.transitions.Tweener;
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.FlexUtil;
 
+import com.threerings.util.MultiLoader;
+
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.PlaceLayer;
@@ -34,6 +36,10 @@ public class TutorialPanel extends Canvas
         verticalScrollPolicy = ScrollPolicy.OFF;
         horizontalScrollPolicy = ScrollPolicy.OFF;
         _onClose = onClose;
+
+        MultiLoader.getContents(PROFESSOR, function (result :DisplayObject) :void {
+            _professor = result;
+        });
     }
 
     public function setContent (message :String, buttonText :String, buttonFn :Function) :void
@@ -89,7 +95,7 @@ public class TutorialPanel extends Canvas
     {
         super.createChildren();
 
-        addCentered(PROFESSOR_X, "tutorialProfessor", new PROFESSOR as DisplayObject);
+        addCentered(PROFESSOR_X, "tutorialProfessor", _professor);
         addCentered(BUBBLE_X, null, makeSpeechBubble());
         addCentered(TEXT_X, "tutorialText", _text = new Text());
         add(CLOSE_X, CLOSE_Y, "closeButton", _close = imgButton(handleClose, "i.tutorial_close"));
@@ -164,8 +170,6 @@ public class TutorialPanel extends Canvas
         g.lineStyle(1, BUBBLE_OUTLINE);
         drawBubbleTail(g);
 
-        // make sure our children get the alpha setting too (contrary to flash documentation)
-        //blendMode = BlendMode.LAYER;
         return s;
     }
 
@@ -182,31 +186,37 @@ public class TutorialPanel extends Canvas
     protected var _close :CommandButton
     protected var _glower :Glower;
     protected var _text :Text;
+    protected var _professor :DisplayObject;
 
-    [Embed(source="../../../../../../../rsrc/media/skins/tutorial/professor.png")]
+    [Embed(source="../../../../../../../rsrc/media/skins/tutorial/professor.swf",
+           mimeType="application/octet-stream")]
     protected static const PROFESSOR :Class;
-
-    protected static const BUBBLE_WIDTH :int = 500;
-    protected static const BUBBLE_HEIGHT :int = HEIGHT - 20;
-    protected static const BUBBLE_ROUNDING :int = 35;
-    protected static const BUBBLE_OUTLINE :int = 0x000000;
-    protected static const BUBBLE_FILL :int = 0xffffff;
 
     protected static const TAIL_BASE_Y :int = 20;
     protected static const TAIL_BASE_HEIGHT :int = 20;
     protected static const TAIL_TIP_Y :int = 45;
     protected static const TAIL_WIDTH :int = 30;
 
-    protected static const PROFESSOR_X :int = 0;
-    protected static const BUBBLE_X :int = PROFESSOR_X + 100;
-    protected static const TEXT_X :int = BUBBLE_X + 10;
-    protected static const TEXT_WIDTH :int = 370;
-    protected static const BUTTON_X :int = TEXT_X + TEXT_WIDTH;
-    protected static const BUTTON_WIDTH :int = WIDTH - 10 - BUTTON_X;
+    protected static const PROFESSOR_WIDTH :int = 100;
+    protected static const BUTTON_WIDTH :int = 110;
     protected static const BUTTON_HEIGHT :int = 40;
-    protected static const TEXT_FULL_WIDTH :int = BUTTON_X + BUTTON_WIDTH - TEXT_X;
+    protected static const TAIL_OVERLAP :int = 10;
+    protected static const PADDING :int = 10;
+
+    protected static const PROFESSOR_X :int = 0;
+    protected static const BUBBLE_X :int = PROFESSOR_X + PROFESSOR_WIDTH + TAIL_WIDTH - TAIL_OVERLAP;
+    protected static const TEXT_X :int = BUBBLE_X + 10;
+    protected static const BUTTON_X :int = WIDTH - PADDING - BUTTON_WIDTH;
+    protected static const TEXT_WIDTH :int = BUTTON_X - TEXT_X - PADDING;
+    protected static const TEXT_FULL_WIDTH :int = WIDTH - PADDING - TEXT_X;
     protected static const CLOSE_X :int = WIDTH - 25;
     protected static const CLOSE_Y :int = 15;
+
+    protected static const BUBBLE_WIDTH :int = WIDTH - BUBBLE_X;
+    protected static const BUBBLE_HEIGHT :int = HEIGHT - 20;
+    protected static const BUBBLE_ROUNDING :int = 35;
+    protected static const BUBBLE_OUTLINE :int = 0x000000;
+    protected static const BUBBLE_FILL :int = 0xffffff;
 }
 }
 
