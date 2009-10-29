@@ -201,13 +201,13 @@ public class TagDetailPanel extends VerticalPanel
                     String actionString;
                     switch(history.action) {
                     case TagHistory.ACTION_ADDED:
-                        actionString = "A";
+                        actionString = "+";
                         break;
                     case TagHistory.ACTION_COPIED:
                         actionString = "C";
                         break;
                     case TagHistory.ACTION_REMOVED:
-                        actionString = "R";
+                        actionString = "-";
                         break;
                     default:
                         actionString = "?";
