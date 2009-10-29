@@ -35,7 +35,7 @@ public class TutorialDirector
         _timer = new Timer(TIP_DELAY, 1);
         _timer.addEventListener(TimerEvent.TIMER, handleTimer);
 
-        _panel = new TutorialPanel(_ctx, onPanelClose);
+        _panel = new TutorialPanel(_ctx, onIgnore, onPanelClose);
     }
 
     /**
@@ -163,6 +163,10 @@ public class TutorialDirector
             onComplete: Util.sequence(
                 Util.adapt(placeBox().removeChild, _panel),
                 Util.adapt(update))});
+    }
+
+    protected function onIgnore () :void
+    {
     }
 
     protected function queue (item :Item) :void

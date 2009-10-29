@@ -826,3 +826,9 @@ ChatInput {
   fontSize: 14;
   textAlign: center;
 }
+
+.tutorialIgnoreLink {
+  color: #AAB5B9;
+  textRollOverColor: #5a9fb9;
+  textAlign: right;
+}

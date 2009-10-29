@@ -15,6 +15,9 @@ import mx.containers.Canvas;
 
 import caurina.transitions.Tweener;
 
+import com.threerings.util.Util;
+
+import com.threerings.flex.CommandLinkButton;
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.FlexUtil;
 
@@ -30,11 +33,12 @@ public class TutorialPanel extends Canvas
     public static const WIDTH :int = 600;
     public static const HEIGHT :int = 120;
 
-    public function TutorialPanel (ctx :MsoyContext, onClose :Function)
+    public function TutorialPanel (ctx :MsoyContext, onIgnore :Function, onClose :Function)
     {
         styleName = "tutorialPanel";
         verticalScrollPolicy = ScrollPolicy.OFF;
         horizontalScrollPolicy = ScrollPolicy.OFF;
+        _onIgnore = onIgnore;
         _onClose = onClose;
 
         MultiLoader.getContents(PROFESSOR, function (result :DisplayObject) :void {
@@ -100,12 +104,18 @@ public class TutorialPanel extends Canvas
         addCentered(TEXT_X, "tutorialText", _text = new Text());
         add(CLOSE_X, CLOSE_Y, "closeButton", _close = imgButton(handleClose, "i.tutorial_close"));
         addCentered(BUTTON_X, "tutorialActionButton", _action = new CommandButton());
+        add(BUTTON_X, HEIGHT - PADDING - IGNORE_HEIGHT, "tutorialIgnoreLink",
+            _ignore = new CommandLinkButton(Msgs.GENERAL.get("b.tutorial_ignore"),
+                                            Util.adapt(_onIgnore)));
 
         _text.selectable = false;
         _text.width = TEXT_WIDTH;
 
         _action.width = BUTTON_WIDTH;
         _action.height = BUTTON_HEIGHT;
+
+        _ignore.width = BUTTON_WIDTH;
+        _ignore.height = IGNORE_HEIGHT;
 
         _glower = new Glower(_close);
 
@@ -181,8 +191,10 @@ public class TutorialPanel extends Canvas
     }
 
     protected var _ctx :MsoyContext;
+    protected var _onIgnore :Function;
     protected var _onClose :Function;
     protected var _action :CommandButton;
+    protected var _ignore :CommandLinkButton;
     protected var _close :CommandButton
     protected var _glower :Glower;
     protected var _text :Text;
@@ -195,11 +207,12 @@ public class TutorialPanel extends Canvas
     protected static const TAIL_BASE_Y :int = 20;
     protected static const TAIL_BASE_HEIGHT :int = 20;
     protected static const TAIL_TIP_Y :int = 45;
-    protected static const TAIL_WIDTH :int = 30;
+    protected static const TAIL_WIDTH :int = 25;
 
     protected static const PROFESSOR_WIDTH :int = 100;
     protected static const BUTTON_WIDTH :int = 110;
     protected static const BUTTON_HEIGHT :int = 40;
+    protected static const IGNORE_HEIGHT :int = 30;
     protected static const TAIL_OVERLAP :int = 10;
     protected static const PADDING :int = 10;
 
@@ -213,7 +226,7 @@ public class TutorialPanel extends Canvas
     protected static const CLOSE_Y :int = 15;
 
     protected static const BUBBLE_WIDTH :int = WIDTH - BUBBLE_X;
-    protected static const BUBBLE_HEIGHT :int = HEIGHT - 20;
+    protected static const BUBBLE_HEIGHT :int = HEIGHT - PADDING * 2;
     protected static const BUBBLE_ROUNDING :int = 35;
     protected static const BUBBLE_OUTLINE :int = 0x000000;
     protected static const BUBBLE_FILL :int = 0xffffff;
