@@ -13,7 +13,6 @@ import com.threerings.msoy.facebook.gwt.FacebookGame;
 import com.threerings.msoy.facebook.gwt.FacebookService;
 import com.threerings.msoy.facebook.gwt.FacebookServiceAsync;
 import com.threerings.msoy.facebook.gwt.FacebookService.InviteInfo;
-import com.threerings.msoy.facebook.gwt.FacebookService.StoryFields;
 
 import client.shell.CShell;
 import client.shell.Page;
@@ -61,13 +60,7 @@ public class FacebookPage extends Page
     {
         if (mode.equals(ArgNames.FB_CHALLENGE_FEED)) {
             setContent(null);
-            _fbsvc.getChallengeStoryFields(
-                CShell.getAppId(), game, new InfoCallback<StoryFields>() {
-                @Override public void onSuccess (StoryFields result) {
-                    FBChallengeFeeder feeder = new FBChallengeFeeder(game, result);
-                    feeder.publish();
-                }
-            });
+            FBChallengeFeeder.publishChallenge(game);
             return;
         }
 

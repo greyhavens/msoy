@@ -3,102 +3,58 @@
 
 package client.facebook;
 
-import java.util.HashMap;
 import java.util.Map;
-
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.JavaScriptObject;
-import com.google.gwt.user.client.rpc.AsyncCallback;
-
-import com.threerings.msoy.web.gwt.ArgNames;
-import com.threerings.msoy.web.gwt.CookieNames;
-import com.threerings.msoy.web.gwt.SharedNaviUtil;
 
 import com.threerings.msoy.facebook.gwt.FacebookGame;
 import com.threerings.msoy.facebook.gwt.FacebookService;
-import com.threerings.msoy.facebook.gwt.FacebookServiceAsync;
+import com.threerings.msoy.facebook.gwt.FacebookService.StoryKey;
 import com.threerings.msoy.facebook.gwt.FacebookService.StoryFields;
 
 import client.facebookbase.FacebookUtil;
+import client.facebookbase.StoryFeeder;
 import client.shell.CShell;
-import client.util.JavaScriptUtil;
 import client.util.Link;
 
 /**
- * Pops up a game challenge feed story publisher.
+ * Publishes a challenge feed story.
  */
-public class FBChallengeFeeder
+public class FBChallengeFeeder extends StoryFeeder
 {
     /**
-     * Creates a new feeder to publish a challenge for the given game and story fields.
+     * Presents the user with a feed post dialog for challenging their friends to the given game.
+     * This overload is for use when the fields have already been received from the server.
      */
-    public FBChallengeFeeder (FacebookGame game, StoryFields fields)
+    public static void publishChallenge (FacebookGame game, StoryFields fields)
     {
-        _game = game;
+        new FBChallengeFeeder(game, fields).doPublish();
+    }
+
+    /**
+     * Presents the user with a feed post dialog for challenging their friends to the given game.
+     */
+    public static void publishChallenge (FacebookGame game)
+    {
+        new FBChallengeFeeder(game, null).publish();
+    }
+
+    protected FBChallengeFeeder (FacebookGame game, StoryFields fields)
+    {
+        super(new StoryKey(CShell.getAppId(), FacebookService.CHALLENGE, game), PUB_IMAGES);
         _fields = fields;
     }
 
-    /**
-     * Pops up a challenge feed story confirmation using the values given in the constructor.
-     */
-    public void publish ()
+    @Override // from StoryFeeder
+    protected void onComplete (boolean success)
     {
-        String vector = _fields.template.toEntryVector();
-        String templateId = String.valueOf(_fields.template.bundleId);
+        Link.go(_key.game.getPlayPage(), _key.game.getPlayArgs());
+    }
 
-        // action link goes to either the Whirled game detail or the Mochi embed
-        String actionURL = SharedNaviUtil.buildRequest(
-            FacebookUtil.getCanvasUrl(_fields.canvasName), _game.getCanvasArgs());
-        actionURL = SharedNaviUtil.buildRequest(actionURL,
-            CookieNames.AFFILIATE, String.valueOf(CShell.getMemberId()),
-            ArgNames.FBParam.VECTOR.name, vector,
-            ArgNames.FBParam.TRACKING.name, _fields.trackingId);
-
-        FacebookUtil.FeedStoryImages images = new FacebookUtil.FeedStoryImages(PUB_IMAGES);
-        for (String thumbnail : _fields.thumbnails) {
-            images.add(thumbnail, actionURL);
-        }
-
-        // TODO: A/B test use of target ids
-        Map<String, Object> data = new HashMap<String, Object>();
+    @Override // from StoryFeeder
+    protected void addMoreWildcards (Map<String, Object> data)
+    {
         data.put("game", _fields.name);
         data.put("game_desc", _fields.description);
-        data.put("action_url", actionURL);
-        data.put("images", images.toArray());
-        data.put("fbuid", "" + String.valueOf(_fields.fbuid));
-
-        publishChallenge(templateId, JavaScriptUtil.createDictionaryFromMap(data));
     }
-
-    /**
-     * Callback after the feed form is submitted or cancelled.
-     */
-    protected void onCompletion (String postId)
-    {
-        if (postId != null && !postId.equals("null")) {
-            _fbsvc.challengePublished(
-                CShell.getAppId(), _game, _fields.trackingId, new AsyncCallback<Void>() {
-                @Override public void onFailure (Throwable caught) {
-                    goBackToGame();
-                }
-                @Override public void onSuccess (Void result) {
-                    goBackToGame();
-                }
-            });
-        }
-    }
-
-    protected void goBackToGame ()
-    {
-        Link.go(_game.getPlayPage(), _game.getPlayArgs());
-    }
-
-    protected native void publishChallenge (String templateId, JavaScriptObject data) /*-{
-        var object = this;
-        $wnd.FB_PostChallenge(templateId, data, function (postid, exception, data) {
-            object.@client.facebook.FBChallengeFeeder::onCompletion(Ljava/lang/String;)(postid);
-        });
-    }-*/;
 
     // Handy JSON for pasting into Facebook's template editor
     /*
@@ -113,13 +69,8 @@ public class FBChallengeFeeder
               "href" : "http://www.whirled.com/go/games-d_827_t"}]}
     */
 
-    protected FacebookGame _game;
-    protected StoryFields _fields;
-
-    public static final String PUB_IMAGES[] = {
+    protected static final String PUB_IMAGES[] = {
         FacebookUtil.PUB_ROOT + "db21cc504a1f735f96eb051275c1dd9d394924d2.png",
         FacebookUtil.PUB_ROOT + "e59ac92a6c497f573fcee451dedb59ce03cadf68.png",
         FacebookUtil.PUB_ROOT + "af525e4e1b026a46beeaf98ff824aa65e30d800a.png" };
-
-    protected static final FacebookServiceAsync _fbsvc = GWT.create(FacebookService.class);
 }

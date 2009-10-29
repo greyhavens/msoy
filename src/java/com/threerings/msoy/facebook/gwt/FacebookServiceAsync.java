@@ -12,14 +12,14 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 public interface FacebookServiceAsync
 {
     /**
-     * The async version of {@link FacebookService#getTrophyStoryFields}.
+     * The async version of {@link FacebookService#getStoryFields}.
      */
-    void getTrophyStoryFields (int appId, int gameId, AsyncCallback<FacebookService.StoryFields> callback);
+    void getStoryFields (FacebookService.StoryKey key, AsyncCallback<FacebookService.StoryFields> callback);
 
     /**
-     * The async version of {@link FacebookService#trophyPublished}.
+     * The async version of {@link FacebookService#trackStoryPosted}.
      */
-    void trophyPublished (int appId, int gameId, String ident, String trackingId, AsyncCallback<Void> callback);
+    void trackStoryPosted (FacebookService.StoryKey key, String ident, String trackingId, AsyncCallback<Void> callback);
 
     /**
      * The async version of {@link FacebookService#getAppFriendsInfo}.
@@ -40,26 +40,6 @@ public interface FacebookServiceAsync
      * The async version of {@link FacebookService#sendChallengeNotification}.
      */
     void sendChallengeNotification (int appId, FacebookGame game, boolean appOnly, AsyncCallback<FacebookService.StoryFields> callback);
-
-    /**
-     * The async version of {@link FacebookService#getChallengeStoryFields}.
-     */
-    void getChallengeStoryFields (int appId, FacebookGame game, AsyncCallback<FacebookService.StoryFields> callback);
-
-    /**
-     * The async version of {@link FacebookService#getLevelUpStoryFields}.
-     */
-    void getLevelUpStoryFields (int appId, AsyncCallback<FacebookService.StoryFields> callback);
-
-    /**
-     * The async version of {@link FacebookService#challengePublished}.
-     */
-    void challengePublished (int appId, FacebookGame game, String trackingId, AsyncCallback<Void> callback);
-
-    /**
-     * The async version of {@link FacebookService#levelUpPublished}.
-     */
-    void levelUpPublished (int appId, String trackingId, AsyncCallback<Void> callback);
 
     /**
      * The async version of {@link FacebookService#trackPageRequest}.

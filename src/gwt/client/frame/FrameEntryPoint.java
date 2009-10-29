@@ -66,6 +66,15 @@ import client.util.events.NameChangeEvent;
 public class FrameEntryPoint
     implements EntryPoint, ValueChangeHandler<String>, Session.Observer, Frame
 {
+    /**
+     * Creates the new frame entry point.
+     */
+    public FrameEntryPoint ()
+    {
+        // listen for trophy events to publish to facebook
+        TrophyFeeder.listen();
+    }
+
     // from interface EntryPoint
     public void onModuleLoad ()
     {
@@ -1000,10 +1009,6 @@ public class FrameEntryPoint
 
     /** Used to talk to Google Analytics. */
     protected Analytics _analytics = new Analytics();
-
-    /** Handles publishing info to external feeds. It registers event listeners in its constructor,
-     * so we don't ever need to actually talk to this instance. */
-    protected ExternalFeeder _feeder = new ExternalFeeder();
 
     /** A command to be run when Java reports readiness. */
     protected Command _javaReadyCommand;

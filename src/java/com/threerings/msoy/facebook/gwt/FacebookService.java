@@ -21,6 +21,15 @@ public interface FacebookService extends RemoteService
     public static final String ENTRY_POINT = "/fbpage";
     public static final String REL_PATH = "../../.." + FacebookService.ENTRY_POINT;
 
+    /** Hard-wired feed story and thumbnail code for trophy posting. */
+    public static final String TROPHY = "trophy";
+
+    /** Hard-wired feed story and thumbnail code for challenge posts. */
+    public static final String CHALLENGE = "challenge";
+
+    /** Hard-wired feed story and thumbnail code for levl up posts. */
+    public static final String LEVELUP = "levelup";
+
     /**
      * Genders for the purposes of a facebook invite.
      */
@@ -63,6 +72,43 @@ public interface FacebookService extends RemoteService
     }
 
     /**
+     * Represents a kind of feed story, not the fields themselves.
+     */
+    public static class StoryKey
+        implements IsSerializable
+    {
+        /** The application the story is for. */
+        public int appId;
+
+        /** The type of feed story, also a database key for the template lookup. */
+        public String code;
+
+        /** The game the feed story is for, also a database key for finding custom thumbnails. */
+        public FacebookGame game;
+
+        /**
+         * Creates a new story key for the given application and type code.
+         */
+        public StoryKey (int appId, String code)
+        {
+            this(appId, code, null);
+        }
+
+        /**
+         * Creates a new story key for the given application, type code and game.
+         */
+        public StoryKey (int appId, String code, FacebookGame game)
+        {
+            this.appId = appId;
+            this.code = code;
+            this.game = game;
+        }
+
+        // for serialization
+        protected StoryKey () {}
+    }
+
+    /**
      * Data required for publishing a simple feed story.
      */
     public static class StoryFields
@@ -92,17 +138,16 @@ public interface FacebookService extends RemoteService
     }
 
     /**
-     * Gets the basic story fields (template and tracking id) for publishing a trophy story. If no
-     * templates are found, throws an exception.
+     * Gets the story fields for the given key. If no templates are found, throws an exception.
      */
-    StoryFields getTrophyStoryFields (int appId, int gameId)
+    StoryFields getStoryFields (StoryKey key)
         throws ServiceException;
 
     /**
-     * Notes that the user published a trophy to their feed (or at least viewed the publish
-     * dialog).
+     * Notes that the user published a feed story. This may involve sending a message to Kontagent
+     * or other things.
      */
-    void trophyPublished (int appId, int gameId, String ident, String trackingId)
+    void trackStoryPosted (StoryKey key, String ident, String trackingId)
         throws ServiceException;
 
     /**
@@ -133,32 +178,6 @@ public interface FacebookService extends RemoteService
      * feed story, or null if the data could not be loaded.
      */
     StoryFields sendChallengeNotification (int appId, FacebookGame game, boolean appOnly)
-        throws ServiceException;
-
-    /**
-     * Returns data for publishing a challenge feed story. Throws an exception if the data could
-     * not be loaded.
-     */
-    StoryFields getChallengeStoryFields (int appId, FacebookGame game)
-        throws ServiceException;
-
-    /**
-     * Returns data for publishing a level-up feed story. Throws an exception if the data could
-     * not be loaded.
-     */
-    StoryFields getLevelUpStoryFields (int appId)
-        throws ServiceException;
-
-    /**
-     * Lets the server know that a challenge feed story has been published.
-     */
-    void challengePublished (int appId, FacebookGame game, String trackingId)
-        throws ServiceException;
-
-    /**
-     * Lets the server know that a level-up feed story has been published.
-     */
-    void levelUpPublished (int appId, String trackingId)
         throws ServiceException;
 
     /**

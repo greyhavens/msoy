@@ -24,29 +24,17 @@ window.FB_RequireSession = function() {
     });
 };
 
-window.FB_PostStory = function(bundleId, data, targetIds, body, callback) {
+window.FB_PostStory = function(bundleId, data, callback) {
     var showingFeed = false;
     FB_WithInit(function() {
         FB.Connect.requireSession(function() {
             if (!showingFeed) {
                 showingFeed = true;
-                FB.Connect.showFeedDialog(bundleId, data, targetIds, body, null,
+                FB.Connect.showFeedDialog(bundleId, data, [], "", null,
                     FB.RequireConnect.promptConnect, callback);
             }
         });
     });
-};
-
-window.FB_PostTrophy = function(templateId, data, callback) {
-    FB_PostStory(templateId, data, [], "", callback);
-};
-
-window.FB_PostChallenge = function(templateId, data, callback) {
-    FB_PostStory(templateId, data, [], "", callback);
-};
-
-window.FB_PostLevelUp = function(templateId, data, callback) {
-    FB_PostStory(templateId, data, [], "", callback);
 };
 
 window.FB_Logout = function() {

@@ -17,7 +17,6 @@ import com.google.gwt.user.client.ui.Label;
 import com.threerings.gwt.ui.AbsoluteCSSPanel;
 import com.threerings.msoy.facebook.gwt.FacebookService;
 import com.threerings.msoy.facebook.gwt.FacebookServiceAsync;
-import com.threerings.msoy.facebook.gwt.FacebookService.StoryFields;
 import com.threerings.msoy.web.gwt.SessionData;
 
 import client.shell.CShell;
@@ -26,7 +25,6 @@ import client.shell.ShellMessages;
 import client.ui.BorderedDialog;
 import client.ui.MsoyUI;
 
-import client.util.InfoCallback;
 import client.util.events.FlashEventListener;
 import client.util.events.FlashEvents;
 import client.util.events.StatusChangeEvent;
@@ -161,12 +159,7 @@ public class FacebookStatusPanel extends AbsoluteCSSPanel
             popup.addButton(new Button(_msgs.fbStatusLevelPopupBtn(), popup.onAction(
                 new Command() {
                 @Override public void execute () {
-                    _fbsvc.getLevelUpStoryFields(
-                        CShell.getAppId(), new InfoCallback<StoryFields>() {
-                        @Override public void onSuccess (StoryFields result) {
-                            new LevelUpFeeder(_data.level, result).publish();
-                        }
-                    });
+                    LevelUpFeeder.publishLevelup(_data.level);
                 }
             })));
         } else {

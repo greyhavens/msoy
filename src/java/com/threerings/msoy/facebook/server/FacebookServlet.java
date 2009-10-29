@@ -80,22 +80,18 @@ import static com.threerings.msoy.Log.log;
 public class FacebookServlet extends MsoyServiceServlet
     implements FacebookService
 {
-    /** Hard-wired feed story and thumbnail code for trophy posting. */
-    public static final String TROPHY = "trophy";
-
-    /** Hard-wired feed story and thumbnail code for challenge posts. */
-    public static final String CHALLENGE = "challenge";
-
-    /** Hard-wired feed story and thumbnail code for levl up posts. */
-    public static final String LEVELUP = "levelup";
-
     @Override // from FacebookService
-    public StoryFields getTrophyStoryFields (int appId, int gameId)
+    public StoryFields getStoryFields (StoryKey key)
         throws ServiceException
     {
-        StoryFields fields = loadGameStoryFields(loadBasicStoryFields(
-            new StoryFields(), requireSession(appId), TROPHY), appId, new FacebookGame(gameId),
-            TROPHY);
+        int appId = key.appId;
+        StoryFields fields = loadBasicStoryFields(
+            new StoryFields(), requireSession(key.appId), key.code);
+        if (key.game != null) {
+            loadGameStoryFields(fields, appId, key.game, key.code);
+        } else {
+            fields.thumbnails = assembleThumbnails(appId, key.code, null, 0);
+        }
 
         if (fields.template == null) {
             throw new ServiceException(MsoyCodes.E_INTERNAL_ERROR);
@@ -104,13 +100,15 @@ public class FacebookServlet extends MsoyServiceServlet
     }
 
     @Override // from FacebookService
-    public void trophyPublished (int appId, int gameId, String ident, String trackingId)
+    public void trackStoryPosted (StoryKey key, String ident, String trackingId)
         throws ServiceException
     {
-        SessionInfo session = requireSession(appId);
-        _facebookRepo.recordAction(FacebookActionRecord.trophyPublished(
-            appId, session.memRec.memberId, gameId, ident));
-        _tracker.trackFeedStoryPosted(appId, session.fbid, trackingId);
+        SessionInfo session = requireSession(key.appId);
+        if (key.code.equals(FacebookService.TROPHY)) {
+            _facebookRepo.recordAction(FacebookActionRecord.trophyPublished(
+                key.appId, session.memRec.memberId, key.game.getIntId(), ident));
+        }
+        _tracker.trackFeedStoryPosted(key.appId, session.fbid, trackingId);
     }
 
     @Override // from FacebookService
@@ -294,55 +292,17 @@ public class FacebookServlet extends MsoyServiceServlet
     public StoryFields sendChallengeNotification (int appId, FacebookGame game, boolean appOnly)
         throws ServiceException
     {
+        String challenge = FacebookService.CHALLENGE;
         SessionInfo session = requireSession(appId);
         StoryFields result = loadGameStoryFields(loadBasicStoryFields(
-            new StoryFields(), session, CHALLENGE), appId, game, CHALLENGE);
+            new StoryFields(), session, challenge), appId, game, challenge);
         Map<String, String> replacements = Maps.newHashMap();
         replacements.put("game", result.name);
         replacements.put("game_url", SharedNaviUtil.buildRequest(
             _fbLogic.getCanvasUrl(session.siteId), game.getCanvasArgs()));
-        _fbLogic.scheduleFriendNotification(session, CHALLENGE, replacements, appOnly);
+        _fbLogic.scheduleFriendNotification(session, challenge, replacements, appOnly);
 
         return result.template != null ? result : null;
-    }
-
-    @Override // from FacebookService
-    public StoryFields getChallengeStoryFields (int appId, FacebookGame game)
-        throws ServiceException
-    {
-        StoryFields result = loadGameStoryFields(loadBasicStoryFields(new StoryFields(),
-            requireSession(appId), CHALLENGE), appId, game, CHALLENGE);
-        if (result.template == null) {
-            throw new ServiceException(MsoyCodes.E_INTERNAL_ERROR);
-        }
-        return result;
-    }
-
-    @Override // from FacebookService
-    public StoryFields getLevelUpStoryFields (int appId)
-        throws ServiceException
-    {
-        StoryFields result = loadBasicStoryFields(
-            new StoryFields(), requireSession(appId), "levelup");
-        if (result.template == null) {
-            throw new ServiceException(MsoyCodes.E_INTERNAL_ERROR);
-        }
-        result.thumbnails = assembleThumbnails(appId, LEVELUP, null, 0);
-        return result;
-    }
-
-    @Override // from FacebookService
-    public void challengePublished (int appId, FacebookGame game, String trackingId)
-        throws ServiceException
-    {
-        _tracker.trackFeedStoryPosted(appId, requireSession(appId).fbid, trackingId);
-    }
-
-    @Override // from FacebookService
-    public void levelUpPublished (int appId, String trackingId)
-        throws ServiceException
-    {
-        _tracker.trackFeedStoryPosted(appId, requireSession(appId).fbid, trackingId);
     }
 
     @Override // from FacebookService
