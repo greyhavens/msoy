@@ -59,7 +59,6 @@ public class EntityBackend extends ControlBackend
         o["canEditRoom_v1"] = canEditRoom_v1;
         o["showPopup_v1"] = showPopup_v1;
         o["clearPopup_v1"] = clearPopup_v1;
-        o["showPage_v1"] = showPage_v1;
         o["getMemories_v1"] = getMemories_v1;
         o["getCamera_v1"] = getCamera_v1;
         o["getMicrophone_v1"] = getMicrophone_v1;
@@ -244,18 +243,6 @@ public class EntityBackend extends ControlBackend
         if (_sprite != null) {
             (_sprite.parent as RoomView).getRoomController().clearEntityPopup(_sprite);
         }
-    }
-
-    protected function showPage_v1 (token :String) :Boolean
-    {
-        if (this is ActorBackend) {
-            // TODO: just move showPage to FurniControl
-            return false;
-        }
-
-        // handleViewUrl will do the "right thing"
-        _ctx.getMsoyController().handleViewUrl(DeploymentConfig.serverURL + "#" + token);
-        return true;
     }
 
     // Deprecated on 2007-03-12
