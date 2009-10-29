@@ -160,15 +160,7 @@ public class Prefs
 
     public static function setMediaBleeped (id :String, bleeped :Boolean) :void
     {
-        checkLoadBleepedMedia();
-        if (bleeped) {
-            _bleepedMedia[id] = true;
-
-        } else {
-            delete _bleepedMedia[id];
-        }
-        _config.setValue(BLEEPED_MEDIA, _bleepedMedia, false); // don't flush
-        events.dispatchEvent(new ValueEvent(BLEEPED_MEDIA, [ id, bleeped ]));
+        getBleepedMedia().update(id, bleeped);
     }
 
     /**
@@ -176,8 +168,7 @@ public class Prefs
      */
     public static function isMediaBleeped (id :String) :Boolean
     {
-        checkLoadBleepedMedia();
-        return (id in _bleepedMedia);
+        return getBleepedMedia().contains(id);
     }
 
     public static function setGlobalBleep (bleeped :Boolean) :void
@@ -389,21 +380,19 @@ public class Prefs
         }
     }
 
-    protected static function checkLoadBleepedMedia () :void
+    protected static function getBleepedMedia () :StringSet
     {
         if (_bleepedMedia == null) {
-            _bleepedMedia = _config.getValue(BLEEPED_MEDIA, null) as Object;
-            if (_bleepedMedia == null) {
-                _bleepedMedia = new Object();
-            }
+            _bleepedMedia = new StringSet(_config, BLEEPED_MEDIA);
         }
+        return _bleepedMedia;
     }
 
     /** The path of our config object. */
     protected static const CONFIG_PATH :String = "rsrc/config/msoy";
 
     /** A set of media ids that are bleeped (the keys of the dictionary). */
-    protected static var _bleepedMedia :Object;
+    protected static var _bleepedMedia :StringSet;
     protected static var _globalBleep :Boolean;
 
     /** Our config object. */
@@ -423,4 +412,60 @@ public class Prefs
 
     staticInit();
 }
+}
+
+import com.threerings.util.Config;
+import com.threerings.util.ValueEvent;
+
+import com.threerings.msoy.client.Prefs;
+
+/**
+ * Represents a configuration value that is a set of strings.
+ */
+class StringSet
+{
+    /**
+     * Creates a new string set using the given config with the given name.
+     */
+    public function StringSet (config :Config, name :String)
+    {
+        _config = config;
+        _name = name;
+        _contents = _config.getValue(_name, null) as Object;
+        if (_contents == null) {
+            _contents = new Object();
+        }
+    }
+
+    /**
+     * Updates a value's presence in the set.
+     */
+    public function update (value :String, present :Boolean) :void
+    {
+        if (contains(value) == present) {
+            return;
+        }
+
+        if (present) {
+            _contents[value] = true;
+
+        } else {
+            delete _contents[value];
+        }
+
+        _config.setValue(_name, _contents, false); // don't flush
+        Prefs.events.dispatchEvent(new ValueEvent(_name, [ value, present ]));
+    }
+
+    /**
+     * Tests if the set contains the given value.
+     */
+    public function contains (value :String) :Boolean
+    {
+        return value in _contents;
+    }
+
+    protected var _name :String;
+    protected var _config :Config;
+    protected var _contents :Object;
 }
