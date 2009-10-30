@@ -74,9 +74,9 @@ public class ParlorGamePanel extends WhirledGamePanel
         const def :MsoyGameDefinition = cfg.getGameDefinition() as MsoyGameDefinition;
 
         function peg (defaultVal :int, place :int, userMax :int) :int {
-            // if the user-specified maximum is non-zero, assume they know what they are doing and
-            // allow the game to be as small as half size
-            var effectiveMin :int = userMax == 0 ? defaultVal : defaultVal / 2;
+            // if the user-specified maximum is non-zero but less than the default, assume they
+            // know what they are doing and allow the game to be as small as half size
+            var effectiveMin :int = (userMax > 0 && userMax < defaultVal) ? userMax : defaultVal;
 
             // now just peg
             return Math.max(effectiveMin, Math.min(place, userMax));
@@ -90,6 +90,9 @@ public class ParlorGamePanel extends WhirledGamePanel
         graphics.beginFill(getBackgroundColor());
         graphics.drawRect(0, 0, _actualWidth, _actualHeight);
         graphics.endFill();
+
+        width = Math.min(unscaledWidth, _actualWidth);
+        height = Math.min(unscaledHeight, _actualHeight);
     }
 
     // from MsoyPlaceView
