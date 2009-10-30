@@ -6,13 +6,12 @@ package com.threerings.msoy.group.gwt;
 import java.util.List;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.threerings.gwt.util.PagedResult;
+import com.threerings.msoy.data.all.Theme;
 import com.threerings.msoy.data.all.VizMemberName;
 import com.threerings.msoy.group.data.all.Group;
 import com.threerings.msoy.group.data.all.GroupMembership;
+
 import com.threerings.msoy.group.data.all.Medal;
-
-import com.threerings.msoy.data.all.Theme;
-
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.PriceQuote;
 import com.threerings.msoy.money.data.all.PurchaseResult;
@@ -23,11 +22,6 @@ import com.threerings.msoy.web.gwt.TagHistory;
  */
 public interface GroupServiceAsync
 {
-    /**
-     * The async version of {@link GroupService#createGroup}.
-     */
-    void createGroup (Group group, GroupExtras extras, Currency currency, int authedAmount, AsyncCallback<PurchaseResult<Group>> callback);
-
     /**
      * The async version of {@link GroupService#getGroups}.
      */
@@ -94,16 +88,6 @@ public interface GroupServiceAsync
     void updateTheme (Theme theme, AsyncCallback<Void> callback);
 
     /**
-     * The async version of {@link GroupService#leaveGroup}.
-     */
-    void leaveGroup (int groupId, int memberId, AsyncCallback<Void> callback);
-
-    /**
-     * The async version of {@link GroupService#joinGroup}.
-     */
-    void joinGroup (int groupId, AsyncCallback<Void> callback);
-
-    /**
      * The async version of {@link GroupService#updateMemberRank}.
      */
     void updateMemberRank (int groupId, int memberId, GroupMembership.Rank newRank, AsyncCallback<Void> callback);
@@ -167,4 +151,19 @@ public interface GroupServiceAsync
      * The async version of {@link GroupService#setBrandShares}.
      */
     void setBrandShares (int brandId, int targetId, int shares, AsyncCallback<Void> callback);
+
+    /**
+     * The async version of {@link GroupService#createGroup}.
+     */
+    void createGroup (Group group, GroupExtras extras, Currency currency, int authedAmount, AsyncCallback<PurchaseResult<Group>> callback);
+
+    /**
+     * The async version of {@link GroupService#joinGroup}.
+     */
+    void joinGroup (int groupId, AsyncCallback<Void> callback);
+
+    /**
+     * The async version of {@link GroupService#leaveGroup}.
+     */
+    void leaveGroup (int groupId, int memberId, AsyncCallback<Void> callback);
 }
