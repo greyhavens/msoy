@@ -36,6 +36,7 @@ import com.threerings.msoy.data.all.MediaDesc;
 
 import com.threerings.msoy.notify.data.Notification;
 
+import com.threerings.msoy.game.data.MsoyGameDefinition;
 import com.threerings.msoy.game.data.ParlorGameConfig;
 import com.threerings.msoy.game.data.ParlorGameObject;
 import com.threerings.msoy.game.util.GameUtil;
@@ -64,16 +65,22 @@ public class ParlorGamePanel extends WhirledGamePanel
         } else {
             _goBtn = new CommandButton(Msgs.GENERAL.get("b.back"), MsoyController.MOVE_BACK);
         }
-
-        graphics.beginFill(getBackgroundColor());
-        graphics.drawRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
-        graphics.endFill();
     }
 
     // from MsoyPlaceView
     public function setPlaceSize (unscaledWidth :Number, unscaledHeight :Number) :void
     {
-        // don't care
+        const cfg :ParlorGameConfig = _ctrl.getPlaceConfig() as ParlorGameConfig;
+        const def :MsoyGameDefinition = cfg.getGameDefinition() as MsoyGameDefinition;
+
+        // peg to min & max
+        _actualWidth = Math.max(GAME_WIDTH, Math.min(unscaledWidth, def.maxWidth));
+        _actualHeight = Math.max(GAME_HEIGHT, Math.min(unscaledHeight, def.maxHeight));
+
+        graphics.clear();
+        graphics.beginFill(getBackgroundColor());
+        graphics.drawRect(0, 0, _actualWidth, _actualHeight);
+        graphics.endFill();
     }
 
     // from MsoyPlaceView
@@ -109,7 +116,7 @@ public class ParlorGamePanel extends WhirledGamePanel
     // from MsoyPlaceView
     public function getSize () :Point
     {
-        return new Point(GAME_WIDTH, GAME_HEIGHT);
+        return new Point(_actualWidth, _actualHeight);
     }
 
     // from MsoyPlaceView
@@ -273,5 +280,8 @@ public class ParlorGamePanel extends WhirledGamePanel
     protected var _gameOverPanel :GameOverPanel;
 
     protected var _goBtn :CommandButton;
+
+    protected var _actualWidth :int;
+    protected var _actualHeight :int;
 }
 }

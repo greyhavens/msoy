@@ -18,6 +18,8 @@ import com.google.gwt.xml.client.Node;
 import com.google.gwt.xml.client.NodeList;
 import com.google.gwt.xml.client.XMLParser;
 
+import com.threerings.gwt.ui.SmartTable;
+
 import com.threerings.gwt.util.StringUtil;
 
 import com.threerings.msoy.data.all.MediaDesc;
@@ -99,6 +101,21 @@ public class CodeEditorPanel extends GameEditorTable
                     config.watchable = watchable.getValue();
                 }
             });
+
+            final TextBox maxWidth = MsoyUI.createTextBox(""+config.maxWidth, 4, 4);
+            final TextBox maxHeight = MsoyUI.createTextBox(""+config.maxHeight, 4, 4);
+            SmartTable size = new SmartTable(0, 3);
+            size.cell(0, 0).text(_msgs.egWidth());
+            size.cell(0, 1).widget(maxWidth);
+            size.cell(0, 2).text(_msgs.egByHeight());
+            size.cell(0, 3).widget(maxHeight);
+            addRow(_msgs.egMaxSize(), size, new Command() {
+                public void execute () {
+                    config.maxWidth = Integer.valueOf(maxWidth.getText());
+                    config.maxHeight = Integer.valueOf(maxHeight.getText());
+                }
+            });
+            addTip(_msgs.egMaxSizeTip());
         }
 
         addSpacer();
@@ -249,6 +266,18 @@ public class CodeEditorPanel extends GameEditorTable
             config.serverClass = elem.getFirstChild().toString();
         }
 
+        // determine the maximum width & height
+        elems = xml.getElementsByTagName("max_width");
+        if (elems.getLength() > 0) {
+            Element elem = (Element)elems.item(0);
+            config.maxWidth = Integer.valueOf(elem.getFirstChild().toString());
+        }
+        elems = xml.getElementsByTagName("max_height");
+        if (elems.getLength() > 0) {
+            Element elem = (Element)elems.item(0);
+            config.maxHeight = Integer.valueOf(elem.getFirstChild().toString());
+        }
+
         // look up some boolean bits
         config.noprogress = (xml.getElementsByTagName("noprogress").getLength() > 0);
         config.agentMPOnly = (xml.getElementsByTagName("agentmponly").getLength() > 0);
@@ -308,6 +337,18 @@ public class CodeEditorPanel extends GameEditorTable
         }
         if (config.roomless) {
             xml.getFirstChild().appendChild(xml.createElement("roomless"));
+        }
+
+        // max. width & height
+        if (config.maxWidth > 0) {
+            Element elem = xml.createElement("max_width");
+            elem.appendChild(xml.createTextNode("" + config.maxWidth));
+            xml.getFirstChild().appendChild(elem);
+        }
+        if (config.maxHeight > 0) {
+            Element elem = xml.createElement("max_height");
+            elem.appendChild(xml.createTextNode("" + config.maxHeight));
+            xml.getFirstChild().appendChild(elem);
         }
 
         // add the custom parameters, if any
@@ -376,6 +417,8 @@ public class CodeEditorPanel extends GameEditorTable
         public boolean noprogress;
         public boolean roomless;
         public String params;
+        public int maxWidth;
+        public int maxHeight;
     }
 
     protected int _minRow, _maxRow, _watchRow;

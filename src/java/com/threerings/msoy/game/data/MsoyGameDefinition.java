@@ -27,6 +27,12 @@ public class MsoyGameDefinition extends GameDefinition
     /** Indicates the id of the bureau that this game's server code will run in, if any. */
     public String bureauId;
 
+    /** The maximum client width to allow. */
+    public int maxWidth;
+
+    /** The maximum client height to allow. */
+    public int maxHeight;
+
     /**
      * Configures the path to this game's media.
      */

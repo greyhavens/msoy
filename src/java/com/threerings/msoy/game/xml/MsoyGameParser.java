@@ -12,6 +12,8 @@ import org.xml.sax.SAXException;
 import org.apache.commons.digester.Digester;
 import org.apache.commons.digester.Rule;
 
+import com.samskivert.xml.SetFieldRule;
+
 import com.threerings.msoy.edgame.gwt.GameCode;
 import com.threerings.msoy.game.data.MsoyGameDefinition;
 import com.threerings.msoy.game.data.MsoyMatchConfig;
@@ -47,6 +49,8 @@ public class MsoyGameParser extends WhirledGameParser
                 ((MsoyGameDefinition)digester.peek()).roomless = true;
             }
         });
+        _digester.addRule("game/max_width", new SetFieldRule("maxWidth"));
+        _digester.addRule("game/max_height", new SetFieldRule("maxHeight"));
     }
 
     /**

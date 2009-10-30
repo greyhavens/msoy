@@ -30,6 +30,12 @@ public class MsoyGameDefinition extends GameDefinition
     /** The id of the bureau that this game's server code will run in, if any. */
     public var bureauId :String;
 
+    /** The maximum client width to allow. */
+    public var maxWidth :int;
+
+    /** The maximum client height to allow. */
+    public var maxHeight :int;
+
     public function MsoyGameDefinition ()
     {
     }
@@ -56,6 +62,8 @@ public class MsoyGameDefinition extends GameDefinition
         roomless = ins.readBoolean();
         serverMedia = (ins.readField(String) as String);
         bureauId = (ins.readField(String) as String);
+        maxWidth = ins.readInt();
+        maxHeight = ins.readInt();
     }
 
     // from interface Streamable
@@ -67,6 +75,8 @@ public class MsoyGameDefinition extends GameDefinition
         out.writeBoolean(roomless);
         out.writeField(serverMedia);
         out.writeField(bureauId);
+        out.writeInt(maxWidth);
+        out.writeInt(maxHeight);
     }
 }
 }
