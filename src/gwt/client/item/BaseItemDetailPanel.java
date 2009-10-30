@@ -154,7 +154,14 @@ public abstract class BaseItemDetailPanel extends SmartTable
                 _itemsvc.addFlag(ident, kind, comment, new NoopAsyncCallback());
             }
         };
-        setWidget(2, 0, new TagDetailPanel(tagService, flagService, detail.tags, canEditTags));
+        TagDetailPanel.ComplainService complainer = new TagDetailPanel.ComplainService() {
+            public void complain (String tag, String reason, AsyncCallback<Void> callback) {
+                ItemIdent ident = new ItemIdent(_item.getType(), _item.getMasterId());
+                _itemsvc.complainTag(ident, tag, reason, callback);
+            }
+        };
+        setWidget(2, 0, new TagDetailPanel(
+            tagService, flagService, complainer, detail.tags, canEditTags));
         getFlexCellFormatter().setHeight(2, 0, "10px");
 
         configureCallbacks(this);

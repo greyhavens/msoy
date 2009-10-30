@@ -206,7 +206,7 @@ public class GroupEdit extends FlexTable
                         }
                     });
                 }
-            }, null, null, true);
+            }, null, null, null, true);
             addRow("", WidgetUtil.makeShim(1, 20));
             addRow("", tags);
         }

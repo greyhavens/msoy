@@ -42,6 +42,7 @@ import com.threerings.msoy.web.gwt.TagHistory;
 import client.shell.CShell;
 import client.ui.BorderedDialog;
 import client.ui.BorderedPopup;
+import client.ui.ComplainPopup;
 import client.ui.MsoyUI;
 import client.ui.PopupMenu;
 import client.ui.PromptPopup;
@@ -82,12 +83,21 @@ public class TagDetailPanel extends VerticalPanel
         void addFlag (ItemFlag.Kind kind, String comment);
     }
 
-    public TagDetailPanel (
-        TagService service, FlagService flagger, List<String> tags, boolean showAddUI)
+    /**
+     * Interface to the optional service supporting tag complaints.
+     */
+    public interface ComplainService
+    {
+        void complain (String tag, String reason, AsyncCallback<Void> callback);
+    }
+
+    public TagDetailPanel (TagService service, FlagService flagger, ComplainService complainer,
+        List<String> tags, boolean showAddUI)
     {
         setStyleName("tagDetailPanel");
         _service = service;
         _flagger = flagger;
+        _complainer = complainer;
         _canEdit = !CShell.isGuest() && showAddUI;
 
         _tags = new FlowPanel();
@@ -282,6 +292,14 @@ public class TagDetailPanel extends VerticalPanel
                         addMenuItem(_cmsgs.tagRemove(),
                             new PromptPopup(_cmsgs.tagRemoveConfirm(tag), remove));
                     }
+                    if (CShell.isRegistered() && _complainer != null) {
+                        addMenuItem(_cmsgs.tagComplain(),
+                            new Command() {
+                                @Override public void execute () {
+                                    new ComplainTagPopup(tag).show();
+                                }
+                            });
+                    }
                 }
             };
             _tags.add(tagLabel);
@@ -418,8 +436,27 @@ public class TagDetailPanel extends VerticalPanel
         protected TextBox _link;
     }
 
+    protected class ComplainTagPopup extends ComplainPopup
+    {
+        public ComplainTagPopup (String tag)
+        {
+            super(MAX_COMPLAINT_LENGTH);
+            _tag = tag;
+        }
+
+        @Override
+        protected boolean callService ()
+        {
+            _complainer.complain(_tag, _description.getText(), this);
+            return true;
+        }
+
+        protected String _tag;
+    }
+
     protected TagService _service;
     protected FlagService _flagger;
+    protected ComplainService _complainer;
     protected boolean _canEdit;
 
     protected List<String> _tlist;
@@ -432,4 +469,9 @@ public class TagDetailPanel extends VerticalPanel
     protected static final ItemServiceAsync _itemsvc = GWT.create(ItemService.class);
 
     protected static final int MAX_NAME_LENGTH = 22;
+
+    /** Maximum length allowed for a comment complaint. Note: this must be the same as the maximum
+     * length of {@link com.threerings.underwire.server.persist.EventRecord#subject}, but we cannot
+     * easily share code here. */
+    public static final int MAX_COMPLAINT_LENGTH = 255;
 }

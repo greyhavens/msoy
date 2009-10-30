@@ -159,6 +159,20 @@ public abstract class TagRepository extends DepotRepository
     }
 
     /**
+     * Gets the most recent addition of the given tag.
+     */
+    public TagHistoryRecord getLastAddition (int targetId, int tagId)
+    {
+        List<TagHistoryRecord> hist = findAll(getTagHistoryClass(),
+            new Where(getTagHistoryColumn(TagHistoryRecord.TARGET_ID), targetId,
+                getTagHistoryColumn(TagHistoryRecord.TAG_ID), tagId,
+                getTagHistoryColumn(TagHistoryRecord.ACTION), TagHistory.ACTION_ADDED),
+            new Limit(0, 1), OrderBy.descending(getTagHistoryColumn(TagHistoryRecord.TIME)));
+
+        return hist.isEmpty() ? null : hist.get(0);
+    }
+
+    /**
      * Loads all the tag history records for a given member.
      */
     public List<TagHistoryRecord> getTagHistoryByMember (int memberId)

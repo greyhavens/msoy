@@ -129,4 +129,12 @@ public interface ItemService extends RemoteService
      */
     void setAvatarInLineup (int catalogId, int groupId, boolean doAdd)
         throws ServiceException;
+
+    /**
+     * Enters a complaint into the support system about the given tag. The target of the complaint
+     * is the user who most recently entered the tag, or the creator of the item if the tag was
+     * copied from somewhere.
+     */
+    void complainTag (ItemIdent ident, String tag, String reason)
+        throws ServiceException;
 }

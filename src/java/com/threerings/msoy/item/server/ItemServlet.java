@@ -24,6 +24,8 @@ import com.threerings.msoy.server.persist.TagHistoryRecord;
 import com.threerings.msoy.server.persist.TagNameRecord;
 import com.threerings.msoy.server.persist.TagRepository;
 
+import com.threerings.msoy.underwire.server.SupportLogic;
+
 import com.threerings.msoy.group.data.all.GroupMembership.Rank;
 import com.threerings.msoy.group.server.ThemeLogic;
 import com.threerings.msoy.group.server.persist.GroupRepository;
@@ -44,6 +46,7 @@ import com.threerings.msoy.item.server.persist.ItemRepository;
 import com.threerings.msoy.item.server.persist.PhotoRecord;
 import com.threerings.msoy.item.server.persist.PhotoRepository;
 
+import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.ServiceCodes;
 import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.gwt.TagHistory;
@@ -370,6 +373,40 @@ public class ItemServlet extends MsoyServiceServlet
         }
     }
 
+    @Override // from ItemService
+    public void complainTag (ItemIdent iident, String tag, String reason)
+        throws ServiceException
+    {
+        MemberRecord complainer = requireAuthedUser();
+        TagRepository tagRepo = _itemLogic.getRepository(iident.type).getTagRepository();
+
+        int tagId = tagRepo.getTagId(tag);
+        if (tagId == 0) {
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
+
+        ItemRecord item = _itemLogic.getRepository(iident.type).loadItem(iident.itemId);
+        if (item == null) {
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
+
+        TagHistoryRecord hist = tagRepo.getLastAddition(iident.itemId, tagId);
+        StringBuilder message = new StringBuilder("[");
+        int targetId;
+        if (hist == null) {
+            message.append("tag not added to listed item ");
+            targetId = item.creatorId;
+        } else {
+            message.append("tag added to listed item at ").append(hist.time);
+            targetId = hist.memberId;
+        }
+        message.append('"').append(item.name).append('"');
+        message.append("]\n").append("Tag: ").append(tag);
+
+        _supportLogic.addMessageComplaint(complainer.getName(), targetId, message.toString(),
+            reason, Pages.STUFF.makeURL("d", iident.type, iident.itemId));
+    }
+
     // our dependencies
     @Inject protected ItemFlagRepository _itemFlagRepo;
     @Inject protected ItemLogic _itemLogic;
@@ -379,8 +416,8 @@ public class ItemServlet extends MsoyServiceServlet
     @Inject protected ThemeRepository _themeRepo;
     @Inject protected ThemeLogic _themeLogic;
     @Inject protected StatLogic _statLogic;
+    @Inject protected SupportLogic _supportLogic;
     @Inject protected TagLogic _tagLogic;
 
     protected static final int MIN_SOLID_RATINGS = 20;
-
 }

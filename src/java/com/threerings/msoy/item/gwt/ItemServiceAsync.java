@@ -19,21 +19,6 @@ import com.threerings.msoy.web.gwt.TagHistory;
 public interface ItemServiceAsync
 {
     /**
-     * The async version of {@link ItemService#addFlag}.
-     */
-    void addFlag (ItemIdent item, ItemFlag.Kind kind, String comment, AsyncCallback<Void> callback);
-
-    /**
-     * The async version of {@link ItemService#getTagHistory}.
-     */
-    void getTagHistory (ItemIdent item, AsyncCallback<List<TagHistory>> callback);
-
-    /**
-     * The async version of {@link ItemService#getTags}.
-     */
-    void getTags (ItemIdent item, AsyncCallback<List<String>> callback);
-
-    /**
      * The async version of {@link ItemService#scaleAvatar}.
      */
     void scaleAvatar (int avatarId, float newScale, AsyncCallback<Void> callback);
@@ -44,9 +29,24 @@ public interface ItemServiceAsync
     void rateItem (ItemIdent item, byte rating, AsyncCallback<RatingResult> callback);
 
     /**
+     * The async version of {@link ItemService#getTags}.
+     */
+    void getTags (ItemIdent item, AsyncCallback<List<String>> callback);
+
+    /**
+     * The async version of {@link ItemService#getTagHistory}.
+     */
+    void getTagHistory (ItemIdent item, AsyncCallback<List<TagHistory>> callback);
+
+    /**
      * The async version of {@link ItemService#tagItem}.
      */
     void tagItem (ItemIdent item, String tag, boolean set, AsyncCallback<TagHistory> callback);
+
+    /**
+     * The async version of {@link ItemService#addFlag}.
+     */
+    void addFlag (ItemIdent item, ItemFlag.Kind kind, String comment, AsyncCallback<Void> callback);
 
     /**
      * The async version of {@link ItemService#removeAllFlags}.
@@ -87,4 +87,9 @@ public interface ItemServiceAsync
      * The async version of {@link ItemService#setAvatarInLineup}.
      */
     void setAvatarInLineup (int catalogId, int groupId, boolean doAdd, AsyncCallback<Void> callback);
+
+    /**
+     * The async version of {@link ItemService#complainTag}.
+     */
+    void complainTag (ItemIdent ident, String tag, String reason, AsyncCallback<Void> callback);
 }
