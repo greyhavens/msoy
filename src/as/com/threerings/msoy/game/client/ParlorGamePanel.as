@@ -73,9 +73,18 @@ public class ParlorGamePanel extends WhirledGamePanel
         const cfg :ParlorGameConfig = _ctrl.getPlaceConfig() as ParlorGameConfig;
         const def :MsoyGameDefinition = cfg.getGameDefinition() as MsoyGameDefinition;
 
+        function peg (defaultVal :int, place :int, userMax :int) :int {
+            // if the user-specified maximum is non-zero, assume they know what they are doing and
+            // allow the game to be as small as half size
+            var effectiveMin :int = userMax == 0 ? defaultVal : defaultVal / 2;
+
+            // now just peg
+            return Math.max(effectiveMin, Math.min(place, userMax));
+        }
+
         // peg to min & max
-        _actualWidth = Math.max(GAME_WIDTH, Math.min(unscaledWidth, def.maxWidth));
-        _actualHeight = Math.max(GAME_HEIGHT, Math.min(unscaledHeight, def.maxHeight));
+        _actualWidth = peg(GAME_WIDTH, unscaledWidth, def.maxWidth);
+        _actualHeight = peg(GAME_HEIGHT, unscaledHeight, def.maxHeight);
 
         graphics.clear();
         graphics.beginFill(getBackgroundColor());
