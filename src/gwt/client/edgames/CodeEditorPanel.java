@@ -116,6 +116,7 @@ public class CodeEditorPanel extends GameEditorTable
                 }
             });
             addTip(_msgs.egMaxSizeTip());
+            addTip(_msgs.egMaxSizeTip2());
         }
 
         addSpacer();
