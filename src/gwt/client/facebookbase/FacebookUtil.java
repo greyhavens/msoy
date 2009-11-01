@@ -5,6 +5,7 @@ package client.facebookbase;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.google.gwt.core.client.JavaScriptObject;
@@ -43,51 +44,29 @@ public class FacebookUtil
     }
 
     /**
-     * Manages the creation of an array of feed story images.
+     * Creates an array of feed story images, in javascript form for passing into Facebook.
+     * @param urls the src attributes of the images, usually on the media server
+     * @param actionUrl the href attribute of the images, currently all images go to the same url
+     * @param pubImages images to use if running on a local test server; if the images passed to
+     *        facebook are not public, the feed story will not post
+     * @param setType whether to also set the "type" attribute to "image" for each item        
      */
-    public static class FeedStoryImages
+    public static JavaScriptObject makeImages (
+        List<String> urls, String actionUrl, String[] pubImages, boolean setType)
     {
-        public FeedStoryImages (String[] accessibleImages)
-        {
-            _accessibleImages = accessibleImages;
-        }
-
-        /**
-         * Adds a new image to the array.
-         * @param altPublicImageUrl for convenience, this url (if not null) is swapped in for the
-         * real URL if the deployment does not have {@link #IS_MEDIA_ACCESSIBLE}.
-         */
-        public void add (String imageUrl, String actionUrl)
-        {
-            if (!IS_MEDIA_ACCESSIBLE && _accessibleImages != null) {
-                imageUrl = _accessibleImages[_images.size() % _accessibleImages.length];
+        ArrayList<Object> images = new ArrayList<Object>();
+        for (String url : urls) {
+            if (!IS_MEDIA_ACCESSIBLE && pubImages != null) {
+                url = pubImages[images.size() % pubImages.length];
             }
             Map<String, Object> image = new HashMap<String, Object>();
-            image.put("src", imageUrl);
+            if (setType) {
+                image.put("type", "image");
+            }
+            image.put("src", url);
             image.put("href", actionUrl);
-            _images.add(JavaScriptUtil.createDictionaryFromMap(image));
+            images.add(JavaScriptUtil.createDictionaryFromMap(image));
         }
-
-        /**
-         * Converts to an array for passing into native java script.
-         */
-        public JavaScriptObject toArray ()
-        {
-            return JavaScriptUtil.createArray(_images);
-        }
-
-        protected ArrayList<Object> _images = new ArrayList<Object>();
-        protected String[] _accessibleImages;
-    }
-
-    /**
-     * Creates a JSNI dictionary referring to the given image source and href.
-     */
-    protected static JavaScriptObject createImage (String src, String href)
-    {
-        Map<String, Object> image = new HashMap<String, Object>();
-        image.put("src", src);
-        image.put("href", href);
-        return JavaScriptUtil.createDictionaryFromMap(image);
+        return JavaScriptUtil.createArray(images);
     }
 }

@@ -85,15 +85,11 @@ public class StoryFeeder
 
         actionURL = addMoreParameters(actionURL);
 
-        FacebookUtil.FeedStoryImages images = new FacebookUtil.FeedStoryImages(_publicImages);
-        for (String thumbnail : _fields.thumbnails) {
-            images.add(thumbnail, actionURL);
-        }
-
         Map<String, Object> data = new HashMap<String, Object>();
         data.put("action_url", actionURL);
         data.put("vector", vector);
-        data.put("images", images.toArray());
+        data.put("images", FacebookUtil.makeImages(
+            _fields.thumbnails, actionURL, _publicImages, false));
         data.put("fbuid", String.valueOf(_fields.fbuid));
         addMoreWildcards(data);
 
