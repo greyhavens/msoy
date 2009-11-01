@@ -24,7 +24,7 @@ window.FB_RequireSession = function() {
     });
 };
 
-window.FB_PostStory = function(bundleId, data, callback) {
+window.FB_ShowFeedDialog = function(bundleId, data, callback) {
     var showingFeed = false;
     FB_WithInit(function() {
         FB.Connect.requireSession(function() {

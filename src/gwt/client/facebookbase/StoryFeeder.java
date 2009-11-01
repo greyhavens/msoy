@@ -163,7 +163,7 @@ public class StoryFeeder
      */
     protected native void doPublish (String templateId, JavaScriptObject data) /*-{
         var object = this;
-        $wnd.FB_PostStory(templateId, data, function (postid, exception, data) {
+        $wnd.FB_ShowFeedDialog(templateId, data, function (postid, exception, data) {
             object.@client.facebookbase.StoryFeeder::publishCallback(Ljava/lang/String;)(postid);
         });
     }-*/;
