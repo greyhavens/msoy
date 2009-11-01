@@ -12,6 +12,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 
 import com.threerings.msoy.edgame.gwt.EditGameService;
 import com.threerings.msoy.edgame.gwt.EditGameServiceAsync;
+import com.threerings.msoy.facebook.gwt.FacebookService;
 import com.threerings.msoy.facebook.gwt.FeedThumbnail;
 
 import client.ui.MsoyUI;
@@ -25,11 +26,6 @@ import client.edutil.EditorUtil.ConfigException;
  */
 public class EditGlobalFeedThumbsPanel extends FlowPanel
 {
-    // TODO: move these somewhere shared
-    public static final String TROPHY = "trophy";
-    public static final String CHALLENGE = "challenge";
-    public static final String LEVELUP = "levelup";
-
     public EditGlobalFeedThumbsPanel ()
     {
         setStyleName("editFeedThumbs");
@@ -45,9 +41,9 @@ public class EditGlobalFeedThumbsPanel extends FlowPanel
     public void init (List<FeedThumbnail> result)
     {
         ThumbnailSet thumbnails = new ThumbnailSet(result);
-        addPanel(_msgs.editFeedThumbnailsTrophy(), TROPHY, thumbnails);
-        addPanel(_msgs.editFeedThumbnailsChallenge(), CHALLENGE, thumbnails);
-        addPanel(_msgs.editFeedThumbnailsLevelUp(), LEVELUP, thumbnails);
+        addPanel(_msgs.editFeedThumbnailsTrophy(), FacebookService.TROPHY, thumbnails);
+        addPanel(_msgs.editFeedThumbnailsChallenge(), FacebookService.CHALLENGE, thumbnails);
+        addPanel(_msgs.editFeedThumbnailsLevelUp(), FacebookService.LEVELUP, thumbnails);
 
         Button save = new Button(_msgs.editFeedThumbnailsSave());
         add(save);

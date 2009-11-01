@@ -16,6 +16,7 @@ import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.msoy.edgame.gwt.EditGameService;
 import com.threerings.msoy.edgame.gwt.EditGameServiceAsync;
 import com.threerings.msoy.facebook.gwt.FacebookInfo;
+import com.threerings.msoy.facebook.gwt.FacebookService;
 import com.threerings.msoy.facebook.gwt.FeedThumbnail;
 
 import client.edutil.EditorTable;
@@ -31,10 +32,6 @@ import client.util.InfoCallback;
  */
 public class FacebookGameInfoEditorPanel extends FlowPanel
 {
-    // TODO: move these somewhere shared
-    public static final String TROPHY = "trophy";
-    public static final String CHALLENGE = "challenge";
-
     public FacebookGameInfoEditorPanel (final FacebookInfo info)
     {
         setStyleName("fie");
@@ -61,9 +58,9 @@ public class FacebookGameInfoEditorPanel extends FlowPanel
                 };
                 ThumbnailSet thumbnails = new ThumbnailSet(result);
                 _thumbsPanels.add(new EditThumbsPanel(_msgs.editFeedThumbnailsTrophy(),
-                    TROPHY, thumbnails, onMediaModified));
+                    FacebookService.TROPHY, thumbnails, onMediaModified));
                 _thumbsPanels.add(new EditThumbsPanel(_msgs.editFeedThumbnailsChallenge(),
-                    CHALLENGE, thumbnails, onMediaModified));
+                    FacebookService.CHALLENGE, thumbnails, onMediaModified));
             }
         });
 
