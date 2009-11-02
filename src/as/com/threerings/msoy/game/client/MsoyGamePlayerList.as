@@ -5,6 +5,8 @@ package com.threerings.msoy.game.client {
 
 import flash.filters.GlowFilter;
 
+import mx.controls.Label;
+
 import com.whirled.ui.NameLabelCreator;
 
 import com.whirled.game.client.GamePlayerList;
@@ -12,6 +14,16 @@ import com.whirled.game.client.GamePlayerRecord;
 
 public class MsoyGamePlayerList extends GamePlayerList
 {
+    public static function setLabelStyle (label :Label) :void
+    {
+        // NOTE: the appearance of this label should match the text field in MsoyNameLabel
+        label.filters = [ new GlowFilter(0x000000, 1, 5, 5, 12) ];
+        label.setStyle("color", 0xFFFFFF);
+        label.setStyle("fontSize", 12);
+        label.setStyle("fontFamily", "_sans");
+        label.setStyle("letterSpacing", 0.6);
+    }
+
     public function MsoyGamePlayerList (labelCreator :NameLabelCreator = null)
     {
         super(labelCreator);
@@ -23,11 +35,7 @@ public class MsoyGamePlayerList extends GamePlayerList
         super.setLabel(label);
 
         if (_label != null) {
-            _label.filters = [ new GlowFilter(0, 1, 2, 2, 255) ];
-            _label.setStyle("color", 0xFFFFFF);
-            _label.setStyle("fontSize", 12);
-            _label.setStyle("fontWeight", "bold");
-            _label.setStyle("fontFamily", "Ariel");
+            setLabelStyle(_label);
         }
     }
 
@@ -45,6 +53,7 @@ public class MsoyGamePlayerList extends GamePlayerList
 
 import flash.filters.GlowFilter;
 
+import com.threerings.msoy.game.client.MsoyGamePlayerList;
 import com.whirled.game.client.GamePlayerRenderer;
 
 class MsoyGamePlayerRenderer extends GamePlayerRenderer
@@ -53,11 +62,7 @@ class MsoyGamePlayerRenderer extends GamePlayerRenderer
     {
         super.createChildren();
 
-        _scoreLabel.filters = [ new GlowFilter(0, 1, 2, 2, 255) ];
-        _scoreLabel.setStyle("color", 0xFFFFFF);
-        _scoreLabel.setStyle("fontSize", 12);
-        _scoreLabel.setStyle("fontWeight", "bold");
-        _scoreLabel.setStyle("fontFamily", "Ariel");
+        MsoyGamePlayerList.setLabelStyle(_scoreLabel);
     }
 }
 

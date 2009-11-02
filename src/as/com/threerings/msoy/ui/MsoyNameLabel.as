@@ -31,6 +31,7 @@ public class MsoyNameLabel extends Sprite
 
         // TODO: the outline trick just barely works here, perhaps it is time to consider a
         // different solution, including using different code for avatars and occupant list
+        // NOTE: the look of this text field must match the labels in MsoyGamePlayerList
         _label = TextFieldUtil.createField("",
             { textColor: 0xFFFFFF, selectable: false, autoSize :TextFieldAutoSize.LEFT,
             outlineColor: 0x000000, outlineWidth: 5, outlineStrength: 12 });
