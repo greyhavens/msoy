@@ -37,6 +37,18 @@ window.FB_ShowFeedDialog = function(bundleId, data, callback) {
     });
 };
 
+window.FB_StreamPublish = function(attachment, links, prompt, callback) {
+    var publishing = false;
+    FB_WithInit(function() {
+        FB.Connect.requireSession(function() {
+            if (!publishing) {
+                publishing = true;
+                FB.Connect.streamPublish('', attachment, links, null, prompt, callback);
+            }
+        });
+    });
+};
+
 window.FB_Logout = function() {
     FB_WithInit(function() {
         FB.Connect.logout(null);

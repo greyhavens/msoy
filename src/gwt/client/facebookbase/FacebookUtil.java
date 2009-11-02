@@ -69,4 +69,19 @@ public class FacebookUtil
         }
         return JavaScriptUtil.createArray(images);
     }
+
+    /**
+     * Creates an array of one feed story link, in javascript form for passing into Facebook.
+     * @param text the text of the link
+     * @param actionUrl the href of the link
+     */
+    public static JavaScriptObject makeLinks (String text, String actionUrl)
+    {
+        Map<String, Object> link = new HashMap<String, Object>();
+        link.put("text", text);
+        link.put("href", actionUrl);
+        ArrayList<Object> links = new ArrayList<Object>();
+        links.add(JavaScriptUtil.createDictionaryFromMap(link));
+        return JavaScriptUtil.createArray(links);
+    }
 }

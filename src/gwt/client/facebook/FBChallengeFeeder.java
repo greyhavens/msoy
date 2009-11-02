@@ -50,7 +50,7 @@ public class FBChallengeFeeder extends StoryFeeder
     }
 
     @Override // from StoryFeeder
-    protected void addMoreWildcards (Map<String, Object> data)
+    protected void addMoreWildcards (Map<String, String> data)
     {
         data.put("game", _fields.name);
         data.put("game_desc", _fields.description);

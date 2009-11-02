@@ -16,6 +16,7 @@ import com.threerings.msoy.web.gwt.SharedNaviUtil;
 
 import com.threerings.msoy.facebook.gwt.FacebookService;
 import com.threerings.msoy.facebook.gwt.FacebookServiceAsync;
+import com.threerings.msoy.facebook.gwt.Wildcards;
 import com.threerings.msoy.facebook.gwt.FacebookService.StoryKey;
 import com.threerings.msoy.facebook.gwt.FacebookService.StoryFields;
 
@@ -69,7 +70,6 @@ public class StoryFeeder
     protected void doPublish ()
     {
         String vector = _fields.template.toEntryVector();
-        String templateId = String.valueOf(_fields.template.bundleId);
 
         // we use this url in 3 places on the post
         // TODO: link different things to different places? more redirects in FacebookServlet?
@@ -85,15 +85,35 @@ public class StoryFeeder
 
         actionURL = addMoreParameters(actionURL);
 
-        Map<String, Object> data = new HashMap<String, Object>();
-        data.put("action_url", actionURL);
-        data.put("vector", vector);
-        data.put("images", FacebookUtil.makeImages(
-            _fields.thumbnails, actionURL, _publicImages, false));
-        data.put("fbuid", String.valueOf(_fields.fbuid));
-        addMoreWildcards(data);
+        Map<String, String> wildcards = new HashMap<String, String>();
+        wildcards.put("action_url", actionURL);
+        wildcards.put("vector", vector);
+        wildcards.put("fbuid", String.valueOf(_fields.fbuid));
+        addMoreWildcards(wildcards);
 
-        doPublish(templateId, JavaScriptUtil.createDictionaryFromMap(data));
+        if (_fields.template.bundleId != 0) {
+            // use the old skool bundle ids - this is just so pre-2009!
+            Map<String, Object> data = new HashMap<String, Object>();
+            data.putAll(wildcards);
+            data.put("images", FacebookUtil.makeImages(
+                _fields.thumbnails, actionURL, _publicImages, false));
+            String templateId = String.valueOf(_fields.template.bundleId);
+            showFeedDialog(templateId, JavaScriptUtil.createDictionaryFromMap(data));
+
+        } else {
+            Wildcards wild = new Wildcards(wildcards);
+            Map<String, Object> attachments = new HashMap<String, Object>();
+            //attachment.put("name", wild.replace(_fields.template.name));
+            attachments.put("href", actionURL);
+            attachments.put("description", wild.replace(_fields.template.description));
+            attachments.put("caption", wild.replace(_fields.template.caption));
+            attachments.put("media", FacebookUtil.makeImages(
+                _fields.thumbnails, actionURL, _publicImages, true));
+
+            publishStream(JavaScriptUtil.createDictionaryFromMap(attachments),
+                FacebookUtil.makeLinks(wild.replace(_fields.template.linkText), actionURL),
+                wild.replace(_fields.template.prompt));
+        }
     }
 
     /**
@@ -111,7 +131,7 @@ public class StoryFeeder
      * done with a map. The base version does nothing. Subclasses may need to add their own
      * specific wildcards.
      */
-    protected void addMoreWildcards (Map<String, Object> data)
+    protected void addMoreWildcards (Map<String, String> wildcards)
     {
     }
 
@@ -157,9 +177,21 @@ public class StoryFeeder
      * Invokes the javascript bridge code (source in {code facebook.js.tmpl}) to popup the facebook
      * feed dialog using the given template id and wildcard data.
      */
-    protected native void doPublish (String templateId, JavaScriptObject data) /*-{
+    protected native void showFeedDialog (String templateId, JavaScriptObject data) /*-{
         var object = this;
         $wnd.FB_ShowFeedDialog(templateId, data, function (postid, exception, data) {
+            object.@client.facebookbase.StoryFeeder::publishCallback(Ljava/lang/String;)(postid);
+        });
+    }-*/;
+
+    /**
+     * Invokes the javascript bridge code (source in {code facebook.js.tmpl}) to publish the given
+     * attachment and links to the facebook stream.
+     */
+    protected native void publishStream (
+        JavaScriptObject attachments, JavaScriptObject links, String prompt) /*-{
+        var object = this;
+        $wnd.FB_StreamPublish(attachments, links, prompt, function (postid, exception, data) {
             object.@client.facebookbase.StoryFeeder::publishCallback(Ljava/lang/String;)(postid);
         });
     }-*/;

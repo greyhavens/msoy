@@ -58,6 +58,7 @@ import com.threerings.msoy.apps.server.persist.AppRepository;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.facebook.data.FacebookCodes;
 import com.threerings.msoy.facebook.gwt.FacebookGame;
+import com.threerings.msoy.facebook.gwt.Wildcards;
 import com.threerings.msoy.facebook.server.KontagentLogic.LinkType;
 import com.threerings.msoy.facebook.server.KontagentLogic.TrackingId;
 import com.threerings.msoy.facebook.server.persist.FacebookActionRecord;
@@ -602,11 +603,7 @@ public class FacebookLogic
         updateURL(replacements, "app_url", memRec, trackingId);
 
         // do the replacements and create the instance
-        String text = template.text;
-        for (Map.Entry<String, String> pair : replacements.entrySet()) {
-            String key = "{*" + pair.getKey() + "*}";
-            text = text.replace(key, pair.getValue());
-        }
+        String text = Wildcards.replace(template.text, replacements);
 
         // create the batch
         NotificationBatch batch = new NotificationBatch(

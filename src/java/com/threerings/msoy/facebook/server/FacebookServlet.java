@@ -46,6 +46,7 @@ import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.facebook.gwt.FacebookFriendInfo;
 import com.threerings.msoy.facebook.gwt.FacebookGame;
 import com.threerings.msoy.facebook.gwt.FacebookService;
+import com.threerings.msoy.facebook.gwt.FacebookTemplate;
 import com.threerings.msoy.facebook.server.FacebookLogic.SessionInfo;
 import com.threerings.msoy.facebook.server.KontagentLogic.TrackingId;
 import com.threerings.msoy.facebook.server.KontagentLogic.LinkType;
@@ -354,14 +355,26 @@ public class FacebookServlet extends MsoyServiceServlet
         StoryFields fields, SessionInfo session, String template)
     {
         int appId = session.siteId.getFacebookAppId();
-        List<FacebookTemplateRecord> templates = _facebookRepo.loadVariants(appId, template);
-        if (templates.size() == 0) {
-            log.warning("No Facebook templates found for request", "code", template);
-            return fields;
+
+        // test code for publish stream, this needs to be changed to come from the template rec.
+        if (DeploymentConfig.devDeployment && template.equals(TROPHY)) {
+            fields.template = new FacebookTemplate(TROPHY, "tmp", 0);
+            fields.template.caption = "{*actor*} earned the {*trophy*} trophy in {*game*}";
+            fields.template.description = "{*game_desc*}";
+            fields.template.linkText = "Play {*game*} now";
+            fields.template.prompt = "Enter a personal message";
+
+        } else {
+            List<FacebookTemplateRecord> templates = _facebookRepo.loadVariants(appId, template);
+            if (templates.size() == 0) {
+                log.warning("No Facebook templates found for request", "code", template);
+                return fields;
+            }
+            fields.template = RandomUtil.pickRandom(templates).toTemplate();
         }
+
         FacebookInfoRecord fbinfo = _facebookRepo.loadAppFacebookInfo(appId);
         fields.canvasName = fbinfo != null ? fbinfo.canvasName : "";
-        fields.template = RandomUtil.pickRandom(templates).toTemplate();
         TrackingId trackingId = new KontagentLogic.TrackingId(LinkType.FEED_LONG,
             template + fields.template.variant, session.fbid);
         fields.trackingId = trackingId.flatten();

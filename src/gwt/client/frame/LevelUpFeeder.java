@@ -36,7 +36,7 @@ public class LevelUpFeeder extends StoryFeeder
     }
 
     @Override // from StoryFeeder
-    protected void addMoreWildcards (Map<String, Object> data)
+    protected void addMoreWildcards (Map<String, String> data)
     {
         data.put("level", "" + _level);
     }

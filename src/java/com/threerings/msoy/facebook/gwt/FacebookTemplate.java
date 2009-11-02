@@ -17,15 +17,23 @@ public class FacebookTemplate
     /** Distinguish between functionally equivalent templates. */
     public String variant = "";
 
-    /** The bundle id registered with facebook used to publish an instance of the template. */
+    /** The bundle id registered with facebook used to publish an instance of the template. 
+     * TODO: remove, this is deprecated. */
     public long bundleId;
 
-    /**
-     * Creates a template for deserialization.
-     */
-    public FacebookTemplate ()
-    {
-    }
+    /** The caption for passing to publishStream */
+    public String caption;
+
+    /** The description for passing to publishStream */
+    public String description;
+
+    /** The prompt for passing to publishStream */
+    public String prompt;
+
+    /** The text of the link to pass to publishStream */
+    // TODO: allow for more links?
+    // TODO: allow linkUrl?
+    public String linkText;
 
     /**
      * Creates a new template with the given fields.
@@ -80,5 +88,12 @@ public class FacebookTemplate
         int cmp = code.compareTo(o.code);
         cmp = (cmp == 0) ? variant.compareTo(o.variant) : cmp;
         return cmp;
+    }
+
+    /**
+     * Creates a template for deserialization.
+     */
+    protected FacebookTemplate ()
+    {
     }
 }

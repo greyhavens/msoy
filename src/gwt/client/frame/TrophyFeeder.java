@@ -56,10 +56,10 @@ public class TrophyFeeder extends StoryFeeder
     }
 
     @Override // from StoryFeeder
-    protected void addMoreWildcards (Map<String, Object> data)
+    protected void addMoreWildcards (Map<String, String> data)
     {
         // add in the game specific stuff we got from the event
-        data.put("game_id", _event.getGameId());
+        data.put("game_id", ""+_event.getGameId());
         data.put("game", _event.getGame());
         data.put("game_desc", _event.getGameDescription());
         data.put("trophy", _event.getTrophy());
