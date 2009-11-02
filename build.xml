@@ -617,7 +617,6 @@
       <arg value="-default-size"/>
       <arg value="600"/>
       <arg value="488"/>
-      <arg value="-incremental=true"/>
       <arg value="-output"/>
       <arg value="${deploy.dir}/${swfname}.swf"/>
       <arg value="-file-specs"/>
@@ -658,6 +657,7 @@
       <param name="copydir" value="/export/whirled/lib"/>
       <param name="dev_deployment" value="false"/>
       <param name="flex.extra-arg" value="-static-link-runtime-shared-libraries=true"/>
+      <param name="flex.extra-arg-2" value="-incremental=false"/>
     </antcall>
   </target>
 

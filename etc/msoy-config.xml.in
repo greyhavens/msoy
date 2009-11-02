@@ -84,9 +84,7 @@
       </include-libraries>
       -->
       <!-- compiler.incremental: enables incremental compilation-->
-      <!-- compiler.incremental usage:
-      <incremental>boolean</incremental>
-      -->
+      <incremental>true</incremental>
       <!-- compiler.keep-all-type-selectors: disables the pruning of unused CSS type selectors-->
       <!-- compiler.keep-all-type-selectors usage:
       <keep-all-type-selectors>boolean</keep-all-type-selectors>
