@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.facebook.gwt;
 
 import java.util.Map;
