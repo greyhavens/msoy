@@ -4,6 +4,7 @@
 package com.threerings.msoy.apps.gwt;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.threerings.msoy.facebook.gwt.FacebookInfo;
@@ -80,7 +81,7 @@ public interface AppServiceAsync
     /**
      * The async version of {@link AppService#updateTemplates}.
      */
-    void updateTemplates (int appId, Set<FacebookTemplate> changed, Set<FacebookTemplate.Key> removed, AsyncCallback<Void> callback);
+    void updateTemplates (int appId, Set<FacebookTemplate> changed, Set<FacebookTemplate.Key> removed, Map<FacebookTemplate.Key, Boolean> abled, AsyncCallback<Void> callback);
 
     /**
      * The async version of {@link AppService#loadThumbnails}.

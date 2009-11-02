@@ -121,6 +121,7 @@
 .facebookTemplates .templatesList {
   padding-left: 10px;
   padding-bottom: 20px;
+  font-size: 10px;
 }
 
 /* ------------------------------------
@@ -145,7 +146,23 @@
 }
 
 .templatesList .Code {
-  width: 20%;
+  width: 10%;
+}
+
+.templatesList .Caption {
+  width: 25%;
+}
+
+.templatesList .Description {
+  width: 15%;
+}
+
+.templatesList .Prompt {
+  width: 15%;
+}
+
+.templatesList .Link {
+  width: 15%;
 }
 
 /* ------------------------------------

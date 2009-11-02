@@ -78,6 +78,19 @@ public class FacebookRepository extends DepotRepository
                     null, FacebookActionRecord.APP_ID, NEW_DEFAULT);
             }
         });
+
+        // set the default values for the new stream publishing columns - we don't want these to
+        // be nullable or have permanent default values
+        context.registerMigration(FacebookTemplateRecord.class,
+            new SchemaMigration.Add(4, FacebookTemplateRecord.CAPTION, "''"));
+        context.registerMigration(FacebookTemplateRecord.class,
+            new SchemaMigration.Add(4, FacebookTemplateRecord.DESCRIPTION, "''"));
+        context.registerMigration(FacebookTemplateRecord.class,
+            new SchemaMigration.Add(4, FacebookTemplateRecord.PROMPT, "''"));
+        context.registerMigration(FacebookTemplateRecord.class,
+            new SchemaMigration.Add(4, FacebookTemplateRecord.LINK_TEXT, "''"));
+        context.registerMigration(FacebookTemplateRecord.class,
+            new SchemaMigration.Add(4, FacebookTemplateRecord.ENABLED, "'t'"));
     }
 
     /**
@@ -132,6 +145,15 @@ public class FacebookRepository extends DepotRepository
     }
 
     /**
+     * Sets or clears the enabled flag of a template.
+     */
+    public void updateTemplateEnabling (int appId, FacebookTemplate.Key key, Boolean enabled)
+    {
+        updatePartial(FacebookTemplateRecord.getKey(appId, key.code, key.variant),
+            FacebookTemplateRecord.ENABLED, enabled);
+    }
+
+    /**
      * Deletes the template record with the given code.
      */
     public void deleteTemplate (int appId, FacebookTemplate.Key key)
@@ -154,7 +176,8 @@ public class FacebookRepository extends DepotRepository
     public List<FacebookTemplateRecord> loadVariants (int appId, String code)
     {
         return findAll(FacebookTemplateRecord.class, new Where(Ops.and(
-            FacebookTemplateRecord.CODE.eq(code), FacebookTemplateRecord.APP_ID.eq(appId))));
+            FacebookTemplateRecord.CODE.eq(code), FacebookTemplateRecord.APP_ID.eq(appId),
+            FacebookTemplateRecord.ENABLED.eq(Boolean.TRUE))));
     }
 
     /**

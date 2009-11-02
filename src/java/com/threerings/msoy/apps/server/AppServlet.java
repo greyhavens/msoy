@@ -5,6 +5,7 @@ package com.threerings.msoy.apps.server;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.google.common.base.Function;
@@ -188,7 +189,8 @@ public class AppServlet extends MsoyServiceServlet
 
     @Override // from AppService
     public void updateTemplates (
-        int appId, Set<FacebookTemplate> templates, Set<FacebookTemplate.Key> removed)
+        int appId, Set<FacebookTemplate> templates, Set<FacebookTemplate.Key> removed,
+        Map<FacebookTemplate.Key, Boolean> abled)
         throws ServiceException
     {
         requireApp(appId);
@@ -197,6 +199,9 @@ public class AppServlet extends MsoyServiceServlet
         }
         for (FacebookTemplate templ : templates) {
             _facebookRepo.storeTemplate(new FacebookTemplateRecord(appId, templ));
+        }
+        for (Map.Entry<FacebookTemplate.Key, Boolean> abling : abled.entrySet()) {
+            _facebookRepo.updateTemplateEnabling(appId, abling.getKey(), abling.getValue());
         }
     }
 

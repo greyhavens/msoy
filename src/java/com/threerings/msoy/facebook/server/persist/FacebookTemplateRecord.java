@@ -22,11 +22,16 @@ public class FacebookTemplateRecord extends PersistentRecord
     public static final ColumnExp APP_ID = colexp(_R, "appId");
     public static final ColumnExp CODE = colexp(_R, "code");
     public static final ColumnExp VARIANT = colexp(_R, "variant");
+    public static final ColumnExp ENABLED = colexp(_R, "enabled");
     public static final ColumnExp BUNDLE_ID = colexp(_R, "bundleId");
+    public static final ColumnExp CAPTION = colexp(_R, "caption");
+    public static final ColumnExp DESCRIPTION = colexp(_R, "description");
+    public static final ColumnExp PROMPT = colexp(_R, "prompt");
+    public static final ColumnExp LINK_TEXT = colexp(_R, "linkText");
     // AUTO-GENERATED: FIELDS END
 
     /** Determines compatible schema versions. */
-    public static final int SCHEMA_VERSION = 3;
+    public static final int SCHEMA_VERSION = 4;
 
     /** The id of the application defining this template. */
     @Id public int appId;
@@ -37,8 +42,23 @@ public class FacebookTemplateRecord extends PersistentRecord
     /** Distinguish between functionally equivalent templates. */
     @Id public String variant;
 
+    /** Whether this template is considered when a template is requested. */
+    public boolean enabled;
+
     /** Passed to Facebook when creating a new story. */
     public long bundleId;
+
+    /** The caption for passing to publishStream */
+    public String caption;
+
+    /** The description for passing to publishStream */
+    public String description;
+
+    /** The prompt for passing to publishStream */
+    public String prompt;
+
+    /** The text of the link to pass to publishStream */
+    public String linkText;
 
     /**
      * Creates a new template to be filled in with data from the database.
@@ -56,6 +76,11 @@ public class FacebookTemplateRecord extends PersistentRecord
         code = template.key.code;
         bundleId = template.bundleId;
         variant = template.key.variant;
+        caption = template.caption;
+        description = template.description;
+        prompt = template.prompt;
+        linkText = template.linkText;
+        enabled = template.enabled;
     }
 
     /**
@@ -63,7 +88,13 @@ public class FacebookTemplateRecord extends PersistentRecord
      */
     public FacebookTemplate toTemplate ()
     {
-        return new FacebookTemplate(code, variant, bundleId);
+        FacebookTemplate templ = new FacebookTemplate(code, variant, bundleId);
+        templ.caption = caption;
+        templ.description = description;
+        templ.prompt = prompt;
+        templ.linkText = linkText;
+        templ.enabled = enabled;
+        return templ;
     }
 
     /**

@@ -4,6 +4,7 @@
 package com.threerings.msoy.apps.gwt;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
@@ -119,7 +120,8 @@ public interface AppService extends RemoteService
      * by the given codes.
      */
     void updateTemplates (
-        int appId, Set<FacebookTemplate> changed, Set<FacebookTemplate.Key> removed)
+        int appId, Set<FacebookTemplate> changed, Set<FacebookTemplate.Key> removed,
+        Map<FacebookTemplate.Key, Boolean> abled)
         throws ServiceException;
 
     /**
