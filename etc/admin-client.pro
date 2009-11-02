@@ -20,7 +20,7 @@
 -injars ../dist/msoy-code.jar(
     !**/*UnitTest.class,rsrc/i18n/**,**/msoy/Log.class,**/msoy/data/**,**/msoy/client/**,
     **/msoy/item/data/all/**,**/msoy/admin/data/**,**/msoy/admin/client/**,**/msoy/admin/util/**,
-    **/msoy/group/data/all/GroupMembership.class,**/msoy/group/data/all/GroupMembership$Rank.class,
+    **/msoy/group/data/all/**,**/msoy/group/data/all/GroupMembership$Rank.class,
     **/msoy/badge/data/**,**/msoy/notify/data/**,**/msoy/game/data/GameSummary.class)
 
 -dontskipnonpubliclibraryclasses
