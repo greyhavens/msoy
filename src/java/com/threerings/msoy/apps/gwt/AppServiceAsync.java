@@ -8,6 +8,7 @@ import java.util.Set;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.threerings.msoy.facebook.gwt.FacebookInfo;
 import com.threerings.msoy.facebook.gwt.FacebookTemplate;
+
 import com.threerings.msoy.facebook.gwt.FeedThumbnail;
 import com.threerings.msoy.facebook.gwt.KontagentInfo;
 
@@ -79,7 +80,7 @@ public interface AppServiceAsync
     /**
      * The async version of {@link AppService#updateTemplates}.
      */
-    void updateTemplates (int appId, Set<FacebookTemplate> changed, Set<FacebookTemplate> removed, AsyncCallback<Void> callback);
+    void updateTemplates (int appId, Set<FacebookTemplate> changed, Set<FacebookTemplate.Key> removed, AsyncCallback<Void> callback);
 
     /**
      * The async version of {@link AppService#loadThumbnails}.

@@ -124,7 +124,7 @@ public class FacebookTemplatesPanel extends FlowPanel
         _original = result;
         _templates = new ArrayList<FacebookTemplate>();
         _templates.addAll(result);
-        _removed = new HashSet<FacebookTemplate>();
+        _removed = new HashSet<FacebookTemplate.Key>();
         _added = new HashSet<FacebookTemplate>();
         _display.update();
     }
@@ -168,8 +168,9 @@ public class FacebookTemplatesPanel extends FlowPanel
                         int idx = _templates.indexOf(ftemplate);
                         removeRow(idx + 1); // "1" for header row
                         _templates.remove(idx);
+                        _added.remove(ftemplate); // just in case it was added then removed
                         if (_original.indexOf(ftemplate) != -1) {
-                            _removed.add(ftemplate);
+                            _removed.add(ftemplate.key);
                         }
                         update();
                     }
@@ -186,7 +187,8 @@ public class FacebookTemplatesPanel extends FlowPanel
 
     protected int _appId;
     protected List<FacebookTemplate> _original, _templates;
-    protected Set<FacebookTemplate> _added, _removed;
+    protected Set<FacebookTemplate> _added;
+    protected Set<FacebookTemplate.Key> _removed;
     protected TemplatesList _display;
 
     protected static final AppsMessages _msgs = GWT.create(AppsMessages.class);

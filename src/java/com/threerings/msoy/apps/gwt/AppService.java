@@ -119,7 +119,7 @@ public interface AppService extends RemoteService
      * by the given codes.
      */
     void updateTemplates (
-        int appId, Set<FacebookTemplate> changed, Set<FacebookTemplate> removed)
+        int appId, Set<FacebookTemplate> changed, Set<FacebookTemplate.Key> removed)
         throws ServiceException;
 
     /**

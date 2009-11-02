@@ -188,12 +188,12 @@ public class AppServlet extends MsoyServiceServlet
 
     @Override // from AppService
     public void updateTemplates (
-        int appId, Set<FacebookTemplate> templates, Set<FacebookTemplate> removed)
+        int appId, Set<FacebookTemplate> templates, Set<FacebookTemplate.Key> removed)
         throws ServiceException
     {
         requireApp(appId);
-        for (FacebookTemplate templ : removed) {
-            _facebookRepo.deleteTemplate(appId, templ.key);
+        for (FacebookTemplate.Key key : removed) {
+            _facebookRepo.deleteTemplate(appId, key);
         }
         for (FacebookTemplate templ : templates) {
             _facebookRepo.storeTemplate(new FacebookTemplateRecord(appId, templ));
