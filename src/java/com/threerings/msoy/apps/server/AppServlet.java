@@ -193,7 +193,7 @@ public class AppServlet extends MsoyServiceServlet
     {
         requireApp(appId);
         for (FacebookTemplate templ : removed) {
-            _facebookRepo.deleteTemplate(appId, templ.code, templ.variant);
+            _facebookRepo.deleteTemplate(appId, templ.key);
         }
         for (FacebookTemplate templ : templates) {
             _facebookRepo.storeTemplate(new FacebookTemplateRecord(appId, templ));

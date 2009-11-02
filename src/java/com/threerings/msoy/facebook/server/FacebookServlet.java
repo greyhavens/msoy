@@ -376,7 +376,7 @@ public class FacebookServlet extends MsoyServiceServlet
         FacebookInfoRecord fbinfo = _facebookRepo.loadAppFacebookInfo(appId);
         fields.canvasName = fbinfo != null ? fbinfo.canvasName : "";
         TrackingId trackingId = new KontagentLogic.TrackingId(LinkType.FEED_LONG,
-            template + fields.template.variant, session.fbid);
+            template + fields.template.key.variant, session.fbid);
         fields.trackingId = trackingId.flatten();
         fields.fbuid = session.fbid;
         return fields;

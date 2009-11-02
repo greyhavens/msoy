@@ -11,11 +11,59 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 public class FacebookTemplate
     implements IsSerializable, Comparable<FacebookTemplate>
 {
-    /** Used by msoy to reference the functionality of this template. */
-    public String code = "";
+    public static class Key
+        implements IsSerializable, Comparable<Key>
+    {
+        /** Used by msoy to reference the functionality of this template. */
+        public String code = "";
 
-    /** Distinguish between functionally equivalent templates. */
-    public String variant = "";
+        /** Distinguish between functionally equivalent templates. */
+        public String variant = "";
+
+        public Key (String code, String variant)
+        {
+            this.code = code;
+            this.variant = variant;
+        }
+
+        /**
+         * Detects equality with another template.
+         */
+        public boolean equalsKey (Key other)
+        {
+            return code.equals(other.code) && variant.equals(other.variant);
+        }
+
+        @Override // from Object
+        public int hashCode ()
+        {
+            return code.hashCode() + variant.hashCode();
+        }
+
+        @Override // from Object
+        public boolean equals (Object other)
+        {
+            return other instanceof Key && equalsKey((Key)other);
+        }
+
+        @Override // from Comparable
+        public int compareTo (Key o)
+        {
+            int cmp = code.compareTo(o.code);
+            cmp = (cmp == 0) ? variant.compareTo(o.variant) : cmp;
+            return cmp;
+        }
+
+        protected Key ()
+        {
+        }
+    }
+
+    /** The lookup key for this template. */
+    public Key key;
+
+    /** Whether this template is considered when the client requests a random template. */
+    public boolean enabled;
 
     /** The bundle id registered with facebook used to publish an instance of the template. 
      * TODO: remove, this is deprecated. */
@@ -40,8 +88,15 @@ public class FacebookTemplate
      */
     public FacebookTemplate (String code, String variant, long bundleId)
     {
-        this.code = code;
-        this.variant = variant;
+        this(new Key(code, variant), bundleId);
+    }
+
+    /**
+     * Creates a new template with the given key and bundle id.
+     */
+    public FacebookTemplate (Key key, long bundleId)
+    {
+        this.key = key;
         this.bundleId = bundleId;
     }
 
@@ -50,7 +105,7 @@ public class FacebookTemplate
      */
     public String toEntryVector ()
     {
-        return toEntryVector(code, variant);
+        return "fb." + key.code + key.variant;
     }
 
     /**
@@ -61,33 +116,22 @@ public class FacebookTemplate
         return "fb." + code + variant;
     }
 
-    /**
-     * Detects equality with another template.
-     */
-    public boolean equals (FacebookTemplate other)
-    {
-        return code.equals(other.code) && variant.equals(other.variant) &&
-            bundleId == other.bundleId;
-    }
-
     @Override // from Object
     public int hashCode ()
     {
-        return code.hashCode() + variant.hashCode();
+        return key.hashCode();
     }
 
     @Override // from Object
     public boolean equals (Object other)
     {
-        return other instanceof FacebookTemplate && equals((FacebookTemplate)other);
+        return other instanceof FacebookTemplate && key.equals(((FacebookTemplate)other).key);
     }
 
     @Override // from Comparable
     public int compareTo (FacebookTemplate o)
     {
-        int cmp = code.compareTo(o.code);
-        cmp = (cmp == 0) ? variant.compareTo(o.variant) : cmp;
-        return cmp;
+        return key.compareTo(o.key);
     }
 
     /**

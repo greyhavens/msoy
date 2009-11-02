@@ -53,9 +53,9 @@ public class FacebookTemplateRecord extends PersistentRecord
     public FacebookTemplateRecord (int appId, FacebookTemplate template)
     {
         this.appId = appId;
-        code = template.code;
+        code = template.key.code;
         bundleId = template.bundleId;
-        variant = template.variant;
+        variant = template.key.variant;
     }
 
     /**

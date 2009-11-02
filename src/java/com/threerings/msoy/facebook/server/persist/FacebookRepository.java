@@ -27,6 +27,7 @@ import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.expression.SQLExpression;
+import com.threerings.msoy.facebook.gwt.FacebookTemplate;
 import com.threerings.msoy.server.util.DropPrimaryKey;
 
 /**
@@ -133,9 +134,9 @@ public class FacebookRepository extends DepotRepository
     /**
      * Deletes the template record with the given code.
      */
-    public void deleteTemplate (int appId, String code, String variant)
+    public void deleteTemplate (int appId, FacebookTemplate.Key key)
     {
-        delete(FacebookTemplateRecord.getKey(appId, code, variant));
+        delete(FacebookTemplateRecord.getKey(appId, key.code, key.variant));
     }
 
     /**

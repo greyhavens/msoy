@@ -83,7 +83,8 @@ public class FacebookTemplatesPanel extends FlowPanel
                 FacebookTemplate newTmpl = new FacebookTemplate(code.getText().trim(),
                     variant.getText().trim(), Long.parseLong(bundleId.getText().trim()));
                 if (_templates.indexOf(newTmpl) != -1) {
-                    MsoyUI.error(_msgs.fbTemplErrDuplicate(newTmpl.code, newTmpl.variant));
+                    FacebookTemplate.Key key = newTmpl.key;
+                    MsoyUI.error(_msgs.fbTemplErrDuplicate(key.code, key.variant));
                     return;
                 }
                 _added.add(newTmpl);
@@ -156,8 +157,8 @@ public class FacebookTemplatesPanel extends FlowPanel
             getRowFormatter().setStyleName(row++, "Row");
 
             for (FacebookTemplate template : _templates) {
-                setText(row, CODE, template.code, 1, "Code");
-                setText(row, VARIANT, template.variant);
+                setText(row, CODE, template.key.code, 1, "Code");
+                setText(row, VARIANT, template.key.variant);
                 setText(row, BUNDLE_ID, String.valueOf(template.bundleId));
 
                 // delete button
