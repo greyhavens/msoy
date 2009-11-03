@@ -580,11 +580,13 @@ public class ItemLogic
             if (nrecord.getType() == Item.AVATAR) {
                 // notify the old and new owners of the item
                 if (orecord != null && orecord.ownerId != 0) {
-                    MemberNodeActions.avatarUpdated(orecord.ownerId, orecord.itemId);
+                    MemberNodeActions.avatarUpdated(orecord.ownerId, orecord.itemId,
+                        isThematicallyValid(orecord));
                 }
                 if ((orecord == null || orecord.ownerId != nrecord.ownerId) &&
                     nrecord.ownerId != 0) {
-                    MemberNodeActions.avatarUpdated(nrecord.ownerId, nrecord.itemId);
+                    MemberNodeActions.avatarUpdated(nrecord.ownerId, nrecord.itemId,
+                        isThematicallyValid(orecord));
                 }
 
             } else if (nrecord instanceof IdentGameItemRecord) {
@@ -625,7 +627,8 @@ public class ItemLogic
     public void itemPurchased (ItemRecord record, Currency currency, int amountPaid)
     {
         if (record.getType() == Item.AVATAR) {
-            MemberNodeActions.avatarUpdated(record.ownerId, record.itemId);
+            MemberNodeActions.avatarUpdated(record.ownerId, record.itemId,
+                isThematicallyValid(record));
 
         } else if (record instanceof IdentGameItemRecord) {
             IdentGameItemRecord srecord = (IdentGameItemRecord)record;
@@ -1241,6 +1244,19 @@ public class ItemLogic
             }
         }
         return result;
+    }
+
+    // check whether the given avatar is stamped for its current owner's current theme
+    protected boolean isThematicallyValid (ItemRecord avarec)
+    {
+        if (avarec.ownerId == 0) {
+            return true;
+        }
+        MemberRecord memrec = _memberRepo.loadMember(avarec.ownerId);
+        if (memrec == null || memrec.themeGroupId == 0) {
+            return true;
+        }
+        return getAvatarRepository().isThemeStamped(memrec.themeGroupId, avarec.itemId);
     }
 
     @SuppressWarnings("unchecked")

@@ -207,12 +207,14 @@ public class ItemManager
 
     /**
      * Called when an avatar item is updated.
+     * @param validForTheme
      */
-    public void avatarUpdatedOnPeer (final MemberObject memObj, final int avatarId)
+    public void avatarUpdatedOnPeer (
+        final MemberObject memObj, final int avatarId, final boolean validForTheme)
     {
         getItem(new ItemIdent(Item.AVATAR, avatarId), new ResultListener<Item>() {
             public void requestCompleted (Item avatar) {
-                avatarUpdatedOnPeer(memObj, (Avatar) avatar);
+                avatarUpdatedOnPeer(memObj, (Avatar) avatar, validForTheme);
             }
 
             public void requestFailed (Exception cause) {
@@ -224,11 +226,11 @@ public class ItemManager
     /**
      * Called when an avatar item is updated.
      */
-    public void avatarUpdatedOnPeer (MemberObject memObj, Avatar avatar)
+    public void avatarUpdatedOnPeer (MemberObject memObj, Avatar avatar, boolean validForTheme)
     {
         memObj.startTransaction();
         try {
-            boolean remove = (avatar.ownerId != memObj.getMemberId());
+            boolean remove = !validForTheme || (avatar.ownerId != memObj.getMemberId());
 
             // if they're wearing it, update that.
             if (avatar.equals(memObj.avatar)) {

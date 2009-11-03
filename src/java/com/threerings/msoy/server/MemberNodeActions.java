@@ -156,10 +156,11 @@ public class MemberNodeActions
 
     /**
      * Update a changed avatar.
+     * @param validForTheme
      */
-    public static void avatarUpdated (int memberId, int avatarId)
+    public static void avatarUpdated (int memberId, int avatarId, boolean validForTheme)
     {
-        _peerMan.invokeNodeAction(new AvatarUpdated(memberId, avatarId));
+        _peerMan.invokeNodeAction(new AvatarUpdated(memberId, avatarId, validForTheme));
     }
 
     /**
@@ -448,19 +449,21 @@ public class MemberNodeActions
 
     protected static class AvatarUpdated extends MemberNodeAction
     {
-        public AvatarUpdated (int memberId, int avatarId) {
+        public AvatarUpdated (int memberId, int avatarId, boolean validForTheme) {
             super(memberId);
             _avatarId = avatarId;
+            _validForTheme = validForTheme;
         }
 
         public AvatarUpdated () {
         }
 
         @Override protected void execute (MemberObject memobj) {
-            _itemMan.avatarUpdatedOnPeer(memobj, _avatarId);
+            _itemMan.avatarUpdatedOnPeer(memobj, _avatarId, _validForTheme);
         }
 
         protected int _avatarId;
+        protected boolean _validForTheme;
 
         @Inject protected transient ItemManager _itemMan;
     }

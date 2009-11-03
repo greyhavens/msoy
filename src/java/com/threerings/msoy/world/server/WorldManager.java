@@ -394,11 +394,13 @@ public class WorldManager
             final long now = System.currentTimeMillis();
             if (prev != null) {
                 prev.lastTouched = now;
-                _itemMan.avatarUpdatedOnPeer(user, prev);
+                // TODO: we need to actually check if the avatar is quick-list valid here
+                _itemMan.avatarUpdatedOnPeer(user, prev, user.theme == null);
             }
             if (avatar != null) {
                 avatar.lastTouched = now + 1; // the new one should be more recently touched
-                _itemMan.avatarUpdatedOnPeer(user, avatar);
+                // the new avatar is always OK for the quicklist (we're wearing it!)
+                _itemMan.avatarUpdatedOnPeer(user, avatar, true);
             }
 
             // now set the new avatar
