@@ -40,6 +40,7 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemFlag;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.Prize;
+import com.threerings.msoy.item.data.all.Avatar.QuicklistState;
 
 import com.threerings.msoy.item.data.ItemCodes;
 
@@ -210,11 +211,11 @@ public class ItemManager
      * @param validForTheme
      */
     public void avatarUpdatedOnPeer (
-        final MemberObject memObj, final int avatarId, final boolean validForTheme)
+        final MemberObject memObj, final int avatarId, final QuicklistState state)
     {
         getItem(new ItemIdent(Item.AVATAR, avatarId), new ResultListener<Item>() {
             public void requestCompleted (Item avatar) {
-                avatarUpdatedOnPeer(memObj, (Avatar) avatar, validForTheme);
+                avatarUpdatedOnPeer(memObj, (Avatar) avatar, state);
             }
 
             public void requestFailed (Exception cause) {
@@ -226,31 +227,36 @@ public class ItemManager
     /**
      * Called when an avatar item is updated.
      */
-    public void avatarUpdatedOnPeer (MemberObject memObj, Avatar avatar, boolean validForTheme)
+    public void avatarUpdatedOnPeer (MemberObject memObj, Avatar avatar, QuicklistState state)
     {
         memObj.startTransaction();
         try {
-            boolean remove = !validForTheme || (avatar.ownerId != memObj.getMemberId());
+            if (avatar.ownerId != memObj.getMemberId()) {
+                state = QuicklistState.INVALID;
+            }
 
             // if they're wearing it, update that.
             if (avatar.equals(memObj.avatar)) {
-                memObj.setAvatar(remove ? null : avatar);
+                memObj.setAvatar((state == QuicklistState.INVALID) ? null : avatar);
                 _bodyMan.updateOccupantInfo(memObj, new MemberInfo.AvatarUpdater(memObj));
             }
 
             // probably we'll update it in their cache, too.
             DSet<Avatar> avatarCache = memObj.avatarCache;
             if (avatarCache != null && avatarCache.contains(avatar)) {
-                if (remove) {
+                switch(state) {
+                case INVALID:
                     memObj.removeFromAvatarCache(avatar.getKey());
-                } else {
+                    break;
+                case VALID:
+                case DONT_TOUCH:
                     memObj.updateAvatarCache(avatar);
                 }
 
-            } else if (remove) {
+            } else if (state == QuicklistState.INVALID) {
                 // nothing, they don't have it in their cache and we want to remove it anyway
 
-            } else if (avatarCache != null) {
+            } else if (avatarCache != null && state == QuicklistState.VALID) {
                 if (avatarCache.size() < MemberObject.AVATAR_CACHE_SIZE) {
                     memObj.addToAvatarCache(avatar);
 

@@ -10,6 +10,20 @@ import com.threerings.msoy.data.all.MediaDesc;
  */
 public class Avatar extends Item
 {
+    /**
+     * When a player's avatar is updated, we also want to be told whether or not that avatar
+     * is suitable for the player's current theme (this saves us pointless database lookups and
+     * invoker round trips).
+     */
+    public enum QuicklistState {
+        /** The avatar is valid for the theme, it should be in the player's quicklist. */
+        VALID,
+        /** The avatar is invalid for the theme; remove it from the player's quicklist. */
+        INVALID,
+        /** Keep the avatar in the quicklist if it's there, but don't add it. */
+        DONT_TOUCH
+    }
+
     /** The avatar media. */
     public MediaDesc avatarMedia;
 

@@ -61,6 +61,7 @@ import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.data.all.Avatar.QuicklistState;
 import com.threerings.msoy.item.server.ItemLogic;
 import com.threerings.msoy.item.server.ItemManager;
 import com.threerings.msoy.item.server.persist.AvatarRecord;
@@ -375,6 +376,7 @@ public class WorldManager
     /**
      * Updates the runtime information for an avatar change then finally commits the change to the
      * database.
+     * @param oldAvatarIsValid
      */
     protected void finishSetAvatar (
         final MemberObject user, final Avatar avatar, EntityMemories memories,
@@ -394,13 +396,11 @@ public class WorldManager
             final long now = System.currentTimeMillis();
             if (prev != null) {
                 prev.lastTouched = now;
-                // TODO: we need to actually check if the avatar is quick-list valid here
-                _itemMan.avatarUpdatedOnPeer(user, prev, user.theme == null);
+                _itemMan.avatarUpdatedOnPeer(user, prev, QuicklistState.DONT_TOUCH);
             }
             if (avatar != null) {
                 avatar.lastTouched = now + 1; // the new one should be more recently touched
-                // the new avatar is always OK for the quicklist (we're wearing it!)
-                _itemMan.avatarUpdatedOnPeer(user, avatar, true);
+                _itemMan.avatarUpdatedOnPeer(user, avatar, QuicklistState.VALID);
             }
 
             // now set the new avatar

@@ -40,6 +40,7 @@ import com.threerings.msoy.game.data.PlayerObject;
 
 import com.threerings.msoy.group.data.all.GroupMembership;
 
+import com.threerings.msoy.item.data.all.Avatar.QuicklistState;
 import com.threerings.msoy.item.server.ItemManager;
 
 import com.threerings.msoy.notify.data.BadgeEarnedNotification;
@@ -158,9 +159,9 @@ public class MemberNodeActions
      * Update a changed avatar.
      * @param validForTheme
      */
-    public static void avatarUpdated (int memberId, int avatarId, boolean validForTheme)
+    public static void avatarUpdated (int memberId, int avatarId, QuicklistState state)
     {
-        _peerMan.invokeNodeAction(new AvatarUpdated(memberId, avatarId, validForTheme));
+        _peerMan.invokeNodeAction(new AvatarUpdated(memberId, avatarId, state));
     }
 
     /**
@@ -449,7 +450,7 @@ public class MemberNodeActions
 
     protected static class AvatarUpdated extends MemberNodeAction
     {
-        public AvatarUpdated (int memberId, int avatarId, boolean validForTheme) {
+        public AvatarUpdated (int memberId, int avatarId, QuicklistState validForTheme) {
             super(memberId);
             _avatarId = avatarId;
             _validForTheme = validForTheme;
@@ -463,7 +464,7 @@ public class MemberNodeActions
         }
 
         protected int _avatarId;
-        protected boolean _validForTheme;
+        protected QuicklistState _validForTheme;
 
         @Inject protected transient ItemManager _itemMan;
     }

@@ -79,6 +79,7 @@ import com.threerings.msoy.item.data.all.ItemListInfo;
 import com.threerings.msoy.item.data.all.ItemListQuery;
 import com.threerings.msoy.item.data.all.IdentGameItem;
 import com.threerings.msoy.item.data.all.Launcher;
+import com.threerings.msoy.item.data.all.Avatar.QuicklistState;
 import com.threerings.msoy.item.gwt.CatalogListing;
 import com.threerings.msoy.item.gwt.ListingCard;
 import com.threerings.msoy.item.gwt.MemberItemInfo;
@@ -1247,16 +1248,20 @@ public class ItemLogic
     }
 
     // check whether the given avatar is stamped for its current owner's current theme
-    protected boolean isThematicallyValid (ItemRecord avarec)
+    protected QuicklistState isThematicallyValid (ItemRecord avarec)
     {
         if (avarec.ownerId == 0) {
-            return true;
+            return QuicklistState.DONT_TOUCH;
         }
         MemberRecord memrec = _memberRepo.loadMember(avarec.ownerId);
-        if (memrec == null || memrec.themeGroupId == 0) {
-            return true;
+        if (memrec == null) {
+            return QuicklistState.DONT_TOUCH;
         }
-        return getAvatarRepository().isThemeStamped(memrec.themeGroupId, avarec.itemId);
+        if (memrec.themeGroupId == 0) {
+            return QuicklistState.VALID;
+        }
+        return getAvatarRepository().isThemeStamped(memrec.themeGroupId, avarec.itemId) ?
+            QuicklistState.VALID : QuicklistState.INVALID;
     }
 
     @SuppressWarnings("unchecked")
