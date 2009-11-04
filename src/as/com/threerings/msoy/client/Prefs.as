@@ -23,6 +23,15 @@ import com.threerings.util.ValueEvent;
 [Event(name="bleepedMedia", type="com.threerings.util.ValueEvent")]
 
 /**
+ * Dispatched when a tutorial id is ignored.
+ * This is dispatched on the 'events' object.
+ *
+ * @eventType com.threerings.msoy.client.Prefs.IGNORED_TUTORIAL_IDS;
+ * arg: [ tutorialItemId (String), ignored (Boolean) ]
+ */
+[Event(name="ignoredTutIds", type="com.threerings.util.ValueEvent")]
+
+/**
  * Dispatched when a preference is changed.
  * This is dispatched on the 'events' object.
  *
@@ -53,7 +62,7 @@ public class Prefs
     public static const CUSTOM_BACKGROUND_COLOR :String = "customBgColor";
     public static const AUTOSHOW_PREFIX :String = "autoShow_";
     public static const ROOM_ZOOM :String = "roomZoom";
-    public static const TUTORIAL :String = "tutorialEnabled";
+    public static const IGNORED_TUTORIAL_IDS :String = "ignoredTutIds";
 
     public static const APRIL_FOOLS :String = "aprilFools";
 
@@ -61,7 +70,7 @@ public class Prefs
     public static const ALL_KEYS :Array = [
         VOLUME, CHAT_FONT_SIZE, CHAT_DECAY, CHAT_FILTER, CHAT_HISTORY, CHAT_SIDEBAR, OCCUPANT_LIST,
         LOG_TO_CHAT, BLEEPED_MEDIA, PARTY_GROUP, USE_CUSTOM_BACKGROUND_COLOR,
-        CUSTOM_BACKGROUND_COLOR, ROOM_ZOOM, TUTORIAL];
+        CUSTOM_BACKGROUND_COLOR, ROOM_ZOOM, IGNORED_TUTORIAL_IDS];
 
     public static const CHAT_FONT_SIZE_MIN :int = 10;
     public static const CHAT_FONT_SIZE_MAX :int = 24;
@@ -334,14 +343,14 @@ public class Prefs
         _config.setValue(CUSTOM_BACKGROUND_COLOR, value);
     }
 
-    public static function getTutorial () :Boolean
+    public static function isTutorialIgnored (id :String) :Boolean
     {
-        return (_config.getValue(TUTORIAL, true) as Boolean);
+        return getIgnoredTutorialIds().contains(id);
     }
 
-    public static function setTutorial (value :Boolean) :void
+    public static function ignoreTutorial (id :String) :void
     {
-        _config.setValue(TUTORIAL, value);
+        getIgnoredTutorialIds().update(id, true);
     }
 
     /**
@@ -388,12 +397,23 @@ public class Prefs
         return _bleepedMedia;
     }
 
+    protected static function getIgnoredTutorialIds () :StringSet
+    {
+        if (_ignoredTutorialIds == null) {
+            _ignoredTutorialIds = new StringSet(_config, IGNORED_TUTORIAL_IDS);
+        }
+        return _ignoredTutorialIds;
+    }
+
     /** The path of our config object. */
     protected static const CONFIG_PATH :String = "rsrc/config/msoy";
 
-    /** A set of media ids that are bleeped (the keys of the dictionary). */
+    /** A set of media ids that are bleeped. */
     protected static var _bleepedMedia :StringSet;
     protected static var _globalBleep :Boolean;
+
+    /** A set of tutorial item ids that have been ignored. */
+    protected static var _ignoredTutorialIds :StringSet;
 
     /** Our config object. */
     protected static var _config :Config = new Config(null);
