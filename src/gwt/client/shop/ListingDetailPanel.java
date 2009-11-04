@@ -338,13 +338,19 @@ public class ListingDetailPanel extends BaseItemDetailPanel
         updateLineup();
     }
 
+    @Override protected void updateStamps ()
+    {
+        super.updateStamps();
+        updateLineup();
+    }
+
     protected void updateLineup ()
     {
-        _linePanel.clear();
-
-        if (_managedThemes.length == 0) {
+        if (_managedThemes.length == 0 || _linePanel == null) {
             return;
         }
+
+        _linePanel.clear();
 
         _lineBox = new ListBox();
         _lineBox.addItem(_imsgs.itemListNoTheme());
@@ -370,8 +376,10 @@ public class ListingDetailPanel extends BaseItemDetailPanel
                 _unlineEntries.add(theme);
 
             } else if (theme.equals(_listing.brand.group)) {
-                _lineBox.addItem(theme.toString());
-                _lineEntries.add(theme);
+                if (_detail.themes.contains(theme)) {
+                    _lineBox.addItem(theme.toString());
+                    _lineEntries.add(theme);
+                }
             }
         }
 
