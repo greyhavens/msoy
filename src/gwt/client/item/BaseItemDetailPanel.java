@@ -44,6 +44,7 @@ import com.threerings.msoy.web.gwt.WebMemberService;
 import com.threerings.msoy.web.gwt.WebMemberServiceAsync;
 
 import client.shell.CShell;
+import client.shop.ListingDetailPanel;
 import client.ui.CreatorLabel;
 import client.ui.HeaderBox;
 import client.ui.MsoyUI;
@@ -275,12 +276,14 @@ public abstract class BaseItemDetailPanel extends SmartTable
 
         Set<GroupName> existing = new HashSet<GroupName>(_detail.themes);
         for (GroupName theme : _managedThemes) {
-            if (!existing.contains(theme)) {
+            if (existing.contains(theme)) {
+                if (!restrictUnstamping(theme)) {
+                    _unstampBox.addItem(theme.toString());
+                    _unstampEntries.add(theme);
+                }
+            } else {
                 _stampBox.addItem(theme.toString());
                 _stampEntries.add(theme);
-            } else {
-                _unstampBox.addItem(theme.toString());
-                _unstampEntries.add(theme);
             }
         }
 
@@ -332,6 +335,15 @@ public abstract class BaseItemDetailPanel extends SmartTable
             _stampPanel.setWidget(row, 2, _unstampButton);
             row ++;
         }
+    }
+
+    /**
+     * Overridden by subclasses that want to restrict the unstamping of some themes. This is
+     * currently used by {@link ListingDetailPanel} to prevent unstamping avatar lineup items.
+     */
+    protected boolean restrictUnstamping (GroupName theme)
+    {
+        return false;
     }
 
     /**

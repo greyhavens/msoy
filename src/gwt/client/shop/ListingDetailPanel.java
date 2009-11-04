@@ -335,7 +335,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
         // else we wait for that callback
         ensureThemeBits();
         _themeContents.setWidget(2, 0, _linePanel = new SmartTable());
-        updateLineup();
+        updateStamps();
     }
 
     @Override protected void updateStamps ()
@@ -398,7 +398,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
                         _item.catalogId, theme.getGroupId(), true, new InfoCallback<Void>() {
                             public void onSuccess (Void result) {
                                 _lineup.add(theme);
-                                updateLineup();
+                                updateStamps();
                             }
                         });
                 }
@@ -422,7 +422,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
                         _item.catalogId, theme.getGroupId(), false, new InfoCallback<Void>() {
                             public void onSuccess (Void result) {
                                 _lineup.remove(theme);
-                                updateLineup();
+                                updateStamps();
                             }
                         });
                 }
@@ -433,6 +433,11 @@ public class ListingDetailPanel extends BaseItemDetailPanel
         }
     }
 
+    @Override // from BaseItemDetailPanel
+    protected boolean restrictUnstamping (GroupName theme)
+    {
+        return (_lineup != null && _lineup.contains(theme));
+    }
 
     protected static Widget createSeparator ()
     {
