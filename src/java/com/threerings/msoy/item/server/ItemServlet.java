@@ -363,9 +363,18 @@ public class ItemServlet extends MsoyServiceServlet
             throw new ServiceException(ItemCodes.E_ACCESS_DENIED);
         }
         if (doAdd) {
+            CatalogRecord catRec = _avaRepo.loadListing(catalogId, false);
+            // the item must be branded by the theme group
+            if (catRec.brandId != groupId) {
+                log.warning("Intended lineup listing not branded by theme", "catalogId", catalogId,
+                    "theme", "groupId");
+                throw new ServiceException(ItemCodes.E_ACCESS_DENIED);
+            }
+
             if (!_themeRepo.setAvatarInLineup(groupId, catalogId)) {
                 log.warning("Avatar was already in lineup!", "avatar", catalogId, "theme", groupId);
             }
+
         } else {
             if (!_themeRepo.removeAvatarFromLineup(groupId, catalogId)) {
                 log.warning("Avatar was not in lineup!", "avatar", catalogId, "theme", groupId);
@@ -418,6 +427,7 @@ public class ItemServlet extends MsoyServiceServlet
     @Inject protected StatLogic _statLogic;
     @Inject protected SupportLogic _supportLogic;
     @Inject protected TagLogic _tagLogic;
+    @Inject protected AvatarRepository _avaRepo;
 
     protected static final int MIN_SOLID_RATINGS = 20;
 }
