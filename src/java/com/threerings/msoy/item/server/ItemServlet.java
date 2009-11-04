@@ -370,6 +370,11 @@ public class ItemServlet extends MsoyServiceServlet
                     "theme", "groupId");
                 throw new ServiceException(ItemCodes.E_ACCESS_DENIED);
             }
+            if (!_avaRepo.isThemeStamped(groupId, catRec.listedItemId)) {
+                log.warning("Intended lineup listing not stamped", "catalogId", catalogId,
+                    "theme", "groupId");
+                throw new ServiceException(ItemCodes.E_ACCESS_DENIED);
+            }
 
             if (!_themeRepo.setAvatarInLineup(groupId, catalogId)) {
                 log.warning("Avatar was already in lineup!", "avatar", catalogId, "theme", groupId);
