@@ -123,7 +123,7 @@ public class TutorialDirector
         delay *= delayMultiplier;
         var id :int = getTimer();
         setTimeout(function () :void {
-            newSuggestion("test" + id, "This is a test suggestion (id " + id + "). " + gibberish).
+            newSuggestion("test" + id, gibby("This is a test suggestion (id " + id + ").")).
                 button("Take me somewhere", function () :void {}).queue();
         }, delay);
 
