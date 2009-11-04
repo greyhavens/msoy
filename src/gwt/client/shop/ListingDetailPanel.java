@@ -341,6 +341,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
     protected void updateLineup ()
     {
         _linePanel.clear();
+
         if (_managedThemes.length == 0) {
             return;
         }
@@ -364,14 +365,16 @@ public class ListingDetailPanel extends BaseItemDetailPanel
         _unlineEntries = new ArrayList<GroupName>();
 
         for (GroupName theme : _managedThemes) {
-            if (!_lineup.contains(theme)) {
-                _lineBox.addItem(theme.toString());
-                _lineEntries.add(theme);
-            } else {
+            if (_lineup.contains(theme)) {
                 _unlineBox.addItem(theme.toString());
                 _unlineEntries.add(theme);
+
+            } else if (theme.equals(_listing.brand.group)) {
+                _lineBox.addItem(theme.toString());
+                _lineEntries.add(theme);
             }
         }
+
         int row = 0;
         if (_lineEntries.size() > 0) {
             _linePanel.setWidget(row, 0, _lineBox);
@@ -386,9 +389,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
                     _itemsvc.setAvatarInLineup(
                         _item.catalogId, theme.getGroupId(), true, new InfoCallback<Void>() {
                             public void onSuccess (Void result) {
-                                CShell.log("Adding " + theme + " to _lineup...");
                                 _lineup.add(theme);
-                                CShell.log("Added " + theme + " to _lineup...");
                                 updateLineup();
                             }
                         });
