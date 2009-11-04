@@ -65,6 +65,8 @@ public class TutorialPanel extends Canvas
             _text.width = TEXT_WIDTH;
         }
 
+        _ignore.setVisible(item.ignorable);
+
         _currentItem = item;
     }
 
@@ -162,7 +164,7 @@ public class TutorialPanel extends Canvas
 
     protected function handleIgnore () :void
     {
-        if (_currentItem != null) {
+        if (_currentItem != null && _currentItem.ignorable) {
             Prefs.ignoreTutorial(_currentItem.id);
             _onClose();
         }

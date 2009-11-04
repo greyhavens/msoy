@@ -43,5 +43,6 @@ internal class TutorialItem
     internal var checkAvailable :Function;
     internal var buttonText :String;
     internal var onClick :Function;
+    internal var ignorable :Boolean = true;
 }
 }

@@ -50,6 +50,15 @@ public class TutorialItemBuilder
     }
 
     /**
+     * Sets a flag on the item that prevents it from being ignored.
+     */
+    public function noIgnore () :TutorialItemBuilder
+    {
+        _item.ignorable = false;
+        return this;
+    }
+
+    /**
      * Queues up the item to be displayed. The builder may no longer be used after this.
      */
     public function queue () :void

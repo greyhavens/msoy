@@ -76,16 +76,17 @@ public class TutorialDirector
      */
     public function queueItem (item :TutorialItem) :void
     {
+        var ignored :Boolean = isIgnored(item);
         if (isImmediate(item.kind)) {
             // either show this item now or just ignore it
-            if (!Prefs.isTutorialIgnored(item.id) && item.isAvailable()) {
+            if (!ignored && item.isAvailable()) {
                 _suggestions.push(item);
                 update();
             }
         } else {
             // add to pool for later display, mark as seen if it was previously ignored
             // TODO: unfudge: "ignored" is not really the same as "seen"
-            var seen :Boolean = Prefs.isTutorialIgnored(item.id);
+            var seen :Boolean = ignored;
             _pool.put(item, seen);
             update();
         }
@@ -99,7 +100,7 @@ public class TutorialDirector
             newTip("tip1", "This is test tip #1. " + gibberish).queue();
             newTip("tip2", "This is test tip #2. " + gibberish).queue();
             newTip("tip3", "This is test tip #3. " + gibberish).queue();
-            newTip("tip4", "This is test tip #4. " + gibberish).queue();
+            newTip("tip4", "This is a non-ignorable tip. " + gibberish).noIgnore().queue();
             newPromotion("promo1", "This is a test promotion. " + gibberish).queue();
             _ctx.getChatDirector().displayFeedback(null, "Test: added 4 tips and 1 promotion.");
         }
@@ -144,7 +145,7 @@ public class TutorialDirector
                 var changed :Boolean = false;
                 while (unseen.length > 0) {
                     var item :TutorialItem = unseen.pop();
-                    if (Prefs.isTutorialIgnored(item.id)) {
+                    if (isIgnored(item)) {
                         // TODO: unfudge: "ignored" is not really the same as "seen"
                         _pool.put(item, true);
                         changed = true;
@@ -220,6 +221,11 @@ public class TutorialDirector
         if (!isImmediate(item.kind)) {
             _pool.put(item, true);
         }
+    }
+
+    protected static function isIgnored (item :TutorialItem) :Boolean
+    {
+        return item.ignorable && Prefs.isTutorialIgnored(item.id);
     }
 
     protected static function isImmediate (kind :Kind) :Boolean
