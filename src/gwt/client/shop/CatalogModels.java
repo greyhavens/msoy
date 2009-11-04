@@ -35,9 +35,15 @@ public class CatalogModels
 {
     public static class Jumble implements DataModel<ListingCard>
     {
-        public Jumble (int themeId)
+        /**
+         * The theme restriction on the result; can either be explicitly requested or
+         * implicitly returned with the result.
+         */
+        public GroupName theme;
+
+        public Jumble (GroupName theme)
         {
-            _themeId = themeId;
+            this.theme = theme;
         }
 
         public int getItemCount () {
@@ -46,8 +52,10 @@ public class CatalogModels
 
         public void doFetchRows (
             int start, int count, final AsyncCallback<List<ListingCard>> callback) {
-            _catalogsvc.loadJumble(_themeId, start, count, new InfoCallback<CatalogResult>() {
+            _catalogsvc.loadJumble((theme != null) ? theme.getGroupId() : 0, start, count,
+                new InfoCallback<CatalogResult>() {
                     public void onSuccess (CatalogResult result) {
+                        Jumble.this.theme = result.theme;
                         callback.onSuccess(result.listings);
                     }
                 });
@@ -56,12 +64,14 @@ public class CatalogModels
         public void removeItem (ListingCard item) {
             // do nothing
         }
-
-        protected int _themeId;
     }
 
     public static class Listings implements DataModel<ListingCard>
     {
+        /**
+         * The theme restriction on the result; can either be explicitly requested or
+         * implicitly returned with the result.
+         */
         public GroupName theme;
 
         public Listings (CatalogQuery query) {

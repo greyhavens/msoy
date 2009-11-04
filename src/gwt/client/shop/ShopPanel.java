@@ -3,6 +3,8 @@
 
 package client.shop;
 
+import java.util.List;
+
 import com.google.gwt.core.client.GWT;
 
 import com.google.gwt.user.client.ui.FlexTable;
@@ -23,6 +25,7 @@ import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MediaDesc;
 
+import client.shell.CShell;
 import client.shell.DynamicLookup;
 import client.ui.MsoyUI;
 import client.ui.SearchBox;
@@ -37,9 +40,10 @@ import client.item.SideBar;
  */
 public class ShopPanel extends FlowPanel
 {
-    public ShopPanel (final GroupName theme)
+    public ShopPanel (GroupName theme)
     {
         setStyleName("shopPanel");
+        _theme = theme;
 
         int themeId = (theme != null) ? theme.getGroupId() : 0;
 
@@ -90,22 +94,33 @@ public class ShopPanel extends FlowPanel
 
         ListingGrid grid = new ListingGrid(HEADER_HEIGHT) {
             @Override protected String getEmptyMessage () {
+                CShell.log("GEM Model: " + _model);
+                GroupName theme = ((CatalogModels.Jumble) _model).theme;
                 if (theme != null) {
                     return _msgs.themeShopNoItems();
                 }
                 return _msgs.shopNoFavorites();
             }
             @Override protected void addCustomControls (FlexTable controls) {
-                if (theme != null) {
-                    controls.setText(0, 0, _msgs.themeShopHeader(theme.toString()));
-                } else {
-                    controls.setWidget(0, 0, Link.create(
-                        _msgs.shopClubPicks(), Pages.BILLING, "subscribe"));
-                }
+                _controls.setWidget(0, 0, _controlContainer = new FlowPanel());
             }
+            @Override protected void displayResults (int start, int count, List<ListingCard> list) {
+                _controlContainer.clear();
+                GroupName theme = ((CatalogModels.Jumble) _model).theme;
+                if (theme != null) {
+                    _controlContainer.add(MsoyUI.createLabel(
+                        _msgs.themeShopHeader(theme.toString()), null));
+                } else {
+                    _controlContainer.add(
+                        Link.create(_msgs.shopClubPicks(), Pages.BILLING, "subscribe"));
+                }
+
+                super.displayResults(start, count, list);
+            }
+            protected FlowPanel _controlContainer;
         };
 
-        grid.setModel(new CatalogModels.Jumble(themeId), 0);
+        grid.setModel(new CatalogModels.Jumble(theme), 0);
         _contents.add(grid);
     }
 
@@ -129,6 +144,7 @@ public class ShopPanel extends FlowPanel
     // TODO: this looks out of date
     protected static final int HEADER_HEIGHT = 15 /* gap */ + 59 /* top tags, etc. */;
 
+    protected GroupName _theme;
     protected FlowPanel _contents;
 
     protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
