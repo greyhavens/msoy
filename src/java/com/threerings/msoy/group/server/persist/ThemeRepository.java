@@ -89,6 +89,14 @@ public class ThemeRepository extends DepotRepository
     }
 
     /**
+     * Test whether the given avatar is in the given theme's lineup.
+     */
+    public boolean isAvatarInLineup (int groupId, int catalogId)
+    {
+        return null != load(ThemeAvatarLineupRecord.getKey(groupId, catalogId));
+    }
+
+    /**
      * Fetch the avatar lineup for a given theme, limited to count results.
      */
     public List<ThemeAvatarLineupRecord> loadAvatarLineup (int groupId, int offset, int count)

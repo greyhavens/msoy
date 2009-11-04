@@ -6,6 +6,8 @@ package com.threerings.msoy.item.server;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
@@ -348,6 +350,15 @@ public class ItemServlet extends MsoyServiceServlet
                 log.warning("Item was already stamped!", "item", ident, "theme", groupId);
             }
         } else {
+            // make sure this is not the template item for a lineup avatar listing
+            List<CatalogRecord> catRecs =
+                _avaRepo.loadCatalogByListedItems(ImmutableList.of(ident.itemId), false);
+            if (!catRecs.isEmpty() &&
+                    _themeRepo.isAvatarInLineup(groupId, catRecs.get(0).catalogId)) {
+                log.warning("Tried to unstamp a lineup avatar", "item", ident, "theme", groupId);
+                throw new ServiceException(ItemCodes.E_ACCESS_DENIED);
+            }
+
             if (!_itemLogic.getRepository(ident.type).unstampItem(ident.itemId, groupId)) {
                 log.warning("Item was not stamped!", "item", ident, "theme", groupId);
             }
