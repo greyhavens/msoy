@@ -67,6 +67,10 @@ public class TutorialPanel extends Canvas
 
         _ignore.setVisible(item.ignorable);
 
+        if (item.popupHelper != null) {
+            item.popupHelper.popup();
+        }
+
         _currentItem = item;
     }
 
@@ -96,6 +100,9 @@ public class TutorialPanel extends Canvas
     {
         Tweener.removeTweens(_glower);
         _glower.reset();
+        if (_currentItem != null && _currentItem.popupHelper != null) {
+            _currentItem.popupHelper.popdown();
+        }
         _onClose();
     }
 
@@ -166,7 +173,7 @@ public class TutorialPanel extends Canvas
     {
         if (_currentItem != null && _currentItem.ignorable) {
             Prefs.ignoreTutorial(_currentItem.id);
-            _onClose();
+            handleClose();
         }
     }
 

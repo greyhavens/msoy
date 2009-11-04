@@ -47,5 +47,6 @@ internal class TutorialItem
     internal var buttonText :String;
     internal var onClick :Function;
     internal var ignorable :Boolean = true;
+    internal var popupHelper :PopupHelper;
 }
 }

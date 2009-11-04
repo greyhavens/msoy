@@ -3,7 +3,10 @@
 
 package com.threerings.msoy.tutorial.client {
 
+import mx.core.UIComponent;
+
 import com.threerings.util.Predicates;
+import com.threerings.util.Util;
 
 /**
  * Builder for tutorial items. Constructed by the tutorial director with all required item fields
@@ -33,6 +36,24 @@ public class TutorialItemBuilder
     {
         _item.checkAvailable = checkAvailable;
         return this;
+    }
+
+    /**
+     * Sets the popup helper to be invoked when the item is popped up and down.
+     */
+    public function popup (helper :PopupHelper) :TutorialItemBuilder
+    {
+        _item.popupHelper = helper;
+        return this;
+    }
+
+    /**
+     * Sets the popup helper to a ui highlighter that will highlight the given ui component using a
+     * standard tutorial graphic on popup and unhighlight it on popdown.
+     */
+    public function highlight (obj :UIComponent) :TutorialItemBuilder
+    {
+        return popup(new UIHighlightHelper(_director.topPanel, obj));
     }
 
     /**

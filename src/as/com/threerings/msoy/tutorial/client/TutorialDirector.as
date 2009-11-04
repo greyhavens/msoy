@@ -115,6 +115,8 @@ public class TutorialDirector
             newTip("tip2", gibby("This is test tip #2.")).queue();
             newTip("tip3", gibby("This tip is limited to advanced users.")).advanced().queue();
             newTip("tip4", gibby("This is a non-ignorable tip.")).noIgnore().queue();
+            newTip("tip5", gibby("Hey! There's the go button."))
+                .highlight(_ctx.getControlBar().goBtn).queue();
             newPromotion("promo1", gibby("This is a test promotion.")).queue();
             _ctx.getChatDirector().displayFeedback(null, "Test: added 4 tips and 1 promotion.");
         }
@@ -199,6 +201,11 @@ public class TutorialDirector
         if (isShowing() && _suggestions.length > 0) {
             _panel.flashCloseButton();
         }
+    }
+
+    internal function get topPanel () :TopPanel
+    {
+        return _ctx.getTopPanel();
     }
 
     protected function placeBox () :PlaceBox
