@@ -126,7 +126,7 @@ public class TutorialDirector
         var id :int = getTimer();
         setTimeout(function () :void {
             newSuggestion("test" + id, gibby("This is a test suggestion (id " + id + ").")).
-                button("Take me somewhere", function () :void {}).queue();
+                button("Do It!", function () :void {}).queue();
         }, delay);
 
         _ctx.getChatDirector().displayFeedback(null, "Test: queued suggestion id " + id +
