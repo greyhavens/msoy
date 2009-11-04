@@ -16,10 +16,13 @@ import com.threerings.util.Map;
 import com.threerings.util.Maps;
 import com.threerings.util.Util;
 
-import com.threerings.msoy.client.MsoyContext;
+import com.threerings.msoy.data.MemberObject;
+
 import com.threerings.msoy.client.PlaceBox;
 import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.client.TopPanel;
+
+import com.threerings.msoy.world.client.WorldContext;
 
 import flash.utils.setTimeout; // function import
 import flash.utils.getTimer; // function import
@@ -33,13 +36,13 @@ public class TutorialDirector
     /**
      * Creates a new director.
      */
-    public function TutorialDirector (ctx :MsoyContext)
+    public function TutorialDirector (ctx :WorldContext)
     {
         _ctx = ctx;
         _timer = new Timer(TIP_DELAY, 1);
         _timer.addEventListener(TimerEvent.TIMER, handleTimer);
 
-        _panel = new TutorialPanel(_ctx, onPanelClose);
+        _panel = new TutorialPanel(onPanelClose);
     }
 
     /**
@@ -92,16 +95,27 @@ public class TutorialDirector
         }
     }
 
+    /**
+     * Gets the level of the logged in member, or -1 if the member is not logged in.
+     */
+    public function getMemberLevel () :int
+    {
+        var memObj :MemberObject = _ctx.getMemberObject();
+        return memObj == null ? -1 : memObj.level;
+    }
+
     public function test (delayMultiplier :Number) :void
     {
-        var gibberish :String = "The quick brown fox jumped over the lazy dog.";
-        gibberish = gibberish + " " + gibberish;
+        function gibby (str :String) :String {
+            var gibberish :String = "The quick brown fox jumped over the lazy dog.";
+            return str + " " + gibberish + " " + gibberish;
+        }
         if (_pool.size() == 0) {
-            newTip("tip1", "This is test tip #1. " + gibberish).queue();
-            newTip("tip2", "This is test tip #2. " + gibberish).queue();
-            newTip("tip3", "This is test tip #3. " + gibberish).queue();
-            newTip("tip4", "This is a non-ignorable tip. " + gibberish).noIgnore().queue();
-            newPromotion("promo1", "This is a test promotion. " + gibberish).queue();
+            newTip("tip1", gibby("This is test tip #1.")).queue();
+            newTip("tip2", gibby("This is test tip #2.")).queue();
+            newTip("tip3", gibby("This tip is limited to advanced users.")).advanced().queue();
+            newTip("tip4", gibby("This is a non-ignorable tip.")).noIgnore().queue();
+            newPromotion("promo1", gibby("This is a test promotion.")).queue();
             _ctx.getChatDirector().displayFeedback(null, "Test: added 4 tips and 1 promotion.");
         }
 
@@ -238,7 +252,7 @@ public class TutorialDirector
         return !val;
     }
 
-    protected var _ctx :MsoyContext;
+    protected var _ctx :WorldContext;
     protected var _panel :TutorialPanel;
     protected var _timer :Timer;
     protected var _suggestions :Array = [];

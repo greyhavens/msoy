@@ -34,7 +34,7 @@ public class TutorialPanel extends Canvas
     public static const WIDTH :int = 600;
     public static const HEIGHT :int = 120;
 
-    public function TutorialPanel (ctx :MsoyContext, onClose :Function)
+    public function TutorialPanel (onClose :Function)
     {
         styleName = "tutorialPanel";
         verticalScrollPolicy = ScrollPolicy.OFF;
@@ -202,7 +202,6 @@ public class TutorialPanel extends Canvas
         g.lineTo(0, TAIL_BASE_Y + TAIL_BASE_HEIGHT);
     }
 
-    protected var _ctx :MsoyContext;
     protected var _onClose :Function;
     protected var _action :CommandButton;
     protected var _ignore :CommandLinkButton;

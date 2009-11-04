@@ -32,6 +32,9 @@ internal class TutorialItem
         return (other is TutorialItem) && (id == TutorialItem(other).id);
     }
 
+    /**
+     * Checks the availability of this tutorial item for display.
+     */
     public function isAvailable () :Boolean
     {
         return checkAvailable == null || checkAvailable();
