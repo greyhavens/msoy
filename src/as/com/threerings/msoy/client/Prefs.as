@@ -386,6 +386,11 @@ public class Prefs
     {
         for each (var name :String in names) {
             _config.remove(name);
+            if (name == BLEEPED_MEDIA) {
+                _bleepedMedia = null;
+            } else if (name == IGNORED_TUTORIAL_IDS) {
+                _ignoredTutorialIds = null;
+            }
         }
     }
 
