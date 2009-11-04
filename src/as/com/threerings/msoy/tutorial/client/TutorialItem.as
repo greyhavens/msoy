@@ -3,12 +3,14 @@
 
 package com.threerings.msoy.tutorial.client {
 
-import flash.errors.IllegalOperationError;
+import com.threerings.util.Hashable;
+import com.threerings.util.StringUtil;
 
 /**
  * Holds the values used by the tutorial director to display and handle tutorial items.
  */
 internal class TutorialItem
+    implements Hashable
 {
     /** @private */
     public function TutorialItem (kind :Kind, id :String, text :String)
@@ -16,6 +18,23 @@ internal class TutorialItem
         this.kind = kind;
         this.id = id;
         this.text = text;
+    }
+
+    // from Hashable
+    public function hashCode () :int
+    {
+        return 31 * kind.hashCode() + StringUtil.hashCode(id);
+    }
+
+    // from Equalable via Hashable
+    public function equals (other :Object) :Boolean
+    {
+        return (other is TutorialItem) && (id == TutorialItem(other).id);
+    }
+
+    public function isAvailable () :Boolean
+    {
+        return checkAvailable == null || checkAvailable();
     }
 
     internal var kind :Kind;

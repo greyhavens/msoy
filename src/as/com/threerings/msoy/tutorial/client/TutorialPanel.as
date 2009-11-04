@@ -26,6 +26,7 @@ import com.threerings.util.MultiLoader;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.PlaceLayer;
+import com.threerings.msoy.client.Prefs;
 
 public class TutorialPanel extends Canvas
     implements PlaceLayer
@@ -33,12 +34,11 @@ public class TutorialPanel extends Canvas
     public static const WIDTH :int = 600;
     public static const HEIGHT :int = 120;
 
-    public function TutorialPanel (ctx :MsoyContext, onIgnore :Function, onClose :Function)
+    public function TutorialPanel (ctx :MsoyContext, onClose :Function)
     {
         styleName = "tutorialPanel";
         verticalScrollPolicy = ScrollPolicy.OFF;
         horizontalScrollPolicy = ScrollPolicy.OFF;
-        _onIgnore = onIgnore;
         _onClose = onClose;
 
         MultiLoader.getContents(PROFESSOR, function (result :DisplayObject) :void {
@@ -46,24 +46,26 @@ public class TutorialPanel extends Canvas
         });
     }
 
-    public function setContent (message :String, buttonText :String, buttonFn :Function) :void
+    public function setContent (item :TutorialItem) :void
     {
         Tweener.removeTweens(_glower);
         _glower.reset();
 
         _close.toolTip = Msgs.GENERAL.get("i.tutorial_close");
 
-        _text.text = message;
+        _text.text = item.text;
 
-        if (buttonText == null) {
+        if (item.buttonText == null) {
             _action.setVisible(false);
             _text.width = TEXT_FULL_WIDTH;
         } else {
             _action.setVisible(true);
-            _action.setCallback(buttonFn);
-            _action.label = buttonText;
+            _action.setCallback(item.onClick);
+            _action.label = item.buttonText;
             _text.width = TEXT_WIDTH;
         }
+
+        _currentItem = item;
     }
 
     /**
@@ -106,7 +108,7 @@ public class TutorialPanel extends Canvas
         addCentered(BUTTON_X, "tutorialActionButton", _action = new CommandButton());
         add(BUTTON_X, HEIGHT - PADDING - IGNORE_HEIGHT, "tutorialIgnoreLink",
             _ignore = new CommandLinkButton(Msgs.GENERAL.get("b.tutorial_ignore"),
-                                            Util.adapt(_onIgnore)));
+                                            Util.adapt(handleIgnore)));
 
         _text.selectable = false;
         _text.width = TEXT_WIDTH;
@@ -158,6 +160,14 @@ public class TutorialPanel extends Canvas
         return button;
     }
 
+    protected function handleIgnore () :void
+    {
+        if (_currentItem != null) {
+            Prefs.ignoreTutorial(_currentItem.id);
+            _onClose();
+        }
+    }
+
     protected static function makeSpeechBubble () :Sprite
     {
         var s :Sprite = new Sprite();
@@ -191,7 +201,6 @@ public class TutorialPanel extends Canvas
     }
 
     protected var _ctx :MsoyContext;
-    protected var _onIgnore :Function;
     protected var _onClose :Function;
     protected var _action :CommandButton;
     protected var _ignore :CommandLinkButton;
@@ -199,6 +208,7 @@ public class TutorialPanel extends Canvas
     protected var _glower :Glower;
     protected var _text :Text;
     protected var _professor :DisplayObject;
+    protected var _currentItem :TutorialItem;
 
     [Embed(source="../../../../../../../rsrc/media/skins/tutorial/professor.swf",
            mimeType="application/octet-stream")]

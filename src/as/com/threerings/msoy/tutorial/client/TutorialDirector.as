@@ -11,10 +11,14 @@ import mx.core.UIComponent;
 
 import caurina.transitions.Tweener;
 
+import com.threerings.util.ArrayUtil;
+import com.threerings.util.Map;
+import com.threerings.util.Maps;
 import com.threerings.util.Util;
 
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.PlaceBox;
+import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.client.TopPanel;
 
 import flash.utils.setTimeout; // function import
@@ -35,7 +39,7 @@ public class TutorialDirector
         _timer = new Timer(TIP_DELAY, 1);
         _timer.addEventListener(TimerEvent.TIMER, handleTimer);
 
-        _panel = new TutorialPanel(_ctx, onIgnore, onPanelClose);
+        _panel = new TutorialPanel(_ctx, onPanelClose);
     }
 
     /**
@@ -72,19 +76,32 @@ public class TutorialDirector
      */
     public function queueItem (item :TutorialItem) :void
     {
-        queue(item);
+        if (isImmediate(item.kind)) {
+            // either show this item now or just ignore it
+            if (!Prefs.isTutorialIgnored(item.id) && item.isAvailable()) {
+                _suggestions.push(item);
+                update();
+            }
+        } else {
+            // add to pool for later display, mark as seen if it was previously ignored
+            // TODO: unfudge: "ignored" is not really the same as "seen"
+            var seen :Boolean = Prefs.isTutorialIgnored(item.id);
+            _pool.put(item, seen);
+            update();
+        }
     }
 
     public function test (delayMultiplier :Number) :void
     {
         var gibberish :String = "The quick brown fox jumped over the lazy dog.";
         gibberish = gibberish + " " + gibberish;
-        if (_tips.length == 0) {
-            newTip("test1", "This is test tip #1. " + gibberish).queue();
-            newTip("test2", "This is test tip #2. " + gibberish).queue();
-            newTip("test3", "This is test tip #3. " + gibberish).queue();
-            newTip("test4", "This is test tip #4. " + gibberish).queue();
-            _ctx.getChatDirector().displayFeedback(null, "Test: added 4 tips.");
+        if (_pool.size() == 0) {
+            newTip("tip1", "This is test tip #1. " + gibberish).queue();
+            newTip("tip2", "This is test tip #2. " + gibberish).queue();
+            newTip("tip3", "This is test tip #3. " + gibberish).queue();
+            newTip("tip4", "This is test tip #4. " + gibberish).queue();
+            newPromotion("promo1", "This is a test promotion. " + gibberish).queue();
+            _ctx.getChatDirector().displayFeedback(null, "Test: added 4 tips and 1 promotion.");
         }
 
         var delay :Number = TIP_DELAY + (Math.random() - .5) * TIP_DELAY * .5;
@@ -118,9 +135,32 @@ public class TutorialDirector
             if (_suggestions.length > 0) {
                 popup(_suggestions.shift());
 
-            } else if (_tips.length > 0) {
-                _lastTip = (_lastTip + 1) % _tips.length;
-                popup(_tips[_lastTip]);
+            } else {
+                // compute the candidate list of unseen tips and shuffle
+                var unseen :Array = Maps.filter(_pool, isUnseen, Maps.selectKey);
+                ArrayUtil.shuffle(unseen);
+
+                // start from the end and find one that is not ignored and is available
+                var changed :Boolean = false;
+                while (unseen.length > 0) {
+                    var item :TutorialItem = unseen.pop();
+                    if (Prefs.isTutorialIgnored(item.id)) {
+                        // TODO: unfudge: "ignored" is not really the same as "seen"
+                        _pool.put(item, true);
+                        changed = true;
+                    } else if (!item.isAvailable()) {
+                        // skip it, it might become available later
+                    } else {
+                        // show it and bail
+                        popup(item);
+                        break;
+                    }
+                }
+
+                // update if any tip changed state
+                if (changed) {
+                    update();
+                }
             }
         }
     }
@@ -132,8 +172,11 @@ public class TutorialDirector
             _timer.reset();
 
         } else {
-            _timer.delay = _suggestions.length > 0 ? SUGGESTION_DELAY : TIP_DELAY;
-            if (!_timer.running && (_tips.length > 0 || _suggestions.length > 0)) {
+            var delay :Number = _suggestions.length > 0 ? SUGGESTION_DELAY : TIP_DELAY;
+            if (delay != _timer.delay) {
+                _timer.delay = delay;
+            }
+            if (!_timer.running && (Maps.some(_pool, isUnseen) || _suggestions.length > 0)) {
                 _timer.start();
             }
         }
@@ -156,22 +199,6 @@ public class TutorialDirector
                 Util.adapt(update))});
     }
 
-    protected function onIgnore () :void
-    {
-    }
-
-    protected function queue (item :TutorialItem) :void
-    {
-        if (item.kind == Kind.SUGGESTION) {
-            _suggestions.push(item);
-            update();
-
-        } else {
-            _tips.push(item);
-            update();
-        }
-    }
-
     protected function popup (item :TutorialItem) :void
     {
         Tweener.removeTweens(_panel);
@@ -181,21 +208,35 @@ public class TutorialDirector
             _panel.y = -_panel.height;
         }
 
-        _panel.setContent(item.text, item.buttonText, item.onClick);
+        _panel.setContent(item);
 
         if (_panel.y != 0) {
             Tweener.addTween(_panel, {y :0, time: ROLL_TIME, transition: "easeoutquart"});
         }
 
         update();
+
+        // mark as seen
+        if (!isImmediate(item.kind)) {
+            _pool.put(item, true);
+        }
+    }
+
+    protected static function isImmediate (kind :Kind) :Boolean
+    {
+        return kind == Kind.SUGGESTION;
+    }
+
+    protected static function isUnseen (item :TutorialItem, val :Boolean) :Boolean
+    {
+        return !val;
     }
 
     protected var _ctx :MsoyContext;
     protected var _panel :TutorialPanel;
     protected var _timer :Timer;
     protected var _suggestions :Array = [];
-    protected var _tips :Array = [];
-    protected var _lastTip :int = -1;
+    protected var _pool :Map = Maps.newMapOf(TutorialItem); // to boolean: seen
 
     protected var ROLL_TIME :Number = 0.6;
     protected var TIP_DELAY :Number = 60 * 1000;
