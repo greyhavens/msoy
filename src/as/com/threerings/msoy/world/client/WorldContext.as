@@ -24,6 +24,8 @@ import com.threerings.msoy.world.tour.client.TourDirector;
 
 import com.threerings.msoy.party.client.PartyDirector;
 
+import com.threerings.msoy.tutorial.client.TutorialDirector;
+
 /**
  * Defines services for the World client.
  */
@@ -122,6 +124,14 @@ public class WorldContext extends MsoyContext
     }
 
     /**
+     * Get the tutorial director.
+     */
+    public function getTutorialDirector () :TutorialDirector
+    {
+        return _tutorialDir;
+    }
+
+    /**
      * Returns the top-level world controller.
      */
     public function getWorldController () :WorldController
@@ -159,6 +169,7 @@ public class WorldContext extends MsoyContext
         _memberDir = new MemberDirector(this);
         _tourDir = new TourDirector(this);
         _partyDir = new PartyDirector(this);
+        _tutorialDir = new TutorialDirector(this);
     }
 
     protected var _controller :WorldController;
@@ -171,5 +182,6 @@ public class WorldContext extends MsoyContext
     protected var _memberDir :MemberDirector;
     protected var _tourDir :TourDirector;
     protected var _partyDir :PartyDirector;
+    protected var _tutorialDir :TutorialDirector;
 }
 }
