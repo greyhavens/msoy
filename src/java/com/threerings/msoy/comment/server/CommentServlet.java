@@ -20,6 +20,9 @@ import com.threerings.gwt.util.PagedResult;
 import com.threerings.msoy.notify.server.NotificationManager;
 import com.threerings.msoy.underwire.server.SupportLogic;
 
+import com.threerings.msoy.game.server.persist.GameInfoRecord;
+import com.threerings.msoy.game.server.persist.MsoyGameRepository;
+
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.server.ItemLogic;
 import com.threerings.msoy.item.server.persist.CatalogRecord;
@@ -154,6 +157,14 @@ public class CommentServlet extends MsoyServiceServlet
             } catch (DatabaseException de) {
                 log.warning("Unable to load comment target item", "type", etype, "id", eid, de);
             }
+        } else if (etype == Comment.TYPE_GAME) {
+            GameInfoRecord game = _msoyGameRepo.loadGame(eid);
+            if (game != null) {
+                ownerId = game.creatorId;
+                _feedLogic.publishSelfMessage(
+                    ownerId, mrec.memberId, FeedMessageType.SELF_GAME_COMMENT,
+                    eid, game.name, MediaDesc.mdToString(game.getThumbMedia()));
+            }
         }
 
         // notify the item creator that a comment was made
@@ -238,6 +249,7 @@ public class CommentServlet extends MsoyServiceServlet
     @Inject protected CommentRepository _commentRepo;
     @Inject protected FeedLogic _feedLogic;
     @Inject protected ItemLogic _itemLogic;
+    @Inject protected MsoyGameRepository _msoyGameRepo;
     @Inject protected MsoySceneRepository _sceneRepo;
     @Inject protected NotificationManager _notifyMan;
     @Inject protected StatLogic _statLogic;

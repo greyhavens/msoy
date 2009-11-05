@@ -230,8 +230,9 @@ public class FeedItemGenerator
             break;
 
         case SELF_ITEM_COMMENT:
+        case SELF_GAME_COMMENT:
         case SELF_FORUM_REPLY:
-            _builder.addText(text);
+            addMedia(media, text);
             break;
         }
     }
@@ -290,6 +291,7 @@ public class FeedItemGenerator
         case FRIEND_WON_MEDAL:
         case SELF_ROOM_COMMENT:
         case SELF_ITEM_COMMENT:
+        case SELF_GAME_COMMENT:
         case SELF_FORUM_REPLY:
             addMedia(media, text);
             break;
@@ -373,6 +375,10 @@ public class FeedItemGenerator
             } else if (message.type == FeedMessageType.SELF_ITEM_COMMENT) {
                 return _builder.createLink(message.data[2], Pages.SHOP,
                     Args.compose("l", message.data[0], message.data[1]));
+
+            } else if (message.type == FeedMessageType.SELF_GAME_COMMENT) {
+                return _builder.createLink(message.data[1], Pages.GAMES,
+                    Args.compose("d", message.data[0]));
             }
             break;
 
@@ -442,6 +448,9 @@ public class FeedItemGenerator
             }
             if (message.type == FeedMessageType.SELF_ITEM_COMMENT) {
                 return buildMedia(message, 3, Pages.SHOP, "l", message.data[0], message.data[1]);
+            }
+            if (message.type == FeedMessageType.SELF_GAME_COMMENT) {
+                return buildMedia(message, 2, Pages.GAMES, "d", message.data[0], "c");
             }
         }
         return null;

@@ -120,11 +120,14 @@ public class FeedLogic
                 // include room updates from the first itemsPerCategory groups
                 key = "group_" + ((GroupFeedMessageRecord)record).groupId + "";
             } else if (type == FeedMessageType.SELF_ROOM_COMMENT) {
-                // include comments on the first itemsPerCategory rooms and/or items
+                // include comments on the first itemsPerCategory rooms
                 key = "room_" + record.data.split("\t")[0];
             } else if (type == FeedMessageType.SELF_ITEM_COMMENT) {
-                // include comments on the first itemsPerCategory rooms and/or items
+                // include comments on the first itemsPerCategory items
                 key = "item_" + record.data.split("\t")[1];
+            } else if (type == FeedMessageType.SELF_GAME_COMMENT) {
+                // include comments on the first itemsPerCategory games
+                key = "game_" + record.data.split("\t")[1];
             } else if (record instanceof FriendFeedMessageRecord) {
                 // include friend activities from the first itemsPerCategory friends
                 key = "member_" + ((FriendFeedMessageRecord)record).actorId + "";

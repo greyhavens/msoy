@@ -1041,6 +1041,9 @@ public class SpamLogic
             case SELF_ITEM_COMMENT:
                 return _pmsgs.get("selfItemComment", subject, object);
 
+            case SELF_GAME_COMMENT:
+                return _pmsgs.get("selfGameComment", subject, object);
+
             case SELF_FORUM_REPLY:
                 switch (plural) {
                 default:

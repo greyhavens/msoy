@@ -169,6 +169,10 @@ public class FeedMessageAggregator
             // one or more people commented on your shop item; catalog id is the key
             return MessageKey.id(message, 1);
 
+        case SELF_GAME_COMMENT:
+            // one or more people commented on your game; game id is the key
+            return MessageKey.id(message, 0);
+
         case SELF_FORUM_REPLY:
             // one or more replies to a forum post; thread id is the key
             return MessageKey.id(message, 0);

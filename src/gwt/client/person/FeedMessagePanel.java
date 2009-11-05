@@ -187,6 +187,9 @@ public class FeedMessagePanel extends FocusPanel
                 case SELF_ITEM_COMMENT:
                     return _pmsgs.selfItemComment(subject, object);
 
+                case SELF_GAME_COMMENT:
+                    return _pmsgs.selfGameComment(subject, object);
+
                 case SELF_FORUM_REPLY:
                     switch (plural) {
                     default:
@@ -288,5 +291,5 @@ public class FeedMessagePanel extends FocusPanel
     }
 
     protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
-    protected static final PersonMessages _pmsgs = (PersonMessages)GWT.create(PersonMessages.class);
+    protected static final PersonMessages _pmsgs = GWT.create(PersonMessages.class);
 }
