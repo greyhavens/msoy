@@ -113,6 +113,7 @@ public class RoomEditorController
 
         _panel.setDecor(scene.getDecor());
         _panel.updatePlaylistControl(scene.getPlaylistControl());
+        _panel.setBackgroundColor(scene.getBackgroundColor());
 
         // hide advanced ui
         actionAdvancedEditing(false);

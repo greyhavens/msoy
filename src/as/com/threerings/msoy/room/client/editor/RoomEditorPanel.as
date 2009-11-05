@@ -329,7 +329,6 @@ public class RoomEditorPanel extends FlyingPanel
         colorBox.addChild(colorLabel);
         colorLabel.width = 200;
         _backgroundColor = new ColorPicker();
-        _backgroundColor.selectedColor = _controller.scene.getBackgroundColor();
         colorBox.addChild(_backgroundColor);
         _backgroundColor.addEventListener(ColorPickerEvent.CHANGE,
             function (evt :ColorPickerEvent) :void {
