@@ -579,7 +579,8 @@ public class ForumServlet extends MsoyServiceServlet
         StringBuffer expbuf = new StringBuffer();
         Matcher m = _messageProcessingPattern.matcher(message);
         while (m.find()) {
-            m.appendReplacement(expbuf, convertToken(m.group(3), m.group()));
+            m.appendReplacement(expbuf, 
+                Matcher.quoteReplacement(convertToken(m.group(3), m.group())));
         }
         m.appendTail(expbuf);
         message = expbuf.toString();
