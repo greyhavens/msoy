@@ -49,8 +49,8 @@ public class SceneUpdateAction
             if (from.hasOwnProperty(attribute)) {
                 to[attribute] = from[attribute];
             } else {
-                Log.getLog(this).warning("UpdateAction: trying to copy absent attribute " +
-                                         "[attribute=" + attribute + "]");
+                Log.getLog(this).warning("UpdateAction: trying to copy absent attribute",
+                                         "attribute", attribute);
             }
         }
     }
