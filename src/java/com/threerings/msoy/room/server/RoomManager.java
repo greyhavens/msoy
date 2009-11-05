@@ -346,6 +346,7 @@ public class RoomManager extends SpotSceneManager
             update.playlistControl = scene.getPlaylistControl();
             update.decor = MsoySceneModel.defaultMsoySceneModelDecor();
             update.entrance = ((MsoySceneModel)scene.getSceneModel()).entrance;
+            update.noPuppet = ((MsoySceneModel)scene.getSceneModel()).noPuppet;
             doRoomUpdate(update, memberId, null);
 
         } else if (item.type == Item.AUDIO) {
