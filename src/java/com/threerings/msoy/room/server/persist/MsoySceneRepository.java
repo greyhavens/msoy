@@ -284,13 +284,13 @@ public class MsoySceneRepository extends DepotRepository
                           SceneRecord.ENTRANCE_Z, scup.entrance.z,
                           SceneRecord.BACKGROUND_COLOR, scup.backgroundColor);
 
-            int removeFlags = scup.noPuppet ? SceneRecord.Flag.SUPPRESS_PUPPET.getMask() : 0;
+            int removeFlags = scup.noPuppet ? 0 : SceneRecord.Flag.SUPPRESS_PUPPET.getMask();
             if (removeFlags != 0) {
                 updatePartial(SceneRecord.getKey(update.getSceneId()),
                     SceneRecord.FLAGS, SceneRecord.FLAGS.bitAnd(~removeFlags));
             }
 
-            int addFlags = scup.noPuppet ? 0 : SceneRecord.Flag.SUPPRESS_PUPPET.getMask();
+            int addFlags = scup.noPuppet ? SceneRecord.Flag.SUPPRESS_PUPPET.getMask() : 0;
             if (addFlags != 0) {
                 updatePartial(SceneRecord.getKey(update.getSceneId()),
                     SceneRecord.FLAGS, SceneRecord.FLAGS.bitOr(addFlags));
