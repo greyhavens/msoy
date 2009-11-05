@@ -632,7 +632,7 @@ public class MemberLogic
     {
         if (!MemberName.isValidDisplayName(name) ||
                 (!allowSupportNames && !MemberName.isValidNonSupportName(name))) {
-            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+            throw new ServiceException("e.bad_displayname");
         }
 
         // TODO: improve. Load patterns from the database at startup?
