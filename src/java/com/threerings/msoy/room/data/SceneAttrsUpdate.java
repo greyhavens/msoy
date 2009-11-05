@@ -32,6 +32,9 @@ public class SceneAttrsUpdate extends SceneUpdate
     /** The new background color. */
     public int backgroundColor;
 
+    /** If the puppet has been turned off for this scene. */
+    public boolean noPuppet;
+
     @Override
     public void apply (SceneModel model)
     {
@@ -44,6 +47,7 @@ public class SceneAttrsUpdate extends SceneUpdate
         mmodel.decor = decor;
         mmodel.entrance = entrance;
         mmodel.backgroundColor = backgroundColor;
+        mmodel.noPuppet = noPuppet;
     }
 
     @Override

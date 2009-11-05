@@ -69,6 +69,32 @@ public class SceneRecord extends PersistentRecord
         protected String _name;
     };
 
+    /**
+     * Various boolean values for the {@link #flags} field.
+     */
+    public enum Flag {
+        /** Set by the owner if the puppetar should be suppressed in this room. */
+        SUPPRESS_PUPPET(1<<0),
+
+        /** The next unused flag. Copy this and update the bit mask when making a new flag. */
+        UNUSED(1<<1);
+
+        /**
+         * Gets the bit mask for this flag.
+         */
+        public int getMask ()
+        {
+            return _mask;
+        }
+
+        Flag (int mask)
+        {
+            _mask = mask;
+        }
+
+        protected int _mask;
+    }
+
     // AUTO-GENERATED: FIELDS START
     public static final Class<SceneRecord> _R = SceneRecord.class;
     public static final ColumnExp SCENE_ID = colexp(_R, "sceneId");
@@ -96,7 +122,7 @@ public class SceneRecord extends PersistentRecord
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 14;
+    public static final int SCHEMA_VERSION = 15;
 
     /** Define the sort order for the new & hot queries. */
     public static Tuple<SQLExpression, Order> ixNewAndHot_v3 ()
@@ -168,6 +194,9 @@ public class SceneRecord extends PersistentRecord
     /** The color to use under and around the decor by default. */
     public int backgroundColor;
 
+    /** Extra boolean information {@link Flag} */
+    public int flags;
+
     /** When the room was last published, or null if it was never published. */
     @Column(nullable=true) @Index(name="ixLastPublished")
     public Timestamp lastPublished;
@@ -175,6 +204,26 @@ public class SceneRecord extends PersistentRecord
     /** Used when loading from the database. */
     public SceneRecord ()
     {
+    }
+
+    /**
+     * Returns true if the given flag is set for this scene.
+     */
+    public boolean isSet (Flag flag)
+    {
+        return (flags & flag.getMask()) != 0;
+    }
+
+    /**
+     * Sets the given flag to the given value for this scene.
+     */
+    public void set (Flag flag, boolean val)
+    {
+        if (val) {
+            flags |= flag.getMask();
+        } else {
+            flags &= ~flag.getMask();
+        }
     }
 
     /**
@@ -196,6 +245,7 @@ public class SceneRecord extends PersistentRecord
         entranceY = model.entrance.y;
         entranceZ = model.entrance.z;
         backgroundColor = model.backgroundColor;
+        set(Flag.SUPPRESS_PUPPET, model.noPuppet);
     }
 
     /**
@@ -220,7 +270,7 @@ public class SceneRecord extends PersistentRecord
         model.entrance = new MsoyLocation(entranceX, entranceY, entranceZ, 180);
 
         model.backgroundColor = backgroundColor;
-
+        model.noPuppet = isSet(Flag.SUPPRESS_PUPPET);
         return model;
     }
 

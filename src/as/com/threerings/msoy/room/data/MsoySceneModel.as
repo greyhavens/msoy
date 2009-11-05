@@ -79,6 +79,9 @@ public class MsoySceneModel extends SceneModel
     /** Color to use around and under the decor (by default). */
     public var backgroundColor :uint;
 
+    /** If the puppet is turned off for this scene. */
+    public var noPuppet :Boolean;
+
     /** Constructor. */
     public function MsoySceneModel ()
     {
@@ -219,6 +222,7 @@ public class MsoySceneModel extends SceneModel
         model.entrance = (entrance.clone() as MsoyLocation);
         model.decor = decor;
         model.backgroundColor = backgroundColor;
+        model.noPuppet = noPuppet;
         return model;
     }
 
@@ -237,6 +241,7 @@ public class MsoySceneModel extends SceneModel
         out.writeObject(entrance);
         out.writeObject(decor);
         out.writeInt(backgroundColor);
+        out.writeBoolean(noPuppet);
     }
 
     // documentation inherited
@@ -254,7 +259,8 @@ public class MsoySceneModel extends SceneModel
         furnis = TypedArray(ins.readObject());
         entrance = MsoyLocation(ins.readObject());
         decor = Decor(ins.readObject());
-        backgroundColor = ins.readInt()
+        backgroundColor = ins.readInt();
+        noPuppet = ins.readBoolean();
     }
 
     override public function toString () :String

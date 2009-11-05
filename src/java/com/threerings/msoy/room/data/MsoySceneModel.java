@@ -83,6 +83,9 @@ public class MsoySceneModel extends SceneModel
     /** Color to use around and under the decor (by default). */
     public int backgroundColor;
 
+    /** If the puppet is hidden for this room. */
+    public boolean noPuppet;
+
     /** Constructor. */
     public MsoySceneModel ()
     {

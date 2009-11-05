@@ -37,6 +37,9 @@ public class SceneAttrsUpdate extends SceneUpdate
     /** The new background color. */
     public var backgroundColor :uint;
 
+    /** The new puppet state. */
+    public var noPuppet :Boolean;
+
     override public function apply (model :SceneModel) :void
     {
         super.apply(model);
@@ -48,6 +51,7 @@ public class SceneAttrsUpdate extends SceneUpdate
         mmodel.decor = decor;
         mmodel.entrance = entrance;
         mmodel.backgroundColor = backgroundColor;
+        mmodel.noPuppet = noPuppet;
     }
 
     override public function writeObject (out :ObjectOutputStream) :void
@@ -60,6 +64,7 @@ public class SceneAttrsUpdate extends SceneUpdate
         out.writeObject(decor);
         out.writeObject(entrance);
         out.writeInt(backgroundColor);
+        out.writeBoolean(noPuppet);
     }
 
     override public function readObject (ins :ObjectInputStream) :void
@@ -72,6 +77,7 @@ public class SceneAttrsUpdate extends SceneUpdate
         decor = Decor(ins.readObject());
         entrance = MsoyLocation(ins.readObject());
         backgroundColor = ins.readInt();
+        noPuppet = ins.readBoolean();
     }
 }
 }
