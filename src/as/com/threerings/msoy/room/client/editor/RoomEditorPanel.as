@@ -175,6 +175,28 @@ public class RoomEditorPanel extends FlyingPanel
     }
 
     /**
+     * Sets whether or not we should show the puppet control check box. Note that this is intended
+     * for use during initialization of editing mode and should only be called once prior to
+     * opening the panel.
+     */
+    public function setMayHavePuppet (visible :Boolean) :void
+    {
+        // remove the control so layout looks right
+        if (!visible && _removePuppetControl != null) {
+            _removePuppetControl();
+            _removePuppetControl = null;
+        }
+    }
+
+    /**
+     * Sets whether or not the puppet control check box is selected.
+     */
+    public function setPuppetEnabled (enabled :Boolean) :void
+    {
+        _puppetControl.selected = enabled;
+    }
+
+    /**
      * Displays a modal box to enter the url. When the user clicks OK,
      * it will set the currently selected item to link at the given url.
      */
@@ -311,6 +333,14 @@ public class RoomEditorPanel extends FlyingPanel
         _playlistControl = new CommandCheckBox(Msgs.EDITING.get("l.playlist"),
             _controller.setPlaylistControl);
         GridUtil.addRow(contents, _playlistControl, [ 3, 1 ]);
+
+        // puppet control
+        var puppetControlRow :UIComponent = GridUtil.addRow(contents,
+            _puppetControl = new CommandCheckBox(Msgs.EDITING.get("l.show_puppet"),
+                _controller.setPuppetEnabled), [ 3, 1 ]);
+        _removePuppetControl = function () :void {
+            contents.removeChild(puppetControlRow);
+        };
 
         // decor name
         var decorBox :Box = new HBox();
@@ -561,6 +591,9 @@ public class RoomEditorPanel extends FlyingPanel
     protected var _customConfigButton :UIComponent;
 
     protected var _playlistControl :CommandCheckBox;
+
+    protected var _removePuppetControl :Function;
+    protected var _puppetControl :CommandCheckBox;
 
     protected var _decorLabel :Label;
 

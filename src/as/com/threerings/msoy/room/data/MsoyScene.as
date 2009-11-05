@@ -158,6 +158,22 @@ public class MsoyScene extends SceneImpl
         return _msoyModel.backgroundColor;
     }
 
+    /**
+     * Tests if this room permits puppets.
+     */
+    public function mayHavePuppet () :Boolean
+    {
+        return _msoyModel.ownerType == MsoySceneModel.OWNER_TYPE_MEMBER;
+    }
+
+    /**
+     * Tests if the user has chosen to enable puppets for this room.
+     */
+    public function isPuppetEnabled () :Boolean
+    {
+        return mayHavePuppet() && !_msoyModel.noPuppet;
+    }
+
     // from SpotScene
     public function addPortal (portal :Portal) :void
     {

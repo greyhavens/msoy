@@ -114,6 +114,8 @@ public class RoomEditorController
         _panel.setDecor(scene.getDecor());
         _panel.updatePlaylistControl(scene.getPlaylistControl());
         _panel.setBackgroundColor(scene.getBackgroundColor());
+        _panel.setMayHavePuppet(scene.mayHavePuppet());
+        _panel.setPuppetEnabled(scene.isPuppetEnabled());
 
         // hide advanced ui
         actionAdvancedEditing(false);
@@ -142,6 +144,16 @@ public class RoomEditorController
         updateScene(scene, newscene);
     }
 
+    public function setPuppetEnabled (showPuppet :Boolean) :void
+    {
+        if (scene.mayHavePuppet()) {
+            var newscene :MsoyScene = scene.clone() as MsoyScene;
+            var newmodel :MsoySceneModel = newscene.getSceneModel() as MsoySceneModel;
+            newmodel.noPuppet = !showPuppet;
+            updateScene(scene, newscene);
+        }
+    }
+
     /**
      * Receives a scene update from the controller, and refreshes the edited target appropriately.
      */
@@ -160,6 +172,7 @@ public class RoomEditorController
             _panel.updatePlaylistControl(up.playlistControl);
             _panel.setDecor(up.decor);
             _panel.setBackgroundColor(up.backgroundColor);
+            _panel.setPuppetEnabled(!up.noPuppet);
             updateNameDisplay();
 
             refreshTarget();
