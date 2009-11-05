@@ -117,6 +117,7 @@ public class SceneRecord extends PersistentRecord
     public static final ColumnExp RATING_COUNT = colexp(_R, "ratingCount");
     public static final ColumnExp RATING = colexp(_R, "rating");
     public static final ColumnExp BACKGROUND_COLOR = colexp(_R, "backgroundColor");
+    public static final ColumnExp FLAGS = colexp(_R, "flags");
     public static final ColumnExp LAST_PUBLISHED = colexp(_R, "lastPublished");
     // AUTO-GENERATED: FIELDS END
 
