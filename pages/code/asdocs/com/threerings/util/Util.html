@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
-<meta content="Util,com.threerings.util.Util,adapt,equals,getDefault,init,isPlainObject,isSimple,keys,unfuckVarargs,values" name="keywords">
+<meta content="Util,com.threerings.util.Util,adapt,equals,getDefault,init,isPlainObject,isSimple,keys,sequence,unfuckVarargs,unit,values" name="keywords">
 <title>com.threerings.util.Util</title>
 </head>
 <body>
@@ -114,10 +114,26 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
+<a class="signatureLink" href="#sequence()">sequence</a>(... functions):Function</div>
+<div class="summaryTableDescription">[static]
+     Returns a function that will call each of the given functions in order.</div>
+</td><td class="summaryTableOwnerCol">Util</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
 <a class="signatureLink" href="#unfuckVarargs()">unfuckVarargs</a>(args:Array):Array</div>
 <div class="summaryTableDescription">[static]
      If you call a varargs method by passing it an array, the array
      will end up being arg 1.</div>
+</td><td class="summaryTableOwnerCol">Util</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#unit()">unit</a>(n:int):Function</div>
+<div class="summaryTableDescription">[static]
+     Returns a function that returns its nth argument, or undefined if there is no nth argument.</div>
 </td><td class="summaryTableOwnerCol">Util</td>
 </tr>
 <tr class="">
@@ -378,6 +394,29 @@ showHideInherited();
 </tr>
 </table>
 </div>
+<a name="sequence()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">sequence</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function sequence(... functions):Function</code><p>
+     Returns a function that will call each of the given functions in order.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code>... <span class="label">functions</span></code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Function</code></td>
+</tr>
+</table>
+</div>
 <a name="unfuckVarargs()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -399,6 +438,29 @@ showHideInherited();
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20"></td><td><code>Array</code></td>
+</tr>
+</table>
+</div>
+<a name="unit()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">unit</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function unit(n:int):Function</code><p>
+     Returns a function that returns its nth argument, or undefined if there is no nth argument.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">n</span>:int</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Function</code></td>
 </tr>
 </table>
 </div>

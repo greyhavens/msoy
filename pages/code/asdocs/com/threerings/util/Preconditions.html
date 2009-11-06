@@ -62,7 +62,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#checkIndex()">checkIndex</a>(index:int, size:int, message:String = null):void</div>
+<a class="signatureLink" href="#checkIndex()">checkIndex</a>(index:int, size:int, message:String = null):int</div>
 <div class="summaryTableDescription">[static]
      Check that the specified index is valid: greater than or equal to 0, and less than size.</div>
 </td><td class="summaryTableOwnerCol">Preconditions</td>
@@ -78,9 +78,9 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#checkRange()">checkRange</a>(index:int, start:int, size:int, message:String = null):void</div>
+<a class="signatureLink" href="#checkRange()">checkRange</a>(value:Number, low:Number, high:Number, message:String = null):Number</div>
 <div class="summaryTableDescription">[static]
-     Check that the specified index is valid: greater than or equal to start, and less than size.</div>
+     Check that the specified value is not NaN and between the low and high values (inclusive).</div>
 </td><td class="summaryTableOwnerCol">Preconditions</td>
 </tr>
 </table>
@@ -128,7 +128,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public static function checkIndex(index:int, size:int, message:String = null):void</code><p>
+<code>public static function checkIndex(index:int, size:int, message:String = null):int</code><p>
      Check that the specified index is valid: greater than or equal to 0, and less than size.
      </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
@@ -146,6 +146,14 @@ showHideInherited();
 </tr>
 <tr>
 <td width="20px"></td><td><code><span class="label">message</span>:String</code> (default = <code>null</code>)<code></code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>int</code> &mdash; the index that was checked.
+     </td>
 </tr>
 </table>
 <br>
@@ -181,7 +189,8 @@ showHideInherited();
 <span class="label">Returns</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20"></td><td><code>*</code></td>
+<td width="20"></td><td><code>*</code> &mdash; the reference that was checked.
+     </td>
 </tr>
 </table>
 <br>
@@ -199,30 +208,39 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public static function checkRange(index:int, start:int, size:int, message:String = null):void</code><p>
-     Check that the specified index is valid: greater than or equal to start, and less than size.
+<code>public static function checkRange(value:Number, low:Number, high:Number, message:String = null):Number</code><p>
+     Check that the specified value is not NaN and between the low and high values (inclusive).
+     Passing NaN for low or high will disable that test.
      </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20px"></td><td><code><span class="label">index</span>:int</code></td>
+<td width="20px"></td><td><code><span class="label">value</span>:Number</code></td>
 </tr>
 <tr>
 <td class="paramSpacer">&nbsp;</td>
 </tr>
 <tr>
-<td width="20px"></td><td><code><span class="label">start</span>:int</code></td>
+<td width="20px"></td><td><code><span class="label">low</span>:Number</code></td>
 </tr>
 <tr>
 <td class="paramSpacer">&nbsp;</td>
 </tr>
 <tr>
-<td width="20px"></td><td><code><span class="label">size</span>:int</code></td>
+<td width="20px"></td><td><code><span class="label">high</span>:Number</code></td>
 </tr>
 <tr>
 <td class="paramSpacer">&nbsp;</td>
 </tr>
 <tr>
 <td width="20px"></td><td><code><span class="label">message</span>:String</code> (default = <code>null</code>)<code></code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Number</code> &mdash; the value that was checked.
+     </td>
 </tr>
 </table>
 <br>

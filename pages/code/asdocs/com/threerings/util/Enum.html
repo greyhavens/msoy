@@ -157,10 +157,9 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#valueOf()">valueOf</a>(clazz:Class, name:String):<a href="../util/Enum.html">Enum</a>
-</div>
-<div class="summaryTableDescription">[static]
-     Turn a String name into an Enum constant.</div>
+<a class="signatureLink" href="#valueOf()">valueOf</a>():Object</div>
+<div class="summaryTableDescription">
+     Return the primitive value of this Object.</div>
 </td><td class="summaryTableOwnerCol">Enum</td>
 </tr>
 <tr class="">
@@ -363,25 +362,14 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public static function valueOf(clazz:Class, name:String):<a href="../util/Enum.html">Enum</a></code><p>
-     Turn a String name into an Enum constant.
-     </p><span class="label">Parameters</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20px"></td><td><code><span class="label">clazz</span>:Class</code></td>
-</tr>
-<tr>
-<td class="paramSpacer">&nbsp;</td>
-</tr>
-<tr>
-<td width="20px"></td><td><code><span class="label">name</span>:String</code></td>
-</tr>
-</table>
-<p></p>
+<code>public function valueOf():Object</code><p>
+     Return the primitive value of this Object.
+     The default implementation for Enums is to return the ordinal.
+     </p><p></p>
 <span class="label">Returns</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20"></td><td><code><a href="../util/Enum.html">Enum</a></code></td>
+<td width="20"></td><td><code>Object</code></td>
 </tr>
 </table>
 </div>

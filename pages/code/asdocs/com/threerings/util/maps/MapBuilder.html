@@ -246,7 +246,8 @@ showHideInherited();
 <div class="detailBody">
 <code>public function makeLR(maxSize:int, accessOrder:Boolean = true):<a href="../maps/MapBuilder.html">MapBuilder</a></code><p>
      Make the Map a cache, disposing of the least-recently-accessed (or least-recently-inserted)
-     mappings whenever size exceeds maxSize.
+     mappings whenever size exceeds maxSize. Iterating over this map (via keys(), values(),
+     or forEach()) will visit the oldest mappings first.
           </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>

@@ -251,7 +251,8 @@ showHideInherited();
 <div class="detailBody">
 <code>public function makeLR(maxSize:int, accessOrder:Boolean = true):<a href="../sets/SetBuilder.html">SetBuilder</a></code><p>
      Make the Set a cache, disposing of the least-recently-accessed (or just inserted) value
-     whenever size exceeds maxSize.
+     whenever size exceeds maxSize. Iterating over this Set (via forEach() or toArray()) will
+     see the oldest entries first.
           </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>

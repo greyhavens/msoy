@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../print.css" type="text/css" media="print">
-<meta content="FurniControl,com.whirled.FurniControl,BODY_ENTERED,BODY_LEFT" name="keywords">
+<meta content="FurniControl,com.whirled.FurniControl,BODY_ENTERED,BODY_LEFT,showPage" name="keywords">
 <title>com.whirled.FurniControl</title>
 </head>
 <body>
@@ -341,13 +341,13 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
      Configures the interval on which this item is "ticked" in milliseconds.</div>
 </td><td class="summaryTableOwnerCol"><a href="EntityControl.html">EntityControl</a></td>
 </tr>
-<tr class="hideInheritedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="EntityControl.html#showPage()">showPage</a>(token:String):Boolean</div>
+<a class="signatureLink" href="#showPage()">showPage</a>(token:String):Boolean</div>
 <div class="summaryTableDescription">
      Shows the Whirled page identified by the supplied token.</div>
-</td><td class="summaryTableOwnerCol"><a href="EntityControl.html">EntityControl</a></td>
+</td><td class="summaryTableOwnerCol">FurniControl</td>
 </tr>
 <tr class="hideInheritedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
@@ -631,6 +631,35 @@ showHideInherited();
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">disp</span>:DisplayObject</code></td>
+</tr>
+</table>
+</div>
+<a name="methodDetail"></a>
+<div class="detailSectionHeader">Method detail</div>
+<a name="showPage()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">showPage</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function showPage(token:String):Boolean</code><p>
+     Shows the Whirled page identified by the supplied token.
+          </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">token</span>:String</code> &mdash; the token that identifies the page to be shown. This is <em>not</em> the full
+     URL, just the part after http://www.whirled.com/#. For example: passing "me" would show the
+     Me page. Passing "shop-l_5_343" would show the shop page for the Kawaii Knight avatar.
+          </td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Boolean</code> &mdash; true if the page was shown, false if it could not be shown for some reason.
+     </td>
 </tr>
 </table>
 </div>

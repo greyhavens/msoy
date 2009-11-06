@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
-<meta content="Maps,com.threerings.util.Maps,equals,findKey,newBuilder,newMapOf,newSortedMapOf" name="keywords">
+<meta content="Maps,com.threerings.util.Maps,equals,filter,findKey,newBuilder,newMapOf,newSortedMapOf,selectKey,selectValue,some" name="keywords">
 <title>com.threerings.util.Maps</title>
 </head>
 <body>
@@ -75,6 +75,15 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
+<a class="signatureLink" href="#filter()">filter</a>(map:<a href="Map.html">Map</a>, condition:Function, transform:Function = null):Array</div>
+<div class="summaryTableDescription">[static]
+     Filters all the entries in a map against a condition, transforms those that meet the
+     condition and returns an array of the transformed, filtered entries.</div>
+</td><td class="summaryTableOwnerCol">Maps</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
 <a class="signatureLink" href="#findKey()">findKey</a>(map:<a href="Map.html">Map</a>, value:Object):*</div>
 <div class="summaryTableDescription">[static]
      Return the first key found for the specified value, or undefined if not found.</div>
@@ -105,6 +114,30 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </div>
 <div class="summaryTableDescription">[static]
      Create a new sorted Map designed to hold keys of the specified class.</div>
+</td><td class="summaryTableOwnerCol">Maps</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#selectKey()">selectKey</a>(key:Object, value:Object):Object</div>
+<div class="summaryTableDescription">[static]
+     Returns the key of a map entry (for use as a transform function in <code>filter</code>).</div>
+</td><td class="summaryTableOwnerCol">Maps</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#selectValue()">selectValue</a>(key:Object, value:Object):Object</div>
+<div class="summaryTableDescription">[static]
+     Returns the value of a map entry (for use as a transform function in <code>filter</code>).</div>
+</td><td class="summaryTableOwnerCol">Maps</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#some()">some</a>(map:<a href="Map.html">Map</a>, condition:Function):Boolean</div>
+<div class="summaryTableDescription">[static]
+     Tests if at least one entry in a map meets a condition.</div>
 </td><td class="summaryTableOwnerCol">Maps</td>
 </tr>
 </table>
@@ -142,6 +175,52 @@ showHideInherited();
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20"></td><td><code>Boolean</code></td>
+</tr>
+</table>
+</div>
+<a name="filter()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">filter</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function filter(map:<a href="Map.html">Map</a>, condition:Function, transform:Function = null):Array</code><p>
+     Filters all the entries in a map against a condition, transforms those that meet the
+     condition and returns an array of the transformed, filtered entries.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">map</span>:<a href="Map.html">Map</a></code> &mdash; the map whose entries are to be filtered
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">condition</span>:Function</code> &mdash; the function to test whether to include an entry:
+         <div class='listing'><pre>
+             function condition (key :Object, value :Object) :Boolean
+         </pre></div>
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">transform</span>:Function</code> (default = <code>null</code>)<code></code> &mdash; the function to obtain an entry in the resulting array:
+         <div class='listing'><pre>
+             function transform (key :Object, value :Object) :Object
+         </pre></div>
+         If the transform is null, the map values are returned.
+     </td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Array</code></td>
 </tr>
 </table>
 </div>
@@ -262,6 +341,98 @@ showHideInherited();
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20"></td><td><code><a href="../util/Map.html">Map</a></code></td>
+</tr>
+</table>
+</div>
+<a name="selectKey()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">selectKey</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function selectKey(key:Object, value:Object):Object</code><p>
+     Returns the key of a map entry (for use as a transform function in <code>filter</code>).
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">key</span>:Object</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">value</span>:Object</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Object</code></td>
+</tr>
+</table>
+</div>
+<a name="selectValue()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">selectValue</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function selectValue(key:Object, value:Object):Object</code><p>
+     Returns the value of a map entry (for use as a transform function in <code>filter</code>).
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">key</span>:Object</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">value</span>:Object</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Object</code></td>
+</tr>
+</table>
+</div>
+<a name="some()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">some</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function some(map:<a href="Map.html">Map</a>, condition:Function):Boolean</code><p>
+     Tests if at least one entry in a map meets a condition.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">map</span>:<a href="Map.html">Map</a></code> &mdash; the map whose entries are to be tested
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">condition</span>:Function</code> &mdash; a function that tests a map entry:
+     <div class='listing'><pre>
+         function predicate (key :Object, value :Object) :Boolean
+     </pre></div>
+     </td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Boolean</code></td>
 </tr>
 </table>
 </div>

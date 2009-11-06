@@ -62,7 +62,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#distance()">distance</a>(x1:Number, y1:Number, x2:Number, y2:Number, p:int = 2):Number</div>
+<a class="signatureLink" href="#distance()">distance</a>(x1:Number, y1:Number, x2:Number, y2:Number, p:Number = 2):Number</div>
 <div class="summaryTableDescription">[static]
      Returns distance from point (x1, y1) to (x2, y2) in 2D.</div>
 </td><td class="summaryTableOwnerCol">MathUtil</td>
@@ -150,7 +150,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public static function distance(x1:Number, y1:Number, x2:Number, y2:Number, p:int = 2):Number</code><p>
+<code>public static function distance(x1:Number, y1:Number, x2:Number, y2:Number, p:Number = 2):Number</code><p>
      Returns distance from point (x1, y1) to (x2, y2) in 2D.
           </p><p>Supports various distance metrics: the common Euclidean distance, taxicab distance,
      arbitrary Minkowski distances, and Chebyshev distance.
@@ -187,7 +187,7 @@ showHideInherited();
 <td class="paramSpacer">&nbsp;</td>
 </tr>
 <tr>
-<td width="20px"></td><td><code><span class="label">p</span>:int</code> (default = <code>2</code>)<code></code> &mdash; Optional: p value of the norm function. Common cases:
+<td width="20px"></td><td><code><span class="label">p</span>:Number</code> (default = <code>2</code>)<code></code> &mdash; Optional: p value of the norm function. Common cases:
               <ul><li>p = 2 (default): standard Euclidean distance on a plane
                   <li>p = 1: taxicab distance (aka Manhattan distance)
                   <li>p = Infinity: Chebyshev distance
