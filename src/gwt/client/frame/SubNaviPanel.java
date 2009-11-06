@@ -4,6 +4,8 @@
 package client.frame;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Image;
@@ -15,6 +17,7 @@ import com.threerings.msoy.web.gwt.Tabs;
 import client.shell.CShell;
 import client.shell.ShellMessages;
 import client.ui.MsoyUI;
+import client.util.BillingUtil;
 import client.util.Link;
 
 /**
@@ -70,7 +73,22 @@ public class SubNaviPanel extends FlowPanel
             break;
 
         case BILLING:
-            addLink(null, "Select method", Pages.BILLING);
+            addImageLink("/images/billing/menu_lock.png",
+                "Billing pages are https secure, click here to open in a new window",
+                new ClickHandler() {
+                    public void onClick (ClickEvent event) {
+                        BillingUtil.popBillingPage("");
+                    }
+                }, false);
+            addLink(null, "Get Bars", false, Pages.BILLING);
+            addLink(null, "Club Whirled", Pages.BILLING, "subscribe");
+            if (CShell.isRegistered()) {
+                addLink(null, "My Bars", Pages.ME, Args.compose("transactions", "2"));
+            }
+            addExternalLink("http://wiki.whirled.com/Billing_FAQ", "Billing FAQ", true);
+            if (CShell.isSupport()) {
+                addLink(null, "Billing Admin", Pages.BILLING, "admin");
+            }
             break;
 
         case STUFF:
@@ -151,6 +169,12 @@ public class SubNaviPanel extends FlowPanel
         add(Link.create(label, page, args));
     }
 
+    public void addExternalLink (String url, String label, boolean sep)
+    {
+        addSeparator(sep);
+        add(MsoyUI.createExternalAnchor(url, label));
+    }
+
     public void addContextLink (String label, Pages page, Args args, int position)
     {
         // sanity check the position
@@ -163,8 +187,13 @@ public class SubNaviPanel extends FlowPanel
 
     public Image addImageLink (String path, String tip, Pages page, Args args)
     {
-        addSeparator(true);
-        Image icon = MsoyUI.createActionImage(path, Link.createHandler(page, args));
+        return addImageLink(path, tip, Link.createHandler(page, args), true);
+    }
+
+    public Image addImageLink (String path, String tip, ClickHandler clickHandler, boolean sep)
+    {
+        addSeparator(sep);
+        Image icon = MsoyUI.createActionImage(path, clickHandler);
         icon.setTitle(tip);
         add(icon);
         return icon;

@@ -4,47 +4,28 @@
  * CSS styles for the Billing interfaces.
  */
 
-/** BillingPanel */
+/* -------------------------------
+  BillingPanel
+ --------------------------------- */
 
 .billing {
   font-family: Helvetica, Arial, sans-serif;
   background: url(/images/ui/gradient_bg.jpg) repeat-x top  #63ABD3;
-  height: 100%;
+  min-height: 100%;
   padding: 0px 50px;
 }
 
 .billing .Header {
-  margin-top: 15px;
+  padding-top: 15px;
 }
 
 .billing .Intro {
   width: 410px;
-  text-align: right;
 }
 
-/** SelectMethodPanel */
-
-.selectMethod .Balloons {
-  padding: 5px 0px 0px 10px;
-}
-
-.selectMethod .Balloons .Tip {
-  background: transparent url(/images/billing/balloon.png) no-repeat;
-  width: 393px;
-  height: 40px;
-  padding-left: 24px;
-  vertical-align: top;
-  padding-top: 5px;
-  margin: 5px 0px;
-}
-
-.selectMethod .Balloons .Tip, .selectMethod .Balloons .Tip a {
-  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
-  color: #FFFFFF;
-  font-size: 12px;
-}
-
-/** SubscribePanel */
+/* -------------------------------
+  SubscribePanel
+ --------------------------------- */
 
 .subscribe .Features, .subscribe .GoBuy {
   color: #FFFFFF;
@@ -63,4 +44,48 @@
 .subscribe .roundBox em {
   font-size: 20px;
   font-style: normal;
+}
+
+/* -------------------------------
+  AboutBarsPanel
+ --------------------------------- */
+ 
+.aboutBars .Subscription,
+.aboutBars .Methods {
+  margin: 20px 0;
+}
+
+.aboutBars .SubscriptionStar {
+  margin: 5px 0 0 0;
+}
+
+.aboutBars .SubscriptionText {
+  margin: 0 15px;
+  width: 525px;
+  text-align: center;
+  color: #0D496D;
+}
+
+.aboutBars .SubscriptionText a {
+  color: #0D496D;
+}
+
+.aboutBars .MethodButtons {
+  width: 550px;
+  margin: 10px auto;
+  cursor: pointer;
+}
+
+.aboutBars .stretchButton table {
+  margin: 0 auto;
+}
+
+/* -------------------------------
+  BillingIframePanel
+ --------------------------------- */
+ 
+.billingIframe {
+  background: #C7E4F6 url(/images/billing/billing_content_bg.png) repeat-x center top;
+  width: 100%;
+  min-height: 100%;
 }

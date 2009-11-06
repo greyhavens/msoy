@@ -39,13 +39,55 @@ public class BillingUtil
                               Link.createHandler(Pages.ACCOUNT, "config"));
 
         } else {
-            Window.open(BASE + url + ((url.indexOf("?") == -1) ? "?" : "&") +
-                        "initUsername=" + URL.encodeComponent(CShell.creds.accountName),
+            Window.open(getAbsoluteBillingURL(url),
                         "_blank",
                         // For those silly browsers that open this in a new window instead of a new
                         // tab, enable all the chrome options on the new window.
                         "resizable=1,menubar=1,toolbar=1,location=1,status=1,scrollbars=1");
         }
+    }
+
+    /**
+     * Display an appropriate error dialog if the user's account is not ready for billing,
+     * otherwise send the user to #billing-args
+     */
+    public static void openBillingPage (final Object... args)
+    {
+        if (CShell.isGuest()) {
+            MsoyUI.infoAction(_cmsgs.gobuyMustLogon(), _cmsgs.gobuyLogon(), Link.createHandler(
+                Pages.ACCOUNT, "logon"));
+
+        } else if (CShell.isPermaguest()) {
+            MsoyUI.infoAction(_cmsgs.gobuyMustRegister(), _cmsgs.gobuyRegister(),
+                NaviUtil.onMustRegister());
+
+        } else if (MemberMailUtil.isPlaceholderAddress(CShell.creds.accountName)) {
+            MsoyUI.infoAction(_cmsgs.gobuyMustConfigure(), _cmsgs.gobuyConfigure(),
+                Link.createHandler(Pages.ACCOUNT, "config"));
+
+        } else {
+            Link.go(Pages.BILLING, args);
+        }
+    }
+
+    /**
+     * Return true if the user is registered and has an actual email address on file, meaning they
+     * are ready to be sent to the billing system.
+     */
+    public static boolean isBillingReady ()
+    {
+        return (!CShell.isGuest() && !CShell.isPermaguest() 
+            && !MemberMailUtil.isPlaceholderAddress(CShell.creds.accountName));
+    }
+
+    /**
+     * Return a url to the specified page on the billing system, including auth credentials.
+     * @param path Relative page to a page on billing eg "paypal/choosecoins.jspx"
+     */
+    public static String getAbsoluteBillingURL (String path)
+    {
+        return BASE + path + ((path.indexOf("?") == -1) ? "?" : "&") +
+        "initUsername=" + URL.encodeComponent(CShell.creds.accountName);
     }
 
     /**

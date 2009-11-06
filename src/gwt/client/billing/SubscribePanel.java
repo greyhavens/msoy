@@ -57,7 +57,7 @@ public class SubscribePanel extends BillingPanel
             _images.cc_default().createImage(), _images.cc_down().createImage(),
             new ClickHandler() {
                 public void onClick (ClickEvent event) {
-                    BillingUtil.popBillingPage("subscribe.wm");
+                    BillingUtil.openBillingPage(BillingPage.IFRAME_SUBSCRIBE);
                 }
             });
         gobuy.getUpHoveringFace().setImage(_images.cc_over().createImage());
