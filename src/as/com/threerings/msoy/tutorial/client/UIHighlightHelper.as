@@ -31,6 +31,7 @@ public class UIHighlightHelper
         if (_highlight != null || _comp.stage == null) {
             return;
         }
+
         var tl :Point = toTop(0, 0);
         var br :Point = toTop(_comp.width, _comp.height);
         _highlight = new UIComponent();
@@ -41,24 +42,33 @@ public class UIHighlightHelper
         _highlight.graphics.lineStyle(2, 0xff0000);
         _highlight.graphics.drawRect(0, 0, br.x - tl.x, br.y - tl.y);
 
-        _highlight.x = tl.x;
-        _highlight.y = tl.y;
         _top.addChild(_highlight);
 
         // make sure we don't keep highlighting after the component is gone
         _comp.addEventListener(Event.REMOVED_FROM_STAGE, handleRemovedFromStage);
+        _comp.addEventListener(Event.ENTER_FRAME, handleEnterFrame);
     }
 
     /** @inheritDocs */
     public function popdown () :void
     {
         _comp.removeEventListener(Event.REMOVED_FROM_STAGE, handleRemovedFromStage);
+        _comp.removeEventListener(Event.ENTER_FRAME, handleEnterFrame);
 
         if (_highlight == null) {
             return;
         }
         _top.removeChild(_highlight);
         _highlight = null;
+    }
+
+    protected function handleEnterFrame (evt :Event) :void
+    {
+        if (_highlight != null && _comp != null) {
+            var tl :Point = toTop(0, 0);
+            _highlight.x = 0;//tl.x;
+            _highlight.y = 0;//tl.y;
+        }
     }
 
     protected function handleRemovedFromStage (evt :Event) :void

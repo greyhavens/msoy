@@ -336,11 +336,13 @@ public class PlaceBox extends LayeredContainer
         var idx :int = ArrayUtil.indexOf(zooms, zoomable.getZoom());
         idx = (idx + 1) % zooms.length;
 
+        const SIZE :int = 18;
+        const PADDING :int = 1;
         _zoomBtn = new CommandButton();
         _zoomBtn.styleName = "placeZoomButton";
         _zoomBtn.toolTip = Msgs.GENERAL.get("l.change_zoom");
-        _zoomBtn.x = bounds.right - 12;
-        _zoomBtn.y = bounds.top + 1;
+        _zoomBtn.x = Math.min(bounds.right + PADDING, width - SIZE - PADDING * 2);
+        _zoomBtn.y = bounds.top + PADDING;
         addOverlay(_zoomBtn, LAYER_PLACE_CONTROL);
 
         _zoomBtn.setCallback(function () :void {
@@ -350,15 +352,17 @@ public class PlaceBox extends LayeredContainer
             layoutPlaceView();
         });
 
+        const LBL_WIDTH :int = 150;
+        const LBL_HEIGHT :int = 20;
         if (_zoomChanged) {
             _zoomChanged = false;
             _zoomLbl = FlexUtil.createLabel(zoomable.translateZoom(), "placeZoomLabel");
             _zoomLbl.filters = [new GlowFilter(0xffffff, 1, 8, 8, 4)];
             // TODO: WTF? why do I have to specify the width and height? Grrr
-            _zoomLbl.width = 150;
-            _zoomLbl.height = 20;
-            _zoomLbl.x = bounds.right - 170;
-            _zoomLbl.y = bounds.top - 1;
+            _zoomLbl.width = LBL_WIDTH;
+            _zoomLbl.height = LBL_HEIGHT;
+            _zoomLbl.x = _zoomBtn.x - LBL_WIDTH;
+            _zoomLbl.y = _zoomBtn.y;
             addOverlay(_zoomLbl, LAYER_PLACE_CONTROL);
 
             Tweener.addTween(_zoomLbl, {alpha: 0, time: _zoomLbl.getStyle("fade") as Number,
