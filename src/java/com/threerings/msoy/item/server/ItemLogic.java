@@ -675,8 +675,7 @@ public class ItemLogic
      * Resolves the supplied list of favorited items into properly initialized {@link ListingCard}
      * records.
      */
-    public List<ListingCard> resolveFavorites (
-        List<FavoritedItemResultRecord> faves, boolean stripHidden)
+    public List<ListingCard> resolveFavorites (List<FavoritedItemResultRecord> faves)
         throws ServiceException
     {
         // break the list up by item type
@@ -690,7 +689,7 @@ public class ItemLogic
         for (Map.Entry<Byte, Collection<Integer>> entry : typeMap.asMap().entrySet()) {
             Byte type = entry.getKey();
             for (CatalogRecord rec : getRepository(type).loadCatalog(entry.getValue())) {
-                if (!stripHidden || rec.pricing != CatalogListing.PRICING_HIDDEN) {
+                if (rec.pricing != CatalogListing.PRICING_HIDDEN) {
                     cardMap.put(Tuple.newTuple(type, rec.catalogId), rec.toListingCard());
                 }
             }
@@ -1172,7 +1171,7 @@ public class ItemLogic
     protected List<ListingCard> buildJumble ()
     {
         try {
-            return resolveFavorites(_faveRepo.loadRecentFavorites(0, 1000, Item.NOT_A_TYPE), true);
+            return resolveFavorites(_faveRepo.loadRecentFavorites(0, 1000, Item.NOT_A_TYPE));
         } catch (ServiceException e) {
             log.warning("Failed to build jumble", e);
             return Lists.newArrayList();

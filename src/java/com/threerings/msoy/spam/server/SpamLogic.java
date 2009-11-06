@@ -657,7 +657,7 @@ public class SpamLogic
         resultSet.addAll(_catalogLogic.loadCatalog(
                              null, itemType, CatalogQuery.SORT_BY_NEW_AND_HOT, count));
         resultSet.addAll(_itemLogic.resolveFavorites(
-                             _faveRepo.loadRecentFavorites(0, count * 2, itemType), true));
+                             _faveRepo.loadRecentFavorites(0, count * 2, itemType)));
 
         // get a random subset into a list
         List<ListingCard> result;

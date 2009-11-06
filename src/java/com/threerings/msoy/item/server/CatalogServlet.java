@@ -564,7 +564,7 @@ public class CatalogServlet extends MsoyServiceServlet
             return null;
         }
         result.favorites = _itemLogic.resolveFavorites(
-            _faveRepo.loadFavorites(memberId, itemType), false);
+            _faveRepo.loadFavorites(memberId, itemType));
         return result;
     }
 
