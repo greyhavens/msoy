@@ -19,22 +19,18 @@ public class ThemedStylesheets
      */
     public static void inject (int themeId)
     {
-        CShell.log("Looking for head...");
         NodeList<Element> heads = Document.get().getElementsByTagName("head");
         if (heads.getLength() == 0) {
             return;
         }
-        CShell.log("Looking for links...");
         NodeList<Element> links = heads.getItem(0).getElementsByTagName("link");
         for (int ii = links.getLength()-1; ii >= 0; ii --) {
             LinkElement link = LinkElement.as(links.getItem(ii));
-            CShell.log("Checking it's a stylesheet link...");
             if ("stylesheet".equalsIgnoreCase(link.getRel())) {
                 String href = link.getHref();
                 int ix = href.indexOf("?themeId=");
                 if (ix > 0) {
                     href = (href.substring(0, ix) + "?themeId=" + themeId);
-                    CShell.log("Changing href to: " + href);
                     link.setHref(href);
                 }
             }
