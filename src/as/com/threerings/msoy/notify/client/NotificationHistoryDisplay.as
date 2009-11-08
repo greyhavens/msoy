@@ -12,7 +12,9 @@ import mx.core.UIComponent;
 
 public class NotificationHistoryDisplay extends VBox
 {
-    public static const PADDING :int = ScrollBar.THICKNESS;
+    // TODO: hmm, without the fudge, text is cropped
+    public static const FUDGE :int = 10;
+    public static const PADDING :int = ScrollBar.THICKNESS + FUDGE;
 
     public function NotificationHistoryDisplay (notifications :Array)
     {
