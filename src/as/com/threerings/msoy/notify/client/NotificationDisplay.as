@@ -42,6 +42,8 @@ import com.threerings.msoy.chat.client.ChatOverlay;
 
 import com.threerings.msoy.notify.data.Notification;
 
+import flash.utils.setTimeout; // function import
+
 public class NotificationDisplay extends HBox
 {
     public function NotificationDisplay (ctx :MsoyContext, canvasHeight :int) :void
@@ -98,6 +100,8 @@ public class NotificationDisplay extends HBox
             toggleNotificationHistory(true);
             _popupBtn.selected = true;
         }
+
+        updateCurrentDisplay(false);
     }
 
     override protected function createChildren () :void
@@ -127,7 +131,7 @@ public class NotificationDisplay extends HBox
 
     protected function checkPendingNotifications () :void
     {
-        if (_currentlyAnimating) {
+        if (_animating) {
             return;
         }
         if (_pendingNotifications.length == 0) {
@@ -135,24 +139,35 @@ public class NotificationDisplay extends HBox
             return;
         }
 
-        var notif :Notification = Notification(_pendingNotifications.shift());
-        var notification :UIComponent = createDisplay(notif);
-        notification.x = _canvas.width;
-        notification.y = (_canvasHeight - notification.height) / 2;
-        _canvas.removeAllChildren();
-        _canvas.addChild(notification);
-        Tweener.addTween(notification, { x: 5, time: 0.75, transition: "easeoutquart" });
+        _current = Notification(_pendingNotifications.shift());
+        _animating = true;
+        updateCurrentDisplay(true);
 
         // set up the min/max display times
-        _currentlyAnimating = true;
-        _clearTimer.delay = 1000 * notif.getMaxDisplayTime();
+        _clearTimer.delay = 1000 * _current.getMaxDisplayTime();
         _clearTimer.reset();
-        Tweener.addTween(notification, { delay: notif.getMinDisplayTime(),
-            onComplete: function () :void {
-                _currentlyAnimating = false;
-                checkPendingNotifications();
-            }
-        });
+        setTimeout(function () :void {
+            _animating = false;
+            checkPendingNotifications();
+        }, _current.getMinDisplayTime() * 1000);
+    }
+
+    protected function updateCurrentDisplay (slide :Boolean) :void
+    {
+        if (_current == null) {
+            return;
+        }
+
+        var left :int = 5;
+        var notification :UIComponent = createDisplay(_current);
+        notification.y = (_canvasHeight - notification.height) / 2;
+        notification.x = slide ? _canvas.width : left;
+        _canvas.removeAllChildren();
+        _canvas.addChild(notification);
+
+        if (slide) {
+            Tweener.addTween(notification, { x: left, time: 0.75, transition: "easeoutquart" });
+        }
     }
 
     protected function displayCustomNotification (notification :Notification) :void
@@ -171,6 +186,7 @@ public class NotificationDisplay extends HBox
         // TODO: fancy fade? that would call attention to a 60 second old notification which
         // doesn't seem like what we want
         _canvas.removeAllChildren();
+        _current = null;
     }
 
     protected function createDisplay (
@@ -294,7 +310,8 @@ public class NotificationDisplay extends HBox
     protected var _canvas :Canvas;
     protected var _popupBtn :CommandCheckBox;
     protected var _pendingNotifications :Array = [];
-    protected var _currentlyAnimating :Boolean = false;
+    protected var _current :Notification;
+    protected var _animating :Boolean;
     protected var _nHistory :NotificationHistoryDisplay;
     protected var _clearTimer :Timer = new Timer(1, 1);
 }
