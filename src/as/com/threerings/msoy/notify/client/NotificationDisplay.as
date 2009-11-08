@@ -90,12 +90,13 @@ public class NotificationDisplay extends HBox
         }
     }
 
-    public function updatePopupLocation () :void
+    public function sizeDidChange () :void
     {
         if (_nHistory != null) {
-            var canvasPos :Point = localToGlobal(new Point(_canvas.x, _canvas.y));
-            _nHistory.x = canvasPos.x;
-            _nHistory.y = canvasPos.y - _nHistory.height;
+            // all the history text might need updating, just hide and re-show
+            hideNotificationHistory();
+            toggleNotificationHistory(true);
+            _popupBtn.selected = true;
         }
     }
 
@@ -108,7 +109,6 @@ public class NotificationDisplay extends HBox
         addChild(_canvas = new Canvas());
         _canvas.styleName = "notificationCanvas";
         _canvas.percentWidth = 100;
-        _canvas.minWidth = 200;
         _canvas.height = _canvasHeight;
         _canvas.horizontalScrollPolicy = ScrollPolicy.OFF;
         _canvas.verticalScrollPolicy = ScrollPolicy.OFF;
@@ -199,7 +199,8 @@ public class NotificationDisplay extends HBox
         }
 
         if (forHistory) {
-            text.width = getHistoryWidth();
+            // TODO: this is still cropping the text, even without the PADDING
+            text.width = getHistoryWidth(false);
         } else {
             text.width = _canvas.width * 2;
             while (text.textWidth > _canvas.width && text.length > 4) {
@@ -225,11 +226,19 @@ public class NotificationDisplay extends HBox
         hideNotificationHistory();
 
         if (show) {
+            var histWidth :int = getHistoryWidth(true);
+
             _nHistory = new NotificationHistoryDisplay(prepareNotifications(
-                _ctx.getNotificationDirector().getCurrentNotifications()), getHistoryWidth());
+                _ctx.getNotificationDirector().getCurrentNotifications()));
+            _nHistory.width = histWidth;
             _nHistory.addEventListener(TextEvent.LINK, dispatchEvent);
             PopUpManager.addPopUp(_nHistory, _ctx.getTopPanel(), false);
-            updatePopupLocation();
+
+            var canvasPos :Point = localToGlobal(new Point(_canvas.x, _canvas.y));
+            var limitPos :Point = localToGlobal(new Point(this.width - histWidth, _canvas.y));
+            _nHistory.x = Math.min(canvasPos.x, limitPos.x);
+            _nHistory.y = canvasPos.y - _nHistory.height;
+
             systemManager.addEventListener(MouseEvent.CLICK, maybeCloseHistory);
         }
     }
@@ -246,9 +255,11 @@ public class NotificationDisplay extends HBox
         _popupBtn.selected = false;
     }
 
-    protected function getHistoryWidth () :int
+    protected function getHistoryWidth (pad :Boolean) :int
     {
-        return this.width - 40;
+        var histWidth :int = Math.max(200, this.width - _popupBtn.width);
+        histWidth += pad ? NotificationHistoryDisplay.PADDING : 0;
+        return histWidth;
     }
 
     protected function prepareNotifications (notifs :Array) :Array

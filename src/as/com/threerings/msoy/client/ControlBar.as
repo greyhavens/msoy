@@ -198,7 +198,7 @@ public class ControlBar extends HBox
         super.setActualSize(uw, uh);
 
         if (_notificationDisplay != null && _notificationDisplay.visible) {
-            callLater(_notificationDisplay.updatePopupLocation);
+            callLater(_notificationDisplay.sizeDidChange);
         }
     }
 

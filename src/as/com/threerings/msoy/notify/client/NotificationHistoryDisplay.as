@@ -12,11 +12,12 @@ import mx.core.UIComponent;
 
 public class NotificationHistoryDisplay extends VBox
 {
-    public function NotificationHistoryDisplay (notifications :Array, width :int)
+    public static const PADDING :int = ScrollBar.THICKNESS;
+
+    public function NotificationHistoryDisplay (notifications :Array)
     {
         styleName = "notificationHistoryDisplay";
         height = 200;
-        this.width = width + ScrollBar.THICKNESS;
         _notifications = notifications;
 
         horizontalScrollPolicy = ScrollPolicy.OFF;

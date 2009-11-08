@@ -647,9 +647,9 @@ ChatInput {
   horizontalGap: 0;
   verticalGap: 0;
   borderStyle: none;
-  paddingRight: 10px;
+  paddingRight: 5px;
   paddingBottom: 4px;
-  paddingLeft: 20px;
+  paddingLeft: 0px;
   paddingTop: 3px;
 }
 
