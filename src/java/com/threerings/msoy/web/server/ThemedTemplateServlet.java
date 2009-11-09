@@ -32,18 +32,17 @@ public class ThemedTemplateServlet extends DefaultServlet
     protected void doGet (HttpServletRequest req, HttpServletResponse rsp)
         throws ServletException, IOException
     {
-        String appIdStr = req.getParameter(ArgNames.THEME);
-        int appId = (appIdStr != null) ? Integer.parseInt(appIdStr) : 0;
-        ThemeRecord themeRec = _themeRepo.loadTheme(appId);
+        String themeIdStr = req.getParameter(ArgNames.THEME);
+        int themeId = (themeIdStr != null) ? Integer.parseInt(themeIdStr) : 0;
+        ThemeRecord themeRec = (themeId != 0) ? _themeRepo.loadTheme(themeId) : null;
 
         VelocityContext ctx = new VelocityContext();
-
         if (themeRec != null) {
             ctx.put("logoUrl", themeRec.toLogo().getMediaPath());
-            ctx.put("backgroundColor", themeRec.backgroundColor);
+            ctx.put("backgroundColor", hexColor(themeRec.backgroundColor));
         } else {
             ctx.put("logoUrl", DEFAULT_LOGO_URL);
-            ctx.put("backgroundColor", DEFAULT_BACKGROUND_COLOR);
+            ctx.put("backgroundColor", hexColor(DEFAULT_BACKGROUND_COLOR));
         }
 
         try {
@@ -56,6 +55,11 @@ public class ThemedTemplateServlet extends DefaultServlet
         } catch (Exception ex) {
             rsp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
+    }
+
+    protected static String hexColor (int rgb)
+    {
+        return ("000000" + Integer.toHexString(rgb)).substring(0, 6);
     }
 
     @Inject ThemeRepository _themeRepo;
