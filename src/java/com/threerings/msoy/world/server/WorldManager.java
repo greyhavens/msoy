@@ -53,6 +53,7 @@ import com.threerings.msoy.server.MemberNodeActions;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.world.client.WorldService.HomeResultListener;
+import com.threerings.msoy.world.data.WorldCodes;
 
 import com.threerings.msoy.group.server.ThemeLogic;
 import com.threerings.msoy.group.server.persist.GroupRepository;
@@ -124,6 +125,10 @@ public class WorldManager
         final MemberObject memobj = (MemberObject)caller;
         final boolean tofu = memobj.avatar == null || memobj.avatar.itemId == 0;
 
+        if (ownerId == 0) {
+            throw new InvocationException(MsoyCodes.E_INTERNAL_ERROR);
+        }
+
         _invoker.postUnit(new PersistingUnit("getHomeId", listener) {
             @Override public void invokePersistent () throws Exception {
                 if (tofu) {
@@ -132,15 +137,21 @@ public class WorldManager
                         _gifts = gifts.toArray(new Avatar[gifts.size()]);
                     }
                 }
-                _homeId = _memberLogic.getHomeId(ownerType, ownerId);
+                if ((_homeId = _memberLogic.getHomeId(ownerType, ownerId)) == null) {
+                    String msg = WorldCodes.E_INTERNAL_ERROR;
+                    switch (ownerType) {
+                    case MsoySceneModel.OWNER_TYPE_MEMBER: msg = WorldCodes.NO_SUCH_USER; break;
+                    case MsoySceneModel.OWNER_TYPE_GROUP: msg = WorldCodes.NO_SUCH_GROUP; break;
+                    }
+                    throw new InvocationException(msg);
+                }
             }
+
             @Override public void handleSuccess () {
                 if (_gifts != null) {
                     ((HomeResultListener)_listener).selectGift(_gifts, _homeId);
-                } else if (_homeId != null) {
-                    ((HomeResultListener)_listener).readyToEnter(_homeId);
                 } else {
-                    handleFailure(new InvocationException("m.no_such_user"));
+                    ((HomeResultListener)_listener).readyToEnter(_homeId);
                 }
             }
             protected Integer _homeId;
