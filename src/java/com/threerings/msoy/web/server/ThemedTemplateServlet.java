@@ -59,7 +59,8 @@ public class ThemedTemplateServlet extends DefaultServlet
 
     protected static String hexColor (int rgb)
     {
-        return ("000000" + Integer.toHexString(rgb)).substring(0, 6);
+        String str = ("000000" + Integer.toHexString(rgb));
+        return str.substring(str.length() - 6);
     }
 
     @Inject ThemeRepository _themeRepo;
