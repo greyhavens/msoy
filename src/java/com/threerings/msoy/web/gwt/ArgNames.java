@@ -28,6 +28,9 @@ public class ArgNames
     /** Popup a dialog to publish a challenge to the feed. */
     public static final String FB_CHALLENGE_FEED = "feed";
 
+    /** Theme identifier for requesting templated /theme pages. */
+    public static final String THEME = "themeId";
+
     /**
      * Parameters that are passed into the facebook canvas callback. These generally are parsed
      * by the callback servlet and control the GWT token used for the redirect.
@@ -49,7 +52,7 @@ public class ArgNames
 
         /** Attaches a tracking vector to be used when creating a new user. */
         VECTOR(ArgNames.VECTOR),
-        
+
         APP_ID("app");
 
         /** The name of the parameter. */

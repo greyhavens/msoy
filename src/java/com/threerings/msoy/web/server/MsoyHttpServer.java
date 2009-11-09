@@ -202,7 +202,7 @@ public class MsoyHttpServer extends Server
             StreamUtil.close(out);
         }
     }
-    
+
     public static void dumpParameters (HttpServletRequest req)
     {
         for (String pname : ParameterUtil.getParameterNames(req)) {
@@ -321,6 +321,7 @@ public class MsoyHttpServer extends Server
         .put("/fbinvite/*", FacebookInviteServlet.class)
         .put("/gameframe/*", GameFrameServlet.class)
         .put("/js/facebook.js", AppInserterServlet.class)
+        .put("/themed/*", ThemedTemplateServlet.class)
         .put(DeploymentConfig.PROXY_PREFIX + "*", MediaProxyServlet.class)
         // if -Dthrottle=true is set, serve up files as if we were on a slow connection
         .put("/*", (Boolean.getBoolean("throttle") || Boolean.getBoolean("throttleMedia"))
@@ -353,7 +354,7 @@ public class MsoyHttpServer extends Server
 
     protected static final String PRIVACY_HEADER_NAME = "P3P";
 
-    // Copied from puzzle pirates web site 
+    // Copied from puzzle pirates web site
     protected static final String PRIVACY_HEADER = "CP=\"CAO DSP COR CURa ADMa DEVa TAIa PSAa " +
         "PSDa CONo OUR IND PHY ONL UNI PUR COM NAV INT DEM\"";
 }
