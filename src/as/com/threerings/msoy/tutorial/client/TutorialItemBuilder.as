@@ -57,6 +57,18 @@ public class TutorialItemBuilder
     }
 
     /**
+     * Sets the popup helper to a ui highlighter that will highlight the given control bar ui
+     * component using a standard tutorial graphic on popup and unhighlight it on popdown. This is
+     * different from a normal highlight in that the menu popper will be highlighted if the
+     * desired component is not currently being displayed.
+     */
+    public function controlBarHighlight (obj :UIComponent) :TutorialItemBuilder
+    {
+        return popup(new UIHighlightHelper(_director.topPanel, Util.adapt(
+            _director.topPanel.getControlBar().getClickableComponent, obj)));
+    }
+
+    /**
      * Limit the item for display exclusively to beginner users.
      */
     public function beginner () :TutorialItemBuilder

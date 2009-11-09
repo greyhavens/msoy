@@ -125,8 +125,10 @@ public class TutorialDirector
         delay *= delayMultiplier;
         var id :int = getTimer();
         setTimeout(function () :void {
-            newSuggestion("test" + id, gibby("This is a test suggestion (id " + id + ").")).
-                button("Do It!", function () :void {}).queue();
+            newSuggestion("test" + id, gibby("This is a test suggestion (id " + id + ")."))
+                .button("Do It!", function () :void {})
+                .controlBarHighlight(_ctx.getControlBar().goBtn)
+                .queue();
         }, delay);
 
         _ctx.getChatDirector().displayFeedback(null, "Test: queued suggestion id " + id +

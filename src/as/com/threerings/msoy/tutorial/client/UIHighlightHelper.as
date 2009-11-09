@@ -18,8 +18,16 @@ public class UIHighlightHelper
 {
     /**
      * Creates a new highlight helper.
+     * @param topPanel the top panel of the client
+     * @param comp either a UI component or a function that returns a UI component. In the case of
+     *        the former, the highlight always surrounds the fixed component. In the case of the
+     *        latter, the highlight will adapt to surround whatever component is returned at the
+     *        beginning of the frame and disappearing when null is returned.
+     *          <listing verion="3.0">
+     *              function comp () :UIComponent;
+     *          </listing>
      */
-    public function UIHighlightHelper (topPanel :TopPanel, comp :UIComponent)
+    public function UIHighlightHelper (topPanel :TopPanel, comp :Object)
     {
         _top = topPanel;
         _comp = comp;
@@ -32,51 +40,65 @@ public class UIHighlightHelper
             return;
         }
 
-        var tl :Point = toTop(0, 0);
-        var br :Point = toTop(_comp.width, _comp.height);
-        _highlight = new UIComponent();
+        var comp :UIComponent = getComp();
+        if (comp == null) {
+            return;
+        }
 
         // TODO: animation... something more eyecatching
-        // TODO: update the position of the highlight each frame in case _comp moves
-        _highlight.graphics.clear();
-        _highlight.graphics.lineStyle(2, 0xff0000);
-        _highlight.graphics.drawRect(0, 0, br.x - tl.x, br.y - tl.y);
+        _highlight = new UIComponent();
+        _highlight.addEventListener(Event.ENTER_FRAME, handleEnterFrame);
         _highlight.visible = false;
-
         _top.addChild(_highlight);
 
-        _comp.addEventListener(Event.ENTER_FRAME, handleEnterFrame);
     }
 
     /** @inheritDocs */
     public function popdown () :void
     {
-        _comp.removeEventListener(Event.ENTER_FRAME, handleEnterFrame);
-
         if (_highlight == null) {
             return;
         }
+
+        _highlight.removeEventListener(Event.ENTER_FRAME, handleEnterFrame);
         _top.removeChild(_highlight);
         _highlight = null;
     }
 
+    protected function getComp () :UIComponent
+    {
+        if (_comp is UIComponent) {
+            return UIComponent(_comp);
+        } else if (_comp is Function) {
+            return UIComponent((_comp as Function)());
+        }
+        return null;
+    }
+
     protected function handleEnterFrame (evt :Event) :void
     {
-        if (_highlight != null && _comp != null) {
-            _highlight.visible = _comp.stage != null;
-            var tl :Point = toTop(0, 0);
+        var comp :UIComponent = getComp();
+        if (true == (_highlight.visible = (comp != null && comp.stage != null))) {
+            var tl :Point = toTop(comp, 0, 0);
+            var br :Point = toTop(comp, comp.width, comp.height);
+
             _highlight.x = tl.x;
             _highlight.y = tl.y;
+
+            // TODO: this is really inefficient, but it is placeholder
+            _highlight.graphics.clear();
+            _highlight.graphics.lineStyle(2, 0xff0000);
+            _highlight.graphics.drawRect(0, 0, br.x - tl.x, br.y - tl.y);
         }
     }
 
-    protected function toTop (x :Number, y :Number) :Point
+    protected function toTop (comp :UIComponent, x :Number, y :Number) :Point
     {
-        return _top.globalToLocal(_comp.localToGlobal(new Point(x, y)));
+        return _top.globalToLocal(comp.localToGlobal(new Point(x, y)));
     }
 
     protected var _top :TopPanel;
-    protected var _comp :UIComponent;
+    protected var _comp :Object;
     protected var _highlight :UIComponent;
 }
 }
