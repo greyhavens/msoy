@@ -1,6 +1,9 @@
 <module>
   <inherits name="global"/>
 
+  <!-- temporary dependency - Jamie, can we clean this up? -->
+  <inherits name="facebookbase"/>
+
   <source path="client/edutil"/>
 
   <public path="public/edutil"/>
