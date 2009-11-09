@@ -30,7 +30,7 @@ public class ThemeRecord extends PersistentRecord
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 3;
+    public static final int SCHEMA_VERSION = 4;
 
     /** The groupId of this theme. */
     @Id
@@ -48,6 +48,9 @@ public class ThemeRecord extends PersistentRecord
 
     /** The constraint for the logo image. */
     public byte logoMediaConstraint;
+
+    /** The background colour of the main Whirled UI. */
+    public int backgroundColor;
 
     public ThemeRecord ()
     {
