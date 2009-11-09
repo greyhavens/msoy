@@ -203,6 +203,19 @@ public class ControlBar extends HBox
     }
 
     /**
+     * Returns either the given component if it is in view, or the expander button that will
+     * bring the given component into view when clicked. Returns null if the target is not
+     * currently a descendant of the control bar.
+     */
+    public function getClickableComponent (target :UIComponent) :UIComponent
+    {
+        if (target.parent == this) {
+            return target;
+        }
+        return _buttons.getClickableComponent(target);
+    }
+
+    /**
      * Creates the controls we'll be using.
      */
     protected function createControls () :void

@@ -93,6 +93,22 @@ public class ButtonPalette extends Canvas
         }
     }
 
+    /**
+     * Returns either the given component if it is in view, or the expander button that will
+     * bring the given component into view when clicked. Returns null if the target is not
+     * currently a descendant of the palette.
+     */
+    public function getClickableComponent (target :UIComponent) :UIComponent
+    {
+        if (target.parent != _tile) {
+            return null;
+        }
+        if (!_toggle.visible || _up || target.y < _tile.tileHeight) {
+            return target;
+        }
+        return _toggle;
+    }
+
     override protected function measure () :void
     {
         super.measure();
