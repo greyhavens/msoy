@@ -1,4 +1,5 @@
 <module>
+  <inherits name="edutil"/>
   <inherits name="msgs"/>
   <inherits name="room"/>
   <inherits name="money"/>
