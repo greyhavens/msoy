@@ -11,7 +11,7 @@
   <source path="client/mail"/>
 
   <public path="public/mail"/>
-  <stylesheet src="mail.css"/>
+  <stylesheet src="/themed/css/mail.css?themeId=0"/>
 
   <entry-point class="client.mail.MailPage"/>
 </module>

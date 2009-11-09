@@ -5,5 +5,5 @@
   <source path="client/money"/>
 
   <public path="public/money"/>
-  <stylesheet src="money.css"/>
+  <stylesheet src="/themed/css/money.css?themeId=0"/>
 </module>

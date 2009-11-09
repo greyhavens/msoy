@@ -8,7 +8,7 @@
   <source path="client/comment"/>
 
   <public path="public/rooms"/>
-  <stylesheet src="rooms.css"/>
+  <stylesheet src="/themed/css/rooms.css?themeId=0"/>
 
   <entry-point class="client.rooms.RoomsPage"/>
 </module>

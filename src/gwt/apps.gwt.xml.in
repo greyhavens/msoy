@@ -6,7 +6,7 @@
   <source path="client/apps"/>
 
   <public path="public/apps"/>
-  <stylesheet src="apps.css"/>
+  <stylesheet src="/themed/css/apps.css?themeId=0"/>
 
   <entry-point class="client.apps.AppsPage"/>
 </module>

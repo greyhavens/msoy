@@ -4,5 +4,5 @@
   <source path="client/edutil"/>
 
   <public path="public/edutil"/>
-  <stylesheet src="edutil.css"/>
+  <stylesheet src="/themed/css/edutil.css?themeId=0"/>
 </module>

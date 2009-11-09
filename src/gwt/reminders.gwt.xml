@@ -10,5 +10,5 @@
   <source path="client/reminders"/>
 
   <public path="public/reminders"/>
-  <stylesheet src="reminders.css"/>
+  <stylesheet src="/themed/css/reminders.css?themeId=0"/>
 </module>

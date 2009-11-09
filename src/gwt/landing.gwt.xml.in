@@ -5,7 +5,7 @@
   <source path="client/landing"/>
 
   <public path="public/landing"/>
-  <stylesheet src="landing.css"/>
+  <stylesheet src="/themed/css/landing.css?themeId=0"/>
 
   <entry-point class="client.landing.LandingPage"/>
 </module>

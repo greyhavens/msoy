@@ -3,5 +3,5 @@
   <source path="client/trophy"/>
 
   <public path="public/trophy"/>
-  <stylesheet src="trophy.css"/>
+  <stylesheet src="/themed/css/trophy.css?themeId=0"/>
 </module>

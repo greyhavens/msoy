@@ -5,7 +5,7 @@
   <source path="client/billing"/>
 
   <public path="public/billing"/>
-  <stylesheet src="billing.css"/>
+  <stylesheet src="/themed/css/billing.css?themeId=0"/>
 
   <entry-point class="client.billing.BillingPage"/>
 </module>

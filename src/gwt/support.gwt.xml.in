@@ -7,7 +7,7 @@
   <source path="com/threerings/msoy/underwire/gwt"/>
 
   <public path="public/support"/>
-  <stylesheet src="support.css"/>
+  <stylesheet src="/themed/css/support.css?themeId=0"/>
 
   <entry-point class="client.support.SupportPage"/>
 </module>

@@ -2,6 +2,6 @@
   <inherits name="facebookbase"/>
   <source path="client/frame"/>
   <public path="public/frame"/>
-  <stylesheet src="frame.css"/>
+  <stylesheet src="/themed/css/frame.css?themeId=0"/>
   <entry-point class="client.frame.FrameEntryPoint"/>
 </module>

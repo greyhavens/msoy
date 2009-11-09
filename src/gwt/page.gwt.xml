@@ -6,5 +6,5 @@
   <source path="client/page"/>
 
   <public path="public/page"/>
-  <stylesheet src="page.css"/>
+  <stylesheet src="/themed/css/page.css?themeId=0"/>
 </module>

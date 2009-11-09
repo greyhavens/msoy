@@ -4,7 +4,7 @@
   <source path="client/issues"/>
 
   <public path="public/issues"/>
-  <stylesheet src="issues.css"/>
+  <stylesheet src="/themed/css/issues.css?themeId=0"/>
 
   <entry-point class="client.issues.IssuesPage"/>
 </module>

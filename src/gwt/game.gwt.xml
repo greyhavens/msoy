@@ -8,5 +8,5 @@
   <source path="client/game"/>
 
   <public path="public/game"/>
-  <stylesheet src="game.css"/>
+  <stylesheet src="/themed/css/game.css?themeId=0"/>
 </module>

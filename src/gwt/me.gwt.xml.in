@@ -10,7 +10,7 @@
   <source path="client/me"/>
 
   <public path="public/me"/>
-  <stylesheet src="me.css"/>
+  <stylesheet src="/themed/css/me.css?themeId=0"/>
 
   <entry-point class="client.me.MePage"/>
 </module>

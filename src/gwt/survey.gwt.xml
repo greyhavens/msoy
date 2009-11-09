@@ -6,5 +6,5 @@
   <source path="client/survey"/>
 
   <public path="public/survey"/>
-  <stylesheet src="survey.css"/>
+  <stylesheet src="/themed/css/survey.css?themeId=0"/>
 </module>

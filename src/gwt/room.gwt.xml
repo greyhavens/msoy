@@ -5,5 +5,5 @@
   <source path="client/room"/>
 
   <public path="public/room"/>
-  <stylesheet src="room.css"/>
+  <stylesheet src="/themed/css/room.css?themeId=0"/>
 </module>

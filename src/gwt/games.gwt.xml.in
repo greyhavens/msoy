@@ -9,7 +9,7 @@
   <source path="client/games"/>
 
   <public path="public/games"/>
-  <stylesheet src="games.css"/>
+  <stylesheet src="/themed/css/games.css?themeId=0"/>
 
   <entry-point class="client.games.GamesPage"/>
 </module>

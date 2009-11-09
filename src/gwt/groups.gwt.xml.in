@@ -9,7 +9,7 @@
   <source path="client/groups"/>
 
   <public path="public/groups"/>
-  <stylesheet src="groups.css"/>
+  <stylesheet src="/themed/css/groups.css?themeId=0"/>
 
   <entry-point class="client.groups.GroupsPage"/>
 </module>

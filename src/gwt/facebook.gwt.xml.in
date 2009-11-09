@@ -2,6 +2,6 @@
   <inherits name="facebookbase"/>
   <source path="client/facebook"/>
   <public path="public/facebook"/>
-  <stylesheet src="facebook.css"/>
+  <stylesheet src="/themed/css/facebook.css?themeId=0"/>
   <entry-point class="client.facebook.FacebookPage"/>
 </module>

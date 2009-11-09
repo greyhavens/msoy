@@ -26,7 +26,7 @@
   <source path="client/adminz"/>
 
   <public path="public/adminz"/>
-  <stylesheet src="adminz.css"/>
+  <stylesheet src="/themed/css/adminz.css?themeId=0"/>
 
   <entry-point class="client.adminz.AdminPage"/>
 </module>

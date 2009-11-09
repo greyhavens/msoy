@@ -15,5 +15,5 @@
   <source path="client/item"/>
 
   <public path="public/item"/>
-  <stylesheet src="item.css"/>
+  <stylesheet src="/themed/css/item.css?themeId=0"/>
 </module>

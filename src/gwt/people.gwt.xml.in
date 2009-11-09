@@ -26,7 +26,7 @@
   <source path="client/people"/>
 
   <public path="public/people"/>
-  <stylesheet src="people.css"/>
+  <stylesheet src="/themed/css/people.css?themeId=0"/>
 
   <entry-point class="client.people.PeoplePage"/>
 </module>

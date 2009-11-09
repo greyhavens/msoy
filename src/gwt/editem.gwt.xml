@@ -12,5 +12,5 @@
   <source path="client/editem"/>
 
   <public path="public/editem"/>
-  <stylesheet src="editem.css"/>
+  <stylesheet src="/themed/css/editem.css?themeId=0"/>
 </module>

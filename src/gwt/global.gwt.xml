@@ -20,8 +20,8 @@
 
   <public path="public/global"/>
 
-  <stylesheet src="global.css"/>
-  <stylesheet src="gwt.css"/>
+  <stylesheet src="/themed/css/global.css?themeId=0"/>
+  <stylesheet src="/themed/css/gwt.css?themeId=0"/>
 
   <!-- Standard implementations of href attribute -->
   <replace-with class="client.ui.impl.HrefImpl">
