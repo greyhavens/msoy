@@ -42,7 +42,7 @@ public class ThemedTemplateServlet extends DefaultServlet
             ctx.put("backgroundColor", hexColor(themeRec.backgroundColor));
         } else {
             ctx.put("logoUrl", DEFAULT_LOGO_URL);
-            ctx.put("backgroundColor", hexColor(DEFAULT_BACKGROUND_COLOR));
+            ctx.put("backgroundColor", hexColor(ThemeRecord.DEFAULT_BACKGROUND_COLOR));
         }
 
         try {
@@ -67,5 +67,4 @@ public class ThemedTemplateServlet extends DefaultServlet
     @Inject ThemeLogic _themeLogic;
 
     protected static final String DEFAULT_LOGO_URL = "/images/header/header_logo.png";
-    protected static final int DEFAULT_BACKGROUND_COLOR = 0xFFFFFF;
 }

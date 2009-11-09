@@ -19,6 +19,8 @@ import com.threerings.msoy.data.all.Theme;
 @Entity
 public class ThemeRecord extends PersistentRecord
 {
+    public static final int DEFAULT_BACKGROUND_COLOR = 0xFFFFFF;
+
     // AUTO-GENERATED: FIELDS START
     public static final Class<ThemeRecord> _R = ThemeRecord.class;
     public static final ColumnExp GROUP_ID = colexp(_R, "groupId");
@@ -50,7 +52,7 @@ public class ThemeRecord extends PersistentRecord
     public byte logoMediaConstraint;
 
     /** The background colour of the main Whirled UI. */
-    public int backgroundColor;
+    public int backgroundColor = DEFAULT_BACKGROUND_COLOR;
 
     public ThemeRecord ()
     {
