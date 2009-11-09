@@ -53,19 +53,16 @@ public class Theme extends SimpleStreamableObject
     {
     }
 
-    public Theme (GroupName group)
-    {
-        this(group, false, null);
-    }
-
     /**
      * An initialization constructor.
+     * @param backgroundColor2
      */
-    public Theme (GroupName group, boolean playOnEnter, MediaDesc logo)
+    public Theme (GroupName group, boolean playOnEnter, MediaDesc logo, int backgroundColor)
     {
         this.group = group;
         this.playOnEnter = playOnEnter;
         this.logo = logo;
+        this.backgroundColor = backgroundColor;
     }
 
     /**

@@ -8,6 +8,7 @@ import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.TextBox;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.Theme;
@@ -68,6 +69,13 @@ public class ThemeEdit extends FlowPanel
                 }
             });
 
+            final TextBox bgColBox = MsoyUI.createTextBox(hexColor(_theme.backgroundColor), 6, 6);
+            addRow(_msgs.etBackgroundColor(), _msgs.etBgColTip(), bgColBox, new Command() {
+                public void execute () {
+                    _theme.backgroundColor = Integer.valueOf(bgColBox.getText(), 16);
+                }
+            });
+
             final CheckBox poeBox = new CheckBox();
             poeBox.setValue(_theme.playOnEnter);
             addRow(_msgs.etPlayOnEnter(), _msgs.etPoeTip(), poeBox, new Command() {
@@ -96,6 +104,12 @@ public class ThemeEdit extends FlowPanel
     protected Theme _theme;
     protected Group _group;
     protected String _name;
+
+    protected static String hexColor (int rgb)
+    {
+        String str = ("000000" + Integer.toHexString(rgb));
+        return str.substring(str.length() - 6);
+    }
 
     protected static final GroupsMessages _msgs = GWT.create(GroupsMessages.class);
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);

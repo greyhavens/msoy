@@ -138,6 +138,9 @@ public class ThemeLogic
             updates.put(ThemeRecord.LOGO_MIME_TYPE, theme.logo.mimeType);
             updates.put(ThemeRecord.LOGO_MEDIA_CONSTRAINT, theme.logo.constraint);
         }
+        if (theme.backgroundColor != trec.backgroundColor) {
+            updates.put(ThemeRecord.BACKGROUND_COLOR, theme.backgroundColor);
+        }
         if (updates.size() > 0) {
             _themeRepo.updateTheme(theme.getGroupId(), updates);
         }

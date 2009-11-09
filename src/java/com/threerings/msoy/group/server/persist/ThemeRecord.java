@@ -28,6 +28,7 @@ public class ThemeRecord extends PersistentRecord
     public static final ColumnExp LOGO_MEDIA_HASH = colexp(_R, "logoMediaHash");
     public static final ColumnExp LOGO_MIME_TYPE = colexp(_R, "logoMimeType");
     public static final ColumnExp LOGO_MEDIA_CONSTRAINT = colexp(_R, "logoMediaConstraint");
+    public static final ColumnExp BACKGROUND_COLOR = colexp(_R, "backgroundColor");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that
@@ -68,7 +69,7 @@ public class ThemeRecord extends PersistentRecord
      */
     public Theme toTheme (GroupName group)
     {
-        return new Theme(group, playOnEnter, toLogo());
+        return new Theme(group, playOnEnter, toLogo(), backgroundColor);
     }
 
     /**
