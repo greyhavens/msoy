@@ -336,10 +336,10 @@ public class GroupServlet extends MsoyServiceServlet
     }
 
     @Override
-    public PurchaseResult<Theme> createTheme (Theme theme, Currency currency, int authedAmount)
+    public PurchaseResult<Theme> createTheme (int groupId, Currency currency, int authedAmount)
         throws ServiceException
     {
-        return _themeLogic.createTheme(requireValidatedUser(), theme, currency, authedAmount);
+        return _themeLogic.createTheme(requireValidatedUser(), groupId, currency, authedAmount);
     }
 
     // from interface GroupService

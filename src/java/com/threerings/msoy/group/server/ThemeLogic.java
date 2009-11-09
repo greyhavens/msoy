@@ -31,6 +31,7 @@ import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.PriceQuote;
 import com.threerings.msoy.money.data.all.PurchaseResult;
 import com.threerings.msoy.money.server.MoneyLogic;
+import com.threerings.msoy.money.server.MoneyLogic.BuyOperation;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.web.gwt.ServiceCodes;
 import com.threerings.msoy.web.gwt.ServiceException;
@@ -86,38 +87,28 @@ public class ThemeLogic
     /**
      * Create a new theme
      */
-    public PurchaseResult<Theme> createTheme (
-        final MemberRecord mrec, Theme theme, Currency currency, int authedAmount)
+    public PurchaseResult<Theme> createTheme (MemberRecord mrec, final int groupId,
+        Currency currency, int authedAmount)
         throws ServiceException
     {
-        if (_groupRepo.loadGroup(theme.getGroupId()) == null) {
-            log.warning("Attempt to create theme for non-existent group", "group", theme.group);
+        if (_groupRepo.loadGroup(groupId) == null) {
+            log.warning("Attempt to create theme for non-existent group", "group", groupId);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
 
-        final ThemeRecord trec = new ThemeRecord();
-        trec.groupId = theme.getGroupId();
-        if (theme.logo != null) {
-            trec.logoMimeType = theme.logo.mimeType;
-            trec.logoMediaHash = theme.logo.hash;
-            trec.logoMediaConstraint = theme.logo.constraint;
-        }
-        trec.playOnEnter = theme.playOnEnter;
-
-        // execute the purchase
-        PurchaseResult<Theme> result = _moneyLogic.buyTheme(
-            mrec, THEME_PURCHASE_KEY, currency, authedAmount, Currency.BARS, getThemeBarCost(),
-            new MoneyLogic.BuyOperation<Theme>() {
+        BuyOperation<Theme> buyOperation = new MoneyLogic.BuyOperation<Theme>() {
             public Theme create (boolean magicFree, Currency currency, int amountPaid)
                 throws ServiceException
             {
+                ThemeRecord trec = new ThemeRecord(groupId);
                 _themeRepo.createTheme(trec);
 
                 return trec.toTheme(_groupRepo.loadGroupName(trec.groupId));
             }
-        }).toPurchaseResult();
+        };
 
-        return result;
+        return _moneyLogic.buyTheme(mrec, THEME_PURCHASE_KEY, currency, authedAmount,
+            Currency.BARS, getThemeBarCost(), buyOperation).toPurchaseResult();
     }
 
     /**

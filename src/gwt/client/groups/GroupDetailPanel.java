@@ -8,10 +8,12 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -20,8 +22,10 @@ import com.threerings.gwt.ui.FloatPanel;
 import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.util.DateUtil;
+import com.threerings.gwt.util.PopupCallback;
 
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.Theme;
 import com.threerings.msoy.group.data.all.Group;
 import com.threerings.msoy.group.data.all.GroupMembership.Rank;
 import com.threerings.msoy.group.gwt.GroupDetail;
@@ -266,35 +270,11 @@ public class GroupDetailPanel extends FlowPanel
                 }));
         }
 
-        // edit this group & manage rooms
+        // manage themes
         if (_detail.myRank == Rank.MANAGER || CShell.isSupport()) {
-            FlowPanel themeActions = MsoyUI.createFlowPanel("ThemeActions");
-            actions.add(themeActions);
-
-            // For now, only support+ can create themes
-            if (CShell.isSupport()) {
-                final int groupId = _detail.group.groupId;
-                if (_detail.theme != null) {
-                    themeActions.add(MsoyUI.createActionLabel(_msgs.detailEditTheme(), "inline",
-                        Link.createHandler(Pages.GROUPS, Nav.THEME_EDIT.composeArgs(groupId))));
-
-                    themeActions.add(new InlineLabel(" | "));
-                    themeActions.add(MsoyUI.createActionLabel(_msgs.detailViewLineup(), "inline",
-                            Link.createHandler(Pages.STUFF, "l", groupId)));
-
-                    themeActions.add(new InlineLabel(" | "));
-                    themeActions.add(MsoyUI.createActionLabel(_msgs.detailViewShop(), "inline",
-                        Link.createHandler(Pages.SHOP, "j", groupId)));
-
-                } else {
-                    themeActions.add(MsoyUI.createActionLabel(
-                        _msgs.detailCreateTheme(), "inline", new ClickHandler() {
-                            public void onClick (ClickEvent event) {
-                                Link.go(Pages.GROUPS, Nav.THEME_EDIT.composeArgs(groupId));
-                            }
-                        }));
-                }
-            }
+            _themeActions = MsoyUI.createFlowPanel("ThemeActions");
+            actions.add(_themeActions);
+            updateThemes();
         }
 
         FlowPanel rightPanel = MsoyUI.createFlowPanel("Right");
@@ -325,6 +305,45 @@ public class GroupDetailPanel extends FlowPanel
         _contentPanel.showDiscussions();
         // list managers and some members
         lowerArea.add(new TopMembersPanel());
+    }
+
+    protected void updateThemes ()
+    {
+        _themeActions.clear();
+
+        // For now, only support+ can create themes
+        if (CShell.isSupport()) {
+            final int groupId = _detail.group.groupId;
+            if (_detail.theme != null) {
+                _themeActions.add(MsoyUI.createActionLabel(_msgs.detailEditTheme(), "inline",
+                    Link.createHandler(Pages.GROUPS, Nav.THEME_EDIT.composeArgs(groupId))));
+
+                _themeActions.add(new InlineLabel(" | "));
+                _themeActions.add(MsoyUI.createActionLabel(_msgs.detailViewLineup(), "inline",
+                        Link.createHandler(Pages.STUFF, "l", groupId)));
+
+                _themeActions.add(new InlineLabel(" | "));
+                _themeActions.add(MsoyUI.createActionLabel(_msgs.detailViewShop(), "inline",
+                    Link.createHandler(Pages.SHOP, "j", groupId)));
+
+            } else {
+                _themeActions.add(MsoyUI.createActionLabel(
+                    _msgs.detailCreateTheme(), "inline", new ClickHandler() {
+                        public void onClick (ClickEvent event) {
+                            AsyncCallback<Theme> ourCallback = new PopupCallback<Theme>() {
+                                public void onSuccess (Theme theme) {
+                                    _buyPopup.hide();
+                                    _detail.theme = theme;
+                                    updateThemes();
+                                }
+                            };
+
+                            _buyPopup = ThemeBuyPanel.buyTheme(
+                                groupId, _detail.group.name, ourCallback);
+                        }
+                    }));
+            }
+        }
     }
 
     protected Command removeMember (final int memberId) {
@@ -406,6 +425,8 @@ public class GroupDetailPanel extends FlowPanel
     protected GroupDetail _detail;
     protected GroupExtras _extras;
     protected DetailContentPanel _contentPanel;
+    protected FlowPanel _themeActions;
+    protected PopupPanel _buyPopup;
 
     protected static final GroupsMessages _msgs = GWT.create(GroupsMessages.class);
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);

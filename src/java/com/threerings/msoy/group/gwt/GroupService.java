@@ -170,7 +170,7 @@ public interface GroupService extends RemoteService
     /**
      * Create a new theme in the system, with data supplied in the {@link Theme} argument.
      */
-    PurchaseResult<Theme> createTheme (Theme theme, Currency currency, int authedAmount)
+    PurchaseResult<Theme> createTheme (int groupId, Currency currency, int authedAmount)
         throws ServiceException;
 
     /**

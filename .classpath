@@ -47,7 +47,7 @@
 	<classpathentry kind="lib" path="extlibs/java/commons-lang.jar"/>
 	<classpathentry kind="lib" path="extlibs/java/commons-logging.jar"/>
 	<classpathentry kind="lib" path="extlibs/java/antisamy/dom4j.jar"/>
-	<classpathentry kind="lib" path="extlibs/java/ehcache.jar"/>
+	<classpathentry kind="lib" path="extlibs/java/ehcache.jar" sourcepath="/Users/zell/src/ehcache-1.6.0-sources.jar"/>
 	<classpathentry kind="lib" path="extlibs/java/flexTasks.jar"/>
 	<classpathentry kind="lib" path="extlibs/java/ganymed.jar"/>
 	<classpathentry kind="lib" path="extlibs/java/getdown.jar"/>

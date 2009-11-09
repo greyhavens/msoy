@@ -23,6 +23,11 @@ import com.threerings.msoy.web.gwt.TagHistory;
 public interface GroupServiceAsync
 {
     /**
+     * The async version of {@link GroupService#createGroup}.
+     */
+    void createGroup (Group group, GroupExtras extras, Currency currency, int authedAmount, AsyncCallback<PurchaseResult<Group>> callback);
+
+    /**
      * The async version of {@link GroupService#getGroups}.
      */
     void getGroups (int offset, int count, GroupService.GroupQuery query, boolean needCount, AsyncCallback<PagedResult<GroupCard>> callback);
@@ -75,7 +80,7 @@ public interface GroupServiceAsync
     /**
      * The async version of {@link GroupService#createTheme}.
      */
-    void createTheme (Theme theme, Currency currency, int authedAmount, AsyncCallback<PurchaseResult<Theme>> callback);
+    void createTheme (int groupId, Currency currency, int authedAmount, AsyncCallback<PurchaseResult<Theme>> callback);
 
     /**
      * The async version of {@link GroupService#updateGroup}.
@@ -86,6 +91,16 @@ public interface GroupServiceAsync
      * The async version of {@link GroupService#updateTheme}.
      */
     void updateTheme (Theme theme, AsyncCallback<Void> callback);
+
+    /**
+     * The async version of {@link GroupService#leaveGroup}.
+     */
+    void leaveGroup (int groupId, int memberId, AsyncCallback<Void> callback);
+
+    /**
+     * The async version of {@link GroupService#joinGroup}.
+     */
+    void joinGroup (int groupId, AsyncCallback<Void> callback);
 
     /**
      * The async version of {@link GroupService#updateMemberRank}.
@@ -151,19 +166,4 @@ public interface GroupServiceAsync
      * The async version of {@link GroupService#setBrandShares}.
      */
     void setBrandShares (int brandId, int targetId, int shares, AsyncCallback<Void> callback);
-
-    /**
-     * The async version of {@link GroupService#createGroup}.
-     */
-    void createGroup (Group group, GroupExtras extras, Currency currency, int authedAmount, AsyncCallback<PurchaseResult<Group>> callback);
-
-    /**
-     * The async version of {@link GroupService#joinGroup}.
-     */
-    void joinGroup (int groupId, AsyncCallback<Void> callback);
-
-    /**
-     * The async version of {@link GroupService#leaveGroup}.
-     */
-    void leaveGroup (int groupId, int memberId, AsyncCallback<Void> callback);
 }

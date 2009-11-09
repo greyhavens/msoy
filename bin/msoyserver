@@ -11,6 +11,8 @@ NODE="msoy1"
 HOSTNAME=`hostname`
 
 JAVA_ARGS="-Djava.awt.headless=true \
+           -Dcom.samskivert.depot.debug=false \
+           -Dcom.samskivert.depot.pg83=false \
            -Dlog4j.configuration=log4j.properties \
            -Dorg.apache.commons.logging.Log=org.apache.commons.logging.impl.Log4JLogger \
            -Dehcache.disk.store.dir=world"
