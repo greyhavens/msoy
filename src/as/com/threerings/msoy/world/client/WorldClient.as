@@ -468,9 +468,8 @@ class ThemeUpdater implements AttributeChangeListener
 
     public function updateTheme (theme :Theme) :void
     {
-        Log.getLog(ThemeUpdater).info("Updating theme: " + theme);
-        _client.dispatchEventToGWT(THEME_CHANGE_EVENT, (theme != null) ?
-            [ theme.getGroupId(), theme.logo.getMediaPath() ] : [ 0, null ]);
+        _client.dispatchEventToGWT(THEME_CHANGE_EVENT,
+            (theme != null) ? [ theme.getGroupId() ] : [ 0 ]);
     }
 
     protected var _client :MsoyClient;

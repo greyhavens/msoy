@@ -13,7 +13,6 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.HasAlignment;
-import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -41,8 +40,7 @@ public class FrameHeader
 {
     public FrameHeader (ClickHandler onLogoClick)
     {
-        _logo = MsoyUI.createActionImage(DEFAULT_LOGO_URL, onLogoClick);
-        _logoContainer = MsoyUI.createSimplePanel(_logo, "frameHeaderLogo");
+        _logoContainer = MsoyUI.createSimplePanel(null, "frameHeaderLogo");
 
         _statusContainer = MsoyUI.createSimplePanel(null, "frameHeaderStatus");
 
@@ -111,7 +109,6 @@ public class FrameHeader
      */
     public void setLogoUrl (String path)
     {
-        _logo.setUrl(path != null ? path : DEFAULT_LOGO_URL);
     }
 
     public void selectTab (Tabs tab)
@@ -136,7 +133,7 @@ public class FrameHeader
     protected void updateTabs ()
     {
         _naviPanel.clear();
-    
+
         int col = 0;
         col += addButton(col, Pages.ME, _cmsgs.menuMe(), _images.me(), _images.ome(), _images.sme());
         // TODO: remove the tab images
@@ -221,10 +218,7 @@ public class FrameHeader
     protected int _statusCol;
     protected List<NaviButton> _buttons = new ArrayList<NaviButton>();
     protected Set<Pages> _hidden = new HashSet<Pages>();
-    protected Image _logo;
 
     protected static final NaviImages _images = GWT.create(NaviImages.class);
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
-
-    protected static final String DEFAULT_LOGO_URL = "/images/header/header_logo.png";
 }

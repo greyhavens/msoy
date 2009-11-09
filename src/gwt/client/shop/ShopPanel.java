@@ -25,7 +25,6 @@ import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MediaDesc;
 
-import client.shell.CShell;
 import client.shell.DynamicLookup;
 import client.ui.MsoyUI;
 import client.ui.SearchBox;
@@ -44,7 +43,6 @@ public class ShopPanel extends FlowPanel
     {
         setStyleName("shopPanel");
         _theme = theme;
-
         int themeId = (theme != null) ? theme.getGroupId() : 0;
 
         // prepare the search box
@@ -94,7 +92,6 @@ public class ShopPanel extends FlowPanel
 
         ListingGrid grid = new ListingGrid(HEADER_HEIGHT) {
             @Override protected String getEmptyMessage () {
-                CShell.log("GEM Model: " + _model);
                 GroupName theme = ((CatalogModels.Jumble) _model).theme;
                 if (theme != null) {
                     return _msgs.themeShopNoItems();
