@@ -3,10 +3,6 @@
 
 package com.threerings.msoy.data.all;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.io.SimpleStreamableObject;
@@ -28,6 +24,9 @@ public class Theme extends SimpleStreamableObject
 
     /** Whether or not we start playing this group's associated AVRG upon room entry. */
     public boolean playOnEnter;
+
+    /** The background colour of the main Whirled UI. */
+    public int backgroundColor;
 
     /**
      * Return the specified MediaDesc, or the theme default logo if it's null.
@@ -80,52 +79,6 @@ public class Theme extends SimpleStreamableObject
     public int getGroupId ()
     {
         return (group != null) ? group.getGroupId() : 0;
-    }
-
-    /**
-     * Flattens this instance into a string that can be passed between JavaScript apps.
-     */
-    public List<String> flatten ()
-    {
-        List<String> data = new ArrayList<String>();
-        if (group != null) {
-            data.addAll(group.flatten());
-        } else {
-            data.add(null);
-        }
-        if (logo != null) {
-            data.addAll(logo.flatten());
-        } else {
-            data.add(null);
-        }
-        data.add(Boolean.toString(playOnEnter));
-        return data;
-    }
-
-    /**
-     * Creates and initializes an instance from supplied {@link #flatten}ed string.
-     */
-    public static Theme unflatten (Iterator<String> data)
-    {
-        if (data == null) {
-            return null;
-        }
-
-        // the name is not optional; if it's null, this is a null theme
-        String groupName = data.next();
-        if (groupName == null) {
-            return null;
-        }
-        GroupName group = GroupName.unflatten(groupName, data.next());
-
-        // the logo is optional, a single null means no logo
-        String logoHash = data.next();
-        MediaDesc logo = (logoHash != null) ?
-            MediaDesc.unflatten(logoHash, data.next(), data.next()) : null;
-
-        boolean playOnEnter = Boolean.parseBoolean(data.next());
-
-        return new Theme(group, playOnEnter, logo);
     }
 
     @Override

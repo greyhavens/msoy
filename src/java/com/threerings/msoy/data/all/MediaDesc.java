@@ -3,9 +3,6 @@
 
 package com.threerings.msoy.data.all;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.io.Streamable;
@@ -658,27 +655,6 @@ public class MediaDesc implements Streamable, IsSerializable
         default:
             return false;
         }
-    }
-
-    /**
-     * Flattens this instance into a string that can be passed between JavaScript apps.
-     */
-    public List<String> flatten ()
-    {
-        List<String> data = new ArrayList<String>();
-        data.add(hashToString(hash));
-        data.add(Byte.toString(mimeType));
-        data.add(Byte.toString(constraint));
-        return data;
-    }
-
-    /**
-     * Creates and initializes an instance from supplied strings.
-     */
-    public static MediaDesc unflatten (String hashStr, String typeStr, String conStr)
-    {
-        return new MediaDesc(
-            stringToHash(hashStr), Byte.parseByte(typeStr), Byte.parseByte(conStr));
     }
 
     @Override // from Object

@@ -639,7 +639,7 @@ public class WebUserServlet extends MsoyServiceServlet
             log.warning("Failed to load new mail count [id=" + mrec.memberId + "].", e);
         }
 
-        data.theme = (mrec.themeGroupId != 0) ? _themeLogic.loadTheme(mrec.themeGroupId) : null;
+        data.themeId = mrec.themeGroupId;
     }
 
     protected static String generateDeleteSecret (MemberRecord mrec)

@@ -109,8 +109,7 @@ public class Session
         frame.dispatchEvent(new StatusChangeEvent(StatusChangeEvent.BARS, data.gold));
         frame.dispatchEvent(new StatusChangeEvent(StatusChangeEvent.LEVEL, data.level));
 
-        frame.dispatchEvent(new ThemeChangeEvent(
-            (data.theme != null) ? data.theme.getGroupId() : 0));
+        frame.dispatchEvent(new ThemeChangeEvent(data.themeId));
     }
 
     /**
