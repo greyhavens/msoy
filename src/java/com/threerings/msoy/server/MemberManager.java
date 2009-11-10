@@ -13,6 +13,7 @@ import com.google.inject.Singleton;
 import com.samskivert.jdbc.WriteOnlyUnit;
 import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
+import com.samskivert.util.ResultListener;
 import com.samskivert.util.StringUtil;
 
 import com.google.common.collect.Lists;
@@ -41,15 +42,18 @@ import com.threerings.crowd.chat.data.UserMessage;
 import com.threerings.crowd.chat.server.SpeakUtil;
 import com.threerings.crowd.chat.server.SpeakUtil.ChatHistoryEntry;
 import com.threerings.crowd.data.BodyObject;
+import com.threerings.crowd.peer.server.CrowdPeerManager.ChatHistoryResult;
 import com.threerings.crowd.server.BodyManager;
 import com.threerings.crowd.server.PlaceManager;
 import com.threerings.crowd.server.PlaceRegistry;
 
+import com.threerings.msoy.chat.data.MsoyChatChannel;
 import com.threerings.msoy.chat.data.MsoyChatCodes;
 import com.threerings.msoy.data.MemberExperience;
 import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.persist.BatchInvoker;
 import com.threerings.msoy.server.persist.MemberRepository;
@@ -453,9 +457,28 @@ public class MemberManager
      */
     public void complainMember (
         final BodyObject complainer, final int targetId,
-        String complaint, MemberName optTargetName)
+        final String complaint, final MemberName optTargetName)
     {
-        MemberName complainerName = (MemberName) complainer.getVisibleName();
+        _peerMan.collectChatHistory((MemberName)complainer.getVisibleName(),
+            new ResultListener<ChatHistoryResult>() {
+            @Override public void requestFailed (Exception cause) {
+                log.warning("Failed to collect chat history for a complaint", "cause", cause);
+                finish(null);
+            }
+            @Override public void requestCompleted (ChatHistoryResult result) {
+                finish(result);
+            }
+            protected void finish (ChatHistoryResult result) {
+                finishComplaint(result, complainer, targetId, complaint, optTargetName);
+            }
+        });
+    }
+
+    protected void finishComplaint (
+        ChatHistoryResult result, final BodyObject complainer,
+        final int targetId, String complaint, MemberName optTargetName)
+    {
+        MemberName complainerName = (MemberName)complainer.getVisibleName();
 
         final EventRecord event = new EventRecord();
         event.source = Integer.toString(complainerName.getMemberId());
@@ -464,13 +487,26 @@ public class MemberManager
         event.subject = complaint;
 
         // format and provide the complainer's chat history
-        SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss");
         StringBuilder chatHistory = new StringBuilder();
-        for (ChatHistoryEntry msg : SpeakUtil.getChatHistory(complainerName)) {
-            UserMessage umsg = (UserMessage)msg.message;
-            chatHistory.append(df.format(new Date(umsg.timestamp))).append(' ').
-                append(StringUtil.pad(MsoyChatCodes.XLATE_MODES[umsg.mode], 10)).append(' ').
-                append(umsg.speaker);
+        if (!result.failedNodes.isEmpty()) {
+            chatHistory.append("Not all chat history could be collected; failed servers: ");
+            StringUtil.toString(chatHistory, result.failedNodes);
+            chatHistory.append(".\n\n");
+        }
+        // TODO: break up the formatting by channel and remove the "mode" infix
+        SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss");
+        for (ChatHistoryEntry entry : SpeakUtil.getChatHistory(complainerName)) {
+            UserMessage umsg = (UserMessage)entry.message;
+            chatHistory.append(df.format(new Date(umsg.timestamp))).append(' ');
+            MsoyChatChannel channel = (MsoyChatChannel)entry.channel;
+            if (channel != null && channel.ident instanceof GroupName) {
+                GroupName group = (GroupName)channel.ident;
+                chatHistory.append("grp ").append(group).append('(')
+                    .append(group.getGroupId()).append(')');
+            } else {
+                chatHistory.append(MsoyChatCodes.XLATE_MODES[umsg.mode]);
+            }
+            chatHistory.append('|').append(umsg.speaker);
             if (umsg.speaker instanceof MemberName) {
                 int memberId = ((MemberName)umsg.speaker).getMemberId();
                 chatHistory.append('(').append(memberId).append(')');
