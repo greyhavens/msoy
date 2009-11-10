@@ -391,8 +391,7 @@ public class FacebookLogic
     public void initSessionData (
         ExternalSiteId siteId, MemberRecord mrec, MemberMoney money, SessionData data)
     {
-        // TODO: is any of this useful for other apps?
-        if (!siteId.equals(getDefaultGamesSite())) {
+        if (siteId.getFacebookAppId() == null) {
             return;
         }
 
