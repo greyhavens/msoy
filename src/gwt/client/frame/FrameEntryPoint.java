@@ -814,6 +814,7 @@ public class FrameEntryPoint
             return new String[] { String.valueOf(isHeaderless()) };
         case OPEN_BOTTOM_FRAME:
             openBottomFrame(args[0]);
+            return null;
         case GET_THEME_ID:
             return new String[] { String.valueOf(getThemeId()) };
         }
