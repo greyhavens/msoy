@@ -12,6 +12,7 @@ import com.threerings.msoy.web.gwt.Pages;
 import client.msgs.ForumModels;
 import client.msgs.ForumPanel;
 import client.msgs.ThreadPanel;
+import client.shell.CShell;
 import client.shell.Page;
 import client.ui.MsoyUI;
 
@@ -61,6 +62,10 @@ public class GroupsPage extends Page
         if (page == Nav.DETAIL) {
             setContent(_detail);
             _detail.setGroup(args.get(1, 0), args.get(2, "").equals("r"));
+
+        } else if (page == Nav.DEFAULT && CShell.frame.getThemeId() != 0) {
+            setContent(_detail);
+            _detail.setGroup(CShell.frame.getThemeId(), true);
 
         } else if (page == Nav.EDIT) {
             int groupId = args.get(1, 0);
