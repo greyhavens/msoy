@@ -37,9 +37,9 @@ import com.threerings.presents.server.PresentsSession;
 import com.threerings.presents.server.ReportManager;
 import com.threerings.presents.util.PersistingUnit;
 
-import com.threerings.crowd.chat.data.ChatMessage;
 import com.threerings.crowd.chat.data.UserMessage;
 import com.threerings.crowd.chat.server.SpeakUtil;
+import com.threerings.crowd.chat.server.SpeakUtil.ChatHistoryEntry;
 import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.server.BodyManager;
 import com.threerings.crowd.server.PlaceManager;
@@ -466,8 +466,8 @@ public class MemberManager
         // format and provide the complainer's chat history
         SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss");
         StringBuilder chatHistory = new StringBuilder();
-        for (ChatMessage msg : SpeakUtil.getChatHistory(complainerName)) {
-            UserMessage umsg = (UserMessage)msg;
+        for (ChatHistoryEntry msg : SpeakUtil.getChatHistory(complainerName)) {
+            UserMessage umsg = (UserMessage)msg.message;
             chatHistory.append(df.format(new Date(umsg.timestamp))).append(' ').
                 append(StringUtil.pad(MsoyChatCodes.XLATE_MODES[umsg.mode], 10)).append(' ').
                 append(umsg.speaker);
