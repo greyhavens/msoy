@@ -3,7 +3,6 @@
 
 package client.frame;
 
-import client.shell.ThemedStylesheets;
 import client.util.events.FlashEvents;
 import client.util.events.ThemeChangeEvent;
 
@@ -121,7 +120,6 @@ public abstract class Layout
 
         FlashEvents.addListener(new ThemeChangeEvent.Listener() {
             public void themeChanged (ThemeChangeEvent event) {
-                ThemedStylesheets.inject(event.getGroupId());
                 _header.setHidden(Pages.ROOMS, event.getGroupId() != 0);
             }
         });

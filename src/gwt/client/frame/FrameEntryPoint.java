@@ -48,6 +48,7 @@ import client.shell.Frame;
 import client.shell.ScriptSources;
 import client.shell.Session;
 import client.shell.ShellMessages;
+import client.shell.ThemedStylesheets;
 import client.ui.BorderedDialog;
 import client.util.ArrayUtil;
 import client.util.FlashClients;
@@ -58,6 +59,7 @@ import client.util.NoopAsyncCallback;
 import client.util.events.FlashEvent;
 import client.util.events.FlashEvents;
 import client.util.events.NameChangeEvent;
+import client.util.events.ThemeChangeEvent;
 
 /**
  * Handles the outer shell of the Whirled web application. Loads pages into an iframe and also
@@ -101,8 +103,16 @@ public class FrameEntryPoint
         // initialize our GA handler
         _analytics.init();
 
-        // set up the callbackd that our flash clients can call
+        // set up the callbacd that our flash clients can call
         configureCallbacks(this);
+
+        // listen for theme changes (one which will likely be triggered by the didLogon below)
+        FlashEvents.addListener(new ThemeChangeEvent.Listener() {
+            public void themeChanged (ThemeChangeEvent event) {
+                _themeId = event.getGroupId();
+                ThemedStylesheets.inject(_themeId);
+            }
+        });
 
         // validate our session which will dispatch a didLogon or didLogoff
         Session.validate();
@@ -444,6 +454,12 @@ public class FrameEntryPoint
             _bottomFrameToken = bottomFrameToken;
             _layout.setBottomContent(_bottomFrame);
         }
+    }
+
+    // from interface Frame
+    public int getThemeId ()
+    {
+        return _themeId;
     }
 
     protected void setPage (Pages page)
@@ -798,7 +814,8 @@ public class FrameEntryPoint
             return new String[] { String.valueOf(isHeaderless()) };
         case OPEN_BOTTOM_FRAME:
             openBottomFrame(args[0]);
-            return null;
+        case GET_THEME_ID:
+            return new String[] { String.valueOf(getThemeId()) };
         }
         CShell.log("Got unknown frameCall request [call=" + call + "].");
         return null; // not reached
@@ -995,6 +1012,7 @@ public class FrameEntryPoint
     protected String _pageToken = "", _bottomFrameToken = "";
     protected String _closeToken, _closeTitle;
     protected String _facebookId, _facebookSession;
+    protected int _themeId;
 
     protected Embedding _embedding;
     protected FrameHeader _header;

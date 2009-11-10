@@ -128,6 +128,9 @@ public abstract class Page
                 public void openBottomFrame (String token) {
                     frameCall(Frame.Calls.OPEN_BOTTOM_FRAME, token);
                 }
+                public int getThemeId () {
+                    return Integer.valueOf(frameCall(Frame.Calls.GET_THEME_ID)[0]);
+                }
             });
 
             // extract our frame id to use in frameCall
@@ -211,6 +214,10 @@ public abstract class Page
                 }
                 public void openBottomFrame (String token) {
                     // no bottom frame in test mode
+                }
+                public int getThemeId () {
+                    // no themes in test mode
+                    return 0;
                 }
             });
 

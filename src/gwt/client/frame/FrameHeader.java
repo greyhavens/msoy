@@ -103,14 +103,6 @@ public class FrameHeader
         return _logoContainer;
     }
 
-    /**
-     * Replace the Whirled logo with the URL identified by the given path, or restore the
-     * default if path is null.
-     */
-    public void setLogoUrl (String path)
-    {
-    }
-
     public void selectTab (Tabs tab)
     {
         for (NaviButton button : _buttons) {

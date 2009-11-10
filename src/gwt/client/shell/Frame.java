@@ -24,7 +24,7 @@ public interface Frame
         SET_TITLE, ADD_NAV_LINK, NAVIGATE_TO, NAVIGATE_REPLACE, CLOSE_CLIENT, CLOSE_CONTENT,
         DID_LOGON, LOGOFF, EMAIL_UPDATED, GET_WEB_CREDS, GET_PAGE_TOKEN, GET_MD5,
         CHECK_FLASH_VERSION, GET_ACTIVE_INVITE, GET_VISITOR_INFO, TEST_ACTION, GET_EMBEDDING,
-        IS_HEADERLESS, OPEN_BOTTOM_FRAME
+        IS_HEADERLESS, OPEN_BOTTOM_FRAME, GET_THEME_ID
     };
 
     /**
@@ -136,4 +136,9 @@ public interface Frame
      * Opens a content frame below the main frame and displays the given page.
      */
     void openBottomFrame (String token);
+
+    /**
+     * Get the groupId of our current theme, or 0 if we're in the mundane Whirled.
+     */
+    int getThemeId ();
 }
