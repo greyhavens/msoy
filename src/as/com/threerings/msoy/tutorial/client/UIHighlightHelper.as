@@ -3,10 +3,16 @@
 
 package com.threerings.msoy.tutorial.client {
 
+import flash.display.DisplayObject;
+import flash.display.MovieClip;
 import flash.events.Event;
 import flash.geom.Point;
 
 import mx.core.UIComponent;
+
+import com.threerings.util.MultiLoader;
+
+import com.threerings.flex.FlexUtil;
 
 import com.threerings.msoy.client.TopPanel;
 
@@ -31,12 +37,19 @@ public class UIHighlightHelper
     {
         _top = topPanel;
         _comp = comp;
+
+        MultiLoader.getContents(CIRCLE, function (result :MovieClip) :void {
+            _circle = result;
+            _highlight = new UIComponent();
+            _highlight.mouseEnabled = false;
+            _highlight.addChild(_circle);
+        });
     }
 
     /** @inheritDocs */
     public function popup () :void
     {
-        if (_highlight != null) {
+        if (_highlight == null || _up) {
             return;
         }
 
@@ -45,24 +58,23 @@ public class UIHighlightHelper
             return;
         }
 
-        // TODO: animation... something more eyecatching
-        _highlight = new UIComponent();
+        _up = true;
         _highlight.addEventListener(Event.ENTER_FRAME, handleEnterFrame);
         _highlight.visible = false;
         _top.addChild(_highlight);
-
     }
 
     /** @inheritDocs */
     public function popdown () :void
     {
-        if (_highlight == null) {
+        if (!_up) {
             return;
         }
 
-        _highlight.removeEventListener(Event.ENTER_FRAME, handleEnterFrame);
         _top.removeChild(_highlight);
-        _highlight = null;
+        _highlight.removeEventListener(Event.ENTER_FRAME, handleEnterFrame);        
+        _up = false;
+        _lastComp = null;
     }
 
     protected function getComp () :UIComponent
@@ -78,18 +90,26 @@ public class UIHighlightHelper
     protected function handleEnterFrame (evt :Event) :void
     {
         var comp :UIComponent = getComp();
-        if (true == (_highlight.visible = (comp != null && comp.stage != null))) {
+        var show :Boolean = comp != null && comp.stage != null;
+
+        if (show) {
             var tl :Point = toTop(comp, 0, 0);
             var br :Point = toTop(comp, comp.width, comp.height);
+            var w :int = br.x - tl.x + 30;
+            var h :int = br.y - tl.y + 30;
 
-            _highlight.x = tl.x;
-            _highlight.y = tl.y;
+            _highlight.x = tl.x - 8;
+            _highlight.y = tl.y - 10;
 
-            // TODO: this is really inefficient, but it is placeholder
-            _highlight.graphics.clear();
-            _highlight.graphics.lineStyle(2, 0xff0000);
-            _highlight.graphics.drawRect(0, 0, br.x - tl.x, br.y - tl.y);
+            if (!_highlight.visible || comp != _lastComp) {
+                _circle.width = w;
+                _circle.height = h;
+                _circle.gotoAndPlay(0);
+            }
         }
+
+        _highlight.visible = show;
+        _lastComp = comp;
     }
 
     protected function toTop (comp :UIComponent, x :Number, y :Number) :Point
@@ -99,6 +119,13 @@ public class UIHighlightHelper
 
     protected var _top :TopPanel;
     protected var _comp :Object;
+    protected var _circle :MovieClip;
     protected var _highlight :UIComponent;
+    protected var _lastComp :UIComponent;
+    protected var _up :Boolean;
+
+    [Embed(source="../../../../../../../rsrc/media/skins/tutorial/circle.swf",
+           mimeType="application/octet-stream")]
+    protected static const CIRCLE :Class;
 }
 }
