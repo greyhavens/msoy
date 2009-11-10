@@ -248,7 +248,7 @@ public abstract class BaseItemDetailPanel extends SmartTable
     protected void updateStampItem ()
     {
         _stampPanel.clear();
-        if (_managedThemes == null || _managedThemes.length == 0) {
+        if (_managedThemes == null || _managedThemes.length == 0 || _item.isCatalogClone()) {
             return;
         }
 
