@@ -215,7 +215,8 @@ public /*abstract*/ class MsoyClient extends CrowdClient
      */
     public function isChromeless () :Boolean
     {
-        return UberClient.isFeaturedPlaceView() || MsoyParameters.get()["chromeless"] == "true";
+        return UberClient.isFeaturedPlaceView() ||
+            (_embedding.isChromelessWhenMinimized() && _minimized);
     }
 
     /**

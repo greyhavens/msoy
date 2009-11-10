@@ -286,7 +286,7 @@ public class TopPanel extends Canvas
 
     protected function getHeaderBarHeight () :int
     {
-        return _showChrome && !UberClient.isViewer() ?
+        return showChrome() && !UberClient.isViewer() ?
             HeaderBar.getHeight(_ctx.getMsoyClient()) : 0;
     }
 
@@ -299,8 +299,8 @@ public class TopPanel extends Canvas
         app.height = _ctx.getHeight();
 
         // center control bar in the "footer". we shall put other things here soon
-        _controlBar.setStyle("bottom", _showChrome ? 0 : -getControlBarHeight());
-        _headerBar.setStyle("top", _showChrome || UberClient.isViewer() ? 0 :
+        _controlBar.setStyle("bottom", showChrome() ? 0 : -getControlBarHeight());
+        _headerBar.setStyle("top", showChrome() || UberClient.isViewer() ? 0 :
             -HeaderBar.getHeight(_ctx.getMsoyClient()));
 
         if (_leftPanel != null) {
@@ -333,7 +333,7 @@ public class TopPanel extends Canvas
         var w :int = _ctx.getWidth() - getLeftPanelWidth();
         var h :int = _ctx.getHeight() - top;
 
-        if (_showChrome) {
+        if (showChrome()) {
             bottom += getControlBarHeight();
             h -= getControlBarHeight();
         }
@@ -348,6 +348,11 @@ public class TopPanel extends Canvas
         _placeBox.setStyle("right", right);
         _placeBox.setStyle("left", left + getLeftPanelWidth()); // + ScrollBar.THICKNESS);
         _placeBox.setActualSize(w, h);
+    }
+
+    protected function showChrome () :Boolean
+    {
+        return _showChrome && !_ctx.getMsoyClient().isChromeless();
     }
 
     /** The giver of life. */

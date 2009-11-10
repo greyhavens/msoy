@@ -80,6 +80,15 @@ public final class Embedding extends Enum
     }
 
     /**
+     * Returns true if this embedding wants to hide the control bars and other things when gwt is
+     * open.
+     */
+    public function isChromelessWhenMinimized () :Boolean
+    {
+        return this == FACEBOOK_ROOMS;
+    }
+
+    /**
      * Returns true if this embedding should upsell whirled (i.e. display some links to whirled).
      */
     public function shouldUpsellWhirled () :Boolean

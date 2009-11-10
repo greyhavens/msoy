@@ -134,7 +134,7 @@ public class RoomObjectView extends RoomView
         if (_zoom == null) {
             _zoom = Prefs.getRoomZoom();
         }
-        return super.getZoom();
+        return _ctx.getMsoyClient().isChromeless() ? FIT_WIDTH : super.getZoom();
     }
 
     // from Zoomable, via RoomView

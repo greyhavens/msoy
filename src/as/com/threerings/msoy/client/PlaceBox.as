@@ -328,7 +328,7 @@ public class PlaceBox extends LayeredContainer
         }
 
         var zoomable :Zoomable = _msoyPlaceView != null ? _msoyPlaceView.asZoomable() : null;
-        if (zoomable == null) {
+        if (zoomable == null || _ctx.getMsoyClient().isChromeless()) {
             return;
         }
 
