@@ -48,6 +48,14 @@ public enum ClientMode
     }
 
     /**
+     * Detects if this client mode is the facebook rooms portal.
+     */
+    public boolean isFacebookRooms ()
+    {
+        return this == FB_ROOMS;
+    }
+
+    /**
      * Detects if this client mode should only show one thing at a time. That is, either content
      * or client, not both.
      */
