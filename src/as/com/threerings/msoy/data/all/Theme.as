@@ -27,6 +27,9 @@ public class Theme extends SimpleStreamableObject
     /** Whether or not we start playing this group's associated AVRG upon room entry. */
     public var playOnEnter :Boolean;
 
+    /** The background colour of the main Whirled UI. */
+    public var backgroundColor :int;
+
     public function Theme ()
     {
     }
@@ -48,6 +51,7 @@ public class Theme extends SimpleStreamableObject
         group = GroupName(ins.readObject());
         logo = MediaDesc(ins.readObject());
         playOnEnter = ins.readBoolean();
+        backgroundColor = ins.readInt();
     }
 }
 
