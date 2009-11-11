@@ -49,6 +49,7 @@ import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.PriceQuote;
 import com.threerings.msoy.money.data.all.PurchaseResult;
+import com.threerings.msoy.money.server.MoneyExchange;
 import com.threerings.msoy.money.server.MoneyLogic;
 
 import com.threerings.msoy.person.server.persist.GameInvitationRecord;
@@ -339,7 +340,7 @@ public class MemberServlet extends MsoyServiceServlet
         if (memrec.isSubscriber()) {
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
-        return new PriceQuote(Currency.BARS, -1, _runtime.subscription.barscriptionCost, 0, 0f, 0);
+        return _exchange.secureQuote(Currency.BARS, _runtime.subscription.barscriptionCost, false);
     }
 
     // from WebMemberService
@@ -403,6 +404,7 @@ public class MemberServlet extends MsoyServiceServlet
     @Inject protected InviteRepository _inviteRepo;
     @Inject protected MemberLogic _memberLogic;
     @Inject protected MemberManager _memberMan;
+    @Inject protected MoneyExchange _exchange;
     @Inject protected MoneyLogic _moneyLogic;
     @Inject protected ProfileRepository _profileRepo;
     @Inject protected RuntimeConfig _runtime;

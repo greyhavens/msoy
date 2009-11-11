@@ -159,8 +159,8 @@ public abstract class BuyPanel<T> extends SmartTable
             _coinPanel.setVisible(false);
             _barPanel.setVisible(true);
             int cents = quote.getCentsPerBar() * quote.getBars();
-            barTip = (cents < 100) ? _msgs.centsCost(""+cents) :
-                _msgs.dollarCost(NumberFormat.getFormat("$0.00").format(cents/100f));
+            barTip = (cents == 0) ? "" : (cents < 100) ? _msgs.centsCost("" + cents)
+                : _msgs.dollarCost(NumberFormat.getFormat("$0.00").format(cents / 100f));
         } else {
             // the item is priced in coins, so either one will work
             _coinPanel.setVisible(!_altCurrency);
