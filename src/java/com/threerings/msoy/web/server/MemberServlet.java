@@ -367,8 +367,8 @@ public class MemberServlet extends MsoyServiceServlet
         throws ServiceException
     {
         MemberRecord memrec = requireAuthedUser();
-        return (memrec.themeGroupId != 0) &&
-            (_groupRepo.getMembership(themeGroupId, memrec.memberId).left == Rank.MANAGER);
+        return (memrec.themeGroupId != 0) && (memrec.isSupport() ||
+                (_groupRepo.getMembership(themeGroupId, memrec.memberId).left == Rank.MANAGER));
     }
 
     // from interface WebMemberService
