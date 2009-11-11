@@ -118,7 +118,17 @@ public interface WebMemberServiceAsync
     void barscribe (int authedBarCost, AsyncCallback<PurchaseResult<WebCreds.Role>> callback);
 
     /**
+     * The async version of {@link WebMemberService#isThemeManager}.
+     */
+    void isThemeManager (int themeGroupId, AsyncCallback<Boolean> callback);
+
+    /**
      * The async version of {@link WebMemberService#loadManagedThemes}.
      */
     void loadManagedThemes (AsyncCallback<GroupName[]> callback);
+
+    /**
+     * The async version of {@link WebMemberService#escapeTheme}.
+     */
+    void escapeTheme (AsyncCallback<Void> callback);
 }

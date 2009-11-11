@@ -363,6 +363,15 @@ public class MemberServlet extends MsoyServiceServlet
     }
 
     // from interface WebMemberService
+    public Boolean isThemeManager (int themeGroupId)
+        throws ServiceException
+    {
+        MemberRecord memrec = requireAuthedUser();
+        return (memrec.themeGroupId != 0) &&
+            (_groupRepo.getMembership(themeGroupId, memrec.memberId).left == Rank.MANAGER);
+    }
+
+    // from interface WebMemberService
     public GroupName[] loadManagedThemes ()
         throws ServiceException
     {
@@ -373,6 +382,18 @@ public class MemberServlet extends MsoyServiceServlet
             groupIds.add(rec.groupId);
         }
         return _groupRepo.loadGroupNames(groupIds).values().toArray(new GroupName[0]);
+    }
+
+    // from interface WebMemberService
+    public void escapeTheme ()
+        throws ServiceException
+    {
+        MemberRecord memrec = requireAuthedUser();
+        if (memrec.themeGroupId != 0) {
+            _memberRepo.configureThemeId(memrec.memberId, 0);
+            return;
+        }
+        // else they left the theme before the service call landed, that's fine with us
     }
 
 

@@ -179,8 +179,23 @@ public interface WebMemberService extends RemoteService
         throws ServiceException;
 
     /**
+     * Tests to see if we're the manager of the given theme (really just the group).
+     */
+    Boolean isThemeManager (int themeGroupId)
+        throws ServiceException;
+
+    /**
      * Loads the themes the current player is allowed to manage (stamp).
      */
     GroupName[] loadManagedThemes ()
+        throws ServiceException;
+
+    /**
+     * To be called only for a player who is in a theme, unset the persistent MemberRecord.themeId
+     * for that player (but leave her in her current location). This provides a partial escape from
+     * the theme for managers who want to e.g. browse the regular shop/stuff while working with
+     * one of their themes.
+     */
+    void escapeTheme ()
         throws ServiceException;
 }

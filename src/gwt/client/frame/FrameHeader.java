@@ -13,6 +13,7 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.HasAlignment;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -20,6 +21,8 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.SessionData;
 import com.threerings.msoy.web.gwt.Tabs;
+import com.threerings.msoy.web.gwt.WebMemberService;
+import com.threerings.msoy.web.gwt.WebMemberServiceAsync;
 
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
@@ -29,8 +32,11 @@ import client.shell.CShell;
 import client.shell.Session;
 import client.shell.ShellMessages;
 import client.ui.MsoyUI;
+import client.util.InfoCallback;
 import client.util.Link;
 import client.util.NaviUtil;
+import client.util.events.FlashEvents;
+import client.util.events.ThemeChangeEvent;
 
 /**
  * Displays our navigation buttons, member status and/or logon/signup buttons.
@@ -40,7 +46,21 @@ public class FrameHeader
 {
     public FrameHeader (ClickHandler onLogoClick)
     {
-        _logoContainer = MsoyUI.createSimplePanel(null, "frameHeaderLogo");
+        _logoContainer = new SmartTable();
+        _logoContainer.setWidget(0, 0, MsoyUI.createSimplePanel(null, "frameHeaderLogo"));
+        final Image escapeButton = MsoyUI.createActionImage(
+            "/images/ui/close.png", _cmsgs.escapeThemeTip(), new ClickHandler() {
+                public void onClick (ClickEvent event) {
+                    _membersvc.escapeTheme(new InfoCallback<Void>() {
+                        public void onSuccess (Void result) {
+                            // awesome, it worked -- now let the UI know
+                            CShell.frame.dispatchEvent(new ThemeChangeEvent(0));
+                        }
+                    });
+                }
+            });
+        _logoContainer.setWidget(0, 1, escapeButton);
+        _logoContainer.getCellFormatter().setVerticalAlignment(0, 1, HasAlignment.ALIGN_TOP);
 
         _statusContainer = MsoyUI.createSimplePanel(null, "frameHeaderStatus");
 
@@ -50,6 +70,27 @@ public class FrameHeader
 
         // listen for session state changes
         Session.addObserver(this);
+
+        FlashEvents.addListener(new ThemeChangeEvent.Listener() {
+            public void themeChanged (ThemeChangeEvent event) {
+                int themeId = event.getGroupId();
+                setHidden(Pages.ROOMS, themeId != 0);
+                escapeButton.setVisible(false);
+
+                if (themeId != 0) {
+                    // if we're managers of this theme, give us an escape button
+                    // TODO: this is most likely a somewhat temporary piece of functionality;
+                    // TODO: if it sticks with us long-term, we should ship the "isManager" data
+                    // TODO: to ourselves in more intelligent ways so we don't do a superfluous
+                    // TODO: service call every single time somebody steps into a theme.
+                    _membersvc.isThemeManager(themeId, new InfoCallback<Boolean>() {
+                        public void onSuccess (Boolean result) {
+                            escapeButton.setVisible(result);
+                        }
+                    });
+                }
+            }
+        });
     }
 
     /**
@@ -139,6 +180,7 @@ public class FrameHeader
                   _images.sworlds());
         col += addButton(col, Pages.SHOP, _cmsgs.menuShop(), _images.shop(), _images.oshop(),
                   _images.sshop());
+
     }
 
     protected int addButton (int col, Pages page, String text, AbstractImagePrototype up,
@@ -149,7 +191,7 @@ public class FrameHeader
         if (_hidden.contains(page)) {
             return 0;
         }
-        _naviPanel.setWidget(0, col, button);
+        _naviPanel.setWidget(1, col, button);
         return 1;
     }
 
@@ -204,7 +246,7 @@ public class FrameHeader
 
     protected SmartTable _naviPanel;
     protected SimplePanel _statusContainer;
-    protected SimplePanel _logoContainer;
+    protected SmartTable _logoContainer;
     protected StatusPanel _status = new StatusPanel();
     protected SmartTable _logonPanel = makeLogonPanel();
     protected int _statusCol;
@@ -213,4 +255,5 @@ public class FrameHeader
 
     protected static final NaviImages _images = GWT.create(NaviImages.class);
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
+    protected static final WebMemberServiceAsync _membersvc = GWT.create(WebMemberService.class);
 }
