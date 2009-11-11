@@ -165,8 +165,14 @@ public class StuffPanel extends FlowPanel
 
     protected boolean shouldDisplayUpload (byte type)
     {
+        // for now, if you're in a theme, there is no uploading of stuff
+        if (CShell.frame.getThemeId() != 0) {
+            // TODO: we should have Buy but not Upload, punt!
+            return false;
+        }
         if (type == Item.LAUNCHER) {
-            return false; // TODO: we should have Buy but not Upload, punt!
+            // TODO: we should have Buy but not Upload, punt!
+            return false;
         }
         for (byte stype : Item.SHOP_TYPES) {
             if (type == stype) {
