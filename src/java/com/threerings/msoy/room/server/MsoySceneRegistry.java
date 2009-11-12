@@ -521,6 +521,7 @@ public class MsoySceneRegistry extends SpotSceneRegistry
                 } else {
                     // otherwise, fire up the selection UI
                     _lineup = _themeLogic.loadLineup(_themeId, 0, 6);
+                    _candidateAvatarId = 0;
                 }
             }
         }
