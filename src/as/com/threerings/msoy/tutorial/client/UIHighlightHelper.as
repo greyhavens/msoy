@@ -9,6 +9,7 @@ import flash.events.Event;
 import flash.geom.Point;
 
 import mx.core.UIComponent;
+import mx.core.IFlexDisplayObject;
 
 import com.threerings.util.MultiLoader;
 
@@ -53,7 +54,7 @@ public class UIHighlightHelper
             return;
         }
 
-        var comp :UIComponent = getComp();
+        var comp :IFlexDisplayObject = getComp();
         if (comp == null) {
             return;
         }
@@ -77,7 +78,7 @@ public class UIHighlightHelper
         _lastComp = null;
     }
 
-    protected function getComp () :UIComponent
+    protected function getComp () :IFlexDisplayObject
     {
         if (_comp is UIComponent) {
             return UIComponent(_comp);
@@ -89,8 +90,8 @@ public class UIHighlightHelper
 
     protected function handleEnterFrame (evt :Event) :void
     {
-        var comp :UIComponent = getComp();
-        var show :Boolean = comp != null && comp.stage != null;
+        var comp :IFlexDisplayObject = getComp();
+        var show :Boolean = comp != null && comp.stage != null && comp.visible;
 
         if (show) {
             var tl :Point = toTop(comp, 0, 0);
@@ -112,7 +113,7 @@ public class UIHighlightHelper
         _lastComp = comp;
     }
 
-    protected function toTop (comp :UIComponent, x :Number, y :Number) :Point
+    protected function toTop (comp :IFlexDisplayObject, x :Number, y :Number) :Point
     {
         return _top.globalToLocal(comp.localToGlobal(new Point(x, y)));
     }
@@ -121,7 +122,7 @@ public class UIHighlightHelper
     protected var _comp :Object;
     protected var _circle :MovieClip;
     protected var _highlight :UIComponent;
-    protected var _lastComp :UIComponent;
+    protected var _lastComp :IFlexDisplayObject;
     protected var _up :Boolean;
 
     [Embed(source="../../../../../../../rsrc/media/skins/tutorial/circle.swf",
