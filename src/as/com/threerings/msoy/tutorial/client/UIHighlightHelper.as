@@ -7,6 +7,7 @@ import flash.display.DisplayObject;
 import flash.display.MovieClip;
 import flash.events.Event;
 import flash.geom.Point;
+import flash.geom.Rectangle;
 
 import mx.core.UIComponent;
 import mx.core.IFlexDisplayObject;
@@ -75,7 +76,7 @@ public class UIHighlightHelper
         if (_highlight.parent != null) {
             PopUpManager.removePopUp(_highlight);
         }
-        _highlight.removeEventListener(Event.ENTER_FRAME, handleEnterFrame);        
+        _highlight.removeEventListener(Event.ENTER_FRAME, handleEnterFrame);
         _up = false;
         _lastComp = null;
     }
@@ -90,23 +91,45 @@ public class UIHighlightHelper
         return null;
     }
 
+    protected function getHighlightArea (comp :IFlexDisplayObject) :Rectangle
+    {
+        if (comp == null) {
+            return new Rectangle(0, 0, 0, 0);
+        }
+        var tl :Point = toTop(comp, 0, 0);
+        var br :Point = toTop(comp, comp.width, comp.height);
+        var area :Rectangle = new Rectangle(tl.x, tl.y, br.x - tl.x, br.y - tl.y);
+        adjustHighlightArea(comp, area);
+        return area;
+    }
+
+    protected function adjustHighlightArea (comp :IFlexDisplayObject, area:Rectangle) :void
+    {
+        area.inflate(8, 10);
+        area.width += 14;
+        area.height += 10;
+    }
+
     protected function handleEnterFrame (evt :Event) :void
     {
         var comp :IFlexDisplayObject = getComp();
         var show :Boolean = comp != null && comp.stage != null && comp.visible;
+        var area :Rectangle = getHighlightArea(comp);
 
         if (show) {
-            var tl :Point = toTop(comp, 0, 0);
-            var br :Point = toTop(comp, comp.width, comp.height);
-            var w :int = br.x - tl.x + 30;
-            var h :int = br.y - tl.y + 30;
+            if (_highlight.x != area.x || _highlight.y != area.y) {
+                _highlight.x = area.x;
+                _highlight.y = area.y;
+            }
 
-            _highlight.x = tl.x - 8;
-            _highlight.y = tl.y - 10;
+            if (_lastArea == null || Math.abs(_lastArea.width - area.width) > 0.01 ||
+                Math.abs(_lastArea.height - area.height) > 0.01) {
+                var rect :Rectangle = _circle.getRect(_circle);
+                _circle.scaleX = area.width / rect.width;
+                _circle.scaleY = area.height / rect.height;
+            }
 
             if (_highlight.parent == null || comp != _lastComp) {
-                _circle.width = w;
-                _circle.height = h;
                 _circle.gotoAndPlay(0);
             }
 
@@ -120,6 +143,7 @@ public class UIHighlightHelper
             }
         }
 
+        _lastArea = area;
         _lastComp = comp;
     }
 
@@ -133,6 +157,7 @@ public class UIHighlightHelper
     protected var _circle :MovieClip;
     protected var _highlight :UIComponent;
     protected var _lastComp :IFlexDisplayObject;
+    protected var _lastArea :Rectangle;
     protected var _up :Boolean;
 
     [Embed(source="../../../../../../../rsrc/media/skins/tutorial/circle.swf",
