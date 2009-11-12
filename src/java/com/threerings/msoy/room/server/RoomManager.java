@@ -315,7 +315,7 @@ public class RoomManager extends SpotSceneManager
                     continue;
                 }
             }
-            _screg.moveBody(player, player.getHomeSceneId());
+            _screg.moveBody(player, homeId);
         }
 
         // then immediately shut down the manager
