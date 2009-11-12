@@ -24,6 +24,7 @@ import flash.utils.Timer;
 import flash.utils.getTimer;
 
 import mx.controls.Button;
+import mx.controls.Menu;
 import mx.core.IUITextField;
 import mx.events.MenuEvent;
 
@@ -593,6 +594,17 @@ public class MsoyController extends Controller
     }
 
     /**
+     * Returns the currently popped open menu.
+     */
+    public function getCurrentMenu () :Menu
+    {
+        if (_currentMenus.length == 0) {
+            return null;
+        }
+        return _currentMenus[_currentMenus.length - 1];
+    }
+
+    /**
      * Return true if we are running in the GWT application shell, false otherwise.
      */
     protected function inGWTApp () :Boolean
@@ -634,7 +646,31 @@ public class MsoyController extends Controller
         var r :Rectangle = trigger.getBounds(trigger.stage);
         var y :int;
         y = Math.min(r.top, _mctx.getControlBar().localToGlobal(new Point()).y);
+
+        menu.addEventListener(MenuEvent.MENU_SHOW, handleShowMenu);
+        menu.addEventListener(MenuEvent.MENU_HIDE, handleHideMenu);
         menu.popUpAt(r.left, y, true);
+    }
+
+    /**
+     * Tracks when a menu is shown and updates our tracking stack.
+     */
+    protected function handleShowMenu (evt :MenuEvent) :void
+    {
+        if (_currentMenus.length == 0 || evt.menu.parentMenu == getCurrentMenu()) {
+            _currentMenus.push(evt.menu);
+        }
+    }
+
+    /**
+     * Tracks when a menu is hidden and updates our tracking stack.
+     */
+    protected function handleHideMenu (evt :MenuEvent) :void
+    {
+        var idx :int = _currentMenus.indexOf(evt.menu);
+        if (idx != -1) {
+            _currentMenus.length = idx;
+        }
     }
 
     /**
@@ -849,6 +885,9 @@ public class MsoyController extends Controller
 
     /** Handlers that can perform actions and/or abort the exiting of a place. */
     protected var _placeExitHandlers :Array = [];
+
+    /** The menus that we are currently showing. */
+    protected var _currentMenus :Array = [];
 
     /** The URL prefix for 'command' URLs, that post CommendEvents. */
     protected static const COMMAND_URL :String = "command://";
