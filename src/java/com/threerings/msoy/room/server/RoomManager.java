@@ -304,9 +304,18 @@ public class RoomManager extends SpotSceneManager
 
         // now throw the players out
         for (MemberObject player : players) {
-            _screg.moveBody(player, player.getHomeSceneId());
             SpeakUtil.sendInfo(player, MsoyCodes.GENERAL_MSGS,
                 MessageUtil.tcompose("m.shutdown_evicted", _scene.getName()));
+            int homeId = player.getHomeSceneId();
+            if (homeId == _scene.getId()) {
+                // a player's home room is being updated, send them to BNW instead?
+                if (homeId == 1) {
+                    // silly edge case: it's the BNW room being stamped, just evict them to nowhere
+                    _locmgr.leaveOccupiedPlace(player);
+                    continue;
+                }
+            }
+            _screg.moveBody(player, player.getHomeSceneId());
         }
 
         // then immediately shut down the manager
