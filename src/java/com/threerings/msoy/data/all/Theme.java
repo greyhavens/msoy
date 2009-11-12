@@ -16,6 +16,9 @@ import com.threerings.msoy.data.all.StaticMediaDesc;
 public class Theme extends SimpleStreamableObject
     implements IsSerializable
 {
+    /** Identifies the game splash media. */
+    public static final String LOGO_MEDIA = "logo";
+
     /** The group of this theme. */
     public GroupName group;
 

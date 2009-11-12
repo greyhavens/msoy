@@ -96,6 +96,9 @@ public class MediaDesc implements Streamable, IsSerializable
     /** The full size for facbeook feed images. */
     public static final int FB_FEED_SIZE = 9;
 
+    /** The full size for the Whirled logo (and themed replacements). */
+    public static final int LOGO_SIZE = 10;
+
     /** The thumbnail image width.  */
     public static final int THUMBNAIL_WIDTH = 80;
 
@@ -705,7 +708,7 @@ public class MediaDesc implements Streamable, IsSerializable
         return true;
     }
 
-    /** Hexidecimal digits. */
+    /** Hexadecimal digits. */
     protected static final String HEX = "0123456789abcdef";
 
     /** Defines the dimensions of our various image sizes. */
@@ -720,5 +723,6 @@ public class MediaDesc implements Streamable, IsSerializable
          40,  23, // tiny snapshots, same width as half thumbnail
         700, 500, // game splash image, same as the game window
         130, 130, // facebook feed thumbnail
+        300, 50,  // whirled logo size
     };
 }

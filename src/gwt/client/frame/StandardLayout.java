@@ -51,7 +51,7 @@ public class StandardLayout extends WebLayout
         _header.setVisible(true);
         int naviLeft = Math.max(
             FlashClients.MIN_WORLD_WIDTH, Window.getClientWidth() - CONTENT_WIDTH);
-        RootPanel.get(PAGE).setWidgetPosition(_header.getLogo(), 27, 5);
+        RootPanel.get(PAGE).setWidgetPosition(_header.getLogo(), 0, 0);
         RootPanel.get(PAGE).setWidgetPosition(_header.getNaviPanel(), naviLeft, 23);
 
         Element status = _header.getStatusPanel().getElement();

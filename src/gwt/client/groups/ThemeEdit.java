@@ -15,8 +15,6 @@ import com.threerings.msoy.data.all.Theme;
 import com.threerings.msoy.group.data.all.Group;
 import com.threerings.msoy.group.gwt.GroupService;
 import com.threerings.msoy.group.gwt.GroupServiceAsync;
-import com.threerings.msoy.item.data.all.Item;
-
 import client.edutil.EditorTable;
 import client.edutil.EditorUtil;
 import client.shell.CShell;
@@ -61,8 +59,14 @@ public class ThemeEdit extends FlowPanel
     {
         protected ThemeEditorTable ()
         {
-            final MediaBox tbox = new MediaBox(
-                MediaDesc.THUMBNAIL_SIZE, Item.THUMB_MEDIA, _theme.getLogo());
+            final MediaBox tbox =
+                new MediaBox(MediaDesc.LOGO_SIZE, Theme.LOGO_MEDIA, _theme.getLogo()) {
+                @Override public void mediaUploaded (String name, MediaDesc desc, int w, int h) {
+                    if (checkSize(w, h)) {
+                        super.mediaUploaded(name, desc, w, h);
+                    }
+                }
+            };
             addRow(_msgs.etLogo(), _msgs.etLogoTip(), tbox, new Command() {
                 public void execute () {
                     _theme.logo = EditorUtil.requireImageMedia(_msgs.editLogo(), tbox.getMedia());

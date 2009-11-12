@@ -46,7 +46,7 @@ public class FrameHeader
 {
     public FrameHeader (ClickHandler onLogoClick)
     {
-        _logoContainer = new SmartTable();
+        _logoContainer = new SmartTable(0, 0);
         _logoContainer.setWidget(0, 0, MsoyUI.createSimplePanel(null, "frameHeaderLogo"));
         final Image escapeButton = MsoyUI.createActionImage(
             "/images/ui/close.png", _cmsgs.escapeThemeTip(), new ClickHandler() {
