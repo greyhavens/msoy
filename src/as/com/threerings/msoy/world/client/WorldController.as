@@ -1642,6 +1642,8 @@ public class WorldController extends MsoyController
                 command: _wctx.getTutorialDirector().test, arg: 1.0 });
             menuData.push({ label: "Popup tutorial",
                 command: _wctx.getTutorialDirector().test, arg: 0.0 });
+            menuData.push({ label: "Test tutorial sequence",
+                command: _wctx.getTutorialDirector().testSequence });
         }
     }
 

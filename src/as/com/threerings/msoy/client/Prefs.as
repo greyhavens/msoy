@@ -63,6 +63,7 @@ public class Prefs
     public static const AUTOSHOW_PREFIX :String = "autoShow_";
     public static const ROOM_ZOOM :String = "roomZoom";
     public static const IGNORED_TUTORIAL_IDS :String = "ignoredTutIds";
+    public static const TUTORIAL_PROGRESS_PREFIX :String = "tutProgress_";
 
     public static const APRIL_FOOLS :String = "aprilFools";
 
@@ -351,6 +352,16 @@ public class Prefs
     public static function ignoreTutorial (id :String) :void
     {
         getIgnoredTutorialIds().update(id, true);
+    }
+
+    public static function getTutorialProgress (id :String) :int
+    {
+        return _config.getValue(TUTORIAL_PROGRESS_PREFIX + id, 0) as int;
+    }
+
+    public static function setTutorialProgress (id :String, progress :int) :void
+    {
+        _config.setValue(TUTORIAL_PROGRESS_PREFIX + id, progress);
     }
 
     /**

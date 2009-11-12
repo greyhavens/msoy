@@ -16,10 +16,12 @@ public class TutorialItemBuilder
     /**
      * Creates a new builder for the given item. The given director is used to queue up the item.
      */
-    public function TutorialItemBuilder (item :TutorialItem, director :TutorialDirector)
+    public function TutorialItemBuilder (item :TutorialItem, director :TutorialDirector,
+                                         sequenceBuilder :TutorialSequenceBuilder = null)
     {
         _item = item;
         _director = director;
+        _sequenceBuilder = sequenceBuilder;
     }
 
     /**
@@ -127,13 +129,19 @@ public class TutorialItemBuilder
         // chain the level availability function, if any, onto the caller-provided one
         _item.checkAvailable = Levels.makeCheck(
             _levels, _director.getMemberLevel, _item.checkAvailable);
-        _director.queueItem(_item);
+        if (_sequenceBuilder != null) {
+            _sequenceBuilder.queue(_item);
+        } else {
+            _director.queueItem(_item);
+        }
         _item = null;
         _director = null;
+        _sequenceBuilder = null;
     }
 
     protected var _item :TutorialItem;
     protected var _levels :Levels;
     protected var _director :TutorialDirector;
+    protected var _sequenceBuilder :TutorialSequenceBuilder;
 }
 }

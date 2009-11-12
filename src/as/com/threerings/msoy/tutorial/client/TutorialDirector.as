@@ -75,6 +75,18 @@ public class TutorialDirector
     }
 
     /**
+     * Creates a new builder for a tutorial sequence. Once a sequence is activated, all of its
+     * items must be viewed before the "ambient" tutorial proceeds. If any item in the sequence is
+     * not available the tutorial will wait and check periodically until it becomes available. The
+     * progress within a sequence is stored in <code>Prefs</code> so that a sequence will pick up
+     * where it left off in the last session when activated.
+     */
+    public function newSequence (id :String) :TutorialSequenceBuilder
+    {
+        return new TutorialSequenceBuilder(id, this);
+    }
+
+    /**
      * Queues a previously created item to popup.
      */
     public function queueItem (item :TutorialItem) :void
@@ -93,6 +105,21 @@ public class TutorialDirector
             _pool.put(item, seen);
             update();
         }
+    }
+
+    /**
+     * Activates a sequence. All items will be viewed before normal tutorial behavior resumes.
+     */
+    public function activateSequence (seq :TutorialSequence) :Boolean
+    {
+        if (_sequence != null || !seq.isAvailable() ||
+            Prefs.getTutorialProgress(seq.id) >= seq.size()) {
+            return false;
+        }
+
+        _sequence = seq;
+        update();
+        return true;
     }
 
     /**
@@ -135,6 +162,19 @@ public class TutorialDirector
             " for display in " + int(delay / 1000) + " seconds.");
     }
 
+    public function testSequence () :void
+    {
+        var sequence :TutorialSequenceBuilder = newSequence("testSeq");
+        sequence.newSuggestion("This is sequence item #1").queue();
+        sequence.newSuggestion("This is sequence item #2").queue();
+        sequence.newSuggestion("This is sequence item #3").queue();
+        if (sequence.activate()) {
+            _ctx.getChatDirector().displayFeedback(null, "Test: activated sequence.");
+        } else {
+            _ctx.getChatDirector().displayFeedback(null, "Test: sequence not activated.");
+        }
+    }
+
     /**
      * Creates a new builder for an item of the given kind with the given id and text.
      */
@@ -150,8 +190,27 @@ public class TutorialDirector
 
     protected function handleTimer (evt :TimerEvent) :void
     {
+        var item :TutorialItem; // for use in multiple scopes
         if (!isShowing()) {
-            if (_suggestions.length > 0) {
+            if (_sequence != null) {
+                var seqId :String = _sequence.id;
+                var progress :int = Prefs.getTutorialProgress(seqId);
+                if (progress >= _sequence.size()) {
+                    // degenerate case, the sequence has changed since the cookie was last set
+                    Prefs.setTutorialProgress(seqId, int.MAX_VALUE);
+                    update();
+                } else if ((item = _sequence.items[progress]).isAvailable()) {
+                    if (++progress == _sequence.size()) {
+                        progress = int.MAX_VALUE;
+                        _sequence = null;
+                    }
+                    Prefs.setTutorialProgress(seqId, progress);
+                    popup(item);
+                } else {
+                    update();
+                }
+
+            } else if (_suggestions.length > 0) {
                 popup(_suggestions.shift());
 
             } else {
@@ -162,7 +221,7 @@ public class TutorialDirector
                 // start from the end and find one that is not ignored and is available
                 var changed :Boolean = false;
                 while (unseen.length > 0) {
-                    var item :TutorialItem = unseen.pop();
+                    item = unseen.pop();
                     if (isIgnored(item)) {
                         // TODO: unfudge: "ignored" is not really the same as "seen"
                         _pool.put(item, true);
@@ -191,11 +250,13 @@ public class TutorialDirector
             _timer.reset();
 
         } else {
-            var delay :Number = _suggestions.length > 0 ? SUGGESTION_DELAY : TIP_DELAY;
+            var delay :Number =
+                (_suggestions.length > 0 || _sequence != null) ? SUGGESTION_DELAY : TIP_DELAY;
             if (delay != _timer.delay) {
                 _timer.delay = delay;
             }
-            if (!_timer.running && (Maps.some(_pool, isUnseen) || _suggestions.length > 0)) {
+            if (!_timer.running && (
+                Maps.some(_pool, isUnseen) || _suggestions.length > 0 || _sequence != null)) {
                 _timer.start();
             }
         }
@@ -266,6 +327,7 @@ public class TutorialDirector
     protected var _timer :Timer;
     protected var _suggestions :Array = [];
     protected var _pool :Map = Maps.newMapOf(TutorialItem); // to boolean: seen
+    protected var _sequence :TutorialSequence;
 
     protected var ROLL_TIME :Number = 0.6;
     protected var TIP_DELAY :Number = 60 * 1000;
