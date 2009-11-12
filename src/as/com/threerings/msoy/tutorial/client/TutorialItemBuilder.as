@@ -5,7 +5,6 @@ package com.threerings.msoy.tutorial.client {
 
 import mx.core.UIComponent;
 
-import com.threerings.util.Predicates;
 import com.threerings.util.Util;
 
 /**
@@ -73,7 +72,8 @@ public class TutorialItemBuilder
      */
     public function beginner () :TutorialItemBuilder
     {
-        return setLevelRange(BEGINNER_LEVELS);
+        _levels = Levels.BEGINNER;
+        return this;
     }
 
     /**
@@ -81,7 +81,8 @@ public class TutorialItemBuilder
      */
     public function intermediate () :TutorialItemBuilder
     {
-        return setLevelRange(INTERMEDIATE_LEVELS);
+        _levels = Levels.INTERMEDIATE;
+        return this;
     }
 
     /**
@@ -89,7 +90,8 @@ public class TutorialItemBuilder
      */
     public function advanced () :TutorialItemBuilder
     {
-        return setLevelRange(ADVANCED_LEVELS);
+        _levels = Levels.ADVANCED;
+        return this;
     }
 
     /**
@@ -123,35 +125,15 @@ public class TutorialItemBuilder
     public function queue () :void
     {
         // chain the level availability function, if any, onto the caller-provided one
-        if (_levelAvail != null) {
-            _item.checkAvailable = _item.checkAvailable == null ? _levelAvail :
-                Predicates.createAnd(_item.checkAvailable, _levelAvail);
-        }
+        _item.checkAvailable = Levels.makeCheck(
+            _levels, _director.getMemberLevel, _item.checkAvailable);
         _director.queueItem(_item);
         _item = null;
         _director = null;
     }
 
-    protected function setLevelRange (levels :Array) :TutorialItemBuilder
-    {
-        // make a local copy because we null the members in queue
-        var director :TutorialDirector = _director;
-
-        // create a free function for checking the level, this will get chained onto the caller-
-        // provided one later when the item if queued
-        _levelAvail = function () :Boolean {
-            var level :int = director.getMemberLevel();
-            return level >= levels[0] && level <= levels[1];
-        }
-        return this;
-    }
-
     protected var _item :TutorialItem;
-    protected var _levelAvail :Function;
+    protected var _levels :Levels;
     protected var _director :TutorialDirector;
-
-    protected static const BEGINNER_LEVELS :Array = [1, 15];
-    protected static const INTERMEDIATE_LEVELS :Array = [10, 25];
-    protected static const ADVANCED_LEVELS :Array = [20, int.MAX_VALUE];
 }
 }
