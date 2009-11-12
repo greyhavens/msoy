@@ -21,7 +21,6 @@ import com.threerings.flex.FlexUtil;
 
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.ConfigValueSetEvent;
-import com.threerings.util.Log;
 import com.threerings.util.StringUtil;
 
 import com.threerings.display.DisplayUtil;
@@ -277,11 +276,6 @@ public class PlaceBox extends LayeredContainer
                 view.x = Math.max((w - size.x) / 2, wmargin);
                 view.y = Math.max((h - size.y) / 2, hmargin);
 
-                if (DeploymentConfig.devDeployment) {
-                    log.info("Layout place view", "sh", size.y, "sw", size.x,
-                             "vx", view.x, "vy", view.y, "w", w, "h", h);
-                }
-
                 // TODO: the scrollRect in the room view takes care of cropping, we only require
                 // masking if the view does *not* scroll - complicated!
 
@@ -303,7 +297,7 @@ public class PlaceBox extends LayeredContainer
         } else if (_placeView is PlaceLayer) {
             PlaceLayer(_placeView).setPlaceSize(w, h);
         } else if (_placeView != null) {
-            Log.getLog(this).warning("PlaceView is not a PlaceLayer or an UIComponent.");
+            log.warning("PlaceView is not a PlaceLayer or an UIComponent.");
         }
 
         updateZoom(bounds);
@@ -347,7 +341,6 @@ public class PlaceBox extends LayeredContainer
 
         _zoomBtn.setCallback(function () :void {
             zoomable.setZoom(zooms[idx]);
-            log.info("Zoom", "value", zooms[idx]);
             _zoomChanged = true;
             layoutPlaceView();
         });
@@ -376,10 +369,6 @@ public class PlaceBox extends LayeredContainer
     protected function setMasked (
         disp :DisplayObject, x :Number, y : Number, w :Number, h :Number) :void
     {
-        if (DeploymentConfig.devDeployment) {
-            log.info("Masking", "disp", disp, "x", x, "y", y, "w", w, "h", h);
-        }
-
         if (_masked != disp) {
             if (_masked != null) {
                 _masked.mask = null;
