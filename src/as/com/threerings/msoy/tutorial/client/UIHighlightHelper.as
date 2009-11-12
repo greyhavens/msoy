@@ -10,6 +10,8 @@ import flash.geom.Point;
 
 import mx.core.UIComponent;
 import mx.core.IFlexDisplayObject;
+import mx.managers.PopUpManager;
+import mx.managers.PopUpManagerChildList;
 
 import com.threerings.util.MultiLoader;
 
@@ -61,8 +63,6 @@ public class UIHighlightHelper
 
         _up = true;
         _highlight.addEventListener(Event.ENTER_FRAME, handleEnterFrame);
-        _highlight.visible = false;
-        _top.addChild(_highlight);
     }
 
     /** @inheritDocs */
@@ -72,7 +72,9 @@ public class UIHighlightHelper
             return;
         }
 
-        _top.removeChild(_highlight);
+        if (_highlight.parent != null) {
+            PopUpManager.removePopUp(_highlight);
+        }
         _highlight.removeEventListener(Event.ENTER_FRAME, handleEnterFrame);        
         _up = false;
         _lastComp = null;
@@ -102,14 +104,22 @@ public class UIHighlightHelper
             _highlight.x = tl.x - 8;
             _highlight.y = tl.y - 10;
 
-            if (!_highlight.visible || comp != _lastComp) {
+            if (_highlight.parent == null || comp != _lastComp) {
                 _circle.width = w;
                 _circle.height = h;
                 _circle.gotoAndPlay(0);
             }
+
+            if (_highlight.parent == null) {
+                PopUpManager.addPopUp(_highlight, _top, false, PopUpManagerChildList.POPUP);
+            }
+
+        } else {
+            if (_highlight.parent != null) {
+                PopUpManager.removePopUp(_highlight);
+            }
         }
 
-        _highlight.visible = show;
         _lastComp = comp;
     }
 
