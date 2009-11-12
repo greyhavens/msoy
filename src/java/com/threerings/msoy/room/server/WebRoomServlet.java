@@ -48,7 +48,6 @@ import com.threerings.msoy.room.gwt.RoomInfo;
 import com.threerings.msoy.room.gwt.WebRoomService;
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
 import com.threerings.msoy.room.server.persist.SceneRecord;
-
 import static com.threerings.msoy.Log.log;
 
 /**
@@ -225,7 +224,11 @@ public class WebRoomServlet extends MsoyServiceServlet
                 "scene.theme", sceneRec.themeGroupId, "doStamp", doStamp);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
-        if (!_sceneRepo.stampRoom(sceneId, doStamp ? groupId : 0)) {
+        if (_sceneRepo.stampRoom(sceneId, doStamp ? groupId : 0)) {
+            // if the scene is resolved somewhere, nuke it
+            _sceneActions.flushTheme(sceneId);
+
+        } else {
             log.warning("No room was stamped!", "sceneId", sceneId, "groupId", groupId);
             // let it go
         }
@@ -287,4 +290,5 @@ public class WebRoomServlet extends MsoyServiceServlet
     @Inject protected ThemeLogic _themeLogic;
     @Inject protected RuntimeConfig _runtime;
     @Inject protected ServerMessages _serverMsgs;
+    @Inject protected SceneNodeActions _sceneActions;
 }

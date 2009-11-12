@@ -157,6 +157,7 @@ public class RoomDetailPanel extends SmartTable
                 }));
             }
             _themeBit.add(_unstampHolder);
+            _unstampHolder.setVisible(false);
         }
     }
 
@@ -171,19 +172,28 @@ public class RoomDetailPanel extends SmartTable
             return;
         }
 
-        if (_detail.theme == null) {
-            if (_themeBits == null) {
-                _bits.add(_themeBits = new RoundBox(RoundBox.BLUE));
-                _themeBits.setWidth("100%");
-                _themeBits.add(_themeContents = new SmartTable());
-            }
-            _themeContents.setWidget(0, 0, _stampPanel = new SmartTable());
+        if (_themeBits == null) {
+            _bits.add(_themeBits = new RoundBox(RoundBox.BLUE));
+            _themeBits.setWidth("100%");
+            _themeBits.add(_themeContents = new SmartTable());
+        }
+        _themeContents.setWidget(0, 0, _stampPanel = new SmartTable());
+        _themeContents.setWidget(1, 0, MsoyUI.createLabel(_msgs.themeNote(), "themeNote"));
 
+        if (_detail.theme != null) {
+            if (!_managedThemes.contains(_detail.theme)) {
+                _unstampHolder.setVisible(false);
+                return;
+            }
+            _unstampHolder.setVisible(true);
+            // fall through
+        } else {
             buildStampUI();
         }
+
     }
 
-    protected void buildStampUI ()
+    protected boolean buildStampUI ()
     {
         _stampBox = new ListBox();
         _stampBox.addItem(_msgs.noTheme());
@@ -220,7 +230,9 @@ public class RoomDetailPanel extends SmartTable
             });
             _stampButton.setEnabled(false);
             _stampPanel.setWidget(0, 2, _stampButton);
+            return true;
         }
+        return false;
     }
 
     protected RoomDetail _detail;

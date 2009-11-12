@@ -64,7 +64,7 @@ public class SceneNodeActions
         }
 
         protected void execute (RoomManager mgr) {
-            // DO SOMETHING
+            mgr.evictPlayersAndShutdown();
         }
     }
 

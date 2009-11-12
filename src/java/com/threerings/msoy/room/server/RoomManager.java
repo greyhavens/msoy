@@ -289,6 +289,31 @@ public class RoomManager extends SpotSceneManager
     }
 
     /**
+     * Evict all the players in room and shut it down.
+     */
+    public void evictPlayersAndShutdown ()
+    {
+        // copy the occupant set as a player list, as occupancy is modified in the loop below
+        List<MemberObject> players = Lists.newArrayList();
+        for (OccupantInfo playerInfo : _roomObj.occupantInfo) {
+            DObject body = _omgr.getObject(playerInfo.bodyOid);
+            if (body instanceof MemberObject) {
+                players.add((MemberObject) body);
+            }
+        }
+
+        // now throw the players out
+        for (MemberObject player : players) {
+            _screg.moveBody(player, player.getHomeSceneId());
+            SpeakUtil.sendInfo(player, MsoyCodes.GENERAL_MSGS,
+                MessageUtil.tcompose("m.shutdown_evicted", _scene.getName()));
+        }
+
+        // then immediately shut down the manager
+        shutdown();
+    }
+
+    /**
      * Can the specified user manage this room.
      */
     public boolean canManage (MemberObject user)
