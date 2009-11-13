@@ -59,6 +59,7 @@ public class FrameHeader
                     });
                 }
             });
+        escapeButton.setVisible(false);
         _logoContainer.setWidget(0, 1, escapeButton);
         _logoContainer.getCellFormatter().setVerticalAlignment(0, 1, HasAlignment.ALIGN_TOP);
 
