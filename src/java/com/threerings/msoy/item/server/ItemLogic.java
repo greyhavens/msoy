@@ -1193,8 +1193,8 @@ public class ItemLogic
             }
         });
         // load theme stamp records for all item types and insert them into our ordered set
-        for (ItemRepository<ItemRecord> repo : _repos.values()) {
-            Byte type = repo.getItemType();
+        for (byte type : Item.SHOP_TYPES) {
+            ItemRepository<ItemRecord> repo = getRepositoryFor(type);
             for (MogMarkRecord rec : repo.loadThemedCatalog(themeId, rows)) {
                 records.add(Tuple.newTuple(type, rec));
             }
