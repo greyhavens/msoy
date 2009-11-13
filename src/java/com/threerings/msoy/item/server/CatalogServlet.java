@@ -17,6 +17,7 @@ import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.UserAction;
+import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.StatLogic;
@@ -77,15 +78,19 @@ public class CatalogServlet extends MsoyServiceServlet
         if (themeId == 0 && mrec != null) {
             themeId = mrec.themeGroupId;
         }
-        if (themeId == 0) {
-            List<ListingCard> items = _itemLogic.getJumbleSnapshot();
-            items = Lists.newArrayList(items.subList(
-                Math.min(items.size(), offset), Math.min(items.size(), offset + rows)));
-            return new CatalogResult(items, null);
-        }
+        List<ListingCard> items;
+        GroupName theme;
 
-        return new CatalogResult(
-            _itemLogic.getThemedJumble(themeId), _groupRepo.loadGroupName(themeId));
+        if (themeId != 0) {
+            items = _itemLogic.getThemedJumble(themeId);
+            theme = _groupRepo.loadGroupName(themeId);
+        } else {
+            items = _itemLogic.getJumbleSnapshot();
+            theme = null;
+        }
+        items = Lists.newArrayList(items.subList(
+            Math.min(items.size(), offset), Math.min(items.size(), offset + rows)));
+        return new CatalogResult(items, theme);
     }
 
     // from interface CatalogService
