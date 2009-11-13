@@ -70,6 +70,17 @@ public class TutorialItemBuilder
     }
 
     /**
+     * Sets the popup helper to highlight the menu item designated by the given command in the
+     * menu that pops up from the given button. Until the menu is opened, the button is
+     * highlighted. If the button is obscured, the control bar palette toggle is highlighted.
+     */
+    public function menuItemHighlight (obj :UIComponent, command :String) :TutorialItemBuilder
+    {
+        return popup(new MenuHighlightHelper(_director.worldCtx, Util.adapt(
+            _director.topPanel.getControlBar().getClickableComponent, obj), command));
+    }
+
+    /**
      * Limit the item for display exclusively to beginner users.
      */
     public function beginner () :TutorialItemBuilder
