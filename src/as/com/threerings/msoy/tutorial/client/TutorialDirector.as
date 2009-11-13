@@ -23,6 +23,7 @@ import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.client.TopPanel;
 
 import com.threerings.msoy.world.client.WorldContext;
+import com.threerings.msoy.world.client.WorldControlBar;
 
 import flash.utils.setTimeout; // function import
 import flash.utils.getTimer; // function import
@@ -164,10 +165,11 @@ public class TutorialDirector
 
     public function testSequence () :void
     {
-        var sequence :TutorialSequenceBuilder = newSequence("testSeq");
-        sequence.newSuggestion("This is sequence item #1").queue();
-        sequence.newSuggestion("This is sequence item #2").queue();
-        sequence.newSuggestion("This is sequence item #3").queue();
+        var sequence :TutorialSequenceBuilder = newSequence("testSeq" + getTimer());
+        sequence.newSuggestion("This is sequence item #1. Arrange your room dumbass!")
+            .menuItemHighlight(WorldControlBar(_ctx.getControlBar()).roomBtn, "RoomEdit").queue();
+        sequence.newSuggestion("This is sequence item #2.").queue();
+        sequence.newSuggestion("This is sequence item #3.").queue();
         if (sequence.activate()) {
             _ctx.getChatDirector().displayFeedback(null, "Test: activated sequence.");
         } else {
@@ -269,6 +271,11 @@ public class TutorialDirector
     internal function get topPanel () :TopPanel
     {
         return _ctx.getTopPanel();
+    }
+
+    internal function get worldCtx () :WorldContext
+    {
+        return _ctx;
     }
 
     protected function placeBox () :PlaceBox
