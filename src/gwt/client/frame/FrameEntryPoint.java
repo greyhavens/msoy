@@ -103,7 +103,7 @@ public class FrameEntryPoint
         // initialize our GA handler
         _analytics.init();
 
-        // set up the callbacd that our flash clients can call
+        // set up the callbacks that our flash clients can call
         configureCallbacks(this);
 
         // listen for theme changes (one which will likely be triggered by the didLogon below)
@@ -233,6 +233,7 @@ public class FrameEntryPoint
                 _bar.resetNav();
             }
             _pageFrame.setToken(_pageToken);
+            WorldClient.contentChanged(_page, _pageToken);
         }
 
         // report the page visit
@@ -478,6 +479,7 @@ public class FrameEntryPoint
 
         // if we're displaying a world page, that's special
         if (page == Pages.WORLD) {
+            WorldClient.contentCleared();
             displayWorld(_pageToken);
             return;
         }
@@ -504,6 +506,9 @@ public class FrameEntryPoint
         _layout.setContent(_bar, _pageFrame);
         _bottomFrame = null;
         _bottomFrameToken = "";
+
+        // let the flash client know we are changing pages
+        WorldClient.contentChanged(_page, _pageToken);
     }
 
     protected void clearContent (boolean restoreClient)

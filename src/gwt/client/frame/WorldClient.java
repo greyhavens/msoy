@@ -12,6 +12,7 @@ import com.threerings.gwt.util.StringUtil;
 
 import com.threerings.msoy.web.gwt.ConnectConfig;
 import com.threerings.msoy.web.gwt.CookieNames;
+import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.WebCreds;
 import com.threerings.msoy.web.gwt.WebUserService;
 import com.threerings.msoy.web.gwt.WebUserServiceAsync;
@@ -95,6 +96,22 @@ public class WorldClient extends Widget
     {
         _minimized = minimized;
         clientMinimized(minimized);
+    }
+
+    /**
+     * Lets the world client know that the user has navigated to the specified content page.
+     */
+    public static void contentChanged (Pages page, String token)
+    {
+        clientSetPage(page.getPath(), token);
+    }
+
+    /**
+     * Lets the world client know that the user has closed the GWT content.
+     */
+    public static void contentCleared ()
+    {
+        clientSetPage(null, null);
     }
 
     public static void clientWillClose ()
@@ -193,6 +210,17 @@ public class WorldClient extends Widget
         if (client) {
             // exceptions from JavaScript break GWT; don't let that happen
             try { client.setMinimized(mini); } catch (e) {}
+        }
+    }-*/;
+
+    /**
+     * Notifies the flash client of the page and token we are viewing.
+     */
+    protected static native void clientSetPage (String page, String token) /*-{
+        var client = $doc.getElementById("asclient");
+        if (client) {
+            // exceptions from JavaScript break GWT; don't let that happen
+            try { client.setPage(page, token); } catch (e) {}
         }
     }-*/;
 

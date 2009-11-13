@@ -56,6 +56,16 @@ import com.threerings.msoy.item.data.all.Item_UsedAs;
 [Event(name="miniWillChange", type="com.threerings.util.ValueEvent")]
 
 /**
+ * Dispatched when the GWT page changes. The event.value will be an array with 2 elements.
+ * The first element is either the GWT page being viewed (e.g. "me") or null if the GWT page was
+ * closed. The second element is either the token being viewed (e.g. "transactions") or null if
+ * the GWT page was closed. No attempt is made to remove redundancy.
+ *
+ * @eventType com.threerings.msoy.client.MsoyClient.GWT_PAGE_CHANGED
+ */
+[Event(name="msoy.setPage", type="com.threerings.util.ValueEvent")]
+
+/**
  * A client shared by both our world and game incarnations.
  */
 public /*abstract*/ class MsoyClient extends CrowdClient
@@ -68,6 +78,13 @@ public /*abstract*/ class MsoyClient extends CrowdClient
      * @eventType miniWillChange
      */
     public static const MINI_WILL_CHANGE :String = "miniWillChange";
+
+    /**
+     * An event dispatched when a web page is opened.
+     *
+     * @eventType msoy.pageOpened
+     */
+    public static const GWT_PAGE_CHANGED :String = "msoy.setPage";
 
     // statically reference classes we require
     MsoyBootstrapData;
@@ -400,6 +417,7 @@ public /*abstract*/ class MsoyClient extends CrowdClient
         ExternalInterface.addCallback("onUnload", externalOnUnload);
         ExternalInterface.addCallback("setMinimized", externalSetMinimized);
         ExternalInterface.addCallback("isConnected", externalIsConnected);
+        ExternalInterface.addCallback("setPage", externalSetPage);
 
         try {
             if (ExternalInterface.call("helloWhirled") as Boolean) {
@@ -445,6 +463,11 @@ public /*abstract*/ class MsoyClient extends CrowdClient
     protected function externalIsConnected () :Boolean
     {
         return _ctx.getClient().isLoggedOn();
+    }
+
+    protected function externalSetPage (page :String, token :String) :void
+    {
+        dispatchEvent(new ValueEvent(GWT_PAGE_CHANGED, [page, token]));
     }
 
     /**
