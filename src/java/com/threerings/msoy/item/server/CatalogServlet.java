@@ -88,6 +88,9 @@ public class CatalogServlet extends MsoyServiceServlet
             items = _itemLogic.getJumbleSnapshot();
             theme = null;
         }
+
+        _itemLogic.resolveCardNames(items);
+
         items = Lists.newArrayList(items.subList(
             Math.min(items.size(), offset), Math.min(items.size(), offset + rows)));
         return new CatalogResult(items, theme);
