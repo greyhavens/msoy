@@ -60,11 +60,11 @@ public class TutorialPanel extends Canvas
             _text.width = TEXT_FULL_WIDTH;
         } else {
             _action.setVisible(true);
-            _action.setCallback(item.onClick);
             _action.label = item.buttonText;
             _text.width = TEXT_WIDTH;
         }
 
+        _close.setVisible(!item.buttonCloses);
         _ignore.setVisible(item.ignorable);
 
         if (item.popupHelper != null) {
@@ -79,6 +79,10 @@ public class TutorialPanel extends Canvas
      */
     public function flashCloseButton () :void
     {
+        if (_currentItem.buttonCloses) {
+            return;
+        }
+
         _glower.level = 0;
         _close.toolTip = Msgs.GENERAL.get("i.tutorial_close_pending");
         Tweener.addTween(_glower, {level: 1, time: .5, transition: "easeinoutsine"});
@@ -106,6 +110,19 @@ public class TutorialPanel extends Canvas
         _onClose();
     }
 
+    protected function handleAction () :void
+    {
+        var item :TutorialItem = _currentItem;
+        if (item != null) {
+            if (item.buttonCloses) {
+                handleClose();
+            }
+            if (item.onClick != null) {
+                item.onClick();
+            }
+        }
+    }
+
     override protected function createChildren () :void
     {
         super.createChildren();
@@ -114,7 +131,8 @@ public class TutorialPanel extends Canvas
         addCentered(BUBBLE_X, null, makeSpeechBubble());
         addCentered(TEXT_X, "tutorialText", _text = new Text());
         add(CLOSE_X, CLOSE_Y, "closeButton", _close = imgButton(handleClose, "i.tutorial_close"));
-        addCentered(BUTTON_X, "tutorialActionButton", _action = new CommandButton());
+        addCentered(BUTTON_X, "tutorialActionButton",
+                    _action = new CommandButton(null, handleAction));
         add(BUTTON_X, HEIGHT - PADDING - IGNORE_HEIGHT, "tutorialIgnoreLink",
             _ignore = new CommandLinkButton(Msgs.GENERAL.get("b.tutorial_ignore"),
                                             Util.adapt(handleIgnore)));

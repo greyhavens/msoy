@@ -115,11 +115,15 @@ public class TutorialItemBuilder
      *        <listing>
      *            function buttonFn () :void;
      *        </listing>
+     * @param closes if passed and set to true, pressing the button also dismissed the popup and
+     *        the close button is hidden
      */
-    public function button (text :String, onClick :Function) :TutorialItemBuilder
+    public function button (text :String, onClick :Function,
+                            closes :Boolean = false) :TutorialItemBuilder
     {
         _item.buttonText = text;
         _item.onClick = onClick;
+        _item.buttonCloses = closes;
         return this;
     }
 

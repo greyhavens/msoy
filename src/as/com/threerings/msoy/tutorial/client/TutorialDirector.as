@@ -138,9 +138,10 @@ public class TutorialDirector
             var gibberish :String = "The quick brown fox jumped over the lazy dog.";
             return str + " " + gibberish + " " + gibberish;
         }
+        function naught () :void {}
         if (_pool.size() == 0) {
             newTip("tip1", gibby("This is test tip #1.")).queue();
-            newTip("tip2", gibby("This is test tip #2.")).queue();
+            newTip("tip2", gibby("This is test tip #2.")).button("Close", naught, true).queue();
             newTip("tip3", gibby("This tip is limited to advanced users.")).advanced().queue();
             newTip("tip4", gibby("This is a non-ignorable tip.")).noIgnore().queue();
             newTip("tip5", gibby("Hey! There's the go button."))
@@ -154,8 +155,7 @@ public class TutorialDirector
         var id :int = getTimer();
         setTimeout(function () :void {
             newSuggestion("test" + id, gibby("This is a test suggestion (id " + id + ")."))
-                .button("Do It!", function () :void {})
-                .controlBarHighlight(_ctx.getControlBar().goBtn)
+                .button("Do It!", naught).controlBarHighlight(_ctx.getControlBar().goBtn)
                 .queue();
         }, delay);
 
