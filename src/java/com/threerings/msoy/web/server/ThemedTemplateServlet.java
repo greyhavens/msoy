@@ -20,6 +20,7 @@ import com.google.inject.Singleton;
 import com.samskivert.io.StreamUtil;
 import com.samskivert.velocity.VelocityUtil;
 
+import com.threerings.msoy.data.all.Theme;
 import com.threerings.msoy.group.server.ThemeLogic;
 import com.threerings.msoy.group.server.persist.ThemeRecord;
 import com.threerings.msoy.group.server.persist.ThemeRepository;
@@ -36,14 +37,13 @@ public class ThemedTemplateServlet extends DefaultServlet
         int themeId = (themeIdStr != null) ? Integer.parseInt(themeIdStr) : 0;
         ThemeRecord themeRec = (themeId != 0) ? _themeRepo.loadTheme(themeId) : null;
 
+        Theme theme = (themeRec != null) ? themeRec.toTheme(null) : Theme.DEFAULT_THEME;
+
         VelocityContext ctx = new VelocityContext();
-        if (themeRec != null) {
-            ctx.put("logoUrl", themeRec.toLogo().getMediaPath());
-            ctx.put("backgroundColor", hexColor(themeRec.backgroundColor));
-        } else {
-            ctx.put("logoUrl", DEFAULT_LOGO_URL);
-            ctx.put("backgroundColor", hexColor(ThemeRecord.DEFAULT_BACKGROUND_COLOR));
-        }
+        ctx.put("logoUrl", theme.getLogo().getMediaPath());
+        ctx.put("navUrl", theme.getNavButton().getMediaPath());
+        ctx.put("navSelUrl", theme.getNavSelButton().getMediaPath());
+        ctx.put("backgroundColor", hexColor(theme.backgroundColor));
 
         try {
             PrintWriter pout = new PrintWriter(rsp.getOutputStream());
@@ -66,5 +66,4 @@ public class ThemedTemplateServlet extends DefaultServlet
     @Inject ThemeRepository _themeRepo;
     @Inject ThemeLogic _themeLogic;
 
-    protected static final String DEFAULT_LOGO_URL = "/images/header/header_logo.png";
 }

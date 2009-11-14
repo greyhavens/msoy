@@ -59,6 +59,7 @@ public class ThemeEdit extends FlowPanel
     {
         protected ThemeEditorTable ()
         {
+            // bits for editing the logo
             final MediaBox tbox =
                 new MediaBox(MediaDesc.LOGO_SIZE, Theme.LOGO_MEDIA, _theme.getLogo()) {
                 @Override public void mediaUploaded (String name, MediaDesc desc, int w, int h) {
@@ -69,10 +70,44 @@ public class ThemeEdit extends FlowPanel
             };
             addRow(_msgs.etLogo(), _msgs.etLogoTip(), tbox, new Command() {
                 public void execute () {
-                    _theme.logo = EditorUtil.requireImageMedia(_msgs.editLogo(), tbox.getMedia());
+                    _theme.logo = EditorUtil.requireImageMedia(
+                        _msgs.editLogo(), tbox.getMedia());
                 }
             });
 
+            // bits for editing the tab navigation button
+            final MediaBox navBox =
+                new MediaBox(MediaDesc.NAV_SIZE, Theme.NAV_MEDIA, _theme.getNavButton()) {
+                @Override public void mediaUploaded (String name, MediaDesc desc, int w, int h) {
+                    if (checkSize(w, h)) {
+                        super.mediaUploaded(name, desc, w, h);
+                    }
+                }
+            };
+            addRow(_msgs.etNavBtn(), _msgs.etNavBtnTip(), navBox, new Command() {
+                public void execute () {
+                    _theme.navButton = EditorUtil.requireImageMedia(
+                        _msgs.editLogo(), navBox.getMedia());
+                }
+            });
+
+            // bits for editing the selected tab navigation button
+            final MediaBox navSelBox =
+                new MediaBox(MediaDesc.NAV_SIZE, Theme.NAV_SEL_MEDIA, _theme.getNavSelButton()) {
+                @Override public void mediaUploaded (String name, MediaDesc desc, int w, int h) {
+                    if (checkSize(w, h)) {
+                        super.mediaUploaded(name, desc, w, h);
+                    }
+                }
+            };
+            addRow(_msgs.etNavSelBtn(), _msgs.etNavSelBtnTip(), navSelBox, new Command() {
+                public void execute () {
+                    _theme.navSelButton = EditorUtil.requireImageMedia(
+                        _msgs.editLogo(), navSelBox.getMedia());
+                }
+            });
+
+            // bits for editing the background colour
             final TextBox bgColBox = MsoyUI.createTextBox(hexColor(_theme.backgroundColor), 6, 6);
             addRow(_msgs.etBackgroundColor(), _msgs.etBgColTip(), bgColBox, new Command() {
                 public void execute () {

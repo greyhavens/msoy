@@ -138,6 +138,16 @@ public class ThemeLogic
             updates.put(ThemeRecord.LOGO_MIME_TYPE, theme.logo.mimeType);
             updates.put(ThemeRecord.LOGO_MEDIA_CONSTRAINT, theme.logo.constraint);
         }
+        if (theme.navButton != null && !theme.navButton.equals(trec.toNavButton())) {
+            updates.put(ThemeRecord.NAV_MEDIA_HASH, theme.navButton.hash);
+            updates.put(ThemeRecord.NAV_MIME_TYPE, theme.navButton.mimeType);
+            updates.put(ThemeRecord.NAV_MEDIA_CONSTRAINT, theme.navButton.constraint);
+        }
+        if (theme.navSelButton != null && !theme.navSelButton.equals(trec.toNavSelButton())) {
+            updates.put(ThemeRecord.NAV_SEL_MEDIA_HASH, theme.navSelButton.hash);
+            updates.put(ThemeRecord.NAV_SEL_MIME_TYPE, theme.navSelButton.mimeType);
+            updates.put(ThemeRecord.NAV_SEL_MEDIA_CONSTRAINT, theme.navSelButton.constraint);
+        }
         if (theme.backgroundColor != trec.backgroundColor) {
             updates.put(ThemeRecord.BACKGROUND_COLOR, theme.backgroundColor);
         }

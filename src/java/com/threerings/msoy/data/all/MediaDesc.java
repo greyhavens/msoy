@@ -99,6 +99,9 @@ public class MediaDesc implements Streamable, IsSerializable
     /** The full size for the Whirled logo (and themed replacements). */
     public static final int LOGO_SIZE = 10;
 
+    /** The full size for a Whirled (tab) navigation button (and themed replacements). */
+    public static final int NAV_SIZE = 11;
+
     /** The thumbnail image width.  */
     public static final int THUMBNAIL_WIDTH = 80;
 
@@ -724,5 +727,6 @@ public class MediaDesc implements Streamable, IsSerializable
         700, 500, // game splash image, same as the game window
         130, 130, // facebook feed thumbnail
         300, 50,  // whirled logo size
+        76, 32,   // navigation (tab) button
     };
 }
