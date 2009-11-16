@@ -10,6 +10,7 @@ import flash.media.SoundTransform;
 
 import com.threerings.util.Config;
 import com.threerings.util.ConfigValueSetEvent;
+import com.threerings.util.StringUtil;
 import com.threerings.util.ValueEvent;
 
 /**
@@ -71,7 +72,8 @@ public class Prefs
     public static const ALL_KEYS :Array = [
         VOLUME, CHAT_FONT_SIZE, CHAT_DECAY, CHAT_FILTER, CHAT_HISTORY, CHAT_SIDEBAR, OCCUPANT_LIST,
         LOG_TO_CHAT, BLEEPED_MEDIA, PARTY_GROUP, USE_CUSTOM_BACKGROUND_COLOR,
-        CUSTOM_BACKGROUND_COLOR, ROOM_ZOOM, IGNORED_TUTORIAL_IDS];
+        CUSTOM_BACKGROUND_COLOR, ROOM_ZOOM, IGNORED_TUTORIAL_IDS, TUTORIAL_PROGRESS_PREFIX,
+        AUTOSHOW_PREFIX];
 
     public static const CHAT_FONT_SIZE_MIN :int = 10;
     public static const CHAT_FONT_SIZE_MAX :int = 24;
@@ -383,26 +385,82 @@ public class Prefs
     }
 
     /**
-     * Gets a cookie value by name.
+     * Gets all the cookie content for the given name. Each element returned is a 2 element array,
+     * the first is the name and the second is the value. Single-valued cookies will return a
+     * single element array if the cookie is set, or an empty array if not. Prefix cookies will
+     * return an element for each cookie that matches the prefix. Set cookies will return a single
+     * element with a comma-separated list of the set contents. The list may be an empty string if
+     * the set is empty.
      */
-    public static function getByName (name :String) :Object
+    public static function getByName (name :String) :Array
     {
-        return _config.getValue(name, null);
+        var values :Array = [];
+
+        function pushSetElements (elems :StringSet) :void {
+            values.push([name, elems.asArray().join(", ")]);
+        }
+
+        switch (name) {
+        case AUTOSHOW_PREFIX:
+        case TUTORIAL_PROGRESS_PREFIX:
+            for each (var key :String in _config) {
+                if (StringUtil.startsWith(key, name)) {
+                    values.push([key, _config.getValue(key, null)]);
+                }
+            }
+            break;
+        case BLEEPED_MEDIA:
+            pushSetElements(getBleepedMedia());
+            break;
+        case IGNORED_TUTORIAL_IDS:
+            pushSetElements(getIgnoredTutorialIds());
+            break;
+        default:
+            var value :Object = _config.getValue(name, null);
+            if (value != null) {
+                values.push([name, value]);
+            }
+            break;
+        }
+        return values;
     }
 
     /**
      * Removes all cookies with names in the given array.
      */
-    public static function removeAll (names :Array) :void
+    public static function removeAll (names :Array) :int
     {
+        var count :int = 0;
         for each (var name :String in names) {
-            _config.remove(name);
-            if (name == BLEEPED_MEDIA) {
-                _bleepedMedia = null;
-            } else if (name == IGNORED_TUTORIAL_IDS) {
-                _ignoredTutorialIds = null;
+            switch (name) {
+            case BLEEPED_MEDIA:
+                count += getBleepedMedia().size();
+                getBleepedMedia().clear();
+                break;
+            case IGNORED_TUTORIAL_IDS:
+                count += getIgnoredTutorialIds().size();
+                getIgnoredTutorialIds().clear();
+                break;
+            case AUTOSHOW_PREFIX:
+            case TUTORIAL_PROGRESS_PREFIX:
+                for each (var key :String in _config) {
+                    if (StringUtil.startsWith(key, name)) {
+                        _config.remove(key);
+                        ++count;
+                    }
+                }
+                break;
+            default:
+                _config.remove(name);
+                ++count;
+                break;
             }
+
+            // TODO: event dispatch? complicated because all default values are encoded in the
+            // individual access methods
         }
+
+        return count;
     }
 
     protected static function getBleepedMedia () :StringSet
@@ -452,6 +510,7 @@ public class Prefs
 
 import com.threerings.util.Config;
 import com.threerings.util.ValueEvent;
+import com.threerings.util.Util;
 
 import com.threerings.msoy.client.Prefs;
 
@@ -474,6 +533,26 @@ class StringSet
     }
 
     /**
+     * Returns the number of elements in the set.
+     */
+    public function size () :int
+    {
+        var count :int = 0;
+        for each (var key :String in _contents) {
+            ++count;
+        }
+        return count;
+    }
+
+    /**
+     * Return all members of the set as an array of strings.
+     */
+    public function asArray () :Array
+    {
+        return Util.keys(_contents);
+    }
+
+    /**
      * Updates a value's presence in the set.
      */
     public function update (value :String, present :Boolean) :void
@@ -491,6 +570,15 @@ class StringSet
 
         _config.setValue(_name, _contents, false); // don't flush
         Prefs.events.dispatchEvent(new ValueEvent(_name, [ value, present ]));
+    }
+
+    /**
+     * Removes all elements from the set.
+     */
+    public function clear () :void
+    {
+        _config.setValue(_name, null);
+        _contents = new Object();
     }
 
     /**

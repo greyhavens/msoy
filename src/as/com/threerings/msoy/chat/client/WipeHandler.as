@@ -44,8 +44,10 @@ public class WipeHandler extends CommandHandler
             }
             ctx.getChatDirector().displayFeedback(msoyChat, "m.wipe_available");
             for each (var name2 :String in Prefs.ALL_KEYS) {
-                var pair :String = name2 + " = " + Prefs.getByName(name2);
-                ctx.getChatDirector().displayFeedback(msoyChat, "  " + pair);
+                for each (var pair :Array in Prefs.getByName(name2)) {
+                    ctx.getChatDirector().displayFeedback(msoyChat,
+                        "  " + pair[0] + " = " + pair[1]);
+                }
             }
             return ChatCodes.SUCCESS;
 
@@ -57,8 +59,9 @@ public class WipeHandler extends CommandHandler
             }
         }
 
-        Prefs.removeAll(names);
-        ctx.getChatDirector().displayFeedback(msoyChat, "m.wipe_success");
+        var count :int = Prefs.removeAll(names);
+        ctx.getChatDirector().displayFeedback(msoyChat,
+            MessageBundle.tcompose("m.wipe_success", String(count)));
         return ChatCodes.SUCCESS;
     }
 }
