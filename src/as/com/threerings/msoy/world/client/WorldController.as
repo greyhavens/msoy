@@ -1638,12 +1638,16 @@ public class WorldController extends MsoyController
 
         // test menu option to look at the tutorial panel on dev
         if (DeploymentConfig.devDeployment) {
-            menuData.push({ label: "Simulate tutorial",
+            var tutMenu :Array = [];
+            tutMenu.push({ label: "Simulate tutorial",
                 command: _wctx.getTutorialDirector().test, arg: 1.0 });
-            menuData.push({ label: "Popup tutorial",
+            tutMenu.push({ label: "Popup tutorial",
                 command: _wctx.getTutorialDirector().test, arg: 0.0 });
-            menuData.push({ label: "Test tutorial sequence",
+            tutMenu.push({ label: "Test tutorial full sequence",
                 command: _wctx.getTutorialDirector().testSequence });
+            tutMenu.push({ label: "Test tutorial singles sequence",
+                command: _wctx.getTutorialDirector().testSequence, arg :true });
+            menuData.push({ label: "Tutorial", children: tutMenu }); 
         }
     }
 
