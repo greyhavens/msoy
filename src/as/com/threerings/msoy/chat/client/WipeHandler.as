@@ -46,7 +46,7 @@ public class WipeHandler extends CommandHandler
             for each (var name2 :String in Prefs.ALL_KEYS) {
                 for each (var pair :Array in Prefs.getByName(name2)) {
                     ctx.getChatDirector().displayFeedback(msoyChat,
-                        "  " + pair[0] + " = " + pair[1]);
+                        MessageBundle.tcompose("m.echo", pair[0], pair[1]));
                 }
             }
             return ChatCodes.SUCCESS;
