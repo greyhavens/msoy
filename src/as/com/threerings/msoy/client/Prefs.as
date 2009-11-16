@@ -403,7 +403,7 @@ public class Prefs
         switch (name) {
         case AUTOSHOW_PREFIX:
         case TUTORIAL_PROGRESS_PREFIX:
-            for each (var key :String in _config) {
+            for each (var key :String in _config.getPropertyNames()) {
                 if (StringUtil.startsWith(key, name)) {
                     values.push([key, _config.getValue(key, null)]);
                 }
@@ -443,7 +443,7 @@ public class Prefs
                 break;
             case AUTOSHOW_PREFIX:
             case TUTORIAL_PROGRESS_PREFIX:
-                for each (var key :String in _config) {
+                for each (var key :String in _config.getPropertyNames()) {
                     if (StringUtil.startsWith(key, name)) {
                         _config.remove(key);
                         ++count;
