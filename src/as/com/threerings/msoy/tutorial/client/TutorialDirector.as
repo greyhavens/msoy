@@ -191,7 +191,7 @@ public class TutorialDirector
 
     protected function isShowing () :Boolean
     {
-        return _panel.parent != null;
+        return _current != null;
     }
 
     protected function handleTimer (evt :TimerEvent) :void
@@ -207,9 +207,6 @@ public class TutorialDirector
                     update();
 
                 } else {
-                    if (!_sequence.advance()) {
-                        _sequence = null;
-                    }
                     popup(item);
                 }
 
@@ -264,7 +261,7 @@ public class TutorialDirector
             }
         }
 
-        if (isShowing() && _suggestions.length > 0) {
+        if (showing && _suggestions.length > 0) {
             _panel.flashCloseButton();
         }
     }
@@ -286,6 +283,17 @@ public class TutorialDirector
 
     protected function onPanelClose () :void
     {
+        // mark as seen
+        if (_sequence != null && _sequence.hasItem(_current)) {
+            if (!_sequence.advance()) {
+                _sequence = null;
+            }
+
+        } else if (!isImmediate(_current.kind)) {
+            _pool.put(_current, true);
+        }
+
+        _current = null;
         Tweener.addTween(_panel, {y :-_panel.height, time: ROLL_TIME, transition: "easeinquart",
             onComplete: Util.sequence(
                 Util.adapt(placeBox().removeChild, _panel),
@@ -301,18 +309,13 @@ public class TutorialDirector
             _panel.y = -_panel.height;
         }
 
-        _panel.setContent(item);
+        _panel.setContent(_current = item);
 
         if (_panel.y != 0) {
             Tweener.addTween(_panel, {y :0, time: ROLL_TIME, transition: "easeoutquart"});
         }
 
         update();
-
-        // mark as seen
-        if (!isImmediate(item.kind)) {
-            _pool.put(item, true);
-        }
     }
 
     protected static function isIgnored (item :TutorialItem) :Boolean
@@ -336,6 +339,7 @@ public class TutorialDirector
     protected var _suggestions :Array = [];
     protected var _pool :Map = Maps.newMapOf(TutorialItem); // to boolean: seen
     protected var _sequence :ActiveSequence;
+    protected var _current :TutorialItem;
 
     protected var ROLL_TIME :Number = 0.6;
     protected var TIP_DELAY :Number = 60 * 1000;

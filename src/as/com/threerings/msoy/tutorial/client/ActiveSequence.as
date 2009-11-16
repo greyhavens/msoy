@@ -46,6 +46,14 @@ internal class ActiveSequence
         return true;
     }
 
+    /**
+     * Returns true if the given item is in the sequence.
+     */
+    public function hasItem (item :TutorialItem) :Boolean
+    {
+        return _sequence.items.indexOf(item) >= 0;
+    }
+
     protected var _sequence :TutorialSequence;
     protected var _progress :int;
 }
