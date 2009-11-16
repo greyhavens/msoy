@@ -118,7 +118,7 @@ public class TutorialDirector
             return false;
         }
 
-        _sequence = seq;
+        _sequence = new ActiveSequence(seq);
         update();
         return true;
     }
@@ -163,13 +163,17 @@ public class TutorialDirector
             " for display in " + int(delay / 1000) + " seconds.");
     }
 
-    public function testSequence () :void
+    public function testSequence (singles :Boolean = false) :void
     {
-        var sequence :TutorialSequenceBuilder = newSequence("testSeq" + getTimer());
+        var sequence :TutorialSequenceBuilder = newSequence(
+            "testSeq_" + (singles ? "singles" : "full"));
         sequence.newSuggestion("This is sequence item #1. Arrange your room dumbass!")
             .menuItemHighlight(WorldControlBar(_ctx.getControlBar()).roomBtn, "RoomEdit").queue();
         sequence.newSuggestion("This is sequence item #2.").queue();
         sequence.newSuggestion("This is sequence item #3.").queue();
+        if (singles) {
+            sequence.singles();
+        }
         if (sequence.activate()) {
             _ctx.getChatDirector().displayFeedback(null, "Test: activated sequence.");
         } else {
@@ -195,21 +199,18 @@ public class TutorialDirector
         var item :TutorialItem; // for use in multiple scopes
         if (!isShowing()) {
             if (_sequence != null) {
-                var seqId :String = _sequence.id;
-                var progress :int = Prefs.getTutorialProgress(seqId);
-                if (progress >= _sequence.size()) {
+                item = _sequence.item;
+                if (item == null || !item.isAvailable()) {
                     // degenerate case, the sequence has changed since the cookie was last set
-                    Prefs.setTutorialProgress(seqId, int.MAX_VALUE);
+                    // TODO: any special behavior when a sequence item is not available?
+                    _sequence = null;
                     update();
-                } else if ((item = _sequence.items[progress]).isAvailable()) {
-                    if (++progress == _sequence.size()) {
-                        progress = int.MAX_VALUE;
+
+                } else {
+                    if (!_sequence.advance()) {
                         _sequence = null;
                     }
-                    Prefs.setTutorialProgress(seqId, progress);
                     popup(item);
-                } else {
-                    update();
                 }
 
             } else if (_suggestions.length > 0) {
@@ -334,7 +335,7 @@ public class TutorialDirector
     protected var _timer :Timer;
     protected var _suggestions :Array = [];
     protected var _pool :Map = Maps.newMapOf(TutorialItem); // to boolean: seen
-    protected var _sequence :TutorialSequence;
+    protected var _sequence :ActiveSequence;
 
     protected var ROLL_TIME :Number = 0.6;
     protected var TIP_DELAY :Number = 60 * 1000;

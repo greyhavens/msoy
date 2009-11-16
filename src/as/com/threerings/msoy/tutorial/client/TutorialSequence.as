@@ -33,6 +33,7 @@ internal class TutorialSequence
     internal var id :String;
     internal var items :Array = [];
     internal var checkAvailable :Function;
+    internal var singles :Boolean;
 }
 
 }
