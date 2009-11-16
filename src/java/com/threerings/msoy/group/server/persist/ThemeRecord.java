@@ -32,12 +32,16 @@ public class ThemeRecord extends PersistentRecord
     public static final ColumnExp NAV_SEL_MEDIA_HASH = colexp(_R, "navSelMediaHash");
     public static final ColumnExp NAV_SEL_MIME_TYPE = colexp(_R, "navSelMimeType");
     public static final ColumnExp NAV_SEL_MEDIA_CONSTRAINT = colexp(_R, "navSelMediaConstraint");
+    public static final ColumnExp NAV_COLOR = colexp(_R, "navColor");
+    public static final ColumnExp NAV_SEL_COLOR = colexp(_R, "navSelColor");
+    public static final ColumnExp STATUS_LINKS_COLOR = colexp(_R, "statusLinksColor");
+    public static final ColumnExp STATUS_LEVELS_COLOR = colexp(_R, "statusLevelsColor");
     public static final ColumnExp BACKGROUND_COLOR = colexp(_R, "backgroundColor");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 5;
+    public static final int SCHEMA_VERSION = 6;
 
     /** The groupId of this theme. */
     @Id
@@ -76,7 +80,24 @@ public class ThemeRecord extends PersistentRecord
     /** The constraint for the selected nav image. */
     public byte navSelMediaConstraint;
 
+    /** The color of the nav button text. */
+    @Column(defaultValue=""+Theme.DEFAULT_NAV_COLOR)
+    public int navColor = Theme.DEFAULT_THEME.navColor;
+
+    /** The color of the nav selected button text. */
+    @Column(defaultValue=""+Theme.DEFAULT_NAV_SEL_COLOR)
+    public int navSelColor = Theme.DEFAULT_THEME.navSelColor;
+
+    /** The color of the links in the status panel. */
+    @Column(defaultValue=""+Theme.DEFAULT_STATUS_LINKS_COLOR)
+    public int statusLinksColor = Theme.DEFAULT_THEME.statusLinksColor;
+
+    /** The color of the levels in the status panel. */
+    @Column(defaultValue=""+Theme.DEFAULT_STATUS_LEVELS_COLOR)
+    public int statusLevelsColor = Theme.DEFAULT_THEME.statusLevelsColor;
+
     /** The background colour of the main Whirled UI. */
+    @Column(defaultValue=""+Theme.DEFAULT_BACKGROUND_COLOR)
     public int backgroundColor = Theme.DEFAULT_THEME.backgroundColor;
 
     public ThemeRecord ()
@@ -93,8 +114,8 @@ public class ThemeRecord extends PersistentRecord
      */
     public Theme toTheme (GroupName group)
     {
-        return new Theme(
-            group, playOnEnter, toLogo(), toNavButton(), toNavSelButton(), backgroundColor);
+        return new Theme(group, playOnEnter, toLogo(), toNavButton(), toNavSelButton(),
+            navColor, navSelColor, statusLinksColor, statusLevelsColor, backgroundColor);
     }
 
     /**

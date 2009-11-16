@@ -4,11 +4,11 @@
 
 /* StandardLayout styles */
 .standardPage {
-  background: #$backgroundColor;
+  background: $backgroundColor;
 }
 
 .framedPage {
-  background: #$backgroundColor;
+  background: $backgroundColor;
 }
 
 /* ------------------------------------
@@ -27,7 +27,7 @@
 }
 
 .frameHeaderStatus {
-  background: #$backgroundColor;
+  background: $backgroundColor;
   color: #000000;
   height: 50px;
 }
@@ -47,14 +47,14 @@
   padding-top: 10px;
   margin-right: 5px;
   text-align: center;
-  color: #0D496D;
+  color: $navCol;
   width: 71px;
   height: 32px;
 }
 
 .frameHeaderNavi .NaviButtonSelected {
   background: url($navSelUrl) no-repeat;
-  color: white;
+  color: $navSelCol;
 }
 
 .frameHeaderNavi .NaviButton .actionLabel {
@@ -98,9 +98,9 @@
 
 .statusPanel .TopBoxLinks {
   height: 26px;
-  color: #0064b8;
   font-size: 12px;
   padding: 4px 5px 0 0;
+  color: $statusLinksCol;
 }
 
 .statusPanel .TopBoxLinks .Links {
@@ -112,7 +112,7 @@
 }
 
 .statusPanel .TopBoxLinks a {
-  color: #0064b8;
+  color: $statusLinksCol;
 }
 
 .statusPanel .TopBoxLinks .Mail img {
@@ -121,12 +121,12 @@
 }
 
 .statusPanel .TopBoxLinks .Spacer {
-  color: #4378a6;
+  color: $statusLinksCol;
   margin: 0 5px;
 }
 
 .statusPanel .Levels {
-  color: #474b4d;
+  color: $statusLevelsCol;
   font-family: Helvetica, sans-serif;
   font-size: 11px;
   font-weight: bold;

@@ -148,6 +148,18 @@ public class ThemeLogic
             updates.put(ThemeRecord.NAV_SEL_MIME_TYPE, theme.navSelButton.mimeType);
             updates.put(ThemeRecord.NAV_SEL_MEDIA_CONSTRAINT, theme.navSelButton.constraint);
         }
+        if (theme.navColor != trec.navColor) {
+            updates.put(ThemeRecord.NAV_COLOR, theme.navColor);
+        }
+        if (theme.navSelColor != trec.navSelColor) {
+            updates.put(ThemeRecord.NAV_SEL_COLOR, theme.navSelColor);
+        }
+        if (theme.statusLevelsColor != trec.statusLevelsColor) {
+            updates.put(ThemeRecord.STATUS_LEVELS_COLOR, theme.statusLevelsColor);
+        }
+        if (theme.statusLinksColor != trec.statusLinksColor) {
+            updates.put(ThemeRecord.STATUS_LINKS_COLOR, theme.statusLinksColor);
+        }
         if (theme.backgroundColor != trec.backgroundColor) {
             updates.put(ThemeRecord.BACKGROUND_COLOR, theme.backgroundColor);
         }

@@ -15,7 +15,23 @@ import com.threerings.msoy.data.all.MediaDesc;
 public class Theme extends SimpleStreamableObject
     implements IsSerializable
 {
+    /** An instantiated Theme representing the settings for the default Whirled. */
     public static final Theme DEFAULT_THEME = createDefaultTheme();
+
+    /** The default color of the nav button text. */
+    public static final int DEFAULT_NAV_COLOR = 0x0d496d;
+
+    /** The default color of the nav selected button text. */
+    public static final int DEFAULT_NAV_SEL_COLOR = 0xffffff;
+
+    /** The default color of the links in the status panel. */
+    public static final int DEFAULT_STATUS_LINKS_COLOR = 0x0064b8;
+
+    /** The default color of the levels in the status panel. */
+    public static final int DEFAULT_STATUS_LEVELS_COLOR = 0x474b4d;
+
+    /** The default colour of the web header background. */
+    public static final int DEFAULT_BACKGROUND_COLOR = 0xffffff;
 
     /** Identifies the logo media. */
     public static final String LOGO_MEDIA = "logo";
@@ -29,6 +45,9 @@ public class Theme extends SimpleStreamableObject
     /** The group of this theme. */
     public GroupName group;
 
+    /** Whether or not we start playing this group's associated AVRG upon room entry. */
+    public boolean playOnEnter;
+
     /** The media of the theme's Whirled logo replacement image. */
     public MediaDesc logo;
 
@@ -38,8 +57,17 @@ public class Theme extends SimpleStreamableObject
     /** The media of the theme's Whirled nav selected button replacement image. */
     public MediaDesc navSelButton;
 
-    /** Whether or not we start playing this group's associated AVRG upon room entry. */
-    public boolean playOnEnter;
+    /** The color of the nav button text. */
+    public int navColor;
+
+    /** The color of the nav selected button text. */
+    public int navSelColor;
+
+    /** The color of the links in the status panel. */
+    public int statusLinksColor;
+
+    /** The color of the levels in the status panel. */
+    public int statusLevelsColor;
 
     /** The background colour of the main Whirled UI. */
     public int backgroundColor;
@@ -55,13 +83,18 @@ public class Theme extends SimpleStreamableObject
      * An initialization constructor.
      */
     public Theme (GroupName group, boolean playOnEnter, MediaDesc logo, MediaDesc navButton,
-        MediaDesc navSelButton, int backgroundColor)
+        MediaDesc navSelButton, int navColor, int navSelColor, int statusLinksColor,
+        int statusLevelsColor, int backgroundColor)
     {
         this.group = group;
         this.playOnEnter = playOnEnter;
         this.logo = logo;
         this.navButton = navButton;
         this.navSelButton = navSelButton;
+        this.navColor = navColor;
+        this.navSelColor = navSelColor;
+        this.statusLinksColor = statusLinksColor;
+        this.statusLevelsColor = statusLevelsColor;
         this.backgroundColor = backgroundColor;
     }
 
@@ -144,14 +177,12 @@ public class Theme extends SimpleStreamableObject
     {
         return new Theme(null, false, getDefaultThemeLogoMedia(),
             getDefaultThemeNavButtonMedia(), getDefaultThemeNavSelButtonMedia(),
-            DEFAULT_BACKGROUND_COLOR);
+            DEFAULT_NAV_COLOR, DEFAULT_NAV_SEL_COLOR, DEFAULT_STATUS_LINKS_COLOR,
+            DEFAULT_STATUS_LEVELS_COLOR, DEFAULT_BACKGROUND_COLOR);
     }
 
     /** The internal paths for various themable assets. */
     protected static final String DEFAULT_LOGO_URL = "/images/header/header_logo";
     protected static final String DEFAULT_NAV_URL = "/images/header/navi_button_bg";
     protected static final String DEFAULT_NAV_SEL_URL = "/images/header/navi_button_selected_bg";
-
-    /** The default colour of the web header background. */
-    protected static final int DEFAULT_BACKGROUND_COLOR = 0xFFFFFF;
 }

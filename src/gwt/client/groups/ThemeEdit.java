@@ -107,6 +107,40 @@ public class ThemeEdit extends FlowPanel
                 }
             });
 
+            // bits for editing the tab navigation text color
+            final TextBox navColBox = MsoyUI.createTextBox(hexColor(_theme.navColor), 6, 6);
+            addRow(_msgs.etNavColor(), _msgs.etNavColTip(), navColBox, new Command() {
+                public void execute () {
+                    _theme.navColor = Integer.valueOf(navColBox.getText(), 16);
+                }
+            });
+
+            // bits for editing the selected tab navigation text color
+            final TextBox navSelColBox = MsoyUI.createTextBox(hexColor(_theme.navSelColor), 6, 6);
+            addRow(_msgs.etNavSelColor(), _msgs.etNavSelColTip(), navSelColBox, new Command() {
+                public void execute () {
+                    _theme.navSelColor = Integer.valueOf(navSelColBox.getText(), 16);
+                }
+            });
+
+            // bits for editing the status panel links color
+            final TextBox linksColBox =
+                MsoyUI.createTextBox(hexColor(_theme.statusLinksColor), 6, 6);
+            addRow(_msgs.etStatLinksColor(), _msgs.etStatLinksColTip(), linksColBox, new Command() {
+                public void execute () {
+                    _theme.statusLinksColor = Integer.valueOf(linksColBox.getText(), 16);
+                }
+            });
+
+            // bits for editing the status panel numbers color
+            final TextBox levelsColBox =
+                MsoyUI.createTextBox(hexColor(_theme.statusLevelsColor), 6, 6);
+            addRow(_msgs.etStatLevelsColor(), _msgs.etStatLevelsColTip(), levelsColBox, new Command() {
+                public void execute () {
+                    _theme.statusLevelsColor = Integer.valueOf(levelsColBox.getText(), 16);
+                }
+            });
+
             // bits for editing the background colour
             final TextBox bgColBox = MsoyUI.createTextBox(hexColor(_theme.backgroundColor), 6, 6);
             addRow(_msgs.etBackgroundColor(), _msgs.etBgColTip(), bgColBox, new Command() {

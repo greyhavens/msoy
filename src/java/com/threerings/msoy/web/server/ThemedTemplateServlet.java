@@ -42,8 +42,12 @@ public class ThemedTemplateServlet extends DefaultServlet
         VelocityContext ctx = new VelocityContext();
         ctx.put("logoUrl", theme.getLogo().getMediaPath());
         ctx.put("navUrl", theme.getNavButton().getMediaPath());
+        ctx.put("navCol", cssColor(theme.navColor));
         ctx.put("navSelUrl", theme.getNavSelButton().getMediaPath());
-        ctx.put("backgroundColor", hexColor(theme.backgroundColor));
+        ctx.put("navSelCol", cssColor(theme.navSelColor));
+        ctx.put("statusLinksCol", cssColor(theme.statusLinksColor));
+        ctx.put("statusLevelsCol", cssColor(theme.statusLevelsColor));
+        ctx.put("backgroundColor", cssColor(theme.backgroundColor));
 
         try {
             PrintWriter pout = new PrintWriter(rsp.getOutputStream());
@@ -57,10 +61,10 @@ public class ThemedTemplateServlet extends DefaultServlet
         }
     }
 
-    protected static String hexColor (int rgb)
+    protected static String cssColor (int rgb)
     {
         String str = ("000000" + Integer.toHexString(rgb));
-        return str.substring(str.length() - 6);
+        return "#" + str.substring(str.length() - 6);
     }
 
     @Inject ThemeRepository _themeRepo;
