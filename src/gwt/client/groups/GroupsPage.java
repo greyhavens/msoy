@@ -4,8 +4,9 @@
 package client.groups;
 
 import com.google.gwt.core.client.GWT;
-
-import com.threerings.msoy.group.data.all.Group;
+import com.threerings.msoy.group.gwt.GroupDetail;
+import com.threerings.msoy.group.gwt.GroupService;
+import com.threerings.msoy.group.gwt.GroupServiceAsync;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
@@ -15,6 +16,7 @@ import client.msgs.ThreadPanel;
 import client.shell.CShell;
 import client.shell.Page;
 import client.ui.MsoyUI;
+import client.util.InfoCallback;
 
 public class GroupsPage extends Page
 {
@@ -60,24 +62,35 @@ public class GroupsPage extends Page
         Nav page = Nav.getGroupPage(args);
 
         if (page == Nav.DETAIL) {
-            setContent(_detail);
-            _detail.setGroup(args.get(1, 0), args.get(2, "").equals("r"));
+            final GroupDetailPanel panel = new GroupDetailPanel();
+            setContent(panel);
+
+            runWithGroup(args.get(1, 0), new Runnable() {
+                public void run () {
+                    panel.setGroupDetail(_detail);
+                }
+            });
 
         } else if (page == Nav.DEFAULT && CShell.frame.getThemeId() != 0) {
-            setContent(_detail);
-            _detail.setGroup(CShell.frame.getThemeId(), true);
+            final GroupDetailPanel panel = new GroupDetailPanel();
+            setContent(panel);
+
+            runWithGroup(CShell.frame.getThemeId(), new Runnable() {
+                public void run () {
+                    panel.setGroupDetail(_detail);
+                }
+            });
 
         } else if (page == Nav.EDIT) {
             int groupId = args.get(1, 0);
             if (groupId == 0) {
                 setContent(new GroupEdit());
             } else {
-                Group group = _detail.getGroup();
-                if (group == null || group.groupId != groupId) {
-                    MsoyUI.error("ZOMG! That's not supported yet."); // pants! TODO
-                    return;
-                }
-                setContent(new GroupEdit(group, _detail.getGroupExtras()));
+                runWithGroup(groupId, new Runnable() {
+                    public void run () {
+                        setContent(new GroupEdit(_detail.group, _detail.extras));
+                    }
+                });
             }
 
         } else if (page == Nav.THEME_EDIT) {
@@ -86,13 +99,11 @@ public class GroupsPage extends Page
                 MsoyUI.error("Need a group to edit theme.");
                 return;
             }
-            Group group = _detail.getGroup();
-            if (group == null || group.groupId != groupId) {
-                MsoyUI.error("ZOMG! That's not supported yet."); // pants! TODO
-                return;
-            }
-
-            setContent(new ThemeEdit(group, _detail.getGroupDetail().theme));
+            runWithGroup(groupId, new Runnable() {
+                public void run () {
+                    setContent(new ThemeEdit(_detail.group, _detail.theme));
+                }
+            });
 
         } else if (page == Nav.MYGROUPS) {
             setContent(_msgs.myGroupsTitle(), new MyGroupsPanel());
@@ -163,8 +174,23 @@ public class GroupsPage extends Page
         setContent(_msgs.forumsTitle(), new ForumPanel(_fmodels, mode, groupId, search, page));
     }
 
+    protected void runWithGroup (int groupId, final Runnable callback)
+    {
+        if (_detail != null && _detail.group.groupId == groupId) {
+            callback.run();
+            return;
+        }
+        _groupsvc.getGroupDetail(groupId, new InfoCallback<GroupDetail>() {
+            public void onSuccess (GroupDetail result) {
+                _detail = result;
+                callback.run();
+            }
+        });
+    }
+
     protected ForumModels _fmodels = new ForumModels();
-    protected GroupDetailPanel _detail = new GroupDetailPanel();
+    protected GroupDetail _detail;
 
     protected static final GroupsMessages _msgs = GWT.create(GroupsMessages.class);
+    protected static final GroupServiceAsync _groupsvc = GWT.create(GroupService.class);
 }

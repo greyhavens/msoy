@@ -61,15 +61,6 @@ public class GroupDetailPanel extends FlowPanel
     }
 
     /**
-     * Configures this view to display the specified group.
-     */
-    public void setGroup (int groupId, boolean refresh) {
-        if (_group == null || _group.groupId != groupId || refresh) {
-            loadGroup(groupId);
-        }
-    }
-
-    /**
      * Returns the currently loaded group detail.
      */
     public GroupDetail getGroupDetail ()
