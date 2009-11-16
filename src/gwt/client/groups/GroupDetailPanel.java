@@ -322,9 +322,9 @@ public class GroupDetailPanel extends FlowPanel
                 _themeActions.add(MsoyUI.createActionLabel(_msgs.detailViewLineup(), "inline",
                         Link.createHandler(Pages.STUFF, "l", groupId)));
 
-                _themeActions.add(new InlineLabel(" | "));
-                _themeActions.add(MsoyUI.createActionLabel(_msgs.detailViewShop(), "inline",
-                    Link.createHandler(Pages.SHOP, "j", groupId)));
+//                _themeActions.add(new InlineLabel(" | "));
+//                _themeActions.add(MsoyUI.createActionLabel(_msgs.detailViewShop(), "inline",
+//                    Link.createHandler(Pages.SHOP, "j", groupId)));
 
             } else {
                 _themeActions.add(MsoyUI.createActionLabel(
