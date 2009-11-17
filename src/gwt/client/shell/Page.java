@@ -308,6 +308,9 @@ public abstract class Page
 
         // clear out any lingering dialog
         CShell.frame.clearDialog();
+
+        // let the frame know the content is ready to roll
+        frameCall(Frame.Calls.CONTENT_SET, getPageId().toString(), _token);
     }
 
     /**
@@ -353,6 +356,7 @@ public abstract class Page
      */
     protected void setPageToken (String token)
     {
+        _token = token;
         onHistoryChanged(Args.fromToken(token));
     }
 
@@ -468,6 +472,7 @@ public abstract class Page
     protected Widget _content;
     protected BorderedDialog _dialog;
     protected String _frameId = "";
+    protected String _token;
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
     protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);

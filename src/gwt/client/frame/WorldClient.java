@@ -101,7 +101,15 @@ public class WorldClient extends Widget
     /**
      * Lets the world client know that the user has navigated to the specified content page.
      */
-    public static void contentChanged (Pages page, String token)
+    public static void contentRequested (Pages page, String token)
+    {
+        // no need to pass this along right now
+    }
+
+    /**
+     * Lets the world client know that the content page has now loaded and initialized.
+     */
+    public static void contentPageReady (Pages page, String token)
     {
         clientSetPage(page.getPath(), token);
     }
