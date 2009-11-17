@@ -3,6 +3,7 @@
 
 package client.shell;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.core.client.EntryPoint;
@@ -11,6 +12,7 @@ import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.History;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -31,6 +33,7 @@ import client.util.ArrayUtil;
 import client.util.Link;
 import client.util.events.FlashEvent;
 import client.util.events.FlashEvents;
+import client.util.events.PageCommandEvent;
 
 /**
  * Handles some standard services for a top-level MetaSOY page.
@@ -40,6 +43,14 @@ public abstract class Page
 {
     /** Prefix for our iframe id to avoid conflicts with other getElementById calls. */
     public static final String FRAME_ID_PREFIX = "PageFrame_";
+
+    /**
+     * Interface for removing a previously registered object.
+     */
+    public static interface Registration
+    {
+        void remove ();
+    }
 
     /**
      * Returns the default title for the specified page.
@@ -56,6 +67,41 @@ public abstract class Page
         }
     }
 
+    /**
+     * Gets the page corresponding to the current module, or null if the current module is not a
+     * Page instance.
+     */
+    public static Pages getPage ()
+    {
+        if (CShell.frame instanceof PageFrame) {
+            return ((PageFrame)CShell.frame).getPage();
+        }
+        return null;
+    }
+
+    /**
+     * Adds a listener that will be invoked whenever a command event is received that is targeting
+     * the current page. This allows callers to avoid explicit references to their page. The
+     * returned registration is used to remove the listener. If there are any past events, they
+     * will also be dispatched. Each event may only be acted upon once, that is to say the first
+     * listener to return true from {@link PageCommandEvent.Listener#act} will cause the event
+     * to not be sent to subsequent listeners.
+     */
+    public static Registration register (final PageCommandEvent.Listener listener)
+    {
+        _relay.add(listener);
+        return new Registration() {
+            @Override public void remove () {
+                if (_listener == null) {
+                    throw new IllegalStateException();
+                }
+                _relay.remove(_listener);
+                _listener = null;
+            }
+            protected PageCommandEvent.Listener _listener = listener;
+        };
+    }
+
     // from interface EntryPoint
     public void onModuleLoad ()
     {
@@ -67,7 +113,7 @@ public abstract class Page
         // wire ourselves up to the top-level frame
         if (configureCallbacks(this)) {
             // if we're not running in standalone page test mode, we basically forward requests
-            CShell.init(new PageFrame() {
+            CShell.init(new PageFrame(getPageId()) {
                 public void setTitle (String title) {
                     frameCall(Frame.Calls.SET_TITLE, title);
                 }
@@ -155,7 +201,7 @@ public abstract class Page
 
         } else {
             // if we're running in standalone page test mode, we do a bunch of stuff
-            CShell.init(new PageFrame() {
+            CShell.init(new PageFrame(getPageId()) {
                 public void setTitle (String title) {
                     Window.setTitle(title == null ? _cmsgs.bareTitle() : _cmsgs.windowTitle(title));
                 }
@@ -240,6 +286,10 @@ public abstract class Page
 
         // load up JavaScript source files
         ScriptSources.inject(CShell.getAppId());
+
+        // record command events so that sub-page listeners won't miss them (e.g. while a servlet
+        // request is pending)
+        FlashEvents.addListener(_relay = new Relay());
     }
 
     protected void onHistoryChanged (String token)
@@ -451,6 +501,12 @@ public abstract class Page
 
     protected abstract class PageFrame implements Frame
     {
+        public PageFrame (Pages page) {
+            _page = page;
+        }
+        public Pages getPage () {
+            return _page;
+        }
         public void showDialog (String title, Widget dialog) {
             clearDialog();
             _dialog = new BorderedDialog(false, false, false) {
@@ -467,12 +523,72 @@ public abstract class Page
                 _dialog.hide();
             }
         }
+
+        protected Pages _page;
+    }
+
+    /**
+     * Holds command events received from the flash client and dispatches them when listeners
+     * are added. This is so that the page content widgets can act on flash events sent prior to
+     * the initialization of the content. This is the norm when flash opens a new URL and sends a
+     * command.
+     */
+    protected static class Relay
+        implements PageCommandEvent.Listener
+    {
+        /**
+         * Registers the given listener to receive future events and dispatches previous events,
+         * allowing the listener to consume them.
+         */
+        public void add (final PageCommandEvent.Listener listener)
+        {
+            _listeners.add(listener);
+
+            final PageCommandEvent event = _queue;
+            if (event != null) {
+                // postpone the method call so the call stack can unwind completely 
+                new Timer() {
+                    @Override public void run () {
+                        if (listener.act(event) && event == _queue) {
+                            _queue = null;
+                        }
+                    }
+                }.schedule(1);
+            }            
+        }
+
+        public void remove (PageCommandEvent.Listener listener)
+        {
+            _listeners.remove(listener);
+        }
+
+        @Override public boolean act (PageCommandEvent commandEvent)
+        {
+            if (commandEvent.getTarget() != getPage()) {
+                return false;
+            }
+
+            for (PageCommandEvent.Listener listener : _listeners) {
+                if (listener.act(commandEvent)) {
+                    return true;
+                }
+            }
+
+            _queue = commandEvent; // goodbye old event
+            return true;
+        }
+
+        protected PageCommandEvent _queue; // queue of maximum size 1
+        protected List<PageCommandEvent.Listener> _listeners =
+            new ArrayList<PageCommandEvent.Listener>();
     }
 
     protected Widget _content;
     protected BorderedDialog _dialog;
     protected String _frameId = "";
     protected String _token;
+
+    protected static Relay _relay;
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
     protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
