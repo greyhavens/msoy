@@ -26,7 +26,7 @@ import com.threerings.msoy.server.persist.RepositoryUtil;
 
 /**
  * Provides access to installation specific configuration. Properties that
- * are specific to a particular Bang! server installation are accessed via
+ * are specific to a particular Whirled server installation are accessed via
  * this class.
  */
 public class ServerConfig
