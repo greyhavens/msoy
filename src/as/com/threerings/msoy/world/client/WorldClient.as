@@ -117,6 +117,10 @@ public class WorldClient extends MsoyClient
             _ctx.getTopPanel().getPlaceContainer().addOverlay(
                 overlay, PlaceBox.LAYER_FEATURED_PLACE);
         }
+
+        if (getEmbedding().hasGWT() && DeploymentConfig.enableTutorial) {
+            new MePageTutorial(_wctx);
+        }
     }
 
     // from Client
