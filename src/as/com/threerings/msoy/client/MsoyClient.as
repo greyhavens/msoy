@@ -35,6 +35,7 @@ import com.threerings.presents.net.BootstrapData;
 
 import com.threerings.crowd.client.CrowdClient;
 
+import com.threerings.msoy.data.Address;
 import com.threerings.msoy.data.Embedding;
 import com.threerings.msoy.data.LurkerName;
 import com.threerings.msoy.data.MemberObject;
@@ -56,10 +57,9 @@ import com.threerings.msoy.item.data.all.Item_UsedAs;
 [Event(name="miniWillChange", type="com.threerings.util.ValueEvent")]
 
 /**
- * Dispatched when the GWT page changes. The event.value will be an array with 2 elements.
- * The first element is either the GWT page being viewed (e.g. "me") or null if the GWT page was
- * closed. The second element is either the token being viewed (e.g. "transactions") or null if
- * the GWT page was closed. No attempt is made to remove redundancy.
+ * Dispatched when the GWT page changes. The event.value will be an <code>Address</code> object or
+ * null if the GWT page was closed. No attempt is made to remove redundancy so multiple identical
+ * events may be sent in some circumstances.
  *
  * @eventType com.threerings.msoy.client.MsoyClient.GWT_PAGE_CHANGED
  */
@@ -465,9 +465,10 @@ public /*abstract*/ class MsoyClient extends CrowdClient
         return _ctx.getClient().isLoggedOn();
     }
 
-    protected function externalSetPage (page :String, token :String) :void
+    protected function externalSetPage (pagePath :String, token :String) :void
     {
-        dispatchEvent(new ValueEvent(GWT_PAGE_CHANGED, [page, token]));
+        dispatchEvent(new ValueEvent(GWT_PAGE_CHANGED,
+            pagePath == null ? null : Address.fromToken(pagePath, token)));
     }
 
     /**

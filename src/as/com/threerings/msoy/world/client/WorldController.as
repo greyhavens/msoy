@@ -38,6 +38,8 @@ import com.threerings.flex.CommandMenu;
 
 import com.threerings.whirled.data.Scene;
 
+import com.threerings.msoy.utils.Args;
+
 import com.threerings.msoy.chat.client.IMRegisterDialog;
 import com.threerings.msoy.group.data.all.GroupMembership;
 import com.threerings.msoy.item.client.FlagItemDialog;
@@ -70,6 +72,7 @@ import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.client.TopPanel;
 import com.threerings.msoy.client.UberClient;
 
+import com.threerings.msoy.data.Address;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.MsoyCredentials;
@@ -910,6 +913,16 @@ public class WorldController extends MsoyController
         const url :String = DeploymentConfig.serverURL + "swizzle/" + stoken + "/" + ptoken;
         log.info("Showing external URL " + url);
         return super.handleViewUrl(url, null);
+    }
+
+    /**
+     * Displays a new page at a given address either in our GWT application or by reloading the
+     * current web page with the full GWT application, restoring our current location and then
+     * displaying the page.
+     */
+    public function displayAddress (address :Address) :Boolean
+    {
+        return displayPage(address.page.path, Args.join(address.args));
     }
 
     /**
