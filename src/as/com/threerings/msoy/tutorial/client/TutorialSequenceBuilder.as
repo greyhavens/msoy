@@ -43,11 +43,21 @@ public class TutorialSequenceBuilder
 
     /**
      * Sets the sequence to show its items one at a time. Each time the sequence is activated, the
-     * next item is shown. The default behavior is to show all the tutorial items at once.
+     * next item is shown. The default behavior is to show each items in succession until complete,
+     * or restart on each activation if cancelled.
      */
     public function singles () :TutorialSequenceBuilder
     {
         _sequence.singles = true;
+        return this;
+    }
+
+    /**
+     * Limit the sequence for display exclusively to new users.
+     */
+    public function newbie () :TutorialSequenceBuilder
+    {
+        _levels = Levels.NEWBIE;
         return this;
     }
 

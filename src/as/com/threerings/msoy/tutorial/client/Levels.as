@@ -10,6 +10,9 @@ import com.threerings.util.Predicates;
  */
 internal class Levels
 {
+    /** Levels for very new users. */
+    public static const NEWBIE :Levels = new Levels(1, 1);
+
     /** Levels for beginner users. */
     public static const BEGINNER :Levels = new Levels(1, 15);
 
