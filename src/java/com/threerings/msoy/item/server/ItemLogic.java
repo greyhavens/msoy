@@ -587,7 +587,7 @@ public class ItemLogic
                 if ((orecord == null || orecord.ownerId != nrecord.ownerId) &&
                     nrecord.ownerId != 0) {
                     MemberNodeActions.avatarUpdated(nrecord.ownerId, nrecord.itemId,
-                        isThematicallyValid(orecord));
+                        isThematicallyValid(nrecord));
                 }
 
             } else if (nrecord instanceof IdentGameItemRecord) {
