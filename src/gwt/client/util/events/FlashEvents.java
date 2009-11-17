@@ -84,6 +84,8 @@ public class FlashEvents
             return TrophyEvent.NAME;
         } else if (listener instanceof ThemeChangeEvent.Listener) {
             return ThemeChangeEvent.NAME;
+        } else if (listener instanceof PageCommandEvent.Listener) {
+            return PageCommandEvent.NAME;
         } else {
             CShell.log("Requested name for unknown listener '" + listener + "'?!");
             return null;
@@ -104,6 +106,8 @@ public class FlashEvents
             return new TrophyEvent();
         } else if (ThemeChangeEvent.NAME.equals(eventName)) {
             return new ThemeChangeEvent();
+        } else if (PageCommandEvent.NAME.equals(eventName)) {
+            return new PageCommandEvent();
         } else {
             CShell.log("Requested event for unknown name '" + eventName + "'?!");
             return null;
@@ -111,7 +115,7 @@ public class FlashEvents
     }
 
     /** We have to do this kookiness because methods in this class can be called from JSNI methods
-     * which seem not to inoke the static initializers of the class before doing so. */
+     * which seem not to invoke the static initializers of the class before doing so. */
     protected static Map<String, ListenerList<FlashEventListener>> getLLMap () {
         if (_eventListeners == null) {
             _eventListeners = new HashMap<String, ListenerList<FlashEventListener>>();
