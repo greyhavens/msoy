@@ -16,6 +16,9 @@ public class PageCommandEvent extends FlashEvent
     /** The name of this event type, also defined in action script. */
     public static final String NAME = "pageCommand";
 
+    /** Command for showing the interface for editing a profile. */
+    public static final String EDIT_PROFILE = "editProfile";
+
     /** Implemented by entities which wish to act upon commands from flash. */
     public static interface Listener extends FlashEventListener
     {

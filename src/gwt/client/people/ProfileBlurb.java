@@ -47,6 +47,7 @@ import client.item.ShopUtil;
 import client.person.GalleryActions;
 import client.shell.CShell;
 import client.shell.DynamicLookup;
+import client.shell.Page;
 import client.shell.ShellMessages;
 import client.ui.DateFields;
 import client.ui.MsoyUI;
@@ -56,6 +57,7 @@ import client.util.Link;
 import client.util.MediaUtil;
 import client.util.InfoCallback;
 import client.util.events.NameChangeEvent;
+import client.util.events.PageCommandEvent;
 
 /**
  * Displays a person's basic profile information.
@@ -238,6 +240,15 @@ public class ProfileBlurb extends Blurb
                     startEdit();
                 }
             });
+            _registration = Page.register(new PageCommandEvent.Listener() {
+                @Override public boolean act (PageCommandEvent commandEvent) {
+                    if (commandEvent.getCommand().equals(PageCommandEvent.EDIT_PROFILE)) {
+                        startEdit();
+                        return true;
+                    }
+                    return false;
+                }
+            });
         }
     }
 
@@ -276,6 +287,8 @@ public class ProfileBlurb extends Blurb
         if (_profile == null) {
             return; // nothing doing
         }
+
+        unregisterForFlashCommands();
 
         SmartTable econtent = new SmartTable("profileEditor", 0, 5);
 
@@ -469,6 +482,21 @@ public class ProfileBlurb extends Blurb
         return false;
     }
 
+    @Override // from Widget
+    protected void onDetach ()
+    {
+        super.onDetach();
+        unregisterForFlashCommands();
+    }
+
+    protected void unregisterForFlashCommands ()
+    {
+        if (_registration != null) {
+            _registration.remove();
+            _registration = null;
+        }
+    }
+
     protected ProfileService.ProfileResult _pdata;
     protected Profile _profile;
     protected ProfileService.GreeterStatus _greeter;
@@ -482,6 +510,8 @@ public class ProfileBlurb extends Blurb
     protected FlowPanel _buttons;
     /** The widgetry for adding or removing this person as a friend. */
     protected Widget _friendBtn;
+
+    protected Page.Registration _registration;
 
     protected static final PeopleMessages _msgs = GWT.create(PeopleMessages.class);
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
