@@ -824,7 +824,6 @@ public class FrameEntryPoint
             return new String[] { String.valueOf(getThemeId()) };
         case CONTENT_SET:
             if (MAIN_FRAME_ID.equals(frameId)) {
-                CShell.log("Content ready", "args", args, "_page", _page, "_pageToken", _pageToken);
                 // let the world know we're now looking at this content, but only if it is the
                 // right content
                 if (_page == Pages.valueOf(args[0]) && _pageToken.equals(args[1])) {
