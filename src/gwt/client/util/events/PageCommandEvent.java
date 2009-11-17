@@ -66,7 +66,7 @@ public class PageCommandEvent extends FlashEvent
     @Override // from FlashEvent
     public void fromJSObject (JavaScriptObject args)
     {
-        _target = Pages.fromHistory(JavaScriptUtil.getStringElement(args, 0));
+        _target = Pages.valueOf(JavaScriptUtil.getStringElement(args, 0));
         _command = JavaScriptUtil.getStringElement(args, 1);
     }
 

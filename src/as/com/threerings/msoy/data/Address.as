@@ -27,16 +27,16 @@ public class Address
     }
 
     /**
-     * Creates an new address from a path and token. Returns null if the provided path does not
-     * match any known path, see <code>Page</code>.
-     * @throws ArgumentError if path is null
+     * Creates an new address from a page name and a token. Returns null if the provided name does
+     * not match any known Page.name(), see <code>Page</code>.
+     * @throws ArgumentError if the name is null
      */
-    public static function fromToken (path :String, token :String) :Address
+    public static function fromToken (pageName :String, token :String) :Address
     {
-        if (path == null) {
-            throw new ArgumentError("Null path");
+        if (pageName == null) {
+            throw new ArgumentError("Null page");
         }
-        var page :Page = Page.fromPath(path);
+        var page :Page = Page.findByName(pageName);
         return page == null ? null : new Address(page, Args.split(token));
     }
 
@@ -79,7 +79,7 @@ public class Address
     /** @inheritDoc */ // from Object
     public function toString () :String
     {
-        return Joiner.pairs("Address", "page", _page.path, "args", _args.join(","));
+        return Joiner.pairs("Address", "page", _page, "args", _args.join(","));
     }
 
     protected var _page :Page;

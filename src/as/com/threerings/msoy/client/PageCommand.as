@@ -27,7 +27,7 @@ public class PageCommand
      */
     public static function serialize (page :Page, command :String) :Array
     {
-        return [page.path, command];
+        return [page.toString(), command];
     }
 
     /**

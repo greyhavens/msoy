@@ -22,8 +22,7 @@ public class Page extends Enum
 
     /**
      * Looks up the Page value with a name corresponding to the one given. The name must exactly
-     * match the all-caps name of the enum value. To obtain the Page for a lower case "path"
-     * value, use <code>fromPath</code>.
+     * match the all-caps name of the enum value.
      * @throws ArgumentError is no such page is found.
      */
     public static function valueOf (name :String) :Page
@@ -40,13 +39,13 @@ public class Page extends Enum
     }
 
     /**
-     * Looks up the Page value with a path equal to the one given. Returns null if no such page is
-     * found.
+     * Attempts to find a Page instance with a name corresponding to the one given. The name must
+     * exactly match the all-caps name of the enum value. Returns null if no such page is found.
      */
-    public static function fromPath (path :String) :Page
+    public static function findByName (name :String) :Page
     {
         for each (var page :Page in values()) {
-            if (page.path == path) {
+            if (name == page.name()) {
                 return page;
             }
         }
@@ -54,23 +53,19 @@ public class Page extends Enum
     }
 
     /**
-     * Accesses the path of this page. The path is the string that it used to access the gwt
-     * module associated with this page. Some paths have a special.
+     * Returns the path of the page. This should only be used when converting to a URL to actually
+     * display the page and nowhere else.
      */
     public function get path () :String
     {
-        return _path;
+        // TODO: this does not work for *all* pages, update behavior when it becomes necessary
+        return _name.toLowerCase();
     }
 
     /** @private */
     public function Page (name :String)
     {
         super(name);
-
-        // TODO: this does not work for all pages, update behavior when necessary
-        _path = name.toLowerCase();
     }
-
-    protected var _path :String;
 }
 }
