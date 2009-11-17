@@ -110,6 +110,10 @@ public abstract class Page
         // do our on-load stuff
         onPageLoad();
 
+        // record command events so that sub-page listeners won't miss them (e.g. while a servlet
+        // request is pending)
+        FlashEvents.addListener(_relay = new Relay());
+
         // wire ourselves up to the top-level frame
         if (configureCallbacks(this)) {
             // if we're not running in standalone page test mode, we basically forward requests
@@ -286,10 +290,6 @@ public abstract class Page
 
         // load up JavaScript source files
         ScriptSources.inject(CShell.getAppId());
-
-        // record command events so that sub-page listeners won't miss them (e.g. while a servlet
-        // request is pending)
-        FlashEvents.addListener(_relay = new Relay());
     }
 
     protected void onHistoryChanged (String token)
