@@ -19,6 +19,9 @@ public class PageCommandEvent extends FlashEvent
     /** Command for showing the interface for editing a profile. */
     public static final String EDIT_PROFILE = "editProfile";
 
+    /** Command for showing the interface for editing profile info. */
+    public static final String EDIT_INFO = "editInfo";
+
     /** Implemented by entities which wish to act upon commands from flash. */
     public static interface Listener extends FlashEventListener
     {

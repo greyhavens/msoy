@@ -24,10 +24,12 @@ import com.threerings.msoy.web.gwt.Pages;
 
 import client.shell.CShell;
 import client.shell.DynamicLookup;
+import client.shell.Page;
 import client.shell.ShellMessages;
 import client.ui.MsoyUI;
 import client.util.ClickCallback;
 import client.util.Link;
+import client.util.events.PageCommandEvent;
 
 /**
  * Displays a member's interests and other random bits.
@@ -72,6 +74,15 @@ public class InterestsBlurb extends Blurb
                     startEdit();
                 }
             });
+            _registration = Page.register(new PageCommandEvent.Listener() {
+                @Override public boolean act (PageCommandEvent commandEvent) {
+                    if (commandEvent.getCommand().equals(PageCommandEvent.EDIT_INFO)) {
+                        startEdit();
+                        return true;
+                    }
+                    return false;
+                }
+            });
         } else {
             setFooter(null);
         }
@@ -79,6 +90,8 @@ public class InterestsBlurb extends Blurb
 
     protected void startEdit ()
     {
+        unregisterForFlashCommands();
+
         SmartTable editor = new SmartTable("Interests", 0, 5);
 
         _iEditors = new TextBox[Interest.TYPES.length];
@@ -169,8 +182,24 @@ public class InterestsBlurb extends Blurb
         return panel;
     }
 
+    @Override // from Widget
+    protected void onDetach ()
+    {
+        super.onDetach();
+        unregisterForFlashCommands();
+    }
+
+    protected void unregisterForFlashCommands ()
+    {
+        if (_registration != null) {
+            _registration.remove();
+            _registration = null;
+        }
+    }
+
     protected List<Interest> _interests;
     protected TextBox[] _iEditors;
+    protected Page.Registration _registration;
 
     protected static final PeopleMessages _msgs = GWT.create(PeopleMessages.class);
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
