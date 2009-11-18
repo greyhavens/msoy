@@ -1238,7 +1238,7 @@ public class ItemLogic
         List<ListingCard> result = Lists.newArrayList();
         for (MogMarkRecord mRec : toOutput) {
             CatalogRecord cRec = loadedRecords.get(mRec);
-            if (cRec != null) {
+            if (cRec != null && cRec.pricing != CatalogListing.PRICING_HIDDEN) {
                 // should be always true unless we got a mystery error above
                 result.add(cRec.toListingCard());
             }
