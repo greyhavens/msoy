@@ -45,7 +45,6 @@ import com.threerings.msoy.data.WorldCredentials;
 import com.threerings.msoy.data.all.ChannelName;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.data.all.Theme;
 import com.threerings.msoy.data.all.VisitorInfo;
 
 import com.threerings.msoy.chat.data.MsoyChatChannel;
@@ -425,7 +424,7 @@ import com.threerings.msoy.item.data.all.Item_UsedAs;
 import com.threerings.msoy.client.MsoyClient;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.FriendEntry;
-import com.threerings.msoy.data.all.Theme;
+import com.threerings.msoy.data.all.GroupName;
 
 import com.threerings.msoy.world.client.WorldContext;
 
@@ -466,11 +465,11 @@ class ThemeUpdater implements AttributeChangeListener
     public function attributeChanged (event :AttributeChangedEvent) :void
     {
         if (MemberObject.THEME == event.getName()) {
-            updateTheme(event.getValue() as Theme);
+            updateTheme(event.getValue() as GroupName);
         }
     }
 
-    public function updateTheme (theme :Theme) :void
+    public function updateTheme (theme :GroupName) :void
     {
         _client.dispatchEventToGWT(THEME_CHANGE_EVENT,
             (theme != null) ? [ theme.getGroupId() ] : [ 0 ]);

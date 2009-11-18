@@ -38,6 +38,7 @@ import com.threerings.whirled.spot.server.SpotSceneRegistry;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyBodyObject;
+import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MemberLocal;
 import com.threerings.msoy.server.MemberLocator;
@@ -49,7 +50,6 @@ import com.threerings.msoy.world.server.WorldManager;
 import com.threerings.msoy.peer.data.HostedRoom;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 
-import com.threerings.msoy.data.all.Theme;
 import com.threerings.msoy.group.server.ThemeLogic;
 import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
@@ -484,8 +484,7 @@ public class MsoySceneRegistry extends SpotSceneRegistry
                     return;
                 }
 
-                _theme = themeRec.toTheme(groupRec.toGroupName());
-                _groupName = groupRec.name;
+                _groupName = groupRec.toGroupName();
 
                 if (themeRec.playOnEnter) {
                     _gameId = groupRec.gameId;
@@ -542,8 +541,8 @@ public class MsoySceneRegistry extends SpotSceneRegistry
                 }
 
                 // if the theme really needs changing, do it
-                if (!ObjectUtil.equals(_theme, _user.theme)) {
-                    _user.setTheme(_theme);
+                if (!ObjectUtil.equals(_groupName, _user.theme)) {
+                    _user.setTheme(_groupName);
                 }
             } finally {
                 _user.commitTransaction();
@@ -551,7 +550,8 @@ public class MsoySceneRegistry extends SpotSceneRegistry
 
             // if there's a lineup, instruct the client to show the selection UI and exit
             if (_lineup != null && !_lineup.isEmpty()) {
-                _listener.selectGift(_lineup.toArray(new Avatar[_lineup.size()]), _groupName);
+                _listener.selectGift(
+                    _lineup.toArray(new Avatar[_lineup.size()]), _groupName.toString());
                 return;
             }
 
@@ -600,8 +600,7 @@ public class MsoySceneRegistry extends SpotSceneRegistry
         protected int _candidateAvatarId;
         protected List<AvatarRecord> _quicklist;
         protected List<Avatar> _lineup;
-        protected Theme _theme;
-        protected String _groupName;
+        protected GroupName _groupName;
 
         // for finishOrPunt()
         protected int _gameId;

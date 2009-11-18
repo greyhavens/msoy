@@ -20,10 +20,10 @@ import com.threerings.msoy.group.data.all.GroupMembership.Rank;
 import com.threerings.msoy.data.all.ContactEntry;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.GatewayEntry;
+import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberMailUtil;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.data.all.Theme;
 import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.data.all.VizMemberName;
 
@@ -144,7 +144,7 @@ public class MemberObject extends MsoyBodyObject
     public int homeSceneId;
 
     /** The definition of the theme this member is currently in, or null. */
-    public Theme theme;
+    public GroupName theme;
 
     /** The avatar that the user has chosen, or null for guests. */
     public Avatar avatar;
@@ -576,9 +576,9 @@ public class MemberObject extends MsoyBodyObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
-    public void setTheme (Theme value)
+    public void setTheme (GroupName value)
     {
-        Theme ovalue = this.theme;
+        GroupName ovalue = this.theme;
         requestAttributeChange(
             THEME, value, ovalue);
         this.theme = value;

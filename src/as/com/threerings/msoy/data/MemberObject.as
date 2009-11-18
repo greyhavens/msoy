@@ -17,10 +17,10 @@ import com.threerings.msoy.data.MemberExperience;
 import com.threerings.msoy.data.all.ContactEntry;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.GatewayEntry;
+import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberMailUtil;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.PlayerEntry;
-import com.threerings.msoy.data.all.Theme;
 import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.data.all.VizMemberName;
 
@@ -136,7 +136,7 @@ public class MemberObject extends MsoyBodyObject
     public var homeSceneId :int;
 
     /** The definition of the theme this member is currently in, or null. */
-    public var theme :Theme;
+    public var theme :GroupName;
 
     /** The avatar that the user has chosen, or null for guests. */
     public var avatar :Avatar;
@@ -327,7 +327,7 @@ public class MemberObject extends MsoyBodyObject
         followers = DSet(ins.readObject());
         tokens = MsoyTokenRing(ins.readObject());
         homeSceneId = ins.readInt();
-        theme = Theme(ins.readObject());
+        theme = GroupName(ins.readObject());
         avatar = Avatar(ins.readObject());
         avatarCache = DSet(ins.readObject());
         friends = DSet(ins.readObject());
