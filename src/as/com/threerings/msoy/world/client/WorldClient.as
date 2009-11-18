@@ -164,8 +164,6 @@ public class WorldClient extends MsoyClient
         // listen for theme changes
         var themeUpdater :ThemeUpdater = new ThemeUpdater(this);
         member.addListener(themeUpdater);
-        // configure our levels to start
-        themeUpdater.updateTheme(member.theme);
     }
 
     /**
