@@ -102,15 +102,12 @@ public class LobbyManager
      */
     public void setGameContent (GameContent content)
     {
-        // parse the game definition
-        GameDefinition gameDef;
+        // parse the game definition. start with a null in case parse fails
+        GameDefinition gameDef = null;
         try {
             gameDef = new MsoyGameParser().parseGame(content.code);
         } catch (Exception e) {
-            log.warning("Error parsing game definition", "id", content.gameId, "err", e);
-            // however, we do not want to put the kibosh on the update. If someone booches their
-            // game, we want the lobby to *fail fast*, not fail the next time the server reboots...
-            gameDef = null;
+            log.warning("Error parsing game definition", "id", content.gameId, e);
         }
 
         // accept the new game
