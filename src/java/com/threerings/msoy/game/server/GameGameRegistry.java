@@ -762,6 +762,11 @@ public class GameGameRegistry
                     return;
                 }
 
+                if (_content.code == null) {
+                    reportFailure("m.code_not_published");
+                    return;
+                }
+
                 LobbyManager lmgr = _injector.getInstance(LobbyManager.class);
                 lmgr.init(_invmgr, GameGameRegistry.this);
                 lmgr.setGameContent(_content);
