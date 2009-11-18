@@ -5,6 +5,7 @@ package com.threerings.msoy.web.server;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -14,12 +15,12 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.mortbay.jetty.servlet.DefaultServlet;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.samskivert.io.StreamUtil;
 import com.samskivert.velocity.VelocityUtil;
-
 import com.threerings.msoy.data.all.Theme;
 import com.threerings.msoy.group.server.ThemeLogic;
 import com.threerings.msoy.group.server.persist.ThemeRecord;
@@ -39,15 +40,17 @@ public class ThemedTemplateServlet extends DefaultServlet
 
         Theme theme = (themeRec != null) ? themeRec.toTheme(null) : Theme.DEFAULT_THEME;
 
-        VelocityContext ctx = new VelocityContext();
-        ctx.put("logoUrl", theme.getLogo().getMediaPath());
-        ctx.put("navUrl", theme.getNavButton().getMediaPath());
-        ctx.put("navCol", cssColor(theme.navColor));
-        ctx.put("navSelUrl", theme.getNavSelButton().getMediaPath());
-        ctx.put("navSelCol", cssColor(theme.navSelColor));
-        ctx.put("statusLinksCol", cssColor(theme.statusLinksColor));
-        ctx.put("statusLevelsCol", cssColor(theme.statusLevelsColor));
-        ctx.put("backgroundColor", cssColor(theme.backgroundColor));
+        Map<String, Object> configuration = ImmutableMap.<String, Object>builder().
+            put("logoUrl", theme.getLogo().getMediaPath()).
+            put("navUrl", theme.getNavButton().getMediaPath()).
+            put("navCol", cssColor(theme.navColor)).
+            put("navSelUrl", theme.getNavSelButton().getMediaPath()).
+            put("navSelCol", cssColor(theme.navSelColor)).
+            put("statusLinksCol", cssColor(theme.statusLinksColor)).
+            put("statusLevelsCol", cssColor(theme.statusLevelsColor)).
+            put("backgroundColor", cssColor(theme.backgroundColor)).build();
+
+        VelocityContext ctx = new VelocityContext(configuration);
 
         try {
             PrintWriter pout = new PrintWriter(rsp.getOutputStream());
