@@ -50,12 +50,20 @@ public class TutorialPanel extends Canvas
     {
         Tweener.removeTweens(_glower);
         _glower.reset();
-
         _close.toolTip = Msgs.GENERAL.get("i.tutorial_close");
+        _currentItem = item;
+        updateContent(false);
+        if (item.popupHelper != null) {
+            item.popupHelper.popup();
+        }
+    }
 
-        _text.text = item.text;
+    protected function updateContent (finishing :Boolean) :void
+    {
+        var item :TutorialItem = _currentItem;
+        _text.text = finishing ? item.finishText : item.text;
 
-        if (item.buttonText == null) {
+        if (item.buttonText == null || switched) {
             _action.setVisible(false);
             _text.width = TEXT_FULL_WIDTH;
         } else {
@@ -64,14 +72,8 @@ public class TutorialPanel extends Canvas
             _text.width = TEXT_WIDTH;
         }
 
-        _close.setVisible(!item.buttonCloses);
+        _close.setVisible(!item.hideClose || finishing);
         _ignore.setVisible(item.ignorable);
-
-        if (item.popupHelper != null) {
-            item.popupHelper.popup();
-        }
-
-        _currentItem = item;
     }
 
     /**
@@ -116,6 +118,9 @@ public class TutorialPanel extends Canvas
         if (item != null) {
             if (item.buttonCloses) {
                 handleClose();
+            }
+            if (item.finishText != null) {
+                updateContent(true);
             }
             if (item.onClick != null) {
                 item.onClick();

@@ -115,15 +115,32 @@ public class TutorialItemBuilder
      *        <listing>
      *            function buttonFn () :void;
      *        </listing>
-     * @param closes if passed and set to true, pressing the button also dismissed the popup and
-     *        the close button is hidden
      */
-    public function button (text :String, onClick :Function,
-                            closes :Boolean = false) :TutorialItemBuilder
+    public function button (text :String, onClick :Function) :TutorialItemBuilder
     {
         _item.buttonText = text;
         _item.onClick = onClick;
-        _item.buttonCloses = closes;
+        return this;
+    }
+
+    /**
+     * Sets up the item so that pressing the button also changes the text in the popup and hides
+     * the button disappears. This may not be used with <code>buttonCloses</code>.
+     */
+    public function finishText (text :String) :TutorialItemBuilder
+    {
+        _item.finishText = text;
+        return this;
+    }
+
+    /**
+     * Sets up the item so that pressing the button also dismisses the popup.
+     * @param hideClose Sets the close button to be hidden.
+     */
+    public function buttonCloses (hideClose :Boolean = false) :TutorialItemBuilder
+    {
+        _item.buttonCloses = true;
+        _item.hideClose = hideClose;
         return this;
     }
 

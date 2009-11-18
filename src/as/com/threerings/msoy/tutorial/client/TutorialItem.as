@@ -46,8 +46,10 @@ internal class TutorialItem
     internal var checkAvailable :Function;
     internal var buttonText :String;
     internal var buttonCloses :Boolean;
+    internal var hideClose :Boolean;
     internal var onClick :Function;
     internal var ignorable :Boolean = true;
     internal var popupHelper :PopupHelper;
+    internal var finishText :String;
 }
 }
