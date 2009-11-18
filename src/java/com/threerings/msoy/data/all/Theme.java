@@ -15,6 +15,10 @@ import com.threerings.msoy.data.all.MediaDesc;
 public class Theme extends SimpleStreamableObject
     implements IsSerializable
 {
+    public static final boolean isLive () {
+        return true;
+    }
+
     /** An instantiated Theme representing the settings for the default Whirled. */
     public static final Theme DEFAULT_THEME = createDefaultTheme();
 

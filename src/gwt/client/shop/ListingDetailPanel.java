@@ -31,6 +31,7 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.util.DateUtil;
 
 import com.threerings.msoy.data.all.GroupName;
+import com.threerings.msoy.data.all.Theme;
 import com.threerings.msoy.group.gwt.BrandDetail.BrandShare;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.gwt.CatalogListing;
@@ -283,7 +284,8 @@ public class ListingDetailPanel extends BaseItemDetailPanel
 
     protected boolean mayManage ()
     {
-        if (CShell.isSupport() || _detail.creator.getMemberId() == CShell.getMemberId()) {
+        if (CShell.isSupport() ||
+                (Theme.isLive() && _detail.creator.getMemberId() == CShell.getMemberId())) {
             return true;
         }
         if (_listing.brand != null) {

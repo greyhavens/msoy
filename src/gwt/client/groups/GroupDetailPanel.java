@@ -262,7 +262,7 @@ public class GroupDetailPanel extends FlowPanel
         }
 
         // manage themes
-        if (_detail.myRank == Rank.MANAGER || CShell.isSupport()) {
+        if (CShell.isSupport() || (Theme.isLive() && _detail.myRank == Rank.MANAGER)) {
             _themeActions = MsoyUI.createFlowPanel("ThemeActions");
             actions.add(_themeActions);
             updateThemes();
