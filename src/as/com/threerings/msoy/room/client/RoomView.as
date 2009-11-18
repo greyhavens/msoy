@@ -1026,6 +1026,16 @@ public class RoomView extends Sprite
      */
     protected function removeSprite (sprite :MsoySprite) :void
     {
+        if (sprite.parent != this) {
+            // TODO: I believe this happens when you leave a room and your greeter enters;
+            // TODO: the sprite with bodyOid=0 ends up in _pendingRemovals and _occupants
+            // TODO: both. I don't have time to track down precisely why this happens, but
+            // TODO: let's stop throwing exceptions halfway through this code.
+            log.warning("Trying to remove a sprite that's not our child", "sprite", sprite,
+                        "parent", sprite.parent);
+            return;
+        }
+
         _ctrl.setSpriteHovered(sprite, false);
         removeFromEntityMap(sprite);
         removeChild(sprite);
