@@ -15,6 +15,7 @@ import com.threerings.msoy.data.all.MediaDesc;
 public class Theme extends SimpleStreamableObject
     implements IsSerializable
 {
+    /** Enables or disables many of the Theme UI fragments. */
     public static final boolean isLive () {
         return true;
     }
