@@ -13,13 +13,22 @@ public class PageCommand
 {
     public static const NAME :String = "pageCommand";
     public static const EDIT_PROFILE :String = "editProfile";
+    public static const EDIT_INFO :String = "editInfo";
 
     /**
-     * Sends a command to edit the profile, if one is currently showing.
+     * Sends a command to edit the profile, if one is currently showing and is editable.
      */
     public static function editProfile (ctx :MsoyContext) :void
     {
         send(ctx, Page.PEOPLE, EDIT_PROFILE);
+    }
+
+    /**
+     * Sends a command to edit the info, if the profile is currently showing and is editable.
+     */
+    public static function editInfo (ctx :MsoyContext) :void
+    {
+        send(ctx, Page.PEOPLE, EDIT_INFO);
     }
 
     /**

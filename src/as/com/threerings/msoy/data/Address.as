@@ -18,6 +18,18 @@ public class Address
     /** The default me page. */
     public static const ME :Address = new Address(Page.ME, []);
 
+    /** The share whirled page. */
+    public static const SHARE :Address = new Address(Page.PEOPLE, ["invites", "links"]);
+
+    /** The invite friends page. */
+    public static const INVITE :Address = new Address(Page.PEOPLE, ["invites"]);
+
+    /** The contests page. */
+    public static const CONTESTS :Address = new Address(Page.ME, ["contests"]);
+
+    /** The contests page. */
+    public static const PASSPORT :Address = new Address(Page.ME, ["passport"]);
+
     /**
      * Creates the address of a member's profile page.
      */
