@@ -63,7 +63,7 @@ public class TutorialPanel extends Canvas
         var item :TutorialItem = _currentItem;
         _text.text = finishing ? item.finishText : item.text;
 
-        if (item.buttonText == null || switched) {
+        if (item.buttonText == null || finishing) {
             _action.setVisible(false);
             _text.width = TEXT_FULL_WIDTH;
         } else {
