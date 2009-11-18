@@ -302,8 +302,7 @@ public class GroupDetailPanel extends FlowPanel
     {
         _themeActions.clear();
 
-        // For now, only support+ can create themes
-        if (CShell.isSupport()) {
+        if (CShell.isSupport() || (CShell.isSubscriber() && Theme.isLive())) {
             final int groupId = _detail.group.groupId;
             if (_detail.theme != null) {
                 _themeActions.add(MsoyUI.createActionLabel(_msgs.detailEditTheme(), "inline",
