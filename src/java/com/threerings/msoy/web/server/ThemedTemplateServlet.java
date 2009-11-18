@@ -40,15 +40,16 @@ public class ThemedTemplateServlet extends DefaultServlet
 
         Theme theme = (themeRec != null) ? themeRec.toTheme(null) : Theme.DEFAULT_THEME;
 
-        Map<String, Object> configuration = ImmutableMap.<String, Object>builder().
-            put("logoUrl", theme.getLogo().getMediaPath()).
-            put("navUrl", theme.getNavButton().getMediaPath()).
-            put("navCol", cssColor(theme.navColor)).
-            put("navSelUrl", theme.getNavSelButton().getMediaPath()).
-            put("navSelCol", cssColor(theme.navSelColor)).
-            put("statusLinksCol", cssColor(theme.statusLinksColor)).
-            put("statusLevelsCol", cssColor(theme.statusLevelsColor)).
-            put("backgroundColor", cssColor(theme.backgroundColor)).build();
+        Map<String, Object> configuration = ImmutableMap.<String, Object>builder()
+            .put("logoUrl", theme.getLogo().getMediaPath())
+            .put("navUrl", theme.getNavButton().getMediaPath())
+            .put("navCol", cssColor(theme.navColor))
+            .put("navSelUrl", theme.getNavSelButton().getMediaPath())
+            .put("navSelCol", cssColor(theme.navSelColor))
+            .put("statusLinksCol", cssColor(theme.statusLinksColor))
+            .put("statusLevelsCol", cssColor(theme.statusLevelsColor))
+            .put("backgroundColor", cssColor(theme.backgroundColor))
+            .build();
 
         VelocityContext ctx = new VelocityContext(configuration);
 
