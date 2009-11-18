@@ -111,7 +111,7 @@ public class WorldClient extends Widget
      */
     public static void contentPageReady (Pages page, String token)
     {
-        clientSetPage(page.toString(), token);
+        clientSetPage(page.name(), token);
     }
 
     /**

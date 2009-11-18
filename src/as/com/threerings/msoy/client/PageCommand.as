@@ -36,7 +36,7 @@ public class PageCommand
      */
     public static function serialize (page :Page, command :String) :Array
     {
-        return [page.toString(), command];
+        return [page.name(), command];
     }
 
     /**
