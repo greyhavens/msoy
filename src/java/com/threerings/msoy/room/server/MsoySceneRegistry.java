@@ -326,7 +326,8 @@ public class MsoySceneRegistry extends SpotSceneRegistry
             _memobj = (mover instanceof MemberObject) ? (MemberObject)mover : null;
         }
 
-        public void sceneOnNode (Tuple<String, HostedRoom> nodeInfo) {
+        public void sceneOnNode (Tuple<String, HostedRoom> nodeInfo)
+        {
             if (_memobj == null) {
                 log.warning("Non-member requested move that requires server switch?",
                     "who", _mover.who(), "info", nodeInfo);
@@ -349,7 +350,9 @@ public class MsoySceneRegistry extends SpotSceneRegistry
             sendClientToNode(nodeInfo.left, _memobj, _msoyListener);
         }
 
-        protected void effectSceneMove (SceneManager scmgr) throws InvocationException {
+        protected void effectSceneMove (SceneManager scmgr)
+            throws InvocationException
+        {
             final MsoyScene scene = (MsoyScene) scmgr.getScene();
             final RoomManager destmgr = (RoomManager)scmgr;
 
@@ -496,9 +499,6 @@ public class MsoySceneRegistry extends SpotSceneRegistry
 //                }
             }
 
-            // if we're definitely going, update MemberRecord (even with _themeId == 0)
-            _memberRepo.configureThemeId(_memberId, _themeId);
-
             // if we've been in this theme before, see what we wore last
             ThemeAvatarUseRecord aRec = _themeRepo.getLastWornAvatar(_memberId, _themeId);
             if (aRec != null && aRec.itemId != _candidateAvatarId) {
@@ -533,6 +533,14 @@ public class MsoySceneRegistry extends SpotSceneRegistry
                 return;
             }
 
+            // if there's a lineup, instruct the client to show the selection UI and exit
+            if (_lineup != null && !_lineup.isEmpty()) {
+                _listener.selectGift(
+                    _lineup.toArray(new Avatar[_lineup.size()]), _groupName.toString());
+                return;
+            }
+
+            // else we're definitely moving
             _user.startTransaction();
             try {
                 // if we loaded a quicklist (and it wasn't set during our thread hopping), set it
@@ -549,12 +557,13 @@ public class MsoySceneRegistry extends SpotSceneRegistry
                 _user.commitTransaction();
             }
 
-            // if there's a lineup, instruct the client to show the selection UI and exit
-            if (_lineup != null && !_lineup.isEmpty()) {
-                _listener.selectGift(
-                    _lineup.toArray(new Avatar[_lineup.size()]), _groupName.toString());
-                return;
-            }
+            // kick off a DB write to persist the user's theme
+            _invoker.postUnit(new RepositoryUnit("persistThemeId") {
+                public void invokePersist () throws Exception {
+                    _memberRepo.configureThemeId(_memberId, _themeId);
+                }
+                public void handleSuccess () { }
+            });
 
             // if we're not switching avatars, we're done
             if (_candidateAvatarId == _oldAvatarId) {
