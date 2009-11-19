@@ -45,7 +45,7 @@ public class MenuHighlightHelper extends UIHighlightHelper
     {
         super.adjustHighlightArea(comp, area);
         if (_mine) {
-            area.inflate(10, 10);
+            area.inflate(-10, 5);
         }
     }
 

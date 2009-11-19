@@ -105,9 +105,6 @@ public class UIHighlightHelper
 
     protected function adjustHighlightArea (comp :IFlexDisplayObject, area:Rectangle) :void
     {
-        area.inflate(8, 10);
-        area.width += 14;
-        area.height += 10;
     }
 
     protected function handleEnterFrame (evt :Event) :void
@@ -117,17 +114,15 @@ public class UIHighlightHelper
         var area :Rectangle = getHighlightArea(comp);
 
         if (show) {
-            if (_highlight.x != area.x || _highlight.y != area.y) {
-                _highlight.x = area.x;
-                _highlight.y = area.y;
-            }
-
             if (_lastArea == null || Math.abs(_lastArea.width - area.width) > 0.01 ||
                 Math.abs(_lastArea.height - area.height) > 0.01) {
                 var rect :Rectangle = _circle.getRect(_circle);
-                _circle.scaleX = area.width / rect.width;
-                _circle.scaleY = area.height / rect.height;
+                _circle.scaleX = area.width / 27;
+                _circle.scaleY = area.height / 30;
             }
+
+            _highlight.x = area.x - 13.7 * _circle.scaleX;
+            _highlight.y = area.y - 9.0 * _circle.scaleY;
 
             if (_highlight.parent == null || comp != _lastComp) {
                 _circle.gotoAndPlay(0);
