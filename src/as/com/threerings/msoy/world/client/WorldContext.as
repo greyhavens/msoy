@@ -139,6 +139,14 @@ public class WorldContext extends MsoyContext
         return _controller;
     }
 
+    /**
+     * Returns the world control bar.
+     */
+    public function getWorldControlBar () :WorldControlBar
+    {
+        return WorldControlBar(getControlBar());
+    }
+
     // from MsoyContext
     override public function getTokens () :MsoyTokenRing
     {
