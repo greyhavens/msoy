@@ -370,6 +370,7 @@ public class MsoySceneRegistry extends SpotSceneRegistry
             // temporarily forbid anybody but subscribers to enter a theme from the mundane world
             if (scene.getThemeId() != 0 && !_memobj.tokens.isSubscriberPlus()) {
                 _msoyListener.requestFailed(InvocationCodes.E_ACCESS_DENIED);
+                return;
             }
 
             // otherwise we need to take an extra trip over the invoker thread
