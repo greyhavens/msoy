@@ -472,6 +472,8 @@ public class MsoySceneRegistry extends SpotSceneRegistry
                     _memberId, _themeId, MemberObject.AVATAR_CACHE_SIZE);
             }
 
+            _memberRepo.configureThemeId(_memberId, _themeId);
+
             if (_themeId != 0) {
                 ThemeRecord themeRec = _themeRepo.loadTheme(_themeId);
                 if (themeRec == null) {
@@ -558,14 +560,6 @@ public class MsoySceneRegistry extends SpotSceneRegistry
             } finally {
                 _user.commitTransaction();
             }
-
-            // kick off a DB write to persist the user's theme
-            _invoker.postUnit(new RepositoryUnit("persistThemeId") {
-                public void invokePersist () throws Exception {
-                    _memberRepo.configureThemeId(_memberId, _themeId);
-                }
-                public void handleSuccess () { }
-            });
 
             // if we're not switching avatars, we're done
             if (_candidateAvatarId == _oldAvatarId) {
