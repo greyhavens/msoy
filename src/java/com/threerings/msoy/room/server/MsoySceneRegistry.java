@@ -486,13 +486,14 @@ public class MsoySceneRegistry extends SpotSceneRegistry
 
                 _groupName = groupRec.toGroupName();
 
-                if (themeRec.playOnEnter) {
-                    _gameId = groupRec.gameId;
-                    if (_gameId == 0) {
-                        log.warning("Play-on-enter theme has no game registered", "sceneId", _sceneId,
-                            "themeGroupId", _themeId);
-                    }
-                }
+                // TODO: Enable this when it works.
+//                if (themeRec.playOnEnter) {
+//                    _gameId = groupRec.gameId;
+//                    if (_gameId == 0) {
+//                        log.warning("Play-on-enter theme has no game registered", "sceneId", _sceneId,
+//                            "themeGroupId", _themeId);
+//                    }
+//                }
             }
 
             // if we're definitely going, update MemberRecord (even with _themeId == 0)
