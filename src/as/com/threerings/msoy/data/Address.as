@@ -9,6 +9,8 @@ import com.threerings.util.Joiner;
 
 import com.threerings.msoy.utils.Args;
 
+import com.threerings.msoy.item.data.all.ItemTypes;
+
 /**
  * Represents the address of a specific page on the whirled web site.
  */
@@ -30,12 +32,23 @@ public class Address
     /** The contests page. */
     public static const PASSPORT :Address = new Address(Page.ME, ["passport"]);
 
+    /** The furniture shop page. */
+    public static const SHOP_FURNI :Address = shopDefault(ItemTypes.FURNITURE);
+
     /**
      * Creates the address of a member's profile page.
      */
     public static function profile (memberId :int) :Address
     {
-        return new Address(Page.PEOPLE, [String(memberId)]);
+        return new Address(Page.PEOPLE, [memberId]);
+    }
+
+    /**
+     * Creates the address of a shop page for the supplied item type and with a default sort.
+     */
+    public static function shopDefault (type :int) :Address
+    {
+        return new Address(Page.SHOP, [type]);
     }
 
     /**

@@ -15,6 +15,7 @@ public class Page extends Enum
 {
     public static const PEOPLE :Page = new Page("PEOPLE");
     public static const ME :Page = new Page("ME");
+    public static const SHOP :Page = new Page("SHOP");
 
     // TODO: add all pages that exist in gwt (as needed)
     // TODO: fix all the hardwired page names throughout the code to use this enum
