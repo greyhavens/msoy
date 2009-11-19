@@ -110,13 +110,22 @@ public class TutorialDirector
     }
 
     /**
-     * Activates a sequence. All items will be viewed before normal tutorial behavior resumes.
+     * Activates a sequence.
      */
-    public function activateSequence (seq :TutorialSequence) :Boolean
+    public function activateSequence (seq :TutorialSequence, dismiss :Boolean) :Boolean
     {
-        if (_sequence != null || !seq.isAvailable() ||
-            Prefs.getTutorialProgress(seq.id) >= seq.size()) {
+        if (!seq.isAvailable() || Prefs.getTutorialProgress(seq.id) >= seq.size()) {
             return false;
+        }
+
+        if (_sequence != null) {
+            if (dismiss) {
+                _panel.handleClose();
+                _sequence = null;
+
+            } else {
+                return false;
+            }
         }
 
         _sequence = new ActiveSequence(seq);

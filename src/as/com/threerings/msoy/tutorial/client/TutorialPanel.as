@@ -102,7 +102,7 @@ public class TutorialPanel extends Canvas
         x = (unscaledWidth - width) / 2;
     }
 
-    protected function handleClose () :void
+    internal function handleClose () :void
     {
         Tweener.removeTweens(_glower);
         _glower.reset();
