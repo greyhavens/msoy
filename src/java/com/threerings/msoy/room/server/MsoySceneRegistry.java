@@ -364,13 +364,10 @@ public class MsoySceneRegistry extends SpotSceneRegistry
             }
 
             // if we're not a player (e.g. a pet or a mob), just let us through
-            if (_memobj == null) {
-                finishMove(scene, destmgr);
-            }
-
-            // if we've already got an avatar quicklist and we're not crossing a theme
-            // boundary, we can just finish the move as usual
-            if (_memobj.avatarCache != null && isInTheme(_memobj, scene.getThemeId())) {
+            if ((_memobj == null) ||
+                    // Or, if we've already got an avatar quicklist and we're not crossing a theme
+                    // boundary, we can just finish the move as usual
+                    (_memobj.avatarCache != null && isInTheme(_memobj, scene.getThemeId()))) {
                 finishMove(scene, destmgr);
                 return;
             }
