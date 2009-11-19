@@ -16,12 +16,17 @@ import com.threerings.util.Log;
 import com.threerings.util.Map;
 import com.threerings.util.Maps;
 import com.threerings.util.StringUtil;
+import com.threerings.util.Util;
+
+import com.threerings.whirled.data.SceneUpdate;
+
+import com.threerings.msoy.data.Address;
+
+import com.threerings.msoy.client.DeploymentConfig;
 
 import com.threerings.msoy.item.client.ItemService;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
-
-import com.threerings.whirled.data.SceneUpdate;
 
 import com.threerings.msoy.world.client.WorldContext;
 import com.threerings.msoy.world.client.WorldService;
@@ -40,6 +45,8 @@ import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.msoy.room.data.MsoyScene;
 import com.threerings.msoy.room.data.MsoySceneModel;
 import com.threerings.msoy.room.data.SceneAttrsUpdate;
+
+import com.threerings.msoy.tutorial.client.TutorialSequenceBuilder;
 
 /**
  * Controller for the room editing panel. It starts up two different types of UI: one is
@@ -120,6 +127,9 @@ public class RoomEditorController
         // hide advanced ui
         actionAdvancedEditing(false);
         updateNameDisplay();
+
+        // show tutorial
+        maybeShowTutorial();
     }
 
     /**
@@ -460,6 +470,36 @@ public class RoomEditorController
         var newmodel :MsoySceneModel = newscene.getSceneModel() as MsoySceneModel;
         newmodel.backgroundColor = value;
         updateScene(scene, newscene);
+    }
+
+    protected function maybeShowTutorial () :void
+    {
+        if (!DeploymentConfig.enableTutorial) {
+            return;
+        }
+
+        function xlate (msg :String) :String {
+            return Msgs.NPC.get(msg);
+        }
+
+        var sequence :TutorialSequenceBuilder;
+        sequence = _ctx.getTutorialDirector().newSequence("roomEdit").newbie().limit(isEditing);
+
+        // click and drag
+        sequence.newSuggestion(xlate("i.edit_click")).button(xlate("b.edit_click"), null)
+            .buttonCloses(true).queue();
+
+        // try other options
+        sequence.newSuggestion(xlate("i.edit_try_more")).button(xlate("b.edit_try_more"), null)
+            .buttonCloses(true).highlight(_panel).queue();
+
+        // shop
+        sequence.newSuggestion(xlate("i.edit_shop")).button(xlate("b.edit_shop"),
+                Util.adapt(_ctx.getWorldController().displayAddress, Address.SHOP_FURNI))
+            .buttonCloses().queue();
+
+        // let 'er rip
+        sequence.activate();
     }
 
     /**
