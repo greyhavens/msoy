@@ -357,10 +357,15 @@ public class MsoySceneRegistry extends SpotSceneRegistry
             final RoomManager destmgr = (RoomManager)scmgr;
 
             // if we're not going to be let into the room, let our listener know now
-            String accessMsg = scmgr.ratifyBodyEntry(_memobj);
+            String accessMsg = scmgr.ratifyBodyEntry(_mover);
             if (accessMsg != null) {
                 _msoyListener.requestFailed(accessMsg);
                 return;
+            }
+
+            // if we're not a player (e.g. a pet or a mob), just let us through
+            if (_memobj == null) {
+                finishMove(scene, destmgr);
             }
 
             // if we've already got an avatar quicklist and we're not crossing a theme
