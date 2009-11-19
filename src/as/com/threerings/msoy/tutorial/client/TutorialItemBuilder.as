@@ -81,6 +81,15 @@ public class TutorialItemBuilder
     }
 
     /**
+     * Limit the item for display exclusively to new users.
+     */
+    public function newbie () :TutorialItemBuilder
+    {
+        _levels = Levels.NEWBIE;
+        return this;
+    }
+
+    /**
      * Limit the item for display exclusively to beginner users.
      */
     public function beginner () :TutorialItemBuilder
