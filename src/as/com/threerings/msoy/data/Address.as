@@ -40,7 +40,7 @@ public class Address
      */
     public static function profile (memberId :int) :Address
     {
-        return new Address(Page.PEOPLE, [memberId]);
+        return new Address(Page.PEOPLE, [String(memberId)]);
     }
 
     /**
@@ -48,7 +48,7 @@ public class Address
      */
     public static function shopDefault (type :int) :Address
     {
-        return new Address(Page.SHOP, [type]);
+        return new Address(Page.SHOP, [String(type)]);
     }
 
     /**
