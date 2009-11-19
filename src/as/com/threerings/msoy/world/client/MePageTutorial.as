@@ -42,12 +42,7 @@ public class MePageTutorial
         }
 
         var sequence :TutorialSequenceBuilder;
-        sequence = _ctx.getTutorialDirector().newSequence("mePage").singles();
-
-        // let everyone see this sequence on dev
-        if (!DeploymentConfig.devDeployment) {
-            sequence.newbie();
-        }
+        sequence = _ctx.getTutorialDirector().newSequence("mePage").singles().newbie();
 
         // name editing
         sequence.newSuggestion(xlate("i.me_name_change"))
@@ -117,11 +112,6 @@ public class MePageTutorial
     protected function display (addr :Address) :Boolean
     {
         return _ctx.getWorldController().displayAddress(addr);
-    }
-
-    protected function feedback (msg :String) :void
-    {
-        _ctx.getMsoyChatDirector().displayFeedback(null, msg);
     }
 
     protected function xlate (msg :String) :String
