@@ -3,21 +3,9 @@
 
 package com.threerings.msoy.world.client {
 
-import flash.display.BlendMode;
-import flash.display.DisplayObjectContainer;
-import flash.display.SimpleButton;
-import flash.display.Sprite;
-
-import flash.events.MouseEvent;
-
-import flash.text.TextField;
-
-import caurina.transitions.Tweener;
-
 import com.threerings.io.TypedArray;
 import com.threerings.util.Util;
 import com.threerings.util.Log;
-import com.threerings.util.MultiLoader;
 
 import com.threerings.presents.client.BasicDirector;
 import com.threerings.presents.client.Client;
@@ -29,18 +17,19 @@ import com.threerings.crowd.data.PlaceObject;
 import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.MemberService;
 import com.threerings.msoy.client.Msgs;
-import com.threerings.msoy.client.PlaceBox;
 import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 
 import com.threerings.msoy.item.data.all.Avatar;
-import com.threerings.msoy.item.data.all.Item;
 
 import com.threerings.msoy.room.data.MsoySceneModel;
 import com.threerings.msoy.room.data.PetMarshaller;
 import com.threerings.msoy.room.data.RoomConfig;
 import com.threerings.msoy.room.data.RoomObject;
+
+import com.threerings.msoy.tutorial.client.TutorialDirector;
+import com.threerings.msoy.tutorial.client.TutorialSequenceBuilder;
 
 /**
  * Handles moving around in the virtual world.
@@ -188,7 +177,7 @@ public class WorldDirector extends BasicDirector
             fn();
 
         } else if (place is RoomObject && !_wctx.getGameDirector().isGaming()) {
-            maybeDisplayAvatarIntro();
+            maybeDisplayRoomTutorial();
         }
     }
 
@@ -215,55 +204,55 @@ public class WorldDirector extends BasicDirector
         _wsvc = (client.requireService(WorldService) as WorldService);
     }
 
-    /**
-     * This has nowhere else good to live.
-     */
-    protected function maybeDisplayAvatarIntro () :void
+    protected function maybeDisplayRoomTutorial () :void
     {
-        // if we have already shown the intro, they are a guest, are not wearing the tofu avatar,
-        // or have ever worn any non-tofu avatar, don't show the avatar intro
-        var mobj :MemberObject = _wctx.getMemberObject();
-        if (_avatarIntro != null || mobj.isViewer() || mobj.isPermaguest() ||
-            mobj.avatar != null || mobj.avatarCache.size() > 0) {
+        // skip all of this until tutorial switch is flipped
+        if (!DeploymentConfig.enableTutorial) {
             return;
         }
 
-        MultiLoader.getContents(DeploymentConfig.serverURL + "rsrc/avatar_intro.swf",
-            function (result :DisplayObjectContainer) :void {
-            _avatarIntro = result;
-            _avatarIntro.x = 15;
+        var homeId :int = _wctx.getMemberObject().homeSceneId;
 
-            var title :TextField = (_avatarIntro.getChildByName("txt_welcome") as TextField);
-            title.text = Msgs.GENERAL.get("t.avatar_intro");
+        // checks if the logged in user is in their home room
+        function isHome () :Boolean {
+            return homeId != 0 && _wctx.getSceneDirector().getScene() != null &&
+                _wctx.getSceneDirector().getScene().getId() == homeId;
+        }
 
-            var info :TextField = (_avatarIntro.getChildByName("txt_description") as TextField);
-            info.text = Msgs.GENERAL.get("m.avatar_intro");
+        // stash the director in a short variable
+        var tut :TutorialDirector = _wctx.getTutorialDirector();
 
-            var fadeOut :Function = function (event :MouseEvent) :void {
-                Tweener.addTween(_avatarIntro, { alpha: 0, time: .75, transition: "linear",
-                    onComplete: function () :void {
-                        _wctx.getTopPanel().getPlaceContainer().removeOverlay(_avatarIntro);
-                        // gc the intro, but suppress further popups this session
-                        _avatarIntro = new Sprite();
-                    } });
-            };
+        // translates a tutorial string
+        function xlate (msg :String) :String {
+            return Msgs.NPC.get(msg);
+        }
 
-            var close :SimpleButton = (_avatarIntro.getChildByName("btn_nothanks") as SimpleButton);
-            close.addEventListener(MouseEvent.CLICK, fadeOut);
+        // omg, we're not in Kansas anymore... show a suggestion for getting back home
+        if (!isHome()) {
+            if (homeId != 0) {
+                tut.newSuggestion("leftHome", xlate("i.noob_left_home")).newbie()
+                    .button(xlate("b.noob_left_home"), Util.adapt(
+                        _wctx.getSceneDirector().moveTo, homeId))
+                    .queue();
+            }
+            return;
+        }
 
-            var go :SimpleButton = (_avatarIntro.getChildByName("btn_gotoshop") as SimpleButton);
-            go.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
-                _wctx.getWorldController().handleViewShop(Item.AVATAR);
-            });
-            go.addEventListener(MouseEvent.CLICK, fadeOut);
+        // the new user sequence...
+        var sequence :TutorialSequenceBuilder = tut.newSequence("newUser").newbie().limit(isHome);
 
-            _avatarIntro.alpha = 0;
-            // make the text get the alpha setting too (contrary to flash documentation)
-            _avatarIntro.blendMode = BlendMode.LAYER;
-            _wctx.getTopPanel().getPlaceContainer().addOverlay(
-                _avatarIntro, PlaceBox.LAYER_TRANSIENT);
-            Tweener.addTween(_avatarIntro, { alpha: 1, time: .75, transition: "linear" });
-        });
+        // welcome
+        sequence.newSuggestion(xlate("i.noob_welcome"))
+            .button(xlate("b.noob_welcome"), null).buttonCloses(true).queue();
+
+        // decorate
+        sequence.newSuggestion(xlate("i.noob_decorate"))
+            .button(xlate("b.noob_decorate"), _wctx.getWorldController().handleRoomEdit)
+            .menuItemHighlight(_wctx.getWorldControlBar().roomBtn, WorldController.ROOM_EDIT)
+            .buttonCloses().queue();
+
+        // activate it
+        sequence.activate();
     }
 
     protected var _wctx :WorldContext;
@@ -274,9 +263,6 @@ public class WorldDirector extends BasicDirector
 
     /** If non-null, we should call it when we change places. */
     protected var _goToGame :Function;
-
-    /** An introduction to avatars shown to brand new players. */
-    protected var _avatarIntro :DisplayObjectContainer;
 }
 }
 
