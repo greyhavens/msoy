@@ -499,7 +499,7 @@ public class RoomEditorController
             .buttonCloses().queue();
 
         // let 'er rip
-        sequence.activate();
+        sequence.activate(true);
     }
 
     /**
