@@ -11,6 +11,10 @@ import com.google.gwt.dom.client.NodeList;
 /**
  * Allows index.html files for the top-level frame and pages to refer to stylesheet URL's on
  * the form /themed/css/foo.css?themeId=0 while we inject the user's theme as it loads/changes.
+ *
+ * NOTE WELL: Whirled falls apart if we ever reload the styles directly governing the layout
+ * of the flash client. For this reason, gwt.css (which has a display: block style for various
+ * block level elements including 'embed' and 'object') is NOT among the themed CSS files.
  */
 public class ThemedStylesheets
 {
