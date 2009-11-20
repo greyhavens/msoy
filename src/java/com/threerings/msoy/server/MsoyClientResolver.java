@@ -239,6 +239,10 @@ public class MsoyClientResolver extends CrowdClientResolver
             }
         }
 
+        // resolve their persisted theme
+        memobj.theme = (member.themeGroupId != 0) ?
+            _groupRepo.loadGroupName(member.themeGroupId) : null;
+
         // for players, resolve this here from the database.
         // guests will get resolution later on, in MsoySession.sessionWillStart()
         memobj.visitorInfo = new VisitorInfo(member.visitorId, true);
