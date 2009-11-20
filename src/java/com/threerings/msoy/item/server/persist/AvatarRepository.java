@@ -70,6 +70,7 @@ public class AvatarRepository extends ItemRepository<AvatarRecord>
                 new ColumnExp(getMogMarkClass(), MogMarkRecord.GROUP_ID.name).eq(themeId),
                 getItemColumn(ItemRecord.OWNER_ID).eq(ownerId))));
 
+        // add in the clones
         results.addAll(resolveClones(findAll(getCloneClass(), CacheStrategy.NONE, join,
             new Join(getCloneColumn(CloneRecord.ORIGINAL_ITEM_ID),
                      getItemColumn(ItemRecord.ITEM_ID)),
