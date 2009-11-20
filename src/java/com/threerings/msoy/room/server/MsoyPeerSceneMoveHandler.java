@@ -29,6 +29,7 @@ import com.threerings.msoy.item.server.ItemLogic;
 import com.threerings.msoy.item.server.persist.AvatarRecord;
 import com.threerings.msoy.item.server.persist.AvatarRepository;
 import com.threerings.msoy.item.server.persist.ItemRecord;
+import com.threerings.msoy.item.server.persist.PetRepository;
 import com.threerings.msoy.peer.data.HostedRoom;
 import com.threerings.msoy.room.client.MsoySceneService.MsoySceneMoveListener;
 import com.threerings.msoy.room.data.MsoyLocation;
@@ -36,7 +37,6 @@ import com.threerings.msoy.room.data.MsoyPortal;
 import com.threerings.msoy.room.data.MsoyScene;
 import com.threerings.msoy.room.data.PetObject;
 import com.threerings.msoy.room.data.RoomCodes;
-import com.threerings.msoy.room.server.MsoySceneRegistry.MsoySceneMoveAdapter;
 import com.threerings.msoy.room.server.MsoySceneRegistry.PeerSceneMoveHandler;
 import com.threerings.msoy.room.server.MsoySceneRegistry.ThemeMoveHandler;
 import com.threerings.msoy.server.MemberLocal;
@@ -46,6 +46,7 @@ import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.dobj.DSet;
 import com.threerings.presents.server.InvocationException;
+import com.threerings.whirled.client.SceneMoveAdapter;
 import com.threerings.whirled.server.SceneManager;
 
 /**
@@ -117,6 +118,9 @@ public class MsoyPeerSceneMoveHandler extends PeerSceneMoveHandler
             return;
         }
 
+        // if we're walking a pet, find out what it is so we can test it for themeness
+        _petobj = _petMan.getPetObject(_memobj.walkingId);
+
         // otherwise we need to take an extra trip over the invoker thread
         _invoker.postUnit(new ThemeRepositoryUnit(scene, new ThemeMoveHandler() {
             public void finish () {
@@ -153,19 +157,14 @@ public class MsoyPeerSceneMoveHandler extends PeerSceneMoveHandler
             return;
         }
 
-        // for members, check for following entities
-        if (_memobj != null) {
-            // deal with pets
-            PetObject petobj = _petMan.getPetObject(_memobj.walkingId);
-            if (petobj != null) {
-                try {
-                    _screg.moveTo(petobj, scene.getId(), Integer.MAX_VALUE, _portalId, _destLoc,
-                        new MsoySceneMoveAdapter());
+        if (_petobj != null) {
+            try {
+                _screg.moveTo(_petobj, scene.getId(), Integer.MAX_VALUE, _portalId, _destLoc,
+                    new MsoySceneMoveAdapter());
 
-                } catch (InvocationException ie) {
-                    log.warning("Pet follow failed", "memberId", _memobj.getMemberId(),
-                        "sceneId", scene.getId(), ie);
-                }
+            } catch (InvocationException ie) {
+                log.warning("Pet follow failed", "memberId", _memobj.getMemberId(),
+                    "sceneId", scene.getId(), ie);
             }
         }
     }
@@ -180,6 +179,7 @@ public class MsoyPeerSceneMoveHandler extends PeerSceneMoveHandler
     @Inject protected @MainInvoker Invoker _invoker;
     @Inject protected MsoySceneRegistry _screg;
     @Inject protected GroupRepository _groupRepo;
+    @Inject protected PetRepository _petRepo;
     @Inject protected ThemeRepository _themeRepo;
     @Inject protected ThemeLogic _themeLogic;
     @Inject protected PetManager _petMan;
@@ -221,6 +221,12 @@ public class MsoyPeerSceneMoveHandler extends PeerSceneMoveHandler
             }
 
             if (_themeId != 0) {
+                // if we have a pet and the pet is not stamped, it does not follow us
+                if (_petobj != null &&
+                        !_petRepo.isThemeStamped(_themeId, _petobj.pet.getMasterId())) {
+                    _petobj = null;
+                }
+
                 ThemeRecord themeRec = _themeRepo.loadTheme(_themeId);
                 if (themeRec == null) {
                     // internal error, log it and let the move complete
@@ -299,8 +305,6 @@ public class MsoyPeerSceneMoveHandler extends PeerSceneMoveHandler
                         Lists.transform(_quicklist, new ItemRecord.ToItem<Avatar>())));
                 }
 
-                log.info("switching themes?", "userTheme", _memobj.theme, "newTheme", _groupName);
-
                 // if the theme really needs changing, do it
                 if (!ObjectUtil.equals(_groupName, _memobj.theme)) {
                     _memobj.setTheme(_groupName);
@@ -375,4 +379,18 @@ public class MsoyPeerSceneMoveHandler extends PeerSceneMoveHandler
         return user.theme.getGroupId() == groupId;
     }
 
+
+    /**
+     * Implements MsoySceneMoveListener trivially.
+     */
+    protected static class MsoySceneMoveAdapter extends SceneMoveAdapter
+        implements MsoySceneMoveListener
+    {
+        public void moveToBeHandledByAVRG (int gameId, int sceneId) {
+            // noop
+        }
+        public void selectGift (Avatar[] avatars, String groupName) {
+            // noop
+        }
+    }
 }

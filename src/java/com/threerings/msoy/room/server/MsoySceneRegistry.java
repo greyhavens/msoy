@@ -23,7 +23,6 @@ import com.threerings.presents.server.InvocationManager;
 import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.server.LocationManager;
 
-import com.threerings.whirled.client.SceneMoveAdapter;
 import com.threerings.whirled.client.SceneService;
 import com.threerings.whirled.data.SceneCodes;
 import com.threerings.whirled.server.SceneManager;
@@ -285,18 +284,4 @@ public class MsoySceneRegistry extends SpotSceneRegistry
     @Inject protected MemberLocator _locator;
     @Inject protected MsoyEventLogger _eventLog;
     @Inject protected MsoyPeerManager _peerMan;
-
-    /**
-     * Implements MsoySceneMoveListener trivially.
-     */
-    protected static class MsoySceneMoveAdapter extends SceneMoveAdapter
-        implements MsoySceneMoveListener
-    {
-        public void moveToBeHandledByAVRG (int gameId, int sceneId) {
-            // noop
-        }
-        public void selectGift (Avatar[] avatars, String groupName) {
-            // noop
-        }
-    }
 }
