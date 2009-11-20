@@ -119,6 +119,7 @@ public class WorldClient extends MsoyClient
 
         if (getEmbedding().hasGWT() && DeploymentConfig.enableTutorial) {
             new MePageTutorial(_wctx);
+            new GeneralTips(_wctx);
         }
     }
 
