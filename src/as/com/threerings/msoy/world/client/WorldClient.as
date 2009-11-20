@@ -116,11 +116,6 @@ public class WorldClient extends MsoyClient
             _ctx.getTopPanel().getPlaceContainer().addOverlay(
                 overlay, PlaceBox.LAYER_FEATURED_PLACE);
         }
-
-        if (getEmbedding().hasGWT() && DeploymentConfig.enableTutorial) {
-            new MePageTutorial(_wctx);
-            new GeneralTips(_wctx);
-        }
     }
 
     // from Client
@@ -165,6 +160,12 @@ public class WorldClient extends MsoyClient
         // listen for theme changes
         var themeUpdater :ThemeUpdater = new ThemeUpdater(this);
         member.addListener(themeUpdater);
+
+        // turn on tutorials for the main web site
+        if (getEmbedding().hasGWT() && DeploymentConfig.enableTutorial) {
+            new MePageTutorial(_wctx);
+            new GeneralTips(_wctx);
+        }
     }
 
     /**
