@@ -71,9 +71,10 @@ public class AvatarRepository extends ItemRepository<AvatarRecord>
                 getItemColumn(ItemRecord.OWNER_ID).eq(ownerId))));
 
         // add in the clones
-        results.addAll(resolveClones(findAll(getCloneClass(), CacheStrategy.NONE, join,
+        results.addAll(resolveClones(findAll(getCloneClass(), CacheStrategy.NONE,
             new Join(getCloneColumn(CloneRecord.ORIGINAL_ITEM_ID),
                      getItemColumn(ItemRecord.ITEM_ID)),
+            join,
             new Where(Ops.and(
                 new ColumnExp(getMogMarkClass(), MogMarkRecord.GROUP_ID.name).eq(themeId),
                 getCloneColumn(CloneRecord.OWNER_ID).eq(ownerId))))));
