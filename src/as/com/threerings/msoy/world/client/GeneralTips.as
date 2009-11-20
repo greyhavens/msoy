@@ -21,7 +21,7 @@ public class GeneralTips
         tut.newTip("tipSecurity", xlate("i.link_security")).buttonCloses()
             .button(xlate("b.link_default"), viewWiki("Account_security")).queue();
 
-        tut.newTip("tipCurrency", xlate("i.link_currency")).buttonCloses()
+        tut.newTip("tipCurrency", xlate("i.link_currency")).beginner().buttonCloses()
             .button(xlate("b.link_default"), viewWiki("Currency")).queue();
 
         tut.newTip("tipSelling", xlate("i.link_selling")).buttonCloses()
@@ -30,10 +30,10 @@ public class GeneralTips
         tut.newTip("tipWiki", xlate("i.link_wiki")).buttonCloses()
             .button(xlate("b.link_wiki"), viewWiki("")).queue();
 
-        tut.newTip("tipStartupGuide", xlate("i.link_startup_guide")).buttonCloses()
+        tut.newTip("tipStartupGuide", xlate("i.link_startup_guide")).beginner().buttonCloses()
             .button(xlate("b.link_default"), viewWiki("Starting_out")).queue();
 
-        tut.newTip("tipGetBars", xlate("i.link_get_bars")).buttonCloses()
+        tut.newTip("tipGetBars", xlate("i.link_get_bars")).beginner().buttonCloses()
             .button(xlate("b.link_default"), viewWiki("Billing_FAQ")).queue();
 
         tut.newTip("tipShare", xlate("i.link_share")).buttonCloses()
@@ -50,7 +50,7 @@ public class GeneralTips
 
         // TODO: tipShareFB - share on facebook
 
-        tut.newTip("tipTransactions", xlate("i.link_transactions")).buttonCloses()
+        tut.newTip("tipTransactions", xlate("i.link_transactions")).beginner().buttonCloses()
             .button(xlate("b.link_default"), display(Address.TRANSACTIONS)).queue();
     }
 
