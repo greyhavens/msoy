@@ -35,6 +35,12 @@ public class Address
     /** The furniture shop page. */
     public static const SHOP_FURNI :Address = shopDefault(ItemTypes.FURNITURE);
 
+    /** The billing subscription page. */
+    public static const SUBSCRIBE :Address = new Address(Page.BILLING, ["subscribe"]);
+
+    /** My transactions page. */
+    public static const TRANSACTIONS :Address = new Address(Page.ME, ["transactions"]);
+
     /**
      * Creates the address of a member's profile page.
      */
