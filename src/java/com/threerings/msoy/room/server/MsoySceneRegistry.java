@@ -513,7 +513,7 @@ public class MsoySceneRegistry extends SpotSceneRegistry
                     (_candidateAvatarId == 0 ||
                      !avaRepo.isThemeStamped(_themeId, _candidateAvatarId))) {
                 // see if the player has any existing acceptable avatars in their inventory
-                List<AvatarRecord> ownedAvatars = avaRepo.findItems(_memberId, null, _themeId);
+                List<AvatarRecord> ownedAvatars = avaRepo.getThemeAvatars(_memberId, _themeId);
 
                 if (ownedAvatars.size() > 0) {
                     // if so, pick a random one

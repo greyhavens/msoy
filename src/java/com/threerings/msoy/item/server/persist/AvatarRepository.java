@@ -3,12 +3,22 @@
 
 package com.threerings.msoy.item.server.persist;
 
+import java.util.List;
+
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import com.samskivert.depot.Ops;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.annotation.Entity;
+import com.samskivert.depot.clause.Join;
+import com.samskivert.depot.clause.QueryClause;
+import com.samskivert.depot.clause.Where;
+import com.samskivert.depot.expression.ColumnExp;
+import com.samskivert.depot.expression.SQLExpression;
+import com.samskivert.util.ArrayUtil;
 
+import com.threerings.msoy.room.server.MsoySceneRegistry;
 import com.threerings.msoy.server.persist.RatingRecord;
 import com.threerings.msoy.server.persist.RatingRepository;
 import com.threerings.msoy.server.persist.TagHistoryRecord;
@@ -41,6 +51,45 @@ public class AvatarRepository extends ItemRepository<AvatarRecord>
     {
         super(ctx);
     }
+
+    /**
+     * Finds all (original and cloned) avatars owned by the specified player in the given theme.
+     * Note: this method explicitly and deliberately bypasses the cache, as its sole client
+     * {@link MsoySceneRegistry} needs to be able to rely on an accurate enumeration of themed
+     * avatars for the gifting to work correctly.
+     */
+    public List<AvatarRecord> getThemeAvatars (int ownerId, int themeId)
+    {
+        if (ownerId == 0 || themeId == 0) {
+            throw new IllegalArgumentException("Expecting non-zero arguments");
+        }
+
+        QueryClause[] clauses = new QueryClause[] {
+            new Join(getItemColumn(ItemRecord.ITEM_ID),
+                new ColumnExp(getMogMarkClass(), MogMarkRecord.ITEM_ID.name))
+        };
+        SQLExpression[] whereBits = new SQLExpression[] {
+            new ColumnExp(getMogMarkClass(), MogMarkRecord.GROUP_ID.name).eq(themeId)
+        };
+
+        SQLExpression[] originalBits = ArrayUtil.append(
+            whereBits, getItemColumn(ItemRecord.OWNER_ID).eq(ownerId));
+
+        // locate all matching original items
+        List<AvatarRecord> results = findAll(getItemClass(), CacheStrategy.NONE,
+        ArrayUtil.append(clauses, new Where(Ops.and(originalBits))));
+
+        // locate all matching clone items
+        SQLExpression[] cloneBits = ArrayUtil.append(
+            whereBits, getCloneColumn(CloneRecord.OWNER_ID).eq(ownerId));
+        results.addAll(resolveClones(findAll(getCloneClass(), CacheStrategy.NONE,
+        ArrayUtil.append(ArrayUtil.insert(clauses, new Join(
+                        getCloneColumn(CloneRecord.ORIGINAL_ITEM_ID),
+                        getItemColumn(ItemRecord.ITEM_ID)), 0), new Where(Ops.and(cloneBits))))));
+
+        return results;
+    }
+
 
     /**
      * Update the scale of the specified avatar.
