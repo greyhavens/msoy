@@ -515,5 +515,5 @@ public abstract class BaseItemDetailPanel extends SmartTable
     protected static final ItemServiceAsync _itemsvc = GWT.create(ItemService.class);
     protected static final WebMemberServiceAsync _membersvc = GWT.create(WebMemberService.class);
 
-    protected static final int BRIEF_STAMP_COUNT = 6;
+    protected static final int BRIEF_STAMP_COUNT = 3;
 }
