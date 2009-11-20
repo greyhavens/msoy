@@ -15,9 +15,6 @@ import com.samskivert.depot.clause.Join;
 import com.samskivert.depot.clause.QueryClause;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.expression.ColumnExp;
-import com.samskivert.depot.expression.SQLExpression;
-import com.samskivert.util.ArrayUtil;
-
 import com.threerings.msoy.room.server.MsoySceneRegistry;
 import com.threerings.msoy.server.persist.RatingRecord;
 import com.threerings.msoy.server.persist.RatingRepository;
@@ -64,32 +61,24 @@ public class AvatarRepository extends ItemRepository<AvatarRecord>
             throw new IllegalArgumentException("Expecting non-zero arguments");
         }
 
-        QueryClause[] clauses = new QueryClause[] {
-            new Join(getItemColumn(ItemRecord.ITEM_ID),
-                new ColumnExp(getMogMarkClass(), MogMarkRecord.ITEM_ID.name))
-        };
-        SQLExpression[] whereBits = new SQLExpression[] {
-            new ColumnExp(getMogMarkClass(), MogMarkRecord.GROUP_ID.name).eq(themeId)
-        };
-
-        SQLExpression[] originalBits = ArrayUtil.append(
-            whereBits, getItemColumn(ItemRecord.OWNER_ID).eq(ownerId));
+        QueryClause join = new Join(getItemColumn(ItemRecord.ITEM_ID),
+            new ColumnExp(getMogMarkClass(), MogMarkRecord.ITEM_ID.name));
 
         // locate all matching original items
-        List<AvatarRecord> results = findAll(getItemClass(), CacheStrategy.NONE,
-        ArrayUtil.append(clauses, new Where(Ops.and(originalBits))));
+        List<AvatarRecord> results = findAll(
+            getItemClass(), CacheStrategy.NONE, join, new Where(Ops.and(
+                new ColumnExp(getMogMarkClass(), MogMarkRecord.GROUP_ID.name).eq(themeId),
+                getItemColumn(ItemRecord.OWNER_ID).eq(ownerId))));
 
-        // locate all matching clone items
-        SQLExpression[] cloneBits = ArrayUtil.append(
-            whereBits, getCloneColumn(CloneRecord.OWNER_ID).eq(ownerId));
-        results.addAll(resolveClones(findAll(getCloneClass(), CacheStrategy.NONE,
-        ArrayUtil.append(ArrayUtil.insert(clauses, new Join(
-                        getCloneColumn(CloneRecord.ORIGINAL_ITEM_ID),
-                        getItemColumn(ItemRecord.ITEM_ID)), 0), new Where(Ops.and(cloneBits))))));
+        results.addAll(resolveClones(findAll(getCloneClass(), CacheStrategy.NONE, join,
+            new Join(getCloneColumn(CloneRecord.ORIGINAL_ITEM_ID),
+                     getItemColumn(ItemRecord.ITEM_ID)),
+            new Where(Ops.and(
+                new ColumnExp(getMogMarkClass(), MogMarkRecord.GROUP_ID.name).eq(themeId),
+                getCloneColumn(CloneRecord.OWNER_ID).eq(ownerId))))));
 
         return results;
     }
-
 
     /**
      * Update the scale of the specified avatar.
