@@ -4,6 +4,7 @@
 package com.threerings.msoy.tutorial.client {
 
 import flash.display.Sprite;
+import flash.events.Event;
 import flash.events.TimerEvent;
 import flash.utils.Timer;
 
@@ -18,7 +19,9 @@ import com.threerings.util.Util;
 
 import com.threerings.msoy.data.MemberObject;
 
+import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.Msgs;
+import com.threerings.msoy.client.UIState;
 import com.threerings.msoy.client.PlaceBox;
 import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.client.TopPanel;
@@ -43,7 +46,7 @@ public class TutorialDirector
         _ctx = ctx;
         _timer = new Timer(TIP_DELAY, 1);
         _timer.addEventListener(TimerEvent.TIMER, handleTimer);
-
+        _ctx.getUIState().addEventListener(UIState.STATE_CHANGE, handleUIStateChange);
         _panel = new TutorialPanel(onPanelClose);
     }
 
@@ -205,11 +208,23 @@ public class TutorialDirector
         return _current != null;
     }
 
+    protected function handleUIStateChange (evt :Event) :void
+    {
+        if (isShowing() && inGame()) {
+            _panel.handleClose();
+        } else {
+            update();
+        }
+    }
+
     protected function handleTimer (evt :TimerEvent) :void
     {
         var item :TutorialItem; // for use in multiple scopes
         if (!isShowing()) {
-            if (_sequence != null) {
+            if (inGame()) {
+                update();
+
+            } else if (_sequence != null) {
                 item = _sequence.item;
                 if (item == null || !item.isAvailable()) {
                     // degenerate case, the sequence has changed since the cookie was last set
@@ -261,8 +276,8 @@ public class TutorialDirector
             _timer.reset();
 
         } else {
-            var delay :Number =
-                (_suggestions.length > 0 || _sequence != null) ? SUGGESTION_DELAY : TIP_DELAY;
+            var delay :Number = inGame() ? GAME_DELAY :
+                ((_suggestions.length > 0 || _sequence != null) ? SUGGESTION_DELAY : TIP_DELAY);
             if (delay != _timer.delay) {
                 _timer.delay = delay;
             }
@@ -277,6 +292,11 @@ public class TutorialDirector
                 _panel.flashCloseButton();
             }
         }
+    }
+
+    protected function inGame () :Boolean
+    {
+        return _ctx.getUIState().inGame || _ctx.getUIState().inAVRGame;
     }
 
     internal function get topPanel () :TopPanel
@@ -355,7 +375,8 @@ public class TutorialDirector
     protected var _current :TutorialItem;
 
     protected var ROLL_TIME :Number = 0.6;
-    protected var TIP_DELAY :Number = 60 * 1000;
+    protected var TIP_DELAY :Number = (DeploymentConfig.devDeployment ? 1 : 5) * 60 * 1000;
     protected var SUGGESTION_DELAY :Number = (ROLL_TIME + .25) * 1000;
+    protected var GAME_DELAY :Number = 10 * 60 * 1000;
 }
 }
