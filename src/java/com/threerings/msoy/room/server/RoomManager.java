@@ -314,6 +314,7 @@ public class RoomManager extends SpotSceneManager
                     _locmgr.leaveOccupiedPlace(player);
                     continue;
                 }
+                homeId = 1;
             }
             _screg.moveBody(player, homeId);
         }
