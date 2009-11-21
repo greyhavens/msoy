@@ -25,6 +25,10 @@ public class RoomDetail
     /** The owner of this room (either a MemberName or a GroupName). */
     public Name owner;
 
+    /** Whether or not this player may manage this room (i.e. the room is owned by them,
+     * or it's owned by a group they manage). */
+    public boolean mayManage;
+
     /** The theme this room is associated with, or null. */
     public GroupName theme;
 

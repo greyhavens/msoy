@@ -82,6 +82,7 @@ public class RoomDetailPanel extends SmartTable
         _bits = new FlowPanel();
         _bits.add(MsoyUI.createLabel(detail.info.name, "Title"));
         _bits.add(new InlineLabel(_msgs.owner(), false, false, true));
+
         if (detail.owner instanceof MemberName) {
             MemberName name = (MemberName)detail.owner;
             _bits.add(Link.memberView(name.toString(), name.getMemberId()));
@@ -89,8 +90,10 @@ public class RoomDetailPanel extends SmartTable
             GroupName name = (GroupName)detail.owner;
             _bits.add(Link.groupView(name.toString(), name.getGroupId()));
         }
-        _bits.add(_themeBit = new FlowPanel());
-        updateTheme();
+        if (CShell.isSupport() || detail.mayManage) {
+            _bits.add(_themeBit = new FlowPanel());
+            updateTheme();
+        }
 
         _bits.add(WidgetUtil.makeShim(10, 15));
         _bits.add(new Rating(detail.info.rating, detail.ratingCount, detail.memberRating, true) {
@@ -115,7 +118,7 @@ public class RoomDetailPanel extends SmartTable
             // TODO: verbiage about gifting: all items, bla bla bla?
         }
 
-        if (!CShell.isGuest()) {
+        if (CShell.isSupport() || detail.mayManage) {
             _membersvc.loadManagedThemes(new InfoCallback<GroupName[]>() {
                 public void onSuccess (GroupName[] result) {
                     _managedThemes = new LinkedHashSet<GroupName>(Arrays.asList(result));
