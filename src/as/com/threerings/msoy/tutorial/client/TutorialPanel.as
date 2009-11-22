@@ -95,11 +95,11 @@ public class TutorialPanel extends Canvas
     // from PlaceLayer
     public function setPlaceSize (unscaledWidth :Number, unscaledHeight :Number) :void
     {
-        // clip width to avoid a scroll bar showing up in the place box
-        width = Math.min(WIDTH, unscaledWidth);
-
-        // the director controls our y coordinate, but we need to center in x
-        x = (unscaledWidth - width) / 2;
+        x = unscaledWidth - WIDTH;
+        if (x > 0) {
+            x = x / 2;
+        } 
+        width = WIDTH;
     }
 
     internal function handleClose () :void
