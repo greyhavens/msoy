@@ -922,7 +922,7 @@ public class WorldController extends MsoyController
      */
     public function displayAddress (address :Address) :Boolean
     {
-        return displayPage(address.page.path, Args.join(address.args));
+        return displayPage(address.page.path, Args.join.apply(null, address.args));
     }
 
     /**
