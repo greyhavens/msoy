@@ -493,10 +493,17 @@ public class RoomEditorController
         sequence.newSuggestion(xlate("i.edit_try_more")).button(xlate("b.edit_try_more"), null)
             .buttonCloses(true).highlight(_panel).queue();
 
+        // register for unregistered players
+        if (!_ctx.isRegistered()) {
+            sequence.newSuggestion(xlate("i.edit_register")).button(xlate("b.edit_register"),
+                    Util.adapt(_ctx.getWorldController().displayAddress, Address.REGISTER))
+                .finishText(xlate("i.edit_register_finish")).queue();
+        }
+
         // shop
         sequence.newSuggestion(xlate("i.edit_shop")).button(xlate("b.edit_shop"),
                 Util.adapt(_ctx.getWorldController().displayAddress, Address.SHOP_FURNI))
-            .buttonCloses().queue();
+            .buttonCloses().limit(_ctx.isRegistered).queue();
 
         // let 'er rip
         sequence.activate(true);

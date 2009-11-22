@@ -41,6 +41,9 @@ public class Address
     /** My transactions page. */
     public static const TRANSACTIONS :Address = new Address(Page.ME, ["transactions"]);
 
+    /** My transactions page. */
+    public static const REGISTER :Address = new Address(Page.ACCOUNT, ["create"]);
+
     /**
      * Creates the address of a member's profile page.
      */
