@@ -24,7 +24,11 @@ public class MePageTutorial
     public function MePageTutorial (ctx :WorldContext) :void
     {
         _ctx = ctx;
-        _ctx.getMsoyClient().addEventListener(MsoyClient.GWT_PAGE_CHANGED, onPageChange);
+
+        // most of the me page tutorial doesn't make sense if you're not registered
+        if (_ctx.isRegistered()) {
+            _ctx.getMsoyClient().addEventListener(MsoyClient.GWT_PAGE_CHANGED, onPageChange);
+        }
     }
 
     protected function onPageChange (evt :ValueEvent) :void

@@ -24,7 +24,7 @@ public class GeneralTips
         tut.newTip("tipCurrency", xlate("i.link_currency")).beginner().buttonCloses()
             .button(xlate("b.link_default"), viewWiki("Currency")).queue();
 
-        tut.newTip("tipSelling", xlate("i.link_selling")).buttonCloses()
+        tut.newTip("tipSelling", xlate("i.link_selling")).limit(_ctx.isRegistered).buttonCloses()
             .button(xlate("b.link_default"), viewWiki("List")).intermediate().queue();
 
         tut.newTip("tipWiki", xlate("i.link_wiki")).buttonCloses()
