@@ -25,11 +25,9 @@ import com.threerings.util.MultiLoader;
 
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;
-import com.threerings.msoy.client.PlaceLayer;
 import com.threerings.msoy.client.Prefs;
 
 public class TutorialPanel extends Canvas
-    implements PlaceLayer
 {
     public static const WIDTH :int = 600;
     public static const HEIGHT :int = 120;
@@ -92,14 +90,15 @@ public class TutorialPanel extends Canvas
             transition: "easeinoutsine", onComplete: flashCloseButton });
     }
 
-    // from PlaceLayer
-    public function setPlaceSize (unscaledWidth :Number, unscaledHeight :Number) :void
+    /**
+     * Lets the panel know how much horizontal space is available so that it can reposition.
+     */
+    public function setAvailableWidth (w :Number) :void
     {
-        x = unscaledWidth - WIDTH;
+        x = w - WIDTH;
         if (x > 0) {
             x = x / 2;
         } 
-        width = WIDTH;
     }
 
     internal function handleClose () :void

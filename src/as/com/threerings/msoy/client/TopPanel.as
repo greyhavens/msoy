@@ -24,6 +24,8 @@ import com.threerings.msoy.chat.client.ComicOverlay;
 
 import com.threerings.msoy.room.client.RoomObjectView;
 
+import com.threerings.msoy.tutorial.client.TutorialPanel;
+
 /**
  * Dispatched when the name of our current location changes. The value supplied will be a string
  * with the new location name.
@@ -229,7 +231,7 @@ public class TopPanel extends Canvas
     }
 
     /**
-     * Configures our left side panel. Any previous right side panel will be cleared.
+     * Configures our left side panel. Any previous left side panel will be cleared.
      */
     public function setLeftPanel (side :UIComponent) :void
     {
@@ -238,6 +240,10 @@ public class TopPanel extends Canvas
         _leftPanel.includeInLayout = false;
         _leftPanel.width = side.width;
         addChild(_leftPanel);
+        // make sure tutorial stays on top
+        if (_tutorial != null) {
+            setChildIndex(_tutorial, numChildren - 1);
+        }
         layoutPanels();
     }
 
@@ -270,6 +276,24 @@ public class TopPanel extends Canvas
     }
 
     /**
+     * Removes the current tutorial panel and sets it to the given instance if not null.
+     */
+    public function setTutorialPanel (panel :TutorialPanel) :void
+    {
+        if (_tutorial != null) {
+            removeChild(_tutorial);
+        }
+
+        _tutorial = panel;
+
+        if (_tutorial != null) {
+            addChild(_tutorial);
+        }
+
+        updateTutorialPanelSize();
+    }
+
+    /**
      * Returns true if the current view is a room view and the editor is open.
      */
     public function isEditingRoom () :Boolean
@@ -279,15 +303,18 @@ public class TopPanel extends Canvas
             RoomObjectView(view).getRoomObjectController().isRoomEditing();
     }
 
-    protected function stageResized (event :Event) :void
-    {
-        layoutPanels();
-    }
-
-    protected function getHeaderBarHeight () :int
+    /**
+     * Returns the height of the header bar.
+     */
+    public function getHeaderBarHeight () :int
     {
         return showChrome() && !UberClient.isViewer() ?
             HeaderBar.getHeight(_ctx.getMsoyClient()) : 0;
+    }
+
+    protected function stageResized (event :Event) :void
+    {
+        layoutPanels();
     }
 
     protected function layoutPanels () :void
@@ -318,6 +345,7 @@ public class TopPanel extends Canvas
         }
 
         updatePlaceViewSize();
+        updateTutorialPanelSize();
     }
 
     protected function updatePlaceViewSize () :void
@@ -350,6 +378,15 @@ public class TopPanel extends Canvas
         _placeBox.setActualSize(w, h);
     }
 
+    protected function updateTutorialPanelSize () :void
+    {
+        if (_tutorial == null) {
+            return;
+        }
+
+        _tutorial.setAvailableWidth(_ctx.getWidth());
+    }
+
     protected function showChrome () :Boolean
     {
         return _showChrome && !_ctx.getMsoyClient().isChromeless();
@@ -374,5 +411,8 @@ public class TopPanel extends Canvas
     protected var _controlBar :ControlBar;
 
     protected var _comicOverlay :ComicOverlay;
+
+    /** Tutorial panel that may popup on top of everything occasionally. */
+    protected var _tutorial :TutorialPanel;
 }
 }

@@ -22,7 +22,6 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.UIState;
-import com.threerings.msoy.client.PlaceBox;
 import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.client.TopPanel;
 
@@ -309,11 +308,6 @@ public class TutorialDirector
         return _ctx;
     }
 
-    protected function placeBox () :PlaceBox
-    {
-        return _ctx.getTopPanel().getPlaceContainer();
-    }
-
     protected function onPanelClose () :void
     {
         // mark as seen
@@ -329,7 +323,7 @@ public class TutorialDirector
         _current = null;
         Tweener.addTween(_panel, {y :-_panel.height, time: ROLL_TIME, transition: "easeinquart",
             onComplete: Util.sequence(
-                Util.adapt(placeBox().removeChild, _panel),
+                Util.adapt(topPanel.setTutorialPanel, null),
                 Util.adapt(update))});
     }
 
@@ -337,15 +331,17 @@ public class TutorialDirector
     {
         Tweener.removeTweens(_panel);
 
+        var animate :Boolean = false;
         if (!isShowing()) {
-            placeBox().addOverlay(_panel, PlaceBox.LAYER_TUTORIAL);
+            topPanel.setTutorialPanel(_panel);
             _panel.y = -_panel.height;
+            animate = true;
         }
 
         _panel.setContent(_current = item);
-
-        if (_panel.y != 0) {
-            Tweener.addTween(_panel, {y :0, time: ROLL_TIME, transition: "easeoutquart"});
+        if (animate) {
+            var targetY :int = topPanel.getHeaderBarHeight();
+            Tweener.addTween(_panel, {y :targetY, time: ROLL_TIME, transition: "easeoutquart"});
         }
 
         update();
