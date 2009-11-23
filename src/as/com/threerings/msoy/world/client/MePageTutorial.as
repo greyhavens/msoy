@@ -48,6 +48,11 @@ public class MePageTutorial
         var sequence :TutorialSequenceBuilder;
         sequence = _ctx.getTutorialDirector().newSequence("mePage").singles().newbie();
 
+        // gwt intro
+        sequence.newSuggestion(xlate("i.me_intro"))
+            .button(xlate("b.me_intro"), null)
+            .finishText(xlate("i.me_intro_finish")).queue();
+
         // name editing
         sequence.newSuggestion(xlate("i.me_name_change"))
             .button(xlate("b.me_name_change"), editProfile)
