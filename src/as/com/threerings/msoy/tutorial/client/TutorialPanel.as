@@ -143,6 +143,7 @@ public class TutorialPanel extends Canvas
         add(BUTTON_X, HEIGHT - PADDING - IGNORE_HEIGHT, "tutorialIgnoreLink",
             _ignore = new CommandLinkButton(Msgs.GENERAL.get("b.tutorial_ignore"),
                                             Util.adapt(handleIgnore)));
+        _ignore.toolTip = Msgs.GENERAL.get("i.tutorial_ignore");
 
         _text.selectable = false;
         _text.width = TEXT_WIDTH;
