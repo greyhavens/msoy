@@ -56,6 +56,10 @@ public class ForumLogic
         // convert the threads to runtime format
         Map<Integer,ForumThread> thrmap = Maps.newLinkedHashMap();
         for (ForumThreadRecord ftr : thrrecs) {
+            // skip empty threads - should not happen, but can due to non-transactional DB
+            if (ftr.posts == 0) {
+                continue;
+            }
             ForumThread thread = ftr.toForumThread(names, groups);
             // include details on the original post for each thread if required
             if (needFirstPost) {
