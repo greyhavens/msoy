@@ -95,10 +95,13 @@ public class TutorialPanel extends Canvas
      */
     public function setAvailableWidth (w :Number) :void
     {
+        const margin :int = 5;
         x = w - WIDTH;
-        if (x > 0) {
+        if (x > margin) {
             x = x / 2;
-        } 
+        } else {
+            x -= margin;
+        }
     }
 
     internal function handleClose () :void
