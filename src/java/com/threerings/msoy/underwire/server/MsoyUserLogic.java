@@ -125,11 +125,11 @@ public class MsoyUserLogic extends SupportUserLogic
             if (mrec == null) {
                 throw new UnderwireException("m.unknown_user");
             }
-            if (!email.equals(user.email)) {
+            if (email != null && !email.equals(user.email)) {
                 _accountLogic.updateAccountName(mrec, email);
                 mrec.accountName = email;
             }
-            if (!password.equals(user.password)) {
+            if (password != null && !password.equals(user.password)) {
                 _accountLogic.updatePassword(mrec, password);
             }
         } catch (ServiceException se) {
