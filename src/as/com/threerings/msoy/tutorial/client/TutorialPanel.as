@@ -27,14 +27,19 @@ import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.Prefs;
 
+/**
+ * Panel for the tutorial. A note on layout: the tutorial panel is expected to be a child of the
+ * top panel and with its y position set to -HEIGHT. All other layout and animation is taken care
+ * of internally.
+ */
 public class TutorialPanel extends Canvas
 {
     public static const WIDTH :int = 600;
     public static const HEIGHT :int = 120;
+    public static const ROLL_TIME :Number = 0.6;
 
     public function TutorialPanel (onClose :Function)
     {
-        styleName = "tutorialPanel";
         verticalScrollPolicy = ScrollPolicy.OFF;
         horizontalScrollPolicy = ScrollPolicy.OFF;
         _onClose = onClose;
@@ -54,24 +59,9 @@ public class TutorialPanel extends Canvas
         if (item.popupHelper != null) {
             item.popupHelper.popup();
         }
-    }
 
-    protected function updateContent (finishing :Boolean) :void
-    {
-        var item :TutorialItem = _currentItem;
-        _text.text = finishing ? item.finishText : item.text;
-
-        if (item.buttonText == null || finishing) {
-            _action.setVisible(false);
-            _text.width = TEXT_FULL_WIDTH;
-        } else {
-            _action.setVisible(true);
-            _action.label = item.buttonText;
-            _text.width = TEXT_WIDTH;
-        }
-
-        _close.setVisible(!item.hideClose || finishing);
-        _ignore.setVisible(item.ignorable);
+        Tweener.addTween(_main, {y :_topMargin + HEIGHT, time: ROLL_TIME,
+                                 transition: "easeoutquart"});
     }
 
     /**
@@ -104,6 +94,17 @@ public class TutorialPanel extends Canvas
         }
     }
 
+    /**
+     * Sets the size of the header bar.
+     */
+    public function setTopMargin (margin :Number) :void
+    {
+        if (margin != _topMargin) {
+            _topMargin = margin;
+            height = HEIGHT * 2 + _topMargin;
+        }
+    }
+
     internal function handleClose () :void
     {
         Tweener.removeTweens(_glower);
@@ -112,6 +113,26 @@ public class TutorialPanel extends Canvas
             _currentItem.popupHelper.popdown();
         }
         _onClose();
+
+        Tweener.addTween(_main, {y :0, time: ROLL_TIME, transition: "easeinquart"});
+    }
+
+    protected function updateContent (finishing :Boolean) :void
+    {
+        var item :TutorialItem = _currentItem;
+        _text.text = finishing ? item.finishText : item.text;
+
+        if (item.buttonText == null || finishing) {
+            _action.setVisible(false);
+            _text.width = TEXT_FULL_WIDTH;
+        } else {
+            _action.setVisible(true);
+            _action.label = item.buttonText;
+            _text.width = TEXT_WIDTH;
+        }
+
+        _close.setVisible(!item.hideClose || finishing);
+        _ignore.setVisible(item.ignorable);
     }
 
     protected function handleAction () :void
@@ -133,6 +154,12 @@ public class TutorialPanel extends Canvas
     override protected function createChildren () :void
     {
         super.createChildren();
+
+        _main = new Canvas();
+        _main.styleName = "tutorialPanel";
+        _main.verticalScrollPolicy = ScrollPolicy.OFF;
+        _main.horizontalScrollPolicy = ScrollPolicy.OFF;
+        addChild(_main);
 
         addCentered(PROFESSOR_X, "tutorialProfessor", _professor);
         addCentered(BUBBLE_X, null, makeSpeechBubble());
@@ -157,8 +184,13 @@ public class TutorialPanel extends Canvas
         _glower = new Glower(_close);
 
         // set the width and height for all time
+        _main.width = WIDTH;
+        _main.height = HEIGHT;
+
         width = WIDTH;
-        height = HEIGHT;
+
+        // initialize the top margin
+        setTopMargin(0);
     }
 
     protected function addCentered (x :int, style :String, child :DisplayObject) :void
@@ -175,7 +207,7 @@ public class TutorialPanel extends Canvas
         var comp :UIComponent = wrap(child, style);
         comp.x = x;
         comp.y = y;
-        addChild(comp);
+        _main.addChild(comp);
     }
 
     protected function wrap (obj :DisplayObject, style :String) :UIComponent
@@ -235,6 +267,8 @@ public class TutorialPanel extends Canvas
         g.lineTo(0, TAIL_BASE_Y + TAIL_BASE_HEIGHT);
     }
 
+    protected var _main :Canvas;
+    protected var _topMargin :Number; // NaN
     protected var _onClose :Function;
     protected var _action :CommandButton;
     protected var _ignore :CommandLinkButton;

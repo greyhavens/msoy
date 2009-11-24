@@ -10,8 +10,6 @@ import flash.utils.Timer;
 
 import mx.core.UIComponent;
 
-import caurina.transitions.Tweener;
-
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.Map;
 import com.threerings.util.Maps;
@@ -321,29 +319,18 @@ public class TutorialDirector
         }
 
         _current = null;
-        Tweener.addTween(_panel, {y :-_panel.height, time: ROLL_TIME, transition: "easeinquart",
-            onComplete: Util.sequence(
-                Util.adapt(topPanel.setTutorialPanel, null),
-                Util.adapt(update))});
+        update();
     }
 
     protected function popup (item :TutorialItem) :void
     {
-        Tweener.removeTweens(_panel);
-
-        var animate :Boolean = false;
-        if (!isShowing()) {
+        if (_panel.parent == null) {
             topPanel.setTutorialPanel(_panel);
-            _panel.y = -_panel.height;
-            animate = true;
+            _panel.y = -TutorialPanel.HEIGHT;
         }
 
+        _panel.setTopMargin(topPanel.getHeaderBarHeight());
         _panel.setContent(_current = item);
-        if (animate) {
-            var targetY :int = topPanel.getHeaderBarHeight();
-            Tweener.addTween(_panel, {y :targetY, time: ROLL_TIME, transition: "easeoutquart"});
-        }
-
         update();
     }
 
@@ -370,9 +357,8 @@ public class TutorialDirector
     protected var _sequence :ActiveSequence;
     protected var _current :TutorialItem;
 
-    protected var ROLL_TIME :Number = 0.6;
     protected var TIP_DELAY :Number = (DeploymentConfig.devDeployment ? 1 : 5) * 60 * 1000;
-    protected var SUGGESTION_DELAY :Number = (ROLL_TIME + .25) * 1000;
+    protected var SUGGESTION_DELAY :Number = (TutorialPanel.ROLL_TIME + .25) * 1000;
     protected var GAME_DELAY :Number = 10 * 60 * 1000;
 }
 }
