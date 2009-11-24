@@ -114,7 +114,7 @@ public class MsoyPeerSceneMoveHandler extends PeerSceneMoveHandler
 
         // temporarily forbid anybody but subscribers to enter a theme from the mundane world
         if (scene.getThemeId() != 0 && !_memobj.tokens.isSubscriberPlus()) {
-            _msoyListener.requestFailed(InvocationCodes.E_ACCESS_DENIED);
+            _msoyListener.requestFailed(RoomCodes.E_ENTRANCE_DENIED);
             return;
         }
 
