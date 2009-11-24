@@ -176,7 +176,8 @@ public class WorldDirector extends BasicDirector
             _goToGame = null;
             fn();
 
-        } else if (place is RoomObject && !_wctx.getGameDirector().isGaming()) {
+        } else if (place is RoomObject && !_wctx.getGameDirector().isGaming() &&
+                   !_wctx.getMsoyClient().isEmbedded()) {
             maybeDisplayRoomTutorial();
         }
     }
