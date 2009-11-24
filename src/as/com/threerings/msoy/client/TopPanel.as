@@ -240,10 +240,6 @@ public class TopPanel extends Canvas
         _leftPanel.includeInLayout = false;
         _leftPanel.width = side.width;
         addChild(_leftPanel);
-        // make sure tutorial stays on top
-        if (_tutorial != null) {
-            setChildIndex(_tutorial, numChildren - 1);
-        }
         layoutPanels();
     }
 
@@ -280,16 +276,7 @@ public class TopPanel extends Canvas
      */
     public function setTutorialPanel (panel :TutorialPanel) :void
     {
-        if (_tutorial != null) {
-            removeChild(_tutorial);
-        }
-
         _tutorial = panel;
-
-        if (_tutorial != null) {
-            addChild(_tutorial);
-        }
-
         updateTutorialPanelSize();
     }
 
