@@ -12,6 +12,7 @@ import mx.core.ScrollPolicy;
 import mx.core.UIComponent;
 import mx.controls.Text;
 import mx.containers.Canvas;
+import mx.containers.HBox;
 
 import caurina.transitions.Tweener;
 
@@ -34,8 +35,10 @@ import com.threerings.msoy.client.Prefs;
  */
 public class TutorialPanel extends Canvas
 {
-    public static const WIDTH :int = 600;
-    public static const HEIGHT :int = 120;
+    public static const NWIDTH :int = 600;
+    public static const NHEIGHT :int = 120;
+    public static const MWIDTH :int = 320;
+    public static const MHEIGHT :int = 250;
     public static const ROLL_TIME :Number = 0.6;
 
     public function TutorialPanel (onClose :Function)
@@ -45,7 +48,8 @@ public class TutorialPanel extends Canvas
         _onClose = onClose;
 
         MultiLoader.getContents(PROFESSOR, function (result :DisplayObject) :void {
-            _professor = result;
+            _professor = FlexUtil.wrapSized(result);
+            _professor.styleName = "tutorialProfessor";
         });
     }
 
@@ -55,12 +59,13 @@ public class TutorialPanel extends Canvas
         _glower.reset();
         _close.toolTip = Msgs.GENERAL.get("i.tutorial_close");
         _currentItem = item;
-        updateContent(false);
+        _finishing = false;
+        updateContent();
         if (item.popupHelper != null) {
             item.popupHelper.popup();
         }
 
-        Tweener.addTween(_main, {y :_topMargin + HEIGHT, time: ROLL_TIME,
+        Tweener.addTween(_main, {y :_topMargin + getContentHeight(), time: ROLL_TIME,
                                  transition: "easeoutquart"});
     }
 
@@ -69,7 +74,7 @@ public class TutorialPanel extends Canvas
      */
     public function flashCloseButton () :void
     {
-        if (_currentItem.buttonCloses) {
+        if (_currentItem != null && _currentItem.buttonCloses) {
             return;
         }
 
@@ -85,12 +90,19 @@ public class TutorialPanel extends Canvas
      */
     public function setAvailableWidth (w :Number) :void
     {
+        var wasMinimized :Boolean = _minimized;
+        _minimized = w < NWIDTH - PADDING * 2; // clip a little before minimizing
+
         const margin :int = 5;
-        x = w - WIDTH;
+        x = w - getContentWidth();
         if (x > margin) {
             x = x / 2;
         } else {
             x -= margin;
+        }
+
+        if (wasMinimized != _minimized) {
+            layout();
         }
     }
 
@@ -99,10 +111,8 @@ public class TutorialPanel extends Canvas
      */
     public function setTopMargin (margin :Number) :void
     {
-        if (margin != _topMargin) {
-            _topMargin = margin;
-            height = HEIGHT * 2 + _topMargin;
-        }
+        _topMargin = margin;
+        height = getContentHeight() * 2 + _topMargin;
     }
 
     internal function handleClose () :void
@@ -115,23 +125,44 @@ public class TutorialPanel extends Canvas
         _onClose();
 
         Tweener.addTween(_main, {y :0, time: ROLL_TIME, transition: "easeinquart"});
+        _currentItem = null;
     }
 
-    protected function updateContent (finishing :Boolean) :void
+    protected function getContentHeight () :int
+    {
+        return _minimized ? MHEIGHT : NHEIGHT;
+    }
+
+    protected function getContentWidth () :int
+    {
+        return _minimized ? MWIDTH : NWIDTH;
+    }
+
+    protected function updateContent () :void
     {
         var item :TutorialItem = _currentItem;
-        _text.text = finishing ? item.finishText : item.text;
+        _text.text = _finishing ? item.finishText : item.text;
 
-        if (item.buttonText == null || finishing) {
+        var tw :int = getContentWidth() - TEXT_X - PADDING;
+        var th :int = getContentHeight() - PADDING * 4;
+        if (item.buttonText == null || _finishing) {
             _action.setVisible(false);
-            _text.width = TEXT_FULL_WIDTH;
+            if (!_minimized) {
+                tw -= CLOSE_SIZE;
+            }
         } else {
             _action.setVisible(true);
             _action.label = item.buttonText;
-            _text.width = TEXT_WIDTH;
+            if (_minimized) {
+                th -= BUTTON_HEIGHT + PADDING;
+            } else {
+                tw -= BUTTON_WIDTH + PADDING;
+            }
         }
+        _text.width = tw;
+        _text.height = th;
 
-        _close.setVisible(!item.hideClose || finishing);
+        _close.setVisible(!item.hideClose || _finishing);
         _ignore.setVisible(item.ignorable);
     }
 
@@ -143,7 +174,8 @@ public class TutorialPanel extends Canvas
                 handleClose();
             }
             if (item.finishText != null) {
-                updateContent(true);
+                _finishing = true;
+                updateContent();
             }
             if (item.onClick != null) {
                 item.onClick();
@@ -161,63 +193,84 @@ public class TutorialPanel extends Canvas
         _main.horizontalScrollPolicy = ScrollPolicy.OFF;
         addChild(_main);
 
-        addCentered(PROFESSOR_X, "tutorialProfessor", _professor);
-        addCentered(BUBBLE_X, null, makeSpeechBubble());
-        addCentered(TEXT_X, "tutorialText", _text = new Text());
-        add(CLOSE_X, CLOSE_Y, "closeButton", _close = imgButton(handleClose, "i.tutorial_close"));
-        addCentered(BUTTON_X, "tutorialActionButton",
-                    _action = new CommandButton(null, handleAction));
-        add(BUTTON_X, HEIGHT - PADDING - IGNORE_HEIGHT, "tutorialIgnoreLink",
-            _ignore = new CommandLinkButton(Msgs.GENERAL.get("b.tutorial_ignore"),
-                                            Util.adapt(handleIgnore)));
-        _ignore.toolTip = Msgs.GENERAL.get("i.tutorial_ignore");
-
+        _text = new Text();
+        _text.styleName = "tutorialText";
         _text.selectable = false;
-        _text.width = TEXT_WIDTH;
+        _text.mouseEnabled = false;
 
+        _close = imgButton(handleClose, "i.tutorial_close");
+        _close.styleName = "closeButton";
+        _glower = new Glower(_close);
+
+        _action = new CommandButton(null, handleAction);
+        _action.styleName = "tutorialActionButton";
         _action.width = BUTTON_WIDTH;
         _action.height = BUTTON_HEIGHT;
 
-        _ignore.width = BUTTON_WIDTH;
+        _ignore = new CommandLinkButton(Msgs.GENERAL.get("b.tutorial_ignore"), handleIgnore);
+        _ignore.styleName = "tutorialIgnoreLink";
+        _ignore.toolTip = Msgs.GENERAL.get("i.tutorial_ignore");
+        _ignore.width = IGNORE_WIDTH;
         _ignore.height = IGNORE_HEIGHT;
 
-        _glower = new Glower(_close);
-
-        // set the width and height for all time
-        _main.width = WIDTH;
-        _main.height = HEIGHT;
-
-        width = WIDTH;
-
-        // initialize the top margin
-        setTopMargin(0);
+        // add everything
+        layout();
     }
 
-    protected function addCentered (x :int, style :String, child :DisplayObject) :void
+    protected function layout () :void
     {
-        var comp :UIComponent = wrap(child, style);
-        var hbox :Container = FlexUtil.createHBox(comp);
-        hbox.setStyle("verticalAlign", "middle");
-        hbox.height = HEIGHT;
-        add(x, 0, null, hbox);
-    }
-
-    protected function add (x :int, y :int, style :String, child :DisplayObject) :void
-    {
-        var comp :UIComponent = wrap(child, style);
-        comp.x = x;
-        comp.y = y;
-        _main.addChild(comp);
-    }
-
-    protected function wrap (obj :DisplayObject, style :String) :UIComponent
-    {
-        var comp :UIComponent = obj as UIComponent;
-        if (comp == null) {
-            comp = FlexUtil.wrapSized(obj);
+        for (var ii :int = _main.numChildren - 1; ii >= 0; --ii) {
+            var child :UIComponent = _main.getChildAt(ii) as UIComponent;
+            if (child is HBox) {
+                HBox(child).removeAllChildren();
+            }
+            _main.removeChildAt(ii);
         }
-        comp.styleName = style;
-        return comp;
+
+        _main.width = getContentWidth();
+        _main.height = getContentHeight();
+        width = getContentWidth();
+        this.y = -getContentHeight();
+        // re-initialize the top margin
+        setTopMargin(_topMargin);
+
+        var cw :int = getContentWidth();
+        var ch :int = getContentHeight();
+
+        add(PROFESSOR_X, PROFESSOR_Y, _professor);
+        addCentered(BUBBLE_X, makeSpeechBubble(cw - BUBBLE_X, ch - PADDING * 2));
+
+        if (_minimized) {
+            add(TEXT_X, CLOSE_Y + CLOSE_SIZE, _text);
+            add(TEXT_X, ch - BUTTON_HEIGHT - PADDING * 2, _action);
+        } else {
+            addCentered(TEXT_X, _text);
+            addCentered(cw - PADDING - BUTTON_WIDTH, _action);
+        }
+
+        add(cw - CLOSE_SIZE, CLOSE_Y, _close);
+        add(cw - PADDING - IGNORE_WIDTH, ch - PADDING - IGNORE_HEIGHT, _ignore);
+
+        if (_currentItem != null) {
+            updateContent();
+            _main.y = ch + _topMargin;
+            Tweener.removeTweens(_main);
+        }
+    }
+
+    protected function addCentered (x :int, child :UIComponent) :void
+    {
+        var hbox :Container = FlexUtil.createHBox(child);
+        hbox.setStyle("verticalAlign", "middle");
+        hbox.height = getContentHeight();
+        add(x, 0, hbox);
+    }
+
+    protected function add (x :int, y :int, child :UIComponent) :void
+    {
+        child.x = x;
+        child.y = y;
+        _main.addChild(child);
     }
 
     protected function imgButton (callback :Function, tip :String) :CommandButton
@@ -235,7 +288,7 @@ public class TutorialPanel extends Canvas
         }
     }
 
-    protected static function makeSpeechBubble () :Sprite
+    protected static function makeSpeechBubble (width :int, height :int) :UIComponent
     {
         var s :Sprite = new Sprite();
         var g :Graphics = s.graphics;
@@ -243,7 +296,7 @@ public class TutorialPanel extends Canvas
         // rectangle outline
         g.lineStyle(1, BUBBLE_OUTLINE);
         g.beginFill(BUBBLE_FILL);
-        g.drawRoundRect(0, 0, BUBBLE_WIDTH, BUBBLE_HEIGHT, BUBBLE_ROUNDING);
+        g.drawRoundRect(0, 0, width, height, BUBBLE_ROUNDING);
         g.endFill();
 
         // tail interior
@@ -257,7 +310,7 @@ public class TutorialPanel extends Canvas
         g.lineStyle(1, BUBBLE_OUTLINE);
         drawBubbleTail(g);
 
-        return s;
+        return FlexUtil.wrapSized(s);
     }
 
     protected static function drawBubbleTail (g :Graphics) :void
@@ -269,14 +322,16 @@ public class TutorialPanel extends Canvas
 
     protected var _main :Canvas;
     protected var _topMargin :Number; // NaN
+    protected var _minimized :Boolean;
     protected var _onClose :Function;
     protected var _action :CommandButton;
     protected var _ignore :CommandLinkButton;
     protected var _close :CommandButton
     protected var _glower :Glower;
     protected var _text :Text;
-    protected var _professor :DisplayObject;
+    protected var _professor :UIComponent;
     protected var _currentItem :TutorialItem;
+    protected var _finishing :Boolean;
 
     [Embed(source="../../../../../../../rsrc/media/skins/tutorial/professor.swf",
            mimeType="application/octet-stream")]
@@ -286,25 +341,22 @@ public class TutorialPanel extends Canvas
     protected static const TAIL_BASE_HEIGHT :int = 20;
     protected static const TAIL_TIP_Y :int = 45;
     protected static const TAIL_WIDTH :int = 25;
+    protected static const CLOSE_SIZE :int = 25;
 
     protected static const PROFESSOR_WIDTH :int = 100;
     protected static const BUTTON_WIDTH :int = 110;
     protected static const BUTTON_HEIGHT :int = 40;
+    protected static const IGNORE_WIDTH :int = BUTTON_WIDTH;
     protected static const IGNORE_HEIGHT :int = 30;
     protected static const TAIL_OVERLAP :int = 10;
     protected static const PADDING :int = 10;
 
     protected static const PROFESSOR_X :int = 0;
+    protected static const PROFESSOR_Y :int = 10;
     protected static const BUBBLE_X :int = PROFESSOR_X + PROFESSOR_WIDTH + TAIL_WIDTH - TAIL_OVERLAP;
     protected static const TEXT_X :int = BUBBLE_X + 10;
-    protected static const BUTTON_X :int = WIDTH - PADDING - BUTTON_WIDTH;
-    protected static const TEXT_WIDTH :int = BUTTON_X - TEXT_X - PADDING;
-    protected static const TEXT_FULL_WIDTH :int = WIDTH - PADDING - TEXT_X;
-    protected static const CLOSE_X :int = WIDTH - 25;
     protected static const CLOSE_Y :int = 15;
 
-    protected static const BUBBLE_WIDTH :int = WIDTH - BUBBLE_X;
-    protected static const BUBBLE_HEIGHT :int = HEIGHT - PADDING * 2;
     protected static const BUBBLE_ROUNDING :int = 35;
     protected static const BUBBLE_OUTLINE :int = 0x000000;
     protected static const BUBBLE_FILL :int = 0xffffff;

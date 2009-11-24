@@ -326,7 +326,6 @@ public class TutorialDirector
     {
         if (_panel.parent == null) {
             topPanel.setTutorialPanel(_panel);
-            _panel.y = -TutorialPanel.HEIGHT;
         }
 
         _panel.setTopMargin(topPanel.getHeaderBarHeight());
