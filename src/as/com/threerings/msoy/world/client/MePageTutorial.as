@@ -41,17 +41,28 @@ public class MePageTutorial
             return;
         }
 
+        if (_current == null) {
+            return;
+        }
+
+        // first try the intro for opening any tab
+        var sequence :TutorialSequenceBuilder;
+        sequence = _ctx.getTutorialDirector().newSequence("web").singles().newbie();
+
+        // web intro
+        sequence.newSuggestion(xlate("i.web_intro"))
+            .button(xlate("b.web_intro"), null)
+            .finishText(xlate("i.web_intro_finish")).queue();
+
+        if (sequence.activate()) {
+            return;
+        }
+
         if (!Address.ME.equals(_current)) {
             return;
         }
 
-        var sequence :TutorialSequenceBuilder;
         sequence = _ctx.getTutorialDirector().newSequence("mePage").singles().newbie();
-
-        // gwt intro
-        sequence.newSuggestion(xlate("i.me_intro"))
-            .button(xlate("b.me_intro"), null)
-            .finishText(xlate("i.me_intro_finish")).queue();
 
         // name editing
         sequence.newSuggestion(xlate("i.me_name_change"))

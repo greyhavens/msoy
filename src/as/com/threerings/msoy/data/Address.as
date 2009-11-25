@@ -71,7 +71,7 @@ public class Address
             throw new ArgumentError("Null page");
         }
         var page :Page = Page.findByName(pageName);
-        return page == null ? null : new Address(page, Args.split(token));
+        return new Address(page == null ? Page.UNKNOWN : page, Args.split(token));
     }
 
     /**

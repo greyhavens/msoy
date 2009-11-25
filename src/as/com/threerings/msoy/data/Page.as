@@ -19,6 +19,9 @@ public class Page extends Enum
     public static const BILLING :Page = new Page("BILLING");
     public static const ACCOUNT :Page = new Page("ACCOUNT");
 
+    /** This is a catchall page, may be used as a placeholder. */
+    public static const UNKNOWN :Page = new Page("UNKNOWN");
+
     // TODO: add all pages that exist in gwt (as needed)
     // TODO: fix all the hardwired page names throughout the code to use this enum
     finishedEnumerating(Page);
