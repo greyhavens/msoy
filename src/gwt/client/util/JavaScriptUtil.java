@@ -87,10 +87,19 @@ public class JavaScriptUtil
     }-*/;
 
     /**
+     * Creates a boolean object suitable for use as a parameter, member or element in native
+     * java script.
+     */
+    public static native JavaScriptObject makeBoolean (boolean value) /*-{
+        return value;
+    }-*/;
+
+    /**
      * Converts a java map into a javascript dictionary that can then be passed into a native
      * method. Returns null in the event of an exception and logs the error to the console, if
-     * active. Note that each value must be a JSNI type (String, boolean, JavaScriptObject or a
-     * numeric type other than long). As far as I'm aware, the map key type must be String. 
+     * active. Note that each value must be a JSNI type. However, since map values are non-
+     * primitive, the values are effectively limited to (String, JavaScriptObject). As far as I'm
+     * aware, the map key type must be String. 
      */
     public static native <K, V> JavaScriptObject createDictionaryFromMap (Map<K, V> map) /*-{
         try {
