@@ -72,7 +72,8 @@ public class FBRequestPanel extends ServerFBMLPanel
     {
         // {0} just played {1} on {2} and challenges you to beat {3} high score!
         String invite = _msgs.inviteChallenge(
-            info.username, info.gameName, info.appName, getPronoun(info.gender));
+            info.username, info.gameName, info.appName,
+            FacebookUtil.getPossessivePronoun(info.gender, false));
         String tip = _msgs.inviteChallengeTip();
         String accept = _msgs.inviteChallengeAccept(info.gameName);
 
@@ -137,16 +138,6 @@ public class FBRequestPanel extends ServerFBMLPanel
         FBMLPanel reqChoice = new FBMLPanel("req-choice", "url", url, "label", accept);
         return StringUtil.escapeAttribute(text) +
             MsoyUI.createFlowPanel(null, reqChoice).getElement().getInnerHTML();
-    }
-
-    protected static String getPronoun (FacebookService.Gender gender)
-    {
-        switch (gender) {
-        case FEMALE: return _msgs.possessiveHers();
-        case MALE: return _msgs.possessiveHis();
-        case HIDDEN: return _msgs.possessiveNeutral();
-        }
-        return "";
     }
 
     protected static final FacebookMessages _msgs = GWT.create(FacebookMessages.class);

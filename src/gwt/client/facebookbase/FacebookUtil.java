@@ -8,9 +8,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
+import com.threerings.msoy.facebook.gwt.FacebookService;
 
 import client.util.JavaScriptUtil;
 
@@ -84,4 +86,16 @@ public class FacebookUtil
         links.add(JavaScriptUtil.createDictionaryFromMap(link));
         return JavaScriptUtil.createArray(links);
     }
+
+    public static String getPossessivePronoun (FacebookService.Gender gender, boolean capitalize)
+    {
+        switch (gender) {
+        case FEMALE: return _msgs.possessiveHers();
+        case MALE: return _msgs.possessiveHis();
+        case HIDDEN: return _msgs.possessiveNeutral();
+        }
+        return "";
+    }
+
+    protected static final FacebookBaseMessages _msgs = GWT.create(FacebookBaseMessages.class);
 }
