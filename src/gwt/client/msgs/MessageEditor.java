@@ -3,46 +3,50 @@
 
 package client.msgs;
 
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.RichTextArea;
-
-import com.threerings.msoy.web.gwt.MessageUtil;
-
-import client.item.RichTextToolbar;
+import com.google.gwt.user.client.ui.Widget;
 
 /**
- * A {@link RichTextArea} with toolbar for editing forum messages.
+ * Interface and static factory methods for editing html messages.
  */
-public class MessageEditor extends FlowPanel
+public class MessageEditor
 {
-    public MessageEditor ()
+    /**
+     * Interface for the embedded editor widget.
+     */
+    public interface Panel
     {
-        _text = new RichTextArea();
-        add(new RichTextToolbar(_text, false));
-        add(_text);
-        _text.setWidth("100%");
-        _text.setHeight("300px");
+        /**
+         * Casts the editor to a widget so it can be placed in the DOM hierarchy.
+         */
+        Widget asWidget ();
+
+        /**
+         * Retrieves the HTML for the user's message.
+         */
+        String getHTML ();
+
+        /**
+         * Sets the HTML for the user's message.
+         */
+        void setHTML (String html);
+
+        /**
+         * Sets or clears focus for the editor.
+         */
+        void setFocus (boolean focus);
+
+        /**
+         * Selects all of the text in the editor.
+         */
+        void selectAll ();
     }
 
-    public RichTextArea getTextArea()
+    /**
+     * Creates the default message editor.
+     */
+    public static Panel createDefault ()
     {
-        return _text;
+        return new RichTextEditor();
+        //return new TinyMCEEditor();
     }
-
-    public String getHTML ()
-    {
-        return _text.getHTML();
-    }
-
-    public void setHTML (String html)
-    {
-        _text.setHTML(MessageUtil.preEditMessage(html));
-    }
-
-    public void setFocus (boolean focus)
-    {
-        _text.setFocus(focus);
-    }
-
-    protected RichTextArea _text;
 }

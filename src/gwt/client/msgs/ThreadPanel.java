@@ -139,7 +139,8 @@ public class ThreadPanel extends TitledListPanel
     {
         public ReplyPanel (ForumMessage inReplyTo, boolean quote)
         {
-            _content.setWidget(0, 0, _editor = new MessageEditor());
+            _editor = MessageEditor.createDefault();
+            _content.setWidget(0, 0, _editor.asWidget());
 
             if (inReplyTo != null) {
                 // set the quote text if available
@@ -148,7 +149,7 @@ public class ThreadPanel extends TitledListPanel
                                                            inReplyTo.message));
                     DeferredCommand.addCommand(new Command() {
                         public void execute () {
-                            _editor.getTextArea().getBasicFormatter().selectAll();
+                            _editor.selectAll();
                         }
                     });
                 }
@@ -205,7 +206,7 @@ public class ThreadPanel extends TitledListPanel
             _editor.setFocus(true);
         }
 
-        protected MessageEditor _editor;
+        protected MessageEditor.Panel _editor;
     }
 
     protected class PostEditorPanel extends TableFooterPanel
@@ -215,7 +216,8 @@ public class ThreadPanel extends TitledListPanel
             _messageId = message.messageId;
             _callback = callback;
 
-            _content.setWidget(0, 0, _editor = new MessageEditor());
+            _editor = MessageEditor.createDefault();
+            _content.setWidget(0, 0, _editor.asWidget());
             _editor.setHTML(message.message);
 
             addFooterButton(new Button(_cmsgs.cancel(), new ClickHandler() {
@@ -254,7 +256,7 @@ public class ThreadPanel extends TitledListPanel
 
         protected int _messageId;
         protected AsyncCallback<ForumMessage> _callback;
-        protected MessageEditor _editor;
+        protected MessageEditor.Panel _editor;
     }
 
     protected class ThreadEditorPanel extends BorderedDialog

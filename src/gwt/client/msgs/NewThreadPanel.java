@@ -94,7 +94,8 @@ public class NewThreadPanel extends TableFooterPanel
 
         addRow(WidgetUtil.makeShim(5, 5));
         addRow(_mmsgs.ntpFirstMessage());
-        addRow(_message = new MessageEditor());
+        _message = MessageEditor.createDefault();
+        addRow(_message.asWidget());
 
         addFooterButton(new Button(_cmsgs.cancel(), new ClickHandler() {
             public void onClick (ClickEvent event) {
@@ -172,7 +173,7 @@ public class NewThreadPanel extends TableFooterPanel
     protected int _groupId;
     protected TextBox _subject;
     protected CheckBox _announce, _sticky, _spam;
-    protected MessageEditor _message;
+    protected MessageEditor.Panel _message;
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
     protected static final MsgsMessages _mmsgs = (MsgsMessages)GWT.create(MsgsMessages.class);
