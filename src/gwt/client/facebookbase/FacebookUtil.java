@@ -90,12 +90,12 @@ public class FacebookUtil
     public static String getPossessivePronoun (FacebookService.Gender gender, boolean capitalize)
     {
         switch (gender) {
-        case FEMALE: return _msgs.possessiveHers();
-        case MALE: return _msgs.possessiveHis();
-        case HIDDEN: return _msgs.possessiveNeutral();
+        case FEMALE: return _msgs.xlate("possessiveHer");
+        case MALE: return _msgs.xlate("possessiveHis");
+        case HIDDEN: return _msgs.xlate("possessiveNeutral");
         }
         return "";
     }
 
-    protected static final FacebookBaseMessages _msgs = GWT.create(FacebookBaseMessages.class);
+    protected static final FacebookBaseLookup _msgs = GWT.create(FacebookBaseLookup.class);
 }
