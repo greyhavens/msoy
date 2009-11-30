@@ -45,6 +45,7 @@ public class TutorialPanel extends Canvas
     {
         verticalScrollPolicy = ScrollPolicy.OFF;
         horizontalScrollPolicy = ScrollPolicy.OFF;
+        mouseEnabled = false;
         _onClose = onClose;
 
         MultiLoader.getContents(PROFESSOR, function (result :DisplayObject) :void {
