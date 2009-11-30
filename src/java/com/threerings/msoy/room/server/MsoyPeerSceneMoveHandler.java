@@ -43,7 +43,6 @@ import com.threerings.msoy.server.MemberLocal;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.world.server.WorldManager;
 import com.threerings.presents.annotation.MainInvoker;
-import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.dobj.DSet;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.whirled.client.SceneMoveAdapter;
