@@ -18,6 +18,7 @@ public class Page extends Enum
     public static const SHOP :Page = new Page("SHOP");
     public static const BILLING :Page = new Page("BILLING");
     public static const ACCOUNT :Page = new Page("ACCOUNT");
+    public static const GAMES :Page = new Page("GAMES");
 
     /** This is a catchall page, may be used as a placeholder. */
     public static const UNKNOWN :Page = new Page("UNKNOWN");

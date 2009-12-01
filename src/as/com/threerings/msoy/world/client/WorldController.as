@@ -215,6 +215,9 @@ public class WorldController extends MsoyController
     /** Command to request detailed info on a party. */
     public static const GET_PARTY_DETAIL :String = "GetPartyDetail";
 
+    /** Command to start the whirled tour. */
+    public static const START_TOUR :String = "StartTour";
+
     // statically reference classes we require
     ItemMarshaller;
 
@@ -922,7 +925,11 @@ public class WorldController extends MsoyController
      */
     public function displayAddress (address :Address) :Boolean
     {
-        return displayPage(address.page.path, Args.join.apply(null, address.args));
+        if (address.page != null) {
+            return displayPage(address.page.path, Args.join.apply(null, address.args));
+        } else {
+            return handleViewUrl(address.args.join("/"));
+        }
     }
 
     /**
@@ -1074,6 +1081,14 @@ public class WorldController extends MsoyController
             // go to our home scene (this doe the right thing for guests as well)
             _wctx.getSceneDirector().moveTo(_wctx.getMemberObject().getHomeSceneId());
         }
+    }
+
+    /**
+     * Handles the START_TOUR command.
+     */
+    public function handleStartTour () :void
+    {
+        _wctx.getTourDirector().startTour();
     }
 
     // from MsoyController
@@ -1641,7 +1656,7 @@ public class WorldController extends MsoyController
         // and the world tour, baby!
         menuData.push({ label: Msgs.WORLD.get("b.start_tour"),
             enabled: !_wctx.getTourDirector().isOnTour(),
-            command: _wctx.getTourDirector().startTour });
+            command: START_TOUR });
         // and our home
         const ourHomeId :int = me.homeSceneId;
         if (ourHomeId != 0) {

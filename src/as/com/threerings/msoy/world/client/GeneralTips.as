@@ -52,6 +52,13 @@ public class GeneralTips
 
         tut.newTip("tipTransactions", xlate("i.link_transactions")).beginner().buttonCloses()
             .button(xlate("b.link_default"), display(Address.TRANSACTIONS)).queue();
+
+        tut.newTip("tipTour", xlate("i.tour")).beginner().buttonCloses()
+            .menuItemHighlight(_ctx.getControlBar().goBtn, WorldController.START_TOUR)
+            .button(xlate("b.tour"), _ctx.getWorldController().handleStartTour).queue();
+
+        tut.newTip("tipGames", xlate("i.games")).beginner().buttonCloses()
+            .button(xlate("b.games"), display(Address.GAMES)).queue();
     }
 
     protected function display (address :Address) :Function
@@ -61,7 +68,7 @@ public class GeneralTips
 
     protected function viewWiki (page :String) :Function
     {
-        return Util.adapt(_ctx.getMsoyController().handleViewUrl, WIKI + page);
+        return display(Address.wiki(page));
     }
 
     protected static function xlate (msg :String) :String
@@ -70,7 +77,5 @@ public class GeneralTips
     }
 
     protected var _ctx :WorldContext;
-
-    protected static const WIKI :String = "http://wiki.whirled.com/";
 }
 }

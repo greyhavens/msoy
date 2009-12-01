@@ -18,6 +18,7 @@ import com.threerings.util.Maps;
 import com.threerings.util.Util;
 
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.MsoyCodes;
 
 import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.Msgs;
@@ -47,6 +48,7 @@ public class TutorialDirector
         _timer.addEventListener(TimerEvent.TIMER, handleTimer);
         _ctx.getUIState().addEventListener(UIState.STATE_CHANGE, handleUIStateChange);
         _panel = new TutorialPanel(onPanelClose);
+        _ctx.getChatDirector().registerCommandHandler(Msgs.CHAT, "tut", new TutorialHandler());
     }
 
     /**
@@ -192,6 +194,45 @@ public class TutorialDirector
         } else {
             _ctx.getChatDirector().displayFeedback(null, "Test: sequence not activated.");
         }
+    }
+
+    /**
+     * Pops up a previosuly queued tip. Displays feedback if the tip could not be popped up, or if
+     * some other condition that would normally prevent popping up the tip is being ignored.
+     */
+    public function testTip (id :String) :void
+    {
+        var item :TutorialItem = null;
+        var seen :Boolean;
+        _pool.forEach(function (key :TutorialItem, value :Boolean) :Boolean {
+            if (key.id == id) {
+                item = key;
+                seen = value;
+                return true;
+            }
+            return false;
+        });
+        function feedback (msg :String) :void {
+            _ctx.getChatDirector().displayFeedback(MsoyCodes.NPC_MSGS, msg);
+        }
+        if (item == null) {
+            feedback("m.testtip_not_found");
+            return;
+        }
+        if (isShowing()) {
+            feedback("m.testtip_panel_open");
+            return;
+        }
+        if (seen == true) {
+            feedback("m.testtip_seen");
+        }
+        if (isIgnored(item)) {
+            feedback("m.testtip_ignored");
+        }
+        if (!item.isAvailable()) {
+            feedback("m.testtip_unavailable");
+        }
+        popup(item);
     }
 
     /**

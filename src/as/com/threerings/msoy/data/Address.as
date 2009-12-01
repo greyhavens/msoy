@@ -12,7 +12,7 @@ import com.threerings.msoy.utils.Args;
 import com.threerings.msoy.item.data.all.ItemTypes;
 
 /**
- * Represents the address of a specific page on the whirled web site.
+ * Represents the address of a specific page on the whirled web site or wiki.
  */
 public class Address
     implements Equalable
@@ -43,6 +43,9 @@ public class Address
 
     /** My transactions page. */
     public static const REGISTER :Address = new Address(Page.ACCOUNT, ["create"]);
+
+    /** The games page. */
+    public static const GAMES :Address = new Address(Page.GAMES, []);
 
     /**
      * Creates the address of a member's profile page.
@@ -75,6 +78,14 @@ public class Address
     }
 
     /**
+     * Creates an address for visiting a page on the whirled wiki.
+     */
+    public static function wiki (page :String) :Address
+    {
+        return new Address(null, ["http:", "", "wiki.whirled.com", page]);
+    }
+
+    /**
      * Creates a new address from a page and an array of arguments.
      */
     public function Address (page :Page, args :Array)
@@ -84,7 +95,7 @@ public class Address
     }
 
     /**
-     * Accesses the page value of this address.
+     * Accesses the page value of this address. Will be null if this address is for a wiki page.
      */
     public function get page () :Page
     {
@@ -92,7 +103,8 @@ public class Address
     }
 
     /**
-     * Accesses the array of arguments of this address.
+     * Accesses the array of arguments of this address. If the address is for a wiki page, each
+     * argument is an address component.
      */
     public function get args () :Array
     {

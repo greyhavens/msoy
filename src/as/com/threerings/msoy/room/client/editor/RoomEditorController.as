@@ -482,6 +482,10 @@ public class RoomEditorController
             return Msgs.NPC.get(msg);
         }
 
+        function display (address :Address) :Function {
+            return Util.adapt(_ctx.getWorldController().displayAddress, address);
+        }
+
         var sequence :TutorialSequenceBuilder;
         sequence = _ctx.getTutorialDirector().newSequence("roomEdit").newbie().limit(isEditing);
 
@@ -496,17 +500,21 @@ public class RoomEditorController
         // register for unregistered players
         if (!_ctx.isRegistered()) {
             sequence.newSuggestion(xlate("i.edit_register")).button(xlate("b.edit_register"),
-                    Util.adapt(_ctx.getWorldController().displayAddress, Address.REGISTER))
-                .finishText(xlate("i.edit_register_finish")).queue();
+                display(Address.REGISTER)).finishText(xlate("i.edit_register_finish")).queue();
         }
 
         // shop
         sequence.newSuggestion(xlate("i.edit_shop")).button(xlate("b.edit_shop"),
-                Util.adapt(_ctx.getWorldController().displayAddress, Address.SHOP_FURNI))
-            .buttonCloses().limit(_ctx.isRegistered).queue();
+            display(Address.SHOP_FURNI)).buttonCloses().limit(_ctx.isRegistered).queue();
 
         // let 'er rip
-        sequence.activate(true);
+        if (sequence.activate(true)) {
+            return;
+        }
+
+        _ctx.getTutorialDirector().newSuggestion("roomEditWiki", xlate("i.edit_wiki")).beginner()
+            .button(xlate("b.edit_wiki"), display(Address.wiki("Edit_your_room")))
+            .buttonCloses().queue();
     }
 
     /**
