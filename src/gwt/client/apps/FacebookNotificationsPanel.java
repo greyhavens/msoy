@@ -138,7 +138,7 @@ public class FacebookNotificationsPanel extends FlowPanel
 
             for (FacebookNotification notif : notifs) {
                 setText(row, ID, notif.id, 1, "Id");
-                setText(row, TEXT, StringUtil.truncate(notif.text, 50), 1, "Text");
+                setText(row, TEXT, StringUtil.truncate(notif.text, 40, "..."), 1, "Text");
     
                 // edit button
                 final FacebookNotification fnotif = notif; 

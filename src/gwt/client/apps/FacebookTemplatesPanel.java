@@ -153,9 +153,9 @@ public class FacebookTemplatesPanel extends FlowPanel
         _code.setText(templ.key.code);
         _variant.setText(templ.key.variant);
         _bundleId.setText(""+templ.bundleId);
-        _captionMale.setText(StringUtil.getOr(templ.captions.get(Gender.MALE), ""));
-        _captionFemale.setText(StringUtil.getOr(templ.captions.get(Gender.FEMALE), ""));
-        _captionNeutral.setText(StringUtil.getOr(templ.captions.get(Gender.NEUTRAL), ""));
+        _captionMale.setText(templ.captions.get(Gender.MALE));
+        _captionFemale.setText(templ.captions.get(Gender.FEMALE));
+        _captionNeutral.setText(templ.captions.get(Gender.NEUTRAL));
         _description.setText(templ.description);
         _prompt.setText(templ.prompt);
         _link.setText(templ.linkText);
@@ -218,11 +218,11 @@ public class FacebookTemplatesPanel extends FlowPanel
                 cell(row, VARIANT).text(template.key.variant);
                 cell(row, BUNDLE_ID).text(String.valueOf(template.bundleId));
                 cell(row, CAPTIONM).text(
-                    StringUtil.getOr(template.captions.get(Gender.MALE), ""));
+                    StringUtil.truncate(template.captions.get(Gender.MALE), 20, "..."));
                 cell(row, CAPTIONF).text(
-                    StringUtil.getOr(template.captions.get(Gender.FEMALE), ""));
+                    StringUtil.truncate(template.captions.get(Gender.FEMALE), 20, "..."));
                 cell(row, CAPTIONN).text(
-                    StringUtil.getOr(template.captions.get(Gender.NEUTRAL), ""));
+                    StringUtil.truncate(template.captions.get(Gender.NEUTRAL), 20, "..."));
                 cell(row, DESCRIP).text(template.description);
                 cell(row, PROMPT).text(template.prompt);
                 cell(row, LINK_TEXT).text(template.linkText);
