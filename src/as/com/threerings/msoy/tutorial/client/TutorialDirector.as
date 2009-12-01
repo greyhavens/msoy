@@ -146,56 +146,6 @@ public class TutorialDirector
         return memObj == null ? -1 : memObj.level;
     }
 
-    public function test (delayMultiplier :Number) :void
-    {
-        function gibby (str :String) :String {
-            var gibberish :String = "The quick brown fox jumped over the lazy dog.";
-            return str + " " + gibberish + " " + gibberish;
-        }
-        function naught () :void {}
-        if (_pool.size() == 0) {
-            newTip("tip1", gibby("This is test tip #1.")).queue();
-            newTip("tip2", gibby("This is test tip #2.")).button("Close", naught)
-                .buttonCloses(true).queue();
-            newTip("tip3", gibby("This tip is limited to advanced users.")).advanced().queue();
-            newTip("tip4", gibby("This is a non-ignorable tip.")).noIgnore().queue();
-            newTip("tip5", gibby("Hey! There's the go button."))
-                .highlight(_ctx.getControlBar().goBtn).queue();
-            newPromotion("promo1", gibby("This is a test promotion.")).queue();
-            _ctx.getChatDirector().displayFeedback(null, "Test: added 4 tips and 1 promotion.");
-        }
-
-        var delay :Number = TIP_DELAY + (Math.random() - .5) * TIP_DELAY * .5;
-        delay *= delayMultiplier;
-        var id :int = getTimer();
-        setTimeout(function () :void {
-            newSuggestion("test" + id, gibby("This is a test suggestion (id " + id + ")."))
-                .button("Do It!", naught).controlBarHighlight(_ctx.getControlBar().goBtn)
-                .queue();
-        }, delay);
-
-        _ctx.getChatDirector().displayFeedback(null, "Test: queued suggestion id " + id +
-            " for display in " + int(delay / 1000) + " seconds.");
-    }
-
-    public function testSequence (singles :Boolean = false) :void
-    {
-        var sequence :TutorialSequenceBuilder = newSequence(
-            "testSeq_" + (singles ? "singles" : "full"));
-        sequence.newSuggestion("This is sequence item #1. Arrange your room dumbass!")
-            .menuItemHighlight(WorldControlBar(_ctx.getControlBar()).roomBtn, "RoomEdit").queue();
-        sequence.newSuggestion("This is sequence item #2.").queue();
-        sequence.newSuggestion("This is sequence item #3.").queue();
-        if (singles) {
-            sequence.singles();
-        }
-        if (sequence.activate()) {
-            _ctx.getChatDirector().displayFeedback(null, "Test: activated sequence.");
-        } else {
-            _ctx.getChatDirector().displayFeedback(null, "Test: sequence not activated.");
-        }
-    }
-
     /**
      * Pops up a previosuly queued tip. Displays feedback if the tip could not be popped up, or if
      * some other condition that would normally prevent popping up the tip is being ignored.

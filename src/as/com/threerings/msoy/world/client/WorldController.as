@@ -1663,20 +1663,6 @@ public class WorldController extends MsoyController
             menuData.push({ label: Msgs.GENERAL.get("b.go_home"), command: GO_SCENE, arg: ourHomeId,
                 enabled: (ourHomeId != curSceneId) });
         }
-
-        // test menu option to look at the tutorial panel on dev
-        if (DeploymentConfig.devDeployment) {
-            var tutMenu :Array = [];
-            tutMenu.push({ label: "Simulate tutorial",
-                command: _wctx.getTutorialDirector().test, arg: 1.0 });
-            tutMenu.push({ label: "Popup tutorial",
-                command: _wctx.getTutorialDirector().test, arg: 0.0 });
-            tutMenu.push({ label: "Test tutorial full sequence",
-                command: _wctx.getTutorialDirector().testSequence });
-            tutMenu.push({ label: "Test tutorial singles sequence",
-                command: _wctx.getTutorialDirector().testSequence, arg :true });
-            menuData.push({ label: "Tutorial", children: tutMenu }); 
-        }
     }
 
     /**
