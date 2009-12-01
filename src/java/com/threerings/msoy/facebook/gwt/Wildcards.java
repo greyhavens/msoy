@@ -19,15 +19,30 @@ public class Wildcards
 
     public String replace (String original)
     {
-        String replaced = original;
-        for (Map.Entry<String, String> pair : _replacements.entrySet()) {
-            if (pair.getValue() == null) {
-                continue;
+        StringBuilder output = new StringBuilder();
+        int pos = 0;
+        while (true) {
+            int kstart = original.indexOf("{*", pos);
+            if (kstart == -1) {
+                output.append(original, pos, original.length());
+                break;
             }
-            String key = "{*" + pair.getKey() + "*}";
-            replaced = replaced.replace(key, pair.getValue());
+            output.append(original, pos, kstart);
+            int kend = original.indexOf("*}", kstart);
+            appendReplacement(output, original.substring(kstart + 2, kend));
+            pos = kend + 2;
         }
-        return replaced;
+        return output.toString();
+    }
+
+    protected void appendReplacement (StringBuilder output, String key)
+    {
+        String repl = _replacements.get(key);
+        if (repl != null) {
+            output.append(repl);
+            return;
+        }
+        output.append("{*").append(key).append("*}");
     }
 
     protected Map<String, String> _replacements;
