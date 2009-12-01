@@ -3,10 +3,14 @@
 
 package com.threerings.msoy.facebook.gwt;
 
+import java.util.Map;
+
 import com.google.gwt.user.client.rpc.IsSerializable;
 
+import com.threerings.msoy.facebook.gwt.FacebookService.Gender;
+
 /**
- * Runtime representation of a facebook template, mainly for use by admin editor.
+ * Runtime representation of a facebook template. Used by the admin editor and story feeder.
  */
 public class FacebookTemplate
     implements IsSerializable, Comparable<FacebookTemplate>
@@ -69,8 +73,13 @@ public class FacebookTemplate
      * TODO: remove, this is deprecated. */
     public long bundleId;
 
-    /** The caption for passing to publishStream */
+    /** The caption for passing to publishStream. Note that when requesting templates for
+     * editing, this field is null. */
     public String caption;
+
+    /** The available captions to choose from for passing to publishStream. Note that when
+     * requesting a template for publishing, this field is null. */
+    public Map<Gender, String> captions;
 
     /** The description for passing to publishStream */
     public String description;

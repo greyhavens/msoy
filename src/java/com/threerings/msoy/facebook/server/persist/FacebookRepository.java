@@ -82,7 +82,8 @@ public class FacebookRepository extends DepotRepository
         // set the default values for the new stream publishing columns - we don't want these to
         // be nullable or have permanent default values
         context.registerMigration(FacebookTemplateRecord.class,
-            new SchemaMigration.Add(4, FacebookTemplateRecord.CAPTION, "''"));
+            new SchemaMigration.Add(4, new ColumnExp(
+                FacebookTemplateRecord.class, "caption"), "''"));
         context.registerMigration(FacebookTemplateRecord.class,
             new SchemaMigration.Add(4, FacebookTemplateRecord.DESCRIPTION, "''"));
         context.registerMigration(FacebookTemplateRecord.class,
@@ -91,6 +92,10 @@ public class FacebookRepository extends DepotRepository
             new SchemaMigration.Add(4, FacebookTemplateRecord.LINK_TEXT, "''"));
         context.registerMigration(FacebookTemplateRecord.class,
             new SchemaMigration.Add(4, FacebookTemplateRecord.ENABLED, "'t'"));
+
+        // old captions become the gender neutral caption
+        context.registerMigration(FacebookTemplateRecord.class,
+            new SchemaMigration.Rename(5, "caption", FacebookTemplateRecord.CAPTION_NEUTRAL));
     }
 
     /**

@@ -272,7 +272,7 @@ public class FacebookServlet extends MsoyServiceServlet
             } else if ("female".equalsIgnoreCase(user.getSex())) {
                 info.gender = FacebookService.Gender.FEMALE;
             } else {
-                info.gender = FacebookService.Gender.HIDDEN;
+                info.gender = FacebookService.Gender.NEUTRAL;
             }
 
         } catch (FacebookException fe) {
@@ -360,7 +360,8 @@ public class FacebookServlet extends MsoyServiceServlet
             log.warning("No Facebook templates found for request", "code", template);
             return fields;
         }
-        fields.template = RandomUtil.pickRandom(templates).toTemplate();
+        Gender gender = Gender.NEUTRAL; // TODO
+        fields.template = RandomUtil.pickRandom(templates).toTemplate(gender);
 
         FacebookInfoRecord fbinfo = _facebookRepo.loadAppFacebookInfo(appId);
         fields.canvasName = fbinfo != null ? fbinfo.canvasName : "";

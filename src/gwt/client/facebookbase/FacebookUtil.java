@@ -92,7 +92,7 @@ public class FacebookUtil
         switch (gender) {
         case FEMALE: return _msgs.xlate("possessiveHer");
         case MALE: return _msgs.xlate("possessiveHis");
-        case HIDDEN: return _msgs.xlate("possessiveNeutral");
+        case NEUTRAL: return _msgs.xlate("possessiveNeutral");
         }
         return "";
     }

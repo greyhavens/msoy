@@ -180,7 +180,7 @@ public class AppServlet extends MsoyServiceServlet
             Iterables.transform(_facebookRepo.loadTemplates(appId),
                 new Function<FacebookTemplateRecord, FacebookTemplate>() {
                     public FacebookTemplate apply (FacebookTemplateRecord in) {
-                        return in.toTemplate();
+                        return in.toTemplate(); // include all genders
                     }
                 }));
         Collections.sort(result);

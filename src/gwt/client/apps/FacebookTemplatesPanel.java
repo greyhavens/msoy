@@ -20,12 +20,14 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
 
 import com.threerings.gwt.ui.SmartTable;
+import com.threerings.gwt.util.StringUtil;
 
 import com.threerings.msoy.apps.gwt.AppInfo;
 import com.threerings.msoy.apps.gwt.AppService;
 import com.threerings.msoy.apps.gwt.AppServiceAsync;
 
 import com.threerings.msoy.facebook.gwt.FacebookTemplate;
+import com.threerings.msoy.facebook.gwt.FacebookService.Gender;
 
 import client.edutil.EditorTable;
 import client.edutil.EditorUtil.ConfigException;
@@ -77,8 +79,14 @@ public class FacebookTemplatesPanel extends FlowPanel
             }
         });
 
-        editor.addRow(
-            _msgs.fbTemplCaptionLabel(), _caption = MsoyUI.createTextBox("", 250, 60), null);
+        editor.addRow(_msgs.fbTemplCaptionMaleLabel(),
+            _captionMale = MsoyUI.createTextBox("", 250, 60), null);
+
+        editor.addRow(_msgs.fbTemplCaptionFemaleLabel(),
+            _captionFemale = MsoyUI.createTextBox("", 250, 60), null);
+
+        editor.addRow(_msgs.fbTemplCaptionNeutralLabel(),
+            _captionNeutral = MsoyUI.createTextBox("", 250, 60), null);
 
         editor.addRow(_msgs.fbTemplDescriptionLabel(),
             _description = MsoyUI.createTextBox("", 250, 60), null);
@@ -101,7 +109,10 @@ public class FacebookTemplatesPanel extends FlowPanel
                     MsoyUI.error(_msgs.fbTemplErrDuplicate(key.code, key.variant));
                     return;
                 }
-                newTmpl.caption = _caption.getText().trim();
+                newTmpl.captions = new HashMap<Gender, String>();
+                newTmpl.captions.put(Gender.MALE, _captionMale.getText().trim());
+                newTmpl.captions.put(Gender.FEMALE, _captionFemale.getText().trim());
+                newTmpl.captions.put(Gender.NEUTRAL, _captionNeutral.getText().trim());
                 newTmpl.description = _description.getText().trim();
                 newTmpl.prompt = _prompt.getText().trim();
                 newTmpl.linkText = _link.getText().trim();
@@ -142,7 +153,9 @@ public class FacebookTemplatesPanel extends FlowPanel
         _code.setText(templ.key.code);
         _variant.setText(templ.key.variant);
         _bundleId.setText(""+templ.bundleId);
-        _caption.setText(templ.caption);
+        _captionMale.setText(StringUtil.getOr(templ.captions.get(Gender.MALE), ""));
+        _captionFemale.setText(StringUtil.getOr(templ.captions.get(Gender.FEMALE), ""));
+        _captionNeutral.setText(StringUtil.getOr(templ.captions.get(Gender.NEUTRAL), ""));
         _description.setText(templ.description);
         _prompt.setText(templ.prompt);
         _link.setText(templ.linkText);
@@ -170,7 +183,7 @@ public class FacebookTemplatesPanel extends FlowPanel
         public TemplatesList ()
         {
             super("templatesList", 5, 0);
-            setWidget(0, 0, MsoyUI.createNowLoading());
+            cell(0, 0).widget(MsoyUI.createNowLoading());
         }
 
         public void update ()
@@ -180,36 +193,44 @@ public class FacebookTemplatesPanel extends FlowPanel
             }
 
             if (_templates.size() == 0) {
-                setText(0, 0, _msgs.fbTemplEmpty());
+                cell(0, 0).text(_msgs.fbTemplEmpty());
                 return;
             }
 
-            final int CODE = 0, VARIANT = 1, BUNDLE_ID = 2, CAPTION = 3, DESCRIP = 4,
-                 PROMPT = 5, LINK_TEXT = 6, COPY_BTN = 7, ENABLING_BTN = 8, DELETE_BTN = 9;
+            final int CODE = 0, VARIANT = 1, BUNDLE_ID = 2, CAPTIONM = 3, CAPTIONF = 4,
+                CAPTIONN = 5, DESCRIP = 6, PROMPT = 7, LINK_TEXT = 8, COPY_BTN = 9,
+                ENABLING_BTN = 10, DELETE_BTN = 11;
 
             int row = 0;
-            setText(row, CODE, _msgs.fbTemplCodeHdr(), 1, "Header", "Code");
-            setText(row, VARIANT, _msgs.fbTemplVariantHdr(), 1, "Header");
-            setText(row, BUNDLE_ID, _msgs.fbTemplBundleIdHdr(), 1, "Header");
-            setText(row, CAPTION, _msgs.fbTemplCaptionHdr(), 1, "Header", "Caption");
-            setText(row, DESCRIP, _msgs.fbTemplDescripHdr(), 1, "Header", "Description");
-            setText(row, PROMPT, _msgs.fbTemplPromptHdr(), 1, "Header", "Prompt");
-            setText(row, LINK_TEXT, _msgs.fbTemplLinkTextHdr(), 1, "Header", "Link");
+            cell(row, CODE).text(_msgs.fbTemplCodeHdr()).styles("Header", "Code");
+            cell(row, VARIANT).text(_msgs.fbTemplVariantHdr()).styles("Header");
+            cell(row, BUNDLE_ID).text(_msgs.fbTemplBundleIdHdr()).styles("Header");
+            cell(row, CAPTIONM).text(_msgs.fbTemplCaptionMaleHdr()).styles("Header", "Caption");
+            cell(row, CAPTIONF).text(_msgs.fbTemplCaptionFemaleHdr()).styles("Header", "Caption");
+            cell(row, CAPTIONN).text(_msgs.fbTemplCaptionNeutralHdr()).styles("Header", "Caption");
+            cell(row, DESCRIP).text(_msgs.fbTemplDescripHdr()).styles("Header", "Description");
+            cell(row, PROMPT).text(_msgs.fbTemplPromptHdr()).styles("Header", "Prompt");
+            cell(row, LINK_TEXT).text(_msgs.fbTemplLinkTextHdr()).styles("Header", "Link");
             getRowFormatter().setStyleName(row++, "Row");
 
             for (FacebookTemplate template : _templates) {
-                setText(row, CODE, template.key.code, 1, "Code");
-                setText(row, VARIANT, template.key.variant);
-                setText(row, BUNDLE_ID, String.valueOf(template.bundleId));
-                setText(row, CAPTION, template.caption);
-                setText(row, DESCRIP, template.description);
-                setText(row, PROMPT, template.prompt);
-                setText(row, LINK_TEXT, template.linkText);
+                cell(row, CODE).text(template.key.code).styles("Code");
+                cell(row, VARIANT).text(template.key.variant);
+                cell(row, BUNDLE_ID).text(String.valueOf(template.bundleId));
+                cell(row, CAPTIONM).text(
+                    StringUtil.getOr(template.captions.get(Gender.MALE), ""));
+                cell(row, CAPTIONF).text(
+                    StringUtil.getOr(template.captions.get(Gender.FEMALE), ""));
+                cell(row, CAPTIONN).text(
+                    StringUtil.getOr(template.captions.get(Gender.NEUTRAL), ""));
+                cell(row, DESCRIP).text(template.description);
+                cell(row, PROMPT).text(template.prompt);
+                cell(row, LINK_TEXT).text(template.linkText);
 
                 final FacebookTemplate ftemplate = template;
 
                 // copy button
-                setWidget(row, COPY_BTN, MsoyUI.createActionLabel(_msgs.fbTemplCopyBtn(),
+                cell(row, COPY_BTN).widget(MsoyUI.createActionLabel(_msgs.fbTemplCopyBtn(),
                     new ClickHandler() {
                     @Override public void onClick (ClickEvent event) {
                         setFields(ftemplate);
@@ -217,7 +238,7 @@ public class FacebookTemplatesPanel extends FlowPanel
                 }));
 
                 // enabling button
-                setWidget(row, ENABLING_BTN, setAbleButtonLabel(MsoyUI.createActionLabel("",
+                cell(row, ENABLING_BTN).widget(setAbleButtonLabel(MsoyUI.createActionLabel("",
                     new ClickHandler() {
                         @Override public void onClick (ClickEvent event) {
                             ftemplate.enabled = !ftemplate.enabled;
@@ -227,7 +248,7 @@ public class FacebookTemplatesPanel extends FlowPanel
                     }), template));
 
                 // delete button
-                setWidget(row, DELETE_BTN, MsoyUI.createCloseButton(new ClickHandler() {
+                cell(row, DELETE_BTN).widget(MsoyUI.createCloseButton(new ClickHandler() {
                     @Override public void onClick (ClickEvent event) {
                         int idx = _templates.indexOf(ftemplate);
                         removeRow(idx + 1); // "1" for header row
@@ -256,7 +277,8 @@ public class FacebookTemplatesPanel extends FlowPanel
     protected Set<FacebookTemplate.Key> _removed;
     protected Map<FacebookTemplate.Key, Boolean> _abled; // en- or dis-
     protected TemplatesList _display;
-    protected TextBox _code, _variant, _bundleId, _caption, _description, _prompt, _link;
+    protected TextBox _code, _variant, _bundleId, _captionMale, _captionFemale, _captionNeutral,
+        _description, _prompt, _link;
 
     protected static final AppsMessages _msgs = GWT.create(AppsMessages.class);
     protected static final AppServiceAsync _appsvc = GWT.create(AppService.class);

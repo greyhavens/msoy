@@ -106,6 +106,7 @@ public class StoryFeeder
             //attachment.put("name", wild.replace(_fields.template.name));
             attachments.put("href", actionURL);
             attachments.put("description", wild.replace(_fields.template.description));
+            // Note this will hork if the template is not defined properly
             attachments.put("caption", wild.replace(_fields.template.caption));
             attachments.put("media", FacebookUtil.makeImages(
                 _fields.thumbnails, actionURL, _publicImages, true));

@@ -3,12 +3,19 @@
 
 package com.threerings.msoy.facebook.server.persist;
 
+import com.google.common.collect.Maps;
+
 import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistentRecord;
+import com.samskivert.depot.annotation.Column;
 import com.samskivert.depot.annotation.Entity;
 import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.expression.ColumnExp;
+
+import com.samskivert.util.StringUtil;
+
 import com.threerings.msoy.facebook.gwt.FacebookTemplate;
+import com.threerings.msoy.facebook.gwt.FacebookService.Gender;
 
 /**
  * Describes a story template entered into the Facebook template editor for use at runtime by the
@@ -24,14 +31,16 @@ public class FacebookTemplateRecord extends PersistentRecord
     public static final ColumnExp VARIANT = colexp(_R, "variant");
     public static final ColumnExp ENABLED = colexp(_R, "enabled");
     public static final ColumnExp BUNDLE_ID = colexp(_R, "bundleId");
-    public static final ColumnExp CAPTION = colexp(_R, "caption");
+    public static final ColumnExp CAPTION_MALE = colexp(_R, "captionMale");
+    public static final ColumnExp CAPTION_FEMALE = colexp(_R, "captionFemale");
+    public static final ColumnExp CAPTION_NEUTRAL = colexp(_R, "captionNeutral");
     public static final ColumnExp DESCRIPTION = colexp(_R, "description");
     public static final ColumnExp PROMPT = colexp(_R, "prompt");
     public static final ColumnExp LINK_TEXT = colexp(_R, "linkText");
     // AUTO-GENERATED: FIELDS END
 
     /** Determines compatible schema versions. */
-    public static final int SCHEMA_VERSION = 4;
+    public static final int SCHEMA_VERSION = 5;
 
     /** The id of the application defining this template. */
     @Id public int appId;
@@ -48,8 +57,17 @@ public class FacebookTemplateRecord extends PersistentRecord
     /** Passed to Facebook when creating a new story. */
     public long bundleId;
 
-    /** The caption for passing to publishStream */
-    public String caption;
+    /** The caption for passing to publishStream for a user with a penis. */
+    @Column(nullable=true)
+    public String captionMale;
+
+    /** The caption for passing to publishStream for a user with a vagina. */
+    @Column(nullable=true)
+    public String captionFemale;
+
+    /** The caption for passing to publishStream for a user with undisclosed genitalia. */
+    @Column(nullable=true)
+    public String captionNeutral;
 
     /** The description for passing to publishStream */
     public String description;
@@ -76,7 +94,9 @@ public class FacebookTemplateRecord extends PersistentRecord
         code = template.key.code;
         bundleId = template.bundleId;
         variant = template.key.variant;
-        caption = template.caption;
+        captionMale = template.captions.get(Gender.MALE);
+        captionFemale = template.captions.get(Gender.FEMALE);
+        captionNeutral = template.captions.get(Gender.NEUTRAL);
         description = template.description;
         prompt = template.prompt;
         linkText = template.linkText;
@@ -84,16 +104,37 @@ public class FacebookTemplateRecord extends PersistentRecord
     }
 
     /**
-     * Creates and returns a runtime template matching this one.
+     * Creates and returns a runtime template matching this one, including all genders in the
+     * {@link FacebookTemplate#captions} member.
      */
     public FacebookTemplate toTemplate ()
     {
-        FacebookTemplate templ = new FacebookTemplate(code, variant, bundleId);
-        templ.caption = caption;
-        templ.description = description;
-        templ.prompt = prompt;
-        templ.linkText = linkText;
-        templ.enabled = enabled;
+        FacebookTemplate templ = toTemplateBase();
+        templ.captions = Maps.newHashMap();
+        templ.captions.put(Gender.MALE, StringUtil.deNull(captionMale));
+        templ.captions.put(Gender.FEMALE, StringUtil.deNull(captionFemale));
+        templ.captions.put(Gender.NEUTRAL, StringUtil.deNull(captionNeutral));
+        return templ;
+    }
+
+    /**
+     * Creates and returns a runtime template matching this one, including the appropiate gender-
+     * specific value in {@link FacebookTemplate#caption}.
+     */
+    public FacebookTemplate toTemplate (Gender gender)
+    {
+        FacebookTemplate templ = toTemplateBase();
+        switch (gender) {
+        case MALE:
+            templ.caption = StringUtil.getOr(captionMale, captionNeutral);
+            break;
+        case FEMALE:
+            templ.caption = StringUtil.getOr(captionFemale, captionNeutral);
+            break;
+        case NEUTRAL:
+            templ.caption = captionNeutral;
+            break;
+        }
         return templ;
     }
 
@@ -119,4 +160,14 @@ public class FacebookTemplateRecord extends PersistentRecord
                 new Comparable[] { appId, code, variant });
     }
     // AUTO-GENERATED: METHODS END
+
+    protected FacebookTemplate toTemplateBase ()
+    {
+        FacebookTemplate templ = new FacebookTemplate(code, variant, bundleId);
+        templ.description = description;
+        templ.prompt = prompt;
+        templ.linkText = linkText;
+        templ.enabled = enabled;
+        return templ;
+    }
 }

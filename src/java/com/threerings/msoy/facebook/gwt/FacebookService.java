@@ -33,7 +33,7 @@ public interface FacebookService extends RemoteService
     /**
      * Genders for the purposes of a facebook invite.
      */
-    public static enum Gender { MALE, FEMALE, HIDDEN };
+    public static enum Gender { MALE, FEMALE, NEUTRAL };
 
     /**
      * Provides data for the invitaion request form.
