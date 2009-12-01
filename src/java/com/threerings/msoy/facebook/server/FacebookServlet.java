@@ -34,7 +34,9 @@ import com.samskivert.util.RandomUtil;
 import com.threerings.parlor.rating.server.persist.RatingRecord;
 import com.threerings.parlor.rating.server.persist.RatingRepository;
 
+import com.threerings.msoy.person.server.persist.ProfileRecord;
 import com.threerings.msoy.person.server.persist.ProfileRepository;
+import com.threerings.msoy.profile.gwt.Profile;
 import com.threerings.msoy.server.persist.ExternalMapRecord;
 import com.threerings.msoy.server.persist.MemberCardRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
@@ -360,7 +362,20 @@ public class FacebookServlet extends MsoyServiceServlet
             log.warning("No Facebook templates found for request", "code", template);
             return fields;
         }
-        Gender gender = Gender.NEUTRAL; // TODO
+
+        // determine the correct gender to get the appropriate caption
+        Gender gender = Gender.NEUTRAL;
+        ProfileRecord profile = _profileRepo.loadProfile(session.memRec.memberId);
+        if (profile != null) {
+            switch (profile.sex) {
+            case Profile.SEX_MALE:
+                gender = Gender.MALE;
+                break;
+            case Profile.SEX_FEMALE:
+                gender = Gender.FEMALE;
+                break;
+            }
+        }
         fields.template = RandomUtil.pickRandom(templates).toTemplate(gender);
 
         FacebookInfoRecord fbinfo = _facebookRepo.loadAppFacebookInfo(appId);

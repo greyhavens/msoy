@@ -85,7 +85,8 @@ public class ProfileRecord extends PersistentRecord
     @Column(length=Profile.MAX_STATUS_LENGTH)
     public String headline = "";
 
-    /** Whether the member identifies as male or female. */
+    /** Whether the member identifies as {@link Profile#SEX_MALE}, {@link Profile#SEX_FEMALE} or
+     * {@link Profile#SEX_UNSPECIFIED}. */
     public byte sex;
 
     /** The date on which the member claims to be born. */
