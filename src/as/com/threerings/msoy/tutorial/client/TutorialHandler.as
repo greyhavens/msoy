@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.tutorial.client {
 
 import com.threerings.crowd.util.CrowdContext;
