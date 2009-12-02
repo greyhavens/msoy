@@ -173,6 +173,7 @@ public class ThreadPanel extends TitledListPanel
                 setWidget(row++, 0, reply);
             }
 
+            addFooterButton(_editor.getToggler());
             addFooterButton(new Button(_cmsgs.cancel(), new ClickHandler() {
                 public void onClick (ClickEvent event) {
                     showMessages();
@@ -220,6 +221,7 @@ public class ThreadPanel extends TitledListPanel
             _content.setWidget(0, 0, _editor.asWidget());
             _editor.setHTML(message.message);
 
+            addFooterButton(_editor.getToggler());
             addFooterButton(new Button(_cmsgs.cancel(), new ClickHandler() {
                 public void onClick (ClickEvent event) {
                     showMessages();

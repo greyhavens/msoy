@@ -97,6 +97,7 @@ public class NewThreadPanel extends TableFooterPanel
         _message = MessageEditor.createDefault();
         addRow(_message.asWidget());
 
+        addFooterButton(_message.getToggler());
         addFooterButton(new Button(_cmsgs.cancel(), new ClickHandler() {
             public void onClick (ClickEvent event) {
                 ((ForumPanel)getParent()).newThreadCanceled(_groupId);
