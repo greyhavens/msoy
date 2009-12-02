@@ -57,7 +57,6 @@ public class TinyMceEditor extends FlowPanel
             .build());
         settings.put("theme_advanced_buttons2", new CommaList()
             .add("forecolor")
-            .add("backcolor")
             .add("fontselect")
             .add("fontsizeselect")
             .add("formatselect")
@@ -66,6 +65,7 @@ public class TinyMceEditor extends FlowPanel
         settings.put("theme_advanced_buttons3", "");
         settings.put("theme_advanced_blockformats", new CommaList()
             .add("p")
+            .add("div")
             .add("pre")
             .add("h1")
             .add("h2")
@@ -76,7 +76,6 @@ public class TinyMceEditor extends FlowPanel
             .build());
         settings.put("theme_advanced_toolbar_location", "top");
         settings.put("theme_advanced_fonts", new PairList()
-            .add("Normal", "")
             .add("Times New Roman", "times")
             .add("Arial", "arial")
             .add("Monospace", "monospace")
