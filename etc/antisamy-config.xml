@@ -29,6 +29,7 @@
         <regexp name="cssColor" value="(aqua|black|blue|fuchsia|gray|grey|green|lime|maroon|navy|olive|purple|red|silver|teal|white|yellow)|rgb\(([1]?[0-9]{1,2}|2[0-4][0-9]|25[0-5]),([1]?[0-9]{1,2}|2[0-4][0-9]|25[0-5]),([1]?[0-9]{1,2}|2[0-4][0-9]|25[0-5])\)"/>        
         <regexp name="length" value="((-|\+)?0|(-|\+)?([0-9]+(.[0-9]+)?)(em|ex|px|in|cm|mm|pt|pc))"/>
         <regexp name="percentage" value="(-|\+)?([0-9]+(.[0-9]+)?)%"/>
+        <regexp name="absolute-size" value="(xx-small|x-small|small|medium|large|x-large|xx-large)"/>
 
     </common-regexps>
 
@@ -308,6 +309,15 @@
             </literal-list>
             <regexp-list>
                 <regexp value="[\w,\-&apos;&quot; ]+"/>
+            </regexp-list>
+        </property>
+
+        <property name="font-size" default="medium" description="">
+            <category-list>
+                <category value="visual"/>
+            </category-list>
+            <regexp-list>
+                <regexp name="absolute-size"/>
             </regexp-list>
         </property>
 
