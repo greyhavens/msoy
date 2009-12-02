@@ -520,6 +520,10 @@ public class RoomEditorController
 
     protected function maybeShowSelectionTutorial (selected :FurniSprite) :void
     {
+        if (selected == null) {
+            return;
+        }
+
         function xlate (msg :String) :String {
             return Msgs.NPC.get(msg);
         }
