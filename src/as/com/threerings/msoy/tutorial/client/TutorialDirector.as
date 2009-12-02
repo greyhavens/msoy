@@ -100,7 +100,8 @@ public class TutorialDirector
         var ignored :Boolean = isIgnored(item);
         if (isImmediate(item.kind)) {
             // either show this item now or just ignore it
-            if (!ignored && item.isAvailable()) {
+            if (!ignored && item.isAvailable() && !item.equals(_current) &&
+                ArrayUtil.indexOf(_suggestions, item) == -1) {
                 _suggestions.push(item);
                 update();
             }
