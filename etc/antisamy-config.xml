@@ -28,7 +28,9 @@
         <regexp name="numberOrPercent" value="(\d)+(%{0,1})"/>
         <regexp name="cssColor" value="(aqua|black|blue|fuchsia|gray|grey|green|lime|maroon|navy|olive|purple|red|silver|teal|white|yellow)|rgb\(([1]?[0-9]{1,2}|2[0-4][0-9]|25[0-5]),([1]?[0-9]{1,2}|2[0-4][0-9]|25[0-5]),([1]?[0-9]{1,2}|2[0-4][0-9]|25[0-5])\)"/>        
         <regexp name="length" value="((-|\+)?0|(-|\+)?([0-9]+(.[0-9]+)?)(em|ex|px|in|cm|mm|pt|pc))"/>
+        <regexp name="positiveLength" value="((\+)?0|(\+)?([0-9]+(.[0-9]+)?)(em|ex|px|in|cm|mm|pt|pc))"/>
         <regexp name="percentage" value="(-|\+)?([0-9]+(.[0-9]+)?)%"/>
+        <regexp name="positivePercentage" value="(\+)?([0-9]+(.[0-9]+)?)%"/>
         <regexp name="absolute-size" value="(xx-small|x-small|small|medium|large|x-large|xx-large)"/>
 
     </common-regexps>
@@ -386,6 +388,32 @@
             <regexp-list>
                 <regexp name="length"/>
                 <regexp name="percentage"/>
+            </regexp-list>
+        </property>
+
+        <property name="padding-left" description="">
+            <category-list>
+                <category value="visual"/>
+            </category-list>
+            <literal-list>
+                <literal value="inherit"/>
+            </literal-list>
+            <regexp-list>
+                <regexp name="positiveLength"/>
+                <regexp name="positivePercentage"/>
+            </regexp-list>
+        </property>
+
+        <property name="margin-left" description="">
+            <category-list>
+                <category value="visual"/>
+            </category-list>
+            <literal-list>
+                <literal value="inherit"/>
+            </literal-list>
+            <regexp-list>
+                <regexp name="positiveLength"/>
+                <regexp name="positivePercentage"/>
             </regexp-list>
         </property>
     </css-rules>
