@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -125,6 +126,12 @@ public class TinyMceEditor extends FlowPanel
     public void selectAll ()
     {
         // TODO
+    }
+
+    @Override // from MessageEditor
+    public Button getToggler ()
+    {
+        return null;
     }
 
     @Override // from Widget

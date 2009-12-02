@@ -3,6 +3,7 @@
 
 package client.msgs;
 
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.RichTextArea;
 import com.google.gwt.user.client.ui.Widget;
@@ -54,6 +55,12 @@ public class RichTextEditor extends FlowPanel
     public void selectAll ()
     {
         _text.getBasicFormatter().selectAll();
+    }
+
+    @Override // from MessageEditor
+    public Button getToggler ()
+    {
+        return null;
     }
 
     protected RichTextArea _text;
