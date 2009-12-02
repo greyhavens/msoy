@@ -12,6 +12,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.web.gwt.MessageUtil;
+import com.threerings.msoy.web.gwt.CssUtil;
 
 import client.util.JavaScriptUtil;
 
@@ -65,7 +66,7 @@ public class TinyMceEditor extends FlowPanel
         settings.put("theme_advanced_buttons3", "");
         settings.put("theme_advanced_blockformats", new CommaList()
             .add("p")
-            .add("code")
+            .add("pre")
             .add("h1")
             .add("h2")
             .add("h3")
@@ -83,6 +84,7 @@ public class TinyMceEditor extends FlowPanel
             .add("Trebuchet", "trebuchet")
             .add("Verdana", "verdana")
             .build());
+        settings.put("content_css", CssUtil.GLOBAL_PATH);
 
         initializeTinyMCE(JavaScriptUtil.createDictionaryFromMap(settings));
 
