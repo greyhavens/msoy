@@ -48,6 +48,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.web.gwt.CssUtil;
 
 import com.threerings.gwt.ui.WidgetUtil;
 
@@ -219,7 +220,7 @@ public class RichTextToolbar extends Composite
         // why; just walk away and think happy thoughts
         new Timer() {
             public void run () {
-                configureIFrame(richText.getElement());
+                configureIFrame(richText.getElement(), CssUtil.GLOBAL_PATH);
             }
         }.schedule(100);
     }
@@ -365,19 +366,14 @@ public class RichTextToolbar extends Composite
         popup.show();
     }
 
-    protected static native void configureIFrame (Element elem) /*-{
+    protected static native void configureIFrame (Element elem, String globalCss) /*-{
         var hostport = $wnd.location.hostname + ":" + $wnd.location.port;
         var head = elem.contentWindow.document.getElementsByTagName("head")[0];
         var ss = elem.contentWindow.document.createElement("link");
         ss.type = "text/css";
         ss.rel = "stylesheet";
-        ss.href = "http://" + hostport + "/gwt/frame/global.css";
+        ss.href = globalCss;
         head.appendChild(ss);
-        ss = elem.contentWindow.document.createElement("link");
-        ss.type = "text/css";
-        ss.rel = "stylesheet";
-        ss.href = "http://" + hostport + "/css/editor.css";
-        elem.contentWindow.document.getElementsByTagName("head")[0].appendChild(ss);
     }-*/;
 
     protected static native void setPanelColorsImpl (

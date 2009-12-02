@@ -96,6 +96,7 @@ import com.threerings.msoy.room.gwt.WebRoomService;
 import com.threerings.msoy.room.server.SnapshotItemUploadServlet;
 import com.threerings.msoy.room.server.WebRoomServlet;
 
+import com.threerings.msoy.web.gwt.CssUtil;
 import com.threerings.msoy.web.gwt.WebMemberService;
 import com.threerings.msoy.web.gwt.WebUserService;
 
@@ -332,7 +333,7 @@ public class MsoyHttpServer extends Server
     protected static final String ERROR_HEAD =
         "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=ISO-8859-1\"/>\n" +
         "<title>Oh noez!</title>\n" +
-        "<link rel=\"stylesheet\" href=\"/gwt/frame/global.css\" type=\"text/css\"/>\n" +
+        "<link rel=\"stylesheet\" href=\"" + CssUtil.GLOBAL_PATH + "\" type=\"text/css\"/>\n" +
         "<style type=\"text/css\">\n" +
         ".kansas { width: 100%; min-height: 100%; " +
         "    background: #61ABD0 url(/images/whirled/bg_gradient_long_blue.png) repeat-x;\n" +
