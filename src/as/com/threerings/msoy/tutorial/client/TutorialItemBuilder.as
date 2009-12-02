@@ -52,9 +52,19 @@ public class TutorialItemBuilder
      * Sets the popup helper to a ui highlighter that will highlight the given ui component using a
      * standard tutorial graphic on popup and unhighlight it on popdown.
      */
-    public function highlight (obj :UIComponent) :TutorialItemBuilder
+    public function highlightObj (obj :UIComponent) :TutorialItemBuilder
     {
         return popup(new UIHighlightHelper(_director.topPanel, obj));
+    }
+
+    /**
+     * Sets the popup helper to a ui highlighter that will highlight the ui component returned by
+     * the given function. The returned value may change over time and a null return value will
+     * cause the highlight to disppear.
+     */
+    public function highlightFn (fn :Function) :TutorialItemBuilder
+    {
+        return popup(new UIHighlightHelper(_director.topPanel, fn));
     }
 
     /**

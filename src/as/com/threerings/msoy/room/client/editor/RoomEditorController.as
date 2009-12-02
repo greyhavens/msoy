@@ -190,6 +190,7 @@ public class RoomEditorController
         } else if (update is FurniUpdate_Add) {
             queryServerForNames([ (update as FurniUpdate_Add).data ]);
             updateNameDisplay();
+            _addCount += 1;
 
         } else if (update is FurniUpdate_Change) {
             refreshTarget();
@@ -495,7 +496,7 @@ public class RoomEditorController
 
         // try other options
         sequence.newSuggestion(xlate("i.edit_try_more")).button(xlate("b.edit_try_more"), null)
-            .buttonCloses(true).highlight(_panel).queue();
+            .buttonCloses(true).highlightObj(_panel).queue();
 
         // register for unregistered players
         if (!_ctx.isRegistered()) {
@@ -515,6 +516,31 @@ public class RoomEditorController
         _ctx.getTutorialDirector().newSuggestion("roomEditWiki", xlate("i.edit_wiki")).beginner()
             .button(xlate("b.edit_wiki"), display(Address.wiki("Edit_your_room")))
             .buttonCloses().queue();
+    }
+
+    protected function maybeShowSelectionTutorial (selected :FurniSprite) :void
+    {
+        function xlate (msg :String) :String {
+            return Msgs.NPC.get(msg);
+        }
+
+        // what's a welcome mat?
+        if (selected == _entranceSprite) {
+            _ctx.getTutorialDirector().newSuggestion("roomEditEntrance", xlate("i.edit_entrance"))
+                .beginner().button(xlate("b.edit_entrance"), null)
+                .finishText(xlate("i.edit_entrance_finish")).queue();
+            return;
+        }
+
+        // make a door
+        if (selected.getFurniData().actionType == FurniData.ACTION_NONE && _addCount == 1) {
+            function button () :* {
+                return isEditing() ? _panel.getMakeDoorButton() : null;
+            }
+            _ctx.getTutorialDirector().newSuggestion("roomEditDoor", xlate("i.edit_door"))
+                .beginner().highlightFn(button).queue();
+            return;
+        }
     }
 
     /**
@@ -658,6 +684,7 @@ public class RoomEditorController
         }
         targetSpriteUpdated();
         selectTargetName();
+        maybeShowSelectionTutorial(targetSprite);
     }
 
     /** Sets the currently edited target's action (if applicable). */
@@ -704,6 +731,9 @@ public class RoomEditorController
     protected var _names :Map = Maps.newMapOf(ItemIdent);
 
     protected var _entranceSprite :EntranceSprite;
+
+    /** Tracks how many items have been added to the room this session. */
+    protected var _addCount :int;
 
     private const log :Log = Log.getLog(this);
 }

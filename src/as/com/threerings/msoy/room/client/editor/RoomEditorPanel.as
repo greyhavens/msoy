@@ -197,6 +197,14 @@ public class RoomEditorPanel extends FlyingPanel
     }
 
     /**
+     * Gets the button which, when pressed, will start the door creation wizard.
+     */
+    public function getMakeDoorButton () :UIComponent
+    {
+        return _makeDoorButton;
+    }
+
+    /**
      * Displays a modal box to enter the url. When the user clicks OK,
      * it will set the currently selected item to link at the given url.
      */
