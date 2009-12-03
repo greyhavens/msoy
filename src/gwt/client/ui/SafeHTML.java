@@ -35,17 +35,14 @@ public class SafeHTML extends HTML
 
             // set target if there is none, and style text links that open in a new window
             if (anchor.getAttribute("target").length() > 0) {
-                if (anchor.getAttribute("target").equals("_blank")
-                    && anchor.getInnerHTML().indexOf("<img") == -1) {
-                    anchor.setClassName("external");
+                if (anchor.getAttribute("target").equals("_blank")) {
+                    applyExternalStyle(anchor);
                 }
             } else if (isWhirledLink(_href.getLiteral(anchor))) {
                 anchor.setAttribute("target", "_top");
             } else {
                 anchor.setAttribute("target", "_blank");
-                if (anchor.getInnerHTML().indexOf("<img") == -1) {
-                    anchor.setClassName("external");
-                }
+                applyExternalStyle(anchor);
             }
         }
     }
@@ -60,6 +57,13 @@ public class SafeHTML extends HTML
     {
         super.setHTML(html);
         fixAnchors(getElement());
+    }
+
+    protected static void applyExternalStyle (Element anchor)
+    {
+        if (anchor.getInnerHTML().indexOf("<img") == -1) {
+            anchor.setClassName("external");
+        }
     }
 
     protected static boolean isWhirledLink (String href)
