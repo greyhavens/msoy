@@ -131,7 +131,7 @@ public class FrameEntryPoint
         });
 
         // create our frame layout
-        _layout = Layout.getLayout(_header, _embedding.mode, isFramed(), new ClickHandler() {
+        _layout = Layout.create(_header, _embedding.mode, isFramed(), new ClickHandler() {
             public void onClick (ClickEvent event) {
                 // put the client in in minimized state
                 String args = "memberHome=" + CShell.getMemberId() + "&mini=true";

@@ -25,7 +25,7 @@ public abstract class Layout
     /**
      * Creates and returns a layout instance based on the given external arguments.
      */
-    public static Layout getLayout (
+    public static Layout create (
         FrameHeader header, ClientMode clientMode, boolean isInnerFrame, ClickHandler onGoHome)
     {
         Layout layout = null;
