@@ -481,6 +481,16 @@ public class FrameEntryPoint
         if (page == Pages.WORLD) {
             WorldClient.contentCleared();
             displayWorld(_pageToken);
+
+            // For facebook layouts where #world is the first page we visit, need to boot up the
+            // title bar too
+            if (_layout.alwaysShowsTitleBar()) {
+                if (_bar == null) {
+                    _bar = TitleBar.create(_layout, null, _closeContent);
+                    _bar.setCloseVisible(true);
+                }
+                _layout.setTitleBar(_bar);
+            }
             return;
         }
 
@@ -495,7 +505,7 @@ public class FrameEntryPoint
             closeClient();
         }
 
-        if (isHeaderless()) {
+        if (isHeaderless() && !_layout.alwaysShowsTitleBar()) {
             _bar = null;
 
         } else {
