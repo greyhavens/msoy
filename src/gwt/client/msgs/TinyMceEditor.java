@@ -60,6 +60,7 @@ public class TinyMceEditor extends FlowPanel
             .add("fontselect")
             .add("fontsizeselect")
             .add("formatselect")
+            .add("blockquote")
             .add("code")
             .build());
         settings.put("theme_advanced_buttons3", "");
