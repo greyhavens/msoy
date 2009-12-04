@@ -225,14 +225,9 @@ public class CommentsPanel extends PagedGrid<Comment>
             contents.add(_text = new TextArea());
             _text.setWidth("450px");
             _text.setVisibleLines(3);
-            contents.add(MsoyUI.createLabel("", "clear")); // i hate the web
-            contents.add(_agree = new CheckBox() {
-                public void setHTML (String html) {
-                    super.setHTML(html); // i really hate the web
-                    SafeHTML.fixAnchors(getElement());
-                }
-            });
-            _agree.setHTML(_cmsgs.commentAmNotAsshole());
+            contents.add(MsoyUI.createLabel("", "clear")); // forces a line break
+            contents.add(_agree = new CheckBox(_cmsgs.commentAmNotAsshole(), true));
+            SafeHTML.fixAnchors(_agree.getElement()); // doctor up the external link
             setContents(contents);
 
             addButton(new Button(_cmsgs.cancel(), onCancel()));
