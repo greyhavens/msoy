@@ -97,8 +97,7 @@ public class TongueBox extends SmartTable
     public void setContent (String content, boolean isHTML)
     {
         if (isHTML) {
-            cell(1, 0).html(content);
-            SafeHTML.fixAnchors(getCellFormatter().getElement(1, 0));
+            cell(1, 0).widget(MsoyUI.createHTML(content, null));
         } else {
             cell(1, 0).text(content);
         }
