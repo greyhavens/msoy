@@ -5,7 +5,6 @@ package client.ui;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
@@ -30,18 +29,12 @@ public class TongueBox extends SmartTable
 
     public TongueBox (String title, Widget content)
     {
-        this(); // not sure if zero argument constructor is automatically called
-        if (title != null) {
-            setHeader(title);
-        }
-        if (content != null) {
-            setContent(content);
-        }
+        this(null, title, content, null);
     }
 
     public TongueBox (String title, String content, boolean isHTML)
     {
-        this(); // not sure if zero argument constructor is automatically called
+        this();
         if (title != null) {
             setHeader(title);
         }
@@ -57,7 +50,7 @@ public class TongueBox extends SmartTable
 
     public TongueBox (Image icon, String title, Widget content, ClickHandler clicker)
     {
-        this(); // not sure if zero argument constructor is automatically called
+        this();
         _clicker = clicker;
         if (title != null || icon != null) {
             setHeader(title, icon);
@@ -76,40 +69,40 @@ public class TongueBox extends SmartTable
     {
         SmartTable header = new SmartTable("THeader", 0, 0);
         if (title != null && icon == null) {
-            header.setWidget(0, 0, MsoyUI.createHTML(title, null), 1, "Base");
+            header.cell(0, 0).widget(MsoyUI.createHTML(title, null)).styles("Base");
             header.addClickHandler(this);
         } else if (title == null && icon != null) {
-            header.setWidget(0, 0, icon, 1, "Base");
+            header.cell(0, 0).widget(icon).styles("Base");
             header.addClickHandler(this);
         } else {
             SmartTable base = new SmartTable("BaseContents", 0, 0);
-            base.setWidget(0, 0, icon);
-            base.setWidget(0, 1, MsoyUI.createHTML(title, null), 1, "BaseText");
+            base.cell(0, 0).widget(icon);
+            base.cell(0, 1).widget(MsoyUI.createHTML(title, null)).styles("BaseText");
             base.addClickHandler(this);
-            header.setWidget(0, 0, base, 1, "Base");
+            header.cell(0, 0).widget(base).styles("Base");
         }
 
         Image line = new Image("/images/ui/grey_line.png");
         line.setWidth("100%");
         line.setHeight("1px");
-        header.setWidget(0, 1, line, 1, "Line");
-        setWidget(0, 0, header);
+        header.cell(0, 1).widget(line).styles("Line");
+        cell(0, 0).widget(header);
     }
 
     public void setContent (Widget content)
     {
-        setWidget(1, 0, content, 1, "TContent");
+        cell(1, 0).widget(content).styles("TContent");
     }
 
     public void setContent (String content, boolean isHTML)
     {
         if (isHTML) {
-            setHTML(1, 0, content);
-            getFlexCellFormatter().setStyleName(1, 0, "TContent");
-            SafeHTML.fixAnchors(getBodyElement()); // we can't call getCellElement(), yay!
+            cell(1, 0).html(content);
+            SafeHTML.fixAnchors(getCellFormatter().getElement(1, 0));
         } else {
-            setText(1, 0, content, 1, "TContent");
+            cell(1, 0).text(content);
         }
+        cell(1, 0).styles("TContent");
     }
 
     public void setFooterLink (String text, Pages page, Object... args)
@@ -131,10 +124,9 @@ public class TongueBox extends SmartTable
     public void setFooter (Widget widget)
     {
         if (widget != null) {
-            setWidget(2, 0, widget, 1, "TFooter");
-            getFlexCellFormatter().setHorizontalAlignment(2, 0, HasAlignment.ALIGN_RIGHT);
+            cell(2, 0).widget(widget).styles("TFooter").alignRight();
         } else if (getRowCount() > 2) {
-            clearCell(2, 0);
+            cell(2, 0).clear();
         }
     }
 
