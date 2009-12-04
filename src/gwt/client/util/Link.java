@@ -122,14 +122,6 @@ public class Link
     }
 
     /**
-     * Creates a link with a text label that will open a url in the top-most frame.
-     */
-    public static Widget createTop (String style, String url)
-    {
-        return new TargetedLink("", style, url, "_top");
-    }
-
-    /**
      * Returns a non-inline link that navigates to the specified application page with the
      * specified arguments. A page should use this method to pass itself arguments.
      */
@@ -315,29 +307,6 @@ public class Link
         protected String _targetHistoryToken;
 
         protected static HyperlinkImpl impl = GWT.create(HyperlinkImpl.class);
-    }
-
-    /**
-     * A simple old skool link.
-     */
-    protected static class TargetedLink extends Widget
-    {
-        /**
-         * Creates a new link with the given text and the given href and target attributes.
-         */
-        public TargetedLink (String text, String style, String href, String target)
-        {
-            setElement(DOM.createDiv());
-            setStyleName("gwt-Hyperlink");
-            if (style != null) {
-                addStyleName(style);
-            }
-            Element anchorElem = DOM.createAnchor();
-            getElement().appendChild(anchorElem);
-            anchorElem.setInnerText(text);
-            anchorElem.setAttribute("href", href);
-            anchorElem.setAttribute("target", target);
-        }
     }
 
     /**
