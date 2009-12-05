@@ -16,17 +16,12 @@ import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.gwt.util.CookieUtil;
 import com.threerings.gwt.util.StringUtil;
 
-import com.threerings.msoy.data.all.DeploymentConfig;
-import com.threerings.msoy.data.all.LaunchConfig;
 import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.facebook.gwt.FacebookService;
 import com.threerings.msoy.facebook.gwt.FacebookServiceAsync;
@@ -39,15 +34,12 @@ import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.SessionData;
 import com.threerings.msoy.web.gwt.WebMemberService;
 import com.threerings.msoy.web.gwt.WebMemberServiceAsync;
-import com.threerings.msoy.web.gwt.WebUserService;
-import com.threerings.msoy.web.gwt.WebUserServiceAsync;
 
-import client.images.frame.FrameImages;
+import client.frame.FrameNav.FrameId;
 import client.shell.CShell;
 import client.shell.Frame;
 import client.shell.ScriptSources;
 import client.shell.Session;
-import client.shell.ShellMessages;
 import client.shell.ThemedStylesheets;
 import client.ui.BorderedDialog;
 import client.util.ArrayUtil;
@@ -66,7 +58,7 @@ import client.util.events.ThemeChangeEvent;
  * handles displaying the Flash client.
  */
 public class FrameEntryPoint
-    implements EntryPoint, ValueChangeHandler<String>, Session.Observer, Frame
+    implements EntryPoint, ValueChangeHandler<String>, Session.Observer, Frame, FrameNav.Listener
 {
     /**
      * Creates the new frame entry point.
@@ -117,31 +109,8 @@ public class FrameEntryPoint
         // validate our session which will dispatch a didLogon or didLogoff
         Session.validate();
 
-        // create our header
-        _header = new FrameHeader(new ClickHandler() {
-            public void onClick (ClickEvent event) {
-                if (_closeToken != null) {
-                    closeContent();
-                } else if (CShell.isGuest()) {
-                    History.newItem("");
-                } else {
-                    Link.go(Pages.WORLD, "m" + CShell.getMemberId());
-                }
-            }
-        });
-
-        // create our frame layout
-        _layout = Layout.create(_header, _embedding.mode, isFramed(), new ClickHandler() {
-            public void onClick (ClickEvent event) {
-                // put the client in in minimized state
-                String args = "memberHome=" + CShell.getMemberId() + "&mini=true";
-                _closeToken = Pages.WORLD.makeToken("h");
-                if (_bar != null) {
-                    _bar.setCloseVisible(true);
-                }
-                WorldClient.displayFlash(args, _layout.getClientProvider());
-            }
-        });
+        // create our ...
+        _nav = new FrameNav(_embedding, this);
 
         // clear out the loading HTML so we can display a browser warning or load Whirled
         DOM.setInnerHTML(RootPanel.get(LOADING).getElement(), "");
@@ -161,6 +130,58 @@ public class FrameEntryPoint
             RootPanel.get(LOADING).clear();
             RootPanel.get(LOADING).setVisible(false);
         }
+    }
+
+    @Override // from FrameNav.Listener
+    public void onLogoClick ()
+    {
+        if (_closeToken != null) {
+            _nav.closeContent();
+        } else if (CShell.isGuest()) {
+            History.newItem("");
+        } else {
+            Link.go(Pages.WORLD, "m" + CShell.getMemberId());
+        }
+    }
+
+    @Override // from FrameNav.Listener
+    public void onClientClosed (boolean didLogoff)
+    {
+        _closeToken = null;
+        _closeTitle = null;
+
+        // if we just logged off, go to the logoff page
+        if (didLogoff) {
+            Link.go(Pages.ACCOUNT, "logoff");
+
+        // if we're on a "world" page, go to a landing page
+        } else if (_currentToken != null &&
+                   (_currentToken.startsWith(Pages.WORLD.makeToken()) ||
+                    _currentToken.equals(""))) {
+            if (_currentToken.indexOf("game") != -1) {
+                // if we were in a game, go to the games page
+                Link.go(Pages.GAMES, "");
+            } else if (CShell.isGuest()) {
+                // if we're a guest, go to the rooms page
+                Link.go(Pages.ROOMS, "");
+            } else {
+                // otherwise go to the ME page
+                Link.go(Pages.ME, "");
+            }
+        }
+    }
+
+    @Override // from FrameNav.Listener
+    public void onContentClosed (String lastFlashToken)
+    {
+        History.newItem(lastFlashToken);
+    }
+
+    @Override // from FrameNav.Listener
+    public void onEnterFacebookGame (String uid, String session)
+    {
+        _facebookId = uid;
+        _facebookSession = session;
     }
 
     // from interface ValueChangeHandler
@@ -213,28 +234,16 @@ public class FrameEntryPoint
 
         // if we have no account cookie (which means we've seen someone on this computer before),
         // force the creation of our visitor info because we're very probably a real new user
-        boolean newUser = StringUtil.isBlank(CookieUtil.get(CookieNames.WHO));
-        if (newUser) {
+        if (StringUtil.isBlank(CookieUtil.get(CookieNames.WHO))) {
             getVisitorInfo(); // creates a visitorId and reports it
         }
 
-        // recreate the page token which we'll pass through to the page (or if it's being loaded
-        // for the first time, it will request in a moment with a call to getPageToken)
-        _pageToken = args.recompose(0).toToken();
-
-        // replace the page if necessary
-        if (_page != page || _page == Pages.WORLD) {
-            setPage(page);
-
-        } else {
-            // reset our navigation as we're not changing pages but need to give the current page a
-            // fresh subnavigation palette
-            if (_bar != null) {
-                _bar.resetNav();
-            }
-            _pageFrame.setToken(_pageToken);
-            WorldClient.contentRequested(_page, _pageToken);
+        if (page != _nav.getPage(FrameId.MAIN)) {
+            // clear out any lingering dialog content
+            clearDialog();
         }
+
+        _nav.go(FrameId.MAIN, page, args.recompose(0).toToken());
 
         // report the page visit
         reportPageVisit(page, args);
@@ -253,18 +262,15 @@ public class FrameEntryPoint
             rebootFlashClient();
         }
 
-        // now that we know we're a member, we can add our "open home in minimized mode" icon
-        // (which may get immediately removed if we're going directly into the world)...
-        _layout.addNoClientIcon();
-
+        Pages curPage = _nav.getPage(FrameId.MAIN);
         if (data.group != SessionData.Group.NONE) {
             Link.go(Pages.PEEPLESS, "confprof"); // send them to configure profile
-        } else if (isHeaderless() || (_page == Pages.ACCOUNT && _prevToken.equals(""))) {
+        } else if (isHeaderless() || (curPage == Pages.ACCOUNT && _prevToken.equals(""))) {
             Link.go(Pages.WORLD, "places");
-        } else if (_page == Pages.ACCOUNT) {
+        } else if (curPage == Pages.ACCOUNT) {
             History.back(); // go back to where we were
-        } else if (_page != null) {
-            setPage(_page); // reloads the current page
+        } else if (curPage != null) {
+            _nav.reload(); // reloads the current page
         } else {
             setToken(_currentToken);
         }
@@ -273,30 +279,24 @@ public class FrameEntryPoint
     // from interface Session.Observer
     public void didLogoff ()
     {
-        // clear out any current page
-        _page = null;
+        _nav.closeContent();
+
         // reload the current page (preserving our previous page token)
         String prevToken = _prevToken;
         setToken(_currentToken);
         _prevToken = prevToken;
-        // close the Flash client if it's open
-        closeClient(true);
     }
 
     // from interface Frame
     public void setTitle (String title)
     {
-        Window.setTitle(title == null ? _cmsgs.bareTitle() : _cmsgs.windowTitle(title));
-        if (title != null && _bar != null) {
-            _bar.setTitle(title);
-        }
+        _nav.setTitle(title, false);
     }
 
     // from interface Frame
     public void addNavLink (String label, Pages page, Args args, int position)
     {
-        _bar.addContextLink(label, page, args, position);
-        _layout.updateTitleBarHeight();
+        _nav.addLink(label, page, args, position);
     }
 
     // from interface Frame
@@ -325,19 +325,13 @@ public class FrameEntryPoint
     // from interface Frame
     public void closeClient ()
     {
-        closeClient(false);
+        _nav.closeClient();
     }
 
     // from interface Frame
     public void closeContent ()
     {
-        // clear out the content
-        clearContent(true);
-
-        // restore the client's URL
-        if (_closeToken != null) {
-            History.newItem(_closeToken);
-        }
+        _nav.closeContent();
     }
 
     // from interface Frame
@@ -371,9 +365,7 @@ public class FrameEntryPoint
         FlashEvents.internalDispatchEvent(event);
 
         // forward the event to our page frame
-        if (_pageFrame != null) {
-            _pageFrame.forwardEvent(event);
-        }
+        _nav.forwardEvent(event);
     }
 
     // from interface Frame
@@ -440,21 +432,15 @@ public class FrameEntryPoint
     // from interface Frame
     public boolean isHeaderless ()
     {
-        return (_page != null) && (_page.getTab() == null);
+        return _nav.isHeaderless();
     }
 
     // from interface Frame
     public void openBottomFrame (String token)
     {
-        CShell.log("Opening bottom frame", "token", token);
         Pages page = Pages.fromHistory(token);
-        Args args = Args.fromHistory(token);
-        String bottomFrameToken = args.recompose(0).toToken();
-        if (!bottomFrameToken.equals(_bottomFrameToken)) {
-            _bottomFrame = new PageFrame(page, BOTTOM_FRAME_ID);
-            _bottomFrameToken = bottomFrameToken;
-            _layout.setBottomContent(_bottomFrame);
-        }
+        String pageToken = Args.fromHistory(token).toToken();
+        _nav.go(FrameId.BOTTOM, page, pageToken);
     }
 
     // from interface Frame
@@ -463,316 +449,22 @@ public class FrameEntryPoint
         return _themeId;
     }
 
-    protected void setPage (Pages page)
-    {
-        // clear out any old content
-        clearContent(page == Pages.WORLD);
-
-        // clear out any lingering dialog content
-        clearDialog();
-
-        // show the header for pages that report a tab of which they are a part
-        _header.selectTab(page.getTab());
-
-        // make a note of our current page
-        _page = page;
-
-        // if we're displaying a world page, that's special
-        if (page == Pages.WORLD) {
-            WorldClient.contentCleared();
-            displayWorld(_pageToken);
-
-            // For facebook layouts where #world is the first page we visit, need to boot up the
-            // title bar too
-            if (_layout.alwaysShowsTitleBar()) {
-                if (_bar == null) {
-                    _bar = TitleBar.create(_layout, null, _closeContent);
-                    _bar.setCloseVisible(true);
-                }
-                _layout.setTitleBar(_bar);
-            }
-            return;
-        }
-
-        // tell the flash client we're minimizing it
-        WorldClient.setMinimized(true);
-
-        // create our page frame
-        _pageFrame = new PageFrame(_page, MAIN_FRAME_ID);
-
-        // if we're on a headerless page or we only support one screen, we need to close the client
-        if (isHeaderless() || _embedding.mode.isMonoscreen()) {
-            closeClient();
-        }
-
-        if (isHeaderless() && !_layout.alwaysShowsTitleBar()) {
-            _bar = null;
-
-        } else {
-            _bar = TitleBar.create(_layout, page.getTab(), _closeContent);
-            _bar.setCloseVisible(FlashClients.clientExists());
-        }
-
-        _layout.setContent(_bar, _pageFrame);
-        _bottomFrame = null;
-        _bottomFrameToken = "";
-
-        // let the flash client know we are changing pages
-        WorldClient.contentRequested(_page, _pageToken);
-    }
-
-    protected void clearContent (boolean restoreClient)
-    {
-        if (_layout.hasContent()) {
-            _layout.closeContent(restoreClient);
-
-            // restore the title to the last thing flash asked for
-            setTitle(_closeTitle);
-        }
-
-        // let the Flash client know that it's being unminimized or to start unminimized
-        WorldClient.setMinimized(false);
-
-        _pageFrame = null;
-        _bottomFrame = null;
-        _bottomFrameToken = "";
-        if (!_layout.alwaysShowsTitleBar()) {
-            _bar = null;
-        }
-    }
-
-    protected void closeClient (boolean didLogoff)
-    {
-        WorldClient.clientWillClose();
-        _closeToken = null;
-        _closeTitle = null;
-
-        if (_bar != null) {
-            _bar.setCloseVisible(false);
-        }
-
-        if (_layout.closeClient()) {
-            // if we just logged off, go to the logoff page
-            if (didLogoff) {
-                Link.go(Pages.ACCOUNT, "logoff");
-
-            // if we're on a "world" page, go to a landing page
-            } else if (_currentToken != null &&
-                       (_currentToken.startsWith(Pages.WORLD.makeToken()) ||
-                        _currentToken.equals(""))) {
-                if (_currentToken.indexOf("game") != -1) {
-                    // if we were in a game, go to the games page
-                    Link.go(Pages.GAMES, "");
-                } else if (CShell.isGuest()) {
-                    // if we're a guest, go to the rooms page
-                    Link.go(Pages.ROOMS, "");
-                } else {
-                    // otherwise go to the ME page
-                    Link.go(Pages.ME, "");
-                }
-            }
-        }
-    }
-
-    protected void displayWorld (String pageToken)
-    {
-        Args args = Args.fromToken(pageToken);
-
-        String action = args.get(0, "");
-        if (action.startsWith("s")) {
-            String sceneId = action.substring(1);
-            if (args.getArgCount() <= 1) {
-                displayWorldClient("sceneId=" + sceneId, null);
-            } else {
-                // if we have sNN-extra-args we want the close button to use just "sNN"
-                displayWorldClient("sceneId=" + sceneId + "&page=" + args.get(1, "") +
-                                   "&args=" + args.recompose(2),
-                                   Pages.WORLD.makeToken("s" + sceneId));
-            }
-
-        } else if (action.equals("game")) {
-            // display a game lobby or enter a game (action_gameId_otherid1_token_otherid2)
-            displayGame(args.get(1, ""), args.get(2, 0), args.get(3, 0), args.get(4, ""),
-                        args.get(5, 0));
-
-        } else if (action.equals("fbgame")) {
-            // we're entering a chromeless facebook game (fbgame_gameId_fbid_fbtok)
-            _facebookId = args.get(2, "");
-            _facebookSession = args.get(3, "");
-            FlashClients.setChromeless(true);
-            displayGame("p", args.get(1, 0), 0, "", 0);
-
-        } else if (action.equals("tour")) {
-            displayWorldClient("tour=true", null);
-
-        } else if (action.startsWith("g")) {
-            // go to a specific group's scene group
-            displayWorldClient("groupHome=" + action.substring(1), null);
-
-        } else if (action.startsWith("m")) {
-            // go to a specific member's home
-            displayWorldClient("memberHome=" + action.substring(1), null);
-
-        } else if (action.startsWith("c")) {
-            // join a group chat
-            displayWorldClient("groupChat=" + action.substring(1), null);
-
-        } else if (action.equals("h")) {
-            // go to our home
-            displayWorldClient("memberHome=" + CShell.getMemberId(), null);
-
-        } else if (action.equals("hplaces")) {
-            // just logon and show the myplaces dialog, don't go anywhere
-            displayWorldClient("myplaces=true", null);
-
-        } else { // (action == "places" or anything else)
-            // just logon and go home for now
-            displayWorldClient("memberHome=" + CShell.getMemberId(), null);
-        }
-    }
-
-    /**
-     * Displays a world client for viewing a scene.
-     */
-    protected void displayWorldClient (String args, String closeToken)
-    {
-        displayWorldClient(args, closeToken, null);
-    }
-
-    /**
-     * Displays a world client for playing a game.
-     */
-    protected void displayWorldClient (String args, String closeToken, LaunchConfig game)
-    {
-        // note the current history token so that we can restore it if needed
-        _closeToken = (closeToken == null) ? _currentToken : closeToken;
-
-        // finally actually display the client
-        WorldClient.displayFlash(args, _layout.getClientProvider());
-
-        TitleBar bar = TitleBar.createClient(_layout, game);
-        if (bar != null) {
-            _bar = bar;
-            _bar.setCloseVisible(!_embedding.mode.isMonoscreen());
-            _layout.setTitleBar(_bar);
-        }
-    }
-
-    protected void displayGame (final String action, int gameId, final int otherId1,
-                                final String token, final int otherId2)
-    {
-        // load up the information needed to launch the game
-        _usersvc.loadLaunchConfig(gameId, new InfoCallback<LaunchConfig>() {
-            public void onSuccess (LaunchConfig result) {
-                launchGame(result, action, otherId1, token, otherId2);
-            }
-        });
-        if (_embedding.mode.isFacebookGames()) {
-            openBottomFrame(Pages.FACEBOOK.makeToken("game", gameId));
-        }
-    }
-
-    protected void launchGame (final LaunchConfig config, String action, final int otherId1,
-                               String token, final int otherId2)
-    {
-        // configure our world client with a default host and port in case we're first to the party
-        WorldClient.setDefaultServer(config.groupServer, config.groupPort);
-
-        // sanitize our token
-        token = (token == null) ? "" : token;
-
-        String args;
-        switch (config.type) {
-        case LaunchConfig.FLASH_IN_WORLD:
-            args = "worldGame=" + config.gameId;
-            if (action.equals("j")) {
-                args += "&inviteToken=" + token + "&inviterMemberId=" + otherId1 +
-                    "&gameRoomId=" + otherId2;
-            } else {
-                args += "&gameRoomId=" + config.sceneId;
-            }
-            displayWorldClient(args, null, config);
-            break;
-
-        case LaunchConfig.FLASH_LOBBIED:
-            String hostPort = "&ghost=" + config.gameServer + "&gport=" + config.gamePort;
-            args = "gameId=" + config.gameId;
-
-            // "g" means we're going right into an already running game
-            if (action.equals("g")) {
-                args += "&gameOid=" + otherId1;
-
-            // "j" is from a game invite
-            } else if (action.equals("j")) {
-                args += "&inviteToken=" + token + "&inviterMemberId=" + otherId1;
-
-            // everything else ("p" and "i" and legacy codes) means 'play now'
-            } else if (otherId1 != 0) {
-                args += "&playerId=" + otherId1;
-            }
-            displayWorldClient(args + hostPort, null, config);
-            break;
-
-        case LaunchConfig.JAVA_FLASH_LOBBIED:
-        case LaunchConfig.JAVA_SELF_LOBBIED:
-            if (config.type == LaunchConfig.JAVA_FLASH_LOBBIED && otherId1 <= 0) {
-                displayWorldClient("gameId=" + config.gameId, null, config);
-
-            } else {
-                // clear out the client as we're going into Java land
-                closeClient();
-
-                // prepare a command to be invoked once we know Java is loaded
-                _javaReadyCommand = new Command() {
-                    public void execute () {
-                        displayJava(config, otherId1);
-                    }
-                };
-
-                // stick up a loading message and the HowdyPardner Java applet
-                FlowPanel bits = new FlowPanel();
-                bits.setStyleName("javaLoading");
-                bits.add(new Label("Loading game..."));
-
-                String hpath = "/clients/" + DeploymentConfig.version + "/howdy.jar";
-                bits.add(WidgetUtil.createApplet("game", config.getGameURL(hpath),
-                                                 "com.threerings.msoy.client.HowdyPardner",
-                                                 "100", "10", true, new String[0]));
-                // TODO
-                // setContent(bits);
-            }
-            break;
-
-//         case LaunchConfig.FLASH_SOLO:
-//             setFlashContent(
-//                     config.name, FlashClients.createSoloGameDefinition(config.clientMediaPath));
-//             break;
-
-//         case LaunchConfig.JAVA_SOLO:
-//             setContent(config.name, new Label("Not yet supported"));
-//             break;
-
-        default:
-            CShell.log("Requested to display unsupported game type " + config.type + ".");
-            break;
-        }
-    }
-
     /**
      * Handles a variety of methods called by our iframed page.
      */
     protected String[] frameCall (String callStr, String frameId, String[] args)
     {
-        Calls call = Enum.valueOf(Calls.class, callStr);
+        Calls call = Calls.valueOf(callStr);
+        FrameId frame = FrameId.valueOf(frameId);
         switch (call) {
         case SET_TITLE:
             // only the main frame can set the title
-            if (MAIN_FRAME_ID.equals(frameId)) {
+            if (frame == FrameId.MAIN) {
                 setTitle(args[0]);
             }
             return null;
         case ADD_NAV_LINK:
-            addNavLink(args[0], Enum.valueOf(Pages.class, args[1]), Args.fromToken(args[2]),
+            addNavLink(args[0], Pages.valueOf(args[1]), Args.fromToken(args[2]),
                        Integer.parseInt(args[3]));
             return null;
         case NAVIGATE_TO:
@@ -781,7 +473,7 @@ public class FrameEntryPoint
             return null;
         case NAVIGATE_REPLACE:
             // TODO: bottom frame navigation
-            if (MAIN_FRAME_ID.equals(frameId)) {
+            if (frame == FrameId.MAIN) {
                 navigateReplace(args[0]);
             }
             return null;
@@ -803,13 +495,7 @@ public class FrameEntryPoint
         case GET_WEB_CREDS:
             return (CShell.creds == null) ? null : CShell.creds.flatten().toArray(new String[0]);
         case GET_PAGE_TOKEN:
-            if (MAIN_FRAME_ID.equals(frameId)) {
-                return new String[] { _pageToken };
-            } else if (BOTTOM_FRAME_ID.equals(frameId)) {
-                return new String[] { _bottomFrameToken };
-            } else {
-                return null;
-            }
+            return new String[] { _nav.getToken(frame) };
         case GET_MD5:
             return new String[] { nmd5hex(args[0]) };
         case CHECK_FLASH_VERSION:
@@ -833,11 +519,13 @@ public class FrameEntryPoint
         case GET_THEME_ID:
             return new String[] { String.valueOf(getThemeId()) };
         case CONTENT_SET:
-            if (MAIN_FRAME_ID.equals(frameId)) {
+            if (frame == FrameId.MAIN) {
                 // let the world know we're now looking at this content, but only if it is the
                 // right content
-                if (_page == Pages.valueOf(args[0]) && _pageToken.equals(args[1])) {
-                    WorldClient.contentPageReady(_page, _pageToken);
+                if (_nav.getPage(FrameId.MAIN) == Pages.valueOf(args[0]) &&
+                        _nav.getToken(FrameId.MAIN).equals(args[1])) {
+                    WorldClient.contentPageReady(
+                        _nav.getPage(FrameId.MAIN), _nav.getToken(FrameId.MAIN));
                 }
             }
             return null;
@@ -866,32 +554,6 @@ public class FrameEntryPoint
         }
     }
 
-    protected void displayJava (LaunchConfig config, int gameOid)
-    {
-//         String[] args = new String[] {
-//             "game_id", "" + config.gameId, "game_oid", "" + gameOid,
-//             "server", config.gameServer, "port", "" + config.gamePort,
-//             "authtoken", (CWorld.ident == null) ? "" : CWorld.ident.token };
-//         String gjpath = "/clients/" + DeploymentConfig.version + "/" +
-//             (config.lwjgl ? "lwjgl-" : "") + "game-client.jar";
-//         WorldClient.displayJava(
-//             WidgetUtil.createApplet(
-//                 // here we explicitly talk directly to our game server (not via the public facing
-//                 // URL which is a virtual IP) so that Java's security policy works
-//                 "game", config.getGameURL(gjpath) + "," + config.getGameURL(config.clientMediaPath),
-//                 "com.threerings.msoy.game.client." + (config.lwjgl ? "LWJGL" : "") + "GameApplet",
-//                 // TODO: allow games to specify their dimensions in their config
-//                 "100%", "600", false, args));
-    }
-
-    protected void javaReady ()
-    {
-        if (_javaReadyCommand != null) {
-            DeferredCommand.addCommand(_javaReadyCommand);
-            _javaReadyCommand = null;
-        }
-    }
-
     protected String getVisitorId ()
     {
         return getVisitorInfo().id;
@@ -909,11 +571,7 @@ public class FrameEntryPoint
 
     protected void setTitleFromFlash (String title)
     {
-        // if we're displaying content currently, don't let flash mess with the title
-        if (!_layout.hasContent()) {
-            setTitle(title);
-        }
-        _closeTitle = title;
+        _nav.setTitle(title, true);
     }
 
     protected void setPermaguestInfo (String name, String token)
@@ -939,7 +597,7 @@ public class FrameEntryPoint
 
     protected void rebootFlashClient ()
     {
-        WorldClient.rebootFlash(_layout.getClientProvider());
+        _nav.rebootFlashClient();
     }
 
     protected void reportPageVisit (Pages page, Args args)
@@ -1007,7 +665,7 @@ public class FrameEntryPoint
             entry.@client.frame.FrameEntryPoint::triggerEvent(Ljava/lang/String;Lcom/google/gwt/core/client/JavaScriptObject;)(eventName, args);
         }
         $wnd.howdyPardner = function () {
-            entry.@client.frame.FrameEntryPoint::javaReady()();
+            // nothing to do here, the client just wants to know we have this method 
         }
         $wnd.setPermaguestInfo = function (name, token) {
             entry.@client.frame.FrameEntryPoint::setPermaguestInfo(Ljava/lang/String;Ljava/lang/String;)(name, token);
@@ -1025,26 +683,13 @@ public class FrameEntryPoint
         return $wnd.hex_md5(text);
     }-*/;
 
-    /**
-     * Checks if the current web document resides in a frame.
-     */
-    protected native static boolean isFramed () /*-{
-        return $wnd.top != $wnd;
-    }-*/;
-
-    protected Pages _page;
-    protected String _currentToken = "", _prevToken = "";
-    protected String _pageToken = "", _bottomFrameToken = "";
     protected String _closeToken, _closeTitle;
+    protected String _currentToken = "", _prevToken = "";
     protected String _facebookId, _facebookSession;
     protected int _themeId;
 
     protected Embedding _embedding;
-    protected FrameHeader _header;
-    protected Layout _layout;
-    protected TitleBar _bar;
-    protected PageFrame _pageFrame;
-    protected PageFrame _bottomFrame;
+    protected FrameNav _nav;
     protected BorderedDialog _dialog;
 
     /** If the user arrived via an invitation, we'll store that here during their session. */
@@ -1053,26 +698,12 @@ public class FrameEntryPoint
     /** Used to talk to Google Analytics. */
     protected Analytics _analytics = new Analytics();
 
-    /** A command to be run when Java reports readiness. */
-    protected Command _javaReadyCommand;
-
-    protected ClickHandler _closeContent = new ClickHandler() {
-        @Override public void onClick (ClickEvent event) {
-            closeContent();
-        }
-    };
-
-    protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
-    protected static final FrameImages _images = (FrameImages)GWT.create(FrameImages.class);
     protected static final WebMemberServiceAsync _membersvc = GWT.create(WebMemberService.class);
-    protected static final WebUserServiceAsync _usersvc = GWT.create(WebUserService.class);
     protected static final FacebookServiceAsync _fbsvc = GWT.create(FacebookService.class);
 
     // constants for our top-level elements
     protected static final String PAGE = "page";
     protected static final String LOADING = "loading";
-    protected static final String MAIN_FRAME_ID = "main";
-    protected static final String BOTTOM_FRAME_ID = "bottom";
 
     /** This vector string represents an email invite */
     protected static final String EMAIL_VECTOR = "emailInvite";
