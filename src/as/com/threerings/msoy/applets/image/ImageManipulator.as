@@ -81,6 +81,11 @@ public class ImageManipulator extends HBox
         addChild(_editor);
         setImage(null);
 
+        // We need to explicitly set the height here... what is the point of all this flex layout
+        // bullshit if explicit sizing is almost always required? I must be doing misunderstanding
+        // something, oh well.
+        _controlBar.height = maxH;
+
         if (sizeRestrict.forced != null) {
             disableMode(EditCanvas.SELECT);
         }
@@ -119,7 +124,7 @@ public class ImageManipulator extends HBox
         bar.percentHeight = 100;
         bar.width = CONTROL_BAR_WIDTH;
         bar.horizontalScrollPolicy = ScrollPolicy.OFF;
-        bar.verticalScrollPolicy = ScrollPolicy.OFF;
+        bar.verticalScrollPolicy = ScrollPolicy.AUTO;
 
         // TODO: add a scrollbox?
 
@@ -447,7 +452,7 @@ public class ImageManipulator extends HBox
         _selectionHeight.text = event.value[1]
     }
 
-    protected static const CONTROL_BAR_WIDTH :int = 150;
+    protected static const CONTROL_BAR_WIDTH :int = 170;
 
     protected static const HGAP :int = 8;
 
