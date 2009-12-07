@@ -31,14 +31,6 @@ public class WorldNav
     public interface Listener
     {
         /**
-         * Called when the token we are going to is "fbgame" and provides a user id and session for
-         * Facebook interaction within the game.
-         * @param uid the Facebook user id
-         * @param session the Facebook session key
-         */
-        void onEnterFacebookGame (String uid, String session);
-
-        /**
          * Called whenever we have just displayed a client.
          */
         void onClientDisplayed ();
@@ -53,6 +45,9 @@ public class WorldNav
     {
         _provider = provider;
         _listener = listener;
+
+        configureCallbacks();
+
         Session.addObserver(new Session.Observer() {
             @Override public void didLogon (SessionData data) {
                 // update the world client to relogin (this will NOOP if we're logging in now
@@ -196,7 +191,8 @@ public class WorldNav
 
         } else if (action.equals("fbgame")) {
             // we're entering a chromeless facebook game (fbgame_gameId_fbid_fbtok)
-            _listener.onEnterFacebookGame(_args.get(2, ""), _args.get(3, ""));
+            _facebookId = _args.get(2, "");
+            _facebookSession = _args.get(3, "");
             FlashClients.setChromeless(true);
             loadAndDisplayGame("p", _args.get(1, 0), 0, "", 0);
 
@@ -303,11 +299,46 @@ public class WorldNav
         }
     }
 
+    protected String getFacebookId ()
+    {
+        return _facebookId;
+    }
+
+    protected String getFacebookSession ()
+    {
+        return _facebookSession;
+    }
+
+    protected void setPermaguestInfo (String name, String token)
+    {
+        // the server has created a permaguest account for us via flash, store the cookies
+        CShell.log("Got permaguest info from flash", "name", name, "token", token);
+        Session.conveyLoginFromFlash(token);
+    }
+
+    protected native void configureCallbacks () /*-{
+        var wnav = this;
+        // anoyingly these have to be specified separately, ActionScript chokes on String[]
+        $wnd.getFacebookId = function () {
+             return wnav.@client.frame.WorldNav::getFacebookId()();
+        };
+        $wnd.getFacebookSession = function () {
+             return wnav.@client.frame.WorldNav::getFacebookSession()();
+        };
+        $wnd.rebootFlashClient = function () {
+            wnav.@client.frame.WorldNav::reload()();
+        }
+        $wnd.setPermaguestInfo = function (name, token) {
+            wnav.@client.frame.WorldNav::setPermaguestInfo(Ljava/lang/String;Ljava/lang/String;)(name, token);
+        }
+    }-*/;
+
     protected WorldClient.PanelProvider _provider;
     protected Listener _listener;
     protected Args _args;
     protected String _title;
     protected LaunchConfig _game;
+    protected String _facebookId, _facebookSession;
 
     protected static final WebUserServiceAsync _usersvc = GWT.create(WebUserService.class);
 }

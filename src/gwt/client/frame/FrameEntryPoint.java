@@ -10,9 +10,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -96,7 +94,7 @@ public class FrameEntryPoint
         _analytics.init();
 
         // set up the callbacks that our flash clients can call
-        configureCallbacks(this);
+        configureCallbacks();
 
         // listen for theme changes (one which will likely be triggered by the didLogon below)
         FlashEvents.addListener(new ThemeChangeEvent.Listener() {
@@ -172,13 +170,6 @@ public class FrameEntryPoint
         History.newItem(lastFlashToken);
     }
 
-    @Override // from FrameNav.Listener
-    public void onEnterFacebookGame (String uid, String session)
-    {
-        _facebookId = uid;
-        _facebookSession = session;
-    }
-
     // from interface ValueChangeHandler
     public void onValueChange (ValueChangeEvent<String> event)
     {
@@ -250,7 +241,7 @@ public class FrameEntryPoint
         // if they just registered, reboot the flash client (which will put them back where they
         // are but logged in as their newly registered self)
         if (FlashClients.clientExists() && data.group != SessionData.Group.NONE) {
-            rebootFlashClient();
+            _nav.rebootFlashClient();
         }
 
         Pages curPage = _nav.getPage(FrameId.MAIN);
@@ -517,15 +508,6 @@ public class FrameEntryPoint
         return null; // not reached
     }
 
-    protected void deferredCloseClient ()
-    {
-        DeferredCommand.addCommand(new Command() {
-            public void execute () {
-                closeClient();
-            }
-        });
-    }
-
     /**
      * Called when Flash or our inner Page frame wants us to dispatch an event.
      */
@@ -542,28 +524,6 @@ public class FrameEntryPoint
         return getVisitorInfo().id;
     }
 
-    protected String getFacebookId ()
-    {
-        return _facebookId;
-    }
-
-    protected String getFacebookSession ()
-    {
-        return _facebookSession;
-    }
-
-    protected void setTitleFromFlash (String title)
-    {
-        _nav.setTitle(title, true);
-    }
-
-    protected void setPermaguestInfo (String name, String token)
-    {
-        // the server has created a permaguest account for us via flash, store the cookies
-        CShell.log("Got permaguest info from flash", "name", name, "token", token);
-        Session.conveyLoginFromFlash(token);
-    }
-
     protected void refreshDisplayName ()
     {
         _membersvc.getMemberCard(CShell.getMemberId(), new AsyncCallback<MemberCard>() {
@@ -576,11 +536,6 @@ public class FrameEntryPoint
                 }
             }
         });
-    }
-
-    protected void rebootFlashClient ()
-    {
-        _nav.rebootFlashClient();
     }
 
     protected void reportPageVisit (Pages page, Args args)
@@ -606,7 +561,8 @@ public class FrameEntryPoint
      * Configures top-level functions that can be called by Flash or an iframed
      * {@link client.shell.Page}.
      */
-    protected static native void configureCallbacks (FrameEntryPoint entry) /*-{
+    protected native void configureCallbacks () /*-{
+        var entry = this;
         $wnd.onunload = function (event) {
             var client = $doc.getElementById("asclient");
             if (client) {
@@ -625,39 +581,17 @@ public class FrameEntryPoint
             var mode = emb.@com.threerings.msoy.web.gwt.Embedding::mode;
             return mode.@java.lang.Object::toString()();
         }
-        $wnd.setWindowTitle = function (title) {
-            entry.@client.frame.FrameEntryPoint::setTitleFromFlash(Ljava/lang/String;)(title);
-        };
         $wnd.displayPage = function (page, args) {
             @client.util.Link::goFromFlash(Ljava/lang/String;Ljava/lang/String;)(page, args);
-        };
-        $wnd.clearClient = function () {
-             entry.@client.frame.FrameEntryPoint::deferredCloseClient()();
         };
         $wnd.getVisitorId = function () {
              return entry.@client.frame.FrameEntryPoint::getVisitorId()();
         };
-        // anoyingly these have to be specified separately, ActionScript chokes on String[]
-        $wnd.getFacebookId = function () {
-             return entry.@client.frame.FrameEntryPoint::getFacebookId()();
-        };
-        $wnd.getFacebookSession = function () {
-             return entry.@client.frame.FrameEntryPoint::getFacebookSession()();
-        };
         $wnd.triggerFlashEvent = function (eventName, args) {
             entry.@client.frame.FrameEntryPoint::triggerEvent(Ljava/lang/String;Lcom/google/gwt/core/client/JavaScriptObject;)(eventName, args);
         }
-        $wnd.howdyPardner = function () {
-            // nothing to do here, the client just wants to know we have this method 
-        }
-        $wnd.setPermaguestInfo = function (name, token) {
-            entry.@client.frame.FrameEntryPoint::setPermaguestInfo(Ljava/lang/String;Ljava/lang/String;)(name, token);
-        }
         $wnd.refreshDisplayName = function () {
             entry.@client.frame.FrameEntryPoint::refreshDisplayName()();
-        }
-        $wnd.rebootFlashClient = function () {
-            entry.@client.frame.FrameEntryPoint::rebootFlashClient()();
         }
     }-*/;
 
@@ -667,7 +601,6 @@ public class FrameEntryPoint
     }-*/;
 
     protected String _currentToken = "", _prevToken = "";
-    protected String _facebookId, _facebookSession;
     protected int _themeId;
 
     protected Embedding _embedding;

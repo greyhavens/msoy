@@ -6,6 +6,8 @@ package client.frame;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.Window;
 
 import com.threerings.gwt.util.StringUtil;
@@ -54,13 +56,6 @@ public class FrameNav
          * not minimized
          */
         void onContentClosed (String lastFlashToken);
-
-        /**
-         * Called when a Facebook game is entered.
-         * @param uid the Facebook user id given by the token
-         * @param session the Facebook session id given by the token
-         */
-        void onEnterFacebookGame (String uid, String session);
     }
 
     /**
@@ -72,6 +67,9 @@ public class FrameNav
     {
         _embedding = embedding;
         _listener = listener;
+
+        // flash callbacks
+        configureCallbacks();
 
         // listen for logon/logoff
         Session.addObserver(new Session.Observer() {
@@ -124,10 +122,6 @@ public class FrameNav
                     Args args = Args.compose("game", _world.getGame().gameId);
                     go(FrameId.BOTTOM, Pages.FACEBOOK, args.toToken());
                 }
-            }
-
-            @Override public void onEnterFacebookGame (String uid, String session) {
-                _listener.onEnterFacebookGame(uid, session);
             }
         });
     }
@@ -196,21 +190,10 @@ public class FrameNav
      * Sets the title of the window and, if appropriate, the title bar. This is normally called
      * when a module if finally loaded via the frame module's page callbacks.
      * @param title the title to set
-     * @param fromFlash if the title is being set from flash; if so, the title may be stored and
-     *        set later when the content is closed
      */
-    public void setTitle (String title, boolean fromFlash)
+    public void setTitle (String title)
     {
-        // if we're displaying content currently, don't let flash mess with the title
-        if (!fromFlash || !_layout.hasContent()) {
-            Window.setTitle(title == null ? _cmsgs.bareTitle() : _cmsgs.windowTitle(title));
-            if (title != null && _bar != null) {
-                _bar.setTitle(title);
-            }
-        }
-        if (fromFlash) {
-            _world.setTitle(title);
-        }
+        setTitle(title, false);
     }
 
     /**
@@ -370,7 +353,7 @@ public class FrameNav
             _layout.closeContent(restoreClient);
 
             // restore the title to the last thing flash asked for
-            setTitle(_world.getTitle(), false);
+            setTitle(_world.getTitle());
         }
 
         // let the Flash client know that it's being unminimized or to start unminimized
@@ -410,6 +393,44 @@ public class FrameNav
      */
     protected native static boolean isFramed () /*-{
         return $wnd.top != $wnd;
+    }-*/;
+
+    protected void setTitle (String title, boolean fromFlash)
+    {
+        // if we're displaying content currently, don't let flash mess with the title
+        if (!fromFlash || !_layout.hasContent()) {
+            Window.setTitle(title == null ? _cmsgs.bareTitle() : _cmsgs.windowTitle(title));
+            if (title != null && _bar != null) {
+                _bar.setTitle(title);
+            }
+        }
+        if (fromFlash) {
+            _world.setTitle(title);
+        }
+    }
+
+    protected void setTitleFromFlash (String title)
+    {
+        setTitle(title, true);
+    }
+
+    protected void deferredCloseClient ()
+    {
+        DeferredCommand.addCommand(new Command() {
+            public void execute () {
+                closeClient();
+            }
+        });
+    }
+
+    protected native void configureCallbacks () /*-{
+        var fnav = this;
+        $wnd.setWindowTitle = function (title) {
+            fnav.@client.frame.FrameNav::setTitleFromFlash(Ljava/lang/String;)(title);
+        };
+        $wnd.clearClient = function () {
+            fnav.@client.frame.FrameNav::deferredCloseClient()();
+        };
     }-*/;
 
     protected ClickHandler _closeContent = new ClickHandler() {
