@@ -183,8 +183,8 @@ public class FrameNav
     {
         // if we're displaying content currently, don't let flash mess with the title
         if (!fromFlash || !_layout.hasContent()) {
+            Window.setTitle(title == null ? _cmsgs.bareTitle() : _cmsgs.windowTitle(title));
             if (title != null && _bar != null) {
-                Window.setTitle(title == null ? _cmsgs.bareTitle() : _cmsgs.windowTitle(title));
                 _bar.setTitle(title);
             }
         }
