@@ -1,5 +1,5 @@
 //
-// $Id: ScriptSources.java 18228 2009-10-01 18:17:40Z jamie $
+// $Id$
 
 package client.shell;
 
@@ -7,6 +7,9 @@ import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.LinkElement;
 import com.google.gwt.dom.client.NodeList;
+
+import client.util.events.FlashEvents;
+import client.util.events.ThemeChangeEvent;
 
 /**
  * Allows index.html files for the top-level frame and pages to refer to stylesheet URL's on
@@ -18,10 +21,26 @@ import com.google.gwt.dom.client.NodeList;
  */
 public class ThemedStylesheets
 {
+    public ThemedStylesheets ()
+    {
+        // listen for theme changes (one which will likely be triggered by the didLogon below)
+        FlashEvents.addListener(new ThemeChangeEvent.Listener() {
+            public void themeChanged (ThemeChangeEvent event) {
+                _themeId = event.getGroupId();
+                inject();
+            }
+        });
+    }
+
+    public int getThemeId ()
+    {
+        return _themeId;
+    }
+
     /**
      * Injects the src tags of all known scripts using the given application id where appropriate.
      */
-    public static void inject (int themeId)
+    protected void inject ()
     {
         NodeList<Element> heads = Document.get().getElementsByTagName("head");
         if (heads.getLength() == 0) {
@@ -34,10 +53,12 @@ public class ThemedStylesheets
                 String href = link.getHref();
                 int ix = href.indexOf("?themeId=");
                 if (ix > 0) {
-                    href = (href.substring(0, ix) + "?themeId=" + themeId);
+                    href = (href.substring(0, ix) + "?themeId=" + _themeId);
                     link.setHref(href);
                 }
             }
         }
     }
+
+    protected int _themeId;
 }

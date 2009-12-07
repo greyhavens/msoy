@@ -49,7 +49,6 @@ import client.util.NoopAsyncCallback;
 import client.util.events.FlashEvent;
 import client.util.events.FlashEvents;
 import client.util.events.NameChangeEvent;
-import client.util.events.ThemeChangeEvent;
 
 /**
  * Handles the outer shell of the Whirled web application. Loads pages into an iframe and also
@@ -96,13 +95,7 @@ public class FrameEntryPoint
         // set up the callbacks that our flash clients can call
         configureCallbacks();
 
-        // listen for theme changes (one which will likely be triggered by the didLogon below)
-        FlashEvents.addListener(new ThemeChangeEvent.Listener() {
-            public void themeChanged (ThemeChangeEvent event) {
-                _themeId = event.getGroupId();
-                ThemedStylesheets.inject(_themeId);
-            }
-        });
+        _themes = new ThemedStylesheets();
 
         // validate our session which will dispatch a didLogon or didLogoff
         Session.validate();
@@ -428,7 +421,7 @@ public class FrameEntryPoint
     // from interface Frame
     public int getThemeId ()
     {
-        return _themeId;
+        return _themes.getThemeId();
     }
 
     /**
@@ -601,11 +594,11 @@ public class FrameEntryPoint
     }-*/;
 
     protected String _currentToken = "", _prevToken = "";
-    protected int _themeId;
 
     protected Embedding _embedding;
     protected FrameNav _nav;
     protected BorderedDialog _dialog;
+    protected ThemedStylesheets _themes;
 
     /** If the user arrived via an invitation, we'll store that here during their session. */
     protected Invitation _activeInvite;
@@ -617,7 +610,6 @@ public class FrameEntryPoint
     protected static final FacebookServiceAsync _fbsvc = GWT.create(FacebookService.class);
 
     // constants for our top-level elements
-    protected static final String PAGE = "page";
     protected static final String LOADING = "loading";
 
     /** This vector string represents an email invite */
