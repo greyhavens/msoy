@@ -81,7 +81,7 @@ public class ThemeLogic
         throws ServiceException
     {
         return _moneyLogic.securePrice(mrec.memberId, THEME_PURCHASE_KEY,
-            Currency.BARS, getThemeBarCost(), false);
+            Currency.BARS, getThemeBarCost(mrec), false);
     }
 
     /**
@@ -108,7 +108,7 @@ public class ThemeLogic
         };
 
         return _moneyLogic.buyTheme(mrec, THEME_PURCHASE_KEY, currency, authedAmount,
-            Currency.BARS, getThemeBarCost(), buyOperation).toPurchaseResult();
+            Currency.BARS, getThemeBarCost(mrec), buyOperation).toPurchaseResult();
     }
 
     /**
@@ -169,11 +169,13 @@ public class ThemeLogic
     }
 
     /**
-     * Return the current cost of forming a new group, in coins.
+     * Return the current cost of creating a Whirled for the given member.
      */
-    protected int getThemeBarCost ()
+    protected int getThemeBarCost (MemberRecord mrec)
     {
-        return _runtime.getBarCost(CostsConfigObject.NEW_THEME);
+        return _runtime.getBarCost(mrec.isSubscriber() ?
+            CostsConfigObject.NEW_THEME_SUB : CostsConfigObject.NEW_THEME_NONSUB);
+
     }
 
     /** An arbitrary key for quoting group creation (purchase). */
