@@ -486,7 +486,7 @@ public class AccountLogic
         if (birthdayYMD != null) {
             java.sql.Date bday = ProfileRecord.fromDateVec(birthdayYMD);
             if (bday.compareTo(Calendars.now().addYears(-13).toDate()) > 0) {
-                log.warning("User submitted invalid birtdate", "date", bday);
+                log.warning("User submitted invalid birthdate", "date", bday);
                 throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
             }
         }
