@@ -135,9 +135,7 @@ public class FrameEntryPoint
     @Override // from FrameNav.Listener
     public void onLogoClick ()
     {
-        if (_closeToken != null) {
-            _nav.closeContent();
-        } else if (CShell.isGuest()) {
+        if (CShell.isGuest()) {
             History.newItem("");
         } else {
             Link.go(Pages.WORLD, "m" + CShell.getMemberId());
@@ -147,9 +145,6 @@ public class FrameEntryPoint
     @Override // from FrameNav.Listener
     public void onClientClosed (boolean didLogoff)
     {
-        _closeToken = null;
-        _closeTitle = null;
-
         // if we just logged off, go to the logoff page
         if (didLogoff) {
             Link.go(Pages.ACCOUNT, "logoff");
@@ -671,7 +666,6 @@ public class FrameEntryPoint
         return $wnd.hex_md5(text);
     }-*/;
 
-    protected String _closeToken, _closeTitle;
     protected String _currentToken = "", _prevToken = "";
     protected String _facebookId, _facebookSession;
     protected int _themeId;
