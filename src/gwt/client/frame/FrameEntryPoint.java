@@ -252,10 +252,6 @@ public class FrameEntryPoint
     // from interface Session.Observer
     public void didLogon (SessionData data)
     {
-        // update the world client to relogin (this will NOOP if we're logging in now because Flash
-        // just told us to do so)
-        WorldClient.didLogon(data.creds);
-
         // if they just registered, reboot the flash client (which will put them back where they
         // are but logged in as their newly registered self)
         if (FlashClients.clientExists() && data.group != SessionData.Group.NONE) {
@@ -519,15 +515,7 @@ public class FrameEntryPoint
         case GET_THEME_ID:
             return new String[] { String.valueOf(getThemeId()) };
         case CONTENT_SET:
-            if (frame == FrameId.MAIN) {
-                // let the world know we're now looking at this content, but only if it is the
-                // right content
-                if (_nav.getPage(FrameId.MAIN) == Pages.valueOf(args[0]) &&
-                        _nav.getToken(FrameId.MAIN).equals(args[1])) {
-                    WorldClient.contentPageReady(
-                        _nav.getPage(FrameId.MAIN), _nav.getToken(FrameId.MAIN));
-                }
-            }
+            _nav.contentSet(frame, Pages.valueOf(args[0]), args[1]);
             return null;
         }
         CShell.log("Got unknown frameCall request [call=" + call + "].");

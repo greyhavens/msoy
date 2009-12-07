@@ -9,10 +9,12 @@ import com.threerings.gwt.util.StringUtil;
 import com.threerings.msoy.data.all.LaunchConfig;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
+import com.threerings.msoy.web.gwt.SessionData;
 import com.threerings.msoy.web.gwt.WebUserService;
 import com.threerings.msoy.web.gwt.WebUserServiceAsync;
 
 import client.shell.CShell;
+import client.shell.Session;
 import client.util.FlashClients;
 import client.util.InfoCallback;
 
@@ -51,6 +53,16 @@ public class WorldNav
     {
         _provider = provider;
         _listener = listener;
+        Session.addObserver(new Session.Observer() {
+            @Override public void didLogon (SessionData data) {
+                // update the world client to relogin (this will NOOP if we're logging in now
+                // because Flash just told us to do so)
+                WorldClient.didLogon(data.creds);
+            }
+
+            @Override public void didLogoff () {
+            }
+        });
     }
 
     /**
@@ -123,6 +135,16 @@ public class WorldNav
     public void contentChanged (Pages page, String token)
     {
         WorldClient.contentRequested(page, token);
+    }
+
+    /**
+     * Notifies the flash client that the previously requested content is now being viewed.
+     * @param page the page (module) of the content
+     * @param token the arguments to the page
+     */
+    public void contentReady (Pages page, String token)
+    {
+        WorldClient.contentPageReady(page, token);
     }
 
     /**

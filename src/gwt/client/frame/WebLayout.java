@@ -44,11 +44,6 @@ public abstract class WebLayout extends Layout
             _content = iframe;
 
         } else {
-            // squish the client if it's around
-            if (_client != null) {
-                WorldClient.setMinimized(true);
-            }
-
             _content = MsoyUI.createFlowPanel(null, bar.exposeWidget(), _iframe);
         }
 

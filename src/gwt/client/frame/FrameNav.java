@@ -173,6 +173,26 @@ public class FrameNav
     }
 
     /**
+     * Notifies the navigator that the previously requested content is now being displayed. This
+     * is required because the module callbacks are declared elsewhere.
+     * @param frame the frame that is displaying the content
+     * @param page the page (module) being displayed
+     * @param token the page argument that was processed
+     */
+    public void contentSet (FrameId frame, Pages page, String token)
+    {
+        if (frame != FrameId.MAIN) {
+            return;
+        }
+
+        // let the world know we're now looking at this content, but only if it is the
+        // right content
+        if (_main.page == page && _main.token.equals(token)) {
+            _world.contentReady(_main.page, _main.token);
+        }
+    }
+
+    /**
      * Sets the title of the window and, if appropriate, the title bar. This is normally called
      * when a module if finally loaded via the frame module's page callbacks.
      * @param title the title to set
