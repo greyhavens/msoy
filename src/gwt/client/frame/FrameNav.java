@@ -7,6 +7,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
+import com.threerings.gwt.util.StringUtil;
 import com.threerings.msoy.data.all.LaunchConfig;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Embedding;
@@ -82,11 +83,6 @@ public class FrameNav
                 _layout.addNoClientIcon();
             }
             @Override public void didLogoff () {
-                // TODO: this page clear may be needed after all...
-                // ...it used to happen just before setToken(_currentToken) in FrameEntryPoint
-                // clear out any current page
-                //_main.page = null;
-
                 // close the Flash client if it's open
                 closeClient(true);
             }
@@ -126,13 +122,14 @@ public class FrameNav
      */
     public void go (FrameId frame, Pages page, String token)
     {
+        // de-nullify
+        token = StringUtil.getOr(token, "");
+
+        // bottom heuristics are simpler (cannot visit funky /#world there)
         if (frame == FrameId.BOTTOM) {
             CShell.log("Opening bottom frame", "token", token);
-            if (_bottom.page != page || !token.equals(_bottom.token)) {
-                _bottom.page = page;
-                _bottom.token = token;
-                _bottom.frame = new PageFrame(page, FrameId.BOTTOM.name());
-                _layout.setBottomContent(_bottom.frame);
+            if (_bottom.set(page, token)) {
+                _layout.setBottomContent(_bottom.createFrame());
             }
             return;
         }
@@ -283,8 +280,7 @@ public class FrameNav
         clearContent(page == Pages.WORLD);
 
         // make a note of our current page
-        _main.page = page;
-        _main.token = token;
+        _main.set(page, token);
 
         // show the header for pages that report a tab of which they are a part
         _header.selectTab(page.getTab());
@@ -309,9 +305,6 @@ public class FrameNav
         // tell the flash client we're minimizing it
         WorldClient.setMinimized(true);
 
-        // create our page frame
-        _main.frame = new PageFrame(_main.page, FrameId.MAIN.name());
-
         // if we're on a headerless page or we only support one screen, we need to close the client
         if (isHeaderless() || _embedding.mode.isMonoscreen()) {
             closeClient();
@@ -325,10 +318,7 @@ public class FrameNav
             _bar.setCloseVisible(FlashClients.clientExists());
         }
 
-        _layout.setContent(_bar, _main.frame);
-        _bottom.page = null;
-        _bottom.token = "";
-        _bottom.frame = null;
+        _layout.setContent(_bar, _main.createFrame());
 
         // let the flash client know we are changing pages
         WorldClient.contentRequested(_main.page, _main.token);
@@ -346,11 +336,8 @@ public class FrameNav
         // let the Flash client know that it's being unminimized or to start unminimized
         WorldClient.setMinimized(false);
 
-        _main.frame = null;
-        _main.page = null;
-        _bottom.page = null;
-        _bottom.token = "";
-        _bottom.frame = null;
+        _main.clear();
+        _bottom.clear();
         if (!_layout.alwaysShowsTitleBar()) {
             _bar = null;
         }
@@ -518,7 +505,7 @@ public class FrameNav
         }
     }
 
-    protected Frame toFrame (FrameId frameId)
+    protected FrameInfo toFrame (FrameId frameId)
     {
         switch (frameId) {
         case MAIN: return _main;
@@ -540,21 +527,46 @@ public class FrameNav
         }
     };
 
-    protected static class Frame
+    protected static class FrameInfo
     {
+        public FrameId frameId;
         public Pages page;
-        public String token;
+        public String token = "";
         public PageFrame frame;
+
+        public FrameInfo (FrameId id)
+        {
+            frameId = id;
+        }
+
+        public PageFrame createFrame ()
+        {
+            return frame = new PageFrame(page, frameId.name());
+        }
+
+        public boolean set (Pages page, String token)
+        {
+            if (this.page == page && this.token.equals(token)) {
+                return false;
+            }
+
+            this.page = page;
+            this.token = token;
+            this.frame = null;
+            return true;
+        }
+
+        public void clear ()
+        {
+            set(null, "");
+        }
     }
 
     protected Embedding _embedding;
     protected Listener _listener;
-
-    // TODO: make an object with page, token, frame
-    protected Frame _main = new Frame(), _bottom = new Frame();
-
+    protected FrameInfo _main = new FrameInfo(FrameId.MAIN);
+    protected FrameInfo _bottom = new FrameInfo(FrameId.BOTTOM);
     protected String _closeToken, _closeTitle;
-
     protected FrameHeader _header;
     protected Layout _layout;
     protected TitleBar _bar;
