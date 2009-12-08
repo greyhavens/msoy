@@ -589,7 +589,7 @@ public class MemberRepository extends DepotRepository
     public void purgeSessionRecords ()
     {
         Timestamp cutoff = new Timestamp(System.currentTimeMillis() - SESSION_RECORD_EXPIRE);
-        int deleted = deleteAll(EntryVectorRecord.class,
+        int deleted = deleteAll(SessionRecord.class,
             new Where(SessionRecord.EXPIRES.lessThan(cutoff)),
             null);
         if (deleted > 0) {
