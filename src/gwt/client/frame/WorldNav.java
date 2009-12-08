@@ -15,7 +15,6 @@ import com.threerings.msoy.web.gwt.WebUserServiceAsync;
 
 import client.shell.CShell;
 import client.shell.Session;
-import client.util.FlashClients;
 import client.util.InfoCallback;
 
 /**
@@ -45,6 +44,7 @@ public class WorldNav
     {
         _provider = provider;
         _listener = listener;
+        _client = new WorldClient();
 
         configureCallbacks();
 
@@ -52,7 +52,7 @@ public class WorldNav
             @Override public void didLogon (SessionData data) {
                 // update the world client to relogin (this will NOOP if we're logging in now
                 // because Flash just told us to do so)
-                WorldClient.didLogon(data.creds);
+                _client.didLogon(data.creds);
             }
 
             @Override public void didLogoff () {
@@ -103,7 +103,7 @@ public class WorldNav
      */
     public void setMinimized (boolean minimized)
     {
-        WorldClient.setMinimized(minimized);
+        _client.setMinimized(minimized);
     }
 
     /**
@@ -119,7 +119,7 @@ public class WorldNav
      */
     public void reload ()
     {
-        WorldClient.rebootFlash(_provider);
+        _client.rebootFlash(_provider);
     }
 
     /**
@@ -129,7 +129,7 @@ public class WorldNav
      */
     public void contentChanged (Pages page, String token)
     {
-        WorldClient.contentRequested(page, token);
+        _client.contentRequested(page, token);
     }
 
     /**
@@ -139,7 +139,7 @@ public class WorldNav
      */
     public void contentReady (Pages page, String token)
     {
-        WorldClient.contentPageReady(page, token);
+        _client.contentPageReady(page, token);
     }
 
     /**
@@ -147,7 +147,7 @@ public class WorldNav
      */
     public void contentCleared ()
     {
-        WorldClient.contentCleared();
+        _client.contentCleared();
     }
 
     /**
@@ -165,7 +165,7 @@ public class WorldNav
      */
     public void willClose ()
     {
-        WorldClient.clientWillClose();
+        _client.clientWillClose();
         _args = null;
         _title = null;
     }
@@ -193,7 +193,7 @@ public class WorldNav
             // we're entering a chromeless facebook game (fbgame_gameId_fbid_fbtok)
             _facebookId = _args.get(2, "");
             _facebookSession = _args.get(3, "");
-            FlashClients.setChromeless(true);
+            _client.setChromeless();
             loadAndDisplayGame("p", _args.get(1, 0), 0, "", 0);
 
         } else if (action.equals("tour")) {
@@ -236,7 +236,7 @@ public class WorldNav
         _game = game;
 
         // finally actually display the client
-        WorldClient.displayFlash(args, _provider);
+        _client.displayFlash(args, _provider);
 
         _listener.onClientDisplayed();
     }
@@ -256,7 +256,7 @@ public class WorldNav
                                String token, final int otherId2)
     {
         // configure our world client with a default host and port in case we're first to the party
-        WorldClient.setDefaultServer(config.groupServer, config.groupPort);
+        _client.setDefaultServer(config.groupServer, config.groupPort);
 
         // sanitize our token
         token = StringUtil.getOr(token, "");
@@ -333,6 +333,7 @@ public class WorldNav
         }
     }-*/;
 
+    protected WorldClient _client;
     protected WorldClient.PanelProvider _provider;
     protected Listener _listener;
     protected Args _args;

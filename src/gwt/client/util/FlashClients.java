@@ -25,13 +25,8 @@ public class FlashClients
     public static final int MIN_WORLD_WIDTH = 300;
     public static final int MIN_WORLD_HEIGHT = 300;
 
-    /**
-     * Configures whether or not the client is in chromeless mode.
-     */
-    public static void setChromeless (boolean chromeless)
-    {
-        _chromeless = chromeless;
-    }
+    /** The "id" attribute of the <embed> tag containing the world client. */
+    public static final String ELEM_ID = "asclient";
 
     /**
      * Create a tiny applet for uploading media.
@@ -125,31 +120,14 @@ public class FlashClients
             return;
         }
 
-        FlashObject obj = new FlashObject("asclient", "/clients/" +
+        FlashObject obj = new FlashObject(ELEM_ID, "/clients/" +
             DeploymentConfig.version + "/world-client.swf", "100%", "100%",
             flashVars);
 
-        if (_chromeless) {
-            obj.flashVars += "&chromeless=true";
-        }
         obj.bgcolor = "#ffffff";
 
         Widget embed = WidgetUtil.embedFlashObject(container, WidgetUtil.createDefinition(obj));
         embed.setHeight("100%");
-    }
-
-    /**
-     * Creates a game client, and embeds it in a container object, with which it can communicate
-     * via the Flash/Javascript interface.
-     */
-    public static void embedGameClient (Panel container, String flashVars)
-    {
-        if (shouldShowFlash(container, 0, 0)) {
-            WidgetUtil.embedFlashObject(
-                container, WidgetUtil.createFlashObjectDefinition(
-                    "asclient", "/clients/" + DeploymentConfig.version + "/game-client.swf",
-                    "100%", "100%", flashVars));
-        }
     }
 
     /**
@@ -263,10 +241,11 @@ public class FlashClients
      * Returns the element that represents the Flash client.
      */
     public static native Element findClient () /*-{
-        var client = $wnd.document.getElementById("asclient");
+        var id = @client.util.FlashClients::ELEM_ID;
+        var client = $wnd.document.getElementById(id);
         try {
             if (client == null) {
-                client = $wnd.parent.document.getElementById("asclient");
+                client = $wnd.parent.document.getElementById(id);
             }
         } catch (e) {
             // we may be running in an iframe on Facebook in which case touching parent will throw
@@ -370,9 +349,6 @@ public class FlashClients
         }
         return false;
     }-*/;
-
-    /** Whether or not the client is in chromeless mode. */
-    protected static boolean _chromeless;
 
     protected static final int CLIENT_HEIGHT = 552;
     protected static final int HEADER_HEIGHT = 24;

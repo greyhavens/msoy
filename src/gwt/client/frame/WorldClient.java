@@ -5,7 +5,6 @@ package client.frame;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Panel;
-import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.util.CookieUtil;
 import com.threerings.gwt.util.StringUtil;
@@ -22,22 +21,22 @@ import client.util.FlashClients;
 import client.util.InfoCallback;
 
 /**
- * Manages our World client (which also handles Flash games).
+ * Manages a World client (which also handles Flash games).
  */
-public class WorldClient extends Widget
+public class WorldClient
 {
-    public static interface PanelProvider
+    public interface PanelProvider
     {
         public Panel get ();
     }
 
-    public static void setDefaultServer (String host, int port)
+    public void setDefaultServer (String host, int port)
     {
         _defaultHost = host;
         _defaultPort = port;
     }
 
-    public static void displayFlash (String flashArgs, final PanelProvider pprov)
+    public void displayFlash (String flashArgs, final PanelProvider pprov)
     {
         // if we have not yet determined our default server, find that out now
         if (_defaultHost == null) {
@@ -59,9 +58,9 @@ public class WorldClient extends Widget
         }
 
         // create our client if necessary
-        if (_flashPanel != null && clientGo("asclient", flashArgs)) {
+        if (_flashPanel != null && clientGo(flashArgs)) {
             _flashArgs = flashArgs; // note our new current flash args
-            setMinimized(false);
+            setMinimized(false); // TODO: why is this here?
 
         } else {
             // flash is not resolved or it's hosed, create or recreate the client
@@ -73,35 +72,26 @@ public class WorldClient extends Widget
      * Called when the Flash client has determined that it's hosed (lost connection or otherwise
      * died) and wants to be thrown away and recreated at its present location.
      */
-    public static void rebootFlash (PanelProvider pprov)
+    public void rebootFlash (PanelProvider pprov)
     {
         embedClient(_flashArgs, pprov.get());
     }
 
-    public static void displayJava (Widget client, PanelProvider pprov)
-    {
-        // clear out any flash page stuff
-        _flashArgs = null;
-        _flashPanel = null;
-
-        if (_javaPanel != client) {
-            clientWillClose(); // clear out our flash client if we have one
-            pprov.get().add(_javaPanel = client);
-        } else {
-            setMinimized(false);
-        }
-    }
-
-    public static void setMinimized (boolean minimized)
+    public void setMinimized (boolean minimized)
     {
         _minimized = minimized;
         clientMinimized(minimized);
     }
 
+    public void setChromeless ()
+    {
+        _chromeless = true;
+    }
+
     /**
      * Lets the world client know that the user has navigated to the specified content page.
      */
-    public static void contentRequested (Pages page, String token)
+    public void contentRequested (Pages page, String token)
     {
         // no need to pass this along right now
     }
@@ -109,7 +99,7 @@ public class WorldClient extends Widget
     /**
      * Lets the world client know that the content page has now loaded and initialized.
      */
-    public static void contentPageReady (Pages page, String token)
+    public void contentPageReady (Pages page, String token)
     {
         clientSetPage(page.name(), token);
     }
@@ -117,33 +107,29 @@ public class WorldClient extends Widget
     /**
      * Lets the world client know that the user has closed the GWT content.
      */
-    public static void contentCleared ()
+    public void contentCleared ()
     {
         clientSetPage(null, null);
     }
 
-    public static void clientWillClose ()
+    public void clientWillClose ()
     {
-        if (_flashPanel != null || _javaPanel != null) {
-            if (_flashPanel != null) {
-                clientUnload(); // TODO: make this work for jclient
-            }
+        if (_flashPanel != null) {
+            clientUnload();
             _flashArgs = null;
             _flashPanel = null;
-            _javaPanel = null;
         }
     }
 
-    public static void didLogon (WebCreds creds)
+    public void didLogon (WebCreds creds)
     {
         if (_flashPanel != null) {
             clientLogon(creds.getMemberId(), creds.token);
         }
-        // TODO: let jclient know about logon?
         // TODO: propagate creds to our flash SharedObject in case next login is from an embed?
     }
 
-    protected static void embedClient (String flashArgs, Panel parent)
+    protected void embedClient (String flashArgs, Panel parent)
     {
         clientWillClose(); // clear our clients if we have any
 
@@ -164,23 +150,23 @@ public class WorldClient extends Widget
         if (_minimized) {
             flashArgs += "&minimized=t";
         }
-        flashArgs += getAffiliateArg();
+        if (_chromeless) {
+            flashArgs += "&chromeless=true";
+        }
+        String affstr = CookieUtil.get(CookieNames.AFFILIATE);
+        if (!StringUtil.isBlank(affstr)) {
+            flashArgs += "&aff=" + affstr;
+        }
 
         parent.clear();
         FlashClients.embedWorldClient(parent, flashArgs);
     }
 
-    protected static String getAffiliateArg ()
-    {
-        String affstr = CookieUtil.get(CookieNames.AFFILIATE);
-        return StringUtil.isBlank(affstr) ? "" : ("&aff=" + affstr);
-    }
-
     /**
      * Tells the World client to go to a particular location.
      */
-    protected static native boolean clientGo (String id, String where) /*-{
-        var client = $doc.getElementById(id);
+    protected native boolean clientGo (String where) /*-{
+        var client = @client.util.FlashClients::findClient()();
         if (client) {
             // exceptions from JavaScript break GWT; don't let that happen
             try { return client.clientGo(where); } catch (e) {}
@@ -191,8 +177,8 @@ public class WorldClient extends Widget
     /**
      * Logs on the MetaSOY Flash client using magical JavaScript.
      */
-    protected static native void clientLogon (int memberId, String token) /*-{
-        var client = $doc.getElementById("asclient");
+    protected native void clientLogon (int memberId, String token) /*-{
+        var client = @client.util.FlashClients::findClient()();
         if (client) {
             // exceptions from JavaScript break GWT; don't let that happen
             try { client.clientLogon(memberId, token); } catch (e) {}
@@ -202,8 +188,8 @@ public class WorldClient extends Widget
     /**
      * Logs off the MetaSOY Flash client using magical JavaScript.
      */
-    protected static native void clientUnload () /*-{
-        var client = $doc.getElementById("asclient");
+    protected native void clientUnload () /*-{
+        var client = @client.util.FlashClients::findClient()();
         if (client) {
             // exceptions from JavaScript break GWT; don't let that happen
             try { client.onUnload(); } catch (e) {}
@@ -213,8 +199,8 @@ public class WorldClient extends Widget
     /**
      * Notifies the flash client that we're either minimized or not.
      */
-    protected static native void clientMinimized (boolean mini) /*-{
-        var client = $doc.getElementById("asclient");
+    protected native void clientMinimized (boolean mini) /*-{
+        var client = @client.util.FlashClients::findClient()();
         if (client) {
             // exceptions from JavaScript break GWT; don't let that happen
             try { client.setMinimized(mini); } catch (e) {}
@@ -224,22 +210,24 @@ public class WorldClient extends Widget
     /**
      * Notifies the flash client of the page and token we are viewing.
      */
-    protected static native void clientSetPage (String page, String token) /*-{
-        var client = $doc.getElementById("asclient");
+    protected native void clientSetPage (String page, String token) /*-{
+        var client = @client.util.FlashClients::findClient()();
         if (client) {
             // exceptions from JavaScript break GWT; don't let that happen
             try { client.setPage(page, token); } catch (e) {}
         }
     }-*/;
 
-    protected static String _flashArgs;
-    protected static Panel  _flashPanel;
-    protected static Widget _javaPanel;
-    protected static boolean _minimized;
+    protected String _flashArgs;
+    protected Panel  _flashPanel;
+    protected boolean _minimized;
+
+    /** Whether or not the client is in chromeless mode. */
+    protected boolean _chromeless;
 
     /** Our default world server host and port. Configured the first time Flash is used. */
-    protected static String _defaultHost;
-    protected static int _defaultPort;
+    protected String _defaultHost;
+    protected int _defaultPort;
 
     protected static final WebUserServiceAsync _usersvc = GWT.create(WebUserService.class);
 }
