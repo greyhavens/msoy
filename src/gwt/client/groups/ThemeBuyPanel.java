@@ -4,7 +4,8 @@
 package client.groups;
 
 import client.money.BuyPanel;
-import client.ui.BorderedPopup;
+import client.shell.CShell;
+import client.ui.BorderedDialog;
 import client.ui.MsoyUI;
 import client.util.InfoCallback;
 import com.google.gwt.core.client.GWT;
@@ -20,15 +21,21 @@ import com.threerings.msoy.money.data.all.PurchaseResult;
 
 public class ThemeBuyPanel extends BuyPanel<Theme>
 {
-    public static PopupPanel buyTheme (int groupId, String name, final AsyncCallback<Theme> callback)
+    public static PopupPanel buyTheme (int groupId, String name, AsyncCallback<Theme> callback)
     {
-        final BorderedPopup popup = new BorderedPopup(false, false);
+        String titleText = _msgs.ctBuy(name);
+
+        BorderedDialog popup = new BorderedDialog() {};
+        popup.setHeaderTitle(titleText);
 
         FlowPanel ui = MsoyUI.createFlowPanel("buyTheme",
-            MsoyUI.createLabel(_msgs.ctBuy(name), null),
             new ThemeBuyPanel(groupId, callback));
 
-        popup.setWidget(ui);
+        if (!CShell.isSubscriber()) {
+            ui.add(MsoyUI.createHTML(_msgs.ctUpsell(), "upsell"));
+        }
+
+        popup.setContents(ui);
         popup.show();
 
         return popup;
