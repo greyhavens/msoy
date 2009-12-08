@@ -26,6 +26,7 @@ import com.threerings.msoy.web.gwt.WebUserService;
 import com.threerings.msoy.web.gwt.WebUserServiceAsync;
 
 import client.shell.CShell;
+import client.shell.Session;
 import client.ui.MsoyUI;
 import client.util.ClickCallback;
 import client.util.Link;
@@ -47,6 +48,10 @@ public class DashboardPanel extends SmartTable
 
         // admin-only controls
         if (CShell.isAdmin()) {
+            // attempt to refresh our token's lifespan on the server so the dashboard doesn't
+            // freak out over an expired session
+            Session.validate();
+
             FlowPanel admin = new FlowPanel();
             admin.add(MsoyUI.createLabel(_msgs.adminControls(), "Title"));
             final SimplePanel ddash = new SimplePanel();
