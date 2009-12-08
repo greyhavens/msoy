@@ -186,6 +186,7 @@ public class MemberManager
         _cronLogic.scheduleEvery(1, "MemberManager purge entry vectors", new Runnable() {
             public void run () {
                 _memberRepo.purgeEntryVectors();
+                _memberRepo.purgeSessionRecords();
             }
         });
         _cronLogic.scheduleEvery(1, "MemberManager purge permaguests", new Runnable() {
@@ -459,7 +460,7 @@ public class MemberManager
         final BodyObject complainer, final int targetId,
         final String complaint, final MemberName optTargetName)
     {
-        _peerMan.collectChatHistory((MemberName)complainer.getVisibleName(),
+        _peerMan.collectChatHistory(complainer.getVisibleName(),
             new ResultListener<ChatHistoryResult>() {
             @Override public void requestFailed (Exception cause) {
                 log.warning("Failed to collect chat history for a complaint", "cause", cause);

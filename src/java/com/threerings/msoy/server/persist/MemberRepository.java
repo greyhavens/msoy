@@ -584,6 +584,20 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
+     * Purges session records that have not been refreshed in a month.
+     */
+    public void purgeSessionRecords ()
+    {
+        Timestamp cutoff = new Timestamp(System.currentTimeMillis() - SESSION_RECORD_EXPIRE);
+        int deleted = deleteAll(EntryVectorRecord.class,
+            new Where(SessionRecord.EXPIRES.lessThan(cutoff)),
+            null);
+        if (deleted > 0) {
+            log.info("Purged " + deleted + " expired session records.");
+        }
+    }
+
+    /**
      * Insert a new member record into the repository and assigns them a unique member id in the
      * process. The {@link MemberRecord#created} field will be filled in by this method if it is
      * not already.
@@ -1502,6 +1516,9 @@ public class MemberRepository extends DepotRepository
 
     /** Period after which we expire entry vector records that are not associated with members. */
     protected static final long ENTRY_VECTOR_EXPIRE = 14 * 24*60*60*1000L;
+
+    /** Period after which we expire session records. */
+    protected static final long SESSION_RECORD_EXPIRE = 30 * 24*60*60*1000L;
 
     /** A "like" pattern that matches permaguest accounts. */
     protected static final String PERMA_PATTERN = MemberMailUtil.makePermaguestEmail("%");
