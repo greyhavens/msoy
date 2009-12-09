@@ -78,23 +78,19 @@ public abstract class WebLayout extends Layout
     }
 
     @Override // from Layout
-    public WorldClient.PanelProvider getClientProvider ()
+    public Panel prepareClientPanel ()
     {
-        return new WorldClient.PanelProvider() {
-            public Panel get () {
-                // clear out any existing bits
-                _noclient = removeFromPage(_noclient);
-                _client = removeFromPage(_client);
+        // clear out any existing bits
+        _noclient = removeFromPage(_noclient);
+        _client = removeFromPage(_client);
 
-                // add a new client panel
-                Panel client = makeClientPanel();
-                RootPanel.get(PAGE).add(_client = client);
+        // add a new client panel
+        Panel client = makeClientPanel();
+        RootPanel.get(PAGE).add(_client = client);
 
-                // reposition everything
-                positionElements();
-                return client;
-            }
-        };
+        // reposition everything
+        positionElements();
+        return client;
     }
 
     @Override // from Layout

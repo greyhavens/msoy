@@ -9,6 +9,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Panel;
 
 import com.threerings.gwt.util.StringUtil;
 
@@ -109,7 +110,11 @@ public class FrameNav
             }
         });
 
-        _world = new WorldNav(_layout.getClientProvider(), new WorldNav.Listener() {
+        _world = new WorldNav(new WorldNav.PanelProvider() {
+            @Override public Panel get () {
+                return _layout.prepareClientPanel();
+            }
+        }, new WorldNav.Listener() {
             @Override public void onClientDisplayed () {
                 TitleBar bar = TitleBar.createClient(_layout, _world.getGame());
                 if (bar != null) {

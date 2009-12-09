@@ -4,6 +4,7 @@
 package client.frame;
 
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.web.gwt.ClientMode;
@@ -68,9 +69,9 @@ public abstract class Layout
     public abstract void closeContent (boolean restoreClient);
 
     /**
-     * Gets the provider that will service the opening of the world client.
+     * Prepares and returns the panel that will contain the world client.
      */
-    public abstract WorldClient.PanelProvider getClientProvider ();
+    public abstract Panel prepareClientPanel ();
 
     /**
      * Closes the client.

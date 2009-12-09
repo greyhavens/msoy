@@ -4,10 +4,16 @@
 package client.frame;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Element;
+import com.google.gwt.user.client.ui.Panel;
 
+import com.threerings.gwt.util.CookieUtil;
 import com.threerings.gwt.util.StringUtil;
+
 import com.threerings.msoy.data.all.LaunchConfig;
 import com.threerings.msoy.web.gwt.Args;
+import com.threerings.msoy.web.gwt.ConnectConfig;
+import com.threerings.msoy.web.gwt.CookieNames;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.SessionData;
 import com.threerings.msoy.web.gwt.WebUserService;
@@ -15,6 +21,7 @@ import com.threerings.msoy.web.gwt.WebUserServiceAsync;
 
 import client.shell.CShell;
 import client.shell.Session;
+import client.util.FlashClients;
 import client.util.InfoCallback;
 
 /**
@@ -36,15 +43,25 @@ public class WorldNav
     }
 
     /**
+     * Provides the panel for the world client.
+     */
+    public interface PanelProvider
+    {
+        /**
+         * Prepares, creates or gets a panel to embed the world client in.
+         */
+        Panel get ();
+    }
+
+    /**
      * Creates a new world navigator.
      * @param provider the panel provider we use to embed the flash movie
      * @param listener receives basic feedback about our navigation
      */
-    public WorldNav (WorldClient.PanelProvider provider, Listener listener)
+    public WorldNav (PanelProvider provider, Listener listener)
     {
         _provider = provider;
         _listener = listener;
-        _client = new WorldClient();
 
         configureCallbacks();
 
@@ -52,7 +69,9 @@ public class WorldNav
             @Override public void didLogon (SessionData data) {
                 // update the world client to relogin (this will NOOP if we're logging in now
                 // because Flash just told us to do so)
-                _client.didLogon(data.creds);
+                if (_flashPanel != null) {
+                    nativeLogon(findClient(), data.creds.getMemberId(), data.creds.token);
+                }
             }
 
             @Override public void didLogoff () {
@@ -103,7 +122,8 @@ public class WorldNav
      */
     public void setMinimized (boolean minimized)
     {
-        _client.setMinimized(minimized);
+        _minimized = minimized;
+        nativeMinimized(findClient(), minimized);
     }
 
     /**
@@ -119,7 +139,7 @@ public class WorldNav
      */
     public void reload ()
     {
-        _client.rebootFlash(_provider);
+        displayClient(_flashArgs, true);
     }
 
     /**
@@ -129,7 +149,7 @@ public class WorldNav
      */
     public void contentChanged (Pages page, String token)
     {
-        _client.contentRequested(page, token);
+        // no need to pass this along right now
     }
 
     /**
@@ -139,7 +159,7 @@ public class WorldNav
      */
     public void contentReady (Pages page, String token)
     {
-        _client.contentPageReady(page, token);
+        nativeSetPage(findClient(), page.name(), token);
     }
 
     /**
@@ -147,7 +167,7 @@ public class WorldNav
      */
     public void contentCleared ()
     {
-        _client.contentCleared();
+        nativeSetPage(findClient(), null, null);
     }
 
     /**
@@ -165,7 +185,7 @@ public class WorldNav
      */
     public void willClose ()
     {
-        _client.clientWillClose();
+        unload();
         _args = null;
         _title = null;
     }
@@ -193,7 +213,7 @@ public class WorldNav
             // we're entering a chromeless facebook game (fbgame_gameId_fbid_fbtok)
             _facebookId = _args.get(2, "");
             _facebookSession = _args.get(3, "");
-            _client.setChromeless();
+            _chromeless = true;
             loadAndDisplayGame("p", _args.get(1, 0), 0, "", 0);
 
         } else if (action.equals("tour")) {
@@ -236,7 +256,7 @@ public class WorldNav
         _game = game;
 
         // finally actually display the client
-        _client.displayFlash(args, _provider);
+        displayClient(args, false);
 
         _listener.onClientDisplayed();
     }
@@ -256,7 +276,8 @@ public class WorldNav
                                String token, final int otherId2)
     {
         // configure our world client with a default host and port in case we're first to the party
-        _client.setDefaultServer(config.groupServer, config.groupPort);
+        _defaultHost = config.groupServer;
+        _defaultPort = config.groupPort;
 
         // sanitize our token
         token = StringUtil.getOr(token, "");
@@ -299,6 +320,76 @@ public class WorldNav
         }
     }
 
+    protected void displayClient (String flashArgs, final boolean forceRestart)
+    {
+        // if we have not yet determined our default server, find that out now
+        if (_defaultHost == null) {
+            final String savedArgs = flashArgs;
+            _usersvc.getConnectConfig(new InfoCallback<ConnectConfig>() {
+                public void onSuccess (ConnectConfig config) {
+                    _defaultHost = config.server;
+                    _defaultPort = config.port;
+                    displayClient(savedArgs, forceRestart);
+                }
+            });
+            return;
+        }
+
+        // TODO: is this necessary anymore? the old comment is not correct
+        // if we're currently already displaying exactly what we've been asked to display; then
+        // stop here because we're just restoring our client after closing a GWT page
+        if (flashArgs.equals(_flashArgs)) {
+            return;
+        }
+
+        // create our client if necessary
+        if (!forceRestart && _flashPanel != null && nativeGo(findClient(), flashArgs)) {
+            _flashArgs = flashArgs; // note our new current flash args
+            setMinimized(false); // TODO: why is this here?
+
+        } else {
+            // flash is not resolved or it's hosed, create or recreate the client
+            unload(); // clear our clients if we have any
+
+            _flashPanel = _provider.get();
+            _flashArgs = flashArgs;
+
+            // augment the arguments with things that are only relevant to the initial embed, i.e. not
+            // logically part of the location of the client
+            if (flashArgs.indexOf("&host") == -1) {
+                flashArgs += "&host=" + _defaultHost;
+            }
+            if (flashArgs.indexOf("&port") == -1) {
+                flashArgs += "&port=" + _defaultPort;
+            }
+            if (CShell.getAuthToken() != null) {
+                flashArgs += "&token=" + CShell.getAuthToken();
+            }
+            if (_minimized) {
+                flashArgs += "&minimized=t";
+            }
+            if (_chromeless) {
+                flashArgs += "&chromeless=true";
+            }
+            String affstr = CookieUtil.get(CookieNames.AFFILIATE);
+            if (!StringUtil.isBlank(affstr)) {
+                flashArgs += "&aff=" + affstr;
+            }
+
+            _flashPanel.clear();
+            FlashClients.embedWorldClient(_flashPanel, flashArgs);
+        }
+    }
+
+    protected void unload ()
+    {
+        if (_flashPanel != null) {
+            nativeUnload(findClient());
+            _flashArgs = null;
+            _flashPanel = null;
+        }
+    }
+
     protected String getFacebookId ()
     {
         return _facebookId;
@@ -314,6 +405,11 @@ public class WorldNav
         // the server has created a permaguest account for us via flash, store the cookies
         CShell.log("Got permaguest info from flash", "name", name, "token", token);
         Session.conveyLoginFromFlash(token);
+    }
+
+    protected Element findClient ()
+    {
+        return FlashClients.findClient();
     }
 
     protected native void configureCallbacks () /*-{
@@ -333,13 +429,54 @@ public class WorldNav
         }
     }-*/;
 
-    protected WorldClient _client;
-    protected WorldClient.PanelProvider _provider;
+    protected native boolean nativeGo (Element client, String where) /*-{
+        if (client) {
+            try { return client.clientGo(where); } catch (e) {}
+        }
+        return false;
+    }-*/;
+
+    protected static native void nativeLogon (Element client, int memberId, String token) /*-{
+        if (client) {
+            try { client.clientLogon(memberId, token); } catch (e) {}
+        }
+    }-*/;
+
+    protected static native void nativeUnload (Element client) /*-{
+        if (client) {
+            try { client.onUnload(); } catch (e) {}
+        }
+    }-*/;
+
+    protected static native void nativeMinimized (Element client, boolean mini) /*-{
+        if (client) {
+            try { client.setMinimized(mini); } catch (e) {}
+        }
+    }-*/;
+
+    protected static native void nativeSetPage (Element client, String page, String token) /*-{
+        if (client) {
+            try { client.setPage(page, token); } catch (e) {}
+        }
+    }-*/;
+
+    protected PanelProvider _provider;
     protected Listener _listener;
     protected Args _args;
     protected String _title;
     protected LaunchConfig _game;
     protected String _facebookId, _facebookSession;
+
+    protected String _flashArgs;
+    protected Panel  _flashPanel;
+    protected boolean _minimized;
+
+    /** Whether or not the client is in chromeless mode. */
+    protected boolean _chromeless;
+
+    /** Our default world server host and port. Configured the first time Flash is used. */
+    protected String _defaultHost;
+    protected int _defaultPort;
 
     protected static final WebUserServiceAsync _usersvc = GWT.create(WebUserService.class);
 }

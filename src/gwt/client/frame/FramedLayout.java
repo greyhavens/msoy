@@ -64,17 +64,13 @@ public class FramedLayout extends Layout
     }
 
     @Override // from Layout
-    public WorldClient.PanelProvider getClientProvider ()
+    public Panel prepareClientPanel ()
     {
-        return new WorldClient.PanelProvider() {
-            public Panel get () {
-                closeClient();
-                _client.setHeight((_content.getWidget() == null ?  CLIENT_HEIGHT :
-                    CLIENT_MINIMIZED_HEIGHT) + "px");
-                updateMainContentHeight();
-                return _client;
-            }
-        };
+        closeClient();
+        _client.setHeight((_content.getWidget() == null ?  CLIENT_HEIGHT :
+            CLIENT_MINIMIZED_HEIGHT) + "px");
+        updateMainContentHeight();
+        return _client;
     }
 
     @Override // from Layout
