@@ -91,17 +91,6 @@ public class FramedLayout extends Layout
     }
 
     @Override // from Layout
-    protected void init (FrameHeader header, ClickHandler onGoHome)
-    {
-        super.init(header, onGoHome);
-        RootPanel.get().addStyleName("framedPage");
-        _client = new SimplePanel();
-        _bar = new SimplePanel();
-        _content = new SimplePanel();
-        addPanels(RootPanel.get(PAGE));
-    }
-
-    @Override // from Layout
     public boolean usesFramedTitleBar ()
     {
         return true;
@@ -111,6 +100,17 @@ public class FramedLayout extends Layout
     public void updateTitleBarHeight ()
     {
         // not supported
+    }
+
+    @Override // from Layout
+    protected void init (FrameHeader header, ClickHandler onGoHome)
+    {
+        super.init(header, onGoHome);
+        RootPanel.get().addStyleName("framedPage");
+        _client = new SimplePanel();
+        _bar = new SimplePanel();
+        _content = new SimplePanel();
+        addPanels(RootPanel.get(PAGE));
     }
 
     /**

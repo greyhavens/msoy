@@ -29,8 +29,7 @@ public abstract class TitleBar
             return new FacebookTitleBar();
         }
 
-        StandardTitleBar titleBar = new StandardTitleBar(tab, onClose, layout.usesFramedTitleBar());
-        return titleBar;
+        return new StandardTitleBar(tab, onClose, layout.usesFramedTitleBar());
     }
 
     /**

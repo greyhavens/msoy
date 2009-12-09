@@ -23,12 +23,9 @@ public abstract class Layout
         Layout layout = null;
         if (clientMode.isFacebookGames()) {
             // TODO: rename FacebookLayout -> FacebookGamesPortalLayout or something
-            layout = new FacebookLayout();
+            layout = new FacebookGamesLayout();
         } else if (clientMode.isFacebookRooms()) {
-            layout = new FacebookLayout() {
-                @Override public void setBottomContent (Widget content) {
-                }
-            };
+            layout = new FacebookRoomsLayout();
         } else if (isInnerFrame) {
             layout = new FramedLayout();
         } else {
