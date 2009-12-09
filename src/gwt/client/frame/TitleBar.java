@@ -25,8 +25,8 @@ public abstract class TitleBar
      */
     public static TitleBar create (Layout layout, Tabs tab, ClickHandler onClose)
     {
-        if (layout instanceof FacebookLayout) {
-            return new FacebookTitleBar();
+        if (layout instanceof FacebookGamesLayout) {
+            return new FacebookGamesTitleBar();
         }
 
         return new StandardTitleBar(tab, onClose, layout.usesFramedTitleBar());
@@ -41,10 +41,10 @@ public abstract class TitleBar
      */
     public static TitleBar createClient (Layout layout, LaunchConfig game)
     {
-        if (!(layout instanceof FacebookLayout) || game == null) {
+        if (!(layout instanceof FacebookGamesLayout) || game == null) {
             return null;
         }
-        return new FacebookTitleBar(game.name, game.gameId);
+        return new FacebookGamesTitleBar(game.name, game.gameId);
     }
 
     /**

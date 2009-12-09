@@ -30,14 +30,14 @@ import client.util.Link;
  * Displays a page title and subnavigation at the top of the page content area for the facebook
  * portal.
  */
-public class FacebookTitleBar extends TitleBar
+public class FacebookGamesTitleBar extends TitleBar
 {
-    public FacebookTitleBar ()
+    public FacebookGamesTitleBar ()
     {
         this(null, 0);
     }
 
-    public FacebookTitleBar (String gameName, int gameId)
+    public FacebookGamesTitleBar (String gameName, int gameId)
     {
         _contents = new AbsoluteCSSPanel("fbpageTitle");
         _contents.add(MsoyUI.createFlowPanel("Logo"));
