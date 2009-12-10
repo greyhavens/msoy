@@ -39,7 +39,7 @@ public class FacebookGamesTitleBar extends TitleBar
 
     public FacebookGamesTitleBar (String gameName, int gameId)
     {
-        _contents = new AbsoluteCSSPanel("fbpageTitle");
+        _contents = new AbsoluteCSSPanel("fbGamesTitle");
         _contents.add(MsoyUI.createFlowPanel("Logo"));
         _contents.add(button("Games", Pages.GAMES));
         _contents.add(button("Invite", Pages.FACEBOOK, "invite"));

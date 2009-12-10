@@ -214,7 +214,6 @@
 
 /** Some adjustments when we're running in a framed layout. */
 .framedTitle {
-  background: #3581B2;
   width: 100%;
 }
 
@@ -222,95 +221,120 @@
   height: 100%;
 }
 
-.framedTitle .Close {
-  padding-bottom: 2px;
+
+/** Facebook rooms, a bit bigger with a logo on the left */
+.fbRoomsTitle {
+  height: 50px;
+  background: #3B5998;
 }
 
-/** Facebook page title (always in a framed layout). */
+.fbRoomsTitle .Logo {
+  width: 80px;
+  height: 50px;
+  background: url($fblogoUrl) no-repeat 5px 3px;
+}
 
-.fbpageTitle {
+.fbRoomsTitle .Title {
+  left: 85px;
+  top: 1px;
+  height: auto;
+  color: #fff;
+}
+
+.fbRoomsTitle .SubNavi {
+  left: 85px;
+  top: 27px;
+}
+
+.fbRoomsTitle .fbstatus {
+  right: 9px;
+  top: 11px;
+}
+
+/** Facebook games title, a completely independently styled title bar. */
+.fbGamesTitle {
   background: #3b5998;
   width: 100%;
 }
 
-.fbpageTitle[mode="normal"] {
+.fbGamesTitle[mode="normal"] {
   height: 53px;
 }
 
-.fbpageTitle[mode="challenge"] {
+.fbGamesTitle[mode="challenge"] {
   height: 66px;
 }
 
-.fbpageTitle .Logo {
+.fbGamesTitle .Logo {
   background: #3581B2;
   width: 80px;
   height: 53px;
   background: url(/images/facebook/logo.png) no-repeat 5px 5px;
 }
 
-.fbpageTitle .actionLabel, .fbpageTitle .gwt-Hyperlink {
+.fbGamesTitle .actionLabel, .fbGamesTitle .gwt-Hyperlink {
   height: 30px;
   top: 15px;
 }
 
-.fbpageTitle .Games {
+.fbGamesTitle .Games {
   background: url(/images/facebook/games_button.png) no-repeat;
   width: 79px;
   left: 97px;
 }
 
-.fbpageTitle .Games-up-hovering, .fbpageTitle .Games-down-hovering {
+.fbGamesTitle .Games-up-hovering, .fbGamesTitle .Games-down-hovering {
   background-position: 0 -30px;
 }
 
-.fbpageTitle .Invite {
+.fbGamesTitle .Invite {
   background: url(/images/facebook/invite_button.png) no-repeat;
   width: 149px;
   left: 180px;
 }
 
-.fbpageTitle .Invite-up-hovering, .fbpageTitle .Invite-down-hovering {
+.fbGamesTitle .Invite-up-hovering, .fbGamesTitle .Invite-down-hovering {
   background-position: 0 -30px;
 }
 
-.fbpageTitle .Fan {
+.fbGamesTitle .Fan {
   background: url(/images/facebook/fan_button.png) no-repeat;
   width: 142px;
   left: 333px;
 }
 
-.fbpageTitle .Fan-up-hovering, .fbpageTitle .Fan-down-hovering {
+.fbGamesTitle .Fan-up-hovering, .fbGamesTitle .Fan-down-hovering {
   background-position: 0 -30px;
 }
 
-.fbpageTitle > .Trophies {
+.fbGamesTitle > .Trophies {
   background: url(/images/facebook/trophies_button.png) no-repeat;
   width: 104px;
   left: 479px;
 }
 
-.fbpageTitle .Trophies-up-hovering, .fbpageTitle .Trophies-down-hovering {
+.fbGamesTitle .Trophies-up-hovering, .fbGamesTitle .Trophies-down-hovering {
   background-position: 0 -30px;
 }
 
-.fbpageTitle .Challenge {
+.fbGamesTitle .Challenge {
   top: 49px;
   width: 100%;
   text-align: center;
   font-size: 12px;
 }
 
-.fbpageTitle .Challenge a {
+.fbGamesTitle .Challenge a {
   color: white;
   font-weight: bold;
   text-decoration: none;
 }
 
-.fbpageTitle .Challenge a:hover {
+.fbGamesTitle .Challenge a:hover {
   text-decoration: underline;
 }
 
-.fbpageTitle .fbstatus {
+.fbGamesTitle .fbstatus {
   right: 9px;
   top: 13px;
 }

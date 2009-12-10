@@ -27,6 +27,8 @@ public abstract class TitleBar
     {
         if (layout instanceof FacebookGamesLayout) {
             return new FacebookGamesTitleBar();
+        } else if (layout instanceof FacebookRoomsLayout) {
+            return new FacebookRoomsTitleBar(tab, onClose);
         }
 
         return new StandardTitleBar(tab, onClose, layout.usesFramedTitleBar());
@@ -43,6 +45,8 @@ public abstract class TitleBar
     {
         if (!(layout instanceof FacebookGamesLayout) || game == null) {
             return null;
+        } else if (layout instanceof FacebookRoomsLayout) {
+            return new FacebookRoomsTitleBar(null, null);
         }
         return new FacebookGamesTitleBar(game.name, game.gameId);
     }
