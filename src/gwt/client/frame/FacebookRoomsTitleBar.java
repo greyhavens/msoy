@@ -21,6 +21,8 @@ public class FacebookRoomsTitleBar extends TitleBar
     public FacebookRoomsTitleBar (Tabs tab, ClickHandler onClose)
     {
         _tab = tab;
+        _onClose = onClose;
+
         _contents = new AbsoluteCSSPanel("pageTitle");
         _contents.addStyleName("framedTitle");
         _contents.addStyleName("fbRoomsTitle");
@@ -62,10 +64,19 @@ public class FacebookRoomsTitleBar extends TitleBar
         // TODO
     }
 
+    @Override // from TitleBar
+    public Widget createCloseBox ()
+    {
+        Widget closeBox = MsoyUI.createActionImage("/images/ui/close.png", _onClose);
+        closeBox.addStyleName("Close");
+        return MsoyUI.createFlowPanel("fbRoomsCloseBar", closeBox);
+    }
+
     protected Tabs _tab;
     protected AbsoluteCSSPanel _contents;
     protected SubNaviPanel _subnavi;
     protected Label _titleLabel;
+    protected ClickHandler _onClose;
 
     // TODO: temp
     protected static final String LOADING = "Loading...";

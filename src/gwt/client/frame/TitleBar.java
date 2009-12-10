@@ -84,6 +84,14 @@ public abstract class TitleBar
     public abstract void addContextLink (String label, Pages page, Args args, int position);
 
     /**
+     * Creates a widget containing a close box to be inserted somewhere else in the layout.
+     */
+    public Widget createCloseBox ()
+    {
+        return null;
+    }
+
+    /**
      * Returns true if the layout should give the title bar more room. Exactly what is meant by
      * more room is up to the layout. 
      */
