@@ -177,7 +177,7 @@ public class WorldNav
      */
     public String getToken ()
     {
-        return Pages.WORLD.makeToken(_args);
+        return _args == null ? null : Pages.WORLD.makeToken(_args);
     }
 
     /**
