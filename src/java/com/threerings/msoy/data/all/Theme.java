@@ -41,6 +41,9 @@ public class Theme extends SimpleStreamableObject
     /** Identifies the logo media. */
     public static final String LOGO_MEDIA = "logo";
 
+    /** Identifies the facebook logo media. */
+    public static final String FACEBOOK_LOGO_MEDIA = "facebook_logo";
+
     /** Identifies the nav button media. */
     public static final String NAV_MEDIA = "nav";
 
@@ -112,6 +115,14 @@ public class Theme extends SimpleStreamableObject
     }
 
     /**
+     * Returns this group's facebook logo, or the default.
+     */
+    public MediaDesc getFacebookLogo ()
+    {
+        return getDefaultThemeFacebookLogoMedia();
+    }
+
+    /**
      * Returns this group's nav button, or the default.
      */
     public MediaDesc getNavButton ()
@@ -161,6 +172,15 @@ public class Theme extends SimpleStreamableObject
     }
 
     /**
+     * Creates a default facebook logo for use with groups that have no facebook logo.
+     */
+    protected static MediaDesc getDefaultThemeFacebookLogoMedia ()
+    {
+        return new InternalMediaDesc(DEFAULT_FACEBOOK_LOGO_URL, MediaDesc.IMAGE_PNG,
+            Theme.FACEBOOK_LOGO_MEDIA, MediaDesc.HORIZONTALLY_CONSTRAINED);
+    }
+
+    /**
      * Creates a default nav button for use with groups that have none.
      */
     protected static MediaDesc getDefaultThemeNavButtonMedia ()
@@ -188,6 +208,7 @@ public class Theme extends SimpleStreamableObject
 
     /** The internal paths for various themable assets. */
     protected static final String DEFAULT_LOGO_URL = "/images/header/header_logo";
+    protected static final String DEFAULT_FACEBOOK_LOGO_URL = "/images/facebook/logo";
     protected static final String DEFAULT_NAV_URL = "/images/header/navi_button_bg";
     protected static final String DEFAULT_NAV_SEL_URL = "/images/header/navi_button_selected_bg";
 }

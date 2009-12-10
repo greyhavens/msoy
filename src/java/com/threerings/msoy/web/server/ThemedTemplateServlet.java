@@ -42,6 +42,7 @@ public class ThemedTemplateServlet extends DefaultServlet
 
         Map<String, Object> configuration = ImmutableMap.<String, Object>builder()
             .put("logoUrl", theme.getLogo().getMediaPath())
+            .put("fblogoUrl", theme.getFacebookLogo().getMediaPath())
             .put("navUrl", theme.getNavButton().getMediaPath())
             .put("navCol", cssColor(theme.navColor))
             .put("navSelUrl", theme.getNavSelButton().getMediaPath())
