@@ -176,7 +176,7 @@ public class Theme extends SimpleStreamableObject
      */
     protected static MediaDesc getDefaultThemeFacebookLogoMedia ()
     {
-        return new InternalMediaDesc(DEFAULT_FACEBOOK_LOGO_URL, MediaDesc.IMAGE_PNG,
+        return new InternalMediaDesc(DEFAULT_FACEBOOK_LOGO_URL, MediaMimeTypes.IMAGE_PNG,
             Theme.FACEBOOK_LOGO_MEDIA, MediaDesc.HORIZONTALLY_CONSTRAINED);
     }
 
