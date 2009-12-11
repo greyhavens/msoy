@@ -534,6 +534,7 @@ public class MediaDesc
     // from Object
     public function toString () :String
     {
+        // Note: stringToMD() above relies on this precise format.
         return hashToString(hash) + ":" + mimeType + ":" + constraint;
     }
 
