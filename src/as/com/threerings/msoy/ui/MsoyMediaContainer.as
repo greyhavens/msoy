@@ -27,6 +27,7 @@ import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.Prefs;
 
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaMimeTypes;
 import com.threerings.msoy.item.client.ExternalMediaUtil;
 import com.threerings.msoy.item.client.YouTubePlayer;
 import com.threerings.msoy.item.data.all.DefaultItemMediaDesc;
@@ -169,9 +170,9 @@ public class MsoyMediaContainer extends MediaContainer
 
     override protected function showNewMedia (url :String) :void
     {
-        switch (MediaDesc.suffixToMimeType(url)) {
-        case MediaDesc.VIDEO_FLASH:
-        case MediaDesc.EXTERNAL_YOUTUBE:
+        switch (MediaMimeTypes.suffixToMimeType(url)) {
+        case MediaMimeTypes.VIDEO_FLASH:
+        case MediaMimeTypes.EXTERNAL_YOUTUBE:
             setupVideo(url);
             break;
 
@@ -183,7 +184,7 @@ public class MsoyMediaContainer extends MediaContainer
 
     override protected function setupVideo (url :String) :void
     {
-        if (MediaDesc.suffixToMimeType(url) == MediaDesc.EXTERNAL_YOUTUBE) {
+        if (MediaMimeTypes.suffixToMimeType(url) == MediaMimeTypes.EXTERNAL_YOUTUBE) {
             var ytPlayer :YouTubePlayer = new YouTubePlayer();
             _media = createVideoUI(ytPlayer);
             addChildAt(_media, 0);
@@ -217,7 +218,7 @@ public class MsoyMediaContainer extends MediaContainer
     {
         var desc :MediaDesc;
         if (blockType != null) {
-            desc = new DefaultItemMediaDesc(MediaDesc.IMAGE_PNG, Item.FURNITURE, blockType);
+            desc = new DefaultItemMediaDesc(MediaMimeTypes.IMAGE_PNG, Item.FURNITURE, blockType);
         } else {
             desc = _desc;
         }

@@ -7,6 +7,7 @@ import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
 
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaMimeTypes;
 
 /**
  * Represents an avatar that's usable in the msoy system.
@@ -24,7 +25,8 @@ public class Avatar extends Item
      */
     public static function getDefaultMemberAvatarMedia () :MediaDesc
     {
-        return new DefaultItemMediaDesc(MediaDesc.APPLICATION_SHOCKWAVE_FLASH, AVATAR, "member");
+        return new DefaultItemMediaDesc(
+            MediaMimeTypes.APPLICATION_SHOCKWAVE_FLASH, AVATAR, "member");
     }
 
     /**
@@ -32,7 +34,8 @@ public class Avatar extends Item
      */
     public static function getDefaultGuestAvatarMedia () :MediaDesc
     {
-        return new DefaultItemMediaDesc(MediaDesc.APPLICATION_SHOCKWAVE_FLASH, AVATAR, "guest");
+        return new DefaultItemMediaDesc(
+            MediaMimeTypes.APPLICATION_SHOCKWAVE_FLASH, AVATAR, "guest");
     }
 
     public function Avatar ()

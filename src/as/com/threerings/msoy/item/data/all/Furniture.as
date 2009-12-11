@@ -7,6 +7,7 @@ import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
 
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaMimeTypes;
 
 /**
  * Represents a piece of furniture (any prop really) that a user can place into
@@ -31,7 +32,7 @@ public class Furniture extends Item
     public static function getTestingFurniMedia () :MediaDesc
     {
         return new DefaultItemMediaDesc(
-            MediaDesc.APPLICATION_SHOCKWAVE_FLASH, FURNITURE, "testing");
+            MediaMimeTypes.APPLICATION_SHOCKWAVE_FLASH, FURNITURE, "testing");
     }
 
     public function Furniture ()

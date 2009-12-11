@@ -13,6 +13,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaMimeTypes;
 import com.threerings.msoy.data.all.StaticMediaDesc;
 import com.threerings.msoy.web.gwt.Pages;
 
@@ -45,7 +46,7 @@ public class SceneUtil
         final int sceneId, MediaDesc snapshot, final SimplePanel container)
     {
         if (snapshot == null) {
-            snapshot = new StaticMediaDesc(MediaDesc.IMAGE_JPEG, "snapshot", "default");
+            snapshot = new StaticMediaDesc(MediaMimeTypes.IMAGE_JPEG, "snapshot", "default");
         }
 
         FlowPanel panel = new FlowPanel();

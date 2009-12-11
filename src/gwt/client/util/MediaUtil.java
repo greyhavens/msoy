@@ -8,6 +8,7 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaMimeTypes;
 import com.threerings.msoy.data.all.StaticMediaDesc;
 import com.threerings.msoy.web.gwt.SharedMediaUtil;
 
@@ -82,5 +83,5 @@ public class MediaUtil extends SharedMediaUtil
 
     // TODO: create a proper default image for media we don't know how to display
     protected static final MediaDesc UNKNOWN_DESC = new StaticMediaDesc(
-        MediaDesc.IMAGE_PNG, "document", "thumb", MediaDesc.HALF_VERTICALLY_CONSTRAINED);
+        MediaMimeTypes.IMAGE_PNG, "document", "thumb", MediaDesc.HALF_VERTICALLY_CONSTRAINED);
 }

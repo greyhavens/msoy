@@ -18,6 +18,7 @@ import com.samskivert.util.ArrayUtil;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaMimeTypes;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.StaticMediaDesc;
 import com.threerings.msoy.data.all.TagCodes;
@@ -247,5 +248,5 @@ public class GameInfoRecord extends PersistentRecord
     // AUTO-GENERATED: METHODS END
 
     protected static final MediaDesc DEFAULT_THUMB_MEDIA = new StaticMediaDesc(
-        MediaDesc.IMAGE_PNG, "game", "thumb", MediaDesc.HALF_VERTICALLY_CONSTRAINED); // TODO
+        MediaMimeTypes.IMAGE_PNG, "game", "thumb", MediaDesc.HALF_VERTICALLY_CONSTRAINED); // TODO
 }

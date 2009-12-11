@@ -109,7 +109,7 @@ public class LoaderServlet extends HttpServlet
 
         // TODO: if the background is a swf, we probably need to do some spayshul stuffz.
 
-        return MediaDesc.getMediaPath(backdrop.furniMediaHash, backdrop.furniMimeType, false);
+        return MediaDesc.getMediaPath(backdrop.furniMediaHash, backdrop.furniMimeType);
     }
 
     /**

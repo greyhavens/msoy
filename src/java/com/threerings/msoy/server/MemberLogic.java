@@ -84,6 +84,7 @@ import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaMimeTypes;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.NavItemData;
 import com.threerings.msoy.data.all.StaticMediaDesc;
@@ -770,7 +771,7 @@ public class MemberLogic
     {
         return new HomePageItem(HomePageItem.ACTION_GWT_PAGE,
             new GwtPageNavItemData(name, page.makeToken(), Args.compose(args).toToken()),
-            new StaticMediaDesc(MediaDesc.IMAGE_PNG, "icon", imagePath));
+            new StaticMediaDesc(MediaMimeTypes.IMAGE_PNG, "icon", imagePath));
     }
 
     protected HomePageItem makeGameItem (int gameId)
@@ -927,7 +928,7 @@ public class MemberLogic
     /** The whirled tour home page item. */
     protected static final HomePageItem EXPLORE_ITEM = new HomePageItem(
         HomePageItem.ACTION_EXPLORE, null, new StaticMediaDesc(
-            MediaDesc.IMAGE_PNG, "icon", "home_page_tour"));
+            MediaMimeTypes.IMAGE_PNG, "icon", "home_page_tour"));
 
     /** The number of slots we have in My Whired Places. */
     protected static final int MWP_COUNT = 9;

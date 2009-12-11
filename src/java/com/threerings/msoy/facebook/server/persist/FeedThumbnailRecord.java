@@ -37,7 +37,7 @@ public class FeedThumbnailRecord extends PersistentRecord
     public static final Function<FeedThumbnailRecord, String> TO_MEDIA_PATH =
         new Function<FeedThumbnailRecord, String>() {
         @Override public String apply (FeedThumbnailRecord thumb) {
-            return MediaDesc.getMediaPath(thumb.hash, thumb.mimeType, false);
+            return MediaDesc.getMediaPath(thumb.hash, thumb.mimeType);
         }
     };
 

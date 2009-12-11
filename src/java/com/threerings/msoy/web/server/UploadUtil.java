@@ -32,6 +32,7 @@ import com.google.common.collect.ImmutableMap;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaMimeTypes;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.server.ServerConfig;
 
@@ -294,8 +295,8 @@ public class UploadUtil
         throws IOException
     {
         // name it using the hash value and the suffix
-        String name = hash + MediaDesc.mimeTypeToSuffix(mimeType);
-        publishStream(input, null, name, MediaDesc.mimeTypeToString(mimeType), mimeType,
+        String name = hash + MediaMimeTypes.mimeTypeToSuffix(mimeType);
+        publishStream(input, null, name, MediaMimeTypes.mimeTypeToString(mimeType), mimeType,
             EXPIRES_2038);
     }
 
@@ -597,7 +598,7 @@ public class UploadUtil
         "png", BufferedImage.TYPE_INT_ARGB,
         "tiff", BufferedImage.TYPE_INT_ARGB);
 
-    protected static final byte THUMBNAIL_MIME_TYPE = MediaDesc.IMAGE_PNG;
+    protected static final byte THUMBNAIL_MIME_TYPE = MediaMimeTypes.IMAGE_PNG;
     protected static final String THUMBNAIL_IMAGE_FORMAT = "PNG";
 
     // Effectively 'never' expire date.

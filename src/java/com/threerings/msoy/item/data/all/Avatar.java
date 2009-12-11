@@ -4,6 +4,7 @@
 package com.threerings.msoy.item.data.all;
 
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaMimeTypes;
 
 /**
  * Represents an avatar that's usable in the msoy system.
@@ -35,7 +36,7 @@ public class Avatar extends Item
      */
     public static MediaDesc getDefaultMemberAvatarMedia ()
     {
-        return new DefaultItemMediaDesc(MediaDesc.APPLICATION_SHOCKWAVE_FLASH, AVATAR, "member");
+        return new DefaultItemMediaDesc(MediaMimeTypes.APPLICATION_SHOCKWAVE_FLASH, AVATAR, "member");
     }
 
     /**
@@ -43,7 +44,7 @@ public class Avatar extends Item
      */
     public static MediaDesc getDefaultGuestAvatarMedia ()
     {
-        return new DefaultItemMediaDesc(MediaDesc.APPLICATION_SHOCKWAVE_FLASH, AVATAR, "guest");
+        return new DefaultItemMediaDesc(MediaMimeTypes.APPLICATION_SHOCKWAVE_FLASH, AVATAR, "guest");
     }
 
     /**
@@ -51,7 +52,7 @@ public class Avatar extends Item
      */
     public static MediaDesc getStaticImageAvatarMedia ()
     {
-        return new DefaultItemMediaDesc(MediaDesc.IMAGE_PNG, AVATAR, "static");
+        return new DefaultItemMediaDesc(MediaMimeTypes.IMAGE_PNG, AVATAR, "static");
     }
 
     @Override // from Item

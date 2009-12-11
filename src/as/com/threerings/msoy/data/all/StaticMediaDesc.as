@@ -7,6 +7,7 @@ import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
 
 import com.threerings.msoy.client.DeploymentConfig;
+import com.threerings.msoy.data.all.MediaMimeTypes;
 
 /**
  * Provides a "faked" media descriptor for static media (default thumbnails and
@@ -27,7 +28,7 @@ public class StaticMediaDesc extends MediaDesc
     override public function getMediaPath () :String
     {
         return DeploymentConfig.staticMediaURL + _itemType + "/" + _mediaType +
-            mimeTypeToSuffix(mimeType);
+            MediaMimeTypes.mimeTypeToSuffix(mimeType);
     }
 
     // from MediaDesc

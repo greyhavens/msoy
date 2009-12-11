@@ -22,7 +22,7 @@ import org.semanticdesktop.aperture.mime.identifier.magic.MagicMimeTypeIdentifie
 import com.samskivert.io.StreamUtil;
 import com.samskivert.util.StringUtil;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaMimeTypes;
 
 /**
  * Wrap various file objects and provide useful methods for dealing with uploaded file data.
@@ -39,7 +39,7 @@ public abstract class UploadFile
      */
     public String getMimeTypeAsString ()
     {
-        return MediaDesc.mimeTypeToString(getMimeType());
+        return MediaMimeTypes.mimeTypeToString(getMimeType());
     }
 
     /**
@@ -104,8 +104,8 @@ public abstract class UploadFile
         byte mimeType;
 
         // try inferring the type from the file name
-        mimeType = MediaDesc.suffixToMimeType(getOriginalName());
-        if (mimeType != MediaDesc.INVALID_MIME_TYPE) {
+        mimeType = MediaMimeTypes.suffixToMimeType(getOriginalName());
+        if (mimeType != MediaMimeTypes.INVALID_MIME_TYPE) {
             return mimeType;
         }
 
@@ -116,7 +116,7 @@ public abstract class UploadFile
 
         // Read identifying bytes from the uploaded file
         if (getInputStream().read(firstBytes, 0, firstBytes.length) < firstBytes.length) {
-            return MediaDesc.INVALID_MIME_TYPE;
+            return MediaMimeTypes.INVALID_MIME_TYPE;
         }
 
         // Sufficient data was read, attempt magic identification
@@ -127,9 +127,9 @@ public abstract class UploadFile
             // and what types of files are being uploaded -- landonf (March 5, 2007)
             log.info("Magically determined unknown mime type [type=" + mimeString +
                      ", name=" + getOriginalName() + "].");
-            return MediaDesc.stringToMimeType(mimeString);
+            return MediaMimeTypes.stringToMimeType(mimeString);
         } else {
-            return MediaDesc.INVALID_MIME_TYPE;
+            return MediaMimeTypes.INVALID_MIME_TYPE;
         }
     }
 

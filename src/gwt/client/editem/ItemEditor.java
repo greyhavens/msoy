@@ -32,6 +32,7 @@ import com.threerings.gwt.util.StringUtil;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaMimeTypes;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.stuff.gwt.StuffService;
 import com.threerings.msoy.stuff.gwt.StuffServiceAsync;
@@ -837,7 +838,7 @@ public abstract class ItemEditor extends FlowPanel
             "&mediaId="+ URL.encodeComponent(mediaId) +
             "&auth=" + URL.encodeComponent(CShell.getAuthToken()) +
             "&noPickPhoto=true" + // suppress picking a photo from inventory, here
-            "&forceMimeType=" + MediaDesc.APPLICATION_ZIP_NOREMIX +
+            "&forceMimeType=" + MediaMimeTypes.APPLICATION_ZIP_NOREMIX +
             "&inject-image=" + URL.encodeComponent(image.getMediaPath());
         if (_item.getType() != Item.AVATAR) {
             flashVars += "&username=Tester";

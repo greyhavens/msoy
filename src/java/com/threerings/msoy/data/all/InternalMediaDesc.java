@@ -35,7 +35,7 @@ public class InternalMediaDesc extends MediaDesc
     @Override // from MediaDesc
     public String getMediaPath ()
     {
-        return DeploymentConfig.serverURL + _path + mimeTypeToSuffix(mimeType);
+        return DeploymentConfig.serverURL + _path + MediaMimeTypes.mimeTypeToSuffix(mimeType);
     }
 
     protected String _path;

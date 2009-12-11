@@ -16,6 +16,7 @@ import com.threerings.io.Streamable;
 import com.threerings.presents.dobj.DSet_Entry;
 
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaMimeTypes;
 
 /**
  * The base class for all digital items in the MSOY system.
@@ -191,7 +192,7 @@ public /*abstract*/ class Item
      */
     public static function getDefaultFurniMediaFor (itemType :int) :MediaDesc
     {
-        return new DefaultItemMediaDesc(MediaDesc.IMAGE_PNG, itemType, FURNI_MEDIA);
+        return new DefaultItemMediaDesc(MediaMimeTypes.IMAGE_PNG, itemType, FURNI_MEDIA);
     }
 
     /**
@@ -200,7 +201,7 @@ public /*abstract*/ class Item
      */
     public static function getDefaultThumbnailMediaFor (itemType :int) :MediaDesc
     {
-        return new DefaultItemMediaDesc(MediaDesc.IMAGE_PNG, itemType, THUMB_MEDIA);
+        return new DefaultItemMediaDesc(MediaMimeTypes.IMAGE_PNG, itemType, THUMB_MEDIA);
     }
 
     /**

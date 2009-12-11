@@ -8,6 +8,7 @@ import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.ui.TextBox;
 
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaMimeTypes;
 import com.threerings.msoy.item.data.all.Video;
 import com.threerings.msoy.item.data.all.Item;
 
@@ -121,7 +122,7 @@ public class VideoEditor extends BulkMediaEditor
         _youtubeIdBox.setEnabled(false);
         // once the full length has been reached, upload the file.
         String data = "id=" + URL.encodeComponent(youtubeId);
-        _stuffsvc.publishExternalMedia(data, MediaDesc.EXTERNAL_YOUTUBE,
+        _stuffsvc.publishExternalMedia(data, MediaMimeTypes.EXTERNAL_YOUTUBE,
             new InfoCallback<MediaDesc>() {
             public void onSuccess (MediaDesc desc) {
                 _video.videoMedia = desc;

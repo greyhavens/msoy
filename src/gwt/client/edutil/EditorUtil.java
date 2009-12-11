@@ -8,6 +8,7 @@ import com.google.gwt.user.client.ui.HasAlignment;
 
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaMimeTypes;
 
 import client.ui.MsoyUI;
 import client.util.MediaUploader;
@@ -204,7 +205,7 @@ public class EditorUtil
      */
     public static MediaDesc checkServerMedia (MediaDesc desc)
     {
-        if (desc != null && desc.mimeType != MediaDesc.COMPILED_ACTIONSCRIPT_LIBRARY) {
+        if (desc != null && desc.mimeType != MediaMimeTypes.COMPILED_ACTIONSCRIPT_LIBRARY) {
             throw new ConfigException(_msgs.errInvalidServerCode());
         }
         return desc;

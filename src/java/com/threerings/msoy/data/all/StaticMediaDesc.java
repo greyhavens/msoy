@@ -53,7 +53,7 @@ public class StaticMediaDesc extends MediaDesc
     public String getMediaPath ()
     {
         return DeploymentConfig.staticMediaURL + _itemType + "/" + _mediaType +
-            mimeTypeToSuffix(mimeType);
+            MediaMimeTypes.mimeTypeToSuffix(mimeType);
     }
 
     protected String _itemType;

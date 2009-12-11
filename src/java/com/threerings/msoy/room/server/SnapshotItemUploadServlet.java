@@ -13,7 +13,7 @@ import com.samskivert.io.StreamUtil;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaMimeTypes;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.Photo;
@@ -64,7 +64,7 @@ public class SnapshotItemUploadServlet extends AbstractSnapshotUploadServlet
             if (snapIdx != -1) {
                 MediaInfo info = mediaInfos.get(snapIdx);
                 out.println(DeploymentConfig.mediaURL +
-                    info.hash + MediaDesc.mimeTypeToSuffix(info.mimeType));
+                    info.hash + MediaMimeTypes.mimeTypeToSuffix(info.mimeType));
             }
         } finally {
             StreamUtil.close(out);

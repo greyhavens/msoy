@@ -4,6 +4,7 @@
 package com.threerings.msoy.item.data.all;
 
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaMimeTypes;
 
 /**
  * Represents a pet, which is just furniture, really.
@@ -33,7 +34,7 @@ public class Pet extends Item
      */
     public static MediaDesc getStaticImagePetMedia ()
     {
-        return new DefaultItemMediaDesc(MediaDesc.IMAGE_PNG, PET, "static");
+        return new DefaultItemMediaDesc(MediaMimeTypes.IMAGE_PNG, PET, "static");
     }
 
     @Override // from Item

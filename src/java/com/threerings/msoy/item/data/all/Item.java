@@ -11,6 +11,7 @@ import com.samskivert.util.ByteEnum;
 
 import com.threerings.io.Streamable;
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaMimeTypes;
 import com.threerings.presents.dobj.DSet;
 
 /**
@@ -226,7 +227,7 @@ public abstract class Item implements Comparable<Item>, Streamable, IsSerializab
      */
     public static MediaDesc getDefaultFurniMediaFor (byte itemType)
     {
-        return new DefaultItemMediaDesc(MediaDesc.IMAGE_PNG, itemType, FURNI_MEDIA);
+        return new DefaultItemMediaDesc(MediaMimeTypes.IMAGE_PNG, itemType, FURNI_MEDIA);
     }
 
     /**
@@ -235,7 +236,7 @@ public abstract class Item implements Comparable<Item>, Streamable, IsSerializab
      */
     public static MediaDesc getDefaultThumbnailMediaFor (byte itemType)
     {
-        return new DefaultItemMediaDesc(MediaDesc.IMAGE_PNG, itemType, THUMB_MEDIA,
+        return new DefaultItemMediaDesc(MediaMimeTypes.IMAGE_PNG, itemType, THUMB_MEDIA,
                                         MediaDesc.HALF_VERTICALLY_CONSTRAINED);
     }
 

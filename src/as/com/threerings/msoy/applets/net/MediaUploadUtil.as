@@ -12,6 +12,7 @@ import flash.utils.ByteArray;
 import com.threerings.msoy.client.DeploymentConfig;
 
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaMimeTypes;
 
 public class MediaUploadUtil
 {
@@ -35,8 +36,8 @@ public class MediaUploadUtil
         request.method = URLRequestMethod.POST;
 
         if (mediaIds != null) {
-            const mimeType :String = MediaDesc.mimeTypeToString(
-                MediaDesc.suffixToMimeType(filename));
+            const mimeType :String = MediaMimeTypes.mimeTypeToString(
+                MediaMimeTypes.suffixToMimeType(filename));
             var body :ByteArray = new ByteArray();
             body.writeUTFBytes("\r\n--" + BOUNDARY + "\r\n" +
                 "Content-Disposition: form-data; name=\"client\"\r\n\r\n" +

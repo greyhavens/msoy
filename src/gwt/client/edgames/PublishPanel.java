@@ -12,6 +12,7 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.util.DateUtil;
 
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaMimeTypes;
 import com.threerings.msoy.edgame.gwt.EditGameService;
 import com.threerings.msoy.edgame.gwt.EditGameServiceAsync;
 import com.threerings.msoy.edgame.gwt.GameCode;
@@ -80,7 +81,7 @@ public class PublishPanel extends SmartTable
     {
         return (desc == null) ? "" :
             MediaDesc.hashToString(desc.hash).substring(0, 30) + ".." +
-            MediaDesc.mimeTypeToSuffix(desc.mimeType);
+            MediaMimeTypes.mimeTypeToSuffix(desc.mimeType);
     }
 
     protected int _dataRow;

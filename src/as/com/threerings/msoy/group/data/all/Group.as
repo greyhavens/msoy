@@ -4,6 +4,8 @@
 package com.threerings.msoy.group.data.all {
 
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescBase;
+import com.threerings.msoy.data.all.MediaMimeTypes;
 import com.threerings.msoy.data.all.StaticMediaDesc;
 
 /**
@@ -25,7 +27,7 @@ public class Group
      */
     public static function getDefaultGroupLogoMedia () :MediaDesc
     {
-        return new StaticMediaDesc(MediaDesc.IMAGE_PNG, "photo", "group_logo",
+        return new StaticMediaDesc(MediaMimeTypes.IMAGE_PNG, "photo", "group_logo",
             MediaDesc.HALF_VERTICALLY_CONSTRAINED);
     }
 }

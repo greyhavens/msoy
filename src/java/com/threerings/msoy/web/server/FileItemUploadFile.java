@@ -8,7 +8,7 @@ import java.io.InputStream;
 
 import org.apache.commons.fileupload.FileItem;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaMimeTypes;
 
 public class FileItemUploadFile extends UploadFile
 {
@@ -30,8 +30,8 @@ public class FileItemUploadFile extends UploadFile
     public byte getMimeType ()
     {
         // look up the mime type from the item content type first
-        byte mimeType = MediaDesc.stringToMimeType(_item.getContentType());
-        if (mimeType != MediaDesc.INVALID_MIME_TYPE) {
+        byte mimeType = MediaMimeTypes.stringToMimeType(_item.getContentType());
+        if (mimeType != MediaMimeTypes.INVALID_MIME_TYPE) {
             return mimeType;
         }
         return _detectedMimeType;

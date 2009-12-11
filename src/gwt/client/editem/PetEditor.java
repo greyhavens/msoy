@@ -6,6 +6,7 @@ package client.editem;
 import com.google.gwt.core.client.GWT;
 
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaMimeTypes;
 import com.threerings.msoy.data.all.StaticMediaDesc;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.Pet;
@@ -37,7 +38,7 @@ public class PetEditor extends ItemEditor
                 public String updateMedia (String name, MediaDesc desc, int width, int height) {
                     if (desc.isImage()) {
                         promptEasyItem(Item.FURNI_MEDIA,
-                            new StaticMediaDesc(MediaDesc.APPLICATION_ZIP, "pet", "easy-proto"),
+                            new StaticMediaDesc(MediaMimeTypes.APPLICATION_ZIP, "pet", "easy-proto"),
                             desc, _emsgs.makeEasyPet(), _emsgs.makeEasyPetDetails());
                         return SUPPRESS_ERROR;
                     }

@@ -11,6 +11,7 @@ import org.apache.commons.fileupload.FileUploadException;
 import com.google.inject.Inject;
 
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaMimeTypes;
 import com.threerings.msoy.person.gwt.FeedMessageType;
 import com.threerings.msoy.person.server.FeedLogic;
 import com.threerings.msoy.server.persist.MemberRecord;
@@ -75,7 +76,7 @@ public class SceneThumbnailUploadServlet extends AbstractSnapshotUploadServlet
         UploadFile uploadFile = new SnapshotUploadFile(ctx.file, sceneId);
 
         // some sanity checks
-        if (!MediaDesc.isImage(uploadFile.getMimeType())) {
+        if (!MediaMimeTypes.isImage(uploadFile.getMimeType())) {
             throw new FileUploadException("Received snapshot file that is not an image [type=" +
                                           uploadFile.getMimeType() + "].");
         } else {

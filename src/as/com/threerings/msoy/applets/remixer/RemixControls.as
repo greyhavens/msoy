@@ -42,6 +42,8 @@ import com.threerings.msoy.client.MsoyLogConfig;
 
 import com.threerings.msoy.data.UberClientModes;
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaMimeTypes;
+import com.threerings.msoy.data.all.MediaMimeTypes;
 import com.threerings.msoy.utils.UberClientLoader;
 
 /**
@@ -433,8 +435,8 @@ public class RemixControls extends HBox
 
             for (var mediaId :String in result) {
                 var data :Object = result[mediaId];
-                var mimeType :int = (forcedType == MediaDesc.INVALID_MIME_TYPE) ? data.mimeType
-                                                                                : forcedType;
+                var mimeType :int = (forcedType == MediaMimeTypes.INVALID_MIME_TYPE) ?
+                    data.mimeType : forcedType;
                 ExternalInterface.call("setHash", mediaId, "", data.hash, mimeType,
                     data.constraint, data.width, data.height);
             }

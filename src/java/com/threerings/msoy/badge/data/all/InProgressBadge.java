@@ -5,6 +5,7 @@ package com.threerings.msoy.badge.data.all;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaMimeTypes;
 import com.threerings.msoy.data.all.NavItemData;
 import com.threerings.msoy.data.all.StaticMediaDesc;
 
@@ -38,7 +39,7 @@ public class InProgressBadge extends Badge
     // TODO: can this become abstract in Badge and replace Badge.imageUrl?
     public MediaDesc imageMedia ()
     {
-        return new StaticMediaDesc(MediaDesc.IMAGE_PNG, "badge", getImageFilename());
+        return new StaticMediaDesc(MediaMimeTypes.IMAGE_PNG, "badge", getImageFilename());
     }
 
     public String toString ()

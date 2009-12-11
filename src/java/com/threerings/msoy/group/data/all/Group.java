@@ -13,6 +13,7 @@ import com.threerings.io.Streamable;
 
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaMimeTypes;
 import com.threerings.msoy.data.all.StaticMediaDesc;
 import com.threerings.msoy.fora.gwt.ForumThread;
 import com.threerings.msoy.group.data.all.GroupMembership.Rank;
@@ -140,7 +141,7 @@ public class Group
      */
     public static MediaDesc getDefaultGroupLogoMedia ()
     {
-        return new StaticMediaDesc(MediaDesc.IMAGE_PNG, "photo", "group_logo",
+        return new StaticMediaDesc(MediaMimeTypes.IMAGE_PNG, "photo", "group_logo",
                                    // we know that we're 66x60
                                    MediaDesc.HALF_VERTICALLY_CONSTRAINED);
     }

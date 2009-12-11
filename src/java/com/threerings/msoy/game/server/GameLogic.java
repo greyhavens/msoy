@@ -18,7 +18,7 @@ import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.presents.server.InvocationException;
 
 import com.threerings.msoy.data.all.LaunchConfig;
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaMimeTypes;
 import com.threerings.msoy.edgame.gwt.GameCode;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.MemberRepository;
@@ -90,11 +90,11 @@ public class GameLogic
         }
 
         switch (code.clientMedia.mimeType) {
-        case MediaDesc.APPLICATION_SHOCKWAVE_FLASH:
+        case MediaMimeTypes.APPLICATION_SHOCKWAVE_FLASH:
             config.type = game.isAVRG ?
                 LaunchConfig.FLASH_IN_WORLD : LaunchConfig.FLASH_LOBBIED;
             break;
-        case MediaDesc.APPLICATION_JAVA_ARCHIVE:
+        case MediaMimeTypes.APPLICATION_JAVA_ARCHIVE:
             // ignore maxSeats in the case of a party game - always display a lobby
             config.type = (!match.isPartyGame && match.maxSeats == 1) ?
                 LaunchConfig.JAVA_SOLO : LaunchConfig.JAVA_FLASH_LOBBIED;
@@ -106,7 +106,7 @@ public class GameLogic
         }
 
         // we have to proxy game jar files through the game server due to the applet sandbox
-        config.clientMediaPath = (code.clientMedia.mimeType == MediaDesc.APPLICATION_JAVA_ARCHIVE) ?
+        config.clientMediaPath = (code.clientMedia.mimeType == MediaMimeTypes.APPLICATION_JAVA_ARCHIVE) ?
             code.clientMedia.getProxyMediaPath() : code.clientMedia.getMediaPath();
         config.name = game.name;
         config.httpPort = ServerConfig.httpPort;

@@ -4,6 +4,7 @@
 package com.threerings.msoy.badge.data.all;
 
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaMimeTypes;
 import com.threerings.msoy.data.all.StaticMediaDesc;
 
 public class EarnedBadge extends Badge
@@ -38,7 +39,7 @@ public class EarnedBadge extends Badge
 
     public static MediaDesc getImageMedia (int badgeCode, int level)
     {
-        return new StaticMediaDesc(MediaDesc.IMAGE_PNG, "badge",
+        return new StaticMediaDesc(MediaMimeTypes.IMAGE_PNG, "badge",
             Integer.toHexString(badgeCode) + "_" + level + "f");
     }
 

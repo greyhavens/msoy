@@ -14,7 +14,7 @@ import com.google.common.collect.Lists;
 
 import com.samskivert.io.StreamUtil;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaMimeTypes;
 import com.threerings.msoy.item.data.all.Item;
 
 import com.threerings.msoy.web.server.AbstractUploadServlet;
@@ -57,7 +57,7 @@ public class ItemMediaUploadServlet extends AbstractUploadServlet
         // check the file size now that we know mimetype,
         // or freak out if we still don't know the mimetype.
         byte mimeType = uploadFile.getMimeType();
-        if (mimeType == MediaDesc.INVALID_MIME_TYPE) {
+        if (mimeType == MediaMimeTypes.INVALID_MIME_TYPE) {
             throw new FileUploadException("Received upload of unknown mime type [type=" +
                 ctx.file.getContentType() + ", name=" + ctx.file.getName() + "].");
         }
@@ -69,7 +69,7 @@ public class ItemMediaUploadServlet extends AbstractUploadServlet
         List<MediaInfo> mediaInfos = Lists.newArrayList();
 
         // if this is an image...
-        if (MediaDesc.isImage(mimeType)) {
+        if (MediaMimeTypes.isImage(mimeType)) {
             // ...determine its constraints, generate a thumbnail, and publish the data into the
             // media store
             String mainMediaId = mediaIds.get(0);
@@ -168,16 +168,16 @@ public class ItemMediaUploadServlet extends AbstractUploadServlet
     {
         long limit;
         switch (mimeType) {
-        case MediaDesc.AUDIO_MPEG:
-        case MediaDesc.VIDEO_FLASH:
-        case MediaDesc.VIDEO_MPEG:
-        case MediaDesc.VIDEO_QUICKTIME:
-        case MediaDesc.VIDEO_MSVIDEO:
-        case MediaDesc.APPLICATION_ZIP:
+        case MediaMimeTypes.AUDIO_MPEG:
+        case MediaMimeTypes.VIDEO_FLASH:
+        case MediaMimeTypes.VIDEO_MPEG:
+        case MediaMimeTypes.VIDEO_QUICKTIME:
+        case MediaMimeTypes.VIDEO_MSVIDEO:
+        case MediaMimeTypes.APPLICATION_ZIP:
             limit = LARGE_MEDIA_MAX_SIZE;
             break;
 
-        case MediaDesc.APPLICATION_SHOCKWAVE_FLASH:
+        case MediaMimeTypes.APPLICATION_SHOCKWAVE_FLASH:
             limit = MEDIUM_MEDIA_MAX_SIZE;
             break;
 

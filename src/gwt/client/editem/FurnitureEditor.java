@@ -6,7 +6,7 @@ package client.editem;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.TextBox;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaMimeTypes;
 import com.threerings.msoy.item.data.all.Furniture;
 import com.threerings.msoy.item.data.all.Item;
 
@@ -55,7 +55,7 @@ public class FurnitureEditor extends ItemEditor
 
         if (Item.FURNI_MEDIA.equals(id)) {
             maybeSetNameFromFilename(filename);
-            if ( MediaDesc.isImage((byte)mimeType)) {
+            if ( MediaMimeTypes.isImage((byte)mimeType)) {
                 _hotSpotX.setText("" + (width/2));
                 _hotSpotY.setText("" + height);
             }

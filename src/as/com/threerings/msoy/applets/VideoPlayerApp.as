@@ -18,6 +18,7 @@ import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.ui.MsoyVideoDisplay;
 
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaMimeTypes;
 import com.threerings.msoy.item.client.ExternalMediaDisplayer;
 import com.threerings.msoy.item.client.ExternalMediaUtil;
 import com.threerings.msoy.item.client.YouTubePlayer;
@@ -68,18 +69,18 @@ public class VideoPlayerApp extends Sprite
         const url :String = String(params["video"]);
 
         // see if it's FLV or youtube
-        switch (MediaDesc.suffixToMimeType(url)) {
+        switch (MediaMimeTypes.suffixToMimeType(url)) {
         default:
             trace("VideoPlayer: unrecognized url: " + url);
             return;
 
-        case MediaDesc.VIDEO_FLASH:
+        case MediaMimeTypes.VIDEO_FLASH:
             var flvPlayer :FlvVideoPlayer = new FlvVideoPlayer();
             addPlayer(flvPlayer);
             flvPlayer.load(url);
             break;
 
-        case MediaDesc.EXTERNAL_YOUTUBE:
+        case MediaMimeTypes.EXTERNAL_YOUTUBE:
             // we act like an ExternalMediaDisplayer ourselves, so that we can access the id
             // when it's available
             ExternalMediaUtil.fetch(url, this);
