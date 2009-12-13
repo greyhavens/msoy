@@ -239,8 +239,8 @@ public class FrameEntryPoint
 
         Pages curPage = _nav.getPage(FrameId.MAIN);
 
-        // MDB removed data.originatedInFlash for some presumably enlightened reason in 2/08, then
-        // added the isHeaderless() check below in 6/08... the two together cause permaguests
+        // MDB removed data.originatedInFlash for some presumably enlightened reason in 2/09, then
+        // added the isHeaderless() check below in 6/09... the two together cause permaguests
         // going into a game to redirect to #world-places. So... to fix it, kludgily just don't do
         // any redirects if we are currently on the world page.
         // TODO: make this more robust, are there any other conditions where a login would occur
