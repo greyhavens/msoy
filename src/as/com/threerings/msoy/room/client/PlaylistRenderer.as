@@ -10,7 +10,7 @@ import mx.controls.Label;
 import mx.controls.scrollClasses.ScrollBar;
 
 import com.threerings.util.CommandEvent;
-import com.threerings.util.ValueEvent;
+import com.threerings.util.NamedValueEvent;
 
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.FlexUtil;
@@ -118,14 +118,12 @@ public class PlaylistRenderer extends HBox
         _removeBtn.enabled = false;
     }
 
-    protected function handleBleepChange (event :ValueEvent) :void
+    protected function handleBleepChange (event :NamedValueEvent) :void
     {
         var audio :Audio = Audio(data);
-        if (audio != null && audio.audioMedia.isBleepable()) {
-            const id :String = String(event.value[0]);
-            if (id == Prefs.GLOBAL_BLEEP || id == audio.audioMedia.getMediaId()) {
-                updateName();
-            }
+        if (audio != null && audio.audioMedia.isBleepable() &&
+                (event.name == Prefs.GLOBAL_BLEEP || event.name == audio.audioMedia.getMediaId())) {
+            updateName();
         }
     }
 

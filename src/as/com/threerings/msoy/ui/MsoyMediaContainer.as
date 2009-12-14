@@ -14,8 +14,8 @@ import mx.core.ISWFBridgeProvider;
 
 import mx.events.SWFBridgeEvent;
 
+import com.threerings.util.NamedValueEvent;
 import com.threerings.util.Util;
-import com.threerings.util.ValueEvent;
 
 import com.threerings.media.MediaContainer;
 import com.threerings.ui.MenuUtil;
@@ -228,13 +228,11 @@ public class MsoyMediaContainer extends MediaContainer
     /**
      * Called when a piece of media is bleeped or unbleeped.
      */
-    protected function handleBleepChange (event :ValueEvent) :void
+    protected function handleBleepChange (event :NamedValueEvent) :void
     {
-        if (isBleepable()) {
-            const id :String = String(event.value[0]);
-            if (id == Prefs.GLOBAL_BLEEP || id == _desc.getMediaId()) {
-                checkBlocked();
-            }
+        if (isBleepable() &&
+                (event.name == Prefs.GLOBAL_BLEEP || event.name == _desc.getMediaId())) {
+            checkBlocked();
         }
     }
 

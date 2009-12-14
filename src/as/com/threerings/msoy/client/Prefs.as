@@ -11,26 +11,26 @@ import flash.media.SoundTransform;
 import com.threerings.util.Config;
 import com.threerings.util.NamedValueEvent;
 import com.threerings.util.StringUtil;
-import com.threerings.util.ValueEvent;
 
 /**
  * Dispatched when a piece of media is bleeped or unbleeped.
  * This is dispatched on the 'events' object.
  *
  * @eventType com.threerings.msoy.client.Prefs.BLEEPED_MEDIA;
- * arg: [ mediaId (String), bleeped (Boolean) ]
- * mediaId may be the GLOBAL_BLEEP constant.
+ * name: mediaId (may be the GLOBAL_BLEEP constant)
+ * value: bleeped (Boolean)
  */
-[Event(name="bleepedMedia", type="com.threerings.util.ValueEvent")]
+[Event(name="bleepedMedia", type="com.threerings.util.NamedValueEvent")]
 
 /**
  * Dispatched when a tutorial id is ignored.
  * This is dispatched on the 'events' object.
  *
  * @eventType com.threerings.msoy.client.Prefs.IGNORED_TUTORIAL_IDS;
- * arg: [ tutorialItemId (String), ignored (Boolean) ]
+ * name: tutorialItemId
+ * value: ignored (Boolean)
  */
-[Event(name="ignoredTutIds", type="com.threerings.util.ValueEvent")]
+[Event(name="ignoredTutIds", type="com.threerings.util.NamedValueEvent")]
 
 /**
  * Dispatched when a preference is changed.
@@ -193,7 +193,7 @@ public class Prefs
     public static function setGlobalBleep (bleeped :Boolean) :void
     {
         _globalBleep = bleeped;
-        events.dispatchEvent(new ValueEvent(BLEEPED_MEDIA, [ GLOBAL_BLEEP, bleeped ]));
+        events.dispatchEvent(new NamedValueEvent(BLEEPED_MEDIA, GLOBAL_BLEEP, bleeped));
     }
 
     public static function isGlobalBleep () :Boolean
@@ -516,7 +516,7 @@ public class Prefs
 }
 
 import com.threerings.util.Config;
-import com.threerings.util.ValueEvent;
+import com.threerings.util.NamedValueEvent;
 import com.threerings.util.Util;
 
 import com.threerings.msoy.client.Prefs;
@@ -576,7 +576,7 @@ class StringSet
         }
 
         _config.setValue(_name, _contents, false); // don't flush
-        Prefs.events.dispatchEvent(new ValueEvent(_name, [ value, present ]));
+        Prefs.events.dispatchEvent(new NamedValueEvent(_name, value, present));
     }
 
     /**

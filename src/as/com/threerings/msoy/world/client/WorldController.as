@@ -1505,7 +1505,7 @@ public class WorldController extends MsoyController
         _recentScenes.length = Math.min(_recentScenes.length, MAX_RECENT_SCENES);
     }
 
-    protected function handleBleepChange (event :ValueEvent) :void
+    protected function handleBleepChange (event :NamedValueEvent) :void
     {
         if (_music == null) {
             return; // couldn't possibly concern us..
