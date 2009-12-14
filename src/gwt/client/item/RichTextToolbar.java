@@ -52,6 +52,7 @@ import com.threerings.msoy.web.gwt.CssUtil;
 
 import com.threerings.gwt.ui.WidgetUtil;
 
+import client.imagechooser.ImageChooserPopup;
 import client.images.editor.RichTextToolbarImages;
 import client.shell.ShellMessages;
 import client.ui.BorderedPopup;

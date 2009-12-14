@@ -23,7 +23,7 @@ import com.threerings.gwt.util.DateUtil;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.web.gwt.Promotion;
 
-import client.item.ImageChooserPopup;
+import client.imagechooser.ImageChooserPopup;
 import client.ui.LimitedTextArea;
 import client.ui.MsoyUI;
 import client.ui.PromotionBox;

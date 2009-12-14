@@ -27,10 +27,10 @@ import com.threerings.gwt.util.DataModel;
 import com.threerings.gwt.util.SimpleDataModel;
 
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.imagechooser.gwt.ImageChooserService;
+import com.threerings.msoy.imagechooser.gwt.ImageChooserServiceAsync;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.Photo;
-import com.threerings.msoy.item.gwt.ItemService;
-import com.threerings.msoy.item.gwt.ItemServiceAsync;
 import com.threerings.msoy.person.gwt.Gallery;
 import com.threerings.msoy.person.gwt.GalleryData;
 import com.threerings.msoy.person.gwt.GalleryService;
@@ -170,7 +170,7 @@ public class GalleryEditPanel extends AbsolutePanel // AbsolutePanel needed to s
 
         // only populate the box if it's a member editing their own gallery (i.e. not support)
         if (CShell.getMemberId() == _galleryData.owner.getMemberId()) {
-            _itemsvc.loadPhotos(new InfoCallback<List<Photo>>() {
+            _imgsvc.loadPhotos(new InfoCallback<List<Photo>>() {
                 public void onSuccess (List<Photo> result) {
                     createPhotoBox(photoContainer, result);
                 }
@@ -365,5 +365,5 @@ public class GalleryEditPanel extends AbsolutePanel // AbsolutePanel needed to s
 
     protected static final PersonMessages _pmsgs = (PersonMessages)GWT.create(PersonMessages.class);
     protected static final GalleryServiceAsync _gallerysvc = GWT.create(GalleryService.class);
-    protected static final ItemServiceAsync _itemsvc = GWT.create(ItemService.class);
+    protected static final ImageChooserServiceAsync _imgsvc = GWT.create(ImageChooserService.class);
 }

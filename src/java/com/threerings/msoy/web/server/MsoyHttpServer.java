@@ -67,6 +67,8 @@ import com.threerings.msoy.game.server.GameServlet;
 import com.threerings.msoy.game.server.GameTraceLogServlet;
 import com.threerings.msoy.group.gwt.GroupService;
 import com.threerings.msoy.group.server.GroupServlet;
+import com.threerings.msoy.imagechooser.gwt.ImageChooserService;
+import com.threerings.msoy.imagechooser.server.ImageChooserServlet;
 import com.threerings.msoy.item.gwt.CatalogService;
 import com.threerings.msoy.item.gwt.ItemService;
 import com.threerings.msoy.item.server.CatalogServlet;
@@ -287,6 +289,7 @@ public class MsoyHttpServer extends Server
         .put(InviteService.ENTRY_POINT, InviteServlet.class)
         .put(IssueService.ENTRY_POINT, IssueServlet.class)
         .put(ItemService.ENTRY_POINT, ItemServlet.class)
+        .put(ImageChooserService.ENTRY_POINT, ImageChooserServlet.class)
         .put(MailService.ENTRY_POINT, MailServlet.class)
         .put(MeService.ENTRY_POINT, MeServlet.class)
         .put(MoneyService.ENTRY_POINT, MoneyServlet.class)

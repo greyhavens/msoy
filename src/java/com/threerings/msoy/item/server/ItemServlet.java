@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.item.server;
 
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -37,7 +36,6 @@ import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.item.data.all.ItemFlag;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.ItemListQuery;
-import com.threerings.msoy.item.data.all.Photo;
 import com.threerings.msoy.item.gwt.ItemService;
 import com.threerings.msoy.item.server.persist.AvatarRecord;
 import com.threerings.msoy.item.server.persist.AvatarRepository;
@@ -45,8 +43,6 @@ import com.threerings.msoy.item.server.persist.CatalogRecord;
 import com.threerings.msoy.item.server.persist.ItemFlagRepository;
 import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
-import com.threerings.msoy.item.server.persist.PhotoRecord;
-import com.threerings.msoy.item.server.persist.PhotoRepository;
 
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.ServiceCodes;
@@ -297,22 +293,6 @@ public class ItemServlet extends MsoyServiceServlet
     }
 
     // from interface ItemService
-    public List<Photo> loadPhotos ()
-        throws ServiceException
-    {
-        MemberRecord memrec = requireAuthedUser();
-        List<Photo> photos = Lists.newArrayList();
-        for (PhotoRecord record : _photoRepo.loadOriginals(memrec.memberId)) {
-            photos.add((Photo)record.toItem());
-        }
-        for (PhotoRecord record : _photoRepo.loadClones(memrec.memberId)) {
-            photos.add((Photo)record.toItem());
-        }
-        Collections.sort(photos);
-        return photos;
-    }
-
-    // from interface ItemService
     public ItemListResult loadItemList (ItemListQuery query)
         throws ServiceException
     {
@@ -436,7 +416,6 @@ public class ItemServlet extends MsoyServiceServlet
     @Inject protected ItemFlagRepository _itemFlagRepo;
     @Inject protected ItemLogic _itemLogic;
     @Inject protected ItemManager _itemMan;
-    @Inject protected PhotoRepository _photoRepo;
     @Inject protected GroupRepository _groupRepo;
     @Inject protected ThemeRepository _themeRepo;
     @Inject protected ThemeLogic _themeLogic;

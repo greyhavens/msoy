@@ -1,0 +1,16 @@
+<!-- $Id$ -->
+<module>
+  <!-- Defines build directives for the image chooser module -->
+  <inherits name="global"/>
+
+  <!-- lean & mean slice of the item classes -->
+  <source path="com/threerings/msoy/item/data/all">
+    <include name="Item.java"/>
+    <include name="Photo.java"/>
+  </source>
+
+  <source path="com/threerings/msoy/imagechooser/gwt"/>
+  <source path="client/imagechooser"/>
+
+  <public path="public/imagechooser"/>
+</module>

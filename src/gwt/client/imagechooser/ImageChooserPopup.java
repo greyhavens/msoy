@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.item;
+package client.imagechooser;
 
 import java.util.List;
 
@@ -21,15 +21,14 @@ import com.threerings.gwt.util.SimpleDataModel;
 import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.ui.SmartTable;
 
+import com.threerings.msoy.imagechooser.gwt.ImageChooserService;
+import com.threerings.msoy.imagechooser.gwt.ImageChooserServiceAsync;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.Photo;
-import com.threerings.msoy.item.gwt.ItemService;
-import com.threerings.msoy.item.gwt.ItemServiceAsync;
 
 import com.threerings.msoy.data.all.MediaDesc;
 
 import client.shell.CShell;
-import client.shell.ShellMessages;
 import client.ui.MsoyUI;
 import client.util.MediaUploader;
 import client.util.MediaUtil;
@@ -48,10 +47,10 @@ public class ImageChooserPopup extends VerticalPanel
     public static void displayImageChooser (
         final boolean thumbnail, final AsyncCallback<MediaDesc> callback)
     {
-        _itemsvc.loadPhotos(new AsyncCallback<List<Photo>>() {
+        _imgsvc.loadPhotos(new AsyncCallback<List<Photo>>() {
             public void onSuccess (List<Photo> items) {
                 CShell.frame.showDialog(
-                    _cmsgs.icTitle(), new ImageChooserPopup(items, thumbnail, callback));
+                    _msgs.icTitle(), new ImageChooserPopup(items, thumbnail, callback));
             }
             public void onFailure (Throwable caught) {
                 callback.onFailure(caught);
@@ -67,19 +66,19 @@ public class ImageChooserPopup extends VerticalPanel
     public static void displayRestrictedImageChooser (
         final int requiredWidth, final int requiredHeight, final AsyncCallback<MediaDesc> callback)
     {
-        _itemsvc.loadPhotos(new AsyncCallback<List<Photo>>() {
+        _imgsvc.loadPhotos(new AsyncCallback<List<Photo>>() {
             public void onSuccess(List<Photo> items) {
                 ImageChooserPopup popup = new ImageChooserPopup(items, false, callback) {
                     @Override public void imageChosen (MediaDesc media, int width, int height) {
                         if (width != requiredWidth || height != requiredHeight) {
                             MsoyUI.error(
-                                _cmsgs.icRestrictedError("" + requiredWidth, "" + requiredHeight));
+                                _msgs.icRestrictedError("" + requiredWidth, "" + requiredHeight));
                         } else {
                             super.imageChosen(media, width, height);
                         }
                     }
                 };
-                CShell.frame.showDialog(_cmsgs.icTitle(), popup);
+                CShell.frame.showDialog(_msgs.icTitle(), popup);
             }
 
             public void onFailure(Throwable caught) {
@@ -96,12 +95,12 @@ public class ImageChooserPopup extends VerticalPanel
         setStyleName("imageChooser");
 
         if (images.size() > 0) {
-            add(MsoyUI.createLabel(_cmsgs.icPickPhoto(), "Title"));
+            add(MsoyUI.createLabel(_msgs.icPickPhoto(), "Title"));
             add(new PhotoGrid(images));
-            add(MsoyUI.createLabel(_cmsgs.icOr(), "Or"));
+            add(MsoyUI.createLabel(_msgs.icOr(), "Or"));
         }
 
-        add(MsoyUI.createLabel(_cmsgs.icUploadPhoto(), "Title"));
+        add(MsoyUI.createLabel(_msgs.icUploadPhoto(), "Title"));
         add(new PhotoUploader(_thumbnail));
     }
 
@@ -190,7 +189,7 @@ public class ImageChooserPopup extends VerticalPanel
                     if (!desc.isImage()) {
                         _upload.setEnabled(false);
                         _preview.setWidget(null);
-                        MsoyUI.error(_cmsgs.errPhotoNotImage());
+                        MsoyUI.error(_msgs.errPhotoNotImage());
                         return;
                     }
                     _media = desc;
@@ -201,7 +200,7 @@ public class ImageChooserPopup extends VerticalPanel
                     _preview.setWidget(MediaUtil.createMediaView(_media, size));
                 }
             }));
-            setWidget(1, 1, _upload = new Button(_cmsgs.icUploadGo(), new ClickHandler() {
+            setWidget(1, 1, _upload = new Button(_msgs.icUploadGo(), new ClickHandler() {
                 public void onClick (ClickEvent event) {
                     imageChosen(_media, _width, _height);
                 }
@@ -219,6 +218,6 @@ public class ImageChooserPopup extends VerticalPanel
     protected boolean _thumbnail;
     protected AsyncCallback<MediaDesc> _callback;
 
-    protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
-    protected static final ItemServiceAsync _itemsvc = GWT.create(ItemService.class);
+    protected static final ImageChooserMessages _msgs = GWT.create(ImageChooserMessages.class);
+    protected static final ImageChooserServiceAsync _imgsvc = GWT.create(ImageChooserService.class);
 }

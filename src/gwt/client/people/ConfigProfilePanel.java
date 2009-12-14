@@ -24,7 +24,7 @@ import com.threerings.msoy.profile.gwt.ProfileService;
 import com.threerings.msoy.profile.gwt.ProfileServiceAsync;
 import com.threerings.msoy.web.gwt.Pages;
 
-import client.item.ImageChooserPopup;
+import client.imagechooser.ImageChooserPopup;
 import client.shell.CShell;
 import client.shell.ShellMessages;
 import client.ui.MsoyUI;

@@ -16,7 +16,6 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemFlag;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.ItemListQuery;
-import com.threerings.msoy.item.data.all.Photo;
 
 import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.gwt.TagHistory;
@@ -101,14 +100,6 @@ public interface ItemService extends RemoteService
      * Loads items from a list that match the given criteria.
      */
     ItemListResult loadItemList (ItemListQuery query)
-        throws ServiceException;
-
-    /**
-     * Loads up all of this member's photo inventory. This exists separate from
-     * StuffService.loadInventory because we want to allow photo selection in many places in the
-     * website, but we don't want to have to compile in the entire Item hiearchy to do so.
-     */
-    List<Photo> loadPhotos ()
         throws ServiceException;
 
     /**

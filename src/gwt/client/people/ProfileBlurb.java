@@ -42,7 +42,7 @@ import com.threerings.msoy.web.gwt.WebCreds;
 import com.threerings.msoy.web.gwt.WebMemberService;
 import com.threerings.msoy.web.gwt.WebMemberServiceAsync;
 
-import client.item.ImageChooserPopup;
+import client.imagechooser.ImageChooserPopup;
 import client.item.ShopUtil;
 import client.person.GalleryActions;
 import client.shell.CShell;

@@ -69,11 +69,6 @@ public interface ItemServiceAsync
     void loadItemList (ItemListQuery query, AsyncCallback<ItemService.ItemListResult> callback);
 
     /**
-     * The async version of {@link ItemService#loadPhotos}.
-     */
-    void loadPhotos (AsyncCallback<List<Photo>> callback);
-
-    /**
      * The async version of {@link ItemService#loadLineups}.
      */
     void loadLineups (int avatarId, AsyncCallback<GroupName[]> callback);

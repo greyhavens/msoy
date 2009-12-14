@@ -23,7 +23,7 @@ import com.threerings.msoy.group.gwt.GroupService;
 import com.threerings.msoy.group.gwt.GroupServiceAsync;
 import com.threerings.msoy.web.gwt.Pages;
 
-import client.item.ImageChooserPopup;
+import client.imagechooser.ImageChooserPopup;
 
 import client.ui.LimitedTextArea;
 import client.ui.MsoyUI;

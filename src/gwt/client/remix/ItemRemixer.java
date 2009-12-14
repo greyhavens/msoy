@@ -19,7 +19,7 @@ import com.threerings.msoy.stuff.gwt.StuffService;
 import com.threerings.msoy.stuff.gwt.StuffServiceAsync;
 
 import client.editem.EditemMessages;
-import client.item.ImageChooserPopup;
+import client.imagechooser.ImageChooserPopup;
 import client.item.ItemUtil;
 import client.shell.CShell;
 import client.ui.MsoyUI;
