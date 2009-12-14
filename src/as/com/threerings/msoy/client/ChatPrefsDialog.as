@@ -16,7 +16,7 @@ import mx.containers.VBox;
 
 import mx.core.UIComponent;
 
-import com.threerings.util.ConfigValueSetEvent;
+import com.threerings.util.NamedValueEvent;
 
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.FlexUtil;
@@ -36,8 +36,7 @@ public class ChatPrefsDialog extends FloatingPanel
         open(true);
 
         // listen for preferences changes that happen without us..
-        Prefs.events.addEventListener(ConfigValueSetEvent.CONFIG_VALUE_SET,
-            handlePrefsUpdated, false, 0, true);
+        Prefs.events.addEventListener(Prefs.PREF_SET, handlePrefsUpdated, false, 0, true);
     }
 
     override protected function createChildren () :void
@@ -126,7 +125,7 @@ public class ChatPrefsDialog extends FloatingPanel
     /**
      * Handle prefs that update some other way, and reflect the changes in the UI.
      */
-    protected function handlePrefsUpdated (event :ConfigValueSetEvent) :void
+    protected function handlePrefsUpdated (event :NamedValueEvent) :void
     {
         switch (event.name) {
         case Prefs.CHAT_FONT_SIZE:

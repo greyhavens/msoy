@@ -13,11 +13,11 @@ import mx.controls.Button;
 
 import mx.styles.StyleManager;
 
-import com.threerings.util.ConfigValueSetEvent;
 import com.threerings.util.DelayUtil;
 import com.threerings.util.Log;
 import com.threerings.util.MessageBundle;
 import com.threerings.util.Name;
+import com.threerings.util.NamedValueEvent;
 import com.threerings.util.StringUtil;
 import com.threerings.util.ValueEvent;
 import com.threerings.util.Util;
@@ -227,8 +227,7 @@ public class WorldController extends MsoyController
         _wctx = ctx;
 
         Prefs.events.addEventListener(Prefs.BLEEPED_MEDIA, handleBleepChange, false, 0, true);
-        Prefs.events.addEventListener(ConfigValueSetEvent.CONFIG_VALUE_SET, handleConfigValueSet,
-            false, 0, true);
+        Prefs.events.addEventListener(Prefs.PREF_SET, handleConfigValueSet, false, 0, true);
         _musicPlayer.addEventListener(MediaPlayerCodes.METADATA, handleMusicMetadata);
 
         try {
@@ -1517,7 +1516,7 @@ public class WorldController extends MsoyController
         }
     }
 
-    protected function handleConfigValueSet (event :ConfigValueSetEvent) :void
+    protected function handleConfigValueSet (event :NamedValueEvent) :void
     {
         // if the volume got turned up and we were not playing music, play it now.
         if ((event.name == Prefs.VOLUME) && (event.value > 0) && (_music != null) &&

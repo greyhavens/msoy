@@ -13,8 +13,8 @@ import mx.core.UIComponent;
 
 import mx.containers.HBox;
 
-import com.threerings.util.ConfigValueSetEvent;
 import com.threerings.util.Integer;
+import com.threerings.util.NamedValueEvent;
 
 import com.threerings.display.DisplayUtil;
 
@@ -92,7 +92,7 @@ public class ControlBar extends HBox
         _big = ENABLE_BIG_MODE && ctx.getMsoyClient().getEmbedding().hasThickHeader();
         // the rest is in init()
 
-        Prefs.events.addEventListener(ConfigValueSetEvent.CONFIG_VALUE_SET, handleConfigValueSet);
+        Prefs.events.addEventListener(Prefs.PREF_SET, handleConfigValueSet);
     }
 
     public function init (top :TopPanel) :void
@@ -400,7 +400,7 @@ public class ControlBar extends HBox
             { styleName: "volumeSlider", tickValues: [ 0, 1 ], dataTipFormatFunction: dfmt });
     }
 
-    protected function handleConfigValueSet (event :ConfigValueSetEvent) :void
+    protected function handleConfigValueSet (event :NamedValueEvent) :void
     {
         if (event.name == Prefs.VOLUME) {
             updateVolumeSkin(Number(event.value));

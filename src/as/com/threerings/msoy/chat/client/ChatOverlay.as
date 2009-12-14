@@ -32,7 +32,7 @@ import com.whirled.game.data.WhirledGameCodes;
 import com.whirled.ui.PlayerList;
 
 import com.threerings.util.ArrayUtil;
-import com.threerings.util.ConfigValueSetEvent;
+import com.threerings.util.NamedValueEvent;
 import com.threerings.util.Log;
 import com.threerings.util.Map;
 import com.threerings.util.Maps;
@@ -110,8 +110,7 @@ public class ChatOverlay
         _historyOverlay.mouseEnabled = false;
         _historyOverlay.blendMode = BlendMode.LAYER;
 
-        Prefs.events.addEventListener(
-            ConfigValueSetEvent.CONFIG_VALUE_SET, handlePrefsUpdated, false, 0, true);
+        Prefs.events.addEventListener(Prefs.PREF_SET, handlePrefsUpdated, false, 0, true);
         createStandardFormats();
 
         layout();
@@ -454,7 +453,7 @@ public class ChatOverlay
         return [ _historyOverlay, _occupantList ];
     }
 
-    protected function handlePrefsUpdated (event :ConfigValueSetEvent) :void
+    protected function handlePrefsUpdated (event :NamedValueEvent) :void
     {
         switch (event.name) {
         case Prefs.CHAT_HISTORY:

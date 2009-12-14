@@ -17,11 +17,11 @@ import flash.ui.Mouse;
 import flash.utils.ByteArray;
 
 import com.threerings.util.ArrayUtil;
-import com.threerings.util.ConfigValueSetEvent;
 import com.threerings.util.Iterator;
 import com.threerings.util.Log;
 import com.threerings.util.Map;
 import com.threerings.util.Maps;
+import com.threerings.util.NamedValueEvent;
 import com.threerings.util.ObjectMarshaller;
 
 import com.threerings.crowd.data.PlaceObject;
@@ -75,8 +75,7 @@ public class RoomView extends Sprite
         _layout = RoomLayoutFactory.createLayout(null, this);
 
         // listen for preferences changes (for April fool's day setting)
-        Prefs.events.addEventListener(ConfigValueSetEvent.CONFIG_VALUE_SET,
-            handlePrefsUpdated, false, 0, true);
+        Prefs.events.addEventListener(Prefs.PREF_SET, handlePrefsUpdated, false, 0, true);
     }
 
     /**
@@ -749,7 +748,7 @@ public class RoomView extends Sprite
         addAllOccupants();
     }
 
-    protected function handlePrefsUpdated (event :ConfigValueSetEvent) :void
+    protected function handlePrefsUpdated (event :NamedValueEvent) :void
     {
         switch (event.name) {
         case Prefs.APRIL_FOOLS:

@@ -9,7 +9,7 @@ import flash.media.SoundMixer;
 import flash.media.SoundTransform;
 
 import com.threerings.util.Config;
-import com.threerings.util.ConfigValueSetEvent;
+import com.threerings.util.NamedValueEvent;
 import com.threerings.util.StringUtil;
 import com.threerings.util.ValueEvent;
 
@@ -36,14 +36,21 @@ import com.threerings.util.ValueEvent;
  * Dispatched when a preference is changed.
  * This is dispatched on the 'events' object.
  *
- * @eventType com.threerings.util.ConfigValueSetEvent.CONFIG_VALUE_SET;
+ * @eventType com.threerings.msoy.client.Prefs.PREF_SET;
  */
-[Event(name="ConfigValSet", type="com.threerings.util.ConfigValueSetEvent")]
+[Event(name="ConfigValSet", type="com.threerings.util.NamedValueEvent")]
 
 public class Prefs
 {
     /** We're a static class, so events are dispatched here. */
     public static const events :EventDispatcher = new EventDispatcher();
+
+    /**
+     * The event type dispatched when a preference is set
+     *
+     * @eventType ConfigValSet
+     */
+    public static const PREF_SET :String = Config.CONFIG_VALUE_SET;
 
     public static const USERNAME :String = "username";
     public static const SESSION_TOKEN :String = "sessionTok";
@@ -500,8 +507,8 @@ public class Prefs
     private static function staticInit () :void
     {
         // route events
-        _config.addEventListener(ConfigValueSetEvent.CONFIG_VALUE_SET, events.dispatchEvent);
-        _machineConfig.addEventListener(ConfigValueSetEvent.CONFIG_VALUE_SET, events.dispatchEvent);
+        _config.addEventListener(Config.CONFIG_VALUE_SET, events.dispatchEvent);
+        _machineConfig.addEventListener(Config.CONFIG_VALUE_SET, events.dispatchEvent);
     }
 
     staticInit();

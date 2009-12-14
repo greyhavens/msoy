@@ -20,7 +20,7 @@ import com.threerings.flex.CommandButton;
 import com.threerings.flex.FlexUtil;
 
 import com.threerings.util.ArrayUtil;
-import com.threerings.util.ConfigValueSetEvent;
+import com.threerings.util.NamedValueEvent;
 import com.threerings.util.StringUtil;
 
 import com.threerings.display.DisplayUtil;
@@ -75,8 +75,7 @@ public class PlaceBox extends LayeredContainer
         rawChildren.addChild(_mask = new Shape());
 
         // use a weak reference
-        Prefs.events.addEventListener(ConfigValueSetEvent.CONFIG_VALUE_SET,
-            handlePrefsUpdated, false, 0, true);
+        Prefs.events.addEventListener(Prefs.PREF_SET, handlePrefsUpdated, false, 0, true);
     }
 
     public function getPlaceView () :PlaceView
@@ -384,7 +383,7 @@ public class PlaceBox extends LayeredContainer
         _mask.graphics.endFill();
     }
 
-    protected function handlePrefsUpdated (evt :ConfigValueSetEvent) :void
+    protected function handlePrefsUpdated (evt :NamedValueEvent) :void
     {
         switch (evt.name) {
         case Prefs.USE_CUSTOM_BACKGROUND_COLOR:
