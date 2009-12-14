@@ -427,7 +427,10 @@ public class GameGameRegistry
                                    int minutesPlayed, final int gamesPlayed, final int coinsAwarded)
     {
         // update our in-memory record to reflect this gameplay
-        metrics.flowToNextRecalc -= coinsAwarded;
+        // note: we add a constant factor 100 to the actual coins awarded so as to avoid
+        // destructive spirals where a game that has very low payouts gets stuck never
+        // triggering a recalculation
+        metrics.flowToNextRecalc -= (coinsAwarded + 100);
         metrics.gamesPlayed += gamesPlayed;
 
         // determine whether or not it's time to recalculate this game's payout factor
