@@ -335,10 +335,9 @@ public class WorldNav
             return;
         }
 
-        // TODO: is this necessary anymore? the old comment is not correct
         // if we're currently already displaying exactly what we've been asked to display; then
         // stop here because we're just restoring our client after closing a GWT page
-        if (flashArgs.equals(_flashArgs)) {
+        if (!forceRestart && flashArgs.equals(_flashArgs)) {
             return;
         }
 
