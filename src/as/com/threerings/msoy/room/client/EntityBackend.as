@@ -120,7 +120,7 @@ public class EntityBackend extends ControlBackend
         return Camera.getCamera(index);
     }
 
-    protected function getMicrophone_v1 (index :int = 0) :Microphone
+    protected function getMicrophone_v1 (index :int = -1) :Microphone
     {
         return Microphone.getMicrophone(index);
     }
