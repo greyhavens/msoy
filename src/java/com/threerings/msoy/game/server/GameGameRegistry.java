@@ -274,7 +274,8 @@ public class GameGameRegistry
             return;
         }
 
-        log.warning("Updated game record not, in the end, hosted by us", "game", gameId);
+        log.warning("Updated game not in fact hosted by us, clearing peer data", "game", gameId);
+        _wgameReg.clearGame(gameId);
     }
 
     /**
