@@ -10,7 +10,6 @@ import com.threerings.msoy.data.all.RatingResult;
 import com.threerings.msoy.item.data.all.ItemFlag;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.ItemListQuery;
-import com.threerings.msoy.item.data.all.Photo;
 import com.threerings.msoy.web.gwt.TagHistory;
 
 /**
