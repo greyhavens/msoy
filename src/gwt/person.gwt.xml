@@ -1,5 +1,5 @@
 <module>
-  <inherits name="item"/>
+  <inherits name="imagechooser"/>
   <inherits name="dnd"/>
 
   <source path="com/threerings/msoy/person/gwt"/>

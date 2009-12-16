@@ -1,5 +1,6 @@
 <module>
   <inherits name="editem"/>
+  <inherits name="imagechooser"/> <!-- for the remixer -->
 
   <source path="com/threerings/msoy/stuff/gwt"/>
 

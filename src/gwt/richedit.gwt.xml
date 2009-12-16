@@ -1,0 +1,7 @@
+<!-- $Id$ -->
+<module>
+  <!-- Defines build directives for the rich edit module -->
+  <inherits name="imagechooser"/>
+  <source path="client/richedit"/>
+  <public path="public/richedit"/>
+</module>

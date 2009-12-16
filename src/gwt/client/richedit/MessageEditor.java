@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.msgs;
+package client.richedit;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -136,5 +136,5 @@ public class MessageEditor
         protected Button _experiment;
     }
 
-    protected static final MsgsMessages _msgs = GWT.create(MsgsMessages.class);
+    protected static final RichEditMessages _msgs = GWT.create(RichEditMessages.class);
 }

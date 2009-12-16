@@ -4,6 +4,7 @@
   <inherits name="trophy"/>
   <inherits name="room"/>
   <inherits name="money"/>
+  <inherits name="item"/>
 
   <source path="com/kisgergely/gwt/canvas/client"/>
 
@@ -11,7 +12,6 @@
   <source path="com/threerings/msoy/fora/gwt"/>
   <source path="com/threerings/msoy/group/data/all"/>
   <source path="com/threerings/msoy/group/gwt"/>
-  <source path="com/threerings/msoy/item/gwt"/>
   <source path="com/threerings/msoy/mail/gwt"/>
   <source path="com/threerings/msoy/badge/data/all"/>
   <source path="com/threerings/msoy/badge/gwt"/>

@@ -1,5 +1,5 @@
 <module>
-  <inherits name="item"/>
+  <inherits name="richedit"/>
 
   <source path="com/threerings/msoy/fora/gwt"/>
   <source path="client/msgs"/>

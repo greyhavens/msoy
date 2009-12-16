@@ -16,6 +16,7 @@ import com.threerings.msoy.fora.gwt.ForumService;
 import com.threerings.msoy.fora.gwt.ForumServiceAsync;
 import com.threerings.msoy.fora.gwt.ForumThread;
 
+import client.richedit.MessageEditor;
 import client.shell.CShell;
 import client.shell.ShellMessages;
 import client.ui.MsoyUI;

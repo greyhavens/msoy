@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.msgs;
+package client.richedit;
 
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -10,7 +10,6 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.web.gwt.MessageUtil;
 
-import client.item.RichTextToolbar;
 
 /**
  * HTML message editor implementation using GWT's builtin rich text area with a custom toolbar.

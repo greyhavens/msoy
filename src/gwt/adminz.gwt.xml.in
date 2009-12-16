@@ -1,5 +1,6 @@
 <module>
   <inherits name="item"/>
+  <inherits name="imagechooser"/>
   <inherits name="survey"/>
 
   <!-- for the date picker -->

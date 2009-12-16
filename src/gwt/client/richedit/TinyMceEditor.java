@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.msgs;
+package client.richedit;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -180,7 +180,7 @@ public class TinyMceEditor extends FlowPanel
             // NB "window.tinymce" is the package, "window.tinyMCE" is the singleton
             var ed = new $wnd.tinymce.Editor(itemId, $wnd.tinyMCE.settings);
             ed.onInit.add(function(ed) {
-                t.@client.msgs.TinyMceEditor::editorReady()();
+                t.@client.richedit.TinyMceEditor::editorReady()();
             });
             ed.render();
             return true;

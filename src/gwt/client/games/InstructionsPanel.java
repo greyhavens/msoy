@@ -16,7 +16,7 @@ import com.threerings.msoy.game.gwt.GameDetail;
 import com.threerings.msoy.game.gwt.GameService;
 import com.threerings.msoy.game.gwt.GameServiceAsync;
 
-import client.item.RichTextToolbar;
+import client.richedit.RichTextToolbar;
 import client.shell.CShell;
 import client.ui.MsoyUI;
 import client.ui.SafeHTML;

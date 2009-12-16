@@ -2,6 +2,7 @@
   <inherits name="game"/>
   <inherits name="trophy"/>
   <inherits name="reminders"/>
+  <inherits name="richedit"/>
 
   <source path="com/kisgergely/gwt/canvas/client"/>
   <source path="com/threerings/msoy/comment/gwt"/>

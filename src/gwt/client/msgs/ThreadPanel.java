@@ -26,6 +26,7 @@ import com.threerings.msoy.fora.gwt.ForumServiceAsync;
 import com.threerings.msoy.fora.gwt.ForumThread;
 import com.threerings.msoy.web.gwt.Pages;
 
+import client.richedit.MessageEditor;
 import client.shell.ShellMessages;
 import client.ui.BorderedDialog;
 import client.ui.MessagePanel;

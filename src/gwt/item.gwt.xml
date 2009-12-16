@@ -1,6 +1,5 @@
 <module>
   <inherits name="page"/>
-  <inherits name="imagechooser"/>
 
   <source path="com/threerings/msoy/item/data/all"/>
   <source path="com/threerings/msoy/item/gwt"/>
