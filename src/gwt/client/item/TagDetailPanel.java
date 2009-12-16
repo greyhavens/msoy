@@ -33,8 +33,6 @@ import com.threerings.gwt.util.SimpleDataModel;
 import com.threerings.msoy.data.all.TagCodes;
 
 import com.threerings.msoy.item.data.all.ItemFlag;
-import com.threerings.msoy.item.gwt.ItemService;
-import com.threerings.msoy.item.gwt.ItemServiceAsync;
 
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.TagHistory;
@@ -466,7 +464,6 @@ public class TagDetailPanel extends VerticalPanel
     protected BorderedPopup _tagHistory;
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
-    protected static final ItemServiceAsync _itemsvc = GWT.create(ItemService.class);
 
     protected static final int MAX_NAME_LENGTH = 22;
 
