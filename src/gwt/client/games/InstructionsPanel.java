@@ -9,14 +9,13 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.RichTextArea;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 import com.threerings.msoy.game.gwt.GameDetail;
 import com.threerings.msoy.game.gwt.GameService;
 import com.threerings.msoy.game.gwt.GameServiceAsync;
 
-import client.richedit.RichTextToolbar;
+import client.richedit.MessageEditor;
 import client.shell.CShell;
 import client.ui.MsoyUI;
 import client.ui.SafeHTML;
@@ -68,6 +67,10 @@ public class InstructionsPanel extends VerticalPanel
 
     protected String[] decodeInstructions (String instructions)
     {
+        // we no longer allow setting the panel text color, but we need to decode it to to make
+        // sure the panel background color gets set and that old instructions continue to look
+        // right
+        // TODO: upgrade all instructions using this feature and remove the '{t#' code
         String[] results = new String[3];
         if (instructions.length() > 9 && instructions.substring(0, 10).matches("{t#......}")) {
             results[1] = instructions.substring(2, 9);
@@ -87,19 +90,16 @@ public class InstructionsPanel extends VerticalPanel
         DOM.setStyleAttribute(getElement(), "color", "");
         DOM.setStyleAttribute(getElement(), "background", "none");
 
-        final RichTextArea editor = new RichTextArea();
-        editor.setWidth("100%");
-        editor.setHeight("300px");
+        final MessageEditor.Panel editor = MessageEditor.createDefault(true);
 
         setHorizontalAlignment(ALIGN_LEFT);
-        final RichTextToolbar toolbar = new RichTextToolbar(editor, true);
-        add(toolbar);
-        add(editor);
+        add(editor.asWidget());
 
         if (_detail.instructions != null) {
             String[] bits = decodeInstructions(_detail.instructions);
             editor.setHTML(bits[0]);
-            toolbar.setPanelColors(bits[1], bits[2]);
+            // we no longer use the panel text color
+            editor.setPanelColor(bits[2]);
         }
 
         setHorizontalAlignment(ALIGN_RIGHT);
@@ -111,18 +111,14 @@ public class InstructionsPanel extends VerticalPanel
         Button update = new Button("Update", new ClickHandler() {
             public void onClick (ClickEvent event) {
                 String instructions = editor.getHTML();
-                String bgcolor = toolbar.getBackgroundColor();
+                String bgcolor = editor.getPanelColor();
                 if (bgcolor != null && bgcolor.matches("#......")) {
                     instructions = "{bg" + bgcolor + "}" + instructions;
-                }
-                String tcolor = toolbar.getTextColor();
-                if (tcolor != null && tcolor.matches("#......")) {
-                    instructions = "{t" + tcolor + "}" + instructions;
                 }
                 saveInstructions(instructions);
             }
         });
-        add(MsoyUI.createButtonPair(cancel, update));
+        add(MsoyUI.createButtonRow(editor.getToggler(), cancel, update));
     }
 
     protected void saveInstructions (final String instructions)
