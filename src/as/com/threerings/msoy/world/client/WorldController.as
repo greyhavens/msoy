@@ -179,6 +179,9 @@ public class WorldController extends MsoyController
     /** Command to view details for a specific game. Arg: [ gameId ] */
     public static const VIEW_GAME :String = "ViewGame";
 
+    /** Command to view comments for a specific game. Arg: [ gameId ] */
+    public static const VIEW_GAME_COMMENTS :String = "ViewGameComments";
+
     /** Command to issue an invite to a current guest. */
     public static const INVITE_GUEST :String = "InviteGuest";
 
@@ -438,6 +441,14 @@ public class WorldController extends MsoyController
     public function handleViewGame (gameId :int) :void
     {
         displayPage("games", "d_" + gameId);
+    }
+
+    /**
+     * Handles the VIEW_GAME_COMMENTS command.
+     */
+    public function handleViewGameComments (gameId :int) :void
+    {
+        displayPage("games", "d_" + gameId + "_c");
     }
 
     /**

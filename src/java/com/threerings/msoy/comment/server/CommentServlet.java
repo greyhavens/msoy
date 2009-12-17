@@ -161,6 +161,7 @@ public class CommentServlet extends MsoyServiceServlet
             GameInfoRecord game = _msoyGameRepo.loadGame(eid);
             if (game != null) {
                 ownerId = game.creatorId;
+                entityName = game.name;
                 _feedLogic.publishSelfMessage(
                     ownerId, mrec.memberId, FeedMessageType.SELF_GAME_COMMENT,
                     eid, game.name, MediaDesc.mdToString(game.getThumbMedia()));
