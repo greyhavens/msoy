@@ -20,8 +20,6 @@ package client.richedit;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.Constants;
-import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
@@ -51,6 +49,7 @@ import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.web.gwt.CssUtil;
 
 import com.threerings.gwt.ui.WidgetUtil;
+import com.threerings.gwt.util.StringUtil;
 
 import client.imagechooser.ImageChooserPopup;
 import client.images.editor.RichTextToolbarImages;
@@ -200,12 +199,16 @@ public class RichTextToolbar extends Composite
 
         // this may be called before we're added to the DOM, so we need to wait until our inner
         // iframe is created before trying to set its background color, etc.
-        DeferredCommand.addCommand(new Command() {
-            public void execute () {
-                setPanelColorsImpl(richText.getElement(), (_tcolor == null) ? "" : _tcolor,
-                                   (_bgcolor == null) ? "none" : _bgcolor);
+        new Timer() {
+            public void run () {
+                if (richText.getElement() != null) {
+                    setPanelColorsImpl(richText.getElement(),
+                        StringUtil.getOr(_tcolor, ""), StringUtil.getOr(_bgcolor, "none"));
+                } else {
+                    schedule(100);
+                }
             }
-        });
+        }.schedule(100);
     }
 
     public void setBlockFormat (String format)
