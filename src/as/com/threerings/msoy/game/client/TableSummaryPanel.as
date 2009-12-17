@@ -24,6 +24,7 @@ import com.whirled.game.data.WhirledGameConfig;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.data.all.VizMemberName;
 import com.threerings.msoy.ui.MediaWrapper;
 import com.threerings.msoy.ui.InfoTipper;
@@ -129,7 +130,7 @@ public class TableSummaryPanel extends HBox
         infoBox.addChild(_tipper);
         infoBox.addChild(_info = FlexUtil.createLabel("", "tableSummaryStatus"));
 
-        addChild(_icon = MediaWrapper.createView(null, MediaDesc.HALF_THUMBNAIL_SIZE));
+        addChild(_icon = MediaWrapper.createView(null, MediaDescSize.HALF_THUMBNAIL_SIZE));
         var bits :VBox = new VBox();
         bits.percentWidth = 100;
         bits.setStyle("verticalGap", 0);

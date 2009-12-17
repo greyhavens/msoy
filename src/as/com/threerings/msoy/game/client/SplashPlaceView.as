@@ -13,7 +13,8 @@ import com.threerings.crowd.data.PlaceObject;
 import com.threerings.flex.FlexWrapper;
 
 import com.threerings.msoy.data.all.MediaDesc;
-import com.threerings.msoy.ui.ScalingMediaContainer;
+import com.threerings.msoy.data.all.MediaDescSize;
+import com.threerings.msoy.ui.ScalingMsoyMediaContainer;
 
 /**
  * View that displays the game's splash image underneath the lobby panel itself.
@@ -25,20 +26,20 @@ public class SplashPlaceView extends Canvas
      * Returns the descriptor of a piece of media to be displayed while the game is loading.
      */
     public static function getLoadingMedia (
-        splash :MediaDesc, thumb :MediaDesc) :ScalingMediaContainer
+        splash :MediaDesc, thumb :MediaDesc) :ScalingMsoyMediaContainer
     {
         // get the full splash media if possible
         if (splash != null) {
-            return ScalingMediaContainer.createView(splash, MediaDesc.GAME_SPLASH_SIZE);
+            return ScalingMsoyMediaContainer.createView(splash, MediaDescSize.GAME_SPLASH_SIZE);
         } else {
             // if splash media is not available, use the thumbnail which always is
-            return ScalingMediaContainer.createView(thumb, MediaDesc.PREVIEW_SIZE);
+            return ScalingMsoyMediaContainer.createView(thumb, MediaDescSize.PREVIEW_SIZE);
         }
     }
 
     public function SplashPlaceView (splash :MediaDesc, thumb :MediaDesc)
     {
-        var scont :ScalingMediaContainer = getLoadingMedia(splash, thumb);
+        var scont :ScalingMsoyMediaContainer = getLoadingMedia(splash, thumb);
         var wrapper :FlexWrapper = new FlexWrapper(scont);
 
         wrapper.setStyle("verticalCenter", "0");

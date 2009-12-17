@@ -83,6 +83,7 @@ import com.threerings.msoy.data.all.ContactEntry;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.GatewayEntry;
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VizMemberName;
 
@@ -1247,7 +1248,7 @@ public class WorldController extends MsoyController
         var icon :* = null;
         if (isUs) {
             icon = MediaWrapper.createView(
-                us.memberName.getPhoto(), MediaDesc.QUARTER_THUMBNAIL_SIZE);
+                us.memberName.getPhoto(), MediaDescSize.QUARTER_THUMBNAIL_SIZE);
 //        } else if (name is VizMemberName) {
 //            icon = MediaWrapper.createView(
 //                VizMemberName(name).getPhoto(), MediaDesc.QUARTER_THUMBNAIL_SIZE);

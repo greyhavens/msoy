@@ -27,6 +27,7 @@ import com.threerings.parlor.data.Table;
 import com.whirled.game.data.WhirledGameConfig;
 
 import com.threerings.msoy.client.Msgs;
+import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.ui.CopyableText;
 import com.threerings.msoy.ui.SimpleGrid;
 
@@ -228,7 +229,7 @@ import com.threerings.flex.FlexUtil;
 import com.threerings.parlor.data.Table;
 
 import com.threerings.msoy.client.Msgs;
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.data.all.VizMemberName;
 import com.threerings.msoy.ui.MediaWrapper;
 
@@ -270,17 +271,17 @@ class SeatPanel extends VBox
         super.createChildren();
 
         var box :Canvas = new Canvas();
-        box.addChild(_headShot = MediaWrapper.createView(null, MediaDesc.THUMBNAIL_SIZE));
+        box.addChild(_headShot = MediaWrapper.createView(null, MediaDescSize.THUMBNAIL_SIZE));
         box.addChild(_bootBtn = new CommandButton());
         _bootBtn.styleName = "closeButton";
-        _bootBtn.x = MediaDesc.THUMBNAIL_WIDTH-13;
+        _bootBtn.x = MediaDescSize.THUMBNAIL_WIDTH-13;
         _bootBtn.y = 0;
         addChild(box);
 
         addChild(_name = FlexUtil.createLabel("", "nameLabel"));
         // let the name be a smidgen wider because we have more room than is needed to just
         // display the thumbnails
-        _name.width = MediaDesc.THUMBNAIL_WIDTH +
+        _name.width = MediaDescSize.THUMBNAIL_WIDTH +
             SEAT_GRID_WHITESPACE / LobbyTablePanel.SEAT_COLS;
         _name.setStyle("textAlign", "center");
     }
@@ -291,6 +292,6 @@ class SeatPanel extends VBox
 
     protected static const SEAT_GRID_WHITESPACE :int =
         LobbyPanel.WIDTH - (26+10) /* borders */ -
-        MediaDesc.THUMBNAIL_WIDTH * LobbyTablePanel.SEAT_COLS -
+        MediaDescSize.THUMBNAIL_WIDTH * LobbyTablePanel.SEAT_COLS -
         5 * (LobbyTablePanel.SEAT_COLS-1) /* gaps */;
 }

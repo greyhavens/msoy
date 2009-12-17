@@ -43,6 +43,8 @@ import com.threerings.msoy.client.UberClient;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescSize;
+import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.ui.BubblePopup;
 
@@ -415,13 +417,14 @@ public class RoomObjectController extends RoomController
             var av :Avatar = avatars[ii] as Avatar;
             avItems.push({ label: av.name, enabled: !av.equals(us.avatar),
                 iconObject: MediaWrapper.createView(
-                    av.getThumbnailMedia(), MediaDesc.QUARTER_THUMBNAIL_SIZE),
+                    av.getThumbnailMedia(), MediaDescSize.QUARTER_THUMBNAIL_SIZE),
                 callback: _wdctx.getWorldDirector().setAvatar, arg: av.itemId });
         }
         // add defaults
         avItems.push({ label: Msgs.ITEM.get("m.default"), enabled: (us.avatar != null),
             iconObject: MediaWrapper.createView(
-                Item.getDefaultThumbnailMediaFor(Item.AVATAR), MediaDesc.QUARTER_THUMBNAIL_SIZE),
+                Item.getDefaultThumbnailMediaFor(Item.AVATAR),
+                MediaDescSize.QUARTER_THUMBNAIL_SIZE),
             callback: _wdctx.getWorldDirector().setAvatar, arg: 0 });
 
         // return a menu item for changing their avatar

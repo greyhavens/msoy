@@ -7,7 +7,7 @@ import flash.display.DisplayObject;
 
 import com.whirled.game.client.Thumbnail;
 
-import com.threerings.msoy.ui.ScalingMediaContainer;
+import com.threerings.msoy.ui.ScalingMsoyMediaContainer;
 
 import com.threerings.msoy.game.client.GameContext;
 
@@ -38,7 +38,7 @@ public class PartyGameClientHelper extends PartyGameHelper
         if (party == null) {
             return new Thumbnail(); // return a blank
         }
-        return new Thumbnail(ScalingMediaContainer.createView(Group.logo(party.icon)));
+        return new Thumbnail(ScalingMsoyMediaContainer.createView(Group.logo(party.icon)));
     }
 
     override protected function player_getPartyId_v1 (playerId :int) :int

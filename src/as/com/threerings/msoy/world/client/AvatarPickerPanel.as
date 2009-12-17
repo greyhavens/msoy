@@ -18,6 +18,7 @@ import com.threerings.flex.CommandButton;
 
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.ui.FloatingPanel;
 import com.threerings.msoy.ui.MediaWrapper;
@@ -91,8 +92,8 @@ public class AvatarPickerPanel extends FloatingPanel
             var icon :UIComponent;
             if (false) {
                 icon = new UIComponent();
-                var w :int = MediaDesc.getWidth(MediaDesc.PREVIEW_SIZE);
-                var h :int = MediaDesc.getHeight(MediaDesc.PREVIEW_SIZE);
+                var w :int = MediaDescSize.getWidth(MediaDescSize.PREVIEW_SIZE);
+                var h :int = MediaDescSize.getHeight(MediaDescSize.PREVIEW_SIZE);
                 icon.width = w;
                 icon.height = h;
                 icon.graphics.clear();
@@ -101,7 +102,7 @@ public class AvatarPickerPanel extends FloatingPanel
                 icon.graphics.endFill();
 
             } else {
-                icon = MediaWrapper.createView(avi.getPreviewMedia(), MediaDesc.PREVIEW_SIZE);
+                icon = MediaWrapper.createView(avi.getPreviewMedia(), MediaDescSize.PREVIEW_SIZE);
             }
 
             var select :CommandButton = new CommandButton(Msgs.WORLD.get("b.pick_avatar", avi.name),

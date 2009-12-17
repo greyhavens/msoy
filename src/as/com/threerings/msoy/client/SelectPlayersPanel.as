@@ -228,7 +228,7 @@ import mx.core.ScrollPolicy;
 
 import com.threerings.msoy.ui.MediaWrapper;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.data.all.VizMemberName;
 
 class PlayerBox extends HBox
@@ -274,7 +274,7 @@ class PlayerBox extends HBox
 
     override protected function createChildren () :void
     {
-        addChild(MediaWrapper.createView(_name.getPhoto(), MediaDesc.HALF_THUMBNAIL_SIZE));
+        addChild(MediaWrapper.createView(_name.getPhoto(), MediaDescSize.HALF_THUMBNAIL_SIZE));
 
         var label :Label = new Label();
         label.styleName = "selectPlayersPanelPlayerName";

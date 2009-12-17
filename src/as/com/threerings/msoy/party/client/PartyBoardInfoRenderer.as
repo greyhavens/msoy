@@ -15,6 +15,7 @@ import com.threerings.flex.FlexUtil;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.ui.MediaWrapper;
 
 import com.threerings.msoy.group.data.all.Group;
@@ -44,7 +45,7 @@ public class PartyBoardInfoRenderer extends HBox
 
         _picHolder.removeAllChildren();
         _picHolder.addChild(MediaWrapper.createView(
-            Group.logo(party.summary.icon), MediaDesc.QUARTER_THUMBNAIL_SIZE));
+            Group.logo(party.summary.icon), MediaDescSize.QUARTER_THUMBNAIL_SIZE));
 
         _name.text = party.summary.name;
         _population.text = String(party.info.population);

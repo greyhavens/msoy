@@ -8,6 +8,7 @@ import mx.core.Container;
 import com.threerings.media.MediaContainer;
 
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescSize;
 
 /**
  * Wraps a MediaContainer into a UIComponent.
@@ -18,10 +19,10 @@ public class MediaWrapper extends Container
      * Factory to create a MediaWrapper configured to view media represented by a MediaDesc
      * at the specified size.
      */
-    public static function createView (desc :MediaDesc, size :int = MediaDesc.THUMBNAIL_SIZE)
+    public static function createView (desc :MediaDesc, size :int = MediaDescSize.THUMBNAIL_SIZE)
         :MediaWrapper
     {
-        var smc :ScalingMediaContainer = ScalingMediaContainer.createView(desc, size);
+        var smc :ScalingMsoyMediaContainer = ScalingMsoyMediaContainer.createView(desc, size);
         return new MediaWrapper(smc, smc.maxW, smc.maxH, true);
     }
 

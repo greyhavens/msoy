@@ -59,7 +59,7 @@ import com.threerings.flex.FlexWrapper;
 import com.threerings.crowd.data.OccupantInfo;
 
 import com.threerings.msoy.client.MsoyContext;
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.data.all.VizMemberName;
 import com.threerings.msoy.ui.MediaWrapper;
 import com.threerings.msoy.ui.MsoyNameLabel;
@@ -124,7 +124,7 @@ class LabelBox extends HBox
     {
         super.createChildren();
 
-        addChild(MediaWrapper.createView(_name.getPhoto(), MediaDesc.QUARTER_THUMBNAIL_SIZE));
+        addChild(MediaWrapper.createView(_name.getPhoto(), MediaDescSize.QUARTER_THUMBNAIL_SIZE));
 
         _label = new MsoyNameLabel();
         _label.setName(_name.toString());

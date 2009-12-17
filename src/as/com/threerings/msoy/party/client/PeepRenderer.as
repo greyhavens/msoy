@@ -14,7 +14,7 @@ import mx.core.IFactory;
 import com.threerings.flex.FlexUtil;
 
 import com.threerings.msoy.client.PlayerRenderer;
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescSize;
 
 import com.threerings.msoy.world.client.WorldContext;
 
@@ -71,7 +71,7 @@ public class PeepRenderer extends PlayerRenderer
 
     override protected function getIconSize () :int
     {
-        return MediaDesc.QUARTER_THUMBNAIL_SIZE;
+        return MediaDescSize.QUARTER_THUMBNAIL_SIZE;
     }
 }
 }

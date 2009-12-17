@@ -13,7 +13,7 @@ import com.threerings.msoy.ui.MediaWrapper;
 
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.data.all.PlayerEntry;
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescSize;
 
 public class PlayerRenderer extends HBox
 {
@@ -88,7 +88,7 @@ public class PlayerRenderer extends HBox
      */
     protected function getIconSize () :int
     {
-        return MediaDesc.HALF_THUMBNAIL_SIZE;
+        return MediaDescSize.HALF_THUMBNAIL_SIZE;
     }
 }
 }

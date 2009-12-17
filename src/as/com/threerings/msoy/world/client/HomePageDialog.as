@@ -28,7 +28,7 @@ import com.threerings.msoy.data.HomePageItem;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.ui.FlyingPanel;
 import com.threerings.msoy.ui.MediaWrapper;
-import com.threerings.msoy.ui.ScalingMediaContainer;
+import com.threerings.msoy.ui.ScalingMsoyMediaContainer;
 
 /**
  * The "My Whirled Places" 3x3 grid of recent games and rooms you have visited, plus stamps and
@@ -122,7 +122,7 @@ public class HomePageDialog extends FlyingPanel
         }
 
         // Create the image
-        var view :ScalingMediaContainer = new ScalingMediaContainer(IMAGE_WIDTH, IMAGE_HEIGHT);
+        var view :ScalingMsoyMediaContainer = new ScalingMsoyMediaContainer(IMAGE_WIDTH, IMAGE_HEIGHT);
         view.setMediaDesc(item.getImage());
         var image :UIComponent = new MediaWrapper(view, IMAGE_WIDTH, IMAGE_HEIGHT, true);
 

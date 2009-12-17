@@ -20,6 +20,7 @@ import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.ui.MediaControls;
 import com.threerings.msoy.ui.MediaWrapper;
 
@@ -90,7 +91,7 @@ public class PlaylistRenderer extends HBox
         _playBtn = new CommandButton("\u25B6", doPlay);
         addChild(_playBtn);
 
-        _thumbnail = MediaWrapper.createView(null, MediaDesc.QUARTER_THUMBNAIL_SIZE);
+        _thumbnail = MediaWrapper.createView(null, MediaDescSize.QUARTER_THUMBNAIL_SIZE);
         addChild(_thumbnail);
 
         _name = FlexUtil.createLabel(null);

@@ -228,7 +228,7 @@ import mx.controls.Label;
 import com.threerings.flex.FlexUtil;
 
 import com.threerings.msoy.data.all.FriendEntry;
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescSize;
 
 import com.threerings.msoy.ui.MediaWrapper;
 
@@ -242,9 +242,9 @@ class FriendCheckBox extends VBox
         styleName = "friendCheckBox";
         this.friend = friend;
 
-        addChild(MediaWrapper.createView(friend.name.getPhoto(), MediaDesc.HALF_THUMBNAIL_SIZE));
+        addChild(MediaWrapper.createView(friend.name.getPhoto(), MediaDescSize.HALF_THUMBNAIL_SIZE));
         var name :Label = FlexUtil.createLabel(friend.name.toString());
-        name.maxWidth = 4*MediaDesc.THUMBNAIL_WIDTH/5;
+        name.maxWidth = 4*MediaDescSize.THUMBNAIL_WIDTH/5;
         addChild(name);
         addChild(check = new CheckBox());
         check.width = 14; // don't ask; go punch someone at adobe instead

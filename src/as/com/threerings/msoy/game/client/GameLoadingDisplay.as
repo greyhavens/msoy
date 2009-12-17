@@ -8,11 +8,11 @@ import caurina.transitions.Tweener;
 import com.threerings.msoy.client.PlaceBox;
 import com.threerings.msoy.client.PlaceLoadingDisplay;
 
-import com.threerings.msoy.ui.ScalingMediaContainer;
+import com.threerings.msoy.ui.ScalingMsoyMediaContainer;
 
 public class GameLoadingDisplay extends PlaceLoadingDisplay 
 {
-    public function GameLoadingDisplay (box :PlaceBox, logo :ScalingMediaContainer)
+    public function GameLoadingDisplay (box :PlaceBox, logo :ScalingMsoyMediaContainer)
     {
         super(box);
         
@@ -48,6 +48,6 @@ public class GameLoadingDisplay extends PlaceLoadingDisplay
         Tweener.removeTweens(_spinner, "x", "y");
     }
 
-    protected var _logo :ScalingMediaContainer;
+    protected var _logo :ScalingMsoyMediaContainer;
 }
 }

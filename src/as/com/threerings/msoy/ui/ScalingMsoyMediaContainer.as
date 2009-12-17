@@ -4,17 +4,18 @@
 package com.threerings.msoy.ui {
 
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescSize;
 
-public class ScalingMediaContainer extends MsoyMediaContainer
+public class ScalingMsoyMediaContainer extends MsoyMediaContainer
 {
     /**
      * Factory to create a MediaContainer for viewing a MediaDesc.
      */
-    public static function createView (desc :MediaDesc, size :int = MediaDesc.THUMBNAIL_SIZE)
-        :ScalingMediaContainer
+    public static function createView (desc :MediaDesc, size :int = MediaDescSize.THUMBNAIL_SIZE)
+        :ScalingMsoyMediaContainer
     {
-        var smc :ScalingMediaContainer = new ScalingMediaContainer(MediaDesc.getWidth(size),
-            MediaDesc.getHeight(size), true);
+        var smc :ScalingMsoyMediaContainer = new ScalingMsoyMediaContainer(
+            MediaDescSize.getWidth(size), MediaDescSize.getHeight(size), true);
         smc.setMediaDesc(desc);
         return smc;
     }
@@ -29,7 +30,8 @@ public class ScalingMediaContainer extends MsoyMediaContainer
      * @param center if true, the actual media will be centered within the maximum size if
      * it is smaller in either dimension.
      */
-    public function ScalingMediaContainer (maxWidth :int, maxHeight :int, center :Boolean = true)
+    public function ScalingMsoyMediaContainer (
+        maxWidth :int, maxHeight :int, center :Boolean = true)
     {
         if (maxWidth == 0 || maxHeight == 0) {
             throw new Error("Requested scaling media container with invalid dimensions " +
