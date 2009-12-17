@@ -26,7 +26,7 @@ public class TinyMceEditor extends FlowPanel
     /**
      * Creates a new editor.
      */
-    public TinyMceEditor ()
+    public TinyMceEditor (boolean enablePanelColor)
     {
         Map<String, Object> settings = new HashMap<String, Object>();
         settings.put("mode", "none");
@@ -62,6 +62,7 @@ public class TinyMceEditor extends FlowPanel
             .add("formatselect")
             .add("blockquote")
             .add("code")
+            .add("panelcolor") // no-op if we don't add the plugin below
             .build());
         settings.put("theme_advanced_buttons3", "");
         settings.put("theme_advanced_blockformats", new CommaList()
@@ -86,6 +87,10 @@ public class TinyMceEditor extends FlowPanel
             .build());
         settings.put("content_css", CssUtil.GLOBAL_PATH);
 
+        if (enablePanelColor) {
+            settings.put("plugins", "panelcolor");
+        }
+
         initializeTinyMCE(JavaScriptUtil.createDictionaryFromMap(settings));
 
         add(_text = new FlowPanel());
@@ -94,13 +99,13 @@ public class TinyMceEditor extends FlowPanel
         _text.getElement().setId("msoy_tinymce");
     }
 
-    @Override // from MessageEditor
+    @Override // from MessageEditor.Panel
     public String getHTML ()
     {
         return getHTML(getId());
     }
 
-    @Override // from MessageEditor
+    @Override // from MessageEditor.Panel
     public void setHTML (String html)
     {
         // this can get called before the editor is attached, so postpone if necessary 
@@ -112,28 +117,41 @@ public class TinyMceEditor extends FlowPanel
         }
     }
 
-    @Override // from MessageEditor
+    @Override // from MessageEditor.Panel
     public void setFocus (boolean focus)
     {
         // TODO
     }
 
-    @Override // from MessageEditor
+    @Override // from MessageEditor.Panel
     public Widget asWidget ()
     {
         return this;
     }
 
-    @Override // from MessageEditor
+    @Override // from MessageEditor.Panel
     public void selectAll ()
     {
         // TODO
     }
 
-    @Override // from MessageEditor
+    @Override // from MessageEditor.Panel
     public Button getToggler ()
     {
         return null;
+    }
+
+    @Override // from MessageEditor.Panel
+    public String getPanelColor ()
+    {
+        return _panelColor;
+    }
+
+    @Override // from MessageEditor.Panel
+    public void setPanelColor (String color)
+    {
+        _panelColor = color;
+        setPanelColor(getId(), color);
     }
 
     @Override // from Widget
@@ -162,6 +180,14 @@ public class TinyMceEditor extends FlowPanel
             setHTML(_queuedHTML);
             _queuedHTML = null;
         }
+        if (_panelColor != null) {
+            setPanelColor(getId(), _panelColor);
+        }
+    }
+
+    protected void handlePanelColorChange (String color)
+    {
+        _panelColor = color;
     }
 
     protected native void initializeTinyMCE(JavaScriptObject settings) /*-{
@@ -177,10 +203,16 @@ public class TinyMceEditor extends FlowPanel
     protected native boolean attachEditor(String itemId) /*-{
         try {
             var t = this;
+            var onPanelColorChanged = function (ed, color) {
+                t.@client.richedit.TinyMceEditor::handlePanelColorChange(Ljava/lang/String;)(color);
+            };
             // NB "window.tinymce" is the package, "window.tinyMCE" is the singleton
             var ed = new $wnd.tinymce.Editor(itemId, $wnd.tinyMCE.settings);
             ed.onInit.add(function(ed) {
                 t.@client.richedit.TinyMceEditor::editorReady()();
+                if (ed.onPanelColorChanged) {
+                    ed.onPanelColorChanged.add(onPanelColorChanged);
+                }
             });
             ed.render();
             return true;
@@ -220,6 +252,16 @@ public class TinyMceEditor extends FlowPanel
         } catch (e) {
             if ($wnd.console) {
                 $wnd.console.info("Failed to setHTML", e);
+            }
+        }
+    }-*/;
+
+    protected native void setPanelColor (String id, String color) /*-{
+        try {
+            $wnd.tinyMCE.get(id).execCommand("setPanelColor", false, color);
+        } catch (e) {
+            if ($wnd.console) {
+                $wnd.console.info("Failed to setPanelColor", e);
             }
         }
     }-*/;
@@ -279,4 +321,5 @@ public class TinyMceEditor extends FlowPanel
     protected FlowPanel _text;
     protected String _queuedHTML;
     protected boolean _ready;
+    protected String _panelColor;
 }

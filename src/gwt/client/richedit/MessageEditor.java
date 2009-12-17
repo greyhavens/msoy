@@ -36,6 +36,16 @@ public class MessageEditor
         void setHTML (String html);
 
         /**
+         * Gets the panel color set by this editor, or null if none is set.
+         */
+        String getPanelColor ();
+
+        /**
+         * Sets the panel color of this editor.
+         */
+        void setPanelColor (String color);
+
+        /**
          * Sets or clears focus for the editor.
          */
         void setFocus (boolean focus);
@@ -56,15 +66,23 @@ public class MessageEditor
      */
     public static Panel createDefault ()
     {
-        final WrapperEditor wrapper = new WrapperEditor(new RichTextEditor());
+        return createDefault(false);
+    }
+
+    /**
+     * Creates the default message editor.
+     */
+    public static Panel createDefault (final boolean enablePanelColor)
+    {
+        final WrapperEditor wrapper = new WrapperEditor(new RichTextEditor(enablePanelColor));
         wrapper.getToggler().setText(_msgs.experiment());
         wrapper.getToggler().addClickHandler(new ClickHandler() {
             @Override public void onClick (ClickEvent event) {
                 if (wrapper.getEditor() instanceof RichTextEditor) {
-                    wrapper.setEditor(new TinyMceEditor());
+                    wrapper.setEditor(new TinyMceEditor(enablePanelColor));
                     wrapper.getToggler().setText(_msgs.antiExperiment());
                 } else if (wrapper.getEditor() instanceof TinyMceEditor) {
-                    wrapper.setEditor(new RichTextEditor());
+                    wrapper.setEditor(new RichTextEditor(enablePanelColor));
                     wrapper.getToggler().setText(_msgs.experiment());
                 }
             }
@@ -93,40 +111,54 @@ public class MessageEditor
         public void setEditor (Panel newEditor)
         {
             newEditor.setHTML(_editor.getHTML());
+            newEditor.setPanelColor(_editor.getPanelColor());
             _editor = newEditor;
             setWidget(newEditor.asWidget());
         }
 
-        @Override
+        @Override // from MessageEditor.Panel
         public Widget asWidget ()
         {
             return this;
         }
 
-        @Override
+        @Override // from MessageEditor.Panel
         public String getHTML ()
         {
             return _editor.getHTML();
         }
 
-        @Override
+        @Override // from MessageEditor.Panel
         public void selectAll ()
         {
             _editor.selectAll();
         }
 
-        @Override
+        @Override // from MessageEditor.Panel
         public void setFocus (boolean focus)
         {
             _editor.setFocus(focus);
         }
 
-        @Override
+        @Override // from MessageEditor.Panel
         public void setHTML (String html)
         {
             _editor.setHTML(html);
         }
 
+        @Override // from MessageEditor.Panel
+        public String getPanelColor ()
+        {
+            return _editor.getPanelColor();
+        }
+
+        @Override // from MessageEditor.Panel
+        public void setPanelColor (String color)
+        {
+            _editor.setPanelColor(color);
+        }
+
+        @Override // from MessageEditor.Panel
         public Button getToggler ()
         {
             return _experiment;

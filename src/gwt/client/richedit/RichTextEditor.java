@@ -17,50 +17,63 @@ import com.threerings.msoy.web.gwt.MessageUtil;
 public class RichTextEditor extends FlowPanel
     implements MessageEditor.Panel
 {
-    public RichTextEditor ()
+    public RichTextEditor (boolean enablePanelColor)
     {
         _text = new RichTextArea();
-        add(new RichTextToolbar(_text, false));
+        add(_toolbar = new RichTextToolbar(_text, enablePanelColor));
         add(_text);
         _text.setWidth("100%");
         _text.setHeight("300px");
     }
 
-    @Override // from MessageEditor
+    @Override // from MessageEditor.Panel
     public Widget asWidget ()
     {
         return this;
     }
 
-    @Override // from MessageEditor
+    @Override // from MessageEditor.Panel
     public String getHTML ()
     {
         return _text.getHTML();
     }
 
-    @Override // from MessageEditor
+    @Override // from MessageEditor.Panel
     public void setHTML (String html)
     {
         _text.setHTML(MessageUtil.preEditMessage(html));
     }
 
-    @Override // from MessageEditor
+    @Override // from MessageEditor.Panel
+    public String getPanelColor ()
+    {
+        return _toolbar.getBackgroundColor();
+    }
+
+    @Override // from MessageEditor.Panel
+    public void setPanelColor (String color)
+    {
+        _toolbar.setPanelColors(null, color);
+    }
+
+    @Override // from MessageEditor.Panel
     public void setFocus (boolean focus)
     {
         _text.setFocus(focus);
     }
 
-    @Override // from MessageEditor
+    @Override // from MessageEditor.Panel
     public void selectAll ()
     {
         _text.getBasicFormatter().selectAll();
     }
 
-    @Override // from MessageEditor
+    @Override // from MessageEditor.Panel
     public Button getToggler ()
     {
         return null;
     }
 
     protected RichTextArea _text;
+    protected RichTextToolbar _toolbar;
 }
