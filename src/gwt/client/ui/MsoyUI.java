@@ -415,10 +415,28 @@ public class MsoyUI
     public static Widget createButtonPair (Widget left, Widget right)
     {
         HorizontalPanel panel = new HorizontalPanel();
-        panel.addStyleName("ButtonPair");
+        panel.addStyleName("ButtonRow");
         panel.add(left);
         panel.add(WidgetUtil.makeShim(5, 5));
         panel.add(right);
+        return panel;
+    }
+
+    /**
+     * Creates a widget containing an array of buttons arranged in a row from left to right, with a
+     * small gap betwixt each pair. Note: Our standard is that ok goes on the far right, cancel
+     * just the left of that, and other buttons farther to the left.
+     */
+    public static Widget createButtonRow (Widget... contents)
+    {
+        HorizontalPanel panel = new HorizontalPanel();
+        panel.addStyleName("ButtonRow");
+        for (int ii = 0; ii < contents.length; ++ii) {
+            if (ii > 0) {
+                panel.add(WidgetUtil.makeShim(5, 5));
+            }
+            panel.add(contents[ii]);
+        }
         return panel;
     }
 
