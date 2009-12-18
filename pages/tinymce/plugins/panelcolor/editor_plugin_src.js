@@ -40,11 +40,6 @@
 			t.ed = ed;
 			t.url = url;
 
-			// add a new setting to the editor since we need it to default to "1"
-			extend(ed.settings, {
-				panelcolor_more_colors : 1
-			});
-
 			// add an event dispatcher for when the color changes
 			ed.onPanelColorChanged = new Dispatcher(ed);
 
@@ -60,6 +55,9 @@
 			ed.addCommand('setPanelColor', function(ui, c) {
 				t._setPanelColor(c);
 			});
+
+			// load the css for displaying our button
+			DOM.loadCSS(url + "/css/ui.css");
 		},
 
 		/**
@@ -72,9 +70,9 @@
 		 */
 		createControl : function(n, cm) {
 			if (n == NAME) {
-				var t = this, s = t.ed.settings, o = {}, v;
+				var t = this, ed = t.ed, o = {}, v;
 
-				if (s.panelcolor_more_colors) {
+				if (ed.getParam('panelcolor_more_colors', 1)) {
 					o.more_colors_func = function() {
 						t._showPicker({
 							color : t.control.value,
@@ -85,18 +83,25 @@
 					};
 				}
 
-				if (v = s.panelcolor_colors)
+				if (v = ed.getParam('panelcolor_colors'))
 					o.colors = v;
 
-				if (s.panelcolor_default_color)
-					o.default_color = s.panelcolor_default_color;
+				if (v = ed.getParam('panelcolor_default_color'))
+					o.default_color = v;
 
 				o.title = NAME + '.desc';
 				o.onselect = function(v) {
 					t._setPanelColor(c.value);
-					t.ed.onPanelColorChanged.dispatch(t.ed, c.value);
+					ed.onPanelColorChanged.dispatch(ed, c.value);
 				};
-				o.image = t.url + '/img/' + NAME + '.gif';
+
+				// Using the image key here should be possible in theory, but when doing so, the
+				// height attribute in the img style block does not take, at least on firefox. So
+				// just do what tinymce forecolor button does and use a span block with a
+				// background and fixed height (see ./csss/ui.css).
+				//o.image = t.url + '/img/' + NAME + '.gif';
+
+				o['class'] = NAME;
 
 				// TODO: not sure what this is doing
 				o.scope = t;
