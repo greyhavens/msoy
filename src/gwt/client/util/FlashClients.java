@@ -84,7 +84,7 @@ public class FlashClients
      * Create the image editor swf.
      *
      * @param currentURL may be null
-     * @param maxWidth or -1 to allow any width 
+     * @param maxWidth or -1 to allow any width
      * @param maxHeight or -1 to allow any height
      * @param maxRequired whether the maxes are  maximums, or a _required_ size.
      */

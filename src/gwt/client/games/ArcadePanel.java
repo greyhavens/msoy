@@ -10,7 +10,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.game.gwt.ArcadeData;
 import com.threerings.msoy.game.gwt.GameCard;
 import com.threerings.msoy.game.gwt.GameGenre;
@@ -94,7 +94,7 @@ public class ArcadePanel extends FlowPanel
             for (GameCard game : genre.games) {
                 FlowPanel genreGame = MsoyUI.createFlowPanel("GenreGame");
                 add(genreGame);
-                genreGame.add(new ThumbBox(game.thumbMedia, MediaDesc.HALF_THUMBNAIL_SIZE,
+                genreGame.add(new ThumbBox(game.thumbMedia, MediaDescSize.HALF_THUMBNAIL_SIZE,
                                            Pages.GAMES, "d", game.gameId));
                 genreGame.add(Link.create(game.name, "Name", Pages.GAMES, "d", game.gameId));
                 if (game.playersOnline > 0) {
@@ -116,7 +116,7 @@ public class ArcadePanel extends FlowPanel
         public TopGameWidget (int index, GameCard game) {
             super("TopGameWidget", 0, 0);
             setText(0, 0, index+"", 1, "Number");
-            setWidget(0, 1, new ThumbBox(game.thumbMedia, MediaDesc.HALF_THUMBNAIL_SIZE,
+            setWidget(0, 1, new ThumbBox(game.thumbMedia, MediaDescSize.HALF_THUMBNAIL_SIZE,
                                          Pages.GAMES, "d", game.gameId));
             Widget link = Link.createBlock(game.name, "Name", Pages.GAMES, "d", game.gameId);
             if (game.playersOnline == 0) {

@@ -12,6 +12,7 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescSize;
 
 /**
  * Utilities for displaying a Group's canonical scene snapshot.
@@ -30,7 +31,7 @@ public class LiveViewUtil
         }
 
         FlowPanel panel = new FlowPanel();
-        panel.add(MediaUtil.createMediaView(snapshot, MediaDesc.SNAPSHOT_FULL_SIZE, onClick));
+        panel.add(MediaUtil.createMediaView(snapshot, MediaDescSize.SNAPSHOT_FULL_SIZE, onClick));
         Image overlay = MsoyUI.createActionImage("/images/landing/click_overlay.png", onClick);
         overlay.addStyleName("LiveViewOverlay");
         panel.add(overlay);

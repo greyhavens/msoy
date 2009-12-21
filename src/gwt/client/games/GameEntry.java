@@ -9,7 +9,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 
 import com.threerings.gwt.ui.SmartTable;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.game.gwt.GameInfo;
 import com.threerings.msoy.web.gwt.Pages;
 
@@ -32,7 +32,7 @@ public class GameEntry extends SmartTable
             }
         };
         setWidget(0, 0, MediaUtil.createMediaView(
-                      game.thumbMedia, MediaDesc.THUMBNAIL_SIZE, onClick), 1, "Thumb");
+                      game.thumbMedia, MediaDescSize.THUMBNAIL_SIZE, onClick), 1, "Thumb");
 
         setWidget(0, 1, MsoyUI.createActionLabel(game.name, onClick), 1, "Name");
 

@@ -23,7 +23,7 @@ import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.ui.PagedWidget;
 
 import com.threerings.msoy.data.all.GroupName;
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.data.all.VizMemberName;
 import com.threerings.msoy.group.data.all.GroupMembership.Rank;
 import com.threerings.msoy.group.data.all.Medal;
@@ -114,7 +114,7 @@ public class MedalListPanel extends FlowPanel
                 FlowPanel ownerWidget = new FlowPanel();
                 ownerWidget.setStyleName("OwnerWidget");
                 ownerWidget.add(MediaUtil.createMediaView(
-                    owner.getPhoto(), MediaDesc.THUMBNAIL_SIZE,
+                    owner.getPhoto(), MediaDescSize.THUMBNAIL_SIZE,
                     Link.createHandler(Pages.PEOPLE, ""+owner.getMemberId())));
                 ownerWidget.add(Link.create(owner.toString(), "OwnerLink", Pages.PEOPLE,
                     ""+owner.getMemberId(), false));
@@ -161,7 +161,7 @@ public class MedalListPanel extends FlowPanel
         public MedalWidget (Medal medal)
         {
             setStyleName("MedalWidget");
-            Widget icon = MediaUtil.createMediaView(medal.icon, MediaDesc.THUMBNAIL_SIZE);
+            Widget icon = MediaUtil.createMediaView(medal.icon, MediaDescSize.THUMBNAIL_SIZE);
             icon.addStyleName("Icon");
             add(icon);
             add(MsoyUI.createLabel(medal.name, "Name"));

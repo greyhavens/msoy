@@ -28,6 +28,7 @@ import com.threerings.gwt.util.StringUtil;
 import com.threerings.msoy.data.all.Award;
 import com.threerings.msoy.data.all.Friendship;
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.Award.AwardType;
 
@@ -300,7 +301,7 @@ public class ProfileBlurb extends Blurb
         econtent.setText(row, 0, "Photo");
         RowPanel panel = new RowPanel();
         panel.add(_ephoto = new SimplePanel());
-        _ephoto.setWidget(MediaUtil.createMediaView(_profile.photo, MediaDesc.THUMBNAIL_SIZE));
+        _ephoto.setWidget(MediaUtil.createMediaView(_profile.photo, MediaDescSize.THUMBNAIL_SIZE));
 
         panel.add(new Button("Select New...", new ClickHandler() {
             public void onClick (ClickEvent event) {
@@ -309,7 +310,7 @@ public class ProfileBlurb extends Blurb
                         if (photo != null) {
                             _profile.photo = photo;
                             _ephoto.setWidget(MediaUtil.createMediaView(
-                                _profile.photo, MediaDesc.THUMBNAIL_SIZE));
+                                _profile.photo, MediaDescSize.THUMBNAIL_SIZE));
                         }
                     }
                 });

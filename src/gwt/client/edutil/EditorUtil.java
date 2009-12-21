@@ -8,6 +8,7 @@ import com.google.gwt.user.client.ui.HasAlignment;
 
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.data.all.MediaMimeTypes;
 
 import client.ui.MsoyUI;
@@ -86,7 +87,7 @@ public class EditorUtil
          * Otherwise shows an error message and returns false.
          */
         protected boolean checkSize (int width, int height) {
-            int targetW = MediaDesc.getWidth(_size), targetH = MediaDesc.getHeight(_size);
+            int targetW = MediaDescSize.getWidth(_size), targetH = MediaDescSize.getHeight(_size);
             if ((width != targetW) || (height != targetH)) {
                 MsoyUI.error(_msgs.errInvalidShot(
                     String.valueOf(targetW), String.valueOf(targetH)));

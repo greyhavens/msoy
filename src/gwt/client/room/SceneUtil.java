@@ -13,6 +13,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.data.all.MediaMimeTypes;
 import com.threerings.msoy.data.all.StaticMediaDesc;
 import com.threerings.msoy.web.gwt.Pages;
@@ -51,7 +52,7 @@ public class SceneUtil
 
         FlowPanel panel = new FlowPanel();
         panel.addStyleName("sceneView");
-        panel.add(MediaUtil.createMediaView(snapshot, MediaDesc.SNAPSHOT_FULL_SIZE, null));
+        panel.add(MediaUtil.createMediaView(snapshot, MediaDescSize.SNAPSHOT_FULL_SIZE, null));
 
         PushButton liveButton = MsoyUI.createImageButton("liveButton", new ClickHandler() {
             public void onClick (ClickEvent event) {
@@ -79,7 +80,7 @@ public class SceneUtil
     public static Widget createSceneThumbView (MediaDesc thumb, ClickHandler onClick)
     {
         if (thumb != null) {
-            return MediaUtil.createMediaView(thumb, MediaDesc.SNAPSHOT_THUMB_SIZE, onClick);
+            return MediaUtil.createMediaView(thumb, MediaDescSize.SNAPSHOT_THUMB_SIZE, onClick);
         } else {
             Image image = new Image();
             if (onClick != null) {

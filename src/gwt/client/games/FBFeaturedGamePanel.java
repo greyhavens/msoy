@@ -10,7 +10,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 
 import com.threerings.gwt.ui.AbsoluteCSSPanel;
 import com.threerings.gwt.ui.FloatPanel;
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.game.gwt.GameInfo;
 import com.threerings.msoy.web.gwt.Pages;
 
@@ -40,7 +40,8 @@ public class FBFeaturedGamePanel extends AbsoluteCSSPanel
         clear();
         GameInfo game = _games[index];
         add(MsoyUI.createLabel("Daily Games", "title"));
-        add(new ThumbBox(game.shotMedia, MediaDesc.GAME_SHOT_SIZE, Pages.GAMES, "d", game.gameId));
+        add(new ThumbBox(game.shotMedia,
+            MediaDescSize.GAME_SHOT_SIZE, Pages.GAMES, "d", game.gameId));
         add(createScroller(index));
         add(createGameBits(game));
     }

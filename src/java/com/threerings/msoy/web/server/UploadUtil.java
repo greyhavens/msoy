@@ -32,6 +32,7 @@ import com.google.common.collect.ImmutableMap;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.data.all.MediaMimeTypes;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.server.ServerConfig;
@@ -272,7 +273,8 @@ public class UploadUtil
          * Convert the result into a MediaInfo object.
          */
         public MediaInfo getMediaInfo () {
-            int constraintSize = thumbSize == null ? MediaDesc.PREVIEW_SIZE : thumbSize.intValue();
+            int constraintSize = thumbSize == null ?
+                MediaDescSize.PREVIEW_SIZE : thumbSize.intValue();
             byte constraint = MediaDesc.computeConstraint(
                 constraintSize, originalSize.width, originalSize.height);
             return new MediaInfo(digester.hexHash(), mimeType, constraint, finalSize.width,
@@ -395,7 +397,7 @@ public class UploadUtil
         SnapshotInfo canonicalInfo = publishCanonicalImage(uploadFile);
 
         // publish a reduced sized version of the image
-        SnapshotInfo thumbInfo = publishImage(MediaDesc.SNAPSHOT_THUMB_SIZE, uploadFile,
+        SnapshotInfo thumbInfo = publishImage(MediaDescSize.SNAPSHOT_THUMB_SIZE, uploadFile,
             uploadFile.getMimeType(), "jpg").getSnapshotInfo();
 
         return new CanonicalSnapshotInfo(canonicalInfo, thumbInfo);
@@ -439,9 +441,9 @@ public class UploadUtil
     {
         Integer size = null;
         if (Item.THUMB_MEDIA.equals(mediaId)) {
-            size = MediaDesc.THUMBNAIL_SIZE;
+            size = MediaDescSize.THUMBNAIL_SIZE;
         } else if (scaleFurni && Item.FURNI_MEDIA.equals(mediaId)) {
-            size = MediaDesc.PREVIEW_SIZE;
+            size = MediaDescSize.PREVIEW_SIZE;
         }
         return publishImage(size, uploadFile, THUMBNAIL_MIME_TYPE, THUMBNAIL_IMAGE_FORMAT
             ).getMediaInfo();
@@ -468,7 +470,7 @@ public class UploadUtil
      */
     public static Rectangle thumbnailDimensions (int thumbSize)
     {
-        return new Rectangle(MediaDesc.getWidth(thumbSize), MediaDesc.getHeight(thumbSize));
+        return new Rectangle(MediaDescSize.getWidth(thumbSize), MediaDescSize.getHeight(thumbSize));
     }
 
     /**

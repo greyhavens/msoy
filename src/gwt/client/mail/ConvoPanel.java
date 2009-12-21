@@ -19,7 +19,7 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.gwt.util.DateUtil;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.mail.gwt.ConvMessage;
 import com.threerings.msoy.mail.gwt.MailService;
@@ -176,7 +176,7 @@ public class ConvoPanel extends FlowPanel
             setWidget(0, 0, MsoyUI.createFlowPanel("roleBox", new ThumbBox(msg.author.photo),
                                                    MsoyUI.createRoleLabel(msg.author.role)),
                       1, "Thumb");
-            getFlexCellFormatter().setWidth(0, 0, (MediaDesc.THUMBNAIL_WIDTH+20) + "px");
+            getFlexCellFormatter().setWidth(0, 0, (MediaDescSize.THUMBNAIL_WIDTH+20) + "px");
             getFlexCellFormatter().setVerticalAlignment(0, 0, HasAlignment.ALIGN_TOP);
 
             FlowPanel info = new FlowPanel();

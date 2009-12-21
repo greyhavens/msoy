@@ -14,7 +14,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.WidgetUtil;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.web.gwt.Promotion;
 
 import client.util.MediaUtil;
@@ -44,7 +44,7 @@ public class PromotionBox extends RoundBox
         HorizontalPanel hbox = new HorizontalPanel();
         hbox.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
         if (promo.icon != null) {
-            hbox.add(MediaUtil.createMediaView(promo.icon, MediaDesc.HALF_THUMBNAIL_SIZE));
+            hbox.add(MediaUtil.createMediaView(promo.icon, MediaDescSize.HALF_THUMBNAIL_SIZE));
             hbox.add(WidgetUtil.makeShim(10, 10));
         }
         Widget blurb = MsoyUI.createHTML(promo.blurb, "inline");

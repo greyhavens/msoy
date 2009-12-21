@@ -24,7 +24,7 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.CenteredBox;
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.item.data.all.Photo;
 import com.threerings.msoy.person.gwt.Gallery;
 import com.threerings.msoy.person.gwt.GalleryData;
@@ -44,14 +44,14 @@ public class GalleryDetailEditPanel extends AbsolutePanel
 
         Widget thumbnail;
         if (gallery.thumbMedia != null) {
-            thumbnail = MediaUtil.createMediaView(gallery.thumbMedia, MediaDesc.THUMBNAIL_SIZE);
+            thumbnail = MediaUtil.createMediaView(gallery.thumbMedia, MediaDescSize.THUMBNAIL_SIZE);
         } else {
             thumbnail = MsoyUI.createLabel(_pmsgs.galleryNoThumbnail(), "Text");
         }
 
         final CenteredBox thumbnailPanel = new CenteredBox(thumbnail, "GalleryThumbnail",
-            MediaDesc.getWidth(MediaDesc.THUMBNAIL_SIZE),
-            MediaDesc.getHeight(MediaDesc.THUMBNAIL_SIZE));
+            MediaDescSize.getWidth(MediaDescSize.THUMBNAIL_SIZE),
+            MediaDescSize.getHeight(MediaDescSize.THUMBNAIL_SIZE));
         //final SimplePanel thumbnailPanel = MsoyUI.createSimplePanel("GalleryThumbnail", thumbnail);
         // allow for the user to drop an image on the thumbnail panel to set the thumbnail media
         // for the gallery
@@ -65,7 +65,7 @@ public class GalleryDetailEditPanel extends AbsolutePanel
                         galleryData.hasUnsavedChanges = true;
                         thumbnailPanel.clear();
                         thumbnailPanel.add(MediaUtil.createMediaView(image.getThumbnailMedia(),
-                            MediaDesc.THUMBNAIL_SIZE));
+                            MediaDescSize.THUMBNAIL_SIZE));
                     }
                 }
                 // we've extracted all the information we need. return the dropped widget to whence

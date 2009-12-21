@@ -7,7 +7,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.FlowPanel;
 
 import com.threerings.gwt.ui.AbsoluteCSSPanel;
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescSize;
 
 import com.threerings.msoy.web.gwt.Pages;
 
@@ -40,7 +40,7 @@ public class FBFriendPanel extends AbsoluteCSSPanel
 
         addStyleName(rank % 2 == 0 ? "friendInfoEven" : "friendInfoOdd");
 
-        int halfSize = MediaDesc.HALF_THUMBNAIL_SIZE;
+        int halfSize = MediaDescSize.HALF_THUMBNAIL_SIZE;
         add(MsoyUI.createFlowPanel("Name", FBMLPanel.makeName(info.facebookUid)));
 
         if (rank <= 3) {

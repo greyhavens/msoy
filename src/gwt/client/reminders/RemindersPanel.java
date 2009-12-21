@@ -18,6 +18,7 @@ import com.threerings.gwt.ui.AbsoluteCSSPanel;
 import com.threerings.gwt.util.CookieUtil;
 
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.reminders.gwt.Reminder;
 import com.threerings.msoy.reminders.gwt.ReminderType;
@@ -168,7 +169,7 @@ public class RemindersPanel extends FlowPanel
 
     protected Widget createThumbnail (MediaDesc media, String style)
     {
-        Widget w = MediaUtil.createMediaView(media, MediaDesc.THUMBNAIL_SIZE);
+        Widget w = MediaUtil.createMediaView(media, MediaDescSize.THUMBNAIL_SIZE);
         w.addStyleName(style);
         return w;
     }

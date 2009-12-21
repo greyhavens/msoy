@@ -22,7 +22,7 @@ import com.google.gwt.user.client.ui.TextBox;
 
 import com.threerings.gwt.ui.EnterClickAdapter;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.data.all.VizMemberName;
 import com.threerings.msoy.group.data.all.Medal;
 import com.threerings.msoy.group.gwt.GroupService;
@@ -104,7 +104,7 @@ public class AwardMedalsPanel extends FlowPanel
         for (final VizMemberName member : members) {
             HorizontalPanel row = new HorizontalPanel();
             row.setSpacing(10);
-            row.add(MediaUtil.createMediaView(member.getPhoto(), MediaDesc.HALF_THUMBNAIL_SIZE));
+            row.add(MediaUtil.createMediaView(member.getPhoto(), MediaDescSize.HALF_THUMBNAIL_SIZE));
             row.add(Link.create(member.toString(), Pages.PEOPLE, "" + member.getMemberId()));
             // TODO: this will be really inefficient for groups that have a ton of Medals.  This
             // UI should contain only one drop down if at all possible.

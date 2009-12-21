@@ -14,6 +14,7 @@ import com.google.gwt.user.client.ui.TextBox;
 
 
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.edgame.gwt.EditGameService.GameData;
 import com.threerings.msoy.game.gwt.GameGenre;
 import com.threerings.msoy.game.gwt.GameInfo;
@@ -92,7 +93,7 @@ public class InfoEditorPanel extends GameEditorTable
         addSpacer();
 
         final MediaBox tbox = new MediaBox(
-            MediaDesc.THUMBNAIL_SIZE, Item.THUMB_MEDIA, info.thumbMedia);
+            MediaDescSize.THUMBNAIL_SIZE, Item.THUMB_MEDIA, info.thumbMedia);
         addRow(_msgs.egThumb(), _msgs.egThumbTip(), tbox, new Command() {
             public void execute () {
                 info.thumbMedia = EditorUtil.requireImageMedia(_msgs.egThumb(), tbox.getMedia());
@@ -100,7 +101,7 @@ public class InfoEditorPanel extends GameEditorTable
         });
 
         final MediaBox sbox = new MediaBox(
-            MediaDesc.GAME_SHOT_SIZE, Item.AUX_MEDIA, info.shotMedia) {
+            MediaDescSize.GAME_SHOT_SIZE, Item.AUX_MEDIA, info.shotMedia) {
             @Override public void mediaUploaded (String name, MediaDesc desc, int w, int h) {
                 if (checkSize(w, h)) {
                     super.mediaUploaded(name, desc, w, h);

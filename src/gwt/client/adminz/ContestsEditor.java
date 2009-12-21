@@ -21,6 +21,7 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.util.DateUtil;
 
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.web.gwt.Contest;
 
 import client.imagechooser.ImageChooserPopup;
@@ -173,7 +174,7 @@ public class ContestsEditor extends AdminDataPanel<List<Contest>>
         ptable.setText(row, col++, contest.contestId);
         if (contest.icon != null) {
             ptable.setWidget(row, col++, MediaUtil.createMediaView(
-                contest.icon, MediaDesc.HALF_THUMBNAIL_SIZE));
+                contest.icon, MediaDescSize.HALF_THUMBNAIL_SIZE));
         } else {
             ptable.setText(row, col++, "");
         }

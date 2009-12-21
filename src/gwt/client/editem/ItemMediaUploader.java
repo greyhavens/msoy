@@ -13,6 +13,7 @@ import com.google.gwt.user.client.ui.Label;
 
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.item.data.all.Item;
 
 import client.shell.CShell;
@@ -94,7 +95,7 @@ public class ItemMediaUploader extends SmartTable
     public void setMedia (MediaDesc desc)
     {
         if (desc != null) {
-            int width = MediaDesc.THUMBNAIL_WIDTH, height = MediaDesc.THUMBNAIL_HEIGHT;
+            int width = MediaDescSize.THUMBNAIL_WIDTH, height = MediaDescSize.THUMBNAIL_HEIGHT;
             if (_mode != MODE_THUMB) {
                 width *= 2;
                 height *= 2;
@@ -169,17 +170,17 @@ public class ItemMediaUploader extends SmartTable
 
         switch (_mode) {
         case MODE_THUMB:
-            maxWidth = MediaDesc.getWidth(MediaDesc.THUMBNAIL_SIZE);
-            maxHeight = MediaDesc.getHeight(MediaDesc.THUMBNAIL_SIZE);
+            maxWidth = MediaDescSize.getWidth(MediaDescSize.THUMBNAIL_SIZE);
+            maxHeight = MediaDescSize.getHeight(MediaDescSize.THUMBNAIL_SIZE);
             break;
         case MODE_GAME_SHOT:
-            maxWidth = MediaDesc.getWidth(MediaDesc.GAME_SHOT_SIZE);
-            maxHeight = MediaDesc.getHeight(MediaDesc.GAME_SHOT_SIZE);
+            maxWidth = MediaDescSize.getWidth(MediaDescSize.GAME_SHOT_SIZE);
+            maxHeight = MediaDescSize.getHeight(MediaDescSize.GAME_SHOT_SIZE);
             maxRequired = true;
             break;
         case MODE_GAME_SPLASH:
-            maxWidth = MediaDesc.getWidth(MediaDesc.GAME_SPLASH_SIZE);
-            maxHeight = MediaDesc.getHeight(MediaDesc.GAME_SPLASH_SIZE);
+            maxWidth = MediaDescSize.getWidth(MediaDescSize.GAME_SPLASH_SIZE);
+            maxHeight = MediaDescSize.getHeight(MediaDescSize.GAME_SPLASH_SIZE);
             maxRequired = true;
             break;
         }

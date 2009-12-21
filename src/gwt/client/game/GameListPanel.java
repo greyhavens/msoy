@@ -16,7 +16,7 @@ import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.util.SimpleDataModel;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.game.gwt.GameInfo;
 import com.threerings.msoy.web.gwt.Pages;
 
@@ -131,7 +131,7 @@ public abstract class GameListPanel extends FlowPanel
                 int col = 0;
 
                 setWidget(0, col++, MediaUtil.createMediaView(
-                              game.thumbMedia, MediaDesc.THUMBNAIL_SIZE,
+                              game.thumbMedia, MediaDescSize.THUMBNAIL_SIZE,
                               Link.createHandler(Pages.GAMES, "d", game.gameId)), 1, "Thumbnail");
 
                 FlowPanel name = new FlowPanel();

@@ -7,7 +7,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.PagedGrid;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.item.gwt.ListingCard;
 
 import client.item.ListingBox;
@@ -52,6 +52,6 @@ public abstract class ListingGrid extends PagedGrid<ListingCard>
     protected static final int COLUMNS = 4;
 
     protected static final int NAV_BAR_ETC = 15 /* gap */ + 20 /* bar height */ + 10 /* gap */;
-    protected static final int BOX_HEIGHT = MediaDesc.THUMBNAIL_HEIGHT + 20 /* border */ +
+    protected static final int BOX_HEIGHT = MediaDescSize.THUMBNAIL_HEIGHT + 20 /* border */ +
         15 /* name */ + 20 /* creator */ + 20 /* rating/price */;
 }

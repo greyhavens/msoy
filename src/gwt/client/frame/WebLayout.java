@@ -60,7 +60,7 @@ public abstract class WebLayout extends Layout
         _content.setVisible(false);
         RootPanel.get(PAGE).add(_content);
 
-        // position 
+        // position
         positionElements();
         _content.setVisible(true);
     }
@@ -145,9 +145,7 @@ public abstract class WebLayout extends Layout
         }
 
         FlowPanel bits = MsoyUI.createFlowPanel("Bits");
-        bits.add(MsoyUI.createPushButton(_images.noclient().createImage(),
-                                         _images.noclient_hover().createImage(),
-                                         _images.noclient_hover().createImage(), _onGoHome));
+        bits.add(FlashClients.createWhirledMap());
         bits.add(MsoyUI.createActionLabel(_cmsgs.goHome(), _onGoHome));
 
         _noclient = MsoyUI.createSimplePanel(bits, "noclient");

@@ -26,7 +26,7 @@ import com.threerings.gwt.ui.CenteredBox;
 import com.threerings.gwt.util.DataModel;
 import com.threerings.gwt.util.SimpleDataModel;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.imagechooser.gwt.ImageChooserService;
 import com.threerings.msoy.imagechooser.gwt.ImageChooserServiceAsync;
 import com.threerings.msoy.item.data.all.Item;
@@ -150,7 +150,7 @@ public class GalleryEditPanel extends AbsolutePanel // AbsolutePanel needed to s
         DropPanel<Photo> dropPanel = new DropPanel<Photo>(_dragController, dropModel) {
             @Override protected Widget createWidget (Photo photo) {
                 return new CenteredBox(MediaUtil.createMediaView(photo.getThumbnailMedia(),
-                    MediaDesc.THUMBNAIL_SIZE), "ThumbnailImage");
+                    MediaDescSize.THUMBNAIL_SIZE), "ThumbnailImage");
             }
         };
         add(dropPanel, 0, 120);
@@ -347,7 +347,7 @@ public class GalleryEditPanel extends AbsolutePanel // AbsolutePanel needed to s
         protected Widget createWidget (Photo photo) {
             PayloadWidget<Photo> payload = new PayloadWidget<Photo>(
                 this, new CenteredBox(MediaUtil.createMediaView(
-                    photo.getThumbnailMedia(), MediaDesc.THUMBNAIL_SIZE),
+                    photo.getThumbnailMedia(), MediaDescSize.THUMBNAIL_SIZE),
                 "ThumbnailImage"), photo);
             _dragController.makeDraggable(payload);
             return payload;

@@ -20,7 +20,7 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.comment.gwt.Comment;
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.data.all.RatingResult;
 import com.threerings.msoy.game.gwt.GameDetail;
 import com.threerings.msoy.game.gwt.GameInfo;
@@ -79,7 +79,7 @@ public class GameDetailPanel extends SmartTable
 
         VerticalPanel shot = new VerticalPanel();
         shot.setHorizontalAlignment(HasAlignment.ALIGN_CENTER);
-        shot.add(new ThumbBox(info.shotMedia, MediaDesc.GAME_SHOT_SIZE));
+        shot.add(new ThumbBox(info.shotMedia, MediaDescSize.GAME_SHOT_SIZE));
         shot.add(WidgetUtil.makeShim(5, 5));
         Rating rating = new Rating(info.rating, info.ratingCount, detail.memberRating, false) {
             @Override protected void handleRate (

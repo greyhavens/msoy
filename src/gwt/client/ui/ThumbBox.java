@@ -8,6 +8,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.SimplePanel;
 
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.util.Link;
@@ -20,22 +21,22 @@ public class ThumbBox extends SimplePanel
 {
     public ThumbBox (MediaDesc desc)
     {
-        this(desc, MediaDesc.THUMBNAIL_SIZE);
+        this(desc, MediaDescSize.THUMBNAIL_SIZE);
     }
 
     public ThumbBox (MediaDesc desc, int size)
     {
-        this(desc, MediaDesc.getWidth(size), MediaDesc.getHeight(size), null);
+        this(desc, MediaDescSize.getWidth(size), MediaDescSize.getHeight(size), null);
     }
 
     public ThumbBox (MediaDesc desc, Pages page, Object... args)
     {
-        this(desc, MediaDesc.THUMBNAIL_SIZE, page, args);
+        this(desc, MediaDescSize.THUMBNAIL_SIZE, page, args);
     }
 
     public ThumbBox (MediaDesc desc, int size, Pages page, Object... args)
     {
-        this(desc, MediaDesc.getWidth(size), MediaDesc.getHeight(size),
+        this(desc, MediaDescSize.getWidth(size), MediaDescSize.getHeight(size),
              Link.createHandler(page, args));
     }
 

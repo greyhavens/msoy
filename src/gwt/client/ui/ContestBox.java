@@ -8,7 +8,7 @@ import java.util.Date;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.threerings.gwt.ui.FloatPanel;
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.web.gwt.Contest;
 
 import client.shell.ShellMessages;
@@ -30,7 +30,7 @@ public class ContestBox extends FloatPanel
             FlowPanel icon = MsoyUI.createFlowPanel("Icon");
             add(icon);
             if (contest.icon != null) {
-                icon.add(MediaUtil.createMediaView(contest.icon, MediaDesc.THUMBNAIL_SIZE));
+                icon.add(MediaUtil.createMediaView(contest.icon, MediaDescSize.THUMBNAIL_SIZE));
             } else {
                 icon.add(MsoyUI.createHTML("&nbsp;", null));
             }

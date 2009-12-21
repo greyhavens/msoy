@@ -12,7 +12,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.group.gwt.GroupCard;
 import com.threerings.msoy.group.gwt.GroupService;
 import com.threerings.msoy.group.gwt.GroupServiceAsync;
@@ -62,7 +62,7 @@ public class MyGroupsPanel extends FlowPanel
             super("Card", 0, 5);
 
             int groupId = card.name.getGroupId();
-            setWidget(0, 0, new ThumbBox(card.getLogo(), MediaDesc.HALF_THUMBNAIL_SIZE,
+            setWidget(0, 0, new ThumbBox(card.getLogo(), MediaDescSize.HALF_THUMBNAIL_SIZE,
                                          Pages.GROUPS, "d", groupId), 1, "Thumb");
 
             setWidget(0, 1, Link.create(""+card.name, Pages.GROUPS, "d", groupId));

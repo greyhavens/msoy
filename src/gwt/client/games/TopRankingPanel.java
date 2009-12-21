@@ -9,7 +9,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 import com.threerings.gwt.ui.SmartTable;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.game.gwt.GameService;
 import com.threerings.msoy.game.gwt.GameServiceAsync;
 import com.threerings.msoy.game.gwt.PlayerRating;
@@ -95,7 +95,7 @@ public class TopRankingPanel extends VerticalPanel
             _grid.setText(row, col, _msgs.gameRank("" + (ii+1)), 1, "Cell");
             _grid.getFlexCellFormatter().setHorizontalAlignment(row, col, HasAlignment.ALIGN_RIGHT);
 
-            ThumbBox box = new ThumbBox(rating.photo, MediaDesc.QUARTER_THUMBNAIL_SIZE);
+            ThumbBox box = new ThumbBox(rating.photo, MediaDescSize.QUARTER_THUMBNAIL_SIZE);
             _grid.setWidget(row, col+1, box, 1, "Cell");
             _grid.getFlexCellFormatter().addStyleName(row, col+1, "Photo");
             _grid.getFlexCellFormatter().setHorizontalAlignment(

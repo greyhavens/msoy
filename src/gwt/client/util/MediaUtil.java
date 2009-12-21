@@ -8,6 +8,7 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.data.all.MediaMimeTypes;
 import com.threerings.msoy.data.all.StaticMediaDesc;
 import com.threerings.msoy.web.gwt.SharedMediaUtil;
@@ -23,8 +24,8 @@ public class MediaUtil extends SharedMediaUtil
     /**
      * Create a widget to display the supplied media.
      *
-     * @param size either {@link MediaDesc#HALF_THUMBNAIL_SIZE}, {@link MediaDesc#THUMBNAIL_SIZE}
-     * or {@link MediaDesc#PREVIEW_SIZE}.
+     * @param size either {@link MediaDescSize#HALF_THUMBNAIL_SIZE}, {@link MediaDescSize#THUMBNAIL_SIZE}
+     * or {@link MediaDescSize#PREVIEW_SIZE}.
      */
     public static Widget createMediaView (MediaDesc desc, int size)
     {
@@ -36,14 +37,14 @@ public class MediaUtil extends SharedMediaUtil
      */
     public static Widget createMediaView (MediaDesc desc, int size, ClickHandler click)
     {
-        return createMediaView(desc, MediaDesc.getWidth(size), MediaDesc.getHeight(size), click);
+        return createMediaView(desc, MediaDescSize.getWidth(size), MediaDescSize.getHeight(size), click);
     }
 
     /**
      * Create a widget to display the supplied media. The media will be configured to scale
      * properly to constraint it to the indicated size. The supplied target width and height which
-     * must be in the same ratio as the ratio between {@link MediaDesc#THUMBNAIL_WIDTH} and {@link
-     * MediaDesc#THUMBNAIL_HEIGHT}.
+     * must be in the same ratio as the ratio between {@link MediaDescSize#THUMBNAIL_WIDTH} and {@link
+     * MediaDescSize#THUMBNAIL_HEIGHT}.
      */
     public static Widget createMediaView (
         MediaDesc desc, int width, int height, ClickHandler click)

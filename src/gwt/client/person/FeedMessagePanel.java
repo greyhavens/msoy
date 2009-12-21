@@ -19,6 +19,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.InlinePanel;
 
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.person.gwt.FeedMessage;
 import com.threerings.msoy.person.gwt.FeedItemGenerator;
 import com.threerings.msoy.person.gwt.FeedMessageType;
@@ -53,12 +54,12 @@ public class FeedMessagePanel extends FocusPanel
                         Link.go(page, args);
                     }
                 };
-                int size = MediaDesc.HALF_THUMBNAIL_SIZE;
+                int size = MediaDescSize.HALF_THUMBNAIL_SIZE;
                 if (page == Pages.WORLD && args.get(0, "").startsWith("s")) {
                     // snapshots are unconstrained at a set size; fake a width constraint for
                     // TINY_SIZE.
                     md.constraint = MediaDesc.HORIZONTALLY_CONSTRAINED;
-                    size = MediaDesc.SNAPSHOT_TINY_SIZE;
+                    size = MediaDescSize.SNAPSHOT_TINY_SIZE;
                 }
                 return new WidgetWrapper(MediaUtil.createMediaView(md, size, clicker));
             }

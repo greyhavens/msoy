@@ -7,7 +7,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlexTable;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.web.gwt.Pages;
 
@@ -42,7 +42,7 @@ public class TrophyGrid extends FlexTable
             };
 
             grid.setWidget(row, col, MediaUtil.createMediaView(
-                               trophy.trophyMedia, MediaDesc.THUMBNAIL_SIZE, trophyClick));
+                               trophy.trophyMedia, MediaDescSize.THUMBNAIL_SIZE, trophyClick));
             grid.getFlexCellFormatter().setStyleName(row, col, "Trophy");
             grid.setWidget(row+1, col, MsoyUI.createActionLabel(trophy.name, trophyClick));
             grid.getFlexCellFormatter().setStyleName(row+1, col, "Name");

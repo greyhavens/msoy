@@ -16,7 +16,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.util.DateUtil;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.web.gwt.MemberCard;
 import com.threerings.msoy.web.gwt.MessageUtil;
 import com.threerings.msoy.web.gwt.Pages;
@@ -158,7 +158,7 @@ public class MessagePanel extends FlexTable
      */
     protected int getThumbnailSize ()
     {
-        return MediaDesc.THUMBNAIL_SIZE;
+        return MediaDescSize.THUMBNAIL_SIZE;
     }
 
     /**

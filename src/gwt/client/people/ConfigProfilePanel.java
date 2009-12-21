@@ -18,6 +18,7 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.util.DateUtil;
 
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.profile.gwt.Profile;
 import com.threerings.msoy.profile.gwt.ProfileService;
@@ -104,7 +105,7 @@ public class ConfigProfilePanel extends FlowPanel
                         if (photo != null) {
                             _profile.photo = photo;
                             _preview.setWidget(0, 0, MediaUtil.createMediaView(photo,
-                                MediaDesc.THUMBNAIL_SIZE));
+                                MediaDescSize.THUMBNAIL_SIZE));
                         }
                     }
                 });
@@ -113,7 +114,7 @@ public class ConfigProfilePanel extends FlowPanel
 
         _preview = new SmartTable("Preview", 0, 10);
         _preview.setWidget(0, 0, MediaUtil.createMediaView(profile.photo,
-            MediaDesc.THUMBNAIL_SIZE));
+            MediaDescSize.THUMBNAIL_SIZE));
         _preview.getFlexCellFormatter().setRowSpan(0, 0, 2);
         _preview.setText(0, 1, fiddleName(name.toString()), 2, "Name");
         _preview.setText(1, 0, _msgs.memberSince());

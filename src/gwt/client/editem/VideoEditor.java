@@ -8,6 +8,7 @@ import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.ui.TextBox;
 
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.data.all.MediaMimeTypes;
 import com.threerings.msoy.item.data.all.Video;
 import com.threerings.msoy.item.data.all.Item;
@@ -92,7 +93,7 @@ public class VideoEditor extends BulkMediaEditor
                     // create a blank video viewer, ready to receive data when
                     // the user enters it
                     setWidget(0, 0, FlashClients.createVideoPlayer(
-                        MediaDesc.THUMBNAIL_WIDTH * 2, MediaDesc.THUMBNAIL_HEIGHT * 2, null));
+                        MediaDescSize.THUMBNAIL_WIDTH * 2, MediaDescSize.THUMBNAIL_HEIGHT * 2, null));
                 }
             };
 

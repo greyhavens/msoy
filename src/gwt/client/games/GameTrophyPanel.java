@@ -17,7 +17,7 @@ import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.util.DateUtil;
 import com.threerings.gwt.util.SimpleDataModel;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.game.gwt.GameService;
 import com.threerings.msoy.game.gwt.GameServiceAsync;
@@ -83,7 +83,7 @@ public class GameTrophyPanel extends PagedGrid<Trophy>
 
             if (trophy != null) {
                 setWidget(0, 0, MediaUtil.createMediaView(
-                              trophy.trophyMedia, MediaDesc.THUMBNAIL_SIZE));
+                              trophy.trophyMedia, MediaDescSize.THUMBNAIL_SIZE));
                 setText(0, 1, trophy.name);
                 if (trophy.description == null) {
                     setText(1, 0, _msgs.gameTrophySecret());

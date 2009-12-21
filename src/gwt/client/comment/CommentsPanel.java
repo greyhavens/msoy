@@ -23,7 +23,7 @@ import com.threerings.gwt.util.PagedResult;
 import com.threerings.msoy.comment.gwt.Comment;
 import com.threerings.msoy.comment.gwt.CommentService;
 import com.threerings.msoy.comment.gwt.CommentServiceAsync;
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescSize;
 
 import client.shell.CShell;
 import client.shell.ShellMessages;
@@ -107,7 +107,7 @@ public class CommentsPanel extends PagedGrid<Comment>
      */
     protected int getThumbnailSize ()
     {
-        return MediaDesc.HALF_THUMBNAIL_SIZE;
+        return MediaDescSize.HALF_THUMBNAIL_SIZE;
     }
 
     protected boolean commentsCanBeRated ()

@@ -24,6 +24,7 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.util.DateUtil;
 
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.mail.gwt.Conversation;
 import com.threerings.msoy.mail.gwt.MailService;
 import com.threerings.msoy.mail.gwt.MailServiceAsync;
@@ -217,7 +218,7 @@ public class MailPanel extends FlowPanel
                 name = Link.memberView(convo.other.name);
             }
 
-            setWidget(0, 1, new ThumbBox(photo, MediaDesc.HALF_THUMBNAIL_SIZE), 1, "Photo");
+            setWidget(0, 1, new ThumbBox(photo, MediaDescSize.HALF_THUMBNAIL_SIZE), 1, "Photo");
             getFlexCellFormatter().setRowSpan(0, 1, 2);
 
             setWidget(0, 2, name, 1, "Name");

@@ -32,6 +32,7 @@ import com.threerings.gwt.util.StringUtil;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.data.all.MediaMimeTypes;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.stuff.gwt.StuffService;
@@ -330,7 +331,7 @@ public abstract class ItemEditor extends FlowPanel
     protected String getThumbnailHint ()
     {
         return _emsgs.editorThumbHint(
-            String.valueOf(MediaDesc.THUMBNAIL_WIDTH), String.valueOf(MediaDesc.THUMBNAIL_HEIGHT));
+            String.valueOf(MediaDescSize.THUMBNAIL_WIDTH), String.valueOf(MediaDescSize.THUMBNAIL_HEIGHT));
     }
 
     protected void addFurniUploader ()

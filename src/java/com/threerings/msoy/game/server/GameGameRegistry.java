@@ -983,8 +983,7 @@ public class GameGameRegistry
             initialGameState.put(record.datumKey, record.datumValue);
         }
         delegates.add(new PropertySpaceDelegate() {
-            @Override
-            protected Map<String, byte[]> initialStateFromStore () {
+            @Override protected Map<String, byte[]> initialStateFromStore () {
                 return initialGameState;
             }
             @Override

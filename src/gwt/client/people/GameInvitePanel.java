@@ -22,7 +22,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.game.gwt.GameDetail;
 import com.threerings.msoy.game.gwt.GameService;
 import com.threerings.msoy.game.gwt.GameServiceAsync;
@@ -106,7 +106,7 @@ public class GameInvitePanel extends InvitePanel
         info.setWidth("100%");
         info.setStyleName("gameInfo");
         info.setWidget(0, 0, new ThumbBox(detail.info.thumbMedia,
-                                          MediaDesc.THUMBNAIL_SIZE), 1, "thumbnail");
+                                          MediaDescSize.THUMBNAIL_SIZE), 1, "thumbnail");
         info.getFlexCellFormatter().setRowSpan(0, 0, 2);
         info.setText(0, 1, _msgs.gameInviteIntro(detail.info.name), 1, "Intro");
         info.setText(1, 0, _msgs.gameInviteTip(), 1);
@@ -354,7 +354,7 @@ public class GameInvitePanel extends InvitePanel
             super(0, 1);
             _card = card;
             setWidget(0, 0, _check = new CheckBox());
-            setWidget(0, 1, new ThumbBox(card.photo, MediaDesc.QUARTER_THUMBNAIL_SIZE));
+            setWidget(0, 1, new ThumbBox(card.photo, MediaDescSize.QUARTER_THUMBNAIL_SIZE));
             setWidget(0, 2, MsoyUI.createLabel(card.name.toString(), "memberName"));
             getFlexCellFormatter().setWidth(0, 2, "100%");
             _check.addClickHandler(listener);

@@ -23,6 +23,7 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.util.StringUtil;
 
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.edgame.gwt.GameCode;
 import com.threerings.msoy.game.gwt.GameInfo;
 import com.threerings.msoy.item.data.all.Item;
@@ -122,7 +123,7 @@ public class CodeEditorPanel extends GameEditorTable
         addSpacer();
 
         final MediaBox spbox = new MediaBox(
-            MediaDesc.GAME_SHOT_SIZE, GameCode.SPLASH_MEDIA, code.splashMedia) {
+            MediaDescSize.GAME_SHOT_SIZE, GameCode.SPLASH_MEDIA, code.splashMedia) {
             public void setMedia (MediaDesc media) {
                 if (media != null) {
                     // we do some fakery here to keep the splash media sanely scaled

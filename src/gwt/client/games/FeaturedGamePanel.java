@@ -8,7 +8,7 @@ import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.game.gwt.GameInfo;
 import com.threerings.msoy.web.gwt.Pages;
 
@@ -38,8 +38,9 @@ public class FeaturedGamePanel extends AbsolutePanel
         clear();
         final GameInfo game = _games[index];
 
-        add(new ThumbBox(game.shotMedia, MediaDesc.GAME_SHOT_SIZE, Pages.GAMES, "d", game.gameId),
-            10, 37);
+        ThumbBox thumbBox = new ThumbBox(
+            game.shotMedia, MediaDescSize.GAME_SHOT_SIZE, Pages.GAMES, "d", game.gameId);
+        add(thumbBox, 10, 37);
         if (game.playersOnline > 0) {
             add(MsoyUI.createLabel(_msgs.featuredOnline(""+game.playersOnline), "Online"), 10, 170);
         }

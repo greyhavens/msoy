@@ -7,7 +7,7 @@ import com.google.gwt.user.client.ui.HasAlignment;
 
 import com.threerings.gwt.ui.SmartTable;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.web.gwt.MemberCard;
 import com.threerings.msoy.web.gwt.Pages;
 
@@ -24,7 +24,7 @@ public class MemberWidget extends SmartTable
     {
         super("memberWidget", 0, 5);
 
-        setWidget(0, 0, MediaUtil.createMediaView(card.photo, MediaDesc.THUMBNAIL_SIZE,
+        setWidget(0, 0, MediaUtil.createMediaView(card.photo, MediaDescSize.THUMBNAIL_SIZE,
                                                   Link.createHandler(
                                                   Pages.PEOPLE, "" + card.name.getMemberId())),
                   1, "Photo");

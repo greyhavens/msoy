@@ -17,7 +17,7 @@ import com.threerings.gwt.ui.Anchor;
 import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.util.DateUtil;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.fora.gwt.ForumThread;
 import com.threerings.msoy.group.gwt.GroupDetail;
 import com.threerings.msoy.web.gwt.MessageUtil;
@@ -92,7 +92,7 @@ public class GroupDiscussionsPanel extends FlowPanel
             ClickHandler posterClick = Link.createHandler(
                 Pages.PEOPLE, "" + thread.firstPost.poster.name.getMemberId());
             Widget posterIcon = MediaUtil.createMediaView(
-                thread.firstPost.poster.photo, MediaDesc.HALF_THUMBNAIL_SIZE, posterClick);
+                thread.firstPost.poster.photo, MediaDescSize.HALF_THUMBNAIL_SIZE, posterClick);
             posterIcon.setStyleName("PostedByIcon");
             add(posterIcon);
 

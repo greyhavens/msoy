@@ -21,6 +21,7 @@ import com.samskivert.util.IntSet;
 
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
 import com.threerings.msoy.room.server.persist.SceneRecord;
 import com.threerings.msoy.server.MsoyEventLogger;
@@ -656,28 +657,28 @@ public class ForumServlet extends MsoyServiceServlet
         CatalogRecord crec = repo.loadListing(catalogId, true);
         Item item = (crec == null) ? null : crec.item.toItem();
         return (item == null) ? null : MessageUtil.makeBox(token, item.getThumbnailMedia(),
-                                                           MediaDesc.THUMBNAIL_SIZE, item.name);
+                                                           MediaDescSize.THUMBNAIL_SIZE, item.name);
     }
 
     protected String makeBoxedGame (String token, int gameId)
     {
         GameInfoRecord grec = _mgameRepo.loadGame(gameId);
         return (grec == null) ? null :
-            MessageUtil.makeBox(token, grec.getShotMedia(), MediaDesc.GAME_SHOT_SIZE, grec.name);
+            MessageUtil.makeBox(token, grec.getShotMedia(), MediaDescSize.GAME_SHOT_SIZE, grec.name);
     }
 
     protected String makeBoxedWhirled (String token, int groupId)
     {
         GroupRecord grec = _groupRepo.loadGroup(groupId);
         return (grec == null) ? null :
-            MessageUtil.makeBox(token, grec.toLogo(), MediaDesc.THUMBNAIL_SIZE, grec.name);
+            MessageUtil.makeBox(token, grec.toLogo(), MediaDescSize.THUMBNAIL_SIZE, grec.name);
     }
 
     protected String makeBoxedScene (String token, int sceneId)
     {
         SceneRecord srec = _sceneRepo.loadScene(sceneId);
         return (srec == null) ? null : MessageUtil.makeBox(
-            token, srec.getSnapshotThumb(), MediaDesc.SNAPSHOT_THUMB_SIZE, srec.name);
+            token, srec.getSnapshotThumb(), MediaDescSize.SNAPSHOT_THUMB_SIZE, srec.name);
     }
 
     protected String makeBoxedMemberHome (String token, int memberId)

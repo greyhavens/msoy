@@ -21,6 +21,7 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.util.DateUtil;
 
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.web.gwt.Promotion;
 
 import client.imagechooser.ImageChooserPopup;
@@ -124,7 +125,7 @@ public class PromotionEditor extends AdminDataPanel<List<Promotion>>
         ptable.setText(row, col++, promo.promoId);
         if (promo.icon != null) {
             ptable.setWidget(row, col++, MediaUtil.createMediaView(
-                                 promo.icon, MediaDesc.HALF_THUMBNAIL_SIZE));
+                                 promo.icon, MediaDescSize.HALF_THUMBNAIL_SIZE));
         }
         ptable.setWidget(row, col++, MsoyUI.createHTML(promo.blurb, null));
         ptable.setText(row, col++, DateUtil.formatDateTime(promo.starts));

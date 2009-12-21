@@ -19,6 +19,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.facebook.gwt.FeedThumbnail;
 
 import client.edutil.EditorUtil;
@@ -126,7 +127,7 @@ class EditThumbsPanel extends FlowPanel
                 MsoyUI.createLabel(_msgs.editFeedThumbnailsVariantLabel(), null),
                 _variant = MsoyUI.createTextBox(variant, 8, 4)));
 
-            final int size = MediaDesc.FB_FEED_SIZE;
+            final int size = MediaDescSize.FB_FEED_SIZE;
             for (int ii = 0; ii < FeedThumbnail.COUNT; ++ii) {
                 String id = _code + variant + ii;
                 EditorUtil.MediaBox box = new EditorUtil.MediaBox(size, id,

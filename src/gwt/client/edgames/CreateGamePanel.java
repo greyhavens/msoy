@@ -9,6 +9,7 @@ import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.TextBox;
 
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.game.gwt.GameInfo;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.web.gwt.Pages;
@@ -46,7 +47,7 @@ public class CreateGamePanel extends GameEditorTable
             }
         });
 
-        final MediaBox tbox = new MediaBox(MediaDesc.THUMBNAIL_SIZE, Item.THUMB_MEDIA, null);
+        final MediaBox tbox = new MediaBox(MediaDescSize.THUMBNAIL_SIZE, Item.THUMB_MEDIA, null);
         addRow(_msgs.egThumb(), _msgs.egThumbTip(), tbox, new Command() {
             public void execute () {
                 _thumbMedia = EditorUtil.requireImageMedia(_msgs.egThumb(), tbox.getMedia());

@@ -14,6 +14,7 @@ import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.item.data.all.TrophySource;
 import java.sql.Timestamp;
@@ -84,7 +85,7 @@ public class TrophyRecord extends PersistentRecord
     {
         return new MediaDesc(
             trophyMediaHash, trophyMimeType, MediaDesc.computeConstraint(
-                MediaDesc.THUMBNAIL_SIZE, TrophySource.TROPHY_WIDTH, TrophySource.TROPHY_HEIGHT));
+                MediaDescSize.THUMBNAIL_SIZE, TrophySource.TROPHY_WIDTH, TrophySource.TROPHY_HEIGHT));
     }
 
     @Override // from Object

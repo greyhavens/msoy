@@ -14,7 +14,7 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescSize;
 
 import com.threerings.msoy.edgame.gwt.EditGameService;
 import com.threerings.msoy.edgame.gwt.EditGameServiceAsync;
@@ -82,7 +82,7 @@ public class GameItemEditorPanel extends SmartTable
             GameItem item = itemInfo.item;
             int col = 0;
             setWidget(row, col++, MediaUtil.createMediaView(
-                          item.getThumbnailMedia(), MediaDesc.HALF_THUMBNAIL_SIZE));
+                          item.getThumbnailMedia(), MediaDescSize.HALF_THUMBNAIL_SIZE));
             setText(row, col++, item.name, 1);
             final int statusCol = col++;
             setText(row, statusCol, item.isListedOriginal() ? (itemInfo.listingOutOfDate ?

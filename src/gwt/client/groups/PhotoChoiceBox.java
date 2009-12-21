@@ -9,6 +9,7 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.SimplePanel;
 
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescSize;
 
 import client.ui.MsoyUI;
 import client.util.MediaUtil;
@@ -56,7 +57,7 @@ public class PhotoChoiceBox extends FlexTable
         if ((_media = media) == null) {
             _preview.setWidget(null);
         } else {
-            _preview.setWidget(MediaUtil.createMediaView(_media, MediaDesc.HALF_THUMBNAIL_SIZE));
+            _preview.setWidget(MediaUtil.createMediaView(_media, MediaDescSize.HALF_THUMBNAIL_SIZE));
         }
     }
 

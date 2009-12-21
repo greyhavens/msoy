@@ -23,7 +23,7 @@ import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
 import com.threerings.msoy.data.all.GroupName;
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescSize;
 
 import client.shell.DynamicLookup;
 import client.ui.MsoyUI;
@@ -130,7 +130,7 @@ public class ShopPanel extends FlowPanel
     {
         public TopListingBox (int rank, ListingCard card) {
             super("TopListingBox", 0, 0);
-            setWidget(0, 1, new ThumbBox(card.thumbMedia, MediaDesc.HALF_THUMBNAIL_SIZE,
+            setWidget(0, 1, new ThumbBox(card.thumbMedia, MediaDescSize.HALF_THUMBNAIL_SIZE,
                                          Pages.SHOP, makeShopArgs(card)), 1, "Thumb");
             setText(1, 0, _msgs.shopRank(""+rank), 1, "Ranking");
             setWidget(1, 1, MsoyUI.createLabel(card.name, "Name")); // requires overflow: hidden

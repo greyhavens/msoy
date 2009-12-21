@@ -18,6 +18,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.group.data.all.Medal;
 import com.threerings.msoy.group.gwt.GroupService;
 import com.threerings.msoy.group.gwt.GroupServiceAsync;
@@ -160,7 +161,7 @@ public class EditMedalPanel extends FlexTable
 
     protected void setIconImage (MediaDesc media)
     {
-        _iconPreview.setWidget(MediaUtil.createMediaView(media, MediaDesc.THUMBNAIL_SIZE));
+        _iconPreview.setWidget(MediaUtil.createMediaView(media, MediaDescSize.THUMBNAIL_SIZE));
     }
 
     protected Medal _medal;

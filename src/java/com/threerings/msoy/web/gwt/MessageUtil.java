@@ -8,6 +8,7 @@ import java.util.List;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescSize;
 
 /**
  * Message (forum and other) related utilities.
@@ -163,7 +164,7 @@ public class MessageUtil
             try {
                 msize = Integer.parseInt(bits[2]);
             } catch (NumberFormatException e) {
-                msize = MediaDesc.THUMBNAIL_SIZE;
+                msize = MediaDescSize.THUMBNAIL_SIZE;
             }
             this.size = msize;
             this.name = bits[3];
@@ -196,11 +197,11 @@ public class MessageUtil
         public void format (StringBuilder buf) {
             int cols;
             switch (boxes.get(0).size) {
-            case MediaDesc.THUMBNAIL_SIZE: cols = 4; break;
-            case MediaDesc.GAME_SHOT_SIZE:
-            case MediaDesc.SNAPSHOT_THUMB_SIZE: cols = 2; break;
+            case MediaDescSize.THUMBNAIL_SIZE: cols = 4; break;
+            case MediaDescSize.GAME_SHOT_SIZE:
+            case MediaDescSize.SNAPSHOT_THUMB_SIZE: cols = 2; break;
             default:
-            case MediaDesc.SNAPSHOT_FULL_SIZE: cols = 1; break;
+            case MediaDescSize.SNAPSHOT_FULL_SIZE: cols = 1; break;
             }
 
             int col = 0;

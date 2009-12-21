@@ -8,7 +8,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 
 import com.threerings.msoy.comment.gwt.Comment;
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.profile.gwt.ProfileService;
 
 import client.comment.CommentsPanel;
@@ -55,7 +55,7 @@ public class CommentsBlurb extends Blurb
 
         @Override // from CommentsPanel
         protected int getThumbnailSize() {
-            return MediaDesc.HALF_THUMBNAIL_SIZE;
+            return MediaDescSize.HALF_THUMBNAIL_SIZE;
         }
     }
 

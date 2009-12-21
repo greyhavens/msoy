@@ -15,7 +15,7 @@ import com.threerings.gwt.ui.FloatPanel;
 import com.threerings.gwt.ui.InlinePanel;
 import com.threerings.gwt.ui.SmartTable;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.group.gwt.GalaxyData;
 import com.threerings.msoy.group.gwt.GroupCard;
 import com.threerings.msoy.group.gwt.GroupService;
@@ -130,7 +130,7 @@ public class GalaxyPanel extends FlowPanel
     protected Widget createQuickGroupWidget (GroupCard group)
     {
         FloatPanel widget = new FloatPanel("Group");
-        widget.add(new ThumbBox(group.getLogo(), MediaDesc.QUARTER_THUMBNAIL_SIZE,
+        widget.add(new ThumbBox(group.getLogo(), MediaDescSize.QUARTER_THUMBNAIL_SIZE,
                                 Pages.GROUPS, "d", group.name.getGroupId()));
         widget.add(Link.create(group.name.toString(), "Name",
                                Pages.GROUPS, "d", group.name.getGroupId()));
@@ -147,7 +147,7 @@ public class GalaxyPanel extends FlowPanel
         FlowPanel widget = MsoyUI.createFlowPanel("Group");
 
         FloatPanel logoAndName = new FloatPanel("LogoAndName");
-        logoAndName.add(new ThumbBox(group.getLogo(), MediaDesc.HALF_THUMBNAIL_SIZE,
+        logoAndName.add(new ThumbBox(group.getLogo(), MediaDescSize.HALF_THUMBNAIL_SIZE,
                                      Pages.GROUPS, "d", group.name.getGroupId()));
         logoAndName.add(Link.create(group.name.toString(), "GroupName",
                                     Pages.GROUPS, "d", group.name.getGroupId()));

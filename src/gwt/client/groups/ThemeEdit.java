@@ -11,6 +11,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.data.all.Theme;
 import com.threerings.msoy.group.data.all.Group;
 import com.threerings.msoy.group.gwt.GroupService;
@@ -61,7 +62,7 @@ public class ThemeEdit extends FlowPanel
         {
             // bits for editing the logo
             final MediaBox tbox =
-                new MediaBox(MediaDesc.LOGO_SIZE, Theme.LOGO_MEDIA, _theme.getLogo()) {
+                new MediaBox(MediaDescSize.LOGO_SIZE, Theme.LOGO_MEDIA, _theme.getLogo()) {
                 @Override public void mediaUploaded (String name, MediaDesc desc, int w, int h) {
                     if (checkSize(w, h)) {
                         super.mediaUploaded(name, desc, w, h);
@@ -77,7 +78,7 @@ public class ThemeEdit extends FlowPanel
 
             // bits for editing the tab navigation button
             final MediaBox navBox =
-                new MediaBox(MediaDesc.NAV_SIZE, Theme.NAV_MEDIA, _theme.getNavButton()) {
+                new MediaBox(MediaDescSize.NAV_SIZE, Theme.NAV_MEDIA, _theme.getNavButton()) {
                 @Override public void mediaUploaded (String name, MediaDesc desc, int w, int h) {
                     if (checkSize(w, h)) {
                         super.mediaUploaded(name, desc, w, h);
@@ -92,8 +93,8 @@ public class ThemeEdit extends FlowPanel
             });
 
             // bits for editing the selected tab navigation button
-            final MediaBox navSelBox =
-                new MediaBox(MediaDesc.NAV_SIZE, Theme.NAV_SEL_MEDIA, _theme.getNavSelButton()) {
+            final MediaBox navSelBox = new MediaBox(
+                MediaDescSize.NAV_SIZE, Theme.NAV_SEL_MEDIA, _theme.getNavSelButton()) {
                 @Override public void mediaUploaded (String name, MediaDesc desc, int w, int h) {
                     if (checkSize(w, h)) {
                         super.mediaUploaded(name, desc, w, h);

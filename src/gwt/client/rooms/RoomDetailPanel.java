@@ -26,7 +26,7 @@ import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.comment.gwt.Comment;
 import com.threerings.msoy.data.all.GroupName;
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.RatingResult;
 
@@ -76,7 +76,7 @@ public class RoomDetailPanel extends SmartTable
         CShell.frame.setTitle(detail.info.name);
 
         setWidget(0, 0, SceneUtil.createSceneView(detail.info.sceneId, detail.snapshot));
-        final int snapWidth = MediaDesc.getWidth(MediaDesc.SNAPSHOT_FULL_SIZE);
+        final int snapWidth = MediaDescSize.getWidth(MediaDescSize.SNAPSHOT_FULL_SIZE);
         getFlexCellFormatter().setWidth(0, 0, snapWidth + "px");
 
         _bits = new FlowPanel();

@@ -9,7 +9,7 @@ import client.util.MediaUtil;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlexTable;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.item.data.all.Item;
 
 /**
@@ -25,7 +25,7 @@ public class ItemThumbnail extends FlexTable
         setCellPadding(0);
         setCellSpacing(0);
         setWidget(0, 0, MediaUtil.createMediaView(
-                      item.getThumbnailMedia(), MediaDesc.THUMBNAIL_SIZE, listener));
+                      item.getThumbnailMedia(), MediaDescSize.THUMBNAIL_SIZE, listener));
         if (listener != null) {
             setWidget(1, 0, MsoyUI.createActionLabel(ItemUtil.getName(item), "Text", listener));
         } else {

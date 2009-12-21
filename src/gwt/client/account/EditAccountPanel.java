@@ -27,6 +27,7 @@ import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.data.all.CharityInfo;
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.gwt.AccountInfo;
 import com.threerings.msoy.web.gwt.ExternalSiteId;
@@ -307,7 +308,7 @@ public class EditAccountPanel extends FlowPanel
             charityButtons.add(charityButton);
             charityTable.setWidget(row, 0, charityButton);
             charityTable.setWidget(
-                row, 1, MediaUtil.createMediaView(photo, MediaDesc.THUMBNAIL_SIZE));
+                row, 1, MediaUtil.createMediaView(photo, MediaDescSize.THUMBNAIL_SIZE));
             charityTable.getFlexCellFormatter().setRowSpan(row, 1, 2);
             charityTable.getCellFormatter().setVerticalAlignment(row, 1, HasAlignment.ALIGN_TOP);
             charityTable.setText(row++, 2, name.getNormal());

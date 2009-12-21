@@ -4,6 +4,7 @@
 package com.threerings.msoy.web.gwt;
 
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescSize;
 
 /**
  * Utility routines for displaying media or generating html code to display media.
@@ -33,11 +34,11 @@ public class SharedMediaUtil
     {
         switch (desc.constraint) {
         case MediaDesc.HALF_HORIZONTALLY_CONSTRAINED:
-            return (width < MediaDesc.THUMBNAIL_WIDTH) ?
+            return (width < MediaDescSize.THUMBNAIL_WIDTH) ?
                 new Dimensions(width + "px", "auto") : null;
 
         case MediaDesc.HALF_VERTICALLY_CONSTRAINED:
-            return (height < MediaDesc.THUMBNAIL_HEIGHT) ?
+            return (height < MediaDescSize.THUMBNAIL_HEIGHT) ?
                 new Dimensions("auto", height + "px") : null;
 
         case MediaDesc.HORIZONTALLY_CONSTRAINED:

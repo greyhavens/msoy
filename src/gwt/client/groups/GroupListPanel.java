@@ -23,7 +23,7 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.util.PagedResult;
 import com.threerings.gwt.util.StringUtil;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.group.gwt.GroupCard;
 import com.threerings.msoy.group.gwt.GroupService;
 import com.threerings.msoy.group.gwt.GroupServiceAsync;
@@ -164,7 +164,7 @@ public class GroupListPanel extends FlowPanel
         int groupId = group.name.getGroupId();
 
         SmartTable card = new SmartTable("Group", 0, 5);
-        card.setWidget(0, 0, new ThumbBox(group.getLogo(), MediaDesc.HALF_THUMBNAIL_SIZE,
+        card.setWidget(0, 0, new ThumbBox(group.getLogo(), MediaDescSize.HALF_THUMBNAIL_SIZE,
                                           Pages.GROUPS, "d", groupId), 1, "Thumb");
         card.getFlexCellFormatter().setHorizontalAlignment(0, 0, HasAlignment.ALIGN_CENTER);
 

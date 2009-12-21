@@ -14,7 +14,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.CenteredBox;
 import com.threerings.gwt.ui.InlinePanel;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.item.data.all.Photo;
 import com.threerings.msoy.person.gwt.GalleryData;
 import com.threerings.msoy.person.gwt.GalleryService;
@@ -206,12 +206,12 @@ public class GalleryViewPanel extends FlowPanel
 
             // add thumbnail and image name to a box
             Widget image = MediaUtil.createMediaView(
-                photo.getPreviewMedia(), MediaDesc.PREVIEW_SIZE, thumbClickHandler);
+                photo.getPreviewMedia(), MediaDescSize.PREVIEW_SIZE, thumbClickHandler);
             FlowPanel thumbnail = MsoyUI.createFlowPanel("Thumbnail");
             // size the containing box here, include space for 1px border
             thumbnail.add(new CenteredBox(image, "Image",
-                                          MediaDesc.getWidth(MediaDesc.PREVIEW_SIZE) + 2,
-                                          MediaDesc.getHeight(MediaDesc.PREVIEW_SIZE) + 2));
+                MediaDescSize.getWidth(MediaDescSize.PREVIEW_SIZE) + 2,
+                MediaDescSize.getHeight(MediaDescSize.PREVIEW_SIZE) + 2));
             thumbnail.add(MsoyUI.createLabel(photo.name, "Name"));
             photoList.add(thumbnail);
         }

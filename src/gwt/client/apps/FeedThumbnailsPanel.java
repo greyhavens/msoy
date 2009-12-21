@@ -19,6 +19,7 @@ import com.threerings.msoy.apps.gwt.AppInfo;
 import com.threerings.msoy.apps.gwt.AppService;
 import com.threerings.msoy.apps.gwt.AppServiceAsync;
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.facebook.gwt.FeedThumbnail;
 
 import client.edutil.EditorTable;
@@ -111,7 +112,7 @@ public class FeedThumbnailsPanel extends FlowPanel
             setText(row, VARIANT, variant);
             for (int ii = 0, ll = Math.min(FeedThumbnail.COUNT, content.size()); ii < ll; ++ii) {
                 setWidget(row, IMAGE + ii, MediaUtil.createMediaView(
-                    content.get(ii).media, MediaDesc.FB_FEED_SIZE), 1, "Image");
+                    content.get(ii).media, MediaDescSize.FB_FEED_SIZE), 1, "Image");
             }
             setWidget(row, DELETE_BTN, MsoyUI.createCloseButton(new ClickHandler() {
                 @Override public void onClick (ClickEvent event) {
@@ -176,7 +177,7 @@ public class FeedThumbnailsPanel extends FlowPanel
 
         protected void addMediaSlot (final int index)
         {
-            final MediaBox media = new MediaBox(MediaDesc.FB_FEED_SIZE, "fdthumb" + index, null) {
+            final MediaBox media = new MediaBox(MediaDescSize.FB_FEED_SIZE, "fdthumb" + index, null) {
                 @Override public void mediaUploaded (
                     String name, MediaDesc desc, int w, int h) {
                     if (checkSize(w, h)) {

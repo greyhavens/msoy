@@ -34,6 +34,7 @@ import com.threerings.util.MessageBundle;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.data.all.MemberMailUtil;
 import com.threerings.msoy.fora.gwt.ForumThread;
 import com.threerings.msoy.fora.server.ForumLogic;
@@ -765,15 +766,15 @@ public class SpamLogic
                 // media in my feed before...
                 return new StringWrapper(_html.append("[X]").finish());
             }
-            int size = MediaDesc.HALF_THUMBNAIL_SIZE;
+            int size = MediaDescSize.HALF_THUMBNAIL_SIZE;
             if (page == Pages.WORLD && args.get(0, "").startsWith("s")) {
                 // snapshots are unconstrained at a set size; fake a width constraint for
                 // TINY_SIZE.
                 md.constraint = MediaDesc.HORIZONTALLY_CONSTRAINED;
-                size = MediaDesc.SNAPSHOT_TINY_SIZE;
+                size = MediaDescSize.SNAPSHOT_TINY_SIZE;
             }
-            int width = MediaDesc.getWidth(size);
-            int height = MediaDesc.getHeight(size);
+            int width = MediaDescSize.getWidth(size);
+            int height = MediaDescSize.getHeight(size);
             Dimensions dim = SharedMediaUtil.resolveImageSize(md, width, height);
             if (dim == null) {
                 dim = new Dimensions(width + "px", height + "px");

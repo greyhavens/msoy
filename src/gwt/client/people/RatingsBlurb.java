@@ -11,7 +11,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.game.gwt.GameRating;
 import com.threerings.msoy.profile.gwt.ProfileService;
 import com.threerings.msoy.web.gwt.Pages;
@@ -86,7 +86,7 @@ public class RatingsBlurb extends Blurb
                 }
             };
             setWidget(0, 0, MediaUtil.createMediaView(
-                          entry.gameThumb, MediaDesc.HALF_THUMBNAIL_SIZE, gameClick));
+                          entry.gameThumb, MediaDescSize.HALF_THUMBNAIL_SIZE, gameClick));
             if (entry.singleRating > 0) {
                 getFlexCellFormatter().setRowSpan(0, 0, 2);
             }

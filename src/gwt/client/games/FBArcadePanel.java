@@ -12,7 +12,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.AbsoluteCSSPanel;
 import com.threerings.gwt.ui.SmartTable;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.game.gwt.ArcadeData;
 import com.threerings.msoy.game.gwt.GameCard;
 import com.threerings.msoy.game.gwt.GameService;
@@ -116,7 +116,7 @@ public class FBArcadePanel extends AbsoluteCSSPanel
 
     protected void addGame (SmartTable table, int row, int startCol, GameCard game)
     {
-        table.setWidget(row, startCol, new ThumbBox(game.thumbMedia, MediaDesc.HALF_THUMBNAIL_SIZE,
+        table.setWidget(row, startCol, new ThumbBox(game.thumbMedia, MediaDescSize.HALF_THUMBNAIL_SIZE,
                                                     Pages.GAMES, "d", game.gameId));
         Widget link = Link.createBlock(game.name, "Name", Pages.GAMES, "d", game.gameId);
         if (game.playersOnline == 0) {

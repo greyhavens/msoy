@@ -27,6 +27,7 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.Photo;
 
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescSize;
 
 import client.shell.CShell;
 import client.ui.MsoyUI;
@@ -149,7 +150,7 @@ public class ImageChooserPopup extends VerticalPanel
         protected Widget createWidget (final Photo photo) {
             final MediaDesc media = _thumbnail ? photo.getThumbnailMedia() : photo.photoMedia;
             Widget image = MediaUtil.createMediaView(
-                photo.getThumbnailMedia(), MediaDesc.THUMBNAIL_SIZE, new ClickHandler() {
+                photo.getThumbnailMedia(), MediaDescSize.THUMBNAIL_SIZE, new ClickHandler() {
                     public void onClick (ClickEvent event) {
                         imageChosen(media, photo.photoWidth, photo.photoHeight);
                     }
@@ -166,8 +167,8 @@ public class ImageChooserPopup extends VerticalPanel
         @Override // from PagedGrid
         protected void formatCell (HTMLTable.CellFormatter formatter, int row, int col, int limit) {
             super.formatCell(formatter, row, col, limit);
-            formatter.setWidth(row, col, MediaDesc.THUMBNAIL_WIDTH+"px");
-            formatter.setHeight(row, col, MediaDesc.THUMBNAIL_HEIGHT+"px");
+            formatter.setWidth(row, col, MediaDescSize.THUMBNAIL_WIDTH+"px");
+            formatter.setHeight(row, col, MediaDescSize.THUMBNAIL_HEIGHT+"px");
         }
 
         @Override // from PagedGrid
@@ -196,7 +197,8 @@ public class ImageChooserPopup extends VerticalPanel
                     _width = width;
                     _height = height;
                     _upload.setEnabled(true);
-                    int size = thumbnail ? MediaDesc.THUMBNAIL_SIZE : MediaDesc.PREVIEW_SIZE;
+                    int size = thumbnail ?
+                        MediaDescSize.THUMBNAIL_SIZE : MediaDescSize.PREVIEW_SIZE;
                     _preview.setWidget(MediaUtil.createMediaView(_media, size));
                 }
             }));

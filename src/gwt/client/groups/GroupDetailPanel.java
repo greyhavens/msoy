@@ -25,6 +25,7 @@ import com.threerings.gwt.util.DateUtil;
 import com.threerings.gwt.util.PopupCallback;
 
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.data.all.Theme;
 import com.threerings.msoy.group.data.all.Group;
 import com.threerings.msoy.group.data.all.GroupMembership.Rank;
@@ -128,7 +129,7 @@ public class GroupDetailPanel extends FlowPanel
             logoMedia = Group.getDefaultGroupLogoMedia();
         }
         SimplePanel logo = MsoyUI.createSimplePanel(MediaUtil.createMediaView(logoMedia,
-            MediaDesc.HALF_THUMBNAIL_SIZE), "Logo");
+            MediaDescSize.HALF_THUMBNAIL_SIZE), "Logo");
         titleBox.add(logo);
         titleBox.add(MsoyUI.createLabel(_group.name, "Name"));
 
@@ -370,7 +371,7 @@ public class GroupDetailPanel extends FlowPanel
             content.add(members);
             for (int ii = 0; ii < _detail.topMembers.size(); ii++) {
                 GroupMemberCard member = _detail.topMembers.get(ii);
-                ThumbBox icon = new ThumbBox(member.photo, MediaDesc.HALF_THUMBNAIL_SIZE,
+                ThumbBox icon = new ThumbBox(member.photo, MediaDescSize.HALF_THUMBNAIL_SIZE,
                                              Pages.PEOPLE, ""+member.name.getMemberId());
                 members.setWidget(ii * 2, 0, icon, 1, "Icon");
                 members.getFlexCellFormatter().setRowSpan(ii * 2, 0, 2);
