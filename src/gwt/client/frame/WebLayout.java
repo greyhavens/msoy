@@ -9,7 +9,6 @@ import com.google.gwt.event.logical.shared.ResizeEvent;
 import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -144,15 +143,12 @@ public abstract class WebLayout extends Layout
             return; // no quick-home link for guests, none if we have a client open
         }
 
-        FlowPanel bits = MsoyUI.createFlowPanel("Bits");
-        bits.add(FlashClients.createWhirledMap());
-        bits.add(MsoyUI.createActionLabel(_cmsgs.goHome(), _onGoHome));
-
-        _noclient = MsoyUI.createSimplePanel(bits, "noclient");
+        _noclient = MsoyUI.createSimplePanel(null, "noclient");
+        FlashClients.embedWhirledMap(_noclient, "");
         RootPanel.get(PAGE).add(_noclient);
     }
 
-    protected Widget removeFromPage (Widget widget)
+    protected <T extends Widget> T removeFromPage (T widget)
     {
         if (widget != null) {
             RootPanel.get(PAGE).remove(widget);
@@ -197,7 +193,8 @@ public abstract class WebLayout extends Layout
      */
     protected abstract void positionElements ();
 
-    protected Widget _iframe,  _content, _client, _noclient;
+    protected Widget _iframe,  _content, _client;
+    protected Panel _noclient;
 
     /** Handles window resizes. */
     protected ResizeHandler _resizer;
