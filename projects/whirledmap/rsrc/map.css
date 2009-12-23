@@ -1,0 +1,38 @@
+/**
+ * $Id$
+ */
+
+.whirledMap {
+    horizontalAlign: center;
+    horizontalCenter: 0;
+}
+
+.whirledTitle {
+    horizontalAlign: center;
+    textAlign: center;
+    color: #ffffff;
+    fontSize: 18px;
+    fontFamily: Arial;
+}
+
+.whirledEntry {
+    paddingTop: 2px;
+    paddingBottom: 2px;
+
+    color: #606060;
+    textAlign: left;
+    fontFamily: Arial;
+    fontAntiAliasType: advanced;
+}
+
+.whirledLogo {
+}
+
+.whirledName {
+    fontSize: 16px;
+    textDecoration: underline;
+}
+
+.whirledPopulation {
+    fontSize: 14px;
+}

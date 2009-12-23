@@ -1,0 +1,39 @@
+<!-- build configuration -->
+<project name="whirledmap" default="compile" basedir=".">
+
+  <!-- define some basic project parameters -->
+  <property name="app.name"  value="whirledmap"/>
+  <property name="build.root" value="../.."/>
+  <property name="flex.path" value="${build.root}/lib/flex_sdk"/>
+
+  <!-- builds our Flash game -->
+  <target name="compile">
+    <exec executable="${flex.path}/bin/mxmlc" failonerror="true">
+      <arg value="-compiler.optimize"/>
+      <arg value="-load-config"/>
+      <arg value="${build.root}/etc/msoy-config.xml"/>
+      <arg value="-compiler.source-path=src/as"/>
+      <arg value="-compiler.source-path=rsrc/{locale}/i18n"/>
+      <arg value="-compiler.source-path=${build.root}/src/as"/>
+      <arg value="-externs"/>
+      <arg value="-file-specs"/>
+      <arg value="src/as/map.mxml"/>
+      <arg value="-output"/>
+      <arg value="${app.name}.swf"/>
+    </exec>
+  </target>
+
+  <!-- cleans out the compiled code -->
+  <target name="clean">
+    <delete>
+       <fileset file="${app.name}.swf"/>
+       <fileset file="${app.name}.swc"/>
+    </delete>
+  </target>
+
+  <!-- builds our swf and plops it up at the top level -->
+  <target name="dist" depends="compile">
+    <copy file="${app.name}.swf" todir="${build.root}/dist"/>
+  </target>
+
+</project>

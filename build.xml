@@ -798,10 +798,10 @@
     </antcall>
   </target>
 
-  <!-- builds our tutorial game -->
-  <target name="tutorial" depends="prepare">
-    <ant dir="projects/games/tutorial" target="dist" inheritAll="false"/>
-    <copy file="${deploy.dir}/tutorial.swf" todir="pages/media/static/game"/>
+  <!-- builds our whirled map -->
+  <target name="whirledmap" depends="asprepare">
+    <ant dir="projects/whirledmap" target="dist" inheritAll="false"/>
+    <copy file="${deploy.dir}/whirledmap.swf" todir="pages/clients/${version}"/>
   </target>
 
   <!-- builds, runs Proguard on and signs a Java client -->
@@ -1073,7 +1073,7 @@
 
   <!-- builds top-level flash applications. -->
   <target name="flashapps" depends="asprepare,mediastub,embedstub,mochistub,videoplayer,
-          audioplayer,remixer,imageeditor,camerabutton,uploader,asclient"
+          audioplayer,remixer,imageeditor,camerabutton,uploader,asclient,whirledmap"
           description="Rebuilds all of our Flash clients and applets.">
   </target>
 

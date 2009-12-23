@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  $Id$
+-->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" xmlns="*"
+    layout="absolute" styleName="plain"
+    verticalScrollPolicy="off" horizontalScrollPolicy="off"
+    width="100%" height="100%"
+    preloader="com.threerings.msoy.client.Preloader"
+    applicationComplete="doInit();">
+<mx:Style source="../../rsrc/map.css"/>
+<mx:Metadata>
+    [ResourceBundle("texts")]
+</mx:Metadata>
+<mx:Script>
+    <![CDATA[
+        import com.threerings.msoy.map.client.MapVisualizer;
+        protected function doInit () :void {
+            viewStack.addChild(new MapVisualizer(this));
+        }
+    ]]>
+</mx:Script>
+<mx:ViewStack id="viewStack" horizontalScrollPolicy="off" verticalScrollPolicy="off"
+    width="100%" height="100%"/>
+</mx:Application>
