@@ -8,6 +8,7 @@
 
   <!-- builds our Flash game -->
   <target name="compile">
+    <mkdir dir="dist"/>
     <exec executable="${flex.path}/bin/mxmlc" failonerror="true">
       <arg value="-compiler.optimize"/>
       <arg value="-load-config"/>
@@ -19,21 +20,18 @@
       <arg value="-file-specs"/>
       <arg value="src/as/map.mxml"/>
       <arg value="-output"/>
-      <arg value="${app.name}.swf"/>
+      <arg value="dist/${app.name}.swf"/>
     </exec>
   </target>
 
   <!-- cleans out the compiled code -->
   <target name="clean">
-    <delete>
-       <fileset file="${app.name}.swf"/>
-       <fileset file="${app.name}.swc"/>
-    </delete>
+    <delete dir="dist"/>
   </target>
 
   <!-- builds our swf and plops it up at the top level -->
   <target name="dist" depends="compile">
-    <copy file="${app.name}.swf" todir="${build.root}/dist"/>
+    <copy file="dist/${app.name}.swf" todir="${build.root}/dist"/>
   </target>
 
 </project>
