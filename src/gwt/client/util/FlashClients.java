@@ -113,7 +113,8 @@ public class FlashClients
      */
     public static void embedWhirledMap (Panel container, String flashvars)
     {
-        FlashObject obj = new FlashObject("map", clientPath("whirledmap.swf"), "100%", "100%");
+        FlashObject obj = new FlashObject(
+            "map", clientPath("whirledmap.swf"), "100%", "100%", flashvars);
         obj.transparent = true;
 
         Widget embed = WidgetUtil.embedFlashObject(container, WidgetUtil.createDefinition(obj));

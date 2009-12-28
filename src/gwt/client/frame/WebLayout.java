@@ -14,6 +14,7 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.threerings.msoy.web.gwt.SessionData;
 
 import client.images.frame.FrameImages;
 import client.shell.CShell;
@@ -115,8 +116,9 @@ public abstract class WebLayout extends Layout
     }
 
     @Override // from Layout
-    public void addNoClientIcon ()
+    public void addNoClientIcon (SessionData data)
     {
+        _topThemes = data.topThemes;
         doAddNoClientIcon();
         positionElements();
     }
@@ -144,7 +146,7 @@ public abstract class WebLayout extends Layout
         }
 
         _noclient = MsoyUI.createSimplePanel(null, "noclient");
-        FlashClients.embedWhirledMap(_noclient, "");
+        FlashClients.embedWhirledMap(_noclient, "map=" + _topThemes);
         RootPanel.get(PAGE).add(_noclient);
     }
 
@@ -195,6 +197,7 @@ public abstract class WebLayout extends Layout
 
     protected Widget _iframe,  _content, _client;
     protected Panel _noclient;
+    protected String _topThemes;
 
     /** Handles window resizes. */
     protected ResizeHandler _resizer;

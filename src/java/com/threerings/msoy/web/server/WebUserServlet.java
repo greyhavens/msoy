@@ -17,6 +17,9 @@ import java.net.URLEncoder;
 import java.util.Collections;
 import java.util.List;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
@@ -46,10 +49,13 @@ import com.threerings.msoy.server.AccountLogic;
 import com.threerings.msoy.server.ExternalAuthHandler;
 import com.threerings.msoy.server.ExternalAuthLogic;
 import com.threerings.msoy.server.MemberLogic;
+import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.MsoyAuthenticator;
+import com.threerings.msoy.server.PopularPlacesSnapshot;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.ServerMessages;
 import com.threerings.msoy.server.StatLogic;
+import com.threerings.msoy.server.PopularPlacesSnapshot.Place;
 import com.threerings.msoy.server.persist.CharityRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.util.MailSender;
@@ -640,6 +646,26 @@ public class WebUserServlet extends MsoyServiceServlet
         }
 
         data.themeId = mrec.themeGroupId;
+
+        // If there are still not enough places, fill in with some currently popular places.
+        PopularPlacesSnapshot pps = _memberMan.getPPSnapshot();
+
+        JSONObject themes = new JSONObject();
+        for (Place themePlace : pps.getTopThemes()) {
+            JSONObject themeObj = new JSONObject();
+            try {
+                themeObj.put("groupId", themePlace.placeId);
+                themeObj.put("logoHash", "aab40f60c917807c0b4713de6d5d2099a469839d");
+                themeObj.put("logoType", 10);
+                themeObj.put("pop", themePlace.population);
+                themeObj.put("name", "Ghosthunters");
+                themes.accumulate("themes", themeObj);
+
+            } catch (JSONException e) {
+                log.warning("Failed to JSON-encode place: " + themePlace);
+            }
+        }
+        data.topThemes = themes.toString();
     }
 
     protected static String generateDeleteSecret (MemberRecord mrec)
@@ -661,6 +687,7 @@ public class WebUserServlet extends MsoyServiceServlet
     @Inject protected MailRepository _mailRepo;
     @Inject protected MailSender _mailer;
     @Inject protected MemberLogic _memberLogic;
+    @Inject protected MemberManager _memberMan;
     @Inject protected MoneyLogic _moneyLogic;
     @Inject protected MsoyAuthenticator _author;
     @Inject protected MsoyPeerManager _peerMan;

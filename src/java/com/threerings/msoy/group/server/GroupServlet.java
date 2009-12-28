@@ -184,7 +184,7 @@ public class GroupServlet extends MsoyServiceServlet
 
         // fill in the current population of the group
         PopularPlacesSnapshot pps = _memberMan.getPPSnapshot();
-        PopularPlacesSnapshot.Place card = pps.getWhirled(groupId);
+        PopularPlacesSnapshot.Place card = pps.getGroup(groupId);
         if (card != null) {
             detail.population = card.population;
         }
@@ -766,7 +766,7 @@ public class GroupServlet extends MsoyServiceServlet
     {
         PopularPlacesSnapshot pps = _memberMan.getPPSnapshot();
         for (GroupCard card : groups) {
-            PopularPlacesSnapshot.Place pcard = pps.getWhirled(card.name.getGroupId());
+            PopularPlacesSnapshot.Place pcard = pps.getGroup(card.name.getGroupId());
             if (pcard != null) {
                 card.population = pcard.population;
             }

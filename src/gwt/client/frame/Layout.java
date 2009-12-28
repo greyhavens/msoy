@@ -8,6 +8,7 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.web.gwt.ClientMode;
+import com.threerings.msoy.web.gwt.SessionData;
 
 /**
  * Handles the layout of our various frame elements (header, content, client).
@@ -70,7 +71,7 @@ public abstract class Layout
      * Adds the home button that is shown when the client is hidden. The click handler should be
      * the one used to initialize the layout.
      */
-    public abstract void addNoClientIcon ();
+    public abstract void addNoClientIcon (SessionData data);
 
     /**
      * Updates the layout after the title bar changes height.

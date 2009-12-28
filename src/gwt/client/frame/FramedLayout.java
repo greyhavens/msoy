@@ -9,6 +9,7 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.threerings.msoy.web.gwt.SessionData;
 
 /**
  * A slimmed down vertical layout for use when Whirled is embedded in an iframe on another
@@ -85,7 +86,7 @@ public class FramedLayout extends Layout
     }
 
     @Override // from Layout
-    public void addNoClientIcon ()
+    public void addNoClientIcon (SessionData data)
     {
         // not supported
     }

@@ -77,7 +77,7 @@ public class FrameNav
             @Override public void didLogon (SessionData data) {
                 // now that we know we're a member, we can add our "open home in minimized mode"
                 // icon (which may get immediately removed if we're going directly into the world)
-                _layout.addNoClientIcon();
+                _layout.addNoClientIcon(data);
             }
             @Override public void didLogoff () {
                 // close the Flash client if it's open

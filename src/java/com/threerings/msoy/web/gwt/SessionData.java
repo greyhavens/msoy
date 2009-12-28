@@ -17,6 +17,8 @@ import com.threerings.msoy.data.all.VisitorInfo;
  */
 public class SessionData implements IsSerializable
 {
+    public static int TOP_WHIRLEDS = 6;
+
     /** Identifies A/B groups assigned to sessions during the validation process. */
     public enum Group { NONE, A, B, C };
 
@@ -69,6 +71,9 @@ public class SessionData implements IsSerializable
     /** The id of the theme this user logged into, or 0. */
     public int themeId;
 
+    /** Data about the top themes in the Whirled, JSON-encoded. */
+    public String topThemes;
+
     /** Optional data for displaying more progress information (facebook). */
     public Extra extra;
 
@@ -90,6 +95,7 @@ public class SessionData implements IsSerializable
         sdata.visitor = VisitorInfo.unflatten(data);
         sdata.group = Group.valueOf(data.next());
         sdata.themeId = Integer.valueOf(data.next());
+        sdata.topThemes = data.next();
 
         // Note the extra is not included in flattened state
         return sdata;
@@ -109,6 +115,7 @@ public class SessionData implements IsSerializable
         data.addAll(visitor.flatten());
         data.add(String.valueOf(group));
         data.add(String.valueOf(themeId));
+        data.add(topThemes);
 
         // Note the extra is not included in flattened state
         return data;

@@ -84,13 +84,13 @@ public class PopularPlacesSnapshot
     }
 
     /**
-     * Returns a list of the {@link #MAX_TRACKED_PLACES} most popular whirleds in the world, sorted
+     * Returns a list of the {@link #MAX_TRACKED_PLACES} most popular groups in the world, sorted
      * in descending order of population. <em>Note:</em> the {@link Place#name} field for these
      * records is not valid and the {@link Place#placeId} field is the Whirled's id.
      */
-    public Iterable<Place> getTopWhirleds ()
+    public Iterable<Place> getTopGroups ()
     {
-        return _whlist;
+        return _grlist;
     }
 
     /**
@@ -100,6 +100,15 @@ public class PopularPlacesSnapshot
     public Iterable<Place> getTopGames ()
     {
         return _glist;
+    }
+
+    /**
+     * Returns a list of the {@link #MAX_TRACKED_PLACES} most popular themes in the world, sorted
+     * in descending order of population.
+     */
+    public Iterable<Place> getTopThemes ()
+    {
+        return _thlist;
     }
 
     /**
@@ -120,11 +129,11 @@ public class PopularPlacesSnapshot
     }
 
     /**
-     * Returns the place summary information for the specified whirled.
+     * Returns the place summary information for the specified groupd.
      */
-    public Place getWhirled (int whirledId)
+    public Place getGroup (int groupId)
     {
-        return _whirleds.get(whirledId);
+        return _groups.get(groupId);
     }
 
     /**
@@ -178,13 +187,17 @@ public class PopularPlacesSnapshot
                 if (room != null && room.accessControl == MsoySceneModel.ACCESS_EVERYONE) {
                     if (room.ownerType == MsoySceneModel.OWNER_TYPE_GROUP) {
                         // map whirled rooms by whirled id
-                        increment(_whirleds, _whlist, room.ownerId, room);
+                        increment(_groups, _grlist, room.ownerId, room);
                     }
                     increment(_scenes, _sclist, room.placeId, room);
 
                     // mark as an online greeter if appropriate
                     if (greeters.contains(ms.memberId)) {
                         onlineGreeters.add(ms.memberId);
+                    }
+
+                    if (room.themeId != 0) {
+                        increment(_themes, _thlist, room.themeId, room);
                     }
                 }
             }
@@ -206,7 +219,7 @@ public class PopularPlacesSnapshot
         _totalPopulation = seenIds.size();
 
         // sort and prune our top places list
-        sortAndPrune(_whlist);
+        sortAndPrune(_grlist);
         sortAndPrune(_sclist);
         sortAndPrune(_glist);
 
@@ -253,8 +266,8 @@ public class PopularPlacesSnapshot
     /** The total number of people in the Whirled. */
     protected int _totalPopulation;
 
-    /** A mapping of all resolved whirleds in the whole wide Whirled. */
-    protected final IntMap<Place> _whirleds = IntMaps.newHashIntMap();
+    /** A mapping of all resolved groups in the whole wide Whirled. */
+    protected final IntMap<Place> _groups = IntMaps.newHashIntMap();
 
     /** A mapping of all resolved scenes in the whole wide Whirled. */
     protected final IntMap<Place> _scenes = IntMaps.newHashIntMap();
@@ -262,14 +275,20 @@ public class PopularPlacesSnapshot
     /** A mapping of all resolved games in the whole wide Whirled. */
     protected final IntMap<Place> _games = IntMaps.newHashIntMap();
 
-    /** The most popular whirleds, sorted. */
-    protected final List<Place> _whlist = Lists.newArrayList();
+    /** A mapping of all resolved themes in the whole wide Whirled. */
+    protected final IntMap<Place> _themes = IntMaps.newHashIntMap();
+
+    /** The most popular groups, sorted. */
+    protected final List<Place> _grlist = Lists.newArrayList();
 
     /** The most popular scenes, sorted. */
     protected final List<Place> _sclist = Lists.newArrayList();
 
     /** The most popular games, sorted. */
     protected final List<Place> _glist = Lists.newArrayList();
+
+    /** The most popular themes, sorted. */
+    protected final List<Place> _thlist = Lists.newArrayList();
 
     /** Greeters, sorted by online now then last online time. */
     protected final List<Integer> _greeters;
