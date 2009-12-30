@@ -14,10 +14,10 @@ import com.samskivert.util.Lifecycle;
 import com.samskivert.util.StringUtil;
 import com.threerings.messaging.AddressedMessageListener;
 import com.threerings.messaging.DestinationAddress;
+import com.threerings.messaging.InMessage;
 import com.threerings.messaging.IntMessage;
 import com.threerings.messaging.MessageConnection;
-import com.threerings.messaging.MessageListener;
-import com.threerings.messaging.Replier;
+import com.threerings.messaging.AckingMessageListener;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.SubscriptionLogic;
 import com.threerings.msoy.server.persist.MemberRecord;
@@ -43,11 +43,11 @@ public class MoneyMessageListener
     public void init ()
     {
         // Handle subscription billed messages
-        listen("subscriptionBilled", new MessageListener() {
-            public void received (final byte[] message, Replier replier) {
+        listen("subscriptionBilled", new AckingMessageListener() {
+            public void processReceived (InMessage message) {
                 SubscriptionBilledMessage ssm = null;
                 try {
-                    ssm = new SubscriptionBilledMessage(message);
+                    ssm = new SubscriptionBilledMessage(message.getBody());
                     log.info("Noting subscription billed: ", "accountName", ssm.accountName,
                         "months", ssm.months);
                     _subLogic.noteSubscriptionBilled(ssm.accountName, ssm.months);
@@ -59,11 +59,11 @@ public class MoneyMessageListener
         });
 
         // Handle subscription ended messages
-        listen("subscriptionEnded", new MessageListener() {
-            public void received (final byte[] message, Replier replier) {
+        listen("subscriptionEnded", new AckingMessageListener() {
+            public void processReceived (InMessage message) {
                 SubscriptionEndedMessage sem = null;
                 try {
-                    sem = new SubscriptionEndedMessage(message);
+                    sem = new SubscriptionEndedMessage(message.getBody());
                     log.info("Noting subscription ended: ", "accountName", sem.accountName);
                     _subLogic.noteSubscriptionEnded(sem.accountName);
                 } catch (Exception e) {
@@ -74,9 +74,9 @@ public class MoneyMessageListener
         });
 
         // Handle bars bought messages
-        listen("barsBought", new MessageListener() {
-            public void received (final byte[] message, final Replier replier) {
-                BarsBoughtMessage bbm = new BarsBoughtMessage(message);
+        listen("barsBought", new AckingMessageListener() {
+            public void processReceived (InMessage message) {
+                BarsBoughtMessage bbm = new BarsBoughtMessage(message.getBody());
                 log.info("Noting bars bought: ", "accountName", bbm.accountName,
                     "numBars", bbm.numBars, "payment", bbm.payment);
                 MemberRecord member = _memberRepo.loadMember(bbm.accountName);
@@ -90,9 +90,9 @@ public class MoneyMessageListener
         });
 
         // Handle get bar count messages
-        listen("getBarCount", new MessageListener() {
-            public void received (final byte[] message, final Replier replier) {
-                GetBarCountMessage gbcm = new GetBarCountMessage(message);
+        listen("getBarCount", new AckingMessageListener() {
+            public void processReceived (InMessage message) {
+                GetBarCountMessage gbcm = new GetBarCountMessage(message.getBody());
                 log.info("Getting bar count: ", "accountName", gbcm.accountName);
                 MemberRecord member = _memberRepo.loadMember(gbcm.accountName);
                 try {
@@ -105,7 +105,7 @@ public class MoneyMessageListener
                         // TODO: is there another way to let billing know there's trouble?
                         bars = -1;
                     }
-                    replier.reply(new IntMessage(bars));
+                    message.reply(new IntMessage(bars));
                 } catch (IOException ioe) {
                     throw new RuntimeException("Could not send a reply for getBarCount.", ioe);
                 }
@@ -123,7 +123,7 @@ public class MoneyMessageListener
      * Listens for messages on the destination address in the server configuration specified by
      * command.  When messages come in, they will execute the given message listener.
      */
-    protected void listen (String command, MessageListener listener)
+    protected void listen (String command, AckingMessageListener listener)
     {
         if (ServerConfig.getAMQPMessageConfig() == null) {
             return; // messaging is not activated, so no listening
@@ -136,7 +136,7 @@ public class MoneyMessageListener
     /**
      * Message to retrieve the number of bars for a particular user.
      */
-    protected static final class GetBarCountMessage
+    protected static class GetBarCountMessage
     {
         public final String accountName;
 
@@ -155,7 +155,7 @@ public class MoneyMessageListener
     /**
      * Message indicating a user purchased some number of bars.
      */
-    protected static final class BarsBoughtMessage
+    protected static class BarsBoughtMessage
     {
         public final String accountName;
         public final int numBars;
