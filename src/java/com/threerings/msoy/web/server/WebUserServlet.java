@@ -680,6 +680,7 @@ public class WebUserServlet extends MsoyServiceServlet
                 themeObj.put("logoType", group.logoMimeType);
                 themeObj.put("pop", themePlace.population);
                 themeObj.put("name", themePlace.name);
+                themeObj.put("homeId", group.homeSceneId);
                 themes.accumulate("themes", themeObj);
 
             } catch (JSONException e) {
