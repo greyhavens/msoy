@@ -111,12 +111,6 @@ public class MsoyPeerSceneMoveHandler extends PeerSceneMoveHandler
             return;
         }
 
-        // temporarily forbid anybody but subscribers to enter a theme from the mundane world
-        if (scene.getThemeId() != 0 && !_memobj.tokens.isSubscriberPlus()) {
-            _msoyListener.requestFailed(RoomCodes.E_ENTRANCE_DENIED);
-            return;
-        }
-
         // if we're walking a pet, find out what it is so we can test it for themeness
         _petobj = _petMan.getPetObject(_memobj.walkingId);
 
