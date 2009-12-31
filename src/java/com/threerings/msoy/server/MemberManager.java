@@ -6,23 +6,27 @@ package com.threerings.msoy.server;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-
+import java.util.Map;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.samskivert.jdbc.WriteOnlyUnit;
+import com.samskivert.util.IntMap;
 import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.StringUtil;
 
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 import com.threerings.underwire.server.persist.EventRecord;
 import com.threerings.underwire.web.data.Event;
 import com.threerings.util.Name;
 import com.threerings.cron.server.CronLogic;
 
+import com.threerings.presents.annotation.BlockingThread;
 import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.client.InvocationService;
@@ -55,6 +59,10 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.group.server.persist.GroupRepository;
+import com.threerings.msoy.group.server.persist.ThemeRecord;
+import com.threerings.msoy.group.server.persist.ThemeRepository;
+import com.threerings.msoy.server.PopularPlacesSnapshot.Place;
 import com.threerings.msoy.server.persist.BatchInvoker;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.util.ServiceUnit;
@@ -170,15 +178,12 @@ public class MemberManager
         // loading all the greeter ids is expensive, so do it infrequently
         _greeterIdsInvalidator.schedule(GREETERS_REFRESH_PERIOD, true);
 
-        _ppSnapshot = PopularPlacesSnapshot.takeSnapshot(_omgr, _peerMan, getGreeterIdsSnapshot());
-        _ppInvalidator = new Interval(_omgr) {
+        takeSnapshot();
+        _ppInvalidator = new Interval(_batchInvoker) {
             @Override public void expired() {
-                final PopularPlacesSnapshot newSnapshot =
-                    PopularPlacesSnapshot.takeSnapshot(_omgr, _peerMan, getGreeterIdsSnapshot());
-                synchronized (_snapshotLock) {
-                    _ppSnapshot = newSnapshot;
-                }
+                takeSnapshot();
             }
+
         };
         _ppInvalidator.schedule(POP_PLACES_REFRESH_PERIOD, true);
 
@@ -603,6 +608,52 @@ public class MemberManager
         }
     }
 
+    @BlockingThread
+    protected void takeSnapshot ()
+    {
+        // load all existing themes, ordered by popularity
+        final List<ThemeRecord> themeRecs = _themeRepo.loadThemes();
+        // find out their names
+        IntMap<GroupName> themeNames = _groupRepo.loadGroupNames(Sets.newHashSet(
+            Iterables.transform(themeRecs, ThemeRecord.TO_GROUP_ID)));
+
+        // the popular places snapshot function just wants an ordered list of group names
+        final List<GroupName> popularThemes = Lists.newArrayList();
+        for (ThemeRecord rec : themeRecs) {
+            popularThemes.add(themeNames.get(rec.groupId));
+        }
+
+        // hop over to the omgr thread
+        _omgr.postRunnable(new Runnable() {
+            public void run () {
+                // calculate the PP snapshot
+                PopularPlacesSnapshot newSnapshot = PopularPlacesSnapshot.takeSnapshot(
+                    _omgr, _peerMan, popularThemes, getGreeterIdsSnapshot());
+
+                // take a private copy of the population map
+                final Map<Integer, Place> themeMap = newSnapshot.getThemePopulationMap();
+
+                // and slide the new snapshot into place
+                synchronized (_snapshotLock) {
+                    _ppSnapshot = newSnapshot;
+                }
+
+                // finally kick off a unit to update popularities with the new population data
+                _batchInvoker.postUnit(new Invoker.Unit("topThemes") {
+                    @Override public boolean invoke () {
+                        for (ThemeRecord rec : themeRecs) {
+                            Place place = themeMap.get(rec.groupId);
+                            rec.popularity = (int)(THEME_POPULARITY_DECAY * rec.popularity) +
+                                ((place != null) ? place.population : 0);
+                            _themeRepo.updateTheme(rec);
+                        }
+                        return false;
+                    }
+                });
+            }
+        });
+    }
+
     /** An internal object on which we synchronize to update/get snapshots. */
     protected final Object _snapshotLock = new Object();
 
@@ -626,6 +677,7 @@ public class MemberManager
     @Inject protected BodyManager _bodyMan;
     @Inject protected ClientManager _clmgr;
     @Inject protected CronLogic _cronLogic;
+    @Inject protected GroupRepository _groupRepo;
     @Inject protected MemberLocator _locator;
     @Inject protected MemberLogic _memberLogic;
     @Inject protected MemberRepository _memberRepo;
@@ -637,6 +689,7 @@ public class MemberManager
     @Inject protected PresentsDObjectMgr _omgr;
     @Inject protected ProfileRepository _profileRepo;
     @Inject protected SupportLogic _supportLogic;
+    @Inject protected ThemeRepository _themeRepo;
 
     /** The frequency with which we recalculate our popular places snapshot. */
     protected static final long POP_PLACES_REFRESH_PERIOD = 30*1000;
@@ -646,4 +699,7 @@ public class MemberManager
 
     /** Maximum number of experiences we will keep track of per user. */
     protected static final int MAX_EXPERIENCES = 20;
+
+    /** The exponential decay rate to apply each time popular places are recalculated. */
+    protected static final double THEME_POPULARITY_DECAY = 0.999; // ca 25% per day
 }

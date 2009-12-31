@@ -5,9 +5,11 @@ package com.threerings.msoy.server;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import com.samskivert.util.CollectionUtil;
@@ -19,6 +21,7 @@ import com.samskivert.util.RandomUtil;
 import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.server.PresentsDObjectMgr;
 
+import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.game.server.GameUtil;
 import com.threerings.msoy.peer.data.HostedPlace;
 import com.threerings.msoy.peer.data.HostedRoom;
@@ -62,16 +65,18 @@ public class PopularPlacesSnapshot
      * Iterates over all the games, lobbies and the scenes in the world, finds out the N most
      * populated ones and sorts all scenes by owner, caching the values. Also builds lists of
      * greeters, sorting by who is online.
+     * @param popularThemes
      *
      * @param greeterIds the most recently read list of greeter ids from {@link
      * MemberRepository#loadGreeterIds()} (sorted by last online).
      */
     @EventThread
     public static PopularPlacesSnapshot takeSnapshot (
-        PresentsDObjectMgr omgr, MsoyPeerManager peerMan, List<Integer> greeterIds)
+        PresentsDObjectMgr omgr, MsoyPeerManager peerMan, List<GroupName> popularThemes,
+        List<Integer> greeterIds)
     {
         omgr.requireEventThread();
-        return new PopularPlacesSnapshot(peerMan, greeterIds);
+        return new PopularPlacesSnapshot(peerMan, popularThemes, greeterIds);
     }
 
     /**
@@ -161,6 +166,14 @@ public class PopularPlacesSnapshot
     }
 
     /**
+     * Returns a clone of the theme-to-population mapping.
+     */
+    public Map<Integer, Place> getThemePopulationMap ()
+    {
+        return Maps.newHashMap(_themes);
+    }
+
+    /**
      * Return the total population count in the whirled.
      */
     public int getPopulationCount ()
@@ -168,7 +181,9 @@ public class PopularPlacesSnapshot
         return _totalPopulation;
     }
 
-    protected PopularPlacesSnapshot (MsoyPeerManager peerMan, List<Integer> greeterIds)
+    // TODO: Do something with the popularThemes parameter.
+    protected PopularPlacesSnapshot (
+        MsoyPeerManager peerMan, List<GroupName> popularThemes, List<Integer> greeterIds)
     {
         // intermediate greeter hash tables
         final Set<Integer> greeters = Sets.newHashSet(greeterIds);
