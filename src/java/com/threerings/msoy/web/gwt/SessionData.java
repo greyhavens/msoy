@@ -13,7 +13,6 @@ import com.threerings.msoy.data.all.VisitorInfo;
 
 /**
  * Contains a snapshot of the user's data delivered when they validate their session.
- * TODO: rename all "flow" members to "coins".
  */
 public class SessionData implements IsSerializable
 {
