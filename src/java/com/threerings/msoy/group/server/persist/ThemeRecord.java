@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.group.server.persist;
 
+import com.google.common.base.Function;
 import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.annotation.Column;
@@ -23,6 +24,7 @@ public class ThemeRecord extends PersistentRecord
     public static final Class<ThemeRecord> _R = ThemeRecord.class;
     public static final ColumnExp GROUP_ID = colexp(_R, "groupId");
     public static final ColumnExp PLAY_ON_ENTER = colexp(_R, "playOnEnter");
+    public static final ColumnExp POPULARITY = colexp(_R, "popularity");
     public static final ColumnExp LOGO_MEDIA_HASH = colexp(_R, "logoMediaHash");
     public static final ColumnExp LOGO_MIME_TYPE = colexp(_R, "logoMimeType");
     public static final ColumnExp LOGO_MEDIA_CONSTRAINT = colexp(_R, "logoMediaConstraint");
@@ -41,7 +43,15 @@ public class ThemeRecord extends PersistentRecord
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 6;
+    public static final int SCHEMA_VERSION = 7;
+
+    /** Extracts the groupId of a record. */
+    public static final Function<ThemeRecord, Integer> TO_GROUP_ID =
+        new Function<ThemeRecord, Integer>() {
+        public Integer apply (ThemeRecord record) {
+            return record.groupId;
+        }
+    };
 
     /** The groupId of this theme. */
     @Id
@@ -49,6 +59,9 @@ public class ThemeRecord extends PersistentRecord
 
     /** Whether or not to start this theme group's associated AVRG upon entering a themed room. */
     public boolean playOnEnter;
+
+    /** The long-term population count of this group, an exponential moving average. */
+    public int popularity;
 
     /** A hash code identifying the media for this theme's logo. */
     @Column(nullable=true)
