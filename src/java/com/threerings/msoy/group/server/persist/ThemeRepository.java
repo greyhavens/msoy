@@ -15,8 +15,10 @@ import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.Ops;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
+import com.samskivert.depot.XList;
 import com.samskivert.depot.clause.Join;
 import com.samskivert.depot.clause.Limit;
+import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.QueryClause;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.expression.ColumnExp;
@@ -40,6 +42,14 @@ public class ThemeRepository extends DepotRepository
     public ThemeRecord loadTheme (int groupId)
     {
         return load(ThemeRecord.class, ThemeRecord.getKey(groupId));
+    }
+
+    /**
+     * Fetch all the themes, ordered by popularity.
+     */
+    public XList<ThemeRecord> loadThemes ()
+    {
+        return findAll(ThemeRecord.class, OrderBy.descending(ThemeRecord.POPULARITY));
     }
 
     /**
@@ -70,6 +80,14 @@ public class ThemeRepository extends DepotRepository
     public void updateTheme (int groupId, Map<ColumnExp, Object> updates)
     {
         updatePartial(ThemeRecord.getKey(groupId), updates);
+    }
+
+    /**
+     * Updates the specified theme record in the database.
+     */
+    public void updateTheme (ThemeRecord rec)
+    {
+        update(rec);
     }
 
     /**
