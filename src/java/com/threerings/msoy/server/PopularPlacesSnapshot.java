@@ -181,7 +181,6 @@ public class PopularPlacesSnapshot
         return _totalPopulation;
     }
 
-    // TODO: Do something with the popularThemes parameter.
     protected PopularPlacesSnapshot (
         MsoyPeerManager peerMan, List<GroupName> popularThemes, List<Integer> greeterIds)
     {
@@ -212,7 +211,7 @@ public class PopularPlacesSnapshot
                     }
 
                     if (room.themeId != 0) {
-                        increment(_themes, _thlist, room.themeId, room);
+                        increment(_themes, null, room.themeId, room);
                     }
                 }
             }
@@ -256,6 +255,19 @@ public class PopularPlacesSnapshot
         // and voila, we are read-only lists
         _greeters = Collections.unmodifiableList(glist);
         _onlineGreeters = Collections.unmodifiableList(oglist);
+
+        // make a list of the most popular themes, as places
+        for (GroupName theme : popularThemes) {
+            // was this theme already resolved on some server?
+            Place place = _themes.get(theme.getGroupId());
+            // if not, build a empty place
+            if (place == null) {
+                place = new Place();
+                place.name = theme.toString();
+                place.placeId = theme.getGroupId();
+            }
+            _thlist.add(place);
+        }
     }
 
     protected static void increment (IntMap<Place> places, List<Place> plist,
@@ -267,7 +279,9 @@ public class PopularPlacesSnapshot
             place.placeId = placeId;
             place.name = hp.name;
             places.put(placeId, place);
-            plist.add(place);
+            if (plist != null) {
+                plist.add(place);
+            }
         }
         place.population++;
     }
