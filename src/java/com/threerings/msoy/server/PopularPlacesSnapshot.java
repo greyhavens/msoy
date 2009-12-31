@@ -83,7 +83,7 @@ public class PopularPlacesSnapshot
      * Returns a list of the {@link #MAX_TRACKED_PLACES} most popular scenes in the world, sorted
      * in descending order of population.
      */
-    public Iterable<Place> getTopScenes ()
+    public List<Place> getTopScenes ()
     {
         return _sclist;
     }
@@ -93,7 +93,7 @@ public class PopularPlacesSnapshot
      * in descending order of population. <em>Note:</em> the {@link Place#name} field for these
      * records is not valid and the {@link Place#placeId} field is the Whirled's id.
      */
-    public Iterable<Place> getTopGroups ()
+    public List<Place> getTopGroups ()
     {
         return _grlist;
     }
@@ -102,7 +102,7 @@ public class PopularPlacesSnapshot
      * Returns a list of the {@link #MAX_TRACKED_PLACES} most popular games in the world, sorted in
      * descending order of population.
      */
-    public Iterable<Place> getTopGames ()
+    public List<Place> getTopGames ()
     {
         return _glist;
     }
@@ -111,7 +111,7 @@ public class PopularPlacesSnapshot
      * Returns a list of the {@link #MAX_TRACKED_PLACES} most popular themes in the world, sorted
      * in descending order of population.
      */
-    public Iterable<Place> getTopThemes ()
+    public List<Place> getTopThemes ()
     {
         return _thlist;
     }
