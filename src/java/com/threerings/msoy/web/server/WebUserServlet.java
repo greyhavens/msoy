@@ -16,12 +16,15 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 
 import com.samskivert.io.StreamUtil;
@@ -42,6 +45,7 @@ import com.threerings.msoy.data.all.CharityInfo;
 import com.threerings.msoy.data.all.CoinAwards;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.LaunchConfig;
+import com.threerings.msoy.data.all.MediaDescBase;
 import com.threerings.msoy.data.all.MemberMailUtil;
 import com.threerings.msoy.data.all.VisitorInfo;
 
@@ -51,7 +55,6 @@ import com.threerings.msoy.server.ExternalAuthLogic;
 import com.threerings.msoy.server.MemberLogic;
 import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.MsoyAuthenticator;
-import com.threerings.msoy.server.PopularPlacesSnapshot;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.ServerMessages;
 import com.threerings.msoy.server.StatLogic;
@@ -66,6 +69,8 @@ import com.threerings.msoy.facebook.server.persist.FacebookInfoRecord;
 import com.threerings.msoy.facebook.server.persist.FacebookRepository;
 import com.threerings.msoy.game.server.GameLogic;
 import com.threerings.msoy.group.server.ThemeLogic;
+import com.threerings.msoy.group.server.persist.GroupRecord;
+import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.mail.server.MailLogic;
 import com.threerings.msoy.mail.server.persist.MailRepository;
 import com.threerings.msoy.money.data.all.MemberMoney;
@@ -647,18 +652,34 @@ public class WebUserServlet extends MsoyServiceServlet
 
         data.themeId = mrec.themeGroupId;
 
-        // If there are still not enough places, fill in with some currently popular places.
-        PopularPlacesSnapshot pps = _memberMan.getPPSnapshot();
+        List<Place> topThemes = _memberMan.getPPSnapshot().getTopThemes();
+
+        Set<Integer> groupIds = Sets.newHashSet();
+        for (Place themePlace : topThemes) {
+            if (groupIds.size() == TOP_THEMES) {
+                break;
+            }
+            groupIds.add(themePlace.placeId);
+        }
+        Map<Integer, GroupRecord> groupMap = Maps.newHashMap();
+        for (GroupRecord group : _groupRepo.loadGroups(groupIds)) {
+            groupMap.put(group.groupId, group);
+        }
 
         JSONObject themes = new JSONObject();
-        for (Place themePlace : pps.getTopThemes()) {
+        for (Place themePlace : topThemes) {
+            GroupRecord group = groupMap.get(themePlace.placeId);
+            if (group == null) {
+                // this signals that we've exhausted our loaded groups and we're done
+                break;
+            }
             JSONObject themeObj = new JSONObject();
             try {
                 themeObj.put("groupId", themePlace.placeId);
-                themeObj.put("logoHash", "aab40f60c917807c0b4713de6d5d2099a469839d");
-                themeObj.put("logoType", 10);
+                themeObj.put("logoHash", MediaDescBase.hashToString(group.logoMediaHash));
+                themeObj.put("logoType", group.logoMimeType);
                 themeObj.put("pop", themePlace.population);
-                themeObj.put("name", "Ghosthunters");
+                themeObj.put("name", themePlace.name);
                 themes.accumulate("themes", themeObj);
 
             } catch (JSONException e) {
@@ -682,6 +703,7 @@ public class WebUserServlet extends MsoyServiceServlet
     @Inject protected FacebookLogic _facebookLogic;
     @Inject protected FacebookRepository _facebookRepo;
     @Inject protected GameLogic _gameLogic;
+    @Inject protected GroupRepository _groupRepo;
     @Inject protected InviteRepository _inviteRepo;
     @Inject protected MailLogic _mailLogic;
     @Inject protected MailRepository _mailRepo;
@@ -698,4 +720,6 @@ public class WebUserServlet extends MsoyServiceServlet
     @Inject protected ServerMessages _serverMsgs;
     @Inject protected StatLogic _statLogic;
     @Inject protected ThemeLogic _themeLogic;
+
+    protected static final int TOP_THEMES = 8;
 }
