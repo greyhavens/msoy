@@ -28,11 +28,11 @@ public class WhirledMap
     public static function fromJSON (json: Object) :WhirledMap
     {
         var map :WhirledMap = new WhirledMap();
-
         map.whirleds = new Array();
-        if (json.whirleds != null) {
-            for (var ii :int = 0; ii < json.whirleds.length; ii ++) {
-                map.whirleds[ii] = Whirled.fromJSON(json.whirleds[ii]);
+
+        if (json.themes != null) {
+            for (var ii :int = 0; ii < json.themes.length; ii ++) {
+                map.whirleds[ii] = Whirled.fromJSON(json.themes[ii]);
             }
         }
         return map;

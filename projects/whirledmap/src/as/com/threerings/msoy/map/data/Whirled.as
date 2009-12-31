@@ -21,8 +21,8 @@ public class Whirled
     /** The name of this place. */
     public var name :String;
 
-    /** The hash of the whirled's logo, if any. */
-    public var logo :MediaDesc;
+    /** The whirled's logo. */
+    public var logo :MediaDescBase;
 
     /** The number of members occupying this whirled place. */
     public var population :int;
@@ -33,13 +33,15 @@ public class Whirled
     /**
      * Instantiates an existing whirled subclass with data common to this superclass.
      */
-    public static function fromJSON (JSON: Object) :Whirled
+    public static function fromJSON (json: Object) :Whirled
     {
         var whirled :Whirled = new Whirled();
-        whirled.groupId = JSON.groupId;
-        whirled.name = JSON.name;
-        whirled.population = JSON.pcount;
-        whirled.homeId = JSON.homeId;
+        whirled.groupId = json.groupId;
+        whirled.name = json.name;
+        whirled.logo = new MediaDescBase(
+            MediaDescBase.stringToHash(json.logoHash), int(json.logoType));
+        whirled.population = json.pcount;
+        whirled.homeId = json.homeId;
         return whirled;
     }
 

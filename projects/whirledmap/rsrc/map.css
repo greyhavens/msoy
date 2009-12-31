@@ -10,7 +10,8 @@
 .whirledTitle {
     horizontalAlign: center;
     textAlign: center;
-    color: #ffffff;
+    textDecoration: underline;
+    color: #000000;
     fontSize: 18px;
     fontFamily: Arial;
 }

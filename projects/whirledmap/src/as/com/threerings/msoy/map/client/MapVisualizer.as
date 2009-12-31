@@ -52,7 +52,7 @@ public class MapVisualizer extends Canvas
         _canvas.width = SWF_WIDTH;
         _canvas.height = SWF_HEIGHT;
 
-        var title :Label = FlexUtil.createLabel("Some Whirleds", "whirledTitle");
+        var title :Label = FlexUtil.createLabel("Recently Popular Whirleds", "whirledTitle");
         title.percentWidth = 100;
         _canvas.addChild(title);
 
