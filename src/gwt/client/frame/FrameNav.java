@@ -75,6 +75,7 @@ public class FrameNav
         // listen for logon/logoff
         Session.addObserver(new Session.Observer() {
             @Override public void didLogon (SessionData data) {
+                CShell.log("FrameNav.didLogon(listener)", "data", data);
                 // now that we know we're a member, we can add our "open home in minimized mode"
                 // icon (which may get immediately removed if we're going directly into the world)
                 _layout.addNoClientIcon(data);

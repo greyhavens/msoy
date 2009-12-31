@@ -83,6 +83,8 @@ public class Session
      */
     public static void didLogon (SessionData data)
     {
+        CShell.log("Session.didLogon", "data", data);
+
         // store our session information in a cookie
         setSessionCookie(data.creds.token);
 
