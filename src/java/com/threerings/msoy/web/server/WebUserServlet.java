@@ -722,5 +722,5 @@ public class WebUserServlet extends MsoyServiceServlet
     @Inject protected StatLogic _statLogic;
     @Inject protected ThemeLogic _themeLogic;
 
-    protected static final int TOP_THEMES = 8;
+    protected static final int TOP_THEMES = 6;
 }
