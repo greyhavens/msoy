@@ -47,7 +47,7 @@ public class Whirled
             whirled.logo = new StaticMediaDesc(
                 MediaMimeTypes.IMAGE_PNG, "photo", "group_logo");
         }
-        whirled.population = json.pcount;
+        whirled.population = json.pop;
         whirled.homeId = json.homeId;
         return whirled;
     }
