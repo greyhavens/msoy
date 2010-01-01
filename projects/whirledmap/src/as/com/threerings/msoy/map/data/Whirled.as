@@ -7,6 +7,8 @@ import com.adobe.serialization.json.*;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MediaDescBase;
+import com.threerings.msoy.data.all.MediaMimeTypes;
+import com.threerings.msoy.data.all.StaticMediaDesc;
 import com.threerings.util.Random;
 import com.threerings.util.RandomUtil;
 
@@ -38,8 +40,13 @@ public class Whirled
         var whirled :Whirled = new Whirled();
         whirled.groupId = json.groupId;
         whirled.name = json.name;
-        whirled.logo = new MediaDescBase(
-            MediaDescBase.stringToHash(json.logoHash), int(json.logoType));
+        if (json.logoHash != null) {
+            whirled.logo = new MediaDescBase(
+                MediaDescBase.stringToHash(json.logoHash), int(json.logoType));
+        } else {
+            whirled.logo = new StaticMediaDesc(
+                MediaMimeTypes.IMAGE_PNG, "photo", "group_logo");
+        }
         whirled.population = json.pcount;
         whirled.homeId = json.homeId;
         return whirled;
