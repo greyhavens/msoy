@@ -676,8 +676,10 @@ public class WebUserServlet extends MsoyServiceServlet
             JSONObject themeObj = new JSONObject();
             try {
                 themeObj.put("groupId", themePlace.placeId);
-                themeObj.put("logoHash", MediaDescBase.hashToString(group.logoMediaHash));
-                themeObj.put("logoType", group.logoMimeType);
+                if (group.logoMediaHash != null) {
+                    themeObj.put("logoHash", MediaDescBase.hashToString(group.logoMediaHash));
+                    themeObj.put("logoType", group.logoMimeType);
+                }
                 themeObj.put("pop", themePlace.population);
                 themeObj.put("name", themePlace.name);
                 themeObj.put("homeId", group.homeSceneId);
