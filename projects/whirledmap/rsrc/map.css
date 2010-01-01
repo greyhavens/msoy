@@ -2,6 +2,10 @@
  * $Id$
  */
 
+.mapApp {
+    backgroundAlpha: 0;
+}
+
 .whirledMap {
     horizontalAlign: center;
     horizontalCenter: 0;
