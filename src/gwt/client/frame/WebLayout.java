@@ -142,7 +142,7 @@ public abstract class WebLayout extends Layout
 
     protected void doAddNoClientIcon ()
     {
-        if (CShell.isGuest() || _client != null) {
+        if (_client != null) {
             return; // no quick-home link for guests, none if we have a client open
         }
 
