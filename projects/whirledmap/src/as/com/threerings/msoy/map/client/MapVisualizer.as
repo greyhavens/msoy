@@ -67,6 +67,10 @@ public class MapVisualizer extends Canvas
             var homeBits :HBox = new HBox();
             homeBits.styleName = "mapHomeBits";
             homeBits.percentWidth = 100;
+            enableHandCursor(homeBits);
+            homeBits.addEventListener(MouseEvent.CLICK, function (evt :MouseEvent) :void {
+                NetUtil.navigateToURL(DeploymentConfig.serverURL + "#world-h");
+            });
             _canvas.addChild(homeBits);
 
             var spacer :Spacer = new Spacer();
@@ -81,9 +85,6 @@ public class MapVisualizer extends Canvas
             homeIcon.width = 17;
             homeIcon.height = 13;
             homeIcon.styleName = "mapHomeIcon";
-            homeIcon.addEventListener(MouseEvent.CLICK, function (evt :MouseEvent) :void {
-                NetUtil.navigateToURL(DeploymentConfig.serverURL + "#world-h");
-            });
             homeBits.addChild(homeIcon);
         }
     }
@@ -103,6 +104,7 @@ public class MapVisualizer extends Canvas
         whirledBox.addEventListener(MouseEvent.CLICK, getClickHandler(whirled));
         whirledBox.percentWidth = 100;
         whirledBox.styleName = "mapEntry";
+        enableHandCursor(whirledBox);
         _canvas.addChild(whirledBox);
 
         var logoHolder :ScalingMediaContainer =
@@ -135,6 +137,13 @@ public class MapVisualizer extends Canvas
         return function (event :MouseEvent) :void {
             NetUtil.navigateToURL(DeploymentConfig.serverURL + "#world-s" + (whirled.homeId));
         }
+    }
+
+    protected function enableHandCursor (obj :UIComponent) :void
+    {
+        obj.useHandCursor = true;
+        obj.buttonMode = true;
+        obj.mouseChildren = false;
     }
 
     // scales the loaded logo to the dimensions of the logo holder
