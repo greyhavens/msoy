@@ -65,6 +65,9 @@ import com.threerings.msoy.game.server.GameNodeActions;
 import com.threerings.msoy.game.server.PlayerNodeActions;
 import com.threerings.msoy.game.server.persist.GameInfoRecord;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
+import com.threerings.msoy.group.data.all.Group;
+import com.threerings.msoy.group.server.GroupLogic;
+import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 
@@ -1032,8 +1035,9 @@ public class ItemLogic
     /**
      * Construct and return a list of the {@link GroupName} of each theme group which has
      * stamped the supplied item.
+     * @param memberId
      */
-    public List<GroupName> loadItemStamps (byte itemType, int itemId)
+    public List<GroupName> loadItemStamps (int memberId, byte itemType, int itemId)
         throws ServiceException
     {
         List<? extends MogMarkRecord> stampRecs = getRepository(itemType).loadItemStamps(itemId);
@@ -1041,9 +1045,20 @@ public class ItemLogic
         for (MogMarkRecord rec : stampRecs) {
             themeIds.add(rec.groupId);
         }
-        return Lists.newArrayList(_groupRepo.loadGroupNames(themeIds).values());
-    }
 
+        Set<Integer> memberships = (memberId != 0) ?
+            _groupLogic.getMemberGroupIds(memberId) : null;
+
+        List<GroupName> result = Lists.newArrayList();
+        for (GroupRecord rec : _groupRepo.loadGroups(themeIds)) {
+            // do not include any exclusive group of which the viewer is not a member
+            if (rec.policy != Group.Policy.EXCLUSIVE ||
+                    (memberships != null && memberships.contains(rec.groupId))) {
+                result.add(rec.toGroupName());
+            }
+        }
+        return result;
+    }
 
     /**
      * A class that helps manage loading or storing a bunch of items that may be spread in
@@ -1316,6 +1331,7 @@ public class ItemLogic
     @Inject protected ItemFlagRepository _itemFlagRepo;
     @Inject protected ItemListRepository _listRepo;
     @Inject protected GroupRepository _groupRepo;
+    @Inject protected GroupLogic _groupLogic;
     @Inject protected MailLogic _mailLogic;
     @Inject protected MemberRepository _memberRepo;
     @Inject protected MsoyEventLogger _eventLog;
