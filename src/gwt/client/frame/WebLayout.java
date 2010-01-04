@@ -148,7 +148,8 @@ public abstract class WebLayout extends Layout
 
         _noclient = MsoyUI.createSimplePanel(null, "noclient");
         // escape all the quotes in the JSON!
-        FlashClients.embedWhirledMap(_noclient, "map=" + _topThemes.replace("\"", "&quot;"));
+        FlashClients.embedWhirledMap(_noclient, "map=" + _topThemes.replace("\"", "&quot;") +
+            "&guest=" + CShell.isGuest());
         RootPanel.get(PAGE).add(_noclient);
     }
 
