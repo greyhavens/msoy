@@ -52,7 +52,7 @@ public class MapVisualizer extends Canvas
         _canvas.width = SWF_WIDTH;
         _canvas.height = SWF_HEIGHT;
 
-        var title :Label = FlexUtil.createLabel("Recently Popular Whirleds", "whirledTitle");
+        var title :Label = FlexUtil.createLabel("Visit a Whirled:", "whirledTitle");
         title.percentWidth = 100;
         _canvas.addChild(title);
 
@@ -92,10 +92,14 @@ public class MapVisualizer extends Canvas
         whirledBox.addChild(infoBox);
 
         var name :Label = FlexUtil.createLabel(whirled.name, "whirledName");
+        name.truncateToFit = true;
+        name.width = 210;
         infoBox.addChild(name);
 
         var population :Label = FlexUtil.createLabel(
             "Currently playing: " + whirled.population, "whirledPopulation");
+        population.truncateToFit = true;
+        population.width = 210;
         infoBox.addChild(population);
     }
 
