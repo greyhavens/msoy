@@ -19,8 +19,10 @@ import mx.containers.Canvas;
 import mx.containers.HBox;
 import mx.containers.VBox;
 import mx.core.Application;
+import mx.core.Container;
 import mx.core.UIComponent;
 import mx.controls.Label;
+import mx.controls.Spacer;
 
 import flash.display.Graphics;
 import flash.display.Loader;
@@ -37,8 +39,10 @@ public class MapVisualizer extends Canvas
         var params :Object = app.loaderInfo.parameters;
         if (params != null && params.map != null) {
             _map = WhirledMap.fromParameters(params.map);
+            _showHome = (params.guest == "false");
         } else {
             _map = WhirledMap.debugMap();
+            _showHome = true;
         }
     }
 
@@ -48,17 +52,40 @@ public class MapVisualizer extends Canvas
         super.createChildren();
 
         _canvas = new VBox();
-        _canvas.styleName = "whirledMap";
+        _canvas.styleName = "mapCanvas";
         _canvas.width = SWF_WIDTH;
         _canvas.height = SWF_HEIGHT;
+        this.addChild(_canvas);
 
-        var title :Label = FlexUtil.createLabel("Visit a Whirled:", "whirledTitle");
+        var title :Label = FlexUtil.createLabel("Visit a Whirled --", "mapTitle");
         title.percentWidth = 100;
         _canvas.addChild(title);
 
         _map.whirleds.forEach(addWhirledBox);
 
-        this.addChild(_canvas);
+        if (_showHome) {
+            var homeBits :HBox = new HBox();
+            homeBits.styleName = "mapHomeBits";
+            homeBits.percentWidth = 100;
+            _canvas.addChild(homeBits);
+
+            var spacer :Spacer = new Spacer();
+            spacer.styleName = "mapHomeSpacer";
+            spacer.percentWidth = 100;
+            homeBits.addChild(spacer);
+
+            var homeText :Label = FlexUtil.createLabel("-- or go home", "mapHomeText");
+            homeBits.addChild(homeText);
+
+            var homeIcon :Container = new Container();
+            homeIcon.width = 17;
+            homeIcon.height = 13;
+            homeIcon.styleName = "mapHomeIcon";
+            homeIcon.addEventListener(MouseEvent.CLICK, function (evt :MouseEvent) :void {
+                NetUtil.navigateToURL(DeploymentConfig.serverURL + "#world-h");
+            });
+            homeBits.addChild(homeIcon);
+        }
     }
 
     protected static const SWF_WIDTH :int = 300;
@@ -75,7 +102,7 @@ public class MapVisualizer extends Canvas
         var whirledBox :HBox = new BorderedHBox();
         whirledBox.addEventListener(MouseEvent.CLICK, getClickHandler(whirled));
         whirledBox.percentWidth = 100;
-        whirledBox.styleName = "whirledEntry";
+        whirledBox.styleName = "mapEntry";
         _canvas.addChild(whirledBox);
 
         var logoHolder :ScalingMediaContainer =
@@ -83,7 +110,7 @@ public class MapVisualizer extends Canvas
         logoHolder.setMedia(whirled.logo.getMediaPath());
 
         var holderComponent :UIComponent = FlexUtil.wrap(logoHolder);
-        holderComponent.styleName = "whirledLogo";
+        holderComponent.styleName = "mapLogo";
         holderComponent.width = logoWidth;
         holderComponent.height = logoHeight;
         whirledBox.addChild(holderComponent);
@@ -91,13 +118,13 @@ public class MapVisualizer extends Canvas
         var infoBox :VBox = new VBox();
         whirledBox.addChild(infoBox);
 
-        var name :Label = FlexUtil.createLabel(whirled.name, "whirledName");
+        var name :Label = FlexUtil.createLabel(whirled.name, "mapName");
         name.truncateToFit = true;
         name.width = 210;
         infoBox.addChild(name);
 
         var population :Label = FlexUtil.createLabel(
-            "Currently playing: " + whirled.population, "whirledPopulation");
+            "Currently playing: " + whirled.population, "mapPopulation");
         population.truncateToFit = true;
         population.width = 210;
         infoBox.addChild(population);
@@ -122,6 +149,7 @@ public class MapVisualizer extends Canvas
     }
 
     protected var _map :WhirledMap;
+    protected var _showHome :Boolean;
     protected var _canvas :VBox;
 }
 }

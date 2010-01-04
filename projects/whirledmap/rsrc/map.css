@@ -6,38 +6,59 @@
     backgroundAlpha: 0;
 }
 
-.whirledMap {
+.mapCanvas {
     horizontalAlign: center;
     horizontalCenter: 0;
 }
 
-.whirledTitle {
-    horizontalAlign: center;
-    textAlign: center;
-    textDecoration: underline;
+.mapTitle {
+    textAlign: left;
     color: #000000;
-    fontSize: 18px;
-    fontFamily: Arial;
+    fontSize: 16px;
+    fontFamily: Georgia;
+    fontAntiAliasType: true;
 }
 
-.whirledEntry {
+.mapEntry {
     paddingTop: 2px;
     paddingBottom: 2px;
 
     color: #606060;
     textAlign: left;
     fontFamily: Arial;
-    fontAntiAliasType: advanced;
+    fontAntiAliasType: true;
 }
 
-.whirledLogo {
+.mapLogo {
 }
 
-.whirledName {
+.mapName {
     fontSize: 16px;
     textDecoration: underline;
+    fontAntiAliasType: true;
 }
 
-.whirledPopulation {
+.mapPopulation {
     fontSize: 14px;
+    fontAntiAliasType: true;
+}
+
+.mapHomeBits {
+    horizontalGap: 2px;
+    verticalAlign: middle;
+}
+
+.mapHomeSpacer {
+}
+
+.mapHomeText {
+    color: #000000;
+    fontSize: 16px;
+    fontFamily: Georgia;
+    fontAntiAliasType: true;
+}
+
+.mapHomeIcon {
+    backgroundImage: Embed(source="menu_home.png");
+    backgroundSize: "100%";
 }
