@@ -191,8 +191,17 @@ public class PopularPlacesSnapshot
         // use to count up members online
         final Set<Integer> seenIds = Sets.newHashSet();
 
-        // now we can count up the population in all scenes and games. collect greeter online info
-        // while we're at it
+        // make a list of the most popular themes, as places
+        for (GroupName theme : popularThemes) {
+            Place place = new Place();
+            place.name = theme.toString();
+            place.placeId = theme.getGroupId();
+            _themes.put(place.placeId, place);
+            _thlist.add(place);
+        }
+
+        // now we can count up the population in all scenes, whirleds and games. collect greeter
+        // online info while we're at it
         for (MsoyNodeObject mnobj : peerMan.getMsoyNodeObjects()) {
             for (MemberScene ms : mnobj.memberScenes) {
                 seenIds.add(ms.memberId);
@@ -255,19 +264,6 @@ public class PopularPlacesSnapshot
         // and voila, we are read-only lists
         _greeters = Collections.unmodifiableList(glist);
         _onlineGreeters = Collections.unmodifiableList(oglist);
-
-        // make a list of the most popular themes, as places
-        for (GroupName theme : popularThemes) {
-            // was this theme already resolved on some server?
-            Place place = _themes.get(theme.getGroupId());
-            // if not, build a empty place
-            if (place == null) {
-                place = new Place();
-                place.name = theme.toString();
-                place.placeId = theme.getGroupId();
-            }
-            _thlist.add(place);
-        }
     }
 
     protected static void increment (IntMap<Place> places, List<Place> plist,
