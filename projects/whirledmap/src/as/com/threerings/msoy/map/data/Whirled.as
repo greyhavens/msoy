@@ -67,7 +67,7 @@ public class Whirled
     protected static const DEBUG_WHIRLEDS :Array = [
         [ "Monster Rocks", "b61d047ed2172e196b3b089aa25939ee3cf6bff4" ],
         [ "OOO Whirled", "d11d3dd33f89a6f6e4caa7d9fcee9d60c86bd24c" ],
-        [ "Tree House Defense", "f5cb77cf022cc759af25ec8c792a5d7d8a42151a" ],
+        [ "Majestically Grandiose Tree House Defense", "f5cb77cf022cc759af25ec8c792a5d7d8a42151a" ],
         [ "Bug Hunters", "994eaa7909d2e17e2fa4a7f39c6ef4fee4fc1acf" ],
         [ "Ghosthunters", "aab40f60c917807c0b4713de6d5d2099a469839d" ],
     ];

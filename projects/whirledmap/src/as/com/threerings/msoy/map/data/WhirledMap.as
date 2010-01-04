@@ -44,6 +44,9 @@ public class WhirledMap
         map.whirleds = [
             Whirled.debugWhirled(),
             Whirled.debugWhirled(),
+            Whirled.debugWhirled(),
+            Whirled.debugWhirled(),
+            Whirled.debugWhirled(),
             Whirled.debugWhirled()
         ];
 
