@@ -327,13 +327,14 @@ public class CatalogServlet extends MsoyServiceServlet
         throws ServiceException
     {
         MemberRecord mrec = getAuthedUser();
+        int memberId = (mrec != null) ? mrec.memberId : 0;
 
         // load up the old catalog record
         CatalogRecord record = _itemLogic.requireListing(itemType, catalogId, true);
 
         // if we're not the creator of the listing (who has to download it to update it) do
         // some access control checks
-        if (mrec == null || (record.item.creatorId != mrec.memberId && !mrec.isSupport())) {
+        if (mrec == null || (record.item.creatorId != memberId && !mrec.isSupport())) {
             // if the type in question is not salable, reject the request
             if (!isSalable(itemType)) {
                 throw new ServiceException(ItemCodes.E_ACCESS_DENIED);
@@ -382,7 +383,7 @@ public class CatalogServlet extends MsoyServiceServlet
         }
 
         // secure the current price of the item for this member
-        PriceQuote quote = _moneyLogic.securePrice((mrec == null) ? 0 : mrec.memberId,
+        PriceQuote quote = _moneyLogic.securePrice(memberId,
             new CatalogIdent(itemType, catalogId), record.currency, record.cost);
 
         if (mrec != null) {
@@ -390,7 +391,7 @@ public class CatalogServlet extends MsoyServiceServlet
             // flush their pending coin earnings to ensure that they can buy it if affording it
             // requires a combination of their real coin balance plus their pending earnings
             if (record.currency == Currency.COINS) {
-                _gameLogic.maybeFlushCoinEarnings(mrec.memberId, record.cost);
+                _gameLogic.maybeFlushCoinEarnings(memberId, record.cost);
             }
         }
 
@@ -399,7 +400,8 @@ public class CatalogServlet extends MsoyServiceServlet
         listing.detail.creator = _memberRepo.loadMemberName(record.item.creatorId);
         listing.detail.memberItemInfo = _itemLogic.getMemberItemInfo(mrec, record.item.toItem());
         if (forDisplay) {
-            listing.detail.themes = _itemLogic.loadItemStamps(itemType, record.listedItemId);
+            listing.detail.themes = _itemLogic.loadItemStamps(
+                memberId, itemType, record.listedItemId);
         } else {
             listing.detail.themes = Lists.newArrayList();
         }
@@ -409,10 +411,9 @@ public class CatalogServlet extends MsoyServiceServlet
         listing.brand = brand;
         listing.derivatives = derivatives;
 
-        // let's remember this
-        final int memberId = (mrec != null) ? mrec.memberId : MsoyEventLogger.UNKNOWN_MEMBER_ID;
-        final String tracker = (mrec != null) ? mrec.visitorId : getVisitorTracker();
-        _eventLog.shopDetailsViewed(memberId, tracker);
+        _eventLog.shopDetailsViewed(
+            (mrec != null) ? mrec.memberId : MsoyEventLogger.UNKNOWN_MEMBER_ID,
+            (mrec != null) ? mrec.visitorId : getVisitorTracker());
 
         return listing;
     }

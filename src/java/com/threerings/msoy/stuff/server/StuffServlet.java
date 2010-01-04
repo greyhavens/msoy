@@ -262,7 +262,8 @@ public class StuffServlet extends MsoyServiceServlet
             _memberRepo.loadMemberName(record.creatorId); // normal lookup
 
         // fill in the themes for this item, or its master copy if it's a clone
-        detail.themes = _itemLogic.loadItemStamps(iident.type, record.getMasterId());
+        detail.themes = _itemLogic.loadItemStamps(
+            (mrec != null) ? mrec.memberId : 0, iident.type, record.getMasterId());
 
         detail.memberItemInfo = _itemLogic.getMemberItemInfo(mrec, detail.item);
         switch (detail.item.used) {
