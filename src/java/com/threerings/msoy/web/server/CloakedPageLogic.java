@@ -66,7 +66,9 @@ public class CloakedPageLogic
         HttpServletRequest req, HttpServletResponse rsp, String path, String agent)
         throws IOException
     {
-        if (agent.contains("Googlebot")) {
+        if (agent.contains("Googlebot") ||
+                agent.equals("Slurp") || // yahoo
+                agent.equals("msnbot")) { // bing
             if (serveGoogle(req, rsp, path)) {
                 return true;
             }
