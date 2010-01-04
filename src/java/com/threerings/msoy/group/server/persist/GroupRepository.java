@@ -400,11 +400,7 @@ public class GroupRepository extends DepotRepository
     public List<GroupMembership> resolveGroupMemberships (
         int memberId, Predicate<Tuple<GroupRecord,GroupMembershipRecord>> filter)
     {
-        List<GroupMembershipRecord> records = getMemberships(memberId);
-        IntMap<GroupMembershipRecord> rmap = IntMaps.newHashIntMap();
-        for (GroupMembershipRecord record : records) {
-            rmap.put(record.groupId, record);
-        }
+        Map<Integer, GroupMembershipRecord> rmap = getMemberships(memberId);
 
         // potentially filter exclusive groups and resolve the group names
         IntMap<GroupName> groupNames = IntMaps.newHashIntMap();
@@ -417,7 +413,7 @@ public class GroupRepository extends DepotRepository
 
         // convert the persistent membership records into runtime records
         List<GroupMembership> groups = Lists.newArrayList();
-        for (GroupMembershipRecord record : records) {
+        for (GroupMembershipRecord record : rmap.values()) {
             if (groupNames.containsKey(record.groupId)) {
                 groups.add(record.toGroupMembership(groupNames));
             }
@@ -430,11 +426,7 @@ public class GroupRepository extends DepotRepository
      */
     public List<GroupCard> getMemberGroups (int memberId, boolean includeExclusive)
     {
-        List<GroupMembershipRecord> records = getMemberships(memberId);
-        IntMap<GroupMembershipRecord> rmap = IntMaps.newHashIntMap();
-        for (GroupMembershipRecord record : records) {
-            rmap.put(record.groupId, record);
-        }
+        Map<Integer, GroupMembershipRecord> rmap = getMemberships(memberId);
 
         // potentially filter exclusive groups and resolve the group names
         List<GroupCard> groups = Lists.newArrayList();
@@ -548,10 +540,16 @@ public class GroupRepository extends DepotRepository
     /**
      * Fetches the group memberships a given member belongs to.
      */
-    public List<GroupMembershipRecord> getMemberships (int memberId)
+    public Map<Integer, GroupMembershipRecord> getMemberships (int memberId)
     {
-        return findAll(GroupMembershipRecord.class,
-                       new Where(GroupMembershipRecord.MEMBER_ID, memberId));
+        List<GroupMembershipRecord> recs = findAll(
+            GroupMembershipRecord.class, new Where(GroupMembershipRecord.MEMBER_ID, memberId));
+
+        Map<Integer, GroupMembershipRecord> result = IntMaps.newHashIntMap();
+        for (GroupMembershipRecord rec : recs) {
+            result.put(rec.groupId, rec);
+        }
+        return result;
     }
 
     /**

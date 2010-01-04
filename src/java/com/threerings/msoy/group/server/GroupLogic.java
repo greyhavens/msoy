@@ -252,7 +252,7 @@ public class GroupLogic
     public Set<Integer> getMemberGroupIds (int memberId)
     {
         Set<Integer> groupIds = Sets.newHashSet();
-        for (GroupMembershipRecord gmrec : _groupRepo.getMemberships(memberId)) {
+        for (GroupMembershipRecord gmrec : _groupRepo.getMemberships(memberId).values()) {
             groupIds.add(gmrec.groupId);
         }
         groupIds.add(ServerConfig.getAnnounceGroupId());
