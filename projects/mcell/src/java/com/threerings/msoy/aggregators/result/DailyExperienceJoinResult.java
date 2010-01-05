@@ -8,45 +8,53 @@ import java.util.Map;
 
 import org.apache.hadoop.io.WritableComparable;
 
-import com.threerings.panopticon.aggregator.result.JoinResult;
+import com.google.common.collect.Maps;
+
+import com.threerings.panopticon.aggregator.result.field.FieldAggregatedResult;
 import com.threerings.panopticon.common.event.EventData;
-import com.threerings.panopticon.common.event.EventName;
 
 /**
  * Joins two tables: one that counts up all unique trackers by day, and another that
  * counts up all unique trackers' experiences by day. After joining, we calculate
  * daily percentages for each experience count, divided by that day's tracker count.
- *
- * @author Robert Zubek <robert@threerings.net>
  */
-public class DailyExperienceJoinResult extends JoinResult<WritableComparable<?>>
+public class DailyExperienceJoinResult extends FieldAggregatedResult<WritableComparable<?>>
 {
-    public boolean putData (final Map<String, Object> result)
+    public int total;
+
+    public Map<String, Integer> actions = Maps.newHashMap();
+
+
+    @Override
+    protected void doInit (WritableComparable<?> key, EventData data)
     {
-        EventData totalEvent = get(new EventName("DailyExperienceUniqueTrackerCounts"));
-        EventData pivotEvent = get(new EventName("DailyExperienceTrackerPivot"));
-
-        if (totalEvent == null || pivotEvent == null) {
-            return false; // something's not right!
-        }
-
-        final int total = ((Number) totalEvent.getData().get("total")).intValue();
-        result.put("total", total);
-
-        for (Map.Entry<String, Object> pivotEntry : pivotEvent.getData().entrySet()) {
-            final String column = pivotEntry.getKey();
-            final Object value = pivotEntry.getValue();
-            if (! column.equals("date") && ! column.equals("total")) {
-                // copy this column over to the results
-                result.put(column, value);
-                // try to insert a percentage as well
-                if (value instanceof Integer) {
-                    final String percentColumn = "p_" + column;
-                    final double percentValue = ((Integer) value).doubleValue() / total;
-                    result.put(percentColumn, percentValue);
+        if(data.getEventName().getFullName().equals("DailyExperienceUniqueTrackerCounts")) {
+            total = ((Number) data.getData().get("total")).intValue();
+        } else {
+            for (Map.Entry<String, Object> entry : data.getData().entrySet()) {
+                final String column = entry.getKey();
+                final Object value = entry.getValue();
+                if (!column.equals("date") && !column.equals("total")) {
+                    // copy this column over to the results
+                    actions.put(column, (Integer)value);
                 }
             }
         }
+    }
+
+    @Override
+    public boolean putData (final Map<String, Object> result)
+    {
+        if (total == 0 || actions.isEmpty()) {
+            return false; // something's not right!
+        }
+
+        result.put("total", total);
+        result.putAll(actions);
+        for (Map.Entry<String, Integer> entry : actions.entrySet()) {
+            result.put("p_" + entry.getKey(), entry.getValue().doubleValue() / total);
+        }
+
         return false;
     }
 }

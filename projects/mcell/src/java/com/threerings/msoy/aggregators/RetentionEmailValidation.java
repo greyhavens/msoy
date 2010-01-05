@@ -8,7 +8,7 @@ import com.threerings.msoy.spam.server.SpamLogic.Bucket;
 import com.threerings.panopticon.aggregator.hadoop.Aggregator;
 import com.threerings.panopticon.aggregator.writable.Keys.LongKey;
 import com.threerings.panopticon.common.event.EventDataBuilder;
-import com.threerings.panopticon.efs.storev2.EventWriter;
+import com.threerings.panopticon.eventstore.EventWriter;
 
 @Aggregator(output="msoy.RetentionEmailResponse.Validation")
 public class RetentionEmailValidation extends RetentionEmailBucketed

@@ -14,7 +14,7 @@ import com.threerings.panopticon.aggregator.result.field.FieldResult;
 import com.threerings.panopticon.aggregator.result.field.FieldWritable;
 import com.threerings.panopticon.common.event.EventData;
 import com.threerings.panopticon.common.event.EventDataBuilder;
-import com.threerings.panopticon.efs.storev2.EventWriter;
+import com.threerings.panopticon.eventstore.EventWriter;
 
 @Aggregator(output="AccountsWithVectors", nexts=DailyAccountsCreated.class)
 public class AccountsWithVectors

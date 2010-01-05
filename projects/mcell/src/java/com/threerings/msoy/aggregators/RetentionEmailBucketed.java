@@ -15,7 +15,7 @@ import com.google.common.collect.Sets;
 import com.threerings.msoy.spam.server.SpamLogic.Bucket;
 import com.threerings.panopticon.aggregator.writable.Keys.LongKey;
 import com.threerings.panopticon.common.event.EventDataBuilder;
-import com.threerings.panopticon.efs.storev2.EventWriter;
+import com.threerings.panopticon.eventstore.EventWriter;
 
 /**
  * Processes retention mail events from the advent of user buckets onwards. Subclasses provide

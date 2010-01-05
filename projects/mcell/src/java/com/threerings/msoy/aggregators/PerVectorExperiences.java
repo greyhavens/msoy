@@ -14,7 +14,7 @@ import com.threerings.panopticon.aggregator.result.field.FieldKey;
 import com.threerings.panopticon.common.event.EventData;
 import com.threerings.panopticon.common.event.EventDataBuilder;
 
-import com.threerings.panopticon.efs.storev2.EventWriter;
+import com.threerings.panopticon.eventstore.EventWriter;
 
 public abstract class PerVectorExperiences
     implements JavaAggregator<PerVectorExperiences.VectorConversionKey>

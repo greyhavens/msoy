@@ -10,7 +10,7 @@ import java.util.Collections;
 import com.threerings.panopticon.aggregator.hadoop.Aggregator;
 import com.threerings.panopticon.aggregator.writable.Keys.LongKey;
 import com.threerings.panopticon.common.event.EventDataBuilder;
-import com.threerings.panopticon.efs.storev2.EventWriter;
+import com.threerings.panopticon.eventstore.EventWriter;
 
 /**
  * Before we had buckets, there were subject lines. Before we had subject lines, there were only

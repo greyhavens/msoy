@@ -5,33 +5,49 @@
 package com.threerings.msoy.aggregators.result;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.hadoop.io.WritableComparable;
 
-import com.threerings.panopticon.aggregator.result.JoinResult;
+import com.google.common.collect.Lists;
+
+import com.threerings.panopticon.aggregator.result.field.FieldAggregatedResult;
 import com.threerings.panopticon.common.event.EventData;
-import com.threerings.panopticon.common.event.EventName;
 
-public class InviteJoinResult extends JoinResult<WritableComparable<?>>
+public class InviteJoinResult extends FieldAggregatedResult<WritableComparable<?>>
 {
-    public boolean putData (final Map<String, Object> result)
-    {
-        final EventData inviteSent = get(new EventName("InviteSent"));
-        final EventData inviteViewed = get(new EventName("InviteViewed"));
-        final EventData accountCreated = get(new EventName("AccountCreated"));
+    public List<Date> timestamps = Lists.newArrayList();
+    public List<Integer> inviterId = Lists.newArrayList();
+    public boolean viewed, accepted;
 
+    @Override
+    protected void doInit (WritableComparable<?> key, EventData data)
+    {
+        if (data.getEventName().getFullName().equals("InviteSent")) {
+            Object timestamp = data.getData().get("timestamp");
+            timestamps.add((timestamp instanceof Date) ? (Date)timestamp : new Date(
+                (Long)timestamp));
+            inviterId.add(((Number)data.getData().get("inviterId")).intValue());
+        } else if (data.getEventName().getFullName().equals("InviteViewed")) {
+            viewed = true;
+        } else {
+            accepted = true;
+        }
+    }
+
+    @Override
+    public boolean putData (Map<String, Object> result)
+    {
         // Don't try to do anything with the data if we have no invitation sent.
-        if (inviteSent == null) {
+        if (timestamps.isEmpty()) {
             return false;
         }
 
-        final Object timestamp = inviteSent.getData().get("timestamp");
-        result.put("dateSent", (timestamp instanceof Date) ? (Date)timestamp : new Date(
-            (Long)timestamp));
-        result.put("inviterId", ((Number)inviteSent.getData().get("inviterId")).intValue());
-        result.put("followed", inviteViewed != null);
-        result.put("accepted", accountCreated != null);
+        result.put("dateSent", timestamps.get(0));
+        result.put("inviterId", inviterId.get(0));
+        result.put("followed", viewed);
+        result.put("accepted", accepted);
         return false;
     }
 }
