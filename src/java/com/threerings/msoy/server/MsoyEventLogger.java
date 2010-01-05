@@ -54,13 +54,6 @@ public class MsoyEventLogger
     {
         _ident = ident;
 
-        // log locally (always for now)
-        File logloc = new File(new File(ServerConfig.serverRoot, "log"), "events_" + ident
-            + ".log");
-        log.info("Events logged locally to: " + logloc);
-        _local = new LocalEventLogger(logloc);
-        _local.start();
-
         // do we want local debug?
         _debugDisplayEnabled = ServerConfig.eventLogDebugDisplay;
 
@@ -92,9 +85,6 @@ public class MsoyEventLogger
     {
         if (_remote != null) {
             _remote.shutdown();
-        }
-        if (_local != null) {
-            _local.shutdown();
         }
     }
 
@@ -410,40 +400,10 @@ public class MsoyEventLogger
     /** Posts a log message to the appropriate place. */
     protected synchronized void post (MsoyEvent message)
     {
-        // log locally
-        _local.log(message);
-
         // log remotely (if applicable)
         if (_remote != null) {
             _remote.log(message);
         }
-
-        // display, perhaps
-        if (_debugDisplayEnabled) {
-            dumpMessage(message);
-        }
-    }
-
-    /** Dump a message to logs. */
-    protected void dumpMessage (MsoyEvent message)
-    {
-        StringBuilder sb = new StringBuilder("MsoyEventLogger posting event:\n  ");
-        sb.append(message.getClass().getSimpleName());
-        sb.append("\n  [ ");
-
-        for (Field field : message.getClass().getFields()) {
-            sb.append(field.getName());
-            sb.append("=");
-            try {
-                sb.append(field.get(message).toString());
-            } catch (Exception e) {
-                // skip this one
-            }
-            sb.append(" ");
-        }
-        sb.append("]");
-
-        log.info(sb.toString());
     }
 
     /** Should we display debug info about what's being logged? */
@@ -451,9 +411,6 @@ public class MsoyEventLogger
 
     /** The connection via which we deliver our log messages. */
     protected EventLogger _remote;
-
-    /** Used to log events to the local filesystem. */
-    protected LocalEventLogger _local;
 
     /** Identity used to initialize this logger. */
     protected String _ident;
