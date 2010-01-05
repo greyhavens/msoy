@@ -83,17 +83,8 @@ public class ServerConfig
     /** The secret key used for S3 authentication. */
     public static String mediaS3Key;
 
-    /** Event logging server host name. */
-    public static String eventLogHostname;
-
-    /** Event logging server host name. */
-    public static int eventLogPort;
-
-    /** Event logging server host name. */
-    public static String eventLogUsername;
-
-    /** Event logging server host name. */
-    public static String eventLogPassword;
+    /** Event logging server spooling directory. */
+    public static String eventRemoteURI;
 
     /** Event logging server spooling directory. */
     public static String eventLogSpoolDir;
@@ -366,10 +357,7 @@ public class ServerConfig
         mediaS3Id = config.getValue("media_s3id", "id");
         mediaS3Key = config.getValue("media_s3key", "key");
         sharedSecret = config.getValue("server_secret", "");
-        eventLogHostname = config.getValue("event_log_host", "");
-        eventLogPort = config.getValue("event_log_port", 0);
-        eventLogUsername = config.getValue("event_log_username", "");
-        eventLogPassword = config.getValue("event_log_password", "");
+        eventRemoteURI = config.getValue("event_remote_uri", "");
         eventLogSpoolDir = config.getValue("event_log_spool_dir", "");
         eventLogDebugDisplay = config.getValue("event_log_debug", false);
         recaptchaPublicKey = config.getValue("recaptcha_public", "");

@@ -171,10 +171,7 @@ oooauth.access_denied_url = /register/access_denied.wm
 # Connection details for the event log server. The spool directory is relative
 # to the server_root unless it starts with /.
 
-# event_log_host = logdb.whirled.com
-# event_log_port = 47615
-# event_log_username = username
-# event_log_password = password
+# event_remote_uri = s3://<access_id>:<access_key>@<event_bucket>/
 # event_log_spool_dir = run
 
 # Set the following to true, to display Panopticon messages as they're being logged
