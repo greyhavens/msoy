@@ -78,7 +78,10 @@ public class MsoyEventLogger
             _remote = new EventLogger(spoolDir.getAbsolutePath(),
                 ServerConfig.eventLogDebugDisplay);
         }
-        initialized = true;
+        if (!initialized) {
+            initialized = true;
+            _reportMan.registerReporter(PANOPTICON_REPORT_TYPE, new EventLoggerReporter());
+        }
     }
 
     /**
