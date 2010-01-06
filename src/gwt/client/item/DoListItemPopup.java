@@ -452,6 +452,11 @@ public class DoListItemPopup extends VerticalPanel
 
     protected void gotBrands (List<BrandDetail> result, CatalogListing listing)
     {
+        // if the listing is branded by a brand we do not administer (this could happen if
+        // we clicked Reprice as support+), include the item's existing brand in the dropdown
+        if (listing != null && listing.brand != null && !result.contains(listing.brand)) {
+            result.add(listing.brand);
+        }
         for (BrandDetail detail : result) {
             _brandBox.addItem(detail.group.toString());
             _brandItems.add(detail);
