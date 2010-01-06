@@ -17,6 +17,7 @@ import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.msoy.admin.data.CostsConfigObject;
 import com.threerings.msoy.admin.server.RuntimeConfig;
+import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.Theme;
 import com.threerings.msoy.group.data.all.GroupMembership.Rank;
 import com.threerings.msoy.group.server.persist.GroupRepository;
@@ -30,6 +31,7 @@ import com.threerings.msoy.item.server.persist.CatalogRecord;
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.PriceQuote;
 import com.threerings.msoy.money.data.all.PurchaseResult;
+import com.threerings.msoy.money.server.BuyResult;
 import com.threerings.msoy.money.server.MoneyLogic;
 import com.threerings.msoy.money.server.MoneyLogic.BuyOperation;
 import com.threerings.msoy.server.persist.MemberRecord;
@@ -95,6 +97,7 @@ public class ThemeLogic
             log.warning("Attempt to create theme for non-existent group", "group", groupId);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
+        final GroupName groupName = _groupRepo.loadGroupName(groupId);
 
         BuyOperation<Theme> buyOperation = new MoneyLogic.BuyOperation<Theme>() {
             public Theme create (boolean magicFree, Currency currency, int amountPaid)
@@ -103,12 +106,13 @@ public class ThemeLogic
                 ThemeRecord trec = new ThemeRecord(groupId);
                 _themeRepo.createTheme(trec);
 
-                return trec.toTheme(_groupRepo.loadGroupName(trec.groupId));
+                return trec.toTheme(groupName);
             }
         };
 
-        return _moneyLogic.buyTheme(mrec, THEME_PURCHASE_KEY, currency, authedAmount,
-            Currency.BARS, getThemeBarCost(mrec), buyOperation).toPurchaseResult();
+        BuyResult<Theme> buyResult = _moneyLogic.buyTheme(mrec, THEME_PURCHASE_KEY, currency,
+            authedAmount, Currency.BARS, getThemeBarCost(mrec), groupName.toString(), buyOperation);
+        return buyResult.toPurchaseResult();
     }
 
     /**

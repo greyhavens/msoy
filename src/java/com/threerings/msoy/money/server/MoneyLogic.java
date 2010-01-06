@@ -468,12 +468,12 @@ public class MoneyLogic
      */
     public <T> BuyResult<T> buyTheme (
         MemberRecord buyerRec, Object groupKey, Currency buyCurrency, int authedAmount,
-        Currency listCurrency, int listAmount, BuyOperation<T> buyOp)
+        Currency listCurrency, int listAmount, String groupName, BuyOperation<T> buyOp)
         throws ServiceException
     {
         return buyFromOOO(
             buyerRec, groupKey, buyCurrency, authedAmount, listCurrency, listAmount, buyOp,
-            UserAction.Type.BOUGHT_THEME, "m.theme_created",
+            UserAction.Type.BOUGHT_THEME, MessageBundle.tcompose("m.theme_created", groupName),
             TransactionType.THEME_PURCHASE, "m.change_rcvd_theme");
     }
 
