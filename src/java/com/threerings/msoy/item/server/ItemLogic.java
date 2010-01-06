@@ -363,7 +363,8 @@ public class ItemLogic
     public void requireIsInBrand (MemberRecord mrec, int brandId, String action, ItemRecord item)
         throws ServiceException
     {
-        if (mrec != null && _groupRepo.getBrandShare(brandId, mrec.memberId) > 0) {
+        if (mrec != null &&
+                (mrec.isSupport() || _groupRepo.getBrandShare(brandId, mrec.memberId) > 0)) {
             return;
         }
         String who = (mrec == null) ? "null" : mrec.who();
