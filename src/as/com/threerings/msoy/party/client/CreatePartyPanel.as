@@ -11,7 +11,7 @@ import mx.controls.TextInput;
 
 import mx.core.ClassFactory;
 
-import com.threerings.util.Integer;
+import com.threerings.util.ComparisonChain;
 import com.threerings.util.StringUtil;
 
 import com.threerings.flex.CommandComboBox;
@@ -90,11 +90,10 @@ public class CreatePartyPanel extends FloatingPanel
         _group.dataProvider = us.groups.toArray().sort(
             function (one :GroupMembership, two :GroupMembership) :int {
                 // sort groups by your rank, then by name
-                var cmp :int = two.rank.compareTo(one.rank); // higher rank sorts first
-                if (cmp == 0) {
-                    cmp = MemberName.BY_DISPLAY_NAME(one.group, two.group);
-                }
-                return cmp;
+                return ComparisonChain.start()
+                    .compareComparables(two.rank, one.rank)
+                    .compare(one.group, two.group, MemberName.BY_DISPLAY_NAME)
+                    .result();
             }).map(function (item :GroupMembership, ... rest) :Object {
                 return { label: item.group.toString(), data: item.group.getGroupId(),
                     rank: item.rank };

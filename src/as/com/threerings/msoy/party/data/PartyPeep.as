@@ -6,7 +6,7 @@ package com.threerings.msoy.party.data {
 import com.threerings.io.ObjectOutputStream;
 import com.threerings.io.ObjectInputStream;
 
-import com.threerings.util.Integer;
+import com.threerings.util.ComparisonChain;
 
 import com.threerings.msoy.data.all.PlayerEntry;
 
@@ -36,11 +36,10 @@ public class PartyPeep extends PlayerEntry
             } else if (partyInfo.leaderId == rhs.name.getMemberId()) {
                 return 1;
             }
-            var cmp :int = Integer.compare(lhs.joinOrder, rhs.joinOrder);
-            if (cmp == 0) {
-                cmp = PlayerEntry.sortByName(lhs, rhs);
-            }
-            return cmp;
+            return ComparisonChain.start()
+                .compareInts(lhs.joinOrder, rhs.joinOrder)
+                .compare(lhs, rhs, PlayerEntry.sortByName)
+                .result();
         };
     }
 
