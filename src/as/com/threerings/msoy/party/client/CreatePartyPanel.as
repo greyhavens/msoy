@@ -91,7 +91,7 @@ public class CreatePartyPanel extends FloatingPanel
             function (one :GroupMembership, two :GroupMembership) :int {
                 // sort groups by your rank, then by name
                 return ComparisonChain.start()
-                    .compareComparables(two.rank, one.rank)
+                    .compareComparables(two.rank, one.rank) // higher rank sorts first
                     .compare(one.group, two.group, MemberName.BY_DISPLAY_NAME)
                     .result();
             }).map(function (item :GroupMembership, ... rest) :Object {
