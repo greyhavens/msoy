@@ -429,10 +429,9 @@ public abstract class ItemRepository<T extends ItemRecord>
 
         if (themeId != 0) {
             clauses = ArrayUtil.append(clauses, new Join(
-                getItemColumn(ItemRecord.ITEM_ID),
-                new ColumnExp(getMogMarkClass(), MogMarkRecord.ITEM_ID.name)));
+                getItemColumn(ItemRecord.ITEM_ID), getMogMarkColumn(MogMarkRecord.ITEM_ID)));
             whereBits = ArrayUtil.append(whereBits,
-                new ColumnExp(getMogMarkClass(), MogMarkRecord.GROUP_ID.name).eq(themeId));
+                getMogMarkColumn(MogMarkRecord.GROUP_ID).eq(themeId));
         }
 
         SQLExpression[] originalBits = ArrayUtil.append(
@@ -477,7 +476,7 @@ public abstract class ItemRepository<T extends ItemRecord>
         };
         if (themeId != 0) {
             baseWhere = ArrayUtil.append(baseWhere,
-                new ColumnExp(getMogMarkClass(), MogMarkRecord.GROUP_ID.name).eq(themeId));
+                getMogMarkColumn(MogMarkRecord.GROUP_ID).eq(themeId));
             cloneClauses = ArrayUtil.append(cloneClauses,
                 new Join(getCloneColumn(CloneRecord.ORIGINAL_ITEM_ID),
                     new ColumnExp(getMogMarkClass(), MogMarkRecord.ITEM_ID.name)));
@@ -497,7 +496,7 @@ public abstract class ItemRepository<T extends ItemRecord>
         if (themeId != 0) {
             originalClauses = ArrayUtil.append(originalClauses,
                 new Join(getItemColumn(ItemRecord.ITEM_ID),
-                    new ColumnExp(getMogMarkClass(), MogMarkRecord.ITEM_ID.name)));
+                         getMogMarkColumn(MogMarkRecord.ITEM_ID)));
         }
 
         items.addAll(loadAllWithWhere(
@@ -927,10 +926,10 @@ public abstract class ItemRepository<T extends ItemRecord>
     public List<? extends MogMarkRecord> loadThemedCatalog (int themeId, int rows)
     {
         return findAll(getMogMarkClass(),
-            new Join(new ColumnExp(getMogMarkClass(), MogMarkRecord.ITEM_ID.name),
-                getCatalogColumn(CatalogRecord.LISTED_ITEM_ID)),
-            new Where(new ColumnExp(getMogMarkClass(), MogMarkRecord.GROUP_ID.name), themeId),
-            OrderBy.descending(new ColumnExp(getMogMarkClass(), MogMarkRecord.LAST_STAMPED.name)),
+            new Join(getMogMarkColumn(MogMarkRecord.ITEM_ID),
+                     getCatalogColumn(CatalogRecord.LISTED_ITEM_ID)),
+            new Where(getMogMarkColumn(MogMarkRecord.GROUP_ID), themeId),
+            OrderBy.descending(getMogMarkColumn(MogMarkRecord.LAST_STAMPED)),
             new Limit(0, rows));
     }
 
@@ -1025,13 +1024,13 @@ public abstract class ItemRepository<T extends ItemRecord>
         if (itemId < 0) {
             // for clones we have to do a join
             return null != load(getMogMarkClass(),
-                new Join(new ColumnExp(getMogMarkClass(), MogMarkRecord.ITEM_ID.name),
+                new Join(getMogMarkColumn(MogMarkRecord.ITEM_ID),
                          getCloneColumn(CloneRecord.ORIGINAL_ITEM_ID)),
                 new Where(getCloneColumn(CloneRecord.ITEM_ID), itemId));
         }
         return null != load(getMogMarkClass(), new Where(
-            new ColumnExp(getMogMarkClass(), MogMarkRecord.GROUP_ID.name), themeGroupId,
-            new ColumnExp(getMogMarkClass(), MogMarkRecord.ITEM_ID.name), itemId));
+            getMogMarkColumn(MogMarkRecord.GROUP_ID), themeGroupId,
+            getMogMarkColumn(MogMarkRecord.ITEM_ID), itemId));
     }
 
     /**
@@ -1040,7 +1039,7 @@ public abstract class ItemRepository<T extends ItemRecord>
     public List<? extends MogMarkRecord> loadItemStamps (int itemId)
     {
         return findAll(getMogMarkClass(),
-            new Where(new ColumnExp(getMogMarkClass(), MogMarkRecord.ITEM_ID.name), itemId));
+            new Where(getMogMarkColumn(MogMarkRecord.ITEM_ID), itemId));
     }
 
     /**
@@ -1622,9 +1621,8 @@ public abstract class ItemRepository<T extends ItemRecord>
 
         if (themeId != 0) {
             clauses.add(new Join(
-                getItemColumn(ItemRecord.ITEM_ID),
-                new ColumnExp(getMogMarkClass(), MogMarkRecord.ITEM_ID.name)));
-            whereBits.add(new ColumnExp(getMogMarkClass(), MogMarkRecord.GROUP_ID.name).eq(themeId));
+                getItemColumn(ItemRecord.ITEM_ID), getMogMarkColumn(MogMarkRecord.ITEM_ID)));
+            whereBits.add(getMogMarkColumn(MogMarkRecord.GROUP_ID).eq(themeId));
             significantlyConstrained = true;
         }
 
@@ -1767,6 +1765,12 @@ public abstract class ItemRepository<T extends ItemRecord>
 //    {
 //        return new ColumnExp(getRatingClass(), pcol.name);
 //    }
+
+    protected ColumnExp getMogMarkColumn (ColumnExp pcol)
+    {
+        return new ColumnExp(getMogMarkClass(), pcol.name);
+
+    }
 
     protected ColumnExp getTagColumn (ColumnExp pcol)
     {
