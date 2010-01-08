@@ -35,7 +35,6 @@ import com.threerings.msoy.web.gwt.WebUserServiceAsync;
 
 import client.shell.CShell;
 import client.shell.ShellMessages;
-import client.ui.DateFields;
 import client.ui.MsoyUI;
 import client.util.ClickCallback;
 import client.util.RecaptchaUtil;
@@ -70,8 +69,8 @@ public class RegisterPanel extends FlowPanel
         regi.setWidget(0, 1, _newemail);
         regi.setText(1, 0, _cmsgs.regiRegPass(), 1, "Right");
         regi.setWidget(1, 1, _newpass);
-        String ageTitle = useAgeNotBirthdate() ? _cmsgs.regiRegAge() : _cmsgs.regiRegBirth();
-        _birthday = useAgeNotBirthdate() ? new AgeDropdown() : new DateFields();
+        String ageTitle = _cmsgs.regiRegAge();
+        _birthday = new AgeDropdown();
         regi.setText(2, 0, ageTitle, 1, "Right");
         regi.setWidget(2, 1, _birthday);
         ButtonBase doCreate = MsoyUI.createButton(MsoyUI.SHORT_THIN, _cmsgs.regiRegGo(), null);
@@ -136,7 +135,6 @@ public class RegisterPanel extends FlowPanel
                     MsoyUI.errorNear(_cmsgs.regiMustTOS(), tosBox);
                     return false;
                 }
-                // TODO: switch to regi step 3: display "creating account"
                 _usersvc.register(DeploymentConfig.version, createRegInfo(), true, this);
                 return true;
             }
@@ -175,14 +173,6 @@ public class RegisterPanel extends FlowPanel
         // nada
     }
 
-    /**
-     * Return true to display a dropdown of ages or false for a day/month/year birthdate.
-     */
-    protected boolean useAgeNotBirthdate ()
-    {
-        return false;
-    }
-
     protected RegisterInfo createRegInfo ()
     {
         RegisterInfo info = new RegisterInfo();
@@ -206,30 +196,12 @@ public class RegisterPanel extends FlowPanel
 
     protected int[] getBirthday ()
     {
-        if (useAgeNotBirthdate()) {
-            return ((AgeDropdown)_birthday).getDate();
-        } else {
-            return ((DateFields)_birthday).getDate();
-        }
+        return ((AgeDropdown)_birthday).getDate();
     }
 
     protected boolean isThirteen ()
     {
-        if (useAgeNotBirthdate()) {
-            return ((AgeDropdown)_birthday).getAge() >= 13;
-        }
-
-        int[] birthday = getBirthday();
-        String[] today = new Date().toString().split(" ");
-        String thirteenYearsAgo = "";
-        for (int ii = 0; ii < today.length; ii++) {
-            if (today[ii].matches("[0-9]{4}")) {
-                int year = Integer.valueOf(today[ii]).intValue();
-                today[ii] = "" + (year - 13);
-            }
-            thirteenYearsAgo += today[ii] + " ";
-        }
-        return DateUtil.newDate(thirteenYearsAgo).compareTo(DateUtil.toDate(birthday)) >= 0;
+        return ((AgeDropdown)_birthday).getAge() >= 13;
     }
 
     protected static Widget createAdWordsTracker ()

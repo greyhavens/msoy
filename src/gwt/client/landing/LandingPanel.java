@@ -6,7 +6,6 @@ package client.landing;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ButtonBase;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
@@ -23,7 +22,6 @@ import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.WebMemberService;
 import com.threerings.msoy.web.gwt.WebMemberServiceAsync;
 
-import client.shell.CShell;
 import client.shell.LogonPanel;
 import client.ui.MsoyUI;
 import client.ui.RegisterPanel;
@@ -37,19 +35,6 @@ public class LandingPanel extends SmartTable
     public LandingPanel ()
     {
         super("landing", 0, 20);
-
-        // a/b test asking for birthdate vs age in registration box
-        _membersvc.getABTestGroup(CShell.frame.getVisitorInfo(),
-            "2009 10 landing birthdate vs age", true,
-            new AsyncCallback<Integer>() {
-                public void onSuccess (Integer group) {
-                    gotTestGroup(group);
-                }
-
-                public void onFailure (Throwable cause) {
-                    gotTestGroup(-1);
-                }
-            });
 
         // create a UI explaining briefly what Whirled is
         FlowPanel explain = MsoyUI.createFlowPanel("Explain");
@@ -68,7 +53,18 @@ public class LandingPanel extends SmartTable
 
         // create our registration UI and a logon UI
         FlowPanel rightbits = MsoyUI.createFlowPanel("Rightbits");
-        registerPlaceholder = MsoyUI.createFlowPanel("registerPlaceholder");
+        FlowPanel registerPlaceholder = MsoyUI.createFlowPanel("registerPlaceholder");
+        RegisterPanel register = new RegisterPanel() {
+            protected void addHeader (boolean complete) {
+                if (complete) {
+                    add(MsoyUI.createLabel(_msgs.landingRegistered(), "Title"));
+                } else {
+                    add(MsoyUI.createLabel(_msgs.landingRegister(), "Title"));
+                    add(MsoyUI.createLabel(_msgs.landingRegisterSub(), "Subtitle"));
+                }
+            }
+        };
+        registerPlaceholder.add(register);
         rightbits.add(registerPlaceholder);
 
         rightbits.add(WidgetUtil.makeShim(15, 15));
@@ -104,37 +100,6 @@ public class LandingPanel extends SmartTable
         setWidget(1, 0, LandingCopyright.addFinePrint(new FlowPanel()), 2);
         getFlexCellFormatter().setHorizontalAlignment(1, 0, HasAlignment.ALIGN_CENTER);
     }
-
-    /**
-     * Called when the test group has been assigned and retrieved; display the registraiton ui we
-     * are testing changes to.
-     */
-    protected void gotTestGroup (final int groupId)
-    {
-        RegisterPanel register = new RegisterPanel() {
-            protected void addHeader (boolean complete) {
-                if (complete) {
-                    add(MsoyUI.createLabel(_msgs.landingRegistered(), "Title"));
-                } else {
-                    add(MsoyUI.createLabel(_msgs.landingRegister(), "Title"));
-                    add(MsoyUI.createLabel(_msgs.landingRegisterSub(), "Subtitle"));
-                }
-            }
-            protected boolean useAgeNotBirthdate ()
-            {
-                // ask for their age and default the birthdate to January 1st of that year
-                if (groupId == 2) {
-                    return true;
-                    // group 1, returning users, affiliate users, etc get birthyear/month/date
-                } else {
-                    return false;
-                }
-            }
-        };
-        registerPlaceholder.add(register);
-    }
-
-    protected FlowPanel registerPlaceholder;
 
     protected static final LandingMessages _msgs = GWT.create(LandingMessages.class);
 
