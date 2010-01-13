@@ -72,6 +72,7 @@
     <file name="${extlibs.dir}/commons-beanutils.jar"/>
     <file name="${extlibs.dir}/commons-codec.jar"/>
     <file name="${extlibs.dir}/commons-collections.jar"/>
+    <file name="${extlibs.dir}/commons-configuration.jar"/>
     <file name="${extlibs.dir}/commons-digester.jar"/>
     <file name="${extlibs.dir}/commons-fileupload.jar"/>
     <file name="${extlibs.dir}/commons-httpclient.jar"/>
