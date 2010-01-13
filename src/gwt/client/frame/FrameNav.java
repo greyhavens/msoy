@@ -18,7 +18,6 @@ import com.threerings.msoy.web.gwt.Embedding;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.SessionData;
 
-import client.shell.CShell;
 import client.shell.Session;
 import client.shell.ShellMessages;
 import client.util.FlashClients;
@@ -75,10 +74,11 @@ public class FrameNav
         // listen for logon/logoff
         Session.addObserver(new Session.Observer() {
             @Override public void didLogon (SessionData data) {
-                CShell.log("FrameNav.didLogon(listener)", "data", data);
                 // now that we know we're a member, we can add our "open home in minimized mode"
                 // icon (which may get immediately removed if we're going directly into the world)
-                _layout.addNoClientIcon(data);
+                if (!isHeaderless()) {
+                    _layout.addNoClientIcon(data);
+                }
             }
             @Override public void didLogoff () {
                 // close the Flash client if it's open
@@ -145,7 +145,6 @@ public class FrameNav
 
         // bottom heuristics are simpler (cannot visit funky /#world there)
         if (frame == FrameId.BOTTOM) {
-            CShell.log("Opening bottom frame", "token", token);
             if (_bottom.set(page, token)) {
                 _layout.setBottomContent(_bottom.createFrame());
             }
