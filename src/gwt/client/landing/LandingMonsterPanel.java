@@ -9,6 +9,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.ButtonBase;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextBox;
@@ -16,7 +17,13 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.gwt.Pages;
+import com.threerings.msoy.web.gwt.WebUserService;
+import com.threerings.msoy.web.gwt.WebUserServiceAsync;
+
+import client.shell.CShell;
 import client.shell.LogonPanel;
+import client.shell.ShellMessages;
+import client.shell.LogonPanel.ForgotPasswordDialog;
 import client.ui.MsoyUI;
 import client.ui.RegisterPanel;
 import client.util.Link;
@@ -37,18 +44,30 @@ public class LandingMonsterPanel extends SimplePanel
 
         // login box
         FlowPanel loginBox = MsoyUI.createFlowPanel("LoginBox");
-        TextBox logemail = MsoyUI.createTextBox("", MemberName.MAX_EMAIL_LENGTH, -1);
+        final TextBox emailTextBox = MsoyUI.createTextBox("", MemberName.MAX_EMAIL_LENGTH, -1);
         PasswordTextBox logpass = new PasswordTextBox();
         SmartTable logon = new SmartTable("Login", 0, 5);
         logon.setText(0, 0, _msgs.landingLogEmail(), 1, "Right");
-        logon.setWidget(0, 1, logemail);
+        logon.setWidget(0, 1, emailTextBox);
         logon.setText(1, 0, _msgs.landingLogPass(), 1, "Right");
         logon.setWidget(1, 1, logpass);
         loginBox.add(logon);
         ButtonBase logonButton = MsoyUI.createButton(MsoyUI.SHORT_THIN, _msgs.landingLogGo(),
             null);
-        LogonPanel.addLogonBehavior(logemail, logpass, logonButton, null);
+        LogonPanel.addLogonBehavior(emailTextBox, logpass, logonButton, null);
         loginBox.add(logonButton);
+        // forgot password link
+        Label forgot = MsoyUI.createActionLabel(_msgs.monsterAveForgotTip(), "ForgotPassword",
+            new ClickHandler() {
+            public void onClick (ClickEvent event) {
+                ForgotPasswordDialog forgottenDialog =
+                    new ForgotPasswordDialog(
+                        emailTextBox.getText().trim());
+                CShell.frame.showDialog(_msgs.monsterAveForgotTitle(), forgottenDialog);
+            }
+        });
+        loginBox.add(forgot);
+        // facebook connect button
         FlowPanel connect = MsoyUI.createFlowPanel("Connect");
         connect.add(Link.createImage("/images/account/fbconnect.png", null, Pages.ACCOUNT,
             "logon"));
@@ -102,4 +121,6 @@ public class LandingMonsterPanel extends SimplePanel
     protected RegisterPanel _register;
 
     protected static final LandingMessages _msgs = GWT.create(LandingMessages.class);
+    protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
+    protected static final WebUserServiceAsync _usersvc = GWT.create(WebUserService.class);
 }

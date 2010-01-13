@@ -170,7 +170,7 @@ public class LogonPanel extends SmartTable
         });
     }
 
-    protected class ForgotPasswordDialog extends SmartTable
+    public static class ForgotPasswordDialog extends SmartTable
     {
         public ForgotPasswordDialog (String oemail)
         {
@@ -180,18 +180,19 @@ public class LogonPanel extends SmartTable
                 oemail = CookieUtil.get(CookieNames.WHO);
             }
 
+            final TextBox email = new TextBox();
             int col = 0;
             getFlexCellFormatter().setStyleName(0, col, "rightLabel");
             getFlexCellFormatter().setVerticalAlignment(0, col, HasAlignment.ALIGN_MIDDLE);
             setText(0, col++, _cmsgs.logonEmail());
-            setWidget(0, col++, _email = new TextBox());
-            _email.setText(oemail);
+            setWidget(0, col++, email);
+            email.setText(oemail);
 
             Button forgot = new Button(_cmsgs.send());
             setWidget(0, col++, forgot);
             new ClickCallback<Void>(forgot) {
                 @Override protected boolean callService () {
-                    String account = _email.getText();
+                    String account = email.getText();
                     if (account.length() <= 0) {
                         return false;
                     }
