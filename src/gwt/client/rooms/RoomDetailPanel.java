@@ -193,7 +193,6 @@ public class RoomDetailPanel extends SmartTable
         } else {
             buildStampUI();
         }
-
     }
 
     protected boolean buildStampUI ()

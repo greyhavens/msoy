@@ -118,7 +118,6 @@ public abstract class WebLayout extends Layout
     @Override // from Layout
     public void addNoClientIcon (SessionData data)
     {
-        CShell.log("addNoClientIcon", "data", data.topThemes);
         _topThemes = data.topThemes;
         doAddNoClientIcon();
         positionElements();
