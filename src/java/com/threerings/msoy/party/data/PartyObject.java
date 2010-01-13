@@ -430,11 +430,11 @@ public class PartyObject extends DObject
     }
 
     @Override
-    public Object clone ()
+    public PartyObject clone ()
     {
         try {
             PartyObject that = (PartyObject)super.clone();
-            that.peeps = this.peeps.typedClone();
+            that.peeps = this.peeps.clone();
             that.partyService = null;
 //            that.speakService = null;
             return that;

@@ -250,10 +250,10 @@ public class MsoyScene extends SceneImpl
     }
 
     // from Cloneable
-    public Object clone ()
+    public MsoyScene clone ()
         throws CloneNotSupportedException
     {
-        return new MsoyScene((MsoySceneModel) _model.clone(), _config);
+        return new MsoyScene(_model.clone(), _config);
     }
 
     /** A reference to our scene model. */

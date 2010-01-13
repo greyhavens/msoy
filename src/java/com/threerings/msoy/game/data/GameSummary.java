@@ -61,12 +61,12 @@ public class GameSummary extends SimpleStreamableObject
     }
 
     @Override // from Object
-    public Object clone ()
+    public GameSummary clone ()
     {
         try {
-            return super.clone();
+            return (GameSummary) super.clone();
         } catch (CloneNotSupportedException cnse) {
-            throw new RuntimeException(cnse); // not going to happen
+            throw new AssertionError(cnse); // not going to happen
         }
     }
 }

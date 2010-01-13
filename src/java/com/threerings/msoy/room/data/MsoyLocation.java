@@ -52,9 +52,9 @@ public class MsoyLocation
     }
 
     // documentation inherited from interface Location
-    public Location getOpposite ()
+    public MsoyLocation getOpposite ()
     {
-        MsoyLocation l = (MsoyLocation) clone();
+        MsoyLocation l = clone();
         // rotated 180 degrees
         l.orient = (short) ((orient + 180) % 360);
         return l;
@@ -68,12 +68,12 @@ public class MsoyLocation
     }
 
     // documentation inherited
-    public Object clone ()
+    public MsoyLocation clone ()
     {
         try {
-            return super.clone();
+            return (MsoyLocation) super.clone();
         } catch (CloneNotSupportedException cnse) {
-            return cnse;
+            throw new AssertionError(cnse);
         }
     }
 

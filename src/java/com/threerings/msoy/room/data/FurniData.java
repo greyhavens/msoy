@@ -164,12 +164,12 @@ public class FurniData extends SimpleStreamableObject
     }
 
     @Override // from Object
-    public Object clone ()
+    public FurniData clone ()
     {
         try {
-            return super.clone();
+            return (FurniData) super.clone();
         } catch (CloneNotSupportedException cnse) {
-            throw new RuntimeException(cnse); // not going to happen
+            throw new AssertionError(cnse); // not going to happen
         }
     }
 }

@@ -238,12 +238,12 @@ public class MsoySceneModel extends SceneModel
         }
     }
 
-    public Object clone ()
+    public MsoySceneModel clone ()
         throws CloneNotSupportedException
     {
         MsoySceneModel model = (MsoySceneModel) super.clone();
         model.furnis = furnis.clone();
-        model.entrance = (MsoyLocation) entrance.clone();
+        model.entrance = entrance.clone();
         // decor and ownerName are ok to just copy by reference
         model.invalidatePortalInfo();
         return model;

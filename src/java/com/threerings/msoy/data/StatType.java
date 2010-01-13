@@ -74,7 +74,7 @@ public enum StatType implements Stat.Type
     // from interface Stat.Type
     public Stat newStat ()
     {
-        return (Stat)_prototype.clone();
+        return _prototype.clone();
     }
 
     // from interface Stat.Type

@@ -84,7 +84,7 @@ public class EntityMemories
     }
 
     @Override
-    public Object clone ()
+    public EntityMemories clone ()
     {
         try {
             EntityMemories copy = (EntityMemories) super.clone();
@@ -97,7 +97,7 @@ public class EntityMemories
             return copy;
 
         } catch (CloneNotSupportedException cnse) {
-            throw new RuntimeException(cnse); // shouldn't happen
+            throw new AssertionError(cnse); // shouldn't happen
         }
     }
 

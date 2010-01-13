@@ -917,7 +917,7 @@ public class RoomManager extends SpotSceneManager
                 // clone the outgoing owner's memories
                 EntityMemories mems = member.getLocal(MemberLocal.class).memories;
                 if (mems != null) {
-                    mems = (EntityMemories) mems.clone();
+                    mems = mems.clone();
                     mems.modified = false; // clear the modified flag in the clone...
                 }
                 activatePuppet(pupName, owner.avatar, owner.isPermaguest(), mems);
