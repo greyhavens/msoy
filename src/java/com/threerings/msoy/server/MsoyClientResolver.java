@@ -212,12 +212,6 @@ public class MsoyClientResolver extends CrowdClientResolver
 //        List<ItemListInfo> itemLists = _itemMan.getItemLists(member.memberId);
 //        memobj.lists = new DSet<ItemListInfo>(itemLists);
 
-// TEMP: flow evaporation is disabled; we need to think more about this
-//         // calculate flow evaporation since last logon
-//         int dT = (int) ((System.currentTimeMillis() - member.lastSession.getTime()) / 60000);
-//         _memberRepo.getFlowRepository().expireFlow(member, dT); // modifies member.flow
-// END TEMP
-
         // fill in this member's raw friends list; the friend manager will update it later
         local.friendIds = _memberRepo.loadFriendIds(member.memberId);
 

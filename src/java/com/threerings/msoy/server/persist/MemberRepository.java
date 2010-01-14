@@ -826,11 +826,6 @@ public class MemberRepository extends DepotRepository
             record.lastHumanityAssessment = nowStamp;
         }
 
-// TEMP: disabled
-//         // expire flow without updating MemberObject, since we're dropping session anyway
-//         _actionRepo.expireFlow(record, minutes);
-// END TEMP
-
         record.sessions++;
         record.sessionMinutes += minutes;
         record.lastSession = nowStamp;
