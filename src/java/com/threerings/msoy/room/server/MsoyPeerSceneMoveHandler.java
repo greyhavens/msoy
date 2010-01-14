@@ -325,11 +325,7 @@ public class MsoyPeerSceneMoveHandler extends PeerSceneMoveHandler
                 public void success () {
                     finishOrPunt();
                 }
-                public void accessDeniedFailure () throws Exception {
-                    // let's reluctantly accept this until we see if it happens for real
-                    finishOrPunt();
-                }
-                public void noSuchItemFailure () throws Exception {
+                public void failure (String error) {
                     // let's reluctantly accept this until we see if it happens for real
                     finishOrPunt();
                 }

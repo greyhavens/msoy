@@ -81,8 +81,7 @@ public class WorldManager
     public interface SetAvatarListener
     {
         void success();
-        void noSuchItemFailure() throws Exception;
-        void accessDeniedFailure() throws Exception;
+        void failure (String error);
     }
 
     @Inject public WorldManager (InvocationManager invmgr)
@@ -290,11 +289,8 @@ public class WorldManager
             public void success () {
                 listener.requestProcessed();
             }
-            public void accessDeniedFailure () throws Exception {
-                throw new InvocationException(ItemCodes.E_ACCESS_DENIED);
-            }
-            public void noSuchItemFailure () throws Exception {
-                throw new InvocationException(ItemCodes.E_NO_SUCH_ITEM);
+            public void failure (String error) {
+                listener.requestFailed(error);
             }
         });
     }
@@ -323,19 +319,27 @@ public class WorldManager
             @Override public void invokePersist () throws Exception {
                 _avatar = (Avatar)_itemLogic.loadItem(ident);
                 if (_avatar == null) {
-                    listener.noSuchItemFailure();
-                    return;
+                    log.warning("Avatar does not exist", "user", user.which(),
+                        "avatar", ident);
+                    throw new InvocationException(ItemCodes.E_NO_SUCH_ITEM);
                 }
                 if (user.getMemberId() != _avatar.ownerId) { // ensure that they own it
                     log.warning("Not user's avatar", "user", user.which(),
-                                "ownerId", _avatar.ownerId, "avatar.itemId", _avatar.itemId);
-                    listener.accessDeniedFailure();
-                    return;
+                        "ownerId", _avatar.ownerId, "avatar.itemId", _avatar.itemId);
+                    throw new InvocationException(ItemCodes.E_ACCESS_DENIED);
+                }
+                if (user.theme != null && !_itemLogic.getAvatarRepository().isThemeStamped(
+                        user.theme.getGroupId(), _avatar.itemId)) {
+                    log.warning("Avatar not stamped for theme", "user", user.which(),
+                        "avatar.itemid", _avatar.itemId, "theme", user.theme);
+                    throw new InvocationException(ItemCodes.E_ACCESS_DENIED);
                 }
                 MemoriesRecord memrec = _memoryRepo.loadMemory(_avatar.getType(), _avatar.itemId);
                 _memories = (memrec == null) ? null : memrec.toEntry();
             }
-
+            @Override public void handleFailure (Exception e) {
+                listener.failure(e.getMessage());
+            }
             @Override public void handleSuccess () {
                 if (_avatar.equals(user.avatar)) {
                     listener.success();
@@ -521,17 +525,9 @@ public class WorldManager
         }
 
         @Override // from SetAvatarListener
-        public void accessDeniedFailure ()
-            throws Exception
+        public void failure (String error)
         {
-            throw new InvocationException(ItemCodes.E_ACCESS_DENIED);
-        }
-
-        @Override // from SetAvatarListener
-        public void noSuchItemFailure ()
-            throws Exception
-        {
-            throw new InvocationException(ItemCodes.E_NO_SUCH_ITEM);
+            _listener.requestFailed(error);
         }
 
         @Override // from SetAvatarListener
