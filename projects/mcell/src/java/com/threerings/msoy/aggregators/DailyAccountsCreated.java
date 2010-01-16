@@ -13,8 +13,7 @@ import com.threerings.panopticon.common.event.EventData;
 import com.threerings.panopticon.common.event.EventDataBuilder;
 
 import com.threerings.panopticon.eventstore.EventWriter;
-import com.threerings.panopticon.shared.util.PartialDateType;
-import com.threerings.panopticon.shared.util.TimeRange;
+import com.threerings.panopticon.aggregator.util.PartialDate;
 
 @Aggregator(output=DailyAccountsCreated.OUTPUT_EVENT_NAME)
 public class DailyAccountsCreated
@@ -31,7 +30,7 @@ public class DailyAccountsCreated
         {
             Date date = data.getDate("date");
             if (date != null) {
-                day = TimeRange.roundDown(date.getTime(), PartialDateType.DAY).getTime();
+                day = PartialDate.DAY.roundDown(date.getTime()).getTime();
             } else {
                 day = null;
             }
@@ -88,6 +87,5 @@ public class DailyAccountsCreated
         }
     }
 
-    protected Date _midnight =
-        TimeRange.roundDown(System.currentTimeMillis(), PartialDateType.DAY).getTime();
+    protected Date _midnight = PartialDate.DAY.roundDown(System.currentTimeMillis()).getTime();
 }

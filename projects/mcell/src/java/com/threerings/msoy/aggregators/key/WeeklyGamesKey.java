@@ -13,8 +13,7 @@ import org.apache.commons.configuration.ConfigurationException;
 import com.threerings.panopticon.aggregator.key.PropertiesAggregatorKey;
 import com.threerings.panopticon.aggregator.writable.MultiKeys;
 import com.threerings.panopticon.common.event.EventData;
-import com.threerings.panopticon.shared.util.PartialDateType;
-import com.threerings.panopticon.shared.util.TimeRange;
+import com.threerings.panopticon.aggregator.util.PartialDate;
 
 public class WeeklyGamesKey
     implements PropertiesAggregatorKey<MultiKeys.DateIntegerKey>
@@ -30,7 +29,7 @@ public class WeeklyGamesKey
         final Object timestamp = eventData.getData().get("timestamp");
         final long time = (timestamp instanceof Date) ? ((Date)timestamp).getTime()
             : (Long)timestamp;
-        final Date date = TimeRange.roundDown(time, PartialDateType.WEEK).getTime();
+        final Date date = PartialDate.WEEK.roundDown(time).getTime();
 
         final int bucket = Math.abs(((Number)eventData.getData().get("gameId")).intValue());
         return new MultiKeys.DateIntegerKey(date, bucket);

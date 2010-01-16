@@ -15,7 +15,7 @@ import com.google.common.base.Preconditions;
 
 import com.threerings.panopticon.aggregator.PropertiesResultTransformer;
 import com.threerings.panopticon.common.event.EventData;
-import com.threerings.panopticon.common.util.ThreadHelper.SafeSimpleDateFormatProvider;
+import com.threerings.panopticon.common.util.DateFactory;
 
 /**
  * Skips results that fall within specific date ranges.
@@ -93,6 +93,6 @@ public class DataSkippingTransformer
     private String timestampField;
     private long[] startTimes, endTimes;
 
-    private static final SafeSimpleDateFormatProvider formatProvider =
-        new SafeSimpleDateFormatProvider("yyyy-MM-dd");
+    private static final ThreadLocal<DateFormat> formatProvider =
+        DateFactory.newThreadSafeDateFormat("yyyy-MM-dd");
 }

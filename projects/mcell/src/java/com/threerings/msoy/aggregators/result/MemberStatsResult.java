@@ -16,8 +16,8 @@ import java.util.Map.Entry;
 import org.apache.hadoop.io.WritableComparable;
 
 import com.threerings.panopticon.aggregator.result.AggregatedResult;
+import com.threerings.panopticon.aggregator.util.PartialDate;
 import com.threerings.panopticon.common.event.EventData;
-import com.threerings.panopticon.shared.util.TimeRange;
 
 public class MemberStatsResult implements AggregatedResult<WritableComparable<?>, MemberStatsResult>
 {
@@ -58,7 +58,7 @@ public class MemberStatsResult implements AggregatedResult<WritableComparable<?>
             avgTotal += (double)sample.totalOverall / (double)sample.count;
         }
 
-        Calendar c = TimeRange.roundDown(((Date)result.get("date")).getTime(), Calendar.DAY_OF_MONTH);
+        Calendar c = PartialDate.roundDown(((Date)result.get("date")).getTime(), Calendar.DAY_OF_MONTH);
         result.put("day", c.getTime());
         result.put("active", avgActives);
         result.put("guests", avgGuests);

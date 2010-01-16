@@ -17,9 +17,8 @@ import org.apache.hadoop.io.WritableComparable;
 
 import com.threerings.panopticon.aggregator.key.PropertiesAggregatorKey;
 import com.threerings.panopticon.common.event.EventData;
-import com.threerings.panopticon.shared.util.DateFactory;
-import com.threerings.panopticon.shared.util.PartialDateType;
-import com.threerings.panopticon.shared.util.TimeRange;
+import com.threerings.panopticon.common.util.DateFactory;
+import com.threerings.panopticon.aggregator.util.PartialDate;
 
 public class CohortKey
     implements PropertiesAggregatorKey<CohortKey.Key>
@@ -94,8 +93,8 @@ public class CohortKey
         final Object timestamp = eventData.getData().get("timestamp");
         final long time = (timestamp instanceof Date) ? ((Date)timestamp).getTime()
             : (Long)timestamp;
-        final Date date = TimeRange.roundDown(time, PartialDateType.WEEK).getTime();
-        Date cohortDate = TimeRange.roundDown((Long)createdOn, PartialDateType.WEEK).getTime();
+        final Date date = PartialDate.WEEK.roundDown(time).getTime();
+        Date cohortDate = PartialDate.WEEK.roundDown((Long)createdOn).getTime();
         if (cohortDate.before(startDate)) {
             cohortDate = startDate;
         }
@@ -118,7 +117,7 @@ public class CohortKey
         final Calendar start = DateFactory.newCalendar();
         start.clear();
         start.set(2008, Calendar.JANUARY, 1);
-        startDate = TimeRange.roundDownWeekly(start).getTime();
+        startDate = PartialDate.roundDownWeekly(start).getTime();
     }
 
     private static final Date startDate;

@@ -28,7 +28,7 @@ import com.threerings.panopticon.aggregator.HadoopSerializationUtil;
 import com.threerings.panopticon.aggregator.result.AggregatedResult;
 import com.threerings.panopticon.common.event.EventData;
 import com.threerings.panopticon.common.event.EventName;
-import com.threerings.panopticon.shared.util.DateFactory;
+import com.threerings.panopticon.common.util.DateFactory;
 
 /**
  * Extracts a guest behavior table, including the time they first show up, the time they register

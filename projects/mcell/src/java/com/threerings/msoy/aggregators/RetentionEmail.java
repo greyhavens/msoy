@@ -29,7 +29,7 @@ import com.threerings.panopticon.aggregator.hadoop.KeyInitData;
 import com.threerings.panopticon.aggregator.writable.Keys;
 import com.threerings.panopticon.common.event.EventData;
 import com.threerings.panopticon.eventstore.EventWriter;
-import com.threerings.panopticon.shared.util.DateFactory;
+import com.threerings.panopticon.common.util.DateFactory;
 
 
 public abstract class RetentionEmail

@@ -14,9 +14,8 @@ import org.apache.commons.configuration.ConfigurationException;
 
 import com.threerings.panopticon.aggregator.PropertiesResultTransformer;
 import com.threerings.panopticon.common.event.EventData;
-import com.threerings.panopticon.shared.util.DateFactory;
-import com.threerings.panopticon.shared.util.PartialDateType;
-import com.threerings.panopticon.shared.util.TimeRange;
+import com.threerings.panopticon.common.util.DateFactory;
+import com.threerings.panopticon.aggregator.util.PartialDate;
 
 /**
  * Removes data before or after today (rounded down as desired).
@@ -25,7 +24,7 @@ import com.threerings.panopticon.shared.util.TimeRange;
  * <ul>
  *     <li><b>field</b>: name of the date field in each event; defaults to "date".</li>
  *     <li><b>interval</b>: how current time should be rounded down to yield comparison threshold;
- *         one of the {@link PartialDateType} enums, defaults to DAY.</li>
+ *         one of the {@link PartialDate} enums, defaults to DAY.</li>
  *     <li><b>test</b>: name of the test that checks whether each timestamp passes a comparison
  *         with the interval threshold; one of {@link IntervalCheck}, defaults to BEFORE.</li>
  *     <li><b>format</b>: date format string compatible with {@link SimpleDateFormat}, which will
@@ -70,8 +69,8 @@ public class TruncateToIntervalTransformer
     public void configure (final Configuration config)
         throws ConfigurationException
     {
-        _interval = PartialDateType.valueOf(
-                config.getString("interval", PartialDateType.DAY.name()));
+        _interval = PartialDate.valueOf(
+                config.getString("interval", PartialDate.DAY.name()));
         _intervalCheck = IntervalCheck.valueOf(
                 config.getString("test", IntervalCheck.BEFORE.name()));
         _dateField = config.getString("field", "date");
@@ -84,7 +83,7 @@ public class TruncateToIntervalTransformer
     {
         // get the timestamp the start of this interval.
         long now = System.currentTimeMillis();
-        Date threshold = TimeRange.roundDown(now, _interval).getTime();
+        Date threshold = _interval.roundDown(now).getTime();
 
         // get the timestamp. any null timestamps (or those we can't convert) will skip this event
         Date timestamp = getTimestamp(data);
@@ -122,7 +121,7 @@ public class TruncateToIntervalTransformer
         }
     }
 
-    protected PartialDateType _interval;
+    protected PartialDate _interval;
     protected IntervalCheck _intervalCheck;
     protected String _dateField;
     protected DateFormat _format;

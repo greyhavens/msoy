@@ -18,7 +18,7 @@ import com.google.common.collect.Sets;
 import com.threerings.panopticon.aggregator.result.StringInputNameResult;
 import com.threerings.panopticon.aggregator.result.field.FieldResult;
 import com.threerings.panopticon.common.event.EventData;
-import com.threerings.panopticon.shared.util.DateFactory;
+import com.threerings.panopticon.common.util.DateFactory;
 
 /**
  * Extracts a table of guest experiences before conversion, per entry vector / conversion status.

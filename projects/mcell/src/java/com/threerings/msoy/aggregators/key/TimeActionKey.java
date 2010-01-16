@@ -13,8 +13,7 @@ import org.apache.commons.configuration.ConfigurationException;
 import com.threerings.panopticon.aggregator.key.PropertiesAggregatorKey;
 import com.threerings.panopticon.aggregator.writable.MultiKeys;
 import com.threerings.panopticon.common.event.EventData;
-import com.threerings.panopticon.shared.util.PartialDateType;
-import com.threerings.panopticon.shared.util.TimeRange;
+import com.threerings.panopticon.aggregator.util.PartialDate;
 
 /**
  * Key that includes a date rounded down to a day, and another string column.
@@ -28,7 +27,7 @@ import com.threerings.panopticon.shared.util.TimeRange;
  *   <li><b>actionOutput</b>: name of the output field for the action, defaults to "action".</li>
  *   <li><b>rounding</b>: name of the rounding parameters, eg. "DAY" to round down to each day,
  *       "WEEK" to round down to the week. Must be one of the values of the
- *       {@link PartialDateType} enum. Default value is "DAY".
+ *       {@link PartialDate} enum. Default value is "DAY".
  * </ul>
  */
 public class TimeActionKey
@@ -43,14 +42,14 @@ public class TimeActionKey
         this.actionOut = config.getString("actionOutput", "action");
         this.dateOut = config.getString("dateOutput", "date");
 
-        this.rounding = PartialDateType.valueOf(config.getString("rounding", "DAY"));
+        this.rounding = PartialDate.valueOf(config.getString("rounding", "DAY"));
     }
 
     public MultiKeys.DateStringKey create (final EventData eventData)
     {
         final String action = (String) eventData.getData().get(actionField);
         final Date time = (Date) eventData.getData().get(timestampField);
-        final Date date = TimeRange.roundDown(time.getTime(), rounding).getTime();
+        final Date date = rounding.roundDown(time.getTime()).getTime();
         return new MultiKeys.DateStringKey(date, action);
     }
 
@@ -67,5 +66,5 @@ public class TimeActionKey
 
     String actionField, timestampField;
     String actionOut, dateOut;
-    PartialDateType rounding;
+    PartialDate rounding;
 }
