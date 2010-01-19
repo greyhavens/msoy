@@ -1933,7 +1933,7 @@ public class RoomManager extends SpotSceneManager
     {
         MsoySceneModel msm = (MsoySceneModel)getScene().getSceneModel();
         return ((msm.ownerType == MsoySceneModel.OWNER_TYPE_MEMBER) &&
-                msm.ownerName.equals(body.getVisibleName()));
+                msm.ownerName != null && msm.ownerName.equals(body.getVisibleName()));
     }
 
     /**
