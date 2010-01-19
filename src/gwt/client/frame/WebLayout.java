@@ -110,7 +110,6 @@ public abstract class WebLayout extends Layout
         }
 
         _client = removeFromPage(_client);
-        doAddNoClientIcon(); // TODO
         positionElements();
         return true;
     }
@@ -141,8 +140,9 @@ public abstract class WebLayout extends Layout
 
     protected void doAddNoClientIcon ()
     {
+        // don't show the whirled map if we have a client open
         if (_client != null) {
-            return; // no quick-home link for guests, none if we have a client open
+            return;
         }
 
         _noclient = MsoyUI.createSimplePanel(null, "noclient");
