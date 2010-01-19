@@ -894,11 +894,13 @@ public class ItemLogic
     {
         ItemRepository<ItemRecord> irepo = getRepository(itemType);
         if (favorite) {
-            _faveRepo.noteFavorite(memberId, itemType, record.catalogId);
-            irepo.incrementFavoriteCount(record.catalogId, 1);
+            if (_faveRepo.noteFavorite(memberId, itemType, record.catalogId)) {
+                irepo.incrementFavoriteCount(record.catalogId, 1);
+            }
         } else {
-            _faveRepo.clearFavorite(memberId, itemType, record.catalogId);
-            irepo.incrementFavoriteCount(record.catalogId, -1);
+            if (_faveRepo.clearFavorite(memberId, itemType, record.catalogId)) {
+                irepo.incrementFavoriteCount(record.catalogId, -1);
+            }
         }
     }
 

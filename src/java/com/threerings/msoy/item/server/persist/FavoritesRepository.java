@@ -119,23 +119,27 @@ public class FavoritesRepository extends DepotRepository
 
     /**
      * Notes that the specified member favorited the specified item.
+     *
+     * @return true iff the item wasn't a favorite (but is now)
      */
-    public void noteFavorite (int memberId, byte itemType, int catalogId)
+    public boolean noteFavorite (int memberId, byte itemType, int catalogId)
     {
         FavoriteItemRecord record = new FavoriteItemRecord();
         record.memberId = memberId;
         record.itemType = itemType;
         record.catalogId = catalogId;
         record.notedOn = new Timestamp(System.currentTimeMillis());
-        insert(record);
+        return store(record);
     }
 
     /**
      * Clears out a favorited item registration.
+     *
+     * @return true iff the item was a favorite (and now isn't)
      */
-    public void clearFavorite (int memberId, byte itemType, int catalogId)
+    public boolean clearFavorite (int memberId, byte itemType, int catalogId)
     {
-        delete(FavoriteItemRecord.getKey(memberId, itemType, catalogId));
+        return delete(FavoriteItemRecord.getKey(memberId, itemType, catalogId)) > 0;
     }
 
     /**
