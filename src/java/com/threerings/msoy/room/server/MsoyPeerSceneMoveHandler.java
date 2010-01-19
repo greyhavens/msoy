@@ -102,17 +102,21 @@ public class MsoyPeerSceneMoveHandler extends PeerSceneMoveHandler
             return;
         }
 
-        // if we're not a player (e.g. a pet or a mob), just let us through
-        if ((_memobj == null) ||
-                // Or, if we've already got an avatar quicklist and we're not crossing a theme
-                // boundary, we can just finish the move as usual
-                (_memobj.avatarCache != null && isInTheme(_memobj, scene.getThemeId()))) {
+        // if we're not a player (e.g. a pet), bypass all the complexity
+        if (_memobj == null) {
             finishMove(scene, destmgr);
             return;
         }
 
-        // if we're walking a pet, find out what it is so we can test it for themeness
+        // else if we're walking a pet, find out what it is so we can test it for themeness
         _petobj = _petMan.getPetObject(_memobj.walkingId);
+
+        // and if we've already got an avatar quicklist and we're not crossing a theme
+        // boundary, we can also just finish the move the simple way
+        if (_memobj.avatarCache != null && isInTheme(_memobj, scene.getThemeId())) {
+            finishMove(scene, destmgr);
+            return;
+        }
 
         // otherwise we need to take an extra trip over the invoker thread
         _invoker.postUnit(new ThemeRepositoryUnit(scene, new ThemeMoveHandler() {
