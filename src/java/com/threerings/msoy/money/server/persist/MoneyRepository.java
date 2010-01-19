@@ -467,7 +467,7 @@ public class MoneyRepository extends DepotRepository
             new ActiveCashOutInvalidator(memberId),
             BlingCashOutRecord.TIME_FINISHED, new Timestamp(System.currentTimeMillis()),
             BlingCashOutRecord.ACTUAL_CASHED_OUT, actualAmount,
-            BlingCashOutRecord.SUCCESSFUL, false);
+            BlingCashOutRecord.SUCCESSFUL, true);
     }
 
     /**
