@@ -303,6 +303,6 @@ public class StuffPanel extends FlowPanel
 
     /** Height of page above items. Main top navigation is outside of iframe so not counted. */
     protected static final int NAVIGATION_HEIGHT = 50 /* search */ + 50 /* grid top */;
-    protected static final int ITEM_BOX_HEIGHT = 120;
+    protected static final int ITEM_BOX_HEIGHT = 117;
     protected static final int GET_STUFF_HEIGHT = 160;
 }
