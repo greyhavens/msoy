@@ -534,13 +534,16 @@ public class MoneyRepository extends DepotRepository
     }
 
     /**
-     * Retrieves the most recent bling cash out request for a given member (regardless of whether
-     * it is finished). Returns null if there are no cash outs.
+     * Retrieves the most recent bling cash out request for a given member, either pending or
+     * successful. Returns null if there are no cash outs.
      */
     public BlingCashOutRecord getMostRecentBlingCashout (int memberId)
     {
         List<BlingCashOutRecord> cashouts = findAll(BlingCashOutRecord.class,
-            new Where (BlingCashOutRecord.MEMBER_ID.eq(memberId)),
+            new Where(Ops.and(
+                BlingCashOutRecord.MEMBER_ID.eq(memberId),
+                Ops.or(BlingCashOutRecord.SUCCESSFUL,
+                       BlingCashOutRecord.TIME_FINISHED.isNull()))),
             OrderBy.descending(BlingCashOutRecord.TIME_REQUESTED), new Limit(0, 1));
         return cashouts.size() > 0 ? cashouts.get(0) : null;
     }
