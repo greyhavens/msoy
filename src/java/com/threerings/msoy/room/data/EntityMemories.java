@@ -80,7 +80,7 @@ public class EntityMemories
     @Override
     public String toString ()
     {
-        return "[ident=" + ident + ", modified=" + modified + "]";
+        return "[ident=" + ident + ", size=" + memories.size() + ", modified=" + modified + "]";
     }
 
     @Override
@@ -91,7 +91,7 @@ public class EntityMemories
             // mainly we need to clone the memories so that they can safely be modified in
             // another room on this same node
             @SuppressWarnings("unchecked")
-            StreamableHashMap<String, byte[]> memcopy = 
+            StreamableHashMap<String, byte[]> memcopy =
                 (StreamableHashMap<String, byte[]>) copy.memories.clone();
             copy.memories = memcopy;
             return copy;
