@@ -162,7 +162,7 @@ public class MsoyPeerSceneMoveHandler extends PeerSceneMoveHandler
         // and entering another, but the additional complexity on the client is not worth
         // it, in practice this should work just fine
         if (newAvatarId != null) {
-            _worldMan.setAvatar(_memobj, newAvatarId, new ConfirmListener() {
+            _worldMan.doSetAvatar(_memobj, newAvatarId, new ConfirmListener() {
                 public void requestFailed (String cause) {
                     log.warning("Switching to themed avatar failed", "mover", _mover.who(),
                         "avatar", newAvatarId);

@@ -278,7 +278,7 @@ public class WorldManager
     public void setAvatar (ClientObject caller, int avatarItemId, final ConfirmListener listener)
         throws InvocationException
     {
-        setAvatar(caller, avatarItemId, listener);
+        doSetAvatar((MemberObject)caller, avatarItemId, listener);
     }
 
     /**
@@ -286,7 +286,7 @@ public class WorldManager
      * supplied {@link SetAvatarListener} object. An avatarId of zero may be passed to
      * revert to the default avatar.
      */
-    public void setAvatar (final MemberObject user, final int avatarItemId,
+    public void doSetAvatar (final MemberObject user, final int avatarItemId,
         final ConfirmListener listener)
     {
         if (avatarItemId == ((user.avatar == null) ? 0 : user.avatar.itemId)) {
