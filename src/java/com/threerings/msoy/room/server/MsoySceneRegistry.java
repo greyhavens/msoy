@@ -273,7 +273,7 @@ public class MsoySceneRegistry extends SpotSceneRegistry
 
     protected interface ThemeMoveHandler
     {
-        void finish ();
+        void finish (Integer candidateAvatarId);
         void puntToGame (int gameId);
         void selectGift (Avatar[] avatars, String groupName);
     }

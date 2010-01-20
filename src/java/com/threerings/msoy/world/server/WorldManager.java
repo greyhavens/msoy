@@ -77,13 +77,6 @@ import static com.threerings.msoy.Log.log;
 public class WorldManager
     implements WorldProvider
 {
-    /** A generic feedback interface for setting a player's avatar. */
-    public interface SetAvatarListener
-    {
-        void success();
-        void failure (String error);
-    }
-
     @Inject public WorldManager (InvocationManager invmgr)
     {
         // register our bootstrap invocation service
@@ -285,14 +278,7 @@ public class WorldManager
     public void setAvatar (ClientObject caller, int avatarItemId, final ConfirmListener listener)
         throws InvocationException
     {
-        setAvatar((MemberObject) caller, avatarItemId, new SetAvatarListener() {
-            public void success () {
-                listener.requestProcessed();
-            }
-            public void failure (String error) {
-                listener.requestFailed(error);
-            }
-        });
+        setAvatar(caller, avatarItemId, listener);
     }
 
     /**
@@ -301,10 +287,10 @@ public class WorldManager
      * revert to the default avatar.
      */
     public void setAvatar (final MemberObject user, final int avatarItemId,
-        final SetAvatarListener listener)
+        final ConfirmListener listener)
     {
         if (avatarItemId == ((user.avatar == null) ? 0 : user.avatar.itemId)) {
-            listener.success();
+            listener.requestProcessed();
             return;
         }
         if (avatarItemId == 0) {
@@ -338,11 +324,11 @@ public class WorldManager
                 _memories = (memrec == null) ? null : memrec.toEntry();
             }
             @Override public void handleFailure (Exception e) {
-                listener.failure(e.getMessage());
+                listener.requestFailed(e.getMessage());
             }
             @Override public void handleSuccess () {
                 if (_avatar.equals(user.avatar)) {
-                    listener.success();
+                    listener.requestProcessed();
                     return;
                 }
                 finishSetAvatar(user, _avatar, _memories, listener);
@@ -395,7 +381,7 @@ public class WorldManager
      */
     protected void finishSetAvatar (
         final MemberObject user, final Avatar avatar, EntityMemories memories,
-        final SetAvatarListener listener)
+        final ConfirmListener listener)
     {
         final Avatar prev = user.avatar;
 
@@ -444,7 +430,7 @@ public class WorldManager
         } finally {
             user.commitTransaction();
         }
-        listener.success();
+        listener.requestProcessed();
 
         // this just fires off an invoker unit, we don't need the result, log it
         _itemMan.updateItemUsage(
@@ -474,7 +460,6 @@ public class WorldManager
      * TODO: share code with {@link MsoySceneRegistry.ThemeRepositoryUnit}
      */
     protected class GiftUnit extends PersistingUnit
-        implements SetAvatarListener
     {
         public GiftUnit (MemberObject memobj, int giftCatalogId, ConfirmListener listener)
         {
@@ -506,7 +491,7 @@ public class WorldManager
             // bother with a miss on the db
             EntityMemories memories = null;
 
-            finishSetAvatar(_mobj, _newAvatar, memories, this);
+            finishSetAvatar(_mobj, _newAvatar, memories, (ConfirmListener)_listener);
         }
 
         protected Avatar giveGift (Avatar avatar)
@@ -522,18 +507,6 @@ public class WorldManager
         protected void warn (String message)
         {
             log.warning(message, "member", _mname, "giftCatalogId", _giftCatalogId);
-        }
-
-        @Override // from SetAvatarListener
-        public void failure (String error)
-        {
-            _listener.requestFailed(error);
-        }
-
-        @Override // from SetAvatarListener
-        public void success ()
-        {
-            ((ConfirmListener)_listener).requestProcessed();
         }
 
         protected MemberName _mname;

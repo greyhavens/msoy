@@ -43,6 +43,7 @@ import com.threerings.msoy.server.MemberLocal;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.world.server.WorldManager;
 import com.threerings.presents.annotation.MainInvoker;
+import com.threerings.presents.client.InvocationService.ConfirmListener;
 import com.threerings.presents.dobj.DSet;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.whirled.client.SceneMoveAdapter;
@@ -104,7 +105,7 @@ public class MsoyPeerSceneMoveHandler extends PeerSceneMoveHandler
 
         // if we're not a player (e.g. a pet), bypass all the complexity
         if (_memobj == null) {
-            finishMove(scene, destmgr);
+            finishMove(destmgr, null);
             return;
         }
 
@@ -114,14 +115,14 @@ public class MsoyPeerSceneMoveHandler extends PeerSceneMoveHandler
         // and if we've already got an avatar quicklist and we're not crossing a theme
         // boundary, we can also just finish the move the simple way
         if (_memobj.avatarCache != null && isInTheme(_memobj, scene.getThemeId())) {
-            finishMove(scene, destmgr);
+            finishMove(destmgr, null);
             return;
         }
 
         // otherwise we need to take an extra trip over the invoker thread
         _invoker.postUnit(new ThemeRepositoryUnit(scene, new ThemeMoveHandler() {
-            public void finish () {
-                finishMove(scene, destmgr);
+            public void finish (Integer candidateAvatarId) {
+                finishMove(destmgr, candidateAvatarId);
             }
             public void puntToGame (int gameId) {
                 _msoyListener.moveToBeHandledByAVRG(gameId, scene.getId());
@@ -132,8 +133,10 @@ public class MsoyPeerSceneMoveHandler extends PeerSceneMoveHandler
         }));
     }
 
-    protected void finishMove (MsoyScene scene, RoomManager destmgr)
+    protected void finishMove (RoomManager destmgr, final Integer newAvatarId)
     {
+        MsoyScene scene = (MsoyScene)destmgr.getScene();
+
         // create a fake "from" portal that contains our destination location
         MsoyPortal from = new MsoyPortal();
         from.targetPortalId = (short)-1;
@@ -152,6 +155,22 @@ public class MsoyPeerSceneMoveHandler extends PeerSceneMoveHandler
                 "sceneId", scene.getId(), ie);
             _msoyListener.requestFailed(ie.getMessage());
             return;
+        }
+
+        // if the move succeeded, switch the avatar as an afterthought
+        // I really wanted this to be done in the "void space" between leaving one room
+        // and entering another, but the additional complexity on the client is not worth
+        // it, in practice this should work just fine
+        if (newAvatarId != null) {
+            _worldMan.setAvatar(_memobj, newAvatarId, new ConfirmListener() {
+                public void requestFailed (String cause) {
+                    log.warning("Switching to themed avatar failed", "mover", _mover.who(),
+                        "avatar", newAvatarId);
+                }
+                public void requestProcessed () {
+                    // that's great thanks
+                }
+            });
         }
 
         if (_petobj != null) {
@@ -186,8 +205,7 @@ public class MsoyPeerSceneMoveHandler extends PeerSceneMoveHandler
 
     protected class ThemeRepositoryUnit extends RepositoryUnit
     {
-        protected ThemeRepositoryUnit (
-            MsoyScene scene, ThemeMoveHandler finishMove)
+        protected ThemeRepositoryUnit (MsoyScene scene, ThemeMoveHandler finishMove)
         {
             super("crossThemeBoundary");
             _listener = finishMove;
@@ -318,30 +336,17 @@ public class MsoyPeerSceneMoveHandler extends PeerSceneMoveHandler
                 public void handleSuccess () { }
             });
 
-            // if we're not switching avatars, we're done
-            if (_candidateAvatarId == _oldAvatarId) {
-                finishOrPunt();
+            // hacky, doesn't work
+            if (_gameId != 0) {
+                _listener.puntToGame(_gameId);
                 return;
             }
 
-            // otherwise we have to route everything through MemberManager.setAvatar()
-            _worldMan.setAvatar(_memobj, _candidateAvatarId, new WorldManager.SetAvatarListener() {
-                public void success () {
-                    finishOrPunt();
-                }
-                public void failure (String error) {
-                    // let's reluctantly accept this until we see if it happens for real
-                    finishOrPunt();
-                }
-            });
-        }
-
-        protected void finishOrPunt ()
-        {
-            if (_gameId != 0) {
-                _listener.puntToGame(_gameId);
+            // if we're not switching avatars, we're done
+            if (_candidateAvatarId == _oldAvatarId) {
+                _listener.finish(null);
             } else {
-                _listener.finish();
+                _listener.finish(_candidateAvatarId);
             }
         }
 
