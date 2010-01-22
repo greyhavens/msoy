@@ -268,6 +268,11 @@ public class ItemLogic
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
 
+        // Hack in the AVRG-ness of Launchers, the GWT editor code fails completely here.
+        if (item instanceof Launcher) {
+            updateAVRGness((Launcher)item);
+        }
+
         // create the persistent item record
         ItemRepository<ItemRecord> repo = getRepository(item.getType());
         final ItemRecord record = repo.newItemRecord(item);
@@ -288,10 +293,6 @@ public class ItemLogic
             if (grec.creatorId != creatorId) {
                 throw new ServiceException(ServiceCodes.E_ACCESS_DENIED);
             }
-        }
-        // Hack in the AVRG-ness of Launchers, the GWT editor code fails completely here.
-        if (item instanceof Launcher) {
-            updateAVRGness((Launcher)item);
         }
 
         // write the item to the database
