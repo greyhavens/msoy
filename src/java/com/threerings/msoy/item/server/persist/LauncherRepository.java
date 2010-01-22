@@ -48,7 +48,7 @@ public class LauncherRepository extends ItemRepository<LauncherRecord>
         super(ctx);
 
         // TEMP: Remove after a bit
-        registerMigration(new DataMigration("2009_08_20_fixAVRGLaunchers") {
+        registerMigration(new DataMigration("2009_01_22_fixAVRGLaunchersAgain") {
             @Override public void invoke () throws DatabaseException {
                 Collection<Integer> avrgIds = _mgameRepo.getAVRGameIds();
                 HashSet<Integer> allIds = new HashSet<Integer>();
