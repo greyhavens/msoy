@@ -571,9 +571,17 @@ public abstract class ItemRepository<T extends ItemRecord>
      */
     public List<CloneRecord> loadCloneRecords (int itemId)
     {
-        return findAll(
-            getCloneClass(),
-            new Where(getCloneColumn(CloneRecord.ORIGINAL_ITEM_ID), itemId));
+        return loadCloneRecords(Collections.singleton(itemId));
+    }
+
+    /**
+     * Loads all the raw clone records associated with any one of the given original item ids.
+     * This is potentially an enormously large dataset.
+     */
+    public List<CloneRecord> loadCloneRecords (Collection<Integer> itemIds)
+    {
+        return findAll(getCloneClass(),
+            new Where(getCloneColumn(CloneRecord.ORIGINAL_ITEM_ID).in(itemIds)));
     }
 
     /**
