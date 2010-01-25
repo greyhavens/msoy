@@ -25,6 +25,7 @@ import com.samskivert.depot.Ops;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.SchemaMigration;
+import com.samskivert.depot.XList;
 import com.samskivert.depot.clause.FromOverride;
 import com.samskivert.depot.clause.Limit;
 import com.samskivert.depot.clause.OrderBy;
@@ -170,6 +171,7 @@ public class MsoySceneRepository extends DepotRepository
         return findAll(SceneFurniRecord.class, CacheStrategy.RECORDS,
                        new Where(SceneFurniRecord.SCENE_ID, sceneId));
     }
+
 
     /**
      * Load the SceneRecord for the given sceneId
@@ -431,6 +433,32 @@ public class MsoySceneRepository extends DepotRepository
     {
         return 1 == updatePartial(SceneRecord.getKey(sceneId), ImmutableMap.of(
             SceneRecord.THEME_GROUP_ID, groupId));
+    }
+
+    /**
+     * Temporary function for a migration in {@link LauncherRepository}. Loads a piece of furni
+     * in a given scene with the given item, if that item exists there. This method will not load
+     * the cache.
+     */
+    public SceneFurniRecord loadFurni (int sceneId, int itemId)
+    {
+        XList<SceneFurniRecord> recs = findAll(SceneFurniRecord.class, CacheStrategy.NONE,
+            new Where(SceneFurniRecord.SCENE_ID, sceneId,
+                      SceneFurniRecord.ITEM_ID, itemId));
+        return recs.isEmpty() ? null : recs.get(0);
+    }
+
+    /**
+     * Temporary function for a migration in {@link LauncherRepository}. Sets the actionType
+     * of a specific itemId in the given scene.
+     */
+    public int updateActionType (int sceneId, int itemId, int actionType)
+    {
+        return updatePartial(SceneFurniRecord.class,
+            new Where(SceneFurniRecord.SCENE_ID, sceneId,
+                      SceneFurniRecord.ITEM_ID, itemId),
+            null,
+            SceneFurniRecord.ACTION_TYPE, actionType);
     }
 
     /**
