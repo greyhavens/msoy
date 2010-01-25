@@ -207,8 +207,8 @@ public class Theme extends SimpleStreamableObject
     }
 
     /** The internal paths for various themable assets. */
-    protected static final String DEFAULT_LOGO_URL = "/images/header/header_logo";
-    protected static final String DEFAULT_FACEBOOK_LOGO_URL = "/images/facebook/logo";
-    protected static final String DEFAULT_NAV_URL = "/images/header/navi_button_bg";
-    protected static final String DEFAULT_NAV_SEL_URL = "/images/header/navi_button_selected_bg";
+    protected static final String DEFAULT_LOGO_URL = "images/header/header_logo";
+    protected static final String DEFAULT_FACEBOOK_LOGO_URL = "images/facebook/logo";
+    protected static final String DEFAULT_NAV_URL = "images/header/navi_button_bg";
+    protected static final String DEFAULT_NAV_SEL_URL = "images/header/navi_button_selected_bg";
 }
