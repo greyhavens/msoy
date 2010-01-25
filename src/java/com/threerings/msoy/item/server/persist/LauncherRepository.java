@@ -63,7 +63,7 @@ public class LauncherRepository extends ItemRepository<LauncherRecord>
         // of any SceneFurniRecord associated with such a launcher would also be incorrectly made
         // ACTION_LOBBY_GAME rather than ACTION_WORLD_GAME. We have to iterate over a large number
         // of records to fix this.
-        registerMigration(new DataMigration("2009_01_22_fixAVRGLaunchersAgain") {
+        registerMigration(new DataMigration("2009_01_25_fixAVRGLaunchersAndFurni") {
             @Override public void invoke () throws DatabaseException {
                 // there's 336 AVRGs at the time of writing
                 Collection<Integer> avrgIds = _mgameRepo.getAVRGameIds();
