@@ -101,6 +101,7 @@ public class LauncherRepository extends ItemRepository<LauncherRecord>
                 // now figure out all the clones of those launcher originals; there's about 30k
                 // of these (with non-zero locaion) in the production at the time of writing
                 XList<LauncherCloneRecord> clones = findAll(LauncherCloneRecord.class,
+                    CacheStrategy.NONE,
                     new Where(Ops.and(getCloneColumn(CloneRecord.ORIGINAL_ITEM_ID).in(originalIds),
                                       getCloneColumn(CloneRecord.LOCATION).notEq(0))));
 
