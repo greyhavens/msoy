@@ -262,13 +262,13 @@ BasePanel {
 }
 
 .roomEditResetLocation {
-  image: url("/images/ui/editor/reset_location.png");
+  image: url("images/ui/editor/reset_location.png");
 }
 
 .roomEditResetScale {
-  image: url("/images/ui/editor/reset_scale.png");
+  image: url("images/ui/editor/reset_scale.png");
 }
 
 .roomEditResetRotation {
-  image: url("/images/ui/editor/reset_rotation.png");
+  image: url("images/ui/editor/reset_rotation.png");
 }

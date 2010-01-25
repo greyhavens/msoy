@@ -84,11 +84,11 @@ GameOverPanel {
 }
 
 .joinNowButton {
-  image: url("/images/ui/joinnow.png");
+  image: url("images/ui/joinnow.png");
 }
 
 .logonButton {
-  image: url("/images/ui/logon.png");
+  image: url("images/ui/logon.png");
 }
 
 .unselectedRoomTab, .attentionRoomTab, .unselectedTellTab, .attentionTellTab, .unselectedGroupTab,
@@ -273,7 +273,7 @@ GameOverPanel {
 }
 
 .tourNext {
-  image: url("/images/rooms/tour_next.png");
+  image: url("images/rooms/tour_next.png");
 }
 
 .attentionLabel {
