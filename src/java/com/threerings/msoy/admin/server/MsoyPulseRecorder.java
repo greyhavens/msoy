@@ -7,7 +7,7 @@ import com.google.inject.Inject;
 
 import com.threerings.presents.peer.data.ClientInfo;
 
-import com.threerings.pulse.server.PulseManager;
+import com.threerings.pulse.server.AbstractPulseManager;
 import com.threerings.pulse.server.persist.PulseRecord;
 
 import com.threerings.msoy.admin.server.persist.MsoyPulseRecord;
@@ -19,7 +19,7 @@ import com.threerings.msoy.peer.server.MsoyPeerManager;
 /**
  * Records a pulse of what's going on on the Whirled server.
  */
-public class MsoyPulseRecorder implements PulseManager.Recorder
+public class MsoyPulseRecorder implements AbstractPulseManager.Recorder
 {
     // from interface PulseManager.Recorder
     public Class<? extends PulseRecord> getRecordClass ()

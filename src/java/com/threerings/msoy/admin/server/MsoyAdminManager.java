@@ -37,10 +37,7 @@ import com.threerings.presents.server.InvocationManager;
 import com.threerings.presents.server.PresentsServer;
 import com.threerings.presents.server.RebootManager;
 
-import com.threerings.pulse.server.JVMPulseRecorder;
-import com.threerings.pulse.server.PeerPulseRecorder;
-import com.threerings.pulse.server.PresentsPulseRecorder;
-import com.threerings.pulse.server.PulseManager;
+import com.threerings.pulse.server.PresentsPulseManager;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.DeploymentConfig;
@@ -71,14 +68,9 @@ import static com.threerings.msoy.Log.log;
 public class MsoyAdminManager extends AdminManager
     implements PeerAdminProvider
 {
-    @Inject public MsoyAdminManager (PulseManager pulseMan, InvocationManager invmgr)
+    @Inject public MsoyAdminManager (InvocationManager invmgr)
     {
         super(invmgr);
-        // we need to register our records before the server gets around to initing the repos
-        pulseMan.registerRecorder(JVMPulseRecorder.class);
-        pulseMan.registerRecorder(PresentsPulseRecorder.class);
-        pulseMan.registerRecorder(PeerPulseRecorder.class);
-        pulseMan.registerRecorder(MsoyPulseRecorder.class);
     }
 
     /**
@@ -327,7 +319,7 @@ public class MsoyAdminManager extends AdminManager
     @Inject protected MsoyPeerManager _peerMan;
     @Inject protected MsoyRebootManager _rebmgr;
     @Inject protected PersistenceContext _perCtx;
-    @Inject protected PulseManager _pulseMan;
+    @Inject protected PresentsPulseManager _pulseMan;
     @Inject protected RPCProfiler _rpcProfiler;
     @Inject protected RootDObjectManager _omgr;
 

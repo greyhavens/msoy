@@ -19,6 +19,10 @@ import com.threerings.presents.dobj.AccessController;
 import com.threerings.presents.server.PresentsInvoker;
 import com.threerings.presents.server.ReportManager;
 
+import com.threerings.pulse.server.JVMPulseRecorder;
+import com.threerings.pulse.server.PeerPulseRecorder;
+import com.threerings.pulse.server.PresentsPulseRecorder;
+import com.threerings.pulse.server.PulseModule;
 import com.threerings.pulse.server.persist.PulseDatabase;
 
 import com.threerings.whirled.server.WhirledServer;
@@ -26,6 +30,7 @@ import com.threerings.whirled.server.WhirledServer;
 import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.server.persist.BatchInvoker;
 
+import com.threerings.msoy.admin.server.MsoyPulseRecorder;
 import com.threerings.msoy.admin.server.RuntimeConfig;
 
 import static com.threerings.msoy.Log.log;
@@ -40,6 +45,8 @@ public abstract class MsoyBaseServer extends WhirledServer
     {
         @Override protected void configure () {
             super.configure();
+            install(new PulseModule(JVMPulseRecorder.class, PresentsPulseRecorder.class, PeerPulseRecorder.class, 
+                MsoyPulseRecorder.class));
             // depot dependencies (we will initialize this persistence context later when the
             // server is ready to do database operations; not initializing it now ensures that no
             // one sneaks any database manipulations into the dependency resolution phase)
