@@ -112,7 +112,8 @@ public class StuffPage extends Page
                 return; // permaguests can't create or edit items
             }
             type = args.get(1, Item.AVATAR);
-            final ItemEditor editor = ItemEditor.createItemEditor(type, createEditorHost());
+            final ItemEditor editor = ItemEditor.createItemEditor(
+                type, createEditorHost(CREATE.equals(arg0)));
             if ("e".equals(arg0)) {
                 int itemId = args.get(2, 0);
                 getItem(type, itemId, new InfoCallback<Item>() {
@@ -161,13 +162,14 @@ public class StuffPage extends Page
         }
     }
 
-    protected EditorHost createEditorHost ()
+    protected EditorHost createEditorHost (final boolean create)
     {
         return new EditorHost() {
             public void editComplete (Item item) {
                 if (item != null) {
                     _models.itemUpdated(item);
-                    if (BULK_TYPES.contains(item.getType())) {
+                    // if we're editing a listing original, it has no owner, don't do the bulk bit
+                    if (create && item.ownerId != 0 && BULK_TYPES.contains(item.getType())) {
                         Link.go(Pages.STUFF, item.getType(), item.ownerId);
                     } else if (GAME_TYPES.containsKey(item.getType())) {
                         int gameId = Math.abs(((IdentGameItem)item).gameId);
@@ -185,7 +187,7 @@ public class StuffPage extends Page
 
     protected RemixerHost createRemixHost ()
     {
-        final EditorHost ehost = createEditorHost();
+        final EditorHost ehost = createEditorHost(false);
         return new RemixerHost() {
             public void buyItem () {
                 // not needed here
