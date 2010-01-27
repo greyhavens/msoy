@@ -252,12 +252,23 @@ public class FrameEntryPoint
 
         if (data.group != SessionData.Group.NONE) {
             Link.go(Pages.PEEPLESS, "confprof"); // send them to configure profile
-        } else if (isHeaderless() || (curPage == Pages.ACCOUNT && _prevToken.equals(""))) {
+
+        } else if (isHeaderless()) {
             Link.go(Pages.WORLD, "places");
+
         } else if (curPage == Pages.ACCOUNT) {
-            History.back(); // go back to where we were
+            if (_prevToken.equals("") || _prevToken.startsWith(Pages.LANDING.makeToken())) {
+                // if we're logging in without a previous page, OR we're logging in from a landing
+                // page, hop forward into the world
+                Link.go(Pages.WORLD, "places");
+            } else {
+                // otherwise just go back to where we were
+                History.back();
+            }
+
         } else if (curPage != null) {
             _nav.reload(); // reloads the current page
+
         } else {
             setToken(_currentToken);
         }

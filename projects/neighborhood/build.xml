@@ -28,7 +28,7 @@
   </target>
 
   <!-- builds our Flash game -->
-  <target name="compile" depends="lib">
+  <target name="compile">
     <exec executable="${flex.path}/bin/mxmlc" failonerror="true">
       <arg value="-compiler.optimize"/>
       <arg value="-load-config"/>

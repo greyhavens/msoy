@@ -494,6 +494,7 @@
     <!-- prepare our temporary .gwt.xml file -->
     <antcall target="preppage"><param name="page" value="${page}"/></antcall>
 
+    <echo>Compiling at level ${gwt_style}...</echo>
     <!-- invoke the GWT compiler and grindy grindy grindy -->
     <java fork="true" maxmemory="1024M" failonerror="false" resultproperty="gwt.result"
     	classname="com.google.gwt.dev.Compiler">
