@@ -359,12 +359,10 @@ public class RoomObjectController extends RoomController
             return;
 
         case FurniData.ACTION_WORLD_GAME:
-            log.info("ACTION_WORLD_GAME -> JOIN_AVR_GAME");
             postAction(WorldController.JOIN_AVR_GAME, int(furni.splitActionData()[0]));
             return;
 
         case FurniData.ACTION_LOBBY_GAME:
-            log.info("ACTION_LOBBY_GAME -> PLAY_GAME");
             postAction(WorldController.PLAY_GAME, int(furni.splitActionData()[0]));
             return;
 

@@ -715,7 +715,6 @@ public class WorldController extends MsoyController
         if (sceneId == int.MIN_VALUE) {
             var curScene :int = getCurrentSceneId();
             sceneId = (curScene != 0) ? curScene : _wctx.getMemberObject().getHomeSceneId();
-            log.info("sceneId was unspecified", "curScene", curScene, "newSceneId", sceneId);
         }
 
         // either we don't want a scene, or we're already in the right one, carry on

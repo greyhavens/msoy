@@ -21,7 +21,7 @@ import com.threerings.util.NetUtil;
 import com.threerings.util.Random;
 import com.threerings.util.StringUtil;
 
-import com.threerings.display.DisplayUtil;
+import com.threerings.flash.DisplayUtil;
 
 import com.adobe.serialization.json.JSONDecoder;
 
