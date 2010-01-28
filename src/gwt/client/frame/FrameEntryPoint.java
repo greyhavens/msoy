@@ -254,6 +254,7 @@ public class FrameEntryPoint
             Link.go(Pages.PEEPLESS, "confprof"); // send them to configure profile
 
         } else if (isHeaderless()) {
+            // this takes care of all the landing pages
             Link.go(Pages.WORLD, "places");
 
         } else if (curPage == Pages.ACCOUNT) {
