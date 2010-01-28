@@ -16,17 +16,16 @@ import com.google.gwt.user.client.ui.TextBox;
 
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.WebUserService;
 import com.threerings.msoy.web.gwt.WebUserServiceAsync;
 
 import client.shell.CShell;
+import client.shell.FBLogonPanel;
 import client.shell.LogonPanel;
 import client.shell.ShellMessages;
 import client.shell.LogonPanel.ForgotPasswordDialog;
 import client.ui.MsoyUI;
 import client.ui.RegisterPanel;
-import client.util.Link;
 
 /**
  * Our main landing page.
@@ -67,11 +66,9 @@ public class LandingMonsterPanel extends SimplePanel
             }
         });
         loginBox.add(forgot);
-        // facebook connect button
-        FlowPanel connect = MsoyUI.createFlowPanel("Connect");
-        connect.add(Link.createImage("/images/account/fbconnect.png", null, Pages.ACCOUNT,
-            "logon"));
-        loginBox.add(connect);
+        FBLogonPanel fbLogon = new FBLogonPanel();
+        fbLogon.setStyleName("Connect");
+        loginBox.add(fbLogon);
         content.add(loginBox);
 
         // clickable monster ave screenshot opens registration

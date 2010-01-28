@@ -18,14 +18,13 @@ import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.WebMemberService;
 import com.threerings.msoy.web.gwt.WebMemberServiceAsync;
 
+import client.shell.FBLogonPanel;
 import client.shell.LogonPanel;
 import client.ui.MsoyUI;
 import client.ui.RegisterPanel;
-import client.util.Link;
 
 /**
  * Our main landing page.
@@ -87,8 +86,7 @@ public class LandingPanel extends SmartTable
 
         FlowPanel connect = MsoyUI.createFlowPanel("Connect");
         connect.add(MsoyUI.createLabel(_msgs.landingConnect(), "Subtitle"));
-        connect.add(Link.createImage("/images/account/fbconnect.png", null,
-                                     Pages.ACCOUNT, "logon"));
+        connect.add(new FBLogonPanel());
         rightbits.add(connect);
 
         // wrap all that up in two columns with header and background and whatnot
