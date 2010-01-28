@@ -39,6 +39,7 @@ import com.threerings.msoy.server.ServerConfig;
 
 import com.threerings.msoy.room.server.SnapshotUploadFile;
 
+import com.threerings.s3.client.MediaType;
 import com.threerings.s3.client.S3Connection;
 import com.threerings.s3.client.S3Exception;
 import com.threerings.s3.client.S3FileObject;
@@ -359,7 +360,7 @@ public class UploadUtil
     {
         try {
             S3Connection conn = new S3Connection(ServerConfig.mediaS3Id, ServerConfig.mediaS3Key);
-            S3FileObject uploadTarget = new S3FileObject(name, file, mimeType);
+            S3FileObject uploadTarget = new S3FileObject(name, file, new MediaType(mimeType));
 
             if (headers == null) {
                 headers = Collections.emptyMap();
