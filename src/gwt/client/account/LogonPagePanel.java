@@ -7,6 +7,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import client.shell.FullLogonPanel;
 import client.ui.MsoyUI;
 import client.util.NaviUtil;
 

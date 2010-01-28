@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.account;
+package client.shell;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 

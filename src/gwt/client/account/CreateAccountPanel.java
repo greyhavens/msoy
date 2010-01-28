@@ -10,6 +10,7 @@ import com.google.gwt.user.client.ui.Image;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import client.shell.CShell;
+import client.shell.FullLogonPanel;
 import client.ui.MsoyUI;
 import client.ui.RegisterPanel;
 

@@ -37,6 +37,8 @@ import com.threerings.msoy.web.gwt.WebUserService;
 import com.threerings.msoy.web.gwt.WebUserServiceAsync;
 
 import client.shell.CShell;
+import client.shell.FBConnect;
+import client.shell.FullLogonPanel;
 import client.shell.ShellMessages;
 import client.ui.MsoyUI;
 import client.ui.PromptPopup;
