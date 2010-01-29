@@ -174,7 +174,7 @@ public class GroupRepository extends DepotRepository
      */
     public List<GroupRecord> getGroups (int count)
     {
-        return getGroups(0, count, new GroupQuery());
+        return getGroups(0, count, new GroupQuery(), false);
     }
 
     /**
@@ -182,8 +182,9 @@ public class GroupRepository extends DepotRepository
      *
      * @param query Limit, search and sort options. query.searchString and query.tag are mutually
      * exclusive. If either is set, results will be ordered by relevance instead of query.sort.
+     * @param b
      */
-    public List<GroupRecord> getGroups (int offset, int count, GroupQuery query)
+    public List<GroupRecord> getGroups (int offset, int count, GroupQuery query, boolean support)
     {
         int tagId = 0;
         if (query.tag != null) {
@@ -196,7 +197,7 @@ public class GroupRepository extends DepotRepository
 
         WordSearch search = (query.search != null) ? new WordSearch(query.search) : null;
 
-        List<QueryClause> clauses = buildSearchClauses(search, tagId);
+        List<QueryClause> clauses = buildSearchClauses(search, tagId, support);
         clauses.add(buildOrderBy(query.sort, tagId, search));
         clauses.add(new Limit(offset, count));
 
@@ -207,7 +208,7 @@ public class GroupRepository extends DepotRepository
      * Returns the total count of visible groups for a given query (which corresponds to the
      * number of groups available via calls to {@link #getGroups}).
      */
-    public int getGroupCount (GroupQuery query)
+    public int getGroupCount (GroupQuery query, boolean support)
     {
         int tagId = 0;
         if (query.tag != null) {
@@ -220,7 +221,7 @@ public class GroupRepository extends DepotRepository
 
         WordSearch search = (query.search != null) ? new WordSearch(query.search) : null;
 
-        List<QueryClause> clauses = buildSearchClauses(search, tagId);
+        List<QueryClause> clauses = buildSearchClauses(search, tagId, support);
         clauses.add(new FromOverride(GroupRecord.class));
         return load(CountRecord.class, clauses.toArray(new QueryClause[clauses.size()])).count;
     }
@@ -639,13 +640,19 @@ public class GroupRepository extends DepotRepository
 
     /**
      * Return the where clause for a group select based on a given query
+     *
+     * TODO: Ideally this would not hide exclusive groups from their members/owners
      */
-    protected List<QueryClause> buildSearchClauses (WordSearch search, int tagId)
+    protected List<QueryClause> buildSearchClauses (WordSearch search, int tagId, boolean support)
     {
         List<QueryClause> clauses = Lists.newArrayList();
 
-        List<SQLExpression> conditions = Lists.<SQLExpression>newArrayList(
-            Ops.not(GroupRecord.POLICY.eq(Group.Policy.EXCLUSIVE)));
+        List<SQLExpression> conditions = Lists.newArrayList();
+
+        if (!support) {
+            // if we're not support, skip exclusive groups in the result
+            conditions.add(Ops.not(GroupRecord.POLICY.eq(Group.Policy.EXCLUSIVE)));
+        }
 
         if (search != null) {
             List<SQLExpression> wordBits =
