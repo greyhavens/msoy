@@ -28,7 +28,7 @@ import static com.threerings.msoy.Log.log;
  *
  * <p> Or a request to redirect with an optional assignment of affiliate:
  * /welcome/[affiliate]/[page_tokens_and_args]</p>
- * 
+ *
  * <p> Or a request to redirect with an optional assignment of affiliate and a friend request:
  * /friend/[affiliate]/[page_tokens_and_args]</p>
  */
@@ -77,6 +77,10 @@ public class GoServlet extends HttpServlet
 
             // note that we have a new visitor
             _memberLogic.noteNewVisitor(info, true, bits.left, req.getHeader("Referrer"));
+
+            // DEBUG
+            log.info("VisitorInfo created", "info", info,
+                "reason", "GoServlet", "vector", bits.left, "path", bits.right);
         }
 
         // set their affiliate cookie if appropriate

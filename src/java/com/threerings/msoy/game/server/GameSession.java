@@ -50,6 +50,9 @@ public class GameSession extends CrowdSession
                 _invoker.postUnit(new WriteOnlyUnit("noteNewVisitor") {
                     public void invokePersist () throws Exception {
                         _memberLogic.noteNewVisitor(_plobj.visitorInfo, false, vector, null);
+                        // DEBUG
+                        log.info("VisitorInfo created", "info", _plobj.visitorInfo,
+                            "reason", "GameSession", "memberId", _plobj.memberName.getMemberId());
                     }
                 });
             }

@@ -225,6 +225,12 @@ public class FacebookCallbackServlet extends HttpServlet
         // created and we need to note that this is an entry
         if (vinfo.id.equals(mrec.visitorId)) {
             _memberLogic.noteNewVisitor(vinfo, true, info.vector, req.getHeader("Referrer"));
+
+            // DEBUG
+            log.info("VisitorInfo created", "info", vinfo, "reason", "FacebookCallbackServlet",
+                "vector", info.vector, "ref", req.getHeader("Referrer"),
+                "memberId", mrec.memberId);
+
         }
 
         // activate a session for them

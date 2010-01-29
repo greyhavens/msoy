@@ -107,6 +107,10 @@ public class MsoySession extends WhirledSession
                 _invoker.postUnit(new WriteOnlyUnit("noteNewVisitor") {
                     public void invokePersist () throws Exception {
                         _memberLogic.noteNewVisitor(_memobj.visitorInfo, false, vector, null);
+
+                        // DEBUG
+                        log.info("VisitorInfo created", "info", _memobj.visitorInfo, "reason",
+                            "MsoySession", "vector", vector, "memberId", _memobj.getMemberId());
                     }
                 });
             }
