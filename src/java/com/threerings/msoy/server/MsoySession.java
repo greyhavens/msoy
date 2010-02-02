@@ -7,8 +7,6 @@ import com.google.inject.Inject;
 
 import com.samskivert.jdbc.WriteOnlyUnit;
 import com.samskivert.util.Invoker;
-import com.samskivert.util.StringUtil;
-
 import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.dobj.AttributeChangeListener;
 import com.threerings.presents.dobj.AttributeChangedEvent;
@@ -94,26 +92,29 @@ public class MsoySession extends WhirledSession
         _memobj.addListener(_idleTracker);
 
         AuthenticationDomain.Account acct = (AuthenticationDomain.Account)_authdata;
-        WorldCredentials creds = (WorldCredentials)getCredentials();
 
-        // if this is a guest account, they didn't get a VisitorInfo through the resolver, pull one
-        // from their flash credentials, or manufacture a brand new one (only for non-lurkers)
-        if (_memobj.visitorInfo == null && !_memobj.isViewer()) {
-            if (creds.visitorId != null) {
-                _memobj.visitorInfo = new VisitorInfo(creds.visitorId, false);
-            } else {
-                _memobj.visitorInfo = new VisitorInfo();
-                final String vector = StringUtil.getOr(creds.vector, "world_session");
-                _invoker.postUnit(new WriteOnlyUnit("noteNewVisitor") {
-                    public void invokePersist () throws Exception {
-                        _memberLogic.noteNewVisitor(_memobj.visitorInfo, false, vector, null);
+        // If this is an embedded world session for a freshly created permaguest, we have not
+        // yet associated their visitorId with a tracker and must do so here. But only once, so
+        // for now we look in the database whether or not the tracker already exists. We might
+        // want to create a field in {@link MsoyCredentials} that suggests a visitorId was
+        // freshly created on the client.
+        if (_memobj.isPermaguest() && !_memobj.isViewer()) {
+            WorldCredentials creds = (WorldCredentials)getCredentials();
+            final String vector = creds.vector;
+            final VisitorInfo info = new VisitorInfo(creds.visitorId, false);
 
-                        // DEBUG
-                        log.info("VisitorInfo created", "info", _memobj.visitorInfo, "reason",
-                            "MsoySession", "vector", vector, "memberId", _memobj.getMemberId());
+            _invoker.postUnit(new WriteOnlyUnit("maybeNoteNewVisitor") {
+                public void invokePersist () throws Exception {
+                    if (_memberRepo.entryVectorExists(info.id) != null) {
+                        return;
                     }
-                });
-            }
+                    _memberLogic.noteNewVisitor(info, false, vector, null);
+
+                    // DEBUG
+                    log.info("VisitorInfo created", "info", _memobj.visitorInfo, "reason",
+                        "MsoySession", "vector", vector, "memberId", _memobj.getMemberId());
+                }
+            });
         }
 
         if (acct != null) {

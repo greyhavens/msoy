@@ -6,8 +6,6 @@ package com.threerings.msoy.game.server;
 import com.google.inject.Inject;
 import com.samskivert.jdbc.WriteOnlyUnit;
 import com.samskivert.util.Invoker;
-import com.samskivert.util.StringUtil;
-
 import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.crowd.server.CrowdSession;
 
@@ -18,6 +16,7 @@ import com.threerings.msoy.game.data.GameCredentials;
 import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.server.MemberLogic;
 import com.threerings.msoy.server.MsoyObjectAccess;
+import com.threerings.msoy.server.persist.MemberRepository;
 
 import static com.threerings.msoy.Log.log;
 
@@ -38,25 +37,27 @@ public class GameSession extends CrowdSession
         MsoyTokenRing tokens = (MsoyTokenRing) _authdata;
         _plobj.setTokens(tokens == null ? new MsoyTokenRing() : tokens);
 
-        // if this is a guest account, they won't have gotten a VisitorInfo through the resolver,
-        // pull one from their flash credentials, or manufacture a brand new one
-        if (_plobj.visitorInfo == null) {
-            GameCredentials creds = (GameCredentials)getCredentials();
-            if (creds.visitorId != null) {
-                _plobj.visitorInfo = new VisitorInfo(creds.visitorId, false);
-            } else {
-                _plobj.visitorInfo = new VisitorInfo();
-                final String vector = StringUtil.getOr(creds.vector, "game_session");
-                _invoker.postUnit(new WriteOnlyUnit("noteNewVisitor") {
-                    public void invokePersist () throws Exception {
-                        _memberLogic.noteNewVisitor(_plobj.visitorInfo, false, vector, null);
-                        // DEBUG
-                        log.info("VisitorInfo created", "info", _plobj.visitorInfo,
-                            "reason", "GameSession", "memberId", _plobj.memberName.getMemberId());
-                    }
-                });
+        GameCredentials creds = (GameCredentials)getCredentials();
+        final String vector = creds.vector;
+        final VisitorInfo info = new VisitorInfo(creds.visitorId, false);
+
+        // If this is an embedded game session for a freshly created permaguest, we have not
+        // yet associated their visitorId with a tracker and must do so here. But only once, so
+        // for now we look in the database whether or not the tracker already exists. We might
+        // want to create a field in {@link MsoyCredentials} that suggests a visitorId was
+        // freshly created on the client.
+        _invoker.postUnit(new WriteOnlyUnit("maybeNoteNewVisitor") {
+            public void invokePersist () throws Exception {
+                if (_memberRepo.entryVectorExists(info.id) != null) {
+                    return;
+                }
+                _memberLogic.noteNewVisitor(info, false, vector, null);
+
+                // DEBUG
+                log.info("VisitorInfo created", "info", _plobj.visitorInfo,
+                    "reason", "GameSession", "memberId", _plobj.memberName.getMemberId());
             }
-        }
+        });
 
         log.debug("Player session starting", "memberId", _plobj.memberName.getMemberId(),
                   "memberName", _plobj.memberName, "oid", _plobj.getOid());
@@ -95,6 +96,7 @@ public class GameSession extends CrowdSession
 
     @Inject protected @MainInvoker Invoker _invoker;
     @Inject protected MemberLogic _memberLogic;
+    @Inject protected MemberRepository _memberRepo;
     @Inject protected PlayerLocator _locator;
     @Inject protected PlayerNodeActions _playerActions;
 }

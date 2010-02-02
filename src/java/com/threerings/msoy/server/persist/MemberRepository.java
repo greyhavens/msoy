@@ -190,6 +190,15 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
+     * Test to see if an {@link EntryVectorRecord} association already exists for the given
+     * visitor.
+     */
+    public EntryVectorRecord entryVectorExists (String visitorId)
+    {
+        return load(EntryVectorRecord.getKey(visitorId));
+    }
+
+    /**
      * Records the supplied visitorId to entry vector mapping for later correlation and analysis.
      */
     public void noteEntryVector (String visitorId, String vector)
