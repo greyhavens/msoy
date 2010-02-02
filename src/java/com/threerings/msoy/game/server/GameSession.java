@@ -6,6 +6,7 @@ package com.threerings.msoy.game.server;
 import com.google.inject.Inject;
 import com.samskivert.jdbc.WriteOnlyUnit;
 import com.samskivert.util.Invoker;
+import com.samskivert.util.StringUtil;
 import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.crowd.server.CrowdSession;
 
@@ -38,7 +39,7 @@ public class GameSession extends CrowdSession
         _plobj.setTokens(tokens == null ? new MsoyTokenRing() : tokens);
 
         GameCredentials creds = (GameCredentials)getCredentials();
-        final String vector = creds.vector;
+        final String vector = StringUtil.getOr(creds.vector, "game_session");
         final VisitorInfo info = new VisitorInfo(creds.visitorId, false);
 
         // If this is an embedded game session for a freshly created permaguest, we have not

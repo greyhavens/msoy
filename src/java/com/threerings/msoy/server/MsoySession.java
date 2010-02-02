@@ -7,6 +7,7 @@ import com.google.inject.Inject;
 
 import com.samskivert.jdbc.WriteOnlyUnit;
 import com.samskivert.util.Invoker;
+import com.samskivert.util.StringUtil;
 import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.dobj.AttributeChangeListener;
 import com.threerings.presents.dobj.AttributeChangedEvent;
@@ -100,7 +101,7 @@ public class MsoySession extends WhirledSession
         // freshly created on the client.
         if (_memobj.isPermaguest() && !_memobj.isViewer()) {
             WorldCredentials creds = (WorldCredentials)getCredentials();
-            final String vector = creds.vector;
+            final String vector = StringUtil.getOr(creds.vector, "world_session");
             final VisitorInfo info = new VisitorInfo(creds.visitorId, false);
 
             _invoker.postUnit(new WriteOnlyUnit("maybeNoteNewVisitor") {
