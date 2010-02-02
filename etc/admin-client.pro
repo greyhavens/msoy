@@ -18,7 +18,7 @@
 -injars ../dist/lib/whirled-code-0.0-SNAPSHOT.jar(**/WhirledOccupantInfo.class)
 -injars ../dist/lib/gwt-user.jar(**/user/client/rpc/IsSerializable.class)
 -injars ../dist/msoy-code.jar(
-    !**/*UnitTest.class,rsrc/i18n/**,**/msoy/Log.class,**/msoy/data/**,**/msoy/chat/data/**,**/msoy/client/**,
+    !**/*UnitTest.class,rsrc/i18n/**,**/msoy/Log.class,**/msoy/data/**,**/msoy/chat/data/MsoyChat*,**/msoy/client/**,
     **/msoy/item/data/all/**,**/msoy/admin/data/**,**/msoy/admin/client/**,**/msoy/admin/util/**,
     **/msoy/group/data/all/**,**/msoy/group/data/all/GroupMembership$Rank.class,
     **/msoy/badge/data/**,**/msoy/notify/data/**,**/msoy/game/data/GameSummary.class)
