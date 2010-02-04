@@ -182,7 +182,7 @@ public class LobbyObject extends DObject implements TableLobbyObject
     public void setTables (DSet<Table> value)
     {
         requestAttributeChange(TABLES, value, this.tables);
-        DSet<Table> clone = (value == null) ? null : value.typedClone();
+        DSet<Table> clone = (value == null) ? null : value.clone();
         this.tables = clone;
     }
 

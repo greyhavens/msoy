@@ -208,7 +208,7 @@ public class RoomObject extends SpotSceneObject
     public void setMemories (DSet<EntityMemories> value)
     {
         requestAttributeChange(MEMORIES, value, this.memories);
-        DSet<EntityMemories> clone = (value == null) ? null : value.typedClone();
+        DSet<EntityMemories> clone = (value == null) ? null : value.clone();
         this.memories = clone;
     }
 
@@ -255,7 +255,7 @@ public class RoomObject extends SpotSceneObject
     public void setControllers (DSet<EntityControl> value)
     {
         requestAttributeChange(CONTROLLERS, value, this.controllers);
-        DSet<EntityControl> clone = (value == null) ? null : value.typedClone();
+        DSet<EntityControl> clone = (value == null) ? null : value.clone();
         this.controllers = clone;
     }
 
@@ -302,7 +302,7 @@ public class RoomObject extends SpotSceneObject
     public void setPropertySpaces (DSet<RoomPropertiesEntry> value)
     {
         requestAttributeChange(PROPERTY_SPACES, value, this.propertySpaces);
-        DSet<RoomPropertiesEntry> clone = (value == null) ? null : value.typedClone();
+        DSet<RoomPropertiesEntry> clone = (value == null) ? null : value.clone();
         this.propertySpaces = clone;
     }
 
@@ -349,7 +349,7 @@ public class RoomObject extends SpotSceneObject
     public void setParties (DSet<PartySummary> value)
     {
         requestAttributeChange(PARTIES, value, this.parties);
-        DSet<PartySummary> clone = (value == null) ? null : value.typedClone();
+        DSet<PartySummary> clone = (value == null) ? null : value.clone();
         this.parties = clone;
     }
 
@@ -396,7 +396,7 @@ public class RoomObject extends SpotSceneObject
     public void setPartyLeaders (DSet<PartyLeader> value)
     {
         requestAttributeChange(PARTY_LEADERS, value, this.partyLeaders);
-        DSet<PartyLeader> clone = (value == null) ? null : value.typedClone();
+        DSet<PartyLeader> clone = (value == null) ? null : value.clone();
         this.partyLeaders = clone;
     }
 
@@ -443,7 +443,7 @@ public class RoomObject extends SpotSceneObject
     public void setPlaylist (DSet<Audio> value)
     {
         requestAttributeChange(PLAYLIST, value, this.playlist);
-        DSet<Audio> clone = (value == null) ? null : value.typedClone();
+        DSet<Audio> clone = (value == null) ? null : value.clone();
         this.playlist = clone;
     }
 

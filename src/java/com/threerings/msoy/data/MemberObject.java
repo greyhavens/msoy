@@ -532,7 +532,7 @@ public class MemberObject extends MsoyBodyObject
     public void setFollowers (DSet<MemberName> value)
     {
         requestAttributeChange(FOLLOWERS, value, this.followers);
-        DSet<MemberName> clone = (value == null) ? null : value.typedClone();
+        DSet<MemberName> clone = (value == null) ? null : value.clone();
         this.followers = clone;
     }
 
@@ -643,7 +643,7 @@ public class MemberObject extends MsoyBodyObject
     public void setAvatarCache (DSet<Avatar> value)
     {
         requestAttributeChange(AVATAR_CACHE, value, this.avatarCache);
-        DSet<Avatar> clone = (value == null) ? null : value.typedClone();
+        DSet<Avatar> clone = (value == null) ? null : value.clone();
         this.avatarCache = clone;
     }
 
@@ -690,7 +690,7 @@ public class MemberObject extends MsoyBodyObject
     public void setFriends (DSet<FriendEntry> value)
     {
         requestAttributeChange(FRIENDS, value, this.friends);
-        DSet<FriendEntry> clone = (value == null) ? null : value.typedClone();
+        DSet<FriendEntry> clone = (value == null) ? null : value.clone();
         this.friends = clone;
     }
 
@@ -737,7 +737,7 @@ public class MemberObject extends MsoyBodyObject
     public void setGateways (DSet<GatewayEntry> value)
     {
         requestAttributeChange(GATEWAYS, value, this.gateways);
-        DSet<GatewayEntry> clone = (value == null) ? null : value.typedClone();
+        DSet<GatewayEntry> clone = (value == null) ? null : value.clone();
         this.gateways = clone;
     }
 
@@ -784,7 +784,7 @@ public class MemberObject extends MsoyBodyObject
     public void setImContacts (DSet<ContactEntry> value)
     {
         requestAttributeChange(IM_CONTACTS, value, this.imContacts);
-        DSet<ContactEntry> clone = (value == null) ? null : value.typedClone();
+        DSet<ContactEntry> clone = (value == null) ? null : value.clone();
         this.imContacts = clone;
     }
 
@@ -831,7 +831,7 @@ public class MemberObject extends MsoyBodyObject
     public void setGroups (DSet<GroupMembership> value)
     {
         requestAttributeChange(GROUPS, value, this.groups);
-        DSet<GroupMembership> clone = (value == null) ? null : value.typedClone();
+        DSet<GroupMembership> clone = (value == null) ? null : value.clone();
         this.groups = clone;
     }
 
@@ -990,7 +990,7 @@ public class MemberObject extends MsoyBodyObject
     public void setExperiences (DSet<MemberExperience> value)
     {
         requestAttributeChange(EXPERIENCES, value, this.experiences);
-        DSet<MemberExperience> clone = (value == null) ? null : value.typedClone();
+        DSet<MemberExperience> clone = (value == null) ? null : value.clone();
         this.experiences = clone;
     }
     // AUTO-GENERATED: METHODS END

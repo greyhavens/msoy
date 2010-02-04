@@ -130,7 +130,7 @@ public class MsoyNodeObject extends CrowdNodeObject
     public void setMemberScenes (DSet<MemberScene> value)
     {
         requestAttributeChange(MEMBER_SCENES, value, this.memberScenes);
-        DSet<MemberScene> clone = (value == null) ? null : value.typedClone();
+        DSet<MemberScene> clone = (value == null) ? null : value.clone();
         this.memberScenes = clone;
     }
 
@@ -177,7 +177,7 @@ public class MsoyNodeObject extends CrowdNodeObject
     public void setMemberGames (DSet<MemberGame> value)
     {
         requestAttributeChange(MEMBER_GAMES, value, this.memberGames);
-        DSet<MemberGame> clone = (value == null) ? null : value.typedClone();
+        DSet<MemberGame> clone = (value == null) ? null : value.clone();
         this.memberGames = clone;
     }
 
@@ -224,7 +224,7 @@ public class MsoyNodeObject extends CrowdNodeObject
     public void setHostedScenes (DSet<HostedRoom> value)
     {
         requestAttributeChange(HOSTED_SCENES, value, this.hostedScenes);
-        DSet<HostedRoom> clone = (value == null) ? null : value.typedClone();
+        DSet<HostedRoom> clone = (value == null) ? null : value.clone();
         this.hostedScenes = clone;
     }
 
@@ -271,7 +271,7 @@ public class MsoyNodeObject extends CrowdNodeObject
     public void setHostedGames (DSet<HostedGame> value)
     {
         requestAttributeChange(HOSTED_GAMES, value, this.hostedGames);
-        DSet<HostedGame> clone = (value == null) ? null : value.typedClone();
+        DSet<HostedGame> clone = (value == null) ? null : value.clone();
         this.hostedGames = clone;
     }
 
@@ -318,7 +318,7 @@ public class MsoyNodeObject extends CrowdNodeObject
     public void setHostedParties (DSet<PartySummary> value)
     {
         requestAttributeChange(HOSTED_PARTIES, value, this.hostedParties);
-        DSet<PartySummary> clone = (value == null) ? null : value.typedClone();
+        DSet<PartySummary> clone = (value == null) ? null : value.clone();
         this.hostedParties = clone;
     }
 
@@ -365,7 +365,7 @@ public class MsoyNodeObject extends CrowdNodeObject
     public void setPartyInfos (DSet<PartyInfo> value)
     {
         requestAttributeChange(PARTY_INFOS, value, this.partyInfos);
-        DSet<PartyInfo> clone = (value == null) ? null : value.typedClone();
+        DSet<PartyInfo> clone = (value == null) ? null : value.clone();
         this.partyInfos = clone;
     }
 
@@ -412,7 +412,7 @@ public class MsoyNodeObject extends CrowdNodeObject
     public void setMemberParties (DSet<MemberParty> value)
     {
         requestAttributeChange(MEMBER_PARTIES, value, this.memberParties);
-        DSet<MemberParty> clone = (value == null) ? null : value.typedClone();
+        DSet<MemberParty> clone = (value == null) ? null : value.clone();
         this.memberParties = clone;
     }
 
@@ -459,7 +459,7 @@ public class MsoyNodeObject extends CrowdNodeObject
     public void setTablesWaiting (DSet<TablesWaiting> value)
     {
         requestAttributeChange(TABLES_WAITING, value, this.tablesWaiting);
-        DSet<TablesWaiting> clone = (value == null) ? null : value.typedClone();
+        DSet<TablesWaiting> clone = (value == null) ? null : value.clone();
         this.tablesWaiting = clone;
     }
 

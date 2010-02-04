@@ -111,7 +111,7 @@ public class AVRGameAgentObject extends AgentObject
     public void setScenes (DSet<SceneInfo> value)
     {
         requestAttributeChange(SCENES, value, this.scenes);
-        DSet<SceneInfo> clone = (value == null) ? null : value.typedClone();
+        DSet<SceneInfo> clone = (value == null) ? null : value.clone();
         this.scenes = clone;
     }
 

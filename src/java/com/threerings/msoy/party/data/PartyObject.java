@@ -225,7 +225,7 @@ public class PartyObject extends DObject
     public void setPeeps (DSet<PartyPeep> value)
     {
         requestAttributeChange(PEEPS, value, this.peeps);
-        DSet<PartyPeep> clone = (value == null) ? null : value.typedClone();
+        DSet<PartyPeep> clone = (value == null) ? null : value.clone();
         this.peeps = clone;
     }
 

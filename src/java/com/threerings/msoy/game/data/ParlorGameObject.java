@@ -117,7 +117,7 @@ public class ParlorGameObject extends WhirledGameObject
     public void setParties (DSet<PartySummary> value)
     {
         requestAttributeChange(PARTIES, value, this.parties);
-        DSet<PartySummary> clone = (value == null) ? null : value.typedClone();
+        DSet<PartySummary> clone = (value == null) ? null : value.clone();
         this.parties = clone;
     }
 
@@ -164,7 +164,7 @@ public class ParlorGameObject extends WhirledGameObject
     public void setPartyLeaders (DSet<PartyLeader> value)
     {
         requestAttributeChange(PARTY_LEADERS, value, this.partyLeaders);
-        DSet<PartyLeader> clone = (value == null) ? null : value.typedClone();
+        DSet<PartyLeader> clone = (value == null) ? null : value.clone();
         this.partyLeaders = clone;
     }
     // AUTO-GENERATED: METHODS END
