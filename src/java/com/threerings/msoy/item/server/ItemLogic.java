@@ -595,8 +595,10 @@ public class ItemLogic
                         isThematicallyValid(nrecord));
                 }
 
-            } else if (nrecord instanceof IdentGameItemRecord) {
-                // notify any server hosting this game that its content has been updated
+            } else if ((nrecord instanceof IdentGameItemRecord) && !nrecord.isCatalogClone()) {
+                // if a game's defining originals have been updated, notify any server hosting
+                // the game that its content has been updated, but don't do it for clones which
+                // are typically owned by players and updated very often.
                 _gameActions.gameUpdated(((IdentGameItemRecord)nrecord).gameId);
             }
 
