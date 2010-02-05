@@ -206,6 +206,14 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
     }
 
     /**
+     * Returns true if this item is a clone of something listed in the catalog.
+     */
+    public boolean isCatalogClone ()
+    {
+        return (sourceId != 0) && (catalogId > 0);
+    }
+
+    /**
      * Clears out any fields that should be reset when listing this item in the catalog.
      *
      * @param oldListing the previous catalog master item if this item has already been listed,
