@@ -102,7 +102,15 @@ public class MsoySession extends WhirledSession
         if (_memobj.isPermaguest() && !_memobj.isViewer()) {
             WorldCredentials creds = (WorldCredentials)getCredentials();
             final String vector = StringUtil.getOr(creds.vector, "world_session");
-            final VisitorInfo info = new VisitorInfo(creds.visitorId, false);
+
+            final VisitorInfo info;
+            if (creds.visitorId != null) {
+                info = new VisitorInfo(creds.visitorId, false);
+            } else {
+                log.warning("No visitorId in WorldCredentials", "memberId",
+                    _memobj.memberName.getMemberId());
+                info = new VisitorInfo();
+            }
 
             _invoker.postUnit(new WriteOnlyUnit("maybeNoteNewVisitor") {
                 public void invokePersist () throws Exception {
@@ -112,8 +120,8 @@ public class MsoySession extends WhirledSession
                     _memberLogic.noteNewVisitor(info, false, vector, null);
 
                     // DEBUG
-                    log.info("VisitorInfo created", "info", _memobj.visitorInfo, "reason",
-                        "MsoySession", "vector", vector, "memberId", _memobj.getMemberId());
+                    log.info("VisitorInfo created", "info", info, "reason", "MsoySession",
+                        "vector", vector, "memberId", _memobj.getMemberId());
                 }
             });
         }
