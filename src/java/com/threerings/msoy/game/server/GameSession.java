@@ -40,7 +40,15 @@ public class GameSession extends CrowdSession
 
         GameCredentials creds = (GameCredentials)getCredentials();
         final String vector = StringUtil.getOr(creds.vector, "game_session");
-        final VisitorInfo info = new VisitorInfo(creds.visitorId, false);
+
+        final VisitorInfo info;
+        if (creds.visitorId != null) {
+            info = new VisitorInfo(creds.visitorId, false);
+        } else {
+            log.warning("No visitorId in GameCredentials", "memberId",
+                _plobj.memberName.getMemberId());
+            info = new VisitorInfo();
+        }
 
         // If this is an embedded game session for a freshly created permaguest, we have not
         // yet associated their visitorId with a tracker and must do so here. But only once, so
@@ -55,8 +63,8 @@ public class GameSession extends CrowdSession
                 _memberLogic.noteNewVisitor(info, false, vector, null);
 
                 // DEBUG
-                log.info("VisitorInfo created", "info", _plobj.visitorInfo,
-                    "reason", "GameSession", "memberId", _plobj.memberName.getMemberId());
+                log.info("VisitorInfo created", "info", info, "reason", "GameSession", "memberId",
+                    _plobj.memberName.getMemberId());
             }
         });
 
