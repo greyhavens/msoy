@@ -250,7 +250,7 @@ public class MailServlet extends MsoyServiceServlet
                 .append(" ");
 
             MemberCard author = authors.get(cmrec.authorId);
-            bodyText.append((author != null) ? author.name.toString() : "#")
+            bodyText.append((author != null) ? author.name.toString() : "<unknown>")
                 .append("(").append(cmrec.authorId).append("): ");
             if (cmrec.payloadType != 0) {
                 bodyText.append("Special mail type: " + describePayloadType(cmrec.payloadType))
