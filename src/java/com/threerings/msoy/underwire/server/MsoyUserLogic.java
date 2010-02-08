@@ -15,6 +15,7 @@ import com.threerings.user.OOOUser;
 import com.threerings.underwire.server.SupportUserLogic;
 import com.threerings.underwire.web.client.UnderwireException;
 import com.threerings.underwire.web.data.Account;
+import com.threerings.underwire.web.data.AccountName;
 
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.all.MemberName;
@@ -39,6 +40,19 @@ public class MsoyUserLogic extends SupportUserLogic
     {
         super(authRepo);
     }
+
+    @Override
+    public AccountName[] findAccountsByEmail (String query)
+        throws UnderwireException
+    {
+        // SupportUserLogic seems to go out of its way not to require email addresses to be
+        // case insensitive, so I guess we'll let it continue in that fasion -- but Whirled
+        // does downcase all email addresses, and so we want our searches to be similarly
+        // oblivious to case sensitivity
+
+        return super.findAccountsByEmail(query.toLowerCase());
+    }
+
 
     @Override // from SupportUserLogic
     public Caller loadCaller (String authtok)
