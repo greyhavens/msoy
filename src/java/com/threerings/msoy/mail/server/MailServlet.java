@@ -233,7 +233,6 @@ public class MailServlet extends MsoyServiceServlet
         }
 
         // load up the messages in this conversation
-        List<ConvMessage> msgs = Lists.newArrayList();
         List<ConvMessageRecord> cmrecs = _mailRepo.loadMessages(convoId);
         IntSet authorIds = new ArrayIntSet();
         for (ConvMessageRecord cmrec : cmrecs) {
