@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.mail.server;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 import com.google.common.collect.Lists;
@@ -231,6 +232,34 @@ public class MailServlet extends MsoyServiceServlet
             return;
         }
 
+        // load up the messages in this conversation
+        List<ConvMessage> msgs = Lists.newArrayList();
+        List<ConvMessageRecord> cmrecs = _mailRepo.loadMessages(convoId);
+        IntSet authorIds = new ArrayIntSet();
+        for (ConvMessageRecord cmrec : cmrecs) {
+            authorIds.add(cmrec.authorId);
+        }
+
+        // resolve the member cards for the participants
+        IntMap<MemberCard> authors = MemberCardRecord.toMap(_memberRepo.loadMemberCards(authorIds));
+
+        StringBuilder bodyText = new StringBuilder();
+        for (ConvMessageRecord cmrec : cmrecs) {
+            bodyText.append(
+                new SimpleDateFormat("yyyy-MM-dd@HH:mm:ss").format(cmrec.sent))
+                .append(" ");
+
+            MemberCard author = authors.get(cmrec.authorId);
+            bodyText.append((author != null) ?
+                author.name.toString() : ("Member #" + cmrec.authorId))
+                .append(": ");
+            if (cmrec.payloadType != 0) {
+                bodyText.append("Special mail type: " + describePayloadType(cmrec.payloadType))
+                .append("\n");
+            }
+            bodyText.append(cmrec.body).append("\n----\n");
+        }
+
         // flag the complaint, with an error if it was already flagged
         try {
             _mailRepo.addComplaint(convoId, memrec.memberId);
@@ -241,7 +270,30 @@ public class MailServlet extends MsoyServiceServlet
         // queue up the event
         _supportLogic.addMessageComplaint(
             memrec.getName(), conrec.getOtherId(memrec.memberId),
-            "", "Conversation: " + reason, Pages.MAIL.makeLink("c", convoId));
+            bodyText.toString(), "Conversation: " + reason, Pages.MAIL.makeLink("c", convoId));
+    }
+
+    /**
+     * Describe the given payload type in human-readable language.
+     */
+    protected static String describePayloadType (int type)
+    {
+        switch(type) {
+        case MailPayload.TYPE_GROUP_INVITE:
+            return "Group Invitation";
+        case MailPayload.TYPE_FRIEND_INVITE:
+            return "Friend Invitation";
+        case MailPayload.TYPE_GAME_AWARD:
+            return "Game Award";
+        case MailPayload.TYPE_PRESENT:
+            return "Item Gift";
+        case MailPayload.TYPE_GAME_INVITE:
+            return "Game Invitation";
+        case MailPayload.TYPE_ROOM_GIFT:
+            return "Room Gift";
+        default:
+            return "Unknown Payload Type: " + type;
+        }
     }
 
     @Inject protected MailLogic _mailLogic;
