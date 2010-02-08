@@ -11,7 +11,7 @@
     }
   </script>
 
-  <link rel="stylesheet" href="/gwt/frame/global.css" type="text/css"/>
+  <link rel="stylesheet" href="/themed/css/global.css?themeId=0" type="text/css"/>
   <link rel="shortcut icon" href="/favicon.ico" type="image/vnd.microsoft.icon"/>
 </head>
 
