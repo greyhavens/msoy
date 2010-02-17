@@ -43,7 +43,7 @@ def downloadAndMerge (datestr, output):
         for file in opened: file.close()
 
 target = args[0]
-for day in range(int(opts.skip), int(opts.days)):
+for day in range(int(opts.skip), int(opts.days) + 1):
     datestr = (datetime.date.today() - datetime.timedelta(day)).strftime("%Y-%m-%d")
     output = os.path.join(target, "world-servers-merged.%s.log" % datestr)
     if os.path.exists(output):
