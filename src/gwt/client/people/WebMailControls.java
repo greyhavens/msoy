@@ -16,8 +16,8 @@ import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.gwt.ui.DefaultTextListener;
 import com.threerings.gwt.ui.SmartTable;
+import com.threerings.gwt.ui.Widgets;
 
 import com.threerings.msoy.person.gwt.InviteService;
 import com.threerings.msoy.person.gwt.InviteServiceAsync;
@@ -64,7 +64,7 @@ public abstract class WebMailControls extends FlowPanel
         col = 0;
         row.setText(0, col++, _msgs.emailAccount(), 1);
         final TextBox account = MsoyUI.createTextBox("", InviteUtils.MAX_MAIL_LENGTH, 25);
-        DefaultTextListener.configure(account, _msgs.emailWebAddress());
+        Widgets.setPlaceholderText(account, _msgs.emailWebAddress());
         row.setWidget(0, col++, account);
         row.setText(0, col++, _msgs.emailPassword(), 1);
         final TextBox password = new PasswordTextBox();

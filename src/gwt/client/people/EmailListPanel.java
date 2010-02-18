@@ -16,8 +16,8 @@ import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.gwt.ui.DefaultTextListener;
 import com.threerings.gwt.ui.SmartTable;
+import com.threerings.gwt.ui.Widgets;
 import com.threerings.msoy.web.gwt.EmailContact;
 
 import client.shell.CShell;
@@ -78,7 +78,7 @@ public abstract class EmailListPanel extends FlowPanel
         add(_msgbox = new SmartTable());
         addFrom(_msgbox);
         _msgbox.addWidget(_message = MsoyUI.createTextArea("", 80, 4), 2);
-        DefaultTextListener.configure(_message, _msgs.emailMessage());
+        Widgets.setPlaceholderText(_message, _msgs.emailMessage());
         int row = _msgbox.addWidget(MsoyUI.createButton(MsoyUI.SHORT_THIN, _msgs.emailSend(),
                                                         new ClickHandler() {
             public void onClick (ClickEvent event) {
@@ -163,11 +163,11 @@ public abstract class EmailListPanel extends FlowPanel
             int col = 0;
             row.setText(0, col++, _msgs.emailName(), 1);
             _name = MsoyUI.createTextBox("", InviteUtils.MAX_NAME_LENGTH, 25);
-            DefaultTextListener.configure(_name, _msgs.emailFriendName());
+            Widgets.setPlaceholderText(_name, _msgs.emailFriendName());
             row.setWidget(0, col++, _name);
             row.setText(0, col++, _msgs.emailAddress(), 1);
             _address = MsoyUI.createTextBox("", InviteUtils.MAX_MAIL_LENGTH, 25);
-            DefaultTextListener.configure(_address, _msgs.emailFriendEmail());
+            Widgets.setPlaceholderText(_address, _msgs.emailFriendEmail());
             row.setWidget(0, col++, _address);
             row.setWidget(0, col++, MsoyUI.createButton(MsoyUI.SHORT_THIN, _msgs.emailAdd(),
                                                         new ClickHandler() {

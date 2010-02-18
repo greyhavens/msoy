@@ -16,9 +16,9 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.TextBox;
 
-import com.threerings.gwt.ui.DefaultTextListener;
 import com.threerings.gwt.ui.EnterClickAdapter;
 import com.threerings.gwt.ui.SmartTable;
+import com.threerings.gwt.ui.Widgets;
 import com.threerings.gwt.util.CookieUtil;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
@@ -62,7 +62,7 @@ public class LogonPanel extends SmartTable
                 }
             });
         } else {
-            DefaultTextListener.configure(email, _cmsgs.logonEmailDefault());
+            Widgets.setPlaceholderText(email, _cmsgs.logonEmailDefault());
         }
         email.addKeyPressHandler(new EnterClickAdapter(new ClickHandler() {
             public void onClick (ClickEvent event) {
