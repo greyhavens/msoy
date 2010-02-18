@@ -204,10 +204,10 @@ public class GameGameRegistry
     public Percentiler getScoreDistribution (int gameId, boolean multiplayer, int gameMode)
     {
         if (gameMode < 0 || gameMode >= MAX_GAME_MODES) {
-            log.warning("Requested invalid score distribution", "game", gameId, "mode", gameMode);
+            log.warning("Requested invalid score distribution", "gameId", gameId, "mode", gameMode);
             gameMode = 0;
         }
-        log.debug("Attempting to locate score distribution", "game", gameId, "mp", multiplayer,
+        log.debug("Attempting to locate score distribution", "gameId", gameId, "mp", multiplayer,
                   "gameMode", gameMode);
         TilerKey key = new TilerKey(gameId, multiplayer, gameMode);
         Percentiler tiler = _distribs.get(key);
@@ -240,13 +240,13 @@ public class GameGameRegistry
                     // and then update the lobby with the content
                     lmgr.setGameContent(_content);
                     _gameContent.put(gameId, _content);
-                    log.info("Reloaded lobbied game configuration", "game", gameId);
+                    log.info("Reloaded lobbied game configuration", "gameId", gameId);
                 }
 
                 @Override
                 public void handleFailure (Exception e) {
                     // if anything goes wrong, we can just fall back on what was already there
-                    log.warning("Failed to resolve game", "game", gameId, e);
+                    log.warning("Failed to resolve game", "gameId", gameId, e);
                 }
 
                 protected GameContent _content;
@@ -274,7 +274,7 @@ public class GameGameRegistry
             return;
         }
 
-        log.warning("Updated game not in fact hosted by us, clearing peer data", "game", gameId);
+        log.warning("Updated game not in fact hosted by us, clearing peer data", "gameId", gameId);
         _wgameReg.clearGame(gameId);
     }
 
@@ -291,7 +291,7 @@ public class GameGameRegistry
             contentType = GameData.ITEM_DATA;
         } else {
             log.warning("Notified that player purchased content of unknown type",
-                        "who", plobj.who(), "game", gameId, "itemType", itemType, "ident", ident);
+                        "who", plobj.who(), "gameId", gameId, "itemType", itemType, "ident", ident);
             return;
         }
 
@@ -319,7 +319,7 @@ public class GameGameRegistry
      */
     public void resetScorePercentiler (int gameId, boolean single, int gameMode)
     {
-        log.info("Resetting in-memory percentiler", "game", gameId, "single", single,
+        log.info("Resetting in-memory percentiler", "gameId", gameId, "single", single,
                  "mode", gameMode);
         _distribs.remove(new TilerKey(gameId, !single, gameMode));
     }
@@ -526,7 +526,7 @@ public class GameGameRegistry
     // from interface LobbyManager.ShutdownObserver
     public void lobbyDidShutdown (int gameId)
     {
-        log.info("Shutting down lobby", "game", gameId);
+        log.info("Shutting down lobby", "gameId", gameId);
 
         // destroy our record of that lobby
         _lobbies.remove(gameId);
@@ -578,7 +578,7 @@ public class GameGameRegistry
         if (list != null) {
             list.requestProcessed(mgr);
         } else {
-            log.warning("No listeners when done activating AVRGame", "game", gameId);
+            log.warning("No listeners when done activating AVRGame", "gameId", gameId);
         }
     }
 
@@ -588,7 +588,7 @@ public class GameGameRegistry
         int gameId = mgr.getGameId();
 
         if (_avrgManagers.get(gameId) != null) {
-            log.warning("Agent failed to start but is already started?", "game", gameId);
+            log.warning("Agent failed to start but is already started?", "gameId", gameId);
         }
 
         ResultListenerList list = _loadingAVRGames.remove(gameId);
@@ -601,7 +601,7 @@ public class GameGameRegistry
                 list.requestFailed("e.agent_error");
             }
         } else {
-            log.warning("No listeners when AVRGame agent failed", "game", gameId);
+            log.warning("No listeners when AVRGame agent failed", "gameId", gameId);
         }
 
         mgr.shutdown();
@@ -655,7 +655,7 @@ public class GameGameRegistry
             @Override
             public void handleSuccess () {
                 if (_content.game == null) {
-                    log.warning("Content has no game", "game", gameId);
+                    log.warning("Content has no game", "gameId", gameId);
                     reportFailure(MsoyGameCodes.E_NO_SUCH_GAME);
                     return;
                 }
@@ -668,7 +668,7 @@ public class GameGameRegistry
 
             @Override
             public void handleFailure (Exception pe) {
-                log.warning("Failed to resolve AVRGame", "game", gameId, pe);
+                log.warning("Failed to resolve AVRGame", "gameId", gameId, pe);
                 reportFailure(pe.getMessage());
             }
 
@@ -677,7 +677,7 @@ public class GameGameRegistry
                 if (list != null) {
                     list.requestFailed(reason);
                 } else {
-                    log.warning("No listeners when failing AVRGame", "game", gameId);
+                    log.warning("No listeners when failing AVRGame", "gameId", gameId);
                 }
             }
 
@@ -713,7 +713,7 @@ public class GameGameRegistry
         if (mgr != null) {
             _locmgr.leavePlace(player);
         } else {
-            log.warning("Tried to deactivate AVRG without manager", "game", gameId);
+            log.warning("Tried to deactivate AVRG without manager", "gameId", gameId);
         }
 
         listener.requestProcessed();
@@ -726,7 +726,7 @@ public class GameGameRegistry
     {
         // if we aren't hosting this game, fail
         if (!_wgameReg.isHosting(gameId)) {
-            log.warning("Requested to identify lobby for game we're not hosting", "game", gameId,
+            log.warning("Requested to identify lobby for game we're not hosting", "gameId", gameId,
                         "caller", caller.who());
             throw new InvocationException(InvocationCodes.E_INTERNAL_ERROR);
         }
@@ -793,7 +793,7 @@ public class GameGameRegistry
 
             @Override
             public void handleFailure (Exception pe) {
-                log.warning("Failed to resolve game", "game", gameId, pe);
+                log.warning("Failed to resolve game", "gameId", gameId, pe);
                 reportFailure(InvocationCodes.E_INTERNAL_ERROR);
             }
 
@@ -825,7 +825,7 @@ public class GameGameRegistry
                 LobbyManager mgr = _lobbies.get(gameId);
                 if (mgr == null) {
                     log.warning("identifyLobby returned non-failure but lobby manager disappeared",
-                                "game", gameId);
+                                "gameId", gameId);
                     requestFailed(InvocationCodes.E_INTERNAL_ERROR);
                 } else {
                     listener.requestProcessed(finishPlayNow(mgr, plobj, playerId));
@@ -845,7 +845,7 @@ public class GameGameRegistry
 
         GameContent content = _gameContent.get(gameId);
         if (content == null) {
-            log.warning("Requested trophies before manager was fully resolved?", "game", gameId,
+            log.warning("Requested trophies before manager was fully resolved?", "gameId", gameId,
                 "lmgr", _lobbies.get(gameId), "amgr", _avrgManagers.get(gameId));
             throw new InvocationException(InvocationCodes.E_INTERNAL_ERROR);
         }
@@ -966,11 +966,11 @@ public class GameGameRegistry
         }
 
         if (StringUtil.isBlank(def.getServerMediaPath(gameId))) {
-            log.info("AVRG missing server agent code", "game", gameId);
+            log.info("AVRG missing server agent code", "gameId", gameId);
             throw new InvocationException(MsoyGameCodes.E_BAD_GAME_CONTENT);
         }
 
-        log.info("Setting up AVRG manager", "game", content.game);
+        log.info("Setting up AVRG manager", "gameId", gameId, "game", content.game);
 
         AVRGameConfig config = new AVRGameConfig();
         config.init(content.gameId, content.toGameSummary(), def, content.code.splashMedia);
@@ -1034,7 +1034,7 @@ public class GameGameRegistry
             // TODO: add a timeout?
 
         } catch (Exception e) {
-            log.warning("Failed to create AVR game manager", "game", gameId, e);
+            log.warning("Failed to create AVR game manager", "gameId", gameId, e);
             throw new InvocationException(MsoyGameCodes.E_INTERNAL_ERROR);
         }
     }
@@ -1078,7 +1078,7 @@ public class GameGameRegistry
         int gameId = gameConfig.getGameId();
         LobbyManager lmgr = _lobbies.get(gameId);
         if (lmgr == null) {
-            log.warning("No lobby manager found for existing game!", "game", gameId);
+            log.warning("No lobby manager found for existing game!", "gameId", gameId);
             return 0;
         }
         LobbyObject lobj = lmgr.getLobbyObject();
@@ -1179,7 +1179,7 @@ public class GameGameRegistry
         }
 
         log.info("AVRG " + why + ": evicting players and shutting down manager",
-                 "game", amgr.getGameId(), "evicted", players.size());
+                 "gameId", amgr.getGameId(), "evicted", players.size());
 
         // now throw the players out
         for (PlayerObject player : players) {

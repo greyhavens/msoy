@@ -154,9 +154,9 @@ public class WorldGameRegistry
     public void clearGame (int gameId)
     {
         if (_peerMan.getHostedGame(gameId) == null) {
-            log.warning("Requested to clear game that we're not hosting?", "game", gameId);
+            log.warning("Requested to clear game that we're not hosting?", "gameId", gameId);
         } else {
-            log.info("No longer hosting game", "game", gameId);
+            log.info("No longer hosting game", "gameId", gameId);
             _peerMan.gameDidShutdown(gameId);
         }
     }
@@ -250,7 +250,7 @@ public class WorldGameRegistry
         ArrayIntSet gamesToDrop = new ArrayIntSet();
         for (HostedGame game : peerobj.hostedGames) {
             if (ourobj.hostedGames.contains(game)) {
-                log.warning("Zoiks! Peer is hosting the same game as us. Dropping!", "game", game);
+                log.warning("Zoiks! Peer is hosting the same game as us. Dropping!", "gameId", game);
                 gamesToDrop.add(game.placeId);
             }
         }
@@ -287,14 +287,14 @@ public class WorldGameRegistry
             }
             public void handleSuccess () {
                 if (_game == null) {
-                    log.warning("Requested to resolve unknown game", "game", gameId);
+                    log.warning("Requested to resolve unknown game", "gameId", gameId);
                     resolver.fail();
                 } else {
                     hostGame(gameId, _game.name, _game.isAVRG, resolver);
                 }
             }
             public void handleFailure (Exception e) {
-                log.warning("Failed to resolve game", "game", gameId, e);
+                log.warning("Failed to resolve game", "gameId", gameId, e);
                 resolver.fail();
             }
             protected GameInfoRecord _game;
@@ -304,9 +304,9 @@ public class WorldGameRegistry
     protected void hostGame (int gameId, String name, boolean isAVRG, GameResolver resolver)
     {
         if (_peerMan.getHostedGame(gameId) != null) {
-            log.warning("Requested to host game that we're already hosting?", "game", gameId);
+            log.warning("Requested to host game that we're already hosting?", "gameId", gameId);
         } else {
-            log.info("Hosting game", "game", gameId, "name", name, "isAVRG", isAVRG);
+            log.info("Hosting game", "gameId", gameId, "name", name, "isAVRG", isAVRG);
             _peerMan.gameDidStartup(gameId, name, isAVRG);
         }
         // this will notify the waiting listeners, release our lock and clean itself up
@@ -357,31 +357,31 @@ public class WorldGameRegistry
 
         public void requestCompleted (String nodeName) {
             if (_peerMan.getNodeObject().nodeName.equals(nodeName)) {
-                log.debug("Got lock, resolving", "game", _gameId);
+                log.debug("Got lock, resolving", "gameId", _gameId);
                 _lock = MsoyPeerManager.getGameLock(_gameId); // note that we got the lock
                 resolveGame(_gameId, this);
 
             } else if (nodeName != null) {
                 // some other peer got the lock before we could; send them there
-                log.debug("Didn't get lock", "game", _gameId, "remote", nodeName);
+                log.debug("Didn't get lock", "gameId", _gameId, "remote", nodeName);
                 Tuple<String, HostedGame> rhost = _peerMan.getGameHost(_gameId);
                 if (rhost != null) {
                     finish(_peerMan.getPeerPublicHostName(rhost.left),
                            _peerMan.getPeerPort(rhost.left), rhost.right.isAVRG);
                 } else {
                     log.warning("Failed to acquire lock but no registered host for game!?",
-                                "game", _gameId);
+                                "gameId", _gameId);
                     fail();
                 }
 
             } else {
-                log.warning("Game lock acquired by null?", "game", _gameId);
+                log.warning("Game lock acquired by null?", "gameId", _gameId);
                 fail();
             }
         }
 
         public void requestFailed (Exception cause) {
-            log.warning("Failed to acquire game resolution lock", "game", _gameId, cause);
+            log.warning("Failed to acquire game resolution lock", "gameId", _gameId, cause);
             fail();
         }
 
