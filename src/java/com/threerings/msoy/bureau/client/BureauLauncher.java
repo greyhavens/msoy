@@ -232,7 +232,8 @@ public class BureauLauncher
         Bureau bureau = _bureaus.get(bureauId);
         if (bureau != null && bureau.isRunning()) {
             log.warning(
-                "Did not expect to launch two bureaus with the same id", "bureauId", bureauId);
+                "Did not expect to launch two bureaus with the same id", "bureauId", bureauId,
+                "server", server);
             return;
         }
 
