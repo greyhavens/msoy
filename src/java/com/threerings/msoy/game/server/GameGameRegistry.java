@@ -34,6 +34,7 @@ import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.dobj.RootDObjectManager;
+import com.threerings.presents.server.ClientManager;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
 import com.threerings.presents.server.PresentsSession;
@@ -53,6 +54,7 @@ import com.threerings.parlor.rating.util.Percentiler;
 import com.threerings.parlor.server.ParlorSender;
 
 import com.threerings.stats.data.Stat;
+import com.threerings.util.Name;
 
 import com.threerings.bureau.server.BureauRegistry;
 
@@ -750,6 +752,8 @@ public class GameGameRegistry
         _loadingLobbies.put(gameId, list = new ResultListenerList());
         list.add(listener);
 
+        final Name callerName = caller.username;
+
         _invoker.postUnit(new RepositoryUnit("loadLobby") {
             @Override
             public void invokePersist () throws Exception {
@@ -763,6 +767,16 @@ public class GameGameRegistry
             public void handleSuccess () {
                 if (_content.game == null) {
                     reportFailure("m.no_such_game");
+                    return;
+                }
+
+                if (_content.game.isAVRG) {
+                    // this should definitely not be happening, but it is
+                    reportFailure("m.avrgs_have_no_lobbies");
+
+                    PresentsSession pclient = _clmgr.getClient(callerName);
+                    log.warning("Request to identify lobby for an AVRG?", "gameId", gameId,
+                        "caller", pclient);
                     return;
                 }
 
@@ -1291,6 +1305,7 @@ public class GameGameRegistry
     @Inject protected RuntimeConfig _runtime;
     @Inject protected StatLogic _statLogic;
     @Inject protected WorldGameRegistry _wgameReg;
+    @Inject protected ClientManager _clmgr;
 
     // various and sundry repositories for loading persistent data
     @Inject protected AVRGameRepository _avrgRepo;
