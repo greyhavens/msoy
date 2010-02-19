@@ -514,8 +514,8 @@ public class AVRGameManager extends PlaceManager
      */
     public void agentReady (ClientObject caller)
     {
-        log.debug("AVRG Agent ready", "clientOid", caller.getOid(),
-                  "agentOid", _gameAgentObj.getOid());
+        log.info("AVRG Agent ready", "clientOid", caller.getOid(),
+                 "agentOid", _gameAgentObj.getOid());
         _agentStarted = true;
         _lifecycleObserver.avrGameReady(this);
     }
