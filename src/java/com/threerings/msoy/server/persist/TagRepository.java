@@ -19,6 +19,7 @@ import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
+import com.samskivert.depot.StringFuncs;
 import com.samskivert.depot.clause.FromOverride;
 import com.samskivert.depot.clause.GroupBy;
 import com.samskivert.depot.clause.Limit;
@@ -186,7 +187,12 @@ public abstract class TagRepository extends DepotRepository
      */
     public List<TagNameRecord> getTags (String[] tags)
     {
-        return findAll(TagNameRecord.class, new Where(TagNameRecord.TAG.in(tags)));
+        String[] newTags = new String[tags.length];
+        for (int ii = 0; ii < tags.length; ii ++) {
+            newTags[ii] = tags[ii].toLowerCase();
+        }
+        return findAll(TagNameRecord.class, new Where(
+            StringFuncs.lower(TagNameRecord.TAG).in(newTags)));
     }
 
     /**
@@ -203,7 +209,8 @@ public abstract class TagRepository extends DepotRepository
      */
     public TagNameRecord getTag (String tagName)
     {
-        return load(TagNameRecord.class, new Where(TagNameRecord.TAG, tagName));
+        return load(TagNameRecord.class, new Where(
+            StringFuncs.lower(TagNameRecord.TAG).eq(tagName.toLowerCase())));
     }
 
     /**
