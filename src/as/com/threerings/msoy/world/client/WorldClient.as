@@ -397,10 +397,6 @@ public class WorldClient extends MsoyClient
         creds.affiliateId = getAffiliateId();
         creds.vector = getEntryVector();
 
-        log.info("Creating startup creds", "anonymous", anonymous, "sessionToken",
-                 creds.sessionToken, "userName", creds.getUsername(), "visitorId",
-                 creds.visitorId);
-
         // if we're anonymous and in an embed and have no visitor id we need to generate one
         if (creds.sessionToken == null && anonymous && creds.visitorId == null) {
             creds.visitorId = VisitorInfo.createLocalId();
