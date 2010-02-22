@@ -374,15 +374,20 @@ public class WorldClient extends MsoyClient
     {
         var params :Object = MsoyParameters.get();
         var creds :WorldCredentials;
+        var anonymous :Boolean;
+
         if ((params["pass"] != null) && (params["user"] != null)) {
             creds = new WorldCredentials(
                 new Name(String(params["user"])), MD5.hash(String(params["pass"])));
+            anonymous = false;
 
         } else if (Prefs.getPermaguestUsername() != null) {
             creds = new WorldCredentials(new Name(Prefs.getPermaguestUsername()), "");
+            anonymous = true;
 
         } else {
             creds = new WorldCredentials(null, null);
+            anonymous = true;
         }
 
         creds.sessionToken = (token == null) ? params["token"] : token;
@@ -392,9 +397,14 @@ public class WorldClient extends MsoyClient
         creds.affiliateId = getAffiliateId();
         creds.vector = getEntryVector();
 
+        log.info("Creating startup creds", "anonymous", anonymous, "sessionToken",
+                 creds.sessionToken, "userName", creds.getUsername(), "visitorId",
+                 creds.visitorId);
+
         // if we're anonymous and in an embed and have no visitor id we need to generate one
-        if (creds.sessionToken == null && creds.getUsername() == null && creds.visitorId == null) {
+        if (creds.sessionToken == null && anonymous && creds.visitorId == null) {
             creds.visitorId = VisitorInfo.createLocalId();
+            log.info("Created local visitorId", "visitorId", creds.visitorId);
         }
 
         return creds;
