@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.item.server;
 
+import java.util.Collections;
 import java.util.List;
 
 import com.google.common.collect.Lists;
@@ -113,6 +114,10 @@ public class CatalogLogic
         // resolve the id of the tag if one is needed
         if (query.tagId == 0 && query.tag != null) {
             query.tagId = repo.getTagRepository().getTagId(query.tag);
+            if (query.tagId == 0) {
+                // if a tag was requested and it doesn't exist, return no matches
+                return Collections.emptyList();
+            }
         }
 
         // build our word search once and share it for loadCatalog() and countListings()
