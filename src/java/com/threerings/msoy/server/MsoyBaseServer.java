@@ -29,6 +29,7 @@ import com.threerings.whirled.server.WhirledServer;
 
 import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.server.persist.BatchInvoker;
+import com.threerings.msoy.util.UnmodifiedUTFStringStreamer;
 
 import com.threerings.msoy.admin.server.MsoyPulseRecorder;
 import com.threerings.msoy.admin.server.RuntimeConfig;
@@ -45,7 +46,7 @@ public abstract class MsoyBaseServer extends WhirledServer
     {
         @Override protected void configure () {
             super.configure();
-            install(new PulseModule(JVMPulseRecorder.class, PresentsPulseRecorder.class, PeerPulseRecorder.class, 
+            install(new PulseModule(JVMPulseRecorder.class, PresentsPulseRecorder.class, PeerPulseRecorder.class,
                 MsoyPulseRecorder.class));
             // depot dependencies (we will initialize this persistence context later when the
             // server is ready to do database operations; not initializing it now ensures that no
@@ -65,6 +66,9 @@ public abstract class MsoyBaseServer extends WhirledServer
         // before doing anything else, let's ensure that we don't cache DNS queries forever -- this
         // breaks Amazon S3, specifically.
         Security.setProperty("networkaddress.cache.ttl" , "30");
+
+        // hack up our String streamer
+        UnmodifiedUTFStringStreamer.inject();
 
         // initialize event logger
         _eventLog.init(getIdent());
