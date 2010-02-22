@@ -201,12 +201,13 @@ public class MemberRepository extends DepotRepository
     /**
      * Records the supplied visitorId to entry vector mapping for later correlation and analysis.
      */
-    public void noteEntryVector (String visitorId, String vector)
+    public void noteEntryVector (String visitorId, String vector, int memberId)
     {
         EntryVectorRecord record = new EntryVectorRecord();
         record.visitorId = visitorId;
         record.vector = vector;
         record.created = new Timestamp(System.currentTimeMillis());
+        record.memberId = memberId;
         insert(record);
     }
 

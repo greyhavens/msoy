@@ -76,7 +76,7 @@ public class GoServlet extends HttpServlet
             path = bits.right;
 
             // note that we have a new visitor
-            _memberLogic.noteNewVisitor(info, true, bits.left, req.getHeader("Referrer"));
+            _memberLogic.noteNewVisitor(info, true, bits.left, req.getHeader("Referrer"), 0);
 
             // DEBUG
             log.info("VisitorInfo created", "info", info,

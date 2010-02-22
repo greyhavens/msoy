@@ -85,7 +85,7 @@ public class MsoyDefaultServlet extends DefaultServlet
             // we can't get the anchor from the URL (AFAIK the client doens't even send it) so we
             // have to lump all non-/welcome-nor-/go landings into a single vector
 
-            _memberLogic.noteNewVisitor(info, true, "page.default", req.getHeader("Referrer"));
+            _memberLogic.noteNewVisitor(info, true, "page.default", req.getHeader("Referrer"), 0);
 
             // DEBUG
             String path = StringUtil.deNull(req.getPathInfo());

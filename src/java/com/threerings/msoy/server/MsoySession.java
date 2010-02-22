@@ -112,16 +112,17 @@ public class MsoySession extends WhirledSession
                 info = new VisitorInfo();
             }
 
+            final int memberId = _memobj.getMemberId();
             _invoker.postUnit(new WriteOnlyUnit("maybeNoteNewVisitor") {
                 public void invokePersist () throws Exception {
                     if (_memberRepo.entryVectorExists(info.id) != null) {
                         return;
                     }
-                    _memberLogic.noteNewVisitor(info, false, vector, null);
+                    _memberLogic.noteNewVisitor(info, false, vector, null, memberId);
 
                     // DEBUG
                     log.info("VisitorInfo created", "info", info, "reason", "MsoySession",
-                        "vector", vector, "memberId", _memobj.getMemberId());
+                        "vector", vector, "memberId", memberId);
                 }
             });
         }

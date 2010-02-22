@@ -444,8 +444,10 @@ public class MemberLogic
      * @param vector the vector via which this new visitor arrived. The value is sanity checked so
      * it's safe to pass it straight through from the untrustworthy client.
      * @param referrer if non-null, the HTTP referrer header for this new visitor.
+     * @param memberId if non-zero, a permaguest that was created for this visitor
      */
-    public void noteNewVisitor (VisitorInfo info, boolean fromWeb, String vector, String referrer)
+    public void noteNewVisitor (VisitorInfo info, boolean fromWeb, String vector,
+        String referrer, int memberId)
     {
         if (info == null || info.id == null || StringUtil.isBlank(vector)) {
             log.warning("Got bogus visitor data", "info", info, "vector", vector);
@@ -458,7 +460,7 @@ public class MemberLogic
         if (!StringUtil.isBlank(referrer)) {
             _eventLog.referrerAssociated(info, referrer);
         }
-        _memberRepo.noteEntryVector(info.id, vector);
+        _memberRepo.noteEntryVector(info.id, vector, memberId);
     }
 
     /**
@@ -903,7 +905,7 @@ public class MemberLogic
     @Inject protected PlayerNodeActions _playerActions;
     @Inject protected PresentsDObjectMgr _omgr;
     @Inject protected StatLogic _statLogic;
-    @Inject protected MailLogic _mailLogic; 
+    @Inject protected MailLogic _mailLogic;
 
     // member purging dependencies
     @Inject protected AVRGameRepository _avrGameRepo;
