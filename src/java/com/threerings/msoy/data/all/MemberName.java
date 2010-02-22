@@ -143,8 +143,7 @@ public class MemberName extends Name
     }
 
     /**
-     * Return the memberId of this user, positive if they are a registered member, negative if they
-     * are a guest.
+     * Return the memberId of this user.
      */
     public int getMemberId ()
     {
