@@ -632,8 +632,11 @@ public class FacebookLogic
     protected FacebookJaxbRestClient getFacebookClient (
         String apiKey, String appSecret, String sessionKey, int timeout)
     {
-        return new FacebookJaxbRestClient(
-            SERVER_URL, apiKey, appSecret, sessionKey, CONNECT_TIMEOUT, timeout);
+        FacebookJaxbRestClient client = new FacebookJaxbRestClient(apiKey, appSecret, sessionKey);
+        client.setServerUrl(SERVER_URL);
+        client.setConnectTimeout(CONNECT_TIMEOUT);
+        client.setReadTimeout(timeout);
+        return client;
     }
 
     /**
