@@ -21,6 +21,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -785,7 +786,7 @@ public class FacebookLogic
         // retrieve the data
         Set<ProfileField> fields = EnumSet.of(
             ProfileField.SEX, ProfileField.BIRTHDAY, ProfileField.CURRENT_LOCATION);
-        Iterable<Long> uids = Iterables.transform(fbusers.values(), MAPREC_TO_UID);
+        Collection<Long> uids = Collections2.transform(fbusers.values(), MAPREC_TO_UID);
         UsersGetStandardInfoResponse uinfo;
         try {
             uinfo = (UsersGetStandardInfoResponse)client.users_getStandardInfo(uids, fields);
