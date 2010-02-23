@@ -305,13 +305,6 @@ public class MsoyGameRepository extends DepotRepository
         return load(GameInfoRecord.getKey(Math.abs(gameId)));
     }
 
-    // TEMP
-    public Collection<Integer> getAVRGameIds ()
-    {
-        return findAllKeys(GameInfoRecord.class, false, new Where(GameInfoRecord.IS_AVRG.eq(true)))
-            .map(Key.<GameInfoRecord>toInt());
-    }
-
     /**
      * Loads the code record for the specified game. If the id is negative, the development record
      * will be loaded, if positive, the published record will be loaded.
