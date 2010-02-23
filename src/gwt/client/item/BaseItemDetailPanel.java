@@ -71,51 +71,37 @@ public abstract class BaseItemDetailPanel extends SmartTable
         _detail = detail;
         _item = detail.item;
 
-        HeaderBox bits = new HeaderBox(null, _item.name);
-        SimplePanel preview = new SimplePanel();
-        preview.setStyleName("ItemPreview");
 
-        preview.setWidget(ItemUtil.createViewer(_item, inShop(), userOwnsItem(), detail.memories));
-        bits.add(preview);
-        if (_item.isRatable()) {
-            HorizontalPanel row = new HorizontalPanel();
-            row.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
-            addRatableBits(row);
-            bits.add(row);
-        }
-        setWidget(0, 0, bits);
-        getFlexCellFormatter().setRowSpan(0, 0, 3);
+        // create the upper left: the item preview, ratings, favoring, etc
+        _leftBits = new HeaderBox(null, _item.name);
+        setWidget(0, 0, _leftBits);
         getFlexCellFormatter().setVerticalAlignment(0, 0, HorizontalPanel.ALIGN_TOP);
 
-        // a place for details
-        setWidget(0, 1, _details = new RoundBox(RoundBox.BLUE), 1, "Details");
-        _details.setWidth("100%");
+        addLeftBits();
+
+        // create the upper right: details, theme stuff and tags
+        _rightBits = new FlowPanel();
+        setWidget(0, 1, _rightBits);
         getFlexCellFormatter().setVerticalAlignment(0, 1, HorizontalPanel.ALIGN_TOP);
 
-        // set up our detail bits
-        _details.add(_creator = new CreatorLabel());
-        _creator.setMember(_detail.creator);
+        SimplePanel detailHolder = new SimplePanel();
+        detailHolder.setStyleName("Details");
+        _rightBits.add(detailHolder);
 
-        // add a link to the creator's shop
-        _creator.add(MsoyUI.createHTML("&nbsp;", "inline"));
-        CatalogQuery query = new CatalogQuery();
-        query.itemType = _detail.item.getType();
-        query.creatorId = _detail.creator.getMemberId();
-        Widget bshop = Link.create(_imsgs.browseCatalogFor(), Pages.SHOP,
-                                   ShopUtil.composeArgs(query, 0));
-        bshop.setTitle(_imsgs.browseCatalogTip(_detail.creator.toString()));
-        _creator.add(bshop);
+        // a place for details
+        _details = new RoundBox(RoundBox.BLUE);
+        _details.setWidth("100%");
+        detailHolder.setWidget(_details);
 
+        addUpperDetails();
         addExtraDetails();
+        addLowerDetails();
 
-        _details.add(WidgetUtil.makeShim(10, 10));
-        _indeets = new RoundBox(RoundBox.WHITE);
-        _indeets.addStyleName("Description");
-        _details.add(_indeets);
-        _indeets.add(MsoyUI.createRestrictedHTML(ItemUtil.getDescription(_item)));
+        _themeHolder = new SimplePanel();
+        _themeHolder.setStyleName("Details");
+        _rightBits.add(_themeHolder);
 
         _themeContents = new SmartTable();
-
         if (!CShell.isGuest()) {
             _membersvc.loadManagedThemes(new InfoCallback<GroupName[]>() {
                 public void onSuccess (GroupName[] result) {
@@ -129,7 +115,19 @@ public abstract class BaseItemDetailPanel extends SmartTable
         }
         addExtraThemeBits();
 
+        // create the bottom: comments and such
+        _bottomBits = new FlowPanel();
+        setWidget(1, 0, _bottomBits, 2);
+        getFlexCellFormatter().setVerticalAlignment(0, 1, HorizontalPanel.ALIGN_TOP);
+
         // add our tag business at the bottom
+        addTagBits(detail);
+
+        configureCallbacks(this);
+    }
+
+    private void addTagBits (ItemDetail detail)
+    {
         boolean canEditTags = CShell.isSubscriber() || _item.creatorId == CShell.getMemberId();
         TagDetailPanel.TagService tagService = new TagDetailPanel.TagService() {
             public void tag (String tag, AsyncCallback<TagHistory> callback) {
@@ -160,11 +158,52 @@ public abstract class BaseItemDetailPanel extends SmartTable
                 _itemsvc.complainTag(ident, tag, reason, callback);
             }
         };
-        setWidget(2, 0, new TagDetailPanel(
-            tagService, flagService, complainer, detail.tags, canEditTags));
-        getFlexCellFormatter().setHeight(2, 0, "10px");
 
-        configureCallbacks(this);
+        Widget tagPanel = new TagDetailPanel(
+            tagService, flagService, complainer, detail.tags, canEditTags);
+        tagPanel.setHeight("10px");
+        _rightBits.add(tagPanel);
+    }
+
+    private void addLowerDetails ()
+    {
+        _details.add(WidgetUtil.makeShim(10, 10));
+        _indeets = new RoundBox(RoundBox.WHITE);
+        _indeets.addStyleName("Description");
+        _details.add(_indeets);
+        _indeets.add(MsoyUI.createRestrictedHTML(ItemUtil.getDescription(_item)));
+    }
+
+    private void addUpperDetails ()
+    {
+        // set up our detail bits
+        _details.add(_creator = new CreatorLabel());
+        _creator.setMember(_detail.creator);
+
+        // add a link to the creator's shop
+        _creator.add(MsoyUI.createHTML("&nbsp;", "inline"));
+        CatalogQuery query = new CatalogQuery();
+        query.itemType = _detail.item.getType();
+        query.creatorId = _detail.creator.getMemberId();
+        Widget bshop = Link.create(_imsgs.browseCatalogFor(), Pages.SHOP,
+                                   ShopUtil.composeArgs(query, 0));
+        bshop.setTitle(_imsgs.browseCatalogTip(_detail.creator.toString()));
+        _creator.add(bshop);
+    }
+
+    private void addLeftBits ()
+    {
+        SimplePanel preview = new SimplePanel();
+        preview.setStyleName("ItemPreview");
+
+        preview.setWidget(ItemUtil.createViewer(_item, inShop(), userOwnsItem(), _detail.memories));
+        _leftBits.add(preview);
+        if (_item.isRatable()) {
+            HorizontalPanel row = new HorizontalPanel();
+            row.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
+            addRatableBits(row);
+            _leftBits.add(row);
+        }
     }
 
     protected void gotManagedThemes (GroupName[] themes)
@@ -175,32 +214,24 @@ public abstract class BaseItemDetailPanel extends SmartTable
     protected void ensureThemeBits ()
     {
         if (_themeBits == null) {
-            setWidget(1, 0, _themeBits = new RoundBox(RoundBox.BLUE), 1, "Details");
-            getFlexCellFormatter().setVerticalAlignment(1, 0, HorizontalPanel.ALIGN_TOP);
+            _themeBits = new RoundBox(RoundBox.BLUE);
             _themeBits.setWidth("100%");
             _themeBits.add(_themeContents);
+
+            _themeHolder.setWidget(_themeBits);
         }
     }
 
     protected void addTabBelow (String title, Widget content, boolean select)
     {
         if (_belowTabs == null) {
-            addBelow(_belowTabs = new StyledTabPanel());
+            Widget widget = _belowTabs = new StyledTabPanel();
+            _bottomBits.add(widget);
         }
         _belowTabs.add(content, title);
         if (select) {
             _belowTabs.selectTab(_belowTabs.getWidgetCount() - 1);
         }
-    }
-
-    /**
-     * Adds a widget below the primary item detail contents.
-     */
-    protected void addBelow (Widget widget)
-    {
-        int row = getRowCount();
-        setWidget(row, 0, widget);
-        getFlexCellFormatter().setColSpan(row, 0, 3);
     }
 
     protected void updateStamps ()
@@ -491,10 +522,14 @@ public abstract class BaseItemDetailPanel extends SmartTable
     protected ItemDetail _detail;
     protected GroupName[] _managedThemes;
 
+    protected FlowPanel _leftBits, _rightBits, _bottomBits;
+
     protected RoundBox _details;
     protected RoundBox _indeets;
     protected RoundBox _themeBits;
+
     protected SmartTable _themeContents;
+    protected SimplePanel _themeHolder;
 
     protected CreatorLabel _creator;
 
