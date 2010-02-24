@@ -360,7 +360,7 @@ public class ThaneAVRGameController
         binding.sceneId = scene.sceneId;
         _bindings.put(scene.sceneId, binding);
 
-        log.debug("Opening window", "scene", scene);
+//        log.debug("Opening window", "scene", scene);
         var resultListener :com.threerings.util.ResultAdapter =
             new com.threerings.util.ResultAdapter(
                 function (wnd :Window) :void {
@@ -382,7 +382,7 @@ public class ThaneAVRGameController
             return;
         }
 
-        log.debug("Got window", "binding", binding, "window", window);
+//        log.debug("Got window", "binding", binding, "window", window);
 
         // set the window so it can be closed later
         binding.window = window;
@@ -479,7 +479,7 @@ public class ThaneAVRGameController
             return;
         }
 
-        log.debug("Got room props id", "binding", binding, "propsOid", propsOid);
+//        log.debug("Got room props id", "binding", binding, "propsOid", propsOid);
         binding.propsSubscriber = new SafeSubscriber(
             propsOid, function (obj :RoomPropertiesObject) :void {
                 gotRoomPropertiesObject(binding, obj);
@@ -501,7 +501,7 @@ public class ThaneAVRGameController
             return;
         }
 
-        log.debug("Got room props", "binding", binding, "propsOid", propsObj.getOid());
+//        log.debug("Got room props", "binding", binding, "propsOid", propsObj.getOid());
 
         binding.roomProps = propsObj;
 
@@ -522,7 +522,7 @@ public class ThaneAVRGameController
             return;
         }
 
-        log.debug("Removing binding", "binding", binding);
+//        log.debug("Removing binding", "binding", binding);
 
         _backend.roomUnloaded(sceneId);
 
@@ -702,7 +702,7 @@ public class ThaneAVRGameController
      */
     protected function updatePlayer (playerId :int, why :String, leaving :Boolean = false) :void
     {
-        log.debug("Updating player", "why", why, "playerId", playerId);
+//        log.debug("Updating player", "why", why, "playerId", playerId);
 
         // Check the binding exists
         var pbind :PlayerBinding = PlayerBinding(_players.get(playerId));
@@ -740,8 +740,8 @@ public class ThaneAVRGameController
 
         // No need to enter scene zero, wait for the next update if any
         if (newSceneId == 0) {
-            log.debug(
-                "Skipping room entry: new scene is zero", "playerId", playerId);
+//            log.debug(
+//                "Skipping room entry: new scene is zero", "playerId", playerId);
             return;
         }
 
