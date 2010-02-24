@@ -43,4 +43,7 @@ public interface ItemCodes extends InvocationCodes
 
     /** Error reported when listing an item and the basis of the item does not exist. */
     public static final String E_BASIS_ERROR = "e.basis_error";
+
+    /** Error reported when somebody tried to add a derived avatar to a theme's lineup. */
+    public static final String E_CANT_LINEUP_DERIVED = "e.cant_lineup_derived";
 }
