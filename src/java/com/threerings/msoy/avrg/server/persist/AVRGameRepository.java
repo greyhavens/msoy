@@ -12,7 +12,10 @@ import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import com.samskivert.depot.DataMigration;
+import com.samskivert.depot.DatabaseException;
 import com.samskivert.depot.DepotRepository;
+import com.samskivert.depot.Exps;
 import com.samskivert.depot.Ops;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
@@ -24,6 +27,8 @@ import com.samskivert.depot.clause.QueryClause;
 import com.samskivert.depot.clause.Where;
 
 import com.threerings.presents.annotation.BlockingThread;
+
+import static com.threerings.msoy.Log.log;
 
 /**
  * Maintains state for AVR games.
@@ -45,6 +50,24 @@ public class AVRGameRepository extends DepotRepository
     @Inject public AVRGameRepository (PersistenceContext context)
     {
         super(context);
+
+        registerMigration(new DataMigration("2010-02-24 avrg_null_property_cleanup") {
+            @Override public void invoke () throws DatabaseException {
+                int count;
+
+                count = deleteAll(AgentStateRecord.class, new Where(Exps.literal(
+                    "encode(\"datumValue\", 'hex') = '0000'")));
+                log.info("Deleted null AgentStateRecord properties", "count", count);
+
+                count = deleteAll(PlayerGameStateRecord.class, new Where(Exps.literal(
+                    "encode(\"datumValue\", 'hex') = '0000'")));
+                log.info("Deleted null PlayerGameStateRecord properties", "count", count);
+
+                count = deleteAll(GameStateRecord.class, new Where(Exps.literal(
+                    "encode(\"datumValue\", 'hex') = '0000'")));
+                log.info("Deleted null GameStateRecord properties", "count", count);
+            }
+        });
     }
 
     public List<AgentStateRecord> getAgentState (int gameId)

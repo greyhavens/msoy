@@ -16,6 +16,8 @@ import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import com.samskivert.depot.DataMigration;
+import com.samskivert.depot.DatabaseException;
 import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.Exps;
 import com.samskivert.depot.Funcs;
@@ -84,6 +86,17 @@ public class MsoySceneRepository extends DepotRepository
         ctx.registerMigration(SceneRecord.class, new SchemaMigration.Drop(12, "audioMediaHash"));
         ctx.registerMigration(SceneRecord.class, new SchemaMigration.Drop(12, "audioMediaType"));
         ctx.registerMigration(SceneRecord.class, new SchemaMigration.Drop(12, "audioVolume"));
+
+        registerMigration(new DataMigration("2010-02-24 room_null_property_cleanup") {
+            @Override public void invoke () throws DatabaseException {
+                int count;
+
+                count = deleteAll(RoomPropertyRecord.class, new Where(Exps.literal(
+                    "encode(\"value\", 'hex') = '0000'")));
+                log.info("Deleted null RoomPropertyRecord properties", "count", count);
+            }
+        });
+
     }
 
     /**
