@@ -189,9 +189,9 @@ public class GameGameRegistry
             minLogInterval = 1;
             maxLogInterval = 2;
         } else {
-            // write listed logs at least every 2 hours, but at most one per 20 minutes
-            minLogInterval = 20;
-            maxLogInterval = 120;
+            // write listed logs at least every 20 minutes, but at most every four
+            minLogInterval = 4;
+            maxLogInterval = 20;
         }
         delegates.add(new AgentTraceDelegate(config.getGameId(), minLogInterval, maxLogInterval));
 
