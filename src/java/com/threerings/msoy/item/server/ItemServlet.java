@@ -355,12 +355,20 @@ public class ItemServlet extends MsoyServiceServlet
         }
         if (doAdd) {
             CatalogRecord catRec = _avaRepo.loadListing(catalogId, false);
-            // the item must be branded by the theme group
+
+            // this is not tested for in the GWT page
+            if (catRec.basisId != 0) {
+                throw new ServiceException(ItemCodes.E_CANT_LINEUP_DERIVED);
+            }
+
+            // sanity check: the item must be branded by the theme group
             if (catRec.brandId != groupId) {
                 log.warning("Intended lineup listing not branded by theme", "catalogId", catalogId,
                     "theme", "groupId");
                 throw new ServiceException(ItemCodes.E_ACCESS_DENIED);
             }
+
+            // sanity check: the item must be stamped!
             if (!_avaRepo.isThemeStamped(groupId, catRec.listedItemId)) {
                 log.warning("Intended lineup listing not stamped", "catalogId", catalogId,
                     "theme", "groupId");
