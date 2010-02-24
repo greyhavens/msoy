@@ -12,6 +12,7 @@ import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import com.samskivert.depot.CountRecord;
 import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.Ops;
 import com.samskivert.depot.PersistenceContext;
@@ -24,8 +25,6 @@ import com.samskivert.depot.clause.QueryClause;
 import com.samskivert.depot.clause.Where;
 
 import com.threerings.presents.annotation.BlockingThread;
-
-import com.threerings.msoy.server.persist.CountRecord;
 
 /**
  * Handles database interactions for the survey package.

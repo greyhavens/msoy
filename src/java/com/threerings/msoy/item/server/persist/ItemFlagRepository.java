@@ -9,6 +9,7 @@ import java.util.Set;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import com.samskivert.depot.CountRecord;
 import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
@@ -17,8 +18,6 @@ import com.samskivert.depot.clause.FromOverride;
 import com.samskivert.depot.clause.Limit;
 import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.Where;
-
-import com.threerings.msoy.server.persist.CountRecord;
 
 // TODO: doc
 

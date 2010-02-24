@@ -15,6 +15,7 @@ import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import com.samskivert.depot.CountRecord;
 import com.samskivert.depot.DatabaseException;
 import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.DuplicateKeyException;
@@ -33,7 +34,6 @@ import com.samskivert.depot.expression.SQLExpression;
 import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.msoy.comment.gwt.Comment;
-import com.threerings.msoy.server.persist.CountRecord;
 
 import static com.threerings.msoy.Log.log;
 

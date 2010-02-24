@@ -25,6 +25,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.samskivert.depot.CacheInvalidator.TraverseWithFilter;
+import com.samskivert.depot.CountRecord;
 import com.samskivert.depot.DataMigration;
 import com.samskivert.depot.DatabaseException;
 import com.samskivert.depot.DepotRepository;
@@ -47,7 +48,6 @@ import com.samskivert.util.Logger;
 import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
-import com.threerings.msoy.server.persist.CountRecord;
 
 import com.threerings.msoy.money.data.all.CashOutBillingInfo;
 import com.threerings.msoy.money.data.all.Currency;

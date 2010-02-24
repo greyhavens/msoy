@@ -15,6 +15,7 @@ import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import com.samskivert.depot.CountRecord;
 import com.samskivert.depot.DatabaseException;
 import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.Exps;
@@ -38,7 +39,6 @@ import com.samskivert.util.IntIntMap;
 import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.msoy.fora.gwt.ForumThread;
-import com.threerings.msoy.server.persist.CountRecord;
 import com.threerings.msoy.server.persist.RepositoryUtil;
 
 import static com.threerings.msoy.Log.log;

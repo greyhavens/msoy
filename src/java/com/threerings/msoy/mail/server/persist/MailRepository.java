@@ -16,6 +16,7 @@ import com.google.inject.Singleton;
 
 import com.samskivert.util.StringUtil;
 
+import com.samskivert.depot.CountRecord;
 import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.Key;
 import com.samskivert.depot.Ops;
@@ -30,7 +31,6 @@ import com.samskivert.depot.expression.SQLExpression;
 import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.msoy.server.MsoyEventLogger;
-import com.threerings.msoy.server.persist.CountRecord;
 import com.threerings.msoy.server.util.JSONMarshaller;
 
 import com.threerings.msoy.mail.gwt.Conversation;

@@ -17,6 +17,7 @@ import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import com.samskivert.depot.CountRecord;
 import com.samskivert.depot.DatabaseException;
 import com.samskivert.depot.DateFuncs;
 import com.samskivert.depot.DepotRepository;
@@ -50,7 +51,6 @@ import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.server.MsoyEventLogger;
-import com.threerings.msoy.server.persist.CountRecord;
 import com.threerings.msoy.server.persist.TagHistoryRecord;
 import com.threerings.msoy.server.persist.TagNameRecord;
 import com.threerings.msoy.server.persist.TagRecord;

@@ -36,6 +36,7 @@ import com.samskivert.util.QuickSort;
 import com.samskivert.util.StringUtil;
 
 import com.samskivert.depot.CacheInvalidator.TraverseWithFilter;
+import com.samskivert.depot.CountRecord;
 import com.samskivert.depot.DataMigration;
 import com.samskivert.depot.DatabaseException;
 import com.samskivert.depot.DateFuncs;
@@ -66,7 +67,6 @@ import com.samskivert.depot.operator.Case;
 import com.samskivert.depot.operator.FullText;
 import com.threerings.presents.annotation.BlockingThread;
 
-import com.threerings.msoy.server.persist.CountRecord;
 import com.threerings.msoy.server.persist.HotnessConfig;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.persist.RatingRecord;

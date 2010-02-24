@@ -16,6 +16,7 @@ import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import com.samskivert.depot.CountRecord;
 import com.samskivert.depot.DataMigration;
 import com.samskivert.depot.DatabaseException;
 import com.samskivert.depot.DepotRepository;
@@ -46,7 +47,6 @@ import com.threerings.presents.annotation.BlockingThread;
 import com.threerings.whirled.data.SceneUpdate;
 
 import com.threerings.msoy.data.all.MediaDesc;
-import com.threerings.msoy.server.persist.CountRecord;
 import com.threerings.msoy.server.persist.HotnessConfig;
 import com.threerings.msoy.server.persist.RatingRecord;
 import com.threerings.msoy.server.persist.RatingRepository;

@@ -13,6 +13,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.samskivert.depot.CacheInvalidator;
+import com.samskivert.depot.CountRecord;
 import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.Ops;
 import com.samskivert.depot.PersistenceContext;
@@ -28,8 +29,6 @@ import com.threerings.presents.annotation.BlockingThread;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.ItemListQuery;
-
-import com.threerings.msoy.server.persist.CountRecord;
 
 @Singleton
 @BlockingThread

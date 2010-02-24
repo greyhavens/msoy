@@ -24,6 +24,7 @@ import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import com.samskivert.depot.CountRecord;
 import com.samskivert.depot.DataMigration;
 import com.samskivert.depot.DatabaseException;
 import com.samskivert.depot.DepotRepository;
