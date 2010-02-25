@@ -28,7 +28,6 @@ import com.samskivert.depot.Ops;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.SchemaMigration;
-import com.samskivert.depot.XList;
 import com.samskivert.depot.clause.FromOverride;
 import com.samskivert.depot.clause.Limit;
 import com.samskivert.depot.clause.OrderBy;
@@ -455,7 +454,7 @@ public class MsoySceneRepository extends DepotRepository
      */
     public SceneFurniRecord loadFurni (int sceneId, int itemId)
     {
-        XList<SceneFurniRecord> recs = findAll(SceneFurniRecord.class, CacheStrategy.NONE,
+        List<SceneFurniRecord> recs = findAll(SceneFurniRecord.class, CacheStrategy.NONE,
             new Where(SceneFurniRecord.SCENE_ID, sceneId,
                       SceneFurniRecord.ITEM_ID, itemId));
         return recs.isEmpty() ? null : recs.get(0);

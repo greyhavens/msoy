@@ -15,7 +15,6 @@ import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.Ops;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
-import com.samskivert.depot.XList;
 import com.samskivert.depot.clause.Join;
 import com.samskivert.depot.clause.Limit;
 import com.samskivert.depot.clause.OrderBy;
@@ -47,7 +46,7 @@ public class ThemeRepository extends DepotRepository
     /**
      * Fetch all the themes, ordered by popularity.
      */
-    public XList<ThemeRecord> loadThemes ()
+    public List<ThemeRecord> loadThemes ()
     {
         return findAll(ThemeRecord.class, OrderBy.descending(ThemeRecord.POPULARITY));
     }
