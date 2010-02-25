@@ -33,6 +33,7 @@ import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.group.server.persist.ThemeAvatarLineupRecord;
 import com.threerings.msoy.group.server.persist.ThemeRepository;
 import com.threerings.msoy.item.data.ItemCodes;
+import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemFlag;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.ItemListQuery;
@@ -324,23 +325,37 @@ public class ItemServlet extends MsoyServiceServlet
                 _groupRepo.getMembership(groupId, memrec.memberId).left != Rank.MANAGER) {
             throw new ServiceException(ItemCodes.E_ACCESS_DENIED);
         }
+
+        ItemRepository<ItemRecord> repo = _itemLogic.getRepository(ident.type);
+        ItemRecord rec = repo.loadItem(ident.itemId);
+        if (rec == null) {
+            log.warning("Couldn't find item to stamp", "item", ident, "stamper", memrec.who());
+            throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
+        }
+
+        int stampItemId = (rec.isCatalogClone() ? rec.sourceId : rec.itemId);
+
         if (doStamp) {
-            if (!_itemLogic.getRepository(ident.type).
-                    stampItem(ident.itemId, groupId, memrec.memberId)) {
-                log.warning("Item was already stamped!", "item", ident, "theme", groupId);
-            }
-        } else {
-            // make sure this is not the template item for a lineup avatar listing
-            List<CatalogRecord> catRecs =
-                _avaRepo.loadCatalogByListedItems(ImmutableList.of(ident.itemId), false);
-            if (!catRecs.isEmpty() &&
-                    _themeRepo.isAvatarInLineup(groupId, catRecs.get(0).catalogId)) {
-                log.warning("Tried to unstamp a lineup avatar", "item", ident, "theme", groupId);
-                throw new ServiceException(ItemCodes.E_ACCESS_DENIED);
+            if (!repo.stampItem(stampItemId, groupId, memrec.memberId)) {
+                log.warning("Item was already stamped!", "item", ident, "stampItemId", stampItemId,
+                    "theme", groupId);
             }
 
-            if (!_itemLogic.getRepository(ident.type).unstampItem(ident.itemId, groupId)) {
-                log.warning("Item was not stamped!", "item", ident, "theme", groupId);
+        } else {
+            if (ident.type == Item.AVATAR) {
+                // make sure this is not the template item for a lineup avatar listing
+                List<CatalogRecord> catRecs =
+                    repo.loadCatalogByListedItems(ImmutableList.of(stampItemId), false);
+                if (!catRecs.isEmpty() &&
+                        _themeRepo.isAvatarInLineup(groupId, catRecs.get(0).catalogId)) {
+                    log.warning("Tried to unstamp a lineup avatar", "item", ident, "theme", groupId);
+                    throw new ServiceException(ItemCodes.E_ACCESS_DENIED);
+                }
+            }
+
+            if (!repo.unstampItem(stampItemId, groupId)) {
+                log.warning("Item was not stamped!", "item", ident, "stampItemId", stampItemId,
+                    "theme", groupId);
             }
         }
     }
