@@ -51,6 +51,7 @@ import client.ui.PopupMenu;
 import client.ui.Rating;
 import client.ui.RoundBox;
 import client.ui.StyledTabPanel;
+import client.util.ClickCallback;
 import client.util.FlashClients;
 import client.util.Link;
 import client.util.InfoCallback;
@@ -70,7 +71,6 @@ public abstract class BaseItemDetailPanel extends SmartTable
     {
         _detail = detail;
         _item = detail.item;
-
 
         // create the upper left: the item preview, ratings, favoring, etc
         _leftBits = new HeaderBox(null, _item.name);
@@ -101,12 +101,13 @@ public abstract class BaseItemDetailPanel extends SmartTable
         _themeHolder.setStyleName("Details");
         _rightBits.add(_themeHolder);
 
-        _themeContents = new SmartTable();
+        _themeContents = new FlowPanel();
         if (!CShell.isGuest()) {
             _membersvc.loadManagedThemes(new InfoCallback<GroupName[]>() {
                 public void onSuccess (GroupName[] result) {
-                    _themeContents.setWidget(0, 0, _stampedBy = new FlowPanel());
-                    _themeContents.setWidget(1, 0, _stampPanel = new SmartTable());
+                    _themeContents.add(_stampHeader = new SimplePanel());
+                    _themeContents.add(_stampedBy = new FlowPanel());
+                    _themeContents.add(_stampPanel = new SmartTable());
 
                     gotManagedThemes(result);
                     updateStamps();
@@ -279,8 +280,15 @@ public abstract class BaseItemDetailPanel extends SmartTable
     protected void updateStampItem ()
     {
         _stampPanel.clear();
-        if (_managedThemes == null || _managedThemes.length == 0 || _item.isCatalogClone()) {
+        if (_managedThemes == null || _managedThemes.length == 0) {
             return;
+        }
+
+        if (_item.isCatalogClone()) {
+            _stampHeader.setWidget(MsoyUI.createLabel(
+                "Theme markup for listing...", "listingMarkupHeader"));
+        } else {
+            _stampHeader.setWidget(null);
         }
 
         // now that we know we're drawing something, make sure the UI is showing the theme box
@@ -320,23 +328,25 @@ public abstract class BaseItemDetailPanel extends SmartTable
         int row = 0;
         if (_stampBox.getItemCount() > 1) {
             _stampPanel.setWidget(row, 0, _stampBox, 1);
-            _stampButton = MsoyUI.createTinyButton(_imsgs.itemDoStamp(), new ClickHandler() {
-                public void onClick (ClickEvent event) {
+            _stampButton = MsoyUI.createTinyButton(_imsgs.itemDoStamp(), null);
+            new ClickCallback<Void>(_stampButton) {
+                protected boolean callService () {
                     int ix = _stampBox.getSelectedIndex();
                     if (ix == 0) {
                         Popups.errorNear(_imsgs.itemNothingToStamp(), _stampButton);
-                        return;
+                        return false;
                     }
-                    final GroupName theme = _stampEntries.get(ix-1);
-                    _itemsvc.stampItem(
-                        _item.getIdent(), theme.getGroupId(), true, new InfoCallback<Void>() {
-                            public void onSuccess (Void result) {
-                                _detail.themes.add(theme);
-                                updateStamps();
-                            }
-                        });
+                    _theme = _stampEntries.get(ix-1);
+                    _itemsvc.stampItem(_item.getIdent(), _theme.getGroupId(), true, this);
+                    return true;
                 }
-            });
+                protected boolean gotResult (Void result) {
+                    _detail.themes.add(_theme);
+                    updateStamps();
+                    return true;
+                }
+                protected GroupName _theme;
+            };
             _stampButton.setEnabled(false);
             _stampPanel.setWidget(row, 2, _stampButton);
             row ++;
@@ -344,23 +354,27 @@ public abstract class BaseItemDetailPanel extends SmartTable
 
         if (_unstampBox.getItemCount() > 1) {
             _stampPanel.setWidget(row, 0, _unstampBox, 1);
-            _unstampButton = MsoyUI.createTinyButton(_imsgs.itemDoUnstamp(), new ClickHandler() {
-                public void onClick (ClickEvent event) {
+            _unstampButton = MsoyUI.createTinyButton(_imsgs.itemDoUnstamp(), null);
+            CShell.log("Created unstamp button: " + _unstampButton);
+            new ClickCallback<Void>(_unstampButton) {
+                protected boolean callService () {
                     int ix = _unstampBox.getSelectedIndex();
                     if (ix == 0) {
                         Popups.errorNear(_imsgs.itemNothingToUnstamp(), _unstampButton);
-                        return;
+                        return false;
                     }
-                    final GroupName theme = _unstampEntries.get(ix-1);
-                    _itemsvc.stampItem(
-                        _item.getIdent(), theme.getGroupId(), false, new InfoCallback<Void>() {
-                            public void onSuccess (Void result) {
-                                _detail.themes.remove(theme);
-                                updateStamps();
-                            }
-                        });
+                    _theme = _unstampEntries.get(ix-1);
+                    _itemsvc.stampItem(_item.getIdent(), _theme.getGroupId(), false, this);
+                    return true;
                 }
-            });
+                protected boolean gotResult (Void result) {
+                    _detail.themes.remove(_theme);
+                    updateStamps();
+                    return true;
+                }
+                protected GroupName _theme;
+            };
+            CShell.log("Disabling unstamp button...");
             _unstampButton.setEnabled(false);
             _stampPanel.setWidget(row, 2, _unstampButton);
             row ++;
@@ -528,12 +542,13 @@ public abstract class BaseItemDetailPanel extends SmartTable
     protected RoundBox _indeets;
     protected RoundBox _themeBits;
 
-    protected SmartTable _themeContents;
+    protected FlowPanel _themeContents;
     protected SimplePanel _themeHolder;
 
     protected CreatorLabel _creator;
 
     protected FlowPanel _stampedBy;
+    protected SimplePanel _stampHeader;
     protected boolean _briefStamps = true;
 
     protected SmartTable _stampPanel;

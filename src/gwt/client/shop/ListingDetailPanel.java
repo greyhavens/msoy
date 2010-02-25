@@ -185,7 +185,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
         _details.add(new ItemBuyPanel(_listing, null));
 
         // display a comment interface below the listing details
-        addTabBelow("Comments", new CommentsPanel(_item.getType(), listing.catalogId, true), true);
+        _bottomBits.add(new CommentsPanel(_item.getType(), listing.catalogId, true));
 
 //         // if this item supports sub-items, add a tab for those item types
 //         byte[] types = _item.getSalableSubTypes();
@@ -336,7 +336,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
     {
         // else we wait for that callback
         ensureThemeBits();
-        _themeContents.setWidget(2, 0, _linePanel = new SmartTable());
+        _themeContents.add(_linePanel = new SmartTable());
         updateStamps();
     }
 
