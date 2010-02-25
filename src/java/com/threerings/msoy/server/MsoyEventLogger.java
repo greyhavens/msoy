@@ -4,8 +4,6 @@
 package com.threerings.msoy.server;
 
 import java.io.File;
-import java.lang.reflect.Field;
-import java.text.DateFormat;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;

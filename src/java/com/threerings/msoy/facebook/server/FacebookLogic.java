@@ -22,7 +22,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -789,7 +788,7 @@ public class FacebookLogic
         Collection<Long> uids = Collections2.transform(fbusers.values(), MAPREC_TO_UID);
         UsersGetStandardInfoResponse uinfo;
         try {
-            uinfo = (UsersGetStandardInfoResponse)client.users_getStandardInfo(uids, fields);
+            uinfo = client.users_getStandardInfo(uids, fields);
         } catch (FacebookException ex) {
             log.warning("Failed to getStandardInfo", "uids", uids,
                 "rawResponse", client.getRawResponse(), ex);
@@ -819,7 +818,7 @@ public class FacebookLogic
             // friend count
             Integer friendCount = null;
             try {
-                FriendsGetResponse finfo = (FriendsGetResponse)client.friends_get(uid);
+                FriendsGetResponse finfo = client.friends_get(uid);
                 friendCount = finfo.getUid().size();
 
             } catch (FacebookException e) {

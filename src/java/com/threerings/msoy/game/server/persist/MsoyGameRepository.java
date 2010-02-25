@@ -26,7 +26,6 @@ import com.samskivert.depot.CacheInvalidator;
 import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.Exps;
 import com.samskivert.depot.Funcs;
-import com.samskivert.depot.Key;
 import com.samskivert.depot.Ops;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
