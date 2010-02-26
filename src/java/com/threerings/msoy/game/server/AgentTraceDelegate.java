@@ -11,6 +11,7 @@ import com.samskivert.jdbc.RepositoryUnit;
 
 import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
+import com.samskivert.util.StringUtil;
 
 import com.threerings.crowd.data.PlaceObject;
 
@@ -71,8 +72,15 @@ public class AgentTraceDelegate extends PlaceManagerDelegate
         if (trace.length() > MAX_USER_LENGTH / 2) {
             log.warning("Agent trace line too long", "length", trace.length());
             return;
-
         }
+
+        // Java strings can contain null byte characters, but our persistent layer (read: PGSQL)
+        // can't store that, so let's just say that traces can't contain null bytes; replace them
+        // with the Unicode replacement character instead.
+        //
+        // TODO: Perhaps we should escape some set of control characters? The traces are supposed
+        // TODO: to be human-readable anyway, right?
+        trace = StringUtil.replace(trace, "\000", "\uFFFD");
 
         // Bail if we have previously truncated
         if (!_tracing) {
