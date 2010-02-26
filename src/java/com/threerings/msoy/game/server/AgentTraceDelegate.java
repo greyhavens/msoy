@@ -74,6 +74,11 @@ public class AgentTraceDelegate extends PlaceManagerDelegate
             return;
         }
 
+        // Bail if we have previously truncated
+        if (!_tracing) {
+            return;
+        }
+
         // Java strings can contain null byte characters, but our persistent layer (read: PGSQL)
         // can't store that, so let's just say that traces can't contain null bytes; replace them
         // with the Unicode replacement character instead.
@@ -81,11 +86,6 @@ public class AgentTraceDelegate extends PlaceManagerDelegate
         // TODO: Perhaps we should escape some set of control characters? The traces are supposed
         // TODO: to be human-readable anyway, right?
         trace = StringUtil.replace(trace, "\000", "\uFFFD");
-
-        // Bail if we have previously truncated
-        if (!_tracing) {
-            return;
-        }
 
         // Check if this string will fit in the remaining space
         boolean willFit = _traceBuffer.length() + trace.length() + 1 < MAX_USER_LENGTH;
