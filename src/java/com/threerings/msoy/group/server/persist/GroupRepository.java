@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.group.server.persist;
 
+import java.io.Serializable;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.Collection;
@@ -14,10 +15,13 @@ import java.util.Set;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import com.samskivert.depot.CacheInvalidator;
 import com.samskivert.depot.CountRecord;
+import com.samskivert.depot.DataMigration;
 import com.samskivert.depot.DatabaseException;
 import com.samskivert.depot.DateFuncs;
 import com.samskivert.depot.DepotRepository;
@@ -60,11 +64,14 @@ import com.threerings.msoy.room.data.MsoySceneModel;
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
 import com.threerings.msoy.room.server.persist.SceneRecord;
 
+import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 import com.threerings.msoy.group.data.all.Group;
 import com.threerings.msoy.group.data.all.GroupMembership;
 import com.threerings.msoy.group.data.all.GroupMembership.Rank;
 import com.threerings.msoy.group.gwt.GroupCard;
 import com.threerings.msoy.group.gwt.GroupService.GroupQuery;
+
+import static com.threerings.msoy.Log.log;
 
 /**
  * Manages the persistent store of group data.
@@ -157,6 +164,26 @@ public class GroupRepository extends DepotRepository
         for (String oldField : oldFields) {
             ctx.registerMigration(GroupRecord.class, new SchemaMigration.Drop(22, oldField));
         }
+
+        registerMigration(new DataMigration("2010-02-26 groups_with_missing_games") {
+            @Override public void invoke () throws DatabaseException {
+                List<GroupRecord> groups = findAll(GroupRecord.class,
+                    new Where(GroupRecord.GAME_ID.notEq(0)));
+                Set<Integer> badGroups = Sets.newHashSet();
+                for (GroupRecord group : groups) {
+                    if (null == _gameRepo.loadGame(group.gameId)) {
+                        badGroups.add(group.groupId);
+                    }
+                }
+                if (!badGroups.isEmpty()) {
+                    int rows = updatePartial(GroupRecord.class,
+                        new Where(GroupRecord.GROUP_ID.in(badGroups)), null,
+                        GroupRecord.GAME_ID, 0);
+                    log.info("Fixing groups with missing games", "attempted", badGroups.size(),
+                        "actual", rows);
+                }
+            }
+        });
     }
 
     /**
@@ -607,6 +634,20 @@ public class GroupRepository extends DepotRepository
     }
 
     /**
+     * Deletes all the data associated with the supplied game.
+     */
+    public void purgeGame (final int gameId)
+    {
+        updatePartial(GroupRecord.class,
+            new Where(GroupRecord.GAME_ID, gameId),
+            new CacheInvalidator.TraverseWithFilter<GroupRecord>(GroupRecord.class) {
+                protected boolean testForEviction (Serializable key, GroupRecord record) {
+                    return record.gameId == gameId;
+                }
+            }, GroupRecord.GAME_ID, 0);
+    }
+
+    /**
      * Deletes all data associated with the supplied members. This is done as a part of purging
      * member accounts.
      */
@@ -744,4 +785,7 @@ public class GroupRepository extends DepotRepository
     // our dependencies
     @Inject protected MsoyEventLogger _eventLog;
     @Inject protected MsoySceneRepository _sceneRepo;
+
+    /** TEMP: to handle migration */
+    @Inject protected MsoyGameRepository _gameRepo;
 }

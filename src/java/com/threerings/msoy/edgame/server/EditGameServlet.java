@@ -245,6 +245,8 @@ public class EditGameServlet extends MsoyServiceServlet
         _ratingRepo.purgeGame(-gameId);
         _ratingRepo.purgeGame(gameId);
 
+        _groupRepo.purgeGame(gameId);
+
         // pass the buck onto the repositories
         _facebookRepo.deleteGameFacebookInfo(gameId);
         _mgameRepo.deleteGame(gameId);
