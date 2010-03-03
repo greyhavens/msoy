@@ -2,6 +2,7 @@
 <project name="Whirled panopticon aggregations" default="dist" 
          xmlns:artifact="urn:maven-artifact-ant">
   <!-- the base directory from which we get our bundles and jar files -->
+  <property name="cell.name" value="msoy"/>
   <property name="base.dir" value="../.."/>
   <property name="libs.dir" value="${base.dir}/extlibs/java"/>
 
