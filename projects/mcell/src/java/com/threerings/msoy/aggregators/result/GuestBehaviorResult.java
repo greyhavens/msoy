@@ -134,6 +134,8 @@ public class GuestBehaviorResult
         result.put("acct_start", created);
         result.put("acct_tracker", _entry.tracker);
 
+        result.put("embed", (_entry.embed != null && _entry.embed.booleanValue()) ? 1 : 0);
+
         // data from VectorAssociated
         String vector = _entry.vector;
         if (vector != null) {

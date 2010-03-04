@@ -28,7 +28,7 @@ public class EmbedFilter
 
     public boolean transform (EventData data)
     {
-        return data.getBoolean("embed") == _keepEmbedded;
+        return (data.containsKey("embed") && data.getInt("embed") == 1) == _keepEmbedded;
     }
 
     protected boolean _keepEmbedded;
