@@ -1,0 +1,44 @@
+body {
+  font-family: sans-serif;
+  font-size: 16px;
+  margin: 0 50px 0 50px;
+}
+
+#legend {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+#controls {
+    font-size: smaller;
+}
+
+#controls div{ 
+    margin-bottom: 10px;
+}
+
+#controls h3 {
+    display: inline;
+}
+
+#controls form {
+    display: inline;
+}
+
+#controls table {
+    margin-left: 10px;
+}
+
+#controls td.category {
+    font-weight: bold;
+    text-align: right;
+}
+
+.legendColorBox {
+    padding-left: 2px;
+}
+
+.legendLabel {
+    padding-right: 2px;
+}
+

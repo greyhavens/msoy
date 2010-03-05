@@ -1,0 +1,36 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Bite Me Panopticon</title>
+    <link href="layout.css" rel="stylesheet" type="text/css"/>
+    <!--[if IE]><script language="javascript" type="text/javascript" src="flot/excanvas.pack.js"></script><![endif]-->
+    <script language="javascript" type="text/javascript" src="flot/json2.js"></script>
+    <script language="javascript" type="text/javascript" src="flot/base64.js"></script>
+    <script language="javascript" type="text/javascript" src="flot/bedrock.js"></script>
+    <script language="javascript" type="text/javascript" src="flot/bedrock.util.js"></script>
+    <script language="javascript" type="text/javascript" src="flot/bedrock.iter.js"></script>
+    <script language="javascript" type="text/javascript" src="flot/bedrock.collections.js"></script>
+    <script language="javascript" type="text/javascript" src="flot/bedrock.gibs.js"></script>
+    <script language="javascript" type="text/javascript" src="flot/jquery-1.3.2.js"></script>
+    <script language="javascript" type="text/javascript" src="flot/jquery.flot-r148.js"></script>
+    <script language="javascript" type="text/javascript" src="flot/panopticon.js"></script>
+    <script language="javascript" type="text/javascript" src="whirled.js"></script>
+</head>
+<body>
+     <h1 id="title"></h1>
+     <div id="chart"></div>
+     <div id="legend"></div>
+     <div id="controls"></div>
+     <script id="source" language="javascript" type="text/javascript">
+         $(whirled.addCharts);
+     </script>
+     <ul id="chart_links">
+     <li>Funnel<ul id="funnel"></ul></li>
+     <li>Viral<ul id="viral"></ul></li>
+     <li>Retention<ul id="retention"></ul></li>
+     <li>A/B Campaign Results<ul id="campaign"></ul></li>
+     </ul>
+     <a id="hide_links" href="#">Hide Links</a>
+</body>
+</html>
