@@ -73,11 +73,9 @@ public class GuestBehaviorResult
 
         } else if (ACCOUNT_CREATED.equals(name)) {
             Boolean isGuest = (Boolean) data.get("isGuest");
-            if (isGuest != null && isGuest.booleanValue()) {
-                // if they created a permaguest account, they played Whirled
-                _entry.played = timestamp;
-            } else {
-                // if they saved their permaguest account, they're fully converted
+            _entry.played = timestamp;
+            if (isGuest == null || !isGuest.booleanValue()) {
+                // they saved their permaguest account or registered fully right off the bat
                 _entry.converted = timestamp;
             }
             _entry.member = (Integer)data.get("newMemberId");
@@ -154,11 +152,8 @@ public class GuestBehaviorResult
         result.put("acct_vector", vector);
         result.put("acct_vector_from_ad", vector.startsWith("a."));
 
+        boolean played = (_entry.played != null);
         boolean converted = (_entry.converted != null);
-        result.put("conv", converted ? 1 : 0);
-
-        boolean played = (_entry.converted != null || _entry.played != null);
-        result.put("played", played ? 1 : 0);
 
         // data from Experiences
         final Map<String, Integer> conversionEvents =
@@ -191,7 +186,17 @@ public class GuestBehaviorResult
         result.put("conv_hours", minutes / 60);
         result.put("conv_days", minutes / (60 * 24));
 
+
         Date lastEventDate = _entry.findLastEventDate();
+
+        // returning is defined as any experience > 24 hours after creation
+        int returnDays = 0;
+        if (lastEventDate != null) {
+            long msecs = (lastEventDate.getTime() - created.getTime());
+            returnDays = (int)(msecs / (1000 * 60 * 60 * 24));
+        }
+
+        boolean returned = (returnDays > 0);
 
         // pull out retention stats, as days and weeks from joining.
         // retention counts only if they have a valid start date, a valid conversion
@@ -205,17 +210,6 @@ public class GuestBehaviorResult
         boolean retained = (retainDays / 7) > 0;
         result.put("ret_days", retainDays);
         result.put("ret_weeks", retainDays / 7);
-        result.put("ret", retained ? 1 : 0); // 1 if someone was retained for a week+
-
-        // returning is defined as any experience > 24 hours after creation
-        int returnDays = 0;
-        if (lastEventDate != null) {
-            long msecs = (lastEventDate.getTime() - created.getTime());
-            returnDays = (int)(msecs / (1000 * 60 * 60 * 24));
-        }
-
-        boolean returned = (returnDays > 0);
-        result.put("returned", returned ? 1 : 0); // 1 if someone returned after 24 hours
 
         // pull out conversion / retention status
         String status = "1. did not convert";
@@ -223,6 +217,13 @@ public class GuestBehaviorResult
             status = !retained ? "2. converted" : "3. retained";
         }
         result.put("conv_status", status);
+
+        // work out the status of this visitor for funnel purposes
+        result.put("lost", (!played && !converted && !returned && !retained) ? 1 : 0);
+        result.put("played", (played && !converted && !returned && !retained) ? 1 : 0);
+        result.put("converted", (converted && !returned && !retained) ? 1 : 0);
+        result.put("returned", (returned && !retained) ? 1 : 0);
+        result.put("retained", retained ? 1 : 0);
 
         return false;
     }
