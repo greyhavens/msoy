@@ -15,7 +15,7 @@ public class RetentionByEntryResult extends FieldAggregatedResult<WritableCompar
     protected void doInit (WritableComparable<?> key, EventData data)
     {
         total = 1;
-        converted = data.getInt("conv") == 1 ? 1 : 0;
+        converted = data.getInt("converted") == 1 ? 1 : 0;
         retained = data.getInt("ret_weeks") > 0 ? 1 : 0;
     }
 
