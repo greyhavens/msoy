@@ -11,7 +11,6 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 import java.util.Map.Entry;
 
@@ -20,7 +19,6 @@ import org.apache.hadoop.io.WritableComparable;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Multimap;
 import com.threerings.msoy.aggregators.trans.GuestBehaviorSplitterTransformer;
@@ -86,15 +84,6 @@ public class GuestBehaviorResult
                 return false;
             }
             _entry.addEvent(action, timestamp);
-
-            // we use their first experience as a possible indication of creation in
-            // addition to VISITOR_INFO_CREATED
-            _entry.created = timestamp;
-
-            // fake ACCOUNT_CREATED/guest entries by looking at experiences
-            if (PLAY_EXPERIENCES.contains(action)) {
-                _entry.played = timestamp;
-            }
         }
 
         return true;
@@ -464,8 +453,4 @@ public class GuestBehaviorResult
     protected final static EventName EXPERIENCE = new EventName("Experience");
 
     protected final static int MAX_VECTOR_LENGTH = 40;
-
-    // TODO: used to fake entry.played for a while
-    protected static final Set<String> PLAY_EXPERIENCES = ImmutableSet.of(
-        "GS", "GM", "GA", "VW", "VR", "AL");
 }
