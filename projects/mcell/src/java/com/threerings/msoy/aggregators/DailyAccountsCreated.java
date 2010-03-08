@@ -5,10 +5,9 @@ import java.io.IOException;
 import java.util.Date;
 import com.threerings.panopticon.aggregator.hadoop.Aggregator;
 import com.threerings.panopticon.aggregator.hadoop.JavaAggregator;
+import com.threerings.panopticon.aggregator.key.field.DayKey;
 import com.threerings.panopticon.aggregator.result.Result;
 import com.threerings.panopticon.aggregator.result.field.FieldAggregatedResult;
-import com.threerings.panopticon.aggregator.result.field.FieldKey;
-
 import com.threerings.panopticon.common.event.EventData;
 import com.threerings.panopticon.common.event.EventDataBuilder;
 
@@ -17,25 +16,9 @@ import com.threerings.panopticon.aggregator.util.PartialDate;
 
 @Aggregator(output=DailyAccountsCreated.OUTPUT_EVENT_NAME)
 public class DailyAccountsCreated
-    implements JavaAggregator<DailyAccountsCreated.DayKey>
+    implements JavaAggregator<DayKey>
 {
     public static final String OUTPUT_EVENT_NAME = "DailyAccountsCreated";
-
-    public static class DayKey extends FieldKey
-    {
-        public Date day;
-
-        @Override
-        public void init (EventData data)
-        {
-            Date date = data.getDate("date");
-            if (date != null) {
-                day = PartialDate.DAY.roundDown(date.getTime()).getTime();
-            } else {
-                day = null;
-            }
-        }
-    }
 
     @Result(inputs=AccountsWithVectors.class)
     public static class CountTypes extends FieldAggregatedResult<DayKey>
@@ -79,8 +62,8 @@ public class DailyAccountsCreated
     public void write (EventWriter writer, EventDataBuilder builder, DayKey key)
         throws IOException
     {
-        if (key.day.before(_midnight)) {
-            writer.write(builder.create("date", key.day, "total", types.total, "affiliated",
+        if (key.timestamp.before(_midnight)) {
+            writer.write(builder.create("date", key.timestamp, "total", types.total, "affiliated",
                 types.affiliated, "fromAd", types.fromAd, "organic", types.organic,
                 "facebookAd", types.fromFacebookAd,
                 "facebookAffiliated", types.facebookAffiliated));

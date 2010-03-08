@@ -126,7 +126,7 @@ public class AccountsWithVectors
         if (account == null) {
             return;
         }
-        writer.write(builder.create("tracker", key.tracker, "memberId", account.memberId, "date",
-            account.date, "affiliateId", account.affiliateId, "vector", vector));
+        writer.write(builder.create("tracker", key.tracker, "memberId", account.memberId,
+            "timestamp", account.date, "affiliateId", account.affiliateId, "vector", vector));
     }
 }
