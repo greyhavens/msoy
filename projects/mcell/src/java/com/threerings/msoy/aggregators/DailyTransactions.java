@@ -102,6 +102,7 @@ public class DailyTransactions
         writer.write(builder.create(
             "timestamp", key.timestamp,
             "currency", key.currency.toString().toLowerCase(),
+            "actionType", key.actionType,
             "earned", result.earned,
             "spent", result.spent,
             "ratio", (result.spent == 0) ? 0 : (double) result.earned / result.spent));
