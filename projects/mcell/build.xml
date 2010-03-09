@@ -49,9 +49,8 @@
 
   <target name="just-package">
       <package-cell>
-          <fileset dir=".">
-              <include name="src/webapp/*"/>
-              <include name="yohoho.tasks"/>
+          <fileset dir="src">
+              <include name="webapp/**/*"/>
           </fileset>
       </package-cell>
   </target>
