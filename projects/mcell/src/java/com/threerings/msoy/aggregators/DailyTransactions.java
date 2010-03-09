@@ -17,25 +17,25 @@ import com.threerings.panopticon.common.event.EventData;
 import com.threerings.panopticon.common.event.EventDataBuilder;
 import com.threerings.panopticon.eventstore.EventWriter;
 
-@Aggregator(output=DailyTransactions.OUTPUT_EVENT_NAME, incremental="timestamp")
+@Aggregator(output=DailyTransactions.OUTPUT_EVENT_NAME/*, incremental="timestamp" */)
 public class DailyTransactions
     implements JavaAggregator<DailyTransactions.TransactionKey>,
                KeyFactory<DailyTransactions.TransactionKey>
 {
     public static final String OUTPUT_EVENT_NAME = "DailyTransactions";
 
-    public static final int CURRENCY_FLOW = 1;
-    public static final int CURRENCY_BARS = 2;
-    public static final int CURRENCY_BLING = 3;
+    enum Currency {
+        COINS, BARS, BLING;
+    }
 
     public static class TransactionKey extends DayKey
     {
         public int actionType;
-        public int currency;
+        public Currency currency;
 
         public TransactionKey () { }
 
-        public TransactionKey (EventData data, int currency)
+        public TransactionKey (EventData data, Currency currency)
         {
             init(data);
 
@@ -44,7 +44,7 @@ public class DailyTransactions
         }
     }
 
-    @StringInputNameResult(inputs="FlowTransaction", incrementals="timestamp")
+    @StringInputNameResult(inputs="FlowTransaction" /*, incrementals="timestamp" */)
     public static class Accumulation extends FieldAggregatedResult<TransactionKey>
     {
         public int earned;
@@ -56,14 +56,14 @@ public class DailyTransactions
             int amount;
 
             switch(key.currency) {
-            case CURRENCY_FLOW:
+            case COINS:
             default:
                 amount = eventData.getDefaultInt("deltaFlow", 0);
                 break;
-            case CURRENCY_BARS:
+            case BARS:
                 amount = eventData.getDefaultInt("deltaBars", 0);
                 break;
-            case CURRENCY_BLING:
+            case BLING:
                 amount = eventData.getDefaultInt("deltaBling", 0);
                 break;
             }
@@ -84,13 +84,13 @@ public class DailyTransactions
     {
         List<TransactionKey> keys = Lists.newArrayList();
         if (keyInitData.eventData.getDefaultInt("deltaFlow", 0) != 0) {
-            keys.add(new TransactionKey(keyInitData.eventData, CURRENCY_FLOW));
+            keys.add(new TransactionKey(keyInitData.eventData, Currency.COINS));
         }
         if (keyInitData.eventData.getDefaultInt("deltaBars", 0) != 0) {
-            keys.add(new TransactionKey(keyInitData.eventData, CURRENCY_BARS));
+            keys.add(new TransactionKey(keyInitData.eventData, Currency.BARS));
         }
         if (keyInitData.eventData.getDefaultInt("deltaBling", 0) != 0) {
-            keys.add(new TransactionKey(keyInitData.eventData, CURRENCY_BLING));
+            keys.add(new TransactionKey(keyInitData.eventData, Currency.BLING));
         }
         return keys;
     }
@@ -101,7 +101,7 @@ public class DailyTransactions
     {
         writer.write(builder.create(
             "timestamp", key.timestamp,
-            "currency", key.currency,
+            "currency", key.currency.toString().toLowerCase(),
             "earned", result.earned,
             "spent", result.spent,
             "ratio", (result.spent == 0) ? 0 : (double) result.earned / result.spent));
