@@ -4,7 +4,7 @@ com.threerings.msoy.aggregators.AccountsWithVectors
 
 DailyBatchFriendRequests
 DailyChainedActionResults
-DailyExchangeRate
+com.threerings.msoy.aggregators.DailyExchangeRate
 DailyForumPosts
 DailyFriendships
 DailyIdleActive
