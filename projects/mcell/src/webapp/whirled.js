@@ -17,27 +17,28 @@ whirled.addCharts = function () {
             var options = {
                 xaxis: { mode: "time", minTickSize: [1, "day"]}
             };
-            return new SelfContainedEventChart(
+            var chart = new SelfContainedEventChart(
                 "DailyExchangeRate", function (ev, collector) {
                     collector.assume("Exchange Rate").add(
-                        [ev.timestamp, ev.rate]);
+                        [ev.date, ev.rate]);
                 }, options);
+            return chart;
         });
 
         addChart("economy", "Earnings", "Earnings", function () {
-            var sourceNames = new List([
+            var actionNames = new List([
                 [20, "Games"], [31, "Purchases"], [34, "Payouts"], [40, "Badges"],
                 [50, "Bars Purchased"], [51, "Payouts"], [54, "Bling to Bars"],
-                [55, "Cashed Out"]]);
+                [55, "Cashed Out"]
             ]);
-            var sources = new CheckBoxes("Sources", "sources", sourceNames);
+            var actions = new CheckBoxes("Actions", "actions", actionNames);
             var currency = new RadioButtons("Currency", "currency", ["coins", "bar", "bling" ]);
             function valueExtractor (event, name) {
-                return (currency.value == event.currency && sources.has(name)) ?
-                    (event[name] || 0) : 0;
+                return (currency.value == event.currency && actions.has(event.actionType) ?
+                        (event[earned] || 0) : 0;
             }
-            return StackedBarChart(
-                "DailyTransactions", sourceNames, valueExtractor, {controls:[sources, group]});
+            return new StackedBarChart(
+                "DailyTransactions", actionNames, valueExtractor, {controls:[actions]});
         });
 
         addChart("funnel", "funnel_web", "Conversion and Retention", function () {
