@@ -44,6 +44,6 @@ public class DailyExchangeRate
         throws IOException
     {
         writer.write(builder.create(
-            "date", key.timestamp, "rate", (float) (result.total / result.count)));
+            "date", key.timestamp, "rate", result.total / result.count));
     }
 }
