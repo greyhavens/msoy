@@ -5,7 +5,7 @@ package com.threerings.msoy.aggregators;
 import java.io.IOException;
 import java.util.List;
 
-import com.google.inject.internal.Lists;
+import com.google.common.collect.Lists;
 import com.threerings.panopticon.aggregator.hadoop.Aggregator;
 import com.threerings.panopticon.aggregator.hadoop.JavaAggregator;
 import com.threerings.panopticon.aggregator.hadoop.KeyFactory;
