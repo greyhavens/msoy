@@ -18,7 +18,7 @@ import com.threerings.panopticon.eventstore.EventWriter;
 public class DailyVisitorFutures
     implements JavaAggregator<DailyVisitorFutures.EmbedDayKey>
 {
-    public static final String OUTPUT_EVENT_NAME = "DailyAccountsCreated";
+    public static final String OUTPUT_EVENT_NAME = "DailyVisitorFutures";
 
     public static class EmbedDayKey extends DayKey
     {
