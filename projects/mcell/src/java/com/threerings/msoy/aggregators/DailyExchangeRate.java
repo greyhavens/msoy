@@ -17,13 +17,13 @@ import com.threerings.panopticon.eventstore.EventWriter;
  * fluid, and has in fact been fixed for something like a year, but we retain this task to view
  * the historical data.
   */
-@Aggregator(output=DailyExchangeRate.OUTPUT_EVENT_NAME)
+@Aggregator(output=DailyExchangeRate.OUTPUT_EVENT_NAME, incremental="date")
 public class DailyExchangeRate
     implements JavaAggregator<DayKey>
 {
     public static final String OUTPUT_EVENT_NAME = "DailyExchangeRate";
 
-    @StringInputNameResult(inputs="ExchangeRate")
+    @StringInputNameResult(inputs="ExchangeRate", incrementals="timestamp")
     public static class Accumulation extends FieldAggregatedResult<DayKey>
     {
         public double total;
