@@ -19,7 +19,7 @@ DailyRoomUpdates
 DailySessions
 DailyTimeAllocation
 DailyTimeInGames
-DailyTransactions
+com.threerings.msoy.aggregators.DailyTransactions
 DailyTrophies
 DailyVisitorInfoCreation
 LastMonthGameAffinity
