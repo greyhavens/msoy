@@ -14,7 +14,7 @@ import com.threerings.panopticon.common.event.EventData;
 import com.threerings.panopticon.common.event.EventDataBuilder;
 import com.threerings.panopticon.eventstore.EventWriter;
 
-@Aggregator(output=DailyVisitorFutures.OUTPUT_EVENT_NAME)
+@Aggregator(output=DailyVisitorFutures.OUTPUT_EVENT_NAME, incremental="timestamp")
 public class DailyVisitorFutures
     implements JavaAggregator<DailyVisitorFutures.EmbedDayKey>
 {
@@ -37,7 +37,7 @@ public class DailyVisitorFutures
         }
     }
 
-    @Result(inputs=DailyAllGuestBehavior.class)
+    @Result(inputs=DailyAllGuestBehavior.class, incrementals="date")
     public static class CountTypes extends FieldAggregatedResult<EmbedDayKey>
     {
         public int lost;
