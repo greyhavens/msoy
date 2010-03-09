@@ -24,6 +24,22 @@ whirled.addCharts = function () {
                 }, options);
         });
 
+        addChart("economy", "Earnings", "Earnings", function () {
+            var sourceNames = new List([
+                [20, "Games"], [31, "Purchases"], [34, "Payouts"], [40, "Badges"],
+                [50, "Bars Purchased"], [51, "Payouts"], [54, "Bling to Bars"],
+                [55, "Cashed Out"]]);
+            ]);
+            var sources = new CheckBoxes("Sources", "sources", sourceNames);
+            var currency = new RadioButtons("Currency", "currency", ["coins", "bar", "bling" ]);
+            function valueExtractor (event, name) {
+                return (currency.value == event.currency && sources.has(name)) ?
+                    (event[name] || 0) : 0;
+            }
+            return StackedBarChart(
+                "DailyTransactions", sourceNames, valueExtractor, {controls:[sources, group]});
+        });
+
         addChart("funnel", "funnel_web", "Conversion and Retention", function () {
             var sourceNames = new List([
                 ["lost", "Lost"],
@@ -35,9 +51,6 @@ whirled.addCharts = function () {
             var sources = new CheckBoxes("Sources", "sources", sourceNames);
             var group = new RadioButtons("Group", "group", ["web", "embed" ]);
             function valueExtractor (event, name) {
-                if (event.group == 'web' && name == 'lost') {
-                    alert("Foo: " + event.lost + ", bar: " + event.date);
-                }
                 return (group.value == event.group && sources.has(name)) ?
                     (event[name] || 0) : 0;
             }
