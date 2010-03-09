@@ -12,6 +12,11 @@ import com.threerings.panopticon.common.event.EventData;
 import com.threerings.panopticon.common.event.EventDataBuilder;
 import com.threerings.panopticon.eventstore.EventWriter;
 
+/**
+ * Simply average the bar/coins exchange rate over each server. The exchange rate is no longer
+ * fluid, and has in fact been fixed for something like a year, but we retain this task to view
+ * the historical data.
+  */
 @Aggregator(output=DailyExchangeRate.OUTPUT_EVENT_NAME)
 public class DailyExchangeRate
     implements JavaAggregator<DayKey>
