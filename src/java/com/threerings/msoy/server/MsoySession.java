@@ -113,6 +113,9 @@ public class MsoySession extends WhirledSession
             }
 
             final int memberId = _memobj.getMemberId();
+
+            log.info("MsoySession", "info", info, "vector", vector, "memberId", memberId);
+
             _invoker.postUnit(new WriteOnlyUnit("maybeNoteNewVisitor") {
                 public void invokePersist () throws Exception {
                     if (_memberRepo.entryVectorExists(info.id) != null) {

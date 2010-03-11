@@ -56,6 +56,9 @@ public class GameSession extends CrowdSession
         // want to create a field in {@link MsoyCredentials} that suggests a visitorId was
         // freshly created on the client.
         final int memberId = _plobj.memberName.getMemberId();
+
+        log.info("GameSession", "info", info, "vector", vector, "memberId", memberId);
+
         _invoker.postUnit(new WriteOnlyUnit("maybeNoteNewVisitor") {
             public void invokePersist () throws Exception {
                 if (_memberRepo.entryVectorExists(info.id) != null) {
@@ -64,8 +67,8 @@ public class GameSession extends CrowdSession
                 _memberLogic.noteNewVisitor(info, false, vector, null, memberId);
 
                 // DEBUG
-                log.info("VisitorInfo created", "info", info,
-                    "reason", "GameSession", "memberId", memberId);
+                log.info("VisitorInfo created", "info", info, "reason", "GameSession",
+                    "vector", vector, "memberId", memberId);
             }
         });
 

@@ -55,9 +55,10 @@ public class MsoyEvents
         @Field final public boolean isGuest;
         @Field final public long createdOn;
         @Field final public String tracker;
+        @Field final public String vector;
 
         public Login (int memberId, boolean firstLogin, boolean isGuest,
-            long createdOn, String tracker)
+            long createdOn, String tracker, String vector)
         {
             this.timestamp = new Date();
             this.memberId = memberId;
@@ -65,6 +66,7 @@ public class MsoyEvents
             this.isGuest = isGuest;
             this.createdOn = createdOn;
             this.tracker = toValue(tracker);
+            this.vector = toValue(vector);
         }
     }
 
@@ -184,6 +186,12 @@ public class MsoyEvents
     @Event(name="ItemPurchase") // note: do not change this event name
     public static class ItemPurchase implements MsoyEvent
     {
+        // we use ItemPurchase for things that aren't actually items
+        public static final byte TYPE_ROOM = -1;
+        public static final byte TYPE_GROUP = -2;
+        public static final byte TYPE_PARTY = -3;
+        public static final byte TYPE_THEME = -4;
+
         @Index @Field final public Date timestamp;
         @Field final public int memberId;
         @Field final public byte itemType;
@@ -262,7 +270,7 @@ public class MsoyEvents
             this.failures = failures;
         }
     }
-    
+
     @Event(name="GroupMembershipAction") // note: do not change this event name
     public static class GroupMembershipAction implements MsoyEvent
     {

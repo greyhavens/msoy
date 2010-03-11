@@ -38,6 +38,7 @@ import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MemberLogic;
 import com.threerings.msoy.server.MsoyEventLogger;
+import com.threerings.msoy.server.MsoyEvents.ItemPurchase;
 import com.threerings.msoy.server.persist.CharityRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
@@ -429,10 +430,16 @@ public class MoneyLogic
         throws ServiceException
     {
         MemberRecord buyerRec = _memberRepo.loadMember(buyerId);
-        return buyFromOOO(
+        BuyResult<Void> result = buyFromOOO(
             buyerRec, partyKey, buyCurrency, authedAmount, listCurrency, listAmount,
             BuyOperation.NOOP, UserAction.Type.BOUGHT_PARTY, "m.party_bought",
             TransactionType.PARTY_PURCHASE, "m.change_rcvd_party");
+
+        if (result.getMemberTransaction().amount != 0) {
+            _eventLog.pseudoItemPurchased(
+                buyerId, ItemPurchase.TYPE_PARTY, result.getMemberTransaction());
+        }
+        return result;
     }
 
     /**
@@ -443,10 +450,16 @@ public class MoneyLogic
         Currency listCurrency, int listAmount, BuyOperation<T> buyOp)
         throws ServiceException
     {
-        return buyFromOOO(
+        BuyResult<T> result = buyFromOOO(
             buyerRec, roomKey, buyCurrency, authedAmount, listCurrency, listAmount,
             buyOp, UserAction.Type.BOUGHT_ROOM, "m.room_bought", TransactionType.ROOM_PURCHASE,
             "m.change_rcvd_room");
+
+        if (result.getMemberTransaction().amount != 0) {
+            _eventLog.pseudoItemPurchased(
+                buyerRec.memberId, ItemPurchase.TYPE_ROOM, result.getMemberTransaction());
+        }
+        return result;
     }
 
     /**
@@ -457,10 +470,16 @@ public class MoneyLogic
         Currency listCurrency, int listAmount, String groupName, BuyOperation<T> buyOp)
         throws ServiceException
     {
-        return buyFromOOO(
+        BuyResult<T> result = buyFromOOO(
             buyerRec, groupKey, buyCurrency, authedAmount, listCurrency, listAmount, buyOp,
             UserAction.Type.BOUGHT_GROUP, MessageBundle.tcompose("m.group_created", groupName),
             TransactionType.GROUP_PURCHASE, "m.change_rcvd_group");
+
+        if (result.getMemberTransaction().amount != 0) {
+            _eventLog.pseudoItemPurchased(
+                buyerRec.memberId, ItemPurchase.TYPE_GROUP, result.getMemberTransaction());
+        }
+        return result;
     }
 
     /**
@@ -471,10 +490,15 @@ public class MoneyLogic
         Currency listCurrency, int listAmount, String groupName, BuyOperation<T> buyOp)
         throws ServiceException
     {
-        return buyFromOOO(
+        BuyResult<T> result = buyFromOOO(
             buyerRec, groupKey, buyCurrency, authedAmount, listCurrency, listAmount, buyOp,
             UserAction.Type.BOUGHT_THEME, MessageBundle.tcompose("m.theme_created", groupName),
             TransactionType.THEME_PURCHASE, "m.change_rcvd_theme");
+        if (result.getMemberTransaction().amount != 0) {
+            _eventLog.pseudoItemPurchased(
+                buyerRec.memberId, ItemPurchase.TYPE_THEME, result.getMemberTransaction());
+        }
+        return result;
     }
 
     /**

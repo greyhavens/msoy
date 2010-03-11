@@ -15,6 +15,7 @@ import com.threerings.presents.server.ReportManager;
 import com.threerings.presents.server.ReportManager.Reporter;
 
 import com.threerings.msoy.money.data.all.Currency;
+import com.threerings.msoy.money.data.all.MoneyTransaction;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.UserAction;
@@ -114,6 +115,12 @@ public class MsoyEventLogger
         post(new MsoyEvents.ExchangeRate(serverName, rate));
     }
 
+    public void pseudoItemPurchased (int memberId, byte itemType, MoneyTransaction transaction)
+    {
+        post(new MsoyEvents.ItemPurchase(
+            memberId, itemType, 0, transaction.currency, transaction.amount));
+    }
+
     public void itemPurchased (int memberId, byte itemType, int itemId, Currency currency,
         int amountPaid)
     {
@@ -135,13 +142,13 @@ public class MsoyEventLogger
         post(new MsoyEvents.Experience(Type.ITEM_LISTED, creatorId, tracker));
     }
 
-    public void userLoggedIn (int memberId, String tracker, boolean firstLogin,
+    public void userLoggedIn (int memberId, String tracker, String vector, boolean firstLogin,
         boolean isGuest, long createdOn)
     {
         if (!MemberName.isViewer(memberId)) {
             post(new MsoyEvents.Experience(Type.ACCOUNT_LOGIN, memberId, tracker));
         }
-        post(new MsoyEvents.Login(memberId, firstLogin, isGuest, createdOn, tracker));
+        post(new MsoyEvents.Login(memberId, firstLogin, isGuest, createdOn, tracker, vector));
     }
 
     public void logPlayerMetrics (MemberObject member, String sessionToken)
@@ -275,8 +282,6 @@ public class MsoyEventLogger
     public void vectorAssociated (VisitorInfo info, String vector)
     {
         post(new MsoyEvents.VectorAssociated(info, vector));
-//         log.info(String.format("WRLD-465 stage 3 [? %s] %s %s", vector, String.valueOf(info.id),
-//                                String.valueOf(info.isAuthoritative)));
     }
 
     public void referrerAssociated (VisitorInfo info, String referrer)
