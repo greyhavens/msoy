@@ -27,18 +27,18 @@ whirled.addCharts = function () {
 
         addChart("economy", "Earnings", "Earnings", function () {
             var actionNames = new List([
-                [20, "Games"], [31, "Purchases"], [34, "Payouts"], [40, "Badges"],
+                [1, "Games"], [3, "Purchases"], [34, "Payouts"], [40, "Badges"],
                 [50, "Bars Purchased"], [51, "Payouts"], [54, "Bling to Bars"],
                 [55, "Cashed Out"]
             ]);
             var actions = new CheckBoxes("Actions", "actions", actionNames);
-            var currency = new RadioButtons("Currency", "currency", ["coins", "bar", "bling" ]);
+            var currency = new RadioButtons("Currency", "currency", ["coins", "bars", "bling" ]);
             function valueExtractor (event, name) {
-                if ((currency.value == event.currency) && actions.has(event.actionType) &&
-                    event.earned > 0) {
-                    return event.earned || 0;
+                if (currency.value != event.currency || !actions.has(name)) {
+                    return 0;
                 }
-                return  0;
+                var earned = event["earned:" + name];
+                return (earned > 0) ? earned : 0;
             }
             return new StackedBarChart(
                 "DailyTransactions", actionNames, valueExtractor, {controls:[actions,currency]});
@@ -47,23 +47,27 @@ whirled.addCharts = function () {
         addChart("funnel", "login_count", "Daily Logins", function () {
             var sources = new CheckBoxes("Sources", "sources", new List([
                 "Guests", "Registered", "Visitors", "Total" ]));
+            var group = new RadioButtons("Group", "group", ["web", "embed" ]);
             var options = {
                 xaxis: { mode: "time", minTickSize: [1, "hour"]},
-                controls: [ sources ]
+                controls: [ sources, group ]
             };
             return new SelfContainedEventChart(
                 "DailyLoginCount", function (ev, collector) {
+                    if ((group.value == "embed") ^ ev.embed) {
+                        return;
+                    }
                     if (sources.has("Guests")) {
-                        collector.assume("Guests").add([ev.date, ev.uniqueGuests ]);
+                        collector.assume("Guests").add([ev.timestamp, ev.uniqueGuests ]);
                     }
                     if (sources.has("Registered")) {
-                        collector.assume("Registered").add([ev.date, ev.uniquePlayers ]);
+                        collector.assume("Registered").add([ev.timestamp, ev.uniquePlayers ]);
                     }
                     if (sources.has("Visitors")) {
-                        collector.assume("Visitors").add([ev.date, ev.uniqueVisitors ]);
+                        collector.assume("Visitors").add([ev.timestamp, ev.uniqueVisitors ]);
                     }
                     if (sources.has("Total")) {
-                        collector.assume("Total").add([ev.date, ev.totalPlayers ]);
+                        collector.assume("Total").add([ev.timestamp, ev.totalPlayers ]);
                     }
                 }, options);
         });

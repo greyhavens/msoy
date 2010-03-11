@@ -4,8 +4,11 @@ package com.threerings.msoy.aggregators;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.threerings.panopticon.aggregator.hadoop.Aggregator;
 import com.threerings.panopticon.aggregator.hadoop.JavaAggregator;
 import com.threerings.panopticon.aggregator.hadoop.KeyFactory;
@@ -30,7 +33,6 @@ public class DailyTransactions
 
     public static class TransactionKey extends DayKey
     {
-        public int actionType;
         public Currency currency;
 
         public TransactionKey () { }
@@ -38,8 +40,6 @@ public class DailyTransactions
         public TransactionKey (EventData data, Currency currency)
         {
             init(data);
-
-            this.actionType = data.getInt("actionType");
             this.currency = currency;
         }
     }
@@ -47,14 +47,17 @@ public class DailyTransactions
     @StringInputNameResult(inputs="FlowTransaction" /*, incrementals="timestamp" */)
     public static class Accumulation extends FieldAggregatedResult<TransactionKey>
     {
-        public int earned;
-        public int spent;
+        public Map<Integer, Integer> earned = Maps.newHashMap();
+        public Map<Integer, Integer> spent = Maps.newHashMap();
 
         @Override
         public void doInit (TransactionKey key, EventData eventData)
         {
-            int amount;
+            if (!eventData.containsKey("actionType")) {
+                return;
+            }
 
+            int amount;
             switch(key.currency) {
             case COINS:
             default:
@@ -70,9 +73,10 @@ public class DailyTransactions
 
             // store as appropriate
             if (amount > 0) {
-                earned += amount;
+                earned.put(eventData.getInt("actionType"), amount);
+
             } else {
-                spent -= amount;
+                spent.put(eventData.getInt("actionType"), amount);
             }
         }
     }
@@ -99,12 +103,26 @@ public class DailyTransactions
     public void write (EventWriter writer, EventDataBuilder builder, TransactionKey key)
         throws IOException
     {
-        writer.write(builder.create(
-            "timestamp", key.timestamp,
-            "currency", key.currency.toString().toLowerCase(),
-            "actionType", key.actionType,
-            "earned", result.earned,
-            "spent", result.spent,
-            "ratio", (result.spent == 0) ? 0 : (double) result.earned / result.spent));
+        if (result.earned.isEmpty() && result.spent.isEmpty()) {
+            return;
+        }
+        Map<String, Object> props = Maps.newHashMap();
+        for (int actionType : Sets.union(result.earned.keySet(), result.spent.keySet())) {
+            int earned = toValue(result.earned.get(actionType));
+            int spent = toValue(result.spent.get(actionType));
+
+            props.put("earned:" + actionType, earned);
+            props.put("spent:" + actionType, spent);
+            props.put("ratio:" + actionType, (spent == 0) ? 0 : earned / spent);
+        }
+        props.put("timestamp", key.timestamp);
+        props.put("currency", key.currency.toString().toLowerCase());
+
+        writer.write(builder.create(props));
+    }
+
+    protected static int toValue (Integer maybeValue)
+    {
+        return (maybeValue != null) ? maybeValue.intValue() : 0;
     }
 }

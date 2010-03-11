@@ -36,7 +36,8 @@ public class DailyLoginCount
         }
     }
 
-    @StringInputNameResult(inputs={"Login", "VisitorInfoCreated"}, incrementals={"timestamp"})
+    @StringInputNameResult(
+        inputs={"Login", "VisitorInfoCreated"}, incrementals={"timestamp", "timestamp"})
     public static class CountLogins extends FieldAggregatedResult<EmbedDayKey>
     {
         public Set<String> uniqueVisitors = Sets.newHashSet();
