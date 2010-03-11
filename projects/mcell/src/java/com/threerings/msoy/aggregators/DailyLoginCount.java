@@ -20,19 +20,31 @@ import com.threerings.panopticon.aggregator.util.PartialDate;
 
 @Aggregator(output=DailyLoginCount.OUTPUT_EVENT_NAME, incremental="timestamp")
 public class DailyLoginCount
-    implements JavaAggregator<DayKey>
+    implements JavaAggregator<DailyLoginCount.EmbedDayKey>
 {
     public static final String OUTPUT_EVENT_NAME = "DailyLoginCount";
 
+    public static class EmbedDayKey extends DayKey {
+        public boolean isEmbedded;
+
+        @Override public void init (EventData eventData) {
+            super.init(eventData);
+
+            // the only way we have of knowing whether or not a login is through an embed
+            // is to trust the vector :/
+            this.isEmbedded = eventData.getDefaultString("vector", "").startsWith("e.");
+        }
+    }
+
     @StringInputNameResult(inputs={"Login", "VisitorInfoCreated"}, incrementals={"timestamp"})
-    public static class CountLogins extends FieldAggregatedResult<DayKey>
+    public static class CountLogins extends FieldAggregatedResult<EmbedDayKey>
     {
         public Set<String> uniqueVisitors = Sets.newHashSet();
         public Set<Integer> uniquePlayers = Sets.newHashSet();
         public Set<Integer> uniqueGuests = Sets.newHashSet();
 
         @Override
-        public void doInit (DayKey key, EventData eventData)
+        public void doInit (EmbedDayKey key, EventData eventData)
         {
             EventName name = eventData.getEventName();
 
@@ -58,11 +70,12 @@ public class DailyLoginCount
 
     public CountLogins logins;
 
-    public void write (EventWriter writer, EventDataBuilder builder, DayKey key)
+    public void write (EventWriter writer, EventDataBuilder builder, EmbedDayKey key)
         throws IOException
     {
         if (key.timestamp.before(_midnight)) {
             writer.write(builder.create("timestamp", key.timestamp,
+                "embed", key.isEmbedded,
                 "uniqueVisitors", logins.uniqueVisitors.size(),
                 "uniquePlayers", logins.uniquePlayers.size(),
                 "totalPlayers", Sets.union(logins.uniquePlayers, logins.uniqueGuests).size(),
