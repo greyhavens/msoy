@@ -35,9 +35,8 @@ public class LoginCountResult implements AggregatedResult<WritableComparable<?>,
 
         // the real juice is in the LOGIN event though
         if (LOGIN.equals(name)) {
-            Boolean isGuest = (Boolean) eventData.getData().get("isGuest");
-            int memberId = ((Number)eventData.getData().get("memberId")).intValue();
-            if (memberId < 0 || (isGuest != null && isGuest.booleanValue())) {
+            int memberId = eventData.getInt("memberId");
+            if (eventData.getDefaultBoolean("isGuest", false)) {
                 _uniqueGuests.add(memberId);
             } else {
                 _uniquePlayers.add(memberId);

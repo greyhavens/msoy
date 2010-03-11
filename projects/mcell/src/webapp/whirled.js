@@ -21,7 +21,7 @@ whirled.addCharts = function () {
                 "DailyExchangeRate", function (ev, collector) {
                     collector.assume("Exchange Rate").add(
                         [ev.date, ev.rate]);
-                }, options);
+                }, options, "date");
             return chart;
         });
 
@@ -34,11 +34,38 @@ whirled.addCharts = function () {
             var actions = new CheckBoxes("Actions", "actions", actionNames);
             var currency = new RadioButtons("Currency", "currency", ["coins", "bar", "bling" ]);
             function valueExtractor (event, name) {
-                return (currency.value == event.currency && actions.has(event.actionType) ?
-                        (event[earned] || 0) : 0;
+                if ((currency.value == event.currency) && actions.has(event.actionType) &&
+                    event.earned > 0) {
+                    return event.earned || 0;
+                }
+                return  0;
             }
             return new StackedBarChart(
-                "DailyTransactions", actionNames, valueExtractor, {controls:[actions]});
+                "DailyTransactions", actionNames, valueExtractor, {controls:[actions,currency]});
+        });
+
+        addChart("funnel", "login_count", "Daily Logins", function () {
+            var sources = new CheckBoxes("Sources", "sources", new List([
+                "Guests", "Registered", "Visitors", "Total" ]));
+            var options = {
+                xaxis: { mode: "time", minTickSize: [1, "hour"]},
+                controls: [ sources ]
+            };
+            return new SelfContainedEventChart(
+                "DailyLoginCount", function (ev, collector) {
+                    if (sources.has("Guests")) {
+                        collector.assume("Guests").add([ev.date, ev.uniqueGuests ]);
+                    }
+                    if (sources.has("Registered")) {
+                        collector.assume("Registered").add([ev.date, ev.uniquePlayers ]);
+                    }
+                    if (sources.has("Visitors")) {
+                        collector.assume("Visitors").add([ev.date, ev.uniqueVisitors ]);
+                    }
+                    if (sources.has("Total")) {
+                        collector.assume("Total").add([ev.date, ev.totalPlayers ]);
+                    }
+                }, options);
         });
 
         addChart("funnel", "funnel_web", "Conversion and Retention", function () {

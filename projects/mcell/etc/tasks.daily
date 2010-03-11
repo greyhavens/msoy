@@ -9,7 +9,7 @@ DailyForumPosts
 DailyFriendships
 DailyIdleActive
 DailyListings
-DailyLoginCount
+com.threerings.msoy.aggregators.DailyLoginCount
 DailyMail
 DailyPlayers
 DailyProfileUpdates
