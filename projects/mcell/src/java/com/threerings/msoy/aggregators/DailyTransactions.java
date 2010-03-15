@@ -5,10 +5,11 @@ package com.threerings.msoy.aggregators;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import com.threerings.panopticon.aggregator.hadoop.Aggregator;
 import com.threerings.panopticon.aggregator.hadoop.JavaAggregator;
 import com.threerings.panopticon.aggregator.hadoop.KeyFactory;
@@ -87,14 +88,16 @@ public class DailyTransactions
     public List<TransactionKey> createKeys (KeyInitData keyInitData)
     {
         List<TransactionKey> keys = Lists.newArrayList();
-        if (keyInitData.eventData.getDefaultInt("deltaFlow", 0) != 0) {
-            keys.add(new TransactionKey(keyInitData.eventData, Currency.COINS));
-        }
-        if (keyInitData.eventData.getDefaultInt("deltaBars", 0) != 0) {
-            keys.add(new TransactionKey(keyInitData.eventData, Currency.BARS));
-        }
-        if (keyInitData.eventData.getDefaultInt("deltaBling", 0) != 0) {
-            keys.add(new TransactionKey(keyInitData.eventData, Currency.BLING));
+        if (ACTION_TYPES.contains(keyInitData.eventData.getInt("actionType"))) {
+            if (keyInitData.eventData.getDefaultInt("deltaFlow", 0) != 0) {
+                keys.add(new TransactionKey(keyInitData.eventData, Currency.COINS));
+            }
+            if (keyInitData.eventData.getDefaultInt("deltaBars", 0) != 0) {
+                keys.add(new TransactionKey(keyInitData.eventData, Currency.BARS));
+            }
+            if (keyInitData.eventData.getDefaultInt("deltaBling", 0) != 0) {
+                keys.add(new TransactionKey(keyInitData.eventData, Currency.BLING));
+            }
         }
         return keys;
     }
@@ -107,7 +110,7 @@ public class DailyTransactions
             return;
         }
         Map<String, Object> props = Maps.newHashMap();
-        for (int actionType : Sets.union(result.earned.keySet(), result.spent.keySet())) {
+        for (int actionType : ACTION_TYPES) {
             int earned = toValue(result.earned.get(actionType));
             int spent = toValue(result.spent.get(actionType));
 
@@ -125,4 +128,7 @@ public class DailyTransactions
     {
         return (maybeValue != null) ? maybeValue.intValue() : 0;
     }
+
+    protected static final Set<Integer> ACTION_TYPES =
+        ImmutableSet.of(20, 31, 34, 40, 50, 51, 54, 55);
 }
