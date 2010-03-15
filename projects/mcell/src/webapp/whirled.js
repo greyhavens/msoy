@@ -44,7 +44,7 @@ whirled.addCharts = function () {
                 "DailyTransactions", actionNames, valueExtractor, {controls:[actions,currency]});
         });
 
-        addChart("funnel", "login_count", "Daily Logins", function () {
+        addChart("funnel", "logins", "Daily Logins", function () {
             var sourceNames = new List([
                 ["uniqueGuests", "Flash Guests"],
                 ["uniquePlayers", "Flash Registered"],
@@ -69,7 +69,25 @@ whirled.addCharts = function () {
                 }, options);
         });
 
-        addChart("funnel", "funnel_web", "Conversion and Retention", function () {
+        addChart("funnel", "accounts", "New Accounts", function () {
+            var sourceNames = new List([
+                ["facebookAffiliated", "Facebook Affiliate"],
+                ["fromAd", "From Ad"],
+                ["facebookAd", "Facebook Ad"],
+                ["affiliated", "Affiliated"],
+                ["organic", "Organic"],
+            ]);
+            var sources = new CheckBoxes("Sources", "sources", sourceNames);
+            function valueExtractor (event, name) {
+                return (sources.has(name)) ? (event[name] || 0) : 0;
+            }
+            var chart = new StackedBarChart(
+                "DailyAccountsCreated", sourceNames, valueExtractor, {controls:[sources]});
+            chart.extractKey = function (ev) { return ev.date; }
+            return chart;
+        });
+
+        addChart("funnel", "funnel", "Conversion and Retention", function () {
             var sourceNames = new List([
                 ["lost", "Lost"],
                 ["played", "Played"],
