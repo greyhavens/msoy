@@ -27,7 +27,7 @@ whirled.addCharts = function () {
 
         addChart("economy", "Earnings", "Earnings", function () {
             var actionNames = new List([
-                [1, "Games"], [3, "Purchases"], [34, "Payouts"], [40, "Badges"],
+                [20, "Games"], [31, "Purchases"], [34, "Payouts"], [40, "Badges"],
                 [50, "Bars Purchased"], [51, "Payouts"], [54, "Bling to Bars"],
                 [55, "Cashed Out"]
             ]);
@@ -45,8 +45,12 @@ whirled.addCharts = function () {
         });
 
         addChart("funnel", "login_count", "Daily Logins", function () {
-            var sources = new CheckBoxes("Sources", "sources", new List([
-                "Guests", "Registered", "Visitors", "Total" ]));
+            var sourceNames = new List([
+                ["uniqueGuests", "Flash Guests"],
+                ["uniquePlayers", "Flash Registered"],
+                ["totalPlayers", "Flash Total"],
+                ["uniqueVisitors", "Flash+Web Visitors"]]);
+            var sources = new CheckBoxes("Sources", "sources", sourceNames);
             var group = new RadioButtons("Group", "group", ["web", "embed" ]);
             var options = {
                 xaxis: { mode: "time", minTickSize: [1, "hour"]},
@@ -57,18 +61,11 @@ whirled.addCharts = function () {
                     if ((group.value == "embed") ^ ev.embed) {
                         return;
                     }
-                    if (sources.has("Guests")) {
-                        collector.assume("Guests").add([ev.timestamp, ev.uniqueGuests ]);
-                    }
-                    if (sources.has("Registered")) {
-                        collector.assume("Registered").add([ev.timestamp, ev.uniquePlayers ]);
-                    }
-                    if (sources.has("Visitors")) {
-                        collector.assume("Visitors").add([ev.timestamp, ev.uniqueVisitors ]);
-                    }
-                    if (sources.has("Total")) {
-                        collector.assume("Total").add([ev.timestamp, ev.totalPlayers ]);
-                    }
+                    sourceNames.each(function (bit) {
+                        if (sources.has(bit[0])) {
+                            collector.assume(bit[1]).add([ev.timestamp, ev[bit[0]]]);
+                        }
+                    });
                 }, options);
         });
 
