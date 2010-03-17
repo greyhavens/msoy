@@ -135,7 +135,7 @@ public class MsoyVideoDisplay extends Sprite
 
     protected function updateHUD () :void
     {
-        const show :Boolean = _mouseIn || !_playing || _controls.isDraggingSeek()
+        const show :Boolean = _mouseIn || !_playing || _controls.isDraggingSeek();
         Tweener.addTween(_hud, {
             time: .35,
             y: show ? HEIGHT - MediaControls.HEIGHT : HEIGHT + 1,
