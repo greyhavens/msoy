@@ -127,7 +127,7 @@ public abstract class BaseItemDetailPanel extends SmartTable
         configureCallbacks(this);
     }
 
-    private void addTagBits (ItemDetail detail)
+    protected void addTagBits (ItemDetail detail)
     {
         boolean canEditTags = CShell.isSubscriber() || _item.creatorId == CShell.getMemberId();
         TagDetailPanel.TagService tagService = new TagDetailPanel.TagService() {
@@ -166,7 +166,7 @@ public abstract class BaseItemDetailPanel extends SmartTable
         _rightBits.add(tagPanel);
     }
 
-    private void addLowerDetails ()
+    protected void addLowerDetails ()
     {
         _details.add(WidgetUtil.makeShim(10, 10));
         _indeets = new RoundBox(RoundBox.WHITE);
@@ -175,7 +175,7 @@ public abstract class BaseItemDetailPanel extends SmartTable
         _indeets.add(MsoyUI.createRestrictedHTML(ItemUtil.getDescription(_item)));
     }
 
-    private void addUpperDetails ()
+    protected void addUpperDetails ()
     {
         // set up our detail bits
         _details.add(_creator = new CreatorLabel());
@@ -192,7 +192,7 @@ public abstract class BaseItemDetailPanel extends SmartTable
         _creator.add(bshop);
     }
 
-    private void addLeftBits ()
+    protected void addLeftBits ()
     {
         SimplePanel preview = new SimplePanel();
         preview.setStyleName("ItemPreview");
