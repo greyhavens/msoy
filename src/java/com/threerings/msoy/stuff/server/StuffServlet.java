@@ -9,10 +9,13 @@ import java.io.IOException;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 
 import com.samskivert.util.ArrayUtil;
@@ -209,13 +212,44 @@ public class StuffServlet extends MsoyServiceServlet
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
 
-        List<Item> items = Lists.newArrayList(Lists.transform(
-            _itemLogic.getRepository(type).findItems(memberId, query, memrec.themeGroupId),
-            new ItemRecord.ToItem<Item>()));
+        ItemRepository<ItemRecord> repo = _itemLogic.getRepository(type);
+        List<ItemRecord> allRecords = repo.findItems(memberId, query, 0);
 
-        Collections.sort(items);
+        Set<ItemRecord> themeRecords;
+        if (memrec.themeGroupId != 0) {
+            themeRecords = Sets.newHashSet(repo.findItems(memberId, query, memrec.themeGroupId));
+        } else {
+            themeRecords = null;
+        }
 
-        return new InventoryResult<Item>(items, (memrec.themeGroupId > 0) ?
+        for (ItemRecord rec : allRecords) {
+            if (themeRecords == null || themeRecords.contains(rec)) {
+                rec.attrs |= Item.ATTR_THEME_STAMPED;
+            }
+        }
+
+        List<Item> allItems = Lists.newArrayList(Lists.transform(
+            allRecords, new ItemRecord.ToItem<Item>()));
+
+        if (memrec.themeGroupId != 0) {
+            // for a theme query, put all the stamped stuff first
+            Collections.sort(allItems, new Comparator<Item>() {
+                public int compare (Item o1, Item o2) {
+                    boolean stamp1 = o1.isAttrSet(Item.ATTR_THEME_STAMPED);
+                    boolean stamp2 = o2.isAttrSet(Item.ATTR_THEME_STAMPED);
+                    if (stamp1 == stamp2) {
+                        return o1.compareTo(o2);
+                    }
+                    return (stamp1 ? -1 : 1);
+                }
+            });
+
+        } else {
+            // otherwise just use the built-in (last touched base) comparator
+            Collections.sort(allItems);
+        }
+
+        return new InventoryResult<Item>(allItems, (memrec.themeGroupId > 0) ?
             _groupRepo.loadGroupName(memrec.themeGroupId) : null);
     }
 

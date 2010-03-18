@@ -164,6 +164,9 @@ public abstract class Item implements Comparable<Item>, Streamable, IsSerializab
     /** Indicates that this item is a remixable clone and the original version is updated. */
     public static final byte ATTR_ORIGINAL_UPDATED = 1 << 1;
 
+    /** Indicates that this item is stamped for the current user's theme, where relevant. */
+    public static final byte ATTR_THEME_STAMPED = 1 << 2;
+
     /** The maximum length for item names. */
     public static final int MAX_NAME_LENGTH = 64;
 

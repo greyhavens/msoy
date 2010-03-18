@@ -22,7 +22,6 @@ import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.util.DataModel;
 import com.threerings.gwt.util.SimpleDataModel;
 
-import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.item.data.all.IdentGameItem;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.web.gwt.Pages;
@@ -107,20 +106,13 @@ public class StuffPanel extends FlowPanel
 
             }
             @Override protected String getEmptyMessage () {
-                GroupName theme = null;
-                String query = null;
                 if (_model instanceof InventoryModels.Stuff) {
-                    query = ((InventoryModels.Stuff)_model).query;
-                    theme = ((InventoryModels.Stuff)_model).theme;
+                    String query = ((InventoryModels.Stuff)_model).query;
+                    if (query != null) {
+                        return _msgs.panelNoMatches(query);
+                    }
                 }
-                if (query != null) {
-                    return _msgs.panelNoMatches(query);
-                }
-                String typeDesc = _dmsgs.xlate("itemType" + _type);
-                if (theme != null) {
-                    typeDesc = theme.toString() + " " + typeDesc;
-                }
-                return _msgs.panelNoItems(typeDesc);
+                return _msgs.panelNoItems(_dmsgs.xlate("itemType" + _type));
             }
             @Override protected boolean displayNavi (int items) {
                 return true;
