@@ -22,6 +22,7 @@ import flash.utils.setInterval;
 
 import flash.system.ApplicationDomain;
 import flash.system.LoaderContext;
+import flash.system.Security;
 import flash.system.System;
 
 import com.threerings.util.DelayUtil;
