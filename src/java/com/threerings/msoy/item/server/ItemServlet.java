@@ -333,7 +333,7 @@ public class ItemServlet extends MsoyServiceServlet
             throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
         }
 
-        int stampItemId = (rec.isCatalogClone() ? rec.sourceId : rec.itemId);
+        int stampItemId = (rec.sourceId != 0) ? rec.sourceId : rec.itemId;
 
         if (doStamp) {
             if (!repo.stampItem(stampItemId, groupId, memrec.memberId)) {

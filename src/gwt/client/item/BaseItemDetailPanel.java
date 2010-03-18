@@ -284,9 +284,9 @@ public abstract class BaseItemDetailPanel extends SmartTable
             return;
         }
 
-        if (_item.isCatalogClone()) {
+        if (_item.sourceId != 0) {
             _stampHeader.setWidget(MsoyUI.createLabel(
-                "Theme markup for listing...", "listingMarkupHeader"));
+                "This item's listing:", "listingMarkupHeader"));
         } else {
             _stampHeader.setWidget(null);
         }
