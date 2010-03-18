@@ -19,13 +19,26 @@ import client.util.Link;
  */
 public class ClickBox extends SmartTable
 {
+    /**
+     * Create a {@link ClickBox} with the given media, style name, and link information. The page
+     * argument may be null, in which case linking will be disabled for this box.
+     */
     public ClickBox (MediaDesc media, String name, Pages page, Object... args)
     {
         super("clickBox", 0, 0);
 
-        addWidget(new ThumbBox(media, page, args), getColumns());
+        Widget box, label;
+
+        if (page != null) {
+            box = new ThumbBox(media, page, args);
+            label = Link.createBlock(name, null, page, args);
+        } else {
+            box = new ThumbBox(media);
+            label = MsoyUI.createLabel(name, null);
+        }
+        addWidget(box, getColumns());
+        addLabel(label);
         getFlexCellFormatter().setHorizontalAlignment(0, 0, HasAlignment.ALIGN_CENTER);
-        addLabel(Link.createBlock(name, null, page, args));
     }
 
     /**
