@@ -696,57 +696,6 @@ public abstract class ItemRepository<T extends ItemRecord>
         return result;
     }
 
-    /**
-     * Find a single catalog entry randomly.
-     */
-    public CatalogRecord pickRandomCatalogEntry ()
-    {
-        CatalogRecord record = load(getCatalogClass(), new QueryClause[] {
-            new Limit(0, 1),
-            OrderBy.random()
-        });
-
-        if (record != null) {
-            record.item = loadOriginalItem(record.listedItemId);
-        }
-        return record;
-    }
-
-    /**
-     * Find a single random catalog entry that is tagged with *any* of the specified tags.
-     */
-    public CatalogRecord findRandomCatalogEntryByTags (String... tags)
-    {
-        // first find the tag record...
-        List<TagNameRecord> tagRecords = getTagRepository().getTags(tags);
-        int tagCount = tagRecords.size();
-        if (tagCount == 0) {
-            return null;
-        }
-
-        Integer[] tagIds = new Integer[tagCount];
-        for (int ii = 0; ii < tagCount; ii++) {
-            tagIds[ii] = tagRecords.get(ii).tagId;
-        }
-
-        List<CatalogRecord> records = findAll(
-            getCatalogClass(),
-            new Join(getCatalogColumn(CatalogRecord.LISTED_ITEM_ID),
-                     getItemColumn(ItemRecord.ITEM_ID)),
-            new Limit(0, 1),
-            OrderBy.random(),
-            new Join(getCatalogColumn(CatalogRecord.LISTED_ITEM_ID),
-                     getTagRepository().getTagColumn(TagRecord.TARGET_ID)),
-            new Where(getTagColumn(TagRecord.TAG_ID).in(tagIds)));
-
-        if (records.isEmpty()) {
-            return null;
-        }
-
-        CatalogRecord record = records.get(0);
-        record.item = loadOriginalItem(record.listedItemId);
-        return record;
-    }
 
     /**
      * Loads all items in the catalog.
