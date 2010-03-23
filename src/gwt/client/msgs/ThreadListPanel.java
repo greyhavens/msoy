@@ -95,7 +95,7 @@ public abstract class ThreadListPanel extends PagedGrid<ForumThread>
      * Same as {@link #setPage(String, int)}, but optionally forces the model to be reset to that
      * provided by the subclass implementation, {@link #getThreadListModel()}.
      */
-    protected void setPage (String query, int page, boolean force)
+    protected void setPage (String query, final int page, boolean force)
     {
         query = query.trim();
         if (!force && _model != null && _query.equals(query)) {
@@ -108,7 +108,7 @@ public abstract class ThreadListPanel extends PagedGrid<ForumThread>
             } else {
                 doSearch(query, new InfoCallback<List<ForumThread>>() {
                     public void onSuccess (List<ForumThread> threads) {
-                        setModel(new SimpleDataModel<ForumThread>(threads), 0);
+                        setModel(new SimpleDataModel<ForumThread>(threads), page);
                     }
                 });
             }
