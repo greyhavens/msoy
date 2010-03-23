@@ -27,9 +27,9 @@ public class ItemEntry extends ItemBox
         }
         if (!item.isAttrSet(Item.ATTR_THEME_STAMPED)) {
             this.addStyleName("Shaded");
-        }
 
-        if (activator) {
+        } else if (activator) {
+            // only allow activation if the item is stamped
             addWidget(new ItemActivator(item, false), getColumns(), "Activator");
         }
     }
