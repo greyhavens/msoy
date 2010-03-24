@@ -266,8 +266,8 @@ public class FacebookServlet extends MsoyServiceServlet
         fields.add(ProfileField.FIRST_NAME);
         fields.add(ProfileField.SEX);
         try {
-            User user = ((UsersGetInfoResponse)client.users_getInfo(
-                Collections.singletonList(userId), fields)).getUser().get(0);
+            User user = client.users_getInfo(Collections.singletonList(userId), fields)
+                .getUser().get(0);
             info.username = user.getFirstName();
             if ("male".equalsIgnoreCase(user.getSex())) {
                 info.gender = FacebookService.Gender.MALE;

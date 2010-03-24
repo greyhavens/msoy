@@ -72,7 +72,7 @@ public class FacebookAuthHandler extends ExternalAuthHandler
             Set<ProfileField> fields = EnumSet.of(
                 ProfileField.FIRST_NAME, ProfileField.LAST_NAME, ProfileField.SEX,
                 ProfileField.BIRTHDAY, ProfileField.CURRENT_LOCATION);
-            UsersGetInfoResponse uinfo = (UsersGetInfoResponse)fbclient.users_getInfo(ids, fields);
+            UsersGetInfoResponse uinfo = fbclient.users_getInfo(ids, fields);
             if (uinfo.getUser().size() > 0) {
                 User user = uinfo.getUser().get(0);
                 info.displayName = user.getFirstName();
