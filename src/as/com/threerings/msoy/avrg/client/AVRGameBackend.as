@@ -15,6 +15,9 @@ import flash.utils.Dictionary;
 
 import com.threerings.util.DelayUtil;
 import com.threerings.util.Log;
+import com.threerings.util.Maps;
+import com.threerings.util.Map;
+import com.threerings.util.Map;
 import com.threerings.util.MessageBundle;
 import com.threerings.util.NetUtil;
 import com.threerings.util.ObjectMarshaller;
@@ -108,14 +111,13 @@ public class AVRGameBackend extends ControlBackend
 
         _partyHelper.shutdown();
 
-        // remove any decoration we set up on the player
-        if (_decoration != null) {
-            var view :RoomView = _wctx.getPlaceView() as RoomView;
-            var sprite :MemberSprite = view.getMyAvatar();
+        // remove any decoration we set up on players
+        _decorations.forEach(function (key :int, val :DisplayObject) :void {
+            var sprite :MemberSprite = getAvatarSprite(key);
             if (sprite != null) {
-                sprite.removeDecoration(_decoration);
+                sprite.removeDecoration(val);
             }
-        }
+        });
 
         // ensure the placeview gets the full display again
         setRoomViewBounds_v1(null);
@@ -189,6 +191,8 @@ public class AVRGameBackend extends ControlBackend
             _gameObj, _ctrl.getRoom(), _props, "playerMoved_v1", "actorStateSet_v1",
             "actorAppearanceChanged_v1");
 
+        _decorations.clear();
+
         callUserCode("enteredRoom_v1", roomId);
     }
 
@@ -199,6 +203,8 @@ public class AVRGameBackend extends ControlBackend
 
     public function roomOccupantRemoved (memberId :int) :void
     {
+        _decorations.remove(memberId);
+
         callUserCode("playerLeft_v1", memberId);
     }
 
@@ -585,32 +591,32 @@ public class AVRGameBackend extends ControlBackend
 
     // PlayerControl
     protected function setPlayerDecoration_v1 (
-        targetId :int /* ignored */, decoration :DisplayObject) :void
+        targetId :int /* ignored */, playerId :int, decoration :DisplayObject) :void
     {
         if (isPlaying()) {
-            var view :RoomView = _wctx.getPlaceView() as RoomView;
-            var sprite :MemberSprite = view.getMyAvatar();
-
+            var sprite :MemberSprite = getAvatarSprite(playerId);
             if (sprite == null) {
                 return;
             }
 
+            var existing :DisplayObject = _decorations.get(playerId);
+
             if (decoration != null) {
                 // we're setting a decoration, is it new?
-                if (_decoration == decoration) {
+                if (existing == decoration) {
                     // if no, we're done
                     return;
                 }
                 // is there an old one to remove?
-                if (_decoration != null) {
-                    sprite.removeDecoration(_decoration);
+                if (existing != null) {
+                    sprite.removeDecoration(existing);
                 }
-                _decoration = decoration;
-                sprite.addDecoration(_decoration);
+                _decorations.put(playerId, decoration);
+                sprite.addDecoration(decoration);
 
-            } else if (_decoration != null) {
+            } else if (existing != null) {
                 // we're removing an existing decoration
-                sprite.removeDecoration(_decoration);
+                sprite.removeDecoration(existing);
             }
         }
     }
@@ -1193,7 +1199,7 @@ public class AVRGameBackend extends ControlBackend
     protected var _gameObj :AVRGameObject;
     protected var _playerObj :PlayerObject;
 
-    protected var _decoration :DisplayObject;
+    protected var _decorations :Map = Maps.newMapOf(int);
 
     protected var _gameNetAdapter :BackendNetAdapter;
     protected var _playerNetAdapter :BackendNetAdapter;
