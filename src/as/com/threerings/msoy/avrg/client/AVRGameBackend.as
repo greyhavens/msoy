@@ -108,6 +108,15 @@ public class AVRGameBackend extends ControlBackend
 
         _partyHelper.shutdown();
 
+        // remove any decoration we set up on the player
+        if (_decoration != null) {
+            var view :RoomView = _wctx.getPlaceView() as RoomView;
+            var sprite :MemberSprite = view.getMyAvatar();
+            if (sprite != null) {
+                sprite.removeDecoration(_decoration);
+            }
+        }
+
         // ensure the placeview gets the full display again
         setRoomViewBounds_v1(null);
 
@@ -297,6 +306,7 @@ public class AVRGameBackend extends ControlBackend
         o["getAvatarMasterItemId_v1"] = getAvatarMasterItemId_v1;
         o["getPlayerId_v1"] = getPlayerId_v1;
         o["getPlayerName_v1"] = getPlayerName_v1;
+        o["setPlayerDecoration_v1"] = setPlayerDecoration_v1;
         o["getFacebookInfo_v1"] = getFacebookInfo_v1;
         o["holdsTrophy_v1"] = holdsTrophy_v1;
         o["getPlayerItemPacks_v1"] = getPlayerItemPacks_v1;
@@ -571,6 +581,38 @@ public class AVRGameBackend extends ControlBackend
     protected function getPlayerName_v1 (targetId :int /* ignored */) :String
     {
         return _wctx.getMyName().toString();
+    }
+
+    // PlayerControl
+    protected function setPlayerDecoration_v1 (
+        targetId :int /* ignored */, decoration :DisplayObject) :void
+    {
+        if (isPlaying()) {
+            var view :RoomView = _wctx.getPlaceView() as RoomView;
+            var sprite :MemberSprite = view.getMyAvatar();
+
+            if (sprite == null) {
+                return;
+            }
+
+            if (decoration != null) {
+                // we're setting a decoration, is it new?
+                if (_decoration == decoration) {
+                    // if no, we're done
+                    return;
+                }
+                // is there an old one to remove?
+                if (_decoration != null) {
+                    sprite.removeDecoration(_decoration);
+                }
+                _decoration = decoration;
+                sprite.addDecoration(_decoration);
+
+            } else if (_decoration != null) {
+                // we're removing an existing decoration
+                sprite.removeDecoration(_decoration);
+            }
+        }
     }
 
     // PlayerSubControl
@@ -1150,6 +1192,8 @@ public class AVRGameBackend extends ControlBackend
 
     protected var _gameObj :AVRGameObject;
     protected var _playerObj :PlayerObject;
+
+    protected var _decoration :DisplayObject;
 
     protected var _gameNetAdapter :BackendNetAdapter;
     protected var _playerNetAdapter :BackendNetAdapter;
