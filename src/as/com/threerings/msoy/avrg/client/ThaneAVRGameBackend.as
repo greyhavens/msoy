@@ -46,8 +46,6 @@ import com.threerings.msoy.avrg.data.AVRGameObject;
 import com.threerings.msoy.avrg.data.PlayerLocation;
 import com.threerings.msoy.avrg.data.PropertySpaceObjectImpl;
 
-import flash.utils.Dictionary;
-
 /**
  * Manages the connection to the server agent thane user code for an AVRG.
  */
