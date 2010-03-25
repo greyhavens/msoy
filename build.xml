@@ -84,7 +84,7 @@
     <file name="${extlibs.dir}/google-collect.jar"/>
     <file name="${extlibs.dir}/guice.jar"/>
     <file name="${extlibs.dir}/guice-multibindings.jar"/>
-    <file name="${extlibs.dir}/gwt-user.jar"/>
+    <file name="${extlibs.dir}/gwt-user-1.7.jar"/>
     <file name="${extlibs.dir}/jaxb/jaxb-api.jar"/>
     <file name="${extlibs.dir}/jcip-annotations.jar"/>
     <file name="${extlibs.dir}/jetty6/jetty-util.jar"/>
@@ -499,7 +499,7 @@
     	classname="com.google.gwt.dev.Compiler">
       <classpath>
         <fileset dir="${extlibs.dir}" includes="gwt-dev-linux.jar"/> <!-- the GWT compiler -->
-        <fileset dir="${deploy.dir}/lib" includes="gwt-user.jar"/>
+        <fileset dir="${deploy.dir}/lib" includes="gwt-user-1.7.jar"/>
         <path refid="gwt.classpath"/>
       </classpath>
       <!-- temporary workaround to crashing problem on build server's BSD java -->
