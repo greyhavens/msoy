@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
-<meta content="Config,com.threerings.util.Config,_data,_so,ensureCapacity,getValue,isPersisting,remove,setPath,setValue" name="keywords">
+<meta content="Config,com.threerings.util.Config,CONFIG_VALUE_SET,_data,_so,ensureCapacity,getPropertyNames,getValue,isPersisting,remove,setPath,setValue" name="keywords">
 <title>com.threerings.util.Config</title>
 </head>
 <body>
@@ -19,7 +19,7 @@
 <td align="left" class="titleTableTitle">Whirled API Documentation</td><td align="right" class="titleTableTopNav"><a onclick="loadClassListFrame('../../../all-classes.html')" href="../../../package-summary.html">All&nbsp;Packages</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../../all-classes.html')" href="../../../class-summary.html">All&nbsp;Classes</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../../index-list.html')" href="../../../all-index-A.html">Index</a>&nbsp;|&nbsp;<a href="../../../index.html?com/threerings/util/Config.html&amp;com/threerings/util/class-list.html" id="framesLink1">Frames</a><a onclick="parent.location=document.location" href="" style="display:none" id="noFramesLink1">No&nbsp;Frames</a></td><td rowspan="3" align="right" class="titleTableLogo"><img alt="Adobe Logo" title="Adobe Logo" class="logoImage" src="../../../images/logo.jpg"></td>
 </tr>
 <tr class="titleTableRow2">
-<td align="left" id="subTitle" class="titleTableSubTitle">Class&nbsp;Config</td><td align="right" id="subNav" class="titleTableSubNav"><a href="#propertySummary">Properties</a>&nbsp;| <a href="#methodSummary">Methods</a>&nbsp;| <a href="#eventSummary">Events</a></td>
+<td align="left" id="subTitle" class="titleTableSubTitle">Class&nbsp;Config</td><td align="right" id="subNav" class="titleTableSubNav"><a href="#propertySummary">Properties</a>&nbsp;| <a href="#methodSummary">Methods</a>&nbsp;| <a href="#eventSummary">Events</a>&nbsp;| <a href="#constantSummary">Constants</a></td>
 </tr>
 <tr class="titleTableRow3">
 <td colspan="2">&nbsp;</td>
@@ -27,7 +27,7 @@
 </table>
 <script type="text/javascript" language="javascript">
 <!--
-if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Class Config"); titleBar_setSubNav(false,true,false,false,true,false,true,false,false,false,false,false,false,false);}
+if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Class Config"); titleBar_setSubNav(true,true,false,false,true,false,true,false,false,false,false,false,false,false);}
 --></script>
 <div class="MainContent">
 <table cellspacing="0" cellpadding="0" class="classHeaderTable">
@@ -90,6 +90,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
+<a class="signatureLink" href="#getPropertyNames()">getPropertyNames</a>():Array</div>
+<div class="summaryTableDescription">
+     Gets all the property names.</div>
+</td><td class="summaryTableOwnerCol">Config</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
 <a class="signatureLink" href="#getValue()">getValue</a>(name:String, defValue:Object):Object</div>
 <div class="summaryTableDescription">
      Fetches and returns the value for the specified configuration property.</div>
@@ -144,6 +152,19 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </div>
 </td><td class="summaryTableDescription summaryTableCol">
  Dispatched when this Config object has a value set on it.</td><td class="summaryTableOwnerCol">Config</td>
+</tr>
+</table>
+</div>
+<a name="constantSummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Public Constants</div>
+<table id="summaryTableConstant" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Constant</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#CONFIG_VALUE_SET">CONFIG_VALUE_SET</a> : String = "ConfigValSet"<div class="summaryTableDescription">[static] The event type dispatched when a config value changes.</div>
+</td><td class="summaryTableOwnerCol">Config</td>
 </tr>
 </table>
 </div>
@@ -220,6 +241,23 @@ showHideInherited();
 </tr>
 <tr>
 <td width="20px"></td><td><code><span class="label">onSuccess</span>:Function</code> (default = <code>null</code>)<code></code></td>
+</tr>
+</table>
+</div>
+<a name="getPropertyNames()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getPropertyNames</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function getPropertyNames():Array</code><p>
+     Gets all the property names.
+     </p><p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Array</code></td>
 </tr>
 </table>
 </div>
@@ -339,11 +377,24 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<span class="label">Event object type: </span><a href="../util/ConfigValueSetEvent.html"><code>com.threerings.util.ConfigValueSetEvent</code></a>
+<span class="label">Event object type: </span><a href="../util/NamedValueEvent.html"><code>com.threerings.util.NamedValueEvent</code></a>
 <br>
-<p></p><p>
+<span class="label">NamedValueEvent.type property = </span><a href="../util/Config.html#CONFIG_VALUE_SET"><code>com.threerings.util.Config.CONFIG_VALUE_SET</code></a>
+<br><p>
  Dispatched when this Config object has a value set on it.
-  </p></div>
+  </p><p> The event type dispatched when a config value changes.
+          </p></div>
+<a name="constantDetail"></a>
+<div class="detailSectionHeader">Constant detail</div>
+<a name="CONFIG_VALUE_SET"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">CONFIG_VALUE_SET</td><td class="detailHeaderType">constant</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static const CONFIG_VALUE_SET:String = "ConfigValSet"</code><p> The event type dispatched when a config value changes.
+          </p></div>
 <br>
 <br>
 <hr>

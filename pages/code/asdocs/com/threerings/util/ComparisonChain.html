@@ -1,0 +1,454 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
+<link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
+<meta content="ComparisonChain,com.threerings.util.ComparisonChain,ACTIVE,compare,compareBooleans,compareComparables,compareInts,compareNumbers,compareStrings,compareStringsIgnoreCase,result,start" name="keywords">
+<title>com.threerings.util.ComparisonChain</title>
+</head>
+<body>
+<script type="text/javascript" language="javascript" src="../../../asdoc.js"></script><script type="text/javascript" language="javascript" src="../../../cookies.js"></script><script type="text/javascript" language="javascript">
+<!--
+				asdocTitle = 'ComparisonChain - Whirled API Documentation';
+				var baseRef = '../../../';
+				window.onload = configPage;
+			--></script>
+<table style="display:none" id="titleTable" cellspacing="0" cellpadding="0" class="titleTable">
+<tr>
+<td align="left" class="titleTableTitle">Whirled API Documentation</td><td align="right" class="titleTableTopNav"><a onclick="loadClassListFrame('../../../all-classes.html')" href="../../../package-summary.html">All&nbsp;Packages</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../../all-classes.html')" href="../../../class-summary.html">All&nbsp;Classes</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../../index-list.html')" href="../../../all-index-A.html">Index</a>&nbsp;|&nbsp;<a href="../../../index.html?com/threerings/util/ComparisonChain.html&amp;com/threerings/util/class-list.html" id="framesLink1">Frames</a><a onclick="parent.location=document.location" href="" style="display:none" id="noFramesLink1">No&nbsp;Frames</a></td><td rowspan="3" align="right" class="titleTableLogo"><img alt="Adobe Logo" title="Adobe Logo" class="logoImage" src="../../../images/logo.jpg"></td>
+</tr>
+<tr class="titleTableRow2">
+<td align="left" id="subTitle" class="titleTableSubTitle">Class&nbsp;ComparisonChain</td><td align="right" id="subNav" class="titleTableSubNav"><a href="#methodSummary">Methods</a>&nbsp;| <a href="#constantSummary">Constants</a></td>
+</tr>
+<tr class="titleTableRow3">
+<td colspan="2">&nbsp;</td>
+</tr>
+</table>
+<script type="text/javascript" language="javascript">
+<!--
+if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Class ComparisonChain"); titleBar_setSubNav(true,false,false,false,false,false,true,false,false,false,false,false,false,false);}
+--></script>
+<div class="MainContent">
+<table cellspacing="0" cellpadding="0" class="classHeaderTable">
+<tr>
+<td class="classHeaderTableLabel">Package</td><td><a onclick="javascript:loadClassListFrame('class-list.html')" href="package-detail.html">com.threerings.util</a></td>
+</tr>
+<tr>
+<td class="classHeaderTableLabel">Class</td><td class="classSignature">public class ComparisonChain</td>
+</tr>
+</table>
+<p></p>
+ A utility for performing a "lazy" chained comparison statement, which
+ performs comparisons only until it finds a nonzero result. For example:
+  The value of this expression will have the same sign as the <i>first
+ nonzero</i> comparison result in the chain, or will be zero if every
+ comparison result was zero.
+  <p>Once any comparison returns a nonzero value, remaining comparisons are
+ "short-circuited".
+  <p></p>
+<br>
+<span class="label">Example</span>
+<br> <div class='listing'><pre>
+   public function compareTo (that :Object) :int
+   {
+       return ComparisonChain.start()
+           .compareStrings(this.aString, that.aString)
+           .compareInts(this.anInt, that.anInt)
+           .compareComparables(this.anEnum, that.anEnum)
+           .result();
+   }
+ </pre></div>
+ <p></p>
+<br>
+<hr>
+</div>
+<a name="methodSummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Public Methods</div>
+<table id="summaryTableMethod" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Method</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#compare()">compare</a>(left:*, right:Function, comparator:* = null):<a href="../util/ComparisonChain.html">ComparisonChain</a>
+</div>
+<div class="summaryTableDescription">
+     Compares two Objects of any type, <i>if</i> the result of this comparison chain
+     has not already been determined.</div>
+</td><td class="summaryTableOwnerCol">ComparisonChain</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#compareBooleans()">compareBooleans</a>(left:Boolean, right:Boolean):<a href="../util/ComparisonChain.html">ComparisonChain</a>
+</div>
+<div class="summaryTableDescription">
+     Compares two Booleans, <i>if</i> the result of this comparison chain
+     has not already been determined.</div>
+</td><td class="summaryTableOwnerCol">ComparisonChain</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#compareComparables()">compareComparables</a>(left:<a href="Comparable.html">Comparable</a>, right:<a href="Comparable.html">Comparable</a>):<a href="../util/ComparisonChain.html">ComparisonChain</a>
+</div>
+<div class="summaryTableDescription">
+     Compares two comparable objects, <i>if</i> the result of this comparison chain
+     has not already been determined.</div>
+</td><td class="summaryTableOwnerCol">ComparisonChain</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#compareInts()">compareInts</a>(left:int, right:int):<a href="../util/ComparisonChain.html">ComparisonChain</a>
+</div>
+<div class="summaryTableDescription">
+     Compares two ints, <i>if</i> the result of this comparison chain
+     has not already been determined.</div>
+</td><td class="summaryTableOwnerCol">ComparisonChain</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#compareNumbers()">compareNumbers</a>(left:Number, right:Number):<a href="../util/ComparisonChain.html">ComparisonChain</a>
+</div>
+<div class="summaryTableDescription">
+     Compares two Numbers, <i>if</i> the result of this comparison chain
+     has not already been determined.</div>
+</td><td class="summaryTableOwnerCol">ComparisonChain</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#compareStrings()">compareStrings</a>(left:String, right:String):<a href="../util/ComparisonChain.html">ComparisonChain</a>
+</div>
+<div class="summaryTableDescription">
+     Compares two Strings, <i>if</i> the result of this comparison chain
+     has not already been determined.</div>
+</td><td class="summaryTableOwnerCol">ComparisonChain</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#compareStringsIgnoreCase()">compareStringsIgnoreCase</a>(left:String, right:String):<a href="../util/ComparisonChain.html">ComparisonChain</a>
+</div>
+<div class="summaryTableDescription">
+     Compares two strings, ignoring case, <i>if</i> the result of this comparison chain
+     has not already been determined.</div>
+</td><td class="summaryTableOwnerCol">ComparisonChain</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#result()">result</a>():int</div>
+<div class="summaryTableDescription">
+     Ends this ComparisonChain and returns its reuslt.</div>
+</td><td class="summaryTableOwnerCol">ComparisonChain</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#start()">start</a>():<a href="../util/ComparisonChain.html">ComparisonChain</a>
+</div>
+<div class="summaryTableDescription">[static]
+     Start a ComparisonChain.</div>
+</td><td class="summaryTableOwnerCol">ComparisonChain</td>
+</tr>
+</table>
+</div>
+<a name="constantSummary"></a><a name="protectedConstantSummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Protected Constants</div>
+<table id="summaryTableProtectedConstant" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Constant</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#ACTIVE">ACTIVE</a> : <a href="../util/ComparisonChain.html">ComparisonChain</a>
+<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">ComparisonChain</td>
+</tr>
+</table>
+</div>
+<script type="text/javascript" language="javascript">
+<!--
+showHideInherited();
+--></script>
+<div class="MainContent">
+<a name="methodDetail"></a>
+<div class="detailSectionHeader">Method detail</div>
+<a name="compare()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">compare</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function compare(left:*, right:Function, comparator:* = null):<a href="../util/ComparisonChain.html">ComparisonChain</a></code><p>
+     Compares two Objects of any type, <i>if</i> the result of this comparison chain
+     has not already been determined. If a comparator is specified, that is used, otherwise
+     it tries to suss-out the types of the arguments and compares them that way.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">left</span>:*</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">right</span>:Function</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">comparator</span>:*</code> (default = <code>null</code>)<code></code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code><a href="../util/ComparisonChain.html">ComparisonChain</a></code></td>
+</tr>
+</table>
+</div>
+<a name="compareBooleans()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">compareBooleans</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function compareBooleans(left:Boolean, right:Boolean):<a href="../util/ComparisonChain.html">ComparisonChain</a></code><p>
+     Compares two Booleans, <i>if</i> the result of this comparison chain
+     has not already been determined.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">left</span>:Boolean</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">right</span>:Boolean</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code><a href="../util/ComparisonChain.html">ComparisonChain</a></code></td>
+</tr>
+</table>
+</div>
+<a name="compareComparables()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">compareComparables</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function compareComparables(left:<a href="Comparable.html">Comparable</a>, right:<a href="Comparable.html">Comparable</a>):<a href="../util/ComparisonChain.html">ComparisonChain</a></code><p>
+     Compares two comparable objects, <i>if</i> the result of this comparison chain
+     has not already been determined.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">left</span>:<a href="Comparable.html">Comparable</a></code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">right</span>:<a href="Comparable.html">Comparable</a></code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code><a href="../util/ComparisonChain.html">ComparisonChain</a></code></td>
+</tr>
+</table>
+</div>
+<a name="compareInts()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">compareInts</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function compareInts(left:int, right:int):<a href="../util/ComparisonChain.html">ComparisonChain</a></code><p>
+     Compares two ints, <i>if</i> the result of this comparison chain
+     has not already been determined.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">left</span>:int</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">right</span>:int</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code><a href="../util/ComparisonChain.html">ComparisonChain</a></code></td>
+</tr>
+</table>
+</div>
+<a name="compareNumbers()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">compareNumbers</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function compareNumbers(left:Number, right:Number):<a href="../util/ComparisonChain.html">ComparisonChain</a></code><p>
+     Compares two Numbers, <i>if</i> the result of this comparison chain
+     has not already been determined.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">left</span>:Number</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">right</span>:Number</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code><a href="../util/ComparisonChain.html">ComparisonChain</a></code></td>
+</tr>
+</table>
+</div>
+<a name="compareStrings()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">compareStrings</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function compareStrings(left:String, right:String):<a href="../util/ComparisonChain.html">ComparisonChain</a></code><p>
+     Compares two Strings, <i>if</i> the result of this comparison chain
+     has not already been determined.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">left</span>:String</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">right</span>:String</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code><a href="../util/ComparisonChain.html">ComparisonChain</a></code></td>
+</tr>
+</table>
+</div>
+<a name="compareStringsIgnoreCase()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">compareStringsIgnoreCase</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function compareStringsIgnoreCase(left:String, right:String):<a href="../util/ComparisonChain.html">ComparisonChain</a></code><p>
+     Compares two strings, ignoring case, <i>if</i> the result of this comparison chain
+     has not already been determined.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">left</span>:String</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">right</span>:String</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code><a href="../util/ComparisonChain.html">ComparisonChain</a></code></td>
+</tr>
+</table>
+</div>
+<a name="result()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">result</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function result():int</code><p>
+     Ends this ComparisonChain and returns its reuslt.
+     </p><p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>int</code></td>
+</tr>
+</table>
+</div>
+<a name="start()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">start</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function start():<a href="../util/ComparisonChain.html">ComparisonChain</a></code><p>
+     Start a ComparisonChain.
+     </p><p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code><a href="../util/ComparisonChain.html">ComparisonChain</a></code></td>
+</tr>
+</table>
+</div>
+<a name="constantDetail"></a>
+<div class="detailSectionHeader">Constant detail</div>
+<a name="ACTIVE"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">ACTIVE</td><td class="detailHeaderType">constant</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected static const ACTIVE:<a href="../util/ComparisonChain.html">ComparisonChain</a></code>
+</div>
+<br>
+<br>
+<hr>
+<br>
+<p></p>
+<center class="copyright">Copyright&nbsp;&copy;&nbsp;2007-2009 Three Rings Design, Inc.</center>
+</div>
+</body>
+</html>
+<!--Copyright © 2007-2009 Three Rings Design, Inc.-->

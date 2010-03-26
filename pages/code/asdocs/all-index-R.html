@@ -158,14 +158,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("RÂ
      Adds the specified listener to the specified dispatcher for the specified event.</td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/EventHandlers.html#registerListener()">registerListener</a>(dispatcher, event, listener, useCapture, priority) &mdash; Static method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/EventHandlers.html">EventHandlers</a></td>
-</tr>
-<tr>
-<td width="20"></td><td>
-     Adds the specified listener to the specified dispatcher for the specified event.</td>
-</tr>
-<tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/EventHandlers.html#registerListenerUntil()">registerListenerUntil</a>(triggerDispatcher, triggerEvent, dispatcher, event, listener) &mdash; Static method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/EventHandlers.html">EventHandlers</a></td>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/EventHandlerManager.html#registerListenerUntil()">registerListenerUntil</a>(triggerDispatcher, triggerEvent, dispatcher, event, listener) &mdash; Method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/EventHandlerManager.html">EventHandlerManager</a></td>
 </tr>
 <tr>
 <td width="20"></td><td>
@@ -174,13 +167,6 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("RÂ
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/EventHandlerManager.html#registerOneShotCallback()">registerOneShotCallback</a>(dispatcher, event, callback, useCapture, priority) &mdash; Method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/EventHandlerManager.html">EventHandlerManager</a></td>
-</tr>
-<tr>
-<td width="20"></td><td>
-     Registers a zero-arg callback function that should be called once when the event fires.</td>
-</tr>
-<tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/EventHandlers.html#registerOneShotCallback()">registerOneShotCallback</a>(dispatcher, event, callback, useCapture, priority) &mdash; Static method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/EventHandlers.html">EventHandlers</a></td>
 </tr>
 <tr>
 <td width="20"></td><td>
@@ -202,14 +188,6 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("RÂ
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/EventHandlerManager.html#registerUnload()">registerUnload</a>(dispatcher) &mdash; Method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/EventHandlerManager.html">EventHandlerManager</a></td>
-</tr>
-<tr>
-<td width="20"></td><td>
-     Registers the freeAllHandlers() method to be called upon Event.UNLOAD on the supplied
-     event dispatcher.</td>
-</tr>
-<tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/EventHandlers.html#registerUnload()">registerUnload</a>(dispatcher) &mdash; Static method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/EventHandlers.html">EventHandlers</a></td>
 </tr>
 <tr>
 <td width="20"></td><td>
@@ -314,6 +292,13 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("RÂ
 <tr>
 <td width="20"></td><td>
      Removes the previously assigned decoration.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/RoomSubControlClient.html#removeDecoration()">removeDecoration</a>(playerId) &mdash; Method in class com.whirled.avrg.<a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/RoomSubControlClient.html">RoomSubControlClient</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Removes the previously assigned decoration on a given player.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/display/class-list.html');" href="com/threerings/display/AnimationManager.html#removeDisplayAnimation()">removeDisplayAnimation</a>(disp) &mdash; Static method in class com.threerings.display.<a onclick="javascript:loadClassListFrame('com/threerings/display/class-list.html');" href="com/threerings/display/AnimationManager.html">AnimationManager</a></td>
@@ -440,6 +425,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("RÂ
      Reset to 0, with the amplitude about to increase.</td>
 </tr>
 <tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/ArrayUtil.html#resize()">resize</a>(arr, newLength) &mdash; Static method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/ArrayUtil.html">ArrayUtil</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Properly resizes an Array, truncating if it's too large, and padding it with 'undefined'
+     if too small.</td>
+</tr>
+<tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/GameSubControl.html#restartGameIn()">restartGameIn</a>(seconds) &mdash; Method in class com.whirled.game.<a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/GameSubControl.html">GameSubControl</a></td>
 </tr>
 <tr>
@@ -451,6 +444,13 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("RÂ
 </tr>
 <tr>
 <td width="20"></td><td></td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/ComparisonChain.html#result()">result</a>() &mdash; Method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/ComparisonChain.html">ComparisonChain</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Ends this ComparisonChain and returns its reuslt.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/MultiLoader.html#_result">_result</a> &mdash; Property in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/MultiLoader.html">MultiLoader</a></td>

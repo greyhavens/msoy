@@ -345,7 +345,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("EÂ
      </td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/geom/class-list.html');" href="com/threerings/geom/Vector2.html#equals()">equals</a>(v:<a href="com/threerings/geom/Vector2.html" onclick="javascript:loadClassListFrame('com/threerings/geom./class-list.html');">com.threerings.geom:Vector2</a>) &mdash; Method in class com.threerings.geom.<a onclick="javascript:loadClassListFrame('com/threerings/geom/class-list.html');" href="com/threerings/geom/Vector2.html">Vector2</a></td>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/geom/class-list.html');" href="com/threerings/geom/Vector2.html#equals()">equals</a>(v) &mdash; Method in class com.threerings.geom.<a onclick="javascript:loadClassListFrame('com/threerings/geom/class-list.html');" href="com/threerings/geom/Vector2.html">Vector2</a></td>
 </tr>
 <tr>
 <td width="20"></td><td>
@@ -434,6 +434,12 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("EÂ
 <td width="20"></td><td></td>
 </tr>
 <tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/EventHandlerManager.html#_errorHandler">_errorHandler</a> &mdash; Property in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/EventHandlerManager.html">EventHandlerManager</a></td>
+</tr>
+<tr>
+<td width="20"></td><td></td>
+</tr>
+<tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/ui/class-list.html');" href="com/threerings/ui/KeyboardCodes.html#ESCAPE">ESCAPE</a> &mdash; Constant static property in class com.threerings.ui.<a onclick="javascript:loadClassListFrame('com/threerings/ui/class-list.html');" href="com/threerings/ui/KeyboardCodes.html">KeyboardCodes</a></td>
 </tr>
 <tr>
@@ -447,17 +453,16 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("EÂ
  A class for keeping track of event listeners and freeing them all at a given time.</td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/EventHandlerManager.html#_eventHandlers">_eventHandlers</a> &mdash; Property in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/EventHandlerManager.html">EventHandlerManager</a></td>
-</tr>
-<tr>
-<td width="20"></td><td></td>
-</tr>
-<tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/EventHandlers.html">EventHandlers</a> &mdash; Class in package <a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/package-detail.html">com.threerings.util</a></td>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/EventHandlerManager.html#EventHandlerManager()">EventHandlerManager</a>(globalErrorHandler) &mdash; Constructor in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/EventHandlerManager.html">EventHandlerManager</a></td>
 </tr>
 <tr>
 <td width="20"></td><td>
- A class for keeping track of event listeners and freeing them all at a given time.</td>
+     Create a EventHandlerManager, optionally specifying a "globalErrorHandler" with the
+     following signature:
+     <div class='listing'><pre>
+        function (error :Error) :void;
+     </pre></div>
+          NOTE: a global error handler will soon be built-in to Flash player 10.1.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/RingBuffer.html#every()">every</a>(callback, thisObject) &mdash; Method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/RingBuffer.html">RingBuffer</a></td>

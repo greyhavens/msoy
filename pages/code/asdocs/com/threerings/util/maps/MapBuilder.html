@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../../print.css" type="text/css" media="print">
-<meta content="MapBuilder,com.threerings.util.maps.MapBuilder,build,makeExpiring,makeImmutable,makeLR,makeSorted,makeWeakValues,put,setDefaultValue" name="keywords">
+<meta content="MapBuilder,com.threerings.util.maps.MapBuilder,build,makeComputing,makeExpiring,makeImmutable,makeLR,makeSorted,makeWeakValues,put,setDefaultValue" name="keywords">
 <title>com.threerings.util.maps.MapBuilder</title>
 </head>
 <body>
@@ -76,6 +76,15 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summaryTableDescription">
      Build the Map!
      </div>
+</td><td class="summaryTableOwnerCol">MapBuilder</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#makeComputing()">makeComputing</a>(computer:Function):<a href="../maps/MapBuilder.html">MapBuilder</a>
+</div>
+<div class="summaryTableDescription">
+     Make the map compute values for missing keys with the given function.</div>
 </td><td class="summaryTableOwnerCol">MapBuilder</td>
 </tr>
 <tr class="">
@@ -181,6 +190,31 @@ showHideInherited();
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20"></td><td><code><a href="../../util/Map.html">Map</a></code></td>
+</tr>
+</table>
+</div>
+<a name="makeComputing()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">makeComputing</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function makeComputing(computer:Function):<a href="../maps/MapBuilder.html">MapBuilder</a></code><p>
+     Make the map compute values for missing keys with the given function.  If setDefaultValue is
+     also used, the compute function will first create a value for a missing key, and if it
+     returns undefined, then the default value will be used.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">computer</span>:Function</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code><a href="../maps/MapBuilder.html">MapBuilder</a></code></td>
 </tr>
 </table>
 </div>
@@ -360,7 +394,8 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public function setDefaultValue(value:*):<a href="../maps/MapBuilder.html">MapBuilder</a></code><p>
-     Make the Map have a default value other than undefined.
+     Make the Map have a default value other than undefined.  If makeComputing is also used, this
+     will only be returned if the computing function returns undefined for a key.
      </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>

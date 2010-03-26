@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
-<meta content="ArrayUtil,com.threerings.util.ArrayUtil,contains,copy,copyOf,create,equals,findIf,indexIf,indexOf,removeAll,removeAllIf,removeFirst,removeFirstIf,removeLast,removeLastIf,shuffle,sort,sortOn,sortedInsert,splice,stableSort" name="keywords">
+<meta content="ArrayUtil,com.threerings.util.ArrayUtil,contains,copy,copyOf,create,equals,findIf,indexIf,indexOf,padToLength,removeAll,removeAllIf,removeFirst,removeFirstIf,removeLast,removeLastIf,resize,shuffle,sort,sortOn,sortedInsert,splice,stableSort,transpose" name="keywords">
 <title>com.threerings.util.ArrayUtil</title>
 </head>
 <body>
@@ -125,6 +125,15 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
+<a class="signatureLink" href="#padToLength()">padToLength</a>(arr:Array, size:uint, val:* = null):Array</div>
+<div class="summaryTableDescription">[static]
+     Pad the array to the specified length with the value specified, returning the passed-in
+     array for convenience.</div>
+</td><td class="summaryTableOwnerCol">ArrayUtil</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
 <a class="signatureLink" href="#removeAll()">removeAll</a>(arr:Array, element:Object):Boolean</div>
 <div class="summaryTableDescription">[static]
      Removes all instances of the specified element from the array.</div>
@@ -168,6 +177,15 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <a class="signatureLink" href="#removeLastIf()">removeLastIf</a>(arr:Array, pred:Function):Boolean</div>
 <div class="summaryTableDescription">[static]
      Removes the last element in the array for which the specified predicate returns true.</div>
+</td><td class="summaryTableOwnerCol">ArrayUtil</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#resize()">resize</a>(arr:Array, newLength:uint):void</div>
+<div class="summaryTableDescription">[static]
+     Properly resizes an Array, truncating if it's too large, and padding it with 'undefined'
+     if too small.</div>
 </td><td class="summaryTableOwnerCol">ArrayUtil</td>
 </tr>
 <tr class="">
@@ -217,6 +235,15 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <a class="signatureLink" href="#stableSort()">stableSort</a>(arr:Array, comp:Function = null):void</div>
 <div class="summaryTableDescription">[static]
      Perform a stable sort on the specified array.</div>
+</td><td class="summaryTableOwnerCol">ArrayUtil</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#transpose()">transpose</a>(x:Array, y:Array, ... arrays):Array</div>
+<div class="summaryTableDescription">[static]
+     Returns an array whose nth element is an array of the nth elements of each of the passed
+     in arrays.</div>
 </td><td class="summaryTableOwnerCol">ArrayUtil</td>
 </tr>
 </table>
@@ -483,6 +510,42 @@ showHideInherited();
 </tr>
 </table>
 </div>
+<a name="padToLength()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">padToLength</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function padToLength(arr:Array, size:uint, val:* = null):Array</code><p>
+     Pad the array to the specified length with the value specified, returning the passed-in
+     array for convenience.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">arr</span>:Array</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">size</span>:uint</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">val</span>:*</code> (default = <code>null</code>)<code></code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Array</code></td>
+</tr>
+</table>
+</div>
 <a name="removeAll()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -666,6 +729,31 @@ showHideInherited();
 </tr>
 </table>
 </div>
+<a name="resize()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">resize</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function resize(arr:Array, newLength:uint):void</code><p>
+     Properly resizes an Array, truncating if it's too large, and padding it with 'undefined'
+     if too small.
+          An Array grown with the Array class's length setter will not actually have the
+     number of elements that it claims to.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">arr</span>:Array</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">newLength</span>:uint</code></td>
+</tr>
+</table>
+</div>
 <a name="shuffle()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -839,6 +927,54 @@ showHideInherited();
 <td width="20px"></td><td><code><span class="label">comp</span>:Function</code> (default = <code>null</code>)<code></code></td>
 </tr>
 </table>
+</div>
+<a name="transpose()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">transpose</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function transpose(x:Array, y:Array, ... arrays):Array</code><p>
+     Returns an array whose nth element is an array of the nth elements of each of the passed
+     in arrays. Therefore, the length of the returned array will be the maximum of the lengths
+     of the passed in arrays and will have no undefined entries. Also, the nth element of the
+     returned array will contain undefined entries for each corresponding array whose nth
+     element was undefined.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">x</span>:Array</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">y</span>:Array</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code>... <span class="label">arrays</span></code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Array</code></td>
+</tr>
+</table>
+<br>
+<span class="label">Example</span>
+<br>     <div class='listing'><pre>
+         var trans :Array = transpose([1, 2, 3], ["a", "b", "c"], ["foo", "bar", "baz"]);
+         trace(trans[0]); // [1, "a", "foo"]
+         trace(trans[1]); // [2, "b", "bar"]
+         trace(trans[2]); // [3, "c", "baz"]
+     </pre></div>
+     <p></p>
 </div>
 <br>
 <br>

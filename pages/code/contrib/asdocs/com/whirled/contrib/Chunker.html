@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
-<meta content="Chunker,com.whirled.contrib.Chunker,ALWAYS_COMPRESS,COMPRESSED_TOKEN,END_TOKEN,MAX_CHUNK_DATA,MIN_SEND_WAIT,NEVER_COMPRESS,NO_TOKENS,OBJECT_TOKEN,START_TOKEN,TRY_COMPRESS,_ctrl,_inData,_msgName,_nextSend,_outData,_outTokens,_timer,checkSendChunk,chunkReceived,countChunks,handleMessage,handleUnload,send,sendChunk" name="keywords">
+<meta content="Chunker,com.whirled.contrib.Chunker,ALWAYS_COMPRESS,COMPRESSED_TOKEN,END_TOKEN,MAX_CHUNK_DATA,MIN_SEND_WAIT,NEVER_COMPRESS,NO_TOKENS,OBJECT_TOKEN,START_TOKEN,TRY_COMPRESS,_ctrl,_inChunks,_msgName,_nextSend,_outData,_outTokens,_thisId,_timer,checkSendChunk,chunkReceived,countChunks,handleMessage,handleUnload,send,sendChunk" name="keywords">
 <title>com.whirled.contrib.Chunker</title>
 </head>
 <body>
@@ -60,7 +60,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </td><td class="summaryTableOwnerCol">Chunker</td>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_inData">_inData</a> : ByteArray<div class="summaryTableDescription"> The data we're currently receiving.</div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_inChunks">_inChunks</a> : Object<div class="summaryTableDescription"> Holds incomplete chunks being received.</div>
 </td><td class="summaryTableOwnerCol">Chunker</td>
 </tr>
 <tr class="">
@@ -77,6 +77,10 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_outTokens">_outTokens</a> : int<div class="summaryTableDescription"> Some tokens describing the format of the _outData.</div>
+</td><td class="summaryTableOwnerCol">Chunker</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_thisId">_thisId</a> : String<div class="summaryTableDescription"> The instance id of this instance of the chunker.</div>
 </td><td class="summaryTableOwnerCol">Chunker</td>
 </tr>
 <tr class="">
@@ -128,7 +132,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#chunkReceived()">chunkReceived</a>(inBytes:ByteArray):void</div>
+<a class="signatureLink" href="#chunkReceived()">chunkReceived</a>(id:String, inBytes:ByteArray):void</div>
 <div class="summaryTableDescription">
      Handle a received chunk.</div>
 </td><td class="summaryTableOwnerCol">Chunker</td>
@@ -259,14 +263,14 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>protected var _ctrl:EntityControl</code><p> The entity control we're using. </p></div>
-<a name="_inData"></a>
+<a name="_inChunks"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">_inData</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+<td class="detailHeaderName">_inChunks</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
 </tr>
 </table>
 <div class="detailBody">
-<code>protected var _inData:ByteArray</code><p> The data we're currently receiving. </p></div>
+<code>protected var _inChunks:Object</code><p> Holds incomplete chunks being received. </p></div>
 <a name="_msgName"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -299,6 +303,14 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>protected var _outTokens:int</code><p> Some tokens describing the format of the _outData. </p></div>
+<a name="_thisId"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_thisId</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _thisId:String</code><p> The instance id of this instance of the chunker. </p></div>
 <a name="_timer"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -328,7 +340,7 @@ showHideInherited();
 <td class="paramSpacer">&nbsp;</td>
 </tr>
 <tr>
-<td width="20px"></td><td><code><span class="label">msgName</span>:String</code> (default = "<code>chunk</code>")<code></code> &mdash; the name of the message to use for data sent using this chunker.
+<td width="20px"></td><td><code><span class="label">msgName</span>:String</code> (default = "<code>chunk</code>")<code></code> &mdash; the prefix name of the message to use for data sent using this chunker.
      </td>
 </tr>
 <tr>
@@ -336,7 +348,7 @@ showHideInherited();
 </tr>
 <tr>
 <td width="20px"></td><td><code><span class="label">receivedCallback</span>:Function</code> (default = <code>null</code>)<code></code> &mdash; may be specified instead of listening for the complete event,
-     this function will be invoked when the data is received.
+     this function will be invoked when the data is received. Only the value is returned.
      Signature: function (data :Object) :void;
      </td>
 </tr>
@@ -361,10 +373,16 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>protected function chunkReceived(inBytes:ByteArray):void</code><p>
+<code>protected function chunkReceived(id:String, inBytes:ByteArray):void</code><p>
      Handle a received chunk.
      </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">id</span>:String</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
 <tr>
 <td width="20px"></td><td><code><span class="label">inBytes</span>:ByteArray</code></td>
 </tr>
@@ -473,10 +491,11 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<span class="label">Event object type: </span><a href=""><code>com.threerings.util.ValueEvent</code></a>
+<span class="label">Event object type: </span><a href=""><code>com.threerings.util.NamedValueEvent</code></a>
 <br>
 <p></p><p>
  Dispatched when the chunks are reconstituted and ready to use.
+ The 'name' property will contain the String version of the instance id that sent the data.
  The 'value' property will contain the received data.
   </p></div>
 <a name="constantDetail"></a>

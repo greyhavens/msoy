@@ -187,7 +187,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#getMicrophone()">getMicrophone</a>(index:int = 0):Microphone</div>
+<a class="signatureLink" href="#getMicrophone()">getMicrophone</a>(index:int = -1):Microphone</div>
 <div class="summaryTableDescription">
      Access the local user's microphone.</div>
 </td><td class="summaryTableOwnerCol">EntityControl</td>
@@ -837,14 +837,14 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function getMicrophone(index:int = 0):Microphone</code><p>
+<code>public function getMicrophone(index:int = -1):Microphone</code><p>
      Access the local user's microphone.
           </p><p>Calling Microphone.getMicrophone() does not work inside whirled due to security
      restrictions. For convenience, this method works even when you're not connected.</p>
      <span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20px"></td><td><code><span class="label">index</span>:int</code> (default = <code>0</code>)<code></code></td>
+<td width="20px"></td><td><code><span class="label">index</span>:int</code> (default = <code>-1</code>)<code></code></td>
 </tr>
 </table>
 <p></p>

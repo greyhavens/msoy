@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
-<meta content="RoomSubControlClient,com.whirled.avrg.RoomSubControlClient,props,canManageRoom,getEntityIds,getEntityProperty,getMobSubControl,getMusicId3,getRoomId" name="keywords">
+<meta content="RoomSubControlClient,com.whirled.avrg.RoomSubControlClient,props,canManageRoom,getEntityIds,getEntityProperty,getMobSubControl,getMusicId3,getRoomId,removeDecoration,setDecoration" name="keywords">
 <title>com.whirled.avrg.RoomSubControlClient</title>
 </head>
 <body>
@@ -245,6 +245,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
      Tests if a player of a given id is in this room.</div>
 </td><td class="summaryTableOwnerCol"><a href="RoomSubControlBase.html">RoomSubControlBase</a></td>
 </tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#removeDecoration()">removeDecoration</a>(playerId:int):void</div>
+<div class="summaryTableDescription">
+     Removes the previously assigned decoration on a given player.</div>
+</td><td class="summaryTableOwnerCol">RoomSubControlClient</td>
+</tr>
 <tr class="hideInheritedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
@@ -252,6 +260,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summaryTableDescription">
      Unregisters an event listener.</div>
 </td><td class="summaryTableOwnerCol"><a href="../AbstractControl.html">AbstractControl</a></td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#setDecoration()">setDecoration</a>(playerId:int, decoration:DisplayObject):void</div>
+<div class="summaryTableDescription">
+     Assigns an object to decorate the given player.</div>
+</td><td class="summaryTableOwnerCol">RoomSubControlClient</td>
 </tr>
 </table>
 </div>
@@ -546,6 +562,44 @@ showHideInherited();
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20"></td><td><code>int</code></td>
+</tr>
+</table>
+</div>
+<a name="removeDecoration()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">removeDecoration</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function removeDecoration(playerId:int):void</code><p>
+     Removes the previously assigned decoration on a given player.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">playerId</span>:int</code></td>
+</tr>
+</table>
+</div>
+<a name="setDecoration()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">setDecoration</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function setDecoration(playerId:int, decoration:DisplayObject):void</code><p>
+     Assigns an object to decorate the given player.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">playerId</span>:int</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">decoration</span>:DisplayObject</code></td>
 </tr>
 </table>
 </div>
