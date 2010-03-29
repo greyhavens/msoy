@@ -40,13 +40,17 @@ public class GameSession extends CrowdSession
 
         GameCredentials creds = (GameCredentials)getCredentials();
         final String vector = StringUtil.getOr(creds.vector, "game_session");
+        final int memberId = _plobj.memberName.getMemberId();
 
         final VisitorInfo info;
         if (creds.visitorId != null) {
             info = new VisitorInfo(creds.visitorId, false);
+
+        } else if (_plobj.visitorInfo != null) {
+            info = _plobj.visitorInfo;
+
         } else {
-            log.warning("No visitorId in GameCredentials", "memberId",
-                _plobj.memberName.getMemberId());
+            log.warning("No visitorId in GameCredentials", "memberId", memberId);
             info = new VisitorInfo();
         }
 
@@ -55,7 +59,6 @@ public class GameSession extends CrowdSession
         // for now we look in the database whether or not the tracker already exists. We might
         // want to create a field in {@link MsoyCredentials} that suggests a visitorId was
         // freshly created on the client.
-        final int memberId = _plobj.memberName.getMemberId();
 
         log.info("GameSession", "info", info, "vector", vector, "memberId", memberId);
 

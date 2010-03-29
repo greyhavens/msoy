@@ -102,17 +102,19 @@ public class MsoySession extends WhirledSession
         if (_memobj.isPermaguest() && !_memobj.isViewer()) {
             WorldCredentials creds = (WorldCredentials)getCredentials();
             final String vector = StringUtil.getOr(creds.vector, "world_session");
+            final int memberId = _memobj.memberName.getMemberId();
 
             final VisitorInfo info;
             if (creds.visitorId != null) {
                 info = new VisitorInfo(creds.visitorId, false);
+
+            } else if (_memobj.visitorInfo != null) {
+                info = _memobj.visitorInfo;
+
             } else {
-                log.warning("No visitorId in WorldCredentials", "memberId",
-                    _memobj.memberName.getMemberId());
+                log.warning("No visitorId in WorldCredentials", "memberId", memberId);
                 info = new VisitorInfo();
             }
-
-            final int memberId = _memobj.getMemberId();
 
             log.info("MsoySession", "info", info, "vector", vector, "memberId", memberId);
 
