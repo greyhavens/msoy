@@ -466,7 +466,7 @@ public class SpamLogic
         }
 
         // oh look, they've logged in! maybe the email(s) worked. clear counter
-        boolean persuaded = last != null && mrec.lastSession.after(last);
+        boolean persuaded = (last != null) && mrec.lastSession.after(last);
         if (persuaded) {
             spamRec.retentionCountSinceLogin = 0;
             // fall through, we'll send a mail and save the record below
@@ -609,6 +609,7 @@ public class SpamLogic
 
         // pick a random subject line based on the bucket
         String subjectLine = RandomUtil.pickRandom(bucket.subjectLines);
+        String address = (addressOverride != null) ? addressOverride : mrec.accountName;
 
         // fire off the email, the template will take care of looping over categories and items
         // TODO: it would be great if we could somehow get the final result of actually sending the
@@ -622,7 +623,8 @@ public class SpamLogic
         params.set("avatars", filler.avatars);
         params.set("games", filler.games);
         params.set("subject", subjectLine);
-        String address = addressOverride != null ? addressOverride : mrec.accountName;
+        params.set("optoutbits", SpamUtil.generateOptOutHash(memberId, address) + "_" + memberId);
+
         _mailSender.sendTemplateEmail(realDeal ? MailSender.By.COMPUTER : MailSender.By.HUMAN,
             address, ServerConfig.getFromAddress(), MAIL_TEMPLATE, params);
         return new MailContent(subjectLine, bucket, friendIds.size(), personalMessages);
