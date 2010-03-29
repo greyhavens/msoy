@@ -475,10 +475,12 @@ public class MemberRepository extends DepotRepository
     public List<Integer> findRetentionCandidates (Date earliestLastSession, Date latestLastSession)
     {
         ColumnExp lastSess = MemberRecord.LAST_SESSION;
-        int bits = Flag.NO_ANNOUNCE_EMAIL.getBit() | Flag.SPANKED.getBit();
+        int noBits = Flag.NO_ANNOUNCE_EMAIL.getBit() | Flag.SPANKED.getBit();
+        int yesBits = Flag.VALIDATED.getBit();
         Where where = new Where(Ops.and(lastSess.greaterThan(earliestLastSession),
                                         lastSess.lessEq(latestLastSession),
-                                        MemberRecord.FLAGS.bitAnd(bits).eq(0)));
+                                        MemberRecord.FLAGS.bitAnd(noBits).eq(0),
+                                        MemberRecord.FLAGS.bitAnd(yesBits).notEq(0)));
         return Lists.transform(findAllKeys(MemberRecord.class, false, where),
                                Key.<MemberRecord>toInt());
     }
