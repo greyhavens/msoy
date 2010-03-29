@@ -383,7 +383,7 @@ public class WorldClient extends MsoyClient
 
         } else if (Prefs.getPermaguestUsername() != null) {
             creds = new WorldCredentials(new Name(Prefs.getPermaguestUsername()), "");
-            anonymous = true;
+            anonymous = false;
 
         } else {
             creds = new WorldCredentials(null, null);
