@@ -82,6 +82,12 @@ public class StuffServlet extends MsoyServiceServlet
 
         item = _itemLogic.createItem(memrec.memberId, item).toItem();
 
+        // this newly created item will not be stamped for any theme, but if the user is
+        // viewing it from a themeless environment we have to explicitly mark it as such
+        if (memrec.themeGroupId == 0) {
+            item.attrs |= Item.ATTR_THEME_STAMPED;
+        }
+
         // Some items have a stat that may need updating
         if (item instanceof Avatar) {
             _statLogic.ensureIntStatMinimum(
@@ -260,10 +266,17 @@ public class StuffServlet extends MsoyServiceServlet
         MemberRecord mrec = requireAuthedUser();
         ItemRepository<ItemRecord> repo = _itemLogic.getRepository(item.type);
         ItemRecord irec = repo.loadItem(item.itemId);
-        // we only return the item metadata if they own it, it's a catalog master, or for agents
-        boolean accessValid = (irec != null) &&
-            ((irec.ownerId == mrec.memberId) || irec.isCatalogMaster() || mrec.isSupport());
-        return accessValid ? irec.toItem() : null;
+        if (irec == null) {
+            throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
+        }
+        // make sure they own it (unless they're support or it's a public object)
+        if (!mrec.isSupport() && !irec.isCatalogMaster() && (irec.ownerId != mrec.memberId)) {
+            throw new ServiceException(ItemCodes.E_ACCESS_DENIED);
+        }
+
+        Item result = irec.toItem();
+        setThemeAttribute(mrec.themeGroupId, result);
+        return result;
     }
 
     // from interface StuffService
@@ -291,6 +304,7 @@ public class StuffServlet extends MsoyServiceServlet
 
         ItemDetail detail = new ItemDetail();
         detail.item = record.toItem();
+        setThemeAttribute(mrec.themeGroupId, detail.item);
         detail.creator = ((mrec != null) && (record.creatorId == mrec.memberId)) ?
             mrec.getName() : // shortcut for items we created
             _memberRepo.loadMemberName(record.creatorId); // normal lookup
@@ -335,6 +349,18 @@ public class StuffServlet extends MsoyServiceServlet
         return new InventoryResult<Avatar>(
                 Lists.newArrayList(_themeLogic.loadLineup(groupId)),
                 _groupRepo.loadGroupName(groupId));
+    }
+
+    protected void setThemeAttribute (int themeId, Item item)
+        throws ServiceException
+    {
+        ItemRepository<ItemRecord> repo = _itemLogic.getRepository(item.getType());
+        // mark it as stamped if we're not in a theme, or if it really is stamped for the theme
+        if (themeId == 0 || repo.isThemeStamped(themeId, item.itemId)) {
+            item.attrs |= Item.ATTR_THEME_STAMPED;
+        } else {
+            item.attrs &= ~Item.ATTR_THEME_STAMPED;
+        }
     }
 
     /**
