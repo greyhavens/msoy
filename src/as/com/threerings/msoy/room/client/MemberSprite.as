@@ -15,6 +15,7 @@ import com.threerings.msoy.game.data.GameSummary;
 
 import com.threerings.msoy.world.client.WorldContext;
 
+import com.threerings.msoy.room.client.OccupantSprite;
 import com.threerings.msoy.room.data.MemberInfo;
 
 /**
@@ -170,7 +171,7 @@ public class MemberSprite extends ActorSprite
             if (_idleIcon == null) {
                 _idleIcon = (new IDLE_ICON() as DisplayObject);
                 addDecoration(_idleIcon, {
-                    weight: Number.MAX_VALUE / 2,
+                    weight: OccupantSprite.DEC_WEIGHT_IDLE,
                     bounds: new Rectangle(0, 0, 50, 45)
                 });
             } else {
@@ -277,6 +278,7 @@ import com.threerings.msoy.party.data.PartySummary;
 
 import com.threerings.msoy.room.client.MemberSprite;
 import com.threerings.msoy.room.client.MsoySprite;
+import com.threerings.msoy.room.client.OccupantSprite;
 
 /**
  * A decoration used when this actor is at a table in a lobby.
@@ -326,9 +328,12 @@ class TableIcon extends GlowSprite
         }
         init(MsoySprite.GAME_HOVER, cmd, arg);
 
-        _host.addDecoration(this,
-            // specify our bounds explicitly, as our width is centered at 0.
-            { toolTip: gameSummary.name, bounds: new Rectangle(width/-2, 0, width, height) });
+        // specify our bounds explicitly, as our width is centered at 0.
+        _host.addDecoration(this, {
+              toolTip: gameSummary.name,
+              weight: OccupantSprite.DEC_WEIGHT_GAME,
+              bounds: new Rectangle(width/-2, 0, width, height)
+         });
     }
 
     public function getGameSummary () :GameSummary
@@ -372,9 +377,12 @@ class PartyIcon extends GlowSprite
 
         var width :int = _icon.maxW;
         var height :int = _icon.maxH
-        _host.addDecoration(this,
-            // specify our bounds explicitly, as our width is centered at 0.
-            { toolTip: summ.name, bounds: new Rectangle(width/-2, 0, width, height) });
+        // specify our bounds explicitly, as our width is centered at 0.
+        _host.addDecoration(this, {
+              toolTip: summ.name,
+              weight: OccupantSprite.DEC_WEIGHT_PARTY,
+              bounds: new Rectangle(width/-2, 0, width, height)
+        });
     }
 
     public function shutdown () :void
