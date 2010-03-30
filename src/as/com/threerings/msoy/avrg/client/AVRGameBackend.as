@@ -612,7 +612,9 @@ public class AVRGameBackend extends ControlBackend
                     sprite.removeDecoration(existing);
                 }
                 _decorations.put(playerId, decoration);
-                sprite.addDecoration(decoration);
+                sprite.addDecoration(decoration, {
+                    weight: OccupantSprite.DEC_WEIGHT_AVRG_SPECIAL
+                });
 
             } else if (existing != null) {
                 // we're removing an existing decoration
