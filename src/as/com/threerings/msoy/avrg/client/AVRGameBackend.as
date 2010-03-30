@@ -617,7 +617,7 @@ public class AVRGameBackend extends ControlBackend
             } else if (existing != null) {
                 // we're removing an existing decoration
                 sprite.removeDecoration(existing);
-                _decorations.remove(playerId, decoration);
+                _decorations.remove(playerId);
             }
         }
     }
