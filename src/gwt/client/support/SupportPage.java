@@ -86,6 +86,7 @@ public class SupportPage extends Page
             GWT.create(UnderwireService.class), SupportService.ENTRY_POINT);
         _webctx.cmsgs = (ClientMessages)GWT.create(ClientMessages.class);
         _webctx.smsgs = (ServerMessages)GWT.create(ServerMessages.class);
+        _webctx.supportPrefix = "Agent ";
 
         _webctx.panelCreator = new PanelCreator() {
             @Override public AccountPopup createAccountPanel (
