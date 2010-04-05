@@ -656,7 +656,9 @@ public class GroupRepository extends DepotRepository
         // note: if these members were the last manager of any groups, they are left high and dry;
         // given that we only purge permaguests currently, this is a non-issue
         deleteAll(GroupMembershipRecord.class,
-                  new Where(GroupMembershipRecord.MEMBER_ID.in(memberIds)));
+            new Where(GroupMembershipRecord.MEMBER_ID.in(memberIds)));
+        deleteAll(BrandShareRecord.class,
+            new Where(BrandShareRecord.MEMBER_ID.in(memberIds)));
         _tagRepo.purgeMembers(memberIds);
     }
 
