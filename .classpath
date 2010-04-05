@@ -53,7 +53,7 @@
 	<classpathentry kind="lib" path="extlibs/java/getdown.jar"/>
 	<classpathentry kind="lib" path="extlibs/java/google-collect.jar"/>
 	<classpathentry kind="lib" path="extlibs/java/guice.jar"/>
-	<classpathentry kind="lib" path="extlibs/java/gwt-user.jar"/>
+	<classpathentry kind="lib" path="extlibs/java/gwt-user-1.7.jar"/>
 	<classpathentry kind="lib" path="extlibs/java/hessian.jar"/>
 	<classpathentry kind="lib" path="extlibs/java/javassist.jar"/>
 	<classpathentry kind="lib" path="extlibs/java/jcip-annotations.jar"/>
@@ -74,7 +74,7 @@
 	<classpathentry kind="lib" path="extlibs/java/redstone-xmlrpc-client.jar"/>
 	<classpathentry kind="lib" path="extlibs/java/retroweaver-all-1.2.2.jar"/>
 	<classpathentry kind="lib" path="extlibs/java/retroweaver-rt-1.2.2.jar"/>
-	<classpathentry kind="lib" path="extlibs/java/s3lib.jar"/>
+	<classpathentry kind="lib" path="extlibs/java/s3lib-r332.jar"/>
 	<classpathentry kind="lib" path="extlibs/java/antisamy/sac.jar"/>
 	<classpathentry kind="lib" path="extlibs/java/servlet-api.jar"/>
 	<classpathentry kind="lib" path="extlibs/java/slf4j-api.jar"/>
