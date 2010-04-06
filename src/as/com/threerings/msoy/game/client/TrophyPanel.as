@@ -121,18 +121,25 @@ public class TrophyPanel extends FloatingPanel
         }
 
         var buttons :Array = [ OK_BUTTON ];
-        if (filterEarned(_trophies).length > 0) {
-            buttons.push(new CommandButton(Msgs.GAME.get("b.tp_publish"), publishTrophies));
-        }
+
+        // TODO: Disabled until FB Connect works again. Currently there's a problem where
+        // TODO: requests end up in the Java layer with appId == 0 which is translated to
+        // TODO: siteId == 0, where FBConnect's default siteId seems to be hard-coded to
+        // TODO: 1, but not enough cycles to investigate how this should be done properly
+        // TODO: at the moment.
+//        if (filterEarned(_trophies).length > 0) {
+//            buttons.push(new CommandButton(Msgs.GAME.get("b.tp_publish"), publishTrophies));
+//        }
         addButtons.apply(this, buttons);
     }
 
-    protected function publishTrophies () :void
-    {
-        close();
-        TrophyFeederPanel.showExisting(
-            _gctx.getWorldContext(), _gameName, _gameDescription, filterEarned(_trophies));
-    }
+    // TODO: removed until needed, see above
+//    protected function publishTrophies () :void
+//    {
+//        close();
+//        TrophyFeederPanel.showExisting(
+//            _gctx.getWorldContext(), _gameName, _gameDescription, filterEarned(_trophies));
+//    }
 
     protected var _gctx :GameContext;
     protected var _trophies :Array /*of Trophy*/;
