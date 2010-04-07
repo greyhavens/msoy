@@ -58,7 +58,7 @@ public class MemberStatsResult implements AggregatedResult<WritableComparable<?>
             avgTotal += (double)sample.totalOverall / (double)sample.count;
         }
 
-        Calendar c = PartialDate.roundDown(((Date)result.get("date")).getTime(), Calendar.DAY_OF_MONTH);
+        Calendar c = PartialDate.DAY.roundDown(((Date)result.get("date")).getTime());
         result.put("day", c.getTime());
         result.put("active", avgActives);
         result.put("guests", avgGuests);
