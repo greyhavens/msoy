@@ -226,14 +226,6 @@ public class CountABTestResult implements PropertiesAggregatedResult<CountABTest
             currentAction = (actionIter.hasNext() ? actionIter.next() : null);
         }
 
-        public String getCurrentAction () {
-            return currentAction;
-        }
-
-        public String getCurrentGroup () {
-            return currentGroup;
-        }
-
         public Iterator<String> groupIter;
         public String currentGroup;
         public Iterator<String> actionIter;
