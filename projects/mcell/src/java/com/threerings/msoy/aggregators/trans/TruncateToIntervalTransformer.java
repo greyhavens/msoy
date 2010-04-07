@@ -82,8 +82,7 @@ public class TruncateToIntervalTransformer
     public boolean transform (EventData data)
     {
         // get the timestamp the start of this interval.
-        long now = System.currentTimeMillis();
-        Date threshold = _interval.roundDown(now).getTime();
+        Date threshold = _interval.roundDown(System.currentTimeMillis()).getTime();
 
         // get the timestamp. any null timestamps (or those we can't convert) will skip this event
         Date timestamp = getTimestamp(data);

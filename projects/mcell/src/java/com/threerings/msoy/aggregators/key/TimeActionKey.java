@@ -49,7 +49,7 @@ public class TimeActionKey
     {
         final String action = (String) eventData.getData().get(actionField);
         final Date time = (Date) eventData.getData().get(timestampField);
-        final Date date = rounding.roundDown(time.getTime()).getTime();
+        final Date date = rounding.roundDown(time).getTime();
         return new MultiKeys.DateStringKey(date, action);
     }
 

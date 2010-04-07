@@ -184,6 +184,7 @@ public class GuestBehaviorResult
         }
     }
 
+    @Override
     public void write (final DataOutput out)
         throws IOException
     {
@@ -200,7 +201,7 @@ public class GuestBehaviorResult
         HadoopSerializationUtil.writeObject(out, events);
     }
 
-    @SuppressWarnings("unchecked")
+    @Override
     public void readFields (final DataInput in)
         throws IOException
     {
@@ -214,7 +215,9 @@ public class GuestBehaviorResult
         this.played = (Date)HadoopSerializationUtil.readObject(in);
         this.member = (Integer)HadoopSerializationUtil.readObject(in);
         // more data from Experiences
-        this.events = (Multimap<String, Date>)HadoopSerializationUtil.readObject(in);
+        @SuppressWarnings("unchecked")
+        Multimap<String, Date> mm = (Multimap<String, Date>)HadoopSerializationUtil.readObject(in);
+        this.events = mm;
     }
 
     protected static Date oldest (Date ours, Date theirs)

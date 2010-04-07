@@ -26,6 +26,7 @@ import com.threerings.panopticon.aggregator.hadoop.Aggregator;
 import com.threerings.panopticon.aggregator.hadoop.JavaAggregator;
 import com.threerings.panopticon.aggregator.hadoop.KeyFactory;
 import com.threerings.panopticon.aggregator.hadoop.KeyInitData;
+import com.threerings.panopticon.aggregator.util.PartialDate;
 import com.threerings.panopticon.aggregator.writable.Keys;
 import com.threerings.panopticon.common.event.EventData;
 import com.threerings.panopticon.eventstore.EventWriter;
@@ -160,15 +161,9 @@ public abstract class RetentionEmail
 
     protected static Calendar getDayOfEvent (EventData eventData)
     {
-        Calendar calendar = DateFactory.newCalendar();
         Object timestamp = eventData.get("timestamp");
-        calendar.setTimeInMillis(timestamp instanceof Date ?
-            ((Date)timestamp).getTime() : (Long)timestamp);
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-        return calendar;
+        return PartialDate.DAY.roundDown(timestamp instanceof Date ? ((Date)timestamp).getTime()
+            : (Long)timestamp);
     }
 
     protected String getOutputEventName ()
