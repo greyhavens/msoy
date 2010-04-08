@@ -82,6 +82,7 @@
     <file name="${extlibs.dir}/ganymed.jar"/>
     <file name="${extlibs.dir}/getdown.jar"/>
     <file name="${extlibs.dir}/google-collect.jar"/>
+    <file name="${extlibs.dir}/gson.jar"/>
     <file name="${extlibs.dir}/guice.jar"/>
     <file name="${extlibs.dir}/guice-multibindings.jar"/>
     <file name="${extlibs.dir}/gwt-user-1.7.jar"/>
