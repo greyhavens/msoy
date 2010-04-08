@@ -27,8 +27,7 @@ public class Embedding
                 }
             }
         }
-
-        return new Embedding(ClientMode.UNSPECIFIED, 0);
+        return new Embedding(ClientMode.UNSPECIFIED, 1);
     }
 
     /**
