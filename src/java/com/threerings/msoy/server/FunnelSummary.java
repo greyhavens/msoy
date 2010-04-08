@@ -1,15 +1,13 @@
 package com.threerings.msoy.server;
 
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
-
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
 import com.google.common.collect.Multisets;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.samskivert.depot.Exps;
+import com.samskivert.util.Calendars;
 import com.threerings.msoy.data.all.MemberMailUtil;
 import com.threerings.msoy.money.server.persist.MemberAccountRecord;
 import com.threerings.msoy.server.persist.EntryVectorRecord;
@@ -110,12 +108,7 @@ public class FunnelSummary
             MemberRecord.FLAGS.bitAnd(MemberRecord.Flag.SUBSCRIBER.getBit()).notEq(0)));
 
         // expire the funnel next midnight
-        Calendar cal = new GregorianCalendar();
-        cal.add(Calendar.DAY_OF_MONTH, 1);
-        cal.set(Calendar.HOUR, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.SECOND, 0);
-        _expiration = cal.getTime();
+        _expiration = Calendars.now().zeroTime().addDays(1).toDate();
 
     }
 
