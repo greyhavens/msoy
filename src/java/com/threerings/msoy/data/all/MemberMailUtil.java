@@ -16,6 +16,10 @@ public class MemberMailUtil
     public static final String PERMAGUEST_EMAIL_PATTERN =
         PERMAGUEST_EMAIL_PREFIX + "[0-9a-f]{32}" + PERMAGUEST_EMAIL_SUFFIX;
 
+    /** SQL pattern used to check if an email address is one assigned to a permaguest. */
+    public static final String PERMAGUEST_SQL_PATTERN =
+        PERMAGUEST_EMAIL_PREFIX + "%" + PERMAGUEST_EMAIL_SUFFIX;
+
     /** Regular expressions that match our various placeholder addresses. */
     public static final String[] PLACEHOLDER_PATTERNS = {
         "[0-9]+@facebook.com",
