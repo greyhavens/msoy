@@ -148,7 +148,7 @@ whirled.addCharts = function () {
             return chart;
         });
 
-        addChart("funnel", "funnel", "Conversion and Retention", function () {
+        addChart("funnel", "funnel_stacked", "Conversion and Retention (stacked)", function () {
             var sourceNames = new List([
                 ["lost", "Lost"],
                 ["played", "Played"],
@@ -162,9 +162,50 @@ whirled.addCharts = function () {
                 return (group.value == event.group && sources.has(name)) ?
                     (event[name] || 0) : 0;
             }
+
             var chart = new StackedBarChart(
                 "DailyVisitorFutures", sourceNames, valueExtractor, {controls:[sources, group]});
             chart.extractKey = function (ev) { return ev.date; }
+            return chart;
+        });
+
+        addChart("funnel", "funnel_lines", "Conversion and Retention (lines)", function () {
+            var sourceNames = new List([
+                ["visited", "Visited"],
+                ["played", "Played"],
+                ["registered", "Registered"],
+                ["returned", "Returned"],
+                ["retained", "Retained"],
+                ["paid", "Paid"],
+                ["subscribed", "Subscribed"],
+            ]);
+            var sources = new CheckBoxes("Sources", "sources", sourceNames);
+            var groups = new CheckBoxes("Group", "group", [
+                "GWT/Landing",
+                "Web/Organic",
+                "Web/Other",
+                "GWT/Other",
+                "Embed/Mochi",
+                "Embed/Kongregate",
+                "Embed/Other",
+                "Ad/Other",
+                "Other/Other"]);
+
+            var options = {
+                controls: [ sources, groups ],
+                xaxis: {  mode: "time", minTickSize: [1, "day"]}
+            };
+            var chart = new SelfContainedEventChart("funnel", function (ev, collector) {
+                sourceNames.each(function (bit) {
+                    if (sources.has(bit[0]) && groups.has(ev.group)) {
+                        collector.assume(bit[1]).add([ev.date, ev[bit[0]]]);
+                    }
+                });
+            }, options, "date");
+            chart.getEvents = function (eventName, callback) {
+                $.getJSON("http://www.whirled.com/json/" + eventName + "?jsoncallback=?",
+                          callback);
+            };
             return chart;
         });
     }
