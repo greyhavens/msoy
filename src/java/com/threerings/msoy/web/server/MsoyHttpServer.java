@@ -315,6 +315,7 @@ public class MsoyHttpServer extends Server
         .put("/swizzle/*", SwizzleServlet.class)
         .put("/embed/*", EmbedRouterServlet.class)
         .put("/status/*", StatusServlet.class)
+        .put("/json/*", JSONServlet.class)
         .put("/mystats/*", MyStatsServlet.class)
         .put("/gamelogs/*", GameTraceLogServlet.class)
         .put("/info/*", PublicInfoServlet.class)
