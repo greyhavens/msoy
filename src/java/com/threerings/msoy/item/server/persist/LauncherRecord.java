@@ -81,10 +81,10 @@ public class LauncherRecord extends GameItemRecord
      */
     public static Key<LauncherRecord> getKey (int itemId)
     {
-        return new Key<LauncherRecord>(
-                LauncherRecord.class,
-                new ColumnExp[] { ITEM_ID },
-                new Comparable[] { itemId });
+        return newKey(_R, itemId);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(ITEM_ID); }
     // AUTO-GENERATED: METHODS END
 }

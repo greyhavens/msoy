@@ -55,10 +55,10 @@ public class SpamRecord extends PersistentRecord
      */
     public static Key<SpamRecord> getKey (int memberId)
     {
-        return new Key<SpamRecord>(
-                SpamRecord.class,
-                new ColumnExp[] { MEMBER_ID },
-                new Comparable[] { memberId });
+        return newKey(_R, memberId);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(MEMBER_ID); }
     // AUTO-GENERATED: METHODS END
 }

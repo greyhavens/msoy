@@ -60,10 +60,10 @@ public class GameStateRecord extends PersistentRecord
      */
     public static Key<GameStateRecord> getKey (int gameId, String datumKey)
     {
-        return new Key<GameStateRecord>(
-                GameStateRecord.class,
-                new ColumnExp[] { GAME_ID, DATUM_KEY },
-                new Comparable[] { gameId, datumKey });
+        return newKey(_R, gameId, datumKey);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(GAME_ID, DATUM_KEY); }
     // AUTO-GENERATED: METHODS END
 }

@@ -46,10 +46,10 @@ public class ItemPackCloneRecord extends CloneRecord
      */
     public static Key<ItemPackCloneRecord> getKey (int itemId)
     {
-        return new Key<ItemPackCloneRecord>(
-                ItemPackCloneRecord.class,
-                new ColumnExp[] { ITEM_ID },
-                new Comparable[] { itemId });
+        return newKey(_R, itemId);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(ITEM_ID); }
     // AUTO-GENERATED: METHODS END
 }

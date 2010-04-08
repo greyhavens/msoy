@@ -42,10 +42,10 @@ public class InstructionsRecord extends PersistentRecord
      */
     public static Key<InstructionsRecord> getKey (int gameId)
     {
-        return new Key<InstructionsRecord>(
-                InstructionsRecord.class,
-                new ColumnExp[] { GAME_ID },
-                new Comparable[] { gameId });
+        return newKey(_R, gameId);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(GAME_ID); }
     // AUTO-GENERATED: METHODS END
 }

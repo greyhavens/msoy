@@ -119,10 +119,10 @@ public class ABTestRecord extends PersistentRecord
      */
     public static Key<ABTestRecord> getKey (int testId)
     {
-        return new Key<ABTestRecord>(
-                ABTestRecord.class,
-                new ColumnExp[] { TEST_ID },
-                new Comparable[] { testId });
+        return newKey(_R, testId);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(TEST_ID); }
     // AUTO-GENERATED: METHODS END
 }

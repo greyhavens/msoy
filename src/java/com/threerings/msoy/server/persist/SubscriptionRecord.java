@@ -56,10 +56,10 @@ public class SubscriptionRecord extends PersistentRecord
      */
     public static Key<SubscriptionRecord> getKey (int memberId)
     {
-        return new Key<SubscriptionRecord>(
-                SubscriptionRecord.class,
-                new ColumnExp[] { MEMBER_ID },
-                new Comparable[] { memberId });
+        return newKey(_R, memberId);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(MEMBER_ID); }
     // AUTO-GENERATED: METHODS END
 }

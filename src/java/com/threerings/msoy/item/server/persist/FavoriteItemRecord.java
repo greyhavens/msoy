@@ -50,10 +50,10 @@ public class FavoriteItemRecord extends PersistentRecord
      */
     public static Key<FavoriteItemRecord> getKey (int memberId, byte itemType, int catalogId)
     {
-        return new Key<FavoriteItemRecord>(
-                FavoriteItemRecord.class,
-                new ColumnExp[] { MEMBER_ID, ITEM_TYPE, CATALOG_ID },
-                new Comparable[] { memberId, itemType, catalogId });
+        return newKey(_R, memberId, itemType, catalogId);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(MEMBER_ID, ITEM_TYPE, CATALOG_ID); }
     // AUTO-GENERATED: METHODS END
 }

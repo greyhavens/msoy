@@ -47,10 +47,10 @@ public class BarPoolRecord extends PersistentRecord
      */
     public static Key<BarPoolRecord> getKey (int id)
     {
-        return new Key<BarPoolRecord>(
-                BarPoolRecord.class,
-                new ColumnExp[] { ID },
-                new Comparable[] { id });
+        return newKey(_R, id);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(ID); }
     // AUTO-GENERATED: METHODS END
 }

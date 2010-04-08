@@ -171,11 +171,11 @@ public class ThemeRecord extends PersistentRecord
      */
     public static Key<ThemeRecord> getKey (int groupId)
     {
-        return new Key<ThemeRecord>(
-                ThemeRecord.class,
-                new ColumnExp[] { GROUP_ID },
-                new Comparable[] { groupId });
+        return newKey(_R, groupId);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(GROUP_ID); }
     // AUTO-GENERATED: METHODS END
 
 }

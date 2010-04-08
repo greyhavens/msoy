@@ -89,10 +89,10 @@ public class ItemListInfoRecord extends PersistentRecord
      */
     public static Key<ItemListInfoRecord> getKey (int listId)
     {
-        return new Key<ItemListInfoRecord>(
-                ItemListInfoRecord.class,
-                new ColumnExp[] { LIST_ID },
-                new Comparable[] { listId });
+        return newKey(_R, listId);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(LIST_ID); }
     // AUTO-GENERATED: METHODS END
 }

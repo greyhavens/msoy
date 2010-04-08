@@ -119,10 +119,10 @@ public class GalleryRecord extends PersistentRecord
      */
     public static Key<GalleryRecord> getKey (int galleryId)
     {
-        return new Key<GalleryRecord>(
-                GalleryRecord.class,
-                new ColumnExp[] { GALLERY_ID },
-                new Comparable[] { galleryId });
+        return newKey(_R, galleryId);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(GALLERY_ID); }
     // AUTO-GENERATED: METHODS END
 }

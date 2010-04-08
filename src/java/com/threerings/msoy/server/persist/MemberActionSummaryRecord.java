@@ -54,10 +54,10 @@ public class MemberActionSummaryRecord extends PersistentRecord
      */
     public static Key<MemberActionSummaryRecord> getKey (int memberId, int actionId)
     {
-        return new Key<MemberActionSummaryRecord>(
-                MemberActionSummaryRecord.class,
-                new ColumnExp[] { MEMBER_ID, ACTION_ID },
-                new Comparable[] { memberId, actionId });
+        return newKey(_R, memberId, actionId);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(MEMBER_ID, ACTION_ID); }
     // AUTO-GENERATED: METHODS END
 }

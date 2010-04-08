@@ -109,10 +109,10 @@ public class InProgressBadgeRecord extends PersistentRecord
      */
     public static Key<InProgressBadgeRecord> getKey (int memberId, int badgeCode)
     {
-        return new Key<InProgressBadgeRecord>(
-                InProgressBadgeRecord.class,
-                new ColumnExp[] { MEMBER_ID, BADGE_CODE },
-                new Comparable[] { memberId, badgeCode });
+        return newKey(_R, memberId, badgeCode);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(MEMBER_ID, BADGE_CODE); }
     // AUTO-GENERATED: METHODS END
 }

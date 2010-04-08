@@ -136,10 +136,10 @@ public class ContestRecord extends PersistentRecord
      */
     public static Key<ContestRecord> getKey (String contestId)
     {
-        return new Key<ContestRecord>(
-                ContestRecord.class,
-                new ColumnExp[] { CONTEST_ID },
-                new Comparable[] { contestId });
+        return newKey(_R, contestId);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(CONTEST_ID); }
     // AUTO-GENERATED: METHODS END
 }

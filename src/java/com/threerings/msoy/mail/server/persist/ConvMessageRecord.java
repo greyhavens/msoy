@@ -123,10 +123,10 @@ public class ConvMessageRecord extends PersistentRecord
      */
     public static Key<ConvMessageRecord> getKey (int conversationId, Timestamp sent)
     {
-        return new Key<ConvMessageRecord>(
-                ConvMessageRecord.class,
-                new ColumnExp[] { CONVERSATION_ID, SENT },
-                new Comparable[] { conversationId, sent });
+        return newKey(_R, conversationId, sent);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(CONVERSATION_ID, SENT); }
     // AUTO-GENERATED: METHODS END
 }

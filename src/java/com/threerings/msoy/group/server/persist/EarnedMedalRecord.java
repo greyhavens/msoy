@@ -52,10 +52,10 @@ public class EarnedMedalRecord extends PersistentRecord
      */
     public static Key<EarnedMedalRecord> getKey (int medalId, int memberId)
     {
-        return new Key<EarnedMedalRecord>(
-                EarnedMedalRecord.class,
-                new ColumnExp[] { MEDAL_ID, MEMBER_ID },
-                new Comparable[] { medalId, memberId });
+        return newKey(_R, medalId, memberId);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(MEDAL_ID, MEMBER_ID); }
     // AUTO-GENERATED: METHODS END
 }

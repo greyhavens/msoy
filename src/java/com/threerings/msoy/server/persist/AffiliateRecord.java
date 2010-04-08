@@ -39,10 +39,10 @@ public class AffiliateRecord extends PersistentRecord
      */
     public static Key<AffiliateRecord> getKey (int memberId)
     {
-        return new Key<AffiliateRecord>(
-                AffiliateRecord.class,
-                new ColumnExp[] { MEMBER_ID },
-                new Comparable[] { memberId });
+        return newKey(_R, memberId);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(MEMBER_ID); }
     // AUTO-GENERATED: METHODS END
 }

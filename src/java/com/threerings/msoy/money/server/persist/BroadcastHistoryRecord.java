@@ -63,10 +63,10 @@ public class BroadcastHistoryRecord extends PersistentRecord
      */
     public static Key<BroadcastHistoryRecord> getKey (Timestamp timeSent)
     {
-        return new Key<BroadcastHistoryRecord>(
-                BroadcastHistoryRecord.class,
-                new ColumnExp[] { TIME_SENT },
-                new Comparable[] { timeSent });
+        return newKey(_R, timeSent);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(TIME_SENT); }
     // AUTO-GENERATED: METHODS END
 }

@@ -101,10 +101,10 @@ public class ExchangeRecord extends PersistentRecord
      */
     public static Key<ExchangeRecord> getKey (int id)
     {
-        return new Key<ExchangeRecord>(
-                ExchangeRecord.class,
-                new ColumnExp[] { ID },
-                new Comparable[] { id });
+        return newKey(_R, id);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(ID); }
     // AUTO-GENERATED: METHODS END
 }

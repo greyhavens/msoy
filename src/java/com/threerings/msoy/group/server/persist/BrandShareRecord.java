@@ -65,10 +65,10 @@ public class BrandShareRecord extends PersistentRecord
      */
     public static Key<BrandShareRecord> getKey (int memberId, int groupId)
     {
-        return new Key<BrandShareRecord>(
-                BrandShareRecord.class,
-                new ColumnExp[] { MEMBER_ID, GROUP_ID },
-                new Comparable[] { memberId, groupId });
+        return newKey(_R, memberId, groupId);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(MEMBER_ID, GROUP_ID); }
     // AUTO-GENERATED: METHODS END
 }

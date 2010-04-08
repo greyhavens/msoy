@@ -261,11 +261,11 @@ public class ProfileRecord extends PersistentRecord
      */
     public static Key<ProfileRecord> getKey (int memberId)
     {
-        return new Key<ProfileRecord>(
-                ProfileRecord.class,
-                new ColumnExp[] { MEMBER_ID },
-                new Comparable[] { memberId });
+        return newKey(_R, memberId);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(MEMBER_ID); }
     // AUTO-GENERATED: METHODS END
 
     /**

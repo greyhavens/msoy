@@ -84,11 +84,11 @@ public class GameTraceLogRecord
      */
     public static Key<GameTraceLogRecord> getKey (int logId)
     {
-        return new Key<GameTraceLogRecord>(
-                GameTraceLogRecord.class,
-                new ColumnExp[] { LOG_ID },
-                new Comparable[] { logId });
+        return newKey(_R, logId);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(LOG_ID); }
     // AUTO-GENERATED: METHODS END
 
     protected static Integer _logLength;

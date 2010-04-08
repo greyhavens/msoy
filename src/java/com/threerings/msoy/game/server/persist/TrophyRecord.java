@@ -101,10 +101,10 @@ public class TrophyRecord extends PersistentRecord
      */
     public static Key<TrophyRecord> getKey (int gameId, int memberId, String ident)
     {
-        return new Key<TrophyRecord>(
-                TrophyRecord.class,
-                new ColumnExp[] { GAME_ID, MEMBER_ID, IDENT },
-                new Comparable[] { gameId, memberId, ident });
+        return newKey(_R, gameId, memberId, ident);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(GAME_ID, MEMBER_ID, IDENT); }
     // AUTO-GENERATED: METHODS END
 }

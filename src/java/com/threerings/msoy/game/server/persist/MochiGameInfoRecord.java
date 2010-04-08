@@ -121,11 +121,11 @@ public class MochiGameInfoRecord extends PersistentRecord
      */
     public static Key<MochiGameInfoRecord> getKey (int id)
     {
-        return new Key<MochiGameInfoRecord>(
-                MochiGameInfoRecord.class,
-                new ColumnExp[] { ID },
-                new Comparable[] { id });
+        return newKey(_R, id);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(ID); }
     // AUTO-GENERATED: METHODS END
 
     /** A Function to turn records into runtime reps. */

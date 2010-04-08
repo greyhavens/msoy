@@ -48,10 +48,10 @@ public class ThemeHomeTemplateRecord extends PersistentRecord
      */
     public static Key<ThemeHomeTemplateRecord> getKey (int groupId, int sceneId)
     {
-        return new Key<ThemeHomeTemplateRecord>(
-                ThemeHomeTemplateRecord.class,
-                new ColumnExp[] { GROUP_ID, SCENE_ID },
-                new Comparable[] { groupId, sceneId });
+        return newKey(_R, groupId, sceneId);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(GROUP_ID, SCENE_ID); }
     // AUTO-GENERATED: METHODS END
 }

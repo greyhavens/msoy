@@ -163,10 +163,10 @@ public class MemoriesRecord extends PersistentRecord
      */
     public static Key<MemoriesRecord> getKey (byte itemType, int itemId)
     {
-        return new Key<MemoriesRecord>(
-                MemoriesRecord.class,
-                new ColumnExp[] { ITEM_TYPE, ITEM_ID },
-                new Comparable[] { itemType, itemId });
+        return newKey(_R, itemType, itemId);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(ITEM_TYPE, ITEM_ID); }
     // AUTO-GENERATED: METHODS END
 }

@@ -122,10 +122,10 @@ public class ForumThreadRecord extends PersistentRecord
      */
     public static Key<ForumThreadRecord> getKey (int threadId)
     {
-        return new Key<ForumThreadRecord>(
-                ForumThreadRecord.class,
-                new ColumnExp[] { THREAD_ID },
-                new Comparable[] { threadId });
+        return newKey(_R, threadId);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(THREAD_ID); }
     // AUTO-GENERATED: METHODS END
 }

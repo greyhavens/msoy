@@ -46,10 +46,10 @@ public class PrizeCloneRecord extends CloneRecord
      */
     public static Key<PrizeCloneRecord> getKey (int itemId)
     {
-        return new Key<PrizeCloneRecord>(
-                PrizeCloneRecord.class,
-                new ColumnExp[] { ITEM_ID },
-                new Comparable[] { itemId });
+        return newKey(_R, itemId);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(ITEM_ID); }
     // AUTO-GENERATED: METHODS END
 }

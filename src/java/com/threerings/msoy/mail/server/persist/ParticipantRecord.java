@@ -46,10 +46,10 @@ public class ParticipantRecord extends PersistentRecord
      */
     public static Key<ParticipantRecord> getKey (int conversationId, int participantId)
     {
-        return new Key<ParticipantRecord>(
-                ParticipantRecord.class,
-                new ColumnExp[] { CONVERSATION_ID, PARTICIPANT_ID },
-                new Comparable[] { conversationId, participantId });
+        return newKey(_R, conversationId, participantId);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(CONVERSATION_ID, PARTICIPANT_ID); }
     // AUTO-GENERATED: METHODS END
 }

@@ -154,11 +154,11 @@ public class FacebookTemplateRecord extends PersistentRecord
      */
     public static Key<FacebookTemplateRecord> getKey (int appId, String code, String variant)
     {
-        return new Key<FacebookTemplateRecord>(
-                FacebookTemplateRecord.class,
-                new ColumnExp[] { APP_ID, CODE, VARIANT },
-                new Comparable[] { appId, code, variant });
+        return newKey(_R, appId, code, variant);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(APP_ID, CODE, VARIANT); }
     // AUTO-GENERATED: METHODS END
 
     protected FacebookTemplate toTemplateBase ()

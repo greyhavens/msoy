@@ -58,10 +58,10 @@ public class InterestRecord extends PersistentRecord
      */
     public static Key<InterestRecord> getKey (int memberId, int type)
     {
-        return new Key<InterestRecord>(
-                InterestRecord.class,
-                new ColumnExp[] { MEMBER_ID, TYPE },
-                new Comparable[] { memberId, type });
+        return newKey(_R, memberId, type);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(MEMBER_ID, TYPE); }
     // AUTO-GENERATED: METHODS END
 }

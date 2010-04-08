@@ -61,10 +61,10 @@ public class RoomPropertyRecord extends PersistentRecord
      */
     public static Key<RoomPropertyRecord> getKey (int ownerId, int sceneId, String name)
     {
-        return new Key<RoomPropertyRecord>(
-                RoomPropertyRecord.class,
-                new ColumnExp[] { OWNER_ID, SCENE_ID, NAME },
-                new Comparable[] { ownerId, sceneId, name });
+        return newKey(_R, ownerId, sceneId, name);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(OWNER_ID, SCENE_ID, NAME); }
     // AUTO-GENERATED: METHODS END
 }

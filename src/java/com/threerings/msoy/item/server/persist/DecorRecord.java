@@ -126,10 +126,10 @@ public class DecorRecord extends ItemRecord
      */
     public static Key<DecorRecord> getKey (int itemId)
     {
-        return new Key<DecorRecord>(
-                DecorRecord.class,
-                new ColumnExp[] { ITEM_ID },
-                new Comparable[] { itemId });
+        return newKey(_R, itemId);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(ITEM_ID); }
     // AUTO-GENERATED: METHODS END
 }

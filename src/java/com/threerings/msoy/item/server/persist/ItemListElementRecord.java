@@ -91,11 +91,11 @@ public class ItemListElementRecord extends PersistentRecord
      */
     public static Key<ItemListElementRecord> getKey (int listId, byte type, int itemId)
     {
-        return new Key<ItemListElementRecord>(
-                ItemListElementRecord.class,
-                new ColumnExp[] { LIST_ID, TYPE, ITEM_ID },
-                new Comparable[] { listId, type, itemId });
+        return newKey(_R, listId, type, itemId);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(LIST_ID, TYPE, ITEM_ID); }
     // AUTO-GENERATED: METHODS END
 }
 

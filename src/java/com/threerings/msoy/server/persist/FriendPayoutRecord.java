@@ -45,10 +45,10 @@ public class FriendPayoutRecord extends PersistentRecord
      */
     public static Key<FriendPayoutRecord> getKey (int friendId)
     {
-        return new Key<FriendPayoutRecord>(
-                FriendPayoutRecord.class,
-                new ColumnExp[] { FRIEND_ID },
-                new Comparable[] { friendId });
+        return newKey(_R, friendId);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(FRIEND_ID); }
     // AUTO-GENERATED: METHODS END
 }

@@ -103,10 +103,10 @@ public class EarnedBadgeRecord extends PersistentRecord
      */
     public static Key<EarnedBadgeRecord> getKey (int memberId, int badgeCode)
     {
-        return new Key<EarnedBadgeRecord>(
-                EarnedBadgeRecord.class,
-                new ColumnExp[] { MEMBER_ID, BADGE_CODE },
-                new Comparable[] { memberId, badgeCode });
+        return newKey(_R, memberId, badgeCode);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(MEMBER_ID, BADGE_CODE); }
     // AUTO-GENERATED: METHODS END
 }

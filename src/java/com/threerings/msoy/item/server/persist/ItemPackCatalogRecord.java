@@ -36,10 +36,10 @@ public class ItemPackCatalogRecord extends CatalogRecord
      */
     public static Key<ItemPackCatalogRecord> getKey (int catalogId)
     {
-        return new Key<ItemPackCatalogRecord>(
-                ItemPackCatalogRecord.class,
-                new ColumnExp[] { CATALOG_ID },
-                new Comparable[] { catalogId });
+        return newKey(_R, catalogId);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(CATALOG_ID); }
     // AUTO-GENERATED: METHODS END
 }

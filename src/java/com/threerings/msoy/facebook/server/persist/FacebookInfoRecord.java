@@ -96,10 +96,10 @@ public class FacebookInfoRecord extends PersistentRecord
      */
     public static Key<FacebookInfoRecord> getKey (int gameId, int appId)
     {
-        return new Key<FacebookInfoRecord>(
-                FacebookInfoRecord.class,
-                new ColumnExp[] { GAME_ID, APP_ID },
-                new Comparable[] { gameId, appId });
+        return newKey(_R, gameId, appId);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(GAME_ID, APP_ID); }
     // AUTO-GENERATED: METHODS END
 }

@@ -36,10 +36,10 @@ public class AvatarCatalogRecord extends CatalogRecord
      */
     public static Key<AvatarCatalogRecord> getKey (int catalogId)
     {
-        return new Key<AvatarCatalogRecord>(
-                AvatarCatalogRecord.class,
-                new ColumnExp[] { CATALOG_ID },
-                new Comparable[] { catalogId });
+        return newKey(_R, catalogId);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(CATALOG_ID); }
     // AUTO-GENERATED: METHODS END
 }

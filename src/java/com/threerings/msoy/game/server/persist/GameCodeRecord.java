@@ -110,10 +110,10 @@ public class GameCodeRecord extends PersistentRecord
      */
     public static Key<GameCodeRecord> getKey (int gameId, boolean isDevelopment)
     {
-        return new Key<GameCodeRecord>(
-                GameCodeRecord.class,
-                new ColumnExp[] { GAME_ID, IS_DEVELOPMENT },
-                new Comparable[] { gameId, isDevelopment });
+        return newKey(_R, gameId, isDevelopment);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(GAME_ID, IS_DEVELOPMENT); }
     // AUTO-GENERATED: METHODS END
 }

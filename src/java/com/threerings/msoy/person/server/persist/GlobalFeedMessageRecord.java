@@ -43,10 +43,10 @@ public class GlobalFeedMessageRecord extends FeedMessageRecord
      */
     public static Key<GlobalFeedMessageRecord> getKey (int messageId)
     {
-        return new Key<GlobalFeedMessageRecord>(
-                GlobalFeedMessageRecord.class,
-                new ColumnExp[] { MESSAGE_ID },
-                new Comparable[] { messageId });
+        return newKey(_R, messageId);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(MESSAGE_ID); }
     // AUTO-GENERATED: METHODS END
 }

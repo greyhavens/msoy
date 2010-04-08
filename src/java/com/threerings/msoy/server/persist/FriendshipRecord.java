@@ -38,11 +38,11 @@ public class FriendshipRecord extends PersistentRecord
      */
     public static Key<FriendshipRecord> getKey (int memberId, int friendId)
     {
-        return new Key<FriendshipRecord>(
-                FriendshipRecord.class,
-                new ColumnExp[] { MEMBER_ID, FRIEND_ID },
-                new Comparable[] { memberId, friendId });
+        return newKey(_R, memberId, friendId);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(MEMBER_ID, FRIEND_ID); }
     // AUTO-GENERATED: METHODS END
 
     /** Blank */

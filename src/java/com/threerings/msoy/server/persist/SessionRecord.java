@@ -57,10 +57,10 @@ public class SessionRecord extends PersistentRecord
      */
     public static Key<SessionRecord> getKey (String token)
     {
-        return new Key<SessionRecord>(
-                SessionRecord.class,
-                new ColumnExp[] { TOKEN },
-                new Comparable[] { token });
+        return newKey(_R, token);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(TOKEN); }
     // AUTO-GENERATED: METHODS END
 }

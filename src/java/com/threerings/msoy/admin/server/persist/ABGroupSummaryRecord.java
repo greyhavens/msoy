@@ -60,10 +60,10 @@ public class ABGroupSummaryRecord extends PersistentRecord
      */
     public static Key<ABGroupSummaryRecord> getKey (int testId, int group)
     {
-        return new Key<ABGroupSummaryRecord>(
-                ABGroupSummaryRecord.class,
-                new ColumnExp[] { TEST_ID, GROUP },
-                new Comparable[] { testId, group });
+        return newKey(_R, testId, group);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(TEST_ID, GROUP); }
     // AUTO-GENERATED: METHODS END
 }

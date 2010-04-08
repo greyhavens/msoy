@@ -154,10 +154,10 @@ public class SceneFurniRecord extends PersistentRecord
      */
     public static Key<SceneFurniRecord> getKey (int sceneId, short furniId)
     {
-        return new Key<SceneFurniRecord>(
-                SceneFurniRecord.class,
-                new ColumnExp[] { SCENE_ID, FURNI_ID },
-                new Comparable[] { sceneId, furniId });
+        return newKey(_R, sceneId, furniId);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(SCENE_ID, FURNI_ID); }
     // AUTO-GENERATED: METHODS END
 }

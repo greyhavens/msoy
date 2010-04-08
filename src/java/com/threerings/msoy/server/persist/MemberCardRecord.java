@@ -160,10 +160,10 @@ public class MemberCardRecord extends PersistentRecord
      */
     public static Key<MemberCardRecord> getKey (int memberId)
     {
-        return new Key<MemberCardRecord>(
-                MemberCardRecord.class,
-                new ColumnExp[] { MEMBER_ID },
-                new Comparable[] { memberId });
+        return newKey(_R, memberId);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(MEMBER_ID); }
     // AUTO-GENERATED: METHODS END
 }

@@ -98,10 +98,10 @@ public class GameMetricsRecord extends PersistentRecord
      */
     public static Key<GameMetricsRecord> getKey (int gameId)
     {
-        return new Key<GameMetricsRecord>(
-                GameMetricsRecord.class,
-                new ColumnExp[] { GAME_ID },
-                new Comparable[] { gameId });
+        return newKey(_R, gameId);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(GAME_ID); }
     // AUTO-GENERATED: METHODS END
 }

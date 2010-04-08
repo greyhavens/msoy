@@ -54,10 +54,10 @@ public class FacebookNotificationRecord extends PersistentRecord
      */
     public static Key<FacebookNotificationRecord> getKey (int appId, String id)
     {
-        return new Key<FacebookNotificationRecord>(
-                FacebookNotificationRecord.class,
-                new ColumnExp[] { APP_ID, ID },
-                new Comparable[] { appId, id });
+        return newKey(_R, appId, id);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(APP_ID, ID); }
     // AUTO-GENERATED: METHODS END
 }

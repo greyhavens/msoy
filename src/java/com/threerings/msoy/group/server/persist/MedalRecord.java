@@ -97,10 +97,10 @@ public class MedalRecord extends PersistentRecord
      */
     public static Key<MedalRecord> getKey (int medalId)
     {
-        return new Key<MedalRecord>(
-                MedalRecord.class,
-                new ColumnExp[] { MEDAL_ID },
-                new Comparable[] { medalId });
+        return newKey(_R, medalId);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(MEDAL_ID); }
     // AUTO-GENERATED: METHODS END
 }

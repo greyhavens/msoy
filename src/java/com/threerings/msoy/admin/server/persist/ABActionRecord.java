@@ -44,10 +44,10 @@ public class ABActionRecord extends PersistentRecord
      */
     public static Key<ABActionRecord> getKey (int testId, String visitorId, String action)
     {
-        return new Key<ABActionRecord>(
-                ABActionRecord.class,
-                new ColumnExp[] { TEST_ID, VISITOR_ID, ACTION },
-                new Comparable[] { testId, visitorId, action });
+        return newKey(_R, testId, visitorId, action);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(TEST_ID, VISITOR_ID, ACTION); }
     // AUTO-GENERATED: METHODS END
 }

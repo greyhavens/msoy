@@ -57,10 +57,10 @@ public class GroupFeedMessageRecord extends FeedMessageRecord
      */
     public static Key<GroupFeedMessageRecord> getKey (int messageId)
     {
-        return new Key<GroupFeedMessageRecord>(
-                GroupFeedMessageRecord.class,
-                new ColumnExp[] { MESSAGE_ID },
-                new Comparable[] { messageId });
+        return newKey(_R, messageId);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(MESSAGE_ID); }
     // AUTO-GENERATED: METHODS END
 }

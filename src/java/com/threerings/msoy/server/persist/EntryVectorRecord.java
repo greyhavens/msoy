@@ -50,10 +50,10 @@ public class EntryVectorRecord extends PersistentRecord
      */
     public static Key<EntryVectorRecord> getKey (String visitorId)
     {
-        return new Key<EntryVectorRecord>(
-                EntryVectorRecord.class,
-                new ColumnExp[] { VISITOR_ID },
-                new Comparable[] { visitorId });
+        return newKey(_R, visitorId);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(VISITOR_ID); }
     // AUTO-GENERATED: METHODS END
 }

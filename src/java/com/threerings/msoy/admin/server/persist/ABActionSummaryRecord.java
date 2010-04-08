@@ -44,10 +44,10 @@ public class ABActionSummaryRecord extends PersistentRecord
      */
     public static Key<ABActionSummaryRecord> getKey (int testId, int group, String action)
     {
-        return new Key<ABActionSummaryRecord>(
-                ABActionSummaryRecord.class,
-                new ColumnExp[] { TEST_ID, GROUP, ACTION },
-                new Comparable[] { testId, group, action });
+        return newKey(_R, testId, group, action);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(TEST_ID, GROUP, ACTION); }
     // AUTO-GENERATED: METHODS END
 }

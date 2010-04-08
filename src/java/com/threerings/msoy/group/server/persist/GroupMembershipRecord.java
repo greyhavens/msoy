@@ -88,10 +88,10 @@ public class GroupMembershipRecord extends PersistentRecord
      */
     public static Key<GroupMembershipRecord> getKey (int memberId, int groupId)
     {
-        return new Key<GroupMembershipRecord>(
-                GroupMembershipRecord.class,
-                new ColumnExp[] { MEMBER_ID, GROUP_ID },
-                new Comparable[] { memberId, groupId });
+        return newKey(_R, memberId, groupId);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(MEMBER_ID, GROUP_ID); }
     // AUTO-GENERATED: METHODS END
 }

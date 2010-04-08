@@ -39,10 +39,10 @@ public class MuteRecord extends PersistentRecord
      */
     public static Key<MuteRecord> getKey (int muterId, int muteeId)
     {
-        return new Key<MuteRecord>(
-                MuteRecord.class,
-                new ColumnExp[] { MUTER_ID, MUTEE_ID },
-                new Comparable[] { muterId, muteeId });
+        return newKey(_R, muterId, muteeId);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(MUTER_ID, MUTEE_ID); }
     // AUTO-GENERATED: METHODS END
 }

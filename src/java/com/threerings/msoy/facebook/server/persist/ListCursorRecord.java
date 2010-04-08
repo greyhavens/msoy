@@ -42,10 +42,10 @@ public class ListCursorRecord extends PersistentRecord
      */
     public static Key<ListCursorRecord> getKey (String listId, String cursorId)
     {
-        return new Key<ListCursorRecord>(
-                ListCursorRecord.class,
-                new ColumnExp[] { LIST_ID, CURSOR_ID },
-                new Comparable[] { listId, cursorId });
+        return newKey(_R, listId, cursorId);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(LIST_ID, CURSOR_ID); }
     // AUTO-GENERATED: METHODS END
 }

@@ -509,11 +509,11 @@ public class MemberRecord extends PersistentRecord
      */
     public static Key<MemberRecord> getKey (int memberId)
     {
-        return new Key<MemberRecord>(
-                MemberRecord.class,
-                new ColumnExp[] { MEMBER_ID },
-                new Comparable[] { memberId });
+        return newKey(_R, memberId);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(MEMBER_ID); }
     // AUTO-GENERATED: METHODS END
 
     protected static final String DELETED_SUFFIX = ":deleted";

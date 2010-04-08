@@ -342,10 +342,10 @@ public class SceneRecord extends PersistentRecord
      */
     public static Key<SceneRecord> getKey (int sceneId)
     {
-        return new Key<SceneRecord>(
-                SceneRecord.class,
-                new ColumnExp[] { SCENE_ID },
-                new Comparable[] { sceneId });
+        return newKey(_R, sceneId);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(SCENE_ID); }
     // AUTO-GENERATED: METHODS END
 }

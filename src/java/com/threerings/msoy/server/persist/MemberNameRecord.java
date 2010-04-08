@@ -49,10 +49,10 @@ public class MemberNameRecord extends PersistentRecord
      */
     public static Key<MemberNameRecord> getKey (int memberId)
     {
-        return new Key<MemberNameRecord>(
-                MemberNameRecord.class,
-                new ColumnExp[] { MEMBER_ID },
-                new Comparable[] { memberId });
+        return newKey(_R, memberId);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(MEMBER_ID); }
     // AUTO-GENERATED: METHODS END
 }

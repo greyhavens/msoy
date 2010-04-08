@@ -66,10 +66,10 @@ public class ThemeAvatarLineupRecord extends PersistentRecord
      */
     public static Key<ThemeAvatarLineupRecord> getKey (int groupId, int catalogId)
     {
-        return new Key<ThemeAvatarLineupRecord>(
-                ThemeAvatarLineupRecord.class,
-                new ColumnExp[] { GROUP_ID, CATALOG_ID },
-                new Comparable[] { groupId, catalogId });
+        return newKey(_R, groupId, catalogId);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(GROUP_ID, CATALOG_ID); }
     // AUTO-GENERATED: METHODS END
 }

@@ -81,10 +81,10 @@ public class MemberExperienceRecord extends PersistentRecord
      */
     public static Key<MemberExperienceRecord> getKey (int id)
     {
-        return new Key<MemberExperienceRecord>(
-                MemberExperienceRecord.class,
-                new ColumnExp[] { ID },
-                new Comparable[] { id });
+        return newKey(_R, id);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(ID); }
     // AUTO-GENERATED: METHODS END
 }

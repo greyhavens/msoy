@@ -49,10 +49,10 @@ public class GameInvitationRecord extends PersistentRecord
      */
     public static Key<GameInvitationRecord> getKey (String inviteeEmail)
     {
-        return new Key<GameInvitationRecord>(
-                GameInvitationRecord.class,
-                new ColumnExp[] { INVITEE_EMAIL },
-                new Comparable[] { inviteeEmail });
+        return newKey(_R, inviteeEmail);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(INVITEE_EMAIL); }
     // AUTO-GENERATED: METHODS END
 }

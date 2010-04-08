@@ -96,10 +96,10 @@ public class PrizeRecord extends IdentGameItemRecord
      */
     public static Key<PrizeRecord> getKey (int itemId)
     {
-        return new Key<PrizeRecord>(
-                PrizeRecord.class,
-                new ColumnExp[] { ITEM_ID },
-                new Comparable[] { itemId });
+        return newKey(_R, itemId);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(ITEM_ID); }
     // AUTO-GENERATED: METHODS END
 }

@@ -47,10 +47,10 @@ public class MemberWarningRecord extends PersistentRecord
      */
     public static Key<MemberWarningRecord> getKey (int memberId)
     {
-        return new Key<MemberWarningRecord>(
-                MemberWarningRecord.class,
-                new ColumnExp[] { MEMBER_ID },
-                new Comparable[] { memberId });
+        return newKey(_R, memberId);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(MEMBER_ID); }
     // AUTO-GENERATED: METHODS END
 }

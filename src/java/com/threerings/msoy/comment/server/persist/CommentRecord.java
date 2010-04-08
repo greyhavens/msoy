@@ -95,10 +95,10 @@ public class CommentRecord extends PersistentRecord
      */
     public static Key<CommentRecord> getKey (int entityType, int entityId, Timestamp posted)
     {
-        return new Key<CommentRecord>(
-                CommentRecord.class,
-                new ColumnExp[] { ENTITY_TYPE, ENTITY_ID, POSTED },
-                new Comparable[] { entityType, entityId, posted });
+        return newKey(_R, entityType, entityId, posted);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(ENTITY_TYPE, ENTITY_ID, POSTED); }
     // AUTO-GENERATED: METHODS END
 }

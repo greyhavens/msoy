@@ -133,10 +133,10 @@ public class FeedThumbnailRecord extends PersistentRecord
      */
     public static Key<FeedThumbnailRecord> getKey (int appId, int gameId, String code, String variant, byte pos)
     {
-        return new Key<FeedThumbnailRecord>(
-                FeedThumbnailRecord.class,
-                new ColumnExp[] { APP_ID, GAME_ID, CODE, VARIANT, POS },
-                new Comparable[] { appId, gameId, code, variant, pos });
+        return newKey(_R, appId, gameId, code, variant, pos);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(APP_ID, GAME_ID, CODE, VARIANT, POS); }
     // AUTO-GENERATED: METHODS END
 }

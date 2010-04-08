@@ -62,10 +62,10 @@ public class TagNameRecord extends PersistentRecord
      */
     public static Key<TagNameRecord> getKey (int tagId)
     {
-        return new Key<TagNameRecord>(
-                TagNameRecord.class,
-                new ColumnExp[] { TAG_ID },
-                new Comparable[] { tagId });
+        return newKey(_R, tagId);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(TAG_ID); }
     // AUTO-GENERATED: METHODS END
 }

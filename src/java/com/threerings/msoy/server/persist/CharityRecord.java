@@ -61,10 +61,10 @@ public class CharityRecord extends PersistentRecord
      */
     public static Key<CharityRecord> getKey (int memberId)
     {
-        return new Key<CharityRecord>(
-                CharityRecord.class,
-                new ColumnExp[] { MEMBER_ID },
-                new Comparable[] { memberId });
+        return newKey(_R, memberId);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(MEMBER_ID); }
     // AUTO-GENERATED: METHODS END
 }

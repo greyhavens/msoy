@@ -111,10 +111,10 @@ public class IssueRecord extends PersistentRecord
      */
     public static Key<IssueRecord> getKey (int issueId)
     {
-        return new Key<IssueRecord>(
-                IssueRecord.class,
-                new ColumnExp[] { ISSUE_ID },
-                new Comparable[] { issueId });
+        return newKey(_R, issueId);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(ISSUE_ID); }
     // AUTO-GENERATED: METHODS END
 }

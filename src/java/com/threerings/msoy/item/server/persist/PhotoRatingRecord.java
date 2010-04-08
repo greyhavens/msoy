@@ -25,10 +25,10 @@ public class PhotoRatingRecord extends RatingRecord
      */
     public static Key<PhotoRatingRecord> getKey (int targetId, int memberId)
     {
-        return new Key<PhotoRatingRecord>(
-                PhotoRatingRecord.class,
-                new ColumnExp[] { TARGET_ID, MEMBER_ID },
-                new Comparable[] { targetId, memberId });
+        return newKey(_R, targetId, memberId);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(TARGET_ID, MEMBER_ID); }
     // AUTO-GENERATED: METHODS END
 }

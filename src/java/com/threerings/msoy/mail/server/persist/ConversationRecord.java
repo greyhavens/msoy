@@ -91,10 +91,10 @@ public class ConversationRecord extends PersistentRecord
      */
     public static Key<ConversationRecord> getKey (int conversationId)
     {
-        return new Key<ConversationRecord>(
-                ConversationRecord.class,
-                new ColumnExp[] { CONVERSATION_ID },
-                new Comparable[] { conversationId });
+        return newKey(_R, conversationId);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(CONVERSATION_ID); }
     // AUTO-GENERATED: METHODS END
 }

@@ -108,10 +108,10 @@ public class PromotionRecord extends PersistentRecord
      */
     public static Key<PromotionRecord> getKey (String promoId)
     {
-        return new Key<PromotionRecord>(
-                PromotionRecord.class,
-                new ColumnExp[] { PROMO_ID },
-                new Comparable[] { promoId });
+        return newKey(_R, promoId);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(PROMO_ID); }
     // AUTO-GENERATED: METHODS END
 }

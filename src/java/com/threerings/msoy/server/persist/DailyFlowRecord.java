@@ -43,10 +43,10 @@ public class DailyFlowRecord extends PersistentRecord
      */
     public static Key<DailyFlowRecord> getKey (String type, Date date)
     {
-        return new Key<DailyFlowRecord>(
-                DailyFlowRecord.class,
-                new ColumnExp[] { TYPE, DATE },
-                new Comparable[] { type, date });
+        return newKey(_R, type, date);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(TYPE, DATE); }
     // AUTO-GENERATED: METHODS END
 }

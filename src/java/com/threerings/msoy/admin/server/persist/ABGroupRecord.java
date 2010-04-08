@@ -40,10 +40,10 @@ public class ABGroupRecord extends PersistentRecord
      */
     public static Key<ABGroupRecord> getKey (int testId, String visitorId)
     {
-        return new Key<ABGroupRecord>(
-                ABGroupRecord.class,
-                new ColumnExp[] { TEST_ID, VISITOR_ID },
-                new Comparable[] { testId, visitorId });
+        return newKey(_R, testId, visitorId);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(TEST_ID, VISITOR_ID); }
     // AUTO-GENERATED: METHODS END
 }

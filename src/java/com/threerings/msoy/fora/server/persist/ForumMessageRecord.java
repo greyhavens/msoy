@@ -112,10 +112,10 @@ public class ForumMessageRecord extends PersistentRecord
      */
     public static Key<ForumMessageRecord> getKey (int messageId)
     {
-        return new Key<ForumMessageRecord>(
-                ForumMessageRecord.class,
-                new ColumnExp[] { MESSAGE_ID },
-                new Comparable[] { messageId });
+        return newKey(_R, messageId);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(MESSAGE_ID); }
     // AUTO-GENERATED: METHODS END
 }

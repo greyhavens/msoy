@@ -56,10 +56,10 @@ public class InviterRecord extends PersistentRecord
      */
     public static Key<InviterRecord> getKey (int memberId)
     {
-        return new Key<InviterRecord>(
-                InviterRecord.class,
-                new ColumnExp[] { MEMBER_ID },
-                new Comparable[] { memberId });
+        return newKey(_R, memberId);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(MEMBER_ID); }
     // AUTO-GENERATED: METHODS END
 }

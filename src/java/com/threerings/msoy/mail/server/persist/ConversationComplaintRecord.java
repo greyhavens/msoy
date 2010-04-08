@@ -38,10 +38,10 @@ public class ConversationComplaintRecord extends PersistentRecord
      */
     public static Key<ConversationComplaintRecord> getKey (int conversationId, int complainerId)
     {
-        return new Key<ConversationComplaintRecord>(
-                ConversationComplaintRecord.class,
-                new ColumnExp[] { CONVERSATION_ID, COMPLAINER_ID },
-                new Comparable[] { conversationId, complainerId });
+        return newKey(_R, conversationId, complainerId);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(CONVERSATION_ID, COMPLAINER_ID); }
     // AUTO-GENERATED: METHODS END
 }

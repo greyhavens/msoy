@@ -60,10 +60,10 @@ public class ThemeAvatarUseRecord extends PersistentRecord
      */
     public static Key<ThemeAvatarUseRecord> getKey (int memberId, int groupId)
     {
-        return new Key<ThemeAvatarUseRecord>(
-                ThemeAvatarUseRecord.class,
-                new ColumnExp[] { MEMBER_ID, GROUP_ID },
-                new Comparable[] { memberId, groupId });
+        return newKey(_R, memberId, groupId);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(MEMBER_ID, GROUP_ID); }
     // AUTO-GENERATED: METHODS END
 }

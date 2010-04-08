@@ -60,10 +60,10 @@ public class AgentStateRecord extends PersistentRecord
      */
     public static Key<AgentStateRecord> getKey (int gameId, String datumKey)
     {
-        return new Key<AgentStateRecord>(
-                AgentStateRecord.class,
-                new ColumnExp[] { GAME_ID, DATUM_KEY },
-                new Comparable[] { gameId, datumKey });
+        return newKey(_R, gameId, datumKey);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(GAME_ID, DATUM_KEY); }
     // AUTO-GENERATED: METHODS END
 }

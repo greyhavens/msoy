@@ -34,10 +34,10 @@ public class ToyCloneRecord extends CloneRecord
      */
     public static Key<ToyCloneRecord> getKey (int itemId)
     {
-        return new Key<ToyCloneRecord>(
-                ToyCloneRecord.class,
-                new ColumnExp[] { ITEM_ID },
-                new Comparable[] { itemId });
+        return newKey(_R, itemId);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(ITEM_ID); }
     // AUTO-GENERATED: METHODS END
 }

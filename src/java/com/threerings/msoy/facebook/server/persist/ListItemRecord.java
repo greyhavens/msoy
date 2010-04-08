@@ -49,10 +49,10 @@ public class ListItemRecord extends PersistentRecord
      */
     public static Key<ListItemRecord> getKey (String listId, int index)
     {
-        return new Key<ListItemRecord>(
-                ListItemRecord.class,
-                new ColumnExp[] { LIST_ID, INDEX },
-                new Comparable[] { listId, index });
+        return newKey(_R, listId, index);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(LIST_ID, INDEX); }
     // AUTO-GENERATED: METHODS END
 }

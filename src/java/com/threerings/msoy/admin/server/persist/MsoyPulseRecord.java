@@ -59,10 +59,10 @@ public class MsoyPulseRecord extends PulseRecord
      */
     public static Key<MsoyPulseRecord> getKey (Timestamp recorded, String server)
     {
-        return new Key<MsoyPulseRecord>(
-                MsoyPulseRecord.class,
-                new ColumnExp[] { RECORDED, SERVER },
-                new Comparable[] { recorded, server });
+        return newKey(_R, recorded, server);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(RECORDED, SERVER); }
     // AUTO-GENERATED: METHODS END
 }

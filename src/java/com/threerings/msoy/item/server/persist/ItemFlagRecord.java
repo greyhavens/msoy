@@ -70,10 +70,10 @@ public class ItemFlagRecord extends PersistentRecord
      */
     public static Key<ItemFlagRecord> getKey (int memberId, byte itemType, int itemId, ItemFlag.Kind kind)
     {
-        return new Key<ItemFlagRecord>(
-                ItemFlagRecord.class,
-                new ColumnExp[] { MEMBER_ID, ITEM_TYPE, ITEM_ID, KIND },
-                new Comparable[] { memberId, itemType, itemId, kind });
+        return newKey(_R, memberId, itemType, itemId, kind);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(MEMBER_ID, ITEM_TYPE, ITEM_ID, KIND); }
     // AUTO-GENERATED: METHODS END
 }

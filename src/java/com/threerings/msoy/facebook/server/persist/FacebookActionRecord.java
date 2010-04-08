@@ -161,11 +161,11 @@ public class FacebookActionRecord extends PersistentRecord
      */
     public static Key<FacebookActionRecord> getKey (int appId, int memberId, FacebookActionRecord.Type type, String id)
     {
-        return new Key<FacebookActionRecord>(
-                FacebookActionRecord.class,
-                new ColumnExp[] { APP_ID, MEMBER_ID, TYPE, ID },
-                new Comparable[] { appId, memberId, type, id });
+        return newKey(_R, appId, memberId, type, id);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(APP_ID, MEMBER_ID, TYPE, ID); }
     // AUTO-GENERATED: METHODS END
 
     protected static long now ()

@@ -101,10 +101,10 @@ public class InvitationRecord extends PersistentRecord
      */
     public static Key<InvitationRecord> getKey (String inviteId)
     {
-        return new Key<InvitationRecord>(
-                InvitationRecord.class,
-                new ColumnExp[] { INVITE_ID },
-                new Comparable[] { inviteId });
+        return newKey(_R, inviteId);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(INVITE_ID); }
     // AUTO-GENERATED: METHODS END
 }

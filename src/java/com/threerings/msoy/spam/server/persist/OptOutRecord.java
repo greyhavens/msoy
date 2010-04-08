@@ -53,10 +53,10 @@ public class OptOutRecord extends PersistentRecord
      */
     public static Key<OptOutRecord> getKey (String email)
     {
-        return new Key<OptOutRecord>(
-                OptOutRecord.class,
-                new ColumnExp[] { EMAIL },
-                new Comparable[] { email });
+        return newKey(_R, email);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(EMAIL); }
     // AUTO-GENERATED: METHODS END
 }

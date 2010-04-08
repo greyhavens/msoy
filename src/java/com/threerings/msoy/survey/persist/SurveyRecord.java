@@ -107,10 +107,10 @@ public class SurveyRecord extends PersistentRecord
      */
     public static Key<SurveyRecord> getKey (int surveyId)
     {
-        return new Key<SurveyRecord>(
-                SurveyRecord.class,
-                new ColumnExp[] { SURVEY_ID },
-                new Comparable[] { surveyId });
+        return newKey(_R, surveyId);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(SURVEY_ID); }
     // AUTO-GENERATED: METHODS END
 }

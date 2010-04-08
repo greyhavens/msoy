@@ -47,10 +47,10 @@ public class ReadTrackingRecord extends PersistentRecord
      */
     public static Key<ReadTrackingRecord> getKey (int memberId, int threadId)
     {
-        return new Key<ReadTrackingRecord>(
-                ReadTrackingRecord.class,
-                new ColumnExp[] { MEMBER_ID, THREAD_ID },
-                new Comparable[] { memberId, threadId });
+        return newKey(_R, memberId, threadId);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(MEMBER_ID, THREAD_ID); }
     // AUTO-GENERATED: METHODS END
 }

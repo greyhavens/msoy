@@ -243,10 +243,10 @@ public class MoneyTransactionRecord extends PersistentRecord
      */
     public static Key<MoneyTransactionRecord> getKey (int id)
     {
-        return new Key<MoneyTransactionRecord>(
-                MoneyTransactionRecord.class,
-                new ColumnExp[] { ID },
-                new Comparable[] { id });
+        return newKey(_R, id);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(ID); }
     // AUTO-GENERATED: METHODS END
 }

@@ -40,10 +40,10 @@ public class BarscriptionRecord extends PersistentRecord
      */
     public static Key<BarscriptionRecord> getKey (int memberId)
     {
-        return new Key<BarscriptionRecord>(
-                BarscriptionRecord.class,
-                new ColumnExp[] { MEMBER_ID },
-                new Comparable[] { memberId });
+        return newKey(_R, memberId);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(MEMBER_ID); }
     // AUTO-GENERATED: METHODS END
 }

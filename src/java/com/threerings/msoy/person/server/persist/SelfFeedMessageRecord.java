@@ -62,10 +62,10 @@ public class SelfFeedMessageRecord extends FeedMessageRecord
      */
     public static Key<SelfFeedMessageRecord> getKey (int messageId)
     {
-        return new Key<SelfFeedMessageRecord>(
-                SelfFeedMessageRecord.class,
-                new ColumnExp[] { MESSAGE_ID },
-                new Comparable[] { messageId });
+        return newKey(_R, messageId);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(MESSAGE_ID); }
     // AUTO-GENERATED: METHODS END
 }

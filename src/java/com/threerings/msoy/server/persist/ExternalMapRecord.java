@@ -86,10 +86,10 @@ public class ExternalMapRecord extends PersistentRecord
      */
     public static Key<ExternalMapRecord> getKey (ExternalSiteId.Auther auther, int siteId, String externalId)
     {
-        return new Key<ExternalMapRecord>(
-                ExternalMapRecord.class,
-                new ColumnExp[] { AUTHER, SITE_ID, EXTERNAL_ID },
-                new Comparable[] { auther, siteId, externalId });
+        return newKey(_R, auther, siteId, externalId);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(AUTHER, SITE_ID, EXTERNAL_ID); }
     // AUTO-GENERATED: METHODS END
 }

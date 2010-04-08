@@ -71,10 +71,10 @@ public class KontagentInfoRecord extends PersistentRecord
      */
     public static Key<KontagentInfoRecord> getKey (int appId)
     {
-        return new Key<KontagentInfoRecord>(
-                KontagentInfoRecord.class,
-                new ColumnExp[] { APP_ID },
-                new Comparable[] { appId });
+        return newKey(_R, appId);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(APP_ID); }
     // AUTO-GENERATED: METHODS END
 }

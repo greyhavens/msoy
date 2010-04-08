@@ -84,10 +84,10 @@ public class AppInfoRecord extends PersistentRecord
      */
     public static Key<AppInfoRecord> getKey (int appId)
     {
-        return new Key<AppInfoRecord>(
-                AppInfoRecord.class,
-                new ColumnExp[] { APP_ID },
-                new Comparable[] { appId });
+        return newKey(_R, appId);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(APP_ID); }
     // AUTO-GENERATED: METHODS END
 }

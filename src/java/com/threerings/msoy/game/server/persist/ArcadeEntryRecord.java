@@ -54,10 +54,10 @@ public class ArcadeEntryRecord extends PersistentRecord
      */
     public static Key<ArcadeEntryRecord> getKey (ArcadeData.Portal portal, int gameId)
     {
-        return new Key<ArcadeEntryRecord>(
-                ArcadeEntryRecord.class,
-                new ColumnExp[] { PORTAL, GAME_ID },
-                new Comparable[] { portal, gameId });
+        return newKey(_R, portal, gameId);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(PORTAL, GAME_ID); }
     // AUTO-GENERATED: METHODS END
 }
