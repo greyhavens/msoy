@@ -27,6 +27,7 @@ import com.google.inject.Singleton;
 import com.samskivert.depot.CountRecord;
 import com.samskivert.depot.DataMigration;
 import com.samskivert.depot.DatabaseException;
+import com.samskivert.depot.DateFuncs;
 import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.DuplicateKeyException;
 import com.samskivert.depot.Exps;
@@ -44,14 +45,17 @@ import com.samskivert.depot.annotation.Computed;
 import com.samskivert.depot.annotation.Entity;
 
 import com.samskivert.depot.clause.FieldDefinition;
+import com.samskivert.depot.clause.FieldOverride;
 import com.samskivert.depot.clause.FromOverride;
 import com.samskivert.depot.clause.GroupBy;
+import com.samskivert.depot.clause.Join;
 import com.samskivert.depot.clause.Limit;
 import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.QueryClause;
 import com.samskivert.depot.clause.Where;
 
 import com.samskivert.depot.expression.ColumnExp;
+import com.samskivert.depot.expression.FluentExp;
 import com.samskivert.depot.expression.SQLExpression;
 import com.samskivert.depot.operator.FullText;
 import com.samskivert.jdbc.DatabaseLiaison;
@@ -214,7 +218,7 @@ public class MemberRepository extends DepotRepository
 
     /**
      * Purges entry vector records that have not become associated with members and are older than
-     * two weeks.
+     * two months.
      */
     public void purgeEntryVectors ()
     {
@@ -465,6 +469,33 @@ public class MemberRepository extends DepotRepository
                     Ops.like(StringFuncs.lower(MemberRecord.NAME), "%" + search + "%")));
         return Lists.transform(findAllKeys(MemberRecord.class, false, where),
                                Key.<MemberRecord>toInt());
+    }
+
+    /**
+     * Execute a special query for our funnel report with the given optional external column to
+     * join against and the given optional where condition.
+     */
+    public List<FunnelEntryRecord> funnelQuery (ColumnExp joinColumn, SQLExpression whereBit)
+    {
+        final FluentExp dateExp = DateFuncs.date(EntryVectorRecord.CREATED);
+        List<QueryClause> clauses = Lists.newArrayList(
+            new FromOverride(EntryVectorRecord.class),
+            new FieldOverride(FunnelEntryRecord.DATE, dateExp),
+            new GroupBy(dateExp, EntryVectorRecord.VECTOR),
+            OrderBy.ascending(dateExp));
+
+        if (joinColumn != null) {
+            clauses.add(new Join(EntryVectorRecord.MEMBER_ID, joinColumn));
+        }
+
+        FluentExp condition = DateFuncs.now().minus(EntryVectorRecord.CREATED)
+            .lessEq(Exps.days(FUNNEL_DAYS));
+        if (whereBit != null) {
+            condition = condition.and(whereBit);
+        }
+        clauses.add(new Where(condition));
+
+        return findAll(FunnelEntryRecord.class, clauses);
     }
 
     /**
@@ -1421,7 +1452,7 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
-     * Returns the member ids of all permaguest accounts that have not logged in in the past 10
+     * Returns the member ids of all permaguest accounts that have not logged in in the past N
      * days and have not achieved at least level 5. The list is limited to a maximum number.
      */
     public List<Integer> loadExpiredWeakPermaguestIds (long now)
@@ -1432,7 +1463,7 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
-     * Returns the number of permaguest accounts that have not logged in in the past 10 days and
+     * Returns the number of permaguest accounts that have not logged in in the past N days and
      * have not achieved at least level 5.
      */
     public int countExpiredWeakPermaguestIds (long now)
@@ -1522,8 +1553,14 @@ public class MemberRepository extends DepotRepository
     protected static final SQLExpression GREETER_FLAG_IS_SET =
         MemberRecord.FLAGS.bitAnd(MemberRecord.Flag.GREETER.getBit()).notEq(0);
 
-    /** Period after which we expire entry vector records that are not associated with members. */
-    protected static final long ENTRY_VECTOR_EXPIRE = 14 * 24*60*60*1000L;
+
+    /**
+     *  Period after which we expire entry vector records that are not associated with members.
+     *  This should not be shorter than the period for which we want to create a funnel report.
+     */
+    protected static final long ENTRY_VECTOR_EXPIRE = 60 * 24*60*60*1000L;
+
+    protected static final int FUNNEL_DAYS = 60;
 
     /** Period after which we expire session records. */
     protected static final long SESSION_RECORD_EXPIRE = 30 * 24*60*60*1000L;
@@ -1531,8 +1568,11 @@ public class MemberRepository extends DepotRepository
     /** A "like" pattern that matches permaguest accounts. */
     protected static final String PERMA_PATTERN = MemberMailUtil.makePermaguestEmail("%");
 
-    /** Period after which we expire "weak" permaguest accounts (those of low level). */
-    protected static final long WEAK_PERMAGUEST_EXPIRE = 10 * 24*60*60*1000L;
+    /**
+     * Period after which we expire "weak" permaguest accounts (those of low level). This should
+     * not be shorter than the period for which we want to create a funnel report.
+     */
+    protected static final long WEAK_PERMAGUEST_EXPIRE = 60 * 24*60*60*1000L;
 
     /** A permaguest that fails to achieve this level is considered weak, and purged. */
     protected static final int STRONG_PERMAGUEST_LEVEL = 5;
