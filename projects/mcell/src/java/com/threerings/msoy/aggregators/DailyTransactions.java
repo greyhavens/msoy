@@ -21,7 +21,7 @@ import com.threerings.panopticon.common.event.EventData;
 import com.threerings.panopticon.common.event.EventDataBuilder;
 import com.threerings.panopticon.eventstore.EventWriter;
 
-@Aggregator(output=DailyTransactions.OUTPUT_EVENT_NAME /*, incremental="timestamp" */)
+@Aggregator(output=DailyTransactions.OUTPUT_EVENT_NAME, incremental="timestamp")
 public class DailyTransactions
     implements JavaAggregator<DailyTransactions.TransactionKey>,
                KeyFactory<DailyTransactions.TransactionKey>
@@ -45,7 +45,7 @@ public class DailyTransactions
         }
     }
 
-    @StringInputNameResult(inputs="FlowTransaction" /*, incrementals="timestamp" */)
+    @StringInputNameResult(inputs="FlowTransaction", incrementals="timestamp")
     public static class Accumulation extends FieldAggregatedResult<TransactionKey>
     {
         public Map<Integer, Integer> earned = Maps.newHashMap();
@@ -93,10 +93,10 @@ public class DailyTransactions
                 keys.add(new TransactionKey(keyInitData.eventData, Currency.COINS));
             }
             if (keyInitData.eventData.getDefaultInt("deltaBars", 0) != 0) {
-//                keys.add(new TransactionKey(keyInitData.eventData, Currency.BARS));
+                keys.add(new TransactionKey(keyInitData.eventData, Currency.BARS));
             }
             if (keyInitData.eventData.getDefaultInt("deltaBling", 0) != 0) {
-//                keys.add(new TransactionKey(keyInitData.eventData, Currency.BLING));
+                keys.add(new TransactionKey(keyInitData.eventData, Currency.BLING));
             }
         }
         return keys;
