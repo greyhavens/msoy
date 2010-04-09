@@ -1,4 +1,0 @@
-# The majestic GuestBehavior computation and its many follow-up tasks get their own
-# cluster to play in...
-
-com.threerings.msoy.aggregators.DailyAllGuestBehavior
