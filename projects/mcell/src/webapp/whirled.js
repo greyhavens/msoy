@@ -148,28 +148,7 @@ whirled.addCharts = function () {
             return chart;
         });
 
-        addChart("funnel", "funnel_stacked", "Conversion and Retention (stacked)", function () {
-            var sourceNames = new List([
-                ["lost", "Lost"],
-                ["played", "Played"],
-                ["converted", "Converted"],
-                ["returned", "Returned"],
-                ["retained", "Retained"]
-            ]);
-            var sources = new CheckBoxes("Sources", "sources", sourceNames);
-            var group = new RadioButtons("Group", "group", ["web", "embed" ]);
-            function valueExtractor (event, name) {
-                return (group.value == event.group && sources.has(name)) ?
-                    (event[name] || 0) : 0;
-            }
-
-            var chart = new StackedBarChart(
-                "DailyVisitorFutures", sourceNames, valueExtractor, {controls:[sources, group]});
-            chart.extractKey = function (ev) { return ev.date; }
-            return chart;
-        });
-
-        addChart("funnel", "funnel_lines", "Conversion and Retention (lines)", function () {
+        addChart("funnel", "funnel_lines", "Conversion and Retention (line graph)", function () {
             var sourceNames = new List([
                 ["visited", "Visited"],
                 ["played", "Played"],
