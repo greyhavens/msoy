@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.room.server;
 
+import javax.annotation.Generated;
+
 import com.threerings.msoy.room.client.MsoySceneService;
 import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.presents.data.ClientObject;
@@ -12,6 +14,8 @@ import com.threerings.presents.server.InvocationProvider;
 /**
  * Defines the server-side of the {@link MsoySceneService}.
  */
+@Generated(value={"com.threerings.presents.tools.GenServiceTask"},
+           comments="Derived from MsoySceneService.java.")
 public interface MsoySceneProvider extends InvocationProvider
 {
     /**

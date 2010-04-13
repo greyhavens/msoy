@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.avrg.server;
 
+import javax.annotation.Generated;
+
 import com.threerings.msoy.avrg.client.AVRService;
 import com.threerings.msoy.avrg.data.AVRMarshaller;
 import com.threerings.presents.client.InvocationService;
@@ -13,6 +15,8 @@ import com.threerings.presents.server.InvocationException;
 /**
  * Dispatches requests to the {@link AVRProvider}.
  */
+@Generated(value={"com.threerings.presents.tools.GenServiceTask"},
+           comments="Derived from AVRService.java.")
 public class AVRDispatcher extends InvocationDispatcher<AVRMarshaller>
 {
     /**
@@ -24,13 +28,13 @@ public class AVRDispatcher extends InvocationDispatcher<AVRMarshaller>
         this.provider = provider;
     }
 
-    @Override // documentation inherited
+    @Override
     public AVRMarshaller createMarshaller ()
     {
         return new AVRMarshaller();
     }
 
-    @Override // documentation inherited
+    @Override
     public void dispatchRequest (
         ClientObject source, int methodId, Object[] args)
         throws InvocationException

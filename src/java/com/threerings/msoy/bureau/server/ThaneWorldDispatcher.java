@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.bureau.server;
 
+import javax.annotation.Generated;
+
 import com.threerings.msoy.bureau.data.ThaneWorldMarshaller;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
@@ -12,6 +14,8 @@ import com.threerings.presents.server.InvocationException;
 /**
  * Dispatches requests to the {@link ThaneWorldProvider}.
  */
+@Generated(value={"com.threerings.presents.tools.GenServiceTask"},
+           comments="Derived from ThaneWorldService.java.")
 public class ThaneWorldDispatcher extends InvocationDispatcher<ThaneWorldMarshaller>
 {
     /**
@@ -23,13 +27,13 @@ public class ThaneWorldDispatcher extends InvocationDispatcher<ThaneWorldMarshal
         this.provider = provider;
     }
 
-    @Override // documentation inherited
+    @Override
     public ThaneWorldMarshaller createMarshaller ()
     {
         return new ThaneWorldMarshaller();
     }
 
-    @Override // documentation inherited
+    @Override
     public void dispatchRequest (
         ClientObject source, int methodId, Object[] args)
         throws InvocationException

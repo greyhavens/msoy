@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.game.data;
 
+import javax.annotation.Generated;
+
 import com.threerings.msoy.game.client.WorldGameService;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
@@ -16,6 +18,8 @@ import com.threerings.presents.dobj.InvocationResponseEvent;
  * interfaces that marshall the response arguments and deliver them back
  * to the requesting client.
  */
+@Generated(value={"com.threerings.presents.tools.GenServiceTask"},
+           comments="Derived from WorldGameService.java.")
 public class WorldGameMarshaller extends InvocationMarshaller
     implements WorldGameService
 {

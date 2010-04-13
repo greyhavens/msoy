@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.chat.data;
 
+import javax.annotation.Generated;
+
 import com.threerings.msoy.chat.client.JabberService;
 import com.threerings.msoy.data.all.JabberName;
 import com.threerings.presents.client.Client;
@@ -16,6 +18,8 @@ import com.threerings.presents.data.InvocationMarshaller;
  * interfaces that marshall the response arguments and deliver them back
  * to the requesting client.
  */
+@Generated(value={"com.threerings.presents.tools.GenServiceTask"},
+           comments="Derived from JabberService.java.")
 public class JabberMarshaller extends InvocationMarshaller
     implements JabberService
 {

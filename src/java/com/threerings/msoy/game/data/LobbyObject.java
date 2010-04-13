@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.game.data;
 
+import javax.annotation.Generated;
 import com.threerings.presents.dobj.DSet;
 import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.dobj.Subscriber;
@@ -29,21 +30,27 @@ public class LobbyObject extends DObject implements TableLobbyObject
 
     // AUTO-GENERATED: FIELDS START
     /** The field name of the <code>game</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String GAME = "game";
 
     /** The field name of the <code>gameDef</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String GAME_DEF = "gameDef";
 
     /** The field name of the <code>tables</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String TABLES = "tables";
 
     /** The field name of the <code>tableService</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String TABLE_SERVICE = "tableService";
 
     /** The field name of the <code>groupId</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String GROUP_ID = "groupId";
 
     /** The field name of the <code>splashMedia</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String SPLASH_MEDIA = "splashMedia";
     // AUTO-GENERATED: FIELDS END
 
@@ -115,6 +122,7 @@ public class LobbyObject extends DObject implements TableLobbyObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setGame (GameSummary value)
     {
         GameSummary ovalue = this.game;
@@ -131,6 +139,7 @@ public class LobbyObject extends DObject implements TableLobbyObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setGameDef (GameDefinition value)
     {
         GameDefinition ovalue = this.gameDef;
@@ -144,6 +153,7 @@ public class LobbyObject extends DObject implements TableLobbyObject
      * <code>tables</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void addToTables (Table elem)
     {
         requestEntryAdd(TABLES, tables, elem);
@@ -154,6 +164,7 @@ public class LobbyObject extends DObject implements TableLobbyObject
      * the <code>tables</code> set. The set will not change until the
      * event is actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void removeFromTables (Comparable<?> key)
     {
         requestEntryRemove(TABLES, tables, key);
@@ -164,6 +175,7 @@ public class LobbyObject extends DObject implements TableLobbyObject
      * <code>tables</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void updateTables (Table elem)
     {
         requestEntryUpdate(TABLES, tables, elem);
@@ -179,6 +191,7 @@ public class LobbyObject extends DObject implements TableLobbyObject
      * change. Proxied copies of this object (on clients) will apply the
      * value change when they received the attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setTables (DSet<Table> value)
     {
         requestAttributeChange(TABLES, value, this.tables);
@@ -194,6 +207,7 @@ public class LobbyObject extends DObject implements TableLobbyObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setTableService (TableMarshaller value)
     {
         TableMarshaller ovalue = this.tableService;
@@ -210,6 +224,7 @@ public class LobbyObject extends DObject implements TableLobbyObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setGroupId (int value)
     {
         int ovalue = this.groupId;
@@ -226,6 +241,7 @@ public class LobbyObject extends DObject implements TableLobbyObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setSplashMedia (MediaDesc value)
     {
         MediaDesc ovalue = this.splashMedia;

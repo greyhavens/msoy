@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.party.server;
 
+import javax.annotation.Generated;
+
 import com.threerings.msoy.party.client.PeerPartyService;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
@@ -12,6 +14,8 @@ import com.threerings.presents.server.InvocationProvider;
 /**
  * Defines the server-side of the {@link PeerPartyService}.
  */
+@Generated(value={"com.threerings.presents.tools.GenServiceTask"},
+           comments="Derived from PeerPartyService.java.")
 public interface PeerPartyProvider extends InvocationProvider
 {
     /**

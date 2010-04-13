@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.room.data;
 
+import javax.annotation.Generated;
 import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.data.Place;
 import com.threerings.crowd.data.PlaceObject;
@@ -17,6 +18,7 @@ public class PetObject extends MsoyBodyObject
 {
     // AUTO-GENERATED: FIELDS START
     /** The field name of the <code>pet</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String PET = "pet";
     // AUTO-GENERATED: FIELDS END
 
@@ -62,6 +64,7 @@ public class PetObject extends MsoyBodyObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setPet (Pet value)
     {
         Pet ovalue = this.pet;

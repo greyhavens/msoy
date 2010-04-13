@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.bureau.data;
 
+import javax.annotation.Generated;
 import static com.threerings.msoy.Log.log;
 
 import com.threerings.presents.data.ClientObject;
@@ -13,6 +14,7 @@ public class WindowClientObject extends ClientObject
 {
     // AUTO-GENERATED: FIELDS START
     /** The field name of the <code>bureauId</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String BUREAU_ID = "bureauId";
     // AUTO-GENERATED: FIELDS END
 
@@ -28,6 +30,7 @@ public class WindowClientObject extends ClientObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setBureauId (String value)
     {
         String ovalue = this.bureauId;

@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import javax.annotation.Generated;
 
 import com.threerings.presents.dobj.DSet;
 
@@ -50,33 +51,43 @@ public class AVRGameObject extends PlaceObject
 
     // AUTO-GENERATED: FIELDS START
     /** The field name of the <code>playerLocs</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String PLAYER_LOCS = "playerLocs";
 
     /** The field name of the <code>parties</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String PARTIES = "parties";
 
     /** The field name of the <code>partyLeaders</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String PARTY_LEADERS = "partyLeaders";
 
     /** The field name of the <code>gameData</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String GAME_DATA = "gameData";
 
     /** The field name of the <code>avrgService</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String AVRG_SERVICE = "avrgService";
 
     /** The field name of the <code>contentService</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String CONTENT_SERVICE = "contentService";
 
     /** The field name of the <code>prizeService</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String PRIZE_SERVICE = "prizeService";
 
     /** The field name of the <code>messageService</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String MESSAGE_SERVICE = "messageService";
 
     /** The field name of the <code>propertiesService</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String PROPERTIES_SERVICE = "propertiesService";
 
     /** The field name of the <code>isApproved</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String IS_APPROVED = "isApproved";
     // AUTO-GENERATED: FIELDS END
 
@@ -132,6 +143,7 @@ public class AVRGameObject extends PlaceObject
      * <code>playerLocs</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void addToPlayerLocs (PlayerLocation elem)
     {
         requestEntryAdd(PLAYER_LOCS, playerLocs, elem);
@@ -142,6 +154,7 @@ public class AVRGameObject extends PlaceObject
      * the <code>playerLocs</code> set. The set will not change until the
      * event is actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void removeFromPlayerLocs (Comparable<?> key)
     {
         requestEntryRemove(PLAYER_LOCS, playerLocs, key);
@@ -152,6 +165,7 @@ public class AVRGameObject extends PlaceObject
      * <code>playerLocs</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void updatePlayerLocs (PlayerLocation elem)
     {
         requestEntryUpdate(PLAYER_LOCS, playerLocs, elem);
@@ -167,6 +181,7 @@ public class AVRGameObject extends PlaceObject
      * change. Proxied copies of this object (on clients) will apply the
      * value change when they received the attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setPlayerLocs (DSet<PlayerLocation> value)
     {
         requestAttributeChange(PLAYER_LOCS, value, this.playerLocs);
@@ -179,6 +194,7 @@ public class AVRGameObject extends PlaceObject
      * <code>parties</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void addToParties (PartySummary elem)
     {
         requestEntryAdd(PARTIES, parties, elem);
@@ -189,6 +205,7 @@ public class AVRGameObject extends PlaceObject
      * the <code>parties</code> set. The set will not change until the
      * event is actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void removeFromParties (Comparable<?> key)
     {
         requestEntryRemove(PARTIES, parties, key);
@@ -199,6 +216,7 @@ public class AVRGameObject extends PlaceObject
      * <code>parties</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void updateParties (PartySummary elem)
     {
         requestEntryUpdate(PARTIES, parties, elem);
@@ -214,6 +232,7 @@ public class AVRGameObject extends PlaceObject
      * change. Proxied copies of this object (on clients) will apply the
      * value change when they received the attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setParties (DSet<PartySummary> value)
     {
         requestAttributeChange(PARTIES, value, this.parties);
@@ -226,6 +245,7 @@ public class AVRGameObject extends PlaceObject
      * <code>partyLeaders</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void addToPartyLeaders (PartyLeader elem)
     {
         requestEntryAdd(PARTY_LEADERS, partyLeaders, elem);
@@ -236,6 +256,7 @@ public class AVRGameObject extends PlaceObject
      * the <code>partyLeaders</code> set. The set will not change until the
      * event is actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void removeFromPartyLeaders (Comparable<?> key)
     {
         requestEntryRemove(PARTY_LEADERS, partyLeaders, key);
@@ -246,6 +267,7 @@ public class AVRGameObject extends PlaceObject
      * <code>partyLeaders</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void updatePartyLeaders (PartyLeader elem)
     {
         requestEntryUpdate(PARTY_LEADERS, partyLeaders, elem);
@@ -261,6 +283,7 @@ public class AVRGameObject extends PlaceObject
      * change. Proxied copies of this object (on clients) will apply the
      * value change when they received the attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setPartyLeaders (DSet<PartyLeader> value)
     {
         requestAttributeChange(PARTY_LEADERS, value, this.partyLeaders);
@@ -276,6 +299,7 @@ public class AVRGameObject extends PlaceObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setGameData (GameData[] value)
     {
         GameData[] ovalue = this.gameData;
@@ -293,6 +317,7 @@ public class AVRGameObject extends PlaceObject
      * will apply the value change when they received the attribute
      * changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setGameDataAt (GameData value, int index)
     {
         GameData ovalue = this.gameData[index];
@@ -309,6 +334,7 @@ public class AVRGameObject extends PlaceObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setAvrgService (AVRGameMarshaller value)
     {
         AVRGameMarshaller ovalue = this.avrgService;
@@ -325,6 +351,7 @@ public class AVRGameObject extends PlaceObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setContentService (ContentMarshaller value)
     {
         ContentMarshaller ovalue = this.contentService;
@@ -341,6 +368,7 @@ public class AVRGameObject extends PlaceObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setPrizeService (PrizeMarshaller value)
     {
         PrizeMarshaller ovalue = this.prizeService;
@@ -357,6 +385,7 @@ public class AVRGameObject extends PlaceObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setMessageService (WhirledGameMessageMarshaller value)
     {
         WhirledGameMessageMarshaller ovalue = this.messageService;
@@ -373,6 +402,7 @@ public class AVRGameObject extends PlaceObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setPropertiesService (PropertySpaceMarshaller value)
     {
         PropertySpaceMarshaller ovalue = this.propertiesService;
@@ -389,6 +419,7 @@ public class AVRGameObject extends PlaceObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setIsApproved (boolean value)
     {
         boolean ovalue = this.isApproved;

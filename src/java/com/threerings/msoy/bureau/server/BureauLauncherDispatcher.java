@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.bureau.server;
 
+import javax.annotation.Generated;
+
 import com.threerings.msoy.admin.gwt.BureauLauncherInfo;
 import com.threerings.msoy.bureau.data.BureauLauncherMarshaller;
 import com.threerings.presents.data.ClientObject;
@@ -12,6 +14,8 @@ import com.threerings.presents.server.InvocationException;
 /**
  * Dispatches requests to the {@link BureauLauncherProvider}.
  */
+@Generated(value={"com.threerings.presents.tools.GenServiceTask"},
+           comments="Derived from BureauLauncherService.java.")
 public class BureauLauncherDispatcher extends InvocationDispatcher<BureauLauncherMarshaller>
 {
     /**
@@ -23,13 +27,13 @@ public class BureauLauncherDispatcher extends InvocationDispatcher<BureauLaunche
         this.provider = provider;
     }
 
-    @Override // documentation inherited
+    @Override
     public BureauLauncherMarshaller createMarshaller ()
     {
         return new BureauLauncherMarshaller();
     }
 
-    @Override // documentation inherited
+    @Override
     public void dispatchRequest (
         ClientObject source, int methodId, Object[] args)
         throws InvocationException

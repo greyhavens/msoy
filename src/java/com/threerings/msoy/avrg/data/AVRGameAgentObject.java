@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import javax.annotation.Generated;
 
 import com.threerings.bureau.data.AgentObject;
 import com.threerings.io.ObjectInputStream;
@@ -25,18 +26,23 @@ public class AVRGameAgentObject extends AgentObject
 {
     // AUTO-GENERATED: FIELDS START
     /** The field name of the <code>scenes</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String SCENES = "scenes";
 
     /** The field name of the <code>gameOid</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String GAME_OID = "gameOid";
 
     /** The field name of the <code>gameId</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String GAME_ID = "gameId";
 
     /** The field name of the <code>agentService</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String AGENT_SERVICE = "agentService";
 
     /** The field name of the <code>propertiesService</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String PROPERTIES_SERVICE = "propertiesService";
     // AUTO-GENERATED: FIELDS END
 
@@ -73,6 +79,7 @@ public class AVRGameAgentObject extends AgentObject
      * <code>scenes</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void addToScenes (SceneInfo elem)
     {
         requestEntryAdd(SCENES, scenes, elem);
@@ -83,6 +90,7 @@ public class AVRGameAgentObject extends AgentObject
      * the <code>scenes</code> set. The set will not change until the
      * event is actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void removeFromScenes (Comparable<?> key)
     {
         requestEntryRemove(SCENES, scenes, key);
@@ -93,6 +101,7 @@ public class AVRGameAgentObject extends AgentObject
      * <code>scenes</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void updateScenes (SceneInfo elem)
     {
         requestEntryUpdate(SCENES, scenes, elem);
@@ -108,6 +117,7 @@ public class AVRGameAgentObject extends AgentObject
      * change. Proxied copies of this object (on clients) will apply the
      * value change when they received the attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setScenes (DSet<SceneInfo> value)
     {
         requestAttributeChange(SCENES, value, this.scenes);
@@ -123,6 +133,7 @@ public class AVRGameAgentObject extends AgentObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setGameOid (int value)
     {
         int ovalue = this.gameOid;
@@ -139,6 +150,7 @@ public class AVRGameAgentObject extends AgentObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setGameId (int value)
     {
         int ovalue = this.gameId;
@@ -155,6 +167,7 @@ public class AVRGameAgentObject extends AgentObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setAgentService (AVRGameAgentMarshaller value)
     {
         AVRGameAgentMarshaller ovalue = this.agentService;
@@ -171,6 +184,7 @@ public class AVRGameAgentObject extends AgentObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setPropertiesService (PropertySpaceMarshaller value)
     {
         PropertySpaceMarshaller ovalue = this.propertiesService;

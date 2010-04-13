@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.avrg.data;
 
+import javax.annotation.Generated;
+
 import com.threerings.msoy.avrg.client.AVRGameAgentService;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.data.InvocationMarshaller;
@@ -14,6 +16,8 @@ import com.threerings.presents.data.InvocationMarshaller;
  * interfaces that marshall the response arguments and deliver them back
  * to the requesting client.
  */
+@Generated(value={"com.threerings.presents.tools.GenServiceTask"},
+           comments="Derived from AVRGameAgentService.java.")
 public class AVRGameAgentMarshaller extends InvocationMarshaller
     implements AVRGameAgentService
 {

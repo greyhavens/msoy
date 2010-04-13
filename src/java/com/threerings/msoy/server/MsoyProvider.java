@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.server;
 
+import javax.annotation.Generated;
+
 import com.threerings.msoy.client.MsoyService;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
@@ -12,6 +14,8 @@ import com.threerings.presents.server.InvocationProvider;
 /**
  * Defines the server-side of the {@link MsoyService}.
  */
+@Generated(value={"com.threerings.presents.tools.GenServiceTask"},
+           comments="Derived from MsoyService.java.")
 public interface MsoyProvider extends InvocationProvider
 {
     /**

@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.party.data;
 
+import javax.annotation.Generated;
+
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.PriceQuote;
 import com.threerings.msoy.party.client.PartyBoardService;
@@ -18,6 +20,8 @@ import com.threerings.presents.dobj.InvocationResponseEvent;
  * interfaces that marshall the response arguments and deliver them back
  * to the requesting client.
  */
+@Generated(value={"com.threerings.presents.tools.GenServiceTask"},
+           comments="Derived from PartyBoardService.java.")
 public class PartyBoardMarshaller extends InvocationMarshaller
     implements PartyBoardService
 {

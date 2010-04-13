@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.party.server;
 
+import javax.annotation.Generated;
+
 import com.threerings.msoy.party.data.PeerPartyMarshaller;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
@@ -12,6 +14,8 @@ import com.threerings.presents.server.InvocationException;
 /**
  * Dispatches requests to the {@link PeerPartyProvider}.
  */
+@Generated(value={"com.threerings.presents.tools.GenServiceTask"},
+           comments="Derived from PeerPartyService.java.")
 public class PeerPartyDispatcher extends InvocationDispatcher<PeerPartyMarshaller>
 {
     /**
@@ -23,13 +27,13 @@ public class PeerPartyDispatcher extends InvocationDispatcher<PeerPartyMarshalle
         this.provider = provider;
     }
 
-    @Override // documentation inherited
+    @Override
     public PeerPartyMarshaller createMarshaller ()
     {
         return new PeerPartyMarshaller();
     }
 
-    @Override // documentation inherited
+    @Override
     public void dispatchRequest (
         ClientObject source, int methodId, Object[] args)
         throws InvocationException

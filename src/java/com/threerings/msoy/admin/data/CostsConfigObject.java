@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.admin.data;
 
+import javax.annotation.Generated;
 import com.threerings.admin.data.ConfigObject;
 
 /**
@@ -16,24 +17,31 @@ public class CostsConfigObject extends ConfigObject
 {
     // AUTO-GENERATED: FIELDS START
     /** The field name of the <code>newRoom</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String NEW_ROOM = "newRoom";
 
     /** The field name of the <code>newGroup</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String NEW_GROUP = "newGroup";
 
     /** The field name of the <code>newThemeSub</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String NEW_THEME_SUB = "newThemeSub";
 
     /** The field name of the <code>newThemeNonsub</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String NEW_THEME_NONSUB = "newThemeNonsub";
 
     /** The field name of the <code>broadcastBase</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String BROADCAST_BASE = "broadcastBase";
 
     /** The field name of the <code>broadcastIncrement</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String BROADCAST_INCREMENT = "broadcastIncrement";
 
     /** The field name of the <code>startParty</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String START_PARTY = "startParty";
     // AUTO-GENERATED: FIELDS END
 
@@ -67,6 +75,7 @@ public class CostsConfigObject extends ConfigObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setNewRoom (int value)
     {
         int ovalue = this.newRoom;
@@ -83,6 +92,7 @@ public class CostsConfigObject extends ConfigObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setNewGroup (int value)
     {
         int ovalue = this.newGroup;
@@ -99,6 +109,7 @@ public class CostsConfigObject extends ConfigObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setNewThemeSub (int value)
     {
         int ovalue = this.newThemeSub;
@@ -115,6 +126,7 @@ public class CostsConfigObject extends ConfigObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setNewThemeNonsub (int value)
     {
         int ovalue = this.newThemeNonsub;
@@ -131,6 +143,7 @@ public class CostsConfigObject extends ConfigObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setBroadcastBase (int value)
     {
         int ovalue = this.broadcastBase;
@@ -147,6 +160,7 @@ public class CostsConfigObject extends ConfigObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setBroadcastIncrement (int value)
     {
         int ovalue = this.broadcastIncrement;
@@ -163,6 +177,7 @@ public class CostsConfigObject extends ConfigObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setStartParty (int value)
     {
         int ovalue = this.startParty;

@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.party.data;
 
+import javax.annotation.Generated;
 import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.dobj.DSet;
 
@@ -20,48 +21,63 @@ public class PartyObject extends DObject
 {
     // AUTO-GENERATED: FIELDS START
     /** The field name of the <code>id</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String ID = "id";
 
     /** The field name of the <code>name</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String NAME = "name";
 
     /** The field name of the <code>icon</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String ICON = "icon";
 
     /** The field name of the <code>group</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String GROUP = "group";
 
     /** The field name of the <code>peeps</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String PEEPS = "peeps";
 
     /** The field name of the <code>leaderId</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String LEADER_ID = "leaderId";
 
     /** The field name of the <code>sceneId</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String SCENE_ID = "sceneId";
 
     /** The field name of the <code>gameId</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String GAME_ID = "gameId";
 
     /** The field name of the <code>gameState</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String GAME_STATE = "gameState";
 
     /** The field name of the <code>gameOid</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String GAME_OID = "gameOid";
 
     /** The field name of the <code>status</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String STATUS = "status";
 
     /** The field name of the <code>statusType</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String STATUS_TYPE = "statusType";
 
     /** The field name of the <code>recruitment</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String RECRUITMENT = "recruitment";
 
     /** The field name of the <code>disband</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String DISBAND = "disband";
 
     /** The field name of the <code>partyService</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String PARTY_SERVICE = "partyService";
     // AUTO-GENERATED: FIELDS END
 
@@ -126,6 +142,7 @@ public class PartyObject extends DObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setId (int value)
     {
         int ovalue = this.id;
@@ -142,6 +159,7 @@ public class PartyObject extends DObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setName (String value)
     {
         String ovalue = this.name;
@@ -158,6 +176,7 @@ public class PartyObject extends DObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setIcon (MediaDesc value)
     {
         MediaDesc ovalue = this.icon;
@@ -174,6 +193,7 @@ public class PartyObject extends DObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setGroup (GroupName value)
     {
         GroupName ovalue = this.group;
@@ -187,6 +207,7 @@ public class PartyObject extends DObject
      * <code>peeps</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void addToPeeps (PartyPeep elem)
     {
         requestEntryAdd(PEEPS, peeps, elem);
@@ -197,6 +218,7 @@ public class PartyObject extends DObject
      * the <code>peeps</code> set. The set will not change until the
      * event is actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void removeFromPeeps (Comparable<?> key)
     {
         requestEntryRemove(PEEPS, peeps, key);
@@ -207,6 +229,7 @@ public class PartyObject extends DObject
      * <code>peeps</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void updatePeeps (PartyPeep elem)
     {
         requestEntryUpdate(PEEPS, peeps, elem);
@@ -222,6 +245,7 @@ public class PartyObject extends DObject
      * change. Proxied copies of this object (on clients) will apply the
      * value change when they received the attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setPeeps (DSet<PartyPeep> value)
     {
         requestAttributeChange(PEEPS, value, this.peeps);
@@ -237,6 +261,7 @@ public class PartyObject extends DObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setLeaderId (int value)
     {
         int ovalue = this.leaderId;
@@ -253,6 +278,7 @@ public class PartyObject extends DObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setSceneId (int value)
     {
         int ovalue = this.sceneId;
@@ -269,6 +295,7 @@ public class PartyObject extends DObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setGameId (int value)
     {
         int ovalue = this.gameId;
@@ -285,6 +312,7 @@ public class PartyObject extends DObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setGameState (byte value)
     {
         byte ovalue = this.gameState;
@@ -301,6 +329,7 @@ public class PartyObject extends DObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setGameOid (int value)
     {
         int ovalue = this.gameOid;
@@ -317,6 +346,7 @@ public class PartyObject extends DObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setStatus (String value)
     {
         String ovalue = this.status;
@@ -333,6 +363,7 @@ public class PartyObject extends DObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setStatusType (byte value)
     {
         byte ovalue = this.statusType;
@@ -349,6 +380,7 @@ public class PartyObject extends DObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setRecruitment (byte value)
     {
         byte ovalue = this.recruitment;
@@ -365,6 +397,7 @@ public class PartyObject extends DObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setDisband (boolean value)
     {
         boolean ovalue = this.disband;
@@ -381,6 +414,7 @@ public class PartyObject extends DObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setPartyService (PartyMarshaller value)
     {
         PartyMarshaller ovalue = this.partyService;

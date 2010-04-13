@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.bureau.server;
 
+import javax.annotation.Generated;
+
 import com.threerings.msoy.admin.gwt.BureauLauncherInfo;
 import com.threerings.msoy.bureau.client.BureauLauncherService;
 import com.threerings.presents.data.ClientObject;
@@ -11,6 +13,8 @@ import com.threerings.presents.server.InvocationProvider;
 /**
  * Defines the server-side of the {@link BureauLauncherService}.
  */
+@Generated(value={"com.threerings.presents.tools.GenServiceTask"},
+           comments="Derived from BureauLauncherService.java.")
 public interface BureauLauncherProvider extends InvocationProvider
 {
     /**

@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.peer.data;
 
+import javax.annotation.Generated;
+
 import com.threerings.io.Streamable;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.item.data.all.ItemIdent;
@@ -19,6 +21,8 @@ import com.threerings.util.Name;
  * interfaces that marshall the response arguments and deliver them back
  * to the requesting client.
  */
+@Generated(value={"com.threerings.presents.tools.GenServiceTask"},
+           comments="Derived from MsoyPeerService.java.")
 public class MsoyPeerMarshaller extends InvocationMarshaller
     implements MsoyPeerService
 {

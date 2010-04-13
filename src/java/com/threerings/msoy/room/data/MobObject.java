@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.room.data;
 
+import javax.annotation.Generated;
 import com.threerings.util.Name;
 
 import com.threerings.crowd.data.OccupantInfo;
@@ -17,9 +18,11 @@ public class MobObject extends MsoyBodyObject
 {
     // AUTO-GENERATED: FIELDS START
     /** The field name of the <code>gameId</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String GAME_ID = "gameId";
 
     /** The field name of the <code>ident</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String IDENT = "ident";
     // AUTO-GENERATED: FIELDS END
 
@@ -56,6 +59,7 @@ public class MobObject extends MsoyBodyObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setGameId (int value)
     {
         int ovalue = this.gameId;
@@ -72,6 +76,7 @@ public class MobObject extends MsoyBodyObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setIdent (String value)
     {
         String ovalue = this.ident;

@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.peer.server;
 
+import javax.annotation.Generated;
+
 import com.threerings.io.Streamable;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.item.data.all.ItemIdent;
@@ -16,6 +18,8 @@ import com.threerings.util.Name;
 /**
  * Defines the server-side of the {@link MsoyPeerService}.
  */
+@Generated(value={"com.threerings.presents.tools.GenServiceTask"},
+           comments="Derived from MsoyPeerService.java.")
 public interface MsoyPeerProvider extends InvocationProvider
 {
     /**

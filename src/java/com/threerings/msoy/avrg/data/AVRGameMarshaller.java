@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.avrg.data;
 
+import javax.annotation.Generated;
+
 import com.threerings.msoy.avrg.client.AVRGameService;
 import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.presents.client.Client;
@@ -16,6 +18,8 @@ import com.threerings.presents.data.InvocationMarshaller;
  * interfaces that marshall the response arguments and deliver them back
  * to the requesting client.
  */
+@Generated(value={"com.threerings.presents.tools.GenServiceTask"},
+           comments="Derived from AVRGameService.java.")
 public class AVRGameMarshaller extends InvocationMarshaller
     implements AVRGameService
 {

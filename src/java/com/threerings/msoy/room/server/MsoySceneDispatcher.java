@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.room.server;
 
+import javax.annotation.Generated;
+
 import com.threerings.msoy.room.client.MsoySceneService;
 import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.msoy.room.data.MsoySceneMarshaller;
@@ -13,6 +15,8 @@ import com.threerings.presents.server.InvocationException;
 /**
  * Dispatches requests to the {@link MsoySceneProvider}.
  */
+@Generated(value={"com.threerings.presents.tools.GenServiceTask"},
+           comments="Derived from MsoySceneService.java.")
 public class MsoySceneDispatcher extends InvocationDispatcher<MsoySceneMarshaller>
 {
     /**
@@ -24,13 +28,13 @@ public class MsoySceneDispatcher extends InvocationDispatcher<MsoySceneMarshalle
         this.provider = provider;
     }
 
-    @Override // documentation inherited
+    @Override
     public MsoySceneMarshaller createMarshaller ()
     {
         return new MsoySceneMarshaller();
     }
 
-    @Override // documentation inherited
+    @Override
     public void dispatchRequest (
         ClientObject source, int methodId, Object[] args)
         throws InvocationException

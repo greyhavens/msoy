@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.party.server;
 
+import javax.annotation.Generated;
+
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.party.client.PartyBoardService;
 import com.threerings.msoy.party.data.PartyBoardMarshaller;
@@ -14,6 +16,8 @@ import com.threerings.presents.server.InvocationException;
 /**
  * Dispatches requests to the {@link PartyBoardProvider}.
  */
+@Generated(value={"com.threerings.presents.tools.GenServiceTask"},
+           comments="Derived from PartyBoardService.java.")
 public class PartyBoardDispatcher extends InvocationDispatcher<PartyBoardMarshaller>
 {
     /**
@@ -25,13 +29,13 @@ public class PartyBoardDispatcher extends InvocationDispatcher<PartyBoardMarshal
         this.provider = provider;
     }
 
-    @Override // documentation inherited
+    @Override
     public PartyBoardMarshaller createMarshaller ()
     {
         return new PartyBoardMarshaller();
     }
 
-    @Override // documentation inherited
+    @Override
     public void dispatchRequest (
         ClientObject source, int methodId, Object[] args)
         throws InvocationException

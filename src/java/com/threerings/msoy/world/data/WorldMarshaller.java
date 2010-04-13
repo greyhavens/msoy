@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.world.data;
 
+import javax.annotation.Generated;
+
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.world.client.WorldService;
 import com.threerings.presents.client.Client;
@@ -17,6 +19,8 @@ import com.threerings.presents.dobj.InvocationResponseEvent;
  * interfaces that marshall the response arguments and deliver them back
  * to the requesting client.
  */
+@Generated(value={"com.threerings.presents.tools.GenServiceTask"},
+           comments="Derived from WorldService.java.")
 public class WorldMarshaller extends InvocationMarshaller
     implements WorldService
 {

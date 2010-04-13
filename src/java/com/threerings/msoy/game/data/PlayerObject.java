@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import javax.annotation.Generated;
 
 import com.threerings.util.Name;
 
@@ -46,27 +47,35 @@ public class PlayerObject extends WhirledPlayerObject
 {
     // AUTO-GENERATED: FIELDS START
     /** The field name of the <code>memberName</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String MEMBER_NAME = "memberName";
 
     /** The field name of the <code>tokens</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String TOKENS = "tokens";
 
     /** The field name of the <code>game</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String GAME = "game";
 
     /** The field name of the <code>coins</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String COINS = "coins";
 
     /** The field name of the <code>bars</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String BARS = "bars";
 
     /** The field name of the <code>humanity</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String HUMANITY = "humanity";
 
     /** The field name of the <code>visitorInfo</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String VISITOR_INFO = "visitorInfo";
 
     /** The field name of the <code>propertyService</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String PROPERTY_SERVICE = "propertyService";
     // AUTO-GENERATED: FIELDS END
 
@@ -201,6 +210,7 @@ public class PlayerObject extends WhirledPlayerObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setMemberName (VizMemberName value)
     {
         VizMemberName ovalue = this.memberName;
@@ -217,6 +227,7 @@ public class PlayerObject extends WhirledPlayerObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setTokens (MsoyTokenRing value)
     {
         MsoyTokenRing ovalue = this.tokens;
@@ -233,6 +244,7 @@ public class PlayerObject extends WhirledPlayerObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setGame (GameSummary value)
     {
         GameSummary ovalue = this.game;
@@ -249,6 +261,7 @@ public class PlayerObject extends WhirledPlayerObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setCoins (int value)
     {
         int ovalue = this.coins;
@@ -265,6 +278,7 @@ public class PlayerObject extends WhirledPlayerObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setBars (int value)
     {
         int ovalue = this.bars;
@@ -281,6 +295,7 @@ public class PlayerObject extends WhirledPlayerObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setHumanity (int value)
     {
         int ovalue = this.humanity;
@@ -297,6 +312,7 @@ public class PlayerObject extends WhirledPlayerObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setVisitorInfo (VisitorInfo value)
     {
         VisitorInfo ovalue = this.visitorInfo;
@@ -313,6 +329,7 @@ public class PlayerObject extends WhirledPlayerObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setPropertyService (PropertySpaceMarshaller value)
     {
         PropertySpaceMarshaller ovalue = this.propertyService;

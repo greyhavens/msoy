@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.peer.server;
 
+import javax.annotation.Generated;
+
 import com.threerings.io.Streamable;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.item.data.all.ItemIdent;
@@ -16,6 +18,8 @@ import com.threerings.util.Name;
 /**
  * Dispatches requests to the {@link MsoyPeerProvider}.
  */
+@Generated(value={"com.threerings.presents.tools.GenServiceTask"},
+           comments="Derived from MsoyPeerService.java.")
 public class MsoyPeerDispatcher extends InvocationDispatcher<MsoyPeerMarshaller>
 {
     /**
@@ -27,13 +31,13 @@ public class MsoyPeerDispatcher extends InvocationDispatcher<MsoyPeerMarshaller>
         this.provider = provider;
     }
 
-    @Override // documentation inherited
+    @Override
     public MsoyPeerMarshaller createMarshaller ()
     {
         return new MsoyPeerMarshaller();
     }
 
-    @Override // documentation inherited
+    @Override
     public void dispatchRequest (
         ClientObject source, int methodId, Object[] args)
         throws InvocationException

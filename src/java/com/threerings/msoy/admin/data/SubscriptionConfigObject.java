@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.admin.data;
 
+import javax.annotation.Generated;
 import com.threerings.admin.data.ConfigObject;
 
 /**
@@ -12,12 +13,15 @@ public class SubscriptionConfigObject extends ConfigObject
 {
     // AUTO-GENERATED: FIELDS START
     /** The field name of the <code>monthlyBarGrant</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String MONTHLY_BAR_GRANT = "monthlyBarGrant";
 
     /** The field name of the <code>specialItem</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String SPECIAL_ITEM = "specialItem";
 
     /** The field name of the <code>barscriptionCost</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String BARSCRIPTION_COST = "barscriptionCost";
     // AUTO-GENERATED: FIELDS END
 
@@ -42,6 +46,7 @@ public class SubscriptionConfigObject extends ConfigObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setMonthlyBarGrant (int value)
     {
         int ovalue = this.monthlyBarGrant;
@@ -58,6 +63,7 @@ public class SubscriptionConfigObject extends ConfigObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setSpecialItem (String value)
     {
         String ovalue = this.specialItem;
@@ -74,6 +80,7 @@ public class SubscriptionConfigObject extends ConfigObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setBarscriptionCost (int value)
     {
         int ovalue = this.barscriptionCost;

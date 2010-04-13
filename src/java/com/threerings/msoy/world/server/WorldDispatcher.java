@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.world.server;
 
+import javax.annotation.Generated;
+
 import com.threerings.msoy.world.client.WorldService;
 import com.threerings.msoy.world.data.WorldMarshaller;
 import com.threerings.presents.client.InvocationService;
@@ -13,6 +15,8 @@ import com.threerings.presents.server.InvocationException;
 /**
  * Dispatches requests to the {@link WorldProvider}.
  */
+@Generated(value={"com.threerings.presents.tools.GenServiceTask"},
+           comments="Derived from WorldService.java.")
 public class WorldDispatcher extends InvocationDispatcher<WorldMarshaller>
 {
     /**
@@ -24,13 +28,13 @@ public class WorldDispatcher extends InvocationDispatcher<WorldMarshaller>
         this.provider = provider;
     }
 
-    @Override // documentation inherited
+    @Override
     public WorldMarshaller createMarshaller ()
     {
         return new WorldMarshaller();
     }
 
-    @Override // documentation inherited
+    @Override
     public void dispatchRequest (
         ClientObject source, int methodId, Object[] args)
         throws InvocationException

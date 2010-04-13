@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import javax.annotation.Generated;
 
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
@@ -25,9 +26,11 @@ public class RoomPropertiesObject extends DObject
 {
     // AUTO-GENERATED: FIELDS START
     /** The field name of the <code>propertiesService</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String PROPERTIES_SERVICE = "propertiesService";
 
     /** The field name of the <code>messageService</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String MESSAGE_SERVICE = "messageService";
     // AUTO-GENERATED: FIELDS END
 
@@ -91,6 +94,7 @@ public class RoomPropertiesObject extends DObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setPropertiesService (PropertySpaceMarshaller value)
     {
         PropertySpaceMarshaller ovalue = this.propertiesService;
@@ -107,6 +111,7 @@ public class RoomPropertiesObject extends DObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setMessageService (WhirledGameMessageMarshaller value)
     {
         WhirledGameMessageMarshaller ovalue = this.messageService;

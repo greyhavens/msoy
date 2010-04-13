@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.room.server;
 
+import javax.annotation.Generated;
+
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.room.data.RoomMarshaller;
 import com.threerings.presents.client.InvocationService;
@@ -15,6 +17,8 @@ import com.threerings.whirled.spot.data.Location;
 /**
  * Dispatches requests to the {@link RoomProvider}.
  */
+@Generated(value={"com.threerings.presents.tools.GenServiceTask"},
+           comments="Derived from RoomService.java.")
 public class RoomDispatcher extends InvocationDispatcher<RoomMarshaller>
 {
     /**
@@ -26,13 +30,13 @@ public class RoomDispatcher extends InvocationDispatcher<RoomMarshaller>
         this.provider = provider;
     }
 
-    @Override // documentation inherited
+    @Override
     public RoomMarshaller createMarshaller ()
     {
         return new RoomMarshaller();
     }
 
-    @Override // documentation inherited
+    @Override
     public void dispatchRequest (
         ClientObject source, int methodId, Object[] args)
         throws InvocationException

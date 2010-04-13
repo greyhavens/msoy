@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.room.data;
 
+import javax.annotation.Generated;
+
 import com.threerings.crowd.data.PlaceConfig;
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.room.client.MsoySceneService;
@@ -19,6 +21,8 @@ import com.threerings.whirled.data.SceneUpdate;
  * interfaces that marshall the response arguments and deliver them back
  * to the requesting client.
  */
+@Generated(value={"com.threerings.presents.tools.GenServiceTask"},
+           comments="Derived from MsoySceneService.java.")
 public class MsoySceneMarshaller extends InvocationMarshaller
     implements MsoySceneService
 {

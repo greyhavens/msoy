@@ -4,6 +4,7 @@
 package com.threerings.msoy.data;
 
 import java.util.Set;
+import javax.annotation.Generated;
 
 import com.threerings.presents.dobj.DSet;
 import com.threerings.util.Name;
@@ -43,72 +44,95 @@ public class MemberObject extends MsoyBodyObject
 {
     // AUTO-GENERATED: FIELDS START
     /** The field name of the <code>memberName</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String MEMBER_NAME = "memberName";
 
     /** The field name of the <code>coins</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String COINS = "coins";
 
     /** The field name of the <code>bars</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String BARS = "bars";
 
     /** The field name of the <code>level</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String LEVEL = "level";
 
     /** The field name of the <code>following</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String FOLLOWING = "following";
 
     /** The field name of the <code>followers</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String FOLLOWERS = "followers";
 
     /** The field name of the <code>tokens</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String TOKENS = "tokens";
 
     /** The field name of the <code>homeSceneId</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String HOME_SCENE_ID = "homeSceneId";
 
     /** The field name of the <code>theme</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String THEME = "theme";
 
     /** The field name of the <code>avatar</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String AVATAR = "avatar";
 
     /** The field name of the <code>avatarCache</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String AVATAR_CACHE = "avatarCache";
 
     /** The field name of the <code>friends</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String FRIENDS = "friends";
 
     /** The field name of the <code>gateways</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String GATEWAYS = "gateways";
 
     /** The field name of the <code>imContacts</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String IM_CONTACTS = "imContacts";
 
     /** The field name of the <code>groups</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String GROUPS = "groups";
 
     /** The field name of the <code>newMailCount</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String NEW_MAIL_COUNT = "newMailCount";
 
     /** The field name of the <code>game</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String GAME = "game";
 
     /** The field name of the <code>walkingId</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String WALKING_ID = "walkingId";
 
     /** The field name of the <code>headline</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String HEADLINE = "headline";
 
     /** The field name of the <code>visitorInfo</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String VISITOR_INFO = "visitorInfo";
 
     /** The field name of the <code>onTour</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String ON_TOUR = "onTour";
 
     /** The field name of the <code>partyId</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String PARTY_ID = "partyId";
 
     /** The field name of the <code>experiences</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String EXPERIENCES = "experiences";
     // AUTO-GENERATED: FIELDS END
 
@@ -417,6 +441,7 @@ public class MemberObject extends MsoyBodyObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setMemberName (VizMemberName value)
     {
         VizMemberName ovalue = this.memberName;
@@ -433,6 +458,7 @@ public class MemberObject extends MsoyBodyObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setCoins (int value)
     {
         int ovalue = this.coins;
@@ -449,6 +475,7 @@ public class MemberObject extends MsoyBodyObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setBars (int value)
     {
         int ovalue = this.bars;
@@ -465,6 +492,7 @@ public class MemberObject extends MsoyBodyObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setLevel (int value)
     {
         int ovalue = this.level;
@@ -481,6 +509,7 @@ public class MemberObject extends MsoyBodyObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setFollowing (MemberName value)
     {
         MemberName ovalue = this.following;
@@ -494,6 +523,7 @@ public class MemberObject extends MsoyBodyObject
      * <code>followers</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void addToFollowers (MemberName elem)
     {
         requestEntryAdd(FOLLOWERS, followers, elem);
@@ -504,6 +534,7 @@ public class MemberObject extends MsoyBodyObject
      * the <code>followers</code> set. The set will not change until the
      * event is actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void removeFromFollowers (Comparable<?> key)
     {
         requestEntryRemove(FOLLOWERS, followers, key);
@@ -514,6 +545,7 @@ public class MemberObject extends MsoyBodyObject
      * <code>followers</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void updateFollowers (MemberName elem)
     {
         requestEntryUpdate(FOLLOWERS, followers, elem);
@@ -529,6 +561,7 @@ public class MemberObject extends MsoyBodyObject
      * change. Proxied copies of this object (on clients) will apply the
      * value change when they received the attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setFollowers (DSet<MemberName> value)
     {
         requestAttributeChange(FOLLOWERS, value, this.followers);
@@ -544,6 +577,7 @@ public class MemberObject extends MsoyBodyObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setTokens (MsoyTokenRing value)
     {
         MsoyTokenRing ovalue = this.tokens;
@@ -560,6 +594,7 @@ public class MemberObject extends MsoyBodyObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setHomeSceneId (int value)
     {
         int ovalue = this.homeSceneId;
@@ -576,6 +611,7 @@ public class MemberObject extends MsoyBodyObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setTheme (GroupName value)
     {
         GroupName ovalue = this.theme;
@@ -592,6 +628,7 @@ public class MemberObject extends MsoyBodyObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setAvatar (Avatar value)
     {
         Avatar ovalue = this.avatar;
@@ -605,6 +642,7 @@ public class MemberObject extends MsoyBodyObject
      * <code>avatarCache</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void addToAvatarCache (Avatar elem)
     {
         requestEntryAdd(AVATAR_CACHE, avatarCache, elem);
@@ -615,6 +653,7 @@ public class MemberObject extends MsoyBodyObject
      * the <code>avatarCache</code> set. The set will not change until the
      * event is actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void removeFromAvatarCache (Comparable<?> key)
     {
         requestEntryRemove(AVATAR_CACHE, avatarCache, key);
@@ -625,6 +664,7 @@ public class MemberObject extends MsoyBodyObject
      * <code>avatarCache</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void updateAvatarCache (Avatar elem)
     {
         requestEntryUpdate(AVATAR_CACHE, avatarCache, elem);
@@ -640,6 +680,7 @@ public class MemberObject extends MsoyBodyObject
      * change. Proxied copies of this object (on clients) will apply the
      * value change when they received the attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setAvatarCache (DSet<Avatar> value)
     {
         requestAttributeChange(AVATAR_CACHE, value, this.avatarCache);
@@ -652,6 +693,7 @@ public class MemberObject extends MsoyBodyObject
      * <code>friends</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void addToFriends (FriendEntry elem)
     {
         requestEntryAdd(FRIENDS, friends, elem);
@@ -662,6 +704,7 @@ public class MemberObject extends MsoyBodyObject
      * the <code>friends</code> set. The set will not change until the
      * event is actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void removeFromFriends (Comparable<?> key)
     {
         requestEntryRemove(FRIENDS, friends, key);
@@ -672,6 +715,7 @@ public class MemberObject extends MsoyBodyObject
      * <code>friends</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void updateFriends (FriendEntry elem)
     {
         requestEntryUpdate(FRIENDS, friends, elem);
@@ -687,6 +731,7 @@ public class MemberObject extends MsoyBodyObject
      * change. Proxied copies of this object (on clients) will apply the
      * value change when they received the attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setFriends (DSet<FriendEntry> value)
     {
         requestAttributeChange(FRIENDS, value, this.friends);
@@ -699,6 +744,7 @@ public class MemberObject extends MsoyBodyObject
      * <code>gateways</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void addToGateways (GatewayEntry elem)
     {
         requestEntryAdd(GATEWAYS, gateways, elem);
@@ -709,6 +755,7 @@ public class MemberObject extends MsoyBodyObject
      * the <code>gateways</code> set. The set will not change until the
      * event is actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void removeFromGateways (Comparable<?> key)
     {
         requestEntryRemove(GATEWAYS, gateways, key);
@@ -719,6 +766,7 @@ public class MemberObject extends MsoyBodyObject
      * <code>gateways</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void updateGateways (GatewayEntry elem)
     {
         requestEntryUpdate(GATEWAYS, gateways, elem);
@@ -734,6 +782,7 @@ public class MemberObject extends MsoyBodyObject
      * change. Proxied copies of this object (on clients) will apply the
      * value change when they received the attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setGateways (DSet<GatewayEntry> value)
     {
         requestAttributeChange(GATEWAYS, value, this.gateways);
@@ -746,6 +795,7 @@ public class MemberObject extends MsoyBodyObject
      * <code>imContacts</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void addToImContacts (ContactEntry elem)
     {
         requestEntryAdd(IM_CONTACTS, imContacts, elem);
@@ -756,6 +806,7 @@ public class MemberObject extends MsoyBodyObject
      * the <code>imContacts</code> set. The set will not change until the
      * event is actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void removeFromImContacts (Comparable<?> key)
     {
         requestEntryRemove(IM_CONTACTS, imContacts, key);
@@ -766,6 +817,7 @@ public class MemberObject extends MsoyBodyObject
      * <code>imContacts</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void updateImContacts (ContactEntry elem)
     {
         requestEntryUpdate(IM_CONTACTS, imContacts, elem);
@@ -781,6 +833,7 @@ public class MemberObject extends MsoyBodyObject
      * change. Proxied copies of this object (on clients) will apply the
      * value change when they received the attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setImContacts (DSet<ContactEntry> value)
     {
         requestAttributeChange(IM_CONTACTS, value, this.imContacts);
@@ -793,6 +846,7 @@ public class MemberObject extends MsoyBodyObject
      * <code>groups</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void addToGroups (GroupMembership elem)
     {
         requestEntryAdd(GROUPS, groups, elem);
@@ -803,6 +857,7 @@ public class MemberObject extends MsoyBodyObject
      * the <code>groups</code> set. The set will not change until the
      * event is actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void removeFromGroups (Comparable<?> key)
     {
         requestEntryRemove(GROUPS, groups, key);
@@ -813,6 +868,7 @@ public class MemberObject extends MsoyBodyObject
      * <code>groups</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void updateGroups (GroupMembership elem)
     {
         requestEntryUpdate(GROUPS, groups, elem);
@@ -828,6 +884,7 @@ public class MemberObject extends MsoyBodyObject
      * change. Proxied copies of this object (on clients) will apply the
      * value change when they received the attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setGroups (DSet<GroupMembership> value)
     {
         requestAttributeChange(GROUPS, value, this.groups);
@@ -843,6 +900,7 @@ public class MemberObject extends MsoyBodyObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setNewMailCount (int value)
     {
         int ovalue = this.newMailCount;
@@ -859,6 +917,7 @@ public class MemberObject extends MsoyBodyObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setGame (GameSummary value)
     {
         GameSummary ovalue = this.game;
@@ -875,6 +934,7 @@ public class MemberObject extends MsoyBodyObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setWalkingId (int value)
     {
         int ovalue = this.walkingId;
@@ -891,6 +951,7 @@ public class MemberObject extends MsoyBodyObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setHeadline (String value)
     {
         String ovalue = this.headline;
@@ -907,6 +968,7 @@ public class MemberObject extends MsoyBodyObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setVisitorInfo (VisitorInfo value)
     {
         VisitorInfo ovalue = this.visitorInfo;
@@ -923,6 +985,7 @@ public class MemberObject extends MsoyBodyObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setOnTour (boolean value)
     {
         boolean ovalue = this.onTour;
@@ -939,6 +1002,7 @@ public class MemberObject extends MsoyBodyObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setPartyId (int value)
     {
         int ovalue = this.partyId;
@@ -952,6 +1016,7 @@ public class MemberObject extends MsoyBodyObject
      * <code>experiences</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void addToExperiences (MemberExperience elem)
     {
         requestEntryAdd(EXPERIENCES, experiences, elem);
@@ -962,6 +1027,7 @@ public class MemberObject extends MsoyBodyObject
      * the <code>experiences</code> set. The set will not change until the
      * event is actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void removeFromExperiences (Comparable<?> key)
     {
         requestEntryRemove(EXPERIENCES, experiences, key);
@@ -972,6 +1038,7 @@ public class MemberObject extends MsoyBodyObject
      * <code>experiences</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void updateExperiences (MemberExperience elem)
     {
         requestEntryUpdate(EXPERIENCES, experiences, elem);
@@ -987,6 +1054,7 @@ public class MemberObject extends MsoyBodyObject
      * change. Proxied copies of this object (on clients) will apply the
      * value change when they received the attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setExperiences (DSet<MemberExperience> value)
     {
         requestAttributeChange(EXPERIENCES, value, this.experiences);

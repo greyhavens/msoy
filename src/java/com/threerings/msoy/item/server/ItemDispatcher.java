@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.item.server;
 
+import javax.annotation.Generated;
+
 import com.threerings.msoy.item.data.ItemMarshaller;
 import com.threerings.msoy.item.data.all.ItemFlag;
 import com.threerings.msoy.item.data.all.ItemIdent;
@@ -14,6 +16,8 @@ import com.threerings.presents.server.InvocationException;
 /**
  * Dispatches requests to the {@link ItemProvider}.
  */
+@Generated(value={"com.threerings.presents.tools.GenServiceTask"},
+           comments="Derived from ItemService.java.")
 public class ItemDispatcher extends InvocationDispatcher<ItemMarshaller>
 {
     /**
@@ -25,13 +29,13 @@ public class ItemDispatcher extends InvocationDispatcher<ItemMarshaller>
         this.provider = provider;
     }
 
-    @Override // documentation inherited
+    @Override
     public ItemMarshaller createMarshaller ()
     {
         return new ItemMarshaller();
     }
 
-    @Override // documentation inherited
+    @Override
     public void dispatchRequest (
         ClientObject source, int methodId, Object[] args)
         throws InvocationException

@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.server;
 
+import javax.annotation.Generated;
+
 import com.threerings.msoy.data.MemberMarshaller;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
@@ -12,6 +14,8 @@ import com.threerings.presents.server.InvocationException;
 /**
  * Dispatches requests to the {@link MemberProvider}.
  */
+@Generated(value={"com.threerings.presents.tools.GenServiceTask"},
+           comments="Derived from MemberService.java.")
 public class MemberDispatcher extends InvocationDispatcher<MemberMarshaller>
 {
     /**
@@ -23,13 +27,13 @@ public class MemberDispatcher extends InvocationDispatcher<MemberMarshaller>
         this.provider = provider;
     }
 
-    @Override // documentation inherited
+    @Override
     public MemberMarshaller createMarshaller ()
     {
         return new MemberMarshaller();
     }
 
-    @Override // documentation inherited
+    @Override
     public void dispatchRequest (
         ClientObject source, int methodId, Object[] args)
         throws InvocationException

@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.room.data;
 
+import javax.annotation.Generated;
+
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.room.client.RoomService;
 import com.threerings.presents.client.Client;
@@ -18,6 +20,8 @@ import com.threerings.whirled.spot.data.Location;
  * interfaces that marshall the response arguments and deliver them back
  * to the requesting client.
  */
+@Generated(value={"com.threerings.presents.tools.GenServiceTask"},
+           comments="Derived from RoomService.java.")
 public class RoomMarshaller extends InvocationMarshaller
     implements RoomService
 {

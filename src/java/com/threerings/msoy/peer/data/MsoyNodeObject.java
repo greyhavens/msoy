@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.peer.data;
 
+import javax.annotation.Generated;
 import com.threerings.presents.dobj.DSet;
 import com.threerings.crowd.peer.data.CrowdNodeObject;
 
@@ -20,36 +21,47 @@ public class MsoyNodeObject extends CrowdNodeObject
 {
     // AUTO-GENERATED: FIELDS START
     /** The field name of the <code>memberScenes</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String MEMBER_SCENES = "memberScenes";
 
     /** The field name of the <code>memberGames</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String MEMBER_GAMES = "memberGames";
 
     /** The field name of the <code>hostedScenes</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String HOSTED_SCENES = "hostedScenes";
 
     /** The field name of the <code>hostedGames</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String HOSTED_GAMES = "hostedGames";
 
     /** The field name of the <code>hostedParties</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String HOSTED_PARTIES = "hostedParties";
 
     /** The field name of the <code>partyInfos</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String PARTY_INFOS = "partyInfos";
 
     /** The field name of the <code>memberParties</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String MEMBER_PARTIES = "memberParties";
 
     /** The field name of the <code>tablesWaiting</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String TABLES_WAITING = "tablesWaiting";
 
     /** The field name of the <code>msoyPeerService</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String MSOY_PEER_SERVICE = "msoyPeerService";
 
     /** The field name of the <code>peerAdminService</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String PEER_ADMIN_SERVICE = "peerAdminService";
 
     /** The field name of the <code>peerPartyService</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String PEER_PARTY_SERVICE = "peerPartyService";
     // AUTO-GENERATED: FIELDS END
 
@@ -92,6 +104,7 @@ public class MsoyNodeObject extends CrowdNodeObject
      * <code>memberScenes</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void addToMemberScenes (MemberScene elem)
     {
         requestEntryAdd(MEMBER_SCENES, memberScenes, elem);
@@ -102,6 +115,7 @@ public class MsoyNodeObject extends CrowdNodeObject
      * the <code>memberScenes</code> set. The set will not change until the
      * event is actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void removeFromMemberScenes (Comparable<?> key)
     {
         requestEntryRemove(MEMBER_SCENES, memberScenes, key);
@@ -112,6 +126,7 @@ public class MsoyNodeObject extends CrowdNodeObject
      * <code>memberScenes</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void updateMemberScenes (MemberScene elem)
     {
         requestEntryUpdate(MEMBER_SCENES, memberScenes, elem);
@@ -127,6 +142,7 @@ public class MsoyNodeObject extends CrowdNodeObject
      * change. Proxied copies of this object (on clients) will apply the
      * value change when they received the attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setMemberScenes (DSet<MemberScene> value)
     {
         requestAttributeChange(MEMBER_SCENES, value, this.memberScenes);
@@ -139,6 +155,7 @@ public class MsoyNodeObject extends CrowdNodeObject
      * <code>memberGames</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void addToMemberGames (MemberGame elem)
     {
         requestEntryAdd(MEMBER_GAMES, memberGames, elem);
@@ -149,6 +166,7 @@ public class MsoyNodeObject extends CrowdNodeObject
      * the <code>memberGames</code> set. The set will not change until the
      * event is actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void removeFromMemberGames (Comparable<?> key)
     {
         requestEntryRemove(MEMBER_GAMES, memberGames, key);
@@ -159,6 +177,7 @@ public class MsoyNodeObject extends CrowdNodeObject
      * <code>memberGames</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void updateMemberGames (MemberGame elem)
     {
         requestEntryUpdate(MEMBER_GAMES, memberGames, elem);
@@ -174,6 +193,7 @@ public class MsoyNodeObject extends CrowdNodeObject
      * change. Proxied copies of this object (on clients) will apply the
      * value change when they received the attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setMemberGames (DSet<MemberGame> value)
     {
         requestAttributeChange(MEMBER_GAMES, value, this.memberGames);
@@ -186,6 +206,7 @@ public class MsoyNodeObject extends CrowdNodeObject
      * <code>hostedScenes</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void addToHostedScenes (HostedRoom elem)
     {
         requestEntryAdd(HOSTED_SCENES, hostedScenes, elem);
@@ -196,6 +217,7 @@ public class MsoyNodeObject extends CrowdNodeObject
      * the <code>hostedScenes</code> set. The set will not change until the
      * event is actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void removeFromHostedScenes (Comparable<?> key)
     {
         requestEntryRemove(HOSTED_SCENES, hostedScenes, key);
@@ -206,6 +228,7 @@ public class MsoyNodeObject extends CrowdNodeObject
      * <code>hostedScenes</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void updateHostedScenes (HostedRoom elem)
     {
         requestEntryUpdate(HOSTED_SCENES, hostedScenes, elem);
@@ -221,6 +244,7 @@ public class MsoyNodeObject extends CrowdNodeObject
      * change. Proxied copies of this object (on clients) will apply the
      * value change when they received the attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setHostedScenes (DSet<HostedRoom> value)
     {
         requestAttributeChange(HOSTED_SCENES, value, this.hostedScenes);
@@ -233,6 +257,7 @@ public class MsoyNodeObject extends CrowdNodeObject
      * <code>hostedGames</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void addToHostedGames (HostedGame elem)
     {
         requestEntryAdd(HOSTED_GAMES, hostedGames, elem);
@@ -243,6 +268,7 @@ public class MsoyNodeObject extends CrowdNodeObject
      * the <code>hostedGames</code> set. The set will not change until the
      * event is actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void removeFromHostedGames (Comparable<?> key)
     {
         requestEntryRemove(HOSTED_GAMES, hostedGames, key);
@@ -253,6 +279,7 @@ public class MsoyNodeObject extends CrowdNodeObject
      * <code>hostedGames</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void updateHostedGames (HostedGame elem)
     {
         requestEntryUpdate(HOSTED_GAMES, hostedGames, elem);
@@ -268,6 +295,7 @@ public class MsoyNodeObject extends CrowdNodeObject
      * change. Proxied copies of this object (on clients) will apply the
      * value change when they received the attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setHostedGames (DSet<HostedGame> value)
     {
         requestAttributeChange(HOSTED_GAMES, value, this.hostedGames);
@@ -280,6 +308,7 @@ public class MsoyNodeObject extends CrowdNodeObject
      * <code>hostedParties</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void addToHostedParties (PartySummary elem)
     {
         requestEntryAdd(HOSTED_PARTIES, hostedParties, elem);
@@ -290,6 +319,7 @@ public class MsoyNodeObject extends CrowdNodeObject
      * the <code>hostedParties</code> set. The set will not change until the
      * event is actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void removeFromHostedParties (Comparable<?> key)
     {
         requestEntryRemove(HOSTED_PARTIES, hostedParties, key);
@@ -300,6 +330,7 @@ public class MsoyNodeObject extends CrowdNodeObject
      * <code>hostedParties</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void updateHostedParties (PartySummary elem)
     {
         requestEntryUpdate(HOSTED_PARTIES, hostedParties, elem);
@@ -315,6 +346,7 @@ public class MsoyNodeObject extends CrowdNodeObject
      * change. Proxied copies of this object (on clients) will apply the
      * value change when they received the attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setHostedParties (DSet<PartySummary> value)
     {
         requestAttributeChange(HOSTED_PARTIES, value, this.hostedParties);
@@ -327,6 +359,7 @@ public class MsoyNodeObject extends CrowdNodeObject
      * <code>partyInfos</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void addToPartyInfos (PartyInfo elem)
     {
         requestEntryAdd(PARTY_INFOS, partyInfos, elem);
@@ -337,6 +370,7 @@ public class MsoyNodeObject extends CrowdNodeObject
      * the <code>partyInfos</code> set. The set will not change until the
      * event is actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void removeFromPartyInfos (Comparable<?> key)
     {
         requestEntryRemove(PARTY_INFOS, partyInfos, key);
@@ -347,6 +381,7 @@ public class MsoyNodeObject extends CrowdNodeObject
      * <code>partyInfos</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void updatePartyInfos (PartyInfo elem)
     {
         requestEntryUpdate(PARTY_INFOS, partyInfos, elem);
@@ -362,6 +397,7 @@ public class MsoyNodeObject extends CrowdNodeObject
      * change. Proxied copies of this object (on clients) will apply the
      * value change when they received the attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setPartyInfos (DSet<PartyInfo> value)
     {
         requestAttributeChange(PARTY_INFOS, value, this.partyInfos);
@@ -374,6 +410,7 @@ public class MsoyNodeObject extends CrowdNodeObject
      * <code>memberParties</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void addToMemberParties (MemberParty elem)
     {
         requestEntryAdd(MEMBER_PARTIES, memberParties, elem);
@@ -384,6 +421,7 @@ public class MsoyNodeObject extends CrowdNodeObject
      * the <code>memberParties</code> set. The set will not change until the
      * event is actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void removeFromMemberParties (Comparable<?> key)
     {
         requestEntryRemove(MEMBER_PARTIES, memberParties, key);
@@ -394,6 +432,7 @@ public class MsoyNodeObject extends CrowdNodeObject
      * <code>memberParties</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void updateMemberParties (MemberParty elem)
     {
         requestEntryUpdate(MEMBER_PARTIES, memberParties, elem);
@@ -409,6 +448,7 @@ public class MsoyNodeObject extends CrowdNodeObject
      * change. Proxied copies of this object (on clients) will apply the
      * value change when they received the attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setMemberParties (DSet<MemberParty> value)
     {
         requestAttributeChange(MEMBER_PARTIES, value, this.memberParties);
@@ -421,6 +461,7 @@ public class MsoyNodeObject extends CrowdNodeObject
      * <code>tablesWaiting</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void addToTablesWaiting (TablesWaiting elem)
     {
         requestEntryAdd(TABLES_WAITING, tablesWaiting, elem);
@@ -431,6 +472,7 @@ public class MsoyNodeObject extends CrowdNodeObject
      * the <code>tablesWaiting</code> set. The set will not change until the
      * event is actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void removeFromTablesWaiting (Comparable<?> key)
     {
         requestEntryRemove(TABLES_WAITING, tablesWaiting, key);
@@ -441,6 +483,7 @@ public class MsoyNodeObject extends CrowdNodeObject
      * <code>tablesWaiting</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void updateTablesWaiting (TablesWaiting elem)
     {
         requestEntryUpdate(TABLES_WAITING, tablesWaiting, elem);
@@ -456,6 +499,7 @@ public class MsoyNodeObject extends CrowdNodeObject
      * change. Proxied copies of this object (on clients) will apply the
      * value change when they received the attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setTablesWaiting (DSet<TablesWaiting> value)
     {
         requestAttributeChange(TABLES_WAITING, value, this.tablesWaiting);
@@ -471,6 +515,7 @@ public class MsoyNodeObject extends CrowdNodeObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setMsoyPeerService (MsoyPeerMarshaller value)
     {
         MsoyPeerMarshaller ovalue = this.msoyPeerService;
@@ -487,6 +532,7 @@ public class MsoyNodeObject extends CrowdNodeObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setPeerAdminService (PeerAdminMarshaller value)
     {
         PeerAdminMarshaller ovalue = this.peerAdminService;
@@ -503,6 +549,7 @@ public class MsoyNodeObject extends CrowdNodeObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setPeerPartyService (PeerPartyMarshaller value)
     {
         PeerPartyMarshaller ovalue = this.peerPartyService;

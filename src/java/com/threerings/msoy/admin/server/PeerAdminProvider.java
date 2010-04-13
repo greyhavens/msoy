@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.admin.server;
 
+import javax.annotation.Generated;
+
 import com.threerings.msoy.admin.client.PeerAdminService;
 import com.threerings.msoy.admin.gwt.StatsModel;
 import com.threerings.presents.client.InvocationService;
@@ -13,6 +15,8 @@ import com.threerings.presents.server.InvocationProvider;
 /**
  * Defines the server-side of the {@link PeerAdminService}.
  */
+@Generated(value={"com.threerings.presents.tools.GenServiceTask"},
+           comments="Derived from PeerAdminService.java.")
 public interface PeerAdminProvider extends InvocationProvider
 {
     /**

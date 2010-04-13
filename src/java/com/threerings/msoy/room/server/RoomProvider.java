@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.room.server;
 
+import javax.annotation.Generated;
+
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.room.client.RoomService;
 import com.threerings.presents.client.InvocationService;
@@ -15,6 +17,8 @@ import com.threerings.whirled.spot.data.Location;
 /**
  * Defines the server-side of the {@link RoomService}.
  */
+@Generated(value={"com.threerings.presents.tools.GenServiceTask"},
+           comments="Derived from RoomService.java.")
 public interface RoomProvider extends InvocationProvider
 {
     /**

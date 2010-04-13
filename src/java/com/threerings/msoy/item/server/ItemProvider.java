@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.item.server;
 
+import javax.annotation.Generated;
+
 import com.threerings.msoy.item.client.ItemService;
 import com.threerings.msoy.item.data.all.ItemFlag;
 import com.threerings.msoy.item.data.all.ItemIdent;
@@ -14,6 +16,8 @@ import com.threerings.presents.server.InvocationProvider;
 /**
  * Defines the server-side of the {@link ItemService}.
  */
+@Generated(value={"com.threerings.presents.tools.GenServiceTask"},
+           comments="Derived from ItemService.java.")
 public interface ItemProvider extends InvocationProvider
 {
     /**

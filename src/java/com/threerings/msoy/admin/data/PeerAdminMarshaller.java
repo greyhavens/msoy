@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.admin.data;
 
+import javax.annotation.Generated;
+
 import com.threerings.msoy.admin.client.PeerAdminService;
 import com.threerings.msoy.admin.gwt.StatsModel;
 import com.threerings.presents.client.Client;
@@ -16,6 +18,8 @@ import com.threerings.presents.data.InvocationMarshaller;
  * interfaces that marshall the response arguments and deliver them back
  * to the requesting client.
  */
+@Generated(value={"com.threerings.presents.tools.GenServiceTask"},
+           comments="Derived from PeerAdminService.java.")
 public class PeerAdminMarshaller extends InvocationMarshaller
     implements PeerAdminService
 {

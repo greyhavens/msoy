@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.room.data;
 
+import javax.annotation.Generated;
 import com.threerings.util.Name;
 
 import com.threerings.presents.dobj.DSet;
@@ -27,39 +28,51 @@ public class RoomObject extends SpotSceneObject
 {
     // AUTO-GENERATED: FIELDS START
     /** The field name of the <code>name</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String NAME = "name";
 
     /** The field name of the <code>owner</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String OWNER = "owner";
 
     /** The field name of the <code>accessControl</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String ACCESS_CONTROL = "accessControl";
 
     /** The field name of the <code>roomService</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String ROOM_SERVICE = "roomService";
 
     /** The field name of the <code>memories</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String MEMORIES = "memories";
 
     /** The field name of the <code>controllers</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String CONTROLLERS = "controllers";
 
     /** The field name of the <code>propertySpaces</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String PROPERTY_SPACES = "propertySpaces";
 
     /** The field name of the <code>parties</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String PARTIES = "parties";
 
     /** The field name of the <code>partyLeaders</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String PARTY_LEADERS = "partyLeaders";
 
     /** The field name of the <code>playlist</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String PLAYLIST = "playlist";
 
     /** The field name of the <code>currentSongId</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String CURRENT_SONG_ID = "currentSongId";
 
     /** The field name of the <code>playCount</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String PLAY_COUNT = "playCount";
     // AUTO-GENERATED: FIELDS END
 
@@ -109,6 +122,7 @@ public class RoomObject extends SpotSceneObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setName (String value)
     {
         String ovalue = this.name;
@@ -125,6 +139,7 @@ public class RoomObject extends SpotSceneObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setOwner (Name value)
     {
         Name ovalue = this.owner;
@@ -141,6 +156,7 @@ public class RoomObject extends SpotSceneObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setAccessControl (byte value)
     {
         byte ovalue = this.accessControl;
@@ -157,6 +173,7 @@ public class RoomObject extends SpotSceneObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setRoomService (RoomMarshaller value)
     {
         RoomMarshaller ovalue = this.roomService;
@@ -170,6 +187,7 @@ public class RoomObject extends SpotSceneObject
      * <code>memories</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void addToMemories (EntityMemories elem)
     {
         requestEntryAdd(MEMORIES, memories, elem);
@@ -180,6 +198,7 @@ public class RoomObject extends SpotSceneObject
      * the <code>memories</code> set. The set will not change until the
      * event is actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void removeFromMemories (Comparable<?> key)
     {
         requestEntryRemove(MEMORIES, memories, key);
@@ -190,6 +209,7 @@ public class RoomObject extends SpotSceneObject
      * <code>memories</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void updateMemories (EntityMemories elem)
     {
         requestEntryUpdate(MEMORIES, memories, elem);
@@ -205,6 +225,7 @@ public class RoomObject extends SpotSceneObject
      * change. Proxied copies of this object (on clients) will apply the
      * value change when they received the attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setMemories (DSet<EntityMemories> value)
     {
         requestAttributeChange(MEMORIES, value, this.memories);
@@ -217,6 +238,7 @@ public class RoomObject extends SpotSceneObject
      * <code>controllers</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void addToControllers (EntityControl elem)
     {
         requestEntryAdd(CONTROLLERS, controllers, elem);
@@ -227,6 +249,7 @@ public class RoomObject extends SpotSceneObject
      * the <code>controllers</code> set. The set will not change until the
      * event is actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void removeFromControllers (Comparable<?> key)
     {
         requestEntryRemove(CONTROLLERS, controllers, key);
@@ -237,6 +260,7 @@ public class RoomObject extends SpotSceneObject
      * <code>controllers</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void updateControllers (EntityControl elem)
     {
         requestEntryUpdate(CONTROLLERS, controllers, elem);
@@ -252,6 +276,7 @@ public class RoomObject extends SpotSceneObject
      * change. Proxied copies of this object (on clients) will apply the
      * value change when they received the attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setControllers (DSet<EntityControl> value)
     {
         requestAttributeChange(CONTROLLERS, value, this.controllers);
@@ -264,6 +289,7 @@ public class RoomObject extends SpotSceneObject
      * <code>propertySpaces</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void addToPropertySpaces (RoomPropertiesEntry elem)
     {
         requestEntryAdd(PROPERTY_SPACES, propertySpaces, elem);
@@ -274,6 +300,7 @@ public class RoomObject extends SpotSceneObject
      * the <code>propertySpaces</code> set. The set will not change until the
      * event is actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void removeFromPropertySpaces (Comparable<?> key)
     {
         requestEntryRemove(PROPERTY_SPACES, propertySpaces, key);
@@ -284,6 +311,7 @@ public class RoomObject extends SpotSceneObject
      * <code>propertySpaces</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void updatePropertySpaces (RoomPropertiesEntry elem)
     {
         requestEntryUpdate(PROPERTY_SPACES, propertySpaces, elem);
@@ -299,6 +327,7 @@ public class RoomObject extends SpotSceneObject
      * change. Proxied copies of this object (on clients) will apply the
      * value change when they received the attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setPropertySpaces (DSet<RoomPropertiesEntry> value)
     {
         requestAttributeChange(PROPERTY_SPACES, value, this.propertySpaces);
@@ -311,6 +340,7 @@ public class RoomObject extends SpotSceneObject
      * <code>parties</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void addToParties (PartySummary elem)
     {
         requestEntryAdd(PARTIES, parties, elem);
@@ -321,6 +351,7 @@ public class RoomObject extends SpotSceneObject
      * the <code>parties</code> set. The set will not change until the
      * event is actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void removeFromParties (Comparable<?> key)
     {
         requestEntryRemove(PARTIES, parties, key);
@@ -331,6 +362,7 @@ public class RoomObject extends SpotSceneObject
      * <code>parties</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void updateParties (PartySummary elem)
     {
         requestEntryUpdate(PARTIES, parties, elem);
@@ -346,6 +378,7 @@ public class RoomObject extends SpotSceneObject
      * change. Proxied copies of this object (on clients) will apply the
      * value change when they received the attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setParties (DSet<PartySummary> value)
     {
         requestAttributeChange(PARTIES, value, this.parties);
@@ -358,6 +391,7 @@ public class RoomObject extends SpotSceneObject
      * <code>partyLeaders</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void addToPartyLeaders (PartyLeader elem)
     {
         requestEntryAdd(PARTY_LEADERS, partyLeaders, elem);
@@ -368,6 +402,7 @@ public class RoomObject extends SpotSceneObject
      * the <code>partyLeaders</code> set. The set will not change until the
      * event is actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void removeFromPartyLeaders (Comparable<?> key)
     {
         requestEntryRemove(PARTY_LEADERS, partyLeaders, key);
@@ -378,6 +413,7 @@ public class RoomObject extends SpotSceneObject
      * <code>partyLeaders</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void updatePartyLeaders (PartyLeader elem)
     {
         requestEntryUpdate(PARTY_LEADERS, partyLeaders, elem);
@@ -393,6 +429,7 @@ public class RoomObject extends SpotSceneObject
      * change. Proxied copies of this object (on clients) will apply the
      * value change when they received the attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setPartyLeaders (DSet<PartyLeader> value)
     {
         requestAttributeChange(PARTY_LEADERS, value, this.partyLeaders);
@@ -405,6 +442,7 @@ public class RoomObject extends SpotSceneObject
      * <code>playlist</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void addToPlaylist (Audio elem)
     {
         requestEntryAdd(PLAYLIST, playlist, elem);
@@ -415,6 +453,7 @@ public class RoomObject extends SpotSceneObject
      * the <code>playlist</code> set. The set will not change until the
      * event is actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void removeFromPlaylist (Comparable<?> key)
     {
         requestEntryRemove(PLAYLIST, playlist, key);
@@ -425,6 +464,7 @@ public class RoomObject extends SpotSceneObject
      * <code>playlist</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void updatePlaylist (Audio elem)
     {
         requestEntryUpdate(PLAYLIST, playlist, elem);
@@ -440,6 +480,7 @@ public class RoomObject extends SpotSceneObject
      * change. Proxied copies of this object (on clients) will apply the
      * value change when they received the attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setPlaylist (DSet<Audio> value)
     {
         requestAttributeChange(PLAYLIST, value, this.playlist);
@@ -455,6 +496,7 @@ public class RoomObject extends SpotSceneObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setCurrentSongId (int value)
     {
         int ovalue = this.currentSongId;
@@ -471,6 +513,7 @@ public class RoomObject extends SpotSceneObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setPlayCount (int value)
     {
         int ovalue = this.playCount;

@@ -4,6 +4,7 @@
 package com.threerings.msoy.data;
 
 import java.util.Set;
+import javax.annotation.Generated;
 
 import com.threerings.crowd.data.BodyObject;
 
@@ -16,6 +17,7 @@ public class MsoyBodyObject extends BodyObject
 {
     // AUTO-GENERATED: FIELDS START
     /** The field name of the <code>actorState</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String ACTOR_STATE = "actorState";
     // AUTO-GENERATED: FIELDS END
 
@@ -60,6 +62,7 @@ public class MsoyBodyObject extends BodyObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setActorState (String value)
     {
         String ovalue = this.actorState;

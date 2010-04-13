@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.admin.server;
 
+import javax.annotation.Generated;
+
 import com.threerings.msoy.admin.data.PeerAdminMarshaller;
 import com.threerings.msoy.admin.gwt.StatsModel;
 import com.threerings.presents.client.InvocationService;
@@ -13,6 +15,8 @@ import com.threerings.presents.server.InvocationException;
 /**
  * Dispatches requests to the {@link PeerAdminProvider}.
  */
+@Generated(value={"com.threerings.presents.tools.GenServiceTask"},
+           comments="Derived from PeerAdminService.java.")
 public class PeerAdminDispatcher extends InvocationDispatcher<PeerAdminMarshaller>
 {
     /**
@@ -24,13 +28,13 @@ public class PeerAdminDispatcher extends InvocationDispatcher<PeerAdminMarshalle
         this.provider = provider;
     }
 
-    @Override // documentation inherited
+    @Override
     public PeerAdminMarshaller createMarshaller ()
     {
         return new PeerAdminMarshaller();
     }
 
-    @Override // documentation inherited
+    @Override
     public void dispatchRequest (
         ClientObject source, int methodId, Object[] args)
         throws InvocationException

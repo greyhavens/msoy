@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.room.server;
 
+import javax.annotation.Generated;
+
 import com.threerings.msoy.room.data.PetMarshaller;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
@@ -12,6 +14,8 @@ import com.threerings.presents.server.InvocationException;
 /**
  * Dispatches requests to the {@link PetProvider}.
  */
+@Generated(value={"com.threerings.presents.tools.GenServiceTask"},
+           comments="Derived from PetService.java.")
 public class PetDispatcher extends InvocationDispatcher<PetMarshaller>
 {
     /**
@@ -23,13 +27,13 @@ public class PetDispatcher extends InvocationDispatcher<PetMarshaller>
         this.provider = provider;
     }
 
-    @Override // documentation inherited
+    @Override
     public PetMarshaller createMarshaller ()
     {
         return new PetMarshaller();
     }
 
-    @Override // documentation inherited
+    @Override
     public void dispatchRequest (
         ClientObject source, int methodId, Object[] args)
         throws InvocationException

@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.chat.server;
 
+import javax.annotation.Generated;
+
 import com.threerings.msoy.chat.data.JabberMarshaller;
 import com.threerings.msoy.data.all.JabberName;
 import com.threerings.presents.client.InvocationService;
@@ -13,6 +15,8 @@ import com.threerings.presents.server.InvocationException;
 /**
  * Dispatches requests to the {@link JabberProvider}.
  */
+@Generated(value={"com.threerings.presents.tools.GenServiceTask"},
+           comments="Derived from JabberService.java.")
 public class JabberDispatcher extends InvocationDispatcher<JabberMarshaller>
 {
     /**
@@ -24,13 +28,13 @@ public class JabberDispatcher extends InvocationDispatcher<JabberMarshaller>
         this.provider = provider;
     }
 
-    @Override // documentation inherited
+    @Override
     public JabberMarshaller createMarshaller ()
     {
         return new JabberMarshaller();
     }
 
-    @Override // documentation inherited
+    @Override
     public void dispatchRequest (
         ClientObject source, int methodId, Object[] args)
         throws InvocationException

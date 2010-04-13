@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.party.data;
 
+import javax.annotation.Generated;
 import com.threerings.util.Name;
 
 import com.threerings.crowd.data.BodyObject;
@@ -16,9 +17,11 @@ public class PartierObject extends BodyObject
 {
     // AUTO-GENERATED: FIELDS START
     /** The field name of the <code>memberName</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String MEMBER_NAME = "memberName";
 
     /** The field name of the <code>partyId</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String PARTY_ID = "partyId";
     // AUTO-GENERATED: FIELDS END
 
@@ -51,6 +54,7 @@ public class PartierObject extends BodyObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setMemberName (VizMemberName value)
     {
         VizMemberName ovalue = this.memberName;
@@ -67,6 +71,7 @@ public class PartierObject extends BodyObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setPartyId (int value)
     {
         int ovalue = this.partyId;

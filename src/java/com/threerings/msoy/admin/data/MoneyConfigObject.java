@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.admin.data;
 
+import javax.annotation.Generated;
 import com.threerings.admin.data.ConfigObject;
 
 /**
@@ -12,45 +13,59 @@ public class MoneyConfigObject extends ConfigObject
 {
     // AUTO-GENERATED: FIELDS START
     /** The field name of the <code>hourlyGameFlowRate</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String HOURLY_GAME_FLOW_RATE = "hourlyGameFlowRate";
 
     /** The field name of the <code>hourlyAVRGameFlowRate</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String HOURLY_AVRGAME_FLOW_RATE = "hourlyAVRGameFlowRate";
 
     /** The field name of the <code>partyGameBonusFactor</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String PARTY_GAME_BONUS_FACTOR = "partyGameBonusFactor";
 
     /** The field name of the <code>partyMaxBonusPopulation</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String PARTY_MAX_BONUS_POPULATION = "partyMaxBonusPopulation";
 
     /** The field name of the <code>payoutFactorReassessment</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String PAYOUT_FACTOR_REASSESSMENT = "payoutFactorReassessment";
 
     /** The field name of the <code>creatorPercentage</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String CREATOR_PERCENTAGE = "creatorPercentage";
 
     /** The field name of the <code>affiliatePercentage</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String AFFILIATE_PERCENTAGE = "affiliatePercentage";
 
     /** The field name of the <code>charityPercentage</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String CHARITY_PERCENTAGE = "charityPercentage";
 
     /** The field name of the <code>blingPoolSize</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String BLING_POOL_SIZE = "blingPoolSize";
 
     /** The field name of the <code>blingWorth</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String BLING_WORTH = "blingWorth";
 
     /** The field name of the <code>minimumBlingCashOut</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String MINIMUM_BLING_CASH_OUT = "minimumBlingCashOut";
 
     /** The field name of the <code>barPoolSize</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String BAR_POOL_SIZE = "barPoolSize";
 
     /** The field name of the <code>targetExchangeRate</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String TARGET_EXCHANGE_RATE = "targetExchangeRate";
 
     /** The field name of the <code>barCost</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String BAR_COST = "barCost";
     // AUTO-GENERATED: FIELDS END
 
@@ -117,6 +132,7 @@ public class MoneyConfigObject extends ConfigObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setHourlyGameFlowRate (int value)
     {
         int ovalue = this.hourlyGameFlowRate;
@@ -133,6 +149,7 @@ public class MoneyConfigObject extends ConfigObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setHourlyAVRGameFlowRate (int value)
     {
         int ovalue = this.hourlyAVRGameFlowRate;
@@ -149,6 +166,7 @@ public class MoneyConfigObject extends ConfigObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setPartyGameBonusFactor (float value)
     {
         float ovalue = this.partyGameBonusFactor;
@@ -165,6 +183,7 @@ public class MoneyConfigObject extends ConfigObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setPartyMaxBonusPopulation (int value)
     {
         int ovalue = this.partyMaxBonusPopulation;
@@ -181,6 +200,7 @@ public class MoneyConfigObject extends ConfigObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setPayoutFactorReassessment (int value)
     {
         int ovalue = this.payoutFactorReassessment;
@@ -197,6 +217,7 @@ public class MoneyConfigObject extends ConfigObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setCreatorPercentage (float value)
     {
         float ovalue = this.creatorPercentage;
@@ -213,6 +234,7 @@ public class MoneyConfigObject extends ConfigObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setAffiliatePercentage (float value)
     {
         float ovalue = this.affiliatePercentage;
@@ -229,6 +251,7 @@ public class MoneyConfigObject extends ConfigObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setCharityPercentage (float value)
     {
         float ovalue = this.charityPercentage;
@@ -245,6 +268,7 @@ public class MoneyConfigObject extends ConfigObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setBlingPoolSize (int value)
     {
         int ovalue = this.blingPoolSize;
@@ -261,6 +285,7 @@ public class MoneyConfigObject extends ConfigObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setBlingWorth (int value)
     {
         int ovalue = this.blingWorth;
@@ -277,6 +302,7 @@ public class MoneyConfigObject extends ConfigObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setMinimumBlingCashOut (int value)
     {
         int ovalue = this.minimumBlingCashOut;
@@ -293,6 +319,7 @@ public class MoneyConfigObject extends ConfigObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setBarPoolSize (int value)
     {
         int ovalue = this.barPoolSize;
@@ -309,6 +336,7 @@ public class MoneyConfigObject extends ConfigObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setTargetExchangeRate (float value)
     {
         float ovalue = this.targetExchangeRate;
@@ -325,6 +353,7 @@ public class MoneyConfigObject extends ConfigObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setBarCost (int value)
     {
         int ovalue = this.barCost;

@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.avrg.server;
 
+import javax.annotation.Generated;
+
 import com.threerings.msoy.avrg.data.AVRGameMarshaller;
 import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.presents.client.InvocationService;
@@ -13,6 +15,8 @@ import com.threerings.presents.server.InvocationException;
 /**
  * Dispatches requests to the {@link AVRGameProvider}.
  */
+@Generated(value={"com.threerings.presents.tools.GenServiceTask"},
+           comments="Derived from AVRGameService.java.")
 public class AVRGameDispatcher extends InvocationDispatcher<AVRGameMarshaller>
 {
     /**
@@ -24,13 +28,13 @@ public class AVRGameDispatcher extends InvocationDispatcher<AVRGameMarshaller>
         this.provider = provider;
     }
 
-    @Override // documentation inherited
+    @Override
     public AVRGameMarshaller createMarshaller ()
     {
         return new AVRGameMarshaller();
     }
 
-    @Override // documentation inherited
+    @Override
     public void dispatchRequest (
         ClientObject source, int methodId, Object[] args)
         throws InvocationException

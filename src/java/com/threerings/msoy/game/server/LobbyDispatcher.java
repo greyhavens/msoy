@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.game.server;
 
+import javax.annotation.Generated;
+
 import com.threerings.msoy.game.data.LobbyMarshaller;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
@@ -12,6 +14,8 @@ import com.threerings.presents.server.InvocationException;
 /**
  * Dispatches requests to the {@link LobbyProvider}.
  */
+@Generated(value={"com.threerings.presents.tools.GenServiceTask"},
+           comments="Derived from LobbyService.java.")
 public class LobbyDispatcher extends InvocationDispatcher<LobbyMarshaller>
 {
     /**
@@ -23,13 +27,13 @@ public class LobbyDispatcher extends InvocationDispatcher<LobbyMarshaller>
         this.provider = provider;
     }
 
-    @Override // documentation inherited
+    @Override
     public LobbyMarshaller createMarshaller ()
     {
         return new LobbyMarshaller();
     }
 
-    @Override // documentation inherited
+    @Override
     public void dispatchRequest (
         ClientObject source, int methodId, Object[] args)
         throws InvocationException

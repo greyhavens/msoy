@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.party.server;
 
+import javax.annotation.Generated;
+
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.party.client.PartyBoardService;
 import com.threerings.presents.client.InvocationService;
@@ -13,6 +15,8 @@ import com.threerings.presents.server.InvocationProvider;
 /**
  * Defines the server-side of the {@link PartyBoardService}.
  */
+@Generated(value={"com.threerings.presents.tools.GenServiceTask"},
+           comments="Derived from PartyBoardService.java.")
 public interface PartyBoardProvider extends InvocationProvider
 {
     /**

@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.game.data;
 
+import javax.annotation.Generated;
 import com.threerings.presents.dobj.DSet;
 
 import com.threerings.crowd.data.OccupantInfo;
@@ -21,12 +22,15 @@ public class ParlorGameObject extends WhirledGameObject
 {
     // AUTO-GENERATED: FIELDS START
     /** The field name of the <code>name</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String NAME = "name";
 
     /** The field name of the <code>parties</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String PARTIES = "parties";
 
     /** The field name of the <code>partyLeaders</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String PARTY_LEADERS = "partyLeaders";
     // AUTO-GENERATED: FIELDS END
 
@@ -66,6 +70,7 @@ public class ParlorGameObject extends WhirledGameObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setName (String value)
     {
         String ovalue = this.name;
@@ -79,6 +84,7 @@ public class ParlorGameObject extends WhirledGameObject
      * <code>parties</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void addToParties (PartySummary elem)
     {
         requestEntryAdd(PARTIES, parties, elem);
@@ -89,6 +95,7 @@ public class ParlorGameObject extends WhirledGameObject
      * the <code>parties</code> set. The set will not change until the
      * event is actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void removeFromParties (Comparable<?> key)
     {
         requestEntryRemove(PARTIES, parties, key);
@@ -99,6 +106,7 @@ public class ParlorGameObject extends WhirledGameObject
      * <code>parties</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void updateParties (PartySummary elem)
     {
         requestEntryUpdate(PARTIES, parties, elem);
@@ -114,6 +122,7 @@ public class ParlorGameObject extends WhirledGameObject
      * change. Proxied copies of this object (on clients) will apply the
      * value change when they received the attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setParties (DSet<PartySummary> value)
     {
         requestAttributeChange(PARTIES, value, this.parties);
@@ -126,6 +135,7 @@ public class ParlorGameObject extends WhirledGameObject
      * <code>partyLeaders</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void addToPartyLeaders (PartyLeader elem)
     {
         requestEntryAdd(PARTY_LEADERS, partyLeaders, elem);
@@ -136,6 +146,7 @@ public class ParlorGameObject extends WhirledGameObject
      * the <code>partyLeaders</code> set. The set will not change until the
      * event is actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void removeFromPartyLeaders (Comparable<?> key)
     {
         requestEntryRemove(PARTY_LEADERS, partyLeaders, key);
@@ -146,6 +157,7 @@ public class ParlorGameObject extends WhirledGameObject
      * <code>partyLeaders</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void updatePartyLeaders (PartyLeader elem)
     {
         requestEntryUpdate(PARTY_LEADERS, partyLeaders, elem);
@@ -161,6 +173,7 @@ public class ParlorGameObject extends WhirledGameObject
      * change. Proxied copies of this object (on clients) will apply the
      * value change when they received the attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setPartyLeaders (DSet<PartyLeader> value)
     {
         requestAttributeChange(PARTY_LEADERS, value, this.partyLeaders);

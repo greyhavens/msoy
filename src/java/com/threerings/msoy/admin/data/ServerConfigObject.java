@@ -7,6 +7,7 @@ import java.lang.reflect.Field;
 import java.text.DateFormat;
 import java.util.Date;
 import javax.swing.JPanel;
+import javax.annotation.Generated;
 
 import com.threerings.presents.util.PresentsContext;
 
@@ -22,36 +23,47 @@ public class ServerConfigObject extends ConfigObject
 {
     // AUTO-GENERATED: FIELDS START
     /** The field name of the <code>nonAdminsAllowed</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String NON_ADMINS_ALLOWED = "nonAdminsAllowed";
 
     /** The field name of the <code>registrationEnabled</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String REGISTRATION_ENABLED = "registrationEnabled";
 
     /** The field name of the <code>humanityReassessment</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String HUMANITY_REASSESSMENT = "humanityReassessment";
 
     /** The field name of the <code>nextReboot</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String NEXT_REBOOT = "nextReboot";
 
     /** The field name of the <code>customRebootMsg</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String CUSTOM_REBOOT_MSG = "customRebootMsg";
 
     /** The field name of the <code>servletRebootInitiator</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String SERVLET_REBOOT_INITIATOR = "servletRebootInitiator";
 
     /** The field name of the <code>servletReboot</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String SERVLET_REBOOT = "servletReboot";
 
     /** The field name of the <code>servletRebootNode</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String SERVLET_REBOOT_NODE = "servletRebootNode";
 
     /** The field name of the <code>maxInvokerQueueSize</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String MAX_INVOKER_QUEUE_SIZE = "maxInvokerQueueSize";
 
     /** The field name of the <code>maxPendingClientResolutions</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String MAX_PENDING_CLIENT_RESOLUTIONS = "maxPendingClientResolutions";
 
     /** The field name of the <code>fbNotificationsAlloc</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String FB_NOTIFICATIONS_ALLOC = "fbNotificationsAlloc";
     // AUTO-GENERATED: FIELDS END
 
@@ -130,6 +142,7 @@ public class ServerConfigObject extends ConfigObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setNonAdminsAllowed (boolean value)
     {
         boolean ovalue = this.nonAdminsAllowed;
@@ -146,6 +159,7 @@ public class ServerConfigObject extends ConfigObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setRegistrationEnabled (boolean value)
     {
         boolean ovalue = this.registrationEnabled;
@@ -162,6 +176,7 @@ public class ServerConfigObject extends ConfigObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setHumanityReassessment (int value)
     {
         int ovalue = this.humanityReassessment;
@@ -178,6 +193,7 @@ public class ServerConfigObject extends ConfigObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setNextReboot (long value)
     {
         long ovalue = this.nextReboot;
@@ -194,6 +210,7 @@ public class ServerConfigObject extends ConfigObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setCustomRebootMsg (String value)
     {
         String ovalue = this.customRebootMsg;
@@ -210,6 +227,7 @@ public class ServerConfigObject extends ConfigObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setServletRebootInitiator (String value)
     {
         String ovalue = this.servletRebootInitiator;
@@ -226,6 +244,7 @@ public class ServerConfigObject extends ConfigObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setServletReboot (long value)
     {
         long ovalue = this.servletReboot;
@@ -242,6 +261,7 @@ public class ServerConfigObject extends ConfigObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setServletRebootNode (String value)
     {
         String ovalue = this.servletRebootNode;
@@ -258,6 +278,7 @@ public class ServerConfigObject extends ConfigObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setMaxInvokerQueueSize (int value)
     {
         int ovalue = this.maxInvokerQueueSize;
@@ -274,6 +295,7 @@ public class ServerConfigObject extends ConfigObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setMaxPendingClientResolutions (int value)
     {
         int ovalue = this.maxPendingClientResolutions;
@@ -290,6 +312,7 @@ public class ServerConfigObject extends ConfigObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public void setFbNotificationsAlloc (int value)
     {
         int ovalue = this.fbNotificationsAlloc;

@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.avrg.server;
 
+import javax.annotation.Generated;
+
 import com.threerings.msoy.avrg.client.AVRGameService;
 import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.presents.client.InvocationService;
@@ -13,6 +15,8 @@ import com.threerings.presents.server.InvocationProvider;
 /**
  * Defines the server-side of the {@link AVRGameService}.
  */
+@Generated(value={"com.threerings.presents.tools.GenServiceTask"},
+           comments="Derived from AVRGameService.java.")
 public interface AVRGameProvider extends InvocationProvider
 {
     /**
