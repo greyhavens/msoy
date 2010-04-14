@@ -4,8 +4,6 @@
 package client.landing;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.rpc.AsyncCallback;
-
 import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.web.gwt.Args;
@@ -13,7 +11,6 @@ import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.WebMemberService;
 import com.threerings.msoy.web.gwt.WebMemberServiceAsync;
 
-import client.shell.CShell;
 import client.shell.Page;
 import client.ui.NoNavPanel;
 import client.util.Link;
@@ -60,36 +57,9 @@ public class LandingPage extends Page
         } else if (action.equals(NEW_MONSTER_LANDING)) {
             setContent(_msgs.titleLanding(), new LandingMonsterPanel());
 
-        // old blue landing or new monster ave landing
         } else {
-            runABTest();
-        }
-    }
-
-    /**
-     * Runs AB test defined on the landing page.
-     */
-    protected void runABTest ()
-    {
-        _membersvc.getABTestGroup(CShell.frame.getVisitorInfo(),
-            "2010 01 landing blue vs monsterave", true,
-            new AsyncCallback<Integer>() {
-                public void onSuccess (Integer group) {
-                    gotTestGroup(group);
-                }
-                public void onFailure (Throwable cause) {
-                    gotTestGroup(-1);
-                }
-            });
-    }
-
-    protected void gotTestGroup (int groupId)
-    {
-        // show new whiteness monster ave landing page
-        if (groupId == 2) {
-            Link.go(Pages.LANDING, NEW_MONSTER_LANDING);
-        // group 1, returning users, affiliate users, etc get old landing page
-        } else {
+            // default to the blue landing, which won the A/B test against the MonsterPanel
+            // by a tiny fraction (we may revisit this decision later)
             Link.go(Pages.LANDING, OLD_BLUE_LANDING);
         }
     }
