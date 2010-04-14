@@ -16,7 +16,7 @@
 -injars ../dist/lib/vilya-whirled-0.0-SNAPSHOT.jar(
     **/ClusteredBodyObject.class,**/ScenedBodyObject.class)
 -injars ../dist/lib/whirled-code-0.0-SNAPSHOT.jar(**/WhirledOccupantInfo.class)
--injars ../dist/lib/gwt-user-1.7.jar(**/user/client/rpc/IsSerializable.class)
+-injars ../dist/lib/gwt-user.jar(**/user/client/rpc/IsSerializable.class)
 -injars ../dist/msoy-code.jar(
     !**/*UnitTest.class,rsrc/i18n/**,**/msoy/Log.class,**/msoy/data/**,**/msoy/chat/data/MsoyChat*,**/msoy/client/**,
     **/msoy/item/data/all/**,**/msoy/admin/data/**,**/msoy/admin/client/**,**/msoy/admin/util/**,
