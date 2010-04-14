@@ -85,7 +85,7 @@
     <file name="${extlibs.dir}/gson.jar"/>
     <file name="${extlibs.dir}/guice.jar"/>
     <file name="${extlibs.dir}/guice-multibindings.jar"/>
-    <file name="${extlibs.dir}/gwt-user-1.7.jar"/>
+    <file name="${extlibs.dir}/gwt-user.jar"/>
     <file name="${extlibs.dir}/jaxb/jaxb-api.jar"/>
     <file name="${extlibs.dir}/jcip-annotations.jar"/>
     <file name="${extlibs.dir}/jetty6/jetty-util.jar"/>
@@ -365,51 +365,6 @@
     </else></if>
   </target>
 
-  <!-- runs the GWT debugging shell -->
-  <target name="gshell" depends="config">
-    <available property="gwtdir.present" file="lib/gwt"/>
-    <fail message="You must symlink 'lib/gwt' to a current GWT distribution."
-          unless="gwtdir.present"/>
-
-    <path id="gshell.classpath">
-      <fileset dir="lib/gwt" includes="*.jar"/>
-      <path refid="gwt.classpath"/>
-    </path>
-    <available property="gwt.present" classname="com.google.gwt.dev.GWTShell"
-               classpathref="gshell.classpath"/>
-    <fail message="You must symlink 'lib/gwt' to a current GWT distribution." unless="gwt.present"/>
-    <fail message="You must specify -Dpage=(mail|stuff|shop|etc.)." unless="page"/>
-
-    <!-- we need to copy our .gwt.xml into place while gshell is running -->
-    <antcall target="preppage"><param name="page" value="${page}"/></antcall>
-
-    <if><equals arg1="${platform.darwin}" arg2="true"/><then>
-      <java classpathref="gshell.classpath" fork="true" maxmemory="256M"
-            classname="com.google.gwt.dev.GWTShell">
-        <jvmarg value="-XstartOnFirstThread"/>
-        <arg value="-noserver"/>
-        <arg value="-port"/>
-        <arg value="${http_port}"/>
-        <arg value="-out"/>
-        <arg value="${gwtout.dir}"/>
-        <arg value="gwt/0/${page}/${page}.html"/>
-      </java>
-    </then><else>
-      <java classpathref="gshell.classpath" fork="true" maxmemory="256M"
-            classname="com.google.gwt.dev.GWTShell">
-        <arg value="-noserver"/>
-        <arg value="-port"/>
-        <arg value="${http_port}"/>
-        <arg value="-out"/>
-        <arg value="${gwtout.dir}"/>
-        <arg value="gwt/0/${page}/"/>
-      </java>
-    </else></if>
-
-    <!-- now delete our temporary .gwt.xml file -->
-    <delete file="${gsrc.dir}/${page}.gwt.xml"/>
-  </target>
-
   <!-- regenerates our i18n messages classes -->
   <target name="gmsgs">
     <taskdef name="i18nsync" classname="com.threerings.gwt.tools.I18nSyncTask"
@@ -499,8 +454,8 @@
     <java fork="true" maxmemory="1024M" failonerror="false" resultproperty="gwt.result"
     	classname="com.google.gwt.dev.Compiler">
       <classpath>
-        <fileset dir="${extlibs.dir}" includes="gwt-dev-linux.jar"/> <!-- the GWT compiler -->
-        <fileset dir="${deploy.dir}/lib" includes="gwt-user-1.7.jar"/>
+        <fileset dir="${extlibs.dir}" includes="gwt-dev.jar"/> <!-- the GWT compiler -->
+        <fileset dir="${deploy.dir}/lib" includes="gwt-user.jar"/>
         <path refid="gwt.classpath"/>
       </classpath>
       <!-- temporary workaround to crashing problem on build server's BSD java -->
