@@ -33,4 +33,10 @@
     <when-type-is class="client.ui.impl.HrefImpl"/>
     <when-property-is name="user.agent" value="ie8"/>
   </replace-with>
+
+<!-- Work-around for GWT 2.0 compiler bug;
+     see http://code.google.com/p/google-web-toolkit/issues/detail?id=4438 -->
+<extend-configuration-property name="rpc.blacklist" 
+                               value="com.google.gwt.user.client.ui.*Collection"/>
+
 </module>
