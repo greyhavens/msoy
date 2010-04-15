@@ -53,7 +53,7 @@
 	<classpathentry kind="lib" path="extlibs/java/getdown.jar"/>
 	<classpathentry kind="lib" path="extlibs/java/google-collect.jar"/>
 	<classpathentry kind="lib" path="extlibs/java/guice.jar"/>
-	<classpathentry kind="lib" path="extlibs/java/gwt-user-1.7.jar"/>
+	<classpathentry kind="lib" path="extlibs/java/gwt-user.jar"/>
 	<classpathentry kind="lib" path="extlibs/java/hessian.jar"/>
 	<classpathentry kind="lib" path="extlibs/java/javassist.jar"/>
 	<classpathentry kind="lib" path="extlibs/java/jcip-annotations.jar"/>
@@ -120,5 +120,6 @@
 	<classpathentry kind="lib" path="/export/msoy/extlibs/java/facebook-java-api.jar"/>
 	<classpathentry kind="lib" path="extlibs/java/xmlrpc-server.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/pulse"/>
+	<classpathentry kind="lib" path="extlibs/java/cxf/jettison-1.0.jar"/>
 	<classpathentry kind="output" path="dist/eclipse"/>
 </classpath>
