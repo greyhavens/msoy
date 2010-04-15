@@ -18,6 +18,7 @@ import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.WebMemberService;
 import com.threerings.msoy.web.gwt.WebMemberServiceAsync;
 
@@ -25,13 +26,14 @@ import client.shell.FBLogonPanel;
 import client.shell.LogonPanel;
 import client.ui.MsoyUI;
 import client.ui.RegisterPanel;
+import client.util.Link;
 
 /**
  * Our main landing page.
  */
 public class LandingPanel extends SmartTable
 {
-    public LandingPanel ()
+    public LandingPanel (boolean playNow)
     {
         super("landing", 0, 20);
 
@@ -50,22 +52,37 @@ public class LandingPanel extends SmartTable
         }));
         explain.add(video);
 
-        // create our registration UI and a logon UI
         FlowPanel rightbits = MsoyUI.createFlowPanel("Rightbits");
-        FlowPanel registerPlaceholder = MsoyUI.createFlowPanel("registerPlaceholder");
-        RegisterPanel register = new RegisterPanel() {
-            protected void addHeader (boolean complete) {
-                if (complete) {
-                    add(MsoyUI.createLabel(_msgs.landingRegistered(), "Title"));
-                } else {
-                    add(MsoyUI.createLabel(_msgs.landingRegister(), "Title"));
-                    add(MsoyUI.createLabel(_msgs.landingRegisterSub(), "Subtitle"));
-                }
-            }
-        };
-        registerPlaceholder.add(register);
-        rightbits.add(registerPlaceholder);
+        if (playNow) {
+            // create our play now UI
+            FlowPanel playNowPlaceholder = MsoyUI.createFlowPanel("playNowPlaceholder");
+            playNowPlaceholder.add(MsoyUI.createLabel(_msgs.landingHopRightIn(), "Subtitle"));
+            SmartTable align = new SmartTable(0, 5);
+            align.setWidth("100%");
+            align.setWidget(0, 0, MsoyUI.createButton(MsoyUI.MEDIUM_THIN,
+                _msgs.landingPlayNow(), Link.createHandler(Pages.WORLD, "places")));
+            align.getFlexCellFormatter().setHorizontalAlignment(0, 0, HasAlignment.ALIGN_RIGHT);
+            playNowPlaceholder.add(align);
+            rightbits.add(playNowPlaceholder);
 
+        } else {
+            // create our registration UI
+            FlowPanel registerPlaceholder = MsoyUI.createFlowPanel("registerPlaceholder");
+            RegisterPanel register = new RegisterPanel() {
+                protected void addHeader (boolean complete) {
+                    if (complete) {
+                        add(MsoyUI.createLabel(_msgs.landingRegistered(), "Title"));
+                    } else {
+                        add(MsoyUI.createLabel(_msgs.landingRegister(), "Title"));
+                        add(MsoyUI.createLabel(_msgs.landingRegisterSub(), "Subtitle"));
+                    }
+                }
+            };
+            registerPlaceholder.add(register);
+            rightbits.add(registerPlaceholder);
+        }
+
+        // create a logon UI
         rightbits.add(WidgetUtil.makeShim(15, 15));
         rightbits.add(MsoyUI.createLabel(_msgs.landingLogon(), "Subtitle"));
         TextBox logemail = MsoyUI.createTextBox("", MemberName.MAX_EMAIL_LENGTH, -1);
