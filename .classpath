@@ -116,8 +116,8 @@
 	<classpathentry kind="lib" path="extlibs/java/advanced-components-1.4.1.jar"/>
 	<classpathentry kind="lib" path="extlibs/java/gwt-incubator.jar"/>
 	<classpathentry kind="lib" path="extlibs/java/jaxb/jaxb-api.jar"/>
-	<classpathentry kind="lib" path="/export/msoy/extlibs/java/facebook-java-api-schema.jar"/>
-	<classpathentry kind="lib" path="/export/msoy/extlibs/java/facebook-java-api.jar"/>
+	<classpathentry kind="lib" path="extlibs/java/facebook-java-api-schema.jar"/>
+	<classpathentry kind="lib" path="extlibs/java/facebook-java-api.jar"/>
 	<classpathentry kind="lib" path="extlibs/java/xmlrpc-server.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/pulse"/>
 	<classpathentry kind="lib" path="extlibs/java/cxf/jettison-1.0.jar"/>
