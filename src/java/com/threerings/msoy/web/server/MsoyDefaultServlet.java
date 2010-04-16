@@ -94,8 +94,8 @@ public class MsoyDefaultServlet extends DefaultServlet
                 path = path.substring(1);
             }
             // note: the HTTP referrer field is spelled 'Referer', sigh (thanks Bruno).
-            log.info("VisitorInfo created", "info", info, "reason", "MsoyDefaultServlet",
-                "request", req, "ref", req.getHeader("Referer"), "path", path);
+            log.info("VisitorInfo created", "info", info, "reason", "MsoyDefaultServlet", "agent",
+                req.getHeader("User-Agent"), "ref", req.getHeader("Referer"), "path", path);
         }
 
         if (CookieUtil.getCookie(req, CookieNames.WHO) == null) {
