@@ -58,6 +58,7 @@ public class ThemedTemplateServlet extends DefaultServlet
             PrintWriter pout = new PrintWriter(rsp.getOutputStream());
             VelocityEngine ve = VelocityUtil.createEngine();
             String URI = req.getRequestURI();
+            rsp.setContentType(getServletContext().getMimeType(URI));
             ve.mergeTemplate("rsrc" + URI + ".tmpl", "UTF-8", ctx, pout);
             StreamUtil.close(pout);
 

@@ -42,8 +42,8 @@ public class AppInserterServlet extends DefaultServlet
     {
         // TODO: if no app parameter is given, use the FB connect app
         String appIdStr = req.getParameter(ArgNames.APP);
-        int appId = appIdStr != null ? Integer.parseInt(appIdStr) : 0;
-        appId = appId == 0 ? _facebookLogic.getDefaultGamesSite().getFacebookAppId() : appId;
+        int appId = (appIdStr != null) ? Integer.parseInt(appIdStr) : 0;
+        appId = (appId != 0) ? appId : _facebookLogic.getDefaultGamesSite().getFacebookAppId();
         FacebookInfoRecord fbInfo = _facebookRepository.loadAppFacebookInfo(appId);
 
         if (fbInfo == null || StringUtil.isBlank(fbInfo.apiKey)) {
@@ -57,7 +57,9 @@ public class AppInserterServlet extends DefaultServlet
             ctx.put("apiKey", fbInfo.apiKey);
             PrintWriter pout = new PrintWriter(rsp.getOutputStream());
             VelocityEngine ve = VelocityUtil.createEngine();
-            ve.mergeTemplate("rsrc" + req.getRequestURI() + ".tmpl", "UTF-8", ctx, pout);
+            String URI = req.getRequestURI();
+            rsp.setContentType(getServletContext().getMimeType(URI));
+            ve.mergeTemplate("rsrc" + URI + ".tmpl", "UTF-8", ctx, pout);
             StreamUtil.close(pout);
 
         } catch (Exception ex) {
