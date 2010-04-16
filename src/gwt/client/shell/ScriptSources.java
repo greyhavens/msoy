@@ -28,7 +28,6 @@ public class ScriptSources
                     SOURCE_MAP[ii+1].replace(APP_ID_WILDCARD, appIdStr));
             }
         }
-
     }
 
     /** For replacing in the script sources below. */
@@ -36,9 +35,6 @@ public class ScriptSources
 
     /** Enumerates our Javascript source locations by id. */
     protected static final String[] SOURCE_MAP = {
-        "swfobject", "/js/swfobject.js",
-        "md5", "/js/md5.js",
-        "googanal", "http://www.google-analytics.com/ga.js",
         "fbhelper", SharedNaviUtil.buildRequest("/js/facebook.js", ArgNames.APP, APP_ID_WILDCARD)
     };
 }
