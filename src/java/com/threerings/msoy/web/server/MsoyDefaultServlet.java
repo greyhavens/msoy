@@ -85,15 +85,17 @@ public class MsoyDefaultServlet extends DefaultServlet
             // we can't get the anchor from the URL (AFAIK the client doens't even send it) so we
             // have to lump all non-/welcome-nor-/go landings into a single vector
 
-            _memberLogic.noteNewVisitor(info, true, "page.default", req.getHeader("Referrer"), 0);
+            // note: the HTTP referrer field is spelled 'Referer', sigh (thanks Bruno).
+            _memberLogic.noteNewVisitor(info, true, "page.default", req.getHeader("Referer"), 0);
 
             // DEBUG
             String path = StringUtil.deNull(req.getPathInfo());
             if (path.startsWith("/")) {
                 path = path.substring(1);
             }
+            // note: the HTTP referrer field is spelled 'Referer', sigh (thanks Bruno).
             log.info("VisitorInfo created", "info", info, "reason", "MsoyDefaultServlet",
-                "ref", req.getHeader("Referrer"), "path", path);
+                "request", req, "ref", req.getHeader("Referer"), "path", path);
         }
 
         if (CookieUtil.getCookie(req, CookieNames.WHO) == null) {

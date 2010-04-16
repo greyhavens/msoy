@@ -224,12 +224,13 @@ public class FacebookCallbackServlet extends HttpServlet
         // if the member has the same visitor id as the one we just made up, they were just
         // created and we need to note that this is an entry
         if (vinfo.id.equals(mrec.visitorId)) {
+            // note: the HTTP referrer field is spelled 'Referer', sigh (thanks Bruno).
             _memberLogic.noteNewVisitor(
-                vinfo, true, info.vector, req.getHeader("Referrer"), mrec.memberId);
+                vinfo, true, info.vector, req.getHeader("Referer"), mrec.memberId);
 
             // DEBUG
             log.info("VisitorInfo created", "info", vinfo, "reason", "FacebookCallbackServlet",
-                "vector", info.vector, "ref", req.getHeader("Referrer"),
+                "vector", info.vector, "ref", req.getHeader("Referer"),
                 "memberId", mrec.memberId);
 
         }
