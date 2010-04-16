@@ -80,8 +80,9 @@ public class GoServlet extends HttpServlet
             _memberLogic.noteNewVisitor(info, true, bits.left, req.getHeader("Referer"), 0);
 
             // DEBUG
-            log.info("VisitorInfo created", "info", info,
-                "reason", "GoServlet", "vector", bits.left, "path", bits.right);
+            log.info("VisitorInfo created", "info", info, "reason", "GoServlet", "vector",
+                bits.left, "path", bits.right, "agent", req.getHeader("User-Agent"), "ref",
+                req.getHeader("Referer"), "ip", req.getRemoteAddr());
         }
 
         // set their affiliate cookie if appropriate
