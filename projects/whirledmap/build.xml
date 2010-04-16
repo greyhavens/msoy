@@ -9,7 +9,11 @@
   <!-- builds our Flash game -->
   <target name="compile">
     <mkdir dir="dist"/>
-    <exec executable="${flex.path}/bin/mxmlc" failonerror="true">
+    <condition property="mxmlc" value="mxmlc" else="mxmlc.exe">
+        <not><os family="windows"/></not>
+    </condition>
+    <property name="mxmlc-full-path" location="${flex.path}/bin/${mxmlc}"/>
+    <exec executable="${mxmlc-full-path}" failonerror="true">
       <arg value="-compiler.optimize"/>
       <arg value="-load-config"/>
       <arg value="${build.root}/etc/msoy-config.xml"/>

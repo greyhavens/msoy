@@ -562,7 +562,10 @@
     <property name="flex.extra-arg" value="-externs=DummyValueIgnore"/>
     <property name="flex.extra-arg-2" value="-externs=DummyValueIgnore"/>
     <property name="copydir" value="pages/clients/${version}"/>
-    <exec executable="${basedir}/bin/mxmlc" failonerror="true">
+    <condition property="mxmlc" value="mxmlc" else="mxmlc.bat">
+        <not><os family="windows"/></not>
+    </condition>
+    <exec executable="${basedir}/bin/${mxmlc}" failonerror="true">
       <arg value="-load-config"/>
       <arg value="etc/msoy-config.xml"/>
       <arg value="${flex.extra-arg}"/>
@@ -1040,8 +1043,13 @@
     <!-- thane/dist directory. -->
     <ant dir="projects/thane" target="distbinary"/>
 
-    <!-- this is not copied automatically :( -->
-    <copy file="projects/thane/dist/avmthane" todir="${deploy.dir}/lib"/>
+    <!-- this is not copied automatically because the thane build doesn't know about our deploy dir! :) -->
+    <if><available file="projects/thane/dist/avmthane"/><then>
+        <property name="avmthane" value="avmthane"/>
+    </then><else>
+        <property name="avmthane" value="avmthane.exe"/>
+    </else></if>
+    <copy file="projects/thane/dist/${avmthane}" todir="${deploy.dir}/lib"/>
 
     <!-- executable permission must be set manually :( -->
     <chmod perm="oug+x" file="dist/lib/avmthane"/>
