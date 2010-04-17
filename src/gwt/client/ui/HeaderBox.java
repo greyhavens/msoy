@@ -59,10 +59,10 @@ public class HeaderBox extends FlowPanel
     {
         SmartTable footer = new SmartTable(0, 0);
         footer.setWidth("100%");
-        footer.setWidget(0, 0, _images.white_lower_left().createImage());
+        footer.setWidget(0, 0, new Image(_images.white_lower_left()));
         footer.getFlexCellFormatter().setStyleName(0, 1, "Contents");
         footer.getFlexCellFormatter().setWidth(0, 1, "100%");
-        footer.setWidget(0, 2, _images.white_lower_right().createImage());
+        footer.setWidget(0, 2, new Image(_images.white_lower_right()));
         super.add(footer);
         return this;
     }

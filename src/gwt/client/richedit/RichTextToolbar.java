@@ -20,11 +20,11 @@ package client.richedit;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.Constants;
+import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -36,6 +36,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PushButton;
@@ -297,17 +298,17 @@ public class RichTextToolbar extends Composite
         return lb;
     }
 
-    protected PushButton createPushButton (AbstractImagePrototype img, String tip)
+    protected PushButton createPushButton (ImageResource img, String tip)
     {
-        PushButton pb = new PushButton(img.createImage());
+        PushButton pb = new PushButton(new Image(img));
         pb.addClickHandler(handler);
         pb.setTitle(tip);
         return pb;
     }
 
-    protected ToggleButton createToggleButton (AbstractImagePrototype img, String tip)
+    protected ToggleButton createToggleButton (ImageResource img, String tip)
     {
-        ToggleButton tb = new ToggleButton(img.createImage());
+        ToggleButton tb = new ToggleButton(new Image(img));
         tb.addClickHandler(handler);
         tb.setTitle(tip);
         return tb;

@@ -13,6 +13,7 @@ import com.google.gwt.event.dom.client.FocusEvent;
 import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 
+import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
@@ -309,6 +310,16 @@ public class MsoyUI
     /**
      * Creates a PushButton with default(up), mouseover and mousedown states.
      */
+    public static PushButton createPushButton (ImageResource defaultImage, ImageResource overImage,
+        ImageResource downImage, ClickHandler onClick)
+    {
+        return createPushButton(new Image(defaultImage), new Image(overImage),
+            new Image(downImage), onClick);
+    }
+
+    /**
+     * Creates a PushButton with default(up), mouseover and mousedown states.
+     */
     public static PushButton createPushButton (Image defaultImage, Image overImage,
         Image downImage, ClickHandler onClick)
     {
@@ -316,6 +327,7 @@ public class MsoyUI
         button.getUpHoveringFace().setImage(overImage);
         return button;
     }
+
 
     /**
      * Creates an orange button of the specified size with the supplied text.
@@ -469,6 +481,18 @@ public class MsoyUI
     }
 
     /**
+     * Creates an image with the supplied {@link ImageResource} and style.
+     */
+    public static Image createImage (ImageResource resource, String styleName)
+    {
+        Image image = new Image(resource);
+        if (styleName != null) {
+            image.addStyleName(styleName);
+        }
+        return image;
+    }
+
+    /**
      * Creates an image that responds to clicking.
      */
     public static Image createActionImage (String path, ClickHandler onClick)
@@ -482,6 +506,22 @@ public class MsoyUI
     public static Image createActionImage (String path, String tip, ClickHandler onClick)
     {
         return makeActionImage(new Image(path), tip, onClick);
+    }
+
+    /**
+     * Creates an image that responds to clicking.
+     */
+    public static Image createActionImage (ImageResource resource, ClickHandler onClick)
+    {
+        return createActionImage(resource, null, onClick);
+    }
+
+    /**
+     * Creates an image that responds to clicking.
+     */
+    public static Image createActionImage (ImageResource resource, String tip, ClickHandler onClick)
+    {
+        return makeActionImage(new Image(resource), tip, onClick);
     }
 
     /**
@@ -776,7 +816,7 @@ public class MsoyUI
     {
         FlowPanel bits = createFlowPanel("shareBox");
         bits.add(createLabel(_cmsgs.share(), null));
-        Image share = _mimgs.share().createImage();
+        Image share = new Image(_mimgs.share());
         share.addClickHandler(onShare);
         share.addStyleName("actionLabel");
         bits.add(share);

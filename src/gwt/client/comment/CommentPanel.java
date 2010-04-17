@@ -6,7 +6,7 @@ package client.comment;
 import java.util.Date;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.ui.AbstractImagePrototype;
+import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -184,13 +184,13 @@ public class CommentPanel extends MessagePanel
     }
 
     protected static PushButton makeThumbButton (
-        AbstractImagePrototype def, AbstractImagePrototype over, String tip, ClickHandler onClick)
+        ImageResource def, ImageResource over, String tip, ClickHandler onClick)
     {
-        Image defImg = def.createImage();
+        Image defImg = new Image(def);
         defImg.addStyleName("inline");
         defImg.setTitle(tip);
 
-        Image overImg = over.createImage();
+        Image overImg = new Image(over);
         overImg.addStyleName("inline");
         overImg.setTitle(tip);
 

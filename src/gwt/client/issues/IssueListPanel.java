@@ -11,6 +11,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -120,8 +121,8 @@ public class IssueListPanel extends PagedGrid<Issue>
 
             int col = 0;
             setWidget(0, col, (issue.type == Issue.TYPE_BUG) ?
-                      _mimgs.new_issue().createImage() : // a little bug
-                      _mimgs.edit_post().createImage()); // a pencil
+                      new Image(_mimgs.new_issue()) : // a little bug
+                      new Image(_mimgs.edit_post())); // a pencil
             getFlexCellFormatter().setStyleName(0, col++, "Type");
 
             String summary = issue.summary;

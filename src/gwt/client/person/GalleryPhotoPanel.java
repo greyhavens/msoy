@@ -121,9 +121,9 @@ public class GalleryPhotoPanel extends FlowPanel
                 }
             };
             controls.add(MsoyUI.createPushButton(
-                _slideshowImages.play_default().createImage(),
-                _slideshowImages.play_over().createImage(),
-                _slideshowImages.play_down().createImage(), slideshowClick), 0, 0);
+                _slideshowImages.play_default(),
+                _slideshowImages.play_over(),
+                _slideshowImages.play_down(), slideshowClick), 0, 0);
             controls.add(MsoyUI.createActionLabel(_pmsgs.gallerySlideshowStart(), slideshowClick),
                 35, 5);
         }
@@ -147,9 +147,9 @@ public class GalleryPhotoPanel extends FlowPanel
             final int leftOffset = 380;
             // play and pause buttons swap when clicked
             _playButton = MsoyUI.createPushButton(
-                _slideshowImages.play_default().createImage(),
-                _slideshowImages.play_over().createImage(),
-                _slideshowImages.play_down().createImage(), new ClickHandler() {
+                _slideshowImages.play_default(),
+                _slideshowImages.play_over(),
+                _slideshowImages.play_down(), new ClickHandler() {
                     public void onClick (ClickEvent event) {
                         _slideshowPaused = false;
                         _slideshowTimer.schedule(1);
@@ -158,9 +158,9 @@ public class GalleryPhotoPanel extends FlowPanel
                     }
                 });
             _pauseButton = MsoyUI.createPushButton(
-                _slideshowImages.pause_default().createImage(),
-                _slideshowImages.pause_over().createImage(),
-                _slideshowImages.pause_down().createImage(), new ClickHandler() {
+                _slideshowImages.pause_default(),
+                _slideshowImages.pause_over(),
+                _slideshowImages.pause_down(), new ClickHandler() {
                     public void onClick (ClickEvent event) {
                         _slideshowPaused = true;
                         controls.remove(_pauseButton);
@@ -174,9 +174,9 @@ public class GalleryPhotoPanel extends FlowPanel
             }
 
             controls.add(MsoyUI.createPushButton(
-                _slideshowImages.close_default().createImage(),
-                _slideshowImages.close_over().createImage(),
-                _slideshowImages.close_down().createImage(), new ClickHandler() {
+                _slideshowImages.close_default(),
+                _slideshowImages.close_over(),
+                _slideshowImages.close_down(), new ClickHandler() {
                     public void onClick (ClickEvent event) {
                         stopSlideshow();
                         gotoPhotoIndex(-1);

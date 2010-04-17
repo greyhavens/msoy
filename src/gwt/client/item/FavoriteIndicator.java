@@ -7,6 +7,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ToggleButton;
 
@@ -29,8 +30,8 @@ public class FavoriteIndicator extends FlowPanel
 
         add(new Label(_imsgs.favorite()));
 
-        ToggleButton toggle = new ToggleButton(_mimgs.add_favorite().createImage(),
-                                               _mimgs.favorite().createImage());
+        ToggleButton toggle = new ToggleButton(
+            new Image(_mimgs.add_favorite()), new Image(_mimgs.favorite()));
         toggle.addStyleName("actionLabel");
         toggle.setDown(memberItemInfo.favorite);
         toggle.addClickHandler(new ClickHandler() {

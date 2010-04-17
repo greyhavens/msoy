@@ -7,8 +7,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.ui.AbstractImagePrototype;
+import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.item.data.all.Item;
@@ -53,16 +54,16 @@ public class SideBar extends FlowPanel
 
         for (int ii = 0; ii < itemTypes.length; ii++) {
             byte type = itemTypes[ii];
-            AbstractImagePrototype proto = IMAGES.get(type);
+            ImageResource proto = IMAGES.get(type);
             if (ii > 0) {
                 // use a blank separator between game and level pack, etc.
                 navi.add(MsoyUI.createLabel("", (proto == null) ? "BlankSep" : "Separator"));
             }
             Widget item = makeItem(linker, _dmsgs.xlate("pItemType" + type), type);
             if (proto != null) {
-                navi.add(proto.createImage());
+                navi.add(new Image(proto));
             } else {
-                navi.add(_itemImages.blank().createImage());
+                navi.add(new Image(_itemImages.blank()));
                 item.addStyleName("SubCell"); // items that lack an image are subordinate
             }
             navi.add(item);
@@ -90,8 +91,7 @@ public class SideBar extends FlowPanel
     protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
     protected static final ItemImages _itemImages = GWT.create(ItemImages.class);
 
-    protected static final Map<Byte, AbstractImagePrototype> IMAGES =
-        new HashMap<Byte, AbstractImagePrototype>();
+    protected static final Map<Byte, ImageResource> IMAGES = new HashMap<Byte, ImageResource>();
     static {
         IMAGES.put(Item.AUDIO, _itemImages.audio());
         IMAGES.put(Item.AVATAR, _itemImages.avatar());

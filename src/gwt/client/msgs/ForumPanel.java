@@ -6,6 +6,7 @@ package client.msgs;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.History;
+import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
 
@@ -149,7 +150,7 @@ public class ForumPanel extends TitledListPanel
         int col = 0;
         if (_mode == Mode.GROUP) {
             Anchor rss = new Anchor("/rss/" + _groupId, "", "_blank");
-            rss.setHTML(_images.rss().getHTML());
+            rss.setHTML(AbstractImagePrototype.create(_images.rss()).getHTML());
             header.setWidget(0, col++, rss, 1, "RSS");
         }
         // default title may be overwritten later

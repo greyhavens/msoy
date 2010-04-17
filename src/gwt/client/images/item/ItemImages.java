@@ -3,41 +3,41 @@
 
 package client.images.item;
 
-import com.google.gwt.user.client.ui.AbstractImagePrototype;
-import com.google.gwt.user.client.ui.ImageBundle;
+import com.google.gwt.resources.client.ClientBundle;
+import com.google.gwt.resources.client.ImageResource;
 
 /**
  * Contains images for item navigation.
  */
-public interface ItemImages extends ImageBundle
+public interface ItemImages extends ClientBundle
 {
-    @Resource("blank.png")
-    AbstractImagePrototype blank ();
+    @Source("blank.png")
+    ImageResource blank ();
 
-    @Resource("audio.png")
-    AbstractImagePrototype audio ();
+    @Source("audio.png")
+    ImageResource audio ();
 
-    @Resource("avatar.png")
-    AbstractImagePrototype avatar ();
+    @Source("avatar.png")
+    ImageResource avatar ();
 
-    @Resource("backdrop.png")
-    AbstractImagePrototype backdrop ();
+    @Source("backdrop.png")
+    ImageResource backdrop ();
 
-    @Resource("furniture.png")
-    AbstractImagePrototype furniture ();
+    @Source("furniture.png")
+    ImageResource furniture ();
 
-    @Resource("game.png")
-    AbstractImagePrototype game ();
+    @Source("game.png")
+    ImageResource game ();
 
-    @Resource("pet.png")
-    AbstractImagePrototype pet ();
+    @Source("pet.png")
+    ImageResource pet ();
 
-    @Resource("photo.png")
-    AbstractImagePrototype photo ();
+    @Source("photo.png")
+    ImageResource photo ();
 
-    @Resource("toy.png")
-    AbstractImagePrototype toy ();
+    @Source("toy.png")
+    ImageResource toy ();
 
-    @Resource("video.png")
-    AbstractImagePrototype video ();
+    @Source("video.png")
+    ImageResource video ();
 }

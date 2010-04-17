@@ -3,20 +3,20 @@
 
 package client.images.misc;
 
-import com.google.gwt.user.client.ui.AbstractImagePrototype;
-import com.google.gwt.user.client.ui.ImageBundle;
+import com.google.gwt.resources.client.ClientBundle;
+import com.google.gwt.resources.client.ImageResource;
 
 /**
  * Contains images for miscellaneous bits.
  */
-public interface MiscImages extends ImageBundle
+public interface MiscImages extends ClientBundle
 {
-    @Resource("share.png")
-    AbstractImagePrototype share ();
+    @Source("share.png")
+    ImageResource share ();
 
-    @Resource("add_favorite.png")
-    AbstractImagePrototype add_favorite ();
+    @Source("add_favorite.png")
+    ImageResource add_favorite ();
 
-    @Resource("favorite.png")
-    AbstractImagePrototype favorite ();
+    @Source("favorite.png")
+    ImageResource favorite ();
 }

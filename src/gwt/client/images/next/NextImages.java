@@ -3,44 +3,44 @@
 
 package client.images.next;
 
-import com.google.gwt.user.client.ui.AbstractImagePrototype;
-import com.google.gwt.user.client.ui.ImageBundle;
+import com.google.gwt.resources.client.ClientBundle;
+import com.google.gwt.resources.client.ImageResource;
 
 /**
  * Contains images used by the What's Next panel.
  */
-public interface NextImages extends ImageBundle
+public interface NextImages extends ClientBundle
 {
-    @Resource("astro_shot.png")
-    AbstractImagePrototype astro_shot ();
+    @Source("astro_shot.png")
+    ImageResource astro_shot ();
 
-    @Resource("brawler_shot.png")
-    AbstractImagePrototype brawler_shot ();
+    @Source("brawler_shot.png")
+    ImageResource brawler_shot ();
 
-    @Resource("dict_shot.png")
-    AbstractImagePrototype dict_shot ();
+    @Source("dict_shot.png")
+    ImageResource dict_shot ();
 
-    @Resource("drift_shot.png")
-    AbstractImagePrototype drift_shot ();
+    @Source("drift_shot.png")
+    ImageResource drift_shot ();
 
-    @Resource("lol_shot.png")
-    AbstractImagePrototype lol_shot ();
+    @Source("lol_shot.png")
+    ImageResource lol_shot ();
 
-    @Resource("brave_shot.png")
-    AbstractImagePrototype brave_shot ();
+    @Source("brave_shot.png")
+    ImageResource brave_shot ();
 
-    @Resource("kawaii_shot.png")
-    AbstractImagePrototype kawaii_shot ();
+    @Source("kawaii_shot.png")
+    ImageResource kawaii_shot ();
 
-    @Resource("nap_shot.png")
-    AbstractImagePrototype nap_shot ();
+    @Source("nap_shot.png")
+    ImageResource nap_shot ();
 
-    @Resource("pirate_shot.png")
-    AbstractImagePrototype pirate_shot ();
+    @Source("pirate_shot.png")
+    ImageResource pirate_shot ();
 
-    @Resource("rave_shot.png")
-    AbstractImagePrototype rave_shot ();
+    @Source("rave_shot.png")
+    ImageResource rave_shot ();
 
-    @Resource("home_shot.png")
-    AbstractImagePrototype home_shot ();
+    @Source("home_shot.png")
+    ImageResource home_shot ();
 }

@@ -6,9 +6,9 @@ package client.msgs;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DeferredCommand;
-import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -189,9 +189,9 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
     }
 
     protected static Widget makeInfoImage (
-        AbstractImagePrototype iproto, String tip, ClickHandler onClick)
+        ImageResource resource, String tip, ClickHandler onClick)
     {
-        Widget image = MsoyUI.makeActionImage(iproto.createImage(), tip, onClick);
+        Widget image = MsoyUI.createActionImage(resource, tip, onClick);
         image.addStyleName("ActionIcon");
         return image;
     }

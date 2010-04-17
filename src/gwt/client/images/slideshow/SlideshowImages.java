@@ -3,39 +3,39 @@
 
 package client.images.slideshow;
 
-import com.google.gwt.user.client.ui.AbstractImagePrototype;
-import com.google.gwt.user.client.ui.ImageBundle;
+import com.google.gwt.resources.client.ClientBundle;
+import com.google.gwt.resources.client.ImageResource;
 
 /**
  * Contains images for Gallery slideshow navigation, or anywhere else we need play/pause/close
  * buttons. These will be served to the client as one big image for added efficiency.
  */
-public interface SlideshowImages extends ImageBundle
+public interface SlideshowImages extends ClientBundle
 {
-    @Resource("close_default.png")
-    AbstractImagePrototype close_default ();
+    @Source("close_default.png")
+    ImageResource close_default ();
 
-    @Resource("close_down.png")
-    AbstractImagePrototype close_down ();
+    @Source("close_down.png")
+    ImageResource close_down ();
 
-    @Resource("close_over.png")
-    AbstractImagePrototype close_over ();
+    @Source("close_over.png")
+    ImageResource close_over ();
 
-    @Resource("pause_default.png")
-    AbstractImagePrototype pause_default ();
+    @Source("pause_default.png")
+    ImageResource pause_default ();
 
-    @Resource("pause_down.png")
-    AbstractImagePrototype pause_down ();
+    @Source("pause_down.png")
+    ImageResource pause_down ();
 
-    @Resource("pause_over.png")
-    AbstractImagePrototype pause_over ();
+    @Source("pause_over.png")
+    ImageResource pause_over ();
 
-    @Resource("play_default.png")
-    AbstractImagePrototype play_default ();
+    @Source("play_default.png")
+    ImageResource play_default ();
 
-    @Resource("play_down.png")
-    AbstractImagePrototype play_down ();
+    @Source("play_down.png")
+    ImageResource play_down ();
 
-    @Resource("play_over.png")
-    AbstractImagePrototype play_over ();
+    @Source("play_over.png")
+    ImageResource play_over ();
 }

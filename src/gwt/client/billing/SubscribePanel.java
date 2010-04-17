@@ -8,6 +8,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PushButton;
 
@@ -54,13 +55,12 @@ public class SubscribePanel extends BillingPanel
         box.add(MsoyUI.createHTML(_msgs.subscribeFeatures(), "Features"));
 
         PushButton gobuy = new PushButton(
-            _images.cc_default().createImage(), _images.cc_down().createImage(),
-            new ClickHandler() {
+            new Image(_images.cc_default()), new Image(_images.cc_down()), new ClickHandler() {
                 public void onClick (ClickEvent event) {
                     BillingUtil.openBillingPage(BillingPage.IFRAME_SUBSCRIBE);
                 }
             });
-        gobuy.getUpHoveringFace().setImage(_images.cc_over().createImage());
+        gobuy.getUpHoveringFace().setImage(new Image(_images.cc_over()));
 
         SmartTable gotable = new SmartTable(0, 0);
         gotable.setHTML(0, 0, _msgs.subscribeDoItNow(), 1, "GoBuy");

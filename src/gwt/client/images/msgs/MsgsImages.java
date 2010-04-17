@@ -3,54 +3,54 @@
 
 package client.images.msgs;
 
-import com.google.gwt.user.client.ui.AbstractImagePrototype;
-import com.google.gwt.user.client.ui.ImageBundle;
+import com.google.gwt.resources.client.ClientBundle;
+import com.google.gwt.resources.client.ImageResource;
 
 /**
  * Contains images for our msgs services.
  */
-public interface MsgsImages extends ImageBundle
+public interface MsgsImages extends ClientBundle
 {
-    @Resource("assign_issue.png")
-    AbstractImagePrototype assign_issue ();
+    @Source("assign_issue.png")
+    ImageResource assign_issue ();
 
-    @Resource("delete_post.png")
-    AbstractImagePrototype delete_post ();
+    @Source("delete_post.png")
+    ImageResource delete_post ();
 
-    @Resource("edit_post.png")
-    AbstractImagePrototype edit_post ();
+    @Source("edit_post.png")
+    ImageResource edit_post ();
 
-    @Resource("new_issue.png")
-    AbstractImagePrototype new_issue ();
+    @Source("new_issue.png")
+    ImageResource new_issue ();
 
-    @Resource("reply_post.png")
-    AbstractImagePrototype reply_post ();
+    @Source("reply_post.png")
+    ImageResource reply_post ();
 
-    @Resource("reply_post_quote.png")
-    AbstractImagePrototype reply_post_quote ();
+    @Source("reply_post_quote.png")
+    ImageResource reply_post_quote ();
 
-    @Resource("view_issue.png")
-    AbstractImagePrototype view_issue ();
+    @Source("view_issue.png")
+    ImageResource view_issue ();
 
-    @Resource("rss.png")
-    AbstractImagePrototype rss ();
+    @Source("rss.png")
+    ImageResource rss ();
 
-    @Resource("complain_post.png")
-    AbstractImagePrototype complain_post ();
+    @Source("complain_post.png")
+    ImageResource complain_post ();
 
-    @Resource("sendmail.png")
-    AbstractImagePrototype sendmail ();
+    @Source("sendmail.png")
+    ImageResource sendmail ();
 
-    @Resource("thdown_default.png")
-    AbstractImagePrototype thumb_down_default();
+    @Source("thdown_default.png")
+    ImageResource thumb_down_default();
 
-    @Resource("thup_default.png")
-    AbstractImagePrototype thumb_up_default();
+    @Source("thup_default.png")
+    ImageResource thumb_up_default();
 
-    @Resource("thdown_over.png")
-    AbstractImagePrototype thumb_down_over();
+    @Source("thdown_over.png")
+    ImageResource thumb_down_over();
 
-    @Resource("thup_over.png")
-    AbstractImagePrototype thumb_up_over();
+    @Source("thup_over.png")
+    ImageResource thumb_up_over();
 
 }

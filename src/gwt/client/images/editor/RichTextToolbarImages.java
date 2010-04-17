@@ -3,67 +3,67 @@
 
 package client.images.editor;
 
-import com.google.gwt.user.client.ui.AbstractImagePrototype;
-import com.google.gwt.user.client.ui.ImageBundle;
+import com.google.gwt.resources.client.ClientBundle;
+import com.google.gwt.resources.client.ImageResource;
 
 /**
- * This {@link ImageBundle} is used for all the button icons. Using an image bundle allows all of
+ * This {@link ClientBundle} is used for all the button icons. Using an image bundle allows all of
  * these images to be packed into a single image, which saves a lot of HTTP requests, drastically
  * improving startup time.
  */
-public interface RichTextToolbarImages extends ImageBundle
+public interface RichTextToolbarImages extends ClientBundle
 {
-    @Resource("bold.png")
-    AbstractImagePrototype bold();
+    @Source("bold.png")
+    ImageResource bold();
 
-    @Resource("createLink.png")
-    AbstractImagePrototype createLink();
+    @Source("createLink.png")
+    ImageResource createLink();
 
-    @Resource("hr.png")
-    AbstractImagePrototype hr();
+    @Source("hr.png")
+    ImageResource hr();
 
-    @Resource("indent.png")
-    AbstractImagePrototype indent();
+    @Source("indent.png")
+    ImageResource indent();
 
-    @Resource("insertImage.png")
-    AbstractImagePrototype insertImage();
+    @Source("insertImage.png")
+    ImageResource insertImage();
 
-    @Resource("italic.png")
-    AbstractImagePrototype italic();
+    @Source("italic.png")
+    ImageResource italic();
 
-    @Resource("justifyCenter.png")
-    AbstractImagePrototype justifyCenter();
+    @Source("justifyCenter.png")
+    ImageResource justifyCenter();
 
-    @Resource("justifyLeft.png")
-    AbstractImagePrototype justifyLeft();
+    @Source("justifyLeft.png")
+    ImageResource justifyLeft();
 
-    @Resource("justifyRight.png")
-    AbstractImagePrototype justifyRight();
+    @Source("justifyRight.png")
+    ImageResource justifyRight();
 
-    @Resource("ol.png")
-    AbstractImagePrototype ol();
+    @Source("ol.png")
+    ImageResource ol();
 
-    @Resource("outdent.png")
-    AbstractImagePrototype outdent();
+    @Source("outdent.png")
+    ImageResource outdent();
 
-    @Resource("removeFormat.png")
-    AbstractImagePrototype removeFormat();
+    @Source("removeFormat.png")
+    ImageResource removeFormat();
 
-    @Resource("removeLink.png")
-    AbstractImagePrototype removeLink();
+    @Source("removeLink.png")
+    ImageResource removeLink();
 
-    @Resource("strikeThrough.png")
-    AbstractImagePrototype strikeThrough();
+    @Source("strikeThrough.png")
+    ImageResource strikeThrough();
 
-    @Resource("subscript.png")
-    AbstractImagePrototype subscript();
+    @Source("subscript.png")
+    ImageResource subscript();
 
-    @Resource("superscript.png")
-    AbstractImagePrototype superscript();
+    @Source("superscript.png")
+    ImageResource superscript();
 
-    @Resource("ul.png")
-    AbstractImagePrototype ul();
+    @Source("ul.png")
+    ImageResource ul();
 
-    @Resource("underline.png")
-    AbstractImagePrototype underline();
+    @Source("underline.png")
+    ImageResource underline();
 }

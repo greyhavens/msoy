@@ -3,17 +3,17 @@
 
 package client.images.frame;
 
-import com.google.gwt.user.client.ui.AbstractImagePrototype;
-import com.google.gwt.user.client.ui.ImageBundle;
+import com.google.gwt.resources.client.ClientBundle;
+import com.google.gwt.resources.client.ImageResource;
 
 /**
  * Images used by the frame.
  */
-public interface FrameImages extends ImageBundle
+public interface FrameImages extends ClientBundle
 {
-    @Resource("noclient.png")
-    AbstractImagePrototype noclient ();
+    @Source("noclient.png")
+    ImageResource noclient ();
 
-    @Resource("noclient_hover.png")
-    AbstractImagePrototype noclient_hover ();
+    @Source("noclient_hover.png")
+    ImageResource noclient_hover ();
 }

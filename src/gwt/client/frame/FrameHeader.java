@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.ui.AbstractImagePrototype;
+import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.HasAlignment;
@@ -184,8 +184,8 @@ public class FrameHeader
 
     }
 
-    protected int addButton (int col, Pages page, String text, AbstractImagePrototype up,
-                              AbstractImagePrototype over, AbstractImagePrototype down)
+    protected int addButton (int col, Pages page, String text,
+        ImageResource up, ImageResource over, ImageResource down)
     {
         NaviButton button = new NaviButton(page, text, up, over, down);
         _buttons.add(button);
@@ -200,8 +200,8 @@ public class FrameHeader
     {
         public final Pages page;
 
-        public NaviButton (Pages page, String text, AbstractImagePrototype up,
-                           AbstractImagePrototype over, AbstractImagePrototype down) {
+        public NaviButton (Pages page, String text, ImageResource up,
+                           ImageResource over, ImageResource down) {
             setStyleName("NaviButton");
             this.page = page;
 

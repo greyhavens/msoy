@@ -6,6 +6,7 @@ package client.ui;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
@@ -31,25 +32,25 @@ public class RoundBox extends SmartTable
         super("roundBox", 0, 0);
 
         if (color.equals(WHITE)) {
-            setWidget(0, 0, _images.white_upper_left().createImage(), 1, "Corner");
-            setWidget(0, 2, _images.white_upper_right().createImage(), 1, "Corner");
-            setWidget(2, 0, _images.white_lower_left().createImage(), 1, "Corner");
-            setWidget(2, 2, _images.white_lower_right().createImage(), 1, "Corner");
+            setWidget(0, 0, new Image(_images.white_upper_left()), 1, "Corner");
+            setWidget(0, 2, new Image(_images.white_upper_right()), 1, "Corner");
+            setWidget(2, 0, new Image(_images.white_lower_left()), 1, "Corner");
+            setWidget(2, 2, new Image(_images.white_lower_right()), 1, "Corner");
         } else if (color.equals(BLUE)) {
-            setWidget(0, 0, _images.blue_upper_left().createImage(), 1, "Corner");
-            setWidget(0, 2, _images.blue_upper_right().createImage(), 1, "Corner");
-            setWidget(2, 0, _images.blue_lower_left().createImage(), 1, "Corner");
-            setWidget(2, 2, _images.blue_lower_right().createImage(), 1, "Corner");
+            setWidget(0, 0, new Image(_images.blue_upper_left()), 1, "Corner");
+            setWidget(0, 2, new Image(_images.blue_upper_right()), 1, "Corner");
+            setWidget(2, 0, new Image(_images.blue_lower_left()), 1, "Corner");
+            setWidget(2, 2, new Image(_images.blue_lower_right()), 1, "Corner");
         } else if (color.equals(DARK_BLUE)) {
-            setWidget(0, 0, _images.darkblue_upper_left().createImage(), 1, "Corner");
-            setWidget(0, 2, _images.darkblue_upper_right().createImage(), 1, "Corner");
-            setWidget(2, 0, _images.darkblue_lower_left().createImage(), 1, "Corner");
-            setWidget(2, 2, _images.darkblue_lower_right().createImage(), 1, "Corner");
+            setWidget(0, 0, new Image(_images.darkblue_upper_left()), 1, "Corner");
+            setWidget(0, 2, new Image(_images.darkblue_upper_right()), 1, "Corner");
+            setWidget(2, 0, new Image(_images.darkblue_lower_left()), 1, "Corner");
+            setWidget(2, 2, new Image(_images.darkblue_lower_right()), 1, "Corner");
         } else if (color.equals(MEDIUM_BLUE)) {
-            setWidget(0, 0, _images.medblue_upper_left().createImage(), 1, "Corner");
-            setWidget(0, 2, _images.medblue_upper_right().createImage(), 1, "Corner");
-            setWidget(2, 0, _images.medblue_lower_left().createImage(), 1, "Corner");
-            setWidget(2, 2, _images.medblue_lower_right().createImage(), 1, "Corner");
+            setWidget(0, 0, new Image(_images.medblue_upper_left()), 1, "Corner");
+            setWidget(0, 2, new Image(_images.medblue_upper_right()), 1, "Corner");
+            setWidget(2, 0, new Image(_images.medblue_lower_left()), 1, "Corner");
+            setWidget(2, 2, new Image(_images.medblue_lower_right()), 1, "Corner");
         }
 
         setWidget(1, 1, _contents = new FlowPanel(), 1, "Center");

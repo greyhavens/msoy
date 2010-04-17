@@ -6,6 +6,7 @@ package client.billing;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FocusPanel;
+import com.google.gwt.user.client.ui.Image;
 
 import com.threerings.gwt.ui.FloatPanel;
 import com.threerings.gwt.ui.WidgetUtil;
@@ -35,10 +36,10 @@ public class AboutBarsPanel extends BillingPanel
 
         // show some sample payment methods, link the whole thing to billing
         FloatPanel methodButtons = new FloatPanel("MethodButtons");
-        methodButtons.add(_images.cc_default().createImage());
-        methodButtons.add(_images.paypal_default().createImage());
-        methodButtons.add(_images.ooo_card_default().createImage());
-        methodButtons.add(_images.sms_default().createImage());
+        methodButtons.add(new Image(_images.cc_default()));
+        methodButtons.add(new Image(_images.paypal_default()));
+        methodButtons.add(new Image(_images.ooo_card_default()));
+        methodButtons.add(new Image(_images.sms_default()));
         FocusPanel methodButtonsWrapper = new FocusPanel(methodButtons);
         methodButtonsWrapper.addClickHandler(new ClickHandler() {
             public void onClick (ClickEvent event) {

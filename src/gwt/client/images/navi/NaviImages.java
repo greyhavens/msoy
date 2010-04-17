@@ -3,74 +3,74 @@
 
 package client.images.navi;
 
-import com.google.gwt.user.client.ui.AbstractImagePrototype;
-import com.google.gwt.user.client.ui.ImageBundle;
+import com.google.gwt.resources.client.ClientBundle;
+import com.google.gwt.resources.client.ImageResource;
 
 /**
  * Images used in the header.
  */
-public interface NaviImages extends ImageBundle
+public interface NaviImages extends ClientBundle
 {
-    @Resource("shop.png")
-    AbstractImagePrototype shop ();
+    @Source("shop.png")
+    ImageResource shop ();
 
-    @Resource("shop_over.png")
-    AbstractImagePrototype oshop ();
+    @Source("shop_over.png")
+    ImageResource oshop ();
 
-    @Resource("shop_selected.png")
-    AbstractImagePrototype sshop ();
+    @Source("shop_selected.png")
+    ImageResource sshop ();
 
-    @Resource("games.png")
-    AbstractImagePrototype games ();
+    @Source("games.png")
+    ImageResource games ();
 
-    @Resource("games_over.png")
-    AbstractImagePrototype ogames ();
+    @Source("games_over.png")
+    ImageResource ogames ();
 
-    @Resource("games_selected.png")
-    AbstractImagePrototype sgames ();
+    @Source("games_selected.png")
+    ImageResource sgames ();
 
-    @Resource("help.png")
-    AbstractImagePrototype help ();
+    @Source("help.png")
+    ImageResource help ();
 
-    @Resource("help_over.png")
-    AbstractImagePrototype ohelp ();
+    @Source("help_over.png")
+    ImageResource ohelp ();
 
-    @Resource("help_selected.png")
-    AbstractImagePrototype shelp ();
+    @Source("help_selected.png")
+    ImageResource shelp ();
 
-    @Resource("me.png")
-    AbstractImagePrototype me ();
+    @Source("me.png")
+    ImageResource me ();
 
-    @Resource("me_over.png")
-    AbstractImagePrototype ome ();
+    @Source("me_over.png")
+    ImageResource ome ();
 
-    @Resource("me_selected.png")
-    AbstractImagePrototype sme ();
+    @Source("me_selected.png")
+    ImageResource sme ();
 
-    @Resource("stuff.png")
-    AbstractImagePrototype stuff ();
+    @Source("stuff.png")
+    ImageResource stuff ();
 
-    @Resource("stuff_over.png")
-    AbstractImagePrototype ostuff ();
+    @Source("stuff_over.png")
+    ImageResource ostuff ();
 
-    @Resource("stuff_selected.png")
-    AbstractImagePrototype sstuff ();
+    @Source("stuff_selected.png")
+    ImageResource sstuff ();
 
-    @Resource("groups.png")
-    AbstractImagePrototype worlds ();
+    @Source("groups.png")
+    ImageResource worlds ();
 
-    @Resource("groups_over.png")
-    AbstractImagePrototype oworlds ();
+    @Source("groups_over.png")
+    ImageResource oworlds ();
 
-    @Resource("groups_selected.png")
-    AbstractImagePrototype sworlds ();
+    @Source("groups_selected.png")
+    ImageResource sworlds ();
 
-    @Resource("rooms.png")
-    AbstractImagePrototype rooms ();
+    @Source("rooms.png")
+    ImageResource rooms ();
 
-    @Resource("rooms_over.png")
-    AbstractImagePrototype orooms ();
+    @Source("rooms_over.png")
+    ImageResource orooms ();
 
-    @Resource("rooms_selected.png")
-    AbstractImagePrototype srooms ();
+    @Source("rooms_selected.png")
+    ImageResource srooms ();
 }
