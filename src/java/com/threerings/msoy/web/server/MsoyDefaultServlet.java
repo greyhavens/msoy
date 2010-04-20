@@ -19,6 +19,7 @@ import org.mortbay.jetty.servlet.DefaultServlet;
 import org.mortbay.resource.Resource;
 
 import com.threerings.msoy.admin.server.ABTestLogic;
+import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.server.MemberLogic;
 import com.threerings.msoy.web.gwt.ABTestCard;
