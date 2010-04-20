@@ -355,7 +355,10 @@
   <target name="preppage">
     <if><isset property="gwt_user_agent"/><then>
       <echo>Building GWT clients for: ${gwt_user_agent}...</echo>
-      <exec executable="bin/quickify" failonerror="true">
+      <condition property="quickify" value="quickify.bat" else="quickify">
+        <os family="windows"/>
+      </condition>
+      <exec executable="bin/${quickify}" failonerror="true">
         <arg value="${gsrc.dir}/${page}.gwt.xml"/>
         <arg value="${gwt_user_agent}"/>
       </exec>
@@ -428,7 +431,7 @@
         description="Rebuilds all GWT clients (use -Dpages to choose which).">
     <pathconvert property="allpages" pathsep=",">
       <path><fileset dir="src/gwt" includes="*.gwt.xml.in"/></path>
-      <mapper type="regexp" from=".*/([a-z]+).gwt.xml.in" to="\1"/>
+      <mapper type="regexp" from=".*/|\\([a-z]+).gwt.xml.in" to="\1"/>
     </pathconvert>
     <echo>Converted ${allpages}</echo>
     <property name="pages" value="${allpages}"/>
