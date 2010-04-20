@@ -82,7 +82,7 @@ public class GoServlet extends HttpServlet
             // DEBUG
             log.info("VisitorInfo created", "info", info, "reason", "GoServlet", "vector",
                 bits.left, "path", bits.right, "agent", req.getHeader("User-Agent"), "ref",
-                req.getHeader("Referer"), "ip", req.getRemoteAddr());
+                req.getHeader("Referer"), "addr", req.getRemoteAddr());
         }
 
         // set their affiliate cookie if appropriate

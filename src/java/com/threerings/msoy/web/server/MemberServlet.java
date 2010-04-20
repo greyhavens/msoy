@@ -308,7 +308,8 @@ public class MemberServlet extends MsoyServiceServlet
         throws ServiceException
     {
         // DEBUG
-        log.info("VisitorInfo created", "info", info, "reason", "noteNewVisitor", "page", page);
+        log.info("VisitorInfo created", "info", info, "reason", "noteNewVisitor", "page", page,
+            "addr", getThreadLocalRequest().getRemoteAddr());
         _memberLogic.noteNewVisitor(info, true, StringUtil.truncate("gpage." + page, 100), null, 0);
     }
 

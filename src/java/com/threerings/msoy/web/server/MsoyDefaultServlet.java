@@ -19,7 +19,6 @@ import org.mortbay.jetty.servlet.DefaultServlet;
 import org.mortbay.resource.Resource;
 
 import com.threerings.msoy.admin.server.ABTestLogic;
-import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.server.MemberLogic;
 import com.threerings.msoy.web.gwt.ABTestCard;
@@ -49,6 +48,11 @@ public class MsoyDefaultServlet extends DefaultServlet
 
         // add the privacy header so we can set some cookies in an iframe
         MsoyHttpServer.addPrivacyHeader(rsp);
+
+        // spam the crap out of the logs to figure out why cookies are getting set from GWT
+        // when they really ought to all be getting them set here on the server?
+        log.info("HTTP Request", "URL", req.getRequestURL(), "uri", uri, "info",
+            VisitorCookie.get(req), "ref", req.getHeader("Referer"), "addr", req.getRemoteAddr());
 
         if ("/".equals(uri)) {
             doPreMainPageGet(req, rsp);
@@ -96,7 +100,7 @@ public class MsoyDefaultServlet extends DefaultServlet
             // note: the HTTP referrer field is spelled 'Referer', sigh (thanks Bruno).
             log.info("VisitorInfo created", "info", info, "reason", "MsoyDefaultServlet", "path",
                 path, "agent", req.getHeader("User-Agent"), "ref", req.getHeader("Referer"),
-                "ip", req.getRemoteAddr());
+                "addr", req.getRemoteAddr());
         }
 
         if (CookieUtil.getCookie(req, CookieNames.WHO) == null) {
