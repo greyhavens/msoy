@@ -38,14 +38,12 @@ public class ABTestLogic
 {
     @Inject public ABTestLogic (Lifecycle cycle)
     {
-        log.info("CONSTRUCTOR");
         cycle.addComponent(this);
     }
 
     // from Lifecycle.InitComponent
     public void init ()
     {
-        log.info("INIT");
         // register new tests here
         // registerTest("NAME", 4 /* num groups */, false /* only new */, false /* landing */);
         registerTest("2010 04 register (1) play (2) room (3)", 3, true, true);
