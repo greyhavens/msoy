@@ -217,6 +217,27 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
+     * Updates an entry vector for the given visitorId. Currently it's only possible to upgrade
+     * from a 'page.default' vector.
+     */
+    public boolean updateEntryVector (String visitorId, String vector)
+    {
+        EntryVectorRecord record = load(EntryVectorRecord.getKey(visitorId));
+        if (record != null) {
+            if (record.vector.equals("page.default")) {
+                record.vector = vector;
+                update(record);
+                return true;
+            }
+            log.warning("Attempted to update non-trivial entry vector", "visitorId", visitorId,
+                "old", record.vector, "new", vector);
+            return false;
+        }
+        log.warning("Attempted to update non-existent vector", "visitorId", visitorId, "new", vector);
+        return false;
+    }
+
+    /**
      * Purges entry vector records that have not become associated with members and are older than
      * two months.
      */
