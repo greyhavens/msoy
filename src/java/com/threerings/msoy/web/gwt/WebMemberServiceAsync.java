@@ -90,7 +90,7 @@ public interface WebMemberServiceAsync
     /**
      * The async version of {@link WebMemberService#noteNewVisitor}.
      */
-    void noteNewVisitor (VisitorInfo info, String pageToken, AsyncCallback<Void> callback);
+    void noteNewVisitor (VisitorInfo info, String pageToken, boolean requested, AsyncCallback<Void> callback);
 
     /**
      * The async version of {@link WebMemberService#getABTestGroup}.

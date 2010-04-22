@@ -17,6 +17,7 @@ import com.threerings.gwt.util.StringUtil;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.VisitorInfo;
+import com.threerings.msoy.web.gwt.CookieNames;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.SessionData;
 import com.threerings.msoy.web.gwt.WebCreds;
@@ -156,16 +157,58 @@ public class Session
      */
     public static VisitorInfo frameGetVisitorInfo ()
     {
+        // we only want to run once per session
         if (_visitor != null) {
             return _visitor;
-        } else if (VisitorCookie.exists()) {
-            return (_visitor = VisitorCookie.get());
-        } else {
-            VisitorCookie.save(_visitor = new VisitorInfo(), false);
-            String vector = StringUtil.getOr(History.getToken(), Pages.LANDING.makeToken());
-            _membersvc.noteNewVisitor(_visitor, vector, new NoopAsyncCallback());
+        }
+        String vector = StringUtil.getOr(History.getToken(), Pages.LANDING.makeToken());
+
+        // the server should've created a visitor cookie if one didn't already exist, but...
+        if (!VisitorCookie.exists()) {
+            // ... be robust, cover our little behinds, create a local cookie and send it off
+            // to server-land for registration. this should only happen in anonymous browsers
+            // sessions or web spiders or whatnot, but let's keep an eye on the server logs.
+            _visitor = new VisitorInfo();
+            VisitorCookie.save(_visitor, false);
+            _membersvc.noteNewVisitor(_visitor, vector, false, new NoopAsyncCallback());
             return _visitor;
         }
+        // the common case is an existing player or a new one with a cookie from the server
+        _visitor = VisitorCookie.get();
+        // if the server just created this user, it'll also have set the NEED_GWT_VECTOR cookie
+        if (CookieUtil.get(CookieNames.NEED_GWT_VECTOR) != null) {
+            // and if that's the case, tell the server what it could not find out itself: what
+            // our actual entry vector is, constructed from the client-side-only history token
+            _membersvc.noteNewVisitor(_visitor, vector, true, new NoopAsyncCallback());
+            CookieUtil.clear("/", CookieNames.NEED_GWT_VECTOR);
+        }
+        return _visitor;
+    }
+
+    protected static VisitorInfo ensureVisitorInfo ()
+    {
+        if (_visitor != null) {
+            return _visitor;
+        }
+        String vector = StringUtil.getOr(History.getToken(), Pages.LANDING.makeToken());
+        if (!VisitorCookie.exists()) {
+            // the server should always be creating a visitor cookie if one does not already
+            // exists, so if we get here we're most likely encountering somebody/something that
+            // does not handle cookies; for now we don't do anything draconian, we create a
+            // client-side visitorId and tell the server about it
+            _visitor = new VisitorInfo();
+            VisitorCookie.save(_visitor, false);
+            _membersvc.noteNewVisitor(_visitor, vector, false, new NoopAsyncCallback());
+            return _visitor;
+        }
+        // we're a known visitor, see if we were just created by the server
+        _visitor = VisitorCookie.get();
+        if (CookieUtil.get(CookieNames.NEED_GWT_VECTOR) != null) {
+            // if so, update the server-side entry vector
+            _membersvc.noteNewVisitor(_visitor, vector, true, new NoopAsyncCallback());
+            CookieUtil.clear("/", CookieNames.NEED_GWT_VECTOR);
+        }
+        return _visitor;
     }
 
     protected static void setSessionCookie (String token)

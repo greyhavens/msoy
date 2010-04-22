@@ -97,6 +97,10 @@ public class FrameEntryPoint
 
         _themes = new ThemedStylesheets();
 
+        // if we're a brand new visitor, we might need to supply a entry vector since we know
+        // what the server can't know, i.e. the history token
+        Session.frameGetVisitorInfo();
+
         // validate our session which will dispatch a didLogon or didLogoff
         Session.validate();
 

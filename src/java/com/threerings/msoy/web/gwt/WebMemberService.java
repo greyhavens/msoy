@@ -142,10 +142,14 @@ public interface WebMemberService extends RemoteService
         throws ServiceException;
 
     /**
-     * Notes that a brand new visitor has arrived at our website. We try to catch this before GWT
-     * is fired up, but if we can't do that for some reason, GWT will pick up the ball.
+     * Notes that a brand new visitor has arrived at our website. We generally create the entry
+     * vector on the server before GWT fires up, but only GWT has access to the history token,
+     * which is required to make a sensible entry vector. Thus for new visitors, GWT is asked to
+     * submit a useful entry vector through this method with 'requested=true'. Furthermore, if
+     * for some reason the server-side entry vector generation fails, this method may be called
+     * with requested set to false.
      */
-    void noteNewVisitor (VisitorInfo info, String pageToken)
+    void noteNewVisitor (VisitorInfo info, String pageToken, boolean requested)
         throws ServiceException;
 
     /**

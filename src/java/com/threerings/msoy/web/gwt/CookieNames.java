@@ -23,4 +23,7 @@ public class CookieNames
 
     /** Sets where or not the user claims to have bookmarked our FB app. */
     public static final String BOOKMARKED = "bmd";
+
+    /** A session cookie that lets the GWT client know it should supply a real entry vector. */
+    public static final String NEED_GWT_VECTOR = "gwtvec";
 }

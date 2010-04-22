@@ -50,12 +50,7 @@ public class MsoyDefaultServlet extends DefaultServlet
         // add the privacy header so we can set some cookies in an iframe
         MsoyHttpServer.addPrivacyHeader(rsp);
 
-        // spam the crap out of the logs to figure out why cookies are getting set from GWT
-        // when they really ought to all be getting them set here on the server?
-        log.info("HTTP Request", "URL", req.getRequestURL(), "uri", uri, "info",
-            VisitorCookie.get(req), "ref", req.getHeader("Referer"), "addr", req.getRemoteAddr());
-
-        if ("/".equals(uri)) {
+        if ("/index.html".equals(uri)) {
             doPreMainPageGet(req, rsp);
         }
         try {
@@ -92,6 +87,8 @@ public class MsoyDefaultServlet extends DefaultServlet
 
             // note: the HTTP referrer field is spelled 'Referer', sigh (thanks Bruno).
             _memberLogic.noteNewVisitor(info, true, "page.default", req.getHeader("Referer"), 0);
+
+            rsp.addCookie(new Cookie(CookieNames.NEED_GWT_VECTOR, "t"));;
 
             // DEBUG
             String path = StringUtil.deNull(req.getPathInfo());

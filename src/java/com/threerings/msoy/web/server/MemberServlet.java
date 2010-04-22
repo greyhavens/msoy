@@ -11,6 +11,7 @@ import java.util.List;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 
+import com.samskivert.servlet.util.CookieUtil;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.CollectionUtil;
 import com.samskivert.util.IntListUtil;
@@ -36,6 +37,7 @@ import com.threerings.msoy.server.SubscriptionLogic;
 import com.threerings.msoy.server.persist.MemberCardRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 
+import com.threerings.msoy.web.gwt.CookieNames;
 import com.threerings.msoy.web.gwt.Invitation;
 import com.threerings.msoy.web.gwt.MemberCard;
 import com.threerings.msoy.web.gwt.ServiceCodes;
@@ -304,13 +306,27 @@ public class MemberServlet extends MsoyServiceServlet
     }
 
     // from WebMemberService
-    public void noteNewVisitor (VisitorInfo info, String page)
+    public void noteNewVisitor (VisitorInfo info, String page, boolean requested)
         throws ServiceException
     {
-        // DEBUG
+        String vector = StringUtil.truncate("gpage." + page, 100);
+
+        if (requested) {
+            // if we requested this update from GWT, the visitor entry should already exist --
+            // it'll just have a useless page.default vector
+            CookieUtil.clearCookie(getThreadLocalResponse(), CookieNames.NEED_GWT_VECTOR);
+            if (_memberRepo.updateEntryVector(info.id, vector)) {
+                log.info("EntryVector updated", "info", info, "vector", vector);
+                return;
+            }
+            log.warning("Requested entry vector update without existing vector", "info", info,
+                "page", page);
+        }
+        // if the update was not requested by the server, GWT simply found itself without visitor
+        // information for reasons unknown and decided to make its own; insert it here
         log.info("VisitorInfo created", "info", info, "reason", "noteNewVisitor", "page", page,
             "addr", getThreadLocalRequest().getRemoteAddr());
-        _memberLogic.noteNewVisitor(info, true, StringUtil.truncate("gpage." + page, 100), null, 0);
+        _memberLogic.noteNewVisitor(info, true, vector, null, 0);
     }
 
     // from WebMemberService
