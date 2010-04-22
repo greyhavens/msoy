@@ -16,7 +16,7 @@ public class ArrayUtil
      */
     public interface ArrayType <T>
     {
-        T[] makeNew (int size); 
+        T[] makeNew (int size);
     }
 
     /** A string array type. */
@@ -27,11 +27,13 @@ public class ArrayUtil
     };
 
     /** An object array type. */
-    public static final ArrayType<Object> OBJECT_TYPE = new ArrayType<Object>() {
-        public Object[] makeNew (int size) {
-            return new Object[size];
-        }
-    };
+    // TODO: There is a GWT bug which generates broken JS for this Object[] factory method
+    // TODO: specifically (but not for STRING_TYPE) above. Work around it until it's fixed.
+//    public static final ArrayType<Object> OBJECT_TYPE = new ArrayType<Object>() {
+//        public Object[] makeNew (int size) {
+//            return new Object[size];
+//        }
+//    };
 
     /**
      * Creates an iterator over the supplied array. If the array is null, null is returned.

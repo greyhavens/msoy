@@ -129,7 +129,19 @@ public abstract class ThreadListPanel extends PagedGrid<ForumThread>
      */
     protected Args compose (Object... moreArgs)
     {
-        return Args.compose(ArrayUtil.concatenate(_baseArgs, moreArgs, ArrayUtil.OBJECT_TYPE));
+        // TODO: We have to work around a GWT bug; this should really use ArrayUtil.OBJECT_TYPE
+        Object[] hack = ArrayUtil.concatenate(
+            toStrArr(_baseArgs), toStrArr(moreArgs), ArrayUtil.STRING_TYPE);
+        return Args.compose(hack);
+    }
+
+    protected String[] toStrArr (Object[] args)
+    {
+        String[] result = new String[args.length];
+        for (int ii = 0; ii < args.length; ii ++) {
+            result[ii] = args[ii].toString();
+        }
+        return result;
     }
 
     @Override // from PagedGrid
@@ -262,7 +274,7 @@ public abstract class ThreadListPanel extends PagedGrid<ForumThread>
     protected ForumModels _fmodels;
 
     /** The query we are currently looking at. */
-    protected String _query = ""; 
+    protected String _query = "";
 
     /** The first (prepended) arguments for accessing this page. */
     protected Object[] _baseArgs;
