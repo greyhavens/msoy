@@ -431,7 +431,7 @@
         description="Rebuilds all GWT clients (use -Dpages to choose which).">
     <pathconvert property="allpages" pathsep=",">
       <path><fileset dir="src/gwt" includes="*.gwt.xml.in"/></path>
-      <mapper type="regexp" from=".*/|\\([a-z]+).gwt.xml.in" to="\1"/>
+      <mapper type="regexp" from=".*(/|\\)([a-z]+).gwt.xml.in" to="\2"/>
     </pathconvert>
     <echo>Converted ${allpages}</echo>
     <property name="pages" value="${allpages}"/>
