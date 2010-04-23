@@ -159,7 +159,7 @@ whirled.addCharts = function () {
                 ["subscribed", "Subscribed"],
             ]);
             var sources = new CheckBoxes("Sources", "sources", sourceNames);
-            var groups = new RadioButtons("Group", "group", [
+            var groups = new CheckBoxes("Group", "group", [
                 "GWT/Landing",
                 "Web/Organic",
                 "Web/Other",
@@ -174,10 +174,20 @@ whirled.addCharts = function () {
                 controls: [ sources, groups ],
                 xaxis: {  mode: "time", minTickSize: [1, "day"]}
             };
+
             var chart = new SelfContainedEventChart("funnel", function (ev, collector) {
                 sourceNames.each(function (bit) {
-                    if (sources.has(bit[0]) && groups.value == ev.group) {
-                        collector.assume(bit[1]).add([ev.date, ev[bit[0]]]);
+                    if (sources.has(bit[0]) && groups.has(ev.group)) {
+                        var list = collector.assume(bit[1]);
+                        var sz = list.length;
+                        var arr;
+                        if (sz > 0 && list.get(sz-1)[0] == ev.date) {
+                            arr = list.get(sz-1);
+                        } else {
+                            arr = [ ev.date, 0 ];
+                            list.add(arr);
+                        }
+                        arr[1] += ev[bit[0]];
                     }
                 });
             }, options, "date");
