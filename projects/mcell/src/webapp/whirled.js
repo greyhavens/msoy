@@ -197,6 +197,7 @@ whirled.addCharts = function () {
             };
             return chart;
         });
+        init();
     }
 }();
 
