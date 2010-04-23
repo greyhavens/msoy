@@ -54,11 +54,11 @@ public class FunnelReporter
 
     protected String summarizeVector (String vector)
     {
-        if (vector.equals("gpage.landing")) {
+        if (vector.startsWith("gpage.landing")) {
             return "GWT/Landing";
         }
         if (vector.equals("page.default") || vector.equals("page.")) {
-            return "Web/Organic";
+            return "Web/Broken";
         }
         if (vector.startsWith("page.")) {
             return "Web/Other";
@@ -71,6 +71,12 @@ public class FunnelReporter
         }
         if (vector.startsWith("e.kongregate")) {
             return "Embed/Kongregate";
+        }
+        if (vector.equals("game_session")) {
+            return "Embed/?Game";
+        }
+        if (vector.equals("world_session")) {
+            return "Embed/?Room";
         }
         if (vector.startsWith("e.")) {
             return "Embed/Other";
