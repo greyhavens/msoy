@@ -19,13 +19,13 @@ import com.threerings.msoy.server.FunnelSummary.Phase;
 import com.threerings.presents.annotation.BlockingThread;
 
 @Singleton @BlockingThread
-public class FunnelReporter
+public class FunnelReporter implements JSONReporter
 {
     @Inject public FunnelReporter ()
     {
     }
 
-    public String buildVectorSummaryReport ()
+    public String buildJSONReport ()
     {
         Multiset<FunnelBit> newSummary = HashMultiset.create();
         Set<Tuple<String, Date>> keys = Sets.newHashSet();

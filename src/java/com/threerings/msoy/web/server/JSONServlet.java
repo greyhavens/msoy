@@ -13,6 +13,7 @@ import com.google.inject.Inject;
 
 import com.samskivert.io.StreamUtil;
 import com.threerings.msoy.server.FunnelReporter;
+import com.threerings.msoy.server.JSONReporter;
 
 /**
  * Exports Panopticon-style JSON that's generated locally.
@@ -23,7 +24,12 @@ public class JSONServlet extends HttpServlet
     protected void doGet (HttpServletRequest req, HttpServletResponse rsp)
         throws IOException
     {
-        if (!req.getPathInfo().startsWith("/funnel")) {
+        String path = req.getPathInfo();
+        JSONReporter reporter;
+
+        if (FUNNEL_PATH.equals(path)) {
+            reporter = _funnel;
+        } else {
             throw new IllegalArgumentException("Unknown path: " + req.getPathInfo());
         }
         rsp.setContentType("application/json");
@@ -35,7 +41,7 @@ public class JSONServlet extends HttpServlet
         if (jsonCallback != null) {
             out.append(jsonCallback + "(");
         }
-        out.append(_funnel.buildVectorSummaryReport());
+        out.append(reporter.buildJSONReport());
         // End the padding if we started it above
         if (jsonCallback != null) {
             out.append(")");
@@ -45,4 +51,6 @@ public class JSONServlet extends HttpServlet
     }
 
     @Inject protected FunnelReporter _funnel;
+
+    protected static final String FUNNEL_PATH = "/funnel";
 }
