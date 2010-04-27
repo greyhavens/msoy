@@ -12,7 +12,8 @@ import javax.servlet.http.HttpServletResponse;
 import com.google.inject.Inject;
 
 import com.samskivert.io.StreamUtil;
-import com.threerings.msoy.server.FunnelReporter;
+import com.threerings.msoy.server.FunnelByDate;
+import com.threerings.msoy.server.FunnelByVector;
 import com.threerings.msoy.server.JSONReporter;
 
 /**
@@ -27,8 +28,10 @@ public class JSONServlet extends HttpServlet
         String path = req.getPathInfo();
         JSONReporter reporter;
 
-        if (FUNNEL_PATH.equals(path)) {
-            reporter = _funnel;
+        if (FUNNEL_BY_DATE_PATH.equals(path)) {
+            reporter = _funnelByDate;
+        } else if (FUNNEL_BY_VECTOR_PATH.equals(path)) {
+            reporter = _funnelByVector;
         } else {
             throw new IllegalArgumentException("Unknown path: " + req.getPathInfo());
         }
@@ -50,7 +53,9 @@ public class JSONServlet extends HttpServlet
         StreamUtil.close(out);
     }
 
-    @Inject protected FunnelReporter _funnel;
+    @Inject protected FunnelByDate _funnelByDate;
+    @Inject protected FunnelByVector _funnelByVector;
 
-    protected static final String FUNNEL_PATH = "/funnel";
+    protected static final String FUNNEL_BY_DATE_PATH = "/funnel/date";
+    protected static final String FUNNEL_BY_VECTOR_PATH = "/funnel/vector";
 }

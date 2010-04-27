@@ -93,6 +93,10 @@ import static com.threerings.msoy.Log.log;
 @Singleton @BlockingThread
 public class MemberRepository extends DepotRepository
 {
+    public static final int FUNNEL_TOTAL_DAYS = 60;
+    public static final int FUNNEL_RETURNED_DAYS = 1;
+    public static final int FUNNEL_RETAINED_DAYS = 7;
+
     /** Used by {@link #runMemberMigration}. */
     public static interface MemberMigration {
         public void apply (MemberRecord record) throws Exception;
@@ -257,6 +261,9 @@ public class MemberRepository extends DepotRepository
     /**
      * Returns a summary of Whirled entries for the last two weeks (up to the entry vector purge
      * interval).
+     *
+     * TODO: This code is very similar to that in {@link FunnelSummary}, perhaps they
+     * could be made to harmonize at some point.
      */
     public List<EntrySummary> summarizeEntries ()
     {
@@ -273,16 +280,48 @@ public class MemberRepository extends DepotRepository
             summaries.put(sum.vector, sum);
         }
 
-        // then determine how many of those eventually registered
+        // then determine how many of those eventually played
         Where where = new Where(Ops.and(since, EntryVectorRecord.MEMBER_ID.notEq(0)));
         for (EntrySummaryRecord entry : findAll(EntrySummaryRecord.class, where,
                                                 new GroupBy(EntryVectorRecord.VECTOR))) {
             EntrySummary sum = summaries.get(entry.vector);
-            if (sum == null) { // should not be possible, but robustness demands
+            if (sum == null) { // highly unlikely, but robustness demands
+                summaries.put(entry.vector, sum = new EntrySummary());
+                sum.vector = entry.vector;
+            }
+            sum.played = entry.entries;
+        }
+
+        // same, but also registered? i.e. non-permaguest account name
+        where = new Where(Ops.and(since, EntryVectorRecord.MEMBER_ID.notEq(0),
+            MemberRecord.ACCOUNT_NAME.notLike(MemberMailUtil.PERMAGUEST_SQL_PATTERN)));
+
+        for (EntrySummaryRecord entry : findAll(EntrySummaryRecord.class, where,
+            new Join(EntryVectorRecord.MEMBER_ID, MemberRecord.MEMBER_ID),
+            new GroupBy(EntryVectorRecord.VECTOR))) {
+            EntrySummary sum = summaries.get(entry.vector);
+            if (sum == null) { // highly unlikely, but robustness demands
                 summaries.put(entry.vector, sum = new EntrySummary());
                 sum.vector = entry.vector;
             }
             sum.registrations = entry.entries;
+        }
+
+        // same, but also returned? i.e. with a restriction on LAST_SESSION
+        where = new Where(Ops.and(since, EntryVectorRecord.MEMBER_ID.notEq(0),
+            MemberRecord.ACCOUNT_NAME.notLike(MemberMailUtil.PERMAGUEST_SQL_PATTERN),
+            MemberRecord.LAST_SESSION.minus(EntryVectorRecord.CREATED)
+                .greaterEq(Exps.days(1))));
+
+        for (EntrySummaryRecord entry : findAll(EntrySummaryRecord.class, where,
+            new Join(EntryVectorRecord.MEMBER_ID, MemberRecord.MEMBER_ID),
+            new GroupBy(EntryVectorRecord.VECTOR))) {
+            EntrySummary sum = summaries.get(entry.vector);
+            if (sum == null) { // highly unlikely, but robustness demands
+                summaries.put(entry.vector, sum = new EntrySummary());
+                sum.vector = entry.vector;
+            }
+            sum.returns = entry.entries;
         }
 
         return Lists.newArrayList(summaries.values());
@@ -493,15 +532,15 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
-     * Execute a special query for our funnel report with the given optional external column to
-     * join against and the given optional where condition.
+     * Execute a funnel report query that summarizes entry records by (date, vector group),
+     * optionally joined with the given external column and/or the given where condition.
      */
-    public List<FunnelEntryRecord> funnelQuery (ColumnExp joinColumn, SQLExpression whereBit)
+    public List<FunnelByDateRecord> funnelByDate (ColumnExp joinColumn, SQLExpression whereBit)
     {
         final FluentExp dateExp = DateFuncs.date(EntryVectorRecord.CREATED);
         List<QueryClause> clauses = Lists.newArrayList(
             new FromOverride(EntryVectorRecord.class),
-            new FieldOverride(FunnelEntryRecord.DATE, dateExp),
+            new FieldOverride(FunnelByDateRecord.DATE, dateExp),
             new GroupBy(dateExp, EntryVectorRecord.VECTOR),
             OrderBy.ascending(dateExp));
 
@@ -510,14 +549,39 @@ public class MemberRepository extends DepotRepository
         }
 
         FluentExp condition = DateFuncs.now().minus(EntryVectorRecord.CREATED)
-            .lessEq(Exps.days(FUNNEL_DAYS));
+            .lessEq(Exps.days(FUNNEL_TOTAL_DAYS));
         if (whereBit != null) {
             condition = condition.and(whereBit);
         }
         clauses.add(new Where(condition));
 
-        return findAll(FunnelEntryRecord.class, clauses);
+        return findAll(FunnelByDateRecord.class, clauses);
     }
+
+    /**
+     * Execute a funnel report query that summarizes entry records grouped by vector,
+     * optionally joined with the given external column and/or the given where condition.
+     */
+    public List<FunnelByVectorRecord> funnelByVector (ColumnExp joinColumn, SQLExpression whereBit)
+    {
+        List<QueryClause> clauses = Lists.newArrayList(
+            new FromOverride(EntryVectorRecord.class),
+            new GroupBy(EntryVectorRecord.VECTOR));
+
+        if (joinColumn != null) {
+            clauses.add(new Join(EntryVectorRecord.MEMBER_ID, joinColumn));
+        }
+
+        FluentExp condition = DateFuncs.now().minus(EntryVectorRecord.CREATED)
+            .lessEq(Exps.days(FUNNEL_TOTAL_DAYS));
+        if (whereBit != null) {
+            condition = condition.and(whereBit);
+        }
+        clauses.add(new Where(condition));
+
+        return findAll(FunnelByVectorRecord.class, clauses);
+    }
+
 
     /**
      * Loads ids of member records that are initial candidates for a retention email. Members are
@@ -1574,14 +1638,11 @@ public class MemberRepository extends DepotRepository
     protected static final SQLExpression GREETER_FLAG_IS_SET =
         MemberRecord.FLAGS.bitAnd(MemberRecord.Flag.GREETER.getBit()).notEq(0);
 
-
     /**
-     *  Period after which we expire entry vector records that are not associated with members.
-     *  This should not be shorter than the period for which we want to create a funnel report.
+     * Period after which we expire entry vector records that are not associated with members.
+     * This should not be shorter than the period for which we want to create a funnel report.
      */
-    protected static final long ENTRY_VECTOR_EXPIRE = 60 * 24*60*60*1000L;
-
-    protected static final int FUNNEL_DAYS = 60;
+    protected static final long ENTRY_VECTOR_EXPIRE = FUNNEL_TOTAL_DAYS * 24*60*60*1000L;
 
     /** Period after which we expire session records. */
     protected static final long SESSION_RECORD_EXPIRE = 30 * 24*60*60*1000L;
@@ -1593,7 +1654,7 @@ public class MemberRepository extends DepotRepository
      * Period after which we expire "weak" permaguest accounts (those of low level). This should
      * not be shorter than the period for which we want to create a funnel report.
      */
-    protected static final long WEAK_PERMAGUEST_EXPIRE = 60 * 24*60*60*1000L;
+    protected static final long WEAK_PERMAGUEST_EXPIRE = FUNNEL_TOTAL_DAYS * 24*60*60*1000L;
 
     /** A permaguest that fails to achieve this level is considered weak, and purged. */
     protected static final int STRONG_PERMAGUEST_LEVEL = 5;

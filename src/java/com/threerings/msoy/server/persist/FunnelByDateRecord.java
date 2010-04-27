@@ -13,10 +13,10 @@ import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.expression.ColumnExp;
 
 @Computed @Entity
-public class FunnelEntryRecord extends PersistentRecord
+public class FunnelByDateRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
-    public static final Class<FunnelEntryRecord> _R = FunnelEntryRecord.class;
+    public static final Class<FunnelByDateRecord> _R = FunnelByDateRecord.class;
     public static final ColumnExp VECTOR = colexp(_R, "vector");
     public static final ColumnExp DATE = colexp(_R, "date");
     public static final ColumnExp COUNT = colexp(_R, "count");
@@ -33,10 +33,10 @@ public class FunnelEntryRecord extends PersistentRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link FunnelEntryRecord}
+     * Create and return a primary {@link Key} to identify a {@link FunnelByDateRecord}
      * with the supplied key values.
      */
-    public static Key<FunnelEntryRecord> getKey (String vector, Timestamp date)
+    public static Key<FunnelByDateRecord> getKey (String vector, Timestamp date)
     {
         return newKey(_R, vector, date);
     }
