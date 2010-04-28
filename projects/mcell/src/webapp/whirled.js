@@ -227,57 +227,52 @@ whirled.addCharts = function () {
                     var cumulation = 0;
                     for (var i = 0; i < phases.length; i ++) {
                         if (phases[i] == name) {
-                            log("For phase " + phases[i] + " returning " + event[phases[i]] + " - " + cumulation);
                             return (event[phases[i]] - cumulation) || 0;
                         }
                         cumulation += event[phases[i]];
                     }
-                    log("Eek, returning nothing for event named: " + name);
-                    return 0;
                 }
+                return 0;
             }
             var vectorIx = new Dict();
             var chart = new StackedBarChart("funnel/vector", sourceNames, valueExtractor, options);
 
             chart.gotData = function (events) {
-                log("Sorting " + events.length + " events...");
-
                 events.sort(function(e1, e2) {
                     if (e1.visited == e2.visited) {
                         return 0;
                     }
                     return (e1.visited < e2.visited) ? 1 : -1;
                 });
+            };
 
-                log("Processing " + events.length + " events...");
+            chart.options.prePlot.push(function () {
+                var events = chart.data;
+                vectorIx.clear();
                 var ix = 0;
                 each(events, function (event, idx) {
                     if (groups.has(event.group)) {
-                        log("Adding vector: " + event.vector);
                         vectorIx.put(event.vector, ix);
                         ix ++;
                     }
                 });
 
                 chart.options.bars.barWidth = 0.9 / vectorIx.size();
-            };
+            });
             chart.options.xaxis.mode = null;
             chart.options.xaxis.min = -0.1;
             chart.options.xaxis.max = 1.1;
 
             chart.options.xaxis.ticks = function(axisInfo) {
                 return vectorIx.items(function (key, value) {
-                    log("Mapping to (" + value + "/" + key + ")");
                     return [ value / vectorIx.size(), key ];
                 });
             }
             chart.extractKey = function (ev) {
-                log("Returning " + ev.vector + " -> " + 
-                    vectorIx.get(ev.vector) / vectorIx.size());
                 return vectorIx.get(ev.vector) / vectorIx.size();
             }
             chart.getEvents = function (eventName, callback) {
-                $.getJSON("http://mothra.alyx.com:8080/json/" + eventName + "?jsoncallback=?",
+                $.getJSON("http://www.whirled.com/json/" + eventName + "?jsoncallback=?",
                           callback);
             };
             return chart;
