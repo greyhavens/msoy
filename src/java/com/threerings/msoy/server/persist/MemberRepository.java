@@ -69,7 +69,6 @@ import com.samskivert.util.Tuple;
 import com.threerings.util.StreamableArrayIntSet;
 import com.threerings.util.TimeUtil;
 
-import com.threerings.msoy.admin.gwt.EntrySummary;
 import com.threerings.msoy.data.MsoyCodes;
 
 import com.threerings.msoy.data.all.FriendEntry;
@@ -256,75 +255,6 @@ public class MemberRepository extends DepotRepository
         if (deleted > 0) {
             log.info("Purged " + deleted + " expired entry vector records.");
         }
-    }
-
-    /**
-     * Returns a summary of Whirled entries for the last two weeks (up to the entry vector purge
-     * interval).
-     *
-     * TODO: This code is very similar to that in {@link FunnelSummary}, perhaps they
-     * could be made to harmonize at some point.
-     */
-    public List<EntrySummary> summarizeEntries ()
-    {
-        Timestamp cutoff = new Timestamp(System.currentTimeMillis() - ENTRY_VECTOR_EXPIRE);
-        SQLExpression since = EntryVectorRecord.CREATED.greaterEq(cutoff);
-
-        // first load up all entries in the period
-        Map<String, EntrySummary> summaries = Maps.newHashMap();
-        for (EntrySummaryRecord entry : findAll(EntrySummaryRecord.class, new Where(since),
-                                                new GroupBy(EntryVectorRecord.VECTOR))) {
-            EntrySummary sum = new EntrySummary();
-            sum.vector = entry.vector;
-            sum.entries = entry.entries;
-            summaries.put(sum.vector, sum);
-        }
-
-        // then determine how many of those eventually played
-        Where where = new Where(Ops.and(since, EntryVectorRecord.MEMBER_ID.notEq(0)));
-        for (EntrySummaryRecord entry : findAll(EntrySummaryRecord.class, where,
-                                                new GroupBy(EntryVectorRecord.VECTOR))) {
-            EntrySummary sum = summaries.get(entry.vector);
-            if (sum == null) { // highly unlikely, but robustness demands
-                summaries.put(entry.vector, sum = new EntrySummary());
-                sum.vector = entry.vector;
-            }
-            sum.played = entry.entries;
-        }
-
-        // same, but also registered? i.e. non-permaguest account name
-        where = new Where(Ops.and(since, EntryVectorRecord.MEMBER_ID.notEq(0),
-            MemberRecord.ACCOUNT_NAME.notLike(MemberMailUtil.PERMAGUEST_SQL_PATTERN)));
-
-        for (EntrySummaryRecord entry : findAll(EntrySummaryRecord.class, where,
-            new Join(EntryVectorRecord.MEMBER_ID, MemberRecord.MEMBER_ID),
-            new GroupBy(EntryVectorRecord.VECTOR))) {
-            EntrySummary sum = summaries.get(entry.vector);
-            if (sum == null) { // highly unlikely, but robustness demands
-                summaries.put(entry.vector, sum = new EntrySummary());
-                sum.vector = entry.vector;
-            }
-            sum.registrations = entry.entries;
-        }
-
-        // same, but also returned? i.e. with a restriction on LAST_SESSION
-        where = new Where(Ops.and(since, EntryVectorRecord.MEMBER_ID.notEq(0),
-            MemberRecord.ACCOUNT_NAME.notLike(MemberMailUtil.PERMAGUEST_SQL_PATTERN),
-            MemberRecord.LAST_SESSION.minus(EntryVectorRecord.CREATED)
-                .greaterEq(Exps.days(1))));
-
-        for (EntrySummaryRecord entry : findAll(EntrySummaryRecord.class, where,
-            new Join(EntryVectorRecord.MEMBER_ID, MemberRecord.MEMBER_ID),
-            new GroupBy(EntryVectorRecord.VECTOR))) {
-            EntrySummary sum = summaries.get(entry.vector);
-            if (sum == null) { // highly unlikely, but robustness demands
-                summaries.put(entry.vector, sum = new EntrySummary());
-                sum.vector = entry.vector;
-            }
-            sum.returns = entry.entries;
-        }
-
-        return Lists.newArrayList(summaries.values());
     }
 
     /**

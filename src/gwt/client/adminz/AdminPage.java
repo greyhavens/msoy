@@ -77,7 +77,7 @@ public class AdminPage extends Page
 
         } else if (action.equals("stats")) {
             setContent("Stats", new StatsPanel());
-            
+
         } else if (action.equals("panopticonStatus")) {
             setContent("Panopticon Status", new PanopticonStatusPanel());
 
@@ -93,9 +93,6 @@ public class AdminPage extends Page
 
         } else if (action.equals("broadcasts")) {
             setContent("Broadcasts", new BroadcastHistoryPanel());
-
-        } else if (action.equals("entries")) {
-            setContent("Entries", new EntrySummaryPanel());
 
         } else {
             setContent(_msgs.title(), new DashboardPanel());

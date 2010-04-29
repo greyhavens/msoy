@@ -152,9 +152,4 @@ public interface AdminServiceAsync
      * The async version of {@link AdminService#getBroadcastHistory}.
      */
     void getBroadcastHistory (int offset, int count, boolean needCount, AsyncCallback<AdminService.BroadcastHistoryResult> callback);
-
-    /**
-     * The async version of {@link AdminService#summarizeEntries}.
-     */
-    void summarizeEntries (AsyncCallback<List<EntrySummary>> callback);
 }

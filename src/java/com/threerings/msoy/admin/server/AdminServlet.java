@@ -6,7 +6,6 @@ package com.threerings.msoy.admin.server;
 import static com.threerings.msoy.Log.log;
 
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -90,7 +89,6 @@ import com.threerings.msoy.admin.gwt.ABTestSummary;
 import com.threerings.msoy.admin.gwt.AdminService;
 import com.threerings.msoy.admin.gwt.BureauLauncherInfo.BureauInfo;
 import com.threerings.msoy.admin.gwt.BureauLauncherInfo;
-import com.threerings.msoy.admin.gwt.EntrySummary;
 import com.threerings.msoy.admin.gwt.MemberAdminInfo;
 import com.threerings.msoy.admin.gwt.StatsModel;
 import com.threerings.msoy.admin.server.ABTestLogic;
@@ -689,38 +687,6 @@ public class AdminServlet extends MsoyServiceServlet
         result.memberNames = Maps.newHashMap();
         result.memberNames.putAll(_memberRepo.loadMemberNames(memberIds));
         return result;
-    }
-
-    // from interface AdminService
-    public List<EntrySummary> summarizeEntries ()
-        throws ServiceException
-    {
-        requireSupportUser();
-
-        // load the raw entry summary data
-        List<EntrySummary> sums = _memberRepo.summarizeEntries();
-
-        // now combine pages with random arguments into a single entry
-        Map<String, EntrySummary> map = Maps.newHashMap();
-        for (Iterator<EntrySummary> iter = sums.iterator(); iter.hasNext(); ) {
-            EntrySummary sum = iter.next();
-            int didx = sum.vector.indexOf("-");
-            if (didx == -1) {
-                continue;
-            }
-            String tvector = sum.vector.substring(0, didx+1) + "...";
-            EntrySummary tsum = map.get(tvector);
-            if (tsum == null) {
-                sum.vector = tvector;
-                map.put(tvector, sum);
-            } else {
-                tsum.entries += sum.entries;
-                tsum.registrations += sum.registrations;
-                iter.remove();
-            }
-        }
-
-        return sums;
     }
 
     protected void sendGotInvitesMail (final int senderId, final int recipientId, final int number)

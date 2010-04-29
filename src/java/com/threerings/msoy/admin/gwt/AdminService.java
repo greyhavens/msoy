@@ -260,10 +260,4 @@ public interface AdminService extends RemoteService
      * Gets a page of user paid broadcast message history.
      */
     BroadcastHistoryResult getBroadcastHistory (int offset, int count, boolean needCount);
-
-    /**
-     * Returns a summary of recent Whirled "entries".
-     */
-    List<EntrySummary> summarizeEntries ()
-        throws ServiceException;
 }
