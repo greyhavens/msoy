@@ -1,15 +1,16 @@
 if (!whirled) {
     var whirled = {};
 }
+var funnelHost = "www.whirled.com";
 
 whirled.addCharts = function () {
     eval(bedrock.include({
             'bedrock.util': ['log'],
-            'bedrock.iter': ['each'],
+            'bedrock.iter': ['each', 'map'],
             'bedrock.collections': ['List','Dict', 'Set'],
             'panopticon.chart': ['addChart', 'init', 'StackedBarChart',
                                  'SelfContainedEventChart'],
-            'panopticon.ui': ['CheckBoxes', 'RadioButtons'],
+            'panopticon.ui': ['CheckBoxes', 'RadioButtons', 'Table'],
         }));
 
     return function() {
@@ -148,29 +149,30 @@ whirled.addCharts = function () {
             return chart;
         });
 
+        var funnelPhases = [
+            "subscribed", "paid", "retained", "returned", "registered", "played", "visited"
+        ];
+
+        var funnelGroups = [
+            "GWT/Landing", "Web/Broken", "Web/Other", "GWT/Other", "Embed/Mochi", "Embed/Kongregate",
+            "Embed/?Game", "Embed/?Room", "Embed/Other", "Ad/Other", "Other/Other"
+        ];
+
+        function toStacked (event, phase) {
+            var cumulation = 0;
+            for (var i = 0; i < funnelPhases.length; i ++) {
+                if (funnelPhases[i] == phase) {
+                    return Math.max(0, event[funnelPhases[i]] - cumulation);
+                }
+                cumulation += event[funnelPhases[i]];
+            }
+            log("toStacked(" + event + ", " + phase + ") returning ZERO");
+        }
+
         addChart("funnel", "funnel_lines", "Conversion and Retention (line graph)", function () {
-            var sourceNames = new List([
-                ["visited", "Visited"],
-                ["played", "Played"],
-                ["registered", "Registered"],
-                ["returned", "Returned"],
-                ["retained", "Retained"],
-                ["paid", "Paid"],
-                ["subscribed", "Subscribed"],
-            ]);
+            var sourceNames = new List(funnelPhases);
             var sources = new CheckBoxes("Sources", "sources", sourceNames);
-            var groups = new CheckBoxes("Group", "group", [
-                "GWT/Landing",
-                "Web/Broken",
-                "Web/Other",
-                "GWT/Other",
-                "Embed/Mochi",
-                "Embed/Kongregate",
-                "Embed/?Game",
-                "Embed/?Room",
-                "Embed/Other",
-                "Ad/Other",
-                "Other/Other"]);
+            var groups = new CheckBoxes("Group", "group", funnelGroups);
 
             var options = {
                 controls: [ sources, groups ],
@@ -178,9 +180,9 @@ whirled.addCharts = function () {
             };
 
             var chart = new SelfContainedEventChart("funnel/date", function (ev, collector) {
-                sourceNames.each(function (bit) {
-                    if (sources.has(bit[0]) && groups.has(ev.group)) {
-                        var list = collector.assume(bit[1]);
+                sourceNames.each(function (source) {
+                    if (sources.has(source) && groups.has(ev.group)) {
+                        var list = collector.assume(source);
                         var sz = list.length;
                         var arr;
                         if (sz > 0 && list.get(sz-1)[0] == ev.date) {
@@ -189,93 +191,78 @@ whirled.addCharts = function () {
                             arr = [ ev.date, 0 ];
                             list.add(arr);
                         }
-                        arr[1] += ev[bit[0]];
+                        arr[1] += ev[source];
                     }
                 });
             }, options, "date");
             chart.getEvents = function (eventName, callback) {
-                $.getJSON("http://www.whirled.com/json/" + eventName + "?jsoncallback=?",
+                $.getJSON("http://" + funnelHost + "/json/" + eventName + "?jsoncallback=?",
                           callback);
             };
             return chart;
         });
-        addChart("funnel", "entry_vectors", "Entry Vectors", function () {
-            var phases = [ "subscribed", "paid", "retained", "returned",
-                "registered", "played", "visited" ];
 
-            var sourceNames = new List(phases);
-            var sources = new CheckBoxes("Sources", "sources", sourceNames);
-            var groups = new CheckBoxes("Group", "group", [
-                "GWT/Landing",
-                "Web/Broken",
-                "Web/Other",
-                "GWT/Other",
-                "Embed/Mochi",
-                "Embed/Kongregate",
-                "Embed/?Game",
-                "Embed/?Room",
-                "Embed/Other",
-                "Ad/Other",
-                "Other/Other"]);
+        addChart("funnel", "vector_table", "Entry Vectors (table)", function () {
+            function gotData (data) {
+                panopticon.chart.unbindChartListeners($("#chart"));
+                $("#controls").empty();
+                $("#legend").empty();
 
-            var options = {
-                controls: [ sources, groups ],
-            };
+                var rawOrPercent = new RadioButtons("Format", "format", ["percentage", "raw"]);
+                $("#controls").append(rawOrPercent.makeHtml());
+                $("#controls :input").change(function () {
+                    setTimeout(drawTable, 0);
+                });
 
-            function valueExtractor (event, name) {
-                if (sources.has(name) && groups.has(event.group)) {
-                    var cumulation = 0;
-                    for (var i = 0; i < phases.length; i ++) {
-                        if (phases[i] == name) {
-                            return (event[phases[i]] - cumulation) || 0;
+                var columns = funnelPhases.slice();
+                columns.reverse();
+                columns.unshift("vector");
+
+                function drawTable () {
+                    // "prePlot"
+                    rawOrPercent.extract();
+
+                    // "plot"
+                    $("#chart").empty().append("<div id='table'></div>");
+                    $("#table").css({width: null, height: 700, overflow: "auto",
+                                     border: "1px black solid"});
+
+                    var tbl = new Table(columns, "#table", false);
+                    tbl.setData = function (data) {
+                        var self = this;
+                        self.data = data;
+                        var stripey = true;
+                        $(self.selector).append(map(data, function (ev) {
+                            stripey = !stripey;
+                            return '<tr' +
+                                (stripey ? ' class="stripe">' : '>') +
+                                self.makeColumns(ev) + '</tr>';
+                        }).join("\n"));
+                    };
+                    var events = data.events;
+                    panopticon.util.sortByKey(events, "visited", true);
+                    tbl.setData(map(events, function (ev) {
+                        if (rawOrPercent.extract() != "percentage") {
+                            return ev;
                         }
-                        cumulation += event[phases[i]];
-                    }
+                        var result = { visited: ev.visited, vector: ev.vector };
+                        for (var ii = 2; ii < columns.length; ii ++) {
+                            var percent = 100 * ev[columns[ii]] / ev.visited;
+                            result[columns[ii]] = percent.toFixed(1) + "%";
+                        }
+                        return result;
+                    }));
+
+                    // "postPlot"
+                    rawOrPercent.updateFragment();
                 }
-                return 0;
+                drawTable();
             }
-            var vectorIx = new Dict();
-            var chart = new StackedBarChart("funnel/vector", sourceNames, valueExtractor, options);
 
-            chart.gotData = function (events) {
-                events.sort(function(e1, e2) {
-                    if (e1.visited == e2.visited) {
-                        return 0;
-                    }
-                    return (e1.visited < e2.visited) ? 1 : -1;
-                });
-            };
-
-            chart.options.prePlot.push(function () {
-                var events = chart.data;
-                vectorIx.clear();
-                var ix = 0;
-                each(events, function (event, idx) {
-                    if (groups.has(event.group)) {
-                        vectorIx.put(event.vector, ix);
-                        ix ++;
-                    }
-                });
-
-                chart.options.bars.barWidth = 0.9 / vectorIx.size();
-            });
-            chart.options.xaxis.mode = null;
-            chart.options.xaxis.min = -0.1;
-            chart.options.xaxis.max = 1.1;
-
-            chart.options.xaxis.ticks = function(axisInfo) {
-                return vectorIx.items(function (key, value) {
-                    return [ value / vectorIx.size(), key ];
-                });
-            }
-            chart.extractKey = function (ev) {
-                return vectorIx.get(ev.vector) / vectorIx.size();
-            }
-            chart.getEvents = function (eventName, callback) {
-                $.getJSON("http://www.whirled.com/json/" + eventName + "?jsoncallback=?",
-                          callback);
-            };
-            return chart;
+            var eventName = "funnel/vector";
+            return { run: function () {
+                $.getJSON("http://" + funnelHost + "/json/" + eventName + "?jsoncallback=?", gotData);
+            }};
         });
         init();
     }

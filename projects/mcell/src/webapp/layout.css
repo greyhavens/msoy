@@ -42,3 +42,20 @@ body {
     padding-right: 2px;
 }
 
+#table table, #table td, #table th {
+    border: 1px solid black;
+    padding: 2px;
+    text-align: right;
+}
+
+#table th {
+    text-align: center;
+}
+
+#table .stripe {
+    background-color: #D8E2EE;
+}
+
+#table {
+    overflow: auto;
+}
