@@ -122,32 +122,31 @@ public class FunnelByDate implements JSONReporter
         _entries.clear();
 
         // total visitors is just all the recent EntryVectorRecord rows
-        fromRecords(Phase.VISITED, _memberRepo.funnelByDate(null, null));
+        fromRecords(Phase.VISITED, null, _memberRepo.funnelByDate(null, null));
 
-        // people who have played have an entry in MemberRecord, so join against that
-        fromRecords(Phase.PLAYED, _memberRepo.funnelByDate(MemberRecord.MEMBER_ID, null));
+        // people who have PLAYED have an entry in MemberRecord, so join against that
+        fromRecords(Phase.PLAYED, null, _memberRepo.funnelByDate(MemberRecord.MEMBER_ID, null));
 
-        // people who registered have a non-anonymous account name
-        fromRecords(Phase.REGISTERED, _memberRepo.funnelByDate(MemberRecord.MEMBER_ID,
+        fromRecords(Phase.REGISTERED, null, _memberRepo.funnelByDate(MemberRecord.MEMBER_ID,
             MemberRecord.ACCOUNT_NAME.notLike(MemberMailUtil.PERMAGUEST_SQL_PATTERN)));
 
-        // people who returned have a session at least 24 hours after their creation time
-        fromRecords(Phase.RETURNED, _memberRepo.funnelByDate(MemberRecord.MEMBER_ID,
+        // people who RETURNED have a session at least 24 hours after their creation time
+        fromRecords(Phase.RETURNED, null, _memberRepo.funnelByDate(MemberRecord.MEMBER_ID,
             MemberRecord.LAST_SESSION.minus(EntryVectorRecord.CREATED)
                 .greaterEq(Exps.days(MemberRepository.FUNNEL_RETURNED_DAYS))));
 
-        // people who were retained have a session at least 7 days after their creation time
-        fromRecords(Phase.RETAINED, _memberRepo.funnelByDate(MemberRecord.MEMBER_ID,
-            MemberRecord.LAST_SESSION.minus(EntryVectorRecord.CREATED)
+        // people who were RETAINED are REGISTERED and also played at least 7 days after creation
+        fromRecords(Phase.RETAINED, Phase.REGISTERED, _memberRepo.funnelByDate(
+            MemberRecord.MEMBER_ID, MemberRecord.LAST_SESSION.minus(EntryVectorRecord.CREATED)
                 .greaterEq(Exps.days(MemberRepository.FUNNEL_RETAINED_DAYS))));
 
-        // people who paid are actually those who have accumulated bars one way or another
+        // people who PAID are RETAINED who have also accumulated bars one way or another
         // TODO: make this an actual payment check?
-        fromRecords(Phase.PAID, _memberRepo.funnelByDate(MemberAccountRecord.MEMBER_ID,
-            MemberAccountRecord.ACC_BARS.greaterThan(0)));
+        fromRecords(Phase.PAID, Phase.RETAINED, _memberRepo.funnelByDate(
+            MemberAccountRecord.MEMBER_ID, MemberAccountRecord.ACC_BARS.greaterThan(0)));
 
-        // people who have subscribed simply have the relevant flag set on MemberRecord
-        fromRecords(Phase.SUBSCRIBED, _memberRepo.funnelByDate(MemberRecord.MEMBER_ID,
+        // people who have SUBSCRIBED simply have the relevant flag set on MemberRecord
+        fromRecords(Phase.SUBSCRIBED, Phase.PAID, _memberRepo.funnelByDate(MemberRecord.MEMBER_ID,
             MemberRecord.FLAGS.bitAnd(MemberRecord.Flag.SUBSCRIBER.getBit()).notEq(0)));
 
         // expire the funnel next midnight
@@ -155,10 +154,14 @@ public class FunnelByDate implements JSONReporter
 
     }
 
-    protected void fromRecords (Phase phase, Iterable<FunnelByDateRecord> records)
+    protected void fromRecords (
+        Phase phase, Phase subsetOf, Iterable<FunnelByDateRecord> records)
     {
         for (FunnelByDateRecord rec : records) {
-            _entries.add(new FunnelByDateBit(phase, rec.vector, rec.date), rec.count);
+            if (subsetOf == null ||
+                    _entries.contains(new FunnelByDateBit(subsetOf, rec.vector, rec.date))) {
+                _entries.add(new FunnelByDateBit(phase, rec.vector, rec.date), rec.count);
+            }
         }
     }
 
