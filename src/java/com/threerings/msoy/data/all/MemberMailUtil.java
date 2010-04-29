@@ -10,7 +10,7 @@ public class MemberMailUtil
 {
     // these have to be declared before the public constant that uses them below; lame-ass compiler
     protected static final String PERMAGUEST_EMAIL_PREFIX = "anon";
-    protected static final String PERMAGUEST_EMAIL_SUFFIX = "@" + DeploymentConfig.serverHost;
+    protected static final String PERMAGUEST_EMAIL_SUFFIX = "@www.whirled.com";
 
     /** Regular expression used to check if an email address is one assigned to a permaguest. */
     public static final String PERMAGUEST_EMAIL_PATTERN =
