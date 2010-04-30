@@ -59,7 +59,7 @@ public interface FacebookService extends RemoteService
         /** The name of the application in use. */
         public String appName;
 
-        /** The facebook canvas name of the application. */ 
+        /** The facebook canvas name of the application. */
         public String canvasName;
 
         /**
@@ -170,14 +170,6 @@ public interface FacebookService extends RemoteService
      * if game is null.
      */
     InviteInfo getInviteInfo (int appId, FacebookGame game)
-        throws ServiceException;
-
-    /**
-     * Sends a challenge notification to all friends of the logged in user, optionally limiting
-     * to only those friends that use the application. Returns data for publishing a challenge
-     * feed story, or null if the data could not be loaded.
-     */
-    StoryFields sendChallengeNotification (int appId, FacebookGame game, boolean appOnly)
         throws ServiceException;
 
     /**

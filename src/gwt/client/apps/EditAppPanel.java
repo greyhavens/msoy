@@ -101,18 +101,6 @@ public class EditAppPanel extends FlowPanel
 
         _tabs.add(new LazyPanel() {
             protected Widget createWidget () {
-                return new FacebookNotificationsPanel(data.info);
-            }
-        }, _msgs.editAppTabNotifications());
-
-        _tabs.add(new LazyPanel() {
-            protected Widget createWidget () {
-                return new FacebookNotificationStatusPanel(data.info);
-            }
-        }, _msgs.editAppTabNotificationStatus());
-
-        _tabs.add(new LazyPanel() {
-            protected Widget createWidget () {
                 return new FacebookTemplatesPanel(data.info);
             }
         }, _msgs.editAppTabTemplates());
@@ -128,12 +116,6 @@ public class EditAppPanel extends FlowPanel
                 return new KontagentInfoPanel(data.info, data.kontagent);
             }
         }, _msgs.editAppTabKontagentInfo());
-
-        _tabs.add(new LazyPanel() {
-            protected Widget createWidget () {
-                return new FacebookDailyNotificationsPanel(data.info, data.dailyNotifications);
-            }
-        }, _msgs.editAppTabDailyNotifs());
     }
 
     protected int _appId;

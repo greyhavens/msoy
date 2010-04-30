@@ -291,23 +291,6 @@ public class FacebookServlet extends MsoyServiceServlet
     }
 
     @Override // from FacebookService
-    public StoryFields sendChallengeNotification (int appId, FacebookGame game, boolean appOnly)
-        throws ServiceException
-    {
-        String challenge = FacebookService.CHALLENGE;
-        SessionInfo session = requireSession(appId);
-        StoryFields result = loadGameStoryFields(loadBasicStoryFields(
-            new StoryFields(), session, challenge), appId, game, challenge);
-        Map<String, String> replacements = Maps.newHashMap();
-        replacements.put("game", result.name);
-        replacements.put("game_url", SharedNaviUtil.buildRequest(
-            _fbLogic.getCanvasUrl(session.siteId), game.getCanvasArgs()));
-        _fbLogic.scheduleFriendNotification(session, challenge, replacements, appOnly);
-
-        return result.template != null ? result : null;
-    }
-
-    @Override // from FacebookService
     public void trackPageRequest (int appId, String page)
         throws ServiceException
     {

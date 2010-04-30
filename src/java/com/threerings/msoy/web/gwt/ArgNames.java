@@ -16,12 +16,6 @@ public class ArgNames
     /** Parameter designating the application id. */
     public static final String APP = "app";
 
-    /** Subnav for a facebook game challenge. */
-    public static final String FB_GAME_CHALLENGE = "challenge";
-
-    /** Subnav for a facebook mochi game challenge. */
-    public static final String FB_MOCHI_CHALLENGE = "mochichallenge";
-
     /** Pick some friends to challenge. */
     public static final String FB_CHALLENGE_PICK = "pick";
 

@@ -37,11 +37,6 @@ public interface FacebookServiceAsync
     void getInviteInfo (int appId, FacebookGame game, AsyncCallback<FacebookService.InviteInfo> callback);
 
     /**
-     * The async version of {@link FacebookService#sendChallengeNotification}.
-     */
-    void sendChallengeNotification (int appId, FacebookGame game, boolean appOnly, AsyncCallback<FacebookService.StoryFields> callback);
-
-    /**
      * The async version of {@link FacebookService#trackPageRequest}.
      */
     void trackPageRequest (int appId, String page, AsyncCallback<Void> callback);

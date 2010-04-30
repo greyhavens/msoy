@@ -343,7 +343,6 @@ public class FacebookCallbackServlet extends HttpServlet
             info.game = _faceLogic.parseGame(req);
             info.vector = StringUtil.getOr(FrameParam.VECTOR.get(req),
                 FacebookTemplate.toEntryVector("app" + String.valueOf(info.app.appId), ""));
-            info.challenge = FrameParam.CHALLENGE.get(req) != null;
             info.trackingId = FrameParam.TRACKING.get(req);
 
         } else if (path.startsWith(PING_PATH)) {
@@ -374,7 +373,6 @@ public class FacebookCallbackServlet extends HttpServlet
             info.game = _faceLogic.parseGame(req);
             info.vector = StringUtil.getOr(FrameParam.VECTOR.get(req),
                 FacebookTemplate.toEntryVector("app", ""));
-            info.challenge = FrameParam.CHALLENGE.get(req) != null;
             info.trackingId = FrameParam.TRACKING.get(req);
         }
 
@@ -441,7 +439,6 @@ public class FacebookCallbackServlet extends HttpServlet
         public FacebookInfoRecord fb;
         public FacebookGame game;
         public String vector;
-        public boolean challenge;
         public boolean ping;
         public String trackingId;
         public ExternalSiteId siteId;
@@ -468,14 +465,6 @@ public class FacebookCallbackServlet extends HttpServlet
                 if (fb.chromeless) {
                     // chromeless games go directly into the game
                     return Pages.WORLD.makeToken("fbgame", game.getIntId());
-
-                } else if (challenge) {
-                    // completion of the challenge flow (ideally this would just be done in gwt
-                    // but Facebook request submissions work like forms and we therefore route them
-                    // via whirled.com/fbinvite/ndone, which then needs to complete the flow by
-                    // redirecting to the main canvas)
-                    return Pages.FACEBOOK.makeToken(game.getChallengeArgs(),
-                        ArgNames.FB_CHALLENGE_FEED, embed);
 
                 } else {
                     // other games are "viewed"
@@ -583,7 +572,6 @@ public class FacebookCallbackServlet extends HttpServlet
         CANVAS("canvas"),
         TOKEN("token"),
         TRACKING(ArgNames.FBParam.TRACKING),
-        CHALLENGE(ArgNames.FBParam.CHALLENGE),
         NEW_INSTALL("newuser"),
         VECTOR(ArgNames.VECTOR);
 

@@ -13,7 +13,6 @@ import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.msoy.game.gwt.GameService;
 import com.threerings.msoy.game.gwt.GameServiceAsync;
 import com.threerings.msoy.game.gwt.MochiGameInfo;
-import com.threerings.msoy.web.gwt.ArgNames;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
@@ -40,8 +39,6 @@ public class MochiGamePanel extends FlowPanel
     protected void init (MochiGameInfo info)
     {
         clear();
-        CShell.frame.addNavLink("Click here to challenge a friend to beat you in " + info.name,
-            Pages.FACEBOOK, Args.compose(ArgNames.FB_MOCHI_CHALLENGE, info.tag), -1);
         Widget game = WidgetUtil.createFlashContainer(
             info.tag, info.swfURL, info.width, info.height, null);
         game.addStyleName("Game");

@@ -20,7 +20,6 @@ import javax.servlet.http.HttpServletRequest;
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -32,7 +31,6 @@ import com.google.inject.Singleton;
 import com.samskivert.util.Calendars;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
-import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.Lifecycle;
 import com.samskivert.util.StringUtil;
@@ -49,21 +47,15 @@ import com.google.code.facebookapi.schema.UsersGetStandardInfoResponse;
 import com.threerings.cron.server.CronLogic;
 import com.threerings.facebook.FQL;
 import com.threerings.facebook.FQLQuery;
-import com.threerings.util.MessageBundle;
-
 import com.threerings.msoy.admin.server.RuntimeConfig;
-import com.threerings.msoy.apps.data.AppCodes;
 import com.threerings.msoy.apps.server.persist.AppInfoRecord;
 import com.threerings.msoy.apps.server.persist.AppRepository;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.facebook.data.FacebookCodes;
 import com.threerings.msoy.facebook.gwt.FacebookGame;
-import com.threerings.msoy.facebook.gwt.Wildcards;
-import com.threerings.msoy.facebook.server.KontagentLogic.LinkType;
 import com.threerings.msoy.facebook.server.KontagentLogic.TrackingId;
 import com.threerings.msoy.facebook.server.persist.FacebookActionRecord;
 import com.threerings.msoy.facebook.server.persist.FacebookInfoRecord;
-import com.threerings.msoy.facebook.server.persist.FacebookNotificationRecord;
 import com.threerings.msoy.facebook.server.persist.FacebookRepository;
 import com.threerings.msoy.facebook.server.persist.ListRepository;
 import com.threerings.msoy.game.server.persist.TrophyRepository;
@@ -316,33 +308,6 @@ public class FacebookLogic
     }
 
     /**
-     * Schedules or reschedules a notification to be posted to all Facebook users. If a
-     * notification already exists with the given id, it is rescheduled and the content
-     * overwritten.
-     * @param delay number of minutes to wait before sending the notification
-     */
-    public void scheduleNotification (ExternalSiteId siteId, String id, int delay)
-        throws ServiceException
-    {
-        Map<String, String> replacements = Maps.newHashMap();
-        replacements.put("app_url", getCanvasUrl(loadSiteInfo(siteId).canvasName));
-        scheduleNotification(siteId, null, null, id, replacements, false, delay);
-    }
-
-    /**
-     * Schedules a notification to be sent immediately to a subset of the Facebook friends of a
-     * given user. If a notification of the given id is already active for that user, an exception
-     * is thrown.
-     */
-    public void scheduleFriendNotification (SessionInfo session, String notificationId,
-        Map<String, String> replacements, boolean appOnly)
-        throws ServiceException
-    {
-        scheduleNotification(session.siteId, session.memRec, session.fbid,
-            notificationId, replacements, appOnly, 0);
-    }
-
-    /**
      * Loads the map records for all the given member's facebook friends. Throws an exception if
      * the session isn't valid or if the facebook friends could not be loaded.
      * @param limit maximum number of friends to retrieve, or 0 to retrieve all
@@ -506,35 +471,6 @@ public class FacebookLogic
         return _listRepo.getCursorItems(Arrays.asList(MOCHI_BUCKETS), MOCHI_CURSOR);
     }
 
-    /**
-     * Gets the list of notification ids that will be used when sending notifications after the
-     * featured games are updated. This only applies to the default games application.
-     */
-    public List<String> getDailyGamesUpdatedNotifications ()
-        throws ServiceException
-    {
-        return _listRepo.getList(DAILY_GAMES_LIST, false);
-    }
-
-    /**
-     * Sets the list of notification ids that will be used when sending notifications after the
-     * featured games are updated. Throws an exception if any of the ids do not correspond to a
-     * notification. This only applies to the default games application.
-     */
-    public void setDailyGamesUpdatedNotifications (List<String> ids)
-        throws ServiceException
-    {
-        int appId = _defaultSite.getFacebookAppId();
-        for (String id : ids) {
-            if (_facebookRepo.loadNotification(appId, id) == null) {
-                throw new ServiceException(MessageBundle.tcompose(
-                    AppCodes.E_NO_SUCH_NOTIFICATION, id));
-            }
-        }
-        _listRepo.setList(DAILY_GAMES_LIST, ids);
-        _listRepo.advanceCursor(DAILY_GAMES_LIST, DAILY_GAMES_CURSOR);
-    }
-
     public void testUpdateFeaturedGames ()
     {
         updateFeaturedGames(true);
@@ -551,81 +487,6 @@ public class FacebookLogic
             }
             replacements.put(varName, url = SharedNaviUtil.buildRequest(url,
                 FBParam.TRACKING.name, trackingId.flatten()));
-        }
-    }
-
-    /**
-     * Replaces wildcards in a notification template and schedules it to be sent using a unique
-     * batch id.
-     * @param session user session or null if this is a global send
-     * @param notifId the id of the template notification
-     * @param replacements wildcards to replace in the text of the template
-     * @param appOnly if the session is provided, limits recipients to friends that use the app
-     * @param delay time in minutes after which to do the send
-     * @throws ServiceException
-     */
-    protected void scheduleNotification (ExternalSiteId siteId, MemberRecord memRec, Long fbid,
-        String notifId, Map<String, String> replacements, boolean appOnly, int delay)
-        throws ServiceException
-    {
-        // only apps have notifications
-        Preconditions.checkArgument(siteId.getFacebookAppId() != null);
-
-        // load up & verify the template
-        FacebookNotificationRecord template =
-            _facebookRepo.loadNotification(siteId.getFacebookAppId(), notifId);
-        if (template == null) {
-            log.warning("Unable to load notification", "siteId", siteId, "id", notifId);
-            return;
-        }
-        if (StringUtil.isBlank(template.text)) {
-            throw new ServiceException(AppCodes.E_NOTIFICATION_BLANK);
-        }
-
-        // generate a batch id
-        String batchId = notifId + "." + BATCH_FMT.format(new Date());
-        if (memRec != null) {
-            batchId += "." + String.valueOf(memRec.memberId);
-        }
-
-        // grab a tracking id
-        TrackingId trackingId = new TrackingId(
-            LinkType.NOTIFICATION, notifId, fbid == null ? 0 : fbid);
-
-        // add replacements for <fb:name> etc if we have a user session
-        if (fbid != null) {
-            replacements.put("uid", fbid.toString());
-        }
-
-        // tack on tracking and affiliate to the urls, if present
-        updateURL(replacements, "game_url", memRec, trackingId);
-        updateURL(replacements, "app_url", memRec, trackingId);
-
-        // do the replacements and create the instance
-        String text = Wildcards.replace(template.text, replacements);
-
-        // create the batch
-        NotificationBatch batch = new NotificationBatch(
-            siteId, batchId, text, trackingId, memRec, appOnly);
-
-        // insert into map and schedule
-        synchronized (_notifications) {
-            NotificationBatch prior = _notifications.get(batchId);
-            if (prior != null) {
-                prior.cancel();
-            }
-            _notifications.put(batchId, batch);
-            batch.schedule(delay * 60 * 1000L);
-        }
-
-        long startTime = System.currentTimeMillis() + delay * 60 * 1000L;
-        _facebookRepo.noteNotificationScheduled(siteId.getFacebookAppId(), batchId, startTime);
-    }
-
-    protected void removeNotification (String id)
-    {
-        synchronized (_notifications) {
-            _notifications.remove(id);
         }
     }
 
@@ -672,49 +533,6 @@ public class FacebookLogic
             // pass along the translated text for now
             throw new ServiceException(fe.getMessage());
         }
-    }
-
-    protected <T> Collection<String> sendNotifications (FacebookJaxbRestClient client, int appId,
-        String id, String text, List<T> batch, Function<T, FQL.Exp> toUserId,
-        Predicate<FQLQuery.Record> filter, boolean global)
-    {
-        try {
-            _facebookRepo.noteNotificationProgress(appId, id, "Verifying", 0, 0);
-
-            List<FQL.Exp> uids = Lists.transform(batch, toUserId);
-
-            // we query whether each user in our list is a user of the application so that we
-            // aren't sending out tons of notifications that don't reach anyone
-            // TODO: this is not ideal since one of the callers of this method does not care if
-            // the targets are app users or not
-            // TODO: if we kept our ExternalMapRecord entries up to date as mentioned above in the
-            // class TODO comments, we could probably avoid this query
-            FQLQuery getUsers = new FQLQuery(USERS_TABLE, new FQL.Field[] {UID, IS_APP_USER},
-                new FQL.Where(UID.in(uids)));
-
-            List<Long> targetIds = Lists.newArrayListWithCapacity(uids.size());
-            for (FQLQuery.Record result : getUsers.run(client)) {
-                if (!filter.apply(result)) {
-                    continue;
-                }
-                targetIds.add(Long.valueOf(result.getField(UID)));
-            }
-
-            if (targetIds.size() > 0) {
-                _facebookRepo.noteNotificationProgress(
-                    appId, id, "Sending", targetIds.size(), 0);
-                Collection<String> sent = client.notifications_send(targetIds, text, global);
-                _facebookRepo.noteNotificationProgress(
-                    appId, id, "Sent", 0, sent.size());
-                return sent;
-            }
-
-        } catch (Exception e) {
-            log.warning("Failed to send notifications", "id", id, "targetCount", batch.size(),
-                "rawResponse", client.getRawResponse(), e);
-        }
-
-        return Collections.emptyList();
     }
 
     protected void updateDemographics ()
@@ -841,23 +659,6 @@ public class FacebookLogic
         for (String bucket : MOCHI_BUCKETS) {
             _listRepo.advanceCursor(bucket, MOCHI_CURSOR);
         }
-
-        if (test) {
-            return;
-        }
-
-        try {
-            // auto-notifications only go out on the default games app
-            String notifId = _listRepo.getCursorItem(DAILY_GAMES_LIST, DAILY_GAMES_CURSOR);
-            FacebookInfoRecord wgames = loadSiteInfo(_defaultSite);
-            if (notifId != null && wgames != null) {
-                scheduleNotification(ExternalSiteId.facebookApp(wgames.appId), notifId, 5);
-                _listRepo.advanceCursor(DAILY_GAMES_LIST, DAILY_GAMES_CURSOR);
-            }
-
-        } catch (ServiceException ex) {
-            log.warning("Could not send daily games notification", ex);
-        }
     }
 
     /**
@@ -878,179 +679,8 @@ public class FacebookLogic
         return results;
     }
 
-    /**
-     * A notification batch.
-     */
-    protected class NotificationBatch
-        extends Invoker.Unit
-    {
-        /**
-         * Creates a notification batch targeting the designated subset of a specific memeber's
-         * friends, or global if the member is null.
-         */
-        public NotificationBatch (
-            ExternalSiteId siteId, String batchId, String text, TrackingId trackingId,
-            MemberRecord mrec, boolean appFriendsOnly)
-        {
-            _siteId = siteId;
-            _batchId = batchId;
-            _text = text;
-            _trackingId = trackingId;
-            _mrec = mrec;
-            _appFriendsOnly = appFriendsOnly;
-        }
-
-        /**
-         * Schedules the batch to run after the given number of milliseconds.
-         */
-        public void schedule (long delay)
-        {
-            _interval.schedule(delay, false);
-        }
-
-        /**
-         * If the notification is scheduled, removes it and stops it from running.
-         */
-        public void cancel ()
-        {
-            _interval.cancel();
-        }
-
-        /**
-         * Synchronously sends out notifications to all targets (friends of a member).
-         */
-        protected void trySendFriends ()
-            throws ServiceException
-        {
-            // TODO: fetch the N value on a timer from the API instead of using the runtime config
-            int alloc = _runtime.server.fbNotificationsAlloc;
-            int appId = _siteId.getFacebookAppId();
-
-            if (_appFriendsOnly) {
-                // this will only send to the first N users where N is the "notifications_per_day"
-                // allocation
-                // TODO: optimize the target selection? (remove the shuffle when we do that)
-                // NOTE: wtf? the facebook api is throwing an exception, perhaps because FB
-                // have changed the documented behavior of this method... try to limit how many we
-                // send, see if exception stops
-                List<ExternalMapRecord> targets = loadMappedFriends(_siteId, _mrec, false, alloc);
-                SessionInfo sinf = loadSessionInfo(_siteId, _mrec, BATCH_READ_TIMEOUT);
-                Collection<String> recipients = sendNotifications(sinf.client, appId, _batchId,
-                    _text, targets, MAPREC_TO_UID_EXP, APP_USER_FILTER, false);
-                _tracker.trackNotificationSent(appId, sinf.fbid, _trackingId, recipients);
-            } else {
-                // see above
-                List<Long> targets = loadFriends(_siteId, _mrec);
-                Collections.shuffle(targets);
-                targets = alloc >= targets.size() ? targets : targets.subList(0, alloc);
-                SessionInfo sinf = loadSessionInfo(_siteId, _mrec, BATCH_READ_TIMEOUT);
-                Collection<String> recipients = sendNotifications(sinf.client, appId, _batchId,
-                    _text, targets, new Function<Long, FQL.Exp> () {
-                    public FQL.Exp apply (Long uid) {
-                        return FQL.unquoted(uid);
-                    }
-                }, Predicates.<FQLQuery.Record>alwaysTrue(), false);
-                _tracker.trackNotificationSent(appId, sinf.fbid, _trackingId, recipients);
-            }
-        }
-
-        /**
-         * Asynchronously sends to all mapped users by daisy chaining small batches on the invoker.
-         * This is so as not to cause undue delay to other jobs that use the batch invoker.
-         */
-        protected void trySendGlobal (final Runnable onFinish)
-        {
-            final List<ExternalMapRecord> allUsers = _memberRepo.loadExternalMappings(_siteId);
-            log.info("Kicking off notifications daisy-chain", "size", allUsers.size());
-
-            final FacebookJaxbRestClient client = getFacebookClient(_siteId, BATCH_READ_TIMEOUT);
-            final int BATCH_SIZE = 100;
-
-            Invoker.Unit job = new Invoker.Unit("Facebook notification") {
-                int pos;
-                public boolean invoke () {
-                    if (_shutdown) {
-                        log.warning("Server is shutting down, skipping notifications",
-                            "pos", pos, "size", allUsers.size());
-                        onFinish.run();
-                        return false;
-                    }
-                    List<ExternalMapRecord> batch = allUsers.subList(pos,
-                        Math.min(pos + BATCH_SIZE, allUsers.size()));
-                    Collection<String> recipients = sendNotifications(client,
-                        _siteId.getFacebookAppId(), _batchId, _text, batch, MAPREC_TO_UID_EXP,
-                        APP_USER_FILTER, true);
-
-                    // Kontagent doesn't supply a special message for global notifications,
-                    // so just set sender id to 0
-                    // TODO: we may need to do something different for global notifications
-                    _tracker.trackNotificationSent(
-                        _siteId.getFacebookAppId(), 0, _trackingId, recipients);
-
-                    pos += BATCH_SIZE;
-                    if (pos < allUsers.size()) {
-                        _batchInvoker.postUnit(this);
-                    } else {
-                        onFinish.run();
-                    }
-                    return false;
-                }
-                @Override public long getLongThreshold () {
-                    return 30 * 1000L;
-                }
-            };
-
-            _batchInvoker.postUnit(job);
-        }
-
-        public boolean invoke ()
-        {
-            Runnable onFinish = new Runnable() {
-                public void run () {
-                    _facebookRepo.noteNotificationProgress(
-                        _siteId.getFacebookAppId(), _batchId, "Finished", 0, 0);
-                    removeNotification(_batchId);
-                    log.info("Notification sending complete", "id", _batchId);
-                }
-            };
-
-            if (_mrec != null) {
-                try {
-                    trySendFriends();
-
-                } catch (Exception e) {
-                    log.warning("Send-level notification failure", "id", _batchId, e);
-
-                } finally {
-                    onFinish.run();
-                }
-            } else {
-                trySendGlobal(onFinish);
-            }
-            return false;
-        }
-
-        public long getLongThreshold ()
-        {
-            return 30 * 1000L;
-        }
-
-        protected ExternalSiteId _siteId;
-        protected String _batchId;
-        protected String _text;
-        protected TrackingId _trackingId;
-        protected MemberRecord _mrec;
-        protected boolean _appFriendsOnly;
-        protected Interval _interval = new Interval() {
-            public void expired () {
-                _batchInvoker.postUnit(NotificationBatch.this);
-            }
-        };
-    }
-
     // assume the default Whirled Games app is 1. This is far easier than anything else I tried.
     protected ExternalSiteId _defaultSite = ExternalSiteId.facebookApp(1);
-    protected Map<String, NotificationBatch> _notifications = Maps.newHashMap();
     protected boolean _shutdown;
 
     protected static final Function<ExternalMapRecord, FQL.Exp> MAPREC_TO_UID_EXP =
@@ -1123,9 +753,6 @@ public class FacebookLogic
     }
 
     protected static final String MOCHI_CURSOR = "";
-
-    protected static final String DAILY_GAMES_LIST = "DailyGamesNotifications";
-
     protected static final String DAILY_GAMES_CURSOR = "";
 
     // dependencies

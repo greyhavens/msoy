@@ -16,8 +16,6 @@ import com.google.inject.Inject;
 import com.threerings.msoy.apps.data.AppCodes;
 import com.threerings.msoy.apps.gwt.AppInfo;
 import com.threerings.msoy.apps.gwt.AppService;
-import com.threerings.msoy.apps.gwt.FacebookNotification;
-import com.threerings.msoy.apps.gwt.FacebookNotificationStatus;
 import com.threerings.msoy.apps.server.persist.AppInfoRecord;
 import com.threerings.msoy.apps.server.persist.AppRepository;
 
@@ -27,18 +25,14 @@ import com.threerings.msoy.facebook.gwt.FeedThumbnail;
 import com.threerings.msoy.facebook.gwt.KontagentInfo;
 import com.threerings.msoy.facebook.server.FacebookLogic;
 import com.threerings.msoy.facebook.server.persist.FacebookInfoRecord;
-import com.threerings.msoy.facebook.server.persist.FacebookNotificationRecord;
-import com.threerings.msoy.facebook.server.persist.FacebookNotificationStatusRecord;
 import com.threerings.msoy.facebook.server.persist.FacebookRepository;
 import com.threerings.msoy.facebook.server.persist.FacebookTemplateRecord;
 import com.threerings.msoy.facebook.server.persist.FeedThumbnailRecord;
 import com.threerings.msoy.facebook.server.persist.KontagentInfoRecord;
 
 import com.threerings.msoy.web.gwt.ClientMode;
-import com.threerings.msoy.web.gwt.ExternalSiteId;
 import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
-import com.threerings.util.MessageBundle;
 
 /**
  * Implements the application service.
@@ -75,12 +69,6 @@ public class AppServlet extends MsoyServiceServlet
         data.facebook = _facebookRepo.loadAppFacebookInfo(appId).toFacebookInfo();
         KontagentInfoRecord kinfo = _facebookRepo.loadKontagentInfo(appId);
         data.kontagent = kinfo==null ? new KontagentInfo("", "") : kinfo.toKontagentInfo();
-        if (appId == _facebookLogic.getDefaultGamesSite().getFacebookAppId()) {
-            data.dailyNotifications = Lists.newArrayList(
-                _facebookLogic.getDailyGamesUpdatedNotifications());
-        } else {
-            data.dailyNotifications = Lists.newArrayList();
-        }
         return data;
     }
 
@@ -106,69 +94,6 @@ public class AppServlet extends MsoyServiceServlet
     {
         requireApp(info.appId);
         _facebookRepo.updateFacebookInfo(FacebookInfoRecord.fromFacebookInfo(info));
-    }
-
-    @Override // from AppService
-    public void deleteNotification (int appId, String id)
-        throws ServiceException
-    {
-        requireApp(appId);
-        FacebookNotificationRecord notif = _facebookRepo.loadNotification(appId, id);
-        if (notif == null) {
-            throw new ServiceException(MessageBundle.tcompose(AppCodes.E_NO_SUCH_NOTIFICATION, id));
-        }
-        _facebookRepo.deleteNotification(appId, id);
-    }
-
-    @Override // from AppService
-    public List<FacebookNotification> loadNotifications (int appId)
-        throws ServiceException
-    {
-        requireApp(appId);
-        List<FacebookNotification> notifs = Lists.newArrayList();
-        for (FacebookNotificationRecord notif : _facebookRepo.loadNotifications(appId)) {
-            notifs.add(notif.toNotification());
-        }
-        return notifs;
-    }
-
-    @Override // from AppService
-    public void saveNotification (int appId, FacebookNotification notif)
-        throws ServiceException
-    {
-        requireApp(appId);
-        _facebookRepo.storeNotification(appId, notif.id, notif.text);
-    }
-
-    @Override // from AppService
-    public void scheduleNotification (int appId, String id, int delay)
-        throws ServiceException
-    {
-        requireApp(appId);
-        _facebookLogic.scheduleNotification(ExternalSiteId.facebookApp(appId), id, delay);
-    }
-
-    @Override // from AppService
-    public void setDailyNotifications (int appId, List<String> ids)
-        throws ServiceException
-    {
-        requireAdminUser();
-        if (appId != _facebookLogic.getDefaultGamesSite().getFacebookAppId()) {
-            throw new ServiceException(AppCodes.E_DAILY_NOTIFICATIONS_NOT_SUPPORTED);
-        }
-        _facebookLogic.setDailyGamesUpdatedNotifications(ids);
-    }
-
-    @Override // from AppService
-    public List<FacebookNotificationStatus> loadNotificationsStatus (int appId)
-        throws ServiceException
-    {
-        requireApp(appId);
-        List<FacebookNotificationStatus> statusList = Lists.newArrayList();
-        for (FacebookNotificationStatusRecord rec : _facebookRepo.loadNotificationStatus(appId)) {
-            statusList.add(rec.toStatus());
-        }
-        return statusList;
     }
 
     @Override // from AppService

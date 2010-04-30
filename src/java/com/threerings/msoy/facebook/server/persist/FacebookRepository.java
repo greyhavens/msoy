@@ -3,16 +3,12 @@
 
 package com.threerings.msoy.facebook.server.persist;
 
-import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.samskivert.depot.DataMigration;
@@ -46,20 +42,6 @@ public class FacebookRepository extends DepotRepository
 
         // workaround to add the new @Id column properly
         context.registerMigration(FacebookInfoRecord.class, new DropPrimaryKey(5));
-
-        // workaround to add the new @Id column properly
-        Class<FacebookNotificationRecord> fnr = FacebookNotificationRecord.class;
-        context.registerMigration(fnr, new DropPrimaryKey(3));
-
-        // drop the old columns, we don't care about the data in them
-        for (String col : new String[] {
-            "node", "progress", "started", "finished", "userCount", "sentCount"}) {
-            context.registerMigration(fnr, new SchemaMigration.Drop(3, col));
-        }
-
-        // explicitly add the app id column, it should not have a default value
-        context.registerMigration(fnr, new SchemaMigration.Add(
-            3, FacebookNotificationRecord.APP_ID, ""+0));
 
         // workaround to add the new @Id column properly
         context.registerMigration(FacebookTemplateRecord.class, new DropPrimaryKey(3));
@@ -233,99 +215,6 @@ public class FacebookRepository extends DepotRepository
     }
 
     /**
-     * Loads all notifications for an application.
-     */
-    public List<FacebookNotificationRecord> loadNotifications (int appId)
-    {
-        return findAll(FacebookNotificationRecord.class,
-            new Where(FacebookNotificationRecord.APP_ID.eq(appId)),
-            OrderBy.ascending(FacebookNotificationRecord.ID));
-    }
-
-    /**
-     * Loads the status of all notification batches for an application.
-     */
-    public List<FacebookNotificationStatusRecord> loadNotificationStatus (int appId)
-    {
-        final int MAX_STATUSES = 100;
-        return findAll(FacebookNotificationStatusRecord.class,
-            new Where(FacebookNotificationStatusRecord.APP_ID.eq(appId)),
-            OrderBy.descending(FacebookNotificationStatusRecord.START_TIME),
-            new Limit(0, MAX_STATUSES));
-    }
-
-    /**
-     * Updates or adds a new notification.
-     */
-    public FacebookNotificationRecord storeNotification (int appId, String id, String text)
-    {
-        FacebookNotificationRecord notifRec = loadNotification(appId, id);
-        if (notifRec != null) {
-            updatePartial(FacebookNotificationRecord.getKey(appId, id), ImmutableMap.of(
-                FacebookNotificationRecord.TEXT, text));
-            notifRec.text = text;
-
-        } else {
-            notifRec = new FacebookNotificationRecord();
-            notifRec.appId = appId;
-            notifRec.id = id;
-            notifRec.text = text;
-            insert(notifRec);
-        }
-        return notifRec;
-    }
-
-    /**
-     * Notes that the notification with the given id has been scheduled to run on the given node.
-     */
-    public void noteNotificationScheduled (int appId, String batchId, long startTime)
-    {
-        FacebookNotificationStatusRecord status = new FacebookNotificationStatusRecord();
-        status.appId = appId;
-        status.batchId = batchId;
-        status.startTime = new Timestamp(startTime);
-        status.progress = "Scheduled";
-        insert(status);
-    }
-
-    /**
-     * Notes a change in the progress of a running notification.
-     */
-    public void noteNotificationProgress (
-        int appId, String batchId, String newProgress, int userCountDelta, int sentCountDelta)
-    {
-        Map<ColumnExp, Object> updates = Maps.newHashMap();
-        if (newProgress != null) {
-            updates.put(FacebookNotificationStatusRecord.PROGRESS, newProgress);
-        }
-        if (userCountDelta != 0) {
-            updates.put(FacebookNotificationStatusRecord.USER_COUNT,
-                FacebookNotificationStatusRecord.USER_COUNT.plus(userCountDelta));
-        }
-        if (sentCountDelta != 0) {
-            updates.put(FacebookNotificationStatusRecord.SENT_COUNT,
-                FacebookNotificationStatusRecord.SENT_COUNT.plus(sentCountDelta));
-        }
-        updatePartial(FacebookNotificationStatusRecord.getKey(appId, batchId), updates);
-    }
-
-    /**
-     * Loads and returns the notification with the given id, or null if it does not exist.
-     */
-    public FacebookNotificationRecord loadNotification (int appId, String id)
-    {
-        return load(FacebookNotificationRecord.getKey(appId, id));
-    }
-
-    /**
-     * Deletes the notification with the given id.
-     */
-    public void deleteNotification (int appId, String id)
-    {
-        delete(FacebookNotificationRecord.getKey(appId, id));
-    }
-
-    /**
      * Loads all thumbnails assigned to the given game.
      */
     public List<FeedThumbnailRecord> loadGameThumbnails (int gameId)
@@ -427,8 +316,6 @@ public class FacebookRepository extends DepotRepository
     {
         classes.add(FacebookTemplateRecord.class);
         classes.add(FacebookActionRecord.class);
-        classes.add(FacebookNotificationRecord.class);
-        classes.add(FacebookNotificationStatusRecord.class);
         classes.add(FacebookInfoRecord.class);
         classes.add(FeedThumbnailRecord.class);
         classes.add(KontagentInfoRecord.class);

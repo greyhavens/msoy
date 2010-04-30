@@ -5,7 +5,6 @@ package com.threerings.msoy.facebook.gwt;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-import com.threerings.msoy.web.gwt.ArgNames;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.ArgNames.FBParam;
@@ -93,15 +92,6 @@ public class FacebookGame
     }
 
     /**
-     * Gets the arguments to pass to the FACEBOOK page in order to initiate a game challenge.
-     * @return
-     */
-    public Args getChallengeArgs ()
-    {
-        return Args.compose(choose(ArgNames.FB_GAME_CHALLENGE, ArgNames.FB_MOCHI_CHALLENGE), _id);
-    }
-
-    /**
      * Gets the CGI parameters to append to the canvas (application) url in order to get to this
      * game.
      */
@@ -128,9 +118,9 @@ public class FacebookGame
     @Override // from Object
     public int hashCode ()
     {
-        return type.hashCode() + _id.hashCode(); 
+        return type.hashCode() + _id.hashCode();
     }
 
-    /** The id of the game. */ 
+    /** The id of the game. */
     protected String _id;
 }
