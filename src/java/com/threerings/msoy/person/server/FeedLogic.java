@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.person.server;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -19,28 +17,15 @@ import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
 import com.samskivert.util.IntSet;
-import com.samskivert.util.RandomUtil;
 import com.samskivert.util.StringUtil;
-
-import com.google.code.facebookapi.IFeedImage;
-import com.google.code.facebookapi.FeedImage;
 
 import com.threerings.presents.annotation.BlockingThread;
 
-import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
-import com.threerings.msoy.web.gwt.ArgNames.FBParam;
-import com.threerings.msoy.web.gwt.ExternalSiteId;
-import com.threerings.msoy.web.gwt.SharedNaviUtil;
-
-import com.threerings.msoy.facebook.server.FacebookLogic;
-import com.threerings.msoy.facebook.server.persist.FacebookRepository;
-import com.threerings.msoy.facebook.server.persist.FacebookTemplateRecord;
-
 import com.threerings.msoy.game.server.persist.GameInfoRecord;
 
 import com.threerings.msoy.group.server.GroupLogic;
@@ -55,8 +40,6 @@ import com.threerings.msoy.person.server.persist.FeedMessageRecord;
 import com.threerings.msoy.person.server.persist.FeedRepository;
 import com.threerings.msoy.person.server.persist.FriendFeedMessageRecord;
 import com.threerings.msoy.person.server.persist.GroupFeedMessageRecord;
-
-import static com.threerings.msoy.Log.log;
 
 /**
  * Provides new feed related services to servlets and other blocking thread entities.
@@ -245,15 +228,8 @@ public class FeedLogic
         // them or something
         // TODO: use the scores too, but always replace previous feed items with the higher score
         if (playerIds.length == 1) {
-            boolean published = publishMemberMessage(playerIds[0],
-                FeedMessageType.FRIEND_PLAYED_GAME, game.name, game.gameId,
-                MediaDesc.mdToString(game.getThumbMedia()));
-
-            if (published) {
-                publishGameStory(playerIds[0], game.gameId, game.name, game.description, "played",
-                    game.getShotMedia());
-                // TODO: @Inject KontagentLogic and trackFeedPost(...)
-            }
+            publishMemberMessage(playerIds[0], FeedMessageType.FRIEND_PLAYED_GAME,
+                game.name, game.gameId, MediaDesc.mdToString(game.getThumbMedia()));
 
         } else {
             // TODO: multiplayer message
@@ -290,73 +266,6 @@ public class FeedLogic
         return messages;
     }
 
-    /**
-     * Does most of the legwork for publishing a game story to facebook.
-     */
-    protected void publishGameStory (int memberId, int gameId, String gameName,
-        String gameDescription, String templateCode, MediaDesc media, String ...moreData)
-    {
-        // TODO: can game stories be published anywhere but the default site?
-        ExternalSiteId siteId = _faceLogic.getDefaultGamesSite();
-
-        // get the facebook session key - we can't do anything wihout that
-        String sessionKey = _memberRepo.lookupExternalSessionKey(siteId, memberId);
-        if (sessionKey == null) {
-            return;
-        }
-
-        // lookup a random template variant
-        List<FacebookTemplateRecord> templates =
-            _faceRepo.loadVariants(siteId.getFacebookAppId(), templateCode);
-        if (templates.size() == 0) {
-            log.warning("No facebook templates", "code", templateCode);
-            return;
-        }
-
-        FacebookTemplateRecord template = RandomUtil.pickRandom(templates);
-
-        // set up the data for the story
-        String actionURL = SharedNaviUtil.buildRequest(_faceLogic.getCanvasUrl(siteId),
-            FBParam.GAME.name, ""+gameId, FBParam.VECTOR.name, template.toEntryVector());
-        Map<String, String> data = Maps.newHashMap();
-        data.put("action_url", actionURL);
-        data.put("game", gameName);
-        data.put("game_desc", gameDescription);
-        for (int ii = 0; ii < moreData.length; ii += 2) {
-            data.put(moreData[ii], moreData[ii + 1]);
-        }
-
-        // set up the images
-        List<IFeedImage> images = Lists.newArrayList();
-        try {
-            String imageUrl = media.getMediaPath();
-            // facebook proxies images, presumably to keep their site from looking like ass, so
-            // give 'em something to proxy if we are firewalled (iff dev for now)
-            if (DeploymentConfig.devDeployment) {
-                imageUrl = FAKE_PUBLIC_IMAGE_URL;
-            }
-            images.add(new FeedImage(new URL(imageUrl), new URL(actionURL)));
-        } catch (MalformedURLException mue) {
-            log.warning("Failed to add image to trophy story", "trophy", media.getMediaPath(),
-                        "action", actionURL, "error", mue);
-            // post the story anyway without images
-        }
-
-        try {
-            int storySize = 2; // short story (facebook will auto-reduce if we lack permissions)
-            if (!_faceLogic.getFacebookClient(siteId, sessionKey).feed_publishUserAction(
-                template.bundleId, data, images, Collections.<Long>emptyList(), null, storySize)) {
-                log.info("Failed to publish trophy story", "storyId", template.bundleId,
-                    "for", memberId);
-            }
-        } catch (Exception e) {
-            log.warning("Failed to post story to Facebook", "memId", memberId, "gameId", gameId,
-                "storyId", template.bundleId, "error", e);
-        }
-    }
-
-    @Inject protected FacebookLogic _faceLogic;
-    @Inject protected FacebookRepository _faceRepo;
     @Inject protected FeedRepository _feedRepo;
     @Inject protected GroupLogic _groupLogic;
     @Inject protected GroupRepository _groupRepo;
