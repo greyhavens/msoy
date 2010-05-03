@@ -275,7 +275,7 @@ public class StuffServlet extends MsoyServiceServlet
         }
 
         Item result = irec.toItem();
-        setThemeAttribute(mrec.themeGroupId, result);
+        setThemeAttribute(mrec, result);
         return result;
     }
 
@@ -304,7 +304,7 @@ public class StuffServlet extends MsoyServiceServlet
 
         ItemDetail detail = new ItemDetail();
         detail.item = record.toItem();
-        setThemeAttribute(mrec.themeGroupId, detail.item);
+        setThemeAttribute(mrec, detail.item);
         detail.creator = ((mrec != null) && (record.creatorId == mrec.memberId)) ?
             mrec.getName() : // shortcut for items we created
             _memberRepo.loadMemberName(record.creatorId); // normal lookup
@@ -351,12 +351,13 @@ public class StuffServlet extends MsoyServiceServlet
                 _groupRepo.loadGroupName(groupId));
     }
 
-    protected void setThemeAttribute (int themeId, Item item)
+    protected void setThemeAttribute (MemberRecord mrec, Item item)
         throws ServiceException
     {
         ItemRepository<ItemRecord> repo = _itemLogic.getRepository(item.getType());
         // mark it as stamped if we're not in a theme, or if it really is stamped for the theme
-        if (themeId == 0 || repo.isThemeStamped(themeId, item.itemId)) {
+        if (mrec == null || mrec.themeGroupId == 0 ||
+                repo.isThemeStamped(mrec.themeGroupId, item.itemId)) {
             item.attrs |= Item.ATTR_THEME_STAMPED;
         } else {
             item.attrs &= ~Item.ATTR_THEME_STAMPED;
