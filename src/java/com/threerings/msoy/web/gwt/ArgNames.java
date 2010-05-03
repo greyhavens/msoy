@@ -16,9 +16,6 @@ public class ArgNames
     /** Parameter designating the application id. */
     public static final String APP = "app";
 
-    /** Pick some friends to challenge. */
-    public static final String FB_CHALLENGE_PICK = "pick";
-
     /** Popup a dialog to publish a challenge to the feed. */
     public static final String FB_CHALLENGE_FEED = "feed";
 
