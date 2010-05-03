@@ -23,7 +23,6 @@ import com.google.code.facebookapi.FacebookException;
 import com.google.code.facebookapi.FacebookJaxbRestClient;
 import com.google.code.facebookapi.ProfileField;
 import com.google.code.facebookapi.schema.User;
-import com.google.code.facebookapi.schema.UsersGetInfoResponse;
 
 import com.samskivert.util.CollectionUtil;
 import com.samskivert.util.Comparators;
@@ -71,7 +70,6 @@ import com.threerings.msoy.money.server.persist.MoneyRepository;
 
 import com.threerings.msoy.web.gwt.ExternalSiteId;
 import com.threerings.msoy.web.gwt.ServiceException;
-import com.threerings.msoy.web.gwt.SharedNaviUtil;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 
 import static com.threerings.msoy.Log.log;
