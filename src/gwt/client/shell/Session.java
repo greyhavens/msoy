@@ -92,9 +92,8 @@ public class Session
         // fill in our global creds info
         CShell.creds = data.creds;
 
-        // clear out any old visitor cookie, and use the data from the server
-        VisitorCookie.clear();
-        _visitor = data.visitor;
+        // use the visitor data from the server
+        _visitor = VisitorCookie.upgrade(data.visitor);
 
         // let our observers know that we've just logged on
         for (Observer observer : _observers) {

@@ -38,6 +38,26 @@ public class VisitorCookie
     }
 
     /**
+     * When a player logs on and we receive their canonical visitorId from the server, we want
+     * to use the new one everywhere in the client as well as set the cookie to the new info.
+     */
+    public static VisitorInfo upgrade (VisitorInfo authoritative)
+    {
+        if (!authoritative.isAuthoritative) {
+            CShell.log("Huh? Asked to upgrade to a non-authoritative visitor info.");
+            return get();
+        }
+        String id = CookieUtil.get(CookieNames.VISITOR);
+        // if the authoritative cookie is different from what we have (or we have nothing), replace
+        if (id == null || !id.equals(authoritative.id)) {
+            CookieUtil.set("/", 365, CookieNames.VISITOR, authoritative.id);
+            CShell.log("Updated to " + authoritative);
+            id = authoritative.id;
+        }
+        return new VisitorInfo(id, true);
+    }
+
+    /**
      * Saves visitor information in the cookie, if the cookie doesn't already exist, or if the
      * /overwrite/ flag is set.
      */
