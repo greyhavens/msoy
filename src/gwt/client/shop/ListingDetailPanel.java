@@ -377,7 +377,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
                 _unlineBox.addItem(theme.toString());
                 _unlineEntries.add(theme);
 
-            } else if (theme.equals(_listing.brand.group)) {
+            } else if (_listing.brand != null && theme.equals(_listing.brand.group)) {
                 if (_detail.themes.contains(theme)) {
                     _lineBox.addItem(theme.toString());
                     _lineEntries.add(theme);
