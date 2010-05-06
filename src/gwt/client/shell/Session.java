@@ -185,32 +185,6 @@ public class Session
         return _visitor;
     }
 
-    protected static VisitorInfo ensureVisitorInfo ()
-    {
-        if (_visitor != null) {
-            return _visitor;
-        }
-        String vector = StringUtil.getOr(History.getToken(), Pages.LANDING.makeToken());
-        if (!VisitorCookie.exists()) {
-            // the server should always be creating a visitor cookie if one does not already
-            // exists, so if we get here we're most likely encountering somebody/something that
-            // does not handle cookies; for now we don't do anything draconian, we create a
-            // client-side visitorId and tell the server about it
-            _visitor = new VisitorInfo();
-            VisitorCookie.save(_visitor, false);
-            _membersvc.noteNewVisitor(_visitor, vector, false, new NoopAsyncCallback());
-            return _visitor;
-        }
-        // we're a known visitor, see if we were just created by the server
-        _visitor = VisitorCookie.get();
-        if (CookieUtil.get(CookieNames.NEED_GWT_VECTOR) != null) {
-            // if so, update the server-side entry vector
-            _membersvc.noteNewVisitor(_visitor, vector, true, new NoopAsyncCallback());
-            CookieUtil.clear("/", CookieNames.NEED_GWT_VECTOR);
-        }
-        return _visitor;
-    }
-
     protected static void setSessionCookie (String token)
     {
         CookieUtil.set("/", WebUserService.SESSION_DAYS, WebCreds.credsCookie(), token);
