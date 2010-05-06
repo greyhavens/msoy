@@ -15,7 +15,10 @@ public enum ReportType
     COINS(1, null, Currency.COINS, Currency.COINS.getLargeIcon()),
     BARS(2, null, Currency.BARS, Currency.BARS.getLargeIcon()),
     BLING(3, null, Currency.BLING, Currency.BLING.getLargeIcon()),
-    CREATOR(4, EnumSet.of(TransactionType.CREATOR_PAYOUT), null, "/images/profile/browseitems.png"),
+    CREATOR_COINS(4, EnumSet.of(TransactionType.CREATOR_PAYOUT),
+        Currency.COINS, "/images/profile/browseitems.png"),
+    CREATOR_BARS(5, EnumSet.of(TransactionType.CREATOR_PAYOUT),
+        Currency.BLING, "/images/profile/browseitems.png"),
     ;
 
     public int toIndex ()

@@ -9,6 +9,7 @@ import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.ReportType;
@@ -58,9 +59,16 @@ public class TransactionsPanel extends FlowPanel
         });
         reportBox.setSelectedIndex(reportIndex-1);
 
+        // figure out which display mode to use
+        Widget panel;
+        if (report == ReportType.CREATOR_BARS || report == ReportType.CREATOR_COINS) {
+            panel = new IncomePanel(model, reportBox);
+        } else {
+            panel = new BalancePanel(model, reportBox);
+        }
+
         // we use titleless tongue boxes here to make the indentation work
-        add(new TongueBox(null, (report == ReportType.CREATOR) ?
-            new IncomePanel(model, reportBox) : new BalancePanel(model, reportBox)));
+        add(new TongueBox(null, panel));
 
         // extra bits
         if (report == ReportType.BLING) {
@@ -77,10 +85,10 @@ public class TransactionsPanel extends FlowPanel
 
     protected static final MeMessages _msgs = GWT.create(MeMessages.class);
 
-    protected static final String[] REPORT_NAMES = {
-        _msgs.reportCoins(), _msgs.reportBars(), _msgs.reportBling(), _msgs.reportCreator()
+    protected static final String[] REPORT_NAMES = { _msgs.reportCoins(), _msgs.reportBars(),
+        _msgs.reportBling(), _msgs.reportCreatorCoins(), _msgs.reportCreatorBling()
     };
-    protected static final String[] REPORT_TIPS = {
-        _msgs.tipCoins(), _msgs.tipBars(), _msgs.tipBling(), _msgs.tipCreator()
+    protected static final String[] REPORT_TIPS = { _msgs.tipCoins(), _msgs.tipBars(),
+        _msgs.tipBling(), _msgs.tipCreatorCoins(), _msgs.tipCreatorBling()
     };
 }

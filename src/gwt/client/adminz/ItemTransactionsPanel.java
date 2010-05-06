@@ -15,10 +15,12 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.PagedTable;
 import com.threerings.gwt.ui.WidgetUtil;
+import com.threerings.gwt.util.DataModel;
 import com.threerings.gwt.util.DateUtil;
 
 import com.threerings.msoy.admin.gwt.AdminService;
 import com.threerings.msoy.admin.gwt.AdminServiceAsync;
+import com.threerings.msoy.admin.gwt.AdminService.ItemTransactionResult;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.gwt.ItemDetail;
@@ -26,8 +28,8 @@ import com.threerings.msoy.money.data.all.MoneyTransaction;
 
 import client.shell.DynamicLookup;
 import client.ui.MsoyUI;
+import client.util.InfoCallback;
 import client.util.Link;
-import client.util.MsoyPagedServiceDataModel;
 
 /**
  * Panel to list the transactions involving the sale of a given item.
@@ -81,7 +83,7 @@ public class ItemTransactionsPanel extends VerticalPanel
         MemberName memberName = _result != null ? _result.memberNames.get(entry.memberId) : null;
         String memberNameString = "" + (memberName != null ? memberName : entry.memberId);
         row.add(Link.memberView(memberNameString, entry.memberId));
-        
+
         String description = _dmsgs.xlate(MsoyUI.escapeHTML(entry.description));
         row.add(MsoyUI.createHTML(description, "Description"));
 
@@ -103,24 +105,30 @@ public class ItemTransactionsPanel extends VerticalPanel
         return row;
     }
 
-    protected class Model
-        extends MsoyPagedServiceDataModel<MoneyTransaction, AdminService.ItemTransactionResult>
+    protected class Model implements DataModel<MoneyTransaction>
     {
-        @Override // from ServiceBackedDataModel
-        protected void callFetchService (int start, int count, boolean needCount,
-            AsyncCallback<AdminService.ItemTransactionResult> callback)
+        @Override
+        public void doFetchRows (
+            int start, int count, final AsyncCallback<List<MoneyTransaction>> callback)
         {
-            _adminsvc.getItemTransactions(new ItemIdent(
-                _detail.item.getType(), _detail.item.itemId), start, count, needCount, callback);
+            ItemIdent ident = new ItemIdent(_detail.item.getType(), _detail.item.itemId);
+            _adminsvc.getItemTransactions(ident, start, count, new InfoCallback<ItemTransactionResult>() {
+                public void onSuccess (ItemTransactionResult result) {
+                    _result = result;
+                    callback.onSuccess(result.page);
+                }
+            });
         }
 
-        @Override // from ServiceBackedDataModel
-        protected void onSuccess (
-            AdminService.ItemTransactionResult result,
-            AsyncCallback<List<MoneyTransaction>> callback)
+        @Override
+        public int getItemCount ()
         {
-            _result = result;
-            super.onSuccess(result, callback);
+            return -1;
+        }
+
+        @Override
+        public void removeItem (MoneyTransaction item)
+        {
         }
     }
 

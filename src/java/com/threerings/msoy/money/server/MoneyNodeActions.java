@@ -43,7 +43,7 @@ public class MoneyNodeActions
      */
     public void moneyUpdated (MoneyTransactionRecord tx)
     {
-        moneyUpdated(tx.memberId, tx.currency, tx.amount);
+        moneyUpdated(tx.memberId, tx.getCurrency(), tx.amount);
     }
 
     protected void moneyUpdated (int memberId, Currency currency, int amount)

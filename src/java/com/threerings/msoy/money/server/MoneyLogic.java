@@ -5,6 +5,8 @@ package com.threerings.msoy.money.server;
 
 import java.text.NumberFormat;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -16,6 +18,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Ordering;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -634,7 +637,7 @@ public class MoneyLogic
             boolean magicFree = forceFree || (buyerTx.amount == 0 && buyCost != 0);
 
             // actually create the item!
-            T ware = buyOp.create(magicFree, buyerTx.currency, -buyerTx.amount);
+            T ware = buyOp.create(magicFree, buyCurrency, -buyerTx.amount);
 
             // go ahead and insert the buyer transaction
             buyerTx.fill(buyerTxType, buyMsgFn.apply(magicFree), subject);
@@ -723,31 +726,33 @@ public class MoneyLogic
         HashMap<Integer, int[]> vanishedPayouts = Maps.newHashMap();
         List<Integer> affiliatedTxIds = Lists.newArrayList();
         int[] systemPurse = getOrCreate(refunds, systemId, initRefund);
-        for (MoneyTransactionRecord txRec :
-            _repo.getTransactionsForSubject(item, 0, Integer.MAX_VALUE, false)) {
-            int currencyIdx = txRec.currency.ordinal();
+        for (Currency currency : Currency.values()) {
+            for (MoneyTransactionRecord txRec :
+                _repo.getTransactionsForSubject(item, currency, 0, Integer.MAX_VALUE, false)) {
+                int currencyIdx = currency.ordinal();
 
-            // record the earnings or spendings of this user (inverted amount) and merge spent bars
-            // as a coin refund, otherwise just add into total
-            if (txRec.amount < 0 && txRec.currency == Currency.BARS) {
-                getOrCreate(refunds, txRec.memberId, initRefund)[Currency.COINS.ordinal()] +=
-                    Math.floor(-txRec.amount * xchgRate);
+                // record the earnings or spendings of this user (inverted amount) and merge spent bars
+                // as a coin refund, otherwise just add into total
+                if (txRec.amount < 0 && currency == Currency.BARS) {
+                    getOrCreate(refunds, txRec.memberId, initRefund)[Currency.COINS.ordinal()] +=
+                        Math.floor(-txRec.amount * xchgRate);
 
-            } else {
-                getOrCreate(refunds, txRec.memberId, initRefund)[currencyIdx] -= txRec.amount;
-            }
+                } else {
+                    getOrCreate(refunds, txRec.memberId, initRefund)[currencyIdx] -= txRec.amount;
+                }
 
-            // resurrect vanished money too. this will not be docked from any account but will
-            // contribute to the pool
-            if (txRec.transactionType == TransactionType.CREATOR_PAYOUT ||
-                txRec.transactionType == TransactionType.BASIS_CREATOR_PAYOUT) {
-                systemPurse[currencyIdx] -= Math.ceil(txRec.amount * systemPct);
+                // resurrect vanished money too. this will not be docked from any account but will
+                // contribute to the pool
+                if (txRec.transactionType == TransactionType.CREATOR_PAYOUT ||
+                        txRec.transactionType == TransactionType.BASIS_CREATOR_PAYOUT) {
+                    systemPurse[currencyIdx] -= Math.ceil(txRec.amount * systemPct);
 
-                getOrCreate(vanishedPayouts, txRec.referenceTxId, initRefund)[currencyIdx] +=
-                    Math.ceil(txRec.amount * affiliatePct);
+                    getOrCreate(vanishedPayouts, txRec.referenceTxId, initRefund)[currencyIdx] +=
+                        Math.ceil(txRec.amount * affiliatePct);
 
-            } else if (txRec.transactionType == TransactionType.AFFILIATE_PAYOUT) {
-                affiliatedTxIds.add(txRec.referenceTxId);
+                } else if (txRec.transactionType == TransactionType.AFFILIATE_PAYOUT) {
+                    affiliatedTxIds.add(txRec.referenceTxId);
+                }
             }
         }
 
@@ -1047,8 +1052,7 @@ public class MoneyLogic
      * @param memberId ID of the member to retrieve money for.
      * @param transactionTypes Set of transaction types to retrieve logs for.  If null, all
      *      transactionTypes will be retrieved.
-     * @param currency Money type to retrieve logs for. If null, then records for all types are
-     * returned.
+     * @param currency Money type to retrieve logs for.
      * @param start Zero-based index of the first log item to return.
      * @param count The number of log items to return. If Integer.MAX_VALUE, this will return all
      * records.
@@ -1076,39 +1080,31 @@ public class MoneyLogic
     }
 
     /**
-     * Retrieves the total number of transaction history entries we have stored for this query.
-     *
-     * @param memberId ID of the member to count transactions for.
-     * @param transactionTypes Set of transaction types to retrieve logs for.  If null, all
-     *      transactionTypes will be counted.
-     * @param currency Currency to retrieve logs for. If null, then records for all money types are
-     * counted.
-     */
-    public int getTransactionCount (
-        int memberId, Set<TransactionType> transactionTypes, Currency currency)
-    {
-        return _repo.getTransactionCount(memberId, transactionTypes, currency);
-    }
-
-    /**
      * Loads all transactions that were inserted with the given subject.
      */
     public List<MoneyTransaction> getItemTransactions (
         ItemIdent item, int from, int count, boolean descending)
     {
+        List<MoneyTransactionRecord> records = Lists.newArrayList();
+        // we have to iterate over the currencies, load all the records of each currency
+        // leading up to the (from + count) point, then merge/sort them locally
+        for (Currency currency : Currency.values()) {
+            records.addAll(
+                _repo.getTransactionsForSubject(item, currency, 0, from + count, descending));
+        }
+
+        Ordering<Date> natural = Ordering.natural();
+        final Ordering<Date> comparator = descending ? natural.reverse() : natural;
+        Collections.sort(records, new Comparator<MoneyTransactionRecord>() {
+            public int compare (MoneyTransactionRecord o1, MoneyTransactionRecord o2) {
+                return comparator.compare(o1.timestamp, o2.timestamp);
+            }
+        });
+
         List<MoneyTransaction> txList = Lists.newArrayList(Iterables.transform(
-            _repo.getTransactionsForSubject(item, from, count, descending),
-            MoneyTransactionRecord.TO_TRANSACTION_SUPPORT));
+           records, MoneyTransactionRecord.TO_TRANSACTION_SUPPORT));
         fillInMemberNames(txList);
         return txList;
-    }
-
-    /**
-     * Counts the number of transactions that were inserted with the given subject.
-     */
-    public int getItemTransactionCount (ItemIdent item)
-    {
-        return _repo.getTransactionCountForSubject(item);
     }
 
     /**
@@ -1382,7 +1378,7 @@ public class MoneyLogic
         _userActionRepo.logUserAction(action);
 
         // record this to panopticon for the greater glory of our future AI overlords
-        _eventLog.moneyTransaction(action, tx.currency, tx.amount);
+        _eventLog.moneyTransaction(action, tx.getCurrency(), tx.amount);
     }
 
     /**
@@ -1462,7 +1458,7 @@ public class MoneyLogic
         if (notifySession) {
             _nodeActions.moneyUpdated(tx);
         }
-        if (tx.currency == Currency.COINS && tx.amount > 0 && tx.accAffected) {
+        if (tx.getCurrency() == Currency.COINS && tx.amount > 0 && tx.accAffected) {
             _memberLogic.maybeIncreaseLevel(tx.memberId, tx.accBalance - tx.amount, tx.accBalance);
         }
     }

@@ -7,7 +7,6 @@ import java.sql.Timestamp;
 
 import com.google.common.base.Function;
 
-import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.annotation.Column;
 import com.samskivert.depot.annotation.Entity;
@@ -32,8 +31,8 @@ import com.threerings.msoy.money.data.all.TransactionType;
  *
  * @author Kyle Sampson <kyle@threerings.net>
  */
-@Entity(indices={ @Index(name="ixSubject"), @Index(name="ixCurrencyTimestamp") })
-public class MoneyTransactionRecord extends PersistentRecord
+@Entity(indices=@Index(name="ixSubject"))
+public abstract class MoneyTransactionRecord extends PersistentRecord
 {
     /** Stores the data for the subject of a transaction. */
     public static class Subject
@@ -78,7 +77,6 @@ public class MoneyTransactionRecord extends PersistentRecord
     public static final ColumnExp MEMBER_ID = colexp(_R, "memberId");
     public static final ColumnExp TIMESTAMP = colexp(_R, "timestamp");
     public static final ColumnExp TRANSACTION_TYPE = colexp(_R, "transactionType");
-    public static final ColumnExp CURRENCY = colexp(_R, "currency");
     public static final ColumnExp AMOUNT = colexp(_R, "amount");
     public static final ColumnExp BALANCE = colexp(_R, "balance");
     public static final ColumnExp DESCRIPTION = colexp(_R, "description");
@@ -90,7 +88,7 @@ public class MoneyTransactionRecord extends PersistentRecord
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this if you change this object's schema. */
-    public static final int SCHEMA_VERSION = 6;
+    public static final int SCHEMA_VERSION = 1;
 
     /** Value of {@link #subjectType} when there is no subject. */
     public static final int SUBJECT_NONE = 0;
@@ -117,22 +115,6 @@ public class MoneyTransactionRecord extends PersistentRecord
         }
     };
 
-    /**
-     * Defines the subject multikey index.
-     */
-    public static ColumnExp[] ixSubject ()
-    {
-        return new ColumnExp[] { SUBJECT_TYPE, SUBJECT_ID_TYPE, SUBJECT_ID };
-    }
-
-    /**
-     * Defines the currency/timestamp multikey index.
-     */
-    public static ColumnExp[] ixCurrencyTimestamp ()
-    {
-        return new ColumnExp[] { CURRENCY, TIMESTAMP };
-    }
-
     /** ID of this record. */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -149,9 +131,6 @@ public class MoneyTransactionRecord extends PersistentRecord
     /** Type of transaction this history record was for. */
     @Column(defaultValue = "0") @Index(name="ixTransactionType")
     public TransactionType transactionType;
-
-    /** Type of money modified. */
-    public Currency currency;
 
     /** Amount debited/credited. */
     public int amount;
@@ -186,15 +165,18 @@ public class MoneyTransactionRecord extends PersistentRecord
     @Transient public long accBalance;
 
     /**
+     * Concrete subclasses identify which currency they represent through this method.
+     */
+    public abstract Currency getCurrency ();
+
+    /**
      * Create a new MoneyTransactionRecord.
      */
     public MoneyTransactionRecord (
-        int memberId, Currency currency, int amount, int balance, boolean accAffected,
-        long accBalance)
+        int memberId, int amount, int balance, boolean accAffected, long accBalance)
     {
         this.memberId = memberId;
         this.timestamp = new Timestamp(System.currentTimeMillis());
-        this.currency = currency;
         this.amount = amount;
         this.balance = balance;
         this.accAffected = accAffected;
@@ -223,7 +205,7 @@ public class MoneyTransactionRecord extends PersistentRecord
     public MoneyTransaction toMoneyTransaction ()
     {
         return new MoneyTransaction(
-            memberId, timestamp, transactionType, currency, amount, balance, description);
+            memberId, timestamp, transactionType, getCurrency(), amount, balance, description);
     }
 
     public MoneyTransaction toMoneyTransaction (boolean forSupport)
@@ -236,17 +218,4 @@ public class MoneyTransactionRecord extends PersistentRecord
         return mtx;
     }
 
-    // AUTO-GENERATED: METHODS START
-    /**
-     * Create and return a primary {@link Key} to identify a {@link MoneyTransactionRecord}
-     * with the supplied key values.
-     */
-    public static Key<MoneyTransactionRecord> getKey (int id)
-    {
-        return newKey(_R, id);
-    }
-
-    /** Register the key fields in an order matching the getKey() factory. */
-    static { registerKeyFields(ID); }
-    // AUTO-GENERATED: METHODS END
 }

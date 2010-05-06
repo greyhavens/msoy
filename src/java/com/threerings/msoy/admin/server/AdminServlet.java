@@ -343,8 +343,7 @@ public class AdminServlet extends MsoyServiceServlet
     }
 
     // from interface AdminService
-    public ItemTransactionResult getItemTransactions (
-        ItemIdent iident, int from, int count, boolean needCount)
+    public ItemTransactionResult getItemTransactions (ItemIdent iident, int from, int count)
         throws ServiceException
     {
         requireSupportUser();
@@ -356,9 +355,6 @@ public class AdminServlet extends MsoyServiceServlet
             throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
         }
         ItemTransactionResult result = new ItemTransactionResult();
-        if (needCount) {
-            result.total = _moneyLogic.getItemTransactionCount(iident);
-        }
         result.page = _moneyLogic.getItemTransactions(iident, from, count, false);
 
         Set<Integer> memberIds = Sets.newHashSet();

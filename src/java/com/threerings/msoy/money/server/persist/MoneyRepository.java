@@ -4,9 +4,7 @@
 package com.threerings.msoy.money.server.persist;
 
 import java.io.Serializable;
-import java.sql.Connection;
 import java.sql.Date;
-import java.sql.SQLException;
 import java.sql.Timestamp;
 
 import java.util.Collection;
@@ -26,7 +24,6 @@ import com.google.inject.Singleton;
 
 import com.samskivert.depot.CacheInvalidator.TraverseWithFilter;
 import com.samskivert.depot.CountRecord;
-import com.samskivert.depot.DataMigration;
 import com.samskivert.depot.DatabaseException;
 import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.DuplicateKeyException;
@@ -34,7 +31,6 @@ import com.samskivert.depot.Key;
 import com.samskivert.depot.Ops;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
-import com.samskivert.depot.SchemaMigration;
 import com.samskivert.depot.clause.FromOverride;
 import com.samskivert.depot.clause.Limit;
 import com.samskivert.depot.clause.OrderBy;
@@ -42,12 +38,9 @@ import com.samskivert.depot.clause.QueryClause;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.expression.SQLExpression;
-import com.samskivert.jdbc.DatabaseLiaison;
 import com.samskivert.util.Logger;
 
 import com.threerings.presents.annotation.BlockingThread;
-
-import com.threerings.msoy.data.all.DeploymentConfig;
 
 import com.threerings.msoy.money.data.all.CashOutBillingInfo;
 import com.threerings.msoy.money.data.all.Currency;
@@ -71,27 +64,6 @@ public class MoneyRepository extends DepotRepository
     public MoneyRepository (final PersistenceContext ctx)
     {
         super(ctx);
-
-        _ctx.registerMigration(MoneyTransactionRecord.class, new SchemaMigration(6) {
-            protected int invoke (Connection conn, DatabaseLiaison liaison) throws SQLException {
-                String ixName = _tableName + "_ixCurrency";
-                if (liaison.tableContainsIndex(conn, _tableName, ixName)) {
-                    log.info("Dropping index " + ixName + " using liaison: " + liaison);
-                    liaison.dropIndex(conn, _tableName, ixName);
-                    return 1;
-                }
-                log.warning(_tableName + " does not contain index " + ixName + " for dropping.");
-                return 0;
-            }
-        });
-
-        if (!DeploymentConfig.devDeployment) {
-            registerMigration(new DataMigration("2009_02_12_dumpBarsIntoExchange") {
-                @Override public void invoke () throws DatabaseException {
-                    adjustBarPool(15000);
-                }
-            });
-        }
     }
 
     /**
@@ -150,8 +122,46 @@ public class MoneyRepository extends DepotRepository
 
         // TODO: be able to get the balance at the same time as the update, pending Depot changes
         MemberAccountRecord acct = load(MemberAccountRecord.class, key);
-        return new MoneyTransactionRecord(memberId, currency, amount, acct.getAmount(currency),
+        return createTransactionRecord(currency, memberId, amount, acct.getAmount(currency),
             updateAcc, acct.getAccAmount(currency));
+
+    }
+
+    protected ColumnExp getColumn (Currency currency, ColumnExp pcol)
+    {
+        return new ColumnExp(getTransactionRecordClass(currency), pcol.name);
+    }
+
+    protected Class<? extends MoneyTransactionRecord> getTransactionRecordClass (Currency currency)
+    {
+        switch(currency) {
+        case COINS:
+            return CoinMoneyTransactionRecord.class;
+        case BARS:
+            return BarMoneyTransactionRecord.class;
+        case BLING:
+            return BlingMoneyTransactionRecord.class;
+        default:
+            throw new IllegalArgumentException("Unknown currency: " + currency);
+        }
+    }
+
+    protected MoneyTransactionRecord createTransactionRecord (Currency currency, int memberId,
+        int amount, int balance, boolean updateAcc, long accBalance)
+    {
+        switch(currency) {
+        case COINS:
+            return new CoinMoneyTransactionRecord(memberId, amount, balance,
+                updateAcc, accBalance);
+        case BARS:
+            return new BarMoneyTransactionRecord(memberId, amount, balance,
+                updateAcc, accBalance);
+        case BLING:
+            return new BlingMoneyTransactionRecord(memberId, amount, balance,
+                updateAcc, accBalance);
+        default:
+            throw new IllegalArgumentException("Unknown currency: " + currency);
+        }
     }
 
     /**
@@ -188,7 +198,7 @@ public class MoneyRepository extends DepotRepository
         }
 
         // Return the amount reserved, or 0 if it didn't work, but allowFree==true
-        return new MoneyTransactionRecord(memberId, currency, (count == 0) ? 0 : -amount, balance,
+        return createTransactionRecord(currency, memberId, (count == 0) ? 0 : -amount, balance,
             false, mar.getAccAmount(currency));
     }
 
@@ -244,7 +254,7 @@ public class MoneyRepository extends DepotRepository
     {
         Preconditions.checkArgument(deduction.amount <= 0, "Only deductions can be rolled back.");
         Preconditions.checkArgument(deduction.id == 0, "Transaction has already been inserted!");
-        ColumnExp currencyCol = MemberAccountRecord.getColumn(deduction.currency);
+        ColumnExp currencyCol = MemberAccountRecord.getColumn(deduction.getCurrency());
         Key<MemberAccountRecord> key = MemberAccountRecord.getKey(deduction.memberId);
         if (updatePartial(MemberAccountRecord.class, key, key,
                           currencyCol, currencyCol.plus(-deduction.amount)) == 0) {
@@ -267,42 +277,31 @@ public class MoneyRepository extends DepotRepository
         insert(transaction);
     }
 
-    public List<MoneyTransactionRecord> getTransactions (
+    public List<? extends MoneyTransactionRecord> getTransactions (
         int memberId, Set<TransactionType> transactionTypes, Currency currency,
         int start, int count, boolean descending)
     {
-        // select * from MemberAccountRecord where type = ? and transactionType in (?)
-        // and memberId=? order by timestamp
-        List<QueryClause> clauses = Lists.newArrayList();
-        populateSearch(clauses, memberId, transactionTypes, currency);
-
-        clauses.add(descending ?
-                    OrderBy.descending(MoneyTransactionRecord.TIMESTAMP) :
-                    OrderBy.ascending(MoneyTransactionRecord.TIMESTAMP));
-
-        if (count != Integer.MAX_VALUE) {
-            clauses.add(new Limit(start, count));
+        List<SQLExpression> where = Lists.newArrayList();
+        where.add(getColumn(currency, MoneyTransactionRecord.MEMBER_ID).eq(memberId));
+        if (transactionTypes != null) {
+            where.add(getColumn(currency, MoneyTransactionRecord.TRANSACTION_TYPE)
+                .in(transactionTypes));
         }
 
-        return findAll(MoneyTransactionRecord.class, clauses);
-    }
-
-    public int getTransactionCount (
-        int memberId, Set<TransactionType> transactionTypes, Currency currency)
-    {
-        List<QueryClause> clauses = Lists.newArrayList();
-        clauses.add(new FromOverride(MoneyTransactionRecord.class));
-        populateSearch(clauses, memberId, transactionTypes, currency);
-        return load(CountRecord.class, clauses.toArray(new QueryClause[clauses.size()])).count;
+        return findAll(getTransactionRecordClass(currency),
+            new Where(Ops.and(where)),
+            descending ?
+                OrderBy.descending(getColumn(currency, MoneyTransactionRecord.TIMESTAMP)) :
+                OrderBy.ascending(getColumn(currency, MoneyTransactionRecord.TIMESTAMP)),
+            new Limit(start, count));
     }
 
     public int deleteOldTransactions (Currency currency, long maxAge)
     {
         Timestamp cutoff = new Timestamp(System.currentTimeMillis() - maxAge);
-        Where where = new Where(
-            Ops.and(MoneyTransactionRecord.CURRENCY.eq(currency),
-                    MoneyTransactionRecord.TIMESTAMP.lessThan(cutoff)));
-        return deleteAll(MoneyTransactionRecord.class, where, null /* no cache invalidation */);
+        return deleteAll(getTransactionRecordClass(currency),
+            new Where(getColumn(currency, MoneyTransactionRecord.TIMESTAMP).lessThan(cutoff)),
+            null /* no cache invalidation */);
     }
 
     /**
@@ -312,33 +311,19 @@ public class MoneyRepository extends DepotRepository
      * @param count maximum number of transactions to return
      * @param descending if set, transactions are ordered newest to oldest
      */
-    public List<MoneyTransactionRecord> getTransactionsForSubject (
-        Object subject, int from, int count, boolean descending)
+    public List<? extends MoneyTransactionRecord> getTransactionsForSubject (
+        Object subject, Currency currency, int start, int count, boolean descending)
     {
         List<QueryClause> clauses = Lists.newArrayList();
-        clauses.add(makeSubjectSearch(subject));
-
-        clauses.add(descending ?
-            OrderBy.descending(MoneyTransactionRecord.TIMESTAMP) :
-            OrderBy.ascending(MoneyTransactionRecord.TIMESTAMP));
-
         if (count != Integer.MAX_VALUE) {
-            clauses.add(new Limit(from, count));
+            clauses.add(new Limit(start, count));
         }
+        clauses.add(makeSubjectSearch(currency, subject));
+        clauses.add(descending ?
+            OrderBy.descending(getColumn(currency, MoneyTransactionRecord.TIMESTAMP)) :
+            OrderBy.ascending(getColumn(currency, MoneyTransactionRecord.TIMESTAMP)));
 
-        return findAll(MoneyTransactionRecord.class, clauses);
-    }
-
-    /**
-     * Loads the number of recent transactions that were inserted with the given subject.
-     * @param subject the subject of the transaction to search for
-     */
-    public int getTransactionCountForSubject (Object subject)
-    {
-        List<QueryClause> clauses = Lists.newArrayList();
-        clauses.add(new FromOverride(MoneyTransactionRecord.class));
-        clauses.add(makeSubjectSearch(subject));
-        return load(CountRecord.class, clauses.toArray(new QueryClause[clauses.size()])).count;
+        return findAll(getTransactionRecordClass(currency), clauses);
     }
 
     /**
@@ -628,31 +613,14 @@ public class MoneyRepository extends DepotRepository
         return bpRec;
     }
 
-    /** Helper method to setup a query for a transaction history search. */
-    protected void populateSearch (
-        List<QueryClause> clauses, int memberId,
-        Set<TransactionType> transactionTypes, Currency currency)
-    {
-        List<SQLExpression> where = Lists.newArrayList();
-
-        where.add(MoneyTransactionRecord.MEMBER_ID.eq(memberId));
-        if (transactionTypes != null) {
-            where.add(MoneyTransactionRecord.TRANSACTION_TYPE.in(transactionTypes));
-        }
-        if (currency != null) {
-            where.add(MoneyTransactionRecord.CURRENCY.eq(currency));
-        }
-
-        clauses.add(new Where(Ops.and(where)));
-    }
-
-    protected Where makeSubjectSearch (Object subject)
+    protected Where makeSubjectSearch (Currency currency, Object subject)
     {
         MoneyTransactionRecord.Subject subj = new MoneyTransactionRecord.Subject(subject);
+
         List<SQLExpression> where = Lists.newArrayList();
-        where.add(MoneyTransactionRecord.SUBJECT_TYPE.eq(subj.type));
-        where.add(MoneyTransactionRecord.SUBJECT_ID_TYPE.eq(subj.idType));
-        where.add(MoneyTransactionRecord.SUBJECT_ID.eq(subj.id));
+        where.add(getColumn(currency, MoneyTransactionRecord.SUBJECT_TYPE).eq(subj.type));
+        where.add(getColumn(currency, MoneyTransactionRecord.SUBJECT_ID_TYPE).eq(subj.idType));
+        where.add(getColumn(currency, MoneyTransactionRecord.SUBJECT_ID).eq(subj.id));
         return new Where(Ops.and(where));
     }
 
@@ -660,7 +628,9 @@ public class MoneyRepository extends DepotRepository
     protected void getManagedRecords (final Set<Class<? extends PersistentRecord>> classes)
     {
         classes.add(MemberAccountRecord.class);
-        classes.add(MoneyTransactionRecord.class);
+        classes.add(CoinMoneyTransactionRecord.class);
+        classes.add(BarMoneyTransactionRecord.class);
+        classes.add(BlingMoneyTransactionRecord.class);
         classes.add(MoneyConfigRecord.class);
         classes.add(BlingCashOutRecord.class);
         classes.add(BarPoolRecord.class);

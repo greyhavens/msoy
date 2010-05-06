@@ -5,22 +5,23 @@ package com.threerings.msoy.money.data.all;
 
 import java.util.List;
 
-import com.threerings.gwt.util.PagedResult;
+import com.google.gwt.user.client.rpc.IsSerializable;
 
 /**
  * Contains all of the information needed for the Transactions page.
- *
- * @author Kyle Sampson <kyle@threerings.net>
  */
-public class TransactionPageResult extends PagedResult<MoneyTransaction>
+public class TransactionPageResult
+    implements IsSerializable
 {
     /** The user's current bling information. */
     public /* final */ BlingInfo blingInfo;
 
-    public TransactionPageResult (int total, List<MoneyTransaction> page, BlingInfo blingInfo)
+    /** The current page of elements */
+    public List<MoneyTransaction> page;
+
+    public TransactionPageResult (List<MoneyTransaction> page, BlingInfo blingInfo)
     {
         this.blingInfo = blingInfo;
-        this.total = total;
         this.page = page;
     }
 

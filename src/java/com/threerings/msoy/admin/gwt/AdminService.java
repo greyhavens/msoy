@@ -153,8 +153,7 @@ public interface AdminService extends RemoteService
     /**
      * Gets a page of transactions for a flagged item.
      */
-    ItemTransactionResult getItemTransactions (
-        ItemIdent iident, int from, int count, boolean needCount)
+    ItemTransactionResult getItemTransactions (ItemIdent iident, int from, int count)
         throws ServiceException;
 
     /**

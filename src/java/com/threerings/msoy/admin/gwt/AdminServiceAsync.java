@@ -66,7 +66,7 @@ public interface AdminServiceAsync
     /**
      * The async version of {@link AdminService#getItemTransactions}.
      */
-    void getItemTransactions (ItemIdent iident, int from, int count, boolean needCount, AsyncCallback<AdminService.ItemTransactionResult> callback);
+    void getItemTransactions (ItemIdent iident, int from, int count, AsyncCallback<AdminService.ItemTransactionResult> callback);
 
     /**
      * The async version of {@link AdminService#deleteItemAdmin}.
