@@ -1102,7 +1102,10 @@ public class MoneyLogic
         });
 
         // now that the records from the three tables are merged and sorted, get the bit we want
-        records = records.subList(from, from + count);
+        if (records.size() < from) {
+            return Lists.newArrayList();
+        }
+        records = records.subList(from, Math.min(records.size(), from + count));
 
         // finally spruce it up for the client
         List<MoneyTransaction> txList = Lists.newArrayList(Iterables.transform(
