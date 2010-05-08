@@ -355,7 +355,7 @@ public class AdminServlet extends MsoyServiceServlet
             throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
         }
         ItemTransactionResult result = new ItemTransactionResult();
-        result.page = _moneyLogic.getItemTransactions(iident, from, count, false);
+        result.page = _moneyLogic.getItemTransactions(iident, from, count, true);
 
         Set<Integer> memberIds = Sets.newHashSet();
         for (MoneyTransaction tx : result.page) {
