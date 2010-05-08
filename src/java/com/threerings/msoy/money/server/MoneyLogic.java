@@ -6,7 +6,6 @@ package com.threerings.msoy.money.server;
 import java.text.NumberFormat;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -19,7 +18,6 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Ordering;
-
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -1093,13 +1091,13 @@ public class MoneyLogic
                 _repo.getTransactionsForSubject(item, currency, 0, from + count, descending));
         }
 
-        Ordering<Date> natural = Ordering.natural();
-        final Ordering<Date> comparator = descending ? natural.reverse() : natural;
-        Collections.sort(records, new Comparator<MoneyTransactionRecord>() {
-            public int compare (MoneyTransactionRecord o1, MoneyTransactionRecord o2) {
-                return comparator.compare(o1.timestamp, o2.timestamp);
-            }
-        });
+        Ordering<MoneyTransactionRecord> ordering =
+            Ordering.from(new Comparator<MoneyTransactionRecord>() {
+                public int compare (MoneyTransactionRecord o1, MoneyTransactionRecord o2) {
+                    return o1.timestamp.compareTo(o2.timestamp);
+                }
+            });
+        Collections.sort(records, descending ? ordering.reverse() : ordering);
 
         // now that the records from the three tables are merged and sorted, get the bit we want
         if (records.size() < from) {
