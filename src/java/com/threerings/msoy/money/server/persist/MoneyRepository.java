@@ -542,12 +542,11 @@ public class MoneyRepository extends DepotRepository
         // we only delete money records for permaguests
         deleteAll(MemberAccountRecord.class,
                   new Where(MemberAccountRecord.MEMBER_ID.in(guestIds)));
-        // we delete transaction records for both (TODO: maybe we should preserve tx records for
-        // deleted members for a while... oh the complexities)
-        deleteAll(MoneyTransactionRecord.class,
-                  new Where(MoneyTransactionRecord.MEMBER_ID.in(
-                                Sets.union(Sets.newHashSet(guestIds),
-                                           Sets.newHashSet(memberIds)))));
+
+        // delete COINS transactions (not very interesting), but keep a trail of bars/bling
+        deleteAll(getTransactionRecordClass(Currency.COINS),
+            new Where(getColumn(Currency.COINS, MoneyTransactionRecord.MEMBER_ID).in(
+                Sets.union(Sets.newHashSet(guestIds), Sets.newHashSet(memberIds)))));
     }
 
     /**
