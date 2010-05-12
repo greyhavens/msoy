@@ -332,27 +332,11 @@ public class MsoySceneRepository extends DepotRepository
      * @param portalAction to where to link the new room's door.
      * @param firstTime whether this the first room this owner has created.
      */
-    public SceneRecord createBlankRoom (
-        byte ownerType, int ownerId, String roomName, String portalAction, boolean firstTime)
+    public SceneRecord createBlankRoom (byte ownerType, int ownerId, int stockSceneId,
+        int themeId, String roomName, String portalAction)
     {
-        // determine the scene id to clone
-        SceneRecord.Stock stock = null;
-        switch (ownerType) {
-        case MsoySceneModel.OWNER_TYPE_MEMBER:
-            stock = firstTime ? SceneRecord.Stock.FIRST_MEMBER_ROOM :
-                SceneRecord.Stock.EXTRA_MEMBER_ROOM;
-            break;
-        case MsoySceneModel.OWNER_TYPE_GROUP:
-            stock = firstTime ? SceneRecord.Stock.FIRST_GROUP_HALL :
-                 SceneRecord.Stock.EXTRA_GROUP_HALL;
-            break;
-        }
-
         // load up the stock scene
-        SceneRecord record = null;
-        if (stock != null) {
-            record = load(SceneRecord.class, SceneRecord.getKey(stock.getSceneId()));
-        }
+        SceneRecord record = load(SceneRecord.class, SceneRecord.getKey(stockSceneId));
 
         // if we fail to load a stock scene, just create a totally blank scene
         if (record == null) {
@@ -362,6 +346,7 @@ public class MsoySceneRepository extends DepotRepository
             model.ownerId = ownerId;
             model.version = 1;
             model.name = roomName;
+            model.themeId = themeId;
             return insertScene(model);
         }
 
@@ -369,13 +354,14 @@ public class MsoySceneRepository extends DepotRepository
         record.accessControl = MsoySceneModel.ACCESS_EVERYONE;
         record.ownerType = ownerType;
         record.ownerId = ownerId;
+        record.themeGroupId = themeId;
         record.name = roomName;
         record.version = 1;
         record.sceneId = 0;
         insert(record);
 
         // now load up furni from the stock scene
-        Where where = new Where(SceneFurniRecord.SCENE_ID, stock.getSceneId());
+        Where where = new Where(SceneFurniRecord.SCENE_ID, stockSceneId);
         for (SceneFurniRecord furni : findAll(SceneFurniRecord.class, where)) {
             furni.sceneId = record.sceneId;
             // if the scene has a portal pointing to the default public space; rewrite it to point

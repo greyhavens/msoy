@@ -203,11 +203,10 @@ public class WebRoomServlet extends MsoyServiceServlet
             public RoomInfo create (boolean magicFree, Currency currency, int amountPaid) {
                 String name = _serverMsgs.getBundle("server").get("m.new_room_name", mrec.name);
                 return _sceneRepo.createBlankRoom(MsoySceneModel.OWNER_TYPE_MEMBER, mrec.memberId,
-                                                  name, null, false).toRoomInfo();
+                    SceneRecord.Stock.EXTRA_MEMBER_ROOM.getSceneId(), 0, name, null).toRoomInfo();
             }
         }).toPurchaseResult();
     }
-
 
     // from interface WebRoomService
     public void stampRoom (int sceneId, int groupId, boolean doStamp)

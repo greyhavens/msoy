@@ -329,10 +329,10 @@ public class GroupRepository extends DepotRepository
         record.creationDate = new Date(System.currentTimeMillis());
         insert(record);
 
-        SceneRecord newScene = _sceneRepo.createBlankRoom(
-            MsoySceneModel.OWNER_TYPE_GROUP, record.groupId, record.name, null, true);
+        SceneRecord newScene = _sceneRepo.createBlankRoom(MsoySceneModel.OWNER_TYPE_GROUP,
+            record.groupId, SceneRecord.Stock.FIRST_GROUP_HALL.getSceneId(), 0, record.name, null);
         updatePartial(GroupRecord.getKey(record.groupId),
-                      GroupRecord.HOME_SCENE_ID, newScene.sceneId);
+            GroupRecord.HOME_SCENE_ID, newScene.sceneId);
 
         return record.groupId;
     }
