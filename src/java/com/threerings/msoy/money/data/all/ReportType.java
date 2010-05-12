@@ -5,7 +5,6 @@ package com.threerings.msoy.money.data.all;
 
 import java.util.EnumSet;
 import java.util.Set;
-
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 /** The format of a transaction report. */
@@ -15,10 +14,10 @@ public enum ReportType
     COINS(1, null, Currency.COINS, Currency.COINS.getLargeIcon()),
     BARS(2, null, Currency.BARS, Currency.BARS.getLargeIcon()),
     BLING(3, null, Currency.BLING, Currency.BLING.getLargeIcon()),
-    CREATOR_COINS(4, EnumSet.of(TransactionType.CREATOR_PAYOUT),
-        Currency.COINS, "/images/profile/browseitems.png"),
-    CREATOR_BARS(5, EnumSet.of(TransactionType.CREATOR_PAYOUT),
-        Currency.BLING, "/images/profile/browseitems.png"),
+    CREATOR_COINS(4, EnumSet.of(TransactionType.CREATOR_PAYOUT,
+        TransactionType.BASIS_CREATOR_PAYOUT), Currency.COINS, "/images/profile/browseitems.png"),
+    CREATOR_BARS(5, EnumSet.of(TransactionType.CREATOR_PAYOUT,
+        TransactionType.BASIS_CREATOR_PAYOUT), Currency.BLING, "/images/profile/browseitems.png"),
     ;
 
     public int toIndex ()
