@@ -27,10 +27,7 @@ import com.threerings.msoy.money.server.MoneyLogic;
 import com.threerings.msoy.person.server.persist.InvitationRecord;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
 import com.threerings.msoy.person.server.persist.ProfileRepository;
-import com.threerings.msoy.room.data.MsoySceneModel;
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
-import com.threerings.msoy.room.server.persist.SceneRecord;
-
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.all.CoinAwards;
@@ -425,13 +422,6 @@ public class AccountLogic
             if (data.exSite != null) {
                 _memberRepo.mapExternalAccount(data.exSite, data.exAuthUserId, mrec.memberId);
             }
-
-            // create a blank room for them, store it
-            final String name = _serverMsgs.getBundle("server").get("m.new_room_name");
-            SceneRecord scene = _sceneRepo.createBlankRoom(MsoySceneModel.OWNER_TYPE_MEMBER,
-                mrec.memberId, SceneRecord.Stock.FIRST_MEMBER_ROOM.getSceneId(), 0, name, null);
-            mrec.homeSceneId = scene.sceneId;
-            _memberRepo.setHomeSceneId(mrec.memberId, mrec.homeSceneId);
 
             // create their money account, granting them some starting flow
             _moneyLogic.createMoneyAccount(

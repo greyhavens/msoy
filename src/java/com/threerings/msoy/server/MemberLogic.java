@@ -114,7 +114,19 @@ public class MemberLogic
         switch (ownerType) {
         case MsoySceneModel.OWNER_TYPE_MEMBER:
             MemberRecord member = _memberRepo.loadMember(ownerId);
-            return (member == null) ? null : member.homeSceneId;
+            if (member == null) {
+                return null;
+            }
+            if (member.homeSceneId == 0) {
+                // create a blank room for them, store it
+                final String name = _serverMsgs.getBundle("server").get("m.new_room_name");
+                SceneRecord scene = _sceneRepo.createBlankRoom(MsoySceneModel.OWNER_TYPE_MEMBER,
+                    member.memberId, SceneRecord.Stock.FIRST_MEMBER_ROOM.getSceneId(),
+                    member.themeGroupId, name, null);
+                member.homeSceneId = scene.sceneId;
+                _memberRepo.setHomeSceneId(member.memberId, member.homeSceneId);
+            }
+            return member.homeSceneId;
 
         case MsoySceneModel.OWNER_TYPE_GROUP:
             GroupRecord group = _groupRepo.loadGroup(ownerId);
@@ -895,6 +907,7 @@ public class MemberLogic
     @Inject protected FeedLogic _feedLogic;
     @Inject protected GroupRepository _groupRepo;
     @Inject protected ItemLogic _itemLogic;
+    @Inject protected MailLogic _mailLogic;
     @Inject protected MemberManager _memberMan;
     @Inject protected MemberRepository _memberRepo;
     @Inject protected MoneyLogic _moneyLogic;
@@ -904,8 +917,8 @@ public class MemberLogic
     @Inject protected MsoySceneRepository _sceneRepo;
     @Inject protected PlayerNodeActions _playerActions;
     @Inject protected PresentsDObjectMgr _omgr;
+    @Inject protected ServerMessages _serverMsgs;
     @Inject protected StatLogic _statLogic;
-    @Inject protected MailLogic _mailLogic;
 
     // member purging dependencies
     @Inject protected AVRGameRepository _avrGameRepo;
