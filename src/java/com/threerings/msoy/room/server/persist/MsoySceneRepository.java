@@ -236,6 +236,33 @@ public class MsoySceneRepository extends DepotRepository
     }
 
     /**
+     * Insert just a new scene record.
+     */
+    public void insertScene (SceneRecord record)
+    {
+        insert(record);
+    }
+
+    /**
+     * Insert a new scene, with furni and all, into the database and return the newly assigned
+     * sceneId.
+     */
+    public SceneRecord insertScene (MsoySceneModel model)
+    {
+        SceneRecord scene = new SceneRecord(model);
+        insert(scene);
+        for (FurniData data : model.furnis) {
+            insert(new SceneFurniRecord(scene.sceneId, data));
+        }
+        return scene;
+    }
+
+    public void insertFurni (SceneFurniRecord record)
+    {
+        insert(record);
+    }
+
+    /**
      * Saves the specified update to the database.
      */
     public void persistUpdate (SceneUpdate update)
@@ -325,58 +352,6 @@ public class MsoySceneRepository extends DepotRepository
         }
     }
 
-    /**
-     * Creates a new blank room for the specified member.
-     *
-     * @param ownerType may be an individual member or a group.
-     * @param portalAction to where to link the new room's door.
-     * @param firstTime whether this the first room this owner has created.
-     */
-    public SceneRecord createBlankRoom (byte ownerType, int ownerId, int stockSceneId,
-        int themeId, String roomName, String portalAction)
-    {
-        // load up the stock scene
-        SceneRecord record = load(SceneRecord.class, SceneRecord.getKey(stockSceneId));
-
-        // if we fail to load a stock scene, just create a totally blank scene
-        if (record == null) {
-            log.info("Unable to find stock scene to clone", "type", ownerType);
-            MsoySceneModel model = MsoySceneModel.blankMsoySceneModel();
-            model.ownerType = ownerType;
-            model.ownerId = ownerId;
-            model.version = 1;
-            model.name = roomName;
-            model.themeId = themeId;
-            return insertScene(model);
-        }
-
-        // fill in our new bits and write out our new scene
-        record.accessControl = MsoySceneModel.ACCESS_EVERYONE;
-        record.ownerType = ownerType;
-        record.ownerId = ownerId;
-        record.themeGroupId = themeId;
-        record.name = roomName;
-        record.version = 1;
-        record.sceneId = 0;
-        insert(record);
-
-        // now load up furni from the stock scene
-        Where where = new Where(SceneFurniRecord.SCENE_ID, stockSceneId);
-        for (SceneFurniRecord furni : findAll(SceneFurniRecord.class, where)) {
-            furni.sceneId = record.sceneId;
-            // if the scene has a portal pointing to the default public space; rewrite it to point
-            // to our specified new portal destination (if we have one)
-            if (portalAction != null && furni.actionType == FurniData.ACTION_PORTAL &&
-                furni.actionData != null && furni.actionData.startsWith(
-                    SceneRecord.Stock.PUBLIC_ROOM.getSceneId() + ":")) {
-                furni.actionData = portalAction;
-            }
-            insert(furni);
-        }
-
-        return record;
-    }
-
     /** Loads the room properties. */
     public List<RoomPropertyRecord> loadProperties (int ownerId, int sceneId)
     {
@@ -434,19 +409,6 @@ public class MsoySceneRepository extends DepotRepository
     }
 
     /**
-     * Temporary function for a migration in {@link LauncherRepository}. Loads a piece of furni
-     * in a given scene with the given item, if that item exists there. This method will not load
-     * the cache.
-     */
-    public SceneFurniRecord loadFurni (int sceneId, int itemId)
-    {
-        List<SceneFurniRecord> recs = findAll(SceneFurniRecord.class, CacheStrategy.NONE,
-            new Where(SceneFurniRecord.SCENE_ID, sceneId,
-                      SceneFurniRecord.ITEM_ID, itemId));
-        return recs.isEmpty() ? null : recs.get(0);
-    }
-
-    /**
      * Temporary function for a migration in {@link LauncherRepository}. Sets the actionType
      * of a specific itemId in the given scene.
      */
@@ -457,20 +419,6 @@ public class MsoySceneRepository extends DepotRepository
                       SceneFurniRecord.ITEM_ID, itemId),
             null,
             SceneFurniRecord.ACTION_TYPE, actionType);
-    }
-
-    /**
-     * Insert a new scene, with furni and all, into the database and return the newly assigned
-     * sceneId.
-     */
-    protected SceneRecord insertScene (MsoySceneModel model)
-    {
-        SceneRecord scene = new SceneRecord(model);
-        insert(scene);
-        for (FurniData data : model.furnis) {
-            insert(new SceneFurniRecord(scene.sceneId, data));
-        }
-        return scene;
     }
 
     protected void checkCreateStockScene (SceneRecord.Stock stock)

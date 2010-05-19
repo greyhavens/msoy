@@ -69,6 +69,7 @@ import com.threerings.msoy.person.server.persist.InviteRepository;
 import com.threerings.msoy.person.server.persist.ProfileRepository;
 import com.threerings.msoy.room.data.MsoySceneModel;
 import com.threerings.msoy.room.data.RoomCodes;
+import com.threerings.msoy.room.server.SceneLogic;
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
 import com.threerings.msoy.room.server.persist.SceneRecord;
 
@@ -120,7 +121,7 @@ public class MemberLogic
             if (member.homeSceneId == 0) {
                 // create a blank room for them, store it
                 final String name = _serverMsgs.getBundle("server").get("m.new_room_name");
-                SceneRecord scene = _sceneRepo.createBlankRoom(MsoySceneModel.OWNER_TYPE_MEMBER,
+                SceneRecord scene = _sceneLogic.createBlankRoom(MsoySceneModel.OWNER_TYPE_MEMBER,
                     member.memberId, SceneRecord.Stock.FIRST_MEMBER_ROOM.getSceneId(),
                     member.themeGroupId, name, null);
                 member.homeSceneId = scene.sceneId;
@@ -918,6 +919,7 @@ public class MemberLogic
     @Inject protected PlayerNodeActions _playerActions;
     @Inject protected PresentsDObjectMgr _omgr;
     @Inject protected ServerMessages _serverMsgs;
+    @Inject protected SceneLogic _sceneLogic;
     @Inject protected StatLogic _statLogic;
 
     // member purging dependencies

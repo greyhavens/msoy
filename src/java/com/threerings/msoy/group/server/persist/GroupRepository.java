@@ -60,10 +60,7 @@ import com.threerings.msoy.server.persist.TagNameRecord;
 import com.threerings.msoy.server.persist.TagRecord;
 import com.threerings.msoy.server.persist.TagRepository;
 
-import com.threerings.msoy.room.data.MsoySceneModel;
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
-import com.threerings.msoy.room.server.persist.SceneRecord;
-
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 import com.threerings.msoy.group.data.all.Group;
 import com.threerings.msoy.group.data.all.GroupMembership;
@@ -328,11 +325,6 @@ public class GroupRepository extends DepotRepository
         }
         record.creationDate = new Date(System.currentTimeMillis());
         insert(record);
-
-        SceneRecord newScene = _sceneRepo.createBlankRoom(MsoySceneModel.OWNER_TYPE_GROUP,
-            record.groupId, SceneRecord.Stock.FIRST_GROUP_HALL.getSceneId(), 0, record.name, null);
-        updatePartial(GroupRecord.getKey(record.groupId),
-            GroupRecord.HOME_SCENE_ID, newScene.sceneId);
 
         return record.groupId;
     }

@@ -550,7 +550,8 @@ public class ItemLogic
     }
 
     /**
-     * Very minimal logic to grant a subscriber the free item of the month.
+     * Very minimal logic to grant a player a free item. This is used for the subscription item
+     * as well as to populate blank rooms with startup furniture.
      */
     public Item grantItem (MemberRecord grantee, CatalogRecord listing)
         throws ServiceException

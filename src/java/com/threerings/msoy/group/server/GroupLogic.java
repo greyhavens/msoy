@@ -32,6 +32,8 @@ import com.threerings.msoy.admin.server.RuntimeConfig;
 
 import com.threerings.msoy.person.gwt.FeedMessageType;
 import com.threerings.msoy.person.server.FeedLogic;
+import com.threerings.msoy.room.data.MsoySceneModel;
+import com.threerings.msoy.room.server.SceneLogic;
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
 import com.threerings.msoy.room.server.persist.SceneRecord;
 
@@ -124,8 +126,15 @@ public class GroupLogic
             {
                 try {
                     // create the group and then add the creator to it
-                    _groupRepo.createGroup(grec);
+                    int groupId = _groupRepo.createGroup(grec);
                     _groupRepo.addMember(grec.groupId, grec.creatorId, Rank.MANAGER);
+
+                    // add its home room
+                    SceneRecord newScene = _sceneLogic.createBlankRoom(
+                        MsoySceneModel.OWNER_TYPE_GROUP, groupId,
+                        SceneRecord.Stock.FIRST_GROUP_HALL.getSceneId(), 0, grec.name, null);
+                    _groupRepo.setHomeSceneId(groupId, newScene.sceneId);
+
                 } catch (DuplicateKeyException dke) {
                     // inform the user that the name is already in use
                     throw new ServiceException(GroupCodes.E_GROUP_NAME_IN_USE);
@@ -291,4 +300,5 @@ public class GroupLogic
     @Inject protected MsoySceneRepository _sceneRepo;
     @Inject protected RuntimeConfig _runtime;
     @Inject protected StatLogic _statLogic;
+    @Inject protected SceneLogic _sceneLogic;
 }

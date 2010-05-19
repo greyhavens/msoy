@@ -202,7 +202,7 @@ public class WebRoomServlet extends MsoyServiceServlet
             new MoneyLogic.BuyOperation<RoomInfo>() {
             public RoomInfo create (boolean magicFree, Currency currency, int amountPaid) {
                 String name = _serverMsgs.getBundle("server").get("m.new_room_name", mrec.name);
-                return _sceneRepo.createBlankRoom(MsoySceneModel.OWNER_TYPE_MEMBER, mrec.memberId,
+                return _sceneLogic.createBlankRoom(MsoySceneModel.OWNER_TYPE_MEMBER, mrec.memberId,
                     SceneRecord.Stock.EXTRA_MEMBER_ROOM.getSceneId(), 0, name, null).toRoomInfo();
             }
         }).toPurchaseResult();
@@ -313,5 +313,6 @@ public class WebRoomServlet extends MsoyServiceServlet
     @Inject protected ThemeLogic _themeLogic;
     @Inject protected RuntimeConfig _runtime;
     @Inject protected ServerMessages _serverMsgs;
+    @Inject protected SceneLogic _sceneLogic;
     @Inject protected SceneNodeActions _sceneActions;
 }

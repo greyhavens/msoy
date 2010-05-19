@@ -143,6 +143,57 @@ public class SceneLogic
         _accumulator.add(update);
     }
 
+    /**
+     * Creates a new blank room for the specified member.
+     *
+     * @param ownerType may be an individual member or a group.
+     * @param portalAction to where to link the new room's door.
+     * @param firstTime whether this the first room this owner has created.
+     */
+    public SceneRecord createBlankRoom (byte ownerType, int ownerId, int stockSceneId,
+        int themeId, String roomName, String portalAction)
+    {
+        // load up the stock scene
+        SceneRecord record = _sceneRepo.loadScene(stockSceneId);
+
+        // if we fail to load a stock scene, just create a totally blank scene
+        if (record == null) {
+            log.info("Unable to find stock scene to clone", "type", ownerType);
+            MsoySceneModel model = MsoySceneModel.blankMsoySceneModel();
+            model.ownerType = ownerType;
+            model.ownerId = ownerId;
+            model.version = 1;
+            model.name = roomName;
+            model.themeId = themeId;
+            return _sceneRepo.insertScene(model);
+        }
+
+        // fill in our new bits and write out our new scene
+        record.accessControl = MsoySceneModel.ACCESS_EVERYONE;
+        record.ownerType = ownerType;
+        record.ownerId = ownerId;
+        record.themeGroupId = themeId;
+        record.name = roomName;
+        record.version = 1;
+        record.sceneId = 0;
+        _sceneRepo.insertScene(record);
+
+        // now load up furni from the stock scene
+        for (SceneFurniRecord furni : _sceneRepo.loadFurni(stockSceneId)) {
+            furni.sceneId = record.sceneId;
+            // if the scene has a portal pointing to the default public space; rewrite it to point
+            // to our specified new portal destination (if we have one)
+            if (portalAction != null && furni.actionType == FurniData.ACTION_PORTAL &&
+                furni.actionData != null && furni.actionData.startsWith(
+                    SceneRecord.Stock.PUBLIC_ROOM.getSceneId() + ":")) {
+                furni.actionData = portalAction;
+            }
+            _sceneRepo.insertFurni(furni);
+        }
+
+        return record;
+    }
+
     // dependencies
     @Inject protected AudioRepository _audioRepo;
     @Inject protected DecorRepository _decorRepo;
