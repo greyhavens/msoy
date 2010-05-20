@@ -46,7 +46,7 @@ public class ABTestLogic
     {
         // register new tests here
         // registerTest("NAME", 4 /* num groups */, false /* only new */, false /* landing */);
-        registerTest("2010 04 register (1) play (2) room (3)", 3, true, true);
+        registerTest("2010 05 register (1) room (2)", 2, true, true);
 
         // mark any tests that are no longer registered as ended, purge really old tests
         ArrayIntSet activeIds = new ArrayIntSet();

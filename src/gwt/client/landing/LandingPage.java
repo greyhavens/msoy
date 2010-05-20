@@ -66,7 +66,7 @@ public class LandingPage extends Page
 
         } else {
             _membersvc.getABTestGroup(CShell.frame.getVisitorInfo(),
-                "2010 04 register (1) play (2) room (3)", true, new AsyncCallback<Integer>() {
+                "2010 05 register (1) room (2)", true, new AsyncCallback<Integer>() {
                 public void onSuccess (Integer group) {
                     gotABGroup(group);
                 }
@@ -76,8 +76,6 @@ public class LandingPage extends Page
                 protected void gotABGroup (int group) {
                     if (group == 1) {
                         Link.go(Pages.LANDING, OLD_BLUE_LANDING);
-                    } else if (group == 2) {
-                        Link.go(Pages.LANDING, PLAY_BLUE_LANDING);
                     } else {
                         Link.go(Pages.WORLD, "places");
                     }
