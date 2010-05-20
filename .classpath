@@ -51,7 +51,7 @@
 	<classpathentry kind="lib" path="extlibs/java/flexTasks.jar"/>
 	<classpathentry kind="lib" path="extlibs/java/ganymed.jar"/>
 	<classpathentry kind="lib" path="extlibs/java/getdown.jar"/>
-	<classpathentry kind="lib" path="extlibs/java/google-collect.jar"/>
+	<classpathentry kind="lib" path="extlibs/java/guava.jar"/>
 	<classpathentry kind="lib" path="extlibs/java/guice.jar"/>
 	<classpathentry kind="lib" path="extlibs/java/gwt-user.jar"/>
 	<classpathentry kind="lib" path="extlibs/java/hessian.jar"/>
