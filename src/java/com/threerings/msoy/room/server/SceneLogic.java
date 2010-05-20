@@ -20,17 +20,20 @@ import com.threerings.whirled.util.NoSuchSceneException;
 import com.threerings.whirled.util.UpdateList;
 
 import com.threerings.msoy.server.persist.MemberRepository;
-
 import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.item.data.all.Audio;
 import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.server.ItemLogic;
 import com.threerings.msoy.item.server.persist.AudioRepository;
+import com.threerings.msoy.item.server.persist.CatalogRecord;
 import com.threerings.msoy.item.server.persist.DecorRecord;
 import com.threerings.msoy.item.server.persist.DecorRepository;
 import com.threerings.msoy.item.server.persist.ItemRecord;
+import com.threerings.msoy.item.server.persist.ItemRepository;
+import com.threerings.msoy.money.data.all.Currency;
 
 import com.threerings.msoy.room.data.FurniData;
 import com.threerings.msoy.room.data.MsoySceneModel;
@@ -181,6 +184,42 @@ public class SceneLogic
         // now load up furni from the stock scene
         for (SceneFurniRecord furni : _sceneRepo.loadFurni(stockSceneId)) {
             furni.sceneId = record.sceneId;
+
+            // if this is a member room with "real" furniture in it, clone the furni items
+            if (furni.itemId != 0) {
+                if (ownerType != MsoySceneModel.OWNER_TYPE_MEMBER) {
+                    log.warning("Found furniture item in non-member room.");
+                    continue;
+                }
+                try {
+                    // first load the actual item that's in the template scene
+                    ItemRepository<ItemRecord> repo = _itemLogic.getRepository(furni.itemType);
+                    ItemRecord stockItem = repo.loadItem(furni.itemId);
+                    if (stockItem.catalogId == 0) {
+                        log.warning("Unlisted furniture item in room template; skipping",
+                            "sceneId", furni.sceneId, "itemType", furni.itemType, "itemId",
+                            furni.itemId);
+                        continue;
+                    }
+
+                    // load its associated catalog listing
+                    CatalogRecord listing = repo.loadListing(stockItem.catalogId, true);
+
+                    // create a new clone, pretty much exactly as if we were buying it
+                    ItemRecord clone = repo.insertClone(listing.item, ownerId, Currency.BARS, 0);
+                    // in fact, log it as if we bought it
+                    _itemLogic.itemPurchased(clone, Currency.BARS, 0);
+
+                    furni.itemId = clone.itemId;
+
+                } catch (Exception e) {
+                    log.warning("Failed to create new furni clone from room template; skipping",
+                        "sceneId", furni.sceneId, "itemType", furni.itemType, "itemId",
+                        furni.itemId);
+                    continue;
+                }
+            }
+
             // if the scene has a portal pointing to the default public space; rewrite it to point
             // to our specified new portal destination (if we have one)
             if (portalAction != null && furni.actionType == FurniData.ACTION_PORTAL &&
@@ -198,6 +237,7 @@ public class SceneLogic
     @Inject protected AudioRepository _audioRepo;
     @Inject protected DecorRepository _decorRepo;
     @Inject protected GroupRepository _groupRepo;
+    @Inject protected ItemLogic _itemLogic;
     @Inject protected MemberRepository _memberRepo;
     @Inject protected MemoryRepository _memoryRepo;
     @Inject protected MsoySceneRepository _sceneRepo;
