@@ -115,7 +115,7 @@ public class WorldManager
         throws InvocationException
     {
         final MemberObject memobj = (MemberObject)caller;
-        final boolean tofu = memobj.avatar == null || memobj.avatar.itemId == 0;
+        final boolean tofu = (memobj.avatar == null || memobj.avatar.itemId == 0);
 
         if (ownerId == 0) {
             throw new InvocationException(MsoyCodes.E_INTERNAL_ERROR);
