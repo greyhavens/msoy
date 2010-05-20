@@ -1006,7 +1006,12 @@ public class WorldController extends MsoyController
         // first, see if we should hit a specific scene
         if (null != params["memberHome"]) {
             _suppressTokenForScene = true;
-            handleGoMemberHome(int(params["memberHome"]));
+            var memberId :int = int(params["memberHome"]);
+            if (memberId == 0) {
+                // let's take this as a signal that we're after our own home room
+                memberId = _wctx.getMemberObject().getMemberId();
+            }
+            handleGoMemberHome(memberId);
 
         } else if (null != params["groupHome"]) {
             _suppressTokenForScene = true;
