@@ -15,13 +15,8 @@ import com.google.gwt.user.client.ui.TextBox;
 
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
-import com.threerings.gwt.util.ServiceUtil;
-
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.gwt.Pages;
-import com.threerings.msoy.web.gwt.WebMemberService;
-import com.threerings.msoy.web.gwt.WebMemberServiceAsync;
-
 import client.shell.FBLogonPanel;
 import client.shell.LogonPanel;
 import client.ui.MsoyUI;
@@ -117,7 +112,4 @@ public class LandingPanel extends SmartTable
     }
 
     protected static final LandingMessages _msgs = GWT.create(LandingMessages.class);
-
-    protected static final WebMemberServiceAsync _membersvc = (WebMemberServiceAsync)
-        ServiceUtil.bind(GWT.create(WebMemberService.class), WebMemberService.ENTRY_POINT);
 }
