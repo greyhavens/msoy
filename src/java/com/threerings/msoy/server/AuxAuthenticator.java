@@ -94,7 +94,7 @@ public abstract class AuxAuthenticator<T extends MsoyCredentials> extends Chaine
                 // a brand new guest (or one returning after a long sojourn)
                 if (guest == null || guest.isDeleted()) {
                     guest = _accountLogic.createGuestAccount(
-                        conn.getInetAddress().toString(), creds.visitorId,
+                        conn.getInetAddress().toString(), creds.visitorId, creds.themeId,
                         AffiliateCookie.fromCreds(creds.affiliateId));
                 }
 

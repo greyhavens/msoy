@@ -152,8 +152,8 @@ public class MsoyAuthenticator extends Authenticator
 
             // create their account
             MemberRecord mrec = _accountLogic.createExternalAccount(
-                creds.getPlaceholderAddress(), info.displayName, info.profile, vinfo, affiliate,
-                creds.getSite(), creds.getUserId());
+                creds.getPlaceholderAddress(), info.displayName, info.profile, vinfo, 0,
+                affiliate, creds.getSite(), creds.getUserId());
 
             // if they have an external session key, update that here
             if (creds.getSessionKey() != null) {
@@ -269,7 +269,7 @@ public class MsoyAuthenticator extends Authenticator
 
             // create a new guest account
             MemberRecord mrec = _accountLogic.createGuestAccount(
-                conn.getInetAddress().toString(), creds.visitorId,
+                conn.getInetAddress().toString(), creds.visitorId, creds.themeId,
                 AffiliateCookie.fromCreds(creds.affiliateId));
 
             // now authenticate just to make sure everything is in order and get the token

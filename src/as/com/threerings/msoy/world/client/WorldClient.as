@@ -391,6 +391,7 @@ public class WorldClient extends MsoyClient
         }
 
         creds.sessionToken = (token == null) ? params["token"] : token;
+        creds.themeId = params["themeId"];
         creds.ident = Prefs.getMachineIdent();
         creds.featuredPlaceView = _featuredPlaceView;
         creds.visitorId = getVisitorId();

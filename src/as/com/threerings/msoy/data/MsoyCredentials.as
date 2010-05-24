@@ -28,6 +28,9 @@ public class MsoyCredentials extends Credentials
     /** The vector by which this client entered, or null. */
     public var vector :String;
 
+    /** The theme (group id) through which this client entered, or 0. */
+    public var themeId :int;
+
     /**
      * Creates credentials with the specified username.
      */
@@ -49,6 +52,7 @@ public class MsoyCredentials extends Credentials
         out.writeField(visitorId);
         out.writeInt(affiliateId);
         out.writeField(vector);
+        out.writeInt(themeId);
         out.writeObject(_username);
     }
 

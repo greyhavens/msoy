@@ -158,7 +158,7 @@ public class WebUserServlet extends MsoyServiceServlet
                 invite, info.visitor, info.birthday) :
             _accountLogic.createWebAccount(
                 info.email, info.password, info.displayName, info.info.realName, invite,
-                info.visitor, AffiliateCookie.fromWeb(getThreadLocalRequest()), info.birthday);
+                info.visitor, 0, AffiliateCookie.fromWeb(getThreadLocalRequest()), info.birthday);
 
         // TODO: consider moving the below code into AccountLogic
 

@@ -68,11 +68,12 @@ public class AccountLogic
      */
     public MemberRecord createWebAccount (
         String email, String password, String displayName, String realName, InvitationRecord invite,
-        VisitorInfo vinfo, AffiliateCookie affiliate, int[] birthdayYMD)
+        VisitorInfo vinfo, int themeId, AffiliateCookie affiliate, int[] birthdayYMD)
         throws ServiceException
     {
         // TODO: handle affiliate.autoFriend
-        AccountData data = new AccountData(true, email, password, displayName, vinfo, affiliate);
+        AccountData data = new AccountData(
+            true, email, password, displayName, vinfo, themeId, affiliate);
         data.realName = realName;
         data.invite = invite;
         data.birthdayYMD = birthdayYMD;
@@ -166,16 +167,15 @@ public class AccountLogic
      * @return the newly created member record.
      */
     public MemberRecord createGuestAccount (
-        String ipAddress, String visitorId, AffiliateCookie affiliate)
+        String ipAddress, String visitorId, int themeId, AffiliateCookie affiliate)
         throws ServiceException
     {
         // TODO: handle affiliate.autoFriend
         String email = MemberMailUtil.makePermaguestEmail(
             StringUtil.md5hex(System.currentTimeMillis() + ":" + ipAddress + ":" + Math.random()));
         String displayName = _serverMsgs.getBundle("server").get("m.permaguest_name");
-        AccountData data = new AccountData(
-            false, email, PERMAGUEST_PASSWORD, displayName,
-            new VisitorInfo(checkCreateId(email, visitorId), false), affiliate);
+        AccountData data = new AccountData(false, email, PERMAGUEST_PASSWORD, displayName,
+            new VisitorInfo(checkCreateId(email, visitorId), false), themeId, affiliate);
         MemberRecord guest =  createAccount(data);
         // now that we have their member id, we can update their display name with it
         guest.name = generatePermaguestDisplayName(guest.memberId);
@@ -192,11 +192,11 @@ public class AccountLogic
      */
     public MemberRecord createExternalAccount (
         String email, String displayName, ProfileRecord profile, VisitorInfo vinfo,
-        AffiliateCookie affiliate, ExternalSiteId exSite, String exAuthUserId)
+        int themeId, AffiliateCookie affiliate, ExternalSiteId exSite, String exAuthUserId)
         throws ServiceException
     {
         // TODO: handle affiliate.autoFriend
-        AccountData data = new AccountData(true, email, "", displayName, vinfo, affiliate);
+        AccountData data = new AccountData(true, email, "", displayName, vinfo, themeId, affiliate);
         data.exSite = exSite;
         data.exAuthUserId = exAuthUserId;
         // TODO: import more information as long as it is not a privacy violiation
@@ -410,6 +410,7 @@ public class AccountLogic
             mrec.affiliateMemberId = (data.invite == null) ?
                 data.affiliate.memberId : data.invite.inviterId;
             mrec.visitorId = checkCreateId(account.accountName, data.vinfo);
+            mrec.themeGroupId = data.themeId;
             if (data.affiliate.memberId == mrec.affiliateMemberId && data.affiliate.autoFriend) {
                 mrec.setFlag(MemberRecord.Flag.FRIEND_AFFILIATE, true);
             }
@@ -522,6 +523,7 @@ public class AccountLogic
         public final String displayName;
         public final VisitorInfo vinfo;
         public final AffiliateCookie affiliate;
+        public int themeId;
 
         // optional bits
         public String realName;
@@ -532,7 +534,8 @@ public class AccountLogic
         public String location;
 
         public AccountData (boolean isRegistering, String email, String password,
-                            String displayName, VisitorInfo vinfo, AffiliateCookie affiliate)
+                            String displayName, VisitorInfo vinfo, int themeId,
+                            AffiliateCookie affiliate)
         {
             this.isRegistering = isRegistering;
             this.email = email.trim().toLowerCase();
@@ -540,6 +543,7 @@ public class AccountLogic
             this.displayName = displayName.trim();
             this.vinfo = vinfo;
             this.affiliate = affiliate;
+            this.themeId = themeId;
         }
     }
 

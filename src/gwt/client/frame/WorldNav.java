@@ -255,6 +255,10 @@ public class WorldNav
         // store (or clear) the launch config
         _game = game;
 
+        if (CShell.frame.getThemeId() != 0) {
+            args += "&themeId=" + CShell.frame.getThemeId();
+        }
+
         // finally actually display the client
         displayClient(args, false);
 

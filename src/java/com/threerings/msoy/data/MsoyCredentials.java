@@ -25,6 +25,9 @@ public class MsoyCredentials extends Credentials
     /** The vector by which this client entered, or null. */
     public String vector;
 
+    /** The theme (group id) through which this client entered, or 0. */
+    public int themeId;
+
     /**
      * Returns our username or null if none was provided.
      */
@@ -48,6 +51,7 @@ public class MsoyCredentials extends Credentials
         buf.append(", visitorId=").append(visitorId);
         buf.append(", affiliateId=").append(affiliateId);
         buf.append(", vector=").append(vector);
+        buf.append(", themeId=").append(themeId);
         buf.append(", username=").append(_username);
     }
 

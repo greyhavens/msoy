@@ -16,6 +16,7 @@ import client.shell.CShell;
 import client.shell.Page;
 import client.ui.NoNavPanel;
 import client.util.Link;
+import client.util.events.ThemeChangeEvent;
 
 /**
  * The main entry point for the landing page(s).
@@ -65,6 +66,13 @@ public class LandingPage extends Page
             setContent(_msgs.titleLanding(), new LandingMonsterPanel());
 
         } else {
+            if (action.equals("theme")) {
+                int themeId = args.get(1, 0);
+                if (themeId > 0) {
+                    CShell.frame.dispatchEvent(new ThemeChangeEvent(themeId));
+                }
+            }
+
             _membersvc.getABTestGroup(CShell.frame.getVisitorInfo(),
                 "2010 05 register (1) room (2)", true, new AsyncCallback<Integer>() {
                 public void onSuccess (Integer group) {
