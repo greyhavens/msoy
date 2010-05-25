@@ -26,6 +26,7 @@ import com.threerings.msoy.item.data.all.Audio;
 import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.gwt.CatalogListing;
 import com.threerings.msoy.item.server.ItemLogic;
 import com.threerings.msoy.item.server.persist.AudioRepository;
 import com.threerings.msoy.item.server.persist.CatalogRecord;
@@ -196,7 +197,7 @@ public class SceneLogic
                     ItemRepository<ItemRecord> repo = _itemLogic.getRepository(furni.itemType);
                     ItemRecord stockItem = repo.loadItem(furni.itemId);
                     if (stockItem.catalogId == 0) {
-                        log.warning("Unlisted furniture item in room template; skipping",
+                        log.warning("Unlisted item in room template; skipping",
                             "sceneId", furni.sceneId, "itemType", furni.itemType, "itemId",
                             furni.itemId);
                         continue;
@@ -204,6 +205,12 @@ public class SceneLogic
 
                     // load its associated catalog listing
                     CatalogRecord listing = repo.loadListing(stockItem.catalogId, true);
+                    if (listing.pricing != CatalogListing.PRICING_HIDDEN) {
+                        log.warning("Listing for item in room template is not hidden; skipping",
+                            "sceneId", furni.sceneId, "itemType", furni.itemType, "itemId",
+                            furni.itemId, "pricing", listing.pricing);
+                        continue;
+                    }
 
                     // create a new clone, pretty much exactly as if we were buying it
                     ItemRecord clone = repo.insertClone(listing.item, ownerId, Currency.BARS, 0);
