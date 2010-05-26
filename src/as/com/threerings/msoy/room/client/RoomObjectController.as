@@ -295,7 +295,7 @@ public class RoomObjectController extends RoomController
         var handleResult :Function = function (result :Object) :void {
             DoorTargetEditController.start(furniData, _wdctx);
         };
-        _roomObj.roomService.editRoom(_wdctx.resultListener(handleResult));
+        _roomObj.roomService.editRoom(_wdctx.resultListener(handleResult, MsoyCodes.EDITING_MSGS));
     }
 
     /**
@@ -325,7 +325,7 @@ public class RoomObjectController extends RoomController
         var handleResult :Function = function (result :Object) :void {
             beginRoomEditing();
         };
-        _roomObj.roomService.editRoom(_wdctx.resultListener(handleResult));
+        _roomObj.roomService.editRoom(_wdctx.resultListener(handleResult, MsoyCodes.EDITING_MSGS));
     }
 
     /**
@@ -341,7 +341,7 @@ public class RoomObjectController extends RoomController
      */
     public function handlePublishRoom () :void
     {
-        _roomObj.roomService.publishRoom(_wdctx.listener());
+        _roomObj.roomService.publishRoom(_wdctx.listener(MsoyCodes.EDITING_MSGS));
 
         // TODO: remove this bubbley hint someday?
         BubblePopup.showHelpBubble(_wdctx, _wdctx.getControlBar().shareBtn,
@@ -530,7 +530,7 @@ public class RoomObjectController extends RoomController
     override public function deleteItem (ident :ItemIdent) :void
     {
         var svc :ItemService = _wdctx.getClient().requireService(ItemService) as ItemService;
-        svc.deleteItem(ident, _wdctx.confirmListener());
+        svc.deleteItem(ident, _wdctx.confirmListener(MsoyCodes.EDITING_MSGS));
     }
 
     override public function rateRoom (rating :Number, onSuccess :Function) :void
@@ -821,7 +821,7 @@ public class RoomObjectController extends RoomController
      */
     protected function updateRoom (update :SceneUpdate) :void
     {
-        _roomObj.roomService.updateRoom(update, _wdctx.listener());
+        _roomObj.roomService.updateRoom(update, _wdctx.listener(MsoyCodes.EDITING_MSGS));
     }
 
     override protected function checkMouse2 (
