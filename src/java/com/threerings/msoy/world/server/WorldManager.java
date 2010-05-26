@@ -130,12 +130,13 @@ public class WorldManager
                     }
                 }
                 if ((_homeId = _memberLogic.getHomeId(ownerType, ownerId)) == null) {
-                    String msg = WorldCodes.E_INTERNAL_ERROR;
-                    switch (ownerType) {
-                    case MsoySceneModel.OWNER_TYPE_MEMBER: msg = WorldCodes.NO_SUCH_USER; break;
-                    case MsoySceneModel.OWNER_TYPE_GROUP: msg = WorldCodes.NO_SUCH_GROUP; break;
+                    if (ownerType == MsoySceneModel.OWNER_TYPE_MEMBER) {
+                        throw new InvocationException(WorldCodes.NO_SUCH_USER);
+                    } else if (ownerType == MsoySceneModel.OWNER_TYPE_GROUP) {
+                        throw new InvocationException(WorldCodes.NO_SUCH_GROUP);
+                    } else {
+                        throw new InvocationException(WorldCodes.E_INTERNAL_ERROR);
                     }
-                    throw new InvocationException(msg);
                 }
             }
 
