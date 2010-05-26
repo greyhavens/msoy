@@ -51,6 +51,8 @@ import com.threerings.msoy.game.server.persist.TrophyRepository;
 import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.group.server.persist.MedalRepository;
+import com.threerings.msoy.group.server.persist.ThemeHomeTemplateRecord;
+import com.threerings.msoy.group.server.persist.ThemeRepository;
 import com.threerings.msoy.item.server.ItemLogic;
 import com.threerings.msoy.item.server.persist.FavoritesRepository;
 import com.threerings.msoy.item.server.persist.ItemRecord;
@@ -120,10 +122,20 @@ public class MemberLogic
             }
             if (member.homeSceneId == 0) {
                 // create a blank room for them, store it
-                final String name = _serverMsgs.getBundle("server").get("m.new_room_name");
+                String name = _serverMsgs.getBundle("server").get("m.new_room_name");
+
+                int stockSceneId = SceneRecord.Stock.FIRST_MEMBER_ROOM.getSceneId();
+                if (member.themeGroupId != 0) {
+                    // this member is themed, let's see if the theme has any home room templates
+                    List<ThemeHomeTemplateRecord> templates =
+                        _themeRepo.loadHomeTemplates(member.themeGroupId);
+                    // if so, just grab first one for now
+                    if (templates.size() > 0) {
+                        stockSceneId = templates.get(0).sceneId;
+                    }
+                }
                 SceneRecord scene = _sceneLogic.createBlankRoom(MsoySceneModel.OWNER_TYPE_MEMBER,
-                    member.memberId, SceneRecord.Stock.FIRST_MEMBER_ROOM.getSceneId(),
-                    member.themeGroupId, name, null);
+                    member.memberId, stockSceneId, member.themeGroupId, name, null);
                 member.homeSceneId = scene.sceneId;
                 _memberRepo.setHomeSceneId(member.memberId, member.homeSceneId);
             }
@@ -921,6 +933,7 @@ public class MemberLogic
     @Inject protected ServerMessages _serverMsgs;
     @Inject protected SceneLogic _sceneLogic;
     @Inject protected StatLogic _statLogic;
+    @Inject protected ThemeRepository _themeRepo;
 
     // member purging dependencies
     @Inject protected AVRGameRepository _avrGameRepo;

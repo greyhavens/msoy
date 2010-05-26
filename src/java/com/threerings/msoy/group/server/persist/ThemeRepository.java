@@ -163,6 +163,11 @@ public class ThemeRepository extends DepotRepository
             new Where(ThemeHomeTemplateRecord.GROUP_ID, groupId));
     }
 
+    public ThemeHomeTemplateRecord loadHomeTemplate (int groupId, int sceneId)
+    {
+        return load(ThemeHomeTemplateRecord.getKey(groupId, sceneId));
+    }
+
     /**
      * Add or modify a home room template for a theme. Returns true if the template did not
      * previously exist for the theme.

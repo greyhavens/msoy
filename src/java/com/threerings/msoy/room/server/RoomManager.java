@@ -35,6 +35,7 @@ import com.threerings.util.Name;
 import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.client.InvocationService;
+import com.threerings.presents.client.InvocationService.InvocationListener;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.dobj.AccessController;
@@ -96,6 +97,7 @@ import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.util.MailSender;
+import com.threerings.msoy.web.gwt.ServiceException;
 
 import com.threerings.msoy.bureau.data.WindowClientObject;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
@@ -106,9 +108,13 @@ import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.gwt.CatalogListing;
 import com.threerings.msoy.item.server.ItemLogic;
 import com.threerings.msoy.item.server.ItemManager;
 import com.threerings.msoy.item.server.persist.AvatarRecord;
+import com.threerings.msoy.item.server.persist.CatalogRecord;
+import com.threerings.msoy.item.server.persist.ItemRecord;
+import com.threerings.msoy.item.server.persist.ItemRepository;
 
 import com.threerings.msoy.party.server.PartyRegistry;
 
@@ -612,12 +618,27 @@ public class RoomManager extends SpotSceneManager
     }
 
     // documentation inherited from RoomProvider
-    public void updateRoom (ClientObject caller, SceneUpdate update,
+    public void updateRoom (ClientObject caller, final SceneUpdate update,
                             RoomService.InvocationListener listener)
         throws InvocationException
     {
-        MemberObject user = requireManager(caller);
-        doRoomUpdate(update, user.getMemberId(), user);
+        final MemberObject user = requireManager(caller);
+
+        Runnable doUpdate = new Runnable() {
+            public void run () {
+                doRoomUpdate(update, user.getMemberId(), user);
+            }
+        };
+
+        if (update instanceof FurniUpdate.Add) {
+            // if the scene is themed, make sure the item is OK to add
+            int themeId = ((MsoyScene) _scene).getThemeId();
+            if (themeId != 0) {
+                validateForTheme(themeId, _scene.getId(), ((FurniUpdate)update).data, listener, doUpdate);
+                return;
+            }
+        }
+        doUpdate.run();
     }
 
     // from interface RoomProvider
@@ -1495,29 +1516,15 @@ public class RoomManager extends SpotSceneManager
         } else if (update instanceof FurniUpdate.Add) {
             final FurniData data = ((FurniUpdate)update).data;
 
-            Runnable markAndResolve = new Runnable() {
-                public void run () {
-                    // mark this item as in use
-                    _itemMan.updateItemUsage(
-                        data.itemType, Item.UsedAs.FURNITURE, memberId, mScene.getId(),
-                        0, data.itemId, new ComplainingListener<Void>(
-                            log, "Unable to set furni item usage"));
+            // mark this item as in use
+            _itemMan.updateItemUsage(
+                data.itemType, Item.UsedAs.FURNITURE, memberId, mScene.getId(),
+                0, data.itemId, new ComplainingListener<Void>(
+                        log, "Unable to set furni item usage"));
 
-                    // and resolve any memories it may have, calling the scene updater when it's done
-                    resolveMemories(data.getItemIdent(), doUpdateScene);
-                    // don't fall through here
-                }
-            };
-
-            // if the scene is themed, make sure the item is stamped
-            final int themeId = mScene.getThemeId();
-            if (themeId != 0) {
-                validateStamp(themeId, data.itemType, data.itemId, markAndResolve);
-                return;
-            }
-
-            // otherwise just proceed to usage marking & memory resolution
-            markAndResolve.run();
+            // and resolve any memories it may have, calling the scene updater when it's done
+            resolveMemories(data.getItemIdent(), doUpdateScene);
+            // don't fall through here
             return;
         }
 
@@ -1640,19 +1647,65 @@ public class RoomManager extends SpotSceneManager
      * a generic error otherwise (this should only happened with hacked clients or internal
      * errors).
      */
-    protected void validateStamp (
-        final int themeId, final byte itemType, final int itemId, final Runnable onSuccess)
+    protected void validateForTheme (final int themeId, final int sceneId, FurniData data,
+        final InvocationListener listener, final Runnable onSuccess)
     {
+        final byte itemType = data.itemType;
+        final int itemId = data.itemId;
         _invoker.postUnit(new RepositoryUnit("validateStamp") {
             public void invokePersist () throws Exception {
-                _success = _itemLogic.getRepository(itemType).isThemeStamped(themeId, itemId);
-            }
-            public void handleSuccess () {
-                if (_success && onSuccess != null) {
-                    onSuccess.run();
+                // make sure the item is stamped
+                if (!_itemLogic.getRepository(itemType).isThemeStamped(themeId, itemId)) {
+                    throw new InvocationException(furniError(
+                        RoomCodes.E_FURNI_NOT_STAMPED, itemType, itemId));
                 }
+
+                // test to see if we're editing a theme home room template
+                if (_themeRepo.loadHomeTemplate(themeId, sceneId) == null) {
+                    // if not, we're done, pass through to success
+                    return;
+                }
+
+                // but if we are, we need to do sanity tests on the item
+                ItemRepository<ItemRecord> repo = _itemLogic.getRepository(itemType);
+                ItemRecord stockItem = repo.loadItem(itemId);
+                // it has to be listed
+                if (stockItem.catalogId == 0) {
+                    throw new InvocationException(furniError(
+                        RoomCodes.E_TEMPLATE_FURNI_NOT_LISTED, itemType, itemId));
+                }
+
+                CatalogRecord listing = repo.loadListing(stockItem.catalogId, true);
+                // and the pricing has to be HIDDEN
+                if (listing.pricing != CatalogListing.PRICING_HIDDEN) {
+                    throw new InvocationException(furniError(
+                        RoomCodes.E_TEMPLATE_LISTING_NOT_HIDDEN, itemType, itemId));
+                }
+                // finally the listing must be brand owned (by the theme in question)
+                if (listing.brandId != themeId) {
+                    throw new InvocationException(furniError(
+                        RoomCodes.E_TEMPLATE_LISTING_NOT_OWNED, itemType, itemId));
+                }
+                // else all is well
             }
-            protected boolean _success;
+            protected String furniError (String code, byte itemType, int itemId)
+            {
+                try {
+                    ItemRecord item = _itemLogic.getRepository(itemType).loadItem(itemId);
+                    if (item != null) {
+                        return MessageBundle.tcompose(code, item.name);
+                    }
+                } catch (ServiceException e) {
+                    e.printStackTrace();
+                }
+                return MessageBundle.tcompose(code, itemType + ":" + itemId);
+            }
+            @Override public void handleSuccess () {
+                onSuccess.run();
+            }
+            @Override public void handleFailure (Exception e) {
+                listener.requestFailed(e.getMessage());
+            }
         });
     }
 
