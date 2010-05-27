@@ -84,6 +84,8 @@ public class WebRoomServlet extends MsoyServiceServlet
         }
         if (screc.themeGroupId != 0) {
             detail.theme = _groupRepo.loadGroupName(screc.themeGroupId);
+            detail.isTemplate =
+                (_themeRepo.loadHomeTemplate(screc.themeGroupId, sceneId) != null);
         }
         return detail;
     }
@@ -212,15 +214,7 @@ public class WebRoomServlet extends MsoyServiceServlet
     public void stampRoom (int sceneId, int groupId, boolean doStamp)
         throws ServiceException
     {
-        MemberRecord mrec = requireAuthedUser();
-
-        // make sure we're allowed to stamp for this theme
-        if (!_themeLogic.isTheme(groupId) ||
-                _groupRepo.getMembership(groupId, mrec.memberId).left != Rank.MANAGER) {
-            log.warning("User not allowed to stamp with this theme", "scene", sceneId,
-                "theme", groupId, "who", mrec.who());
-            throw new ServiceException(ItemCodes.E_ACCESS_DENIED);
-        }
+        MemberRecord mrec = requireThemeManager(sceneId, groupId);
 
         SceneRecord sceneRec = _sceneRepo.loadScene(sceneId);
         if (sceneRec == null) {
@@ -232,6 +226,52 @@ public class WebRoomServlet extends MsoyServiceServlet
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
 
+        ensureSceneManager(mrec, sceneRec);
+
+        // all is well, let's go ahead
+        if (_sceneRepo.stampRoom(sceneId, doStamp ? groupId : 0)) {
+            // if the scene is resolved somewhere, nuke it
+            _sceneActions.flushTheme(sceneId);
+
+            // if we unstamped a room, make sure it's not a home room template
+            _themeRepo.removeHomeTemplate(groupId, sceneId);
+
+        } else {
+            log.warning("No room was stamped!", "sceneId", sceneId, "groupId", groupId);
+            // let it go
+        }
+    }
+
+    // from interface WebRoomService
+    public void makeTemplate (int sceneId, int groupId, boolean doMake)
+        throws ServiceException
+    {
+        MemberRecord mrec = requireThemeManager(sceneId, groupId);
+
+        SceneRecord sceneRec = _sceneRepo.loadScene(sceneId);
+        if (sceneRec == null) {
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
+        if (sceneRec.themeGroupId != groupId) {
+            log.warning("Unexpected scene theme", "scene", sceneId, "theme", groupId,
+                "scene.theme", sceneRec.themeGroupId, "doMake", doMake);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
+
+        ensureSceneManager(mrec, sceneRec);
+
+        // all is well, let's go ahead
+        if (doMake) {
+            _themeRepo.setHomeTemplate(groupId, sceneId);
+
+        } else {
+            _themeRepo.removeHomeTemplate(groupId, sceneId);
+        }
+    }
+
+    protected void ensureSceneManager (MemberRecord mrec, SceneRecord sceneRec)
+        throws ServiceException
+    {
         // make sure we're allowed to stamp this room
         boolean mayManage;
         if (sceneRec.ownerType == MsoySceneModel.OWNER_TYPE_MEMBER) {
@@ -241,20 +281,25 @@ public class WebRoomServlet extends MsoyServiceServlet
                 _groupRepo.getMembership(sceneRec.ownerId, mrec.memberId).left);
         }
         if (!mayManage) {
-            log.warning("User not allowed to stamp this scene", "scene", sceneId,
+            log.warning("User not allowed to stamp this scene", "scene", sceneRec.sceneId,
+                "who", mrec.who());
+            throw new ServiceException(ItemCodes.E_ACCESS_DENIED);
+        }
+    }
+
+    protected MemberRecord requireThemeManager (int sceneId, int groupId)
+        throws ServiceException
+    {
+        MemberRecord mrec = requireAuthedUser();
+
+        // make sure we're allowed to stamp for this theme
+        if (!_themeLogic.isTheme(groupId) ||
+                _groupRepo.getMembership(groupId, mrec.memberId).left != Rank.MANAGER) {
+            log.warning("User not allowed to manage this theme", "scene", sceneId,
                 "theme", groupId, "who", mrec.who());
             throw new ServiceException(ItemCodes.E_ACCESS_DENIED);
         }
-
-        // all is well, let's go aheads
-        if (_sceneRepo.stampRoom(sceneId, doStamp ? groupId : 0)) {
-            // if the scene is resolved somewhere, nuke it
-            _sceneActions.flushTheme(sceneId);
-
-        } else {
-            log.warning("No room was stamped!", "sceneId", sceneId, "groupId", groupId);
-            // let it go
-        }
+        return mrec;
     }
 
 

@@ -125,4 +125,11 @@ public interface WebRoomService extends RemoteService
      */
     void stampRoom (int sceneId, int groupId, boolean doStamp)
         throws ServiceException;
+
+    /**
+     * Make (or unmake) the given scene a home room template for the given theme. The scene
+     * must already be stamped appropriately.
+     */
+    public void makeTemplate (int sceneId, int groupId, boolean doMake)
+        throws ServiceException;
 }

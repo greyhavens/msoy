@@ -58,4 +58,9 @@ public interface WebRoomServiceAsync
      * The async version of {@link WebRoomService#stampRoom}.
      */
     void stampRoom (int sceneId, int groupId, boolean doStamp, AsyncCallback<Void> callback);
+
+    /**
+     * The async version of {@link WebRoomService#makeTemplate}.
+     */
+    void makeTemplate (int sceneId, int groupId, boolean doMake, AsyncCallback<Void> callback);
 }

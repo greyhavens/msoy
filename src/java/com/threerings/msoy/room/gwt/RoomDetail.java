@@ -32,6 +32,9 @@ public class RoomDetail
     /** The theme this room is associated with, or null. */
     public GroupName theme;
 
+    /** If this room is themed, whether or not it is a home room template. */
+    public boolean isTemplate;
+
     /** The rating assigned to the room by this player. */
     public byte memberRating;
 
