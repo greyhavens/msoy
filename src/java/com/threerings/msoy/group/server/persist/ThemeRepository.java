@@ -182,7 +182,7 @@ public class ThemeRepository extends DepotRepository
      */
     public boolean removeHomeTemplate (int groupId, int sceneId)
     {
-        return 1 == delete(ThemeAvatarLineupRecord.getKey(groupId, sceneId));
+        return 1 == delete(ThemeHomeTemplateRecord.getKey(groupId, sceneId));
     }
 
     @Override
