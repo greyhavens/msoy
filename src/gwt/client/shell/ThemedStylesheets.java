@@ -26,8 +26,10 @@ public class ThemedStylesheets
         // listen for theme changes (one which will likely be triggered by the didLogon below)
         FlashEvents.addListener(new ThemeChangeEvent.Listener() {
             public void themeChanged (ThemeChangeEvent event) {
-                _themeId = event.getGroupId();
-                inject();
+                if (event.getGroupId() != _themeId) {
+                    _themeId = event.getGroupId();
+                    inject();
+                }
             }
         });
     }
