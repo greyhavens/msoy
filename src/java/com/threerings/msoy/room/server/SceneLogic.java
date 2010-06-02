@@ -155,7 +155,7 @@ public class SceneLogic
      * @param firstTime whether this the first room this owner has created.
      */
     public SceneRecord createBlankRoom (byte ownerType, int ownerId, int stockSceneId,
-        int themeId, String roomName, String portalAction)
+        boolean privileged, int themeId, String roomName, String portalAction)
     {
         // load up the stock scene
         SceneRecord record = _sceneRepo.loadScene(stockSceneId);
@@ -205,7 +205,7 @@ public class SceneLogic
 
                     // load its associated catalog listing
                     CatalogRecord listing = repo.loadListing(stockItem.catalogId, true);
-                    if (listing.pricing != CatalogListing.PRICING_HIDDEN) {
+                    if (!privileged && listing.pricing != CatalogListing.PRICING_HIDDEN) {
                         log.warning("Listing for item in room template is not hidden; skipping",
                             "sceneId", furni.sceneId, "itemType", furni.itemType, "itemId",
                             furni.itemId, "pricing", listing.pricing);

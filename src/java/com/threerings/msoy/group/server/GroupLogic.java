@@ -132,7 +132,7 @@ public class GroupLogic
                     // add its home room
                     SceneRecord newScene = _sceneLogic.createBlankRoom(
                         MsoySceneModel.OWNER_TYPE_GROUP, groupId,
-                        SceneRecord.Stock.FIRST_GROUP_HALL.getSceneId(), 0, grec.name, null);
+                        SceneRecord.Stock.FIRST_GROUP_HALL.getSceneId(), true, 0, grec.name, null);
                     _groupRepo.setHomeSceneId(groupId, newScene.sceneId);
 
                 } catch (DuplicateKeyException dke) {

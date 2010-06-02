@@ -125,6 +125,7 @@ public class MemberLogic
                 String name = _serverMsgs.getBundle("server").get("m.new_room_name");
 
                 int stockSceneId = SceneRecord.Stock.FIRST_MEMBER_ROOM.getSceneId();
+                boolean privileged = true;
                 if (member.themeGroupId != 0) {
                     // this member is themed, let's see if the theme has any home room templates
                     List<ThemeHomeTemplateRecord> templates =
@@ -132,10 +133,11 @@ public class MemberLogic
                     // if so, just grab first one for now
                     if (templates.size() > 0) {
                         stockSceneId = templates.get(0).sceneId;
+                        privileged = false;
                     }
                 }
                 SceneRecord scene = _sceneLogic.createBlankRoom(MsoySceneModel.OWNER_TYPE_MEMBER,
-                    member.memberId, stockSceneId, member.themeGroupId, name, null);
+                    member.memberId, stockSceneId, privileged, member.themeGroupId, name, null);
                 member.homeSceneId = scene.sceneId;
                 _memberRepo.setHomeSceneId(member.memberId, member.homeSceneId);
             }
