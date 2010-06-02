@@ -18,7 +18,7 @@ import com.threerings.util.PostgresUtil;
 public class RepositoryUtil
 {
     /**
-     * Returns a timetstamp that cuts off the specified number of days in the past at midnight
+     * Returns a timestamp that cuts off the specified number of days in the past at midnight
      * rather than at the current time minus that many milliseconds. Use this when using cutoffs
      * for timestamps in queries to ensure that they can be cached.
      */
