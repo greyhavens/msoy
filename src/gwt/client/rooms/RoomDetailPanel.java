@@ -53,6 +53,23 @@ import client.util.InfoCallback;
  */
 public class RoomDetailPanel extends SmartTable
 {
+    protected final class TemplateClickHandler implements ClickHandler {
+        public TemplateClickHandler (boolean doMake) {
+            _doMake = doMake;
+        }
+        public void onClick (ClickEvent event) {
+            _roomsvc.makeTemplate(_detail.info.sceneId, _detail.theme.getGroupId(), _doMake,
+                new InfoCallback<Void>() {
+                public void onSuccess (Void result) {
+                    _detail.isTemplate = _doMake;
+                    updateStamps();
+                }
+            });
+        }
+
+        protected boolean _doMake;
+    }
+
     public RoomDetailPanel (int sceneId)
     {
         super("roomDetailPanel", 0, 10);
@@ -145,22 +162,30 @@ public class RoomDetailPanel extends SmartTable
         if (_detail.theme != null) {
             _themeBit.add(new InlineLabel(_msgs.theme(), false, false, true));
             _themeBit.add(Link.groupView(_detail.theme.toString(), (_detail.theme).getGroupId()));
-            if (_unstampHolder == null) {
-                _unstampHolder = new FlowPanel();
-                _unstampHolder.add(MsoyUI.createTinyButton(_msgs.doUnstamp(), new ClickHandler() {
-                    public void onClick (ClickEvent event) {
-                        _roomsvc.stampRoom(_detail.info.sceneId, _detail.theme.getGroupId(), false,
-                            new InfoCallback<Void>() {
-                            public void onSuccess (Void result) {
-                                _detail.theme = null;
-                                updateStamps();
-                            }
-                        });
-                    }
+            if (_holder == null) {
+                _holder = new FlowPanel();
+                _holder.add(_unstampButton = MsoyUI.createTinyButton(
+                    _msgs.doUnstamp(), new ClickHandler() {
+                        public void onClick (ClickEvent event) {
+                            _roomsvc.stampRoom(_detail.info.sceneId, _detail.theme.getGroupId(), false,
+                                new InfoCallback<Void>() {
+                                public void onSuccess (Void result) {
+                                    _detail.theme = null;
+                                    _detail.isTemplate = false;
+                                    updateStamps();
+                                }
+                            });
+                        }
                 }));
+
+                _holder.add(_templateButton = MsoyUI.createTinyButton(
+                    _msgs.doTemplate(), new TemplateClickHandler(true)));
+
+                _holder.add(_unTemplateButton = MsoyUI.createTinyButton(
+                    _msgs.doUntemplate(), new TemplateClickHandler(false)));
             }
-            _themeBit.add(_unstampHolder);
-            _unstampHolder.setVisible(false);
+
+            _themeBit.add(_holder);
         }
     }
 
@@ -184,12 +209,14 @@ public class RoomDetailPanel extends SmartTable
         _themeContents.setWidget(1, 0, MsoyUI.createLabel(_msgs.themeNote(), "themeNote"));
 
         if (_detail.theme != null) {
-            if (!_managedThemes.contains(_detail.theme)) {
-                _unstampHolder.setVisible(false);
-                return;
+            if (_managedThemes.contains(_detail.theme)) {
+                _unstampButton.setVisible(true);
+                _unTemplateButton.setVisible(_detail.isTemplate);
+                _templateButton.setVisible(!_detail.isTemplate);
+            } else {
+                _unstampButton.setVisible(false);
             }
-            _unstampHolder.setVisible(true);
-            // fall through
+
         } else {
             buildStampUI();
         }
@@ -246,7 +273,8 @@ public class RoomDetailPanel extends SmartTable
     protected SmartTable _stampPanel;
     protected Set<GroupName> _managedThemes;
 
-    protected FlowPanel _unstampHolder;
+    protected FlowPanel _holder;
+    protected Button _unstampButton, _templateButton, _unTemplateButton;
     protected ListBox _stampBox;
     protected Button _stampButton;
     protected List<GroupName> _stampEntries;
