@@ -47,6 +47,7 @@ import com.threerings.msoy.room.gwt.RoomDetail;
 import com.threerings.msoy.room.gwt.RoomInfo;
 import com.threerings.msoy.room.gwt.WebRoomService;
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
+import com.threerings.msoy.room.server.persist.SceneFurniRecord;
 import com.threerings.msoy.room.server.persist.SceneRecord;
 import static com.threerings.msoy.Log.log;
 
@@ -260,8 +261,23 @@ public class WebRoomServlet extends MsoyServiceServlet
 
         ensureSceneManager(mrec, sceneRec);
 
-        // all is well, let's go ahead
         if (doMake) {
+            // if we get this far, forcibly shut down the room; this may not help for this
+            // particular invocation, but the manager can just hit the button again and the
+            // flush will have taken place by then -- pragmatism is the word of the day
+            _sceneActions.flushTheme(sceneId);
+
+            // go through the furni and make sure they're sane
+            for (SceneFurniRecord rec : _sceneRepo.loadFurni(sceneId)) {
+                if (rec.itemType != 0 && rec.itemId != 0) {
+                    String err = _sceneLogic.validateTemplateFurni(
+                        groupId, sceneId, rec.itemType, rec.itemId);
+                    if (err != null) {
+                        throw new ServiceException(err);
+                    }
+                }
+            }
+
             _themeRepo.setHomeTemplate(groupId, sceneId);
 
         } else {

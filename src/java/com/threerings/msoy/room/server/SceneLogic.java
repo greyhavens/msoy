@@ -13,6 +13,7 @@ import com.google.inject.Singleton;
 
 import com.samskivert.io.PersistenceException;
 
+import com.threerings.util.MessageBundle;
 import com.threerings.whirled.data.SceneModel;
 import com.threerings.whirled.data.SceneUpdate;
 import com.threerings.whirled.server.persist.SceneRepository;
@@ -20,8 +21,10 @@ import com.threerings.whirled.util.NoSuchSceneException;
 import com.threerings.whirled.util.UpdateList;
 
 import com.threerings.msoy.server.persist.MemberRepository;
+import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
+import com.threerings.msoy.group.server.persist.ThemeRepository;
 import com.threerings.msoy.item.data.all.Audio;
 import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.Item;
@@ -38,11 +41,11 @@ import com.threerings.msoy.money.data.all.Currency;
 
 import com.threerings.msoy.room.data.FurniData;
 import com.threerings.msoy.room.data.MsoySceneModel;
+import com.threerings.msoy.room.data.RoomCodes;
 import com.threerings.msoy.room.server.persist.MemoryRepository;
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
 import com.threerings.msoy.room.server.persist.SceneFurniRecord;
 import com.threerings.msoy.room.server.persist.SceneRecord;
-
 import static com.threerings.msoy.Log.log;
 
 /**
@@ -240,6 +243,55 @@ public class SceneLogic
         return record;
     }
 
+    public String validateTemplateFurni (final int themeId, final int sceneId, final byte itemType,
+        final int itemId)
+        throws ServiceException
+    {
+        // make sure the item is stamped
+        if (!_itemLogic.getRepository(itemType).isThemeStamped(themeId, itemId)) {
+            return furniError(RoomCodes.E_FURNI_NOT_STAMPED, itemType, itemId);
+        }
+
+        // test to see if we're editing a theme home room template
+        if (_themeRepo.loadHomeTemplate(themeId, sceneId) == null) {
+            // if not, we're done, pass through to success
+            return null;
+        }
+
+        // but if we are, we need to do sanity tests on the item
+        ItemRepository<ItemRecord> repo = _itemLogic.getRepository(itemType);
+        ItemRecord stockItem = repo.loadItem(itemId);
+        // it has to be listed
+        if (stockItem.catalogId == 0) {
+            return furniError(RoomCodes.E_TEMPLATE_FURNI_NOT_LISTED, itemType, itemId);
+        }
+
+        CatalogRecord listing = repo.loadListing(stockItem.catalogId, true);
+        // and the pricing has to be HIDDEN
+        if (listing.pricing != CatalogListing.PRICING_HIDDEN) {
+            return furniError(RoomCodes.E_TEMPLATE_LISTING_NOT_HIDDEN, itemType, itemId);
+        }
+        // finally the listing must be brand owned (by the theme in question)
+        if (listing.brandId != themeId) {
+            return furniError(RoomCodes.E_TEMPLATE_LISTING_NOT_OWNED, itemType, itemId);
+        }
+        // else all is well
+        return null;
+    }
+
+    protected String furniError (String code, byte itemType, int itemId)
+    {
+        try {
+            ItemRecord item = _itemLogic.getRepository(itemType).loadItem(itemId);
+            if (item != null) {
+                return MessageBundle.tcompose(code, item.name);
+            }
+        } catch (ServiceException e) {
+            e.printStackTrace();
+        }
+        return MessageBundle.tcompose(code, itemType + ":" + itemId);
+    }
+
     // dependencies
     @Inject protected AudioRepository _audioRepo;
     @Inject protected DecorRepository _decorRepo;
@@ -248,5 +300,6 @@ public class SceneLogic
     @Inject protected MemberRepository _memberRepo;
     @Inject protected MemoryRepository _memoryRepo;
     @Inject protected MsoySceneRepository _sceneRepo;
+    @Inject protected ThemeRepository _themeRepo;
     @Inject protected UpdateAccumulator _accumulator;
 }

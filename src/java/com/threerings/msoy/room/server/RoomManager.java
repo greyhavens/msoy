@@ -28,7 +28,6 @@ import com.samskivert.util.ObjectUtil;
 import com.samskivert.util.QuickSort;
 import com.samskivert.util.StringUtil;
 import com.samskivert.util.Throttle;
-
 import com.threerings.util.MessageBundle;
 import com.threerings.util.Name;
 
@@ -97,7 +96,6 @@ import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.util.MailSender;
-import com.threerings.msoy.web.gwt.ServiceException;
 
 import com.threerings.msoy.bureau.data.WindowClientObject;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
@@ -108,13 +106,9 @@ import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
-import com.threerings.msoy.item.gwt.CatalogListing;
 import com.threerings.msoy.item.server.ItemLogic;
 import com.threerings.msoy.item.server.ItemManager;
 import com.threerings.msoy.item.server.persist.AvatarRecord;
-import com.threerings.msoy.item.server.persist.CatalogRecord;
-import com.threerings.msoy.item.server.persist.ItemRecord;
-import com.threerings.msoy.item.server.persist.ItemRepository;
 
 import com.threerings.msoy.party.server.PartyRegistry;
 
@@ -1654,51 +1648,10 @@ public class RoomManager extends SpotSceneManager
         final int itemId = data.itemId;
         _invoker.postUnit(new RepositoryUnit("validateStamp") {
             public void invokePersist () throws Exception {
-                // make sure the item is stamped
-                if (!_itemLogic.getRepository(itemType).isThemeStamped(themeId, itemId)) {
-                    throw new InvocationException(furniError(
-                        RoomCodes.E_FURNI_NOT_STAMPED, itemType, itemId));
+                String err = _sceneLogic.validateTemplateFurni(themeId, sceneId, itemType, itemId);
+                if (err != null) {
+                    throw new InvocationException(err);
                 }
-
-                // test to see if we're editing a theme home room template
-                if (_themeRepo.loadHomeTemplate(themeId, sceneId) == null) {
-                    // if not, we're done, pass through to success
-                    return;
-                }
-
-                // but if we are, we need to do sanity tests on the item
-                ItemRepository<ItemRecord> repo = _itemLogic.getRepository(itemType);
-                ItemRecord stockItem = repo.loadItem(itemId);
-                // it has to be listed
-                if (stockItem.catalogId == 0) {
-                    throw new InvocationException(furniError(
-                        RoomCodes.E_TEMPLATE_FURNI_NOT_LISTED, itemType, itemId));
-                }
-
-                CatalogRecord listing = repo.loadListing(stockItem.catalogId, true);
-                // and the pricing has to be HIDDEN
-                if (listing.pricing != CatalogListing.PRICING_HIDDEN) {
-                    throw new InvocationException(furniError(
-                        RoomCodes.E_TEMPLATE_LISTING_NOT_HIDDEN, itemType, itemId));
-                }
-                // finally the listing must be brand owned (by the theme in question)
-                if (listing.brandId != themeId) {
-                    throw new InvocationException(furniError(
-                        RoomCodes.E_TEMPLATE_LISTING_NOT_OWNED, itemType, itemId));
-                }
-                // else all is well
-            }
-            protected String furniError (String code, byte itemType, int itemId)
-            {
-                try {
-                    ItemRecord item = _itemLogic.getRepository(itemType).loadItem(itemId);
-                    if (item != null) {
-                        return MessageBundle.tcompose(code, item.name);
-                    }
-                } catch (ServiceException e) {
-                    e.printStackTrace();
-                }
-                return MessageBundle.tcompose(code, itemType + ":" + itemId);
             }
             @Override public void handleSuccess () {
                 onSuccess.run();
@@ -2297,6 +2250,7 @@ public class RoomManager extends SpotSceneManager
     @Inject protected MsoySceneRepository _sceneRepo;
     @Inject protected PartyRegistry _partyReg;
     @Inject protected PetManager _petMan;
+    @Inject protected SceneLogic _sceneLogic;
     @Inject protected SceneRegistry _screg;
     @Inject protected ThemeRepository _themeRepo;
 }
