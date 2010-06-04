@@ -103,8 +103,8 @@ public class MsoyPeerSceneMoveHandler extends PeerSceneMoveHandler
             return;
         }
 
-        // if we're not a player (e.g. a pet), bypass all the complexity
-        if (_memobj == null) {
+        // if we're not a player (e.g. a pet or a lurker), bypass all the complexity
+        if (_memobj == null || _memobj.getMemberId() == 0) {
             finishMove(destmgr, null);
             return;
         }
@@ -221,11 +221,6 @@ public class MsoyPeerSceneMoveHandler extends PeerSceneMoveHandler
         public void invokePersist ()
             throws Exception
         {
-            if (_memberId == 0) {
-                log.warning("What's going on? This user's memberId is zero!", "user", _memobj.who(),
-                    "sceneId", _sceneId, "themeId", _themeId);
-                return;
-            }
             AvatarRepository avaRepo = _itemLogic.getAvatarRepository();
 
             // if we're moving into a theme, or we just don't have an avatar cache yet, load it
