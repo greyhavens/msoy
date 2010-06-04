@@ -208,11 +208,19 @@ public class SceneLogic
 
                     // load its associated catalog listing
                     CatalogRecord listing = repo.loadListing(stockItem.catalogId, true);
-                    if (!privileged && listing.pricing != CatalogListing.PRICING_HIDDEN) {
-                        log.warning("Listing for item in room template is not hidden; skipping",
-                            "sceneId", furni.sceneId, "itemType", furni.itemType, "itemId",
-                            furni.itemId, "pricing", listing.pricing);
-                        continue;
+                    if (!privileged) {
+                        if (listing.pricing != CatalogListing.PRICING_HIDDEN) {
+                            log.warning("Listing for item in room template is not hidden; skipping",
+                                "sceneId", furni.sceneId, "itemType", furni.itemType, "itemId",
+                                furni.itemId, "pricing", listing.pricing);
+                            continue;
+                        }
+                        if (themeId != 0 && listing.brandId != themeId) {
+                            log.warning("Listing for item in room template is not owned by theme; skipping",
+                                "sceneId", furni.sceneId, "itemType", furni.itemType, "itemId",
+                                furni.itemId, "brand", listing.brandId);
+                            continue;
+                        }
                     }
 
                     // create a new clone, pretty much exactly as if we were buying it
@@ -243,8 +251,7 @@ public class SceneLogic
         return record;
     }
 
-    public String validateTemplateFurni (final int themeId, final int sceneId, final byte itemType,
-        final int itemId)
+    public String validateTemplateFurni (int themeId, int sceneId, byte itemType, int itemId)
         throws ServiceException
     {
         // make sure the item is stamped
@@ -252,9 +259,7 @@ public class SceneLogic
             return furniError(RoomCodes.E_FURNI_NOT_STAMPED, itemType, itemId);
         }
 
-        // test to see if we're editing a theme home room template
-        if (_themeRepo.loadHomeTemplate(themeId, sceneId) == null) {
-            // if not, we're done, pass through to success
+        if (sceneId == 0) {
             return null;
         }
 

@@ -1648,7 +1648,10 @@ public class RoomManager extends SpotSceneManager
         final int itemId = data.itemId;
         _invoker.postUnit(new RepositoryUnit("validateStamp") {
             public void invokePersist () throws Exception {
-                String err = _sceneLogic.validateTemplateFurni(themeId, sceneId, itemType, itemId);
+                // only send in a sceneId if it's in use as a template
+                int templateId =
+                    (_themeRepo.loadHomeTemplate(themeId, sceneId) != null) ? sceneId : 0;
+                String err = _sceneLogic.validateTemplateFurni(themeId, templateId, itemType, itemId);
                 if (err != null) {
                     throw new InvocationException(err);
                 }
