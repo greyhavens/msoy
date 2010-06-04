@@ -8,6 +8,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.threerings.msoy.data.all.RatingResult;
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.PurchaseResult;
+import com.threerings.msoy.room.gwt.WebRoomService.TemplatesResult;
 
 /**
  * Provides the asynchronous version of {@link WebRoomService}.
@@ -63,4 +64,10 @@ public interface WebRoomServiceAsync
      * The async version of {@link WebRoomService#makeTemplate}.
      */
     void makeTemplate (int sceneId, int groupId, boolean doMake, AsyncCallback<Void> callback);
+
+    /**
+     * The async version of {@link WebRoomService#loadThemeTemplates}.
+     */
+    void loadThemeTemplates (int groupId, AsyncCallback<TemplatesResult> callback);
+
 }

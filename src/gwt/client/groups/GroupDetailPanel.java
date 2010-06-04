@@ -249,7 +249,7 @@ public class GroupDetailPanel extends FlowPanel
             managerActions.add(MsoyUI.createActionLabel(
                 _msgs.detailManageRooms(), "inline", new ClickHandler() {
                     public void onClick (ClickEvent event) {
-                        _contentPanel.showRooms();
+                        _contentPanel.showTemplates();
                     }
                 }));
 
@@ -312,6 +312,14 @@ public class GroupDetailPanel extends FlowPanel
                 _themeActions.add(new InlineLabel(" | "));
                 _themeActions.add(MsoyUI.createActionLabel(_msgs.detailViewLineup(), "inline",
                         Link.createHandler(Pages.STUFF, "l", groupId)));
+
+                _themeActions.add(new InlineLabel(" | "));
+                _themeActions.add(MsoyUI.createActionLabel(_msgs.detailViewTemplateRooms(),
+                    "inline", new ClickHandler() {
+                    public void onClick (ClickEvent event) {
+                        _contentPanel.showTemplates();
+                    }
+                }));
 
 //                _themeActions.add(new InlineLabel(" | "));
 //                _themeActions.add(MsoyUI.createActionLabel(_msgs.detailViewShop(), "inline",

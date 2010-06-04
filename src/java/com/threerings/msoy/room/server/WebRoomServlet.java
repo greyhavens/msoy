@@ -34,6 +34,7 @@ import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.group.data.all.GroupMembership.Rank;
 import com.threerings.msoy.group.server.ThemeLogic;
 import com.threerings.msoy.group.server.persist.GroupRepository;
+import com.threerings.msoy.group.server.persist.ThemeHomeTemplateRecord;
 import com.threerings.msoy.group.server.persist.ThemeRepository;
 import com.threerings.msoy.item.data.ItemCodes;
 
@@ -215,7 +216,7 @@ public class WebRoomServlet extends MsoyServiceServlet
     public void stampRoom (int sceneId, int groupId, boolean doStamp)
         throws ServiceException
     {
-        MemberRecord mrec = requireThemeManager(sceneId, groupId);
+        MemberRecord mrec = requireThemeManager(groupId);
 
         SceneRecord sceneRec = _sceneRepo.loadScene(sceneId);
         if (sceneRec == null) {
@@ -247,7 +248,7 @@ public class WebRoomServlet extends MsoyServiceServlet
     public void makeTemplate (int sceneId, int groupId, boolean doMake)
         throws ServiceException
     {
-        MemberRecord mrec = requireThemeManager(sceneId, groupId);
+        MemberRecord mrec = requireThemeManager(groupId);
 
         SceneRecord sceneRec = _sceneRepo.loadScene(sceneId);
         if (sceneRec == null) {
@@ -285,6 +286,20 @@ public class WebRoomServlet extends MsoyServiceServlet
         }
     }
 
+    public TemplatesResult loadThemeTemplates (int groupId)
+        throws ServiceException
+    {
+        requireThemeManager(groupId);
+
+        List<SceneRecord> scenes = _sceneRepo.loadScenes(Lists.transform(
+            _themeRepo.loadHomeTemplates(groupId), ThemeHomeTemplateRecord.TO_SCENE_ID));
+
+        TemplatesResult result = new TemplatesResult();
+        result.groupRooms = Lists.newArrayList(Lists.transform(scenes, TO_ROOM_INFO));
+
+        return result;
+    }
+
     protected void ensureSceneManager (MemberRecord mrec, SceneRecord sceneRec)
         throws ServiceException
     {
@@ -303,7 +318,7 @@ public class WebRoomServlet extends MsoyServiceServlet
         }
     }
 
-    protected MemberRecord requireThemeManager (int sceneId, int groupId)
+    protected MemberRecord requireThemeManager (int groupId)
         throws ServiceException
     {
         MemberRecord mrec = requireAuthedUser();
@@ -311,7 +326,7 @@ public class WebRoomServlet extends MsoyServiceServlet
         // make sure we're allowed to stamp for this theme
         if (!_themeLogic.isTheme(groupId) ||
                 _groupRepo.getMembership(groupId, mrec.memberId).left != Rank.MANAGER) {
-            log.warning("User not allowed to manage this theme", "scene", sceneId,
+            log.warning("User not allowed to manage this theme",
                 "theme", groupId, "who", mrec.who());
             throw new ServiceException(ItemCodes.E_ACCESS_DENIED);
         }

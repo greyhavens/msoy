@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.group.server.persist;
 
+import com.google.common.base.Function;
 import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.annotation.Entity;
@@ -22,6 +23,15 @@ public class ThemeHomeTemplateRecord extends PersistentRecord
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
     public static final int SCHEMA_VERSION = 1;
+
+    /** A convenient {@link Function} for extracting this record's sceneId. */
+    public static final Function<ThemeHomeTemplateRecord,Integer> TO_SCENE_ID =
+        new Function<ThemeHomeTemplateRecord,Integer>() {
+        public Integer apply (ThemeHomeTemplateRecord record) {
+            return record.sceneId;
+        }
+    };
+
 
     /** The groupId of the theme for which we're enumerating home room templates. */
     @Id

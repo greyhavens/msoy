@@ -57,6 +57,15 @@ public interface WebRoomService extends RemoteService
         public PriceQuote newRoomQuote;
     }
 
+    /** Delivers the respose to {@link #loadThemeTemplates}. */
+    public static class TemplatesResult implements IsSerializable
+    {
+        /**
+         * The rooms of this group.
+         */
+        public List<RoomInfo> groupRooms;
+    }
+
     /** Delivers the respose to {@link #loadOverview}. */
     public static class OverviewResult
         implements IsSerializable
@@ -131,5 +140,11 @@ public interface WebRoomService extends RemoteService
      * must already be stamped appropriately.
      */
     public void makeTemplate (int sceneId, int groupId, boolean doMake)
+        throws ServiceException;
+
+    /**
+     * Find and return the current template rooms of the given theme.
+     */
+    public TemplatesResult loadThemeTemplates (int groupId)
         throws ServiceException;
 }

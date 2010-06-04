@@ -99,6 +99,18 @@ public class DetailContentPanel extends FlowPanel
         _backButton.setVisible(true);
     }
 
+    public void showTemplates () {
+        if (_templates != null && _content.getWidget() == _templates) {
+            return;
+        }
+        _title.setWidget(new Label(_msgs.detailTabRooms()));
+        if (_templates == null) {
+            _templates = new ThemeTemplatesPanel(_detail);
+        }
+        _content.setWidget(_templates);
+        _backButton.setVisible(true);
+    }
+
     public void showAwardMedals () {
         if (_awardMedals != null && _content.getWidget() == _awardMedals) {
                 return;
@@ -134,6 +146,7 @@ public class DetailContentPanel extends FlowPanel
     protected PrettyTextPanel _charter;
     protected GroupMembersPanel _members;
     protected GroupRoomsPanel _rooms;
+    protected ThemeTemplatesPanel _templates;
     protected AwardMedalsPanel _awardMedals;
     protected Widget _previousContent;
     protected Widget _previousTitle;
