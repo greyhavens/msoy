@@ -263,27 +263,26 @@ public class MsoyAuthenticator extends Authenticator
             }
         }
 
-        if (!creds.featuredPlaceView) {
-            // bail if the server is too busy for a guest
-            _authLogic.requireServerAvailabile(null);
-
-            // create a new guest account
-            MemberRecord mrec = _accountLogic.createGuestAccount(
-                conn.getInetAddress().toString(), creds.visitorId, creds.themeId,
-                AffiliateCookie.fromCreds(creds.affiliateId));
-
-            // now authenticate just to make sure everything is in order and get the token
-            return authenticateMember(conn, creds, rdata, mrec, true, mrec.accountName,
-                                      AccountLogic.PERMAGUEST_PASSWORD);
+        if (creds.featuredPlaceView) {
+            // we're a "featured whirled" client so we'll be an ephemeral guest with id 0
+            // TODO: throttle logins for featured place view?
+            authenticateLurker(conn, creds, rdata, 0);
+            return null;
         }
+        // bail if the server is too busy for a guest
+        _authLogic.requireServerAvailabile(null);
 
-        // we're a "featured whirled" client so we'll be an ephemeral guest with id 0
-        // TODO: throttle logins for featured place view?
-        authenticateGuest(conn, creds, rdata, 0);
-        return null;
+        // create a new guest account
+        MemberRecord mrec = _accountLogic.createGuestAccount(
+            conn.getInetAddress().toString(), creds.visitorId, creds.themeId,
+            AffiliateCookie.fromCreds(creds.affiliateId));
+
+        // now authenticate just to make sure everything is in order and get the token
+        return authenticateMember(conn, creds, rdata, mrec, true, mrec.accountName,
+            AccountLogic.PERMAGUEST_PASSWORD);
     }
 
-    protected void authenticateGuest (AuthingConnection conn, WorldCredentials creds,
+    protected void authenticateLurker (AuthingConnection conn, WorldCredentials creds,
                                       MsoyAuthResponseData rdata, int memberId)
         throws ServiceException
     {
