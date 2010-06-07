@@ -215,6 +215,12 @@ public class SceneLogic
                                 furni.itemId, "pricing", listing.pricing);
                             continue;
                         }
+                        if (listing.basisId != 0) {
+                            log.warning("Listing for item in room template is derived; skipping",
+                                "sceneId", furni.sceneId, "itemType", furni.itemType, "itemId",
+                                furni.itemId, "pricing", listing.pricing, "basis", listing.basisId);
+                            continue;
+                        }
                         if (themeId != 0 && listing.brandId != themeId) {
                             log.warning("Listing for item in room template is not owned by theme; skipping",
                                 "sceneId", furni.sceneId, "itemType", furni.itemType, "itemId",
@@ -279,6 +285,9 @@ public class SceneLogic
         // finally the listing must be brand owned (by the theme in question)
         if (listing.brandId != themeId) {
             return furniError(RoomCodes.E_TEMPLATE_LISTING_NOT_OWNED, itemType, itemId);
+        }
+        if (listing.basisId != 0) {
+            return furniError(RoomCodes.E_TEMPLATE_LISTING_DERIVED, itemType, itemId);
         }
         // else all is well
         return null;

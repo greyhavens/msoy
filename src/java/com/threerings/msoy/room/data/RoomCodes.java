@@ -35,17 +35,20 @@ public interface RoomCodes extends InvocationCodes
     /** Error reported when a client attempt to set a room property when they cannot. */
     public static final String E_CANNOT_SET_PROPERTY = "e.cannot_add_set_property";
 
-    /** The user tries to add an unstamped furni to a themed room. */
+    /** Can't have an unstamped furni in a themed room. */
     public static final String E_FURNI_NOT_STAMPED = "e.furni_not_stamped";
 
-    /** The user tries to add an unlisted furni to a home room template. */
+    /** Can't have an unlisted furni in a home room template. */
     public static final String E_TEMPLATE_FURNI_NOT_LISTED = "e.furni_not_listed";
 
-    /** The user tries to add a furni to a room template whose listing is not hidden. */
+    /** Can't have a furni in a room template whose listing is not hidden. */
     public static final String E_TEMPLATE_LISTING_NOT_HIDDEN = "e.template_listing_not_hidden";
 
-    /** The user tries to add a furni to a room template whose listing is not owned by the brand. */
+    /** Can't have a furni in a room template whose listing is not owned by the brand. */
     public static final String E_TEMPLATE_LISTING_NOT_OWNED= "e.template_listing_not_owned";
+
+    /** Can't have a derived furni in a room template. */
+    public static final String E_TEMPLATE_LISTING_DERIVED = "e.template_listing_derived";
 
     /** A room layer that is in front of normal furniture and such. */
     public static final byte FOREGROUND_LAYER = 0;
