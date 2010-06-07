@@ -249,7 +249,7 @@ public class GroupDetailPanel extends FlowPanel
             managerActions.add(MsoyUI.createActionLabel(
                 _msgs.detailManageRooms(), "inline", new ClickHandler() {
                     public void onClick (ClickEvent event) {
-                        _contentPanel.showTemplates();
+                        _contentPanel.showRooms();
                     }
                 }));
 
