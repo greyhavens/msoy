@@ -19,6 +19,7 @@ import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.room.data.RoomCodes;
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.StatLogic;
 import com.threerings.msoy.server.persist.CharityRecord;
@@ -34,6 +35,7 @@ import com.threerings.msoy.game.server.persist.GameInfoRecord;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 import com.threerings.msoy.group.gwt.BrandDetail;
 import com.threerings.msoy.group.server.GroupLogic;
+import com.threerings.msoy.group.server.ThemeLogic;
 import com.threerings.msoy.group.server.persist.BrandShareRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.group.server.persist.ThemeRepository;
@@ -62,6 +64,7 @@ import com.threerings.msoy.item.server.persist.FavoritesRepository;
 import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
 import com.threerings.msoy.item.server.persist.FavoritesRepository.FavoritedItemResultRecord;
+import com.threerings.util.MessageBundle;
 
 /**
  * Provides the server implementation of {@link CatalogService}.
@@ -499,6 +502,10 @@ public class CatalogServlet extends MsoyServiceServlet
             if (!_itemLogic.isSuitableBasis(record.item, basisId, currency, cost)) {
                 throw new ServiceException(ItemCodes.E_BASIS_ERROR);
             }
+            if (_themeLogic.isUsedInTemplate(itemType, catalogId)) {
+                throw new ServiceException(MessageBundle.tcompose(
+                    RoomCodes.E_TEMPLATE_LISTING_DERIVED, record.item.name));
+            }
         }
 
         // load a copy of the original item
@@ -697,6 +704,7 @@ public class CatalogServlet extends MsoyServiceServlet
     @Inject protected ThemeRepository _themeRepo;
     @Inject protected RuntimeConfig _runtime;
     @Inject protected StatLogic _statLogic;
+    @Inject protected ThemeLogic _themeLogic;
     @Inject protected UserActionRepository _userActionRepo;
 
     /** Used by {@link #loadSuite}. */

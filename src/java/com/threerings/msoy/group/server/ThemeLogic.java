@@ -5,12 +5,14 @@ package com.threerings.msoy.group.server;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.google.inject.internal.Sets;
 
 import com.samskivert.depot.expression.ColumnExp;
 import com.threerings.presents.annotation.BlockingThread;
@@ -22,6 +24,7 @@ import com.threerings.msoy.data.all.Theme;
 import com.threerings.msoy.group.data.all.GroupMembership.Rank;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.group.server.persist.ThemeAvatarLineupRecord;
+import com.threerings.msoy.group.server.persist.ThemeHomeTemplateRecord;
 import com.threerings.msoy.group.server.persist.ThemeRecord;
 import com.threerings.msoy.group.server.persist.ThemeRepository;
 import com.threerings.msoy.item.data.all.Avatar;
@@ -34,6 +37,8 @@ import com.threerings.msoy.money.data.all.PurchaseResult;
 import com.threerings.msoy.money.server.BuyResult;
 import com.threerings.msoy.money.server.MoneyLogic;
 import com.threerings.msoy.money.server.MoneyLogic.BuyOperation;
+import com.threerings.msoy.room.server.persist.MsoySceneRepository;
+import com.threerings.msoy.room.server.persist.SceneFurniRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.web.gwt.ServiceCodes;
 import com.threerings.msoy.web.gwt.ServiceException;
@@ -64,6 +69,30 @@ public class ThemeLogic
             }
         });
     }
+
+    /**
+     * Find if a certain item is used in any home template. This is not necessarily a cheap
+     * operation, and it's somewhat questionable if we can keep doing it like this in the long
+     * run. We'll have to see how it works out in practice.
+     */
+    public boolean isUsedInTemplate (byte itemType, int catalogId)
+        throws ServiceException
+    {
+        // first fetch a list of *all* home template scenes
+        List<Integer> sceneIds = Lists.transform(
+            _themeRepo.loadHomeTemplates(), ThemeHomeTemplateRecord.TO_SCENE_ID);
+
+        // fetch *all* the itemIds of the correct itemType from *any* such scene
+        Set<Integer> itemIds = Sets.newHashSet();
+        for (SceneFurniRecord furni : _sceneRepo.loadFurni(itemType, sceneIds)) {
+            itemIds.add(furni.itemId);
+        }
+
+        // finally perform a special-purpose query among those itemIds to see if any of
+        // them have the same catalogId as the item we're testing
+        return _itemLogic.getRepository(itemType).containsListedItem(itemIds, catalogId);
+    }
+
 
     public boolean isTheme (int groupId)
     {
@@ -191,5 +220,6 @@ public class ThemeLogic
     @Inject protected GroupRepository _groupRepo;
     @Inject protected MoneyLogic _moneyLogic;
     @Inject protected RuntimeConfig _runtime;
+    @Inject protected MsoySceneRepository _sceneRepo;
 
 }

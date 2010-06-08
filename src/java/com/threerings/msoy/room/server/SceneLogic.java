@@ -29,7 +29,6 @@ import com.threerings.msoy.item.data.all.Audio;
 import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
-import com.threerings.msoy.item.gwt.CatalogListing;
 import com.threerings.msoy.item.server.ItemLogic;
 import com.threerings.msoy.item.server.persist.AudioRepository;
 import com.threerings.msoy.item.server.persist.CatalogRecord;
@@ -209,12 +208,6 @@ public class SceneLogic
                     // load its associated catalog listing
                     CatalogRecord listing = repo.loadListing(stockItem.catalogId, true);
                     if (!privileged) {
-                        if (listing.pricing != CatalogListing.PRICING_HIDDEN) {
-                            log.warning("Listing for item in room template is not hidden; skipping",
-                                "sceneId", furni.sceneId, "itemType", furni.itemType, "itemId",
-                                furni.itemId, "pricing", listing.pricing);
-                            continue;
-                        }
                         if (listing.basisId != 0) {
                             log.warning("Listing for item in room template is derived; skipping",
                                 "sceneId", furni.sceneId, "itemType", furni.itemType, "itemId",
@@ -278,14 +271,11 @@ public class SceneLogic
         }
 
         CatalogRecord listing = repo.loadListing(stockItem.catalogId, true);
-        // and the pricing has to be HIDDEN
-        if (listing.pricing != CatalogListing.PRICING_HIDDEN) {
-            return furniError(RoomCodes.E_TEMPLATE_LISTING_NOT_HIDDEN, itemType, itemId);
-        }
-        // finally the listing must be brand owned (by the theme in question)
+        // the listing must be brand owned (by the theme in question)
         if (listing.brandId != themeId) {
             return furniError(RoomCodes.E_TEMPLATE_LISTING_NOT_OWNED, itemType, itemId);
         }
+        // and the item must not be derived from anything else
         if (listing.basisId != 0) {
             return furniError(RoomCodes.E_TEMPLATE_LISTING_DERIVED, itemType, itemId);
         }

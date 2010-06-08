@@ -155,6 +155,16 @@ public class ThemeRepository extends DepotRepository
     }
 
     /**
+     * Fetch all the scenes currently used as home templates. The size of this result will
+     * grow linearly with the cumulative size of the Whirled, but should remain quite small
+     * for the foreseeable future.
+     */
+    public List<ThemeHomeTemplateRecord> loadHomeTemplates ()
+    {
+        return findAll(ThemeHomeTemplateRecord.class);
+    }
+
+    /**
      * Fetch the home room templates for a given theme.
      */
     public List<ThemeHomeTemplateRecord> loadHomeTemplates (int groupId)

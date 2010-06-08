@@ -184,6 +184,15 @@ public class MsoySceneRepository extends DepotRepository
                        new Where(SceneFurniRecord.SCENE_ID, sceneId));
     }
 
+    /**
+     * Loads all of the furni records in the given scenes of the given type.
+     */
+    public List<SceneFurniRecord> loadFurni (byte itemType, Collection<Integer> scenes)
+    {
+        return findAll(SceneFurniRecord.class, new Where(Ops.and(
+            SceneFurniRecord.ITEM_TYPE.eq(itemType),
+            SceneFurniRecord.SCENE_ID.in(scenes))));
+    }
 
     /**
      * Load the SceneRecord for the given sceneId

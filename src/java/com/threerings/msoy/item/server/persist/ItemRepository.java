@@ -1382,6 +1382,36 @@ public abstract class ItemRepository<T extends ItemRecord>
     }
 
     /**
+     * A highly specialized method that returns true if one of the supplied itemIds (which may
+     * correspond to clones or originals) corresponds to (is a clone of or master item for) the
+     * given catalog listing.
+     */
+    public boolean containsListedItem (Collection<Integer> itemIds, int catalogId)
+    {
+        Set<Integer> originalIds = getOriginalIds(itemIds);
+        if (!originalIds.isEmpty()) {
+            if (!findAll(getItemClass(), new Where(Ops.and(
+                getItemColumn(ItemRecord.ITEM_ID).in(originalIds),
+                getItemColumn(ItemRecord.CATALOG_ID).eq(catalogId)))).isEmpty()) {
+                return true;
+            }
+        }
+    
+        Set<Integer> cloneIds = getCloneIds(itemIds);
+        if (!cloneIds.isEmpty()) {
+            if (!findAll(getCloneClass(),
+                new Join(getCloneColumn(CloneRecord.ORIGINAL_ITEM_ID),
+                    getItemColumn(ItemRecord.ITEM_ID)),
+                new Where(Ops.and(
+                    getCloneColumn(CloneRecord.ITEM_ID).in(cloneIds),
+                    getItemColumn(ItemRecord.CATALOG_ID).eq(catalogId)))).isEmpty()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Notes that the specified original item is now associated with the specified catalog listed
      * item (which may be zero to clear out a listing link).
      */
