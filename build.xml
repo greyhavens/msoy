@@ -641,7 +641,7 @@
       <arg value="${deploy.dir}/lib/thane.swc"/>
       <arg value="-compiler.library-path"/>
       <arg value="${deploy.dir}/lib/corelib.swc"/>
-      <arg value="${deploy.dir}/lib/ooolib-0.0-SNAPSHOT.swc"/>
+      <arg value="${deploy.dir}/lib/aspirin-0.0-SNAPSHOT.swc"/>
       <arg value="${deploy.dir}/lib/naryalib-0.0-SNAPSHOT.swc"/>
       <arg value="${deploy.dir}/lib/nenyalib-0.0-SNAPSHOT.swc"/>
       <arg value="${deploy.dir}/lib/vilyalib-0.0-SNAPSHOT.swc"/>
@@ -1000,7 +1000,7 @@
       <arg line="-library-path ${deploy.dir}/lib/KongregateAPI.swc"/>
       <arg line="-library-path ${deploy.dir}/lib/corelib.swc"/>
       <arg line="-library-path ${deploy.dir}/lib/flexlib.swc"/>
-      <arg line="-library-path ${deploy.dir}/lib/ooolib-0.0-SNAPSHOT.swc"/>
+      <arg line="-library-path ${deploy.dir}/lib/aspirin-0.0-SNAPSHOT.swc"/>
       <arg line="-library-path ${deploy.dir}/lib/naryalib-0.0-SNAPSHOT.swc"/>
       <arg line="-library-path ${deploy.dir}/lib/player-env-0.0-SNAPSHOT.swc"/>
       <arg line="-library-path ${deploy.dir}/lib/nenyalib-0.0-SNAPSHOT.swc"/>
