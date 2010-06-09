@@ -100,10 +100,10 @@
       <keep-generated-actionscript>false</keep-generated-actionscript>
       <!-- compiler.library-path: list of SWC files or directories that contain SWC files-->
       <library-path>
-         <path-element>../dist/lib/ooolib-0.0-SNAPSHOT.swc</path-element>
+         <path-element>../dist/lib/aspirin-0.0-SNAPSHOT.swc</path-element>
          <path-element>../dist/lib/naryalib-0.0-SNAPSHOT.swc</path-element>
-         <path-element>../dist/lib/vilyalib-0.0-SNAPSHOT.swc</path-element>
          <path-element>../dist/lib/nenyalib-0.0-SNAPSHOT.swc</path-element>
+         <path-element>../dist/lib/vilyalib-0.0-SNAPSHOT.swc</path-element>
          <path-element>../dist/lib/whirledlib-0.0-SNAPSHOT.swc</path-element>
          <path-element>../dist/lib/toyboxlib-0.0-SNAPSHOT.swc</path-element>
          <path-element>../dist/lib/corelib.swc</path-element>
