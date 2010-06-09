@@ -1389,24 +1389,25 @@ public abstract class ItemRepository<T extends ItemRecord>
     public boolean containsListedItem (Collection<Integer> itemIds, int catalogId)
     {
         Set<Integer> originalIds = getOriginalIds(itemIds);
-        if (!originalIds.isEmpty()) {
-            if (!findAll(getItemClass(), new Where(Ops.and(
-                getItemColumn(ItemRecord.ITEM_ID).in(originalIds),
-                getItemColumn(ItemRecord.CATALOG_ID).eq(catalogId)))).isEmpty()) {
-                return true;
-            }
+        if (!originalIds.isEmpty() &&
+                load(CountRecord.class,
+                    new FromOverride(getItemClass()),
+                    new Where(Ops.and(
+                        getItemColumn(ItemRecord.ITEM_ID).in(originalIds),
+                        getItemColumn(ItemRecord.CATALOG_ID).eq(catalogId)))).count > 0) {
+            return true;
         }
-    
+
         Set<Integer> cloneIds = getCloneIds(itemIds);
-        if (!cloneIds.isEmpty()) {
-            if (!findAll(getCloneClass(),
-                new Join(getCloneColumn(CloneRecord.ORIGINAL_ITEM_ID),
-                    getItemColumn(ItemRecord.ITEM_ID)),
-                new Where(Ops.and(
-                    getCloneColumn(CloneRecord.ITEM_ID).in(cloneIds),
-                    getItemColumn(ItemRecord.CATALOG_ID).eq(catalogId)))).isEmpty()) {
-                return true;
-            }
+        if (!cloneIds.isEmpty() &&
+                load(CountRecord.class,
+                    new FromOverride(getCloneClass()),
+                    new Join(getCloneColumn(CloneRecord.ORIGINAL_ITEM_ID),
+                        getItemColumn(ItemRecord.ITEM_ID)),
+                        new Where(Ops.and(
+                            getCloneColumn(CloneRecord.ITEM_ID).in(cloneIds),
+                            getItemColumn(ItemRecord.CATALOG_ID).eq(catalogId)))).count > 0) {
+            return true;
         }
         return false;
     }
