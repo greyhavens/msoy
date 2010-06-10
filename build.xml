@@ -182,6 +182,7 @@
     <!-- these libraries we need for building and for the server runtime -->
     <artifact:dependencies filesetId="runtime.fileset">
       <remoteRepository refid="ooo.maven.depends.repo"/>
+      <dependency groupId="com.threerings" artifactId="aspirin" version="0.0-SNAPSHOT" type="swc"/>
       <dependency groupId="com.threerings.panopticon" artifactId="panopticon-client"
                   version="0.0-SNAPSHOT"/>
       <dependency groupId="com.threerings.narya" artifactId="narya-base" version="0.0-SNAPSHOT"/>
