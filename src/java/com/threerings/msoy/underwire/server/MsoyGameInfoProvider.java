@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.google.common.base.Function;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -30,11 +31,11 @@ import com.threerings.underwire.web.data.Account;
 public class MsoyGameInfoProvider extends GameInfoProvider
 {
     @Override // from GameInfoProvider
-    public Map<String,String> resolveGameNames (Set<String> names)
+    public Map<String,List<String>> resolveGameNames (Set<String> names)
     {
-        Map<String,String> map = Maps.newHashMap();
+        Map<String,List<String>> map = Maps.newHashMap();
         for (MemberName name : _memberRepo.loadMemberNames(names, TO_INT).values()) {
-            map.put(Integer.toString(name.getMemberId()), name.toString());
+            map.put(Integer.toString(name.getMemberId()), Lists.newArrayList(name.toString()));
         }
         return map;
     }

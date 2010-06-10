@@ -41,9 +41,7 @@ public class SupportPage extends Page
         if (_webctx.ainfo == null && CSupport.creds != null) {
             UnderwireService.AuthInfo ainfo = new UnderwireService.AuthInfo();
             ainfo.authtok = CSupport.creds.token;
-            ainfo.name = new AccountName();
-            ainfo.name.accountName = ""+CSupport.getMemberId();
-            ainfo.name.gameName = CSupport.creds.name.toString();
+            ainfo.name = new AccountName(""+CSupport.getMemberId(), CSupport.creds.name.toString());
             ainfo.email = CSupport.creds.accountName;
             ainfo.isAdmin = CSupport.isSupport();
             if (ainfo.isAdmin) {
