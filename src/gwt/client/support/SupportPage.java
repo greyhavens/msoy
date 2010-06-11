@@ -3,7 +3,11 @@
 
 package client.support;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.History;
 
 import com.threerings.gwt.util.ServiceUtil;
 
@@ -26,6 +30,7 @@ import client.shell.CShell;
 import client.shell.Page;
 import client.shell.ShellMessages;
 import client.ui.MsoyUI;
+import client.util.Link;
 
 public class SupportPage extends Page
 {
@@ -61,6 +66,11 @@ public class SupportPage extends Page
             AdminPanel panel = new AdminPanel(_webctx);
             setContent(CSupport.msgs.supportTitle(), panel);
             panel.init();
+
+            String token = args.get(1, "");
+            if (!token.isEmpty()) {
+                _webctx.frame.navigate(token);
+            }
         } else {
             ContactPanel panel = new ContactPanel(_webctx);
             setContent(CSupport.msgs.contactTitle(), panel);
@@ -97,6 +107,24 @@ public class SupportPage extends Page
             public String md5hex (String text) {
                 return CShell.frame.md5hex(text);
             }
+            public void navigatedTo (String token) {
+                History.newItem(Link.createToken(Pages.SUPPORT, "admin", token));
+            }
+            public void navigate (String token) {
+                String[] tokens = token.split(":");
+                if (tokens.length > 0) {
+                    WebContext.TokenResolver tr = _resolvers.get(tokens[0]);
+                    if (tr != null) {
+                        tr.show(tokens);
+                    }
+                }
+            }
+            public void addTokenResolver (String type, WebContext.TokenResolver tr) {
+                _resolvers.put(type, tr);
+            }
+
+            protected Map<String, WebContext.TokenResolver> _resolvers =
+                new HashMap<String, WebContext.TokenResolver>();
         };
 
         // initialize our MSOY context
