@@ -246,7 +246,7 @@ public class WorldGameRegistry
     {
         // if the peer that just connected to us claims to be hosting any games that we also claim
         // to be hosting, drop them
-        MsoyNodeObject ourobj = (MsoyNodeObject)_peerMan.getNodeObject();
+        MsoyNodeObject ourobj = _peerMan.getMsoyNodeObject();
         ArrayIntSet gamesToDrop = new ArrayIntSet();
         for (HostedGame game : peerobj.hostedGames) {
             if (ourobj.hostedGames.contains(game)) {

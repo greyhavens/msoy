@@ -21,7 +21,6 @@ import com.threerings.parlor.game.data.GameConfig;
 import com.threerings.parlor.game.server.GameManager;
 import com.threerings.parlor.server.TableManager;
 
-import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 
 import com.threerings.msoy.game.data.LobbyObject;
@@ -130,9 +129,9 @@ public class MsoyTableManager extends TableManager
         if (_publishedPending != hasWaitingGames()) {
             int gameId = _lobj.game.gameId;
             if (_publishedPending) {
-                ((MsoyNodeObject) _peerMgr.getNodeObject()).removeFromTablesWaiting(gameId);
+                _peerMgr.getMsoyNodeObject().removeFromTablesWaiting(gameId);
             } else {
-                ((MsoyNodeObject) _peerMgr.getNodeObject()).addToTablesWaiting(
+                _peerMgr.getMsoyNodeObject().addToTablesWaiting(
                     new TablesWaiting(gameId, _lobj.game.name));
             }
             _publishedPending = !_publishedPending;

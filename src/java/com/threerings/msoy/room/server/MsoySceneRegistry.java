@@ -39,6 +39,7 @@ import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.peer.data.HostedRoom;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 
+import com.threerings.msoy.group.server.ThemeRegistry;
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.room.client.MsoySceneService.MsoySceneMoveListener;
@@ -115,6 +116,12 @@ public class MsoySceneRegistry extends SpotSceneRegistry
                         public void sceneWasResolved (SceneManager scmgr) {
                             releaseLock();
                             listener.sceneWasResolved(scmgr);
+
+                            // if we successfully hosted the scene, see if theme also needs to be
+                            int themeId = ((MsoyScene)(scmgr.getScene())).getThemeId();
+                            if (themeId != 0) {
+                                _themeReg.maybeHostTheme(themeId, new NOOP<Integer>());
+                            }
                         }
                         public void sceneFailedToResolve (int sceneId, Exception reason) {
                             releaseLock();
@@ -284,4 +291,5 @@ public class MsoySceneRegistry extends SpotSceneRegistry
     @Inject protected MemberLocator _locator;
     @Inject protected MsoyEventLogger _eventLog;
     @Inject protected MsoyPeerManager _peerMan;
+    @Inject protected ThemeRegistry _themeReg;
 }

@@ -115,7 +115,7 @@ public class StatusServlet extends HttpServlet
         final Map<String,ServerInfo> info = Maps.newLinkedHashMap();
 
         // collect info on this server
-        MsoyNodeObject nodeobj = (MsoyNodeObject)_peerMan.getNodeObject();
+        MsoyNodeObject nodeobj = _peerMan.getMsoyNodeObject();
         info.put(nodeobj.nodeName, collectInfo(details, null, nodeobj));
 
         // collect info on our peers

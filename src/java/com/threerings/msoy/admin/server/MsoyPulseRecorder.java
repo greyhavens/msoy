@@ -32,7 +32,7 @@ public class MsoyPulseRecorder implements AbstractPulseManager.Recorder
     {
         MsoyPulseRecord record = new MsoyPulseRecord();
 
-        MsoyNodeObject nodeobj = (MsoyNodeObject)_peerMan.getNodeObject();
+        MsoyNodeObject nodeobj = _peerMan.getMsoyNodeObject();
         record.rooms = nodeobj.hostedScenes.size();
         record.games = nodeobj.hostedGames.size();
         record.channels = nodeobj.hostedChannels.size();

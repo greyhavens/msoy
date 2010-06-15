@@ -78,7 +78,7 @@ public class PartyManager
         _summary = new PartySummary(_partyObj.id, _partyObj.name, _partyObj.group, _partyObj.icon);
         _partyObj.setAccessController(new PartyAccessController(this));
 
-        MsoyNodeObject nodeObj = (MsoyNodeObject) _peerMgr.getNodeObject();
+        MsoyNodeObject nodeObj = _peerMgr.getMsoyNodeObject();
         nodeObj.startTransaction();
         try {
             nodeObj.addToHostedParties(_summary);
@@ -111,7 +111,7 @@ public class PartyManager
             return; // already shut down
         }
 
-        MsoyNodeObject nodeObj = (MsoyNodeObject) _peerMgr.getNodeObject();
+        MsoyNodeObject nodeObj = _peerMgr.getMsoyNodeObject();
         nodeObj.startTransaction();
         try {
             nodeObj.removeFromHostedParties(_partyObj.id);
@@ -372,7 +372,7 @@ public class PartyManager
 
     protected void indicateMemberPartying (int memberId, boolean set)
     {
-        MsoyNodeObject nodeObj = (MsoyNodeObject) _peerMgr.getNodeObject();
+        MsoyNodeObject nodeObj = _peerMgr.getMsoyNodeObject();
 
         if (set) {
             MemberParty mp = new MemberParty(memberId, _partyObj.id);
@@ -382,7 +382,7 @@ public class PartyManager
             } else if (omp.partyId != mp.partyId) {
                 log.warning("Wha? Replacing stale MemberParty", "mp", mp, "omp", omp);
                 nodeObj.updateMemberParties(mp);
-            } 
+            }
             // otherwise: no need to update anything. This can happen in normal circumstances
             // when a user logs in over themselves
 
@@ -486,7 +486,7 @@ public class PartyManager
     {
         PartyInfo newInfo = new PartyInfo(_partyObj.id, _partyObj.leaderId, _partyObj.status,
             _partyObj.statusType, _partyObj.peeps.size(), _partyObj.recruitment);
-        MsoyNodeObject nodeObj = (MsoyNodeObject) _peerMgr.getNodeObject();
+        MsoyNodeObject nodeObj = _peerMgr.getMsoyNodeObject();
         if (nodeObj.partyInfos.containsKey(_partyObj.id)) {
             nodeObj.updatePartyInfos(newInfo);
         } else {

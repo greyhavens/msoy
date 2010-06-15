@@ -110,7 +110,7 @@ public class PartyRegistry
      */
     public void init ()
     {
-        ((MsoyNodeObject) _peerMgr.getNodeObject()).setPeerPartyService(
+        _peerMgr.getMsoyNodeObject().setPeerPartyService(
             _invmgr.registerDispatcher(new PeerPartyDispatcher(this)));
     }
 

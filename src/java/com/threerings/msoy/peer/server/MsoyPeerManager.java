@@ -186,6 +186,14 @@ public class MsoyPeerManager extends CrowdPeerManager
     }
 
     /**
+     * Returns this node's distributed object, casted to {@link MsoyNodeObject}.
+     */
+    public MsoyNodeObject getMsoyNodeObject ()
+    {
+        return (MsoyNodeObject)_nodeobj;
+    }
+
+    /**
      * Returns an iterable over all node objects (this and other peers') casted to {@link
      * MsoyNodeObject}.
      */

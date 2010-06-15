@@ -86,7 +86,7 @@ public class MsoyAdminManager extends AdminManager
         _rebmgr.init();
 
         // register our peer service (now that the peer node object is created)
-        ((MsoyNodeObject)_peerMan.getNodeObject()).setPeerAdminService(
+        _peerMan.getMsoyNodeObject().setPeerAdminService(
             invmgr.registerDispatcher(new PeerAdminDispatcher(this)));
 
         // register our stat collectors
