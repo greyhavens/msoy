@@ -303,7 +303,7 @@ public class GroupRepository extends DepotRepository
     /**
      * Looks up members' names by id.
      */
-    public IntMap<GroupName> loadGroupNames (Set<Integer> groupIds)
+    public IntMap<GroupName> loadGroupNames (Iterable<Integer> groupIds)
     {
         IntMap<GroupName> names = IntMaps.newHashIntMap();
         for (GroupNameRecord name : loadAll(GroupNameRecord.class, groupIds)) {
