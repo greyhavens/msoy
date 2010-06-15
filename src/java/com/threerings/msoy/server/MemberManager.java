@@ -11,7 +11,6 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.samskivert.jdbc.WriteOnlyUnit;
-import com.samskivert.util.IntMap;
 import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.ResultListener;
@@ -19,8 +18,6 @@ import com.samskivert.util.StringUtil;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-
 import com.threerings.underwire.server.persist.EventRecord;
 import com.threerings.underwire.web.data.Event;
 import com.threerings.util.Name;
@@ -59,10 +56,9 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.group.server.ThemeRegistry;
+import com.threerings.msoy.group.server.ThemeRegistry.ThemeEntry;
 import com.threerings.msoy.group.server.persist.GroupRepository;
-import com.threerings.msoy.group.server.persist.ThemeRecord;
-import com.threerings.msoy.group.server.persist.ThemeRepository;
-import com.threerings.msoy.server.PopularPlacesSnapshot.Place;
 import com.threerings.msoy.server.persist.BatchInvoker;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.util.ServiceUnit;
@@ -612,15 +608,15 @@ public class MemberManager
     protected void takeSnapshot ()
     {
         // load all existing themes, ordered by popularity
-        final List<ThemeRecord> themeRecs = _themeRepo.loadThemes();
+        final List<ThemeEntry> themeRecs = _themeReg.getThemes();
         // find out their names
-        IntMap<GroupName> themeNames = _groupRepo.loadGroupNames(Sets.newHashSet(
-            Iterables.transform(themeRecs, ThemeRecord.TO_GROUP_ID)));
+        Map<Integer, GroupName> themeNames = _groupRepo.loadGroupNames(
+            Iterables.transform(themeRecs, ThemeRegistry.ENTRY_TO_GROUP_ID));
 
         // the popular places snapshot function just wants an ordered list of group names
         final List<GroupName> popularThemes = Lists.newArrayList();
-        for (ThemeRecord rec : themeRecs) {
-            popularThemes.add(themeNames.get(rec.groupId));
+        for (ThemeEntry rec : themeRecs) {
+            popularThemes.add(themeNames.get(rec.themeId));
         }
 
         // hop over to the omgr thread
@@ -630,26 +626,13 @@ public class MemberManager
                 PopularPlacesSnapshot newSnapshot = PopularPlacesSnapshot.takeSnapshot(
                     _omgr, _peerMan, popularThemes, getGreeterIdsSnapshot());
 
-                // take a private copy of the population map
-                final Map<Integer, Place> themeMap = newSnapshot.getThemePopulationMap();
-
-                // and slide the new snapshot into place
+                // then slide it into place
                 synchronized (_snapshotLock) {
                     _ppSnapshot = newSnapshot;
                 }
 
-                // finally kick off a unit to update popularities with the new population data
-                _batchInvoker.postUnit(new Invoker.Unit("topThemes") {
-                    @Override public boolean invoke () {
-                        for (ThemeRecord rec : themeRecs) {
-                            Place place = themeMap.get(rec.groupId);
-                            rec.popularity = (int)(THEME_POPULARITY_DECAY * rec.popularity) +
-                                ((place != null) ? place.population : 0);
-                            _themeRepo.updateTheme(rec);
-                        }
-                        return false;
-                    }
-                });
+                // finally decay the popularity of whatever themes this server hosts
+                _themeReg.heartbeat(THEME_POPULARITY_DECAY, newSnapshot);
             }
         });
     }
@@ -689,7 +672,7 @@ public class MemberManager
     @Inject protected PresentsDObjectMgr _omgr;
     @Inject protected ProfileRepository _profileRepo;
     @Inject protected SupportLogic _supportLogic;
-    @Inject protected ThemeRepository _themeRepo;
+    @Inject protected ThemeRegistry _themeReg;
 
     /** The frequency with which we recalculate our popular places snapshot. */
     protected static final long POP_PLACES_REFRESH_PERIOD = 30*1000;
