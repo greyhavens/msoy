@@ -36,6 +36,10 @@ public class MsoyNodeObject extends CrowdNodeObject
     @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String HOSTED_GAMES = "hostedGames";
 
+    /** The field name of the <code>hostedThemes</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
+    public static final String HOSTED_THEMES = "hostedThemes";
+
     /** The field name of the <code>hostedParties</code> field. */
     @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String HOSTED_PARTIES = "hostedParties";
@@ -76,6 +80,9 @@ public class MsoyNodeObject extends CrowdNodeObject
 
     /** Contains info on all games hosted by this server. */
     public DSet<HostedGame> hostedGames = DSet.newDSet();
+
+    /** Contains info on all scenes hosted by this server. */
+    public DSet<HostedTheme> hostedThemes = DSet.newDSet();
 
     /** Contains the immutable summaries for all parties on this node. */
     public DSet<PartySummary> hostedParties = DSet.newDSet();
@@ -301,6 +308,57 @@ public class MsoyNodeObject extends CrowdNodeObject
         requestAttributeChange(HOSTED_GAMES, value, this.hostedGames);
         DSet<HostedGame> clone = (value == null) ? null : value.clone();
         this.hostedGames = clone;
+    }
+
+    /**
+     * Requests that the specified entry be added to the
+     * <code>hostedThemes</code> set. The set will not change until the event is
+     * actually propagated through the system.
+     */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
+    public void addToHostedThemes (HostedTheme elem)
+    {
+        requestEntryAdd(HOSTED_THEMES, hostedThemes, elem);
+    }
+
+    /**
+     * Requests that the entry matching the supplied key be removed from
+     * the <code>hostedThemes</code> set. The set will not change until the
+     * event is actually propagated through the system.
+     */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
+    public void removeFromHostedThemes (Comparable<?> key)
+    {
+        requestEntryRemove(HOSTED_THEMES, hostedThemes, key);
+    }
+
+    /**
+     * Requests that the specified entry be updated in the
+     * <code>hostedThemes</code> set. The set will not change until the event is
+     * actually propagated through the system.
+     */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
+    public void updateHostedThemes (HostedTheme elem)
+    {
+        requestEntryUpdate(HOSTED_THEMES, hostedThemes, elem);
+    }
+
+    /**
+     * Requests that the <code>hostedThemes</code> field be set to the
+     * specified value. Generally one only adds, updates and removes
+     * entries of a distributed set, but certain situations call for a
+     * complete replacement of the set value. The local value will be
+     * updated immediately and an event will be propagated through the
+     * system to notify all listeners that the attribute did
+     * change. Proxied copies of this object (on clients) will apply the
+     * value change when they received the attribute changed notification.
+     */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
+    public void setHostedThemes (DSet<HostedTheme> value)
+    {
+        requestAttributeChange(HOSTED_THEMES, value, this.hostedThemes);
+        DSet<HostedTheme> clone = (value == null) ? null : value.clone();
+        this.hostedThemes = clone;
     }
 
     /**

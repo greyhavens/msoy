@@ -64,6 +64,7 @@ import com.threerings.msoy.room.server.MsoySceneRegistry;
 
 import com.threerings.msoy.peer.data.HostedGame;
 import com.threerings.msoy.peer.data.HostedRoom;
+import com.threerings.msoy.peer.data.HostedTheme;
 import com.threerings.msoy.peer.data.MemberGame;
 import com.threerings.msoy.peer.data.MemberScene;
 import com.threerings.msoy.peer.data.MsoyClientInfo;
@@ -154,6 +155,12 @@ public class MsoyPeerManager extends CrowdPeerManager
     public static NodeObject.Lock getGameLock (int gameId)
     {
         return new NodeObject.Lock("GameHost", gameId);
+    }
+
+    /** Returns a lock used to claim resolution of the specified theme. */
+    public static NodeObject.Lock getThemeLock (int themeId)
+    {
+        return new NodeObject.Lock("ThemeHost", themeId);
     }
 
     /**
@@ -372,6 +379,20 @@ public class MsoyPeerManager extends CrowdPeerManager
         return lookupNodeDatum(new NodeFunc<Tuple<String, HostedGame>>() {
             public Tuple<String, HostedGame> apply (MsoyNodeObject nodeobj) {
                 HostedGame info = nodeobj.hostedGames.get(gameId);
+                return (info == null) ? null : Tuple.newTuple(nodeobj.nodeName, info);
+            }
+        });
+    }
+
+    /**
+     * Returns the node name of the peer that is hosting the specified theme, or null if no peer
+     * has published that they are hosting the theme.
+     */
+    public Tuple<String, HostedTheme> getThemeHost (final int themeId)
+    {
+        return lookupNodeDatum(new NodeFunc<Tuple<String, HostedTheme>>() {
+            public Tuple<String, HostedTheme> apply (MsoyNodeObject nodeobj) {
+                HostedTheme info = nodeobj.hostedThemes.get(themeId);
                 return (info == null) ? null : Tuple.newTuple(nodeobj.nodeName, info);
             }
         });
