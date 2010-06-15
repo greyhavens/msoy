@@ -46,10 +46,20 @@ public class ThemeRepository extends DepotRepository
     /**
      * Fetch all the themes, ordered by popularity.
      */
-    public List<ThemeRecord> loadThemes ()
+    public List<ThemeRecord> loadThemes (int count)
     {
-        return findAll(ThemeRecord.class, OrderBy.descending(ThemeRecord.POPULARITY));
+        return findAll(ThemeRecord.class, new Limit(0, count),
+            OrderBy.descending(ThemeRecord.POPULARITY));
     }
+
+    /**
+     * Fetch all the themes with non-zero popularity.
+     */
+    public List<ThemeRecord> loadActiveThemes ()
+    {
+        return findAll(ThemeRecord.class, new Where(ThemeRecord.POPULARITY.greaterThan(0)));
+    }
+
 
     /**
      * Load the themes in which the given member has at least the given rank. This warrants
@@ -79,6 +89,14 @@ public class ThemeRepository extends DepotRepository
     public void updateTheme (int groupId, Map<ColumnExp, Object> updates)
     {
         updatePartial(ThemeRecord.getKey(groupId), updates);
+    }
+
+    /**
+     * Updates the specified theme record's popularity.
+     */
+    public void updateThemePopularity (int groupId, int newPopularity)
+    {
+        updatePartial(ThemeRecord.getKey(groupId), ThemeRecord.POPULARITY, newPopularity);
     }
 
     /**
