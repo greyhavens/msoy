@@ -16,6 +16,7 @@ import com.google.inject.internal.Sets;
 
 import com.samskivert.depot.expression.ColumnExp;
 import com.threerings.presents.annotation.BlockingThread;
+import com.threerings.presents.server.PresentsDObjectMgr;
 
 import com.threerings.msoy.admin.data.CostsConfigObject;
 import com.threerings.msoy.admin.server.RuntimeConfig;
@@ -132,8 +133,13 @@ public class ThemeLogic
             public Theme create (boolean magicFree, Currency currency, int amountPaid)
                 throws ServiceException
             {
-                ThemeRecord trec = new ThemeRecord(groupId);
+                final ThemeRecord trec = new ThemeRecord(groupId);
                 _themeRepo.createTheme(trec);
+                _omgr.postRunnable(new Runnable() {
+                    public void run () {
+                        _themeReg.newTheme(trec);
+                    }
+                });
 
                 return trec.toTheme(groupName);
             }
@@ -215,11 +221,12 @@ public class ThemeLogic
     protected static final Object THEME_PURCHASE_KEY = new Object();
 
     // our dependencies
-    @Inject protected ItemLogic _itemLogic;
-    @Inject protected ThemeRepository _themeRepo;
     @Inject protected GroupRepository _groupRepo;
+    @Inject protected ItemLogic _itemLogic;
     @Inject protected MoneyLogic _moneyLogic;
-    @Inject protected RuntimeConfig _runtime;
     @Inject protected MsoySceneRepository _sceneRepo;
-
+    @Inject protected PresentsDObjectMgr _omgr;
+    @Inject protected RuntimeConfig _runtime;
+    @Inject protected ThemeRegistry _themeReg;
+    @Inject protected ThemeRepository _themeRepo;
 }
