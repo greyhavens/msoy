@@ -13,12 +13,13 @@ import java.util.Queue;
 import java.util.Set;
 
 import com.google.common.base.Function;
+import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Ordering;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.internal.Maps;
-import com.samskivert.util.Comparators;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.Lifecycle;
 import com.samskivert.util.ResultListener;
@@ -74,7 +75,9 @@ public class ThemeRegistry
         }
 
         public int compareTo (ThemeEntry other) {
-            return Comparators.compare(popularity, other.popularity);
+            return ComparisonChain.start()
+                .compare(popularity, other.popularity, Ordering.natural().reverse())
+                .compare(themeId, other.themeId).result();
         }
     }
 
