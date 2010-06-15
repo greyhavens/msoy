@@ -14,8 +14,6 @@ import com.google.common.collect.Sets;
 
 import com.samskivert.util.CollectionUtil;
 import com.samskivert.util.Comparators;
-import com.samskivert.util.IntMap;
-import com.samskivert.util.IntMaps;
 import com.samskivert.util.RandomUtil;
 
 import com.threerings.presents.annotation.EventThread;
@@ -165,12 +163,10 @@ public class PopularPlacesSnapshot
         return _games.get(gameId);
     }
 
-    /**
-     * Returns a clone of the theme-to-population mapping.
-     */
-    public Map<Integer, Place> getThemePopulationMap ()
+    public int getThemePopulation (int themeId)
     {
-        return Maps.newHashMap(_themes);
+        Place place = _themes.get(themeId);
+        return (place != null) ? place.population : 0;
     }
 
     /**
@@ -266,7 +262,7 @@ public class PopularPlacesSnapshot
         _onlineGreeters = Collections.unmodifiableList(oglist);
     }
 
-    protected static void increment (IntMap<Place> places, List<Place> plist,
+    protected static void increment (Map<Integer, Place> places, List<Place> plist,
                                      int placeId, HostedPlace hp)
     {
         Place place = places.get(placeId);
@@ -292,16 +288,16 @@ public class PopularPlacesSnapshot
     protected int _totalPopulation;
 
     /** A mapping of all resolved groups in the whole wide Whirled. */
-    protected final IntMap<Place> _groups = IntMaps.newHashIntMap();
+    protected final Map<Integer, Place> _groups = Maps.newHashMap();
 
     /** A mapping of all resolved scenes in the whole wide Whirled. */
-    protected final IntMap<Place> _scenes = IntMaps.newHashIntMap();
+    protected final Map<Integer, Place> _scenes = Maps.newHashMap();
 
     /** A mapping of all resolved games in the whole wide Whirled. */
-    protected final IntMap<Place> _games = IntMaps.newHashIntMap();
+    protected final Map<Integer, Place> _games = Maps.newHashMap();
 
     /** A mapping of all resolved themes in the whole wide Whirled. */
-    protected final IntMap<Place> _themes = IntMaps.newHashIntMap();
+    protected final Map<Integer, Place> _themes = Maps.newHashMap();
 
     /** The most popular groups, sorted. */
     protected final List<Place> _grlist = Lists.newArrayList();
