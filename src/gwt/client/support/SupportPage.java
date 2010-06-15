@@ -108,7 +108,7 @@ public class SupportPage extends Page
                 return CShell.frame.md5hex(text);
             }
             public void navigatedTo (String token) {
-                History.newItem(Link.createToken(Pages.SUPPORT, "admin", token));
+                History.newItem(Link.createToken(Pages.SUPPORT, "admin", token), false);
             }
             public void navigate (String token) {
                 String[] tokens = token.split(":");
