@@ -3,10 +3,13 @@
 
 package com.threerings.msoy.server.persist;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
@@ -19,6 +22,7 @@ import com.samskivert.depot.clause.Join;
 import com.samskivert.depot.clause.Where;
 
 import com.samskivert.util.StringUtil;
+import com.samskivert.util.Tuple;
 
 import com.threerings.user.OOOUser;
 import com.threerings.user.depot.DepotUserRepository;
@@ -120,5 +124,33 @@ public class MsoyOOOUserRepository extends DepotUserRepository
                 MemberRecord.MEMBER_ID.eq(memberId),
                 OOOUserRecord.EMAIL.eq(MemberRecord.ACCOUNT_NAME));
         return toUser(load(OOOUserRecord.class, new Join(MemberRecord.class, joinCondition)));
+    }
+
+    @Override // documentation inherited
+    public List<Tuple<Integer, String>> getUsersOfMachIdent (String machIdent)
+    {
+        // We need to return the email as our "username" for underwire
+        List<Tuple<Integer,String>> users = Lists.newArrayList();
+        Join join = new Join(UserIdentRecord.class, Ops.and(
+                                 OOOUserRecord.USER_ID.eq(UserIdentRecord.USER_ID),
+                                 UserIdentRecord.MACH_IDENT.eq(machIdent)));
+        for (OOOUserRecord record : findAll(OOOUserRecord.class, join)) {
+            users.add(new Tuple<Integer,String>(record.userId, record.email));
+        }
+        return users;
+    }
+
+    @Override // documentation inherited
+    public List<Tuple<Integer, String>> getUsersOfMachIdents (String[] idents)
+    {
+        // We need to return the email as our "username" for underwire
+        List<Tuple<Integer,String>> users = Lists.newArrayList();
+        Join join = new Join(UserIdentRecord.class, Ops.and(
+                                 OOOUserRecord.USER_ID.eq(UserIdentRecord.USER_ID),
+                                 UserIdentRecord.MACH_IDENT.in(Arrays.asList(idents))));
+        for (OOOUserRecord record : findAll(OOOUserRecord.class, join)) {
+            users.add(new Tuple<Integer,String>(record.userId, record.email));
+        }
+        return users;
     }
 }
