@@ -22,6 +22,7 @@ import com.google.inject.internal.Maps;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.Lifecycle;
 import com.samskivert.util.ResultListener;
+import com.samskivert.util.StringUtil;
 import com.samskivert.util.Tuple;
 import com.samskivert.util.ResultListener.NOOP;
 import com.threerings.msoy.group.server.persist.GroupRepository;
@@ -62,10 +63,12 @@ public class ThemeRegistry
             this.hosted = hosted;
         }
 
+        @Override
         public int hashCode () {
             return themeId;
         }
 
+        @Override
         public boolean equals (Object obj)
         {
             return (this == obj ||
@@ -73,6 +76,13 @@ public class ThemeRegistry
                             ((ThemeEntry) obj).themeId == themeId));
         }
 
+        @Override
+        public String toString ()
+        {
+            return StringUtil.fieldsToString(this);
+        }
+
+        @Override
         public int compareTo (ThemeEntry other) {
             return ComparisonChain.start()
                 .compare(other.popularity, popularity) // reversed: higher popularity comes first
@@ -178,7 +188,8 @@ public class ThemeRegistry
 
     public void newTheme (ThemeRecord record)
     {
-        _themes.put(record.groupId, new ThemeEntry(record.groupId, record.popularity, false));
+        ThemeEntry entry = new ThemeEntry(record.groupId, record.popularity, false);
+        _themes.put(record.groupId, entry);
         maybeHostTheme(record.groupId, new NOOP<Integer>());
     }
 
@@ -253,9 +264,13 @@ public class ThemeRegistry
     protected void doDecayThemes (double decay, PopularPlacesSnapshot snapshot)
     {
         MsoyNodeObject node = _peerMan.getMsoyNodeObject();
-        for (HostedTheme nodeTheme : node.hostedThemes) {
+
+        // make a copy of our hosted themes, so we don't modify the DSet we're iterating over
+        Iterable<HostedTheme> hostedThemesCopy = Lists.newArrayList(node.hostedThemes);
+        for (HostedTheme nodeTheme : hostedThemesCopy) {
+            // figure out the new popularity of each hosted theme
             int newPop = (int)(decay * nodeTheme.popularity) +
-            snapshot.getThemePopulation(nodeTheme.themeId);
+                snapshot.getThemePopulation(nodeTheme.themeId);
             if (newPop != nodeTheme.popularity) {
                 node.updateHostedThemes(new HostedTheme(nodeTheme.themeId, newPop));
                 _themes.put(nodeTheme.themeId, new ThemeEntry(nodeTheme.themeId, newPop, true));
