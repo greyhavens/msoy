@@ -4,6 +4,7 @@
 package com.threerings.msoy.ui {
 
 import flash.display.DisplayObject;
+import flash.display.Loader;
 import flash.display.LoaderInfo;
 
 import flash.events.Event;
@@ -152,6 +153,10 @@ public class MsoyMediaContainer extends MediaContainer
     {
         super.addListeners(info);
 
+        var uee :Object = info.loader["uncaughtErrorEvents"];
+        if (uee != null) {
+            uee.addEventListener("uncaughtError", handleUncaughtErrors);
+        }
         info.sharedEvents.addEventListener(SWFBridgeEvent.BRIDGE_NEW_APPLICATION, bridgeApp);
     }
 
@@ -159,7 +164,16 @@ public class MsoyMediaContainer extends MediaContainer
     {
         super.removeListeners(info);
 
+        var uee :Object = info.loader["uncaughtErrorEvents"];
+        if (uee != null) {
+            uee.removeEventListener("uncaughtError", handleUncaughtErrors);
+        }
         info.sharedEvents.removeEventListener(SWFBridgeEvent.BRIDGE_NEW_APPLICATION, bridgeApp);
+    }
+
+    protected function handleUncaughtErrors (event :*) :void
+    {
+        log.info("Uncaught Error", "media", _desc, event);
     }
 
     protected function bridgeApp (event :Event) :void

@@ -965,6 +965,11 @@ public class MsoySprite extends DataPackMediaContainer
         CommandEvent.dispatch(this, MsoyController.VIEW_ITEM, _ident);
     }
 
+    override protected function handleUncaughtErrors (event :*) :void
+    {
+        log.info("Uncaught Error", "ident", _ident, "media", _desc, event);
+    }
+
     /** The giver of life. */
     protected var _ctx :WorldContext;
 

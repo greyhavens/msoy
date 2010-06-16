@@ -76,10 +76,28 @@
 
         protected function doInit () :void
         {
+            configureUncaughtErrors();
+
             this.name = "WorldApplication";
             var theThis :Application = this;
             MsoyParameters.init(this, function () :void {
                 UberClient.init(theThis);
+            });
+        }
+
+        /**
+         * Configure uncaught error events in a way that's totally flashplayer 9 safe.
+         * (Uncaught errors were added in 10.1.53.64)
+         */
+        protected function configureUncaughtErrors () :void
+        {
+            var uee :Object = loaderInfo["uncaughtErrorEvents"];
+            if (uee == null) {
+                return;
+            }
+            // "uncaughtError" == UncaughtErrorEvent.UNCAUGHT_ERROR
+            uee.addEventListener("uncaughtError", function (event :*) :void {
+                MsoyClient.log.warning("Uncaught Error in msoy!", event);
             });
         }
 
