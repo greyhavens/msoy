@@ -967,6 +967,7 @@ public class MsoySprite extends DataPackMediaContainer
 
     override protected function handleUncaughtErrors (event :*) :void
     {
+        // override the version in MsoyMediaContainer so that we can also log the ident.
         log.info("Uncaught Error", "ident", _ident, "media", _desc, event);
     }
 

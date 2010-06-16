@@ -91,14 +91,14 @@
          */
         protected function configureUncaughtErrors () :void
         {
-            var uee :Object = loaderInfo["uncaughtErrorEvents"];
-            if (uee == null) {
+            if (!("uncaughtErrorEvents" in Object(loaderInfo))) {
                 return;
             }
             // "uncaughtError" == UncaughtErrorEvent.UNCAUGHT_ERROR
-            uee.addEventListener("uncaughtError", function (event :*) :void {
-                MsoyClient.log.warning("Uncaught Error in msoy!", event);
-            });
+            Object(loaderInfo).uncaughtErrorEvents.addEventListener(
+                    "uncaughtError", function (event :*) :void {
+                        MsoyClient.log.warning("Uncaught Error in msoy!", event);
+                    });
         }
 
         protected var _viewer :Object;

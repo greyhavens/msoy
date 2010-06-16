@@ -153,9 +153,9 @@ public class MsoyMediaContainer extends MediaContainer
     {
         super.addListeners(info);
 
-        var uee :Object = info.loader["uncaughtErrorEvents"];
-        if (uee != null) {
-            uee.addEventListener("uncaughtError", handleUncaughtErrors);
+        if ("uncaughtErrorEvents" in Object(info.loader)) {
+            Object(info.loader).uncaughtErrorEvents.addEventListener(
+                "uncaughtError", handleUncaughtErrors);
         }
         info.sharedEvents.addEventListener(SWFBridgeEvent.BRIDGE_NEW_APPLICATION, bridgeApp);
     }
@@ -164,15 +164,16 @@ public class MsoyMediaContainer extends MediaContainer
     {
         super.removeListeners(info);
 
-        var uee :Object = info.loader["uncaughtErrorEvents"];
-        if (uee != null) {
-            uee.removeEventListener("uncaughtError", handleUncaughtErrors);
+        if ("uncaughtErrorEvents" in Object(info.loader)) {
+            Object(info.loader).uncaughtErrorEvents.removeEventListener(
+                "uncaughtError", handleUncaughtErrors);
         }
         info.sharedEvents.removeEventListener(SWFBridgeEvent.BRIDGE_NEW_APPLICATION, bridgeApp);
     }
 
     protected function handleUncaughtErrors (event :*) :void
     {
+        // this is overridden in MsoySprite
         log.info("Uncaught Error", "media", _desc, event);
     }
 
