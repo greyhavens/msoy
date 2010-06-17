@@ -25,6 +25,7 @@ import com.samskivert.util.ResultListener;
 import com.samskivert.util.StringUtil;
 import com.samskivert.util.Tuple;
 import com.samskivert.util.ResultListener.NOOP;
+import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.group.server.persist.ThemeRecord;
 import com.threerings.msoy.group.server.persist.ThemeRepository;
@@ -48,8 +49,11 @@ public class ThemeRegistry
 {
     public static class ThemeEntry implements Comparable<ThemeEntry>
     {
-        /** The groupId of the theme. */
+        /** The id of the theme group. */
         public int themeId;
+
+        /** The name of the theme group. */
+        public String name;
 
         /** What's the current popularity of this theme? */
         public int popularity;
@@ -57,10 +61,17 @@ public class ThemeRegistry
         /** Is this theme currently hosted on any server? */
         public boolean hosted;
 
-        public ThemeEntry (int themeId, int popularity, boolean hosted) {
+
+        public ThemeEntry (int themeId, String name, int popularity, boolean hosted) {
             this.themeId = themeId;
+            this.name = name;
             this.popularity = popularity;
             this.hosted = hosted;
+        }
+
+        public ThemeEntry (GroupName groupName, int popularity, boolean hosted)
+        {
+            this(groupName.getGroupId(), groupName.toString(), popularity, hosted);
         }
 
         @Override
@@ -114,9 +125,12 @@ public class ThemeRegistry
             // for e.g. development environments, just grab whatever is there
             records = _themeRepo.loadThemes(5);
         }
+        Map<Integer, GroupName> groupNames =
+            _groupRepo.loadGroupNames(records, ThemeRecord.TO_GROUP_ID);
+
         // initialize our theme mapping with these records
         for (ThemeRecord rec : records) {
-            _themes.put(rec.groupId, new ThemeEntry(rec.groupId, rec.popularity, false));
+            _themes.put(rec.groupId, new ThemeEntry(groupNames.get(rec.groupId), rec.popularity, false));
         }
     }
 
@@ -140,10 +154,10 @@ public class ThemeRegistry
     {
         for (MsoyNodeObject node : _peerMan.getMsoyNodeObjects()) {
             for (HostedTheme nodeTheme : node.hostedThemes) {
-                ThemeEntry entry = _themes.get(nodeTheme.themeId);
+                ThemeEntry entry = _themes.get(nodeTheme.placeId);
                 if (entry == null || entry.popularity != nodeTheme.popularity || !entry.hosted) {
-                    _themes.put(nodeTheme.themeId,
-                        new ThemeEntry(nodeTheme.themeId, nodeTheme.popularity, true));
+                    _themes.put(nodeTheme.placeId, new ThemeEntry(
+                        nodeTheme.placeId, nodeTheme.name, nodeTheme.popularity, true));
                 }
             }
         }
@@ -168,6 +182,8 @@ public class ThemeRegistry
                 continue;
             }
             if (snapshot.getThemePopulation(entry.themeId) > 0 || entry.popularity > 0) {
+                log.info("Flagging theme for hosting", "entry", entry, "population",
+                    snapshot.getThemePopulation(entry.themeId));
                 toHost.add(entry);
             }
         }
@@ -188,7 +204,9 @@ public class ThemeRegistry
 
     public void newTheme (ThemeRecord record)
     {
-        ThemeEntry entry = new ThemeEntry(record.groupId, record.popularity, false);
+        ThemeEntry entry = new ThemeEntry(
+            _groupRepo.loadGroupName(record.groupId), record.popularity, false);
+        log.info("Registering new theme", "theme", entry);
         _themes.put(record.groupId, entry);
         maybeHostTheme(record.groupId, new NOOP<Integer>());
     }
@@ -213,9 +231,10 @@ public class ThemeRegistry
                     if (entry == null) {
                         log.warning("WTF? Unknown theme", "theme", themeId);
                     } else {
+                        log.info("Successfully hosting theme", "theme", entry);
                         ((MsoyNodeObject) _peerMan.getNodeObject()).addToHostedThemes(
-                            new HostedTheme(themeId, entry.popularity));
-                        _themes.put(themeId, new ThemeEntry(themeId, entry.popularity, true));
+                            new HostedTheme(themeId, entry.name, entry.popularity));
+                        _themes.put(themeId, new ThemeEntry(themeId, entry.name, entry.popularity, true));
                     }
                     releaseLock();
 
@@ -266,17 +285,27 @@ public class ThemeRegistry
         MsoyNodeObject node = _peerMan.getMsoyNodeObject();
 
         // make a copy of our hosted themes, so we don't modify the DSet we're iterating over
-        Iterable<HostedTheme> hostedThemesCopy = Lists.newArrayList(node.hostedThemes);
+        List<HostedTheme> hostedThemesCopy = Lists.newArrayList(node.hostedThemes);
+        double totalDecay = 0, totalPop = 0;
+
         for (HostedTheme nodeTheme : hostedThemesCopy) {
             // figure out the new popularity of each hosted theme
+            totalDecay += decay * nodeTheme.popularity;
+            totalPop += snapshot.getThemePopulation(nodeTheme.placeId);
+
             int newPop = (int)(decay * nodeTheme.popularity) +
-                snapshot.getThemePopulation(nodeTheme.themeId);
+                snapshot.getThemePopulation(nodeTheme.placeId);
             if (newPop != nodeTheme.popularity) {
-                node.updateHostedThemes(new HostedTheme(nodeTheme.themeId, newPop));
-                _themes.put(nodeTheme.themeId, new ThemeEntry(nodeTheme.themeId, newPop, true));
-                _dirty.add(nodeTheme.themeId);
+                node.updateHostedThemes(
+                    new HostedTheme(nodeTheme.placeId, nodeTheme.name, newPop));
+                _themes.put(nodeTheme.placeId,
+                    new ThemeEntry(nodeTheme.placeId, nodeTheme.name, newPop, true));
+                _dirty.add(nodeTheme.placeId);
             }
         }
+        int sz = hostedThemesCopy.size();
+        log.info("Updated theme popularities", "count", sz, "averageDecay", totalDecay/sz,
+            "averagePop", totalPop/sz);
     }
 
     @BlockingThread
@@ -291,6 +320,7 @@ public class ThemeRegistry
             }
             _themeRepo.updateThemePopularity(themeId, theme.popularity);
         }
+        log.info("Flushing theme popularities to store...", "count", _dirty.size());
         _dirty.clear();
     }
 

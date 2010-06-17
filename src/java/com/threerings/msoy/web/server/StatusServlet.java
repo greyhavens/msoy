@@ -175,6 +175,9 @@ public class StatusServlet extends HttpServlet
         case CHANNELS:
             info.details = makeDetails(nodeobj.hostedChannels, null);
             break;
+        case THEMES:
+            info.details = makeDetails(nodeobj.hostedThemes, null);
+            break;
         case PARTIES:
             info.details = makePartyDetails(nodeobj.hostedParties, nodeobj.partyInfos);
             break;
@@ -265,7 +268,7 @@ public class StatusServlet extends HttpServlet
     }
 
     protected static enum Details {
-        NONE, ROOMS, GAMES, CHANNELS, PARTIES, REPORT, PROFILE, CLIENTS, PANOPTICON
+        NONE, ROOMS, GAMES, CHANNELS, THEMES, PARTIES, REPORT, PROFILE, CLIENTS, PANOPTICON
     };
 
     protected static class ServerInfo

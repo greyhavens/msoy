@@ -3,27 +3,17 @@
 
 package com.threerings.msoy.peer.data;
 
-import com.threerings.io.SimpleStreamableObject;
 import com.threerings.msoy.group.server.persist.ThemeRecord;
 import com.threerings.presents.dobj.DSet;
 
 /**
  * Represents a hosted theme on a particular server.
  */
-public class HostedTheme extends SimpleStreamableObject
+public class HostedTheme extends HostedPlace
     implements DSet.Entry
 {
-    /** The unique identifier for the place being hosted. */
-    public Integer themeId;
-
     /** The popularity of this theme, see {@link ThemeRecord#popularity}. */
     public Integer popularity;
-
-    // from DSet.Entry
-    public Comparable<?> getKey ()
-    {
-        return themeId;
-    }
 
     /** Used when unserializing. */
     public HostedTheme ()
@@ -33,9 +23,9 @@ public class HostedTheme extends SimpleStreamableObject
     /**
      * Creates a hosted place record.
      */
-    public HostedTheme (int themeId, int popularity)
+    public HostedTheme (int themeId, String name, int popularity)
     {
-        this.themeId = themeId;
+        super(themeId, name);
         this.popularity = popularity;
     }
 }
