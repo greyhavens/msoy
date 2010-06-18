@@ -6,7 +6,6 @@ package com.threerings.msoy.server;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -16,14 +15,13 @@ import com.samskivert.util.Invoker;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.StringUtil;
 
-import com.google.common.collect.Iterables;
+import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.threerings.underwire.server.persist.EventRecord;
 import com.threerings.underwire.web.data.Event;
 import com.threerings.util.Name;
 import com.threerings.cron.server.CronLogic;
 
-import com.threerings.presents.annotation.BlockingThread;
 import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.client.InvocationService;
@@ -174,14 +172,12 @@ public class MemberManager
         // loading all the greeter ids is expensive, so do it infrequently
         _greeterIdsInvalidator.schedule(GREETERS_REFRESH_PERIOD, true);
 
-        takeSnapshot();
-        _ppInvalidator = new Interval(_batchInvoker) {
+        _ppInvalidator = new Interval(_omgr) {
             @Override public void expired() {
                 takeSnapshot();
             }
-
         };
-        _ppInvalidator.schedule(POP_PLACES_REFRESH_PERIOD, true);
+        _ppInvalidator.schedule(0, POP_PLACES_REFRESH_PERIOD, true);
 
         // schedule member-related periodic jobs (note: these run on background threads)
         _cronLogic.scheduleEvery(1, "MemberManager purge entry vectors", new Runnable() {
@@ -604,37 +600,27 @@ public class MemberManager
         }
     }
 
-    @BlockingThread
     protected void takeSnapshot ()
     {
-        // load all existing themes, ordered by popularity
-        final List<ThemeEntry> themeRecs = _themeReg.getThemes();
-        // find out their names
-        Map<Integer, GroupName> themeNames = _groupRepo.loadGroupNames(
-            Iterables.transform(themeRecs, ThemeRegistry.ENTRY_TO_GROUP_ID));
-
         // the popular places snapshot function just wants an ordered list of group names
-        final List<GroupName> popularThemes = Lists.newArrayList();
-        for (ThemeEntry rec : themeRecs) {
-            popularThemes.add(themeNames.get(rec.themeId));
+        List<GroupName> popularThemes = Lists.transform(
+            _themeReg.getThemes(), new Function<ThemeEntry, GroupName>() {
+                @Override public GroupName apply (ThemeEntry entry) {
+                    return new GroupName(entry.name, entry.themeId);
+                }
+            });
+
+        // calculate the PP snapshot
+        PopularPlacesSnapshot newSnapshot = PopularPlacesSnapshot.takeSnapshot(
+            _omgr, _peerMan, popularThemes, getGreeterIdsSnapshot());
+
+        // then slide it into place
+        synchronized (_snapshotLock) {
+            _ppSnapshot = newSnapshot;
         }
 
-        // hop over to the omgr thread
-        _omgr.postRunnable(new Runnable() {
-            public void run () {
-                // calculate the PP snapshot
-                PopularPlacesSnapshot newSnapshot = PopularPlacesSnapshot.takeSnapshot(
-                    _omgr, _peerMan, popularThemes, getGreeterIdsSnapshot());
-
-                // then slide it into place
-                synchronized (_snapshotLock) {
-                    _ppSnapshot = newSnapshot;
-                }
-
-                // finally decay the popularity of whatever themes this server hosts
-                _themeReg.heartbeat(THEME_POPULARITY_DECAY, newSnapshot);
-            }
-        });
+        // finally decay the popularity of whatever themes this server hosts
+        _themeReg.heartbeat(THEME_POPULARITY_DECAY, newSnapshot);
     }
 
     /** An internal object on which we synchronize to update/get snapshots. */
