@@ -202,13 +202,18 @@ public class ThemeRegistry
         }
     }
 
+    @BlockingThread
     public void newTheme (ThemeRecord record)
     {
-        ThemeEntry entry = new ThemeEntry(
+        final ThemeEntry entry = new ThemeEntry(
             _groupRepo.loadGroupName(record.groupId), record.popularity, false);
         log.info("Registering new theme", "theme", entry);
-        _themes.put(record.groupId, entry);
-        maybeHostTheme(record.groupId, new NOOP<Integer>());
+        _omgr.postRunnable(new Runnable() {
+            public void run () {
+                _themes.put(entry.themeId, entry);
+                maybeHostTheme(entry.themeId, new NOOP<Integer>());
+            }
+        });
     }
 
     public void maybeHostTheme (final int themeId, final ResultListener<Integer> listener)
