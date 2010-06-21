@@ -98,7 +98,7 @@
     <file name="${extlibs.dir}/quartz.jar"/>
     <file name="${extlibs.dir}/redstone-xmlrpc-client.jar"/>
     <file name="${extlibs.dir}/redstone-xmlrpc.jar"/>
-    <file name="${extlibs.dir}/s3lib-r332.jar"/>
+    <file name="${extlibs.dir}/s3lib.jar"/>
     <file name="${extlibs.dir}/servlet-api.jar"/>
     <file name="${extlibs.dir}/slf4j-api.jar"/>
     <file name="${extlibs.dir}/slf4j-log4j12.jar"/>
