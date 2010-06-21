@@ -33,7 +33,7 @@
 	<classpathentry kind="lib" path="extlibs/java/abimporter.jar"/>
 	<classpathentry kind="lib" path="extlibs/java/activation.jar"/>
 	<classpathentry kind="lib" path="extlibs/java/antisamy/antisamy-bin.1.0.jar"/>
--	<classpathentry kind="lib" path="extlibs/java/s3lib.jar"/>
+	<classpathentry kind="lib" path="extlibs/java/s3lib.jar"/>
 	<classpathentry kind="lib" path="extlibs/java/args4j-2.0.7.jar"/>
 	<classpathentry kind="lib" path="extlibs/java/asc.jar"/>
 	<classpathentry kind="lib" path="extlibs/java/antisamy/batik-css.jar"/>
