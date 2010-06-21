@@ -59,10 +59,10 @@ public class CoinMoneyTransactionRecord extends MoneyTransactionRecord
      */
     public static Key<CoinMoneyTransactionRecord> getKey (int id)
     {
-        return new Key<CoinMoneyTransactionRecord>(
-                CoinMoneyTransactionRecord.class,
-                new ColumnExp[] { ID },
-                new Comparable[] { id });
+        return newKey(_R, id);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(ID); }
     // AUTO-GENERATED: METHODS END
 }

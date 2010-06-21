@@ -59,10 +59,10 @@ public class BarMoneyTransactionRecord extends MoneyTransactionRecord
      */
     public static Key<BarMoneyTransactionRecord> getKey (int id)
     {
-        return new Key<BarMoneyTransactionRecord>(
-                BarMoneyTransactionRecord.class,
-                new ColumnExp[] { ID },
-                new Comparable[] { id });
+        return newKey(_R, id);
     }
+
+    /** Register the key fields in an order matching the getKey() factory. */
+    static { registerKeyFields(ID); }
     // AUTO-GENERATED: METHODS END
 }
