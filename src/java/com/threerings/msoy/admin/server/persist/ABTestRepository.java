@@ -5,6 +5,7 @@ package com.threerings.msoy.admin.server.persist;
 
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.google.common.collect.HashMultimap;
@@ -14,9 +15,6 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-
-import com.samskivert.util.IntMap;
-import com.samskivert.util.IntMaps;
 
 import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.DuplicateKeyException;
@@ -184,7 +182,7 @@ public class ABTestRepository extends DepotRepository
         exprs.add(new GroupBy(ABGroupRecord.GROUP));
 
         // first determine the number of visitors assigned to the test groups
-        IntMap<ABGroupSummaryRecord> groups = IntMaps.newHashIntMap();
+        Map<Integer, ABGroupSummaryRecord> groups = Maps.newHashMap();
         SQLExpression where = ABGroupRecord.TEST_ID.eq(testId);
         for (GroupCountRecord rec : findAll(
                  GroupCountRecord.class, CacheStrategy.NONE, where(exprs, where))) {

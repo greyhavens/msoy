@@ -3,12 +3,12 @@
 
 package com.threerings.msoy.game.tests;
 
+import java.util.Map;
 import java.util.prefs.Preferences;
 
+import com.google.common.collect.Maps;
 import com.samskivert.util.BasicRunQueue;
 import com.samskivert.util.Config;
-import com.samskivert.util.IntMap;
-import com.samskivert.util.IntMaps;
 import com.samskivert.util.RunQueue;
 
 import com.threerings.presents.client.Client;
@@ -217,5 +217,5 @@ public class EnterGameClient
         }
     }
 
-    protected static IntMap<Tester> _testers = IntMaps.newHashIntMap();
+    protected static Map<Integer, Tester> _testers = Maps.newHashMap();
 }

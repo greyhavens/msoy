@@ -21,8 +21,6 @@ import com.google.inject.Inject;
 
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.Calendars;
-import com.samskivert.util.IntMap;
-import com.samskivert.util.IntMaps;
 import com.samskivert.util.IntSet;
 import com.samskivert.util.ObjectUtil;
 import com.threerings.parlor.rating.server.persist.RatingRecord;
@@ -338,7 +336,7 @@ public class ProfileServlet extends MsoyServiceServlet
         }
 
         // now resolve cards for these members
-        IntMap<Friendship> friendships = (mrec == null) ? null :
+        Map<Integer, Friendship> friendships = (mrec == null) ? null :
             _memberRepo.loadFriendships(mrec.memberId, mids.keySet());
         List<MemberCard> results = _mhelper.resolveMemberCards(mids.keySet(), false, friendships);
 
@@ -479,7 +477,7 @@ public class ProfileServlet extends MsoyServiceServlet
 
         // create GameRating records for all the games we know about
         final List<GameRating> result = Lists.newArrayList();
-        final IntMap<GameRating> map = IntMaps.newHashIntMap();
+        final Map<Integer, GameRating> map = Maps.newHashMap();
         for (final RatingRecord record : ratings) {
             GameRating rrec = map.get(Math.abs(record.gameId));
             if (rrec == null) {
@@ -500,8 +498,8 @@ public class ProfileServlet extends MsoyServiceServlet
         }
 
         // now load up and fill in the game details
-        for (final IntMap.IntEntry<GameRating> entry : map.intEntrySet()) {
-            final int gameId = entry.getIntKey();
+        for (final Map.Entry<Integer, GameRating> entry : map.entrySet()) {
+            final int gameId = entry.getKey();
             final GameInfoRecord record = _mgameRepo.loadGame(gameId);
             if (record == null) {
                 log.info("Player has rating for non-existent game", "id", gameId);

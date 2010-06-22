@@ -3,11 +3,12 @@
 
 package com.threerings.msoy.person.server.persist;
 
+import java.util.Map;
+
 import com.samskivert.depot.Key;
 import com.samskivert.depot.annotation.Entity;
 import com.samskivert.depot.annotation.Index;
 import com.samskivert.depot.expression.ColumnExp;
-import com.samskivert.util.IntMap;
 import com.samskivert.util.IntSet;
 
 import com.threerings.msoy.data.all.GroupName;
@@ -50,7 +51,8 @@ public class SelfFeedMessageRecord extends FeedMessageRecord
     }
 
     @Override // from FeedMessageRecord
-    public FeedMessage toMessage (IntMap<MemberName> memberNames, IntMap<GroupName> groupNames)
+    public FeedMessage toMessage (
+        Map<Integer, MemberName> memberNames, Map<Integer, GroupName> groupNames)
     {
         return new SelfFeedMessage(getType(), memberNames.get(actorId), getData(), getPosted());
     }

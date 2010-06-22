@@ -31,8 +31,6 @@ import com.google.inject.Singleton;
 import com.samskivert.depot.DuplicateKeyException;
 
 import com.samskivert.util.ArrayIntSet;
-import com.samskivert.util.IntMap;
-import com.samskivert.util.IntMaps;
 import com.samskivert.util.IntSet;
 import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
@@ -723,7 +721,7 @@ public class ItemLogic
     public void resolveCardNames (List<ListingCard> list)
     {
         // look up the names and build a map of memberId -> MemberName
-        IntMap<MemberName> memberMap = _memberRepo.loadMemberNames(
+        Map<Integer, MemberName> memberMap = _memberRepo.loadMemberNames(
             list, new Function<ListingCard,Integer>() {
                 public Integer apply (ListingCard card) {
                     return card.creator.getMemberId();
@@ -735,7 +733,7 @@ public class ItemLogic
         }
 
         // look up the names and build a map of groupId -> GroupName
-        IntMap<GroupName> brandMap = _groupRepo.loadGroupNames(
+        Map<Integer, GroupName> brandMap = _groupRepo.loadGroupNames(
             list, new Function<ListingCard,Integer>() {
                 public Integer apply (ListingCard card) {
                     return (card.brand != null) ? card.brand.getGroupId() : null;
@@ -1182,7 +1180,7 @@ public class ItemLogic
         }
 
         /** A mapping of item type to LookupType record of repo / ids. */
-        protected HashMap<Byte, LookupType> _byType = new HashMap<Byte, LookupType>();
+        protected Map<Byte, LookupType> _byType = Maps.newHashMap();
     } /* End: class LookupList. */
 
     /**
@@ -1320,7 +1318,7 @@ public class ItemLogic
     /** Maps byte type ids to repository for all digital item types. */
     protected Map<Byte, ItemRepository<ItemRecord>> _repos = Maps.newHashMap();
 
-    protected IntMap<ThemedJumble> _themedJumbles = IntMaps.newHashIntMap();
+    protected Map<Integer, ThemedJumble> _themedJumbles = Maps.newHashMap();
 
     /** A current snapshot of items favorited by subscribers. */
     protected List<ListingCard> _jumble;

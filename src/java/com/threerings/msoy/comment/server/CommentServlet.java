@@ -6,13 +6,13 @@ package com.threerings.msoy.comment.server;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 
 import com.samskivert.depot.DatabaseException;
 import com.samskivert.util.ArrayIntSet;
-import com.samskivert.util.IntMap;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.gwt.util.PagedResult;
@@ -72,7 +72,7 @@ public class CommentServlet extends MsoyServiceServlet
         for (CommentRecord record : records) {
             memIds.add(record.memberId);
         }
-        IntMap<MemberCard> cards = MemberCardRecord.toMap(_memberRepo.loadMemberCards(memIds));
+        Map<Integer, MemberCard> cards = MemberCardRecord.toMap(_memberRepo.loadMemberCards(memIds));
 
         // convert the comment records to runtime records
         List<Comment> comments = Lists.newArrayList();

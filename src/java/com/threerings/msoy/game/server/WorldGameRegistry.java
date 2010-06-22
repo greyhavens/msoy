@@ -5,9 +5,11 @@ package com.threerings.msoy.game.server;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
@@ -15,8 +17,6 @@ import com.google.inject.Singleton;
 import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.CollectionUtil;
-import com.samskivert.util.IntMap;
-import com.samskivert.util.IntMaps;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.StringUtil;
@@ -411,7 +411,7 @@ public class WorldGameRegistry
     protected static final int MAX_TABLES_WAITING = 50;
 
     /** A map of games pending resolution. */
-    protected IntMap<GameResolver> _penders = IntMaps.newHashIntMap();
+    protected Map<Integer, GameResolver> _penders = Maps.newHashMap();
 
     // dependencies
     @Inject protected @MainInvoker Invoker _invoker;

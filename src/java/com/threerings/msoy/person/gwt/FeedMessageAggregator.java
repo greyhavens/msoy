@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import com.threerings.gwt.util.DateUtil;
 
@@ -417,7 +418,7 @@ public class FeedMessageAggregator
         protected Style _style;
 
         /** Partition of messages with the same subject or object. */
-        protected HashMap<MessageKey, Group> _map = new HashMap<MessageKey, Group>();
+        protected Map<MessageKey, Group> _map = new HashMap<MessageKey, Group>();
 
         /** Empty group. */
         protected Group _dummy = new Group();

@@ -362,7 +362,7 @@ public class GameServlet extends MsoyServiceServlet
             _ratingRepo.getTopRatings(gameId, MAX_RANKINGS, since, friendIds);
 
         // combine all players in question into one map for name/photo resolution
-        IntMap<PlayerRating> players = IntMaps.newHashIntMap();
+        Map<Integer, PlayerRating> players = Maps.newHashMap();
         for (RatingRecord record : single) {
             players.put(record.playerId, new PlayerRating());
         }
@@ -425,7 +425,7 @@ public class GameServlet extends MsoyServiceServlet
     }
 
     protected PlayerRating[] toRatingResult (
-        List<RatingRecord> records, IntMap<PlayerRating> players)
+        List<RatingRecord> records, Map<Integer, PlayerRating> players)
     {
         PlayerRating[] result = new PlayerRating[records.size()];
         for (int ii = 0; ii < result.length; ii++) {
@@ -580,7 +580,7 @@ public class GameServlet extends MsoyServiceServlet
             }
 
             // resolve creator names
-            IntMap<MemberName> memberNames = _memberRepo.loadMemberNames(creatorIds);
+            Map<Integer, MemberName> memberNames = _memberRepo.loadMemberNames(creatorIds);
             for (GameInfo info : featured) {
                 info.creator = memberNames.get(info.creator.getMemberId());
             }

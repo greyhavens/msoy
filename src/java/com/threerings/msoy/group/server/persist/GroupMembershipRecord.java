@@ -4,6 +4,7 @@
 package com.threerings.msoy.group.server.persist;
 
 import java.sql.Timestamp;
+import java.util.Map;
 
 import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistentRecord;
@@ -12,7 +13,6 @@ import com.samskivert.depot.annotation.Entity;
 import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.annotation.Index;
 
-import com.samskivert.util.IntMap;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.msoy.data.all.GroupName;
@@ -64,7 +64,7 @@ public class GroupMembershipRecord extends PersistentRecord
     /**
      * Converts this persistent record to a runtime record.
      */
-    public GroupMembership toGroupMembership (IntMap<GroupName> groups)
+    public GroupMembership toGroupMembership (Map<Integer, GroupName> groups)
     {
         GroupMembership gm = new GroupMembership();
         gm.rank = rank;

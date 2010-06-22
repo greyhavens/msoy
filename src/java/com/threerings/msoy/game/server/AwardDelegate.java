@@ -4,15 +4,15 @@
 package com.threerings.msoy.game.server;
 
 import java.util.List;
+import java.util.Map;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.TreeMultimap;
 import com.google.inject.Inject;
 
-import com.samskivert.util.IntMap;
-import com.samskivert.util.IntMaps;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.media.util.MathUtil;
@@ -94,7 +94,7 @@ public class AwardDelegate extends RatingDelegate
         // avoid funny business
         long now = System.currentTimeMillis();
         int highestScore = Integer.MIN_VALUE;
-        IntMap<Player> players = IntMaps.newHashIntMap();
+        Map<Integer, Player> players = Maps.newHashMap();
         for (int ii = 0; ii < playerIds.length; ii++) {
             int availFlow = getAwardableFlow(now, playerIds[ii]);
             Player player = createPlayer(playerIds[ii], scores[ii], availFlow);
@@ -192,7 +192,7 @@ public class AwardDelegate extends RatingDelegate
 
         // convert the players into records indexed on player oid to weed out duplicates and avoid
         // any funny business
-        IntMap<Player> players = IntMaps.newHashIntMap();
+        Map<Integer, Player> players = Maps.newHashMap();
         for (int winnerId : winnerIds) {
             Player pl = createPlayer(winnerId, 1, getAwardableFlow(now, winnerId));
             if (pl != null) {
@@ -255,9 +255,7 @@ public class AwardDelegate extends RatingDelegate
         stopTracking();
         resetTracking();
 
-        // pay out to all the players who have not yet been paid
-        int[] ids = _flowRecords.intKeySet().toIntArray();
-        for (int id : ids) {
+        for (int id : _flowRecords.keySet()) {
             payoutPlayer(id);
         }
 
@@ -448,7 +446,7 @@ public class AwardDelegate extends RatingDelegate
                  "erat", erat, "diff", pctdiff, "K", K, "nrat", nrat);
     }
 
-    protected void awardFlow (IntMap<Player> players, int payoutType)
+    protected void awardFlow (Map<Integer, Player> players, int payoutType)
     {
         if (players.size() == 0) { // sanity check
             return;
@@ -581,7 +579,7 @@ public class AwardDelegate extends RatingDelegate
     /**
      * Scale each player's flow by their percentile performance.
      */
-    protected void scaleAvailableFlowToPercentiles (IntMap<Player> players)
+    protected void scaleAvailableFlowToPercentiles (Map<Integer, Player> players)
     {
         for (Player player : players.values()) {
             player.availFlow = (int)Math.ceil(player.availFlow * (player.percentile / 99f));
@@ -926,7 +924,7 @@ public class AwardDelegate extends RatingDelegate
     protected int _totalAwardedFlow = 0;
 
     /** Tracks accumulated playtime for all players in the game. */
-    protected IntMap<FlowRecord> _flowRecords = IntMaps.newHashIntMap();
+    protected Map<Integer, FlowRecord> _flowRecords = Maps.newHashMap();
 
     // our dependencies
     @Inject protected PlayerLocator _locator;

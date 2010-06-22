@@ -298,7 +298,7 @@ public class MemberRepository extends DepotRepository
      * Extracts the set of member id from the supplied collection of records using the supplied
      * <code>getId</code> function and loads up the associated names.
      */
-    public <C> IntMap<MemberName> loadMemberNames (Iterable<C> records, Function<C,Integer> getId)
+    public <C> Map<Integer, MemberName> loadMemberNames (Iterable<C> records, Function<C,Integer> getId)
     {
         Set<Integer> memberIds = new ArrayIntSet();
         for (C record : records) {
@@ -310,9 +310,9 @@ public class MemberRepository extends DepotRepository
     /**
      * Looks up members' names by id.
      */
-    public IntMap<MemberName> loadMemberNames (Set<Integer> memberIds)
+    public Map<Integer, MemberName> loadMemberNames (Set<Integer> memberIds)
     {
-        IntMap<MemberName> names = IntMaps.newHashIntMap();
+        Map<Integer, MemberName> names = Maps.newHashMap();
         for (MemberNameRecord name : loadAll(MemberNameRecord.class, memberIds)) {
             names.put(name.memberId, name.toMemberName());
         }
@@ -1028,9 +1028,9 @@ public class MemberRepository extends DepotRepository
      * Return a mapping of all friend relationships extending from this member. This means
      * that only FRIENDS and INVITED will be returned.
      */
-    public IntMap<Friendship> loadFriendships (int memberId)
+    public Map<Integer, Friendship> loadFriendships (int memberId)
     {
-        IntMap<Friendship> ships = IntMaps.newHashIntMap();
+        Map<Integer, Friendship> ships = Maps.newHashMap();
         for (FriendshipRecord frec : findAll(FriendshipRecord.class,
                 new Where(FriendshipRecord.MEMBER_ID, memberId))) {
             ships.put(frec.friendId, frec.valid ? Friendship.FRIENDS : Friendship.INVITED);
@@ -1043,9 +1043,9 @@ public class MemberRepository extends DepotRepository
      * Only FRIENDS and INVITED will be returned, NOT_FRIENDS is implicit with missing ids
      * in the returned map.
      */
-    public IntMap<Friendship> loadFriendships (int memberId, Collection<Integer> otherIds)
+    public Map<Integer, Friendship> loadFriendships (int memberId, Collection<Integer> otherIds)
     {
-        IntMap<Friendship> ships = IntMaps.newHashIntMap();
+        Map<Integer, Friendship> ships = Maps.newHashMap();
         if (otherIds.isEmpty()) {
             return ships;
         }

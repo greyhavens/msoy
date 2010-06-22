@@ -13,11 +13,9 @@ import java.util.Map;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-
-import com.samskivert.util.IntMap;
-import com.samskivert.util.IntMaps;
 
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.all.Friendship;
@@ -183,15 +181,15 @@ public class MemberHelper
      * {@link MemberCard#friendship}, otherwise friendship will be left null.
      */
     public List<MemberCard> resolveMemberCards (
-        final Collection<Integer> memberIds, boolean onlineOnly, IntMap<Friendship> friendships)
+        final Collection<Integer> memberIds, boolean onlineOnly, Map<Integer, Friendship> friendships)
         throws ServiceException
     {
         List<MemberCard> cards = Lists.newArrayList();
 
         // first collect room and game info for all online members (which may be scattered across
         // our node objects in any order so we have to wait to merge until after this collecting)
-        final IntMap<MemberCard.InScene> rstatuses = IntMaps.newHashIntMap();
-        final IntMap<MemberCard.InGame> gstatuses = IntMaps.newHashIntMap();
+        final Map<Integer, MemberCard.InScene> rstatuses = Maps.newHashMap();
+        final Map<Integer, MemberCard.InGame> gstatuses = Maps.newHashMap();
         _servletLogic.invokePeerOperation(
             "resolveMemberCards(" + memberIds + ")", new Function<MsoyNodeObject, Void>() {
             public Void apply (MsoyNodeObject mnobj) {
@@ -210,7 +208,7 @@ public class MemberHelper
         });
 
         // merge the game and room info, if they are in an AVRG we use some of both
-        IntMap<MemberCard.Status> statuses = IntMaps.newHashIntMap();
+        Map<Integer, MemberCard.Status> statuses = Maps.newHashMap();
         for (Integer id : memberIds) {
             MemberCard.InScene rstatus = rstatuses.get(id);
             MemberCard.InGame gstatus = gstatuses.get(id);

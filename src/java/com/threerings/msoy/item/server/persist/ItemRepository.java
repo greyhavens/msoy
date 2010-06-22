@@ -27,10 +27,7 @@ import com.google.inject.Inject;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.ArrayUtil;
 import com.samskivert.util.CollectionUtil;
-import com.samskivert.util.HashIntMap;
 import com.samskivert.util.IntIntMap;
-import com.samskivert.util.IntMap;
-import com.samskivert.util.IntMaps;
 import com.samskivert.util.IntSet;
 import com.samskivert.util.QuickSort;
 import com.samskivert.util.StringUtil;
@@ -863,7 +860,7 @@ public abstract class ItemRepository<T extends ItemRecord>
                 itemIds.add(cRec.listedItemId);
             }
             // load them and associate each one with its id
-            IntMap<T> itemMap = IntMaps.newHashIntMap();
+            Map<Integer, T> itemMap = Maps.newHashMap();
             for (T iRec : loadAll(getItemClass(), itemIds)) {
                 itemMap.put(iRec.itemId, iRec);
             }
@@ -1473,7 +1470,7 @@ public abstract class ItemRepository<T extends ItemRecord>
 
         // find all the originals and insert them into a map
         List<T> originals = loadAll(getItemClass(), origIds);
-        HashIntMap<T> records = new HashIntMap<T>(originals.size(), HashIntMap.DEFAULT_LOAD_FACTOR);
+        Map<Integer, T> records = Maps.newHashMap();
         for (T record : originals) {
             records.put(record.itemId, record);
         }

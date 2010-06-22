@@ -4,12 +4,12 @@
 package com.threerings.msoy.server;
 
 import java.util.Collections;
+import java.util.Map;
 
+import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.util.IntMap;
-import com.samskivert.util.IntMaps;
 import com.samskivert.util.ObserverList;
 import com.threerings.util.Name;
 
@@ -124,7 +124,7 @@ public class MemberLocator extends BodyLocator
     }
 
     /** A mapping from member name to member object for all online members. */
-    protected IntMap<MemberObject> _online = IntMaps.newHashIntMap();
+    protected Map<Integer, MemberObject> _online = Maps.newHashMap();
 
     /** A list of member session observers. */
     protected ObserverList<Observer> _observers = ObserverList.newFastUnsafe();

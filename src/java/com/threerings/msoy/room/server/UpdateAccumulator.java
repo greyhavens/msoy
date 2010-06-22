@@ -5,14 +5,14 @@ package com.threerings.msoy.room.server;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.util.IntMap;
-import com.samskivert.util.IntMaps;
 import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.Lifecycle;
@@ -184,7 +184,7 @@ public class UpdateAccumulator
      * Since only furni updates are currently supported, the value is a cumulative update that
      * includes all changes accumulated so far. Scenes not included in this map do not have any
      * pending accumulated updates. */
-    protected IntMap<UpdateWrapper> _pending = IntMaps.newHashIntMap();
+    protected Map<Integer, UpdateWrapper> _pending = Maps.newHashMap();
 
     /** Handles flushing our room updates periodically. Note that we're setting up an Interval that
      * posts to the invoker thread. */

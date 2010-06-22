@@ -324,7 +324,7 @@ public class MoneyLogic
         }
 
         // see what kind of payouts we're going pay- null means don't load, don't care
-        List<IntMap<CurrencyAmount>> creatorPayouts =
+        List<Map<Integer, CurrencyAmount>> creatorPayouts =
             magicFree ? null : computeCreatorPayouts(quote, listings, listingShares);
         CurrencyAmount affiliatePayout = magicFree ? null : computeAffiliatePayout(quote);
         CurrencyAmount charityPayout = magicFree ? null : computeCharityPayout(quote);
@@ -333,7 +333,7 @@ public class MoneyLogic
         if (creatorPayouts != null) {
             creatorTxs = Lists.newArrayListWithExpectedSize(creatorPayouts.size());
             for (int ii = 0; ii < creatorPayouts.size(); ++ii) {
-                IntMap<CurrencyAmount> payouts = creatorPayouts.get(ii);
+                Map<Integer, CurrencyAmount> payouts = creatorPayouts.get(ii);
                 // TODO: Introduce BRAND_PAYOUT and BASIS_BRAND_PAYOUT?
                 TransactionType txType = (ii == 0) ? TransactionType.CREATOR_PAYOUT :
                     TransactionType.BASIS_CREATOR_PAYOUT;
@@ -1204,7 +1204,7 @@ public class MoneyLogic
      * on a fraction of the total payout due, with the lister receiving any remainder. Each
      * creator may be a brand, in which case more complicated stuff happens.
      */
-    protected List<IntMap<CurrencyAmount>> computeCreatorPayouts (
+    protected List<Map<Integer, CurrencyAmount>> computeCreatorPayouts (
         PriceQuote quote, List<CatalogRecord> listings, List<List<BrandShareRecord>> listingShares)
         throws ServiceException
     {
@@ -1215,7 +1215,7 @@ public class MoneyLogic
         Currency baseCurrency = listings.get(listings.size() - 1).currency;
 
         // map of divided payouts
-        List<IntMap<CurrencyAmount>> divvies = Lists.newArrayList();
+        List<Map<Integer, CurrencyAmount>> divvies = Lists.newArrayList();
 
         int payoutSum = 0;
 
@@ -1241,7 +1241,7 @@ public class MoneyLogic
             }
 
             if (listingPayout > 0) {
-                IntMap<CurrencyAmount> result = IntMaps.newHashIntMap();
+                Map<Integer, CurrencyAmount> result = Maps.newHashMap();
                 divvies.add(result);
 
                 List<BrandShareRecord> shares = listingShares.get(ii);
@@ -1284,7 +1284,7 @@ public class MoneyLogic
      * because of derivations).
      */
     protected int computePayoutsForListing (
-        IntMap<CurrencyAmount> result, List<BrandShareRecord> shares, Currency currency,
+        Map<Integer, CurrencyAmount> result, List<BrandShareRecord> shares, Currency currency,
         float totalPayout)
     {
         int totShares = 0;
@@ -1319,7 +1319,7 @@ public class MoneyLogic
      * because of derivations).
      */
     protected int computePayoutsForListing (
-        IntMap<CurrencyAmount> result, int creatorId, Currency currency, float payout)
+        Map<Integer, CurrencyAmount> result, int creatorId, Currency currency, float payout)
     {
         int creatorPayout = (int)Math.floor(payout);
         result.put(creatorId, new CurrencyAmount(currency, creatorPayout));
@@ -1415,7 +1415,7 @@ public class MoneyLogic
         for (MoneyTransaction tx : txList) {
             memberIds.add(tx.referenceMemberName.getMemberId());
         }
-        IntMap<MemberName> names = _memberRepo.loadMemberNames(memberIds);
+        Map<Integer, MemberName> names = _memberRepo.loadMemberNames(memberIds);
         for (MoneyTransaction tx : txList) {
             tx.referenceMemberName = names.get(tx.referenceMemberName.getMemberId());
         }

@@ -4,9 +4,10 @@
 package com.threerings.msoy.room.data;
 
 import java.util.Iterator;
+import java.util.Map;
 
+import com.google.common.collect.Maps;
 import com.samskivert.util.ArrayUtil;
-import com.samskivert.util.HashIntMap;
 import com.samskivert.util.ListUtil;
 
 import com.threerings.util.Name;
@@ -224,7 +225,7 @@ public class MsoySceneModel extends SceneModel
             return;
         }
 
-        _portalInfo = new HashIntMap<Portal>();
+        _portalInfo = Maps.newHashMap();
         for (FurniData furni : furnis) {
             if (furni.actionType != FurniData.ACTION_PORTAL) {
                 continue;
@@ -289,6 +290,6 @@ public class MsoySceneModel extends SceneModel
     }
 
     /** Cached portal info. */
-    protected transient HashIntMap<Portal> _portalInfo;
+    protected transient Map<Short, Portal> _portalInfo;
 
 }

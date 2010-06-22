@@ -495,7 +495,7 @@ public class ForumServlet extends MsoyServiceServlet
         for (ForumMessageRecord msgrec : msgrecs) {
             posters.add(msgrec.posterId);
         }
-        IntMap<MemberCard> cards = MemberCardRecord.toMap(_memberRepo.loadMemberCards(posters));
+        Map<Integer, MemberCard> cards = MemberCardRecord.toMap(_memberRepo.loadMemberCards(posters));
 
         // convert the messages to runtime format
         List<ForumMessage> messages = Lists.newArrayList();
@@ -550,9 +550,9 @@ public class ForumServlet extends MsoyServiceServlet
     /**
      * Helper function for getting a map of member cards for posting and editing a message.
      */
-    protected IntMap<MemberCard> getCardsMap (int memberId)
+    protected Map<Integer, MemberCard> getCardsMap (int memberId)
     {
-        IntMap<MemberCard> cards = IntMaps.newHashIntMap();
+        Map<Integer, MemberCard> cards = Maps.newHashMap();
         cards.put(memberId, _memberRepo.loadMemberCard(memberId, false));
         return cards;
     }

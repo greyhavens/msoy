@@ -16,6 +16,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 
@@ -26,8 +27,6 @@ import org.json.JSONObject;
 import com.samskivert.io.StreamUtil;
 
 import com.samskivert.util.ArrayIntSet;
-import com.samskivert.util.IntMap;
-import com.samskivert.util.IntMaps;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.parlor.rating.server.persist.RatingRepository;
@@ -158,7 +157,7 @@ public class EditGameServlet extends MsoyServiceServlet
 
         ItemRepository<GameItemRecord> repo = _itemLogic.getRepository(GameItemRecord.class, type);
 
-        IntMap<GameItemRecord> masters = IntMaps.newHashIntMap();
+        Map<Integer, GameItemRecord> masters = Maps.newHashMap();
         for (GameItemRecord master : repo.loadGameOriginals(info.gameId)) {
             masters.put(master.catalogId, master);
         }

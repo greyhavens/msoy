@@ -21,7 +21,6 @@ import com.samskivert.text.MessageUtil;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.Comparators;
 import com.samskivert.util.ComplainingListener;
-import com.samskivert.util.HashIntMap;
 import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.ObjectUtil;
@@ -1587,7 +1586,7 @@ public class RoomManager extends SpotSceneManager
     protected boolean assignControllers (Collection<Controllable> ctrlables)
     {
         // determine the available controllers
-        HashIntMap<Controller> controllers = new HashIntMap<Controller>();
+        Map<Integer, Controller> controllers = Maps.newHashMap();
         for (OccupantInfo info : _roomObj.occupantInfo) {
             if ((info instanceof MemberInfo) && (info.status != OccupantInfo.DISCONNECTED) &&
                     !(info.username instanceof PuppetName)) {
@@ -2180,10 +2179,10 @@ public class RoomManager extends SpotSceneManager
     protected List<Integer> _actors = Lists.newArrayList();
 
     /** Mapping to keep track of spawned mobs. */
-    protected HashIntMap<Map<String, MobObject>> _mobs = new HashIntMap<Map<String, MobObject>>();
+    protected Map<Integer, Map<String, MobObject>> _mobs = Maps.newHashMap();
 
     /** Mapping to keep track of starting location of added bodies. */
-    protected HashIntMap<Location> _startingLocs = new HashIntMap<Location>();
+    protected Map<Integer, Location> _startingLocs = Maps.newHashMap();
 
     /** For all MemberInfo's, a mapping of ItemIdent to the member's oid. */
     protected Map<ItemIdent, Integer> _avatarIdents = Maps.newHashMap();

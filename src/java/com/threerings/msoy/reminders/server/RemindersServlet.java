@@ -64,7 +64,7 @@ public class RemindersServlet extends MsoyServiceServlet
             ArcadeData.Portal.FACEBOOK, true), ArcadeEntryRecord.TO_GAME_ID));
 
         // add notifications for recent, unpublished trophies in approved games
-        IntMap<GameInfoRecord> games = IntMaps.newHashIntMap();
+        Map<Integer, GameInfoRecord> games = Maps.newHashMap();
         for (TrophyRecord trophy : _trophyRepo.loadRecentTrophies(
             memrec.memberId, MAX_RECENT_TROPHIES)) {
             if (published.containsKey(toActionId(trophy)) ||

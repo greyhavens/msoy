@@ -50,7 +50,7 @@ public class ForumLogic
         boolean needLastReadPost, boolean needFirstPost)
     {
         // enumerate the last-posters and create member names for them
-        IntMap<MemberName> names = _memberRepo.loadMemberNames(
+        Map<Integer, MemberName> names = _memberRepo.loadMemberNames(
             thrrecs, ForumThreadRecord.GET_MOST_RECENT_POSTER_ID);
 
         // convert the threads to runtime format
@@ -95,7 +95,7 @@ public class ForumLogic
             _memberRepo.loadFriendIds(mrec.memberId), _groupLogic.getHiddenGroupIds(
                 mrec.memberId, null), maximum);
 
-        IntMap<GroupName> groupNames = _groupRepo.loadGroupNames(
+        Map<Integer, GroupName> groupNames = _groupRepo.loadGroupNames(
             threads, new Function<ForumThreadRecord, Integer> () {
                 @Override public Integer apply (ForumThreadRecord record) {
                     return record.groupId;

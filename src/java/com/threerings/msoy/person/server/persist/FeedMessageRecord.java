@@ -5,6 +5,7 @@ package com.threerings.msoy.person.server.persist;
 
 import java.sql.Timestamp;
 import java.util.Comparator;
+import java.util.Map;
 
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.expression.ColumnExp;
@@ -13,7 +14,6 @@ import com.samskivert.depot.annotation.GeneratedValue;
 import com.samskivert.depot.annotation.GenerationType;
 import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.annotation.Index;
-import com.samskivert.util.IntMap;
 import com.samskivert.util.IntSet;
 
 import com.threerings.msoy.data.all.GroupName;
@@ -69,7 +69,7 @@ public abstract class FeedMessageRecord extends PersistentRecord
      * Converts this persistent record to a runtime record.
      */
     public abstract FeedMessage toMessage (
-        IntMap<MemberName> memberNames, IntMap<GroupName> groupNames);
+        Map<Integer, MemberName> memberNames, Map<Integer, GroupName> groupNames);
 
     protected FeedMessageType getType ()
     {

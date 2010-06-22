@@ -3,9 +3,9 @@
 
 package com.threerings.msoy.data;
 
-import com.samskivert.util.HashIntMap;
-import com.samskivert.util.IntMap;
+import java.util.Map;
 
+import com.google.common.collect.Maps;
 import com.threerings.io.SimpleStreamableObject;
 
 import com.threerings.msoy.badge.data.all.Badge;
@@ -236,7 +236,7 @@ public class UserAction extends SimpleStreamableObject
         this.data = data;
     }
 
-    protected static IntMap<Type> _reverse = new HashIntMap<Type>();
+    protected static Map<Integer, Type> _reverse = Maps.newHashMap();
     static {
         for (Type type : Type.values()) {
             _reverse.put(type.getNumber(), type);

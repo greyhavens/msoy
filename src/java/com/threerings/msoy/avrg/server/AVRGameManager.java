@@ -3,10 +3,10 @@
 
 package com.threerings.msoy.avrg.server;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
@@ -14,13 +14,9 @@ import com.google.inject.Inject;
 import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.jdbc.WriteOnlyUnit;
 import com.samskivert.util.ArrayIntSet;
-import com.samskivert.util.HashIntMap;
 import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.StringUtil;
-import com.samskivert.util.IntMap;
-import com.samskivert.util.IntMap.IntEntry;
-
 import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.client.InvocationService;
@@ -596,7 +592,7 @@ public class AVRGameManager extends PlaceManager
                     props = offlineProps.getUserProps();
                 } else {
                     // turn them into a handy mapping
-                    Map<String, byte[]> initialState = new HashMap<String, byte[]>();
+                    Map<String, byte[]> initialState = Maps.newHashMap();
                     for (PlayerGameStateRecord record : _stateRecs) {
                         initialState.put(record.datumKey, record.datumValue);
                     }
@@ -673,8 +669,8 @@ public class AVRGameManager extends PlaceManager
         _sceneCheck.cancel();
 
         // any loaded offline players must have their dirty states (if any) flushed
-        for (IntEntry<PropertySpaceObject> entry : _offlineProps.intEntrySet()) {
-            flushPlayerGameState(entry.getIntKey(), entry.getValue());
+        for (Entry<Integer, PropertySpaceObject> entry : _offlineProps.entrySet()) {
+            flushPlayerGameState(entry.getKey(), entry.getValue());
         }
 
         super.didShutdown();
@@ -1077,13 +1073,13 @@ public class AVRGameManager extends PlaceManager
     protected boolean _agentStarted;
 
     /** The map of scenes by scene id, one to one. */
-    protected IntMap<Scene> _scenes = new HashIntMap<Scene>();
+    protected Map<Integer, Scene> _scenes = Maps.newHashMap();
 
     /** The map of player ids to scenes, many to one. */
-    protected IntMap<Scene> _playerScenes = new HashIntMap<Scene>();
+    protected Map<Integer, Scene> _playerScenes = Maps.newHashMap();
 
     /** The map of player ids to offline property space data. TODO: Use LRUHashMap. */
-    protected IntMap<PropertySpaceObject> _offlineProps = new HashIntMap<PropertySpaceObject>();
+    protected Map<Integer, PropertySpaceObject> _offlineProps = Maps.newHashMap();
 
     /** Interval to run our scene checker. */
     protected Interval _sceneCheck;

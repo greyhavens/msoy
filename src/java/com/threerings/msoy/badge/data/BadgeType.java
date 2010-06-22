@@ -12,10 +12,8 @@ import java.util.zip.CRC32;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-
-import com.samskivert.util.IntMap;
-import com.samskivert.util.IntMaps;
 
 import com.threerings.stats.Log;
 import com.threerings.stats.data.StatSet;
@@ -555,7 +553,7 @@ public enum BadgeType
     protected static void mapStatDependencies (BadgeType type)
     {
         if (_statDependencies == null) {
-            _statDependencies = IntMaps.newHashIntMap();
+            _statDependencies = Maps.newHashMap();
         }
 
         StatType stat = type.getRelevantStat();
@@ -575,10 +573,10 @@ public enum BadgeType
     protected Level[] _levels;
 
     /** The table mapping stat codes to enumerated types. */
-    protected static IntMap<BadgeType> _codeToType = IntMaps.newHashIntMap();
+    protected static Map<Integer, BadgeType> _codeToType = Maps.newHashMap();
 
     /** The mapping of stats to the badges that depend on them. */
-    protected static IntMap<Set<BadgeType>> _statDependencies;
+    protected static Map<Integer, Set<BadgeType>> _statDependencies;
 
     /**
      * Create the hash<->BadgeType mapping for each BadgeType.

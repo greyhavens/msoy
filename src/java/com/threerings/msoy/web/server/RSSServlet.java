@@ -5,6 +5,7 @@ package com.threerings.msoy.web.server;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 
@@ -12,10 +13,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.common.collect.Maps;
 import com.google.inject.Inject;
-
-import com.samskivert.util.IntMap;
-import com.samskivert.util.IntMaps;
 
 import com.threerings.msoy.web.gwt.MessageUtil;
 import com.threerings.msoy.web.gwt.Pages;
@@ -177,7 +176,7 @@ public class RSSServlet extends HttpServlet
     @Inject protected GroupRepository _groupRepo;
 
     /** Cache our generated rss files. */
-    protected static IntMap<RSSCache> _rssCache = IntMaps.newHashIntMap();
+    protected static Map<Integer, RSSCache> _rssCache = Maps.newHashMap();
 
     /** Used for RFC 822 compliant date strings. */
     protected static SimpleDateFormat _sdf = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z");

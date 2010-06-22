@@ -5,9 +5,8 @@ package com.threerings.msoy.game.server;
 
 import java.util.Map;
 
+import com.google.common.collect.Maps;
 import com.google.inject.Inject;
-import com.samskivert.util.HashIntMap;
-
 import com.threerings.parlor.game.server.GameManagerDelegate;
 import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.server.MsoyEventLogger;
@@ -69,7 +68,7 @@ public class EventLoggingDelegate extends GameManagerDelegate
     protected final GameContent _content;
 
     /** Mapping from player oid to their entry timestamp. */
-    Map<Integer, Long> _entries = new HashIntMap<Long>();
+    Map<Integer, Long> _entries = Maps.newHashMap();
 
     // dependencies
     @Inject protected MsoyEventLogger _eventLog;

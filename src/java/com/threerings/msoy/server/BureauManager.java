@@ -4,12 +4,12 @@
 package com.threerings.msoy.server;
 
 import java.io.IOException;
+import java.util.Map;
 
+import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.util.IntMap;
-import com.samskivert.util.IntMaps;
 import com.samskivert.util.Interval;
 import com.samskivert.util.Lifecycle;
 import com.samskivert.util.ResultListener;
@@ -107,7 +107,7 @@ public class BureauManager
         }
 
         // reset the results buffer and wait for it to fill up, up to 5 seconds
-        _launcherInfo = IntMaps.newHashIntMap();
+        _launcherInfo = Maps.newHashMap();
         new Interval(_omgr) {
             public void expired () {
                 if (_launcherInfo.size() == _launcherClients.size()) {
@@ -247,10 +247,10 @@ public class BureauManager
     protected int _listenPort;
 
     /** Currently logged in bureau launchers. */
-    protected IntMap<BureauLauncherClientObject> _launcherClients = IntMaps.newHashIntMap();
+    protected Map<Integer, BureauLauncherClientObject> _launcherClients = Maps.newHashMap();
 
     /** Summary information about each bureau launcher. This is only set during an info request. */
-    protected IntMap<BureauLauncherInfo> _launcherInfo;
+    protected Map<Integer, BureauLauncherInfo> _launcherInfo;
 
     // dependencies
     @Inject protected BureauRegistry _bureauReg;

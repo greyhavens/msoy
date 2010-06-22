@@ -577,7 +577,7 @@ public class FacebookLogic
         int appId = siteId.getFacebookAppId();
 
         // create mapping of member id to external record
-        IntMap<ExternalMapRecord> fbusers = IntMaps.newHashIntMap();
+        Map<Integer, ExternalMapRecord> fbusers = Maps.newHashMap();
         for (ExternalMapRecord exrec : users) {
             fbusers.put(exrec.memberId, exrec);
         }

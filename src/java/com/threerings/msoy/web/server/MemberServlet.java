@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
@@ -15,7 +16,6 @@ import com.samskivert.servlet.util.CookieUtil;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.CollectionUtil;
 import com.samskivert.util.IntListUtil;
-import com.samskivert.util.IntMap;
 import com.samskivert.util.IntSet;
 import com.samskivert.util.StringUtil;
 
@@ -98,7 +98,7 @@ public class MemberServlet extends MsoyServiceServlet
         FriendsResult result = new FriendsResult();
         result.name = tgtrec.getName();
         IntSet friendIds = _memberRepo.loadFriendIds(memberId);
-        IntMap<Friendship> callerFriendships = null;
+        Map<Integer, Friendship> callerFriendships = null;
         if ((mrec != null) && (mrec.memberId != memberId)) {
             // if we're loading someone else's friend list, we want to know whether the people
             // are OUR friends
@@ -187,7 +187,7 @@ public class MemberServlet extends MsoyServiceServlet
         // resolve the cards of the requested slice
         List<Integer> showingIds = allGreeterIds.subList(
             offset, Math.min(offset + limit, allGreeterIds.size()));
-        IntMap<Friendship> friendships = _memberRepo.loadFriendships(tgtrec.memberId, showingIds);
+        Map<Integer, Friendship> friendships = _memberRepo.loadFriendships(tgtrec.memberId, showingIds);
         result.friendsAndGreeters = _mhelper.resolveMemberCards(showingIds, false, friendships);
         return result;
     }

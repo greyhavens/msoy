@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.Key;
@@ -30,8 +31,6 @@ import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.impl.Modifier;
 import com.samskivert.jdbc.DatabaseLiaison;
 import com.samskivert.jdbc.JDBCUtil;
-import com.samskivert.util.HashIntMap;
-import com.samskivert.util.IntMap;
 import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
@@ -242,7 +241,7 @@ public abstract class TagRepository extends DepotRepository
      */
     public Map<Integer, TagNameRecord> getTags (Set<Integer> tagIds)
     {
-        IntMap<TagNameRecord> result = new HashIntMap<TagNameRecord>();
+        Map<Integer, TagNameRecord> result = Maps.newHashMap();
         for (TagNameRecord rec : loadAll(TagNameRecord.class, tagIds)) {
             result.put(rec.tagId, rec);
         }

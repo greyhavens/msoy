@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.money.server;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -137,7 +136,7 @@ public class MoneyServlet extends MsoyServiceServlet
         for (CharityRecord charity : charities) {
             memberIds.add(charity.memberId);
         }
-        Map<Integer, MemberRecord> memberMap = new HashMap<Integer, MemberRecord>();
+        Map<Integer, MemberRecord> memberMap = Maps.newHashMap();
         for (MemberRecord member : _memberRepo.loadMembers(memberIds)) {
             memberMap.put(member.memberId, member);
         }

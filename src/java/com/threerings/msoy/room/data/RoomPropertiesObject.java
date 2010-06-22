@@ -4,12 +4,12 @@
 package com.threerings.msoy.room.data;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import javax.annotation.Generated;
 
+import com.google.common.collect.Maps;
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
 import com.threerings.presents.dobj.DObject;
@@ -78,7 +78,7 @@ public class RoomPropertiesObject extends DObject
      * On the server, this will be a byte[] for normal properties and a byte[][] for array
      * properties. On the client, the actual values are kept whole.
      */
-    protected transient HashMap<String, Object> _props = new HashMap<String, Object>();
+    protected transient Map<String, Object> _props = Maps.newHashMap();
 
     /**
      * The persistent properties that have been written to since startup.

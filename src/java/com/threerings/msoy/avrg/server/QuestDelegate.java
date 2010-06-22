@@ -5,12 +5,13 @@ package com.threerings.msoy.avrg.server;
 
 import static com.threerings.msoy.Log.log;
 
+import java.util.Map;
+
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 
-import com.samskivert.util.HashIntMap;
-import com.samskivert.util.IntMap;
 import com.samskivert.util.Invoker;
 
 import com.threerings.parlor.server.PlayManagerDelegate;
@@ -368,7 +369,7 @@ public class QuestDelegate extends PlayManagerDelegate
     protected GameContent _content;
 
     /** A map to track current AVRG player data, per PlayerObject Oid. */
-    protected IntMap<Player> _players = new HashIntMap<Player>();
+    protected Map<Integer, Player> _players = Maps.newHashMap();
 
     @Inject protected @MainInvoker Invoker _invoker;
     @Inject protected AVRGameRepository _repo;

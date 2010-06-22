@@ -4,18 +4,18 @@
 package com.threerings.msoy.party.server;
 
 import java.util.List;
+import java.util.Map;
 
 import com.google.common.base.Function;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
 
 import com.samskivert.util.CollectionUtil;
-import com.samskivert.util.IntMap;
-import com.samskivert.util.IntMaps;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.QuickSort;
 import com.samskivert.util.StringUtil;
@@ -527,7 +527,7 @@ public class PartyRegistry
         return _runtime.getCoinCost(CostsConfigObject.START_PARTY);
     }
 
-    protected IntMap<PartyManager> _parties = IntMaps.newHashIntMap();
+    protected Map<Integer, PartyManager> _parties = Maps.newHashMap();
 
     protected Multimap<Integer,PartyPlaceObject> _partyPlaces = HashMultimap.create();
 

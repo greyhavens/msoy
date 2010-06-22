@@ -5,13 +5,13 @@ package com.threerings.msoy.fora.server;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 
 import com.samskivert.util.ArrayIntSet;
-import com.samskivert.util.IntMap;
-import com.samskivert.util.IntMaps;
 import com.samskivert.util.IntSet;
 
 import com.threerings.msoy.data.all.MemberName;
@@ -202,7 +202,7 @@ public class IssueServlet extends MsoyServiceServlet
                 }
             }
 
-            IntMap<MemberName> mnames = IntMaps.newHashIntMap();
+            Map<Integer, MemberName> mnames = Maps.newHashMap();
             for (MemberRecord mem : _memberRepo.loadMembers(members)) {
                 mnames.put(mem.memberId, new MemberName(mem.permaName, mem.memberId));
             }
@@ -232,7 +232,7 @@ public class IssueServlet extends MsoyServiceServlet
         for (ForumMessageRecord msgrec : records) {
             posters.add(msgrec.posterId);
         }
-        IntMap<MemberCard> cards = MemberCardRecord.toMap(_memberRepo.loadMemberCards(posters));
+        Map<Integer, MemberCard> cards = MemberCardRecord.toMap(_memberRepo.loadMemberCards(posters));
 
         // convert the messages to runtime format
         List<ForumMessage> messages = Lists.newArrayList();

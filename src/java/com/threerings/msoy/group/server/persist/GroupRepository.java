@@ -15,6 +15,7 @@ import java.util.Set;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -46,8 +47,6 @@ import com.samskivert.depot.operator.FullText;
 
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.ArrayUtil;
-import com.samskivert.util.IntMap;
-import com.samskivert.util.IntMaps;
 import com.samskivert.util.IntSet;
 import com.samskivert.util.Tuple;
 
@@ -279,7 +278,7 @@ public class GroupRepository extends DepotRepository
      */
     public GroupName loadGroupName (int groupId)
     {
-        IntMap<GroupName> result = loadGroupNames(Collections.singleton(groupId));
+        Map<Integer, GroupName> result = loadGroupNames(Collections.singleton(groupId));
         return result.isEmpty() ? null : result.values().iterator().next();
     }
 
@@ -288,7 +287,7 @@ public class GroupRepository extends DepotRepository
      * extract an id from each one. The function may return null to indicate that object
      * should not be include in the returned mapping.
      */
-    public <C> IntMap<GroupName> loadGroupNames (Iterable<C> records, Function<C, Integer> getId)
+    public <C> Map<Integer, GroupName> loadGroupNames (Iterable<C> records, Function<C, Integer> getId)
     {
         Set<Integer> groupIds = new ArrayIntSet();
         for (C record : records) {
@@ -303,9 +302,9 @@ public class GroupRepository extends DepotRepository
     /**
      * Looks up members' names by id.
      */
-    public IntMap<GroupName> loadGroupNames (Iterable<Integer> groupIds)
+    public Map<Integer, GroupName> loadGroupNames (Iterable<Integer> groupIds)
     {
-        IntMap<GroupName> names = IntMaps.newHashIntMap();
+        Map<Integer, GroupName> names = Maps.newHashMap();
         for (GroupNameRecord name : loadAll(GroupNameRecord.class, groupIds)) {
             names.put(name.groupId, name.toGroupName());
         }
@@ -423,7 +422,7 @@ public class GroupRepository extends DepotRepository
         Map<Integer, GroupMembershipRecord> rmap = getMemberships(memberId);
 
         // potentially filter exclusive groups and resolve the group names
-        IntMap<GroupName> groupNames = IntMaps.newHashIntMap();
+        Map<Integer, GroupName> groupNames = Maps.newHashMap();
         for (GroupRecord group : loadGroups(rmap.keySet())) {
             if (filter == null || filter.apply(Tuple.newTuple(group, rmap.get(group.groupId)))) {
                 groupNames.put(group.groupId, group.toGroupName());
@@ -564,7 +563,7 @@ public class GroupRepository extends DepotRepository
         List<GroupMembershipRecord> recs = findAll(
             GroupMembershipRecord.class, new Where(GroupMembershipRecord.MEMBER_ID, memberId));
 
-        Map<Integer, GroupMembershipRecord> result = IntMaps.newHashIntMap();
+        Map<Integer, GroupMembershipRecord> result = Maps.newHashMap();
         for (GroupMembershipRecord rec : recs) {
             result.put(rec.groupId, rec);
         }

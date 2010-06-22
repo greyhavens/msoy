@@ -4,16 +4,16 @@
 package com.threerings.msoy.room.server;
 
 import java.util.List;
+import java.util.Map;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
 
 import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.util.ArrayIntSet;
-import com.samskivert.util.IntMap;
-import com.samskivert.util.IntMaps;
 import com.samskivert.util.Invoker;
 
 import com.threerings.presents.annotation.EventThread;
@@ -137,7 +137,7 @@ public class PetManager
             }
 
             protected List<Pet> _pets = Lists.newArrayList();
-            protected IntMap<EntityMemories> _memories = IntMaps.newHashIntMap();
+            protected Map<Integer, EntityMemories> _memories = Maps.newHashMap();
         });
     }
 
@@ -282,7 +282,7 @@ public class PetManager
      * pet resolution.
      */
     protected void resolveRoomPets (int sceneId, List<Pet> pets,
-                                    IntMap<EntityMemories> memories)
+                                    Map<Integer, EntityMemories> memories)
     {
         for (Pet pet : pets) {
             // if this pet is already resolved (is wandering around with its owner), skip it (TODO:
@@ -342,7 +342,7 @@ public class PetManager
     }
 
     /** Maintains a mapping of all pet handlers by item id. */
-    protected IntMap<PetHandler> _handlers = IntMaps.newHashIntMap();
+    protected Map<Integer, PetHandler> _handlers = Maps.newHashMap();
 
     @Inject protected @MainInvoker Invoker _invoker;
     @Inject protected Injector _injector;

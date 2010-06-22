@@ -5,15 +5,15 @@ package com.threerings.msoy.server.persist;
 
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Map;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistentRecord;
-import com.samskivert.util.IntMap;
-import com.samskivert.util.IntMaps;
 import com.samskivert.depot.annotation.Computed;
 import com.samskivert.depot.annotation.Entity;
 import com.samskivert.depot.annotation.Id;
@@ -102,9 +102,9 @@ public class MemberCardRecord extends PersistentRecord
     /**
      * Converts a sequence of records into a mapping from member id to MemberCard.
      */
-    public static IntMap<MemberCard> toMap (Iterable<MemberCardRecord> records)
+    public static Map<Integer, MemberCard> toMap (Iterable<MemberCardRecord> records)
     {
-        IntMap<MemberCard> cards = IntMaps.newHashIntMap();
+        Map<Integer, MemberCard> cards = Maps.newHashMap();
         for (MemberCardRecord record : records) {
             cards.put(record.memberId, record.toMemberCard());
         }

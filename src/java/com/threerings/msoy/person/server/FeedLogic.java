@@ -249,10 +249,10 @@ public class FeedLogic
         }
 
         // generate a lookup for the member names
-        IntMap<MemberName> memberNames = _memberRepo.loadMemberNames(memberIds);
+        Map<Integer, MemberName> memberNames = _memberRepo.loadMemberNames(memberIds);
 
         // generate a lookup for the group names
-        IntMap<GroupName> groupNames = IntMaps.newHashIntMap();
+        Map<Integer, GroupName> groupNames = Maps.newHashMap();
         for (GroupRecord group : _groupRepo.loadGroups(groupIds)) {
             groupNames.put(group.groupId, group.toGroupName());
         }

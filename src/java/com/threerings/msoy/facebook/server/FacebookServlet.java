@@ -116,7 +116,7 @@ public class FacebookServlet extends MsoyServiceServlet
         throws ServiceException
     {
         // set up return map
-        IntMap<FacebookFriendInfo> friendsInfo = getInitialFriendInfo(appId);
+        Map<Integer, FacebookFriendInfo> friendsInfo = getInitialFriendInfo(appId);
 
         // insert level
         for (MemberCardRecord friend : _memberRepo.loadMemberCards(friendsInfo.keySet())) {
@@ -125,8 +125,8 @@ public class FacebookServlet extends MsoyServiceServlet
         }
 
         // find the last played games & ratings (1p only) + collect game ids
-        IntMap<FacebookFriendInfo.Thumbnail> games = IntMaps.newHashIntMap();
-        IntMap<RatingRecord> lastGames = IntMaps.newHashIntMap();
+        Map<Integer, FacebookFriendInfo.Thumbnail> games = Maps.newHashMap();
+        Map<Integer, RatingRecord> lastGames = Maps.newHashMap();
 
         Set<Integer> approvedGames = Sets.newHashSet();
         for (Integer gameId : Lists.transform(_mgameRepo.loadArcadeEntries(
@@ -182,12 +182,12 @@ public class FacebookServlet extends MsoyServiceServlet
         throws ServiceException
     {
         // set up return map
-        IntMap<FacebookFriendInfo> friendsInfo = getInitialFriendInfo(appId);
+        Map<Integer, FacebookFriendInfo> friendsInfo = getInitialFriendInfo(appId);
 
         // find the ratings (single player only)
-        IntMap<RatingRecord> ratings = IntMaps.newHashIntMap();
+        Map<Integer, RatingRecord> ratings = Maps.newHashMap();
         for (RatingRecord rating :  _ratingRepo.getTopRatings(
-            -gameId, friendsInfo.size(), 0L, friendsInfo.intKeySet())) {
+            -gameId, friendsInfo.size(), 0L, friendsInfo.keySet())) {
             ratings.put(rating.playerId, rating);
         }
 
@@ -302,10 +302,10 @@ public class FacebookServlet extends MsoyServiceServlet
      * also have Whirled accounts linked to the given app, filling in only the facebook uid and
      * member id fields.
      */
-    protected IntMap<FacebookFriendInfo> getInitialFriendInfo (int appId)
+    protected Map<Integer, FacebookFriendInfo> getInitialFriendInfo (int appId)
         throws ServiceException
     {
-        IntMap<FacebookFriendInfo> friendsInfo = IntMaps.newHashIntMap();
+        Map<Integer, FacebookFriendInfo> friendsInfo = Maps.newHashMap();
         for (ExternalMapRecord exRec : _fbLogic.loadMappedFriends(
             ExternalSiteId.facebookApp(appId), requireAuthedUser(), true, 0)) {
             FacebookFriendInfo info = new FacebookFriendInfo();

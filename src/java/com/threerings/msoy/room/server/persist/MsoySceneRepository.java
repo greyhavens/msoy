@@ -163,9 +163,9 @@ public class MsoySceneRepository extends DepotRepository
     /**
      * Given a list of scene ids, return a map containing the current names, indexed by scene id.
      */
-    public IntMap<String> identifyScenes (Set<Integer> sceneIds)
+    public Map<Integer, String> identifyScenes (Set<Integer> sceneIds)
     {
-        IntMap<String> names = IntMaps.newHashIntMap();
+        Map<Integer, String> names = Maps.newHashMap();
         // TODO: use a @Computed record?
         for (SceneRecord scene : loadAll(SceneRecord.class, sceneIds)) {
             names.put(scene.sceneId, scene.name);

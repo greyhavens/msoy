@@ -34,7 +34,7 @@ public class TagLogic
     {
         List<TagHistoryRecord> records = repo.getTagHistoryByTarget(targetId, offset, rows);
 
-        IntMap<MemberName> names = _memberRepo.loadMemberNames(
+        Map<Integer, MemberName> names = _memberRepo.loadMemberNames(
             records, TagHistoryRecord.GET_MEMBER_ID);
 
         Map<Integer, TagNameRecord> tagNames = getTagNames(repo, records);

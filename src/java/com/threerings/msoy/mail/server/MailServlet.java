@@ -5,6 +5,7 @@ package com.threerings.msoy.mail.server;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Map;
 
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
@@ -12,7 +13,6 @@ import com.google.inject.Inject;
 import com.samskivert.depot.DuplicateKeyException;
 
 import com.samskivert.util.ArrayIntSet;
-import com.samskivert.util.IntMap;
 import com.samskivert.util.IntSet;
 
 import com.threerings.msoy.server.MemberNodeActions;
@@ -66,7 +66,7 @@ public class MailServlet extends MsoyServiceServlet
         }
 
         // resolve the member cards for the other parties
-        IntMap<MemberCard> others = MemberCardRecord.toMap(_memberRepo.loadMemberCards(otherIds));
+        Map<Integer, MemberCard> others = MemberCardRecord.toMap(_memberRepo.loadMemberCards(otherIds));
         for (int ii = 0, ll = convos.size(); ii < ll; ii++) {
             convos.get(ii).other = others.get(conrecs.get(ii).getOtherId(memrec.memberId));
         }
@@ -128,7 +128,7 @@ public class MailServlet extends MsoyServiceServlet
         }
 
         // resolve the member cards for the participants
-        IntMap<MemberCard> authors = MemberCardRecord.toMap(_memberRepo.loadMemberCards(authorIds));
+        Map<Integer, MemberCard> authors = MemberCardRecord.toMap(_memberRepo.loadMemberCards(authorIds));
         for (int ii = 0, ll = msgs.size(); ii < ll; ii++) {
             msgs.get(ii).author = authors.get(cmrecs.get(ii).authorId);
         }
@@ -240,7 +240,7 @@ public class MailServlet extends MsoyServiceServlet
         }
 
         // resolve the member cards for the participants
-        IntMap<MemberCard> authors = MemberCardRecord.toMap(_memberRepo.loadMemberCards(authorIds));
+        Map<Integer, MemberCard> authors = MemberCardRecord.toMap(_memberRepo.loadMemberCards(authorIds));
 
         StringBuilder bodyText = new StringBuilder();
         for (ConvMessageRecord cmrec : cmrecs) {

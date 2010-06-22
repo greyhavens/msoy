@@ -3,11 +3,12 @@
 
 package com.threerings.msoy.game.server;
 
+import java.util.Map;
+
+import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.util.HashIntMap;
-import com.samskivert.util.IntMap;
 import com.samskivert.util.Tuple;
 
 import com.threerings.presents.annotation.EventThread;
@@ -114,7 +115,7 @@ public class GameWatcherManager
     }
 
     /** A map of members to {@link Observer} objects to notify of each member's movements. */
-    protected IntMap<Observer> _observers = new HashIntMap<Observer>();
+    protected Map<Integer, Observer> _observers = Maps.newHashMap();
 
     @Inject protected MsoyPeerManager _peerMan;
 }

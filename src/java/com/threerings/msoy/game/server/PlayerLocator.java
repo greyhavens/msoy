@@ -3,11 +3,12 @@
 
 package com.threerings.msoy.game.server;
 
+import java.util.Map;
+
+import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.util.IntMap;
-import com.samskivert.util.IntMaps;
 import com.threerings.util.Name;
 
 import com.threerings.presents.annotation.EventThread;
@@ -73,7 +74,7 @@ public class PlayerLocator extends BodyLocator
     }
 
     /** A mapping from member name to member object for all online members. */
-    protected IntMap<PlayerObject> _online = IntMaps.newHashIntMap();
+    protected Map<Integer, PlayerObject> _online = Maps.newHashMap();
 
     @Inject protected PresentsDObjectMgr _omgr;
 }

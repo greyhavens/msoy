@@ -22,8 +22,6 @@ import com.google.inject.Singleton;
 import com.samskivert.depot.DuplicateKeyException;
 import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.jdbc.WriteOnlyUnit;
-import com.samskivert.util.HashIntMap;
-import com.samskivert.util.IntMap;
 import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.Lifecycle;
@@ -1268,22 +1266,22 @@ public class GameGameRegistry
     }
 
     /** Maps game id -> lobby. */
-    protected IntMap<LobbyManager> _lobbies = new HashIntMap<LobbyManager>();
+    protected Map<Integer, LobbyManager> _lobbies = Maps.newHashMap();
 
     /** Maps game id -> a mapping of various percentile distributions. */
     protected Map<TilerKey, Percentiler> _distribs = Maps.newHashMap();
 
     /** Maps game id -> listeners waiting for a lobby to load. */
-    protected IntMap<ResultListenerList> _loadingLobbies = new HashIntMap<ResultListenerList>();
+    protected Map<Integer, ResultListenerList> _loadingLobbies = Maps.newHashMap();
 
     /** Maps game id -> manager for AVR games. */
-    protected IntMap<AVRGameManager> _avrgManagers = new HashIntMap<AVRGameManager>();
+    protected Map<Integer, AVRGameManager> _avrgManagers = Maps.newHashMap();
 
     /** Maps game id -> listeners waiting for a lobby to load. */
-    protected IntMap<ResultListenerList> _loadingAVRGames = new HashIntMap<ResultListenerList>();
+    protected Map<Integer, ResultListenerList> _loadingAVRGames = Maps.newHashMap();
 
     /** Content objects for all games (lobbied or avrg). */
-    protected IntMap<GameContent> _gameContent = new HashIntMap<GameContent>();
+    protected Map<Integer, GameContent> _gameContent = Maps.newHashMap();
 
     // various and sundry dependent services
     @Inject protected @BatchInvoker Invoker _batchInvoker;
