@@ -4,6 +4,7 @@
 package com.threerings.msoy.server;
 
 import java.util.List;
+import java.util.Set;
 
 import com.threerings.util.StreamableArrayIntSet;
 
@@ -54,10 +55,10 @@ public class MemberLocal extends BodyLocal
     public List<Notification> deferredNotifications;
 
     /** The complete list of all your friends. */
-    public StreamableArrayIntSet friendIds;
+    public Set<Integer> friendIds;
 
     /** Rooms we've visited during our current Whirled Tour. */
-    public StreamableArrayIntSet touredRooms;
+    public Set<Integer> touredRooms;
 
     /** The memories of the member's avatar. */
     public EntityMemories memories;
@@ -172,5 +173,5 @@ public class MemberLocal extends BodyLocal
     }
 
     /** If not null, contains the set of group ids for which to suppress chat. */
-    protected StreamableArrayIntSet _suppressedGroupChats;
+    protected Set<Integer> _suppressedGroupChats;
 }

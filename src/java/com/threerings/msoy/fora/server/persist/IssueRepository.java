@@ -43,7 +43,7 @@ public class IssueRepository extends DepotRepository
     /**
      * Load issues of specific types and states.
      */
-    public List<IssueRecord> loadIssues (IntSet states, int offset, int count)
+    public List<IssueRecord> loadIssues (Set<Integer> states, int offset, int count)
     {
         return loadIssues(states, 0, offset, count);
     }
@@ -51,7 +51,7 @@ public class IssueRepository extends DepotRepository
     /**
      * Load issues of specific types, states and ownerId.
      */
-    public List<IssueRecord> loadIssues (IntSet states, int ownerId, int offset, int count)
+    public List<IssueRecord> loadIssues (Set<Integer> states, int ownerId, int offset, int count)
     {
         List<SQLExpression> whereBits = Lists.newArrayList();
         whereBits.add(IssueRecord.STATE.in(states));
@@ -81,7 +81,7 @@ public class IssueRepository extends DepotRepository
     /**
      * Load the total number of issues with specific types, states.
      */
-    public int loadIssueCount (IntSet states)
+    public int loadIssueCount (Set<Integer> states)
     {
         List<SQLExpression> whereBits = Lists.newArrayList();
         if (states != null) {

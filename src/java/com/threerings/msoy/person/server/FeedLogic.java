@@ -10,13 +10,11 @@ import java.util.Set;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.samskivert.util.ArrayIntSet;
-import com.samskivert.util.IntMap;
-import com.samskivert.util.IntMaps;
-import com.samskivert.util.IntSet;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.presents.annotation.BlockingThread;
@@ -55,7 +53,7 @@ public class FeedLogic
      * @param onlyCategory If null, load all categories, otherwise only load that one.
      */
     public List<FeedCategory> loadFeedCategories (
-        MemberRecord mrec, IntSet friendIds, int itemsPerCategory, Category onlyCategory)
+        MemberRecord mrec, Set<Integer> friendIds, int itemsPerCategory, Category onlyCategory)
     {
         int feedDays = MAX_PERSONAL_FEED_CUTOFF_DAYS;
 
@@ -243,7 +241,7 @@ public class FeedLogic
     protected List<FeedMessage> resolveFeedMessages (List<FeedMessageRecord> records)
     {
         // find out which member and group names we'll need
-        IntSet memberIds = new ArrayIntSet(), groupIds = new ArrayIntSet();
+        Set<Integer> memberIds = new ArrayIntSet(), groupIds = Sets.newHashSet();
         for (FeedMessageRecord record : records) {
             record.addReferences(memberIds, groupIds);
         }

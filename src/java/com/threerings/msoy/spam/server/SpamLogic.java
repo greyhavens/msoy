@@ -522,7 +522,7 @@ public class SpamLogic
         int memberId = mrec.memberId;
 
         // load up friends and feed categories
-        IntSet friendIds = _memberRepo.loadFriendIds(mrec.memberId);
+        Set<Integer> friendIds = _memberRepo.loadFriendIds(mrec.memberId);
         List<FeedCategory> categories = _feedLogic.loadFeedCategories(
             mrec, friendIds, ITEMS_PER_CATEGORY, null);
 

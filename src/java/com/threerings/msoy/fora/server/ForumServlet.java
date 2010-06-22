@@ -6,19 +6,16 @@ package com.threerings.msoy.fora.server;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 
-import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.IntIntMap;
-import com.samskivert.util.IntMap;
-import com.samskivert.util.IntMaps;
-import com.samskivert.util.IntSet;
-
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MediaDescSize;
@@ -491,7 +488,7 @@ public class ForumServlet extends MsoyServiceServlet
     protected List<ForumMessage> resolveMessages (List<ForumMessageRecord> msgrecs)
     {
         // enumerate the posters and create member cards for them
-        IntSet posters = new ArrayIntSet();
+        Set<Integer> posters = Sets.newHashSet();
         for (ForumMessageRecord msgrec : msgrecs) {
             posters.add(msgrec.posterId);
         }
@@ -580,7 +577,7 @@ public class ForumServlet extends MsoyServiceServlet
         StringBuffer expbuf = new StringBuffer();
         Matcher m = _messageProcessingPattern.matcher(message);
         while (m.find()) {
-            m.appendReplacement(expbuf, 
+            m.appendReplacement(expbuf,
                 Matcher.quoteReplacement(convertToken(m.group(3), m.group())));
         }
         m.appendTail(expbuf);

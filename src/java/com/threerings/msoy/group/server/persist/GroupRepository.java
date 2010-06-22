@@ -124,7 +124,9 @@ public class GroupRepository extends DepotRepository
             }
 
             // look up each word as a tag
-            _tagIds = new ArrayIntSet();
+            _tagIds = Sets.newHashSet();
+
+
             if (searchTerms.length > 0) {
                 for (TagNameRecord tRec : getTagRepository().getTags(searchTerms)) {
                     _tagIds.add(tRec.tagId);
@@ -134,7 +136,7 @@ public class GroupRepository extends DepotRepository
             _fts = new FullText(GroupRecord.class, GroupRecord.FTS_NBC, search);
         }
 
-        protected IntSet _tagIds;
+        protected Set<Integer> _tagIds;
         protected FullText _fts;
     }
 
@@ -289,7 +291,9 @@ public class GroupRepository extends DepotRepository
      */
     public <C> Map<Integer, GroupName> loadGroupNames (Iterable<C> records, Function<C, Integer> getId)
     {
-        Set<Integer> groupIds = new ArrayIntSet();
+        Set<Integer> groupIds = Sets.newHashSet();
+
+
         for (C record : records) {
             Integer id = getId.apply(record);
             if (id != null) {

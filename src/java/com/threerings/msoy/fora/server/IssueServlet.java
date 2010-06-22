@@ -6,14 +6,14 @@ package com.threerings.msoy.fora.server;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 
 import com.samskivert.util.ArrayIntSet;
-import com.samskivert.util.IntSet;
-
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.MemberCardRecord;
@@ -183,7 +183,7 @@ public class IssueServlet extends MsoyServiceServlet
         IssueResult result = new IssueResult();
 
         // load up the requested set of issues
-        ArrayIntSet states = new ArrayIntSet();
+        Set<Integer> states = Sets.newHashSet();
         if (open) {
             states.add(Issue.STATE_OPEN);
         } else {
@@ -194,7 +194,9 @@ public class IssueServlet extends MsoyServiceServlet
 
         List<Issue> issues = Lists.newArrayList();
         if (irecs.size() > 0) {
-            IntSet members = new ArrayIntSet();
+            Set<Integer> members = Sets.newHashSet();
+
+
             for (IssueRecord record : irecs) {
                 members.add(record.creatorId);
                 if (record.ownerId != -1) {
@@ -228,7 +230,9 @@ public class IssueServlet extends MsoyServiceServlet
     protected List<ForumMessage> resolveMessages (List<ForumMessageRecord> records)
     {
         // enumerate the posters and create member cards for them
-        IntSet posters = new ArrayIntSet();
+        Set<Integer> posters = Sets.newHashSet();
+
+
         for (ForumMessageRecord msgrec : records) {
             posters.add(msgrec.posterId);
         }

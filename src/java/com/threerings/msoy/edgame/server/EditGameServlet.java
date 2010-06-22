@@ -18,6 +18,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.google.common.primitives.Ints;
 import com.google.inject.Inject;
 
 import org.json.JSONArray;
@@ -327,7 +328,8 @@ public class EditGameServlet extends MsoyServiceServlet
         List<ArcadeEntryRecord> entries = _mgameRepo.loadArcadeEntries(page, false);
         ArcadeEntriesResult result = new ArcadeEntriesResult();
         result.entries = Lists.newArrayListWithCapacity(entries.size());
-        ArrayIntSet featured = new ArrayIntSet();
+        Set<Integer> featured = Sets.newHashSet();
+
         for (int ii = 0, ll = entries.size(); ii < ll; ++ii) {
             int gameId = entries.get(ii).gameId;
             int gamePop = getGamePop(_memberMan.getPPSnapshot(), gameId);
@@ -345,11 +347,12 @@ public class EditGameServlet extends MsoyServiceServlet
         throws ServiceException
     {
         requireSupportUser();
-        ArrayIntSet entryIds = new ArrayIntSet();
+        Set<Integer> entryIds = Sets.newHashSet();
+
         // this is only used for editing, so bypass the cache
         entryIds.addAll(Lists.transform(_mgameRepo.loadArcadeEntries(page, false),
             ArcadeEntryRecord.TO_GAME_ID));
-        return entryIds.toIntArray();
+        return Ints.toArray(entryIds);
     }
 
     @Override // from interface EditGameService

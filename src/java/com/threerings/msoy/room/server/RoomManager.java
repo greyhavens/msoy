@@ -13,6 +13,7 @@ import java.util.TreeSet;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 
 import com.samskivert.jdbc.RepositoryUnit;
@@ -2164,10 +2165,10 @@ public class RoomManager extends SpotSceneManager
     protected RoomExtras _extras;
 
     /** Game ids of properties we are currently loading. */
-    protected ArrayIntSet _pendingGameIds = new ArrayIntSet();
+    protected Set<Integer> _pendingGameIds = Sets.newHashSet();
 
     /** If non-null, a list of memberId blocked from the room. */
-    protected ArrayIntSet _booted;
+    protected Set<Integer> _booted;
 
     /** True if the puppet is in the room, OR is believed to be on the way. */
     protected boolean _puppetInRoom;

@@ -4,11 +4,10 @@
 package com.threerings.msoy.server;
 
 import java.util.List;
+import java.util.Set;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-
-import com.samskivert.util.IntSet;
 
 import com.threerings.msoy.web.gwt.ExternalSiteId;
 
@@ -47,7 +46,7 @@ public class ExternalAuthLogic
             return; // nothing doing!
         }
 
-        IntSet haveIds = _memberRepo.loadFriendIds(memberId);
+        Set<Integer> haveIds = _memberRepo.loadFriendIds(memberId);
         for (int friendId : _memberRepo.lookupExternalAccounts(auther, friendIds)) {
             if (!haveIds.contains(friendId)) {
                 _memberRepo.noteFriendship(memberId, friendId);

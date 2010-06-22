@@ -4,16 +4,17 @@
 package com.threerings.msoy.admin.server;
 
 import java.util.Map;
+import java.util.Set;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.samskivert.depot.DuplicateKeyException;
-import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.ExpiringReference;
 import com.samskivert.util.Lifecycle;
 
@@ -49,7 +50,7 @@ public class ABTestLogic
         registerTest("2010 05 register (1) room (2)", 2, true, true);
 
         // mark any tests that are no longer registered as ended, purge really old tests
-        ArrayIntSet activeIds = new ArrayIntSet();
+        Set<Integer> activeIds = Sets.newHashSet();
         for (ABTestRecord record : _tests.values()) {
             activeIds.add(record.testId);
         }

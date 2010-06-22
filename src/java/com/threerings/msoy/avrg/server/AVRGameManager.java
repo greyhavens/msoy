@@ -6,14 +6,15 @@ package com.threerings.msoy.avrg.server;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Map.Entry;
 
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 
 import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.jdbc.WriteOnlyUnit;
-import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.StringUtil;
@@ -1002,7 +1003,7 @@ public class AVRGameManager extends PlaceManager
         public int sceneId;
         public long modTime;
         public boolean subscribed;
-        public ArrayIntSet players = new ArrayIntSet();
+        public Set<Integer> players = Sets.newHashSet();
 
         public Scene (int sceneId)
         {

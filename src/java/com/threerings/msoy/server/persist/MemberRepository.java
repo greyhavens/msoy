@@ -20,6 +20,7 @@ import com.google.common.base.Preconditions;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -60,9 +61,6 @@ import com.samskivert.depot.expression.SQLExpression;
 import com.samskivert.depot.operator.FullText;
 import com.samskivert.jdbc.DatabaseLiaison;
 
-import com.samskivert.util.ArrayIntSet;
-import com.samskivert.util.IntMap;
-import com.samskivert.util.IntMaps;
 import com.samskivert.util.StringUtil;
 import com.samskivert.util.Tuple;
 
@@ -300,7 +298,7 @@ public class MemberRepository extends DepotRepository
      */
     public <C> Map<Integer, MemberName> loadMemberNames (Iterable<C> records, Function<C,Integer> getId)
     {
-        Set<Integer> memberIds = new ArrayIntSet();
+        Set<Integer> memberIds = Sets.newHashSet();
         for (C record : records) {
             memberIds.add(getId.apply(record));
         }
@@ -1014,7 +1012,7 @@ public class MemberRepository extends DepotRepository
      * Loads the member ids of the specified member's friends.
      */
     // TODO: make a version that just loads a list, and use that most every place
-    public StreamableArrayIntSet loadFriendIds (int memberId)
+    public Set<Integer> loadFriendIds (int memberId)
     {
         List<FriendshipRecord> list = findAll(FriendshipRecord.class, fullFriendWhere(memberId));
         int[] ids = new int[list.size()];

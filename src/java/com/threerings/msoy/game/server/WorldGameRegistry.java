@@ -6,16 +6,17 @@ package com.threerings.msoy.game.server;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
 
 import com.samskivert.jdbc.RepositoryUnit;
-import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.CollectionUtil;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.ResultListener;
@@ -247,7 +248,7 @@ public class WorldGameRegistry
         // if the peer that just connected to us claims to be hosting any games that we also claim
         // to be hosting, drop them
         MsoyNodeObject ourobj = _peerMan.getMsoyNodeObject();
-        ArrayIntSet gamesToDrop = new ArrayIntSet();
+        Set<Integer> gamesToDrop = Sets.newHashSet();
         for (HostedGame game : peerobj.hostedGames) {
             if (ourobj.hostedGames.contains(game)) {
                 log.warning("Zoiks! Peer is hosting the same game as us. Dropping!", "gameId", game);

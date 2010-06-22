@@ -7,13 +7,15 @@ import static com.threerings.msoy.Log.log;
 
 import java.io.File;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import com.google.common.primitives.Ints;
 
 import com.samskivert.jdbc.ConnectionProvider;
-import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.Config;
 import com.samskivert.util.StringUtil;
 
@@ -172,7 +174,7 @@ public class ServerConfig
     public static int[] getServerPorts (String nodeName)
     {
         String nodePortOffset = config.getValue("node_port_offset", "");
-        ArrayIntSet ports = new ArrayIntSet();
+        Set<Integer> ports = Sets.newHashSet();
         if (!StringUtil.isBlank(nodePortOffset)) {
             try {
                 // obtain the node id from the node name
@@ -191,7 +193,7 @@ public class ServerConfig
                 log.error("Bad nodePortOffset when asked for serverPorts", e);
             }
         }
-        return ports.toIntArray();
+        return Ints.toArray(ports);
     }
 
     /**

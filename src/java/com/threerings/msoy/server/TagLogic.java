@@ -6,14 +6,13 @@ package com.threerings.msoy.server;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.util.ArrayIntSet;
-import com.samskivert.util.IntMap;
-import com.samskivert.util.IntSet;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.persist.TagHistoryRecord;
@@ -60,7 +59,7 @@ public class TagLogic
     protected Map<Integer, TagNameRecord> getTagNames (
         TagRepository repo, List<TagHistoryRecord> records)
     {
-        IntSet tagIds = new ArrayIntSet();
+        Set<Integer> tagIds = Sets.newHashSet();
         for (TagHistoryRecord threc : records) {
             tagIds.add(threc.tagId);
         }

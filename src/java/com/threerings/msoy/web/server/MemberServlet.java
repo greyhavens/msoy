@@ -8,15 +8,15 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 
 import com.samskivert.servlet.util.CookieUtil;
-import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.CollectionUtil;
 import com.samskivert.util.IntListUtil;
-import com.samskivert.util.IntSet;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.gwt.util.PagedResult;
@@ -97,7 +97,7 @@ public class MemberServlet extends MsoyServiceServlet
 
         FriendsResult result = new FriendsResult();
         result.name = tgtrec.getName();
-        IntSet friendIds = _memberRepo.loadFriendIds(memberId);
+        Set<Integer> friendIds = _memberRepo.loadFriendIds(memberId);
         Map<Integer, Friendship> callerFriendships = null;
         if ((mrec != null) && (mrec.memberId != memberId)) {
             // if we're loading someone else's friend list, we want to know whether the people
@@ -296,7 +296,7 @@ public class MemberServlet extends MsoyServiceServlet
         throws ServiceException
     {
         // locate the members that match the supplied search
-        IntSet mids = new ArrayIntSet();
+        Set<Integer> mids = Sets.newHashSet();
         mids.addAll(_memberRepo.getLeadingMembers(MAX_LEADER_MATCHES));
 
         // resolve cards for these members
@@ -396,7 +396,13 @@ public class MemberServlet extends MsoyServiceServlet
         throws ServiceException
     {
         MemberRecord memrec = requireAuthedUser();
-        IntSet groupIds = new ArrayIntSet();
+        Set<Integer> groupIds = Sets.newHashSet();
+
+
+
+
+
+
 
         for (ThemeRecord rec : _themeRepo.getManagedThemes(memrec.memberId, Rank.MANAGER)) {
             groupIds.add(rec.groupId);

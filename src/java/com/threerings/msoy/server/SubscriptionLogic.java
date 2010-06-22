@@ -57,7 +57,7 @@ public class SubscriptionLogic
 //                    }
 //
 //                    // figure out who the various owners are
-//                    IntSet owners = itemRepo.loadOwnerIds(263); // Weard Academy
+//                    Set<Integer> owners = itemRepo.loadOwnerIds(263); // Weard Academy
 //                    owners.addAll(itemRepo.loadOwnerIds(264)); // The Incident
 //                    owners.addAll(itemRepo.loadOwnerIds(238)); // Compleat
 //

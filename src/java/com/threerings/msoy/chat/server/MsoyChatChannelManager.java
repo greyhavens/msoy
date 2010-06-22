@@ -3,11 +3,13 @@
 
 package com.threerings.msoy.chat.server;
 
+import java.util.Set;
+
+import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.samskivert.jdbc.RepositoryUnit;
-import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.Invoker;
 
 import com.threerings.util.Name;
@@ -100,7 +102,8 @@ public class MsoyChatChannelManager extends ChatChannelManager
             public void handleFailure (Exception e) {
                 resolutionFailed(channel, e);
             }
-            protected ArrayIntSet _memberIds = new ArrayIntSet();
+            protected Set<Integer> _memberIds = Sets.newHashSet();
+
         });
     }
 

@@ -31,7 +31,6 @@ import com.google.inject.Singleton;
 import com.samskivert.depot.DuplicateKeyException;
 
 import com.samskivert.util.ArrayIntSet;
-import com.samskivert.util.IntSet;
 import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.StringUtil;
@@ -1045,7 +1044,11 @@ public class ItemLogic
         throws ServiceException
     {
         List<? extends MogMarkRecord> stampRecs = getRepository(itemType).loadItemStamps(itemId);
-        IntSet themeIds = new ArrayIntSet();
+        Set<Integer> themeIds = Sets.newHashSet();
+
+
+
+
         for (MogMarkRecord rec : stampRecs) {
             themeIds.add(rec.groupId);
         }
@@ -1176,7 +1179,7 @@ public class ItemLogic
                 return _ids;
             }
 
-            protected ArrayIntSet _ids = new ArrayIntSet();
+            protected Set<Integer> _ids = Sets.newHashSet();
         }
 
         /** A mapping of item type to LookupType record of repo / ids. */

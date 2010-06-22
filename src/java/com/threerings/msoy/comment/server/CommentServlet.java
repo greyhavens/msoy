@@ -7,12 +7,13 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 
 import com.samskivert.depot.DatabaseException;
-import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.gwt.util.PagedResult;
@@ -68,7 +69,7 @@ public class CommentServlet extends MsoyServiceServlet
         List<CommentRecord> records = _commentRepo.loadComments(etype, eid, offset, count, false);
 
         // resolve the member cards for all commentors
-        ArrayIntSet memIds = new ArrayIntSet();
+        Set<Integer> memIds = Sets.newHashSet();
         for (CommentRecord record : records) {
             memIds.add(record.memberId);
         }

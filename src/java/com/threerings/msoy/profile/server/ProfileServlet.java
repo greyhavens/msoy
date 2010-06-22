@@ -446,7 +446,12 @@ public class ProfileServlet extends MsoyServiceServlet
         }
 
         // fetch our managed groups from DB
-        IntSet managedGroups = new ArrayIntSet();
+        Set<Integer> managedGroups = Sets.newHashSet();
+
+
+
+
+
         for (GroupMembershipRecord grec :
                 _groupRepo.getMemberships(reqrec.memberId, Rank.MANAGER)) {
             managedGroups.add(grec.groupId);

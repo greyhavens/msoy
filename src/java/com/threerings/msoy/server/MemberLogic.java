@@ -9,16 +9,16 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.samskivert.depot.DuplicateKeyException;
-import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.ArrayUtil;
-import com.samskivert.util.IntSet;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.presents.annotation.BlockingThread;
@@ -368,12 +368,12 @@ public class MemberLogic
         List<HomePageItem> games = experiences.get(0);
         List<HomePageItem> rooms = experiences.get(1);
 
-        IntSet haveRooms = new ArrayIntSet();
+        Set<Integer> haveRooms = Sets.newHashSet();
         for (HomePageItem item : rooms) {
             haveRooms.add(((BasicNavItemData)item.getNavItemData()).getId());
         }
 
-        IntSet haveGames = new ArrayIntSet();
+        Set<Integer> haveGames = Sets.newHashSet();
         for (HomePageItem item : games) {
             haveGames.add(((BasicNavItemData)item.getNavItemData()).getId());
         }

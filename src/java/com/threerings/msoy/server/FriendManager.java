@@ -14,8 +14,6 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.samskivert.jdbc.RepositoryUnit;
-import com.samskivert.util.Interator;
-import com.samskivert.util.IntSet;
 import com.samskivert.util.Invoker;
 
 import com.threerings.presents.annotation.EventThread;
@@ -85,14 +83,13 @@ public class FriendManager
     // from interface MemberLocator.Observer
     public void memberLoggedOn (final MemberObject memobj)
     {
-        IntSet friendIds = memobj.getLocal(MemberLocal.class).friendIds;
         // register interest in updates for this member's friends
-        for (Interator ii = friendIds.interator(); ii.hasNext(); ) {
-            registerFriendInterest(memobj, ii.nextInt());
+        for (int friendId : memobj.getLocal(MemberLocal.class).friendIds) {
+            registerFriendInterest(memobj, friendId);
         }
 
         // determine which are online and then load their names and headlines
-        final Set<Integer> onlineIds = _peerMan.filterOnline(friendIds);
+        final Set<Integer> onlineIds = _peerMan.filterOnline(memobj.getLocal(MemberLocal.class).friendIds);
 
         List<Integer> removeKeys = null;
         for (FriendEntry entry : memobj.friends) {
@@ -161,10 +158,9 @@ public class FriendManager
     // from interface MemberLocator.Observer
     public void memberLoggedOff (MemberObject memobj)
     {
-        IntSet friendIds = memobj.getLocal(MemberLocal.class).friendIds;
         // clear out our friend interest registrations
-        for (Interator ii = friendIds.interator(); ii.hasNext(); ) {
-            clearFriendInterest(memobj, ii.nextInt());
+        for (int friendId : memobj.getLocal(MemberLocal.class).friendIds) {
+            clearFriendInterest(memobj, friendId);
         }
     }
 

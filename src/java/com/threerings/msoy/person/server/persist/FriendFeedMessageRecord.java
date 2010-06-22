@@ -4,13 +4,12 @@
 package com.threerings.msoy.person.server.persist;
 
 import java.util.Map;
+import java.util.Set;
 
 import com.samskivert.depot.Key;
 import com.samskivert.depot.annotation.Entity;
 import com.samskivert.depot.annotation.Index;
 import com.samskivert.depot.expression.ColumnExp;
-import com.samskivert.util.IntSet;
-
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.person.gwt.FeedMessage;
@@ -40,7 +39,7 @@ public class FriendFeedMessageRecord extends FeedMessageRecord
     public int actorId;
 
     @Override // from FeedMessageRecord
-    public void addReferences (IntSet memberIds, IntSet groupIds)
+    public void addReferences (Set<Integer> memberIds, Set<Integer> groupIds)
     {
         memberIds.add(actorId);
     }

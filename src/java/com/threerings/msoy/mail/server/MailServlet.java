@@ -6,14 +6,13 @@ package com.threerings.msoy.mail.server;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 
 import com.samskivert.depot.DuplicateKeyException;
-
-import com.samskivert.util.ArrayIntSet;
-import com.samskivert.util.IntSet;
 
 import com.threerings.msoy.server.MemberNodeActions;
 import com.threerings.msoy.server.persist.MemberCardRecord;
@@ -52,7 +51,7 @@ public class MailServlet extends MsoyServiceServlet
         List<Conversation> convos = Lists.newArrayList();
         List<ConversationRecord> conrecs =
             _mailRepo.loadConversations(memrec.memberId, offset, count);
-        IntSet otherIds = new ArrayIntSet();
+        Set<Integer> otherIds = Sets.newHashSet();
         for (ConversationRecord conrec : conrecs) {
             convos.add(conrec.toConversation());
             otherIds.add(conrec.getOtherId(memrec.memberId));
@@ -119,7 +118,12 @@ public class MailServlet extends MsoyServiceServlet
         // load up the messages in this conversation
         List<ConvMessage> msgs = Lists.newArrayList();
         List<ConvMessageRecord> cmrecs = _mailRepo.loadMessages(convoId);
-        IntSet authorIds = new ArrayIntSet();
+        Set<Integer> authorIds = Sets.newHashSet();
+
+
+
+
+
         long newLastRead = lastRead;
         for (ConvMessageRecord cmrec : cmrecs) {
             msgs.add(cmrec.toConvMessage());
@@ -234,7 +238,12 @@ public class MailServlet extends MsoyServiceServlet
 
         // load up the messages in this conversation
         List<ConvMessageRecord> cmrecs = _mailRepo.loadMessages(convoId);
-        IntSet authorIds = new ArrayIntSet();
+        Set<Integer> authorIds = Sets.newHashSet();
+
+
+
+
+
         for (ConvMessageRecord cmrec : cmrecs) {
             authorIds.add(cmrec.authorId);
         }

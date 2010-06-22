@@ -21,14 +21,9 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 
-import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.CollectionUtil;
 import com.samskivert.util.Comparators;
 import com.samskivert.util.IntListUtil;
-import com.samskivert.util.IntMap;
-import com.samskivert.util.IntMaps;
-import com.samskivert.util.IntSet;
-
 import com.threerings.parlor.rating.server.persist.RatingRecord;
 import com.threerings.parlor.rating.server.persist.RatingRepository;
 import com.threerings.parlor.rating.util.Percentiler;
@@ -346,7 +341,7 @@ public class GameServlet extends MsoyServiceServlet
         }
 
         // if we should restrict to just this player's friends, figure out who those are
-        IntSet friendIds = null;
+        Set<Integer> friendIds = null;
         if (onlyMyFriends) {
             friendIds = _memberRepo.loadFriendIds(mrec.memberId);
             friendIds.add(mrec.memberId); // us too!
@@ -561,7 +556,7 @@ public class GameServlet extends MsoyServiceServlet
 
         public GameInfo[] buildFeatured ()
         {
-            ArrayIntSet creatorIds = new ArrayIntSet();
+            Set<Integer> creatorIds = Sets.newHashSet();
             List<GameInfo> featured = Lists.newArrayList();
             for (ArcadeEntryRecord topGame : _agames) {
                 if (!topGame.featured) {

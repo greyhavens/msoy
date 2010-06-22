@@ -6,6 +6,7 @@ package com.threerings.msoy.person.server.persist;
 import java.sql.Timestamp;
 import java.util.Comparator;
 import java.util.Map;
+import java.util.Set;
 
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.expression.ColumnExp;
@@ -14,8 +15,6 @@ import com.samskivert.depot.annotation.GeneratedValue;
 import com.samskivert.depot.annotation.GenerationType;
 import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.annotation.Index;
-import com.samskivert.util.IntSet;
-
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.person.gwt.FeedMessage;
@@ -61,7 +60,7 @@ public abstract class FeedMessageRecord extends PersistentRecord
      * Generate an add call for each member id and group id that will be required by
      * {@link #toMessage()}.
      */
-    public void addReferences (IntSet memberIds, IntSet groupIds)
+    public void addReferences (Set<Integer> memberIds, Set<Integer> groupIds)
     {
     }
 

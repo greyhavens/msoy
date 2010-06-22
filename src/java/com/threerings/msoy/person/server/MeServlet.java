@@ -97,7 +97,7 @@ public class MeServlet extends MsoyServiceServlet
         }
 
         // load information on their friends
-        IntSet friendIds = _memberRepo.loadFriendIds(mrec.memberId);
+        Set<Integer> friendIds = _memberRepo.loadFriendIds(mrec.memberId);
         data.friendCount = friendIds.size();
         if (data.friendCount > 0) {
             data.friends = _mhelper.resolveMemberCards(friendIds, true, null);

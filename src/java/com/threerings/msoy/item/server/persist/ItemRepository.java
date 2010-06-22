@@ -28,7 +28,6 @@ import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.ArrayUtil;
 import com.samskivert.util.CollectionUtil;
 import com.samskivert.util.IntIntMap;
-import com.samskivert.util.IntSet;
 import com.samskivert.util.QuickSort;
 import com.samskivert.util.StringUtil;
 
@@ -154,14 +153,24 @@ public abstract class ItemRepository<T extends ItemRecord>
             }
 
             // look up each word as a tag
-            _tagIds = new ArrayIntSet();
+            _tagIds = Sets.newHashSet();
+
+
+
+
+
             if (searchTerms.length > 0) {
                 for (TagNameRecord tRec : getTagRepository().getTags(searchTerms)) {
                     _tagIds.add(tRec.tagId);
                 }
             }
 
-            _memberIds = new ArrayIntSet();
+            _memberIds = Sets.newHashSet();
+
+
+
+
+
             // look up the first 100 members whose name matches each search term exactly
             for (String term : searchTerms) {
                 _memberIds.addAll(_memberRepo.findMembersByExactDisplayName(term, 100));
@@ -172,8 +181,8 @@ public abstract class ItemRepository<T extends ItemRecord>
 
         }
 
-        protected IntSet _tagIds;
-        protected IntSet _memberIds;
+        protected Set<Integer> _tagIds;
+        protected Set<Integer> _memberIds;
         protected FullText _itemFts, _cloneFts;
     }
 
@@ -678,7 +687,7 @@ public abstract class ItemRepository<T extends ItemRecord>
      * Loads all owners of a given original item. Please note that this can be a large amount
      * of data for popular items. This method is intended for migration purposes.
      */
-    public IntSet loadOwnerIds (int originalItemId)
+    public Set<Integer> loadOwnerIds (int originalItemId)
     {
         List<OwnerIdRecord> ownerRecords = findAll(
             OwnerIdRecord.class, new FromOverride(getCloneClass()),
@@ -686,7 +695,12 @@ public abstract class ItemRepository<T extends ItemRecord>
             new FieldDefinition("ownerId", getCloneColumn(CloneRecord.OWNER_ID)),
             new Where(getCloneColumn(CloneRecord.ITEM_ID).eq(originalItemId)));
 
-        IntSet result = new ArrayIntSet();
+        Set<Integer> result = Sets.newHashSet();
+
+
+
+
+
         for (OwnerIdRecord oidrec : ownerRecords) {
             result.add(oidrec.ownerId);
         }
@@ -855,7 +869,12 @@ public abstract class ItemRepository<T extends ItemRecord>
             new Where(getCatalogColumn(CatalogRecord.LISTED_ITEM_ID).in(listedItemIds)));
         if (loadListedItems) {
             // find out the id's of all the listed items
-            IntSet itemIds = new ArrayIntSet();
+            Set<Integer> itemIds = Sets.newHashSet();
+
+
+
+
+
             for (CatalogRecord cRec : cRecs) {
                 itemIds.add(cRec.listedItemId);
             }
@@ -1463,7 +1482,7 @@ public abstract class ItemRepository<T extends ItemRecord>
         }
 
         // create a set of the corresponding original ids
-        ArrayIntSet origIds = new ArrayIntSet(clones.size());
+        Set<Integer> origIds = Sets.newHashSet();
         for (CloneRecord clone : clones) {
             origIds.add(clone.originalItemId);
         }

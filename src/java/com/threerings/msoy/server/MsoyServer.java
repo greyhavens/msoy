@@ -5,15 +5,18 @@ package com.threerings.msoy.server;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Set;
 
 import org.apache.mina.common.IoAcceptor;
 
 import com.google.common.base.Predicate;
+import com.google.common.primitives.Ints;
 
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
+import com.google.inject.internal.Sets;
 
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.Interval;
@@ -258,15 +261,15 @@ public class MsoyServer extends MsoyBaseServer
         }
 
         if (_otherNodePorts == null) {
-            _otherNodePorts = new ArrayIntSet();
+            _otherNodePorts = Sets.newHashSet();
         }
-        _otherNodePorts.add(ports);
+        _otherNodePorts.addAll(Ints.asList(ports));
 
         if (_policyServer != null) {
             _policyServer.unbindAll();
         }
         try {
-            _policyServer = MsoyPolicyServer.init(_otherNodePorts.toIntArray());
+            _policyServer = MsoyPolicyServer.init(Ints.toArray(_otherNodePorts));
         } catch (final IOException ioe) {
             log.warning("Failed to restart MsoyPolicyServer with new ports", ioe);
         }
@@ -283,7 +286,12 @@ public class MsoyServer extends MsoyBaseServer
         }
 
         if (_otherNodePorts == null) {
-            _otherNodePorts = new ArrayIntSet();
+            _otherNodePorts = Sets.newHashSet();
+
+
+
+
+
         }
         _otherNodePorts.remove(ports);
 
@@ -291,7 +299,7 @@ public class MsoyServer extends MsoyBaseServer
             _policyServer.unbindAll();
         }
         try {
-            _policyServer = MsoyPolicyServer.init(_otherNodePorts.toIntArray());
+            _policyServer = MsoyPolicyServer.init(Ints.toArray(_otherNodePorts));
         } catch (final IOException ioe) {
             log.warning("Failed to restart MsoyPolicyServer with ports removed", ioe);
         }
@@ -360,7 +368,7 @@ public class MsoyServer extends MsoyBaseServer
 
     /** On dev deployments, we keep track of the ports on other nodes (hosted on the same machine
      * that need to be accepted by the policy server. */
-    protected ArrayIntSet _otherNodePorts;
+    protected Set<Integer> _otherNodePorts;
 
     /** Prunes the feeds every so often. */
     protected Interval _feedPruner;

@@ -5,14 +5,14 @@ package com.threerings.msoy.item.server;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 
-import com.samskivert.util.ArrayIntSet;
-import com.samskivert.util.IntSet;
 import com.samskivert.util.Tuple;
 
 import com.threerings.msoy.data.StatType;
@@ -322,7 +322,7 @@ public class ItemServlet extends MsoyServiceServlet
     public GroupName[] loadLineups (int catalogId)
         throws ServiceException
     {
-        IntSet groupIds = new ArrayIntSet();
+        Set<Integer> groupIds = Sets.newHashSet();
         for (ThemeAvatarLineupRecord rec : _themeRepo.loadLineups(catalogId)) {
             groupIds.add(rec.groupId);
         }

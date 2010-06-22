@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -20,7 +21,6 @@ import org.json.JSONObject;
 import com.google.inject.Inject;
 import com.samskivert.io.StreamUtil;
 import com.samskivert.servlet.util.CookieUtil;
-import com.samskivert.util.IntSet;
 import com.threerings.msoy.money.data.all.MemberMoney;
 import com.threerings.msoy.money.server.MoneyLogic;
 import com.threerings.msoy.server.persist.MemberRecord;
@@ -55,7 +55,7 @@ public class MyStatsServlet extends HttpServlet
             MemberMoney money = _moneyLogic.getMoneyFor(member.memberId);
 
             // now get their friend ids
-            IntSet friendIds = _memberRepo.loadFriendIds(member.memberId);
+            Set<Integer> friendIds = _memberRepo.loadFriendIds(member.memberId);
             List<MemberCard> friends = _mhelper.resolveMemberCards(friendIds, true, null);
 
             // and print out the response

@@ -5,15 +5,16 @@ package com.threerings.msoy.room.server;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
 
 import com.samskivert.jdbc.RepositoryUnit;
-import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.Invoker;
 
 import com.threerings.presents.annotation.EventThread;
@@ -115,7 +116,7 @@ public class PetManager
         _invoker.postUnit(new RepositoryUnit("loadRoomPets(" + sceneId + ")") {
             public void invokePersist () throws Exception {
                 // load up our pets, collect their memory ids and convert them to runtime objs
-                ArrayIntSet mids = new ArrayIntSet();
+                Set<Integer> mids = Sets.newHashSet();
                 for (PetRecord petrec : _petRepo.loadItemsByLocation(sceneId)) {
                     _pets.add((Pet)petrec.toItem());
                     mids.add(petrec.itemId);

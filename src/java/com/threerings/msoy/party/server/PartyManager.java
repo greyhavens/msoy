@@ -3,9 +3,11 @@
 
 package com.threerings.msoy.party.server;
 
+import java.util.Set;
+
+import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 
-import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.StringUtil;
 import com.samskivert.util.Tuple;
 
@@ -502,7 +504,7 @@ public class PartyManager
     protected PartyObject _partyObj;
     protected PartySummary _summary;
     protected PartyInfo _lastInfo;
-    protected ArrayIntSet _invitedIds = new ArrayIntSet();
+    protected Set<Integer> _invitedIds = Sets.newHashSet();
 
     @Inject protected ClientManager _clmgr;
     @Inject protected InvocationManager _invMgr;

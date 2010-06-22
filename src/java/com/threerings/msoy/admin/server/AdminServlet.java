@@ -389,7 +389,7 @@ public class AdminServlet extends MsoyServiceServlet
         appendToNote(note, "Message Body", body);
         appendToNote(note, "Item Record", item);
 
-        final IntSet owners = new ArrayIntSet();
+        final Set<Integer> owners = Sets.newHashSet();
 
         ItemDeletionResult result = new ItemDeletionResult();
         owners.add(item.creatorId);
