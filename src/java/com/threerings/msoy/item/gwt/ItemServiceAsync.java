@@ -6,6 +6,7 @@ package com.threerings.msoy.item.gwt;
 import java.util.List;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.threerings.msoy.data.all.GroupName;
+import com.threerings.msoy.data.all.RatingHistoryResult;
 import com.threerings.msoy.data.all.RatingResult;
 import com.threerings.msoy.item.data.all.ItemFlag;
 import com.threerings.msoy.item.data.all.ItemIdent;
@@ -26,6 +27,11 @@ public interface ItemServiceAsync
      * The async version of {@link ItemService#rateItem}.
      */
     void rateItem (ItemIdent item, byte rating, AsyncCallback<RatingResult> callback);
+
+    /**
+     * The async version of {@link ItemService#getRatingHistory}.
+     */
+    void getRatingHistory (ItemIdent item, AsyncCallback<RatingHistoryResult> callback);
 
     /**
      * The async version of {@link ItemService#getTags}.

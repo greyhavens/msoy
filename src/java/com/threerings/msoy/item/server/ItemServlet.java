@@ -17,10 +17,13 @@ import com.samskivert.util.Tuple;
 
 import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.all.GroupName;
+import com.threerings.msoy.data.all.RatingHistoryResult;
 import com.threerings.msoy.data.all.RatingResult;
+import com.threerings.msoy.server.RatingLogic;
 import com.threerings.msoy.server.StatLogic;
 import com.threerings.msoy.server.TagLogic;
 import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.RatingRepository;
 import com.threerings.msoy.server.persist.TagHistoryRecord;
 import com.threerings.msoy.server.persist.TagNameRecord;
 import com.threerings.msoy.server.persist.TagRepository;
@@ -178,6 +181,16 @@ public class ItemServlet extends MsoyServiceServlet
 
         return result.left;
     }
+
+    // from interface ItemService
+    public RatingHistoryResult getRatingHistory (final ItemIdent iident)
+        throws ServiceException
+    {
+        RatingRepository ratingRepo = _itemLogic.getRepository(iident.type).getRatingRepository();
+        return _ratingLogic.getRatingHistory(iident.itemId, ratingRepo, 0, 0);
+    }
+
+
 
     // from interface ItemService
     public List<String> getTags (ItemIdent iident)
@@ -436,16 +449,17 @@ public class ItemServlet extends MsoyServiceServlet
     }
 
     // our dependencies
+    @Inject protected AvatarRepository _avaRepo;
+    @Inject protected GroupRepository _groupRepo;
     @Inject protected ItemFlagRepository _itemFlagRepo;
     @Inject protected ItemLogic _itemLogic;
     @Inject protected ItemManager _itemMan;
-    @Inject protected GroupRepository _groupRepo;
-    @Inject protected ThemeRepository _themeRepo;
-    @Inject protected ThemeLogic _themeLogic;
+    @Inject protected RatingLogic _ratingLogic;
     @Inject protected StatLogic _statLogic;
     @Inject protected SupportLogic _supportLogic;
     @Inject protected TagLogic _tagLogic;
-    @Inject protected AvatarRepository _avaRepo;
+    @Inject protected ThemeRepository _themeRepo;
+    @Inject protected ThemeLogic _themeLogic;
 
     protected static final int MIN_SOLID_RATINGS = 20;
 }

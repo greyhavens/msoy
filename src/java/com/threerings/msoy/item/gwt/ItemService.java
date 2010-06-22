@@ -10,6 +10,7 @@ import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 import com.threerings.msoy.data.all.GroupName;
+import com.threerings.msoy.data.all.RatingHistoryResult;
 import com.threerings.msoy.data.all.RatingResult;
 
 import com.threerings.msoy.item.data.all.Item;
@@ -52,6 +53,12 @@ public interface ItemService extends RemoteService
      * Awards an item a rating from 1 to 5.
      */
     RatingResult rateItem (ItemIdent item, byte rating)
+        throws ServiceException;
+
+    /**
+     * Fetch the complete rating history of the specified item as a {@link RatingHistoryResult}.
+     */
+    RatingHistoryResult getRatingHistory (ItemIdent item)
         throws ServiceException;
 
     /**
