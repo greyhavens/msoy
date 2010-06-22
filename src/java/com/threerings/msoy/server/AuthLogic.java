@@ -102,7 +102,7 @@ public class AuthLogic
     }
 
     // dependencies
-    @Inject protected ClientManager _clmgr;
     @Inject protected @MainInvoker Invoker _invoker;
+    @Inject protected ClientManager _clmgr;
     @Inject protected RuntimeConfig _runtime;
 }

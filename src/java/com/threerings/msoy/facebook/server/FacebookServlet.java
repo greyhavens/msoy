@@ -26,8 +26,6 @@ import com.google.code.facebookapi.schema.User;
 
 import com.samskivert.util.CollectionUtil;
 import com.samskivert.util.Comparators;
-import com.samskivert.util.IntMap;
-import com.samskivert.util.IntMaps;
 import com.samskivert.util.RandomUtil;
 
 import com.threerings.parlor.rating.server.persist.RatingRecord;
@@ -468,8 +466,8 @@ public class FacebookServlet extends MsoyServiceServlet
     @Inject protected FacebookRepository _facebookRepo;
     @Inject protected KontagentLogic _tracker;
     @Inject protected MemberRepository _memberRepo;
-    @Inject protected MsoyGameRepository _mgameRepo;
     @Inject protected MoneyRepository _moneyRepo;
+    @Inject protected MsoyGameRepository _mgameRepo;
     @Inject protected ProfileRepository _profileRepo;
     @Inject protected RatingRepository _ratingRepo;
     @Inject protected TrophyRepository _trophyRepo;

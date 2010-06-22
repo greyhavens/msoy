@@ -902,8 +902,8 @@ public class MsoyPeerManager extends CrowdPeerManager
     // dependencies
     @Inject protected ClientManager _clmgr;
     @Inject protected InvocationManager _invmgr;
-    @Inject protected ReportManager _reportMan;
     @Inject protected MsoyServer _msoyServer;
+    @Inject protected ReportManager _reportMan;
 
     /** A counter used to assign party ids on this server. */
     protected static int _partyIdCounter;

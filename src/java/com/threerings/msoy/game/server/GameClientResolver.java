@@ -71,7 +71,7 @@ public class GameClientResolver extends CrowdClientResolver
 
     // our dependencies
     @Inject protected MemberRepository _memberRepo;
+    @Inject protected MoneyLogic _moneyLogic;
     @Inject protected MsoyPeerManager _peerMan;
     @Inject protected ProfileRepository _profileRepo;
-    @Inject protected MoneyLogic _moneyLogic;
 }

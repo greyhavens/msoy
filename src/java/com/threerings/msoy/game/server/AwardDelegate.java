@@ -927,12 +927,12 @@ public class AwardDelegate extends RatingDelegate
     protected Map<Integer, FlowRecord> _flowRecords = Maps.newHashMap();
 
     // our dependencies
-    @Inject protected PlayerLocator _locator;
+    @Inject protected FeedLogic _feedLogic;
     @Inject protected GameGameRegistry _gameReg;
     @Inject protected MemberRepository _memberRepo;
     @Inject protected MsoyGameRepository _mgameRepo;
+    @Inject protected PlayerLocator _locator;
     @Inject protected RuntimeConfig _runtime;
-    @Inject protected FeedLogic _feedLogic;
 
     /** Returns whether or not a {@link Player} is a guest. */
     protected static final Predicate<Player> IS_GUEST = new Predicate<Player>() {

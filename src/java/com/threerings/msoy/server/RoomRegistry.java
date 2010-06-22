@@ -95,17 +95,5 @@ public class RoomRegistry extends PlaceRegistry
         }
     }
 
-    // TODO
-//     @Override protected PlaceManager createPlaceManager (PlaceConfig config) throws Exception {
-//         ClassLoader loader = _hostedMan.getClassLoader(config);
-//         if (loader == null) {
-//             return super.createPlaceManager(config);
-//         }
-//         return (PlaceManager)Class.forName(
-//             config.getManagerClassName(), true, loader).newInstance();
-//     }
-
-//     @Inject protected HostedGameManager _hostedMan;
-
     @Inject protected PlayerLocator _plocator;
 }

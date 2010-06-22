@@ -299,6 +299,6 @@ public class GroupLogic
     @Inject protected MoneyLogic _moneyLogic;
     @Inject protected MsoySceneRepository _sceneRepo;
     @Inject protected RuntimeConfig _runtime;
-    @Inject protected StatLogic _statLogic;
     @Inject protected SceneLogic _sceneLogic;
+    @Inject protected StatLogic _statLogic;
 }

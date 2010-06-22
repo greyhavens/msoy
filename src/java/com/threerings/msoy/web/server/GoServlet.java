@@ -126,6 +126,6 @@ public class GoServlet extends HttpServlet
     }
 
     // our dependencies
-    @Inject protected MemberLogic _memberLogic;
     @Inject protected CloakedPageLogic _cloakedPageLogic;
+    @Inject protected MemberLogic _memberLogic;
 }

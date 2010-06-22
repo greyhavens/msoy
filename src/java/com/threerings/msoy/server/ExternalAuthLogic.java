@@ -55,6 +55,6 @@ public class ExternalAuthLogic
     }
 
     // dependencies
-    @Inject protected MemberRepository _memberRepo;
     @Inject protected FacebookAuthHandler _faceAuther;
+    @Inject protected MemberRepository _memberRepo;
 }

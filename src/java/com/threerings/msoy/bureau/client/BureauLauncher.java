@@ -462,9 +462,6 @@ public class BureauLauncher
         protected long _shutdownTime;
     }
 
-    /** Presents run queue. */
-    @Inject protected Runner _runner;
-
     /** Database run queue. */
     protected Runner _dbrunner = new Runner();
 
@@ -487,8 +484,8 @@ public class BureauLauncher
     /** The current set of bureaus on this launcher. Pruned periodically when printing a summary. */
     protected HashMap<String, Bureau> _bureaus = Maps.newHashMap();
 
-    /** The nodes repository. */
     @Inject protected NodeRepository _nodeRepo;
+    @Inject protected Runner _runner;
 
     /** Time between checks of the <code>NODES</code> table. */
     protected static long PEER_POLL_INTERVAL = 30000;

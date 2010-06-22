@@ -89,8 +89,8 @@ public class MoneyTransactionExpirer
     protected final Interval _interval;
 
     // dependencies
-    @Inject protected MoneyRepository _repo;
     @Inject protected @BatchInvoker Invoker _batchInvoker;
+    @Inject protected MoneyRepository _repo;
 
     protected static final long DAY = 24L * 60 * 60 * 1000L; // the length of 99.4% of days
     protected static final long COIN_MAX_AGE = 10L * DAY; // 10 days

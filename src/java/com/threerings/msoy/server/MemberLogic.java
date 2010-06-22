@@ -891,8 +891,8 @@ public class MemberLogic
 
         protected FriendEntry _entry;
 
-        @Inject protected transient MsoyPeerManager _peerMan;
         @Inject protected transient FriendManager _friendMan;
+        @Inject protected transient MsoyPeerManager _peerMan;
     }
 
     protected static class RemoveFriend extends MemberNodeAction
@@ -932,8 +932,8 @@ public class MemberLogic
     @Inject protected MsoySceneRepository _sceneRepo;
     @Inject protected PlayerNodeActions _playerActions;
     @Inject protected PresentsDObjectMgr _omgr;
-    @Inject protected ServerMessages _serverMsgs;
     @Inject protected SceneLogic _sceneLogic;
+    @Inject protected ServerMessages _serverMsgs;
     @Inject protected StatLogic _statLogic;
     @Inject protected ThemeRepository _themeRepo;
 

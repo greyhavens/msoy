@@ -458,8 +458,8 @@ public class ItemServlet extends MsoyServiceServlet
     @Inject protected StatLogic _statLogic;
     @Inject protected SupportLogic _supportLogic;
     @Inject protected TagLogic _tagLogic;
-    @Inject protected ThemeRepository _themeRepo;
     @Inject protected ThemeLogic _themeLogic;
+    @Inject protected ThemeRepository _themeRepo;
 
     protected static final int MIN_SOLID_RATINGS = 20;
 }

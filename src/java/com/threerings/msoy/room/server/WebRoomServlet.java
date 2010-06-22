@@ -385,10 +385,10 @@ public class WebRoomServlet extends MsoyServiceServlet
     @Inject protected MoneyLogic _moneyLogic;
     @Inject protected MsoySceneRepository _sceneRepo;
     @Inject protected RoomLogic _roomLogic;
-    @Inject protected ThemeRepository _themeRepo;
-    @Inject protected ThemeLogic _themeLogic;
     @Inject protected RuntimeConfig _runtime;
-    @Inject protected ServerMessages _serverMsgs;
     @Inject protected SceneLogic _sceneLogic;
     @Inject protected SceneNodeActions _sceneActions;
+    @Inject protected ServerMessages _serverMsgs;
+    @Inject protected ThemeLogic _themeLogic;
+    @Inject protected ThemeRepository _themeRepo;
 }

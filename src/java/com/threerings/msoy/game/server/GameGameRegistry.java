@@ -1287,6 +1287,7 @@ public class GameGameRegistry
     @Inject protected @BatchInvoker Invoker _batchInvoker;
     @Inject protected @MainInvoker Invoker _invoker;
     @Inject protected BureauRegistry _bureauReg;
+    @Inject protected ClientManager _clmgr;
     @Inject protected FeedLogic _feedLogic;
     @Inject protected GameWatcherManager _watchmgr;
     @Inject protected Injector _injector;
@@ -1303,7 +1304,6 @@ public class GameGameRegistry
     @Inject protected RuntimeConfig _runtime;
     @Inject protected StatLogic _statLogic;
     @Inject protected WorldGameRegistry _wgameReg;
-    @Inject protected ClientManager _clmgr;
 
     // various and sundry repositories for loading persistent data
     @Inject protected AVRGameRepository _avrgRepo;

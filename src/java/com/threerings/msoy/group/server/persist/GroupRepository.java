@@ -16,13 +16,11 @@ import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.samskivert.depot.CacheInvalidator;
 import com.samskivert.depot.CountRecord;
-import com.samskivert.depot.DataMigration;
 import com.samskivert.depot.DatabaseException;
 import com.samskivert.depot.DateFuncs;
 import com.samskivert.depot.DepotRepository;
@@ -47,7 +45,6 @@ import com.samskivert.depot.operator.FullText;
 
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.ArrayUtil;
-import com.samskivert.util.IntSet;
 import com.samskivert.util.Tuple;
 
 import com.threerings.presents.annotation.BlockingThread;
@@ -60,14 +57,11 @@ import com.threerings.msoy.server.persist.TagRecord;
 import com.threerings.msoy.server.persist.TagRepository;
 
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
-import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 import com.threerings.msoy.group.data.all.Group;
 import com.threerings.msoy.group.data.all.GroupMembership;
 import com.threerings.msoy.group.data.all.GroupMembership.Rank;
 import com.threerings.msoy.group.gwt.GroupCard;
 import com.threerings.msoy.group.gwt.GroupService.GroupQuery;
-
-import static com.threerings.msoy.Log.log;
 
 /**
  * Manages the persistent store of group data.
@@ -124,9 +118,7 @@ public class GroupRepository extends DepotRepository
             }
 
             // look up each word as a tag
-            _tagIds = Sets.newHashSet();
-
-
+            _tagIds = new ArrayIntSet();
             if (searchTerms.length > 0) {
                 for (TagNameRecord tRec : getTagRepository().getTags(searchTerms)) {
                     _tagIds.add(tRec.tagId);
@@ -162,26 +154,6 @@ public class GroupRepository extends DepotRepository
         for (String oldField : oldFields) {
             ctx.registerMigration(GroupRecord.class, new SchemaMigration.Drop(22, oldField));
         }
-
-        registerMigration(new DataMigration("2010-02-26 groups_with_missing_games") {
-            @Override public void invoke () throws DatabaseException {
-                List<GroupRecord> groups = findAll(GroupRecord.class,
-                    new Where(GroupRecord.GAME_ID.notEq(0)));
-                Set<Integer> badGroups = Sets.newHashSet();
-                for (GroupRecord group : groups) {
-                    if (null == _gameRepo.loadGame(group.gameId)) {
-                        badGroups.add(group.groupId);
-                    }
-                }
-                if (!badGroups.isEmpty()) {
-                    int rows = updatePartial(GroupRecord.class,
-                        new Where(GroupRecord.GROUP_ID.in(badGroups)), null,
-                        GroupRecord.GAME_ID, 0);
-                    log.info("Fixing groups with missing games", "attempted", badGroups.size(),
-                        "actual", rows);
-                }
-            }
-        });
     }
 
     /**
@@ -291,9 +263,7 @@ public class GroupRepository extends DepotRepository
      */
     public <C> Map<Integer, GroupName> loadGroupNames (Iterable<C> records, Function<C, Integer> getId)
     {
-        Set<Integer> groupIds = Sets.newHashSet();
-
-
+        Set<Integer> groupIds = new ArrayIntSet();
         for (C record : records) {
             Integer id = getId.apply(record);
             if (id != null) {
@@ -782,7 +752,4 @@ public class GroupRepository extends DepotRepository
     // our dependencies
     @Inject protected MsoyEventLogger _eventLog;
     @Inject protected MsoySceneRepository _sceneRepo;
-
-    /** TEMP: to handle migration */
-    @Inject protected MsoyGameRepository _gameRepo;
 }

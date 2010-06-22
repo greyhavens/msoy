@@ -696,15 +696,15 @@ public class CatalogServlet extends MsoyServiceServlet
     @Inject protected FeedLogic _feedLogic;
     @Inject protected GameLogic _gameLogic;
     @Inject protected GroupLogic _groupLogic;
+    @Inject protected GroupRepository _groupRepo;
     @Inject protected ItemLogic _itemLogic;
     @Inject protected MoneyLogic _moneyLogic;
     @Inject protected MsoyEventLogger _eventLog;
     @Inject protected MsoyGameRepository _mgameRepo;
-    @Inject protected GroupRepository _groupRepo;
-    @Inject protected ThemeRepository _themeRepo;
     @Inject protected RuntimeConfig _runtime;
     @Inject protected StatLogic _statLogic;
     @Inject protected ThemeLogic _themeLogic;
+    @Inject protected ThemeRepository _themeRepo;
     @Inject protected UserActionRepository _userActionRepo;
 
     /** Used by {@link #loadSuite}. */

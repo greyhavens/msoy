@@ -852,8 +852,6 @@ public class GroupServlet extends MsoyServiceServlet
     @Inject protected ForumRepository _forumRepo;
     @Inject protected GroupLogic _groupLogic;
     @Inject protected GroupRepository _groupRepo;
-    @Inject protected ThemeLogic _themeLogic;
-    @Inject protected ThemeRepository _themeRepo;
     @Inject protected MedalRepository _medalRepo;
     @Inject protected MemberManager _memberMan;
     @Inject protected MemberRepository _memberRepo;
@@ -861,6 +859,8 @@ public class GroupServlet extends MsoyServiceServlet
     @Inject protected MsoySceneRepository _sceneRepo;
     @Inject protected RoomLogic _roomLogic;
     @Inject protected TagLogic _tagLogic;
+    @Inject protected ThemeLogic _themeLogic;
+    @Inject protected ThemeRepository _themeRepo;
 
     /** The number of matches to return when searching against all display names in the database. */
     protected static int MAX_MEMBER_MATCHES = 100;

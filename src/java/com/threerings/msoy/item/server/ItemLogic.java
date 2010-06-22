@@ -30,7 +30,6 @@ import com.google.inject.Singleton;
 
 import com.samskivert.depot.DuplicateKeyException;
 
-import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.StringUtil;
@@ -1334,16 +1333,16 @@ public class ItemLogic
     @Inject protected FavoritesRepository _faveRepo;
     @Inject protected GameLogic _gameLogic;
     @Inject protected GameNodeActions _gameActions;
-    @Inject protected PlayerNodeActions _playerActions;
+    @Inject protected GroupLogic _groupLogic;
+    @Inject protected GroupRepository _groupRepo;
     @Inject protected ItemFlagRepository _itemFlagRepo;
     @Inject protected ItemListRepository _listRepo;
-    @Inject protected GroupRepository _groupRepo;
-    @Inject protected GroupLogic _groupLogic;
     @Inject protected MailLogic _mailLogic;
     @Inject protected MemberRepository _memberRepo;
     @Inject protected MsoyEventLogger _eventLog;
     @Inject protected MsoyGameRepository _mgameRepo;
     @Inject protected MsoyPeerManager _peerMan;
+    @Inject protected PlayerNodeActions _playerActions;
     @Inject protected RootDObjectManager _omgr;
     @Inject protected ServerMessages _serverMsgs;
     @Inject protected SupportLogic _supportLogic;

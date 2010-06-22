@@ -19,9 +19,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 
-import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.Calendars;
-import com.samskivert.util.IntSet;
 import com.samskivert.util.ObjectUtil;
 import com.threerings.parlor.rating.server.persist.RatingRecord;
 import com.threerings.parlor.rating.server.persist.RatingRepository;
@@ -533,9 +531,9 @@ public class ProfileServlet extends MsoyServiceServlet
     @Inject protected FavoritesRepository _faveRepo;
     @Inject protected FeedLogic _feedLogic;
     @Inject protected GalleryLogic _galleryLogic;
+    @Inject protected GroupLogic _groupLogic;
     @Inject protected GroupRepository _groupRepo;
     @Inject protected ItemLogic _itemLogic;
-    @Inject protected GroupLogic _groupLogic;
     @Inject protected MedalRepository _medalRepo;
     @Inject protected MemberLogic _memberLogic;
     @Inject protected MoneyLogic _moneyLogic;

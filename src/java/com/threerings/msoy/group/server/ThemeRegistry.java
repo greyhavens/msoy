@@ -333,8 +333,8 @@ public class ThemeRegistry
     protected Set<Integer> _dirty = Sets.newHashSet();
 
     // our dependencies
-    @Inject protected GroupRepository _groupRepo;
     @Inject protected @MainInvoker Invoker _invoker;
+    @Inject protected GroupRepository _groupRepo;
     @Inject protected MsoyPeerManager _peerMan;
     @Inject protected RootDObjectManager _omgr;
     @Inject protected ThemeRepository _themeRepo;

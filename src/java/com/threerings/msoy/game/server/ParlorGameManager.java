@@ -310,6 +310,6 @@ public class ParlorGameManager extends WhirledGameManager
     @Inject protected ItemPackRepository _ipackRepo;
     @Inject protected LevelPackRepository _lpackRepo;
     @Inject protected PartyRegistry _partyReg;
-    @Inject protected TrophyRepository _trophyRepo;
     @Inject protected PlayerNodeActions _playerActions;
+    @Inject protected TrophyRepository _trophyRepo;
 }

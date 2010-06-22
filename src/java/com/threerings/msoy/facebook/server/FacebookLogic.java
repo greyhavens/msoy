@@ -29,8 +29,6 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.samskivert.util.Calendars;
-import com.samskivert.util.IntMap;
-import com.samskivert.util.IntMaps;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.Lifecycle;
 import com.samskivert.util.StringUtil;
@@ -756,8 +754,8 @@ public class FacebookLogic
     protected static final String DAILY_GAMES_CURSOR = "";
 
     // dependencies
-    @Inject protected AppRepository _appRepo;
     @Inject protected @BatchInvoker Invoker _batchInvoker;
+    @Inject protected AppRepository _appRepo;
     @Inject protected FacebookRepository _facebookRepo;
     @Inject protected KontagentLogic _tracker;
     @Inject protected ListRepository _listRepo;

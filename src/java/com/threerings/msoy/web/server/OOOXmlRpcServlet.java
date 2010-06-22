@@ -93,8 +93,8 @@ public class OOOXmlRpcServlet extends XmlRpcServlet
         }
     }
 
-    @Inject protected MsoyAuthenticator _auth;
     @Inject protected MemberRepository _memberRepo;
+    @Inject protected MsoyAuthenticator _auth;
 
     // these are static so that we can provide them to our request handlers (which Apache's XML-RPC
     // library awesomely instantiates anew for each request and provides no non-total-backbending

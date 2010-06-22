@@ -22,8 +22,6 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.samskivert.depot.DatabaseException;
-import com.samskivert.util.IntMap;
-import com.samskivert.util.IntMaps;
 import com.samskivert.util.IntTuple;
 import com.samskivert.util.RandomUtil;
 
@@ -1558,6 +1556,7 @@ public class MoneyLogic
     protected PriceQuoteCache _priceCache = new PriceQuoteCache();
 
     // dependencies
+    @Inject protected GroupRepository _groupRepo;
     @Inject protected MemberLogic _memberLogic;
     @Inject protected MemberRepository _memberRepo;
     @Inject protected MoneyExchange _exchange;
@@ -1568,7 +1567,6 @@ public class MoneyLogic
     @Inject protected MsoyEventLogger _eventLog;
     @Inject protected RuntimeConfig _runtime;
     @Inject protected UserActionRepository _userActionRepo;
-    @Inject protected GroupRepository _groupRepo;
 
     /** An arbitrary key for tracking quotes in {@link #listItem}. */
     protected static final Object LIST_ITEM_KEY = new Object();

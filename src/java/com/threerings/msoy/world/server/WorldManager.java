@@ -518,18 +518,18 @@ public class WorldManager
 
     // dependencies
     @Inject protected @MainInvoker Invoker _invoker;
+    @Inject protected AvatarRepository _avaRepo;
     @Inject protected BodyManager _bodyMan;
     @Inject protected GroupRepository _groupRepo;
     @Inject protected ItemLogic _itemLogic;
-    @Inject protected ThemeLogic _themeLogic;
     @Inject protected ItemManager _itemMan;
     @Inject protected MemberLocator _locator;
     @Inject protected MemberLogic _memberLogic;
     @Inject protected MemberRepository _memberRepo;
     @Inject protected MemoryRepository _memoryRepo;
     @Inject protected MsoySceneRepository _sceneRepo;
-    @Inject protected AvatarRepository _avaRepo;
     @Inject protected NotificationManager _notifyMan;
     @Inject protected PlaceRegistry _placeReg;
+    @Inject protected ThemeLogic _themeLogic;
     @Inject protected ThemeRepository _themeRepo;
 }

@@ -133,23 +133,23 @@ public abstract class MsoyBaseServer extends WhirledServer
     /** Used for caching things. */
     protected CacheManager _cacheMgr = CacheManager.getInstance();
 
-    /** Provides database access to all of our repositories. */
-    @Inject protected PersistenceContext _perCtx;
-
-    /** Maintains runtime modifiable configuration information. */
-    @Inject protected RuntimeConfig _runtime;
-
-    /** Sends event information to an external log database. */
-    @Inject protected MsoyEventLogger _eventLog;
-
-    /** Handles state of the server reporting (used by the /status servlet). */
-    @Inject protected ReportManager _reportMan;
-
     /** Manages our bureau launchers. */
     @Inject protected BureauManager _bureauMgr;
 
     /** The batch invoker thread. */
     @Inject protected MsoyBatchInvoker _batchInvoker;
+
+    /** Sends event information to an external log database. */
+    @Inject protected MsoyEventLogger _eventLog;
+
+    /** Provides database access to all of our repositories. */
+    @Inject protected PersistenceContext _perCtx;
+
+    /** Handles state of the server reporting (used by the /status servlet). */
+    @Inject protected ReportManager _reportMan;
+
+    /** Maintains runtime modifiable configuration information. */
+    @Inject protected RuntimeConfig _runtime;
 
     /** This is needed to ensure that the StatType enum's static initializer runs before anything
      * else in the server that might rely on stats runs. */

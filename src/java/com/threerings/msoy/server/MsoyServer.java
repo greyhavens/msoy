@@ -18,7 +18,6 @@ import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import com.google.inject.internal.Sets;
 
-import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.Lifecycle;
@@ -373,63 +372,33 @@ public class MsoyServer extends MsoyBaseServer
     /** Prunes the feeds every so often. */
     protected Interval _feedPruner;
 
-    /** Our runtime jabber manager. */
-    @Inject protected JabberManager _jabberMan;
-
-    /** Manages interactions with our peer servers. */
-    @Inject protected MsoyPeerManager _peerMan;
-
-    /** Keeps track of our locally resolved scenes and how to resolve them. */
-    @Inject protected MsoySceneRegistry _sceneReg;
-
-    /** Manages our parties. */
-    @Inject protected PartyRegistry _partyReg;
-
-    /** Our runtime admin manager. */
-    @Inject protected MsoyAdminManager _adminMan;
-
-    /** Handles HTTP servlet requests. */
-    @Inject protected MsoyHttpServer _httpServer;
-
-    /** Our runtime msoy manager. */
-    @Inject protected MsoyManager _msoyMan;
-
-    /** Our runtime member manager. */
-    @Inject protected MemberManager _memberMan;
-
-    /** Handles management of member's friends lists. */
-    @Inject protected FriendManager _friendMan;
-
-    /** Handles management of chat channels. */
-    @Inject protected MsoyChatChannelManager _channelMan;
-
-    /** Handles item-related services. */
-    @Inject protected ItemManager _itemMan;
-
-    /** Handles our cuddly little pets. */
-    @Inject protected PetManager _petMan;
-
-    /** Manages our external game servers. */
-    @Inject protected WorldGameRegistry _wgameReg;
-
-    /** Manages lobbies and other game bits on this server. */
-    @Inject protected GameGameRegistry _ggameReg;
-
-    /** The Whirled Tour manager. */
-    @Inject protected TourManager _tourMan;
-
-    /** The Whirled World manager. */
-    @Inject protected WorldManager _worldMan;
-
-    /** Provides parlor game services. */
-    @Inject protected ParlorManager _parlorMan;
+    /** Distributes Bling once a day; referenced here so it'll load. */
+    @Inject protected BlingPoolDistributor _blingDistributor;
 
     /** Handles dictionary services for games. */
     @Inject protected DictionaryManager _dictMan;
 
+    /** The feed repository, so that we may prune. */
+    @Inject protected FeedRepository _feedRepo;
+
+    /** Handles management of member's friends lists. */
+    @Inject protected FriendManager _friendMan;
+
     // these need to be injected here to ensure that they're created at server startup time rather
     // than lazily the first time they're referenced
     @Inject protected GameCookieManager _cookMan;
+
+    /** Manages lobbies and other game bits on this server. */
+    @Inject protected GameGameRegistry _ggameReg;
+
+    /** Handles item-related services. */
+    @Inject protected ItemManager _itemMan;
+
+    /** Our runtime jabber manager. */
+    @Inject protected JabberManager _jabberMan;
+
+    /** Our runtime member manager. */
+    @Inject protected MemberManager _memberMan;
 
     /** Connection to the AMQP messaging server. */
     @Inject protected MessageConnection _messageConn;
@@ -437,17 +406,47 @@ public class MsoyServer extends MsoyBaseServer
     /** Provides money services. */
     @Inject protected MoneyLogic _moneyLogic;
 
-    /** Distributes Bling once a day; referenced here so it'll load. */
-    @Inject protected BlingPoolDistributor _blingDistributor;
+    /** Our runtime admin manager. */
+    @Inject protected MsoyAdminManager _adminMan;
 
-    /** The feed repository, so that we may prune. */
-    @Inject protected FeedRepository _feedRepo;
+    /** Handles management of chat channels. */
+    @Inject protected MsoyChatChannelManager _channelMan;
+
+    /** Handles HTTP servlet requests. */
+    @Inject protected MsoyHttpServer _httpServer;
+
+    /** Our runtime msoy manager. */
+    @Inject protected MsoyManager _msoyMan;
+
+    /** Manages interactions with our peer servers. */
+    @Inject protected MsoyPeerManager _peerMan;
+
+    /** Keeps track of our locally resolved scenes and how to resolve them. */
+    @Inject protected MsoySceneRegistry _sceneReg;
+
+    /** Provides parlor game services. */
+    @Inject protected ParlorManager _parlorMan;
+
+    /** Manages our parties. */
+    @Inject protected PartyRegistry _partyReg;
+
+    /** Handles our cuddly little pets. */
+    @Inject protected PetManager _petMan;
 
     /** The spam logic mail sender, it needs to be told to kick off its jobs. */
     @Inject protected SpamLogic _spamLogic;
 
     /** Manages subscriptions. */
     @Inject protected SubscriptionLogic _subscripLogic;
+
+    /** The Whirled Tour manager. */
+    @Inject protected TourManager _tourMan;
+
+    /** Manages our external game servers. */
+    @Inject protected WorldGameRegistry _wgameReg;
+
+    /** The Whirled World manager. */
+    @Inject protected WorldManager _worldMan;
 
     static {
         MemberName.isSpacePred = new Predicate<Character>() {

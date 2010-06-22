@@ -19,9 +19,7 @@ import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 
 import com.samskivert.servlet.util.ServiceWaiter;
-import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.ArrayUtil;
-import com.samskivert.util.IntSet;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.StringUtil;
@@ -733,8 +731,8 @@ public class AdminServlet extends MsoyServiceServlet
             return true;
         }
 
-        @Inject protected transient MsoyEventLogger _nodeLogger;
         @Inject protected transient @MainInvoker Invoker _invoker;
+        @Inject protected transient MsoyEventLogger _nodeLogger;
     }
 
     /**

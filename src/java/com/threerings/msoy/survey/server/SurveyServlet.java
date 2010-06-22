@@ -321,7 +321,7 @@ public class SurveyServlet extends MsoyServiceServlet
         summary.others++;
     }
 
-    @Inject protected SurveyRepository _surveyRepo;
     @Inject protected MoneyLogic _moneyLogic;
     @Inject protected PromotionRepository _promoRepo;
+    @Inject protected SurveyRepository _surveyRepo;
 }

@@ -191,7 +191,7 @@ public class MsoyUserLogic extends SupportUserLogic
         user.email = email;
     }
 
+    @Inject protected AccountLogic _accountLogic;
     @Inject protected MemberRepository _memberRepo;
     @Inject protected MsoyAuthenticator _author;
-    @Inject protected AccountLogic _accountLogic;
 }

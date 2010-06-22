@@ -304,11 +304,11 @@ public class LobbyManager
     protected Interval _shutdownInterval;
 
     // our dependencies
-    @Inject protected Injector _injector;
     @Inject protected @MainInvoker Invoker _invoker;
+    @Inject protected GameGameRegistry _ggreg;
+    @Inject protected Injector _injector;
     @Inject protected MsoyEventLogger _eventLog;
     @Inject protected PlaceRegistry _plreg;
-    @Inject protected GameGameRegistry _ggreg;
     @Inject protected PlayerNodeActions _playerActions;
     @Inject protected RootDObjectManager _omgr;
 

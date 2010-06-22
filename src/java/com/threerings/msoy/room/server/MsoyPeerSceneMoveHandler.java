@@ -185,23 +185,13 @@ public class MsoyPeerSceneMoveHandler extends PeerSceneMoveHandler
         }
     }
 
-    protected int _portalId;
-    protected MsoyLocation _destLoc;
-    protected MemberObject _memobj;
-    protected MsoyBodyObject _mover;
-    protected PetObject _petobj;
-    protected MsoySceneMoveListener _msoyListener;
-
-    @Inject protected @MainInvoker Invoker _invoker;
-    @Inject protected MsoySceneRegistry _screg;
-    @Inject protected GroupRepository _groupRepo;
-    @Inject protected PetRepository _petRepo;
-    @Inject protected ThemeRepository _themeRepo;
-    @Inject protected ThemeLogic _themeLogic;
-    @Inject protected PetManager _petMan;
-    @Inject protected MemberRepository _memberRepo;
-    @Inject protected ItemLogic _itemLogic;
-    @Inject protected WorldManager _worldMan;
+    protected static boolean isInTheme (MemberObject user, int groupId)
+    {
+        if (user.theme == null) {
+            return groupId == 0;
+        }
+        return user.theme.getGroupId() == groupId;
+    }
 
     protected class ThemeRepositoryUnit extends RepositoryUnit
     {
@@ -364,15 +354,6 @@ public class MsoyPeerSceneMoveHandler extends PeerSceneMoveHandler
         protected int _gameId;
     }
 
-    protected static boolean isInTheme (MemberObject user, int groupId)
-    {
-        if (user.theme == null) {
-            return groupId == 0;
-        }
-        return user.theme.getGroupId() == groupId;
-    }
-
-
     /**
      * Implements MsoySceneMoveListener trivially.
      */
@@ -386,4 +367,22 @@ public class MsoyPeerSceneMoveHandler extends PeerSceneMoveHandler
             // noop
         }
     }
+
+    protected int _portalId;
+    protected MsoyLocation _destLoc;
+    protected MemberObject _memobj;
+    protected MsoyBodyObject _mover;
+    protected PetObject _petobj;
+    protected MsoySceneMoveListener _msoyListener;
+
+    @Inject protected @MainInvoker Invoker _invoker;
+    @Inject protected GroupRepository _groupRepo;
+    @Inject protected ItemLogic _itemLogic;
+    @Inject protected MemberRepository _memberRepo;
+    @Inject protected MsoySceneRegistry _screg;
+    @Inject protected PetManager _petMan;
+    @Inject protected PetRepository _petRepo;
+    @Inject protected ThemeLogic _themeLogic;
+    @Inject protected ThemeRepository _themeRepo;
+    @Inject protected WorldManager _worldMan;
 }

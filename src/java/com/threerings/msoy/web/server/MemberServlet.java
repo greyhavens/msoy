@@ -426,6 +426,7 @@ public class MemberServlet extends MsoyServiceServlet
     // our dependencies
     @Inject protected ABTestLogic _testLogic;
     @Inject protected FriendManager _friendMan;
+    @Inject protected GroupRepository _groupRepo;
     @Inject protected InviteRepository _inviteRepo;
     @Inject protected MemberLogic _memberLogic;
     @Inject protected MemberManager _memberMan;
@@ -435,7 +436,6 @@ public class MemberServlet extends MsoyServiceServlet
     @Inject protected RuntimeConfig _runtime;
     @Inject protected SpamRepository _spamRepo;
     @Inject protected SubscriptionLogic _subscripLogic;
-    @Inject protected GroupRepository _groupRepo;
     @Inject protected ThemeRepository _themeRepo;
 
     /** Maximum number of members to return for the leader board */
