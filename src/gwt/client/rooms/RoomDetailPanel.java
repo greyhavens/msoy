@@ -45,6 +45,7 @@ import client.ui.MsoyUI;
 import client.ui.Rating;
 import client.ui.RoundBox;
 import client.ui.StyledTabPanel;
+import client.ui.Rating.RateService;
 import client.util.Link;
 import client.util.InfoCallback;
 
@@ -113,12 +114,12 @@ public class RoomDetailPanel extends SmartTable
         }
 
         _bits.add(WidgetUtil.makeShim(10, 15));
-        _bits.add(new Rating(detail.info.rating, detail.ratingCount, detail.memberRating, true) {
-            @Override
-            protected void handleRate (byte newRating , InfoCallback<RatingResult> callback) {
-                _roomsvc.rateRoom(detail.info.sceneId, newRating, callback);
-            }
-        });
+        _bits.add(new Rating(
+            detail.info.rating, detail.ratingCount, detail.memberRating, true, new RateService() {
+                public void handleRate (byte newRating , InfoCallback<RatingResult> callback) {
+                    _roomsvc.rateRoom(detail.info.sceneId, newRating, callback);
+                }
+            }, null));
 
         // maybe add the gifting option
         if ((detail.owner instanceof MemberName) &&

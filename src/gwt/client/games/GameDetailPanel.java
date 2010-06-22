@@ -38,6 +38,7 @@ import client.ui.MsoyUI;
 import client.ui.NaviTabPanel;
 import client.ui.Rating;
 import client.ui.ThumbBox;
+import client.ui.Rating.RateService;
 import client.util.InfoCallback;
 import client.util.Link;
 
@@ -81,12 +82,13 @@ public class GameDetailPanel extends SmartTable
         shot.setHorizontalAlignment(HasAlignment.ALIGN_CENTER);
         shot.add(new ThumbBox(info.shotMedia, MediaDescSize.GAME_SHOT_SIZE));
         shot.add(WidgetUtil.makeShim(5, 5));
-        Rating rating = new Rating(info.rating, info.ratingCount, detail.memberRating, false) {
-            @Override protected void handleRate (
-                byte newRating , InfoCallback<RatingResult> callback) {
-                _gamesvc.rateGame(_gameId, newRating, callback);
-            }
-        };
+        Rating rating = new Rating(
+            info.rating, info.ratingCount, detail.memberRating, false, new RateService() {
+                public void handleRate (byte newRating, InfoCallback<RatingResult> callback) {
+                    _gamesvc.rateGame(_gameId, newRating, callback);
+                }
+            }, null);
+
         shot.add(rating);
         HorizontalPanel mbits = new HorizontalPanel();
         mbits.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);

@@ -29,6 +29,7 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.data.all.GroupName;
+import com.threerings.msoy.data.all.RatingHistoryResult;
 import com.threerings.msoy.data.all.RatingResult;
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;
@@ -51,6 +52,8 @@ import client.ui.PopupMenu;
 import client.ui.Rating;
 import client.ui.RoundBox;
 import client.ui.StyledTabPanel;
+import client.ui.Rating.HistoryService;
+import client.ui.Rating.RateService;
 import client.util.ClickCallback;
 import client.util.FlashClients;
 import client.util.Link;
@@ -416,14 +419,16 @@ public abstract class BaseItemDetailPanel extends SmartTable
 
     protected void addRatableBits (HorizontalPanel row)
     {
-        Rating rating = new Rating(
-            _item.getRating(), _item.ratingCount, _detail.memberItemInfo.memberRating, true) {
-            @Override protected void handleRate (
-                byte newRating , InfoCallback<RatingResult> callback) {
+        row.add(new Rating(_item.getRating(), _item.ratingCount,
+            _detail.memberItemInfo.memberRating, true, new RateService() {
+            public void handleRate (byte newRating, InfoCallback<RatingResult> callback) {
                 _itemsvc.rateItem(_item.getIdent(), newRating, callback);
             }
-        };
-        row.add(rating);
+        }, new HistoryService() {
+            public void getHistory (InfoCallback<RatingHistoryResult> callback) {
+                _itemsvc.getRatingHistory(_item.getIdent(), callback);
+            }
+        }));
 
         if (!CShell.isGuest()) {
             row.add(new FavoriteIndicator(_item, _detail.memberItemInfo));
