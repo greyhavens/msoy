@@ -16,6 +16,7 @@ public class ToyRatingRecord extends RatingRecord
     public static final ColumnExp TARGET_ID = colexp(_R, "targetId");
     public static final ColumnExp MEMBER_ID = colexp(_R, "memberId");
     public static final ColumnExp RATING = colexp(_R, "rating");
+    public static final ColumnExp TIMESTAMP = colexp(_R, "timestamp");
     // AUTO-GENERATED: FIELDS END
 
     // AUTO-GENERATED: METHODS START

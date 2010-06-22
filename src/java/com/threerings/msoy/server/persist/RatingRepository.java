@@ -4,9 +4,12 @@
 package com.threerings.msoy.server.persist;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
+import com.google.common.collect.Lists;
 import com.samskivert.util.StringUtil;
 import com.samskivert.util.Tuple;
 
@@ -20,6 +23,9 @@ import com.samskivert.depot.annotation.Computed;
 import com.samskivert.depot.annotation.Entity;
 import com.samskivert.depot.clause.FieldDefinition;
 import com.samskivert.depot.clause.FromOverride;
+import com.samskivert.depot.clause.Limit;
+import com.samskivert.depot.clause.OrderBy;
+import com.samskivert.depot.clause.QueryClause;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.expression.ColumnExp;
 
@@ -103,6 +109,8 @@ public abstract class RatingRepository extends DepotRepository
             ratingRec.targetId = targetId;
             ratingRec.memberId = memberId;
             ratingRec.rating = rating;
+            ratingRec.timestamp = new Timestamp(System.currentTimeMillis());
+
             try {
                 insert(ratingRec);
             } catch (DuplicateKeyException dke) {
@@ -162,6 +170,20 @@ public abstract class RatingRepository extends DepotRepository
     {
         RatingRecord record = load(getRatingKey(targetId, memberId));
         return (record == null) ? (byte)0 : record.rating;
+    }
+
+    /**
+     * Returns all the rating records for the specified target.
+     */
+    public List<RatingRecord> getRatings (int targetId, int offset, int count)
+    {
+        List<QueryClause> clauses = Lists.newArrayList(
+            new Where(getRatingColumn(RatingRecord.TARGET_ID), targetId),
+            OrderBy.descending(getRatingColumn(RatingRecord.TIMESTAMP)));
+        if (count > 0) {
+            clauses.add(new Limit(offset, count));
+        }
+        return findAll(getRatingClass(), clauses);
     }
 
     /**
