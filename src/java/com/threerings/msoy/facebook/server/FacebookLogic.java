@@ -48,7 +48,6 @@ import com.threerings.facebook.FQLQuery;
 import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.apps.server.persist.AppInfoRecord;
 import com.threerings.msoy.apps.server.persist.AppRepository;
-import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.facebook.data.FacebookCodes;
 import com.threerings.msoy.facebook.gwt.FacebookGame;
 import com.threerings.msoy.facebook.server.KontagentLogic.TrackingId;
@@ -362,61 +361,8 @@ public class FacebookLogic
 
         int memberId = mrec.memberId;
 
-        // determine if an award is due, find lastLevel
-        long now = System.currentTimeMillis();
-        int lastAward = -1; // suppress award by default
-        int lastLevel = 0;
-        if (mrec.created.getTime() < now - NEW_ACCOUNT_TIME) {
-            FacebookActionRecord lastVisit = _facebookRepo.getLastAction(
-                siteId.getFacebookAppId(), memberId, FacebookActionRecord.Type.DAILY_VISIT);
-            if (lastVisit == null) {
-                lastAward = 0; // trigger a 1st visit award
-                lastLevel = data.level; // trigger level-up if subsequent gain occurs
-
-            } else if (lastVisit.timestamp.getTime() < now - MIN_AWARD_PERIOD) {
-                Tuple<Integer, Integer> lastStuff = lastVisit.extractCoinAwardAndLevel();
-                lastAward = lastStuff.left;
-                lastLevel = lastStuff.right;
-            }
-        }
-
-        // calculate award index, based on last one
-        int awardIdx = -1;
-        if (lastAward == 0) {
-            // 1st visit, grant full award
-            awardIdx = VISIT_AWARDS.length - 1;
-
-        } else if (lastAward > 0) {
-            // bump down 1 level
-            awardIdx = Arrays.binarySearch(VISIT_AWARDS, lastAward);
-            awardIdx = (awardIdx < 0) ? -(awardIdx + 1) : awardIdx;
-            awardIdx = Math.max(awardIdx - 1, 0);
-        }
-
-        int award = awardIdx >= 0 ? VISIT_AWARDS[awardIdx] : 0;
-        if (award > 0) {
-            AppInfoRecord appInfo = _appRepo.loadAppInfo(siteId.getFacebookAppId());
-
-            // award the coins; note this eventually calls synchMemberLevel
-            _moneyLogic.awardCoins(memberId, award, true, UserAction.visitedFBApp(
-                memberId, appInfo != null ? appInfo.name : ""));
-
-            // shortcut, just update changed fields directly rather than reload frmo DB
-            money.coins += award;
-            money.accCoins += award;
-            data.level = _memberLogic.getLevelFinder().findLevel((int)money.accCoins);
-
-            // let the client know
-            data.extra.flowAwarded = award;
-
-            // record the daily visit
-            _facebookRepo.recordAction(FacebookActionRecord.dailyVisit(
-                siteId.getFacebookAppId(), memberId, award, data.level));
-
-        } else {
-            // update the level (it may have changed due to game play or other stuff)
-            data.level = _memberLogic.synchMemberLevel(memberId, mrec.level, money.accCoins);
-        }
+        // update the level (it may have changed due to game play or other stuff)
+        data.level = _memberLogic.synchMemberLevel(memberId, mrec.level, money.accCoins);
 
         // set up facebook status fields
         data.extra.accumFlow = (int)Math.min(money.accCoins, Integer.MAX_VALUE);
@@ -425,13 +371,6 @@ public class FacebookLogic
         data.extra.levelFlow = data.level <= 1 ? 0 : levelFinder.getCoinsForLevel(data.level);
         data.extra.nextLevelFlow = levelFinder.getCoinsForLevel(data.level + 1);
         data.extra.trophyCount = _trophyRepo.countTrophies(memberId);
-
-        // level-uppance - note we only show this for people who have had a daily visit since the
-        // award system was rolled out *or* gained a level as a result of the award, so older users
-        // don't see something like "you have just reached level 5" when they haven't
-        if (lastLevel != 0 && lastLevel != data.level) {
-            data.extra.levelsGained = data.level - lastLevel;
-        }
     }
 
     /**
@@ -723,15 +662,6 @@ public class FacebookLogic
     /** Amount of time after the app is installed that we will start granting visit rewards. This
      *  is because new users automatically get 1000 coins for joining. */
     protected static final long NEW_ACCOUNT_TIME = 20 * 60 * 60 * 1000; // 20 hours
-
-    /** Minimum amount of time between visit rewards. Use 20 hours so that there is some leeway for
-     *  people to visit at the same approximate time each day but not generally get more than one
-     *  reward per day. */
-    protected static final long MIN_AWARD_PERIOD = 20 * 60 * 60 * 1000; // 20 hours
-
-    /** Coin awards for visiting the app, in reverse order. I.e. 1st visit rewards is in last
-     *  slot. */
-    protected static final int VISIT_AWARDS[] = {200, 400, 600, 800};
 
     protected static final URL SERVER_URL;
     static {
