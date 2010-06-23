@@ -12,6 +12,9 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.samskivert.io.PersistenceException;
+import com.samskivert.jdbc.RepositoryUnit;
+import com.samskivert.servlet.util.ServiceWaiter;
+import com.samskivert.util.Invoker;
 
 import com.threerings.util.MessageBundle;
 import com.threerings.whirled.data.SceneModel;
@@ -45,6 +48,9 @@ import com.threerings.msoy.room.server.persist.MemoryRepository;
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
 import com.threerings.msoy.room.server.persist.SceneFurniRecord;
 import com.threerings.msoy.room.server.persist.SceneRecord;
+import com.threerings.presents.annotation.MainInvoker;
+import com.threerings.presents.client.InvocationService.ResultListener;
+
 import static com.threerings.msoy.Log.log;
 
 /**
@@ -111,9 +117,21 @@ public class SceneLogic
         return new UpdateList(); // we don't do scene updates
     }
 
-    public boolean flushUpdates (int sceneId)
+    public void flushUpdates (final int sceneId, final ResultListener listener)
     {
-        return _accumulator.flushUpdates(sceneId);
+        // trigger a flush of any furniture updates
+        _invoker.postUnit(new RepositoryUnit("flushUpdates") {
+            @Override public void invokePersist () throws Exception {
+                // clear out any pending updates
+                _accumulator.flushUpdates(sceneId);
+            }
+            @Override public void handleSuccess () {
+                listener.requestProcessed(null);
+            }
+            @Override public void handleFailure (Exception e) {
+                listener.requestFailed(e.getMessage());
+            }
+        });
     }
 
     // from interface SceneRepository
@@ -255,7 +273,32 @@ public class SceneLogic
         return record;
     }
 
-    public String validateTemplateFurni (int themeId, int sceneId, byte itemType, int itemId)
+    public void validateAllTemplateFurni (final int groupId, final int sceneId,
+        final ServiceWaiter<Void> waiter)
+    {
+        _invoker.postUnit(new RepositoryUnit("validateAllTemplateFurni") {
+            @Override public void invokePersist () throws Exception {
+                // go through the furni and make sure they're sane
+                for (SceneFurniRecord rec : _sceneRepo.loadFurni(sceneId)) {
+                    if (rec.itemType != 0 && rec.itemId != 0) {
+                        String err = validateOneTemplateFurni(
+                            groupId, sceneId, rec.itemType, rec.itemId);
+                        if (err != null) {
+                            throw new ServiceException(err);
+                        }
+                    }
+                }
+            }
+            @Override public void handleSuccess () {
+                waiter.requestCompleted(null);
+            }
+            @Override public void handleFailure (Exception e) {
+                waiter.requestFailed(e);
+            }
+        });
+    }
+
+    public String validateOneTemplateFurni (int themeId, int sceneId, byte itemType, int itemId)
         throws ServiceException
     {
         // make sure the item is stamped
@@ -302,6 +345,7 @@ public class SceneLogic
     }
 
     // dependencies
+    @Inject protected @MainInvoker Invoker _invoker;
     @Inject protected AudioRepository _audioRepo;
     @Inject protected DecorRepository _decorRepo;
     @Inject protected GroupRepository _groupRepo;

@@ -14,6 +14,8 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 
+import com.samskivert.servlet.util.ServiceWaiter;
+import com.samskivert.util.ServiceWaiter.TimeoutException;
 import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.PopularPlacesSnapshot;
 import com.threerings.msoy.server.ServerConfig;
@@ -27,7 +29,6 @@ import com.threerings.msoy.data.all.RatingResult;
 import com.threerings.msoy.web.gwt.ServiceCodes;
 import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
-
 import com.threerings.msoy.admin.data.CostsConfigObject;
 import com.threerings.msoy.admin.server.RuntimeConfig;
 
@@ -48,8 +49,9 @@ import com.threerings.msoy.room.gwt.RoomDetail;
 import com.threerings.msoy.room.gwt.RoomInfo;
 import com.threerings.msoy.room.gwt.WebRoomService;
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
-import com.threerings.msoy.room.server.persist.SceneFurniRecord;
 import com.threerings.msoy.room.server.persist.SceneRecord;
+import com.threerings.presents.client.InvocationService;
+
 import static com.threerings.msoy.Log.log;
 
 /**
@@ -233,7 +235,7 @@ public class WebRoomServlet extends MsoyServiceServlet
         // all is well, let's go ahead
         if (_sceneRepo.stampRoom(sceneId, doStamp ? groupId : 0)) {
             // if the scene is resolved somewhere, nuke it
-            _sceneActions.flushTheme(sceneId);
+            _sceneActions.evictAndShutdown(sceneId);
 
             // if we unstamped a room, make sure it's not a home room template
             _themeRepo.removeHomeTemplate(groupId, sceneId);
@@ -245,7 +247,7 @@ public class WebRoomServlet extends MsoyServiceServlet
     }
 
     // from interface WebRoomService
-    public void makeTemplate (int sceneId, int groupId, boolean doMake)
+    public void makeTemplate (final int sceneId, final int groupId, boolean doMake)
         throws ServiceException
     {
         MemberRecord mrec = requireThemeManager(groupId);
@@ -263,23 +265,30 @@ public class WebRoomServlet extends MsoyServiceServlet
         ensureSceneManager(mrec, sceneRec);
 
         if (doMake) {
-            // if we get this far, forcibly shut down the room; this may not help for this
-            // particular invocation, but the manager can just hit the button again and the
-            // flush will have taken place by then -- pragmatism is the word of the day
-            _sceneActions.flushTheme(sceneId);
+            // if we get this far, we need to flush out any pending furniture changes to
+            // disk before continuing on with the checks. this necessitates a fair bit of
+            // frustrating thread bouncing.
+            final ServiceWaiter<Void> waiter = new ServiceWaiter<Void>();
 
-            // go through the furni and make sure they're sane
-            for (SceneFurniRecord rec : _sceneRepo.loadFurni(sceneId)) {
-                if (rec.itemType != 0 && rec.itemId != 0) {
-                    String err = _sceneLogic.validateTemplateFurni(
-                        groupId, sceneId, rec.itemType, rec.itemId);
-                    if (err != null) {
-                        throw new ServiceException(err);
-                    }
+            _sceneActions.flushUpdates(sceneId, new InvocationService.ConfirmListener() {
+                @Override public void requestProcessed () {
+                    _sceneLogic.validateAllTemplateFurni(groupId, sceneId, waiter);
                 }
-            }
+                @Override public void requestFailed (String cause) {
+                    // the flush failed, try the validation anyway
+                    _sceneLogic.validateAllTemplateFurni(groupId, sceneId, waiter);
+                }
+            });
+            try {
+                if (!waiter.waitForResponse()) {
+                    throw new ServiceException(waiter.getError().getMessage());
+                }
+                _themeRepo.setHomeTemplate(groupId, sceneId);
 
-            _themeRepo.setHomeTemplate(groupId, sceneId);
+            } catch (TimeoutException e) {
+                log.warning("Flush waiter timed out", e);
+                throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+            }
 
         } else {
             _themeRepo.removeHomeTemplate(groupId, sceneId);

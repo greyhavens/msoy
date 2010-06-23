@@ -293,43 +293,39 @@ public class RoomManager extends SpotSceneManager
      */
     public void evictPlayersAndShutdown ()
     {
-        // copy the occupant set as a player list, as occupancy is modified in the loop below
-        List<MemberObject> players = Lists.newArrayList();
-        for (OccupantInfo playerInfo : _roomObj.occupantInfo) {
-            DObject body = _omgr.getObject(playerInfo.bodyOid);
-            if (body instanceof MemberObject) {
-                players.add((MemberObject) body);
-            }
-        }
-
-        // now throw the players out
-        for (MemberObject player : players) {
-            SpeakUtil.sendInfo(player, MsoyCodes.GENERAL_MSGS,
-                MessageUtil.tcompose("m.shutdown_evicted", _scene.getName()));
-            int homeId = player.getHomeSceneId();
-            if (homeId == _scene.getId()) {
-                // a player's home room is being updated, send them to BNW instead?
-                if (homeId == 1) {
-                    // silly edge case: it's the BNW room being stamped, just evict them to nowhere
-                    _locmgr.leaveOccupiedPlace(player);
-                    continue;
+        try {
+            // copy the occupant set as a player list, as occupancy is modified in the loop below
+            List<MemberObject> players = Lists.newArrayList();
+            for (OccupantInfo playerInfo : _roomObj.occupantInfo) {
+                DObject body = _omgr.getObject(playerInfo.bodyOid);
+                if (body instanceof MemberObject) {
+                    players.add((MemberObject) body);
                 }
-                homeId = 1;
             }
-            _screg.moveBody(player, homeId);
-        }
 
-        // trigger a flush of any furniture updates
-        _invoker.postUnit(new RepositoryUnit("flushUpdates") {
-            @Override public void invokePersist () throws Exception {
-                // clear out any pending updates
-                _sceneLogic.flushUpdates(_scene.getId());
+            // now throw the players out
+            for (MemberObject player : players) {
+                SpeakUtil.sendInfo(player, MsoyCodes.GENERAL_MSGS,
+                    MessageUtil.tcompose("m.shutdown_evicted", _scene.getName()));
+                int homeId = player.getHomeSceneId();
+                if (homeId == _scene.getId()) {
+                    // a player's home room is being updated, send them to BNW instead?
+                    if (homeId == 1) {
+                        // silly edge case: it's the BNW room being stamped, just evict them to nowhere
+                        _locmgr.leaveOccupiedPlace(player);
+                        continue;
+                    }
+                    homeId = 1;
+                }
+                _screg.moveBody(player, homeId);
             }
-            @Override public void handleSuccess () {
-                // then immediately shut down the manager
-                shutdown();
-            }
-        });
+        } catch (Exception e) {
+            log.warning("Error evicting players from room before shutdown; proceeding anyway", e);
+
+        }
+        // then immediately shut down the manager
+        shutdown();
+
     }
 
     /**
@@ -1660,7 +1656,8 @@ public class RoomManager extends SpotSceneManager
                 // only send in a sceneId if it's in use as a template
                 int templateId =
                     (_themeRepo.loadHomeTemplate(themeId, sceneId) != null) ? sceneId : 0;
-                String err = _sceneLogic.validateTemplateFurni(themeId, templateId, itemType, itemId);
+                String err = _sceneLogic.validateOneTemplateFurni(
+                    themeId, templateId, itemType, itemId);
                 if (err != null) {
                     throw new InvocationException(err);
                 }
