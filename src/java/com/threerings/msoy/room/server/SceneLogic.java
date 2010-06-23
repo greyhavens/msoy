@@ -111,6 +111,11 @@ public class SceneLogic
         return new UpdateList(); // we don't do scene updates
     }
 
+    public boolean flushUpdates (int sceneId)
+    {
+        return _accumulator.flushUpdates(sceneId);
+    }
+
     // from interface SceneRepository
     public Object loadExtras (int sceneId, SceneModel model)
         throws PersistenceException

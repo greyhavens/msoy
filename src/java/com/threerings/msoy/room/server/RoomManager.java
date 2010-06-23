@@ -319,8 +319,17 @@ public class RoomManager extends SpotSceneManager
             _screg.moveBody(player, homeId);
         }
 
-        // then immediately shut down the manager
-        shutdown();
+        // trigger a flush of any furniture updates
+        _invoker.postUnit(new RepositoryUnit("flushUpdates") {
+            @Override public void invokePersist () throws Exception {
+                // clear out any pending updates
+                _sceneLogic.flushUpdates(_scene.getId());
+            }
+            @Override public void handleSuccess () {
+                // then immediately shut down the manager
+                shutdown();
+            }
+        });
     }
 
     /**

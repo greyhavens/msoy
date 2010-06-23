@@ -93,6 +93,21 @@ public class UpdateAccumulator
     }
 
     /**
+     * Commits any pending changes to the given sceneId, returning true if there were
+     * changes to flush.
+     */
+    public boolean flushUpdates (int sceneId)
+    {
+        UpdateWrapper wrapper = _pending.get(sceneId);
+        if (wrapper != null && !wrapper.isEmpty()) {
+            wrapper.filterAndStore(_repo);
+            _pending.remove(sceneId);
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Commits accumulated updates that have been around long enough.  This is invoked on the
      * invoker thread.
      */
