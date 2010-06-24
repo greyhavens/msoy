@@ -181,9 +181,11 @@ public class RoomDetailPanel extends SmartTable
 
                 _holder.add(_templateButton = MsoyUI.createTinyButton(
                     _msgs.doTemplate(), new TemplateClickHandler(true)));
+                _templateButton.setVisible(false);
 
                 _holder.add(_unTemplateButton = MsoyUI.createTinyButton(
                     _msgs.doUntemplate(), new TemplateClickHandler(false)));
+                _unTemplateButton.setVisible(false);
             }
 
             _themeBit.add(_holder);
@@ -210,7 +212,7 @@ public class RoomDetailPanel extends SmartTable
         _themeContents.setWidget(1, 0, MsoyUI.createLabel(_msgs.themeNote(), "themeNote"));
 
         if (_detail.theme != null) {
-            if (_managedThemes.contains(_detail.theme)) {
+            if (CShell.isSupport() || _managedThemes.contains(_detail.theme)) {
                 _unstampButton.setVisible(true);
                 _unTemplateButton.setVisible(_detail.isTemplate);
                 _templateButton.setVisible(!_detail.isTemplate);
