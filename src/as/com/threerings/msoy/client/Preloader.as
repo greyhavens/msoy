@@ -14,7 +14,6 @@ import flash.external.ExternalInterface;
 
 import flash.net.URLRequest;
 
-import flash.system.Capabilities;
 import flash.utils.getTimer;
 
 import flash.text.TextField;
@@ -28,6 +27,7 @@ import mx.preloaders.IPreloaderDisplay
 
 import com.threerings.msoy.data.UberClientModes;
 import com.threerings.msoy.ui.LoadingSpinner;
+import com.threerings.msoy.utils.Capabilities;
 
 /**
  * Displays a spinny animation during loading, but also validates the required
@@ -197,7 +197,7 @@ public class Preloader extends Sprite
 
         // NOTE: this code is flash 9 -> 10 specific. This might need to get more complicated
         // in the future. Molotov's for adobe.
-        if (getFlashVersion()[0] > 9) {
+        if (Capabilities.getFlashVersion()[0] > 9) {
             var l :Loader = new Loader();
             if (!l.hasOwnProperty("unloadAndStop")) { // only available in 10
                 // the stub is booching us!
@@ -232,7 +232,7 @@ public class Preloader extends Sprite
      */
     protected function checkFlashVersion () :Boolean
     {
-        var bits :Array = getFlashVersion();
+        var bits :Array = Capabilities.getFlashVersion();
         // pad out the version number to be the same length as our min
         while (bits.length < MIN_FLASH_VERSION.length) {
             bits.push(0);
@@ -251,16 +251,6 @@ public class Preloader extends Sprite
             // else: if two are the same, move to the next minor version number.
         }
         return true;
-    }
-
-    /**
-     * Get the flash player version as an array of Strings, like [ "9", "0", "115", "0" ].
-     */
-    protected function getFlashVersion () :Array
-    {
-        // the version looks like "LNX 9,0,31,0"
-        var bits :Array = Capabilities.version.split(" ");
-        return (bits[1] as String).split(",");
     }
 
     protected function showMessage (msg :String, link :String) :void

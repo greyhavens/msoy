@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.notify.client {
 
-import flash.system.Capabilities;
-
 import flash.utils.setTimeout; // function
 
 import com.threerings.util.Log;
@@ -33,6 +31,7 @@ import com.threerings.msoy.badge.data.all.Badge;
 import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.ui.AwardPanel;
+import com.threerings.msoy.utils.Capabilities;
 
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;
@@ -299,7 +298,7 @@ public class NotificationDirector extends BasicDirector
         }
 
         // check their flash version
-        if (Capabilities.version.split(" ")[1].split(",")[0] < FLASH_UPGRADE_VERSION) {
+        if (Capabilities.getFlashMajorVersion() < FLASH_UPGRADE_VERSION) {
             // just show this in 1 seconds
             setTimeout(addGenericNotification, 1 * 1000, "m.flash_upgrade", Notification.SYSTEM);
         }
