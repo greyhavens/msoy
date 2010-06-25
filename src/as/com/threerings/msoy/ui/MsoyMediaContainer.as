@@ -154,7 +154,7 @@ public class MsoyMediaContainer extends MediaContainer
     {
         super.addListeners(info);
 
-        if (Capabilities.isFlash10()) {
+        if (Capabilities.isFlash10() && "uncaughtErrorEvents" in Object(info.loader)) {
             Object(info.loader).uncaughtErrorEvents.addEventListener(
                 "uncaughtError", handleUncaughtErrors);
         }
@@ -165,7 +165,7 @@ public class MsoyMediaContainer extends MediaContainer
     {
         super.removeListeners(info);
 
-        if (Capabilities.isFlash10()) {
+        if (Capabilities.isFlash10() && "uncaughtErrorEvents" in Object(info.loader)) {
             Object(info.loader).uncaughtErrorEvents.removeEventListener(
                 "uncaughtError", handleUncaughtErrors);
         }
