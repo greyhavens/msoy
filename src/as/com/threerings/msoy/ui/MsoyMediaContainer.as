@@ -26,6 +26,7 @@ import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.ContextMenuProvider;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.Prefs;
+import com.threerings.msoy.utils.Capabilities;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MediaMimeTypes;
@@ -153,7 +154,7 @@ public class MsoyMediaContainer extends MediaContainer
     {
         super.addListeners(info);
 
-        if ("uncaughtErrorEvents" in Object(info.loader)) {
+        if (Capabilities.isFlash10()) {
             Object(info.loader).uncaughtErrorEvents.addEventListener(
                 "uncaughtError", handleUncaughtErrors);
         }
@@ -164,7 +165,7 @@ public class MsoyMediaContainer extends MediaContainer
     {
         super.removeListeners(info);
 
-        if ("uncaughtErrorEvents" in Object(info.loader)) {
+        if (Capabilities.isFlash10()) {
             Object(info.loader).uncaughtErrorEvents.removeEventListener(
                 "uncaughtError", handleUncaughtErrors);
         }
