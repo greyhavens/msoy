@@ -40,9 +40,11 @@ import com.threerings.presents.annotation.BlockingThread;
 import com.threerings.presents.dobj.RootDObjectManager;
 
 import com.threerings.underwire.web.data.Event;
+import com.threerings.util.MessageBundle;
 
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.room.data.RoomCodes;
 import com.threerings.msoy.server.MemberNodeActions;
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.ServerMessages;
@@ -63,6 +65,7 @@ import com.threerings.msoy.game.server.persist.GameInfoRecord;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 import com.threerings.msoy.group.data.all.Group;
 import com.threerings.msoy.group.server.GroupLogic;
+import com.threerings.msoy.group.server.ThemeLogic;
 import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
@@ -401,6 +404,11 @@ public class ItemLogic
             log.warning("Disallowing listing removal for non-owner", "who", remover.who(),
                         "listing", listing);
             throw new ServiceException(ItemCodes.E_ACCESS_DENIED);
+        }
+
+        if (_themeLogic.isUsedInTemplate(itemType, catalogId)) {
+            throw new ServiceException(MessageBundle.tcompose(
+                RoomCodes.E_TEMPLATE_LISTING_DERIVED, listing.item.name));
         }
 
         // get rid of derived listings
@@ -1346,6 +1354,7 @@ public class ItemLogic
     @Inject protected RootDObjectManager _omgr;
     @Inject protected ServerMessages _serverMsgs;
     @Inject protected SupportLogic _supportLogic;
+    @Inject protected ThemeLogic _themeLogic;
 
     // our myriad item repositories
     @Inject protected AudioRepository _audioRepo;

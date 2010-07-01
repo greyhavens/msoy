@@ -24,7 +24,6 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 
-import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.ArrayUtil;
 import com.samskivert.util.CollectionUtil;
 import com.samskivert.util.IntIntMap;
@@ -434,10 +433,10 @@ public abstract class ItemRepository<T extends ItemRecord>
         SQLExpression[] whereBits = new SQLExpression[0];
 
         if (themeId != 0) {
-            clauses = ArrayUtil.append(clauses, new Join(
-                getItemColumn(ItemRecord.ITEM_ID), getMogMarkColumn(MogMarkRecord.ITEM_ID)));
-            whereBits = ArrayUtil.append(whereBits,
-                getMogMarkColumn(MogMarkRecord.GROUP_ID).eq(themeId));
+            List<? extends MogMarkRecord> originalRecs = findAll(getMogMarkClass(),
+                new Where(getMogMarkColumn(MogMarkRecord.GROUP_ID).eq(themeId)));
+            whereBits = ArrayUtil.append(whereBits, getItemColumn(ItemRecord.ITEM_ID).in(
+                Lists.transform(originalRecs, MogMarkRecord.TO_ITEM_ID)));
         }
 
         SQLExpression[] originalBits = ArrayUtil.append(
