@@ -14,6 +14,7 @@ import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.util.Invoker;
 import com.samskivert.depot.EHCacheAdapter;
 import com.samskivert.depot.PersistenceContext;
+import com.samskivert.depot.EHCacheAdapter.EHCacheConfig;
 
 import com.threerings.presents.dobj.AccessController;
 import com.threerings.presents.server.PresentsInvoker;
@@ -75,7 +76,12 @@ public abstract class MsoyBaseServer extends WhirledServer
 
         // initialize our persistence context and repositories; run schema and data migrations
         ConnectionProvider conprov = ServerConfig.createConnectionProvider();
-        _perCtx.init("msoy", conprov, new EHCacheAdapter(_cacheMgr, "msoy"));
+        _perCtx.init("msoy", conprov, new EHCacheAdapter(_cacheMgr, "msoy",
+                new EHCacheConfig("depotRecord", 400000, 300, 600),
+                new EHCacheConfig("depotShortKeyset", 35000, 10, 10),
+                new EHCacheConfig("depotLongKeyset", 25000, 300, 300),
+                new EHCacheConfig("depotResult", 5000, 300, 300)));
+
         _perCtx.initializeRepositories(true);
 
         // set up our runtime config now so it's ready before any other initialization happens
