@@ -9,13 +9,17 @@ import com.google.common.base.Function;
 
 import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistentRecord;
+import com.samskivert.depot.StringFuncs;
 import com.samskivert.depot.annotation.Entity;
 import com.samskivert.depot.annotation.GeneratedValue;
 import com.samskivert.depot.annotation.GenerationType;
 import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.annotation.Index;
+import com.samskivert.depot.clause.OrderBy.Order;
 
 import com.samskivert.depot.expression.ColumnExp;
+import com.samskivert.depot.expression.SQLExpression;
+import com.samskivert.util.Tuple;
 import com.threerings.io.Streamable;
 
 import com.threerings.msoy.data.all.TagCodes;
@@ -23,7 +27,7 @@ import com.threerings.msoy.data.all.TagCodes;
 /**
  * Maps a tag's id to the tag itself.
  */
-@Entity
+@Entity(indices=@Index(name="ixLowerTag"))
 public class TagNameRecord extends PersistentRecord
     implements Streamable
 {
@@ -33,7 +37,13 @@ public class TagNameRecord extends PersistentRecord
     public static final ColumnExp TAG = colexp(_R, "tag");
     // AUTO-GENERATED: FIELDS END
 
-    public static final int SCHEMA_VERSION = 2;
+    /** Defines the index on {@link #tag} converted to lower case. */
+    public static Tuple<SQLExpression, Order> ixLowerTag ()
+    {
+        return new Tuple<SQLExpression, Order>(StringFuncs.lower(TagNameRecord.TAG), Order.ASC);
+    }
+
+    public static final int SCHEMA_VERSION = 3;
 
     /** A regexp pattern to validate tags */
     public static final Pattern VALID_TAG = Pattern.compile(
@@ -52,7 +62,6 @@ public class TagNameRecord extends PersistentRecord
     public int tagId;
 
     /** The actual tag. */
-    @Index(name="ixTag")
     public String tag;
 
     // AUTO-GENERATED: METHODS START
