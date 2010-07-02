@@ -167,8 +167,8 @@ public class GameDetailPanel extends SmartTable
             }
         });
 
-        // if we're the creator of the game or an admin, add the metrics and logs tabs
-        if (info.isCreator(CShell.getMemberId()) || CShell.isAdmin()) {
+        // if we're the creator of the game or support, add the metrics and logs tabs
+        if (info.isCreator(CShell.getMemberId()) || CShell.isSupport()) {
             addTab(GameDetails.METRICS, _msgs.tabMetrics(), new LazyPanel() {
                 protected Widget createWidget () {
                     return new GameMetricsPanel(detail);
