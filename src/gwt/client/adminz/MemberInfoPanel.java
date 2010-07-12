@@ -11,7 +11,6 @@ import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
@@ -160,22 +159,6 @@ public class MemberInfoPanel extends AdminDataPanel<MemberAdminInfo>
 
         row = table.addText("Last session:", 1, "Label");
         table.setText(row, 1, ""+info.lastSession);
-
-        row = table.addText("Humanity:", 1, "Label");
-        final Label humanityLabel = new Label(""+info.humanity);
-        Button resetHumanity = new Button("Reset");
-        table.setWidget(row, 1, MsoyUI.createButtonPair(humanityLabel, resetHumanity));
-        new ClickCallback<Integer>(resetHumanity) {
-            @Override protected boolean callService () {
-                _adminsvc.resetHumanity(info.name.getMemberId(), this);
-                return true;
-            }
-            @Override protected boolean gotResult (Integer newHumanity) {
-                info.humanity = newHumanity;
-                humanityLabel.setText(""+info.humanity);
-                return true;
-            }
-        };
 
         row = table.addText("Affiliate:", 1, "Label");
         if (info.affiliate != null) {
