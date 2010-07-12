@@ -192,9 +192,27 @@ public abstract class RatingRepository extends DepotRepository
      */
     public void purgeMembers (Collection<Integer> memberIds)
     {
-        // note: this is a full table scan, add appropriate index if this becomes slow
-        deleteAll(getRatingClass(),
-                  new Where(getRatingColumn(RatingRecord.MEMBER_ID).in(memberIds)));
+        Where where = new Where(getRatingColumn(RatingRecord.MEMBER_ID).in(memberIds));
+
+        for (RatingRecord rec : findAll(getRatingClass(), where)) {
+            int targetId = rec.targetId;
+
+            RatingExtractionRecord targetRec = load(RatingExtractionRecord.class,
+                new FromOverride(getTargetClass()),
+                new Where(_targetId, targetId),
+                new FieldDefinition("ratingCount", _ratingCount),
+                new FieldDefinition("ratingSum", _ratingSum));
+
+            if (targetRec == null) {
+                log.warning("Asked to nuke rating for a non-existent record", "target", targetId);
+                continue;
+            }
+
+            updatePartial(getTargetKey(targetId),
+                _ratingSum, targetRec.ratingSum - rec.rating,
+                _ratingCount, targetRec.ratingCount - 1);
+            delete(rec);
+        }
     }
 
     /** Exports the specific rating class used by this repository. */
