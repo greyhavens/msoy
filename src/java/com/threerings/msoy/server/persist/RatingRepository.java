@@ -203,14 +203,14 @@ public abstract class RatingRepository extends DepotRepository
                 new FieldDefinition("ratingCount", _ratingCount),
                 new FieldDefinition("ratingSum", _ratingSum));
 
-            if (targetRec == null) {
+            if (targetRec != null) {
+                updatePartial(getTargetKey(targetId),
+                    _ratingSum, targetRec.ratingSum - rec.rating,
+                    _ratingCount, targetRec.ratingCount - 1);
+            } else {
                 log.warning("Asked to nuke rating for a non-existent record", "target", targetId);
-                continue;
             }
 
-            updatePartial(getTargetKey(targetId),
-                _ratingSum, targetRec.ratingSum - rec.rating,
-                _ratingCount, targetRec.ratingCount - 1);
             delete(rec);
         }
     }
