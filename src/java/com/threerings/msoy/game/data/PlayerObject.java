@@ -23,7 +23,6 @@ import com.whirled.game.server.PropertySpaceHelper;
 
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
-import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.MsoyTokenRing;
 import com.threerings.msoy.data.MsoyUserObject;
 import com.threerings.msoy.data.all.MediaDesc;
@@ -66,10 +65,6 @@ public class PlayerObject extends WhirledPlayerObject
     @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String BARS = "bars";
 
-    /** The field name of the <code>humanity</code> field. */
-    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
-    public static final String HUMANITY = "humanity";
-
     /** The field name of the <code>visitorInfo</code> field. */
     @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String VISITOR_INFO = "visitorInfo";
@@ -93,10 +88,6 @@ public class PlayerObject extends WhirledPlayerObject
 
     /** The number of bars the member has currently in their account. */
     public int bars;
-
-    /** Our current assessment of how likely to be human this member is, in [0, {@link
-     * MsoyCodes#MAX_HUMANITY}]. */
-    public int humanity;
 
     /** Player's referral information. */
     public VisitorInfo visitorInfo;
@@ -142,12 +133,6 @@ public class PlayerObject extends WhirledPlayerObject
     public int getMemberId ()
     {
         return memberName.getMemberId();
-    }
-
-    // from interface MsoyUserObject
-    public float getHumanity ()
-    {
-        return humanity / (float)MsoyCodes.MAX_HUMANITY;
     }
 
     // from interface MsoyUserObject
@@ -285,23 +270,6 @@ public class PlayerObject extends WhirledPlayerObject
         requestAttributeChange(
             BARS, Integer.valueOf(value), Integer.valueOf(ovalue));
         this.bars = value;
-    }
-
-    /**
-     * Requests that the <code>humanity</code> field be set to the
-     * specified value. The local value will be updated immediately and an
-     * event will be propagated through the system to notify all listeners
-     * that the attribute did change. Proxied copies of this object (on
-     * clients) will apply the value change when they received the
-     * attribute changed notification.
-     */
-    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
-    public void setHumanity (int value)
-    {
-        int ovalue = this.humanity;
-        requestAttributeChange(
-            HUMANITY, Integer.valueOf(value), Integer.valueOf(ovalue));
-        this.humanity = value;
     }
 
     /**

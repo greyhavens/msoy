@@ -40,9 +40,6 @@ public class PlayerObject extends WhirledPlayerObject
     /** The field name of the <code>game</code> field. */
     public static const GAME :String = "game";
 
-    /** The field name of the <code>humanity</code> field. */
-    public static const HUMANITY :String = "humanity";
-
     /** The field name of the <code>visitorInfo</code> field. */
     public static const VISITOR_INFO :String = "visitorInfo";
     // AUTO-GENERATED: FIELDS END
@@ -61,9 +58,6 @@ public class PlayerObject extends WhirledPlayerObject
 
     /** The number of bars the member has currently in their account. */
     public var bars :int;
-
-    /** Our current assessment of how likely to be human this member is, in [0, 255]. */
-    public var humanity :int;
 
     /** Player's tracking information. */
     public var visitorInfo :VisitorInfo;
@@ -107,14 +101,6 @@ public class PlayerObject extends WhirledPlayerObject
         return memberName.getPhoto();
     }
 
-    /**
-     * Return our assessment of how likely this member is to be human, in [0, 1].
-     */
-    public function getHumanity () :Number
-    {
-        return humanity / 255;
-    }
-
     // from PropertySpaceObject
     public function getUserProps () :Object
     {
@@ -149,7 +135,6 @@ public class PlayerObject extends WhirledPlayerObject
         game = GameSummary(ins.readObject());
         coins = ins.readInt();
         bars = ins.readInt();
-        humanity = ins.readInt();
         visitorInfo = VisitorInfo(ins.readObject());
         propertyService = PropertySpaceMarshaller(ins.readObject());
     }

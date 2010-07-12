@@ -50,9 +50,6 @@ public class MemberAdminInfo
     /** This time of this member's last session. */
     public Date lastSession;
 
-    /** This member's humanity rating. */
-    public int humanity;
-
     /** The member that is this player's affiliate, if any. */
     public MemberName affiliate;
 

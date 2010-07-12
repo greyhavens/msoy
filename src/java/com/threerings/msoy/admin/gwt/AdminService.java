@@ -115,12 +115,6 @@ public interface AdminService extends RemoteService
         throws ServiceException;
 
     /**
-     * Resets this member's humanity to the default value.
-     */
-    int resetHumanity (int memberId)
-        throws ServiceException;
-
-    /**
      * Configures this member's display name.
      */
     void setDisplayName (int memberId, String name)

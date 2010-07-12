@@ -65,10 +65,6 @@ import com.samskivert.util.StringUtil;
 import com.samskivert.util.Tuple;
 
 import com.threerings.util.StreamableArrayIntSet;
-import com.threerings.util.TimeUtil;
-
-import com.threerings.msoy.data.MsoyCodes;
-
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.Friendship;
 import com.threerings.msoy.data.all.MemberMailUtil;
@@ -669,8 +665,6 @@ public class MemberRepository extends DepotRepository
             long now = System.currentTimeMillis();
             member.created = new Date(now);
             member.lastSession = new Timestamp(now);
-            member.lastHumanityAssessment = new Timestamp(now);
-            member.humanity = MsoyCodes.STARTING_HUMANITY;
         }
         insert(member);
 
@@ -859,33 +853,20 @@ public class MemberRepository extends DepotRepository
 
     /**
      * Note that a member's session has ended: increment their sessions, add in the number of
-     * minutes spent online, and set their last session time to now. We also test to see if it
-     * is time to reassess this member's humanity.
+     * minutes spent online, and set their last session time to now.
      *
      * @param minutes the duration of the session in minutes.
-     * @param humanityReassessFreq the number of seconds between humanity reassessments or zero if
-     * humanity assessment is disabled.
      */
-    public void noteSessionEnded (int memberId, int minutes, int humanityReassessFreq)
+    public void noteSessionEnded (int memberId, int minutes)
     {
         MemberRecord record = loadMember(memberId);
         if (record == null) {
             log.warning("Non-existent member's session ended?", "id", memberId);
             return;
         }
-
-        // reassess their humanity if the time has come
-        long now = System.currentTimeMillis();
-        Timestamp nowStamp = new Timestamp(now);
-        int secsSinceLast = TimeUtil.elapsedSeconds(record.lastHumanityAssessment.getTime(), now);
-        if (humanityReassessFreq > 0 && humanityReassessFreq < secsSinceLast) {
-            record.humanity = _actionRepo.assessHumanity(memberId, record.humanity, secsSinceLast);
-            record.lastHumanityAssessment = nowStamp;
-        }
-
         record.sessions++;
         record.sessionMinutes += minutes;
-        record.lastSession = nowStamp;
+        record.lastSession = new Timestamp(System.currentTimeMillis());
         update(record);
     }
 
@@ -1402,13 +1383,6 @@ public class MemberRepository extends DepotRepository
         return findAll(MemberExperienceRecord.class,
             new Where(MemberExperienceRecord.MEMBER_ID, memberId),
             OrderBy.ascending(MemberExperienceRecord.DATE_OCCURRED));
-    }
-
-    public boolean updateHumanity (int memberId, int humanity)
-    {
-        return 1 == updatePartial(MemberRecord.getKey(memberId),
-            MemberRecord.HUMANITY, humanity,
-            MemberRecord.LAST_HUMANITY_ASSESSMENT, new Timestamp(System.currentTimeMillis()));
     }
 
     /**

@@ -92,7 +92,6 @@ import com.threerings.msoy.admin.gwt.StatsModel;
 import com.threerings.msoy.admin.server.ABTestLogic;
 import com.threerings.msoy.admin.server.persist.ABTestRecord;
 import com.threerings.msoy.admin.server.persist.ABTestRepository;
-import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.CharityInfo;
 import com.threerings.msoy.data.all.MemberName;
 
@@ -139,7 +138,6 @@ public class AdminServlet extends MsoyServiceServlet
         if (tgtrec.lastSession != null) {
             info.lastSession = new Date(tgtrec.lastSession.getTime());
         }
-        info.humanity = tgtrec.humanity;
         if (tgtrec.affiliateMemberId != 0) {
             info.affiliate = _memberRepo.loadMemberName(tgtrec.affiliateMemberId);
         }
@@ -209,31 +207,6 @@ public class AdminServlet extends MsoyServiceServlet
         }
         _memberRepo.storeFlags(tgtrec);
         MemberNodeActions.tokensChanged(tgtrec.memberId, tgtrec.toTokenRing());
-    }
-
-    // from interface AdminService
-    public int resetHumanity (int memberId)
-        throws ServiceException
-    {
-        final MemberRecord memrec = requireAdminUser();
-        final MemberRecord tgtrec = _memberRepo.loadMember(memberId);
-        if (tgtrec == null) {
-            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
-        }
-
-        int newHumanity = MsoyCodes.STARTING_HUMANITY;
-
-        // log this as a warning so that it shows up in the nightly filtered logs
-        log.warning("Resetting humanity", "setter", memrec.who(), "target", tgtrec.who(),
-            "from", tgtrec.humanity, "to", newHumanity);
-
-        // it should be enough to update this in the repository without fancy node actions
-        _memberRepo.updateHumanity(memberId, newHumanity);
-
-        // make a note in their support history
-        _supportLogic.noteHumanityReset(memrec.getName(), tgtrec.getName(), newHumanity);
-
-        return newHumanity;
     }
 
     // from interface AdminService

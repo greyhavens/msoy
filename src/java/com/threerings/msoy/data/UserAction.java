@@ -16,8 +16,7 @@ import com.threerings.util.MessageBundle;
 import com.threerings.msoy.data.all.MemberName;
 
 /**
- * Represent an action taken by a user; used for humanity assessment and to tag money earning and
- * spending transactions.
+ * Represent an action taken by a user; used to tag money earning and spending transactions.
  */
 @ActionScript(omit=true)
 public class UserAction extends SimpleStreamableObject

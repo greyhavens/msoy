@@ -18,7 +18,6 @@ import com.samskivert.util.StringUtil;
 import com.samskivert.util.Tuple;
 import com.threerings.util.Name;
 
-import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.MsoyTokenRing;
 import com.threerings.msoy.data.all.MemberMailUtil;
 import com.threerings.msoy.data.all.MemberName;
@@ -137,8 +136,6 @@ public class MemberRecord extends PersistentRecord
     public static final ColumnExp SESSIONS = colexp(_R, "sessions");
     public static final ColumnExp SESSION_MINUTES = colexp(_R, "sessionMinutes");
     public static final ColumnExp LAST_SESSION = colexp(_R, "lastSession");
-    public static final ColumnExp HUMANITY = colexp(_R, "humanity");
-    public static final ColumnExp LAST_HUMANITY_ASSESSMENT = colexp(_R, "lastHumanityAssessment");
     public static final ColumnExp EXPERIENCES = colexp(_R, "experiences");
     public static final ColumnExp FLAGS = colexp(_R, "flags");
     public static final ColumnExp AFFILIATE_MEMBER_ID = colexp(_R, "affiliateMemberId");
@@ -192,12 +189,6 @@ public class MemberRecord extends PersistentRecord
     /** The time at which the player ended their last session. */
     @Index(name="ixLastSession")
     public Timestamp lastSession;
-
-    /** This member's current humanity rating, between 0 and {@link MsoyCodes#MAX_HUMANITY}. */
-    public int humanity;
-
-    /** The time at which we last assessed this member's humanity. */
-    public Timestamp lastHumanityAssessment;
 
     /** Bits tracking whether the user has had any of a set of "one time" experiences. */
     public int experiences;

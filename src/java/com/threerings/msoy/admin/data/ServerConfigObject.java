@@ -30,10 +30,6 @@ public class ServerConfigObject extends ConfigObject
     @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String REGISTRATION_ENABLED = "registrationEnabled";
 
-    /** The field name of the <code>humanityReassessment</code> field. */
-    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
-    public static final String HUMANITY_REASSESSMENT = "humanityReassessment";
-
     /** The field name of the <code>nextReboot</code> field. */
     @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String NEXT_REBOOT = "nextReboot";
@@ -72,9 +68,6 @@ public class ServerConfigObject extends ConfigObject
 
     /** Whether or not to allow new registrations. */
     public boolean registrationEnabled = true;
-
-    /** The number of seconds between reassessments of a member's humanity factor. */
-    public int humanityReassessment = 24 * 3600;
 
     /** The time at which the next reboot will occur. */
     public long nextReboot;
@@ -166,23 +159,6 @@ public class ServerConfigObject extends ConfigObject
         requestAttributeChange(
             REGISTRATION_ENABLED, Boolean.valueOf(value), Boolean.valueOf(ovalue));
         this.registrationEnabled = value;
-    }
-
-    /**
-     * Requests that the <code>humanityReassessment</code> field be set to the
-     * specified value. The local value will be updated immediately and an
-     * event will be propagated through the system to notify all listeners
-     * that the attribute did change. Proxied copies of this object (on
-     * clients) will apply the value change when they received the
-     * attribute changed notification.
-     */
-    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
-    public void setHumanityReassessment (int value)
-    {
-        int ovalue = this.humanityReassessment;
-        requestAttributeChange(
-            HUMANITY_REASSESSMENT, Integer.valueOf(value), Integer.valueOf(ovalue));
-        this.humanityReassessment = value;
     }
 
     /**

@@ -53,22 +53,6 @@ public class SupportLogic
     }
 
     /**
-     * Adds a humanity reset even to the user.
-     */
-    public void noteHumanityReset (MemberName admin, MemberName player, int humanity)
-    {
-        EventRecord event = new EventRecord();
-        event.source = Integer.toString(admin.getMemberId());
-        event.sourceHandle = admin.toString();
-        event.target = Integer.toString(player.getMemberId());
-        event.targetHandle = player.toString();
-        event.chatHistory = "";
-        event.status = Event.RESOLVED_CLOSED;
-        event.subject = "Humanity reset to: " + humanity;
-        _underrepo.insertEvent(event);
-    }
-
-    /**
      * Adds a complaint record to the underwire event queue.
      */
     public void addComplaint (EventRecord event, int targetId)

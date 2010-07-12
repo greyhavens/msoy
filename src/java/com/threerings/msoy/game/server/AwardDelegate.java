@@ -712,7 +712,7 @@ public class AwardDelegate extends RatingDelegate
                      "awardMins", awardMins);
         }
 
-        return Math.round(record.humanity * _flowPerMinute * awardMins);
+        return Math.round(_flowPerMinute * awardMins);
     }
 
     protected void payoutPlayer (int playerId)
@@ -793,7 +793,6 @@ public class AwardDelegate extends RatingDelegate
     {
         public int bodyOid;
         public MemberName name;
-        public float humanity;
         public boolean isGuest;
 
         public int played;
@@ -801,7 +800,6 @@ public class AwardDelegate extends RatingDelegate
         public FlowRecord (PlayerObject plobj) {
             this.bodyOid = plobj.getOid();
             this.name = plobj.memberName;
-            this.humanity = plobj.getHumanity();
             this.isGuest = plobj.isPermaguest();
         }
 

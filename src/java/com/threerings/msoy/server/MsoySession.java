@@ -228,8 +228,7 @@ public class MsoySession extends WhirledSession
 //                    resolutionStamps.add(System.currentTimeMillis() - startStamp);
 
                     // increment their session and minutes online counters
-                    _memberRepo.noteSessionEnded(
-                        memberId, activeMins, _runtime.server.humanityReassessment);
+                    _memberRepo.noteSessionEnded(memberId, activeMins);
 //                    resolutionStamps.add(System.currentTimeMillis() - startStamp);
 
                     // save their experiences

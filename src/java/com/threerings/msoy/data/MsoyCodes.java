@@ -63,10 +63,4 @@ public interface MsoyCodes extends InvocationCodes
 
     /** The translation message bundle for our stats services. */
     public static final String STATS_MSGS = "stats";
-
-    /** The humanity value for a fully actualized human. */
-    public static final int MAX_HUMANITY = 255;
-
-    /** The humanity value for a brand new user. */
-    public static final int STARTING_HUMANITY = MAX_HUMANITY/2;
 }

@@ -51,7 +51,6 @@ public class GameClientResolver extends CrowdClientResolver
         // initialization when we know that no one is listening
         PlayerObject plobj = (PlayerObject) clobj;
         plobj.memberName = new VizMemberName(member.name, member.memberId, photo);
-        plobj.humanity = member.humanity;
         plobj.visitorInfo = new VisitorInfo(member.visitorId, true);
 
         final MemberMoney money = _moneyLogic.getMoneyFor(authName.getMemberId());
