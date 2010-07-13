@@ -3,6 +3,11 @@
 
 package client.comment;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -10,6 +15,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
@@ -31,6 +37,7 @@ import client.ui.BorderedDialog;
 import client.ui.ComplainPopup;
 import client.ui.MsoyUI;
 import client.ui.SafeHTML;
+import client.util.ClickCallback;
 import client.util.InfoCallback;
 import client.util.MsoyPagedServiceDataModel;
 
@@ -68,6 +75,13 @@ public class CommentsPanel extends PagedGrid<Comment>
         new PostPanel().show();
     }
 
+    @Override
+    protected Widget createContents (int start, int count, List<Comment> list)
+    {
+        _batchDelete.clear();
+        return super.createContents(start, count, list);
+    }
+
     @Override // from PagedGrid
     protected Widget createWidget (Comment comment)
     {
@@ -100,6 +114,12 @@ public class CommentsPanel extends PagedGrid<Comment>
             });
             controls.setWidget(0, 0, _post);
         }
+
+        if (commentsCanBeBatchDeleted()) {
+            Button batchButton = new Button("Delete Checked");
+            _batchDelete = new DeleteClickCallback(batchButton, "Are you sure you want to delete these comments?");
+            controls.setWidget(0, 1, batchButton);
+        }
     }
 
     /**
@@ -113,6 +133,12 @@ public class CommentsPanel extends PagedGrid<Comment>
     protected boolean commentsCanBeRated ()
     {
         return _rated;
+    }
+
+    protected boolean commentsCanBeBatchDeleted ()
+    {
+        return CShell.isSupport() ||
+            (_etype == Comment.TYPE_PROFILE_WALL && _entityId == CShell.getMemberId());
     }
 
     /**
@@ -178,13 +204,14 @@ public class CommentsPanel extends PagedGrid<Comment>
     {
         return new Command() {
             public void execute () {
-                _commentsvc.deleteComment(
-                    _etype, _entityId, comment.posted, new InfoCallback<Boolean>() {
-                    public void onSuccess (Boolean deleted) {
-                        if (deleted) {
+                List<Long> single = new LinkedList<Long>(Collections.singleton(comment.posted));
+                _commentsvc.deleteComments(_etype, _entityId, single, new InfoCallback<Integer>() {
+                    public void onSuccess (Integer deleted) {
+                        if (deleted > 0) {
                             MsoyUI.info(_cmsgs.commentDeleted());
                             _commentCount = -1;
                             removeItem(comment);
+                            _batchDelete.remove(comment);
                         } else {
                             MsoyUI.error(_cmsgs.commentDeletionNotAllowed());
                         }
@@ -192,6 +219,16 @@ public class CommentsPanel extends PagedGrid<Comment>
                 });
             }
         };
+    }
+
+    protected void setDeletionCheckbox (Comment comment, boolean checked)
+    {
+        if (checked) {
+            _batchDelete.add(comment);
+        } else {
+            _batchDelete.remove(comment);
+        }
+        _batchDelete.updateAbledness();
     }
 
     protected void complainComment (Comment comment)
@@ -203,6 +240,53 @@ public class CommentsPanel extends PagedGrid<Comment>
     {
         comment = comment.trim();
         return comment.length() >= 8;
+    }
+
+    protected class DeleteClickCallback extends ClickCallback<Integer>
+    {
+        protected DeleteClickCallback (HasClickHandlers trigger, String confirmMessage)
+        {
+            super(trigger, confirmMessage);
+            updateAbledness();
+        }
+
+        public void add (Comment comment)
+        {
+            _batchComments.put(comment.posted, comment);
+            updateAbledness();
+        }
+
+        public void remove (Comment comment)
+        {
+            _batchComments.remove(comment.posted);
+            updateAbledness();
+        }
+
+        public void clear () {
+            _batchComments.clear();
+            updateAbledness();
+        }
+
+        public void updateAbledness () {
+            _batchDelete.setEnabled(!_batchComments.isEmpty());
+        }
+
+        @Override protected boolean callService () {
+            _commentsvc.deleteComments(_etype, _entityId,
+                new LinkedList<Long>(_batchComments.keySet()), this);
+            return true;
+        }
+
+        @Override protected boolean gotResult (Integer result) {
+            for (Comment comment : _batchComments.values()) {
+                removeItem(comment);
+            }
+            _commentCount = -1;
+            _batchComments.clear();
+            return false;
+        }
+
+        protected Map<Long, Comment> _batchComments = new HashMap<Long, Comment>();
     }
 
     protected class CommentModel extends MsoyPagedServiceDataModel<Comment, PagedResult<Comment>>
@@ -280,6 +364,8 @@ public class CommentsPanel extends PagedGrid<Comment>
 
     protected int _etype, _entityId;
     protected int _commentCount = -1;
+
+    protected DeleteClickCallback _batchDelete;
 
     protected boolean _rated;
     protected Button _post;

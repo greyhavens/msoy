@@ -9,6 +9,9 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Panel;
@@ -41,12 +44,7 @@ public class CommentPanel extends MessagePanel
 
         _rated = false;
 
-        if (_parent.commentsCanBeRated()) {
-            _displayed = _parent.shouldDisplay(_comment);
-        } else {
-
-            _displayed = true;
-        }
+        _displayed = _parent.commentsCanBeRated() ? _parent.shouldDisplay(_comment) : true;
 
         addStyleName("commentPanel");
 
@@ -91,12 +89,24 @@ public class CommentPanel extends MessagePanel
     @Override
     protected Panel getTools ()
     {
-        if (!_parent.commentsCanBeRated()) {
-            return null;
-        }
-
         InlinePanel tools = new InlinePanel("Tools");
+        if (_parent.commentsCanBeRated()) {
+            addRatingUI(tools);
+        }
+        if (_parent.commentsCanBeBatchDeleted()) {
+            _delBox = new CheckBox();
+            tools.add(_delBox);
+            _delBox.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+                @Override public void onValueChange (ValueChangeEvent<Boolean> event) {
+                    _parent.setDeletionCheckbox(_comment, event.getValue());
+                }
+            });
+        }
+        return tools;
+    }
 
+    protected void addRatingUI (InlinePanel tools)
+    {
         InlineLabel rating = new InlineLabel("" + _comment.currentRating, false, true, false);
         rating.addStyleName("Posted");
         tools.add(rating);
@@ -113,12 +123,12 @@ public class CommentPanel extends MessagePanel
                 }
             });
             tools.add(showComment);
-            return tools;
+            return;
         }
 
         if (_rated || !CShell.isValidated() ||
-            CShell.getMemberId() == _comment.commentor.getMemberId()) {
-            return tools;
+                CShell.getMemberId() == _comment.commentor.getMemberId()) {
+            return;
         }
 
         _upRate = makeThumbButton(_images.thumb_up_default(), _images.thumb_up_over(),
@@ -136,8 +146,6 @@ public class CommentPanel extends MessagePanel
                 }
             });
         tools.add(_downRate);
-
-        return tools;
     }
 
     protected void rateComment (boolean rating)
@@ -205,6 +213,7 @@ public class CommentPanel extends MessagePanel
     protected boolean _displayed;
     protected boolean _rated;
     protected PushButton _upRate, _downRate;
+    protected CheckBox _delBox;
 
     protected static final MsgsImages _images = GWT.create(MsgsImages.class);
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);

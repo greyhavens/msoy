@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.comment.gwt;
 
+import java.util.Collection;
+
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.threerings.gwt.util.PagedResult;
 
@@ -29,7 +31,7 @@ public interface CommentServiceAsync
     /**
      * The async version of {@link CommentService#deleteComment}.
      */
-    void deleteComment (int entityType, int entityId, long when, AsyncCallback<Boolean> callback);
+    void deleteComments (int entityType, int entityId, Collection<Long> when, AsyncCallback<Integer> callback);
 
     /**
      * The async version of {@link CommentService#complainComment}.

@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.comment.server;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -19,8 +20,6 @@ import com.samskivert.util.StringUtil;
 import com.threerings.gwt.util.PagedResult;
 
 import com.threerings.msoy.notify.server.NotificationManager;
-import com.threerings.msoy.underwire.server.SupportLogic;
-
 import com.threerings.msoy.game.server.persist.GameInfoRecord;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 
@@ -38,7 +37,7 @@ import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.server.StatLogic;
 import com.threerings.msoy.server.persist.MemberCardRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
-
+import com.threerings.msoy.underwire.server.SupportLogic;
 import com.threerings.msoy.person.gwt.FeedMessageType;
 import com.threerings.msoy.person.server.FeedLogic;
 
@@ -189,21 +188,24 @@ public class CommentServlet extends MsoyServiceServlet
     }
 
     // from interface CommentService
-    public boolean deleteComment (int etype, int eid, long posted)
+    public int deleteComments (int etype, int eid, Collection<Long> stamps)
         throws ServiceException
     {
         MemberRecord mrec = requireAuthedUser();
-        // if we're not support personel, ensure that we are the poster of this comment
-        if (!mrec.isSupport()) {
-            CommentRecord record = _commentRepo.loadComment(etype, eid, posted);
-            if (record == null ||
-                !Comment.canDelete(etype, eid, record.memberId, mrec.memberId)) {
-                return false;
+        int deleted = 0;
+        for (Long posted : stamps) {
+            // if we're not support personnel, ensure that we are the poster of this comment
+            if (!mrec.isSupport()) {
+                CommentRecord record = _commentRepo.loadComment(etype, eid, posted);
+                if (record == null ||
+                        !Comment.canDelete(etype, eid, record.memberId, mrec.memberId)) {
+                    continue;
+                }
             }
+            _commentRepo.deleteComment(etype, eid, posted);
+            deleted ++;
         }
-
-        _commentRepo.deleteComment(etype, eid, posted);
-        return true;
+        return deleted;
     }
 
     // from interface CommentService

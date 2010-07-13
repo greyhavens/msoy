@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.comment.gwt;
 
+import java.util.Collection;
+
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -57,7 +59,7 @@ public interface CommentService extends RemoteService
      *
      * @return true if the comment was deleted, throws an exception on failure.
      */
-    boolean deleteComment (int entityType, int entityId, long when)
+    int deleteComments (int entityType, int entityId, Collection<Long> when)
         throws ServiceException;
 
     /**
