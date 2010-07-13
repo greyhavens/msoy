@@ -88,8 +88,7 @@ public class BackendAvatarAdapter
             fn.apply(null, args);
 
         } catch (err :Error) {
-            BackendUtils.log.warning("Error in user-code: " + err);
-            BackendUtils.log.logStackTrace(err);
+            BackendUtils.log.warning("Error in user-code", err);
         }
     }
 

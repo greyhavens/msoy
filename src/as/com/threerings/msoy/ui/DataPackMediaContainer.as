@@ -243,12 +243,14 @@ public class DataPackMediaContainer extends MsoyMediaContainer
                 return; // EXIT
             }
 
+            // if we didn't exit
+            log.warning("Error with stub", "url", _url);
+
         } catch (err :Error) {
-            log.logStackTrace(err);
+            // or there was an error
+            log.warning("Error with stub", "url", _url, err);
         }
 
-        // otherwise, if we didn't exit above,
-        log.warning("Error with stub", "url", _url);
         handleComplete(event);
     }
 
@@ -337,11 +339,13 @@ public class DataPackMediaContainer extends MsoyMediaContainer
                     return; // EXIT
                 }
 
+                // if we didn't exit...
+                log.warning("Error with stub", "url", _url);
+
             } catch (err :Error) {
-                log.logStackTrace(err);
+                // or there was an error
+                log.warning("Error with stub", "url", _url, err);
             }
-            // if we didn't exit above...
-            log.warning("Error with stub", "url", _url);
         }
     }
 

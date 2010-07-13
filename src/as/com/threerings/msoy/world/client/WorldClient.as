@@ -365,7 +365,7 @@ public class WorldClient extends MsoyClient
                 }
             }
         } catch (e :Error) {
-            log.logStackTrace(e);
+            log.warning("Error populating context menu", e);
         }
     }
 

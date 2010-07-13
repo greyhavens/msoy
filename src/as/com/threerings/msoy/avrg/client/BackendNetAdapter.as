@@ -86,8 +86,7 @@ public class BackendNetAdapter
             }
 
         } catch (err :Error) {
-            BackendUtils.log.warning("Error in user-code: " + err);
-            BackendUtils.log.logStackTrace(err);
+            BackendUtils.log.warning("Error in user-code", err);
         }
     }
 
@@ -109,8 +108,7 @@ public class BackendNetAdapter
                 _messageReceived(mname, data, senderId);
 
             } catch (err :Error) {
-                BackendUtils.log.warning("Error in user-code: " + err);
-                BackendUtils.log.logStackTrace(err);
+                BackendUtils.log.warning("Error in user-code", err);
             }
         }
     }
