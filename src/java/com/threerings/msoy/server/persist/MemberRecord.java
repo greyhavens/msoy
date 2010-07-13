@@ -150,7 +150,7 @@ public class MemberRecord extends PersistentRecord
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 30;
+    public static final int SCHEMA_VERSION = 31;
 
     /** This member's unique id. */
     @Id @GeneratedValue(strategy=GenerationType.IDENTITY)

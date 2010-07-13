@@ -136,6 +136,11 @@ public class MemberRepository extends DepotRepository
                 }
             });
 
+        _ctx.registerMigration(MemberRecord.class,
+            new SchemaMigration.Drop(31, "humanity"));
+        _ctx.registerMigration(MemberRecord.class,
+            new SchemaMigration.Drop(31, "lastHumanityAssessment"));
+
         registerMigration(new DataMigration("2009-09 ExternalMapRecord siteId") {
             @Override public void invoke ()
                 throws DatabaseException {
