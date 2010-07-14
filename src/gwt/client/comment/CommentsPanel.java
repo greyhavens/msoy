@@ -78,7 +78,9 @@ public class CommentsPanel extends PagedGrid<Comment>
     @Override
     protected Widget createContents (int start, int count, List<Comment> list)
     {
-        _batchDelete.clear();
+        if (_batchDelete != null) {
+            _batchDelete.clear();
+        }
         return super.createContents(start, count, list);
     }
 
@@ -268,7 +270,7 @@ public class CommentsPanel extends PagedGrid<Comment>
         }
 
         public void updateAbledness () {
-            _batchDelete.setEnabled(!_batchComments.isEmpty());
+            super.setEnabled(!_batchComments.isEmpty());
         }
 
         @Override protected boolean callService () {
