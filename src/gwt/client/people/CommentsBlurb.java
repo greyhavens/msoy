@@ -4,9 +4,6 @@
 package client.people;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-
 import com.threerings.msoy.comment.gwt.Comment;
 import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.profile.gwt.ProfileService;
@@ -32,11 +29,6 @@ public class CommentsBlurb extends Blurb
 
         setHeader(_msgs.commentsTitle());
         setContent(_wall = new WallPanel(pdata.name.getMemberId()));
-        setFooterLabel(_cmsgs.postComment(), new ClickHandler() {
-            public void onClick (ClickEvent event) {
-                _wall.showPostPopup();
-            }
-        });
     }
 
     protected class WallPanel extends CommentsPanel
@@ -46,11 +38,6 @@ public class CommentsBlurb extends Blurb
             addStyleName("Wall");
             removeStyleName("dottedGrid");
             setVisible(true); // trigger immediate loading of our model
-        }
-
-        @Override // from PagedGrid
-        protected boolean displayNavi (int items) {
-            return (items > COMMENTS_PER_PAGE);
         }
 
         @Override // from CommentsPanel
