@@ -18,10 +18,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Maps;
+import com.google.common.util.concurrent.Callables;
 import com.google.inject.Inject;
 
 import com.samskivert.io.StreamUtil;
-import com.samskivert.util.Callables;
 import com.samskivert.util.IntIntMap;
 import com.samskivert.util.Tuple;
 
@@ -213,7 +213,7 @@ public class StatusServlet extends HttpServlet
                 buf.append(": ").append(Math.max(0, pops.get(((HostedPlace)value).placeId)));
             }
         }
-        return Callables.asCallable(buf.toString());
+        return Callables.returning(buf.toString());
     }
 
     protected Callable<String> makePartyDetails (
@@ -232,7 +232,7 @@ public class StatusServlet extends HttpServlet
                 .append("status=\"").append(info.statusType)
                 .append(": ").append(info.status).append("\"");
         }
-        return Callables.asCallable(buf.toString());
+        return Callables.returning(buf.toString());
     }
 
     protected void collectReportInfo (ServerInfo info, Client client, MsoyNodeObject nodeobj,
