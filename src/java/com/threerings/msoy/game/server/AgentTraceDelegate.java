@@ -85,7 +85,7 @@ public class AgentTraceDelegate extends PlaceManagerDelegate
         //
         // TODO: Perhaps we should escape some set of control characters? The traces are supposed
         // TODO: to be human-readable anyway, right?
-        trace = StringUtil.replace(trace, "\000", "\uFFFD");
+        trace = trace.replace("\000", "\uFFFD");
 
         // Check if this string will fit in the remaining space
         boolean willFit = _traceBuffer.length() + trace.length() + 1 < MAX_USER_LENGTH;
