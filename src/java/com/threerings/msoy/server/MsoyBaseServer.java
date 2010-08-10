@@ -69,7 +69,7 @@ public abstract class MsoyBaseServer extends WhirledServer
         Security.setProperty("networkaddress.cache.ttl" , "30");
 
         // hack up our String streamer
-        UnmodifiedUTFStringStreamer.inject();
+        System.setProperty("com.threerings.io.unmodifiedUTFStreaming", "true");
 
         // initialize event logger
         _eventLog.init(getIdent());
