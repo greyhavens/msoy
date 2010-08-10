@@ -7,7 +7,6 @@ import java.io.IOException;
 import com.threerings.io.BasicStreamers;
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
-import com.threerings.io.BasicStreamers.BasicStreamer;
 
 import static com.threerings.msoy.Log.log;
 
@@ -25,17 +24,11 @@ public class UnmodifiedUTFStringStreamer
 {
     public static void inject ()
     {
-        for (int ii = 0; ii < BasicStreamers.BSTREAMER_TYPES.length; ii++) {
-            if (BasicStreamers.BSTREAMER_TYPES[ii].equals(String.class)) {
-                BasicStreamers.BSTREAMER_INSTANCES[ii] = new Streamer();
-                log.info("UTF8 Streamer hack inserted!");
-                return;
-            }
-        }
-        throw new IllegalStateException("Could not find String streamer to replace");
+        BasicStreamers.BSTREAMERS.put(String.class, new Streamer());
+        log.info("UTF8 Streamer hack inserted!");
     }
 
-    protected static final class Streamer extends BasicStreamer
+    protected static final class Streamer extends BasicStreamers.BasicStreamer
     {
         public Object createObject (ObjectInputStream in)
             throws IOException
