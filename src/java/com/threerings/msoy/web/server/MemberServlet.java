@@ -12,11 +12,11 @@ import java.util.Set;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.google.common.primitives.Ints;
 import com.google.inject.Inject;
 
 import com.samskivert.servlet.util.CookieUtil;
 import com.samskivert.util.CollectionUtil;
-import com.samskivert.util.IntListUtil;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.gwt.util.PagedResult;
@@ -148,7 +148,7 @@ public class MemberServlet extends MsoyServiceServlet
         int[] muteList = _memberRepo.loadMutelist(memberId);
         result.total = muteList.length;
         result.page = MemberCardRecord.toMemberCards(
-            _memberRepo.loadMemberCards(IntListUtil.asList(muteList), from, count, true));
+            _memberRepo.loadMemberCards(Ints.asList(muteList), from, count, true));
         return result;
     }
 
