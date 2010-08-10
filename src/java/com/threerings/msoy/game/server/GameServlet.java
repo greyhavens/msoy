@@ -19,11 +19,10 @@ import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.google.common.primitives.Ints;
 import com.google.inject.Inject;
 
 import com.samskivert.util.CollectionUtil;
-import com.samskivert.util.Comparators;
-import com.samskivert.util.IntListUtil;
 import com.threerings.parlor.rating.server.persist.RatingRecord;
 import com.threerings.parlor.rating.server.persist.RatingRepository;
 import com.threerings.parlor.rating.util.Percentiler;
@@ -276,8 +275,8 @@ public class GameServlet extends MsoyServiceServlet
 
         // load up cards for the members in question
         result.members = new MemberCard[memberIds.length];
-        for (MemberCardRecord mcr : _memberRepo.loadMemberCards(IntListUtil.asList(memberIds))) {
-            result.members[IntListUtil.indexOf(memberIds, mcr.memberId)] = mcr.toMemberCard();
+        for (MemberCardRecord mcr : _memberRepo.loadMemberCards(Ints.asList(memberIds))) {
+            result.members[Ints.indexOf(memberIds, mcr.memberId)] = mcr.toMemberCard();
         }
 
         return result;
@@ -639,7 +638,7 @@ public class GameServlet extends MsoyServiceServlet
                 Collections.shuffle(ggames);
                 Collections.sort(ggames, new Comparator<GameCard>() {
                     public int compare (GameCard one, GameCard two) {
-                        return Comparators.compare(two.playersOnline, one.playersOnline);
+                        return Ints.compare(two.playersOnline, one.playersOnline);
                     }
                 });
                 // finally take N from that shuffled list as the games to show
