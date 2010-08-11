@@ -34,6 +34,7 @@ import com.samskivert.util.Lifecycle;
 import com.samskivert.util.StringUtil;
 import com.samskivert.util.Tuple;
 
+import com.google.code.facebookapi.DefaultCommunicationStrategy;
 import com.google.code.facebookapi.FacebookException;
 import com.google.code.facebookapi.FacebookJaxbRestClient;
 import com.google.code.facebookapi.ProfileField;
@@ -432,8 +433,8 @@ public class FacebookLogic
     {
         FacebookJaxbRestClient client = new FacebookJaxbRestClient(apiKey, appSecret, sessionKey);
         client.setServerUrl(SERVER_URL);
-        client.setConnectTimeout(CONNECT_TIMEOUT);
-        client.setReadTimeout(timeout);
+        client.setCommunicationStrategy(
+            new DefaultCommunicationStrategy(CONNECT_TIMEOUT, timeout));
         return client;
     }
 
