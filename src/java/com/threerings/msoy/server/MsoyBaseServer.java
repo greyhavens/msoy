@@ -30,7 +30,6 @@ import com.threerings.whirled.server.WhirledServer;
 
 import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.server.persist.BatchInvoker;
-import com.threerings.msoy.util.UnmodifiedUTFStringStreamer;
 
 import com.threerings.msoy.admin.server.MsoyPulseRecorder;
 import com.threerings.msoy.admin.server.RuntimeConfig;
