@@ -25,6 +25,7 @@ import com.threerings.presents.server.InvocationException;
 
 import com.threerings.crowd.data.PlaceObject;
 
+import com.threerings.parlor.rating.data.Rating;
 import com.threerings.parlor.rating.server.RatingDelegate;
 import com.threerings.parlor.rating.util.Percentiler;
 
@@ -138,30 +139,14 @@ public class AwardDelegate extends RatingDelegate
 
         // compute new ratings if appropriate
         if (shouldRateGame()) {
-            for (Rating rating : _ratings.values()) {
+            for (PlayerRating rating : _ratings.values()) {
                 Player player = players.get(rating.playerId);
                 if (player != null) {
                     updateScoreBasedRating(player, rating);
                 }
             }
 
-            int[] nratings = new int[_playerIds.length];
-            for (int ii = 0; ii < nratings.length; ii ++) {
-                // don't bother computing ratings for guests
-                if (_playerIds[ii] != 0) {
-                    nratings[ii] = computeRating(ii);
-                }
-            }
-
-            // and write them back to their rating records
-            for (int ii = 0; ii < nratings.length; ii++) {
-                PlayerRating rating = _ratings.get(_playerIds[ii]);
-                if (rating != null && nratings[ii] > 0) {
-                    rating.rating = nratings[ii];
-                    rating.experience++;
-                    rating.modified = true;
-                }
-            }
+            updateRatings();
 
             // post to feed (rated games only) - we don't need to wait on the result
             final GameInfoRecord game = _content.game;
