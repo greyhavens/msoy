@@ -155,7 +155,7 @@ public class AwardDelegate extends RatingDelegate
 
             // and write them back to their rating records
             for (int ii = 0; ii < nratings.length; ii++) {
-                Rating rating = _ratings.get(_playerIds[ii]);
+                PlayerRating rating = _ratings.get(_playerIds[ii]);
                 if (rating != null && nratings[ii] > 0) {
                     rating.rating = nratings[ii];
                     rating.experience++;
@@ -352,7 +352,7 @@ public class AwardDelegate extends RatingDelegate
     }
 
     @Override // from RatingDelegate
-    protected void updateRatingInMemory (int gameId, Rating rating)
+    protected void updateRatingInMemory (int gameId, PlayerRating rating)
     {
         // we don't keep in-memory ratings for whirled
     }
@@ -410,7 +410,7 @@ public class AwardDelegate extends RatingDelegate
         return new Player(record.name, record.isGuest, score, availFlow);
     }
 
-    protected void updateScoreBasedRating (Player player, Rating rating)
+    protected void updateScoreBasedRating (Player player, PlayerRating rating)
     {
         // map our percentile to a rating value (0 - 33 map to 1000 and we scale linearly up from
         // there to 3000)
