@@ -26,7 +26,7 @@ public class SceneNodeActions
         _peerMan.invokeNodeAction(new EvictAndShutdownAction(sceneId));
     }
 
-    public void flushUpdates (int sceneId, NodeRequestsListener listener)
+    public void flushUpdates (int sceneId, NodeRequestsListener<Void> listener)
     {
         _peerMan.invokeNodeRequest(new FlushFurniUpdatesRequest(sceneId), listener);
     }
