@@ -9,6 +9,7 @@ import com.google.inject.Singleton;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.peer.data.NodeObject;
 import com.threerings.presents.peer.server.PeerManager;
+import com.threerings.presents.peer.server.NodeRequestsListener;
 import com.threerings.whirled.server.SceneRegistry;
 
 import com.threerings.msoy.peer.data.MsoyNodeObject;
@@ -25,7 +26,7 @@ public class SceneNodeActions
         _peerMan.invokeNodeAction(new EvictAndShutdownAction(sceneId));
     }
 
-    public void flushUpdates (int sceneId, InvocationService.ConfirmListener listener)
+    public void flushUpdates (int sceneId, NodeRequestsListener listener)
     {
         _peerMan.invokeNodeRequest(new FlushFurniUpdatesRequest(sceneId), listener);
     }
@@ -105,12 +106,15 @@ public class SceneNodeActions
         public FlushFurniUpdatesRequest () {
         }
 
-        protected void execute (int sceneId, final InvocationService.ResultListener listener) {
+        @Override public boolean isApplicable(NodeObject nodeobj) {
+            return true;
+        }
+
+        @Override protected void execute (int sceneId, final InvocationService.ResultListener listener) {
             _sceneLogic.flushUpdates(sceneId, listener);
         }
 
         @Inject protected transient SceneLogic _sceneLogic;
-
     }
     @Inject protected MsoyPeerManager _peerMan;
 }

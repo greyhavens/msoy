@@ -17,6 +17,8 @@ import com.samskivert.util.StringUtil;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
+
+import com.threerings.crowd.chat.server.ChatChannelManager;
 import com.threerings.underwire.server.persist.EventRecord;
 import com.threerings.underwire.web.data.Event;
 import com.threerings.util.Name;
@@ -41,7 +43,7 @@ import com.threerings.crowd.chat.data.UserMessage;
 import com.threerings.crowd.chat.server.SpeakUtil;
 import com.threerings.crowd.chat.server.SpeakUtil.ChatHistoryEntry;
 import com.threerings.crowd.data.BodyObject;
-import com.threerings.crowd.peer.server.CrowdPeerManager.ChatHistoryResult;
+import com.threerings.crowd.chat.server.ChatChannelManager.ChatHistoryResult;
 import com.threerings.crowd.server.BodyManager;
 import com.threerings.crowd.server.PlaceManager;
 import com.threerings.crowd.server.PlaceRegistry;
@@ -453,12 +455,10 @@ public class MemberManager
      * and file it with the Underwire system. Note that this method must be called on the dobj
      * thread. The target name is optional (only available when the complainee is online).
      */
-    public void complainMember (
-        final BodyObject complainer, final int targetId,
+    public void complainMember (final BodyObject complainer, final int targetId,
         final String complaint, final MemberName optTargetName)
     {
-        _peerMan.collectChatHistory(complainer.getVisibleName(),
-            new ResultListener<ChatHistoryResult>() {
+        ResultListener<ChatHistoryResult> listener = new ResultListener<ChatHistoryResult>() {
             @Override public void requestFailed (Exception cause) {
                 log.warning("Failed to collect chat history for a complaint", "cause", cause);
                 finish(null);
@@ -469,7 +469,8 @@ public class MemberManager
             protected void finish (ChatHistoryResult result) {
                 finishComplaint(result, complainer, targetId, complaint, optTargetName);
             }
-        });
+        };
+        _chatChanMgr.collectChatHistory(complainer.getVisibleName(), listener);
     }
 
     protected void finishComplaint (
@@ -645,6 +646,7 @@ public class MemberManager
     @Inject protected BadgeManager _badgeMan;
     @Inject protected BodyManager _bodyMan;
     @Inject protected ClientManager _clmgr;
+    @Inject protected ChatChannelManager _chatChanMgr;
     @Inject protected CronLogic _cronLogic;
     @Inject protected GroupRepository _groupRepo;
     @Inject protected MemberLocator _locator;

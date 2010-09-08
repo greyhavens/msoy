@@ -5,7 +5,9 @@ package com.threerings.msoy.room.server;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
+import com.threerings.presents.peer.server.NodeRequestsListener;
 import org.apache.commons.lang.ArrayUtils;
 
 import com.google.common.base.Function;
@@ -50,7 +52,6 @@ import com.threerings.msoy.room.gwt.RoomInfo;
 import com.threerings.msoy.room.gwt.WebRoomService;
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
 import com.threerings.msoy.room.server.persist.SceneRecord;
-import com.threerings.presents.client.InvocationService;
 
 import static com.threerings.msoy.Log.log;
 
@@ -270,8 +271,8 @@ public class WebRoomServlet extends MsoyServiceServlet
             // frustrating thread bouncing.
             final ServiceWaiter<Void> waiter = new ServiceWaiter<Void>();
 
-            _sceneActions.flushUpdates(sceneId, new InvocationService.ConfirmListener() {
-                @Override public void requestProcessed () {
+            _sceneActions.flushUpdates(sceneId, new NodeRequestsListener<Void>() {
+                @Override public void requestsProcessed (NodeRequestsResult<Void> result) {
                     _sceneLogic.validateAllTemplateFurni(groupId, sceneId, waiter);
                 }
                 @Override public void requestFailed (String cause) {
