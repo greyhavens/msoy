@@ -23,6 +23,7 @@ import com.samskivert.util.Invoker;
 import com.samskivert.util.Lifecycle;
 
 import com.threerings.msoy.admin.server.MsoyPulseRecorder;
+import com.threerings.pulse.server.DepotPulseRecorder;
 import com.threerings.pulse.server.PeerPulseRecorder;
 import com.threerings.pulse.server.PresentsPulseRecorder;
 import com.threerings.util.Name;
@@ -108,7 +109,8 @@ public class MsoyServer extends MsoyBaseServer
             super.configure();
 
             // register the Pulse recorders
-            install(new PulseModule(JVMPulseRecorder.class, PresentsPulseRecorder.class, PeerPulseRecorder.class,
+            install(new PulseModule(JVMPulseRecorder.class, DepotPulseRecorder.class,
+                PresentsPulseRecorder.class, PeerPulseRecorder.class,
                 MsoyPulseRecorder.class, MsoyHttpServer.class));
 
             // presents dependencies
