@@ -41,6 +41,7 @@ import com.samskivert.servlet.util.ParameterUtil;
 import com.samskivert.util.Lifecycle;
 
 import com.threerings.pulse.jetty.server.JettyPulseHttpServer;
+import com.threerings.pulse.web.server.PulseFlotServlet;
 import com.threerings.pulse.web.server.PulseServlet;
 
 import com.threerings.msoy.server.ServerConfig;
@@ -153,7 +154,7 @@ public class MsoyHttpServer extends JettyPulseHttpServer
 
         // add the PulseServlet, which can't be resolved earlier because it depends on
         // PulseModule to have been installed.
-        _servlets.put("/pulse", _injector.getInstance(PulseServlet.class));
+        _servlets.put("/pulse/*", _injector.getInstance(PulseFlotServlet.class));
 
         // wire up our various servlets
         ContextHandlerCollection contexts = new ContextHandlerCollection();
