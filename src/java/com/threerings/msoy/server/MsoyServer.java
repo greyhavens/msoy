@@ -22,6 +22,9 @@ import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.Lifecycle;
 
+import com.threerings.msoy.admin.server.MsoyPulseRecorder;
+import com.threerings.pulse.server.PeerPulseRecorder;
+import com.threerings.pulse.server.PresentsPulseRecorder;
 import com.threerings.util.Name;
 
 import com.threerings.messaging.DelayedMessageConnection;
@@ -42,6 +45,9 @@ import com.threerings.crowd.chat.server.ChatChannelManager;
 import com.threerings.crowd.peer.server.CrowdPeerManager;
 import com.threerings.crowd.server.BodyLocator;
 import com.threerings.crowd.server.PlaceRegistry;
+
+import com.threerings.pulse.server.JVMPulseRecorder;
+import com.threerings.pulse.server.PulseModule;
 
 import com.threerings.bureau.server.BureauRegistry;
 
@@ -100,6 +106,11 @@ public class MsoyServer extends MsoyBaseServer
     {
         @Override protected void configure () {
             super.configure();
+
+            // register the Pulse recorders
+            install(new PulseModule(JVMPulseRecorder.class, PresentsPulseRecorder.class, PeerPulseRecorder.class,
+                MsoyPulseRecorder.class, MsoyHttpServer.class));
+
             // presents dependencies
             bind(Authenticator.class).to(MsoyAuthenticator.class);
             bind(PresentsServer.class).to(MsoyServer.class);

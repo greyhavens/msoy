@@ -29,21 +29,21 @@ import org.mortbay.jetty.Connector;
 import org.mortbay.jetty.HttpConnection;
 import org.mortbay.jetty.HttpException;
 import org.mortbay.jetty.NCSARequestLog;
-import org.mortbay.jetty.Server;
 import org.mortbay.jetty.handler.ContextHandlerCollection;
 import org.mortbay.jetty.handler.ErrorHandler;
 import org.mortbay.jetty.handler.HandlerCollection;
 import org.mortbay.jetty.handler.RequestLogHandler;
 import org.mortbay.jetty.nio.SelectChannelConnector;
 import org.mortbay.jetty.servlet.Context;
-import org.mortbay.jetty.servlet.ServletHolder;
 
 import com.samskivert.io.StreamUtil;
 import com.samskivert.servlet.util.ParameterUtil;
 import com.samskivert.util.Lifecycle;
 
-import com.threerings.msoy.server.ServerConfig;
+import com.threerings.pulse.jetty.server.JettyPulseHttpServer;
 import com.threerings.pulse.web.server.PulseServlet;
+
+import com.threerings.msoy.server.ServerConfig;
 
 import com.threerings.msoy.admin.gwt.AdminService;
 import com.threerings.msoy.admin.server.AdminServlet;
@@ -108,7 +108,7 @@ import static com.threerings.msoy.Log.log;
  * Handles HTTP requests made of the Msoy server by the AJAX client and other entities.
  */
 @Singleton
-public class MsoyHttpServer extends Server
+public class MsoyHttpServer extends JettyPulseHttpServer
 {
     /**
      * Attaches the required privacy header for setting cookies inside an iframe contained in
@@ -124,6 +124,7 @@ public class MsoyHttpServer extends Server
 
     @Inject public MsoyHttpServer (Injector injector, Lifecycle cycle)
     {
+        super(2000, 10000);
         // turn our servlet classes into instances with fully resolved dependencies
         for (Map.Entry<String, Class<? extends HttpServlet>> entry : SERVLETS.entrySet()) {
             _servlets.put(entry.getKey(), injector.getInstance(entry.getValue()));
@@ -150,11 +151,15 @@ public class MsoyHttpServer extends Server
         // use a custom connector that works around some jetty non-awesomeness
         setConnectors(new Connector[] { new MsoyChannelConnector() });
 
+        // add the PulseServlet, which can't be resolved earlier because it depends on
+        // PulseModule to have been installed.
+        _servlets.put("/pulse", _injector.getInstance(PulseServlet.class));
+
         // wire up our various servlets
         ContextHandlerCollection contexts = new ContextHandlerCollection();
         Context context = new Context(contexts, "/", Context.NO_SESSIONS);
         for (Map.Entry<String, HttpServlet> entry : _servlets.entrySet()) {
-            context.addServlet(new ServletHolder(entry.getValue()), entry.getKey());
+            context.addServlet(new JettyPulseServletHolder(entry.getValue()), entry.getKey());
         }
 
         // wire up serving of static content
@@ -189,7 +194,7 @@ public class MsoyHttpServer extends Server
 
     /**
      * Sends a short script that will redirect the user's browser window to the given URL (as
-     * opposed to {@link HttpServletResponse#sendRedirect()}, which only works for the frame making
+     * opposed to {@link HttpServletResponse#sendRedirect}, which only works for the frame making
      * the request.
      */
     public static void sendTopRedirect (HttpServletResponse rsp, String url)
@@ -244,6 +249,8 @@ public class MsoyHttpServer extends Server
         }
     }
 
+    @Inject protected Injector _injector;
+    
     protected static class MsoyChannelConnector extends SelectChannelConnector
     {
         public MsoyChannelConnector () {
@@ -304,7 +311,6 @@ public class MsoyHttpServer extends Server
         .put(AppService.ENTRY_POINT, AppServlet.class)
         .put("/facebook/*", FacebookCallbackServlet.class)
         .put("/ooo", OOOXmlRpcServlet.class)
-        .put("/pulse", PulseServlet.class)
         .put("/remixuploadsvc", UploadRemixMediaServlet.class)
         .put("/scenethumbsvc", SceneThumbnailUploadServlet.class)
         .put("/snapshotsvc", SnapshotItemUploadServlet.class)
