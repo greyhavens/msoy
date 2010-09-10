@@ -212,12 +212,23 @@ public class RoomDetailPanel extends SmartTable
         _themeContents.setWidget(1, 0, MsoyUI.createLabel(_msgs.themeNote(), "themeNote"));
 
         if (_detail.theme != null) {
-            if (CShell.isSupport() || _managedThemes.contains(_detail.theme)) {
+            if (CShell.isSupport()) {
+                // support can do everything
                 _unstampButton.setVisible(true);
                 _unTemplateButton.setVisible(_detail.isTemplate);
                 _templateButton.setVisible(!_detail.isTemplate);
+                return;
+            }
+            boolean isThemeManager = _managedThemes.contains(_detail.theme);
+            _unstampButton.setVisible(isThemeManager || _detail.mayManage);
+            if (_detail.isTemplate) {
+                _templateButton.setVisible(false);
+                // you may untemplate a room if you manage the room OR the theme
+                _unTemplateButton.setVisible(isThemeManager || _detail.mayManage);
             } else {
-                _unstampButton.setVisible(false);
+                _unTemplateButton.setVisible(false);
+                // you may template a room if you manage the room AND the theme
+                _templateButton.setVisible(isThemeManager && _detail.mayManage);
             }
 
         } else {
