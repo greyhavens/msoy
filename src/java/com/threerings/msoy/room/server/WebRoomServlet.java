@@ -314,10 +314,17 @@ public class WebRoomServlet extends MsoyServiceServlet
         throws ServiceException
     {
         // make sure we're allowed to stamp this room
+        if (mrec.isSupport()) {
+            // support always may
+            return;
+        }
+        
         boolean mayManage;
         if (sceneRec.ownerType == MsoySceneModel.OWNER_TYPE_MEMBER) {
+            // if the scene belongs to a member, the member is the admin
             mayManage = (mrec.memberId == sceneRec.ownerId);
         } else {
+            // a group room is managed by any group manager
             mayManage = (Rank.MANAGER ==
                 _groupRepo.getMembership(sceneRec.ownerId, mrec.memberId).left);
         }
