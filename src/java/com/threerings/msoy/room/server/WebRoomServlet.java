@@ -219,7 +219,7 @@ public class WebRoomServlet extends MsoyServiceServlet
     public void stampRoom (int sceneId, int groupId, boolean doStamp)
         throws ServiceException
     {
-        MemberRecord mrec = requireThemeManager(groupId);
+        MemberRecord mrec = requireAuthedUser();
 
         SceneRecord sceneRec = _sceneRepo.loadScene(sceneId);
         if (sceneRec == null) {
