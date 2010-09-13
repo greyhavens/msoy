@@ -84,5 +84,5 @@ public class MailPurger
 
     protected static final String GENERIC_INVITE_SNIPPET = "Let's be buddies!";
     protected static final String GENERIC_REPLY_SNIPPET = "Very well, I accept!";
-    protected static final int OLD_MAIL_DAYS = 600;
+    protected static final int OLD_MAIL_DAYS = 90;
 }
