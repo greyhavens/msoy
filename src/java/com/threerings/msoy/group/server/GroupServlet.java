@@ -383,20 +383,7 @@ public class GroupServlet extends MsoyServiceServlet
         }
 
         // TODO: if this was the group's last manager, auto-promote e.g. the oldest member?
-
-        // if we made it this far, go ahead and remove the member from the group
-        _groupRepo.leaveGroup(groupId, memberId);
-
-        // if the group has no members left, hide the group so staff can still see it and we
-        // don't orphan threads, posts, scenes and medals
-        if (_groupRepo.countMembers(groupId) == 0) {
-            // TODO: means of purging old empty groups
-            log.info("Hiding group with no members", "groupId", groupId);
-            _groupRepo.hideEmptyGroup(groupId);
-        }
-
-        // let the dobj world know that this member has been removed
-        MemberNodeActions.leftGroup(memberId, groupId);
+        _groupLogic.leaveGroup(groupId, memberId);
 
         // also let the chat channel manager know that this group lost member
         _channelMan.bodyRemovedFromChannel(
@@ -420,13 +407,7 @@ public class GroupServlet extends MsoyServiceServlet
         // them the UI for joining; this will eventually be a problem
 
         // create a record indicating that we've joined this group
-        _groupRepo.addMember(groupId, mrec.memberId, Rank.MEMBER);
-
-        // update this member's distributed object if they're online anywhere
-        GroupMembership gm = new GroupMembership();
-        gm.group = grec.toGroupName();
-        gm.rank = Rank.MEMBER;
-        MemberNodeActions.joinedGroup(mrec.memberId, gm);
+        _groupLogic.addMember(grec, mrec.memberId, Rank.MEMBER);
 
         // also let the chat channel manager know that this group has a new member
         _channelMan.bodyAddedToChannel(
@@ -454,9 +435,7 @@ public class GroupServlet extends MsoyServiceServlet
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
 
-        _groupRepo.setRank(groupId, memberId, newRank);
-
-        // TODO: MemberNodeActions.groupRankUpdated(memberId, groupId, newRank)
+        _groupLogic.setRank(groupId, memberId, newRank);
     }
 
     // from interface GroupService

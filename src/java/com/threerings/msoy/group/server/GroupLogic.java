@@ -15,6 +15,8 @@ import com.google.inject.Singleton;
 import com.samskivert.depot.DuplicateKeyException;
 import com.samskivert.depot.expression.ColumnExp;
 
+import com.threerings.msoy.chat.data.MsoyChatChannel;
+import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.msoy.data.all.GroupName;
@@ -127,7 +129,7 @@ public class GroupLogic
                 try {
                     // create the group and then add the creator to it
                     int groupId = _groupRepo.createGroup(grec);
-                    _groupRepo.addMember(grec.groupId, grec.creatorId, Rank.MANAGER);
+                    addMember(grec, grec.creatorId, Rank.MANAGER);
 
                     // add its home room
                     SceneRecord newScene = _sceneLogic.createBlankRoom(
@@ -143,16 +145,6 @@ public class GroupLogic
             }
         }).toPurchaseResult();
 
-        // if the creator is online, update their runtime data
-        try {
-            GroupMembership gm = new GroupMembership();
-            gm.group = grec.toGroupName();
-            gm.rank = Rank.MANAGER;
-            MemberNodeActions.joinedGroup(grec.creatorId, gm);
-        } catch (Exception e) { // don't let this booch the purchase
-            log.warning("Error notifying of new group", "memberId", mrec.memberId, e);
-        }
-
         // if the group is non-private, publish that they created it in their feed
         if (grec.policy != Group.Policy.EXCLUSIVE) {
             _feedLogic.publishMemberMessage(
@@ -161,6 +153,48 @@ public class GroupLogic
         }
 
         return result;
+    }
+
+    /**
+     * Add a member to a group, notifying peered runtimes and the event log.
+     */
+    public void addMember (GroupRecord grec, int memberId, Rank rank)
+    {
+        _groupRepo.addMember(grec.groupId, memberId, rank);
+
+        try {
+            // update this member's distributed object if they're online anywhere
+            GroupMembership gm = new GroupMembership();
+            gm.group = grec.toGroupName();
+            gm.rank = rank;
+            MemberNodeActions.joinedGroup(memberId, gm);
+        } catch (Exception e) { // don't let this booch the purchase
+            log.warning("Error notifying of group membership", "group", grec.groupId,
+                "memberId", memberId, e);
+        }
+        
+        _eventLog.groupJoined(memberId, grec.groupId);
+    }
+
+    /**
+     * Remove a member's membership in a group, notifying peered runtimes and the event log
+     * and possibly faux-purging it if the group would be left empty.
+     */
+    public void leaveGroup (int groupId, int memberId)
+    {
+        _groupRepo.leaveGroup(groupId, memberId);
+        
+        // if the group has no members left, hide the group so staff can still see it and we
+        // don't orphan threads, posts, scenes and medals
+        if (_groupRepo.countMembers(groupId) == 0) {
+            // TODO: means of purging old empty groups
+            log.info("Hiding group with no members", "groupId", groupId);
+            _groupRepo.hideEmptyGroup(groupId);
+        }
+        // let the dobj world know that this member has been removed
+        MemberNodeActions.leftGroup(memberId, groupId);
+
+        _eventLog.groupLeft(memberId, groupId);
     }
 
     /**
@@ -268,6 +302,14 @@ public class GroupLogic
         return groupIds;
     }
 
+    public void setRank (int groupId, int memberId, Rank newRank)
+    {
+        _groupRepo.setRank(groupId, memberId, newRank);
+        _eventLog.groupRankChange(memberId, groupId, newRank.toByte());
+
+        // TODO: MemberNodeActions.groupRankUpdated(memberId, groupId, newRank)
+    }
+
     /**
      * Gets the groups with an EXLUSIVE policy with respect to the given member id.
      * @param groupIds the ids of the groups that the user is a member of. If null, the member's
@@ -297,6 +339,7 @@ public class GroupLogic
     @Inject protected GroupRepository _groupRepo;
     @Inject protected MemberRepository _memberRepo;
     @Inject protected MoneyLogic _moneyLogic;
+    @Inject protected MsoyEventLogger _eventLog;
     @Inject protected MsoySceneRepository _sceneRepo;
     @Inject protected RuntimeConfig _runtime;
     @Inject protected SceneLogic _sceneLogic;

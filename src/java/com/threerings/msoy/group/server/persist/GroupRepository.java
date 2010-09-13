@@ -50,7 +50,6 @@ import com.samskivert.util.Tuple;
 import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.msoy.data.all.GroupName;
-import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.persist.TagHistoryRecord;
 import com.threerings.msoy.server.persist.TagNameRecord;
 import com.threerings.msoy.server.persist.TagRecord;
@@ -340,8 +339,6 @@ public class GroupRepository extends DepotRepository
         record.rankAssigned = new Timestamp(System.currentTimeMillis());
         insert(record);
         updateMemberCount(groupId);
-
-        _eventLog.groupJoined(memberId, groupId);
     }
 
     /**
@@ -357,8 +354,6 @@ public class GroupRepository extends DepotRepository
             throw new DatabaseException(
                 "Couldn't find group membership to modify [groupId=" + groupId +
                 "memberId=" + memberId + "]");
-        } else {
-            _eventLog.groupRankChange(memberId, groupId, newRank.toByte());
         }
     }
 
@@ -486,7 +481,6 @@ public class GroupRepository extends DepotRepository
         int rows = delete(GroupMembershipRecord.getKey(memberId, groupId));
         updateMemberCount(groupId);
         delete(BrandShareRecord.getKey(memberId, groupId));
-        _eventLog.groupLeft(memberId, groupId);
         return rows > 0;
     }
 
@@ -750,6 +744,5 @@ public class GroupRepository extends DepotRepository
     protected TagRepository _tagRepo;
 
     // our dependencies
-    @Inject protected MsoyEventLogger _eventLog;
     @Inject protected MsoySceneRepository _sceneRepo;
 }
