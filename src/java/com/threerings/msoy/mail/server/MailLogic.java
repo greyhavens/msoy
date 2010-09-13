@@ -13,6 +13,7 @@ import com.google.inject.Singleton;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.Tuple;
 
+import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.presents.annotation.BlockingThread;
 import com.threerings.presents.annotation.MainInvoker;
 
@@ -204,6 +205,9 @@ public class MailLogic
         // update our last read for this conversation to reflect that we've read our message
         _mailRepo.updateLastRead(convoId, poster.memberId, cmr.sent.getTime());
 
+        // note that we added a message to a conversation
+        _eventLog.mailSent(conrec.conversationId, poster.memberId, cmr.payloadType);
+        
         if (!isMuted) {
             // let other conversation participant know they've got mail
             MemberNodeActions.reportUnreadMail(otherId, _mailRepo.loadUnreadConvoCount(otherId));
@@ -391,6 +395,7 @@ public class MailLogic
     @Inject protected MailSender _mailer;
     @Inject protected MemberLogic _memberLogic;
     @Inject protected MemberRepository _memberRepo;
+    @Inject protected MsoyEventLogger _eventLog;
     @Inject protected RoomLogic _roomLogic;
     @Inject protected RootDObjectManager _omgr;
     @Inject protected ServerMessages _serverMsgs;

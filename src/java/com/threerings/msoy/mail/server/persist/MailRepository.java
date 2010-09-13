@@ -194,9 +194,6 @@ public class MailRepository extends DepotRepository
                 insert(parrec);
             }
         }
-
-        // note that we added a message to a conversation
-        _eventLog.mailSent(conrec.conversationId, authorId, record.payloadType);
     }
 
     /**
@@ -295,8 +292,6 @@ public class MailRepository extends DepotRepository
         classes.add(ParticipantRecord.class);
         classes.add(ConversationComplaintRecord.class);
     }
-
-    @Inject protected MsoyEventLogger _eventLog;
 
     static {
         // register a migration for TrophyAwardPayload -> GameAwardPayload
