@@ -10,6 +10,7 @@ import com.google.inject.Injector;
 
 import com.samskivert.depot.Ops;
 import com.samskivert.depot.PersistenceContext;
+import com.samskivert.depot.annotation.Computed;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.util.Calendars;
@@ -39,13 +40,23 @@ public class MailPurger
                 bind(PersistenceContext.class).toInstance(new PersistenceContext());
             }
         });
-        injector.getInstance(MailPurger.class).execute();
+
+        int days = OLD_MAIL_DAYS;
+        if (args.length > 0) {
+            days = Integer.parseInt(args[0]);
+            if (days < OLD_MAIL_DAYS) {
+                log.warning("Refusing to delete mail younger than " + OLD_MAIL_DAYS + " days.");
+                days = OLD_MAIL_DAYS;
+            }
+        }
+
+        injector.getInstance(MailPurger.class).execute(days);
     }
 
-    public void execute ()
+    public void execute (int days)
         throws Exception
     {
-        Timestamp old = Calendars.now().zeroTime().addDays(-OLD_MAIL_DAYS).toTimestamp();
+        Timestamp old = Calendars.now().zeroTime().addDays(-days).toTimestamp();
 
         ConnectionProvider conprov = ServerConfig.createConnectionProvider();
         _perCtx.init("msoy", conprov, null);
