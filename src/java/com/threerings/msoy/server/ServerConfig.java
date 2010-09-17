@@ -85,6 +85,15 @@ public class ServerConfig
     /** The secret key used for S3 authentication. */
     public static String mediaS3Key;
 
+    /** The name of our distribution, if any, in the Cloudfront CDN. */
+    public static String cloudDistribution;
+
+    /** The user ID used for cloudfront authentication. */
+    public static String cloudId;
+
+    /** The secret key used for cloudfront authentication. */
+    public static String cloudKey;
+
     /** Event logging server spooling directory. */
     public static String eventRemoteURI;
 
@@ -358,6 +367,9 @@ public class ServerConfig
         mediaS3Bucket = config.getValue("media_s3bucket", "msoy");
         mediaS3Id = config.getValue("media_s3id", "id");
         mediaS3Key = config.getValue("media_s3key", "key");
+        cloudDistribution = config.getValue("cloud_distribution", "");
+        cloudId = config.getValue("cloud_id", "id");
+        cloudKey = config.getValue("cloud_key", "key");
         sharedSecret = config.getValue("server_secret", "");
         eventRemoteURI = config.getValue("event_remote_uri", "");
         eventLogSpoolDir = config.getValue("event_log_spool_dir", "");

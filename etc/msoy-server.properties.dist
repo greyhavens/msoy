@@ -145,6 +145,12 @@ static_media_url = http://localhost:8080/media/static/
 # media_s3key = SECRET KEY
 
 #
+# Cloudfront distribution, if any
+# cloud_distribution =
+# cloud_id = AWS ID
+# cloud_key = SECRET KEY
+
+#
 # This is where ToyBox looks for uploaded game jar files
 
 toybox.resource_dir = /export/msoy/pages/media
