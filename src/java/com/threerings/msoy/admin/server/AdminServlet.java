@@ -5,6 +5,7 @@ package com.threerings.msoy.admin.server;
 
 import static com.threerings.msoy.Log.log;
 
+import java.io.File;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +13,7 @@ import java.util.Set;
 import java.util.concurrent.Callable;
 
 import com.google.common.base.Function;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -26,6 +28,11 @@ import com.samskivert.util.StringUtil;
 import com.samskivert.util.Tuple;
 import com.samskivert.util.Invoker.Unit;
 
+import com.threerings.msoy.admin.server.persist.MediaBlacklistRepository;
+import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaMimeTypes;
+import com.threerings.msoy.server.ServerConfig;
+import com.threerings.msoy.web.server.CloudfrontConnection;
 import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.presents.peer.data.NodeObject;
@@ -89,11 +96,11 @@ import com.threerings.msoy.admin.gwt.BureauLauncherInfo.BureauInfo;
 import com.threerings.msoy.admin.gwt.BureauLauncherInfo;
 import com.threerings.msoy.admin.gwt.MemberAdminInfo;
 import com.threerings.msoy.admin.gwt.StatsModel;
-import com.threerings.msoy.admin.server.ABTestLogic;
 import com.threerings.msoy.admin.server.persist.ABTestRecord;
 import com.threerings.msoy.admin.server.persist.ABTestRepository;
 import com.threerings.msoy.data.all.CharityInfo;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.s3.client.S3Connection;
 
 /**
  * Provides the server implementation of {@link AdminService}.
@@ -445,6 +452,47 @@ public class AdminServlet extends MsoyServiceServlet
             note.toString(), item.toItem().getPrimaryMedia().getMediaPath());
 
         return result;
+    }
+
+    public void nukeMedia (MediaDesc desc, String note)
+        throws ServiceException
+    {
+        final MemberRecord memrec = requireSupportUser();
+        log.info("Nuking media for admin", "who", memrec.accountName, "media", desc);
+
+        String fileName = MediaDesc.hashToString(desc.hash) +
+            MediaMimeTypes.mimeTypeToSuffix(desc.mimeType);
+
+        File file = new File(ServerConfig.mediaDir, fileName);
+        if (!file.delete()) {
+            log.warning("Local media file was not successfully deleted", "file", file);
+        }
+
+        if (_blacklistRepo.isBlacklisted(desc)) {
+            log.warning("Media was already blacklisted in database", "media", desc);
+        } else {
+            _blacklistRepo.blacklist(desc, memrec.accountName + ": " + note);
+        }
+
+        if (!ServerConfig.mediaS3Enable) {
+            return;
+        }
+
+        try {
+            // delete the media from S3
+            S3Connection s3Conn = new S3Connection(ServerConfig.mediaS3Id, ServerConfig.mediaS3Key);
+            s3Conn.deleteObject(ServerConfig.mediaS3Bucket, fileName);
+
+            // invalidate it in the cloud
+            CloudfrontConnection cloudConn = new CloudfrontConnection(
+                ServerConfig.cloudId, ServerConfig.cloudKey);
+            cloudConn.invalidateObjects(
+                ServerConfig.cloudDistribution, ImmutableList.of("/" + fileName));
+
+        } catch (Exception e) {
+            log.warning("S3/Cloudfront operation failed", "media", desc, e);
+            throw new ServiceException(MsoyAdminCodes.E_INTERNAL_ERROR);
+        }
     }
 
     // from interface AdminService
@@ -836,6 +884,7 @@ public class AdminServlet extends MsoyServiceServlet
     @Inject protected ItemLogic _itemLogic;
     @Inject protected MailLogic _mailLogic;
     @Inject protected MailRepository _mailRepo;
+    @Inject protected MediaBlacklistRepository _blacklistRepo;
     @Inject protected MemberLogic _memberLogic;
     @Inject protected MoneyLogic _moneyLogic;
     @Inject protected MoneyRepository _moneyRepo;
