@@ -4,6 +4,7 @@
 package client.adminz;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -14,6 +15,7 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.gwt.ui.Popups;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
@@ -27,6 +29,7 @@ import com.threerings.msoy.web.gwt.WebUserServiceAsync;
 
 import client.shell.CShell;
 import client.shell.Session;
+import client.ui.BorderedPopup;
 import client.ui.MsoyUI;
 import client.util.ClickCallback;
 import client.util.Link;
@@ -95,6 +98,18 @@ public class DashboardPanel extends SmartTable
         support.add(makeLink(_msgs.promosButton(), "promos"));
         support.add(makeLink(_msgs.contestsButton(), "contests"));
         support.add(makeLink(_msgs.broadcastButton(), "broadcasts"));
+        support.add(MsoyUI.createActionLabel(_msgs.blacklistButton(), new ClickHandler() {
+            public void onClick (ClickEvent event) {
+                final BorderedPopup popup = new BorderedPopup();
+                popup.setWidget(new BlacklistWidget(new ClickHandler() {
+                    @Override public void onClick (ClickEvent event) {
+                        popup.hide();
+                    }
+                }));
+                popup.show();
+            }
+        }));
+
         setWidget(row, col, support);
         getFlexCellFormatter().setVerticalAlignment(row++, col++, HasAlignment.ALIGN_TOP);
     }
