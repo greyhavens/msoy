@@ -110,6 +110,7 @@
     <file name="${extlibs.dir}/swfutils-ooo.jar"/>
     <file name="${extlibs.dir}/velocity-1.5-dev.jar"/>
     <file name="${extlibs.dir}/ws-commons-util.jar"/>
+    <file name="${extlibs.dir}/xml-writer.jar"/>
     <file name="${extlibs.dir}/xmlrpc-client.jar"/>
     <file name="${extlibs.dir}/xmlrpc-common.jar"/>
     <file name="${extlibs.dir}/xmlrpc-server.jar"/>
