@@ -3,6 +3,7 @@
 
 package client.item;
 
+import com.google.common.base.Strings;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.Element;
@@ -46,8 +47,7 @@ public class ItemUtil
      */
     public static String getName (Item item, boolean truncate)
     {
-        String name = (item.name == null || item.name.trim().length() == 0) ?
-            _cmsgs.noName() : item.name;
+        String name = Strings.isNullOrEmpty(item.name) ? _cmsgs.noName() : item.name;
         if (name.length() > 32 && truncate) {
             name = _cmsgs.truncName(name.substring(0, 29));
         }

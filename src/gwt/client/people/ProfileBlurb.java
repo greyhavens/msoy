@@ -5,6 +5,7 @@ package client.people;
 
 import java.util.Date;
 
+import com.google.common.base.Strings;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Button;
@@ -320,7 +321,7 @@ public class ProfileBlurb extends Blurb
 
         econtent.setText(row, 0, _msgs.status());
         // seed the status line with a facebook-esque cue, if empty
-        String status =  (_profile.headline == null || _profile.headline.isEmpty()) ?
+        String status =  Strings.isNullOrEmpty(_profile.headline) ?
             _msgs.statusQue() : _profile.headline;
         _estatus = MsoyUI.createTextBox(status, Profile.MAX_STATUS_LENGTH, 30);
         econtent.setWidget(row++, 1, _estatus);

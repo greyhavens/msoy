@@ -3,6 +3,7 @@
 
 package client.games;
 
+import com.google.common.base.Strings;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Button;
@@ -40,7 +41,7 @@ public class InstructionsPanel extends VerticalPanel
         DOM.setStyleAttribute(getElement(), "background", "none");
 
         setHorizontalAlignment(ALIGN_LEFT);
-        if (_detail.instructions == null || _detail.instructions.length() == 0) {
+        if (Strings.isNullOrEmpty(_detail.instructions)) {
             add(new Label(_msgs.ipNoInstructions()));
         } else {
             // snip off our background color if we have one
