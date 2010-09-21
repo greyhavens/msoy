@@ -1,7 +1,12 @@
 <module>
   <inherits name="com.google.gwt.user.User"/>
   <inherits name="com.google.gwt.i18n.I18N"/>
+
+  <!-- for now, this one inherits all the others -->
+  <inherits name="com.google.common.collect.Collect"/>
+
   <inherits name="com.samskivert.Utils"/>
+
   <inherits name="com.threerings.gwt.Utils"/>
 
   <source path="org/gwtwidgets/client"/>
