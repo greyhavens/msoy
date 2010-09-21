@@ -30,7 +30,6 @@ import com.samskivert.depot.expression.SQLExpression;
 
 import com.threerings.presents.annotation.BlockingThread;
 
-import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.util.JSONMarshaller;
 
 import com.threerings.msoy.mail.gwt.Conversation;

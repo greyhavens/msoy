@@ -207,7 +207,7 @@ public class ForumServlet extends MsoyServiceServlet
         result.isManager = (mrec != null && mrec.isSupport()) || (rank == Rank.MANAGER);
 
         // load up the messages, convert to runtime records, compute indices and highest post id
-        List<ForumMessage> messages = resolveMessages(
+        List<ForumMessage> messages = _forumLogic.resolveMessages(
             _forumRepo.loadMessages(threadId, offset, count));
         int highestPostId = 0;
         for (int ii = 0, ll = messages.size(); ii < ll; ++ii)  {
@@ -268,7 +268,7 @@ public class ForumServlet extends MsoyServiceServlet
         }
 
         // do the search
-        List<ForumMessage> messages = resolveMessages(
+        List<ForumMessage> messages = _forumLogic.resolveMessages(
             _forumRepo.findMessages(threadId, search, limit));
 
         // fill in the index for permalinks
@@ -483,23 +483,6 @@ public class ForumServlet extends MsoyServiceServlet
         message = MessageUtil.expandMessage(message);
         // and jam the whole thing into an email
         _mailLogic.previewSpam(mrec.memberId, mrec.accountName, subject, message, includeProbeList);
-    }
-
-    protected List<ForumMessage> resolveMessages (List<ForumMessageRecord> msgrecs)
-    {
-        // enumerate the posters and create member cards for them
-        Set<Integer> posters = Sets.newHashSet();
-        for (ForumMessageRecord msgrec : msgrecs) {
-            posters.add(msgrec.posterId);
-        }
-        Map<Integer, MemberCard> cards = MemberCardRecord.toMap(_memberRepo.loadMemberCards(posters));
-
-        // convert the messages to runtime format
-        List<ForumMessage> messages = Lists.newArrayList();
-        for (ForumMessageRecord msgrec : msgrecs) {
-            messages.add(msgrec.toForumMessage(cards));
-        }
-        return messages;
     }
 
     /**

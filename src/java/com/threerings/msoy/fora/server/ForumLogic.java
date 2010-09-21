@@ -6,14 +6,16 @@ package com.threerings.msoy.fora.server;
 import java.util.List;
 import java.util.Map;
 import java.util.Collections;
+import java.util.Set;
+
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.util.IntMap;
-
+import com.threerings.msoy.server.persist.MemberCardRecord;
 import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.msoy.data.all.GroupName;
@@ -103,6 +105,27 @@ public class ForumLogic
             });
 
         return resolveThreads(mrec, threads, groupNames, true, false);
+    }
+
+    /**
+     * Create runtime objects with resolved {@link MemberCard} instances for a collection
+     * of {@link ForumMessageRecord} objects.
+     */
+    public List<ForumMessage> resolveMessages (List<ForumMessageRecord> msgrecs)
+    {
+        // enumerate the posters and create member cards for them
+        Set<Integer> posters = Sets.newHashSet();
+        for (ForumMessageRecord msgrec : msgrecs) {
+            posters.add(msgrec.posterId);
+        }
+        Map<Integer, MemberCard> cards = MemberCardRecord.toMap(_memberRepo.loadMemberCards(posters));
+
+        // convert the messages to runtime format
+        List<ForumMessage> messages = Lists.newArrayList();
+        for (ForumMessageRecord msgrec : msgrecs) {
+            messages.add(msgrec.toForumMessage(cards));
+        }
+        return messages;
     }
 
     @Inject protected ForumRepository _forumRepo;

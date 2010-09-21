@@ -83,7 +83,7 @@ public class IssueServlet extends MsoyServiceServlet
         if (msgrec == null) {
             return null;
         }
-        return resolveMessages(Collections.singletonList(msgrec)).get(0);
+        return _forumLogic.resolveMessages(Collections.singletonList(msgrec)).get(0);
     }
 
     // from interface IssueService
@@ -97,7 +97,7 @@ public class IssueServlet extends MsoyServiceServlet
         }
         // TODO Do we want to validate read priviledges for these individual messages?
 
-        return resolveMessages(msgrecs);
+        return _forumLogic.resolveMessages(msgrecs);
     }
 
     // from interface IssueService
@@ -227,26 +227,8 @@ public class IssueServlet extends MsoyServiceServlet
         return result;
     }
 
-    protected List<ForumMessage> resolveMessages (List<ForumMessageRecord> records)
-    {
-        // enumerate the posters and create member cards for them
-        Set<Integer> posters = Sets.newHashSet();
-
-
-        for (ForumMessageRecord msgrec : records) {
-            posters.add(msgrec.posterId);
-        }
-        Map<Integer, MemberCard> cards = MemberCardRecord.toMap(_memberRepo.loadMemberCards(posters));
-
-        // convert the messages to runtime format
-        List<ForumMessage> messages = Lists.newArrayList();
-        for (ForumMessageRecord msgrec : records) {
-            messages.add(msgrec.toForumMessage(cards));
-        }
-        return messages;
-    }
-
     // our dependencies
+    @Inject protected ForumLogic _forumLogic;
     @Inject protected ForumRepository _forumRepo;
     @Inject protected GroupRepository _groupRepo;
     @Inject protected IssueRepository _issueRepo;
