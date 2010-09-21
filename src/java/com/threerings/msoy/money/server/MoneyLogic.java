@@ -1033,11 +1033,12 @@ public class MoneyLogic
 
         // First transform List<CashOutRecord> into Map<Integer, CashOutRecord>, then
         // transform into Map<Integer, CashOutInfo>.
-        return transformMap(Maps.uniqueIndex(accounts, new Function<BlingCashOutRecord, Integer>() {
-            public Integer apply (BlingCashOutRecord record) {
-                return record.memberId;
-            }
-        }), TO_CASH_OUT_INFO);
+        return Maps.transformValues(
+            Maps.uniqueIndex(accounts, new Function<BlingCashOutRecord, Integer>() {
+                public Integer apply (BlingCashOutRecord record) {
+                    return record.memberId;
+                }
+            }), TO_CASH_OUT_INFO);
     }
 
     /**
@@ -1479,27 +1480,6 @@ public class MoneyLogic
         int cents = pennies % 100;
         return "USD $" + NumberFormat.getNumberInstance().format(dollars) + '.' +
             (cents < 10 ? '0' : "") + cents;
-    }
-
-    /**
-     * Transforms the values in a map from one type to another, as dictated by the given function.
-     * I'm surprised this isn't currently in Google collections...
-     *
-     * @param <K> Type of the map's key.
-     * @param <V1> Type of the source values.
-     * @param <V2> Type of the destination values.
-     * @param values Map of the values to transform.
-     * @param function Function to do the transformation.
-     * @return The transformed map.
-     */
-    protected static <K, V1, V2> Map<K, V2> transformMap (
-        Map<K, V1> values, Function<? super V1, ? extends V2> function)
-    {
-        Map<K, V2> newMap = Maps.newHashMap();
-        for (Map.Entry<K, V1> value : values.entrySet()) {
-            newMap.put(value.getKey(), function.apply(value.getValue()));
-        }
-        return newMap;
     }
 
     /**

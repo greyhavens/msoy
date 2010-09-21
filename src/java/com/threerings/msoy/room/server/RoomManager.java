@@ -11,9 +11,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.google.common.collect.Table;
 import com.google.inject.Inject;
 
 import com.samskivert.jdbc.RepositoryUnit;
@@ -1740,8 +1742,7 @@ public class RoomManager extends SpotSceneManager
      */
     protected MobObject getMob (int gameId, String mobId)
     {
-        Map<String, MobObject> map = _mobs.get(gameId);
-        return (map == null) ? null : map.get(mobId);
+        return _mobs.get(gameId, mobId);
     }
 
     /**
@@ -1749,12 +1750,7 @@ public class RoomManager extends SpotSceneManager
      */
     protected void putMob (int gameId, String mobId, MobObject mob)
     {
-        Map<String, MobObject> map = _mobs.get(gameId);
-        if (map == null) {
-            map = Maps.newHashMap();
-            _mobs.put(gameId, map);
-        }
-        map.put(mobId, mob);
+        _mobs.put(gameId, mobId, mob);
     }
 
     /**
@@ -1762,15 +1758,7 @@ public class RoomManager extends SpotSceneManager
      */
     protected MobObject removeMob (int gameId, String mobId)
     {
-        Map<String, MobObject> map = _mobs.get(gameId);
-        if (map == null) {
-            return null;
-        }
-        MobObject retval = map.remove(mobId);
-        if (map.isEmpty()) {
-            _mobs.remove(gameId);
-        }
-        return retval;
+        return _mobs.remove(gameId, mobId);
     }
 
     /**
@@ -1778,8 +1766,7 @@ public class RoomManager extends SpotSceneManager
      */
     protected int countMobs (int gameId)
     {
-        Map<String, MobObject> map = _mobs.get(gameId);
-        return (map == null) ? 0 : map.size();
+        return _mobs.row(gameId).size();
     }
 
     /**
@@ -2186,7 +2173,7 @@ public class RoomManager extends SpotSceneManager
     protected List<Integer> _actors = Lists.newArrayList();
 
     /** Mapping to keep track of spawned mobs. */
-    protected Map<Integer, Map<String, MobObject>> _mobs = Maps.newHashMap();
+    protected Table<Integer, String, MobObject> _mobs = HashBasedTable.create();
 
     /** Mapping to keep track of starting location of added bodies. */
     protected Map<Integer, Location> _startingLocs = Maps.newHashMap();

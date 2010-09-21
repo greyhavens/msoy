@@ -6,6 +6,7 @@ package com.threerings.msoy.admin.server;
 import static com.threerings.msoy.Log.log;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -13,10 +14,12 @@ import java.util.Set;
 import java.util.concurrent.Callable;
 
 import com.google.common.base.Function;
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 
@@ -282,19 +285,15 @@ public class AdminServlet extends MsoyServiceServlet
             }));
 
         // collect all ids by type that we require
-        Map<Byte, Set<Integer>> itemsToLoad = Maps.newHashMap();
+        Multimap<Byte, Integer> itemsToLoad = HashMultimap.create();
         for (ItemFlag flag : result.page) {
-            Set<Integer> itemIds = itemsToLoad.get(flag.itemIdent.type);
-            if (itemIds == null) {
-                itemsToLoad.put(flag.itemIdent.type, itemIds = Sets.newHashSet());
-            }
-            itemIds.add(flag.itemIdent.itemId);
+            itemsToLoad.put(flag.itemIdent.type, flag.itemIdent.itemId);
         }
 
         // load items and stash by ident, also grab the creator id
         result.items = Maps.newHashMap();
         Set<Integer> memberIds = Sets.newHashSet();
-        for (Map.Entry<Byte, Set<Integer>> ee : itemsToLoad.entrySet()) {
+        for (Map.Entry<Byte, Collection<Integer>> ee : itemsToLoad.asMap().entrySet()) {
             for (ItemRecord rec : _itemLogic.getRepository(ee.getKey()).loadItems(ee.getValue())) {
                 ItemDetail detail = new ItemDetail();
                 detail.item = rec.toItem();
