@@ -55,6 +55,7 @@
     <file name="${extlibs.dir}/advanced-components-1.4.1.jar"/>
     <file name="${extlibs.dir}/gwt-dnd.jar"/>
     <file name="${extlibs.dir}/gwt-incubator.jar"/>
+    <file name="${extlibs.dir}/guava-gwt.jar"/>
     <file name="${extlibs.dir}/junit-3.7.jar"/>
     <file name="${extlibs.dir}/junit4.jar"/>
     <!--<file name="${extlibs.dir}/retroweaver-all-1.2.2.jar"/>
@@ -248,8 +249,10 @@
       <!-- this is needed to run our custom i18n bindings in the GWT compiler -->
       <include name="gwt-utils-0.0-SNAPSHOT.jar"/>
       <include name="*-gwt-0.0-SNAPSHOT.jar"/>
+      <include name="guava.jar"/>
     </fileset>
     <fileset dir="${deploy.dir}/build">
+      <include name="guava-gwt.jar"/>
       <include name="gwt-incubator.jar"/>
       <include name="advanced-components-1.4.1.jar"/>
       <include name="*-gwt-0.0-SNAPSHOT.jar"/>
