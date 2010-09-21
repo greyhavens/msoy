@@ -162,7 +162,7 @@ public class ProfileRecord extends PersistentRecord
      * @param member the member record of the member that owns this profile.
      * @param forMemberId the member id of the member that will be *seeing* this profile.
      */
-    public Profile toProfile (MemberRecord member, int forMemberId)
+    public Profile toProfile (MemberRecord member, boolean includeBirthday)
     {
         Preconditions.checkArgument(
             member.memberId == memberId, "toProfile() passed invalid member record.");
@@ -172,7 +172,7 @@ public class ProfileRecord extends PersistentRecord
         profile.headline = headline;
         profile.sex = sex;
         if (birthday != null) {
-            if (forMemberId == memberId) {
+            if (includeBirthday) {
                 profile.birthday = toDateVec(birthday);
             }
             if (showAge) {
