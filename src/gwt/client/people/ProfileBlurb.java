@@ -320,7 +320,7 @@ public class ProfileBlurb extends Blurb
 
         econtent.setText(row, 0, _msgs.status());
         // seed the status line with a facebook-esque cue, if empty
-        String status = _profile.headline == "" || _profile.headline == null ?
+        String status =  (_profile.headline == null || _profile.headline.isEmpty()) ?
             _msgs.statusQue() : _profile.headline;
         _estatus = MsoyUI.createTextBox(status, Profile.MAX_STATUS_LENGTH, 30);
         econtent.setWidget(row++, 1, _estatus);
@@ -399,7 +399,7 @@ public class ProfileBlurb extends Blurb
         // configure our profile instance with their bits
         _name = new MemberName(name, _name.getMemberId());
         String status = _estatus.getText();
-        _profile.headline = status == _msgs.statusQue() ? "" : status.trim();
+        _profile.headline = _msgs.statusQue().equals(status) ? "" : status.trim();
         _profile.homePageURL = _ehomepage.getText().trim();
         _profile.location = _elocation.getText().trim();
         _profile.sex = (byte)_esex.getSelectedIndex();
