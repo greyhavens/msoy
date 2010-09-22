@@ -42,7 +42,6 @@ import com.samskivert.util.Lifecycle;
 
 import com.threerings.pulse.jetty.server.JettyPulseHttpServer;
 import com.threerings.pulse.web.server.PulseFlotServlet;
-import com.threerings.pulse.web.server.PulseServlet;
 
 import com.threerings.msoy.server.ServerConfig;
 

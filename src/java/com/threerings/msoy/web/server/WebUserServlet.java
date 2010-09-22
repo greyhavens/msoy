@@ -645,7 +645,7 @@ public class WebUserServlet extends MsoyServiceServlet
 
         // load up their new mail count
         try {
-            data.newMailCount = _mailRepo.loadUnreadConvoCount(mrec.memberId);
+            data.newMailCount = _mailLogic.getUnreadConvoCount(mrec.memberId);
         } catch (Exception e) {
             log.warning("Failed to load new mail count [id=" + mrec.memberId + "].", e);
         }

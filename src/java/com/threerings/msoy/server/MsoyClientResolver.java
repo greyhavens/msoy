@@ -15,6 +15,7 @@ import com.samskivert.util.Tuple;
 
 import com.threerings.io.Streamable;
 
+import com.threerings.msoy.mail.server.MailLogic;
 import com.threerings.util.StreamableArrayIntSet;
 
 import com.threerings.presents.data.ClientObject;
@@ -221,7 +222,7 @@ public class MsoyClientResolver extends CrowdClientResolver
             _groupRepo.resolveGroupMemberships(member.memberId, null).iterator());
 
         // load up this member's current new mail count
-        memobj.newMailCount = _mailRepo.loadUnreadConvoCount(member.memberId);
+        memobj.newMailCount = _mailLogic.getUnreadConvoCount(member.memberId);
 
         // load up their selected avatar, we'll configure it later
         if (member.avatarId != 0) {
@@ -266,6 +267,7 @@ public class MsoyClientResolver extends CrowdClientResolver
     @Inject protected GroupRepository _groupRepo;
     @Inject protected ItemLogic _itemLogic;
     @Inject protected ItemManager _itemMan;
+    @Inject protected MailLogic _mailLogic;
     @Inject protected MailRepository _mailRepo;
     @Inject protected MemberLogic _memberLogic;
     @Inject protected MemberRepository _memberRepo;

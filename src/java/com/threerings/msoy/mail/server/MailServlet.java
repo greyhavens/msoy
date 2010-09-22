@@ -10,6 +10,7 @@ import java.util.Set;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.google.common.primitives.Ints;
 import com.google.inject.Inject;
 
 import com.samskivert.depot.DuplicateKeyException;
@@ -47,10 +48,16 @@ public class MailServlet extends MsoyServiceServlet
         throws ServiceException
     {
         MemberRecord memrec = requireRegisteredUser();
-        // load up the conversations in question
+
+        // find who we're muting
+        List<Integer> muted = Ints.asList(_memberRepo.loadMutelist(memrec.memberId));
+
+        // load up the unmuted conversations in question
         List<Conversation> convos = Lists.newArrayList();
         List<ConversationRecord> conrecs =
-            _mailRepo.loadConversations(memrec.memberId, offset, count);
+            _mailRepo.loadConversations(memrec.memberId, muted, offset, count);
+
+        // figure out who the other party is in each conversation
         Set<Integer> otherIds = Sets.newHashSet();
         for (ConversationRecord conrec : conrecs) {
             convos.add(conrec.toConversation());
@@ -72,8 +79,7 @@ public class MailServlet extends MsoyServiceServlet
 
         ConvosResult result = new ConvosResult();
         if (needCount) {
-            result.totalConvoCount = _mailRepo.loadConversationCount(memrec.memberId);
-            result.unreadConvoCount = _mailRepo.loadUnreadConvoCount(memrec.memberId);
+            result.unreadConvoCount = _mailRepo.loadUnreadConvoCount(memrec.memberId, muted);
         }
         result.convos = convos;
         return result;
@@ -240,10 +246,6 @@ public class MailServlet extends MsoyServiceServlet
         List<ConvMessageRecord> cmrecs = _mailRepo.loadMessages(convoId);
         Set<Integer> authorIds = Sets.newHashSet();
 
-
-
-
-
         for (ConvMessageRecord cmrec : cmrecs) {
             authorIds.add(cmrec.authorId);
         }
@@ -261,8 +263,9 @@ public class MailServlet extends MsoyServiceServlet
             bodyText.append((author != null) ? author.name.toString() : "<unknown>")
                 .append("(").append(cmrec.authorId).append("):\n");
             if (cmrec.payloadType != 0) {
-                bodyText.append("Special mail type: " + describePayloadType(cmrec.payloadType))
-                .append("\n");
+                bodyText.append("Special mail type: ")
+                    .append(describePayloadType(cmrec.payloadType))
+                    .append("\n");
             }
             bodyText.append(cmrec.body).append("\n----\n");
         }

@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.google.common.collect.Lists;
+import com.google.common.primitives.Ints;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -85,6 +86,7 @@ public class MailLogic
         String subject, String body, MailPayload payload, boolean checkMuteList)
         throws ServiceException
     {
+        
         // check mute list if requested (some bulk conversations are for automated message, some
         // are for player to player spam)
         if (checkMuteList) {
@@ -107,11 +109,19 @@ public class MailLogic
     
             // potentially send a real email to the recipient
             sendMailEmail(sender, recip, subject, body);
-    
+            
             // let recipient know they've got mail
-            MemberNodeActions.reportUnreadMail(
-                recip.memberId, _mailRepo.loadUnreadConvoCount(recip.memberId));
+            MemberNodeActions.reportUnreadMail(recip.memberId, getUnreadConvoCount(recip.memberId));
         }
+    }
+
+    /**
+     * Count the given member's unread mail, taking into account their mute list.
+     */
+    public int getUnreadConvoCount (int memberId)
+    {
+        return _mailRepo.loadUnreadConvoCount(
+            memberId, Ints.asList(_memberRepo.loadMutelist(memberId)));
     }
 
     /**
@@ -159,8 +169,7 @@ public class MailLogic
             sendMailEmail(sender, recip, subject, body);
 
             // let recipient know they've got mail
-            MemberNodeActions.reportUnreadMail(
-                recip.memberId, _mailRepo.loadUnreadConvoCount(recip.memberId));
+            MemberNodeActions.reportUnreadMail(recip.memberId, getUnreadConvoCount(recip.memberId));
         }
     }
 
@@ -210,7 +219,7 @@ public class MailLogic
         
         if (!isMuted) {
             // let other conversation participant know they've got mail
-            MemberNodeActions.reportUnreadMail(otherId, _mailRepo.loadUnreadConvoCount(otherId));
+            MemberNodeActions.reportUnreadMail(otherId, getUnreadConvoCount(otherId));
 
             // potentially send a real email to the recipient
             if (recip != null) {

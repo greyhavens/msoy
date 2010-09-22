@@ -22,9 +22,6 @@ public interface MailService extends RemoteService
     /** Communicates results for {@link #loadConversation}. */
     public static class ConvosResult implements IsSerializable
     {
-        /** The total conversation count for this player (if requested). */
-        public int totalConvoCount;
-
         /** The number of unread conversations (if requested). */
         public int unreadConvoCount;
 

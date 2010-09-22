@@ -47,37 +47,30 @@ public class MailRepository extends DepotRepository
     }
 
     /**
-     * Returns the number of conversations in which the specified member is a participant.
-     */
-    public int loadConversationCount (int participantId)
-    {
-        return load(CountRecord.class, new FromOverride(ParticipantRecord.class),
-                    new Where(ParticipantRecord.PARTICIPANT_ID, participantId)).count;
-    }
-
-    /**
      * Returns the number of conversations in which the specified member is a participant and which
      * have messages not read by that member.
      */
-    public int loadUnreadConvoCount (int memberId)
+    public int loadUnreadConvoCount (int memberId, Iterable<Integer> muted)
     {
         SQLExpression isMe = ParticipantRecord.PARTICIPANT_ID.eq(memberId);
         SQLExpression isNew = ConversationRecord.LAST_SENT.greaterThan(ParticipantRecord.LAST_READ);
         return load(CountRecord.class,
                     new FromOverride(ParticipantRecord.class),
                     ParticipantRecord.CONVERSATION_ID.join(ConversationRecord.CONVERSATION_ID),
-                    new Where(Ops.and(isMe, isNew))).count;
+                    new Where(Ops.and(isMe, isNew, nonMuted(muted)))).count;
     }
 
     /**
      * Loads conversations in which the specified member is a participant, sorted by most recently
      * active to least.
      */
-    public List<ConversationRecord> loadConversations (int participantId, int offset, int count)
+    public List<ConversationRecord> loadConversations (
+        int participantId, Iterable<Integer> muted, int offset, int count)
     {
+        SQLExpression isMe = ParticipantRecord.PARTICIPANT_ID.eq(participantId);
         return findAll(ConversationRecord.class, CacheStrategy.RECORDS, Lists.newArrayList(
             ConversationRecord.CONVERSATION_ID.join(ParticipantRecord.CONVERSATION_ID),
-            new Where(ParticipantRecord.PARTICIPANT_ID, participantId),
+            new Where(Ops.and(isMe, nonMuted(muted))),
             new Limit(offset, count),
             OrderBy.descending(ConversationRecord.LAST_SENT)));
     }
@@ -292,6 +285,13 @@ public class MailRepository extends DepotRepository
         classes.add(ConversationComplaintRecord.class);
     }
 
+    protected static SQLExpression nonMuted (Iterable<Integer> muted)
+    {
+        return Ops.not(Ops.or(
+            ConversationRecord.TARGET_ID.in(muted),
+            ConversationRecord.INITIATOR_ID.in(muted)));
+    }
+    
     static {
         // register a migration for TrophyAwardPayload -> GameAwardPayload
         Map<String, String> migmap = Maps.newHashMap();
