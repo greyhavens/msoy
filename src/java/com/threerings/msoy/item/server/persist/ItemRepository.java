@@ -1477,7 +1477,7 @@ public abstract class ItemRepository<T extends ItemRecord>
     {
         // our work here is done if we didn't find any
         if (clones.isEmpty()) {
-            return new ArrayList<T>();
+            return Lists.newArrayList();
         }
 
         // create a set of the corresponding original ids

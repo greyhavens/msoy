@@ -10,6 +10,8 @@ import java.util.Set;
 import javax.annotation.Generated;
 
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+
 import com.threerings.presents.dobj.DSet;
 
 import com.threerings.crowd.data.OccupantInfo;
@@ -479,5 +481,5 @@ public class AVRGameObject extends PlaceObject
     /**
      * The persistent properties that have been written to since startup.
      */
-    protected transient Set<String> _dirty = new HashSet<String>();
+    protected transient Set<String> _dirty = Sets.newHashSet();
 }

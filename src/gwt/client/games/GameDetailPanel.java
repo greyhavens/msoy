@@ -126,7 +126,7 @@ public class GameDetailPanel extends SmartTable
         }
         ClickHandler onShop = Link.createHandler(Pages.SHOP, "g", Math.abs(_gameId));
         PushButton shop = MsoyUI.createButton(MsoyUI.MEDIUM_THIN, _msgs.gdpShop(), onShop);
-        buttons = (buttons == null) ? (Widget)shop : MsoyUI.createButtonPair(buttons, shop);
+        buttons = (buttons == null) ? shop : MsoyUI.createButtonPair(buttons, shop);
         setWidget(2, 0, buttons);
         getFlexCellFormatter().setRowSpan(0, 0, 3);
         getFlexCellFormatter().setRowSpan(1, 1, 2);

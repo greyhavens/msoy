@@ -5,6 +5,8 @@ package com.threerings.msoy.person.gwt;
 
 import java.util.HashMap;
 
+import com.google.common.collect.Maps;
+
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 /**
@@ -122,7 +124,7 @@ public enum FeedMessageType
 
     protected static HashMap<Integer, FeedMessageType> _byCode;
     static {
-        _byCode = new HashMap<Integer, FeedMessageType>();
+        _byCode = Maps.newHashMap();
         for (FeedMessageType type : FeedMessageType.values()) {
             _byCode.put(type.getCode(), type);
         }

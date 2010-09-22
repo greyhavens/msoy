@@ -6,6 +6,8 @@ package com.threerings.msoy.admin.gwt;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.collect.Lists;
+
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 /**
@@ -87,7 +89,7 @@ public class StatsModel implements IsSerializable
         for (String header : columnHeaders) {
             model._headers.add(header);
         }
-        model._rows = new ArrayList<Row>();
+        model._rows = Lists.newArrayList();
         return model;
     }
 
@@ -95,8 +97,8 @@ public class StatsModel implements IsSerializable
     {
         StatsModel model = new StatsModel();
         model._titleHeader = titleHeader;
-        model._headers = new ArrayList<String>();
-        model._rows = new ArrayList<Row>();
+        model._headers = Lists.newArrayList();
+        model._rows = Lists.newArrayList();
         for (String title : rowTitles) {
             model._rows.add(new Row(4, title));
         }

@@ -6,6 +6,8 @@ package com.threerings.msoy.item.gwt;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.google.common.collect.Maps;
+
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.money.data.all.Currency;
 
@@ -34,7 +36,7 @@ public class ItemPrices
         }
     }
 
-    protected static final Map<Byte, int[]> MIN_PRICES = new HashMap<Byte, int[]>();
+    protected static final Map<Byte, int[]> MIN_PRICES = Maps.newHashMap();
     static {
         MIN_PRICES.put(Item.AVATAR, new int[] { 100, 200, 500, 1500, 5000 });
         MIN_PRICES.put(Item.FURNITURE, new int[] { 10, 50, 100, 500, 1000 });

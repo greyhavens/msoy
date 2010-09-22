@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.google.common.collect.Lists;
+
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.msoy.data.all.VisitorInfo;
@@ -105,7 +107,7 @@ public class SessionData implements IsSerializable
      */
     public List<String> flatten ()
     {
-        List<String> data = new ArrayList<String>();
+        List<String> data = Lists.newArrayList();
         data.addAll(creds.flatten());
         data.add(String.valueOf(flow));
         data.add(String.valueOf(gold));

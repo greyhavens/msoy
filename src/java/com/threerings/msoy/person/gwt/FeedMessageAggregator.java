@@ -10,6 +10,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+
 import com.threerings.gwt.util.DateUtil;
 
 import com.threerings.msoy.person.gwt.AggregateFeedMessage.Style;
@@ -39,7 +42,7 @@ public class FeedMessageAggregator
         }
 
         // resulting list with a mix of aggregated and non-aggregated messages
-        List<FeedMessage> newMessages = new ArrayList<FeedMessage>();
+        List<FeedMessage> newMessages = Lists.newArrayList();
 
         // if grouping by date, start with today then work backwards
         long header = byDate ? startOfDay(System.currentTimeMillis()) : 0;
@@ -371,7 +374,7 @@ public class FeedMessageAggregator
 
             protected boolean _displayed;
             protected int _size; // number of calls to add, not == _list.size()
-            protected List<KeyedMessage> _list = new ArrayList<KeyedMessage>();
+            protected List<KeyedMessage> _list = Lists.newArrayList();
         }
 
         /**
@@ -417,8 +420,10 @@ public class FeedMessageAggregator
         /** The style of this grouper. */
         protected Style _style;
 
-        /** Partition of messages with the same subject or object. */
-        protected Map<MessageKey, Group> _map = new HashMap<MessageKey, Group>();
+        /**
+         * Partition of messages with the same subject or object.
+         */
+        protected Map<MessageKey, Group> _map = Maps.newHashMap();
 
         /** Empty group. */
         protected Group _dummy = new Group();

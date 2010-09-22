@@ -301,7 +301,7 @@ public class TakeSurveyPanel extends VerticalPanel
 
     public int _surveyId;
     public Survey _survey;
-    public QuestionUI _questions[];
+    public QuestionUI[] _questions;
     public List<SurveyResponse> _responses = Lists.newArrayList();
 
     protected static final SurveyServiceAsync _surveySvc = GWT.create(SurveyService.class);

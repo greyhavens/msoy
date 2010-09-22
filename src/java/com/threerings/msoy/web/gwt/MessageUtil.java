@@ -6,6 +6,8 @@ package com.threerings.msoy.web.gwt;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.collect.Lists;
+
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MediaDescSize;
@@ -37,7 +39,7 @@ public class MessageUtil
                 group.add(box);
                 segs.remove(ii--);
             } else {
-                group = new ArrayList<Box>();
+                group = Lists.newArrayList();
                 group.add(box);
                 segs.set(ii, new Group(group));
             }
@@ -76,7 +78,7 @@ public class MessageUtil
 
     protected static List<Segment> parseSegments (String html)
     {
-        List<Segment> segs = new ArrayList<Segment>();
+        List<Segment> segs = Lists.newArrayList();
         segs.add(new Text(html));
         int size;
         do {

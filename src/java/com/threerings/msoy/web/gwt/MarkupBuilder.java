@@ -5,6 +5,8 @@ package com.threerings.msoy.web.gwt;
 
 import java.util.ArrayList;
 
+import com.google.common.collect.Lists;
+
 /**
  * Quick and dirty Markup language builder to avoid eyestrain from reading angle brackets and \"
  * and reduce the chance of missing or misspelled closing tags.
@@ -118,8 +120,8 @@ public class MarkupBuilder
         }
     }
 
-    protected ArrayList<Integer> _tagcontents = new ArrayList<Integer>();
-    protected ArrayList<String> _tags = new ArrayList<String>();
+    protected ArrayList<Integer> _tagcontents = Lists.newArrayList();
+    protected ArrayList<String> _tags = Lists.newArrayList();
     protected StringBuilder _buff = new StringBuilder();
     protected char _quote;
 }

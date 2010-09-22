@@ -13,6 +13,8 @@ import java.util.List;
 
 import javax.swing.JApplet;
 
+import com.google.common.collect.Lists;
+
 import static com.threerings.msoy.Log.log;
 
 /**
@@ -44,7 +46,7 @@ public class AdminApplet extends JApplet
         }
 
         // don't ask
-        List<URL> urls = new ArrayList<URL>();
+        List<URL> urls = Lists.newArrayList();
         for (URL url : ((URLClassLoader)getClass().getClassLoader()).getURLs()) {
             if (url.getPath().endsWith(".jar")) {
                 urls.add(url);

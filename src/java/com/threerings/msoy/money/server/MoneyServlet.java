@@ -13,6 +13,8 @@ import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+
 import com.google.inject.Inject;
 
 import com.threerings.msoy.server.MsoyAuthenticator;
@@ -132,7 +134,7 @@ public class MoneyServlet extends MsoyServiceServlet
     {
         // Get all charity members.
         List<CharityRecord> charities = _memberRepo.getCharities();
-        Set<Integer> memberIds = new HashSet<Integer>();
+        Set<Integer> memberIds = Sets.newHashSet();
         for (CharityRecord charity : charities) {
             memberIds.add(charity.memberId);
         }

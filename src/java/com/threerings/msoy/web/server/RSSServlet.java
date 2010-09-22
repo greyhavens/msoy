@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 
@@ -74,7 +75,7 @@ public class RSSServlet extends HttpServlet
             if (rss == null) {
                 List<ForumThreadRecord> threads =
                     _forumRepo.loadRecentThreads(group.groupId, THREAD_COUNT);
-                List<ForumMessageRecord> messages = new ArrayList<ForumMessageRecord>();
+                List<ForumMessageRecord> messages = Lists.newArrayList();
                 for (ForumThreadRecord thread : threads) {
                     List<ForumMessageRecord> message =
                         _forumRepo.loadMessages(thread.threadId, 0, 1);

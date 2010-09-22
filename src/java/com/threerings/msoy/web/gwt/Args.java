@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.google.common.collect.Lists;
+
 /**
  * Used to parse the arguments supplied to the page.
  */
@@ -190,7 +192,7 @@ public class Args
      */
     public Args recomposeWithout (int start, int span)
     {
-        List<String> args = new ArrayList<String>();
+        List<String> args = Lists.newArrayList();
         for (int ii = 0, ll = Math.min(_args.size(), start); ii < ll; ii++) {
             args.add(_args.get(ii));
         }
@@ -259,7 +261,7 @@ public class Args
         return str.replaceAll(ARG_ESC_SEP, ARG_SEP).replaceAll(ARG_ESC_ESC, ARG_ESC);
     }
 
-    protected List<String> _args = new ArrayList<String>();
+    protected List<String> _args = Lists.newArrayList();
 
     protected static final String ARG_SEP = "_";
     protected static final String ARG_ESC = "%";

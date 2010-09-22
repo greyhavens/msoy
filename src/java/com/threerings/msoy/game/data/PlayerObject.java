@@ -10,6 +10,8 @@ import java.util.Set;
 import javax.annotation.Generated;
 
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+
 import com.threerings.util.Name;
 
 import com.threerings.crowd.data.OccupantInfo;
@@ -349,5 +351,5 @@ public class PlayerObject extends WhirledPlayerObject
     /**
      * The persistent properties that have been written to since startup.
      */
-    protected transient Set<String> _dirty = new HashSet<String>();
+    protected transient Set<String> _dirty = Sets.newHashSet();
 }

@@ -10,6 +10,8 @@ import java.util.Set;
 import javax.annotation.Generated;
 
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+
 import com.threerings.bureau.data.AgentObject;
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
@@ -226,5 +228,5 @@ public class AVRGameAgentObject extends AgentObject
     /**
      * The persistent properties that have been written to since startup.
      */
-    protected transient Set<String> _dirty = new HashSet<String>();
+    protected transient Set<String> _dirty = Sets.newHashSet();
 }

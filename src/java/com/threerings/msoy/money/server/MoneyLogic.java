@@ -18,6 +18,8 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Ordering;
+import com.google.common.collect.Sets;
+
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -1410,7 +1412,7 @@ public class MoneyLogic
 
     protected void fillInMemberNames (List<MoneyTransaction> txList)
     {
-        Set<Integer> memberIds = new HashSet<Integer>();
+        Set<Integer> memberIds = Sets.newHashSet();
         for (MoneyTransaction tx : txList) {
             memberIds.add(tx.referenceMemberName.getMemberId());
         }

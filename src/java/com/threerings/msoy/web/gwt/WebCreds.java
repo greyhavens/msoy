@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.google.common.collect.Lists;
+
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
@@ -150,7 +152,7 @@ public class WebCreds
      */
     public List<String> flatten ()
     {
-        List<String> data = new ArrayList<String>();
+        List<String> data = Lists.newArrayList();
         data.add(token);
         data.add(accountName);
         data.add(String.valueOf(validated));

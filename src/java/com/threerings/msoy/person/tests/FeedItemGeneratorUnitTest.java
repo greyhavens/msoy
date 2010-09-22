@@ -108,8 +108,7 @@ public class FeedItemGeneratorUnitTest
     @Test public void testPlayedGameDuplicateRemoval ()
     {
         List<FeedMessage> msgs, aggregated;
-
-        msgs = new ArrayList<FeedMessage>();
+        msgs = Lists.newArrayList();
         msgs.add(new FriendFeedMessage(FeedMessageType.FRIEND_PLAYED_GAME,
             new MemberName("M1", 1),new String[]{"", "2000", ""}, 0));
         msgs.add(new FriendFeedMessage(FeedMessageType.FRIEND_PLAYED_GAME,
@@ -118,8 +117,7 @@ public class FeedItemGeneratorUnitTest
         aggregated = FeedMessageAggregator.aggregate(msgs, false);
         assertEquals(1, aggregated.size());
         assertTrue(aggregated.get(0) == msgs.get(0));
-
-        msgs = new ArrayList<FeedMessage>();
+        msgs = Lists.newArrayList();
         msgs.add(new FriendFeedMessage(FeedMessageType.FRIEND_PLAYED_GAME,
             new MemberName("M1", 1),new String[]{"", "2000", ""}, 0));
         msgs.add(new FriendFeedMessage(FeedMessageType.FRIEND_PLAYED_GAME,
@@ -139,7 +137,7 @@ public class FeedItemGeneratorUnitTest
 
     @Test public void testPlayedGameAggregation ()
     {
-        List<FeedMessage> msgs = new ArrayList<FeedMessage>();
+        List<FeedMessage> msgs = Lists.newArrayList();
 
         // 2 members play same game
         msgs.add(new FriendFeedMessage(FeedMessageType.FRIEND_PLAYED_GAME,
@@ -174,7 +172,7 @@ public class FeedItemGeneratorUnitTest
 
     @Test public void testAggregateGroupDepletion ()
     {
-        List<FeedMessage> msgs = new ArrayList<FeedMessage>();
+        List<FeedMessage> msgs = Lists.newArrayList();
 
         // this data is a canonical version of a live user's feed that was casuing a crash in the
         // message aggregation code (fixed in msoy r17548)

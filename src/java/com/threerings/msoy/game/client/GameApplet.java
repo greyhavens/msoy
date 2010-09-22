@@ -18,6 +18,8 @@ import javax.swing.JApplet;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.collect.Lists;
+
 import com.samskivert.util.ListUtil;
 import com.samskivert.util.LoggingLogProvider;
 import com.samskivert.util.OneLineLogFormatter;
@@ -55,7 +57,7 @@ public class GameApplet extends JApplet
         }
 
         // don't ask
-        List<URL> urls = new ArrayList<URL>();
+        List<URL> urls = Lists.newArrayList();
         for (URL url : ((URLClassLoader)getClass().getClassLoader()).getURLs()) {
             if (url.getPath().endsWith(".jar")) {
                 urls.add(url);

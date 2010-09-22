@@ -6,6 +6,8 @@ package com.threerings.msoy.person.gwt;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.collect.Lists;
+
 import com.threerings.msoy.badge.data.all.Badge;
 import com.threerings.msoy.badge.data.all.EarnedBadge;
 import com.threerings.msoy.data.all.MediaDesc;
@@ -471,7 +473,7 @@ public class FeedItemGenerator
      */
     protected Media[] buildMediaArray (List<FeedMessage> list)
     {
-        List<Media> media = new ArrayList<Media>();
+        List<Media> media = Lists.newArrayList();
         for (FeedMessage message : list) {
             Media w = buildMedia(message);
             if (w != null) {

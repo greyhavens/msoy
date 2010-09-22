@@ -68,7 +68,7 @@ public class SurveyRepository extends DepotRepository
      */
     public List<SurveyQuestionRecord> loadQuestions (int surveyId)
     {
-        List<QueryClause> clauses = new ArrayList<QueryClause>();
+        List<QueryClause> clauses = Lists.newArrayList();
         clauses.add(new Where(SurveyQuestionRecord.SURVEY_ID, surveyId));
         clauses.add(OrderBy.ascending(SurveyQuestionRecord.QUESTION_INDEX));
         return findAll(SurveyQuestionRecord.class, clauses);

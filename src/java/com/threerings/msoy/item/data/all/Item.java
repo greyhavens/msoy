@@ -5,6 +5,8 @@ package com.threerings.msoy.item.data.all;
 
 import java.util.HashMap;
 
+import com.google.common.collect.Maps;
+
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.samskivert.util.ByteEnum;
@@ -633,8 +635,8 @@ public abstract class Item implements Comparable<Item>, Streamable, IsSerializab
 
         if (_mapping == null) {
             // we can't use google collections here because this class is used in GWT.
-            _mapping = new HashMap<Byte, Class<? extends Item>>();
-            _reverseMapping = new HashMap<Class<? extends Item>, Byte>();
+            _mapping = Maps.newHashMap();
+            _reverseMapping = Maps.newHashMap();
         }
 
         Byte otype = type;

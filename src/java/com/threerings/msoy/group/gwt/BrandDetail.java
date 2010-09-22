@@ -6,6 +6,8 @@ package com.threerings.msoy.group.gwt;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.collect.Lists;
+
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.io.Streamable;
@@ -56,7 +58,7 @@ public class BrandDetail
     public BrandDetail (GroupName group)
     {
         this.group = group;
-        this.shareHolders = new ArrayList<BrandShare>();
+        this.shareHolders = Lists.newArrayList();
     }
 
     public void setShares (int memberId, int newShares)

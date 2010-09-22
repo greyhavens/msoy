@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.google.common.collect.Lists;
+
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.msoy.data.all.MemberName;
@@ -44,7 +46,7 @@ public class Invitation
      */
     public List<String> flatten ()
     {
-        List<String> data = new ArrayList<String>();
+        List<String> data = Lists.newArrayList();
         data.add(inviteId);
         data.add(inviteeEmail);
         data.add(inviter.toString());

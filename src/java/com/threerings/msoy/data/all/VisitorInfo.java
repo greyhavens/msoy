@@ -9,6 +9,8 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import com.google.common.collect.Lists;
+
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.io.Streamable;
@@ -74,7 +76,7 @@ public class VisitorInfo
      */
     public List<String> flatten ()
     {
-        List<String> data = new ArrayList<String>();
+        List<String> data = Lists.newArrayList();
         data.add(id);
         data.add(Boolean.toString(isAuthoritative));
         return data;

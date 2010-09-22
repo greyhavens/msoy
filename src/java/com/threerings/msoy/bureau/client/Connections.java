@@ -76,7 +76,7 @@ class Connections
 
         _shutdown = true;
         _purge.cancel();
-        java.util.List<Entry> entries = new java.util.ArrayList<Entry>();
+        List<Entry> entries = Lists.newArrayList();
         entries.addAll(_clients.values());
         for (Entry entry : entries) {
             if (entry.getState() == State.CONNECTED ||
@@ -105,7 +105,7 @@ class Connections
     protected void purgeFailedConnections ()
     {
         long now = System.currentTimeMillis();
-        java.util.List<String> keys = new java.util.ArrayList<String>();
+        List<String> keys = Lists.newArrayList();
         keys.addAll(_clients.keySet());
         for (String key : keys) {
             Entry entry = _clients.get(key);

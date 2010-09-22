@@ -119,7 +119,7 @@ public class MemberServlet extends MsoyServiceServlet
         // member
         int deficit = NEED_FRIENDS_FRIEND_COUNT - list.size();
         if (padWithGreeters && mrec != null && deficit > 0) {
-            HashSet<Integer> greeterIds = new HashSet<Integer>();
+            HashSet<Integer> greeterIds = Sets.newHashSet();
             greeterIds.addAll(_memberMan.getPPSnapshot().getOnlineGreeters());
             greeterIds.removeAll(friendIds);
             greeterIds.remove(mrec.memberId);

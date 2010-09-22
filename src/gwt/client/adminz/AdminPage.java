@@ -39,7 +39,6 @@ public class AdminPage extends Page
                 ItemDetail detail = _reviewPanel.getItemDetail(type, item);
                 if (detail == null) {
                     MsoyUI.error("Cannot view transactions for that item");
-                    return;
                 } else {
                     setContent(_msgs.reviewItemTransactionsTitle(),
                         new ItemTransactionsPanel(detail));

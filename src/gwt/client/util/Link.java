@@ -3,6 +3,7 @@
 
 package client.util;
 
+import java.util.Arrays;
 import java.util.HashSet;
 
 import com.google.common.collect.Sets;
@@ -42,9 +43,7 @@ public class Link
     public static void setValidPages (Pages[] pages)
     {
         _validPages = Sets.newHashSet();
-        for (Pages page : pages) {
-            _validPages.add(page);
-        }
+        _validPages.addAll(Arrays.asList(pages));
     }
 
     /**

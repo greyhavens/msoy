@@ -8,6 +8,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import com.google.common.collect.Lists;
+
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -97,7 +99,7 @@ public class TrophyRepository extends DepotRepository
      */
     public List<String> loadTrophyOwnership (int gameId, int memberId)
     {
-        ArrayList<String> idents = new ArrayList<String>();
+        ArrayList<String> idents = Lists.newArrayList();
         Where where = new Where(TrophyRecord.GAME_ID, gameId, TrophyRecord.MEMBER_ID, memberId);
         for (TrophyOwnershipRecord orec : findAll(TrophyOwnershipRecord.class, where)) {
             idents.add(orec.ident);

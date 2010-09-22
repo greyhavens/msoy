@@ -6,6 +6,8 @@ package com.threerings.msoy.person.gwt;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.collect.Lists;
+
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.msoy.data.all.MemberName;
@@ -25,7 +27,7 @@ public class GalleryData implements IsSerializable
 
     public List<Integer> getPhotoIds ()
     {
-        List<Integer> ids = new ArrayList<Integer>();
+        List<Integer> ids = Lists.newArrayList();
         for (Photo photo : photos) {
             ids.add(photo.itemId);
         }

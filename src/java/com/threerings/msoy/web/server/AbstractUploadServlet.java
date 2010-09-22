@@ -17,6 +17,7 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 
@@ -137,7 +138,7 @@ public abstract class AbstractUploadServlet extends HttpServlet
     protected FileItem[] extractFileItems (HttpServletRequest req)
         throws FileUploadException
     {
-        ArrayList<FileItem> items = new ArrayList<FileItem>();
+        ArrayList<FileItem> items = Lists.newArrayList();
 
         // TODO: create a custom file item factory that just puts items in the right place from the
         // start and computes the SHA hash on the way

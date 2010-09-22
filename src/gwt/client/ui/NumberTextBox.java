@@ -76,7 +76,7 @@ public class NumberTextBox extends TextBox
     public Number getNumber ()
     {
         String valstr = getText().length() == 0 ? "0" : getText();
-        return _allowFloatingPoint ? (Number)(new Double(valstr)) : (Number)(new Integer(valstr));
+        return _allowFloatingPoint ? new Double(valstr) : new Integer(valstr);
     }
 
     protected boolean _allowFloatingPoint;

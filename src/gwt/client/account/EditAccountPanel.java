@@ -480,7 +480,7 @@ public class EditAccountPanel extends FlowPanel
                 _perma.getFlexCellFormatter().setStyleName(0, 1, "PermaName");
                 _perma.setText(0, 1, pname);
                 _perma.setText(0, 2, "");
-                _perma.setText(0+1, 0, "");
+                _perma.setText(1, 0, "");
                 MsoyUI.infoNear(_msgs.permaNameConfigured(), _uppname);
             }
             public void onFailure (Throwable cause) {
