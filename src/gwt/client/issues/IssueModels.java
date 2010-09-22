@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.collect.Maps;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -74,7 +76,7 @@ public class IssueModels
 
         protected boolean _open;
         protected boolean _isManager;
-        protected Map<Integer, Issue> _issues = new HashMap<Integer, Issue>();
+        protected Map<Integer, Issue> _issues = Maps.newHashMap();
     }
 
     /** A data model that provides owned issues. */
@@ -151,11 +153,15 @@ public class IssueModels
         return null;
     }
 
-    /** A cached Issues data model. */
-    protected Map<Boolean, Issues> _imodels = new HashMap<Boolean, Issues>();
+    /**
+     * A cached Issues data model.
+     */
+    protected Map<Boolean, Issues> _imodels = Maps.newHashMap();
 
-    /** A cached OwnedIssues data model. */
-    protected Map<Boolean, OwnedIssues> _omodels = new HashMap<Boolean, OwnedIssues>();
+    /**
+     * A cached OwnedIssues data model.
+     */
+    protected Map<Boolean, OwnedIssues> _omodels = Maps.newHashMap();
 
     protected static final IssueServiceAsync _issuesvc = GWT.create(IssueService.class);
 }

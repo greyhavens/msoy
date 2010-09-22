@@ -3,9 +3,10 @@
 
 package client.item;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import com.google.common.collect.Lists;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
@@ -262,8 +263,7 @@ public class TagDetailPanel extends VerticalPanel
         _tlist = tags;
         _tags.clear();
         _tags.add(new InlineLabel("Tags:", false, false, true));
-
-        final List<String> addedTags = new ArrayList<String>();
+        final List<String> addedTags = Lists.newArrayList();
         for (Iterator<String> iter = tags.iterator(); iter.hasNext() ; ) {
             final String tag = iter.next();
             InlineLabel tagLabel = new InlineLabel(tag);

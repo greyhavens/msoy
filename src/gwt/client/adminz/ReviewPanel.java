@@ -3,8 +3,9 @@
 
 package client.adminz;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import com.google.common.collect.Lists;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -78,7 +79,7 @@ public class ReviewPanel extends FlowPanel
         }
         _contents = new PagedTable<ItemFlag>(5) {
             @Override protected List<Widget> createHeader () {
-                List<Widget> header = new ArrayList<Widget>();
+                List<Widget> header = Lists.newArrayList();
                 header.add(MsoyUI.createLabel(_msgs.reviewColumnThumbnail(), null));
                 header.add(MsoyUI.createLabel(_msgs.reviewColumnComment(), null));
                 header.add(MsoyUI.createLabel(_msgs.reviewColumnActions(), null));
@@ -86,7 +87,7 @@ public class ReviewPanel extends FlowPanel
             }
 
             @Override protected List<Widget> createRow (ItemFlag item) {
-                List<Widget> row = new ArrayList<Widget>();
+                List<Widget> row = Lists.newArrayList();
                 ItemDetail detail = _result.items.get(item.itemIdent);
 
                 // thumbnail

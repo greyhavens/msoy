@@ -3,8 +3,9 @@
 
 package client.people;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import com.google.common.collect.Lists;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -38,7 +39,7 @@ public abstract class EmailListPanel extends FlowPanel
         final WebMailControls webmail = new WebMailControls(
             _msgs.emailImportTitle(), _msgs.emailImport()) {
             protected void handleAddresses (List<EmailContact> addrs) {
-                List<EmailContact> members = new ArrayList<EmailContact>();
+                List<EmailContact> members = Lists.newArrayList();
                 for (EmailContact ec : addrs) {
                     // don't add existing members to the to be invited list, those will be handled
                     // by virtue of being on the members list

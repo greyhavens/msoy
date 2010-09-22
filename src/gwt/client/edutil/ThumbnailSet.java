@@ -3,11 +3,13 @@
 
 package client.edutil;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import com.threerings.msoy.facebook.gwt.FeedThumbnail;
 
@@ -56,7 +58,7 @@ public class ThumbnailSet
      */
     public List<FeedThumbnail> toList ()
     {
-        List<FeedThumbnail> thumbnails = new ArrayList<FeedThumbnail>();
+        List<FeedThumbnail> thumbnails = Lists.newArrayList();
         for (Map<String, List<FeedThumbnail>> vmap : _organized.values()) {
             for (List<FeedThumbnail> thumbs : vmap.values()) {
                 thumbnails.addAll(thumbs);
@@ -74,7 +76,7 @@ public class ThumbnailSet
         Map<String, List<FeedThumbnail>> variants = getVariantMap(code);
         List<FeedThumbnail> thumbs = variants.get(variant);
         if (thumbs == null) {
-            variants.put(variant, thumbs = new ArrayList<FeedThumbnail>());
+            variants.put(variant, thumbs = Lists.newArrayList());
         }
         return thumbs;
     }
@@ -87,7 +89,7 @@ public class ThumbnailSet
     {
         Map<String, List<FeedThumbnail>> variants = _organized.get(code);
         if (variants == null) {
-            _organized.put(code, variants = new HashMap<String, List<FeedThumbnail>>());
+            _organized.put(code, variants = Maps.newHashMap());
             return variants;
         }
         return variants;
@@ -98,7 +100,7 @@ public class ThumbnailSet
      */
     public List<String> getCodes ()
     {
-        List<String> codes = new ArrayList<String>();
+        List<String> codes = Lists.newArrayList();
         codes.addAll(_organized.keySet());
         Collections.sort(codes);
         return codes;
@@ -109,7 +111,7 @@ public class ThumbnailSet
      */
     public List<String> getVariants (String code)
     {
-        List<String> variants = new ArrayList<String>();
+        List<String> variants = Lists.newArrayList();
         variants.addAll(getVariantMap(code).keySet());
         Collections.sort(variants);
         return variants;
@@ -145,5 +147,5 @@ public class ThumbnailSet
 
     protected int _deepSize;
     protected Map<String, Map<String, List<FeedThumbnail>>> _organized =
-        new HashMap<String, Map<String, List<FeedThumbnail>>>();
+        Maps.newHashMap();
 }

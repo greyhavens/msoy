@@ -15,7 +15,6 @@ import com.google.gwt.user.client.ui.TextBox;
 
 import com.threerings.gwt.ui.EnterClickAdapter;
 
-import com.threerings.gwt.ui.Popups;
 import com.threerings.msoy.admin.gwt.AdminService;
 import com.threerings.msoy.admin.gwt.AdminServiceAsync;
 import com.threerings.msoy.data.all.MediaDesc;

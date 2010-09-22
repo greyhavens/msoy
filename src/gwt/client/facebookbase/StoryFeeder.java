@@ -6,6 +6,8 @@ package client.facebookbase;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.google.common.collect.Maps;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -84,8 +86,7 @@ public class StoryFeeder
         }
 
         actionURL = addMoreParameters(actionURL);
-
-        Map<String, String> wildcards = new HashMap<String, String>();
+        Map<String, String> wildcards = Maps.newHashMap();
         wildcards.put("action_url", actionURL);
         wildcards.put("vector", vector);
         wildcards.put("fbuid", String.valueOf(_fields.fbuid));
@@ -93,7 +94,7 @@ public class StoryFeeder
 
         if (_fields.template.bundleId != 0) {
             // use the old skool bundle ids - this is just so pre-2009!
-            Map<String, Object> data = new HashMap<String, Object>();
+            Map<String, Object> data = Maps.newHashMap();
             data.putAll(wildcards);
             data.put("images", FacebookUtil.makeImages(
                 _fields.thumbnails, actionURL, _publicImages, false));
@@ -102,7 +103,7 @@ public class StoryFeeder
 
         } else {
             Wildcards wild = new Wildcards(wildcards);
-            Map<String, Object> attachments = new HashMap<String, Object>();
+            Map<String, Object> attachments = Maps.newHashMap();
             //attachment.put("name", wild.replace(_fields.template.name));
             attachments.put("href", actionURL);
             attachments.put("description", wild.replace(_fields.template.description));

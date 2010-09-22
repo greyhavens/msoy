@@ -3,8 +3,9 @@
 
 package client.adminz;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import com.google.common.collect.Lists;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.NumberFormat;
@@ -77,7 +78,7 @@ public class ExchangePanel extends SmartTable
         @Override
         public List<Widget> createRow (ExchangeData data)
         {
-            List<Widget> row = new ArrayList<Widget>();
+            List<Widget> row = Lists.newArrayList();
 
             Label time = MsoyUI.createLabel(DateUtil.formatDateTime(data.timestamp), "Time");
             time.setWordWrap(false);
@@ -94,7 +95,7 @@ public class ExchangePanel extends SmartTable
         @Override
         public List<Widget> createHeader ()
         {
-            List<Widget> header = new ArrayList<Widget>();
+            List<Widget> header = Lists.newArrayList();
 
             header.add(MsoyUI.createLabel("When", null));
             header.add(MsoyUI.createLabel("Bars", "rightLabel"));

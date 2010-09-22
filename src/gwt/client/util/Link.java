@@ -5,6 +5,8 @@ package client.util;
 
 import java.util.HashSet;
 
+import com.google.common.collect.Sets;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -39,7 +41,7 @@ public class Link
      */
     public static void setValidPages (Pages[] pages)
     {
-        _validPages = new HashSet<Pages>();
+        _validPages = Sets.newHashSet();
         for (Pages page : pages) {
             _validPages.add(page);
         }

@@ -6,6 +6,8 @@ package client.util.events;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.google.common.collect.Maps;
+
 import com.google.gwt.core.client.JavaScriptObject;
 
 import com.threerings.gwt.util.ListenerList;
@@ -118,7 +120,7 @@ public class FlashEvents
      * which seem not to invoke the static initializers of the class before doing so. */
     protected static Map<String, ListenerList<FlashEventListener>> getLLMap () {
         if (_eventListeners == null) {
-            _eventListeners = new HashMap<String, ListenerList<FlashEventListener>>();
+            _eventListeners = Maps.newHashMap();
         }
         return _eventListeners;
     }

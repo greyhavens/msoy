@@ -3,9 +3,10 @@
 
 package client.survey;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import com.google.common.collect.Lists;
 
 import com.google.gwt.core.client.GWT;
 
@@ -132,14 +133,14 @@ public class EditSurveyPanel extends VerticalPanel
             add(MsoyUI.createLabel(_msgs.surveysTitle(), null));
             PagedTable<SurveyMetaData> table = new PagedTable<SurveyMetaData>(10) {
                 @Override protected List<Widget> createHeader () {
-                    List<Widget> header = new ArrayList<Widget>();
+                    List<Widget> header = Lists.newArrayList();
                     header.add(MsoyUI.createLabel(_msgs.surveyNameHeader(), null));
                     header.add(MsoyUI.createLabel(_msgs.surveyLinksHeader(), null));
                     return header;
                 }
 
                 @Override protected List<Widget> createRow (SurveyMetaData item) {
-                    List<Widget> row = new ArrayList<Widget>();
+                    List<Widget> row = Lists.newArrayList();
                     row.add(MsoyUI.createLabel(item.name, null));
                     HorizontalPanel links = new HorizontalPanel();
                     links.setSpacing(5);
@@ -189,7 +190,8 @@ public class EditSurveyPanel extends VerticalPanel
             setWidth("100%");
             setStyleName("survey");
 
-            init(new SurveyWithQuestions(new SurveyMetaData(), new ArrayList<SurveyQuestion>()));
+            init(new SurveyWithQuestions(
+                new SurveyMetaData(), Lists.<SurveyQuestion>newArrayList()));
         }
 
         /**
@@ -324,7 +326,7 @@ public class EditSurveyPanel extends VerticalPanel
 
         @Override protected List<Widget> createHeader ()
         {
-            List<Widget> header = new ArrayList<Widget>();
+            List<Widget> header = Lists.newArrayList();
             header.add(MsoyUI.createLabel(_msgs.questionTextHeader(), null));
             header.add(MsoyUI.createLabel(_msgs.questionTypeHeader(), null));
             header.add(MsoyUI.createLabel("", null));
@@ -335,7 +337,7 @@ public class EditSurveyPanel extends VerticalPanel
         @Override protected List<Widget> createRow (SurveyQuestion item)
         {
             // informational columns
-            List<Widget> row = new ArrayList<Widget>();
+            List<Widget> row = Lists.newArrayList();
             row.add(MsoyUI.createLabel(item.text, null));
             row.add(MsoyUI.createLabel(getQuestionTypeName(item.type), null));
 

@@ -3,8 +3,9 @@
 
 package client.person;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import com.google.common.collect.Lists;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.AbsolutePanel;
@@ -72,7 +73,7 @@ public class GalleryEditPanel extends AbsolutePanel // AbsolutePanel needed to s
             galleryData.gallery.name = _pmsgs.galleryNewName();
         }
         galleryData.gallery.description = "";
-        galleryData.photos = new ArrayList<Photo>();
+        galleryData.photos = Lists.newArrayList();
         display(galleryData);
     }
 
@@ -177,7 +178,7 @@ public class GalleryEditPanel extends AbsolutePanel // AbsolutePanel needed to s
             });
         } else {
             // otherwise create the box explicitly with an empty result
-            createPhotoBox(photoContainer, new ArrayList<Photo>());
+            createPhotoBox(photoContainer, Lists.<Photo>newArrayList());
         }
 
         // "your photos" title goes over photo list

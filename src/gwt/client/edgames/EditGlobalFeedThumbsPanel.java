@@ -3,8 +3,9 @@
 
 package client.edgames;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import com.google.common.collect.Lists;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
@@ -50,7 +51,7 @@ public class EditGlobalFeedThumbsPanel extends FlowPanel
         new ClickCallback<Void>(save) {
             @Override protected boolean callService () {
                 try {
-                    List<FeedThumbnail> thumbnails = new ArrayList<FeedThumbnail>();
+                    List<FeedThumbnail> thumbnails = Lists.newArrayList();
                     for (EditThumbsPanel panel : _panels) {
                         thumbnails.addAll(panel.getThumbnails());
                     }
@@ -77,7 +78,7 @@ public class EditGlobalFeedThumbsPanel extends FlowPanel
         _panels.add(panel);
     }
 
-    protected List<EditThumbsPanel> _panels = new ArrayList<EditThumbsPanel>();
+    protected List<EditThumbsPanel> _panels = Lists.newArrayList();
 
     protected static final EditGameServiceAsync _gamesvc = GWT.create(EditGameService.class);
     protected static final EditGamesMessages _msgs = GWT.create(EditGamesMessages.class);

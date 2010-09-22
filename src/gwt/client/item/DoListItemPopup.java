@@ -3,8 +3,9 @@
 
 package client.item;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import com.google.common.collect.Lists;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
@@ -484,11 +485,11 @@ public class DoListItemPopup extends VerticalPanel
     protected ListedListener _listener;
 
     protected ListBox _basisBox;
-    protected List<ListingCard> _basisItems = new ArrayList<ListingCard>();
+    protected List<ListingCard> _basisItems = Lists.newArrayList();
     protected CatalogListing _previousBasis;
 
     protected ListBox _brandBox;
-    protected List<BrandDetail> _brandItems = new ArrayList<BrandDetail>();
+    protected List<BrandDetail> _brandItems = Lists.newArrayList();
 
     protected ListBox _pricingBox;
     protected ListBox _currencyBox;

@@ -3,10 +3,12 @@
 
 package client.people;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -307,7 +309,7 @@ public class GameInvitePanel extends InvitePanel
          */
         protected Set<Integer> getRecipients ()
         {
-            HashSet<Integer> selected = new HashSet<Integer>();
+            HashSet<Integer> selected = Sets.newHashSet();
             for (SelectaFriend saf : _friends) {
                 if (saf.isSelected()) {
                     selected.add(saf.getMemberId());
@@ -338,7 +340,7 @@ public class GameInvitePanel extends InvitePanel
         protected SmartTable _grid;
         protected PushButton _send;
         protected CheckBox _showAll;
-        protected List<SelectaFriend> _friends = new ArrayList<SelectaFriend>();
+        protected List<SelectaFriend> _friends = Lists.newArrayList();
         protected static final int ROWS = 12;
         protected static final int COLS = 3;
         protected static final String COL_WIDTH = "33%";

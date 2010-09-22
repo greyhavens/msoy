@@ -3,10 +3,12 @@
 
 package client.edgames;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -76,8 +78,8 @@ class EditThumbsPanel extends FlowPanel
      */
     public List<FeedThumbnail> getThumbnails ()
     {
-        List<FeedThumbnail> thumbs = new ArrayList<FeedThumbnail>();
-        Set<String> variants = new HashSet<String>();
+        List<FeedThumbnail> thumbs = Lists.newArrayList();
+        Set<String> variants = Sets.newHashSet();
         for (VariantPanel vpanel : getPanels()) {
             if (variants.contains(vpanel.getVariant())) {
                 throw new ConfigException(_msgs.errVariantDuplicate(vpanel.getVariant()));
@@ -89,7 +91,7 @@ class EditThumbsPanel extends FlowPanel
 
     protected List<VariantPanel> getPanels ()
     {
-        List<VariantPanel> panels = new ArrayList<VariantPanel>();
+        List<VariantPanel> panels = Lists.newArrayList();
         for (int ii = 0; ii < _variants.getWidgetCount(); ++ii) {
             if (_variants.getWidget(ii) instanceof VariantPanel) {
                 panels.add((VariantPanel)_variants.getWidget(ii));
@@ -155,7 +157,7 @@ class EditThumbsPanel extends FlowPanel
             if (variant.length() == 0) {
                 throw new ConfigException(_msgs.errVariantNull());
             }
-            List<FeedThumbnail> thumbs = new ArrayList<FeedThumbnail>();
+            List<FeedThumbnail> thumbs = Lists.newArrayList();
             byte pos = 0;
             for (MediaBox box : _boxes) {
                 thumbs.add(new FeedThumbnail(EditorUtil.requireImageMedia(
@@ -175,7 +177,7 @@ class EditThumbsPanel extends FlowPanel
         }
 
         protected TextBox _variant;
-        protected List<MediaBox> _boxes = new ArrayList<MediaBox>();
+        protected List<MediaBox> _boxes = Lists.newArrayList();
     }
 
     protected String _code;

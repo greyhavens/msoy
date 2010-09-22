@@ -8,6 +8,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.google.common.collect.Sets;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -274,7 +276,7 @@ public class EditArcadePanel extends FlowPanel
         protected Set<Integer> _featured;
         protected GameGrid _grid;
         protected Button _save;
-        protected HashSet<Integer> _removed = new HashSet<Integer>();
+        protected HashSet<Integer> _removed = Sets.newHashSet();
         protected boolean _orderChanged;
         protected boolean _featuredChanged;
     }

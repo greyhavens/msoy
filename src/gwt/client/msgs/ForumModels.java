@@ -6,6 +6,8 @@ package client.msgs;
 import java.util.HashMap;
 import java.util.List;
 
+import com.google.common.collect.Maps;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -508,11 +510,15 @@ public class ForumModels
         protected List<ForumThread> _result;
     }
 
-    /** A cache of GroupThreads data models. */
-    protected HashMap<Integer, GroupThreads> _gmodels = new HashMap<Integer, GroupThreads>();
+    /**
+     * A cache of GroupThreads data models.
+     */
+    protected HashMap<Integer, GroupThreads> _gmodels = Maps.newHashMap();
 
-    /** A cache of ThreadMessages data models. */
-    protected HashMap<Integer, ThreadMessages> _tmodels = new HashMap<Integer, ThreadMessages>();
+    /**
+     * A cache of ThreadMessages data models.
+     */
+    protected HashMap<Integer, ThreadMessages> _tmodels = Maps.newHashMap();
 
     /** A cached UnreadThreads data model. */
     protected UnreadThreads _unreadModel;

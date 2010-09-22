@@ -8,6 +8,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import com.google.common.collect.Lists;
+
 import com.google.gwt.core.client.GWT;
 
 import com.google.gwt.user.client.ui.Button;
@@ -337,7 +339,7 @@ public class PassportPanel extends FlowPanel
         {
             _badgePanel.clear();
             // I would use Collections.shuffle(), but it isn't implemented in GWT's JRE emulation.
-            ArrayList<Integer> indexesUnused = new ArrayList<Integer>();
+            ArrayList<Integer> indexesUnused = Lists.newArrayList();
             for (int ii = 0; ii < _badges.size(); ii++) {
                 indexesUnused.add(ii);
             }

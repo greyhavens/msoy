@@ -3,8 +3,9 @@
 
 package client.people;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import com.google.common.collect.Lists;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -108,7 +109,7 @@ public class InviteList extends FlexTable
         _listTable.getFlexCellFormatter().setWidth(row, 1, "40px");
     }
 
-    protected List<EmailContact> _items = new ArrayList<EmailContact>();
+    protected List<EmailContact> _items = Lists.newArrayList();
     protected FlexTable _listTable;
 
     protected static final PeopleMessages _msgs = GWT.create(PeopleMessages.class);

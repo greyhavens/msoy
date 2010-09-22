@@ -3,10 +3,12 @@
 
 package client.frame;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ImageResource;
@@ -251,8 +253,8 @@ public class FrameHeader
     protected StatusPanel _status = new StatusPanel();
     protected SmartTable _logonPanel = makeLogonPanel();
     protected int _statusCol;
-    protected List<NaviButton> _buttons = new ArrayList<NaviButton>();
-    protected Set<Pages> _hidden = new HashSet<Pages>();
+    protected List<NaviButton> _buttons = Lists.newArrayList();
+    protected Set<Pages> _hidden = Sets.newHashSet();
 
     protected static final NaviImages _images = GWT.create(NaviImages.class);
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);

@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.collect.Maps;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -138,7 +140,7 @@ public class GroupsBlurb extends Blurb
         public GroupsGrid (List<GroupCard> groups, List<BrandDetail> brands, Set<Integer> grants)
         {
             super(GROUP_ROWS, GROUP_COLUMNS, PagedGrid.NAV_ON_BOTTOM);
-            _brands = new HashMap<Integer, BrandDetail>();
+            _brands = Maps.newHashMap();
             for (BrandDetail brand : brands) {
                 _brands.put(brand.group.getGroupId(), brand);
             }

@@ -6,6 +6,8 @@ package client.games;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.google.common.collect.Maps;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -211,7 +213,7 @@ public class GameDetailPanel extends SmartTable
 
     protected NaviTabPanel _tabs;
     protected int _gameId;
-    protected Map<GameDetails, Integer> _tabmap = new HashMap<GameDetails, Integer>();
+    protected Map<GameDetails, Integer> _tabmap = Maps.newHashMap();
 
     protected static final GamesMessages _msgs = GWT.create(GamesMessages.class);
     protected static final GameServiceAsync _gamesvc = GWT.create(GameService.class);

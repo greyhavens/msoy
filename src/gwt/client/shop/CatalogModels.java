@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.collect.Maps;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -20,6 +22,7 @@ import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.gwt.CatalogListing;
 import com.threerings.msoy.item.gwt.CatalogQuery;
 import com.threerings.msoy.item.gwt.CatalogService;
+import com.threerings.msoy.item.gwt.CatalogService.SuiteResult;
 import com.threerings.msoy.item.gwt.CatalogServiceAsync;
 import com.threerings.msoy.item.gwt.ListingCard;
 import com.threerings.msoy.item.gwt.CatalogService.CatalogResult;
@@ -186,10 +189,10 @@ public class CatalogModels
         }
     }
 
-    protected Map<CatalogQuery, Listings> _lmodels = new HashMap<CatalogQuery, Listings>();
-    protected Map<String, MemberFavorites> _fmodels = new HashMap<String, MemberFavorites>();
-    protected Map<ItemIdent, CatalogService.SuiteResult> _suites =
-        new HashMap<ItemIdent, CatalogService.SuiteResult>();
+    protected Map<CatalogQuery, Listings> _lmodels = Maps.newHashMap();
+    protected Map<String, MemberFavorites> _fmodels = Maps.newHashMap();
+    protected Map<ItemIdent, SuiteResult> _suites =
+        Maps.newHashMap();
 
     protected static final CatalogServiceAsync _catalogsvc = GWT.create(CatalogService.class);
 }

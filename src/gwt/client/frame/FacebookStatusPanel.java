@@ -3,8 +3,9 @@
 
 package client.frame;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import com.google.common.collect.Lists;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
@@ -227,7 +228,7 @@ public class FacebookStatusPanel extends AbsoluteCSSPanel
     protected Label _name, _level, _trophies;
     protected ProgressBar _levelProgressBar;
     protected Session.Observer _observer;
-    protected List<FlashEventListener> _listeners = new ArrayList<FlashEventListener>();
+    protected List<FlashEventListener> _listeners = Lists.newArrayList();
     // bah, we have to use a static here because the title bar keeps getting re-created but
     // didLogon is only called the first time
     // TODO: some day sort this out 

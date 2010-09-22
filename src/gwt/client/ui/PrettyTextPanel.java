@@ -5,6 +5,8 @@ package client.ui;
 
 import java.util.ArrayList;
 
+import com.google.common.collect.Lists;
+
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.DOM;
@@ -59,7 +61,7 @@ public class PrettyTextPanel extends Widget
         new Parser() {
             public void parse (String plainText, Element parent, int stage)
             {
-                ArrayList<Element> lists = new ArrayList<Element>();
+                ArrayList<Element> lists = Lists.newArrayList();
                 int depth = 0;
                 String[] paragraphs = plainText.split("\n");
                 for (int ii = 0; ii < paragraphs.length; ii++) {

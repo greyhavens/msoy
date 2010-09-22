@@ -3,10 +3,11 @@
 
 package client.item;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import com.google.common.collect.Lists;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -304,7 +305,7 @@ public abstract class BaseItemDetailPanel extends SmartTable
                 _stampButton.setEnabled(_stampBox.getSelectedIndex() > 0);
             }
         });
-        _stampEntries = new ArrayList<GroupName>();
+        _stampEntries = Lists.newArrayList();
 
         _unstampBox = new ListBox();
         _unstampBox.addItem(_imsgs.itemListNoTheme());
@@ -313,7 +314,7 @@ public abstract class BaseItemDetailPanel extends SmartTable
                 _unstampButton.setEnabled(_unstampBox.getSelectedIndex() > 0);
             }
         });
-        _unstampEntries = new ArrayList<GroupName>();
+        _unstampEntries = Lists.newArrayList();
 
         Set<GroupName> existing = new HashSet<GroupName>(_detail.themes);
         for (GroupName theme : _managedThemes) {

@@ -3,8 +3,9 @@
 
 package client.person;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import com.google.common.collect.Lists;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -81,7 +82,7 @@ public class FeedMessagePanel extends FocusPanel
             }
 
             public void addMedia (Media[] media, String message) {
-                List<Widget> widgets = new ArrayList<Widget>();
+                List<Widget> widgets = Lists.newArrayList();
                 for (Media m : media) {
                     widgets.add(((WidgetWrapper)m).widget);
                 }

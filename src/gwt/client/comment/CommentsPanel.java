@@ -8,6 +8,9 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
+import com.google.common.collect.Maps;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -288,7 +291,7 @@ public class CommentsPanel extends PagedGrid<Comment>
             return false;
         }
 
-        protected Map<Long, Comment> _batchComments = new HashMap<Long, Comment>();
+        protected Map<Long, Comment> _batchComments = Maps.newHashMap();
     }
 
     protected class CommentModel extends MsoyPagedServiceDataModel<Comment, PagedResult<Comment>>

@@ -3,8 +3,9 @@
 
 package client.survey;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import com.google.common.collect.Lists;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -135,7 +136,7 @@ public class ViewSurveyResultsPanel extends VerticalPanel
 
         protected List<Widget> createRow (String item)
         {
-            List<Widget> row = new ArrayList<Widget>();
+            List<Widget> row = Lists.newArrayList();
             row.add(MsoyUI.createLabel(item, "freeFormResponse"));
             return row;
         }

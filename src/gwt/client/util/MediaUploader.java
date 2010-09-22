@@ -6,6 +6,8 @@ package client.util;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.google.common.collect.Maps;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
@@ -174,7 +176,7 @@ public class MediaUploader extends FormPanel
     protected SmartFileUpload _upload;
     protected String _submitted;
 
-    protected static Map<String, MediaUploader> _uploaders = new HashMap<String, MediaUploader>();
+    protected static Map<String, MediaUploader> _uploaders = Maps.newHashMap();
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
 }

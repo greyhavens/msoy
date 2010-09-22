@@ -3,8 +3,9 @@
 
 package client.me;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import com.google.common.collect.Lists;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -47,7 +48,7 @@ public abstract class MoneyPanel extends PagedTable<MoneyTransaction>
     @Override
     public List<Widget> createRow (MoneyTransaction entry)
     {
-        List<Widget> row = new ArrayList<Widget>();
+        List<Widget> row = Lists.newArrayList();
 
         Label time = MsoyUI.createLabel(DateUtil.formatDateTime(entry.timestamp), "Time");
         time.setWordWrap(false);
@@ -64,7 +65,7 @@ public abstract class MoneyPanel extends PagedTable<MoneyTransaction>
     @Override
     public List<Widget> createHeader ()
     {
-        List<Widget> header = new ArrayList<Widget>();
+        List<Widget> header = Lists.newArrayList();
 
         header.add(MsoyUI.createLabel(_msgs.reportColumnWhen(), null));
         header.add(MsoyUI.createLabel(_msgs.reportColumnHow(), null));

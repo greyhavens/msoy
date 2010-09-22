@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.collect.Maps;
+
 import com.google.gwt.core.client.GWT;
 
 import com.google.gwt.user.client.Command;
@@ -165,7 +167,7 @@ public class AwardMedalsPanel extends FlowPanel
 
     protected int _groupId;
     protected List<Medal> _medals;
-    protected Map<String, Medal> _medalMap = new HashMap<String, Medal>();
+    protected Map<String, Medal> _medalMap = Maps.newHashMap();
     protected Command _medalsValidCommand;
     protected TextBox _search;
 

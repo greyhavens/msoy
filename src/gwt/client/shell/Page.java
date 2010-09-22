@@ -3,9 +3,9 @@
 
 package client.shell;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.collect.Lists;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
@@ -34,6 +34,7 @@ import client.util.Link;
 import client.util.events.FlashEvent;
 import client.util.events.FlashEvents;
 import client.util.events.PageCommandEvent;
+import client.util.events.PageCommandEvent.Listener;
 
 /**
  * Handles some standard services for a top-level MetaSOY page.
@@ -579,8 +580,7 @@ public abstract class Page
         }
 
         protected PageCommandEvent _queue; // queue of maximum size 1
-        protected List<PageCommandEvent.Listener> _listeners =
-            new ArrayList<PageCommandEvent.Listener>();
+        protected List<Listener> _listeners = Lists.newArrayList();
     }
 
     protected Widget _content;

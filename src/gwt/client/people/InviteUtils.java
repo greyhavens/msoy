@@ -3,10 +3,12 @@
 
 package client.people;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
@@ -105,8 +107,8 @@ public class InviteUtils
      */
     public static List<EmailContact> getValidUniqueAddresses (InviteList list)
     {
-        List<EmailContact> invited = new ArrayList<EmailContact>();
-        Set<String> accepted = new HashSet<String>();
+        List<EmailContact> invited = Lists.newArrayList();
+        Set<String> accepted = Sets.newHashSet();
         for (EmailContact contact : list.getItems()) {
             if (!contact.email.matches(MsoyUI.EMAIL_REGEX)) {
                 MsoyUI.error(_msgs.inviteInvalidAddress(contact.email));

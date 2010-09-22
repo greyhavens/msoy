@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.collect.Maps;
+
 import com.google.gwt.core.client.GWT;
 
 import com.google.gwt.user.client.ui.Button;
@@ -99,8 +101,8 @@ public class MeFriendsPanel extends FlowPanel
         int size = MediaDescSize.HALF_THUMBNAIL_SIZE;
 
         // group our friends by location (in rooms or games)
-        Map<Integer, FlowPanel> games = new HashMap<Integer, FlowPanel>();
-        Map<Integer, FlowPanel> rooms = new HashMap<Integer, FlowPanel>();
+        Map<Integer, FlowPanel> games = Maps.newHashMap();
+        Map<Integer, FlowPanel> rooms = Maps.newHashMap();
         for (MemberCard card : people) {
             if (card.status instanceof MemberCard.InScene) {
                 int sceneId = ((MemberCard.InScene)card.status).sceneId;

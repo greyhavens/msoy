@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.base.Predicate;
+import com.google.common.collect.Maps;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -224,7 +226,7 @@ public class InventoryModels
         }
     }
 
-    protected Map<Key, Stuff> _models = new HashMap<Key, Stuff>();
+    protected Map<Key, Stuff> _models = Maps.newHashMap();
 
     protected static final StuffServiceAsync _stuffsvc = GWT.create(StuffService.class);
 }

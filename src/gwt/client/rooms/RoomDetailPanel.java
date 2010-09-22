@@ -3,11 +3,12 @@
 
 package client.rooms;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+
+import com.google.common.collect.Lists;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -245,7 +246,7 @@ public class RoomDetailPanel extends SmartTable
                 _stampButton.setEnabled(_stampBox.getSelectedIndex() > 0);
             }
         });
-        _stampEntries = new ArrayList<GroupName>();
+        _stampEntries = Lists.newArrayList();
 
         for (GroupName theme : _managedThemes) {
             _stampBox.addItem(theme.toString());

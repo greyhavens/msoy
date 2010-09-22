@@ -6,6 +6,8 @@ package client.support;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.google.common.collect.Maps;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.History;
 
@@ -17,6 +19,7 @@ import com.threerings.underwire.gwt.client.ClientMessages;
 import com.threerings.underwire.gwt.client.PanelCreator;
 import com.threerings.underwire.gwt.client.ServerMessages;
 import com.threerings.underwire.gwt.client.WebContext;
+import com.threerings.underwire.gwt.client.WebContext.TokenResolver;
 import com.threerings.underwire.web.client.UnderwireService;
 import com.threerings.underwire.web.client.UnderwireServiceAsync;
 import com.threerings.underwire.web.data.Account;
@@ -123,8 +126,8 @@ public class SupportPage extends Page
                 _resolvers.put(type, tr);
             }
 
-            protected Map<String, WebContext.TokenResolver> _resolvers =
-                new HashMap<String, WebContext.TokenResolver>();
+            protected Map<String, TokenResolver> _resolvers =
+                Maps.newHashMap();
         };
 
         // initialize our MSOY context

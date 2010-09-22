@@ -3,11 +3,12 @@
 
 package client.shop;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import com.google.common.collect.Lists;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
@@ -361,7 +362,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
                 _lineButton.setEnabled(_lineBox.getSelectedIndex() > 0);
             }
         });
-        _lineEntries = new ArrayList<GroupName>();
+        _lineEntries = Lists.newArrayList();
 
         _unlineBox = new ListBox();
         _unlineBox.addItem(_imsgs.itemListNoTheme());
@@ -370,7 +371,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
                 _unlineButton.setEnabled(_unlineBox.getSelectedIndex() > 0);
             }
         });
-        _unlineEntries = new ArrayList<GroupName>();
+        _unlineEntries = Lists.newArrayList();
 
         for (GroupName theme : _managedThemes) {
             if (_lineup.contains(theme)) {

@@ -6,6 +6,8 @@ package client.adminz;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.google.common.collect.Sets;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
@@ -45,7 +47,7 @@ public class PanopticonStatusPanel extends SmartTable
         setText(0, 1, _msgs.panRestartDescription());
         setWidget(1, 0, new Button(_msgs.panRestart(), new ClickHandler() {
             public void onClick (ClickEvent event) {
-                Set<String> nodes = new HashSet<String>();
+                Set<String> nodes = Sets.newHashSet();
                 for (int i = 0; i < _nodeList.getItemCount(); i++) {
                     if (_nodeList.isItemSelected(i)) {
                         nodes.add(_nodeList.getValue(i));

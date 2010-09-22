@@ -3,8 +3,9 @@
 
 package client.dnd;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import com.google.common.collect.Lists;
 
 /**
  * A simple DropModel implementation that keeps an ordered set of the contents.
@@ -84,6 +85,6 @@ public class SimpleDropModel<T> implements DropModel<T>
     }
 
     protected List<T> _contents;
-    protected List<DropListener<T>> _listeners = new ArrayList<DropListener<T>>();
+    protected List<DropListener<T>> _listeners = Lists.newArrayList();
     protected boolean _allowsDuplicates;
 }

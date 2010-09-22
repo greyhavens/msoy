@@ -11,6 +11,9 @@ import com.allen_sauer.gwt.dnd.client.PickupDragController;
 import com.allen_sauer.gwt.dnd.client.VetoDragException;
 import com.allen_sauer.gwt.dnd.client.drop.FlowPanelDropController;
 import com.allen_sauer.gwt.dnd.client.util.LocationWidgetComparator;
+
+import com.google.common.collect.Maps;
+
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -25,7 +28,7 @@ public abstract class DropPanel<T> extends FlowPanel
     public DropPanel (PickupDragController dragController, DropModel<T> model)
     {
         addStyleName("dropPanel");
-        _contentToWidget = new HashMap<T, Widget>();
+        _contentToWidget = Maps.newHashMap();
 
         _dragController = dragController;
         _dropController = new FlowPanelDropController(this) {

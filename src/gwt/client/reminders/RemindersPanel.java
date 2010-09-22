@@ -3,8 +3,9 @@
 
 package client.reminders;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import com.google.common.collect.Lists;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -174,7 +175,7 @@ public class RemindersPanel extends FlowPanel
         return w;
     }
 
-    protected List<Reminder> _reminders = new ArrayList<Reminder>();
+    protected List<Reminder> _reminders = Lists.newArrayList();
     protected PushButton _cycle;
     protected SimplePanel _reminder;
     protected boolean _dismissed;

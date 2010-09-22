@@ -7,6 +7,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+
 import client.game.GameGenrePanel;
 import client.util.ClickCallback;
 import client.util.InfoCallback;
@@ -39,7 +42,7 @@ public class AddArcadeEntriesPanel extends GameGenrePanel
         super(ArcadeData.Portal.MAIN, GameGenre.ALL, sort, query);
         _edgamesvc.loadArcadeEntryIds(_portal = page, new InfoCallback<int[]> () {
             public void onSuccess (int[] result) {
-                _entryIds = new HashSet<Integer>();
+                _entryIds = Sets.newHashSet();
                 for (int gameId : result) {
                     _entryIds.add(gameId);
                 }
@@ -104,7 +107,7 @@ public class AddArcadeEntriesPanel extends GameGenrePanel
 
     protected ArcadeData.Portal _portal;
     protected Set<Integer> _entryIds;
-    protected HashMap<Integer, FlowPanel> _actions = new HashMap<Integer, FlowPanel>();
+    protected HashMap<Integer, FlowPanel> _actions = Maps.newHashMap();
 
     protected static final EditGamesMessages _msgs = GWT.create(EditGamesMessages.class);
     protected static final EditGameServiceAsync _edgamesvc = GWT.create(EditGameService.class);

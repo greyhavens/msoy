@@ -3,8 +3,9 @@
 
 package client.frame;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import com.google.common.collect.Lists;
 
 import com.google.gwt.user.client.Timer;
 
@@ -71,5 +72,5 @@ public class Analytics
     }-*/;
 
     protected boolean _initialized;
-    protected List<String> _pending = new ArrayList<String>();
+    protected List<String> _pending = Lists.newArrayList();
 }

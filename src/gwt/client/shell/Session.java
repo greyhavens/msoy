@@ -3,8 +3,9 @@
 
 package client.shell;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import com.google.common.collect.Lists;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
@@ -223,7 +224,7 @@ public class Session
     }
 
     protected static VisitorInfo _visitor;
-    protected static List<Observer> _observers = new ArrayList<Observer>();
+    protected static List<Observer> _observers = Lists.newArrayList();
 
     protected static final WebUserServiceAsync _usersvc = GWT.create(WebUserService.class);
     protected static final WebMemberServiceAsync _membersvc = GWT.create(WebMemberService.class);

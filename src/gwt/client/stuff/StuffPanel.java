@@ -4,9 +4,10 @@
 package client.stuff;
 
 import java.util.List;
-import java.util.ArrayList;
 
 import com.google.common.base.Predicate;
+import com.google.common.collect.Lists;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -265,7 +266,7 @@ public class StuffPanel extends FlowPanel
         _msgs.ipfUsed()
     };
 
-    protected static final List<Predicate<Item>> FILTERS = new ArrayList<Predicate<Item>>(); {
+    protected static final List<Predicate<Item>> FILTERS = Lists.newArrayList(); {
         FILTERS.add(new Predicate<Item>() { // show all (TODO: use Predicates.alwaysTrue()
             public boolean apply (Item item) {
                 return true;

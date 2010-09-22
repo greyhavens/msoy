@@ -3,8 +3,9 @@
 
 package client.edutil;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import com.google.common.collect.Lists;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -134,7 +135,7 @@ public class EditorTable extends SmartTable
 
     protected Button _save;
     protected CheckBox _confirm;
-    protected List<Command> _binders = new ArrayList<Command>();
+    protected List<Command> _binders = Lists.newArrayList();
 
     protected static final EditorUtilMessages _utilmsgs = GWT.create(EditorUtilMessages.class);
 }

@@ -3,8 +3,9 @@
 
 package client.people;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import com.google.common.collect.Lists;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
@@ -144,7 +145,7 @@ public class InterestsBlurb extends Blurb
 
     protected List<Interest> getNewInterests ()
     {
-        List<Interest> interests = new ArrayList<Interest>();
+        List<Interest> interests = Lists.newArrayList();
         for (int ii = 0; ii < _iEditors.length; ii++) {
             Interest interest = new Interest();
             interest.type = Interest.TYPES[ii];

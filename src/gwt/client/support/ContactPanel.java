@@ -3,8 +3,9 @@
 
 package client.support;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import com.google.common.collect.Lists;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -89,5 +90,5 @@ public class ContactPanel extends FlowPanel
     protected Label _submitNew;
     protected MyPetitionsPanel _petitions;
 
-    protected List<Widget> _cstack = new ArrayList<Widget>();
+    protected List<Widget> _cstack = Lists.newArrayList();
 }

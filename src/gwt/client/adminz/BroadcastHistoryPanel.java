@@ -3,8 +3,9 @@
 
 package client.adminz;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import com.google.common.collect.Lists;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -41,7 +42,7 @@ public class BroadcastHistoryPanel extends VerticalPanel
 
         PagedTable<BroadcastHistory> table = new PagedTable<BroadcastHistory>(20) {
             @Override protected List<Widget> createHeader () {
-                List<Widget> labels = new ArrayList<Widget>();
+                List<Widget> labels = Lists.newArrayList();
                 labels.add(MsoyUI.createLabel(_msgs.broadcastTimeSent(), "time"));
                 labels.add(MsoyUI.createLabel(_msgs.broadcastMember(), "member"));
                 labels.add(MsoyUI.createLabel(_msgs.broadcastBarsPaid(), "bars"));
@@ -53,7 +54,7 @@ public class BroadcastHistoryPanel extends VerticalPanel
                 if (memberName == null) {
                     memberName = new MemberName(_msgs.broadcastMemberDeleted(), item.memberId);
                 }
-                List<Widget> fields = new ArrayList<Widget>();
+                List<Widget> fields = Lists.newArrayList();
                 fields.add(MsoyUI.createLabel(DateUtil.formatDateTime(item.timeSent), "time"));
                 fields.add(Link.memberView(memberName));
                 fields.add(MsoyUI.createLabel(String.valueOf(item.barsPaid), "bars"));

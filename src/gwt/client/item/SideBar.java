@@ -6,6 +6,8 @@ package client.item;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.google.common.collect.Maps;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -91,7 +93,7 @@ public class SideBar extends FlowPanel
     protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
     protected static final ItemImages _itemImages = GWT.create(ItemImages.class);
 
-    protected static final Map<Byte, ImageResource> IMAGES = new HashMap<Byte, ImageResource>();
+    protected static final Map<Byte, ImageResource> IMAGES = Maps.newHashMap();
     static {
         IMAGES.put(Item.AUDIO, _itemImages.audio());
         IMAGES.put(Item.AVATAR, _itemImages.avatar());

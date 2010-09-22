@@ -8,6 +8,9 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.History;
 
@@ -230,15 +233,17 @@ public class StuffPage extends Page
     }
 
     protected InventoryModels _models = new InventoryModels();
-    protected Map<Byte, StuffPanel> _stuffPanels = new HashMap<Byte, StuffPanel>();
+    protected Map<Byte, StuffPanel> _stuffPanels = Maps.newHashMap();
     protected ItemDetail _detail;
 
     protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
     protected static final StuffMessages _msgs = GWT.create(StuffMessages.class);
     protected static final StuffServiceAsync _stuffsvc = GWT.create(StuffService.class);
 
-    /** Denotes item types that might be uploaded in bulk. */
-    protected static final Set<Byte> BULK_TYPES = new HashSet<Byte>();
+    /**
+     * Denotes item types that might be uploaded in bulk.
+     */
+    protected static final Set<Byte> BULK_TYPES = Sets.newHashSet();
     static {
         BULK_TYPES.add(Item.PHOTO);
         BULK_TYPES.add(Item.DOCUMENT);
@@ -249,8 +254,10 @@ public class StuffPage extends Page
     /** The number of tabs on the edit game page before we get to the subitems. */
     protected static final int PRE_ITEM_TABS = 4;
 
-    /** A mapping from game sub-item type to edit game page tab index. */
-    protected static final Map<Byte, Integer> GAME_TYPES = new HashMap<Byte, Integer>();
+    /**
+     * A mapping from game sub-item type to edit game page tab index.
+     */
+    protected static final Map<Byte, Integer> GAME_TYPES = Maps.newHashMap();
     static {
         int idx = PRE_ITEM_TABS;
         for (byte type : GameItem.TYPES) {

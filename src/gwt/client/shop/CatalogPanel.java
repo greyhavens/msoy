@@ -6,6 +6,8 @@ package client.shop;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.google.common.collect.Maps;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -204,7 +206,7 @@ public class CatalogPanel extends SmartTable
 
     protected CatalogQuery _query;
     protected CatalogModels _models;
-    protected Map<Byte, TagCloud> _clouds = new HashMap<Byte, TagCloud>();
+    protected Map<Byte, TagCloud> _clouds = Maps.newHashMap();
 
     protected SmartTable _listings;
     protected TextBox _searchBox;

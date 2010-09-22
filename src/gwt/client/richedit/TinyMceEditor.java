@@ -6,6 +6,8 @@ package client.richedit;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.google.common.collect.Maps;
+
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -28,7 +30,7 @@ public class TinyMceEditor extends FlowPanel
      */
     public TinyMceEditor (boolean enablePanelColor)
     {
-        Map<String, Object> settings = new HashMap<String, Object>();
+        Map<String, Object> settings = Maps.newHashMap();
         settings.put("mode", "none");
         settings.put("theme", "advanced");
         settings.put("extended_valid_elements", "b/strong");

@@ -3,8 +3,9 @@
 
 package client.adminz;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import com.google.common.collect.Lists;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -53,7 +54,7 @@ public class ItemTransactionsPanel extends VerticalPanel
             }
 
             @Override protected List<Widget> createHeader () {
-                List<Widget> header = new ArrayList<Widget>();
+                List<Widget> header = Lists.newArrayList();
 
                 header.add(MsoyUI.createLabel(_msgs.reviewItemColumnWhen(), null));
                 header.add(MsoyUI.createLabel(_msgs.reviewItemColumnWho(), null));
@@ -74,7 +75,7 @@ public class ItemTransactionsPanel extends VerticalPanel
 
     protected List<Widget> getRow (MoneyTransaction entry)
     {
-        List<Widget> row = new ArrayList<Widget>();
+        List<Widget> row = Lists.newArrayList();
 
         Label time = MsoyUI.createLabel(DateUtil.formatDateTime(entry.timestamp), "Time");
         time.setWordWrap(false);

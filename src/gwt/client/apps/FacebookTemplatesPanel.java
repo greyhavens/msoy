@@ -3,12 +3,13 @@
 
 package client.apps;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -109,7 +110,7 @@ public class FacebookTemplatesPanel extends FlowPanel
                     MsoyUI.error(_msgs.fbTemplErrDuplicate(key.code, key.variant));
                     return;
                 }
-                newTmpl.captions = new HashMap<Gender, String>();
+                newTmpl.captions = Maps.newHashMap();
                 newTmpl.captions.put(Gender.MALE, _captionMale.getText().trim());
                 newTmpl.captions.put(Gender.FEMALE, _captionFemale.getText().trim());
                 newTmpl.captions.put(Gender.NEUTRAL, _captionNeutral.getText().trim());
@@ -164,11 +165,11 @@ public class FacebookTemplatesPanel extends FlowPanel
     public void setTemplates (List<FacebookTemplate> result)
     {
         _original = result;
-        _templates = new ArrayList<FacebookTemplate>();
+        _templates = Lists.newArrayList();
         _templates.addAll(result);
-        _removed = new HashSet<FacebookTemplate.Key>();
-        _added = new HashSet<FacebookTemplate>();
-        _abled = new HashMap<FacebookTemplate.Key, Boolean>();
+        _removed = Sets.newHashSet();
+        _added = Sets.newHashSet();
+        _abled = Maps.newHashMap();
         _display.update();
     }
 

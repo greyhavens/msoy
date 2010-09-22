@@ -3,11 +3,11 @@
 
 package client.adminz;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import com.google.common.collect.Lists;
 import com.google.gwt.i18n.client.NumberFormat;
 
 import com.threerings.gwt.ui.SmartTable;
@@ -42,8 +42,7 @@ public class ABTestSummaryPanel extends AdminDataPanel<ABTestSummary>
             addRow(info, _msgs.tspRan(), _msgs.tspDates(DateUtil.formatDateTime(test.started),
                                                         DateUtil.formatDateTime(test.ended)));
         }
-
-        List<String> attrs = new ArrayList<String>();
+        List<String> attrs = Lists.newArrayList();
         if (test.onlyNewVisitors) {
             attrs.add(_msgs.tspOnlyNew());
         }

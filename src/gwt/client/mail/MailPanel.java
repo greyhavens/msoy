@@ -3,14 +3,13 @@
 
 package client.mail;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import com.google.common.collect.Lists;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -88,7 +87,7 @@ public class MailPanel extends FlowPanel
         protected void displayResults (int start, int count, List<Conversation> list)
         {
             // reset our list of displayed conversation widgets
-            _convos = new ArrayList<ConvoWidget>();
+            _convos = Lists.newArrayList();
 
             // create all of our conversation widgets
             super.displayResults(start, count, list);
@@ -118,7 +117,7 @@ public class MailPanel extends FlowPanel
             // wire up a callback for delete selected
             new ClickCallback<Void>(delsel) {
                 @Override protected boolean callService () {
-                    _convoIds = new ArrayList<Integer>();
+                    _convoIds = Lists.newArrayList();
                     for (ConvoWidget cw : _convos) {
                         if (cw.isSelected()) {
                             _convoIds.add(cw.getConvoId());

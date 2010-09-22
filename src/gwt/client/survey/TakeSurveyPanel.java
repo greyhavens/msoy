@@ -3,8 +3,9 @@
 
 package client.survey;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import com.google.common.collect.Lists;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -301,7 +302,7 @@ public class TakeSurveyPanel extends VerticalPanel
     public int _surveyId;
     public Survey _survey;
     public QuestionUI _questions[];
-    public List<SurveyResponse> _responses = new ArrayList<SurveyResponse>();
+    public List<SurveyResponse> _responses = Lists.newArrayList();
 
     protected static final SurveyServiceAsync _surveySvc = GWT.create(SurveyService.class);
     protected static final SurveyMessages _msgs = GWT.create(SurveyMessages.class);

@@ -3,8 +3,9 @@
 
 package client.apps;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import com.google.common.collect.Lists;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -214,7 +215,7 @@ public class FeedThumbnailsPanel extends FlowPanel
         }
 
         protected String _code, _variant;
-        protected List<MediaDesc> _images = new ArrayList<MediaDesc>();
+        protected List<MediaDesc> _images = Lists.newArrayList();
     }
 
     protected int _appId;

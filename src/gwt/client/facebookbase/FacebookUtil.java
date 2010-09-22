@@ -8,6 +8,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 
@@ -56,12 +59,12 @@ public class FacebookUtil
     public static JavaScriptObject makeImages (
         List<String> urls, String actionUrl, String[] pubImages, boolean setType)
     {
-        ArrayList<Object> images = new ArrayList<Object>();
+        ArrayList<Object> images = Lists.newArrayList();
         for (String url : urls) {
             if (!IS_MEDIA_ACCESSIBLE && pubImages != null) {
                 url = pubImages[images.size() % pubImages.length];
             }
-            Map<String, Object> image = new HashMap<String, Object>();
+            Map<String, Object> image = Maps.newHashMap();
             if (setType) {
                 image.put("type", "image");
             }
@@ -79,10 +82,10 @@ public class FacebookUtil
      */
     public static JavaScriptObject makeLinks (String text, String actionUrl)
     {
-        Map<String, Object> link = new HashMap<String, Object>();
+        Map<String, Object> link = Maps.newHashMap();
         link.put("text", text);
         link.put("href", actionUrl);
-        ArrayList<Object> links = new ArrayList<Object>();
+        ArrayList<Object> links = Lists.newArrayList();
         links.add(JavaScriptUtil.createDictionaryFromMap(link));
         return JavaScriptUtil.createArray(links);
     }

@@ -6,6 +6,8 @@ package client.editem;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.google.common.collect.Maps;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.Command;
@@ -902,7 +904,7 @@ public abstract class ItemEditor extends FlowPanel
     protected FlexTable _currentTab;
     protected SmartTable _content;
 
-    protected Map<String, ItemMediaUploader> _uploaders = new HashMap<String, ItemMediaUploader>();
+    protected Map<String, ItemMediaUploader> _uploaders = Maps.newHashMap();
 
     protected static ItemEditor _singleton;
 

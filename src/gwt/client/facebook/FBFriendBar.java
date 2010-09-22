@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import com.google.common.collect.Maps;
+
 import client.shell.CShell;
 import client.ui.MsoyUI;
 
@@ -165,7 +167,7 @@ public class FBFriendBar extends AbsoluteCSSPanel
     // store the entire panel since the FBMPLPanel.reparse is very expensive
     protected List<FBFriendPanel> _friendPanels;
     protected PushButton _left, _right;
-    protected HashMap<String, Long> _parsed = new HashMap<String, Long>();
+    protected HashMap<String, Long> _parsed = Maps.newHashMap();
     protected Timer _timer;
 
     protected static final int FRIEND_COUNT = 6;

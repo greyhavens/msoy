@@ -3,14 +3,14 @@
 
 package client.adminz;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -116,9 +116,8 @@ public class BureauInfoPanel extends VerticalPanel
 
     protected Widget makeBureausPanel (BureauLauncherInfo[] infos)
     {
-        Map<BureauInfo, BureauLauncherInfo> launchers =
-            new HashMap<BureauInfo, BureauLauncherInfo>();
-        List<BureauInfo> binfos = new ArrayList<BureauInfo>();
+        Map<BureauInfo, BureauLauncherInfo> launchers = Maps.newHashMap();
+        List<BureauInfo> binfos = Lists.newArrayList();
         for (BureauLauncherInfo info : infos) {
             for (BureauInfo binfo : info.bureaus) {
                 binfos.add(binfo);

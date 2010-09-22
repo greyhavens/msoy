@@ -3,8 +3,9 @@
 
 package client.edgames;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import com.google.common.collect.Lists;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -90,7 +91,7 @@ public class FacebookGameInfoEditorPanel extends FlowPanel
 
     protected List<FeedThumbnail> getThumbnails ()
     {
-        List<FeedThumbnail> thumbnails = new ArrayList<FeedThumbnail>();
+        List<FeedThumbnail> thumbnails = Lists.newArrayList();
         for (int ii = 0, ll = _thumbsPanels.getWidgetCount(); ii < ll; ++ii) {
             EditThumbsPanel panel = (EditThumbsPanel)_thumbsPanels.getWidget(ii);
             thumbnails.addAll(panel.getThumbnails());
