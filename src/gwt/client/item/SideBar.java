@@ -3,7 +3,6 @@
 
 package client.item;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import com.google.common.collect.Maps;

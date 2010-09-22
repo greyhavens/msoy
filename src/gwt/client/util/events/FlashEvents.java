@@ -3,7 +3,6 @@
 
 package client.util.events;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import com.google.common.collect.Maps;

@@ -3,7 +3,6 @@
 
 package client.dnd;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import com.allen_sauer.gwt.dnd.client.DragContext;
