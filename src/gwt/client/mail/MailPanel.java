@@ -141,27 +141,6 @@ public class MailPanel extends FlowPanel
             };
         }
 
-        @Override 
-        public void displayPage (int page, boolean forceRefresh)
-        {
-            int reqPage = page;
-            while (page > 0 && (page * _resultsPerPage >= _model.getItemCount())) {
-                page--;
-            }
-            if (reqPage != page) {
-                // jump to a new page
-                final String pageArg = "" + page;
-                DeferredCommand.addCommand(new Command() {
-                    public void execute () {
-                        Link.go(Pages.MAIL, pageArg);
-                    }
-                });
-
-            } else {
-                super.displayPage(page, forceRefresh);
-            }
-        }
-
         @Override // from PagedGrid
         protected void displayPageFromClick (int page)
         {

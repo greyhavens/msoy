@@ -9,13 +9,14 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 
+import client.util.NonCountingDataModel;
 import com.threerings.msoy.mail.gwt.ConvMessage;
 import com.threerings.msoy.mail.gwt.Conversation;
 import com.threerings.msoy.mail.gwt.MailService;
+import com.threerings.msoy.mail.gwt.MailService.ConvosResult;
 import com.threerings.msoy.mail.gwt.MailServiceAsync;
 
 import client.shell.CShell;
-import client.util.MsoyServiceBackedDataModel;
 import client.util.events.FlashEvents;
 import client.util.events.StatusChangeEvent;
 import client.util.events.StatusChangeListener;
@@ -23,7 +24,7 @@ import client.util.events.StatusChangeListener;
 /**
  * A data model that provides a member's conversations.
  */
-public class ConvosModel extends MsoyServiceBackedDataModel<Conversation, MailService.ConvosResult>
+public class ConvosModel extends NonCountingDataModel<Conversation, ConvosResult>
 {
     public ConvosModel ()
     {
@@ -98,13 +99,13 @@ public class ConvosModel extends MsoyServiceBackedDataModel<Conversation, MailSe
     {
         _mailsvc.loadConversations(start, count, needCount, callback);
     }
-
-    @Override // from ServiceBackedDataModel
-    protected int getCount (MailService.ConvosResult result)
+ 
+    @Override
+    protected void setCurrentResult (MailService.ConvosResult result)
     {
+        super.setCurrentResult(result);
         _unreadCount = result.unreadConvoCount;
         dispatchUnread();
-        return result.totalConvoCount;
     }
 
     @Override // from ServiceBackedDataModel
