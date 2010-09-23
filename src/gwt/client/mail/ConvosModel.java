@@ -104,8 +104,10 @@ public class ConvosModel extends NonCountingDataModel<Conversation, ConvosResult
     protected void setCurrentResult (MailService.ConvosResult result)
     {
         super.setCurrentResult(result);
-        _unreadCount = result.unreadConvoCount;
-        dispatchUnread();
+        if (result.unreadConvoCount > 0) {
+            _unreadCount = result.unreadConvoCount;
+            dispatchUnread();
+        }
     }
 
     @Override // from ServiceBackedDataModel
