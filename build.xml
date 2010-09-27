@@ -206,6 +206,8 @@
                   type="swc"/>
       <dependency groupId="com.threerings" artifactId="whirledthanelib" version="0.0-SNAPSHOT"
                   type="swc"/>
+      <dependency groupId="com.threerings" artifactId="orth" version="0.0-SNAPSHOT"/>
+      <dependency groupId="com.threerings" artifactId="orthlib" version="0.0-SNAPSHOT" type="swc"/>
       <dependency groupId="com.threerings" artifactId="gwt-utils" version="0.0-SNAPSHOT"/>
       <dependency groupId="com.threerings" artifactId="pulse" version="0.0-SNAPSHOT"/>
       <dependency groupId="com.threerings" artifactId="threerings" version="0.0-SNAPSHOT"/>
@@ -248,6 +250,7 @@
     <fileset dir="${deploy.dir}/lib">
       <!-- this is needed to run our custom i18n bindings in the GWT compiler -->
       <include name="gwt-utils-0.0-SNAPSHOT.jar"/>
+      <include name="orth-0.0-SNAPSHOT.jar"/>
       <include name="*-gwt-0.0-SNAPSHOT.jar"/>
       <include name="guava.jar"/>
     </fileset>
@@ -650,6 +653,7 @@
       <arg value="${deploy.dir}/lib/naryalib-0.0-SNAPSHOT.swc"/>
       <arg value="${deploy.dir}/lib/nenyalib-0.0-SNAPSHOT.swc"/>
       <arg value="${deploy.dir}/lib/vilyalib-0.0-SNAPSHOT.swc"/>
+      <arg value="${deploy.dir}/lib/orthlib-0.0-SNAPSHOT.swc"/>
       <arg value="${deploy.dir}/lib/whirledlib-0.0-SNAPSHOT.swc"/>
       <arg value="${deploy.dir}/lib/whirledthanelib-0.0-SNAPSHOT.swc"/>
       <arg value="-output"/>
@@ -1010,6 +1014,7 @@
       <arg line="-library-path ${deploy.dir}/lib/player-env-0.0-SNAPSHOT.swc"/>
       <arg line="-library-path ${deploy.dir}/lib/nenyalib-0.0-SNAPSHOT.swc"/>
       <arg line="-library-path ${deploy.dir}/lib/vilyalib-0.0-SNAPSHOT.swc"/>
+      <arg line="-library-path ${deploy.dir}/lib/orthlib-0.0-SNAPSHOT.swc"/>
       <arg line="-library-path ${deploy.dir}/lib/whirledlib-0.0-SNAPSHOT.swc"/>
       <arg line="-templates-path ${flexsdk.dir}/asdoc/templates"/>
       <arg line="-doc-sources ${asrc.dir}"/>
