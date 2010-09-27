@@ -1,0 +1,1155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="JAVA_MODULE" version="4">
+  <component name="FacetManager">
+    <facet type="flex" name="Flex">
+      <configuration flex_sdk="Flex SDK (player 9)">
+        <option name="DO_BUILD" value="true" />
+        <option name="OUTPUT_TYPE" value="Application" />
+        <option name="USE_DEFAULT_SDK_CONFIG_FILE" value="true" />
+        <option name="USE_CUSTOM_CONFIG_FILE" value="false" />
+        <option name="CUSTOM_CONFIG_FILE" value="" />
+        <option name="USE_CUSTOM_CONFIG_FILE_FOR_TESTS" value="false" />
+        <option name="CUSTOM_CONFIG_FILE_FOR_TESTS" value="" />
+        <option name="APPLICATION_ENTRY_POINT" value="" />
+        <option name="MAIN_CLASS" value="com.threerings.msoy.client.world" />
+        <option name="OUTPUT_FILE_NAME" value="flex.swf" />
+        <option name="USE_FACET_COMPILE_OUTPUT_PATH" value="false" />
+        <option name="FACET_COMPILE_OUTPUT_PATH" value="" />
+        <option name="INCLUDE_RESOURCE_FILES_IN_SWC" value="false" />
+        <option name="TARGET_PLAYER_VERSION" value="9.0.124" />
+        <option name="STATIC_LINK_RUNTIME_SHARED_LIBRARIES" value="true" />
+        <option name="USE_LOCALE_SETTINGS" value="false" />
+        <option name="LOCALE" value="en_US" />
+        <option name="ADDITIONAL_COMPILER_OPTIONS" value="" />
+        <option name="VERSION" value="3" />
+        <option name="PATH_TO_SERVICES_CONFIG_XML" value="" />
+        <option name="CONTEXT_ROOT" value="" />
+        <NAMESPACE_AND_MANIFEST_FILE_INFO_LIST />
+        <CONDITIONAL_COMPILATION_DEFINITION_LIST />
+      </configuration>
+    </facet>
+  </component>
+  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_6" inherit-compiler-output="false">
+    <output url="file://$MODULE_DIR$/dist/eclipse" />
+    <exclude-output />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/src/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/gwt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/rsrc" isTestSource="false" packagePrefix="rsrc" />
+      <sourceFolder url="file://$MODULE_DIR$/src/as" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/rsrc/en_US/i18n" isTestSource="false" />
+      <excludeFolder url="file://$MODULE_DIR$/src/gwt/com/threerings" />
+    </content>
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="module-library">
+      <library name="aperture-2006.1-alpha-3.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/aperture/aperture-2006.1-alpha-3.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="aperture-test-2006.1-alpha-3.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/aperture/aperture-test-2006.1-alpha-3.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="applewrapper-0.1.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/aperture/applewrapper-0.1.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="bcmail-jdk14-132.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/aperture/bcmail-jdk14-132.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="bcprov-jdk14-132.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/aperture/bcprov-jdk14-132.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="demork-2.0.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/aperture/demork-2.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="fontbox-0.1.0-dev.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/aperture/fontbox-0.1.0-dev.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="htmlparser-1.6.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/aperture/htmlparser-1.6.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="ical4j-cvs20061019.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/aperture/ical4j-cvs20061019.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="jacob-1.10-pre4.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/aperture/jacob-1.10-pre4.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="openrdf-model-2.0-alpha-3.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/aperture/openrdf-model-2.0-alpha-3.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="openrdf-util-2.0-alpha-3.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/aperture/openrdf-util-2.0-alpha-3.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="openrdf-util-crazy-debug.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/aperture/openrdf-util-crazy-debug.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="openrdf-util-fixed-locking.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/aperture/openrdf-util-fixed-locking.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="pdfbox-0.7.3.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/aperture/pdfbox-0.7.3.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="poi-3.0-alpha2-20060616.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/aperture/poi-3.0-alpha2-20060616.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="poi-contrib-3.0-alpha2-20060616.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/aperture/poi-contrib-3.0-alpha2-20060616.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="poi-scratchpad-3.0-alpha2-20060616.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/aperture/poi-scratchpad-3.0-alpha2-20060616.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="rio-2.0-alpha-3.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/aperture/rio-2.0-alpha-3.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="sesame-2.0-alpha-3.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/aperture/sesame-2.0-alpha-3.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="winlaf-0.5.1.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/aperture/winlaf-0.5.1.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="plugin.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/plugin.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="json.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/json.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="jswiff-8.0-beta-2-threerings.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/jswiff-8.0-beta-2-threerings.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="lwjgl-applet.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/lwjgl-applet.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="sdoc-0.5.0-beta-ooo.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/sdoc-0.5.0-beta-ooo.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="substance-lite.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/substance-lite-4.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="abimporter.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/extlibs/java/abimporter.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="activation.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/extlibs/java/activation.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="antisamy-bin.1.0.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/extlibs/java/antisamy/antisamy-bin.1.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="s3lib.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/extlibs/java/s3lib-r335.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="args4j-2.0.7.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/extlibs/java/args4j-2.0.7.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="asc.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/extlibs/java/asc.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="batik-css.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/extlibs/java/antisamy/batik-css.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="batik-util.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/extlibs/java/antisamy/batik-util.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="commons-beanutils.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/extlibs/java/commons-beanutils.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="commons-codec.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/extlibs/java/commons-codec.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="commons-collections.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/extlibs/java/commons-collections.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="commons-digester.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/extlibs/java/commons-digester.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="commons-fileupload.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/extlibs/java/commons-fileupload-1.2.1.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="commons-httpclient.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/extlibs/java/commons-httpclient.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="commons-io.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/extlibs/java/commons-io-1.4.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="commons-lang.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/extlibs/java/commons-lang.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="commons-logging.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/extlibs/java/commons-logging.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="dom4j.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/extlibs/java/antisamy/dom4j.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="ehcache.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/extlibs/java/ehcache-1.6.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="flexTasks.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/extlibs/java/flexTasks.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="ganymed.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/extlibs/java/ganymed.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="getdown.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/extlibs/java/getdown.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="guice.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/extlibs/java/guice-2.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="file:///Users/zell/src/google-guice-read-only/src" />
+          <root url="file:///Users/zell/src/google-guice-read-only/src" />
+          <root url="file:///Users/zell/src/google-guice-read-only/src" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="gwt-user.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/extlibs/java/gwt-user-2.0.2.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="hessian.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/extlibs/java/hessian.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="javassist.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/extlibs/java/javassist.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="jcip-annotations.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/extlibs/java/jcip-annotations.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="jetty.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/extlibs/java/jetty6/jetty-6.1.22.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="jetty-util.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/extlibs/java/jetty6/jetty-util-6.1.22.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="junit-3.7.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/extlibs/java/junit-3.7.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="junit4.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/extlibs/java/junit4.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="log4j.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/extlibs/java/log4j.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="mail.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/extlibs/java/mail.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="mina-core.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/extlibs/java/mina-core.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="mina-filter-ssl.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/extlibs/java/mina-filter-ssl.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="mysql-connector-java.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/extlibs/java/mysql-connector-java.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="nekohtml.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/extlibs/java/antisamy/nekohtml.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="ozcommons.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/extlibs/java/ozcommons.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="postgresql-jdbc.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/extlibs/java/postgresql-jdbc.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="proguard.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/extlibs/java/proguard.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="redstone-xmlrpc.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/extlibs/java/redstone-xmlrpc.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="redstone-xmlrpc-client.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/extlibs/java/redstone-xmlrpc-client.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="retroweaver-all-1.2.2.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/extlibs/java/retroweaver-all-1.2.2.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="retroweaver-rt-1.2.2.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/extlibs/java/retroweaver-rt-1.2.2.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="sac.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/extlibs/java/antisamy/sac.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="servlet-api.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/extlibs/java/servlet-api-2.5-20081211.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="slf4j-api.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/extlibs/java/slf4j-api.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="slf4j-log4j12.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/extlibs/java/slf4j-log4j12.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="svnClientAdapter.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/extlibs/java/svnClientAdapter.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="svnjavahl.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/extlibs/java/svnjavahl.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="svnkit.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/extlibs/java/svnkit.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="svnkit-cli.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/extlibs/java/svnkit-cli.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="svnkit-javahl.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/extlibs/java/svnkit-javahl.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="swfutils-ooo.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/extlibs/java/swfutils-ooo.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="velocity-1.5-dev.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/extlibs/java/velocity-1.5-dev.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="ws-commons-util.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/extlibs/java/ws-commons-util.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="xercesImpl.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/extlibs/java/xercesImpl.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="xmlrpc-client.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/extlibs/java/xmlrpc-client-3.1.2.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="xmlrpc-common.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/extlibs/java/xmlrpc-common-3.1.2.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="smack-component-0.0-SNAPSHOT.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/dist/lib/smack-component-0.0-SNAPSHOT.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="substance-lite.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/dist/lib/substance-lite.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="svnClientAdapter.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/dist/lib/svnClientAdapter.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="svnjavahl.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/dist/lib/svnjavahl.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="svnkit.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/dist/lib/svnkit.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="svnkit-cli.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/dist/lib/svnkit-cli.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="svnkit-javahl.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/dist/lib/svnkit-javahl.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="swfutils-ooo.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/dist/lib/swfutils-ooo.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="velocity-1.5-dev.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/dist/lib/velocity-1.5-dev.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="winlaf-0.5.1.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/dist/lib/winlaf-0.5.1.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="ws-commons-util.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/dist/lib/ws-commons-util.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="xercesImpl.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/dist/lib/xercesImpl.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="xmlrpc-client.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/dist/lib/xmlrpc-client.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="xmlrpc-common.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/dist/lib/xmlrpc-common.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="panopticon-client-0.0-SNAPSHOT.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/dist/lib/panopticon-client-0.0-SNAPSHOT.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module" module-name="toybox" />
+    <orderEntry type="module" module-name="underwire" />
+    <orderEntry type="module" module-name="gwt-utils" />
+    <orderEntry type="module-library">
+      <library name="etc">
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/etc" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="aopalliance.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/extlibs/java/aopalliance.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="rabbitmq-client.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/extlibs/java/rabbitmq-client-1.5.5.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="quartz.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/extlibs/java/quartz.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="gwt-dnd.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/extlibs/java/gwt-dnd-2.6.5.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="advanced-components-1.4.1.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/extlibs/java/advanced-components-1.4.1.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="gwt-incubator.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/extlibs/java/gwt-incubator-july-14-2009.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="jaxb-api.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/extlibs/java/jaxb/jaxb-api.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="facebook-java-api-schema.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/extlibs/java/facebook-java-api-schema-3.0.4-SNAPSHOT.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="facebook-java-api.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/extlibs/java/facebook-java-api-3.0.4-SNAPSHOT.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="xmlrpc-server.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/extlibs/java/xmlrpc-server-3.1.2.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module" module-name="pulse" />
+    <orderEntry type="module-library">
+      <library name="jettison-1.0.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/extlibs/java/cxf/jettison-1.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" scope="RUNTIME">
+      <library name="$MODULE_DIR$/">
+        <CLASSES />
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module" module-name="aspirin" />
+    <orderEntry type="module" module-name="depot" />
+    <orderEntry type="module" module-name="narya" />
+    <orderEntry type="module" module-name="nenya" />
+    <orderEntry type="module" module-name="samskivert" />
+    <orderEntry type="module" module-name="threerings" />
+    <orderEntry type="module" module-name="vilya" />
+    <orderEntry type="module" module-name="whirled" />
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../ooo-libs/extlibs/flash/tweener.swc!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$EXT_LIBS_DIR$/gson.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="AUTOGENERATED library equal to Flex SDK Flex SDK (player 9)">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../ooo-libs/lib/flex_sdk/frameworks/libs/player/9/playerglobal.swc!/" />
+          <root url="jar://$MODULE_DIR$/../ooo-libs/lib/flex_sdk/frameworks/libs/flex.swc!/" />
+          <root url="jar://$MODULE_DIR$/../ooo-libs/lib/flex_sdk/frameworks/libs/framework.swc!/" />
+          <root url="jar://$MODULE_DIR$/../ooo-libs/lib/flex_sdk/frameworks/libs/rpc.swc!/" />
+          <root url="jar://$MODULE_DIR$/../ooo-libs/lib/flex_sdk/frameworks/libs/utilities.swc!/" />
+          <root url="jar://$MODULE_DIR$/../ooo-libs/lib/flex_sdk/frameworks/locale/en_US/airframework_rb.swc!/" />
+          <root url="jar://$MODULE_DIR$/../ooo-libs/lib/flex_sdk/frameworks/locale/en_US/framework_rb.swc!/" />
+          <root url="jar://$MODULE_DIR$/../ooo-libs/lib/flex_sdk/frameworks/locale/en_US/rpc_rb.swc!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/../ooo-libs/lib/flex_sdk_3.3.0.4852/frameworks/projects/air/ApplicationUpdater/src" />
+          <root url="file://$MODULE_DIR$/../ooo-libs/lib/flex_sdk_3.3.0.4852/frameworks/projects/air/ServiceMonitor/src" />
+          <root url="file://$MODULE_DIR$/../ooo-libs/lib/flex_sdk_3.3.0.4852/frameworks/projects/airframework/bundles/en_US/src" />
+          <root url="file://$MODULE_DIR$/../ooo-libs/lib/flex_sdk_3.3.0.4852/frameworks/projects/airframework/bundles/ja_JP/src" />
+          <root url="file://$MODULE_DIR$/../ooo-libs/lib/flex_sdk_3.3.0.4852/frameworks/projects/airframework/src" />
+          <root url="file://$MODULE_DIR$/../ooo-libs/lib/flex_sdk_3.3.0.4852/frameworks/projects/flex/src" />
+          <root url="file://$MODULE_DIR$/../ooo-libs/lib/flex_sdk_3.3.0.4852/frameworks/projects/framework/bundles/en_US/src" />
+          <root url="file://$MODULE_DIR$/../ooo-libs/lib/flex_sdk_3.3.0.4852/frameworks/projects/framework/bundles/ja_JP/src" />
+          <root url="file://$MODULE_DIR$/../ooo-libs/lib/flex_sdk_3.3.0.4852/frameworks/projects/framework/src" />
+          <root url="file://$MODULE_DIR$/../ooo-libs/lib/flex_sdk_3.3.0.4852/frameworks/projects/haloclassic/src" />
+          <root url="file://$MODULE_DIR$/../ooo-libs/lib/flex_sdk_3.3.0.4852/frameworks/projects/rpc/bundles/en_US/src" />
+          <root url="file://$MODULE_DIR$/../ooo-libs/lib/flex_sdk_3.3.0.4852/frameworks/projects/rpc/bundles/ja_JP/src" />
+          <root url="file://$MODULE_DIR$/../ooo-libs/lib/flex_sdk_3.3.0.4852/frameworks/projects/rpc/src" />
+          <root url="file://$MODULE_DIR$/../ooo-libs/lib/flex_sdk_3.3.0.4852/frameworks/projects/utilities/src" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/extlibs/java/xml-writer.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/extlibs/java/guava.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module" module-name="orth" />
+  </component>
+</module>
+
