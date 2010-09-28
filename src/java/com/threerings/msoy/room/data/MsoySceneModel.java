@@ -177,7 +177,7 @@ public class MsoySceneModel extends SceneModel
     public Portal getPortal (int portalId)
     {
         validatePortalInfo();
-        return _portalInfo.get(portalId);
+        return _portalInfo.get(Short.valueOf((short) portalId));
     }
 
     /**
