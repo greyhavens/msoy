@@ -26,6 +26,7 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.comment.gwt.Comment;
+import com.threerings.msoy.comment.gwt.Comment.CommentType;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.data.all.MemberName;
@@ -151,7 +152,7 @@ public class RoomDetailPanel extends SmartTable
         getFlexCellFormatter().setVerticalAlignment(0, 1, HasAlignment.ALIGN_TOP);
 
         StyledTabPanel tabs = new StyledTabPanel();
-        tabs.add(new CommentsPanel(Comment.TYPE_ROOM, detail.info.sceneId, true),
+        tabs.add(new CommentsPanel(CommentType.ROOM, detail.info.sceneId, true),
                  _msgs.tabComments());
         addWidget(tabs, 2);
         tabs.selectTab(0);

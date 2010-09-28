@@ -23,9 +23,9 @@ public class TrophySource extends IdentGameItem
     public boolean secret;
 
     @Override // from Item
-    public byte getType ()
+    public MsoyItemType getType ()
     {
-        return TROPHY_SOURCE;
+        return MsoyItemType.TROPHY_SOURCE;
     }
 
     @Override // from Item

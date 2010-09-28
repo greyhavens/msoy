@@ -25,11 +25,13 @@ import com.samskivert.depot.clause.Limit;
 import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.expression.SQLExpression;
+
 import com.threerings.presents.annotation.BlockingThread;
 
-import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRecord.Flag;
+
+import com.threerings.msoy.item.data.all.MsoyItemType;
 
 /**
  * Manages members' favorite item information.
@@ -40,7 +42,7 @@ public class FavoritesRepository extends DepotRepository
     @Entity @Computed(shadowOf=FavoriteItemRecord.class)
     public static class FavoritedItemResultRecord extends PersistentRecord
     {
-        public byte itemType;
+        public MsoyItemType itemType;
         public int catalogId;
     }
 
@@ -51,9 +53,9 @@ public class FavoritesRepository extends DepotRepository
 
     /**
      * Loads up to <code>count</code> items recently favorited by subscribers. If the
-     * type is {@link Item#NOT_A_TYPE}, all types will be returned.
+     * type is {@link MsoyItemType#NOT_A_TYPE}, all types will be returned.
      */
-    public List<FavoritedItemResultRecord> loadRecentFavorites (int offset, int rows, byte type)
+    public List<FavoritedItemResultRecord> loadRecentFavorites (int offset, int rows, MsoyItemType type)
     {
         List<SQLExpression> conditions = Lists.newArrayList();
 
@@ -65,9 +67,9 @@ public class FavoritesRepository extends DepotRepository
         conditions.add(FavoriteItemRecord.NOTED_ON.greaterThan(
             new Timestamp(System.currentTimeMillis() - RECENT_FAVORITE_CUTOFF)));
 
-        if (type != Item.NOT_A_TYPE) {
+        if (type != MsoyItemType.NOT_A_TYPE) {
             // possibly only care about some item types
-            conditions.add(FavoriteItemRecord.ITEM_TYPE.eq(type));
+            conditions.add(FavoriteItemRecord.ITEM_TYPE.eq(type.toByte()));
         }
 
         return findAll(FavoritedItemResultRecord.class,
@@ -92,16 +94,16 @@ public class FavoritesRepository extends DepotRepository
 
     /**
      * Loads all favorites for the specified member of the specified item type. If the type is
-     * {@link Item#NOT_A_TYPE}, all of this member's favorites of all types will be returned.
+     * {@link MsoyItemType#NOT_A_TYPE}, all of this member's favorites of all types will be returned.
      *
      * TODO: paginate if people start favoriting things up a storm.
      */
-    public List<FavoritedItemResultRecord> loadFavorites (int memberId, byte itemType)
+    public List<FavoritedItemResultRecord> loadFavorites (int memberId, MsoyItemType itemType)
     {
-        Where where = (itemType == Item.NOT_A_TYPE) ?
+        Where where = (itemType == MsoyItemType.NOT_A_TYPE) ?
             new Where(FavoriteItemRecord.MEMBER_ID, memberId) :
             new Where(FavoriteItemRecord.MEMBER_ID, memberId,
-                      FavoriteItemRecord.ITEM_TYPE, itemType);
+                      FavoriteItemRecord.ITEM_TYPE, itemType.toByte());
         return findAll(FavoritedItemResultRecord.class, where,
                        OrderBy.descending(FavoriteItemRecord.NOTED_ON));
     }
@@ -110,10 +112,10 @@ public class FavoritesRepository extends DepotRepository
      * Loads a favorite item record for the specified member and catalog listing. Returns null if
      * no such favorite exists.
      */
-    public FavoriteItemRecord loadFavorite (int memberId, byte itemType, int catalogId)
+    public FavoriteItemRecord loadFavorite (int memberId, MsoyItemType itemType, int catalogId)
     {
         return load(FavoriteItemRecord.class,
-                    FavoriteItemRecord.getKey(memberId, itemType, catalogId));
+            FavoriteItemRecord.getKey(memberId, itemType, catalogId));
     }
 
 
@@ -122,7 +124,7 @@ public class FavoritesRepository extends DepotRepository
      *
      * @return true iff the item wasn't a favorite (but is now)
      */
-    public boolean noteFavorite (int memberId, byte itemType, int catalogId)
+    public boolean noteFavorite (int memberId, MsoyItemType itemType, int catalogId)
     {
         FavoriteItemRecord record = new FavoriteItemRecord();
         record.memberId = memberId;
@@ -137,7 +139,7 @@ public class FavoritesRepository extends DepotRepository
      *
      * @return true iff the item was a favorite (and now isn't)
      */
-    public boolean clearFavorite (int memberId, byte itemType, int catalogId)
+    public boolean clearFavorite (int memberId, MsoyItemType itemType, int catalogId)
     {
         return delete(FavoriteItemRecord.getKey(memberId, itemType, catalogId)) > 0;
     }

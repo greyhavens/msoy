@@ -9,6 +9,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.threerings.msoy.group.gwt.BrandDetail;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.PurchaseResult;
 
@@ -30,7 +31,7 @@ public interface CatalogServiceAsync
     /**
      * The async version of {@link CatalogService#purchaseItem}.
      */
-    void purchaseItem (byte itemType, int catalogId, Currency currency, int authedCost, String memories, AsyncCallback<PurchaseResult<Item>> callback);
+    void purchaseItem (MsoyItemType itemType, int catalogId, Currency currency, int authedCost, String memories, AsyncCallback<PurchaseResult<Item>> callback);
 
     /**
      * The async version of {@link CatalogService#listItem}.
@@ -40,12 +41,12 @@ public interface CatalogServiceAsync
     /**
      * The async version of {@link CatalogService#loadListing}.
      */
-    void loadListing (byte itemType, int catalogId, boolean forDisplay, AsyncCallback<CatalogListing> callback);
+    void loadListing (MsoyItemType itemType, int catalogId, boolean forDisplay, AsyncCallback<CatalogListing> callback);
 
     /**
      * The async version of {@link CatalogService#loadAllDerivedItems}.
      */
-    void loadAllDerivedItems (byte itemType, int catalogId, AsyncCallback<CatalogListing.DerivedItem[]> callback);
+    void loadAllDerivedItems (MsoyItemType itemType, int catalogId, AsyncCallback<CatalogListing.DerivedItem[]> callback);
 
     /**
      * The async version of {@link CatalogService#updateListing}.
@@ -55,27 +56,27 @@ public interface CatalogServiceAsync
     /**
      * The async version of {@link CatalogService#updatePricing}.
      */
-    void updatePricing (byte itemType, int catalogId, int pricing, int salesTarget, Currency currency, int cost, int basisId, int brandId, AsyncCallback<Void> callback);
+    void updatePricing (MsoyItemType itemType, int catalogId, int pricing, int salesTarget, Currency currency, int cost, int basisId, int brandId, AsyncCallback<Void> callback);
 
     /**
      * The async version of {@link CatalogService#removeListing}.
      */
-    void removeListing (byte itemType, int catalogId, AsyncCallback<Void> callback);
+    void removeListing (MsoyItemType itemType, int catalogId, AsyncCallback<Void> callback);
 
     /**
      * The async version of {@link CatalogService#getPopularTags}.
      */
-    void getPopularTags (byte type, int rows, AsyncCallback<Map<String, Integer>> callback);
+    void getPopularTags (MsoyItemType type, int rows, AsyncCallback<Map<String, Integer>> callback);
 
     /**
      * The async version of {@link CatalogService#loadFavorites}.
      */
-    void loadFavorites (int memberId, byte itemType, AsyncCallback<CatalogService.FavoritesResult> callback);
+    void loadFavorites (int memberId, MsoyItemType itemType, AsyncCallback<CatalogService.FavoritesResult> callback);
 
     /**
      * The async version of {@link CatalogService#loadPotentialBasisItems}.
      */
-    void loadPotentialBasisItems (byte itemType, AsyncCallback<List<ListingCard>> callback);
+    void loadPotentialBasisItems (MsoyItemType itemType, AsyncCallback<List<ListingCard>> callback);
 
     /**
      * The async version of {@link CatalogService#loadManagedBrands}.
@@ -85,5 +86,5 @@ public interface CatalogServiceAsync
     /**
      * The async version of {@link CatalogService#loadSuite}.
      */
-    void loadSuite (byte itemType, int suiteId, AsyncCallback<CatalogService.SuiteResult> callback);
+    void loadSuite (MsoyItemType itemType, int suiteId, AsyncCallback<CatalogService.SuiteResult> callback);
 }

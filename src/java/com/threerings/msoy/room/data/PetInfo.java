@@ -7,6 +7,7 @@ import com.threerings.msoy.data.MsoyBodyObject;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.item.data.all.Pet;
 
 /**
@@ -39,7 +40,7 @@ public class PetInfo extends ActorInfo
     protected void useStaticMedia ()
     {
         _media = Pet.getStaticImagePetMedia();
-        _ident = new ItemIdent(Item.OCCUPANT, getBodyOid());
+        _ident = new ItemIdent(MsoyItemType.OCCUPANT, getBodyOid());
     }
 
     @Override // from ActorInfo

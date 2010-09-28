@@ -14,9 +14,9 @@ public class Audio extends Item
     public MediaDesc audioMedia;
 
     @Override // from Item
-    public byte getType ()
+    public MsoyItemType getType ()
     {
-        return AUDIO;
+        return MsoyItemType.AUDIO;
     }
 
     @Override // from Item

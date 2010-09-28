@@ -31,6 +31,7 @@ import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.imagechooser.gwt.ImageChooserService;
 import com.threerings.msoy.imagechooser.gwt.ImageChooserServiceAsync;
 import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.item.data.all.Photo;
 import com.threerings.msoy.person.gwt.Gallery;
 import com.threerings.msoy.person.gwt.GalleryData;
@@ -203,7 +204,7 @@ public class GalleryEditPanel extends AbsolutePanel // AbsolutePanel needed to s
                 public void onClick (ClickEvent event) {
                     // save the gallery before leaving this page
                     saveGallery(false, null);
-                    Link.go(Pages.STUFF, "c", Item.PHOTO);
+                    Link.go(Pages.STUFF, "c", MsoyItemType.PHOTO.toByte());
                 }
             }), 210, 395);
     }

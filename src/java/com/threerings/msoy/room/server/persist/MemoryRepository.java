@@ -29,6 +29,7 @@ import com.samskivert.jdbc.DatabaseLiaison;
 import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.data.all.MsoyItemType;
 
 /**
  * Manages "smart" digital item memory.
@@ -55,7 +56,7 @@ public class MemoryRepository extends DepotRepository
     /**
      * Loads the memory for the specified item.
      */
-    public MemoriesRecord loadMemory (byte itemType, int itemId)
+    public MemoriesRecord loadMemory (MsoyItemType itemType, int itemId)
     {
         return load(MemoriesRecord.class, MemoriesRecord.getKey(itemType, itemId));
     }
@@ -63,7 +64,7 @@ public class MemoryRepository extends DepotRepository
     /**
      * Loads up the all memory records for all items with the specified type and ids.
      */
-    public List<MemoriesRecord> loadMemories (byte itemType, Collection<Integer> itemIds)
+    public List<MemoriesRecord> loadMemories (MsoyItemType itemType, Collection<Integer> itemIds)
     {
         List<Key<MemoriesRecord>> keys = Lists.newArrayList();
         for (int itemId : itemIds) {
@@ -109,7 +110,7 @@ public class MemoryRepository extends DepotRepository
     /**
      * Deletes all memories for the specified item.
      */
-    public void deleteMemories (byte itemType, int itemId)
+    public void deleteMemories (MsoyItemType itemType, int itemId)
     {
         delete(MemoriesRecord.getKey(itemType, itemId));
     }
@@ -117,7 +118,7 @@ public class MemoryRepository extends DepotRepository
     /**
      * Deletes all memories for all of the specified items.
      */
-    public void purgeMemories (byte itemType, Collection<Integer> itemIds)
+    public void purgeMemories (MsoyItemType itemType, Collection<Integer> itemIds)
     {
         deleteAll(MemoriesRecord.class, new Where(
                       Ops.and(MemoriesRecord.ITEM_TYPE.eq(itemType),

@@ -3,6 +3,7 @@
 
 package client.item;
 
+import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.item.gwt.CatalogQuery;
 import com.threerings.msoy.web.gwt.Args;
 
@@ -14,7 +15,7 @@ public class ShopUtil
     /**
      * Composes arguments to browse the catalog.
      */
-    public static Args composeArgs (byte type, String tag, String search, int creatorId)
+    public static Args composeArgs (MsoyItemType type, String tag, String search, int creatorId)
     {
         CatalogQuery query = new CatalogQuery();
         query.itemType = type;

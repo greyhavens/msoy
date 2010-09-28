@@ -8,11 +8,13 @@ import java.util.List;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import com.samskivert.util.ByteEnumUtil;
 import com.samskivert.util.Calendars;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.cron.server.CronLogic;
 
+import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.msoy.server.persist.MemberRecord;
@@ -170,7 +172,7 @@ public class SubscriptionLogic
         // see if they need the special item right now
         CatalogRecord listing = getSpecialItem();
         if (listing != null) {
-            byte type = listing.item.getType();
+            MsoyItemType type = listing.item.getType();
             int itemId = listing.item.itemId;
             if ((type != rec.specialItemType) || (itemId != rec.specialItemId)) {
                 // they need the special item
@@ -272,7 +274,7 @@ public class SubscriptionLogic
             return;
         }
 
-        byte type = listing.item.getType();
+        MsoyItemType type = listing.item.getType();
         int itemId = listing.item.itemId;
         List<Integer> memberIds = _subscripRepo.loadSubscribersNeedingItem(type, itemId);
         for (Integer memberId : memberIds) {
@@ -297,7 +299,13 @@ public class SubscriptionLogic
         String specialItem = _runtime.subscription.specialItem;
         if (!StringUtil.isBlank(specialItem) && !"0:0".equals(specialItem)) {
             try {
-                ItemIdent ident = ItemIdent.fromString(specialItem);
+                String[] tokens = specialItem.split(":");
+                if (tokens.length != 2) {
+                    throw new IllegalArgumentException("Format is '<type>:<id>'");
+                }
+                ItemIdent ident = new ItemIdent(
+                        ByteEnumUtil.fromByte(MsoyItemType.class, Byte.parseByte(tokens[0])),
+                        Integer.parseInt(tokens[1]));
                 return _itemLogic.requireListing(ident.type, ident.itemId, true);
 
             } catch (Exception e) {

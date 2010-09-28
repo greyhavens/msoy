@@ -9,6 +9,7 @@ import com.google.inject.Singleton;
 
 import com.threerings.presents.annotation.EventThread;
 
+import com.threerings.msoy.comment.gwt.Comment.CommentType;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.server.MemberLocal;
 import com.threerings.msoy.server.MemberNodeActions;
@@ -79,7 +80,7 @@ public class NotificationManager
      * Notifies the member that someone commented on something they own or created
      */
     public void notifyEntityCommented (
-        int targetId, int entityType, int entityId, String entityName)
+        int targetId, CommentType entityType, int entityId, String entityName)
     {
         MemberNodeActions.sendNotification(targetId,
             new EntityCommentedNotification(entityType, entityId, entityName));

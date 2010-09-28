@@ -11,7 +11,7 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.gwt.util.SimpleDataModel;
 
-import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.item.gwt.CatalogQuery;
 import com.threerings.msoy.item.gwt.CatalogService;
 import com.threerings.msoy.item.gwt.ListingCard;
@@ -26,7 +26,7 @@ import client.util.InfoCallback;
  */
 public class SuiteCatalogPanel extends SmartTable
 {
-    public SuiteCatalogPanel (CatalogModels models, byte itemType, int catalogId)
+    public SuiteCatalogPanel (CatalogModels models, MsoyItemType itemType, int catalogId)
     {
         this(itemType);
         models.getSuite(itemType, catalogId, new InfoCallback<CatalogService.SuiteResult>() {
@@ -38,7 +38,7 @@ public class SuiteCatalogPanel extends SmartTable
 
     public SuiteCatalogPanel (CatalogModels models, int gameId)
     {
-        this(Item.NOT_A_TYPE);
+        this(MsoyItemType.NOT_A_TYPE);
         models.getSuite(gameId, new InfoCallback<CatalogService.SuiteResult>() {
             public void onSuccess (CatalogService.SuiteResult result) {
                 init(result);
@@ -46,7 +46,7 @@ public class SuiteCatalogPanel extends SmartTable
         });
     }
 
-    protected SuiteCatalogPanel (byte itemType)
+    protected SuiteCatalogPanel (MsoyItemType itemType)
     {
         super("catalogPanel", 0, 0); // mimic the style of the catalog panel
 
@@ -62,7 +62,7 @@ public class SuiteCatalogPanel extends SmartTable
         // set up our sidebar and main page structure
         CatalogQuery query = new CatalogQuery();
         query.itemType = itemType;
-        setWidget(0, 0, new SideBar(new CatalogQueryLinker(query), false, null));
+        setWidget(0, 0, new SideBar(new CatalogQueryLinker(query), SideBar.IS_SHOP_TYPE, null));
         getFlexCellFormatter().setVerticalAlignment(0, 0, HasAlignment.ALIGN_TOP);
         setWidget(0, 1, WidgetUtil.makeShim(10, 10));
         setWidget(0, 2, _listings, 1, "ListingsCell");

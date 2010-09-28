@@ -55,9 +55,9 @@ public class Decor extends Item
     public float furniScale;
 
     @Override // from Item
-    public byte getType ()
+    public MsoyItemType getType ()
     {
-        return DECOR;
+        return MsoyItemType.DECOR;
     }
 
     @Override

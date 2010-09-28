@@ -26,6 +26,7 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.data.all.GroupName;
+import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.item.gwt.CatalogQuery;
 import com.threerings.msoy.web.gwt.Pages;
 
@@ -97,7 +98,7 @@ public class CatalogPanel extends SmartTable
                 Link.go(Pages.SHOP, ShopUtil.composeArgs(_query, page));
             }
             @Override protected String getEmptyMessage () {
-                String name = _dmsgs.xlate("itemType" + _query.itemType);
+                String name = _dmsgs.xlateItemType(_query.itemType);
                 if (_model instanceof Listings) {
                     GroupName theme = ((Listings) _model).theme;
                     if (theme != null) {
@@ -136,7 +137,7 @@ public class CatalogPanel extends SmartTable
     {
         _query = query;
 
-        String tname = _dmsgs.xlate("pItemType" + _query.itemType);
+        String tname = _dmsgs.xlateItemsType(_query.itemType);
         // TODO: add logo image
         _listings.setWidget(0, 1, new Marquee(null, tname));
 
@@ -173,10 +174,10 @@ public class CatalogPanel extends SmartTable
         if (cloud == null) {
             _clouds.put(_query.itemType, cloud = new TagCloud(_query.itemType, TAG_COUNT, this));
         }
-        setWidget(0, 0, new SideBar(new CatalogQueryLinker(_query), false, cloud));
+        setWidget(0, 0, new SideBar(new CatalogQueryLinker(_query), SideBar.IS_SHOP_TYPE, cloud));
 
         // set up our page title
-        CShell.frame.setTitle(_dmsgs.xlate("pItemType" + _query.itemType));
+        CShell.frame.setTitle(_dmsgs.xlateItemsType(_query.itemType));
     }
 
     // from interface TagCloud.TagListener
@@ -188,7 +189,7 @@ public class CatalogPanel extends SmartTable
     protected void setFilteredBy (String text)
     {
         if (text == null) {
-            String blurb = _dmsgs.xlate("catIntro" + _query.itemType);
+            String blurb = _dmsgs.xlateCatalogIntro(_query.itemType);
             _listings.setText(0, 0, blurb, 1, "Blurb");
 
         } else {
@@ -205,7 +206,7 @@ public class CatalogPanel extends SmartTable
 
     protected CatalogQuery _query;
     protected CatalogModels _models;
-    protected Map<Byte, TagCloud> _clouds = Maps.newHashMap();
+    protected Map<MsoyItemType, TagCloud> _clouds = Maps.newHashMap();
 
     protected SmartTable _listings;
     protected TextBox _searchBox;

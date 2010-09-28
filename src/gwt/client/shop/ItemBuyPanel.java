@@ -14,6 +14,7 @@ import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.IdentGameItem;
+import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.item.gwt.CatalogListing;
 import com.threerings.msoy.item.gwt.CatalogService;
 import com.threerings.msoy.item.gwt.CatalogServiceAsync;
@@ -64,10 +65,10 @@ public class ItemBuyPanel extends BuyPanel<Item>
     @Override
     protected void addPurchasedUI (Item item, FlowPanel boughtPanel)
     {
-        byte itype = item.getType();
+        MsoyItemType itype = item.getType();
 
         // change the buy button into a "you bought it" display
-        String type = _dmsgs.xlate("itemType" + itype);
+        String type = _dmsgs.xlateItemType(itype);
         boughtPanel.add(MsoyUI.createLabel(_msgs.boughtTitle(type), "Title"));
 
         if (FlashClients.clientExists()) {
@@ -86,20 +87,20 @@ public class ItemBuyPanel extends BuyPanel<Item>
 
         } else {
             boughtPanel.add(new Label(_msgs.boughtViewStuff(type)));
-            String ptype = _dmsgs.xlate("pItemType" + itype);
+            String ptype = _dmsgs.xlateItemsType(itype);
             boughtPanel.add(Link.create(_msgs.boughtGoNow(ptype), Pages.STUFF, ""+itype));
         }
     }
 
-    protected static String getUsageMessage (byte itemType)
+    protected static String getUsageMessage (MsoyItemType itemType)
     {
-        if (itemType == Item.AVATAR) {
+        if (itemType == MsoyItemType.AVATAR) {
             return _msgs.boughtAvatarUsage();
-        } else if (itemType == Item.DECOR) {
+        } else if (itemType == MsoyItemType.DECOR) {
             return _msgs.boughtDecorUsage();
-        } else if (itemType == Item.AUDIO) {
+        } else if (itemType == MsoyItemType.AUDIO) {
             return _msgs.boughtAudioUsage();
-        } else if (itemType == Item.PET) {
+        } else if (itemType == MsoyItemType.PET) {
             return _msgs.boughtPetUsage();
         } else {
             return _msgs.boughtOtherUsage();

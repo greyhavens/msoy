@@ -97,7 +97,7 @@ public class FeedMessagePanel extends FocusPanel
 
         Messages messages = new Messages() {
             public String typeName (String itemType) {
-                return _dmsgs.xlate("itemType" + itemType);
+                return _dmsgs.xlate(itemType);
             }
 
             public String you () {

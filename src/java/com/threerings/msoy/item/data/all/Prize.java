@@ -11,15 +11,15 @@ import com.threerings.msoy.data.all.MediaDesc;
 public class Prize extends IdentGameItem
 {
     /** The item type of the target prize item. */
-    public byte targetType;
+    public MsoyItemType targetType;
 
     /** The catalog id of the target prize item's listing. */
     public int targetCatalogId;
 
     @Override // from Item
-    public byte getType ()
+    public MsoyItemType getType ()
     {
-        return PRIZE;
+        return MsoyItemType.PRIZE;
     }
 
     @Override // from Item
@@ -43,7 +43,7 @@ public class Prize extends IdentGameItem
     @Override // from Item
     public boolean isConsistent ()
     {
-        return super.isConsistent() && (targetType != Item.NOT_A_TYPE) &&
+        return super.isConsistent() && (targetType != MsoyItemType.NOT_A_TYPE) &&
             (targetCatalogId != 0);
     }
 

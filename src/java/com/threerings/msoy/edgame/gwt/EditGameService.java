@@ -21,6 +21,7 @@ import com.threerings.msoy.game.gwt.MochiGameInfo;
 
 import com.threerings.msoy.item.data.all.GameItem;
 
+import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.web.gwt.ServiceException;
 
 /**
@@ -107,7 +108,7 @@ public interface EditGameService extends RemoteService
      * Loads a game's original subitems (level pack, prize, etc.). Caller must be the game owner or
      * support+.
      */
-    List<GameItemEditorInfo> loadGameItems (int gameId, byte type)
+    List<GameItemEditorInfo> loadGameItems (int gameId, MsoyItemType type)
         throws ServiceException;
 
     /**

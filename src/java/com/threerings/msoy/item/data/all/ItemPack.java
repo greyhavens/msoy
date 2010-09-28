@@ -11,9 +11,9 @@ import com.threerings.msoy.data.all.MediaDesc;
 public class ItemPack extends IdentGameItem
 {
     @Override // from Item
-    public byte getType ()
+    public MsoyItemType getType ()
     {
-        return ITEM_PACK;
+        return MsoyItemType.ITEM_PACK;
     }
 
     @Override // from Item

@@ -16,6 +16,7 @@ import com.samskivert.util.IntIntMap;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MediaDescSize;
+import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
 import com.threerings.msoy.room.server.persist.SceneRecord;
 import com.threerings.msoy.server.MsoyEventLogger;
@@ -593,7 +594,7 @@ public class ForumServlet extends MsoyServiceServlet
             case SHOP:
                 // handle shop listings
                 if (args.get(0, "").equals("l")) {
-                    box = makeBoxedItem(token, (byte)args.get(1, 0), args.get(2, 0));
+                    box = makeBoxedItem(token, args.get(1, MsoyItemType.NOT_A_TYPE), args.get(2, 0));
                 }
                 break;
             case GAMES:
@@ -626,7 +627,7 @@ public class ForumServlet extends MsoyServiceServlet
         // return "_URL_" + token; // TODO: mark URLs so that we can auto-link them
     }
 
-    protected String makeBoxedItem (String token, byte type, int catalogId)
+    protected String makeBoxedItem (String token, MsoyItemType type, int catalogId)
         throws ServiceException
     {
         ItemRepository<ItemRecord> repo = _itemLogic.getRepository(type);

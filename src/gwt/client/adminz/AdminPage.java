@@ -5,6 +5,7 @@ package client.adminz;
 
 import com.google.gwt.core.client.GWT;
 
+import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.item.gwt.ItemDetail;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
@@ -33,7 +34,7 @@ public class AdminPage extends Page
             setContent(MsoyUI.createLabel(_msgs.lackPrivileges(), "infoLabel"));
 
         } else if (action.equals("review")) {
-            byte type = (byte)args.get(1, 0);
+            MsoyItemType type = args.get(1, MsoyItemType.NOT_A_TYPE);
             int item = args.get(2, 0);
             if (item != 0 && _reviewPanel != null) {
                 ItemDetail detail = _reviewPanel.getItemDetail(type, item);

@@ -19,6 +19,7 @@ import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.RatingHistoryResult;
 import com.threerings.msoy.data.all.RatingResult;
+import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.server.RatingLogic;
 import com.threerings.msoy.server.StatLogic;
 import com.threerings.msoy.server.TagLogic;
@@ -36,7 +37,6 @@ import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.group.server.persist.ThemeAvatarLineupRecord;
 import com.threerings.msoy.group.server.persist.ThemeRepository;
 import com.threerings.msoy.item.data.ItemCodes;
-import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemFlag;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.ItemListQuery;
@@ -288,11 +288,11 @@ public class ItemServlet extends MsoyServiceServlet
         throws ServiceException
     {
         requireSupportUser();
-        _itemFlagRepo.removeItemFlags(iitem.type, iitem.itemId);
+        _itemFlagRepo.removeItemFlags(iitem.type.toByte(), iitem.itemId);
     }
 
     // from ItemService interface
-    public void setFavorite (byte itemType, int catalogId, boolean favorite)
+    public void setFavorite (MsoyItemType itemType, int catalogId, boolean favorite)
         throws ServiceException
     {
         MemberRecord member = requireAuthedUser();
@@ -355,7 +355,7 @@ public class ItemServlet extends MsoyServiceServlet
             }
 
         } else {
-            if (ident.type == Item.AVATAR) {
+            if (ident.type == MsoyItemType.AVATAR) {
                 // make sure this is not the template item for a lineup avatar listing
                 List<CatalogRecord> catRecs =
                     repo.loadCatalogByListedItems(ImmutableList.of(stampItemId), false);

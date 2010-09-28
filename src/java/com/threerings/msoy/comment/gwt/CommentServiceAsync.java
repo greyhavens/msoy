@@ -7,6 +7,7 @@ import java.util.Collection;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.threerings.gwt.util.PagedResult;
+import com.threerings.msoy.comment.gwt.Comment.CommentType;
 
 /**
  * Provides the asynchronous version of {@link CommentService}.
@@ -16,25 +17,25 @@ public interface CommentServiceAsync
     /**
      * The async version of {@link CommentService#loadComments}.
      */
-    void loadComments (int entityType, int entityId, int offset, int count, boolean needCount, AsyncCallback<PagedResult<Comment>> callback);
+    void loadComments (CommentType entityType, int entityId, int offset, int count, boolean needCount, AsyncCallback<PagedResult<Comment>> callback);
 
     /**
      * The async version of {@link CommentService#postComment}.
      */
-    void postComment (int entityType, int entityId, String text, AsyncCallback<Comment> callback);
+    void postComment (CommentType entityType, int entityId, String text, AsyncCallback<Comment> callback);
 
     /**
      * The async version of {@link CommentService#rateComment}.
      */
-    void rateComment (int entityType, int entityId, long posted, boolean rating, AsyncCallback<Integer> callback);
+    void rateComment (CommentType entityType, int entityId, long posted, boolean rating, AsyncCallback<Integer> callback);
 
     /**
-     * The async version of {@link CommentService#deleteComment}.
+     * The async version of {@link CommentService#deleteComments}.
      */
-    void deleteComments (int entityType, int entityId, Collection<Long> when, AsyncCallback<Integer> callback);
+    void deleteComments (CommentType entityType, int entityId, Collection<Long> when, AsyncCallback<Integer> callback);
 
     /**
      * The async version of {@link CommentService#complainComment}.
      */
-    void complainComment (String subject, int entityType, int entityId, long when, AsyncCallback<Void> callback);
+    void complainComment (String subject, CommentType entityType, int entityId, long when, AsyncCallback<Void> callback);
 }

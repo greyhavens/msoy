@@ -5,6 +5,8 @@ package com.threerings.msoy.server;
 
 import java.util.Date;
 
+import com.samskivert.util.ByteEnum;
+import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.panopticon.common.event.annotations.Event;
 import com.threerings.panopticon.common.event.annotations.Field;
 import com.threerings.panopticon.common.event.annotations.Index;
@@ -187,10 +189,24 @@ public class MsoyEvents
     public static class ItemPurchase implements MsoyEvent
     {
         // we use ItemPurchase for things that aren't actually items
-        public static final byte TYPE_ROOM = -1;
-        public static final byte TYPE_GROUP = -2;
-        public static final byte TYPE_PARTY = -3;
-        public static final byte TYPE_THEME = -4;
+        public enum PseudoItem implements ByteEnum {
+            // make damn sure these don't overlap any MsoyItemType bytes
+            ROOM(-1),
+            GROUP(-2),
+            PARTY(-3),
+            THEME(-4);
+
+            PseudoItem (int i)
+            {
+                _b = (byte) i;
+            }
+            public byte toByte ()
+            {
+                return _b;
+            }
+            protected byte _b;
+        }
+
 
         @Index @Field final public Date timestamp;
         @Field final public int memberId;
@@ -200,15 +216,27 @@ public class MsoyEvents
         @Field final public int goldCost;
 
         public ItemPurchase (
-            int memberId, byte itemType, int itemId, Currency currency, int amountPaid)
+            int memberId, MsoyItemType itemType, int itemId, Currency currency, int amountPaid)
         {
             this.timestamp = new Date();
             this.memberId = memberId;
-            this.itemType = itemType;
+            this.itemType = itemType.toByte();
             this.itemId = itemId;
             this.flowCost = (currency == Currency.COINS) ? amountPaid : 0;
             this.goldCost = (currency == Currency.BARS) ? amountPaid : 0;
         }
+
+        public ItemPurchase (
+            int memberId, PseudoItem itemType, int itemId, Currency currency, int amountPaid)
+        {
+            this.timestamp = new Date();
+            this.memberId = memberId;
+            this.itemType = itemType.toByte();
+            this.itemId = itemId;
+            this.flowCost = (currency == Currency.COINS) ? amountPaid : 0;
+            this.goldCost = (currency == Currency.BARS) ? amountPaid : 0;
+        }
+
     }
 
     @Event(name="ItemCatalogListing") // note: do not change this event name
@@ -223,12 +251,12 @@ public class MsoyEvents
         @Field final public int pricing;
         @Field final public int salesTarget;
 
-        public ItemCatalogListing (int creatorId, byte itemType,
+        public ItemCatalogListing (int creatorId, MsoyItemType itemType,
             int itemId, int flowCost, int goldCost, int pricing, int salesTarget)
         {
             this.timestamp = new Date();
             this.creatorId = creatorId;
-            this.itemType = itemType;
+            this.itemType = itemType.toByte();
             this.itemId = itemId;
             this.flowCost = flowCost;
             this.goldCost = goldCost;
@@ -426,13 +454,13 @@ public class MsoyEvents
         @Field final public String prizeIdent;
         @Field final public byte prizeItemType;
 
-        public PrizeEarned (int recipientId, int gameId, String prizeIdent, byte prizeItemType)
+        public PrizeEarned (int recipientId, int gameId, String prizeIdent, MsoyItemType prizeItemType)
         {
             this.timestamp = new Date();
             this.recipientId = recipientId;
             this.gameId = gameId;
             this.prizeIdent = toValue(prizeIdent);
-            this.prizeItemType = prizeItemType;
+            this.prizeItemType = prizeItemType.toByte();
         }
     }
 

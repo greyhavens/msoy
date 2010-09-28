@@ -14,9 +14,9 @@ public class Document extends Item
     public MediaDesc docMedia;
 
     @Override // from Item
-    public byte getType ()
+    public MsoyItemType getType ()
     {
-        return DOCUMENT;
+        return MsoyItemType.DOCUMENT;
     }
 
     @Override // from Item

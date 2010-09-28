@@ -116,7 +116,7 @@ public class DoListItemPopup extends VerticalPanel
         }
 
         // possibly add the brand selection ui
-        if (_item.supportsBranding() && (firstTime || repricing)) {
+        if (_item.getType().isBrandableType() && (firstTime || repricing)) {
             SmartTable brand = new SmartTable(0, 3);
             brand.addWidget(MsoyUI.createHTML(_imsgs.doListSelectBrandIntro(), null), 3);
             brand.addWidget(WidgetUtil.makeShim(5, 5), 3);
@@ -136,7 +136,7 @@ public class DoListItemPopup extends VerticalPanel
         }
 
         // possibly add the basis selection ui
-        if (_item.supportsDerivation() && (firstTime || repricing)) {
+        if (_item.getType().isDerivationType() && (firstTime || repricing)) {
             SmartTable basis = new SmartTable(0, 3);
             basis.addWidget(MsoyUI.createHTML(_imsgs.doListSelectBasisIntro(), null), 3);
             basis.addWidget(WidgetUtil.makeShim(5, 5), 3);

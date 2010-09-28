@@ -18,6 +18,7 @@ import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.item.gwt.CatalogListing;
 import com.threerings.msoy.item.gwt.CatalogQuery;
 import com.threerings.msoy.item.gwt.CatalogService;
@@ -80,7 +81,7 @@ public class CatalogModels
             _query = query;
         }
 
-        public byte getType () {
+        public MsoyItemType getType () {
             return _query.itemType;
         }
 
@@ -107,7 +108,7 @@ public class CatalogModels
 
     public static class MemberFavorites extends LazyDataModel<ListingCard>
     {
-        public MemberFavorites (int memberId, byte type) {
+        public MemberFavorites (int memberId, MsoyItemType type) {
             _memberId = memberId;
             _type = type;
         }
@@ -127,7 +128,7 @@ public class CatalogModels
         }
 
         protected int _memberId;
-        protected byte _type;
+        protected MsoyItemType _type;
         protected MemberName _noter;
     }
 
@@ -140,7 +141,7 @@ public class CatalogModels
         return model;
     }
 
-    public MemberFavorites getFavoritesModel (int memberId, byte itemType)
+    public MemberFavorites getFavoritesModel (int memberId, MsoyItemType itemType)
     {
         String key = memberId + ":" + itemType;
         MemberFavorites faves = _fmodels.get(key);
@@ -150,7 +151,7 @@ public class CatalogModels
         return faves;
     }
 
-    public void getSuite (byte itemType, int catalogId,
+    public void getSuite (MsoyItemType itemType, int catalogId,
                           final AsyncCallback<CatalogService.SuiteResult> callback)
     {
         final ItemIdent key = new ItemIdent(itemType, catalogId);
@@ -170,7 +171,7 @@ public class CatalogModels
 
     public void getSuite (int gameId, final AsyncCallback<CatalogService.SuiteResult> callback)
     {
-        getSuite(Item.NOT_A_TYPE, gameId, callback); // hack-a-saur
+        getSuite(MsoyItemType.NOT_A_TYPE, gameId, callback); // hack-a-saur
     }
 
     public void itemDelisted (CatalogListing listing)

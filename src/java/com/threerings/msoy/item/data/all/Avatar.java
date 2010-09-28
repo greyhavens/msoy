@@ -36,7 +36,8 @@ public class Avatar extends Item
      */
     public static MediaDesc getDefaultMemberAvatarMedia ()
     {
-        return new DefaultItemMediaDesc(MediaMimeTypes.APPLICATION_SHOCKWAVE_FLASH, AVATAR, "member");
+        return new DefaultItemMediaDesc(
+                MediaMimeTypes.APPLICATION_SHOCKWAVE_FLASH, MsoyItemType.AVATAR, "member");
     }
 
     /**
@@ -44,7 +45,8 @@ public class Avatar extends Item
      */
     public static MediaDesc getDefaultGuestAvatarMedia ()
     {
-        return new DefaultItemMediaDesc(MediaMimeTypes.APPLICATION_SHOCKWAVE_FLASH, AVATAR, "guest");
+        return new DefaultItemMediaDesc(
+                MediaMimeTypes.APPLICATION_SHOCKWAVE_FLASH, MsoyItemType.AVATAR, "guest");
     }
 
     /**
@@ -52,13 +54,13 @@ public class Avatar extends Item
      */
     public static MediaDesc getStaticImageAvatarMedia ()
     {
-        return new DefaultItemMediaDesc(MediaMimeTypes.IMAGE_PNG, AVATAR, "static");
+        return new DefaultItemMediaDesc(MediaMimeTypes.IMAGE_PNG, MsoyItemType.AVATAR, "static");
     }
 
     @Override // from Item
-    public byte getType ()
+    public MsoyItemType getType ()
     {
-        return AVATAR;
+        return MsoyItemType.AVATAR;
     }
 
     @Override // from Item

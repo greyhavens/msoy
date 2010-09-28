@@ -12,6 +12,7 @@ import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.util.Comparators;
 
 import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.item.data.all.TrophySource;
 
 /**
@@ -75,9 +76,9 @@ public class TrophySourceRecord extends IdentGameItemRecord
     public boolean secret;
 
     @Override // from ItemRecord
-    public byte getType ()
+    public MsoyItemType getType ()
     {
-        return Item.TROPHY_SOURCE;
+        return MsoyItemType.TROPHY_SOURCE;
     }
 
     @Override // from ItemRecord

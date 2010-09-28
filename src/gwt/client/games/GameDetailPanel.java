@@ -21,6 +21,7 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.comment.gwt.Comment;
+import com.threerings.msoy.comment.gwt.Comment.CommentType;
 import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.data.all.RatingResult;
 import com.threerings.msoy.game.gwt.GameDetail;
@@ -143,7 +144,7 @@ public class GameDetailPanel extends SmartTable
         // add comments tab
         addTab(GameDetails.COMMENTS, _msgs.tabComments(), new LazyPanel() {
             protected Widget createWidget () {
-                return new CommentsPanel(Comment.TYPE_GAME, info.gameId, true);
+                return new CommentsPanel(CommentType.GAME, info.gameId, true);
             }
         });
 

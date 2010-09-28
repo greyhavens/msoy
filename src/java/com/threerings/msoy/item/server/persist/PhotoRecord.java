@@ -9,6 +9,7 @@ import com.samskivert.depot.expression.ColumnExp;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.item.data.all.Photo;
 
 /**
@@ -69,9 +70,9 @@ public class PhotoRecord extends ItemRecord
     public int photoHeight;
 
     @Override // from ItemRecord
-    public byte getType ()
+    public MsoyItemType getType ()
     {
-        return Item.PHOTO;
+        return MsoyItemType.PHOTO;
     }
 
     @Override // from ItemRecord

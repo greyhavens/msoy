@@ -10,6 +10,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemListQuery;
+import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.item.gwt.ItemService;
 import com.threerings.msoy.item.gwt.ItemService.ItemListResult;
 import com.threerings.msoy.item.gwt.ItemServiceAsync;
@@ -27,10 +28,10 @@ public class ItemListDataModel extends MsoyServiceBackedDataModel<Item, ItemList
     public ItemListDataModel ()
     {
         // by default, show all item types
-        this(Item.NOT_A_TYPE);
+        this(MsoyItemType.NOT_A_TYPE);
     }
 
-    public ItemListDataModel (byte itemType)
+    public ItemListDataModel (MsoyItemType itemType)
     {
         _query = new ItemListQuery();
         _query.itemType = itemType;
@@ -47,7 +48,7 @@ public class ItemListDataModel extends MsoyServiceBackedDataModel<Item, ItemList
         reset();
     }
 
-    public void setItemType (byte itemType)
+    public void setItemType (MsoyItemType itemType)
     {
         if (_query.itemType != itemType ) {
             _query.itemType = itemType;
@@ -57,7 +58,7 @@ public class ItemListDataModel extends MsoyServiceBackedDataModel<Item, ItemList
         }
     }
 
-    public byte getItemType ()
+    public MsoyItemType getItemType ()
     {
         return _query.itemType;
     }

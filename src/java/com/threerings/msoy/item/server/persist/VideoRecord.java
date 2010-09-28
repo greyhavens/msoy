@@ -8,6 +8,7 @@ import com.samskivert.depot.annotation.TableGenerator;
 import com.samskivert.depot.expression.ColumnExp;
 
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.item.data.all.Video;
 import com.threerings.msoy.item.data.all.Item;
 
@@ -56,9 +57,9 @@ public class VideoRecord extends ItemRecord
     public byte videoMimeType;
 
     @Override // from ItemRecord
-    public byte getType ()
+    public MsoyItemType getType ()
     {
-        return Item.VIDEO;
+        return MsoyItemType.VIDEO;
     }
 
     @Override // from ItemRecord

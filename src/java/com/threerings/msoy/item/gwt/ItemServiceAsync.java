@@ -11,6 +11,7 @@ import com.threerings.msoy.data.all.RatingResult;
 import com.threerings.msoy.item.data.all.ItemFlag;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.ItemListQuery;
+import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.web.gwt.TagHistory;
 
 /**
@@ -66,7 +67,7 @@ public interface ItemServiceAsync
     /**
      * The async version of {@link ItemService#setFavorite}.
      */
-    void setFavorite (byte itemType, int catalogId, boolean favorite, AsyncCallback<Void> callback);
+    void setFavorite (MsoyItemType itemType, int catalogId, boolean favorite, AsyncCallback<Void> callback);
 
     /**
      * The async version of {@link ItemService#loadItemList}.

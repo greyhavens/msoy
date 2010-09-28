@@ -5,6 +5,7 @@ package client.mail;
 
 import com.google.gwt.core.client.GWT;
 
+import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
@@ -34,7 +35,7 @@ public class MailPage extends Page
                 } else if (extra.equals("g")) {
                     compose.setGroupInviteId(args.get(++ii, 0));
                 } else if (extra.equals("i")) {
-                    compose.setGiftItem((byte)args.get(++ii, 0), args.get(++ii, 0));
+                    compose.setGiftItem(args.get(++ii, MsoyItemType.NOT_A_TYPE), args.get(++ii, 0));
                 } else if (extra.equals("r")) {
                     compose.setGiftRoom(args.get(++ii, 0));
                 }

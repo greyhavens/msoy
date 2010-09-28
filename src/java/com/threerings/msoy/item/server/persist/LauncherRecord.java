@@ -9,6 +9,7 @@ import com.samskivert.depot.expression.ColumnExp;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.Launcher;
+import com.threerings.msoy.item.data.all.MsoyItemType;
 
 /**
  * Contains the persistent data for a Launcher item.
@@ -52,9 +53,9 @@ public class LauncherRecord extends GameItemRecord
     public boolean isAVRG;
 
     @Override // from ItemRecord
-    public byte getType ()
+    public MsoyItemType getType ()
     {
-        return Item.LAUNCHER;
+        return MsoyItemType.LAUNCHER;
     }
 
     @Override // from ItemRecord

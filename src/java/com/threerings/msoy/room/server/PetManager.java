@@ -30,6 +30,7 @@ import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.server.PlaceManager;
 import com.threerings.crowd.server.PlaceRegistry;
 
+import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.server.MemberLocator;
 
@@ -124,7 +125,7 @@ public class PetManager
 
                 // next load up their memories
                 if (mids.size() > 0) {
-                    for (MemoriesRecord memrec : _memoryRepo.loadMemories(Pet.PET, mids)) {
+                    for (MemoriesRecord memrec : _memoryRepo.loadMemories(MsoyItemType.PET, mids)) {
                         _memories.put(memrec.itemId, memrec.toEntry());
                     }
                 }
@@ -195,7 +196,7 @@ public class PetManager
                 _pet = (Pet)petrec.toItem();
 
                 // load up its memory
-                MemoriesRecord memrec = _memoryRepo.loadMemory(Pet.PET, petId);
+                MemoriesRecord memrec = _memoryRepo.loadMemory(MsoyItemType.PET, petId);
                 if (memrec != null) {
                     _memory = memrec.toEntry();
                 }

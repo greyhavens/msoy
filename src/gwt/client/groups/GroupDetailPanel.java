@@ -223,8 +223,7 @@ public class GroupDetailPanel extends FlowPanel
 
         // shop
         if (_extras.catalogTag != null && !_extras.catalogTag.equals("")) {
-            Args args = ShopUtil.composeArgs(
-                _extras.catalogItemType, _extras.catalogTag, null, 0);
+            Args args = ShopUtil.composeArgs(_extras.catalogItemType, _extras.catalogTag, null, 0);
             basicActions.add(MsoyUI.createActionLabel(
                             _msgs.detailShop(), Link.createHandler(Pages.SHOP, args)));
         }

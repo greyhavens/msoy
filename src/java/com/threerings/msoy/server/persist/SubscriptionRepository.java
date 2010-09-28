@@ -28,6 +28,7 @@ import com.samskivert.depot.expression.SQLExpression;
 
 import com.samskivert.util.Calendars;
 
+import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.presents.annotation.BlockingThread;
 
 import static com.threerings.msoy.Log.log;
@@ -114,7 +115,7 @@ public class SubscriptionRepository extends DepotRepository
     /**
      * Load the memberIds of any subscribers that should be granted the specified special item.
      */
-    public List<Integer> loadSubscribersNeedingItem (byte type, int itemId)
+    public List<Integer> loadSubscribersNeedingItem (MsoyItemType type, int itemId)
     {
         List<Key<SubscriptionRecord>> keys = findAllKeys(SubscriptionRecord.class, true,
             new Where(Ops.and(
@@ -144,7 +145,7 @@ public class SubscriptionRepository extends DepotRepository
     /**
      * Note that the specified subscriber has been granted the specified item.
      */
-    public void noteSpecialItemGranted (int memberId, byte type, int itemId)
+    public void noteSpecialItemGranted (int memberId, MsoyItemType type, int itemId)
     {
         Map<ColumnExp,SQLExpression> updates = Maps.newHashMap();
         updates.put(SubscriptionRecord.SPECIAL_ITEM_TYPE, Exps.value(type));

@@ -15,6 +15,7 @@ import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 
+import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.party.data.PartyOccupantInfo;
 
 /**
@@ -167,7 +168,7 @@ public class MemberInfo extends ActorInfo
     protected void useStaticMedia ()
     {
         _media = Avatar.getStaticImageAvatarMedia();
-        _ident = new ItemIdent(Item.OCCUPANT, getBodyOid());
+        _ident = new ItemIdent(MsoyItemType.OCCUPANT, getBodyOid());
         _scale = 1f;
     }
 
@@ -183,7 +184,7 @@ public class MemberInfo extends ActorInfo
         } else {
             _media = (memobj.isViewer() || memobj.isPermaguest()) ?
                 Avatar.getDefaultGuestAvatarMedia() : Avatar.getDefaultMemberAvatarMedia();
-            _ident = new ItemIdent(Item.OCCUPANT, getBodyOid());
+            _ident = new ItemIdent(MsoyItemType.OCCUPANT, getBodyOid());
             _scale = 1f;
         }
         _state = memobj.actorState;
@@ -199,7 +200,7 @@ public class MemberInfo extends ActorInfo
         } else {
             _media = guestDefault ?
                 Avatar.getDefaultGuestAvatarMedia() : Avatar.getDefaultMemberAvatarMedia();
-            _ident = new ItemIdent(Item.OCCUPANT, getBodyOid());
+            _ident = new ItemIdent(MsoyItemType.OCCUPANT, getBodyOid());
             _scale = 1f;
         }
     }

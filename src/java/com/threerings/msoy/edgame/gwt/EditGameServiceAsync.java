@@ -11,6 +11,7 @@ import com.threerings.msoy.facebook.gwt.FacebookInfo;
 import com.threerings.msoy.facebook.gwt.FeedThumbnail;
 import com.threerings.msoy.game.gwt.ArcadeData;
 import com.threerings.msoy.game.gwt.GameInfo;
+import com.threerings.msoy.item.data.all.MsoyItemType;
 
 /**
  * Provides the asynchronous version of {@link EditGameService}.
@@ -40,7 +41,7 @@ public interface EditGameServiceAsync
     /**
      * The async version of {@link EditGameService#loadGameItems}.
      */
-    void loadGameItems (int gameId, byte type, AsyncCallback<List<EditGameService.GameItemEditorInfo>> callback);
+    void loadGameItems (int gameId, MsoyItemType type, AsyncCallback<List<EditGameService.GameItemEditorInfo>> callback);
 
     /**
      * The async version of {@link EditGameService#createGame}.

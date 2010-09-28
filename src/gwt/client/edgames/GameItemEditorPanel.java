@@ -21,11 +21,12 @@ import com.threerings.msoy.edgame.gwt.EditGameServiceAsync;
 import com.threerings.msoy.edgame.gwt.EditGameService.GameItemEditorInfo;
 
 import com.threerings.msoy.game.gwt.GameInfo;
-import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.GameItem;
-import com.threerings.msoy.item.data.all.LevelPack;
-import com.threerings.msoy.item.data.all.Prize;
 import com.threerings.msoy.item.data.all.IdentGameItem;
+import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.LevelPack;
+import com.threerings.msoy.item.data.all.MsoyItemType;
+import com.threerings.msoy.item.data.all.Prize;
 import com.threerings.msoy.item.data.all.TrophySource;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
@@ -42,7 +43,7 @@ import client.shell.DynamicLookup;
  */
 public class GameItemEditorPanel extends SmartTable
 {
-    public GameItemEditorPanel (final int gameId, final byte itemType)
+    public GameItemEditorPanel (final int gameId, final MsoyItemType itemType)
     {
         super("gameItemEditor", 5, 0);
 
@@ -55,7 +56,7 @@ public class GameItemEditorPanel extends SmartTable
         });
     }
 
-    protected void init (int gameId, byte itemType, List<GameItemEditorInfo> items)
+    protected void init (int gameId, MsoyItemType itemType, List<GameItemEditorInfo> items)
     {
         int row = 0;
         if (items.size() > 0) {
@@ -129,7 +130,7 @@ public class GameItemEditorPanel extends SmartTable
         // add a button for creating these subitems; TODO: fancy this up and add links to the wiki
         HorizontalPanel bits = new HorizontalPanel();
         bits.setVerticalAlignment(HasAlignment.ALIGN_MIDDLE);
-        bits.add(MsoyUI.createHTML(_dmsgs.get("editorWikiLink" + itemType), "Tip"));
+        bits.add(MsoyUI.createHTML(_dmsgs.get("editorWikiLink" + itemType.toByte()), "Tip"));
         bits.add(WidgetUtil.makeShim(10, 10));
         Args cargs = Args.compose("c", itemType, GameInfo.toDevId(gameId));
         bits.add(MsoyUI.createButton(MsoyUI.SHORT_THIN, _msgs.gieCreate(),

@@ -12,12 +12,12 @@ import com.samskivert.util.ByteEnumUtil;
 
 import com.threerings.msoy.item.data.all.Item;
 
-import client.item.ItemMessages;
 import client.ui.MsoyUI;
 import client.util.FlashClients;
 import client.util.events.FlashEvents;
 import client.util.events.ItemUsageEvent;
 import client.util.events.ItemUsageListener;
+import com.threerings.msoy.item.data.all.MsoyItemType;
 
 /**
  * Displays an interface for activating an item (wearing an avatar, adding furni to a room, etc.).
@@ -43,7 +43,7 @@ public class ItemActivator extends FlowPanel
     // from ItemUsageListener
     public void itemUsageChanged (ItemUsageEvent event)
     {
-        if ((_item != null) && (_item.getType() == event.getItemType()) &&
+        if ((_item != null) && (_item.getType().toByte() == event.getItemTypeByte()) &&
                 (_item.itemId == event.getItemId())) {
             update(ByteEnumUtil.fromByte(Item.UsedAs.class, event.getUsage()), event.getLocation());
         }
@@ -101,9 +101,9 @@ public class ItemActivator extends FlowPanel
             tip = isUsed ? _imsgs.inUse() : _imsgs.notInUse();
         }
 
-        byte type = _item.getType();
+        MsoyItemType type = _item.getType();
         final boolean fUsedHere = usedHere;
-        if (type == Item.AVATAR) {
+        if (type == MsoyItemType.AVATAR) {
             if (hasClient) {
                 tip = usedHere ? _imsgs.removeAvatar() : _imsgs.wearAvatar();
                 onClick = new ClickHandler () {
@@ -131,9 +131,9 @@ public class ItemActivator extends FlowPanel
                 onClick = new ClickHandler () {
                     public void onClick (ClickEvent event) {
                         if (fUsedHere) {
-                            FlashClients.clearItem(_item.getType(), _item.itemId);
+                            FlashClients.clearItem(_item.getType().toByte(), _item.itemId);
                         } else {
-                            FlashClients.useItem(_item.getType(), _item.itemId);
+                            FlashClients.useItem(_item.getType().toByte(), _item.itemId);
                             // CItem.frame.closeContent();
                         }
                     }

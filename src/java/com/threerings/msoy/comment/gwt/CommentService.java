@@ -10,6 +10,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 import com.threerings.gwt.util.PagedResult;
 
+import com.threerings.msoy.comment.gwt.Comment.CommentType;
 import com.threerings.msoy.web.gwt.ServiceException;
 
 /**
@@ -34,7 +35,7 @@ public interface CommentService extends RemoteService
      * Loads recent comments made about the specified entity.
      */
     PagedResult<Comment> loadComments (
-        int entityType, int entityId, int offset, int count, boolean needCount)
+        CommentType entityType, int entityId, int offset, int count, boolean needCount)
         throws ServiceException;
 
     /**
@@ -42,7 +43,7 @@ public interface CommentService extends RemoteService
      *
      * @return the comment that was posted, throws an exception on failure.
      */
-    Comment postComment (int entityType, int entityId, String text)
+    Comment postComment (CommentType entityType, int entityId, String text)
         throws ServiceException;
 
     /**
@@ -50,7 +51,7 @@ public interface CommentService extends RemoteService
      *
      * @return how much the item's rating changed: -2, -1, 0, 1 or 2
      */
-    int rateComment (int entityType, int entityId, long posted, boolean rating)
+    int rateComment (CommentType entityType, int entityId, long posted, boolean rating)
         throws ServiceException;
 
     /**
@@ -59,12 +60,12 @@ public interface CommentService extends RemoteService
      *
      * @return true if the comment was deleted, throws an exception on failure.
      */
-    int deleteComments (int entityType, int entityId, Collection<Long> when)
+    int deleteComments (CommentType entityType, int entityId, Collection<Long> when)
         throws ServiceException;
 
     /**
      * Complains the specified comment from the specified entity.
      */
-    void complainComment (String subject, int entityType, int entityId, long when)
+    void complainComment (String subject, CommentType entityType, int entityId, long when)
         throws ServiceException;
 }

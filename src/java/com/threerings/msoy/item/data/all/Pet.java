@@ -34,13 +34,13 @@ public class Pet extends Item
      */
     public static MediaDesc getStaticImagePetMedia ()
     {
-        return new DefaultItemMediaDesc(MediaMimeTypes.IMAGE_PNG, PET, "static");
+        return new DefaultItemMediaDesc(MediaMimeTypes.IMAGE_PNG, MsoyItemType.PET, "static");
     }
 
     @Override // from Item
-    public byte getType ()
+    public MsoyItemType getType ()
     {
-        return PET;
+        return MsoyItemType.PET;
     }
 
     @Override

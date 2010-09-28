@@ -5,8 +5,10 @@ package com.threerings.msoy.comment.gwt;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
+import com.samskivert.util.ByteEnumUtil;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.web.gwt.MemberCard;
 
 /**
@@ -15,23 +17,66 @@ import com.threerings.msoy.web.gwt.MemberCard;
 public class Comment
     implements IsSerializable
 {
-    /** The minimum entity type code reserved for items. */
-    public static final int TYPE_ITEM_MIN = 1;
+	public static class CommentType implements IsSerializable
+	{
+		public static CommentType forItemType (MsoyItemType type)
+		{
+			return new CommentType(type);
+		}
 
-    /** The maximum entity type code reserved for items. */
-    public static final int TYPE_ITEM_MAX = 63;
+		/** An entity type code indicating a comment on a room. */
+		public static final CommentType ROOM = new CommentType(64);
 
-    /** An entity type code indicating a comment on a room. */
-    public static final int TYPE_ROOM = 64;
+		/** An entity type code indicating a comment on a member's profile. */
+		public static final CommentType PROFILE_WALL = new CommentType(65);
 
-    /** An entity type code indicating a comment on a member's profile. */
-    public static final int TYPE_PROFILE_WALL = 65;
+		/** An entity type code indicating a comment on a game. */
+		public static final CommentType GAME = new CommentType(66);
 
-    /** An entity type code indicating a comment on a game. */
-    public static final int TYPE_GAME = 66;
+		public CommentType ()
+		{
 
-    /** Bounds the special (non-item) comment types. */
-    public static final int MAX_SPECIAL_TYPE = TYPE_GAME;
+		}
+
+		protected CommentType (MsoyItemType itemType)
+		{
+			_type = itemType.toByte();
+		}
+
+		protected CommentType (int type)
+		{
+			_type = (byte) type;
+		}
+
+		public boolean isValid ()
+		{
+			return (this == ROOM) || (this == PROFILE_WALL) || (this == GAME)
+				|| toItemType() != null;
+		}
+
+		public boolean isItemType ()
+		{
+			return (_type >= TYPE_ITEM_MIN && _type < TYPE_ITEM_MAX);
+		}
+
+		public byte toByte ()
+		{
+			return _type;
+		}
+		
+		public MsoyItemType toItemType ()
+		{
+			return ByteEnumUtil.fromByte(MsoyItemType.class, _type);
+		}
+
+		protected byte _type;
+
+		/** The minimum entity type code reserved for items. */
+		protected static final int TYPE_ITEM_MIN = 1;
+
+		/** The maximum entity type code reserved for items. */
+		protected static final int TYPE_ITEM_MAX = 63;
+	}
 
     /** The maximum length of comment text. */
     public static final int MAX_TEXT_LENGTH = 1024;
@@ -48,10 +93,10 @@ public class Comment
     /**
      * Returns true if the specified member can delete a comment.
      */
-    public static boolean canDelete (int type, int entityId, int commentorId, int memberId)
+    public static boolean canDelete (CommentType type, int entityId, int commentorId, int memberId)
     {
         return (memberId == commentorId) ||
-            (type == Comment.TYPE_PROFILE_WALL && entityId == memberId);
+            (type == CommentType.PROFILE_WALL && entityId == memberId);
     }
 
     /** The member that made this comment. */

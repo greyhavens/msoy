@@ -13,54 +13,62 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.msoy.item.data.all.Item;
-
 import client.images.item.ItemImages;
 import client.shell.DynamicLookup;
 import client.ui.MsoyUI;
+import com.threerings.msoy.item.data.all.MsoyItemType;
 
 /**
  * Shown next to our catalog listings and our catalog landing page.
  */
 public class SideBar extends FlowPanel
 {
-    public interface Linker {
-        public boolean isSelected (byte itemType);
-        public Widget createLink (String name, byte itemType);
+	public interface Linker {
+        public boolean isSelected (MsoyItemType itemType);
+        public Widget createLink (String name, MsoyItemType itemType);
     }
 
-    public SideBar (Linker linker, boolean showAll, Widget extras)
+	public interface ItemPredicate {
+		public boolean includeItem (MsoyItemType type);
+	}
+
+	public static final ItemPredicate IS_SHOP_TYPE = new ItemPredicate() {
+			@Override public boolean includeItem (MsoyItemType type) {
+				return type.isShopType();
+			}
+		};
+
+	public static final ItemPredicate IS_STUFF_TYPE = new ItemPredicate() {
+			@Override public boolean includeItem (MsoyItemType type) {
+				return type.isStuffType();
+			}
+		};
+
+	public static final ItemPredicate IS_FAVORITE_TYPE = new ItemPredicate() {
+			@Override public boolean includeItem (MsoyItemType type) {
+				return type.isFavoriteType();
+			}
+		};
+
+    public SideBar (Linker linker, ItemPredicate predicate, Widget extras)
     {
         setStyleName("sideBar");
-
-        if (showAll) {
-            init(linker, Item.FAVORITE_TYPES, extras);
-        } else {
-            init(linker, Item.SHOP_TYPES, extras);
-        }
-    }
-
-    public SideBar (Linker linker, byte[] itemTypes, Widget extras)
-    {
-        setStyleName("sideBar");
-        init(linker, itemTypes, extras);
-    }
-
-    protected void init (Linker linker, byte[] itemTypes, Widget extras)
-    {
-//         addText(_msgs.sideBarCats(), 1, "Title");
 
         FlowPanel navi = new FlowPanel();
         navi.setStyleName("NaviPanel");
 
-        for (int ii = 0; ii < itemTypes.length; ii++) {
-            byte type = itemTypes[ii];
+		boolean first = true;
+		for (MsoyItemType type : MsoyItemType.values()) {
+			if (!predicate.includeItem(type)) {
+				continue;
+			}
             ImageResource proto = IMAGES.get(type);
-            if (ii > 0) {
+            if (!first) {
                 // use a blank separator between game and level pack, etc.
                 navi.add(MsoyUI.createLabel("", (proto == null) ? "BlankSep" : "Separator"));
             }
-            Widget item = makeItem(linker, _dmsgs.xlate("pItemType" + type), type);
+			first = false;
+            Widget item = makeItem(linker, _dmsgs.xlateItemsType(type), type);
             if (proto != null) {
                 navi.add(new Image(proto));
             } else {
@@ -76,7 +84,7 @@ public class SideBar extends FlowPanel
         }
     }
 
-    protected Widget makeItem (Linker linker, String name, byte itemType)
+    protected Widget makeItem (Linker linker, String name, MsoyItemType itemType)
     {
         Widget itemWidget;
         if (linker.isSelected(itemType)) {
@@ -92,16 +100,16 @@ public class SideBar extends FlowPanel
     protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
     protected static final ItemImages _itemImages = GWT.create(ItemImages.class);
 
-    protected static final Map<Byte, ImageResource> IMAGES = Maps.newHashMap();
+    protected static final Map<MsoyItemType, ImageResource> IMAGES = Maps.newHashMap();
     static {
-        IMAGES.put(Item.AUDIO, _itemImages.audio());
-        IMAGES.put(Item.AVATAR, _itemImages.avatar());
-        IMAGES.put(Item.DECOR, _itemImages.backdrop());
-        IMAGES.put(Item.FURNITURE, _itemImages.furniture());
-        IMAGES.put(Item.LAUNCHER, _itemImages.game());
-        IMAGES.put(Item.PET, _itemImages.pet());
-        IMAGES.put(Item.PHOTO, _itemImages.photo());
-        IMAGES.put(Item.TOY, _itemImages.toy());
-        IMAGES.put(Item.VIDEO, _itemImages.video());
+        IMAGES.put(MsoyItemType.AUDIO, _itemImages.audio());
+        IMAGES.put(MsoyItemType.AVATAR, _itemImages.avatar());
+        IMAGES.put(MsoyItemType.DECOR, _itemImages.backdrop());
+        IMAGES.put(MsoyItemType.FURNITURE, _itemImages.furniture());
+        IMAGES.put(MsoyItemType.LAUNCHER, _itemImages.game());
+        IMAGES.put(MsoyItemType.PET, _itemImages.pet());
+        IMAGES.put(MsoyItemType.PHOTO, _itemImages.photo());
+        IMAGES.put(MsoyItemType.TOY, _itemImages.toy());
+        IMAGES.put(MsoyItemType.VIDEO, _itemImages.video());
     }
 }

@@ -23,6 +23,7 @@ import com.threerings.io.Streamable;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.MsoyItemType;
 
 /**
  * The base class for all digital items in the MSOY system.
@@ -160,7 +161,7 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
      * This is used to map {@link ItemRecord} concrete classes to item type
      * values.
      */
-    public abstract byte getType ();
+    public abstract MsoyItemType getType ();
 
     @Override
     public int hashCode ()

@@ -21,9 +21,9 @@ public class Photo extends Item
     public int photoHeight;
 
     @Override // from Item
-    public byte getType ()
+    public MsoyItemType getType ()
     {
-        return PHOTO;
+        return MsoyItemType.PHOTO;
     }
 
     @Override // from Item

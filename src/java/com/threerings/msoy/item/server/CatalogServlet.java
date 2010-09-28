@@ -19,6 +19,7 @@ import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.room.data.RoomCodes;
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.StatLogic;
@@ -138,7 +139,7 @@ public class CatalogServlet extends MsoyServiceServlet
 
     // from interface CatalogService
     public PurchaseResult<Item> purchaseItem (
-        byte itemType, int catalogId, Currency currency, int authedCost, String memories)
+        MsoyItemType itemType, int catalogId, Currency currency, int authedCost, String memories)
         throws ServiceException
     {
         final MemberRecord mrec = requireAuthedUser();
@@ -163,13 +164,13 @@ public class CatalogServlet extends MsoyServiceServlet
                         // else: I guess if they earned BLING, that's it's own reward
 
                         // Some items have a stat that may need updating
-                        if (itemType == Item.AVATAR) {
+                        if (itemType == MsoyItemType.AVATAR) {
                             _statLogic.ensureIntStatMinimum(
                                 creatorId, StatType.AVATARS_CREATED, StatType.ITEM_SOLD);
-                        } else if (itemType == Item.FURNITURE) {
+                        } else if (itemType == MsoyItemType.FURNITURE) {
                             _statLogic.ensureIntStatMinimum(
                                 creatorId, StatType.FURNITURE_CREATED, StatType.ITEM_SOLD);
-                        } else if (itemType == Item.DECOR) {
+                        } else if (itemType == MsoyItemType.DECOR) {
                             _statLogic.ensureIntStatMinimum(
                                 creatorId, StatType.BACKDROPS_CREATED, StatType.ITEM_SOLD);
                         }
@@ -304,13 +305,13 @@ public class CatalogServlet extends MsoyServiceServlet
 
         // some items are related to a stat that may need updating.  Use originalItem.creatorId
         // so that agents and admins don't get credit for listing someone elses stuff.
-        if (item.type == Item.AVATAR) {
+        if (item.type == MsoyItemType.AVATAR) {
             _statLogic.ensureIntStatMinimum(
                 originalItem.creatorId, StatType.AVATARS_CREATED, StatType.ITEM_LISTED);
-        } else if (item.type == Item.FURNITURE) {
+        } else if (item.type == MsoyItemType.FURNITURE) {
             _statLogic.ensureIntStatMinimum(
                 originalItem.creatorId, StatType.FURNITURE_CREATED, StatType.ITEM_LISTED);
-        } else if (item.type == Item.DECOR) {
+        } else if (item.type == MsoyItemType.DECOR) {
             _statLogic.ensureIntStatMinimum(
                 originalItem.creatorId, StatType.BACKDROPS_CREATED, StatType.ITEM_LISTED);
         }
@@ -326,7 +327,7 @@ public class CatalogServlet extends MsoyServiceServlet
     }
 
     // from interface CatalogServlet
-    public CatalogListing loadListing (byte itemType, int catalogId, boolean forDisplay)
+    public CatalogListing loadListing (MsoyItemType itemType, int catalogId, boolean forDisplay)
         throws ServiceException
     {
         MemberRecord mrec = getAuthedUser();
@@ -421,7 +422,7 @@ public class CatalogServlet extends MsoyServiceServlet
         return listing;
     }
 
-    public CatalogListing.DerivedItem[] loadAllDerivedItems (byte itemType, int catalogId)
+    public CatalogListing.DerivedItem[] loadAllDerivedItems (MsoyItemType itemType, int catalogId)
         throws ServiceException
     {
         return _itemLogic.loadDerivedItems(itemType, catalogId, 0);
@@ -468,7 +469,7 @@ public class CatalogServlet extends MsoyServiceServlet
     }
 
     // from interface CatalogService
-    public void updatePricing (byte itemType, int catalogId, int pricing, int salesTarget,
+    public void updatePricing (MsoyItemType itemType, int catalogId, int pricing, int salesTarget,
                                Currency currency, int cost, int basisId, int brandId)
         throws ServiceException
     {
@@ -551,14 +552,14 @@ public class CatalogServlet extends MsoyServiceServlet
     }
 
     // from interface CatalogService
-    public void removeListing (byte itemType, int catalogId)
+    public void removeListing (MsoyItemType itemType, int catalogId)
         throws ServiceException
     {
         _itemLogic.removeListing(requireRegisteredUser(), itemType, catalogId);
     }
 
     // from interface CatalogService
-    public Map<String, Integer> getPopularTags (byte type, int rows)
+    public Map<String, Integer> getPopularTags (MsoyItemType type, int rows)
         throws ServiceException
     {
         ItemRepository<ItemRecord> repo = _itemLogic.getRepository(type);
@@ -570,7 +571,7 @@ public class CatalogServlet extends MsoyServiceServlet
     }
 
     // from interface CatalogService
-    public FavoritesResult loadFavorites (int memberId, byte itemType)
+    public FavoritesResult loadFavorites (int memberId, MsoyItemType itemType)
         throws ServiceException
     {
         FavoritesResult result = new FavoritesResult();
@@ -585,7 +586,7 @@ public class CatalogServlet extends MsoyServiceServlet
     }
 
     // from interface CatalogService
-    public List<ListingCard> loadPotentialBasisItems (byte itemType)
+    public List<ListingCard> loadPotentialBasisItems (MsoyItemType itemType)
         throws ServiceException
     {
         MemberRecord mrec = requireAuthedUser();
@@ -617,7 +618,7 @@ public class CatalogServlet extends MsoyServiceServlet
     }
 
     // from interface CatalogService
-    public SuiteResult loadSuite (byte itemType, int suiteId)
+    public SuiteResult loadSuite (MsoyItemType itemType, int suiteId)
         throws ServiceException
     {
         // NOTE: this method is expensive as fuck, but we cache the results on the client and
@@ -655,10 +656,10 @@ public class CatalogServlet extends MsoyServiceServlet
 
         if (info.suiteTag != null) {
             // all tag repositories share the same name to id mapping
-            int tagId = _itemLogic.getRepository(Item.PET).getTagRepository().getTagId(
+            int tagId = _itemLogic.getRepository(MsoyItemType.PET).getTagRepository().getTagId(
                 info.suiteTag);
             if (tagId != 0) {
-                for (byte tagType : SUITE_TAG_TYPES) {
+                for (MsoyItemType tagType : SUITE_TAG_TYPES) {
                     CatalogLogic.Query tquery = new CatalogLogic.Query(
                         tagType, CatalogQuery.SORT_BY_LIST_DATE);
                     tquery.tagId = tagId;
@@ -679,11 +680,11 @@ public class CatalogServlet extends MsoyServiceServlet
     /**
      * Returns true if the specified item type is salable, false if not.
      */
-    protected boolean isSalable (byte itemType)
+    protected boolean isSalable (MsoyItemType itemType)
         throws ServiceException
     {
         try {
-            return Item.getClassForType(itemType).newInstance().isSalable();
+            return itemType.getClassForType().newInstance().isSalable();
         } catch (Exception e) {
             log.warning("Failed to check salability", "type", itemType, e);
             throw new ServiceException(ItemCodes.INTERNAL_ERROR);
@@ -708,8 +709,8 @@ public class CatalogServlet extends MsoyServiceServlet
     @Inject protected UserActionRepository _userActionRepo;
 
     /** Used by {@link #loadSuite}. */
-    protected static final byte[] SUITE_TAG_TYPES = new byte[] {
-        Item.AVATAR, Item.FURNITURE, Item.DECOR, Item.TOY,
-        Item.PET, Item.PHOTO, Item.AUDIO, Item.VIDEO
+    protected static final MsoyItemType[] SUITE_TAG_TYPES = new MsoyItemType[] {
+        MsoyItemType.AVATAR, MsoyItemType.FURNITURE, MsoyItemType.DECOR, MsoyItemType.TOY,
+        MsoyItemType.PET, MsoyItemType.PHOTO, MsoyItemType.AUDIO, MsoyItemType.VIDEO
     };
 }

@@ -14,9 +14,9 @@ public class LevelPack extends IdentGameItem
     public boolean premium;
 
     @Override // from Item
-    public byte getType ()
+    public MsoyItemType getType ()
     {
-        return LEVEL_PACK;
+        return MsoyItemType.LEVEL_PACK;
     }
 
     @Override // from Item

@@ -31,10 +31,12 @@ import com.threerings.gwt.ui.Popups;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.util.DateUtil;
 
+import com.threerings.msoy.comment.gwt.Comment.CommentType;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.Theme;
 import com.threerings.msoy.group.gwt.BrandDetail.BrandShare;
 import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.item.gwt.CatalogListing;
 import com.threerings.msoy.item.gwt.CatalogService;
 import com.threerings.msoy.item.gwt.CatalogServiceAsync;
@@ -64,7 +66,7 @@ import client.util.InfoCallback;
  */
 public class ListingDetailPanel extends BaseItemDetailPanel
 {
-    public ListingDetailPanel (CatalogModels models, byte type, int catalogId)
+    public ListingDetailPanel (CatalogModels models, MsoyItemType type, int catalogId)
     {
         addStyleName("listingDetailPanel");
         _models = models;
@@ -186,13 +188,14 @@ public class ListingDetailPanel extends BaseItemDetailPanel
         _details.add(new ItemBuyPanel(_listing, null));
 
         // display a comment interface below the listing details
-        addTabBelow("Comments", new CommentsPanel(_item.getType(), listing.catalogId, true), true);
+        addTabBelow("Comments", new CommentsPanel(
+			CommentType.forItemType(_item.getType()), listing.catalogId, true), true);
 
 //         // if this item supports sub-items, add a tab for those item types
 //         byte[] types = _item.getSalableSubTypes();
 //         if (types.length > 0) {
 //             for (int ii = 0; ii < types.length; ii++) {
-//                 addTabBelow(_dmsgs.xlate("pItemType" + types[ii]), new Label("TBD"));
+//                 addTabBelow(_dmsgs.xlateItemsType(types[ii]), new Label("TBD"));
 //             }
 //         }
     }
@@ -201,14 +204,14 @@ public class ListingDetailPanel extends BaseItemDetailPanel
     protected void addExtraDetails ()
     {
         super.addExtraDetails();
-        byte type = _listing.detail.item.getType();
+        MsoyItemType type = _listing.detail.item.getType();
 
         if (_listing.basis != null) {
             BasisItem basis = _listing.basis;
             FlowPanel basedOn = new FlowPanel();
             basedOn.add(new InlineLabel(_msgs.listingBasedOn() + " "));
             basedOn.add(_listing.basis.hidden ? new InlineLabel(basis.name) :
-                Link.shopListingView(basis.name, type, basis.catalogId));
+                Link.shopListingView(basis.name, type.toByte(), basis.catalogId));
             basedOn.add(new InlineLabel(" " + _cmsgs.creatorBy() + " "));
             basedOn.add(basis.brand != null ?
                 Link.groupView(basis.brand) : Link.memberView(basis.creator));
@@ -225,7 +228,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
     @Override
     protected void addExtraThemeBits ()
     {
-        if (_item.getType() == Item.AVATAR && !CShell.isGuest()) {
+        if (_item.getType() == MsoyItemType.AVATAR && !CShell.isGuest()) {
             _itemsvc.loadLineups(_item.catalogId, new InfoCallback<GroupName[]>() {
                 public void onSuccess (GroupName[] result) {
                     _lineup = new HashSet<GroupName>(Arrays.asList(result));
@@ -268,7 +271,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
                 ShareDialog.Info info = new ShareDialog.Info();
                 info.page = Pages.SHOP;
                 info.args = Args.compose("l", _item.getType(), _listing.catalogId);
-                info.what = _dmsgs.xlate("itemType" + _item.getType());
+                info.what = _dmsgs.xlateItemType(_item.getType());
                 info.title = _item.name;
                 info.descrip = _item.description;
                 info.image = _item.getThumbnailMedia();
@@ -305,14 +308,14 @@ public class ListingDetailPanel extends BaseItemDetailPanel
             _usedBy.remove(0);
         }
         _usedBy.add(new InlineLabel(_msgs.listingUsedBy() + " "));
-        final byte type = _listing.detail.item.getType();
+        final MsoyItemType type = _listing.detail.item.getType();
         boolean first = true;
         for (DerivedItem derived : _listing.derivatives) {
             if (!first) {
                 _usedBy.add(new InlineLabel(", "));
             }
             first = false;
-            _usedBy.add(Link.shopListingView(derived.name, type, derived.catalogId));
+            _usedBy.add(Link.shopListingView(derived.name, type.toByte(), derived.catalogId));
         }
         if (_listing.derivatives.length < _listing.derivationCount) {
             final AsyncCallback<DerivedItem[]> showAll = new InfoCallback<DerivedItem[]>() {

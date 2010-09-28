@@ -55,7 +55,7 @@ public class GamesPage extends Page
         } else if (action.equals("g")) {
             setContent(new GameGenrePanel(getDefaultPortal(),
                 ByteEnumUtil.fromByte(GameGenre.class, args.get(1, GameGenre.ALL.toByte())),
-                GameInfo.Sort.fromToken(args.get(2, "")), args.get(3, null)));
+                GameInfo.Sort.fromToken(args.get(2, "")), args.get(3, (String)null)));
             showFriendsBar(0);
 
         } else if (action.equals("m") || action.equals("c") || action.equals("e") ||

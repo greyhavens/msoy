@@ -8,6 +8,7 @@ import com.samskivert.depot.annotation.TableGenerator;
 import com.samskivert.depot.expression.ColumnExp;
 
 import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.item.data.all.Prize;
 
 /**
@@ -51,15 +52,15 @@ public class PrizeRecord extends IdentGameItemRecord
     public static final int SCHEMA_VERSION = ITEM_VERSION + BASE_SCHEMA_VERSION * BASE_MULTIPLIER;
 
     /** The item type of the target prize item. */
-    public byte targetType;
+    public MsoyItemType targetType;
 
     /** The catalog id of the target prize item's listing. */
     public int targetCatalogId;
 
     @Override // from ItemRecord
-    public byte getType ()
+    public MsoyItemType getType ()
     {
-        return Item.PRIZE;
+        return MsoyItemType.PRIZE;
     }
 
     @Override // from ItemRecord

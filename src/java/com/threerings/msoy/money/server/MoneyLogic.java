@@ -27,6 +27,8 @@ import com.samskivert.depot.DatabaseException;
 import com.samskivert.util.IntTuple;
 import com.samskivert.util.RandomUtil;
 
+import com.threerings.msoy.item.data.all.MsoyItemType;
+import com.threerings.msoy.server.MsoyEvents.ItemPurchase.PseudoItem;
 import net.sf.ehcache.CacheManager;
 
 import com.threerings.presents.annotation.BlockingThread;
@@ -438,7 +440,7 @@ public class MoneyLogic
 
         if (result.getMemberTransaction().amount != 0) {
             _eventLog.pseudoItemPurchased(
-                buyerId, ItemPurchase.TYPE_PARTY, result.getMemberTransaction());
+                buyerId, PseudoItem.PARTY, result.getMemberTransaction());
         }
         return result;
     }
@@ -458,7 +460,7 @@ public class MoneyLogic
 
         if (result.getMemberTransaction().amount != 0) {
             _eventLog.pseudoItemPurchased(
-                buyerRec.memberId, ItemPurchase.TYPE_ROOM, result.getMemberTransaction());
+                buyerRec.memberId, PseudoItem.ROOM, result.getMemberTransaction());
         }
         return result;
     }
@@ -478,7 +480,7 @@ public class MoneyLogic
 
         if (result.getMemberTransaction().amount != 0) {
             _eventLog.pseudoItemPurchased(
-                buyerRec.memberId, ItemPurchase.TYPE_GROUP, result.getMemberTransaction());
+                buyerRec.memberId, PseudoItem.GROUP, result.getMemberTransaction());
         }
         return result;
     }
@@ -497,7 +499,7 @@ public class MoneyLogic
             TransactionType.THEME_PURCHASE, "m.change_rcvd_theme");
         if (result.getMemberTransaction().amount != 0) {
             _eventLog.pseudoItemPurchased(
-                buyerRec.memberId, ItemPurchase.TYPE_THEME, result.getMemberTransaction());
+                buyerRec.memberId, PseudoItem.THEME, result.getMemberTransaction());
         }
         return result;
     }
@@ -1196,7 +1198,7 @@ public class MoneyLogic
      */
     protected static boolean isValid (CatalogIdent ident)
     {
-        return (ident != null) && (ident.type != Item.NOT_A_TYPE) && (ident.catalogId != 0);
+        return (ident != null) && (ident.type != MsoyItemType.NOT_A_TYPE) && (ident.catalogId != 0);
     }
 
     /**

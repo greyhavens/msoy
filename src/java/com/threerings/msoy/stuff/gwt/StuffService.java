@@ -9,6 +9,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
+import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.web.gwt.ServiceException;
 
 import com.threerings.msoy.data.all.GroupName;
@@ -110,7 +111,7 @@ public interface StuffService extends RemoteService
      * Loads all items in a player's inventory of the specified type. If query is non-null, then
      * restrict the returned set to items whose name/description/tags match the string.
      */
-    InventoryResult<Item> loadInventory (int memberId, byte type, String query)
+    InventoryResult<Item> loadInventory (int memberId, MsoyItemType type, String query)
         throws ServiceException;
 
     /**

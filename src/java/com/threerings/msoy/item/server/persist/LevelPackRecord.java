@@ -9,6 +9,7 @@ import com.samskivert.depot.expression.ColumnExp;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.LevelPack;
+import com.threerings.msoy.item.data.all.MsoyItemType;
 
 /**
  * Contains the persistent data for a LevelPack item.
@@ -53,9 +54,9 @@ public class LevelPackRecord extends IdentGameItemRecord
     public boolean premium;
 
     @Override // from ItemRecord
-    public byte getType ()
+    public MsoyItemType getType ()
     {
-        return Item.LEVEL_PACK;
+        return MsoyItemType.LEVEL_PACK;
     }
 
     @Override // from ItemRecord

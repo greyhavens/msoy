@@ -21,6 +21,7 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.CatalogIdent;
 import com.threerings.msoy.item.data.all.ItemIdent;
 
+import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.MoneyTransaction;
 import com.threerings.msoy.money.data.all.TransactionType;
@@ -41,7 +42,7 @@ public abstract class MoneyTransactionRecord extends PersistentRecord
         public byte type;
 
         /** The type of id held. */
-        public byte idType;
+        public MsoyItemType idType;
 
         /** The subject's actual id. */
         public int id;
@@ -145,7 +146,7 @@ public abstract class MoneyTransactionRecord extends PersistentRecord
     public byte subjectType;
 
     /** An optional divider of the subjectId. */
-    public byte subjectIdType;
+    public MsoyItemType subjectIdType;
 
     /** The id of the subject of this transaction. */
     public int subjectId;

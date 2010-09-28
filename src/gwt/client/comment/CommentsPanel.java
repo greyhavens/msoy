@@ -29,6 +29,7 @@ import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.util.PagedResult;
 
 import com.threerings.msoy.comment.gwt.Comment;
+import com.threerings.msoy.comment.gwt.Comment.CommentType;
 import com.threerings.msoy.comment.gwt.CommentService;
 import com.threerings.msoy.comment.gwt.CommentServiceAsync;
 import com.threerings.msoy.data.all.MediaDescSize;
@@ -48,12 +49,12 @@ import client.util.MsoyPagedServiceDataModel;
  */
 public class CommentsPanel extends PagedGrid<Comment>
 {
-    public CommentsPanel (int entityType, int entityId, boolean rated)
+    public CommentsPanel (CommentType entityType, int entityId, boolean rated)
     {
         this(entityType, entityId, Comment.COMMENTS_PER_PAGE, rated);
     }
 
-    public CommentsPanel (int entityType, int entityId, int commentsPerPage, boolean rated)
+    public CommentsPanel (CommentType entityType, int entityId, int commentsPerPage, boolean rated)
     {
         super(commentsPerPage, 1, NAV_ON_BOTTOM);
         addStyleName("CommentsPanel");
@@ -142,7 +143,7 @@ public class CommentsPanel extends PagedGrid<Comment>
     protected boolean commentsCanBeBatchDeleted ()
     {
         return CShell.isSupport() ||
-            (_etype == Comment.TYPE_PROFILE_WALL && _entityId == CShell.getMemberId());
+            (_etype == CommentType.PROFILE_WALL && _entityId == CShell.getMemberId());
     }
 
     /**
@@ -348,7 +349,7 @@ public class CommentsPanel extends PagedGrid<Comment>
 
     protected class CommentComplainPopup extends ComplainPopup
     {
-        public CommentComplainPopup (Comment comment, int type, int id)
+        public CommentComplainPopup (Comment comment, CommentType type, int id)
         {
             super(CommentService.MAX_COMPLAINT_LENGTH);
             _comment = comment;
@@ -363,10 +364,13 @@ public class CommentsPanel extends PagedGrid<Comment>
         }
 
         protected Comment _comment;
-        protected int _type, _id;
+        protected CommentType _type;
+		protected int _id;
     }
 
-    protected int _etype, _entityId;
+    protected CommentType _etype;
+
+	protected int _entityId;
     protected int _commentCount = -1;
 
     protected DeleteClickCallback _batchDelete;

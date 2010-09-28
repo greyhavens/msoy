@@ -27,6 +27,7 @@ import com.threerings.msoy.admin.gwt.AdminServiceAsync;
 import com.threerings.msoy.admin.gwt.AdminService.ItemFlagsResult;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.ItemFlag;
+import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.item.gwt.ItemDetail;
 
 import client.ui.MsoyUI;
@@ -58,7 +59,7 @@ public class ReviewPanel extends FlowPanel
         refresh();
     }
 
-    public ItemDetail getItemDetail (byte type, int id)
+    public ItemDetail getItemDetail (MsoyItemType type, int id)
     {
         if (_result == null) {
             return null;

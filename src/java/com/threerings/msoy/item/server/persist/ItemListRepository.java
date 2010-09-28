@@ -24,6 +24,7 @@ import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.expression.SQLExpression;
 
+import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.msoy.item.data.all.Item;
@@ -81,10 +82,10 @@ public class ItemListRepository extends DepotRepository
     /**
      * Gets the number of items of the given type in a list.
      */
-    public int getSize (int listId, byte listType)
+    public int getSize (int listId, MsoyItemType listType)
     {
         Where where;
-        if (listType == Item.NOT_A_TYPE) {
+        if (listType == MsoyItemType.NOT_A_TYPE) {
             where = new Where(ItemListElementRecord.LIST_ID, listId);
         } else {
             where = new Where(ItemListElementRecord.LIST_ID, listId,
@@ -146,7 +147,7 @@ public class ItemListRepository extends DepotRepository
     public ItemIdent[] loadList (ItemListQuery query)
     {
         Where where;
-        if (query.itemType == Item.NOT_A_TYPE) {
+        if (query.itemType == MsoyItemType.NOT_A_TYPE) {
             where = new Where(ItemListElementRecord.LIST_ID, query.listId);
         } else {
             where = new Where(ItemListElementRecord.LIST_ID, query.listId,

@@ -14,9 +14,9 @@ public class Video extends Item
     public MediaDesc videoMedia;
 
     @Override // from Item
-    public byte getType ()
+    public MsoyItemType getType ()
     {
-        return VIDEO;
+        return MsoyItemType.VIDEO;
     }
 
     @Override // from Item

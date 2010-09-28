@@ -21,6 +21,7 @@ import com.threerings.gwt.util.StringUtil;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.stuff.gwt.StuffService;
 import com.threerings.msoy.stuff.gwt.StuffServiceAsync;
 import com.threerings.msoy.stuff.gwt.StuffService.DetailOrIdent;
@@ -39,7 +40,7 @@ public class InventoryModels
 {
     public static class Stuff extends SimpleDataModel<Item>
     {
-        public final byte type;
+        public final MsoyItemType type;
         public final String query;
         public final GroupName theme;
 
@@ -47,7 +48,7 @@ public class InventoryModels
             this(result, key.type, key.query);
         }
 
-        public Stuff (InventoryResult<Item> result, byte type, String query) {
+        public Stuff (InventoryResult<Item> result, MsoyItemType type, String query) {
             super(result.items);
             this.theme = result.theme;
             this.type = type;
@@ -87,9 +88,9 @@ public class InventoryModels
     /**
      * Gets the default item type to use in the case that one wasn't specified.
      */
-    public byte getDefaultItemType ()
+    public MsoyItemType getDefaultItemType ()
     {
-        return Item.AVATAR;
+        return MsoyItemType.AVATAR;
     }
 
     /**
@@ -103,7 +104,7 @@ public class InventoryModels
     /**
      * Looks up the data model with the specified parameters. Returns null if we have none.
      */
-    public SimpleDataModel<Item> getModel (int memberId, byte type, String query, int mogId)
+    public SimpleDataModel<Item> getModel (int memberId, MsoyItemType type, String query, int mogId)
     {
         return _models.get(new Key(memberId, type, query, mogId));
     }
@@ -113,7 +114,7 @@ public class InventoryModels
      * query and mog.
      */
     public void loadModel (
-        int memberId, byte type, String query, int mogId, AsyncCallback<DataModel<Item>> cb)
+        int memberId, MsoyItemType type, String query, int mogId, AsyncCallback<DataModel<Item>> cb)
     {
         loadModel(new Key(memberId, type, query, mogId), cb);
     }
@@ -122,7 +123,7 @@ public class InventoryModels
      * Used to try to find an item in the local data model/cache. If this returns null, then the
      * item will get loaded from the server.
      */
-    public Item findItem (byte type, final int itemId)
+    public Item findItem (MsoyItemType type, final int itemId)
     {
         Predicate<Item> itemP = new Predicate<Item>() {
             public boolean apply (Item item) {
@@ -169,7 +170,8 @@ public class InventoryModels
     // from interface ItemUsageListener
     public void itemUsageChanged (ItemUsageEvent event)
     {
-        Item item = findItem(event.getItemType(), event.getItemId());
+		MsoyItemType type = ByteEnumUtil.fromByte(MsoyItemType.class, event.getItemTypeByte());
+        Item item = findItem(type, event.getItemId());
         if (item != null) {
             item.used = ByteEnumUtil.fromByte(Item.UsedAs.class, event.getUsage());
             item.location = event.getLocation();
@@ -204,10 +206,10 @@ public class InventoryModels
 
     protected static class Key {
         public final int memberId;
-        public final byte type;
+        public final MsoyItemType type;
         public final String query;
 
-        public Key (int memberId, byte type, String query, int mogId)
+        public Key (int memberId, MsoyItemType type, String query, int mogId)
         {
             this.memberId = memberId;
             this.type = type;
@@ -215,7 +217,7 @@ public class InventoryModels
         }
 
         public int hashCode () {
-            return memberId ^ type ^ (query == null ? 0 : query.hashCode());
+            return memberId ^ type.toByte() ^ (query == null ? 0 : query.hashCode());
         }
 
         public boolean equals (Object other) {

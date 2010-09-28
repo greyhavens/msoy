@@ -31,6 +31,7 @@ import com.threerings.whirled.server.SceneRegistry;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.game.data.MsoyGameCodes;
+import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.ServerMessages;
 import com.threerings.msoy.server.util.ServiceUnit;
@@ -88,7 +89,7 @@ public class ItemManager
     /**
      * Returns the repository used to manage items of the specified type.
      */
-    public ItemRepository<ItemRecord> getRepository (byte type, ResultListener<?> rl)
+    public ItemRepository<ItemRecord> getRepository (MsoyItemType type, ResultListener<?> rl)
     {
         try {
             return _itemLogic.getRepositoryFor(type);
@@ -167,7 +168,7 @@ public class ItemManager
     public void updateItemUsage (int memberId, Avatar oldAvatar, Avatar newAvatar,
                                  ResultListener<Void> lner)
     {
-        updateItemUsage(Item.AVATAR, Item.UsedAs.AVATAR, memberId, memberId,
+        updateItemUsage(MsoyItemType.AVATAR, Item.UsedAs.AVATAR, memberId, memberId,
                         (oldAvatar != null) ? oldAvatar.itemId : 0,
                         (newAvatar != null) ? newAvatar.itemId : 0, lner);
     }
@@ -180,7 +181,7 @@ public class ItemManager
      * question.
      */
     public void updateItemUsage (
-        final byte itemType, final Item.UsedAs itemUseType, final int memberId,
+        final MsoyItemType itemType, final Item.UsedAs itemUseType, final int memberId,
         final int locationId, final int oldItemId, final int newItemId, ResultListener<Void> lner)
     {
         if (oldItemId == newItemId) {
@@ -208,12 +209,11 @@ public class ItemManager
 
     /**
      * Called when an avatar item is updated.
-     * @param validForTheme
      */
     public void avatarUpdatedOnPeer (
         final MemberObject memObj, final int avatarId, final QuicklistState state)
     {
-        getItem(new ItemIdent(Item.AVATAR, avatarId), new ResultListener<Item>() {
+        getItem(new ItemIdent(MsoyItemType.AVATAR, avatarId), new ResultListener<Item>() {
             public void requestCompleted (Item avatar) {
                 avatarUpdatedOnPeer(memObj, (Avatar) avatar, state);
             }
@@ -290,7 +290,7 @@ public class ItemManager
                 memObj.setAvatar(null);
                 _bodyMan.updateOccupantInfo(memObj, new MemberInfo.AvatarUpdater(memObj));
             }
-            ItemIdent ident = new ItemIdent(Item.AVATAR, avatarId);
+            ItemIdent ident = new ItemIdent(MsoyItemType.AVATAR, avatarId);
             if (memObj.avatarCache != null && memObj.avatarCache.containsKey(ident)) {
                 memObj.removeFromAvatarCache(ident);
             }
@@ -387,7 +387,7 @@ public class ItemManager
         /*
         final MemberObject user = (MemberObject) caller;
 
-        getItem(ident, new ResultListener<Item>() {
+        getId(ident, new ResultListener<Item>() {
             public void requestCompleted (final Item result) {
                 final byte type = result.getType();
                 if (type == Item.DECOR || type == Item.PET || result.used == Item.USED_AS_FURNITURE) {
@@ -440,7 +440,7 @@ public class ItemManager
         throws InvocationException
     {
         final MemberObject user = (MemberObject) caller;
-        if (item.type == Item.AVATAR) {
+        if (item.type == MsoyItemType.AVATAR) {
             log.warning("Tried to reclaim invalid item type", "who", user.who(), "item", item);
             throw new InvocationException(InvocationCodes.INTERNAL_ERROR);
         }
@@ -451,8 +451,8 @@ public class ItemManager
                     lner.requestFailed(ItemCodes.E_ACCESS_DENIED);
                     return;
                 }
-                if ((result.used == Item.UsedAs.FURNITURE) || (result.getType() == Item.DECOR) ||
-                        (result.getType() == Item.AUDIO)) {
+                if ((result.used == Item.UsedAs.FURNITURE) || (result.getType() == MsoyItemType.DECOR) ||
+                        (result.getType() == MsoyItemType.AUDIO)) {
                     ((MsoySceneRegistry)_sceneReg).reclaimItem(
                         result.location, user.getMemberId(), item, new ConfirmAdapter(lner));
 

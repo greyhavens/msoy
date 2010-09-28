@@ -29,6 +29,7 @@ import com.threerings.msoy.group.gwt.GroupService;
 import com.threerings.msoy.group.gwt.GroupServiceAsync;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.mail.gwt.GroupInvitePayload;
 import com.threerings.msoy.mail.gwt.MailPayload;
 import com.threerings.msoy.mail.gwt.PresentPayload;
@@ -156,7 +157,7 @@ public class ComposePanel extends FlowPanel
         });
     }
 
-    public void setGiftItem (byte type, int itemId)
+    public void setGiftItem (MsoyItemType type, int itemId)
     {
         _stuffsvc.loadItem(new ItemIdent(type, itemId), new InfoCallback<Item>() {
             public void onSuccess (Item result) {

@@ -17,9 +17,11 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.samskivert.io.StreamUtil;
+import com.samskivert.util.ByteEnumUtil;
 import com.samskivert.util.CollectionUtil;
 import com.samskivert.util.StringUtil;
 
+import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.util.MessageBundle;
 
 import com.threerings.msoy.data.all.MediaDesc;
@@ -239,7 +241,8 @@ public class CloakedPageLogic
             } else if (path.startsWith(SHARE_ITEM_PREFIX)) {
                 String spec = path.substring(SHARE_ITEM_PREFIX.length());
                 String[] pieces = spec.split("_");
-                byte itemType = Byte.parseByte(pieces[0]);
+                MsoyItemType itemType = ByteEnumUtil.fromByte(
+					MsoyItemType.class, Byte.parseByte(pieces[0]));
                 int catalogId = Integer.parseInt(pieces[1]);
                 CatalogRecord listing;
                 try {

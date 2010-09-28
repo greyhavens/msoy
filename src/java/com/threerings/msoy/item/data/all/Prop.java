@@ -15,9 +15,9 @@ public class Prop extends IdentGameItem
     public int gameId;
 
     @Override // from Item
-    public byte getType ()
+    public MsoyItemType getType ()
     {
-        return PROP;
+        return MsoyItemType.PROP;
     }
 
     @Override

@@ -9,6 +9,7 @@ import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.annotation.*; // for Depot annotations
 import com.samskivert.depot.expression.ColumnExp;
+import com.threerings.msoy.item.data.all.MsoyItemType;
 
 /**
  * Tracks data about subscribers and ex-subscribers.
@@ -44,7 +45,7 @@ public class SubscriptionRecord extends PersistentRecord
     public Timestamp lastGrant;
 
     /** The type of the last special item granted to this subscriber. */
-    public byte specialItemType;
+    public MsoyItemType specialItemType;
 
     /** The item id of the last special item granted to this subscriber. */
     public int specialItemId;

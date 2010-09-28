@@ -22,6 +22,7 @@ import com.threerings.msoy.admin.gwt.AdminServiceAsync;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemFlag;
 import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.item.gwt.CatalogService;
 import com.threerings.msoy.item.gwt.CatalogServiceAsync;
 import com.threerings.msoy.item.gwt.ItemDetail;
@@ -47,7 +48,7 @@ public class ReviewItem extends FlowPanel
         _item = detail != null ? detail.item : null;
         _ident = flag.itemIdent;
 
-        byte type = flag.itemIdent.type;
+        MsoyItemType type = flag.itemIdent.type;
         int id = flag.itemIdent.itemId;
 
         // the name displays an item inspector and the creator name links to profile

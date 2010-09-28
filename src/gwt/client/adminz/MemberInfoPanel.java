@@ -25,6 +25,7 @@ import com.threerings.msoy.admin.gwt.MemberAdminInfo;
 import com.threerings.msoy.data.all.CharityInfo;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.WebCreds;
 
@@ -69,7 +70,7 @@ public class MemberInfoPanel extends AdminDataPanel<MemberAdminInfo>
                                              info.accountName, info.permaName),
                                          "Billing Transactions", "_blank"));
         table.setWidget(3, 0, Link.create("Stuff Inventory", Pages.STUFF,
-                                          Item.AVATAR, info.name.getMemberId()));
+                                          MsoyItemType.AVATAR.toByte(), info.name.getMemberId()));
 
         row = table.addText("Display name:", 1, "Label");
         final TextBox dispName = MsoyUI.createTextBox(

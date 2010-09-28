@@ -8,6 +8,7 @@ import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.data.all.MsoyItemType;
 
 /**
  * Provides the asynchronous version of {@link StuffService}.
@@ -47,7 +48,7 @@ public interface StuffServiceAsync
     /**
      * The async version of {@link StuffService#loadInventory}.
      */
-    void loadInventory (int memberId, byte type, String query, AsyncCallback<StuffService.InventoryResult<Item>> callback);
+    void loadInventory (int memberId, MsoyItemType type, String query, AsyncCallback<StuffService.InventoryResult<Item>> callback);
 
     /**
      * The async version of {@link StuffService#loadItem}.

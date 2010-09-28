@@ -54,7 +54,7 @@ public class EditGamesPage extends Page
             byte portal = args.get(1, ArcadeData.Portal.MAIN.toByte());
             setContent(new AddArcadeEntriesPanel(
                 ByteEnumUtil.fromByte(ArcadeData.Portal.class, portal),
-                GameInfo.Sort.fromToken(args.get(1, "")), args.get(3, null)));
+                GameInfo.Sort.fromToken(args.get(1, "")), args.get(3, (String)null)));
         }
     }
 

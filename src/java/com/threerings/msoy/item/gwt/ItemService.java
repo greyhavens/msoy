@@ -18,6 +18,7 @@ import com.threerings.msoy.item.data.all.ItemFlag;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.ItemListQuery;
 
+import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.gwt.TagHistory;
 
@@ -100,7 +101,7 @@ public interface ItemService extends RemoteService
     /**
      * Flags a item from the catalog as the current member's favorite (or not).
      */
-    void setFavorite (byte itemType, int catalogId, boolean favorite)
+    void setFavorite (MsoyItemType itemType, int catalogId, boolean favorite)
         throws ServiceException;
 
     /**

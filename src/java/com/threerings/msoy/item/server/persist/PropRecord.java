@@ -8,6 +8,7 @@ import com.samskivert.depot.annotation.TableGenerator;
 import com.samskivert.depot.expression.ColumnExp;
 
 import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.item.data.all.Prop;
 
 /**
@@ -49,9 +50,9 @@ public class PropRecord extends IdentGameItemRecord
     public static final int SCHEMA_VERSION = ITEM_VERSION + BASE_SCHEMA_VERSION * BASE_MULTIPLIER;
 
     @Override // from ItemRecord
-    public byte getType ()
+    public MsoyItemType getType ()
     {
-        return Item.PROP;
+        return MsoyItemType.PROP;
     }
 
     @Override // from ItemRecord

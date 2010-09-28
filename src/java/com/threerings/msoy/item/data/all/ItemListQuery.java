@@ -34,7 +34,7 @@ public class ItemListQuery implements Streamable, IsSerializable
     /**
      * An optional field to limit the query results to a particular type of item.
      */
-    public byte itemType = Item.NOT_A_TYPE;
+    public MsoyItemType itemType = MsoyItemType.NOT_A_TYPE;
 
     /**
      * This indicates whether or not the service should return the total number of items this query

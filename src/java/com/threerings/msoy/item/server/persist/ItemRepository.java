@@ -60,6 +60,7 @@ import com.samskivert.depot.expression.FluentExp;
 import com.samskivert.depot.expression.SQLExpression;
 import com.samskivert.depot.operator.Case;
 import com.samskivert.depot.operator.FullText;
+import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.msoy.server.persist.HotnessConfig;
@@ -235,46 +236,15 @@ public abstract class ItemRepository<T extends ItemRecord>
     /**
      * Configures this repository with its item type
      */
-    public void init (byte itemType)
+    public void init (MsoyItemType itemType)
     {
         _itemType = itemType;
-
-        // TEMP: remove a few weeks after 2009/02/24
-        registerMigration(new DataMigration("2009_02_24_minprice_" + _itemType) {
-            @Override public void invoke () throws DatabaseException {
-                int[] byrating = new int[5];
-                int adjusted = 0;
-                for (byte rating : new byte[] { 5, 4, 3, 2, 1 }) {
-                    int minPrice = ItemPrices.getMinimumPrice(Currency.COINS, _itemType, rating);
-                    // this is basically what we're doing except not as an update clause:
-                    // update CatalogRecord set pricing = minPrice
-                    // join ItemRecord on ItemRecord.listedItemId = ItemRecord.itemId
-                    // where currency = coins and rating() <= rating and rating() > (rating-1)
-                    // and cost < minPrice
-                    Join join = new Join(getCatalogColumn(CatalogRecord.LISTED_ITEM_ID),
-                                         getItemColumn(ItemRecord.ITEM_ID));
-                    Where where = new Where(Ops.and(
-                        getCatalogColumn(CatalogRecord.CURRENCY).eq(Currency.COINS.toByte()),
-                        getRatingExpression().lessEq(rating),
-                        getRatingExpression().greaterThan(rating-1),
-                        getCatalogColumn(CatalogRecord.COST).lessThan(minPrice)));
-                    for (CatalogRecord crec : findAll(getCatalogClass(), join, where)) {
-                        updatePartial(getCatalogKey(crec.catalogId), CatalogRecord.COST, minPrice);
-                        adjusted++;
-                        byrating[rating-1]++;
-                    }
-                }
-                log.info("Enforced minimum prices", "type", getItemClass().getSimpleName(),
-                         "total", adjusted, "byrating", byrating);
-            }
-        });
-        // END TEMP
     }
 
     /**
      * Returns the item type constant for the type of item handled by this repository.
      */
-    public byte getItemType ()
+    public MsoyItemType getItemType ()
     {
         return _itemType;
     }
@@ -1136,7 +1106,6 @@ public abstract class ItemRepository<T extends ItemRecord>
     /**
      * Create a row in our catalog table with the given master item record. {@link
      * ItemRecord#catalogId} will be filled into the supplied master.
-     * @param fbrandId
      *
      * @return the catalog id of the newly inserted listing.
      */
@@ -1309,7 +1278,7 @@ public abstract class ItemRepository<T extends ItemRecord>
             _tagRepo.deleteTags(itemId);
 
             // delete support flags on this item
-            _itemFlagRepo.removeItemFlags(getItemType(), itemId);
+            _itemFlagRepo.removeItemFlags(_itemType.toByte(), itemId);
         }
 
         // delete any entity memory for this item as well
@@ -1585,9 +1554,8 @@ public abstract class ItemRepository<T extends ItemRecord>
     }
 
     /**
-     * Helper function for {@link #countListings} and {@link #loadCatalog}. Returns true if
-     * sufficient clauses were added that we can heuristically claim that the query will not
-     * match enormous numbers of rows.
+     * Helper function for {@link #loadCatalog}. Returns true if sufficient clauses were added
+     * that we can heuristically claim that the query will not match enormous numbers of rows.
      */
     protected boolean addSearchClause (
         List<QueryClause> clauses, List<SQLExpression> whereBits, boolean mature,
@@ -1901,7 +1869,7 @@ public abstract class ItemRepository<T extends ItemRecord>
     };
 
     /** The byte type of our item. */
-    protected byte _itemType;
+    protected MsoyItemType _itemType;
 
     /** This item type's concrete MogMarkRecord class. */
     protected Class<? extends MogMarkRecord> _mogMarkClass;

@@ -34,12 +34,13 @@ import com.threerings.parlor.rating.server.persist.RatingRepository;
 
 import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.item.data.all.GameItem;
+import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.item.server.ItemLogic;
 import com.threerings.msoy.item.server.persist.GameItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
 
-import com.threerings.msoy.comment.gwt.Comment;
+import com.threerings.msoy.comment.gwt.Comment.CommentType;
 import com.threerings.msoy.comment.server.persist.CommentRepository;
 
 import com.threerings.msoy.edgame.gwt.EditGameService;
@@ -150,7 +151,7 @@ public class EditGameServlet extends MsoyServiceServlet
     }
 
     @Override // from interface EditGameService
-    public List<GameItemEditorInfo> loadGameItems (int gameId, byte type)
+    public List<GameItemEditorInfo> loadGameItems (int gameId, MsoyItemType type)
         throws ServiceException
     {
         MemberRecord mrec = requireAuthedUser();
@@ -236,7 +237,7 @@ public class EditGameServlet extends MsoyServiceServlet
         }
 
         // delete this game's comments
-        _commentRepo.deleteComments(Comment.TYPE_GAME, gameId);
+        _commentRepo.deleteComments(CommentType.GAME.toByte(), gameId);
 
         // delete the trophies awarded by this game
         _trophyRepo.purgeGame(gameId);

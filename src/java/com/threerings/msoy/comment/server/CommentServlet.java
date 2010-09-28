@@ -19,11 +19,12 @@ import com.samskivert.util.StringUtil;
 
 import com.threerings.gwt.util.PagedResult;
 
+import com.threerings.msoy.comment.gwt.Comment.CommentType;
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.notify.server.NotificationManager;
 import com.threerings.msoy.game.server.persist.GameInfoRecord;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 
-import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.server.ItemLogic;
 import com.threerings.msoy.item.server.persist.CatalogRecord;
 import com.threerings.msoy.item.server.persist.ItemRecord;
@@ -33,7 +34,6 @@ import com.threerings.msoy.comment.gwt.Comment;
 import com.threerings.msoy.comment.gwt.CommentService;
 import com.threerings.msoy.comment.server.persist.CommentRecord;
 import com.threerings.msoy.comment.server.persist.CommentRepository;
-import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.server.StatLogic;
 import com.threerings.msoy.server.persist.MemberCardRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
@@ -61,11 +61,11 @@ public class CommentServlet extends MsoyServiceServlet
 {
     // from interface CommentService
     public PagedResult<Comment> loadComments (
-        int etype, int eid, int offset, int count, boolean needCount)
+        CommentType etype, int eid, int offset, int count, boolean needCount)
         throws ServiceException
     {
         // no authentication required to view comments
-        List<CommentRecord> records = _commentRepo.loadComments(etype, eid, offset, count, false);
+        List<CommentRecord> records = _commentRepo.loadComments(etype.toByte(), eid, offset, count, false);
 
         // resolve the member cards for all commentors
         Set<Integer> memIds = Sets.newHashSet();
@@ -89,35 +89,35 @@ public class CommentServlet extends MsoyServiceServlet
         result.page = comments;
         if (needCount) {
             result.total = (records.size() < count && offset == 0) ?
-                records.size() : _commentRepo.loadCommentCount(etype, eid);
+                records.size() : _commentRepo.loadCommentCount(etype.toByte(), eid);
         }
 
         return result;
     }
 
     // from interface CommentService
-    public Comment postComment (int etype, int eid, String text)
+    public Comment postComment (CommentType etype, int eid, String text)
         throws ServiceException
     {
         MemberRecord mrec = requireValidatedUser();
 
         // validate the entity type and id (sort of; we can't *really* validate the id without a
         // bunch of entity specific befuckery which I don't particularly care to do)
-        if (!isValidType(etype) || eid == 0) {
+        if (!etype.isValid() || eid == 0) {
             log.warning("Refusing to post comment on illegal entity", "type", etype, "id", eid,
                         "who", mrec.who(), "text",  StringUtil.truncate(text, 40, "..."));
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
 
         // record the comment to the data-ma-base
-        CommentRecord crec = _commentRepo.postComment(etype, eid, mrec.memberId, text);
+        CommentRecord crec = _commentRepo.postComment(etype.toByte(), eid, mrec.memberId, text);
 
         // find out the owner id of and the entity name for the entity that was commented on
         int ownerId = 0;
         String entityName = null;
 
         // if this is a comment on a user room, post a self feed message
-        if (etype == Comment.TYPE_ROOM) {
+        if (etype == CommentType.ROOM) {
             SceneRecord scene = _sceneRepo.loadScene(eid);
             if (scene.ownerType == MsoySceneModel.OWNER_TYPE_MEMBER) {
                 _feedLogic.publishSelfMessage(
@@ -127,13 +127,13 @@ public class CommentServlet extends MsoyServiceServlet
                 entityName = scene.name;
             }
 
-        } else if (etype == Comment.TYPE_PROFILE_WALL) {
+        } else if (etype == CommentType.PROFILE_WALL) {
             ownerId = eid;
 
         // comment on an item
-        } else  if (etype >= Comment.TYPE_ITEM_MIN && etype <= Comment.TYPE_ITEM_MAX) {
+        } else  if (etype.isItemType()) {
             try {
-                ItemRepository<?> repo = _itemLogic.getRepository((byte)etype);
+                ItemRepository<?> repo = _itemLogic.getRepository(etype.toItemType());
                 CatalogRecord listing = repo.loadListing(eid, true);
                 if (listing != null) {
                     ItemRecord item = listing.item;
@@ -157,7 +157,7 @@ public class CommentServlet extends MsoyServiceServlet
             } catch (DatabaseException de) {
                 log.warning("Unable to load comment target item", "type", etype, "id", eid, de);
             }
-        } else if (etype == Comment.TYPE_GAME) {
+        } else if (etype == CommentType.GAME) {
             GameInfoRecord game = _msoyGameRepo.loadGame(eid);
             if (game != null) {
                 ownerId = game.creatorId;
@@ -180,15 +180,15 @@ public class CommentServlet extends MsoyServiceServlet
     }
 
     // from interface CommentService
-    public int rateComment (int etype, int eid, long posted, boolean rating)
+    public int rateComment (CommentType etype, int eid, long posted, boolean rating)
         throws ServiceException
     {
         MemberRecord mrec = requireValidatedUser();
-        return _commentRepo.rateComment(etype, eid, posted, mrec.memberId, rating);
+        return _commentRepo.rateComment(etype.toByte(), eid, posted, mrec.memberId, rating);
     }
 
     // from interface CommentService
-    public int deleteComments (int etype, int eid, Collection<Long> stamps)
+    public int deleteComments (CommentType etype, int eid, Collection<Long> stamps)
         throws ServiceException
     {
         MemberRecord mrec = requireAuthedUser();
@@ -196,36 +196,36 @@ public class CommentServlet extends MsoyServiceServlet
         for (Long posted : stamps) {
             // if we're not support personnel, ensure that we are the poster of this comment
             if (!mrec.isSupport()) {
-                CommentRecord record = _commentRepo.loadComment(etype, eid, posted);
+                CommentRecord record = _commentRepo.loadComment(etype.toByte(), eid, posted);
                 if (record == null ||
                         !Comment.canDelete(etype, eid, record.memberId, mrec.memberId)) {
                     continue;
                 }
             }
-            _commentRepo.deleteComment(etype, eid, posted);
+            _commentRepo.deleteComment(etype.toByte(), eid, posted);
             deleted ++;
         }
         return deleted;
     }
 
     // from interface CommentService
-    public void complainComment (String subject, int etype, int eid, long posted)
+    public void complainComment (String subject, CommentType etype, int eid, long posted)
         throws ServiceException
     {
         MemberRecord mrec = requireValidatedUser();
-        CommentRecord record = _commentRepo.loadComment(etype, eid, posted);
+        CommentRecord record = _commentRepo.loadComment(etype.toByte(), eid, posted);
         if (record == null) {
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
 
         String link;
-        if (etype >= Comment.TYPE_ITEM_MIN && etype <= Comment.TYPE_ITEM_MAX) {
+		if (etype.isItemType()) {
             link = Pages.SHOP.makeURL("l", etype, eid);
-        } else if (etype == Comment.TYPE_ROOM) {
+        } else if (etype == CommentType.ROOM) {
             link = Pages.ROOMS.makeURL("room", eid);
-        } else if (etype == Comment.TYPE_PROFILE_WALL) {
+        } else if (etype == CommentType.PROFILE_WALL) {
             link = Pages.PEOPLE.makeURL(eid);
-        } else if (etype == Comment.TYPE_GAME) {
+        } else if (etype == CommentType.GAME) {
             link = Pages.GAMES.makeURL("d", eid, "c");
         } else {
             link = null;
@@ -234,19 +234,6 @@ public class CommentServlet extends MsoyServiceServlet
         String text = "[" + new Date(posted) + "]\n" + record.text;
         _supportLogic.addMessageComplaint(
             mrec.getName(), record.memberId, text, subject, link);
-    }
-
-    /**
-     * Returns true if this is a valid comment entity type, false if not.
-     */
-    protected static boolean isValidType (int entityType)
-    {
-        // if it's an item, we must delegate to the Item class
-        if (entityType >= Comment.TYPE_ITEM_MIN && entityType <= Comment.TYPE_ITEM_MAX) {
-            return Item.getClassForType((byte)entityType) != null;
-        }
-        // otherwise make sure we have a constant defined for this type
-        return (entityType > Comment.TYPE_ITEM_MAX && entityType <= Comment.MAX_SPECIAL_TYPE);
     }
 
     // our dependencies

@@ -28,6 +28,7 @@ import com.samskivert.util.StringUtil;
 
 import com.threerings.cron.server.CronLogic;
 
+import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.util.MessageBundle;
@@ -311,10 +312,10 @@ public class SpamLogic
         protected EmailListing (ListingCard listing)
         {
             _listing = listing;
-            if (listing.itemType == Item.LAUNCHER) {
+            if (listing.itemType == MsoyItemType.LAUNCHER) {
                 try{
                     _gameId = ((LauncherRecord)_itemLogic.requireListing(
-                        Item.LAUNCHER, listing.catalogId, true).item).gameId;
+                        MsoyItemType.LAUNCHER, listing.catalogId, true).item).gameId;
                 } catch (ServiceException e) {
                     log.warning("Could not load game id for new & hot game",
                                 "catalogId", listing.catalogId);
@@ -637,8 +638,8 @@ public class SpamLogic
     {
         NewStuff filler = new NewStuff();
         try {
-            filler.avatars = randomItems(Item.AVATAR);
-            filler.games = randomItems(Item.LAUNCHER);
+            filler.avatars = randomItems(MsoyItemType.AVATAR);
+            filler.games = randomItems(MsoyItemType.LAUNCHER);
 
         } catch (ServiceException e) {
             throw new RuntimeException("Could not create feed mailing filler", e);
@@ -650,7 +651,7 @@ public class SpamLogic
     /**
      * Loads a random set of new & hot and staff pick items for the filler.
      */
-    protected List<EmailListing> randomItems (byte itemType)
+    protected List<EmailListing> randomItems (MsoyItemType itemType)
         throws ServiceException
     {
         int count = ITEM_COUNT;

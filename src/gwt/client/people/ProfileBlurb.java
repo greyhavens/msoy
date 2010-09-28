@@ -34,6 +34,7 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.Award.AwardType;
 
 import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.person.gwt.Gallery;
 import com.threerings.msoy.profile.gwt.Profile;
 import com.threerings.msoy.profile.gwt.ProfileService;
@@ -211,7 +212,7 @@ public class ProfileBlurb extends Blurb
         addButton(_buttons, "/images/profile/viewrooms.png", _msgs.seeRooms(),
                   Pages.PEOPLE, "rooms", _name.getMemberId());
         addButton(_buttons, "/images/profile/browseitems.png", _msgs.browseItems(),
-                  Pages.SHOP, ShopUtil.composeArgs(Item.AVATAR, null, null, _name.getMemberId()));
+                  Pages.SHOP, ShopUtil.composeArgs(MsoyItemType.AVATAR, null, null, _name.getMemberId()));
         if (CShell.isAdmin()) {
             _buttons.add(new Button("Admin: Send feed", new ClickHandler() {
                 public void onClick (ClickEvent event) {

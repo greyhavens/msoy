@@ -34,7 +34,6 @@ import client.shell.CShell;
 import client.shell.DynamicLookup;
 import client.ui.MsoyUI;
 import client.ui.RowPanel;
-import client.util.ArrayUtil;
 import client.util.ClickCallback;
 import client.util.FlashClients;
 import client.util.Link;
@@ -81,7 +80,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
     // from interface ItemUsageListener
     public void itemUsageChanged (ItemUsageEvent event)
     {
-        if ((event.getItemType() == _item.getType()) && (event.getItemId() == _item.itemId)) {
+        if ((event.getItemTypeByte() == _item.getType().toByte()) && (event.getItemId() == _item.itemId)) {
             adjustForUsage();
         }
     }
@@ -139,7 +138,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
         boolean canEditAndList = userCreatedItem() || CShell.isSupport();
         boolean remixable = isRemixable();
         boolean used = _item.used.forAnything();
-        boolean isRoomType = (-1 != ArrayUtil.indexOf(Item.ROOM_TYPES, _item.getType()));
+        boolean isRoomType = _item.getType().isRoomType();
 
         // add a button for deleting this item
         RowPanel buttons = new RowPanel();

@@ -90,6 +90,7 @@ import com.threerings.msoy.data.MsoyUserObject;
 import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.server.BootablePlaceManager;
 import com.threerings.msoy.server.MemberLocal;
 import com.threerings.msoy.server.MemberLocator;
@@ -137,7 +138,6 @@ import com.threerings.msoy.room.data.RoomPropertiesEntry;
 import com.threerings.msoy.room.data.RoomPropertiesObject;
 import com.threerings.msoy.room.data.SceneAttrsUpdate;
 import com.threerings.msoy.room.data.SceneOwnershipUpdate;
-import com.threerings.msoy.room.server.RoomExtras;
 import com.threerings.msoy.room.server.persist.MemoriesRecord;
 import com.threerings.msoy.room.server.persist.MemoryRepository;
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
@@ -379,7 +379,7 @@ public class RoomManager extends SpotSceneManager
     {
         MsoyScene scene = (MsoyScene)_scene;
 
-        if (item.type == Item.DECOR) {
+        if (item.type == MsoyItemType.DECOR) {
             // replace the decor with defaults
             SceneAttrsUpdate update = new SceneAttrsUpdate();
             update.init(scene.getId(), scene.getVersion());
@@ -391,7 +391,7 @@ public class RoomManager extends SpotSceneManager
             update.noPuppet = ((MsoySceneModel)scene.getSceneModel()).noPuppet;
             doRoomUpdate(update, memberId, null);
 
-        } else if (item.type == Item.AUDIO) {
+        } else if (item.type == MsoyItemType.AUDIO) {
             // TODO: remove from playlist? This is not ever called presently
 
         } else {
@@ -481,7 +481,7 @@ public class RoomManager extends SpotSceneManager
         throws InvocationException
     {
         final MemberObject who = (MemberObject) caller;
-        ItemIdent key = new ItemIdent(Item.AUDIO, audioItemId);
+        ItemIdent key = new ItemIdent(MsoyItemType.AUDIO, audioItemId);
         Audio current = _roomObj.playlist.get(key);
 
         // see if it's already done!
@@ -514,7 +514,7 @@ public class RoomManager extends SpotSceneManager
                     "song", current);
                 // but, clear it anyway...
             }
-            _itemMan.updateItemUsage(Item.AUDIO, Item.UsedAs.BACKGROUND, who.getMemberId(),
+            _itemMan.updateItemUsage(MsoyItemType.AUDIO, Item.UsedAs.BACKGROUND, who.getMemberId(),
                 _scene.getId(), audioItemId, 0, new ConfirmAdapter(listener));
             return;
         }
@@ -542,7 +542,7 @@ public class RoomManager extends SpotSceneManager
         requireManager(caller);
 
         if ((_roomObj.currentSongId != songId) &&
-                _roomObj.playlist.containsKey(new ItemIdent(Item.AUDIO, songId))) {
+                _roomObj.playlist.containsKey(new ItemIdent(MsoyItemType.AUDIO, songId))) {
             if (_songJumpThrottle.throttleOp()) {
                 throw new InvocationException("e.rapid_music_jump");
             }
@@ -1033,7 +1033,7 @@ public class RoomManager extends SpotSceneManager
     protected boolean validateMemoryUpdate (MemberObject caller, ItemIdent ident)
     {
         String reason;
-        if (ident.type == Item.AVATAR) {
+        if (ident.type == MsoyItemType.AVATAR) {
             // only the wearer of an avatar may update its memory
             OccupantInfo info = _roomObj.occupantInfo.get(caller.getOid());
             if (info == null) {
@@ -1047,7 +1047,7 @@ public class RoomManager extends SpotSceneManager
                 reason = "not wearing avatar";
             }
 
-        } else if (ident.type == Item.PET) {
+        } else if (ident.type == MsoyItemType.PET) {
             // TODO: keep open, but when we have ThanePetBrain, those pets can only update
             // memory from the thane process.
             for (OccupantInfo info : _roomObj.occupantInfo) {
@@ -1057,7 +1057,7 @@ public class RoomManager extends SpotSceneManager
             }
             reason = "not in room";
 
-        } else if (ident.type == Item.DECOR) {
+        } else if (ident.type == MsoyItemType.DECOR) {
             // Control is not required, it was too much of a PITA.
             MsoySceneModel msm = (MsoySceneModel)getScene().getSceneModel();
             if ((msm.decor != null) && (msm.decor.itemId == ident.itemId)) {
@@ -1474,7 +1474,7 @@ public class RoomManager extends SpotSceneManager
             Decor decor = mScene.getDecor();
             if (decor.itemId != up.decor.itemId) { // modified?
                 _itemMan.updateItemUsage(
-                    Item.DECOR, Item.UsedAs.BACKGROUND, memberId, _scene.getId(),
+                    MsoyItemType.DECOR, Item.UsedAs.BACKGROUND, memberId, _scene.getId(),
                     decor.itemId, up.decor.itemId, new ComplainingListener<Void>(
                         log, "Unable to update decor usage"));
                 if (decor.itemId != 0) {
@@ -1510,7 +1510,7 @@ public class RoomManager extends SpotSceneManager
                     log, "Unable to clear furni item usage"));
 
             // clear out any memories that were loaded for this item
-            if (data.itemType != Item.NOT_A_TYPE) {
+            if (data.itemType != MsoyItemType.NOT_A_TYPE) {
                 removeAndFlushMemories(data.getItemIdent());
             }
 
@@ -1519,9 +1519,8 @@ public class RoomManager extends SpotSceneManager
 
             // mark this item as in use
             _itemMan.updateItemUsage(
-                data.itemType, Item.UsedAs.FURNITURE, memberId, mScene.getId(),
-                0, data.itemId, new ComplainingListener<Void>(
-                        log, "Unable to set furni item usage"));
+                data.itemType, Item.UsedAs.FURNITURE, memberId, mScene.getId(), 0, data.itemId,
+                new ComplainingListener<Void>(log, "Unable to set furni item usage"));
 
             // and resolve any memories it may have, calling the scene updater when it's done
             resolveMemories(data.getItemIdent(), doUpdateScene);
@@ -1651,7 +1650,7 @@ public class RoomManager extends SpotSceneManager
     protected void validateForTheme (final int themeId, final int sceneId, FurniData data,
         final InvocationListener listener, final Runnable onSuccess)
     {
-        final byte itemType = data.itemType;
+        final MsoyItemType itemType = data.itemType;
         final int itemId = data.itemId;
         _invoker.postUnit(new RepositoryUnit("validateStamp") {
             public void invokePersist () throws Exception {
@@ -1791,7 +1790,7 @@ public class RoomManager extends SpotSceneManager
             int oldItemId = realManager ? 0 : item.itemId;
             int newItemId = realManager ? item.itemId : 0;
             // we need to update the item usage
-            _itemMan.updateItemUsage(Item.AUDIO, Item.UsedAs.BACKGROUND, who.getMemberId(),
+            _itemMan.updateItemUsage(MsoyItemType.AUDIO, Item.UsedAs.BACKGROUND, who.getMemberId(),
                 _scene.getId(), oldItemId, newItemId,
                 new ConfirmAdapter(listener) {
                     @Override public void requestCompleted (Void nothing) {
@@ -1831,7 +1830,7 @@ public class RoomManager extends SpotSceneManager
             }
             // start it playing now if there's not already something playing
             if (_roomObj.playCount == -1 || !_roomObj.playlist.containsKey(
-                    new ItemIdent(Item.AUDIO, _roomObj.currentSongId))) {
+                    new ItemIdent(MsoyItemType.AUDIO, _roomObj.currentSongId))) {
                 playNextSong(true);
             }
         } finally {
@@ -1967,7 +1966,7 @@ public class RoomManager extends SpotSceneManager
                     return;
                 }
                 _avatar = (Avatar) avrec.toItem();
-                MemoriesRecord mrec = _memoryRepo.loadMemory(Item.AVATAR, memrec.avatarId);
+                MemoriesRecord mrec = _memoryRepo.loadMemory(MsoyItemType.AVATAR, memrec.avatarId);
                 if (mrec != null) {
                     _mem = mrec.toEntry();
                 }

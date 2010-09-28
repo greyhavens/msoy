@@ -10,6 +10,8 @@ import com.google.inject.Singleton;
 
 import com.samskivert.util.StringUtil;
 
+import com.threerings.msoy.item.data.all.MsoyItemType;
+import com.threerings.msoy.server.MsoyEvents.ItemPurchase.PseudoItem;
 import com.threerings.panopticon.client.EventLogger;
 import com.threerings.presents.server.ReportManager;
 import com.threerings.presents.server.ReportManager.Reporter;
@@ -115,13 +117,13 @@ public class MsoyEventLogger
         post(new MsoyEvents.ExchangeRate(serverName, rate));
     }
 
-    public void pseudoItemPurchased (int memberId, byte itemType, MoneyTransaction transaction)
+    public void pseudoItemPurchased (int memberId, PseudoItem itemType, MoneyTransaction transaction)
     {
         post(new MsoyEvents.ItemPurchase(
             memberId, itemType, 0, transaction.currency, transaction.amount));
     }
 
-    public void itemPurchased (int memberId, byte itemType, int itemId, Currency currency,
+    public void itemPurchased (int memberId, MsoyItemType itemType, int itemId, Currency currency,
         int amountPaid)
     {
         post(new MsoyEvents.ItemPurchase(memberId, itemType, itemId, currency, amountPaid));
@@ -132,7 +134,7 @@ public class MsoyEventLogger
         post(new MsoyEvents.Experience(Type.ITEM_UPLOADED, creatorId, tracker));
     }
 
-    public void itemListedInCatalog (int creatorId, String tracker, byte itemType, int itemId,
+    public void itemListedInCatalog (int creatorId, String tracker, MsoyItemType itemType, int itemId,
         Currency currency, int cost, int pricing, int salesTarget)
     {
         int flowCost = (currency == Currency.COINS) ? cost : 0;
@@ -252,7 +254,7 @@ public class MsoyEventLogger
         post(new MsoyEvents.TrophyEarned(recipientId, gameId, trophyIdent));
     }
 
-    public void prizeEarned (int recipientId, int gameId, String prizeIdent, byte prizeItemType)
+    public void prizeEarned (int recipientId, int gameId, String prizeIdent, MsoyItemType prizeItemType)
     {
         post(new MsoyEvents.PrizeEarned(recipientId, gameId, prizeIdent, prizeItemType));
     }

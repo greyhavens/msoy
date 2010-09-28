@@ -24,7 +24,6 @@ import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 
 import com.samskivert.servlet.util.ServiceWaiter;
-import com.samskivert.util.ArrayUtil;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.StringUtil;
@@ -34,6 +33,7 @@ import com.samskivert.util.Invoker.Unit;
 import com.threerings.msoy.admin.server.persist.MediaBlacklistRepository;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MediaMimeTypes;
+import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.web.server.CloudfrontConnection;
 import com.threerings.presents.annotation.MainInvoker;
@@ -70,7 +70,6 @@ import com.threerings.msoy.web.server.ServletWaiter;
 import com.threerings.msoy.game.server.persist.GameInfoRecord;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 import com.threerings.msoy.item.data.ItemCodes;
-import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemFlag;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.gwt.ItemDetail;
@@ -285,7 +284,7 @@ public class AdminServlet extends MsoyServiceServlet
             }));
 
         // collect all ids by type that we require
-        Multimap<Byte, Integer> itemsToLoad = HashMultimap.create();
+        Multimap<MsoyItemType, Integer> itemsToLoad = HashMultimap.create();
         for (ItemFlag flag : result.page) {
             itemsToLoad.put(flag.itemIdent.type, flag.itemIdent.itemId);
         }
@@ -293,7 +292,7 @@ public class AdminServlet extends MsoyServiceServlet
         // load items and stash by ident, also grab the creator id
         result.items = Maps.newHashMap();
         Set<Integer> memberIds = Sets.newHashSet();
-        for (Map.Entry<Byte, Collection<Integer>> ee : itemsToLoad.asMap().entrySet()) {
+        for (Map.Entry<MsoyItemType, Collection<Integer>> ee : itemsToLoad.asMap().entrySet()) {
             for (ItemRecord rec : _itemLogic.getRepository(ee.getKey()).loadItems(ee.getValue())) {
                 ItemDetail detail = new ItemDetail();
                 detail.item = rec.toItem();
@@ -353,7 +352,7 @@ public class AdminServlet extends MsoyServiceServlet
         log.info("Deleting item for admin", "who", memrec.accountName, "item", iident,
             "subject", subject);
 
-        final byte type = iident.type;
+        final MsoyItemType type = iident.type;
         final ItemRepository<ItemRecord> repo = _itemLogic.getRepository(type);
         final ItemRecord item = repo.loadOriginalItem(iident.itemId);
 
@@ -785,8 +784,7 @@ public class AdminServlet extends MsoyServiceServlet
         public void addItem (ItemRecord item)
         {
             // only if it's used in a room
-            if ((item.location == 0) ||
-                    (-1 == ArrayUtil.indexOf(Item.ROOM_TYPES, item.getType()))) {
+            if ((item.location == 0) || !item.getType().isRoomType()) {
                 return;
             }
 

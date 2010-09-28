@@ -12,6 +12,8 @@ import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.annotation.Index;
 import com.samskivert.depot.expression.ColumnExp;
 
+import com.threerings.msoy.item.data.all.MsoyItemType;
+
 /**
  * Contains information about an item that numbers among one member's favorites.
  */
@@ -34,7 +36,7 @@ public class FavoriteItemRecord extends PersistentRecord
 
     /** The type of the item that is favorited. */
     @Id @Index(name="ixType")
-    public byte itemType;
+    public MsoyItemType itemType;
 
     /** The catalog listing id of the favorited item. */
     @Id
@@ -48,7 +50,7 @@ public class FavoriteItemRecord extends PersistentRecord
      * Create and return a primary {@link Key} to identify a {@link FavoriteItemRecord}
      * with the supplied key values.
      */
-    public static Key<FavoriteItemRecord> getKey (int memberId, byte itemType, int catalogId)
+    public static Key<FavoriteItemRecord> getKey (int memberId, MsoyItemType itemType, int catalogId)
     {
         return newKey(_R, memberId, itemType, catalogId);
     }

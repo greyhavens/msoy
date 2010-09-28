@@ -10,6 +10,7 @@ import com.samskivert.depot.expression.ColumnExp;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Audio;
 import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.MsoyItemType;
 
 /**
  * Represents an uploaded piece of audio.
@@ -56,9 +57,9 @@ public class AudioRecord extends ItemRecord
     public byte audioMimeType;
 
     @Override // from ItemRecord
-    public byte getType ()
+    public MsoyItemType getType ()
     {
-        return Item.AUDIO;
+        return MsoyItemType.AUDIO;
     }
 
     @Override // from ItemRecord

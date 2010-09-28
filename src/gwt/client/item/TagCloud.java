@@ -13,6 +13,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 
 
+import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.item.gwt.CatalogService;
 import com.threerings.msoy.item.gwt.CatalogServiceAsync;
 
@@ -31,7 +32,7 @@ public class TagCloud extends FlowPanel
         void tagClicked (String tag);
     }
 
-    public TagCloud (byte type, int count, TagListener listener)
+    public TagCloud (MsoyItemType type, int count, TagListener listener)
     {
         setStyleName("tagCloud");
         _type = type;
@@ -68,7 +69,7 @@ public class TagCloud extends FlowPanel
         add(MsoyUI.createLabel(CShell.serverError(caught), "Link"));
     }
 
-    protected byte _type;
+    protected MsoyItemType _type;
     protected TagListener _listener;
 
     protected static final ItemMessages _imsgs = GWT.create(ItemMessages.class);

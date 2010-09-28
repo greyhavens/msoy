@@ -17,6 +17,7 @@ import com.threerings.msoy.edgame.gwt.EditGameServiceAsync;
 import com.threerings.msoy.edgame.gwt.EditGameService.GameData;
 
 import com.threerings.msoy.item.data.all.GameItem;
+import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
@@ -113,7 +114,7 @@ public class EditGamePanel extends FlowPanel
         }, _msgs.egTabFacebook());
         // NOTE: if you add a tab here, you have to adjust StuffPage.PRE_ITEM_TABS
 
-        for (final byte type : GameItem.TYPES) {
+        for (final MsoyItemType type : GameItem.TYPES) {
             _tabs.add(new LazyPanel() {
                 protected Widget createWidget () {
                     return new GameItemEditorPanel(data.info.gameId, type);

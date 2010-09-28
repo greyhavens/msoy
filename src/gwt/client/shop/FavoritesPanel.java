@@ -15,6 +15,7 @@ import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.item.gwt.ListingCard;
 import com.threerings.msoy.web.gwt.Pages;
 
@@ -29,23 +30,23 @@ import client.util.Link;
 public class FavoritesPanel extends HorizontalPanel
 {
     public FavoritesPanel (
-        CatalogModels models, final int memberId, final byte itemType, int pageNo)
+        CatalogModels models, final int memberId, final MsoyItemType itemType, int pageNo)
     {
         setStyleName("shopPanel"); // hijack the complex stylings of the shop panel
         addStyleName("favoritesPanel");
         setVerticalAlignment(HasAlignment.ALIGN_TOP);
 
-        final String header = (itemType == Item.NOT_A_TYPE) ? _msgs.allFavorites() :
-            _msgs.favoriteTitle(_dmsgs.xlate("pItemType" + itemType));
+        final String header = (itemType == MsoyItemType.NOT_A_TYPE) ? _msgs.allFavorites() :
+            _msgs.favoriteTitle(_dmsgs.xlateItemsType(itemType));
 
         add(new SideBar(new SideBar.Linker() {
-            public boolean isSelected (byte type) {
+            public boolean isSelected (MsoyItemType type) {
                 return type == itemType;
             }
-            public Widget createLink (String name, byte type) {
+            public Widget createLink (String name, MsoyItemType type) {
                 return Link.create(name, Pages.SHOP, ShopPage.FAVORITES, memberId, type);
             }
-        }, true, null));
+        }, SideBar.IS_FAVORITE_TYPE, null));
         add(WidgetUtil.makeShim(10, 10));
 
         ListingGrid faves = new ListingGrid(HEADER_HEIGHT) {

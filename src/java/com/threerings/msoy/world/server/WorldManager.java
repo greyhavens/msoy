@@ -14,6 +14,7 @@ import com.samskivert.util.Invoker;
 import com.samskivert.util.ObjectUtil;
 import com.samskivert.util.ResultListener;
 
+import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.client.InvocationService;
@@ -301,7 +302,7 @@ public class WorldManager
         }
 
         // otherwise, make sure it exists and we own it
-        final ItemIdent ident = new ItemIdent(Item.AVATAR, avatarItemId);
+        final ItemIdent ident = new ItemIdent(MsoyItemType.AVATAR, avatarItemId);
         _invoker.postUnit(new RepositoryUnit("setAvatar(" + avatarItemId + ")") {
             @Override public void invokePersist () throws Exception {
                 _avatar = (Avatar)_itemLogic.loadItem(ident);

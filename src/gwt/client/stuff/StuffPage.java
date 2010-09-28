@@ -17,6 +17,7 @@ import com.threerings.msoy.item.data.all.GameItem;
 import com.threerings.msoy.item.data.all.IdentGameItem;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.item.gwt.ItemDetail;
 import com.threerings.msoy.stuff.gwt.StuffService;
 import com.threerings.msoy.stuff.gwt.StuffServiceAsync;
@@ -71,12 +72,12 @@ public class StuffPage extends Page
         }
 
         String arg0 = args.get(0, "");
-        byte type = Item.NOT_A_TYPE;
+        MsoyItemType type = MsoyItemType.NOT_A_TYPE;
         int memberId = CShell.getMemberId();
 
         // if we're displaying an item's detail, do that
         if (DETAIL.equals(arg0)) {
-            type = args.get(1, Item.AVATAR);
+            type = args.get(1, MsoyItemType.AVATAR);
             int itemId = args.get(2, 0);
 
             // otherwise we're display a particular item's details
@@ -112,7 +113,7 @@ public class StuffPage extends Page
             if (!MsoyUI.requireRegistered()) {
                 return; // permaguests can't create or edit items
             }
-            type = args.get(1, Item.AVATAR);
+            type = args.get(1, MsoyItemType.AVATAR);
             final ItemEditor editor = ItemEditor.createItemEditor(
                 type, createEditorHost(CREATE.equals(arg0)));
             if ("e".equals(arg0)) {
@@ -130,7 +131,7 @@ public class StuffPage extends Page
 
         // or maybe we're remixing an item
         } else if (REMIX.equals(arg0)) {
-            type = args.get(1, Item.AVATAR);
+            type = args.get(1, MsoyItemType.AVATAR);
             int itemId = args.get(2, 0);
             final ItemRemixer remixer = new ItemRemixer();
             getItem(type, itemId, new InfoCallback<Item>() {
@@ -148,7 +149,7 @@ public class StuffPage extends Page
 
         // otherwise we're viewing some player's inventory
         } else {
-            type = args.get(0, Item.AVATAR);
+            type = args.get(0, MsoyItemType.AVATAR);
             memberId = args.get(1, CShell.getMemberId());
             StuffPanel panel = getStuffPanel(memberId, type);
             panel.setArgs(args.get(2, -1), args.get(3, ""));
@@ -157,8 +158,8 @@ public class StuffPage extends Page
         }
 
         // add a sub-navi link for our active item type
-        if (type != Item.NOT_A_TYPE) {
-            CShell.frame.addNavLink(_dmsgs.xlate("pItemType" + type), Pages.STUFF,
+        if (type != MsoyItemType.NOT_A_TYPE) {
+            CShell.frame.addNavLink(_dmsgs.xlateItemsType(type), Pages.STUFF,
                                     Args.compose(type, memberId), 1);
         }
     }
@@ -206,7 +207,7 @@ public class StuffPage extends Page
         return Pages.STUFF;
     }
 
-    protected void getItem (byte type, int itemId, InfoCallback<Item> callback)
+    protected void getItem (MsoyItemType type, int itemId, InfoCallback<Item> callback)
     {
         Item item = _models.findItem(type, itemId);
         if (item != null) {
@@ -221,7 +222,7 @@ public class StuffPage extends Page
     /**
      * Return the StuffPanel for this member+itemType. Only store one StuffPanel per itemType.
      */
-    protected StuffPanel getStuffPanel (int memberId, byte itemType)
+    protected StuffPanel getStuffPanel (int memberId, MsoyItemType itemType)
     {
         StuffPanel panel = _stuffPanels.get(itemType);
         if (panel == null || panel.getMemberId() != memberId) {
@@ -231,34 +232,31 @@ public class StuffPage extends Page
     }
 
     protected InventoryModels _models = new InventoryModels();
-    protected Map<Byte, StuffPanel> _stuffPanels = Maps.newHashMap();
+    protected Map<MsoyItemType, StuffPanel> _stuffPanels = Maps.newHashMap();
     protected ItemDetail _detail;
 
     protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
     protected static final StuffMessages _msgs = GWT.create(StuffMessages.class);
     protected static final StuffServiceAsync _stuffsvc = GWT.create(StuffService.class);
 
-    /**
-     * Denotes item types that might be uploaded in bulk.
-     */
-    protected static final Set<Byte> BULK_TYPES = Sets.newHashSet();
+    /** Denotes item types that might be uploaded in bulk. */
+    protected static final Set<MsoyItemType> BULK_TYPES = Sets.newHashSet();
     static {
-        BULK_TYPES.add(Item.PHOTO);
-        BULK_TYPES.add(Item.DOCUMENT);
-        BULK_TYPES.add(Item.AUDIO);
-        BULK_TYPES.add(Item.VIDEO);
+        BULK_TYPES.add(MsoyItemType.PHOTO);
+        BULK_TYPES.add(MsoyItemType.DOCUMENT);
+        BULK_TYPES.add(MsoyItemType.AUDIO);
+        BULK_TYPES.add(MsoyItemType.VIDEO);
     }
 
     /** The number of tabs on the edit game page before we get to the subitems. */
     protected static final int PRE_ITEM_TABS = 4;
 
-    /**
-     * A mapping from game sub-item type to edit game page tab index.
-     */
-    protected static final Map<Byte, Integer> GAME_TYPES = Maps.newHashMap();
+    /** A mapping from game sub-item type to edit game page tab index. */
+    protected static final Map<MsoyItemType, Integer> GAME_TYPES = Maps.newHashMap();
+    
     static {
         int idx = PRE_ITEM_TABS;
-        for (byte type : GameItem.TYPES) {
+        for (MsoyItemType type : GameItem.TYPES) {
             GAME_TYPES.put(type, idx++);
         }
     }

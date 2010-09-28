@@ -4,7 +4,8 @@
 package client.people;
 
 import com.google.gwt.core.client.GWT;
-import com.threerings.msoy.comment.gwt.Comment;
+
+import com.threerings.msoy.comment.gwt.Comment.CommentType;
 import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.profile.gwt.ProfileService;
 
@@ -34,7 +35,7 @@ public class CommentsBlurb extends Blurb
     protected class WallPanel extends CommentsPanel
     {
         public WallPanel (int memberId) {
-            super(Comment.TYPE_PROFILE_WALL, memberId, COMMENTS_PER_PAGE, false);
+            super(CommentType.PROFILE_WALL, memberId, COMMENTS_PER_PAGE, false);
             addStyleName("Wall");
             removeStyleName("dottedGrid");
             setVisible(true); // trigger immediate loading of our model

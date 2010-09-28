@@ -6,7 +6,9 @@ package client.editem;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.ListBox;
 
+import com.samskivert.util.ByteEnumUtil;
 import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.item.data.all.Prize;
 
 import client.shell.DynamicLookup;
@@ -49,9 +51,10 @@ public class PrizeEditor extends IdentGameItemEditor
         _targetType = new ListBox();
         addRow(_emsgs.prizeTargetType(), _targetType = new ListBox());
         _targetType.addItem(_emsgs.prizeSelectType(), "0");
-        for (int ii = 0; ii < Item.GIFT_TYPES.length; ii++) {
-            byte type = Item.GIFT_TYPES[ii];
-            _targetType.addItem(_dmsgs.xlate("itemType" + type), ""+type);
+        for (MsoyItemType type : MsoyItemType.values()) {
+            if (type.isGiftType()) {
+                _targetType.addItem(_dmsgs.xlateItemType(type), ""+type);
+            }
         }
 
         // TODO: display a UI where they can select an item from their inventory that has a
@@ -80,10 +83,11 @@ public class PrizeEditor extends IdentGameItemEditor
         super.prepareItem();
 
         int selidx = _targetType.getSelectedIndex();
-        _prize.targetType = Byte.parseByte(_targetType.getValue(selidx));
-        if (_prize.targetType == 0) {
+        byte byteVal = Byte.parseByte(_targetType.getValue(selidx));
+        if (byteVal == 0) {
             throw new Exception(_emsgs.prizePleaseSelectType());
         }
+        _prize.targetType = ByteEnumUtil.fromByte(MsoyItemType.class, byteVal);
 
         _prize.targetCatalogId = _targetCatalogId.getNumber().intValue();
         if (_prize.targetCatalogId <= 0) {

@@ -27,7 +27,7 @@ import com.threerings.msoy.group.data.all.Group;
 import com.threerings.msoy.group.gwt.GroupExtras;
 import com.threerings.msoy.group.gwt.GroupService;
 import com.threerings.msoy.group.gwt.GroupServiceAsync;
-import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.TagHistory;
@@ -146,12 +146,19 @@ public class GroupEdit extends FlexTable
         _charter.setText(_extras.charter);
         addRow(_msgs.editCharter(), _charter);
 
+        int jj = 0;
+        _catalogTypes = new MsoyItemType[MsoyItemType.values().length];
         _catalogType = new ListBox();
-        for (int ii = 0; ii < Item.SHOP_TYPES.length; ii++) {
-            _catalogType.addItem(_dmsgs.xlate("itemType" + Item.SHOP_TYPES[ii]));
-            if (_extras.catalogItemType == Item.SHOP_TYPES[ii]) {
-                _catalogType.setSelectedIndex(ii);
+        for (MsoyItemType type : MsoyItemType.values()) {
+            if (!type.isShopType()) {
+                continue;
             }
+            _catalogType.addItem(_dmsgs.xlateItemType(type));
+            if (_extras.catalogItemType == type) {
+                _catalogType.setSelectedIndex(jj);
+            }
+            _catalogTypes[jj] = type;
+            jj ++;
         }
         addRow(_msgs.editCatalogType(), _catalogType);
         addRow(_msgs.editCatalogTag(),
@@ -250,7 +257,7 @@ public class GroupEdit extends FlexTable
         }
         _extras.charter = _charter.getText().trim();
         _extras.homepageUrl = _homepage.getText().trim();
-        _extras.catalogItemType = Item.SHOP_TYPES[_catalogType.getSelectedIndex()];
+        _extras.catalogItemType = _catalogTypes[_catalogType.getSelectedIndex()];
         _extras.catalogTag = _catalogTag.getText().trim();
         return true;
     }
@@ -306,6 +313,8 @@ public class GroupEdit extends FlexTable
     protected LimitedTextArea _charter;
     protected Button _cancel, _submit;
     protected CheckBox _official;
+
+    protected MsoyItemType[] _catalogTypes;
 
     protected static final GroupsMessages _msgs = GWT.create(GroupsMessages.class);
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);

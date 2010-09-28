@@ -6,6 +6,7 @@ package com.threerings.msoy.game.server;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.presents.peer.data.NodeObject;
 
 import com.threerings.crowd.data.OccupantInfo;
@@ -50,7 +51,7 @@ public class PlayerNodeActions
         _peerMan.invokeNodeAction(new DisplayNameUpdated(name));
     }
 
-    public void gameContentPurchased (int playerId, int gameId, byte itemType, String ident)
+    public void gameContentPurchased (int playerId, int gameId, MsoyItemType itemType, String ident)
     {
         _peerMan.invokeNodeAction(new ContentPurchasedAction(playerId, gameId, itemType, ident));
     }
@@ -137,7 +138,7 @@ public class PlayerNodeActions
     /** Notifies other nodes when a user has purchased game content. */
     protected static class ContentPurchasedAction extends PlayerNodeAction
     {
-        public ContentPurchasedAction (int memberId, int gameId, byte itemType, String ident) {
+        public ContentPurchasedAction (int memberId, int gameId, MsoyItemType itemType, String ident) {
             super(memberId);
             _gameId = gameId;
             _itemType = itemType;
@@ -152,7 +153,7 @@ public class PlayerNodeActions
         }
 
         protected int _gameId;
-        protected byte _itemType;
+        protected MsoyItemType _itemType;
         protected String _ident;
         @Inject protected transient GameGameRegistry _gameReg;
     }

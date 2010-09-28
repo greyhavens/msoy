@@ -13,6 +13,7 @@ import com.samskivert.depot.expression.ColumnExp;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.data.all.MsoyItemType;
 
 /**
  * Represents an element of a list of items.
@@ -47,7 +48,7 @@ public class ItemListElementRecord extends PersistentRecord
 
     /** The item type. */
     @Id
-    public byte type;
+    public MsoyItemType type;
 
     /** The item id. */
     @Id
@@ -89,7 +90,7 @@ public class ItemListElementRecord extends PersistentRecord
      * Create and return a primary {@link Key} to identify a {@link ItemListElementRecord}
      * with the supplied key values.
      */
-    public static Key<ItemListElementRecord> getKey (int listId, byte type, int itemId)
+    public static Key<ItemListElementRecord> getKey (int listId, MsoyItemType type, int itemId)
     {
         return newKey(_R, listId, type, itemId);
     }

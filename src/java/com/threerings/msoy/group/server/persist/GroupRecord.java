@@ -29,6 +29,7 @@ import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.group.data.all.Group;
 import com.threerings.msoy.group.gwt.GroupCard;
 import com.threerings.msoy.group.gwt.GroupExtras;
+import com.threerings.msoy.item.data.all.MsoyItemType;
 
 /**
  * Contains the details of a group.
@@ -132,7 +133,7 @@ public class GroupRecord extends PersistentRecord
     public int memberCount;
 
     /** The item type of the catalog page to land on with the browse by tag function. */
-    public byte catalogItemType;
+    public MsoyItemType catalogItemType;
 
     /** The catalog tag to use with the browse by tag function. */
     @Column(nullable=true)

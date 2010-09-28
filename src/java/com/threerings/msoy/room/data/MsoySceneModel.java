@@ -20,6 +20,7 @@ import com.threerings.msoy.data.all.MediaMimeTypes;
 import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.DefaultItemMediaDesc;
 import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.MsoyItemType;
 
 import static com.threerings.msoy.Log.log;
 
@@ -50,7 +51,7 @@ public class MsoySceneModel extends SceneModel
 
     /** The default decor media. */
     public static final MediaDesc DEFAULT_DECOR_MEDIA =
-        new DefaultItemMediaDesc(MediaMimeTypes.IMAGE_PNG, Item.DECOR, Item.MAIN_MEDIA);
+        new DefaultItemMediaDesc(MediaMimeTypes.IMAGE_PNG, MsoyItemType.DECOR, Item.MAIN_MEDIA);
 
     /** Access control, as one of the ACCESS constants. Limits who can enter the scene. */
     public byte accessControl;

@@ -48,7 +48,7 @@ public class ItemUsageEvent extends FlashEvent
     /**
      * Get the item type of the item that was changed.
      */
-    public byte getItemType ()
+    public byte getItemTypeByte()
     {
         return _type;
     }

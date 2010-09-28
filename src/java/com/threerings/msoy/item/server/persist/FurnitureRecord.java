@@ -9,6 +9,7 @@ import com.samskivert.depot.expression.ColumnExp;
 
 import com.threerings.msoy.item.data.all.Furniture;
 import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.MsoyItemType;
 
 /**
  * Represents a piece of furniture (any prop really) that a user can place into a virtual world
@@ -61,9 +62,9 @@ public class FurnitureRecord extends ItemRecord
     public short hotSpotY;
 
     @Override // from ItemRecord
-    public byte getType ()
+    public MsoyItemType getType ()
     {
-        return Item.FURNITURE;
+        return MsoyItemType.FURNITURE;
     }
 
     @Override // from ItemRecord

@@ -15,6 +15,7 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.item.gwt.CatalogQuery;
 import com.threerings.msoy.item.gwt.CatalogService;
 import com.threerings.msoy.item.gwt.CatalogServiceAsync;
@@ -52,8 +53,11 @@ public class ShopPanel extends FlowPanel
         search.setVerticalAlignment(HasAlignment.ALIGN_MIDDLE);
         search.add(MsoyUI.createLabel(_msgs.shopSearch(), "SearchTitle"));
         final ListBox searchTypes = new ListBox();
-        for (byte searchType : Item.STUFF_TYPES) {
-            searchTypes.addItem(_dmsgs.xlate("pItemType" + searchType), searchType + "");
+        for (MsoyItemType searchType : MsoyItemType.values()) {
+            if (searchType.isShopType()) {
+                searchTypes.addItem(
+                        _dmsgs.xlateItemsType(searchType), searchType.toByte() + "");
+            }
         }
         search.add(searchTypes);
         SearchBox searchBox = new SearchBox(new SearchBox.Listener() {
@@ -81,7 +85,7 @@ public class ShopPanel extends FlowPanel
         // display a sidebar with a linker that knows which theme we're in
         CatalogQuery linkerQuery = new CatalogQuery();
         linkerQuery.themeGroupId = themeId;
-        SideBar sidebar = new SideBar(new CatalogQueryLinker(linkerQuery), false, null);
+        SideBar sidebar = new SideBar(new CatalogQueryLinker(linkerQuery), SideBar.IS_SHOP_TYPE, null);
         sidebar.add(MsoyUI.createImage("/images/shop/shop_bag.png", "Bag"));
         row.add(sidebar);
 

@@ -15,6 +15,7 @@ import com.samskivert.depot.expression.ColumnExp;
 
 import com.threerings.msoy.item.data.all.ItemFlag;
 import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.data.all.MsoyItemType;
 
 /**
  * Records the information from when a user flags an item.
@@ -38,7 +39,7 @@ public class ItemFlagRecord extends PersistentRecord
     @Id public int memberId;
 
     /** Type of item flagged. */
-    @Id public byte itemType;
+    @Id public MsoyItemType itemType;
 
     /** Id of item flagged. */
     @Id public int itemId;
@@ -68,7 +69,7 @@ public class ItemFlagRecord extends PersistentRecord
      * Create and return a primary {@link Key} to identify a {@link ItemFlagRecord}
      * with the supplied key values.
      */
-    public static Key<ItemFlagRecord> getKey (int memberId, byte itemType, int itemId, ItemFlag.Kind kind)
+    public static Key<ItemFlagRecord> getKey (int memberId, MsoyItemType itemType, int itemId, ItemFlag.Kind kind)
     {
         return newKey(_R, memberId, itemType, itemId, kind);
     }

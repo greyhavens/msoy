@@ -12,9 +12,9 @@ import com.threerings.msoy.data.all.MediaDesc;
 public class Toy extends Item
 {
     @Override // from Item
-    public byte getType ()
+    public MsoyItemType getType ()
     {
-        return TOY;
+        return MsoyItemType.TOY;
     }
 
     @Override

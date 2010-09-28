@@ -18,12 +18,12 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 
-import com.samskivert.util.ArrayUtil;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.server.StatLogic;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.TagNameRecord;
@@ -203,7 +203,7 @@ public class StuffServlet extends MsoyServiceServlet
     }
 
     // from interface StuffService
-    public InventoryResult<Item> loadInventory (int memberId, byte type, String query)
+    public InventoryResult<Item> loadInventory (int memberId, MsoyItemType type, String query)
         throws ServiceException
     {
         MemberRecord memrec = requireAuthedUser();
@@ -212,7 +212,7 @@ public class StuffServlet extends MsoyServiceServlet
         }
 
         // make sure they supplied a valid item type
-        if (Item.getClassForType(type) == null) {
+        if (type == MsoyItemType.NOT_A_TYPE) {
             log.warning("Requested to load inventory for invalid item type",
                 "who", who(memrec), "type", type);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
@@ -324,7 +324,7 @@ public class StuffServlet extends MsoyServiceServlet
         List<TagNameRecord> trecs = repo.getTagRepository().getTags(iident.itemId);
         detail.tags = Lists.newArrayList(Iterables.transform(trecs, TagNameRecord.TO_TAG));
         // for entity types: try loading up their memory
-        if (-1 != ArrayUtil.indexOf(Item.ENTITY_TYPES, iident.type)) {
+        if (iident.type.isEntityType()) {
             MemoriesRecord memories = _memoryRepo.loadMemory(iident.type, iident.itemId);
             if (memories != null) {
                 detail.memories = memories.toBase64();

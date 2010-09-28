@@ -10,6 +10,7 @@ import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.web.gwt.ServiceException;
@@ -41,7 +42,7 @@ public class CatalogLogic
     /** Used by {@link #loadCatalog} variants. */
     public static class Query
     {
-        public byte itemType;
+        public MsoyItemType itemType;
         public byte sortBy;
         public String tag;
         public int tagId;
@@ -50,7 +51,7 @@ public class CatalogLogic
         public int gameId;
         public int themeId;
 
-        public Query (byte itemType, byte sortBy) {
+        public Query (MsoyItemType itemType, byte sortBy) {
             this.itemType = itemType;
             this.sortBy = sortBy;
         }
@@ -71,7 +72,7 @@ public class CatalogLogic
      *
      * <p> Note: this does not increment any of the stats we keep track of for the Passport. </p>
      */
-    public BuyResult<Item> purchaseItem (MemberRecord buyer, byte itemType, int catalogId)
+    public BuyResult<Item> purchaseItem (MemberRecord buyer, MsoyItemType itemType, int catalogId)
         throws ServiceException
     {
         CatalogRecord listing = _itemLogic.requireListing(itemType, catalogId, true);
@@ -83,7 +84,7 @@ public class CatalogLogic
      *
      * <p> Note: this does not increment any of the stats we keep track of for the Passport. </p>
      */
-    public BuyResult<Item> purchaseItem (MemberRecord buyer, byte itemType, int catalogId,
+    public BuyResult<Item> purchaseItem (MemberRecord buyer, MsoyItemType itemType, int catalogId,
                                          Currency currency, int authedCost, String memories)
         throws ServiceException
     {
@@ -95,7 +96,7 @@ public class CatalogLogic
      * A simplified method for loading catalog listings. The caller must pass the results to {@link
      * ItemLogic#resolveCardNames} if they want the creator names resolved.
      */
-    public List<ListingCard> loadCatalog (MemberRecord mrec, byte itemType, byte sortBy, int rows)
+    public List<ListingCard> loadCatalog (MemberRecord mrec, MsoyItemType itemType, byte sortBy, int rows)
         throws ServiceException
     {
         return Lists.transform(loadCatalog(mrec, new Query(itemType, sortBy), 0, rows),
@@ -132,7 +133,7 @@ public class CatalogLogic
     }
 
     protected BuyResult<Item> purchaseItem (
-        final MemberRecord buyer, final byte itemType, final CatalogRecord listing,
+        final MemberRecord buyer, final MsoyItemType itemType, final CatalogRecord listing,
         Currency currency, int authedCost, String memories)
         throws ServiceException
     {

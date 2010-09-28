@@ -15,6 +15,7 @@ import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.Decor;
+import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.stuff.gwt.StuffService;
 import com.threerings.msoy.stuff.gwt.StuffServiceAsync;
 
@@ -66,14 +67,14 @@ public class ItemRemixer extends FlexTable
 
         String flashVars = "media=" + URL.encodeComponent(main.getMediaPath()) +
             "&name=" + URL.encodeComponent(item.name) +
-            "&type=" + URL.encodeComponent(Item.getTypeName(item.getType())) +
+            "&type=" + URL.encodeComponent(item.getType().typeName()) +
             "&mediaId=" + URL.encodeComponent(Item.MAIN_MEDIA) +
             "&auth=" + URL.encodeComponent(CShell.getAuthToken());
 
         if (item instanceof Decor) {
             flashVars += "&" + ItemUtil.createDecorViewerParams((Decor) item);
         }
-        if (item.getType() != Item.AVATAR) {
+        if (item.getType() != MsoyItemType.AVATAR) {
             flashVars += "&username=Tester";
         }
         if (_catalogId != 0) {

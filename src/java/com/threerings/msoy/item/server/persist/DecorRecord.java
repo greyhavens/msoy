@@ -10,6 +10,7 @@ import com.samskivert.depot.expression.ColumnExp;
 
 import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.MsoyItemType;
 
 /**
  * Represents a piece of decor (any prop really) that a user can place into
@@ -83,9 +84,9 @@ public class DecorRecord extends ItemRecord
     public float furniScale;
 
     @Override // from ItemRecord
-    public byte getType ()
+    public MsoyItemType getType ()
     {
-        return Item.DECOR;
+        return MsoyItemType.DECOR;
     }
 
     @Override // from ItemRecord

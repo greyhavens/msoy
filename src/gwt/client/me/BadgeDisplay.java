@@ -21,6 +21,7 @@ import com.threerings.msoy.badge.data.all.InProgressBadge;
 
 import com.threerings.msoy.item.data.all.Item;
 
+import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.web.gwt.Pages;
 
@@ -104,13 +105,13 @@ class BadgeDisplay extends AwardDisplay
             return Link.createHandler(Pages.GAMES, "");
 
         case BadgeCodes.CHARACTER_DESIGNER:
-            return Link.createHandler(Pages.STUFF, "" + Item.AVATAR);
+            return Link.createHandler(Pages.STUFF, "" + MsoyItemType.AVATAR.toByte());
 
         case BadgeCodes.FURNITURE_BUILDER:
-            return Link.createHandler(Pages.STUFF, "" + Item.FURNITURE);
+            return Link.createHandler(Pages.STUFF, "" + MsoyItemType.FURNITURE.toByte());
 
         case BadgeCodes.LANDSCAPE_PAINTER:
-            return Link.createHandler(Pages.STUFF, "" + Item.DECOR);
+            return Link.createHandler(Pages.STUFF, "" + MsoyItemType.DECOR.toByte());
 
         case BadgeCodes.PROFESSIONAL:
             return Link.createHandler(Pages.SHOP, "");

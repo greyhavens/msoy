@@ -9,6 +9,7 @@ import com.samskivert.depot.expression.ColumnExp;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemPack;
+import com.threerings.msoy.item.data.all.MsoyItemType;
 
 /**
  * Contains the persistent data for a ItemPack item.
@@ -49,9 +50,9 @@ public class ItemPackRecord extends IdentGameItemRecord
     public static final int SCHEMA_VERSION = ITEM_VERSION + BASE_SCHEMA_VERSION * BASE_MULTIPLIER;
 
     @Override // from ItemRecord
-    public byte getType ()
+    public MsoyItemType getType ()
     {
-        return Item.ITEM_PACK;
+        return MsoyItemType.ITEM_PACK;
     }
 
     @Override // from ItemRecord

@@ -29,6 +29,7 @@ import com.threerings.msoy.group.server.persist.ThemeHomeTemplateRecord;
 import com.threerings.msoy.group.server.persist.ThemeRecord;
 import com.threerings.msoy.group.server.persist.ThemeRepository;
 import com.threerings.msoy.item.data.all.Avatar;
+import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.item.server.ItemLogic;
 import com.threerings.msoy.item.server.persist.AvatarRepository;
 import com.threerings.msoy.item.server.persist.CatalogRecord;
@@ -76,7 +77,7 @@ public class ThemeLogic
      * operation, and it's somewhat questionable if we can keep doing it like this in the long
      * run. We'll have to see how it works out in practice.
      */
-    public boolean isUsedInTemplate (byte itemType, int catalogId)
+    public boolean isUsedInTemplate (MsoyItemType itemType, int catalogId)
         throws ServiceException
     {
         // first fetch a list of *all* home template scenes
@@ -85,7 +86,7 @@ public class ThemeLogic
 
         // fetch *all* the itemIds of the correct itemType from *any* such scene
         Set<Integer> itemIds = Sets.newHashSet();
-        for (SceneFurniRecord furni : _sceneRepo.loadFurni(itemType, sceneIds)) {
+        for (SceneFurniRecord furni : _sceneRepo.loadFurni(itemType.toByte(), sceneIds)) {
             itemIds.add(furni.itemId);
         }
 

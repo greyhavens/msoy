@@ -10,6 +10,7 @@ import com.samskivert.depot.expression.ColumnExp;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Document;
 import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.MsoyItemType;
 
 /**
  * A digital item representing a simple text document.
@@ -56,9 +57,9 @@ public class DocumentRecord extends ItemRecord
     public byte docMimeType;
 
     @Override // from ItemRecord
-    public byte getType ()
+    public MsoyItemType getType ()
     {
-        return Item.DOCUMENT;
+        return MsoyItemType.DOCUMENT;
     }
 
     @Override // from ItemRecord

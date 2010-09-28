@@ -10,6 +10,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.util.DataModel;
 import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
@@ -38,13 +39,13 @@ public abstract class ItemGrid extends PagedGrid<Item>
     /**
      * Gets the item type being displayed in this grid.
      */
-    public byte getItemType ()
+    public MsoyItemType getItemType ()
     {
         if (_listDataModel != null) {
             return _listDataModel.getItemType();
         }
 
-        return Item.NOT_A_TYPE;
+        return MsoyItemType.NOT_A_TYPE;
     }
 
     public void setModel (DataModel<Item> model, int page)

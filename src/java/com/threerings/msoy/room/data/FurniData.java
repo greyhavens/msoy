@@ -12,6 +12,7 @@ import com.threerings.presents.dobj.DSet;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.data.all.MsoyItemType;
 
 /**
  * Contains information on the location of furniture in a scene.
@@ -47,7 +48,7 @@ public class FurniData extends SimpleStreamableObject
     public short id;
 
     /** Identifies the type of the item that was used to create this furni, or Item.NOT_A_TYPE. */
-    public byte itemType;
+    public MsoyItemType itemType;
 
     /** Identifies the id of the item that was used to create this. */
     public int itemId;
@@ -152,7 +153,7 @@ public class FurniData extends SimpleStreamableObject
     public String toString ()
     {
         String s = "Furni[id=" + id + ", itemType=" + itemType;
-        if (itemType != Item.NOT_A_TYPE) {
+        if (itemType != MsoyItemType.NOT_A_TYPE) {
             s += ", itemId=" + itemId;
         }
         s += ", actionType=" + actionType;

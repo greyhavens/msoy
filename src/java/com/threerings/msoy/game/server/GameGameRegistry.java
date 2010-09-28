@@ -64,6 +64,7 @@ import com.whirled.game.server.PropertySpaceDelegate;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.UserAction;
+import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.server.BureauManager;
 import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.MsoyEventLogger;
@@ -72,7 +73,6 @@ import com.threerings.msoy.server.persist.BatchInvoker;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 
-import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemPack;
 import com.threerings.msoy.item.data.all.LevelPack;
 import com.threerings.msoy.item.data.all.Prize;
@@ -281,13 +281,14 @@ public class GameGameRegistry
     /**
      * Called when the player has purchased new game content.
      */
-    public void gameContentPurchased (PlayerObject plobj, int gameId, byte itemType, String ident)
+    public void gameContentPurchased (
+		PlayerObject plobj, int gameId, MsoyItemType itemType, String ident)
     {
         // convert the item type to a GameData content type
         byte contentType;
-        if (itemType == Item.LEVEL_PACK) {
+        if (itemType == MsoyItemType.LEVEL_PACK) {
             contentType = GameData.LEVEL_DATA;
-        } else if (itemType == Item.ITEM_PACK) {
+        } else if (itemType == MsoyItemType.ITEM_PACK) {
             contentType = GameData.ITEM_DATA;
         } else {
             log.warning("Notified that player purchased content of unknown type",

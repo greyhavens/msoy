@@ -24,6 +24,7 @@ import com.threerings.util.StreamableHashMap;
 
 import com.threerings.msoy.item.data.all.ItemIdent;
 
+import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.room.data.EntityMemories;
 
 import static com.threerings.msoy.Log.log;
@@ -46,7 +47,7 @@ public class MemoriesRecord extends PersistentRecord
     public static final int SCHEMA_VERSION = 1;
 
     /** The type of the item for which we're storing memory data. */
-    @Id public byte itemType;
+    @Id public MsoyItemType itemType;
 
     /** The id of the item for which we're storing memory data. */
     @Id public int itemId;
@@ -161,7 +162,7 @@ public class MemoriesRecord extends PersistentRecord
      * Create and return a primary {@link Key} to identify a {@link MemoriesRecord}
      * with the supplied key values.
      */
-    public static Key<MemoriesRecord> getKey (byte itemType, int itemId)
+    public static Key<MemoriesRecord> getKey (MsoyItemType itemType, int itemId)
     {
         return newKey(_R, itemType, itemId);
     }

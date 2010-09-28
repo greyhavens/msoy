@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.item.data.all;
 
+import com.google.common.collect.ComparisonChain;
 import com.threerings.io.Streamable;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
@@ -14,7 +15,7 @@ public class CatalogIdent
     implements Comparable<CatalogIdent>, Streamable, IsSerializable
 {
     /** The item type identifier. */
-    public byte type;
+    public MsoyItemType type;
 
     /** The integer identifier of the catalog entry. */
     public int catalogId;
@@ -29,7 +30,7 @@ public class CatalogIdent
     /**
      * Creates an identifier for the specified catalog entry.
      */
-    public CatalogIdent (byte type, int catalogId)
+    public CatalogIdent (MsoyItemType type, int catalogId)
     {
         this.type = type;
         this.catalogId = catalogId;
@@ -38,25 +39,10 @@ public class CatalogIdent
     // from Comparable
     public int compareTo (CatalogIdent that)
     {
-        // first, compare by type.
-        if (this.type < that.type) {
-            return 1;
-
-        } else if (this.type > that.type) {
-            return -1;
-
-        } else {
-            // if type is equal, compare by item id
-            if (this.catalogId < that.catalogId) {
-                return 1;
-
-            } else if (this.catalogId > that.catalogId) {
-                return -1;
-
-            } else {
-                return 0;
-            }
-        }
+        return ComparisonChain.start()
+                .compare(this.type, that.type)
+                .compare(this.catalogId, that.catalogId).
+                result();
     }
 
     @Override // from Object
@@ -72,7 +58,7 @@ public class CatalogIdent
     @Override // from Object
     public int hashCode ()
     {
-        return (type * 37) | catalogId;
+        return (type.toByte() * 37) | catalogId;
     }
 
     /**

@@ -3,6 +3,9 @@
 
 package com.threerings.msoy.web.gwt;
 
+import com.samskivert.util.ByteEnum;
+import com.samskivert.util.ByteEnumUtil;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -76,7 +79,33 @@ public class Args
      */
     public void add (Object arg)
     {
+		if (arg instanceof ByteEnum) {
+			// ByteEnums (e.g. MsoyItemType) are represented by their bytes. It is unfortunately
+			// the responsibility of the consumer to convert them back.
+			arg = ((ByteEnum) arg).toByte();
+		}
         _args.add(String.valueOf(arg));
+    }
+
+    /**
+     * Parses and returns the specified argument as a byte. Returns the default if the argument is
+     * not a valid byte or is out of bounds.
+     */
+    public <T extends Enum<T> & ByteEnum> T get (int index, T defval)
+    {
+        if (index >= _args.size()) {
+            return defval;
+        }
+        try {
+            byte b = Byte.parseByte(_args.get(index));
+
+			@SuppressWarnings("unchecked")
+			Class<T> clazz = (Class<T>) defval.getClass();
+			
+			return ByteEnumUtil.fromByte(clazz, b);
+        } catch (Exception e) {
+            return defval;
+        }
     }
 
     /**
@@ -94,6 +123,7 @@ public class Args
             return defval;
         }
     }
+
 
     /**
      * Parses and returns the specified argument as an integer. Returns the default if the argument

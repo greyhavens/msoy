@@ -14,9 +14,9 @@ public class Launcher extends GameItem
     public boolean isAVRG;
 
     @Override // from Item
-    public byte getType ()
+    public MsoyItemType getType ()
     {
-        return LAUNCHER;
+        return MsoyItemType.LAUNCHER;
     }
 
     @Override // from Item

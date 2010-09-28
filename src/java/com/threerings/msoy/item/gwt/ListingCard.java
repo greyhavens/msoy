@@ -8,6 +8,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.util.Name;
 
@@ -17,7 +18,7 @@ import com.threerings.util.Name;
 public class ListingCard implements IsSerializable
 {
     /** The type of item listed. */
-    public byte itemType;
+    public MsoyItemType itemType;
 
     /** The item's catalog identifier. */
     public int catalogId;
@@ -67,6 +68,6 @@ public class ListingCard implements IsSerializable
     @Override // from Object
     public int hashCode ()
     {
-        return itemType << 24 + catalogId;
+        return itemType.toByte() << 24 + catalogId;
     }
 }

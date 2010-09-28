@@ -10,6 +10,8 @@ import com.samskivert.depot.annotation.Entity;
 import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.expression.ColumnExp;
 
+import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.room.data.FurniData;
 import com.threerings.msoy.room.data.MsoyLocation;
 
@@ -51,7 +53,7 @@ public class SceneFurniRecord extends PersistentRecord
     @Id public short furniId;
 
     /** The type of item being used as furni. */
-    public byte itemType;
+    public MsoyItemType itemType;
 
     /** The identifier of the item being used as furni. */
     public int itemId;
@@ -108,7 +110,7 @@ public class SceneFurniRecord extends PersistentRecord
     {
         this.sceneId = sceneId;
         furniId = data.id;
-        itemType = data.itemType;
+        itemType = data.getItemIdent().type;
         itemId = data.itemId;
         mediaHash = SceneUtil.flattenMediaDesc(data.media);
         mediaType = data.media.mimeType;

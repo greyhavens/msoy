@@ -18,7 +18,7 @@ public class DefaultItemMediaDesc extends StaticMediaDesc
     /**
      * Creates a configured static media descriptor.
      */
-    public DefaultItemMediaDesc (byte mimeType, byte itemType, String mediaType)
+    public DefaultItemMediaDesc (byte mimeType, MsoyItemType itemType, String mediaType)
     {
         this(mimeType, itemType, mediaType, NOT_CONSTRAINED);
     }
@@ -26,19 +26,19 @@ public class DefaultItemMediaDesc extends StaticMediaDesc
     /**
      * Creates a configured static media descriptor.
      */
-    public DefaultItemMediaDesc (byte mimeType, byte itemType, String mediaType, byte constraint)
+    public DefaultItemMediaDesc (byte mimeType, MsoyItemType itemType, String mediaType, byte constraint)
     {
-        super(mimeType, Item.getTypeName(itemType), mediaType, constraint);
-        _itemTypeCode = itemType;
+        super(mimeType, itemType.typeName(), mediaType, constraint);
+        _itemType = itemType;
     }
 
     /**
      * Returns the type of item for which we're providing static media.
      */
-    public byte getItemTypeCode ()
+    public MsoyItemType getItemTypeCode ()
     {
-        return _itemTypeCode;
+        return _itemType;
     }
 
-    protected byte _itemTypeCode;
+    protected MsoyItemType _itemType;
 }

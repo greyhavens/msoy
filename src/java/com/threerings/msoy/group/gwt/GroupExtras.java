@@ -4,6 +4,7 @@
 package com.threerings.msoy.group.gwt;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
+import com.threerings.msoy.item.data.all.MsoyItemType;
 
 /**
  * Contains extra information about a group.  This should be used to hold information that is only
@@ -19,7 +20,7 @@ public class GroupExtras
     public String homepageUrl;
 
     /** The catalog category to link to. */
-    public byte catalogItemType;
+    public MsoyItemType catalogItemType;
 
     /** The catalog tag to link to. */
     public String catalogTag;

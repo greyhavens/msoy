@@ -7,6 +7,7 @@ import com.samskivert.depot.Key;
 import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.annotation.TableGenerator;
 
+import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.item.data.all.Pet;
 import com.threerings.msoy.item.data.all.Item;
 
@@ -47,9 +48,9 @@ public class PetRecord extends ItemRecord
     public static final int SCHEMA_VERSION = ITEM_VERSION + BASE_SCHEMA_VERSION * BASE_MULTIPLIER;
 
     @Override // from ItemRecord
-    public byte getType ()
+    public MsoyItemType getType ()
     {
-        return Item.PET;
+        return MsoyItemType.PET;
     }
 
     @Override // from ItemRecord

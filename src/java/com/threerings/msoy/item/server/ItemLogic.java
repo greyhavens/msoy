@@ -74,6 +74,7 @@ import com.threerings.msoy.mail.server.MailLogic;
 import com.threerings.msoy.money.data.all.Currency;
 
 import com.threerings.msoy.item.data.ItemCodes;
+import com.threerings.msoy.item.data.all.Avatar.QuicklistState;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemFlag;
 import com.threerings.msoy.item.data.all.ItemIdent;
@@ -81,7 +82,7 @@ import com.threerings.msoy.item.data.all.ItemListInfo;
 import com.threerings.msoy.item.data.all.ItemListQuery;
 import com.threerings.msoy.item.data.all.IdentGameItem;
 import com.threerings.msoy.item.data.all.Launcher;
-import com.threerings.msoy.item.data.all.Avatar.QuicklistState;
+import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.item.gwt.CatalogListing;
 import com.threerings.msoy.item.gwt.ListingCard;
 import com.threerings.msoy.item.gwt.MemberItemInfo;
@@ -127,7 +128,7 @@ public class ItemLogic
      */
     public static class MissingRepositoryException extends RuntimeException
     {
-        public MissingRepositoryException (byte type)
+        public MissingRepositoryException (MsoyItemType type)
         {
             super("No repository registered for " + type + ".");
         }
@@ -139,21 +140,21 @@ public class ItemLogic
     public void init ()
     {
         // map our various repositories
-        registerRepository(Item.AUDIO, _audioRepo);
-        registerRepository(Item.AVATAR, _avatarRepo);
-        registerRepository(Item.DECOR, _decorRepo);
-        registerRepository(Item.DOCUMENT, _documentRepo);
-        registerRepository(Item.FURNITURE, _furniRepo);
-        registerRepository(Item.ITEM_PACK, _ipackRepo);
-        registerRepository(Item.LAUNCHER, _launcherRepo);
-        registerRepository(Item.LEVEL_PACK, _lpackRepo);
-        registerRepository(Item.PET, _petRepo);
-        registerRepository(Item.PHOTO, _photoRepo);
-        registerRepository(Item.PRIZE, _prizeRepo);
-        registerRepository(Item.PROP, _propRepo);
-        registerRepository(Item.TOY, _toyRepo);
-        registerRepository(Item.TROPHY_SOURCE, _tsourceRepo);
-        registerRepository(Item.VIDEO, _videoRepo);
+        registerRepository(MsoyItemType.AUDIO, _audioRepo);
+        registerRepository(MsoyItemType.AVATAR, _avatarRepo);
+        registerRepository(MsoyItemType.DECOR, _decorRepo);
+        registerRepository(MsoyItemType.DOCUMENT, _documentRepo);
+        registerRepository(MsoyItemType.FURNITURE, _furniRepo);
+        registerRepository(MsoyItemType.ITEM_PACK, _ipackRepo);
+        registerRepository(MsoyItemType.LAUNCHER, _launcherRepo);
+        registerRepository(MsoyItemType.LEVEL_PACK, _lpackRepo);
+        registerRepository(MsoyItemType.PET, _petRepo);
+        registerRepository(MsoyItemType.PHOTO, _photoRepo);
+        registerRepository(MsoyItemType.PRIZE, _prizeRepo);
+        registerRepository(MsoyItemType.PROP, _propRepo);
+        registerRepository(MsoyItemType.TOY, _toyRepo);
+        registerRepository(MsoyItemType.TROPHY_SOURCE, _tsourceRepo);
+        registerRepository(MsoyItemType.VIDEO, _videoRepo);
 
         _jumble = buildJumble();
         _jumbleInvalidator = new Interval(_batchInvoker) {
@@ -202,7 +203,7 @@ public class ItemLogic
      * Returns the repository used to manage items of the specified type. Throws a service
      * exception if the supplied type is invalid.
      */
-    public ItemRepository<ItemRecord> getRepository (byte type)
+    public ItemRepository<ItemRecord> getRepository (MsoyItemType type)
         throws ServiceException
     {
         try {
@@ -217,7 +218,7 @@ public class ItemLogic
      * exception if the supplied type is invalid or if the given clazz is not assignable from the
      * repo's item class.
      */
-    public <T extends ItemRecord> ItemRepository<T> getRepository (Class<T> clazz, byte type)
+    public <T extends ItemRecord> ItemRepository<T> getRepository (Class<T> clazz, MsoyItemType type)
         throws ServiceException
     {
         @SuppressWarnings("unchecked") ItemRepository<T> repo =
@@ -231,7 +232,7 @@ public class ItemLogic
     /**
      * Returns an iterator of item types for which we have repositories.
      */
-    public Iterable<Byte> getRepositoryTypes ()
+    public Iterable<MsoyItemType> getRepositoryTypes ()
     {
         return _repos.keySet();
     }
@@ -378,7 +379,7 @@ public class ItemLogic
      * Loads and returns the specified listings. Throws {@link ItemCodes#E_NO_SUCH_ITEM} if the
      * listing could not be found.
      */
-    public CatalogRecord requireListing (byte itemType, int catalogId, boolean loadListedItem)
+    public CatalogRecord requireListing (MsoyItemType itemType, int catalogId, boolean loadListedItem)
         throws ServiceException
     {
         ItemRepository<ItemRecord> repo = getRepository(itemType);
@@ -393,7 +394,7 @@ public class ItemLogic
      * Removes the specified catalog listing.
      * @return the number of listings removed. This can be more than 1 if the listing is a basis
      */
-    public int removeListing (MemberRecord remover, byte itemType, int catalogId)
+    public int removeListing (MemberRecord remover, MsoyItemType itemType, int catalogId)
         throws ServiceException
     {
         // load up the listing to be removed
@@ -532,11 +533,11 @@ public class ItemLogic
 
         // TODO: attribution phase II - recursively update derived listings
 
-        byte type = basis.item.getType();
+        MsoyItemType type = basis.item.getType();
         try {
             // give all derived listings a new price
-            int updated =
-                getRepository(type).updateDerivedCosts(basis.catalogId, newCost - basis.cost);
+            int updated = getRepository(type).updateDerivedCosts(
+                    basis.catalogId, newCost - basis.cost);
 
             if (updated != basis.derivationCount) {
                 log.warning("Mismatch in number of updated derived records and derivationCount",
@@ -571,8 +572,10 @@ public class ItemLogic
      */
     public void transferRoomItems (int oldOwnerId, int newOwnerId, int sceneId)
     {
-        for (byte itemType : Item.ROOM_TYPES) {
-            getRepositoryFor(itemType).transferRoomItems(sceneId, oldOwnerId, newOwnerId);
+        for (MsoyItemType itemType : MsoyItemType.values()) {
+            if (itemType.isRoomType()) {
+                getRepositoryFor(itemType).transferRoomItems(sceneId, oldOwnerId, newOwnerId);
+            }
         }
     }
 
@@ -587,7 +590,7 @@ public class ItemLogic
         // note: we don't want to propagate any exceptions because we don't want to fail the action
         // that triggered the itemUpdated since that has already completed
         try {
-            if (nrecord.getType() == Item.AVATAR) {
+            if (nrecord.getType() == MsoyItemType.AVATAR) {
                 // notify the old and new owners of the item
                 if (orecord != null && orecord.ownerId != 0) {
                     MemberNodeActions.avatarUpdated(orecord.ownerId, orecord.itemId,
@@ -621,7 +624,7 @@ public class ItemLogic
         // note: we don't want to propagate any exceptions from here on out because we don't want
         // to fail the item deletion since the item is already gone
         try {
-            if (record.getType() == Item.AVATAR) {
+            if (record.getType() == MsoyItemType.AVATAR) {
                 MemberNodeActions.avatarDeleted(record.ownerId, record.itemId);
             }
 
@@ -638,7 +641,7 @@ public class ItemLogic
      */
     public void itemPurchased (ItemRecord record, Currency currency, int amountPaid)
     {
-        if (record.getType() == Item.AVATAR) {
+        if (record.getType() == MsoyItemType.AVATAR) {
             MemberNodeActions.avatarUpdated(record.ownerId, record.itemId,
                 isThematicallyValid(record));
 
@@ -690,15 +693,15 @@ public class ItemLogic
         throws ServiceException
     {
         // break the list up by item type
-        SetMultimap<Byte, Integer> typeMap = HashMultimap.create();
+        SetMultimap<MsoyItemType, Integer> typeMap = HashMultimap.create();
         for (FavoritedItemResultRecord fave : faves) {
             typeMap.put(fave.itemType, fave.catalogId);
         }
 
-        Map<Tuple<Byte, Integer>, ListingCard> cardMap = Maps.newHashMap();
+        Map<Tuple<MsoyItemType, Integer>, ListingCard> cardMap = Maps.newHashMap();
         // now go through and resolve the records into listing cards by type
-        for (Map.Entry<Byte, Collection<Integer>> entry : typeMap.asMap().entrySet()) {
-            Byte type = entry.getKey();
+        for (Map.Entry<MsoyItemType, Collection<Integer>> entry : typeMap.asMap().entrySet()) {
+            MsoyItemType type = entry.getKey();
             for (CatalogRecord rec : getRepository(type).loadCatalog(entry.getValue())) {
                 if (rec.pricing != CatalogListing.PRICING_HIDDEN) {
                     cardMap.put(Tuple.newTuple(type, rec.catalogId), rec.toListingCard());
@@ -896,7 +899,7 @@ public class ItemLogic
     /**
      * Notes or clears favorite status for the specified catalog listing for the specified member.
      */
-    public void setFavorite (int memberId, byte itemType, CatalogRecord record, boolean favorite)
+    public void setFavorite (int memberId, MsoyItemType itemType, CatalogRecord record, boolean favorite)
         throws ServiceException
     {
         ItemRepository<ItemRecord> irepo = getRepository(itemType);
@@ -916,7 +919,7 @@ public class ItemLogic
         return _listRepo.getSize(listId);
     }
 
-    public int getItemListSize (int listId, byte itemType)
+    public int getItemListSize (int listId, MsoyItemType itemType)
     {
         return _listRepo.getSize(listId, itemType);
     }
@@ -980,7 +983,7 @@ public class ItemLogic
      * Loads information about each listing that is derived from the given listing.
      * @param max maximum number of items to return, or 0 to return all listings
      */
-    public CatalogListing.DerivedItem[] loadDerivedItems (byte itemType, int catalogId, int max)
+    public CatalogListing.DerivedItem[] loadDerivedItems (MsoyItemType itemType, int catalogId, int max)
         throws ServiceException
     {
         ItemRepository<ItemRecord> repo = getRepository(itemType);
@@ -1020,7 +1023,7 @@ public class ItemLogic
      * existing listing. If currency is not null, then the currency and cost are checked against
      * the minimum pricing requirements of a derived item as well.
      */
-    public boolean isSuitableBasis (byte type, int creatorId, CatalogRecord basisRec,
+    public boolean isSuitableBasis (MsoyItemType type, int creatorId, CatalogRecord basisRec,
                                     Currency currency, int cost)
     {
         if (basisRec == null || basisRec.item == null || basisRec.basisId != 0 ||
@@ -1028,7 +1031,7 @@ public class ItemLogic
             return false;
         }
 
-        if (type != basisRec.item.getType() || !Item.supportsDerivation(type)) {
+        if (type != basisRec.item.getType() || !type.isDerivationType()) {
             return false;
         }
 
@@ -1047,7 +1050,7 @@ public class ItemLogic
      * stamped the supplied item.
      * @param memberId
      */
-    public List<GroupName> loadItemStamps (int memberId, byte itemType, int itemId)
+    public List<GroupName> loadItemStamps (int memberId, MsoyItemType itemType, int itemId)
         throws ServiceException
     {
         List<? extends MogMarkRecord> stampRecs = getRepository(itemType).loadItemStamps(itemId);
@@ -1093,7 +1096,7 @@ public class ItemLogic
         /**
          * Add the specified item id to the list.
          */
-        public void addItem (byte itemType, int itemId)
+        public void addItem (MsoyItemType itemType, int itemId)
             throws MissingRepositoryException
         {
             LookupType lt = _byType.get(itemType);
@@ -1104,7 +1107,7 @@ public class ItemLogic
             lt.addItemId(itemId);
         }
 
-        public void removeItem (byte itemType, int itemId)
+        public void removeItem (MsoyItemType itemType, int itemId)
         {
             LookupType lt = _byType.get(itemType);
             if (lt != null) {
@@ -1131,16 +1134,16 @@ public class ItemLogic
             };
         }
 
-        public Iterator<Tuple<Byte, Collection<Integer>>> typeIterator ()
+        public Iterator<Tuple<MsoyItemType, Collection<Integer>>> typeIterator ()
         {
             final Iterator<LookupType> itr = _byType.values().iterator();
-            return new Iterator<Tuple<Byte, Collection<Integer>>>() {
+            return new Iterator<Tuple<MsoyItemType, Collection<Integer>>>() {
                 public boolean hasNext () {
                     return itr.hasNext();
                 }
-                public Tuple<Byte, Collection<Integer>> next () {
+                public Tuple<MsoyItemType, Collection<Integer>> next () {
                     LookupType lookup = itr.next();
-                    return new Tuple<Byte, Collection<Integer>>(lookup.type, lookup.getItemIds());
+                    return new Tuple<MsoyItemType, Collection<Integer>>(lookup.type, lookup.getItemIds());
                 }
                 public void remove () {
                     throw new UnsupportedOperationException();
@@ -1151,7 +1154,7 @@ public class ItemLogic
         protected class LookupType
         {
             /** The item type associated with this list. */
-            public byte type;
+            public MsoyItemType type;
 
             /** The repository associated with this list. */
             public ItemRepository<ItemRecord> repo;
@@ -1159,7 +1162,7 @@ public class ItemLogic
             /**
              * Create a new LookupType for the specified repository.
              */
-            public LookupType (byte type, ItemRepository<ItemRecord> repo)
+            public LookupType (MsoyItemType type, ItemRepository<ItemRecord> repo)
             {
                 this.type = type;
                 this.repo = repo;
@@ -1190,7 +1193,7 @@ public class ItemLogic
         }
 
         /** A mapping of item type to LookupType record of repo / ids. */
-        protected Map<Byte, LookupType> _byType = Maps.newHashMap();
+        protected Map<MsoyItemType, LookupType> _byType = Maps.newHashMap();
     } /* End: class LookupList. */
 
     /**
@@ -1200,7 +1203,7 @@ public class ItemLogic
     protected List<ListingCard> buildJumble ()
     {
         try {
-            return resolveFavorites(_faveRepo.loadRecentFavorites(0, 1000, Item.NOT_A_TYPE));
+            return resolveFavorites(_faveRepo.loadRecentFavorites(0, 1000, MsoyItemType.NOT_A_TYPE));
         } catch (ServiceException e) {
             log.warning("Failed to build jumble", e);
             return Lists.newArrayList();
@@ -1215,14 +1218,17 @@ public class ItemLogic
 
     protected List<ListingCard> buildThemedJumble (int themeId, int rows)
     {
-        Set<Tuple<Byte, MogMarkRecord>> records = Sets.newTreeSet(new Ordering<Tuple<Byte, MogMarkRecord>>() {
-            public int compare (Tuple<Byte, MogMarkRecord> o1, Tuple<Byte, MogMarkRecord> o2) {
+        Set<Tuple<MsoyItemType, MogMarkRecord>> records = Sets.newTreeSet(new Ordering<Tuple<MsoyItemType, MogMarkRecord>>() {
+            public int compare (Tuple<MsoyItemType, MogMarkRecord> o1, Tuple<MsoyItemType, MogMarkRecord> o2) {
                 // the first elements should be the most recent, i.e. the greater dates
                 return o2.right.lastStamped.compareTo(o1.right.lastStamped);
             }
         });
         // load theme stamp records for all item types and insert them into our ordered set
-        for (byte type : Item.SHOP_TYPES) {
+        for (MsoyItemType type : MsoyItemType.values()) {
+            if (!type.isShopType()) {
+                continue;
+            }
             ItemRepository<ItemRecord> repo = getRepositoryFor(type);
             for (MogMarkRecord rec : repo.loadThemedCatalog(themeId, rows)) {
                 records.add(Tuple.newTuple(type, rec));
@@ -1230,9 +1236,9 @@ public class ItemLogic
         }
 
         // now pull the first 'rows' items in chronological order
-        ListMultimap<Byte, MogMarkRecord> toLoad = ArrayListMultimap.create();
+        ListMultimap<MsoyItemType, MogMarkRecord> toLoad = ArrayListMultimap.create();
         List<MogMarkRecord> toOutput = Lists.newArrayList();
-        for (Tuple<Byte, MogMarkRecord> tuple : records) {
+        for (Tuple<MsoyItemType, MogMarkRecord> tuple : records) {
             // sort into item type buckets
             toLoad.put(tuple.left, tuple.right);
             if (toLoad.size() >= rows) {
@@ -1244,7 +1250,7 @@ public class ItemLogic
 
         Map<MogMarkRecord, CatalogRecord> loadedRecords = Maps.newHashMap();
         // resolve all the catalog records, bucket by bucket, store results in yet another map
-        for (byte itemType : toLoad.keys()) {
+        for (MsoyItemType itemType : toLoad.keys()) {
             ItemRepository<ItemRecord> repo;
             try {
                 repo = getRepository(itemType);
@@ -1293,7 +1299,7 @@ public class ItemLogic
     }
 
     @SuppressWarnings("unchecked")
-    protected void registerRepository (byte itemType, ItemRepository repo)
+    protected void registerRepository (MsoyItemType itemType, ItemRepository repo)
     {
         _repos.put(itemType, repo);
         repo.init(itemType);
@@ -1304,7 +1310,7 @@ public class ItemLogic
      * servlet handler threads but need not be synchronized because the repositories table is
      * created at server startup time and never modified.
      */
-    protected ItemRepository<ItemRecord> getRepositoryFor (byte type)
+    protected ItemRepository<ItemRecord> getRepositoryFor (MsoyItemType type)
         throws MissingRepositoryException
     {
         ItemRepository<ItemRecord> repo = _repos.get(type);
@@ -1325,8 +1331,8 @@ public class ItemLogic
         note.append("\n");
     }
 
-    /** Maps byte type ids to repository for all digital item types. */
-    protected Map<Byte, ItemRepository<ItemRecord>> _repos = Maps.newHashMap();
+    /** Maps MsoyItemType type ids to repository for all digital item types. */
+    protected Map<MsoyItemType, ItemRepository<ItemRecord>> _repos = Maps.newHashMap();
 
     protected Map<Integer, ThemedJumble> _themedJumbles = Maps.newHashMap();
 

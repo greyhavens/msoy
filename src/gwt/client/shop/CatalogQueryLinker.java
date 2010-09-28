@@ -5,6 +5,7 @@ package client.shop;
 
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.item.gwt.CatalogQuery;
 import com.threerings.msoy.web.gwt.Pages;
 
@@ -23,13 +24,13 @@ public class CatalogQueryLinker implements SideBar.Linker
     }
 
     // from interface SideBar.Linker
-    public boolean isSelected (byte itemType)
+    public boolean isSelected (MsoyItemType itemType)
     {
         return (_query.itemType == itemType);
     }
 
     // from interface SideBar.Linker
-    public Widget createLink (String name, byte itemType)
+    public Widget createLink (String name, MsoyItemType itemType)
     {
         CatalogQuery copy = new CatalogQuery(_query);
         copy.itemType = itemType;

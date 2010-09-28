@@ -5,6 +5,7 @@ package client.stuff;
 
 import java.util.List;
 
+import client.item.SideBar.ItemPredicate;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 
@@ -25,6 +26,7 @@ import com.threerings.gwt.util.SimpleDataModel;
 
 import com.threerings.msoy.item.data.all.IdentGameItem;
 import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.item.SideBar;
@@ -46,7 +48,7 @@ public class StuffPanel extends FlowPanel
     /** The number of columns of items to display. */
     public static final int COLUMNS = 4;
 
-    public StuffPanel (InventoryModels models, int memberId, byte type)
+	public StuffPanel (InventoryModels models, int memberId, MsoyItemType type)
     {
         setStyleName("itemPanel");
 
@@ -62,8 +64,11 @@ public class StuffPanel extends FlowPanel
         _search.setVerticalAlignment(HasAlignment.ALIGN_MIDDLE);
         _search.add(MsoyUI.createLabel(_msgs.stuffSearch(), "SearchTitle"));
         final ListBox searchTypes = new ListBox();
-        for (byte searchType : Item.STUFF_TYPES) {
-            searchTypes.addItem(_dmsgs.xlate("pItemType" + searchType), searchType + "");
+        for (MsoyItemType searchType : MsoyItemType.values()) {
+            if (!searchType.isStuffType()) {
+                continue;
+            }
+            searchTypes.addItem(_dmsgs.xlateItemsType(searchType), searchType + "");
             if (searchType == type) {
                 searchTypes.setSelectedIndex(searchTypes.getItemCount() - 1);
             }
@@ -113,7 +118,7 @@ public class StuffPanel extends FlowPanel
                         return _msgs.panelNoMatches(query);
                     }
                 }
-                return _msgs.panelNoItems(_dmsgs.xlate("itemType" + _type));
+                return _msgs.panelNoItems(_dmsgs.xlateItemType(_type));
             }
             @Override protected boolean displayNavi (int items) {
                 return true;
@@ -156,23 +161,18 @@ public class StuffPanel extends FlowPanel
         showInventory(page, query);
     }
 
-    protected boolean shouldDisplayUpload (byte type)
+    protected boolean shouldDisplayUpload (MsoyItemType type)
     {
         // for now, if you're in a theme, there is no uploading of stuff
         if (CShell.frame.getThemeId() != 0) {
             // TODO: we should have Buy but not Upload, punt!
             return false;
         }
-        if (type == Item.LAUNCHER) {
+        if (type == MsoyItemType.LAUNCHER) {
             // TODO: we should have Buy but not Upload, punt!
             return false;
         }
-        for (byte stype : Item.SHOP_TYPES) {
-            if (type == stype) {
-                return true;
-            }
-        }
-        return false;
+        return type.isShopType();
     }
 
     protected void createUploadInterface ()
@@ -180,9 +180,9 @@ public class StuffPanel extends FlowPanel
         _upload = new AbsolutePanel();
         _upload.setStyleName("GetStuff");
         _upload.add(MsoyUI.createLabel(_msgs.getStuffTitle(), "GetStuffTitle"), 60, 10);
-        _upload.add(MsoyUI.createHTML(_dmsgs.xlate("getStuffBuy" + _type), "GetStuffBuy"), 165,
+        _upload.add(MsoyUI.createHTML(_dmsgs.xlateGetStuffBuy(_type), "GetStuffBuy"), 165,
             85);
-        _upload.add(MsoyUI.createHTML(_dmsgs.xlate("getStuffCreate" + _type), "GetStuffCreate"),
+        _upload.add(MsoyUI.createHTML(_dmsgs.xlateGetStuffCreate(_type), "GetStuffCreate"),
             360, 85);
         _upload.add(new StretchButton(StretchButton.BLUE_THICK, _msgs.getStuffShop(),
             Link.createHandler(Pages.SHOP, _type + "")), 10, 90);
@@ -201,23 +201,24 @@ public class StuffPanel extends FlowPanel
         // don't fiddle with things if the inventory is already showing
         if (!_contents.isAttached()) {
             clear();
-            String title = (_type == Item.NOT_A_TYPE) ? _msgs.stuffTitleMain() :
+            String title = (_type == MsoyItemType.NOT_A_TYPE) ? _msgs.stuffTitleMain() :
                 (_memberId == CShell.getMemberId()) ?
-                    _msgs.stuffTitle(_dmsgs.xlate("pItemType" + _type)) :
-                        _msgs.stuffTitlePlayer(_dmsgs.xlate("pItemType" + _type));
+                    _msgs.stuffTitle(_dmsgs.xlateItemsType(_type)) :
+                        _msgs.stuffTitlePlayer(_dmsgs.xlateItemsType(_type));
 
             add(MsoyUI.createLabel(title, "TypeTitle"));
             add(_search);
             HorizontalPanel row = new HorizontalPanel();
             row.setVerticalAlignment(HorizontalPanel.ALIGN_TOP);
             row.add(new SideBar(new SideBar.Linker() {
-                public boolean isSelected (byte itemType) {
+                public boolean isSelected (MsoyItemType itemType) {
                     return itemType == _type;
                 }
-                public Widget createLink (String name, byte itemType) {
+                public Widget createLink (String name, MsoyItemType itemType) {
                     return Link.create(name, Pages.STUFF, itemType, _memberId);
                 }
-            }, Item.STUFF_TYPES, null));
+            }, SideBar.IS_STUFF_TYPE, null));
+
             row.add(_contents);
             add(row);
             if (_upload != null) {
@@ -246,7 +247,7 @@ public class StuffPanel extends FlowPanel
 
     protected InventoryModels _models;
     protected int _memberId;
-    protected byte _type;
+    protected MsoyItemType _type;
     protected int _mostRecentPage;
 
     protected HorizontalPanel _search;

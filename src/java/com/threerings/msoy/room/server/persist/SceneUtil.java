@@ -7,9 +7,12 @@ import java.nio.ByteBuffer;
 
 import com.google.common.base.Preconditions;
 
+import com.samskivert.util.ByteEnumUtil;
+
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.DefaultItemMediaDesc;
 import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.MsoyItemType;
 
 /**
  * Scene related utility methods.
@@ -26,8 +29,8 @@ public class SceneUtil
         if (mediaHash.length == 4 || mediaHash.length == 8) {
             // note: 8-byte descriptors are no longer supported
             // only the itemType int is used, and the media type is always assumed to be Furni
-            byte itemType = (byte)ByteBuffer.wrap(mediaHash).asIntBuffer().get();
-            return Item.getDefaultFurniMediaFor(itemType);
+            byte itemByte = (byte)ByteBuffer.wrap(mediaHash).asIntBuffer().get();
+            return Item.getDefaultFurniMediaFor(ByteEnumUtil.fromByte(MsoyItemType.class, itemByte));
         } else {
             return new MediaDesc(mediaHash, mimeType);
         }
@@ -48,7 +51,7 @@ public class SceneUtil
                                         "Cannot flatten non-furni static media " + desc + ".");
 
             ByteBuffer data = ByteBuffer.allocate(4);
-            data.asIntBuffer().put(sdesc.getItemTypeCode());
+            data.asIntBuffer().put(sdesc.getItemTypeCode().toByte());
             return data.array();
 
         } else {

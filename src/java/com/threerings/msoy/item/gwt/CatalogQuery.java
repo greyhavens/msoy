@@ -6,6 +6,7 @@ package com.threerings.msoy.item.gwt;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.MsoyItemType;
 
 /**
  * Contains information needed to query the catalog.
@@ -33,7 +34,7 @@ public class CatalogQuery
     public static final byte SORT_BY_RELEVANCE = 9;
 
     /** The type of item being browsed. */
-    public byte itemType = Item.NOT_A_TYPE;
+    public MsoyItemType itemType = MsoyItemType.NOT_A_TYPE;
 
     /** The order in which to return the catalog listings. */
     public byte sortBy = SORT_BY_NEW_AND_HOT;
@@ -67,7 +68,7 @@ public class CatalogQuery
     @Override // from Object
     public int hashCode ()
     {
-        return itemType ^ sortBy ^ (tag == null ? 0 : tag.hashCode()) ^
+        return itemType.toByte() ^ sortBy ^ (tag == null ? 0 : tag.hashCode()) ^
             (search == null ? 0 : search.hashCode()) ^ creatorId ^ themeGroupId;
     }
 

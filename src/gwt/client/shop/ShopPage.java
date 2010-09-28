@@ -8,12 +8,14 @@ import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 
+import com.samskivert.util.ByteEnumUtil;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.Theme;
 import com.threerings.msoy.group.gwt.GroupService;
 import com.threerings.msoy.group.gwt.GroupServiceAsync;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.item.gwt.CatalogListing;
 import com.threerings.msoy.item.gwt.CatalogQuery;
 import com.threerings.msoy.item.gwt.CatalogService;
@@ -51,7 +53,7 @@ public class ShopPage extends Page
 
         Integer themeId = null;
         if (action.equals(LOAD_LISTING)) {
-            byte type = getItemType(args, 1, Item.NOT_A_TYPE);
+            MsoyItemType type = getItemType(args, 1, MsoyItemType.NOT_A_TYPE);
             int catalogId = args.get(2, 0);
             setContent(new ListingDetailPanel(_models, type, catalogId));
             addTypeNavi(type);
@@ -59,12 +61,12 @@ public class ShopPage extends Page
         } else if (action.equals(FAVORITES)) {
             // if no member is specified, we use the current member
             int memberId = args.get(1, CShell.getMemberId());
-            byte type = getItemType(args, 2, Item.NOT_A_TYPE);
+            MsoyItemType type = getItemType(args, 2, MsoyItemType.NOT_A_TYPE);
             int page = args.get(3, 0);
             setContent(new FavoritesPanel(_models, memberId, type, page));
 
         } else if (action.equals(SUITE)) {
-            final byte type = getItemType(args, 1, Item.NOT_A_TYPE);
+            final MsoyItemType type = getItemType(args, 1, MsoyItemType.NOT_A_TYPE);
             final int catalogId = args.get(2, 0);
             setContent(new SuiteCatalogPanel(_models, type, catalogId));
             addTypeNavi(type);
@@ -74,7 +76,7 @@ public class ShopPage extends Page
             setContent(new SuiteCatalogPanel(_models, gameId));
 
         } else if (action.equals(REMIX)) {
-            final byte type = getItemType(args, 1, Item.AVATAR);
+            final MsoyItemType type = getItemType(args, 1, MsoyItemType.AVATAR);
             final int itemId = args.get(2, 0);
             final int catalogId = args.get(3, 0);
             final ItemRemixer remixer = new ItemRemixer();
@@ -88,7 +90,7 @@ public class ShopPage extends Page
         } else if (action.equals(JUMBLE)) {
             themeId = args.get(1, 0);
 
-        } else if (getItemType(args, 0, Item.NOT_A_TYPE) == Item.NOT_A_TYPE) {
+        } else if (getItemType(args, 0, MsoyItemType.NOT_A_TYPE) == MsoyItemType.NOT_A_TYPE) {
             themeId = args.get(0, 0);
 
         } else {
@@ -119,10 +121,10 @@ public class ShopPage extends Page
         return Pages.SHOP;
     }
 
-    protected void addTypeNavi (byte type)
+    protected void addTypeNavi (MsoyItemType type)
     {
         CShell.frame.addNavLink(
-            _dmsgs.xlate("pItemType" + type), Pages.SHOP, Args.compose(type), 1);
+            _dmsgs.xlateItemsType(type), Pages.SHOP, Args.compose(type), 1);
     }
 
     protected void loadShopPage (GroupName theme)
@@ -131,7 +133,7 @@ public class ShopPage extends Page
     }
 
     protected RemixerHost createRemixerHost (
-        final ItemRemixer remixer, final byte type, final int catalogId)
+        final ItemRemixer remixer, final MsoyItemType type, final int catalogId)
     {
         return new RemixerHost() {
             public void buyItem () {
@@ -153,7 +155,7 @@ public class ShopPage extends Page
             // called only when the remixer exits
             public void remixComplete (Item item) {
                 if (item != null) {
-                    Link.go(Pages.STUFF, "d", item.getType(), item.itemId);
+                    Link.go(Pages.STUFF, "d", item.getType().toByte(), item.itemId);
                 } else {
                     History.back();
                 }
@@ -164,13 +166,16 @@ public class ShopPage extends Page
     /**
      * Extracts the item type from the arguments, sanitizing it if necessary.
      */
-    protected byte getItemType (Args args, int index, byte deftype)
+    protected MsoyItemType getItemType (Args args, int index, MsoyItemType deftype)
     {
-        byte type = args.get(index, deftype);
-        if (Item.getClassForType(type) == null) {
-            return deftype;
+        byte code = args.get(index, (byte) -1);
+        if (code >= 0) {
+            MsoyItemType type = ByteEnumUtil.fromByte(MsoyItemType.class, code);
+            if (type != null) {
+                return type;
+            }
         }
-        return type;
+        return deftype;
     }
 
     protected CatalogModels _models = new CatalogModels();

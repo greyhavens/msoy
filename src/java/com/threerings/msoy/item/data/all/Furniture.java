@@ -22,9 +22,9 @@ public class Furniture extends Item
     public short hotSpotY;
 
     @Override // from Item
-    public byte getType ()
+    public MsoyItemType getType ()
     {
-        return FURNITURE;
+        return MsoyItemType.FURNITURE;
     }
 
     @Override

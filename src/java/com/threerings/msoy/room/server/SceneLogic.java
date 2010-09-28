@@ -16,6 +16,7 @@ import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.servlet.util.ServiceWaiter;
 import com.samskivert.util.Invoker;
 
+import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.util.MessageBundle;
 import com.threerings.whirled.data.SceneModel;
 import com.threerings.whirled.data.SceneUpdate;
@@ -30,7 +31,6 @@ import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.group.server.persist.ThemeRepository;
 import com.threerings.msoy.item.data.all.Audio;
 import com.threerings.msoy.item.data.all.Decor;
-import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.server.ItemLogic;
 import com.threerings.msoy.item.server.persist.AudioRepository;
@@ -141,7 +141,7 @@ public class SceneLogic
         MsoySceneModel mmodel = (MsoySceneModel) model;
         Set<ItemIdent> memoryIds = Sets.newHashSet();
         for (FurniData furni : mmodel.furnis) {
-            if (furni.itemType != Item.NOT_A_TYPE) {
+            if (furni.itemType != MsoyItemType.NOT_A_TYPE) {
                 memoryIds.add(furni.getItemIdent());
             }
         }
@@ -177,7 +177,6 @@ public class SceneLogic
      *
      * @param ownerType may be an individual member or a group.
      * @param portalAction to where to link the new room's door.
-     * @param firstTime whether this the first room this owner has created.
      */
     public SceneRecord createBlankRoom (byte ownerType, int ownerId, int stockSceneId,
         boolean privileged, int themeId, String roomName, String portalAction)
@@ -280,7 +279,7 @@ public class SceneLogic
             @Override public void invokePersist () throws Exception {
                 // go through the furni and make sure they're sane
                 for (SceneFurniRecord rec : _sceneRepo.loadFurni(sceneId)) {
-                    if (rec.itemType != 0 && rec.itemId != 0) {
+                    if (rec.itemType != MsoyItemType.NOT_A_TYPE && rec.itemId != 0) {
                         String err = validateOneTemplateFurni(
                             groupId, sceneId, rec.itemType, rec.itemId);
                         if (err != null) {
@@ -298,7 +297,7 @@ public class SceneLogic
         });
     }
 
-    public String validateOneTemplateFurni (int themeId, int sceneId, byte itemType, int itemId)
+    public String validateOneTemplateFurni (int themeId, int sceneId, MsoyItemType itemType, int itemId)
         throws ServiceException
     {
         // make sure the item is stamped
@@ -331,7 +330,7 @@ public class SceneLogic
         return null;
     }
 
-    protected String furniError (String code, byte itemType, int itemId)
+    protected String furniError (String code, MsoyItemType itemType, int itemId)
     {
         try {
             ItemRecord item = _itemLogic.getRepository(itemType).loadItem(itemId);

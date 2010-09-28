@@ -36,9 +36,9 @@ import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.data.all.MediaMimeTypes;
 import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.stuff.gwt.StuffService;
 import com.threerings.msoy.stuff.gwt.StuffServiceAsync;
-
 import client.shell.CShell;
 import client.shell.DynamicLookup;
 import client.shell.ShellMessages;
@@ -132,38 +132,38 @@ public abstract class ItemEditor extends FlowPanel
      * Creates an item editor interface for items of the specified type.  Returns null if the type
      * is unknown.
      */
-    public static ItemEditor createItemEditor (byte type, EditorHost host)
+    public static ItemEditor createItemEditor (MsoyItemType type, EditorHost host)
     {
         ItemEditor editor = null;
-        if (type == Item.PHOTO) {
+        if (type == MsoyItemType.PHOTO) {
             editor = new PhotoEditor();
-        } else if (type == Item.DOCUMENT) {
+        } else if (type == MsoyItemType.DOCUMENT) {
             editor = new DocumentEditor();
-        } else if (type == Item.FURNITURE) {
+        } else if (type == MsoyItemType.FURNITURE) {
             editor = new FurnitureEditor();
-        } else if (type == Item.AVATAR) {
+        } else if (type == MsoyItemType.AVATAR) {
             editor = new AvatarEditor();
-        } else if (type == Item.PET) {
+        } else if (type == MsoyItemType.PET) {
             editor = new PetEditor();
-        } else if (type == Item.AUDIO) {
+        } else if (type == MsoyItemType.AUDIO) {
             editor = new AudioEditor();
-        } else if (type == Item.VIDEO) {
+        } else if (type == MsoyItemType.VIDEO) {
             editor = new VideoEditor();
-        } else if (type == Item.DECOR) {
+        } else if (type == MsoyItemType.DECOR) {
             editor = new DecorEditor();
-        } else if (type == Item.TOY) {
+        } else if (type == MsoyItemType.TOY) {
             editor = new ToyEditor();
-        } else if (type == Item.LEVEL_PACK) {
+        } else if (type == MsoyItemType.LEVEL_PACK) {
             editor = new LevelPackEditor();
-        } else if (type == Item.ITEM_PACK) {
+        } else if (type == MsoyItemType.ITEM_PACK) {
             editor = new ItemPackEditor();
-        } else if (type == Item.TROPHY_SOURCE) {
+        } else if (type == MsoyItemType.TROPHY_SOURCE) {
             editor = new TrophySourceEditor();
-        } else if (type == Item.PRIZE) {
+        } else if (type == MsoyItemType.PRIZE) {
             editor = new PrizeEditor();
-        } else if (type == Item.PROP) {
+        } else if (type == MsoyItemType.PROP) {
             editor = new PropEditor();
-        } else if (type == Item.LAUNCHER) {
+        } else if (type == MsoyItemType.LAUNCHER) {
             editor = new LauncherEditor();
         } else {
             return null; // woe be the caller
@@ -213,7 +213,7 @@ public abstract class ItemEditor extends FlowPanel
     /**
      * Configures this editor with a reference to the item service and its item panel parent.
      */
-    public void init (byte type, EditorHost parent)
+    public void init (MsoyItemType type, EditorHost parent)
     {
         _type = type;
         _parent = parent;
@@ -237,8 +237,8 @@ public abstract class ItemEditor extends FlowPanel
         if (_header.getWidgetCount() == 0) {
             _header.setStyleName("Header");
             String title = _item.itemId == 0
-                ? _emsgs.createTitle(_dmsgs.xlate("itemType" + _type))
-                : _emsgs.editTitle(_dmsgs.xlate("itemType" + _type));
+                ? _emsgs.createTitle(_dmsgs.xlateItemType(_type))
+                : _emsgs.editTitle(_dmsgs.xlateItemType(_type));
             _header.add(MsoyUI.createLabel(title, "Title"), 15, 0);
             _header.add(MsoyUI.createHTML(_dmsgs.xlate("editorWikiLink" + _type), "WikiLink"),
                 250, 5);
@@ -395,21 +395,22 @@ public abstract class ItemEditor extends FlowPanel
      */
     protected boolean isValidPrimaryMedia (MediaDesc desc)
     {
-        if (_type == Item.AVATAR || _type == Item.PET || _type == Item.TOY) {
-            // these must be swfs or remixable
-            return desc.isSWF() || desc.isRemixed();
+        switch(_type) {
+            case AVATAR: case PET: case TOY:
+                // these must be swfs or remixable
+                return desc.isSWF() || desc.isRemixed();
 
-        } else if (_type == Item.FURNITURE || _type == Item.DECOR) {
-            // these can be swfs, images, or remixable
-            return desc.hasFlashVisual() || desc.isRemixed();
+            case FURNITURE: case DECOR:
+                // these can be swfs, images, or remixable
+                return desc.hasFlashVisual() || desc.isRemixed();
 
-        } else if (_type == Item.PHOTO) {
-            // images must be images... wow
-            return desc.isImage();
+            case PHOTO:
+                // images must be images... wow
+                return desc.isImage();
 
-        } else {
-            // other types are not yet remixable
-            return desc.hasFlashVisual();
+            default:
+                // other types are not yet remixable
+                return desc.hasFlashVisual();
         }
     }
 
@@ -832,7 +833,7 @@ public abstract class ItemEditor extends FlowPanel
         int popWidth = getOffsetWidth() - 8;
         int popHeight = Math.max(550,
             Math.min(getOffsetHeight() - 8, Window.getClientHeight() - 8));
-        String typename = Item.getTypeName(_item.getType());
+        String typename = _item.getType().typeName();
         String flashVars = "media=" + URL.encodeComponent(prototype.getMediaPath()) +
             "&type=" + URL.encodeComponent(typename) +
             "&name=" + URL.encodeComponent(StringUtil.getOr(_item.name, typename)) +
@@ -842,7 +843,7 @@ public abstract class ItemEditor extends FlowPanel
             "&noPickPhoto=true" + // suppress picking a photo from inventory, here
             "&forceMimeType=" + MediaMimeTypes.APPLICATION_ZIP_NOREMIX +
             "&inject-image=" + URL.encodeComponent(image.getMediaPath());
-        if (_item.getType() != Item.AVATAR) {
+        if (_item.getType() != MsoyItemType.AVATAR) {
             flashVars += "&username=Tester";
         }
 
@@ -888,7 +889,7 @@ public abstract class ItemEditor extends FlowPanel
     }-*/;
 
     /** The type of items we're editing here. */
-    protected byte _type;
+    protected MsoyItemType _type;
     protected EditorHost _parent;
 
     protected Item _item;

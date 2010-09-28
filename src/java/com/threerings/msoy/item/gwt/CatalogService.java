@@ -12,6 +12,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.web.gwt.ServiceException;
 
 import com.threerings.msoy.money.data.all.Currency;
@@ -95,9 +96,6 @@ public interface CatalogService extends RemoteService
 
     /**
      * Loads all catalogue items of the specified type.
-     *
-     * @param includeCount if true, the count of all listings matching the query terms will also be
-     * computed and included in the result.
      */
     CatalogResult loadCatalog (CatalogQuery query, int offset, int rows)
         throws ServiceException;
@@ -106,7 +104,7 @@ public interface CatalogService extends RemoteService
      * Purchases the item of the specified id and type.
      */
     PurchaseResult<Item> purchaseItem (
-        byte itemType, int catalogId, Currency currency, int authedCost, String memories)
+        MsoyItemType itemType, int catalogId, Currency currency, int authedCost, String memories)
         throws ServiceException;
 
     /**
@@ -122,14 +120,14 @@ public interface CatalogService extends RemoteService
      * Loads and returns the specified catalog listing. If <code>forDisplay</code> is set, some
      * additional listing fields are filled in that are only needed for display.
      */
-    CatalogListing loadListing (byte itemType, int catalogId, boolean forDisplay)
+    CatalogListing loadListing (MsoyItemType itemType, int catalogId, boolean forDisplay)
         throws ServiceException;
 
     /**
      * Loads all derived items for a given item. The user interface shows a short list when the
      * listing is loaded, then this may be called at the user's request.
      */
-    DerivedItem[] loadAllDerivedItems (byte itemType, int catalogId)
+    DerivedItem[] loadAllDerivedItems (MsoyItemType itemType, int catalogId)
         throws ServiceException;
 
     /**
@@ -141,26 +139,26 @@ public interface CatalogService extends RemoteService
     /**
      * Updates the specified catalog listing's price.
      */
-    void updatePricing (byte itemType, int catalogId, int pricing, int salesTarget,
+    void updatePricing (MsoyItemType itemType, int catalogId, int pricing, int salesTarget,
                         Currency currency, int cost, int basisId, int brandId)
         throws ServiceException;
 
     /**
      * Removes the specified catalog listing.
      */
-    void removeListing (byte itemType, int catalogId)
+    void removeListing (MsoyItemType itemType, int catalogId)
         throws ServiceException;
 
     /**
      * Fetches the N most-used tags for a given item type.
      */
-    Map<String, Integer> getPopularTags (byte type, int rows)
+    Map<String, Integer> getPopularTags (MsoyItemType type, int rows)
         throws ServiceException;
 
     /**
      * Loads up the favorite items of the specified member of the specified type.
      */
-    FavoritesResult loadFavorites (int memberId, byte itemType)
+    FavoritesResult loadFavorites (int memberId, MsoyItemType itemType)
         throws ServiceException;
 
     /**
@@ -168,7 +166,7 @@ public interface CatalogService extends RemoteService
      * a basis for the given item type. It's not possible for this method to filter based on the
      * cost of the items, the caller should use {@link CatalogListing#getMinimumDerivedCost}.
      */
-    List<ListingCard> loadPotentialBasisItems (byte itemType)
+    List<ListingCard> loadPotentialBasisItems (MsoyItemType itemType)
         throws ServiceException;
 
     /**
@@ -181,6 +179,6 @@ public interface CatalogService extends RemoteService
     /**
      * Loads the specified suite.
      */
-    SuiteResult loadSuite (byte itemType, int suiteId)
+    SuiteResult loadSuite (MsoyItemType itemType, int suiteId)
         throws ServiceException;
 }
