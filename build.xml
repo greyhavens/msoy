@@ -207,6 +207,7 @@
       <dependency groupId="com.threerings" artifactId="whirledthanelib" version="0.0-SNAPSHOT"
                   type="swc"/>
       <dependency groupId="com.threerings" artifactId="orth" version="0.0-SNAPSHOT"/>
+      <dependency groupId="com.threerings" artifactId="orth-gwt" version="0.0-SNAPSHOT"/>
       <dependency groupId="com.threerings" artifactId="orthlib" version="0.0-SNAPSHOT" type="swc"/>
       <dependency groupId="com.threerings" artifactId="gwt-utils" version="0.0-SNAPSHOT"/>
       <dependency groupId="com.threerings" artifactId="pulse" version="0.0-SNAPSHOT"/>
