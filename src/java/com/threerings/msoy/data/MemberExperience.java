@@ -5,6 +5,8 @@ package com.threerings.msoy.data;
 
 import java.util.Date;
 
+import com.google.common.collect.ComparisonChain;
+
 import com.samskivert.util.ObjectUtil;
 
 import com.threerings.presents.dobj.DSet;
@@ -72,14 +74,11 @@ public class MemberExperience
 
     public int compareTo (MemberExperience o)
     {
-        if (action == o.action) {
-            if (getDateOccurred().equals(o.getDateOccurred())) {
-                return data == o.data ? 0 : (data < o.data ? -1 : 1);
-            }
-            return getDateOccurred().compareTo(o.getDateOccurred());
-        }
-        return action < o.action ? -1 : 1;
-
+        return ComparisonChain.start()
+            .compare(action, o.action)
+            .compare(getDateOccurred(), o.getDateOccurred())
+            .compare(data, o.data)
+            .result();
     }
 
     public Comparable<?> getKey ()

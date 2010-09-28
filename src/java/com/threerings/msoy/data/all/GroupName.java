@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.data.all;
 
+import com.google.common.primitives.Ints;
+
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.util.Name;
@@ -84,7 +86,7 @@ public class GroupName extends Name
     @Override // from Name
     public int compareTo (Name o)
     {
-        return _groupId - ((GroupName) o)._groupId;
+        return Ints.compare(_groupId, ((GroupName) o)._groupId);
     }
 
     /** The group's id. */

@@ -3,6 +3,9 @@
 
 package com.threerings.msoy.admin.gwt;
 
+import com.google.common.collect.ComparisonChain;
+import com.google.common.primitives.Ints;
+
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 /**
@@ -29,6 +32,6 @@ public class EntrySummary
     // from interface Comparable<EntrySummary>
     public int compareTo (EntrySummary other)
     {
-        return (entries > other.entries) ? -1 : ((entries < other.entries) ? 1 : 0);
+        return Ints.compare(entries, other.entries);
     }
 }

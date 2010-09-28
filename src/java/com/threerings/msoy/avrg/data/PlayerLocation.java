@@ -3,7 +3,7 @@
 
 package com.threerings.msoy.avrg.data;
 
-import com.samskivert.util.Comparators;
+import com.google.common.primitives.Ints;
 
 import com.threerings.io.SimpleStreamableObject;
 
@@ -40,7 +40,7 @@ public class PlayerLocation extends SimpleStreamableObject
     // from interface Comparable<PlayerLocation>
     public int compareTo (PlayerLocation other)
     {
-        return Comparators.compare(playerId, other.playerId);
+        return Ints.compare(playerId, other.playerId);
     }
 
     @Override // from Object

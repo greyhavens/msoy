@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.game.data;
 
+import com.google.common.primitives.Floats;
+
 public class PerfRecord
     implements Comparable<PerfRecord>
 {
@@ -63,14 +65,7 @@ public class PerfRecord
     // from Comparable
     public int compareTo (PerfRecord that)
     {
-        if (this.calcScore > that.calcScore) {
-            return -1;
-
-        } else if (this.calcScore < that.calcScore) {
-            return 1;
-
-        }
-        return 0;
+        return Floats.compare(calcScore, that.calcScore);
     }
 
     /**

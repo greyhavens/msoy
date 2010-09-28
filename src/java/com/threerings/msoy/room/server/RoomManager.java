@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -2141,12 +2142,8 @@ public class RoomManager extends SpotSceneManager
             return bodyOid;
         }
         public int compareTo (Controller other) {
-            // sort first by load, then by body oid
-            int diff = Comparators.compare(load, other.load);
-            if (diff == 0) {
-                diff = Comparators.compare(bodyOid, other.bodyOid);
-            }
-            return diff;
+            return ComparisonChain.start().compare(load, other.load)
+                .compare(bodyOid, other.bodyOid).result();
         }
     } // End: static class Controller
 

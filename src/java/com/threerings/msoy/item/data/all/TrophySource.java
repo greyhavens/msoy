@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.item.data.all;
 
+import com.google.common.primitives.Ints;
+
 import com.threerings.msoy.data.all.MediaDesc;
 
 /**
@@ -56,7 +58,7 @@ public class TrophySource extends IdentGameItem
     public int compareTo (Item other)
     {
         if (other instanceof TrophySource) {
-            return sortOrder - ((TrophySource)other).sortOrder;
+            return Ints.compare(sortOrder, ((TrophySource)other).sortOrder);
         } else {
             return super.compareTo(other);
         }

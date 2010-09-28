@@ -5,6 +5,8 @@ package com.threerings.msoy.group.data.all;
 
 import java.util.Date;
 
+import com.google.common.collect.ComparisonChain;
+
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.samskivert.util.ByteEnum;
@@ -242,13 +244,7 @@ public class Group
     // from Comparable
     public int compareTo (Group other)
     {
-        // this is used to sort groups on the GroupList page, so sort by group name first, then
-        // by groupId if necessary.
-        int nameComparison = name.compareTo(other.name);
-        if (nameComparison == 0) {
-            return groupId == other.groupId ? 0 : (groupId < other.groupId ? -1 : 1);
-        } else {
-            return nameComparison;
-        }
+        return ComparisonChain.start().compare(name, other.name)
+            .compare(groupId, other.groupId).result();
     }
 }

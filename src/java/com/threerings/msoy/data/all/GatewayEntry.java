@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.data.all;
 
+import com.google.common.collect.ComparisonChain;
+
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.presents.dobj.DSet;
@@ -48,12 +50,9 @@ public class GatewayEntry
     // from interface Comparable
     public int compareTo (GatewayEntry that)
     {
-        // online connections shown first
-        if (this.online != that.online) {
-            return this.online ? -1 : 1;
-        }
-        // then sort by gateway
-        return this.gateway.compareTo(that.gateway);
+        // online connections shown first then sort by gateway
+        return ComparisonChain.start().compare(online, that.online)
+            .compare(gateway, that.gateway).result();
     }
 
     @Override // from Object

@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.item.data.all;
 
+import com.google.common.primitives.Doubles;
+
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.samskivert.util.ByteEnum;
@@ -389,16 +391,7 @@ public abstract class Item implements Comparable<Item>, Streamable, IsSerializab
     // from Comparable<Item>
     public int compareTo (Item other)
     {
-        double thatTouched = other.lastTouched;
-        if (lastTouched > thatTouched) {
-            return -1;
-
-        } else if (lastTouched < thatTouched) {
-            return 1;
-
-        } else {
-            return 0;
-        }
+        return Doubles.compare(other.lastTouched, lastTouched); // reversed
     }
 
     @Override // from Object

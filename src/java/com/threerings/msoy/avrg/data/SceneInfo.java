@@ -3,7 +3,7 @@
 
 package com.threerings.msoy.avrg.data;
 
-import com.samskivert.util.Comparators;
+import com.google.common.primitives.Ints;
 
 import com.threerings.io.SimpleStreamableObject;
 
@@ -44,7 +44,7 @@ public class SceneInfo extends SimpleStreamableObject
     // from interface Comparable<SceneInfo>
     public int compareTo (SceneInfo other)
     {
-        return Comparators.compare(sceneId, other.sceneId);
+        return Ints.compare(sceneId, other.sceneId);
     }
 
     @Override // from Object

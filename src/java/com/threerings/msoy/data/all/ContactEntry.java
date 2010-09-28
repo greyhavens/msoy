@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.data.all;
 
+import com.google.common.collect.ComparisonChain;
+
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.presents.dobj.DSet;
@@ -39,12 +41,9 @@ public class ContactEntry
     // from interface Comparable
     public int compareTo (ContactEntry that)
     {
-        // online folks show up above offline folks
-        if (this.online != that.online) {
-            return this.online ? -1 : 1;
-        }
-        // then, sort by name
-        return this.name.compareTo(that.name);
+        // online folks show up above offline folks, then sort by name
+        return ComparisonChain.start().compare(online, that.online)
+            .compare(name, that.name).result();
     }
 
     @Override // from Object

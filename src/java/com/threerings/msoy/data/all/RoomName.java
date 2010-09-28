@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.data.all;
 
+import com.google.common.primitives.Ints;
+
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.util.Name;
@@ -60,11 +62,7 @@ public class RoomName extends Name
     @Override // from Name
     public int compareTo (Name o)
     {
-        // TODO:
-        //return Comparators.compare(_sceneId, ((RoomName) o)._sceneId);
-        // but, no, thank you GWT...
-        int otherSceneId = ((RoomName) o)._sceneId;
-        return (_sceneId < otherSceneId ? -1 : (_sceneId == otherSceneId ? 0 : 1));
+        return Ints.compare(_sceneId, ((RoomName) o)._sceneId);
     }
 
     /** The scene's id. */

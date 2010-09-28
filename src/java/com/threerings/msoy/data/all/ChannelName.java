@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.data.all;
 
+import com.google.common.primitives.Ints;
+
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.util.Name;
@@ -73,9 +75,8 @@ public class ChannelName extends Name
         ChannelName oc = (ChannelName)o;
         if (_creatorId == oc._creatorId) {
             return super.compareTo(oc);
-        } else {
-            return _creatorId - oc._creatorId;
         }
+        return Ints.compare(_creatorId, oc._creatorId);
     }
 
     /** The member id of this channel's creator. */

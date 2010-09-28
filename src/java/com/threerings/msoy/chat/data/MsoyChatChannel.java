@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.chat.data;
 
+import com.google.common.collect.ComparisonChain;
+
 import com.threerings.util.Name;
 
 import com.threerings.crowd.chat.data.ChatChannel;

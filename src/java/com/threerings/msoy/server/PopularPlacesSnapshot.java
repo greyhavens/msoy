@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -54,8 +55,8 @@ public class PopularPlacesSnapshot
         // from interface Comparable<Place>
         public int compareTo (Place other) {
             // higher population sorts first, then sort alphabetically
-            int rv = Comparators.compare(other.population, population);
-            return (rv == 0) ? name.compareTo(other.name) : rv;
+            return ComparisonChain.start().compare(other.population, population)
+                .compare(name, other.name).result();
         }
     }
 

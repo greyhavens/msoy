@@ -3,7 +3,7 @@
 
 package com.threerings.msoy.room.data;
 
-import com.samskivert.util.Comparators;
+import com.google.common.primitives.Ints;
 
 import com.threerings.util.Name;
 
@@ -47,7 +47,7 @@ public class PetName extends Name
     @Override
     public int compareTo (Name o)
     {
-        return Comparators.compare(_petId, ((PetName) o)._petId);
+        return Ints.compare(_petId, ((PetName) o)._petId);
     }
 
     @Override
