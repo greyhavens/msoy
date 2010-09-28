@@ -65,7 +65,7 @@ public class PerfRecord
     // from Comparable
     public int compareTo (PerfRecord that)
     {
-        return Floats.compare(calcScore, that.calcScore);
+        return Floats.compare(that.calcScore, calcScore);
     }
 
     /**
