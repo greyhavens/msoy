@@ -34,8 +34,16 @@ public class MediaBlacklistRepository extends DepotRepository
      */
     public boolean isBlacklisted (MediaDesc desc)
     {
+        return isBlacklisted(desc.hash);
+    }
+
+    /**
+     * Test to see if the given hash is blacklisted.
+     */
+    public boolean isBlacklisted (byte[] hash)
+    {
         return null != load(MediaBlacklistRecord.class, new Where(
-            MediaBlacklistRecord.MEDIA_HASH.eq(Exps.value(desc.hash))));
+            MediaBlacklistRecord.MEDIA_HASH.eq(Exps.value(hash))));
     }
 
     public void blacklist (MediaDesc desc, String note)
