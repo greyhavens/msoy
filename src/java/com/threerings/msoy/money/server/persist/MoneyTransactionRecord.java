@@ -194,7 +194,7 @@ public abstract class MoneyTransactionRecord extends PersistentRecord
 
         Subject subj = new Subject(subject);
         this.subjectType = subj.type;
-        this.subjectIdType = subj.idType;
+        this.subjectIdType = (subj.idType != null) ? subj.idType : MsoyItemType.NOT_A_TYPE;
         this.subjectId = subj.id;
     }
 
