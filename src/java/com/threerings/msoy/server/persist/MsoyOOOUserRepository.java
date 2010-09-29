@@ -153,4 +153,16 @@ public class MsoyOOOUserRepository extends DepotUserRepository
         }
         return users;
     }
+
+    @Override // documentation inherited
+    public String[] getUsernames (String email)
+    {
+        // We need to return the email as our "username" for underwire
+        List<String> usernames = Lists.newArrayList();
+        Where where = new Where(OOOUserRecord.EMAIL, email);
+        for (OOOUserRecord record : findAll(OOOUserRecord.class, where)) {
+            usernames.add(record.email);
+        }
+        return usernames.toArray(new String[usernames.size()]);
+    }
 }
