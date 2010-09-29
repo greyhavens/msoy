@@ -3,6 +3,7 @@ package com.threerings.msoy.item.data.all;
 import com.threerings.orth.scene.data.EntityIdent.EntityType;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public enum MsoyItemType implements EntityType<MsoyItemType> {
     // DON'T EVER CHANGE THE MAGIC NUMBERS ASSIGNED TO EACH CLASS
@@ -23,8 +24,6 @@ public enum MsoyItemType implements EntityType<MsoyItemType> {
     PRIZE (Prize.class, 14),
     PROP (Prop.class, 15),
     LAUNCHER (Prop.class, 16);
-    static HashMap<MsoyItemType, Class<? extends Item>> _mapping;
-    static HashMap<Class<? extends Item>, MsoyItemType> _reverseMapping;
     // DON'T EVER CHANGE THE MAGIC NUMBERS ASSIGNED TO EACH CLASS
 
     MsoyItemType(Class<? extends Item> clazz, int num)
@@ -152,7 +151,7 @@ public enum MsoyItemType implements EntityType<MsoyItemType> {
 
     public Class<? extends Item> getClassForType ()
     {
-        return getClassForType(_b);
+        return getClassForType(this);
     }
 
     protected byte _b;
@@ -175,7 +174,7 @@ public enum MsoyItemType implements EntityType<MsoyItemType> {
     /**
      * Gets the class for the specified item type.
      */
-    public static Class<? extends Item> getClassForType (byte itemType)
+    public static Class<? extends Item> getClassForType (MsoyItemType itemType)
     {
         return _mapping.get(itemType);
     }
@@ -188,4 +187,7 @@ public enum MsoyItemType implements EntityType<MsoyItemType> {
         MsoyItemType type = _reverseMapping.get(iclass);
         return (type != null) ? type : NOT_A_TYPE;
     }
+
+    static protected Map<MsoyItemType, Class<? extends Item>> _mapping;
+    static protected Map<Class<? extends Item>, MsoyItemType> _reverseMapping;
 }
