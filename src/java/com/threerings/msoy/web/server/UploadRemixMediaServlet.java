@@ -10,6 +10,8 @@ import org.apache.commons.fileupload.FileUploadException;
 
 import com.samskivert.io.StreamUtil;
 
+import com.threerings.msoy.admin.server.persist.MediaBlacklistRepository;
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.web.server.UploadUtil.MediaInfo;
 
 /**
@@ -23,7 +25,11 @@ public class UploadRemixMediaServlet extends AbstractUploadServlet
         throws IOException, FileUploadException, AccessDeniedException
     {
         UploadFile uploadFile = new FileItemUploadFile(ctx.file);
-        MediaInfo info = new MediaInfo(uploadFile.getHash(), uploadFile.getMimeType());
+
+        String hash = uploadFile.getHash();
+        checkBlacklist(hash);
+
+        MediaInfo info = new MediaInfo(hash, uploadFile.getMimeType());
 
         // upload it to S3
         UploadUtil.publishUploadFile(uploadFile);

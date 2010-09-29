@@ -40,6 +40,9 @@ public class ItemMediaUploadServlet extends AbstractUploadServlet
     {
         // wrap the FileItem in an UploadFile for publishing
         UploadFile uploadFile = new FileItemUploadFile(ctx.file);
+        String hash = uploadFile.getHash();
+
+        checkBlacklist(hash);
 
         // attempt to extract the list of mediaIds. First will be the main media, followed
         // by optional thumb and/or furni mediaIds which indicate a thumb or furni mediaInfo
@@ -88,7 +91,7 @@ public class ItemMediaUploadServlet extends AbstractUploadServlet
             }
         } else {
             // treat all other file types in the same manner, just publish them
-            mediaInfos.add(new MediaInfo(uploadFile.getHash(), mimeType));
+            mediaInfos.add(new MediaInfo(hash, mimeType));
             UploadUtil.publishUploadFile(uploadFile);
         }
 

@@ -24,6 +24,8 @@ import com.google.inject.Inject;
 import com.samskivert.io.StreamUtil;
 import com.samskivert.servlet.util.CookieUtil;
 
+import com.threerings.msoy.admin.server.persist.MediaBlacklistRepository;
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.MemberRecord;
 
@@ -252,6 +254,15 @@ public abstract class AbstractUploadServlet extends HttpServlet
         }
     }
 
+    protected void checkBlacklist (String hash)
+        throws AccessDeniedException
+    {
+        if (_blacklistRepo.isBlacklisted(MediaDesc.stringToHash(hash))) {
+            log.warning("Rejecting attempted upload of blacklisted media", "hash", hash);
+            throw new AccessDeniedException("This media has been permanently blacklisted.");
+        }
+    }
+
     /**
      * An exception encountered when a user is not authorized to perform an upload.
      */
@@ -314,6 +325,7 @@ public abstract class AbstractUploadServlet extends HttpServlet
     }
 
     // our dependencies
+    @Inject protected MediaBlacklistRepository _blacklistRepo;
     @Inject protected MemberHelper _mhelper;
 
     protected static final int MEGABYTE = 1024 * 1024;
