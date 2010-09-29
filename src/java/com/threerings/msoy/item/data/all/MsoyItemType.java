@@ -12,6 +12,7 @@ public enum MsoyItemType implements EntityType<MsoyItemType> {
     PHOTO (Photo.class, 1),
     DOCUMENT (Document.class, 2),
     FURNITURE (Furniture.class, 3),
+    _DEPRECATED_GAME (null, 4),
     AVATAR (Avatar.class, 5),
     PET (Pet.class, 6),
     AUDIO (Audio.class, 7),
@@ -164,7 +165,9 @@ public enum MsoyItemType implements EntityType<MsoyItemType> {
         if (_mapping == null) {
             // we can't use google collections here because this class is used in GWT.
             _mapping = new HashMap<MsoyItemType, Class<? extends Item>>();
-            _reverseMapping = new HashMap<Class<? extends Item>, MsoyItemType>();
+            if (iclass != null) {
+                _reverseMapping = new HashMap<Class<? extends Item>, MsoyItemType>();
+            }
         }
 
         _mapping.put(type, iclass);
