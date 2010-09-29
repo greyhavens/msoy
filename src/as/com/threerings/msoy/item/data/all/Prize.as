@@ -7,6 +7,7 @@ import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
 
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.util.ByteEnum;
 
 /**
  * Contains the runtime data for a Prize item.
@@ -39,7 +40,7 @@ public class Prize extends IdentGameItem
     override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);
-        targetType = ins.readByte();
+        targetType = MsoyItemType(ins.readObject()).toByte();
         targetCatalogId = ins.readInt();
     }
 
@@ -47,7 +48,7 @@ public class Prize extends IdentGameItem
     override public function writeObject (out :ObjectOutputStream) :void
     {
         super.writeObject(out);
-        out.writeByte(targetType);
+        out.writeObject(ByteEnum.fromByte(MsoyItemType, targetType));
         out.writeInt(targetCatalogId);
     }
 }

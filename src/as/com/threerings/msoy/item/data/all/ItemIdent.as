@@ -2,7 +2,7 @@
 // $Id$
 
 package com.threerings.msoy.item.data.all {
-
+import com.threerings.util.ByteEnum;
 import com.threerings.util.Comparable;
 import com.threerings.util.Hashable;
 
@@ -91,14 +91,14 @@ public class ItemIdent
     // from interface Streamable
     public function readObject (ins :ObjectInputStream) :void
     {
-        type = ins.readByte();
+        type = MsoyItemType(ins.readObject()).toByte();
         itemId = ins.readInt();
     }
 
     // from interface Streamable
     public function writeObject (out :ObjectOutputStream) :void
     {
-        out.writeByte(type);
+        out.writeObject(ByteEnum.fromByte(MsoyItemType, type));
         out.writeInt(itemId);
     }
 }

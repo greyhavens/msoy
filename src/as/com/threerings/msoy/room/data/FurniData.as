@@ -2,7 +2,8 @@
 // $Id$
 
 package com.threerings.msoy.room.data {
-
+import com.threerings.msoy.item.data.all.MsoyItemType;
+import com.threerings.util.ByteEnum;
 import com.threerings.util.ClassUtil;
 import com.threerings.util.Cloneable;
 import com.threerings.util.Hashable;
@@ -245,7 +246,7 @@ public class FurniData
     public function writeObject (out :ObjectOutputStream) :void
     {
         out.writeShort(id);
-        out.writeByte(itemType);
+        out.writeObject(ByteEnum.fromByte(MsoyItemType, itemType));
         out.writeInt(itemId);
         out.writeObject(media);
         out.writeObject(loc);
@@ -263,7 +264,7 @@ public class FurniData
     public function readObject (ins :ObjectInputStream) :void
     {
         id = ins.readShort();
-        itemType = ins.readByte();
+        itemType = MsoyItemType(ins.readObject()).toByte();
         itemId = ins.readInt();
         media = MediaDesc(ins.readObject());
         loc = MsoyLocation(ins.readObject());

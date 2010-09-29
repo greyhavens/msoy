@@ -7,6 +7,7 @@ import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
 
 import com.threerings.msoy.data.all.StaticMediaDesc;
+import com.threerings.util.ByteEnum;
 
 /**
  * Provides an item's default media.
@@ -26,14 +27,14 @@ public class DefaultItemMediaDesc extends StaticMediaDesc
     override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);
-        _itemTypeCode = ins.readByte();
+        _itemTypeCode = MsoyItemType(ins.readObject()).toByte();
     }
 
     // documentation inherited from interface Streamable
     override public function writeObject (out :ObjectOutputStream) :void
     {
         super.writeObject(out);
-        out.writeByte(_itemTypeCode);
+        out.writeObject(ByteEnum.fromByte(MsoyItemType, _itemTypeCode));
     }
 
     protected var _itemTypeCode :int;
