@@ -119,7 +119,7 @@ public class EditGamePanel extends FlowPanel
                 protected Widget createWidget () {
                     return new GameItemEditorPanel(data.info.gameId, type);
                 }
-            }, _dmsgs.get("pItemType" + type));
+            }, _dmsgs.xlateItemsType(type));
         }
     }
 

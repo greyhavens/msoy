@@ -130,7 +130,7 @@ public class GameItemEditorPanel extends SmartTable
         // add a button for creating these subitems; TODO: fancy this up and add links to the wiki
         HorizontalPanel bits = new HorizontalPanel();
         bits.setVerticalAlignment(HasAlignment.ALIGN_MIDDLE);
-        bits.add(MsoyUI.createHTML(_dmsgs.get("editorWikiLink" + itemType.toByte()), "Tip"));
+        bits.add(MsoyUI.createHTML(_dmsgs.xlateEditorWikiLink(itemType), "Tip"));
         bits.add(WidgetUtil.makeShim(10, 10));
         Args cargs = Args.compose("c", itemType, GameInfo.toDevId(gameId));
         bits.add(MsoyUI.createButton(MsoyUI.SHORT_THIN, _msgs.gieCreate(),

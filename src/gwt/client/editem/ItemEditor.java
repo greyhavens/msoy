@@ -240,10 +240,9 @@ public abstract class ItemEditor extends FlowPanel
                 ? _emsgs.createTitle(_dmsgs.xlateItemType(_type))
                 : _emsgs.editTitle(_dmsgs.xlateItemType(_type));
             _header.add(MsoyUI.createLabel(title, "Title"), 15, 0);
-            _header.add(MsoyUI.createHTML(_dmsgs.xlate("editorWikiLink" + _type), "WikiLink"),
-                250, 5);
+            _header.add(MsoyUI.createHTML(_dmsgs.xlateEditorWikiLink(_type), "WikiLink"), 250, 5);
             _header.add(MsoyUI.createImage("/images/item/editor_divider.png", null), 20, 30);
-            _header.add(MsoyUI.createHTML(_dmsgs.xlate("editorBlurb" + _type), "Blurb"), 15, 40);
+            _header.add(MsoyUI.createHTML(_dmsgs.xlateEditorBlurb(_type), "Blurb"), 15, 40);
         }
 
         recheckFurniMedia();

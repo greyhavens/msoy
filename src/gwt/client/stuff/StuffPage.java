@@ -82,7 +82,7 @@ public class StuffPage extends Page
 
             // otherwise we're display a particular item's details
             ItemIdent ident = new ItemIdent(type, itemId);
-            final String title = _msgs.stuffTitle(_dmsgs.xlate("pItemType" + type));
+            final String title = _msgs.stuffTitle(_dmsgs.xlateItemsType(type));
             if (_detail != null && _detail.item.getIdent().equals(ident)) {
                 // update the detail with the one in our models
                 Item item = _models.findItem(type, itemId);
@@ -253,7 +253,7 @@ public class StuffPage extends Page
 
     /** A mapping from game sub-item type to edit game page tab index. */
     protected static final Map<MsoyItemType, Integer> GAME_TYPES = Maps.newHashMap();
-    
+
     static {
         int idx = PRE_ITEM_TABS;
         for (MsoyItemType type : GameItem.TYPES) {
