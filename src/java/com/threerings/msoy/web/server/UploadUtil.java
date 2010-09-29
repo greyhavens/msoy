@@ -294,7 +294,7 @@ public class UploadUtil
      * Publishes an InputStream to the default media store location, using the hash and the
      * mimeType of the stream.
      */
-    public static void publishStreamAsHash (InputStream input, String hash, byte mimeType)
+    protected static void publishStreamAsHash (InputStream input, String hash, byte mimeType)
         throws IOException
     {
         // name it using the hash value and the suffix
