@@ -41,5 +41,9 @@ public abstract class DynamicLookup extends MessagesLookup
     {
         return xlate("editorWikiLink" + type.toByte());
     }
-    
+
+    public String xlateEditorBlurb (MsoyItemType type)
+    {
+        return xlate("editorBlurb" + type.toByte());
+    }
 }
