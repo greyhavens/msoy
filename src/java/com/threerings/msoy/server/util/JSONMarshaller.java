@@ -15,6 +15,9 @@ import org.json.JSONObject;
 
 import com.google.common.collect.Maps;
 
+import com.samskivert.util.ByteEnum;
+import com.samskivert.util.ByteEnumUtil;
+
 /**
  * Handles the marshalling and unmarshalling of persistent instances to JSON objects.
  *
@@ -157,6 +160,17 @@ public class JSONMarshaller<T>
                     // try to cram a JSON integer into a short
                     return ((Integer) state).shortValue();
                 }
+                if (dClass.isEnum()) {
+                    if (!ByteEnum.class.isAssignableFrom(dClass)) {
+                        throw new JSONMarshallingException(
+                            "Can't deserialize enum that's not ByteEnum [class=" + _pclass + "]");
+                    }
+
+                    @SuppressWarnings("unchecked")
+                    Class<EnumReader> eClass = (Class<EnumReader>)dClass;
+
+                    return ByteEnumUtil.fromByte(eClass, ((Integer) state).byteValue());
+                }
                 return state;
             }
             if (state instanceof Long) {
@@ -235,6 +249,13 @@ public class JSONMarshaller<T>
             }
             return jArr;
         }
+        if (dClass.isEnum()) {
+            if (!ByteEnum.class.isAssignableFrom(dClass)) {
+                throw new JSONException(
+                    "Can't serialize enum that's not ByteEnum [class=" + _pclass + "]");
+            }
+            return ((ByteEnum) value).toByte();
+        }
         return getMarshaller(dClass).serializeObject(value);
     }
 
@@ -258,6 +279,12 @@ public class JSONMarshaller<T>
                 vClass.equals(Float.TYPE) || vClass.equals(Float.class) ||
                 vClass.equals(Double.TYPE) || vClass.equals(Double.class) ||
                 vClass.equals(String.class));
+    }
+
+    /** Used to coerce the type system into quietude when reading enums from the wire. */
+    protected static enum EnumReader implements ByteEnum {
+        NOT_USED;
+        public byte toByte () { return 0; }
     }
 
     /** The class for whom we're marshalling. */
