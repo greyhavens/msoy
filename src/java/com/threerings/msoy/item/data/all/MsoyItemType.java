@@ -1,11 +1,13 @@
 package com.threerings.msoy.item.data.all;
 
-import com.threerings.orth.scene.data.EntityIdent.EntityType;
-
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-public enum MsoyItemType implements EntityType<MsoyItemType> {
+import com.threerings.orth.scene.data.EntityIdent.EntityType;
+
+public enum MsoyItemType implements EntityType<MsoyItemType>
+{
     // DON'T EVER CHANGE THE MAGIC NUMBERS ASSIGNED TO EACH CLASS
     OCCUPANT(null, -1),
     NOT_A_TYPE(null, (byte) 0),
@@ -26,6 +28,18 @@ public enum MsoyItemType implements EntityType<MsoyItemType> {
     PROP (Prop.class, 15),
     LAUNCHER (Prop.class, 16);
     // DON'T EVER CHANGE THE MAGIC NUMBERS ASSIGNED TO EACH CLASS
+
+    public static MsoyItemType[] SHOP_ITEMS = {
+        AVATAR, FURNITURE, DECOR, TOY, PET, LAUNCHER, PHOTO, AUDIO, VIDEO
+    };
+
+    public static MsoyItemType[] STUFF_ITEMS = {
+        AVATAR, FURNITURE, DECOR, TOY, PET, LAUNCHER, LEVEL_PACK, ITEM_PACK, PHOTO, AUDIO, VIDEO
+    };
+
+    public static MsoyItemType[] FAVORITE_ITEMS = {
+        NOT_A_TYPE, AVATAR, FURNITURE, DECOR, TOY, PET, LAUNCHER, PHOTO, AUDIO, VIDEO
+    };
 
     MsoyItemType(Class<? extends Item> clazz, int num)
     {
@@ -56,12 +70,7 @@ public enum MsoyItemType implements EntityType<MsoyItemType> {
      */
     public boolean isShopType ()
     {
-        switch(this) {
-            case AVATAR: case FURNITURE: case DECOR: case TOY: case PET: case LAUNCHER:
-            case PHOTO: case AUDIO: case VIDEO:
-                return true;
-        }
-        return false;
+        return Arrays.asList(SHOP_ITEMS).contains(this);
     }
 
     /**
@@ -69,12 +78,7 @@ public enum MsoyItemType implements EntityType<MsoyItemType> {
      */
     public boolean isStuffType ()
     {
-        switch(this) {
-            case AVATAR: case FURNITURE: case DECOR: case TOY: case PET: case LAUNCHER:
-            case LEVEL_PACK: case ITEM_PACK: case PHOTO: case AUDIO: case VIDEO:
-                return true;
-        }
-        return false;
+        return Arrays.asList(STUFF_ITEMS).contains(this);
     }
 
     /**
@@ -82,12 +86,7 @@ public enum MsoyItemType implements EntityType<MsoyItemType> {
      */
     public boolean isFavoriteType ()
     {
-        switch(this) {
-            case NOT_A_TYPE: case AVATAR: case FURNITURE: case DECOR: case TOY: case PET:
-            case LAUNCHER: case PHOTO: case AUDIO: case VIDEO:
-                return true;
-        }
-        return false;
+        return Arrays.asList(FAVORITE_ITEMS).contains(this);
     }
 
     /**

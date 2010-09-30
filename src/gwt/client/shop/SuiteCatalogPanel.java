@@ -62,7 +62,7 @@ public class SuiteCatalogPanel extends SmartTable
         // set up our sidebar and main page structure
         CatalogQuery query = new CatalogQuery();
         query.itemType = itemType;
-        setWidget(0, 0, new SideBar(new CatalogQueryLinker(query), SideBar.IS_SHOP_TYPE, null));
+        setWidget(0, 0, new SideBar(new CatalogQueryLinker(query), MsoyItemType.SHOP_ITEMS, null));
         getFlexCellFormatter().setVerticalAlignment(0, 0, HasAlignment.ALIGN_TOP);
         setWidget(0, 1, WidgetUtil.makeShim(10, 10));
         setWidget(0, 2, _listings, 1, "ListingsCell");

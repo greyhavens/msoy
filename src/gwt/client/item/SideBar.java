@@ -28,29 +28,7 @@ public class SideBar extends FlowPanel
         public Widget createLink (String name, MsoyItemType itemType);
     }
 
-	public interface ItemPredicate {
-		public boolean includeItem (MsoyItemType type);
-	}
-
-	public static final ItemPredicate IS_SHOP_TYPE = new ItemPredicate() {
-			@Override public boolean includeItem (MsoyItemType type) {
-				return type.isShopType();
-			}
-		};
-
-	public static final ItemPredicate IS_STUFF_TYPE = new ItemPredicate() {
-			@Override public boolean includeItem (MsoyItemType type) {
-				return type.isStuffType();
-			}
-		};
-
-	public static final ItemPredicate IS_FAVORITE_TYPE = new ItemPredicate() {
-			@Override public boolean includeItem (MsoyItemType type) {
-				return type.isFavoriteType();
-			}
-		};
-
-    public SideBar (Linker linker, ItemPredicate predicate, Widget extras)
+    public SideBar (Linker linker, MsoyItemType[] items, Widget extras)
     {
         setStyleName("sideBar");
 
@@ -58,10 +36,7 @@ public class SideBar extends FlowPanel
         navi.setStyleName("NaviPanel");
 
 		boolean first = true;
-		for (MsoyItemType type : MsoyItemType.values()) {
-			if (!predicate.includeItem(type)) {
-				continue;
-			}
+		for (MsoyItemType type : items) {
             ImageResource proto = IMAGES.get(type);
             if (!first) {
                 // use a blank separator between game and level pack, etc.

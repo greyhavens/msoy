@@ -5,7 +5,6 @@ package client.stuff;
 
 import java.util.List;
 
-import client.item.SideBar.ItemPredicate;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 
@@ -217,7 +216,7 @@ public class StuffPanel extends FlowPanel
                 public Widget createLink (String name, MsoyItemType itemType) {
                     return Link.create(name, Pages.STUFF, itemType, _memberId);
                 }
-            }, SideBar.IS_STUFF_TYPE, null));
+            }, MsoyItemType.STUFF_ITEMS, null));
 
             row.add(_contents);
             add(row);

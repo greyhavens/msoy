@@ -46,7 +46,7 @@ public class FavoritesPanel extends HorizontalPanel
             public Widget createLink (String name, MsoyItemType type) {
                 return Link.create(name, Pages.SHOP, ShopPage.FAVORITES, memberId, type);
             }
-        }, SideBar.IS_FAVORITE_TYPE, null));
+        }, MsoyItemType.FAVORITE_ITEMS, null));
         add(WidgetUtil.makeShim(10, 10));
 
         ListingGrid faves = new ListingGrid(HEADER_HEIGHT) {

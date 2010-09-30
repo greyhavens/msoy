@@ -12,9 +12,10 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.ListBox;
+
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
-import com.threerings.msoy.item.data.all.Item;
+
 import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.item.gwt.CatalogQuery;
 import com.threerings.msoy.item.gwt.CatalogService;
@@ -85,7 +86,7 @@ public class ShopPanel extends FlowPanel
         // display a sidebar with a linker that knows which theme we're in
         CatalogQuery linkerQuery = new CatalogQuery();
         linkerQuery.themeGroupId = themeId;
-        SideBar sidebar = new SideBar(new CatalogQueryLinker(linkerQuery), SideBar.IS_SHOP_TYPE, null);
+        SideBar sidebar = new SideBar(new CatalogQueryLinker(linkerQuery), MsoyItemType.SHOP_ITEMS, null);
         sidebar.add(MsoyUI.createImage("/images/shop/shop_bag.png", "Bag"));
         row.add(sidebar);
 

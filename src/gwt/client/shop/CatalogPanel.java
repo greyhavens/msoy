@@ -174,7 +174,7 @@ public class CatalogPanel extends SmartTable
         if (cloud == null) {
             _clouds.put(_query.itemType, cloud = new TagCloud(_query.itemType, TAG_COUNT, this));
         }
-        setWidget(0, 0, new SideBar(new CatalogQueryLinker(_query), SideBar.IS_SHOP_TYPE, cloud));
+        setWidget(0, 0, new SideBar(new CatalogQueryLinker(_query), MsoyItemType.SHOP_ITEMS, cloud));
 
         // set up our page title
         CShell.frame.setTitle(_dmsgs.xlateItemsType(_query.itemType));
