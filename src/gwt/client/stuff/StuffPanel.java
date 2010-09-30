@@ -64,7 +64,7 @@ public class StuffPanel extends FlowPanel
         _search.add(MsoyUI.createLabel(_msgs.stuffSearch(), "SearchTitle"));
         final ListBox searchTypes = new ListBox();
         for (MsoyItemType searchType : MsoyItemType.STUFF_ITEMS) {
-            searchTypes.addItem(_dmsgs.xlateItemsType(searchType), searchType + "");
+            searchTypes.addItem(_dmsgs.xlateItemsType(searchType), searchType.toByte() + "");
             if (searchType == type) {
                 searchTypes.setSelectedIndex(searchTypes.getItemCount() - 1);
             }
