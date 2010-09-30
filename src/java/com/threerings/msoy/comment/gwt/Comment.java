@@ -54,8 +54,7 @@ public class Comment
 
 		public boolean isValid ()
 		{
-			return (this == ROOM) || (this == PROFILE_WALL) || (this == GAME)
-				|| toItemType() != null;
+			return (this == ROOM) || (this == PROFILE_WALL) || (this == GAME) || isItemType();
 		}
 
 		public boolean isItemType ()
