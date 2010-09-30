@@ -39,22 +39,26 @@ public class Comment
 
 		public CommentType ()
 		{
-
 		}
 
-		protected CommentType (MsoyItemType itemType)
-		{
-			_type = itemType.toByte();
-		}
+        public boolean forRoom()
+        {
+            return ROOM.equals(this);
+        }
 
-		protected CommentType (int type)
-		{
-			_type = (byte) type;
-		}
+        public boolean forProfileWall ()
+        {
+            return PROFILE_WALL.equals(this);
+        }
 
-		public boolean isValid ()
+        public boolean forGame ()
+        {
+            return GAME.equals(this);
+        }
+
+        public boolean isValid ()
 		{
-			return (this == ROOM) || (this == PROFILE_WALL) || (this == GAME) || isItemType();
+            return (_type >= 64 && _type <= 66) || isItemType();
 		}
 
 		public boolean isItemType ()
@@ -71,6 +75,35 @@ public class Comment
 		{
 			return ByteEnumUtil.fromByte(MsoyItemType.class, _type);
 		}
+
+        @Override
+        public boolean equals (Object o)
+        {
+            return (this == o) ||
+                (o != null && getClass() == o.getClass() && _type == ((CommentType) o)._type);
+        }
+
+        @Override
+        public int hashCode ()
+        {
+            return (int) _type;
+        }
+
+        @Override
+        protected void toString (StringBuilder buf)
+        {
+            buf.append("type=").append(_type);
+        }
+
+        protected CommentType (MsoyItemType itemType)
+        {
+            _type = itemType.toByte();
+        }
+
+        protected CommentType (int type)
+        {
+            _type = (byte) type;
+        }
 
 		protected byte _type;
 
@@ -99,7 +132,7 @@ public class Comment
     public static boolean canDelete (CommentType type, int entityId, int commentorId, int memberId)
     {
         return (memberId == commentorId) ||
-            (type == CommentType.PROFILE_WALL && entityId == memberId);
+            (type.forProfileWall() && entityId == memberId);
     }
 
     /** The member that made this comment. */

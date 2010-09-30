@@ -117,7 +117,7 @@ public class CommentServlet extends MsoyServiceServlet
         String entityName = null;
 
         // if this is a comment on a user room, post a self feed message
-        if (etype == CommentType.ROOM) {
+        if (etype.forRoom()) {
             SceneRecord scene = _sceneRepo.loadScene(eid);
             if (scene.ownerType == MsoySceneModel.OWNER_TYPE_MEMBER) {
                 _feedLogic.publishSelfMessage(
@@ -127,7 +127,7 @@ public class CommentServlet extends MsoyServiceServlet
                 entityName = scene.name;
             }
 
-        } else if (etype == CommentType.PROFILE_WALL) {
+        } else if (etype.forProfileWall()) {
             ownerId = eid;
 
         // comment on an item
@@ -157,7 +157,7 @@ public class CommentServlet extends MsoyServiceServlet
             } catch (DatabaseException de) {
                 log.warning("Unable to load comment target item", "type", etype, "id", eid, de);
             }
-        } else if (etype == CommentType.GAME) {
+        } else if (etype.forGame()) {
             GameInfoRecord game = _msoyGameRepo.loadGame(eid);
             if (game != null) {
                 ownerId = game.creatorId;
@@ -221,11 +221,11 @@ public class CommentServlet extends MsoyServiceServlet
         String link;
 		if (etype.isItemType()) {
             link = Pages.SHOP.makeURL("l", etype, eid);
-        } else if (etype == CommentType.ROOM) {
+        } else if (etype.forRoom()) {
             link = Pages.ROOMS.makeURL("room", eid);
-        } else if (etype == CommentType.PROFILE_WALL) {
+        } else if (etype.forProfileWall()) {
             link = Pages.PEOPLE.makeURL(eid);
-        } else if (etype == CommentType.GAME) {
+        } else if (etype.forGame()) {
             link = Pages.GAMES.makeURL("d", eid, "c");
         } else {
             link = null;

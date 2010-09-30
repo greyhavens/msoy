@@ -30,9 +30,9 @@ public class EntityCommentedNotification extends Notification
         // need to determine these on the Java side because we don't have the Comment class
         // implemented in actionscript, and there is currently no other reason than these
         // constants to do so.
-        _isRoom = etype == CommentType.ROOM;
-        _isProfile = etype == CommentType.PROFILE_WALL;
-        _isGame = etype == CommentType.GAME;
+        _isRoom = etype.forRoom();
+        _isProfile = etype.forProfileWall();
+        _isGame = etype.forGame();
     }
 
     // from Notification

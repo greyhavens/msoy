@@ -143,7 +143,7 @@ public class CommentsPanel extends PagedGrid<Comment>
     protected boolean commentsCanBeBatchDeleted ()
     {
         return CShell.isSupport() ||
-            (_etype == CommentType.PROFILE_WALL && _entityId == CShell.getMemberId());
+            (_etype.forProfileWall() && _entityId == CShell.getMemberId());
     }
 
     /**
