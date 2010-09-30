@@ -63,10 +63,7 @@ public class StuffPanel extends FlowPanel
         _search.setVerticalAlignment(HasAlignment.ALIGN_MIDDLE);
         _search.add(MsoyUI.createLabel(_msgs.stuffSearch(), "SearchTitle"));
         final ListBox searchTypes = new ListBox();
-        for (MsoyItemType searchType : MsoyItemType.values()) {
-            if (!searchType.isStuffType()) {
-                continue;
-            }
+        for (MsoyItemType searchType : MsoyItemType.STUFF_ITEMS) {
             searchTypes.addItem(_dmsgs.xlateItemsType(searchType), searchType + "");
             if (searchType == type) {
                 searchTypes.setSelectedIndex(searchTypes.getItemCount() - 1);
