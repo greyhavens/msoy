@@ -7,7 +7,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.samskivert.util.ByteEnumUtil;
 
-import com.threerings.io.SimpleStreamableObject;
+import com.threerings.io.Streamable;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
@@ -20,8 +20,8 @@ import com.threerings.msoy.web.gwt.MemberCard;
 public class Comment
     implements IsSerializable
 {
-	public static class CommentType extends SimpleStreamableObject
-        implements IsSerializable
+	public static class CommentType
+        implements IsSerializable, Streamable
 	{
 		public static CommentType forItemType (MsoyItemType type)
 		{
@@ -90,9 +90,9 @@ public class Comment
         }
 
         @Override
-        protected void toString (StringBuilder buf)
+        public String toString ()
         {
-            buf.append("type=").append(_type);
+            return "[type=" + _type + "]";
         }
 
         protected CommentType (MsoyItemType itemType)
