@@ -220,7 +220,7 @@ public class CommentServlet extends MsoyServiceServlet
 
         String link;
 		if (etype.isItemType()) {
-            link = Pages.SHOP.makeURL("l", etype, eid);
+            link = Pages.SHOP.makeURL("l", etype.toByte(), eid);
         } else if (etype.forRoom()) {
             link = Pages.ROOMS.makeURL("room", eid);
         } else if (etype.forProfileWall()) {
