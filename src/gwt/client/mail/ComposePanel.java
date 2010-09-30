@@ -104,7 +104,7 @@ public class ComposePanel extends FlowPanel
                 // if we just mailed an item as a gift, we can't go back to the item detail page
                 // because we no longer have access to it, so go to the STUFF page instead
                 if (_payload instanceof PresentPayload) {
-                    Link.go(Pages.STUFF, ""+((PresentPayload)_payload).ident.type);
+                    Link.go(Pages.STUFF, ((PresentPayload)_payload).ident.type);
                 } else {
                     History.back();
                 }

@@ -211,7 +211,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
             FlowPanel basedOn = new FlowPanel();
             basedOn.add(new InlineLabel(_msgs.listingBasedOn() + " "));
             basedOn.add(_listing.basis.hidden ? new InlineLabel(basis.name) :
-                Link.shopListingView(basis.name, type.toByte(), basis.catalogId));
+                Link.shopListingView(basis.name, type, basis.catalogId));
             basedOn.add(new InlineLabel(" " + _cmsgs.creatorBy() + " "));
             basedOn.add(basis.brand != null ?
                 Link.groupView(basis.brand) : Link.memberView(basis.creator));
@@ -315,7 +315,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
                 _usedBy.add(new InlineLabel(", "));
             }
             first = false;
-            _usedBy.add(Link.shopListingView(derived.name, type.toByte(), derived.catalogId));
+            _usedBy.add(Link.shopListingView(derived.name, type, derived.catalogId));
         }
         if (_listing.derivatives.length < _listing.derivationCount) {
             final AsyncCallback<DerivedItem[]> showAll = new InfoCallback<DerivedItem[]>() {

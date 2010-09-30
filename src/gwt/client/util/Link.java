@@ -23,6 +23,7 @@ import com.google.gwt.user.client.ui.impl.HyperlinkImpl;
 
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
@@ -81,9 +82,9 @@ public class Link
     /**
      * Returns link that displays a shop listing.
      */
-    public static Widget shopListingView (String itemName, byte itemType, int catalogId)
+    public static Widget shopListingView (String itemName, MsoyItemType itemType, int catalogId)
     {
-        return create(itemName, Pages.SHOP, "l", itemType, catalogId);
+        return create(itemName, Pages.SHOP, "l", itemType.toByte(), catalogId);
     }
 
     /**

@@ -88,7 +88,7 @@ public class ItemBuyPanel extends BuyPanel<Item>
         } else {
             boughtPanel.add(new Label(_msgs.boughtViewStuff(type)));
             String ptype = _dmsgs.xlateItemsType(itype);
-            boughtPanel.add(Link.create(_msgs.boughtGoNow(ptype), Pages.STUFF, ""+itype));
+            boughtPanel.add(Link.create(_msgs.boughtGoNow(ptype), Pages.STUFF, itype));
         }
     }
 
