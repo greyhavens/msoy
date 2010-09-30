@@ -300,7 +300,8 @@ public class CatalogServlet extends MsoyServiceServlet
         if (pricing != CatalogListing.PRICING_HIDDEN) {
             _feedLogic.publishMemberMessage(
                 mrec.memberId, FeedMessageType.FRIEND_LISTED_ITEM, master.name,
-                repo.getItemType(), catalogId, MediaDesc.mdToString(master.getThumbMediaDesc()));
+                repo.getItemType().toByte(), catalogId,
+                MediaDesc.mdToString(master.getThumbMediaDesc()));
         }
 
         // some items are related to a stat that may need updating.  Use originalItem.creatorId
