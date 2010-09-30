@@ -144,7 +144,7 @@ public class CommentServlet extends MsoyServiceServlet
                         // when commenting on a listed item, post a self feed message
                         _feedLogic.publishSelfMessage(
                             ownerId, mrec.memberId, FeedMessageType.SELF_ITEM_COMMENT,
-                            item.getType(), listing.catalogId, item.name,
+                            item.getType().toByte(), listing.catalogId, item.name,
                             MediaDesc.mdToString(item.getThumbMediaDesc()));
                     }
                 }
