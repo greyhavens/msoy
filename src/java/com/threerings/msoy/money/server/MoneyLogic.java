@@ -7,7 +7,6 @@ import java.text.NumberFormat;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -41,7 +40,6 @@ import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MemberLogic;
 import com.threerings.msoy.server.MsoyEventLogger;
-import com.threerings.msoy.server.MsoyEvents.ItemPurchase;
 import com.threerings.msoy.server.persist.CharityRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
@@ -51,7 +49,6 @@ import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.group.server.persist.BrandShareRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.item.data.all.CatalogIdent;
-import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.server.persist.CatalogRecord;
 
@@ -288,11 +285,11 @@ public class MoneyLogic
         Function<Boolean, String> buyMsgFn = new Function<Boolean,String>() {
             public String apply (Boolean magicFree) {
                 return MessageBundle.tcompose(magicFree ? "m.item_magicfree" : "m.item_bought",
-                    itemName, item.type, item.catalogId);
+                    itemName, item.type.toByte(), item.catalogId);
             }
         };
         String changeMsg = MessageBundle.tcompose("m.change_received",
-            itemName, item.type, item.catalogId);
+            itemName, item.type.toByte(), item.catalogId);
 
         // do the buy!
         IntermediateBuyResult<T> ibr = buy(buyerRec, item, buyCurrency, authedAmount,
@@ -341,7 +338,7 @@ public class MoneyLogic
                     TransactionType.BASIS_CREATOR_PAYOUT;
                 // TODO: Introduce m.branded_item_sold and m.derived_branded_item_sold?
                 String message = MessageBundle.tcompose(ii == 0 ? "m.item_sold" :
-                    "m.derived_item_sold", itemName, item.type, item.catalogId);
+                    "m.derived_item_sold", itemName, item.type.toByte(), item.catalogId);
                 for (Map.Entry<Integer, CurrencyAmount> payment : payouts.entrySet()) {
                     int payeeId = payment.getKey();
                     CurrencyAmount amount = payment.getValue();
