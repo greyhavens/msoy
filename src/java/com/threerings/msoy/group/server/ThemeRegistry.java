@@ -309,8 +309,8 @@ public class ThemeRegistry
             }
         }
         int sz = hostedThemesCopy.size();
-        log.info("Updated theme popularities", "count", sz, "averageDecay", totalDecay/sz,
-            "averagePop", totalPop/sz);
+        log.debug("Updated theme popularities", "count", sz, "averageDecay", totalDecay/sz,
+                  "averagePop", totalPop/sz);
     }
 
     @BlockingThread
