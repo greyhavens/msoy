@@ -15,6 +15,7 @@
   <stylesheet src='scrolltable.css'/>
 
   <source path="com/threerings/msoy/admin/gwt"/>
+  <source path="com/threerings/msoy/admin/config/gwt"/>
 
   <!-- for brands. urgh, the tendrils -->
   <source path="com/threerings/msoy/group/data/all"/>

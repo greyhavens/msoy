@@ -43,6 +43,8 @@ import com.samskivert.util.Lifecycle;
 import com.threerings.pulse.jetty.server.JettyPulseHttpServer;
 import com.threerings.pulse.web.server.PulseFlotServlet;
 
+import com.threerings.msoy.admin.config.gwt.ConfigService;
+import com.threerings.msoy.admin.config.server.ConfigServlet;
 import com.threerings.msoy.server.ServerConfig;
 
 import com.threerings.msoy.admin.gwt.AdminService;
@@ -250,7 +252,7 @@ public class MsoyHttpServer extends JettyPulseHttpServer
     }
 
     @Inject protected Injector _injector;
-    
+
     protected static class MsoyChannelConnector extends SelectChannelConnector
     {
         public MsoyChannelConnector () {
@@ -286,6 +288,7 @@ public class MsoyHttpServer extends JettyPulseHttpServer
     protected static final Map<String, Class<? extends HttpServlet>> SERVLETS =
         new ImmutableMap.Builder<String, Class<? extends HttpServlet>>()
         .put(AdminService.ENTRY_POINT, AdminServlet.class)
+        .put(ConfigService.ENTRY_POINT, ConfigServlet.class)
         .put(CatalogService.ENTRY_POINT, CatalogServlet.class)
         .put(CommentService.ENTRY_POINT, CommentServlet.class)
         .put(ForumService.ENTRY_POINT, ForumServlet.class)

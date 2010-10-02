@@ -10,6 +10,7 @@ import com.threerings.msoy.item.gwt.ItemDetail;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
+import client.adminz.config.ConfigEditorPanel;
 import client.shell.CShell;
 import client.shell.Page;
 import client.survey.EditSurveyPanel;
@@ -93,6 +94,9 @@ public class AdminPage extends Page
 
         } else if (action.equals("broadcasts")) {
             setContent("Broadcasts", new BroadcastHistoryPanel());
+
+        } else if (action.equals("config")) {
+            setContent("Config", new ConfigEditorPanel());
 
         } else {
             setContent(_msgs.title(), new DashboardPanel());

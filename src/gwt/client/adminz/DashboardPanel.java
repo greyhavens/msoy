@@ -63,6 +63,7 @@ public class DashboardPanel extends SmartTable
                 }
             }));
             admin.add(ddash);
+            admin.add(makeLink("Configuration", "config"));
             admin.add(makeLink(_msgs.viewExchange(), "exchange"));
             admin.add(makeLink(_msgs.cashOutButton(), "cashout"));
             admin.add(makeLink(_msgs.statsButton(), "stats"));
