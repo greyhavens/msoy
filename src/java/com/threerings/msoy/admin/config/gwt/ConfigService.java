@@ -24,15 +24,16 @@ public interface ConfigService extends RemoteService
     public static final String ENTRY_POINT = "/configsvc";
 
     /** The relative path for this service. */
-    public static final String REL_PATH = "../../.." + ConfigService.ENTRY_POINT;
+    public static final String REL_PATH = "../../../.." + ConfigService.ENTRY_POINT;
 
     public static class ConfigurationResult
         implements IsSerializable
     {
+        public ConfigField dummy;
         public Map<String, List<ConfigField>> records;
     }
 
     public ConfigurationResult getConfig () throws ServiceException;
 
-    public ConfigurationResult updateConfiguration (Collection<ConfigField> updates);
+    public ConfigurationResult updateConfiguration (List<ConfigField> updates);
 }
