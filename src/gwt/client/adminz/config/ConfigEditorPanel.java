@@ -57,7 +57,7 @@ public class ConfigEditorPanel extends StyledTabPanel
             String tabKey = tab.getKey();
             ConfigEditorTab widget = new ConfigEditorTab(this, tabKey, tab.getValue());
             _tabs.put(tabKey, widget);
-            add(widget);
+            add(widget, tabKey);
         }
     }
 
