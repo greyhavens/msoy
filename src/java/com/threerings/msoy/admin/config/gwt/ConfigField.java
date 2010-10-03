@@ -14,7 +14,9 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 public class ConfigField
     implements IsSerializable, Comparable<ConfigField>
 {
-    public enum FieldType {
+    public enum FieldType
+        implements IsSerializable
+    {
         INTEGER,
         SHORT,
         BYTE,
@@ -27,17 +29,17 @@ public class ConfigField
 
     public String name;
     public FieldType type;
-    public Object value;
+    public String valStr;
 
     public ConfigField ()
     {
     }
 
-    public ConfigField (String name, FieldType type, Object value)
+    public ConfigField (String name, FieldType type, String valStr)
     {
         this.name = name;
         this.type = type;
-        this.value = value;
+        this.valStr = valStr;
     }
 
     public int compareTo (ConfigField o)

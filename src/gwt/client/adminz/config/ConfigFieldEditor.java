@@ -34,6 +34,7 @@ public abstract class ConfigFieldEditor extends SimplePanel
         @Override protected Widget buildWidget (ConfigField field)
         {
             _box = new TextBox();
+            _box.setText(field.valStr);
             _box.addChangeHandler(this);
             return _box;
         }
@@ -42,10 +43,11 @@ public abstract class ConfigFieldEditor extends SimplePanel
         public ConfigField getModifiedField ()
         {
             Object newValue = textToValue(_box.getText().trim(), _field.type);
-            if (newValue == null || newValue.equals(_field.value)) {
+            String newValStr = (newValue != null) ? newValue.toString() : null;
+            if (newValStr == null || newValStr.equals(_field.valStr)) {
                 return null;
             }
-            return new ConfigField(_field.name, _field.type, newValue);
+            return new ConfigField(_field.name, _field.type, newValStr);
         }
 
         public void onChange (ChangeEvent changeEvent)
@@ -90,11 +92,6 @@ public abstract class ConfigFieldEditor extends SimplePanel
             return text;
         }
         return null;
-    }
-
-    protected static String valueToText (Object value, FieldType type)
-    {
-        return value.toString();
     }
 
     protected ConfigField _field;

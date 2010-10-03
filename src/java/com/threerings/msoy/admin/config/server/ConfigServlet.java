@@ -57,8 +57,9 @@ public class ConfigServlet extends MsoyServiceServlet
                     throw new ServiceException(MsoyAdminCodes.E_INTERNAL_ERROR);
                 }
                 try {
-                    // note that this will autobox primitives
-                    configFields.add(new ConfigField(field.getName(), type, field.get(object)));
+                    Object value = field.get(object);
+                    String valStr = (value != null) ? value.toString() : null;
+                    configFields.add(new ConfigField(field.getName(), type, valStr));
 
                 } catch (IllegalAccessException e) {
                     log.warning("Failure reflecting on configuration object", "key", key,
@@ -74,7 +75,7 @@ public class ConfigServlet extends MsoyServiceServlet
         return result;
     }
 
-    @Override public ConfigurationResult updateConfiguration (Collection<ConfigField> updates)
+    @Override public ConfigurationResult updateConfiguration (List<ConfigField> updates)
     {
         return null;
     }
