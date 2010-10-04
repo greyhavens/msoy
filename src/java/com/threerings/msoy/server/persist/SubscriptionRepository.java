@@ -15,6 +15,7 @@ import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import com.samskivert.depot.DataMigration;
 import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.Exps;
 import com.samskivert.depot.Key;
@@ -45,11 +46,10 @@ public class SubscriptionRepository extends DepotRepository
             new SchemaMigration.Retype(2, SubscriptionRecord.LAST_GRANT));
     }
 
-//    // TODO: A one-shot migration for production, remove after next release, Zell 9/9/2009
-//    public void registerCorpseCraftMigration (DataMigration migration)
-//    {
-//        registerMigration(migration);
-//    }
+    public void registerMigrationHack (DataMigration migration)
+    {
+        registerMigration(migration);
+    }
 
     /**
      * Note a payment made to a new or existing subscription.

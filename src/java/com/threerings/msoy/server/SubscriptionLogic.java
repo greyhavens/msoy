@@ -8,12 +8,15 @@ import java.util.List;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import com.samskivert.depot.DataMigration;
+import com.samskivert.depot.DatabaseException;
 import com.samskivert.util.ByteEnumUtil;
 import com.samskivert.util.Calendars;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.cron.server.CronLogic;
 
+import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.presents.annotation.BlockingThread;
 
@@ -47,43 +50,6 @@ public class SubscriptionLogic
      */
     public void init ()
     {
-//        _subscripRepo.registerCorpseCraftMigration(new DataMigration("2009_09_09_corpsecraft") {
-//            @Override public void invoke () throws DatabaseException {
-//                log.info("Enumerating players who bought a Corpse Craft levelpack...");
-//                ItemRepository<ItemRecord> itemRepo;
-//                    try {
-//                        itemRepo = _itemLogic.getRepository(Item.LEVEL_PACK);
-//                    } catch (ServiceException e) {
-//                        log.error("Failed to get item repository in migration");
-//                        return;
-//                    }
-//
-//                    // figure out who the various owners are
-//                    Set<Integer> owners = itemRepo.loadOwnerIds(263); // Weard Academy
-//                    owners.addAll(itemRepo.loadOwnerIds(264)); // The Incident
-//                    owners.addAll(itemRepo.loadOwnerIds(238)); // Compleat
-//
-//                    int total = 0, barscribed = 0, bared = 0;
-//                    // load their records and give the non-subscribers barscriptions
-//                    for (MemberRecord mrec : _memberRepo.loadMembers(owners)) {
-//                        if ((++total % 100) == 0) {
-//                            log.info("Processing Corpse Craft owners...", "total", total,
-//                                "barscribed", barscribed, "reimbursed", bared);
-//                        }
-//                        if (mrec.isSubscriber()) {
-////                            _moneyLogic.boughtBars(memberId, numBars, payment)
-//
-//                        } else {
-//                            try {
-//                                barscribe(mrec);
-//                            } catch (Exception ex) {
-//                                log.warning("Failed to barscribe member", mrec.memberId);
-//                            }
-//                        }
-//                    }
-//            }
-//        });
-
         // check for bar and special item grants every hour
         _cronLogic.scheduleEvery(1, "SubscriptionLogic hourly", new Runnable() {
             public void run () {
@@ -94,6 +60,51 @@ public class SubscriptionLogic
 
             public String toString () {
                 return "SubscriptionLogic.hourly";
+            }
+        });
+
+        // Temporary hack for subscription booch early October 2010 // Zell
+        if (DeploymentConfig.devDeployment) {
+            return;
+        }
+        _subscripRepo.registerMigrationHack (new DataMigration("2010_10_04_subscription_booch") {
+            @Override public void invoke () throws DatabaseException {
+                String[] accounts = {
+                    "igorthebrazilian@yahoo.com", "leftwich_jevon@yahoo.com",
+                    "xxxnigger@hotmail.com", "khreelah@yahoo.com", "onlysoniclover@aol.com",
+                    "raqennu14@aol.com", "igortriska@yahoo.com", "mattprz1022@yahoo.com",
+                    "iwantthatavi@aol.com", "tomblair01@hotmail.com", "almaguer111@gmail.com",
+                    "johnrocks1219@yahoo.com", "guitarfreak74@yahoo.com",
+                    "snookybloomalan@gmail.com", "lordofthoru@yahoo.com", "loganrezendes@yahoo.com",
+                    "savannahwaldo@yahoo.com", "nailmagik@yahoo.com", "halodixie@live.co.uk",
+                    "shaneboyw@comcast.net", "sarab621@gmail.com", "sandyhuezo22@yahoo.com",
+                    "hooksdh@yahoo.com", "southrowkid@hotmail.com", "sirenia_uchiha@hotmail.com",
+                    "johnytremian1234@gmail.com", "johnytremian12345@gmail.com",
+                    "munoz.john10@gmail.com", "kayla_baker0@yahoo.com",
+                    "liamthegoldelite@hotmail.com", "asshole80@live.com",
+                    "freekshow.jhon@luckymail.com", "extraless@live.com.au",
+                    "lalfredolandaverde@yahoo.com", "dostlund@sbcglobal.net",
+                    "natifishtorn@sbcglobal.net", "sk8rguyx@sbcglobal.net", "mara.taco@yahoo.com",
+                    "lainef_14@hotmail.com", "jacksonrobert@hotmail.co.uk",
+                    "rabbittoykeith@aim.com", "teioh@att.net", "silver.hedgehog29@yahoo.com",
+                    "roma.levesque.rhs@gmail.com", "moondolly@optusnet.com.au",
+                    "raikou34@hotmail.com", "jordan_stratton@yahoo.com", "gintamaster@yahoo.com",
+                    "mythicella@aim.com", "floralists@hotmail.com", "goobert369@googlemail.com",
+                    "mcclellanamy60@yahoo.com", "librairies@hotmail.com", "blindpilot@hotmail.com",
+                    "cyprex@post.com", "tylercarstens@yahoo.com", "heatherjkx125@myway.com",
+                    "banana_phone_1@hotmail.com", "banana_phone_2@hotmail.com", "mweal01@yahoo.com",
+                    "zimandgirfan@hotmail.com", "pennyman.destany@yahoo.com",
+                    "whirledstuff@live.ca", "katrina00181@mail.com", "joseph.barnette9@gmail.com",
+                    "cocoamrx51@hotmail.com", "zell@threerings.net"
+                };
+                for (String account : accounts) {
+                    log.info("Retroactively noting monthly subscription", "account", account);
+                    try {
+                        noteSubscriptionBilled(account, 1);
+                    } catch (Exception e) {
+                        log.warning("Subscription failed!", e);
+                    }
+                }
             }
         });
     }
