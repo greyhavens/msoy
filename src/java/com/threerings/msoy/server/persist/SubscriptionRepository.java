@@ -46,11 +46,6 @@ public class SubscriptionRepository extends DepotRepository
             new SchemaMigration.Retype(2, SubscriptionRecord.LAST_GRANT));
     }
 
-    public void registerMigrationHack (DataMigration migration)
-    {
-        registerMigration(migration);
-    }
-
     /**
      * Note a payment made to a new or existing subscription.
      */
