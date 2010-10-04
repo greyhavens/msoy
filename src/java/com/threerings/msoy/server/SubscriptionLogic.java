@@ -95,8 +95,9 @@ public class SubscriptionLogic
                     "banana_phone_1@hotmail.com", "banana_phone_2@hotmail.com", "mweal01@yahoo.com",
                     "zimandgirfan@hotmail.com", "pennyman.destany@yahoo.com",
                     "whirledstuff@live.ca", "katrina00181@mail.com", "joseph.barnette9@gmail.com",
-                    "cocoamrx51@hotmail.com", "zell@threerings.net", "alptokat@hotmail.com"
-                    
+                    "cocoamrx51@hotmail.com", "zell@threerings.net", "alptokat@hotmail.com",
+                    "saul1986@live.com.mx"
+
                 };
                 for (String account : accounts) {
                     log.info("Retroactively noting monthly subscription", "account", account);

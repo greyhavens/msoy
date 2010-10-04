@@ -80,7 +80,7 @@ public class Comment
         public boolean equals (Object o)
         {
             return (this == o) ||
-                (o != null && getClass() == o.getClass() && _type == ((CommentType) o)._type);
+                (o != null && getClass().equals(o.getClass()) && _type == ((CommentType) o)._type);
         }
 
         @Override

@@ -381,8 +381,9 @@ public class ProfileServlet extends MsoyServiceServlet
     {
         ProfileRecord prec = _profileRepo.loadProfile(tgtrec.memberId);
         int forMemberId = (reqrec == null) ? 0 : reqrec.memberId;
+        boolean amSupport = (reqrec != null) && reqrec.isSupport();
         Profile profile = (prec == null) ? new Profile() :
-            prec.toProfile(tgtrec, forMemberId == tgtrec.memberId || reqrec.isSupport());
+            prec.toProfile(tgtrec, forMemberId == tgtrec.memberId || amSupport);
 
         if (profile.award != null && profile.award.type == AwardType.BADGE) {
             EarnedBadgeRecord earnedBadgeRec =

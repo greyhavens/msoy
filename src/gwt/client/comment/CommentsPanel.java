@@ -21,11 +21,14 @@ import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.PagedGrid;
+import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.gwt.util.PagedResult;
 
 import com.threerings.msoy.comment.gwt.Comment;
@@ -66,6 +69,25 @@ public class CommentsPanel extends PagedGrid<Comment>
         _entityId = entityId;
 
         add(new Label(_cmsgs.loadingComments()));
+
+        // if we're a validated member, display a button for posting a comment
+        if (CShell.isRegistered()) {
+            _post = new Button(_cmsgs.postComment(), new ClickHandler() {
+                public void onClick (ClickEvent event) {
+                    showPostPopup();
+                }
+            });
+            _commentControls.add(_post);
+
+            if (commentsCanBeBatchDeleted()) {
+                _commentControls.add(WidgetUtil.makeShim(7, 1));
+                Button batchButton = new Button("Delete Checked");
+                _batchDelete = new DeleteClickCallback(
+                    batchButton, "Are you sure you want to delete these comments?");
+                _commentControls.add(batchButton);
+            }
+        }
+
         setModel(new CommentModel(), 0);
     }
 
@@ -110,21 +132,9 @@ public class CommentsPanel extends PagedGrid<Comment>
     {
         super.addCustomControls(controls);
 
-        // if we're a validated member, display a button for posting a comment
-        if (CShell.isRegistered()) {
-            _post = new Button(_cmsgs.postComment(), new ClickHandler() {
-                public void onClick (ClickEvent event) {
-                    showPostPopup();
-                }
-            });
-            controls.setWidget(0, 0, _post);
-        }
+        _commentControls = new HorizontalPanel();
 
-        if (commentsCanBeBatchDeleted()) {
-            Button batchButton = new Button("Delete Checked");
-            _batchDelete = new DeleteClickCallback(batchButton, "Are you sure you want to delete these comments?");
-            controls.setWidget(0, 1, batchButton);
-        }
+        _controls.setWidget(0, 0, _commentControls);
     }
 
     /**
@@ -374,6 +384,8 @@ public class CommentsPanel extends PagedGrid<Comment>
     protected int _commentCount = -1;
 
     protected DeleteClickCallback _batchDelete;
+
+    protected Panel _commentControls;
 
     protected boolean _rated;
     protected Button _post;
