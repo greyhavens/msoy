@@ -54,7 +54,7 @@ public class ConfigEditorTab extends SmartTable
             }
         };
 
-        cell(0, 1).alignRight().widget(submit);
+        cell(1, 1).alignRight().widget(submit);
 
         updateTable(fields);
     }
@@ -67,8 +67,8 @@ public class ConfigEditorTab extends SmartTable
         for (ConfigField field : fields) {
             ConfigFieldEditor editor = ConfigFieldEditor.getEditorFor(field);
             _editors.add(editor);
-            cell(row, 0).alignRight().text(field.name);
-            cell(row, 1).alignLeft().widget(editor);
+            table.cell(row, 0).alignRight().text(field.name);
+            table.cell(row, 1).alignLeft().widget(editor);
             row ++;
         }
 
