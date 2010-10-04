@@ -146,7 +146,7 @@ public abstract class MoneyTransactionRecord extends PersistentRecord
     public byte subjectType;
 
     /** An optional divider of the subjectId. */
-    public MsoyItemType subjectIdType;
+    public MsoyItemType subjectIdType = MsoyItemType.NOT_A_TYPE;
 
     /** The id of the subject of this transaction. */
     public int subjectId;

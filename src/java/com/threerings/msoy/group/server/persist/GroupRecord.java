@@ -133,7 +133,7 @@ public class GroupRecord extends PersistentRecord
     public int memberCount;
 
     /** The item type of the catalog page to land on with the browse by tag function. */
-    public MsoyItemType catalogItemType;
+    public MsoyItemType catalogItemType = MsoyItemType.NOT_A_TYPE;
 
     /** The catalog tag to use with the browse by tag function. */
     @Column(nullable=true)

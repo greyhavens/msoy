@@ -45,7 +45,7 @@ public class SubscriptionRecord extends PersistentRecord
     public Timestamp lastGrant;
 
     /** The type of the last special item granted to this subscriber. */
-    public MsoyItemType specialItemType;
+    public MsoyItemType specialItemType = MsoyItemType.NOT_A_TYPE;
 
     /** The item id of the last special item granted to this subscriber. */
     public int specialItemId;
