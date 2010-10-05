@@ -43,7 +43,12 @@ public abstract class ConfigFieldEditor
             _box.setText(field.valStr);
             _box.addChangeHandler(new ChangeHandler() {
                 @Override public void onChange (ChangeEvent changeEvent) {
-                    updateModificationState();
+                    // if the string fails conversion, just reset to the old value
+                    if (textToValue(_box.getText().trim()) == null) {
+                        _box.setText(_field.valStr);
+                    } else {
+                        updateModificationState();
+                    }
                 }
             });
             return _box;
@@ -53,7 +58,7 @@ public abstract class ConfigFieldEditor
         @Override
         public ConfigField getModifiedField ()
         {
-            Object newValue = textToValue(_box.getText().trim(), _field.type);
+            Object newValue = textToValue(_box.getText().trim());
             String newValStr = (newValue != null) ? newValue.toString() : null;
             if (newValStr == null || newValStr.equals(_field.valStr)) {
                 return null;
@@ -67,9 +72,9 @@ public abstract class ConfigFieldEditor
             _box.setText(_field.valStr);
         }
 
-        protected static Object textToValue (String text, FieldType type)
+        protected Object textToValue (String text)
         {
-            switch(type) {
+            switch(_field.type) {
             case INTEGER:
                 return new Integer(text);
             case SHORT:
