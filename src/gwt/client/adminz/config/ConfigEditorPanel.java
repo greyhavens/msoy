@@ -16,6 +16,7 @@ import com.threerings.gwt.util.PopupCallback;
 
 import com.threerings.msoy.admin.config.gwt.ConfigField;
 import com.threerings.msoy.admin.config.gwt.ConfigService;
+import com.threerings.msoy.admin.config.gwt.ConfigService.ConfigurationRecord;
 import com.threerings.msoy.admin.config.gwt.ConfigService.ConfigurationResult;
 import com.threerings.msoy.admin.config.gwt.ConfigServiceAsync;
 
@@ -32,15 +33,15 @@ public class ConfigEditorPanel extends StyledTabPanel
     public ConfigEditorPanel ()
     {
         addStyleName("configEditorPanel");
-        _configsvc.getConfig(new PopupCallback<ConfigurationResult>() {
+        _configsvc.getConfiguration(new PopupCallback<ConfigurationResult>() {
             public void onSuccess (ConfigurationResult result) {
                 gotData(result);
             }
         });
     }
 
-    public void submitChanges (String key, List<ConfigField> modified,
-                               AsyncCallback<ConfigurationResult> callback)
+    public void submitChanges (String key, ConfigField[] modified,
+                               AsyncCallback<ConfigurationRecord> callback)
     {
         _configsvc.updateConfiguration(key, modified, callback);
     }
@@ -53,7 +54,7 @@ public class ConfigEditorPanel extends StyledTabPanel
             return;
         }
 
-        for (Entry<String, List<ConfigField>> tab : result.records.entrySet()) {
+        for (Entry<String, ConfigurationRecord> tab : result.records.entrySet()) {
             String tabKey = tab.getKey();
             ConfigEditorTab widget = new ConfigEditorTab(this, tabKey, tab.getValue());
             _tabs.put(tabKey, widget);

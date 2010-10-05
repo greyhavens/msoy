@@ -3,10 +3,7 @@
 
 package com.threerings.msoy.admin.config.gwt;
 
-import java.util.Collection;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import com.threerings.msoy.web.gwt.ServiceException;
 
@@ -29,11 +26,18 @@ public interface ConfigService extends RemoteService
     public static class ConfigurationResult
         implements IsSerializable
     {
-        public ConfigField dummy;
-        public Map<String, List<ConfigField>> records;
+        public Map<String, ConfigurationRecord> records;
     }
 
-    public ConfigurationResult getConfig () throws ServiceException;
+    public static class ConfigurationRecord
+        implements IsSerializable
+    {
+        public ConfigField[] fields;
+        public int updates;
+    }
 
-    public ConfigurationResult updateConfiguration (List<ConfigField> updates);
+    public ConfigurationResult getConfiguration () throws ServiceException;
+
+    public ConfigurationRecord updateConfiguration (String key, ConfigField[] updates)
+        throws ServiceException;
 }

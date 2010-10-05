@@ -14,9 +14,11 @@ import com.google.gwt.user.client.ui.Button;
 import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.admin.config.gwt.ConfigField;
-import com.threerings.msoy.admin.config.gwt.ConfigService.ConfigurationResult;
+import com.threerings.msoy.admin.config.gwt.ConfigService.ConfigurationRecord;
 
 import client.util.ClickCallback;
+
+import client.ui.InfoPopup;
 
 /**
  *
@@ -25,12 +27,12 @@ public class ConfigEditorTab extends SmartTable
 {
     public interface ConfigAccessor
     {
-        void submitChanges (String key, List<ConfigField> modified,
-                            AsyncCallback<ConfigurationResult> callback);
+        void submitChanges (String key, ConfigField[] modified,
+                            AsyncCallback<ConfigurationRecord> callback);
 
     }
 
-    public ConfigEditorTab (ConfigAccessor parent, String key, List<ConfigField> fields)
+    public ConfigEditorTab (ConfigAccessor parent, String key, ConfigurationRecord record)
     {
         super("configEditorTab", 5, 5);
 
@@ -40,7 +42,7 @@ public class ConfigEditorTab extends SmartTable
         Button submit = new Button("Submit Changes");
 
         // wire up saving the code on click
-        new ClickCallback<ConfigurationResult>(submit) {
+        new ClickCallback<ConfigurationRecord>(submit) {
             protected boolean callService () {
                 List<ConfigField> modified = Lists.newArrayList();
                 for (ConfigFieldEditor editor : _editors) {
@@ -49,27 +51,29 @@ public class ConfigEditorTab extends SmartTable
                         modified.add(field);
                     }
                 }
-                _parent.submitChanges(_key, modified, this);
+                _parent.submitChanges(
+                    _key, modified.toArray(new ConfigField[modified.size()]), this);
                 return true;
             }
-            protected boolean gotResult (ConfigurationResult result) {
-                updateTable(result.records.get(_key));
+            protected boolean gotResult (ConfigurationRecord result) {
+                new InfoPopup("Updated " + result.updates + " fields.").show();
+                updateTable(result);
                 return false;
             }
         };
 
         cell(1, 1).alignRight().widget(submit);
 
-        updateTable(fields);
+        updateTable(record);
     }
 
-    protected void updateTable (List<ConfigField> fields)
+    protected void updateTable (ConfigurationRecord record)
     {
         SmartTable table = new SmartTable(5, 5);
         table.setStyleName("configEditorTable");
 
         int row = 0;
-        for (ConfigField field : fields) {
+        for (ConfigField field : record.fields) {
             ConfigFieldEditor editor = ConfigFieldEditor.getEditorFor(field);
             _editors.add(editor);
             table.cell(row, 0).alignRight().widget(editor.getNameWidget());
