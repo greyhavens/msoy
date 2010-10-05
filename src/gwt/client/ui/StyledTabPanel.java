@@ -21,11 +21,9 @@ public class StyledTabPanel extends TabPanel
         setStyleName("StyledTabs");
         setWidth("100%");
 
-        // This animation is actually pretty damn slick, but given the bug we have to work around
-        // below, I don't trust it to work on various browsers, etc.  Plus, who knows how it
-        // performs on something other than FF3
-        // TODO: the hack appears no longer necessary in gwt 1.6 and has been removed, see if we
-        // can turn on the animation (performance notwithstanding).
+        // This was turned off for a long time (it used to require a hack, and then for fear of
+        // performance penalties) but we're turning it back on -- cause it really looks quite
+        // nice -- and we'll see how it works in practice.
         getDeckPanel().setAnimationEnabled(true);
     }
 
