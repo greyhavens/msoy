@@ -9,6 +9,9 @@ import java.util.Map.Entry;
 
 import com.google.common.collect.Maps;
 
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+
 import com.threerings.gwt.util.PopupCallback;
 
 import com.threerings.msoy.admin.config.gwt.ConfigField;
@@ -16,9 +19,9 @@ import com.threerings.msoy.admin.config.gwt.ConfigService;
 import com.threerings.msoy.admin.config.gwt.ConfigService.ConfigurationResult;
 import com.threerings.msoy.admin.config.gwt.ConfigServiceAsync;
 
-import client.adminz.config.ConfigEditorTab.ConfigAccessor;
 import client.ui.StyledTabPanel;
-import com.google.gwt.core.client.GWT;
+
+import client.adminz.config.ConfigEditorTab.ConfigAccessor;
 
 /**
  *

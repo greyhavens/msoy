@@ -8,13 +8,15 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Button;
+
 import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.admin.config.gwt.ConfigField;
 import com.threerings.msoy.admin.config.gwt.ConfigService.ConfigurationResult;
 
 import client.util.ClickCallback;
-import com.google.gwt.user.client.ui.Button;
 
 /**
  *
@@ -23,12 +25,14 @@ public class ConfigEditorTab extends SmartTable
 {
     public interface ConfigAccessor
     {
-        void submitChanges (String tabKey, List<ConfigField> modified);
+        void submitChanges (List<ConfigField> modified,
+                            AsyncCallback<ConfigurationResult> callback);
+
     }
 
     public ConfigEditorTab (ConfigAccessor parent, String key, List<ConfigField> fields)
     {
-        super(0, 0);
+        super("configEditorTab", 5, 5);
 
         _parent = parent;
         _key = key;
@@ -45,11 +49,11 @@ public class ConfigEditorTab extends SmartTable
                         modified.add(field);
                     }
                 }
-                _parent.submitChanges(_key, modified);
+                _parent.submitChanges(modified, this);
                 return true;
             }
             protected boolean gotResult (ConfigurationResult result) {
-                updateTable(result.records.get(_key);
+                updateTable(result.records.get(_key));
                 return false;
             }
         };
@@ -62,13 +66,15 @@ public class ConfigEditorTab extends SmartTable
     protected void updateTable (List<ConfigField> fields)
     {
         SmartTable table = new SmartTable(5, 5);
+        table.setStyleName("configEditorTable");
 
         int row = 0;
         for (ConfigField field : fields) {
             ConfigFieldEditor editor = ConfigFieldEditor.getEditorFor(field);
             _editors.add(editor);
-            table.cell(row, 0).alignRight().text(field.name);
-            table.cell(row, 1).alignLeft().widget(editor);
+            table.cell(row, 0).alignRight().widget(editor.getNameWidget());
+            table.cell(row, 1).alignLeft().widget(editor.getValueWidget());
+            table.cell(row, 2).alignLeft().widget(editor.getResetWidget());
             row ++;
         }
 
