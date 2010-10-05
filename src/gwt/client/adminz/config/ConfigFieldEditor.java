@@ -4,14 +4,12 @@
 package client.adminz.config;
 
 import com.threerings.msoy.admin.config.gwt.ConfigField;
-import com.threerings.msoy.admin.config.gwt.ConfigField.FieldType;
 
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -44,7 +42,7 @@ public abstract class ConfigFieldEditor
             _box.addChangeHandler(new ChangeHandler() {
                 @Override public void onChange (ChangeEvent changeEvent) {
                     // if the string fails conversion, just reset to the old value
-                    if (textToValue(_box.getText().trim()) == null) {
+                    if (_field.toValue(_box.getText().trim()) == null) {
                         _box.setText(_field.valStr);
                     } else {
                         updateModificationState();
@@ -58,7 +56,7 @@ public abstract class ConfigFieldEditor
         @Override
         public ConfigField getModifiedField ()
         {
-            Object newValue = textToValue(_box.getText().trim());
+            Object newValue = _field.toValue(_box.getText().trim());
             String newValStr = (newValue != null) ? newValue.toString() : null;
             if (newValStr == null || newValStr.equals(_field.valStr)) {
                 return null;
@@ -70,29 +68,6 @@ public abstract class ConfigFieldEditor
         protected void resetField ()
         {
             _box.setText(_field.valStr);
-        }
-
-        protected Object textToValue (String text)
-        {
-            switch(_field.type) {
-            case INTEGER:
-                return new Integer(text);
-            case SHORT:
-                return new Short(text);
-            case BYTE:
-                return new Byte(text);
-            case LONG:
-                return new Long(text);
-            case FLOAT:
-                return new Float(text);
-            case DOUBLE:
-                return new Double(text);
-            case BOOLEAN:
-                return new Boolean(text);
-            case STRING:
-                return text;
-            }
-            return null;
         }
 
         protected TextBox _box;

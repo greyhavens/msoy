@@ -42,6 +42,30 @@ public class ConfigField
         this.valStr = valStr;
     }
 
+    public Object toValue (String text)
+    {
+        switch(type) {
+        case INTEGER:
+            return new Integer(text);
+        case SHORT:
+            return new Short(text);
+        case BYTE:
+            return new Byte(text);
+        case LONG:
+            return new Long(text);
+        case FLOAT:
+            return new Float(text);
+        case DOUBLE:
+            return new Double(text);
+        case BOOLEAN:
+            return new Boolean(text);
+        case STRING:
+            return text;
+        }
+        return null;
+    }
+
+
     public int compareTo (ConfigField o)
     {
         return ComparisonChain.start().compare(name, o.name).result();
