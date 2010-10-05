@@ -26,7 +26,7 @@ public class StyledTabPanel extends TabPanel
         // performs on something other than FF3
         // TODO: the hack appears no longer necessary in gwt 1.6 and has been removed, see if we
         // can turn on the animation (performance notwithstanding).
-        getDeckPanel().setAnimationEnabled(false);
+        getDeckPanel().setAnimationEnabled(true);
     }
 
     // docs inherited
