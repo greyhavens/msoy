@@ -48,15 +48,17 @@ public class ConfigEditorPanel extends StyledTabPanel
     {
         clear();
 
+        if (result.records.isEmpty()) {
+            return;
+        }
+
         for (Entry<String, List<ConfigField>> tab : result.records.entrySet()) {
             String tabKey = tab.getKey();
             ConfigEditorTab widget = new ConfigEditorTab(this, tabKey, tab.getValue());
             _tabs.put(tabKey, widget);
             add(widget, tabKey);
         }
-        if (!result.records.isEmpty()) {
-            selectTab(0);
-        }
+        selectTab(0);
     }
 
     protected Map<String, ConfigEditorTab> _tabs = Maps.newHashMap();
