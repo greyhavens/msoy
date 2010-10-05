@@ -35,18 +35,10 @@ public class ConfigEditorPanel extends StyledTabPanel
         });
     }
 
-    public void submitChanges (final String tabKey, List<ConfigField> modified)
+    public void submitChanges (List<ConfigField> modified,
+                               AsyncCallback<ConfigurationResult> callback)
     {
-        _configsvc.updateConfiguration(modified, new PopupCallback<ConfigurationResult>() {
-            public void onSuccess (ConfigurationResult result) {
-                ConfigEditorTab tab = _tabs.get(tabKey);
-                if (tab == null) {
-                    // buh?
-                    return;
-                }
-                tab.updateTable(result.records.get(tabKey));
-            }
-        });
+        _configsvc.updateConfiguration(modified, callback);
     }
 
     protected void gotData (ConfigurationResult result)

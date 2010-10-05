@@ -49,7 +49,7 @@ public class ConfigEditorTab extends SmartTable
                 return true;
             }
             protected boolean gotResult (ConfigurationResult result) {
-
+                updateTable(result.records.get(_key);
                 return false;
             }
         };
