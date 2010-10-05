@@ -31,6 +31,7 @@ public class ConfigEditorPanel extends StyledTabPanel
 {
     public ConfigEditorPanel ()
     {
+        addStyleName("configEditorPanel");
         _configsvc.getConfig(new PopupCallback<ConfigurationResult>() {
             public void onSuccess (ConfigurationResult result) {
                 gotData(result);
@@ -38,10 +39,10 @@ public class ConfigEditorPanel extends StyledTabPanel
         });
     }
 
-    public void submitChanges (List<ConfigField> modified,
+    public void submitChanges (String key, List<ConfigField> modified,
                                AsyncCallback<ConfigurationResult> callback)
     {
-        _configsvc.updateConfiguration(modified, callback);
+        _configsvc.updateConfiguration(key, modified, callback);
     }
 
     protected void gotData (ConfigurationResult result)
@@ -64,5 +65,4 @@ public class ConfigEditorPanel extends StyledTabPanel
     protected Map<String, ConfigEditorTab> _tabs = Maps.newHashMap();
 
     protected static final ConfigServiceAsync _configsvc = GWT.create(ConfigService.class);
-
 }

@@ -25,7 +25,7 @@ public class ConfigEditorTab extends SmartTable
 {
     public interface ConfigAccessor
     {
-        void submitChanges (List<ConfigField> modified,
+        void submitChanges (String key, List<ConfigField> modified,
                             AsyncCallback<ConfigurationResult> callback);
 
     }
@@ -49,7 +49,7 @@ public class ConfigEditorTab extends SmartTable
                         modified.add(field);
                     }
                 }
-                _parent.submitChanges(modified, this);
+                _parent.submitChanges(_key, modified, this);
                 return true;
             }
             protected boolean gotResult (ConfigurationResult result) {
