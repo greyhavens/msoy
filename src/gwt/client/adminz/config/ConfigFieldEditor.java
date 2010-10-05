@@ -7,6 +7,7 @@ package client.adminz.config;
 import com.threerings.msoy.admin.config.gwt.ConfigField;
 import com.threerings.msoy.admin.config.gwt.ConfigField.FieldType;
 
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -52,10 +53,12 @@ public abstract class ConfigFieldEditor extends SimplePanel
 
         public void onChange (ChangeEvent changeEvent)
         {
+            Style style = _box.getElement().getStyle();
             if (getModifiedField() != null) {
-                addStyleName("borderedWidget");
+                style.setBackgroundColor("red");
+
             } else {
-                removeStyleName("borderedWidget");
+                style.clearBackgroundColor();
             }
         }
     }
