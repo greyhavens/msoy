@@ -54,6 +54,9 @@ public class ConfigEditorPanel extends StyledTabPanel
             _tabs.put(tabKey, widget);
             add(widget, tabKey);
         }
+        if (!result.records.isEmpty()) {
+            selectTab(0);
+        }
     }
 
     protected Map<String, ConfigEditorTab> _tabs = Maps.newHashMap();
