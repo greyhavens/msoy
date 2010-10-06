@@ -8,6 +8,7 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 
@@ -29,7 +30,6 @@ public class ConfigEditorTab extends SmartTable
     {
         void submitChanges (String key, ConfigField[] modified,
                             AsyncCallback<ConfigurationRecord> callback);
-
     }
 
     public ConfigEditorTab (ConfigAccessor parent, String key, ConfigurationRecord record)
@@ -39,10 +39,10 @@ public class ConfigEditorTab extends SmartTable
         _parent = parent;
         _key = key;
 
-        Button submit = new Button("Submit Changes");
+        _submit = new Button("Submit Changes");
 
         // wire up saving the code on click
-        new ClickCallback<ConfigurationRecord>(submit) {
+        new ClickCallback<ConfigurationRecord>(_submit) {
             protected boolean callService () {
                 List<ConfigField> modified = Lists.newArrayList();
                 for (ConfigFieldEditor editor : _editors) {
@@ -62,7 +62,7 @@ public class ConfigEditorTab extends SmartTable
             }
         };
 
-        cell(1, 1).alignRight().widget(submit);
+        cell(1, 1).alignRight().widget(_submit);
 
         updateTable(record);
     }
@@ -74,7 +74,7 @@ public class ConfigEditorTab extends SmartTable
 
         int row = 0;
         for (ConfigField field : record.fields) {
-            ConfigFieldEditor editor = ConfigFieldEditor.getEditorFor(field);
+            ConfigFieldEditor editor = ConfigFieldEditor.getEditorFor(field, UPDATE_BUTTON);
             _editors.add(editor);
             table.cell(row, 0).alignRight().widget(editor.getNameWidget());
             table.cell(row, 1).alignLeft().widget(editor.getValueWidget());
@@ -83,10 +83,26 @@ public class ConfigEditorTab extends SmartTable
         }
 
         cell(0, 0).colSpan(2).widget(table);
+
+        UPDATE_BUTTON.execute();
     }
 
     protected List<ConfigFieldEditor> _editors = Lists.newArrayList();
 
     protected ConfigAccessor _parent;
     protected String _key;
+    protected Button _submit;
+
+    protected Command UPDATE_BUTTON = new Command () {
+        public void execute () {
+            // search for any modified field; if found, enable submissions & exit
+            for (ConfigFieldEditor editor : _editors) {
+                if (editor.getModifiedField() != null) {
+                    _submit.setEnabled(true);
+                    return;
+                }
+            }
+            _submit.setEnabled(false);
+        }
+    };
 }

@@ -6,10 +6,13 @@ package client.adminz.config;
 import com.threerings.msoy.admin.config.gwt.ConfigField;
 
 import com.google.gwt.dom.client.Style;
+
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -20,16 +23,16 @@ import client.ui.MsoyUI;
  */
 public abstract class ConfigFieldEditor
 {
-    public static ConfigFieldEditor getEditorFor (ConfigField field)
+    public static ConfigFieldEditor getEditorFor (ConfigField field, Command onChange)
     {
-        return new StringFieldEditor(field);
+        return new StringFieldEditor(field, onChange);
     }
 
     protected static class StringFieldEditor extends ConfigFieldEditor
     {
-        public StringFieldEditor (ConfigField field)
+        public StringFieldEditor (ConfigField field, Command onChange)
         {
-            super(field);
+            super(field, onChange);
         }
 
         @Override
@@ -44,21 +47,22 @@ public abstract class ConfigFieldEditor
                     // if the string fails conversion, just reset to the old value
                     if (_field.toValue(_box.getText().trim()) == null) {
                         _box.setText(_field.valStr);
-                    } else {
-                        updateModificationState();
                     }
+                    updateModificationState();
                 }
             });
             return _box;
         }
 
-
         @Override
         public ConfigField getModifiedField ()
         {
             Object newValue = _field.toValue(_box.getText().trim());
-            String newValStr = (newValue != null) ? newValue.toString() : null;
-            if (newValStr == null || newValStr.equals(_field.valStr)) {
+            if (newValue == null) {
+                return null;
+            }
+            String newValStr = newValue.toString();
+            if ((newValStr.isEmpty() && _field.valStr == null) ||newValStr.equals(_field.valStr)) {
                 return null;
             }
             return new ConfigField(_field.name, _field.type, newValStr);
@@ -73,9 +77,10 @@ public abstract class ConfigFieldEditor
         protected TextBox _box;
     }
 
-    public ConfigFieldEditor (ConfigField field)
+    public ConfigFieldEditor (ConfigField field, Command onChange)
     {
         _field = field;
+        _onChange = onChange;
 
         _value = buildWidget(field);
         _name = MsoyUI.createLabel(field.name, "fieldName");
@@ -99,6 +104,7 @@ public abstract class ConfigFieldEditor
             style.clearBackgroundColor();
             _reset.setVisible(false);
         }
+        _onChange.execute();
     }
 
     public Widget getNameWidget ()
@@ -121,6 +127,8 @@ public abstract class ConfigFieldEditor
     protected abstract Widget buildWidget (ConfigField field);
     protected abstract void resetField ();
 
-    protected Widget _name, _value, _reset;
     protected ConfigField _field;
+    protected Command _onChange;
+
+    protected Widget _name, _value, _reset;
 }
