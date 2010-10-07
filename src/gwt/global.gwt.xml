@@ -7,6 +7,8 @@
 
   <inherits name="com.samskivert.Utils"/>
 
+  <inherits name="com.threerings.web.Base"/>
+
   <inherits name="com.threerings.gwt.Utils"/>
 
   <source path="org/gwtwidgets/client"/>
