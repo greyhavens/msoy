@@ -15,11 +15,11 @@ import com.samskivert.servlet.user.InvalidUsernameException;
 import com.samskivert.servlet.user.UserExistsException;
 import com.samskivert.servlet.user.Username;
 
+import com.threerings.web.gwt.ServiceException;
 import com.threerings.user.OOOUser;
 
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.underwire.server.SupportLogic;
-import com.threerings.msoy.web.gwt.ServiceException;
 
 import com.threerings.msoy.server.persist.MsoyOOOUserRepository;
 
@@ -238,7 +238,7 @@ public class OOOAuthenticationDomain
                 isForLogon ? MsoyAuthCodes.INVALID_LOGON : MsoyAuthCodes.NO_SUCH_USER);
         }
         return user;
-    }        
+    }
 
     protected static class OOOAccount extends Account
     {

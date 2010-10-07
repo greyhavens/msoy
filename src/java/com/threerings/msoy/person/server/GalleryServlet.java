@@ -17,7 +17,9 @@ import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.PhotoRepository;
 
 import com.threerings.msoy.web.gwt.ServiceCodes;
-import com.threerings.msoy.web.gwt.ServiceException;
+
+import com.threerings.web.gwt.ServiceException;
+
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 
 import com.threerings.msoy.person.gwt.Gallery;

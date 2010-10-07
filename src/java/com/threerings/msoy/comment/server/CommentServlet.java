@@ -17,6 +17,7 @@ import com.google.inject.Inject;
 import com.samskivert.depot.DatabaseException;
 import com.samskivert.util.StringUtil;
 
+import com.threerings.web.gwt.ServiceException;
 import com.threerings.gwt.util.PagedResult;
 
 import com.threerings.msoy.comment.gwt.Comment.CommentType;
@@ -44,7 +45,6 @@ import com.threerings.msoy.person.server.FeedLogic;
 import com.threerings.msoy.web.gwt.MemberCard;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.ServiceCodes;
-import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 
 import com.threerings.msoy.room.data.MsoySceneModel;

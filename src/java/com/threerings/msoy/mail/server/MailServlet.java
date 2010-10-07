@@ -15,6 +15,8 @@ import com.google.inject.Inject;
 
 import com.samskivert.depot.DuplicateKeyException;
 
+import com.threerings.web.gwt.ServiceException;
+
 import com.threerings.msoy.server.MemberNodeActions;
 import com.threerings.msoy.server.persist.MemberCardRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
@@ -32,7 +34,6 @@ import com.threerings.msoy.mail.server.persist.MailRepository;
 import com.threerings.msoy.web.gwt.MemberCard;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.ServiceCodes;
-import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 
 import static com.threerings.msoy.Log.log;

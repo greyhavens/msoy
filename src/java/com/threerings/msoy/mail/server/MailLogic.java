@@ -14,6 +14,8 @@ import com.google.inject.Singleton;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.Tuple;
 
+import com.threerings.web.gwt.ServiceException;
+
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.presents.annotation.BlockingThread;
 import com.threerings.presents.annotation.MainInvoker;
@@ -42,7 +44,6 @@ import com.threerings.msoy.room.server.RoomLogic;
 import com.threerings.msoy.person.gwt.InvitationResults;
 
 import com.threerings.msoy.web.gwt.ServiceCodes;
-import com.threerings.msoy.web.gwt.ServiceException;
 
 import com.threerings.msoy.mail.gwt.FriendInvitePayload;
 import com.threerings.msoy.mail.gwt.MailPayload;
@@ -86,7 +87,7 @@ public class MailLogic
         String subject, String body, MailPayload payload, boolean checkMuteList)
         throws ServiceException
     {
-        
+
         // check mute list if requested (some bulk conversations are for automated message, some
         // are for player to player spam)
         if (checkMuteList) {
@@ -106,10 +107,10 @@ public class MailLogic
 
             _mailRepo.startConversation(
                 recip.memberId, sender.memberId, subject, body, cmr, false, true);
-    
+
             // potentially send a real email to the recipient
             sendMailEmail(sender, recip, subject, body);
-            
+
             // let recipient know they've got mail
             MemberNodeActions.reportUnreadMail(recip.memberId, getUnreadConvoCount(recip.memberId));
         }
@@ -216,7 +217,7 @@ public class MailLogic
 
         // note that we added a message to a conversation
         _eventLog.mailSent(conrec.conversationId, poster.memberId, cmr.payloadType);
-        
+
         if (!isMuted) {
             // let other conversation participant know they've got mail
             MemberNodeActions.reportUnreadMail(otherId, getUnreadConvoCount(otherId));

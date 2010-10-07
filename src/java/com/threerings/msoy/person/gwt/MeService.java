@@ -8,13 +8,14 @@ import java.util.List;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
+import com.threerings.web.gwt.ServiceException;
+
 import com.threerings.msoy.badge.data.all.Badge;
 
 import com.threerings.msoy.person.gwt.MyWhirledData.FeedCategory;
 
 import com.threerings.msoy.data.all.Award.AwardType;
 import com.threerings.msoy.web.gwt.Contest;
-import com.threerings.msoy.web.gwt.ServiceException;
 
 /**
  * Provides information for the Me page.

@@ -6,7 +6,7 @@ package com.threerings.msoy.server.util;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.util.PersistingUnit;
 
-import com.threerings.msoy.web.gwt.ServiceException;
+import com.threerings.web.gwt.ServiceException;
 
 /**
  * Adds support for ServiceException.

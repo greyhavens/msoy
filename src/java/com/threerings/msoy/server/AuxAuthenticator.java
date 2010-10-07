@@ -5,6 +5,7 @@ package com.threerings.msoy.server;
 
 import com.google.inject.Inject;
 
+import com.threerings.web.gwt.ServiceException;
 import com.threerings.util.MessageBundle;
 
 import com.threerings.presents.net.AuthRequest;
@@ -21,7 +22,6 @@ import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
-import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.server.AffiliateCookie;
 
 import static com.threerings.msoy.Log.log;

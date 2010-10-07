@@ -20,7 +20,8 @@ import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 
 import com.samskivert.util.CollectionUtil;
-import com.samskivert.util.IntSet;
+
+import com.threerings.web.gwt.ServiceException;
 
 import com.threerings.msoy.fora.server.persist.ForumRepository;
 
@@ -62,7 +63,6 @@ import com.threerings.msoy.server.persist.PromotionRepository;
 
 import com.threerings.msoy.web.gwt.Contest;
 import com.threerings.msoy.web.gwt.ServiceCodes;
-import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 import com.threerings.msoy.web.server.RPCProfiler;
 
@@ -203,7 +203,7 @@ public class MeServlet extends MsoyServiceServlet
                 return BadgeType.getType(badge.badgeCode) != BadgeType.OUTSPOKEN;
             }
         });
-            
+
         for (StampCategory category : StampCategory.values()) {
             data.stamps.put(category, Lists.newArrayList(
                                 Iterables.filter(badgeUnion, new FilterByCategory(category))));
@@ -285,7 +285,7 @@ public class MeServlet extends MsoyServiceServlet
                 "memberId", memberId, "medalId", medalId);
             throw new ServiceException(ServiceCodes.E_ACCESS_DENIED);
         }
-        
+
         ProfileRecord record = _profileRepo.loadProfile(memberId);
         if (record != null && record.profileMedalId == medalId) {
             _profileRepo.updateProfileAward(memberId, 0, 0);
@@ -321,7 +321,7 @@ public class MeServlet extends MsoyServiceServlet
             }
             medalId = awardId;
         }
-        
+
         _profileRepo.updateProfileAward(mrec.memberId, badgeCode, medalId);
     }
 

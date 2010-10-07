@@ -8,10 +8,10 @@ import java.util.Collection;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
+import com.threerings.web.gwt.ServiceException;
 import com.threerings.gwt.util.PagedResult;
 
 import com.threerings.msoy.comment.gwt.Comment.CommentType;
-import com.threerings.msoy.web.gwt.ServiceException;
 
 /**
  * Service methods for reading and posting comments on various Whirled entities (items, profiles,

@@ -38,7 +38,9 @@ import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.ExternalSiteId;
 import com.threerings.msoy.web.gwt.MarkupBuilder;
 import com.threerings.msoy.web.gwt.Pages;
-import com.threerings.msoy.web.gwt.ServiceException;
+
+import com.threerings.web.gwt.ServiceException;
+
 import com.threerings.msoy.web.gwt.SharedNaviUtil;
 import com.threerings.msoy.web.gwt.WebCreds;
 import com.threerings.msoy.web.gwt.ArgNames.FBParam;
@@ -317,7 +319,7 @@ public class FacebookInviteServlet extends HttpServlet
         "http://static.ak.connect.facebook.com/js/api_lib/v0.4/FeatureLoader.js.php";
 
     /** Our static invite script, we give it all the relevant data. */
-    protected static final String INVITE_JS = "/js/fbinvite.js"; 
+    protected static final String INVITE_JS = "/js/fbinvite.js";
 
     /** The id of our div tag where the facebook invite form goes. */
     protected static final String FORM_TAG_ID = "fbinviteform";

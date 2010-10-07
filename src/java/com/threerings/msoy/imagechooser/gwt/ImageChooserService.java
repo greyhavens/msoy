@@ -8,8 +8,9 @@ import java.util.List;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
+import com.threerings.web.gwt.ServiceException;
+
 import com.threerings.msoy.item.data.all.Photo;
-import com.threerings.msoy.web.gwt.ServiceException;
 
 /**
  * Provides digital items related services.

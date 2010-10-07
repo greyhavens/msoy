@@ -16,7 +16,7 @@ import com.threerings.gwt.util.PagedResult;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.web.gwt.Contest;
 import com.threerings.msoy.web.gwt.Promotion;
-import com.threerings.msoy.web.gwt.ServiceException;
+import com.threerings.web.gwt.ServiceException;
 import com.threerings.msoy.web.gwt.WebCreds;
 
 import com.threerings.msoy.data.all.CharityInfo;
@@ -160,7 +160,7 @@ public interface AdminService extends RemoteService
 
     /**
      * Permanently delete a piece of media, potentially invalidating the Cloudfront caches,
-     * and also add it to the upload blacklist. 
+     * and also add it to the upload blacklist.
      */
     void nukeMedia (MediaDesc desc, String note) throws ServiceException;
 

@@ -19,6 +19,7 @@ import com.samskivert.servlet.util.CookieUtil;
 import com.samskivert.util.CollectionUtil;
 import com.samskivert.util.StringUtil;
 
+import com.threerings.web.gwt.ServiceException;
 import com.threerings.gwt.util.PagedResult;
 
 import com.threerings.msoy.data.MsoyAuthCodes;
@@ -41,7 +42,6 @@ import com.threerings.msoy.web.gwt.CookieNames;
 import com.threerings.msoy.web.gwt.Invitation;
 import com.threerings.msoy.web.gwt.MemberCard;
 import com.threerings.msoy.web.gwt.ServiceCodes;
-import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.gwt.WebCreds;
 import com.threerings.msoy.web.gwt.WebMemberService;
 

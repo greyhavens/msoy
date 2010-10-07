@@ -9,13 +9,13 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.samskivert.util.ServiceWaiter;
 
+import com.threerings.web.gwt.ServiceException;
 import com.threerings.presents.server.PresentsDObjectMgr;
 
 import com.threerings.msoy.data.AuthName;
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.AuxAuthenticator;
-import com.threerings.msoy.web.gwt.ServiceException;
 
 import com.threerings.msoy.group.data.all.GroupMembership.Rank;
 import com.threerings.msoy.group.server.persist.GroupRepository;

@@ -6,6 +6,8 @@ package com.threerings.msoy.person.server;
 import java.util.List;
 import java.util.Set;
 
+import com.threerings.web.gwt.ServiceException;
+
 import octazen.addressbook.AddressBookAuthenticationException;
 import octazen.addressbook.AddressBookException;
 import octazen.addressbook.Contact;
@@ -39,7 +41,6 @@ import com.threerings.msoy.web.gwt.EmailContact;
 import com.threerings.msoy.web.gwt.Invitation;
 import com.threerings.msoy.web.gwt.MemberCard;
 import com.threerings.msoy.web.gwt.ServiceCodes;
-import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 
 import com.threerings.msoy.mail.gwt.GameInvitePayload;

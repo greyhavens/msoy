@@ -23,6 +23,8 @@ import com.google.common.primitives.Ints;
 import com.google.inject.Inject;
 
 import com.samskivert.util.CollectionUtil;
+
+import com.threerings.web.gwt.ServiceException;
 import com.threerings.parlor.rating.server.persist.RatingRecord;
 import com.threerings.parlor.rating.server.persist.RatingRepository;
 import com.threerings.parlor.rating.util.Percentiler;
@@ -67,7 +69,6 @@ import com.threerings.msoy.server.util.HTMLSanitizer;
 
 import com.threerings.msoy.web.gwt.MemberCard;
 import com.threerings.msoy.web.gwt.ServiceCodes;
-import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 
 import static com.threerings.msoy.Log.log;

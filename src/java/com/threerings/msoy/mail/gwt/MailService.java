@@ -11,7 +11,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 import com.threerings.msoy.data.all.MemberName;
 
-import com.threerings.msoy.web.gwt.ServiceException;
+import com.threerings.web.gwt.ServiceException;
 
 /**
  * Defines mail services available to the GWT/AJAX web client.

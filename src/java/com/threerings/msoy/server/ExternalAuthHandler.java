@@ -7,8 +7,9 @@ import java.util.List;
 
 import com.samskivert.util.StringUtil;
 
+import com.threerings.web.gwt.ServiceException;
+
 import com.threerings.msoy.web.gwt.ExternalCreds;
-import com.threerings.msoy.web.gwt.ServiceException;
 
 import com.threerings.msoy.person.server.persist.ProfileRecord;
 
@@ -32,7 +33,7 @@ public abstract class ExternalAuthHandler
      * Validates the supplied external credentials, usually by computing some signature on the
      * credential information and comparing that to a supplied signature.
      *
-     * @exception ServiceException thrown if the supplied credentials are not valid.
+     * @exception com.threerings.web.gwt.ServiceException thrown if the supplied credentials are not valid.
      */
     public abstract void validateCredentials (ExternalCreds creds)
         throws ServiceException;

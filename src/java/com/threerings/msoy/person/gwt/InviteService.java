@@ -9,9 +9,10 @@ import java.util.Set;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
+import com.threerings.web.gwt.ServiceException;
+
 import com.threerings.msoy.web.gwt.EmailContact;
 import com.threerings.msoy.web.gwt.MemberCard;
-import com.threerings.msoy.web.gwt.ServiceException;
 
 /**
  * Handles invitation-related functionality.

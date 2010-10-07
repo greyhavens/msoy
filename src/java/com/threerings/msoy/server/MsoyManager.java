@@ -12,6 +12,7 @@ import com.google.inject.Singleton;
 import com.samskivert.jdbc.WriteOnlyUnit;
 import com.samskivert.util.Invoker;
 
+import com.threerings.web.gwt.ServiceException;
 import com.threerings.util.Name;
 
 import com.threerings.presents.annotation.EventThread;
@@ -42,7 +43,6 @@ import com.threerings.msoy.admin.server.RuntimeConfig;
 
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
-import com.threerings.msoy.web.gwt.ServiceException;
 
 import com.threerings.msoy.badge.data.BadgeType;
 import com.threerings.msoy.badge.data.all.EarnedBadge;
@@ -214,7 +214,8 @@ public class MsoyManager
                     Currency.BARS, authedCost, Currency.BARS, newQuote.getBars(),
                     new BuyOperation<Void>() {
                         public Void create (boolean magicFree, Currency currency, int amountPaid)
-                            throws ServiceException {
+                            throws ServiceException
+						{
                             _moneyRepo.noteBroadcastPurchase(memberId, amountPaid, message);
                             return null;
                         }

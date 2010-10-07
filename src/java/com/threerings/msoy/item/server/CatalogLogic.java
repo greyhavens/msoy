@@ -10,10 +10,11 @@ import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import com.threerings.web.gwt.ServiceException;
+
 import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.persist.MemberRecord;
-import com.threerings.msoy.web.gwt.ServiceException;
 
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.server.BuyResult;

@@ -12,9 +12,6 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 
-import com.samskivert.util.IntMap;
-import com.samskivert.util.IntMaps;
-
 import com.threerings.msoy.facebook.server.FacebookLogic;
 import com.threerings.msoy.facebook.server.persist.FacebookActionRecord;
 import com.threerings.msoy.facebook.server.persist.FacebookRepository;
@@ -34,7 +31,7 @@ import com.threerings.msoy.reminders.gwt.RemindersService;
 
 import com.threerings.msoy.server.persist.MemberRecord;
 
-import com.threerings.msoy.web.gwt.ServiceException;
+import com.threerings.web.gwt.ServiceException;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 
 /**

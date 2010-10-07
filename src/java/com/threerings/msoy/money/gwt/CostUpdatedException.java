@@ -3,8 +3,8 @@
 
 package com.threerings.msoy.money.gwt;
 
+import com.threerings.web.gwt.ServiceException;
 import com.threerings.msoy.money.data.all.PriceQuote;
-import com.threerings.msoy.web.gwt.ServiceException;
 
 /**
  * An exception thrown by things that might have a cost associated with them.

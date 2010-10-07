@@ -17,6 +17,8 @@ import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import com.threerings.web.gwt.ServiceException;
+
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.all.Friendship;
 import com.threerings.msoy.data.all.MemberName;
@@ -34,7 +36,6 @@ import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.game.server.GameUtil;
 import com.threerings.msoy.group.gwt.GroupMemberCard;
 import com.threerings.msoy.web.gwt.MemberCard;
-import com.threerings.msoy.web.gwt.ServiceException;
 
 import static com.threerings.msoy.Log.log;
 

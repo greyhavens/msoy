@@ -29,7 +29,7 @@ import com.threerings.msoy.server.ServerMessages;
 
 import com.threerings.msoy.web.gwt.MemberCard;
 import com.threerings.msoy.web.gwt.Pages;
-import com.threerings.msoy.web.gwt.ServiceException;
+import com.threerings.web.gwt.ServiceException;
 
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;

@@ -15,7 +15,8 @@ import com.google.inject.Singleton;
 import com.samskivert.depot.DuplicateKeyException;
 import com.samskivert.depot.expression.ColumnExp;
 
-import com.threerings.msoy.chat.data.MsoyChatChannel;
+import com.threerings.web.gwt.ServiceException;
+
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.presents.annotation.BlockingThread;
 
@@ -59,7 +60,6 @@ import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 
 import com.threerings.msoy.web.gwt.ServiceCodes;
-import com.threerings.msoy.web.gwt.ServiceException;
 
 import static com.threerings.msoy.Log.log;
 
@@ -172,7 +172,7 @@ public class GroupLogic
             log.warning("Error notifying of group membership", "group", grec.groupId,
                 "memberId", memberId, e);
         }
-        
+
         _eventLog.groupJoined(memberId, grec.groupId);
     }
 
@@ -183,7 +183,7 @@ public class GroupLogic
     public void leaveGroup (int groupId, int memberId)
     {
         _groupRepo.leaveGroup(groupId, memberId);
-        
+
         // if the group has no members left, hide the group so staff can still see it and we
         // don't orphan threads, posts, scenes and medals
         if (_groupRepo.countMembers(groupId) == 0) {

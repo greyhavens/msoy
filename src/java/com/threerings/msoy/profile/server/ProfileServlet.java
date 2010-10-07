@@ -40,7 +40,9 @@ import com.threerings.msoy.spam.server.SpamLogic;
 
 import com.threerings.msoy.web.gwt.MemberCard;
 import com.threerings.msoy.web.gwt.ServiceCodes;
-import com.threerings.msoy.web.gwt.ServiceException;
+
+import com.threerings.web.gwt.ServiceException;
+
 import com.threerings.msoy.web.gwt.MemberCard.NotOnline;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 

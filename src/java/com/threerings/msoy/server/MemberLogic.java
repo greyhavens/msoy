@@ -21,6 +21,7 @@ import com.samskivert.depot.DuplicateKeyException;
 import com.samskivert.util.ArrayUtil;
 import com.samskivert.util.StringUtil;
 
+import com.threerings.web.gwt.ServiceException;
 import com.threerings.presents.annotation.BlockingThread;
 import com.threerings.presents.server.PresentsDObjectMgr;
 
@@ -35,7 +36,6 @@ import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.MemberCard;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.ServiceCodes;
-import com.threerings.msoy.web.gwt.ServiceException;
 
 import com.threerings.msoy.avrg.server.persist.AVRGameRepository;
 import com.threerings.msoy.badge.data.all.InProgressBadge;

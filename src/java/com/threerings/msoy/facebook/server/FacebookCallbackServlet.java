@@ -18,6 +18,8 @@ import com.samskivert.servlet.util.CookieUtil;
 import com.samskivert.servlet.util.ParameterUtil;
 import com.samskivert.util.StringUtil;
 
+import com.threerings.web.gwt.ServiceException;
+
 import com.threerings.msoy.apps.server.persist.AppInfoRecord;
 import com.threerings.msoy.apps.server.persist.AppRepository;
 import com.threerings.msoy.data.all.DeploymentConfig;
@@ -43,7 +45,6 @@ import com.threerings.msoy.web.gwt.CookieNames;
 import com.threerings.msoy.web.gwt.Embedding;
 import com.threerings.msoy.web.gwt.ExternalSiteId;
 import com.threerings.msoy.web.gwt.Pages;
-import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.gwt.SharedNaviUtil;
 import com.threerings.msoy.web.gwt.WebCreds;
 

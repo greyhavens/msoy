@@ -20,6 +20,8 @@ import com.google.inject.Inject;
 
 import com.samskivert.util.StringUtil;
 
+import com.threerings.web.gwt.ServiceException;
+
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.all.MediaDesc;
@@ -48,7 +50,6 @@ import com.threerings.msoy.room.server.persist.MemoryRepository;
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
 
 import com.threerings.msoy.web.gwt.ServiceCodes;
-import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 import com.threerings.msoy.web.server.UploadUtil;
 

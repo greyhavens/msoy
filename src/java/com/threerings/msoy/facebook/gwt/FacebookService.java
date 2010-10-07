@@ -9,8 +9,9 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
+import com.threerings.web.gwt.ServiceException;
+
 import com.threerings.msoy.web.gwt.ArgNames;
-import com.threerings.msoy.web.gwt.ServiceException;
 
 /**
  * Provides services for munging Facebook and Whirled data for display.

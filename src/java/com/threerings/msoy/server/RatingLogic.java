@@ -17,7 +17,7 @@ import com.threerings.msoy.data.all.RatingHistoryResult.RatingHistoryEntry;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.persist.RatingRecord;
 import com.threerings.msoy.server.persist.RatingRepository;
-import com.threerings.msoy.web.gwt.ServiceException;
+import com.threerings.web.gwt.ServiceException;
 import com.threerings.presents.annotation.BlockingThread;
 
 /**

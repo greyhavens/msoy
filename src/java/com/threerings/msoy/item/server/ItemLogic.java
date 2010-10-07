@@ -35,6 +35,7 @@ import com.samskivert.util.Invoker;
 import com.samskivert.util.StringUtil;
 import com.samskivert.util.Tuple;
 
+import com.threerings.web.gwt.ServiceException;
 import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.presents.dobj.RootDObjectManager;
@@ -54,7 +55,6 @@ import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.underwire.server.SupportLogic;
 
 import com.threerings.msoy.web.gwt.ServiceCodes;
-import com.threerings.msoy.web.gwt.ServiceException;
 
 import com.threerings.msoy.game.data.GameAuthName;
 import com.threerings.msoy.game.gwt.GameInfo;

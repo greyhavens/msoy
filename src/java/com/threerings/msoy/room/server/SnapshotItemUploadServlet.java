@@ -19,7 +19,8 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.Photo;
 import com.threerings.msoy.item.server.ItemLogic;
 
-import com.threerings.msoy.web.gwt.ServiceException;
+import com.threerings.web.gwt.ServiceException;
+
 import com.threerings.msoy.web.server.UploadUtil.MediaInfo;
 
 /**

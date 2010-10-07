@@ -12,6 +12,7 @@ import com.google.inject.Singleton;
 
 import com.samskivert.util.StringUtil;
 
+import com.threerings.web.gwt.ServiceException;
 import com.threerings.util.MessageBundle;
 import com.threerings.util.TimeUtil;
 
@@ -40,7 +41,6 @@ import com.threerings.msoy.server.persist.MemberWarningRecord;
 import com.threerings.msoy.web.gwt.BannedException;
 import com.threerings.msoy.web.gwt.ExternalCreds;
 // import com.threerings.msoy.web.gwt.FacebookCreds;
-import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.server.AffiliateCookie;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;
@@ -375,7 +375,7 @@ public class MsoyAuthenticator extends Authenticator
     }
 
     /**
-     * Transforms a  {@link GwtAuthCodes#BANNED} {@link ServiceException} into a
+     * Transforms a  {@link GwtAuthCodes#BANNED} {@link com.threerings.web.gwt.ServiceException} into a
      * {@link BannedException} annotated with the warning supplied for the ban.
      */
     protected void checkBan (ServiceException se, int memberId)

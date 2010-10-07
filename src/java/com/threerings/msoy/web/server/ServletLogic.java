@@ -12,7 +12,8 @@ import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 
-import com.threerings.msoy.web.gwt.ServiceException;
+import com.threerings.web.gwt.ServiceException;
+import com.threerings.web.server.ServletWaiter;
 
 /**
  * Provides various services to servlets.

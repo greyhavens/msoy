@@ -5,8 +5,8 @@ package com.threerings.msoy.room.server;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
+import com.threerings.web.gwt.ServiceException;
 import com.threerings.presents.peer.server.NodeRequestsListener;
 import org.apache.commons.lang.ArrayUtils;
 
@@ -29,7 +29,6 @@ import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.data.all.RatingResult;
 
 import com.threerings.msoy.web.gwt.ServiceCodes;
-import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 import com.threerings.msoy.admin.data.CostsConfigObject;
 import com.threerings.msoy.admin.server.RuntimeConfig;
@@ -318,7 +317,7 @@ public class WebRoomServlet extends MsoyServiceServlet
             // support always may
             return;
         }
-        
+
         boolean mayManage;
         if (sceneRec.ownerType == MsoySceneModel.OWNER_TYPE_MEMBER) {
             // if the scene belongs to a member, the member is the admin

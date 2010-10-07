@@ -22,6 +22,7 @@ import com.google.inject.Inject;
 import com.samskivert.depot.DuplicateKeyException;
 import com.samskivert.util.Tuple;
 
+import com.threerings.web.gwt.ServiceException;
 import com.threerings.gwt.util.PagedResult;
 
 import com.threerings.msoy.data.MsoyAuthCodes;
@@ -30,7 +31,6 @@ import com.threerings.msoy.data.all.Theme;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.VizMemberName;
 import com.threerings.msoy.server.MemberManager;
-import com.threerings.msoy.server.MemberNodeActions;
 import com.threerings.msoy.server.PopularPlacesSnapshot;
 import com.threerings.msoy.server.TagLogic;
 import com.threerings.msoy.server.persist.MemberCardRecord;
@@ -43,7 +43,6 @@ import com.threerings.msoy.server.persist.MemberRepository.MemberSearchRecord;
 
 import com.threerings.msoy.web.gwt.MemberCard;
 import com.threerings.msoy.web.gwt.ServiceCodes;
-import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.gwt.TagHistory;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 
@@ -84,6 +83,7 @@ import com.threerings.msoy.group.server.persist.MedalRecord;
 import com.threerings.msoy.group.server.persist.MedalRepository;
 import com.threerings.msoy.group.server.persist.ThemeRepository;
 import com.threerings.msoy.item.data.ItemCodes;
+
 import static com.threerings.msoy.Log.log;
 
 /**

@@ -70,7 +70,9 @@ import com.threerings.msoy.web.gwt.ArgNames.FBParam;
 import com.threerings.msoy.web.gwt.CookieNames;
 import com.threerings.msoy.web.gwt.ExternalSiteId;
 import com.threerings.msoy.web.gwt.FacebookCreds;
-import com.threerings.msoy.web.gwt.ServiceException;
+
+import com.threerings.web.gwt.ServiceException;
+
 import com.threerings.msoy.web.gwt.SessionData;
 import com.threerings.msoy.web.gwt.SharedNaviUtil;
 

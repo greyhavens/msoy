@@ -26,6 +26,8 @@ import com.samskivert.depot.DatabaseException;
 import com.samskivert.util.IntTuple;
 import com.samskivert.util.RandomUtil;
 
+import com.threerings.web.gwt.ServiceException;
+
 import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.server.MsoyEvents.ItemPurchase.PseudoItem;
 import net.sf.ehcache.CacheManager;
@@ -44,7 +46,6 @@ import com.threerings.msoy.server.persist.CharityRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.persist.UserActionRepository;
-import com.threerings.msoy.web.gwt.ServiceException;
 
 import com.threerings.msoy.group.server.persist.BrandShareRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
@@ -935,7 +936,7 @@ public class MoneyLogic
      * @param memberId ID of the member making the request.
      * @param amount Amount of bling (NOT centibling) to cash out.
      *
-     * @throws ServiceException if the user has already requested a bling cash out that has not yet
+     * @throws com.threerings.web.gwt.ServiceException if the user has already requested a bling cash out that has not yet
      * been fulfilled or the amount requested is below the minimum amount allowed for cashing out
      * or the user hsa cashed out too recently.
      */

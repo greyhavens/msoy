@@ -11,6 +11,7 @@ import com.google.inject.Inject;
 
 import com.samskivert.depot.DuplicateKeyException;
 
+import com.threerings.web.gwt.ServiceException;
 import com.threerings.gwt.util.PagedResult;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.UserAction;
@@ -20,7 +21,6 @@ import com.threerings.msoy.server.persist.PromotionRecord;
 import com.threerings.msoy.server.persist.PromotionRepository;
 
 import com.threerings.msoy.web.gwt.Promotion;
-import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 
 import com.threerings.msoy.money.server.MoneyLogic;

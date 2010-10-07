@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.web.gwt;
 
+import com.threerings.web.gwt.ServiceException;
+
 /**
  * A special case ServiceExeption with extended ban related information.
  */

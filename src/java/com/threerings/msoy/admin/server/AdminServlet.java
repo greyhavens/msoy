@@ -30,6 +30,8 @@ import com.samskivert.util.StringUtil;
 import com.samskivert.util.Tuple;
 import com.samskivert.util.Invoker.Unit;
 
+import com.threerings.web.gwt.ServiceException;
+
 import com.threerings.msoy.admin.server.persist.MediaBlacklistRepository;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MediaMimeTypes;
@@ -41,6 +43,7 @@ import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.presents.peer.data.NodeObject;
 import com.threerings.presents.peer.server.PeerManager.NodeAction;
 
+import com.threerings.web.server.ServletWaiter;
 import com.whirled.bureau.data.BureauTypes;
 
 import com.threerings.msoy.peer.server.MsoyPeerManager;
@@ -62,10 +65,8 @@ import com.threerings.msoy.underwire.server.SupportLogic;
 import com.threerings.msoy.web.gwt.Contest;
 import com.threerings.msoy.web.gwt.Promotion;
 import com.threerings.msoy.web.gwt.ServiceCodes;
-import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.gwt.WebCreds;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
-import com.threerings.msoy.web.server.ServletWaiter;
 
 import com.threerings.msoy.game.server.persist.GameInfoRecord;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;

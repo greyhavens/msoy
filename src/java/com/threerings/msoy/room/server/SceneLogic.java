@@ -16,6 +16,8 @@ import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.servlet.util.ServiceWaiter;
 import com.samskivert.util.Invoker;
 
+import com.threerings.web.gwt.ServiceException;
+
 import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.util.MessageBundle;
 import com.threerings.whirled.data.SceneModel;
@@ -25,7 +27,6 @@ import com.threerings.whirled.util.NoSuchSceneException;
 import com.threerings.whirled.util.UpdateList;
 
 import com.threerings.msoy.server.persist.MemberRepository;
-import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.group.server.persist.ThemeRepository;

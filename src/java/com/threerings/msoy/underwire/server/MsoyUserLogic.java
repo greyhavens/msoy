@@ -10,6 +10,7 @@ import com.samskivert.servlet.user.AuthenticationFailedException;
 import com.samskivert.servlet.user.InvalidPasswordException;
 import com.samskivert.servlet.user.NoSuchUserException;
 
+import com.threerings.web.gwt.ServiceException;
 import com.threerings.user.OOOUser;
 
 import com.threerings.underwire.server.SupportUserLogic;
@@ -24,7 +25,6 @@ import com.threerings.msoy.server.MsoyAuthenticator;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.persist.MsoyOOOUserRepository;
-import com.threerings.msoy.web.gwt.ServiceException;
 
 import com.threerings.msoy.underwire.gwt.MsoyAccount;
 

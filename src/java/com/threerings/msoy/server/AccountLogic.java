@@ -8,6 +8,8 @@ import java.util.Collections;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import com.threerings.web.gwt.ServiceException;
+
 import org.apache.commons.codec.binary.Base64;
 
 import com.samskivert.depot.DuplicateKeyException;
@@ -20,7 +22,6 @@ import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.msoy.web.gwt.ExternalSiteId;
 import com.threerings.msoy.web.gwt.ServiceCodes;
-import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.server.AffiliateCookie;
 
 import com.threerings.msoy.money.server.MoneyLogic;

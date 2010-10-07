@@ -15,6 +15,8 @@ import com.google.inject.Inject;
 
 import com.samskivert.util.Tuple;
 
+import com.threerings.web.gwt.ServiceException;
+
 import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.RatingHistoryResult;
@@ -50,7 +52,6 @@ import com.threerings.msoy.item.server.persist.ItemRepository;
 
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.ServiceCodes;
-import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.gwt.TagHistory;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 

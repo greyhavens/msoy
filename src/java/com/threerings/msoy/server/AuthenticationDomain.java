@@ -3,9 +3,9 @@
 
 package com.threerings.msoy.server;
 
+import com.threerings.web.gwt.ServiceException;
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.MsoyTokenRing;
-import com.threerings.msoy.web.gwt.ServiceException;
 
 /** Provides authentication information and services for a particular partner. */
 public interface AuthenticationDomain
@@ -15,10 +15,10 @@ public interface AuthenticationDomain
     {
         /** The account name in question. */
         public String accountName;
-    
+
         /** The access privileges conferred to this account. */
         public MsoyTokenRing tokens;
-    
+
         /** Whether or not this account is logging on for the first time. */
         public boolean firstLogon;
     }
@@ -62,7 +62,7 @@ public interface AuthenticationDomain
     /**
      * Updates the password for the supplied account.
      *
-     * @exception ServiceException thrown with {@link MsoyAuthCodes#NO_SUCH_USER} if the account in
+     * @exception com.threerings.web.gwt.ServiceException thrown with {@link MsoyAuthCodes#NO_SUCH_USER} if the account in
      * question does not exist.
      */
     public void updatePassword (String accountName, String newPassword)
@@ -71,7 +71,7 @@ public interface AuthenticationDomain
     /**
      * Loads up account information for the specified account and checks the supplied password.
      *
-     * @exception ServiceException thrown with {@link MsoyAuthCodes#INVALID_LOGON} to indicate
+     * @exception com.threerings.web.gwt.ServiceException thrown with {@link MsoyAuthCodes#INVALID_LOGON} to indicate
      * that the account doesn't exist OR the password is incorrect. Differentiating between
      * those is not as secure.
      */
@@ -87,7 +87,7 @@ public interface AuthenticationDomain
      * logging in.
      * @param newIdent if the machIdent was generated on the server
      *
-     * @exception ServiceException thrown with {@link MsoyAuthCodes#BANNED} if the account is
+     * @exception com.threerings.web.gwt.ServiceException thrown with {@link MsoyAuthCodes#BANNED} if the account is
      * banned or {@link MsoyAuthCodes#MACHINE_TAINTED} if the machine identifier provided is
      * associated with a banned account and this is the account's first logon.
      */
@@ -99,7 +99,7 @@ public interface AuthenticationDomain
      * specified account is banned. This is used when the account logs in from a
      * non-machine-ident supporting client (like the web browser).
      *
-     * @exception ServiceException thrown with {@link MsoyAuthCodes#BANNED} if the account is
+     * @exception com.threerings.web.gwt.ServiceException thrown with {@link MsoyAuthCodes#BANNED} if the account is
      * banned.
      */
     public void validateAccount (Account account)

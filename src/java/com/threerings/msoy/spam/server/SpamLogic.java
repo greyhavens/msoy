@@ -21,12 +21,13 @@ import com.samskivert.net.MailUtil;
 import com.samskivert.util.ArrayUtil;
 import com.samskivert.util.CollectionUtil;
 import com.samskivert.util.CountHashMap;
-import com.samskivert.util.IntSet;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.RandomUtil;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.cron.server.CronLogic;
+
+import com.threerings.web.gwt.ServiceException;
 
 import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.presents.annotation.BlockingThread;
@@ -41,7 +42,6 @@ import com.threerings.msoy.fora.gwt.ForumThread;
 import com.threerings.msoy.fora.server.ForumLogic;
 import com.threerings.msoy.group.server.GroupLogic;
 
-import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.gwt.CatalogQuery;
 import com.threerings.msoy.item.gwt.ListingCard;
 import com.threerings.msoy.item.server.CatalogLogic;
@@ -77,7 +77,6 @@ import com.threerings.msoy.spam.server.persist.SpamRepository;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.MarkupBuilder;
 import com.threerings.msoy.web.gwt.Pages;
-import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.gwt.SharedMediaUtil.Dimensions;
 import com.threerings.msoy.web.gwt.SharedMediaUtil;
 

@@ -28,6 +28,7 @@ import com.samskivert.util.CollectionUtil;
 import com.samskivert.util.Comparators;
 import com.samskivert.util.RandomUtil;
 
+import com.threerings.web.gwt.ServiceException;
 import com.threerings.parlor.rating.server.persist.RatingRecord;
 import com.threerings.parlor.rating.server.persist.RatingRepository;
 
@@ -67,7 +68,6 @@ import com.threerings.msoy.game.server.persist.TrophyRepository;
 import com.threerings.msoy.money.server.persist.MoneyRepository;
 
 import com.threerings.msoy.web.gwt.ExternalSiteId;
-import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 
 import static com.threerings.msoy.Log.log;
