@@ -22,6 +22,13 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
 
+import com.samskivert.servlet.util.CookieUtil;
+import com.threerings.msoy.data.MsoyAuthCodes;
+import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.web.gwt.WebCreds;
+
+import com.threerings.web.gwt.ServiceException;
+
 import org.mortbay.io.Connection;
 import org.mortbay.io.nio.SelectChannelEndPoint;
 
@@ -43,8 +50,7 @@ import com.samskivert.util.Lifecycle;
 import com.threerings.pulse.jetty.server.JettyPulseHttpServer;
 import com.threerings.pulse.web.server.PulseFlotServlet;
 
-import com.threerings.msoy.admin.config.gwt.ConfigService;
-import com.threerings.msoy.admin.config.server.ConfigServlet;
+import com.threerings.admin.web.server.ConfigServlet;
 import com.threerings.msoy.server.ServerConfig;
 
 import com.threerings.msoy.admin.gwt.AdminService;
@@ -282,13 +288,32 @@ public class MsoyHttpServer extends JettyPulseHttpServer
         }
     }
 
+    protected static class MsoyConfigServlet extends ConfigServlet
+    {
+        @Override // from ConfigServlet
+        protected void requireAdminUser ()
+			throws ServiceException
+        {
+			MemberRecord mrec =  _mhelper.getAuthedUser(
+				CookieUtil.getCookieValue(getThreadLocalRequest(), WebCreds.credsCookie()));
+
+			if (mrec == null) {
+				throw new ServiceException(MsoyAuthCodes.SESSION_EXPIRED);
+			}
+			if (!mrec.isAdmin()) {
+				throw new ServiceException(MsoyAuthCodes.ACCESS_DENIED);
+			}
+        }
+
+		@Inject protected MemberHelper _mhelper;
+    }
+
     /** Populated during {@link #preInit} with dependency resolved servlet instances. */
     protected Map<String, HttpServlet> _servlets = Maps.newHashMap();
 
     protected static final Map<String, Class<? extends HttpServlet>> SERVLETS =
         new ImmutableMap.Builder<String, Class<? extends HttpServlet>>()
         .put(AdminService.ENTRY_POINT, AdminServlet.class)
-        .put(ConfigService.ENTRY_POINT, ConfigServlet.class)
         .put(CatalogService.ENTRY_POINT, CatalogServlet.class)
         .put(CommentService.ENTRY_POINT, CommentServlet.class)
         .put(ForumService.ENTRY_POINT, ForumServlet.class)
@@ -312,6 +337,7 @@ public class MsoyHttpServer extends JettyPulseHttpServer
         .put(FacebookService.ENTRY_POINT, FacebookServlet.class)
         .put(RemindersService.ENTRY_POINT, RemindersServlet.class)
         .put(AppService.ENTRY_POINT, AppServlet.class)
+        .put("/configsvc", MsoyConfigServlet.class)
         .put("/facebook/*", FacebookCallbackServlet.class)
         .put("/ooo", OOOXmlRpcServlet.class)
         .put("/remixuploadsvc", UploadRemixMediaServlet.class)
