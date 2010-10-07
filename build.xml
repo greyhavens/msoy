@@ -60,7 +60,6 @@
     <file name="${extlibs.dir}/junit4.jar"/>
     <!--<file name="${extlibs.dir}/retroweaver-all-1.2.2.jar"/>
     <file name="${extlibs.dir}/retroweaver-rt-1.2.2.jar"/>-->
-    <file name="${extlibs.dir}/proguard.jar"/>
   </filelist>
 
   <!-- declare the libraries needed by the MSOY runtime and for building -->
@@ -189,6 +188,7 @@
                   version="0.0-SNAPSHOT"/>
       <dependency groupId="com.threerings.narya" artifactId="narya-base" version="0.0-SNAPSHOT"/>
       <dependency groupId="com.threerings.narya" artifactId="narya-distrib" version="0.0-SNAPSHOT"/>
+      <dependency groupId="com.threerings.narya" artifactId="narya-gwt" version="0.0-SNAPSHOT"/>
       <dependency groupId="com.threerings.narya" artifactId="naryalib" version="0.0-SNAPSHOT"
                   type="swc"/>
       <dependency groupId="com.threerings.nenya" artifactId="nenya-rsrc" version="0.0-SNAPSHOT"/>
@@ -778,45 +778,6 @@
     <copy file="${deploy.dir}/whirledmap.swf" todir="pages/clients/${version}"/>
   </target>
 
-  <!-- builds, runs Proguard on and signs a Java client -->
-  <target name="proguard">
-    <echo>Building ${ident} Java client...</echo>
-
-    <!-- figure out where the Java rt.jar file lives -->
-    <condition property="rtClasses" value="${java.home}/../Classes/classes.jar">
-      <istrue value="${platform.darwin}"/>
-    </condition>
-    <condition property="rtClasses" value="${java.home}/lib/rt.jar">
-      <isfalse value="${platform.darwin}"/>
-    </condition>
-    <mkdir dir="${deploy.dir}"/>
-
-    <!-- run Proguard -->
-    <taskdef resource="proguard/ant/task.properties" classpath="${extlibs.dir}/proguard.jar"/>
-    <proguard configuration="etc/${ident}-client.pro">
-      <libraryjar name="${rtClasses}"/>
-    </proguard>
-
-    <!-- Copy the resulting jar file into the document tree. -->
-    <copy file="${deploy.dir}/${ident}-client.jar" todir="pages/clients/${version}"/>
-  </target>
-
-  <!-- builds our Java clients -->
-  <property name="jclients" value="admin"/>
-  <target name="jclients" depends="dist"
-          description="Rebuilds the Java clients. Use -Djclients=IDENT to just rebuild just one.">
-    <for list="${jclients}" param="ident"><sequential>
-      <antcall target="proguard"><param name="ident" value="@{ident}"/></antcall>
-    </sequential></for>
-    <!-- build the howdy pardner jar -->
-    <jar file="pages/clients/${version}/howdy.jar" basedir="${classes.dir}">
-      <include name="com/threerings/msoy/client/HowdyPardner.class"/>
-    </jar>
-  </target>
-
-  <!-- builds top-level Java applications. -->
-  <target name="javaapps" depends="jclients"/>
-
   <!-- generates fields for persistent record classes -->
   <target name="genrecord" depends="prepare">
     <taskdef name="grecord" classname="com.samskivert.depot.tools.GenRecordTask"
@@ -1078,7 +1039,7 @@
   </target>
 
   <!-- rebuilds all subprojects and the whole top-level distribution -->
-  <target name="distbits" depends="distprojects,dist,flashapps,thane-client,jclients"/>
+  <target name="distbits" depends="distprojects,dist,flashapps,thane-client"/>
   <target name="distall-package" depends="prepare,mavendeps,distbits,tests,checkstyle,gclients"
           description="Rebuilds all architecture independent targets."/>
   <target name="distall" depends="copythanebinaries,distall-package"
@@ -1191,8 +1152,6 @@
         <include name="MsoyThaneClient.abc"/>
         <!-- skip build_settings.properties since it's only needed at build time -->
         <exclude name="build_settings.properties"/>
-        <!-- skip conflicting libraries -->
-        <exclude name="**/proguard.jar"/>
       </fileset>
     </copy>
 
