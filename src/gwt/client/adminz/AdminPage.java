@@ -10,7 +10,7 @@ import com.threerings.msoy.item.gwt.ItemDetail;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
-import client.adminz.config.ConfigEditorPanel;
+import com.threerings.admin.web.client.ConfigEditorPanel;
 import client.shell.CShell;
 import client.shell.Page;
 import client.survey.EditSurveyPanel;
@@ -96,7 +96,11 @@ public class AdminPage extends Page
             setContent("Broadcasts", new BroadcastHistoryPanel());
 
         } else if (action.equals("config")) {
-            setContent("Config", new ConfigEditorPanel());
+            setContent("Config", new ConfigEditorPanel() {
+                @Override protected String getServiceEntryPoint () {
+                    return CONFIG_SERVICE_ENTRY_POINT;
+                }
+            });
 
         } else {
             setContent(_msgs.title(), new DashboardPanel());
@@ -113,4 +117,6 @@ public class AdminPage extends Page
     protected EditSurveyPanel _surveyPanel;
 
     protected static final AdminMessages _msgs = GWT.create(AdminMessages.class);
+
+    protected static final String CONFIG_SERVICE_ENTRY_POINT = "/configsvc";
 }
