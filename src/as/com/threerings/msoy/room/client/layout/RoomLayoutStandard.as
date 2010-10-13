@@ -173,29 +173,6 @@ public class RoomLayoutStandard implements RoomLayout
         cloc.loc.z = Math.min(Math.max(cloc.loc.z, 0), 1);
     }
 
-    /**
-     * Determine the location of the projected coordinate.
-     *
-     * @param x the logical x coordinate (0 - 1)
-     * @param y the logical y coordinate (0 - 1)
-     */
-    // TODO: deprecate, fix perspectivization, use the _metrics version
-    // of these methods
-    /*
-    protected function projectedLocation (
-        scale :Number, x :Number, y :Number) :Point
-    {
-        // x position depends on logical x and the scale
-        var floorWidth :Number = (_metrics.sceneWidth * scale);
-        var floorInset :Number = (_metrics.sceneWidth - floorWidth) / 2;
-
-        var horizonY :Number = _metrics.sceneHeight * (1 - _metrics.sceneHorizon);
-        return new Point(floorInset + (x * floorWidth),
-                         horizonY + ((_metrics.sceneHeight - horizonY) -
-                                     (y * _metrics.sceneHeight)) * scale);
-    }
-    */
-
     // from interface RoomLayout
     public function locationToPoint (location :MsoyLocation) :Point
     {
