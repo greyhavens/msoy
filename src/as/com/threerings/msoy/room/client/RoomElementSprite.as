@@ -8,7 +8,6 @@ import flash.display.Sprite;
 
 import flash.geom.Matrix;
 
-import com.threerings.msoy.room.client.RoomElement;
 import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.msoy.room.data.RoomCodes;
 

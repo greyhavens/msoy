@@ -77,10 +77,14 @@ public class PetSprite extends ActorSprite
         CommandEvent.dispatch(this, RoomController.PET_CLICKED, this);
     }
 
-    override protected function getBlockType () :String
+    /**
+     * When our owner's muteness has changed, update the block. This brutally overrides the block
+     * type in the media container. Implement something more sophisticated if we need it later.
+     */
+    public function ownedMuteChanged ():void
     {
         // TODO: we can make a special icon for owner-muting a pet, but right now we re-use "mute".
-        return isOwnerMuted() ? "mute" : super.getBlockType();
+        setBlocked(isOwnerMuted() ? "mute" : null);
     }
 
     override protected function getSpecialProperty (name :String) :Object

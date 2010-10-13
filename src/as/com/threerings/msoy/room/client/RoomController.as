@@ -43,8 +43,6 @@ import com.threerings.msoy.client.PlaceBox;
 import com.threerings.msoy.client.UberClient;
 import com.threerings.msoy.data.all.MemberName;
 
-// import com.threerings.msoy.ui.RadialMenu;
-
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.ItemTypes;
 
@@ -53,9 +51,7 @@ import com.threerings.msoy.world.client.WorldControlBar;
 
 import com.threerings.msoy.chat.client.ChatOverlay;
 
-import com.threerings.msoy.room.client.MsoySprite;
 import com.threerings.msoy.room.data.ActorInfo;
-import com.threerings.msoy.room.data.EntityControl;
 import com.threerings.msoy.room.data.EntityMemories;
 import com.threerings.msoy.room.data.FurniData;
 import com.threerings.msoy.room.data.MsoyLocation;

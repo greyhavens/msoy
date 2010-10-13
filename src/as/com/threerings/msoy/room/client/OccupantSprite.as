@@ -18,7 +18,6 @@ import com.threerings.util.ArrayUtil;
 import com.threerings.util.Comparators;
 
 import com.threerings.display.FilterUtil;
-import com.threerings.text.TextFieldUtil;
 
 import com.threerings.crowd.data.OccupantInfo;
 
@@ -26,7 +25,6 @@ import com.threerings.msoy.ui.MsoyNameLabel;
 
 import com.threerings.msoy.chat.client.ComicOverlay;
 import com.threerings.msoy.client.Prefs;
-import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.world.client.WorldContext;
 
 import com.threerings.msoy.room.data.MsoyLocation;
@@ -84,6 +82,8 @@ public class OccupantSprite extends MsoySprite
         if (occInfo != null) {
             setOccupantInfo(occInfo, extraInfo);
         }
+
+        muteChanged();
     }
 
     override public function roomScaleUpdated () :void
@@ -420,10 +420,13 @@ public class OccupantSprite extends MsoySprite
              _ctx.getMuteDirector().isMuted(_occInfo.username))
     }
 
-    override protected function getBlockType () :String
+    /**
+     * When our muteness has changed, update the block. This brutally overrides the block type
+     * in the media container. Implement something more sophisticated if we need it later.
+     */
+    public function muteChanged ():void
     {
-        // let's have the mute blocking take precedence over bleep blocking
-        return isMuted() ? "mute" : super.getBlockType();
+        setBlocked(isMuted() ? "mute": null);
     }
 
     override protected function getSpecialProperty (name :String) :Object

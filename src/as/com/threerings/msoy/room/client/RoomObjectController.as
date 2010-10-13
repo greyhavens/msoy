@@ -9,8 +9,6 @@ import flash.events.MouseEvent;
 import flash.ui.Keyboard;
 import flash.utils.ByteArray;
 
-import mx.controls.Button;
-
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.MessageBundle;
 import com.threerings.util.Name;
@@ -34,7 +32,6 @@ import com.threerings.flex.CommandMenu;
 import com.threerings.whirled.data.SceneUpdate;
 
 import com.threerings.msoy.client.BootablePlaceController;
-import com.threerings.msoy.client.MemberService;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyClient;
 import com.threerings.msoy.client.MsoyController;
@@ -42,8 +39,6 @@ import com.threerings.msoy.client.TopPanel;
 import com.threerings.msoy.client.UberClient;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
-import com.threerings.msoy.data.all.MediaDesc;
-import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.ui.BubblePopup;
@@ -87,7 +82,6 @@ import com.threerings.msoy.room.data.PetName;
 import com.threerings.msoy.room.data.PuppetName;
 import com.threerings.msoy.room.data.RoomObject;
 import com.threerings.msoy.room.data.SceneAttrsUpdate;
-import com.threerings.msoy.room.data.SceneOwnershipUpdate;
 
 import com.threerings.msoy.ui.MediaWrapper;
 
@@ -138,13 +132,13 @@ public class RoomObjectController extends RoomController
         // when someone becomes muted, it may affect the visibility of their sprite
         var occ :OccupantSprite = _roomObjectView.getOccupantByName(name);
         if (occ != null) {
-            occ.checkBlocked();
+            occ.muteChanged();
         }
         if (name is MemberName) {
             var memberId :int = MemberName(name).getMemberId();
             for each (var pet :PetSprite in _roomObjectView.getPets()) {
                 if (pet.getOwnerId() == memberId) {
-                    pet.checkBlocked();
+                    pet.ownedMuteChanged();
                     // keep going: there could be more than one matching pet
                 }
             }
@@ -157,7 +151,7 @@ public class RoomObjectController extends RoomController
     public function containsPlayer (name :MemberName) :Boolean
     {
         var info :OccupantInfo = _roomObj.getOccupantInfo(name);
-        return (info != null) && !(info.username is PuppetName); 
+        return (info != null) && !(info.username is PuppetName);
     }
 
     /**

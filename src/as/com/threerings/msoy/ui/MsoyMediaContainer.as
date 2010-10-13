@@ -37,13 +37,15 @@ import com.threerings.msoy.item.data.all.Item;
 public class MsoyMediaContainer extends MediaContainer
     implements ContextMenuProvider, ISWFBridgeProvider
 {
-    public function MsoyMediaContainer (desc :MediaDesc = null, bleepInMenu :Boolean = true)
+    public function MsoyMediaContainer (
+        desc :MediaDesc = null, bleepInMenu :Boolean = true, blockType :String = null)
     {
         super(null);
         if (desc != null) {
             setMediaDesc(desc);
         }
         _bleepInMenu = bleepInMenu;
+        _blockType = blockType;
 
         // have this container listen for bleep changes during its lifetime
         Prefs.events.addEventListener(Prefs.BLEEPED_MEDIA, handleBleepChange, false, 0, true);
@@ -97,6 +99,17 @@ public class MsoyMediaContainer extends MediaContainer
     public function isBleeped () :Boolean
     {
         return isBleepable() && Prefs.isMediaBleeped(_desc.getMediaId());
+    }
+
+    /**
+     * Set the block type of this media container, which will replace our actual configured
+     * media with something fixed (typically static and low-bandwidth). A null argument will
+     * clear the block. The block type takes precedence over bleeping, which is another form
+     * of blocking.
+     */
+    public function setBlocked (blockType :String) :void
+    {
+        _blockType = blockType;
     }
 
     /**
@@ -224,6 +237,9 @@ public class MsoyMediaContainer extends MediaContainer
      */
     protected function getBlockType () :String
     {
+        if (_blockType != null) {
+            return _blockType;
+        }
         return (Prefs.isGlobalBleep() || isBleeped()) ? "bleep" : null;
     }
 
@@ -267,6 +283,9 @@ public class MsoyMediaContainer extends MediaContainer
 
     /** Whether or not we should populate the context menu with a bleep action. */
     protected var _bleepInMenu :Boolean;
+
+    /** A settable block type that will, if non-null, override bleep considerations. */
+    protected var _blockType :String;
 
     protected var _bridge :IEventDispatcher;
 }
