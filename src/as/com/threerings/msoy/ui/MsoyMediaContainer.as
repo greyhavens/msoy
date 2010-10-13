@@ -163,6 +163,31 @@ public class MsoyMediaContainer extends MediaContainer
         return false;
     }
 
+    /** @inheritDoc */
+    // from MediaContainer
+    final override public function getMediaScaleX () :Number
+    {
+        // use a fixed scale for blocked media
+        return isBlocked() ? 1 : _spriteMediaScaleX;
+    }
+
+    /** @inheritDoc */
+    // from MediaContainer
+    final override public function getMediaScaleY () :Number
+    {
+        // use a fixed scale for blocked media
+        return isBlocked() ? 1 : _spriteMediaScaleY;
+    }
+
+    /**
+     * Set the media scale to use when we are not displaying a blocked state.
+     */
+    public function setSpriteMediaScale (scaleX :Number, scaleY :Number)
+    {
+        _spriteMediaScaleX = scaleX;
+        _spriteMediaScaleY = scaleY;
+    }
+
     override protected function addListeners (info :LoaderInfo) :void
     {
         super.addListeners(info);
@@ -286,6 +311,12 @@ public class MsoyMediaContainer extends MediaContainer
 
     /** A settable block type that will, if non-null, override bleep considerations. */
     protected var _blockType :String;
+
+    /** The media scale to use when we are not blocked. */
+    protected var _spriteMediaScaleX :Number;
+
+    /** The media scale to use when we are not blocked. */
+    protected var _spriteMediaScaleY :Number;
 
     protected var _bridge :IEventDispatcher;
 }

@@ -40,6 +40,7 @@ public class FurniSprite extends MsoySprite
 
         // configure our media and item
         setItemIdent(furni.getItemIdent());
+        setSpriteMediaScale(furni.scaleX, furni.scaleY);
         setMediaDesc(furni.media);
 
         // set up our hotspot if one is configured in the furni data record
@@ -89,6 +90,7 @@ public class FurniSprite extends MsoySprite
     {
         _furni = furni;
         setItemIdent(furni.getItemIdent());
+        setSpriteMediaScale(furni.scaleX, furni.scaleY);
         setMediaDesc(furni.media);
         scaleUpdated();
         rotationUpdated();
@@ -198,23 +200,9 @@ public class FurniSprite extends MsoySprite
         }
     }
 
-    override public function toString () :String
+    public function toString () :String
     {
         return "FurniSprite[" + _furni.itemType + ":" + _furni.itemId + "]";
-    }
-
-    /** @inheritDoc */
-    // from MsoySprite
-    override protected function getSpriteMediaScaleX () :Number
-    {
-        return _furni.scaleX;
-    }
-
-    /** @inheritDoc */
-    // from MsoySprite
-    override protected function getSpriteMediaScaleY () :Number
-    {
-        return _furni.scaleY;
     }
 
     // documentation inherited

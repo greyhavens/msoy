@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.room.client {
 import com.threerings.media.MediaContainer;
+import com.threerings.msoy.ui.MsoyMediaContainer;
 
 import flash.display.BlendMode;
 import flash.display.DisplayObject;
@@ -319,17 +320,19 @@ public class MsoySprite extends DataPackMediaContainer
 
     protected function setGlow (glow :Boolean) :void
     {
+        var media :DisplayObject = getMedia();
+
         if (glow) {
             _glow = new GlowFilter(getHoverColor(), 1, 32, 32);
-            FilterUtil.addFilter(_media, _glow);
-            if (_media.mask != null) {
-                FilterUtil.addFilter(_media.mask, _glow);
+            FilterUtil.addFilter(media, _glow);
+            if (media.mask != null) {
+                FilterUtil.addFilter(media.mask, _glow);
             }
 
         } else {
-            FilterUtil.removeFilter(_media, _glow);
-            if (_media.mask != null) {
-                FilterUtil.removeFilter(_media.mask, _glow);
+            FilterUtil.removeFilter(media, _glow);
+            if (media.mask != null) {
+                FilterUtil.removeFilter(media.mask, _glow);
             }
             _glow = null;
         }
@@ -466,40 +469,6 @@ public class MsoySprite extends DataPackMediaContainer
     protected function mediaDidShutdown (event :Event) :void
     {
         _hotSpot = null;
-    }
-
-    /** @inheritDoc */
-    // from MediaContainer
-    final override public function getMediaScaleX () :Number
-    {
-        // use a fixed scale for blocked media
-        return isBlocked() ? 1 : getSpriteMediaScaleX();
-    }
-
-    /** @inheritDoc */
-    // from MediaContainer
-    final override public function getMediaScaleY () :Number
-    {
-        // use a fixed scale for blocked media
-        return isBlocked() ? 1 : getSpriteMediaScaleY();
-    }
-
-    /**
-     * Provides the horizontal scale of the sprite when not blocked. When the media is blocked, it
-     * has a fixed scale. Callers should always access the scale using <code>getMediaScaleX</code>.
-     */
-    protected function getSpriteMediaScaleX () :Number
-    {
-        return 1.0;
-    }
-
-    /**
-     * Provides the vertical scale of the sprite when not blocked. When the media is blocked, it
-     * has a fixed scale. Callers should always access the scale using <code>getMediaScaleY</code>.
-     */
-    protected function getSpriteMediaScaleY () :Number
-    {
-        return 1.0;
     }
 
     /**

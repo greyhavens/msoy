@@ -536,20 +536,6 @@ public class OccupantSprite extends MsoySprite
         arrangeDecorations();
     }
 
-    /** @inheritDoc */
-    // from MsoySprite
-    override protected function getSpriteMediaScaleX () :Number
-    {
-        return _scale;
-    }
-
-    /** @inheritDoc */
-    // from MsoySprite
-    override protected function getSpriteMediaScaleY () :Number
-    {
-        return _scale;
-    }
-
     // from MsoySprite
     override protected function setGlow (glow :Boolean) :void
     {
@@ -576,6 +562,7 @@ public class OccupantSprite extends MsoySprite
     override protected function scaleUpdated () :void
     {
         super.scaleUpdated();
+        setSpriteMediaScale(_scale, _scale);
         recheckLabel();
         arrangeDecorations();
     }
