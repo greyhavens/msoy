@@ -94,26 +94,13 @@ class ViewerSprite extends FurniSprite
     public function setScale (scale :Number) :void
     {
         _scale = scale;
+        setSpriteMediaScale(scale, scale);
         scaleUpdated();
     }
 
     override public function capturesMouse () :Boolean
     {
         return true;
-    }
-
-    /** @inheritDoc */
-    // from MsoySprite
-    override protected function getSpriteMediaScaleX () :Number
-    {
-        return _scale;
-    }
-
-    /** @inheritDoc */
-    // from MsoySprite
-    override protected function getSpriteMediaScaleY () :Number
-    {
-        return _scale;
     }
 
     protected var _scale :Number = 1;

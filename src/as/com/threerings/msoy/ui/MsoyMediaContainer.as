@@ -165,7 +165,7 @@ public class MsoyMediaContainer extends MediaContainer
 
     /** @inheritDoc */
     // from MediaContainer
-    final override public function getMediaScaleX () :Number
+    override public function getMediaScaleX () :Number
     {
         // use a fixed scale for blocked media
         return isBlocked() ? 1 : _spriteMediaScaleX;
@@ -173,7 +173,7 @@ public class MsoyMediaContainer extends MediaContainer
 
     /** @inheritDoc */
     // from MediaContainer
-    final override public function getMediaScaleY () :Number
+    override public function getMediaScaleY () :Number
     {
         // use a fixed scale for blocked media
         return isBlocked() ? 1 : _spriteMediaScaleY;

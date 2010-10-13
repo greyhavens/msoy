@@ -200,7 +200,7 @@ public class FurniSprite extends MsoySprite
         }
     }
 
-    public function toString () :String
+    override public function toString () :String
     {
         return "FurniSprite[" + _furni.itemType + ":" + _furni.itemId + "]";
     }
