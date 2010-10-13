@@ -2,12 +2,13 @@
 // $Id$
 
 package com.threerings.msoy.room.client {
+import com.threerings.media.MediaContainer;
 
 import flash.display.BlendMode;
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 import flash.display.Loader;
-
+import flash.events.Event;
 import flash.events.MouseEvent;
 
 import flash.filters.GlowFilter;
@@ -59,6 +60,9 @@ public class MsoySprite extends DataPackMediaContainer
     public function MsoySprite (ctx :WorldContext)
     {
         _ctx = ctx;
+
+        addEventListener(MediaContainer.WILL_SHUTDOWN, mediaWillShutdown);
+        addEventListener(Event.UNLOAD, mediaDidShutdown);
     }
 
     /**
@@ -448,13 +452,7 @@ public class MsoySprite extends DataPackMediaContainer
         callUserCode("gotControl_v1");
     }
 
-    /**
-     * Unload the media we're displaying, clean up any resources.
-     *
-     * @param completely if true, we're going away and should stop everything. Otherwise, we're
-     * just loading up new media.
-     */
-    override public function shutdown (completely :Boolean = true) :void
+    protected function mediaWillShutdown (event :ValueEvent) :void
     {
         // clean up our backend
         if (_backend != null) {
@@ -463,9 +461,10 @@ public class MsoySprite extends DataPackMediaContainer
         }
 
         setHovered(false);
+    }
 
-        super.shutdown(completely);
-
+    protected function mediaDidShutdown (event :Event) :void
+    {
         _hotSpot = null;
     }
 

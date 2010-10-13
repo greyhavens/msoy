@@ -2,6 +2,7 @@
 // $Id$
 
 package com.threerings.msoy.room.client {
+import com.threerings.util.ValueEvent;
 
 import flash.display.BitmapData;
 import flash.display.DisplayObject;
@@ -562,13 +563,13 @@ public class OccupantSprite extends MsoySprite
     }
 
     // from MsoySprite
-    override public function shutdown (completely :Boolean = true) :void
+    override protected function mediaWillShutdown (event :ValueEvent) :void
     {
-        if (completely) {
+        if (Boolean(event.value)) {
             stopMove();
         }
 
-        super.shutdown(completely);
+        super.mediaWillShutdown(event);
     }
 
     // from MsoySprite
