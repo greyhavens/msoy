@@ -4,7 +4,6 @@
 package com.threerings.msoy.ui {
 
 import flash.display.DisplayObject;
-import flash.display.Loader;
 import flash.display.LoaderInfo;
 
 import flash.events.Event;
@@ -38,12 +37,13 @@ import com.threerings.msoy.item.data.all.Item;
 public class MsoyMediaContainer extends MediaContainer
     implements ContextMenuProvider, ISWFBridgeProvider
 {
-    public function MsoyMediaContainer (desc :MediaDesc = null)
+    public function MsoyMediaContainer (desc :MediaDesc = null, bleepInMenu :Boolean = true)
     {
         super(null);
         if (desc != null) {
             setMediaDesc(desc);
         }
+        _bleepInMenu = bleepInMenu;
 
         // have this container listen for bleep changes during its lifetime
         Prefs.events.addEventListener(Prefs.BLEEPED_MEDIA, handleBleepChange, false, 0, true);
@@ -120,7 +120,7 @@ public class MsoyMediaContainer extends MediaContainer
     // from ContextMenuProvider
     public function populateContextMenu (ctx :MsoyContext, menuItems :Array) :void
     {
-        if (isBleepable()) {
+        if (_bleepInMenu && isBleepable()) {
             var isBleeped :Boolean = isBleeped();
             // TODO: if there happens to be another bleepable MsoyMediaContainer
             // also under the mouse, we'll probably clobber each other's menu items.
@@ -264,6 +264,9 @@ public class MsoyMediaContainer extends MediaContainer
 
     /** Our Media descriptor. */
     protected var _desc :MediaDesc;
+
+    /** Whether or not we should populate the context menu with a bleep action. */
+    protected var _bleepInMenu;
 
     protected var _bridge :IEventDispatcher;
 }

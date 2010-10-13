@@ -61,12 +61,6 @@ public class MsoySprite extends DataPackMediaContainer
         _ctx = ctx;
     }
 
-    // from ContextMenuProvider, via MsoyMediaContainer
-    override public function populateContextMenu (ctx :MsoyContext, items :Array) :void
-    {
-        // put the kibosh on super's big ideas
-    }
-
     /**
      * Called by the containing room when it changes scale.
      */
