@@ -266,7 +266,7 @@ public class MsoyMediaContainer extends MediaContainer
     protected var _desc :MediaDesc;
 
     /** Whether or not we should populate the context menu with a bleep action. */
-    protected var _bleepInMenu;
+    protected var _bleepInMenu :Boolean;
 
     protected var _bridge :IEventDispatcher;
 }
