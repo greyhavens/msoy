@@ -227,8 +227,7 @@ public class MsoySprite extends DataPackMediaContainer
     }
 
     /**
-     * Get the hotspot to use for layout purposes. This point is adjusted for scale and any
-     * perspectivization.
+     * Get the hotspot to use for layout purposes. This point is adjusted for scale.
      */
     public function getLayoutHotSpot () :Point
     {
@@ -577,7 +576,7 @@ public class MsoySprite extends DataPackMediaContainer
 
     protected function scaleUpdated () :void
     {
-        if (_media != null && !(_media is Perspectivizer)) {
+        if (_media != null) {
             var scalex :Number = _locScale * getMediaScaleX() /* * _fxScaleX*/;
             var scaley :Number = _locScale * getMediaScaleY() /* * _fxScaleY*/;
 

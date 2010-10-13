@@ -173,61 +173,6 @@ public class RoomLayoutStandard implements RoomLayout
         cloc.loc.z = Math.min(Math.max(cloc.loc.z, 0), 1);
     }
 
-    // Perspectivization
-    // Disabled for now, until we settle on new room layout logic
-    // getPerspInfo comes from FurniSprite, checkPerspective() and updatePerspective()
-
-    /**
-     * Calculate the info needed to perspectivize a piece of furni.
-     */
-
-    /*
-    public function getPerspInfo (
-        sprite :MsoySprite, contentWidth :int, contentHeight :int,
-        loc :MsoyLocation) :PerspInfo
-    {
-        var hotSpot :Point = sprite.getMediaHotSpot();
-        var mediaScaleX :Number = Math.abs(sprite.getMediaScaleX());
-        var mediaScaleY :Number = Math.abs(sprite.getMediaScaleY());
-
-        // below, 0 refers to the right side of the source sprite
-        // N refers to the left side, and H refers to the location
-        // of the hotspot
-
-        // the scale of the object is determined by the z coordinate
-        var distH :Number = _metrics.focal + (_metrics.sceneDepth * loc.z);
-        var dist0 :Number = (hotSpot.x * mediaScaleX);
-        var distN :Number = (contentWidth - hotSpot.x) * mediaScaleX;
-        if (loc.x < .5) {
-            dist0 *= -1;
-        } else {
-            distN *= -1;
-        }
-
-        var scale0 :Number = _metrics.focal / (distH + dist0);
-        var scaleH :Number = _metrics.focal / distH;
-        var scaleN :Number = _metrics.focal / (distH + distN);
-
-        var logicalY :Number = loc.y + ((contentHeight * mediaScaleY) / _metrics.sceneHeight);
-
-        var p0 :Point = projectedLocation(scale0, loc.x, logicalY);
-        var pH :Point = projectedLocation(scaleH, loc.x, loc.y);
-        var pN :Point = projectedLocation(scaleN, loc.x, logicalY);
-
-        var height0 :Number = contentHeight * scale0 * mediaScaleY;
-        var heightN :Number = contentHeight * scaleN * mediaScaleY;
-
-        // min/max don't account for the hotspot location
-        var minX :Number = Math.min(p0.x, pN.x);
-        var minY :Number = Math.min(p0.y, pN.y);
-        p0.offset(-minX, -minY);
-        pN.offset(-minX, -minY);
-        pH.offset(-minX, -minY);
-
-        return new PerspInfo(p0, height0, pN, heightN, pH);
-    }
-    */
-
     /**
      * Determine the location of the projected coordinate.
      *

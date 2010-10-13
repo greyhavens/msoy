@@ -129,24 +129,6 @@ public class FurniData
     }
 
     /**
-     * Sets whether this furniture is in 'perspective' mode.
-     * TODO: support floor/ceiling perspectivization
-     */
-    public function setPerspective (perspective :Boolean) :void
-    {
-        //setLayoutInfo(PERSPECTIVE_FLAG, perspective);
-    }
-
-    /**
-     * Is this furniture being perspectivized?
-     */
-    public function isPerspective () :Boolean
-    {
-        return false;
-        //return isLayoutInfo(PERSPECTIVE_FLAG);
-    }
-
-    /**
      * Set whether or not this furni doesn't scale.
      */
     public function setNoScale (noscale :Boolean) :void
@@ -300,11 +282,5 @@ public class FurniData
 
     /** layoutInfo bitmask flag constant. Indicates if the furni is non-scaling. */
     protected static const NOSCALE_FLAG :int = (1 << 0);
-
-    /** layoutInfo bitmask flag constant. Indicates if the furni is perspectivized. */
-//    protected static const HORZ_PERSPECTIVE_FLAG :int = (1 << 1);
-
-    /** layoutInfo bitmask flag constant. Indicates if the furni is perspectivized. */
-//    protected static const VERT_PERSPECTIVE_FLAG :int = (1 << 2);
 }
 }
