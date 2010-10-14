@@ -228,7 +228,8 @@
     <artifact:dependencies filesetId="build.fileset">
       <remoteRepository refid="ooo.maven.depends.repo"/>
       <dependency groupId="com.samskivert" artifactId="samskivert-gwt" version="0.0-SNAPSHOT"/>
-      <dependency groupId="com.threerings.narya" artifactId="narya-tools" version="0.0-SNAPSHOT"/>
+      <dependency groupId="com.threerings.narya" artifactId="narya-tools-full"
+                  version="0.0-SNAPSHOT"/>
       <dependency groupId="com.threerings.underwire" artifactId="underwire-gwt"
                   version="0.0-SNAPSHOT"/>
     </artifact:dependencies>
@@ -357,7 +358,7 @@
   <!-- defines our various presents ant tasks -->
   <target name="toolprep" depends="prepare">
     <taskdef resource="com/threerings/presents/tools.properties"
-             classpath="${deploy.dir}/build/narya-tools-0.0-SNAPSHOT.jar"/>
+             classpath="${deploy.dir}/build/narya-tools-full-0.0-SNAPSHOT.jar"/>
   </target>
 
   <!-- creates page.gwt.xml from page.gwt.xml.in, doing user agent fiddling -->
