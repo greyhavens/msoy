@@ -36,7 +36,7 @@ import com.threerings.msoy.room.data.RoomCodes;
  * A base sprite that concerns itself with the mundane details of loading and communication with
  * the loaded media content.
  */
-public class MsoySprite extends ItemMediaContainer
+public class MsoySprite
     implements RoomElement
 {
     /** The type of a ValueEvent that is dispatched when the location is updated, but ONLY if the
@@ -119,13 +119,6 @@ public class MsoySprite extends ItemMediaContainer
         }
     }
 
-//    public function setEffectScales (xscale :Number, yscale :Number) :void
-//    {
-//        _fxScaleX = xscale;
-//        _fxScaleY = yscale;
-//        scaleUpdated();
-//    }
-
     /**
      * Get a translatable message briefly describing this type of item.
      */
@@ -149,7 +142,7 @@ public class MsoySprite extends ItemMediaContainer
      */
     public function getActualWidth () :Number
     {
-        return getContentWidth() * _locScale /* * _fxScaleX*/;
+        return getContentWidth() * _locScale;
     }
 
     /**
@@ -157,7 +150,7 @@ public class MsoySprite extends ItemMediaContainer
      */
     public function getActualHeight () :Number
     {
-        return getContentHeight() * _locScale /* * _fxScaleY*/;
+        return getContentHeight() * _locScale;
     }
 
     /**
@@ -230,8 +223,8 @@ public class MsoySprite extends ItemMediaContainer
     public function getLayoutHotSpot () :Point
     {
         var p :Point = getMediaHotSpot();
-        return new Point(Math.abs(p.x * getMediaScaleX() * _locScale /* * _fxScaleX*/),
-                         Math.abs(p.y * getMediaScaleY() * _locScale /* * _fxScaleY*/));
+        return new Point(Math.abs(p.x * getMediaScaleX() * _locScale),
+                         Math.abs(p.y * getMediaScaleY() * _locScale));
     }
 
     public function setActive (active :Boolean) :void
@@ -288,12 +281,12 @@ public class MsoySprite extends ItemMediaContainer
         var anchor :Point = new Point(getActualWidth() / 2, getActualHeight() / 2);
 
         // if the furni is mirrored along one of the axes, undo that for anchor calculation
-        var xscale :Number = _locScale * getMediaScaleX() /* * _fxScaleX*/;
+        var xscale :Number = _locScale * getMediaScaleX();
         if (xscale < 0) {
             anchor.x = -anchor.x;
         }
 
-        var yscale :Number = _locScale * getMediaScaleY() /* * _fxScaleY*/;
+        var yscale :Number = _locScale * getMediaScaleY();
         if (yscale < 0) {
             anchor.y = -anchor.y;
         }
@@ -539,8 +532,8 @@ public class MsoySprite extends ItemMediaContainer
     protected function scaleUpdated () :void
     {
         if (_media != null) {
-            var scalex :Number = _locScale * getMediaScaleX() /* * _fxScaleX*/;
-            var scaley :Number = _locScale * getMediaScaleY() /* * _fxScaleY*/;
+            var scalex :Number = _locScale * getMediaScaleX();
+            var scaley :Number = _locScale * getMediaScaleY();
 
             _media.scaleX = scalex;
             _media.scaleY = scaley;
@@ -571,8 +564,8 @@ public class MsoySprite extends ItemMediaContainer
     {
         if (_media != null) {
             // if scale is negative, the image is flipped and we need to move the origin
-            var xscale :Number = _locScale * getMediaScaleX() /* * _fxScaleX*/;
-            var yscale :Number = _locScale * getMediaScaleY() /* * _fxScaleY*/;
+            var xscale :Number = _locScale * getMediaScaleX();
+            var yscale :Number = _locScale * getMediaScaleY();
             _media.x = (xscale >= 0) ? 0 : Math.abs(Math.min(_w, getMaxContentWidth()) * xscale);
             _media.y = (yscale >= 0) ? 0 : Math.abs(Math.min(_h, getMaxContentHeight()) * yscale);
         }
