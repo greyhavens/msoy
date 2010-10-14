@@ -17,22 +17,17 @@ import flash.filters.GlowFilter;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 
-import com.threerings.util.CommandEvent;
 import com.threerings.util.StringUtil;
 import com.threerings.util.ValueEvent;
 
 import com.threerings.display.FilterUtil;
-import com.threerings.media.VideoPlayer;
 
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.MsoyController;
 
-import com.threerings.msoy.ui.DataPackMediaContainer;
-import com.threerings.msoy.ui.MsoyVideoDisplay;
+import com.threerings.msoy.world.client.WorldContext;
 
 import com.threerings.msoy.item.data.all.ItemIdent;
-
-import com.threerings.msoy.world.client.WorldContext;
 
 import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.msoy.room.data.RoomCodes;
@@ -41,7 +36,7 @@ import com.threerings.msoy.room.data.RoomCodes;
  * A base sprite that concerns itself with the mundane details of loading and communication with
  * the loaded media content.
  */
-public class MsoySprite extends DataPackMediaContainer
+public class MsoySprite extends ItemMediaContainer
     implements RoomElement
 {
     /** The type of a ValueEvent that is dispatched when the location is updated, but ONLY if the
@@ -60,6 +55,8 @@ public class MsoySprite extends DataPackMediaContainer
      */
     public function MsoySprite (ctx :WorldContext)
     {
+        super(false);
+
         _ctx = ctx;
 
         addEventListener(MediaContainer.WILL_SHUTDOWN, mediaWillShutdown);
@@ -476,6 +473,9 @@ public class MsoySprite extends DataPackMediaContainer
      */
     protected function setItemIdent (ident :ItemIdent) :void
     {
+        // remember this will very shortly go to _sprite instead of super.
+        super.setItem(ident);
+
         _ident = ident;
     }
 
@@ -910,26 +910,6 @@ public class MsoySprite extends DataPackMediaContainer
     protected function hasUserCode (name :String) :Boolean
     {
         return (_backend != null) && _backend.hasUserCode(name);
-    }
-
-    override protected function createVideoUI (player :VideoPlayer) :DisplayObject
-    {
-        // here, we assume that the ItemIdent is configured prior to the MediaDesc. Should be true.
-        return new MsoyVideoDisplay(player, (_ident == null) ? null : handleViewItem);
-    }
-
-    /**
-     * Handle the "comment" button on the video player.
-     */
-    protected function handleViewItem () :void
-    {
-        CommandEvent.dispatch(this, MsoyController.VIEW_ITEM, _ident);
-    }
-
-    override protected function handleUncaughtErrors (event :*) :void
-    {
-        // override the version in MsoyMediaContainer so that we can also log the ident.
-        log.info("Uncaught Error", "ident", _ident, "media", _desc, event);
     }
 
     /** The giver of life. */
