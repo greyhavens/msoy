@@ -607,12 +607,13 @@ public class MsoySprite extends ItemMediaContainer
 
     protected function mediaSizeKnown (event :ValueEvent) :void
     {
-        var size :Point = Point(event.value);
+        var x :Number = event.value[0];
+        var y :Number = event.value[1];
 
         // update the hotspot
         if (_hotSpot == null) {
-            _hotSpot = new Point(Math.min(size.x, getMaxContentWidth())/2,
-                                 Math.min(size.y, getMaxContentHeight()));
+            _hotSpot = new Point(Math.min(x, getMaxContentWidth())/2,
+                                 Math.min(y, getMaxContentHeight()));
         }
 
         // we'll want to call locationUpdated() now, but it's done for us as a result of calling
