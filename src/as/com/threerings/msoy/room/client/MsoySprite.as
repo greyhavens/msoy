@@ -36,7 +36,7 @@ import com.threerings.msoy.room.data.RoomCodes;
  * A base sprite that concerns itself with the mundane details of loading and communication with
  * the loaded media content.
  */
-public class MsoySprite
+public class MsoySprite extends ItemMediaContainer
     implements RoomElement
 {
     /** The type of a ValueEvent that is dispatched when the location is updated, but ONLY if the
@@ -62,6 +62,7 @@ public class MsoySprite
         addEventListener(MediaContainer.WILL_SHUTDOWN, mediaWillShutdown);
         addEventListener(MediaContainer.LOADER_READY, loaderReady);
         addEventListener(MediaContainer.SIZE_KNOWN, mediaSizeKnown);
+        addEventListener(MediaContainer.DID_SHOW_NEW_MEDIA, handleNewMedia);
         addEventListener(Event.UNLOAD, mediaDidShutdown);
     }
 
@@ -474,10 +475,8 @@ public class MsoySprite
         _ident = ident;
     }
 
-    override protected function didShowNewMedia () :void
+    protected function handleNewMedia (event :Event) :void
     {
-        super.didShowNewMedia();
-
         scaleUpdated();
         rotationUpdated();
         configureMouseProperties();
