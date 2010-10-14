@@ -38,6 +38,31 @@ public class ItemMediaContainer extends DataPackMediaContainer
         _maxHeight = height;
     }
 
+    /** @inheritDoc */
+    // from MediaContainer
+    override public function getMediaScaleX () :Number
+    {
+        // use a fixed scale for blocked media
+        return isBlocked() ? 1 : _spriteMediaScaleX;
+    }
+
+    /** @inheritDoc */
+    // from MediaContainer
+    override public function getMediaScaleY () :Number
+    {
+        // use a fixed scale for blocked media
+        return isBlocked() ? 1 : _spriteMediaScaleY;
+    }
+
+    /**
+     * Set the media scale to use when we are not displaying a blocked state.
+     */
+    public function setSpriteMediaScale (scaleX :Number, scaleY :Number) :void
+    {
+        _spriteMediaScaleX = scaleX;
+        _spriteMediaScaleY = scaleY;
+    }
+
     // from MsoySprite
     override public function getMaxContentWidth () :int
     {
@@ -74,6 +99,12 @@ public class ItemMediaContainer extends DataPackMediaContainer
 
     protected var _maxWidth :int = int.MAX_VALUE;
     protected var _maxHeight :int = int.MAX_VALUE;
+
+    /** The media scale to use when we are not blocked. */
+    protected var _spriteMediaScaleX :Number;
+
+    /** The media scale to use when we are not blocked. */
+    protected var _spriteMediaScaleY :Number;    
 }
 }
 
