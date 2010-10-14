@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.room.client {
 import com.threerings.media.MediaContainer;
+import com.threerings.msoy.ui.DataPackMediaContainer;
 import com.threerings.msoy.ui.MsoyMediaContainer;
 
 import flash.display.BlendMode;
