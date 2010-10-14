@@ -101,10 +101,10 @@ public class ItemMediaContainer extends DataPackMediaContainer
     protected var _maxHeight :int = int.MAX_VALUE;
 
     /** The media scale to use when we are not blocked. */
-    protected var _spriteMediaScaleX :Number;
+    protected var _spriteMediaScaleX :Number = 1.0;
 
     /** The media scale to use when we are not blocked. */
-    protected var _spriteMediaScaleY :Number;    
+    protected var _spriteMediaScaleY :Number = 1.0;
 }
 }
 
