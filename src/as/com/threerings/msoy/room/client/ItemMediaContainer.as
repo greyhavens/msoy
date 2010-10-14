@@ -22,9 +22,12 @@ import com.threerings.msoy.client.MsoyController;
  */
 public class ItemMediaContainer extends DataPackMediaContainer
 {
-    public function ItemMediaContainer (bleepInMenu :Boolean = true)
+    public function ItemMediaContainer (
+        bleepInMenu :Boolean = true, suppressHitTestPoint :Boolean = false)
     {
         super(bleepInMenu);
+
+        _suppressHitTestPoint = suppressHitTestPoint;
     }
 
     public function setItem (item :ItemIdent) :void
@@ -32,11 +35,27 @@ public class ItemMediaContainer extends DataPackMediaContainer
         _item = item;
     }
 
+    public function setSuppressHitTestPoint (suppress :Boolean) :void
+    {
+        _suppressHitTestPoint = suppress;
+    }
+
     public function setMaxContentDimensions (width :int, height :int) :void
     {
         _maxWidth = width;
         _maxHeight = height;
     }
+
+    // documentation inherited
+    override public function hitTestPoint (
+        x :Number, y :Number, shapeFlag :Boolean = false) :Boolean
+    {
+        if (_suppressHitTestPoint) {
+            return false;
+        }
+        return super.hitTestPoint(x, y, shapeFlag);
+    }
+
 
     /** @inheritDoc */
     // from MediaContainer
@@ -94,6 +113,8 @@ public class ItemMediaContainer extends DataPackMediaContainer
     {
         CommandEvent.dispatch(this, MsoyController.VIEW_ITEM, _item);
     }
+
+    protected var _suppressHitTestPoint :Boolean;
 
     protected var _item :ItemIdent;
 
