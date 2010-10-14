@@ -3,8 +3,10 @@
 
 package com.threerings.msoy.room.client {
 import com.threerings.media.MediaContainer;
+import com.threerings.msoy.client.Snapshottable;
 import com.threerings.msoy.ui.MsoyMediaContainer;
 
+import flash.display.BitmapData;
 import flash.display.BlendMode;
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
@@ -13,7 +15,7 @@ import flash.events.Event;
 import flash.events.MouseEvent;
 import flash.events.ProgressEvent;
 import flash.filters.GlowFilter;
-
+import flash.geom.Matrix;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 
@@ -118,6 +120,12 @@ public class MsoySprite extends ItemMediaContainer
             _locScale = scale;
             scaleUpdated();
         }
+    }
+
+    override public function snapshot (
+        bitmapData:BitmapData, matrix:Matrix, childPredicate:Function = null) :Boolean
+    {
+        return super.snapshot(bitmapData, matrix, childPredicate);
     }
 
     /**
