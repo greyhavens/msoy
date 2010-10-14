@@ -2,6 +2,7 @@
 // $Id$
 
 package com.threerings.msoy.room.client {
+import com.threerings.media.MediaContainer;
 import com.threerings.util.ValueEvent;
 
 import flash.display.BitmapData;
@@ -10,7 +11,7 @@ import flash.display.Loader;
 import flash.display.Sprite;
 
 import flash.events.MouseEvent;
-
+import flash.events.ProgressEvent;
 import flash.geom.Matrix;
 import flash.geom.Point;
 import flash.geom.Rectangle;
@@ -78,6 +79,9 @@ public class OccupantSprite extends MsoySprite
         // _label.cacheAsBitmap = true;
 
         setMaxContentDimensions(MAX_WIDTH, MAX_HEIGHT);
+
+        addEventListener(ProgressEvent.PROGRESS, handleMediaProgress);
+        addEventListener(MediaContainer.DID_SHOW_NEW_MEDIA, handleNewMedia);
 
         addChild(_extras);
         _extras.addChild(_label);
@@ -558,9 +562,9 @@ public class OccupantSprite extends MsoySprite
     }
 
     // from MsoySprite
-    override protected function contentDimensionsUpdated () :void
+    override protected function mediaSizeKnown (event :ValueEvent) :void
     {
-        super.contentDimensionsUpdated();
+        super.mediaSizeKnown(event);
 
         // recheck our scale (TODO: this should perhaps be done differently, but we need to trace
         // through the twisty loading process to find out for sure.
@@ -568,10 +572,9 @@ public class OccupantSprite extends MsoySprite
         scaleUpdated();
     }
 
-    // from MsoySprite
-    override protected function updateLoadingProgress (soFar :Number, total :Number) :void
+    protected function handleMediaProgress (event :ProgressEvent) :void
     {
-        var prog :Number = (total == 0) ? 0 : (soFar / total);
+        var prog :Number = (event.bytesTotal == 0) ? 0 : (event.bytesLoaded / event.bytesTotal);
 
         // always clear the old graphics
         graphics.clear();
@@ -586,11 +589,8 @@ public class OccupantSprite extends MsoySprite
         }
     }
 
-    // from MsoySprite
-    override protected function willShowNewMedia () :void
+    protected function handleWillShowNewMedia () :void
     {
-        super.willShowNewMedia();
-
         // reset the move speed and the _height
         _moveSpeed = DEFAULT_MOVE_SPEED;
         _height = NaN;

@@ -11,7 +11,7 @@ import flash.display.DisplayObjectContainer;
 import flash.display.Loader;
 import flash.events.Event;
 import flash.events.MouseEvent;
-
+import flash.events.ProgressEvent;
 import flash.filters.GlowFilter;
 
 import flash.geom.Point;
