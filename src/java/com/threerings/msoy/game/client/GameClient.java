@@ -197,7 +197,7 @@ public class GameClient
             }
         };
         _occdir = new OccupantDirector(_ctx);
-        _chatdir = new ChatDirector(_ctx, _msgmgr, MsoyCodes.CHAT_MSGS);
+        _chatdir = new ChatDirector(_ctx, MsoyCodes.CHAT_MSGS);
         _pardtr = new ParlorDirector(_ctx);
     }
 
