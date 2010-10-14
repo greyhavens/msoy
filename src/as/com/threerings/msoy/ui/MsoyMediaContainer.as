@@ -182,7 +182,7 @@ public class MsoyMediaContainer extends MediaContainer
     /**
      * Set the media scale to use when we are not displaying a blocked state.
      */
-    public function setSpriteMediaScale (scaleX :Number, scaleY :Number)
+    public function setSpriteMediaScale (scaleX :Number, scaleY :Number) :void
     {
         _spriteMediaScaleX = scaleX;
         _spriteMediaScaleY = scaleY;
