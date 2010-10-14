@@ -66,9 +66,9 @@ public class DataPackMediaContainer extends MsoyMediaContainer
     /**
      * Constructor.
      */
-    public function DataPackMediaContainer ()
+    public function DataPackMediaContainer (bleepInMenu :Boolean = true)
     {
-        super(null);
+        super(null, bleepInMenu);
     }
 
     /**
