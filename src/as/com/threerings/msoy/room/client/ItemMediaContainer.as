@@ -27,9 +27,27 @@ public class ItemMediaContainer extends DataPackMediaContainer
         super(bleepInMenu);
     }
 
-    protected function setItem (item :ItemIdent) :void
+    public function setItem (item :ItemIdent) :void
     {
         _item = item;
+    }
+
+    public function setMaxContentDimensions (width :int, height :int) :void
+    {
+        _maxWidth = width;
+        _maxHeight = height;
+    }
+
+    // from MsoySprite
+    override public function getMaxContentWidth () :int
+    {
+        return _maxWidth;
+    }
+
+    // from MsoySprite
+    override public function getMaxContentHeight () :int
+    {
+        return _maxHeight;
     }
 
     override protected function handleUncaughtErrors (event :*) :void
@@ -53,6 +71,9 @@ public class ItemMediaContainer extends DataPackMediaContainer
     }
 
     protected var _item :ItemIdent;
+
+    protected var _maxWidth :int = int.MAX_VALUE;
+    protected var _maxHeight :int = int.MAX_VALUE;
 }
 }
 

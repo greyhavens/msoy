@@ -77,6 +77,8 @@ public class OccupantSprite extends MsoySprite
 
         // _label.cacheAsBitmap = true;
 
+        setMaxContentDimensions(MAX_WIDTH, MAX_HEIGHT);
+
         addChild(_extras);
         _extras.addChild(_label);
 
@@ -462,18 +464,6 @@ public class OccupantSprite extends MsoySprite
         }
 
         return r;
-    }
-
-    // from MsoySprite
-    override public function getMaxContentWidth () :int
-    {
-        return MAX_WIDTH;
-    }
-
-    // from MsoySprite
-    override public function getMaxContentHeight () :int
-    {
-        return MAX_HEIGHT;
     }
 
     // from MsoySprite
