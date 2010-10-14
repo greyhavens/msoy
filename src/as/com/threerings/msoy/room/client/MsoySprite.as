@@ -36,7 +36,7 @@ import com.threerings.msoy.room.data.RoomCodes;
  * A base sprite that concerns itself with the mundane details of loading and communication with
  * the loaded media content.
  */
-public class MsoySprite extends ItemMediaContainer
+public class MsoySprite
     implements RoomElement
 {
     /** The type of a ValueEvent that is dispatched when the location is updated, but ONLY if the
@@ -447,6 +447,12 @@ public class MsoySprite extends ItemMediaContainer
     {
         callUserCode("gotControl_v1");
     }
+
+    public function toString () :String
+    {
+        return "MsoySprite[" + _ident + "]";
+    }
+
 
     protected function mediaWillShutdown (event :ValueEvent) :void
     {
