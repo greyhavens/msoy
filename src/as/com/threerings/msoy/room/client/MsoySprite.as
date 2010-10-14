@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.room.client {
 import com.threerings.media.MediaContainer;
-import com.threerings.msoy.ui.DataPackMediaContainer;
 import com.threerings.msoy.ui.MsoyMediaContainer;
 
 import flash.display.BlendMode;
@@ -37,7 +36,7 @@ import com.threerings.msoy.room.data.RoomCodes;
  * A base sprite that concerns itself with the mundane details of loading and communication with
  * the loaded media content.
  */
-public class MsoySprite extends DataPackMediaContainer
+public class MsoySprite extends ItemMediaContainer
     implements RoomElement
 {
     /** The type of a ValueEvent that is dispatched when the location is updated, but ONLY if the
@@ -449,7 +448,7 @@ public class MsoySprite extends DataPackMediaContainer
         callUserCode("gotControl_v1");
     }
 
-    public function toString () :String
+    override public function toString () :String
     {
         return "MsoySprite[" + _ident + "]";
     }
