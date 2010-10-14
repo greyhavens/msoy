@@ -14,6 +14,8 @@ import com.threerings.msoy.room.data.FurniData;
 import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.msoy.room.data.RoomCodes;
 
+import flash.events.Event;
+
 public class DecorSprite extends FurniSprite
 {
     /**
@@ -24,6 +26,9 @@ public class DecorSprite extends FurniSprite
         var furniData :FurniData = makeFurniData(decor);
         super(ctx, furniData);
         setLocation(furniData.loc);
+        setSuppressHitTestPoint(true);
+
+        addEventListener(Event.COMPLETE, handleMediaComplete);
     }
 
     /**
@@ -72,13 +77,6 @@ public class DecorSprite extends FurniSprite
         return false; // decor does not capture mouse actions
     }
 
-    // documentation inherited
-    override public function hitTestPoint (
-        x :Number, y :Number, shapeFlag :Boolean = false) :Boolean
-    {
-        return false; // decor does not capture mouse clicks
-    }
-
     override public function toString () :String
     {
         if (_furni != null) {
@@ -103,13 +101,11 @@ public class DecorSprite extends FurniSprite
         return furniData;
     }
 
-    override protected function stoppedLoading () :void
+    protected function handleMediaComplete (event :Event) :void
     {
         if (_loadedCallback != null) {
             _loadedCallback();
         }
-
-        super.stoppedLoading();
     }
 
     /** A function we call when we've finished loading. */
