@@ -60,6 +60,7 @@ public class MsoySprite extends ItemMediaContainer
         _ctx = ctx;
 
         addEventListener(MediaContainer.WILL_SHUTDOWN, mediaWillShutdown);
+        addEventListener(MediaContainer.LOADER_READY, loaderReady);
         addEventListener(Event.UNLOAD, mediaDidShutdown);
     }
 
@@ -488,17 +489,15 @@ public class MsoySprite extends ItemMediaContainer
         configureMouseProperties();
     }
 
-    override protected function initLoader () :Loader
+    protected function loaderReady (event :ValueEvent) :void
     {
-        var loader :Loader = super.initLoader();
+        var loader :Loader = Loader(event.value);
 
         _backend = createBackend();
         if (_backend != null) {
             _backend.init(_ctx, loader.contentLoaderInfo);
             _backend.setSprite(this);
         }
-
-        return loader;
     }
 
     /**
