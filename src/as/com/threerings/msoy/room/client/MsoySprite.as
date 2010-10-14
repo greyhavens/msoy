@@ -61,6 +61,7 @@ public class MsoySprite extends ItemMediaContainer
 
         addEventListener(MediaContainer.WILL_SHUTDOWN, mediaWillShutdown);
         addEventListener(MediaContainer.LOADER_READY, loaderReady);
+        addEventListener(MediaContainer.SIZE_KNOWN, mediaSizeKnown);
         addEventListener(Event.UNLOAD, mediaDidShutdown);
     }
 
@@ -612,14 +613,14 @@ public class MsoySprite extends ItemMediaContainer
         _media.y += delta.y;
     }
 
-    override protected function contentDimensionsUpdated () :void
+    protected function mediaSizeKnown (event :ValueEvent) :void
     {
-        super.contentDimensionsUpdated();
+        var size :Point = Point(event.value);
 
         // update the hotspot
         if (_hotSpot == null) {
-            _hotSpot = new Point(Math.min(_w, getMaxContentWidth())/2,
-                                 Math.min(_h, getMaxContentHeight()));
+            _hotSpot = new Point(Math.min(size.x, getMaxContentWidth())/2,
+                                 Math.min(size.y, getMaxContentHeight()));
         }
 
         // we'll want to call locationUpdated() now, but it's done for us as a result of calling
