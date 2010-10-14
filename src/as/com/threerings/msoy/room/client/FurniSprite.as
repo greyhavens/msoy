@@ -2,6 +2,8 @@
 // $Id$
 
 package com.threerings.msoy.room.client {
+import com.threerings.media.MediaContainer;
+import com.threerings.util.ValueEvent;
 
 import flash.display.DisplayObject;
 import flash.display.LoaderInfo;
@@ -50,6 +52,8 @@ public class FurniSprite extends MsoySprite
 
         addEventListener(MouseEvent.ROLL_OVER, handleMouseHover);
         addEventListener(MouseEvent.ROLL_OUT, handleMouseHover);
+
+        addEventListener(MediaContainer.LOADER_READY, handleLoaderReady);
     }
 
     override public function getDesc () :String
@@ -237,9 +241,9 @@ public class FurniSprite extends MsoySprite
         callUserCode("mouseHover_v1", (event.type == MouseEvent.ROLL_OVER));
     }
 
-    override protected function addListeners (info :LoaderInfo) :void
+    protected function handleLoaderReady (event :ValueEvent) :void
     {
-        super.addListeners(info);
+        var info :LoaderInfo = (event.value as LoaderInfo);
 
         if (_loadingWatcher != null) {
             _loadingWatcher.watchLoader(info, this, (this is DecorSprite));
