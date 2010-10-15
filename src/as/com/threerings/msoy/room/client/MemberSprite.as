@@ -188,7 +188,7 @@ public class MemberSprite extends ActorSprite
     // from ActorSprite
     override protected function postClickAction () :void
     {
-        CommandEvent.dispatch(this, RoomController.AVATAR_CLICKED, this);
+        CommandEvent.dispatch(_sprite, RoomController.AVATAR_CLICKED, this);
     }
 
     // from ActorSprite

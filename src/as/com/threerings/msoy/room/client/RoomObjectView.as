@@ -239,6 +239,7 @@ public class RoomObjectView extends RoomView
         } else if (update is SceneAttrsUpdate) {
             rereadScene(); // re-read our scene
             updateBackground();
+            
         } else if (update is SceneOwnershipUpdate) {
             rereadScene();
         }
@@ -563,11 +564,11 @@ public class RoomObjectView extends RoomView
                 }
             }
 
-            if (sprite.isBleepable()) {
-                var isBleeped :Boolean = sprite.isBleeped();
+            if (sprite.viz.isBleepable()) {
+                var isBleeped :Boolean = sprite.viz.isBleeped();
                 menuItems.push(MenuUtil.createCommandContextMenuItem(
                     Msgs.GENERAL.get((isBleeped ? "b.unbleep_item" : "b.bleep_item"), kind),
-                    sprite.toggleBleeped, _ctx));
+                    sprite.viz.toggleBleeped, _ctx));
             }
         }
 

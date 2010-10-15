@@ -116,7 +116,7 @@ public class RoomEditorPanel extends FlyingPanel
         // the same sprite
         if (target != _curTarget) {
             if (_curTarget != null) {
-                _curTarget.removeEventListener(Event.INIT, handleTargetInit);
+                _curTarget.viz.removeEventListener(Event.INIT, handleTargetInit);
             }
             _curTarget = target;
             checkCustomPanel();
@@ -272,8 +272,8 @@ public class RoomEditorPanel extends FlyingPanel
         var hasPanel :Boolean = false;
         if (_curTarget != null) {
             hasPanel = _curTarget.hasCustomConfigPanel();
-            if (!hasPanel && !_curTarget.isContentInitialized()) {
-                _curTarget.addEventListener(Event.INIT, handleTargetInit);
+            if (!hasPanel && !_curTarget.viz.isContentInitialized()) {
+                _curTarget.viz.addEventListener(Event.INIT, handleTargetInit);
             }
         }
 
@@ -284,7 +284,7 @@ public class RoomEditorPanel extends FlyingPanel
     /** The current target is now initialized. */
     protected function handleTargetInit (event :Event) :void
     {
-        _curTarget.removeEventListener(Event.INIT, handleTargetInit);
+        _curTarget.viz.removeEventListener(Event.INIT, handleTargetInit);
         checkCustomPanel();
     }
 

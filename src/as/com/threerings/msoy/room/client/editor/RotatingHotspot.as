@@ -45,7 +45,7 @@ public class RotatingHotspot extends Hotspot
         super.startAction(event);
         _originalRotation = _editor.target.getMediaRotation();
         _anchorAngle = Vector2.fromPoints(
-            _editor.target.getMediaCentroid(), _editor.target.globalToLocal(_anchor)).angle;
+            _editor.target.getMediaCentroid(), _editor.target.viz.globalToLocal(_anchor)).angle;
     }
 
     // @Override from Hotspot
@@ -94,7 +94,7 @@ public class RotatingHotspot extends Hotspot
         }
 
         var mouseAngle :Number = Vector2.fromPoints(
-            target.getMediaCentroid(), target.globalToLocal(new Point(sx, sy))).angle;
+            target.getMediaCentroid(), target.viz.globalToLocal(new Point(sx, sy))).angle;
         var delta :Number = MathUtil.toDegrees(mouseAngle - _anchorAngle);
 
         _editor.updateTargetRotation(MathUtil.normalizeDegrees(_originalRotation + delta));

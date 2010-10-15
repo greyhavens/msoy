@@ -42,18 +42,17 @@ public class FurniSprite extends MsoySprite
 
         // configure our media and item
         setItemIdent(furni.getItemIdent());
-        setSpriteMediaScale(furni.scaleX, furni.scaleY);
-        setMediaDesc(furni.media);
+        _sprite.setSpriteMediaScale(furni.scaleX, furni.scaleY);
+        _sprite.setMediaDesc(furni.media);
 
         // set up our hotspot if one is configured in the furni data record
         if (_furni.hotSpotX > 0 || _furni.hotSpotY > 0) {
             _hotSpot = new Point(_furni.hotSpotX, _furni.hotSpotY);
         }
 
-        addEventListener(MouseEvent.ROLL_OVER, handleMouseHover);
-        addEventListener(MouseEvent.ROLL_OUT, handleMouseHover);
-
-        addEventListener(MediaContainer.LOADER_READY, handleLoaderReady);
+        _sprite.addEventListener(MouseEvent.ROLL_OVER, handleMouseHover);
+        _sprite.addEventListener(MouseEvent.ROLL_OUT, handleMouseHover);
+        _sprite.addEventListener(MediaContainer.LOADER_READY, handleLoaderReady);
     }
 
     override public function getDesc () :String
@@ -94,8 +93,8 @@ public class FurniSprite extends MsoySprite
     {
         _furni = furni;
         setItemIdent(furni.getItemIdent());
-        setSpriteMediaScale(furni.scaleX, furni.scaleY);
-        setMediaDesc(furni.media);
+        _sprite.setSpriteMediaScale(furni.scaleX, furni.scaleY);
+        _sprite.setMediaDesc(furni.media);
         scaleUpdated();
         rotationUpdated();
         setLocation(furni.loc);
@@ -228,7 +227,7 @@ public class FurniSprite extends MsoySprite
     override protected function postClickAction () :void
     {
         if (hasAction()) {
-            CommandEvent.dispatch(this, RoomController.FURNI_CLICKED, _furni);
+            CommandEvent.dispatch(_sprite, RoomController.FURNI_CLICKED, _furni);
         }
     }
 
@@ -246,7 +245,8 @@ public class FurniSprite extends MsoySprite
         var info :LoaderInfo = (event.value as LoaderInfo);
 
         if (_loadingWatcher != null) {
-            _loadingWatcher.watchLoader(info, this, (this is DecorSprite));
+            log.info("Setting up ")
+            _loadingWatcher.watchLoader(info, _sprite, (_sprite is DecorSprite));
         }
     }
 

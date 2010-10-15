@@ -189,11 +189,11 @@ public class RoomObjectController extends RoomController
             var kind :String = Msgs.GENERAL.get(avatar.getDesc());
             var flagItems :Array = [];
             var bleepItem :Object = null;
-            if (avatar.isBleepable()) {
-                var key :String = avatar.isBleeped() ? "b.unbleep_avatar" : "b.bleep_avatar";
-                //var key :String = avatar.isBleeped() ? "b.unbleep_item" : "b.bleep_item";
+            if (avatar.viz.isBleepable()) {
+                var key :String = avatar.viz.isBleeped() ? "b.unbleep_avatar" : "b.bleep_avatar";
+                //var key :String = avatar.viz.isBleeped() ? "b.unbleep_item" : "b.bleep_item";
                 bleepItem = { label: Msgs.GENERAL.get(key), icon: BLEEP_ICON,
-                    callback: avatar.toggleBleeped, arg: _wdctx };
+                    callback: avatar.viz.toggleBleeped, arg: _wdctx };
             }
 
             var ident :ItemIdent = avatar.getItemIdent();
@@ -444,10 +444,10 @@ public class RoomObjectController extends RoomController
         var menuItems :Array = [];
 
         _wdctx.getWorldController().addPetMenuItems(PetName(occInfo.username), menuItems);
-        if (pet.isBleepable()) {
-            var key :String = pet.isBleeped() ? "b.unbleep_pet" : "b.bleep_pet";
+        if (pet.viz.isBleepable()) {
+            var key :String = pet.viz.isBleeped() ? "b.unbleep_pet" : "b.bleep_pet";
             menuItems.push({ label: Msgs.GENERAL.get(key), icon: BLEEP_ICON,
-                             callback: pet.toggleBleeped, arg: _wdctx });
+                             callback: pet.viz.toggleBleeped, arg: _wdctx });
         }
 
         if (isPetOwner) {
@@ -733,8 +733,8 @@ public class RoomObjectController extends RoomController
 
         _walkTarget.visible = false;
         _flyTarget.visible = false;
-        _roomView.addChildAt(_flyTarget, _roomView.numChildren);
-        _roomView.addChildAt(_walkTarget, _roomView.numChildren);
+        _roomView.appendElement(_flyTarget);
+        _roomView.appendElement(_walkTarget);
 
         _roomView.addEventListener(MouseEvent.CLICK, mouseClicked);
         _roomView.addEventListener(Event.ENTER_FRAME, checkMouse, false, int.MIN_VALUE);
@@ -765,8 +765,8 @@ public class RoomObjectController extends RoomController
         _roomView.stage.removeEventListener(KeyboardEvent.KEY_DOWN, keyEvent);
         _roomView.stage.removeEventListener(KeyboardEvent.KEY_UP, keyEvent);
 
-        _roomView.removeChild(_walkTarget);
-        _roomView.removeChild(_flyTarget);
+        _roomView.removeElement(_walkTarget);
+        _roomView.removeElement(_flyTarget);
         setHoverSprite(null);
 
         if (_roomObj != null) {

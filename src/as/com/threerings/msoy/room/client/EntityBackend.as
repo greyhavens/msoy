@@ -80,7 +80,7 @@ public class EntityBackend extends ControlBackend
 
         var loc :MsoyLocation = _sprite.getLocation();
         o["location"] = [ loc.x, loc.y, loc.z ];
-        o["datapack"] = _sprite.getAndClearDataPack();
+        o["datapack"] = _sprite.viz.getAndClearDataPack();
         o["env"] = _sprite.getEnvironment();
     }
 
@@ -207,12 +207,12 @@ public class EntityBackend extends ControlBackend
 
     protected function getMusicId3_v1 () :Object
     {
-        return (_sprite.parent as RoomView).getMusicId3();
+        return (_sprite.viz.parent as RoomView).getMusicId3();
     }
 
     protected function getMusicOwner_v1 () :int
     {
-        return (_sprite.parent as RoomView).getMusicOwner();
+        return (_sprite.viz.parent as RoomView).getMusicOwner();
     }
 
     protected function getRoomBounds_v1 () :Array
@@ -231,17 +231,17 @@ public class EntityBackend extends ControlBackend
         title :String, panel :DisplayObject, w :Number, h :Number,
         color :uint = 0xFFFFFF, alpha :Number = 1.0) :Boolean
     {
-        if (_sprite == null || !(_sprite.parent is RoomView)) {
+        if (_sprite == null || !(_sprite.viz.parent is RoomView)) {
             return false;
         }
-        return (_sprite.parent as RoomView).getRoomController().showEntityPopup(
+        return (_sprite.viz.parent as RoomView).getRoomController().showEntityPopup(
             _sprite, title, panel, w, h, color, alpha);
     }
 
     protected function clearPopup_v1 () :void
     {
         if (_sprite != null) {
-            (_sprite.parent as RoomView).getRoomController().clearEntityPopup(_sprite);
+            (_sprite.viz.parent as RoomView).getRoomController().clearEntityPopup(_sprite);
         }
     }
 

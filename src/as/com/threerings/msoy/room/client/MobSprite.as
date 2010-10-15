@@ -26,7 +26,7 @@ public class MobSprite extends OccupantSprite
         super(ctx, occInfo, extraInfo);
 
         _holder = new Sprite();
-        setMediaObject(_holder);
+        _sprite.setMediaObject(_holder);
 
         _hostBackend = backend;
         updateMobVisual();

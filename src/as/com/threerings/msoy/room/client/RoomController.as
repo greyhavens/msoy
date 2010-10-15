@@ -456,7 +456,7 @@ public class RoomController extends SceneController
      *
      * @return undefined if the mouse isn't in our bounds, or null, or an MsoySprite.
      */
-    public function getHitSprite (stageX :Number, stageY :Number, all :Boolean = false) :*
+    public function getHitSprite (stageX :Number, stageY :Number, all :Boolean = false) :MsoySprite
     {
         // check to make sure we're within the bounds of the place container
         var container :PlaceBox = _wdctx.getTopPanel().getPlaceContainer();
@@ -493,10 +493,14 @@ public class RoomController extends SceneController
 
         // we search from last-drawn to first drawn to get the topmost...
         for (var dex :int = _roomView.numChildren - 1; dex >= 0; dex--) {
-            var spr :MsoySprite = (_roomView.getChildAt(dex) as MsoySprite);
-            if ((spr != null) && (all || (spr.isActive() && spr.capturesMouse())) &&
-                spr.hitTestPoint(stageX, stageY, true))
-            {
+            var viz :DisplayObject = _roomView.getChildAt(dex);
+            var el :RoomElement = _roomView.vizToEntity(viz);
+            if (el == null || !(el is MsoySprite)) {
+                continue;
+            }
+            var spr :MsoySprite = (el as MsoySprite);
+            if ((all || (spr.isActive() && spr.capturesMouse())) &&
+                viz.hitTestPoint(stageX, stageY, true)) {
                 return spr;
             }
         }
@@ -643,7 +647,7 @@ public class RoomController extends SceneController
         // maybe add a new tip
         if (hovered && (text != null)) {
             if (isNaN(stageX) || isNaN(stageY)) {
-                var p :Point = sprite.localToGlobal(sprite.getLayoutHotSpot());
+                var p :Point = sprite.viz.localToGlobal(sprite.getLayoutHotSpot());
                 stageX = p.x;
                 stageY = p.y;
             }

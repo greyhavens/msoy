@@ -552,8 +552,8 @@ public class RoomEditorController
      */
     protected function mouseDown (event :MouseEvent) :void
     {
-        var hit :MsoySprite = (_view.getRoomController().getHitSprite(
-                               event.stageX, event.stageY, true) as MsoySprite);
+        var hit :MsoySprite =
+            _view.getRoomController().getHitSprite(event.stageX, event.stageY, true);
         if (hit is FurniSprite) {
             if (_edit.isIdle()) {
                 _hover.target = null;

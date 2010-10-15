@@ -2,9 +2,6 @@
 // $Id$
 
 package com.threerings.msoy.room.client {
-import com.threerings.media.MediaContainer;
-import com.threerings.msoy.client.Snapshottable;
-import com.threerings.msoy.ui.MsoyMediaContainer;
 
 import flash.display.BitmapData;
 import flash.display.BlendMode;
@@ -19,6 +16,9 @@ import flash.geom.Matrix;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 
+import com.threerings.media.MediaContainer;
+
+import com.threerings.util.Log;
 import com.threerings.util.StringUtil;
 import com.threerings.util.ValueEvent;
 
@@ -26,21 +26,27 @@ import com.threerings.display.FilterUtil;
 
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.MsoyController;
-
-import com.threerings.msoy.world.client.WorldContext;
+import com.threerings.msoy.client.Snapshottable;
 
 import com.threerings.msoy.item.data.all.ItemIdent;
 
 import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.msoy.room.data.RoomCodes;
 
+import com.threerings.msoy.ui.MsoyMediaContainer;
+
+import com.threerings.msoy.world.client.WorldContext;
+
+
 /**
  * A base sprite that concerns itself with the mundane details of loading and communication with
  * the loaded media content.
  */
-public class MsoySprite extends ItemMediaContainer
+public class MsoySprite
     implements RoomElement
 {
+    protected static const log :Log = Log.getLog(MsoySprite);
+
     /** The type of a ValueEvent that is dispatched when the location is updated, but ONLY if the
      * parent is not a RoomView. */
     public static const LOCATION_UPDATED :String = "locationUpdated";
@@ -57,15 +63,35 @@ public class MsoySprite extends ItemMediaContainer
      */
     public function MsoySprite (ctx :WorldContext)
     {
-        super(false);
-
         _ctx = ctx;
 
-        addEventListener(MediaContainer.WILL_SHUTDOWN, mediaWillShutdown);
-        addEventListener(MediaContainer.LOADER_READY, loaderReady);
-        addEventListener(MediaContainer.SIZE_KNOWN, mediaSizeKnown);
-        addEventListener(MediaContainer.DID_SHOW_NEW_MEDIA, handleNewMedia);
-        addEventListener(Event.UNLOAD, mediaDidShutdown);
+        _sprite = createVisualization();
+
+        _sprite.addEventListener(MediaContainer.WILL_SHUTDOWN, mediaWillShutdown);
+        _sprite.addEventListener(MediaContainer.LOADER_READY, loaderReady);
+        _sprite.addEventListener(MediaContainer.SIZE_KNOWN, mediaSizeKnown);
+        _sprite.addEventListener(MediaContainer.DID_SHOW_NEW_MEDIA, handleNewMedia);
+        _sprite.addEventListener(Event.UNLOAD, mediaDidShutdown);
+    }
+
+    /**
+     * Return the ItemMediaContainer that depicts this logical sprite. This value never changes and
+     * is never null.
+     */
+    public function get viz () :ItemMediaContainer
+    {
+        return _sprite;
+    }
+
+    public function shutdown () :void
+    {
+        _sprite.shutdown();
+
+        _sprite.removeEventListener(MediaContainer.WILL_SHUTDOWN, mediaWillShutdown);
+        _sprite.removeEventListener(MediaContainer.LOADER_READY, loaderReady);
+        _sprite.removeEventListener(MediaContainer.SIZE_KNOWN, mediaSizeKnown);
+        _sprite.removeEventListener(MediaContainer.DID_SHOW_NEW_MEDIA, handleNewMedia);
+        _sprite.removeEventListener(Event.UNLOAD, mediaDidShutdown);
     }
 
     /**
@@ -74,6 +100,12 @@ public class MsoySprite extends ItemMediaContainer
     public function roomScaleUpdated () :void
     {
         // nada
+    }
+
+    // from RoomElement
+    public function getVisualization () :DisplayObject
+    {
+        return _sprite;
     }
 
     // from RoomElement
@@ -110,8 +142,8 @@ public class MsoySprite extends ItemMediaContainer
     // from RoomElement
     public function setScreenLocation (x :Number, y :Number, scale :Number) :void
     {
-        this.x = x;
-        this.y = y;
+        _sprite.x = x;
+        _sprite.y = y;
 
         if (!useLocationScale()) {
             scale = 1;
@@ -122,7 +154,7 @@ public class MsoySprite extends ItemMediaContainer
         }
     }
 
-    override public function snapshot (
+    public function snapshot (
         bitmapData:BitmapData, matrix:Matrix, childPredicate:Function = null) :Boolean
     {
         return super.snapshot(bitmapData, matrix, childPredicate);
@@ -151,7 +183,7 @@ public class MsoySprite extends ItemMediaContainer
      */
     public function getActualWidth () :Number
     {
-        return getContentWidth() * _locScale;
+        return _sprite.getContentWidth() * _locScale;
     }
 
     /**
@@ -159,7 +191,7 @@ public class MsoySprite extends ItemMediaContainer
      */
     public function getActualHeight () :Number
     {
-        return getContentHeight() * _locScale;
+        return _sprite.getContentHeight() * _locScale;
     }
 
     /**
@@ -171,8 +203,8 @@ public class MsoySprite extends ItemMediaContainer
     {
         var botRight :Point = new Point(getActualWidth(), getActualHeight());
         var r :Rectangle = new Rectangle();
-        r.topLeft = localToGlobal(new Point(0, 0));
-        r.bottomRight = localToGlobal(botRight);
+        r.topLeft = _sprite.localToGlobal(new Point(0, 0));
+        r.bottomRight = _sprite.localToGlobal(botRight);
         return r;
     }
 
@@ -181,7 +213,7 @@ public class MsoySprite extends ItemMediaContainer
      */
     public function getRoomBounds () :Array
     {
-        return (parent is RoomView) ? RoomView(parent).getRoomBounds() : null;
+        return (_sprite.parent is RoomView) ? RoomView(_sprite.parent).getRoomBounds() : null;
     }
 
     /**
@@ -232,21 +264,21 @@ public class MsoySprite extends ItemMediaContainer
     public function getLayoutHotSpot () :Point
     {
         var p :Point = getMediaHotSpot();
-        return new Point(Math.abs(p.x * getMediaScaleX() * _locScale),
-                         Math.abs(p.y * getMediaScaleY() * _locScale));
+        return new Point(Math.abs(p.x * _sprite.getMediaScaleX() * _locScale),
+                         Math.abs(p.y * _sprite.getMediaScaleY() * _locScale));
     }
 
     public function setActive (active :Boolean) :void
     {
-        alpha = active ? 1.0 : 0.4;
-        blendMode = active ? BlendMode.NORMAL : BlendMode.LAYER;
+        _sprite.alpha = active ? 1.0 : 0.4;
+        _sprite.blendMode = active ? BlendMode.NORMAL : BlendMode.LAYER;
         configureMouseProperties();
     }
 
     // TODO: don't rely on our blendmode.. ?
     public function isActive () :Boolean
     {
-        return (blendMode == BlendMode.NORMAL);
+        return (_sprite.blendMode == BlendMode.NORMAL);
     }
 
     /**
@@ -290,12 +322,12 @@ public class MsoySprite extends ItemMediaContainer
         var anchor :Point = new Point(getActualWidth() / 2, getActualHeight() / 2);
 
         // if the furni is mirrored along one of the axes, undo that for anchor calculation
-        var xscale :Number = _locScale * getMediaScaleX();
+        var xscale :Number = _locScale * _sprite.getMediaScaleX();
         if (xscale < 0) {
             anchor.x = -anchor.x;
         }
 
-        var yscale :Number = _locScale * getMediaScaleY();
+        var yscale :Number = _locScale * _sprite.getMediaScaleY();
         if (yscale < 0) {
             anchor.y = -anchor.y;
         }
@@ -321,7 +353,7 @@ public class MsoySprite extends ItemMediaContainer
 
     protected function setGlow (glow :Boolean) :void
     {
-        var media :DisplayObject = getMedia();
+        var media :DisplayObject = _sprite.getMedia();
 
         if (glow) {
             _glow = new GlowFilter(getHoverColor(), 1, 32, 32);
@@ -456,11 +488,19 @@ public class MsoySprite extends ItemMediaContainer
         callUserCode("gotControl_v1");
     }
 
-    override public function toString () :String
+    public function toString () :String
     {
         return "MsoySprite[" + _ident + "]";
     }
 
+    /**
+     * Create and return the visual representation of this room entity. This may be overridden
+     * by subclasses to return specific implementations.
+     */
+    protected function createVisualization () :ItemMediaContainer
+    {
+        return new ItemMediaContainer(false);
+    }
 
     protected function mediaWillShutdown (event :ValueEvent) :void
     {
@@ -483,8 +523,7 @@ public class MsoySprite extends ItemMediaContainer
      */
     protected function setItemIdent (ident :ItemIdent) :void
     {
-        // remember this will very shortly go to _sprite instead of super.
-        super.setItem(ident);
+        _sprite.setItem(ident);
 
         _ident = ident;
     }
@@ -524,8 +563,8 @@ public class MsoySprite extends ItemMediaContainer
         // TODO: have a way for entities to temporarily capture mouse events? Maybe only
         // your own personal avatar, for things like an art-vatar, or an avatar that plays back
         // mouse motions...
-        mouseChildren = active && !_editing && !hasAction() && capturesMouse();
-        mouseEnabled = active && !_editing;
+        _sprite.mouseChildren = active && !_editing && !hasAction() && capturesMouse();
+        _sprite.mouseEnabled = active && !_editing;
     }
 
     /**
@@ -534,27 +573,29 @@ public class MsoySprite extends ItemMediaContainer
      */
     protected function locationUpdated () :void
     {
-        if (parent is RoomView) {
-            (parent as RoomView).locationUpdated(this);
+        if (_sprite.parent is RoomView) {
+            (_sprite.parent as RoomView).locationUpdated(this);
 
         } else {
-            dispatchEvent(new ValueEvent(LOCATION_UPDATED, null));
+            _sprite.dispatchEvent(new ValueEvent(LOCATION_UPDATED, null));
         }
     }
 
     protected function scaleUpdated () :void
     {
-        if (_media != null) {
-            var scalex :Number = _locScale * getMediaScaleX();
-            var scaley :Number = _locScale * getMediaScaleY();
+        var media :DisplayObject = _sprite.getMedia();
 
-            _media.scaleX = scalex;
-            _media.scaleY = scaley;
+        if (media != null) {
+            var scalex :Number = _locScale * _sprite.getMediaScaleX();
+            var scaley :Number = _locScale * _sprite.getMediaScaleY();
 
-            if (_media.mask != null && (!(_media is DisplayObjectContainer) ||
-                                        !DisplayObjectContainer(_media).contains(_media.mask))) {
-                _media.mask.scaleX = Math.abs(scalex);
-                _media.mask.scaleY = Math.abs(scaley);
+            media.scaleX = scalex;
+            media.scaleY = scaley;
+
+            if (media.mask != null && (!(media is DisplayObjectContainer) ||
+                                        !DisplayObjectContainer(media).contains(media.mask))) {
+                media.mask.scaleX = Math.abs(scalex);
+                media.mask.scaleY = Math.abs(scaley);
             }
         }
 
@@ -563,8 +604,8 @@ public class MsoySprite extends ItemMediaContainer
 
     protected function rotationUpdated () :void
     {
-        if (_media != null) {
-            _media.rotation = getMediaRotation();
+        if (_sprite.getMedia() != null) {
+            _sprite.getMedia().rotation = getMediaRotation();
         }
         updateMediaPosition();
     }
@@ -575,12 +616,15 @@ public class MsoySprite extends ItemMediaContainer
      */
     protected function updateMediaPosition () :void
     {
-        if (_media != null) {
+        var media :DisplayObject = _sprite.getMedia();
+        if (media != null) {
             // if scale is negative, the image is flipped and we need to move the origin
-            var xscale :Number = _locScale * getMediaScaleX();
-            var yscale :Number = _locScale * getMediaScaleY();
-            _media.x = (xscale >= 0) ? 0 : Math.abs(Math.min(_w, getMaxContentWidth()) * xscale);
-            _media.y = (yscale >= 0) ? 0 : Math.abs(Math.min(_h, getMaxContentHeight()) * yscale);
+            var xscale :Number = _locScale * _sprite.getMediaScaleX();
+            var yscale :Number = _locScale * _sprite.getMediaScaleY();
+            media.x = (xscale >= 0) ? 0 : Math.abs(
+                Math.min(_sprite.getUnscaledWidth(), _sprite.getMaxContentWidth()) * xscale);
+            media.y = (yscale >= 0) ? 0 : Math.abs(
+                Math.min(_sprite.getUnscaledHeight(), _sprite.getMaxContentHeight()) * yscale);
         }
 
         updateMediaAfterRotation();
@@ -595,7 +639,9 @@ public class MsoySprite extends ItemMediaContainer
      */
     protected function updateMediaAfterRotation () :void
     {
-        if (_media == null || _media.rotation == 0) {
+        var media :DisplayObject = _sprite.getMedia();
+
+        if (media == null || media.rotation == 0) {
             return; // nothing to adjust
         }
 
@@ -607,7 +653,7 @@ public class MsoySprite extends ItemMediaContainer
 
         // convert from Flash's whacked "degrees clockwise" to standard radians counter-clockwise,
         // and rotate the anchor vector by the given angle (caution: y+ points down, not up!)
-        var theta :Number = _media.rotation * Math.PI / -180;
+        var theta :Number = media.rotation * Math.PI / -180;
         var cos :Number = Math.cos(theta);
         var sin :Number = Math.sin(theta);
         var newanchor :Point = new Point(
@@ -615,8 +661,8 @@ public class MsoySprite extends ItemMediaContainer
 
         // finally, shift the media over so that the new anchor overlaps the old one
         var delta :Point = anchor.subtract(newanchor);
-        _media.x += delta.x;
-        _media.y += delta.y;
+        media.x += delta.x;
+        media.y += delta.y;
     }
 
     protected function mediaSizeKnown (event :ValueEvent) :void
@@ -626,8 +672,8 @@ public class MsoySprite extends ItemMediaContainer
 
         // update the hotspot
         if (_hotSpot == null) {
-            _hotSpot = new Point(Math.min(x, getMaxContentWidth())/2,
-                                 Math.min(y, getMaxContentHeight()));
+            _hotSpot = new Point(Math.min(x, _sprite.getMaxContentWidth())/2,
+                                 Math.min(y, _sprite.getMaxContentHeight()));
         }
 
         // we'll want to call locationUpdated() now, but it's done for us as a result of calling
@@ -778,7 +824,7 @@ public class MsoySprite extends ItemMediaContainer
             return bounds;
 
         case "dimensions":
-            return [ getContentWidth(), getContentHeight() ];
+            return [ _sprite.getContentWidth(), _sprite.getContentHeight() ];
 
         case "orientation":
             return getLocation().orient;
@@ -854,7 +900,7 @@ public class MsoySprite extends ItemMediaContainer
         if (requireIdent && _ident == null) {
             return null;
         }
-        var room :RoomView = parent as RoomView;
+        var room :RoomView = _sprite.parent as RoomView;
         return (room != null) ? room.getRoomController() : null;
     }
 
@@ -918,6 +964,9 @@ public class MsoySprite extends ItemMediaContainer
     {
         return (_backend != null) && _backend.hasUserCode(name);
     }
+
+    /** The visual representation of us. */
+    protected var _sprite :ItemMediaContainer;
 
     /** The giver of life. */
     protected var _ctx :WorldContext;

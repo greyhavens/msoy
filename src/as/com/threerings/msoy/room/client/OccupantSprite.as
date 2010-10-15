@@ -78,12 +78,12 @@ public class OccupantSprite extends MsoySprite
 
         // _label.cacheAsBitmap = true;
 
-        setMaxContentDimensions(MAX_WIDTH, MAX_HEIGHT);
+        _sprite.setMaxContentDimensions(MAX_WIDTH, MAX_HEIGHT);
 
-        addEventListener(ProgressEvent.PROGRESS, handleMediaProgress);
-        addEventListener(MediaContainer.DID_SHOW_NEW_MEDIA, handleNewMedia);
+        _sprite.addEventListener(ProgressEvent.PROGRESS, handleMediaProgress);
+        _sprite.addEventListener(MediaContainer.DID_SHOW_NEW_MEDIA, handleNewMedia);
 
-        addChild(_extras);
+        _sprite.addChild(_extras);
         _extras.addChild(_label);
 
         if (occInfo != null) {
@@ -98,7 +98,7 @@ public class OccupantSprite extends MsoySprite
         super.roomScaleUpdated();
 
         // undo the scale on _extras
-        var matrix :Matrix = this.transform.concatenatedMatrix;
+        var matrix :Matrix = _sprite.transform.concatenatedMatrix;
         _extras.scaleX = 1 / matrix.a;
         _extras.scaleY = 1 / matrix.d;
         recheckLabel();
@@ -187,7 +187,7 @@ public class OccupantSprite extends MsoySprite
      */
     public function getBubblePosition () :Point
     {
-        return localToGlobal(_bubblePosition);
+        return _sprite.localToGlobal(_bubblePosition);
     }
 
     /**
@@ -274,9 +274,9 @@ public class OccupantSprite extends MsoySprite
         var success :Boolean = true;
 
         // now snapshot everything, including the decorations and name label
-        for (var ii :int = 0; ii < numChildren; ii++) {
-            var d :DisplayObject = getChildAt(ii);
-            if (d == _media && _media is Loader) {
+        for (var ii :int = 0; ii < _sprite.numChildren; ii++) {
+            var d :DisplayObject = _sprite.getChildAt(ii);
+            if (d == _sprite.getMedia() && _sprite.getMedia() is Loader) {
                 success = super.snapshot(bitmapData, matrix, childPredicate);
 
             } else {
@@ -356,8 +356,8 @@ public class OccupantSprite extends MsoySprite
 
     public function dispatchEntityMoved (destLoc :MsoyLocation) :void
     {
-        if (getItemIdent() != null && parent is RoomView) {
-            (parent as RoomView).dispatchEntityMoved(getItemIdent(),
+        if (getItemIdent() != null && _sprite.parent is RoomView) {
+            (_sprite.parent as RoomView).dispatchEntityMoved(getItemIdent(),
                 (destLoc != null) ? [destLoc.x, destLoc.y, destLoc.z] : null);
         }
     }
@@ -396,8 +396,8 @@ public class OccupantSprite extends MsoySprite
 
         appearanceChanged();
         dispatchEntityMoved(null);
-        if (parent is RoomView) {
-            RoomView(parent).moveFinished(this);
+        if (_sprite.parent is RoomView) {
+            RoomView(_sprite.parent).moveFinished(this);
         }
     }
 
@@ -433,7 +433,7 @@ public class OccupantSprite extends MsoySprite
      */
     public function muteChanged ():void
     {
-        setBlocked(isMuted() ? "mute": null);
+        _sprite.setBlocked(isMuted() ? "mute": null);
     }
 
     override protected function getSpecialProperty (name :String) :Object
@@ -458,11 +458,11 @@ public class OccupantSprite extends MsoySprite
         var r :Rectangle = super.getStageRect();
 
         if (includeExtras) {
-            r = r.union(_label.getRect(this.stage));
+            r = r.union(_label.getRect(_sprite.stage));
 
             if (_decorations != null) {
                 for each (var obj :Object in _decorations) {
-                    r = r.union(DisplayObject(obj.dec).getRect(this.stage));
+                    r = r.union(DisplayObject(obj.dec).getRect(_sprite.stage));
                 }
             }
         }
@@ -556,7 +556,7 @@ public class OccupantSprite extends MsoySprite
     override protected function scaleUpdated () :void
     {
         super.scaleUpdated();
-        setSpriteMediaScale(_scale, _scale);
+        _sprite.setSpriteMediaScale(_scale, _scale);
         recheckLabel();
         arrangeDecorations();
     }
@@ -577,15 +577,15 @@ public class OccupantSprite extends MsoySprite
         var prog :Number = (event.bytesTotal == 0) ? 0 : (event.bytesLoaded / event.bytesTotal);
 
         // always clear the old graphics
-        graphics.clear();
+        _sprite.graphics.clear();
 
         // and if we're still loading, draw a line showing progress
         if (prog < 1) {
-            graphics.lineStyle(1, 0x00FF00);
-            graphics.moveTo(0, -1);
-            graphics.lineTo(prog * 100, -1);
-            graphics.lineStyle(1, 0xFF0000);
-            graphics.lineTo(100, -1);
+            _sprite.graphics.lineStyle(1, 0x00FF00);
+            _sprite.graphics.moveTo(0, -1);
+            _sprite.graphics.lineTo(prog * 100, -1);
+            _sprite.graphics.lineStyle(1, 0xFF0000);
+            _sprite.graphics.lineTo(100, -1);
         }
     }
 
@@ -603,12 +603,12 @@ public class OccupantSprite extends MsoySprite
     {
         var hotSpot :Point = getMediaHotSpot();
         // note: may overflow the media area..
-        _label.x = Math.abs(getMediaScaleX() * _locScale /* * _fxScaleX*/) *
+        _label.x = Math.abs(_sprite.getMediaScaleX() * _locScale /* * _fxScaleX*/) *
             hotSpot.x / _extras.scaleX - (_label.width/2);
         // if we have a configured _height use that in relation to the hot spot y position,
         // otherwise assume our label goes above our bounding box
         var baseY :Number = isNaN(_height) ? 0 :
-            Math.abs(getMediaScaleY() * _locScale /* * _fxScaleY*/) * (hotSpot.y - _height);
+            Math.abs(_sprite.getMediaScaleY() * _locScale /* * _fxScaleY*/) * (hotSpot.y - _height);
         // NOTE: At one point we thought we'd bound names to be on-screen, but names mean so
         // little in Whirled, and we've decided we don't care. Avatars with hidden names are cool,
         // and you can still click on the avatar to do whatever you need to do.
@@ -630,7 +630,7 @@ public class OccupantSprite extends MsoySprite
 
         // note: may overflow the media area..
         var hotSpot :Point = getMediaHotSpot();
-        var hotX :Number = Math.abs(getMediaScaleX() * _locScale /* * _fxScaleX*/) * hotSpot.x;
+        var hotX :Number = Math.abs(_sprite.getMediaScaleX() * _locScale) * hotSpot.x;
 
         var baseY :Number = _label.y; // we depend on recheckLabel()
         if (FOOL) {

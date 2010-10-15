@@ -25,14 +25,14 @@ public class FurniHighlight
     public function start () :void
     {
         _border = new RoomElementSprite();
-        _controller.roomView.addChild(_border);
+        _controller.roomView.addElement(_border);
         target = null;
     }
 
     public function end () :void
     {
         target = null;
-        _controller.roomView.removeChild(_border);
+        _controller.roomView.removeElement(_border);
         _border = null;
     }
 
@@ -45,12 +45,12 @@ public class FurniHighlight
     public function set target (sprite :FurniSprite) :void
     {
         if (_target != null) {
-            _target.removeEventListener(MediaContainer.SIZE_KNOWN, handleSizeKnown);
+            _target.viz.removeEventListener(MediaContainer.SIZE_KNOWN, handleSizeKnown);
         }
         _target = sprite;
         updateDisplay();
         if (_target != null) {
-            _target.addEventListener(MediaContainer.SIZE_KNOWN, handleSizeKnown);
+            _target.viz.addEventListener(MediaContainer.SIZE_KNOWN, handleSizeKnown);
         }
     }
 
@@ -58,8 +58,8 @@ public class FurniHighlight
     public function updateDisplay () :void
     {
         if (_target != null) {
-            _border.x = target.x;
-            _border.y = target.y;
+            _border.x = target.viz.x;
+            _border.y = target.viz.y;
             repaintBorder();
         } else {
             clearBorder();

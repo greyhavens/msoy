@@ -44,7 +44,7 @@ public class Viewer extends Sprite
      */
     public function loadBytes (bytes :ByteArray) :void
     {
-        (_sprite as MsoySprite).setZippedMediaBytes(bytes);
+        (_sprite as MsoySprite).viz.setZippedMediaBytes(bytes);
     }
 
     protected function gotParams (params :Object) :void
@@ -53,9 +53,9 @@ public class Viewer extends Sprite
         var mode :int = int(params["mode"]);
 
         _sprite = new ViewerSprite();
-        _sprite.addEventListener(MediaContainer.SIZE_KNOWN, handleSizeKnown);
-        _sprite.setMedia(media);
-        addChild(_sprite);
+        _sprite.viz.addEventListener(MediaContainer.SIZE_KNOWN, handleSizeKnown);
+        _sprite.viz.setMedia(media);
+        addChild(_sprite.viz);
     }
 
     protected function handleSizeKnown (event :ValueEvent) :void
@@ -65,9 +65,8 @@ public class Viewer extends Sprite
         var scale :Number = Math.min(1, Math.min(WIDTH / width, HEIGHT / height));
         _sprite.setScale(scale);
 
-        var d :DisplayObject = _sprite as DisplayObject;
-        d.x = (WIDTH - (scale * width)) / 2;
-        d.y = (HEIGHT - (scale * height)) / 2;
+        _sprite.viz.x = (WIDTH - (scale * width)) / 2;
+        _sprite.viz.y = (HEIGHT - (scale * height)) / 2;
     }
 
     protected var _sprite :ViewerSprite;
@@ -94,7 +93,7 @@ class ViewerSprite extends FurniSprite
     public function setScale (scale :Number) :void
     {
         _scale = scale;
-        setSpriteMediaScale(scale, scale);
+        _sprite.setSpriteMediaScale(scale, scale);
         scaleUpdated();
     }
 

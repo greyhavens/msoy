@@ -168,9 +168,9 @@ class SpriteInfoRenderer extends HBox
 
         var sprite :MsoySprite = arr[0];
         _type.text = Msgs.GENERAL.get(sprite.getDesc());
-        _bleep.setCallback(sprite.toggleBleeped);
-        _bleep.enabled = sprite.isBleepable();
-        _bleep.label = Msgs.GENERAL.get(sprite.isBleeped() ? "b.unbleep" : "b.bleep");
+        _bleep.setCallback(sprite.viz.toggleBleeped);
+        _bleep.enabled = sprite.viz.isBleepable();
+        _bleep.label = Msgs.GENERAL.get(sprite.viz.isBleeped() ? "b.unbleep" : "b.bleep");
 
         var ident :ItemIdent = sprite.getItemIdent();
         _info.setCommand(MsoyController.VIEW_ITEM, ident);

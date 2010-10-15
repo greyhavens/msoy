@@ -137,7 +137,8 @@ public class AVRGameBackend extends ControlBackend
 
     public function requestMobSprite (id :String) :DisplayObject
     {
-        return callUserCode("requestMobSprite_v1", id) as DisplayObject;
+        var sprite :Object = callUserCode("requestMobSprite_v1", id);
+        return (sprite is MobSprite) ? (sprite as MobSprite).viz : null;
     }
 
     public function mobRemoved (id :String) :void
@@ -516,7 +517,7 @@ public class AVRGameBackend extends ControlBackend
             data["moveSpeed"] = sprite.getMoveSpeed(1); // TODO: this may be inaccurate. remove?
             data["isMoving"] = sprite.isMoving();
             data["isIdle"] = actorInfo.isIdle();
-            data["bounds"] = sprite.getBounds(sprite.stage);
+            data["bounds"] = sprite.viz.getBounds(sprite.viz.stage);
             data["name"] = actorInfo.username.toString(); // deprecated, only for _v1
             return data;
         }

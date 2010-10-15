@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.room.client {
 
+import flash.display.DisplayObject;
+
 import com.threerings.msoy.client.Snapshottable;
 
 import com.threerings.msoy.room.data.MsoyLocation;
@@ -13,6 +15,11 @@ import com.threerings.msoy.room.data.MsoyLocation;
  */
 public interface RoomElement extends Snapshottable
 {
+    /**
+     * Return the visualization of this room element. This value should always be non-null.
+     */
+    function getVisualization () :DisplayObject;
+
     /**
      * Return the type of layout to do for this element.
      *

@@ -4,6 +4,7 @@
 package com.threerings.msoy.room.client {
 
 import flash.display.BitmapData;
+import flash.display.DisplayObject;
 import flash.display.Sprite;
 
 import flash.geom.Matrix;
@@ -18,6 +19,12 @@ import com.threerings.msoy.room.data.RoomCodes;
 public class RoomElementSprite extends Sprite
     implements RoomElement
 {
+    // from RoomElement
+    public function getVisualization () :DisplayObject
+    {
+        return this;
+    }
+
     // from RoomElement
     public function setLocation (newLoc :Object) :void
     {

@@ -26,9 +26,9 @@ public class DecorSprite extends FurniSprite
         var furniData :FurniData = makeFurniData(decor);
         super(ctx, furniData);
         setLocation(furniData.loc);
-        setSuppressHitTestPoint(true);
 
-        addEventListener(Event.COMPLETE, handleMediaComplete);
+        _sprite.setSuppressHitTestPoint(true);
+        _sprite.addEventListener(Event.COMPLETE, handleMediaComplete);
     }
 
     /**

@@ -303,7 +303,7 @@ public class MsoyController extends Controller
     public function handlePopMemberMenu (name :String, memberId :int, puppet :Boolean = false) :void
     {
         var menuItems :Array = [];
-        // reconsistute the memberName from args
+        // reconstitute the memberName from args
         var memName :MemberName = puppet ? new PuppetName(name, memberId)
                                          : new MemberName(name, memberId);
         addMemberMenuItems(memName, menuItems);

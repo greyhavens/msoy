@@ -169,12 +169,12 @@ public class FurniEditor extends FurniHighlight
         // get target location in room and stage coordinates
         var roomLocation :MsoyLocation = target.getLocation();
         var stageLocation :Point = view.localToGlobal(view.layout.locationToPoint(roomLocation));
-        var targetLocation :Point = target.globalToLocal(stageLocation);
+        var targetLocation :Point = target.viz.globalToLocal(stageLocation);
 
         // get stem root location by dropping the target y value, and converting back to screen
         var roomRoot :MsoyLocation = new MsoyLocation(roomLocation.x, 0, roomLocation.z, 0);
         var stageRoot :Point = view.localToGlobal(view.layout.locationToPoint(roomRoot));
-        var targetRoot :Point = target.globalToLocal(stageRoot);
+        var targetRoot :Point = target.viz.globalToLocal(stageRoot);
 
         // draw outer and inner outlines
         g.lineStyle(0, 0x000000, 0.5, true);

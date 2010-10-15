@@ -114,7 +114,7 @@ public class DecorEditPanel extends FlyingPanel
         _decor.setFurniMedia(new StudioMediaDesc(path));
         updateDecorInViewer();
         if (figureAttrs) {
-            _studioView.getBackground().addEventListener(
+            _studioView.getBackground().viz.addEventListener(
                 MediaContainer.SIZE_KNOWN, handleSizeKnown);
         }
         if (_noMedia.visible) {

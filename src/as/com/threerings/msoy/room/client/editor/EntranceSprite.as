@@ -28,12 +28,8 @@ public class EntranceSprite extends FurniSprite
         furniData.loc = location;
         super(ctx, furniData);
 
-        setMediaClass(MEDIA_CLASS);
+        _sprite.setMediaClass(MEDIA_CLASS);
         setLocation(location);
-
-        // since this is an embedded image, we'll never get the COMPLETED event -
-        // so let's just clean up right here.
-        stoppedLoading();
     }
 
     // from DataPackMediaContainer

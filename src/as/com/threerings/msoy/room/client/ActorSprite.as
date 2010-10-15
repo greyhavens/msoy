@@ -138,7 +138,7 @@ public class ActorSprite extends OccupantSprite
         const newIdent :ItemIdent = ActorInfo(newInfo).getItemIdent();
         const identChanged :Boolean = !newIdent.equals(oldIdent);
         if (identChanged) {
-            var view :RoomView = parent as RoomView;
+            var view :RoomView = _sprite.parent as RoomView;
             if (view != null) {
                 // pop down any popup
                 view.getRoomController().clearEntityPopup(this);
@@ -153,16 +153,16 @@ public class ActorSprite extends OccupantSprite
 
         // check the media
         const newMedia :MediaDesc = (newInfo as ActorInfo).getMedia();
-        const mediaChanged :Boolean = !newMedia.equals(_desc);
+        const mediaChanged :Boolean = !newMedia.equals(_sprite.getMediaDesc());
         if (!mediaChanged && !identChanged) {
             return false; // nothing changed, bail
         }
         if (!mediaChanged) {
             // if the media didn't change, but the ident did, we still need to reload the media
             // so force a change
-            setMediaDesc(null);
+            _sprite.setMediaDesc(null);
         }
-        setMediaDesc(newMedia);
+        _sprite.setMediaDesc(newMedia);
         return true; // and indicate to callers that something changed
     }
 

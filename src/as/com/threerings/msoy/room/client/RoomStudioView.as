@@ -67,7 +67,7 @@ public class RoomStudioView extends RoomView
      */
     public function loadBytes (bytes :ByteArray) :void
     {
-        _testingSprite.setZippedMediaBytes(bytes);
+        _testingSprite.viz.setZippedMediaBytes(bytes);
     }
 
     public function initForViewing (params :Object, uberMode :int) :void
@@ -227,7 +227,7 @@ public class RoomStudioView extends RoomView
             break;
 
         default:
-            _backdrop.drawRoom(_bg.graphics, decor.width, decor.height, true, true);
+            _backdrop.drawRoom(_bg.viz.graphics, decor.width, decor.height, true, true);
             break;
         }
     }
@@ -255,7 +255,7 @@ public class RoomStudioView extends RoomView
 
         _saveScaling = ("true" == String(params["scaling"]));
         createSpriteScaleControls();
-        _avatar.addEventListener(MediaContainer.SIZE_KNOWN, handleAvatarSizeKnown);
+        _avatar.viz.addEventListener(MediaContainer.SIZE_KNOWN, handleAvatarSizeKnown);
     }
 
     protected function initViewPet (params :Object) :void
@@ -387,7 +387,7 @@ public class RoomStudioView extends RoomView
             return ((_testingSprite as MemberSprite).getActorInfo() as StudioMemberInfo).getScale();
 
         } else if (_testingSprite is FurniSprite) {
-            return (_testingSprite as FurniSprite).getMediaScaleX();
+            return (_testingSprite as FurniSprite).viz.getMediaScaleX();
 
         } else {
             throw new Error("waka!");
@@ -493,10 +493,10 @@ public class RoomStudioView extends RoomView
     protected function setTestingSprite (sprite :MsoySprite) :void
     {
         _testingSprite = sprite;
-        if (sprite.isContentInitialized()) {
+        if (sprite.viz.isContentInitialized()) {
             handleSpriteInit();
         } else {
-            _testingSprite.addEventListener(Event.INIT, handleSpriteInit);
+            _testingSprite.viz.addEventListener(Event.INIT, handleSpriteInit);
         }
     }
 

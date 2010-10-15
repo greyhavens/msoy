@@ -74,7 +74,7 @@ public class PetSprite extends ActorSprite
     // from MsoySprite
     override protected function postClickAction () :void
     {
-        CommandEvent.dispatch(this, RoomController.PET_CLICKED, this);
+        CommandEvent.dispatch(_sprite, RoomController.PET_CLICKED, this);
     }
 
     /**
@@ -84,7 +84,7 @@ public class PetSprite extends ActorSprite
     public function ownedMuteChanged ():void
     {
         // TODO: we can make a special icon for owner-muting a pet, but right now we re-use "mute".
-        setBlocked(isOwnerMuted() ? "mute" : null);
+        _sprite.setBlocked(isOwnerMuted() ? "mute" : null);
     }
 
     override protected function getSpecialProperty (name :String) :Object

@@ -4,6 +4,7 @@
 package com.threerings.msoy.room.client {
 
 import flash.display.BitmapData;
+import flash.display.DisplayObject;
 import flash.display.Sprite;
 
 import flash.events.Event;
@@ -259,7 +260,7 @@ public class RoomView extends Sprite
         _layout.updateScreenLocation(sprite, sprite.getLayoutHotSpot());
 
         if (sprite == _bg && _scene.getSceneType() == Decor.FIXED_IMAGE) {
-            sprite.x += getScrollOffset();
+            sprite.viz.x += getScrollOffset();
         }
 
         // if we moved the _centerSprite, possibly update the scroll position
@@ -471,6 +472,29 @@ public class RoomView extends Sprite
             }
         }
         furni.loc = new MsoyLocation(x, y, z);
+    }
+
+    public function addElement (element :RoomElement) :void
+    {
+        addChild(element.getVisualization());
+        addToElementMap(element);
+    }
+
+    public function appendElement (element :RoomElement) :void
+    {
+        addChildAt(element.getVisualization(), numChildren);
+        addToElementMap(element);
+    }
+
+    public function removeElement (element :RoomElement) :void
+    {
+        removeChild(element.getVisualization());
+        removeFromElementMap(element);
+    }
+
+    public function vizToEntity (viz :DisplayObject) :RoomElement
+    {
+        return _elements.get(viz);
     }
 
     /**
@@ -826,7 +850,7 @@ public class RoomView extends Sprite
             return; // return if there's nothing to scroll
         }
 
-        var centerX :int = _centerSprite.x + _centerSprite.getLayoutHotSpot().x;
+        var centerX :int = _centerSprite.viz.x + _centerSprite.getLayoutHotSpot().x;
         var newX :Number = centerX - (_actualWidth / scaleX)/2;
         newX = Math.min(_scene.getWidth() - rect.width, Math.max(0, newX));
 
@@ -1011,7 +1035,7 @@ public class RoomView extends Sprite
     protected function addSprite (sprite :MsoySprite) :void
     {
         var index :int = (sprite is DecorSprite) ? 0 : 1;
-        addChildAt(sprite, index);
+        addChildAt(sprite.viz, index);
         addToEntityMap(sprite);
     }
 //  This belongs with the above... somehow: but layout timing booches it
@@ -1025,19 +1049,19 @@ public class RoomView extends Sprite
      */
     protected function removeSprite (sprite :MsoySprite) :void
     {
-        if (sprite.parent != this) {
+        if (sprite.viz.parent != this) {
             // TODO: I believe this happens when you leave a room and your greeter enters;
             // TODO: the sprite with bodyOid=0 ends up in _pendingRemovals and _occupants
             // TODO: both. I don't have time to track down precisely why this happens, but
             // TODO: let's stop throwing exceptions halfway through this code.
             log.warning("Trying to remove a sprite that's not our child", "sprite", sprite,
-                        "parent", sprite.parent);
+                        "parent", sprite.viz.parent);
             return;
         }
 
         _ctrl.setSpriteHovered(sprite, false);
         removeFromEntityMap(sprite);
-        removeChild(sprite);
+        removeChild(sprite.viz);
         _ctx.getMediaDirector().returnSprite(sprite);
 
         // clear any popup associated with it
@@ -1073,6 +1097,7 @@ public class RoomView extends Sprite
         if (ident != null) {
             _entities.put(ident, sprite);
         }
+        addToElementMap(sprite);
     }
 
     /**
@@ -1081,6 +1106,25 @@ public class RoomView extends Sprite
     protected function removeFromEntityMap (sprite :MsoySprite) :void
     {
         _entities.remove(sprite.getItemIdent()); // could be a no-op
+        removeFromElementMap(sprite);
+    }
+
+    /**
+     * Maps a {@link RoomElement}'s visualization (DisplayObject) back to the element.
+     */
+    protected function addToElementMap (element :RoomElement) :void
+    {
+        _elements.put(element.getVisualization(), element);
+        log.info("addToElementMap()", "element", element, "mapSize", _elements.size());
+    }
+
+    /**
+     * Unmaps a {@link RoomElement}'s visualization.
+     */
+    protected function removeFromElementMap (element :RoomElement) :void
+    {
+        _elements.remove(element.getVisualization());
+        log.info("removeFromElementMap()", "element", element, "mapSize", _elements.size());
     }
 
     /**
@@ -1103,6 +1147,9 @@ public class RoomView extends Sprite
 
     /** Maps ItemIdent -> MsoySprite for entities (furni, avatars, pets). */
     protected var _entities :Map = Maps.newMapOf(ItemIdent);
+
+    /** Maps DisplayObject -> RoomElement */
+    protected var _elements :Map = Maps.newMapOf(DisplayObject);
 
     /** The sprite we should center on. */
     protected var _centerSprite :MsoySprite;

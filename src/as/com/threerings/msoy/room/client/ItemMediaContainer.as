@@ -56,7 +56,6 @@ public class ItemMediaContainer extends DataPackMediaContainer
         return super.hitTestPoint(x, y, shapeFlag);
     }
 
-
     /** @inheritDoc */
     // from MediaContainer
     override public function getMediaScaleX () :Number
@@ -92,6 +91,16 @@ public class ItemMediaContainer extends DataPackMediaContainer
     override public function getMaxContentHeight () :int
     {
         return _maxHeight;
+    }
+
+    public function getUnscaledWidth () :Number
+    {
+        return _w;
+    }
+
+    public function getUnscaledHeight () :Number
+    {
+        return _h;
     }
 
     override protected function handleUncaughtErrors (event :*) :void

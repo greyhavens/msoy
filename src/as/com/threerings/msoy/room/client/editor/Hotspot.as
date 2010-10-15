@@ -124,7 +124,7 @@ public class Hotspot extends Sprite
 
         // remember click and target location
         _anchor = new Point(event.stageX, event.stageY);
-        _originalHotspot = _editor.target.localToGlobal(_editor.target.getLayoutHotSpot());
+        _originalHotspot = _editor.target.viz.localToGlobal(_editor.target.getLayoutHotSpot());
 
         // also, register for mouse moves and ups anywhere in the scene. if the player
         // pressed the button on the hotspot, we want to know about moves and the subsequent
