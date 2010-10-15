@@ -10,7 +10,7 @@ import flash.display.BitmapData;
 import flash.display.BlendMode;
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
-import flash.display.Loader;
+import flash.display.LoaderInfo;
 import flash.events.Event;
 import flash.events.MouseEvent;
 import flash.events.ProgressEvent;
@@ -498,11 +498,11 @@ public class MsoySprite extends ItemMediaContainer
 
     protected function loaderReady (event :ValueEvent) :void
     {
-        var loader :Loader = Loader(event.value);
+        var info :LoaderInfo = LoaderInfo(event.value);
 
         _backend = createBackend();
         if (_backend != null) {
-            _backend.init(_ctx, loader.contentLoaderInfo);
+            _backend.init(_ctx, info);
             _backend.setSprite(this);
         }
     }
