@@ -75,6 +75,15 @@ public class MsoyMediaContainer extends MediaContainer
     }
 
     /**
+     * Retrieve the MediaDescriptor we're configured with, or null if we're not fully configured
+     * yet, or media was configured through setMedia().
+     */
+    public function getMediaDesc () :MediaDesc
+    {
+        return _desc;
+    }
+
+    /**
      * Tests if this media may be blocked (aka bleeped) by the local user.
      */
     public function isBleepable () :Boolean
