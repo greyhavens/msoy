@@ -43,6 +43,9 @@ public class PlaceLoadingDisplay extends Sprite
     public function watchLoader (
         info :LoaderInfo, unloadie :IEventDispatcher, isPrimary :Boolean = false) :void
     {
+        if (!info || !unloadie) {
+            throw new Error("Bad (null) argument to watchLoader");
+        }
         _unloadies[info] = unloadie;
         unloadie.addEventListener(Event.UNLOAD, handleUnload);
 
@@ -108,29 +111,29 @@ public class PlaceLoadingDisplay extends Sprite
         }
     }
 
-    /** Called to lay out the static loader, while it's counting up the loaded percentage. */ 
+    /** Called to lay out the static loader, while it's counting up the loaded percentage. */
     protected function doStaticLayout () :void
     {
         this.x = 0;
         this.y = 0;
-        
+
         _spinner.scaleX = 1;
         _spinner.scaleY = 1;
         _spinner.x = (_box.width - LoadingSpinner.WIDTH) / 2;
         _spinner.y = (_box.height - LoadingSpinner.HEIGHT) / 2;
     }
-    
-    /** 
-     * Called to perform a transition away from static loading, 
-     * eg. by sliding the loader out of view. 
+
+    /**
+     * Called to perform a transition away from static loading,
+     * eg. by sliding the loader out of view.
      */
     protected function doTransitionOut () :void
     {
         const DURATION :Number = 1;
         const TRANS :String = "easeoutcubic";
-        Tweener.addTween(_spinner, { x: 20, y: 20, scaleX: .4, scaleY: .4, 
+        Tweener.addTween(_spinner, { x: 20, y: 20, scaleX: .4, scaleY: .4,
             time: DURATION, transition: TRANS });
-   
+
     }
 
     protected function handleComplete (event :Event) :void
