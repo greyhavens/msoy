@@ -13,8 +13,8 @@ import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-import com.kisgergely.gwt.canvas.client.Canvas;
-import com.kisgergely.gwt.canvas.client.CanvasRenderingContext2D;
+import com.google.gwt.widgetideas.graphics.client.Color;
+import com.google.gwt.widgetideas.graphics.client.GWTCanvas;
 
 import com.threerings.gwt.ui.WidgetUtil;
 
@@ -155,39 +155,39 @@ public class GameMetricsPanel extends VerticalPanel
         FlexTable holder = new FlexTable();
 
         int width = BAR_WIDTH*data.length;
-        Canvas canvas = new Canvas(width, GRAPH_HEIGHT);
-        CanvasRenderingContext2D ctx = canvas.getContext2D();
 
-        ctx.setStrokeStyle("grey");
-        ctx.strokeRect(0, 0, width-1, GRAPH_HEIGHT-1);
-        ctx.setLineWidth(0.1f);
+        GWTCanvas canvas = new GWTCanvas(width, GRAPH_HEIGHT);
+
+        canvas.setStrokeStyle(Color.GREY);
+        canvas.strokeRect(0, 0, width-1, GRAPH_HEIGHT-1);
+        canvas.setLineWidth(0.1f);
 
         int xx = 0;
         do {
-            ctx.moveTo(xx, 0);
-            ctx.lineTo(xx, GRAPH_HEIGHT);
-            ctx.stroke();
+            canvas.moveTo(xx, 0);
+            canvas.lineTo(xx, GRAPH_HEIGHT);
+            canvas.stroke();
             xx += width/10;
         } while (xx < width);
 
         int yy = GRAPH_HEIGHT-1;
         do {
-            ctx.moveTo(0, yy);
-            ctx.lineTo(width-1, yy);
-            ctx.stroke();
+            canvas.moveTo(0, yy);
+            canvas.lineTo(width-1, yy);
+            canvas.stroke();
             yy -= GRAPH_HEIGHT/5;
         } while (yy > 0);
 
-        ctx.setStrokeStyle("black");
-        ctx.setGlobalAlpha(0.5f);
-        ctx.moveTo(0, GRAPH_HEIGHT);
+        canvas.setStrokeStyle(Color.BLACK);
+        canvas.setGlobalAlpha(0.5f);
+        canvas.moveTo(0, GRAPH_HEIGHT);
         for (int ii = 0; ii < data.length; ii++) {
             int height = GRAPH_HEIGHT - data[ii];
-            ctx.lineTo(BAR_WIDTH*ii, height);
-            ctx.lineTo(BAR_WIDTH*(ii+1), height);
+            canvas.lineTo(BAR_WIDTH*ii, height);
+            canvas.lineTo(BAR_WIDTH*(ii+1), height);
         }
-        ctx.lineTo(width-1, GRAPH_HEIGHT);
-        ctx.fill();
+        canvas.lineTo(width-1, GRAPH_HEIGHT);
+        canvas.fill();
 
         holder.setWidget(0, 0, canvas);
         holder.getFlexCellFormatter().setRowSpan(0, 0, 2);
