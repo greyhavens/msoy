@@ -2,6 +2,8 @@
   <!-- we need this for trophies -->
   <inherits name="item"/>
 
+  <inherits name="com.google.gwt.widgetideas.GWTCanvas"/>
+
   <source path="com/threerings/msoy/game/data/all"/>
   <source path="com/threerings/msoy/game/gwt"/>
 
