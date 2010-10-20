@@ -28,7 +28,7 @@ public class InternalMediaDesc extends MediaDesc
      */
     public InternalMediaDesc (String path, byte mimeType, String mediaType, byte constraint)
     {
-        super((byte[]) null, mimeType, constraint);
+        super(mimeType, constraint);
         _path = path;
     }
 

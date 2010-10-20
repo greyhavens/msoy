@@ -11,6 +11,7 @@ import com.samskivert.depot.annotation.Column;
 import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.expression.ColumnExp;
 
+import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.edgame.gwt.GameCode;
 
@@ -45,11 +46,11 @@ public class GameCodeRecord extends PersistentRecord
         record.gameId = code.gameId;
         record.isDevelopment = code.isDevelopment;
         record.config = code.config;
-        record.clientMediaHash = MediaDesc.unmakeHash(code.clientMedia);
+        record.clientMediaHash = HashMediaDesc.unmakeHash(code.clientMedia);
         record.clientMimeType = MediaDesc.unmakeMimeType(code.clientMedia);
-        record.serverMediaHash = MediaDesc.unmakeHash(code.serverMedia);
+        record.serverMediaHash = HashMediaDesc.unmakeHash(code.serverMedia);
         record.serverMimeType = MediaDesc.unmakeMimeType(code.serverMedia);
-        record.splashMediaHash = MediaDesc.unmakeHash(code.splashMedia);
+        record.splashMediaHash = HashMediaDesc.unmakeHash(code.splashMedia);
         record.splashMimeType = MediaDesc.unmakeMimeType(code.splashMedia);
         return record;
     }
@@ -96,9 +97,9 @@ public class GameCodeRecord extends PersistentRecord
         code.gameId = gameId;
         code.isDevelopment = isDevelopment;
         code.config = config;
-        code.clientMedia = MediaDesc.make(clientMediaHash, clientMimeType, null);
-        code.serverMedia = MediaDesc.make(serverMediaHash, serverMimeType, null);
-        code.splashMedia = MediaDesc.make(splashMediaHash, splashMimeType, null);
+        code.clientMedia = HashMediaDesc.make(clientMediaHash, clientMimeType, null);
+        code.serverMedia = HashMediaDesc.make(serverMediaHash, serverMimeType, null);
+        code.splashMedia = HashMediaDesc.make(splashMediaHash, splashMimeType, null);
         code.lastUpdated = lastUpdated.getTime();
         return code;
     }

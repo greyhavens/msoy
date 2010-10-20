@@ -31,6 +31,7 @@ import com.threerings.msoy.person.gwt.FeedItemGenerator.Plural;
 
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
+import com.threerings.orth.scene.data.EntityMedia;
 
 import static org.junit.Assert.*; 
 
@@ -527,7 +528,7 @@ public class FeedItemGeneratorUnitTest
     public static class StubItem
         implements Icon, Media
     {
-        public StubItem (MediaDesc md, Pages page, Args args)
+        public StubItem (EntityMedia md, Pages page, Args args)
         {
             _text = simpleToString("media", "desc", md, "page", page, "args", args);
         }

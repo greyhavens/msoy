@@ -9,6 +9,10 @@ import com.google.common.base.Preconditions;
 
 import com.samskivert.util.ByteEnumUtil;
 
+import com.threerings.orth.scene.data.EntityMedia;
+
+import com.threerings.msoy.data.all.HashMediaDesc;
+
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.DefaultItemMediaDesc;
 import com.threerings.msoy.item.data.all.Item;
@@ -32,7 +36,7 @@ public class SceneUtil
             byte itemByte = (byte)ByteBuffer.wrap(mediaHash).asIntBuffer().get();
             return Item.getDefaultFurniMediaFor(ByteEnumUtil.fromByte(MsoyItemType.class, itemByte));
         } else {
-            return new MediaDesc(mediaHash, mimeType);
+            return new HashMediaDesc(mediaHash, mimeType);
         }
     }
 
@@ -40,7 +44,7 @@ public class SceneUtil
      * Flattens the supplied {@link MediaDesc} into bytes that can later be decoded by
      * {@link #createMediaDesc} into the appropriate type of descriptor.
      */
-    public static byte[] flattenMediaDesc (MediaDesc desc)
+    public static byte[] flattenMediaDesc (EntityMedia desc)
     {
         if (desc instanceof DefaultItemMediaDesc) {
             DefaultItemMediaDesc sdesc = (DefaultItemMediaDesc)desc;
@@ -54,8 +58,11 @@ public class SceneUtil
             data.asIntBuffer().put(sdesc.getItemTypeCode().toByte());
             return data.array();
 
+        } else if (desc instanceof MediaDesc) {
+            return HashMediaDesc.unmakeHash((MediaDesc)desc);
         } else {
-            return desc.hash;
+            throw new IllegalArgumentException("Unknown media descriptor type: " + desc);
         }
+
     }
 }

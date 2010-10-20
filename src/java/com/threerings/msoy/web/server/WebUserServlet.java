@@ -46,8 +46,8 @@ import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.all.CharityInfo;
 import com.threerings.msoy.data.all.CoinAwards;
 import com.threerings.msoy.data.all.DeploymentConfig;
+import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.msoy.data.all.LaunchConfig;
-import com.threerings.msoy.data.all.MediaDescBase;
 import com.threerings.msoy.data.all.MemberMailUtil;
 import com.threerings.msoy.data.all.VisitorInfo;
 
@@ -678,7 +678,7 @@ public class WebUserServlet extends MsoyServiceServlet
             try {
                 themeObj.put("groupId", themePlace.placeId);
                 if (group.logoMediaHash != null) {
-                    themeObj.put("logoHash", MediaDescBase.hashToString(group.logoMediaHash));
+                    themeObj.put("logoHash", HashMediaDesc.hashToString(group.logoMediaHash));
                     themeObj.put("logoType", group.logoMimeType);
                 }
                 themeObj.put("pop", themePlace.population);

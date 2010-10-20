@@ -11,7 +11,7 @@ import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.expression.ColumnExp;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.msoy.facebook.gwt.FeedThumbnail;
 
 /**
@@ -37,7 +37,7 @@ public class FeedThumbnailRecord extends PersistentRecord
     public static final Function<FeedThumbnailRecord, String> TO_MEDIA_PATH =
         new Function<FeedThumbnailRecord, String>() {
         @Override public String apply (FeedThumbnailRecord thumb) {
-            return MediaDesc.getMediaPath(thumb.hash, thumb.mimeType);
+            return HashMediaDesc.getMediaPath(thumb.hash, thumb.mimeType);
         }
     };
 
@@ -102,7 +102,7 @@ public class FeedThumbnailRecord extends PersistentRecord
     public FeedThumbnail toFeedThumbnail ()
     {
         FeedThumbnail thumbnail = new FeedThumbnail();
-        thumbnail.media = new MediaDesc(hash, mimeType);
+        thumbnail.media = new HashMediaDesc(hash, mimeType);
         thumbnail.media.constraint = constraint;
         thumbnail.pos = pos;
         thumbnail.code = code;
@@ -118,7 +118,7 @@ public class FeedThumbnailRecord extends PersistentRecord
         Preconditions.checkArgument(appId == 0 ^ gameId == 0);
         this.gameId = gameId;
         this.appId = appId;
-        hash = thumbnail.media.hash;
+        hash = HashMediaDesc.unmakeHash(thumbnail.media);
         mimeType = thumbnail.media.mimeType;
         constraint = thumbnail.media.constraint;
         code = thumbnail.code;

@@ -28,6 +28,8 @@ import com.threerings.presents.server.PresentsDObjectMgr;
 import com.threerings.parlor.rating.server.persist.RatingRepository;
 import com.threerings.stats.server.persist.StatRepository;
 
+import com.threerings.orth.scene.data.EntityMedia;
+
 import com.whirled.game.server.persist.GameCookieRepository;
 
 import com.threerings.msoy.peer.server.MemberNodeAction;
@@ -86,7 +88,7 @@ import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.FriendEntry;
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.msoy.data.all.MediaMimeTypes;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.NavItemData;
@@ -188,7 +190,7 @@ public class MemberLogic
             // publish a message to the inviting member's feed
             _feedLogic.publishMemberMessage(
                 memberId, FeedMessageType.FRIEND_ADDED_FRIEND,
-                friend.name, friendId, MediaDesc.mdToString(friend.photo));
+                friend.name, friendId, HashMediaDesc.mdToString(friend.photo));
 
             // add them to the friends list of both parties if/wherever they are online
             // TODO: Review and optimize
@@ -386,7 +388,7 @@ public class MemberLogic
             for (PopularPlacesSnapshot.Place place : pps.getTopScenes()) {
                 if (!haveRooms.contains(place.placeId)) {
                     SceneRecord scene = _sceneRepo.loadScene(place.placeId);
-                    MediaDesc media = scene.getSnapshotFull();
+                    EntityMedia media = scene.getSnapshotFull();
                     if (media == null) {
                         media = RoomCodes.DEFAULT_SNAPSHOT_FULL;
                     }
@@ -751,7 +753,7 @@ public class MemberLogic
                 continue;
             }
 
-            MediaDesc media;
+            EntityMedia media;
             final NavItemData data;
             switch (se.experience.action) {
             case HomePageItem.ACTION_ROOM: {

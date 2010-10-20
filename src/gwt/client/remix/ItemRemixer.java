@@ -12,6 +12,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
+import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.Decor;
@@ -132,7 +133,7 @@ public class ItemRemixer extends FlexTable
             return;
         }
 
-        _item.setPrimaryMedia(new MediaDesc(mediaHash, (byte) mimeType, (byte) constraint));
+        _item.setPrimaryMedia(new HashMediaDesc(mediaHash, (byte) mimeType, (byte) constraint));
 
         _stuffsvc.remixItem(_item, new InfoCallback<Item>() {
             public void onSuccess (Item item) {

@@ -11,6 +11,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.util.DateUtil;
 
+import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MediaMimeTypes;
 import com.threerings.msoy.edgame.gwt.EditGameService;
@@ -80,7 +81,7 @@ public class PublishPanel extends SmartTable
     protected static String toString (MediaDesc desc)
     {
         return (desc == null) ? "" :
-            MediaDesc.hashToString(desc.hash).substring(0, 30) + ".." +
+            HashMediaDesc.hashToString(HashMediaDesc.unmakeHash(desc)).substring(0, 30) + ".." +
             MediaMimeTypes.mimeTypeToSuffix(desc.mimeType);
     }
 

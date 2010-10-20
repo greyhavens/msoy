@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.mail.gwt;
 
+import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.msoy.data.all.MediaDesc;
 
 /**
@@ -50,7 +51,7 @@ public class GameAwardPayload extends MailPayload
         this.gameId = gameId;
         this.gameName = gameName;
         this.awardName = awardName;
-        this.awardMediaHash = awardMedia.hash;
+        this.awardMediaHash = HashMediaDesc.unmakeHash(awardMedia);
         this.awardMimeType = awardMedia.mimeType;
     }
 
@@ -65,6 +66,6 @@ public class GameAwardPayload extends MailPayload
      */
     public MediaDesc getAwardMedia ()
     {
-        return new MediaDesc(awardMediaHash, awardMimeType);
+        return new HashMediaDesc(awardMediaHash, awardMimeType);
     }
 }

@@ -9,6 +9,7 @@ import java.util.List;
 import com.google.common.collect.Lists;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
+import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MediaDescSize;
 
@@ -72,7 +73,7 @@ public class MessageUtil
 
     public static String makeBox (String token, MediaDesc desc, int size, String name)
     {
-        return BOX_START + token + "\t" + MediaDesc.mdToString(desc) + "\t" + size + "\t" + name +
+        return BOX_START + token + "\t" + HashMediaDesc.mdToString(desc) + "\t" + size + "\t" + name +
             BOX_END;
     }
 
@@ -161,7 +162,7 @@ public class MessageUtil
         public Box (String text) {
             String[] bits = text.split("\t", 4);
             this.token = bits[0];
-            this.desc = MediaDesc.stringToMD(bits[1]);
+            this.desc = HashMediaDesc.stringToMD(bits[1]);
             int msize;
             try {
                 msize = Integer.parseInt(bits[2]);

@@ -7,7 +7,7 @@ import com.samskivert.depot.Key;
 import com.samskivert.depot.annotation.TableGenerator;
 import com.samskivert.depot.expression.ColumnExp;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.msoy.item.data.all.Document;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MsoyItemType;
@@ -69,7 +69,7 @@ public class DocumentRecord extends ItemRecord
 
         Document document = (Document)item;
         if (document.docMedia != null) {
-            docMediaHash = document.docMedia.hash;
+            docMediaHash = HashMediaDesc.unmakeHash(document.docMedia);
             docMimeType = document.docMedia.mimeType;
         } else {
             docMediaHash = null;
@@ -99,7 +99,7 @@ public class DocumentRecord extends ItemRecord
     {
         Document object = new Document();
         object.docMedia = docMediaHash == null ? null :
-            new MediaDesc(docMediaHash, docMimeType);
+            new HashMediaDesc(docMediaHash, docMimeType);
         return object;
     }
 

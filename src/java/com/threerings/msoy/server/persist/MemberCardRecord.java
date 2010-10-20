@@ -19,6 +19,7 @@ import com.samskivert.depot.annotation.Entity;
 import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.expression.ColumnExp;
 
+import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VizMemberName;
@@ -150,7 +151,7 @@ public class MemberCardRecord extends PersistentRecord
     {
         return (photoHash == null)
             ? MemberCard.DEFAULT_PHOTO
-            : new MediaDesc(photoHash, photoMimeType, photoConstraint);
+            : new HashMediaDesc(photoHash, photoMimeType, photoConstraint);
     }
 
     // AUTO-GENERATED: METHODS START

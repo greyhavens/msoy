@@ -43,6 +43,8 @@ import com.threerings.msoy.data.MsoyAuthResponseData;
 import com.threerings.msoy.data.MsoyBootstrapData;
 import com.threerings.msoy.data.MsoyMarshaller;
 import com.threerings.msoy.data.UberClientModes;
+
+import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.msoy.data.all.VisitorInfo;
 
 import com.threerings.msoy.notify.data.Notification;
@@ -87,6 +89,7 @@ public /*abstract*/ class MsoyClient extends CrowdClient
     public static const GWT_PAGE_CHANGED :String = "msoy.setPage";
 
     // statically reference classes we require
+    HashMediaDesc;
     MsoyBootstrapData;
     MsoyAuthResponseData;
     MsoyService;

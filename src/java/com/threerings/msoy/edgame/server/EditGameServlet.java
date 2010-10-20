@@ -68,6 +68,7 @@ import com.threerings.msoy.group.data.all.GroupMembership;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.PopularPlacesSnapshot;
@@ -194,7 +195,7 @@ public class EditGameServlet extends MsoyServiceServlet
         grec.creatorId = mrec.memberId;
         grec.description = "";
         grec.isAVRG = isAVRG;
-        grec.thumbMediaHash = MediaDesc.unmakeHash(thumbMedia);
+        grec.thumbMediaHash = HashMediaDesc.unmakeHash(thumbMedia);
         grec.thumbMimeType = MediaDesc.unmakeMimeType(thumbMedia);
         grec.thumbConstraint = MediaDesc.unmakeConstraint(thumbMedia);
         grec.blingPool = true;
@@ -205,7 +206,7 @@ public class EditGameServlet extends MsoyServiceServlet
         crec.isDevelopment = true;
         crec.config = "<game>" +
             "<match type=\"0\"><min_seats>1</min_seats><max_seats>1</max_seats></match></game>";
-        crec.clientMediaHash = MediaDesc.unmakeHash(clientCode);
+        crec.clientMediaHash = HashMediaDesc.unmakeHash(clientCode);
         crec.clientMimeType = MediaDesc.unmakeMimeType(clientCode);
         _mgameRepo.updateGameCode(crec);
 

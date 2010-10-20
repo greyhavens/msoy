@@ -15,19 +15,16 @@ public class StudioMediaDesc extends MediaDesc
         _url = url;
     }
 
+    // from MediaDesc
     override public function getMediaId () :String
     {
         return "studio";
     }
 
+    // from EntityMedia
     override public function getMediaPath () :String
     {
         return _url;
-    }
-
-    override public function hashCode () :int
-    {
-        return 0; // no need to hash efficiently..
     }
 
     override public function equals (other :Object) :Boolean
@@ -36,7 +33,7 @@ public class StudioMediaDesc extends MediaDesc
             (getMediaPath() == StudioMediaDesc(other).getMediaPath());
     }
 
-    override public function toString () :String
+    public function toString () :String
     {
         return "[StudioMediaDesc:" + _url + "]";
     }

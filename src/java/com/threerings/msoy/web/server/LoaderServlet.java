@@ -14,7 +14,7 @@ import com.google.inject.Inject;
 
 import com.samskivert.io.StreamUtil;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.msoy.edgame.gwt.GameCode;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
@@ -109,7 +109,7 @@ public class LoaderServlet extends HttpServlet
 
         // TODO: if the background is a swf, we probably need to do some spayshul stuffz.
 
-        return MediaDesc.getMediaPath(backdrop.furniMediaHash, backdrop.furniMimeType);
+        return HashMediaDesc.getMediaPath(backdrop.furniMediaHash, backdrop.furniMimeType);
     }
 
     /**

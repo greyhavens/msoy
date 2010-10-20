@@ -21,9 +21,11 @@ import com.samskivert.depot.annotation.Transient;
 
 import com.threerings.io.Streamable;
 
+import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MsoyItemType;
+import com.threerings.orth.scene.data.EntityMedia;
 
 /**
  * The base class for all digital items in the MSOY system.
@@ -304,10 +306,10 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
         item.attrs = attrs;
         item.mature = mature;
         if (furniMediaHash != null) {
-            item.setFurniMedia(new MediaDesc(furniMediaHash, furniMimeType, furniConstraint));
+            item.setFurniMedia(new HashMediaDesc(furniMediaHash, furniMimeType, furniConstraint));
         }
         if (thumbMediaHash != null) {
-            item.setThumbnailMedia(new MediaDesc(thumbMediaHash, thumbMimeType, thumbConstraint));
+            item.setThumbnailMedia(new HashMediaDesc(thumbMediaHash, thumbMimeType, thumbConstraint));
         }
         return item;
     }
@@ -335,7 +337,7 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
         description = (item.description == null) ? "" : item.description;
         MediaDesc media = item.getRawThumbnailMedia();
         if (media != null) {
-            thumbMediaHash = media.hash;
+            thumbMediaHash = HashMediaDesc.unmakeHash(media);
             thumbMimeType = media.mimeType;
             thumbConstraint = media.constraint;
         } else {
@@ -343,7 +345,7 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
         }
         media = item.getRawFurniMedia();
         if (media != null) {
-            furniMediaHash = media.hash;
+            furniMediaHash = HashMediaDesc.unmakeHash(media);
             furniMimeType = media.mimeType;
             furniConstraint = media.constraint;
         } else {
@@ -364,17 +366,17 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
     public MediaDesc getThumbMediaDesc ()
     {
         return (thumbMediaHash == null) ? Item.getDefaultThumbnailMediaFor(getType()) :
-            new MediaDesc(thumbMediaHash, thumbMimeType, thumbConstraint);
+            new HashMediaDesc(thumbMediaHash, thumbMimeType, thumbConstraint);
     }
 
     /**
      * Returns the MediaDesc for the furni media of this item, or the default if the item has
      * no furni media.
      */
-    public MediaDesc getFurniMediaDesc ()
+    public EntityMedia getFurniMediaDesc ()
     {
         return (furniMediaHash == null) ? Item.getDefaultFurniMediaFor(getType()) :
-            new MediaDesc(furniMediaHash, furniMimeType, furniConstraint);
+            new HashMediaDesc(furniMediaHash, furniMimeType, furniConstraint);
     }
 
     /**

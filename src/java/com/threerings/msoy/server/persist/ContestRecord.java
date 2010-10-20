@@ -14,7 +14,7 @@ import com.samskivert.depot.annotation.Column;
 import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.expression.ColumnExp;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.msoy.web.gwt.Contest;
 
 /**
@@ -95,7 +95,7 @@ public class ContestRecord extends PersistentRecord
         ContestRecord record = new ContestRecord();
         record.contestId = contest.contestId;
         if (contest.icon != null) {
-            record.iconHash = contest.icon.hash;
+            record.iconHash = HashMediaDesc.unmakeHash(contest.icon);
             record.iconMimeType = contest.icon.mimeType;
             record.iconConstraint = contest.icon.constraint;
         }
@@ -117,7 +117,7 @@ public class ContestRecord extends PersistentRecord
         Contest contest = new Contest();
         contest.contestId = contestId;
         if (iconHash != null) {
-            contest.icon = new MediaDesc(iconHash, iconMimeType, iconConstraint);
+            contest.icon = new HashMediaDesc(iconHash, iconMimeType, iconConstraint);
         }
         contest.name = name;
         contest.blurb = blurb;

@@ -20,6 +20,7 @@ import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.expression.ColumnExp;
 
 import com.threerings.msoy.data.all.Award;
+import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.Award.AwardType;
@@ -200,7 +201,7 @@ public class ProfileRecord extends PersistentRecord
     public void setPhoto (MediaDesc photo)
     {
         if (photo != null) {
-            photoHash = photo.hash;
+            photoHash = HashMediaDesc.unmakeHash(photo);
             photoMimeType = photo.mimeType;
             photoConstraint = photo.constraint;
         }
@@ -212,7 +213,7 @@ public class ProfileRecord extends PersistentRecord
     public MediaDesc getPhoto ()
     {
         return (photoHash != null) ?
-            new MediaDesc(photoHash, photoMimeType, photoConstraint) : MemberCard.DEFAULT_PHOTO;
+            new HashMediaDesc(photoHash, photoMimeType, photoConstraint) : MemberCard.DEFAULT_PHOTO;
     }
 
     public void setAward (Award award)

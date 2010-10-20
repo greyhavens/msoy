@@ -8,7 +8,7 @@ import com.samskivert.depot.annotation.Column;
 import com.samskivert.depot.annotation.TableGenerator;
 import com.samskivert.depot.expression.ColumnExp;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.MsoyItemType;
@@ -83,7 +83,7 @@ public class AvatarRecord extends ItemRecord
 
         Avatar avatar = (Avatar)item;
         if (avatar.avatarMedia != null) {
-            avatarMediaHash = avatar.avatarMedia.hash;
+            avatarMediaHash = HashMediaDesc.unmakeHash(avatar.avatarMedia);
             avatarMimeType = avatar.avatarMedia.mimeType;
         } else {
             avatarMediaHash = null;
@@ -114,7 +114,7 @@ public class AvatarRecord extends ItemRecord
     {
         Avatar object = new Avatar();
         object.avatarMedia = avatarMediaHash == null ? null :
-            new MediaDesc(avatarMediaHash, avatarMimeType);
+            new HashMediaDesc(avatarMediaHash, avatarMimeType);
         object.scale = scale;
         return object;
     }

@@ -20,7 +20,7 @@ import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.msoy.admin.gwt.ABTest;
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.msoy.web.gwt.ABTestCard;
 
 /**
@@ -58,7 +58,7 @@ public class MediaBlacklistRecord extends PersistentRecord
     {
     }
 
-    public MediaBlacklistRecord (MediaDesc desc, String note)
+    public MediaBlacklistRecord (HashMediaDesc desc, String note)
     {
         this.mediaHash = desc.hash;
         this.mimeType = desc.mimeType;

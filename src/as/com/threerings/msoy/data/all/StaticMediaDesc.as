@@ -18,10 +18,9 @@ public class StaticMediaDesc extends MediaDesc
     public function StaticMediaDesc (mimeType :int = 0, itemType :String = null,
                                      mediaType :String = null, constraint :int = NOT_CONSTRAINED)
     {
-        super(null, mimeType);
+        super(mimeType, constraint);
         _itemType = itemType;
         _mediaType = mediaType;
-        this.constraint = constraint;
     }
 
     // from MediaDesc

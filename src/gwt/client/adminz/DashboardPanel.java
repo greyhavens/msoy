@@ -9,29 +9,23 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
-import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.admin.gwt.AdminService;
 import com.threerings.msoy.admin.gwt.AdminServiceAsync;
 import com.threerings.msoy.data.all.DeploymentConfig;
-import com.threerings.msoy.web.gwt.ConnectConfig;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.WebUserService;
 import com.threerings.msoy.web.gwt.WebUserServiceAsync;
 
 import client.shell.CShell;
-import client.shell.Session;
 import client.ui.BorderedPopup;
 import client.ui.MsoyUI;
 import client.util.ClickCallback;
 import client.util.Link;
-import client.util.InfoCallback;
 
 /**
  * Displays the various services available to support and admin personnel.
@@ -49,20 +43,8 @@ public class DashboardPanel extends SmartTable
 
         // admin-only controls
         if (CShell.isAdmin()) {
-            // attempt to refresh our token's lifespan on the server so the dashboard doesn't
-            // freak out over an expired session
-            Session.validate();
-
             FlowPanel admin = new FlowPanel();
             admin.add(MsoyUI.createLabel(_msgs.adminControls(), "Title"));
-            final SimplePanel ddash = new SimplePanel();
-            ddash.setWidget(MsoyUI.createActionLabel(_msgs.displayDashboard(), new ClickHandler() {
-                public void onClick (ClickEvent event) {
-                    ddash.setWidget(new Label(_msgs.displayDashboard()));
-                    displayDashboard();
-                }
-            }));
-            admin.add(ddash);
             admin.add(makeLink("Configuration", "config"));
             admin.add(makeLink(_msgs.viewExchange(), "exchange"));
             admin.add(makeLink(_msgs.cashOutButton(), "cashout"));
@@ -113,16 +95,6 @@ public class DashboardPanel extends SmartTable
         getFlexCellFormatter().setVerticalAlignment(row++, col++, HasAlignment.ALIGN_TOP);
     }
 
-    protected void displayDashboard ()
-    {
-        // load up the information needed to display the dashboard applet
-        _usersvc.getConnectConfig(new InfoCallback<ConnectConfig>() {
-            public void onSuccess (ConnectConfig config) {
-                finishDisplayDashboard(config);
-            }
-        });
-    }
-
     protected Widget makeLink (String title, Object... args)
     {
         Widget link = Link.create(title, Pages.ADMINZ, args);
@@ -145,26 +117,6 @@ public class DashboardPanel extends SmartTable
             }
         };
         return reboot;
-    }
-
-    protected void finishDisplayDashboard (ConnectConfig config)
-    {
-        CShell.frame.closeClient();
-
-        // we have to serve admin-client.jar from the server to which it will connect back due to
-        // security restrictions and proxy the game jar through there as well
-        String appletURL = config.getURL(
-            "/clients/" + DeploymentConfig.version + "/admin-client.jar");
-
-        int row = getRowCount();
-        getFlexCellFormatter().setStyleName(row, 0, "Applet");
-        setWidget(row, 0, WidgetUtil.createApplet(
-                      "admin", appletURL,
-                      "com.threerings.msoy.admin.client.AdminApplet", 680, 400, false,
-                      new String[] { "server", config.server,
-                                     "port", "" + config.port,
-                                     "authtoken", CShell.getAuthToken() }),
-                  getCellCount(row-1));
     }
 
     protected static final AdminMessages _msgs = GWT.create(AdminMessages.class);

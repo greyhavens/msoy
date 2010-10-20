@@ -11,6 +11,7 @@ import com.samskivert.depot.annotation.Entity;
 import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.expression.ColumnExp;
 import com.threerings.msoy.data.all.GroupName;
+import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.Theme;
 
@@ -139,7 +140,7 @@ public class ThemeRecord extends PersistentRecord
         if (logoMediaHash == null) {
             return null;
         }
-        return new MediaDesc(logoMediaHash, logoMimeType, logoMediaConstraint);
+        return new HashMediaDesc(logoMediaHash, logoMimeType, logoMediaConstraint);
     }
 
     /**
@@ -150,7 +151,7 @@ public class ThemeRecord extends PersistentRecord
         if (navMediaHash == null) {
             return null;
         }
-        return new MediaDesc(navMediaHash, navMimeType, navMediaConstraint);
+        return new HashMediaDesc(navMediaHash, navMimeType, navMediaConstraint);
     }
 
     /**
@@ -161,7 +162,7 @@ public class ThemeRecord extends PersistentRecord
         if (navSelMediaHash == null) {
             return null;
         }
-        return new MediaDesc(navSelMediaHash, navSelMimeType, navSelMediaConstraint);
+        return new HashMediaDesc(navSelMediaHash, navSelMimeType, navSelMediaConstraint);
     }
 
     // AUTO-GENERATED: METHODS START

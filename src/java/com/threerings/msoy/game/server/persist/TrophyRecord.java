@@ -13,6 +13,7 @@ import com.samskivert.depot.expression.ColumnExp;
 
 import com.samskivert.util.StringUtil;
 
+import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.game.data.all.Trophy;
@@ -83,7 +84,7 @@ public class TrophyRecord extends PersistentRecord
      */
     public MediaDesc getTrophyMedia ()
     {
-        return new MediaDesc(
+        return new HashMediaDesc(
             trophyMediaHash, trophyMimeType, MediaDesc.computeConstraint(
                 MediaDescSize.THUMBNAIL_SIZE, TrophySource.TROPHY_WIDTH, TrophySource.TROPHY_HEIGHT));
     }

@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.threerings.msoy.web.server.UploadUtil.MediaInfo;
 
+import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.server.ItemMediaUploadServlet;
 
@@ -45,10 +46,6 @@ public abstract class AbstractSnapshotUploadServlet extends ItemMediaUploadServl
      */
     protected MediaDesc createMediaDesc (MediaInfo info)
     {
-        MediaDesc desc = new MediaDesc();
-        desc.hash = MediaDesc.stringToHash(info.hash);
-        desc.mimeType = info.mimeType;
-        desc.constraint = info.constraint;
-        return desc;
+        return new HashMediaDesc(HashMediaDesc.stringToHash(info.hash), info.mimeType, info.constraint);
     }
 }

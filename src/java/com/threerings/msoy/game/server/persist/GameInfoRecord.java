@@ -17,6 +17,7 @@ import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.util.ArrayUtil;
 import com.samskivert.util.StringUtil;
 
+import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MediaMimeTypes;
 import com.threerings.msoy.data.all.MemberName;
@@ -149,7 +150,7 @@ public class GameInfoRecord extends PersistentRecord
      */
     public MediaDesc getThumbMedia ()
     {
-        return MediaDesc.make(thumbMediaHash, thumbMimeType, thumbConstraint, DEFAULT_THUMB_MEDIA);
+        return HashMediaDesc.make(thumbMediaHash, thumbMimeType, thumbConstraint, DEFAULT_THUMB_MEDIA);
     }
 
     /**
@@ -157,7 +158,7 @@ public class GameInfoRecord extends PersistentRecord
      */
     public MediaDesc getShotMedia ()
     {
-        return MediaDesc.make(shotMediaHash, shotMimeType, getThumbMedia());
+        return HashMediaDesc.make(shotMediaHash, shotMimeType, getThumbMedia());
     }
 
     /**
@@ -218,10 +219,10 @@ public class GameInfoRecord extends PersistentRecord
         this.genre = info.genre;
         this.isAVRG = info.isAVRG; // TODO: don't allow this to be changed?
         this.description = info.description;
-        this.thumbMediaHash = MediaDesc.unmakeHash(info.thumbMedia);
+        this.thumbMediaHash = HashMediaDesc.unmakeHash(info.thumbMedia);
         this.thumbMimeType = MediaDesc.unmakeMimeType(info.thumbMedia);
         this.thumbConstraint = MediaDesc.unmakeConstraint(info.thumbMedia);
-        this.shotMediaHash = MediaDesc.unmakeHash(info.shotMedia);
+        this.shotMediaHash = HashMediaDesc.unmakeHash(info.shotMedia);
         this.shotMimeType = MediaDesc.unmakeMimeType(info.shotMedia);
         this.groupId = info.groupId;
         this.shopTag = info.shopTag;

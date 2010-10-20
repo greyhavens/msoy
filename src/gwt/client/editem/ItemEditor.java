@@ -32,6 +32,7 @@ import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.gwt.util.StringUtil;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
+import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.data.all.MediaMimeTypes;
@@ -641,7 +642,7 @@ public abstract class ItemEditor extends FlowPanel
 
         // set the new media in preview and in the item
         mu.setUploadedMedia(filename,
-            new MediaDesc(mediaHash, (byte)mimeType, (byte)constraint), width, height);
+            new HashMediaDesc(mediaHash, (byte)mimeType, (byte)constraint), width, height);
 
         // have the item re-validate that no media ids are duplicated unnecessarily
         _item.checkConsolidateMedia();

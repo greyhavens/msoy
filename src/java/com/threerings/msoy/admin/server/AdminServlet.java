@@ -33,6 +33,7 @@ import com.samskivert.util.Invoker.Unit;
 import com.threerings.web.gwt.ServiceException;
 
 import com.threerings.msoy.admin.server.persist.MediaBlacklistRepository;
+import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MediaMimeTypes;
 import com.threerings.msoy.item.data.all.MsoyItemType;
@@ -457,9 +458,16 @@ public class AdminServlet extends MsoyServiceServlet
         throws ServiceException
     {
         final MemberRecord memrec = requireSupportUser();
+
+        if (!(desc instanceof HashMediaDesc)) {
+            log.warning("Media descriptor is not a HashMediaDesc?!", "desc", desc);
+            throw new ServiceException(MsoyAdminCodes.E_INTERNAL_ERROR);
+        }
+        HashMediaDesc hDesc = (HashMediaDesc) desc;
+
         log.info("Nuking media for admin", "who", memrec.accountName, "media", desc);
 
-        String fileName = MediaDesc.hashToString(desc.hash) +
+        String fileName = HashMediaDesc.hashToString(hDesc.hash) +
             MediaMimeTypes.mimeTypeToSuffix(desc.mimeType);
 
         File file = new File(ServerConfig.mediaDir, fileName);
@@ -467,10 +475,10 @@ public class AdminServlet extends MsoyServiceServlet
             log.warning("Local media file was not successfully deleted", "file", file);
         }
 
-        if (_blacklistRepo.isBlacklisted(desc)) {
+        if (_blacklistRepo.isBlacklisted(hDesc)) {
             log.warning("Media was already blacklisted in database", "media", desc);
         } else {
-            _blacklistRepo.blacklist(desc, memrec.accountName + ": " + note);
+            _blacklistRepo.blacklist(hDesc, memrec.accountName + ": " + note);
         }
 
         if (!ServerConfig.mediaS3Enable) {

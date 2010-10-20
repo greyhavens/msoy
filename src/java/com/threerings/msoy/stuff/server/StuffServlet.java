@@ -24,8 +24,9 @@ import com.threerings.web.gwt.ServiceException;
 
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.StatType;
+import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.msoy.data.all.MediaDesc;
-import com.threerings.msoy.item.data.all.MsoyItemType;
+
 import com.threerings.msoy.server.StatLogic;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.TagNameRecord;
@@ -33,6 +34,7 @@ import com.threerings.msoy.server.persist.TagNameRecord;
 import com.threerings.msoy.group.server.GroupLogic;
 import com.threerings.msoy.group.server.ThemeLogic;
 import com.threerings.msoy.group.server.persist.GroupRepository;
+
 import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Decor;
@@ -40,11 +42,13 @@ import com.threerings.msoy.item.data.all.Furniture;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.Launcher;
+import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.item.gwt.ItemDetail;
 import com.threerings.msoy.item.server.ItemLogic;
 import com.threerings.msoy.item.server.persist.CloneRecord;
 import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
+
 import com.threerings.msoy.room.server.persist.MemoriesRecord;
 import com.threerings.msoy.room.server.persist.MemoryRepository;
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
@@ -68,7 +72,7 @@ public class StuffServlet extends MsoyServiceServlet
         ExternalUploadFile file = new ExternalUploadFile(data, mimeType);
         try {
             UploadUtil.publishUploadFile(file);
-            return new MediaDesc(file.getHash(), file.getMimeType(), MediaDesc.NOT_CONSTRAINED);
+            return new HashMediaDesc(file.getHash(), file.getMimeType(), MediaDesc.NOT_CONSTRAINED);
         } catch (IOException ioe) {
             log.warning("Unable to publish external media file", ioe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
@@ -391,7 +395,7 @@ public class StuffServlet extends MsoyServiceServlet
                 } else {
                     // in all probability, the primary media is different now
                     MediaDesc primary = item.getPrimaryMedia();
-                    byte[] primaryHash = (primary == null) ? null : primary.hash;
+                    byte[] primaryHash = HashMediaDesc.unmakeHash(primary);
                     if (Arrays.equals(primaryHash, orig.getPrimaryMedia())) {
                         record.mediaHash = null; // a revert here, strange, but ok
                     } else {

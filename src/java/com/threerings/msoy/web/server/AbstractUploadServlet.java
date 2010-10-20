@@ -25,6 +25,7 @@ import com.samskivert.io.StreamUtil;
 import com.samskivert.servlet.util.CookieUtil;
 
 import com.threerings.msoy.admin.server.persist.MediaBlacklistRepository;
+import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.MemberRecord;
@@ -257,7 +258,7 @@ public abstract class AbstractUploadServlet extends HttpServlet
     protected void checkBlacklist (String hash)
         throws AccessDeniedException
     {
-        if (_blacklistRepo.isBlacklisted(MediaDesc.stringToHash(hash))) {
+        if (_blacklistRepo.isBlacklisted(HashMediaDesc.stringToHash(hash))) {
             log.warning("Rejecting attempted upload of blacklisted media", "hash", hash);
             throw new AccessDeniedException("This media has been permanently blacklisted.");
         }

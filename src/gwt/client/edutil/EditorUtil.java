@@ -168,7 +168,7 @@ public class EditorUtil
      * Throws a {@link ConfigException} if the given media is not null and not an image. For
      * convenience, returns the media if all is well.
      */
-    public static MediaDesc checkImageMedia (String type, MediaDesc desc)
+    public static <T extends MediaDesc> T checkImageMedia (String type, T desc)
     {
         if (desc != null && !desc.isImage()) {
             throw new ConfigException(_msgs.errInvalidImage(type));
@@ -180,7 +180,7 @@ public class EditorUtil
      * Throws a {@link ConfigException} if the given media is null or not an image. For convenience,
      * returns the media if all is well.
      */
-    public static MediaDesc requireImageMedia (String type, MediaDesc desc)
+    public static <T extends MediaDesc> T requireImageMedia (String type, T desc)
     {
         if (desc == null || !desc.isImage()) {
             throw new ConfigException(_msgs.errInvalidImage(type));

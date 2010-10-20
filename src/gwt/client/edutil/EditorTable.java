@@ -22,7 +22,6 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.data.all.MediaDesc;
-
 import client.ui.MsoyUI;
 
 /**
@@ -115,8 +114,8 @@ public class EditorTable extends SmartTable
 
     protected class MediaBox extends EditorUtil.MediaBox
     {
-        public MediaBox (int size, String mediaId, MediaDesc media) {
-            super(size, mediaId, media);
+        public MediaBox (int size, String mediaId, MediaDesc entityMedia) {
+            super(size, mediaId, entityMedia);
         }
         @Override protected void mediaModified () {
             EditorTable.this.mediaModified();

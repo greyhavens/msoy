@@ -7,7 +7,7 @@ import com.samskivert.depot.Key;
 import com.samskivert.depot.annotation.TableGenerator;
 import com.samskivert.depot.expression.ColumnExp;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.item.data.all.Photo;
@@ -82,7 +82,7 @@ public class PhotoRecord extends ItemRecord
 
         Photo photo = (Photo)item;
         if (photo.photoMedia != null) {
-            photoMediaHash = photo.photoMedia.hash;
+            photoMediaHash = HashMediaDesc.unmakeHash(photo.photoMedia);
             photoMimeType = photo.photoMedia.mimeType;
             photoConstraint = photo.photoMedia.constraint;
         } else {
@@ -115,7 +115,7 @@ public class PhotoRecord extends ItemRecord
     {
         Photo object = new Photo();
         object.photoMedia = (photoMediaHash == null) ?
-            null : new MediaDesc(photoMediaHash, photoMimeType, photoConstraint);
+            null : new HashMediaDesc(photoMediaHash, photoMimeType, photoConstraint);
         object.photoWidth = photoWidth;
         object.photoHeight = photoHeight;
         return object;

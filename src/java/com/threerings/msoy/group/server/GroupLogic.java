@@ -21,7 +21,7 @@ import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.msoy.data.all.GroupName;
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.server.MemberNodeActions;
@@ -108,7 +108,7 @@ public class GroupLogic
         grec.official = group.official;
         if (group.logo != null) {
             grec.logoMimeType = group.logo.mimeType;
-            grec.logoMediaHash = group.logo.hash;
+            grec.logoMediaHash = HashMediaDesc.unmakeHash(group.logo);
             grec.logoMediaConstraint = group.logo.constraint;
         }
         grec.homepageUrl = extras.homepageUrl;
@@ -149,7 +149,7 @@ public class GroupLogic
         if (grec.policy != Group.Policy.EXCLUSIVE) {
             _feedLogic.publishMemberMessage(
                 mrec.memberId, FeedMessageType.FRIEND_CREATED_GROUP,
-                grec.groupId, grec.name, MediaDesc.mdToString(grec.toLogo()));
+                grec.groupId, grec.name, HashMediaDesc.mdToString(grec.toLogo()));
         }
 
         return result;

@@ -10,6 +10,7 @@ import com.google.common.collect.Lists;
 
 import com.threerings.msoy.badge.data.all.Badge;
 import com.threerings.msoy.badge.data.all.EarnedBadge;
+import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.gwt.Args;
@@ -460,7 +461,7 @@ public class FeedItemGenerator
 
     protected Media buildMedia (FeedMessage msg, int idx, Pages page, Object... args)
     {
-        MediaDesc md = (msg.data.length <= idx) ? null : MediaDesc.stringToMD(msg.data[idx]);
+        MediaDesc md = (msg.data.length <= idx) ? null : HashMediaDesc.stringToMD(msg.data[idx]);
         if (md == null) {
             return null;
         }

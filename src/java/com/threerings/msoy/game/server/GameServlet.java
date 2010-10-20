@@ -57,7 +57,7 @@ import com.threerings.msoy.game.server.persist.ArcadeEntryRecord;
 import com.threerings.msoy.game.server.persist.TrophyRecord;
 import com.threerings.msoy.game.server.persist.TrophyRepository;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.RatingResult;
 import com.threerings.msoy.server.MemberManager;
@@ -465,7 +465,7 @@ public class GameServlet extends MsoyServiceServlet
             trophy.gameId = grec.gameId;
             trophy.name = record.name;
             trophy.ident = record.ident;
-            trophy.trophyMedia = new MediaDesc(record.thumbMediaHash, record.thumbMimeType);
+            trophy.trophyMedia = new HashMediaDesc(record.thumbMediaHash, record.thumbMimeType);
             trophies.put(record.ident, trophy);
         }
 

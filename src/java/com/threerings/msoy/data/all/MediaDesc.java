@@ -10,7 +10,7 @@ import com.threerings.io.Streamable;
 /**
  * Contains information about a piece of media.
  */
-public class MediaDesc extends MediaDescBase implements Streamable, IsSerializable
+public abstract class MediaDesc extends MediaDescBase implements Streamable, IsSerializable
 {
     /** A constant used to indicate that an image does not exceed half thumbnail size in either
      * dimension. */
@@ -84,75 +84,6 @@ public class MediaDesc extends MediaDescBase implements Streamable, IsSerializab
     }
 
     /**
-     * Converts a MediaDesc into a colon delimited String.
-     */
-    public static String mdToString (MediaDesc md)
-    {
-        if (md == null || md instanceof StaticMediaDesc) {
-            return "";
-        }
-        StringBuilder buf = new StringBuilder(hashToString(md.hash));
-        buf.append(":").append(md.mimeType);
-        buf.append(":").append(md.constraint);
-        return buf.toString();
-    }
-
-    /**
-     * Creates a MediaDesc from a colon delimited String.
-     */
-    public static MediaDesc stringToMD (String str)
-    {
-        String[] data = str.split(":");
-        if (data.length != 3) {
-            return null;
-        }
-        byte[] hash = stringToHash(data[0]);
-        if (hash == null) {
-            return null;
-        }
-        byte mimeType = MediaMimeTypes.INVALID_MIME_TYPE;
-        byte constraint = 0;
-        try {
-            mimeType = Byte.parseByte(data[1]);
-        } catch (NumberFormatException nfe) {
-            // don't care
-        }
-        try {
-            constraint = Byte.parseByte(data[2]);
-        } catch (NumberFormatException nfe) {
-            // don't care
-        }
-
-        return new MediaDesc(hash, mimeType, constraint);
-    }
-
-    /**
-     * Creates and returns a media descriptor if the supplied hash is non-null, returns onNull
-     * otherwise.
-     */
-    public static MediaDesc make (byte[] hash, byte mimeType, MediaDesc onNull)
-    {
-        return (hash == null) ? onNull : new MediaDesc(hash, mimeType);
-    }
-
-    /**
-     * Creates and returns a media descriptor if the supplied hash is non-null, returns onNull
-     * otherwise.
-     */
-    public static MediaDesc make (byte[] hash, byte mimeType, byte constraint, MediaDesc onNull)
-    {
-        return (hash == null) ? onNull : new MediaDesc(hash, mimeType, constraint);
-    }
-
-    /**
-     * Returns the supplied media descriptor's hash or null if the descriptor is null.
-     */
-    public static byte[] unmakeHash (MediaDesc desc)
-    {
-        return (desc == null) ? null : desc.hash;
-    }
-
-    /**
      * Returns the supplied media descriptor's mime type or 0 if the descriptor is null.
      */
     public static byte unmakeMimeType (MediaDesc desc)
@@ -171,54 +102,24 @@ public class MediaDesc extends MediaDescBase implements Streamable, IsSerializab
     /** Used for deserialization. */
     public MediaDesc ()
     {
-        super();
     }
 
     /**
      * Creates a media descriptor from the supplied configuration.
      */
-    public MediaDesc (byte[] hash, byte mimeType)
+    public MediaDesc (byte mimeType, byte constraint)
     {
-        this(hash, mimeType, NOT_CONSTRAINED);
-    }
-
-    /**
-     * Creates a media descriptor from the supplied configuration.
-     */
-    public MediaDesc (byte[] hash, byte mimeType, byte constraint)
-    {
-        super(hash, mimeType);
+        super(mimeType);
         this.constraint = constraint;
-    }
-
-    /**
-     * Create a media descriptor from the specified info. Note
-     * that the String will be turned into a byte[] differently
-     * depending on the mimeType.
-     */
-    public MediaDesc (String s, byte mimeType, byte constraint)
-    {
-        super(s, mimeType);
-        this.constraint = constraint;
-    }
-
-    /**
-     * TEMPORARY CONSTRUCTOR, for making it easy for me to
-     * pre-initialize some media...
-     */
-    public MediaDesc (String filename)
-    {
-        this(stringToHash(filename.substring(0, filename.indexOf('.'))),
-             MediaMimeTypes.suffixToMimeType(filename));
     }
 
     /**
      * Returns the path of the URL that loads this media proxied through our game server so that we
-     * can work around Java applet sandbox restrictions.
+     * can work around Java applet sandbox restrictions. Subclasses may override this.
      */
     public String getProxyMediaPath ()
     {
-        return getMediaPath(DeploymentConfig.PROXY_PREFIX, hash, mimeType);
+        throw new IllegalArgumentException("Not implemented");
     }
 
     /**
@@ -255,6 +156,12 @@ public class MediaDesc extends MediaDescBase implements Streamable, IsSerializab
     public boolean isRemixable ()
     {
         return isRemixable(mimeType);
+    }
+
+    @Override // from MediaDescBase
+    public int hashCode ()
+    {
+        return (43 * super.hashCode()) + constraint;
     }
 
     @Override // from MediaDescBase

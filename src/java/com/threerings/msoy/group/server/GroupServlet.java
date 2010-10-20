@@ -28,6 +28,7 @@ import com.threerings.gwt.util.PagedResult;
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.Theme;
+import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.VizMemberName;
 import com.threerings.msoy.server.MemberManager;
@@ -417,7 +418,7 @@ public class GroupServlet extends MsoyServiceServlet
         if (grec.policy != Group.Policy.EXCLUSIVE) {
             _feedLogic.publishMemberMessage(
                 mrec.memberId, FeedMessageType.FRIEND_JOINED_GROUP,
-                grec.groupId, grec.name, MediaDesc.mdToString(grec.toLogo()));
+                grec.groupId, grec.name, HashMediaDesc.mdToString(grec.toLogo()));
         }
     }
 
@@ -560,7 +561,7 @@ public class GroupServlet extends MsoyServiceServlet
         medalRec.groupId = medal.groupId;
         medalRec.name = medal.name;
         medalRec.description = medal.description;
-        medalRec.iconHash = medal.icon.hash;
+        medalRec.iconHash = HashMediaDesc.unmakeHash(medal.icon);
         medalRec.iconMimeType = medal.icon.mimeType;
         _medalRepo.storeMedal(medalRec);
     }
@@ -707,7 +708,7 @@ public class GroupServlet extends MsoyServiceServlet
         // data
         _feedLogic.publishMemberMessage(
             memberId, FeedMessageType.FRIEND_WON_MEDAL, medalRec.name,
-            MediaDesc.mdToString(medalRec.createIconMedia()), groupRec.name, groupRec.groupId);
+            HashMediaDesc.mdToString(medalRec.createIconMedia()), groupRec.name, groupRec.groupId);
     }
 
     // from GroupService

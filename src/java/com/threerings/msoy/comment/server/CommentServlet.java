@@ -21,7 +21,6 @@ import com.threerings.web.gwt.ServiceException;
 import com.threerings.gwt.util.PagedResult;
 
 import com.threerings.msoy.comment.gwt.Comment.CommentType;
-import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.notify.server.NotificationManager;
 import com.threerings.msoy.game.server.persist.GameInfoRecord;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
@@ -35,6 +34,8 @@ import com.threerings.msoy.comment.gwt.Comment;
 import com.threerings.msoy.comment.gwt.CommentService;
 import com.threerings.msoy.comment.server.persist.CommentRecord;
 import com.threerings.msoy.comment.server.persist.CommentRepository;
+import com.threerings.msoy.data.all.HashMediaDesc;
+
 import com.threerings.msoy.server.StatLogic;
 import com.threerings.msoy.server.persist.MemberCardRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
@@ -122,7 +123,7 @@ public class CommentServlet extends MsoyServiceServlet
             if (scene.ownerType == MsoySceneModel.OWNER_TYPE_MEMBER) {
                 _feedLogic.publishSelfMessage(
                     scene.ownerId,  mrec.memberId, FeedMessageType.SELF_ROOM_COMMENT,
-                    scene.sceneId, scene.name, MediaDesc.mdToString(scene.getSnapshotThumb()));
+                    scene.sceneId, scene.name, HashMediaDesc.mdToString(scene.getSnapshotThumb()));
                 ownerId = scene.ownerId;
                 entityName = scene.name;
             }
@@ -145,7 +146,7 @@ public class CommentServlet extends MsoyServiceServlet
                         _feedLogic.publishSelfMessage(
                             ownerId, mrec.memberId, FeedMessageType.SELF_ITEM_COMMENT,
                             item.getType().toByte(), listing.catalogId, item.name,
-                            MediaDesc.mdToString(item.getThumbMediaDesc()));
+                            HashMediaDesc.mdToString(item.getThumbMediaDesc()));
                     }
                 }
 
@@ -164,7 +165,7 @@ public class CommentServlet extends MsoyServiceServlet
                 entityName = game.name;
                 _feedLogic.publishSelfMessage(
                     ownerId, mrec.memberId, FeedMessageType.SELF_GAME_COMMENT,
-                    eid, game.name, MediaDesc.mdToString(game.getThumbMedia()));
+                    eid, game.name, HashMediaDesc.mdToString(game.getThumbMedia()));
             }
         }
 

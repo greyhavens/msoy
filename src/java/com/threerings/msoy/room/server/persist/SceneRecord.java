@@ -21,6 +21,7 @@ import com.samskivert.depot.clause.OrderBy.Order;
 import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.expression.SQLExpression;
 
+import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Decor;
 
@@ -309,7 +310,7 @@ public class SceneRecord extends PersistentRecord
     public MediaDesc getSnapshotFull ()
     {
         return (canonicalImageHash == null) ? null:
-            new MediaDesc(canonicalImageHash, canonicalImageType, MediaDesc.NOT_CONSTRAINED);
+            new HashMediaDesc(canonicalImageHash, canonicalImageType, MediaDesc.NOT_CONSTRAINED);
     }
 
     /**
@@ -318,7 +319,7 @@ public class SceneRecord extends PersistentRecord
     public MediaDesc getSnapshotThumb ()
     {
         return (thumbnailHash == null) ? null:
-            new MediaDesc(thumbnailHash, thumbnailType, MediaDesc.NOT_CONSTRAINED);
+            new HashMediaDesc(thumbnailHash, thumbnailType, MediaDesc.NOT_CONSTRAINED);
     }
 
     /**

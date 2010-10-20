@@ -27,10 +27,9 @@ public class StaticMediaDesc extends MediaDesc
      */
     public StaticMediaDesc (byte mimeType, String itemType, String mediaType, byte constraint)
     {
-        super(null, mimeType);
+        super(mimeType, constraint);
         _itemType = itemType;
         _mediaType = mediaType;
-        this.constraint = constraint;
     }
 
     /**

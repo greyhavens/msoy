@@ -14,7 +14,7 @@ import com.samskivert.depot.annotation.Column;
 import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.expression.ColumnExp;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.msoy.web.gwt.Promotion;
 
 /**
@@ -75,7 +75,7 @@ public class PromotionRecord extends PersistentRecord
         PromotionRecord record = new PromotionRecord();
         record.promoId = promo.promoId;
         if (promo.icon != null) {
-            record.iconHash = promo.icon.hash;
+            record.iconHash = HashMediaDesc.unmakeHash(promo.icon);
             record.iconMimeType = promo.icon.mimeType;
             record.iconConstraint = promo.icon.constraint;
         }
@@ -93,7 +93,7 @@ public class PromotionRecord extends PersistentRecord
         Promotion promo = new Promotion();
         promo.promoId = promoId;
         if (iconHash != null) {
-            promo.icon = new MediaDesc(iconHash, iconMimeType, iconConstraint);
+            promo.icon = new HashMediaDesc(iconHash, iconMimeType, iconConstraint);
         }
         promo.blurb = blurb;
         promo.starts = new Date(starts.getTime());

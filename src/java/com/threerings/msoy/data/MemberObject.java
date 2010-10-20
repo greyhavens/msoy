@@ -12,6 +12,8 @@ import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.data.TokenRing;
 
+import com.threerings.orth.scene.data.EntityMedia;
+
 import com.threerings.msoy.item.data.all.Avatar;
 
 import com.threerings.msoy.game.data.GameSummary;
@@ -249,7 +251,7 @@ public class MemberObject extends MsoyBodyObject
     /**
      * Get the media to use as our headshot.
      */
-    public MediaDesc getHeadShotMedia ()
+    public EntityMedia getHeadShotMedia ()
     {
         return memberName.getPhoto();
     }

@@ -5,7 +5,7 @@ package com.threerings.msoy.data.all {
 
 import flash.utils.ByteArray;
 
-import com.threerings.util.Hashable;
+import com.threerings.util.Equalable;
 import com.threerings.util.Util;
 import com.threerings.util.StringUtil;
 
@@ -18,8 +18,8 @@ import com.threerings.msoy.client.DeploymentConfig;
 /**
  * A class containing metadata about a media object.
  */
-public class MediaDesc extends MediaDescBase
-    implements Streamable
+public /* abstract */ class MediaDesc extends MediaDescBase
+    implements Streamable, Equalable
 {
     /** A constant used to indicate that an image does not exceed half thumbnail size in either
      * dimension. */
@@ -54,32 +54,27 @@ public class MediaDesc extends MediaDescBase
     }
 
     /**
-     * Creates a MediaDesc from a colon-delimited String.
+     * Creates either a configured or blank media descriptor.
      */
-    public static function stringToMD (str :String) :MediaDesc
+    public function MediaDesc (mimeType :int = 0, constraint :int = NOT_CONSTRAINED)
     {
-        var data :Array = str.split(":");
-        if (data.length != 3) {
-            return null;
-        }
-
-        var hash :ByteArray = stringToHash(data[0]);
-        if (hash == null) {
-            return null;
-        }
-        var mimeType :int = parseInt(data[1]);
-        var constraint :int = parseInt(data[2]);
-        return new MediaDesc(hash, mimeType, constraint);
+        super(mimeType);
+        this.constraint = constraint;
     }
 
     /**
-     * Creates either a configured or blank media descriptor.
+     * Get some identifier that can be used to refer to this media across
+     * sessions (used as a key in prefs).
      */
-    public function MediaDesc (
-        hash :ByteArray = null, mimeType :int = 0, constraint :int = NOT_CONSTRAINED)
+    public /* abstract */ function getMediaId () :String
     {
-        super(hash, mimeType);
-        this.constraint = constraint;
+        throw new Error("abstract");
+    }
+
+    // from MediaDesc
+    public function isBleepable () :Boolean
+    {
+        throw new Error("abstract");
     }
 
     /**
@@ -125,53 +120,26 @@ public class MediaDesc extends MediaDescBase
         }
     }
 
-    /**
-     * Is this media bleepable?
-     */
-    public function isBleepable () :Boolean
-    {
-        return (hash != null);
-    }
-
-    /**
-     * Get some identifier that can be used to refer to this media across
-     * sessions (used as a key in prefs).
-     */
-    public function getMediaId () :String
-    {
-        return hashToString(hash);
-    }
-
     // documentation inherited from Hashable
     override public function equals (other :Object) :Boolean
     {
-        if (other is MediaDesc) {
-            var that :MediaDesc = (other as MediaDesc);
-            return super.equals(other) && this.constraint == that.constraint;
-        }
-        return false;
-    }
-
-    // from Object
-    override public function toString () :String
-    {
-        // Note: stringToMD() above relies on this precise format.
-        return hashToString(hash) + ":" + mimeType + ":" + constraint;
+        return (other is MediaDesc) && super.equals(other)
+            && this.constraint == (other as MediaDesc).constraint;
     }
 
     // documentation inherited from interface Streamable
-    public function readObject (ins :ObjectInputStream) :void
+    override public function readObject (ins :ObjectInputStream) :void
     {
-        hash = (ins.readField(ByteArray) as ByteArray);
-        mimeType = ins.readByte();
+        super.readObject(ins);
+
         constraint = ins.readByte();
     }
 
     // documentation inherited from interface Streamable
-    public function writeObject (out :ObjectOutputStream) :void
+    override public function writeObject (out :ObjectOutputStream) :void
     {
-        out.writeField(hash);
-        out.writeByte(mimeType);
+        super.writeObject(out);
+
         out.writeByte(constraint);
     }
 }

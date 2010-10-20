@@ -24,6 +24,7 @@ import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.msoy.data.all.GroupName;
+import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.msoy.data.all.MediaDesc;
 
 import com.threerings.msoy.group.data.all.Group;
@@ -176,7 +177,7 @@ public class GroupRecord extends PersistentRecord
         if (logoMediaHash == null) {
             return null;
         }
-        return new MediaDesc(logoMediaHash, logoMimeType, logoMediaConstraint);
+        return new HashMediaDesc(logoMediaHash, logoMimeType, logoMediaConstraint);
     }
 
     /**
@@ -231,7 +232,7 @@ public class GroupRecord extends PersistentRecord
             updates.put(BLURB, groupDef.blurb);
         }
         if (groupDef.logo != null && !groupDef.logo.equals(toLogo())) {
-            updates.put(LOGO_MEDIA_HASH, groupDef.logo.hash);
+            updates.put(LOGO_MEDIA_HASH, HashMediaDesc.unmakeHash(groupDef.logo));
             updates.put(LOGO_MIME_TYPE, groupDef.logo.mimeType);
             updates.put(LOGO_MEDIA_CONSTRAINT, groupDef.logo.constraint);
         }

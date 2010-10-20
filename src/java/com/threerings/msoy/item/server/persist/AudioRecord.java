@@ -7,7 +7,7 @@ import com.samskivert.depot.Key;
 import com.samskivert.depot.annotation.TableGenerator;
 import com.samskivert.depot.expression.ColumnExp;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.msoy.item.data.all.Audio;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MsoyItemType;
@@ -69,7 +69,7 @@ public class AudioRecord extends ItemRecord
 
         Audio audio = (Audio)item;
         if (audio.audioMedia != null) {
-            audioMediaHash = audio.audioMedia.hash;
+            audioMediaHash = HashMediaDesc.unmakeHash(audio.audioMedia);
             audioMimeType = audio.audioMedia.mimeType;
         } else {
             audioMediaHash = null;
@@ -99,7 +99,7 @@ public class AudioRecord extends ItemRecord
     {
         Audio object = new Audio();
         object.audioMedia = audioMediaHash == null ? null :
-            new MediaDesc(audioMediaHash, audioMimeType);
+            new HashMediaDesc(audioMediaHash, audioMimeType);
         return object;
     }
 

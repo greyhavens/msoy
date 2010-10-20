@@ -51,6 +51,7 @@ import com.threerings.msoy.person.server.persist.ProfileRepository;
 import com.threerings.msoy.room.data.RoomCodes;
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
 import com.threerings.msoy.room.server.persist.SceneRecord;
+import com.threerings.orth.scene.data.EntityMedia;
 
 import static com.threerings.msoy.Log.log;
 
@@ -205,7 +206,7 @@ public class CloakedPageLogic
         HttpServletRequest req, HttpServletResponse rsp, String path)
         throws IOException
     {
-        MediaDesc image;
+        EntityMedia image;
         String title;
         String desc;
         String gamePrefix;
@@ -292,7 +293,7 @@ public class CloakedPageLogic
             for (Iterator<Object> itr = args.iterator(); itr.hasNext(); ) {
                 Object arg = itr.next();
                 if (arg instanceof MediaDesc) {
-                    out.println("<img src=\"" + ((MediaDesc) arg).getMediaPath() + "\">");
+                    out.println("<img src=\"" + ((EntityMedia) arg).getMediaPath() + "\">");
 
                 } else if (arg instanceof String) {
                     String link = (String) arg;
@@ -322,7 +323,7 @@ public class CloakedPageLogic
      * Output a generated page for facebook.
      */
     protected void outputFacebook (
-        HttpServletResponse rsp, String title, String desc, MediaDesc image)
+        HttpServletResponse rsp, String title, String desc, EntityMedia image)
         throws IOException
     {
         // TODO: some sort of html templating? Ah, Pfile, you rocked, little guy!

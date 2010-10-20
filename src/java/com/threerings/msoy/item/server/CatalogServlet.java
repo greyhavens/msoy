@@ -18,7 +18,7 @@ import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.all.GroupName;
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.room.data.RoomCodes;
 import com.threerings.msoy.server.MsoyEventLogger;
@@ -302,7 +302,7 @@ public class CatalogServlet extends MsoyServiceServlet
             _feedLogic.publishMemberMessage(
                 mrec.memberId, FeedMessageType.FRIEND_LISTED_ITEM, master.name,
                 repo.getItemType().toByte(), catalogId,
-                MediaDesc.mdToString(master.getThumbMediaDesc()));
+                HashMediaDesc.mdToString(master.getThumbMediaDesc()));
         }
 
         // some items are related to a stat that may need updating.  Use originalItem.creatorId

@@ -16,7 +16,7 @@ import com.samskivert.depot.clause.Where;
 
 import com.threerings.presents.annotation.BlockingThread;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.HashMediaDesc;
 
 /**
  * Maintains the persistent media blacklist.
@@ -32,7 +32,7 @@ public class MediaBlacklistRepository extends DepotRepository
     /**
      * Test to see if the given media descriptor is blacklisted.
      */
-    public boolean isBlacklisted (MediaDesc desc)
+    public boolean isBlacklisted (HashMediaDesc desc)
     {
         return isBlacklisted(desc.hash);
     }
@@ -46,7 +46,7 @@ public class MediaBlacklistRepository extends DepotRepository
             MediaBlacklistRecord.MEDIA_HASH.eq(Exps.value(hash))));
     }
 
-    public void blacklist (MediaDesc desc, String note)
+    public void blacklist (HashMediaDesc desc, String note)
     {
         insert(new MediaBlacklistRecord(desc, note));
     }

@@ -14,6 +14,7 @@ import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 
 import com.threerings.gwt.ui.SmartFileUpload;
+import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.msoy.data.all.MediaDesc;
 
 import client.shell.CShell;
@@ -131,7 +132,7 @@ public class MediaUploader extends FormPanel
                        ", hash=" + mediaHash + ", type=" + mimeType + "].");
         } else {
             uploader.mediaUploaded(
-                new MediaDesc(""+mediaHash, (byte)mimeType, (byte)constraint), width, height);
+                new HashMediaDesc(""+mediaHash, (byte)mimeType, (byte)constraint), width, height);
         }
     }
 

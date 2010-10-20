@@ -30,6 +30,7 @@ import com.whirled.game.data.LevelData;
 import com.whirled.game.data.TrophyData;
 
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.data.all.HashMediaDesc;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemPack;
@@ -96,7 +97,7 @@ public class TrophyDelegate extends PlayManagerDelegate
         trophy.memberId = plobj.getMemberId();
         trophy.ident = source.ident;
         trophy.name = source.name;
-        trophy.trophyMediaHash = source.getThumbnailMedia().hash;
+        trophy.trophyMediaHash = HashMediaDesc.unmakeHash(source.getThumbnailMedia());
         trophy.trophyMimeType = source.getThumbnailMedia().mimeType;
         trophy.whenEarned = new Timestamp(System.currentTimeMillis());
 

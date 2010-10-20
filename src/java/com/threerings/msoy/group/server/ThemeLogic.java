@@ -23,6 +23,7 @@ import com.threerings.presents.server.PresentsDObjectMgr;
 import com.threerings.msoy.admin.data.CostsConfigObject;
 import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.data.all.GroupName;
+import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.msoy.data.all.Theme;
 import com.threerings.msoy.group.data.all.GroupMembership.Rank;
 import com.threerings.msoy.group.server.persist.GroupRepository;
@@ -175,17 +176,17 @@ public class ThemeLogic
             updates.put(ThemeRecord.PLAY_ON_ENTER, theme.playOnEnter);
         }
         if (theme.logo != null && !theme.logo.equals(trec.toLogo())) {
-            updates.put(ThemeRecord.LOGO_MEDIA_HASH, theme.logo.hash);
+            updates.put(ThemeRecord.LOGO_MEDIA_HASH, HashMediaDesc.unmakeHash(theme.logo));
             updates.put(ThemeRecord.LOGO_MIME_TYPE, theme.logo.mimeType);
             updates.put(ThemeRecord.LOGO_MEDIA_CONSTRAINT, theme.logo.constraint);
         }
         if (theme.navButton != null && !theme.navButton.equals(trec.toNavButton())) {
-            updates.put(ThemeRecord.NAV_MEDIA_HASH, theme.navButton.hash);
+            updates.put(ThemeRecord.NAV_MEDIA_HASH, HashMediaDesc.unmakeHash(theme.navButton));
             updates.put(ThemeRecord.NAV_MIME_TYPE, theme.navButton.mimeType);
             updates.put(ThemeRecord.NAV_MEDIA_CONSTRAINT, theme.navButton.constraint);
         }
         if (theme.navSelButton != null && !theme.navSelButton.equals(trec.toNavSelButton())) {
-            updates.put(ThemeRecord.NAV_SEL_MEDIA_HASH, theme.navSelButton.hash);
+            updates.put(ThemeRecord.NAV_SEL_MEDIA_HASH, HashMediaDesc.unmakeHash(theme.navSelButton));
             updates.put(ThemeRecord.NAV_SEL_MIME_TYPE, theme.navSelButton.mimeType);
             updates.put(ThemeRecord.NAV_SEL_MEDIA_CONSTRAINT, theme.navSelButton.constraint);
         }
