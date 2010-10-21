@@ -15,8 +15,8 @@ import com.samskivert.depot.expression.ColumnExp;
 
 import com.google.common.base.Function;
 
+import com.threerings.msoy.data.all.ConstrainedMediaDesc;
 import com.threerings.msoy.data.all.HashMediaDesc;
-import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.group.data.all.Medal;
 
 @Entity
@@ -85,10 +85,10 @@ public class MedalRecord extends PersistentRecord
         return medal;
     }
 
-    public MediaDesc createIconMedia()
+    public ConstrainedMediaDesc createIconMedia()
     {
         // Images are larger than half-thumbnail, so we can't pretend they're not constrained at all
-        return new HashMediaDesc(iconHash, iconMimeType, MediaDesc.HALF_HORIZONTALLY_CONSTRAINED);
+        return new HashMediaDesc(iconHash, iconMimeType, ConstrainedMediaDesc.HALF_HORIZONTALLY_CONSTRAINED);
     }
 
     // AUTO-GENERATED: METHODS START

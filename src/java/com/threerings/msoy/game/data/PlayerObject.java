@@ -4,7 +4,6 @@
 package com.threerings.msoy.game.data;
 
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import javax.annotation.Generated;

@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.item.data.all;
 
+import com.threerings.msoy.data.all.ConstrainedMediaDesc;
 import com.threerings.msoy.data.all.MediaDesc;
 
 /**
@@ -11,7 +12,7 @@ import com.threerings.msoy.data.all.MediaDesc;
 public class Video extends Item
 {
     /** The video media.*/
-    public MediaDesc videoMedia;
+    public ConstrainedMediaDesc videoMedia;
 
     @Override // from Item
     public MsoyItemType getType ()
@@ -34,13 +35,13 @@ public class Video extends Item
     }
 
     @Override // from Item
-    public MediaDesc getPrimaryMedia ()
+    public ConstrainedMediaDesc getPrimaryMedia ()
     {
         return videoMedia;
     }
 
     @Override // from Item
-    public void setPrimaryMedia (MediaDesc desc)
+    public void setPrimaryMedia (ConstrainedMediaDesc desc)
     {
         videoMedia = desc;
     }

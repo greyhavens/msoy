@@ -83,8 +83,8 @@ public class PhotoRecord extends ItemRecord
         Photo photo = (Photo)item;
         if (photo.photoMedia != null) {
             photoMediaHash = HashMediaDesc.unmakeHash(photo.photoMedia);
-            photoMimeType = photo.photoMedia.mimeType;
-            photoConstraint = photo.photoMedia.constraint;
+            photoMimeType = photo.photoMedia.getMimeType();
+            photoConstraint = photo.photoMedia.getConstraint();
         } else {
             photoMediaHash = null;
         }

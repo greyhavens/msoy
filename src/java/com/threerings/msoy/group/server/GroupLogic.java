@@ -107,9 +107,9 @@ public class GroupLogic
         grec.partyPerms = group.partyPerm;
         grec.official = group.official;
         if (group.logo != null) {
-            grec.logoMimeType = group.logo.mimeType;
+            grec.logoMimeType = group.logo.getMimeType();
             grec.logoMediaHash = HashMediaDesc.unmakeHash(group.logo);
-            grec.logoMediaConstraint = group.logo.constraint;
+            grec.logoMediaConstraint = group.logo.getConstraint();
         }
         grec.homepageUrl = extras.homepageUrl;
         grec.charter = extras.charter;

@@ -103,7 +103,7 @@ public class FeedThumbnailRecord extends PersistentRecord
     {
         FeedThumbnail thumbnail = new FeedThumbnail();
         thumbnail.media = new HashMediaDesc(hash, mimeType);
-        thumbnail.media.constraint = constraint;
+        thumbnail.media.setConstraint(constraint);
         thumbnail.pos = pos;
         thumbnail.code = code;
         thumbnail.variant = variant;
@@ -119,8 +119,8 @@ public class FeedThumbnailRecord extends PersistentRecord
         this.gameId = gameId;
         this.appId = appId;
         hash = HashMediaDesc.unmakeHash(thumbnail.media);
-        mimeType = thumbnail.media.mimeType;
-        constraint = thumbnail.media.constraint;
+        mimeType = thumbnail.media.getMimeType();
+        constraint = thumbnail.media.getConstraint();
         code = thumbnail.code;
         variant = thumbnail.variant;
         pos = thumbnail.pos;

@@ -8,7 +8,6 @@ import com.samskivert.depot.annotation.TableGenerator;
 import com.samskivert.depot.expression.ColumnExp;
 
 import com.threerings.msoy.data.all.HashMediaDesc;
-import com.threerings.msoy.data.all.MediaDesc;
 
 import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.item.data.all.Video;
@@ -72,7 +71,7 @@ public class VideoRecord extends ItemRecord
         Video video = (Video)item;
         if (video.videoMedia != null) {
             videoMediaHash = HashMediaDesc.unmakeHash(video.videoMedia);
-            videoMimeType = video.videoMedia.mimeType;
+            videoMimeType = video.videoMedia.getMimeType();
         } else {
             videoMediaHash = null;
         }

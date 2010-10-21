@@ -34,6 +34,8 @@ import com.samskivert.util.StringUtil;
 
 import com.threerings.parlor.rating.server.persist.RatingRepository;
 
+import com.threerings.msoy.data.all.ConstrainedMediaDesc;
+import com.threerings.msoy.data.all.MediaDescUtil;
 import com.threerings.msoy.data.all.MediaMimeTypes;
 import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.item.data.all.GameItem;
@@ -70,7 +72,6 @@ import com.threerings.msoy.group.server.persist.GroupRepository;
 
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.HashMediaDesc;
-import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.PopularPlacesSnapshot;
 import com.threerings.msoy.server.persist.MemberRecord;
@@ -185,7 +186,7 @@ public class EditGameServlet extends MsoyServiceServlet
     }
 
     @Override // from interface EditGameService
-    public int createGame (boolean isAVRG, String name, MediaDesc thumbMedia, MediaDesc clientCode)
+    public int createGame (boolean isAVRG, String name, ConstrainedMediaDesc thumbMedia, ConstrainedMediaDesc clientCode)
         throws ServiceException
     {
         MemberRecord mrec = requireAuthedUser();
@@ -198,7 +199,7 @@ public class EditGameServlet extends MsoyServiceServlet
         grec.isAVRG = isAVRG;
         grec.thumbMediaHash = HashMediaDesc.unmakeHash(thumbMedia);
         grec.thumbMimeType = MediaMimeTypes.unmakeMimeType(thumbMedia);
-        grec.thumbConstraint = MediaDesc.unmakeConstraint(thumbMedia);
+        grec.thumbConstraint = MediaDescUtil.unmakeConstraint(thumbMedia);
         grec.blingPool = true;
         _mgameRepo.createGame(grec);
 

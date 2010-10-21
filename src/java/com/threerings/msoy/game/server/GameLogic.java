@@ -88,7 +88,7 @@ public class GameLogic
             throw new ServiceException(InvocationCodes.INTERNAL_ERROR);
         }
 
-        switch (code.clientMedia.mimeType) {
+        switch (code.clientMedia.getMimeType()) {
         case MediaMimeTypes.APPLICATION_SHOCKWAVE_FLASH:
             config.type = game.isAVRG ?
                 LaunchConfig.FLASH_IN_WORLD : LaunchConfig.FLASH_LOBBIED;
@@ -105,7 +105,7 @@ public class GameLogic
         }
 
         // we have to proxy game jar files through the game server due to the applet sandbox
-        config.clientMediaPath = (code.clientMedia.mimeType == MediaMimeTypes.APPLICATION_JAVA_ARCHIVE) ?
+        config.clientMediaPath = (code.clientMedia.getMimeType() == MediaMimeTypes.APPLICATION_JAVA_ARCHIVE) ?
             code.clientMedia.getProxyMediaPath() : code.clientMedia.getMediaPath();
         config.name = game.name;
         config.httpPort = ServerConfig.httpPort;

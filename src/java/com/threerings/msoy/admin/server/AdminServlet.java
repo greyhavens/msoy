@@ -468,7 +468,7 @@ public class AdminServlet extends MsoyServiceServlet
         log.info("Nuking media for admin", "who", memrec.accountName, "media", desc);
 
         String fileName = HashMediaDesc.hashToString(hDesc.hash) +
-            MediaMimeTypes.mimeTypeToSuffix(desc.mimeType);
+            MediaMimeTypes.mimeTypeToSuffix(desc.getMimeType());
 
         File file = new File(ServerConfig.mediaDir, fileName);
         if (!file.delete()) {

@@ -177,18 +177,18 @@ public class ThemeLogic
         }
         if (theme.logo != null && !theme.logo.equals(trec.toLogo())) {
             updates.put(ThemeRecord.LOGO_MEDIA_HASH, HashMediaDesc.unmakeHash(theme.logo));
-            updates.put(ThemeRecord.LOGO_MIME_TYPE, theme.logo.mimeType);
-            updates.put(ThemeRecord.LOGO_MEDIA_CONSTRAINT, theme.logo.constraint);
+            updates.put(ThemeRecord.LOGO_MIME_TYPE, theme.logo.getMimeType());
+            updates.put(ThemeRecord.LOGO_MEDIA_CONSTRAINT, theme.logo.getConstraint());
         }
         if (theme.navButton != null && !theme.navButton.equals(trec.toNavButton())) {
             updates.put(ThemeRecord.NAV_MEDIA_HASH, HashMediaDesc.unmakeHash(theme.navButton));
-            updates.put(ThemeRecord.NAV_MIME_TYPE, theme.navButton.mimeType);
-            updates.put(ThemeRecord.NAV_MEDIA_CONSTRAINT, theme.navButton.constraint);
+            updates.put(ThemeRecord.NAV_MIME_TYPE, theme.navButton.getMimeType());
+            updates.put(ThemeRecord.NAV_MEDIA_CONSTRAINT, theme.navButton.getConstraint());
         }
         if (theme.navSelButton != null && !theme.navSelButton.equals(trec.toNavSelButton())) {
             updates.put(ThemeRecord.NAV_SEL_MEDIA_HASH, HashMediaDesc.unmakeHash(theme.navSelButton));
-            updates.put(ThemeRecord.NAV_SEL_MIME_TYPE, theme.navSelButton.mimeType);
-            updates.put(ThemeRecord.NAV_SEL_MEDIA_CONSTRAINT, theme.navSelButton.constraint);
+            updates.put(ThemeRecord.NAV_SEL_MIME_TYPE, theme.navSelButton.getMimeType());
+            updates.put(ThemeRecord.NAV_SEL_MEDIA_CONSTRAINT, theme.navSelButton.getConstraint());
         }
         if (theme.navColor != trec.navColor) {
             updates.put(ThemeRecord.NAV_COLOR, theme.navColor);

@@ -23,7 +23,6 @@ import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.jdbc.WriteOnlyUnit;
 import com.samskivert.text.MessageUtil;
 import com.samskivert.util.ArrayIntSet;
-import com.samskivert.util.Comparators;
 import com.samskivert.util.ComplainingListener;
 import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;

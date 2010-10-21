@@ -21,6 +21,7 @@ import com.samskivert.depot.annotation.Transient;
 
 import com.threerings.io.Streamable;
 
+import com.threerings.msoy.data.all.ConstrainedMediaDesc;
 import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MediaMimeTypes;
@@ -336,19 +337,19 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
         // lastTouched = not user editable
         name = (item.name == null) ? "" : item.name;
         description = (item.description == null) ? "" : item.description;
-        MediaDesc media = item.getRawThumbnailMedia();
+        ConstrainedMediaDesc media = item.getRawThumbnailMedia();
         if (media != null) {
             thumbMediaHash = HashMediaDesc.unmakeHash(media);
-            thumbMimeType = media.mimeType;
-            thumbConstraint = media.constraint;
+            thumbMimeType = media.getMimeType();
+            thumbConstraint = media.getConstraint();
         } else {
             thumbMediaHash = null;
         }
         media = item.getRawFurniMedia();
         if (media != null) {
             furniMediaHash = HashMediaDesc.unmakeHash(media);
-            furniMimeType = media.mimeType;
-            furniConstraint = media.constraint;
+            furniMimeType = media.getMimeType();
+            furniConstraint = media.getConstraint();
         } else {
             furniMediaHash = null;
         }

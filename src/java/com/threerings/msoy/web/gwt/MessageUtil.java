@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.web.gwt;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.collect.Lists;

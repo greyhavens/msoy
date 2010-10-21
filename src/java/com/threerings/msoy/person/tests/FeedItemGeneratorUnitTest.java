@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.person.tests;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.*;
@@ -11,7 +10,7 @@ import org.junit.*;
 import com.google.common.collect.Lists;
 import com.samskivert.util.StringUtil;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.ConstrainedMediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.person.gwt.AggregateFeedMessage;
@@ -33,7 +32,7 @@ import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.orth.scene.data.EntityMedia;
 
-import static org.junit.Assert.*; 
+import static org.junit.Assert.*;
 
 public class FeedItemGeneratorUnitTest
 {
@@ -90,7 +89,7 @@ public class FeedItemGeneratorUnitTest
     {
         FriendFeedMessage msgs[] = {
             new FriendFeedMessage(FeedMessageType.FRIEND_LISTED_ITEM,
-                new MemberName("Member", 1), new String[]{"1st Item Name", "1", "1234"}, 0), 
+                new MemberName("Member", 1), new String[]{"1st Item Name", "1", "1234"}, 0),
             new FriendFeedMessage(FeedMessageType.FRIEND_LISTED_ITEM,
                 new MemberName("Member", 1), new String[]{"2nd Item Name", "2", "5678"}, 0)};
         genAggMessage(Style.ACTIONS, msgs);
@@ -438,7 +437,7 @@ public class FeedItemGeneratorUnitTest
             return simpleToString("link", "label", label, "page", page, "args", args);
         }
 
-        public Media createMedia (MediaDesc md, Pages page, Args args) {
+        public Media createMedia (ConstrainedMediaDesc md, Pages page, Args args) {
             calls.count();
             assertNotNull(md);
             assertNotNull(page);

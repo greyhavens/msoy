@@ -11,10 +11,10 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 import com.threerings.web.gwt.ServiceException;
 
+import com.threerings.msoy.data.all.ConstrainedMediaDesc;
 import com.threerings.msoy.item.data.all.MsoyItemType;
 
 import com.threerings.msoy.data.all.GroupName;
-import com.threerings.msoy.data.all.MediaDesc;
 
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;
@@ -72,7 +72,7 @@ public interface StuffService extends RemoteService
     /**
      * Publish the specified xml string as 'external media'.
      */
-    MediaDesc publishExternalMedia (String data, byte mimeType)
+    ConstrainedMediaDesc publishExternalMedia (String data, byte mimeType)
         throws ServiceException;
 
     /**

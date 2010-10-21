@@ -15,7 +15,7 @@ import com.threerings.util.Name;
 import com.threerings.whirled.data.SceneModel;
 import com.threerings.whirled.spot.data.Portal;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.ConstrainedMediaDesc;
 import com.threerings.msoy.data.all.MediaMimeTypes;
 import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.DefaultItemMediaDesc;
@@ -50,7 +50,7 @@ public class MsoySceneModel extends SceneModel
     public static final int MAX_NAME_LENGTH = 80;
 
     /** The default decor media. */
-    public static final MediaDesc DEFAULT_DECOR_MEDIA =
+    public static final ConstrainedMediaDesc DEFAULT_DECOR_MEDIA =
         new DefaultItemMediaDesc(MediaMimeTypes.IMAGE_PNG, MsoyItemType.DECOR, Item.MAIN_MEDIA);
 
     /** Access control, as one of the ACCESS constants. Limits who can enter the scene. */

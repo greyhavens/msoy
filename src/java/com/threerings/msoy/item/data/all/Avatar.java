@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.item.data.all;
 
+import com.threerings.msoy.data.all.ConstrainedMediaDesc;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MediaMimeTypes;
 
@@ -26,7 +27,7 @@ public class Avatar extends Item
     }
 
     /** The avatar media. */
-    public MediaDesc avatarMedia;
+    public ConstrainedMediaDesc avatarMedia;
 
     /** The scaling to apply to the avatar media. */
     public float scale;
@@ -77,13 +78,13 @@ public class Avatar extends Item
     }
 
     @Override // from Item
-    public MediaDesc getPrimaryMedia ()
+    public ConstrainedMediaDesc getPrimaryMedia ()
     {
         return avatarMedia;
     }
 
     @Override // from Item
-    public void setPrimaryMedia (MediaDesc desc)
+    public void setPrimaryMedia (ConstrainedMediaDesc desc)
     {
         avatarMedia = desc;
     }

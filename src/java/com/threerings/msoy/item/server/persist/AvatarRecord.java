@@ -84,7 +84,7 @@ public class AvatarRecord extends ItemRecord
         Avatar avatar = (Avatar)item;
         if (avatar.avatarMedia != null) {
             avatarMediaHash = HashMediaDesc.unmakeHash(avatar.avatarMedia);
-            avatarMimeType = avatar.avatarMedia.mimeType;
+            avatarMimeType = avatar.avatarMedia.getMimeType();
         } else {
             avatarMediaHash = null;
         }

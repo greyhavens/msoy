@@ -106,8 +106,8 @@ public class GalleryRecord extends PersistentRecord
         }
         if (gallery.thumbMedia != null) {
             record.thumbMediaHash = HashMediaDesc.unmakeHash(gallery.thumbMedia);
-            record.thumbMimeType = gallery.thumbMedia.mimeType;
-            record.thumbConstraint = gallery.thumbMedia.constraint;
+            record.thumbMimeType = gallery.thumbMedia.getMimeType();
+            record.thumbConstraint = gallery.thumbMedia.getConstraint();
         }
         return record;
     }

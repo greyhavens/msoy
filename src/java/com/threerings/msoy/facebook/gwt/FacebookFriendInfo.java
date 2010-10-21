@@ -4,6 +4,7 @@
 package com.threerings.msoy.facebook.gwt;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
+
 import com.threerings.msoy.data.all.MediaDesc;
 
 /**

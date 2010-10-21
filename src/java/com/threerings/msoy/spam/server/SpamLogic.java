@@ -29,13 +29,13 @@ import com.threerings.cron.server.CronLogic;
 
 import com.threerings.web.gwt.ServiceException;
 
+import com.threerings.msoy.data.all.ConstrainedMediaDesc;
 import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.util.MessageBundle;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
-import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.data.all.MemberMailUtil;
 import com.threerings.msoy.fora.gwt.ForumThread;
@@ -758,7 +758,7 @@ public class SpamLogic
         }
 
         // from Builder
-        public Media createMedia (MediaDesc md, Pages page, Args args) {
+        public Media createMedia (ConstrainedMediaDesc md, Pages page, Args args) {
             // start with the anchor
             _html.reset().open("a", "href", link(page, args), "style", A_STYLE);
 
@@ -772,7 +772,7 @@ public class SpamLogic
             if (page == Pages.WORLD && args.get(0, "").startsWith("s")) {
                 // snapshots are unconstrained at a set size; fake a width constraint for
                 // TINY_SIZE.
-                md.constraint = MediaDesc.HORIZONTALLY_CONSTRAINED;
+                md.setConstraint(ConstrainedMediaDesc.HORIZONTALLY_CONSTRAINED);
                 size = MediaDescSize.SNAPSHOT_TINY_SIZE;
             }
             int width = MediaDescSize.getWidth(size);
@@ -812,7 +812,7 @@ public class SpamLogic
         }
 
         // from Builder
-        public Media createMedia (MediaDesc md, Pages page, Args args) {
+        public Media createMedia (ConstrainedMediaDesc md, Pages page, Args args) {
             return new StringWrapper("");
         }
     }

@@ -29,7 +29,6 @@ import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.Theme;
 import com.threerings.msoy.data.all.HashMediaDesc;
-import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.VizMemberName;
 import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.PopularPlacesSnapshot;
@@ -562,7 +561,7 @@ public class GroupServlet extends MsoyServiceServlet
         medalRec.name = medal.name;
         medalRec.description = medal.description;
         medalRec.iconHash = HashMediaDesc.unmakeHash(medal.icon);
-        medalRec.iconMimeType = medal.icon.mimeType;
+        medalRec.iconMimeType = medal.icon.getMimeType();
         _medalRepo.storeMedal(medalRec);
     }
 

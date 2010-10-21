@@ -5,6 +5,7 @@ package com.threerings.msoy.item.data.all;
 
 import com.google.common.primitives.Ints;
 
+import com.threerings.msoy.data.all.ConstrainedMediaDesc;
 import com.threerings.msoy.data.all.MediaDesc;
 
 /**
@@ -37,7 +38,7 @@ public class TrophySource extends IdentGameItem
     }
 
     @Override // from Item
-    public MediaDesc getPrimaryMedia ()
+    public ConstrainedMediaDesc getPrimaryMedia ()
     {
         return _thumbMedia;
     }

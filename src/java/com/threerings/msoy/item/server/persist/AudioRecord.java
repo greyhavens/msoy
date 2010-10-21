@@ -70,7 +70,7 @@ public class AudioRecord extends ItemRecord
         Audio audio = (Audio)item;
         if (audio.audioMedia != null) {
             audioMediaHash = HashMediaDesc.unmakeHash(audio.audioMedia);
-            audioMimeType = audio.audioMedia.mimeType;
+            audioMimeType = audio.audioMedia.getMimeType();
         } else {
             audioMediaHash = null;
         }

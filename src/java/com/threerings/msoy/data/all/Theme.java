@@ -6,8 +6,6 @@ package com.threerings.msoy.data.all;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.io.SimpleStreamableObject;
-import com.threerings.msoy.data.all.GroupName;
-import com.threerings.msoy.data.all.MediaDesc;
 
 /**
  *  Contains the definition of a Theme.
@@ -57,13 +55,13 @@ public class Theme extends SimpleStreamableObject
     public boolean playOnEnter;
 
     /** The media of the theme's Whirled logo replacement image. */
-    public MediaDesc logo;
+    public ConstrainedMediaDesc logo;
 
     /** The media of the theme's Whirled nav button replacement image. */
-    public MediaDesc navButton;
+    public ConstrainedMediaDesc navButton;
 
     /** The media of the theme's Whirled nav selected button replacement image. */
-    public MediaDesc navSelButton;
+    public ConstrainedMediaDesc navSelButton;
 
     /** The color of the nav button text. */
     public int navColor;
@@ -90,8 +88,8 @@ public class Theme extends SimpleStreamableObject
     /**
      * An initialization constructor.
      */
-    public Theme (GroupName group, boolean playOnEnter, MediaDesc logo, MediaDesc navButton,
-        MediaDesc navSelButton, int navColor, int navSelColor, int statusLinksColor,
+    public Theme (GroupName group, boolean playOnEnter, ConstrainedMediaDesc logo, ConstrainedMediaDesc navButton,
+        ConstrainedMediaDesc navSelButton, int navColor, int navSelColor, int statusLinksColor,
         int statusLevelsColor, int backgroundColor)
     {
         this.group = group;
@@ -109,7 +107,7 @@ public class Theme extends SimpleStreamableObject
     /**
      * Returns this group's logo, or the default.
      */
-    public MediaDesc getLogo ()
+    public ConstrainedMediaDesc getLogo ()
     {
         return (logo != null) ? logo : getDefaultThemeLogoMedia();
     }
@@ -125,7 +123,7 @@ public class Theme extends SimpleStreamableObject
     /**
      * Returns this group's nav button, or the default.
      */
-    public MediaDesc getNavButton ()
+    public ConstrainedMediaDesc getNavButton ()
     {
         return (navButton != null) ? navButton : getDefaultThemeNavButtonMedia();
     }
@@ -133,7 +131,7 @@ public class Theme extends SimpleStreamableObject
     /**
      * Returns this group's nav selected button, or the default.
      */
-    public MediaDesc getNavSelButton ()
+    public ConstrainedMediaDesc getNavSelButton ()
     {
         return (navSelButton != null) ? navSelButton : getDefaultThemeNavSelButtonMedia();
     }
@@ -165,10 +163,10 @@ public class Theme extends SimpleStreamableObject
     /**
      * Creates a default logo for use with groups that have no logo.
      */
-    protected static MediaDesc getDefaultThemeLogoMedia ()
+    protected static ConstrainedMediaDesc getDefaultThemeLogoMedia ()
     {
         return new InternalMediaDesc(DEFAULT_LOGO_URL, MediaMimeTypes.IMAGE_PNG,
-            Theme.LOGO_MEDIA, MediaDesc.HORIZONTALLY_CONSTRAINED);
+            Theme.LOGO_MEDIA, ConstrainedMediaDesc.HORIZONTALLY_CONSTRAINED);
     }
 
     /**
@@ -177,25 +175,25 @@ public class Theme extends SimpleStreamableObject
     protected static MediaDesc getDefaultThemeFacebookLogoMedia ()
     {
         return new InternalMediaDesc(DEFAULT_FACEBOOK_LOGO_URL, MediaMimeTypes.IMAGE_PNG,
-            Theme.FACEBOOK_LOGO_MEDIA, MediaDesc.HORIZONTALLY_CONSTRAINED);
+            Theme.FACEBOOK_LOGO_MEDIA, ConstrainedMediaDesc.HORIZONTALLY_CONSTRAINED);
     }
 
     /**
      * Creates a default nav button for use with groups that have none.
      */
-    protected static MediaDesc getDefaultThemeNavButtonMedia ()
+    protected static ConstrainedMediaDesc getDefaultThemeNavButtonMedia ()
     {
         return new InternalMediaDesc(DEFAULT_NAV_URL, MediaMimeTypes.IMAGE_PNG,
-            Theme.NAV_MEDIA, MediaDesc.HORIZONTALLY_CONSTRAINED);
+            Theme.NAV_MEDIA, ConstrainedMediaDesc.HORIZONTALLY_CONSTRAINED);
     }
 
     /**
      * Creates a default nav button for use with groups that have none.
      */
-    protected static MediaDesc getDefaultThemeNavSelButtonMedia ()
+    protected static ConstrainedMediaDesc getDefaultThemeNavSelButtonMedia ()
     {
         return new InternalMediaDesc(DEFAULT_NAV_SEL_URL, MediaMimeTypes.IMAGE_PNG,
-            Theme.NAV_MEDIA, MediaDesc.HORIZONTALLY_CONSTRAINED);
+            Theme.NAV_MEDIA, ConstrainedMediaDesc.HORIZONTALLY_CONSTRAINED);
     }
 
     protected static Theme createDefaultTheme ()

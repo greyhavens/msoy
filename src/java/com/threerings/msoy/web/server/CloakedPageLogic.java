@@ -21,10 +21,11 @@ import com.samskivert.util.ByteEnumUtil;
 import com.samskivert.util.CollectionUtil;
 import com.samskivert.util.StringUtil;
 
+import com.threerings.msoy.data.all.ConstrainedMediaDescImpl;
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.util.MessageBundle;
 
-import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.server.ServerMessages;
 
 import com.threerings.msoy.web.gwt.MemberCard;
@@ -292,7 +293,7 @@ public class CloakedPageLogic
 
             for (Iterator<Object> itr = args.iterator(); itr.hasNext(); ) {
                 Object arg = itr.next();
-                if (arg instanceof MediaDesc) {
+                if (arg instanceof ConstrainedMediaDescImpl) {
                     out.println("<img src=\"" + ((EntityMedia) arg).getMediaPath() + "\">");
 
                 } else if (arg instanceof String) {

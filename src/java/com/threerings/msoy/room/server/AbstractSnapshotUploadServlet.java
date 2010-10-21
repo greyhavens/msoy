@@ -5,10 +5,10 @@ package com.threerings.msoy.room.server;
 
 import javax.servlet.http.HttpServletResponse;
 
+import com.threerings.msoy.data.all.ConstrainedMediaDesc;
 import com.threerings.msoy.web.server.UploadUtil.MediaInfo;
 
 import com.threerings.msoy.data.all.HashMediaDesc;
-import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.server.ItemMediaUploadServlet;
 
 public abstract class AbstractSnapshotUploadServlet extends ItemMediaUploadServlet
@@ -44,7 +44,7 @@ public abstract class AbstractSnapshotUploadServlet extends ItemMediaUploadServl
      * Convert a MediaDesc object from a Media info object. Width and Height from the MediaInfo
      * are ignored.
      */
-    protected MediaDesc createMediaDesc (MediaInfo info)
+    protected ConstrainedMediaDesc createMediaDesc (MediaInfo info)
     {
         return new HashMediaDesc(HashMediaDesc.stringToHash(info.hash), info.mimeType, info.constraint);
     }

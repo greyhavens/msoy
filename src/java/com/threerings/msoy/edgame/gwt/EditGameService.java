@@ -12,8 +12,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 import com.threerings.web.gwt.ServiceException;
 
-import com.threerings.msoy.data.all.MediaDesc;
-
+import com.threerings.msoy.data.all.ConstrainedMediaDesc;
 import com.threerings.msoy.facebook.gwt.FacebookInfo;
 import com.threerings.msoy.facebook.gwt.FeedThumbnail;
 
@@ -117,7 +116,7 @@ public interface EditGameService extends RemoteService
      *
      * @return the id of the newly created game.
      */
-    int createGame (boolean isAVRG, String name, MediaDesc thumbMedia, MediaDesc clientCode)
+    int createGame (boolean isAVRG, String name, ConstrainedMediaDesc thumbMedia, ConstrainedMediaDesc clientCode)
         throws ServiceException;
 
     /**

@@ -5,6 +5,7 @@ package com.threerings.msoy.web.gwt;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
+import com.threerings.msoy.data.all.ConstrainedMediaDesc;
 import com.threerings.msoy.data.all.Friendship;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
@@ -73,7 +74,7 @@ public class MemberCard
     }
 
     /** The default profile photo. */
-    public static final MediaDesc DEFAULT_PHOTO = VizMemberName.DEFAULT_PHOTO;
+    public static final ConstrainedMediaDesc DEFAULT_PHOTO = VizMemberName.DEFAULT_PHOTO;
 
     /**
      * Compares two status records based on potential user interset. People in rooms are first (and

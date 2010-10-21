@@ -1,7 +1,7 @@
 package com.threerings.msoy.data.all;
 
 /**
- * Mime-type specific utility for the {@link MediaDesc} family of classes.
+ * Mime-type specific utility for the {@link ConstrainedMediaDescImpl} family of classes.
  */
 public abstract class MediaMimeTypes
 {
@@ -270,6 +270,6 @@ public abstract class MediaMimeTypes
      */
     public static byte unmakeMimeType (MediaDesc desc)
     {
-        return (desc == null) ? INVALID_MIME_TYPE : desc.mimeType;
+        return (desc == null) ? INVALID_MIME_TYPE : desc.getMimeType();
     }
 }

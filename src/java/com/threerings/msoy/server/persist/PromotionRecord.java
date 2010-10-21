@@ -76,8 +76,8 @@ public class PromotionRecord extends PersistentRecord
         record.promoId = promo.promoId;
         if (promo.icon != null) {
             record.iconHash = HashMediaDesc.unmakeHash(promo.icon);
-            record.iconMimeType = promo.icon.mimeType;
-            record.iconConstraint = promo.icon.constraint;
+            record.iconMimeType = promo.icon.getMimeType();
+            record.iconConstraint = promo.icon.getConstraint();
         }
         record.blurb = promo.blurb;
         record.starts = new Timestamp(promo.starts.getTime());

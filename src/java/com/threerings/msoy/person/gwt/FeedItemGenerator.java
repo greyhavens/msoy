@@ -3,15 +3,14 @@
 
 package com.threerings.msoy.person.gwt;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.collect.Lists;
 
 import com.threerings.msoy.badge.data.all.Badge;
 import com.threerings.msoy.badge.data.all.EarnedBadge;
+import com.threerings.msoy.data.all.ConstrainedMediaDesc;
 import com.threerings.msoy.data.all.HashMediaDesc;
-import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
@@ -41,7 +40,7 @@ public class FeedItemGenerator
          * Creates context-free media using the given descriptor that links to the provided page
          * and args.
          */
-        Media createMedia (MediaDesc md, Pages page, Args args);
+        Media createMedia (ConstrainedMediaDesc md, Pages page, Args args);
 
         /**
          * Creates context-free html that links to the given page + args and has the given label.
@@ -408,7 +407,7 @@ public class FeedItemGenerator
      */
     protected Media buildMedia (final FeedMessage message)
     {
-        MediaDesc media;
+        ConstrainedMediaDesc media;
         switch (message.type.getCategory()) {
         case FRIENDINGS:
             return buildMedia(message, 2, Pages.PEOPLE, message.data[1]);
@@ -461,7 +460,7 @@ public class FeedItemGenerator
 
     protected Media buildMedia (FeedMessage msg, int idx, Pages page, Object... args)
     {
-        MediaDesc md = (msg.data.length <= idx) ? null : HashMediaDesc.stringToMD(msg.data[idx]);
+        ConstrainedMediaDesc md = (msg.data.length <= idx) ? null : HashMediaDesc.stringToMD(msg.data[idx]);
         if (md == null) {
             return null;
         }

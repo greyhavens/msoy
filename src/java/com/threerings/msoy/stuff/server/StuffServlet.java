@@ -25,7 +25,7 @@ import com.threerings.web.gwt.ServiceException;
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.all.HashMediaDesc;
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.ConstrainedMediaDesc;
 
 import com.threerings.msoy.server.StatLogic;
 import com.threerings.msoy.server.persist.MemberRecord;
@@ -66,13 +66,13 @@ public class StuffServlet extends MsoyServiceServlet
     implements StuffService
 {
     // from interface ItemService
-    public MediaDesc publishExternalMedia (String data, byte mimeType)
+    public ConstrainedMediaDesc publishExternalMedia (String data, byte mimeType)
         throws ServiceException
     {
         ExternalUploadFile file = new ExternalUploadFile(data, mimeType);
         try {
             UploadUtil.publishUploadFile(file);
-            return new HashMediaDesc(file.getHash(), file.getMimeType(), MediaDesc.NOT_CONSTRAINED);
+            return new HashMediaDesc(file.getHash(), file.getMimeType(), ConstrainedMediaDesc.NOT_CONSTRAINED);
         } catch (IOException ioe) {
             log.warning("Unable to publish external media file", ioe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
@@ -394,7 +394,7 @@ public class StuffServlet extends MsoyServiceServlet
 
                 } else {
                     // in all probability, the primary media is different now
-                    MediaDesc primary = item.getPrimaryMedia();
+                    ConstrainedMediaDesc primary = item.getPrimaryMedia();
                     byte[] primaryHash = HashMediaDesc.unmakeHash(primary);
                     if (Arrays.equals(primaryHash, orig.getPrimaryMedia())) {
                         record.mediaHash = null; // a revert here, strange, but ok

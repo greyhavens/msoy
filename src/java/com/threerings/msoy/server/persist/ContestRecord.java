@@ -96,8 +96,8 @@ public class ContestRecord extends PersistentRecord
         record.contestId = contest.contestId;
         if (contest.icon != null) {
             record.iconHash = HashMediaDesc.unmakeHash(contest.icon);
-            record.iconMimeType = contest.icon.mimeType;
-            record.iconConstraint = contest.icon.constraint;
+            record.iconMimeType = contest.icon.getMimeType();
+            record.iconConstraint = contest.icon.getConstraint();
         }
         record.name = contest.name;
         record.blurb = contest.blurb;

@@ -23,9 +23,9 @@ import com.samskivert.depot.expression.ColumnExp;
 
 import com.samskivert.util.StringUtil;
 
+import com.threerings.msoy.data.all.ConstrainedMediaDesc;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.HashMediaDesc;
-import com.threerings.msoy.data.all.MediaDesc;
 
 import com.threerings.msoy.group.data.all.Group;
 import com.threerings.msoy.group.gwt.GroupCard;
@@ -172,7 +172,7 @@ public class GroupRecord extends PersistentRecord
     /**
      * Creates a MediaDesc of the group logo, or returns null if there is none.
      */
-    public MediaDesc toLogo ()
+    public ConstrainedMediaDesc toLogo ()
     {
         if (logoMediaHash == null) {
             return null;
@@ -233,8 +233,8 @@ public class GroupRecord extends PersistentRecord
         }
         if (groupDef.logo != null && !groupDef.logo.equals(toLogo())) {
             updates.put(LOGO_MEDIA_HASH, HashMediaDesc.unmakeHash(groupDef.logo));
-            updates.put(LOGO_MIME_TYPE, groupDef.logo.mimeType);
-            updates.put(LOGO_MEDIA_CONSTRAINT, groupDef.logo.constraint);
+            updates.put(LOGO_MIME_TYPE, groupDef.logo.getMimeType());
+            updates.put(LOGO_MEDIA_CONSTRAINT, groupDef.logo.getConstraint());
         }
         if (groupDef.policy != policy) {
             updates.put(POLICY, groupDef.policy);

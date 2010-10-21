@@ -5,10 +5,10 @@ package com.threerings.msoy.data.all;
 
 /**
  * Provides a "faked" media descriptor for media served internally at arbitrary relative URLs.
- * NOTE: Unless {@link MediaDesc} and {@link StaticMediaDesc}, this class does not exist in the
+ * NOTE: Unless {@link ConstrainedMediaDescImpl} and {@link StaticMediaDesc}, this class does not exist in the
  * AS3 client, and must not be streamed there.
  */
-public class InternalMediaDesc extends MediaDesc
+public class InternalMediaDesc extends ConstrainedMediaDescImpl
 {
     /** Used for unserialization. */
     public InternalMediaDesc ()
@@ -35,7 +35,7 @@ public class InternalMediaDesc extends MediaDesc
     @Override // from MediaDesc
     public String getMediaPath ()
     {
-        return DeploymentConfig.serverURL + _path + MediaMimeTypes.mimeTypeToSuffix(mimeType);
+        return DeploymentConfig.serverURL + _path + MediaMimeTypes.mimeTypeToSuffix(getMimeType());
     }
 
     protected String _path;

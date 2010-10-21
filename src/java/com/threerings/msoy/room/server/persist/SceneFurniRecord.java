@@ -10,7 +10,6 @@ import com.samskivert.depot.annotation.Entity;
 import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.expression.ColumnExp;
 
-import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.room.data.FurniData;
 import com.threerings.msoy.room.data.MsoyLocation;
@@ -113,7 +112,7 @@ public class SceneFurniRecord extends PersistentRecord
         itemType = data.getItemIdent().type;
         itemId = data.itemId;
         mediaHash = SceneUtil.flattenMediaDesc(data.media);
-        mediaType = data.media.mimeType;
+        mediaType = data.media.getMimeType();
         x = data.loc.x;
         y = data.loc.y;
         z = data.loc.z;

@@ -98,7 +98,7 @@ public class TrophyDelegate extends PlayManagerDelegate
         trophy.ident = source.ident;
         trophy.name = source.name;
         trophy.trophyMediaHash = HashMediaDesc.unmakeHash(source.getThumbnailMedia());
-        trophy.trophyMimeType = source.getThumbnailMedia().mimeType;
+        trophy.trophyMimeType = source.getThumbnailMedia().getMimeType();
         trophy.whenEarned = new Timestamp(System.currentTimeMillis());
 
         // otherwise, award them the trophy, then add it to their runtime collection

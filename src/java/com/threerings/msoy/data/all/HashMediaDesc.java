@@ -1,6 +1,6 @@
 package com.threerings.msoy.data.all;
 
-public class HashMediaDesc extends MediaDesc
+public class HashMediaDesc extends ConstrainedMediaDescImpl
 {
     /** The SHA-1 hash of this media's data. */
     public byte[] hash;
@@ -27,8 +27,8 @@ public class HashMediaDesc extends MediaDesc
             if (val < 0) {
                 val += 256;
             }
-            chars[2 * ii] = MediaDescBase.HEX.charAt(val/16);
-            chars[2 * ii + 1] = MediaDescBase.HEX.charAt(val%16);
+            chars[2 * ii] = HEX.charAt(val/16);
+            chars[2 * ii + 1] = HEX.charAt(val%16);
         }
         return new String(chars);
     }
@@ -45,8 +45,8 @@ public class HashMediaDesc extends MediaDesc
         hash = hash.toLowerCase();
         byte[] data = new byte[hash.length() / 2];
         for (int ii = 0; ii < hash.length(); ii += 2) {
-            int value = (byte) (MediaDescBase.HEX.indexOf(hash.charAt(ii)) << 4);
-            value += MediaDescBase.HEX.indexOf(hash.charAt(ii + 1));
+            int value = (byte) (HEX.indexOf(hash.charAt(ii)) << 4);
+            value += HEX.indexOf(hash.charAt(ii + 1));
 
             // values over 127 are wrapped around, restoring negative bytes
             data[ii / 2] = (byte) value;
@@ -62,8 +62,8 @@ public class HashMediaDesc extends MediaDesc
     {
         if (md instanceof HashMediaDesc) {
             StringBuilder buf = new StringBuilder(HashMediaDesc.hashToString(((HashMediaDesc)md).hash));
-            buf.append(":").append(md.mimeType);
-            buf.append(":").append(md.constraint);
+            buf.append(":").append(md.getMimeType());
+            buf.append(":").append(((HashMediaDesc)md).getConstraint());
             return buf.toString();
         }
         return "";
@@ -102,7 +102,7 @@ public class HashMediaDesc extends MediaDesc
      * Creates and returns a media descriptor if the supplied hash is non-null, returns onNull
      * otherwise.
      */
-    public static MediaDesc make (byte[] hash, byte mimeType, MediaDesc onNull)
+    public static ConstrainedMediaDesc make (byte[] hash, byte mimeType, ConstrainedMediaDesc onNull)
     {
         return (hash == null) ? onNull : new HashMediaDesc(hash, mimeType);
     }
@@ -111,7 +111,7 @@ public class HashMediaDesc extends MediaDesc
      * Creates and returns a media descriptor if the supplied hash is non-null, returns onNull
      * otherwise.
      */
-    public static MediaDesc make (byte[] hash, byte mimeType, byte constraint, MediaDesc onNull)
+    public static ConstrainedMediaDesc make (byte[] hash, byte mimeType, byte constraint, ConstrainedMediaDesc onNull)
     {
         return (hash == null) ? onNull : new HashMediaDesc(hash, mimeType, constraint);
     }
@@ -123,7 +123,7 @@ public class HashMediaDesc extends MediaDesc
     public static byte[] unmakeHash (MediaDesc desc)
     {
         if (desc != null) {
-            if (desc instanceof MediaDesc) {
+            if (desc instanceof HashMediaDesc) {
                 return ((HashMediaDesc) desc).hash;
             }
             throw new IllegalArgumentException(
@@ -183,13 +183,13 @@ public class HashMediaDesc extends MediaDesc
      */
     public String getMediaPath ()
     {
-        return HashMediaDesc.getMediaPath(hash, mimeType);
+        return HashMediaDesc.getMediaPath(hash, getMimeType());
     }
 
     @Override
     public String getProxyMediaPath ()
     {
-        return getMediaPath(DeploymentConfig.PROXY_PREFIX, hash, mimeType);
+        return getMediaPath(DeploymentConfig.PROXY_PREFIX, hash, getMimeType());
     }
 
     @Override // from Object
@@ -197,7 +197,7 @@ public class HashMediaDesc extends MediaDesc
     {
         if (other instanceof HashMediaDesc) {
             HashMediaDesc that = (HashMediaDesc) other;
-            return (this.mimeType == that.mimeType) && HashMediaDesc.arraysEqual(this.hash, that.hash);
+            return (this.getMimeType() == that.getMimeType()) && HashMediaDesc.arraysEqual(this.hash, that.hash);
         }
         return false;
     }
@@ -216,7 +216,7 @@ public class HashMediaDesc extends MediaDesc
     @Override // from Object
     public String toString ()
     {
-        return HashMediaDesc.hashToString(hash) + MediaMimeTypes.mimeTypeToSuffix(mimeType);
+        return HashMediaDesc.hashToString(hash) + MediaMimeTypes.mimeTypeToSuffix(getMimeType());
     }
 
     /**
@@ -250,4 +250,7 @@ public class HashMediaDesc extends MediaDesc
 
         return prefix + hashToString(mediaHash) + MediaMimeTypes.mimeTypeToSuffix(mimeType);
     }
+
+    /** Hexadecimal digits. */
+    protected static final String HEX = "0123456789abcdef";
 }

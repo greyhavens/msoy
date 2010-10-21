@@ -6,6 +6,7 @@ package com.threerings.msoy.edgame.gwt;
 import java.util.List;
 import java.util.Set;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.facebook.gwt.FacebookInfo;
 import com.threerings.msoy.facebook.gwt.FeedThumbnail;

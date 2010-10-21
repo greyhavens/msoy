@@ -20,8 +20,8 @@ import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.expression.ColumnExp;
 
 import com.threerings.msoy.data.all.Award;
+import com.threerings.msoy.data.all.ConstrainedMediaDesc;
 import com.threerings.msoy.data.all.HashMediaDesc;
-import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.Award.AwardType;
 import com.threerings.msoy.profile.gwt.Profile;
@@ -198,19 +198,19 @@ public class ProfileRecord extends PersistentRecord
      * Configures our photo data with the supplied media descriptor, which may be null (in which
      * case this method is a NOOP).
      */
-    public void setPhoto (MediaDesc photo)
+    public void setPhoto (ConstrainedMediaDesc photo)
     {
         if (photo != null) {
             photoHash = HashMediaDesc.unmakeHash(photo);
-            photoMimeType = photo.mimeType;
-            photoConstraint = photo.constraint;
+            photoMimeType = photo.getMimeType();
+            photoConstraint = photo.getConstraint();
         }
     }
 
     /**
      * Returns the photo associated with this profile, or the default record.
      */
-    public MediaDesc getPhoto ()
+    public ConstrainedMediaDesc getPhoto ()
     {
         return (photoHash != null) ?
             new HashMediaDesc(photoHash, photoMimeType, photoConstraint) : MemberCard.DEFAULT_PHOTO;

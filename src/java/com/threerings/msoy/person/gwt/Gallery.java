@@ -7,7 +7,7 @@ import java.util.Date;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.ConstrainedMediaDesc;
 
 /**
  * Photo gallery details.
@@ -26,7 +26,7 @@ public class Gallery implements IsSerializable
     public Date lastModified;
 
     /** The media used to display the gallery's thumbnail representation. */
-    public MediaDesc thumbMedia;
+    public ConstrainedMediaDesc thumbMedia;
 
     public boolean isProfileGallery ()
     {

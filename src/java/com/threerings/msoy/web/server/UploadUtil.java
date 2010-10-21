@@ -31,8 +31,8 @@ import com.google.common.collect.ImmutableMap;
 
 import com.samskivert.util.StringUtil;
 
-import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MediaDescSize;
+import com.threerings.msoy.data.all.MediaDescUtil;
 import com.threerings.msoy.data.all.MediaMimeTypes;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.server.ServerConfig;
@@ -276,7 +276,7 @@ public class UploadUtil
         public MediaInfo getMediaInfo () {
             int constraintSize = thumbSize == null ?
                 MediaDescSize.PREVIEW_SIZE : thumbSize.intValue();
-            byte constraint = MediaDesc.computeConstraint(
+            byte constraint = MediaDescUtil.computeConstraint(
                 constraintSize, originalSize.width, originalSize.height);
             return new MediaInfo(digester.hexHash(), mimeType, constraint, finalSize.width,
                 finalSize.height);

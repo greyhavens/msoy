@@ -7,7 +7,7 @@ import java.util.Date;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.ConstrainedMediaDesc;
 
 /**
  * Contains information on a promotion.
@@ -19,7 +19,7 @@ public class Promotion
     public String promoId;
 
     /** The promotion's optional icon (a thumbnail size image). */
-    public MediaDesc icon;
+    public ConstrainedMediaDesc icon;
 
     /** This promotion's (HTML) blurb. */
     public String blurb;

@@ -5,6 +5,7 @@ package com.threerings.msoy.group.gwt;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
+import com.threerings.msoy.data.all.ConstrainedMediaDesc;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.group.data.all.Group;
@@ -19,7 +20,7 @@ public class GroupCard
     public GroupName name;
 
     /** The groups's logo. Note: Could be null! Use getLogo()! */
-    public MediaDesc logo;
+    public ConstrainedMediaDesc logo;
 
     /** This group's brief description. */
     public String blurb;

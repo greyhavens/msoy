@@ -5,7 +5,7 @@ package com.threerings.msoy.edgame.gwt;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.ConstrainedMediaDesc;
 
 /**
  * Contains the code and XML configuration for a game.
@@ -37,13 +37,13 @@ public class GameCode
     public String config;
 
     /** The game's client code media. */
-    public MediaDesc clientMedia;
+    public ConstrainedMediaDesc clientMedia;
 
     /** The game's server code media. */
-    public MediaDesc serverMedia;
+    public ConstrainedMediaDesc serverMedia;
 
     /** The game's splash screen media (shown when loading). */
-    public MediaDesc splashMedia;
+    public ConstrainedMediaDesc splashMedia;
 
     /** The time at which this code was last updated. */
     public long lastUpdated;

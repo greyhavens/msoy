@@ -9,7 +9,6 @@ import com.threerings.presents.dobj.DSet;
 
 //import com.threerings.crowd.chat.data.SpeakMarshaller;
 //import com.threerings.crowd.chat.data.SpeakObject;
-
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;

@@ -10,8 +10,6 @@ import org.apache.commons.fileupload.FileUploadException;
 
 import com.samskivert.io.StreamUtil;
 
-import com.threerings.msoy.admin.server.persist.MediaBlacklistRepository;
-import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.web.server.UploadUtil.MediaInfo;
 
 /**
