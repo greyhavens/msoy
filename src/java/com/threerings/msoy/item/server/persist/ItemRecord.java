@@ -23,6 +23,7 @@ import com.threerings.io.Streamable;
 
 import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaMimeTypes;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.orth.scene.data.EntityMedia;
@@ -384,7 +385,7 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
      */
     public boolean isRemixable ()
     {
-        return MediaDesc.isRemixable(getPrimaryMimeType());
+        return MediaMimeTypes.isRemixable(getPrimaryMimeType());
     }
 
     /**

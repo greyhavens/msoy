@@ -241,4 +241,27 @@ public abstract class MediaMimeTypes
             return false;
         }
     }
+
+    /**
+     * Returns true if the supplied mimeType represents a zip, basically.
+     */
+    public static boolean isRemixed (byte mimeType)
+    {
+        switch (mimeType) {
+        case APPLICATION_ZIP:
+        case APPLICATION_ZIP_NOREMIX:
+            return true;
+
+        default:
+            return false;
+        }
+    }
+
+    /**
+     * Returns true if the supplied mimeType represents a remixable type.
+     */
+    public static boolean isRemixable (byte mimeType)
+    {
+        return (mimeType == APPLICATION_ZIP);
+    }
 }

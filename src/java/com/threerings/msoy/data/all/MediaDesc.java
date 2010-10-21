@@ -36,29 +36,6 @@ public abstract class MediaDesc extends MediaDescBase implements Streamable, IsS
     public byte constraint;
 
     /**
-     * Returns true if the supplied mimeType represents a zip, basically.
-     */
-    public static boolean isRemixed (byte mimeType)
-    {
-        switch (mimeType) {
-        case MediaMimeTypes.APPLICATION_ZIP:
-        case MediaMimeTypes.APPLICATION_ZIP_NOREMIX:
-            return true;
-
-        default:
-            return false;
-        }
-    }
-
-    /**
-     * Returns true if the supplied mimeType represents a remixable type.
-     */
-    public static boolean isRemixable (byte mimeType)
-    {
-        return (mimeType == MediaMimeTypes.APPLICATION_ZIP);
-    }
-
-    /**
      * Computes the constraining dimension for an image (if any) based on the supplied target and
      * actual dimensions.
      */
@@ -147,7 +124,7 @@ public abstract class MediaDesc extends MediaDescBase implements Streamable, IsS
      */
     public boolean isRemixed ()
     {
-        return isRemixed(mimeType);
+        return MediaMimeTypes.isRemixed(mimeType);
     }
 
     /**
@@ -155,7 +132,7 @@ public abstract class MediaDesc extends MediaDescBase implements Streamable, IsS
      */
     public boolean isRemixable ()
     {
-        return isRemixable(mimeType);
+        return MediaMimeTypes.isRemixable(mimeType);
     }
 
     @Override // from MediaDescBase
