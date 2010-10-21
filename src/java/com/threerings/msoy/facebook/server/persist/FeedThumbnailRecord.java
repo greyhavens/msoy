@@ -36,7 +36,7 @@ public class FeedThumbnailRecord extends PersistentRecord
     /** Functor to get a media path from a thumbnail record. */
     public static final Function<FeedThumbnailRecord, String> TO_MEDIA_PATH =
         new Function<FeedThumbnailRecord, String>() {
-        @Override public String apply (FeedThumbnailRecord thumb) {
+        public String apply (FeedThumbnailRecord thumb) {
             return HashMediaDesc.getMediaPath(thumb.hash, thumb.mimeType);
         }
     };
@@ -44,7 +44,7 @@ public class FeedThumbnailRecord extends PersistentRecord
     /** Functor to get a runtime thumbnail from a thumbnail record. */
     public static final Function<FeedThumbnailRecord, FeedThumbnail> TO_THUMBNAIL =
         new Function<FeedThumbnailRecord, FeedThumbnail>() {
-        @Override public FeedThumbnail apply (FeedThumbnailRecord thumb) {
+        public FeedThumbnail apply (FeedThumbnailRecord thumb) {
             return thumb.toFeedThumbnail();
         }
     };
@@ -102,8 +102,7 @@ public class FeedThumbnailRecord extends PersistentRecord
     public FeedThumbnail toFeedThumbnail ()
     {
         FeedThumbnail thumbnail = new FeedThumbnail();
-        thumbnail.media = new HashMediaDesc(hash, mimeType);
-        thumbnail.media.setConstraint(constraint);
+        thumbnail.media = new HashMediaDesc(hash, mimeType, constraint);
         thumbnail.pos = pos;
         thumbnail.code = code;
         thumbnail.variant = variant;

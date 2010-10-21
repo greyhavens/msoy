@@ -6,7 +6,7 @@ package com.threerings.msoy.profile.gwt;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.msoy.data.all.Award;
-import com.threerings.msoy.data.all.ConstrainedMediaDesc;
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.web.gwt.MemberCard;
 import com.threerings.msoy.web.gwt.WebCreds;
 
@@ -31,7 +31,7 @@ public class Profile implements IsSerializable
     public static final byte SEX_FEMALE = 2;
 
     /** The member's selected profile picture. */
-    public ConstrainedMediaDesc photo = MemberCard.DEFAULT_PHOTO;
+    public MediaDesc photo = MemberCard.DEFAULT_PHOTO;
 
     /** The member's role. */
     public WebCreds.Role role;

@@ -46,7 +46,7 @@ public class FeedThumbnailsPanel extends FlowPanel
         add(new AddNewThumbnails());
 
         _appsvc.loadThumbnails(_appId, new InfoCallback<List<FeedThumbnail>>() {
-            @Override public void onSuccess (List<FeedThumbnail> result) {
+            public void onSuccess (List<FeedThumbnail> result) {
                 _display.setThumbnails(new ThumbnailSet(result));
             }
         });
@@ -116,7 +116,7 @@ public class FeedThumbnailsPanel extends FlowPanel
                     content.get(ii).media, MediaDescSize.FB_FEED_SIZE), 1, "Image");
             }
             setWidget(row, DELETE_BTN, MsoyUI.createCloseButton(new ClickHandler() {
-                @Override public void onClick (ClickEvent event) {
+                public void onClick (ClickEvent event) {
                     _thumbnails.remove(code, variant);
                     refresh();
                 }
@@ -140,7 +140,7 @@ public class FeedThumbnailsPanel extends FlowPanel
             final TextBox code = MsoyUI.createTextBox("", 15, 8);
             addRow(_msgs.feedThumbsCodeLabel(), code,
                 new Command() {
-                @Override public void execute () {
+                public void execute () {
                     _code = code.getText().trim();
                     if (_code.equals("")) {
                         throw new ConfigException(_msgs.feedThumbsCodeRequiredErr());
@@ -149,7 +149,7 @@ public class FeedThumbnailsPanel extends FlowPanel
             });
             final TextBox variant = MsoyUI.createTextBox("", 6, 4);
             addRow(_msgs.feedThumbsVariantLabel(), variant, new Command() {
-                @Override public void execute () {
+                public void execute () {
                     _variant = variant.getText().trim();
                 }
             });
@@ -158,7 +158,7 @@ public class FeedThumbnailsPanel extends FlowPanel
                 addMediaSlot(ii);
             }
             addRow("", new Button (_msgs.feedThumbsAddNewBtn(), new ClickHandler() {
-                @Override public void onClick (ClickEvent event) {
+                public void onClick (ClickEvent event) {
                     addNew();
                 }
             }), null);
@@ -187,7 +187,7 @@ public class FeedThumbnailsPanel extends FlowPanel
                 }
             };
             addRow(_msgs.feedThumbsImageLabel(String.valueOf(index+1)), media, new Command() {
-                @Override public void execute () {
+                public void execute () {
                     if (media.getMedia() == null) {
                         throw new ConfigException(
                             _msgs.feedThumbsNullImageErr(String.valueOf(FeedThumbnail.COUNT)));

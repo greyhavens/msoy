@@ -7,7 +7,7 @@ package com.threerings.msoy.data.all;
  * Provides a "faked" media descriptor for static media (default thumbnails and
  * furni representations).
  */
-public class StaticMediaDesc extends ConstrainedMediaDescImpl
+public class StaticMediaDesc extends MediaDescImpl
 {
     /** Used for unserialization. */
     public StaticMediaDesc ()
@@ -48,7 +48,6 @@ public class StaticMediaDesc extends ConstrainedMediaDescImpl
         return _mediaType;
     }
 
-    @Override // from MediaDesc
     public String getMediaPath ()
     {
         return DeploymentConfig.staticMediaURL + _itemType + "/" + _mediaType +

@@ -22,6 +22,7 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.data.all.MediaDesc;
+
 import client.ui.MsoyUI;
 
 /**

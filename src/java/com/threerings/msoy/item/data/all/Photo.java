@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.item.data.all;
 
-import com.threerings.msoy.data.all.ConstrainedMediaDesc;
 import com.threerings.msoy.data.all.MediaDesc;
 
 /**
@@ -13,7 +12,7 @@ import com.threerings.msoy.data.all.MediaDesc;
 public class Photo extends Item
 {
     /** The photo media. This is the full-size version. furniMedia is 4x thumbnail size. */
-    public ConstrainedMediaDesc photoMedia;
+    public MediaDesc photoMedia;
 
     /** The width (in pixels) of the photo media. */
     public int photoWidth;
@@ -40,13 +39,13 @@ public class Photo extends Item
     }
 
     @Override // from Item
-    public ConstrainedMediaDesc getPrimaryMedia ()
+    public MediaDesc getPrimaryMedia ()
     {
         return photoMedia;
     }
 
     @Override // from Item
-    public void setPrimaryMedia (ConstrainedMediaDesc desc)
+    public void setPrimaryMedia (MediaDesc desc)
     {
         photoMedia = desc;
     }

@@ -34,7 +34,7 @@ import com.samskivert.util.StringUtil;
 
 import com.threerings.parlor.rating.server.persist.RatingRepository;
 
-import com.threerings.msoy.data.all.ConstrainedMediaDesc;
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MediaDescUtil;
 import com.threerings.msoy.data.all.MediaMimeTypes;
 import com.threerings.msoy.item.data.ItemCodes;
@@ -186,7 +186,7 @@ public class EditGameServlet extends MsoyServiceServlet
     }
 
     @Override // from interface EditGameService
-    public int createGame (boolean isAVRG, String name, ConstrainedMediaDesc thumbMedia, ConstrainedMediaDesc clientCode)
+    public int createGame (boolean isAVRG, String name, MediaDesc thumbMedia, MediaDesc clientCode)
         throws ServiceException
     {
         MemberRecord mrec = requireAuthedUser();

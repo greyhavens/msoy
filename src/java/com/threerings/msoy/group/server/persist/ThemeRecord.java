@@ -11,9 +11,9 @@ import com.samskivert.depot.annotation.Entity;
 import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.expression.ColumnExp;
 
-import com.threerings.msoy.data.all.ConstrainedMediaDesc;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.HashMediaDesc;
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.Theme;
 
 /**
@@ -136,7 +136,7 @@ public class ThemeRecord extends PersistentRecord
     /**
      * Creates a MediaDesc of the theme logo, or returns null if there is none.
      */
-    public ConstrainedMediaDesc toLogo ()
+    public MediaDesc toLogo ()
     {
         if (logoMediaHash == null) {
             return null;
@@ -147,7 +147,7 @@ public class ThemeRecord extends PersistentRecord
     /**
      * Creates a MediaDesc of the theme nav button, or returns null if there is none.
      */
-    public ConstrainedMediaDesc toNavButton ()
+    public MediaDesc toNavButton ()
     {
         if (navMediaHash == null) {
             return null;
@@ -158,7 +158,7 @@ public class ThemeRecord extends PersistentRecord
     /**
      * Creates a MediaDesc of the theme selected nav button, or returns null if there is none.
      */
-    public ConstrainedMediaDesc toNavSelButton ()
+    public MediaDesc toNavSelButton ()
     {
         if (navSelMediaHash == null) {
             return null;

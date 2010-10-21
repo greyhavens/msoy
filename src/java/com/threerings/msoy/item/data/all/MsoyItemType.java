@@ -57,7 +57,6 @@ public enum MsoyItemType implements EntityType<MsoyItemType>
         return name().toLowerCase();
     }
 
-    @Override
     public byte toByte ()
     {
         return _b;

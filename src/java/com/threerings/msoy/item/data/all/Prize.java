@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.item.data.all;
 
-import com.threerings.msoy.data.all.ConstrainedMediaDesc;
 import com.threerings.msoy.data.all.MediaDesc;
 
 /**
@@ -30,13 +29,13 @@ public class Prize extends IdentGameItem
     }
 
     @Override // from Item
-    public ConstrainedMediaDesc getPrimaryMedia ()
+    public MediaDesc getPrimaryMedia ()
     {
         return getThumbnailMedia();
     }
 
     @Override // from Item
-    public ConstrainedMediaDesc getThumbnailMedia ()
+    public MediaDesc getThumbnailMedia ()
     {
         return getDefaultThumbnailMediaFor(targetType);
     }

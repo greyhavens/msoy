@@ -94,7 +94,7 @@ public class GalleryPhotoPanel extends FlowPanel
         } else if (height > 0) {
             constraint = MediaDesc.VERTICALLY_CONSTRAINED;
         }
-        photo.photoMedia.constraint = constraint;
+        photo.photoMedia.setConstraint(constraint);
 
         // clear the photo onclick
         ClickHandler onClick = new ClickHandler() {
@@ -186,7 +186,7 @@ public class GalleryPhotoPanel extends FlowPanel
 
         // if this image has been scaled down, link to the full size
         if (_slideshowTimer == null) {
-            if (photo.photoMedia.constraint != MediaDesc.NOT_CONSTRAINED) {
+            if (photo.photoMedia.getConstraint() != MediaDesc.NOT_CONSTRAINED) {
                 controls.add(MsoyUI.createExternalAnchor(photo.photoMedia.getMediaPath(),
                     _pmsgs.galleryFullSize()), 590, 5);
             }

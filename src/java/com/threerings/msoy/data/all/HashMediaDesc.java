@@ -1,6 +1,6 @@
 package com.threerings.msoy.data.all;
 
-public class HashMediaDesc extends ConstrainedMediaDescImpl
+public class HashMediaDesc extends MediaDescImpl
 {
     /** The SHA-1 hash of this media's data. */
     public byte[] hash;
@@ -102,7 +102,7 @@ public class HashMediaDesc extends ConstrainedMediaDescImpl
      * Creates and returns a media descriptor if the supplied hash is non-null, returns onNull
      * otherwise.
      */
-    public static ConstrainedMediaDesc make (byte[] hash, byte mimeType, ConstrainedMediaDesc onNull)
+    public static MediaDesc make (byte[] hash, byte mimeType, MediaDesc onNull)
     {
         return (hash == null) ? onNull : new HashMediaDesc(hash, mimeType);
     }
@@ -111,7 +111,7 @@ public class HashMediaDesc extends ConstrainedMediaDescImpl
      * Creates and returns a media descriptor if the supplied hash is non-null, returns onNull
      * otherwise.
      */
-    public static ConstrainedMediaDesc make (byte[] hash, byte mimeType, byte constraint, ConstrainedMediaDesc onNull)
+    public static MediaDesc make (byte[] hash, byte mimeType, byte constraint, MediaDesc onNull)
     {
         return (hash == null) ? onNull : new HashMediaDesc(hash, mimeType, constraint);
     }
@@ -186,7 +186,6 @@ public class HashMediaDesc extends ConstrainedMediaDescImpl
         return HashMediaDesc.getMediaPath(hash, getMimeType());
     }
 
-    @Override
     public String getProxyMediaPath ()
     {
         return getMediaPath(DeploymentConfig.PROXY_PREFIX, hash, getMimeType());

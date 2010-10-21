@@ -5,7 +5,7 @@ package com.threerings.msoy.facebook.gwt;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-import com.threerings.msoy.data.all.ConstrainedMediaDesc;
+import com.threerings.msoy.data.all.MediaDesc;
 
 /**
  * A thumbnail image for use in a feed.
@@ -25,7 +25,7 @@ public class FeedThumbnail
     public byte pos;
 
     /** The image media for the thumbnail. */
-    public ConstrainedMediaDesc media;
+    public MediaDesc media;
 
     /**
      * For deserializing.
@@ -37,7 +37,7 @@ public class FeedThumbnail
     /**
      * Creates a new thumbnail with the given media.
      */
-    public FeedThumbnail (ConstrainedMediaDesc media, String code, String variant, byte pos)
+    public FeedThumbnail (MediaDesc media, String code, String variant, byte pos)
     {
         this.media = media;
         this.code = code;

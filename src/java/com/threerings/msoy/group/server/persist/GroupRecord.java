@@ -23,10 +23,10 @@ import com.samskivert.depot.expression.ColumnExp;
 
 import com.samskivert.util.StringUtil;
 
-import com.threerings.msoy.data.all.ConstrainedMediaDesc;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.HashMediaDesc;
 
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.group.data.all.Group;
 import com.threerings.msoy.group.gwt.GroupCard;
 import com.threerings.msoy.group.gwt.GroupExtras;
@@ -172,7 +172,7 @@ public class GroupRecord extends PersistentRecord
     /**
      * Creates a MediaDesc of the group logo, or returns null if there is none.
      */
-    public ConstrainedMediaDesc toLogo ()
+    public MediaDesc toLogo ()
     {
         if (logoMediaHash == null) {
             return null;

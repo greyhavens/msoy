@@ -18,7 +18,6 @@ import com.threerings.gwt.ui.EnterClickAdapter;
 import com.threerings.msoy.admin.gwt.AdminService;
 import com.threerings.msoy.admin.gwt.AdminServiceAsync;
 import com.threerings.msoy.data.all.HashMediaDesc;
-import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MediaMimeTypes;
 
 import client.ui.MsoyUI;
@@ -61,7 +60,7 @@ public class BlacklistWidget extends FlexTable
             }
         };
         row += 1;
-        
+
         getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
         setText(row, 0, _msgs.blacklistNote());
         setWidget(row++, 1, _note = new TextBox());

@@ -7,6 +7,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.HasAlignment;
 
 import com.threerings.gwt.ui.SmartTable;
+
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.data.all.MediaMimeTypes;
@@ -69,7 +70,7 @@ public class EditorUtil
         public MediaDesc getMedia () {
             return _media;
         }
-    
+
         // from MediaUploader.Listener
         public void mediaUploaded (String name, MediaDesc desc, int width, int height) {
             setMedia(desc);
@@ -120,7 +121,7 @@ public class EditorUtil
             setMedia(media);
             setWidget(1, 0, new MediaUploader(mediaId, this));
         }
-    
+
         /**
          * Sets the media, or clears it if null is given.
          */
@@ -128,20 +129,20 @@ public class EditorUtil
             _media = media;
             setText(0, 0, (media == null) ? _emptyMessage : media.toString(), 1, "Code");
         }
-    
+
         /**
          * Gets the currently displayed media.
          */
         public MediaDesc getMedia () {
             return _media;
         }
-    
+
         // from MediaUploader.Listener
         public void mediaUploaded (String name, MediaDesc desc, int width, int height) {
             setMedia(desc);
             mediaModified();
         }
-    
+
         /**
          * Lets this editor box know that the media is modified.
          */
@@ -192,7 +193,7 @@ public class EditorUtil
      * Throws a {@link ConfigException} if the given media is null or not appropriate flash media.
      * For convenience, returns the media if all is well.
      */
-    public static MediaDesc checkClientMedia (MediaDesc desc)
+    public static <T extends MediaDesc> T checkClientMedia (T desc)
     {
         if (desc == null || !desc.isSWF()) {
             throw new ConfigException(_msgs.errInvalidClientCode());
@@ -204,9 +205,9 @@ public class EditorUtil
      * Throws a {@link ConfigException} if the given media is null or not appropriate thane media.
      * For convenience, returns the media if all is well.
      */
-    public static MediaDesc checkServerMedia (MediaDesc desc)
+    public static <T extends MediaDesc> T checkServerMedia (T desc)
     {
-        if (desc != null && desc.mimeType != MediaMimeTypes.COMPILED_ACTIONSCRIPT_LIBRARY) {
+        if (desc != null && desc.getMimeType() != MediaMimeTypes.COMPILED_ACTIONSCRIPT_LIBRARY) {
             throw new ConfigException(_msgs.errInvalidServerCode());
         }
         return desc;

@@ -82,7 +82,7 @@ public class PublishPanel extends SmartTable
     {
         return (desc == null) ? "" :
             HashMediaDesc.hashToString(HashMediaDesc.unmakeHash(desc)).substring(0, 30) + ".." +
-            MediaMimeTypes.mimeTypeToSuffix(desc.mimeType);
+            MediaMimeTypes.mimeTypeToSuffix(desc.getMimeType());
     }
 
     protected int _dataRow;

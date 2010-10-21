@@ -14,7 +14,7 @@ import com.samskivert.util.ByteEnumUtil;
 import com.threerings.io.Streamable;
 
 import com.threerings.msoy.data.all.GroupName;
-import com.threerings.msoy.data.all.ConstrainedMediaDesc;
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MediaMimeTypes;
 import com.threerings.msoy.data.all.StaticMediaDesc;
 import com.threerings.msoy.fora.gwt.ForumThread;
@@ -98,7 +98,7 @@ public class Group
     public String blurb;
 
     /** The group's logo. */
-    public ConstrainedMediaDesc logo;
+    public MediaDesc logo;
 
     /** The id of this group's hall scene. */
     public int homeSceneId;
@@ -133,7 +133,7 @@ public class Group
     /**
      * Return the specified MediaDesc, or the group default logo if it's null.
      */
-    public static ConstrainedMediaDesc logo (ConstrainedMediaDesc desc)
+    public static MediaDesc logo (MediaDesc desc)
     {
         return (desc != null) ? desc : getDefaultGroupLogoMedia();
     }
@@ -141,11 +141,11 @@ public class Group
     /**
      * Creates a default logo for use with groups that have no logo.
      */
-    public static ConstrainedMediaDesc getDefaultGroupLogoMedia ()
+    public static MediaDesc getDefaultGroupLogoMedia ()
     {
         return new StaticMediaDesc(MediaMimeTypes.IMAGE_PNG, "photo", "group_logo",
                                    // we know that we're 66x60
-                                   ConstrainedMediaDesc.HALF_VERTICALLY_CONSTRAINED);
+                                   MediaDesc.HALF_VERTICALLY_CONSTRAINED);
     }
 
     /**
@@ -192,7 +192,7 @@ public class Group
     /**
      * Returns this group's logo, or the default.
      */
-    public ConstrainedMediaDesc getLogo ()
+    public MediaDesc getLogo ()
     {
         return logo(logo);
     }

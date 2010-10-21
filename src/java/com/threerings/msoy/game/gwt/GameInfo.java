@@ -7,7 +7,7 @@ import java.util.Comparator;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-import com.threerings.msoy.data.all.ConstrainedMediaDesc;
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 
 /**
@@ -108,10 +108,10 @@ public class GameInfo
     public String description;
 
     /** The game's thumbnail media (will never be null). */
-    public ConstrainedMediaDesc thumbMedia;
+    public MediaDesc thumbMedia;
 
     /** The game screenshot media (will never be null). */
-    public ConstrainedMediaDesc shotMedia;
+    public MediaDesc shotMedia;
 
     /** Optional group associated with this game; 0 means no group */
     public int groupId;

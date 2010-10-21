@@ -5,7 +5,7 @@ package com.threerings.msoy.stuff.gwt;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-import com.threerings.msoy.data.all.ConstrainedMediaDesc;
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
@@ -19,7 +19,7 @@ public interface StuffServiceAsync
     /**
      * The async version of {@link StuffService#publishExternalMedia}.
      */
-    void publishExternalMedia (String data, byte mimeType, AsyncCallback<ConstrainedMediaDesc> callback);
+    void publishExternalMedia (String data, byte mimeType, AsyncCallback<MediaDesc> callback);
 
     /**
      * The async version of {@link StuffService#createItem}.

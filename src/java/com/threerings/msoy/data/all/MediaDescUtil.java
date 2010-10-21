@@ -23,22 +23,22 @@ public class MediaDescUtil
             if (size == MediaDescSize.THUMBNAIL_SIZE) {
                 return computeConstraint(MediaDescSize.HALF_THUMBNAIL_SIZE, actualWidth, actualHeight);
             } else {
-                return ConstrainedMediaDesc.NOT_CONSTRAINED;
+                return MediaDesc.NOT_CONSTRAINED;
             }
         } else if (wfactor < hfactor) {
             return (size == MediaDescSize.HALF_THUMBNAIL_SIZE) ?
-                ConstrainedMediaDesc.HALF_HORIZONTALLY_CONSTRAINED : ConstrainedMediaDesc.HORIZONTALLY_CONSTRAINED;
+                MediaDesc.HALF_HORIZONTALLY_CONSTRAINED : MediaDesc.HORIZONTALLY_CONSTRAINED;
         } else {
             return (size == MediaDescSize.HALF_THUMBNAIL_SIZE) ?
-                ConstrainedMediaDesc.HALF_VERTICALLY_CONSTRAINED : ConstrainedMediaDesc.VERTICALLY_CONSTRAINED;
+                MediaDesc.HALF_VERTICALLY_CONSTRAINED : MediaDesc.VERTICALLY_CONSTRAINED;
         }
     }
 
     /**
      * Returns the supplied media descriptor's constraint or 0 if the descriptor is null.
      */
-    public static byte unmakeConstraint (ConstrainedMediaDesc desc)
+    public static byte unmakeConstraint (MediaDesc desc)
     {
-        return (desc == null) ? ConstrainedMediaDesc.NOT_CONSTRAINED : desc.getConstraint();
+        return (desc == null) ? MediaDesc.NOT_CONSTRAINED : desc.getConstraint();
     }
 }

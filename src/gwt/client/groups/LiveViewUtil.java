@@ -16,7 +16,7 @@ import com.threerings.msoy.data.all.MediaDescSize;
 
 /**
  * Utilities for displaying a Group's canonical scene snapshot.
- * 
+ *
  * @author robin
  */
 public class LiveViewUtil

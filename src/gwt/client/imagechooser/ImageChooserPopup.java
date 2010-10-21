@@ -21,12 +21,12 @@ import com.threerings.gwt.util.SimpleDataModel;
 import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.ui.SmartTable;
 
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.imagechooser.gwt.ImageChooserService;
 import com.threerings.msoy.imagechooser.gwt.ImageChooserServiceAsync;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.Photo;
 
-import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MediaDescSize;
 
 import client.shell.CShell;
@@ -65,7 +65,8 @@ public class ImageChooserPopup extends VerticalPanel
      * MediaDesc returned to the callback is exactly the dimensions required by the caller.
      */
     public static void displayRestrictedImageChooser (
-        final int requiredWidth, final int requiredHeight, final AsyncCallback<MediaDesc> callback)
+        final int requiredWidth, final int requiredHeight,
+        final AsyncCallback<MediaDesc> callback)
     {
         _imgsvc.loadPhotos(new AsyncCallback<List<Photo>>() {
             public void onSuccess(List<Photo> items) {
@@ -148,7 +149,8 @@ public class ImageChooserPopup extends VerticalPanel
 
         @Override // from PagedGrid
         protected Widget createWidget (final Photo photo) {
-            final MediaDesc media = _thumbnail ? photo.getThumbnailMedia() : photo.photoMedia;
+            final MediaDesc media =
+                _thumbnail ? photo.getThumbnailMedia() : photo.photoMedia;
             Widget image = MediaUtil.createMediaView(
                 photo.getThumbnailMedia(), MediaDescSize.THUMBNAIL_SIZE, new ClickHandler() {
                     public void onClick (ClickEvent event) {

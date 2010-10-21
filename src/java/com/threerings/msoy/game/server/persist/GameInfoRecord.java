@@ -17,8 +17,8 @@ import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.util.ArrayUtil;
 import com.samskivert.util.StringUtil;
 
-import com.threerings.msoy.data.all.ConstrainedMediaDesc;
 import com.threerings.msoy.data.all.HashMediaDesc;
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MediaDescUtil;
 import com.threerings.msoy.data.all.MediaMimeTypes;
 import com.threerings.msoy.data.all.MemberName;
@@ -149,7 +149,7 @@ public class GameInfoRecord extends PersistentRecord
     /**
      * Returns this game's thumbnail media or a default if it is not specified.
      */
-    public ConstrainedMediaDesc getThumbMedia ()
+    public MediaDesc getThumbMedia ()
     {
         return HashMediaDesc.make(thumbMediaHash, thumbMimeType, thumbConstraint, DEFAULT_THUMB_MEDIA);
     }
@@ -157,7 +157,7 @@ public class GameInfoRecord extends PersistentRecord
     /**
      * Returns this game's screenshot media or a default if it is not specified.
      */
-    public ConstrainedMediaDesc getShotMedia ()
+    public MediaDesc getShotMedia ()
     {
         return HashMediaDesc.make(shotMediaHash, shotMimeType, getThumbMedia());
     }
@@ -249,6 +249,6 @@ public class GameInfoRecord extends PersistentRecord
     static { registerKeyFields(GAME_ID); }
     // AUTO-GENERATED: METHODS END
 
-    protected static final ConstrainedMediaDesc DEFAULT_THUMB_MEDIA = new StaticMediaDesc(
-        MediaMimeTypes.IMAGE_PNG, "game", "thumb", ConstrainedMediaDesc.HALF_VERTICALLY_CONSTRAINED); // TODO
+    protected static final MediaDesc DEFAULT_THUMB_MEDIA = new StaticMediaDesc(
+        MediaMimeTypes.IMAGE_PNG, "game", "thumb", MediaDesc.HALF_VERTICALLY_CONSTRAINED); // TODO
 }

@@ -11,7 +11,6 @@ import com.samskivert.util.ByteEnum;
 
 import com.threerings.io.Streamable;
 
-import com.threerings.msoy.data.all.ConstrainedMediaDesc;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MediaMimeTypes;
 import com.threerings.presents.dobj.DSet;
@@ -147,7 +146,7 @@ public abstract class Item implements Comparable<Item>, Streamable, IsSerializab
     public boolean mature;
 
     /**
-     * Returns a {@link com.threerings.msoy.data.all.ConstrainedMediaDescImpl} configured to display the default furniture media for items of
+     * Returns a {@link MediaDesc} configured to display the default furniture media for items of
      * the specified type.
      */
     public static MediaDesc getDefaultFurniMediaFor (MsoyItemType itemType)
@@ -156,13 +155,13 @@ public abstract class Item implements Comparable<Item>, Streamable, IsSerializab
     }
 
     /**
-     * Returns a {@link com.threerings.msoy.data.all.ConstrainedMediaDesc} configured to display the default thumbnaiul media for items of
+     * Returns a {@link MediaDesc} configured to display the default thumbnaiul media for items of
      * the specified type.
      */
-    public static ConstrainedMediaDesc getDefaultThumbnailMediaFor (MsoyItemType itemType)
+    public static MediaDesc getDefaultThumbnailMediaFor (MsoyItemType itemType)
     {
         return new DefaultItemMediaDesc(MediaMimeTypes.IMAGE_PNG, itemType, THUMB_MEDIA,
-                                        ConstrainedMediaDesc.HALF_VERTICALLY_CONSTRAINED);
+                                        MediaDesc.HALF_VERTICALLY_CONSTRAINED);
     }
 
     /**
@@ -279,7 +278,7 @@ public abstract class Item implements Comparable<Item>, Streamable, IsSerializab
      * Returns a media descriptor for the media that should be used to display our thumbnail
      * representation.
      */
-    public ConstrainedMediaDesc getThumbnailMedia ()
+    public MediaDesc getThumbnailMedia ()
     {
         return (_thumbMedia == null) ? getDefaultThumbnailMedia() : _thumbMedia;
     }
@@ -287,7 +286,7 @@ public abstract class Item implements Comparable<Item>, Streamable, IsSerializab
     /**
      * Returns our raw thumbnail media which may be null. Don't call this method.
      */
-    public ConstrainedMediaDesc getRawThumbnailMedia ()
+    public MediaDesc getRawThumbnailMedia ()
     {
         return _thumbMedia;
     }
@@ -295,7 +294,7 @@ public abstract class Item implements Comparable<Item>, Streamable, IsSerializab
     /**
      * Configures this item's thumbnail media.
      */
-    public void setThumbnailMedia (ConstrainedMediaDesc thumbMedia)
+    public void setThumbnailMedia (MediaDesc thumbMedia)
     {
         _thumbMedia = thumbMedia;
     }
@@ -312,7 +311,7 @@ public abstract class Item implements Comparable<Item>, Streamable, IsSerializab
     /**
      * Returns our raw furniture media which may be null. Don't call this method.
      */
-    public ConstrainedMediaDesc getRawFurniMedia ()
+    public MediaDesc getRawFurniMedia ()
     {
         return _furniMedia;
     }
@@ -320,7 +319,7 @@ public abstract class Item implements Comparable<Item>, Streamable, IsSerializab
     /**
      * Configures this item's furniture media.
      */
-    public void setFurniMedia (ConstrainedMediaDesc furniMedia)
+    public void setFurniMedia (MediaDesc furniMedia)
     {
         _furniMedia = furniMedia;
     }
@@ -330,7 +329,7 @@ public abstract class Item implements Comparable<Item>, Streamable, IsSerializab
      * return null if the primary media is null and overridden by something
      * else.
      */
-    public ConstrainedMediaDesc getPrimaryMedia ()
+    public MediaDesc getPrimaryMedia ()
     {
         return _furniMedia;
     }
@@ -338,7 +337,7 @@ public abstract class Item implements Comparable<Item>, Streamable, IsSerializab
     /**
      * Update the primary media, usually as a result of remixing.
      */
-    public void setPrimaryMedia (ConstrainedMediaDesc desc)
+    public void setPrimaryMedia (MediaDesc desc)
     {
         _furniMedia = desc;
     }
@@ -405,7 +404,7 @@ public abstract class Item implements Comparable<Item>, Streamable, IsSerializab
     /**
      * Returns the default thumbnail media for use if this item has no provided custom media.
      */
-    protected ConstrainedMediaDesc getDefaultThumbnailMedia ()
+    protected MediaDesc getDefaultThumbnailMedia ()
     {
         return getDefaultThumbnailMediaFor(getType());
     }
@@ -439,9 +438,9 @@ public abstract class Item implements Comparable<Item>, Streamable, IsSerializab
     }
 
     /** The media used to display this item's thumbnail representation. */
-    protected ConstrainedMediaDesc _thumbMedia;
+    protected MediaDesc _thumbMedia;
 
     /** The media used to display this item's furniture representation. */
-    protected ConstrainedMediaDesc _furniMedia;
+    protected MediaDesc _furniMedia;
 
 }

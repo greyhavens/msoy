@@ -14,41 +14,65 @@ public abstract class MediaDescImpl
 
     public MediaDescImpl (byte mimeType)
     {
-        this._mimeType = mimeType;
+        this(mimeType, NOT_CONSTRAINED);
+    }
+
+    /**
+     * Creates a media descriptor from the supplied configuration.
+     */
+    public MediaDescImpl (byte mimeType, byte constraint)
+    {
+        _mimeType = mimeType;
+        _constraint = constraint;
     }
 
     /** The MIME type of the media associated with this item. */
-    @Override public byte getMimeType ()
+    public byte getMimeType ()
     {
         return _mimeType;
     }
 
-    @Override public boolean isImage ()
+    public String getProxyMediaPath ()
+    {
+        throw new IllegalArgumentException("Not implemented");
+    }
+
+    public byte getConstraint ()
+    {
+        return _constraint;
+    }
+
+    public void setConstraint (byte constraint)
+    {
+        _constraint = constraint;
+    }
+
+    public boolean isImage ()
     {
         return MediaMimeTypes.isImage(getMimeType());
     }
 
-    @Override public boolean isSWF ()
+    public boolean isSWF ()
     {
         return (getMimeType() == MediaMimeTypes.APPLICATION_SHOCKWAVE_FLASH);
     }
 
-    @Override public boolean isAudio ()
+    public boolean isAudio ()
     {
         return MediaMimeTypes.isAudio(getMimeType());
     }
 
-    @Override public boolean isVideo ()
+    public boolean isVideo ()
     {
         return MediaMimeTypes.isVideo(getMimeType());
     }
 
-    @Override public boolean isExternal ()
+    public boolean isExternal ()
     {
         return MediaMimeTypes.isExternal(getMimeType());
     }
 
-    @Override public boolean hasFlashVisual ()
+    public boolean hasFlashVisual ()
     {
         switch (getMimeType()) {
         case MediaMimeTypes.IMAGE_PNG:
@@ -64,12 +88,12 @@ public abstract class MediaDescImpl
         }
     }
 
-    @Override public boolean isRemixed ()
+    public boolean isRemixed ()
     {
         return MediaMimeTypes.isRemixed(getMimeType());
     }
 
-    @Override public boolean isRemixable ()
+    public boolean isRemixable ()
     {
         return MediaMimeTypes.isRemixable(getMimeType());
     }
@@ -77,15 +101,19 @@ public abstract class MediaDescImpl
     @Override // from Object
     public int hashCode ()
     {
-        return getMimeType();
+        return (_mimeType * 43) + _constraint;
     }
 
 	@Override // from Object
 	public boolean equals (Object other)
 	{
-		return (other instanceof MediaDescImpl) &&
-			(this.getMimeType() == ((MediaDesc) other).getMimeType());
+		return (other instanceof MediaDesc) &&
+			(_mimeType == ((MediaDesc) other).getMimeType()) &&
+            (_constraint == ((MediaDesc) other).getConstraint());
+
 	}
 
     protected byte _mimeType;
+
+    protected byte _constraint;
 }

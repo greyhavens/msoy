@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.mail.gwt;
 
-import com.threerings.msoy.data.all.ConstrainedMediaDesc;
 import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.msoy.data.all.MediaDesc;
 
@@ -47,7 +46,7 @@ public class GameAwardPayload extends MailPayload
      * Creates a new payload with the supplied configuration.
      */
     public GameAwardPayload (int gameId, String gameName, byte awardType, String awardName,
-                             ConstrainedMediaDesc awardMedia)
+                             MediaDesc awardMedia)
     {
         this.gameId = gameId;
         this.gameName = gameName;

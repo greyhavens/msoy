@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.web.gwt;
 
-import com.threerings.msoy.data.all.ConstrainedMediaDesc;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MediaDescSize;
 
@@ -33,22 +32,22 @@ public class SharedMediaUtil
      */
     public static Dimensions resolveImageSize (MediaDesc desc, int width, int height)
     {
-        if (!(desc instanceof ConstrainedMediaDesc)) {
+        if (!(desc instanceof MediaDesc)) {
             return null;
         }
-        switch (((ConstrainedMediaDesc)desc).getConstraint()) {
-        case ConstrainedMediaDesc.HALF_HORIZONTALLY_CONSTRAINED:
+        switch (desc.getConstraint()) {
+        case MediaDesc.HALF_HORIZONTALLY_CONSTRAINED:
             return (width < MediaDescSize.THUMBNAIL_WIDTH) ?
                 new Dimensions(width + "px", "auto") : null;
 
-        case ConstrainedMediaDesc.HALF_VERTICALLY_CONSTRAINED:
+        case MediaDesc.HALF_VERTICALLY_CONSTRAINED:
             return (height < MediaDescSize.THUMBNAIL_HEIGHT) ?
                 new Dimensions("auto", height + "px") : null;
 
-        case ConstrainedMediaDesc.HORIZONTALLY_CONSTRAINED:
+        case MediaDesc.HORIZONTALLY_CONSTRAINED:
             return new Dimensions(width + "px", "auto");
 
-        case ConstrainedMediaDesc.VERTICALLY_CONSTRAINED:
+        case MediaDesc.VERTICALLY_CONSTRAINED:
             return new Dimensions("auto", height + "px");
 
         default:

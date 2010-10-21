@@ -21,10 +21,10 @@ import com.threerings.util.Name;
 public class VizMemberName extends MemberName
 {
     /** The default profile photo. */
-    public static final ConstrainedMediaDesc DEFAULT_PHOTO =
+    public static final MediaDesc DEFAULT_PHOTO =
         new StaticMediaDesc(MediaMimeTypes.IMAGE_PNG, "photo", "profile_photo",
                             // we know that we're 50x60
-                            ConstrainedMediaDesc.HALF_VERTICALLY_CONSTRAINED);
+                            MediaDesc.HALF_VERTICALLY_CONSTRAINED);
 
     /** For unserialization. */
     public VizMemberName ()

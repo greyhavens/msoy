@@ -5,7 +5,7 @@ package com.threerings.msoy.group.data.all;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-import com.threerings.msoy.data.all.ConstrainedMediaDesc;
+import com.threerings.msoy.data.all.MediaDesc;
 
 public class Medal
     implements IsSerializable, Comparable<Medal>
@@ -40,7 +40,7 @@ public class Medal
 
     /** The media of the medal icon.  It is assumed that it conforms to the width and height
      * constants defined in this class. */
-    public ConstrainedMediaDesc icon;
+    public MediaDesc icon;
 
     /**
      * An empty constructor for deserialization

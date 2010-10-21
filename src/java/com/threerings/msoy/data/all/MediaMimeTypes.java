@@ -1,7 +1,7 @@
 package com.threerings.msoy.data.all;
 
 /**
- * Mime-type specific utility for the {@link ConstrainedMediaDescImpl} family of classes.
+ * Mime-type specific utility for the {@link MediaDesc} family of classes.
  */
 public abstract class MediaMimeTypes
 {

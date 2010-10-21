@@ -11,8 +11,6 @@ import com.samskivert.util.ByteEnumUtil;
 
 import com.threerings.orth.scene.data.EntityMedia;
 
-import com.threerings.msoy.data.all.ConstrainedMediaDesc;
-import com.threerings.msoy.data.all.ConstrainedMediaDescImpl;
 import com.threerings.msoy.data.all.HashMediaDesc;
 
 import com.threerings.msoy.data.all.MediaDesc;
@@ -26,7 +24,7 @@ import com.threerings.msoy.item.data.all.MsoyItemType;
 public class SceneUtil
 {
     /**
-     * Creates a {@link com.threerings.msoy.data.all.ConstrainedMediaDescImpl} of the appropriate type based on the supplied hash and mime
+     * Creates a {@link MediaDesc} of the appropriate type based on the supplied hash and mime
      * type. The hash should previously have been created by calling {@link #flattenMediaDesc} on a
      * media descriptor.
      */
@@ -43,7 +41,7 @@ public class SceneUtil
     }
 
     /**
-     * Flattens the supplied {@link com.threerings.msoy.data.all.ConstrainedMediaDescImpl} into bytes that can later be decoded by
+     * Flattens the supplied {@link MediaDesc} into bytes that can later be decoded by
      * {@link #createMediaDesc} into the appropriate type of descriptor.
      */
     public static byte[] flattenMediaDesc (EntityMedia desc)
@@ -60,8 +58,8 @@ public class SceneUtil
             data.asIntBuffer().put(sdesc.getItemTypeCode().toByte());
             return data.array();
 
-        } else if (desc instanceof ConstrainedMediaDescImpl) {
-            return HashMediaDesc.unmakeHash((ConstrainedMediaDesc)desc);
+        } else if (desc instanceof MediaDesc) {
+            return HashMediaDesc.unmakeHash((MediaDesc)desc);
         } else {
             throw new IllegalArgumentException("Unknown media descriptor type: " + desc);
         }

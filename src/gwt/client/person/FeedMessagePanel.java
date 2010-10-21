@@ -59,7 +59,9 @@ public class FeedMessagePanel extends FocusPanel
                 if (page == Pages.WORLD && args.get(0, "").startsWith("s")) {
                     // snapshots are unconstrained at a set size; fake a width constraint for
                     // TINY_SIZE.
-                    md.constraint = MediaDesc.HORIZONTALLY_CONSTRAINED;
+                    if (md != null) {
+                        md.setConstraint(MediaDesc.HORIZONTALLY_CONSTRAINED);
+                    }
                     size = MediaDescSize.SNAPSHOT_TINY_SIZE;
                 }
                 return new WidgetWrapper(MediaUtil.createMediaView(md, size, clicker));

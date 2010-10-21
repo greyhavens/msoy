@@ -10,7 +10,7 @@ import org.junit.*;
 import com.google.common.collect.Lists;
 import com.samskivert.util.StringUtil;
 
-import com.threerings.msoy.data.all.ConstrainedMediaDesc;
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.person.gwt.AggregateFeedMessage;
@@ -437,7 +437,7 @@ public class FeedItemGeneratorUnitTest
             return simpleToString("link", "label", label, "page", page, "args", args);
         }
 
-        public Media createMedia (ConstrainedMediaDesc md, Pages page, Args args) {
+        public Media createMedia (MediaDesc md, Pages page, Args args) {
             calls.count();
             assertNotNull(md);
             assertNotNull(page);

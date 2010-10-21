@@ -7,7 +7,7 @@ import java.util.Date;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-import com.threerings.msoy.data.all.ConstrainedMediaDesc;
+import com.threerings.msoy.data.all.MediaDesc;
 
 /**
  * A contest as displayed on the contests page.
@@ -23,7 +23,7 @@ public class Contest
     public String contestId;
 
     /** The contest's optional icon (a thumbnail size image). */
-    public ConstrainedMediaDesc icon;
+    public MediaDesc icon;
 
     /** HTML for the name of the contest, optionally linking to another page */
     public String name;
