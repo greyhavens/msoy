@@ -3,9 +3,9 @@
 
 package com.threerings.msoy.edgame.gwt;
 
-import com.google.gwt.user.client.rpc.IsSerializable;
+import com.threerings.orth.data.MediaDesc;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.google.gwt.user.client.rpc.IsSerializable;
 
 /**
  * Contains the code and XML configuration for a game.

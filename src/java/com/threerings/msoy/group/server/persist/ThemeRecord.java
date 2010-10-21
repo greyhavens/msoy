@@ -11,9 +11,10 @@ import com.samskivert.depot.annotation.Entity;
 import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.expression.ColumnExp;
 
+import com.threerings.orth.data.MediaDesc;
+
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.HashMediaDesc;
-import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.Theme;
 
 /**

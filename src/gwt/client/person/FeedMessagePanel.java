@@ -19,7 +19,8 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.InlinePanel;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.orth.data.MediaDesc;
+
 import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.person.gwt.FeedMessage;
 import com.threerings.msoy.person.gwt.FeedItemGenerator;

@@ -34,7 +34,7 @@ import com.threerings.web.gwt.ServiceException;
 
 import com.threerings.msoy.admin.server.persist.MediaBlacklistRepository;
 import com.threerings.msoy.data.all.HashMediaDesc;
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.orth.data.MediaDesc;
 import com.threerings.msoy.data.all.MediaMimeTypes;
 import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.server.ServerConfig;

@@ -15,8 +15,9 @@ import com.samskivert.depot.expression.ColumnExp;
 
 import com.google.common.base.Function;
 
+import com.threerings.orth.data.MediaDesc;
+
 import com.threerings.msoy.data.all.HashMediaDesc;
-import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.group.data.all.Medal;
 
 @Entity

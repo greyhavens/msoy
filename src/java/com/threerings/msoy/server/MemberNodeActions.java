@@ -20,6 +20,8 @@ import com.threerings.whirled.server.SceneSender;
 import com.threerings.stats.data.Stat;
 import com.threerings.stats.data.StatModifier;
 
+import com.threerings.orth.data.MediaDesc;
+
 import com.threerings.msoy.badge.data.all.EarnedBadge;
 import com.threerings.msoy.badge.data.all.InProgressBadge;
 
@@ -33,7 +35,6 @@ import com.threerings.msoy.data.MsoyTokenRing;
 import com.threerings.msoy.data.MsoyUserOccupantInfo;
 
 import com.threerings.msoy.data.all.FriendEntry;
-import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.game.data.PlayerObject;

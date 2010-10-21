@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.data.all;
 
+import com.threerings.orth.data.MediaDesc;
+
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 /**

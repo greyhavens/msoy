@@ -15,7 +15,8 @@ import com.threerings.util.Name;
 import com.threerings.whirled.data.SceneModel;
 import com.threerings.whirled.spot.data.Portal;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.orth.data.MediaDesc;
+
 import com.threerings.msoy.data.all.MediaMimeTypes;
 import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.DefaultItemMediaDesc;

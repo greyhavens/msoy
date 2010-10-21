@@ -11,7 +11,8 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.threerings.gwt.ui.SmartTable;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.orth.data.MediaDesc;
+
 import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.data.all.Theme;
 import com.threerings.msoy.group.data.all.Group;

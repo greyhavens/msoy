@@ -12,7 +12,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 import com.threerings.web.gwt.ServiceException;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.orth.data.MediaDesc;
 import com.threerings.msoy.facebook.gwt.FacebookInfo;
 import com.threerings.msoy.facebook.gwt.FeedThumbnail;
 

@@ -3,7 +3,8 @@
 
 package com.threerings.msoy.mail.gwt;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.orth.data.MediaDesc;
+
 import com.threerings.msoy.item.data.all.ItemIdent;
 
 /**

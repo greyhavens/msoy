@@ -5,7 +5,8 @@ package com.threerings.msoy.room.server;
 
 import javax.servlet.http.HttpServletResponse;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.orth.data.MediaDesc;
+
 import com.threerings.msoy.web.server.UploadUtil.MediaInfo;
 
 import com.threerings.msoy.data.all.HashMediaDesc;

@@ -7,7 +7,7 @@ import java.util.Date;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.orth.data.MediaDesc;
 
 /**
  * Photo gallery details.

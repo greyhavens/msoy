@@ -15,8 +15,9 @@ import com.google.gwt.user.client.ui.HTML;
 
 import com.threerings.gwt.ui.SmartTable;
 
+import com.threerings.orth.data.MediaDesc;
+
 import com.threerings.msoy.data.all.DeploymentConfig;
-import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 

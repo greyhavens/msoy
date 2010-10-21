@@ -21,7 +21,7 @@ import com.samskivert.util.ByteEnumUtil;
 import com.samskivert.util.CollectionUtil;
 import com.samskivert.util.StringUtil;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.orth.data.MediaDesc;
 import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.util.MessageBundle;
 
@@ -51,6 +51,7 @@ import com.threerings.msoy.person.server.persist.ProfileRepository;
 import com.threerings.msoy.room.data.RoomCodes;
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
 import com.threerings.msoy.room.server.persist.SceneRecord;
+
 import com.threerings.orth.scene.data.EntityMedia;
 
 import static com.threerings.msoy.Log.log;

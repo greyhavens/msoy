@@ -3,11 +3,12 @@
 
 package client.room;
 
+import com.threerings.orth.data.MediaDesc;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.room.gwt.RoomInfo;
 import com.threerings.msoy.web.gwt.Pages;
 

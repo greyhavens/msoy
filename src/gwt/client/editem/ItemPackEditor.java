@@ -6,7 +6,7 @@ package client.editem;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.CheckBox;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.orth.data.MediaDesc;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemPack;
 

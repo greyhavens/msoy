@@ -19,9 +19,10 @@ import com.samskivert.depot.annotation.FullTextIndex;
 import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.expression.ColumnExp;
 
+import com.threerings.orth.data.MediaDesc;
+
 import com.threerings.msoy.data.all.Award;
 import com.threerings.msoy.data.all.HashMediaDesc;
-import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.Award.AwardType;
 import com.threerings.msoy.profile.gwt.Profile;

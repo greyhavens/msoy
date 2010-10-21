@@ -13,8 +13,9 @@ import com.samskivert.util.ByteEnum;
 import com.samskivert.util.ByteEnumUtil;
 import com.threerings.io.Streamable;
 
+import com.threerings.orth.data.MediaDesc;
+
 import com.threerings.msoy.data.all.GroupName;
-import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MediaMimeTypes;
 import com.threerings.msoy.data.all.StaticMediaDesc;
 import com.threerings.msoy.fora.gwt.ForumThread;

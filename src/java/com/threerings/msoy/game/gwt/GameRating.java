@@ -5,7 +5,7 @@ package com.threerings.msoy.game.gwt;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.orth.data.MediaDesc;
 
 /**
  * Contains information about an an implicit user's rating for a (also included) game.

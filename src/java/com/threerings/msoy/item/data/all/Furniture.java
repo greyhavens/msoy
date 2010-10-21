@@ -3,7 +3,7 @@
 
 package com.threerings.msoy.item.data.all;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.orth.data.MediaDesc;
 
 /**
  * Represents a piece of furniture (any prop really) that a user can place into a virtual world

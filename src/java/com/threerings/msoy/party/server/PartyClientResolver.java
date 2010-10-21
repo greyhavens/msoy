@@ -8,7 +8,8 @@ import com.google.inject.Inject;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.server.ClientResolver;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.orth.data.MediaDesc;
+
 import com.threerings.msoy.data.all.VizMemberName;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;

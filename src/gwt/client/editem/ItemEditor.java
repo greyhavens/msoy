@@ -33,7 +33,7 @@ import com.threerings.gwt.util.StringUtil;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.HashMediaDesc;
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.orth.data.MediaDesc;
 import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.data.all.MediaMimeTypes;
 import com.threerings.msoy.item.data.all.Item;

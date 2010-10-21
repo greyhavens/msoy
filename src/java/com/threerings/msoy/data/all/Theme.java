@@ -7,6 +7,8 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.io.SimpleStreamableObject;
 
+import com.threerings.orth.data.MediaDesc;
+
 /**
  *  Contains the definition of a Theme.
  */

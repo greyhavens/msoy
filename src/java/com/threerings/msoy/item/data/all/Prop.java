@@ -3,7 +3,7 @@
 
 package com.threerings.msoy.item.data.all;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.orth.data.MediaDesc;
 
 /**
  * Contains the runtime data for a Prop item. A prop is smart furniture that is associated with an

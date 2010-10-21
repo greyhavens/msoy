@@ -10,7 +10,7 @@ import org.junit.*;
 import com.google.common.collect.Lists;
 import com.samskivert.util.StringUtil;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.orth.data.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.person.gwt.AggregateFeedMessage;

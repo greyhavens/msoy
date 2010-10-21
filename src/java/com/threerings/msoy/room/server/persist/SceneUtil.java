@@ -13,7 +13,7 @@ import com.threerings.orth.scene.data.EntityMedia;
 
 import com.threerings.msoy.data.all.HashMediaDesc;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.orth.data.MediaDesc;
 import com.threerings.msoy.item.data.all.DefaultItemMediaDesc;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MsoyItemType;
@@ -24,7 +24,7 @@ import com.threerings.msoy.item.data.all.MsoyItemType;
 public class SceneUtil
 {
     /**
-     * Creates a {@link MediaDesc} of the appropriate type based on the supplied hash and mime
+     * Creates a {@link com.threerings.orth.data.MediaDesc} of the appropriate type based on the supplied hash and mime
      * type. The hash should previously have been created by calling {@link #flattenMediaDesc} on a
      * media descriptor.
      */

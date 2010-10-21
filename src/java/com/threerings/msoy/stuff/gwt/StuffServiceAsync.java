@@ -3,9 +3,10 @@
 
 package com.threerings.msoy.stuff.gwt;
 
+import com.threerings.orth.data.MediaDesc;
+
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;

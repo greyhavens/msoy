@@ -3,12 +3,13 @@
 
 package client.groups;
 
+import com.threerings.orth.data.MediaDesc;
+
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.SimplePanel;
 
-import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MediaDescSize;
 
 import client.ui.MsoyUI;

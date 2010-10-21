@@ -9,7 +9,8 @@ import com.threerings.io.SimpleStreamableObject;
 
 import com.threerings.presents.dobj.DSet;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.orth.data.MediaDesc;
+
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.MsoyItemType;
 

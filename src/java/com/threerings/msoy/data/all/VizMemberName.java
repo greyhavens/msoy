@@ -5,6 +5,8 @@ package com.threerings.msoy.data.all;
 
 import com.threerings.util.Name;
 
+import com.threerings.orth.data.MediaDesc;
+
 /**
  * A member name and profile photo all rolled into one!
  *

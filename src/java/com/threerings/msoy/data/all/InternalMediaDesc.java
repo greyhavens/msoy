@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.data.all;
 
+import com.threerings.orth.data.MediaDesc;
+
 /**
  * Provides a "faked" media descriptor for media served internally at arbitrary relative URLs.
  * NOTE: Unless {@link MediaDesc} and {@link StaticMediaDesc}, this class does not exist in the

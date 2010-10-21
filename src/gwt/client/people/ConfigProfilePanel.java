@@ -17,7 +17,8 @@ import com.threerings.gwt.ui.FloatPanel;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.util.DateUtil;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.orth.data.MediaDesc;
+
 import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.profile.gwt.Profile;

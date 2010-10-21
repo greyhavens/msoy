@@ -21,8 +21,9 @@ import com.samskivert.depot.clause.OrderBy.Order;
 import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.expression.SQLExpression;
 
+import com.threerings.orth.data.MediaDesc;
+
 import com.threerings.msoy.data.all.HashMediaDesc;
-import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Decor;
 
 import com.threerings.msoy.room.data.MsoyLocation;

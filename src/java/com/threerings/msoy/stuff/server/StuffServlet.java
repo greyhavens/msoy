@@ -22,11 +22,12 @@ import com.samskivert.util.StringUtil;
 
 import com.threerings.web.gwt.ServiceException;
 
+import com.threerings.orth.data.MediaDesc;
+
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.all.HashMediaDesc;
 
-import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.server.StatLogic;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.TagNameRecord;

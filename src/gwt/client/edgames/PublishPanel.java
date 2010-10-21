@@ -12,7 +12,7 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.util.DateUtil;
 
 import com.threerings.msoy.data.all.HashMediaDesc;
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.orth.data.MediaDesc;
 import com.threerings.msoy.data.all.MediaMimeTypes;
 import com.threerings.msoy.edgame.gwt.EditGameService;
 import com.threerings.msoy.edgame.gwt.EditGameServiceAsync;

@@ -35,9 +35,10 @@ import com.threerings.gwt.ui.AbsoluteCSSPanel;
 import com.threerings.gwt.ui.Anchor;
 import com.threerings.gwt.ui.WidgetUtil;
 
+import com.threerings.orth.data.MediaDesc;
+
 import com.threerings.msoy.data.all.GwtAuthCodes;
 
-import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.WebCreds;

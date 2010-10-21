@@ -3,7 +3,7 @@
 
 package com.threerings.msoy.item.data.all;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.orth.data.MediaDesc;
 
 /**
  * Represents an interactive piece of furniture. Something that lives permanently in a room but

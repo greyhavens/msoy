@@ -9,7 +9,8 @@ import com.samskivert.util.ByteEnumUtil;
 
 import com.threerings.io.Streamable;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.orth.data.MediaDesc;
+
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.web.gwt.MemberCard;

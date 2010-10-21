@@ -7,7 +7,7 @@ import java.util.Comparator;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.orth.data.MediaDesc;
 
 /**
  * Contains the bare bones info we show about a game on the arcade page.

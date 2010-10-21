@@ -6,7 +6,7 @@ package com.threerings.msoy.item.gwt;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.msoy.data.all.GroupName;
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.orth.data.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.money.data.all.Currency;

@@ -3,7 +3,7 @@
 
 package com.threerings.msoy.item.data.all;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.orth.data.MediaDesc;
 
 /**
  * Set of room decor information, including room settings and a background bitmap.

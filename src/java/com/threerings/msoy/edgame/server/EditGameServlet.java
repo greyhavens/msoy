@@ -34,7 +34,7 @@ import com.samskivert.util.StringUtil;
 
 import com.threerings.parlor.rating.server.persist.RatingRepository;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.orth.data.MediaDesc;
 import com.threerings.msoy.data.all.MediaDescUtil;
 import com.threerings.msoy.data.all.MediaMimeTypes;
 import com.threerings.msoy.item.data.ItemCodes;

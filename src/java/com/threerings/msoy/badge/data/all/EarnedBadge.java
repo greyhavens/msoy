@@ -3,7 +3,8 @@
 
 package com.threerings.msoy.badge.data.all;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.orth.data.MediaDesc;
+
 import com.threerings.msoy.data.all.MediaMimeTypes;
 import com.threerings.msoy.data.all.StaticMediaDesc;
 

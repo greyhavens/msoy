@@ -9,7 +9,8 @@ import com.threerings.presents.data.ClientObject;
 
 import com.threerings.crowd.server.CrowdClientResolver;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.orth.data.MediaDesc;
+
 import com.threerings.msoy.money.data.all.MemberMoney;
 import com.threerings.msoy.money.server.MoneyLogic;
 import com.threerings.msoy.person.server.persist.ProfileRecord;

@@ -15,8 +15,9 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 
 import com.threerings.gwt.ui.SmartFileUpload;
 
+import com.threerings.orth.data.MediaDesc;
+
 import com.threerings.msoy.data.all.HashMediaDesc;
-import com.threerings.msoy.data.all.MediaDesc;
 
 import client.shell.CShell;
 import client.shell.ShellMessages;

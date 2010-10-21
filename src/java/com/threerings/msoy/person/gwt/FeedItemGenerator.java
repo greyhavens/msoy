@@ -7,10 +7,11 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
+import com.threerings.orth.data.MediaDesc;
+
 import com.threerings.msoy.badge.data.all.Badge;
 import com.threerings.msoy.badge.data.all.EarnedBadge;
 import com.threerings.msoy.data.all.HashMediaDesc;
-import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;

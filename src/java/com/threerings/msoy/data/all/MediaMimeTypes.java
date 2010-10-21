@@ -1,7 +1,9 @@
 package com.threerings.msoy.data.all;
 
+import com.threerings.orth.data.MediaDesc;
+
 /**
- * Mime-type specific utility for the {@link MediaDesc} family of classes.
+ * Mime-type specific utility for the {@link com.threerings.orth.data.MediaDesc} family of classes.
  */
 public abstract class MediaMimeTypes
 {

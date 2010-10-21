@@ -29,7 +29,7 @@ import com.threerings.cron.server.CronLogic;
 
 import com.threerings.web.gwt.ServiceException;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.orth.data.MediaDesc;
 import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.presents.annotation.BlockingThread;
 

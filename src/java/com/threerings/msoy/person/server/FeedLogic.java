@@ -19,9 +19,10 @@ import com.samskivert.util.StringUtil;
 
 import com.threerings.presents.annotation.BlockingThread;
 
+import com.threerings.orth.data.MediaDesc;
+
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.HashMediaDesc;
-import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;

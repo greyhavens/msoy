@@ -7,7 +7,7 @@ import com.google.gwt.user.client.DOM;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.SimplePanel;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.orth.data.MediaDesc;
 import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.web.gwt.Pages;
 

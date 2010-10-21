@@ -3,9 +3,10 @@
 
 package client.editem;
 
+import com.threerings.orth.data.MediaDesc;
+
 import com.google.gwt.core.client.GWT;
 
-import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Document;
 import com.threerings.msoy.item.data.all.Item;
 

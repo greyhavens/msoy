@@ -3,6 +3,8 @@
 
 package client.groups;
 
+import com.threerings.orth.data.MediaDesc;
+
 import client.ui.MsoyUI;
 import client.util.MediaUtil;
 
@@ -11,7 +13,6 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MediaDescSize;
 
 /**

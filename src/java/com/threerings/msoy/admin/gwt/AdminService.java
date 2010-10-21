@@ -13,7 +13,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 import com.threerings.gwt.util.PagedResult;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.orth.data.MediaDesc;
 import com.threerings.msoy.web.gwt.Contest;
 import com.threerings.msoy.web.gwt.Promotion;
 import com.threerings.web.gwt.ServiceException;

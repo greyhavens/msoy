@@ -43,8 +43,9 @@ import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.whirled.data.SceneUpdate;
 
+import com.threerings.orth.data.MediaDesc;
+
 import com.threerings.msoy.data.all.HashMediaDesc;
-import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.server.persist.HotnessConfig;
 import com.threerings.msoy.server.persist.RatingRecord;
 import com.threerings.msoy.server.persist.RatingRepository;

@@ -9,7 +9,8 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.io.Streamable;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.orth.data.MediaDesc;
+
 import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.fora.gwt.ForumThread;

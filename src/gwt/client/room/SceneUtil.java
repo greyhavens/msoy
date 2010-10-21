@@ -3,6 +3,8 @@
 
 package client.room;
 
+import com.threerings.orth.data.MediaDesc;
+
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -12,7 +14,6 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
-import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.data.all.MediaMimeTypes;
 import com.threerings.msoy.data.all.StaticMediaDesc;

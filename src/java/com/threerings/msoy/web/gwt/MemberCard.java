@@ -3,10 +3,11 @@
 
 package com.threerings.msoy.web.gwt;
 
+import com.threerings.orth.data.MediaDesc;
+
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.msoy.data.all.Friendship;
-import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VizMemberName;
 

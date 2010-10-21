@@ -89,7 +89,7 @@ import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.MsoyUserObject;
 import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.all.DeploymentConfig;
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.orth.data.MediaDesc;
 import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.server.BootablePlaceManager;
 import com.threerings.msoy.server.MemberLocal;

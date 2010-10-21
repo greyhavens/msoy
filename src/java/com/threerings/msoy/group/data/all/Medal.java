@@ -3,9 +3,9 @@
 
 package com.threerings.msoy.group.data.all;
 
-import com.google.gwt.user.client.rpc.IsSerializable;
+import com.threerings.orth.data.MediaDesc;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.google.gwt.user.client.rpc.IsSerializable;
 
 public class Medal
     implements IsSerializable, Comparable<Medal>

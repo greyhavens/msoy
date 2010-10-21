@@ -5,9 +5,9 @@ package com.threerings.msoy.game.data.all;
 
 import com.threerings.io.SimpleStreamableObject;
 
-import com.google.gwt.user.client.rpc.IsSerializable;
+import com.threerings.orth.data.MediaDesc;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.google.gwt.user.client.rpc.IsSerializable;
 
 /**
  * Contains information on a trophy held by a player.

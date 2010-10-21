@@ -25,8 +25,9 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.EnterClickAdapter;
 import com.threerings.gwt.ui.SmartTable;
 
+import com.threerings.orth.data.MediaDesc;
+
 import com.threerings.msoy.data.all.CharityInfo;
-import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.gwt.AccountInfo;

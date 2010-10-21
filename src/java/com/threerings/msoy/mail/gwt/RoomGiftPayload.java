@@ -3,7 +3,7 @@
 
 package com.threerings.msoy.mail.gwt;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.orth.data.MediaDesc;
 
 /**
  * Contains information on a room gifted from one player to another.

@@ -20,7 +20,8 @@ import org.gwt.advanced.client.ui.widget.DatePicker;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.util.DateUtil;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.orth.data.MediaDesc;
+
 import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.web.gwt.Promotion;
 
