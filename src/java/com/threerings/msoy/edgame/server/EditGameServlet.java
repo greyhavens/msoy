@@ -34,6 +34,7 @@ import com.samskivert.util.StringUtil;
 
 import com.threerings.parlor.rating.server.persist.RatingRepository;
 
+import com.threerings.msoy.data.all.MediaMimeTypes;
 import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.item.data.all.GameItem;
 import com.threerings.msoy.item.data.all.MsoyItemType;
@@ -196,7 +197,7 @@ public class EditGameServlet extends MsoyServiceServlet
         grec.description = "";
         grec.isAVRG = isAVRG;
         grec.thumbMediaHash = HashMediaDesc.unmakeHash(thumbMedia);
-        grec.thumbMimeType = MediaDesc.unmakeMimeType(thumbMedia);
+        grec.thumbMimeType = MediaMimeTypes.unmakeMimeType(thumbMedia);
         grec.thumbConstraint = MediaDesc.unmakeConstraint(thumbMedia);
         grec.blingPool = true;
         _mgameRepo.createGame(grec);
@@ -207,7 +208,7 @@ public class EditGameServlet extends MsoyServiceServlet
         crec.config = "<game>" +
             "<match type=\"0\"><min_seats>1</min_seats><max_seats>1</max_seats></match></game>";
         crec.clientMediaHash = HashMediaDesc.unmakeHash(clientCode);
-        crec.clientMimeType = MediaDesc.unmakeMimeType(clientCode);
+        crec.clientMimeType = MediaMimeTypes.unmakeMimeType(clientCode);
         _mgameRepo.updateGameCode(crec);
 
         return grec.gameId;

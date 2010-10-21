@@ -220,10 +220,10 @@ public class GameInfoRecord extends PersistentRecord
         this.isAVRG = info.isAVRG; // TODO: don't allow this to be changed?
         this.description = info.description;
         this.thumbMediaHash = HashMediaDesc.unmakeHash(info.thumbMedia);
-        this.thumbMimeType = MediaDesc.unmakeMimeType(info.thumbMedia);
+        this.thumbMimeType = MediaMimeTypes.unmakeMimeType(info.thumbMedia);
         this.thumbConstraint = MediaDesc.unmakeConstraint(info.thumbMedia);
         this.shotMediaHash = HashMediaDesc.unmakeHash(info.shotMedia);
-        this.shotMimeType = MediaDesc.unmakeMimeType(info.shotMedia);
+        this.shotMimeType = MediaMimeTypes.unmakeMimeType(info.shotMedia);
         this.groupId = info.groupId;
         this.shopTag = info.shopTag;
     }

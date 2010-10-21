@@ -12,7 +12,7 @@ import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.expression.ColumnExp;
 
 import com.threerings.msoy.data.all.HashMediaDesc;
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaMimeTypes;
 import com.threerings.msoy.edgame.gwt.GameCode;
 
 /**
@@ -47,11 +47,11 @@ public class GameCodeRecord extends PersistentRecord
         record.isDevelopment = code.isDevelopment;
         record.config = code.config;
         record.clientMediaHash = HashMediaDesc.unmakeHash(code.clientMedia);
-        record.clientMimeType = MediaDesc.unmakeMimeType(code.clientMedia);
+        record.clientMimeType = MediaMimeTypes.unmakeMimeType(code.clientMedia);
         record.serverMediaHash = HashMediaDesc.unmakeHash(code.serverMedia);
-        record.serverMimeType = MediaDesc.unmakeMimeType(code.serverMedia);
+        record.serverMimeType = MediaMimeTypes.unmakeMimeType(code.serverMedia);
         record.splashMediaHash = HashMediaDesc.unmakeHash(code.splashMedia);
-        record.splashMimeType = MediaDesc.unmakeMimeType(code.splashMedia);
+        record.splashMimeType = MediaMimeTypes.unmakeMimeType(code.splashMedia);
         return record;
     }
 

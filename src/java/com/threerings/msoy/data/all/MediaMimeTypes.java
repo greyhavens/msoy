@@ -264,4 +264,12 @@ public abstract class MediaMimeTypes
     {
         return (mimeType == APPLICATION_ZIP);
     }
+
+    /**
+     * Returns the supplied media descriptor's mime type or 0 if the descriptor is null.
+     */
+    public static byte unmakeMimeType (MediaDesc desc)
+    {
+        return (desc == null) ? INVALID_MIME_TYPE : desc.mimeType;
+    }
 }

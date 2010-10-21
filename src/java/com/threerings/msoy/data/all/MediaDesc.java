@@ -61,14 +61,6 @@ public abstract class MediaDesc extends MediaDescBase implements Streamable, IsS
     }
 
     /**
-     * Returns the supplied media descriptor's mime type or 0 if the descriptor is null.
-     */
-    public static byte unmakeMimeType (MediaDesc desc)
-    {
-        return (desc == null) ? MediaMimeTypes.INVALID_MIME_TYPE : desc.mimeType;
-    }
-
-    /**
      * Returns the supplied media descriptor's constraint or 0 if the descriptor is null.
      */
     public static byte unmakeConstraint (MediaDesc desc)
