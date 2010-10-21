@@ -12,6 +12,7 @@
   <inherits name="com.threerings.gwt.Utils"/>
 
   <inherits name="com.threerings.orth.Orth"/>
+  <inherits name="com.threerings.orth.Scene"/>
 
   <source path="org/gwtwidgets/client"/>
   <source path="com/threerings/io"/>
