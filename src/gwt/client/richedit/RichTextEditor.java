@@ -65,7 +65,7 @@ public class RichTextEditor extends FlowPanel
     @Override // from MessageEditor.Panel
     public void selectAll ()
     {
-        _text.getBasicFormatter().selectAll();
+        _text.getFormatter().selectAll();
     }
 
     @Override // from MessageEditor.Panel
