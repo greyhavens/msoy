@@ -60,6 +60,43 @@ public abstract class MediaDescBase implements IsSerializable, EntityMedia
         return MediaMimeTypes.isExternal(mimeType);
     }
 
+
+    /**
+     * Return true if this media has a visual component that can be shown in
+     * flash.
+     */
+    public boolean hasFlashVisual ()
+    {
+        switch (mimeType) {
+        case MediaMimeTypes.IMAGE_PNG:
+        case MediaMimeTypes.IMAGE_JPEG:
+        case MediaMimeTypes.IMAGE_GIF:
+        case MediaMimeTypes.VIDEO_FLASH:
+        case MediaMimeTypes.EXTERNAL_YOUTUBE:
+        case MediaMimeTypes.APPLICATION_SHOCKWAVE_FLASH:
+            return true;
+
+        default:
+            return false;
+        }
+    }
+
+    /**
+     * Is this a zip of some sort?
+     */
+    public boolean isRemixed ()
+    {
+        return MediaMimeTypes.isRemixed(mimeType);
+    }
+
+    /**
+     * Is this media remixable?
+     */
+    public boolean isRemixable ()
+    {
+        return MediaMimeTypes.isRemixable(mimeType);
+    }
+    
     @Override // from Object
     public int hashCode ()
     {
