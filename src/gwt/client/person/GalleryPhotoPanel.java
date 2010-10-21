@@ -94,7 +94,7 @@ public class GalleryPhotoPanel extends FlowPanel
         } else if (height > 0) {
             constraint = MediaDesc.VERTICALLY_CONSTRAINED;
         }
-        photo.photoMedia.setConstraint(constraint);
+        photo.photoMedia = photo.photoMedia.newWithConstraint(constraint);
 
         // clear the photo onclick
         ClickHandler onClick = new ClickHandler() {

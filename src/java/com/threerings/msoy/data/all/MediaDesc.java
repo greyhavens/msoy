@@ -1,7 +1,9 @@
+//
+// $Id: $
+
 package com.threerings.msoy.data.all;
 
-import com.threerings.orth.scene.data.EntityMedia;//
-// $Id: $
+import com.threerings.orth.scene.data.EntityMedia;
 
 public interface MediaDesc extends EntityMedia
 {
@@ -28,8 +30,8 @@ public interface MediaDesc extends EntityMedia
     /** The size constraint on this media, if any. See {@link #computeConstraint}. */
     byte getConstraint ();
 
-    /** Set the size constraint on this media. TODO: Should this class be immutable? */
-    void setConstraint (byte constraint);
+    /** Create and return a new MediaDesc, identical except with the new constraint. */
+    MediaDesc newWithConstraint (byte constraint);
 
     /**
      * Is this media merely an image type?

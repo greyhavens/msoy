@@ -126,7 +126,7 @@ public class CodeEditorPanel extends GameEditorTable
             MediaDescSize.GAME_SHOT_SIZE, GameCode.SPLASH_MEDIA, code.splashMedia) {
             public void setMedia (MediaDesc media) {
                 if (media != null) {
-                    media.setConstraint(MediaDesc.HORIZONTALLY_CONSTRAINED);
+                    media = media.newWithConstraint(MediaDesc.HORIZONTALLY_CONSTRAINED);
                 }
                 super.setMedia(media);
             }

@@ -166,7 +166,7 @@ public class Theme extends SimpleStreamableObject
     protected static MediaDesc getDefaultThemeLogoMedia ()
     {
         return new InternalMediaDesc(DEFAULT_LOGO_URL, MediaMimeTypes.IMAGE_PNG,
-            Theme.LOGO_MEDIA, MediaDesc.HORIZONTALLY_CONSTRAINED);
+            MediaDesc.HORIZONTALLY_CONSTRAINED);
     }
 
     /**
@@ -175,7 +175,7 @@ public class Theme extends SimpleStreamableObject
     protected static MediaDesc getDefaultThemeFacebookLogoMedia ()
     {
         return new InternalMediaDesc(DEFAULT_FACEBOOK_LOGO_URL, MediaMimeTypes.IMAGE_PNG,
-            Theme.FACEBOOK_LOGO_MEDIA, MediaDesc.HORIZONTALLY_CONSTRAINED);
+            MediaDesc.HORIZONTALLY_CONSTRAINED);
     }
 
     /**
@@ -184,7 +184,7 @@ public class Theme extends SimpleStreamableObject
     protected static MediaDesc getDefaultThemeNavButtonMedia ()
     {
         return new InternalMediaDesc(DEFAULT_NAV_URL, MediaMimeTypes.IMAGE_PNG,
-            Theme.NAV_MEDIA, MediaDesc.HORIZONTALLY_CONSTRAINED);
+            MediaDesc.HORIZONTALLY_CONSTRAINED);
     }
 
     /**
@@ -193,7 +193,7 @@ public class Theme extends SimpleStreamableObject
     protected static MediaDesc getDefaultThemeNavSelButtonMedia ()
     {
         return new InternalMediaDesc(DEFAULT_NAV_SEL_URL, MediaMimeTypes.IMAGE_PNG,
-            Theme.NAV_MEDIA, MediaDesc.HORIZONTALLY_CONSTRAINED);
+            MediaDesc.HORIZONTALLY_CONSTRAINED);
     }
 
     protected static Theme createDefaultTheme ()

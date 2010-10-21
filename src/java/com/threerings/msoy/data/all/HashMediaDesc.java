@@ -186,6 +186,12 @@ public class HashMediaDesc extends MediaDescImpl
         return HashMediaDesc.getMediaPath(hash, getMimeType());
     }
 
+    // from MediaDesc
+    public MediaDesc newWithConstraint (byte constraint)
+    {
+        return new HashMediaDesc(hash, getMimeType(), constraint);
+    }
+
     public String getProxyMediaPath ()
     {
         return getMediaPath(DeploymentConfig.PROXY_PREFIX, hash, getMimeType());

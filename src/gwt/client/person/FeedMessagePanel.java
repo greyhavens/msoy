@@ -60,7 +60,7 @@ public class FeedMessagePanel extends FocusPanel
                     // snapshots are unconstrained at a set size; fake a width constraint for
                     // TINY_SIZE.
                     if (md != null) {
-                        md.setConstraint(MediaDesc.HORIZONTALLY_CONSTRAINED);
+                        md = md.newWithConstraint(MediaDesc.HORIZONTALLY_CONSTRAINED);
                     }
                     size = MediaDescSize.SNAPSHOT_TINY_SIZE;
                 }

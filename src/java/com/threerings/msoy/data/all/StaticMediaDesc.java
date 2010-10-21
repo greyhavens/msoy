@@ -40,6 +40,12 @@ public class StaticMediaDesc extends MediaDescImpl
         return _itemType;
     }
 
+    // from MediaDesc
+    public MediaDesc newWithConstraint (byte constraint)
+    {
+        return new StaticMediaDesc(getMimeType(), _itemType, _mediaType, constraint);
+    }
+
     /**
      * Returns the media type for which we're obtaining the static default.
      */

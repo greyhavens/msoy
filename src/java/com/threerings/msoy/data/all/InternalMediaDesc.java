@@ -18,18 +18,24 @@ public class InternalMediaDesc extends MediaDescImpl
     /**
      * Creates a configured static media descriptor.
      */
-    public InternalMediaDesc (String path, byte mimeType, String mediaType)
+    public InternalMediaDesc (String path, byte mimeType)
     {
-        this(path, mimeType, mediaType, NOT_CONSTRAINED);
+        this(path, mimeType, NOT_CONSTRAINED);
     }
 
     /**
      * Creates a configured static media descriptor.
      */
-    public InternalMediaDesc (String path, byte mimeType, String mediaType, byte constraint)
+    public InternalMediaDesc (String path, byte mimeType, byte constraint)
     {
         super(mimeType, constraint);
         _path = path;
+    }
+
+    // from MediaDesc
+    public MediaDesc newWithConstraint (byte constraint)
+    {
+        return new InternalMediaDesc(_path, getMimeType(), constraint);
     }
 
     public String getMediaPath ()
