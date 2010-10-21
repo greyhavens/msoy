@@ -5,7 +5,7 @@ package com.threerings.msoy.map.data {
 
 import com.adobe.serialization.json.*;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.msoy.data.all.MediaDescBase;
 import com.threerings.msoy.data.all.MediaMimeTypes;
 import com.threerings.msoy.data.all.StaticMediaDesc;
@@ -41,8 +41,8 @@ public class Whirled
         whirled.groupId = json.groupId;
         whirled.name = json.name;
         if (json.logoHash != null) {
-            whirled.logo = new MediaDescBase(
-                MediaDescBase.stringToHash(json.logoHash), int(json.logoType));
+            whirled.logo = new HashMediaDesc(
+                HashMediaDesc.stringToHash(json.logoHash), int(json.logoType));
         } else {
             whirled.logo = new StaticMediaDesc(
                 MediaMimeTypes.IMAGE_PNG, "photo", "group_logo");
@@ -57,7 +57,7 @@ public class Whirled
         var whirled :Whirled = new Whirled();
         var bit :Array = RandomUtil.pickRandom(DEBUG_WHIRLEDS) as Array;
         whirled.name = String(bit[0]);
-        whirled.logo = new MediaDesc(MediaDescBase.stringToHash(String(bit[1])), 10);
+        whirled.logo = new HashMediaDesc(HashMediaDesc.stringToHash(String(bit[1])), 10);
         whirled.population = rnd.nextInt(1000);
         return whirled;
     }
