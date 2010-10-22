@@ -105,6 +105,7 @@
          <path-element>../dist/lib/nenyalib-0.0-SNAPSHOT.swc</path-element>
          <path-element>../dist/lib/vilyalib-0.0-SNAPSHOT.swc</path-element>
          <path-element>../dist/lib/whirledlib-0.0-SNAPSHOT.swc</path-element>
+         <path-element>../dist/lib/orthlib-0.0-SNAPSHOT.swc</path-element>
          <path-element>../dist/lib/toyboxlib-0.0-SNAPSHOT.swc</path-element>
          <path-element>../dist/lib/corelib.swc</path-element>
          <path-element>../dist/lib/flexlib.swc</path-element>
