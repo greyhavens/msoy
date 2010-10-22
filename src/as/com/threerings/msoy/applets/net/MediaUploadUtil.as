@@ -11,7 +11,7 @@ import flash.utils.ByteArray;
 
 import com.threerings.msoy.client.DeploymentConfig;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.orth.data.MediaDesc;
 import com.threerings.msoy.data.all.MediaMimeTypes;
 
 public class MediaUploadUtil

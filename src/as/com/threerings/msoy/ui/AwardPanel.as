@@ -26,7 +26,7 @@ import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.PlaceBox;
 
 import com.threerings.msoy.data.MsoyCodes;
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.orth.data.MediaDesc;
 
 import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.item.data.all.Item;

@@ -12,12 +12,14 @@ import com.threerings.util.Hashable;
 import com.threerings.util.Util;
 import com.threerings.util.StringUtil;
 
+import com.threerings.orth.data.MediaDesc;
+
 import com.threerings.msoy.client.DeploymentConfig;
 
 /**
  * A class containing metadata about a media object.
  */
-public class HashMediaDesc extends MediaDesc
+public class HashMediaDesc extends MediaDescImpl
 {
     /** The SHA-1 hash of this media's data. */
     public var hash :ByteArray;

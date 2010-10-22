@@ -8,7 +8,7 @@ import flash.geom.Point;
 import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.msoy.client.Zoomable;
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.orth.data.MediaDesc;
 
 /**
  * A place view that isn't really. It merely allows the display of chat.

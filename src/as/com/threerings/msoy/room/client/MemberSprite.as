@@ -264,7 +264,7 @@ import com.threerings.util.Log;
 import com.threerings.text.TextFieldUtil;
 
 import com.threerings.msoy.client.Msgs;
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.orth.data.MediaDesc;
 import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.ui.GlowSprite;

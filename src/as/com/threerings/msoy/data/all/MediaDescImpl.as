@@ -1,5 +1,5 @@
 //
-// $Id$
+// $Id: MediaDesc.as 19417 2010-10-20 20:52:22Z zell $
 
 package com.threerings.msoy.data.all {
 
@@ -13,13 +13,13 @@ import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
 import com.threerings.io.Streamable;
 
-import com.threerings.msoy.client.DeploymentConfig;
+import com.threerings.orth.data.MediaDesc;
 
 /**
  * A class containing metadata about a media object.
  */
-public /* abstract */ class MediaDesc extends MediaDescBase
-    implements Streamable, Equalable
+public /* abstract */ class MediaDescImpl
+    implements MediaDesc, Streamable, Equalable
 {
     /** A constant used to indicate that an image does not exceed half thumbnail size in either
      * dimension. */
@@ -42,24 +42,36 @@ public /* abstract */ class MediaDesc extends MediaDescBase
     public static const HALF_VERTICALLY_CONSTRAINED :int = 4;
 
     /** The size constraint on this media, if any. See {@link #computeConstraint}. */
-    public var constraint :int;
-
-    /**
-     * Computes the constraining dimension for an image (if any) based on the supplied target and
-     * actual dimensions.
-     */
-    public static function computeConstraint (size :int, actualWidth :int, actualHeight :int) :int
+    public function get constraint () :int
     {
-        throw new Error("Unimplemented");
+        return _constraint;
+    }
+
+    /** The MIME type of the media associated with this item. */
+    public function get mimeType () :int
+    {
+        return _mimeType;
     }
 
     /**
      * Creates either a configured or blank media descriptor.
      */
-    public function MediaDesc (mimeType :int = 0, constraint :int = NOT_CONSTRAINED)
+    public function MediaDescImpl (mimeType :int = 0, constraint :int = NOT_CONSTRAINED)
     {
-        super(mimeType);
-        this.constraint = constraint;
+        _mimeType = mimeType;
+        _constraint = constraint;
+    }
+
+    // from EntityMedia
+    public function getMimeType () :int
+    {
+        return _mimeType;
+    }
+
+    // from EntityMedia
+    public function getMediaPath () :String
+    {
+        throw new Error("abstract");
     }
 
     /**
@@ -78,11 +90,57 @@ public /* abstract */ class MediaDesc extends MediaDescBase
     }
 
     /**
+     * Is this media purely audio?
+     */
+    public function isAudio () :Boolean
+    {
+        return MediaMimeTypes.isAudio(_mimeType);
+    }
+
+    /**
+     * Is this media merely an image type?
+     */
+    public function isImage () :Boolean
+    {
+        return MediaMimeTypes.isImage(_mimeType);
+    }
+
+    /**
+     * Is this media a SWF?
+     */
+    public function isSWF () :Boolean
+    {
+        return (_mimeType == MediaMimeTypes.APPLICATION_SHOCKWAVE_FLASH);
+    }
+
+    /**
+     * Is this media video?
+     */
+    public function isVideo () :Boolean
+    {
+        return MediaMimeTypes.isVideo(_mimeType);
+    }
+
+    public function isExternal () :Boolean
+    {
+        return MediaMimeTypes.isExternal(_mimeType);
+    }
+
+    /**
+     * Computes the constraining dimension for an image (if any) based on the supplied target and
+     * actual dimensions.
+     */
+    public static function computeConstraint (size :int, actualWidth :int, actualHeight :int) :int
+    {
+        throw new Error("Unimplemented");
+    }
+
+    /**
      * Is this a zip of some sort?
      */
     public function isRemixed () :Boolean
     {
-        switch (mimeType) {
+        switch (_mimeType) {
         case MediaMimeTypes.APPLICATION_ZIP:
         case MediaMimeTypes.APPLICATION_ZIP_NOREMIX:
             return true;
@@ -97,7 +155,7 @@ public /* abstract */ class MediaDesc extends MediaDescBase
      */
     public function isRemixable () :Boolean
     {
-        return (mimeType == MediaMimeTypes.APPLICATION_ZIP);
+        return (_mimeType == MediaMimeTypes.APPLICATION_ZIP);
     }
 
     /**
@@ -106,7 +164,7 @@ public /* abstract */ class MediaDesc extends MediaDescBase
      */
     public function hasFlashVisual () :Boolean
     {
-        switch (mimeType) {
+        switch (_mimeType) {
         case MediaMimeTypes.IMAGE_PNG:
         case MediaMimeTypes.IMAGE_JPEG:
         case MediaMimeTypes.IMAGE_GIF:
@@ -120,27 +178,30 @@ public /* abstract */ class MediaDesc extends MediaDescBase
         }
     }
 
-    // documentation inherited from Hashable
-    override public function equals (other :Object) :Boolean
+    // documentation inherited from Equalable
+    public function equals (other :Object) :Boolean
     {
-        return (other is MediaDesc) && super.equals(other)
-            && this.constraint == (other as MediaDesc).constraint;
+        return (other is MediaDesc)
+            && _constraint == (other as MediaDesc).constraint
+            && _mimeType == (other as MediaDesc).mimeType;
     }
 
     // documentation inherited from interface Streamable
-    override public function readObject (ins :ObjectInputStream) :void
+    public function readObject (ins :ObjectInputStream) :void
     {
-        super.readObject(ins);
-
-        constraint = ins.readByte();
+        _mimeType = ins.readByte();
+        _constraint = ins.readByte();
     }
 
     // documentation inherited from interface Streamable
-    override public function writeObject (out :ObjectOutputStream) :void
+    public function writeObject (out :ObjectOutputStream) :void
     {
-        super.writeObject(out);
-
-        out.writeByte(constraint);
+        out.writeByte(_mimeType);
+        out.writeByte(_constraint);
     }
+
+    protected var _mimeType :int;
+
+    protected var _constraint :int;
 }
 }

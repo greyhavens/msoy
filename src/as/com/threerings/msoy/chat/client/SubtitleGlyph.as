@@ -14,7 +14,7 @@ import mx.managers.PopUpManager;
 import com.threerings.flex.PopUpUtil;
 
 import com.threerings.msoy.client.UberClient;
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.orth.data.MediaDesc;
 
 import com.threerings.msoy.utils.TextUtil;
 import com.threerings.msoy.ui.MediaWrapper;

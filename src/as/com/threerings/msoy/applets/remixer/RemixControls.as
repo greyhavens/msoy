@@ -41,7 +41,7 @@ import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.MsoyLogConfig;
 
 import com.threerings.msoy.data.UberClientModes;
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.orth.data.MediaDesc;
 import com.threerings.msoy.data.all.MediaMimeTypes;
 import com.threerings.msoy.data.all.MediaMimeTypes;
 import com.threerings.msoy.utils.UberClientLoader;

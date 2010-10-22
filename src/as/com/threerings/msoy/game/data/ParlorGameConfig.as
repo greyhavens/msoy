@@ -11,7 +11,7 @@ import com.threerings.crowd.client.PlaceController;
 import com.whirled.game.data.GameDefinition;
 import com.whirled.game.data.WhirledGameConfig;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.orth.data.MediaDesc;
 import com.threerings.msoy.game.client.ParlorGameController;
 
 /**

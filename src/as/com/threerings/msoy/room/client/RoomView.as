@@ -43,7 +43,7 @@ import com.threerings.msoy.client.SnapshotUtil;
 import com.threerings.msoy.client.UberClient;
 import com.threerings.msoy.client.Zoomable;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.orth.data.MediaDesc;
 
 import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.ItemIdent;

@@ -6,7 +6,7 @@ package com.threerings.msoy.party.data {
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.SimpleStreamableObject;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.orth.data.MediaDesc;
 
 public class PartyBoardInfo extends SimpleStreamableObject
 {

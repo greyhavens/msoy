@@ -9,11 +9,13 @@ import com.threerings.io.ObjectOutputStream;
 import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.data.all.MediaMimeTypes;
 
+import com.threerings.util.Log;
+
 /**
  * Provides a "faked" media descriptor for static media (default thumbnails and
  * furni representations).
  */
-public class StaticMediaDesc extends MediaDesc
+public class StaticMediaDesc extends MediaDescImpl
 {
     public function StaticMediaDesc (mimeType :int = 0, itemType :String = null,
                                      mediaType :String = null, constraint :int = NOT_CONSTRAINED)
@@ -26,8 +28,12 @@ public class StaticMediaDesc extends MediaDesc
     // from MediaDesc
     override public function getMediaPath () :String
     {
-        return DeploymentConfig.staticMediaURL + _itemType + "/" + _mediaType +
+        Log.getLog(this).warning(
+            "Unfolding StaticMediaDesc", "mimeType", _mimeType, "constraint", _constraint,
+            "itemType", _itemType, "mediaType", _mediaType);
+        var url :String = DeploymentConfig.staticMediaURL + _itemType + "/" + _mediaType +
             MediaMimeTypes.mimeTypeToSuffix(mimeType);
+        return url;
     }
 
     // from MediaDesc

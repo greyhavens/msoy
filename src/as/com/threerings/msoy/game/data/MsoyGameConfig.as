@@ -3,7 +3,7 @@
 
 package com.threerings.msoy.game.data {
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.orth.data.MediaDesc;
 
 public interface MsoyGameConfig
 {

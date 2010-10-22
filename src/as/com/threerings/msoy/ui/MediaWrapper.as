@@ -7,7 +7,7 @@ import mx.core.Container;
 
 import com.threerings.media.MediaContainer;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.orth.data.MediaDesc;
 import com.threerings.msoy.data.all.MediaDescSize;
 
 /**

@@ -17,7 +17,7 @@ import com.threerings.media.VideoPlayer;
 import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.ui.MsoyVideoDisplay;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.orth.data.MediaDesc;
 import com.threerings.msoy.data.all.MediaMimeTypes;
 import com.threerings.msoy.item.client.ExternalMediaDisplayer;
 import com.threerings.msoy.item.client.ExternalMediaUtil;

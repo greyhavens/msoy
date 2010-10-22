@@ -25,7 +25,7 @@ import com.threerings.flex.FlexUtil;
 import com.threerings.presents.client.ClientAdapter;
 
 import com.threerings.msoy.client.MsoyController;
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.orth.data.MediaDesc;
 import com.threerings.msoy.ui.FloatingPanel;
 import com.threerings.msoy.ui.ScalingMsoyMediaContainer;
 import com.threerings.msoy.ui.SliderPopup;

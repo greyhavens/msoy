@@ -15,7 +15,7 @@ import com.threerings.io.Streamable;
 
 import com.threerings.presents.dobj.DSet_Entry;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.orth.data.MediaDesc;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 

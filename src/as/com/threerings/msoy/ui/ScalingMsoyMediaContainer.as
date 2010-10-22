@@ -3,7 +3,7 @@
 
 package com.threerings.msoy.ui {
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.orth.data.MediaDesc;
 import com.threerings.msoy.data.all.MediaDescSize;
 
 public class ScalingMsoyMediaContainer extends MsoyMediaContainer

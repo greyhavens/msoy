@@ -16,7 +16,7 @@ import com.threerings.parlor.data.TableMarshaller;
 
 import com.whirled.game.data.GameDefinition;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.orth.data.MediaDesc;
 
 /**
  * Represents a lobby for a particular game.

@@ -3,12 +3,12 @@
 
 package com.threerings.msoy.room.client {
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescImpl;
 
 /**
  * Hacktacular. Do not emulate. I should hide this class somewhere.
  */
-public class StudioMediaDesc extends MediaDesc
+public class StudioMediaDesc extends MediaDescImpl
 {
     public function StudioMediaDesc (url :String)
     {

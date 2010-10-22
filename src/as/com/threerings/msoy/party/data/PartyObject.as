@@ -11,7 +11,7 @@ import com.threerings.presents.dobj.DSet;
 //import com.threerings.crowd.chat.data.SpeakMarshaller;
 
 import com.threerings.msoy.data.all.GroupName;
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.orth.data.MediaDesc;
 
 public class PartyObject extends DObject
 {

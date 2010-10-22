@@ -12,7 +12,7 @@ import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.flex.FlexWrapper;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.orth.data.MediaDesc;
 import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.ui.ScalingMsoyMediaContainer;
 
