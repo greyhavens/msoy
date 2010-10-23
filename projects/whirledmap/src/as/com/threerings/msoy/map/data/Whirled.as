@@ -5,12 +5,14 @@ package com.threerings.msoy.map.data {
 
 import com.adobe.serialization.json.*;
 
-import com.threerings.msoy.data.all.HashMediaDesc;
-import com.threerings.msoy.data.all.MediaDescBase;
-import com.threerings.msoy.data.all.MediaMimeTypes;
-import com.threerings.msoy.data.all.StaticMediaDesc;
+import com.threerings.orth.data.MediaDesc;
+
 import com.threerings.util.Random;
 import com.threerings.util.RandomUtil;
+
+import com.threerings.msoy.data.all.HashMediaDesc;
+import com.threerings.msoy.data.all.MediaMimeTypes;
+import com.threerings.msoy.data.all.StaticMediaDesc;
 
 /**
  * Represents something in a neighborhood: currently either a friend or a group.
@@ -24,7 +26,7 @@ public class Whirled
     public var name :String;
 
     /** The whirled's logo. */
-    public var logo :MediaDescBase;
+    public var logo :MediaDesc;
 
     /** The number of members occupying this whirled place. */
     public var population :int;
