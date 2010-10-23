@@ -186,8 +186,7 @@
       <dependency groupId="com.threerings" artifactId="aspirin" version="0.0-SNAPSHOT" type="swc"/>
       <dependency groupId="com.threerings.panopticon" artifactId="panopticon-client"
                   version="0.0-SNAPSHOT"/>
-      <dependency groupId="com.threerings.narya" artifactId="narya-base" version="0.0-SNAPSHOT"/>
-      <dependency groupId="com.threerings.narya" artifactId="narya-distrib" version="0.0-SNAPSHOT"/>
+      <dependency groupId="com.threerings.narya" artifactId="narya" version="0.0-SNAPSHOT"/>
       <dependency groupId="com.threerings.narya" artifactId="narya-gwt" version="0.0-SNAPSHOT"/>
       <dependency groupId="com.threerings.narya" artifactId="naryalib" version="0.0-SNAPSHOT"
                   type="swc"/>
@@ -232,12 +231,13 @@
                   version="0.0-SNAPSHOT"/>
       <dependency groupId="com.threerings.underwire" artifactId="underwire-gwt"
                   version="0.0-SNAPSHOT"/> 
-      <artifact:remoteRepository id="remote.repository.mvnrepository.com"
-                                 url="http://mirrors.ibiblio.org/pub/mirrors/maven2"/>
-      <Dependency groupId="com.google.gwt" artifactId="gwt-incubator" version="2.0.1"/>
+    </artifact:dependencies>
+    <artifact:dependencies filesetId="build.remote.fileset">
+      <dependency groupId="com.google.gwt" artifactId="gwt-incubator" version="2.0.1"/>
     </artifact:dependencies>
     <copy todir="${deploy.dir}/build">
       <fileset refid="build.fileset"/>
+      <fileset refid="build.remote.fileset"/>
       <mapper type="flatten"/>
     </copy>
   </target>

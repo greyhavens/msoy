@@ -12,7 +12,7 @@
   <target name="prepare">
       <prepare-cell configdir="projects/mcell/etc">
         <cell-libs>
-            <fileset dir="${base.dir}/dist/lib" includes="narya-base.jar,narya-distrib.jar"/>
+            <fileset dir="${base.dir}/dist/lib" includes="narya.jar"/>
             <fileset dir="${base.dir}/extlibs/java/cxf" includes="jettison-1.0.jar"/>
             <fileset dir="${base.dir}/extlibs/java" includes="jcip-annotations.jar"/>
             <fileset refid="cell.libs"/>
