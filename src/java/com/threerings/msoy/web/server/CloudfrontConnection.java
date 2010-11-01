@@ -8,6 +8,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 
@@ -23,6 +24,11 @@ import java.util.TimeZone;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
+import com.google.common.base.Joiner;
+import com.google.common.io.CharStreams;
+
+import com.threerings.msoy.server.ServerConfig;
+
 import com.megginson.sax.XMLWriter;
 
 import org.apache.commons.codec.binary.Base64;
@@ -32,11 +38,16 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
+import org.apache.commons.httpclient.methods.DeleteMethod;
+import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.InputStreamRequestEntity;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.params.HttpClientParams;
 import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
 import org.apache.commons.httpclient.protocol.Protocol;
+import org.xml.sax.SAXException;
+
+import static com.threerings.msoy.Log.log;
 
 /**
  * An interface into the Cloudfront system. It is initially configured with
@@ -59,7 +70,7 @@ public class CloudfrontConnection
             super(message, cause);
         }
     }
-    
+
     public CloudfrontConnection (String keyId, String secretKey)
     {
         this(keyId, secretKey, createDefaultHostConfig());
@@ -90,6 +101,64 @@ public class CloudfrontConnection
         _httpClient.setHttpConnectionManager(manager);
     }
 
+    public static final void main (String[] args)
+    {
+        CloudfrontConnection foo = new CloudfrontConnection(ServerConfig.cloudId, ServerConfig.cloudKey);
+        try {
+            System.out.println(foo.getDistribution(ServerConfig.cloudDistribution));
+            System.exit(1);
+        } catch (CloudfrontException e) {
+            e.printStackTrace();
+            System.exit(0);
+        }
+    }
+
+    public String getOriginAccessIdentities ()
+        throws CloudfrontException
+    {
+        GetMethod method = new GetMethod(API.ORIGIN_ACCESS_ID.build("cloudfront"));
+        return foofoofoo(method);
+    }
+
+    public String getDistributions ()
+        throws CloudfrontException
+    {
+        GetMethod method = new GetMethod(API.DISTRIBUTION.build());
+        return foofoofoo(method);
+    }
+
+    public String getDistribution (String distribution)
+        throws CloudfrontException
+    {
+        GetMethod method = new GetMethod(API.DISTRIBUTION.build(distribution));
+        return foofoofoo(method);
+    }
+
+    public String getDistributionConfig (String distribution)
+        throws CloudfrontException
+    {
+        GetMethod method = new GetMethod(API.DISTRIBUTION.build(distribution, "config"));
+        return foofoofoo(method);
+    }
+
+
+    protected String foofoofoo (HttpMethod method)
+        throws CloudfrontException
+    {
+        signCloudfrontRequest(method);
+        try {
+            InputStream stream = executeMethod(method);
+            return CharStreams.toString(new InputStreamReader(stream));
+
+        } catch (IOException e) {
+            throw new CloudfrontException("Network error executing method", e);
+
+        } finally {
+            method.releaseConnection();
+        }
+    }
+
+
     /**
      * Invalidate an object in the cloud. This forcibly removes cached copies on leaf nodes
      * without waiting for expiration. It is typically used when emergency changes happen to
@@ -99,22 +168,66 @@ public class CloudfrontConnection
      * after that there is a (very small) fee per invalidation. Systems that require instant
      * object updates as a matter of course should use object versioning instead.
      */
-    public void invalidateObjects (String distributionId, Iterable<String> keys)
+    public void invalidateObjects (String distributionId, final Iterable<String> keys)
         throws CloudfrontException
     {
-        PostMethod method = new PostMethod(buildActionURI(distributionId, ACTION_INVALIDATE));
+        executeWithBody(
+            new PostMethod(API.DISTRIBUTION.build(distributionId, "invalidation")),
+            new RequestBodyConstructor() {
+                public void constructBody (XMLWriter writer) throws SAXException {
+                    writer.startElement("InvalidationBatch");
+                    for (String key : keys) {
+                        writer.dataElement("Path", key);
+                    }
+                    writer.dataElement("CallerReference", String.valueOf(System.nanoTime()));
+                    writer.endElement("InvalidationBatch");
+                }
+            });
+    }
+
+    public String createOriginAccessIdentity (final String comment)
+        throws CloudfrontException
+    {
+        return executeWithBody(
+            new PostMethod(API.ORIGIN_ACCESS_ID.build("cloudfront")),
+            new RequestBodyConstructor() {
+                public void constructBody (XMLWriter writer) throws SAXException
+                {
+                    writer.startElement("CloudFrontOriginAccessIdentityConfig");
+                    writer.dataElement("Comment", comment);
+                    writer.dataElement("CallerReference", String.valueOf(System.nanoTime()));
+                    writer.endElement("CloudFrontOriginAccessIdentityConfig");
+                }
+            });
+    }
+
+    public String deleteOriginAccessIdentity (String distributionId, String tag)
+        throws CloudfrontException
+    {
+        DeleteMethod method = new DeleteMethod(
+            API.ORIGIN_ACCESS_ID.build("cloudfront", distributionId));
+
+        signCloudfrontRequest(method);
+
+        return foofoofoo(method);
+    }
+
+    
+    protected interface RequestBodyConstructor
+    {
+        public void constructBody (XMLWriter writer) throws SAXException;
+    }
+
+    protected String executeWithBody (PostMethod method, RequestBodyConstructor constructor)
+        throws CloudfrontException
+    {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         Writer out = new BufferedWriter(new OutputStreamWriter(baos));
         XMLWriter writer = new XMLWriter(out);
 
         try {
             writer.startDocument();
-            writer.startElement("InvalidationBatch");
-            for (String key : keys) {
-                writer.dataElement("Path", key);
-            }
-            writer.dataElement("CallerReference", String.valueOf(System.nanoTime()));
-            writer.endElement("InvalidationBatch");
+            constructor.constructBody(writer);
             writer.endDocument();
             writer.flush();
 
@@ -127,33 +240,31 @@ public class CloudfrontConnection
 
         signCloudfrontRequest(method);
 
-        try {
-            executeMethod(method);
-        } finally {
-            method.releaseConnection();
-        }
+        return foofoofoo(method);
     }
 
-    protected void executeMethod (HttpMethod method)
+    protected InputStream executeMethod (HttpMethod method)
         throws CloudfrontException
     {
         // Execute the request
         int statusCode;
         try {
+            log.info ("Executing HTTP method", "uri", method.getURI());
             statusCode = _httpClient.executeMethod(method);
 
         } catch (IOException ioe) {
             throw new CloudfrontException("Network error executing Cloudfront method: " +
                 ioe.getMessage(), ioe);
         }
-        
-        if (!(statusCode >= HttpStatus.SC_OK && statusCode < HttpStatus.SC_MULTIPLE_CHOICES)) {
-            // Request failed, throw exception.
-            InputStream stream;
-            byte[] errorDoc = new byte[MAX_ERROR_SIZE];
 
-            try {
-                stream = method.getResponseBodyAsStream();
+        InputStream stream;
+        try {
+            stream = method.getResponseBodyAsStream();
+
+            if (!(statusCode >= HttpStatus.SC_OK && statusCode < HttpStatus.SC_MULTIPLE_CHOICES)) {
+                // Request failed, throw exception.
+                byte[] errorDoc = new byte[MAX_ERROR_SIZE];
+
                 if (stream == null) {
                     // We should always receive a response!
                     throw new CloudfrontException("Cloudfront failed to return an error " +
@@ -161,13 +272,15 @@ public class CloudfrontConnection
                 }
 
                 stream.read(errorDoc, 0, errorDoc.length);
-            } catch (IOException ioe) {
-                throw new CloudfrontException("Network error receiving Cloudfront error response: " + ioe.getMessage(), ioe);
+                throw new CloudfrontException("Cloudfront error response: " + new String(errorDoc).trim());
             }
 
-            throw new CloudfrontException("Cloudfront error response: " + new String(errorDoc).trim());
-        }
+            return stream;
+        } catch (IOException ioe) {
+             throw new CloudfrontException("Network error receiving Cloudfront error response: " + ioe.getMessage(), ioe);
+         }
     }
+
     // http://docs.amazonwebservices.com/AmazonCloudFront/latest/DeveloperGuide/index.html?RESTAuthentication.html
     protected void signCloudfrontRequest (HttpMethod method)
     {
@@ -211,12 +324,6 @@ public class CloudfrontConnection
         return format.format(date) + "GMT";
     }
 
-    // e.g. POST /2010-08-01/distribution/[distribution ID]/invalidation HTTP/1.0
-    protected String buildActionURI (String distributionId, String action)
-    {
-        return REQUEST_URI_PREFIX + "/" + distributionId + "/" + action;
-    }
-
     protected static HostConfiguration createDefaultHostConfig ()
     {
         HostConfiguration hostConfig = new HostConfiguration();
@@ -229,17 +336,40 @@ public class CloudfrontConnection
 
     protected HttpClient _httpClient;
 
+    protected enum API
+    {
+        DISTRIBUTION("/2010-08-01/distribution"),
+        ORIGIN_ACCESS_ID("/2010-08-01/origin-access-identity");
+
+        API (String requestPrefix)
+        {
+            _prefix = requestPrefix;
+        }
+
+        public String getRequestPrefix ()
+        {
+            return _prefix;
+        }
+
+        public String build (String... args)
+        {
+            if (args.length == 0) {
+                return _prefix;
+            }
+            return _prefix + "/" + Joiner.on("/").join(args);
+        }
+
+        protected String _prefix;
+    }
+
     /** HTTPS protocol instance. */
     protected static final Protocol HTTPS_PROTOCOL = Protocol.getProtocol("https");
 
     /** Default Cloudfront host. */
     protected static final String DEFAULT_HOST = "cloudfront.amazonaws.com";
 
-    /** Distribution API prefix for the request URI. */
-    protected static final String REQUEST_URI_PREFIX = "/2010-08-01/distribution";
+    /** Origin Access Identify API prefix for the request URI. */
 
-    /** INVALIDATE Action postfix for the request URI. */
-    protected static final String ACTION_INVALIDATE = "invalidation";
 
     /** Maximum size of error output. Should never be larger than 2k!!! */
     private static final int MAX_ERROR_SIZE = 2048;
