@@ -55,6 +55,32 @@ import static com.threerings.msoy.Log.log;
  * manipulate Cloudfront distributions and object invalidation.
  *
  * TODO: Implement everything else.
+ *
+POST   /2010-08-01/distribution HTTP/1.1
+GET    /2010-08-01/distribution?Marker=value&MaxItems=value HTTP/1.1
+GET    /2010-08-01/distribution/DistID HTTP/1.1
+GET    /2010-08-01/distribution/DistID/config HTTP/1.1
+PUT    /2010-08-01/distribution/DistID/config HTTP/1.1
+DELETE /2010-08-01/distribution/DistID HTTP/1.1
+
+POST   /2010-08-01/distribution/DistID/invalidation HTTP/1.0
+GET    /2010-08-01/distribution/DistID/invalidation?Marker=value&MaxItems=value HTTP/1.1
+GET    /2010-08-01/distribution/DistID/invalidation/invalidationID
+
+POST   /2010-08-01/streaming-distribution HTTP/1.1
+GET    /2010-08-01/streaming-distribution?Marker=value&MaxItems=value HTTP/1.1
+GET    /2010-08-01/streaming-distribution/DistID HTTP/1.1
+GET    /2010-08-01/streaming-distribution/DistID/config HTTP/1.1
+PUT    /2010-08-01/streaming-distribution/DistID/config HTTP/1.1
+DELETE /2010-08-01/streaming-distribution/DistID HTTP/1.1
+
+POST   /2010-08-01/origin-access-identity/cloudfront HTTP/1.1
+GET    /2010-08-01/origin-access-identity/cloudfront?Marker=value&MaxItems=value
+GET    /2010-08-01/origin-access-identity/cloudfront/IdentityID HTTP/1.1
+GET    /2010-08-01/origin-access-identity/cloudfront/IdentityID/config HTTP/1.1
+PUT    /2010-08-01/origin-access-identity/cloudfront/IdentityID/config HTTP/1.1
+DELETE /2010-08-01/origin-access-identity/cloudfront/IdentityID HTTP/1.1
+
  */
 public class CloudfrontConnection
 {
@@ -103,13 +129,24 @@ public class CloudfrontConnection
 
     public static final void main (String[] args)
     {
-        CloudfrontConnection foo = new CloudfrontConnection(ServerConfig.cloudId, ServerConfig.cloudKey);
+        CloudfrontConnection conn = new CloudfrontConnection(ServerConfig.cloudId, ServerConfig.cloudKey);
         try {
-            System.out.println(foo.getDistribution(ServerConfig.cloudDistribution));
-            System.exit(1);
+            String body;
+            if ("distributions".equals(args[0])) {
+                body = conn.getDistributions();
+            } else if ("oaids".equals(args[0])) {
+                body = conn.getOriginAccessIdentities();
+            } else if ("oiaid".equals(args[0])) {
+                body = conn.getOriginAccessIdentity(args[1]);
+            } else if ("distribution".equals(args[0])) {
+                body = conn.getDistribution(args[1]);
+            } else {
+                System.err.println("Unknown command.");
+                return;
+            }
+            System.err.println("Result: " + body);
         } catch (CloudfrontException e) {
             e.printStackTrace();
-            System.exit(0);
         }
     }
 
@@ -117,6 +154,13 @@ public class CloudfrontConnection
         throws CloudfrontException
     {
         GetMethod method = new GetMethod(API.ORIGIN_ACCESS_ID.build("cloudfront"));
+        return foofoofoo(method);
+    }
+
+    public String getOriginAccessIdentity (String id)
+        throws CloudfrontException
+    {
+        GetMethod method = new GetMethod(API.ORIGIN_ACCESS_ID.build("cloudfront", id));
         return foofoofoo(method);
     }
 
@@ -206,13 +250,13 @@ public class CloudfrontConnection
     {
         DeleteMethod method = new DeleteMethod(
             API.ORIGIN_ACCESS_ID.build("cloudfront", distributionId));
-
+        method.addRequestHeader("If-Match", tag);
         signCloudfrontRequest(method);
 
         return foofoofoo(method);
     }
 
-    
+
     protected interface RequestBodyConstructor
     {
         public void constructBody (XMLWriter writer) throws SAXException;
