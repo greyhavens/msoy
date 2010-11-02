@@ -8,7 +8,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 
@@ -34,9 +33,7 @@ import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.events.XMLEvent;
 import javax.xml.stream.events.Characters;
-import javax.xml.stream.events.EndDocument;
 import javax.xml.stream.events.EndElement;
-import javax.xml.stream.events.StartDocument;
 import javax.xml.stream.events.StartElement;
 
 import com.google.common.base.Joiner;
@@ -77,25 +74,12 @@ import static com.threerings.msoy.Log.log;
  * POST   /2010-08-01/distribution
  * PUT    /2010-08-01/distribution/DistID/config
  * DELETE /2010-08-01/distribution/DistID
- * 
+ *
  * PUT    /2010-08-01/origin-access-identity/cloudfront/IdentityID/config
  */
 
 public class CloudfrontConnection
 {
-    public static class CloudfrontException extends Exception
-    {
-        public CloudfrontException (String message)
-        {
-            super(message);
-        }
-
-        public CloudfrontException (String message, Throwable cause)
-        {
-            super(message, cause);
-        }
-    }
-
     public CloudfrontConnection (String keyId, String secretKey)
     {
         this(keyId, secretKey, createDefaultHostConfig());
@@ -295,7 +279,7 @@ public class CloudfrontConnection
                             throw new XMLStreamException("Unexpected event: " + reader.peek());
                         }
                     } while (!(reader.peek() instanceof EndElement));
-                    expectElementEnd(reader, "TrustedSigners");                    
+                    expectElementEnd(reader, "TrustedSigners");
 
                 } else {
                     throw new XMLStreamException("Unexpected event: " + reader.peek());
