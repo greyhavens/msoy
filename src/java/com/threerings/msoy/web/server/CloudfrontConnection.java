@@ -727,7 +727,7 @@ public class CloudfrontConnection
     protected String _keyId;
     protected String _secretKey;
 
-    protected XMLInputFactory _xmlFactory = XMLInputFactory.newFactory();
+    protected XMLInputFactory _xmlFactory = XMLInputFactory.newInstance();
 
     protected HttpClient _httpClient;
 
