@@ -17,6 +17,7 @@ import java.security.NoSuchAlgorithmException;
 
 import java.text.SimpleDateFormat;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -29,14 +30,20 @@ import javax.crypto.spec.SecretKeySpec;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLEventReader;
+import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.events.XMLEvent;
+import javax.xml.stream.events.Characters;
+import javax.xml.stream.events.EndDocument;
+import javax.xml.stream.events.EndElement;
+import javax.xml.stream.events.StartDocument;
+import javax.xml.stream.events.StartElement;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.io.CharStreams;
 
-import com.threerings.msoy.server.ServerConfig;
-
 import com.megginson.sax.XMLWriter;
+import org.xml.sax.SAXException;
 
 import org.apache.commons.codec.binary.Base64;
 
@@ -53,7 +60,10 @@ import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.params.HttpClientParams;
 import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
 import org.apache.commons.httpclient.protocol.Protocol;
-import org.xml.sax.SAXException;
+
+import com.samskivert.util.StringUtil;
+
+import com.threerings.msoy.server.ServerConfig;
 
 import static com.threerings.msoy.Log.log;
 
@@ -126,7 +136,7 @@ public class CloudfrontConnection
                 if ("dists".equals(cmd)) {
                     body = conn.getDistributions();
                 } else if ("oaids".equals(cmd)) {
-                    body = conn.getOriginAccessIdentities();
+                    body = Joiner.on("\n").join(conn.getOriginAccessIdentities());
                 }
                 if (args.length > 1) {
                     if ("invreqs".equals(cmd)) {
@@ -147,6 +157,7 @@ public class CloudfrontConnection
                     }
                 }
             }
+
             if (body == null) {
                 System.err.println(
                     "Available commands:\n" +
@@ -166,19 +177,89 @@ public class CloudfrontConnection
         }
     }
 
-    public String getOriginAccessIdentities ()
+    public interface CloudFrontComplexType
+    {
+        public boolean isComplete ();
+    }
+
+    public static class OriginAccessIdentitySummary
+        implements CloudFrontComplexType
+    {
+        public String id;
+        public String s3CanonicalUserId;
+        public String comment;
+
+        public static OriginAccessIdentitySummary create (XMLEventReader reader)
+            throws XMLStreamException
+        {
+            OriginAccessIdentitySummary summary = new OriginAccessIdentitySummary();
+
+            expectElementStart(reader, "CloudFrontOriginAccessIdentitySummary");
+            while (reader.hasNext()) {
+                String data;
+
+                if (null != (data = maybeReadElement(reader, "Id"))) {
+                    summary.id = data;
+
+                } else if (null != (data = maybeReadElement(reader, "S3CanonicalUserId"))) {
+                    summary.s3CanonicalUserId = data;
+
+                } else if (null != (data = maybeReadElement(reader, "Comment"))) {
+                    summary.comment = data;
+
+                } else if (reader.peek() instanceof EndElement) {
+                    expectElementEnd(reader, "CloudFrontOriginAccessIdentitySummary");
+                    if (!summary.isComplete()) {
+                        throw new XMLStreamException("Got partial object: " + summary);
+                    }
+                    return summary;
+
+                } else {
+                    throw new XMLStreamException("Unexpected event: " + reader.peek());
+                }
+            }
+            throw new XMLStreamException("Unexpected end of XML stream.");
+        }
+
+        public boolean isComplete ()
+        {
+            return id != null && s3CanonicalUserId != null;
+        }
+
+        public String toString ()
+        {
+            return StringUtil.fieldsToString(this);
+        }
+    }
+
+    public List<OriginAccessIdentitySummary> getOriginAccessIdentities ()
         throws CloudfrontException
     {
         // GET /2010-08-01/origin-access-identity/cloudfront?Marker=value&MaxItems=value
         GetMethod method = new GetMethod(API.ORIGIN_ACCESS_ID.build("cloudfront"));
 
-        return executeAndReturn(method, new ReturnBodyParser<String>() {
-            public String parseBody (XMLEventReader reader) throws XMLStreamException {
-                List<String> results = Lists.newArrayList();
+        return executeAndReturn(method, new ReturnBodyParser<List<OriginAccessIdentitySummary>>() {
+            public List<OriginAccessIdentitySummary> parseBody (XMLEventReader reader)
+                throws XMLStreamException
+            {
+                expectElementStart(reader, "CloudFrontOriginAccessIdentityList");
+                List<OriginAccessIdentitySummary> result = Lists.newArrayList();
                 while (reader.hasNext()) {
-                    results.add(reader.nextEvent().toString());
+                    if (maybeSkip(reader, "Marker", "NextMarker", "MaxItems", "IsTruncated")) {
+                        // nothing to do
+
+                    } else if (peekForElement(reader, "CloudFrontOriginAccessIdentitySummary")) {
+                        result.add(OriginAccessIdentitySummary.create(reader));
+
+                    } else if (reader.peek() instanceof EndElement) {
+                        expectElementEnd(reader, "CloudFrontOriginAccessIdentityList");
+                        return result;
+
+                    } else {
+                        throw new XMLStreamException("Unexpected event: " + reader.peek());
+                    }
                 }
-                return "XML[" + Joiner.on(", ").join(results) + "]";
+                throw new XMLStreamException("Unexpected end of XML stream.");
             }
         });
     }
@@ -335,7 +416,7 @@ public class CloudfrontConnection
 
         return executeAndReturn(method, parser);
     }
-        
+
     protected <T> T executeAndReturn (HttpMethod method, ReturnBodyParser<T> parser)
         throws CloudfrontException
     {
@@ -343,7 +424,11 @@ public class CloudfrontConnection
         try {
             InputStream stream = execute(method);
             if (parser != null) {
-                return parser.parseBody(_xmlFactory.createXMLEventReader(stream));
+                XMLEventReader reader = _xmlFactory.createXMLEventReader(stream);
+                expectType(reader, XMLStreamConstants.START_DOCUMENT);
+                T val = parser.parseBody(reader);
+                expectType(reader, XMLStreamConstants.END_DOCUMENT);
+                return val;
             }
             return null;
 
@@ -441,6 +526,89 @@ public class CloudfrontConnection
         HostConfiguration hostConfig = new HostConfiguration();
         hostConfig.setHost(DEFAULT_HOST, HTTPS_PROTOCOL.getDefaultPort(), HTTPS_PROTOCOL);
         return hostConfig;
+    }
+
+    protected static void expectType (XMLEventReader reader, int eventType)
+        throws XMLStreamException
+    {
+        XMLEvent event = reader.nextEvent();
+        if (event.getEventType() != eventType) {
+            throw new XMLStreamException("Expecting event type [" + eventType + "], got " + event);
+        }
+    }
+
+    protected static void expectElementStart (XMLEventReader reader, String elementName)
+        throws XMLStreamException
+    {
+        XMLEvent event = reader.nextEvent();
+        if ((event instanceof StartElement) &&
+            ((StartElement) event).getName().getLocalPart().equals(elementName)) {
+            log.info("Expected and found element: " + elementName);
+            return;
+        }
+        throw new XMLStreamException("Expecting start of element [" + elementName + "], got " + event);
+    }
+
+    protected static void expectElementEnd (XMLEventReader reader, String elementName)
+        throws XMLStreamException
+    {
+        XMLEvent event = reader.nextEvent();
+        if ((event instanceof EndElement) &&
+            ((EndElement) event).getName().getLocalPart().equals(elementName)) {
+            return;
+        }
+        throw new XMLStreamException("Expecting end of element [" + elementName + "], got " + event);
+    }
+
+    protected static boolean peekForElement (XMLEventReader reader, String element)
+        throws XMLStreamException
+    {
+        XMLEvent event = reader.peek();
+        return ((event instanceof StartElement) &&
+                element.equals(((StartElement) event).getName().getLocalPart()));
+    }
+
+    protected static boolean maybeSkip (XMLEventReader reader, String... elements)
+        throws XMLStreamException
+    {
+        XMLEvent event = reader.peek();
+        if (event instanceof StartElement) {
+            String name = ((StartElement) event).getName().getLocalPart();
+            if (Arrays.asList(elements).contains(name)) {
+                expectElementStart(reader, name);
+                if (reader.peek() instanceof Characters) {
+                    reader.nextEvent();
+                }
+                expectElementEnd(reader, name);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Returns null if the specified element is not in fact the next thing in front of our cursor;
+     * returns empty string for matching but empty elements.
+     */
+    protected static String maybeReadElement (XMLEventReader reader, String element)
+        throws XMLStreamException
+    {
+        if (!peekForElement(reader, element)) {
+            return null;
+        }
+        reader.nextEvent();
+
+        String result;
+        XMLEvent event = reader.peek();
+        if (event instanceof Characters) {
+            result = ((Characters) event).getData();
+            event = reader.nextEvent();
+        } else {
+            result = "";
+        }
+        expectElementEnd(reader, element);
+        log.info("Returning character content: " + result);
+        return result;
     }
 
     protected String _keyId;
