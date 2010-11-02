@@ -16,13 +16,18 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
+import java.util.Collections;
+import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
+
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 
 import com.google.common.base.Joiner;
 import com.google.common.io.CharStreams;
@@ -39,6 +44,7 @@ import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.methods.DeleteMethod;
+import org.apache.commons.httpclient.methods.EntityEnclosingMethod;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.InputStreamRequestEntity;
 import org.apache.commons.httpclient.methods.PostMethod;
@@ -54,34 +60,14 @@ import static com.threerings.msoy.Log.log;
  * authentication and connection parameters and exposes methods to access and
  * manipulate Cloudfront distributions and object invalidation.
  *
- * TODO: Implement everything else.
- *
-POST   /2010-08-01/distribution HTTP/1.1
-GET    /2010-08-01/distribution?Marker=value&MaxItems=value HTTP/1.1
-GET    /2010-08-01/distribution/DistID HTTP/1.1
-GET    /2010-08-01/distribution/DistID/config HTTP/1.1
-PUT    /2010-08-01/distribution/DistID/config HTTP/1.1
-DELETE /2010-08-01/distribution/DistID HTTP/1.1
-
-POST   /2010-08-01/distribution/DistID/invalidation HTTP/1.0
-GET    /2010-08-01/distribution/DistID/invalidation?Marker=value&MaxItems=value HTTP/1.1
-GET    /2010-08-01/distribution/DistID/invalidation/invalidationID
-
-POST   /2010-08-01/streaming-distribution HTTP/1.1
-GET    /2010-08-01/streaming-distribution?Marker=value&MaxItems=value HTTP/1.1
-GET    /2010-08-01/streaming-distribution/DistID HTTP/1.1
-GET    /2010-08-01/streaming-distribution/DistID/config HTTP/1.1
-PUT    /2010-08-01/streaming-distribution/DistID/config HTTP/1.1
-DELETE /2010-08-01/streaming-distribution/DistID HTTP/1.1
-
-POST   /2010-08-01/origin-access-identity/cloudfront HTTP/1.1
-GET    /2010-08-01/origin-access-identity/cloudfront?Marker=value&MaxItems=value
-GET    /2010-08-01/origin-access-identity/cloudfront/IdentityID HTTP/1.1
-GET    /2010-08-01/origin-access-identity/cloudfront/IdentityID/config HTTP/1.1
-PUT    /2010-08-01/origin-access-identity/cloudfront/IdentityID/config HTTP/1.1
-DELETE /2010-08-01/origin-access-identity/cloudfront/IdentityID HTTP/1.1
-
+ * Functionality that remains unimplemented:
+ * POST   /2010-08-01/distribution
+ * PUT    /2010-08-01/distribution/DistID/config
+ * DELETE /2010-08-01/distribution/DistID
+ * 
+ * PUT    /2010-08-01/origin-access-identity/cloudfront/IdentityID/config
  */
+
 public class CloudfrontConnection
 {
     public static class CloudfrontException extends Exception
@@ -129,22 +115,50 @@ public class CloudfrontConnection
 
     public static final void main (String[] args)
     {
-        CloudfrontConnection conn = new CloudfrontConnection(ServerConfig.cloudId, ServerConfig.cloudKey);
+        CloudfrontConnection conn = new CloudfrontConnection(
+            ServerConfig.cloudId, ServerConfig.cloudKey);
         try {
-            String body;
-            if ("distributions".equals(args[0])) {
-                body = conn.getDistributions();
-            } else if ("oaids".equals(args[0])) {
-                body = conn.getOriginAccessIdentities();
-            } else if ("oiaid".equals(args[0])) {
-                body = conn.getOriginAccessIdentity(args[1]);
-            } else if ("distribution".equals(args[0])) {
-                body = conn.getDistribution(args[1]);
-            } else {
-                System.err.println("Unknown command.");
+            String body = null;
+            if (args.length > 0) {
+                String cmd = args[0];
+                if ("dists".equals(cmd)) {
+                    body = conn.getDistributions();
+                } else if ("oaids".equals(cmd)) {
+                    body = conn.getOriginAccessIdentities();
+                }
+                if (args.length > 1) {
+                    if ("invreqs".equals(cmd)) {
+                        body = conn.getInvalidations(args[1]);
+                    } else if ("dist".equals(cmd)) {
+                        body = conn.getDistribution(args[1]);
+                    } else if ("distconf".equals(cmd)) {
+                        body = conn.getDistributionConfig(args[1]);
+                    } else if ("oaid".equals(cmd)) {
+                        body = conn.getOriginAccessIdentity(args[1]);
+                    }
+                }
+                if (args.length > 2) {
+                    if ("invalidate".equals(cmd)) {
+                        body = conn.invalidateObjects(args[1], Collections.singleton(args[2]));
+                    } else if ("invreq".equals(cmd)) {
+                        body = conn.getInvalidation(args[1], args[2]);
+                    }
+                }
+            }
+            if (body == null) {
+                System.err.println(
+                    "Available commands:\n" +
+                    "dists\n" +
+                    "dist <distId>\n" +
+                    "distconf <distId>\n" +
+                    "oaids\n" +
+                    "oaid <id>\n" +
+                    "invreqs\n" +
+                    "invreq <batchId>\n" +
+                    "invalidate <distId> <key>");
                 return;
             }
-            System.err.println("Result: " + body);
+            System.out.println("Result: " + body);
         } catch (CloudfrontException e) {
             e.printStackTrace();
         }
@@ -153,55 +167,69 @@ public class CloudfrontConnection
     public String getOriginAccessIdentities ()
         throws CloudfrontException
     {
+        // GET /2010-08-01/origin-access-identity/cloudfront?Marker=value&MaxItems=value
         GetMethod method = new GetMethod(API.ORIGIN_ACCESS_ID.build("cloudfront"));
-        return foofoofoo(method);
+
+        return executeAndReturn(method, null);
     }
 
     public String getOriginAccessIdentity (String id)
         throws CloudfrontException
     {
+        // GET /2010-08-01/origin-access-identity/cloudfront/IdentityID
         GetMethod method = new GetMethod(API.ORIGIN_ACCESS_ID.build("cloudfront", id));
-        return foofoofoo(method);
+        return executeAndReturn(method, null);
+    }
+
+    public String getOriginAccessIdentityConfig (String id)
+        throws CloudfrontException
+    {
+        // GET /2010-08-01/origin-access-identity/cloudfront/IdentityID/config
+        GetMethod method = new GetMethod(
+            API.ORIGIN_ACCESS_ID.build("cloudfront", id, "config"));
+        return executeAndReturn(method, null);
     }
 
     public String getDistributions ()
         throws CloudfrontException
     {
+        // GET /2010-08-01/distribution?Marker=value&MaxItems=value
         GetMethod method = new GetMethod(API.DISTRIBUTION.build());
-        return foofoofoo(method);
+        return executeAndReturn(method, null);
     }
 
     public String getDistribution (String distribution)
         throws CloudfrontException
     {
+        // GET /2010-08-01/distribution/DistID
         GetMethod method = new GetMethod(API.DISTRIBUTION.build(distribution));
-        return foofoofoo(method);
+        return executeAndReturn(method, null);
     }
 
     public String getDistributionConfig (String distribution)
         throws CloudfrontException
     {
+        // GET /2010-08-01/distribution/DistID/config
         GetMethod method = new GetMethod(API.DISTRIBUTION.build(distribution, "config"));
-        return foofoofoo(method);
+        return executeAndReturn(method, null);
     }
 
-
-    protected String foofoofoo (HttpMethod method)
+    public String getInvalidations (String distribution)
         throws CloudfrontException
     {
-        signCloudfrontRequest(method);
-        try {
-            InputStream stream = executeMethod(method);
-            return CharStreams.toString(new InputStreamReader(stream));
-
-        } catch (IOException e) {
-            throw new CloudfrontException("Network error executing method", e);
-
-        } finally {
-            method.releaseConnection();
-        }
+        // GET /2010-08-01/distribution/DistID/invalidation?Marker=value&MaxItems=value
+        GetMethod method = new GetMethod(API.DISTRIBUTION.build(distribution, "invalidation"));
+        return executeAndReturn(method, null);
     }
 
+    public String getInvalidation (String distribution, String batch)
+        throws CloudfrontException
+    {
+        // GET /2010-08-01/distribution/DistID/invalidation/invalidationID
+        GetMethod method = new GetMethod(
+            API.DISTRIBUTION.build(distribution, "invalidation", batch));
+        return executeAndReturn(method, null);
+    }
 
     /**
      * Invalidate an object in the cloud. This forcibly removes cached copies on leaf nodes
@@ -212,11 +240,12 @@ public class CloudfrontConnection
      * after that there is a (very small) fee per invalidation. Systems that require instant
      * object updates as a matter of course should use object versioning instead.
      */
-    public void invalidateObjects (String distributionId, final Iterable<String> keys)
+    public String invalidateObjects (String distribution, final Iterable<String> keys)
         throws CloudfrontException
     {
-        executeWithBody(
-            new PostMethod(API.DISTRIBUTION.build(distributionId, "invalidation")),
+        // POST /2010-08-01/distribution/DistID/invalidation
+        return executeWithBody(
+            new PostMethod(API.DISTRIBUTION.build(distribution, "invalidation")),
             new RequestBodyConstructor() {
                 public void constructBody (XMLWriter writer) throws SAXException {
                     writer.startElement("InvalidationBatch");
@@ -226,12 +255,14 @@ public class CloudfrontConnection
                     writer.dataElement("CallerReference", String.valueOf(System.nanoTime()));
                     writer.endElement("InvalidationBatch");
                 }
-            });
+            },
+            null);
     }
 
     public String createOriginAccessIdentity (final String comment)
         throws CloudfrontException
     {
+        // POST /2010-08-01/origin-access-identity/cloudfront
         return executeWithBody(
             new PostMethod(API.ORIGIN_ACCESS_ID.build("cloudfront")),
             new RequestBodyConstructor() {
@@ -242,28 +273,36 @@ public class CloudfrontConnection
                     writer.dataElement("CallerReference", String.valueOf(System.nanoTime()));
                     writer.endElement("CloudFrontOriginAccessIdentityConfig");
                 }
-            });
+            },
+            null);
     }
 
-    public String deleteOriginAccessIdentity (String distributionId, String tag)
+    public String deleteOriginAccessIdentity (String distribution, String tag)
         throws CloudfrontException
     {
+        // DELETE /2010-08-01/origin-access-identity/cloudfront/IdentityID
         DeleteMethod method = new DeleteMethod(
-            API.ORIGIN_ACCESS_ID.build("cloudfront", distributionId));
+            API.ORIGIN_ACCESS_ID.build("cloudfront", distribution));
         method.addRequestHeader("If-Match", tag);
         signCloudfrontRequest(method);
 
-        return foofoofoo(method);
+        return executeAndReturn(method, null);
     }
-
 
     protected interface RequestBodyConstructor
     {
         public void constructBody (XMLWriter writer) throws SAXException;
     }
 
-    protected String executeWithBody (PostMethod method, RequestBodyConstructor constructor)
-        throws CloudfrontException
+    protected interface ReturnBodyParser<T>
+    {
+        public T parseBody (XMLStreamReader writer) throws XMLStreamException;
+    }
+
+    protected <T> T executeWithBody (
+        EntityEnclosingMethod method, RequestBodyConstructor constructor,
+        ReturnBodyParser<T> parser)
+            throws CloudfrontException
     {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         Writer out = new BufferedWriter(new OutputStreamWriter(baos));
@@ -284,10 +323,29 @@ public class CloudfrontConnection
 
         signCloudfrontRequest(method);
 
-        return foofoofoo(method);
+        return executeAndReturn(method, parser);
+    }
+        
+    protected <T> T executeAndReturn (HttpMethod method, ReturnBodyParser<T> parser)
+        throws CloudfrontException
+    {
+        signCloudfrontRequest(method);
+        try {
+            InputStream stream = execute(method);
+            if (parser != null) {
+                return parser.parseBody(_xmlFactory.createXMLStreamReader(stream));
+            }
+            return null;
+
+        } catch (XMLStreamException e) {
+            throw new CloudfrontException("Network error executing method", e);
+
+        } finally {
+            method.releaseConnection();
+        }
     }
 
-    protected InputStream executeMethod (HttpMethod method)
+    protected InputStream execute (HttpMethod method)
         throws CloudfrontException
     {
         // Execute the request
@@ -378,6 +436,8 @@ public class CloudfrontConnection
     protected String _keyId;
     protected String _secretKey;
 
+    protected XMLInputFactory _xmlFactory = XMLInputFactory.newFactory();
+
     protected HttpClient _httpClient;
 
     protected enum API
@@ -411,9 +471,6 @@ public class CloudfrontConnection
 
     /** Default Cloudfront host. */
     protected static final String DEFAULT_HOST = "cloudfront.amazonaws.com";
-
-    /** Origin Access Identify API prefix for the request URI. */
-
 
     /** Maximum size of error output. Should never be larger than 2k!!! */
     private static final int MAX_ERROR_SIZE = 2048;
