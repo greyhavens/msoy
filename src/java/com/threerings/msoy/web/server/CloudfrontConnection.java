@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.TimeZone;
 
 import javax.crypto.Mac;
@@ -40,7 +41,7 @@ import javax.xml.stream.events.StartElement;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
-import com.google.common.io.CharStreams;
+import com.google.common.collect.Sets;
 
 import com.megginson.sax.XMLWriter;
 import org.xml.sax.SAXException;
@@ -131,12 +132,13 @@ public class CloudfrontConnection
             ServerConfig.cloudId, ServerConfig.cloudKey);
         try {
             String body = null;
+            List<?> bits = null;
             if (args.length > 0) {
                 String cmd = args[0];
                 if ("dists".equals(cmd)) {
-                    body = conn.getDistributions();
+                    bits = conn.getDistributions();
                 } else if ("oaids".equals(cmd)) {
-                    body = Joiner.on("\n").join(conn.getOriginAccessIdentities());
+                    bits = conn.getOriginAccessIdentities();
                 }
                 if (args.length > 1) {
                     if ("invreqs".equals(cmd)) {
@@ -156,6 +158,10 @@ public class CloudfrontConnection
                         body = conn.getInvalidation(args[1], args[2]);
                     }
                 }
+            }
+
+            if (bits != null) {
+                body = Joiner.on("\n").join(bits);
             }
 
             if (body == null) {
@@ -232,6 +238,89 @@ public class CloudfrontConnection
         }
     }
 
+    public static class DistributionSummary
+        implements CloudFrontComplexType
+    {
+        public String id;
+        public String status;
+        public String lastModifiedTime;
+        public String domainName;
+        public String origin;
+        public Set<String> cnames = Sets.newHashSet();
+        public String comment;
+        public String enabled;
+        public List<String> trustedSigners = Lists.newArrayList();
+
+        public static DistributionSummary create (XMLEventReader reader)
+            throws XMLStreamException
+        {
+            DistributionSummary summary = new DistributionSummary();
+
+            expectElementStart(reader, "DistributionSummary");
+            do {
+                String data;
+
+                if (null != (data = maybeReadElement(reader, "Id"))) {
+                    summary.id = data;
+
+                } else if (null != (data = maybeReadElement(reader, "Status"))) {
+                    summary.status = data;
+
+                } else if (null != (data = maybeReadElement(reader, "LastModifiedTime"))) {
+                    summary.lastModifiedTime = data;
+
+                } else if (null != (data = maybeReadElement(reader, "DomainName"))) {
+                    summary.domainName = data;
+
+                } else if (null != (data = maybeReadElement(reader, "CNAME"))) {
+                    summary.cnames.add(data);
+
+                } else if (null != (data = maybeReadElement(reader, "Origin"))) {
+                    summary.origin = data;
+
+                } else if (null != (data = maybeReadElement(reader, "Comment"))) {
+                    summary.comment = data;
+
+                } else if (null != (data = maybeReadElement(reader, "Enabled"))) {
+                    summary.enabled = data;
+
+                } else if (peekForElement(reader, "TrustedSigners")) {
+                    reader.nextEvent();
+                    do {
+                        if (null != (data = maybeReadElement(reader, "Self"))) {
+                            summary.trustedSigners.add("SELF");
+                        } else if (null != (data = maybeReadElement(reader, "AwsAccountNumber"))) {
+                            summary.trustedSigners.add("data");
+                        } else {
+                            throw new XMLStreamException("Unexpected event: " + reader.peek());
+                        }
+                    } while (!(reader.peek() instanceof EndElement));
+                    expectElementEnd(reader, "TrustedSigners");                    
+
+                } else {
+                    throw new XMLStreamException("Unexpected event: " + reader.peek());
+                }
+            } while (!(reader.peek() instanceof EndElement));
+
+            expectElementEnd(reader, "DistributionSummary");
+            if (!summary.isComplete()) {
+                throw new XMLStreamException("Got partial object: " + summary);
+            }
+            return summary;
+        }
+
+        public boolean isComplete ()
+        {
+            return id != null && status != null && lastModifiedTime != null && domainName != null
+                && origin != null && enabled != null;
+        }
+
+        public String toString ()
+        {
+            return StringUtil.fieldsToString(this);
+        }
+    }
+
     public List<OriginAccessIdentitySummary> getOriginAccessIdentities ()
         throws CloudfrontException
     {
@@ -281,12 +370,36 @@ public class CloudfrontConnection
         return executeAndReturn(method, null);
     }
 
-    public String getDistributions ()
+    public List <DistributionSummary> getDistributions ()
         throws CloudfrontException
     {
         // GET /2010-08-01/distribution?Marker=value&MaxItems=value
         GetMethod method = new GetMethod(API.DISTRIBUTION.build());
-        return executeAndReturn(method, null);
+
+        return executeAndReturn(method, new ReturnBodyParser<List<DistributionSummary>>() {
+            public List<DistributionSummary> parseBody (XMLEventReader reader)
+                throws XMLStreamException
+            {
+                expectElementStart(reader, "DistributionList");
+                List<DistributionSummary> result = Lists.newArrayList();
+                while (reader.hasNext()) {
+                    if (maybeSkip(reader, "Marker", "NextMarker", "MaxItems", "IsTruncated")) {
+                        // nothing to do
+
+                    } else if (peekForElement(reader, "DistributionSummary")) {
+                        result.add(DistributionSummary.create(reader));
+
+                    } else if (reader.peek() instanceof EndElement) {
+                        expectElementEnd(reader, "DistributionList");
+                        return result;
+
+                    } else {
+                        throw new XMLStreamException("Unexpected event: " + reader.peek());
+                    }
+                }
+                throw new XMLStreamException("Unexpected end of XML stream.");
+            }
+        });
     }
 
     public String getDistribution (String distribution)
