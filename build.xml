@@ -234,6 +234,7 @@
     </artifact:dependencies>
     <artifact:dependencies filesetId="build.remote.fileset">
       <dependency groupId="com.google.gwt" artifactId="gwt-incubator" version="2.0.1"/>
+      <dependency groupId="stax" artifactId="stax" version="1.2.0"/>
     </artifact:dependencies>
     <copy todir="${deploy.dir}/build">
       <fileset refid="build.fileset"/>
