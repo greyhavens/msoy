@@ -19,6 +19,7 @@ import java.text.SimpleDateFormat;
 
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -27,9 +28,10 @@ import javax.crypto.spec.SecretKeySpec;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLEventReader;
 
 import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
 import com.google.common.io.CharStreams;
 
 import com.threerings.msoy.server.ServerConfig;
@@ -170,7 +172,15 @@ public class CloudfrontConnection
         // GET /2010-08-01/origin-access-identity/cloudfront?Marker=value&MaxItems=value
         GetMethod method = new GetMethod(API.ORIGIN_ACCESS_ID.build("cloudfront"));
 
-        return executeAndReturn(method, null);
+        return executeAndReturn(method, new ReturnBodyParser<String>() {
+            public String parseBody (XMLEventReader reader) throws XMLStreamException {
+                List<String> results = Lists.newArrayList();
+                while (reader.hasNext()) {
+                    results.add(reader.nextEvent().toString());
+                }
+                return "XML[" + Joiner.on(", ").join(results) + "]";
+            }
+        });
     }
 
     public String getOriginAccessIdentity (String id)
@@ -296,7 +306,7 @@ public class CloudfrontConnection
 
     protected interface ReturnBodyParser<T>
     {
-        public T parseBody (XMLStreamReader writer) throws XMLStreamException;
+        public T parseBody (XMLEventReader writer) throws XMLStreamException;
     }
 
     protected <T> T executeWithBody (
@@ -333,7 +343,7 @@ public class CloudfrontConnection
         try {
             InputStream stream = execute(method);
             if (parser != null) {
-                return parser.parseBody(_xmlFactory.createXMLStreamReader(stream));
+                return parser.parseBody(_xmlFactory.createXMLEventReader(stream));
             }
             return null;
 
