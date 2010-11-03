@@ -13,7 +13,6 @@ import java.util.TimeZone;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLEventReader;
-import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.events.XMLEvent;
 import javax.xml.stream.events.Characters;
 import javax.xml.stream.events.EndElement;
@@ -32,7 +31,7 @@ public class CloudfrontEventReader
         return _reader.peek();
     }
 
-    protected void expectType (int eventType)
+    public void expectType (int eventType)
         throws XMLStreamException
     {
         XMLEvent event = _reader.nextEvent();
@@ -41,7 +40,7 @@ public class CloudfrontEventReader
         }
     }
 
-    protected void expectElementStart (String elementName)
+    public void expectElementStart (String elementName)
         throws XMLStreamException
     {
         XMLEvent event = _reader.nextEvent();
@@ -53,7 +52,7 @@ public class CloudfrontEventReader
         throw new XMLStreamException("Expecting start of element [" + elementName + "], got " + event);
     }
 
-    protected void expectElementEnd (String elementName)
+    public void expectElementEnd (String elementName)
         throws XMLStreamException
     {
         XMLEvent event = _reader.nextEvent();
@@ -64,7 +63,7 @@ public class CloudfrontEventReader
         throw new XMLStreamException("Expecting end of element [" + elementName + "], got " + event);
     }
 
-    protected boolean peekForElement (String element)
+    public boolean peekForElement (String element)
         throws XMLStreamException
     {
         XMLEvent event = _reader.peek();
@@ -72,7 +71,7 @@ public class CloudfrontEventReader
                 element.equals(((StartElement) event).getName().getLocalPart()));
     }
 
-    protected boolean maybeSkip (String... elements)
+    public boolean maybeSkip (String... elements)
         throws XMLStreamException
     {
         XMLEvent event = _reader.peek();
@@ -94,7 +93,7 @@ public class CloudfrontEventReader
      * Returns null if the specified element is not in fact the next thing in front of our cursor;
      * returns empty string for elements that match, but which are empty.
      */
-    protected String maybeString (String element)
+    public String maybeString (String element)
         throws XMLStreamException
     {
         if (!peekForElement(element)) {
@@ -119,7 +118,7 @@ public class CloudfrontEventReader
      * Returns null if the specified element is not in fact the next thing in front of our cursor;
      * returns the specified default integer for elements that match, but which are empty.
      */
-    protected Integer maybeInt (String element)
+    public Integer maybeInt (String element)
         throws XMLStreamException
     {
         String stringResult = maybeString(element);
@@ -136,7 +135,7 @@ public class CloudfrontEventReader
      * Returns null if the specified element is not in fact the next thing in front of our cursor;
      * there is no default, and thus we throw an error if the element exists but is empty.
      */
-    protected Date maybeDate (String element)
+    public Date maybeDate (String element)
         throws XMLStreamException
     {
         String stringResult = maybeString(element);
@@ -157,7 +156,7 @@ public class CloudfrontEventReader
      * Returns null if the specified element is not in fact the next thing in front of our cursor;
      * returns the specified default integer for elements that match, but which are empty.
      */
-    protected Boolean maybeBoolean (String element)
+    public Boolean maybeBoolean (String element)
         throws XMLStreamException
     {
         String stringResult = maybeString(element);
