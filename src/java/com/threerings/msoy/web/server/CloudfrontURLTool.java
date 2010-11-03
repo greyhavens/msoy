@@ -47,7 +47,6 @@ public class CloudfrontURLTool
     public CloudfrontURLTool (String signingKeyId, String signingKey)
     {
         this(signingKeyId, Base64.decodeBase64(signingKey.getBytes()));
-        log.info("Base64-Decoding key: [" + signingKey + "]");
     }
 
     /**
@@ -90,7 +89,6 @@ public class CloudfrontURLTool
         try {
             Signature sig = Signature.getInstance("SHA1withRSA");
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-            log.info("Creating key", "bytes", StringUtil.toString(_signingKeyBytes));
             sig.initSign(keyFactory.generatePrivate(new PKCS8EncodedKeySpec(_signingKeyBytes)));
             sig.update(policy.getBytes());
             sigBytes = sig.sign();
