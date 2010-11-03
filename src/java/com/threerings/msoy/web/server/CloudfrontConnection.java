@@ -266,14 +266,12 @@ public class CloudfrontConnection
         public String comment;
         public Boolean enabled;
         public boolean selfIsSigner;
-        public List<String> trustedSigners = Lists.newArrayList();
+        public List<String> trustedAwsSigners = Lists.newArrayList();
 
         public boolean nextElement (XMLEventReader reader)
             throws XMLStreamException
         {
-            String str;
-            Date date;
-            Boolean bool;
+            String str; Date date; Boolean bool;
 
             if (null != (str = maybeReadString(reader, "Id"))) {
                 id = str;
@@ -291,6 +289,7 @@ public class CloudfrontConnection
                 comment = str;
             } else if (null != (bool = maybeReadBoolean(reader, "Enabled"))) {
                 enabled = bool;
+
             } else if (peekForElement(reader, "TrustedSigners")) {
                 new ContainerElement() {
                     public boolean nextElement (XMLEventReader reader) throws XMLStreamException {
@@ -298,7 +297,7 @@ public class CloudfrontConnection
                         if (null != (str = maybeReadString(reader, "Self"))) {
                             selfIsSigner = true;
                         } else if (null != (str = maybeReadString(reader, "AwsAccountNumber"))) {
-                            trustedSigners.add(str);
+                            trustedAwsSigners.add(str);
                         } else {
                             return false;
                         }
@@ -366,24 +365,24 @@ public class CloudfrontConnection
         public Date lastModifiedTime;
         public String domainName;
         public List<Signer> activeTrustedSigners = Lists.newArrayList();
+        public DistributionConfig config;
 
         public boolean nextElement (XMLEventReader reader)
             throws XMLStreamException
         {
-            String str;
-            Date date;
-            Integer n;
+            String str; Date date; Integer n;
 
             if (null != (str = maybeReadString(reader, "Id"))) {
                 id = str;
             } else if (null != (str = maybeReadString(reader, "Status"))) {
                 status = str;
             } else if (null != (n = maybeReadInt(reader, "InProgressInvalidationBatches")))  {
-                status = str;
+                inProgressValidationBatches = n;
             } else if (null != (date = maybeReadDate(reader, "LastModifiedTime"))) {
                 lastModifiedTime = date;
             } else if (null != (str = maybeReadString(reader, "DomainName"))) {
                 domainName = str;
+
             } else if (peekForElement(reader, "ActiveTrustedSigners")) {
                 new ContainerElement() {
                     public boolean nextElement (XMLEventReader reader) throws XMLStreamException {
@@ -396,9 +395,7 @@ public class CloudfrontConnection
                 }.recurseInto(reader, "ActiveTrustedSigners");
 
             } else if (peekForElement(reader, "DistributionConfig")) {
-                expectElementStart(reader, "DistributionConfig");
-                // TODO IMPLEMENT
-                expectElementEnd(reader, "DistributionConfig");
+                config = new DistributionConfig().initialize(reader);
             } else {
                 return false;
             }
@@ -412,7 +409,119 @@ public class CloudfrontConnection
 
         public boolean isComplete ()
         {
-            return id != null && status != null && lastModifiedTime != null && domainName != null;
+            return id != null && status != null && lastModifiedTime != null && domainName != null
+                && config != null;
+        }
+    }
+
+    public static class Logging
+        extends CloudFrontComplexType<Logging>
+    {
+        public String bucket;
+        public String prefix;
+
+        public boolean nextElement (XMLEventReader reader)
+            throws XMLStreamException
+        {
+            String str;
+            if (null != (str = maybeReadString(reader, "Bucket"))) {
+                bucket = str;
+            } else if (null != (str = maybeReadString(reader, "Prefix"))) {
+                prefix = str;
+            } else {
+                return false;
+            }
+            return true;
+        }
+
+        public String typeElement ()
+        {
+            return "Logging";
+        }
+
+        public boolean isComplete ()
+        {
+            return bucket != null;
+        }
+    }
+
+    public static class DistributionConfig
+        extends CloudFrontComplexType<DistributionConfig>
+    {
+        public String origin;
+        public String callerReference;
+        public String cname;
+        public String comment;
+        public Boolean enabled;
+        public String defaultRootObject;
+        public Logging logging;
+        public String originAccessIdentity;
+        public boolean selfIsSigner;
+        public List<String> trustedAwsSigners = Lists.newArrayList();
+        public List<String> requiredProtocols = Lists.newArrayList();
+
+        public boolean nextElement (XMLEventReader reader)
+            throws XMLStreamException
+        {
+            String str; Boolean bool;
+
+            if (null != (str = maybeReadString(reader, "Origin"))) {
+                origin = str;
+            } else if (null != (str = maybeReadString(reader, "CallerReference"))) {
+                callerReference = str;
+            } else if (null != (str = maybeReadString(reader, "CNAME"))) {
+                cname = str;
+            } else if (null != (str = maybeReadString(reader, "Comment"))) {
+                comment = str;
+            } else if (null != (bool = maybeReadBoolean(reader, "Enabled"))) {
+                enabled = bool;
+            } else if (null != (str = maybeReadString(reader, "DefaultRootObject"))) {
+                defaultRootObject = str;
+            } else if (null != (str = maybeReadString(reader, "OriginAccessIdentity"))) {
+                originAccessIdentity = str;
+            } else if (peekForElement(reader, "Logging")) {
+                logging = new Logging().initialize(reader);
+
+            } else if (peekForElement(reader, "TrustedSigners")) {
+                new ContainerElement() {
+                    public boolean nextElement (XMLEventReader reader) throws XMLStreamException {
+                        String str;
+                        if (null != (str = maybeReadString(reader, "Self"))) {
+                            selfIsSigner = true;
+                        } else if (null != (str = maybeReadString(reader, "AwsAccountNumber"))) {
+                            trustedAwsSigners.add(str);
+                        } else {
+                            return false;
+                        }
+                        return true;
+                    }
+                }.recurseInto(reader, "TrustedSigners");
+
+            } else if (peekForElement(reader, "RequiredProtocols")) {
+                new ContainerElement() {
+                    public boolean nextElement (XMLEventReader reader) throws XMLStreamException {
+                        String str;
+                        if (null != (str = maybeReadString(reader, "Protocol"))) {
+                            requiredProtocols.add(str);
+                            return true;
+                        }
+                        return false;
+                    }
+                }.recurseInto(reader, "RequiredProtocols");
+            } else {
+                return false;
+            }
+            return true;
+        }
+
+        public String typeElement ()
+        {
+            return "DistributionConfig";
+        }
+
+        public boolean isComplete ()
+        {
+            return origin != null && callerReference != null && enabled != null;
         }
     }
 
