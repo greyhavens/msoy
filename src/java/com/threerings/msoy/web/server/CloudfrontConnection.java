@@ -115,40 +115,39 @@ public class CloudfrontConnection
         CloudfrontConnection conn = new CloudfrontConnection(
             ServerConfig.cloudId, ServerConfig.cloudKey);
         try {
-            String body = null;
-            List<?> bits = null;
+            Object result = null;
+
             if (args.length > 0) {
                 String cmd = args[0];
                 if ("dists".equals(cmd)) {
-                    bits = conn.getDistributions();
+                    result = conn.getDistributions();
                 } else if ("oaids".equals(cmd)) {
-                    bits = conn.getOriginAccessIdentities();
+                    result = conn.getOriginAccessIdentities();
                 }
                 if (args.length > 1) {
                     if ("invreqs".equals(cmd)) {
-                        body = conn.getInvalidations(args[1]);
+                        result = conn.getInvalidations(args[1]);
                     } else if ("dist".equals(cmd)) {
-                        body = conn.getDistribution(args[1]);
+                        result = conn.getDistribution(args[1]);
                     } else if ("distconf".equals(cmd)) {
-                        body = conn.getDistributionConfig(args[1]);
+                        result = conn.getDistributionConfig(args[1]);
                     } else if ("oaid".equals(cmd)) {
-                        body = conn.getOriginAccessIdentity(args[1]);
+                        result = conn.getOriginAccessIdentity(args[1]);
                     }
                 }
                 if (args.length > 2) {
                     if ("invalidate".equals(cmd)) {
-                        body = conn.invalidateObjects(args[1], Collections.singleton(args[2]));
+                        result = conn.invalidateObjects(args[1], Collections.singleton(args[2]));
                     } else if ("invreq".equals(cmd)) {
-                        body = conn.getInvalidation(args[1], args[2]);
+                        result = conn.getInvalidation(args[1], args[2]);
                     }
                 }
             }
 
-            if (bits != null) {
-                body = Joiner.on("\n").join(bits);
-            }
+            if (result instanceof Iterable) {
+                result = Joiner.on("\n").join((Iterable) result);
 
-            if (body == null) {
+            } else if (result == null) {
                 System.err.println(
                     "Available commands:\n" +
                     "dists\n" +
@@ -161,7 +160,8 @@ public class CloudfrontConnection
                     "invalidate <distId> <key>");
                 return;
             }
-            System.out.println("Result: " + body);
+            System.out.println("Result: " + StringUtil.toString(result));
+
         } catch (CloudfrontException e) {
             e.printStackTrace();
         }
@@ -182,27 +182,27 @@ public class CloudfrontConnection
         public static OriginAccessIdentitySummary create (XMLEventReader reader)
             throws XMLStreamException
         {
-            OriginAccessIdentitySummary summary = new OriginAccessIdentitySummary();
+            OriginAccessIdentitySummary result = new OriginAccessIdentitySummary();
 
             expectElementStart(reader, "CloudFrontOriginAccessIdentitySummary");
             while (reader.hasNext()) {
                 String data;
 
                 if (null != (data = maybeReadElement(reader, "Id"))) {
-                    summary.id = data;
+                    result.id = data;
 
                 } else if (null != (data = maybeReadElement(reader, "S3CanonicalUserId"))) {
-                    summary.s3CanonicalUserId = data;
+                    result.s3CanonicalUserId = data;
 
                 } else if (null != (data = maybeReadElement(reader, "Comment"))) {
-                    summary.comment = data;
+                    result.comment = data;
 
                 } else if (reader.peek() instanceof EndElement) {
                     expectElementEnd(reader, "CloudFrontOriginAccessIdentitySummary");
-                    if (!summary.isComplete()) {
-                        throw new XMLStreamException("Got partial object: " + summary);
+                    if (!result.isComplete()) {
+                        throw new XMLStreamException("Got partial object: " + result);
                     }
-                    return summary;
+                    return result;
 
                 } else {
                     throw new XMLStreamException("Unexpected event: " + reader.peek());
@@ -233,48 +233,49 @@ public class CloudfrontConnection
         public Set<String> cnames = Sets.newHashSet();
         public String comment;
         public String enabled;
+        public boolean selfIsSigner;
         public List<String> trustedSigners = Lists.newArrayList();
 
         public static DistributionSummary create (XMLEventReader reader)
             throws XMLStreamException
         {
-            DistributionSummary summary = new DistributionSummary();
+            DistributionSummary result = new DistributionSummary();
 
             expectElementStart(reader, "DistributionSummary");
             do {
                 String data;
 
                 if (null != (data = maybeReadElement(reader, "Id"))) {
-                    summary.id = data;
+                    result.id = data;
 
                 } else if (null != (data = maybeReadElement(reader, "Status"))) {
-                    summary.status = data;
+                    result.status = data;
 
                 } else if (null != (data = maybeReadElement(reader, "LastModifiedTime"))) {
-                    summary.lastModifiedTime = data;
+                    result.lastModifiedTime = data;
 
                 } else if (null != (data = maybeReadElement(reader, "DomainName"))) {
-                    summary.domainName = data;
+                    result.domainName = data;
 
                 } else if (null != (data = maybeReadElement(reader, "CNAME"))) {
-                    summary.cnames.add(data);
+                    result.cnames.add(data);
 
                 } else if (null != (data = maybeReadElement(reader, "Origin"))) {
-                    summary.origin = data;
+                    result.origin = data;
 
                 } else if (null != (data = maybeReadElement(reader, "Comment"))) {
-                    summary.comment = data;
+                    result.comment = data;
 
                 } else if (null != (data = maybeReadElement(reader, "Enabled"))) {
-                    summary.enabled = data;
+                    result.enabled = data;
 
                 } else if (peekForElement(reader, "TrustedSigners")) {
                     reader.nextEvent();
                     do {
                         if (null != (data = maybeReadElement(reader, "Self"))) {
-                            summary.trustedSigners.add("SELF");
+                            result.selfIsSigner = true;
                         } else if (null != (data = maybeReadElement(reader, "AwsAccountNumber"))) {
-                            summary.trustedSigners.add("data");
+                            result.trustedSigners.add("data");
                         } else {
                             throw new XMLStreamException("Unexpected event: " + reader.peek());
                         }
@@ -287,16 +288,134 @@ public class CloudfrontConnection
             } while (!(reader.peek() instanceof EndElement));
 
             expectElementEnd(reader, "DistributionSummary");
-            if (!summary.isComplete()) {
-                throw new XMLStreamException("Got partial object: " + summary);
+            if (!result.isComplete()) {
+                throw new XMLStreamException("Got partial object: " + result);
             }
-            return summary;
+            return result;
         }
 
         public boolean isComplete ()
         {
             return id != null && status != null && lastModifiedTime != null && domainName != null
                 && origin != null && enabled != null;
+        }
+
+        public String toString ()
+        {
+            return StringUtil.fieldsToString(this);
+        }
+    }
+
+    public static class Signer
+        implements CloudFrontComplexType
+    {
+        public boolean isSelf;
+        public String awsAccountNumber;
+        public Set<String> keyIds = Sets.newHashSet();
+
+        public static Signer create (XMLEventReader reader)
+            throws XMLStreamException
+        {
+            Signer result = new Signer();
+
+            expectElementStart(reader, "Signer");
+            do {
+                String data;
+
+                if (null != (data = maybeReadElement(reader, "Self"))) {
+                    result.isSelf = true;
+                } else if (null != (data = maybeReadElement(reader, "AwsAccountNumber"))) {
+                    result.awsAccountNumber = data;
+                } else if (null != (data = maybeReadElement(reader, "KeyPairId"))) {
+                    result.keyIds.add(data);
+                } else {
+                    throw new XMLStreamException("Unexpected event: " + reader.peek());
+                }
+            } while (!(reader.peek() instanceof EndElement));
+
+            expectElementEnd(reader, "Signer");
+            if (!result.isComplete()) {
+                throw new XMLStreamException("Got partial object: " + result);
+            }
+            return result;
+        }
+
+        public boolean isComplete ()
+        {
+            return isSelf || (awsAccountNumber != null);
+        }
+
+        public String toString ()
+        {
+            return StringUtil.fieldsToString(this);
+        }
+    }
+
+    public static class Distribution
+        implements CloudFrontComplexType
+    {
+        public String id;
+        public String status;
+        public String inProgressValidationBatches;
+        public String lastModifiedTime;
+        public String domainName;
+        public List<Signer> activeTrustedSigners = Lists.newArrayList();
+
+        public static Distribution create (XMLEventReader reader)
+            throws XMLStreamException
+        {
+            Distribution result = new Distribution();
+
+            expectElementStart(reader, "Distribution");
+            do {
+                String data;
+
+                if (null != (data = maybeReadElement(reader, "Id"))) {
+                    result.id = data;
+
+                } else if (null != (data = maybeReadElement(reader, "Status"))) {
+                    result.status = data;
+
+                } else if (null != (data = maybeReadElement(reader, "InProgressInvalidationBatches"))) {
+                    result.status = data;
+
+                } else if (null != (data = maybeReadElement(reader, "LastModifiedTime"))) {
+                    result.lastModifiedTime = data;
+
+                } else if (null != (data = maybeReadElement(reader, "DomainName"))) {
+                    result.domainName = data;
+
+                } else if (peekForElement(reader, "ActiveTrustedSigners")) {
+                    reader.nextEvent();
+                    do {
+                        if (peekForElement(reader, "Signer")) {
+                            result.activeTrustedSigners.add(Signer.create(reader));
+                        } else {
+                            throw new XMLStreamException("Unexpected event: " + reader.peek());
+                        }
+                    } while (!(reader.peek() instanceof EndElement));
+                    expectElementEnd(reader, "ActiveTrustedSigners");
+
+                } else if (peekForElement(reader, "DistributionConfig")) {
+                    expectElementStart(reader, "DistributionConfig");
+                    // TODO IMPLEMENT
+                    expectElementEnd(reader, "DistributionConfig");
+
+                } else {
+                    throw new XMLStreamException("Unexpected event: " + reader.peek());
+                }
+            } while (!(reader.peek() instanceof EndElement));
+
+            expectElementEnd(reader, "Distribution");
+            if (!result.isComplete()) {
+                throw new XMLStreamException("Got partial object: " + result);
+            }
+            return result;
+        }
+
+        public boolean isComplete ()
+        {
+            return id != null && status != null && lastModifiedTime != null && domainName != null;
         }
 
         public String toString ()
@@ -386,12 +505,16 @@ public class CloudfrontConnection
         });
     }
 
-    public String getDistribution (String distribution)
+    public Distribution getDistribution (String distribution)
         throws CloudfrontException
     {
         // GET /2010-08-01/distribution/DistID
         GetMethod method = new GetMethod(API.DISTRIBUTION.build(distribution));
-        return executeAndReturn(method, null);
+        return executeAndReturn(method, new ReturnBodyParser<Distribution>() {
+            public Distribution parseBody (XMLEventReader reader) throws XMLStreamException {
+                return Distribution.create(reader);
+            }
+        });
     }
 
     public String getDistributionConfig (String distribution)
