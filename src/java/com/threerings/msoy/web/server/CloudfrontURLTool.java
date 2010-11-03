@@ -13,6 +13,7 @@ import java.security.spec.PKCS8EncodedKeySpec;
 
 import org.apache.commons.codec.binary.Base64;
 
+import com.threerings.msoy.server.ServerConfig;
 import static com.threerings.msoy.Log.log;
 
 /**
@@ -29,10 +30,14 @@ public class CloudfrontURLTool
 
         String url = args[0];
         int days = new Integer(args[1]);
-        int now = System.currentTimeMillis() / 1000;
+        int now = ((int) (System.currentTimeMillis() / 1000));
 
         System.out.println("Signing URL for expiration in " + days + " days: " + url);
-        System.out.println(tool.signURL(url, now + days * 3600 * 24));
+        try {
+            System.out.println(tool.signURL(url, now + days * 3600 * 24));
+        } catch (CloudfrontException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
