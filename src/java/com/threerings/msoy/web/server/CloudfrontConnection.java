@@ -103,7 +103,7 @@ public class CloudfrontConnection
     }
 
     public static abstract class CloudFrontComplexType<T extends CloudFrontComplexType>
-        extends ContainerElement
+        extends ContainerElement implements ReturnBodyParser<T>
     {
         public T initialize (CloudfrontEventReader reader)
             throws XMLStreamException
@@ -116,6 +116,12 @@ public class CloudfrontConnection
             @SuppressWarnings("unchecked")
             T tThis = (T) this;
             return tThis;
+        }
+
+        public T parseBody (CloudfrontEventReader reader)
+            throws XMLStreamException
+        {
+            return initialize(reader);
         }
 
         public abstract String typeElement ();
@@ -250,11 +256,7 @@ public class CloudfrontConnection
     {
         // GET /2010-08-01/origin-access-identity/cloudfront/IdentityID
         GetMethod method = new GetMethod(API.ORIGIN_ACCESS_ID.build("cloudfront", id));
-        return executeAndReturn(method, new ReturnBodyParser<OriginAccessIdentity>() {
-            public OriginAccessIdentity parseBody (CloudfrontEventReader reader) throws XMLStreamException {
-                return new OriginAccessIdentity().initialize(reader);
-            }
-        });
+        return executeAndReturn(method, new OriginAccessIdentity());
     }
 
     public OriginAccessIdentityConfig getOriginAccessIdentityConfig (String id)
@@ -263,13 +265,7 @@ public class CloudfrontConnection
         // GET /2010-08-01/origin-access-identity/cloudfront/IdentityID/config
         GetMethod method = new GetMethod(
             API.ORIGIN_ACCESS_ID.build("cloudfront", id, "config"));
-        return executeAndReturn(method, new ReturnBodyParser<OriginAccessIdentityConfig>() {
-            public OriginAccessIdentityConfig parseBody (CloudfrontEventReader reader)
-                throws XMLStreamException
-            {
-                return new OriginAccessIdentityConfig().initialize(reader);
-            }
-        });
+        return executeAndReturn(method, new OriginAccessIdentityConfig());
     }
 
     public List <DistributionSummary> getDistributions ()
@@ -305,11 +301,7 @@ public class CloudfrontConnection
     {
         // GET /2010-08-01/distribution/DistID
         GetMethod method = new GetMethod(API.DISTRIBUTION.build(distribution));
-        return executeAndReturn(method, new ReturnBodyParser<Distribution>() {
-            public Distribution parseBody (CloudfrontEventReader reader) throws XMLStreamException {
-                return new Distribution().initialize(reader);
-            }
-        });
+        return executeAndReturn(method, new Distribution());
     }
 
     public DistributionConfig getDistributionConfig (String distribution)
@@ -317,11 +309,7 @@ public class CloudfrontConnection
     {
         // GET /2010-08-01/distribution/DistID/config
         GetMethod method = new GetMethod(API.DISTRIBUTION.build(distribution, "config"));
-        return executeAndReturn(method, new ReturnBodyParser<DistributionConfig>() {
-            public DistributionConfig parseBody (CloudfrontEventReader reader) throws XMLStreamException {
-                return new DistributionConfig().initialize(reader);
-            }
-        });
+        return executeAndReturn(method, new DistributionConfig());
     }
 
     public List<InvalidationSummary> getInvalidations (String distribution)
@@ -357,11 +345,7 @@ public class CloudfrontConnection
         // GET /2010-08-01/distribution/DistID/invalidation/invalidationID
         GetMethod method = new GetMethod(
             API.DISTRIBUTION.build(distribution, "invalidation", batch));
-        return executeAndReturn(method, new ReturnBodyParser<Invalidation>() {
-            public Invalidation parseBody (CloudfrontEventReader reader) throws XMLStreamException {
-                return new Invalidation().initialize(reader);
-            }
-        });
+        return executeAndReturn(method, new Invalidation());
     }
 
     /**
