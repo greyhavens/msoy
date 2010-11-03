@@ -361,7 +361,7 @@ public class CloudfrontConnection
     {
         public String id;
         public String status;
-        public Integer inProgressValidationBatches;
+        public Integer inProgressInvalidationBatches;
         public Date lastModifiedTime;
         public String domainName;
         public List<Signer> activeTrustedSigners = Lists.newArrayList();
@@ -377,7 +377,7 @@ public class CloudfrontConnection
             } else if (null != (str = maybeReadString(reader, "Status"))) {
                 status = str;
             } else if (null != (n = maybeReadInt(reader, "InProgressInvalidationBatches")))  {
-                inProgressValidationBatches = n;
+                inProgressInvalidationBatches = n;
             } else if (null != (date = maybeReadDate(reader, "LastModifiedTime"))) {
                 lastModifiedTime = date;
             } else if (null != (str = maybeReadString(reader, "DomainName"))) {
