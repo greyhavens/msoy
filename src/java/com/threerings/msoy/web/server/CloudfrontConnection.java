@@ -29,6 +29,7 @@ import javax.crypto.spec.SecretKeySpec;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.events.EndElement;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
@@ -74,6 +75,58 @@ import static com.threerings.msoy.Log.log;
 
 public class CloudfrontConnection
 {
+    public static abstract class ElementIterable
+    {
+        public void iterateOverElements (CloudfrontEventReader reader)
+            throws XMLStreamException
+        {
+            do {
+                if (!nextElement(reader)) {
+                    throw new XMLStreamException("Unexpected event: " + reader.peek());
+                }
+            } while (!(reader.peek() instanceof EndElement));
+        }
+
+        public abstract boolean nextElement (CloudfrontEventReader reader)
+            throws XMLStreamException;
+    }
+
+    public static abstract class ContainerElement extends ElementIterable
+    {
+        public void recurseInto (CloudfrontEventReader reader, String elementName)
+            throws XMLStreamException
+        {
+            reader.expectElementStart(elementName);
+            iterateOverElements(reader);
+            reader.expectElementEnd(elementName);
+        }
+    }
+
+    public static abstract class CloudFrontComplexType<T extends CloudFrontComplexType>
+        extends ContainerElement
+    {
+        public T initialize (CloudfrontEventReader reader)
+            throws XMLStreamException
+        {
+            recurseInto(reader, typeElement());
+            if (!isComplete()) {
+                throw new XMLStreamException("Got partial object: " + this);
+            }
+
+            @SuppressWarnings("unchecked")
+            T tThis = (T) this;
+            return tThis;
+        }
+
+        public abstract String typeElement ();
+        public abstract boolean isComplete ();
+
+        public String toString ()
+        {
+            return StringUtil.fieldsToString(this);
+        }
+    }
+
     public CloudfrontConnection (String keyId, String secretKey)
     {
         this(keyId, secretKey, createDefaultHostConfig());

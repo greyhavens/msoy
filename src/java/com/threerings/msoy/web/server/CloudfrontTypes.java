@@ -15,60 +15,12 @@ import com.google.common.collect.Sets;
 
 import com.samskivert.util.StringUtil;
 
+import com.threerings.msoy.web.server.CloudfrontConnection.ElementIterable;
+import com.threerings.msoy.web.server.CloudfrontConnection.ContainerElement;
+import com.threerings.msoy.web.server.CloudfrontConnection.CloudFrontComplexType;
+
 public abstract class CloudfrontTypes
 {
-        public static abstract class ElementIterable
-    {
-        public void iterateOverElements (CloudfrontEventReader reader)
-            throws XMLStreamException
-        {
-            do {
-                if (!nextElement(reader)) {
-                    throw new XMLStreamException("Unexpected event: " + reader.peek());
-                }
-            } while (!(reader.peek() instanceof EndElement));
-        }
-
-        public abstract boolean nextElement (CloudfrontEventReader reader)
-            throws XMLStreamException;
-    }
-
-    public static abstract class ContainerElement extends ElementIterable
-    {
-        public void recurseInto (CloudfrontEventReader reader, String elementName)
-            throws XMLStreamException
-        {
-            reader.expectElementStart(elementName);
-            iterateOverElements(reader);
-            reader.expectElementEnd(elementName);
-        }
-    }
-
-    public static abstract class CloudFrontComplexType<T extends CloudFrontComplexType>
-        extends ContainerElement
-    {
-        public T initialize (CloudfrontEventReader reader)
-            throws XMLStreamException
-        {
-            recurseInto(reader, typeElement());
-            if (!isComplete()) {
-                throw new XMLStreamException("Got partial object: " + this);
-            }
-
-            @SuppressWarnings("unchecked")
-            T tThis = (T) this;
-            return tThis;
-        }
-
-        public abstract String typeElement ();
-        public abstract boolean isComplete ();
-
-        public String toString ()
-        {
-            return StringUtil.fieldsToString(this);
-        }
-    }
-
     public static class OriginAccessIdentitySummary
         extends CloudFrontComplexType<OriginAccessIdentitySummary>
     {
