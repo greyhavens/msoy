@@ -149,6 +149,8 @@ static_media_url = http://localhost:8080/media/static/
 # cloud_distribution =
 # cloud_id = AWS ID
 # cloud_key = SECRET KEY
+# cloud_signing_key_id = id of aws key pair dedicated to signing cloudfront URLs
+# cloud_signing_key = the actual PEM-encoded (private half of) the signing key
 
 #
 # This is where ToyBox looks for uploaded game jar files
