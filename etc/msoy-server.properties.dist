@@ -149,8 +149,13 @@ static_media_url = http://localhost:8080/media/static/
 # cloud_distribution =
 # cloud_id = AWS ID
 # cloud_key = SECRET KEY
+
+# Amazon hands out its private key in RSA PEM format. Java expects DER through its PKCS8 reader:
+#   openssl pkcs8 -topk8 -in pk-XXX.pem -nocrypt -outform DER -out pk-XXX.der
+#   openssl base64 -e -in pk-XXX.der
+#
 # cloud_signing_key_id = id of aws key pair dedicated to signing cloudfront URLs
-# cloud_signing_key = the actual PEM-encoded (private half of) the signing key
+# cloud_signing_key = the Base64-encoded DER translation of (private half of) the signing key
 
 #
 # This is where ToyBox looks for uploaded game jar files
