@@ -167,13 +167,17 @@ public class CloudfrontConnection
         }
     }
 
-    public interface CloudFrontComplexType
+    public static abstract class CloudFrontComplexType
     {
-        public boolean isComplete ();
+        public abstract boolean isComplete ();
+
+        public String toString ()
+        {
+            return StringUtil.fieldsToString(this);
+        }
     }
 
-    public static class OriginAccessIdentitySummary
-        implements CloudFrontComplexType
+    public static class OriginAccessIdentitySummary extends CloudFrontComplexType
     {
         public String id;
         public String s3CanonicalUserId;
@@ -215,15 +219,9 @@ public class CloudfrontConnection
         {
             return id != null && s3CanonicalUserId != null;
         }
-
-        public String toString ()
-        {
-            return StringUtil.fieldsToString(this);
-        }
     }
 
-    public static class DistributionSummary
-        implements CloudFrontComplexType
+    public static class DistributionSummary extends CloudFrontComplexType
     {
         public String id;
         public String status;
@@ -299,15 +297,9 @@ public class CloudfrontConnection
             return id != null && status != null && lastModifiedTime != null && domainName != null
                 && origin != null && enabled != null;
         }
-
-        public String toString ()
-        {
-            return StringUtil.fieldsToString(this);
-        }
     }
 
-    public static class Signer
-        implements CloudFrontComplexType
+    public static class Signer extends CloudFrontComplexType
     {
         public boolean isSelf;
         public String awsAccountNumber;
@@ -344,15 +336,9 @@ public class CloudfrontConnection
         {
             return isSelf || (awsAccountNumber != null);
         }
-
-        public String toString ()
-        {
-            return StringUtil.fieldsToString(this);
-        }
     }
 
-    public static class Distribution
-        implements CloudFrontComplexType
+    public static class Distribution extends CloudFrontComplexType
     {
         public String id;
         public String status;
@@ -416,11 +402,6 @@ public class CloudfrontConnection
         public boolean isComplete ()
         {
             return id != null && status != null && lastModifiedTime != null && domainName != null;
-        }
-
-        public String toString ()
-        {
-            return StringUtil.fieldsToString(this);
         }
     }
 
