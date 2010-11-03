@@ -473,15 +473,15 @@ public abstract class CloudfrontTypes
     public static class InvalidationBatch
         extends CloudFrontComplexType<InvalidationBatch>
     {
-        public String path;
         public String callerReference;
+        public Set<String> paths = Sets.newHashSet();
 
         public boolean nextElement (CloudfrontEventReader reader)
             throws XMLStreamException
         {
             String str;
             if (null != (str = reader.maybeString("Path"))) {
-                path = str;
+                paths.add(str);
             } else if (null != (str = reader.maybeString("CallerReference"))) {
                 callerReference = str;
             } else {
@@ -497,7 +497,7 @@ public abstract class CloudfrontTypes
 
         public boolean isComplete ()
         {
-            return path != null && callerReference != null;
+            return callerReference != null && !paths.isEmpty();
         }
     }
 
