@@ -94,6 +94,12 @@ public class ServerConfig
     /** The secret key used for cloudfront authentication. */
     public static String cloudKey;
 
+    /** The ID of the public key pair used exclusively to sign Cloudfront URLs. */
+    public static String cloudSigningKeyId;
+
+    /** The actual PEM-encoded private key identiied by {@link #cloudSigningKeyId}. */
+    public static String cloudSigningKey;
+
     /** Event logging server spooling directory. */
     public static String eventRemoteURI;
 
@@ -370,6 +376,8 @@ public class ServerConfig
         cloudDistribution = config.getValue("cloud_distribution", "");
         cloudId = config.getValue("cloud_id", "id");
         cloudKey = config.getValue("cloud_key", "key");
+        cloudSigningKeyId = config.getValue("cloud_signing_key_id", "id");
+        cloudSigningKey = config.getValue("cloud_signing_key", "");
         sharedSecret = config.getValue("server_secret", "");
         eventRemoteURI = config.getValue("event_remote_uri", "");
         eventLogSpoolDir = config.getValue("event_log_spool_dir", "");
