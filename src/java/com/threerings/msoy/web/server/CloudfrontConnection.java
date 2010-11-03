@@ -15,6 +15,7 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
 import java.text.SimpleDateFormat;
+import java.text.DateFormat;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -209,13 +210,13 @@ public class CloudfrontConnection
         public boolean handleNextElement (XMLEventReader reader)
             throws XMLStreamException
         {
-            String data;
-            if (null != (data = maybeReadElement(reader, "Id"))) {
-                this.id = data;
-            } else if (null != (data = maybeReadElement(reader, "S3CanonicalUserId"))) {
-                this.s3CanonicalUserId = data;
-            } else if (null != (data = maybeReadElement(reader, "Comment"))) {
-                this.comment = data;
+            String str;
+            if (null != (str = maybeReadString(reader, "Id"))) {
+                this.id = str;
+            } else if (null != (str = maybeReadString(reader, "S3CanonicalUserId"))) {
+                this.s3CanonicalUserId = str;
+            } else if (null != (str = maybeReadString(reader, "Comment"))) {
+                this.comment = str;
             } else {
                 return false;
             }
@@ -238,42 +239,45 @@ public class CloudfrontConnection
     {
         public String id;
         public String status;
-        public String lastModifiedTime;
+        public Date lastModifiedTime;
         public String domainName;
         public String origin;
         public Set<String> cnames = Sets.newHashSet();
         public String comment;
-        public String enabled;
+        public Boolean enabled;
         public boolean selfIsSigner;
         public List<String> trustedSigners = Lists.newArrayList();
 
         public boolean handleNextElement (XMLEventReader reader)
             throws XMLStreamException
         {
-            String data;
-            if (null != (data = maybeReadElement(reader, "Id"))) {
-                this.id = data;
-            } else if (null != (data = maybeReadElement(reader, "Status"))) {
-                this.status = data;
-            } else if (null != (data = maybeReadElement(reader, "LastModifiedTime"))) {
-                this.lastModifiedTime = data;
-            } else if (null != (data = maybeReadElement(reader, "DomainName"))) {
-                this.domainName = data;
-            } else if (null != (data = maybeReadElement(reader, "CNAME"))) {
-                this.cnames.add(data);
-            } else if (null != (data = maybeReadElement(reader, "Origin"))) {
-                this.origin = data;
-            } else if (null != (data = maybeReadElement(reader, "Comment"))) {
-                this.comment = data;
-            } else if (null != (data = maybeReadElement(reader, "Enabled"))) {
-                this.enabled = data;
+            String str;
+            Date date;
+            Boolean bool;
+
+            if (null != (str = maybeReadString(reader, "Id"))) {
+                this.id = str;
+            } else if (null != (str = maybeReadString(reader, "Status"))) {
+                this.status = str;
+            } else if (null != (date = maybeReadDate(reader, "LastModifiedTime"))) {
+                this.lastModifiedTime = date;
+            } else if (null != (str = maybeReadString(reader, "DomainName"))) {
+                this.domainName = str;
+            } else if (null != (str = maybeReadString(reader, "CNAME"))) {
+                this.cnames.add(str);
+            } else if (null != (str = maybeReadString(reader, "Origin"))) {
+                this.origin = str;
+            } else if (null != (str = maybeReadString(reader, "Comment"))) {
+                this.comment = str;
+            } else if (null != (bool = maybeReadBoolean(reader, "Enabled"))) {
+                this.enabled = bool;
             } else if (peekForElement(reader, "TrustedSigners")) {
                 reader.nextEvent();
                 do {
-                    if (null != (data = maybeReadElement(reader, "Self"))) {
+                    if (null != (str = maybeReadString(reader, "Self"))) {
                         this.selfIsSigner = true;
-                    } else if (null != (data = maybeReadElement(reader, "AwsAccountNumber"))) {
-                        this.trustedSigners.add("data");
+                    } else if (null != (str = maybeReadString(reader, "AwsAccountNumber"))) {
+                        this.trustedSigners.add(str);
                     } else {
                         throw new XMLStreamException("Unexpected event: " + reader.peek());
                     }
@@ -307,13 +311,13 @@ public class CloudfrontConnection
         public boolean handleNextElement (XMLEventReader reader)
             throws XMLStreamException
         {
-            String data;
-            if (null != (data = maybeReadElement(reader, "Self"))) {
+            String str;
+            if (null != (str = maybeReadString(reader, "Self"))) {
                 this.isSelf = true;
-            } else if (null != (data = maybeReadElement(reader, "AwsAccountNumber"))) {
-                this.awsAccountNumber = data;
-            } else if (null != (data = maybeReadElement(reader, "KeyPairId"))) {
-                this.keyIds.add(data);
+            } else if (null != (str = maybeReadString(reader, "AwsAccountNumber"))) {
+                this.awsAccountNumber = str;
+            } else if (null != (str = maybeReadString(reader, "KeyPairId"))) {
+                this.keyIds.add(str);
             } else {
                 return false;
             }
@@ -336,25 +340,28 @@ public class CloudfrontConnection
     {
         public String id;
         public String status;
-        public String inProgressValidationBatches;
-        public String lastModifiedTime;
+        public Integer inProgressValidationBatches;
+        public Date lastModifiedTime;
         public String domainName;
         public List<Signer> activeTrustedSigners = Lists.newArrayList();
 
         public boolean handleNextElement (XMLEventReader reader)
             throws XMLStreamException
         {
-            String data;
-            if (null != (data = maybeReadElement(reader, "Id"))) {
-                this.id = data;
-            } else if (null != (data = maybeReadElement(reader, "Status"))) {
-                this.status = data;
-            } else if (null != (data = maybeReadElement(reader, "InProgressInvalidationBatches")))  {
-                this.status = data;
-            } else if (null != (data = maybeReadElement(reader, "LastModifiedTime"))) {
-                this.lastModifiedTime = data;
-            } else if (null != (data = maybeReadElement(reader, "DomainName"))) {
-                this.domainName = data;
+            String str;
+            Date date;
+            Integer n;
+
+            if (null != (str = maybeReadString(reader, "Id"))) {
+                this.id = str;
+            } else if (null != (str = maybeReadString(reader, "Status"))) {
+                this.status = str;
+            } else if (null != (n = maybeReadInt(reader, "InProgressInvalidationBatches")))  {
+                this.status = str;
+            } else if (null != (date = maybeReadDate(reader, "LastModifiedTime"))) {
+                this.lastModifiedTime = date;
+            } else if (null != (str = maybeReadString(reader, "DomainName"))) {
+                this.domainName = str;
             } else if (peekForElement(reader, "ActiveTrustedSigners")) {
                 reader.nextEvent();
                 do {
@@ -664,7 +671,7 @@ public class CloudfrontConnection
     protected void signCloudfrontRequest (HttpMethod method)
     {
         // Set the required Date header (now)
-        String date = rfc822Date(new Date());
+        String date = RFC822_DATE_FORMAT.format(new Date());
         method.setRequestHeader("Date", date);
 
         // Sign and encode the Date header, which is all Cloudfront authorization requires
@@ -691,16 +698,6 @@ public class CloudfrontConnection
 
         // Insert the header
         method.setRequestHeader(AUTH_HEADER, "AWS " + _keyId + ":" + b64);
-    }
-
-    protected static String rfc822Date (Date date) {
-        // Convert the expiration date to rfc822 format.
-        final String DateFormat = "EEE, dd MMM yyyy HH:mm:ss ";
-        SimpleDateFormat format;
-
-        format = new SimpleDateFormat( DateFormat, Locale.US );
-        format.setTimeZone(TimeZone.getTimeZone("GMT"));
-        return format.format(date) + "GMT";
     }
 
     protected static HostConfiguration createDefaultHostConfig ()
@@ -770,9 +767,9 @@ public class CloudfrontConnection
 
     /**
      * Returns null if the specified element is not in fact the next thing in front of our cursor;
-     * returns empty string for matching but empty elements.
+     * returns empty string for elements that match, but which are empty.
      */
-    protected static String maybeReadElement (XMLEventReader reader, String element)
+    protected static String maybeReadString (XMLEventReader reader, String element)
         throws XMLStreamException
     {
         if (!peekForElement(reader, element)) {
@@ -791,6 +788,61 @@ public class CloudfrontConnection
         expectElementEnd(reader, element);
         // log.info("Returning character content: " + result);
         return result;
+    }
+
+    /**
+     * Returns null if the specified element is not in fact the next thing in front of our cursor;
+     * returns the specified default integer for elements that match, but which are empty.
+     */
+    protected static Integer maybeReadInt (XMLEventReader reader, String element)
+        throws XMLStreamException
+    {
+        String stringResult = maybeReadString(reader, element);
+        if (stringResult != null) {
+            if (stringResult.length() == 0) {
+                throw new XMLStreamException("Can't handle empty integere elements.");
+            }
+            return Integer.valueOf(stringResult);
+        }
+        return null;
+    }
+
+    /**
+     * Returns null if the specified element is not in fact the next thing in front of our cursor;
+     * there is no default, and thus we throw an error if the element exists but is empty.
+     */
+    protected static Date maybeReadDate (XMLEventReader reader, String element)
+        throws XMLStreamException
+    {
+        String stringResult = maybeReadString(reader, element);
+        if (stringResult != null) {
+            if (stringResult.length() == 0) {
+                throw new XMLStreamException("Can't handle empty date elements.");
+            }
+            try {
+                return RFC8601_DATE_FORMAT.parse(stringResult);
+            } catch (Exception e) {
+                throw new XMLStreamException("Failed to parse date [" + stringResult + "]", e);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Returns null if the specified element is not in fact the next thing in front of our cursor;
+     * returns the specified default integer for elements that match, but which are empty.
+     */
+    protected static Boolean maybeReadBoolean (XMLEventReader reader, String element)
+        throws XMLStreamException
+    {
+        String stringResult = maybeReadString(reader, element);
+        if (stringResult != null) {
+            if (stringResult.length() == 0) {
+                throw new XMLStreamException("Can't handle empty boolean elements.");
+            }
+            return Boolean.valueOf(stringResult);
+        }
+        return null;
     }
 
     protected String _keyId;
@@ -826,6 +878,15 @@ public class CloudfrontConnection
         protected String _prefix;
     }
 
+    protected static final DateFormat RFC822_DATE_FORMAT, RFC8601_DATE_FORMAT;
+    static {
+        RFC822_DATE_FORMAT = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z", Locale.US);
+        RFC822_DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("GMT"));
+
+        RFC8601_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US);
+        RFC8601_DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("GMT"));
+    }
+
     /** HTTPS protocol instance. */
     protected static final Protocol HTTPS_PROTOCOL = Protocol.getProtocol("https");
 
@@ -838,7 +899,7 @@ public class CloudfrontConnection
     /** AWS Authorization Header Name. */
     protected static final String AUTH_HEADER = "Authorization";
 
-    /** HMAC/SHA1 Algorithm per RFC 2104. */
+    /** HMAC/SHA1 Algorithm per _RF 2104. */
     protected static final String HMAC_SHA1_ALGORITHM = "HmacSHA1";
 
     /** Connection and read timeout for our http connections in milliseconds. */
