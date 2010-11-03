@@ -22,6 +22,19 @@ import static com.threerings.msoy.Log.log;
  */
 public class CloudfrontURLTool
 {
+    public static final void main (String[] args)
+    {
+        CloudfrontURLTool tool = new CloudfrontURLTool(
+            ServerConfig.cloudSigningKeyId, ServerConfig.cloudSigningKey);
+
+        String url = args[0];
+        int days = new Integer(args[1]);
+        int now = System.currentTimeMillis() / 1000;
+
+        System.out.println("Signing URL for expiration in " + days + " days: " + url);
+        System.out.println(tool.signURL(url, now + days * 3600 * 24));
+    }
+
     /**
      * This class must be instantiated with the private half of a CloudFront signature key pair.
      */
