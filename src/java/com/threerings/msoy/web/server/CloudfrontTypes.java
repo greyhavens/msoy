@@ -108,7 +108,7 @@ public abstract class CloudfrontTypes
     {
         public String id;
         public String s3CanonicalUserId;
-        public String comment;
+        public OriginAccessIdentityConfig config;
 
         public boolean nextElement (CloudfrontEventReader reader)
             throws XMLStreamException
@@ -118,6 +118,37 @@ public abstract class CloudfrontTypes
                 id = str;
             } else if (null != (str = reader.maybeString("S3CanonicalUserId"))) {
                 s3CanonicalUserId = str;
+            } else if (reader.peekForElement("CloudFrontOriginAccessIdentityConfig")) {
+                config = new OriginAccessIdentityConfig().initialize(reader);
+            } else {
+                return false;
+            }
+            return true;
+        }
+
+        public String typeElement ()
+        {
+            return "CloudFrontOriginAccessIdentity";
+        }
+
+        public boolean isComplete ()
+        {
+            return id != null && s3CanonicalUserId != null && config != null;
+        }
+    }
+
+    public static class OriginAccessIdentityConfig
+        extends CloudFrontComplexType<OriginAccessIdentityConfig>
+    {
+        public String callerReference;
+        public String comment;
+
+        public boolean nextElement (CloudfrontEventReader reader)
+            throws XMLStreamException
+        {
+            String str;
+            if (null != (str = reader.maybeString("CallerReference"))) {
+                callerReference = str;
             } else if (null != (str = reader.maybeString("Comment"))) {
                 comment = str;
             } else {
@@ -128,12 +159,12 @@ public abstract class CloudfrontTypes
 
         public String typeElement ()
         {
-            return "CloudFrontOriginAccessIdentitySummary";
+            return "CloudFrontOriginAccessIdentityConfig";
         }
 
         public boolean isComplete ()
         {
-            return id != null && s3CanonicalUserId != null;
+            return callerReference != null;
         }
     }
 

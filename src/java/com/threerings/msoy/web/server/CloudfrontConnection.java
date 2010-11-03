@@ -127,6 +127,8 @@ public class CloudfrontConnection
                         result = conn.getDistributionConfig(args[1]);
                     } else if ("oaid".equals(cmd)) {
                         result = conn.getOriginAccessIdentity(args[1]);
+                    } else if ("oaidconf".equals(cmd)) {
+                        result = conn.getOriginAccessIdentityConfig(args[1]);
                     }
                 }
                 if (args.length > 2) {
@@ -149,6 +151,7 @@ public class CloudfrontConnection
                     "distconf <distId>\n" +
                     "oaids\n" +
                     "oaid <id>\n" +
+                    "oaidconf <id>\n" +
                     "invreqs\n" +
                     "invreq <batchId>\n" +
                     "invalidate <distId> <key>");
@@ -189,21 +192,31 @@ public class CloudfrontConnection
         });
     }
 
-    public String getOriginAccessIdentity (String id)
+    public OriginAccessIdentity getOriginAccessIdentity (String id)
         throws CloudfrontException
     {
         // GET /2010-08-01/origin-access-identity/cloudfront/IdentityID
         GetMethod method = new GetMethod(API.ORIGIN_ACCESS_ID.build("cloudfront", id));
-        return executeAndReturn(method, null);
+        return executeAndReturn(method, new ReturnBodyParser<OriginAccessIdentity>() {
+            public OriginAccessIdentity parseBody (CloudfrontEventReader reader) throws XMLStreamException {
+                return new OriginAccessIdentity().initialize(reader);
+            }
+        });
     }
 
-    public String getOriginAccessIdentityConfig (String id)
+    public OriginAccessIdentityConfig getOriginAccessIdentityConfig (String id)
         throws CloudfrontException
     {
         // GET /2010-08-01/origin-access-identity/cloudfront/IdentityID/config
         GetMethod method = new GetMethod(
             API.ORIGIN_ACCESS_ID.build("cloudfront", id, "config"));
-        return executeAndReturn(method, null);
+        return executeAndReturn(method, new ReturnBodyParser<OriginAccessIdentityConfig>() {
+            public OriginAccessIdentityConfig parseBody (CloudfrontEventReader reader)
+                throws XMLStreamException
+            {
+                return new OriginAccessIdentityConfig().initialize(reader);
+            }
+        });
     }
 
     public List <DistributionSummary> getDistributions ()
