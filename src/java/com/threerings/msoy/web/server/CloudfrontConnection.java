@@ -357,7 +357,7 @@ public class CloudfrontConnection
      * after that there is a (very small) fee per invalidation. Systems that require instant
      * object updates as a matter of course should use object versioning instead.
      */
-    public String invalidateObjects (String distribution, final Iterable<String> keys)
+    public Invalidation invalidateObjects (String distribution, final Iterable<String> keys)
         throws CloudfrontException
     {
         // POST /2010-08-01/distribution/DistID/invalidation
@@ -373,10 +373,10 @@ public class CloudfrontConnection
                     writer.endElement("InvalidationBatch");
                 }
             },
-            null);
+            new Invalidation());
     }
 
-    public String createOriginAccessIdentity (final String comment)
+    public OriginAccessIdentity createOriginAccessIdentity (final String comment)
         throws CloudfrontException
     {
         // POST /2010-08-01/origin-access-identity/cloudfront
@@ -391,7 +391,7 @@ public class CloudfrontConnection
                     writer.endElement("CloudFrontOriginAccessIdentityConfig");
                 }
             },
-            null);
+            new OriginAccessIdentity());
     }
 
     public String deleteOriginAccessIdentity (String distribution, String tag)
