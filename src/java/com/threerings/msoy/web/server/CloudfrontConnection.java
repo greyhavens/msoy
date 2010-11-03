@@ -168,18 +168,40 @@ public class CloudfrontConnection
         }
     }
 
-    public static abstract class CloudFrontComplexType<T extends CloudFrontComplexType>
+    public static abstract class ElementIterable
     {
-        public T initialize (XMLEventReader reader) throws XMLStreamException
+        public void iterateOverElements (XMLEventReader reader)
+            throws XMLStreamException
         {
-            expectElementStart(reader, typeElement());
             do {
-                if (!handleNextElement(reader)) {
+                if (!nextElement(reader)) {
                     throw new XMLStreamException("Unexpected event: " + reader.peek());
                 }
             } while (!(reader.peek() instanceof EndElement));
+        }
 
-            expectElementEnd(reader, typeElement());
+        public abstract boolean nextElement (XMLEventReader reader)
+            throws XMLStreamException;
+    }
+
+    public static abstract class ContainerElement extends ElementIterable
+    {
+        public void recurseInto (XMLEventReader reader, String elementName)
+            throws XMLStreamException
+        {
+            expectElementStart(reader, elementName);
+            iterateOverElements(reader);
+            expectElementEnd(reader, elementName);
+        }
+    }
+
+    public static abstract class CloudFrontComplexType<T extends CloudFrontComplexType>
+        extends ContainerElement
+    {
+        public T initialize (XMLEventReader reader)
+            throws XMLStreamException
+        {
+            recurseInto(reader, typeElement());
             if (!isComplete()) {
                 throw new XMLStreamException("Got partial object: " + this);
             }
@@ -190,8 +212,6 @@ public class CloudfrontConnection
         }
 
         public abstract String typeElement ();
-        public abstract boolean handleNextElement (XMLEventReader reader)
-            throws XMLStreamException;
         public abstract boolean isComplete ();
 
         public String toString ()
@@ -207,16 +227,16 @@ public class CloudfrontConnection
         public String s3CanonicalUserId;
         public String comment;
 
-        public boolean handleNextElement (XMLEventReader reader)
+        public boolean nextElement (XMLEventReader reader)
             throws XMLStreamException
         {
             String str;
             if (null != (str = maybeReadString(reader, "Id"))) {
-                this.id = str;
+                id = str;
             } else if (null != (str = maybeReadString(reader, "S3CanonicalUserId"))) {
-                this.s3CanonicalUserId = str;
+                s3CanonicalUserId = str;
             } else if (null != (str = maybeReadString(reader, "Comment"))) {
-                this.comment = str;
+                comment = str;
             } else {
                 return false;
             }
@@ -248,7 +268,7 @@ public class CloudfrontConnection
         public boolean selfIsSigner;
         public List<String> trustedSigners = Lists.newArrayList();
 
-        public boolean handleNextElement (XMLEventReader reader)
+        public boolean nextElement (XMLEventReader reader)
             throws XMLStreamException
         {
             String str;
@@ -256,33 +276,35 @@ public class CloudfrontConnection
             Boolean bool;
 
             if (null != (str = maybeReadString(reader, "Id"))) {
-                this.id = str;
+                id = str;
             } else if (null != (str = maybeReadString(reader, "Status"))) {
-                this.status = str;
+                status = str;
             } else if (null != (date = maybeReadDate(reader, "LastModifiedTime"))) {
-                this.lastModifiedTime = date;
+                lastModifiedTime = date;
             } else if (null != (str = maybeReadString(reader, "DomainName"))) {
-                this.domainName = str;
+                domainName = str;
             } else if (null != (str = maybeReadString(reader, "CNAME"))) {
-                this.cnames.add(str);
+                cnames.add(str);
             } else if (null != (str = maybeReadString(reader, "Origin"))) {
-                this.origin = str;
+                origin = str;
             } else if (null != (str = maybeReadString(reader, "Comment"))) {
-                this.comment = str;
+                comment = str;
             } else if (null != (bool = maybeReadBoolean(reader, "Enabled"))) {
-                this.enabled = bool;
+                enabled = bool;
             } else if (peekForElement(reader, "TrustedSigners")) {
-                reader.nextEvent();
-                do {
-                    if (null != (str = maybeReadString(reader, "Self"))) {
-                        this.selfIsSigner = true;
-                    } else if (null != (str = maybeReadString(reader, "AwsAccountNumber"))) {
-                        this.trustedSigners.add(str);
-                    } else {
-                        throw new XMLStreamException("Unexpected event: " + reader.peek());
+                new ContainerElement() {
+                    public boolean nextElement (XMLEventReader reader) throws XMLStreamException {
+                        String str;
+                        if (null != (str = maybeReadString(reader, "Self"))) {
+                            selfIsSigner = true;
+                        } else if (null != (str = maybeReadString(reader, "AwsAccountNumber"))) {
+                            trustedSigners.add(str);
+                        } else {
+                            return false;
+                        }
+                        return true;
                     }
-                } while (!(reader.peek() instanceof EndElement));
-                expectElementEnd(reader, "TrustedSigners");
+                }.recurseInto(reader, "TrustedSigners");
             } else {
                 return false;
             }
@@ -308,16 +330,16 @@ public class CloudfrontConnection
         public String awsAccountNumber;
         public Set<String> keyIds = Sets.newHashSet();
 
-        public boolean handleNextElement (XMLEventReader reader)
+        public boolean nextElement (XMLEventReader reader)
             throws XMLStreamException
         {
             String str;
             if (null != (str = maybeReadString(reader, "Self"))) {
-                this.isSelf = true;
+                isSelf = true;
             } else if (null != (str = maybeReadString(reader, "AwsAccountNumber"))) {
-                this.awsAccountNumber = str;
+                awsAccountNumber = str;
             } else if (null != (str = maybeReadString(reader, "KeyPairId"))) {
-                this.keyIds.add(str);
+                keyIds.add(str);
             } else {
                 return false;
             }
@@ -345,7 +367,7 @@ public class CloudfrontConnection
         public String domainName;
         public List<Signer> activeTrustedSigners = Lists.newArrayList();
 
-        public boolean handleNextElement (XMLEventReader reader)
+        public boolean nextElement (XMLEventReader reader)
             throws XMLStreamException
         {
             String str;
@@ -353,25 +375,26 @@ public class CloudfrontConnection
             Integer n;
 
             if (null != (str = maybeReadString(reader, "Id"))) {
-                this.id = str;
+                id = str;
             } else if (null != (str = maybeReadString(reader, "Status"))) {
-                this.status = str;
+                status = str;
             } else if (null != (n = maybeReadInt(reader, "InProgressInvalidationBatches")))  {
-                this.status = str;
+                status = str;
             } else if (null != (date = maybeReadDate(reader, "LastModifiedTime"))) {
-                this.lastModifiedTime = date;
+                lastModifiedTime = date;
             } else if (null != (str = maybeReadString(reader, "DomainName"))) {
-                this.domainName = str;
+                domainName = str;
             } else if (peekForElement(reader, "ActiveTrustedSigners")) {
-                reader.nextEvent();
-                do {
-                    if (peekForElement(reader, "Signer")) {
-                        this.activeTrustedSigners.add(new Signer().initialize(reader));
-                    } else {
-                        throw new XMLStreamException("Unexpected event: " + reader.peek());
+                new ContainerElement() {
+                    public boolean nextElement (XMLEventReader reader) throws XMLStreamException {
+                        if (peekForElement(reader, "Signer")) {
+                            activeTrustedSigners.add(new Signer().initialize(reader));
+                            return true;
+                        }
+                        return false;
                     }
-                } while (!(reader.peek() instanceof EndElement));
-                expectElementEnd(reader, "ActiveTrustedSigners");
+                }.recurseInto(reader, "ActiveTrustedSigners");
+
             } else if (peekForElement(reader, "DistributionConfig")) {
                 expectElementStart(reader, "DistributionConfig");
                 // TODO IMPLEMENT
@@ -403,24 +426,20 @@ public class CloudfrontConnection
             public List<OriginAccessIdentitySummary> parseBody (XMLEventReader reader)
                 throws XMLStreamException
             {
-                expectElementStart(reader, "CloudFrontOriginAccessIdentityList");
-                List<OriginAccessIdentitySummary> result = Lists.newArrayList();
-                while (reader.hasNext()) {
-                    if (maybeSkip(reader, "Marker", "NextMarker", "MaxItems", "IsTruncated")) {
-                        // nothing to do
-
-                    } else if (peekForElement(reader, "CloudFrontOriginAccessIdentitySummary")) {
-                        result.add(new OriginAccessIdentitySummary().initialize(reader));
-
-                    } else if (reader.peek() instanceof EndElement) {
-                        expectElementEnd(reader, "CloudFrontOriginAccessIdentityList");
-                        return result;
-
-                    } else {
-                        throw new XMLStreamException("Unexpected event: " + reader.peek());
+                final List<OriginAccessIdentitySummary> result = Lists.newArrayList();
+                new ContainerElement() {
+                    public boolean nextElement (XMLEventReader reader) throws XMLStreamException {
+                        if (maybeSkip(reader, "Marker", "NextMarker", "MaxItems", "IsTruncated")) {
+                            // nothing to do
+                        } else if (peekForElement(reader, "CloudFrontOriginAccessIdentitySummary")) {
+                            result.add(new OriginAccessIdentitySummary().initialize(reader));
+                        } else {
+                            return false;
+                        }
+                        return true;
                     }
-                }
-                throw new XMLStreamException("Unexpected end of XML stream.");
+                }.recurseInto(reader, "CloudFrontOriginAccessIdentityList");
+                return result;
             }
         });
     }
@@ -452,24 +471,20 @@ public class CloudfrontConnection
             public List<DistributionSummary> parseBody (XMLEventReader reader)
                 throws XMLStreamException
             {
-                expectElementStart(reader, "DistributionList");
-                List<DistributionSummary> result = Lists.newArrayList();
-                while (reader.hasNext()) {
-                    if (maybeSkip(reader, "Marker", "NextMarker", "MaxItems", "IsTruncated")) {
-                        // nothing to do
-
-                    } else if (peekForElement(reader, "DistributionSummary")) {
-                        result.add(new DistributionSummary().initialize(reader));
-
-                    } else if (reader.peek() instanceof EndElement) {
-                        expectElementEnd(reader, "DistributionList");
-                        return result;
-
-                    } else {
-                        throw new XMLStreamException("Unexpected event: " + reader.peek());
+                final List<DistributionSummary> result = Lists.newArrayList();
+                new ContainerElement () {
+                    public boolean nextElement (XMLEventReader reader) throws XMLStreamException {
+                        if (maybeSkip(reader, "Marker", "NextMarker", "MaxItems", "IsTruncated")) {
+                            // nothing to do
+                        } else if (peekForElement(reader, "DistributionSummary")) {
+                            result.add(new DistributionSummary().initialize(reader));
+                        } else {
+                            return false;
+                        }
+                        return true;
                     }
-                }
-                throw new XMLStreamException("Unexpected end of XML stream.");
+                }.recurseInto(reader, "DistributionList");
+                return result;
             }
         });
     }
