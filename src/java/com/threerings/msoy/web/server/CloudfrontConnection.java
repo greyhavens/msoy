@@ -271,21 +271,44 @@ public class CloudfrontConnection
         });
     }
 
-    public String getInvalidations (String distribution)
+    public List<InvalidationSummary> getInvalidations (String distribution)
         throws CloudfrontException
     {
         // GET /2010-08-01/distribution/DistID/invalidation?Marker=value&MaxItems=value
         GetMethod method = new GetMethod(API.DISTRIBUTION.build(distribution, "invalidation"));
-        return executeAndReturn(method, null);
+        return executeAndReturn(method, new ReturnBodyParser<List<InvalidationSummary>>() {
+            public List<InvalidationSummary> parseBody (CloudfrontEventReader reader)
+                throws XMLStreamException
+            {
+                final List<InvalidationSummary> result = Lists.newArrayList();
+                new ContainerElement () {
+                    public boolean nextElement (CloudfrontEventReader reader) throws XMLStreamException {
+                        if (reader.maybeSkip("Marker", "NextMarker", "MaxItems", "IsTruncated")) {
+                            // nothing to do
+                        } else if (reader.peekForElement("InvalidationSummary")) {
+                            result.add(new InvalidationSummary().initialize(reader));
+                        } else {
+                            return false;
+                        }
+                        return true;
+                    }
+                }.recurseInto(reader, "InvalidationList");
+                return result;
+            }
+        });
     }
 
-    public String getInvalidation (String distribution, String batch)
+    public Invalidation getInvalidation (String distribution, String batch)
         throws CloudfrontException
     {
         // GET /2010-08-01/distribution/DistID/invalidation/invalidationID
         GetMethod method = new GetMethod(
             API.DISTRIBUTION.build(distribution, "invalidation", batch));
-        return executeAndReturn(method, null);
+        return executeAndReturn(method, new ReturnBodyParser<Invalidation>() {
+            public Invalidation parseBody (CloudfrontEventReader reader) throws XMLStreamException {
+                return new Invalidation().initialize(reader);
+            }
+        });
     }
 
     /**

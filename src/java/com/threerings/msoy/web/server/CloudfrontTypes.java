@@ -439,5 +439,105 @@ public abstract class CloudfrontTypes
         }
     }
 
+    public static class InvalidationSummary
+        extends CloudFrontComplexType<InvalidationSummary>
+    {
+        public String id;
+        public String status;
+
+        public boolean nextElement (CloudfrontEventReader reader)
+            throws XMLStreamException
+        {
+            String str;
+            if (null != (str = reader.maybeString("Id"))) {
+                id = str;
+            } else if (null != (str = reader.maybeString("Status"))) {
+                status = str;
+            } else {
+                return false;
+            }
+            return true;
+        }
+
+        public String typeElement ()
+        {
+            return "InvalidationSummary";
+        }
+
+        public boolean isComplete ()
+        {
+            return id != null && status != null;
+        }
+    }
+
+    public static class InvalidationBatch
+        extends CloudFrontComplexType<InvalidationBatch>
+    {
+        public String path;
+        public String callerReference;
+
+        public boolean nextElement (CloudfrontEventReader reader)
+            throws XMLStreamException
+        {
+            String str;
+            if (null != (str = reader.maybeString("Path"))) {
+                path = str;
+            } else if (null != (str = reader.maybeString("CallerReference"))) {
+                callerReference = str;
+            } else {
+                return false;
+            }
+            return true;
+        }
+
+        public String typeElement ()
+        {
+            return "InvalidationBatch";
+        }
+
+        public boolean isComplete ()
+        {
+            return path != null && callerReference != null;
+        }
+    }
+
+    public static class Invalidation
+        extends CloudFrontComplexType<Invalidation>
+    {
+        public String id;
+        public String status;
+        public Date createTime;
+        public InvalidationBatch batch;
+
+        public boolean nextElement (CloudfrontEventReader reader)
+            throws XMLStreamException
+        {
+            String str; Date date;
+
+            if (null != (str = reader.maybeString("Id"))) {
+                id = str;
+            } else if (null != (str = reader.maybeString("Status"))) {
+                status = str;
+            } else if (null != (date = reader.maybeDate("CreateTime"))) {
+                createTime = date;
+            } else if (reader.peekForElement("InvalidationBatch")) {
+                batch = new InvalidationBatch().initialize(reader);
+            } else {
+                return false;
+            }
+            return true;
+        }
+
+        public String typeElement ()
+        {
+            return "Invalidation";
+        }
+
+        public boolean isComplete ()
+        {
+            return id != null && status != null && createTime != null && batch != null;
+        }
+    }
+
 
 }
