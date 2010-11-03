@@ -543,7 +543,7 @@ public class CloudfrontConnection
         // Execute the request
         int statusCode;
         try {
-            log.info ("Executing HTTP method", "uri", method.getURI());
+            // log.info ("Executing HTTP method", "uri", method.getURI());
             statusCode = _httpClient.executeMethod(method);
 
         } catch (IOException ioe) {
@@ -640,7 +640,7 @@ public class CloudfrontConnection
         XMLEvent event = reader.nextEvent();
         if ((event instanceof StartElement) &&
             ((StartElement) event).getName().getLocalPart().equals(elementName)) {
-            log.info("Expected and found element: " + elementName);
+            // log.info("Expected and found element: " + elementName);
             return;
         }
         throw new XMLStreamException("Expecting start of element [" + elementName + "], got " + event);
@@ -704,7 +704,7 @@ public class CloudfrontConnection
             result = "";
         }
         expectElementEnd(reader, element);
-        log.info("Returning character content: " + result);
+        // log.info("Returning character content: " + result);
         return result;
     }
 
