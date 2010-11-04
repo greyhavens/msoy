@@ -16,11 +16,11 @@ while [ ! -z "$1" ]; do
             ;;
 
         *)
-            NODE="$1"
+            ARGS="$ARGS $1"
             ;;
     esac
     shift
 done
 
 CLASS=com.threerings.msoy.web.server.CloudfrontTool
-`dirname $0`/msoyjava msoy -ea -server $JAVA_ARGS $CLASS $*
+`dirname $0`/msoyjava msoy -ea -server $JAVA_ARGS $CLASS $ARGS
