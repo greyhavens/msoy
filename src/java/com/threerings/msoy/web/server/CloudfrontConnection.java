@@ -100,7 +100,7 @@ public class CloudfrontConnection
         }
     }
 
-    public static abstract class CloudFrontComplexType<T extends CloudFrontComplexType>
+    public static abstract class CloudfrontComplexType<T extends CloudfrontComplexType>
         extends ContainerElement implements ReturnBodyParser<T>
     {
         public T initialize (CloudfrontEventReader reader)

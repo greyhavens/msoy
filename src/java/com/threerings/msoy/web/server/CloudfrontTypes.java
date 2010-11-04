@@ -17,12 +17,12 @@ import com.samskivert.util.StringUtil;
 
 import com.threerings.msoy.web.server.CloudfrontConnection.ElementIterable;
 import com.threerings.msoy.web.server.CloudfrontConnection.ContainerElement;
-import com.threerings.msoy.web.server.CloudfrontConnection.CloudFrontComplexType;
+import com.threerings.msoy.web.server.CloudfrontConnection.CloudfrontComplexType;
 
 public abstract class CloudfrontTypes
 {
     public static class OriginAccessIdentitySummary
-        extends CloudFrontComplexType<OriginAccessIdentitySummary>
+        extends CloudfrontComplexType<OriginAccessIdentitySummary>
     {
         public String id;
         public String s3CanonicalUserId;
@@ -56,7 +56,7 @@ public abstract class CloudfrontTypes
     }
 
     public static class OriginAccessIdentity
-        extends CloudFrontComplexType<OriginAccessIdentity>
+        extends CloudfrontComplexType<OriginAccessIdentity>
     {
         public String id;
         public String s3CanonicalUserId;
@@ -90,7 +90,7 @@ public abstract class CloudfrontTypes
     }
 
     public static class OriginAccessIdentityConfig
-        extends CloudFrontComplexType<OriginAccessIdentityConfig>
+        extends CloudfrontComplexType<OriginAccessIdentityConfig>
     {
         public String callerReference;
         public String comment;
@@ -121,7 +121,7 @@ public abstract class CloudfrontTypes
     }
 
     public static class DistributionSummary
-        extends CloudFrontComplexType<DistributionSummary>
+        extends CloudfrontComplexType<DistributionSummary>
     {
         public String id;
         public String status;
@@ -189,7 +189,7 @@ public abstract class CloudfrontTypes
     }
 
     public static class Signer
-        extends CloudFrontComplexType<Signer>
+        extends CloudfrontComplexType<Signer>
     {
         public boolean isSelf;
         public String awsAccountNumber;
@@ -223,7 +223,7 @@ public abstract class CloudfrontTypes
     }
 
     public static class Distribution
-        extends CloudFrontComplexType<Distribution>
+        extends CloudfrontComplexType<Distribution>
     {
         public String id;
         public String status;
@@ -281,7 +281,7 @@ public abstract class CloudfrontTypes
     }
 
     public static class Logging
-        extends CloudFrontComplexType<Logging>
+        extends CloudfrontComplexType<Logging>
     {
         public String bucket;
         public String prefix;
@@ -312,7 +312,7 @@ public abstract class CloudfrontTypes
     }
 
     public static class DistributionConfig
-        extends CloudFrontComplexType<DistributionConfig>
+        extends CloudfrontComplexType<DistributionConfig>
     {
         public String origin;
         public String callerReference;
@@ -392,7 +392,7 @@ public abstract class CloudfrontTypes
     }
 
     public static class InvalidationSummary
-        extends CloudFrontComplexType<InvalidationSummary>
+        extends CloudfrontComplexType<InvalidationSummary>
     {
         public String id;
         public String status;
@@ -423,7 +423,7 @@ public abstract class CloudfrontTypes
     }
 
     public static class InvalidationBatch
-        extends CloudFrontComplexType<InvalidationBatch>
+        extends CloudfrontComplexType<InvalidationBatch>
     {
         public String callerReference;
         public Set<String> paths = Sets.newHashSet();
@@ -454,7 +454,7 @@ public abstract class CloudfrontTypes
     }
 
     public static class Invalidation
-        extends CloudFrontComplexType<Invalidation>
+        extends CloudfrontComplexType<Invalidation>
     {
         public String id;
         public String status;
