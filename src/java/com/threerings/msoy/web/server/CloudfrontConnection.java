@@ -375,16 +375,6 @@ public class CloudfrontConnection
             batch, new Invalidation());
     }
 
-    protected interface RequestBodyConstructor
-    {
-        public void constructBody (CloudfrontEventWriter writer) throws XMLStreamException;
-    }
-
-    protected interface ReturnBodyParser<T>
-    {
-        public T parseBody (CloudfrontEventReader writer) throws XMLStreamException;
-    }
-
     protected <T> T execute (
         EntityEnclosingMethod method, RequestBodyConstructor constructor,
         ReturnBodyParser<T> parser)
@@ -509,14 +499,6 @@ public class CloudfrontConnection
         return hostConfig;
     }
 
-    protected String _keyId;
-    protected String _secretKey;
-
-    protected XMLInputFactory _xmlInputFactory = XMLInputFactory.newInstance();
-    protected XMLOutputFactory _xmlOutputFactory = XMLOutputFactory.newInstance();
-
-    protected HttpClient _httpClient;
-
     protected enum API
     {
         DISTRIBUTION("/2010-08-01/distribution"),
@@ -543,11 +525,23 @@ public class CloudfrontConnection
         protected String _prefix;
     }
 
-    protected static final DateFormat RFC822_DATE_FORMAT;
-    static {
-        RFC822_DATE_FORMAT = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z", Locale.US);
-        RFC822_DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("GMT"));
+    protected interface RequestBodyConstructor
+    {
+        public void constructBody (CloudfrontEventWriter writer) throws XMLStreamException;
     }
+
+    protected interface ReturnBodyParser<T>
+    {
+        public T parseBody (CloudfrontEventReader writer) throws XMLStreamException;
+    }
+    
+    protected String _keyId;
+    protected String _secretKey;
+
+    protected XMLInputFactory _xmlInputFactory = XMLInputFactory.newInstance();
+    protected XMLOutputFactory _xmlOutputFactory = XMLOutputFactory.newInstance();
+
+    protected HttpClient _httpClient;
 
     /** HTTPS protocol instance. */
     protected static final Protocol HTTPS_PROTOCOL = Protocol.getProtocol("https");
@@ -566,4 +560,10 @@ public class CloudfrontConnection
 
     /** Connection and read timeout for our http connections in milliseconds. */
     protected static final int TIMEOUT_MILLIS = 2 * 60 * 1000;
+
+    protected static final DateFormat RFC822_DATE_FORMAT;
+    static {
+        RFC822_DATE_FORMAT = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z", Locale.US);
+        RFC822_DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("GMT"));
+    }
 }
