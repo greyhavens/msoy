@@ -43,6 +43,7 @@ import org.apache.commons.httpclient.methods.DeleteMethod;
 import org.apache.commons.httpclient.methods.EntityEnclosingMethod;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.commons.httpclient.methods.PutMethod;
 import org.apache.commons.httpclient.params.HttpClientParams;
 import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
 import org.apache.commons.httpclient.protocol.Protocol;
@@ -55,13 +56,6 @@ import com.threerings.msoy.web.server.CloudfrontTypes.*;
  * An interface into the Cloudfront system. It is initially configured with
  * authentication and connection parameters and exposes methods to access and
  * manipulate Cloudfront distributions and object invalidation.
- *
- * Functionality that remains unimplemented:
- * POST   /2010-08-01/distribution
- * PUT    /2010-08-01/distribution/DistID/config
- * DELETE /2010-08-01/distribution/DistID
- *
- * PUT    /2010-08-01/origin-access-identity/cloudfront/IdentityID/config
  */
 
 public class CloudfrontConnection
@@ -213,6 +207,42 @@ public class CloudfrontConnection
         return execute(method, new OriginAccessIdentityConfig());
     }
 
+    public OriginAccessIdentity createOriginAccessIdentity (final String comment)
+        throws CloudfrontException
+    {
+        OriginAccessIdentityConfig config = new OriginAccessIdentityConfig();
+        config.callerReference = String.valueOf(System.nanoTime());
+        config.comment = comment;
+        return postConfig(config);
+    }
+
+    public OriginAccessIdentity postConfig (OriginAccessIdentityConfig config)
+        throws CloudfrontException
+    {
+        // POST /2010-08-01/origin-access-identity/cloudfront
+        return execute(
+            new PostMethod(API.ORIGIN_ACCESS_ID.build("cloudfront")),
+            config, new OriginAccessIdentity());
+    }
+
+    public OriginAccessIdentity putConfig (String oaid, OriginAccessIdentityConfig config)
+        throws CloudfrontException
+    {
+        // PUT /2010-08-01/origin-access-identity/cloudfront/IdentityID/config
+        return execute(
+            new PutMethod(API.ORIGIN_ACCESS_ID.build("cloudfront", oaid, "config")),
+            config, new OriginAccessIdentity());
+    }
+
+    public void deleteOriginAccessIdentity (String oaid, String tag)
+        throws CloudfrontException
+    {
+        // DELETE /2010-08-01/origin-access-identity/cloudfront/IdentityID
+        DeleteMethod method = new DeleteMethod(API.ORIGIN_ACCESS_ID.build("cloudfront", oaid));
+        method.addRequestHeader("If-Match", tag);
+        execute(method, null);
+    }
+
     public List <DistributionSummary> getDistributions ()
         throws CloudfrontException
     {
@@ -255,6 +285,31 @@ public class CloudfrontConnection
         // GET /2010-08-01/distribution/DistID/config
         GetMethod method = new GetMethod(API.DISTRIBUTION.build(distribution, "config"));
         return execute(method, new DistributionConfig());
+    }
+
+    public Distribution postConfig (DistributionConfig config)
+        throws CloudfrontException
+    {
+        // POST /2010-08-01/distribution
+        return execute(new PostMethod(API.DISTRIBUTION.build()), config, new Distribution());
+    }
+
+    public void deleteDistribution (String distribution, String tag)
+        throws CloudfrontException
+    {
+        // DELETE /2010-08-01/distribution/DistID
+        DeleteMethod method = new DeleteMethod(API.ORIGIN_ACCESS_ID.build(distribution));
+        method.addRequestHeader("If-Match", tag);
+        execute(method, null);
+    }
+
+    public Distribution putConfig (String distribution, DistributionConfig config)
+        throws CloudfrontException
+    {
+        // PUT /2010-08-01/distribution/DistID/config
+        return execute(
+            new PutMethod(API.DISTRIBUTION.build(distribution, "config")),
+            config, new Distribution());
     }
 
     public List<InvalidationSummary> getInvalidations (String distribution)
@@ -320,37 +375,6 @@ public class CloudfrontConnection
             batch, new Invalidation());
     }
 
-    public OriginAccessIdentity createOriginAccessIdentity (final String comment)
-        throws CloudfrontException
-    {
-        OriginAccessIdentityConfig config = new OriginAccessIdentityConfig();
-        config.callerReference = String.valueOf(System.nanoTime());
-        config.comment = comment;
-        return postConfig(config);
-    }
-
-    public OriginAccessIdentity postConfig (OriginAccessIdentityConfig config)
-        throws CloudfrontException
-    {
-        // POST /2010-08-01/origin-access-identity/cloudfront
-        return execute(
-            new PostMethod(API.ORIGIN_ACCESS_ID.build("cloudfront")),
-            config, new OriginAccessIdentity());
-    }
-
-
-    public String deleteOriginAccessIdentity (String distribution, String tag)
-        throws CloudfrontException
-    {
-        // DELETE /2010-08-01/origin-access-identity/cloudfront/IdentityID
-        DeleteMethod method = new DeleteMethod(
-            API.ORIGIN_ACCESS_ID.build("cloudfront", distribution));
-        method.addRequestHeader("If-Match", tag);
-        signCloudfrontRequest(method);
-
-        return execute(method, null);
-    }
-
     protected interface RequestBodyConstructor
     {
         public void constructBody (CloudfrontEventWriter writer) throws XMLStreamException;
@@ -385,9 +409,8 @@ public class CloudfrontConnection
     protected <T> T execute (HttpMethod method, ReturnBodyParser<T> parser)
         throws CloudfrontException
     {
-        signCloudfrontRequest(method);
         try {
-            InputStream stream = execute(method);
+            InputStream stream = doExecute(method);
             if (parser != null) {
                 CloudfrontEventReader reader =
                     new CloudfrontEventReader(_xmlInputFactory.createXMLEventReader(stream));
@@ -406,9 +429,11 @@ public class CloudfrontConnection
         }
     }
 
-    protected InputStream execute (HttpMethod method)
+    protected InputStream doExecute (HttpMethod method)
         throws CloudfrontException
     {
+        signCloudfrontRequest(method);
+
         // Execute the request
         int statusCode;
         try {
