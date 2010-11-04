@@ -20,6 +20,12 @@ import javax.xml.stream.events.StartElement;
 
 public class CloudfrontEventReader
 {
+    public static final DateFormat RFC8601_DATE_FORMAT;
+    static {
+        RFC8601_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US);
+        RFC8601_DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("GMT"));
+    }
+
     public CloudfrontEventReader (XMLEventReader reader)
     {
         _reader = reader;
@@ -170,11 +176,5 @@ public class CloudfrontEventReader
     }
 
     protected XMLEventReader _reader;
-
-    protected static final DateFormat RFC8601_DATE_FORMAT;
-    static {
-        RFC8601_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US);
-        RFC8601_DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("GMT"));
-    }
 }
 

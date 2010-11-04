@@ -8,27 +8,24 @@ import java.util.List;
 import java.util.Set;
 
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.events.EndElement;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
-import com.samskivert.util.StringUtil;
-
-import com.threerings.msoy.web.server.CloudfrontConnection.ElementIterable;
+import com.threerings.msoy.web.server.CloudfrontConnection.ComplexType;
 import com.threerings.msoy.web.server.CloudfrontConnection.ContainerElement;
-import com.threerings.msoy.web.server.CloudfrontConnection.CloudfrontComplexType;
+import com.threerings.msoy.web.server.CloudfrontConnection.WriteableComplexType;
 
 public abstract class CloudfrontTypes
 {
     public static class OriginAccessIdentitySummary
-        extends CloudfrontComplexType<OriginAccessIdentitySummary>
+        extends ComplexType<OriginAccessIdentitySummary>
     {
         public String id;
         public String s3CanonicalUserId;
         public String comment;
 
-        public boolean nextElement (CloudfrontEventReader reader)
+        public boolean parseNextElement (CloudfrontEventReader reader)
             throws XMLStreamException
         {
             String str;
@@ -56,13 +53,13 @@ public abstract class CloudfrontTypes
     }
 
     public static class OriginAccessIdentity
-        extends CloudfrontComplexType<OriginAccessIdentity>
+        extends ComplexType<OriginAccessIdentity>
     {
         public String id;
         public String s3CanonicalUserId;
         public OriginAccessIdentityConfig config;
 
-        public boolean nextElement (CloudfrontEventReader reader)
+        public boolean parseNextElement (CloudfrontEventReader reader)
             throws XMLStreamException
         {
             String str;
@@ -90,12 +87,12 @@ public abstract class CloudfrontTypes
     }
 
     public static class OriginAccessIdentityConfig
-        extends CloudfrontComplexType<OriginAccessIdentityConfig>
+        extends WriteableComplexType<OriginAccessIdentityConfig>
     {
         public String callerReference;
         public String comment;
 
-        public boolean nextElement (CloudfrontEventReader reader)
+        public boolean parseNextElement (CloudfrontEventReader reader)
             throws XMLStreamException
         {
             String str;
@@ -114,6 +111,14 @@ public abstract class CloudfrontTypes
             return "CloudFrontOriginAccessIdentityConfig";
         }
 
+        @Override
+        public void writeElements (CloudfrontEventWriter writer)
+            throws XMLStreamException
+        {
+            writer.writeString("CallerReference", callerReference);
+            writer.writeString("Comment", comment);
+        }
+
         public boolean isComplete ()
         {
             return callerReference != null;
@@ -121,7 +126,7 @@ public abstract class CloudfrontTypes
     }
 
     public static class DistributionSummary
-        extends CloudfrontComplexType<DistributionSummary>
+        extends ComplexType<DistributionSummary>
     {
         public String id;
         public String status;
@@ -134,7 +139,7 @@ public abstract class CloudfrontTypes
         public boolean selfIsSigner;
         public List<String> trustedAwsSigners = Lists.newArrayList();
 
-        public boolean nextElement (CloudfrontEventReader reader)
+        public boolean parseNextElement (CloudfrontEventReader reader)
             throws XMLStreamException
         {
             String str; Date date; Boolean bool;
@@ -158,7 +163,7 @@ public abstract class CloudfrontTypes
 
             } else if (reader.peekForElement("TrustedSigners")) {
                 new ContainerElement() {
-                    public boolean nextElement (CloudfrontEventReader reader) throws XMLStreamException {
+                    public boolean parseNextElement (CloudfrontEventReader reader) throws XMLStreamException {
                         String str;
                         if (null != (str = reader.maybeString("Self"))) {
                             selfIsSigner = true;
@@ -189,13 +194,13 @@ public abstract class CloudfrontTypes
     }
 
     public static class Signer
-        extends CloudfrontComplexType<Signer>
+        extends ComplexType<Signer>
     {
         public boolean isSelf;
         public String awsAccountNumber;
         public Set<String> keyIds = Sets.newHashSet();
 
-        public boolean nextElement (CloudfrontEventReader reader)
+        public boolean parseNextElement (CloudfrontEventReader reader)
             throws XMLStreamException
         {
             String str;
@@ -223,7 +228,7 @@ public abstract class CloudfrontTypes
     }
 
     public static class Distribution
-        extends CloudfrontComplexType<Distribution>
+        extends ComplexType<Distribution>
     {
         public String id;
         public String status;
@@ -233,7 +238,7 @@ public abstract class CloudfrontTypes
         public List<Signer> activeTrustedSigners = Lists.newArrayList();
         public DistributionConfig config;
 
-        public boolean nextElement (CloudfrontEventReader reader)
+        public boolean parseNextElement (CloudfrontEventReader reader)
             throws XMLStreamException
         {
             String str; Date date; Integer n;
@@ -251,7 +256,7 @@ public abstract class CloudfrontTypes
 
             } else if (reader.peekForElement("ActiveTrustedSigners")) {
                 new ContainerElement() {
-                    public boolean nextElement (CloudfrontEventReader reader) throws XMLStreamException {
+                    public boolean parseNextElement (CloudfrontEventReader reader) throws XMLStreamException {
                         if (reader.peekForElement("Signer")) {
                             activeTrustedSigners.add(new Signer().initialize(reader));
                             return true;
@@ -281,12 +286,12 @@ public abstract class CloudfrontTypes
     }
 
     public static class Logging
-        extends CloudfrontComplexType<Logging>
+        extends WriteableComplexType<Logging>
     {
         public String bucket;
         public String prefix;
 
-        public boolean nextElement (CloudfrontEventReader reader)
+        public boolean parseNextElement (CloudfrontEventReader reader)
             throws XMLStreamException
         {
             String str;
@@ -305,6 +310,14 @@ public abstract class CloudfrontTypes
             return "Logging";
         }
 
+        @Override
+        public void writeElements (CloudfrontEventWriter writer)
+            throws XMLStreamException
+        {
+            writer.writeString("Bucket", bucket);
+            writer.writeString("Prefix", prefix);
+        }
+
         public boolean isComplete ()
         {
             return bucket != null;
@@ -312,7 +325,7 @@ public abstract class CloudfrontTypes
     }
 
     public static class DistributionConfig
-        extends CloudfrontComplexType<DistributionConfig>
+        extends WriteableComplexType<DistributionConfig>
     {
         public String origin;
         public String callerReference;
@@ -326,7 +339,7 @@ public abstract class CloudfrontTypes
         public List<String> trustedAwsSigners = Lists.newArrayList();
         public List<String> requiredProtocols = Lists.newArrayList();
 
-        public boolean nextElement (CloudfrontEventReader reader)
+        public boolean parseNextElement (CloudfrontEventReader reader)
             throws XMLStreamException
         {
             String str; Boolean bool;
@@ -350,7 +363,7 @@ public abstract class CloudfrontTypes
 
             } else if (reader.peekForElement("TrustedSigners")) {
                 new ContainerElement() {
-                    public boolean nextElement (CloudfrontEventReader reader) throws XMLStreamException {
+                    public boolean parseNextElement (CloudfrontEventReader reader) throws XMLStreamException {
                         String str;
                         if (null != (str = reader.maybeString("Self"))) {
                             selfIsSigner = true;
@@ -365,7 +378,7 @@ public abstract class CloudfrontTypes
 
             } else if (reader.peekForElement("RequiredProtocols")) {
                 new ContainerElement() {
-                    public boolean nextElement (CloudfrontEventReader reader) throws XMLStreamException {
+                    public boolean parseNextElement (CloudfrontEventReader reader) throws XMLStreamException {
                         String str;
                         if (null != (str = reader.maybeString("Protocol"))) {
                             requiredProtocols.add(str);
@@ -385,6 +398,35 @@ public abstract class CloudfrontTypes
             return "DistributionConfig";
         }
 
+        @Override
+        public void writeElements (CloudfrontEventWriter writer)
+            throws XMLStreamException
+        {
+            writer.writeString("Origin", origin);
+            writer.writeString("CallerReference", callerReference);
+            writer.writeString("CNAME", cname);
+            writer.writeString("Comment", comment);
+            writer.writeBoolean("Enabled", enabled);
+            writer.writeString("DefaultRootObject", defaultRootObject);
+            writer.writeString("OriginAccessIdentity", originAccessIdentity);
+
+            logging.constructBody(writer);
+
+            writer.startElement("TrustedSigners");
+            if (selfIsSigner) {
+                writer.writeString("Self", "");
+            }
+            for (String number : trustedAwsSigners) {
+                writer.writeString("AwsAccountNumber", number);
+            }
+            writer.endElement("TrustedSigners");
+
+            writer.startElement("RequiredProtocol");
+            for (String protocol : requiredProtocols) {
+                writer.writeString("Protocol", protocol);
+            }
+        }
+
         public boolean isComplete ()
         {
             return origin != null && callerReference != null && enabled != null;
@@ -392,12 +434,12 @@ public abstract class CloudfrontTypes
     }
 
     public static class InvalidationSummary
-        extends CloudfrontComplexType<InvalidationSummary>
+        extends ComplexType<InvalidationSummary>
     {
         public String id;
         public String status;
 
-        public boolean nextElement (CloudfrontEventReader reader)
+        public boolean parseNextElement (CloudfrontEventReader reader)
             throws XMLStreamException
         {
             String str;
@@ -423,12 +465,12 @@ public abstract class CloudfrontTypes
     }
 
     public static class InvalidationBatch
-        extends CloudfrontComplexType<InvalidationBatch>
+        extends WriteableComplexType<InvalidationBatch>
     {
         public String callerReference;
         public Set<String> paths = Sets.newHashSet();
 
-        public boolean nextElement (CloudfrontEventReader reader)
+        public boolean parseNextElement (CloudfrontEventReader reader)
             throws XMLStreamException
         {
             String str;
@@ -451,17 +493,26 @@ public abstract class CloudfrontTypes
         {
             return callerReference != null && !paths.isEmpty();
         }
+
+        @Override
+        public void writeElements (CloudfrontEventWriter writer) throws XMLStreamException
+        {
+            writer.writeString("CallerReference", callerReference);
+            for (String key : paths) {
+                writer.writeString("Path", key);
+            }
+        }
     }
 
     public static class Invalidation
-        extends CloudfrontComplexType<Invalidation>
+        extends ComplexType<Invalidation>
     {
         public String id;
         public String status;
         public Date createTime;
         public InvalidationBatch batch;
 
-        public boolean nextElement (CloudfrontEventReader reader)
+        public boolean parseNextElement (CloudfrontEventReader reader)
             throws XMLStreamException
         {
             String str; Date date;

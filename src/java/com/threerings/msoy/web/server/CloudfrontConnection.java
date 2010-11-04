@@ -3,20 +3,16 @@
 
 package com.threerings.msoy.web.server;
 
-import java.io.BufferedWriter;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
 
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
-import java.text.SimpleDateFormat;
 import java.text.DateFormat;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -26,15 +22,14 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
 import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.EndElement;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
-
-import com.megginson.sax.XMLWriter;
-import org.xml.sax.SAXException;
+import com.google.common.collect.Sets;
 
 import org.apache.commons.codec.binary.Base64;
 
@@ -43,10 +38,10 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
+import org.apache.commons.httpclient.methods.ByteArrayRequestEntity;
 import org.apache.commons.httpclient.methods.DeleteMethod;
 import org.apache.commons.httpclient.methods.EntityEnclosingMethod;
 import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.httpclient.methods.InputStreamRequestEntity;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.params.HttpClientParams;
 import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
@@ -55,8 +50,6 @@ import org.apache.commons.httpclient.protocol.Protocol;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.msoy.web.server.CloudfrontTypes.*;
-
-import static com.threerings.msoy.Log.log;
 
 /**
  * An interface into the Cloudfront system. It is initially configured with
@@ -75,17 +68,17 @@ public class CloudfrontConnection
 {
     public static abstract class ElementIterable
     {
-        public void iterateOverElements (CloudfrontEventReader reader)
+        public void parseElements (CloudfrontEventReader reader)
             throws XMLStreamException
         {
             do {
-                if (!nextElement(reader)) {
+                if (!parseNextElement(reader)) {
                     throw new XMLStreamException("Unexpected event: " + reader.peek());
                 }
             } while (!(reader.peek() instanceof EndElement));
         }
 
-        public abstract boolean nextElement (CloudfrontEventReader reader)
+        public abstract boolean parseNextElement (CloudfrontEventReader reader)
             throws XMLStreamException;
     }
 
@@ -95,12 +88,12 @@ public class CloudfrontConnection
             throws XMLStreamException
         {
             reader.expectElementStart(elementName);
-            iterateOverElements(reader);
+            parseElements(reader);
             reader.expectElementEnd(elementName);
         }
     }
 
-    public static abstract class CloudfrontComplexType<T extends CloudfrontComplexType>
+    public static abstract class ComplexType<T extends ComplexType>
         extends ContainerElement implements ReturnBodyParser<T>
     {
         public T initialize (CloudfrontEventReader reader)
@@ -122,13 +115,27 @@ public class CloudfrontConnection
             return initialize(reader);
         }
 
-        public abstract String typeElement ();
-        public abstract boolean isComplete ();
-
         public String toString ()
         {
             return StringUtil.fieldsToString(this);
         }
+
+        protected abstract String typeElement ();
+        protected abstract boolean isComplete ();
+    }
+
+    public abstract static class WriteableComplexType<T extends WriteableComplexType>
+        extends ComplexType<T> implements RequestBodyConstructor
+    {
+        public void constructBody (CloudfrontEventWriter writer) throws XMLStreamException
+        {
+            writer.startElement(typeElement());
+            writeElements(writer);
+            writer.endElement(typeElement());
+        }
+
+        public abstract void writeElements (CloudfrontEventWriter writer)
+            throws XMLStreamException;
     }
 
     public CloudfrontConnection (String keyId, String secretKey)
@@ -167,13 +174,13 @@ public class CloudfrontConnection
         // GET /2010-08-01/origin-access-identity/cloudfront?Marker=value&MaxItems=value
         GetMethod method = new GetMethod(API.ORIGIN_ACCESS_ID.build("cloudfront"));
 
-        return executeAndReturn(method, new ReturnBodyParser<List<OriginAccessIdentitySummary>>() {
+        return execute(method, new ReturnBodyParser<List<OriginAccessIdentitySummary>>() {
             public List<OriginAccessIdentitySummary> parseBody (CloudfrontEventReader reader)
                 throws XMLStreamException
             {
                 final List<OriginAccessIdentitySummary> result = Lists.newArrayList();
                 new ContainerElement() {
-                    public boolean nextElement (CloudfrontEventReader reader) throws XMLStreamException {
+                    public boolean parseNextElement (CloudfrontEventReader reader) throws XMLStreamException {
                         if (reader.maybeSkip("Marker", "NextMarker", "MaxItems", "IsTruncated")) {
                             // nothing to do
                         } else if (reader.peekForElement("CloudFrontOriginAccessIdentitySummary")) {
@@ -194,7 +201,7 @@ public class CloudfrontConnection
     {
         // GET /2010-08-01/origin-access-identity/cloudfront/IdentityID
         GetMethod method = new GetMethod(API.ORIGIN_ACCESS_ID.build("cloudfront", id));
-        return executeAndReturn(method, new OriginAccessIdentity());
+        return execute(method, new OriginAccessIdentity());
     }
 
     public OriginAccessIdentityConfig getOriginAccessIdentityConfig (String id)
@@ -203,7 +210,7 @@ public class CloudfrontConnection
         // GET /2010-08-01/origin-access-identity/cloudfront/IdentityID/config
         GetMethod method = new GetMethod(
             API.ORIGIN_ACCESS_ID.build("cloudfront", id, "config"));
-        return executeAndReturn(method, new OriginAccessIdentityConfig());
+        return execute(method, new OriginAccessIdentityConfig());
     }
 
     public List <DistributionSummary> getDistributions ()
@@ -212,13 +219,13 @@ public class CloudfrontConnection
         // GET /2010-08-01/distribution?Marker=value&MaxItems=value
         GetMethod method = new GetMethod(API.DISTRIBUTION.build());
 
-        return executeAndReturn(method, new ReturnBodyParser<List<DistributionSummary>>() {
+        return execute(method, new ReturnBodyParser<List<DistributionSummary>>() {
             public List<DistributionSummary> parseBody (CloudfrontEventReader reader)
                 throws XMLStreamException
             {
                 final List<DistributionSummary> result = Lists.newArrayList();
                 new ContainerElement () {
-                    public boolean nextElement (CloudfrontEventReader reader) throws XMLStreamException {
+                    public boolean parseNextElement (CloudfrontEventReader reader) throws XMLStreamException {
                         if (reader.maybeSkip("Marker", "NextMarker", "MaxItems", "IsTruncated")) {
                             // nothing to do
                         } else if (reader.peekForElement("DistributionSummary")) {
@@ -239,7 +246,7 @@ public class CloudfrontConnection
     {
         // GET /2010-08-01/distribution/DistID
         GetMethod method = new GetMethod(API.DISTRIBUTION.build(distribution));
-        return executeAndReturn(method, new Distribution());
+        return execute(method, new Distribution());
     }
 
     public DistributionConfig getDistributionConfig (String distribution)
@@ -247,7 +254,7 @@ public class CloudfrontConnection
     {
         // GET /2010-08-01/distribution/DistID/config
         GetMethod method = new GetMethod(API.DISTRIBUTION.build(distribution, "config"));
-        return executeAndReturn(method, new DistributionConfig());
+        return execute(method, new DistributionConfig());
     }
 
     public List<InvalidationSummary> getInvalidations (String distribution)
@@ -255,13 +262,13 @@ public class CloudfrontConnection
     {
         // GET /2010-08-01/distribution/DistID/invalidation?Marker=value&MaxItems=value
         GetMethod method = new GetMethod(API.DISTRIBUTION.build(distribution, "invalidation"));
-        return executeAndReturn(method, new ReturnBodyParser<List<InvalidationSummary>>() {
+        return execute(method, new ReturnBodyParser<List<InvalidationSummary>>() {
             public List<InvalidationSummary> parseBody (CloudfrontEventReader reader)
                 throws XMLStreamException
             {
                 final List<InvalidationSummary> result = Lists.newArrayList();
                 new ContainerElement () {
-                    public boolean nextElement (CloudfrontEventReader reader) throws XMLStreamException {
+                    public boolean parseNextElement (CloudfrontEventReader reader) throws XMLStreamException {
                         if (reader.maybeSkip("Marker", "NextMarker", "MaxItems", "IsTruncated")) {
                             // nothing to do
                         } else if (reader.peekForElement("InvalidationSummary")) {
@@ -283,7 +290,7 @@ public class CloudfrontConnection
         // GET /2010-08-01/distribution/DistID/invalidation/invalidationID
         GetMethod method = new GetMethod(
             API.DISTRIBUTION.build(distribution, "invalidation", batch));
-        return executeAndReturn(method, new Invalidation());
+        return execute(method, new Invalidation());
     }
 
     /**
@@ -298,39 +305,39 @@ public class CloudfrontConnection
     public Invalidation invalidateObjects (String distribution, final Iterable<String> keys)
         throws CloudfrontException
     {
+        InvalidationBatch batch = new InvalidationBatch();
+        batch.callerReference = String.valueOf(System.nanoTime());
+        batch.paths = Sets.newHashSet(keys);
+        return postBatch(distribution, batch);
+    }
+
+    public Invalidation postBatch (String distribution, InvalidationBatch batch)
+        throws CloudfrontException
+    {
         // POST /2010-08-01/distribution/DistID/invalidation
-        return executeWithBody(
+        return execute(
             new PostMethod(API.DISTRIBUTION.build(distribution, "invalidation")),
-            new RequestBodyConstructor() {
-                public void constructBody (XMLWriter writer) throws SAXException {
-                    writer.startElement("InvalidationBatch");
-                    for (String key : keys) {
-                        writer.dataElement("Path", key);
-                    }
-                    writer.dataElement("CallerReference", String.valueOf(System.nanoTime()));
-                    writer.endElement("InvalidationBatch");
-                }
-            },
-            new Invalidation());
+            batch, new Invalidation());
     }
 
     public OriginAccessIdentity createOriginAccessIdentity (final String comment)
         throws CloudfrontException
     {
-        // POST /2010-08-01/origin-access-identity/cloudfront
-        return executeWithBody(
-            new PostMethod(API.ORIGIN_ACCESS_ID.build("cloudfront")),
-            new RequestBodyConstructor() {
-                public void constructBody (XMLWriter writer) throws SAXException
-                {
-                    writer.startElement("CloudFrontOriginAccessIdentityConfig");
-                    writer.dataElement("Comment", comment);
-                    writer.dataElement("CallerReference", String.valueOf(System.nanoTime()));
-                    writer.endElement("CloudFrontOriginAccessIdentityConfig");
-                }
-            },
-            new OriginAccessIdentity());
+        OriginAccessIdentityConfig config = new OriginAccessIdentityConfig();
+        config.callerReference = String.valueOf(System.nanoTime());
+        config.comment = comment;
+        return postConfig(config);
     }
+
+    public OriginAccessIdentity postConfig (OriginAccessIdentityConfig config)
+        throws CloudfrontException
+    {
+        // POST /2010-08-01/origin-access-identity/cloudfront
+        return execute(
+            new PostMethod(API.ORIGIN_ACCESS_ID.build("cloudfront")),
+            config, new OriginAccessIdentity());
+    }
+
 
     public String deleteOriginAccessIdentity (String distribution, String tag)
         throws CloudfrontException
@@ -341,12 +348,12 @@ public class CloudfrontConnection
         method.addRequestHeader("If-Match", tag);
         signCloudfrontRequest(method);
 
-        return executeAndReturn(method, null);
+        return execute(method, null);
     }
 
     protected interface RequestBodyConstructor
     {
-        public void constructBody (XMLWriter writer) throws SAXException;
+        public void constructBody (CloudfrontEventWriter writer) throws XMLStreamException;
     }
 
     protected interface ReturnBodyParser<T>
@@ -354,34 +361,28 @@ public class CloudfrontConnection
         public T parseBody (CloudfrontEventReader writer) throws XMLStreamException;
     }
 
-    protected <T> T executeWithBody (
+    protected <T> T execute (
         EntityEnclosingMethod method, RequestBodyConstructor constructor,
         ReturnBodyParser<T> parser)
             throws CloudfrontException
     {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        Writer out = new BufferedWriter(new OutputStreamWriter(baos));
-        XMLWriter writer = new XMLWriter(out);
-
         try {
+            CloudfrontEventWriter writer = new CloudfrontEventWriter(
+                _xmlOutputFactory.createXMLEventWriter(baos));
             writer.startDocument();
             constructor.constructBody(writer);
             writer.endDocument();
-            writer.flush();
 
         } catch (Exception e) {
-            throw new RuntimeException("Error encoding XML: " + e.getMessage(), e);
+            throw new CloudfrontException("Error encoding XML: " + e.getMessage(), e);
         }
 
-        InputStream in = new ByteArrayInputStream(baos.toByteArray());
-        method.setRequestEntity(new InputStreamRequestEntity(in, "text/xml"));
-
-        signCloudfrontRequest(method);
-
-        return executeAndReturn(method, parser);
+        method.setRequestEntity(new ByteArrayRequestEntity(baos.toByteArray(), "text/xml"));
+        return execute(method, parser);
     }
 
-    protected <T> T executeAndReturn (HttpMethod method, ReturnBodyParser<T> parser)
+    protected <T> T execute (HttpMethod method, ReturnBodyParser<T> parser)
         throws CloudfrontException
     {
         signCloudfrontRequest(method);
@@ -389,7 +390,7 @@ public class CloudfrontConnection
             InputStream stream = execute(method);
             if (parser != null) {
                 CloudfrontEventReader reader =
-                    new CloudfrontEventReader(_xmlFactory.createXMLEventReader(stream));
+                    new CloudfrontEventReader(_xmlInputFactory.createXMLEventReader(stream));
                 reader.expectType(XMLStreamConstants.START_DOCUMENT);
                 T val = parser.parseBody(reader);
                 reader.expectType(XMLStreamConstants.END_DOCUMENT);
@@ -486,7 +487,8 @@ public class CloudfrontConnection
     protected String _keyId;
     protected String _secretKey;
 
-    protected XMLInputFactory _xmlFactory = XMLInputFactory.newInstance();
+    protected XMLInputFactory _xmlInputFactory = XMLInputFactory.newInstance();
+    protected XMLOutputFactory _xmlOutputFactory = XMLOutputFactory.newInstance();
 
     protected HttpClient _httpClient;
 
