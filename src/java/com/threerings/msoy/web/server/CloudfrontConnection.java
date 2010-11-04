@@ -37,15 +37,12 @@ import org.apache.commons.httpclient.HostConfiguration;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.methods.ByteArrayRequestEntity;
 import org.apache.commons.httpclient.methods.DeleteMethod;
 import org.apache.commons.httpclient.methods.EntityEnclosingMethod;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.PutMethod;
-import org.apache.commons.httpclient.params.HttpClientParams;
-import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
 import org.apache.commons.httpclient.protocol.Protocol;
 
 import com.samskivert.util.StringUtil;
@@ -151,25 +148,10 @@ public class CloudfrontConnection
     {
         // GET /2010-08-01/origin-access-identity/cloudfront?Marker=value&MaxItems=value
         GetMethod method = new GetMethod(API.ORIGIN_ACCESS_ID.build("cloudfront"));
-
-        return execute(method, new ReturnBodyParser<List<OriginAccessIdentitySummary>>() {
-            public List<OriginAccessIdentitySummary> parseBody (CloudfrontEventReader reader)
-                throws XMLStreamException
-            {
-                final List<OriginAccessIdentitySummary> result = Lists.newArrayList();
-                new ContainerElement() {
-                    public boolean parseNextElement (CloudfrontEventReader reader) throws XMLStreamException {
-                        if (reader.maybeSkip("Marker", "NextMarker", "MaxItems", "IsTruncated")) {
-                            // nothing to do
-                        } else if (reader.peekForElement("CloudFrontOriginAccessIdentitySummary")) {
-                            result.add(new OriginAccessIdentitySummary().initialize(reader));
-                        } else {
-                            return false;
-                        }
-                        return true;
-                    }
-                }.recurseInto(reader, "CloudFrontOriginAccessIdentityList");
-                return result;
+        String listElement = "CloudFrontOriginAccessIdentityList";
+        return execute(method, new ElementListBuilder<OriginAccessIdentitySummary>(listElement) {
+            @Override protected OriginAccessIdentitySummary createElement () {
+                return new OriginAccessIdentitySummary();
             }
         });
     }
@@ -233,24 +215,9 @@ public class CloudfrontConnection
         // GET /2010-08-01/distribution?Marker=value&MaxItems=value
         GetMethod method = new GetMethod(API.DISTRIBUTION.build());
 
-        return execute(method, new ReturnBodyParser<List<DistributionSummary>>() {
-            public List<DistributionSummary> parseBody (CloudfrontEventReader reader)
-                throws XMLStreamException
-            {
-                final List<DistributionSummary> result = Lists.newArrayList();
-                new ContainerElement () {
-                    public boolean parseNextElement (CloudfrontEventReader reader) throws XMLStreamException {
-                        if (reader.maybeSkip("Marker", "NextMarker", "MaxItems", "IsTruncated")) {
-                            // nothing to do
-                        } else if (reader.peekForElement("DistributionSummary")) {
-                            result.add(new DistributionSummary().initialize(reader));
-                        } else {
-                            return false;
-                        }
-                        return true;
-                    }
-                }.recurseInto(reader, "DistributionList");
-                return result;
+        return execute(method, new ElementListBuilder<DistributionSummary>("DistributionList") {
+            @Override protected DistributionSummary createElement () {
+                return new DistributionSummary();
             }
         });
     }
@@ -301,24 +268,9 @@ public class CloudfrontConnection
     {
         // GET /2010-08-01/distribution/DistID/invalidation?Marker=value&MaxItems=value
         GetMethod method = new GetMethod(API.DISTRIBUTION.build(distribution, "invalidation"));
-        return execute(method, new ReturnBodyParser<List<InvalidationSummary>>() {
-            public List<InvalidationSummary> parseBody (CloudfrontEventReader reader)
-                throws XMLStreamException
-            {
-                final List<InvalidationSummary> result = Lists.newArrayList();
-                new ContainerElement () {
-                    public boolean parseNextElement (CloudfrontEventReader reader) throws XMLStreamException {
-                        if (reader.maybeSkip("Marker", "NextMarker", "MaxItems", "IsTruncated")) {
-                            // nothing to do
-                        } else if (reader.peekForElement("InvalidationSummary")) {
-                            result.add(new InvalidationSummary().initialize(reader));
-                        } else {
-                            return false;
-                        }
-                        return true;
-                    }
-                }.recurseInto(reader, "InvalidationList");
-                return result;
+        return execute(method, new ElementListBuilder<InvalidationSummary>("InvalidationList") {
+            protected InvalidationSummary createElement () {
+                return new InvalidationSummary();
             }
         });
     }
@@ -481,6 +433,40 @@ public class CloudfrontConnection
         HostConfiguration hostConfig = new HostConfiguration();
         hostConfig.setHost(DEFAULT_HOST, HTTPS_PROTOCOL.getDefaultPort(), HTTPS_PROTOCOL);
         return hostConfig;
+    }
+
+    protected abstract static class ElementListBuilder<T extends ComplexType<T>>
+        extends ContainerElement
+        implements ReturnBodyParser<List<T>>
+    {
+        public ElementListBuilder (String listElement)
+        {
+            _listElement = listElement;
+            _partElement = createElement().typeElement();
+        }
+
+        public List<T> parseBody (CloudfrontEventReader reader)
+            throws XMLStreamException
+        {
+            recurseInto(reader, _listElement);
+            return _result;
+        }
+
+        public boolean parseNextElement (CloudfrontEventReader reader) throws XMLStreamException {
+            if (reader.maybeSkip("Marker", "NextMarker", "MaxItems", "IsTruncated")) {
+                // nothing to do
+            } else if (reader.peekForElement(_partElement)) {
+                _result.add(createElement().initialize(reader));
+            } else {
+                return false;
+            }
+            return true;
+        }
+
+        protected abstract T createElement ();
+
+        protected final String _listElement, _partElement;
+        protected final List<T> _result = Lists.newArrayList();
     }
 
     protected enum API
