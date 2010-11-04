@@ -57,31 +57,22 @@ import com.threerings.msoy.web.server.CloudfrontTypes.*;
 
 public class CloudfrontConnection
 {
-    public static abstract class ElementIterable
-    {
-        public void parseElements (CloudfrontEventReader reader)
-            throws XMLStreamException
-        {
-            do {
-                if (!parseNextElement(reader)) {
-                    throw new XMLStreamException("Unexpected event: " + reader.peek());
-                }
-            } while (!(reader.peek() instanceof EndElement));
-        }
-
-        public abstract boolean parseNextElement (CloudfrontEventReader reader)
-            throws XMLStreamException;
-    }
-
-    public static abstract class ContainerElement extends ElementIterable
+    public static abstract class ContainerElement
     {
         public void recurseInto (CloudfrontEventReader reader, String elementName)
             throws XMLStreamException
         {
             reader.expectElementStart(elementName);
-            parseElements(reader);
+            do {
+                if (!parseNextElement(reader)) {
+                    throw new XMLStreamException("Unexpected event: " + reader.peek());
+                }
+            } while (!(reader.peek() instanceof EndElement));
             reader.expectElementEnd(elementName);
         }
+
+        public abstract boolean parseNextElement (CloudfrontEventReader reader)
+            throws XMLStreamException;
     }
 
     public static abstract class ComplexType<T extends ComplexType>
