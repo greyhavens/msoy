@@ -38,7 +38,7 @@ import com.threerings.orth.data.MediaDesc;
 import com.threerings.msoy.data.all.MediaMimeTypes;
 import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.server.ServerConfig;
-import com.threerings.msoy.web.server.CloudfrontConnection;
+import com.threerings.msoy.web.server.InvalidationAPI;
 import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.presents.peer.data.NodeObject;
@@ -491,7 +491,7 @@ public class AdminServlet extends MsoyServiceServlet
             s3Conn.deleteObject(ServerConfig.mediaS3Bucket, fileName);
 
             // invalidate it in the cloud
-            CloudfrontConnection cloudConn = new CloudfrontConnection(
+            InvalidationAPI cloudConn = new InvalidationAPI(
                 ServerConfig.cloudId, ServerConfig.cloudKey);
             cloudConn.invalidateObjects(
                 ServerConfig.cloudDistribution, ImmutableList.of("/" + fileName));

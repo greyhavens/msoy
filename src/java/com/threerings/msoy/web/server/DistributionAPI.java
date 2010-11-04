@@ -3,128 +3,24 @@
 
 package com.threerings.msoy.web.server;
 
+import javax.xml.stream.XMLStreamException;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import javax.xml.stream.XMLStreamException;
-
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
-import com.threerings.msoy.web.server.CloudfrontConnection.ComplexType;
-import com.threerings.msoy.web.server.CloudfrontConnection.ContainerElement;
-import com.threerings.msoy.web.server.CloudfrontConnection.WriteableComplexType;
+import org.apache.commons.httpclient.methods.DeleteMethod;
+import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.commons.httpclient.methods.PutMethod;
 
-public abstract class CloudfrontTypes
+/**
+ *
+ */
+public class DistributionAPI extends CloudfrontConnection
 {
-    public static class OriginAccessIdentitySummary
-        extends ComplexType<OriginAccessIdentitySummary>
-    {
-        public String id;
-        public String s3CanonicalUserId;
-        public String comment;
-
-        public boolean parseNextElement (CloudfrontEventReader reader)
-            throws XMLStreamException
-        {
-            String str;
-            if (null != (str = reader.maybeString("Id"))) {
-                id = str;
-            } else if (null != (str = reader.maybeString("S3CanonicalUserId"))) {
-                s3CanonicalUserId = str;
-            } else if (null != (str = reader.maybeString("Comment"))) {
-                comment = str;
-            } else {
-                return false;
-            }
-            return true;
-        }
-
-        public String typeElement ()
-        {
-            return "CloudFrontOriginAccessIdentitySummary";
-        }
-
-        public boolean isComplete ()
-        {
-            return id != null && s3CanonicalUserId != null;
-        }
-    }
-
-    public static class OriginAccessIdentity
-        extends ComplexType<OriginAccessIdentity>
-    {
-        public String id;
-        public String s3CanonicalUserId;
-        public OriginAccessIdentityConfig config;
-
-        public boolean parseNextElement (CloudfrontEventReader reader)
-            throws XMLStreamException
-        {
-            String str;
-            if (null != (str = reader.maybeString("Id"))) {
-                id = str;
-            } else if (null != (str = reader.maybeString("S3CanonicalUserId"))) {
-                s3CanonicalUserId = str;
-            } else if (reader.peekForElement("CloudFrontOriginAccessIdentityConfig")) {
-                config = new OriginAccessIdentityConfig().initialize(reader);
-            } else {
-                return false;
-            }
-            return true;
-        }
-
-        public String typeElement ()
-        {
-            return "CloudFrontOriginAccessIdentity";
-        }
-
-        public boolean isComplete ()
-        {
-            return id != null && s3CanonicalUserId != null && config != null;
-        }
-    }
-
-    public static class OriginAccessIdentityConfig
-        extends WriteableComplexType<OriginAccessIdentityConfig>
-    {
-        public String callerReference;
-        public String comment;
-
-        public boolean parseNextElement (CloudfrontEventReader reader)
-            throws XMLStreamException
-        {
-            String str;
-            if (null != (str = reader.maybeString("CallerReference"))) {
-                callerReference = str;
-            } else if (null != (str = reader.maybeString("Comment"))) {
-                comment = str;
-            } else {
-                return false;
-            }
-            return true;
-        }
-
-        public String typeElement ()
-        {
-            return "CloudFrontOriginAccessIdentityConfig";
-        }
-
-        @Override
-        public void writeElements (CloudfrontEventWriter writer)
-            throws XMLStreamException
-        {
-            writer.writeString("CallerReference", callerReference);
-            writer.writeString("Comment", comment);
-        }
-
-        public boolean isComplete ()
-        {
-            return callerReference != null;
-        }
-    }
-
     public static class DistributionSummary
         extends ComplexType<DistributionSummary>
     {
@@ -163,7 +59,8 @@ public abstract class CloudfrontTypes
 
             } else if (reader.peekForElement("TrustedSigners")) {
                 new ContainerElement() {
-                    public boolean parseNextElement (CloudfrontEventReader reader) throws XMLStreamException {
+                    public boolean parseNextElement (CloudfrontEventReader reader)
+                        throws XMLStreamException {
                         String str;
                         if (null != (str = reader.maybeString("Self"))) {
                             selfIsSigner = true;
@@ -433,114 +330,73 @@ public abstract class CloudfrontTypes
         }
     }
 
-    public static class InvalidationSummary
-        extends ComplexType<InvalidationSummary>
+    public DistributionAPI (String keyId, String secretKey)
     {
-        public String id;
-        public String status;
-
-        public boolean parseNextElement (CloudfrontEventReader reader)
-            throws XMLStreamException
-        {
-            String str;
-            if (null != (str = reader.maybeString("Id"))) {
-                id = str;
-            } else if (null != (str = reader.maybeString("Status"))) {
-                status = str;
-            } else {
-                return false;
-            }
-            return true;
-        }
-
-        public String typeElement ()
-        {
-            return "InvalidationSummary";
-        }
-
-        public boolean isComplete ()
-        {
-            return id != null && status != null;
-        }
+        super(keyId, secretKey);
     }
 
-    public static class InvalidationBatch
-        extends WriteableComplexType<InvalidationBatch>
+    /**
+     * Retrieve a list of {link DistributionSummary} objects.
+     */
+    public List<DistributionSummary> getDistributions ()
+        throws CloudfrontException
     {
-        public String callerReference;
-        public Set<String> paths = Sets.newHashSet();
-
-        public boolean parseNextElement (CloudfrontEventReader reader)
-            throws XMLStreamException
-        {
-            String str;
-            if (null != (str = reader.maybeString("Path"))) {
-                paths.add(str);
-            } else if (null != (str = reader.maybeString("CallerReference"))) {
-                callerReference = str;
-            } else {
-                return false;
+        // GET /2010-08-01/distribution?Marker=value&MaxItems=value
+        GetMethod method = new GetMethod(API.DISTRIBUTION.build());
+        return execute(method, new ElementListBuilder<DistributionSummary>("DistributionList") {
+            @Override protected DistributionSummary createElement () {
+                return new DistributionSummary();
             }
-            return true;
-        }
-
-        public String typeElement ()
-        {
-            return "InvalidationBatch";
-        }
-
-        public boolean isComplete ()
-        {
-            return callerReference != null && !paths.isEmpty();
-        }
-
-        @Override
-        public void writeElements (CloudfrontEventWriter writer) throws XMLStreamException
-        {
-            writer.writeString("CallerReference", callerReference);
-            for (String key : paths) {
-                writer.writeString("Path", key);
-            }
-        }
+        });
     }
 
-    public static class Invalidation
-        extends ComplexType<Invalidation>
+    /**
+     * Retrieve a detailed {@link Distribution} associated with the given distribution ID.
+     */
+    public Distribution getDistribution (String distribution)
+        throws CloudfrontException
     {
-        public String id;
-        public String status;
-        public Date createTime;
-        public InvalidationBatch batch;
-
-        public boolean parseNextElement (CloudfrontEventReader reader)
-            throws XMLStreamException
-        {
-            String str; Date date;
-
-            if (null != (str = reader.maybeString("Id"))) {
-                id = str;
-            } else if (null != (str = reader.maybeString("Status"))) {
-                status = str;
-            } else if (null != (date = reader.maybeDate("CreateTime"))) {
-                createTime = date;
-            } else if (reader.peekForElement("InvalidationBatch")) {
-                batch = new InvalidationBatch().initialize(reader);
-            } else {
-                return false;
-            }
-            return true;
-        }
-
-        public String typeElement ()
-        {
-            return "Invalidation";
-        }
-
-        public boolean isComplete ()
-        {
-            return id != null && status != null && createTime != null && batch != null;
-        }
+        // GET /2010-08-01/distribution/DistID
+        GetMethod method = new GetMethod(API.DISTRIBUTION.build(distribution));
+        return execute(method, new Distribution());
     }
 
+    /**
+     * Retrieve the {@link DistributionConfig} associated with the given distribution ID.
+     */
+    public DistributionConfig getDistributionConfig (String distribution)
+        throws CloudfrontException
+    {
+        // GET /2010-08-01/distribution/DistID/config
+        GetMethod method = new GetMethod(API.DISTRIBUTION.build(distribution, "config"));
+        return execute(method, new DistributionConfig());
+    }
 
+    /**
+     * Create a new distribution as specified, returning a {@link Distribution} result.
+     */
+    public Distribution postConfig (DistributionConfig config)
+        throws CloudfrontException
+    {
+        // POST /2010-08-01/distribution
+        return execute(new PostMethod(API.DISTRIBUTION.build()), config, new Distribution());
+    }
+
+    public Distribution putConfig (String distribution, DistributionConfig config)
+        throws CloudfrontException
+    {
+        // PUT /2010-08-01/distribution/DistID/config
+        return execute(
+            new PutMethod(API.DISTRIBUTION.build(distribution, "config")),
+            config, new Distribution());
+    }
+
+    public void deleteDistribution (String distribution, String tag)
+        throws CloudfrontException
+    {
+        // DELETE /2010-08-01/distribution/DistID
+        DeleteMethod method = new DeleteMethod(API.ORIGIN_ACCESS_ID.build(distribution));
+        method.addRequestHeader("If-Match", tag);
+        execute(method, null);
+    }
 }

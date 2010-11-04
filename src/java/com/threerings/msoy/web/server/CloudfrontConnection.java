@@ -29,7 +29,6 @@ import javax.xml.stream.events.EndElement;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 import org.apache.commons.codec.binary.Base64;
 
@@ -38,268 +37,30 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.ByteArrayRequestEntity;
-import org.apache.commons.httpclient.methods.DeleteMethod;
 import org.apache.commons.httpclient.methods.EntityEnclosingMethod;
-import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.httpclient.methods.PutMethod;
 import org.apache.commons.httpclient.protocol.Protocol;
 
 import com.samskivert.util.StringUtil;
-
-import com.threerings.msoy.web.server.CloudfrontTypes.*;
 
 /**
  * An interface into the Cloudfront system. It is initially configured with
  * authentication and connection parameters and exposes methods to access and
  * manipulate Cloudfront distributions and object invalidation.
  */
-
-public class CloudfrontConnection
+public abstract class CloudfrontConnection
 {
-    public static abstract class ContainerElement
-    {
-        public void recurseInto (CloudfrontEventReader reader, String elementName)
-            throws XMLStreamException
-        {
-            reader.expectElementStart(elementName);
-            do {
-                if (!parseNextElement(reader)) {
-                    throw new XMLStreamException("Unexpected event: " + reader.peek());
-                }
-            } while (!(reader.peek() instanceof EndElement));
-            reader.expectElementEnd(elementName);
-        }
-
-        public abstract boolean parseNextElement (CloudfrontEventReader reader)
-            throws XMLStreamException;
-    }
-
-    public static abstract class ComplexType<T extends ComplexType>
-        extends ContainerElement implements ReturnBodyParser<T>
-    {
-        public T initialize (CloudfrontEventReader reader)
-            throws XMLStreamException
-        {
-            recurseInto(reader, typeElement());
-            if (!isComplete()) {
-                throw new XMLStreamException("Got partial object: " + this);
-            }
-
-            @SuppressWarnings("unchecked")
-            T tThis = (T) this;
-            return tThis;
-        }
-
-        public T parseBody (CloudfrontEventReader reader)
-            throws XMLStreamException
-        {
-            return initialize(reader);
-        }
-
-        public String toString ()
-        {
-            return StringUtil.fieldsToString(this);
-        }
-
-        protected abstract String typeElement ();
-        protected abstract boolean isComplete ();
-    }
-
-    public abstract static class WriteableComplexType<T extends WriteableComplexType>
-        extends ComplexType<T> implements RequestBodyConstructor
-    {
-        public void constructBody (CloudfrontEventWriter writer) throws XMLStreamException
-        {
-            writer.startElement(typeElement());
-            writeElements(writer);
-            writer.endElement(typeElement());
-        }
-
-        public abstract void writeElements (CloudfrontEventWriter writer)
-            throws XMLStreamException;
-    }
-
-    public CloudfrontConnection (String keyId, String secretKey)
+    protected CloudfrontConnection (String keyId, String secretKey)
     {
         this(keyId, secretKey, createDefaultHostConfig());
     }
 
-    public CloudfrontConnection (
+    protected CloudfrontConnection (
         String keyId, String secretKey, HostConfiguration hostConfig)
     {
         _keyId = keyId;
         _secretKey = secretKey;
         _httpClient = new HttpClient();
         _httpClient.setHostConfiguration(hostConfig);
-    }
-
-     public List<OriginAccessIdentitySummary> getOriginAccessIdentities ()
-        throws CloudfrontException
-    {
-        // GET /2010-08-01/origin-access-identity/cloudfront?Marker=value&MaxItems=value
-        GetMethod method = new GetMethod(API.ORIGIN_ACCESS_ID.build("cloudfront"));
-        String listElement = "CloudFrontOriginAccessIdentityList";
-        return execute(method, new ElementListBuilder<OriginAccessIdentitySummary>(listElement) {
-            @Override protected OriginAccessIdentitySummary createElement () {
-                return new OriginAccessIdentitySummary();
-            }
-        });
-    }
-
-    public OriginAccessIdentity getOriginAccessIdentity (String id)
-        throws CloudfrontException
-    {
-        // GET /2010-08-01/origin-access-identity/cloudfront/IdentityID
-        GetMethod method = new GetMethod(API.ORIGIN_ACCESS_ID.build("cloudfront", id));
-        return execute(method, new OriginAccessIdentity());
-    }
-
-    public OriginAccessIdentityConfig getOriginAccessIdentityConfig (String id)
-        throws CloudfrontException
-    {
-        // GET /2010-08-01/origin-access-identity/cloudfront/IdentityID/config
-        GetMethod method = new GetMethod(
-            API.ORIGIN_ACCESS_ID.build("cloudfront", id, "config"));
-        return execute(method, new OriginAccessIdentityConfig());
-    }
-
-    public OriginAccessIdentity createOriginAccessIdentity (final String comment)
-        throws CloudfrontException
-    {
-        OriginAccessIdentityConfig config = new OriginAccessIdentityConfig();
-        config.callerReference = String.valueOf(System.nanoTime());
-        config.comment = comment;
-        return postConfig(config);
-    }
-
-    public OriginAccessIdentity postConfig (OriginAccessIdentityConfig config)
-        throws CloudfrontException
-    {
-        // POST /2010-08-01/origin-access-identity/cloudfront
-        return execute(
-            new PostMethod(API.ORIGIN_ACCESS_ID.build("cloudfront")),
-            config, new OriginAccessIdentity());
-    }
-
-    public OriginAccessIdentity putConfig (String oaid, OriginAccessIdentityConfig config)
-        throws CloudfrontException
-    {
-        // PUT /2010-08-01/origin-access-identity/cloudfront/IdentityID/config
-        return execute(
-            new PutMethod(API.ORIGIN_ACCESS_ID.build("cloudfront", oaid, "config")),
-            config, new OriginAccessIdentity());
-    }
-
-    public void deleteOriginAccessIdentity (String oaid, String tag)
-        throws CloudfrontException
-    {
-        // DELETE /2010-08-01/origin-access-identity/cloudfront/IdentityID
-        DeleteMethod method = new DeleteMethod(API.ORIGIN_ACCESS_ID.build("cloudfront", oaid));
-        method.addRequestHeader("If-Match", tag);
-        execute(method, null);
-    }
-
-    public List <DistributionSummary> getDistributions ()
-        throws CloudfrontException
-    {
-        // GET /2010-08-01/distribution?Marker=value&MaxItems=value
-        GetMethod method = new GetMethod(API.DISTRIBUTION.build());
-
-        return execute(method, new ElementListBuilder<DistributionSummary>("DistributionList") {
-            @Override protected DistributionSummary createElement () {
-                return new DistributionSummary();
-            }
-        });
-    }
-
-    public Distribution getDistribution (String distribution)
-        throws CloudfrontException
-    {
-        // GET /2010-08-01/distribution/DistID
-        GetMethod method = new GetMethod(API.DISTRIBUTION.build(distribution));
-        return execute(method, new Distribution());
-    }
-
-    public DistributionConfig getDistributionConfig (String distribution)
-        throws CloudfrontException
-    {
-        // GET /2010-08-01/distribution/DistID/config
-        GetMethod method = new GetMethod(API.DISTRIBUTION.build(distribution, "config"));
-        return execute(method, new DistributionConfig());
-    }
-
-    public Distribution postConfig (DistributionConfig config)
-        throws CloudfrontException
-    {
-        // POST /2010-08-01/distribution
-        return execute(new PostMethod(API.DISTRIBUTION.build()), config, new Distribution());
-    }
-
-    public void deleteDistribution (String distribution, String tag)
-        throws CloudfrontException
-    {
-        // DELETE /2010-08-01/distribution/DistID
-        DeleteMethod method = new DeleteMethod(API.ORIGIN_ACCESS_ID.build(distribution));
-        method.addRequestHeader("If-Match", tag);
-        execute(method, null);
-    }
-
-    public Distribution putConfig (String distribution, DistributionConfig config)
-        throws CloudfrontException
-    {
-        // PUT /2010-08-01/distribution/DistID/config
-        return execute(
-            new PutMethod(API.DISTRIBUTION.build(distribution, "config")),
-            config, new Distribution());
-    }
-
-    public List<InvalidationSummary> getInvalidations (String distribution)
-        throws CloudfrontException
-    {
-        // GET /2010-08-01/distribution/DistID/invalidation?Marker=value&MaxItems=value
-        GetMethod method = new GetMethod(API.DISTRIBUTION.build(distribution, "invalidation"));
-        return execute(method, new ElementListBuilder<InvalidationSummary>("InvalidationList") {
-            protected InvalidationSummary createElement () {
-                return new InvalidationSummary();
-            }
-        });
-    }
-
-    public Invalidation getInvalidation (String distribution, String batch)
-        throws CloudfrontException
-    {
-        // GET /2010-08-01/distribution/DistID/invalidation/invalidationID
-        GetMethod method = new GetMethod(
-            API.DISTRIBUTION.build(distribution, "invalidation", batch));
-        return execute(method, new Invalidation());
-    }
-
-    /**
-     * Invalidate an object in the cloud. This forcibly removes cached copies on leaf nodes
-     * without waiting for expiration. It is typically used when emergency changes happen to
-     * important objects, or for immediate deletions (e.g. takedown notices).
-     *
-     * Amazon allows a large but finite (currently 1,000) invalidations per month for free,
-     * after that there is a (very small) fee per invalidation. Systems that require instant
-     * object updates as a matter of course should use object versioning instead.
-     */
-    public Invalidation invalidateObjects (String distribution, final Iterable<String> keys)
-        throws CloudfrontException
-    {
-        InvalidationBatch batch = new InvalidationBatch();
-        batch.callerReference = String.valueOf(System.nanoTime());
-        batch.paths = Sets.newHashSet(keys);
-        return postBatch(distribution, batch);
-    }
-
-    public Invalidation postBatch (String distribution, InvalidationBatch batch)
-        throws CloudfrontException
-    {
-        // POST /2010-08-01/distribution/DistID/invalidation
-        return execute(
-            new PostMethod(API.DISTRIBUTION.build(distribution, "invalidation")),
-            batch, new Invalidation());
     }
 
     protected <T> T execute (
@@ -424,6 +185,69 @@ public class CloudfrontConnection
         HostConfiguration hostConfig = new HostConfiguration();
         hostConfig.setHost(DEFAULT_HOST, HTTPS_PROTOCOL.getDefaultPort(), HTTPS_PROTOCOL);
         return hostConfig;
+    }
+
+    protected static abstract class ContainerElement
+    {
+        public void recurseInto (CloudfrontEventReader reader, String elementName)
+            throws XMLStreamException
+        {
+            reader.expectElementStart(elementName);
+            do {
+                if (!parseNextElement(reader)) {
+                    throw new XMLStreamException("Unexpected event: " + reader.peek());
+                }
+            } while (!(reader.peek() instanceof EndElement));
+            reader.expectElementEnd(elementName);
+        }
+
+        public abstract boolean parseNextElement (CloudfrontEventReader reader)
+            throws XMLStreamException;
+    }
+
+    protected static abstract class ComplexType<T extends ComplexType>
+        extends ContainerElement implements ReturnBodyParser<T>
+    {
+        public T initialize (CloudfrontEventReader reader)
+            throws XMLStreamException
+        {
+            recurseInto(reader, typeElement());
+            if (!isComplete()) {
+                throw new XMLStreamException("Got partial object: " + this);
+            }
+
+            @SuppressWarnings("unchecked")
+            T tThis = (T) this;
+            return tThis;
+        }
+
+        public T parseBody (CloudfrontEventReader reader)
+            throws XMLStreamException
+        {
+            return initialize(reader);
+        }
+
+        public String toString ()
+        {
+            return StringUtil.fieldsToString(this);
+        }
+
+        protected abstract String typeElement ();
+        protected abstract boolean isComplete ();
+    }
+
+    protected static abstract class WriteableComplexType<T extends WriteableComplexType>
+        extends ComplexType<T> implements RequestBodyConstructor
+    {
+        public void constructBody (CloudfrontEventWriter writer) throws XMLStreamException
+        {
+            writer.startElement(typeElement());
+            writeElements(writer);
+            writer.endElement(typeElement());
+        }
+
+        public abstract void writeElements (CloudfrontEventWriter writer)
+            throws XMLStreamException;
     }
 
     protected abstract static class ElementListBuilder<T extends ComplexType<T>>

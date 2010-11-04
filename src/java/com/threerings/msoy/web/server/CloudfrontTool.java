@@ -15,36 +15,41 @@ public abstract class CloudfrontTool
 {
    public static final void main (String[] args)
     {
-        CloudfrontConnection conn = new CloudfrontConnection(
-            ServerConfig.cloudId, ServerConfig.cloudKey);
+        OriginAccessIdentityAPI oConn =
+            new OriginAccessIdentityAPI(ServerConfig.cloudId, ServerConfig.cloudKey);
+        InvalidationAPI iConn =
+            new InvalidationAPI(ServerConfig.cloudId, ServerConfig.cloudKey);
+        DistributionAPI dConn =
+            new DistributionAPI(ServerConfig.cloudId, ServerConfig.cloudKey);
+
         try {
             Object result = null;
 
             if (args.length > 0) {
                 String cmd = args[0];
                 if ("dists".equals(cmd)) {
-                    result = conn.getDistributions();
+                    result = dConn.getDistributions();
                 } else if ("oaids".equals(cmd)) {
-                    result = conn.getOriginAccessIdentities();
+                    result = oConn.getOriginAccessIdentities();
                 }
                 if (args.length > 1) {
                     if ("invreqs".equals(cmd)) {
-                        result = conn.getInvalidations(args[1]);
+                        result = iConn.getInvalidations(args[1]);
                     } else if ("dist".equals(cmd)) {
-                        result = conn.getDistribution(args[1]);
+                        result = dConn.getDistribution(args[1]);
                     } else if ("distconf".equals(cmd)) {
-                        result = conn.getDistributionConfig(args[1]);
+                        result = dConn.getDistributionConfig(args[1]);
                     } else if ("oaid".equals(cmd)) {
-                        result = conn.getOriginAccessIdentity(args[1]);
+                        result = oConn.getOriginAccessIdentity(args[1]);
                     } else if ("oaidconf".equals(cmd)) {
-                        result = conn.getOriginAccessIdentityConfig(args[1]);
+                        result = oConn.getOriginAccessIdentityConfig(args[1]);
                     }
                 }
                 if (args.length > 2) {
                     if ("invalidate".equals(cmd)) {
-                        result = conn.invalidateObjects(args[1], Collections.singleton(args[2]));
+                        result = iConn.invalidateObjects(args[1], Collections.singleton(args[2]));
                     } else if ("invreq".equals(cmd)) {
-                        result = conn.getInvalidation(args[1], args[2]);
+                        result = iConn.getInvalidation(args[1], args[2]);
                     }
                 }
             }
