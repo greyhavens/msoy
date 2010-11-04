@@ -144,22 +144,6 @@ public class CloudfrontConnection
         _secretKey = secretKey;
         _httpClient = new HttpClient();
         _httpClient.setHostConfiguration(hostConfig);
-
-        /* httpclient defaults to no timeout, which is troublesome if we ever drop our network
-         * connection.  Give it a generous timeout to keep things moving. */
-        HttpClientParams clientParams = new HttpClientParams();
-        clientParams.setSoTimeout(TIMEOUT_MILLIS);
-        clientParams.setConnectionManagerTimeout(TIMEOUT_MILLIS);
-        _httpClient.setParams(clientParams);
-
-        /* Configure the multi-threaded connection manager. Default to MAX_INT (eg, unlimited)
-         * connections, as AWS is intended to support such use */
-        HttpConnectionManagerParams managerParam = new HttpConnectionManagerParams();
-        MultiThreadedHttpConnectionManager manager = new MultiThreadedHttpConnectionManager();
-        managerParam.setDefaultMaxConnectionsPerHost(Integer.MAX_VALUE);
-        managerParam.setMaxTotalConnections(Integer.MAX_VALUE);
-        manager.setParams(managerParam);
-        _httpClient.setHttpConnectionManager(manager);
     }
 
      public List<OriginAccessIdentitySummary> getOriginAccessIdentities ()
@@ -534,7 +518,7 @@ public class CloudfrontConnection
     {
         public T parseBody (CloudfrontEventReader writer) throws XMLStreamException;
     }
-    
+
     protected String _keyId;
     protected String _secretKey;
 
