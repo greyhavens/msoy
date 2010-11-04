@@ -1,0 +1,26 @@
+#!/bin/sh
+#
+# $Id$
+#
+# Command line launcher for the Cloudfront manipulation tool
+
+JAVA_ARGS="-Djava.awt.headless=true \
+           -Dlog4j.configuration=log4j.properties \
+           -Dorg.apache.commons.logging.Log=org.apache.commons.logging.impl.Log4JLogger"
+
+# parse our arguments
+while [ ! -z "$1" ]; do
+    case "$1" in
+        -*)
+            JAVA_ARGS="$JAVA_ARGS $1"
+            ;;
+
+        *)
+            NODE="$1"
+            ;;
+    esac
+    shift
+done
+
+CLASS=com.threerings.msoy.web.server.CloudfrontTool
+`dirname $0`/msoyjava msoy -ea -server $JAVA_ARGS $CLASS $*
