@@ -420,6 +420,7 @@
         <filter token="dev_deployment" value="${dev_deployment}"/>
         <filter token="recaptcha_public" value="${recaptcha_token}"/>
         <filter token="billing_url" value="${billing_url}"/>
+        <filter token="signing_key_id" value="${cloud_signing_key_id}"/>
       </filterset>
     </copy>
   </target>
@@ -562,6 +563,7 @@
         <filter token="log_levels_config" value="${log_levels_config}"/>
         <filter token="billing_url" value="${billing_url}"/>
         <filter token="announce_group_id" value="${announce_group_id}"/>
+        <filter token="signing_key_id" value="${cloud_signing_key_id}"/>
       </filterset>
     </copy>
     <copy file="lib/framework_3.3.0.4852.swz" todir="pages/clients"/>
