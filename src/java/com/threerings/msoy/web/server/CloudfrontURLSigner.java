@@ -54,7 +54,8 @@ public class CloudfrontURLSigner
         int expiration = now + 7 * 24 * 3600;
         byte[] signature = createSignature(HashMediaDesc.getMediaPath(hash, mimeType), expiration);
 
-        return new CloudfrontMediaDesc(hash, mimeType, constraint, expiration, signature);
+        return new CloudfrontMediaDesc(
+            hash, mimeType, constraint, expiration, new String(signature));
     }
 
 

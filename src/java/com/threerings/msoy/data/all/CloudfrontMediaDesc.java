@@ -4,17 +4,16 @@
 
 package com.threerings.msoy.data.all;
 
-import com.threerings.msoy.server.ServerConfig;
-
-import org.apache.commons.codec.binary.Base64;
-
 /**
- *
+ * A hash-based MediaDesc that has been signed for Cloudfront access. We do not do our
+ * own Base64-encoding on the client, mostly because GWT is stupid about turning byte[]
+ * into String, and we get our signing key from DeploymentConfig so we don't have to
+ * send it down the wire pointlessly thousands of times.
  */
 public class CloudfrontMediaDesc extends HashMediaDesc
 {
     public CloudfrontMediaDesc (
-        byte[] hash, byte mimeType, byte constraint, int expiration, byte[] signature)
+        byte[] hash, byte mimeType, byte constraint, int expiration, String signature)
     {
         super(hash, mimeType, constraint);
         _expiration = expiration;
@@ -25,19 +24,13 @@ public class CloudfrontMediaDesc extends HashMediaDesc
     {
         if (_url == null) {
             _url = super.getMediaPath() + "?Expires=" + _expiration + "&Key-Pair-Id=" +
-            ServerConfig.cloudSigningKeyId + "&Signature=" + signature();
+                DeploymentConfig.signingKeyId + "&Signature=" + _signature;
         }
         return _url;
     }
 
-    protected String signature ()
-    {
-        return new String(Base64.encodeBase64(_signature))
-            .replace("+", "-").replace("=", "_").replace("/", "~");
-    }
-
     protected final int _expiration;
-    protected final byte[] _signature;
+    protected final String _signature;
 
     /** Lazily constructed if/when needed. */
     protected String _url;
