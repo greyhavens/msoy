@@ -11,6 +11,7 @@ import com.samskivert.util.StringUtil;
 
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.web.server.CloudfrontConnection.Tagged;
+import com.threerings.msoy.web.server.CloudfrontConnection.WriteableComplexType;
 import com.threerings.msoy.web.server.DistributionAPI.Distribution;
 import com.threerings.msoy.web.server.DistributionAPI.DistributionConfig;
 import com.threerings.msoy.web.server.DistributionAPI.Signer;
@@ -101,18 +102,36 @@ public abstract class CloudfrontTool
         }
     }
 
-    public static Distribution setSelfSigning (String distId, boolean value)
+    public static Distribution setSelfSigning (String distId, final boolean value)
         throws CloudfrontException
     {
-        DistributionAPI dConn =
-            new DistributionAPI(ServerConfig.cloudId, ServerConfig.cloudKey);
+        return modifyDistribution(distId, new Modifier<DistributionConfig>() {
+            public boolean modify (DistributionConfig config) {
+                if (config.selfIsSigner == value) {
+                    return false;
+                }
+                config.selfIsSigner = value;
+                return true;
+            }
+        });
+    }
+
+    protected interface Modifier<T extends WriteableComplexType>
+    {
+        public boolean modify (T object);
+    }
+
+    protected static Distribution modifyDistribution (
+        String distId, Modifier<DistributionConfig> modifier)
+            throws CloudfrontException
+    {
+        DistributionAPI dConn = new DistributionAPI(ServerConfig.cloudId, ServerConfig.cloudKey);
         Tagged<DistributionConfig> tagged = dConn.getDistributionConfig(distId);
         log.info("Fetched distribution", "config", tagged);
-        if (tagged.result.selfIsSigner == value) {
-            return null;
+        if (modifier.modify(tagged.result)) {
+            return dConn.putConfig(distId, tagged);
         }
-        tagged.result.selfIsSigner = value;
-        return dConn.putConfig(distId, tagged);
+        return null;
     }
 
     public static String validateDistributionForSigning (String distId, String signingKeyId)
