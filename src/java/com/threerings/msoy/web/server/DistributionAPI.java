@@ -307,7 +307,9 @@ public class DistributionAPI extends CloudfrontConnection
             writer.writeString("DefaultRootObject", defaultRootObject);
             writer.writeString("OriginAccessIdentity", originAccessIdentity);
 
-            logging.constructBody(writer);
+            if (logging != null) {
+                logging.constructBody(writer);
+            }
 
             writer.startElement("TrustedSigners");
             if (selfIsSigner) {
