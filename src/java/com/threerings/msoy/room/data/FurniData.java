@@ -48,7 +48,7 @@ public class FurniData extends SimpleStreamableObject
     public short id;
 
     /** Identifies the type of the item that was used to create this furni, or Item.NOT_A_TYPE. */
-    public MsoyItemType itemType;
+    public MsoyItemType itemType = MsoyItemType.NOT_A_TYPE;
 
     /** Identifies the id of the item that was used to create this. */
     public int itemId;
