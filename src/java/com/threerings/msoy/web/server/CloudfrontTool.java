@@ -11,6 +11,7 @@ import com.samskivert.util.StringUtil;
 
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.web.server.DistributionAPI.Distribution;
+import com.threerings.msoy.web.server.DistributionAPI.DistributionConfig;
 import com.threerings.msoy.web.server.DistributionAPI.Signer;
 
 import static com.threerings.msoy.Log.log;
@@ -52,6 +53,8 @@ public abstract class CloudfrontTool
                         result = oConn.getOriginAccessIdentity(args[1]);
                     } else if ("oaidconf".equals(cmd)) {
                         result = oConn.getOriginAccessIdentityConfig(args[1]);
+                    } else if ("selfsign".equals(cmd)) {
+                        result = setSelfSigning(args[1], true);
                     }
                 }
                 if (args.length > 2) {
@@ -85,6 +88,8 @@ public abstract class CloudfrontTool
                     "invreqs\n" +
                     "invreq <batchId>\n" +
                     "invalidate <distId> <key>\n" +
+                    "selfsign <distId>\n" +
+                    "validate\n" +
                     "sign <url> <days before expiration>");
                 return;
             }
@@ -93,6 +98,19 @@ public abstract class CloudfrontTool
         } catch (CloudfrontException e) {
             e.printStackTrace();
         }
+    }
+
+    public static Distribution setSelfSigning (String distId, boolean value)
+        throws CloudfrontException
+    {
+        DistributionAPI dConn =
+            new DistributionAPI(ServerConfig.cloudId, ServerConfig.cloudKey);
+        DistributionConfig config = dConn.getDistributionConfig(distId);
+        if (config.selfIsSigner == value) {
+            return null;
+        }
+        config.selfIsSigner = value;
+        return dConn.putConfig(distId, config);
     }
 
     public static String validateDistributionForSigning (String distId, String signingKeyId)
