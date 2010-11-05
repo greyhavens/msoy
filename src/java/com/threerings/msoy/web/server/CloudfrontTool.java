@@ -10,6 +10,10 @@ import com.google.common.base.Joiner;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.msoy.server.ServerConfig;
+import com.threerings.msoy.web.server.DistributionAPI.Distribution;
+import com.threerings.msoy.web.server.DistributionAPI.Signer;
+
+import static com.threerings.msoy.Log.log;
 
 public abstract class CloudfrontTool
 {
@@ -33,6 +37,9 @@ public abstract class CloudfrontTool
                     result = dConn.getDistributions();
                 } else if ("oaids".equals(cmd)) {
                     result = oConn.getOriginAccessIdentities();
+                } else if ("validate".equals(cmd)) {
+                    result = validateDistributionForSigning(
+                        ServerConfig.cloudDistribution, ServerConfig.cloudSigningKeyId);
                 }
                 if (args.length > 1) {
                     if ("invreqs".equals(cmd)) {
@@ -57,8 +64,7 @@ public abstract class CloudfrontTool
                         String url = args[1];
                         int days = new Integer(args[2]);
                         int now = ((int) (System.currentTimeMillis() / 1000));
-                        System.out.println(
-                            "Signing URL for expiration in " + days + " days: " + url);
+                        log.info("Signing URL for expiration", "days", days, "URL", url);
                         result = tool.signURL(url, now + days * 3600 * 24);
                     }
                 }
@@ -86,6 +92,46 @@ public abstract class CloudfrontTool
 
         } catch (CloudfrontException e) {
             e.printStackTrace();
+        }
+    }
+
+    public static String validateDistributionForSigning (String distId, String signingKeyId)
+    {
+        DistributionAPI dConn =
+            new DistributionAPI(ServerConfig.cloudId, ServerConfig.cloudKey);
+        try {
+            Distribution distribution = dConn.getDistribution(distId);
+            log.info("Validating for URL signing", "dist", distribution);
+
+            // first see if the distribution's configuration allows self-signing at all
+            if (!distribution.config.selfIsSigner) {
+                return "Our CloudFront distribution doesn't allow self-signing.";
+            }
+
+            boolean found = false;
+            for (Signer signer : distribution.activeTrustedSigners) {
+                // we're only interested in self-signing
+                if (signer.isSelf) {
+                    // there *are* active self-signing keys, do we have the right one?
+                    if (!signer.keyIds.contains(signingKeyId)) {
+                        return "Our CloudFront distribution has active trusted self-signing keys," +
+                            "but our configured cloud_signing_key_id is not among them.";
+                    }
+                    found = true;
+                }
+            }
+            if (!found) {
+                return "Our Cloudfront distribution allows self-signing, but there are no " +
+                    "active signing keys available on the account.";
+            }
+            return null;
+
+        } catch (CloudfrontException e) {
+            // warn of the problem
+            log.warning("Failed to validate distribution for signing!", e);
+
+            // but don't return an error condition, the URLs might still work
+            return null;
         }
     }
 }
