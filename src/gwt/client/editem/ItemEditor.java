@@ -34,12 +34,14 @@ import com.threerings.gwt.util.StringUtil;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.orth.data.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescFactory;
 import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.data.all.MediaMimeTypes;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.stuff.gwt.StuffService;
 import com.threerings.msoy.stuff.gwt.StuffServiceAsync;
+
 import client.shell.CShell;
 import client.shell.DynamicLookup;
 import client.shell.ShellMessages;
@@ -641,8 +643,8 @@ public abstract class ItemEditor extends FlowPanel
         cancelRemix();
 
         // set the new media in preview and in the item
-        mu.setUploadedMedia(filename,
-            new HashMediaDesc(mediaHash, (byte)mimeType, (byte)constraint), width, height);
+        mu.setUploadedMedia(filename, MediaDescFactory.createMediaDesc(
+            mediaHash, (byte)mimeType, (byte)constraint), width, height);
 
         // have the item re-validate that no media ids are duplicated unnecessarily
         _item.checkConsolidateMedia();

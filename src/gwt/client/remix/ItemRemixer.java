@@ -15,6 +15,7 @@ import com.threerings.orth.data.MediaDesc;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.HashMediaDesc;
+import com.threerings.msoy.data.all.MediaDescFactory;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.MsoyItemType;
@@ -134,7 +135,8 @@ public class ItemRemixer extends FlexTable
             return;
         }
 
-        _item.setPrimaryMedia(new HashMediaDesc(mediaHash, (byte) mimeType, (byte) constraint));
+        _item.setPrimaryMedia(MediaDescFactory.createMediaDesc(
+                mediaHash, (byte) mimeType, (byte) constraint));
 
         _stuffsvc.remixItem(_item, new InfoCallback<Item>() {
             public void onSuccess (Item item) {
