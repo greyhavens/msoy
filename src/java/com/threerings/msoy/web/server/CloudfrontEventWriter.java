@@ -49,9 +49,11 @@ public class CloudfrontEventWriter
     public void writeString (String element, String str)
         throws XMLStreamException
     {
-        startElement(element);
-        _writer.add(_factory.createCharacters(str));
-        endElement(element);
+        if (str != null) {
+            startElement(element);
+            _writer.add(_factory.createCharacters(str));
+            endElement(element);
+        }
     }
 
     public void writeBoolean (String element, boolean bool)
