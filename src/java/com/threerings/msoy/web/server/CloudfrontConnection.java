@@ -32,12 +32,14 @@ import com.google.common.collect.Lists;
 
 import org.apache.commons.codec.binary.Base64;
 
+import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HostConfiguration;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.ByteArrayRequestEntity;
 import org.apache.commons.httpclient.methods.EntityEnclosingMethod;
+import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.protocol.Protocol;
 
 import com.samskivert.util.StringUtil;
@@ -49,6 +51,33 @@ import com.samskivert.util.StringUtil;
  */
 public abstract class CloudfrontConnection
 {
+    public static class Tagged<T extends ComplexType<T>>
+    {
+        public String eTag;
+        public T result;
+
+        public static <T extends ComplexType<T>> Tagged<T> tag (GetMethod method, T result)
+            throws CloudfrontException
+        {
+            Header header = method.getResponseHeader("ETag");
+            if (header == null) {
+                throw new CloudfrontException("No ETag header on response!");
+            }
+            return new Tagged<T>(header.getValue(), result);
+        }
+
+        public Tagged (String eTag, T result)
+        {
+            this.eTag = eTag;
+            this.result = result;
+        }
+
+        public String toString ()
+        {
+            return StringUtil.fieldsToString(this);
+        }
+    }
+
     protected CloudfrontConnection (String keyId, String secretKey)
     {
         this(keyId, secretKey, createDefaultHostConfig());
@@ -61,6 +90,14 @@ public abstract class CloudfrontConnection
         _secretKey = secretKey;
         _httpClient = new HttpClient();
         _httpClient.setHostConfiguration(hostConfig);
+    }
+
+    protected <R extends ComplexType<R>, W extends WriteableComplexType<W>> R execute (
+        EntityEnclosingMethod method, Tagged<W> taggedType, ReturnBodyParser<R> parser)
+            throws CloudfrontException
+    {
+        method.setRequestHeader("If-Match", taggedType.eTag);
+        return execute(method, taggedType.result, parser);
     }
 
     protected <T> T execute (
@@ -79,8 +116,9 @@ public abstract class CloudfrontConnection
         } catch (Exception e) {
             throw new CloudfrontException("Error encoding XML: " + e.getMessage(), e);
         }
-
-        method.setRequestEntity(new ByteArrayRequestEntity(baos.toByteArray(), "text/xml"));
+        byte[] bytes = baos.toByteArray();
+        method.setRequestEntity(new ByteArrayRequestEntity(bytes, "text/xml"));
+        // log.info("Sending request", "body", new String(bytes));
         return execute(method, parser);
     }
 

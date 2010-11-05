@@ -150,13 +150,14 @@ public class OriginAccessIdentityAPI extends CloudfrontConnection
         return execute(method, new OriginAccessIdentity());
     }
 
-    public OriginAccessIdentityConfig getOriginAccessIdentityConfig (String id)
+    public Tagged<OriginAccessIdentityConfig> getOriginAccessIdentityConfig (String id)
         throws CloudfrontException
     {
         // GET /2010-08-01/origin-access-identity/cloudfront/IdentityID/config
         GetMethod method = new GetMethod(
             API.ORIGIN_ACCESS_ID.build("cloudfront", id, "config"));
-        return execute(method, new OriginAccessIdentityConfig());
+        OriginAccessIdentityConfig config = execute(method, new OriginAccessIdentityConfig());
+        return Tagged.tag(method, config);
     }
 
     public OriginAccessIdentity createOriginAccessIdentity (final String comment)
@@ -177,7 +178,7 @@ public class OriginAccessIdentityAPI extends CloudfrontConnection
             config, new OriginAccessIdentity());
     }
 
-    public OriginAccessIdentity putConfig (String oaid, OriginAccessIdentityConfig config)
+    public OriginAccessIdentity putConfig (String oaid, Tagged<OriginAccessIdentityConfig> config)
         throws CloudfrontException
     {
         // PUT /2010-08-01/origin-access-identity/cloudfront/IdentityID/config

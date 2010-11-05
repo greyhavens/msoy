@@ -366,12 +366,13 @@ public class DistributionAPI extends CloudfrontConnection
     /**
      * Retrieve the {@link DistributionConfig} associated with the given distribution ID.
      */
-    public DistributionConfig getDistributionConfig (String distribution)
+    public Tagged<DistributionConfig> getDistributionConfig (String distribution)
         throws CloudfrontException
     {
         // GET /2010-08-01/distribution/DistID/config
         GetMethod method = new GetMethod(API.DISTRIBUTION.build(distribution, "config"));
-        return execute(method, new DistributionConfig());
+        DistributionConfig config = execute(method, new DistributionConfig());
+        return Tagged.tag(method, config);
     }
 
     /**
@@ -384,7 +385,7 @@ public class DistributionAPI extends CloudfrontConnection
         return execute(new PostMethod(API.DISTRIBUTION.build()), config, new Distribution());
     }
 
-    public Distribution putConfig (String distribution, DistributionConfig config)
+    public Distribution putConfig (String distribution, Tagged<DistributionConfig> config)
         throws CloudfrontException
     {
         // PUT /2010-08-01/distribution/DistID/config

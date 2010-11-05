@@ -10,6 +10,7 @@ import com.google.common.base.Joiner;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.msoy.server.ServerConfig;
+import com.threerings.msoy.web.server.CloudfrontConnection.Tagged;
 import com.threerings.msoy.web.server.DistributionAPI.Distribution;
 import com.threerings.msoy.web.server.DistributionAPI.DistributionConfig;
 import com.threerings.msoy.web.server.DistributionAPI.Signer;
@@ -105,12 +106,13 @@ public abstract class CloudfrontTool
     {
         DistributionAPI dConn =
             new DistributionAPI(ServerConfig.cloudId, ServerConfig.cloudKey);
-        DistributionConfig config = dConn.getDistributionConfig(distId);
-        if (config.selfIsSigner == value) {
+        Tagged<DistributionConfig> tagged = dConn.getDistributionConfig(distId);
+        log.info("Fetched distribution", "config", tagged);
+        if (tagged.result.selfIsSigner == value) {
             return null;
         }
-        config.selfIsSigner = value;
-        return dConn.putConfig(distId, config);
+        tagged.result.selfIsSigner = value;
+        return dConn.putConfig(distId, tagged);
     }
 
     public static String validateDistributionForSigning (String distId, String signingKeyId)
