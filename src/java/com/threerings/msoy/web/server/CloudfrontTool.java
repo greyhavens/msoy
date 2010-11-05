@@ -21,7 +21,7 @@ public abstract class CloudfrontTool
             new InvalidationAPI(ServerConfig.cloudId, ServerConfig.cloudKey);
         DistributionAPI dConn =
             new DistributionAPI(ServerConfig.cloudId, ServerConfig.cloudKey);
-        CloudfrontURLSigner tool = new CloudfrontURLTool(
+        CloudfrontURLSigner tool = new CloudfrontURLSigner(
             ServerConfig.cloudSigningKeyId, ServerConfig.cloudSigningKey);
 
         try {
