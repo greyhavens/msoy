@@ -31,6 +31,7 @@ public class CloudfrontEventWriter
         throws XMLStreamException
     {
         _writer.add(_factory.createEndDocument());
+        _writer.flush();
     }
 
     public void startElement (String elementName)
