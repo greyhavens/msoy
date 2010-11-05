@@ -6,6 +6,7 @@ package com.threerings.msoy.web.server;
 
 import java.util.Date;
 
+import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLStreamException;
@@ -35,13 +36,13 @@ public class CloudfrontEventWriter
     public void startElement (String elementName)
         throws XMLStreamException
     {
-        _writer.add(_factory.createStartElement(null, null, elementName));
+        _writer.add(_factory.createStartElement(new QName(elementName), null, null));
     }
 
     public void endElement (String elementName)
         throws XMLStreamException
     {
-        _writer.add(_factory.createEndElement(null, null, elementName));
+        _writer.add(_factory.createEndElement(new QName(elementName), null));
     }
 
     public void writeString (String element, String str)
