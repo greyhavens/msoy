@@ -9,6 +9,7 @@ import com.samskivert.depot.expression.ColumnExp;
 
 import com.threerings.msoy.data.all.HashMediaDesc;
 
+import com.threerings.msoy.data.all.MediaDescFactory;
 import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.item.data.all.Video;
 import com.threerings.msoy.item.data.all.Item;
@@ -100,7 +101,7 @@ public class VideoRecord extends ItemRecord
     {
         Video object = new Video();
         object.videoMedia = videoMediaHash == null ? null :
-            new HashMediaDesc(videoMediaHash, videoMimeType);
+            MediaDescFactory.createHashMediaDesc(videoMediaHash, videoMimeType);
         return object;
     }
 

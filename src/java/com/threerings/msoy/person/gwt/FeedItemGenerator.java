@@ -11,8 +11,8 @@ import com.threerings.orth.data.MediaDesc;
 
 import com.threerings.msoy.badge.data.all.Badge;
 import com.threerings.msoy.badge.data.all.EarnedBadge;
-import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.data.all.MediaDescFactory;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.SharedNaviUtil;
@@ -461,7 +461,7 @@ public class FeedItemGenerator
 
     protected Media buildMedia (FeedMessage msg, int idx, Pages page, Object... args)
     {
-        MediaDesc md = (msg.data.length <= idx) ? null : HashMediaDesc.stringToMD(msg.data[idx]);
+        MediaDesc md = (msg.data.length <= idx) ? null : MediaDescFactory.stringToMD(msg.data[idx]);
         if (md == null) {
             return null;
         }

@@ -28,6 +28,7 @@ import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.all.HashMediaDesc;
 
+import com.threerings.msoy.data.all.MediaDescFactory;
 import com.threerings.msoy.server.StatLogic;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.TagNameRecord;
@@ -73,7 +74,8 @@ public class StuffServlet extends MsoyServiceServlet
         ExternalUploadFile file = new ExternalUploadFile(data, mimeType);
         try {
             UploadUtil.publishUploadFile(file);
-            return new HashMediaDesc(file.getHash(), file.getMimeType(), MediaDesc.NOT_CONSTRAINED);
+            return MediaDescFactory
+                .createHashMediaDesc(file.getHash(), file.getMimeType(), MediaDesc.NOT_CONSTRAINED);
         } catch (IOException ioe) {
             log.warning("Unable to publish external media file", ioe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);

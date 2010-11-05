@@ -14,6 +14,8 @@ import com.threerings.orth.scene.data.EntityMedia;
 import com.threerings.msoy.data.all.HashMediaDesc;
 
 import com.threerings.orth.data.MediaDesc;
+
+import com.threerings.msoy.data.all.MediaDescFactory;
 import com.threerings.msoy.item.data.all.DefaultItemMediaDesc;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MsoyItemType;
@@ -36,7 +38,7 @@ public class SceneUtil
             byte itemByte = (byte)ByteBuffer.wrap(mediaHash).asIntBuffer().get();
             return Item.getDefaultFurniMediaFor(ByteEnumUtil.fromByte(MsoyItemType.class, itemByte));
         } else {
-            return new HashMediaDesc(mediaHash, mimeType);
+            return MediaDescFactory.createHashMediaDesc(mediaHash, mimeType);
         }
     }
 

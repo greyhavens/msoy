@@ -14,7 +14,7 @@ import com.samskivert.depot.expression.ColumnExp;
 import com.threerings.orth.data.MediaDesc;
 
 import com.threerings.msoy.data.all.GroupName;
-import com.threerings.msoy.data.all.HashMediaDesc;
+import com.threerings.msoy.data.all.MediaDescFactory;
 import com.threerings.msoy.data.all.Theme;
 
 /**
@@ -142,7 +142,7 @@ public class ThemeRecord extends PersistentRecord
         if (logoMediaHash == null) {
             return null;
         }
-        return new HashMediaDesc(logoMediaHash, logoMimeType, logoMediaConstraint);
+        return MediaDescFactory.createMediaDesc(logoMediaHash, logoMimeType, logoMediaConstraint);
     }
 
     /**
@@ -153,7 +153,7 @@ public class ThemeRecord extends PersistentRecord
         if (navMediaHash == null) {
             return null;
         }
-        return new HashMediaDesc(navMediaHash, navMimeType, navMediaConstraint);
+        return MediaDescFactory.createMediaDesc(navMediaHash, navMimeType, navMediaConstraint);
     }
 
     /**
@@ -164,7 +164,8 @@ public class ThemeRecord extends PersistentRecord
         if (navSelMediaHash == null) {
             return null;
         }
-        return new HashMediaDesc(navSelMediaHash, navSelMimeType, navSelMediaConstraint);
+        return MediaDescFactory
+            .createMediaDesc(navSelMediaHash, navSelMimeType, navSelMediaConstraint);
     }
 
     // AUTO-GENERATED: METHODS START

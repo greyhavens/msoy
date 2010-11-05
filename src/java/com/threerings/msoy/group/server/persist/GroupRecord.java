@@ -27,6 +27,8 @@ import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.HashMediaDesc;
 
 import com.threerings.orth.data.MediaDesc;
+
+import com.threerings.msoy.data.all.MediaDescFactory;
 import com.threerings.msoy.group.data.all.Group;
 import com.threerings.msoy.group.gwt.GroupCard;
 import com.threerings.msoy.group.gwt.GroupExtras;
@@ -177,7 +179,7 @@ public class GroupRecord extends PersistentRecord
         if (logoMediaHash == null) {
             return null;
         }
-        return new HashMediaDesc(logoMediaHash, logoMimeType, logoMediaConstraint);
+        return MediaDescFactory.createMediaDesc(logoMediaHash, logoMimeType, logoMediaConstraint);
     }
 
     /**

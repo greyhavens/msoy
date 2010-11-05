@@ -13,12 +13,14 @@ import com.samskivert.depot.expression.ColumnExp;
 
 import com.samskivert.util.StringUtil;
 
-import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.orth.data.MediaDesc;
+
+import com.threerings.msoy.data.all.MediaDescFactory;
 import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.data.all.MediaDescUtil;
 import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.item.data.all.TrophySource;
+
 import java.sql.Timestamp;
 
 /**
@@ -85,7 +87,7 @@ public class TrophyRecord extends PersistentRecord
      */
     public MediaDesc getTrophyMedia ()
     {
-        return new HashMediaDesc(
+        return MediaDescFactory.createMediaDesc(
             trophyMediaHash, trophyMimeType, MediaDescUtil.computeConstraint(
                 MediaDescSize.THUMBNAIL_SIZE, TrophySource.TROPHY_WIDTH, TrophySource.TROPHY_HEIGHT));
     }

@@ -26,6 +26,8 @@ import com.threerings.orth.data.MediaDesc;
 import com.threerings.msoy.data.all.MediaMimeTypes;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MsoyItemType;
+import com.threerings.msoy.data.all.MediaDescFactory;
+
 import com.threerings.orth.scene.data.EntityMedia;
 
 /**
@@ -307,10 +309,12 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
         item.attrs = attrs;
         item.mature = mature;
         if (furniMediaHash != null) {
-            item.setFurniMedia(new HashMediaDesc(furniMediaHash, furniMimeType, furniConstraint));
+            item.setFurniMedia(
+                MediaDescFactory.createMediaDesc(furniMediaHash, furniMimeType, furniConstraint));
         }
         if (thumbMediaHash != null) {
-            item.setThumbnailMedia(new HashMediaDesc(thumbMediaHash, thumbMimeType, thumbConstraint));
+            item.setThumbnailMedia(
+                MediaDescFactory.createMediaDesc(thumbMediaHash, thumbMimeType, thumbConstraint));
         }
         return item;
     }
@@ -367,7 +371,7 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
     public MediaDesc getThumbMediaDesc ()
     {
         return (thumbMediaHash == null) ? Item.getDefaultThumbnailMediaFor(getType()) :
-            new HashMediaDesc(thumbMediaHash, thumbMimeType, thumbConstraint);
+            MediaDescFactory.createMediaDesc(thumbMediaHash, thumbMimeType, thumbConstraint);
     }
 
     /**
@@ -377,7 +381,7 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
     public EntityMedia getFurniMediaDesc ()
     {
         return (furniMediaHash == null) ? Item.getDefaultFurniMediaFor(getType()) :
-            new HashMediaDesc(furniMediaHash, furniMimeType, furniConstraint);
+            MediaDescFactory.createMediaDesc(furniMediaHash, furniMimeType, furniConstraint);
     }
 
     /**

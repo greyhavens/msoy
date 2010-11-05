@@ -14,7 +14,7 @@ import com.samskivert.depot.annotation.Computed;
 import com.samskivert.depot.annotation.Entity;
 import com.samskivert.depot.expression.ColumnExp;
 
-import com.threerings.msoy.data.all.HashMediaDesc;
+import com.threerings.msoy.data.all.MediaDescFactory;
 import com.threerings.msoy.person.gwt.Gallery;
 
 /**
@@ -70,7 +70,8 @@ public class GalleryInfoRecord extends PersistentRecord
         gallery.galleryId = galleryId;
         gallery.name = name;
         gallery.lastModified = new Date(lastModified.getTime());
-        gallery.thumbMedia = new HashMediaDesc(thumbMediaHash, thumbMimeType, thumbConstraint);
+        gallery.thumbMedia =
+            MediaDescFactory.createMediaDesc(thumbMediaHash, thumbMimeType, thumbConstraint);
         return gallery;
     }
 }

@@ -6,6 +6,7 @@ package com.threerings.msoy.mail.gwt;
 import com.threerings.orth.data.MediaDesc;
 
 import com.threerings.msoy.data.all.HashMediaDesc;
+import com.threerings.msoy.data.all.MediaDescFactory;
 
 /**
  * Contains information on an awarded trophy.
@@ -67,6 +68,6 @@ public class GameAwardPayload extends MailPayload
      */
     public MediaDesc getAwardMedia ()
     {
-        return new HashMediaDesc(awardMediaHash, awardMimeType);
+        return MediaDescFactory.createHashMediaDesc(awardMediaHash, awardMimeType);
     }
 }

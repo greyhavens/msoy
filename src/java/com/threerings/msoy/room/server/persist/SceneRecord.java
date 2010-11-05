@@ -23,13 +23,13 @@ import com.samskivert.depot.expression.SQLExpression;
 
 import com.threerings.orth.data.MediaDesc;
 
-import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.msoy.item.data.all.Decor;
 
 import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.msoy.room.data.MsoySceneModel;
 import com.threerings.msoy.room.gwt.RoomDetail;
 import com.threerings.msoy.room.gwt.RoomInfo;
+import com.threerings.msoy.data.all.MediaDescFactory;
 
 /**
  * Contains metadata for a scene in the Whirled.
@@ -311,7 +311,8 @@ public class SceneRecord extends PersistentRecord
     public MediaDesc getSnapshotFull ()
     {
         return (canonicalImageHash == null) ? null:
-            new HashMediaDesc(canonicalImageHash, canonicalImageType, MediaDesc.NOT_CONSTRAINED);
+            MediaDescFactory
+                .createMediaDesc(canonicalImageHash, canonicalImageType, MediaDesc.NOT_CONSTRAINED);
     }
 
     /**
@@ -320,7 +321,8 @@ public class SceneRecord extends PersistentRecord
     public MediaDesc getSnapshotThumb ()
     {
         return (thumbnailHash == null) ? null:
-            new HashMediaDesc(thumbnailHash, thumbnailType, MediaDesc.NOT_CONSTRAINED);
+            MediaDescFactory
+                .createMediaDesc(thumbnailHash, thumbnailType, MediaDesc.NOT_CONSTRAINED);
     }
 
     /**

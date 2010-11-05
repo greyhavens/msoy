@@ -23,6 +23,7 @@ import com.threerings.orth.data.MediaDesc;
 
 import com.threerings.msoy.data.all.Award;
 import com.threerings.msoy.data.all.HashMediaDesc;
+import com.threerings.msoy.data.all.MediaDescFactory;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.Award.AwardType;
 import com.threerings.msoy.profile.gwt.Profile;
@@ -214,7 +215,7 @@ public class ProfileRecord extends PersistentRecord
     public MediaDesc getPhoto ()
     {
         return (photoHash != null) ?
-            new HashMediaDesc(photoHash, photoMimeType, photoConstraint) : MemberCard.DEFAULT_PHOTO;
+            MediaDescFactory.createMediaDesc(photoHash, photoMimeType, photoConstraint) : MemberCard.DEFAULT_PHOTO;
     }
 
     public void setAward (Award award)

@@ -65,57 +65,10 @@ public class HashMediaDesc extends MediaDescImpl
         if (md instanceof HashMediaDesc) {
             StringBuilder buf = new StringBuilder(HashMediaDesc.hashToString(((HashMediaDesc)md).hash));
             buf.append(":").append(md.getMimeType());
-            buf.append(":").append(((HashMediaDesc)md).getConstraint());
+            buf.append(":").append(md.getConstraint());
             return buf.toString();
         }
         return "";
-    }
-
-    /**
-     * Creates a MediaDesc from a colon delimited String.
-     */
-    public static HashMediaDesc stringToMD (String str)
-    {
-        String[] data = str.split(":");
-        if (data.length != 3) {
-            return null;
-        }
-        byte[] hash = HashMediaDesc.stringToHash(data[0]);
-        if (hash == null) {
-            return null;
-        }
-        byte mimeType = MediaMimeTypes.INVALID_MIME_TYPE;
-        byte constraint = 0;
-        try {
-            mimeType = Byte.parseByte(data[1]);
-        } catch (NumberFormatException nfe) {
-            // don't care
-        }
-        try {
-            constraint = Byte.parseByte(data[2]);
-        } catch (NumberFormatException nfe) {
-            // don't care
-        }
-
-        return new HashMediaDesc(hash, mimeType, constraint);
-    }
-
-    /**
-     * Creates and returns a media descriptor if the supplied hash is non-null, returns onNull
-     * otherwise.
-     */
-    public static MediaDesc make (byte[] hash, byte mimeType, MediaDesc onNull)
-    {
-        return (hash == null) ? onNull : new HashMediaDesc(hash, mimeType);
-    }
-
-    /**
-     * Creates and returns a media descriptor if the supplied hash is non-null, returns onNull
-     * otherwise.
-     */
-    public static MediaDesc make (byte[] hash, byte mimeType, byte constraint, MediaDesc onNull)
-    {
-        return (hash == null) ? onNull : new HashMediaDesc(hash, mimeType, constraint);
     }
 
     /**
@@ -139,45 +92,12 @@ public class HashMediaDesc extends MediaDescImpl
 	}
 
     /**
-     * Create a media descriptor from the specified info. Note
-     * that the String will be turned into a byte[] differently
-     * depending on the mimeType.
-     */
-    public HashMediaDesc (String s, byte mimeType)
-    {
-        this(HashMediaDesc.stringToHash(s), mimeType);
-    }
-
-    /**
-     * Creates a media descriptor from the supplied configuration.
-     */
-    public HashMediaDesc (byte[] hash, byte mimeType)
-    {
-        this(hash, mimeType, NOT_CONSTRAINED);
-    }
-
-    /**
      * Creates a media descriptor from the supplied configuration.
      */
     public HashMediaDesc (byte[] hash, byte mimeType, byte constraint)
     {
         super(mimeType, constraint);
         this.hash = hash;
-    }
-
-    public HashMediaDesc (String s, byte mimeType, byte constraint)
-    {
-        this(HashMediaDesc.stringToHash(s), mimeType, constraint);
-    }
-
-    /**
-     * TEMPORARY CONSTRUCTOR, for making it easy for me to
-     * pre-initialize some media...
-     */
-    public HashMediaDesc (String filename)
-    {
-        this(HashMediaDesc.stringToHash(filename.substring(0, filename.indexOf('.'))),
-             MediaMimeTypes.suffixToMimeType(filename));
     }
 
     /* (non-Javadoc)
@@ -191,7 +111,7 @@ public class HashMediaDesc extends MediaDescImpl
     // from MediaDesc
     public MediaDesc newWithConstraint (byte constraint)
     {
-        return new HashMediaDesc(hash, getMimeType(), constraint);
+        return MediaDescFactory.createMediaDesc(hash, getMimeType(), constraint);
     }
 
     public String getProxyMediaPath ()
@@ -249,7 +169,7 @@ public class HashMediaDesc extends MediaDescImpl
     /**
      * Get the path of the URL for the media specified.
      */
-    protected static String getMediaPath (String prefix, byte[] mediaHash, byte mimeType)
+    public static String getMediaPath (String prefix, byte[] mediaHash, byte mimeType)
     {
         if (mediaHash == null) {
             return null;

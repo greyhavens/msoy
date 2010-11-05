@@ -12,6 +12,7 @@ import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.expression.ColumnExp;
 
 import com.threerings.msoy.data.all.HashMediaDesc;
+import com.threerings.msoy.data.all.MediaDescFactory;
 import com.threerings.msoy.facebook.gwt.FeedThumbnail;
 
 /**
@@ -102,7 +103,7 @@ public class FeedThumbnailRecord extends PersistentRecord
     public FeedThumbnail toFeedThumbnail ()
     {
         FeedThumbnail thumbnail = new FeedThumbnail();
-        thumbnail.media = new HashMediaDesc(hash, mimeType, constraint);
+        thumbnail.media = MediaDescFactory.createMediaDesc(hash, mimeType, constraint);
         thumbnail.pos = pos;
         thumbnail.code = code;
         thumbnail.variant = variant;

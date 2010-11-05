@@ -21,7 +21,7 @@ import com.samskivert.depot.expression.ColumnExp;
 
 import com.threerings.orth.data.MediaDesc;
 
-import com.threerings.msoy.data.all.HashMediaDesc;
+import com.threerings.msoy.data.all.MediaDescFactory;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VizMemberName;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
@@ -152,7 +152,7 @@ public class MemberCardRecord extends PersistentRecord
     {
         return (photoHash == null)
             ? MemberCard.DEFAULT_PHOTO
-            : new HashMediaDesc(photoHash, photoMimeType, photoConstraint);
+            : MediaDescFactory.createMediaDesc(photoHash, photoMimeType, photoConstraint);
     }
 
     // AUTO-GENERATED: METHODS START

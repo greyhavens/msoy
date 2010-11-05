@@ -11,6 +11,7 @@ import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.msoy.item.data.all.Audio;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MsoyItemType;
+import com.threerings.msoy.data.all.MediaDescFactory;
 
 /**
  * Represents an uploaded piece of audio.
@@ -99,7 +100,7 @@ public class AudioRecord extends ItemRecord
     {
         Audio object = new Audio();
         object.audioMedia = audioMediaHash == null ? null :
-            new HashMediaDesc(audioMediaHash, audioMimeType);
+            MediaDescFactory.createHashMediaDesc(audioMediaHash, audioMimeType);
         return object;
     }
 

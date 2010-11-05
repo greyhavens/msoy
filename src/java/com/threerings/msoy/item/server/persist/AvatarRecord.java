@@ -12,6 +12,7 @@ import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.MsoyItemType;
+import com.threerings.msoy.data.all.MediaDescFactory;
 
 /**
  * Represents an uploaded avatar.
@@ -114,7 +115,7 @@ public class AvatarRecord extends ItemRecord
     {
         Avatar object = new Avatar();
         object.avatarMedia = avatarMediaHash == null ? null :
-            new HashMediaDesc(avatarMediaHash, avatarMimeType);
+            MediaDescFactory.createHashMediaDesc(avatarMediaHash, avatarMimeType);
         object.scale = scale;
         return object;
     }

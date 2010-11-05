@@ -17,8 +17,8 @@ import com.google.common.base.Function;
 
 import com.threerings.orth.data.MediaDesc;
 
-import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.msoy.group.data.all.Medal;
+import com.threerings.msoy.data.all.MediaDescFactory;
 
 @Entity
 public class MedalRecord extends PersistentRecord
@@ -89,7 +89,8 @@ public class MedalRecord extends PersistentRecord
     public MediaDesc createIconMedia()
     {
         // Images are larger than half-thumbnail, so we can't pretend they're not constrained at all
-        return new HashMediaDesc(iconHash, iconMimeType, MediaDesc.HALF_HORIZONTALLY_CONSTRAINED);
+        return MediaDescFactory
+            .createMediaDesc(iconHash, iconMimeType, MediaDesc.HALF_HORIZONTALLY_CONSTRAINED);
     }
 
     // AUTO-GENERATED: METHODS START

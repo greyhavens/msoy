@@ -15,6 +15,12 @@ import org.apache.commons.codec.binary.Base64;
 
 import com.samskivert.util.StringUtil;
 
+import com.threerings.orth.data.MediaDesc;
+
+import com.threerings.msoy.data.all.CloudfrontMediaDesc;
+import com.threerings.msoy.data.all.DeploymentConfig;
+import com.threerings.msoy.data.all.HashMediaDesc;
+
 import static com.threerings.msoy.Log.log;
 
 /**
@@ -22,7 +28,7 @@ import static com.threerings.msoy.Log.log;
  *
  *     http://docs.amazonwebservices.com/AmazonCloudFront/latest/DeveloperGuide/
  */
-public class CloudfrontURLSigner 
+public class CloudfrontURLSigner
 {
     /**
      * This class must be instantiated with the private half of a CloudFront signature key pair.
@@ -40,6 +46,17 @@ public class CloudfrontURLSigner
         _signingKeyId = signingKeyId;
         _signingKeyBytes = signingKeyBytes;
     }
+
+    public CloudfrontMediaDesc createMediaDesc (byte[] hash, byte mimeType, byte constraint)
+        throws CloudfrontException
+    {
+        int now = ((int) (System.currentTimeMillis() / 1000));
+        int expiration = now + 7 * 24 * 3600;
+        byte[] signature = createSignature(HashMediaDesc.getMediaPath(hash, mimeType), expiration);
+
+        return new CloudfrontMediaDesc(hash, mimeType, constraint, expiration, signature);
+    }
+
 
     /**
      * Sign the given URL that expires at the given epoch, and return the result. Currently we
@@ -64,29 +81,28 @@ public class CloudfrontURLSigner
             throw new CloudfrontException("Can't sign URLs with query bits.");
         }
 
+        String encSig = new String(Base64.encodeBase64(createSignature(nakedUrl, expirationEpoch)))
+            .replace("+", "-").replace("=", "_").replace("/", "~");
+        return nakedUrl + "?Expires=" + expirationEpoch + "&Key-Pair-Id=" +
+            _signingKeyId + "&Signature=" + encSig;
+    }
+
+    protected byte[] createSignature (String nakedUrl, int expirationEpoch)
+        throws CloudfrontException
+    {
         // {"Statement":[{"Resource":"RSRC","Condition":{"DateLessThan":{"AWS:EpochTime":EXPR}}}]}
         String policy = "{\"Statement\":[{\"Resource\":\"" + nakedUrl +
             "\",\"Condition\":{\"DateLessThan\":{\"AWS:EpochTime\":" + expirationEpoch + "}}}]}";
-
-        byte[] sigBytes;
         try {
             Signature sig = Signature.getInstance("SHA1withRSA");
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
             sig.initSign(keyFactory.generatePrivate(new PKCS8EncodedKeySpec(_signingKeyBytes)));
             sig.update(policy.getBytes());
-            sigBytes = sig.sign();
+            return sig.sign();
 
         } catch (GeneralSecurityException e) {
             throw new CloudfrontException("Cryptographic failure signing URL", e);
         }
-
-        String encSig = new String(Base64.encodeBase64(sigBytes))
-            .replace("+", "-").replace("=", "_").replace("/", "~");
-
-        String signedUrl = nakedUrl + "?Expires=" + expirationEpoch + "&Key-Pair-Id=" +
-            _signingKeyId + "&Signature=" + encSig;
-
-        return signedUrl;
     }
 
     protected String _signingKeyId;

@@ -45,7 +45,6 @@ import com.threerings.whirled.data.SceneUpdate;
 
 import com.threerings.orth.data.MediaDesc;
 
-import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.msoy.server.persist.HotnessConfig;
 import com.threerings.msoy.server.persist.RatingRecord;
 import com.threerings.msoy.server.persist.RatingRepository;
@@ -56,6 +55,7 @@ import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.msoy.room.data.MsoySceneModel;
 import com.threerings.msoy.room.data.SceneAttrsUpdate;
 import com.threerings.msoy.room.data.SceneOwnershipUpdate;
+import com.threerings.msoy.data.all.MediaDescFactory;
 
 import static com.threerings.msoy.Log.log;
 
@@ -451,7 +451,8 @@ public class MsoySceneRepository extends DepotRepository
             // add a door to the PUBLIC_ROOM
             FurniData f = new FurniData();
             f.id = 1;
-            f.media = new HashMediaDesc("e8b660ec5aa0aa30dab46b267daf3b80996269e7.swf");
+            f.media = MediaDescFactory
+                .createHashMediaDesc("e8b660ec5aa0aa30dab46b267daf3b80996269e7.swf");
             f.loc = new MsoyLocation(1, 0, 0.5, 0);
             f.scaleX = 1.4f;
             f.actionType = FurniData.ACTION_PORTAL;

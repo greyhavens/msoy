@@ -11,6 +11,7 @@ import com.threerings.orth.data.MediaDesc;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.HashMediaDesc;
+import com.threerings.msoy.data.all.MediaDescFactory;
 import com.threerings.msoy.data.all.MediaDescSize;
 
 /**
@@ -162,7 +163,7 @@ public class MessageUtil
         public Box (String text) {
             String[] bits = text.split("\t", 4);
             this.token = bits[0];
-            this.desc = HashMediaDesc.stringToMD(bits[1]);
+            this.desc = MediaDescFactory.stringToMD(bits[1]);
             int msize;
             try {
                 msize = Integer.parseInt(bits[2]);
