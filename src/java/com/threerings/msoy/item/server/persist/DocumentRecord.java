@@ -100,7 +100,7 @@ public class DocumentRecord extends ItemRecord
     {
         Document object = new Document();
         object.docMedia = docMediaHash == null ? null :
-            MediaDescFactory.createHashMediaDesc(docMediaHash, docMimeType);
+            MediaDescFactory.createMediaDesc(docMediaHash, docMimeType);
         return object;
     }
 

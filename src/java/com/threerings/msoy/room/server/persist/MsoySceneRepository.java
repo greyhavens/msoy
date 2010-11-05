@@ -452,7 +452,7 @@ public class MsoySceneRepository extends DepotRepository
             FurniData f = new FurniData();
             f.id = 1;
             f.media = MediaDescFactory
-                .createHashMediaDesc("e8b660ec5aa0aa30dab46b267daf3b80996269e7.swf");
+                .createMediaDesc("e8b660ec5aa0aa30dab46b267daf3b80996269e7.swf");
             f.loc = new MsoyLocation(1, 0, 0.5, 0);
             f.scaleX = 1.4f;
             f.actionType = FurniData.ACTION_PORTAL;

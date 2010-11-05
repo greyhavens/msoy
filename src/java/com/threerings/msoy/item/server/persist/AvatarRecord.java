@@ -115,7 +115,7 @@ public class AvatarRecord extends ItemRecord
     {
         Avatar object = new Avatar();
         object.avatarMedia = avatarMediaHash == null ? null :
-            MediaDescFactory.createHashMediaDesc(avatarMediaHash, avatarMimeType);
+            MediaDescFactory.createMediaDesc(avatarMediaHash, avatarMimeType);
         object.scale = scale;
         return object;
     }

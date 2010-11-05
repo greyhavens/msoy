@@ -100,7 +100,7 @@ public class AudioRecord extends ItemRecord
     {
         Audio object = new Audio();
         object.audioMedia = audioMediaHash == null ? null :
-            MediaDescFactory.createHashMediaDesc(audioMediaHash, audioMimeType);
+            MediaDescFactory.createMediaDesc(audioMediaHash, audioMimeType);
         return object;
     }
 

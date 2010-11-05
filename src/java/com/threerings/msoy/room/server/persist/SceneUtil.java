@@ -38,7 +38,7 @@ public class SceneUtil
             byte itemByte = (byte)ByteBuffer.wrap(mediaHash).asIntBuffer().get();
             return Item.getDefaultFurniMediaFor(ByteEnumUtil.fromByte(MsoyItemType.class, itemByte));
         } else {
-            return MediaDescFactory.createHashMediaDesc(mediaHash, mimeType);
+            return MediaDescFactory.createMediaDesc(mediaHash, mimeType);
         }
     }
 

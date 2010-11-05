@@ -101,7 +101,7 @@ public class VideoRecord extends ItemRecord
     {
         Video object = new Video();
         object.videoMedia = videoMediaHash == null ? null :
-            MediaDescFactory.createHashMediaDesc(videoMediaHash, videoMimeType);
+            MediaDescFactory.createMediaDesc(videoMediaHash, videoMimeType);
         return object;
     }
 

@@ -466,7 +466,7 @@ public class GameServlet extends MsoyServiceServlet
             trophy.name = record.name;
             trophy.ident = record.ident;
             trophy.trophyMedia =
-                MediaDescFactory.createHashMediaDesc(record.thumbMediaHash, record.thumbMimeType);
+                MediaDescFactory.createMediaDesc(record.thumbMediaHash, record.thumbMimeType);
             trophies.put(record.ident, trophy);
         }
 

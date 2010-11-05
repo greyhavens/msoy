@@ -75,7 +75,7 @@ public class StuffServlet extends MsoyServiceServlet
         try {
             UploadUtil.publishUploadFile(file);
             return MediaDescFactory
-                .createHashMediaDesc(file.getHash(), file.getMimeType(), MediaDesc.NOT_CONSTRAINED);
+                .createMediaDesc(file.getHash(), file.getMimeType(), MediaDesc.NOT_CONSTRAINED);
         } catch (IOException ioe) {
             log.warning("Unable to publish external media file", ioe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);

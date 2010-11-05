@@ -18,6 +18,7 @@ import com.threerings.gwt.ui.SmartFileUpload;
 import com.threerings.orth.data.MediaDesc;
 
 import com.threerings.msoy.data.all.HashMediaDesc;
+import com.threerings.msoy.data.all.MediaDescFactory;
 
 import client.shell.CShell;
 import client.shell.ShellMessages;
@@ -134,7 +135,8 @@ public class MediaUploader extends FormPanel
                        ", hash=" + mediaHash + ", type=" + mimeType + "].");
         } else {
             uploader.mediaUploaded(
-                new HashMediaDesc(""+mediaHash, (byte)mimeType, (byte)constraint), width, height);
+                MediaDescFactory.createMediaDesc(""+mediaHash, (byte)mimeType, (byte)constraint),
+                width, height);
         }
     }
 

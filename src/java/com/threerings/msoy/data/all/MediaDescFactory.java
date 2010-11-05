@@ -16,22 +16,17 @@ public class MediaDescFactory
         return new HashMediaDesc(hash, mimeType, constraint);
     }
 
-    public static HashMediaDesc createHashMediaDesc (byte[] hash, byte mimeType)
+    public static HashMediaDesc createMediaDesc (byte[] hash, byte mimeType)
     {
-        return createHashMediaDesc(hash, mimeType, MediaDesc.NOT_CONSTRAINED);
+        return createMediaDesc(hash, mimeType, MediaDesc.NOT_CONSTRAINED);
     }
 
-    public static HashMediaDesc createHashMediaDesc (String s, byte mimeType, byte constraint)
+    public static HashMediaDesc createMediaDesc (String s, byte mimeType, byte constraint)
     {
         return new HashMediaDesc(HashMediaDesc.stringToHash(s), mimeType, constraint);
     }
 
-    public static HashMediaDesc createHashMediaDesc (byte[] hash, byte mimeType, byte constraint)
-    {
-        return new HashMediaDesc(hash, mimeType, constraint);
-    }
-
-    public static HashMediaDesc createHashMediaDesc (String filename)
+    public static HashMediaDesc createMediaDesc (String filename)
     {
         return new HashMediaDesc(
             HashMediaDesc.stringToHash(filename.substring(0, filename.indexOf('.'))),
@@ -45,7 +40,7 @@ public class MediaDescFactory
      */
     public static MediaDesc make (byte[] hash, byte mimeType, MediaDesc onNull)
     {
-        return (hash == null) ? onNull : createHashMediaDesc(hash, mimeType);
+        return (hash == null) ? onNull : createMediaDesc(hash, mimeType);
     }
 
     /**
@@ -54,8 +49,7 @@ public class MediaDescFactory
      */
     public static MediaDesc make (byte[] hash, byte mimeType, byte constraint, MediaDesc onNull)
     {
-        return (hash == null) ? onNull :
-            createMediaDesc(hash, mimeType, constraint);
+        return (hash == null) ? onNull : createMediaDesc(hash, mimeType, constraint);
     }
 
     /**

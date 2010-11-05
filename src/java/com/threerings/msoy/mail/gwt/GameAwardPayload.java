@@ -68,6 +68,6 @@ public class GameAwardPayload extends MailPayload
      */
     public MediaDesc getAwardMedia ()
     {
-        return MediaDescFactory.createHashMediaDesc(awardMediaHash, awardMimeType);
+        return MediaDescFactory.createMediaDesc(awardMediaHash, awardMimeType);
     }
 }
