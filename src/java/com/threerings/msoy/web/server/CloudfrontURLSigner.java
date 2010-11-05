@@ -14,7 +14,7 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import org.apache.commons.codec.binary.Base64;
 
 import com.samskivert.util.StringUtil;
-import com.threerings.msoy.server.ServerConfig;
+
 import static com.threerings.msoy.Log.log;
 
 /**
@@ -22,29 +22,12 @@ import static com.threerings.msoy.Log.log;
  *
  *     http://docs.amazonwebservices.com/AmazonCloudFront/latest/DeveloperGuide/
  */
-public class CloudfrontURLTool
+public class CloudfrontURLSigner 
 {
-    public static final void main (String[] args)
-    {
-        CloudfrontURLTool tool = new CloudfrontURLTool(
-            ServerConfig.cloudSigningKeyId, ServerConfig.cloudSigningKey);
-
-        String url = args[0];
-        int days = new Integer(args[1]);
-        int now = ((int) (System.currentTimeMillis() / 1000));
-
-        System.out.println("Signing URL for expiration in " + days + " days: " + url);
-        try {
-            System.out.println(tool.signURL(url, now + days * 3600 * 24));
-        } catch (CloudfrontException e) {
-            e.printStackTrace();
-        }
-    }
-
     /**
      * This class must be instantiated with the private half of a CloudFront signature key pair.
      */
-    public CloudfrontURLTool (String signingKeyId, String signingKey)
+    public CloudfrontURLSigner (String signingKeyId, String signingKey)
     {
         this(signingKeyId, Base64.decodeBase64(signingKey.getBytes()));
     }
@@ -52,7 +35,7 @@ public class CloudfrontURLTool
     /**
      * This class must be instantiated with the private half of a CloudFront signature key pair.
      */
-    public CloudfrontURLTool (String signingKeyId, byte[] signingKeyBytes)
+    public CloudfrontURLSigner (String signingKeyId, byte[] signingKeyBytes)
     {
         _signingKeyId = signingKeyId;
         _signingKeyBytes = signingKeyBytes;

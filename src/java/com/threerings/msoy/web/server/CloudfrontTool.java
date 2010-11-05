@@ -21,6 +21,8 @@ public abstract class CloudfrontTool
             new InvalidationAPI(ServerConfig.cloudId, ServerConfig.cloudKey);
         DistributionAPI dConn =
             new DistributionAPI(ServerConfig.cloudId, ServerConfig.cloudKey);
+        CloudfrontURLSigner tool = new CloudfrontURLTool(
+            ServerConfig.cloudSigningKeyId, ServerConfig.cloudSigningKey);
 
         try {
             Object result = null;
@@ -50,6 +52,14 @@ public abstract class CloudfrontTool
                         result = iConn.invalidateObjects(args[1], Collections.singleton(args[2]));
                     } else if ("invreq".equals(cmd)) {
                         result = iConn.getInvalidation(args[1], args[2]);
+
+                    } else if ("sign".equals(cmd)) {
+                        String url = args[1];
+                        int days = new Integer(args[2]);
+                        int now = ((int) (System.currentTimeMillis() / 1000));
+                        System.out.println(
+                            "Signing URL for expiration in " + days + " days: " + url);
+                        result = tool.signURL(url, now + days * 3600 * 24);
                     }
                 }
             }
@@ -68,7 +78,8 @@ public abstract class CloudfrontTool
                     "oaidconf <id>\n" +
                     "invreqs\n" +
                     "invreq <batchId>\n" +
-                    "invalidate <distId> <key>");
+                    "invalidate <distId> <key>\n" +
+                    "sign <url> <days before expiration>");
                 return;
             }
             System.out.println("Result: " + StringUtil.toString(result));
