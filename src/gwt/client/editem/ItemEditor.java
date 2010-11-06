@@ -31,10 +31,10 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.gwt.util.StringUtil;
 
+import com.threerings.msoy.data.all.CloudfrontMediaDesc;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.orth.data.MediaDesc;
-import com.threerings.msoy.data.all.MediaDescFactory;
 import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.data.all.MediaMimeTypes;
 import com.threerings.msoy.item.data.all.Item;
@@ -629,9 +629,8 @@ public abstract class ItemEditor extends FlowPanel
     /**
      * Configures this item editor with the hash value for media that it is about to upload.
      */
-    protected void setHash (
-        String id, String filename, String mediaHash, int mimeType, int constraint,
-        int width, int height)
+    protected void setHash (String id, String filename, String mediaHash, int mimeType,
+        int constraint, int expiration, String signature, int width, int height)
     {
         ItemMediaUploader mu = _uploaders.get(id);
         if (mu == null) {
@@ -643,8 +642,9 @@ public abstract class ItemEditor extends FlowPanel
         cancelRemix();
 
         // set the new media in preview and in the item
-        mu.setUploadedMedia(filename, MediaDescFactory.createMediaDesc(
-            mediaHash, (byte)mimeType, (byte)constraint), width, height);
+        MediaDesc desc = new CloudfrontMediaDesc(HashMediaDesc.stringToHash(mediaHash),
+            (byte)mimeType, (byte)constraint);
+        mu.setUploadedMedia(filename, desc, width, height);
 
         // have the item re-validate that no media ids are duplicated unnecessarily
         _item.checkConsolidateMedia();

@@ -14,7 +14,9 @@ import com.google.common.collect.Lists;
 
 import com.samskivert.io.StreamUtil;
 
+import com.threerings.msoy.data.all.CloudfrontMediaDesc;
 import com.threerings.msoy.data.all.MediaMimeTypes;
+import com.threerings.msoy.server.MediaDescFactory;
 import com.threerings.msoy.item.data.all.Item;
 
 import com.threerings.msoy.web.server.AbstractUploadServlet;
@@ -133,8 +135,17 @@ public class ItemMediaUploadServlet extends AbstractUploadServlet
                 for (int ii = 0; ii < mediaIds.size() && ii < mediaInfos.size(); ii++) {
                     String mediaId = mediaIds.get(ii);
                     MediaInfo info = mediaInfos.get(ii);
+
+                    // this is one of the few places where we need to explicitly type
+                    // something as a CloudfrontMediaDesc, since we have to send the
+                    // precise signature and expiration through the damn JavaScript
+                    // layer, allowing GWT to reconstruct the CloudfrontMediaDesc on
+                    // the other side. Bah.
+                    CloudfrontMediaDesc desc = MediaDescFactory.createMediaDesc(
+                        info.hash, info.mimeType, info.constraint);
                     script += "parent.setHash('" + mediaId + "', '" + filename +
                         "', '" + info.hash + "', " + info.mimeType + ", " + info.constraint +
+                        ", " + desc.getExpiration() + ", " + desc.getSignature() +
                         ", " + info.width + ", " + info.height + ");";
                 }
                 out.println("<body onLoad=\"" + script + "\"></body>");

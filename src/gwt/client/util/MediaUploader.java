@@ -17,8 +17,8 @@ import com.threerings.gwt.ui.SmartFileUpload;
 
 import com.threerings.orth.data.MediaDesc;
 
+import com.threerings.msoy.data.all.CloudfrontMediaDesc;
 import com.threerings.msoy.data.all.HashMediaDesc;
-import com.threerings.msoy.data.all.MediaDescFactory;
 
 import client.shell.CShell;
 import client.shell.ShellMessages;
@@ -124,7 +124,7 @@ public class MediaUploader extends FormPanel
      * server as a response to our file upload POST request.
      */
     protected static void mediaUploaded (String id, String mediaHash, int mimeType, int constraint,
-                                         int width, int height)
+        int expiration, String signature, int width, int height)
     {
         // for some reason the strings that come in from JavaScript are not "real" and if we just
         // pass them straight on through to GWT, freakoutery occurs (of the non-hand-waving
@@ -134,9 +134,9 @@ public class MediaUploader extends FormPanel
             CShell.log("No uploader registered for uploaded media [id=" + id +
                        ", hash=" + mediaHash + ", type=" + mimeType + "].");
         } else {
-            uploader.mediaUploaded(
-                MediaDescFactory.createMediaDesc(""+mediaHash, (byte)mimeType, (byte)constraint),
-                width, height);
+            MediaDesc desc = new CloudfrontMediaDesc(HashMediaDesc.stringToHash(""+mediaHash),
+                (byte) mimeType, (byte) constraint, expiration);
+            uploader.mediaUploaded(desc, width, height);
         }
     }
 
@@ -162,9 +162,9 @@ public class MediaUploader extends FormPanel
      * This wires up a sensibly named function that our POST response JavaScript code can call.
      */
     protected static native void configureBridge () /*-{
-        $wnd.setHash = function (id, filename, hash, type, constraint, width, height) {
-           @client.util.MediaUploader::mediaUploaded(Ljava/lang/String;Ljava/lang/String;IIII)(
-               id, hash, type, constraint, width, height);
+        $wnd.setHash = function (id, filename, hash, type, constraint,
+                expiration, signature, width, height) {
+           @client.util.MediaUploader::mediaUploaded(Ljava/lang/String;Ljava/lang/String;IIILjava/lang/String;II)(id, hash, type, constraint, expiration, signature, width, height);
         };
         $wnd.uploadError = function () {
            @client.util.MediaUploader::uploadError()();

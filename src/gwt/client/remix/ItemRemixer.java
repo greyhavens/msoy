@@ -13,9 +13,9 @@ import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.orth.data.MediaDesc;
 
+import com.threerings.msoy.data.all.CloudfrontMediaDesc;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.HashMediaDesc;
-import com.threerings.msoy.data.all.MediaDescFactory;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.MsoyItemType;
@@ -126,17 +126,16 @@ public class ItemRemixer extends FlexTable
         _parent.remixComplete(null);
     }
 
-    protected void setHash (
-        final String id, final String mediaHash, final int mimeType, final int constraint,
-        final int width, final int height)
+    protected void setHash (String id, String mediaHash, int mimeType, int constraint,
+        int expiration, String signature, int width, int height)
     {
         if (id != Item.MAIN_MEDIA) {
             CShell.log("setHash() called on remixer for non-main media: " + id);
             return;
         }
 
-        _item.setPrimaryMedia(MediaDescFactory.createMediaDesc(
-                mediaHash, (byte) mimeType, (byte) constraint));
+        _item.setPrimaryMedia(new CloudfrontMediaDesc(HashMediaDesc.stringToHash(mediaHash),
+                (byte) mimeType, (byte) constraint, expiration, signature));
 
         _stuffsvc.remixItem(_item, new InfoCallback<Item>() {
             public void onSuccess (Item item) {
@@ -174,13 +173,13 @@ public class ItemRemixer extends FlexTable
     }-*/;
 
     protected static void bridgeSetHash (
-        String id, String mediaHash, int mimeType, int constraint, int width, int height)
+        String id, String mediaHash, int mimeType, int constraint, int expiration,
+        String signature, int width, int height)
     {
         // for some reason the strings that come in from JavaScript aren't quite right, so
         // we jiggle them thusly
-        String fid = "" + id;
-        String fhash = "" + mediaHash;
-        _singleton.setHash(fid, fhash, mimeType, constraint, width, height);
+        _singleton.setHash(""+id, ""+mediaHash, mimeType, constraint, expiration,
+             ""+signature, width, height);
     }
 
     protected static void bridgeBuyItem ()
@@ -203,9 +202,9 @@ public class ItemRemixer extends FlexTable
         $wnd.buyItem = function () {
             @client.remix.ItemRemixer::bridgeBuyItem()();
         };
-        $wnd.setHash = function (id, filename, hash, type, constraint, width, height) {
-            @client.remix.ItemRemixer::bridgeSetHash(Ljava/lang/String;Ljava/lang/String;IIII)(
-                id, hash, type, constraint, width, height);
+        $wnd.setHash = function (id, filename, hash, type, constraint, expiration,
+                signature, width, height) {
+            @client.remix.ItemRemixer::bridgeSetHash(Ljava/lang/String;Ljava/lang/String;IIILjava/lang/String;II)(id, hash, type, constraint, width, height);
         };
         $wnd.cancelRemix = function () {
             @client.remix.ItemRemixer::bridgeCancelRemix()();
