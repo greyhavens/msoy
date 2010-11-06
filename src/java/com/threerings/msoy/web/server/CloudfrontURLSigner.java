@@ -15,12 +15,6 @@ import org.apache.commons.codec.binary.Base64;
 
 import com.samskivert.util.StringUtil;
 
-import com.threerings.orth.data.MediaDesc;
-
-import com.threerings.msoy.data.all.CloudfrontMediaDesc;
-import com.threerings.msoy.data.all.DeploymentConfig;
-import com.threerings.msoy.data.all.HashMediaDesc;
-
 import static com.threerings.msoy.Log.log;
 
 /**
@@ -46,18 +40,6 @@ public class CloudfrontURLSigner
         _signingKeyId = signingKeyId;
         _signingKeyBytes = signingKeyBytes;
     }
-
-    public CloudfrontMediaDesc createMediaDesc (byte[] hash, byte mimeType, byte constraint)
-        throws CloudfrontException
-    {
-        int now = ((int) (System.currentTimeMillis() / 1000));
-        int expiration = now + 7 * 24 * 3600;
-        byte[] signature = createSignature(HashMediaDesc.getMediaPath(hash, mimeType), expiration);
-
-        return new CloudfrontMediaDesc(
-            hash, mimeType, constraint, expiration, new String(signature));
-    }
-
 
     /**
      * Sign the given URL that expires at the given epoch, and return the result. Currently we
@@ -88,7 +70,7 @@ public class CloudfrontURLSigner
             _signingKeyId + "&Signature=" + encSig;
     }
 
-    protected byte[] createSignature (String nakedUrl, int expirationEpoch)
+    public byte[] createSignature (String nakedUrl, int expirationEpoch)
         throws CloudfrontException
     {
         // {"Statement":[{"Resource":"RSRC","Condition":{"DateLessThan":{"AWS:EpochTime":EXPR}}}]}
