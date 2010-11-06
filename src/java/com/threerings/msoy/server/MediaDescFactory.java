@@ -4,8 +4,11 @@
 
 package com.threerings.msoy.server;
 
+import com.threerings.msoy.data.all.CloudfrontMediaDesc;
 import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.msoy.data.all.MediaMimeTypes;
+import com.threerings.msoy.web.server.CloudfrontException;
+import com.threerings.msoy.web.server.CloudfrontURLSigner;
 import com.threerings.orth.data.MediaDesc;
 
 /**
@@ -13,22 +16,36 @@ import com.threerings.orth.data.MediaDesc;
  */
 public class MediaDescFactory
 {
-    public static HashMediaDesc createMediaDesc (byte[] hash, byte mimeType, byte constraint)
+    // let's let references live for a week to begin with
+    public static int EXPIRATION_SECONDS = 7 * 24 * 3600;
+
+    public static CloudfrontMediaDesc createMediaDesc (byte[] hash, byte mimeType, byte constraint)
     {
-        return new HashMediaDesc(hash, mimeType, constraint);
+        try {
+            int now = ((int) (System.currentTimeMillis() / 1000));
+            int expiration = now + EXPIRATION_SECONDS;
+            byte[] signature = _signer.createSignature(
+                HashMediaDesc.getMediaPath(hash, mimeType), expiration);
+
+            return new CloudfrontMediaDesc(
+                hash, mimeType, constraint, expiration, new String(signature));
+
+        } catch (CloudfrontException cfe) {
+            throw new RuntimeException("Failed to sign media URL", cfe);
+        }
     }
 
-    public static HashMediaDesc createMediaDesc (byte[] hash, byte mimeType)
+    public static CloudfrontMediaDesc createMediaDesc (byte[] hash, byte mimeType)
     {
         return createMediaDesc(hash, mimeType, MediaDesc.NOT_CONSTRAINED);
     }
 
-    public static HashMediaDesc createMediaDesc (String s, byte mimeType, byte constraint)
+    public static CloudfrontMediaDesc createMediaDesc (String s, byte mimeType, byte constraint)
     {
         return createMediaDesc(HashMediaDesc.stringToHash(s), mimeType, constraint);
     }
 
-    public static HashMediaDesc createMediaDesc (String filename)
+    public static CloudfrontMediaDesc createMediaDesc (String filename)
     {
         return createMediaDesc(
             HashMediaDesc.stringToHash(filename.substring(0, filename.indexOf('.'))),
@@ -54,33 +71,6 @@ public class MediaDescFactory
         return (hash == null) ? onNull : createMediaDesc(hash, mimeType, constraint);
     }
 
-    /**
-     * Creates a MediaDesc from a colon delimited String.
-     */
-    public static HashMediaDesc stringToMD (String str)
-    {
-        String[] data = str.split(":");
-        if (data.length != 3) {
-            return null;
-        }
-        byte[] hash = HashMediaDesc.stringToHash(data[0]);
-        if (hash == null) {
-            return null;
-        }
-        byte mimeType = MediaMimeTypes.INVALID_MIME_TYPE;
-        byte constraint = 0;
-        try {
-            mimeType = Byte.parseByte(data[1]);
-        } catch (NumberFormatException nfe) {
-            // don't care
-        }
-        try {
-            constraint = Byte.parseByte(data[2]);
-        } catch (NumberFormatException nfe) {
-            // don't care
-        }
-
-        return createMediaDesc(hash, mimeType, constraint);
-    }
-
+    public static CloudfrontURLSigner _signer = new CloudfrontURLSigner(
+        ServerConfig.cloudSigningKeyId, ServerConfig.cloudSigningKey);
 }

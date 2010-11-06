@@ -58,20 +58,6 @@ public class HashMediaDesc extends MediaDescImpl
     }
 
     /**
-     * Converts a MediaDesc into a colon delimited String.
-     */
-    public static String mdToString (MediaDesc md)
-    {
-        if (md instanceof HashMediaDesc) {
-            StringBuilder buf = new StringBuilder(HashMediaDesc.hashToString(((HashMediaDesc)md).hash));
-            buf.append(":").append(md.getMimeType());
-            buf.append(":").append(md.getConstraint());
-            return buf.toString();
-        }
-        return "";
-    }
-
-    /**
      * Returns the supplied media descriptor's hash or null if the descriptor is null. This
      * method throws an error if the supplied argument is not a {@link HashMediaDesc}.
      */
@@ -169,7 +155,7 @@ public class HashMediaDesc extends MediaDescImpl
     /**
      * Get the path of the URL for the media specified.
      */
-    public static String getMediaPath (String prefix, byte[] mediaHash, byte mimeType)
+    protected static String getMediaPath (String prefix, byte[] mediaHash, byte mimeType)
     {
         if (mediaHash == null) {
             return null;
