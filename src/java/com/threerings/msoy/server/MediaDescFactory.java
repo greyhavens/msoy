@@ -2,9 +2,10 @@
 // $Id: $
 
 
-package com.threerings.msoy.data.all;
+package com.threerings.msoy.server;
 
-import com.threerings.msoy.server.ServerConfig;
+import com.threerings.msoy.data.all.HashMediaDesc;
+import com.threerings.msoy.data.all.MediaMimeTypes;
 import com.threerings.orth.data.MediaDesc;
 
 /**
@@ -31,7 +32,7 @@ public class MediaDescFactory
     {
         return createMediaDesc(
             HashMediaDesc.stringToHash(filename.substring(0, filename.indexOf('.'))),
-             MediaMimeTypes.suffixToMimeType(filename),
+            MediaMimeTypes.suffixToMimeType(filename),
             MediaDesc.NOT_CONSTRAINED);
     }
 

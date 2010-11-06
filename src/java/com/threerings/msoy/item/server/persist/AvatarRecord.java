@@ -12,7 +12,7 @@ import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.MsoyItemType;
-import com.threerings.msoy.data.all.MediaDescFactory;
+import com.threerings.msoy.server.MediaDescFactory;
 
 /**
  * Represents an uploaded avatar.

@@ -6,7 +6,7 @@ package com.threerings.msoy.mail.gwt;
 import com.threerings.orth.data.MediaDesc;
 
 import com.threerings.msoy.data.all.HashMediaDesc;
-import com.threerings.msoy.data.all.MediaDescFactory;
+import com.threerings.msoy.server.MediaDescFactory;
 
 /**
  * Contains information on an awarded trophy.

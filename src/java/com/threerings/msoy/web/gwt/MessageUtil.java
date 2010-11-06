@@ -11,7 +11,7 @@ import com.threerings.orth.data.MediaDesc;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.HashMediaDesc;
-import com.threerings.msoy.data.all.MediaDescFactory;
+import com.threerings.msoy.server.MediaDescFactory;
 import com.threerings.msoy.data.all.MediaDescSize;
 
 /**

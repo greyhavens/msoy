@@ -29,7 +29,7 @@ import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.msoy.room.data.MsoySceneModel;
 import com.threerings.msoy.room.gwt.RoomDetail;
 import com.threerings.msoy.room.gwt.RoomInfo;
-import com.threerings.msoy.data.all.MediaDescFactory;
+import com.threerings.msoy.server.MediaDescFactory;
 
 /**
  * Contains metadata for a scene in the Whirled.

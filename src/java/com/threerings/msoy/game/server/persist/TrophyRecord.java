@@ -15,7 +15,7 @@ import com.samskivert.util.StringUtil;
 
 import com.threerings.orth.data.MediaDesc;
 
-import com.threerings.msoy.data.all.MediaDescFactory;
+import com.threerings.msoy.server.MediaDescFactory;
 import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.data.all.MediaDescUtil;
 import com.threerings.msoy.game.data.all.Trophy;

@@ -21,7 +21,7 @@ import com.samskivert.depot.expression.ColumnExp;
 
 import com.threerings.orth.data.MediaDesc;
 
-import com.threerings.msoy.data.all.MediaDescFactory;
+import com.threerings.msoy.server.MediaDescFactory;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VizMemberName;
 import com.threerings.msoy.person.server.persist.ProfileRecord;

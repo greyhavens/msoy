@@ -18,7 +18,7 @@ import com.google.common.base.Function;
 import com.threerings.orth.data.MediaDesc;
 
 import com.threerings.msoy.group.data.all.Medal;
-import com.threerings.msoy.data.all.MediaDescFactory;
+import com.threerings.msoy.server.MediaDescFactory;
 
 @Entity
 public class MedalRecord extends PersistentRecord

@@ -111,7 +111,7 @@ public class HashMediaDesc extends MediaDescImpl
     // from MediaDesc
     public MediaDesc newWithConstraint (byte constraint)
     {
-        return MediaDescFactory.createMediaDesc(hash, getMimeType(), constraint);
+        return new HashMediaDesc(hash, getMimeType(), constraint);
     }
 
     public String getProxyMediaPath ()

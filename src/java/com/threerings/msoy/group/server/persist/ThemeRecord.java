@@ -14,7 +14,7 @@ import com.samskivert.depot.expression.ColumnExp;
 import com.threerings.orth.data.MediaDesc;
 
 import com.threerings.msoy.data.all.GroupName;
-import com.threerings.msoy.data.all.MediaDescFactory;
+import com.threerings.msoy.server.MediaDescFactory;
 import com.threerings.msoy.data.all.Theme;
 
 /**
