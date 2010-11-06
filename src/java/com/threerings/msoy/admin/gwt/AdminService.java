@@ -13,7 +13,6 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 import com.threerings.gwt.util.PagedResult;
 
-import com.threerings.orth.data.MediaDesc;
 import com.threerings.msoy.web.gwt.Contest;
 import com.threerings.msoy.web.gwt.Promotion;
 import com.threerings.web.gwt.ServiceException;
@@ -162,7 +161,7 @@ public interface AdminService extends RemoteService
      * Permanently delete a piece of media, potentially invalidating the Cloudfront caches,
      * and also add it to the upload blacklist.
      */
-    void nukeMedia (MediaDesc desc, String note) throws ServiceException;
+    void nukeMedia (byte[] hash, byte type, String note) throws ServiceException;
 
     /**
      * Gets the current info for all connected bureau launchers.

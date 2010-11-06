@@ -34,7 +34,7 @@ import com.threerings.web.gwt.ServiceException;
 
 import com.threerings.msoy.admin.server.persist.MediaBlacklistRepository;
 import com.threerings.msoy.data.all.HashMediaDesc;
-import com.threerings.orth.data.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescFactory;
 import com.threerings.msoy.data.all.MediaMimeTypes;
 import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.server.ServerConfig;
@@ -454,31 +454,27 @@ public class AdminServlet extends MsoyServiceServlet
         return result;
     }
 
-    public void nukeMedia (MediaDesc desc, String note)
+    public void nukeMedia (byte[] hash, byte type, String note)
         throws ServiceException
     {
         final MemberRecord memrec = requireSupportUser();
 
-        if (!(desc instanceof HashMediaDesc)) {
-            log.warning("Media descriptor is not a HashMediaDesc?!", "desc", desc);
-            throw new ServiceException(MsoyAdminCodes.E_INTERNAL_ERROR);
-        }
-        HashMediaDesc hDesc = (HashMediaDesc) desc;
+        HashMediaDesc desc = MediaDescFactory.createMediaDesc(hash, type);
 
         log.info("Nuking media for admin", "who", memrec.accountName, "media", desc);
 
-        String fileName = HashMediaDesc.hashToString(hDesc.hash) +
-            MediaMimeTypes.mimeTypeToSuffix(desc.getMimeType());
+        String fileName = HashMediaDesc.hashToString(hash) +
+            MediaMimeTypes.mimeTypeToSuffix(type);
 
         File file = new File(ServerConfig.mediaDir, fileName);
         if (!file.delete()) {
             log.warning("Local media file was not successfully deleted", "file", file);
         }
 
-        if (_blacklistRepo.isBlacklisted(hDesc)) {
+        if (_blacklistRepo.isBlacklisted(desc)) {
             log.warning("Media was already blacklisted in database", "media", desc);
         } else {
-            _blacklistRepo.blacklist(hDesc, memrec.accountName + ": " + note);
+            _blacklistRepo.blacklist(desc, memrec.accountName + ": " + note);
         }
 
         if (!ServerConfig.mediaS3Enable) {

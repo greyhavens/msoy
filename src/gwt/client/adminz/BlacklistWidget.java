@@ -18,7 +18,6 @@ import com.threerings.gwt.ui.EnterClickAdapter;
 import com.threerings.msoy.admin.gwt.AdminService;
 import com.threerings.msoy.admin.gwt.AdminServiceAsync;
 import com.threerings.msoy.data.all.HashMediaDesc;
-import com.threerings.msoy.data.all.MediaDescFactory;
 import com.threerings.msoy.data.all.MediaMimeTypes;
 
 import client.ui.MsoyUI;
@@ -118,16 +117,15 @@ public class BlacklistWidget extends FlexTable
             MsoyUI.error(_msgs.blacklistUnknownType());
             return;
         }
-        _adminsvc.nukeMedia(
-            MediaDescFactory.createMediaDesc(hash, type), note, new InfoCallback<Void>() {
-                public void onSuccess (Void result) {
-                    if (_done != null) {
-                        MsoyUI.infoAction(_msgs.blacklistDone(), "OK", _done);
+        _adminsvc.nukeMedia(hash, type, note, new InfoCallback<Void>() {
+            public void onSuccess (Void result) {
+                if (_done != null) {
+                    MsoyUI.infoAction(_msgs.blacklistDone(), "OK", _done);
 
-                    } else {
-                        MsoyUI.info(_msgs.blacklistDone());
-                    }
+                } else {
+                    MsoyUI.info(_msgs.blacklistDone());
                 }
+            }
         });
     }
 

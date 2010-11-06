@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Set;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.threerings.msoy.data.all.CharityInfo;
-import com.threerings.orth.data.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.web.gwt.Contest;
@@ -72,7 +71,7 @@ public interface AdminServiceAsync
     /**
      * The async version of {@link AdminService#nukeMedia}.
      */
-    void nukeMedia (MediaDesc desc, String note, AsyncCallback<Void> callback);
+    void nukeMedia (byte[] hash, byte type, String note, AsyncCallback<Void> callback);
 
     /**
      * The async version of {@link AdminService#getBureauLauncherInfo}.
