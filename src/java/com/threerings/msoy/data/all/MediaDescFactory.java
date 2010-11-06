@@ -4,6 +4,7 @@
 
 package com.threerings.msoy.data.all;
 
+import com.threerings.msoy.server.ServerConfig;
 import com.threerings.orth.data.MediaDesc;
 
 /**
@@ -23,12 +24,12 @@ public class MediaDescFactory
 
     public static HashMediaDesc createMediaDesc (String s, byte mimeType, byte constraint)
     {
-        return new HashMediaDesc(HashMediaDesc.stringToHash(s), mimeType, constraint);
+        return createMediaDesc(HashMediaDesc.stringToHash(s), mimeType, constraint);
     }
 
     public static HashMediaDesc createMediaDesc (String filename)
     {
-        return new HashMediaDesc(
+        return createMediaDesc(
             HashMediaDesc.stringToHash(filename.substring(0, filename.indexOf('.'))),
              MediaMimeTypes.suffixToMimeType(filename),
             MediaDesc.NOT_CONSTRAINED);
@@ -80,4 +81,5 @@ public class MediaDescFactory
 
         return createMediaDesc(hash, mimeType, constraint);
     }
+
 }
