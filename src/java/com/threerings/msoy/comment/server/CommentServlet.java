@@ -34,7 +34,7 @@ import com.threerings.msoy.comment.gwt.Comment;
 import com.threerings.msoy.comment.gwt.CommentService;
 import com.threerings.msoy.comment.server.persist.CommentRecord;
 import com.threerings.msoy.comment.server.persist.CommentRepository;
-import com.threerings.msoy.data.all.HashMediaDesc;
+import com.threerings.msoy.data.all.CloudfrontMediaDesc;
 
 import com.threerings.msoy.server.StatLogic;
 import com.threerings.msoy.server.persist.MemberCardRecord;
@@ -123,7 +123,7 @@ public class CommentServlet extends MsoyServiceServlet
             if (scene.ownerType == MsoySceneModel.OWNER_TYPE_MEMBER) {
                 _feedLogic.publishSelfMessage(
                     scene.ownerId,  mrec.memberId, FeedMessageType.SELF_ROOM_COMMENT,
-                    scene.sceneId, scene.name, HashMediaDesc.mdToString(scene.getSnapshotThumb()));
+                    scene.sceneId, scene.name, CloudfrontMediaDesc.mdToString(scene.getSnapshotThumb()));
                 ownerId = scene.ownerId;
                 entityName = scene.name;
             }
@@ -146,7 +146,7 @@ public class CommentServlet extends MsoyServiceServlet
                         _feedLogic.publishSelfMessage(
                             ownerId, mrec.memberId, FeedMessageType.SELF_ITEM_COMMENT,
                             item.getType().toByte(), listing.catalogId, item.name,
-                            HashMediaDesc.mdToString(item.getThumbMediaDesc()));
+                            CloudfrontMediaDesc.mdToString(item.getThumbMediaDesc()));
                     }
                 }
 
@@ -165,7 +165,7 @@ public class CommentServlet extends MsoyServiceServlet
                 entityName = game.name;
                 _feedLogic.publishSelfMessage(
                     ownerId, mrec.memberId, FeedMessageType.SELF_GAME_COMMENT,
-                    eid, game.name, HashMediaDesc.mdToString(game.getThumbMedia()));
+                    eid, game.name, CloudfrontMediaDesc.mdToString(game.getThumbMedia()));
             }
         }
 

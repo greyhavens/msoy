@@ -20,6 +20,7 @@ import com.threerings.web.gwt.ServiceException;
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.presents.annotation.BlockingThread;
 
+import com.threerings.msoy.data.all.CloudfrontMediaDesc;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.msoy.data.all.MemberName;
@@ -149,7 +150,7 @@ public class GroupLogic
         if (grec.policy != Group.Policy.EXCLUSIVE) {
             _feedLogic.publishMemberMessage(
                 mrec.memberId, FeedMessageType.FRIEND_CREATED_GROUP,
-                grec.groupId, grec.name, HashMediaDesc.mdToString(grec.toLogo()));
+                grec.groupId, grec.name, CloudfrontMediaDesc.mdToString(grec.toLogo()));
         }
 
         return result;

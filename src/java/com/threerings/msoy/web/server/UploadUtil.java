@@ -308,9 +308,6 @@ public class UploadUtil
      * name of the stream (usually its hash) and a supplied mime type. Currently this is to the
      * filesystem first, and then s3 if enabled. A map of headers to be added to the s3 object may
      * be supplied.
-     *
-     * @returns MediaInfo Note that the dimensions and constraint will be zero in the returned
-     * MediaInfo object because the image is not decoded.
      */
     protected static void publishStream (InputStream input, String subdirectory, String name,
         String mimeType, byte mime, Map<String, String> headers)

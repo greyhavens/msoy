@@ -9,9 +9,9 @@ import com.google.common.collect.Lists;
 
 import com.threerings.orth.data.MediaDesc;
 
+import com.threerings.msoy.data.all.CloudfrontMediaDesc;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.HashMediaDesc;
-import com.threerings.msoy.server.MediaDescFactory;
 import com.threerings.msoy.data.all.MediaDescSize;
 
 /**
@@ -74,8 +74,8 @@ public class MessageUtil
 
     public static String makeBox (String token, MediaDesc desc, int size, String name)
     {
-        return BOX_START + token + "\t" + HashMediaDesc.mdToString(desc) + "\t" + size + "\t" + name +
-            BOX_END;
+        return BOX_START + token + "\t" + CloudfrontMediaDesc.mdToString(desc) + "\t" +
+            size + "\t" + name + BOX_END;
     }
 
     protected static List<Segment> parseSegments (String html)
@@ -163,7 +163,7 @@ public class MessageUtil
         public Box (String text) {
             String[] bits = text.split("\t", 4);
             this.token = bits[0];
-            this.desc = MediaDescFactory.stringToMD(bits[1]);
+            this.desc = CloudfrontMediaDesc.stringToMD(bits[1]);
             int msize;
             try {
                 msize = Integer.parseInt(bits[2]);

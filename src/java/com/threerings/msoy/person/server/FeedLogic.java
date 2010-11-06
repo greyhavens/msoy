@@ -21,8 +21,8 @@ import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.orth.data.MediaDesc;
 
+import com.threerings.msoy.data.all.CloudfrontMediaDesc;
 import com.threerings.msoy.data.all.GroupName;
-import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
@@ -213,7 +213,7 @@ public class FeedLogic
     {
         // publish to our local Whirled feed
         publishMemberMessage(memberId, FeedMessageType.FRIEND_WON_TROPHY,
-                             name, gameId, HashMediaDesc.mdToString(trophyMedia));
+                             name, gameId, CloudfrontMediaDesc.mdToString(trophyMedia));
     }
 
     /**
@@ -229,7 +229,7 @@ public class FeedLogic
         // TODO: use the scores too, but always replace previous feed items with the higher score
         if (playerIds.length == 1) {
             publishMemberMessage(playerIds[0], FeedMessageType.FRIEND_PLAYED_GAME,
-                game.name, game.gameId, HashMediaDesc.mdToString(game.getThumbMedia()));
+                game.name, game.gameId, CloudfrontMediaDesc.mdToString(game.getThumbMedia()));
 
         } else {
             // TODO: multiplayer message

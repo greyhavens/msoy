@@ -26,6 +26,7 @@ import com.threerings.web.gwt.ServiceException;
 import com.threerings.gwt.util.PagedResult;
 
 import com.threerings.msoy.data.MsoyAuthCodes;
+import com.threerings.msoy.data.all.CloudfrontMediaDesc;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.Theme;
 import com.threerings.msoy.data.all.HashMediaDesc;
@@ -417,7 +418,7 @@ public class GroupServlet extends MsoyServiceServlet
         if (grec.policy != Group.Policy.EXCLUSIVE) {
             _feedLogic.publishMemberMessage(
                 mrec.memberId, FeedMessageType.FRIEND_JOINED_GROUP,
-                grec.groupId, grec.name, HashMediaDesc.mdToString(grec.toLogo()));
+                grec.groupId, grec.name, CloudfrontMediaDesc.mdToString(grec.toLogo()));
         }
     }
 
@@ -707,7 +708,7 @@ public class GroupServlet extends MsoyServiceServlet
         // data
         _feedLogic.publishMemberMessage(
             memberId, FeedMessageType.FRIEND_WON_MEDAL, medalRec.name,
-            HashMediaDesc.mdToString(medalRec.createIconMedia()), groupRec.name, groupRec.groupId);
+            CloudfrontMediaDesc.mdToString(medalRec.createIconMedia()), groupRec.name, groupRec.groupId);
     }
 
     // from GroupService

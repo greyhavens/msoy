@@ -10,7 +10,7 @@ import java.util.Date;
 import org.apache.commons.fileupload.FileUploadException;
 import com.google.inject.Inject;
 
-import com.threerings.msoy.data.all.HashMediaDesc;
+import com.threerings.msoy.data.all.CloudfrontMediaDesc;
 import com.threerings.msoy.data.all.MediaMimeTypes;
 import com.threerings.msoy.person.gwt.FeedMessageType;
 import com.threerings.msoy.person.server.FeedLogic;
@@ -99,11 +99,11 @@ public class SceneThumbnailUploadServlet extends AbstractSnapshotUploadServlet
             if (sceneRecord.ownerType == MsoySceneModel.OWNER_TYPE_MEMBER) {
                 _feedLogic.publishMemberMessage(
                     sceneRecord.ownerId, FeedMessageType.FRIEND_UPDATED_ROOM, sceneId,
-                    sceneRecord.name, HashMediaDesc.mdToString(sceneRecord.getSnapshotThumb()));
+                    sceneRecord.name, CloudfrontMediaDesc.mdToString(sceneRecord.getSnapshotThumb()));
             } else {
                 _feedLogic.publishGroupMessage(
                     sceneRecord.ownerId, FeedMessageType.GROUP_UPDATED_ROOM, sceneId,
-                    sceneRecord.name, HashMediaDesc.mdToString(sceneRecord.getSnapshotThumb()));
+                    sceneRecord.name, CloudfrontMediaDesc.mdToString(sceneRecord.getSnapshotThumb()));
             }
         }
     }

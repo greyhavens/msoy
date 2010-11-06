@@ -16,8 +16,8 @@ import com.samskivert.util.IntIntMap;
 
 import com.threerings.web.gwt.ServiceException;
 
+import com.threerings.msoy.data.all.CloudfrontMediaDesc;
 import com.threerings.msoy.data.all.GroupName;
-import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
@@ -323,9 +323,8 @@ public class ForumServlet extends MsoyServiceServlet
 
         // otherwise, if the thread is an announcement thread, post a feed message about it
         } else if (thread.isAnnouncement()) {
-            _feedLogic.publishGroupMessage(
-                groupId, FeedMessageType.GROUP_ANNOUNCEMENT,
-                group.name, subject, thread.threadId, HashMediaDesc.mdToString(group.getLogo()));
+            _feedLogic.publishGroupMessage(groupId, FeedMessageType.GROUP_ANNOUNCEMENT, group.name,
+            subject, thread.threadId, CloudfrontMediaDesc.mdToString(group.getLogo()));
         }
 
         return thread;
