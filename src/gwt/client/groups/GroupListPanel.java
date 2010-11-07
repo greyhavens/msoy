@@ -53,7 +53,7 @@ public class GroupListPanel extends FlowPanel
                 Link.go(Pages.GROUPS, ACTION_SEARCH, 0, _searchInput.getText().trim());
             }
         };
-        _searchInput.addKeyPressHandler(new EnterClickAdapter(doSearch));
+        EnterClickAdapter.bind(_searchInput, doSearch);
         navi.setWidget(0, 2, MsoyUI.createImageButton("GoButton", doSearch));
         add(navi);
 

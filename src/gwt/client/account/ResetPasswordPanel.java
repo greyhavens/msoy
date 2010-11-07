@@ -59,11 +59,11 @@ public class ResetPasswordPanel extends FlexTable
         getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
         setText(row, 0, _msgs.resetPassword());
         setWidget(row++, 1, _password = new PasswordTextBox());
-        _password.addKeyPressHandler(new EnterClickAdapter(new ClickHandler() {
+        EnterClickAdapter.bind(_password, new ClickHandler() {
             public void onClick (ClickEvent event) {
                 _confirm.setFocus(true);
             }
-        }));
+        });
         TextBoxUtil.addTypingListener(_password, _validator);
 
         ClickHandler submit = new ClickHandler() {
@@ -75,7 +75,7 @@ public class ResetPasswordPanel extends FlexTable
         getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
         setText(row, 0, _msgs.resetConfirm());
         setWidget(row++, 1, _confirm = new PasswordTextBox());
-        _confirm.addKeyPressHandler(new EnterClickAdapter(submit));
+        EnterClickAdapter.bind(_confirm, submit);
         TextBoxUtil.addTypingListener(_confirm, _validator);
 
         getFlexCellFormatter().setColSpan(row, 0, 2);

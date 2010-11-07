@@ -64,12 +64,12 @@ public class LogonPanel extends SmartTable
         } else {
             Widgets.setPlaceholderText(email, _cmsgs.logonEmailDefault());
         }
-        email.addKeyPressHandler(new EnterClickAdapter(new ClickHandler() {
+        EnterClickAdapter.bind(email, new ClickHandler() {
             public void onClick (ClickEvent event) {
                 password.setFocus(true);
             }
-        }));
-        password.addKeyPressHandler(new EnterClickAdapter(onAction));
+        });
+        EnterClickAdapter.bind(password, onAction);
     }
 
     public LogonPanel (Mode mode)

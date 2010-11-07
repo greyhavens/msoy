@@ -318,7 +318,7 @@ public class TagDetailPanel extends VerticalPanel
         public NewTagBox () {
             setMaxLength(20);
             setVisibleLength(12);
-            addKeyPressHandler(new EnterClickAdapter(this));
+            EnterClickAdapter.bind(this, this);
         }
 
         public void onClick (ClickEvent event) {

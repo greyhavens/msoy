@@ -80,7 +80,7 @@ public class AwardMedalsPanel extends FlowPanel
         searchBox.setStyleName("SearchBox");
         searchBox.add(new Label(_msgs.awardMedalsMemberSearch()));
         searchBox.add(_search = new TextBox());
-        _search.addKeyPressHandler(new EnterClickAdapter(onClick));
+        EnterClickAdapter.bind(_search, onClick);
         searchBox.add(new Button(_msgs.awardMedalsFind(), onClick));
         add(searchBox);
     }

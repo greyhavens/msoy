@@ -71,7 +71,7 @@ public class GameHeaderPanel extends FlowPanel
                 Link.go(Pages.GAMES, "g", _genre.toByte(), sort.toToken(), getQuery());
             }
         };
-        _searchBox.addKeyPressHandler(new EnterClickAdapter(searchListener));
+        EnterClickAdapter.bind(_searchBox, searchListener);
         search.add(_searchBox);
         search.add(MsoyUI.createImageButton("GoButton", searchListener));
 

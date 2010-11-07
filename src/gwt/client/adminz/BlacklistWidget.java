@@ -47,11 +47,11 @@ public class BlacklistWidget extends FlexTable
         setWidget(row, 1, _name = new TextBox());
         _name.setVisibleLength(45);
         _name.setMaxLength(45);
-        _name.addKeyPressHandler(new EnterClickAdapter(new ClickHandler() {
+        EnterClickAdapter.bind(_name, new ClickHandler() {
             public void onClick (ClickEvent event) {
                 _note.setFocus(true);
             }
-        }));
+        });
         TextBoxUtil.addTypingListener(_name, _validator);
 
         ClickHandler submit = new ClickHandler() {

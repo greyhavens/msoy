@@ -71,7 +71,7 @@ public class CatalogPanel extends SmartTable
                 Link.go(Pages.SHOP, ShopUtil.composeArgs(_query, null, query, 0));
             }
         };
-        _searchBox.addKeyPressHandler(new EnterClickAdapter(clickListener));
+        EnterClickAdapter.bind(_searchBox, clickListener);
 
         Button searchGo = new Button(_msgs.catalogSearch());
         searchGo.addClickHandler(clickListener);

@@ -239,11 +239,11 @@ public class EditAccountPanel extends FlowPanel
                 _uppass.setEnabled(_password.getText().trim().length() > 0);
             }
         });
-        _password.addKeyPressHandler(new EnterClickAdapter(new ClickHandler() {
+        EnterClickAdapter.bind(_password, new ClickHandler() {
             public void onClick (ClickEvent event) {
                 _confirm.setFocus(true);
             }
-        }));
+        });
 
         table.setText(1, 0, _msgs.editConfirm(), 1, "rightLabel");
         table.setWidget(1, 1, _confirm = new PasswordTextBox());
