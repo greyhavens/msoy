@@ -294,8 +294,6 @@ public class MailServlet extends MsoyServiceServlet
             return "Group Invitation";
         case MailPayload.TYPE_FRIEND_INVITE:
             return "Friend Invitation";
-        case MailPayload.TYPE_GAME_AWARD:
-            return "Game Award";
         case MailPayload.TYPE_PRESENT:
             return "Item Gift";
         case MailPayload.TYPE_GAME_INVITE:

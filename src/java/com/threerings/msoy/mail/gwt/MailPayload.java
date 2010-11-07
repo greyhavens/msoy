@@ -31,8 +31,11 @@ public abstract class MailPayload
 
     /**
      * The identifying integer of a GameAwardPayload.
+     *
+     * Note: I am not sure this was ever used, and if it was, it no longer is. There is not
+     * a single conversation record of type 4 in the production database.
      */
-    public static final int TYPE_GAME_AWARD = 4;
+    public static final int UNUSED_TYPE_GAME_AWARD = 4;
 
     /**
      * The identifying integer of a PresentPayload.

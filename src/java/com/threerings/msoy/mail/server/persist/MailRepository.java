@@ -6,11 +6,10 @@ package com.threerings.msoy.mail.server.persist;
 import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -30,10 +29,7 @@ import com.samskivert.depot.expression.SQLExpression;
 
 import com.threerings.presents.annotation.BlockingThread;
 
-import com.threerings.msoy.server.util.JSONMarshaller;
-
 import com.threerings.msoy.mail.gwt.Conversation;
-import com.threerings.msoy.mail.gwt.GameAwardPayload;
 
 /**
  * Manages the persistent store of mail and mailboxes.
@@ -290,14 +286,5 @@ public class MailRepository extends DepotRepository
         return Ops.not(Ops.or(
             ConversationRecord.TARGET_ID.in(muted),
             ConversationRecord.INITIATOR_ID.in(muted)));
-    }
-    
-    static {
-        // register a migration for TrophyAwardPayload -> GameAwardPayload
-        Map<String, String> migmap = Maps.newHashMap();
-        migmap.put("trophyName", "awardName");
-        migmap.put("trophyMedia", "awardMediaHash");
-        migmap.put("trophyMimeType", "awardMimeType");
-        JSONMarshaller.registerMigration(GameAwardPayload.class, migmap);
     }
 }
