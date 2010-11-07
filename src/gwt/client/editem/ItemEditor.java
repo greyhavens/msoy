@@ -643,7 +643,7 @@ public abstract class ItemEditor extends FlowPanel
 
         // set the new media in preview and in the item
         MediaDesc desc = new CloudfrontMediaDesc(HashMediaDesc.stringToHash(mediaHash),
-            (byte)mimeType, (byte)constraint);
+            (byte)mimeType, (byte)constraint, expiration, signature);
         mu.setUploadedMedia(filename, desc, width, height);
 
         // have the item re-validate that no media ids are duplicated unnecessarily
@@ -685,15 +685,13 @@ public abstract class ItemEditor extends FlowPanel
      */
     protected static void callBridge (
         String id, String filename, String mediaHash, int mimeType, int constraint,
-        int width, int height)
+        int expiration, String signature, int width, int height)
     {
         // for some reason the strings that come in from JavaScript are not "real" and if we just
         // pass them straight on through to GWT, freakoutery occurs (of the non-hand-waving
         // variety); so we convert them hackily to GWT strings here
-        String fid = "" + id;
-        String ffilename = "" + filename;
-        String fhash = "" + mediaHash;
-        _singleton.setHash(fid, ffilename, fhash, mimeType, constraint, width, height);
+        _singleton.setHash("" + id, "" + filename, "" + mediaHash, mimeType, constraint,
+            expiration, signature, width, height);
     }
 
     /**
@@ -873,8 +871,10 @@ public abstract class ItemEditor extends FlowPanel
      * This wires up a sensibly named function that our POST response JavaScript code can call.
      */
     protected static native void configureBridge () /*-{
-        $wnd.setHash = function (id, filename, hash, type, constraint, width, height) {
-            @client.editem.ItemEditor::callBridge(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IIII)(id, filename, hash, type, constraint, width, height);
+        $wnd.setHash = function (id, filename, hash, type, constraint,
+            expiration, signature, width, height) {
+            @client.editem.ItemEditor::callBridge(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IIILjava/lang/String;II)(
+                 id, filename, hash, type, constraint, expiration, signature, width, height);
         };
         $wnd.uploadError = function () {
             @client.editem.ItemEditor::uploadError()();
