@@ -145,8 +145,8 @@ public class ItemMediaUploadServlet extends AbstractUploadServlet
                         info.hash, info.mimeType, info.constraint);
                     script += "parent.setHash('" + mediaId + "', '" + filename +
                         "', '" + info.hash + "', " + info.mimeType + ", " + info.constraint +
-                        ", " + desc.getExpiration() + ", " + desc.getSignature() +
-                        ", " + info.width + ", " + info.height + ");";
+                        ", " + desc.getExpiration() + ", '" + desc.getSignature() +
+                        "', " + info.width + ", " + info.height + ");";
                 }
                 out.println("<body onLoad=\"" + script + "\"></body>");
                 out.println("</html>");
