@@ -24,11 +24,10 @@ public class MediaDescFactory
         try {
             int now = ((int) (System.currentTimeMillis() / 1000));
             int expiration = now + EXPIRATION_SECONDS;
-            byte[] signature = _signer.createSignature(
-                HashMediaDesc.getMediaPath(hash, mimeType), expiration);
+            String signature = CloudfrontURLSigner.encodeSignature(_signer.createSignature(
+                HashMediaDesc.getMediaPath(hash, mimeType), expiration));
 
-            return new CloudfrontMediaDesc(
-                hash, mimeType, constraint, expiration, new String(signature));
+            return new CloudfrontMediaDesc(hash, mimeType, constraint, expiration, signature);
 
         } catch (CloudfrontException cfe) {
             throw new RuntimeException("Failed to sign media URL", cfe);

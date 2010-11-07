@@ -24,6 +24,12 @@ import static com.threerings.msoy.Log.log;
  */
 public class CloudfrontURLSigner
 {
+    public static String encodeSignature (byte[] signature)
+    {
+        return new String(Base64.encodeBase64(signature))
+            .replace("+", "-").replace("=", "_").replace("/", "~");
+    }
+    
     /**
      * This class must be instantiated with the private half of a CloudFront signature key pair.
      */
@@ -47,7 +53,7 @@ public class CloudfrontURLSigner
      *
      * TODO: Remove restrictions, they are only motivated by laziness.
      */
-    public String signURL (String nakedUrl, int expirationEpoch)
+    public String signURL (String nakedUrl, int expiration)
         throws CloudfrontException
     {
         URL url;
@@ -64,10 +70,8 @@ public class CloudfrontURLSigner
             throw new CloudfrontException("Can't sign URLs with query bits.");
         }
 
-        String encSig = new String(Base64.encodeBase64(createSignature(nakedUrl, expirationEpoch)))
-            .replace("+", "-").replace("=", "_").replace("/", "~");
-        return nakedUrl + "?Expires=" + expirationEpoch + "&Key-Pair-Id=" +
-            _signingKeyId + "&Signature=" + encSig;
+        return nakedUrl + "?Expires=" + expiration + "&Key-Pair-Id=" +
+            _signingKeyId + "&Signature=" + encodeSignature(createSignature(nakedUrl, expiration));
     }
 
     public byte[] createSignature (String nakedUrl, int expirationEpoch)
