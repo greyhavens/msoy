@@ -107,6 +107,7 @@ public class JSONMarshaller<T>
     {
         try {
             return deserializeObject(new JSONObject(new String(json)));
+
         } catch (Exception e) {
             throw new JSONMarshallingException("Failed to deserialize [class=" + _pclass + "]", e);
         }
@@ -120,6 +121,7 @@ public class JSONMarshaller<T>
     {
         try {
             return serialize(obj, obj.getClass()).toString().getBytes();
+
         } catch (Exception e) {
             throw new JSONMarshallingException("Failed to serialize [class=" + _pclass + "]", e);
         }
@@ -137,6 +139,7 @@ public class JSONMarshaller<T>
         }
         try {
             return serializeObject(obj);
+
         } catch (Exception e) {
             throw new JSONMarshallingException("Failed to serialize [class=" + _pclass + "]", e);
         }
@@ -202,6 +205,7 @@ public class JSONMarshaller<T>
                     "Can't stuff non-object state into object field [dClass=" + dClass + "]");
             }
             return getMarshaller(dClass).deserializeObject((JSONObject) state);
+
         } catch (Exception e) {
             throw new JSONMarshallingException("Failed to deserialize [class=" + _pclass + "]", e);
         }
@@ -225,6 +229,7 @@ public class JSONMarshaller<T>
                 field.set(obj, value);
             }
             return obj;
+
         } catch (Exception e) {
             throw new JSONMarshallingException("Failed to deserialize [class=" + _pclass + "]", e);
         }

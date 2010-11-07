@@ -83,6 +83,7 @@ public class ConvMessageRecord extends PersistentRecord
                 JSONMarshaller<? extends MailPayload> marsh =
                     JSONMarshaller.getMarshaller(objectClass);
                 cmsg.payload = marsh.newInstance(payloadState);
+
             } catch (Exception e) {
                 log.warning("Failed to unserialize message payload [tpye=" + payloadType +
                         ", state=" + StringUtil.hexlate(payloadState) + "].", e);
