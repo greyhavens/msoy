@@ -135,7 +135,7 @@ public class MediaUploader extends FormPanel
                        ", hash=" + mediaHash + ", type=" + mimeType + "].");
         } else {
             MediaDesc desc = new CloudfrontMediaDesc(HashMediaDesc.stringToHash(""+mediaHash),
-                (byte) mimeType, (byte) constraint, expiration);
+                (byte) mimeType, (byte) constraint, expiration, signature);
             uploader.mediaUploaded(desc, width, height);
         }
     }
