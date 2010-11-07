@@ -13,8 +13,6 @@ import java.security.spec.PKCS8EncodedKeySpec;
 
 import org.apache.commons.codec.binary.Base64;
 
-import com.samskivert.util.StringUtil;
-
 import static com.threerings.msoy.Log.log;
 
 /**
@@ -29,7 +27,7 @@ public class CloudfrontURLSigner
         return new String(Base64.encodeBase64(signature))
             .replace("+", "-").replace("=", "_").replace("/", "~");
     }
-    
+
     /**
      * This class must be instantiated with the private half of a CloudFront signature key pair.
      */
