@@ -97,9 +97,9 @@ public class CloudfrontMediaDesc extends HashMediaDesc
         return _signature;
     }
 
-    protected final int _expiration;
-    protected final String _signature;
+    protected int _expiration;
+    protected String _signature;
 
     /** Lazily constructed if/when needed. */
-    protected String _url;
+    protected transient String _url;
 }
