@@ -44,6 +44,7 @@ import com.threerings.msoy.data.MsoyBootstrapData;
 import com.threerings.msoy.data.MsoyMarshaller;
 import com.threerings.msoy.data.UberClientModes;
 
+import com.threerings.msoy.data.all.CloudfrontMediaDesc;
 import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.msoy.data.all.VisitorInfo;
 
@@ -90,6 +91,7 @@ public /*abstract*/ class MsoyClient extends CrowdClient
 
     // statically reference classes we require
     HashMediaDesc;
+    CloudfrontMediaDesc;
     MsoyBootstrapData;
     MsoyAuthResponseData;
     MsoyService;

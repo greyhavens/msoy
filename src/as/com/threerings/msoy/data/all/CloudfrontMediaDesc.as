@@ -3,6 +3,13 @@
 
 package com.threerings.msoy.data.all {
 
+import flash.utils.ByteArray;
+
+import com.threerings.io.ObjectOutputStream;
+import com.threerings.io.ObjectInputStream;
+
+import com.threerings.msoy.client.DeploymentConfig;
+
 /**
  * A hash-based MediaDesc that has been signed for Cloudfront access. We do not do our
  * own Base64-encoding on the client, mostly because GWT is stupid about turning byte[]
@@ -12,15 +19,15 @@ package com.threerings.msoy.data.all {
 public class CloudfrontMediaDesc extends HashMediaDesc
 {
     public function CloudfrontMediaDesc (
-        hash :ByteArray = null, mimeType :int, constraint :int, expiration :int = 0,
-        signature :String = null)
+        hash :ByteArray = null, mimeType :int = 0, constraint :int = NOT_CONSTRAINED,
+        expiration :int = 0, signature :String = null)
     {
         super(hash, mimeType, constraint);
         _expiration = expiration;
         _signature = signature;
     }
 
-    override public String getMediaPath ()
+    override public function getMediaPath () :String
     {
         if (_url == null) {
             _url = super.getMediaPath() + "?Expires=" + _expiration + "&Key-Pair-Id=" +
@@ -47,9 +54,10 @@ public class CloudfrontMediaDesc extends HashMediaDesc
         out.writeField(_signature);
     }
 
-    protected final var _expiration :int;
-    protected final var _signature :String;
+    protected var _expiration :int;
+    protected var _signature :String;
 
     /** Lazily constructed if/when needed. */
     protected var _url :String;
+}
 }
