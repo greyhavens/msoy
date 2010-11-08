@@ -156,8 +156,12 @@ public class ItemMediaUploadServlet extends AbstractUploadServlet
                 for (int ii = 0; ii < mediaIds.size() && ii < mediaInfos.size(); ii++) {
                     String mediaId = mediaIds.get(ii);
                     MediaInfo info = mediaInfos.get(ii);
+
+                    CloudfrontMediaDesc desc = MediaDescFactory.createMediaDesc(
+                        info.hash, info.mimeType, info.constraint);
                     out.println(mediaId + " " + filename + " " + info.hash + " " +
                         info.mimeType + " " + info.constraint + " " +
+                        desc.getExpiration() + " " + desc.getSignature() + " " +
                         info.width + " " + info.height);
                 }
                 break;

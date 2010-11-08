@@ -132,6 +132,8 @@ public class MediaUploader extends TitleWindow
      *    hash: String (MediaDesc hash)
      *    mimeType: int (MediaDesc mimeType)
      *    constraint: int (MediaDesc constraint)
+     *    expiration: int (the unix epoch when this signature expires)
+     *    signature: String (the base64-encoded signature to embed in the URL)
      *    width: int
      *    height: int
      * }

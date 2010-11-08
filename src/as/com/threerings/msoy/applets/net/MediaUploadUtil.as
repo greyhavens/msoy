@@ -88,8 +88,10 @@ public class MediaUploadUtil
                 hash: bits[2],
                 mimeType: parseInt(bits[3]),
                 constraint: parseInt(bits[4]),
-                width: parseInt(bits[5]),
-                height: parseInt(bits[6])
+                expiration: parseInt(bits[5]),
+                signature : bits[6],
+                width: parseInt(bits[7]),
+                height: parseInt(bits[8])
             };
         }
         return result;
