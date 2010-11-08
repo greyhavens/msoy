@@ -2,6 +2,7 @@
 // $Id$
 
 package com.threerings.msoy.client {
+import com.threerings.msoy.ui.DataPackMediaContainer;
 
 import flash.display.Stage;
 import flash.display.StageDisplayState;
@@ -90,8 +91,8 @@ public /*abstract*/ class MsoyClient extends CrowdClient
     public static const GWT_PAGE_CHANGED :String = "msoy.setPage";
 
     // statically reference classes we require
-    HashMediaDesc;
     CloudfrontMediaDesc;
+    HashMediaDesc;
     MsoyBootstrapData;
     MsoyAuthResponseData;
     MsoyService;
@@ -179,6 +180,7 @@ public /*abstract*/ class MsoyClient extends CrowdClient
         if (mbData.mutedMemberIds != null) {
             _ctx.getMuteDirector().setMutedMemberIds(mbData.mutedMemberIds);
         }
+        MsoyContext.stubUrl = mbData.stubUrl;
     }
 
     /**

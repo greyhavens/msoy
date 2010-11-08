@@ -51,6 +51,9 @@ import com.threerings.msoy.notify.client.NotificationDirector;
 public /*abstract*/ class MsoyContext
     implements CrowdContext
 {
+    /** This variable must be set statically from outside the class. Elegant! */
+    public static var stubUrl :String = null;
+
     public function MsoyContext (client :MsoyClient)
     {
         _client = client;

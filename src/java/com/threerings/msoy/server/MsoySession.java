@@ -24,6 +24,7 @@ import com.threerings.stats.server.persist.StatRepository;
 import com.threerings.whirled.server.WhirledSession;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;
+import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.room.server.persist.MemoriesRecord;
 import com.threerings.msoy.room.server.persist.MemoryRepository;
 
@@ -37,6 +38,8 @@ import com.threerings.msoy.data.WorldCredentials;
 import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.persist.MemberRepository;
+import com.threerings.msoy.web.server.CloudfrontException;
+import com.threerings.msoy.web.server.CloudfrontURLSigner;
 
 import static com.threerings.msoy.Log.log;
 
@@ -76,10 +79,21 @@ public class MsoySession extends WhirledSession
     {
         super.populateBootstrapData(data);
 
+        MsoyBootstrapData mData = (MsoyBootstrapData) data;
+
         MemberLocal local = _memobj.getLocal(MemberLocal.class);
         if (local.mutedMemberIds != null) {
-            ((MsoyBootstrapData) data).mutedMemberIds = local.mutedMemberIds;
+            mData.mutedMemberIds = local.mutedMemberIds;
             local.mutedMemberIds = null;
+        }
+        CloudfrontURLSigner signer = new CloudfrontURLSigner(
+            ServerConfig.cloudSigningKeyId, ServerConfig.cloudSigningKey);
+        try {
+            mData.stubUrl = signer.signURL(
+                DeploymentConfig.mediaURL + "MediaStub.swf",
+                (int) ((System.currentTimeMillis() / 1000) + 7*24*3600));
+        } catch (CloudfrontException e) {
+            log.warning("Failed to sign MediaStub URL!", e);
         }
     }
 

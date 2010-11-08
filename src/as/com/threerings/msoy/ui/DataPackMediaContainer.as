@@ -29,6 +29,7 @@ import com.threerings.util.StringUtil;
 import com.threerings.util.ValueEvent;
 
 import com.threerings.msoy.client.DeploymentConfig;
+import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.Snapshottable;
 import com.threerings.msoy.data.MsoyDataPack;
 
@@ -172,7 +173,7 @@ public class DataPackMediaContainer extends MsoyMediaContainer
         if (shouldUseStub(url)) {
             // load the stub instead
             // TODO: get this URL from elsewhere?
-            url = DeploymentConfig.mediaURL + "MediaStub.swf";
+            url = MsoyContext.stubUrl;
 
         } else if (isZip) {
             // we must be loading a zip off the filesystem!
@@ -214,7 +215,8 @@ public class DataPackMediaContainer extends MsoyMediaContainer
             return (Security.sandboxType != Security.LOCAL_WITH_FILE);
         }
 
-        if (StringUtil.startsWith(url, DeploymentConfig.staticMediaURL)) {
+        if (MsoyContext.stubUrl == null ||
+            StringUtil.startsWith(url, DeploymentConfig.staticMediaURL)) {
             return false;
         }
 
