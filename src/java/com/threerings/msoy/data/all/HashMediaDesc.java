@@ -73,10 +73,11 @@ public class HashMediaDesc extends MediaDescImpl
         return null;
     }
 
+    /** For serialization. */
 	public HashMediaDesc ()
 	{
 	}
-
+    
     /**
      * Creates a media descriptor from the supplied configuration.
      */

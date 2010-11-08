@@ -70,6 +70,11 @@ public class CloudfrontMediaDesc extends HashMediaDesc
         return "";
     }
 
+    /** For serialization. */
+    public CloudfrontMediaDesc ()
+	{
+	}
+
     public CloudfrontMediaDesc (
         byte[] hash, byte mimeType, byte constraint, int expiration, String signature)
     {
