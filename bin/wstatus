@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 ## Executable wrapper for main() in ../src/python/msoy/status.py
 
