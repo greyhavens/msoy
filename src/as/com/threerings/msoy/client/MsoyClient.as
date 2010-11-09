@@ -142,15 +142,6 @@ public /*abstract*/ class MsoyClient extends CrowdClient
         UberClient.getApplication().loaderInfo.sharedEvents.dispatchEvent(
             new Event(UberClientModes.CLIENT_READY, true));
 
-        // allow connecting the media server if it differs from the game server
-        if ((Security.sandboxType != Security.LOCAL_WITH_FILE) &&
-                (DeploymentConfig.mediaURL.indexOf(DeploymentConfig.serverHost) == -1)) {
-            var root :String = DeploymentConfig.mediaURL.replace(
-                new RegExp("(http://[^/]+/).*"), "$1");
-            log.info("Loading media policy: " + root + "crossdomain.xml");
-            Security.loadPolicyFile(root + "crossdomain.xml");
-        }
-
         // prior to logging on to a server, set up our security policy for that server
         addClientObserver(
             new ClientAdapter(clientWillLogon, clientDidLogon, null, clientDidLogoff));
@@ -181,6 +172,11 @@ public /*abstract*/ class MsoyClient extends CrowdClient
             _ctx.getMuteDirector().setMutedMemberIds(mbData.mutedMemberIds);
         }
         MsoyContext.stubUrl = mbData.stubUrl;
+
+        // allow connecting the media server if it differs from the game server
+        if ((Security.sandboxType != Security.LOCAL_WITH_FILE) && mbData.crossDomainUrl != null) {
+            Security.loadPolicyFile(mbData.crossDomainUrl);
+        }
     }
 
     /**

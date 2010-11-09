@@ -17,7 +17,11 @@ public class MsoyBootstrapData extends BootstrapData
     /** An array of memberIds that we've muted in previous sessions. */
     public var mutedMemberIds :TypedArray /* of int */;
 
+    /** The signed URL of our MediaStub.swf */
     public var stubUrl :String;
+
+    /** The signed URL of our MediaStub.swf */
+    public var crossDomainUrl :String;
 
     public function MsoyBootstrapData ()
     {
@@ -29,6 +33,7 @@ public class MsoyBootstrapData extends BootstrapData
         super.readObject(ins);
         mutedMemberIds = TypedArray(ins.readField(TypedArray.getJavaType(int)));
         stubUrl = ins.readField(String);
+        crossDomainUrl = ins.readField(String);
     }
 }
 }

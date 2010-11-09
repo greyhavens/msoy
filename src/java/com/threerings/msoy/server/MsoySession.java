@@ -3,6 +3,9 @@
 
 package com.threerings.msoy.server;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
 import com.google.inject.Inject;
 
 import com.samskivert.jdbc.WriteOnlyUnit;
@@ -36,7 +39,6 @@ import com.threerings.msoy.data.MsoyTokenRing;
 import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.WorldCredentials;
 import com.threerings.msoy.data.all.VisitorInfo;
-import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.web.server.CloudfrontException;
 import com.threerings.msoy.web.server.CloudfrontURLSigner;
@@ -86,14 +88,29 @@ public class MsoySession extends WhirledSession
             mData.mutedMemberIds = local.mutedMemberIds;
             local.mutedMemberIds = null;
         }
+        int expiration = (int) ((System.currentTimeMillis() / 1000) + 7 * 24 * 3600);
+
         CloudfrontURLSigner signer = new CloudfrontURLSigner(
             ServerConfig.cloudSigningKeyId, ServerConfig.cloudSigningKey);
         try {
             mData.stubUrl = signer.signURL(
-                DeploymentConfig.mediaURL + "MediaStub.swf",
-                (int) ((System.currentTimeMillis() / 1000) + 7*24*3600));
+                DeploymentConfig.mediaURL + "MediaStub.swf", expiration);
         } catch (CloudfrontException e) {
             log.warning("Failed to sign MediaStub URL!", e);
+        }
+
+        // allow connecting the media server if it differs from the game server
+        try {
+            URL url = new URL(DeploymentConfig.mediaURL);
+            if (!url.getHost().equals(DeploymentConfig.serverHost)) {
+                URL cUrl = new URL(url.getProtocol(), url.getHost(), url.getPort(), "crossdomain.xml");
+                mData.crossDomainUrl = signer.signURL(cUrl.toString(), expiration);
+            } // else we leave it null, and the client doesn't register a policy
+
+        } catch (CloudfrontException e) {
+            log.warning("Failed to sign crossdomain.xml URL!", e);
+        } catch (MalformedURLException e) {
+            log.warning("Failed to parse/create crossdomain.xml URL!", e);
         }
     }
 
