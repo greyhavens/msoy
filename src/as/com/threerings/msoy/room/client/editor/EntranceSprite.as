@@ -24,7 +24,7 @@ public class EntranceSprite extends FurniSprite
     {
         // fake furni data for the fake sprite
         var furniData :EntranceFurniData = new EntranceFurniData();
-        furniData.media = new MediaDescImpl();
+        furniData.media = null;
         furniData.loc = location;
         super(ctx, furniData);
 
