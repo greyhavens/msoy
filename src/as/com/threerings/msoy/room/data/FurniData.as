@@ -170,7 +170,7 @@ public class FurniData
         return (this.id == that.id) &&
             (this.itemType == that.itemType) &&
             (this.itemId == that.itemId) &&
-            this.media.equals(that.media) &&
+            ((this.media == null) ? (that.media == null) : this.media.equals(that.media)) &&
             this.loc.equals(that.loc) &&
             (this.layoutInfo == that.layoutInfo) &&
             (this.scaleX == that.scaleX) &&
