@@ -87,8 +87,8 @@ public abstract class CloudfrontTool
                     "oaids\n" +
                     "oaid <id>\n" +
                     "oaidconf <id>\n" +
-                    "invreqs\n" +
-                    "invreq <batchId>\n" +
+                    "invreqs <distId>\n" +
+                    "invreq <distId> <batchId>\n" +
                     "invalidate <distId> <key>\n" +
                     "selfsign <distId>\n" +
                     "validate\n" +
