@@ -103,7 +103,8 @@ public class MsoySession extends WhirledSession
         try {
             URL url = new URL(DeploymentConfig.mediaURL);
             if (!url.getHost().equals(DeploymentConfig.serverHost)) {
-                URL cUrl = new URL(url.getProtocol(), url.getHost(), url.getPort(), "crossdomain.xml");
+                URL cUrl = new URL(
+                    url.getProtocol(), url.getHost(), url.getPort(), "/crossdomain.xml");
                 mData.crossDomainUrl = signer.signURL(cUrl.toString(), expiration);
             } // else we leave it null, and the client doesn't register a policy
 
