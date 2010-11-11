@@ -33,7 +33,7 @@ public abstract class MediaDescFactory
     }
 
     /** Sign a HashMediaDesc with the given expiration epoch. */
-    public static CloudfrontMediaDesc createMediaDesc (CloudfrontMediaDesc desc, int expiration)
+    public static CloudfrontMediaDesc createMediaDesc (HashMediaDesc desc, int expiration)
     {
         return createMediaDesc(desc.hash, desc.getMimeType(), desc.getConstraint());
     }
