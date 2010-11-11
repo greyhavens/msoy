@@ -84,7 +84,7 @@ public class TrophyFeeder extends StoryFeeder
 
     protected TrophyEvent _event;
 
-    /** THIS WILL NOT WORK WITH SIGNED URL's -- however, I don't think it's in use. */
+    /** THIS WILL NOT WORK WITH SIGNED URLs -- however, I don't think it's in use. */
     protected static final String[] PUB_IMAGES = {
         FacebookUtil.PUB_ROOT + "88f92c972a7e088dfb71787a37ea3bbb3fed27ce.png",
         FacebookUtil.PUB_ROOT + "c4fa25346e8ba5773fdd4d0b263b322405fe3eef.png",

@@ -69,7 +69,7 @@ public class FBChallengeFeeder extends StoryFeeder
               "href" : "http://www.whirled.com/go/games-d_827_t"}]}
     */
 
-    /** THIS WILL NOT WORK WITH SIGNED URL's -- however, I don't think it's in use. */
+    /** THIS WILL NOT WORK WITH SIGNED URLs -- however, I don't think it's in use. */
     protected static final String[] PUB_IMAGES = {
         FacebookUtil.PUB_ROOT + "db21cc504a1f735f96eb051275c1dd9d394924d2.png",
         FacebookUtil.PUB_ROOT + "e59ac92a6c497f573fcee451dedb59ce03cadf68.png",

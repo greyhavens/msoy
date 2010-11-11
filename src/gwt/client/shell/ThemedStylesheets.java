@@ -12,7 +12,7 @@ import client.util.events.FlashEvents;
 import client.util.events.ThemeChangeEvent;
 
 /**
- * Allows index.html files for the top-level frame and pages to refer to stylesheet URL's on
+ * Allows index.html files for the top-level frame and pages to refer to stylesheet URLs on
  * the form /themed/css/foo.css?themeId=0 while we inject the user's theme as it loads/changes.
  *
  * NOTE WELL: Whirled falls apart if we ever reload the styles directly governing the layout
