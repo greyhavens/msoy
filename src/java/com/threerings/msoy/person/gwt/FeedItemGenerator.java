@@ -17,8 +17,6 @@ import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.SharedNaviUtil;
 
-import client.shell.CShell;
-
 /**
  * Generates the display for a feed message.
  */
@@ -465,7 +463,6 @@ public class FeedItemGenerator
     {
         MediaDesc md = (msg.data.length <= idx) ?
             null : CloudfrontMediaDesc.stringToCFMD(msg.data[idx]);
-        CShell.log("Creating MD from string", "str", msg.data[idx], "desc", md);
         if (md == null) {
             return null;
         }

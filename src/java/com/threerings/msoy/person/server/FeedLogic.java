@@ -278,16 +278,13 @@ public class FeedLogic
     {
         // Hackily iterate over the arguments and sign anything that looks like media.
         for (int ii = message.data.length-1; ii >= 0; ii --) {
-            log.info("Eyeballing message bit", "bit", message.data[ii]);
             String[] bits = message.data[ii].split(":");
             if (bits.length == 3 && bits[0].length() == 40) {
                 HashMediaDesc hmd = HashMediaDesc.stringToHMD(message.data[ii]);
-                log.info("Converting bit", "hmd", hmd);
                 if (hmd != null) {
                     // we have to sign the media descs.
                     message.data[ii] = CloudfrontMediaDesc.cfmdToString(
                         MediaDescFactory.createMediaDesc(hmd));
-                    log.info("Done!", "mewDesc", message.data[ii]);                    
                 }
             }
         }
