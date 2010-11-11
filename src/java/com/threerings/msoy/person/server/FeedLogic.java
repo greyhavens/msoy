@@ -275,6 +275,4 @@ public class FeedLogic
     protected static final int MIN_PERSONAL_FEED_CUTOFF_DAYS = 2;
     protected static final int FRIENDS_PER_DAY = 25;
     protected static final int GROUP_FEED_CUTOFF_DAYS = 7;
-    protected static final String FAKE_PUBLIC_IMAGE_URL =
-        "http://mediacloud.whirled.com/240aa9267fa6dc8422588e6818862301fd658e6f.png";
 }
