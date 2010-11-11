@@ -4,6 +4,8 @@
 
 package com.threerings.msoy.data.all;
 
+import com.threerings.orth.data.MediaDesc;
+
 /**
  * A hash-based MediaDesc that has been signed for Cloudfront access. We do not do our
  * own Base64-encoding on the client, mostly because GWT is stupid about turning byte[]
@@ -48,6 +50,11 @@ public class CloudfrontMediaDesc extends HashMediaDesc
 
         String signature = data[4];
         return new CloudfrontMediaDesc(hash, mimeType, constraint, expiration, signature);
+    }
+
+    @Override public MediaDesc newWithConstraint (byte constraint)
+    {
+        return new CloudfrontMediaDesc(this.hash, _mimeType, constraint, _expiration, _signature);
     }
 
     /**
