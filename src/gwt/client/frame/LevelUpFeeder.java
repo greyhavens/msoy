@@ -54,6 +54,7 @@ public class LevelUpFeeder extends StoryFeeder
 
     protected int _level;
 
+    /** THIS WILL NOT WORK WITH SIGNED URL's -- however, I don't think it's in use. */
     protected static final String[] PUB_IMAGES = {
         FacebookUtil.PUB_ROOT + "5e96a1dd2244f0679834e4d5e6ba886bffabd9ff.png",
         FacebookUtil.PUB_ROOT + "d540aa4605b1b778f826262209723359d81fa06e.png",
