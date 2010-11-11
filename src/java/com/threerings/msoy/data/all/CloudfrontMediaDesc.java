@@ -4,8 +4,6 @@
 
 package com.threerings.msoy.data.all;
 
-import com.threerings.orth.data.MediaDesc;
-
 /**
  * A hash-based MediaDesc that has been signed for Cloudfront access. We do not do our
  * own Base64-encoding on the client, mostly because GWT is stupid about turning byte[]
@@ -17,18 +15,16 @@ public class CloudfrontMediaDesc extends HashMediaDesc
     /**
      * Creates a MediaDesc from a colon delimited String.
      */
-    public static HashMediaDesc stringToMD (String str)
+    public static CloudfrontMediaDesc stringToCFMD (String str)
     {
         String[] data = str.split(":");
         if (data.length != 5) {
             return null;
         }
-
         byte[] hash = HashMediaDesc.stringToHash(data[0]);
         if (hash == null) {
             return null;
         }
-
         byte mimeType = MediaMimeTypes.INVALID_MIME_TYPE;
         byte constraint = 0;
         try {
@@ -42,11 +38,12 @@ public class CloudfrontMediaDesc extends HashMediaDesc
             // don't care
         }
 
-        int expiration = 0;
+        int expiration;
         try {
             expiration = Integer.parseInt(data[3]);
         } catch (NumberFormatException nfe) {
-            // don't care
+            // this is actually quite bad
+            return null;
         }
 
         String signature = data[4];
@@ -56,18 +53,14 @@ public class CloudfrontMediaDesc extends HashMediaDesc
     /**
      * Converts a MediaDesc into a colon delimited String.
      */
-    public static String mdToString (MediaDesc md)
+    public static String cfmdToString (CloudfrontMediaDesc cfmd)
     {
-        if (md instanceof CloudfrontMediaDesc) {
-            CloudfrontMediaDesc cfmd = (CloudfrontMediaDesc) md;
-            return new StringBuilder(hashToString(cfmd.hash))
-                .append(":").append(cfmd.getMimeType())
-                .append(":").append(cfmd.getConstraint())
-                .append(":").append(cfmd.getExpiration())
-                .append(":").append(cfmd.getSignature())
-                .toString();
-        }
-        return "";
+        return new StringBuilder(hashToString(cfmd.hash))
+            .append(":").append(cfmd.getMimeType())
+            .append(":").append(cfmd.getConstraint())
+            .append(":").append(cfmd.getExpiration())
+            .append(":").append(cfmd.getSignature())
+            .toString();
     }
 
     /** For serialization. */
@@ -100,6 +93,11 @@ public class CloudfrontMediaDesc extends HashMediaDesc
     public String getSignature ()
     {
         return _signature;
+    }
+
+    @Override public String toString ()
+    {
+        return super.toString() + "/" + _expiration + "/" + _signature;
     }
 
     protected int _expiration;

@@ -58,6 +58,46 @@ public class HashMediaDesc extends MediaDescImpl
     }
 
     /**
+     * Creates a MediaDesc from a colon delimited String.
+     */
+    public static HashMediaDesc stringToHMD (String str)
+    {
+        String[] data = str.split(":");
+        if (data.length != 3) {
+            return null;
+        }
+        byte[] hash = HashMediaDesc.stringToHash(data[0]);
+        if (hash == null) {
+            return null;
+        }
+        byte mimeType = MediaMimeTypes.INVALID_MIME_TYPE;
+        byte constraint = 0;
+        try {
+            mimeType = Byte.parseByte(data[1]);
+        } catch (NumberFormatException nfe) {
+            // don't care
+        }
+        try {
+            constraint = Byte.parseByte(data[2]);
+        } catch (NumberFormatException nfe) {
+            // don't care
+        }
+
+        return new HashMediaDesc(hash, mimeType, constraint);
+    }
+
+    /**
+     * Converts a HashMediaDesc into a colon delimited String.
+     */
+    public static String hmdToString (HashMediaDesc hmd)
+    {
+        return new StringBuilder(hashToString(hmd.hash))
+            .append(":").append(hmd.getMimeType())
+            .append(":").append(hmd.getConstraint())
+            .toString();
+    }
+
+    /**
      * Returns the supplied media descriptor's hash or null if the descriptor is null. This
      * method throws an error if the supplied argument is not a {@link HashMediaDesc}.
      */
@@ -77,7 +117,7 @@ public class HashMediaDesc extends MediaDescImpl
 	public HashMediaDesc ()
 	{
 	}
-    
+
     /**
      * Creates a media descriptor from the supplied configuration.
      */

@@ -19,6 +19,11 @@ public class MediaDescFactory
     // let's let references live for a week to begin with
     public static int EXPIRATION_SECONDS = 7 * 24 * 3600;
 
+    public static CloudfrontMediaDesc createMediaDesc (HashMediaDesc desc)
+    {
+        return createMediaDesc(desc.hash, desc.getMimeType(), desc.getConstraint());
+    }
+
     public static CloudfrontMediaDesc createMediaDesc (byte[] hash, byte mimeType, byte constraint)
     {
         try {

@@ -17,7 +17,6 @@ import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.UserAction;
-import com.threerings.msoy.data.all.CloudfrontMediaDesc;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.room.data.RoomCodes;
@@ -299,10 +298,8 @@ public class CatalogServlet extends MsoyServiceServlet
 
         // publish to the member's feed if it's not hidden
         if (pricing != CatalogListing.PRICING_HIDDEN) {
-            _feedLogic.publishMemberMessage(
-                mrec.memberId, FeedMessageType.FRIEND_LISTED_ITEM, master.name,
-                repo.getItemType().toByte(), catalogId,
-                CloudfrontMediaDesc.mdToString(master.getThumbMediaDesc()));
+            _feedLogic.publishMemberMessage(mrec.memberId, FeedMessageType.FRIEND_LISTED_ITEM,
+                master.name, repo.getItemType().toByte(), catalogId, master.getThumbMediaDesc());
         }
 
         // some items are related to a stat that may need updating.  Use originalItem.creatorId

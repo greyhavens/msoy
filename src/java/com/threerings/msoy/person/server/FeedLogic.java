@@ -23,7 +23,9 @@ import com.threerings.orth.data.MediaDesc;
 
 import com.threerings.msoy.data.all.CloudfrontMediaDesc;
 import com.threerings.msoy.data.all.GroupName;
+import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.server.MediaDescFactory;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.game.server.persist.GameInfoRecord;
@@ -40,6 +42,8 @@ import com.threerings.msoy.person.server.persist.FeedMessageRecord;
 import com.threerings.msoy.person.server.persist.FeedRepository;
 import com.threerings.msoy.person.server.persist.FriendFeedMessageRecord;
 import com.threerings.msoy.person.server.persist.GroupFeedMessageRecord;
+
+import static com.threerings.msoy.Log.log;
 
 /**
  * Provides new feed related services to servlets and other blocking thread entities.
@@ -169,7 +173,7 @@ public class FeedLogic
      */
     public void publishGlobalMessage (FeedMessageType type, Object... args)
     {
-        _feedRepo.publishGlobalMessage(type, StringUtil.join(args, "\t"));
+        _feedRepo.publishGlobalMessage(type, feedToString(args));
     }
 
     /**
@@ -180,7 +184,7 @@ public class FeedLogic
      */
     public boolean publishMemberMessage (int actorId, FeedMessageType type, Object... args)
     {
-        return _feedRepo.publishMemberMessage(actorId, type, StringUtil.join(args, "\t"));
+        return _feedRepo.publishMemberMessage(actorId, type, feedToString(args));
     }
 
     /**
@@ -191,7 +195,7 @@ public class FeedLogic
      */
     public boolean publishGroupMessage (int groupId, FeedMessageType type, Object... args)
     {
-        return _feedRepo.publishGroupMessage(groupId, type, StringUtil.join(args, "\t"));
+        return _feedRepo.publishGroupMessage(groupId, type, feedToString(args));
     }
 
     /**
@@ -200,7 +204,7 @@ public class FeedLogic
      */
     public void publishSelfMessage (int targetId, int actorId, FeedMessageType type, Object...args)
     {
-        _feedRepo.publishSelfMessage(targetId, actorId, type, StringUtil.join(args, "\t"));
+        _feedRepo.publishSelfMessage(targetId, actorId, type, feedToString(args));
     }
 
     /**
@@ -213,7 +217,7 @@ public class FeedLogic
     {
         // publish to our local Whirled feed
         publishMemberMessage(memberId, FeedMessageType.FRIEND_WON_TROPHY,
-                             name, gameId, CloudfrontMediaDesc.mdToString(trophyMedia));
+            name, gameId, CloudfrontMediaDesc.cfmdToString((CloudfrontMediaDesc) trophyMedia));
     }
 
     /**
@@ -229,7 +233,8 @@ public class FeedLogic
         // TODO: use the scores too, but always replace previous feed items with the higher score
         if (playerIds.length == 1) {
             publishMemberMessage(playerIds[0], FeedMessageType.FRIEND_PLAYED_GAME,
-                game.name, game.gameId, CloudfrontMediaDesc.mdToString(game.getThumbMedia()));
+                game.name, game.gameId, CloudfrontMediaDesc.cfmdToString(
+                    (CloudfrontMediaDesc) game.getThumbMedia()));
 
         } else {
             // TODO: multiplayer message
@@ -260,11 +265,51 @@ public class FeedLogic
         // create our list of feed messages
         List<FeedMessage> messages = Lists.newArrayList();
         for (FeedMessageRecord record : records) {
-            messages.add(record.toMessage(memberNames, groupNames));
+            FeedMessage message = record.toMessage(memberNames, groupNames);
+            signAllMedia(message);
+            messages.add(message);
         }
 
         return messages;
     }
+
+    /** Prepare message arguments for viewing on the client. */
+    protected void signAllMedia (FeedMessage message)
+    {
+        // Hackily iterate over the arguments and sign anything that looks like media.
+        for (int ii = message.data.length-1; ii >= 0; ii --) {
+            log.info("Eyeballing message bit", "bit", message.data[ii]);
+            String[] bits = message.data[ii].split(":");
+            if (bits.length == 3 && bits[0].length() == 40) {
+                HashMediaDesc hmd = HashMediaDesc.stringToHMD(message.data[ii]);
+                log.info("Converting bit", "hmd", hmd);
+                if (hmd != null) {
+                    // we have to sign the media descs.
+                    message.data[ii] = CloudfrontMediaDesc.cfmdToString(
+                        MediaDescFactory.createMediaDesc(hmd));
+                    log.info("Done!", "mewDesc", message.data[ii]);                    
+                }
+            }
+        }
+    }
+
+    /** Prepare message arguments for persisting to database. */
+    protected String feedToString (Object[] args)
+    {
+        for (int ii = args.length-1; ii >= 0; ii --) {
+            if (args[ii] instanceof HashMediaDesc) {
+                // note that we do not persist CloudfrontMediaDesc's expiration/signature!
+                Object foo = args[ii];
+                args[ii] = HashMediaDesc.hmdToString((CloudfrontMediaDesc) args[ii]);
+                log.info("Unpacking bit", "desc", foo, "bit", args[ii]);
+            } else if (args[ii] instanceof MediaDesc) {
+                log.warning("Unknown media descriptor in feed", "desc", args[ii]);
+                args[ii] = "";
+            }
+        }
+        return StringUtil.join(args, "\t");
+    }
+
 
     @Inject protected FeedRepository _feedRepo;
     @Inject protected GroupLogic _groupLogic;

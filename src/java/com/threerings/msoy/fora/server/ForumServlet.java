@@ -324,7 +324,8 @@ public class ForumServlet extends MsoyServiceServlet
         // otherwise, if the thread is an announcement thread, post a feed message about it
         } else if (thread.isAnnouncement()) {
             _feedLogic.publishGroupMessage(groupId, FeedMessageType.GROUP_ANNOUNCEMENT, group.name,
-            subject, thread.threadId, CloudfrontMediaDesc.mdToString(group.getLogo()));
+            subject, thread.threadId, CloudfrontMediaDesc.cfmdToString(
+                    (CloudfrontMediaDesc) group.getLogo()));
         }
 
         return thread;
@@ -634,29 +635,33 @@ public class ForumServlet extends MsoyServiceServlet
         ItemRepository<ItemRecord> repo = _itemLogic.getRepository(type);
         CatalogRecord crec = repo.loadListing(catalogId, true);
         Item item = (crec == null) ? null : crec.item.toItem();
-        return (item == null) ? null : MessageUtil.makeBox(token, item.getThumbnailMedia(),
-                                                           MediaDescSize.THUMBNAIL_SIZE, item.name);
+        return (item == null) ? null : MessageUtil.makeBox(token,
+            (CloudfrontMediaDesc) item.getThumbnailMedia(),
+            MediaDescSize.THUMBNAIL_SIZE, item.name);
     }
 
     protected String makeBoxedGame (String token, int gameId)
     {
         GameInfoRecord grec = _mgameRepo.loadGame(gameId);
         return (grec == null) ? null :
-            MessageUtil.makeBox(token, grec.getShotMedia(), MediaDescSize.GAME_SHOT_SIZE, grec.name);
+            MessageUtil.makeBox(token, (CloudfrontMediaDesc) grec.getShotMedia(),
+                MediaDescSize.GAME_SHOT_SIZE, grec.name);
     }
 
     protected String makeBoxedWhirled (String token, int groupId)
     {
         GroupRecord grec = _groupRepo.loadGroup(groupId);
         return (grec == null) ? null :
-            MessageUtil.makeBox(token, grec.toLogo(), MediaDescSize.THUMBNAIL_SIZE, grec.name);
+            MessageUtil.makeBox(token, (CloudfrontMediaDesc) grec.toLogo(),
+                MediaDescSize.THUMBNAIL_SIZE, grec.name);
     }
 
     protected String makeBoxedScene (String token, int sceneId)
     {
         SceneRecord srec = _sceneRepo.loadScene(sceneId);
         return (srec == null) ? null : MessageUtil.makeBox(
-            token, srec.getSnapshotThumb(), MediaDescSize.SNAPSHOT_THUMB_SIZE, srec.name);
+            token, (CloudfrontMediaDesc) srec.getSnapshotThumb(),
+            MediaDescSize.SNAPSHOT_THUMB_SIZE, srec.name);
     }
 
     protected String makeBoxedMemberHome (String token, int memberId)

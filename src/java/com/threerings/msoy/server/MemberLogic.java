@@ -86,7 +86,6 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.UserAction;
-import com.threerings.msoy.data.all.CloudfrontMediaDesc;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MediaMimeTypes;
@@ -190,7 +189,7 @@ public class MemberLogic
             // publish a message to the inviting member's feed
             _feedLogic.publishMemberMessage(
                 memberId, FeedMessageType.FRIEND_ADDED_FRIEND,
-                friend.name, friendId, CloudfrontMediaDesc.mdToString(friend.photo));
+                friend.name, friendId, friend.photo);
 
             // add them to the friends list of both parties if/wherever they are online
             // TODO: Review and optimize

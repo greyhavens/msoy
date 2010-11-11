@@ -71,9 +71,9 @@ public class MessageUtil
         return buf.toString();
     }
 
-    public static String makeBox (String token, MediaDesc desc, int size, String name)
+    public static String makeBox (String token, CloudfrontMediaDesc desc, int size, String name)
     {
-        return BOX_START + token + "\t" + CloudfrontMediaDesc.mdToString(desc) + "\t" +
+        return BOX_START + token + "\t" + CloudfrontMediaDesc.cfmdToString(desc) + "\t" +
             size + "\t" + name + BOX_END;
     }
 
@@ -162,7 +162,7 @@ public class MessageUtil
         public Box (String text) {
             String[] bits = text.split("\t", 4);
             this.token = bits[0];
-            this.desc = CloudfrontMediaDesc.stringToMD(bits[1]);
+            this.desc = CloudfrontMediaDesc.stringToCFMD(bits[1]);
             int msize;
             try {
                 msize = Integer.parseInt(bits[2]);
