@@ -33,32 +33,32 @@ import com.whirled.thane.HttpUserCodeLoader;
 public class Reference
 {
     BureauMarshaller;
-    DeploymentConfig;
-    VizMemberName;
-    MemberName;
-    MsoyGameDefinition;
-    MsoyMatchConfig;
-    WhirledBureauClient;
-    HttpUserCodeLoader;
-    PlayerObject;
-    CrowdPermissionPolicy;
-    MsoyBureauClient;
-    Item;
-    Trophy;
-    MemberInfo;
-    MsoyLocation;
+    CloudfrontMediaDesc;
     ControllableEntity;
+    CrowdPermissionPolicy;
+    DeploymentConfig;
+    FurniUpdate_Add;
+    FurniUpdate_Change;
+    FurniUpdate_Remove;
+    HashMediaDesc;
+    HttpUserCodeLoader;
+    Item;
+    MemberInfo;
+    MemberName;
     MobInfo;
+    MsoyBureauClient;
+    MsoyGameDefinition;
+    MsoyLocation;
+    MsoyMatchConfig;
     ObserverInfo;
     PetInfo;
+    PlayerObject;
     PuppetName;
-    FurniUpdate_Change;
-    FurniUpdate_Add;
-    FurniUpdate_Remove;
     SceneAttrsUpdate;
     SceneOwnershipUpdate;
-    HashMediaDesc;
-    CloudfrontMediaDesc;
+    Trophy;
+    VizMemberName;
+    WhirledBureauClient;
 }
 }
 
