@@ -19,6 +19,7 @@ import com.google.inject.Singleton;
 
 import com.samskivert.net.MailUtil;
 import com.samskivert.util.ArrayUtil;
+import com.samskivert.util.Calendars;
 import com.samskivert.util.CollectionUtil;
 import com.samskivert.util.CountHashMap;
 import com.samskivert.util.Invoker;
@@ -36,6 +37,7 @@ import com.threerings.presents.annotation.BlockingThread;
 import com.threerings.util.MessageBundle;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
+import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.data.all.MemberMailUtil;
 import com.threerings.msoy.fora.gwt.ForumThread;
@@ -61,6 +63,7 @@ import com.threerings.msoy.person.gwt.FeedMessageAggregator;
 import com.threerings.msoy.person.gwt.FeedMessageType;
 import com.threerings.msoy.person.gwt.MyWhirledData.FeedCategory;
 import com.threerings.msoy.person.server.FeedLogic;
+import com.threerings.msoy.server.MediaDescFactory;
 
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.ServerConfig;
@@ -767,6 +770,10 @@ public class SpamLogic
                 // TODO: should we worry about this? I don't think I've ever seen any non-image
                 // media in my feed before...
                 return new StringWrapper(_html.append("[X]").finish());
+            }
+            if (md instanceof HashMediaDesc) {
+                md = MediaDescFactory.createMediaDesc((HashMediaDesc) md,
+                    (int) Calendars.now().addYears(1).toTime()/1000);
             }
             int size = MediaDescSize.HALF_THUMBNAIL_SIZE;
             if (page == Pages.WORLD && args.get(0, "").startsWith("s")) {
