@@ -42,7 +42,7 @@ public abstract class MediaDescFactory
     public static CloudfrontMediaDesc createMediaDesc (byte[] hash, byte mimeType, byte constraint)
     {
         return createMediaDesc(hash, mimeType, constraint,
-            (int) (Calendars.now().addDays(EXPIRATION_DAYS).toTime())/1000);
+            (int) (Calendars.now().addDays(EXPIRATION_DAYS).toTime()/1000));
     }
 
     /** Return a signed media descriptor with the given configuration and expiration epoch. */

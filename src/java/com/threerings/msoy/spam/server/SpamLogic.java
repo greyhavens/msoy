@@ -773,7 +773,7 @@ public class SpamLogic
             }
             if (md instanceof HashMediaDesc) {
                 md = MediaDescFactory.createMediaDesc((HashMediaDesc) md,
-                    (int) (Calendars.now().addYears(1).toTime())/1000);
+                    (int) (Calendars.now().addYears(1).toTime()/1000));
             }
             int size = MediaDescSize.HALF_THUMBNAIL_SIZE;
             if (page == Pages.WORLD && args.get(0, "").startsWith("s")) {
