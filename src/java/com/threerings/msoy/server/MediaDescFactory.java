@@ -41,8 +41,8 @@ public abstract class MediaDescFactory
     /** Return a signed media descriptor with the given configuration and default expiration. */
     public static CloudfrontMediaDesc createMediaDesc (byte[] hash, byte mimeType, byte constraint)
     {
-        return createMediaDesc(hash, mimeType, constraint,  
-            (int) Calendars.now().addDays(EXPIRATION_DAYS).toTime()/1000);
+        return createMediaDesc(hash, mimeType, constraint,
+            (int) (Calendars.now().addDays(EXPIRATION_DAYS).toTime())/1000);
     }
 
     /** Return a signed media descriptor with the given configuration and expiration epoch. */
@@ -58,7 +58,7 @@ public abstract class MediaDescFactory
             throw new RuntimeException("Failed to sign media URL", cfe);
         }
     }
-    
+
     /** Convenience method, to be phased out. */
     public static CloudfrontMediaDesc createMediaDesc (String s, byte mimeType, byte constraint)
     {
