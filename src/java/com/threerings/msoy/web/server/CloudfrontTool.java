@@ -64,6 +64,10 @@ public abstract class CloudfrontTool
                         result = iConn.invalidateObjects(args[1], Collections.singleton(args[2]));
                     } else if ("invreq".equals(cmd)) {
                         result = iConn.getInvalidation(args[1], args[2]);
+                    } else if ("addcname".equals(cmd)) {
+                        result = setCName(args[1], args[2], true);
+                    } else if ("delcname".equals(cmd)) {
+                        result = setCName(args[1], args[2], false);
 
                     } else if ("sign".equals(cmd)) {
                         String url = args[1];
@@ -91,6 +95,8 @@ public abstract class CloudfrontTool
                     "invreq <distId> <batchId>\n" +
                     "invalidate <distId> <key>\n" +
                     "selfsign <distId>\n" +
+                    "addcname <distId> <cname>\n" +
+                    "delcname <distId> <cname>\n" +
                     "validate\n" +
                     "sign <url> <days before expiration>");
                 return;
@@ -112,6 +118,27 @@ public abstract class CloudfrontTool
                 }
                 config.selfIsSigner = value;
                 return true;
+            }
+        });
+    }
+
+    public static Distribution setCName (String distId, final String cname, final boolean add)
+        throws CloudfrontException
+    {
+        return modifyDistribution(distId, new Modifier<DistributionConfig>() {
+            public boolean modify (DistributionConfig config) {
+                if (add) {
+                    if (config.cnames.contains(cname)) {
+                        return false;
+                    }
+                    config.cnames.add(cname);
+                    return true;
+                }
+                if (config.cnames.contains(cname)) {
+                    config.cnames.remove(cname);
+                    return true;
+                }
+                return false;
             }
         });
     }
