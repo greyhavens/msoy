@@ -226,7 +226,7 @@ public class DistributionAPI extends CloudfrontConnection
     {
         public String origin;
         public String callerReference;
-        public String cname;
+        public Set<String> cnames = Sets.newHashSet();
         public String comment;
         public Boolean enabled;
         public String defaultRootObject;
@@ -246,7 +246,7 @@ public class DistributionAPI extends CloudfrontConnection
             } else if (null != (str = reader.maybeString("CallerReference"))) {
                 callerReference = str;
             } else if (null != (str = reader.maybeString("CNAME"))) {
-                cname = str;
+                cnames.add(str);
             } else if (null != (str = reader.maybeString("Comment"))) {
                 comment = str;
             } else if (null != (bool = reader.maybeBoolean("Enabled"))) {
@@ -301,7 +301,9 @@ public class DistributionAPI extends CloudfrontConnection
         {
             writer.writeString("Origin", origin);
             writer.writeString("CallerReference", callerReference);
-            writer.writeString("CNAME", cname);
+            for (String cname : cnames) {
+                writer.writeString("CNAME", cname);
+            }
             writer.writeString("Comment", comment);
             writer.writeBoolean("Enabled", enabled);
             writer.writeString("DefaultRootObject", defaultRootObject);
