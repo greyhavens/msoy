@@ -7,6 +7,7 @@ import java.util.Collections;
 
 import com.google.common.base.Joiner;
 
+import com.samskivert.util.Calendars;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.msoy.server.ServerConfig;
@@ -69,12 +70,18 @@ public abstract class CloudfrontTool
                     } else if ("delcname".equals(cmd)) {
                         result = setCName(args[1], args[2], false);
 
-                    } else if ("sign".equals(cmd)) {
+                    } else if ("signepoch".equals(cmd)) {
+                        String url = args[1];
+                        int epoch = new Integer(args[2]);
+                        log.info("Signing URL for expiration", "epoch", epoch, "URL", url);
+                        result = tool.signURL(url, epoch);
+
+                    } else if ("signdays".equals(cmd)) {
                         String url = args[1];
                         int days = new Integer(args[2]);
-                        int now = ((int) (System.currentTimeMillis() / 1000));
+                        int epoch = (int) (Calendars.now().addDays(days).toTime()) / 1000;
                         log.info("Signing URL for expiration", "days", days, "URL", url);
-                        result = tool.signURL(url, now + days * 3600 * 24);
+                        result = tool.signURL(url, epoch);
                     }
                 }
             }
@@ -98,7 +105,8 @@ public abstract class CloudfrontTool
                     "addcname <distId> <cname>\n" +
                     "delcname <distId> <cname>\n" +
                     "validate\n" +
-                    "sign <url> <days before expiration>");
+                    "signepoch <url> <days before expiration>\n" +
+                    "signdays <url> <days before expiration>");
                 return;
             }
             System.out.println("Result: " + StringUtil.toString(result));
