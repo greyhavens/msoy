@@ -1,5 +1,6 @@
 //
-// $Id: $
+// $Id$
+
 package com.threerings.msoy.server;
 
 import com.samskivert.util.Calendars;
@@ -10,6 +11,8 @@ import com.threerings.msoy.data.all.MediaMimeTypes;
 import com.threerings.msoy.web.server.CloudfrontException;
 import com.threerings.msoy.web.server.CloudfrontURLSigner;
 import com.threerings.orth.data.MediaDesc;
+
+import static com.threerings.msoy.Log.log;
 
 /**
  * A central class for statically constructor media descriptors that are ready to view
@@ -49,14 +52,15 @@ public abstract class MediaDescFactory
     public static CloudfrontMediaDesc createMediaDesc (
         byte[] hash, byte mimeType, byte constraint, int expiration)
     {
+        String signature;
         try {
-            String signature = CloudfrontURLSigner.encodeSignature(
+            signature = CloudfrontURLSigner.encodeSignature(
                 _signer.createSignature(HashMediaDesc.getMediaPath(hash, mimeType), expiration));
-            return new CloudfrontMediaDesc(hash, mimeType, constraint, expiration, signature);
-
         } catch (CloudfrontException cfe) {
-            throw new RuntimeException("Failed to sign media URL", cfe);
+            log.warning("Failed to sign media URL", cfe);
+            signature = ""; // the media will fail to load, but the server will live on
         }
+        return new CloudfrontMediaDesc(hash, mimeType, constraint, expiration, signature);
     }
 
     /** Convenience method, to be phased out. */
