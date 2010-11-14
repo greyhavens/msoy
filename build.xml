@@ -54,7 +54,6 @@
   <filelist dir="." id="build.libs">
     <file name="${extlibs.dir}/advanced-components-1.4.1.jar"/>
     <file name="${extlibs.dir}/gwt-dnd.jar"/>
-    <file name="${extlibs.dir}/gwt-incubator.jar"/>
     <file name="${extlibs.dir}/guava-gwt.jar"/>
     <file name="${extlibs.dir}/junit-3.7.jar"/>
     <file name="${extlibs.dir}/junit4.jar"/>
@@ -85,7 +84,6 @@
     <file name="${extlibs.dir}/gson.jar"/>
     <file name="${extlibs.dir}/guice.jar"/>
     <file name="${extlibs.dir}/guice-multibindings.jar"/>
-    <file name="${extlibs.dir}/gwt-user.jar"/>
     <file name="${extlibs.dir}/jaxb/jaxb-api.jar"/>
     <file name="${extlibs.dir}/jcip-annotations.jar"/>
     <file name="${extlibs.dir}/jetty6/jetty-util.jar"/>
@@ -220,6 +218,7 @@
     </artifact:dependencies>
     <artifact:dependencies filesetId="runtime.remote.fileset">
       <dependency groupId="stax" artifactId="stax" version="1.2.0"/>
+      <dependency groupId="com.google.gwt" artifactId="gwt-user" version="2.1.0"/>
     </artifact:dependencies>
     <copy todir="${deploy.dir}/lib">
       <fileset refid="runtime.fileset"/>
@@ -237,7 +236,7 @@
                   version="0.0-SNAPSHOT"/> 
     </artifact:dependencies>
     <artifact:dependencies filesetId="build.remote.fileset">
-      <dependency groupId="com.google.gwt" artifactId="gwt-incubator" version="2.0.1"/>
+      <dependency groupId="com.google.gwt" artifactId="gwt-dev" version="2.1.0"/>
     </artifact:dependencies>
     <copy todir="${deploy.dir}/build">
       <fileset refid="build.fileset"/>
@@ -265,7 +264,6 @@
     </fileset>
     <fileset dir="${deploy.dir}/build">
       <include name="guava-gwt.jar"/>
-      <include name="gwt-incubator-2.0.1.jar"/>
       <include name="advanced-components-1.4.1.jar"/>
       <include name="*-gwt-0.0-SNAPSHOT.jar"/>
       <include name="gwt-dnd.jar"/>
@@ -475,8 +473,8 @@
     <java fork="true" maxmemory="1024M" failonerror="false" resultproperty="gwt.result"
     	classname="com.google.gwt.dev.Compiler">
       <classpath>
-        <fileset dir="${extlibs.dir}" includes="gwt-dev.jar"/> <!-- the GWT compiler -->
-        <fileset dir="${deploy.dir}/lib" includes="gwt-user.jar"/>
+        <fileset dir="${deploy.dir}/build" includes="gwt-dev-*.jar"/> <!-- the GWT compiler -->
+        <fileset dir="${deploy.dir}/lib" includes="gwt-user-*.jar"/>
         <path refid="gwt.classpath"/>
       </classpath>
       <!-- temporary workaround to crashing problem on build server's BSD java -->

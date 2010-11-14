@@ -7,13 +7,6 @@
   <inherits name='org.gwt.advanced.Grid'/>
   <stylesheet src="aw-theme.css"/>
 
-  <!-- for the incubator ScrollTable -->
-  <inherits name='com.google.gwt.gen2.table.ScrollTable'/>
-  <!-- Incubator bug: The ScrollTable class inherits from ResizableWidget but the module does not
-     * inherit the required source paths. Add it here. -->
-  <source path="com/google/gwt/widgetideas/client" includes="ResizableWidget*.java"/>
-  <stylesheet src='scrolltable.css'/>
-
   <!-- for the interface to the runtime configuration system -->
   <inherits name="com.threerings.admin.web.Admin"/>
 

@@ -18,16 +18,11 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.ListBox;
 
-import com.google.gwt.gen2.table.client.FixedWidthFlexTable;
-import com.google.gwt.gen2.table.client.FixedWidthGrid;
-import com.google.gwt.gen2.table.client.ScrollTable;
-import com.google.gwt.gen2.table.client.SortableGrid;
-import com.google.gwt.gen2.table.client.TableModelHelper.ColumnSortList;
-
-
 import com.threerings.msoy.admin.gwt.AdminService;
 import com.threerings.msoy.admin.gwt.AdminServiceAsync;
 import com.threerings.msoy.admin.gwt.StatsModel;
+
+import com.threerings.gwt.ui.FluentTable;
 
 import client.ui.MsoyUI;
 import client.util.InfoCallback;
@@ -77,85 +72,18 @@ public class StatsPanel extends FlowPanel
         clear();
         add(_controls);
 
-        // set up the header
-        FixedWidthFlexTable header = new FixedWidthFlexTable();
-        header.setCellSpacing(0);
-        header.setText(0, 0, model.getTitleHeader());
+        FluentTable table = new FluentTable(5, 0);
+        FluentTable.Cell cell = table.add().setText(model.getTitleHeader());
         for (int cc = 0, lc = model.getColumns(); cc < lc; cc++) {
-            header.setText(0, cc+1, model.getColumnHeader(cc));
-            header.getFlexCellFormatter().setHorizontalAlignment(
-                0, cc+1, HasAlignment.ALIGN_CENTER);
+            cell.right().setText(model.getColumnHeader(cc)).alignCenter();
         }
-
-        // set up the table contents
-        FixedWidthGrid data = new FixedWidthGrid();
-        data.setCellSpacing(0);
-        data.resize(model.getRows(), model.getColumns() + 1);
-//         data.setColumnSorter(new StatsColumnSorter(model));
         for (int rr = 0, lr = model.getRows(); rr < lr; rr++) {
-            data.setText(rr, 0, model.getRowTitle(rr));
+            cell = table.add().setText(model.getRowTitle(rr));
             for (int cc = 0, lc = model.getColumns(); cc < lc; cc++) {
-                data.setText(rr, cc+1, ""+model.getCell(rr, cc).value(model));
-                data.getCellFormatter().setHorizontalAlignment(rr, cc+1, HasAlignment.ALIGN_RIGHT);
+                cell.right().setText(""+model.getCell(rr, cc).value(model)).alignRight();
             }
-        }
-
-        // create our table
-        ScrollTable table = new ScrollTable(data, header);
-        table.setResizePolicy(ScrollTable.ResizePolicy.UNCONSTRAINED);
-        table.setScrollPolicy(ScrollTable.ScrollPolicy.HORIZONTAL);
-        table.setSize("100%", "100%");
-        int availwid = 700/*todo*/ - 11 - (model.getColumns()+1)*3; // border, colgap
-        int colwid = Math.min(100, Math.max(DATA_WIDTH, (availwid-200)/model.getColumns()));
-        table.setColumnWidth(0, Math.max(100, availwid - (model.getColumns() * colwid)));
-        for (int cc = 0; cc < model.getColumns(); cc++) {
-            table.setColumnWidth(cc+1, colwid);
         }
         add(table);
-    }
-
-    protected static class StatsColumnSorter extends SortableGrid.ColumnSorter
-    {
-        public StatsColumnSorter (StatsModel model) {
-            _model = model;
-            _curIndexes = makeIndexes();
-        }
-
-        @Override // from SortableGrid.ColumnSorter
-        public void onSortColumn(SortableGrid grid,
-            ColumnSortList sortList, SortableGrid.ColumnSorterCallback callback) {
-            final int column = sortList.getPrimaryColumn()-1; // -1 accounts for row label
-            final boolean ascending = sortList.isPrimaryAscending();
-            Integer[] newIndexes = makeIndexes();
-            Arrays.sort(newIndexes, new Comparator<Integer>() {
-                public int compare (Integer r1, Integer r2) {
-                    long r1v = _model.value(_curIndexes[r1], column);
-                    long r2v = _model.value(_curIndexes[r2], column);
-                    if (ascending) {
-                        return (r1v > r2v) ? 1 : (r1v < r2v ? -1 : 0);
-                    } else {
-                        return (r2v > r1v) ? 1 : (r2v < r1v ? -1 : 0);
-                    }
-                }
-            });
-            int[] indexes = new int[newIndexes.length];
-            for (int ii = 0; ii < _curIndexes.length; ii++) {
-                indexes[ii] = newIndexes[ii];
-                _curIndexes[ii] = _curIndexes[newIndexes[ii]];
-            }
-            callback.onSortingComplete(indexes);
-        }
-
-        protected Integer[] makeIndexes () {
-            Integer[] indexes = new Integer[_model.getRows()];
-            for (int ii = 0; ii < indexes.length; ii++) {
-                indexes[ii] = ii;
-            }
-            return indexes;
-        }
-
-        protected StatsModel _model;
-        protected Integer[] _curIndexes;
     }
 
     protected FlowPanel _controls;
