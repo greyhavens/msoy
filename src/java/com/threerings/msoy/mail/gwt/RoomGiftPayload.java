@@ -3,7 +3,7 @@
 
 package com.threerings.msoy.mail.gwt;
 
-import com.threerings.orth.data.MediaDesc;
+import com.threerings.msoy.data.all.HashMediaDesc;
 
 /**
  * Contains information on a room gifted from one player to another.
@@ -17,7 +17,7 @@ public class RoomGiftPayload extends MailPayload
     public String name;
 
     /** This room's canonical thumbnail (may be null). */
-    public MediaDesc thumbnail;
+    public HashMediaDesc thumbnail;
 
     /**
      * An empty constructor for deserialization.
@@ -29,7 +29,7 @@ public class RoomGiftPayload extends MailPayload
     /**
      * Create a new {@link RoomGiftPayload} with the supplied configuration.
      */
-    public RoomGiftPayload (int sceneId, String name, MediaDesc thumbnail)
+    public RoomGiftPayload (int sceneId, String name, HashMediaDesc thumbnail)
     {
         this.sceneId = sceneId;
         this.name = name;

@@ -3,8 +3,7 @@
 
 package com.threerings.msoy.mail.gwt;
 
-import com.threerings.orth.data.MediaDesc;
-
+import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.msoy.item.data.all.ItemIdent;
 
 /**
@@ -19,7 +18,7 @@ public class PresentPayload extends MailPayload
     public String name;
 
     /** This item's preview thumbnail (may be null). */
-    public MediaDesc thumbMedia;
+    public HashMediaDesc thumbMedia;
 
     /**
      * An empty constructor for deserialization.
@@ -31,7 +30,7 @@ public class PresentPayload extends MailPayload
     /**
      * Create a new {@link PresentPayload} with the supplied configuration.
      */
-    public PresentPayload (ItemIdent ident, String name, MediaDesc thumbMedia)
+    public PresentPayload (ItemIdent ident, String name, HashMediaDesc thumbMedia)
     {
         this.ident = ident;
         this.name = name;
