@@ -173,9 +173,9 @@ public /*abstract*/ class MsoyClient extends CrowdClient
         }
         MsoyContext.stubUrl = mbData.stubUrl;
 
-        // allow connecting the media server if it differs from the game server
-        if ((Security.sandboxType != Security.LOCAL_WITH_FILE) && mbData.crossDomainUrl != null) {
-            Security.loadPolicyFile(mbData.crossDomainUrl);
+        // allow connecting the media server
+        if (Security.sandboxType != Security.LOCAL_WITH_FILE) {
+            Security.loadPolicyFile(DeploymentConfig.crossDomainURL);
         }
     }
 

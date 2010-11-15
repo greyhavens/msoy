@@ -15,7 +15,4 @@ public class MsoyBootstrapData extends BootstrapData
 
     /** The signed URL of our MediaStub.swf */
     public String stubUrl;
-
-    /** The signed URL of our crossdomain.xml */
-    public String crossDomainUrl;
 }

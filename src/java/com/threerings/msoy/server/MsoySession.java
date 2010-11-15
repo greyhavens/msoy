@@ -98,21 +98,6 @@ public class MsoySession extends WhirledSession
         } catch (CloudfrontException e) {
             log.warning("Failed to sign MediaStub URL!", e);
         }
-
-        // allow connecting the media server if it differs from the game server
-        try {
-            URL url = new URL(DeploymentConfig.mediaURL);
-            if (!url.getHost().equals(DeploymentConfig.serverHost)) {
-                URL cUrl = new URL(
-                    url.getProtocol(), url.getHost(), url.getPort(), "/crossdomain.xml");
-                mData.crossDomainUrl = signer.signURL(cUrl.toString(), expiration);
-            } // else we leave it null, and the client doesn't register a policy
-
-        } catch (CloudfrontException e) {
-            log.warning("Failed to sign crossdomain.xml URL!", e);
-        } catch (MalformedURLException e) {
-            log.warning("Failed to parse/create crossdomain.xml URL!", e);
-        }
     }
 
     @Override // from PresentsSession

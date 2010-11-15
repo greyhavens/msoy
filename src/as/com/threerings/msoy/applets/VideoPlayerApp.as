@@ -2,12 +2,15 @@
 // $Id$
 
 package com.threerings.msoy.applets {
+import com.threerings.msoy.client.DeploymentConfig;
 
 import flash.display.Sprite;
 
 import flash.events.Event;
 
 import flash.external.ExternalInterface;
+
+import flash.system.Security;
 
 import com.threerings.util.ParameterUtil;
 
@@ -37,6 +40,9 @@ public class VideoPlayerApp extends Sprite
         } catch (err :Error) {
             // not to worry
         }
+
+        Security.loadPolicyFile(DeploymentConfig.crossDomainURL);
+
         ParameterUtil.getParameters(this, gotParams);
     }
 

@@ -421,6 +421,7 @@
         <filter token="recaptcha_public" value="${recaptcha_token}"/>
         <filter token="billing_url" value="${billing_url}"/>
         <filter token="signing_key_id" value="${cloud_signing_key_id}"/>
+        <filter token="xdom_url" value="${xdom_url}"/>
       </filterset>
     </copy>
   </target>
@@ -546,6 +547,7 @@
     <property name="dev_deployment" value="true"/>
     <property name="socket_policy_port" value="47623"/>
     <property name="log_levels_config" value=""/>
+    <property name="xdom_url" value="${media_url}crossdomain.xml"/>
     <!-- then overwrite with values read from msoy-server.properties -->
     <copy file="${asrc.dir}/com/threerings/msoy/client/DeploymentConfig.as.tmpl"
           tofile="${asrc.dir}/com/threerings/msoy/client/DeploymentConfig.as"
@@ -564,6 +566,7 @@
         <filter token="billing_url" value="${billing_url}"/>
         <filter token="announce_group_id" value="${announce_group_id}"/>
         <filter token="signing_key_id" value="${cloud_signing_key_id}"/>
+        <filter token="xdom_url" value="${xdom_url}"/>
       </filterset>
     </copy>
     <copy file="lib/framework_3.3.0.4852.swz" todir="pages/clients"/>
