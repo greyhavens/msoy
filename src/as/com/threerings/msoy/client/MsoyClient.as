@@ -154,12 +154,6 @@ public /*abstract*/ class MsoyClient extends CrowdClient
         menu.hideBuiltInItems();
         UberClient.getApplication().contextMenu = menu;
         menu.addEventListener(ContextMenuEvent.MENU_SELECT, contextMenuWillPopUp);
-
-        // allow connecting the media server
-        if (Security.sandboxType != Security.LOCAL_WITH_FILE) {
-            log.info("Loading policy file: " + DeploymentConfig.crossDomainURL);
-            Security.loadPolicyFile(DeploymentConfig.crossDomainURL);
-        }
     }
 
     // from Client

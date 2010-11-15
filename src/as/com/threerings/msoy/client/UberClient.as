@@ -11,6 +11,9 @@ import mx.core.Application;
 
 import com.threerings.flex.FlexUtil;
 
+import com.threerings.util.Log;
+
+import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.data.UberClientModes;
 import com.threerings.msoy.utils.UberClientLoader;
 
@@ -146,6 +149,12 @@ public class UberClient
             // do not load the world! Instead complain about being unable to read parameters.
             app.addChild(FlexUtil.createLabel("There was a problem starting the viewer."));
             return;
+        }
+
+        // allow connecting the media server
+        if (Security.sandboxType != Security.LOCAL_WITH_FILE) {
+            Log.getLog(UberClient).info("Loading policy file: " + DeploymentConfig.crossDomainURL);
+            Security.loadPolicyFile(DeploymentConfig.crossDomainURL);
         }
 
         switch (mode) {
