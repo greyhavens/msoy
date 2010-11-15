@@ -18,6 +18,10 @@ import com.google.common.collect.Maps;
 import com.samskivert.util.ByteEnum;
 import com.samskivert.util.ByteEnumUtil;
 
+import com.threerings.msoy.data.all.CloudfrontMediaDesc;
+import com.threerings.msoy.data.all.HashMediaDesc;
+import com.threerings.msoy.server.MediaDescFactory;
+
 /**
  * Handles the marshalling and unmarshalling of persistent instances to JSON objects.
  *
@@ -228,6 +232,16 @@ public class JSONMarshaller<T>
                 Object value = deserialize(jObj.get(key), field.getType());
                 field.set(obj, value);
             }
+
+            // TODO: Hackalicious, make this general (or kill off JSON marshalling).
+            if (_pclass.equals(HashMediaDesc.class)) {
+                com.threerings.msoy.Log.log.info("Upgrading desc", "oldDesc", obj);
+                @SuppressWarnings("unchecked")
+                T newObj = (T) MediaDescFactory.createMediaDesc((HashMediaDesc) obj);
+                com.threerings.msoy.Log.log.info("Upgraded desc", "newDesc", newObj);
+                return newObj;
+            }
+
             return obj;
 
         } catch (Exception e) {
