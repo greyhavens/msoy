@@ -24,6 +24,7 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
+import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.group.gwt.GroupService;
 import com.threerings.msoy.group.gwt.GroupServiceAsync;
@@ -161,8 +162,9 @@ public class ComposePanel extends FlowPanel
     {
         _stuffsvc.loadItem(new ItemIdent(type, itemId), new InfoCallback<Item>() {
             public void onSuccess (Item result) {
+                // in Whirled, this MediaDesc are always HashMediaDesc; still, this is gross
                 PresentPayload payload = new PresentPayload(
-                    result.getIdent(), result.name, result.getThumbnailMedia());
+                    result.getIdent(), result.name, (HashMediaDesc) result.getThumbnailMedia());
                 _contents.setText(3, 0, _msgs.composeAttachment(), 1, "Label");
                 _contents.getFlexCellFormatter().setVerticalAlignment(
                     3, 0, HasAlignment.ALIGN_TOP);
@@ -177,8 +179,10 @@ public class ComposePanel extends FlowPanel
         // TODO: don't load detail, but create a new service for getting one RoomInfo ?
         _roomsvc.loadRoomDetail(sceneId, new InfoCallback<RoomDetail>() {
             public void onSuccess (RoomDetail detail) {
+                // in Whirled, this MediaDesc are always HashMediaDesc; still, this is gross
                 RoomGiftPayload payload = new RoomGiftPayload(
-                    detail.info.sceneId, detail.info.name, detail.info.thumbnail);
+                    detail.info.sceneId, detail.info.name,
+                    (HashMediaDesc) detail.info.thumbnail);
                 _contents.setText(3, 0, _msgs.composeAttachment(), 1, "Label");
                 _contents.getFlexCellFormatter().setVerticalAlignment(
                     3, 0, HasAlignment.ALIGN_TOP);
