@@ -421,7 +421,6 @@
         <filter token="recaptcha_public" value="${recaptcha_token}"/>
         <filter token="billing_url" value="${billing_url}"/>
         <filter token="signing_key_id" value="${cloud_signing_key_id}"/>
-        <filter token="xdom_url" value="${xdom_url}"/>
       </filterset>
     </copy>
   </target>
