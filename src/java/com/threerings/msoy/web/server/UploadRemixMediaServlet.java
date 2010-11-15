@@ -10,6 +10,8 @@ import org.apache.commons.fileupload.FileUploadException;
 
 import com.samskivert.io.StreamUtil;
 
+import com.threerings.msoy.data.all.CloudfrontMediaDesc;
+import com.threerings.msoy.server.MediaDescFactory;
 import com.threerings.msoy.web.server.UploadUtil.MediaInfo;
 
 /**
@@ -32,11 +34,16 @@ public class UploadRemixMediaServlet extends AbstractUploadServlet
         // upload it to S3
         UploadUtil.publishUploadFile(uploadFile);
 
+        // acquire a signed description of the file
+        CloudfrontMediaDesc desc = MediaDescFactory.createMediaDesc(
+            info.hash, info.mimeType, info.constraint);
+
         // tell the remixer the hash and mimetype, so that it can find the file
         ctx.rsp.setContentType("text/plain");
         PrintWriter out = ctx.rsp.getWriter();
         try {
-            out.println(info.hash + " " + info.mimeType);
+            out.println(info.hash + " " + info.mimeType + " " + desc.getExpiration()
+                + " " + desc.getSignature());
         } finally {
             StreamUtil.close(out);
         }

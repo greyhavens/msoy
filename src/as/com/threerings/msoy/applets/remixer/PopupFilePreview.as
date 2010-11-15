@@ -38,7 +38,11 @@ import com.threerings.flex.CommandButton;
 import com.threerings.flex.CommandLinkButton;
 import com.threerings.flex.PopUpUtil;
 
+import com.threerings.util.Log;
+
 import com.threerings.orth.data.MediaDesc;
+import com.threerings.msoy.data.all.MediaDescImpl;
+import com.threerings.msoy.data.all.CloudfrontMediaDesc;
 import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.msoy.data.all.MediaMimeTypes;
 
@@ -244,9 +248,12 @@ public class PopupFilePreview extends TitleWindow
         var filename :String = stuff.shift();
         var response :String = stuff.shift();
         stuff = response.split(" ");
-        var desc :HashMediaDesc = new HashMediaDesc(
-            HashMediaDesc.stringToHash(stuff[0]), parseInt(stuff[1]));
+
+        var desc :CloudfrontMediaDesc = new CloudfrontMediaDesc(
+            HashMediaDesc.stringToHash(stuff[0]), parseInt(stuff[1]), MediaDescImpl.NOT_CONSTRAINED,
+            parseInt(stuff[2]), stuff[3]);
         var url :String = desc.getMediaPath();
+
         // now, download the mofo
         var downloader :Downloader = new Downloader(_ctx);
         downloader.addEventListener(Event.COMPLETE, handleFileChosen);
