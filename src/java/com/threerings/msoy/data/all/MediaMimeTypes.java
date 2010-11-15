@@ -96,7 +96,13 @@ public abstract class MediaMimeTypes
     public static byte suffixToMimeType (String filename)
     {
         // note: this works if a full filename/url is passed, or just the extension
-        String ext = filename.substring(filename.lastIndexOf('.') + 1).toLowerCase();
+        String ext = filename.substring(filename.lastIndexOf('.') + 1);
+        int ix = ext.indexOf('?');
+        if (ix > 0) {
+            ext = ext.substring(0, ix);
+        }
+        ext = ext.toLowerCase();
+
         if ("txt".equals(ext)) {
             return TEXT_PLAIN;
         } else if ("as".equals(ext)) {
