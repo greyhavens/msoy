@@ -36,6 +36,12 @@ public class CloudfrontMediaDesc extends HashMediaDesc
         return _url;
     }
 
+    // from Object
+    override public function toString () :String
+    {
+        return hashToString(hash) + ":" + mimeType + ":" + _expiration + " (signed)";
+    }
+
     // documentation inherited from interface Streamable
     override public function readObject (ins :ObjectInputStream) :void
     {
