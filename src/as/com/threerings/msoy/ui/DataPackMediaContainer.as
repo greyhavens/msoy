@@ -32,6 +32,7 @@ import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.Snapshottable;
 import com.threerings.msoy.data.MsoyDataPack;
+import com.threerings.msoy.data.all.MediaMimeTypes;
 
 /**
  * Dispatched when we actually are about to start loading the media, as opposed to a zip
@@ -280,7 +281,7 @@ public class DataPackMediaContainer extends MsoyMediaContainer
      */
     protected function isZipUrl (url :String) :Boolean
     {
-        return StringUtil.endsWith(url.toLowerCase(), ".zip");
+        return MediaMimeTypes.suffixToMimeType(url) == MediaMimeTypes.APPLICATION_ZIP;
     }
 
     /**
