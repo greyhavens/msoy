@@ -71,6 +71,8 @@ public class MediaUploadUtil
      *    hash: String (MediaDesc hash)
      *    mimeType: int (MediaDesc mimeType)
      *    constraint: int (MediaDesc constraint)
+     *    expiration :int (CloudfrontMediaDesc expiration)
+     *    signature :String (CloudfrontMediaDesc signature, base64-encoded)
      *    width: int
      *    height: int
      * }
