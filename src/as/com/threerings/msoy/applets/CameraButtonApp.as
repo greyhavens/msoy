@@ -8,10 +8,13 @@ import flash.events.MouseEvent;
 import flash.external.ExternalInterface;
 import flash.media.Camera;
 import flash.text.TextFieldAutoSize;
+import flash.system.Security;
 
 import com.threerings.util.ParameterUtil;
 
 import com.threerings.ui.SimpleSkinButton;
+
+import com.threerings.msoy.client.DeploymentConfig;
 
 [SWF(width="160", height="19")]
 public class CameraButtonApp extends Sprite
@@ -31,6 +34,8 @@ public class CameraButtonApp extends Sprite
             button.addEventListener(MouseEvent.CLICK, handleClick);
             addChild(button);
         }
+
+        Security.loadPolicyFile(DeploymentConfig.crossDomainURL);
 
         ParameterUtil.getParameters(this, gotParams);
     }

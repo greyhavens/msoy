@@ -9,10 +9,13 @@ import flash.events.Event;
 
 import flash.external.ExternalInterface;
 
+import flash.system.Security;
+
 import com.threerings.util.ParameterUtil;
 
 import com.threerings.media.Mp3AudioPlayer;
 
+import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.ui.MsoyAudioDisplay;
 
@@ -22,6 +25,8 @@ public class AudioPlayerApp extends Sprite
     public function AudioPlayerApp ()
     {
         this.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
+
+        Security.loadPolicyFile(DeploymentConfig.crossDomainURL);
 
         ParameterUtil.getParameters(this, gotParams);
     }

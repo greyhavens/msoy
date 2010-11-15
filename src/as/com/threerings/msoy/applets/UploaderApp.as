@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.applets {
 
+import flash.display.Sprite;
+
 import flash.events.DataEvent;
 import flash.events.ErrorEvent;
 import flash.events.Event;
@@ -14,19 +16,20 @@ import flash.events.SecurityErrorEvent;
 
 import flash.external.ExternalInterface;
 
-import flash.display.Sprite;
-
 import flash.net.FileFilter;
 import flash.net.FileReference;
 
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 
+import flash.system.Security;
+
 import com.threerings.util.ParameterUtil;
 
 import com.threerings.ui.SimpleSkinButton;
 import com.threerings.text.TextFieldUtil;
 
+import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.applets.net.MediaUploadUtil;
 
 [SWF(width="200", height="40")]
@@ -57,6 +60,8 @@ public class UploaderApp extends Sprite
         _fileRef.addEventListener(ProgressEvent.PROGRESS, handleProgress);
         _fileRef.addEventListener(DataEvent.UPLOAD_COMPLETE_DATA, handleUploadCompleteData);
         _fileRef.addEventListener(Event.COMPLETE, handleUploadComplete);
+
+        Security.loadPolicyFile(DeploymentConfig.crossDomainURL);
 
         ParameterUtil.getParameters(this, gotParams);
     }
