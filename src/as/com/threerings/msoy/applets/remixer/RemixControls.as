@@ -8,6 +8,8 @@ import flash.events.ErrorEvent;
 import flash.events.IOErrorEvent;
 import flash.events.ProgressEvent;
 import flash.events.SecurityErrorEvent;
+import flash.system.Security;
+import flash.system.Security;
 
 import flash.external.ExternalInterface;
 
@@ -120,6 +122,8 @@ public class RemixControls extends HBox
         } catch (err :Error) {
             // whatever
         }
+
+        Security.loadPolicyFile(DeploymentConfig.crossDomainURL);
 
         ParameterUtil.getParameters(app, function (params :Object) :void  {
             _params = params;
