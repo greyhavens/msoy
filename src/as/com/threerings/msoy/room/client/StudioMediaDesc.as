@@ -27,6 +27,12 @@ public class StudioMediaDesc extends MediaDescImpl
         return _url;
     }
 
+    // from MediaDesc
+    override public function isBleepable () :Boolean
+    {
+        return false;
+    }
+
     override public function equals (other :Object) :Boolean
     {
         return (other is StudioMediaDesc) &&
