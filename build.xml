@@ -228,7 +228,7 @@
       <remoteRepository refid="ooo.maven.depends.repo"/>
       <dependency groupId="com.threerings.narya" artifactId="narya-gwt" version="0.0-SNAPSHOT"/>
       <dependency groupId="com.threerings" artifactId="orth-gwt" version="0.0-SNAPSHOT"/>
-      <dependency groupId="com.threerings" artifactId="underwire-gwt" version="1.0-SNAPSHOT">
+      <dependency groupId="com.threerings" artifactId="underwire-gwt" version="1.0-SNAPSHOT"/>
     </artifact:dependencies>
     <artifact:dependencies filesetId="build.remote.fileset">
       <dependency groupId="com.threerings" artifactId="gwt-utils" version="1.2"/>
