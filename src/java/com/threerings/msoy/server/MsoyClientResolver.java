@@ -6,11 +6,15 @@ package com.threerings.msoy.server;
 import static com.threerings.msoy.Log.log;
 
 import java.util.List;
+import java.util.Map;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+
 import com.google.inject.Inject;
 
+import com.samskivert.util.StringUtil;
 import com.samskivert.util.Tuple;
 
 import com.threerings.io.Streamable;
@@ -153,20 +157,26 @@ public class MsoyClientResolver extends CrowdClientResolver
     protected void resolveMember (final MemberObject memobj)
         throws Exception
     {
+        // start keeping track of what we're doing
+        ResolutionProfiler profiler = new ResolutionProfiler();
+
         // load up their member information using on their authentication (account) name
         final MemberRecord member = _memberRepo.loadMember(_username.toString());
         if (member == null) {
             throw new Exception("Missing member record for authenticated member? " +
                                 "[username=" + _username + "]");
         }
+        profiler.complete(Step.MEMBER);
 
         final MemberMoney money = _moneyLogic.getMoneyFor(member.memberId);
+        profiler.complete(Step.MONEY);
 
         // NOTE: we avoid using the dobject setters here because we know the object is not out in
         // the wild and there's no point in generating a crapload of events during user
         // initialization when we know that no one is listening
-
         final ProfileRecord precord = _profileRepo.loadProfile(member.memberId);
+        profiler.complete(Step.PROFILE);
+
         memobj.memberName = new VizMemberName(
             member.name, member.memberId,
             (precord == null) ? MemberCard.DEFAULT_PHOTO : precord.getPhoto());
@@ -193,12 +203,14 @@ public class MsoyClientResolver extends CrowdClientResolver
         MemberLocal local = memobj.getLocal(MemberLocal.class);
         final List<Stat> stats = _statRepo.loadStats(member.memberId);
         local.stats = new ServerStatSet(stats.iterator(), _badgeMan, memobj);
+        profiler.complete(Step.STATS);
 
         // and their mutelist
         int[] muted = _memberRepo.loadMutelist(member.memberId);
         if (muted.length > 0) {
             local.mutedMemberIds = muted;
         }
+        profiler.complete(Step.MUTED);
 
         // and their badges
         local.badgesVersion = member.badgesVersion;
@@ -208,6 +220,7 @@ public class MsoyClientResolver extends CrowdClientResolver
         local.inProgressBadges = new InProgressBadgeSet(
             Iterables.transform(_badgeRepo.loadInProgressBadges(member.memberId),
                                 InProgressBadgeRecord.TO_BADGE));
+        profiler.complete(Step.BADGES);
 
 //        // load up any item lists they may have
 //        List<ItemListInfo> itemLists = _itemMan.getItemLists(member.memberId);
@@ -215,14 +228,17 @@ public class MsoyClientResolver extends CrowdClientResolver
 
         // fill in this member's raw friends list; the friend manager will update it later
         local.friendIds = _memberRepo.loadFriendIds(member.memberId);
+        profiler.complete(Step.FRIENDS);
 
         // load up this member's group memberships
         memobj.groups = new DSet<GroupMembership>(
             // we don't pass in member name here because we don't need it on the client
             _groupRepo.resolveGroupMemberships(member.memberId, null).iterator());
+        profiler.complete(Step.GROUPS);
 
         // load up this member's current new mail count
         memobj.newMailCount = _mailLogic.getUnreadConvoCount(member.memberId);
+        profiler.complete(Step.MAIL);
 
         // load up their selected avatar, we'll configure it later
         if (member.avatarId != 0) {
@@ -232,11 +248,14 @@ public class MsoyClientResolver extends CrowdClientResolver
                 MemoriesRecord memrec = _memoryRepo.loadMemory(avatar.getType(), avatar.itemId);
                 local.memories = (memrec == null) ? null : memrec.toEntry();
             }
+            profiler.complete(Step.AVATAR);
         }
 
         // resolve their persisted theme
-        memobj.theme = (member.themeGroupId != 0) ?
-            _groupRepo.loadGroupName(member.themeGroupId) : null;
+        if (member.themeGroupId != 0) {
+            memobj.theme = _groupRepo.loadGroupName(member.themeGroupId);
+            profiler.complete(Step.THEME);
+        }
 
         // for players, resolve this here from the database.
         // guests will get resolution later on, in MsoySession.sessionWillStart()
@@ -245,6 +264,7 @@ public class MsoyClientResolver extends CrowdClientResolver
         // Load up the member's experiences
         //memobj.experiences = new DSet<MemberExperience>(
         //        _memberLogic.getExperiences(member.memberId));
+        profiler.complete();
     }
 
     @Override // from ClientResolver
@@ -257,6 +277,70 @@ public class MsoyClientResolver extends CrowdClientResolver
         // resolve this user's party info
         user.setParty(_peerMan.getPartySummary(user.getMemberId()));
     }
+
+    protected enum Step {
+        MEMBER, MONEY, PROFILE, STATS, MUTED, BADGES, FRIENDS, GROUPS, MAIL,
+        AVATAR, THEME,
+    }
+
+    /**
+     * Keep track of how much time we spend performing each logically discrete step in
+     * the MemberObject (and MemberLocal) resolution process. We additionally abort the
+     * resolution if the member has disconnected.
+     */
+    protected class ResolutionProfiler
+    {
+        protected void complete (Step step)
+            throws ClientDisconnectedException
+        {
+            // sanity check
+            if (_profile.containsKey(step)) {
+                throw new IllegalStateException("Already completed step: " + step);
+            }
+
+            // abort resolution process if client disconnected
+            try {
+                enforceConnected();
+
+            } catch (ClientDisconnectedException cde) {
+                // let the world know how far we got
+                log.info("Disconnected", "step", step, "profile", buildProfile());
+                // then finish freaking out
+                throw cde;
+            }
+
+            // else register how long we took to do this one step
+            long now = System.nanoTime();
+            _profile.put(step, (int) ((now - _stamp) / 1000));
+            _stamp = now;
+        }
+
+        protected void complete ()
+        {
+            // if we're entirely done, let the world know
+            log.info("Completed", "profile", buildProfile());
+        }
+
+        protected String buildProfile ()
+        {
+            StringBuilder builder = new StringBuilder("[ ");
+            boolean first = true;
+            for (Step step : Step.values()) {
+                if (_profile.containsKey(step)) {
+                    if (!first) {
+                        builder.append(", ");
+                    }
+                    first = false;
+                    builder.append(step.toString()).append("=").append(_profile.get(step));
+                }
+            }
+            return builder.append(" ]").toString();
+        }
+
+        protected Map<Step, Integer> _profile = Maps.newHashMap();
+        protected long _stamp = System.nanoTime();
+    }
+
 
     /** Info on our member object forwarded from another server. */
     protected Tuple<MemberObject,Streamable[]> _fwddata;
