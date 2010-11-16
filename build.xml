@@ -209,10 +209,7 @@
       <dependency groupId="com.threerings" artifactId="toybox" version="0.0-SNAPSHOT"/>
       <dependency groupId="com.threerings" artifactId="toyboxlib" version="0.0-SNAPSHOT"
                   type="swc"/>
-      <dependency groupId="com.threerings" artifactId="underwire" version="1.0-SNAPSHOT">
-        <!-- we don't need gwt-utils and its depends at runtime, just for building -->
-        <exclusion groupId="com.threerings" artifactId="gwt-utils"/>
-      </dependency>
+      <dependency groupId="com.threerings" artifactId="underwire" version="1.0-SNAPSHOT"/>
       <dependency groupId="org.jivesoftware.smack" artifactId="smack-component"
                   version="0.0-SNAPSHOT"/>
     </artifact:dependencies>
@@ -231,6 +228,7 @@
       <remoteRepository refid="ooo.maven.depends.repo"/>
       <dependency groupId="com.threerings.narya" artifactId="narya-gwt" version="0.0-SNAPSHOT"/>
       <dependency groupId="com.threerings" artifactId="orth-gwt" version="0.0-SNAPSHOT"/>
+      <dependency groupId="com.threerings" artifactId="underwire-gwt" version="1.0-SNAPSHOT">
     </artifact:dependencies>
     <artifact:dependencies filesetId="build.remote.fileset">
       <dependency groupId="com.threerings" artifactId="gwt-utils" version="1.2"/>
