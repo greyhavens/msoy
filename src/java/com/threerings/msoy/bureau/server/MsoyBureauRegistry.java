@@ -15,7 +15,7 @@ import com.threerings.presents.server.InvocationManager;
 import com.threerings.presents.server.PresentsSession;
 import com.threerings.presents.server.ServiceAuthenticator;
 import com.threerings.presents.server.SessionFactory;
-import com.threerings.presents.server.net.ConnectionManager;
+import com.threerings.presents.server.net.PresentsConnectionManager;
 
 import com.threerings.bureau.server.BureauRegistry;
 import com.threerings.bureau.server.BureauSession;
@@ -36,7 +36,7 @@ import com.threerings.msoy.bureau.data.WindowCredentials;
 public class MsoyBureauRegistry extends BureauRegistry
 {
     @Inject public MsoyBureauRegistry (
-        InvocationManager invmgr, ConnectionManager conmgr, ClientManager clmgr)
+        InvocationManager invmgr, PresentsConnectionManager conmgr, ClientManager clmgr)
     {
         super(invmgr, conmgr, clmgr);
 

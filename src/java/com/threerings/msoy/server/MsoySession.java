@@ -16,7 +16,7 @@ import com.threerings.presents.dobj.AttributeChangeListener;
 import com.threerings.presents.dobj.AttributeChangedEvent;
 import com.threerings.presents.net.AuthRequest;
 import com.threerings.presents.net.BootstrapData;
-import com.threerings.presents.server.net.Connection;
+import com.threerings.presents.server.net.PresentsConnection;
 
 import com.threerings.crowd.data.OccupantInfo;
 
@@ -163,7 +163,7 @@ public class MsoySession extends WhirledSession
     }
 
     @Override // from PresentsSession
-    protected void resumeSession (AuthRequest req, Connection conn)
+    protected void resumeSession (AuthRequest req, PresentsConnection conn)
     {
         // note that we're in the middle of resuming a session so that we don't end our session
         // when the old connection is closed

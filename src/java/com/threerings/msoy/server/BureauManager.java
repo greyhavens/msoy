@@ -22,7 +22,6 @@ import com.threerings.presents.server.ClientManager;
 import com.threerings.presents.server.ClientResolver;
 import com.threerings.presents.server.InvocationManager;
 import com.threerings.presents.server.PresentsDObjectMgr;
-import com.threerings.presents.server.net.ConnectionManager;
 
 import com.threerings.bureau.server.BureauRegistry;
 
@@ -33,6 +32,7 @@ import com.threerings.msoy.bureau.data.BureauLauncherCodes;
 import com.threerings.msoy.bureau.server.BureauLauncherDispatcher;
 import com.threerings.msoy.bureau.server.BureauLauncherProvider;
 import com.threerings.msoy.bureau.server.BureauLauncherSender;
+import com.threerings.nio.conman.ConnectionManager;
 
 import com.whirled.bureau.data.BureauTypes;
 

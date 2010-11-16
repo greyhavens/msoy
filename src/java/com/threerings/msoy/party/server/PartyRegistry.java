@@ -31,7 +31,7 @@ import com.threerings.presents.peer.data.NodeObject;
 import com.threerings.presents.server.ClientManager;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.SessionFactory;
-import com.threerings.presents.server.net.ConnectionManager;
+import com.threerings.presents.server.net.PresentsConnectionManager;
 import com.threerings.presents.server.InvocationManager;
 
 import com.threerings.crowd.data.OccupantInfo;
@@ -94,7 +94,7 @@ import static com.threerings.msoy.Log.log;
 public class PartyRegistry
     implements PartyBoardProvider, PeerPartyProvider
 {
-    @Inject public PartyRegistry (InvocationManager invmgr, ConnectionManager conmgr,
+    @Inject public PartyRegistry (InvocationManager invmgr, PresentsConnectionManager conmgr,
                                   ClientManager clmgr, PartyAuthenticator partyAuthor)
     {
         invmgr.registerDispatcher(new PartyBoardDispatcher(this), MsoyCodes.WORLD_GROUP);

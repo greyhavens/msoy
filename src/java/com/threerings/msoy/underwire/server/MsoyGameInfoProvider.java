@@ -20,7 +20,6 @@ import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.persist.MemberWarningRecord;
 import com.threerings.msoy.underwire.gwt.MsoyAccount;
-
 import com.threerings.underwire.server.GameInfoProvider;
 import com.threerings.underwire.web.data.Account;
 
@@ -31,9 +30,9 @@ import com.threerings.underwire.web.data.Account;
 public class MsoyGameInfoProvider extends GameInfoProvider
 {
     @Override // from GameInfoProvider
-    public Map<String,List<String>> resolveGameNames (Set<String> names)
+    public Map<String, List<String>> resolveGameNames (Set<String> names)
     {
-        Map<String,List<String>> map = Maps.newHashMap();
+        Map<String, List<String>> map = Maps.newHashMap();
         for (MemberName name : _memberRepo.loadMemberNames(names, TO_INT).values()) {
             map.put(Integer.toString(name.getMemberId()), Lists.newArrayList(name.toString()));
         }

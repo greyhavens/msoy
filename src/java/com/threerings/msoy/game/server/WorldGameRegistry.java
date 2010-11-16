@@ -31,7 +31,7 @@ import com.threerings.presents.server.ClientManager;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
 import com.threerings.presents.server.SessionFactory;
-import com.threerings.presents.server.net.ConnectionManager;
+import com.threerings.presents.server.net.PresentsConnectionManager;
 
 import com.threerings.crowd.server.BodyManager;
 import com.threerings.crowd.server.PlaceManager;
@@ -72,7 +72,7 @@ import static com.threerings.msoy.Log.log;
 public class WorldGameRegistry
     implements WorldGameProvider, MsoyPeerManager.PeerObserver
 {
-    @Inject public WorldGameRegistry (InvocationManager invmgr, ConnectionManager conmgr,
+    @Inject public WorldGameRegistry (InvocationManager invmgr, PresentsConnectionManager conmgr,
                                       ClientManager clmgr, GameAuthenticator gameAuthor)
     {
         invmgr.registerDispatcher(new WorldGameDispatcher(this), MsoyCodes.GAME_GROUP);
