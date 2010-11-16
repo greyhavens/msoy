@@ -15,16 +15,23 @@ import java.util.Set;
 import com.google.common.base.Function;
 import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.google.inject.internal.Maps;
+
 import com.samskivert.util.Invoker;
 import com.samskivert.util.Lifecycle;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.StringUtil;
 import com.samskivert.util.Tuple;
 import com.samskivert.util.ResultListener.NOOP;
+
+import com.threerings.presents.annotation.BlockingThread;
+import com.threerings.presents.annotation.MainInvoker;
+import com.threerings.presents.dobj.RootDObjectManager;
+import com.threerings.presents.peer.data.NodeObject.Lock;
+
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.group.server.persist.ThemeRecord;
@@ -33,10 +40,7 @@ import com.threerings.msoy.peer.data.HostedTheme;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.server.PopularPlacesSnapshot;
-import com.threerings.presents.annotation.BlockingThread;
-import com.threerings.presents.annotation.MainInvoker;
-import com.threerings.presents.dobj.RootDObjectManager;
-import com.threerings.presents.peer.data.NodeObject.Lock;
+
 
 /**
  * Maintains information regarding existing themes and which ones we're responsible

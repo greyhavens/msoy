@@ -10,13 +10,13 @@ import java.util.Set;
 import org.apache.mina.common.IoAcceptor;
 
 import com.google.common.base.Predicate;
+import com.google.common.collect.Sets;
 import com.google.common.primitives.Ints;
 
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
-import com.google.inject.internal.Sets;
 
 import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
@@ -299,11 +299,6 @@ public class MsoyServer extends MsoyBaseServer
 
         if (_otherNodePorts == null) {
             _otherNodePorts = Sets.newHashSet();
-
-
-
-
-
         }
         _otherNodePorts.remove(ports);
 

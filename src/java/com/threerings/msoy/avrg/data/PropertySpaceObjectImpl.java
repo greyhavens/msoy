@@ -12,7 +12,8 @@ import com.whirled.game.data.PropertySpaceObject;
 import com.whirled.game.server.PropertySpaceHelper;
 
 import com.google.common.collect.Maps;
-import com.google.inject.internal.Sets;
+import com.google.common.collect.Sets;
+
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
 import com.threerings.io.SimpleStreamableObject;
