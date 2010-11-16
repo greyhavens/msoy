@@ -206,7 +206,6 @@
       <dependency groupId="com.threerings" artifactId="orth" version="0.0-SNAPSHOT"/>
       <dependency groupId="com.threerings" artifactId="orth-gwt" version="0.0-SNAPSHOT"/>
       <dependency groupId="com.threerings" artifactId="orthlib" version="0.0-SNAPSHOT" type="swc"/>
-      <dependency groupId="com.threerings" artifactId="gwt-utils" version="0.0-SNAPSHOT"/>
       <dependency groupId="com.threerings" artifactId="pulse" version="0.0-SNAPSHOT"/>
       <dependency groupId="com.threerings" artifactId="threerings" version="0.0-SNAPSHOT"/>
       <dependency groupId="com.threerings" artifactId="toybox" version="0.0-SNAPSHOT"/>
@@ -229,11 +228,11 @@
     <!-- these libraries we only need to build -->
     <artifact:dependencies filesetId="build.fileset">
       <remoteRepository refid="ooo.maven.depends.repo"/>
-      <dependency groupId="com.samskivert" artifactId="samskivert-gwt" version="0.0-SNAPSHOT"/>
       <dependency groupId="com.threerings.narya" artifactId="narya-tools-full"
                   version="0.0-SNAPSHOT"/>
       <dependency groupId="com.threerings.underwire" artifactId="underwire-gwt"
                   version="0.0-SNAPSHOT"/> 
+      <dependency groupId="com.threerings" artifactId="gwt-utils" version="1.2-SNAPSHOT"/>
     </artifact:dependencies>
     <artifact:dependencies filesetId="build.remote.fileset">
       <dependency groupId="com.google.gwt" artifactId="gwt-incubator" version="2.0.1"/>
@@ -257,13 +256,12 @@
   <!-- declare our GWT classpath -->
   <path id="gwt.classpath">
     <fileset dir="${deploy.dir}/lib">
-      <!-- this is needed to run our custom i18n bindings in the GWT compiler -->
-      <include name="gwt-utils-0.0-SNAPSHOT.jar"/>
       <include name="orth-0.0-SNAPSHOT.jar"/>
       <include name="*-gwt-0.0-SNAPSHOT.jar"/>
       <include name="guava.jar"/>
     </fileset>
     <fileset dir="${deploy.dir}/build">
+      <include name="gwt-utils-*.jar"/>
       <include name="guava-gwt.jar"/>
       <include name="gwt-incubator-*.jar"/>
       <include name="advanced-components-1.4.1.jar"/>
