@@ -254,6 +254,8 @@
   <!-- declare our GWT classpath -->
   <path id="gwt.classpath">
     <fileset dir="${deploy.dir}/build" includes="*.jar"/>
+    <!-- guava.jar is needed because otherwise GWTC freaks out about @Beta, sigh -->
+    <fileset dir="${deploy.dir}/lib" includes="guava.jar"/>
     <pathelement location="${src.dir}"/>
     <pathelement location="${gsrc.dir}"/>
   </path>
