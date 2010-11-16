@@ -261,6 +261,7 @@
       <include name="guava.jar"/>
     </fileset>
     <fileset dir="${deploy.dir}/build">
+      <include name="samskivert-*.jar"/>
       <include name="gwt-utils-*.jar"/>
       <include name="guava-gwt.jar"/>
       <include name="gwt-incubator-*.jar"/>
