@@ -197,6 +197,7 @@
       <dependency groupId="com.threerings.vilya" artifactId="vilya-micasa" version="0.0-SNAPSHOT"/>
       <dependency groupId="com.threerings.vilya" artifactId="vilyalib" version="0.0-SNAPSHOT"
                   type="swc"/>
+      <dependency groupId="com.threerings" artifactId="gwt-utils" version="1.2"/>
       <dependency groupId="com.threerings" artifactId="whirled-code" version="0.0-SNAPSHOT"/>
       <dependency groupId="com.threerings" artifactId="whirledlib" version="0.0-SNAPSHOT"
                   type="swc"/>
@@ -232,7 +233,6 @@
       <dependency groupId="com.threerings" artifactId="underwire-gwt" version="1.0-SNAPSHOT"/>
     </artifact:dependencies>
     <artifact:dependencies filesetId="build.remote.fileset">
-      <dependency groupId="com.threerings" artifactId="gwt-utils" version="1.2"/>
       <dependency groupId="com.google.gwt" artifactId="gwt-user" version="2.1.0"/>
       <dependency groupId="com.google.gwt" artifactId="gwt-incubator" version="2.0.1"/>
     </artifact:dependencies>
