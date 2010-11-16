@@ -650,10 +650,9 @@
 
   <!-- builds our thane game client -->
   <target name="thane-client" depends="asprepare" description="Rebuilds the thane game client.">
-    <dirname property="abs.flexsdk.dir" file="${flexsdk.dir}/somefile.txt"/>
     <copy file="etc/thane-config.xml.in" tofile="${deploy.dir}/thane-config.xml">
       <filterset>
-        <filter token="flex_sdk_dir" value="${abs.flexsdk.dir}"/>
+        <filter token="flex_sdk_dir" value="${flexsdk.dir}"/>
       </filterset>
     </copy>
     <!-- create msoylib.swc to hold the entire set of dependent classes -->
