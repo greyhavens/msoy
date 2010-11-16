@@ -185,7 +185,6 @@
       <dependency groupId="com.threerings.panopticon" artifactId="panopticon-client"
                   version="0.0-SNAPSHOT"/>
       <dependency groupId="com.threerings.narya" artifactId="narya" version="0.0-SNAPSHOT"/>
-      <dependency groupId="com.threerings.narya" artifactId="narya-gwt" version="0.0-SNAPSHOT"/>
       <dependency groupId="com.threerings.narya" artifactId="naryalib" version="0.0-SNAPSHOT"
                   type="swc"/>
       <dependency groupId="com.threerings.nenya" artifactId="nenya-rsrc" version="0.0-SNAPSHOT"/>
@@ -204,20 +203,22 @@
       <dependency groupId="com.threerings" artifactId="whirledthanelib" version="0.0-SNAPSHOT"
                   type="swc"/>
       <dependency groupId="com.threerings" artifactId="orth" version="0.0-SNAPSHOT"/>
-      <dependency groupId="com.threerings" artifactId="orth-gwt" version="0.0-SNAPSHOT"/>
       <dependency groupId="com.threerings" artifactId="orthlib" version="0.0-SNAPSHOT" type="swc"/>
       <dependency groupId="com.threerings" artifactId="pulse" version="0.0-SNAPSHOT"/>
       <dependency groupId="com.threerings" artifactId="threerings" version="0.0-SNAPSHOT"/>
       <dependency groupId="com.threerings" artifactId="toybox" version="0.0-SNAPSHOT"/>
       <dependency groupId="com.threerings" artifactId="toyboxlib" version="0.0-SNAPSHOT"
                   type="swc"/>
-      <dependency groupId="com.threerings.underwire" artifactId="underwire" version="0.0-SNAPSHOT"/>
+      <dependency groupId="com.threerings" artifactId="underwire" version="1.0-SNAPSHOT">
+        <!-- we don't need gwt-utils and its depends at runtime, just for building -->
+        <exclusion groupId="com.threerings" artifactId="gwt-utils"/>
+      </dependency>
       <dependency groupId="org.jivesoftware.smack" artifactId="smack-component"
                   version="0.0-SNAPSHOT"/>
     </artifact:dependencies>
     <artifact:dependencies filesetId="runtime.remote.fileset">
       <dependency groupId="stax" artifactId="stax" version="1.2.0"/>
-      <dependency groupId="com.google.gwt" artifactId="gwt-user" version="2.1.0"/>
+      <dependency groupId="com.google.gwt" artifactId="gwt-servlet" version="2.1.0"/>
     </artifact:dependencies>
     <copy todir="${deploy.dir}/lib">
       <fileset refid="runtime.fileset"/>
@@ -228,13 +229,12 @@
     <!-- these libraries we only need to build -->
     <artifact:dependencies filesetId="build.fileset">
       <remoteRepository refid="ooo.maven.depends.repo"/>
-      <dependency groupId="com.threerings.underwire" artifactId="underwire-gwt"
-                  version="0.0-SNAPSHOT"/> 
-      <dependency groupId="com.threerings" artifactId="gwt-utils" version="1.2-SNAPSHOT"/>
+      <dependency groupId="com.threerings.narya" artifactId="narya-gwt" version="0.0-SNAPSHOT"/>
+      <dependency groupId="com.threerings" artifactId="orth-gwt" version="0.0-SNAPSHOT"/>
     </artifact:dependencies>
     <artifact:dependencies filesetId="build.remote.fileset">
+      <dependency groupId="com.threerings" artifactId="gwt-utils" version="1.2"/>
       <dependency groupId="com.google.gwt" artifactId="gwt-incubator" version="2.0.1"/>
-      <dependency groupId="com.google.gwt" artifactId="gwt-dev" version="2.1.0"/>
     </artifact:dependencies>
     <copy todir="${deploy.dir}/build">
       <fileset refid="build.fileset"/>
@@ -253,20 +253,7 @@
 
   <!-- declare our GWT classpath -->
   <path id="gwt.classpath">
-    <fileset dir="${deploy.dir}/lib">
-      <include name="orth-0.0-SNAPSHOT.jar"/>
-      <include name="*-gwt-0.0-SNAPSHOT.jar"/>
-      <include name="guava.jar"/>
-    </fileset>
-    <fileset dir="${deploy.dir}/build">
-      <include name="samskivert-*.jar"/>
-      <include name="gwt-utils-*.jar"/>
-      <include name="guava-gwt.jar"/>
-      <include name="gwt-incubator-*.jar"/>
-      <include name="advanced-components-1.4.1.jar"/>
-      <include name="*-gwt-0.0-SNAPSHOT.jar"/>
-      <include name="gwt-dnd.jar"/>
-    </fileset>
+    <fileset dir="${deploy.dir}/build" includes="*.jar"/>
     <pathelement location="${src.dir}"/>
     <pathelement location="${gsrc.dir}"/>
   </path>
@@ -434,9 +421,6 @@
     <javac srcdir="${gsrc.dir}" destdir="${deploy.dir}/gclasses" includeAntRuntime="false"
            debug="on" optimize="off" source="1.5" target="1.5">
       <classpath>
-        <fileset dir="${deploy.dir}/lib">
-          <include name="*.jar"/>
-        </fileset>
         <path refid="gwt.classpath"/>
         <pathelement path="${classes.dir}"/>
       </classpath>
@@ -474,11 +458,13 @@
     <antcall target="preppage"><param name="page" value="${page}"/></antcall>
 
     <!-- invoke the GWT compiler and grindy grindy grindy -->
+    <artifact:dependencies pathId="gwt-dev.classpath">
+      <dependency groupId="com.google.gwt" artifactId="gwt-dev" version="2.1.0"/>
+    </artifact:dependencies>
     <java fork="true" maxmemory="1024M" failonerror="false" resultproperty="gwt.result"
     	classname="com.google.gwt.dev.Compiler">
       <classpath>
-        <fileset dir="${deploy.dir}/build" includes="gwt-dev-*.jar"/> <!-- the GWT compiler -->
-        <fileset dir="${deploy.dir}/lib" includes="gwt-user-*.jar"/>
+        <path refid="gwt-dev.classpath"/>
         <path refid="gwt.classpath"/>
       </classpath>
       <!-- temporary workaround to crashing problem on build server's BSD java -->
