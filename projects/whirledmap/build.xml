@@ -4,7 +4,6 @@
   <!-- define some basic project parameters -->
   <property name="app.name"  value="whirledmap"/>
   <property name="build.root" value="../.."/>
-  <property name="flex.path" value="${build.root}/lib/flex_sdk"/>
 
   <!-- builds our Flash game -->
   <target name="compile">
@@ -12,7 +11,7 @@
     <condition property="mxmlc" value="mxmlc" else="mxmlc.exe">
         <not><os family="windows"/></not>
     </condition>
-    <property name="mxmlc-full-path" location="${flex.path}/bin/${mxmlc}"/>
+    <property name="mxmlc-full-path" location="${flexsdk.dir}/bin/${mxmlc}"/>
     <exec executable="${mxmlc-full-path}" failonerror="true">
       <arg value="-compiler.optimize"/>
       <arg value="-load-config"/>
