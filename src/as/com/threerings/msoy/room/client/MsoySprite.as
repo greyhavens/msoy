@@ -270,15 +270,17 @@ public class MsoySprite
 
     public function setActive (active :Boolean) :void
     {
+        _active = active;
+
         _sprite.alpha = active ? 1.0 : 0.4;
         _sprite.blendMode = active ? BlendMode.NORMAL : BlendMode.LAYER;
         configureMouseProperties();
     }
 
-    // TODO: don't rely on our blendmode.. ?
+    /** Whether or not we're active, i.e. not dimmed. */
     public function isActive () :Boolean
     {
-        return (_sprite.blendMode == BlendMode.NORMAL);
+        return _active;
     }
 
     /**
@@ -556,15 +558,14 @@ public class MsoySprite
 
     protected function configureMouseProperties () :void
     {
-        var active :Boolean = isActive();
         // If we want to capture mouse events for this sprite up in the whirled layer, then
         // we cannot allow the click to go down into the usercode, because when we're running
         // with security boundaries then the click won't come back out.
         // TODO: have a way for entities to temporarily capture mouse events? Maybe only
         // your own personal avatar, for things like an art-vatar, or an avatar that plays back
         // mouse motions...
-        _sprite.mouseChildren = active && !_editing && !hasAction() && capturesMouse();
-        _sprite.mouseEnabled = active && !_editing;
+        _sprite.mouseChildren = _active && !_editing && !hasAction() && capturesMouse();
+        _sprite.mouseEnabled = _active && !_editing;
     }
 
     /**
@@ -993,6 +994,9 @@ public class MsoySprite
     /** The 'location' scale of the media: the scaling that is the result of emulating perspective
      * while we move around the room. */
     protected var _locScale :Number = 1;
+
+    /** Are we active, i.e. not dimmed? */
+    protected var _active :Boolean = true;
 
     /** Are we being edited? */
     protected var _editing :Boolean;
