@@ -137,8 +137,8 @@ public class AVRGameBackend extends ControlBackend
 
     public function requestMobSprite (id :String) :DisplayObject
     {
-        var sprite :Object = callUserCode("requestMobSprite_v1", id);
-        return (sprite is MobSprite) ? (sprite as MobSprite).viz : null;
+        // make sure the return value is a DisplayObject, else return null
+        return callUserCode("requestMobSprite_v1", id) as DisplayObject;
     }
 
     public function mobRemoved (id :String) :void
