@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.data.all {
 
+import com.threerings.util.FileUtil;
+
 /**
  * Mime-type specific utility for the {@link MediaDesc} family of classes.
  */
@@ -113,13 +115,7 @@ public class MediaMimeTypes
      */
     public static function suffixToMimeType (filename :String) :int
     {
-        // note: this works if a full filename/url is passed, or just the extension
-        var ext :String = filename.substring(filename.lastIndexOf(".") + 1);
-        var ix :int = ext.indexOf('?');
-        if (ix > 0) {
-            ext = ext.substring(0, ix);
-        }
-        switch (ext.toLowerCase()) {
+        switch (FileUtil.getDotSuffix(filename)) {
         case "txt": return TEXT_PLAIN;
         case "as": return TEXT_ACTIONSCRIPT;
         case "png": return IMAGE_PNG;
