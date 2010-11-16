@@ -11,7 +11,6 @@
   <property name="deploy.dir"    value="dist"/>
   <property name="classes.dir"   value="${deploy.dir}/classes"/>
   <property name="gwtout.dir"    value="pages/gwt"/>
-  <property name="flexsdk.dir"   value="lib/flex_sdk"/>
   <property name="extlibs.dir"   value="extlibs/java"/>
   <property name="javadoc.title" value="Metasoy API"/>
 
@@ -346,6 +345,20 @@
 
     <!-- copy our HTML sanitizer configuration -->
     <copy file="${basedir}/etc/antisamy-config.xml" todir="${deploy.dir}"/>
+
+    <!-- locate our flex sdk -->
+    <condition property="flexsdk.dir" value="../flex/current">
+      <available file="../flex/current/lib/compc.jar"/>
+    </condition>
+    <condition property="flexsdk.dir" value="../OOOLIBS-FLEX/current">
+      <available file="../OOOLIBS-FLEX/current/lib/compc.jar"/>
+    </condition>
+    <dirname property="parent.dir" file="../somefile.txt"/>
+    <fail><condition><not><isset property="flexsdk.dir"/></not></condition>
+      You must either pass -Dflexsdk.dir=somedir on the command line, or check
+      out the Flex SDK like so:
+      svn checkout svn+ssh://src.earth.threerings.net/flex/trunk ${parent.dir}/flex
+    </fail>
   </target>
 
   <!-- defines our various presents ant tasks -->
@@ -560,8 +573,10 @@
     </copy>
     <copy file="lib/framework_3.3.0.4852.swz" todir="pages/clients"/>
     <copy file="lib/framework_3.3.0.4852.swf" todir="pages/clients"/>
-    <copy file="etc/msoy-config.xml.in" tofile="etc/msoy-config.xml">
+    <dirname property="abs.flexsdk.dir" file="${flexsdk.dir}/somefile.txt"/>
+    <copy file="etc/msoy-config.xml.in" tofile="${deploy.dir}/msoy-config.xml">
       <filterset>
+        <filter token="flex_sdk_dir" value="${abs.flexsdk.dir}"/>
         <filter token="server_url" value="${server_url}"/>
       </filterset>
     </copy>
@@ -576,12 +591,9 @@
     <property name="flex.extra-arg" value="-externs=DummyValueIgnore"/>
     <property name="flex.extra-arg-2" value="-externs=DummyValueIgnore"/>
     <property name="copydir" value="pages/clients/${version}"/>
-    <condition property="mxmlc" value="mxmlc" else="mxmlc.bat">
-        <not><os family="windows"/></not>
-    </condition>
-    <exec executable="${basedir}/bin/${mxmlc}" failonerror="true">
+    <exec executable="${flexsdk.dir}/bin/mxmlc" failonerror="true">
       <arg value="-load-config"/>
-      <arg value="etc/msoy-config.xml"/>
+      <arg value="${deploy.dir}/msoy-config.xml"/>
       <arg value="${flex.extra-arg}"/>
       <arg value="${flex.extra-arg-2}"/>
       <arg value="-compiler.source-path=${asrc.dir}/"/>
@@ -1073,7 +1085,6 @@
     <delete file="pages/crossdomain.xml"/>
     <!-- TODO: remove this one after a build or two -->
     <delete file="pages/js/facebook.js"/>
-    <delete file="etc/msoy-config.xml"/>
     <delete><fileset dir="${gsrc.dir}" includes="**/*Messages.java"/></delete>
   </target>
 

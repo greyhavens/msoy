@@ -42,7 +42,7 @@
       <es>false</es>
       <!-- compiler.external-library-path: list of SWC files or directories to compile against but to omit from linking-->
       <external-library-path>
-         <path-element>../lib/flex_sdk/frameworks/libs/player/{targetPlayerMajorVersion}/playerglobal.swc</path-element>
+         <path-element>@flex_sdk_dir@/frameworks/libs/player/{targetPlayerMajorVersion}/playerglobal.swc</path-element>
       </external-library-path>
       <fonts>
          <!-- compiler.fonts.advanced-anti-aliasing: enables advanced anti-aliasing for embedded fonts, which provides greater clarity for small fonts.-->
@@ -62,7 +62,7 @@
             -->
          </languages>
          <!-- compiler.fonts.local-fonts-snapshot: File containing system font data produced by flex2.tools.FontSnapshot.-->
-         <local-fonts-snapshot>../lib/flex_sdk/frameworks/localFonts.ser</local-fonts-snapshot>
+         <local-fonts-snapshot>@flex_sdk_dir@/frameworks/localFonts.ser</local-fonts-snapshot>
          <!-- compiler.fonts.managers: Compiler font manager classes, in policy resolution order-->
          <managers>
             <manager-class>flash.fonts.JREFontManager</manager-class>
@@ -111,10 +111,10 @@
          <path-element>../dist/lib/flexlib.swc</path-element>
          <path-element>../dist/lib/tweener.swc</path-element>
          <path-element>../dist/lib/KongregateAPI.swc</path-element>
-         <path-element>../lib/flex_sdk/frameworks/libs</path-element>
-         <path-element>../lib/flex_sdk/frameworks/libs/player</path-element>
-         <path-element>../lib/flex_sdk/frameworks/libs/player/{targetPlayerMajorVersion}</path-element>
-         <path-element>../lib/flex_sdk/frameworks/locale/{locale}</path-element>
+         <path-element>@flex_sdk_dir@/frameworks/libs</path-element>
+         <path-element>@flex_sdk_dir@/frameworks/libs/player</path-element>
+         <path-element>@flex_sdk_dir@/frameworks/libs/player/{targetPlayerMajorVersion}</path-element>
+         <path-element>@flex_sdk_dir@/frameworks/locale/{locale}</path-element>
       </library-path>
       <!-- compiler.locale: specifies the locale for internationalization-->
       <locale>
@@ -130,7 +130,7 @@
          <!-- compiler.namespaces.namespace: Specify a URI to associate with a manifest of components for use as MXML elements-->
          <namespace>
             <uri>http://www.adobe.com/2006/mxml</uri>
-            <manifest>../lib/flex_sdk/frameworks/mxml-manifest.xml</manifest>
+            <manifest>@flex_sdk_dir@/frameworks/mxml-manifest.xml</manifest>
          </namespace>
       </namespaces>
       <!-- compiler.optimize: Enable post-link SWF optimization-->
@@ -354,7 +354,7 @@
    </runtime-shared-libraries>
    -->
    <runtime-shared-library-path>
-      <path-element>../lib/flex_sdk/frameworks/libs/framework.swc</path-element>
+      <path-element>@flex_sdk_dir@/frameworks/libs/framework.swc</path-element>
       <rsl-url>@server_url@clients/framework_3.3.0.4852.swz</rsl-url>
       <policy-file-url></policy-file-url>
       <rsl-url>@server_url@clients/framework_3.3.0.4852.swf</rsl-url>
