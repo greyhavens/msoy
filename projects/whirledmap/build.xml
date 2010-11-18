@@ -15,7 +15,7 @@
     <exec executable="${mxmlc-full-path}" failonerror="true">
       <arg value="-compiler.optimize"/>
       <arg value="-load-config"/>
-      <arg value="${build.root}/etc/msoy-config.xml"/>
+      <arg value="${build.root}/${deploy.dir}/msoy-config.xml"/>
       <arg value="-compiler.source-path=src/as"/>
       <arg value="-compiler.source-path=rsrc/{locale}/i18n"/>
       <arg value="-compiler.source-path=${build.root}/src/as"/>
