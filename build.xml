@@ -165,8 +165,6 @@
     <file name="${extlibs.dir}/ozcommons.jar"/>
 
     <!-- The following are used by our Flash clients -->
-    <file name="extlibs/flash/corelib.swc"/>
-    <file name="extlibs/flash/flexlib.swc"/>
     <file name="lib/tweener.swc"/>
     <file name="lib/KongregateAPI.swc"/>
 
@@ -180,32 +178,14 @@
     <!-- these libraries we need for building and for the server runtime -->
     <artifact:dependencies filesetId="runtime.fileset">
       <remoteRepository refid="ooo.maven.depends.repo"/>
-      <dependency groupId="com.threerings" artifactId="aspirin" version="0.0-SNAPSHOT" type="swc"/>
       <dependency groupId="com.threerings.panopticon" artifactId="panopticon-client"
                   version="0.0-SNAPSHOT"/>
-      <dependency groupId="com.threerings" artifactId="narya" version="1.2-SNAPSHOT"/>
-      <dependency groupId="com.threerings.narya" artifactId="naryalib" version="0.0-SNAPSHOT"
-                  type="swc"/>
-      <dependency groupId="com.threerings" artifactId="nenya" version="1.0-SNAPSHOT"/>
-      <dependency groupId="com.threerings.nenya" artifactId="nenyalib" version="0.0-SNAPSHOT"
-                  type="swc"/>
-      <dependency groupId="com.threerings" artifactId="vilya" version="1.0-SNAPSHOT"/>
-      <dependency groupId="com.threerings.vilya" artifactId="vilyalib" version="0.0-SNAPSHOT"
-                  type="swc"/>
       <dependency groupId="com.threerings" artifactId="gwt-utils" version="1.3-SNAPSHOT"/>
-      <dependency groupId="com.threerings" artifactId="whirled-code" version="1.0-SNAPSHOT"/>
-      <dependency groupId="com.threerings" artifactId="whirledlib" version="0.0-SNAPSHOT"
-                  type="swc"/>
-      <dependency groupId="com.threerings" artifactId="whirledthanelib" version="0.0-SNAPSHOT"
-                  type="swc"/>
-      <dependency groupId="com.threerings" artifactId="orth" version="0.0-SNAPSHOT"/>
-      <dependency groupId="com.threerings" artifactId="orthlib" version="0.0-SNAPSHOT" type="swc"/>
+      <dependency groupId="com.threerings" artifactId="orth" version="${orth.vers}"/>
       <dependency groupId="com.threerings" artifactId="pulse" version="0.0-SNAPSHOT"/>
       <dependency groupId="com.threerings" artifactId="threerings" version="1.1-SNAPSHOT"/>
       <dependency groupId="com.threerings" artifactId="database-utils" version="1.0-SNAPSHOT"/>
       <dependency groupId="com.threerings" artifactId="toybox" version="1.0-SNAPSHOT"/>
-      <dependency groupId="com.threerings" artifactId="toyboxlib" version="0.0-SNAPSHOT"
-                  type="swc"/>
       <dependency groupId="com.threerings" artifactId="underwire" version="1.0-SNAPSHOT"/>
       <dependency groupId="org.jivesoftware.smack" artifactId="smack-component"
                   version="0.0-SNAPSHOT"/>
@@ -235,6 +215,23 @@
     <copy todir="${deploy.dir}/build">
       <fileset refid="build.fileset"/>
       <fileset refid="build.remote.fileset"/>
+      <mapper type="flatten"/>
+    </copy>
+  </target>
+
+  <target name="mavendeps-as">
+    <!-- these libraries we need for building actionscript -->
+    <artifact:dependencies filesetId="aslib.fileset">
+      <remoteRepository refid="ooo.maven.depends.repo"/>
+      <dependency groupId="com.threerings" artifactId="toyboxlib"
+                  version="1.0-SNAPSHOT" type="swc"/>
+      <dependency groupId="com.threerings" artifactId="whirledthanelib"
+                  version="1.0-SNAPSHOT" type="swc"/>
+      <dependency groupId="com.threerings" artifactId="orthlib"
+                  version="0.0-SNAPSHOT" type="swc"/>
+    </artifact:dependencies>
+    <copy todir="${deploy.dir}/lib">
+      <fileset refid="aslib.fileset"/>
       <mapper type="flatten"/>
     </copy>
   </target>
@@ -523,7 +520,7 @@
   </target>
 
   <!-- prepares to build our Flash client -->
-  <target name="asprepare" depends="prepare">
+  <target name="asprepare" depends="prepare,mavendeps-as">
     <!-- locate our flex sdk -->
     <condition property="rel.flexsdk.dir" value="../flex/current">
       <available file="../flex/current/lib/compc.jar"/>
@@ -593,6 +590,17 @@
       <arg value="${deploy.dir}/msoy-config.xml"/>
       <arg value="${flex.extra-arg}"/>
       <arg value="${flex.extra-arg-2}"/>
+      <arg value="-compiler.library-path+=${com.threerings:aspirin:swc}"/>
+      <arg value="-compiler.library-path+=${com.threerings:naryalib:swc}"/>
+      <arg value="-compiler.library-path+=${com.threerings:nenyalib:swc}"/>
+      <arg value="-compiler.library-path+=${com.threerings:vilyalib:swc}"/>
+      <arg value="-compiler.library-path+=${com.threerings:whirledlib:swc}"/>
+      <arg value="-compiler.library-path+=${com.threerings:orthlib:swc}"/>
+      <arg value="-compiler.library-path+=${com.threerings:toyboxlib:swc}"/>
+      <arg value="-compiler.library-path+=${com.adobe:as3corelib:swc}"/>
+      <arg value="-compiler.library-path+=${flexlib:flexlib-bin:swc}"/>
+      <arg value="-compiler.library-path+=${deploy.dir}/lib/tweener.swc"/>
+      <arg value="-compiler.library-path+=${deploy.dir}/lib/KongregateAPI.swc"/>
       <arg value="-compiler.source-path=${asrc.dir}/"/>
       <arg value="-compiler.source-path=rsrc/{locale}/i18n"/>
       <arg value="-compiler.verbose-stacktraces=${dev_deployment}"/>
@@ -618,7 +626,8 @@
   </target>
 
   <!-- builds our Flash world client -->
-  <target name="asclient" depends="asprepare" description="Rebuilds the Flash world client.">
+  <target name="asclient" depends="asprepare"
+          description="Rebuilds the Flash world client.">
     <antcall target="ascompile">
       <param name="aspath" value="client/world.mxml"/>
       <param name="swfname" value="world-client"/>
@@ -659,14 +668,7 @@
       <arg value="-compiler.external-library-path"/>
       <arg value="${deploy.dir}/lib/thane.swc"/>
       <arg value="-compiler.library-path"/>
-      <arg value="${deploy.dir}/lib/corelib.swc"/>
-      <arg value="${deploy.dir}/lib/aspirin-0.0-SNAPSHOT.swc"/>
-      <arg value="${deploy.dir}/lib/naryalib-0.0-SNAPSHOT.swc"/>
-      <arg value="${deploy.dir}/lib/nenyalib-0.0-SNAPSHOT.swc"/>
-      <arg value="${deploy.dir}/lib/vilyalib-0.0-SNAPSHOT.swc"/>
-      <arg value="${deploy.dir}/lib/orthlib-0.0-SNAPSHOT.swc"/>
-      <arg value="${deploy.dir}/lib/whirledlib-0.0-SNAPSHOT.swc"/>
-      <arg value="${deploy.dir}/lib/whirledthanelib-0.0-SNAPSHOT.swc"/>
+      <arg value="${deploy.dir}/lib"/>
       <arg value="-output"/>
       <arg value="${deploy.dir}/msoylib.swc"/>
       <arg value="-compiler.source-path"/>
@@ -979,17 +981,7 @@
       <jvmarg value="-Dos.name=Windows"/>
       <arg value="+flexlib=${flexsdk.dir}/frameworks"/>
       <arg line="-library-path ${flexsdk.dir}/frameworks/libs"/>
-      <arg line="-library-path ${deploy.dir}/lib/tweener.swc"/>
-      <arg line="-library-path ${deploy.dir}/lib/KongregateAPI.swc"/>
-      <arg line="-library-path ${deploy.dir}/lib/corelib.swc"/>
-      <arg line="-library-path ${deploy.dir}/lib/flexlib.swc"/>
-      <arg line="-library-path ${deploy.dir}/lib/aspirin-0.0-SNAPSHOT.swc"/>
-      <arg line="-library-path ${deploy.dir}/lib/naryalib-0.0-SNAPSHOT.swc"/>
-      <arg line="-library-path ${deploy.dir}/lib/player-env-0.0-SNAPSHOT.swc"/>
-      <arg line="-library-path ${deploy.dir}/lib/nenyalib-0.0-SNAPSHOT.swc"/>
-      <arg line="-library-path ${deploy.dir}/lib/vilyalib-0.0-SNAPSHOT.swc"/>
-      <arg line="-library-path ${deploy.dir}/lib/orthlib-0.0-SNAPSHOT.swc"/>
-      <arg line="-library-path ${deploy.dir}/lib/whirledlib-0.0-SNAPSHOT.swc"/>
+      <arg line="-library-path ${deploy.dir}/lib"/>
       <arg line="-templates-path ${flexsdk.dir}/asdoc/templates"/>
       <arg line="-doc-sources ${asrc.dir}"/>
       <arg line="-output ${deploy.dir}/asdocs"/>
@@ -1021,7 +1013,7 @@
 
   <!-- builds top-level flash applications. -->
   <target name="flashapps" depends="asprepare,mediastub,embedstub,mochistub,videoplayer,
-          audioplayer,remixer,imageeditor,camerabutton,uploader,asclient,whirledmap"
+          audioplayer,remixer,imageeditor,camerabutton,uploader,asclient"
           description="Rebuilds all of our Flash clients and applets.">
   </target>
 
@@ -1089,7 +1081,7 @@
   <!-- fully cleans out all build results -->
   <target name="distclean" depends="clean,asclean,gclean,postclean">
     <delete dir="${deploy.dir}"/>
-    <ant dir="projects/whirledmap" target="clean" inheritAll="false"/>
+    <!--<ant dir="projects/whirledmap" target="clean" inheritAll="false"/>-->
     <ant dir="projects/mchooser" target="distclean" inheritAll="false"/>
     <ant dir="projects/mcell" target="distclean" inheritAll="false"/>
   </target>

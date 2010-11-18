@@ -100,17 +100,6 @@
       <keep-generated-actionscript>false</keep-generated-actionscript>
       <!-- compiler.library-path: list of SWC files or directories that contain SWC files-->
       <library-path>
-         <path-element>../dist/lib/aspirin-0.0-SNAPSHOT.swc</path-element>
-         <path-element>../dist/lib/naryalib-0.0-SNAPSHOT.swc</path-element>
-         <path-element>../dist/lib/nenyalib-0.0-SNAPSHOT.swc</path-element>
-         <path-element>../dist/lib/vilyalib-0.0-SNAPSHOT.swc</path-element>
-         <path-element>../dist/lib/whirledlib-0.0-SNAPSHOT.swc</path-element>
-         <path-element>../dist/lib/orthlib-0.0-SNAPSHOT.swc</path-element>
-         <path-element>../dist/lib/toyboxlib-0.0-SNAPSHOT.swc</path-element>
-         <path-element>../dist/lib/corelib.swc</path-element>
-         <path-element>../dist/lib/flexlib.swc</path-element>
-         <path-element>../dist/lib/tweener.swc</path-element>
-         <path-element>../dist/lib/KongregateAPI.swc</path-element>
          <path-element>@flex_sdk_dir@/frameworks/libs</path-element>
          <path-element>@flex_sdk_dir@/frameworks/libs/player</path-element>
          <path-element>@flex_sdk_dir@/frameworks/libs/player/{targetPlayerMajorVersion}</path-element>
