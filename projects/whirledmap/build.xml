@@ -4,10 +4,11 @@
   <!-- define some basic project parameters -->
   <property name="app.name"  value="whirledmap"/>
   <property name="build.root" value="../.."/>
+  <property name="deploy.dir" value="dist"/>
 
   <!-- builds our Flash game -->
   <target name="compile">
-    <mkdir dir="dist"/>
+    <mkdir dir="${deploy.dir}"/>
     <condition property="mxmlc" value="mxmlc" else="mxmlc.exe">
         <not><os family="windows"/></not>
     </condition>
@@ -15,7 +16,7 @@
     <exec executable="${mxmlc-full-path}" failonerror="true">
       <arg value="-compiler.optimize"/>
       <arg value="-load-config"/>
-      <arg value="${build.root}/dist/msoy-config.xml"/>
+      <arg value="${build.root}/${deploy.dir}/msoy-config.xml"/>
       <arg value="-compiler.source-path=src/as"/>
       <arg value="-compiler.source-path=rsrc/{locale}/i18n"/>
       <arg value="-compiler.source-path=${build.root}/src/as"/>
@@ -23,18 +24,18 @@
       <arg value="-file-specs"/>
       <arg value="src/as/map.mxml"/>
       <arg value="-output"/>
-      <arg value="dist/${app.name}.swf"/>
+      <arg value="${deploy.dir}/${app.name}.swf"/>
     </exec>
   </target>
 
   <!-- cleans out the compiled code -->
   <target name="clean">
-    <delete dir="dist"/>
+    <delete dir="${deploy.dir}"/>
   </target>
 
   <!-- builds our swf and plops it up at the top level -->
   <target name="dist" depends="compile">
-    <copy file="dist/${app.name}.swf" todir="${build.root}/dist"/>
+    <copy file="${deploy.dir}/${app.name}.swf" todir="${build.root}/${deploy.dir}"/>
   </target>
 
 </project>
