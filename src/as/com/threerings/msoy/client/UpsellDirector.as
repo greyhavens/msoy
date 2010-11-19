@@ -16,10 +16,11 @@ import com.threerings.util.Util;
 import com.threerings.presents.client.BasicDirector;
 import com.threerings.presents.client.ClientEvent;
 
+import com.threerings.orth.notify.data.Notification;
+
 import com.threerings.msoy.data.Embedding;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.PlaceInfo;
-import com.threerings.msoy.notify.data.Notification;
 import com.threerings.msoy.ui.BubblePopup;
 
 public class UpsellDirector extends BasicDirector

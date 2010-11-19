@@ -14,7 +14,6 @@ import com.google.common.collect.Maps;
 
 import com.google.inject.Inject;
 
-import com.samskivert.util.StringUtil;
 import com.samskivert.util.Tuple;
 
 import com.threerings.io.Streamable;
@@ -107,7 +106,7 @@ public class MsoyClientResolver extends CrowdClientResolver
         MemberLocal local = memobj.getLocal(MemberLocal.class);
 
         // create a deferred notifications array so that we can track any notifications dispatched
-        // to this client until they're ready to read them; we'd have NotificationManager do this
+        // to this client until they're ready to read them; we'd have MsoyNotificationManager do this
         // in a MemberLocator.Observer but we need to be sure this is filled in before any other
         // MemberLocator.Observers are notified because that's precisely when early notifications
         // are likely to be generated

@@ -2,20 +2,16 @@
 // $Id$
 
 package com.threerings.msoy.notify.client {
+import com.threerings.orth.notify.client.NotificationDisplay;
+import com.threerings.util.Name;
 
 import flash.utils.setTimeout; // function
 
-import com.threerings.util.Log;
 import com.threerings.util.MessageBundle;
 import com.threerings.util.Set;
 import com.threerings.util.Sets;
 import com.threerings.util.StringUtil;
-import com.threerings.util.Util;
-import com.threerings.util.ValueEvent;
 
-import com.threerings.presents.client.BasicDirector;
-import com.threerings.presents.client.Client;
-import com.threerings.presents.client.ClientEvent;
 import com.threerings.presents.client.ClientAdapter;
 
 import com.threerings.presents.dobj.AttributeChangeListener;
@@ -23,9 +19,10 @@ import com.threerings.presents.dobj.AttributeChangedEvent;
 import com.threerings.presents.dobj.EntryAddedEvent;
 import com.threerings.presents.dobj.EntryRemovedEvent;
 import com.threerings.presents.dobj.EntryUpdatedEvent;
-import com.threerings.presents.dobj.MessageEvent;
-import com.threerings.presents.dobj.MessageListener;
 import com.threerings.presents.dobj.SetListener;
+
+import com.threerings.orth.notify.client.NotificationDirector;
+import com.threerings.orth.notify.data.Notification;
 
 import com.threerings.msoy.badge.data.all.Badge;
 import com.threerings.msoy.game.data.all.Trophy;
@@ -33,12 +30,10 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.ui.AwardPanel;
 import com.threerings.msoy.utils.Capabilities;
 
-import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.MsoyService;
 
 import com.threerings.msoy.data.all.FriendEntry;
-import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 
@@ -47,14 +42,12 @@ import com.threerings.msoy.notify.data.EntityCommentedNotification;
 import com.threerings.msoy.notify.data.LevelUpNotification;
 import com.threerings.msoy.notify.data.FollowInviteNotification;
 import com.threerings.msoy.notify.data.GameInviteNotification;
-import com.threerings.msoy.notify.data.GenericNotification;
 import com.threerings.msoy.notify.data.InviteAcceptedNotification;
 import com.threerings.msoy.notify.data.MoneyNotification;
-import com.threerings.msoy.notify.data.Notification;
 import com.threerings.msoy.notify.data.PartyInviteNotification;
 
-public class NotificationDirector extends BasicDirector
-    implements AttributeChangeListener, SetListener, MessageListener
+public class MsoyNotificationDirector extends NotificationDirector
+    implements AttributeChangeListener, SetListener
 {
     // statically reference classes we require
     BadgeEarnedNotification;
@@ -66,18 +59,35 @@ public class NotificationDirector extends BasicDirector
     MoneyNotification;
     PartyInviteNotification;
 
-    public function NotificationDirector (ctx :MsoyContext)
+    public function MsoyNotificationDirector (ctx :MsoyContext)
     {
-        super(ctx);
+        super(ctx, MemberObject.NOTIFICATION);
         _mctx = ctx;
 
         var ndheight :int = ctx.getControlBar().getControlHeight();
         ctx.getControlBar().setNotificationDisplay(
-            _notificationDisplay = new NotificationDisplay(ctx, ndheight));
+            _notificationDisplay = new MsoyNotificationDisplay(ctx, ndheight));
 
         // clear our display if we lose connection to the server
         ctx.getClient().addClientObserver(new ClientAdapter(null, null, null, null, null,
             clearNotifications, null, null));
+    }
+
+    override protected function getDisplay ():NotificationDisplay
+    {
+        return _notificationDisplay;
+    }
+
+    override protected function dispatchDeferredNotifications ():void
+    {
+        // tell the server to go ahead and dispatch any notifications it had saved up.
+        MsoyService(_ctx.getClient().requireService(MsoyService))
+            .dispatchDeferredNotifications();
+    }
+
+    override protected function isMuted (sender:Name):Boolean
+    {
+        return super.isMuted(sender);
     }
 
     /**
@@ -101,34 +111,6 @@ public class NotificationDirector extends BasicDirector
         }
         // TODO: a "GAME" notification level?
         addGenericNotification(msg, Notification.PERSONAL);
-    }
-
-    public function addGenericNotification (
-        announcement :String, category :int, sender :MemberName = null,
-        clickTracker :Function = null) :void
-    {
-        var gn :GenericNotification = new GenericNotification(announcement, category, sender);
-        gn.clickTracker = clickTracker;
-        addNotification(gn);
-    }
-
-    public function addNotification (notification :Notification) :void
-    {
-        const sender :MemberName = notification.getSender();
-        if (sender != null && _mctx.getMuteDirector().isMuted(sender)) {
-            // we have muted this sender: do not notify.
-            return;
-        }
-
-        // we can't just store the notifications in the array, because some notifications may be
-        // identical (bob invites you to play captions twice within 15 minutes);
-        _notifications.add(notification);
-        _notificationDisplay.displayNotification(notification);
-    }
-
-    public function getCurrentNotifications () :Array
-    {
-        return _notifications.toArray();
     }
 
     /**
@@ -239,58 +221,10 @@ public class NotificationDirector extends BasicDirector
         }
     }
 
-    // from interface MessageListener
-    public function messageReceived (event :MessageEvent) :void
+    override protected function showStartupNotifications () :void
     {
-        var name :String = event.getName();
-        if (name == MemberObject.NOTIFICATION) {
-            var notification :Notification = event.getArgs()[0] as Notification;
-            if (notification != null) {
-                addNotification(notification);
-            }
-        }
-    }
+        super.showStartupNotifications();
 
-    // from BasicDirector
-    override public function clientDidLogoff (event :ClientEvent) :void
-    {
-        super.clientDidLogoff(event);
-
-        if (!event.isSwitchingServers()) {
-            clearNotifications();
-        }
-    }
-
-    // from BasicDirector
-    override protected function clientObjectUpdated (client :Client) :void
-    {
-        super.clientObjectUpdated(client);
-        client.getClientObject().addListener(this);
-
-        // and, let's always update the control bar button
-        if (!_didStartupNotifs) {
-            _didStartupNotifs = true;
-            showStartupNotifications();
-        }
-
-        // tell the server to go ahead and dispatch any notifications it had saved up.
-        const msvc :MsoyService = client.requireService(MsoyService) as MsoyService;
-        msvc.dispatchDeferredNotifications();
-    }
-
-    protected function clearNotifications (... ignored) :void
-    {
-        _notifications.clear();
-        _notificationDisplay.clearDisplay();
-    }
-
-    /**
-     * Called once the user is logged on and the chat system is ready.
-     * Display any notifications that we generate by inspecting the user object,
-     * or external data, or whatever.
-     */
-    protected function showStartupNotifications () :void
-    {
         const clobj :Object = _ctx.getClient().getClientObject();
         const newMail :int = (clobj is MemberObject) ? MemberObject(clobj).newMailCount : 0;
         if (newMail > 0) {
@@ -328,30 +262,22 @@ public class NotificationDirector extends BasicDirector
     /** Give members 15 seconds to get back on before we consider them a fresh logon. */
     protected static const MEMBER_EXPIRE_TIME :int = 15 * 1000; // 15 seconds
 
-    /** Give notifications 15 minutes to be relevant. */
-    protected static const NOTIFICATION_EXPIRE_TIME :int = 15 * 60 * 1000; // 15 minutes
-
     protected static const STATUS_UPDATE_DELAY :int = 15 * 1000; // 15 seconds
 
     protected static const FLASH_UPGRADE_VERSION :int = 10;
 
     protected var _mctx :MsoyContext;
 
-    protected var _notificationDisplay :NotificationDisplay;
+    protected var _notificationDisplay :MsoyNotificationDisplay;
 
     /** An Expiring Set to track members that may only be switching servers. */
     protected var _membersLoggingOff :Set = Sets.newBuilder(FriendEntry)
         .makeExpiring(MEMBER_EXPIRE_TIME).build();
 
-    /** An Expiring Set to hold our most recent notifications. */
-    protected var _notifications :Set = Sets.newBuilder(Notification)
-        .makeExpiring(NOTIFICATION_EXPIRE_TIME).build();
-
     /** Tracks when it's ok to show a status update for a member. */
     protected var _statusDelays :Set = Sets.newBuilder(int)
         .makeExpiring(STATUS_UPDATE_DELAY, statusDelayExpired).build();
 
-    protected var _didStartupNotifs :Boolean;
     protected var _awardPanel :AwardPanel;
 }
 }

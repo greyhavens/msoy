@@ -3,11 +3,13 @@
 
 package com.threerings.msoy.notify.server;
 
-import java.util.List;
-
 import com.google.inject.Singleton;
 
 import com.threerings.presents.annotation.EventThread;
+import com.threerings.presents.dobj.DObject;
+
+import com.threerings.orth.notify.data.NotificationLocal;
+import com.threerings.orth.notify.server.NotificationManager;
 
 import com.threerings.msoy.comment.gwt.Comment.CommentType;
 import com.threerings.msoy.data.MemberObject;
@@ -15,7 +17,6 @@ import com.threerings.msoy.server.MemberLocal;
 import com.threerings.msoy.server.MemberNodeActions;
 
 import com.threerings.msoy.notify.data.EntityCommentedNotification;
-import com.threerings.msoy.notify.data.Notification;
 import com.threerings.msoy.notify.data.FollowInviteNotification;
 import com.threerings.msoy.notify.data.InviteAcceptedNotification;
 import com.threerings.msoy.notify.data.GameInviteNotification;
@@ -26,43 +27,11 @@ import com.threerings.msoy.data.all.MemberName;
  * Manages most notifications to users.
  */
 @Singleton @EventThread
-public class NotificationManager
+public class MsoyNotificationManager extends NotificationManager
 {
-    /**
-     * Sends a notification to the specified member.
-     * @return true if the notification was sent or queued, or false if the notification
-     * was discarded because the recipient is unavailable to the sender.
-     */
-    public void notify (MemberObject target, Notification note)
+    public MsoyNotificationManager ()
     {
-        // if they have not yet reported in with a call to dispatchDeferredNotifications then we
-        // need to queue this notification up rather than dispatch it directly
-        MemberLocal local = target.getLocal(MemberLocal.class);
-        if (local.deferredNotifications != null) {
-            local.deferredNotifications.add(note);
-        } else {
-            target.postMessage(MemberObject.NOTIFICATION, note);
-        }
-    }
-
-    /**
-     * Dispatches a batch of notifications all at once.
-     */
-    public void notify (MemberObject target, List<Notification> notes)
-    {
-        MemberLocal local = target.getLocal(MemberLocal.class);
-        if (local.deferredNotifications != null) {
-            local.deferredNotifications.addAll(notes);
-        } else {
-            target.startTransaction();
-            try {
-                for (Notification note : notes) {
-                    target.postMessage(MemberObject.NOTIFICATION, note);
-                }
-            } finally {
-                target.commitTransaction();
-            }
-        }
+        super(MemberObject.NOTIFICATION);
     }
 
     /**
@@ -103,17 +72,8 @@ public class NotificationManager
         notify(target, new FollowInviteNotification(inviter));
     }
 
-    /**
-     * Dispatches any deferred notifications for the specified member and marks them as ready to
-     * receive notifications in real time.
-     */
-    public void dispatchDeferredNotifications (MemberObject memobj)
+    @Override protected NotificationLocal getLocal (DObject target)
     {
-        final MemberLocal local = memobj.getLocal(MemberLocal.class);
-        if (local.deferredNotifications != null) {
-            List<Notification> notes = local.deferredNotifications;
-            local.deferredNotifications = null;
-            notify(memobj, notes);
-        }
+        return target.getLocal(MemberLocal.class);
     }
 }

@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.notify.data;
 
+import com.threerings.orth.notify.data.Notification;
+
 import com.threerings.msoy.data.all.MemberName;
 
 public class PartyInviteNotification extends Notification

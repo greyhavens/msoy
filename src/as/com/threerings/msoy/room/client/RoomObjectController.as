@@ -31,6 +31,8 @@ import com.threerings.flex.CommandMenu;
 
 import com.threerings.whirled.data.SceneUpdate;
 
+import com.threerings.orth.notify.data.Notification;
+
 import com.threerings.msoy.client.BootablePlaceController;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyClient;
@@ -52,8 +54,6 @@ import com.threerings.msoy.item.data.all.Item_UsedAs;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.Launcher;
 import com.threerings.msoy.item.data.all.Pet;
-
-import com.threerings.msoy.notify.data.Notification;
 
 import com.threerings.msoy.world.client.WorldControlBar;
 import com.threerings.msoy.world.client.WorldController;

@@ -2,12 +2,13 @@
 // $Id$
 
 package com.threerings.msoy.notify.data {
-
+import com.threerings.orth.notify.data.Notification;
 import com.threerings.util.MessageBundle;
 
 import com.threerings.io.ObjectInputStream;
 
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.util.Name;
 
 public class PartyInviteNotification extends Notification
 {
@@ -22,7 +23,7 @@ public class PartyInviteNotification extends Notification
         return INVITE;
     }
 
-    override public function getSender () :MemberName
+    override public function getSender () :Name
     {
         return _inviter;
     }

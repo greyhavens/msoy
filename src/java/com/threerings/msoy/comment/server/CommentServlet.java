@@ -21,7 +21,7 @@ import com.threerings.web.gwt.ServiceException;
 import com.threerings.gwt.util.PagedResult;
 
 import com.threerings.msoy.comment.gwt.Comment.CommentType;
-import com.threerings.msoy.notify.server.NotificationManager;
+import com.threerings.msoy.notify.server.MsoyNotificationManager;
 import com.threerings.msoy.game.server.persist.GameInfoRecord;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 
@@ -241,7 +241,7 @@ public class CommentServlet extends MsoyServiceServlet
     @Inject protected ItemLogic _itemLogic;
     @Inject protected MsoyGameRepository _msoyGameRepo;
     @Inject protected MsoySceneRepository _sceneRepo;
-    @Inject protected NotificationManager _notifyMan;
+    @Inject protected MsoyNotificationManager _notifyMan;
     @Inject protected StatLogic _statLogic;
     @Inject protected SupportLogic _supportLogic;
 }

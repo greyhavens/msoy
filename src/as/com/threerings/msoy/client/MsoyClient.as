@@ -2,7 +2,6 @@
 // $Id$
 
 package com.threerings.msoy.client {
-import com.threerings.msoy.ui.DataPackMediaContainer;
 
 import flash.display.Stage;
 import flash.display.StageDisplayState;
@@ -36,6 +35,8 @@ import com.threerings.presents.net.BootstrapData;
 
 import com.threerings.crowd.client.CrowdClient;
 
+import com.threerings.orth.notify.data.Notification;
+
 import com.threerings.msoy.data.Address;
 import com.threerings.msoy.data.Embedding;
 import com.threerings.msoy.data.LurkerName;
@@ -48,8 +49,6 @@ import com.threerings.msoy.data.UberClientModes;
 import com.threerings.msoy.data.all.CloudfrontMediaDesc;
 import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.msoy.data.all.VisitorInfo;
-
-import com.threerings.msoy.notify.data.Notification;
 
 import com.threerings.msoy.item.data.all.Item_UsedAs;
 

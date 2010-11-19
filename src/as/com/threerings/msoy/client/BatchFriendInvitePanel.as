@@ -5,7 +5,7 @@ package com.threerings.msoy.client {
 
 import com.threerings.presents.client.ConfirmAdapter;
 
-import com.threerings.msoy.notify.data.Notification;
+import com.threerings.orth.notify.data.Notification;
 
 public class BatchFriendInvitePanel extends SelectPlayersPanel
 {

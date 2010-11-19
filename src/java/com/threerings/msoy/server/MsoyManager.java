@@ -32,6 +32,7 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.all.VisitorInfo;
+import com.threerings.msoy.notify.server.MsoyNotificationManager;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.util.MailSender;
@@ -52,7 +53,6 @@ import com.threerings.msoy.money.data.all.TransactionType;
 import com.threerings.msoy.money.server.MoneyLogic;
 import com.threerings.msoy.money.server.MoneyLogic.BuyOperation;
 import com.threerings.msoy.money.server.persist.MoneyRepository;
-import com.threerings.msoy.notify.server.NotificationManager;
 
 import static com.threerings.msoy.Log.log;
 
@@ -259,7 +259,7 @@ public class MsoyManager
     @Inject protected MoneyLogic _moneyLogic;
     @Inject protected MoneyRepository _moneyRepo;
     @Inject protected MsoyEventLogger _eventLog;
-    @Inject protected NotificationManager _notifyMan;
+    @Inject protected MsoyNotificationManager _notifyMan;
     @Inject protected RuntimeConfig _runtime;
 
     /** An arbitrary key for tracking quotes for broadcast messages. */

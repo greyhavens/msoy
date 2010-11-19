@@ -36,7 +36,7 @@ import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.money.data.all.Currency;
-import com.threerings.msoy.notify.server.NotificationManager;
+import com.threerings.msoy.notify.server.MsoyNotificationManager;
 import com.threerings.msoy.room.data.EntityMemories;
 import com.threerings.msoy.room.data.MemberInfo;
 import com.threerings.msoy.room.data.MsoySceneModel;
@@ -61,7 +61,6 @@ import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.group.server.persist.ThemeRepository;
 import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.item.data.all.Avatar;
-import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.Avatar.QuicklistState;
 import com.threerings.msoy.item.server.ItemLogic;
@@ -529,7 +528,7 @@ public class WorldManager
     @Inject protected MemberRepository _memberRepo;
     @Inject protected MemoryRepository _memoryRepo;
     @Inject protected MsoySceneRepository _sceneRepo;
-    @Inject protected NotificationManager _notifyMan;
+    @Inject protected MsoyNotificationManager _notifyMan;
     @Inject protected PlaceRegistry _placeReg;
     @Inject protected ThemeLogic _themeLogic;
     @Inject protected ThemeRepository _themeRepo;

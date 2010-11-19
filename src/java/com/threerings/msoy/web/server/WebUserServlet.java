@@ -77,7 +77,7 @@ import com.threerings.msoy.mail.server.MailLogic;
 import com.threerings.msoy.mail.server.persist.MailRepository;
 import com.threerings.msoy.money.data.all.MemberMoney;
 import com.threerings.msoy.money.server.MoneyLogic;
-import com.threerings.msoy.notify.server.NotificationManager;
+import com.threerings.msoy.notify.server.MsoyNotificationManager;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.person.server.persist.InvitationRecord;
 import com.threerings.msoy.person.server.persist.InviteRepository;
@@ -717,7 +717,7 @@ public class WebUserServlet extends MsoyServiceServlet
     @Inject protected MoneyLogic _moneyLogic;
     @Inject protected MsoyAuthenticator _author;
     @Inject protected MsoyPeerManager _peerMan;
-    @Inject protected NotificationManager _notifyMan;
+    @Inject protected MsoyNotificationManager _notifyMan;
     @Inject protected PresentsDObjectMgr _omgr;
     @Inject protected ProfileRepository _profileRepo;
     @Inject protected RuntimeConfig _runtime;

@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.client {
 
-import com.threerings.util.Iterator;
 import com.threerings.util.MessageBundle;
 
 import com.threerings.presents.dobj.EntryAddedEvent;
@@ -11,14 +10,12 @@ import com.threerings.presents.dobj.EntryRemovedEvent;
 import com.threerings.presents.dobj.EntryUpdatedEvent;
 import com.threerings.presents.dobj.SetListener;
 
-import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.data.PlaceObject;
 
-import com.threerings.msoy.client.MsoyContext;
-import com.threerings.msoy.data.all.MemberName;
+import com.threerings.orth.notify.data.Notification;
 
-import com.threerings.msoy.notify.data.Notification;
+import com.threerings.msoy.data.all.MemberName;
 
 /**
  * Listens for and reports occupant entry and exit.

@@ -45,6 +45,7 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.MsoyUserObject;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.notify.server.MsoyNotificationManager;
 import com.threerings.msoy.server.MemberLocator;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.util.ServiceUnit;
@@ -56,7 +57,6 @@ import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 
 import com.threerings.msoy.notify.data.PartyInviteNotification;
-import com.threerings.msoy.notify.server.NotificationManager;
 
 import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
@@ -544,7 +544,7 @@ public class PartyRegistry
     @Inject protected MemberLocator _memberLocator;
     @Inject protected MoneyLogic _moneyLogic;
     @Inject protected MsoyPeerManager _peerMgr;
-    @Inject protected NotificationManager _notifyMan;
+    @Inject protected MsoyNotificationManager _notifyMan;
     @Inject protected PlaceRegistry _placeReg;
     @Inject protected PlayerLocator _playerLocator;
     @Inject protected RootDObjectManager _omgr;

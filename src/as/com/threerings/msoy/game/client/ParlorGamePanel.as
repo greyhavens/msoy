@@ -21,6 +21,8 @@ import com.threerings.parlor.game.data.GameConfig;
 import com.whirled.game.client.GamePlayerList;
 import com.whirled.game.client.WhirledGamePanel;
 
+import com.threerings.orth.notify.data.Notification;
+
 import com.threerings.msoy.ui.DataPackMediaContainer;
 import com.threerings.msoy.ui.MsoyNameLabelCreator;
 
@@ -33,8 +35,6 @@ import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.client.TopPanel;
 import com.threerings.msoy.client.Zoomable;
 import com.threerings.orth.data.MediaDesc;
-
-import com.threerings.msoy.notify.data.Notification;
 
 import com.threerings.msoy.game.data.MsoyGameDefinition;
 import com.threerings.msoy.game.data.ParlorGameConfig;

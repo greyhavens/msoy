@@ -4,10 +4,11 @@
 package com.threerings.msoy.notify.data {
 
 import com.threerings.io.ObjectInputStream;
-
+import com.threerings.orth.notify.data.Notification;
 import com.threerings.util.MessageBundle;
 
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.util.Name;
 
 /**
  * Notifies a user they have been requested to follow someone
@@ -28,7 +29,7 @@ public class GameInviteNotification extends Notification
     }
 
     // from Notification
-    override public function getSender () :MemberName
+    override public function getSender () :Name
     {
         return _inviter;
     }

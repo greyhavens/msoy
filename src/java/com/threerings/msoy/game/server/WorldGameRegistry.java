@@ -44,7 +44,7 @@ import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.ServerConfig;
 
-import com.threerings.msoy.notify.server.NotificationManager;
+import com.threerings.msoy.notify.server.MsoyNotificationManager;
 
 import com.threerings.msoy.peer.data.HostedGame;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
@@ -334,7 +334,7 @@ public class WorldGameRegistry
         protected MemberName _inviter;
         protected int _gameId;
         protected String _game;
-        @Inject protected transient NotificationManager _notifyMan;
+        @Inject protected transient MsoyNotificationManager _notifyMan;
     }
 
     protected class GameResolver implements ResultListener<String>

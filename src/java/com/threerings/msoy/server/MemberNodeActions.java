@@ -21,6 +21,7 @@ import com.threerings.stats.data.Stat;
 import com.threerings.stats.data.StatModifier;
 
 import com.threerings.orth.data.MediaDesc;
+import com.threerings.orth.notify.data.Notification;
 
 import com.threerings.msoy.badge.data.all.EarnedBadge;
 import com.threerings.msoy.badge.data.all.InProgressBadge;
@@ -45,9 +46,8 @@ import com.threerings.msoy.item.data.all.Avatar.QuicklistState;
 import com.threerings.msoy.item.server.ItemManager;
 
 import com.threerings.msoy.notify.data.BadgeEarnedNotification;
-import com.threerings.msoy.notify.data.Notification;
 
-import com.threerings.msoy.notify.server.NotificationManager;
+import com.threerings.msoy.notify.server.MsoyNotificationManager;
 
 import com.threerings.msoy.party.server.PartyRegistry;
 
@@ -486,7 +486,7 @@ public class MemberNodeActions
 
         protected Notification _notification;
 
-        @Inject protected transient NotificationManager _notifyMan;
+        @Inject protected transient MsoyNotificationManager _notifyMan;
     }
 
     protected static class BadgesVersionUpdated extends MemberNodeAction
@@ -524,7 +524,7 @@ public class MemberNodeActions
 
         protected EarnedBadge _badge;
 
-        @Inject transient protected NotificationManager _notifyMan;
+        @Inject transient protected MsoyNotificationManager _notifyMan;
     }
 
     protected static class InProgressBadgeUpdated extends MemberNodeAction
@@ -647,7 +647,7 @@ public class MemberNodeActions
 
         protected Notification _notification;
 
-        @Inject protected transient NotificationManager _notifyMan;
+        @Inject protected transient MsoyNotificationManager _notifyMan;
     }
 
     protected static class PartyInviteAction extends MemberNodeAction

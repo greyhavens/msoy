@@ -24,15 +24,16 @@ import com.threerings.flex.FlexUtil;
 
 import com.threerings.presents.client.ClientAdapter;
 
-import com.threerings.msoy.client.MsoyController;
 import com.threerings.orth.data.MediaDesc;
+
+import com.threerings.msoy.notify.client.MsoyNotificationDisplay;
+
 import com.threerings.msoy.ui.FloatingPanel;
 import com.threerings.msoy.ui.ScalingMsoyMediaContainer;
 import com.threerings.msoy.ui.SliderPopup;
 import com.threerings.msoy.ui.skins.VolumeButton;
 
 import com.threerings.msoy.chat.client.MsoyChatDirector;
-import com.threerings.msoy.notify.client.NotificationDisplay;
 
 import com.threerings.msoy.world.client.WorldController;
 
@@ -134,7 +135,7 @@ public class ControlBar extends HBox
         return getBarHeight() - PADDING * 2;
     }
 
-    public function setNotificationDisplay (notificationDisplay :NotificationDisplay) :void
+    public function setNotificationDisplay (notificationDisplay :MsoyNotificationDisplay) :void
     {
         _notificationDisplay = notificationDisplay;
         setupControls();
@@ -452,6 +453,6 @@ public class ControlBar extends HBox
     protected var _buttons :ButtonPalette;
 
     /** Displays incoming notifications. */
-    protected var _notificationDisplay :NotificationDisplay;
+    protected var _notificationDisplay :MsoyNotificationDisplay;
 }
 }

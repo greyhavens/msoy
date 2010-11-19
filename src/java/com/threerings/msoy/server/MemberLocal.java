@@ -12,6 +12,9 @@ import com.threerings.stats.data.StatSet;
 
 import com.threerings.crowd.server.BodyLocal;
 
+import com.threerings.orth.notify.data.Notification;
+import com.threerings.orth.notify.data.NotificationLocal;
+
 import com.threerings.msoy.data.MemberObject;
 
 import com.threerings.msoy.badge.data.BadgeType;
@@ -19,7 +22,6 @@ import com.threerings.msoy.badge.data.EarnedBadgeSet;
 import com.threerings.msoy.badge.data.InProgressBadgeSet;
 import com.threerings.msoy.badge.data.all.EarnedBadge;
 import com.threerings.msoy.badge.data.all.InProgressBadge;
-import com.threerings.msoy.notify.data.Notification;
 import com.threerings.msoy.room.data.EntityMemories;
 import com.threerings.msoy.room.data.RoomObject;
 import com.threerings.msoy.room.server.RoomManager;
@@ -28,6 +30,7 @@ import com.threerings.msoy.room.server.RoomManager;
  * Contains server-side only information for a member.
  */
 public class MemberLocal extends BodyLocal
+    implements NotificationLocal
 {
     /** The number of non-idle seconds that have elapsed in this member's session. When the member
      * is forwarded between servers, this value is incremented by the time they spent on the server
@@ -67,6 +70,23 @@ public class MemberLocal extends BodyLocal
      * Note: Only valid between client resolution and sending the bootstrap,
      * and is always null otherwise and never transmitted between nodes. */
     public transient int[] mutedMemberIds;
+
+    public List<Notification> getAndClearDeferredNotifications ()
+    {
+        List<Notification> notifications = deferredNotifications;
+        deferredNotifications = null;
+        return notifications;
+    }
+
+    public boolean stillDeferringNotifications ()
+    {
+        return deferredNotifications != null;
+    }
+
+    public void deferNotifications (List<Notification> notifications)
+    {
+        deferredNotifications.addAll(notifications);
+    }
 
     /**
      * Adds an EarnedBadge to the member's BadgeSet (or updates the existing badge if the badge

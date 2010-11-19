@@ -8,6 +8,7 @@ import com.threerings.io.ObjectInputStream;
 import com.threerings.msoy.badge.data.all.EarnedBadge;
 
 import com.threerings.msoy.badge.ui.BadgeNotificationDisplay;
+import com.threerings.orth.notify.data.Notification;
 
 /**
  * Notifies a user that they earned a new badge.

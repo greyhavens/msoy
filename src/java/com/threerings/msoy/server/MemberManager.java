@@ -48,6 +48,9 @@ import com.threerings.crowd.server.BodyManager;
 import com.threerings.crowd.server.PlaceManager;
 import com.threerings.crowd.server.PlaceRegistry;
 
+import com.threerings.orth.notify.data.GenericNotification;
+import com.threerings.orth.notify.data.Notification;
+
 import com.threerings.msoy.chat.data.MsoyChatChannel;
 import com.threerings.msoy.chat.data.MsoyChatCodes;
 import com.threerings.msoy.data.MemberExperience;
@@ -67,10 +70,8 @@ import com.threerings.msoy.peer.server.MsoyPeerManager;
 
 import com.threerings.msoy.admin.server.MsoyAdminManager;
 import com.threerings.msoy.badge.server.BadgeManager;
-import com.threerings.msoy.notify.data.GenericNotification;
 import com.threerings.msoy.notify.data.LevelUpNotification;
-import com.threerings.msoy.notify.data.Notification;
-import com.threerings.msoy.notify.server.NotificationManager;
+import com.threerings.msoy.notify.server.MsoyNotificationManager;
 import com.threerings.msoy.person.server.persist.ProfileRepository;
 import com.threerings.msoy.profile.gwt.Profile;
 import com.threerings.msoy.room.data.MemberInfo;
@@ -655,7 +656,7 @@ public class MemberManager
     @Inject protected MsoyAdminManager _adminMan;
     @Inject protected MsoyEventLogger _eventLog;
     @Inject protected MsoyPeerManager _peerMan;
-    @Inject protected NotificationManager _notifyMan;
+    @Inject protected MsoyNotificationManager _notifyMan;
     @Inject protected PlaceRegistry _placeReg;
     @Inject protected PresentsDObjectMgr _omgr;
     @Inject protected ProfileRepository _profileRepo;

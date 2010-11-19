@@ -2,6 +2,7 @@
 // $Id$
 
 package com.threerings.msoy.notify.client {
+import com.threerings.orth.notify.client.NotificationDisplay;
 
 import flash.display.DisplayObject;
 import flash.utils.Timer;
@@ -34,19 +35,20 @@ import com.threerings.text.TextFieldUtil;
 import com.threerings.flex.CommandCheckBox;
 import com.threerings.flex.FlexWrapper;
 
+import com.threerings.orth.notify.data.Notification;
+
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.utils.TextUtil;
 
 import com.threerings.msoy.chat.client.ChatOverlay;
 
-import com.threerings.msoy.notify.data.Notification;
-
 import flash.utils.setTimeout; // function import
 
-public class NotificationDisplay extends HBox
+public class MsoyNotificationDisplay extends HBox
+    implements NotificationDisplay
 {
-    public function NotificationDisplay (ctx :MsoyContext, canvasHeight :int) :void
+    public function MsoyNotificationDisplay (ctx :MsoyContext, canvasHeight :int) :void
     {
         _ctx = ctx;
         _canvasHeight = canvasHeight;
@@ -303,7 +305,7 @@ public class NotificationDisplay extends HBox
         }
     }
 
-    protected static const log :Log = Log.getLog(NotificationDisplay);
+    protected static const log :Log = Log.getLog(MsoyNotificationDisplay);
 
     protected var _ctx :MsoyContext;
     protected var _canvasHeight :int;

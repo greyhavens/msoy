@@ -15,12 +15,13 @@ import com.samskivert.util.Invoker;
 import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.annotation.MainInvoker;
 
+import com.threerings.orth.notify.data.Notification;
+
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.notify.server.MsoyNotificationManager;
 import com.threerings.msoy.server.MemberLocal;
 
 import com.threerings.msoy.notify.data.BadgeEarnedNotification;
-import com.threerings.msoy.notify.data.Notification;
-import com.threerings.msoy.notify.server.NotificationManager;
 
 import com.threerings.msoy.badge.data.BadgeProgress;
 import com.threerings.msoy.badge.data.BadgeType;
@@ -229,5 +230,5 @@ public class BadgeManager
 
     @Inject protected @MainInvoker Invoker _invoker;
     @Inject protected BadgeLogic _badgeLogic;
-    @Inject protected NotificationManager _notifyMan;
+    @Inject protected MsoyNotificationManager _notifyMan;
 }

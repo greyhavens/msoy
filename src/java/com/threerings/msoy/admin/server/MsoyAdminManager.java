@@ -52,8 +52,8 @@ import com.threerings.msoy.money.server.MoneyExchange;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 
-import com.threerings.msoy.notify.data.Notification;
-import com.threerings.msoy.notify.data.GenericNotification;
+import com.threerings.orth.notify.data.Notification;
+import com.threerings.orth.notify.data.GenericNotification;
 
 import com.threerings.msoy.admin.client.PeerAdminService;
 import com.threerings.msoy.admin.data.ServerConfigObject;

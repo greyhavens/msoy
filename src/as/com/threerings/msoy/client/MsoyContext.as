@@ -2,10 +2,9 @@
 // $Id$
 
 package com.threerings.msoy.client {
+import com.threerings.msoy.notify.client.MsoyNotificationDirector;
 
 import flash.display.Stage;
-
-import flash.geom.Rectangle;
 
 import mx.core.UIComponent;
 
@@ -42,8 +41,6 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.chat.client.CurseFilter;
 import com.threerings.msoy.chat.client.MsoyChatDirector;
 import com.threerings.msoy.chat.client.MsoyMuteDirector;
-
-import com.threerings.msoy.notify.client.NotificationDirector;
 
 /**
  * Provides services shared by all clients.
@@ -298,7 +295,7 @@ public /*abstract*/ class MsoyContext
     /**
      * Get the notification director.
      */
-    public function getNotificationDirector () :NotificationDirector
+    public function getNotificationDirector () :MsoyNotificationDirector
     {
         return _notifyDir;
     }
@@ -413,7 +410,7 @@ public /*abstract*/ class MsoyContext
      */
     protected function createAdditionalDirectors () :void
     {
-        _notifyDir = new NotificationDirector(this);
+        _notifyDir = new MsoyNotificationDirector(this);
         _muteDir = new MsoyMuteDirector(this);
         _muteDir.setChatDirector(_chatDir);
         _upsellDir = new UpsellDirector(this);
@@ -437,7 +434,7 @@ public /*abstract*/ class MsoyContext
     protected var _occDir :OccupantDirector;
     protected var _chatDir :MsoyChatDirector;
     protected var _muteDir :MsoyMuteDirector;
-    protected var _notifyDir :NotificationDirector;
+    protected var _notifyDir :MsoyNotificationDirector;
     protected var _upsellDir :UpsellDirector;
     protected var _socialDir :SocialDirector;
 }

@@ -35,7 +35,8 @@ import com.threerings.crowd.chat.data.SystemMessage;
 
 import com.threerings.crowd.chat.client.ChatDisplay;
 
-import com.threerings.msoy.client.MemberService;
+import com.threerings.orth.notify.data.Notification;
+
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.MsoyService;
@@ -48,8 +49,6 @@ import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.JabberName;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.RoomName;
-
-import com.threerings.msoy.notify.data.Notification;
 
 /**
  * Displays our chat tabs.
@@ -336,7 +335,7 @@ public class ChatTabBar extends HBox
         _scrollRepeater = new Timer(SCROLL_REPEAT_DELAY, 0);
         _scrollRepeater.addEventListener(TimerEvent.TIMER, scrollRepeat);
 
-        // and create the default tab, which must be done after setting up   
+        // and create the default tab, which must be done after setting up
         callLater(createPlaceTab);
     }
 

@@ -28,6 +28,7 @@ import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.group.data.all.GroupMembership.Rank;
+import com.threerings.msoy.notify.server.MsoyNotificationManager;
 import com.threerings.msoy.server.MemberNodeActions;
 
 import com.threerings.msoy.peer.data.HostedGame;
@@ -35,9 +36,8 @@ import com.threerings.msoy.peer.data.HostedRoom;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 
-import com.threerings.msoy.notify.data.GenericNotification;
-import com.threerings.msoy.notify.data.Notification;
-import com.threerings.msoy.notify.server.NotificationManager;
+import com.threerings.orth.notify.data.GenericNotification;
+import com.threerings.orth.notify.data.Notification;
 
 import com.threerings.msoy.party.data.MemberParty;
 import com.threerings.msoy.party.data.PartierObject;
@@ -509,7 +509,7 @@ public class PartyManager
     @Inject protected ClientManager _clmgr;
     @Inject protected InvocationManager _invMgr;
     @Inject protected MsoyPeerManager _peerMgr;
-    @Inject protected NotificationManager _notifyMgr;
+    @Inject protected MsoyNotificationManager _notifyMgr;
     @Inject protected PartyRegistry _partyReg;
     @Inject protected RootDObjectManager _omgr;
 }

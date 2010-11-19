@@ -34,12 +34,13 @@ import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.whirled.data.Scene;
 
+import com.threerings.orth.notify.data.Notification;
+
 import com.threerings.msoy.ui.FloatingPanel;
 
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.Prefs;
 
-import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 
 import com.threerings.msoy.game.client.GameDirector;
@@ -47,13 +48,10 @@ import com.threerings.msoy.game.client.GameDirector;
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.PriceQuote;
 
-import com.threerings.msoy.notify.data.Notification;
-
 import com.threerings.msoy.party.data.PartyBoardMarshaller;
 import com.threerings.msoy.party.data.PartyBootstrapData;
 import com.threerings.msoy.party.data.PartyCodes;
 import com.threerings.msoy.party.data.PartyDetail;
-import com.threerings.msoy.party.data.PartyInfo;
 import com.threerings.msoy.party.data.PartyObject;
 import com.threerings.msoy.party.data.PartyPeep;
 
