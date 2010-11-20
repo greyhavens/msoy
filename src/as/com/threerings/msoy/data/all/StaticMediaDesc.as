@@ -28,7 +28,7 @@ public class StaticMediaDesc extends MediaDescImpl
     // from MediaDesc
     override public function getMediaPath () :String
     {
-        Log.getLog(this).warning(
+        Log.getLog(this).debug(
             "Unfolding StaticMediaDesc", "mimeType", _mimeType, "constraint", _constraint,
             "itemType", _itemType, "mediaType", _mediaType);
         var url :String = DeploymentConfig.staticMediaURL + _itemType + "/" + _mediaType +
