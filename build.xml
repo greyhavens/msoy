@@ -10,6 +10,7 @@
   <property name="asrc.dir"      value="src/as"/>
   <property name="deploy.dir"    value="dist"/>
   <property name="classes.dir"   value="${deploy.dir}/classes"/>
+  <property name="tclasses.dir"  value="${deploy.dir}/test-classes"/>
   <property name="gwtout.dir"    value="pages/gwt"/>
   <property name="extlibs.dir"   value="extlibs/java"/>
   <property name="javadoc.title" value="Metasoy API"/>
@@ -237,8 +238,14 @@
   <path id="classpath">
     <pathelement location="${classes.dir}"/>
     <fileset dir="${deploy.dir}/lib" includes="*.jar"/>
-    <fileset dir="${deploy.dir}/build" includes="*.jar"/>
     <fileset dir="lib" includes="plugin.jar"/>
+  </path>
+
+  <!-- declare our test classpath -->
+  <path id="test.classpath">
+    <path refid="classpath"/>
+    <pathelement location="${tclasses.dir}"/>
+    <fileset dir="${deploy.dir}/build" includes="*.jar"/>
   </path>
 
   <!-- declare our GWT classpath -->
@@ -286,6 +293,7 @@
        <include name="**/*"/>
       </fileset>
     </copy>
+    <mkdir dir="${tclasses.dir}"/>
 
     <!-- copy all the libs we need for building and for runtime -->
     <copyfilelist dest="${deploy.dir}/lib">
@@ -927,7 +935,7 @@
       classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask"/>
 
       <unit printsummary="no" haltonfailure="yes" fork="yes" dir="${basedir}">
-        <classpath refid="classpath"/>
+        <classpath refid="test.classpath"/>
         <formatter type="brief" usefile="false" unless="use.xml.output"/>
         <formatter type="xml" usefile="true" if="use.xml.output"/>
 
@@ -957,12 +965,22 @@
 
   <!-- builds the java class files only, without preparing the build directories etc. -->
   <target name="qcompile">
-    <echo>Compiling MSOY...</echo>
+    <echo>Compiling main classes...</echo>
     <javac srcdir="${src.dir}" destdir="${classes.dir}" includeAntRuntime="false"
            debug="on" optimize="off" deprecation="on" source="1.5" target="1.5">
       <classpath refid="classpath"/>
       <compilerarg value="-Xlint"/>
       <compilerarg value="-Xlint:-serial"/>
+      <exclude name="**/tests/**"/>
+    </javac>
+
+    <echo>Compiling test classes...</echo>
+    <javac srcdir="${src.dir}" destdir="${tclasses.dir}" includeAntRuntime="false"
+           debug="on" optimize="off" deprecation="on" source="1.5" target="1.5">
+      <classpath refid="test.classpath"/>
+      <compilerarg value="-Xlint"/>
+      <compilerarg value="-Xlint:-serial"/>
+      <include name="**/tests/**"/>
     </javac>
   </target>
 
