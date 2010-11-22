@@ -9,7 +9,7 @@ import com.threerings.orth.data.MediaDesc;
  * Provides a "faked" media descriptor for static media (default thumbnails and
  * furni representations).
  */
-public class StaticMediaDesc extends MediaDescImpl
+public class StaticMediaDesc extends BasicMediaDesc
 {
     /** Used for unserialization. */
     public StaticMediaDesc ()

@@ -10,7 +10,7 @@ import com.threerings.orth.data.MediaDesc;
  * NOTE: Unless {@link MediaDesc} and {@link StaticMediaDesc}, this class does not exist in the
  * AS3 client, and must not be streamed there.
  */
-public class InternalMediaDesc extends MediaDescImpl
+public class InternalMediaDesc extends BasicMediaDesc
 {
     /** Used for unserialization. */
     public InternalMediaDesc ()

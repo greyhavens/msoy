@@ -2,7 +2,7 @@ package com.threerings.msoy.data.all;
 
 import com.threerings.orth.data.MediaDesc;
 
-public class HashMediaDesc extends MediaDescImpl
+public class HashMediaDesc extends BasicMediaDesc
 {
     /** The SHA-1 hash of this media's data. */
     public byte[] hash;

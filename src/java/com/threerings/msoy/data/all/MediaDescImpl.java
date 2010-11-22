@@ -14,39 +14,12 @@ public abstract class MediaDescImpl
     {
     }
 
-    public MediaDescImpl (byte mimeType)
-    {
-        this(mimeType, NOT_CONSTRAINED);
-    }
-
-    /**
-     * Creates a media descriptor from the supplied configuration.
-     */
-    public MediaDescImpl (byte mimeType, byte constraint)
-    {
-        _mimeType = mimeType;
-        _constraint = constraint;
-    }
-
-    /** The MIME type of the media associated with this item. */
-    public byte getMimeType ()
-    {
-        return _mimeType;
-    }
+    public abstract byte getMimeType ();
+    public abstract byte getConstraint ();
 
     public String getProxyMediaPath ()
     {
         throw new IllegalArgumentException("Not implemented");
-    }
-
-    public byte getConstraint ()
-    {
-        return _constraint;
-    }
-
-    public void setConstraint (byte constraint)
-    {
-        _constraint = constraint;
     }
 
     public boolean isImage ()
@@ -103,19 +76,15 @@ public abstract class MediaDescImpl
     @Override // from Object
     public int hashCode ()
     {
-        return (_mimeType * 43) + _constraint;
+        return (getMimeType() * 43) + getConstraint();
     }
 
 	@Override // from Object
 	public boolean equals (Object other)
 	{
 		return (other instanceof MediaDesc) &&
-			(_mimeType == ((MediaDesc) other).getMimeType()) &&
-            (_constraint == ((MediaDesc) other).getConstraint());
+			(getMimeType() == ((MediaDesc) other).getMimeType()) &&
+            (getConstraint() == ((MediaDesc) other).getConstraint());
 
 	}
-
-    protected byte _mimeType;
-
-    protected byte _constraint;
 }
