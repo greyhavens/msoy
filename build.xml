@@ -223,7 +223,10 @@
                   version="1.0-SNAPSHOT" type="swc"/>
       <dependency groupId="com.threerings" artifactId="orthlib"
                   version="0.0-SNAPSHOT" type="swc"/>
+      <dependency groupId="com.threerings" artifactId="aspirin"
+                  version="0.0-SNAPSHOT" type="swc"/>
     </artifact:dependencies>
+    <echo message="Orthlib dependency: ${com.threerings:aspirin:swc}"/>
     <copy todir="${deploy.dir}/lib">
       <fileset refid="aslib.fileset"/>
       <mapper type="flatten"/>
@@ -529,6 +532,7 @@
       svn checkout svn+ssh://src.earth.threerings.net/flex/trunk ${parent.dir}/flex
     </fail>
     <dirname property="flexsdk.dir" file="${rel.flexsdk.dir}/somefile.txt"/>
+    <echo message="The Flex SDK is in ${flexsdk.dir}."/>
 
     <mkdir dir="pages/clients/${version}"/>
     <tstamp>
