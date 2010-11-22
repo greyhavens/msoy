@@ -149,11 +149,8 @@ public class HashMediaDesc extends MediaDescImpl
     @Override // from Object
     public boolean equals (Object other)
     {
-        if (other instanceof HashMediaDesc) {
-            HashMediaDesc that = (HashMediaDesc) other;
-            return (this.getMimeType() == that.getMimeType()) && HashMediaDesc.arraysEqual(this.hash, that.hash);
-        }
-        return false;
+        return (other instanceof HashMediaDesc) && super.equals(other) &&
+            HashMediaDesc.arraysEqual(this.hash, ((HashMediaDesc) other).hash);
     }
 
     @Override // from Object
