@@ -127,10 +127,6 @@ public class MailServlet extends MsoyServiceServlet
         List<ConvMessageRecord> cmrecs = _mailRepo.loadMessages(convoId);
         Set<Integer> authorIds = Sets.newHashSet();
 
-
-
-
-
         long newLastRead = lastRead;
         for (ConvMessageRecord cmrec : cmrecs) {
             msgs.add(cmrec.toConvMessage());
