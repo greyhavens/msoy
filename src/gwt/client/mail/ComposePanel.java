@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import client.ui.InfoPopup;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.Button;
@@ -23,6 +24,8 @@ import com.google.gwt.user.client.ui.TextBox;
 
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
+
+import com.threerings.orth.data.MediaDesc;
 
 import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.msoy.data.all.MemberName;
@@ -162,13 +165,12 @@ public class ComposePanel extends FlowPanel
     {
         _stuffsvc.loadItem(new ItemIdent(type, itemId), new InfoCallback<Item>() {
             public void onSuccess (Item result) {
-                // in Whirled, this MediaDesc are always HashMediaDesc; still, this is gross
                 PresentPayload payload = new PresentPayload(
-                    result.getIdent(), result.name, (HashMediaDesc) result.getThumbnailMedia());
+                    result.getIdent(), result.name, result.getThumbnailMedia());
                 _contents.setText(3, 0, _msgs.composeAttachment(), 1, "Label");
                 _contents.getFlexCellFormatter().setVerticalAlignment(
                     3, 0, HasAlignment.ALIGN_TOP);
-                _contents.setWidget(3, 1, new ThumbBox(payload.thumbMedia));
+                _contents.setWidget(3, 1, new ThumbBox(payload.getThumb()));
                 _payload = payload;
             }
         });
@@ -179,7 +181,6 @@ public class ComposePanel extends FlowPanel
         // TODO: don't load detail, but create a new service for getting one RoomInfo ?
         _roomsvc.loadRoomDetail(sceneId, new InfoCallback<RoomDetail>() {
             public void onSuccess (RoomDetail detail) {
-                // in Whirled, this MediaDesc are always HashMediaDesc; still, this is gross
                 RoomGiftPayload payload = new RoomGiftPayload(
                     detail.info.sceneId, detail.info.name,
                     (HashMediaDesc) detail.info.thumbnail);

@@ -45,7 +45,7 @@ public class PresentDisplay extends MailPayloadDisplay
                 setWidget(0, 1, WidgetUtil.makeShim(10, 10));
                 setText(0, 2, _msgs.presentRecipTip());
                 Args args = Args.compose("d", payload.ident.type, payload.ident.itemId);
-                setWidget(0, 0, new ThumbBox(payload.thumbMedia, Pages.STUFF, args));
+                setWidget(0, 0, new ThumbBox(payload.getThumb(), Pages.STUFF, args));
                 setWidget(1, 0, Link.create(payload.name, Pages.STUFF, args));
 
             } else {
