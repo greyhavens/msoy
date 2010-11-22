@@ -104,7 +104,7 @@ public class CloudfrontMediaDesc extends HashMediaDesc
 
     @Override public String toString ()
     {
-        return super.toString() + "/" + _expiration + "/" + _signature;
+        return super.toString() + "/" + _expiration + " (signed)";
     }
 
     protected int _expiration;
