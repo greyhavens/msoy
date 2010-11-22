@@ -171,10 +171,11 @@
     <!-- these libraries we need for building and for the server runtime -->
     <artifact:dependencies filesetId="runtime.fileset">
       <remoteRepository refid="ooo.maven.depends.repo"/>
+      <dependency groupId="com.samskivert" artifactId="samskivert" version="1.2-SNAPSHOT"/>
       <dependency groupId="com.threerings.panopticon" artifactId="panopticon-client"
                   version="0.0-SNAPSHOT"/>
       <dependency groupId="com.threerings" artifactId="gwt-utils" version="1.3-SNAPSHOT"/>
-      <dependency groupId="com.threerings" artifactId="orth" version="${orth.vers}"/>
+      <dependency groupId="com.threerings" artifactId="orth" version="0.0-SNAPSHOT"/>
       <dependency groupId="com.threerings" artifactId="pulse" version="0.0-SNAPSHOT"/>
       <dependency groupId="com.threerings" artifactId="threerings" version="1.1-SNAPSHOT"/>
       <dependency groupId="com.threerings" artifactId="database-utils" version="1.0-SNAPSHOT"/>
