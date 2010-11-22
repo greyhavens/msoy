@@ -8,6 +8,8 @@ import com.samskivert.util.Calendars;
 import com.threerings.msoy.data.all.CloudfrontMediaDesc;
 import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.msoy.data.all.MediaMimeTypes;
+import com.threerings.msoy.server.util.JSONMarshaller;
+import com.threerings.msoy.server.util.JSONMarshaller.JSONMutator;
 import com.threerings.msoy.web.server.CloudfrontException;
 import com.threerings.msoy.web.server.CloudfrontURLSigner;
 import com.threerings.orth.data.MediaDesc;
@@ -98,4 +100,12 @@ public abstract class MediaDescFactory
 
     public static CloudfrontURLSigner _signer = new CloudfrontURLSigner(
         ServerConfig.cloudSigningKeyId, ServerConfig.cloudSigningKey);
+
+    static {
+        JSONMarshaller.registerMutator(HashMediaDesc.class, new JSONMutator<HashMediaDesc>() {
+            public HashMediaDesc jsonMutate (HashMediaDesc obj) {
+                return MediaDescFactory.createMediaDesc(obj);
+            }
+        });
+    }
 }

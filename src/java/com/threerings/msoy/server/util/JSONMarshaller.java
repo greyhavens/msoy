@@ -18,10 +18,6 @@ import com.google.common.collect.Maps;
 import com.samskivert.util.ByteEnum;
 import com.samskivert.util.ByteEnumUtil;
 
-import com.threerings.msoy.data.all.CloudfrontMediaDesc;
-import com.threerings.msoy.data.all.HashMediaDesc;
-import com.threerings.msoy.server.MediaDescFactory;
-
 /**
  * Handles the marshalling and unmarshalling of persistent instances to JSON objects.
  *
@@ -63,12 +59,25 @@ public class JSONMarshaller<T>
         String migrateField (String original);
     }
 
+    public static interface JSONMutator<T>
+    {
+        public T jsonMutate (T obj);
+    }
+
     /**
      * Registers a migration for a particular JSON encoded class.
      */
     public static void registerMigration (Class<?> pclass, Map<String,String> migration)
     {
         _migrations.put(pclass, migration);
+    }
+
+    /**
+     * Registers a mutatoin for a particular JSON encoded class.
+     */
+    public static <T> void registerMutator (Class<T> pclass, JSONMutator<T> mutator)
+    {
+        _mutators.put(pclass, mutator);
     }
 
     /**
@@ -100,6 +109,10 @@ public class JSONMarshaller<T>
             _fields.put(field.getName(), field);
         }
         _migmap = _migrations.get(pclass);
+
+        @SuppressWarnings("unchecked")
+            JSONMutator<T> mutator = (JSONMutator<T>) _mutators.get(pclass);
+        _mutator = mutator;
     }
 
     /**
@@ -233,13 +246,10 @@ public class JSONMarshaller<T>
                 field.set(obj, value);
             }
 
-            // TODO: Hackalicious, make this general (or kill off JSON marshalling).
-            if (_pclass.equals(HashMediaDesc.class)) {
-                com.threerings.msoy.Log.log.info("Upgrading desc", "oldDesc", obj);
-                @SuppressWarnings("unchecked")
-                T newObj = (T) MediaDescFactory.createMediaDesc((HashMediaDesc) obj);
-                com.threerings.msoy.Log.log.info("Upgraded desc", "newDesc", newObj);
-                return newObj;
+            if (_mutator != null) {
+                T old = obj;
+                obj = _mutator.jsonMutate(obj);
+                com.threerings.msoy.Log.log.info("Mutated object", "before", old, "after", obj);
             }
 
             return obj;
@@ -309,6 +319,9 @@ public class JSONMarshaller<T>
     /** The class for whom we're marshalling. */
     protected Class<T> _pclass;
 
+    /** The mutator for the class we're marshalling or null. */
+    protected JSONMutator<T> _mutator;
+
     /** The migration map for the class we're marshalling or null. */
     protected Map<String, String> _migmap;
 
@@ -320,4 +333,7 @@ public class JSONMarshaller<T>
 
     /** The static registry of migrations. */
     protected static Map<Class<?>, Map<String, String>> _migrations = Maps.newHashMap();
+
+    /** Some classes need to be mutated into something else when they come off the wire. */
+    protected static Map<Class, JSONMutator<?>> _mutators = Maps.newHashMap();
 }
