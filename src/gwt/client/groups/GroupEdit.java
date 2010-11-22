@@ -133,8 +133,8 @@ public class GroupEdit extends FlexTable
         _post.setSelectedIndex(_group.postPerm.ordinal());
         addRow(_msgs.editPost(), _post);
 
-        addRow(_msgs.editLogo(), _logo = new PhotoChoiceBox(true, null));
-        _logo.setMedia(_group.getLogo());
+        _logo = new PhotoChoiceBox(true, _group.logo, Group.getDefaultGroupLogoMedia());
+        addRow(_msgs.editLogo(), _logo);
 
         _blurb = MsoyUI.createTextBox(_group.blurb, Group.MAX_BLURB_LENGTH, 40);
         addRow(_msgs.editBlurb(), _blurb);
