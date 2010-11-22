@@ -62,6 +62,13 @@ public class StaticMediaDesc extends MediaDescImpl
             MediaMimeTypes.mimeTypeToSuffix(getMimeType());
     }
 
+    public boolean equals (Object other)
+    {
+        return (other instanceof StaticMediaDesc) && super.equals(other) &&
+            ((StaticMediaDesc) other).getItemType().equals(_itemType) &&
+            ((StaticMediaDesc) other).getMediaType().equals(_mediaType);
+    }
+
     protected String _itemType;
     protected String _mediaType;
 }
