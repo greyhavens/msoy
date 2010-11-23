@@ -37,7 +37,7 @@ import static com.threerings.msoy.Log.log;
 public abstract class MsoyBaseServer extends WhirledServer
 {
     /** Configures dependencies needed by the Msoy servers. */
-    public static class Module extends WhirledServer.Module
+    public static class MsoyBaseModule extends WhirledModule
     {
         @Override protected void configure () {
             super.configure();

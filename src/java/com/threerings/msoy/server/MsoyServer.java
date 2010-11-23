@@ -13,7 +13,6 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Sets;
 import com.google.common.primitives.Ints;
 
-import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
@@ -38,10 +37,8 @@ import com.threerings.presents.peer.server.EHCachePeerCoordinator;
 import com.threerings.presents.peer.server.PeerManager;
 import com.threerings.presents.server.Authenticator;
 import com.threerings.presents.server.ClientResolver;
-import com.threerings.presents.server.PresentsServer;
 import com.threerings.presents.server.PresentsSession;
 import com.threerings.presents.server.SessionFactory;
-
 import com.threerings.crowd.chat.server.ChatChannelManager;
 import com.threerings.crowd.peer.server.CrowdPeerManager;
 import com.threerings.crowd.server.BodyLocator;
@@ -49,7 +46,6 @@ import com.threerings.crowd.server.PlaceRegistry;
 
 import com.threerings.pulse.server.JVMPulseRecorder;
 import com.threerings.pulse.server.PulseModule;
-
 import com.threerings.bureau.server.BureauRegistry;
 
 import com.threerings.admin.server.AdminManager;
@@ -103,7 +99,7 @@ import static com.threerings.msoy.Log.log;
 public class MsoyServer extends MsoyBaseServer
 {
     /** Configures dependencies needed by the world server. */
-    public static class Module extends MsoyBaseServer.Module
+    public static class MsoyModule extends MsoyBaseModule
     {
         @Override protected void configure () {
             super.configure();
@@ -115,7 +111,6 @@ public class MsoyServer extends MsoyBaseServer
 
             // presents dependencies
             bind(Authenticator.class).to(MsoyAuthenticator.class);
-            bind(PresentsServer.class).to(MsoyServer.class);
             bind(PeerManager.class).to(MsoyPeerManager.class);
             bind(ConfigRegistry.class).to(PeeredDatabaseConfigRegistry.class);
             bind(AdminManager.class).to(MsoyAdminManager.class);
@@ -160,15 +155,7 @@ public class MsoyServer extends MsoyBaseServer
             Invoker.setDefaultLongThreshold(3000L);
         }
 
-        final Injector injector = Guice.createInjector(new Module());
-        final MsoyServer server = injector.getInstance(MsoyServer.class);
-        try {
-            server.init(injector);
-            server.run();
-        } catch (final Exception e) {
-            log.warning("Unable to initialize server", e);
-            System.exit(255);
-        }
+        runServer(new MsoyModule(), new PresentsServerModule(MsoyServer.class));
     }
 
     @Override // from MsoyBaseServer
