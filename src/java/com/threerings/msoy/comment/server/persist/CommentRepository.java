@@ -33,7 +33,7 @@ import com.samskivert.depot.expression.SQLExpression;
 
 import com.threerings.presents.annotation.BlockingThread;
 
-import com.threerings.msoy.comment.gwt.Comment;
+import com.threerings.msoy.comment.data.all.Comment;
 
 import static com.threerings.msoy.Log.log;
 

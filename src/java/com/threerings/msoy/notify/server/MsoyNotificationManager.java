@@ -11,7 +11,7 @@ import com.threerings.presents.dobj.DObject;
 import com.threerings.orth.notify.data.NotificationLocal;
 import com.threerings.orth.notify.server.NotificationManager;
 
-import com.threerings.msoy.comment.gwt.Comment.CommentType;
+import com.threerings.msoy.comment.data.all.CommentType;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.server.MemberLocal;
 import com.threerings.msoy.server.MemberNodeActions;

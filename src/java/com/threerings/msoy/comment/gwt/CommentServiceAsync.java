@@ -7,7 +7,9 @@ import java.util.Collection;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.threerings.gwt.util.PagedResult;
-import com.threerings.msoy.comment.gwt.Comment.CommentType;
+
+import com.threerings.msoy.comment.data.all.Comment;
+import com.threerings.msoy.comment.data.all.CommentType;
 
 /**
  * Provides the asynchronous version of {@link CommentService}.

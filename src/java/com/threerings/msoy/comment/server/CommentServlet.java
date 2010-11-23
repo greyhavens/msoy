@@ -20,7 +20,8 @@ import com.samskivert.util.StringUtil;
 import com.threerings.web.gwt.ServiceException;
 import com.threerings.gwt.util.PagedResult;
 
-import com.threerings.msoy.comment.gwt.Comment.CommentType;
+import com.threerings.msoy.comment.data.all.Comment;
+import com.threerings.msoy.comment.data.all.CommentType;
 import com.threerings.msoy.notify.server.MsoyNotificationManager;
 import com.threerings.msoy.game.server.persist.GameInfoRecord;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
@@ -30,7 +31,6 @@ import com.threerings.msoy.item.server.persist.CatalogRecord;
 import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
 
-import com.threerings.msoy.comment.gwt.Comment;
 import com.threerings.msoy.comment.gwt.CommentService;
 import com.threerings.msoy.comment.server.persist.CommentRecord;
 import com.threerings.msoy.comment.server.persist.CommentRepository;

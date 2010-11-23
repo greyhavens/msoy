@@ -35,6 +35,8 @@ import com.samskivert.util.StringUtil;
 import com.threerings.parlor.rating.server.persist.RatingRepository;
 
 import com.threerings.orth.data.MediaDesc;
+
+import com.threerings.msoy.comment.data.all.CommentType;
 import com.threerings.msoy.data.all.MediaDescUtil;
 import com.threerings.msoy.data.all.MediaMimeTypes;
 import com.threerings.msoy.item.data.ItemCodes;
@@ -45,7 +47,6 @@ import com.threerings.msoy.item.server.persist.GameItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
 
-import com.threerings.msoy.comment.gwt.Comment.CommentType;
 import com.threerings.msoy.comment.server.persist.CommentRepository;
 
 import com.threerings.msoy.edgame.gwt.EditGameService;

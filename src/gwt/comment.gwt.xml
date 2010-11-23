@@ -1,0 +1,5 @@
+<module>
+  <source path="com/threerings/msoy/comment/gwt"/>
+  <source path="com/threerings/msoy/comment/data/all"/>
+  <source path="client/comment"/>
+</module>

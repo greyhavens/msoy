@@ -31,8 +31,8 @@ import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.gwt.util.PagedResult;
 
-import com.threerings.msoy.comment.gwt.Comment;
-import com.threerings.msoy.comment.gwt.Comment.CommentType;
+import com.threerings.msoy.comment.data.all.Comment;
+import com.threerings.msoy.comment.data.all.CommentType;
 import com.threerings.msoy.comment.gwt.CommentService;
 import com.threerings.msoy.comment.gwt.CommentServiceAsync;
 import com.threerings.msoy.data.all.MediaDescSize;

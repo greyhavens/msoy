@@ -3,8 +3,8 @@
   <inherits name="item"/>
   <inherits name="money"/>
   <inherits name="imagechooser"/> <!-- for the remixer -->
+  <inherits name="comment"/>
 
-  <source path="com/threerings/msoy/comment/gwt"/>
   <source path="com/threerings/msoy/stuff/gwt"/>
   <source path="com/threerings/msoy/game/data/all"/>
   <source path="com/threerings/msoy/game/gwt"/>
@@ -14,7 +14,6 @@
   <source path="com/threerings/msoy/fora/gwt"/>
 
   <source path="client/shop"/>
-  <source path="client/comment"/>
   <source path="client/editem"/>
   <source path="client/remix"/>
 

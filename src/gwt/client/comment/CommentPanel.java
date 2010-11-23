@@ -20,7 +20,7 @@ import com.google.gwt.user.client.ui.PushButton;
 import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.InlinePanel;
 
-import com.threerings.msoy.comment.gwt.Comment;
+import com.threerings.msoy.comment.data.all.Comment;
 import com.threerings.msoy.web.gwt.MemberCard;
 
 import client.images.msgs.MsgsImages;

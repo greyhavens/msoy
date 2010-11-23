@@ -14,9 +14,8 @@ import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.annotation.Index;
 import com.samskivert.depot.expression.ColumnExp;
 
+import com.threerings.msoy.comment.data.all.Comment;
 import com.threerings.msoy.web.gwt.MemberCard;
-
-import com.threerings.msoy.comment.gwt.Comment;
 
 /**
  * Contains a comment made on an entity of some sort (item, profile, room, etc.).

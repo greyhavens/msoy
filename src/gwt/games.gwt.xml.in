@@ -3,10 +3,9 @@
   <inherits name="trophy"/>
   <inherits name="reminders"/>
   <inherits name="richedit"/>
+  <inherits name="comment"/>
 
   <source path="com/kisgergely/gwt/canvas/client"/>
-  <source path="com/threerings/msoy/comment/gwt"/>
-  <source path="client/comment"/>
   <source path="client/games"/>
 
   <public path="public/games"/>

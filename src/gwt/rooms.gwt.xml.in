@@ -1,11 +1,9 @@
 <module>
   <inherits name="com.google.gwt.xml.XML"/>
   <inherits name="room"/>
-
-  <source path="com/threerings/msoy/comment/gwt"/>
+  <inherits name="comment"/>
 
   <source path="client/rooms"/>
-  <source path="client/comment"/>
 
   <public path="public/rooms"/>
   <stylesheet src="/themed/css/rooms.css?themeId=0"/>

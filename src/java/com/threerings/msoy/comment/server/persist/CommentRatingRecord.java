@@ -12,8 +12,6 @@ import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.annotation.Index;
 import com.samskivert.depot.expression.ColumnExp;
 
-import com.threerings.msoy.comment.gwt.Comment;
-
 /**
  * Tracks a member's rating of a comment.
  */
@@ -33,7 +31,7 @@ public class CommentRatingRecord extends PersistentRecord
      * will result in a change to its SQL counterpart. */
     public static final int SCHEMA_VERSION = 1;
 
-    /** The type of entity on which the rated comment was made (see {@link Comment}). */
+    /** The type of entity on which the rated comment was made (see {@link com.threerings.msoy.comment.data.all.Comment}). */
     @Id
     public int entityType;
 

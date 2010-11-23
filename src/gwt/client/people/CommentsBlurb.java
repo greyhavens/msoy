@@ -5,7 +5,7 @@ package client.people;
 
 import com.google.gwt.core.client.GWT;
 
-import com.threerings.msoy.comment.gwt.Comment.CommentType;
+import com.threerings.msoy.comment.data.all.CommentType;
 import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.profile.gwt.ProfileService;
 
