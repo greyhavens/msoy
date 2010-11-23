@@ -988,9 +988,6 @@ public class MsoySprite
      * assumed, but an Entity can configure its height when configuring its hotspot. */
     protected var _height :Number = NaN;
 
-//    protected var _fxScaleX :Number = 1;
-//    protected var _fxScaleY :Number = 1;
-
     /** The 'location' scale of the media: the scaling that is the result of emulating perspective
      * while we move around the room. */
     protected var _locScale :Number = 1;
