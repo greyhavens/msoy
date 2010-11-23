@@ -177,7 +177,7 @@ public class ActorSprite extends OccupantSprite
         }
     }
 
-    // from MsoySprite
+    // from EntitySprite
     override protected function createBackend () :EntityBackend
     {
         return new ActorBackend();

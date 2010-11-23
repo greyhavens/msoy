@@ -16,7 +16,7 @@ import com.threerings.msoy.ui.MsoyLoadedAsset;
 
 import com.threerings.msoy.client.Msgs;
 
-import com.threerings.msoy.room.client.MsoySprite;
+import com.threerings.msoy.room.client.EntitySprite;
 
 
 /**
@@ -88,7 +88,7 @@ public class RotatingHotspot extends Hotspot
     /** Moves the furni over to the new location. */
     protected function updateTargetRotation (sx :Number, sy :Number) :void
     {
-        var target :MsoySprite = _editor.target;
+        var target :EntitySprite = _editor.target;
         if (target == null) {
             return;
         }

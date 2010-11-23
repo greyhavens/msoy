@@ -98,7 +98,7 @@ public class MediaDirector extends BasicDirector
     /**
      * Release any references to the specified sprite, if appropriate.
      */
-    public function returnSprite (sprite :MsoySprite) :void
+    public function returnSprite (sprite :EntitySprite) :void
     {
         if (sprite != _ourAvatar) {
             sprite.shutdown();

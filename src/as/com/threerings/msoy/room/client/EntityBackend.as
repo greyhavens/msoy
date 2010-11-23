@@ -23,7 +23,7 @@ public class EntityBackend extends ControlBackend
     /**
      * More initialization: set the sprite we control.
      */
-    public function setSprite (sprite :MsoySprite) :void
+    public function setSprite (sprite :EntitySprite) :void
     {
         _sprite = sprite;
     }
@@ -253,6 +253,6 @@ public class EntityBackend extends ControlBackend
     }
 
     /** The sprite that this backend is connected to. */
-    protected var _sprite :MsoySprite;
+    protected var _sprite :EntitySprite;
 }
 }

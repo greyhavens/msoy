@@ -44,7 +44,7 @@ public class Viewer extends Sprite
      */
     public function loadBytes (bytes :ByteArray) :void
     {
-        (_sprite as MsoySprite).viz.setZippedMediaBytes(bytes);
+        (_sprite as EntitySprite).viz.setZippedMediaBytes(bytes);
     }
 
     protected function gotParams (params :Object) :void

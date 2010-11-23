@@ -47,8 +47,8 @@ import com.threerings.msoy.data.all.MediaMimeTypes;
  * inside a zip file that is a datapack.
  * Also implements Snapshottable and uses the MediaStub to take snapshots of media.
  *
- * Note that this is essentially an abstract class that should only be extended by MsoySprite.
- * I could roll all this into MsoySprite, but this is cleaner.
+ * Note that this is essentially an abstract class that should only be extended by EntitySprite.
+ * I could roll all this into EntitySprite, but this is cleaner.
  */
 //
 // NOTE:

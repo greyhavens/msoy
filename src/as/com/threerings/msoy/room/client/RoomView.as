@@ -240,7 +240,7 @@ public class RoomView extends Sprite
         if (hit === undefined) {
             return;
         }
-        var sprite :MsoySprite = (hit as MsoySprite);
+        var sprite :EntitySprite = (hit as EntitySprite);
         if (sprite == null) {
             if (_bg == null) {
                 return;
@@ -253,9 +253,9 @@ public class RoomView extends Sprite
     }
 
     /**
-     * Called by MsoySprite instances when they've had their location updated.
+     * Called by EntitySprite instances when they've had their location updated.
      */
-    public function locationUpdated (sprite :MsoySprite) :void
+    public function locationUpdated (sprite :EntitySprite) :void
     {
         _layout.updateScreenLocation(sprite, sprite.getLayoutHotSpot());
 
@@ -426,7 +426,7 @@ public class RoomView extends Sprite
     /**
      * Set the sprite we should be following.
      */
-    public function setCenterSprite (center :MsoySprite) :void
+    public function setCenterSprite (center :EntitySprite) :void
     {
         _centerSprite = center;
         scrollView();
@@ -500,7 +500,7 @@ public class RoomView extends Sprite
     /**
      * Add the specified sprite to this display and have the room track it.
      */
-    public function addOtherSprite (sprite :MsoySprite) :void
+    public function addOtherSprite (sprite :EntitySprite) :void
     {
         _otherSprites.push(sprite);
         addSprite(sprite);
@@ -510,7 +510,7 @@ public class RoomView extends Sprite
     /**
      * Remove the specified sprite.
      */
-    public function removeOtherSprite (sprite :MsoySprite) :void
+    public function removeOtherSprite (sprite :EntitySprite) :void
     {
         ArrayUtil.removeAll(_otherSprites, sprite);
         removeSprite(sprite);
@@ -628,14 +628,14 @@ public class RoomView extends Sprite
         }
     }
 
-    public function getEntity (ident :ItemIdent) :MsoySprite
+    public function getEntity (ident :ItemIdent) :EntitySprite
     {
-        return _entities.get(ident) as MsoySprite;
+        return _entities.get(ident) as EntitySprite;
     }
 
     /**
      * Execute the specified function for each entity.
-     * function (key :ItemIdent, entity :MsoySprite) :void
+     * function (key :ItemIdent, entity :EntitySprite) :void
      */
     public function forEachEntity (foreach :Function) :void
     {
@@ -665,7 +665,7 @@ public class RoomView extends Sprite
     public function dispatchSpriteMessage (
         item :ItemIdent, name :String, arg :ByteArray, isAction :Boolean) :void
     {
-        var sprite :MsoySprite = (_entities.get(item) as MsoySprite);
+        var sprite :EntitySprite = (_entities.get(item) as EntitySprite);
         if (sprite != null) {
             sprite.messageReceived(name, ObjectMarshaller.decode(arg), isAction);
         } else {
@@ -685,7 +685,7 @@ public class RoomView extends Sprite
         // until the event handler actually requests the value using a getter(), but I
         // suspect that will require an increment to the version number in the function we
         // call... I don't want to do that just now.
-        _entities.forEach(function (key :Object, sprite :MsoySprite) :void {
+        _entities.forEach(function (key :Object, sprite :EntitySprite) :void {
             sprite.signalReceived(name, ObjectMarshaller.decode(data));
         });
     }
@@ -695,7 +695,7 @@ public class RoomView extends Sprite
      */
     public function dispatchMemoryChanged (ident :ItemIdent, key :String, data :ByteArray) :void
     {
-        var sprite :MsoySprite = (_entities.get(ident) as MsoySprite);
+        var sprite :EntitySprite = (_entities.get(ident) as EntitySprite);
         if (sprite != null) {
             sprite.memoryChanged(key, ObjectMarshaller.decode(data));
         }
@@ -708,7 +708,7 @@ public class RoomView extends Sprite
             return;
         }
         var entityId :String = item.toString();
-        _entities.forEach(function (mapKey :Object, sprite :MsoySprite) :void {
+        _entities.forEach(function (mapKey :Object, sprite :EntitySprite) :void {
             sprite.entityEntered(entityId);
         });
     }
@@ -719,7 +719,7 @@ public class RoomView extends Sprite
             return;
         }
         var entityId :String = item.toString();
-        _entities.forEach(function (mapKey :Object, sprite :MsoySprite) :void {
+        _entities.forEach(function (mapKey :Object, sprite :EntitySprite) :void {
             sprite.entityLeft(entityId);
         });
     }
@@ -727,7 +727,7 @@ public class RoomView extends Sprite
     public function dispatchEntityMoved (item :ItemIdent, destination :Array) :void
     {
         var entityId :String = item.toString();
-        _entities.forEach(function (mapKey :Object, sprite :MsoySprite) :void {
+        _entities.forEach(function (mapKey :Object, sprite :EntitySprite) :void {
             sprite.entityMoved(entityId, destination);
         });
     }
@@ -751,7 +751,7 @@ public class RoomView extends Sprite
     /**
      * Populate the context menu for a sprite.
      */
-    protected function populateSpriteContextMenu (sprite :MsoySprite, menuItems :Array) :void
+    protected function populateSpriteContextMenu (sprite :EntitySprite, menuItems :Array) :void
     {
         if (sprite.getItemIdent() != null && (sprite is FurniSprite) && _ctrl.canManageRoom() &&
                 sprite.hasCustomConfigPanel()) {
@@ -826,7 +826,7 @@ public class RoomView extends Sprite
      */
     protected function relayoutSprites (sprites :Array) :void
     {
-        for each (var sprite :MsoySprite in sprites) {
+        for each (var sprite :EntitySprite in sprites) {
             relayoutSprite(sprite);
         }
     }
@@ -834,7 +834,7 @@ public class RoomView extends Sprite
     /**
      * Do anything necessary to (re)layout a sprite.
      */
-    protected function relayoutSprite (sprite :MsoySprite) :void
+    protected function relayoutSprite (sprite :EntitySprite) :void
     {
         locationUpdated(sprite);
         sprite.roomScaleUpdated();
@@ -964,7 +964,7 @@ public class RoomView extends Sprite
      */
     protected function setActive (map :Map, active :Boolean) :void
     {
-        for each (var sprite :MsoySprite in map.values()) {
+        for each (var sprite :EntitySprite in map.values()) {
             if (sprite != _bg) {
                 sprite.setActive(active);
             }
@@ -976,7 +976,7 @@ public class RoomView extends Sprite
      */
     protected function removeAll (map :Map) :void
     {
-        for each (var sprite :MsoySprite in map.values()) {
+        for each (var sprite :EntitySprite in map.values()) {
             removeSprite(sprite);
         }
         map.clear();
@@ -1032,7 +1032,7 @@ public class RoomView extends Sprite
     /**
      * Add the specified sprite to the view.
      */
-    protected function addSprite (sprite :MsoySprite) :void
+    protected function addSprite (sprite :EntitySprite) :void
     {
         var index :int = (sprite is DecorSprite) ? 0 : 1;
         addChildAt(sprite.viz, index);
@@ -1047,7 +1047,7 @@ public class RoomView extends Sprite
     /**
      * Remove the specified sprite from the view.
      */
-    protected function removeSprite (sprite :MsoySprite) :void
+    protected function removeSprite (sprite :EntitySprite) :void
     {
         if (sprite.viz.parent != this) {
             // TODO: I believe this happens when you leave a room and your greeter enters;
@@ -1075,7 +1075,7 @@ public class RoomView extends Sprite
     /**
      * Should be called prior to a sprite updating.
      */
-    protected function spriteWillUpdate (sprite :MsoySprite) :void
+    protected function spriteWillUpdate (sprite :EntitySprite) :void
     {
         removeFromEntityMap(sprite);
     }
@@ -1083,7 +1083,7 @@ public class RoomView extends Sprite
     /**
      * Should be called after updating a sprite.
      */
-    protected function spriteDidUpdate (sprite :MsoySprite) :void
+    protected function spriteDidUpdate (sprite :EntitySprite) :void
     {
         addToEntityMap(sprite);
     }
@@ -1091,7 +1091,7 @@ public class RoomView extends Sprite
     /**
      * Add the specified sprite to our entity map, if applicable.
      */
-    protected function addToEntityMap (sprite :MsoySprite) :void
+    protected function addToEntityMap (sprite :EntitySprite) :void
     {
         var ident :ItemIdent = sprite.getItemIdent();
         if (ident != null) {
@@ -1103,7 +1103,7 @@ public class RoomView extends Sprite
     /**
      * Remove the specified sprite to our entity map, if applicable.
      */
-    protected function removeFromEntityMap (sprite :MsoySprite) :void
+    protected function removeFromEntityMap (sprite :EntitySprite) :void
     {
         _entities.remove(sprite.getItemIdent()); // could be a no-op
         removeFromElementMap(sprite);
@@ -1145,14 +1145,14 @@ public class RoomView extends Sprite
     /** A map of bodyOid -> OccupantSprite. */
     protected var _occupants :Map = Maps.newMapOf(int);
 
-    /** Maps ItemIdent -> MsoySprite for entities (furni, avatars, pets). */
+    /** Maps ItemIdent -> EntitySprite for entities (furni, avatars, pets). */
     protected var _entities :Map = Maps.newMapOf(ItemIdent);
 
     /** Maps DisplayObject -> RoomElement */
     protected var _elements :Map = Maps.newMapOf(DisplayObject);
 
     /** The sprite we should center on. */
-    protected var _centerSprite :MsoySprite;
+    protected var _centerSprite :EntitySprite;
 
     /** A map of bodyOid -> OccupantSprite for those that we'll remove when they stop moving. */
     protected var _pendingRemovals :Map = Maps.newMapOf(int);

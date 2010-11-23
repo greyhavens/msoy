@@ -32,7 +32,7 @@ import com.threerings.msoy.world.client.WorldContext;
 import com.threerings.msoy.world.client.WorldService;
 
 import com.threerings.msoy.room.client.FurniSprite;
-import com.threerings.msoy.room.client.MsoySprite;
+import com.threerings.msoy.room.client.EntitySprite;
 import com.threerings.msoy.room.client.RoomObjectView;
 import com.threerings.msoy.room.client.updates.FurniUpdateAction;
 import com.threerings.msoy.room.client.updates.SceneUpdateAction;
@@ -430,9 +430,9 @@ public class RoomEditorController
     // Functions for highlighting targets and displaying the furni editing UI
 
     /** Called by the room controller, when the user rolls over or out of a valid sprite. */
-    public function mouseOverSprite (sprite :MsoySprite) :void
+    public function mouseOverSprite (sprite :EntitySprite) :void
     {
-        var sprite :MsoySprite = _edit.isIdle() ? sprite : null;
+        var sprite :EntitySprite = _edit.isIdle() ? sprite : null;
         if (_hover.target != sprite && (_edit.target != null ? _edit.target != sprite : true)) {
             // either the player is hovering over a new sprite, or switching from an old
             // target to nothing at all. in either case, update!
@@ -552,7 +552,7 @@ public class RoomEditorController
      */
     protected function mouseDown (event :MouseEvent) :void
     {
-        var hit :MsoySprite =
+        var hit :EntitySprite =
             _view.getRoomController().getHitSprite(event.stageX, event.stageY, true);
         if (hit is FurniSprite) {
             if (_edit.isIdle()) {

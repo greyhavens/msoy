@@ -21,7 +21,7 @@ import com.threerings.msoy.world.client.WorldContext;
 public class EntityPopup extends FloatingPanel
 {
     public function EntityPopup (
-        ctx :WorldContext, entitySprite :MsoySprite,
+        ctx :WorldContext, entitySprite :EntitySprite,
         title :String, userPanel :DisplayObject, panelWidth :Number, panelHeight :Number,
         panelColor :uint = 0xFFFFFF, panelAlpha :Number = 1.0, doMasking :Boolean = true)
     {
@@ -57,7 +57,7 @@ public class EntityPopup extends FloatingPanel
         _userPanel = userPanel;
     }
 
-    public function getOwningEntity () :MsoySprite
+    public function getOwningEntity () :EntitySprite
     {
         return _entitySprite;
     }
@@ -85,7 +85,7 @@ public class EntityPopup extends FloatingPanel
     protected var _canvas :Canvas;
 
     /** The sprite that owns this. */
-    protected var _entitySprite :MsoySprite;
+    protected var _entitySprite :EntitySprite;
 
     protected var _userPanel :DisplayObject;
 }

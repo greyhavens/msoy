@@ -129,7 +129,7 @@ public class RoomObjectController extends RoomController
     // from interface MuteObserver
     public function muteChanged (name :Name, nowMuted :Boolean) :void
     {
-        // when someone becomes muted, it may affect the visibility of their sprite
+        // when s omeone becomes muted, it may affect the visibility of their sprite
         var occ :OccupantSprite = _roomObjectView.getOccupantByName(name);
         if (occ != null) {
             occ.muteChanged();

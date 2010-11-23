@@ -102,13 +102,13 @@ public class MemberSprite extends ActorSprite
         return "m.avatar";
     }
 
-    // from MsoySprite
+    // from EntitySprite
     override public function getHoverColor () :uint
     {
         return AVATAR_HOVER;
     }
 
-    // from MsoySprite
+    // from EntitySprite
     override public function hasAction () :Boolean
     {
         return true;
@@ -277,7 +277,7 @@ import com.threerings.msoy.world.client.WorldController;
 import com.threerings.msoy.party.data.PartySummary;
 
 import com.threerings.msoy.room.client.MemberSprite;
-import com.threerings.msoy.room.client.MsoySprite;
+import com.threerings.msoy.room.client.EntitySprite;
 import com.threerings.msoy.room.client.OccupantSprite;
 
 /**
@@ -326,7 +326,7 @@ class TableIcon extends GlowSprite
             cmd = WorldController.JOIN_PLAYER_GAME;
             arg = [ gameSummary.gameId, memberId ];
         }
-        init(MsoySprite.GAME_HOVER, cmd, arg);
+        init(EntitySprite.GAME_HOVER, cmd, arg);
 
         // specify our bounds explicitly, as our width is centered at 0.
         _host.addDecoration(this, {
@@ -373,7 +373,7 @@ class PartyIcon extends GlowSprite
         _icon.x = _icon.maxW / -2; // position with 0 at center
         addChild(_icon);
 
-        init(MsoySprite.OTHER_HOVER, WorldController.GET_PARTY_DETAIL, summ.id);
+        init(EntitySprite.OTHER_HOVER, WorldController.GET_PARTY_DETAIL, summ.id);
 
         var width :int = _icon.maxW;
         var height :int = _icon.maxH

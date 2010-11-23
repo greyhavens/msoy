@@ -164,7 +164,7 @@ public class RoomStudioView extends RoomView
     /**
      * Provide access to the primary testing sprite.
      */
-    public function getTestingSprite () :MsoySprite
+    public function getTestingSprite () :EntitySprite
     {
         return _testingSprite;
     }
@@ -420,7 +420,7 @@ public class RoomStudioView extends RoomView
 
         var ident :String = _avatar.getItemIdent().toString();
         var name :String = _avatar.getActorInfo().username.toString();
-        for each (var entity :MsoySprite in _entities.values()) {
+        for each (var entity :EntitySprite in _entities.values()) {
             entity.processChatMessage(ident, name, "bla bla bla");
         }
     }
@@ -490,7 +490,7 @@ public class RoomStudioView extends RoomView
         return (isNaN(scale) || scale == 0) ? 1 : scale;
     }
 
-    protected function setTestingSprite (sprite :MsoySprite) :void
+    protected function setTestingSprite (sprite :EntitySprite) :void
     {
         _testingSprite = sprite;
         if (sprite.viz.isContentInitialized()) {
@@ -509,7 +509,7 @@ public class RoomStudioView extends RoomView
 
     protected var _sctrl :RoomStudioController;
 
-    protected var _testingSprite :MsoySprite;
+    protected var _testingSprite :EntitySprite;
     protected var _avatar :MemberSprite;
     protected var _pet :PetSprite;
 

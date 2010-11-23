@@ -21,7 +21,7 @@ import com.threerings.msoy.world.client.WorldContext;
 
 import com.threerings.msoy.room.data.FurniData;
 
-public class FurniSprite extends MsoySprite
+public class FurniSprite extends EntitySprite
 {
     /**
      * Set the LoadingWatcher that will be used to track whether any

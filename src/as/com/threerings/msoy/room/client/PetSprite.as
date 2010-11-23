@@ -53,13 +53,13 @@ public class PetSprite extends ActorSprite
         return "m.pet";
     }
 
-    // from MsoySprite
+    // from EntitySprite
     override public function getHoverColor () :uint
     {
         return PET_HOVER;
     }
 
-    // from MsoySprite
+    // from EntitySprite
     override public function hasAction () :Boolean
     {
         return true;
@@ -71,7 +71,7 @@ public class PetSprite extends ActorSprite
         return "PetSprite[" + _occInfo.username + " (oid=" + _occInfo.bodyOid + ")]";
     }
 
-    // from MsoySprite
+    // from EntitySprite
     override protected function postClickAction () :void
     {
         CommandEvent.dispatch(_sprite, RoomController.PET_CLICKED, this);

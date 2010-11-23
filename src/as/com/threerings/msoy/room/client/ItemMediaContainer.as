@@ -1,5 +1,5 @@
 //
-// $Id: MsoySprite.as 19383 2010-10-13 20:48:25Z zell $
+// $Id: EntitySprite.as 19383 2010-10-13 20:48:25Z zell $
 
 package com.threerings.msoy.room.client {
 
@@ -81,13 +81,13 @@ public class ItemMediaContainer extends DataPackMediaContainer
         _spriteMediaScaleY = scaleY;
     }
 
-    // from MsoySprite
+    // from EntitySprite
     override public function getMaxContentWidth () :int
     {
         return _maxWidth;
     }
 
-    // from MsoySprite
+    // from EntitySprite
     override public function getMaxContentHeight () :int
     {
         return _maxHeight;

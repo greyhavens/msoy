@@ -267,7 +267,7 @@ public class RoomStudioController extends RoomController
      */
     public function showStudioConfig (show :Boolean = true) :void
     {
-        var tester :MsoySprite = _studioView.getTestingSprite();
+        var tester :EntitySprite = _studioView.getTestingSprite();
         if (!show) {
             clearEntityPopup(tester);
         } else if (showConfigPopup(tester)) {
@@ -286,7 +286,7 @@ public class RoomStudioController extends RoomController
      */
     protected function getStudioMemories () :String
     {
-        var spr :MsoySprite = _studioView.getTestingSprite();
+        var spr :EntitySprite = _studioView.getTestingSprite();
         if (spr == null) {
             return null;
         }

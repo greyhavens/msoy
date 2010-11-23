@@ -194,7 +194,7 @@ public class RoomObjectView extends RoomView
         _editing = editing;
 
         // update all sprites
-        _furni.forEach(function (key :*, sprite :MsoySprite) :void {
+        _furni.forEach(function (key :*, sprite :EntitySprite) :void {
             sprite.setEditing(_editing);
         });
         if (_bg != null) {
@@ -239,7 +239,7 @@ public class RoomObjectView extends RoomView
         } else if (update is SceneAttrsUpdate) {
             rereadScene(); // re-read our scene
             updateBackground();
-            
+
         } else if (update is SceneOwnershipUpdate) {
             rereadScene();
         }
@@ -431,7 +431,7 @@ public class RoomObjectView extends RoomView
             // send it to all entities
             var ident :String = speaker.getItemIdent().toString();
             var name :String = speaker.getOccupantInfo().username.toString();
-            for each (var entity :MsoySprite in _entities.values()) {
+            for each (var entity :EntitySprite in _entities.values()) {
                 entity.processChatMessage(ident, name, msg.message);
             }
 
@@ -550,7 +550,7 @@ public class RoomObjectView extends RoomView
 
     // documentation inherited
     override protected function populateSpriteContextMenu (
-        sprite :MsoySprite, menuItems :Array) :void
+        sprite :EntitySprite, menuItems :Array) :void
     {
         var ident :ItemIdent = sprite.getItemIdent();
         if (ident != null) {
@@ -681,7 +681,7 @@ public class RoomObjectView extends RoomView
         const dispatchStopped :Boolean = (_musicPlayCount >= 0);
         const dispatchStarted :Boolean = (audio != null);
         var avrg :AVRGameBackend = _ctx.getGameDirector().getAVRGameBackend();
-        var entity :MsoySprite;
+        var entity :EntitySprite;
         if (dispatchStopped) {
             for each (entity in _entities.values()) {
                 entity.processMusicStartStop(false);
@@ -824,7 +824,7 @@ public class RoomObjectView extends RoomView
         }
     }
 
-    override protected function removeSprite (sprite :MsoySprite) :void
+    override protected function removeSprite (sprite :EntitySprite) :void
     {
         super.removeSprite(sprite);
 
@@ -849,7 +849,7 @@ public class RoomObjectView extends RoomView
     protected function handleMusicMetadata (event :ValueEvent) :void
     {
         var metadata :Object = new ImmutableProxyObject(event.value);
-        for each (var entity :MsoySprite in _entities.values()) {
+        for each (var entity :EntitySprite in _entities.values()) {
             entity.processMusicId3(metadata);
         }
         var avrg :AVRGameBackend = _ctx.getGameDirector().getAVRGameBackend();

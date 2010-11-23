@@ -36,7 +36,7 @@ import com.threerings.msoy.room.data.MsoyScene;
  * Displays a visualization of an occupant in a scene (could be a member, a pet, a MOB, all sorts
  * of kraaaazy stuff).
  */
-public class OccupantSprite extends MsoySprite
+public class OccupantSprite extends EntitySprite
 {
     /** The maximum width of an occupant sprite. */
     public static const MAX_WIDTH :int = 600;
@@ -401,7 +401,7 @@ public class OccupantSprite extends MsoySprite
         }
     }
 
-    // from MsoySprite
+    // from EntitySprite
     override public function setScreenLocation (x :Number, y :Number, scale :Number) :void
     {
         super.setScreenLocation(x, y, scale);
@@ -412,7 +412,7 @@ public class OccupantSprite extends MsoySprite
         }
     }
 
-    // from MsoySprite
+    // from EntitySprite
     override public function getDesc () :String
     {
         return "m.occupant";
@@ -450,7 +450,7 @@ public class OccupantSprite extends MsoySprite
         }
     }
 
-    // from MsoySprite
+    // from EntitySprite
     override public function getStageRect (includeExtras :Boolean = true) :Rectangle
     {
         // Note: Ideally we could just return getRect(stage), but that seems to pay too much
@@ -470,7 +470,7 @@ public class OccupantSprite extends MsoySprite
         return r;
     }
 
-    // from MsoySprite
+    // from EntitySprite
     override public function mouseClick (event :MouseEvent) :void
     {
         // see if it actually landed on a decoration
@@ -490,7 +490,7 @@ public class OccupantSprite extends MsoySprite
         }
     }
 
-    // from MsoySprite
+    // from EntitySprite
     override public function setHovered (
         hovered :Boolean, stageX :Number = NaN, stageY :Number = NaN) :Object
     {
@@ -516,13 +516,13 @@ public class OccupantSprite extends MsoySprite
         return (_hoverDecoration == null) ? superTip : decorTip;
     }
 
-    // from MsoySprite
+    // from EntitySprite
     override public function toString () :String
     {
         return "OccupantSprite[" + _occInfo.username + " (oid=" + _occInfo.bodyOid + ")]";
     }
 
-    // from MsoySprite
+    // from EntitySprite
     override public function setHotSpot (x :Number, y :Number, height :Number) :void
     {
         super.setHotSpot(x, y, height);
@@ -530,7 +530,7 @@ public class OccupantSprite extends MsoySprite
         arrangeDecorations();
     }
 
-    // from MsoySprite
+    // from EntitySprite
     override protected function setGlow (glow :Boolean) :void
     {
         if (!glow) {
@@ -542,7 +542,7 @@ public class OccupantSprite extends MsoySprite
         }
     }
 
-    // from MsoySprite
+    // from EntitySprite
     override protected function mediaWillShutdown (event :ValueEvent) :void
     {
         if (Boolean(event.value)) {
@@ -552,7 +552,7 @@ public class OccupantSprite extends MsoySprite
         super.mediaWillShutdown(event);
     }
 
-    // from MsoySprite
+    // from EntitySprite
     override protected function scaleUpdated () :void
     {
         super.scaleUpdated();
@@ -561,7 +561,7 @@ public class OccupantSprite extends MsoySprite
         arrangeDecorations();
     }
 
-    // from MsoySprite
+    // from EntitySprite
     override protected function mediaSizeKnown (event :ValueEvent) :void
     {
         super.mediaSizeKnown(event);

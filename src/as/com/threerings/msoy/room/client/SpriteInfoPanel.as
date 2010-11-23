@@ -41,14 +41,14 @@ public class SpriteInfoPanel extends FloatingPanel
     /**
      * Construct a SpriteInfoPanel.
      */
-    public function SpriteInfoPanel (ctx :WorldContext, sprites :Array /* of MsoySprite */)
+    public function SpriteInfoPanel (ctx :WorldContext, sprites :Array /* of EntitySprite */)
     {
         super(ctx, Msgs.WORLD.get("t.item_info"));
         showCloseButton = true;
 
         var idents :TypedArray = TypedArray.create(ItemIdent);
         // wrap each sprite inside an array so that we can fill in the names later
-        var data :Array = sprites.map(function (sprite :MsoySprite, ... ignored) :Array {
+        var data :Array = sprites.map(function (sprite :EntitySprite, ... ignored) :Array {
             // sneak-build the idents array
             var ident :ItemIdent = sprite.getItemIdent();
             if (isRealIdent(ident)) {
@@ -97,7 +97,7 @@ public class SpriteInfoPanel extends FloatingPanel
     {
         // trek through the array, pushing on the name for any idents that we passed to the service
         for each (var data :Array in _data.source) {
-            if (isRealIdent(MsoySprite(data[0]).getItemIdent())) {
+            if (isRealIdent(EntitySprite(data[0]).getItemIdent())) {
                 data.push(names.shift());
             }
         }
@@ -137,7 +137,7 @@ import com.threerings.msoy.item.data.all.ItemIdent;
 
 import com.threerings.msoy.world.client.WorldContext;
 
-import com.threerings.msoy.room.client.MsoySprite;
+import com.threerings.msoy.room.client.EntitySprite;
 import com.threerings.msoy.room.client.SpriteInfoPanel;
 
 class SpriteInfoRenderer extends HBox
@@ -166,7 +166,7 @@ class SpriteInfoRenderer extends HBox
 
         var arr :Array = value as Array;
 
-        var sprite :MsoySprite = arr[0];
+        var sprite :EntitySprite = arr[0];
         _type.text = Msgs.GENERAL.get(sprite.getDesc());
         _bleep.setCallback(sprite.viz.toggleBleeped);
         _bleep.enabled = sprite.viz.isBleepable();
@@ -198,7 +198,7 @@ class SpriteInfoRenderer extends HBox
 
     protected function handleRoll (event :MouseEvent) :void
     {
-        MsoySprite(data[0]).setHovered(event.type == MouseEvent.ROLL_OVER);
+        EntitySprite(data[0]).setHovered(event.type == MouseEvent.ROLL_OVER);
     }
 
     protected var _type :Label;

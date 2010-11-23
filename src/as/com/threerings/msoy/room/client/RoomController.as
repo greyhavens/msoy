@@ -213,7 +213,7 @@ public class RoomController extends SceneController
      */
     public function dispatchEntityGotControl (ident :ItemIdent) :void
     {
-        var sprite :MsoySprite = _roomView.getEntity(ident);
+        var sprite :EntitySprite = _roomView.getEntity(ident);
         if (sprite != null) {
             sprite.gotControl();
         } else {
@@ -294,7 +294,7 @@ public class RoomController extends SceneController
      */
     public function getEntityProperty (ident :ItemIdent, key :String) :Object
     {
-        var sprite :MsoySprite = _roomView.getEntity(ident);
+        var sprite :EntitySprite = _roomView.getEntity(ident);
 
         return (sprite == null) ? null : sprite.lookupEntityProperty(key);
     }
@@ -454,9 +454,9 @@ public class RoomController extends SceneController
      * Get the top-most sprite mouse-capturing sprite with a non-transparent pixel at the specified
      * location.
      *
-     * @return undefined if the mouse isn't in our bounds, or null, or an MsoySprite.
+     * @return undefined if the mouse isn't in our bounds, or null, or an EntitySprite.
      */
-    public function getHitSprite (stageX :Number, stageY :Number, all :Boolean = false) :MsoySprite
+    public function getHitSprite (stageX :Number, stageY :Number, all :Boolean = false) :EntitySprite
     {
         // check to make sure we're within the bounds of the place container
         var container :PlaceBox = _wdctx.getTopPanel().getPlaceContainer();
@@ -495,10 +495,10 @@ public class RoomController extends SceneController
         for (var dex :int = _roomView.numChildren - 1; dex >= 0; dex--) {
             var viz :DisplayObject = _roomView.getChildAt(dex);
             var el :RoomElement = _roomView.vizToEntity(viz);
-            if (el == null || !(el is MsoySprite)) {
+            if (el == null || !(el is EntitySprite)) {
                 continue;
             }
-            var spr :MsoySprite = (el as MsoySprite);
+            var spr :EntitySprite = (el as EntitySprite);
             if ((all || (spr.isActive() && spr.capturesMouse())) &&
                 viz.hitTestPoint(stageX, stageY, true)) {
                 return spr;
@@ -539,12 +539,12 @@ public class RoomController extends SceneController
         var sy :Number = _roomView.stage.mouseY;
         var showWalkTarget :Boolean = false;
         var showFlyTarget :Boolean = false;
-        var hoverTarget :MsoySprite = null;
+        var hoverTarget :EntitySprite = null;
 
         // if shift is being held down, we're looking for locations only, so
         // skip looking for hitSprites.
         var hit :* = (_shiftDownSpot == null) ? getHitSprite(sx, sy, grabAll) : null;
-        var hitter :MsoySprite = (hit as MsoySprite);
+        var hitter :EntitySprite = (hit as EntitySprite);
         // ensure we hit no pop-ups
         if (hit !== undefined) {
             hoverTarget = hitter;
@@ -602,7 +602,7 @@ public class RoomController extends SceneController
      * Set the special singleton sprite that the mouse is hovering over.
      */
     protected function setHoverSprite (
-        sprite :MsoySprite, stageX :Number = NaN, stageY :Number = NaN) :void
+        sprite :EntitySprite, stageX :Number = NaN, stageY :Number = NaN) :void
     {
         if (sprite is FurniSprite && WorldControlBar(_wdctx.getControlBar()).hotZoneBtn.selected) {
             return; // not right now, they're all hovered
@@ -630,7 +630,7 @@ public class RoomController extends SceneController
      * sprites other than the _hoverSprite.
      */
     public function setSpriteHovered (
-        sprite :MsoySprite, hovered: Boolean, stageX :Number = NaN, stageY :Number = NaN) :void
+        sprite :EntitySprite, hovered: Boolean, stageX :Number = NaN, stageY :Number = NaN) :void
     {
         // update the glow on the sprite
         var text :Object = sprite.setHovered(hovered, stageX, stageY);
@@ -660,7 +660,7 @@ public class RoomController extends SceneController
      * Utility method to create and style the hover tip for a sprite.
      */
     protected function addHoverTip (
-        sprite :MsoySprite, tipText :String, stageX :Number, stageY :Number) :IToolTip
+        sprite :EntitySprite, tipText :String, stageX :Number, stageY :Number) :IToolTip
     {
         var tip :IToolTip = ToolTipManager.createToolTip(tipText, stageX, stageY);
         var tipComp :UIComponent = UIComponent(tip);
@@ -694,7 +694,7 @@ public class RoomController extends SceneController
         }
 
         // deal with the target
-        var hitter :MsoySprite = (hit as MsoySprite);
+        var hitter :EntitySprite = (hit as EntitySprite);
         if (hitter != null) {
             // let the sprite decide what to do with it
             if (hitter != _clickSuppress) {
@@ -893,7 +893,7 @@ public class RoomController extends SceneController
 
     protected function throttle (ident :ItemIdent, fn :Function, ... args) :void
     {
-        var av :MsoySprite = _roomView.getMyAvatar();
+        var av :EntitySprite = _roomView.getMyAvatar();
         if (av != null && av.getItemIdent().equals(ident)) {
             // our own avatar is never throttled
             fn.apply(null, args);
@@ -934,7 +934,7 @@ public class RoomController extends SceneController
      * Called to show the custom config panel for the specified FurniSprite in
      * a pop-up.
      */
-    public function showConfigPopup (sprite :MsoySprite) :Boolean
+    public function showConfigPopup (sprite :EntitySprite) :Boolean
     {
         if (_entityPopup != null && _entityPopup.getOwningEntity() == sprite) {
             return true;
@@ -952,7 +952,7 @@ public class RoomController extends SceneController
      * Called from user code to show a custom popup.
      */
     internal function showEntityPopup (
-        sprite :MsoySprite, title :String, panel :DisplayObject, w :Number, h :Number,
+        sprite :EntitySprite, title :String, panel :DisplayObject, w :Number, h :Number,
         color :uint = 0xFFFFFF, alpha :Number = 1.0, mask :Boolean = true) :Boolean
     {
 //        if (_entityAllowedToPop != sprite) {
@@ -982,7 +982,7 @@ public class RoomController extends SceneController
     /**
      * Clear any popup belonging to the specified sprite.
      */
-    public function clearEntityPopup (sprite :MsoySprite) :void
+    public function clearEntityPopup (sprite :EntitySprite) :void
     {
         if (_entityPopup != null && _entityPopup.getOwningEntity() == sprite) {
             _entityPopup.close(); // will trigger callback that clears _entityPopup
@@ -1024,9 +1024,9 @@ public class RoomController extends SceneController
     protected var _suppressNormalHovering :Boolean;
 
     /** The currently hovered sprite, or null. */
-    protected var _hoverSprite :MsoySprite;
+    protected var _hoverSprite :EntitySprite;
 
-    /** All currently displayed sprite tips, indexed by MsoySprite. */
+    /** All currently displayed sprite tips, indexed by EntitySprite. */
     protected var _hoverTips :Dictionary = new Dictionary(true);
 
     /** True if the shift key is currently being held down, false if not. */
@@ -1045,7 +1045,7 @@ public class RoomController extends SceneController
 
     protected var _entityPopup :EntityPopup;
 
-//    protected var _entityAllowedToPop :MsoySprite;
+//    protected var _entityAllowedToPop :EntitySprite;
 }
 }
 

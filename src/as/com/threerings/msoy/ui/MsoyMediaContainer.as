@@ -196,7 +196,7 @@ public class MsoyMediaContainer extends MediaContainer
 
     protected function handleUncaughtErrors (event :*) :void
     {
-        // this is overridden in MsoySprite
+        // this is overridden in EntitySprite
         log.info("Uncaught Error", "media", _desc, event);
     }
 
