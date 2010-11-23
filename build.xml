@@ -227,7 +227,6 @@
       <dependency groupId="com.threerings" artifactId="aspirin"
                   version="1.7-SNAPSHOT" type="swc"/>
     </artifact:dependencies>
-    <echo message="Orthlib dependency: ${com.threerings:aspirin:swc}"/>
     <copy todir="${deploy.dir}/lib">
       <fileset refid="aslib.fileset"/>
       <mapper type="flatten"/>
