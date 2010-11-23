@@ -160,7 +160,7 @@ public class DataPackMediaContainer extends MsoyMediaContainer
 
     override protected function setupSwfOrImage (url :String) :void
     {
-        var isZip :Boolean = url != null && isZipUrl(url);
+        var isZip :Boolean = (url != null) && isZipUrl(url);
         // if it's a zip, always start loading it in the background...
         if (isZip) {
             _packLoader = new URLLoader();
@@ -174,12 +174,12 @@ public class DataPackMediaContainer extends MsoyMediaContainer
         if (shouldUseStub(url)) {
             // load the stub instead
             // TODO: get this URL from elsewhere?
-            url = MsoyContext.stubUrl;
+            url = DeploymentConfig.stubURL;
 
         } else if (isZip) {
             // we must be loading a zip off the filesystem!
             startedLoading();
-            // set up the loader, we'll fill it in in handleZipComplete
+            // set up the loader, we'll fill it in in handlePackComplete
             initLoader();
             return; // EXIT- do not call super
         }
@@ -216,8 +216,7 @@ public class DataPackMediaContainer extends MsoyMediaContainer
             return (Security.sandboxType != Security.LOCAL_WITH_FILE);
         }
 
-        if (MsoyContext.stubUrl == null ||
-            StringUtil.startsWith(url, DeploymentConfig.staticMediaURL)) {
+        if (StringUtil.startsWith(url, DeploymentConfig.staticMediaURL)) {
             return false;
         }
 
@@ -313,7 +312,6 @@ public class DataPackMediaContainer extends MsoyMediaContainer
         }
 
         var usingStub :Boolean = shouldUseStub(_url);
-
         // make sure the stub is ready
         if (usingStub && (Loader(_media).content == null)) {
             return;

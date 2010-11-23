@@ -170,7 +170,6 @@ public /*abstract*/ class MsoyClient extends CrowdClient
         if (mbData.mutedMemberIds != null) {
             _ctx.getMuteDirector().setMutedMemberIds(mbData.mutedMemberIds);
         }
-        MsoyContext.stubUrl = mbData.stubUrl;
     }
 
     /**

@@ -160,10 +160,12 @@ static_media_url = http://localhost:8080/media/static/
 # cloud_signing_key = the Base64-encoded DER translation of (private half of) the signing key
 
 #
-# Flash needs a signed crossdomain.xml reference. Create this (near)-infinite-expiration one with:
+# Flash needs signed references to crossdomain.xml and MediaStub.swf. Create these (near)-infinite-expiration ones with:
 #    bin/cloudfront signepoch ${media_url}/crossdomain.xml 2147483647
-# else if unset, it defaults to ${media_url}crossdomain.xml
+#    bin/cloudfront signepoch ${media_url}/MediaStub.swf 2147483647
+# else if unset, it defaults to ${media_url}crossdomain.xml and ${media_url}MediaStub.swf
 # xdom_url = http://localhost:8080/media/crossdomain.xml
+# stub_url = http://localhost:8080/media/MediaStub.swf
 
 #
 # This is where ToyBox looks for uploaded game jar files
