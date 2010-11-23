@@ -93,7 +93,6 @@ public class FurniSprite extends MsoySprite
     {
         _furni = furni;
         setItemIdent(furni.getItemIdent());
-        _sprite.setSpriteMediaScale(furni.scaleX, furni.scaleY);
         _sprite.setMediaDesc(furni.media);
         scaleUpdated();
         rotationUpdated();
@@ -145,6 +144,14 @@ public class FurniSprite extends MsoySprite
         // that without that class being compiled in, and constants are not inlined.
         // So- we've made the decision to a) Duplicate and b) Don't fuck up step a.
         messageReceived(entering ? "bodyEntered" : "bodyLeft", null, true);
+    }
+
+    override protected function scaleUpdated () :void
+    {
+        // update our visualization with the furni's current scale
+        _sprite.setSpriteMediaScale(_furni.scaleX, _furni.scaleY);
+
+        super.scaleUpdated();
     }
 
     override protected function createBackend () :EntityBackend
