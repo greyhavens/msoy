@@ -534,7 +534,7 @@
     </condition>
     <dirname property="parent.dir" file="../somefile.txt"/>
     <fail><condition><not><isset property="rel.flexsdk.dir"/></not></condition>
-      You must either pass -Dflexsdk.dir=somedir on the command line, or check
+      You must either pass -Drel.flexsdk.dir=somedir on the command line, or check
       out the Flex SDK like so:
       svn checkout svn+ssh://src.earth.threerings.net/flex/trunk ${parent.dir}/flex
     </fail>
