@@ -3,9 +3,6 @@
 
 package com.threerings.msoy.server;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-
 import com.google.inject.Inject;
 
 import com.samskivert.jdbc.WriteOnlyUnit;
@@ -27,12 +24,10 @@ import com.threerings.stats.server.persist.StatRepository;
 import com.threerings.whirled.server.WhirledSession;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;
-import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.room.server.persist.MemoriesRecord;
 import com.threerings.msoy.room.server.persist.MemoryRepository;
 
 import com.threerings.msoy.data.LurkerName;
-//import com.threerings.msoy.data.MemberExperience;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyBootstrapData;
 import com.threerings.msoy.data.MsoyTokenRing;
@@ -40,8 +35,6 @@ import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.WorldCredentials;
 import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.server.persist.MemberRepository;
-import com.threerings.msoy.web.server.CloudfrontException;
-import com.threerings.msoy.web.server.CloudfrontURLSigner;
 
 import static com.threerings.msoy.Log.log;
 
@@ -89,15 +82,6 @@ public class MsoySession extends WhirledSession
             local.mutedMemberIds = null;
         }
         int expiration = (int) ((System.currentTimeMillis() / 1000) + 7 * 24 * 3600);
-
-        CloudfrontURLSigner signer = new CloudfrontURLSigner(
-            ServerConfig.cloudSigningKeyId, ServerConfig.cloudSigningKey);
-        try {
-            mData.stubUrl = signer.signURL(
-                DeploymentConfig.mediaURL + "MediaStub.swf", expiration);
-        } catch (CloudfrontException e) {
-            log.warning("Failed to sign MediaStub URL!", e);
-        }
     }
 
     @Override // from PresentsSession
