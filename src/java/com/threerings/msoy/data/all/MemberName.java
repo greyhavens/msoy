@@ -6,11 +6,10 @@ package com.threerings.msoy.data.all;
 import java.util.Comparator;
 
 import com.google.common.base.Predicate;
-import com.google.common.primitives.Ints;
 
 import com.threerings.util.Name;
 
-import com.threerings.presents.dobj.DSet;
+import com.threerings.orth.data.OrthName;
 
 /**
  * Extends {@link Name} with persistent member information.
@@ -25,8 +24,7 @@ import com.threerings.presents.dobj.DSet;
  * <p> If you extend this class (or if you extend {@link Name}) you will have to implement a custom
  * field serializer for your derived class.
  */
-public class MemberName extends Name
-    implements DSet.Entry
+public class MemberName extends OrthName
 {
     /** The minimum allowable length of a permaname. */
     public static final int MINIMUM_PERMANAME_LENGTH = 4;
@@ -59,21 +57,6 @@ public class MemberName extends Name
 
     /** A Predicate, assigned only on the server, that tests whether a char is whitespace. */
     public static Predicate<Character> isSpacePred;
-
-    /** A comparator for sorting Names by their display portion, case insensitively. */
-    public static final Comparator<MemberName> BY_DISPLAY_NAME = new Comparator<MemberName>() {
-        public int compare (MemberName name1, MemberName name2) {
-            return compareNames(name1, name2);
-        }
-    };
-
-    /**
-     * Compares two member name records case insensitively.
-     */
-    public static int compareNames (MemberName m1, MemberName m2)
-    {
-        return m1.toString().toLowerCase().compareTo(m2.toString().toLowerCase());
-    }
 
     /**
      * Creates a member name that can be used as a key for a DSet lookup or whereever else one might
@@ -139,16 +122,7 @@ public class MemberName extends Name
      */
     public MemberName (String displayName, int memberId)
     {
-        super(displayName);
-        _memberId = memberId;
-    }
-
-    /**
-     * Return the memberId of this user.
-     */
-    public int getMemberId ()
-    {
-        return _memberId;
+        super(displayName, memberId);
     }
 
     /**
@@ -156,7 +130,7 @@ public class MemberName extends Name
      */
     public boolean isViewer ()
     {
-        return isViewer(_memberId);
+        return isViewer(_id);
     }
 
     /**
@@ -169,31 +143,6 @@ public class MemberName extends Name
     }
 
     // from DSet.Entry
-    public Comparable<?> getKey ()
-    {
-        return _memberId;
-    }
-
-    @Override // from Name
-    public int hashCode ()
-    {
-        return _memberId;
-    }
-
-    @Override // from Name
-    public boolean equals (Object other)
-    {
-        return (other instanceof MemberName) && (((MemberName) other).getMemberId() == _memberId);
-    }
-
-    @Override // from Name
-    public int compareTo (Name o)
-    {
-        // Note: You may be tempted to have names sort by the String value, but Names are used
-        // as DSet keys in various places and so each user's must be unique.
-        // Use BY_DISPLAY_NAME to sort names for display.
-        return Ints.compare(_memberId, ((MemberName) o)._memberId);
-    }
 
     @Override // from Name
     protected String normalize (String name)
@@ -236,7 +185,4 @@ public class MemberName extends Name
         // unicode A characters
         return (c == 'a') || (c > 127);
     }
-
-    /** The member id of the member we represent. */
-    protected int _memberId;
 }

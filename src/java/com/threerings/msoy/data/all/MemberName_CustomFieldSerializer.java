@@ -3,6 +3,9 @@
 
 package com.threerings.msoy.data.all;
 
+import com.threerings.orth.data.OrthName;
+import com.threerings.orth.data.OrthName_CustomFieldSerializer;
+
 import com.google.gwt.user.client.rpc.SerializationException;
 import com.google.gwt.user.client.rpc.SerializationStreamReader;
 import com.google.gwt.user.client.rpc.SerializationStreamWriter;
@@ -15,14 +18,14 @@ public final class MemberName_CustomFieldSerializer
     public static void serialize (SerializationStreamWriter streamWriter, MemberName name)
         throws SerializationException
     {
-        streamWriter.writeString(name.toString());
-        streamWriter.writeInt(name.getMemberId());
+        OrthName_CustomFieldSerializer.serialize(streamWriter, name);
     }
 
     public static MemberName instantiate (SerializationStreamReader streamReader)
         throws SerializationException
     {
-        return new MemberName(streamReader.readString(), streamReader.readInt());
+        OrthName name = OrthName_CustomFieldSerializer.instantiate(streamReader);
+        return new MemberName(name.toString(), name.getId());
     }
 
     public static void deserialize (SerializationStreamReader streamReader, MemberName instance)
