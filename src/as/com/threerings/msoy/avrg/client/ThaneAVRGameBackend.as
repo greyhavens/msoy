@@ -597,7 +597,7 @@ public class ThaneAVRGameBackend
         var iterator :Iterator = _gameObj.occupantInfo.iterator();
         while (iterator.hasNext()) {
             var name :MemberName = OccupantInfo(iterator.next()).username as MemberName;
-            if (name != null && name.getMemberId() == playerId) {
+            if (name != null && name.getId() == playerId) {
                 return name.toString();
             }
         }

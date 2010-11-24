@@ -85,7 +85,7 @@ public class FriendsListPanel extends FlyingPanel
     {
         // if we muted or unmuted a friend, refresh the display
         if ((name is MemberName) &&
-                _wctx.getMemberObject().isOnlineFriend(MemberName(name).getMemberId())) {
+                _wctx.getMemberObject().isOnlineFriend(MemberName(name).getId())) {
             _friendsList.refresh();
         }
     }

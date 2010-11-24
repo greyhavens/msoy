@@ -24,7 +24,7 @@ public class MemberInfo extends ActorInfo
      */
     public function getMemberId () :int
     {
-        return (username as MemberName).getMemberId();
+        return (username as MemberName).getId();
     }
 
     /**

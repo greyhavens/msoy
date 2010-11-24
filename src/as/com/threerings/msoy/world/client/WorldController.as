@@ -1198,7 +1198,7 @@ public class WorldController extends MsoyController
     override public function addMemberMenuItems (
         name :MemberName, menuItems :Array, addWorldItems :Boolean = true) :void
     {
-        const memId :int = name.getMemberId();
+        const memId :int = name.getId();
         const us :MemberObject = _wctx.getMemberObject();
         const isUs :Boolean = (memId == us.getMemberId());
         const isMuted :Boolean = !isUs && _wctx.getMuteDirector().isMuted(name);
@@ -1648,7 +1648,7 @@ public class WorldController extends MsoyController
         var friends :Array = [];
         for each (var fe :FriendEntry in me.getSortedFriends()) {
             friends.push({ label: fe.name.toString(),
-                command: VISIT_MEMBER, arg: fe.name.getMemberId() });
+                command: VISIT_MEMBER, arg: fe.name.getId() });
         }
         if (friends.length == 0) {
             friends.push({ label: Msgs.GENERAL.get("m.no_friends"), enabled: false });

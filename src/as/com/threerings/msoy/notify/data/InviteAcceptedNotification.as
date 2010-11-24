@@ -19,7 +19,7 @@ public class InviteAcceptedNotification extends Notification
     override public function getAnnouncement () :String
     {
         return MessageBundle.tcompose(
-            "m.invite_accepted", _inviteeEmail, _invitee, _invitee.getMemberId());
+            "m.invite_accepted", _inviteeEmail, _invitee, _invitee.getId());
     }
 
     // from Notification

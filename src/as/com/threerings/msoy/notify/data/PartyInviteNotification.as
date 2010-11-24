@@ -15,7 +15,7 @@ public class PartyInviteNotification extends Notification
     override public function getAnnouncement () :String
     {
         return MessageBundle.tcompose("m.party_invite",
-            _inviter, _inviter.getMemberId(), _partyName, _partyId);
+            _inviter, _inviter.getId(), _partyName, _partyId);
     }
 
     override public function getCategory () :int

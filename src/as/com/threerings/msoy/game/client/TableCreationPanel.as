@@ -197,7 +197,7 @@ public class TableCreationPanel extends VBox
             for (var ii :int = 0; ii < _friendsGrid.cellCount; ii++) {
                 var fcb :FriendCheckBox = (_friendsGrid.getCellAt(ii) as FriendCheckBox);
                 if (fcb.check.selected) {
-                    invIds.push(fcb.friend.name.getMemberId());
+                    invIds.push(fcb.friend.name.getId());
                 }
             }
         }

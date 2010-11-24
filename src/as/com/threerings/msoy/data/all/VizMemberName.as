@@ -24,7 +24,7 @@ public class VizMemberName extends MemberName
     // from MemberName
     override public function toMemberName () :MemberName
     {
-        return new MemberName(_name, _memberId);
+        return new MemberName(_name, _id);
     }
 
     // from OccupantInfo

@@ -769,7 +769,7 @@ public class ChatOverlay
             var cmd :String;
             if (name is MemberName) {
                 cmd = "\uFFFC" + MsoyController.POP_MEMBER_MENU + "\uFFFC" + name.toString() +
-                    "\uFFFC" + String(MemberName(name).getMemberId());
+                    "\uFFFC" + String(MemberName(name).getId());
                 if (name is PuppetName) {
                     cmd += "/t";
                 }

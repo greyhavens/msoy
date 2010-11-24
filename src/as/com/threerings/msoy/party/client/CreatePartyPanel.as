@@ -18,12 +18,13 @@ import com.threerings.flex.CommandComboBox;
 import com.threerings.flex.FlexUtil;
 import com.threerings.flex.GridUtil;
 
+import com.threerings.orth.data.OrthName;
+
 import com.threerings.msoy.ui.FloatingPanel;
 
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.data.MemberObject;
-import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.world.client.WorldContext;
 
@@ -92,7 +93,7 @@ public class CreatePartyPanel extends FloatingPanel
                 // sort groups by your rank, then by name
                 return ComparisonChain.start()
                     .compareComparables(two.rank, one.rank) // higher rank sorts first
-                    .compare(one.group, two.group, MemberName.BY_DISPLAY_NAME)
+                    .compare(one.group, two.group, OrthName.BY_DISPLAY_NAME)
                     .result();
             }).map(function (item :GroupMembership, ... rest) :Object {
                 return { label: item.group.toString(), data: item.group.getGroupId(),

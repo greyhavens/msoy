@@ -174,7 +174,7 @@ public class MsoyNotificationDirector extends NotificationDirector
             // if they weren't listed in the set, report them as newly coming online
             if (!_membersLoggingOff.remove(entry)) {
                 addGenericNotification(
-                    MessageBundle.tcompose("m.friend_online", entry.name, entry.name.getMemberId()),
+                    MessageBundle.tcompose("m.friend_online", entry.name, entry.name.getId()),
                     Notification.BUTTSCRATCHING, entry.name);
             }
         }
@@ -197,7 +197,7 @@ public class MsoyNotificationDirector extends NotificationDirector
         if (name == MemberObject.FRIENDS) {
             var entry :FriendEntry = event.getEntry() as FriendEntry;
             var oldEntry :FriendEntry = event.getOldEntry() as FriendEntry;
-            var memberId :int = entry.name.getMemberId();
+            var memberId :int = entry.name.getId();
 
             if (entry.name.toString() != oldEntry.name.toString()) {
                 addGenericNotification(

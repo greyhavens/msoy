@@ -137,7 +137,7 @@ public class BackendUtils
             if (name == null) {
                 continue;
             }
-            var memberId :int = name.getMemberId();
+            var memberId :int = name.getId();
             var plLoc :PlayerLocation = gameObj.playerLocs.get(memberId) as PlayerLocation;
             if (plLoc == null || (roomId != 0 && plLoc.sceneId != roomId) ||
                 (extraFilter != null && !extraFilter(memberId))) {
@@ -161,7 +161,7 @@ public class BackendUtils
             for each (var occ :OccupantInfo in placeObj.occupantInfo.toArray()) {
                 var name :MemberName = occ.username as MemberName;
                 if (name != null) {
-                    result.push(name.getMemberId());
+                    result.push(name.getId());
                 }
             }
         }
@@ -176,7 +176,7 @@ public class BackendUtils
         if (placeObj != null) {
             for each (var occ :OccupantInfo in placeObj.occupantInfo.toArray()) {
                 var name :MemberName = occ.username as MemberName;
-                if ((name != null) && (playerId == name.getMemberId())) {
+                if ((name != null) && (playerId == name.getId())) {
                     return name.toString();
                 }
             }

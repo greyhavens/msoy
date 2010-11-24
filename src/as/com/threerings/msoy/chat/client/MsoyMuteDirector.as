@@ -58,7 +58,7 @@ public class MsoyMuteDirector extends MuteDirector
     {
         if (name is MemberName) {
             (_ctx.getClient().requireService(MemberService) as MemberService).setMuted(
-                MemberName(name).getMemberId(), mute,
+                MemberName(name).getId(), mute,
                 MsoyContext(_ctx).confirmListener(function () :void {
                     superSetMuted(name, mute, feedback);
                 }));

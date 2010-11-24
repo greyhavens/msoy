@@ -17,8 +17,9 @@ import com.threerings.io.TypedArray;
 
 import com.threerings.flex.GridUtil;
 
+import com.threerings.orth.data.OrthName;
+
 import com.threerings.msoy.ui.FloatingPanel;
-import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VizMemberName;
 
 /**
@@ -86,7 +87,7 @@ public class SelectPlayersPanel extends FloatingPanel
 
         var row :GridRow = null;
         var cell :int = 0;
-        for each (var playerName :VizMemberName in _playerNames.sort(MemberName.BY_DISPLAY_NAME)) {
+        for each (var playerName :VizMemberName in _playerNames.sort(OrthName.BY_DISPLAY_NAME)) {
             if (row == null) {
                 row = new GridRow();
                 grid.addChild(row);
@@ -160,7 +161,7 @@ public class SelectPlayersPanel extends FloatingPanel
         var ids :TypedArray = TypedArray.create(int);
         for each (var box :PlayerBox in _playerBoxes) {
             if (box.isSelected()) {
-                ids.push(box.getName().getMemberId());
+                ids.push(box.getName().getId());
             }
         }
         return ids;

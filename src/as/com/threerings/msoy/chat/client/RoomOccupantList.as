@@ -122,8 +122,9 @@ import com.threerings.crowd.data.OccupantInfo;
 import com.whirled.ui.NameLabel;
 import com.whirled.ui.NameLabelCreator;
 
+import com.threerings.orth.data.OrthName;
+
 import com.threerings.msoy.data.MsoyUserOccupantInfo;
-import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VizMemberName;
 
 class RoomOccupantRecord
@@ -164,7 +165,7 @@ class RoomOccupantRecord
 
         } else {
             // otherwise: based on name
-            return MemberName.BY_DISPLAY_NAME(this.name, that.name);
+            return OrthName.BY_DISPLAY_NAME(this.name, that.name);
         }
     }
 }

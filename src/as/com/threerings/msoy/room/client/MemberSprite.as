@@ -322,7 +322,7 @@ class TableIcon extends GlowSprite
             arg = gameSummary.gameId;
 
         } else {
-            var memberId :int = (host.getActorInfo().username as MemberName).getMemberId();
+            var memberId :int = (host.getActorInfo().username as MemberName).getId();
             cmd = WorldController.JOIN_PLAYER_GAME;
             arg = [ gameSummary.gameId, memberId ];
         }

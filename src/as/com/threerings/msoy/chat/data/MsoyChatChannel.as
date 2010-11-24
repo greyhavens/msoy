@@ -190,7 +190,7 @@ public class MsoyChatChannel extends ChatChannel
     protected static function getId (name :Name) :String
     {
         if (name is MemberName) {
-            return "" + (name as MemberName).getMemberId();
+            return "" + (name as MemberName).getId();
 
         } else if (name is GroupName) {
             return "" + (name as GroupName).getGroupId();

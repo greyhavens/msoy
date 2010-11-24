@@ -176,7 +176,7 @@ public class PartyGameHelper
     protected function getMemberId (occInfo :Object) :int
     {
         // Do we need to watch out for non-MemberNames?
-        return MemberName(OccupantInfo(occInfo).username).getMemberId();
+        return MemberName(OccupantInfo(occInfo).username).getId();
     }
 
     /**

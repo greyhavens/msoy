@@ -180,14 +180,14 @@ public class PartyDirector extends BasicDirector
         _wctx.getMsoyController().addMemberMenuItems(peep.name, menuItems, false);
 
         if (_partyObj != null && partyId == _partyObj.id) {
-            const peepId :int = peep.name.getMemberId();
+            const peepId :int = peep.name.getId();
             const ourId :int = _wctx.getMyId();
             if (_partyObj.leaderId == ourId && peepId != ourId) {
                 CommandMenu.addSeparator(menuItems);
                 menuItems.push({ label: Msgs.PARTY.get("b.boot"),
-                                 callback: bootMember, arg: peep.name.getMemberId() });
+                                 callback: bootMember, arg: peep.name.getId() });
                 menuItems.push({ label: Msgs.PARTY.get("b.assign_leader"),
-                                 callback: assignLeader, arg: peep.name.getMemberId() });
+                                 callback: assignLeader, arg: peep.name.getId() });
             }
         }
 

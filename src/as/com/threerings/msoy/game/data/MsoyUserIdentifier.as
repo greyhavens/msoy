@@ -13,7 +13,7 @@ public class MsoyUserIdentifier
 {
     public static function getUserId (name :Name) :int
     {
-        return MemberName(name).getMemberId();
+        return MemberName(name).getId();
     }
 }
 }

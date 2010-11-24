@@ -5,11 +5,12 @@ package com.threerings.msoy.data.all {
 
 import com.threerings.io.ObjectOutputStream;
 import com.threerings.io.ObjectInputStream;
+
 import com.threerings.util.Hashable;
 
-import com.threerings.presents.dobj.DSet_Entry;
+import com.threerings.orth.data.OrthName;
 
-import com.threerings.msoy.data.all.MemberName;
+import com.threerings.presents.dobj.DSet_Entry;
 
 /**
  * Represents a friend connection.
@@ -25,7 +26,7 @@ public class PlayerEntry
      */
     public static function sortByName (lhs :PlayerEntry, rhs :PlayerEntry, ... rest) :int
     {
-        return MemberName.BY_DISPLAY_NAME(lhs.name, rhs.name);
+        return OrthName.BY_DISPLAY_NAME(lhs.name, rhs.name);
     }
 
     // from Hashable
@@ -38,7 +39,7 @@ public class PlayerEntry
     public function equals (other :Object) :Boolean
     {
         return (other is PlayerEntry) &&
-            (this.name.getMemberId() == (other as PlayerEntry).name.getMemberId());
+            (this.name.getId() == (other as PlayerEntry).name.getId());
     }
 
     public function toString () :String

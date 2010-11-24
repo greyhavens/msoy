@@ -136,7 +136,7 @@ public class RoomController extends SceneController
     public function getViewerName (instanceId :int = 0) :String
     {
         var name :MemberName = _wdctx.getMyName();
-        if (instanceId == 0 || instanceId == name.getMemberId()) {
+        if (instanceId == 0 || instanceId == name.getId()) {
             return name.toString();
         }
         return null;

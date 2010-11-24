@@ -126,7 +126,7 @@ public class MePageTutorial
 
     protected function getMemberId () :int
     {
-        return _ctx.getMemberObject().memberName.getMemberId();
+        return _ctx.getMemberObject().memberName.getId();
     }
 
     protected function display (addr :Address) :Boolean

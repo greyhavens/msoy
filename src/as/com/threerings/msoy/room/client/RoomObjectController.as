@@ -135,7 +135,7 @@ public class RoomObjectController extends RoomController
             occ.muteChanged();
         }
         if (name is MemberName) {
-            var memberId :int = MemberName(name).getMemberId();
+            var memberId :int = MemberName(name).getId();
             for each (var pet :PetSprite in _roomObjectView.getPets()) {
                 if (pet.getOwnerId() == memberId) {
                     pet.ownedMuteChanged();

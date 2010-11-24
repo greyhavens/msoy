@@ -133,7 +133,7 @@ public class LiaisonGameContext
     public function getMyId () :int
     {
         var name :MemberName = getMyName();
-        return (name == null) ? 0 : name.getMemberId();
+        return (name == null) ? 0 : name.getId();
     }
 
     // from GameContext

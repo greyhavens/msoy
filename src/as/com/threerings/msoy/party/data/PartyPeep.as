@@ -30,10 +30,10 @@ public class PartyPeep extends PlayerEntry
     {
         return function (lhs :PartyPeep, rhs :PartyPeep, ... rest) :int {
             // always show the leader on top
-            if (partyInfo.leaderId == lhs.name.getMemberId()) {
+            if (partyInfo.leaderId == lhs.name.getId()) {
                 return -1;
 
-            } else if (partyInfo.leaderId == rhs.name.getMemberId()) {
+            } else if (partyInfo.leaderId == rhs.name.getId()) {
                 return 1;
             }
             return ComparisonChain.start()

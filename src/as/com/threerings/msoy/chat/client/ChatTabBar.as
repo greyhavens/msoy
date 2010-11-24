@@ -153,7 +153,7 @@ public class ChatTabBar extends HBox
             var newNameStr :String = newEntry.name.toString();
             if (newNameStr != oldEntry.name.toString()) {
                 for each (var tab :ChatTab in _tabs) {
-                    if (tab.getTellMemberId() == newEntry.name.getMemberId()) {
+                    if (tab.getTellMemberId() == newEntry.name.getId()) {
                         tab.text = newNameStr;
                         break;
                     }

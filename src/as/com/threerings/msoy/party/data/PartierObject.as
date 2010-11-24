@@ -35,7 +35,7 @@ public class PartierObject extends BodyObject
      */
     public function getMemberId () :int
     {
-        return memberName.getMemberId();
+        return memberName.getId();
     }
 
     // from BodyObject

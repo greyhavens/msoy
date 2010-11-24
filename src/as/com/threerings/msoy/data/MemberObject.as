@@ -185,7 +185,7 @@ public class MemberObject extends MsoyBodyObject
      */
     public function getMemberId () :int
     {
-        return memberName.getMemberId();
+        return memberName.getId();
     }
 
     /**

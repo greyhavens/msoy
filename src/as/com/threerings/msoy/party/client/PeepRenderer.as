@@ -48,7 +48,7 @@ public class PeepRenderer extends PlayerRenderer
         super.configureUI();
 
         var isLeader :Boolean = (this.data != null) &&
-            (partyInfo.leaderId == PartyPeep(this.data).name.getMemberId());
+            (partyInfo.leaderId == PartyPeep(this.data).name.getId());
         setStyle("backgroundAlpha", isLeader ? .5 : 0);
         setStyle("backgroundColor", isLeader ? 0x000077 : 0x000000);
     }

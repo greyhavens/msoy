@@ -82,7 +82,7 @@ public class PlayerObject extends WhirledPlayerObject
      */
     public function getMemberId () :int
     {
-        return memberName.getMemberId();
+        return memberName.getId();
     }
 
     /**

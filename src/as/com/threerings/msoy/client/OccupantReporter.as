@@ -66,7 +66,7 @@ public class OccupantReporter
     {
         if (name != null && !name.equals(_ctx.getMyName())) {
             _ctx.getNotificationDirector().addGenericNotification(
-                MessageBundle.tcompose(key, name, name.getMemberId()),
+                MessageBundle.tcompose(key, name, name.getId()),
                 Notification.LOWEST, name);
         }
     }

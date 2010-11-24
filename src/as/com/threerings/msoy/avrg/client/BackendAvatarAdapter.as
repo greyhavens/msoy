@@ -76,7 +76,7 @@ public class BackendAvatarAdapter
             var name :MemberName = occInfo.username as MemberName;
             // and make sure it's a player
             if (name != null && _gameObj.getOccupantInfo(name)) {
-                return name.getMemberId();
+                return name.getId();
             }
         }
         return 0;

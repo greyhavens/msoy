@@ -117,7 +117,7 @@ public class SocialDirector extends BasicDirector
      */
     public function shouldAdd (name :VizMemberName) :Boolean
     {
-        var memId :int = name.getMemberId();
+        var memId :int = name.getId();
         // if we're not logged on to the world server yet or this member is us or already our
         // friend or we've already added them to the seen list, skip 'em
         var member :MemberObject = MemberObject(_mctx.getMsoyClient().getClientObject());
@@ -326,7 +326,7 @@ public class SocialDirector extends BasicDirector
     protected static function addNames (names :Array, dict :Dictionary) :void
     {
         for each (var name :VizMemberName in names) {
-            dict[name.getMemberId()] = name;
+            dict[name.getId()] = name;
         }
     }
 
@@ -411,7 +411,7 @@ class Observer
     public function filterUnseen (names :Array) :Array
     {
         return names.filter(function (name :VizMemberName, ...unused) :Boolean {
-            return _seen[name.getMemberId()] != null;
+            return _seen[name.getId()] != null;
         });
     }
 
@@ -492,9 +492,9 @@ class Observer
         if (occInfo.username is VizMemberName) {
             var vname :VizMemberName = VizMemberName(occInfo.username);
             if (_sdir.shouldAdd(vname)) {
-                var seen :Seen = Seen(_seen[vname.getMemberId()]);
+                var seen :Seen = Seen(_seen[vname.getId()]);
                 if (seen == null) {
-                    _seen[vname.getMemberId()] = seen = new Seen(vname);
+                    _seen[vname.getId()] = seen = new Seen(vname);
                 }
                 updater(seen);
             }

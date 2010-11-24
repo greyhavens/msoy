@@ -522,7 +522,7 @@ class StatusUpdater implements AttributeChangeListener, SetListener
         case MemberObject.FRIENDS:
             var entry :FriendEntry = (event.getEntry() as FriendEntry);
             _client.dispatchEventToGWT(
-                FRIEND_EVENT, [FRIEND_ADDED, entry.name.toString(), entry.name.getMemberId()]);
+                FRIEND_EVENT, [FRIEND_ADDED, entry.name.toString(), entry.name.getId()]);
             break;
         }
     }

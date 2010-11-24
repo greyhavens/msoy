@@ -192,7 +192,7 @@ public class HeaderBar extends HBox
             var name :String = event.value.toString(), cmd :String, arg :Object;
             if (event.value is MemberName) {
                 cmd = MsoyController.VIEW_MEMBER;
-                arg = (event.value as MemberName).getMemberId();
+                arg = (event.value as MemberName).getId();
             } else if (event.value is GroupName) {
                 cmd = MsoyController.VIEW_GROUP;
                 arg = (event.value as GroupName).getGroupId();

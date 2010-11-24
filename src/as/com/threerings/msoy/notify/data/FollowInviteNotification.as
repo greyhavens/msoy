@@ -19,7 +19,7 @@ public class FollowInviteNotification extends Notification
     // from Notification
     override public function getAnnouncement () :String
     {
-        return MessageBundle.tcompose("m.follow_invite", _inviter, _inviter.getMemberId());
+        return MessageBundle.tcompose("m.follow_invite", _inviter, _inviter.getId());
     }
 
     // from Notification

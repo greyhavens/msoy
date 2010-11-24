@@ -119,7 +119,7 @@ public class ChatTab extends HBox
     public function getTellMemberId () :int
     {
         if (getChannelType() == MsoyChatChannel.MEMBER_CHANNEL) {
-            return (_channel.ident as MemberName).getMemberId();
+            return (_channel.ident as MemberName).getId();
         }
         return 0;
     }

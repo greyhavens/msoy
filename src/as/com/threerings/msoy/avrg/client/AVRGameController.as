@@ -354,7 +354,7 @@ public class AVRGameController extends PlaceController
     protected function roomOccupantAdded (name :Name, why :String) :void
     {
         if (name is MemberName) {
-            var memberId :int = MemberName(name).getMemberId();
+            var memberId :int = MemberName(name).getId();
             if (memberId != _playerObj.getMemberId()) {
                 log.debug(playerIdStr(), "Player entered [name=" + name + ", why=" + why + "]");
                 _backend.roomOccupantAdded(memberId);
@@ -366,7 +366,7 @@ public class AVRGameController extends PlaceController
     protected function roomOccupantRemoved (name :Name, why :String) :void
     {
         if (name is MemberName) {
-            var memberId :int = MemberName(name).getMemberId();
+            var memberId :int = MemberName(name).getId();
             if (memberId != _playerObj.getMemberId()) {
                 log.debug(playerIdStr(), "Player left [name=" + name + ", why=" + why + "]");
                 _backend.roomOccupantRemoved(memberId);

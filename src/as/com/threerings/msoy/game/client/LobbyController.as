@@ -141,7 +141,7 @@ public class LobbyController extends Controller
         var table :Table = ArrayUtil.findIf(_lobj.tables.toArray(), function (t :Table) :Boolean {
             return !t.inPlay() && (t.players != null) &&
                 t.players.some(function (name :*, ... rest) :Boolean {
-                    return (name is MemberName) && (MemberName(name).getMemberId() == playerId);
+                    return (name is MemberName) && (MemberName(name).getId() == playerId);
                 });
         });
         if (table != null) {
@@ -160,15 +160,15 @@ public class LobbyController extends Controller
     public function countFriends (table :Table) :int
     {
         var friendIds :Array = _gctx.getSortedFriends().map(
-            function (f :FriendEntry) :int { return f.name.getMemberId() });
+            function (f :FriendEntry) :int { return f.name.getId() });
         var plobj :PlayerObject = _gctx.getPlayerObject();
-        var friends :int = 0, ourId :int = plobj.memberName.getMemberId();
+        var friends :int = 0, ourId :int = plobj.memberName.getId();
         for (var ii :int; ii < table.players.length; ii++) {
             var name :MemberName = (table.players[ii] as MemberName);
             if (name == null) {
                 continue;
             }
-            var friendId :int = name.getMemberId();
+            var friendId :int = name.getId();
             if ((friendId == ourId) || (-1 != friendIds.indexOf(friendId))) {
                 friends++;
             }
