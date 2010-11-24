@@ -46,6 +46,9 @@ import com.threerings.crowd.peer.server.CrowdPeerManager;
 import com.threerings.whirled.data.ScenePlace;
 import com.threerings.whirled.server.SceneRegistry;
 
+import com.threerings.orth.data.AuthName;
+import com.threerings.orth.peer.data.OrthClientInfo;
+
 import com.threerings.msoy.data.AuthName;
 import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.MemberObject;
@@ -67,7 +70,6 @@ import com.threerings.msoy.peer.data.HostedRoom;
 import com.threerings.msoy.peer.data.HostedTheme;
 import com.threerings.msoy.peer.data.MemberGame;
 import com.threerings.msoy.peer.data.MemberScene;
-import com.threerings.msoy.peer.data.MsoyClientInfo;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
 
 import static com.threerings.msoy.Log.log;
@@ -678,7 +680,7 @@ public class MsoyPeerManager extends CrowdPeerManager
         super.clientLoggedOn(nodeName, clinfo);
 
         if (clinfo.username instanceof MsoyAuthName) {
-            memberLoggedOn(nodeName, (MsoyClientInfo)clinfo);
+            memberLoggedOn(nodeName, (OrthClientInfo)clinfo);
         }
     }
 
@@ -688,14 +690,14 @@ public class MsoyPeerManager extends CrowdPeerManager
         super.clientLoggedOff(nodeName, clinfo);
 
         if (clinfo.username instanceof MsoyAuthName) {
-            memberLoggedOff(nodeName, (MsoyClientInfo)clinfo);
+            memberLoggedOff(nodeName, (OrthClientInfo)clinfo);
         }
     }
 
     /**
      * Called when a member logs onto this or any other peer.
      */
-    protected void memberLoggedOn (final String nodeName, final MsoyClientInfo info)
+    protected void memberLoggedOn (final String nodeName, final OrthClientInfo info)
     {
         memberObs.apply(new ObserverList.ObserverOp<MemberObserver>() {
             public boolean apply (MemberObserver observer) {
@@ -708,7 +710,7 @@ public class MsoyPeerManager extends CrowdPeerManager
     /**
      * Called when a member logs off of this or any other peer.
      */
-    protected void memberLoggedOff (final String nodeName, final MsoyClientInfo info)
+    protected void memberLoggedOff (final String nodeName, final OrthClientInfo info)
     {
         memberObs.apply(new ObserverList.ObserverOp<MemberObserver>() {
             public boolean apply (MemberObserver observer) {
@@ -740,7 +742,7 @@ public class MsoyPeerManager extends CrowdPeerManager
     @Override // from CrowdPeerManager
     protected ClientInfo createClientInfo ()
     {
-        return new MsoyClientInfo();
+        return new OrthClientInfo();
     }
 
     @Override // from CrowdPeerManager
@@ -754,7 +756,7 @@ public class MsoyPeerManager extends CrowdPeerManager
             client.getClientObject().addListener(new LocationTracker());
 
             // let observers know that a member logged onto this node
-            memberLoggedOn(_nodeName, (MsoyClientInfo)info);
+            memberLoggedOn(_nodeName, (OrthClientInfo)info);
         }
     }
 
@@ -765,7 +767,7 @@ public class MsoyPeerManager extends CrowdPeerManager
 
         if (info.username instanceof MsoyAuthName) {
             // clear out their scene/game info in our node object
-            Integer memberId = ((MsoyClientInfo)info).getMemberId();
+            Integer memberId = ((OrthClientInfo)info).getMemberId();
             if (_mnobj.memberScenes.containsKey(memberId)) {
                 _mnobj.removeFromMemberScenes(memberId);
                 // TODO: memberEnteredScene(memberId, 0)?
@@ -775,7 +777,7 @@ public class MsoyPeerManager extends CrowdPeerManager
             }
 
             // notify observers that a member logged off of this node
-            memberLoggedOff(_nodeName, (MsoyClientInfo)info);
+            memberLoggedOff(_nodeName, (OrthClientInfo)info);
         }
     }
 
