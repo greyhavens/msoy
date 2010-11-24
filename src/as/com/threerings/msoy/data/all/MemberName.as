@@ -5,24 +5,14 @@ package com.threerings.msoy.data.all {
 
 import com.threerings.presents.dobj.DSet_Entry;
 
-import com.threerings.util.Comparators;
-import com.threerings.util.Integer;
-import com.threerings.util.Name;
-
-import com.threerings.io.ObjectInputStream;
-import com.threerings.io.ObjectOutputStream;
+import com.threerings.orth.data.OrthName;
 
 /**
  * Extends Name with persistent member information.
  */
-public class MemberName extends Name
+public class MemberName extends OrthName
     implements DSet_Entry
 {
-    /** A sort function for sorting Names by their display portion, case insensitively.  */
-    public static const BY_DISPLAY_NAME :Function = function (n1 :Name, n2 :Name) :int {
-        return Comparators.compareStringsInsensitively(n1.toString(), n2.toString());
-    };
-
     /** Used to reprepsent a member that has been deleted but is still referenced as an item
      * creator or mail message sender, etc. */
     public static const DELETED_MEMBER :MemberName = new MemberName("", -1);
@@ -46,16 +36,7 @@ public class MemberName extends Name
      */
     public function MemberName (displayName :String = "", memberId :int = 0)
     {
-        super(displayName);
-        _memberId = memberId;
-    }
-
-    /**
-     * Return the memberId of this user, or 0 if they're a guest.
-     */
-    public function getMemberId () :int
-    {
-        return _memberId;
+        super(displayName, memberId);
     }
 
     /**
@@ -63,7 +44,7 @@ public class MemberName extends Name
      */
     public function isViewer () :Boolean
     {
-        return MemberName.isViewer(_memberId);
+        return MemberName.isViewer(getId());
     }
 
     /**
@@ -75,54 +56,10 @@ public class MemberName extends Name
         return this;
     }
 
-    // from DSet_Entry
-    public function getKey () :Object
-    {
-        return _memberId;
-    }
-
-    // from Name
-    override public function hashCode () :int
-    {
-        return _memberId;
-    }
-
-    // from Name
-    override public function compareTo (o :Object) :int
-    {
-        // Note: You may be tempted to have names sort by the String value, but Names are used
-        // as DSet keys in various places and so each user's must be unique.
-        // Use BY_DISPLAY_NAME to sort names for display.
-        return Integer.compare(_memberId, (o as MemberName)._memberId);
-    }
-
     // from Name
     override public function equals (other :Object) :Boolean
     {
-        return (other is MemberName) && ((other as MemberName)._memberId == _memberId);
+        return (other is MemberName) && super.equals(other);
     }
-
-    // from interface Streamable
-    override public function readObject (ins :ObjectInputStream) :void
-    {
-        super.readObject(ins);
-        _memberId = ins.readInt();
-    }
-
-    // from interface Streamable
-    override public function writeObject (out :ObjectOutputStream) :void
-    {
-        super.writeObject(out);
-        out.writeInt(_memberId);
-    }
-
-    // from Name
-    override protected function normalize (name :String) :String
-    {
-        return name; // do not adjust
-    }
-
-    /** The member id of the member we represent. */
-    protected var _memberId :int;
 }
 }
