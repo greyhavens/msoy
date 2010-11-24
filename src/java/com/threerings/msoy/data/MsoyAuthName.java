@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.data;
 
+import com.threerings.orth.data.AuthName;
+
 /**
  * An auth name used to identify clients logged into a world session. This could be called
  * WorldAuthName, but we use MsoyFoo for all of the "primary" connection classes:

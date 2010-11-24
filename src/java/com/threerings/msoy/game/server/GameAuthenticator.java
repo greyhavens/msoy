@@ -5,7 +5,7 @@ package com.threerings.msoy.game.server;
 
 import com.google.inject.Singleton;
 
-import com.threerings.msoy.data.AuthName;
+import com.threerings.orth.data.AuthName;
 import com.threerings.msoy.server.AuxAuthenticator;
 
 import com.threerings.msoy.game.data.GameAuthName;

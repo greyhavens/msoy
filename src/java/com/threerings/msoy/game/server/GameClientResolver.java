@@ -43,7 +43,7 @@ public class GameClientResolver extends CrowdClientResolver
         super.resolveClientData(clobj);
 
         GameAuthName authName = (GameAuthName)_username;
-        MemberRecord member = _memberRepo.loadMember(authName.getMemberId());
+        MemberRecord member = _memberRepo.loadMember(authName.getId());
         ProfileRecord precord = _profileRepo.loadProfile(member.memberId);
         MediaDesc photo = (precord == null) ? VizMemberName.DEFAULT_PHOTO : precord.getPhoto();
 
@@ -54,7 +54,7 @@ public class GameClientResolver extends CrowdClientResolver
         plobj.memberName = new VizMemberName(member.name, member.memberId, photo);
         plobj.visitorInfo = new VisitorInfo(member.visitorId, true);
 
-        final MemberMoney money = _moneyLogic.getMoneyFor(authName.getMemberId());
+        final MemberMoney money = _moneyLogic.getMoneyFor(authName.getId());
         plobj.coins = money.coins;
         plobj.bars = money.bars;
     }

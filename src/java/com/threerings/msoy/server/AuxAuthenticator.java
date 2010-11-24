@@ -14,7 +14,8 @@ import com.threerings.presents.net.AuthResponseData;
 import com.threerings.presents.server.ChainedAuthenticator;
 import com.threerings.presents.server.net.AuthingConnection;
 
-import com.threerings.msoy.data.AuthName;
+import com.threerings.orth.data.AuthName;
+
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.MsoyAuthResponseData;
 import com.threerings.msoy.data.MsoyCredentials;

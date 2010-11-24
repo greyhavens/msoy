@@ -3,7 +3,7 @@
 
 package com.threerings.msoy.game.data;
 
-import com.threerings.msoy.data.AuthName;
+import com.threerings.orth.data.AuthName;
 
 /**
  * Identifies the auth-username of a game authentication request.

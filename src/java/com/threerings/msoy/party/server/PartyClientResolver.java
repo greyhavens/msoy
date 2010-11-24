@@ -40,7 +40,7 @@ public class PartyClientResolver extends ClientResolver
         PartierObject partObj = (PartierObject)clobj;
         PartyAuthName authName = (PartyAuthName)_username;
 
-        MemberRecord member = _memberRepo.loadMember(authName.getMemberId());
+        MemberRecord member = _memberRepo.loadMember(authName.getId());
         ProfileRecord precord = _profileRepo.loadProfile(member.memberId);
         MediaDesc photo = (precord == null) ? VizMemberName.DEFAULT_PHOTO : precord.getPhoto();
 

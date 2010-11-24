@@ -3,7 +3,7 @@
 
 package com.threerings.msoy.party.data;
 
-import com.threerings.msoy.data.AuthName;
+import com.threerings.orth.data.AuthName;
 
 /**
  * Identifies the auth-username of a party authentication request.
