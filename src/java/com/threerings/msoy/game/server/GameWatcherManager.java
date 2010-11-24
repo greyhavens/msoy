@@ -13,6 +13,8 @@ import com.samskivert.util.Tuple;
 
 import com.threerings.presents.annotation.EventThread;
 
+import com.threerings.orth.peer.server.OrthPeerManager.FarSeeingObserver;
+
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.peer.data.HostedRoom;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
@@ -28,7 +30,7 @@ import static com.threerings.msoy.Log.log;
  */
 @Singleton @EventThread
 public class GameWatcherManager
-    implements MsoyPeerManager.MemberObserver
+    implements MsoyPeerManager.MemberObserver, FarSeeingObserver<MemberName>
 {
     /**
      * Interface for notifying the AVRGameManager of the whereabouts of a member.
@@ -48,7 +50,8 @@ public class GameWatcherManager
 
     @Inject public GameWatcherManager (MsoyPeerManager peerMan)
     {
-        peerMan.memberObs.add(this);
+        peerMan.movementObs.add(this);
+        peerMan.logObs.add(this);
     }
 
     /**
@@ -89,13 +92,13 @@ public class GameWatcherManager
     }
 
     // from interface MsoyPeerManager.MemberObserver
-    public void memberLoggedOn (String node, MemberName member)
+    public void loggedOn (String node, MemberName member)
     {
         // nada
     }
 
     // from interface MsoyPeerManager.MemberObserver
-    public void memberLoggedOff (String node, MemberName member)
+    public void loggedOff (String node, MemberName member)
     {
         Observer observer = _observers.get(member.getId());
         if (observer != null) {

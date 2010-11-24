@@ -7,6 +7,8 @@ import javax.annotation.Generated;
 import com.threerings.presents.dobj.DSet;
 import com.threerings.crowd.peer.data.CrowdNodeObject;
 
+import com.threerings.orth.peer.data.OrthNodeObject;
+
 import com.threerings.msoy.admin.data.PeerAdminMarshaller;
 import com.threerings.msoy.game.data.TablesWaiting;
 import com.threerings.msoy.party.data.MemberParty;
@@ -17,7 +19,7 @@ import com.threerings.msoy.party.data.PeerPartyMarshaller;
 /**
  * Maintains information on an MSOY peer server.
  */
-public class MsoyNodeObject extends CrowdNodeObject
+public class MsoyNodeObject extends OrthNodeObject
 {
     // AUTO-GENERATED: FIELDS START
     /** The field name of the <code>memberScenes</code> field. */

@@ -39,6 +39,8 @@ import com.threerings.crowd.server.PlaceRegistry;
 
 import com.threerings.parlor.game.data.GameCodes;
 
+import com.threerings.orth.peer.data.OrthNodeObject;
+
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.MemberName;
@@ -243,13 +245,14 @@ public class WorldGameRegistry
     }
 
     // from interface MsoyPeerManager.PeerObserver
-    public void connectedToPeer (MsoyNodeObject peerobj)
+    public void connectedToPeer (OrthNodeObject peerobj)
     {
+        MsoyNodeObject msnobj = (MsoyNodeObject) peerobj;
         // if the peer that just connected to us claims to be hosting any games that we also claim
         // to be hosting, drop them
         MsoyNodeObject ourobj = _peerMan.getMsoyNodeObject();
         Set<Integer> gamesToDrop = Sets.newHashSet();
-        for (HostedGame game : peerobj.hostedGames) {
+        for (HostedGame game : msnobj.hostedGames) {
             if (ourobj.hostedGames.contains(game)) {
                 log.warning("Zoiks! Peer is hosting the same game as us. Dropping!", "gameId", game);
                 gamesToDrop.add(game.placeId);

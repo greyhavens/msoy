@@ -41,14 +41,13 @@ import com.threerings.presents.peer.data.ClientInfo;
 import com.threerings.presents.peer.data.NodeObject;
 import com.threerings.presents.peer.server.PeerNode;
 
-import com.threerings.crowd.peer.server.CrowdPeerManager;
-
 import com.threerings.whirled.data.ScenePlace;
 import com.threerings.whirled.server.SceneRegistry;
 
-import com.threerings.orth.data.AuthName;
 import com.threerings.orth.peer.data.OrthClientInfo;
+import com.threerings.orth.peer.server.OrthPeerManager;
 
+import com.threerings.orth.data.AuthName;
 import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyAuthName;
@@ -77,9 +76,15 @@ import static com.threerings.msoy.Log.log;
  * Manages communication with our peer servers, coordinates services that must work across peers.
  */
 @Singleton @EventThread
-public class MsoyPeerManager extends CrowdPeerManager
+public class MsoyPeerManager extends OrthPeerManager
     implements MsoyPeerProvider
 {
+    /** Observers listening for member movements. */
+    public final ObserverList<MemberObserver> movementObs = ObserverList.newFastUnsafe();
+
+    /** Observers listening for logins and logouts. */
+    public final ObserverList<FarSeeingObserver<MemberName>> logObs = observe(MsoyAuthName.class);
+
     /**
      * Used to notify interested parties when members move between scenes and when they log onto and
      * off of servers. This includes peer servers and this local server, therefore all member
@@ -87,16 +92,6 @@ public class MsoyPeerManager extends CrowdPeerManager
      */
     public static interface MemberObserver
     {
-        /**
-         * Notifies the observer when a member has logged onto an msoy server.
-         */
-        void memberLoggedOn (String node, MemberName member);
-
-        /**
-         * Notifies the observer when a member has logged off of an msoy server.
-         */
-        void memberLoggedOff (String peerName, MemberName member);
-
         /**
          * Notifies the observer when a member has entered a new scene.
          */
@@ -114,18 +109,6 @@ public class MsoyPeerManager extends CrowdPeerManager
         void memberWillBeSent (String node, MemberObject member);
     }
 
-    /**
-     * Used to hear when peers connect or disconnect from this node.
-     */
-    public static interface PeerObserver
-    {
-        /** Called when a peer logs onto this node. */
-        void connectedToPeer (MsoyNodeObject nodeobj);
-
-        /** Called when a peer logs off of this node. */
-        void disconnectedFromPeer (String node);
-    }
-
     /** Useful with {@link #lookupNodeDatum}. */
     public static abstract class NodeFunc<T> implements Function<NodeObject, T>
     {
@@ -136,15 +119,9 @@ public class MsoyPeerManager extends CrowdPeerManager
         }
     }
 
-    /** Our {@link MemberObserver}s. */
-    public final ObserverList<MemberObserver> memberObs = ObserverList.newFastUnsafe();
-
     /** Our {@link MemberForwardObserver}s. */
     public final ObserverList<MemberForwardObserver> memberFwdObs =
         ObserverList.newFastUnsafe();
-
-    /** Our {@link PeerObserver}s. */
-    public final ObserverList<PeerObserver> peerObs = ObserverList.newFastUnsafe();
 
     /** Returns a lock used to claim resolution of the specified scene. */
     public static NodeObject.Lock getSceneLock (int sceneId)
@@ -673,58 +650,12 @@ public class MsoyPeerManager extends CrowdPeerManager
         _mnobj.setMsoyPeerService(_invmgr.registerDispatcher(new MsoyPeerDispatcher(this)));
     }
 
-    @Override // from PeerManager
-    protected void clientLoggedOn (String nodeName, ClientInfo clinfo)
-    {
-        super.clientLoggedOn(nodeName, clinfo);
-
-        if (clinfo.username instanceof MsoyAuthName) {
-            memberLoggedOn(nodeName, (OrthClientInfo)clinfo);
-        }
-    }
-
-    @Override // from PeerManager
-    protected void clientLoggedOff (String nodeName, ClientInfo clinfo)
-    {
-        super.clientLoggedOff(nodeName, clinfo);
-
-        if (clinfo.username instanceof MsoyAuthName) {
-            memberLoggedOff(nodeName, (OrthClientInfo)clinfo);
-        }
-    }
-
-    /**
-     * Called when a member logs onto this or any other peer.
-     */
-    protected void memberLoggedOn (final String nodeName, final OrthClientInfo info)
-    {
-        memberObs.apply(new ObserverList.ObserverOp<MemberObserver>() {
-            public boolean apply (MemberObserver observer) {
-                observer.memberLoggedOn(nodeName, (MemberName)info.visibleName);
-                return true;
-            }
-        });
-    }
-
-    /**
-     * Called when a member logs off of this or any other peer.
-     */
-    protected void memberLoggedOff (final String nodeName, final OrthClientInfo info)
-    {
-        memberObs.apply(new ObserverList.ObserverOp<MemberObserver>() {
-            public boolean apply (MemberObserver observer) {
-                observer.memberLoggedOff(nodeName, (MemberName)info.visibleName);
-                return true;
-            }
-        });
-    }
-
     /**
      * Called when a member enters a new scene. Notifies observers.
      */
     protected void memberEnteredScene (final String node, final int memberId, final int sceneId)
     {
-        memberObs.apply(new ObserverList.ObserverOp<MemberObserver>() {
+        movementObs.apply(new ObserverList.ObserverOp<MemberObserver>() {
             public boolean apply (MemberObserver observer) {
                 observer.memberEnteredScene(node, memberId, sceneId);
                 return true;
@@ -753,9 +684,6 @@ public class MsoyPeerManager extends CrowdPeerManager
         if (info.username instanceof MsoyAuthName) {
             // we need never remove this as it should live for the duration of the session
             client.getClientObject().addListener(new LocationTracker());
-
-            // let observers know that a member logged onto this node
-            memberLoggedOn(_nodeName, (OrthClientInfo)info);
         }
     }
 
@@ -774,9 +702,6 @@ public class MsoyPeerManager extends CrowdPeerManager
             if (_mnobj.memberGames.containsKey(memberId)) {
                 _mnobj.removeFromMemberGames(memberId);
             }
-
-            // notify observers that a member logged off of this node
-            memberLoggedOff(_nodeName, (OrthClientInfo)info);
         }
     }
 
@@ -809,15 +734,6 @@ public class MsoyPeerManager extends CrowdPeerManager
                 ServerConfig.nodeId == 1) {
             _msoyServer.addPortsToPolicy(ServerConfig.getServerPorts(peer.nodeobj.nodeName));
         }
-
-        // notify our peer observers
-        final MsoyNodeObject nodeobj = (MsoyNodeObject)peer.nodeobj;
-        peerObs.apply(new ObserverList.ObserverOp<PeerObserver>() {
-            public boolean apply (PeerObserver observer) {
-                observer.connectedToPeer(nodeobj);
-                return true;
-            }
-        });
     }
 
     @Override // from PeerManager
@@ -830,15 +746,6 @@ public class MsoyPeerManager extends CrowdPeerManager
                 ServerConfig.nodeId == 1) {
             _msoyServer.removePortsFromPolicy(ServerConfig.getServerPorts(peer.nodeobj.nodeName));
         }
-
-        // notify our peer observers
-        final String nodeName = peer.nodeobj.nodeName;
-        peerObs.apply(new ObserverList.ObserverOp<PeerObserver>() {
-            public boolean apply (PeerObserver observer) {
-                observer.disconnectedFromPeer(nodeName);
-                return true;
-            }
-        });
     }
 
     /**

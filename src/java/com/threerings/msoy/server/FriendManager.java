@@ -21,6 +21,8 @@ import com.threerings.presents.annotation.MainInvoker;
 
 import com.threerings.presents.dobj.DSet;
 
+import com.threerings.orth.peer.server.OrthPeerManager.FarSeeingObserver;
+
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 
 import com.threerings.msoy.data.MemberObject;
@@ -37,7 +39,7 @@ import static com.threerings.msoy.Log.log;
  */
 @Singleton @EventThread
 public class FriendManager
-    implements MemberLocator.Observer, MsoyPeerManager.MemberObserver
+    implements MemberLocator.Observer, FarSeeingObserver<MemberName>
 {
     @Inject public FriendManager (MemberLocator locator)
     {
@@ -51,7 +53,7 @@ public class FriendManager
     public void init ()
     {
         // register to hear when members log on and off of remote peers
-        _peerMan.memberObs.add(this);
+        _peerMan.logObs.add(this);
     }
 
     /**
@@ -164,7 +166,7 @@ public class FriendManager
     }
 
     // from interface MsoyPeerManager.MemberObserver
-    public void memberLoggedOn (String nodeName, MemberName member)
+    public void loggedOn (String nodeName, MemberName member)
     {
         final int memberId = member.getId();
         if (!_friendMap.containsKey(memberId)) {
@@ -190,7 +192,7 @@ public class FriendManager
     }
 
     // from interface MsoyPeerManager.MemberObserver
-    public void memberLoggedOff (String nodeName, MemberName member)
+    public void loggedOff (String nodeName, MemberName member)
     {
         // TODO: maybe avoid when crossing nodes?
         Integer key = member.getId();
