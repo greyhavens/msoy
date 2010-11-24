@@ -44,7 +44,7 @@ public class SupportLogic
     {
         MemberName name = _memberRepo.loadMemberName(user.email);
         EventRecord event = new EventRecord();
-        event.source = Integer.toString(name.getMemberId());
+        event.source = Integer.toString(name.getId());
         event.sourceHandle = name.toString();
         event.chatHistory = "";
         event.status = Event.RESOLVED_CLOSED;
@@ -64,7 +64,7 @@ public class SupportLogic
                 event.targetHandle = "Guest";
             } else {
                 event.targetHandle = targetName.toString();
-                event.target = Integer.toString(targetName.getMemberId());
+                event.target = Integer.toString(targetName.getId());
             }
         }
 
@@ -79,7 +79,7 @@ public class SupportLogic
                                      String subject, String link)
     {
         final EventRecord event = new EventRecord();
-        event.source = Integer.toString(source.getMemberId());
+        event.source = Integer.toString(source.getId());
         event.sourceHandle = source.toString();
         event.status = Event.OPEN;
         event.subject = subject;
@@ -107,7 +107,7 @@ public class SupportLogic
     public void addNote (MemberName source, int targetId, String subj, String note, String link)
     {
         EventRecord event = new EventRecord();
-        event.source = String.valueOf(source.getMemberId());
+        event.source = String.valueOf(source.getId());
         event.sourceHandle = source.toString();
         event.status = Event.RESOLVED_CLOSED;
         event.subject = subj;

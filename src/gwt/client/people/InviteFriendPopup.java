@@ -65,7 +65,7 @@ public class InviteFriendPopup extends BorderedDialog
                 return false;
             }
             protected int getRecipientId () {
-                return target.getMemberId();
+                return target.getId();
             }
             protected MailPayload getPayload () {
                 return new FriendInvitePayload();

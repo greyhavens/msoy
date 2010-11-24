@@ -91,7 +91,7 @@ public class StatusPanel extends SmartTable
 
         FlashEvents.addListener(new NameChangeListener() {
             public void nameChanged (NameChangeEvent event) {
-                _creds.name = new MemberName(event.getName(), _creds.name.getMemberId());
+                _creds.name = new MemberName(event.getName(), _creds.name.getId());
                 _namePanel.setWidget(Link.memberView(_creds.name));
             }
         });

@@ -38,7 +38,7 @@ public class MemberStatusLabel extends FlowPanel
 
             Args args = (card.status instanceof MemberCard.InAVRGame) ?
                 Args.compose("s" + ((MemberCard.InAVRGame)gs).sceneId) :
-                Args.compose("game", "j", gs.gameId, card.name.getMemberId());
+                Args.compose("game", "j", gs.gameId, card.name.getId());
             add(Link.create(_cmsgs.mslJoin(), Pages.WORLD, args));
 
         } else if (card.status instanceof MemberCard.InScene) {

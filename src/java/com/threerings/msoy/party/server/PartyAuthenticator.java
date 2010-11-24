@@ -66,7 +66,7 @@ public class PartyAuthenticator extends AuxAuthenticator<PartyCredentials>
         }
 
         // load up our rank in the group in question
-        final Rank groupRank = _groupRepo.getRank(groupId, name.getMemberId());
+        final Rank groupRank = _groupRepo.getRank(groupId, name.getId());
 
         // now we can pre-join the party (to reserve our spot and make sure we're allowed in)
         eventCall(new Callable<Void>() {

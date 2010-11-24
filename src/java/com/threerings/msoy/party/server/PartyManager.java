@@ -120,7 +120,7 @@ public class PartyManager
             nodeObj.removeFromPartyInfos(_partyObj.id);
             // clear the party info from all remaining players' member objects
             for (PartyPeep peep : _partyObj.peeps) {
-                indicateMemberPartying(peep.name.getMemberId(), false);
+                indicateMemberPartying(peep.name.getId(), false);
             }
         } finally {
             nodeObj.commitTransaction();
@@ -149,7 +149,7 @@ public class PartyManager
         // TODO: now that we don't modify the _partyObj here, we could simplify the PartyRegistry
         // to not register the dobj until the user successfully joins.
 
-        String snub = _partyObj.mayJoin(name, groupRank, _invitedIds.contains(name.getMemberId()));
+        String snub = _partyObj.mayJoin(name, groupRank, _invitedIds.contains(name.getId()));
         if (snub != null) {
             throw new InvocationException(snub);
         }
@@ -263,7 +263,7 @@ public class PartyManager
         try {
             peep.joinOrder = leader.joinOrder;
             leader.joinOrder = leader.joinOrder + 1;
-            _partyObj.setLeaderId(peep.name.getMemberId());
+            _partyObj.setLeaderId(peep.name.getId());
             _partyObj.updatePeeps(peep);
             _partyObj.updatePeeps(leader);
         } finally {
@@ -475,7 +475,7 @@ public class PartyManager
         for (PartyPeep peep : _partyObj.peeps) {
             if (peep.joinOrder < joinOrder) {
                 joinOrder = peep.joinOrder;
-                newLeader = peep.name.getMemberId();
+                newLeader = peep.name.getId();
             }
         }
         return newLeader;

@@ -40,7 +40,7 @@ public class InterestsBlurb extends Blurb
     @Override // from Blurb
     public boolean shouldDisplay (ProfileService.ProfileResult pdata)
     {
-        return (pdata.interests.size() > 0 || CShell.getMemberId() == pdata.name.getMemberId());
+        return (pdata.interests.size() > 0 || CShell.getMemberId() == pdata.name.getId());
     }
 
     @Override // from Blurb
@@ -69,7 +69,7 @@ public class InterestsBlurb extends Blurb
         setContent(contents);
 
         // display the edit button if this is our profile
-        if (CShell.isSupport() || _name.getMemberId() == CShell.getMemberId()) {
+        if (CShell.isSupport() || _name.getId() == CShell.getMemberId()) {
             setFooterLabel(_msgs.interestsEdit(), new ClickHandler() {
                 public void onClick (ClickEvent event) {
                     startEdit();
@@ -116,7 +116,7 @@ public class InterestsBlurb extends Blurb
         new ClickCallback<Void>(update) {
             @Override protected boolean callService () {
                 _newInterests = getNewInterests();
-                _profilesvc.updateInterests(_name.getMemberId(), _newInterests, this);
+                _profilesvc.updateInterests(_name.getId(), _newInterests, this);
                 return true;
             }
 

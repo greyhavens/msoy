@@ -40,7 +40,7 @@ public class GameSession extends CrowdSession
 
         GameCredentials creds = (GameCredentials)getCredentials();
         final String vector = StringUtil.getOr(creds.vector, "game_session");
-        final int memberId = _plobj.memberName.getMemberId();
+        final int memberId = _plobj.memberName.getId();
 
         final VisitorInfo info;
         if (creds.visitorId != null) {
@@ -75,7 +75,7 @@ public class GameSession extends CrowdSession
             }
         });
 
-        log.debug("Player session starting", "memberId", _plobj.memberName.getMemberId(),
+        log.debug("Player session starting", "memberId", _plobj.memberName.getId(),
                   "memberName", _plobj.memberName, "oid", _plobj.getOid());
 
         // let our various server entities know that this member logged on

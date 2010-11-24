@@ -129,7 +129,7 @@ public class MsoyClientResolver extends CrowdClientResolver
             // our auth username has our assigned name and member id, so use those
             final MemberName aname = (MemberName)_username;
             memobj.memberName = new VizMemberName(
-                aname.toString(), aname.getMemberId(), MemberCard.DEFAULT_PHOTO);
+                aname.toString(), aname.getId(), MemberCard.DEFAULT_PHOTO);
             local.stats = new StatSet();
             local.badges = new EarnedBadgeSet();
             local.friendIds = new StreamableArrayIntSet(0);

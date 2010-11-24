@@ -29,7 +29,7 @@ public class CommentsBlurb extends Blurb
         super.init(pdata);
 
         setHeader(_msgs.commentsTitle());
-        setContent(_wall = new WallPanel(pdata.name.getMemberId()));
+        setContent(_wall = new WallPanel(pdata.name.getId()));
     }
 
     protected class WallPanel extends CommentsPanel

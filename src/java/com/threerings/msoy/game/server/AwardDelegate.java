@@ -25,7 +25,6 @@ import com.threerings.presents.server.InvocationException;
 
 import com.threerings.crowd.data.PlaceObject;
 
-import com.threerings.parlor.rating.server.Rating;
 import com.threerings.parlor.rating.server.RatingDelegate;
 import com.threerings.parlor.rating.util.Percentiler;
 
@@ -43,7 +42,6 @@ import com.threerings.msoy.admin.server.RuntimeConfig;
 
 import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.game.server.GameGameRegistry.MetricType;
-import com.threerings.msoy.game.server.PlayerLocator;
 import com.threerings.msoy.game.server.persist.GameInfoRecord;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 
@@ -73,7 +71,7 @@ public class AwardDelegate extends RatingDelegate
         FlowRecord record = _flowRecords.get(playerId);
         if (record != null) {
             // payout their pending earnings (this will NOOP if they have nothing pending)
-            payoutCoins(record.name.getMemberId(), record.getAndNoteAward(),
+            payoutCoins(record.name.getId(), record.getAndNoteAward(),
                         record.getAndNoteSecondsPlayed());
         }
     }
@@ -307,7 +305,7 @@ public class AwardDelegate extends RatingDelegate
             }
         });
         if (record != null) {
-            payoutPlayer(record.name.getMemberId());
+            payoutPlayer(record.name.getId());
         }
     }
 
@@ -534,14 +532,14 @@ public class AwardDelegate extends RatingDelegate
         // finally, award the flow and report it to the player
         boolean actuallyAward = !_content.isDevelopmentVersion();
         for (Player player : players.values()) {
-            FlowRecord record = _flowRecords.get(player.name.getMemberId());
+            FlowRecord record = _flowRecords.get(player.name.getId());
             if (record == null) {
                 continue;
             }
 
             // update the player's member object on their world server
             if (actuallyAward && player.flowAward > 0) {
-                _gameReg.reportCoinAward(record.name.getMemberId(), player.flowAward);
+                _gameReg.reportCoinAward(record.name.getId(), player.flowAward);
             }
 
             // report to the game that this player earned some flow
@@ -738,12 +736,12 @@ public class AwardDelegate extends RatingDelegate
 
         // actually grant their flow award (this may only be partial as we may have flushed pending
         // coins due to an earlier request)
-        payoutCoins(record.name.getMemberId(), record.getAndNoteAward(),
+        payoutCoins(record.name.getId(), record.getAndNoteAward(),
                     record.getAndNoteSecondsPlayed());
 
         // and let the game registry know that we paid out this player (this will be their total
         // award because we only do this when they finally leave the game)
-        _gameReg.gameDidPayout(record.name.getMemberId(), _content.game, record.getTotalAward(),
+        _gameReg.gameDidPayout(record.name.getId(), _content.game, record.getTotalAward(),
                                record.getTotalSecondsPlayed());
     }
 
@@ -870,7 +868,7 @@ public class AwardDelegate extends RatingDelegate
         }
 
         public int getMemberId () {
-            return (name == null) ? 0 : name.getMemberId();
+            return (name == null) ? 0 : name.getId();
         }
 
         public int compareTo (Player other) {

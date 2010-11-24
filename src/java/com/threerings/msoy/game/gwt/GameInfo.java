@@ -137,7 +137,7 @@ public class GameInfo
      */
     public boolean isCreator (int memberId)
     {
-        return creator.getMemberId() == memberId;
+        return creator.getId() == memberId;
     }
 
     @Override // from Object

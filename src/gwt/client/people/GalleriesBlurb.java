@@ -32,7 +32,7 @@ public class GalleriesBlurb extends Blurb
         if (pdata.galleries != null && pdata.galleries.size() > 0) {
             return true;
         }
-        return (CShell.getMemberId() == pdata.name.getMemberId());
+        return (CShell.getMemberId() == pdata.name.getId());
     }
 
     @Override // from Blurb
@@ -57,14 +57,14 @@ public class GalleriesBlurb extends Blurb
 
         // links to create gallery and/or see all galleries
         FlowPanel footerLinks = new FlowPanel();
-        if (CShell.getMemberId() == _name.getMemberId()) {
+        if (CShell.getMemberId() == _name.getId()) {
             footerLinks.add(
                 Link.create(_msgs.createGallery(), Pages.PEOPLE, GalleryActions.CREATE));
         }
         if (pdata.galleries != null && pdata.galleries.size() > NUM_GALLERIES) {
             footerLinks.add(WidgetUtil.makeShim(10, 10));
             footerLinks.add(Link.create(_msgs.seeAll(), Pages.PEOPLE,
-                GalleryActions.GALLERIES, _name.getMemberId()));
+                GalleryActions.GALLERIES, _name.getId()));
         }
         setFooter(footerLinks);
     }

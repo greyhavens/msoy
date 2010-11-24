@@ -36,7 +36,7 @@ public class TrophiesBlurb extends Blurb
         TrophyGrid.populateTrophyGrid(grid, tvec);
         setContent(grid);
 
-        setFooterLink(_msgs.seeAll(), Pages.GAMES, "t", pdata.name.getMemberId());
+        setFooterLink(_msgs.seeAll(), Pages.GAMES, "t", pdata.name.getId());
     }
 
     protected static final PeopleMessages _msgs = GWT.create(PeopleMessages.class);

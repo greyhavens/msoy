@@ -12,7 +12,6 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.game.data.GameSummary;
 
 import com.threerings.msoy.item.data.all.Avatar;
-import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 
 import com.threerings.msoy.item.data.all.MsoyItemType;
@@ -59,7 +58,7 @@ public class MemberInfo extends ActorInfo
      */
     public int getMemberId ()
     {
-        return ((MemberName) username).getMemberId();
+        return ((MemberName) username).getId();
     }
 
     // from PartyOccupantInfo

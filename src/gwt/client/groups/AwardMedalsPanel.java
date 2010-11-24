@@ -106,7 +106,7 @@ public class AwardMedalsPanel extends FlowPanel
             HorizontalPanel row = new HorizontalPanel();
             row.setSpacing(10);
             row.add(MediaUtil.createMediaView(member.getPhoto(), MediaDescSize.HALF_THUMBNAIL_SIZE));
-            row.add(Link.create(member.toString(), Pages.PEOPLE, "" + member.getMemberId()));
+            row.add(Link.create(member.toString(), Pages.PEOPLE, "" + member.getId()));
             // TODO: this will be really inefficient for groups that have a ton of Medals.  This
             // UI should contain only one drop down if at all possible.
             final ListBox awardDrop = createDropDown();
@@ -150,7 +150,7 @@ public class AwardMedalsPanel extends FlowPanel
             MsoyUI.error(_msgs.awardMedalsNoMedalChosen());
         }
 
-        _groupsvc.awardMedal(member.getMemberId(), medal.medalId, new InfoCallback<Void>() {
+        _groupsvc.awardMedal(member.getId(), medal.medalId, new InfoCallback<Void>() {
             public void onSuccess (Void result) {
                 MsoyUI.info(_msgs.awardMedalsMedalGranted(member.toString(), medal.name));
             }

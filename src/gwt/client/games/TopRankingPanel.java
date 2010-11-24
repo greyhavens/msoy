@@ -112,7 +112,7 @@ public class TopRankingPanel extends VerticalPanel
             _grid.setHTML(row, col+4, "&nbsp;", 1, "Cell");
             _grid.getFlexCellFormatter().addStyleName(row, col+4, "Gap");
 
-            if (rating.name.getMemberId() == CShell.getMemberId()) {
+            if (rating.name.getId() == CShell.getMemberId()) {
                 for (int cc = 0; cc < COLUMNS; cc++) {
                     _grid.getFlexCellFormatter().addStyleName(row, col+cc, "Self");
                 }

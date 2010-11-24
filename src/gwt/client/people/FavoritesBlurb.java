@@ -29,7 +29,7 @@ public class FavoritesBlurb extends Blurb
         }
         setContent(grid);
 
-        setFooterLink(_msgs.seeMoreFavorites(), Pages.SHOP, "f", pdata.name.getMemberId());
+        setFooterLink(_msgs.seeMoreFavorites(), Pages.SHOP, "f", pdata.name.getId());
     }
 
     protected static final PeopleMessages _msgs = GWT.create(PeopleMessages.class);

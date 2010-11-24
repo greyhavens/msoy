@@ -66,7 +66,7 @@ public class MessagePanel extends FlexTable
         }
 
         info.add(Link.create(poster.name.toString(), "Author",
-                             Pages.PEOPLE, ""+poster.name.getMemberId()));
+                             Pages.PEOPLE, ""+poster.name.getId()));
 
         // TODO: switch to "XX days/minutes ago"
         String when = _cmsgs.postedOn(DateUtil.formatDateTime(whenPosted));
@@ -116,7 +116,7 @@ public class MessagePanel extends FlexTable
     protected ThumbBox getThumbBox (MemberCard poster)
     {
         return new ThumbBox(poster.photo, getThumbnailSize(),
-                            Pages.PEOPLE, ""+poster.name.getMemberId());
+                            Pages.PEOPLE, ""+poster.name.getId());
     }
 
     /**

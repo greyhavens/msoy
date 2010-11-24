@@ -91,7 +91,7 @@ public class ConvoPanel extends FlowPanel
         if (!review) {
             // only add the "user controls" if the other user has participated
             for (ConvMessage msg : result.messages) {
-                if (msg.author.name.getMemberId() != CShell.getMemberId()) {
+                if (msg.author.name.getId() != CShell.getMemberId()) {
                     addUserControls(footer, result.other);
                     break;
                 }
@@ -146,7 +146,7 @@ public class ConvoPanel extends FlowPanel
         new ComplainHandler(complain, targetName.toString());
         table.setWidget(0, col++, complain, 1, "Control");
 
-        final int targetId = targetName.getMemberId();
+        final int targetId = targetName.getId();
         Button block = new Button(_msgs.convoBlock());
         new ClickCallback<Void>(block, _msgs.convoBlockConfirm()) {
             @Override protected boolean callService () {
@@ -192,7 +192,7 @@ public class ConvoPanel extends FlowPanel
             }
             if (msg.payload != null) {
                 MailPayloadDisplay display = MailPayloadDisplay.getDisplay(_convoId, msg);
-                Widget payviz = (CShell.getMemberId() == msg.author.name.getMemberId()) ?
+                Widget payviz = (CShell.getMemberId() == msg.author.name.getId()) ?
                     display.widgetForSender() : display.widgetForRecipient();
                 if (payviz != null) {
                     _contents.add(payviz);
@@ -205,7 +205,7 @@ public class ConvoPanel extends FlowPanel
 
             if (showReply) {
                 _contents.add(WidgetUtil.makeShim(10, 10));
-                String action = _msg.author.name.getMemberId() == CShell.getMemberId() ?
+                String action = _msg.author.name.getId() == CShell.getMemberId() ?
                     _msgs.convoFollowUp() : _msgs.convoReply();
                 _contents.add(_reply = new Button(action, new ClickHandler() {
                     public void onClick (ClickEvent event) {

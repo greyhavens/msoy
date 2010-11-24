@@ -15,6 +15,6 @@ public class MsoyClientInfo extends CrowdClientInfo
     /** Returns this member's unique identifier. */
     public int getMemberId ()
     {
-        return ((MemberName)visibleName).getMemberId();
+        return ((MemberName)visibleName).getId();
     }
 }

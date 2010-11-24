@@ -76,7 +76,7 @@ public class MemberList extends PagedGrid<MemberCard>
             super.addExtras(extras, card);
 
             int row = extras.getRowCount();
-            boolean isNotMe = CShell.getMemberId() != card.name.getMemberId();
+            boolean isNotMe = CShell.getMemberId() != card.name.getId();
             ClickHandler onClick;
 
             // potentially show the add friend button
@@ -92,14 +92,14 @@ public class MemberList extends PagedGrid<MemberCard>
 
             // if we're not a guest, we can send them mail
             if (isNotMe && !CShell.isGuest()) {
-                onClick = Link.createHandler(Pages.MAIL, "w", "m", card.name.getMemberId());
+                onClick = Link.createHandler(Pages.MAIL, "w", "m", card.name.getId());
                 extras.setWidget(row, 0,
                     MsoyUI.createActionImage("/images/profile/sendmail.png", onClick));
                 extras.setWidget(row++, 1,
                     MsoyUI.createActionLabel(_msgs.mlSendMail(), onClick));
             }
 
-            onClick = Link.createHandler(Pages.WORLD, "m" + card.name.getMemberId());
+            onClick = Link.createHandler(Pages.WORLD, "m" + card.name.getId());
             extras.setWidget(row, 0,
                 MsoyUI.createActionImage("/images/profile/visithome.png", onClick));
             extras.setWidget(row++, 1,

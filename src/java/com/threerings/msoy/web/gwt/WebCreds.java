@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.web.gwt;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -96,7 +95,7 @@ public class WebCreds
      */
     public int getMemberId ()
     {
-        return (name == null) ? 0 : name.getMemberId();
+        return (name == null) ? 0 : name.getId();
     }
 
     /**
@@ -158,7 +157,7 @@ public class WebCreds
         data.add(String.valueOf(validated));
         data.add(String.valueOf(isNewbie));
         data.add(name.toString());
-        data.add(String.valueOf(name.getMemberId()));
+        data.add(String.valueOf(name.getId()));
         data.add(permaName);
         data.add(String.valueOf(role));
         return data;

@@ -90,7 +90,7 @@ public class GroupDiscussionsPanel extends FlowPanel
             add(MsoyUI.createHTML(MessageUtil.expandMessage(thread.firstPost.message), "Text"));
 
             ClickHandler posterClick = Link.createHandler(
-                Pages.PEOPLE, "" + thread.firstPost.poster.name.getMemberId());
+                Pages.PEOPLE, "" + thread.firstPost.poster.name.getId());
             Widget posterIcon = MediaUtil.createMediaView(
                 thread.firstPost.poster.photo, MediaDescSize.HALF_THUMBNAIL_SIZE, posterClick);
             posterIcon.setStyleName("PostedByIcon");

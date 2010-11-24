@@ -26,12 +26,12 @@ public class MemberWidget extends SmartTable
 
         setWidget(0, 0, MediaUtil.createMediaView(card.photo, MediaDescSize.THUMBNAIL_SIZE,
                                                   Link.createHandler(
-                                                  Pages.PEOPLE, "" + card.name.getMemberId())),
+                                                  Pages.PEOPLE, "" + card.name.getId())),
                   1, "Photo");
         getFlexCellFormatter().setRowSpan(0, 0, 3);
 
         setWidget(0, 1, Link.create(card.name.toString(), Pages.PEOPLE,
-                                               ""+card.name.getMemberId()), 1, "Name");
+                                               ""+card.name.getId()), 1, "Name");
 
         // we'll overwrite these below if we have anything to display
         getFlexCellFormatter().setStyleName(1, 0, "Status");

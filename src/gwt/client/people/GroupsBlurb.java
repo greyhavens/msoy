@@ -68,7 +68,7 @@ public class GroupsBlurb extends Blurb
             {
                 _brand = brand;
                 if (_brand != null) {
-                    _shares = brand.getShares(_name.getMemberId());
+                    _shares = brand.getShares(_name.getId());
                 }
                 _grant = grant;
 
@@ -103,7 +103,7 @@ public class GroupsBlurb extends Blurb
                                 // create a callback that updates the UI
                                 InfoCallback<Void> callback = new InfoCallback<Void> () {
                                     @Override public void onSuccess (Void result) {
-                                        _brand.setShares(_name.getMemberId(), newShares);
+                                        _brand.setShares(_name.getId(), newShares);
                                         _shares = newShares;
                                         _editing = false;
                                         updateBrand();
@@ -111,7 +111,7 @@ public class GroupsBlurb extends Blurb
                                 };
                                 // then call the server to actually set the new share count
                                 _groupsvc.setBrandShares(_brand.group.getGroupId(),
-                                    _name.getMemberId(), newShares, callback);
+                                    _name.getId(), newShares, callback);
                             }
                         }));
                     } else {
@@ -156,7 +156,7 @@ public class GroupsBlurb extends Blurb
         @Override // from PagedGrid
         protected Widget createEmptyContents ()
         {
-            if (CShell.getMemberId() != _name.getMemberId()) {
+            if (CShell.getMemberId() != _name.getId()) {
                 return super.createEmptyContents();
             }
             return createEmptyTable(_msgs.notInGroupsSelf(),

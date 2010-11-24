@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.person.gwt;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.collect.Lists;
@@ -36,7 +35,7 @@ public class GalleryData implements IsSerializable
 
     @Override public String toString ()
     {
-        return "[gallery=" + gallery + ", photos=" + photos + ", ownerId=" + owner.getMemberId()
+        return "[gallery=" + gallery + ", photos=" + photos + ", ownerId=" + owner.getId()
             + "]";
     }
 }

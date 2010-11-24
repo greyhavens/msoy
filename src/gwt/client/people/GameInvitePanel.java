@@ -364,7 +364,7 @@ public class GameInvitePanel extends InvitePanel
 
         public int getMemberId ()
         {
-            return _card.name.getMemberId();
+            return _card.name.getId();
         }
 
         public boolean isSelected ()

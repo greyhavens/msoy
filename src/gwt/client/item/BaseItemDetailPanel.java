@@ -189,7 +189,7 @@ public abstract class BaseItemDetailPanel extends SmartTable
         _creator.add(MsoyUI.createHTML("&nbsp;", "inline"));
         CatalogQuery query = new CatalogQuery();
         query.itemType = _detail.item.getType();
-        query.creatorId = _detail.creator.getMemberId();
+        query.creatorId = _detail.creator.getId();
         Widget bshop = Link.create(_imsgs.browseCatalogFor(), Pages.SHOP,
                                    ShopUtil.composeArgs(query, 0));
         bshop.setTitle(_imsgs.browseCatalogTip(_detail.creator.toString()));

@@ -15,6 +15,6 @@ public class MsoyUserIdentifier
     // from UserIdentifier.Ider
     public int getUserId (Name name)
     {
-        return ((MemberName) name).getMemberId();
+        return ((MemberName) name).getId();
     }
 }

@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.group.gwt;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.collect.Lists;
@@ -64,7 +63,7 @@ public class BrandDetail
     public void setShares (int memberId, int newShares)
     {
         for (BrandShare share : shareHolders) {
-            if (share.member.getMemberId() == memberId) {
+            if (share.member.getId() == memberId) {
                 share.shares = newShares;
             }
         }
@@ -73,7 +72,7 @@ public class BrandDetail
     public int getShares (int memberId)
     {
         for (BrandShare share : shareHolders) {
-            if (share.member.getMemberId() == memberId) {
+            if (share.member.getId() == memberId) {
                 return share.shares;
             }
         }

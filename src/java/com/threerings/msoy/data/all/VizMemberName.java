@@ -44,7 +44,7 @@ public class VizMemberName extends MemberName
 
     public VizMemberName (MemberName name, MediaDesc photo)
     {
-        super(name.toString(), name.getMemberId());
+        super(name.toString(), name.getId());
         _photo = photo;
     }
 
@@ -59,7 +59,7 @@ public class VizMemberName extends MemberName
     @Override
     public MemberName toMemberName ()
     {
-        return new MemberName(_name, _memberId);
+        return new MemberName(_name, _id);
     }
 
     /** This member's profile photo. */

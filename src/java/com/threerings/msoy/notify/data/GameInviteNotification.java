@@ -31,7 +31,7 @@ public class GameInviteNotification extends Notification
     public String getAnnouncement ()
     {
         return MessageBundle.tcompose("m.game_invite",
-            _inviter, _inviter.getMemberId(), _game, _gameId);
+            _inviter, _inviter.getId(), _game, _gameId);
     }
 
     @Override

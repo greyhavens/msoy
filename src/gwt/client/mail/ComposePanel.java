@@ -7,7 +7,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import client.ui.InfoPopup;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.Button;
@@ -24,8 +23,6 @@ import com.google.gwt.user.client.ui.TextBox;
 
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
-
-import com.threerings.orth.data.MediaDesc;
 
 import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.msoy.data.all.MemberName;
@@ -120,7 +117,7 @@ public class ComposePanel extends FlowPanel
                     _msgs.composePresentWarning(_recipient.name.toString()) : null);
             }
             protected int getRecipientId () {
-                return _recipient.name.getMemberId();
+                return _recipient.name.getId();
             }
             protected MailPayload getPayload () {
                 return _payload;

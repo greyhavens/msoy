@@ -27,7 +27,6 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
 
-import com.threerings.msoy.server.MemberLocal;
 import com.threerings.msoy.server.persist.MemberRepository;
 
 import static com.threerings.msoy.Log.log;
@@ -60,7 +59,7 @@ public class FriendManager
      */
     public void addNewFriend (MemberObject memobj, FriendEntry entry)
     {
-        int friendId = entry.name.getMemberId();
+        int friendId = entry.name.getId();
         memobj.getLocal(MemberLocal.class).friendIds.add(friendId);
         registerFriendInterest(memobj, friendId);
         if (_peerMan.isMemberOnline(friendId)) {
@@ -93,7 +92,7 @@ public class FriendManager
 
         List<Integer> removeKeys = null;
         for (FriendEntry entry : memobj.friends) {
-            Integer id = entry.name.getMemberId();
+            Integer id = entry.name.getId();
             // remove onlineIds that we already have loaded
             if (!onlineIds.remove(id)) {
                 if (removeKeys == null) {
@@ -167,7 +166,7 @@ public class FriendManager
     // from interface MsoyPeerManager.MemberObserver
     public void memberLoggedOn (String nodeName, MemberName member)
     {
-        final int memberId = member.getMemberId();
+        final int memberId = member.getId();
         if (!_friendMap.containsKey(memberId)) {
             return; // we don't care
         }
@@ -194,7 +193,7 @@ public class FriendManager
     public void memberLoggedOff (String nodeName, MemberName member)
     {
         // TODO: maybe avoid when crossing nodes?
-        Integer key = member.getMemberId();
+        Integer key = member.getId();
         for (MemberObject watcher : _friendMap.get(key)) {
             if (watcher.friends.containsKey(key)) {
                 watcher.removeFromFriends(key);

@@ -33,7 +33,7 @@ public class MuteList extends MemberList
 
     protected void removeMute (final MemberCard card)
     {
-        _membersvc.setMuted(_memberId, card.name.getMemberId(), false, new InfoCallback<Void>() {
+        _membersvc.setMuted(_memberId, card.name.getId(), false, new InfoCallback<Void>() {
             public void onSuccess (Void nothing) {
                 removeItem(card);
             }

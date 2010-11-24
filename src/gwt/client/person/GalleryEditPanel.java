@@ -30,7 +30,6 @@ import com.threerings.gwt.util.SimpleDataModel;
 import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.imagechooser.gwt.ImageChooserService;
 import com.threerings.msoy.imagechooser.gwt.ImageChooserServiceAsync;
-import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.item.data.all.Photo;
 import com.threerings.msoy.person.gwt.Gallery;
@@ -171,7 +170,7 @@ public class GalleryEditPanel extends AbsolutePanel // AbsolutePanel needed to s
         add(photoContainer, 0, 370);
 
         // only populate the box if it's a member editing their own gallery (i.e. not support)
-        if (CShell.getMemberId() == _galleryData.owner.getMemberId()) {
+        if (CShell.getMemberId() == _galleryData.owner.getId()) {
             _imgsvc.loadPhotos(new InfoCallback<List<Photo>>() {
                 public void onSuccess (List<Photo> result) {
                     createPhotoBox(photoContainer, result);
@@ -186,7 +185,7 @@ public class GalleryEditPanel extends AbsolutePanel // AbsolutePanel needed to s
         add(new Image("/images/people/gallery_photo_icon.png"), 10, 375);
 
         String photoBoxTitle;
-        if (CShell.getMemberId() == _galleryData.owner.getMemberId()) {
+        if (CShell.getMemberId() == _galleryData.owner.getId()) {
             photoBoxTitle = _pmsgs.galleryPhotoListTitle();
         } else {
             photoBoxTitle = "Drag here to remove from gallery.";
@@ -194,7 +193,7 @@ public class GalleryEditPanel extends AbsolutePanel // AbsolutePanel needed to s
         add(MsoyUI.createLabel(photoBoxTitle, "PhotoListTitle"), 65, 385);
 
         // if we're support, we're done
-        if (CShell.getMemberId() != _galleryData.owner.getMemberId()) {
+        if (CShell.getMemberId() != _galleryData.owner.getId()) {
             return;
         }
 

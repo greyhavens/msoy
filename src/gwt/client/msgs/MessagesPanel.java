@@ -262,11 +262,11 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
             super.addInfo(info);
 
             final int memberId = CShell.getMemberId();
-            final boolean isPoster = (memberId == _message.poster.name.getMemberId());
+            final boolean isPoster = (memberId == _message.poster.name.getId());
             if (!isPoster) {
                 info.add(makeInfoImage(_images.sendmail(), _mmsgs.inlineMail(),
                                        Link.createHandler(Pages.MAIL, "w", "m",
-                                                           _message.poster.name.getMemberId())));
+                                                           _message.poster.name.getId())));
             }
 
             FlowPanel toolBar = MsoyUI.createFlowPanel("ToolBar");

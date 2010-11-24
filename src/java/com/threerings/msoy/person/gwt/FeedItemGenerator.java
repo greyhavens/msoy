@@ -355,11 +355,11 @@ public class FeedItemGenerator
             int badgeCode = Integer.parseInt(message.data[0]);
             int badgeLevel = Integer.parseInt(message.data[1]);
             String badgeName = _messages.badgeName(badgeCode, Badge.getLevelName(badgeLevel));
-            int memberId = ((FriendFeedMessage)message).friend.getMemberId();
+            int memberId = ((FriendFeedMessage)message).friend.getId();
             return _builder.createLink(badgeName, Pages.ME, Args.compose("passport", memberId));
 
         case MEDALS:
-            memberId = ((FriendFeedMessage)message).friend.getMemberId();
+            memberId = ((FriendFeedMessage)message).friend.getId();
             String medalLink = _builder.createLink(
                 message.data[0], Pages.ME, Args.compose("medals", memberId));
             String groupLink = _builder.createLink(
@@ -431,12 +431,12 @@ public class FeedItemGenerator
         case BADGES:
             int badgeCode = Integer.parseInt(message.data[0]);
             int level = Integer.parseInt(message.data[1]);
-            int memberId = ((FriendFeedMessage)message).friend.getMemberId();
+            int memberId = ((FriendFeedMessage)message).friend.getId();
             media = EarnedBadge.getImageMedia(badgeCode, level);
             return _builder.createMedia(media, Pages.ME, Args.compose("passport", memberId));
 
         case MEDALS:
-            int friendId = ((FriendFeedMessage)message).friend.getMemberId();
+            int friendId = ((FriendFeedMessage)message).friend.getId();
             return buildMedia(message, 1, Pages.ME, "medals", friendId);
 
         case GROUPS:
@@ -505,7 +505,7 @@ public class FeedItemGenerator
             // very old data may not include actor/friend
             return _messages.unknownMember();
         }
-        return profileString(member.toString(), String.valueOf(member.getMemberId()));
+        return profileString(member.toString(), String.valueOf(member.getId()));
     }
 
     /**

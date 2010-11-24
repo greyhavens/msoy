@@ -1414,11 +1414,11 @@ public class MoneyLogic
     {
         Set<Integer> memberIds = Sets.newHashSet();
         for (MoneyTransaction tx : txList) {
-            memberIds.add(tx.referenceMemberName.getMemberId());
+            memberIds.add(tx.referenceMemberName.getId());
         }
         Map<Integer, MemberName> names = _memberRepo.loadMemberNames(memberIds);
         for (MoneyTransaction tx : txList) {
-            tx.referenceMemberName = names.get(tx.referenceMemberName.getMemberId());
+            tx.referenceMemberName = names.get(tx.referenceMemberName.getId());
         }
     }
 

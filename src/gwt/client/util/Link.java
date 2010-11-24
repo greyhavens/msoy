@@ -76,7 +76,7 @@ public class Link
      */
     public static Widget memberView (MemberName name)
     {
-        return create(name.toString(), Pages.PEOPLE, name.getMemberId());
+        return create(name.toString(), Pages.PEOPLE, name.getId());
     }
 
     /**

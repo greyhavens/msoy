@@ -41,7 +41,7 @@ public class GameBitsPanel extends SmartTable
             setText(row++, 1, detail.metrics.gamesPlayed, 1);
         }
 
-        if (CShell.getMemberId() == detail.info.creator.getMemberId() || CShell.isSupport()) {
+        if (CShell.getMemberId() == detail.info.creator.getId() || CShell.isSupport()) {
             setWidget(row++, 0, Link.create(_msgs.bitsEdit(), Pages.EDGAMES, "e",
                 detail.info.gameId), 2);
         }

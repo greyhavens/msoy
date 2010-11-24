@@ -83,7 +83,7 @@ public class FriendInviter
             return;
         }
 
-        _membersvc.isAutomaticFriender(_target.getMemberId(), new AsyncCallback<Boolean>() {
+        _membersvc.isAutomaticFriender(_target.getId(), new AsyncCallback<Boolean>() {
             public void onFailure (Throwable caught) {
                 _clicked = false;
             }
@@ -105,7 +105,7 @@ public class FriendInviter
 
     protected void doAutomaticFriending ()
     {
-        _membersvc.addFriend(_target.getMemberId(), new AsyncCallback<Void>() {
+        _membersvc.addFriend(_target.getId(), new AsyncCallback<Void>() {
             public void onFailure (Throwable caught) {
                 MsoyUI.error(CShell.serverError(caught));
             }

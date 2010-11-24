@@ -98,7 +98,7 @@ public class ItemTransactionsPanel extends VerticalPanel
 
         if (entry.referenceMemberName != null) {
             row.add(Link.memberView(entry.referenceMemberName.toString(),
-                entry.referenceMemberName.getMemberId()));
+                entry.referenceMemberName.getId()));
         } else {
             row.add(MsoyUI.createLabel("", null));
         }

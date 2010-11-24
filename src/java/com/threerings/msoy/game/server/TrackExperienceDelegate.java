@@ -24,7 +24,7 @@ public class TrackExperienceDelegate extends GameManagerDelegate
     {
         final PlayerObject plobj = (PlayerObject)_omgr.getObject(bodyOid);
         MemberNodeActions.addExperience(
-            plobj.memberName.getMemberId(), _content.game.isAVRG ?
+            plobj.memberName.getId(), _content.game.isAVRG ?
             HomePageItem.ACTION_AVR_GAME : HomePageItem.ACTION_GAME, _content.gameId);
     }
 

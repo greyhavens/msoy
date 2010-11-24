@@ -573,7 +573,7 @@ public class MemberNodeActions
             _friends = new int[memobj.friends.size()];
             int ii = 0;
             for (FriendEntry entry : memobj.friends) {
-                _friends[ii++] = entry.name.getMemberId();
+                _friends[ii++] = entry.name.getId();
             }
         }
 
@@ -728,7 +728,7 @@ public class MemberNodeActions
         }
 
         @Override protected void execute (MemberObject memobj) {
-            if (memobj.following == null || memobj.following.getMemberId() != _leaderId) {
+            if (memobj.following == null || memobj.following.getId() != _leaderId) {
                 // oops, no longer following this leader
                 _peerMan.invokeNodeAction(
                     new RemoveFollowerAction(_leaderId, memobj.getMemberId()));

@@ -368,7 +368,7 @@ public class GameServlet extends MsoyServiceServlet
         // resolve the member's names
         Set<Integer> memIds = players.keySet();
         for (MemberName name : _memberRepo.loadMemberNames(memIds).values()) {
-            PlayerRating pr = players.get(name.getMemberId());
+            PlayerRating pr = players.get(name.getId());
             pr.name = name;
         }
 
@@ -578,7 +578,7 @@ public class GameServlet extends MsoyServiceServlet
             // resolve creator names
             Map<Integer, MemberName> memberNames = _memberRepo.loadMemberNames(creatorIds);
             for (GameInfo info : featured) {
-                info.creator = memberNames.get(info.creator.getMemberId());
+                info.creator = memberNames.get(info.creator.getId());
             }
             return featured.toArray(new GameInfo[featured.size()]);
         }

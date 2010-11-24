@@ -289,12 +289,12 @@ public class ListingDetailPanel extends BaseItemDetailPanel
     protected boolean mayManage ()
     {
         if (CShell.isSupport() ||
-                (Theme.isLive() && _detail.creator.getMemberId() == CShell.getMemberId())) {
+                (Theme.isLive() && _detail.creator.getId() == CShell.getMemberId())) {
             return true;
         }
         if (_listing.brand != null) {
             for (BrandShare shareHolder : _listing.brand.shareHolders) {
-                if (shareHolder.member.getMemberId() == CShell.getMemberId()) {
+                if (shareHolder.member.getId() == CShell.getMemberId()) {
                     return true;
                 }
             }

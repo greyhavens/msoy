@@ -168,7 +168,7 @@ public class MsoyUserLogic extends SupportUserLogic
                 log.warning("Unable to find member information [email=" + username + "].");
                 return null;
             }
-            return String.valueOf(name.getMemberId());
+            return String.valueOf(name.getId());
 
         } catch (Exception e) {
             log.warning("Error looking up member", e);

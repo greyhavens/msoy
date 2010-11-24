@@ -183,7 +183,7 @@ public class ThreadPanel extends TitledListPanel
             Button submit = new Button(_cmsgs.send());
             final int replyId = (inReplyTo == null) ? 0 : inReplyTo.messageId;
             final int replyMemberId = (inReplyTo == null || inReplyTo.poster == null ||
-                    inReplyTo.poster.name == null) ? 0 : inReplyTo.poster.name.getMemberId();
+                    inReplyTo.poster.name == null) ? 0 : inReplyTo.poster.name.getId();
             new ForumCallback<ForumMessage>(submit) {
                 @Override protected boolean callService () {
                     String text = _editor.getHTML();

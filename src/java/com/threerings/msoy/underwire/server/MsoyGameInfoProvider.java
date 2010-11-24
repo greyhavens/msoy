@@ -34,7 +34,7 @@ public class MsoyGameInfoProvider extends GameInfoProvider
     {
         Map<String, List<String>> map = Maps.newHashMap();
         for (MemberName name : _memberRepo.loadMemberNames(names, TO_INT).values()) {
-            map.put(Integer.toString(name.getMemberId()), Lists.newArrayList(name.toString()));
+            map.put(Integer.toString(name.getId()), Lists.newArrayList(name.toString()));
         }
         return map;
     }

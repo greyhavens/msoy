@@ -26,7 +26,7 @@ public class FriendRemover extends PromptPopup
     {
         super(_msgs.mlRemoveConfirm(target.toString()), new Command () {
             public void execute () {
-                _membersvc.removeFriend(target.getMemberId(), new InfoCallback<Void>() {
+                _membersvc.removeFriend(target.getId(), new InfoCallback<Void>() {
                     public void onSuccess (Void result) {
                         MsoyUI.info(_msgs.mlRemoved(target.toString()));
                         if (success != null) {

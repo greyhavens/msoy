@@ -46,7 +46,7 @@ public class MsoyChatChannelManager extends ChatChannelManager
     @Override // from ChatChannelManager
     protected int getBodyId (Name speaker)
     {
-        return ((MemberName)speaker).getMemberId();
+        return ((MemberName)speaker).getId();
     }
 
     @Override // from ChatChannelManager

@@ -126,7 +126,7 @@ public class MeFriendsPanel extends FlowPanel
                 FlowPanel game = getPlacePanel(
                     games, gameId, ((MemberCard.InGame)card.status).gameName, true);
                 Widget member = makeMemberWidget(
-                    card, size, Pages.WORLD, "game", "j", gameId, card.name.getMemberId());
+                    card, size, Pages.WORLD, "game", "j", gameId, card.name.getId());
                 member.addStyleName("MemberGame");
                 game.add(member);
             }

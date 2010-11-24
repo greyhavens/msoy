@@ -31,12 +31,12 @@ public class IncomePanel extends MoneyPanel
         income.add(MsoyUI.createInlineImage(entry.currency.getSmallIcon()));
         income.add(WidgetUtil.makeShim(15, 1));
         income.add(MsoyUI.createLabel(entry.currency.format(entry.amount), "Income"));
-        
+
         row.add(income);
 
         if (CShell.isSupport() && entry.referenceMemberName != null) {
-            row.add(Link.memberView(entry.referenceMemberName.toString(), 
-                entry.referenceMemberName.getMemberId()));
+            row.add(Link.memberView(entry.referenceMemberName.toString(),
+                entry.referenceMemberName.getId()));
         }
     }
 

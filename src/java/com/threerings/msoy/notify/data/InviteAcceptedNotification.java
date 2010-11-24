@@ -30,7 +30,7 @@ public class InviteAcceptedNotification extends Notification
     public String getAnnouncement ()
     {
         return MessageBundle.tcompose(
-            "m.invite_accepted", _inviteeEmail, _invitee, _invitee.getMemberId());
+            "m.invite_accepted", _inviteeEmail, _invitee, _invitee.getId());
     }
 
     @Override

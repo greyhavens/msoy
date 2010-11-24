@@ -39,7 +39,7 @@ public class PlayerEntry
     public boolean equals (Object other)
     {
         return (other instanceof PlayerEntry) &&
-            (this.name.getMemberId() == ((PlayerEntry)other).name.getMemberId());
+            (this.name.getId() == ((PlayerEntry)other).name.getId());
     }
 
     @Override

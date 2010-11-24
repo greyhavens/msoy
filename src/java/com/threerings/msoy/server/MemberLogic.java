@@ -879,7 +879,7 @@ public class MemberLogic
         public AddFriend (int memberId, MemberCard friend) {
             super(memberId);
             _entry = new FriendEntry(
-                new VizMemberName(friend.name.toString(), friend.name.getMemberId(), friend.photo),
+                new VizMemberName(friend.name.toString(), friend.name.getId(), friend.photo),
                 friend.headline);
         }
 

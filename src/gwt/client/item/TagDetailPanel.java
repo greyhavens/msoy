@@ -204,7 +204,7 @@ public class TagDetailPanel extends VerticalPanel
                         memName = memName.substring(0, MAX_NAME_LENGTH) + "...";
                     }
                     contents.setWidget(tRow, 1, Link.create(
-                        memName, Pages.PEOPLE, history.member.getMemberId()));
+                        memName, Pages.PEOPLE, history.member.getId()));
                     formatter.setHorizontalAlignment(tRow, 1, HasAlignment.ALIGN_LEFT);
 
                     String actionString;

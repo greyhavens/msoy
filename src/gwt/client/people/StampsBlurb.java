@@ -40,7 +40,7 @@ public class StampsBlurb extends Blurb
         }
         setContent(stamps);
 
-        setFooterLink(_msgs.seeAll(), Pages.ME, "passport", pdata.name.getMemberId());
+        setFooterLink(_msgs.seeAll(), Pages.ME, "passport", pdata.name.getId());
     }
 
     protected static class SimpleBadgeDisplay extends VerticalPanel

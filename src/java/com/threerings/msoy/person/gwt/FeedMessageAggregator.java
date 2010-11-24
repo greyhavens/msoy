@@ -5,7 +5,6 @@ package com.threerings.msoy.person.gwt;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -126,7 +125,7 @@ public class FeedMessageAggregator
         case FRIEND_WON_BADGE:
         case FRIEND_WON_MEDAL:
             // group all these by the friend doing the actions
-            return MessageKey.explicit(message, ((FriendFeedMessage)message).friend.getMemberId());
+            return MessageKey.explicit(message, ((FriendFeedMessage)message).friend.getId());
 
         case FRIEND_GAINED_LEVEL:
             // all level gains by all friends are displayed together
@@ -134,7 +133,7 @@ public class FeedMessageAggregator
 
         case SELF_FORUM_REPLY:
             // group forum replies by the actor
-            return MessageKey.explicit(message, ((SelfFeedMessage)message).actor.getMemberId());
+            return MessageKey.explicit(message, ((SelfFeedMessage)message).actor.getId());
         }
         return null;
     }

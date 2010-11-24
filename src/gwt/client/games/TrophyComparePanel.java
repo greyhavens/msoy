@@ -61,7 +61,7 @@ public class TrophyComparePanel extends SmartTable
             if (card == null) {
                 continue;
             }
-            setWidget(0, pp+1, new ThumbBox(card.photo, Pages.PEOPLE, ""+card.name.getMemberId()));
+            setWidget(0, pp+1, new ThumbBox(card.photo, Pages.PEOPLE, ""+card.name.getId()));
             centerCell(0, pp+1);
             setWidget(1, pp+1, Link.memberView(card.name));
             centerCell(1, pp+1);

@@ -36,7 +36,7 @@ public class PartierObject extends BodyObject
      */
     public int getMemberId ()
     {
-        return memberName.getMemberId();
+        return memberName.getId();
     }
 
     @Override // from BodyObject

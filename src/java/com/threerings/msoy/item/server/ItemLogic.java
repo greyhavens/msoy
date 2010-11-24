@@ -733,12 +733,12 @@ public class ItemLogic
         Map<Integer, MemberName> memberMap = _memberRepo.loadMemberNames(
             list, new Function<ListingCard,Integer>() {
                 public Integer apply (ListingCard card) {
-                    return card.creator.getMemberId();
+                    return card.creator.getId();
                 }
             });
         // fill in the listings using the map
         for (ListingCard card : list) {
-            card.creator = memberMap.get(card.creator.getMemberId());
+            card.creator = memberMap.get(card.creator.getId());
         }
 
         // look up the names and build a map of groupId -> GroupName

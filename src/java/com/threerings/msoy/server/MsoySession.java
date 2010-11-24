@@ -103,7 +103,7 @@ public class MsoySession extends WhirledSession
         if (_memobj.isPermaguest() && !_memobj.isViewer()) {
             WorldCredentials creds = (WorldCredentials)getCredentials();
             final String vector = StringUtil.getOr(creds.vector, "world_session");
-            final int memberId = _memobj.memberName.getMemberId();
+            final int memberId = _memobj.memberName.getId();
 
             final VisitorInfo info;
             if (creds.visitorId != null) {

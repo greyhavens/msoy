@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.web.gwt;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -50,7 +49,7 @@ public class Invitation
         data.add(inviteId);
         data.add(inviteeEmail);
         data.add(inviter.toString());
-        data.add(String.valueOf(inviter.getMemberId()));
+        data.add(String.valueOf(inviter.getId()));
         return data;
     }
 

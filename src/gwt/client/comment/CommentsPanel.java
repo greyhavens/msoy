@@ -162,7 +162,7 @@ public class CommentsPanel extends PagedGrid<Comment>
     protected boolean canDelete (Comment comment)
     {
         return CShell.isSupport() || Comment.canDelete(
-            _etype, _entityId, comment.commentor.getMemberId(), CShell.getMemberId());
+            _etype, _entityId, comment.commentor.getId(), CShell.getMemberId());
     }
 
     /**
@@ -186,7 +186,7 @@ public class CommentsPanel extends PagedGrid<Comment>
      */
     protected boolean canComplain (Comment comment)
     {
-        return CShell.isValidated() && (CShell.getMemberId() != comment.commentor.getMemberId());
+        return CShell.isValidated() && (CShell.getMemberId() != comment.commentor.getId());
     }
 
     protected void postComment (String text)

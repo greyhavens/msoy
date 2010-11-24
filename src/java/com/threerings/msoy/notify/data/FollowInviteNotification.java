@@ -28,7 +28,7 @@ public class FollowInviteNotification extends Notification
     // from Notification
     public String getAnnouncement ()
     {
-        return MessageBundle.tcompose("m.follow_invite", _inviter, _inviter.getMemberId());
+        return MessageBundle.tcompose("m.follow_invite", _inviter, _inviter.getId());
     }
 
     @Override

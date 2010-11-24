@@ -12,8 +12,6 @@ import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.util.IntSet;
-
 import com.samskivert.depot.CountRecord;
 import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.Ops;
@@ -97,8 +95,8 @@ public class IssueRepository extends DepotRepository
     public IssueRecord createIssue (Issue issue)
     {
         IssueRecord ir = new IssueRecord();
-        ir.creatorId = issue.creator.getMemberId();
-        ir.ownerId = (issue.owner != null ? issue.owner.getMemberId() : -1);
+        ir.creatorId = issue.creator.getId();
+        ir.ownerId = (issue.owner != null ? issue.owner.getId() : -1);
         ir.summary = issue.summary;
         ir.description = issue.description;
         ir.state = issue.state;
@@ -116,7 +114,7 @@ public class IssueRepository extends DepotRepository
     public void updateIssue (Issue issue)
     {
         updatePartial(IssueRecord.getKey(issue.issueId),
-                      IssueRecord.OWNER_ID, (issue.owner != null ? issue.owner.getMemberId() : -1),
+                      IssueRecord.OWNER_ID, (issue.owner != null ? issue.owner.getId() : -1),
                       IssueRecord.SUMMARY, issue.summary,
                       IssueRecord.DESCRIPTION, issue.description,
                       IssueRecord.STATE, issue.state,

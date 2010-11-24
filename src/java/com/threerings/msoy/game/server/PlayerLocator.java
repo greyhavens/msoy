@@ -44,7 +44,7 @@ public class PlayerLocator extends BodyLocator
     @EventThread
     public PlayerObject lookupPlayer (MemberName name)
     {
-        return lookupPlayer(name.getMemberId());
+        return lookupPlayer(name.getId());
     }
 
     /**
@@ -54,7 +54,7 @@ public class PlayerLocator extends BodyLocator
     @EventThread
     public void playerLoggedOn (PlayerObject plobj)
     {
-        _online.put(plobj.memberName.getMemberId(), plobj);
+        _online.put(plobj.memberName.getId(), plobj);
     }
 
     /**
@@ -63,14 +63,14 @@ public class PlayerLocator extends BodyLocator
     @EventThread
     public void playerLoggedOff (PlayerObject plobj)
     {
-        _online.remove(plobj.memberName.getMemberId());
+        _online.remove(plobj.memberName.getId());
     }
 
     @Override // from BodyLocator
     public BodyObject lookupBody (Name visibleName)
     {
         _omgr.requireEventThread();
-        return _online.get(((MemberName) visibleName).getMemberId());
+        return _online.get(((MemberName) visibleName).getId());
     }
 
     /** A mapping from member name to member object for all online members. */

@@ -87,14 +87,14 @@ public class ProfileBlurb extends Blurb
 
     protected void displayProfile ()
     {
-        boolean isMe = (_name.getMemberId() == CShell.getMemberId());
+        boolean isMe = (_name.getId() == CShell.getMemberId());
 
         // create our photo section with various buttons
         FlowPanel photo = MsoyUI.createFlowPanel("Photo");
         boolean hasProfileGallery = hasProfileGallery();
         photo.add(!hasProfileGallery ? new ThumbBox(_profile.photo) :
                   new ThumbBox(_profile.photo, Pages.PEOPLE,
-                               GalleryActions.VIEW_PROFILE, _name.getMemberId()));
+                               GalleryActions.VIEW_PROFILE, _name.getId()));
         if (isMe && _profile.role == WebCreds.Role.REGISTERED) {
             photo.add(Link.create(_msgs.subscribeNow(), Pages.BILLING, "subscribe"));
         } else {
@@ -102,10 +102,10 @@ public class ProfileBlurb extends Blurb
         }
         if (hasProfileGallery) {
             photo.add(Link.create(_msgs.photosOfMe(),
-                    Pages.PEOPLE, GalleryActions.VIEW_PROFILE, _name.getMemberId()));
+                    Pages.PEOPLE, GalleryActions.VIEW_PROFILE, _name.getId()));
         } else if (isMe) {
             photo.add(Link.create(_msgs.addPhotosOfMe(),
-                    Pages.PEOPLE, GalleryActions.CREATE_PROFILE, _name.getMemberId()));
+                    Pages.PEOPLE, GalleryActions.CREATE_PROFILE, _name.getId()));
         }
 
         // create the info section with their name, a/s/l, etc.
@@ -147,7 +147,7 @@ public class ProfileBlurb extends Blurb
             info.addWidget(awardBox, 1);
 
             String page = award.type == Award.AwardType.BADGE ? "passport" : "medals";
-            ClickHandler clicker = Link.createHandler(Pages.ME, page, _name.getMemberId());
+            ClickHandler clicker = Link.createHandler(Pages.ME, page, _name.getId());
 
             if (award.type == AwardType.BADGE) {
                 String hexCode = Integer.toHexString(award.awardId);
@@ -182,7 +182,7 @@ public class ProfileBlurb extends Blurb
             String since = DateUtil.formatDate(new Date(_profile.memberSince));
             if (CShell.isSupport()) {
                 addDetail(dbits, _msgs.memberSince(),
-                          Link.create(since, Pages.ADMINZ, "info", _name.getMemberId()));
+                          Link.create(since, Pages.ADMINZ, "info", _name.getId()));
             } else {
                 addDetail(dbits, _msgs.memberSince(), since);
             }
@@ -204,19 +204,19 @@ public class ProfileBlurb extends Blurb
             addFriendButton();
             if (!CShell.isGuest()) {
                 addButton(_buttons, "/images/profile/sendmail.png", _msgs.sendMail(),
-                    Pages.MAIL, "w", "m", ""+_name.getMemberId());
+                    Pages.MAIL, "w", "m", ""+_name.getId());
             }
         }
         addButton(_buttons, "/images/profile/visithome.png", _msgs.visitHome(),
-                  Pages.WORLD, "m" + _name.getMemberId());
+                  Pages.WORLD, "m" + _name.getId());
         addButton(_buttons, "/images/profile/viewrooms.png", _msgs.seeRooms(),
-                  Pages.PEOPLE, "rooms", _name.getMemberId());
+                  Pages.PEOPLE, "rooms", _name.getId());
         addButton(_buttons, "/images/profile/browseitems.png", _msgs.browseItems(),
-                  Pages.SHOP, ShopUtil.composeArgs(MsoyItemType.AVATAR, null, null, _name.getMemberId()));
+                  Pages.SHOP, ShopUtil.composeArgs(MsoyItemType.AVATAR, null, null, _name.getId()));
         if (CShell.isAdmin()) {
             _buttons.add(new Button("Admin: Send feed", new ClickHandler() {
                 public void onClick (ClickEvent event) {
-                    _profilesvc.sendRetentionEmail(_name.getMemberId(), new InfoCallback<Void>() {
+                    _profilesvc.sendRetentionEmail(_name.getId(), new InfoCallback<Void>() {
                         public void onSuccess (Void result) {
                             MsoyUI.info("Sent");
                         }
@@ -237,7 +237,7 @@ public class ProfileBlurb extends Blurb
         setContent(content);
 
         // display the edit button if this is our profile or we're support
-        if (CShell.isSupport() || _name.getMemberId() == CShell.getMemberId()) {
+        if (CShell.isSupport() || _name.getId() == CShell.getMemberId()) {
             setFooterLabel(_msgs.profileEdit(), new ClickHandler() {
                 public void onClick (ClickEvent event) {
                     startEdit();
@@ -399,7 +399,7 @@ public class ProfileBlurb extends Blurb
         }
 
         // configure our profile instance with their bits
-        _name = new MemberName(name, _name.getMemberId());
+        _name = new MemberName(name, _name.getId());
         String status = _estatus.getText();
         _profile.headline = _msgs.statusQue().equals(status) ? "" : status.trim();
         _profile.homePageURL = _ehomepage.getText().trim();
@@ -422,11 +422,11 @@ public class ProfileBlurb extends Blurb
             _greeter = _egreeter.getValue() ? GreeterStatus.GREETER : GreeterStatus.NORMAL;
         }
 
-        _profilesvc.updateProfile(_name.getMemberId(), name, _greeter == GreeterStatus.GREETER,
+        _profilesvc.updateProfile(_name.getId(), name, _greeter == GreeterStatus.GREETER,
             _profile, new InfoCallback<Void>() {
                 public void onSuccess (Void result) {
                     displayProfile();
-                    if (_name.getMemberId() == CShell.getMemberId() &&
+                    if (_name.getId() == CShell.getMemberId() &&
                         !name.equals(CShell.creds.name.toString())) {
                         CShell.frame.dispatchEvent(new NameChangeEvent(name));
                     }
@@ -455,7 +455,7 @@ public class ProfileBlurb extends Blurb
             image = "/images/profile/remove.png";
             handler = new ClickHandler() {
                 public void onClick (ClickEvent event) {
-                    _membersvc.removeFriend(_name.getMemberId(), new InfoCallback<Void>() {
+                    _membersvc.removeFriend(_name.getId(), new InfoCallback<Void>() {
                         public void onSuccess (Void result) {
                             removeFriendBtn.execute();
                         }

@@ -35,7 +35,7 @@ public class FriendsBlurb extends Blurb
         setHeader(_msgs.friendsTitle());
 
         if (pdata.friends.size() == 0) {
-            if (CShell.getMemberId() != _name.getMemberId()) {
+            if (CShell.getMemberId() != _name.getId()) {
                 setContent(new Label(_msgs.noFriendsOther()));
             } else {
                 setContent(GroupsBlurb.createEmptyTable(
@@ -51,7 +51,7 @@ public class FriendsBlurb extends Blurb
         }
 
         setFooterLink(_msgs.seeAllFriends("" + pdata.totalFriendCount),
-                      Pages.PEOPLE, "f", pdata.name.getMemberId());
+                      Pages.PEOPLE, "f", pdata.name.getId());
     }
 
     protected class FriendWidget extends FlowPanel
@@ -59,8 +59,8 @@ public class FriendsBlurb extends Blurb
         public FriendWidget (final MemberCard card)
         {
             setStyleName("Friend");
-            add(new ThumbBox(card.photo, Pages.PEOPLE, ""+card.name.getMemberId()));
-            add(Link.create(card.name.toString(), Pages.PEOPLE, ""+card.name.getMemberId()));
+            add(new ThumbBox(card.photo, Pages.PEOPLE, ""+card.name.getId()));
+            add(Link.create(card.name.toString(), Pages.PEOPLE, ""+card.name.getId()));
         }
     }
 

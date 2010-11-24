@@ -53,7 +53,7 @@ public class GroupMembersPanel extends PagedGrid<GroupMemberCard>
                 AsyncCallback<PagedResult<GroupMemberCard>> callback) {
                 _groupsvc.getGroupMembers(_detail.group.groupId, start, count, callback);
             }
-            
+
         }, 0);
     }
 
@@ -97,7 +97,7 @@ public class GroupMembersPanel extends PagedGrid<GroupMemberCard>
     {
         return new Command() {
             public void execute () {
-                _groupsvc.updateMemberRank(_detail.group.groupId, card.name.getMemberId(), rank,
+                _groupsvc.updateMemberRank(_detail.group.groupId, card.name.getId(), rank,
                     new InfoCallback<Void>() {
                         public void onSuccess (Void result) {
                             card.rank = rank;
@@ -115,7 +115,7 @@ public class GroupMembersPanel extends PagedGrid<GroupMemberCard>
         return new Command() {
             public void execute () {
                 _groupsvc.leaveGroup(
-                    _detail.group.groupId, card.name.getMemberId(), new InfoCallback<Void>() {
+                    _detail.group.groupId, card.name.getId(), new InfoCallback<Void>() {
                         public void onSuccess (Void result) {
                             removeItem(card);
                         }
@@ -131,7 +131,7 @@ public class GroupMembersPanel extends PagedGrid<GroupMemberCard>
             super("Member", 0, 2);
             MemberName name = card.name;
 
-            int mid = name.getMemberId();
+            int mid = name.getId();
             setWidget(0, 0, new ThumbBox(card.photo, Pages.PEOPLE, ""+mid), 1, "Photo");
             getFlexCellFormatter().setRowSpan(0, 0, 3);
             setWidget(0, 1, Link.memberView(""+name, mid), 1, "Name");

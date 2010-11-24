@@ -24,7 +24,6 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.msoy.admin.gwt.MemberAdminInfo;
 import com.threerings.msoy.data.all.CharityInfo;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.WebCreds;
@@ -65,12 +64,12 @@ public class MemberInfoPanel extends AdminDataPanel<MemberAdminInfo>
         int row;
         table.setWidget(0, 0, Link.memberView(info.name), 2, "Name");
         table.setWidget(1, 0, Link.transactionsView(
-                            "Transaction history", info.name.getMemberId()));
+                            "Transaction history", info.name.getId()));
         table.setWidget(2, 0, new Anchor(BillingUtil.getAdminStatusPage(
                                              info.accountName, info.permaName),
                                          "Billing Transactions", "_blank"));
         table.setWidget(3, 0, Link.create("Stuff Inventory", Pages.STUFF,
-                                          MsoyItemType.AVATAR.toByte(), info.name.getMemberId()));
+                                          MsoyItemType.AVATAR.toByte(), info.name.getId()));
 
         row = table.addText("Display name:", 1, "Label");
         final TextBox dispName = MsoyUI.createTextBox(
@@ -79,7 +78,7 @@ public class MemberInfoPanel extends AdminDataPanel<MemberAdminInfo>
         table.setWidget(row, 1, MsoyUI.createButtonPair(dispName, saveName));
         new ClickCallback<Void>(saveName) {
             @Override protected boolean callService () {
-                _adminsvc.setDisplayName(info.name.getMemberId(), dispName.getText(), this);
+                _adminsvc.setDisplayName(info.name.getId(), dispName.getText(), this);
                 return true;
             }
             @Override protected boolean gotResult (Void nothing) {
@@ -98,7 +97,7 @@ public class MemberInfoPanel extends AdminDataPanel<MemberAdminInfo>
 
         validated.addClickHandler(new ClickHandler() {
             public void onClick (ClickEvent event) {
-                _adminsvc.setValidated(info.name.getMemberId(), validated.getValue(),
+                _adminsvc.setValidated(info.name.getId(), validated.getValue(),
                     new InfoCallback<Void>() {
                         public void onSuccess (Void result) {
                             Popups.info("Validated flag changed successfully");
@@ -125,7 +124,7 @@ public class MemberInfoPanel extends AdminDataPanel<MemberAdminInfo>
                 if (_role == info.role) {
                     return false; // we're reverting due to failure, so do nothing
                 }
-                _adminsvc.setRole(info.name.getMemberId(), _role, this);
+                _adminsvc.setRole(info.name.getId(), _role, this);
                 return true;
             }
             @Override protected boolean gotResult (Void result) {
@@ -247,10 +246,10 @@ public class MemberInfoPanel extends AdminDataPanel<MemberAdminInfo>
                     }
                 };
                 if (isCharity) {
-                    _adminsvc.setCharityInfo(new CharityInfo(info.name.getMemberId(), isCoreCharity,
+                    _adminsvc.setCharityInfo(new CharityInfo(info.name.getId(), isCoreCharity,
                         charityDescription.getText()), callback);
                 } else {
-                    _adminsvc.removeCharityStatus(info.name.getMemberId(), callback);
+                    _adminsvc.removeCharityStatus(info.name.getId(), callback);
                 }
             }
         }));
@@ -258,7 +257,7 @@ public class MemberInfoPanel extends AdminDataPanel<MemberAdminInfo>
 
     protected static Widget infoLink (MemberName name)
     {
-        return Link.create("" + name, Pages.ADMINZ, "info", name.getMemberId());
+        return Link.create("" + name, Pages.ADMINZ, "info", name.getId());
     }
 
     protected class AffiliateOfGrid extends PagedGrid<MemberName>
@@ -270,7 +269,7 @@ public class MemberInfoPanel extends AdminDataPanel<MemberAdminInfo>
                 protected void callFetchService (int start, int count, boolean needCount,
                     AsyncCallback<List<MemberName>> callback)
                 {
-                    _adminsvc.getAffiliates(_info.name.getMemberId(), start, count, callback);
+                    _adminsvc.getAffiliates(_info.name.getId(), start, count, callback);
                 }
 
                 @Override

@@ -144,7 +144,7 @@ public class LobbyManager
                 continue;
             }
             for (Name name : table.getPlayers()) {
-                if (((MemberName)name).getMemberId() == playerId) {
+                if (((MemberName)name).getId() == playerId) {
                     return true;
                 }
             }

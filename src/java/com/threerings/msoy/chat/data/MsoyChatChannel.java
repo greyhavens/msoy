@@ -133,7 +133,7 @@ public class MsoyChatChannel extends ChatChannel
     protected String getId (Name name)
     {
         if (name instanceof MemberName) {
-            return "" + ((MemberName) name).getMemberId();
+            return "" + ((MemberName) name).getId();
 
         } else if (name instanceof GroupName) {
             return "" + ((GroupName) name).getGroupId();

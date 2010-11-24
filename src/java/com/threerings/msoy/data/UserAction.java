@@ -122,7 +122,7 @@ public class UserAction extends SimpleStreamableObject
     public static UserAction invitedFriendJoined (int inviterId, MemberName newcomer)
     {
         String descrip = MessageBundle.tcompose(
-            "m.invited_friend_joined", newcomer, newcomer.getMemberId());
+            "m.invited_friend_joined", newcomer, newcomer.getId());
         return new UserAction(Type.INVITED_FRIEND_JOINED, inviterId, descrip);
     }
 
@@ -178,7 +178,7 @@ public class UserAction extends SimpleStreamableObject
 
     public static UserAction supportAdjust (int memberId, MemberName support)
     {
-        String descrip = MessageBundle.tcompose("m.support_adjust", support, support.getMemberId());
+        String descrip = MessageBundle.tcompose("m.support_adjust", support, support.getId());
         return new UserAction(Type.SUPPORT_ADJUST, memberId, descrip, null);
     }
 

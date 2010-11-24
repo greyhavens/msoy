@@ -244,7 +244,7 @@ public class MsoySceneRegistry extends SpotSceneRegistry
                 // leader, dispatch a second action requesting that the follower be removed from
                 // the leader's follower set; welcome to the twisty world of distributed systems
                 MemberNodeActions.followTheLeader(
-                    follower.getMemberId(), memobj.getMemberId(), sceneId);
+                    follower.getId(), memobj.getMemberId(), sceneId);
             }
         }
 

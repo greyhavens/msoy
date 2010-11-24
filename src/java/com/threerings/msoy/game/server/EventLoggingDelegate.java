@@ -39,7 +39,7 @@ public class EventLoggingDelegate extends GameManagerDelegate
         final ParlorGameManager gmgr = (ParlorGameManager)_plmgr;
         final PlayerObject plobj = (PlayerObject)_omgr.getObject(bodyOid);
 
-        int memberId = plobj.memberName.getMemberId();
+        int memberId = plobj.memberName.getId();
         _eventLog.gameEntered(memberId, gmgr.isMultiplayer(), plobj.getVisitorId());
     }
 
@@ -57,7 +57,7 @@ public class EventLoggingDelegate extends GameManagerDelegate
         }
 
         // now that they left, log their info
-        int memberId = plobj.memberName.getMemberId();
+        int memberId = plobj.memberName.getId();
         int seconds = (int)((System.currentTimeMillis() - entry) / 1000);
         boolean isMultiplayer = ((ParlorGameManager)_plmgr).isMultiplayer();
         _eventLog.gameLeft(memberId, _content.game.genre.toByte(), _content.gameId, seconds,

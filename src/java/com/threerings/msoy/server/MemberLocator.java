@@ -55,7 +55,7 @@ public class MemberLocator extends BodyLocator
      */
     public MemberObject lookupMember (MemberName name)
     {
-        return lookupMember(name.getMemberId());
+        return lookupMember(name.getId());
     }
 
     /**
@@ -89,7 +89,7 @@ public class MemberLocator extends BodyLocator
      */
     public void memberLoggedOn (final MemberObject memobj)
     {
-        _online.put(memobj.memberName.getMemberId(), memobj);
+        _online.put(memobj.memberName.getId(), memobj);
 
         // notify our observers
         _observers.apply(new ObserverList.ObserverOp<Observer>() {
@@ -105,7 +105,7 @@ public class MemberLocator extends BodyLocator
      */
     public void memberLoggedOff (final MemberObject memobj)
     {
-        _online.remove(memobj.memberName.getMemberId());
+        _online.remove(memobj.memberName.getId());
 
         // notify our observers
         _observers.apply(new ObserverList.ObserverOp<Observer>() {
@@ -120,7 +120,7 @@ public class MemberLocator extends BodyLocator
     public BodyObject lookupBody (Name visibleName)
     {
         _omgr.requireEventThread();
-        return _online.get(((MemberName) visibleName).getMemberId());
+        return _online.get(((MemberName) visibleName).getId());
     }
 
     /** A mapping from member name to member object for all online members. */

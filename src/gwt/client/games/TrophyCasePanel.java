@@ -49,7 +49,7 @@ public class TrophyCasePanel extends VerticalPanel
 
         CShell.frame.setTitle(_msgs.caseTitle(tcase.owner.toString()));
         if (tcase.shelves.length == 0) {
-            setHeader((CShell.getMemberId() == tcase.owner.getMemberId()) ?
+            setHeader((CShell.getMemberId() == tcase.owner.getId()) ?
                      _msgs.caseEmptyMe() : _msgs.caseEmpty());
             return;
         }
@@ -58,7 +58,7 @@ public class TrophyCasePanel extends VerticalPanel
         for (int ii = 0; ii < tcase.shelves.length; ii++) {
             TrophyCase.Shelf shelf = tcase.shelves[ii];
             TongueBox box = new TongueBox(shelf.name, new TrophyGrid(shelf.trophies));
-            int ownerId = tcase.owner.getMemberId();
+            int ownerId = tcase.owner.getId();
             if (!CShell.isGuest() && CShell.getMemberId() != ownerId) {
                 box.setFooterLink(_msgs.caseCompare(), Pages.GAMES, "ct", shelf.gameId, ownerId);
             }

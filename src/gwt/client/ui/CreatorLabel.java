@@ -41,7 +41,7 @@ public class CreatorLabel extends FlowPanel
     {
         clear();
         add(new InlineLabel(_cmsgs.creatorBy() + " "));
-        add(Link.memberView(name.toString(), name.getMemberId()));
+        add(Link.memberView(name.toString(), name.getId()));
     }
 
     public void setBrand (GroupName name)

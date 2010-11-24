@@ -40,7 +40,7 @@ public class CShell
      */
     public static int getMemberId ()
     {
-        return (creds == null) ? 0 : creds.name.getMemberId();
+        return (creds == null) ? 0 : creds.name.getId();
     }
 
     /**

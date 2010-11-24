@@ -30,11 +30,11 @@ public class MePage extends Page
         if (action.equals("passport")) {
             // guests should never get a link to a passport page that will use the default, so 0
             // is fine (it'll through an internal error on the server)
-            int defaultId = CShell.creds == null ? 0 : CShell.creds.name.getMemberId();
+            int defaultId = CShell.creds == null ? 0 : CShell.creds.name.getId();
             setContent(_msgs.titlePassport(), new PassportPanel(args.get(1, defaultId)));
 
         } else if (action.equals("medals")) {
-            int defaultId = CShell.creds == null ? 0 : CShell.creds.name.getMemberId();
+            int defaultId = CShell.creds == null ? 0 : CShell.creds.name.getId();
             setContent(_msgs.titlePassport(),
                 new PassportPanel(args.get(1, defaultId), PassportPanel.Content.MEDALS));
 

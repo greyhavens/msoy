@@ -124,7 +124,7 @@ public class WorldManager
         _invoker.postUnit(new PersistingUnit("getHomeId", listener) {
             @Override public void invokePersistent () throws Exception {
                 if (tofu) {
-                    List<Avatar> gifts = getStartupGiftAvatars(memobj.memberName.getMemberId());
+                    List<Avatar> gifts = getStartupGiftAvatars(memobj.memberName.getId());
                     if (gifts != null && !gifts.isEmpty()) {
                         _gifts = gifts.toArray(new Avatar[gifts.size()]);
                     }
@@ -227,7 +227,7 @@ public class WorldManager
         // if the caller is requesting to clear their follow, do so
         if (memberId == 0) {
             if (user.following != null) {
-                MemberNodeActions.removeFollower(user.following.getMemberId(), user.getMemberId());
+                MemberNodeActions.removeFollower(user.following.getId(), user.getMemberId());
                 user.setFollowing(null);
             }
             return;
@@ -256,7 +256,7 @@ public class WorldManager
 
         if (followerId == 0) { // Clear all followers
             for (MemberName follower : leader.followers) {
-                MemberObject fmo = _locator.lookupMember(follower.getMemberId());
+                MemberObject fmo = _locator.lookupMember(follower.getId());
                 if (fmo != null) {
                     fmo.setFollowing(null);
                 }
@@ -269,7 +269,7 @@ public class WorldManager
             }
             MemberObject follower = _locator.lookupMember(followerId);
             if (follower != null && follower.following != null &&
-                follower.following.getMemberId() == leader.getMemberId()) {
+                follower.following.getId() == leader.getMemberId()) {
                 follower.setFollowing(null);
             }
         }
@@ -499,7 +499,7 @@ public class WorldManager
         {
             AvatarRepository repo = _itemLogic.getAvatarRepository();
             AvatarRecord item = repo.loadItem(avatar.itemId);
-            item = repo.insertClone(item, _mname.getMemberId(), Currency.COINS, 0);
+            item = repo.insertClone(item, _mname.getId(), Currency.COINS, 0);
             log.info("Gifted startup avatar", "member", _mname, "catalogId", _giftCatalogId,
                 "newItemId", item.itemId);
             return (Avatar)item.toItem();

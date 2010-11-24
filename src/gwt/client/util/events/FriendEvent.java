@@ -36,7 +36,7 @@ public class FriendEvent extends FlashEvent
     public FriendEvent (int action, MemberName friend)
     {
         _action = action;
-        _memberId = friend.getMemberId();
+        _memberId = friend.getId();
         _displayName = friend.toString();
     }
 

@@ -104,7 +104,7 @@ public class RoomDetailPanel extends SmartTable
 
         if (detail.owner instanceof MemberName) {
             MemberName name = (MemberName)detail.owner;
-            _bits.add(Link.memberView(name.toString(), name.getMemberId()));
+            _bits.add(Link.memberView(name.toString(), name.getId()));
         } else if (detail.owner instanceof GroupName) {
             GroupName name = (GroupName)detail.owner;
             _bits.add(Link.groupView(name.toString(), name.getGroupId()));
@@ -124,7 +124,7 @@ public class RoomDetailPanel extends SmartTable
 
         // maybe add the gifting option
         if ((detail.owner instanceof MemberName) &&
-                CShell.getMemberId() == ((MemberName) detail.owner).getMemberId()) {
+                CShell.getMemberId() == ((MemberName) detail.owner).getId()) {
             _bits.add(MsoyUI.createButton(MsoyUI.LONG_THIN, _msgs.gift(), new ClickHandler() {
                 public void onClick (ClickEvent event) {
                     _roomsvc.canGiftRoom(detail.info.sceneId, new InfoCallback<Void>() {

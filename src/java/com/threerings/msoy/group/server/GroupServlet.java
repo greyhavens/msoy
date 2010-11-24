@@ -206,7 +206,7 @@ public class GroupServlet extends MsoyServiceServlet
         if (detail.topMembers.size() < GroupDetail.NUM_TOP_MEMBERS) {
             for (BrandShare share : detail.brand.shareHolders) {
                 // but don't add the managers again
-                int memberId = share.member.getMemberId();
+                int memberId = share.member.getId();
                 if (!managers.contains(memberId)) {
                     holders.add(memberId);
                 }
@@ -605,7 +605,7 @@ public class GroupServlet extends MsoyServiceServlet
         Map<Integer, VizMemberName> memberNames = Maps.newHashMap();
         for (VizMemberName vizMemberName :
                  toVizMemberNames(_memberRepo.loadMemberCards(memberIds))) {
-            memberNames.put(vizMemberName.getMemberId(), vizMemberName);
+            memberNames.put(vizMemberName.getId(), vizMemberName);
         }
         // now that we have each member's VizMemberName, add them to the appropriate lists and ship
         // the whole package off to the client.

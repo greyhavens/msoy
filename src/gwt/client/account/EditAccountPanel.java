@@ -301,11 +301,11 @@ public class EditAccountPanel extends FlowPanel
         int row = 2;
         Collections.sort(_accountInfo.charityNames, MemberName.BY_DISPLAY_NAME);
         for (MemberName name : _accountInfo.charityNames) {
-            CharityInfo charity = _accountInfo.charities.get(name.getMemberId());
-            MediaDesc photo = _accountInfo.charityPhotos.get(name.getMemberId());
+            CharityInfo charity = _accountInfo.charities.get(name.getId());
+            MediaDesc photo = _accountInfo.charityPhotos.get(name.getId());
 
             RadioButton charityButton = new RadioButton(CHARITY_RADIO_GROUP);
-            if (_accountInfo.charityMemberId == name.getMemberId()) {
+            if (_accountInfo.charityMemberId == name.getId()) {
                 charityButton.setValue(true);
             }
             charityButtons.add(charityButton);
@@ -327,7 +327,7 @@ public class EditAccountPanel extends FlowPanel
                 int memberId = 0;
                 for (int i = 1; i < charityButtons.size(); i++) {
                     if (charityButtons.get(i).getValue()) {
-                        memberId = _accountInfo.charityNames.get(i-1).getMemberId();
+                        memberId = _accountInfo.charityNames.get(i-1).getId();
                         break;
                     }
                 }

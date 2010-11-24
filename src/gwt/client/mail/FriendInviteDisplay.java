@@ -41,7 +41,7 @@ public class FriendInviteDisplay extends MailPayloadDisplay
 
         protected void refreshUI (final boolean roundtrip)
         {
-            int friendId = _message.author.name.getMemberId();
+            int friendId = _message.author.name.getId();
             _membersvc.getFriendship(friendId, new InfoCallback<Friendship>() {
                 public void onSuccess (Friendship result) {
                     buildUI(result, roundtrip);
@@ -57,7 +57,7 @@ public class FriendInviteDisplay extends MailPayloadDisplay
                 Button ayeButton = new Button(_msgs.friendBtnAccept());
                 new ClickCallback<Void>(ayeButton) {
                     @Override protected boolean callService () {
-                        _membersvc.addFriend(_message.author.name.getMemberId(), this);
+                        _membersvc.addFriend(_message.author.name.getId(), this);
                         return true;
                     }
                     @Override protected boolean gotResult (Void result) {

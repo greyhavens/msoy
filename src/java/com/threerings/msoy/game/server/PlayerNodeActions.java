@@ -114,7 +114,7 @@ public class PlayerNodeActions
     protected static class DisplayNameUpdated extends PlayerNodeAction
     {
         public DisplayNameUpdated (MemberName name) {
-            super(name.getMemberId());
+            super(name.getId());
             _name = name.toString();
         }
 

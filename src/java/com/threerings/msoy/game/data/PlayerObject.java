@@ -133,7 +133,7 @@ public class PlayerObject extends WhirledPlayerObject
     // from interface MsoyUserObject
     public int getMemberId ()
     {
-        return memberName.getMemberId();
+        return memberName.getId();
     }
 
     // from interface MsoyUserObject

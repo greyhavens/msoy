@@ -350,7 +350,7 @@ public class ProfileServlet extends MsoyServiceServlet
             // measured in years?
             age /= (365L * 24 * 3600 * 1000L);
 
-            int memberId = result.name.getMemberId();
+            int memberId = result.name.getId();
             // if they were on 0 ms, divide by 1, if they were on a year ago, divide by 2
             mids.put(memberId, rankFromId.apply(memberId) / (1 + age));
         }
@@ -360,8 +360,8 @@ public class ProfileServlet extends MsoyServiceServlet
             public int compare (MemberCard o1, MemberCard o2) {
                 // note: ascending sort order, not descending
                 return Double.compare(
-                    rankFromId.apply(o2.name.getMemberId()),
-                    rankFromId.apply(o1.name.getMemberId()));
+                    rankFromId.apply(o2.name.getId()),
+                    rankFromId.apply(o1.name.getId()));
             }
         });
 

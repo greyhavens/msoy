@@ -38,7 +38,7 @@ public class RoomsPanel extends FlowPanel
 
     protected void init (MemberRoomsResult result)
     {
-        boolean isOwner = result.owner.getMemberId() == CShell.getMemberId();
+        boolean isOwner = result.owner.getId() == CShell.getMemberId();
         CShell.frame.setTitle(isOwner ? _msgs.roomsMineTitle() :
                               _msgs.roomsTitle(result.owner.toString()));
 

@@ -140,7 +140,7 @@ public class GroupDetailPanel extends FlowPanel
             false, false, true));
         established.add(new InlineLabel(_cmsgs.creatorBy(), false, false, true));
         Widget creator = Link.memberView(_detail.creator.toString(),
-            _detail.creator.getMemberId());
+            _detail.creator.getId());
         creator.addStyleName("Creator");
         established.add(creator);
         titleBox.add(established);
@@ -380,11 +380,11 @@ public class GroupDetailPanel extends FlowPanel
             for (int ii = 0; ii < _detail.topMembers.size(); ii++) {
                 GroupMemberCard member = _detail.topMembers.get(ii);
                 ThumbBox icon = new ThumbBox(member.photo, MediaDescSize.HALF_THUMBNAIL_SIZE,
-                                             Pages.PEOPLE, ""+member.name.getMemberId());
+                                             Pages.PEOPLE, ""+member.name.getId());
                 members.setWidget(ii * 2, 0, icon, 1, "Icon");
                 members.getFlexCellFormatter().setRowSpan(ii * 2, 0, 2);
 
-                int shares = _detail.brand.getShares(member.name.getMemberId());
+                int shares = _detail.brand.getShares(member.name.getId());
                 String shareDesc = shares + "/" + _detail.brand.getTotalShares();
                 String desc;
                 if (member.rank == Rank.MANAGER) {
@@ -402,7 +402,7 @@ public class GroupDetailPanel extends FlowPanel
                 }
                 members.setHTML(ii * 2, 1, desc, 1, "Manager");
                 SimplePanel name = MsoyUI.createSimplePanel(Link.memberView(""
-                    + member.name, member.name.getMemberId()), "Name");
+                    + member.name, member.name.getId()), "Name");
                 members.setWidget((ii * 2) + 1, 0, name);
             }
 

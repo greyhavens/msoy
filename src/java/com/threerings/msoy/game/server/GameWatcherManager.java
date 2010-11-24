@@ -97,9 +97,9 @@ public class GameWatcherManager
     // from interface MsoyPeerManager.MemberObserver
     public void memberLoggedOff (String node, MemberName member)
     {
-        Observer observer = _observers.get(member.getMemberId());
+        Observer observer = _observers.get(member.getId());
         if (observer != null) {
-            observer.memberLoggedOff(member.getMemberId());
+            observer.memberLoggedOff(member.getId());
         }
     }
 

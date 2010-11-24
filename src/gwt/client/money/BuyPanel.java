@@ -125,7 +125,7 @@ public abstract class BuyPanel<T> extends SmartTable
             charityPanel.setStyleName("Charity");
             charityPanel.add(MsoyUI.createLabel(_msgs.donatedToCharity(percentage), "inline"));
             charityPanel.add(Link.create(
-                result.charity.toString(), Pages.PEOPLE, ""+result.charity.getMemberId()));
+                result.charity.toString(), Pages.PEOPLE, ""+result.charity.getId()));
             charityPanel.add(WidgetUtil.makeShim(10, 10));
             charityPanel.add(Link.create(_msgs.changeCharity(), Pages.ACCOUNT, "edit"));
             boughtPanel.add(charityPanel);

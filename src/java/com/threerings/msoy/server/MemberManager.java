@@ -132,7 +132,7 @@ public class MemberManager
                 buf.append("- ").append(body.getClass().getSimpleName()).append(" [id=");
                 Name vname = body.getVisibleName();
                 if (vname instanceof MemberName) {
-                    buf.append(((MemberName)vname).getMemberId());
+                    buf.append(((MemberName)vname).getId());
                 } else {
                     buf.append(vname);
                 }
@@ -481,7 +481,7 @@ public class MemberManager
         MemberName complainerName = (MemberName)complainer.getVisibleName();
 
         final EventRecord event = new EventRecord();
-        event.source = Integer.toString(complainerName.getMemberId());
+        event.source = Integer.toString(complainerName.getId());
         event.sourceHandle = complainerName.toString();
         event.status = Event.OPEN;
         event.subject = complaint;
@@ -508,7 +508,7 @@ public class MemberManager
             }
             chatHistory.append('|').append(umsg.speaker);
             if (umsg.speaker instanceof MemberName) {
-                int memberId = ((MemberName)umsg.speaker).getMemberId();
+                int memberId = ((MemberName)umsg.speaker).getId();
                 chatHistory.append('(').append(memberId).append(')');
             }
             chatHistory.append(": ").append(umsg.message).append('\n');
@@ -517,7 +517,7 @@ public class MemberManager
 
         if (optTargetName != null) {
             event.targetHandle = optTargetName.toString();
-            event.target = Integer.toString(optTargetName.getMemberId());
+            event.target = Integer.toString(optTargetName.getId());
         }
 
         _invoker.postUnit(new Invoker.Unit("addComplaint") {

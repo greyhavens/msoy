@@ -127,7 +127,7 @@ public class CommentPanel extends MessagePanel
         }
 
         if (_rated || !CShell.isValidated() ||
-                CShell.getMemberId() == _comment.commentor.getMemberId()) {
+                CShell.getMemberId() == _comment.commentor.getId()) {
             return;
         }
 

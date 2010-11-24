@@ -35,7 +35,7 @@ public class MedalsBlurb extends Blurb
         }
         setContent(medals);
 
-        setFooterLink(_msgs.seeAll(), Pages.ME, "medals", pdata.name.getMemberId());
+        setFooterLink(_msgs.seeAll(), Pages.ME, "medals", pdata.name.getId());
     }
 
     protected static class SimpleMedalDisplay extends VerticalPanel

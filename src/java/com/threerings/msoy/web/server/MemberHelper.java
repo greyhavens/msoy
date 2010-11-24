@@ -245,7 +245,7 @@ public class MemberHelper
 
         if (friendships != null) {
             for (MemberCard card : cards) {
-                card.friendship = friendships.get(card.name.getMemberId());
+                card.friendship = friendships.get(card.name.getId());
             }
         }
 

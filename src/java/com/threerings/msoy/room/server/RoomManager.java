@@ -935,7 +935,7 @@ public class RoomManager extends SpotSceneManager
             if (isOwnerMember(body)) {
                 MemberObject owner = (MemberObject) body;
                 PuppetName pupName = new PuppetName(
-                    owner.memberName.toString(), owner.memberName.getMemberId());
+                    owner.memberName.toString(), owner.memberName.getId());
                 // clone the outgoing owner's memories
                 EntityMemories mems = member.getLocal(MemberLocal.class).memories;
                 if (mems != null) {
