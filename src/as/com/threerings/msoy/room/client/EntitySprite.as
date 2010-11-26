@@ -10,7 +10,6 @@ import flash.display.DisplayObjectContainer;
 import flash.display.LoaderInfo;
 import flash.events.Event;
 import flash.events.MouseEvent;
-import flash.events.ProgressEvent;
 import flash.filters.GlowFilter;
 import flash.geom.Matrix;
 import flash.geom.Point;
@@ -24,16 +23,10 @@ import com.threerings.util.ValueEvent;
 
 import com.threerings.display.FilterUtil;
 
-import com.threerings.msoy.client.MsoyContext;
-import com.threerings.msoy.client.MsoyController;
-import com.threerings.msoy.client.Snapshottable;
-
 import com.threerings.msoy.item.data.all.ItemIdent;
 
 import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.msoy.room.data.RoomCodes;
-
-import com.threerings.msoy.ui.MsoyMediaContainer;
 
 import com.threerings.msoy.world.client.WorldContext;
 
@@ -42,10 +35,10 @@ import com.threerings.msoy.world.client.WorldContext;
  * A base sprite that concerns itself with the mundane details of loading and communication with
  * the loaded media content.
  */
-public class MsoySprite
+public class EntitySprite
     implements RoomElement
 {
-    protected static const log :Log = Log.getLog(MsoySprite);
+    protected static const log :Log = Log.getLog(EntitySprite);
 
     /** The type of a ValueEvent that is dispatched when the location is updated, but ONLY if the
      * parent is not a RoomView. */
@@ -59,9 +52,9 @@ public class MsoySprite
     public static const OTHER_HOVER :uint = 0xFF993F; // orange
 
     /**
-     * Construct a MsoySprite.
+     * Construct a EntitySprite.
      */
-    public function MsoySprite (ctx :WorldContext)
+    public function EntitySprite (ctx :WorldContext)
     {
         _ctx = ctx;
 
@@ -288,7 +281,7 @@ public class MsoySprite
      */
     public function setMediaScaleX (scaleX :Number) :void
     {
-        throw new Error("Cannot set scale of abstract MsoySprite");
+        throw new Error("Cannot set scale of abstract EntitySprite");
     }
 
     /**
@@ -296,7 +289,7 @@ public class MsoySprite
      */
     public function setMediaScaleY (scaleY :Number) :void
     {
-        throw new Error("Cannot set scale of abstract MsoySprite");
+        throw new Error("Cannot set scale of abstract EntitySprite");
     }
 
     /**
@@ -304,7 +297,7 @@ public class MsoySprite
      */
     public function setMediaRotation (rotation :Number) :void
     {
-        throw new Error("Cannot set rotation of abstract MsoySprite");
+        throw new Error("Cannot set rotation of abstract EntitySprite");
     }
 
     /**
@@ -492,7 +485,7 @@ public class MsoySprite
 
     public function toString () :String
     {
-        return "MsoySprite[" + _ident + "]";
+        return "EntitySprite[" + _ident + "]";
     }
 
     /**
