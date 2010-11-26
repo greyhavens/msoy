@@ -38,7 +38,8 @@ public class MsoyMediaContainer extends MediaContainer
     implements ContextMenuProvider, ISWFBridgeProvider
 {
     public function MsoyMediaContainer (
-        desc :MediaDesc = null, bleepInMenu :Boolean = true, blockType :String = null)
+        desc :MediaDesc = null, bleepInMenu :Boolean = true, suppressHitTestPoint :Boolean = false,
+        blockType :String = null)
     {
         super(null);
         if (desc != null) {
@@ -46,6 +47,7 @@ public class MsoyMediaContainer extends MediaContainer
         }
         _bleepInMenu = bleepInMenu;
         _blockType = blockType;
+        _suppressHitTestPoint = suppressHitTestPoint;
 
         // have this container listen for bleep changes during its lifetime
         Prefs.events.addEventListener(Prefs.BLEEPED_MEDIA, handleBleepChange, false, 0, true);
@@ -137,6 +139,72 @@ public class MsoyMediaContainer extends MediaContainer
     public function checkBlocked () :void
     {
         setIsBlocked(getBlockType());
+    }
+
+    public function setSuppressHitTestPoint (suppress :Boolean) :void
+    {
+        _suppressHitTestPoint = suppress;
+    }
+
+    public function setMaxContentDimensions (width :int, height :int) :void
+    {
+        _maxWidth = width;
+        _maxHeight = height;
+    }
+
+    // documentation inherited
+    override public function hitTestPoint (
+        x :Number, y :Number, shapeFlag :Boolean = false) :Boolean
+    {
+        if (_suppressHitTestPoint) {
+            return false;
+        }
+        return super.hitTestPoint(x, y, shapeFlag);
+    }
+
+    /** @inheritDoc */
+    // from MediaContainer
+    override public function getMediaScaleX () :Number
+    {
+        // use a fixed scale for blocked media
+        return isBlocked() ? 1 : _spriteMediaScaleX;
+    }
+
+    /** @inheritDoc */
+    // from MediaContainer
+    override public function getMediaScaleY () :Number
+    {
+        // use a fixed scale for blocked media
+        return isBlocked() ? 1 : _spriteMediaScaleY;
+    }
+
+    /**
+     * Set the media scale to use when we are not displaying a blocked state.
+     */
+    public function setSpriteMediaScale (scaleX :Number, scaleY :Number) :void
+    {
+        _spriteMediaScaleX = scaleX;
+        _spriteMediaScaleY = scaleY;
+    }
+
+    override public function getMaxContentWidth () :int
+    {
+        return _maxWidth;
+    }
+
+    override public function getMaxContentHeight () :int
+    {
+        return _maxHeight;
+    }
+
+    public function getUnscaledWidth () :Number
+    {
+        return _w;
+    }
+
+    public function getUnscaledHeight () :Number
+    {
+        return _h;
     }
 
     // from ContextMenuProvider
@@ -285,6 +353,17 @@ public class MsoyMediaContainer extends MediaContainer
             super.shutdownMedia();
         }
     }
+
+    protected var _suppressHitTestPoint :Boolean;
+
+    protected var _maxWidth :int = int.MAX_VALUE;
+    protected var _maxHeight :int = int.MAX_VALUE;
+
+    /** The media scale to use when we are not blocked. */
+    protected var _spriteMediaScaleX :Number = 1.0;
+
+    /** The media scale to use when we are not blocked. */
+    protected var _spriteMediaScaleY :Number = 1.0;
 
     /** Our Media descriptor. */
     protected var _desc :MediaDesc;

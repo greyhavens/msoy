@@ -86,6 +86,8 @@ public class OccupantSprite extends EntitySprite
         _sprite.addChild(_extras);
         _extras.addChild(_label);
 
+        log.info("OccupantSprite instantiated", "occInfo", occInfo);
+
         if (occInfo != null) {
             setOccupantInfo(occInfo, extraInfo);
         }
@@ -343,6 +345,9 @@ public class OccupantSprite extends EntitySprite
             _walk.stopAnimation();
             dispatchEntityMoved(null);
         }
+
+        log.info("moveTo()", "height", _sprite.height, "width", _sprite.width,
+            "parent", _sprite.parent);
 
         // set the orientation towards the new location
         setOrientation(destLoc.orient, false);

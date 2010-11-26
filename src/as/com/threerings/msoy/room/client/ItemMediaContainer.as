@@ -25,82 +25,12 @@ public class ItemMediaContainer extends DataPackMediaContainer
     public function ItemMediaContainer (
         bleepInMenu :Boolean = true, suppressHitTestPoint :Boolean = false)
     {
-        super(bleepInMenu);
-
-        _suppressHitTestPoint = suppressHitTestPoint;
+        super(bleepInMenu, suppressHitTestPoint);
     }
 
     public function setItem (item :ItemIdent) :void
     {
         _item = item;
-    }
-
-    public function setSuppressHitTestPoint (suppress :Boolean) :void
-    {
-        _suppressHitTestPoint = suppress;
-    }
-
-    public function setMaxContentDimensions (width :int, height :int) :void
-    {
-        _maxWidth = width;
-        _maxHeight = height;
-    }
-
-    // documentation inherited
-    override public function hitTestPoint (
-        x :Number, y :Number, shapeFlag :Boolean = false) :Boolean
-    {
-        if (_suppressHitTestPoint) {
-            return false;
-        }
-        return super.hitTestPoint(x, y, shapeFlag);
-    }
-
-    /** @inheritDoc */
-    // from MediaContainer
-    override public function getMediaScaleX () :Number
-    {
-        // use a fixed scale for blocked media
-        return isBlocked() ? 1 : _spriteMediaScaleX;
-    }
-
-    /** @inheritDoc */
-    // from MediaContainer
-    override public function getMediaScaleY () :Number
-    {
-        // use a fixed scale for blocked media
-        return isBlocked() ? 1 : _spriteMediaScaleY;
-    }
-
-    /**
-     * Set the media scale to use when we are not displaying a blocked state.
-     */
-    public function setSpriteMediaScale (scaleX :Number, scaleY :Number) :void
-    {
-        _spriteMediaScaleX = scaleX;
-        _spriteMediaScaleY = scaleY;
-    }
-
-    // from EntitySprite
-    override public function getMaxContentWidth () :int
-    {
-        return _maxWidth;
-    }
-
-    // from EntitySprite
-    override public function getMaxContentHeight () :int
-    {
-        return _maxHeight;
-    }
-
-    public function getUnscaledWidth () :Number
-    {
-        return _w;
-    }
-
-    public function getUnscaledHeight () :Number
-    {
-        return _h;
     }
 
     override protected function handleUncaughtErrors (event :*) :void
@@ -123,18 +53,8 @@ public class ItemMediaContainer extends DataPackMediaContainer
         CommandEvent.dispatch(this, MsoyController.VIEW_ITEM, _item);
     }
 
-    protected var _suppressHitTestPoint :Boolean;
-
     protected var _item :ItemIdent;
 
-    protected var _maxWidth :int = int.MAX_VALUE;
-    protected var _maxHeight :int = int.MAX_VALUE;
-
-    /** The media scale to use when we are not blocked. */
-    protected var _spriteMediaScaleX :Number = 1.0;
-
-    /** The media scale to use when we are not blocked. */
-    protected var _spriteMediaScaleY :Number = 1.0;
 }
 }
 
