@@ -5,7 +5,7 @@ package com.threerings.msoy.game.data;
 
 import com.threerings.io.SimpleStreamableObject;
 
-import com.threerings.orth.scene.data.EntityMedia;
+import com.threerings.orth.data.MediaDesc;
 
 /**
  * Contains metadata about a game for which a player is currently matchmaking.
@@ -26,7 +26,7 @@ public class GameSummary extends SimpleStreamableObject
     public boolean avrGame;
 
     /** The thumbnail media for the game we're summarizing. */
-    public EntityMedia thumbMedia;
+    public MediaDesc thumbMedia;
 
     /** The member id of the creator of the game. */
     public int creatorId;
@@ -40,7 +40,7 @@ public class GameSummary extends SimpleStreamableObject
      * Creates a summary for the specified game.
      */
     public GameSummary (int gameId, String name, String description, boolean isAVRG,
-                        EntityMedia thumbMedia, int creatorId)
+                        MediaDesc thumbMedia, int creatorId)
     {
         this.gameId = gameId;
         this.name = name;

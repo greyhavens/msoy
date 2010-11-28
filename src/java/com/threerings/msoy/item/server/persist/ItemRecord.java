@@ -28,7 +28,7 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.server.MediaDescFactory;
 
-import com.threerings.orth.scene.data.EntityMedia;
+import com.threerings.orth.data.MediaDesc;
 
 /**
  * The base class for all digital items in the MSOY system.
@@ -378,7 +378,7 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
      * Returns the MediaDesc for the furni media of this item, or the default if the item has
      * no furni media.
      */
-    public EntityMedia getFurniMediaDesc ()
+    public MediaDesc getFurniMediaDesc ()
     {
         return (furniMediaHash == null) ? Item.getDefaultFurniMediaFor(getType()) :
             MediaDescFactory.createMediaDesc(furniMediaHash, furniMimeType, furniConstraint);

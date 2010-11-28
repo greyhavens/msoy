@@ -8,7 +8,7 @@ import com.threerings.toybox.data.ToyBoxGameConfig;
 
 import com.whirled.game.data.GameDefinition;
 
-import com.threerings.orth.scene.data.EntityMedia;
+import com.threerings.orth.data.MediaDesc;
 
 /**
  * Configuration for a Parlor game. Parlor games take over the entire display and don't leverage
@@ -24,13 +24,13 @@ public class ParlorGameConfig extends ToyBoxGameConfig
     public int groupId;
 
     /** This game's splash screen media or null. */
-    public EntityMedia splashMedia;
+    public MediaDesc splashMedia;
 
     /**
      * Configures this config with information from the supplied game bits.
      */
     public void init (int gameId, GameSummary game, GameDefinition gameDef,
-                      int groupId, EntityMedia splash)
+                      int groupId, MediaDesc splash)
     {
         this.game = game;
         this.groupId = groupId;

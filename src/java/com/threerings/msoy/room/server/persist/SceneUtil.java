@@ -9,7 +9,7 @@ import com.google.common.base.Preconditions;
 
 import com.samskivert.util.ByteEnumUtil;
 
-import com.threerings.orth.scene.data.EntityMedia;
+import com.threerings.orth.data.MediaDesc;
 
 import com.threerings.msoy.data.all.HashMediaDesc;
 
@@ -46,7 +46,7 @@ public class SceneUtil
      * Flattens the supplied {@link MediaDesc} into bytes that can later be decoded by
      * {@link #createMediaDesc} into the appropriate type of descriptor.
      */
-    public static byte[] flattenMediaDesc (EntityMedia desc)
+    public static byte[] flattenMediaDesc (MediaDesc desc)
     {
         if (desc instanceof DefaultItemMediaDesc) {
             DefaultItemMediaDesc sdesc = (DefaultItemMediaDesc)desc;

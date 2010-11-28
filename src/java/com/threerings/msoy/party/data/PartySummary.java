@@ -5,7 +5,7 @@ package com.threerings.msoy.party.data;
 
 import com.threerings.io.SimpleStreamableObject;
 
-import com.threerings.orth.scene.data.EntityMedia;
+import com.threerings.orth.data.MediaDesc;
 import com.threerings.presents.dobj.DSet;
 
 import com.threerings.msoy.data.all.GroupName;
@@ -27,7 +27,7 @@ public class PartySummary extends SimpleStreamableObject
     public GroupName group;
 
     /** The party's icon (the group icon). */
-    public EntityMedia icon;
+    public MediaDesc icon;
 
     /** Suitable for unserialization. */
     public PartySummary ()
@@ -35,7 +35,7 @@ public class PartySummary extends SimpleStreamableObject
     }
 
     /** Create a PartySummary. */
-    public PartySummary (int id, String name, GroupName group, EntityMedia icon)
+    public PartySummary (int id, String name, GroupName group, MediaDesc icon)
     {
         this.id = id;
         this.name = name;

@@ -6,7 +6,7 @@ package com.threerings.msoy.data;
 import com.threerings.io.SimpleStreamableObject;
 import com.threerings.msoy.badge.data.all.InProgressBadge;
 import com.threerings.msoy.data.all.NavItemData;
-import com.threerings.orth.scene.data.EntityMedia;
+import com.threerings.orth.data.MediaDesc;
 
 /**
  * A home page item is shown to the user within a flash popup in their home room. It is currently a
@@ -63,7 +63,7 @@ public class HomePageItem extends SimpleStreamableObject
      * @param navItemData the data associated with the action
      * @param image the icon to show for this action
      */
-    public HomePageItem (byte action, NavItemData navItemData, EntityMedia image)
+    public HomePageItem (byte action, NavItemData navItemData, MediaDesc image)
     {
         _action = action;
         _navItemData = navItemData;
@@ -89,12 +89,12 @@ public class HomePageItem extends SimpleStreamableObject
     /**
      * Gets the image or media to show to represent this item.
      */
-    public EntityMedia getImage ()
+    public MediaDesc getImage ()
     {
         return _image;
     }
 
     protected /* final */ byte _action;
     protected /* final */ NavItemData _navItemData;
-    protected /* final */ EntityMedia _image;
+    protected /* final */ MediaDesc _image;
 }

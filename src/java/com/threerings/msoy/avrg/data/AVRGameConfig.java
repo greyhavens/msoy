@@ -11,7 +11,7 @@ import com.whirled.game.data.GameDefinition;
 
 import com.threerings.msoy.game.data.GameSummary;
 import com.threerings.msoy.game.data.MsoyGameConfig;
-import com.threerings.orth.scene.data.EntityMedia;
+import com.threerings.orth.data.MediaDesc;
 
 /**
  * Configuration for an AVR game. This is basically BaseGameConfig + ParlorGameConfig,
@@ -27,15 +27,15 @@ public class AVRGameConfig extends PlaceConfig
     public String description;
 
     /** The game's thumbnail media. */
-    public EntityMedia thumbMedia;
+    public MediaDesc thumbMedia;
 
     /** This game's splash screen media or null. */
-    public EntityMedia splashMedia;
+    public MediaDesc splashMedia;
 
     /**
      * Configures this config with information from the supplied game metadata.
      */
-    public void init (int gameId, GameSummary game, GameDefinition gameDef, EntityMedia splashMedia)
+    public void init (int gameId, GameSummary game, GameDefinition gameDef, MediaDesc splashMedia)
     {
         this.name = game.name;
         this.thumbMedia = game.thumbMedia;

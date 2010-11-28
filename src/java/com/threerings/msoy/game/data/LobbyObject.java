@@ -5,7 +5,7 @@ package com.threerings.msoy.game.data;
 
 import javax.annotation.Generated;
 
-import com.threerings.orth.scene.data.EntityMedia;
+import com.threerings.orth.data.MediaDesc;
 import com.threerings.presents.dobj.DSet;
 import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.dobj.Subscriber;
@@ -71,7 +71,7 @@ public class LobbyObject extends DObject implements TableLobbyObject
     public int groupId;
 
     /** The splash media for our game, or null. */
-    public EntityMedia splashMedia;
+    public MediaDesc splashMedia;
 
     /** If set on the server, will be called with subscriber updates. */
     public transient SubscriberListener subscriberListener;
@@ -243,9 +243,9 @@ public class LobbyObject extends DObject implements TableLobbyObject
      * attribute changed notification.
      */
     @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
-    public void setSplashMedia (EntityMedia value)
+    public void setSplashMedia (MediaDesc value)
     {
-        EntityMedia ovalue = this.splashMedia;
+        MediaDesc ovalue = this.splashMedia;
         requestAttributeChange(
             SPLASH_MEDIA, value, ovalue);
         this.splashMedia = value;

@@ -128,7 +128,7 @@ public class HashMediaDesc extends BasicMediaDesc
     }
 
     /* (non-Javadoc)
-     * @see com.threerings.msoy.data.all.EntityMedia#getMediaPath()
+     * @see com.threerings.msoy.data.all.MediaDesc#getMediaPath()
      */
     public String getMediaPath ()
     {

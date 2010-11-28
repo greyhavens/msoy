@@ -52,7 +52,7 @@ import com.threerings.msoy.room.data.RoomCodes;
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
 import com.threerings.msoy.room.server.persist.SceneRecord;
 
-import com.threerings.orth.scene.data.EntityMedia;
+import com.threerings.orth.data.MediaDesc;
 
 import static com.threerings.msoy.Log.log;
 
@@ -207,7 +207,7 @@ public class CloakedPageLogic
         HttpServletRequest req, HttpServletResponse rsp, String path)
         throws IOException
     {
-        EntityMedia image;
+        MediaDesc image;
         String title;
         String desc;
         String gamePrefix;
@@ -324,7 +324,7 @@ public class CloakedPageLogic
      * Output a generated page for facebook.
      */
     protected void outputFacebook (
-        HttpServletResponse rsp, String title, String desc, EntityMedia image)
+        HttpServletResponse rsp, String title, String desc, MediaDesc image)
         throws IOException
     {
         // TODO: some sort of html templating? Ah, Pfile, you rocked, little guy!

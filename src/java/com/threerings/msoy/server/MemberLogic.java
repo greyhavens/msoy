@@ -28,7 +28,7 @@ import com.threerings.presents.server.PresentsDObjectMgr;
 import com.threerings.parlor.rating.server.persist.RatingRepository;
 import com.threerings.stats.server.persist.StatRepository;
 
-import com.threerings.orth.scene.data.EntityMedia;
+import com.threerings.orth.data.MediaDesc;
 
 import com.whirled.game.server.persist.GameCookieRepository;
 
@@ -387,7 +387,7 @@ public class MemberLogic
             for (PopularPlacesSnapshot.Place place : pps.getTopScenes()) {
                 if (!haveRooms.contains(place.placeId)) {
                     SceneRecord scene = _sceneRepo.loadScene(place.placeId);
-                    EntityMedia media = scene.getSnapshotFull();
+                    MediaDesc media = scene.getSnapshotFull();
                     if (media == null) {
                         media = RoomCodes.DEFAULT_SNAPSHOT_FULL;
                     }
@@ -752,7 +752,7 @@ public class MemberLogic
                 continue;
             }
 
-            EntityMedia media;
+            MediaDesc media;
             final NavItemData data;
             switch (se.experience.action) {
             case HomePageItem.ACTION_ROOM: {
