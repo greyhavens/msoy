@@ -231,7 +231,7 @@ public class RoomManager extends SpotSceneManager
             ? body.getLocal(MemberLocal.class).friendIds
             : null;
         // check to see if the scene permits access
-        if (!((MsoyBodyObject) body).canEnterScene(
+        if ((body instanceof MemberObject) && !((MemberObject) body).canEnterScene(
                 model.sceneId, model.ownerId, model.ownerType, model.accessControl, friendIds)) {
             return RoomCodes.E_ENTRANCE_DENIED; // TODO: better? "This room is friend only"
         }
