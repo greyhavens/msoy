@@ -14,9 +14,10 @@ import com.samskivert.util.Invoker;
 import com.samskivert.util.ObjectUtil;
 import com.samskivert.util.RandomUtil;
 import com.samskivert.util.Tuple;
+
+import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.server.LocationManager;
 import com.threerings.msoy.data.MemberObject;
-import com.threerings.msoy.data.MsoyBodyObject;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.group.server.ThemeLogic;
 import com.threerings.msoy.group.server.persist.GroupRecord;
@@ -55,7 +56,7 @@ import com.threerings.whirled.server.SceneManager;
  */
 public class MsoyPeerSceneMoveHandler extends PeerSceneMoveHandler
 {
-    public MsoyPeerSceneMoveHandler (LocationManager locman, MsoyBodyObject mover,
+    public MsoyPeerSceneMoveHandler (LocationManager locman, BodyObject mover,
         int sceneVer, int portalId, MsoyLocation destLoc, MsoySceneMoveListener listener)
     {
         super(locman, mover, sceneVer, listener);
@@ -371,7 +372,7 @@ public class MsoyPeerSceneMoveHandler extends PeerSceneMoveHandler
     protected int _portalId;
     protected MsoyLocation _destLoc;
     protected MemberObject _memobj;
-    protected MsoyBodyObject _mover;
+    protected BodyObject _mover;
     protected PetObject _petobj;
     protected MsoySceneMoveListener _msoyListener;
 

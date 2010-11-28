@@ -42,7 +42,7 @@ public class MobObject extends BodyObject
     public String actorState;
 
     // from MsoyBodyObject
-    public BodyObject body ()
+    public BodyObject self ()
     {
         return this;
     }

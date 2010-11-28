@@ -32,7 +32,6 @@ import com.threerings.whirled.spot.data.Portal;
 import com.threerings.whirled.spot.server.SpotSceneRegistry;
 
 import com.threerings.msoy.data.MemberObject;
-import com.threerings.msoy.data.MsoyBodyObject;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MemberLocator;
 import com.threerings.msoy.server.MemberNodeActions;
@@ -218,7 +217,7 @@ public class MsoySceneRegistry extends SpotSceneRegistry
                         MsoyLocation destLoc, MsoySceneMoveListener listener)
         throws InvocationException
     {
-        final MsoyBodyObject mover = (MsoyBodyObject)caller;
+        final BodyObject mover = (BodyObject) caller;
         final MemberObject memobj = (mover instanceof MemberObject) ? (MemberObject)mover : null;
 
         // if they are departing a scene hosted by this server, move them to the exit; if we fail

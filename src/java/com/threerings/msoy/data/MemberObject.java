@@ -249,7 +249,7 @@ public class MemberObject extends BodyObject
     }
 
     // from MsoyBodyObject
-    public BodyObject body ()
+    public BodyObject self ()
     {
         return this;
     }

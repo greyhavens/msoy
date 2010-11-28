@@ -61,7 +61,7 @@ public abstract class ActorInfo extends OccupantInfo
      */
     public void updateMedia (MsoyBodyObject body)
     {
-        RoomLocal local = body.getLocal(RoomLocal.class);
+        RoomLocal local = body.self().getLocal(RoomLocal.class);
         if (local != null && local.useStaticMedia(body)) {
             useStaticMedia();
             _flags |= STATIC;
@@ -73,7 +73,7 @@ public abstract class ActorInfo extends OccupantInfo
 
     protected ActorInfo (MsoyBodyObject body)
     {
-        super(body);
+        super(body.self());
         _state = body.getActorState();
         updateMedia(body);
     }

@@ -39,7 +39,7 @@ public class PetObject extends BodyObject
     public transient EntityMemories memories;
 
     // from MsoyBodyObject
-    public BodyObject body ()
+    public BodyObject self ()
     {
         return this;
     }

@@ -10,7 +10,7 @@ import com.threerings.crowd.data.BodyObject;
  */
 public interface MsoyBodyObject
 {
-    BodyObject body ();
+    BodyObject self ();
 
     boolean isActor ();
 

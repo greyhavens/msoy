@@ -202,7 +202,7 @@ public class RoomManager extends SpotSceneManager
         // update the state in their body object
         actor.setActorState(state);
         // and in the occInfo
-        setState(actor.getOid(), state);
+        setState(actor.self().getOid(), state);
     }
 
     /**
@@ -2182,7 +2182,7 @@ public class RoomManager extends SpotSceneManager
     /** The RoomLocal installed on actors in this room. */
     protected RoomLocal _roomLocal = new RoomLocal() {
         public boolean useStaticMedia (MsoyBodyObject body) {
-            return _actors.indexOf(body.getOid()) >= ACTOR_RENDERING_LIMIT;
+            return _actors.indexOf(body.self().getOid()) >= ACTOR_RENDERING_LIMIT;
         }
         public boolean isManager (MsoyBodyObject body) {
             return (body instanceof MemberObject) && canManage((MemberObject)body);
