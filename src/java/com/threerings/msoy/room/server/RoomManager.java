@@ -200,7 +200,7 @@ public class RoomManager extends SpotSceneManager
     public void setState (MsoyBodyObject actor, String state)
     {
         // update the state in their body object
-        actor.actorState = state;
+        actor.setActorState(state);
         // and in the occInfo
         setState(actor.getOid(), state);
     }

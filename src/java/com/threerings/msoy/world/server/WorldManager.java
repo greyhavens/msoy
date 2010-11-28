@@ -407,7 +407,7 @@ public class WorldManager
 
             // now set the new avatar
             user.setAvatar(avatar);
-            user.actorState = null; // clear out their state
+            user.setActorState(null); // clear out their state
             user.getLocal(MemberLocal.class).memories = memories;
 
             // check if this player is already in a room (should be the case)

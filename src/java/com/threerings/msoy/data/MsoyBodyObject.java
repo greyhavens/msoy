@@ -22,7 +22,7 @@ public class MsoyBodyObject extends BodyObject
     // AUTO-GENERATED: FIELDS END
 
     /** The current state of the body's actor, or null if unset/unknown/default. */
-    public String actorState;
+    private String actorState;
 
     /**
      * Returns true if this body has an actor in the scene and as a consequence uses an
@@ -31,6 +31,11 @@ public class MsoyBodyObject extends BodyObject
     public boolean isActor ()
     {
         return true;
+    }
+
+    public String getActorState ()
+    {
+        return actorState;
     }
 
     // AUTO-GENERATED: METHODS START

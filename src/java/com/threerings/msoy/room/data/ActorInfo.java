@@ -74,7 +74,7 @@ public abstract class ActorInfo extends OccupantInfo
     protected ActorInfo (MsoyBodyObject body)
     {
         super(body);
-        _state = body.actorState;
+        _state = body.getActorState();
         updateMedia(body);
     }
 

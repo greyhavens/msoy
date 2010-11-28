@@ -186,7 +186,7 @@ public class MemberInfo extends ActorInfo
             _ident = new ItemIdent(MsoyItemType.OCCUPANT, getBodyOid());
             _scale = 1f;
         }
-        _state = memobj.actorState;
+        _state = memobj.getActorState();
     }
 
     // TODO: presently exposed to allow for puppets
