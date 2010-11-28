@@ -25,16 +25,6 @@ public class MsoyBodyObject extends BodyObject
     public String actorState;
 
     /**
-     * Determines whether this body is allowed to enter the specified scene. By default all bodies
-     * are allowed in all scenes. Only members are further restricted.
-     */
-    public boolean canEnterScene (
-        int sceneId, int ownerId, byte ownerType, byte accessControl, Set<Integer> friendIds)
-    {
-        return true;
-    }
-
-    /**
      * Returns true if this body has an actor in the scene and as a consequence uses an
      * OccupantInfo that is instanceof ActorInfo.
      */

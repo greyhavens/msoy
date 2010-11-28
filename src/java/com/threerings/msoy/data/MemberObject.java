@@ -377,7 +377,6 @@ public class MemberObject extends MsoyBodyObject
         return _party;
     }
 
-    @Override // from MsoyBodyObject
     public boolean canEnterScene (
         int sceneId, int ownerId, byte ownerType, byte accessControl, Set<Integer> friendIds)
     {
