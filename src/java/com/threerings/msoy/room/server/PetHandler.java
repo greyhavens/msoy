@@ -21,6 +21,7 @@ import com.threerings.crowd.server.PlaceRegistry;
 import com.threerings.crowd.chat.server.SpeakUtil;
 
 import com.threerings.whirled.client.SceneMoveAdapter;
+import com.threerings.whirled.data.ScenePlace;
 import com.threerings.whirled.server.SceneRegistry;
 
 import com.threerings.msoy.data.MemberObject;
@@ -135,7 +136,7 @@ public class PetHandler
         // set ourselves to follow mode
         startFollowing(owner);
         // head to our destination
-        enterRoom(owner.getSceneId());
+        enterRoom(ScenePlace.getSceneId(owner));
     }
 
     /**
@@ -174,7 +175,7 @@ public class PetHandler
         case Pet.ORDER_GO_HOME:
             stopFollowing();
             updateUsage(Item.UsedAs.PET, owner.homeSceneId);
-            if (_petobj.getSceneId() == owner.homeSceneId) {
+            if (ScenePlace.getSceneId(_petobj) == owner.homeSceneId) {
                 // we're already home, yay!
             } else if (_sceneReg.getSceneManager(owner.homeSceneId) != null) {
                 enterRoom(owner.homeSceneId);

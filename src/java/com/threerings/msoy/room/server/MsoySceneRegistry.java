@@ -25,6 +25,7 @@ import com.threerings.crowd.server.LocationManager;
 
 import com.threerings.whirled.client.SceneService;
 import com.threerings.whirled.data.SceneCodes;
+import com.threerings.whirled.data.ScenePlace;
 import com.threerings.whirled.server.SceneManager;
 import com.threerings.whirled.server.SceneMoveHandler;
 import com.threerings.whirled.spot.data.Portal;
@@ -222,7 +223,7 @@ public class MsoySceneRegistry extends SpotSceneRegistry
 
         // if they are departing a scene hosted by this server, move them to the exit; if we fail
         // later, they will have walked to the exit and then received an error message, alas
-        RoomManager srcmgr = (RoomManager)getSceneManager(mover.getSceneId());
+        RoomManager srcmgr = (RoomManager)getSceneManager(ScenePlace.getSceneId(mover));
         if (srcmgr != null) {
             // give the source scene manager a chance to do access control
             Portal dest = ((MsoyScene)srcmgr.getScene()).getPortal(portalId);

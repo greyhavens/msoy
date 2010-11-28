@@ -14,6 +14,7 @@ import com.samskivert.util.Invoker;
 import com.samskivert.util.Lifecycle;
 
 import com.threerings.util.StreamableArrayIntSet;
+import com.threerings.whirled.data.ScenePlace;
 
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
@@ -164,7 +165,7 @@ public class TourManager
     protected boolean isValidNextRoom (MemberObject memObj, int sceneId)
     {
         return (memObj.homeSceneId != sceneId) &&
-            (memObj.getSceneId() != sceneId) &&
+            (ScenePlace.getSceneId(memObj) != sceneId) &&
             !memObj.getLocal(MemberLocal.class).touredRooms.contains(sceneId);
     }
 

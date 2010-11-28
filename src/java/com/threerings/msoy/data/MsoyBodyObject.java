@@ -25,16 +25,6 @@ public class MsoyBodyObject extends BodyObject
     public String actorState;
 
     /**
-     * Returns the scene occupied by this body.
-     *
-     * @see ScenePlace#getSceneId
-     */
-    public int getSceneId ()
-    {
-        return ScenePlace.getSceneId(this);
-    }
-
-    /**
      * Determines whether this body is allowed to enter the specified scene. By default all bodies
      * are allowed in all scenes. Only members are further restricted.
      */

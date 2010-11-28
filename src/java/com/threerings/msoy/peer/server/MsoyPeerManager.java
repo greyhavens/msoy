@@ -292,7 +292,7 @@ public class MsoyPeerManager extends OrthPeerManager
         }
 
         Integer memberId = memobj.getMemberId();
-        int sceneId = Math.max(memobj.getSceneId(), 0); // we use 0 for no scene
+        int sceneId = Math.max(ScenePlace.getSceneId(memobj), 0); // we use 0 for no scene
         MemberScene datum = _mnobj.memberScenes.get(memberId);
         if (datum == null) {
             if (sceneId != 0) {
