@@ -61,7 +61,7 @@ public class SceneUtil
             return data.array();
 
         } else if (desc instanceof MediaDesc) {
-            return HashMediaDesc.unmakeHash((MediaDesc)desc);
+            return HashMediaDesc.unmakeHash(desc);
         } else {
             throw new IllegalArgumentException("Unknown media descriptor type: " + desc);
         }
