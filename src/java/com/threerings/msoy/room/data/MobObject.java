@@ -6,6 +6,7 @@ package com.threerings.msoy.room.data;
 import javax.annotation.Generated;
 import com.threerings.util.Name;
 
+import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.data.PlaceObject;
 
@@ -14,7 +15,8 @@ import com.threerings.msoy.data.MsoyBodyObject;
 /**
  * Contains the distributed state associated with an AVRG MOB.
  */
-public class MobObject extends MsoyBodyObject
+public class MobObject extends BodyObject
+    implements MsoyBodyObject
 {
     // AUTO-GENERATED: FIELDS START
     /** The field name of the <code>gameId</code> field. */
@@ -40,6 +42,18 @@ public class MobObject extends MsoyBodyObject
     public String actorState;
 
     // from MsoyBodyObject
+    public BodyObject body ()
+    {
+        return this;
+    }
+
+    @Override // from MsoyBodyObject
+    public boolean isActor ()
+    {
+        return false;
+    }
+
+    // from MsoyBodyObject
     public String getActorState ()
     {
         return actorState;
@@ -55,12 +69,6 @@ public class MobObject extends MsoyBodyObject
     public Name getVisibleName ()
     {
         return Name.BLANK;
-    }
-
-    @Override // from MsoyBodyObject
-    public boolean isActor ()
-    {
-        return false;
     }
 
     // AUTO-GENERATED: METHODS START

@@ -4,6 +4,8 @@
 package com.threerings.msoy.room.data;
 
 import javax.annotation.Generated;
+
+import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.data.Place;
 import com.threerings.crowd.data.PlaceObject;
@@ -14,7 +16,8 @@ import com.threerings.msoy.item.data.all.Pet;
 /**
  * Contains the distributed state associated with a Pet.
  */
-public class PetObject extends MsoyBodyObject
+public class PetObject extends BodyObject
+    implements MsoyBodyObject
 {
     // AUTO-GENERATED: FIELDS START
     /** The field name of the <code>pet</code> field. */
@@ -31,9 +34,21 @@ public class PetObject extends MsoyBodyObject
 
     /** The current state of the body's actor, or null if unset/unknown/default. */
     public String actorState;
-    
+
     /** Memories extracted from our most recently departed room. */
     public transient EntityMemories memories;
+
+    // from MsoyBodyObject
+    public BodyObject body ()
+    {
+        return this;
+    }
+
+    // from MsoyBodyObject
+    public boolean isActor ()
+    {
+        return true;
+    }
 
     // from MsoyBodyObject
     public String getActorState ()

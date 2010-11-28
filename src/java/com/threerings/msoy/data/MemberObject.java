@@ -8,6 +8,8 @@ import javax.annotation.Generated;
 
 import com.threerings.presents.dobj.DSet;
 import com.threerings.util.Name;
+
+import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.data.TokenRing;
@@ -40,8 +42,8 @@ import static com.threerings.msoy.Log.log;
 /**
  * Represents a connected msoy user.
  */
-public class MemberObject extends MsoyBodyObject
-    implements MsoyUserObject
+public class MemberObject extends BodyObject
+    implements MsoyUserObject, MsoyBodyObject
 {
     // AUTO-GENERATED: FIELDS START
     /** The field name of the <code>memberName</code> field. */
@@ -153,7 +155,7 @@ public class MemberObject extends MsoyBodyObject
 
     /** The current state of the body's actor, or null if unset/unknown/default. */
     public String actorState;
-    
+
     /** How many coins we've got jangling around on our person. */
     public int coins;
 
@@ -244,6 +246,12 @@ public class MemberObject extends MsoyBodyObject
     public boolean isAway ()
     {
         return awayMessage != null; // message is set to non-null when we're away
+    }
+
+    // from MsoyBodyObject
+    public BodyObject body ()
+    {
+        return this;
     }
 
     // from MsoyBodyObject
