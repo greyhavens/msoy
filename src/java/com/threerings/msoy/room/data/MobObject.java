@@ -24,6 +24,10 @@ public class MobObject extends MsoyBodyObject
     /** The field name of the <code>ident</code> field. */
     @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String IDENT = "ident";
+
+    /** The field name of the <code>actorState</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
+    public static final String ACTOR_STATE = "actorState";
     // AUTO-GENERATED: FIELDS END
 
     /** The gameId of the AVRG that created this MOB. */
@@ -31,6 +35,15 @@ public class MobObject extends MsoyBodyObject
 
     /** An identifier provided by the AVRG when creating this MOB. */
     public String ident;
+
+    /** The current state of the body's actor, or null if unset/unknown/default. */
+    public String actorState;
+
+    // from MsoyBodyObject
+    public String getActorState ()
+    {
+        return actorState;
+    }
 
     @Override // from BodyObject
     public OccupantInfo createOccupantInfo (PlaceObject plobj)
@@ -83,6 +96,23 @@ public class MobObject extends MsoyBodyObject
         requestAttributeChange(
             IDENT, value, ovalue);
         this.ident = value;
+    }
+
+    /**
+     * Requests that the <code>actorState</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
+    public void setActorState (String value)
+    {
+        String ovalue = this.actorState;
+        requestAttributeChange(
+            ACTOR_STATE, value, ovalue);
+        this.actorState = value;
     }
     // AUTO-GENERATED: METHODS END
 }
