@@ -32,6 +32,7 @@ import com.threerings.stats.data.StatSet;
 import com.threerings.stats.server.persist.StatRepository;
 
 import com.threerings.msoy.data.LurkerName;
+import com.threerings.msoy.data.MemberClientObject;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VisitorInfo;
@@ -71,19 +72,13 @@ public class MsoyClientResolver extends CrowdClientResolver
     @Override
     public ClientObject createClientObject ()
     {
-        // see if we have a member object forwarded from our peer
-        _fwddata = _peerMan.getForwardedMemberObject(_username);
-        if (_fwddata == null) {
-            return new MemberObject();
-        } else {
-            return _fwddata.left;
-        }
+        return new MemberClientObject();
     }
 
     @Override
     public ClientLocal createLocalAttribute ()
     {
-        return new MemberLocal();
+        return null;
     }
 
     @Override // from ClientResolver
@@ -92,8 +87,14 @@ public class MsoyClientResolver extends CrowdClientResolver
     {
         super.resolveClientData(clobj);
 
-        // copy our forwarded local attributes
+        MemberClientObject memobj = (MemberClientObject) clobj;
+        mcobj.name = _username;
+
+        // see if we have a member object forwarded from our peer
+        _fwddata = _peerMan.getForwardedMemberObject(_username);
         if (_fwddata != null) {
+            MemberObject memobj = _fwddata.left;
+            mcobj.bodyOid = memobj.getOid();
             for (Streamable local : _fwddata.right) {
                 @SuppressWarnings("unchecked") Class<Streamable> lclass =
                     (Class<Streamable>)local.getClass();
@@ -101,9 +102,24 @@ public class MsoyClientResolver extends CrowdClientResolver
                 clobj.setLocal(lclass, local); // configure our forwarded data
             }
         }
+    }
 
-        final MemberObject memobj = (MemberObject) clobj;
-        MemberLocal local = memobj.getLocal(MemberLocal.class);
+    @Override // from ClientResolver
+    protected void finishResolution (ClientObject clobj)
+    {
+        super.finishResolution(clobj);
+
+        final MemberClientObject memobj = (MemberClientObject) clobj;
+        memobj.username = _username;
+
+        if (memobj.bodyOid != 0) {
+            // we're done
+            log.debug("Resolved forwarded session", "clobj", clobj.who());
+            return;
+        }
+
+        // otherwise we resolve the full thing; later, this is where we'll queue them up
+        memobj.setLocal(ClientLocal.class, new MemberLocal);
 
         // create a deferred notifications array so that we can track any notifications dispatched
         // to this client until they're ready to read them; we'd have MsoyNotificationManager do this
@@ -115,13 +131,6 @@ public class MsoyClientResolver extends CrowdClientResolver
         // do some stats-related hackery
         if (local.stats instanceof ServerStatSet) {
             ((ServerStatSet)local.stats).init(_badgeMan, memobj);
-        }
-
-        // if our member object was forwarded from another server, it will already be fully ready
-        // to go so we can avoid the expensive resolution process
-        if (memobj.memberName != null) {
-            log.debug("Resolved forwarded session", "clobj", clobj.who());
-            return;
         }
 
         // guests have MemberName as an auth username, members have Name
@@ -144,10 +153,19 @@ public class MsoyClientResolver extends CrowdClientResolver
             local.inProgressBadges = new InProgressBadgeSet();
 
         } else {
-            resolveMember(memobj);
+            _invoker.postUnit(new Invoker.Unit() {
+                public boolean invoke () {
+                    resolveMember(memobj);
+                    return true;
+                }
+                public void handleResult () {
+                }
+            });
+            log.debug("Resolved unforwarded session", "clobj", clobj.who());
+            return;
         }
-
-        log.debug("Resolved unforwarded session", "clobj", clobj.who());
+        log.debug("Resolved simple session", "clobj", clobj.who());
+        
     }
 
     /**
@@ -345,6 +363,7 @@ public class MsoyClientResolver extends CrowdClientResolver
     protected Tuple<MemberObject,Streamable[]> _fwddata;
 
     // dependencies
+    @Inject @MainInvoker protected Invoker _invoker;
     @Inject protected BadgeManager _badgeMan;
     @Inject protected BadgeRepository _badgeRepo;
     @Inject protected GroupRepository _groupRepo;
