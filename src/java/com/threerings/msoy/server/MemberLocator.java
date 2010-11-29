@@ -11,6 +11,9 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.samskivert.util.ObserverList;
+
+import com.threerings.presents.data.ClientObject;
+import com.threerings.presents.server.InvocationException;
 import com.threerings.util.Name;
 
 import com.threerings.presents.annotation.EventThread;
@@ -19,10 +22,13 @@ import com.threerings.presents.server.PresentsDObjectMgr;
 import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.server.BodyLocator;
 
+import com.threerings.msoy.data.MemberClientObject;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.MemberName;
 
 import java.util.Collection;
+
+import static com.threerings.msoy.Log.log;
 
 /**
  * Customizes the {@link BodyLocator} and provides a means to lookup a member by id.
@@ -47,6 +53,40 @@ public class MemberLocator extends BodyLocator
     {
         _omgr.requireEventThread();
         return _online.get(memberId);
+    }
+
+    /**
+     * On the assumption that the given argument is a @{link }MemberClientLoader}, look up its
+     * associated {@link MemberObject} and return it. If the loader is not in fact of that type,
+     * or the member has not finished loading, return null.
+     */
+    public MemberObject lookupMember (ClientObject loader)
+    {
+        if (loader instanceof MemberClientObject) {
+            int memberId = ((MemberName) loader.username).getId();
+            return lookupMember(memberId);
+        }
+        return null;
+    }
+
+    /**
+     * On the assumption that the given argument is a @{link }MemberClientLoader}, look up its
+     * associated {@link MemberObject} and return it. If the loader is not in fact of that type,
+     * throw a runtime exception.
+     */
+    public MemberObject requireMember (ClientObject loader)
+    {
+        if (loader instanceof MemberClientObject) {
+            int memberId = ((MemberName) loader.username).getId();
+            MemberObject memobj = lookupMember(memberId);
+            if (memobj != null) {
+                return memobj;
+            }
+            log.warning("Invocation from Member that's not done loading", "memberId", memberId);
+            throw new IllegalStateException("Member not yet loaded");
+        }
+        log.warning("Expected source to be MemberClientObject", "client", loader);
+        throw new IllegalStateException("Unexpected client type");
     }
 
     /**
