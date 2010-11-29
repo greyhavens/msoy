@@ -253,7 +253,7 @@ public class RoomObjectView extends RoomView
      */
     override public function getMyAvatar () :MemberSprite
     {
-        return (getOccupant(_ctx.getClient().getClientOid()) as MemberSprite);
+        return (getOccupant(_ctx.getMemberObject().getOid()) as MemberSprite);
     }
 
     /**
@@ -495,7 +495,7 @@ public class RoomObjectView extends RoomView
         _bg.setLoadedCallback(backgroundFinishedLoading);
 
         var localOccupant :MemberInfo;
-        localOccupant = _roomObj.occupantInfo.get(_ctx.getClient().getClientOid()) as MemberInfo;
+        localOccupant = _roomObj.occupantInfo.get(_ctx.getMemberObject().getOid()) as MemberInfo;
         if (localOccupant != null && localOccupant.isStatic()) {
             _ctx.displayInfo(MsoyCodes.GENERAL_MSGS, "m.static_avatar");
         }
@@ -737,7 +737,7 @@ public class RoomObjectView extends RoomView
             occupant.roomScaleUpdated();
 
             // if we ever add ourselves, we follow it
-            if (bodyOid == _ctx.getClient().getClientOid()) {
+            if (bodyOid == _ctx.getMemberObject().getOid()) {
                 setFastCentering(true);
                 setCenterSprite(occupant);
             }

@@ -80,7 +80,7 @@ public class UpsellDirector extends BasicDirector
             return;
         }
 
-        if (_mctx.getClient().getClientObject() == null) {
+        if (_mctx.getMemberObject() == null) {
             return;
         }
 

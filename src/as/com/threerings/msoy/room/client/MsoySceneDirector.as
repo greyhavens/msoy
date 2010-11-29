@@ -210,7 +210,7 @@ public class MsoySceneDirector extends SceneDirector
         super.clientDidLogon(event);
 
         // add a listener that will respond to follow notifications
-        _ctx.getClient().getClientObject().addListener(_followListener);
+        _worldctx.getMemberObject().addListener(_followListener);
     }
 
     // documentation inherited

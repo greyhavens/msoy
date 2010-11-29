@@ -199,7 +199,7 @@ public class CoordinateDebugPanel extends FloatingPanel
             return;
         }
 
-        if (loc.bodyOid != _ctx.getClient().getClientObject().getOid()) {
+        if (loc.bodyOid != _ctx.getMemberObject().getOid()) {
             return;
         }
 
