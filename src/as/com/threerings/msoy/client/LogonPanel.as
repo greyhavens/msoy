@@ -158,18 +158,18 @@ public class LogonPanel extends FloatingPanel
         var observer :ClientAdapter;
         var didLogon :Function = function (...ignored) :void {
             close();
-            _ctx.getClient().loader.removeClientObserver(observer);
+            _ctx.getClient().removeClientObserver(observer);
 //             _ctx.getSceneDirector().moveTo(_sceneId);
         };
         var failed :Function = function (evt :ClientEvent) :void {
-            _ctx.getClient().loader.removeClientObserver(observer);
+            _ctx.getClient().removeClientObserver(observer);
             Log.getLog(this).debug("failed: " + Msgs.GENERAL.get(evt.getCause().message));
             _error.text = "Logon failed: " + Msgs.GENERAL.get(evt.getCause().message);
             FlexUtil.setVisible(_error, true);
             _logonBtn.enabled = true;
         };
         observer = new ClientAdapter(null, didLogon, null, null, failed, failed);
-        _ctx.getClient().loader.addClientObserver(observer);
+        _ctx.getClient().addClientObserver(observer);
 
         var creds :WorldCredentials = new WorldCredentials(
             new Name(_email.text), MD5.hash(_password.text));

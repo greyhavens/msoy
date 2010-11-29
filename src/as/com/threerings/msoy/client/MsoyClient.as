@@ -27,6 +27,7 @@ import com.threerings.ui.MenuUtil;
 import com.threerings.presents.client.ClientAdapter;
 import com.threerings.presents.client.ClientEvent;
 import com.threerings.presents.client.InvocationService_ResultListener;
+import com.threerings.presents.client.SessionObserver;
 
 import com.threerings.presents.dobj.DObjectManager;
 
@@ -147,7 +148,7 @@ public /*abstract*/ class MsoyClient extends CrowdClient
             new Event(UberClientModes.CLIENT_READY, true));
 
         // prior to logging on to a server, set up our security policy for that server
-        loader.addClientObserver(
+        _loader.addClientObserver(
             new ClientAdapter(clientWillLogon, clientDidLogon, null, clientDidLogoff));
 
         // configure our server and port info
@@ -166,14 +167,15 @@ public /*abstract*/ class MsoyClient extends CrowdClient
     }
 
     // from client
-    override public function addClientObserver (observer :SessionObserver, override :Boolean = false) :void
+    override public function addClientObserver (observer :SessionObserver) :void
     {
         // hijack all normal client observer requests and divert them to our special loader
-        if (override) {
-            super.addClientObserver(observer);
-        } else {
-            _loader.addClientObserver(observer);
-        }
+        _loader.addClientObserver(observer);
+    }
+
+    public function addRealClientObserver (observer :SessionObserver) :void
+    {
+        super.addClientObserver(observer);
     }
 
     // from Client
@@ -401,7 +403,7 @@ public /*abstract*/ class MsoyClient extends CrowdClient
             return;
         }
 
-        var member :MemberObject = loader.getBody() as MemberObject;
+        var member :MemberObject = _ctx.getMemberObject();
         if (_featuredPlaceView || member == null) {
             return;
         }

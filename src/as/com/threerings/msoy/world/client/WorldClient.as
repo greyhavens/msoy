@@ -314,10 +314,10 @@ public class WorldClient extends MsoyClient
             maybeConfigureGuest();
         } else {
             var adapter :ClientAdapter = new ClientAdapter(null, function (event :*) :void {
-                _wctx.getClient().loader.removeClientObserver(adapter);
+                _wctx.getClient().removeClientObserver(adapter);
                 maybeConfigureGuest();
             });
-            _wctx.getClient().loader.addClientObserver(adapter);
+            _wctx.getClient().addClientObserver(adapter);
         }
     }
 

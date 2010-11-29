@@ -115,10 +115,10 @@ public class WorldDirector extends BasicDirector
         if (!_wctx.getClient().isLoggedOn()) {
             log.info("Delaying goToHome, not online [type=" + ownerType + ", id=" + ownerId + "].");
             var waiter :ClientAdapter = new ClientAdapter(null, function (event :*) :void {
-                _wctx.getClient().loader.removeClientObserver(waiter);
+                _wctx.getClient().removeClientObserver(waiter);
                 goToHome(ownerType, ownerId);
             });
-            _wctx.getClient().loader.addClientObserver(waiter);
+            _wctx.getClient().addClientObserver(waiter);
             return;
         }
         function selectGift (avatars :TypedArray, homeSceneId :int) :void {

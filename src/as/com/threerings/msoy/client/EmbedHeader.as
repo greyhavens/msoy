@@ -39,7 +39,7 @@ public class EmbedHeader extends Canvas
     public function EmbedHeader (ctx :WorldContext)
     {
         _ctx = ctx;
-        _ctx.getClient().loader.addClientObserver(new ClientAdapter(null, didLogon));
+        _ctx.getClient().addClientObserver(new ClientAdapter(null, didLogon));
 
         // this is the height of the header logo image.
         height = HEIGHT;

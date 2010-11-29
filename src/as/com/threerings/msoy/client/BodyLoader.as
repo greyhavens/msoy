@@ -17,6 +17,7 @@ import com.threerings.presents.dobj.ObjectAccessError;
 
 import com.threerings.util.Log;
 
+import com.threerings.msoy.client.MsoyClient;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.data.MemberClientObject;
 import com.threerings.msoy.data.MemberObject;
@@ -35,12 +36,13 @@ public class BodyLoader extends EventDispatcher
 {
     private static const log :Log = Log.getLog(BodyLoader);
 
-    public function BodyLoader ( client :Client)
+    public function BodyLoader (client :MsoyClient)
     {
         _client = client;
 
-        _client.addClientObserver(new ClientAdapter(
-            forward, didLogon, forward, didLogoff, forward, forward, forward, forward));
+        var adapter :ClientAdapter = new ClientAdapter(
+            forward, didLogon, forward, didLogoff, forward, forward, forward, forward);
+        _client.addRealClientObserver(adapter);
     }
 
     public function init (ctx :MsoyContext) :void
@@ -166,7 +168,7 @@ public class BodyLoader extends EventDispatcher
         _client.logoff(false);
     }
 
-    protected var _client :Client;
+    protected var _client :MsoyClient;
     protected var _ctx :MsoyContext;
     protected var _loader :MemberClientObject;
     protected var _subscriber :SafeSubscriber;
