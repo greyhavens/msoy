@@ -14,11 +14,16 @@ import com.google.common.collect.Maps;
 
 import com.google.inject.Inject;
 
+import com.samskivert.util.Invoker;
 import com.samskivert.util.Tuple;
 
 import com.threerings.io.Streamable;
 
 import com.threerings.msoy.mail.server.MailLogic;
+
+import com.threerings.presents.Log;
+import com.threerings.presents.annotation.MainInvoker;
+import com.threerings.presents.server.ClientResolutionListener;
 import com.threerings.util.StreamableArrayIntSet;
 
 import com.threerings.presents.data.ClientObject;
@@ -81,19 +86,43 @@ public class MsoyClientResolver extends CrowdClientResolver
         return null;
     }
 
+    // we have to stop ClientResolver from prematurely telling ClientManager that the session
+    // is ready to go; we don't want to trigger that until we're done resolving the actual
+    // MemberObject, which could be quite a while from now
+    @Override
+    public void handleResult ()
+    {
+        // if we haven't failed, finish resolution on the dobj thread
+        if (_failure == null) {
+            try {
+                finishResolution(_clobj);
+            } catch (Exception e) {
+                _failure = e;
+            }
+        }
+        if (_failure != null) {
+            // destroy the dangling user object
+            _omgr.destroyObject(_clobj.getOid());
+            // let our listener know that we're hosed
+            reportFailure(_failure);
+        }
+    }
+
+
     @Override // from ClientResolver
     protected void resolveClientData (final ClientObject clobj)
         throws Exception
     {
         super.resolveClientData(clobj);
 
-        MemberClientObject memobj = (MemberClientObject) clobj;
-        mcobj.name = _username;
+        MemberClientObject mcobj = (MemberClientObject) clobj;
+        mcobj.username = _username;
 
         // see if we have a member object forwarded from our peer
         _fwddata = _peerMan.getForwardedMemberObject(_username);
         if (_fwddata != null) {
             MemberObject memobj = _fwddata.left;
+            mcobj.memobj = memobj;
             mcobj.bodyOid = memobj.getOid();
             for (Streamable local : _fwddata.right) {
                 @SuppressWarnings("unchecked") Class<Streamable> lclass =
@@ -109,23 +138,30 @@ public class MsoyClientResolver extends CrowdClientResolver
     {
         super.finishResolution(clobj);
 
-        final MemberClientObject memobj = (MemberClientObject) clobj;
-        memobj.username = _username;
+        final MemberClientObject mcobj = (MemberClientObject) clobj;
 
-        if (memobj.bodyOid != 0) {
+        if (mcobj.bodyOid != 0) {
             // we're done
             log.debug("Resolved forwarded session", "clobj", clobj.who());
             return;
         }
 
-        // otherwise we resolve the full thing; later, this is where we'll queue them up
-        memobj.setLocal(ClientLocal.class, new MemberLocal);
+        final MemberObject memobj = new MemberObject();
+        _omgr.registerObject(memobj);
+        mcobj.memobj = memobj;
+
+        // give the MemberObject the same (auth) username as we gave MemberClientObject
+        memobj.username = _username;
+
+        // otherwise we're creating a new MemberObject
+        MemberLocal local = new MemberLocal();
+        memobj.setLocal(ClientLocal.class, local);
 
         // create a deferred notifications array so that we can track any notifications dispatched
-        // to this client until they're ready to read them; we'd have MsoyNotificationManager do this
-        // in a MemberLocator.Observer but we need to be sure this is filled in before any other
-        // MemberLocator.Observers are notified because that's precisely when early notifications
-        // are likely to be generated
+        // to this client until they're ready to read them; we'd have MsoyNotificationManager do
+        // this in a MemberLocator.Observer but we need to be sure this is filled in before any
+        // other MemberLocator.Observers are notified because that's precisely when early
+        // notifications are likely to be generated
         local.deferredNotifications = Lists.newArrayList();
 
         // do some stats-related hackery
@@ -153,19 +189,48 @@ public class MsoyClientResolver extends CrowdClientResolver
             local.inProgressBadges = new InProgressBadgeSet();
 
         } else {
+            // otherwise we resolve the full thing; later, this is where we'll queue them up
             _invoker.postUnit(new Invoker.Unit() {
                 public boolean invoke () {
-                    resolveMember(memobj);
+                    try {
+                        resolveMember(memobj);
+                    } catch (Exception e) {
+                        _exception = e;
+                    }
                     return true;
                 }
+
                 public void handleResult () {
+                    // if resolution went well, try to finish up
+                    if (_exception == null) {
+                        try {
+                            // resolve this user's party info
+                            memobj.setParty(_peerMan.getPartySummary(memobj.getMemberId()));
+                        } catch (Exception e) {
+                            _exception = e;
+                        }
+                    }
+
+                    // if there's an error at any point, handle it here
+                    if (_exception != null) {
+                        // destroy the dangling user object
+                        _omgr.destroyObject(_clobj.getOid());
+                        // let our listeners know that we're hosed
+                        reportFailure(_exception);
+
+                    } else {
+                        // otherwise tell the client and our observers to go ahead
+                        announce(memobj, mcobj);
+                    }
                 }
+                protected Exception _exception;
             });
             log.debug("Resolved unforwarded session", "clobj", clobj.who());
             return;
         }
         log.debug("Resolved simple session", "clobj", clobj.who());
-        
+
+        announce(memobj, mcobj);
     }
 
     /**
@@ -284,15 +349,23 @@ public class MsoyClientResolver extends CrowdClientResolver
         profiler.complete();
     }
 
-    @Override // from ClientResolver
-    protected void finishResolution (ClientObject clobj)
+    protected void announce (MemberObject obj, MemberClientObject mcobj)
     {
-        super.finishResolution(clobj);
+        // now we let the ClientResolutionListeners know (this is usually handled by the
+        // ClientResolver subclass, but we override it)
+        for (int ii = 0, ll = _listeners.size(); ii < ll; ii++) {
+            ClientResolutionListener crl = _listeners.get(ii);
+            try {
+                // add a reference for each listener
+                _clobj.reference();
+                crl.clientResolved(_username, _clobj);
+            } catch (Exception e) {
+                Log.log.warning("Client resolution listener choked in clientResolved() " + crl, e);
+            }
+        }
 
-        MemberObject user = (MemberObject)clobj;
-
-        // resolve this user's party info
-        user.setParty(_peerMan.getPartySummary(user.getMemberId()));
+        // just setting the oid should triggeer the client's DID_LOGON joy
+        mcobj.setBodyOid(obj.getOid());
     }
 
     protected enum Step {
