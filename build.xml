@@ -176,8 +176,10 @@
       <dependency groupId="com.threerings.panopticon" artifactId="panopticon-client"
                   version="0.0-SNAPSHOT"/>
       <dependency groupId="com.threerings" artifactId="gwt-utils" version="1.3-SNAPSHOT"/>
+      <dependency groupId="com.threerings" artifactId="narya" version="1.3-SNAPSHOT"/>
       <dependency groupId="com.threerings" artifactId="vilya" version="1.1-SNAPSHOT"/>
       <dependency groupId="com.threerings" artifactId="orth" version="1.0-SNAPSHOT"/>
+      <dependency groupId="com.threerings" artifactId="whirled-code" version="1.1-SNAPSHOT"/>
       <dependency groupId="com.threerings" artifactId="pulse" version="0.0-SNAPSHOT"/>
       <dependency groupId="com.threerings" artifactId="threerings" version="1.1-SNAPSHOT"/>
       <dependency groupId="com.threerings" artifactId="database-utils" version="1.0-SNAPSHOT"/>
@@ -200,7 +202,7 @@
     <artifact:dependencies filesetId="build.fileset">
       <remoteRepository refid="ooo.maven.depends.repo"/>
       <dependency groupId="com.samskivert" artifactId="samskivert-gwt" version="1.2-SNAPSHOT"/>
-      <dependency groupId="com.threerings" artifactId="narya-gwt" version="1.2-SNAPSHOT"/>
+      <dependency groupId="com.threerings" artifactId="narya-gwt" version="1.3-SNAPSHOT"/>
       <dependency groupId="com.threerings" artifactId="orth-gwt" version="1.0-SNAPSHOT"/>
       <dependency groupId="com.threerings" artifactId="underwire-gwt" version="1.0-SNAPSHOT"/>
     </artifact:dependencies>
@@ -223,10 +225,14 @@
                   version="1.0-SNAPSHOT" type="swc"/>
       <dependency groupId="com.threerings" artifactId="whirledthanelib"
                   version="1.0-SNAPSHOT" type="swc"/>
+      <dependency groupId="com.threerings" artifactId="naryalib"
+                  version="1.3-SNAPSHOT" type="swc"/>
       <dependency groupId="com.threerings" artifactId="vilyalib"
                   version="1.1-SNAPSHOT" type="swc"/>
       <dependency groupId="com.threerings" artifactId="orthlib"
                   version="1.0-SNAPSHOT" type="swc"/>
+      <dependency groupId="com.threerings" artifactId="whirledlib"
+                  version="1.1-SNAPSHOT" type="swc"/>
       <dependency groupId="com.threerings" artifactId="aspirin"
                   version="1.7-SNAPSHOT" type="swc"/>
     </artifact:dependencies>
