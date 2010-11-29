@@ -683,7 +683,7 @@ public class MsoyPeerManager extends OrthPeerManager
         // if this is the primary session, add a location tracker
         if (info.username instanceof MsoyAuthName) {
             // we need never remove this as it should live for the duration of the session
-            client.getClientObject().addListener(new LocationTracker());
+            _locator.forClient(client.getClientObject()).addListener(new LocationTracker());
         }
     }
 
