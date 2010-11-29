@@ -82,6 +82,7 @@ import com.whirled.game.server.WhirledGameMessageDispatcher;
 import com.whirled.game.server.WhirledGameMessageHandler;
 
 import com.threerings.msoy.data.HomePageItem;
+import com.threerings.msoy.data.MemberClientObject;
 import com.threerings.msoy.data.MemberExperience;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyBodyObject;
@@ -2211,6 +2212,10 @@ public class RoomManager extends SpotSceneManager
                 ClientObject co = ((ProxySubscriber)sub).getClientObject();
                 if (co instanceof WindowClientObject) {
                     return true;
+                }
+                if (co instanceof MemberClientObject) {
+                    return ((PlaceObject)object).occupants.contains(
+                        ((MemberClientObject) co).memobj.getOid());
                 }
             }
             return CrowdObjectAccess.PLACE.allowSubscribe(object, sub);

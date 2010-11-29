@@ -22,7 +22,7 @@ public class MsoyObjectAccess
     public static AccessController DEFAULT = PresentsObjectAccess.DEFAULT;
 
     /** The user access controller. */
-    public static AccessController USER = PresentsObjectAccess.CLIENT;
+    public static AccessController USER = PresentsObjectAccess.DEFAULT;
 
     /**
      * The player access controller is identical to the user one, except it also allows bureau

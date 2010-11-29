@@ -18,6 +18,9 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+
+import com.threerings.crowd.peer.data.CrowdClientInfo;
+
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -48,6 +51,8 @@ import com.threerings.orth.peer.data.OrthClientInfo;
 import com.threerings.orth.peer.server.OrthPeerManager;
 
 import com.threerings.orth.data.AuthName;
+
+import com.threerings.msoy.data.MemberClientObject;
 import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyAuthName;
@@ -678,12 +683,23 @@ public class MsoyPeerManager extends OrthPeerManager
     @Override // from CrowdPeerManager
     protected void initClientInfo (PresentsSession client, ClientInfo info)
     {
-        super.initClientInfo(client, info);
+        log.info("In initClientInfo()", "username", client.getAuthName());
+        if (client.getAuthName() instanceof MsoyAuthName) {
+            // we have to avoid the CrowdPeerManager layer, as it makes foolish assumptions
+            // about the ClientObject being the BodyObject, so don't call super here.
 
-        // if this is the primary session, add a location tracker
-        if (info.username instanceof MsoyAuthName) {
-            // we need never remove this as it should live for the duration of the session
-            client.getClientObject().addListener(new LocationTracker());
+            // from PeerManager
+            info.username = client.getAuthName();
+
+            // from CrowdPeerManager (modified)
+            MemberClientObject mcobj = (MemberClientObject) client.getClientObject();
+            ((CrowdClientInfo)info).visibleName = mcobj.memobj.getVisibleName();
+
+            // add a location tracker
+            mcobj.memobj.addListener(new LocationTracker());
+
+        } else {
+            super.initClientInfo(client, info);
         }
     }
 

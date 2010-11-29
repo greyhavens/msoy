@@ -13,17 +13,20 @@ import com.threerings.presents.dobj.AttributeChangeListener;
 import com.threerings.presents.dobj.AttributeChangedEvent;
 import com.threerings.presents.net.AuthRequest;
 import com.threerings.presents.net.BootstrapData;
+import com.threerings.presents.server.PresentsSession;
 import com.threerings.presents.server.net.PresentsConnection;
 
+import com.threerings.crowd.chat.server.SpeakUtil;
 import com.threerings.crowd.data.OccupantInfo;
+import com.threerings.crowd.server.BodyManager;
+import com.threerings.crowd.server.LocationManager;
 
 import com.threerings.stats.data.Stat;
 import com.threerings.stats.data.StatSet;
 import com.threerings.stats.server.persist.StatRepository;
 
-import com.threerings.whirled.server.WhirledSession;
-
 import com.threerings.msoy.admin.server.RuntimeConfig;
+import com.threerings.msoy.data.MemberClientObject;
 import com.threerings.msoy.room.server.persist.MemoriesRecord;
 import com.threerings.msoy.room.server.persist.MemoryRepository;
 
@@ -40,8 +43,12 @@ import static com.threerings.msoy.Log.log;
 
 /**
  * Represents an attached Msoy client on the server-side.
+ *
+ * Note: we really want to be extending CrowdSession, but it assumes our body is the same object
+ * as our client (by casting ClientObject to BodyObject) and that's not true for us, so we must
+ * duplicate its functionality here, but targeted on the correct object.
  */
-public class MsoySession extends WhirledSession
+public class MsoySession extends PresentsSession
 {
     /**
      * Called by the peer manager to let us know that our session was forwarded to another server.
@@ -81,7 +88,6 @@ public class MsoySession extends WhirledSession
             mData.mutedMemberIds = local.mutedMemberIds;
             local.mutedMemberIds = null;
         }
-        int expiration = (int) ((System.currentTimeMillis() / 1000) + 7 * 24 * 3600);
     }
 
     @Override // from PresentsSession
@@ -89,7 +95,9 @@ public class MsoySession extends WhirledSession
     {
         super.sessionWillStart();
 
-        _memobj = (MemberObject) _clobj;
+        _mcobj = (MemberClientObject) _clobj;
+
+        _memobj = _mcobj.memobj;
         _memobj.setAccessController(MsoyObjectAccess.USER);
         _memobj.addListener(_idleTracker);
 
@@ -161,6 +169,16 @@ public class MsoySession extends WhirledSession
     {
         super.sessionConnectionClosed();
 
+        // CrowdSession's functionality replicated on the correct body
+        // -----------------------------------------------------------
+
+        if (_mcobj != null && _memobj != null) {
+            // note that the user is disconnected
+            _bodyman.updateOccupantStatus(_memobj, OccupantInfo.DISCONNECTED);
+        }
+        // ---------------------------------
+        // End of CrowdSession functionality
+
         // end our session when the connection is closed, it's easy enough to get back to where you
         // were with a browser reload
         if (!_resumingSession && // but not if we're not in the middle of resuming our session
@@ -174,6 +192,13 @@ public class MsoySession extends WhirledSession
     {
         super.sessionWillResume();
 
+        // CrowdSession's functionality replicated on the correct body
+        // -----------------------------------------------------------
+
+        _bodyman.updateOccupantStatus(_memobj, OccupantInfo.ACTIVE);
+        // ---------------------------------
+        // End of CrowdSession functionality
+
         // we're out of the woods now and can clear our resuming flag
         _resumingSession = false;
     }
@@ -186,6 +211,22 @@ public class MsoySession extends WhirledSession
         if (_memobj == null) {
             return;
         }
+
+        // CrowdSession's functionality replicated on the correct body
+        // -----------------------------------------------------------
+
+        // clear out our location so that anyone listening will know that we've left
+        _locman.leaveOccupiedPlace(_memobj);
+
+        // reset our status in case this object remains around until they start their next session
+        // (which could happen very soon)
+        _bodyman.updateOccupantStatus(_memobj, OccupantInfo.ACTIVE);
+
+        // clear our chat history
+        SpeakUtil.clearHistory(_memobj.getVisibleName());
+
+        // ---------------------------------
+        // End of CrowdSession functionality
 
         // let our various server entities know that this member logged off
         _locator.memberLoggedOff(_memobj);
@@ -293,6 +334,9 @@ public class MsoySession extends WhirledSession
         protected long _idleStamp;
     }
 
+    /** A casted reference to the client object. */
+    protected MemberClientObject _mcobj;
+
     /** A casted reference to the userobject. */
     protected MemberObject _memobj;
 
@@ -308,6 +352,8 @@ public class MsoySession extends WhirledSession
 
     // dependent services
     @Inject protected @MainInvoker Invoker _invoker;
+    @Inject protected BodyManager _bodyman;
+    @Inject protected LocationManager _locman;
     @Inject protected MemberLocator _locator;
     @Inject protected MemberLogic _memberLogic;
     @Inject protected MemberRepository _memberRepo;
