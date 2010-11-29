@@ -161,7 +161,7 @@ public class JabberManager
     // from interface ClientManager.ClientObserver
     public void clientSessionDidStart (PresentsSession client)
     {
-        MemberObject user = _locator.requireMember(client.getClientObject());
+        MemberObject user = _locator.lookupMember(client.getClientObject());
         if (user == null) {
             return;
         }
@@ -178,7 +178,7 @@ public class JabberManager
     // from interface ClientManager.ClientObserver
     public void clientSessionDidEnd (PresentsSession client)
     {
-        MemberObject user = _locator.requireMember(client.getClientObject());
+        MemberObject user = _locator.lookupMember(client.getClientObject());
         if (user == null) {
             return;
         }
