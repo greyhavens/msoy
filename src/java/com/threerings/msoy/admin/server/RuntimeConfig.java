@@ -105,13 +105,8 @@ public class RuntimeConfig
         }
 
         public boolean allowSubscribe (DObject object, Subscriber<?> subscriber) {
-            // if the subscriber is a presents proxy; make sure it is proxying an admin
+            // if the subscriber is a presents proxy, just say no - we don't use this
             if (subscriber instanceof ProxySubscriber) {
-                ClientObject clobj = ((ProxySubscriber)subscriber).getClientObject();
-                if (clobj instanceof MemberClientObject) {
-                    return _locator.requireMember(clobj.username).tokens.isAdmin();
-                }
-                // err on the side of safety
                 return false;
             }
 
