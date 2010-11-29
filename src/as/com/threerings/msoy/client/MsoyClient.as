@@ -165,6 +165,17 @@ public /*abstract*/ class MsoyClient extends CrowdClient
         return _loader;
     }
 
+    // from client
+    override public function addClientObserver (observer :SessionObserver, override :Boolean = false) :void
+    {
+        // hijack all normal client observer requests and divert them to our special loader
+        if (override) {
+            super.addClientObserver(observer);
+        } else {
+            _loader.addClientObserver(observer);
+        }
+    }
+
     // from Client
     override public function gotBootstrap (data :BootstrapData, omgr :DObjectManager) :void
     {
