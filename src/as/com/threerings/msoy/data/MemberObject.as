@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.data {
 
+import com.threerings.crowd.data.BodyObject;
 import com.threerings.presents.dobj.DSet;
 
 import com.threerings.crowd.data.TokenRing;
@@ -12,11 +13,7 @@ import com.threerings.io.ObjectInputStream;
 import com.threerings.util.Comparators;
 import com.threerings.util.Name;
 
-import com.threerings.msoy.data.MemberExperience;
-
 import com.threerings.msoy.data.all.ContactEntry;
-import com.threerings.msoy.data.all.FriendEntry;
-import com.threerings.msoy.data.all.GatewayEntry;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberMailUtil;
 import com.threerings.msoy.data.all.MemberName;
@@ -34,7 +31,7 @@ import com.threerings.msoy.item.data.all.Avatar;
 /**
  * Represents a connected msoy user.
  */
-public class MemberObject extends MsoyBodyObject
+public class MemberObject extends BodyObject
 {
     MsoyAuthName; // filled into username
 
@@ -113,6 +110,9 @@ public class MemberObject extends MsoyBodyObject
 
     /** The member name and id for this user. */
     public var memberName :VizMemberName;
+
+    /** The current state of the body's actor, or null if unset/unknown/default. */
+    public var actorState :String;
 
     /** How many coins we've got jangling around on our person. */
     public var coins :int;
@@ -320,6 +320,7 @@ public class MemberObject extends MsoyBodyObject
         super.readObject(ins);
 
         memberName = VizMemberName(ins.readObject());
+        actorState = (ins.readField(String) as String);
         coins = ins.readInt();
         bars = ins.readInt();
         level = ins.readInt();
