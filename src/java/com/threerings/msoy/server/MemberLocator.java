@@ -13,7 +13,6 @@ import com.google.inject.Singleton;
 import com.samskivert.util.ObserverList;
 
 import com.threerings.presents.data.ClientObject;
-import com.threerings.presents.server.InvocationException;
 import com.threerings.util.Name;
 
 import com.threerings.presents.annotation.EventThread;
@@ -24,7 +23,6 @@ import com.threerings.crowd.server.BodyLocator;
 
 import com.threerings.msoy.data.MemberClientObject;
 import com.threerings.msoy.data.MemberObject;
-import com.threerings.msoy.data.MsoyAuthName;
 import com.threerings.msoy.data.all.MemberName;
 
 import java.util.Collection;
@@ -160,6 +158,16 @@ public class MemberLocator extends BodyLocator
     {
         _omgr.requireEventThread();
         return _online.get(((MemberName) visibleName).getId());
+    }
+
+    @Override // from BodyLocator
+    public BodyObject forClient (ClientObject client)
+    {
+        if (client instanceof MemberClientObject) {
+            return requireMember(client);
+        } else {
+            return super.forClient(client);
+        }
     }
 
     /** A mapping from member name to member object for all online members. */
