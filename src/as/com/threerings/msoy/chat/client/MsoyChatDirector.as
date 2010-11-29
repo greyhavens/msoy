@@ -204,7 +204,7 @@ public class MsoyChatDirector extends ChatDirector
     override public function clientDidLogon (event :ClientEvent) :void
     {
         super.clientDidLogon(event);
-        _chatTabs.memberObjectUpdated(event.getClient().getClientObject() as MemberObject);
+        _chatTabs.memberObjectUpdated(_mctx.getMemberObject());
     }
 
     // from ChatDirector

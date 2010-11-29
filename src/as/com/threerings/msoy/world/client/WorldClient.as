@@ -22,6 +22,7 @@ import com.threerings.util.Log;
 import com.threerings.util.Name;
 
 import com.threerings.presents.client.ClientAdapter;
+import com.threerings.presents.client.ClientEvent;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.dobj.DObjectManager;
 import com.threerings.presents.net.BootstrapData;
@@ -137,12 +138,11 @@ public class WorldClient extends MsoyClient
             "staticMediaURL", DeploymentConfig.staticMediaURL);
     }
 
-    // from Client
-    override public function gotClientObject (clobj :ClientObject) :void
+    override protected function clientDidLogon (event :ClientEvent) :void    
     {
-        super.gotClientObject(clobj);
+        super.clientDidLogon(event);
 
-        var member :MemberObject = clobj as MemberObject;
+        var member :MemberObject = _ctx.getMemberObject();
         if (_featuredPlaceView || member == null) {
             return;
         }
