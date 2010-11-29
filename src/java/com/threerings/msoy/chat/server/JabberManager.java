@@ -61,6 +61,7 @@ import com.threerings.msoy.data.all.ContactEntry;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.GatewayEntry;
 import com.threerings.msoy.data.all.JabberName;
+import com.threerings.msoy.server.MemberLocator;
 import com.threerings.msoy.server.ServerConfig;
 
 import com.threerings.msoy.chat.client.JabberService;
@@ -160,10 +161,10 @@ public class JabberManager
     // from interface ClientManager.ClientObserver
     public void clientSessionDidStart (PresentsSession client)
     {
-        if (!_conn.isConnected() || !(client.getClientObject() instanceof MemberObject)) {
+        MemberObject user = _locator.requireMember(client.getClientObject());
+        if (user == null) {
             return;
         }
-        MemberObject user = (MemberObject)client.getClientObject();
         user.startTransaction();
         try {
             for (String gateway : _gateways) {
@@ -177,10 +178,10 @@ public class JabberManager
     // from interface ClientManager.ClientObserver
     public void clientSessionDidEnd (PresentsSession client)
     {
-        if (!_conn.isConnected() || !(client.getClientObject() instanceof MemberObject)) {
+        MemberObject user = _locator.requireMember(client.getClientObject());
+        if (user == null) {
             return;
         }
-        MemberObject user = (MemberObject)client.getClientObject();
         logoffUser(user.username);
         removePacketResponder(user);
         _users.remove(user.username);
@@ -194,7 +195,7 @@ public class JabberManager
             listener.requestFailed("IM service not currently available");
             return;
         }
-        final MemberObject user = (MemberObject)caller;
+        final MemberObject user = _locator.requireMember(caller);
         Registration reg = new Registration();
         reg.setTo(gateway + "." + _conn.getServiceName());
         String uJID = getJID(user);
@@ -232,7 +233,7 @@ public class JabberManager
             listener.requestFailed("IM service not currently available");
             return;
         }
-        MemberObject user = (MemberObject)caller;
+        MemberObject user = _locator.requireMember(caller);
         if (!user.gateways.containsKey(gateway)) {
             listener.requestFailed("You are not currently logged into this IM service");
             return;
@@ -248,7 +249,7 @@ public class JabberManager
             listener.requestFailed("IM service not currently available");
             return;
         }
-        final MemberObject user = (MemberObject)caller;
+        MemberObject user = _locator.requireMember(caller);
         Chat chat = getChat(user, name);
         chat.sendMessage(message);
         String result = null;
@@ -628,6 +629,7 @@ public class JabberManager
 
     // dependencies
     @Inject protected ChatProvider _chatprov;
+    @Inject protected MemberLocator _locator;
     @Inject protected RootDObjectManager _omgr;
 
     /** The time between reconnection attempts. */

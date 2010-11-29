@@ -273,7 +273,7 @@ public class MemberManager
                                   final InvocationService.ResultListener listener)
         throws InvocationException
     {
-        final MemberObject user = (MemberObject) caller;
+        final MemberObject user = _locator.requireMember(caller);
         _invoker.postUnit(new ServiceUnit("inviteToBeFriend", listener) {
             @Override public void invokePersistent () throws Exception {
                 _autoFriended = _memberLogic.inviteToBeFriend(user.getMemberId(), friendId);
@@ -289,7 +289,7 @@ public class MemberManager
     public void inviteAllToBeFriends (final ClientObject caller, final int memberIds[],
                                       final InvocationService.ConfirmListener listener)
     {
-        final MemberObject user = (MemberObject) caller;
+        final MemberObject user = _locator.requireMember(caller);
         if (memberIds.length == 0) {
             log.warning("Called inviteAllToBeFriends with no member ids", "caller", caller.who());
             listener.requestProcessed();
@@ -322,7 +322,7 @@ public class MemberManager
                                final InvocationService.ConfirmListener listener)
         throws InvocationException
     {
-        final MemberObject user = (MemberObject) caller;
+        final MemberObject user = _locator.requireMember(caller);
         if (user.location == null) {
             throw new InvocationException(InvocationCodes.INTERNAL_ERROR);
 //            // TEST: let's pretend that we KNOW that they're in a game... just move them home
@@ -350,7 +350,7 @@ public class MemberManager
                                           final InvocationService.ResultListener listener)
         throws InvocationException
     {
-        final MemberObject user = (MemberObject) caller;
+        final MemberObject user = _locator.requireMember(caller);
 
         // ensure that the other member is a full friend (or we're support)
         if (!user.tokens.isSupport() &&
@@ -370,7 +370,7 @@ public class MemberManager
         ClientObject caller, String message, InvocationService.ConfirmListener listener)
         throws InvocationException
     {
-        final MemberObject user = (MemberObject) caller;
+        final MemberObject user = _locator.requireMember(caller);
         user.setAwayMessage(message);
         _bodyMan.updateOccupantInfo(user, new MemberInfo.Updater<MemberInfo>() {
             public boolean update (MemberInfo info) {
@@ -390,7 +390,7 @@ public class MemberManager
         InvocationService.ConfirmListener listener)
         throws InvocationException
     {
-        MemberObject user = (MemberObject) caller;
+        final MemberObject user = _locator.requireMember(caller);
         final int muterId = user.getMemberId();
         if (muterId == muteeId || muteeId == 0) {
             throw new InvocationException(InvocationCodes.E_INTERNAL_ERROR);
@@ -407,7 +407,7 @@ public class MemberManager
                                 InvocationService.ConfirmListener listener)
         throws InvocationException
     {
-        final MemberObject user = (MemberObject) caller;
+        final MemberObject user = _locator.requireMember(caller);
         _invoker.postUnit(new ServiceUnit("setDisplayName", listener,
                                           "user", user.who(), "name", name) {
             @Override public void invokePersistent () throws Exception {
@@ -543,7 +543,7 @@ public class MemberManager
         ClientObject caller, String status, InvocationService.InvocationListener listener)
         throws InvocationException
     {
-        final MemberObject member = (MemberObject) caller;
+        final MemberObject member = _locator.requireMember(caller);
         final String commitStatus = StringUtil.truncate(status, Profile.MAX_STATUS_LENGTH);
         _invoker.postUnit(new PersistingUnit("updateStatus", listener, "who", member.who()) {
             @Override public void invokePersistent () throws Exception {
@@ -562,11 +562,9 @@ public class MemberManager
     public void notifyAll (Notification note)
     {
         for (ClientObject clobj : _clmgr.clientObjects()) {
-            if (clobj instanceof MemberObject) {
-                MemberObject mem = (MemberObject) clobj;
-                if (!mem.isViewer()) {
-                    _notifyMan.notify(mem, note);
-                }
+            final MemberObject mem = _locator.lookupMember(clobj);
+            if (mem != null && !mem.isViewer()) {
+                _notifyMan.notify(mem, note);
             }
         }
     }

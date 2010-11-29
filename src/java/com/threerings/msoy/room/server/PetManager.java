@@ -166,7 +166,7 @@ public class PetManager
                          final PetService.ConfirmListener listener)
         throws InvocationException
     {
-        final MemberObject user = (MemberObject)caller;
+        final MemberObject user = _locator.requireMember(caller);
 
         // if the owner is already walking a pet, they can't call another
         if (user.walkingId != 0) {
@@ -221,7 +221,7 @@ public class PetManager
                           PetService.ConfirmListener listener)
         throws InvocationException
     {
-        MemberObject user = (MemberObject)caller;
+        final MemberObject user = _locator.requireMember(caller);
         PetHandler handler = _handlers.get(petId);
         if (handler == null) {
             log.warning("orderPet() on non-resolved pet [who=" + user.who() +
@@ -240,7 +240,7 @@ public class PetManager
                           PetService.ConfirmListener listener)
         throws InvocationException
     {
-        final MemberObject user = (MemberObject)caller;
+        final MemberObject user = _locator.requireMember(caller);
 
         // get the manager of the room where we're chatting
         PlaceManager pmgr = _placeReg.getPlaceManager(user.getPlaceOid());
@@ -349,6 +349,7 @@ public class PetManager
     @Inject protected @MainInvoker Invoker _invoker;
     @Inject protected Injector _injector;
     @Inject protected MemoryRepository _memoryRepo;
+    @Inject protected MemberLocator _locator;
     @Inject protected PetRepository _petRepo;
     @Inject protected PlaceRegistry _placeReg;
     @Inject protected SceneRegistry _sceneReg;

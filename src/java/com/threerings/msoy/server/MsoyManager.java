@@ -84,7 +84,7 @@ public class MsoyManager
                             String[] emails, String message, boolean friend,
                             InvocationService.ConfirmListener cl)
     {
-        final MemberObject memObj = (MemberObject) caller;
+        final MemberObject memObj = _locator.requireMember(caller);
         Args args = isGame ? Args.compose("game", "p", placeId) : Args.compose("s" + placeId);
         int memberId = memObj.getMemberId();
         String url = friend ? Pages.WORLD.makeFriendURL(memberId, args) :
@@ -105,7 +105,8 @@ public class MsoyManager
     public void getABTestGroup (ClientObject caller, final String test, final boolean logEvent,
                                 InvocationService.ResultListener listener)
     {
-        final VisitorInfo vinfo = ((MemberObject)caller).visitorInfo;
+        final MemberObject memObj = _locator.requireMember(caller);
+        final VisitorInfo vinfo = memObj.visitorInfo;
         _invoker.postUnit(new PersistingUnit("getABTestGroup", listener) {
             @Override public void invokePersistent () throws Exception {
                 _testGroup = _testLogic.getABTestGroup(test, vinfo, logEvent);
@@ -120,7 +121,8 @@ public class MsoyManager
     // from interface MemberProvider
     public void trackTestAction (ClientObject caller, final String test, final String action)
     {
-        final VisitorInfo vinfo = ((MemberObject) caller).visitorInfo;
+        final MemberObject memObj = _locator.requireMember(caller);
+        final VisitorInfo vinfo = memObj.visitorInfo;
         _invoker.postUnit(new WriteOnlyUnit("trackTestAction") {
             @Override public void invokePersist () throws Exception {
                 _testLogic.trackTestAction(test, action, vinfo);
@@ -149,7 +151,8 @@ public class MsoyManager
     // from interface MemberProvider
     public void dispatchDeferredNotifications (ClientObject caller)
     {
-        _notifyMan.dispatchDeferredNotifications((MemberObject)caller);
+        final MemberObject memObj = _locator.requireMember(caller);
+        _notifyMan.dispatchDeferredNotifications(memObj);
     }
 
     // from MsoyProvider
@@ -159,7 +162,7 @@ public class MsoyManager
     {
         final int baseCost = _runtime.getBarCost(CostsConfigObject.BROADCAST_BASE);
         final int increment = _runtime.getBarCost(CostsConfigObject.BROADCAST_INCREMENT);
-        final int memberId = ((MemberObject)caller).getMemberId();
+        final int memberId = _locator.requireMember(caller).getMemberId();
         _invoker.postUnit(new PersistingUnit("secureBroadcastQuote", listener) {
             @Override public void invokePersistent ()
                 throws InvocationException {
@@ -183,8 +186,7 @@ public class MsoyManager
         InvocationService.ResultListener listener)
         throws InvocationException
     {
-        MemberObject member = (MemberObject) caller;
-
+        final MemberObject member = _locator.requireMember(caller);
         if (!member.tokens.isSubscriberPlus()) {
             throw new InvocationException(InvocationCodes.E_ACCESS_DENIED);
         }
@@ -256,6 +258,7 @@ public class MsoyManager
     @Inject protected ChatProvider _chatprov;
     @Inject protected MailSender _mailer;
     @Inject protected MemberRepository _memberRepo;
+    @Inject protected MemberLocator _locator;
     @Inject protected MoneyLogic _moneyLogic;
     @Inject protected MoneyRepository _moneyRepo;
     @Inject protected MsoyEventLogger _eventLog;

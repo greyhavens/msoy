@@ -28,7 +28,9 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.all.DeploymentConfig;
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MemberLocal;
+import com.threerings.msoy.server.MemberLocator;
 import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.PopularPlacesSnapshot;
 import com.threerings.msoy.server.StatLogic;
@@ -76,7 +78,7 @@ public class TourManager
         InvocationService.ResultListener listener)
         throws InvocationException
     {
-        final MemberObject memObj = (MemberObject) caller;
+        final MemberObject memObj = _locator.lookupMember((MemberName) caller.username);
 
         // put them "on tour" if they're not already
         if (!memObj.onTour) {
@@ -101,7 +103,7 @@ public class TourManager
     // from TourProvider
     public void endTour (ClientObject caller)
     {
-        MemberObject memObj = (MemberObject) caller;
+         MemberObject memObj = _locator.requireMember(caller);
 
         // stop their tour if they're on one
         if (memObj.onTour) {
@@ -212,6 +214,7 @@ public class TourManager
 
     @Inject protected @MainInvoker Invoker _invoker;
     @Inject protected MemberManager _memberMan;
+    @Inject protected MemberLocator _locator;
     @Inject protected MsoySceneRepository _sceneRepo;
     @Inject protected PresentsDObjectMgr _omgr;
     @Inject protected StatLogic _statLogic;

@@ -6,6 +6,8 @@ package com.threerings.msoy.data;
 import java.util.Set;
 import javax.annotation.Generated;
 
+import com.threerings.presents.data.ClientObject;
+import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.dobj.DSet;
 import com.threerings.util.Name;
 
@@ -370,6 +372,12 @@ public class MemberObject extends BodyObject
     }
 
     // from interface MsoyUserObject
+
+    @Override public int getPlaceOid ()
+    {
+        return 0;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
     public MemberName getMemberName ()
     {
         return memberName;
@@ -1110,4 +1118,7 @@ public class MemberObject extends BodyObject
 
     /** The user's party summary. Only needed on the server. */
     protected transient PartySummary _party;
+
+    /** The actual {@link ClientObject} we represent. */
+    protected transient MemberClientObject _mcobj;
 }

@@ -258,7 +258,7 @@ public class PartyRegistry
         ClientObject caller, final byte mode, final InvocationService.ResultListener rl)
         throws InvocationException
     {
-        final MemberObject member = (MemberObject)caller;
+        final MemberObject member = _memberLocator.requireMember(caller);
 
         final List<PartyBoardInfo> list = Lists.newArrayList();
         for (MsoyNodeObject nodeObj : _peerMgr.getMsoyNodeObjects()) {
@@ -294,7 +294,7 @@ public class PartyRegistry
     public void getCreateCost (ClientObject caller, InvocationService.ResultListener rl)
         throws InvocationException
     {
-        MemberObject member = (MemberObject)caller;
+        final MemberObject member = _memberLocator.requireMember(caller);
 
         PriceQuote quote;
         if (member.tokens.isSubscriberPlus()) {
@@ -314,7 +314,7 @@ public class PartyRegistry
         final PartyBoardService.JoinListener jl)
         throws InvocationException
     {
-        final MemberObject member = (MemberObject)caller;
+        final MemberObject member = _memberLocator.requireMember(caller);
 
         if (member.partyId != 0) {
             // TODO: possibly a better error? Surely this will be blocked on the client

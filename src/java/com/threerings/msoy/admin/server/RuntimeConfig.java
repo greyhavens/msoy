@@ -22,9 +22,11 @@ import com.threerings.msoy.admin.data.CostsConfigObject;
 import com.threerings.msoy.admin.data.MoneyConfigObject;
 import com.threerings.msoy.admin.data.ServerConfigObject;
 import com.threerings.msoy.admin.data.SubscriptionConfigObject;
+import com.threerings.msoy.data.MemberClientObject;
 import com.threerings.msoy.data.MemberObject;
 
 import com.threerings.msoy.money.server.MoneyExchange;
+import com.threerings.msoy.server.MemberLocator;
 
 import static com.threerings.msoy.Log.log;
 
@@ -106,8 +108,8 @@ public class RuntimeConfig
             // if the subscriber is a presents proxy; make sure it is proxying an admin
             if (subscriber instanceof ProxySubscriber) {
                 ClientObject clobj = ((ProxySubscriber)subscriber).getClientObject();
-                if (clobj instanceof MemberObject) {
-                    return ((MemberObject)clobj).tokens.isAdmin();
+                if (clobj instanceof MemberClientObject) {
+                    return _locator.requireMember(clobj.username).tokens.isAdmin();
                 }
                 // err on the side of safety
                 return false;
@@ -160,5 +162,6 @@ public class RuntimeConfig
 
     // our dependencies
     @Inject protected ConfigRegistry _confReg;
+    @Inject protected MemberLocator _locator;
     @Inject protected MoneyExchange _exchange;
 }

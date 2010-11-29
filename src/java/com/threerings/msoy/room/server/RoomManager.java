@@ -353,7 +353,7 @@ public class RoomManager extends SpotSceneManager
     public MemberObject requireManager (ClientObject caller)
         throws InvocationException
     {
-        MemberObject member = (MemberObject) caller;
+        final MemberObject member = _locator.requireMember(caller);
         if (!canManage(member)) {
             throw new InvocationException(RoomCodes.E_ACCESS_DENIED);
         }
@@ -439,11 +439,9 @@ public class RoomManager extends SpotSceneManager
                                    boolean isAction)
     {
         // make sure the caller is in the room
-        if (caller instanceof MemberObject) {
-            MemberObject who = (MemberObject)caller;
-            if (!_roomObj.occupants.contains(who.getOid())) {
-                return;
-            }
+        final MemberObject who = _locator.lookupMember(caller);
+        if (who != null && !_roomObj.occupants.contains(who.getOid())) {
+            return;
         }
 
         // if this client does not currently control this entity; ignore the request; if no one
@@ -462,12 +460,9 @@ public class RoomManager extends SpotSceneManager
     public void sendSpriteSignal (ClientObject caller, String name, byte[] arg)
     {
         // Caller could be a WindowClientObject if coming from a thane client
-        if (caller instanceof MemberObject) {
-            // make sure the caller is in the room
-            MemberObject who = (MemberObject)caller;
-            if (!_roomObj.occupants.contains(who.getOid())) {
-                return;
-            }
+        final MemberObject who = _locator.lookupMember(caller);
+        if (who != null && !_roomObj.occupants.contains(who.getOid())) {
+            return;
         }
 
         // dispatch this as a simple MessageEvent
@@ -480,7 +475,7 @@ public class RoomManager extends SpotSceneManager
         final InvocationService.ConfirmListener listener)
         throws InvocationException
     {
-        final MemberObject who = (MemberObject) caller;
+        final MemberObject who = _locator.requireMember(caller);
         ItemIdent key = new ItemIdent(MsoyItemType.AUDIO, audioItemId);
         Audio current = _roomObj.playlist.get(key);
 
@@ -566,11 +561,9 @@ public class RoomManager extends SpotSceneManager
     // documentation inherited from RoomProvider
     public void setActorState (ClientObject caller, ItemIdent item, int actorOid, String state)
     {
-        if (caller instanceof MemberObject) {
-            MemberObject who = (MemberObject) caller;
-            if (!_roomObj.occupants.contains(who.getOid())) {
-                return;
-            }
+        final MemberObject who = _locator.lookupMember(caller);
+        if (who != null && !_roomObj.occupants.contains(who.getOid())) {
+            return;
         }
 
         if (actorOid == PUPPET_OID) {
@@ -593,7 +586,7 @@ public class RoomManager extends SpotSceneManager
 
         } else {
             // the actor is the caller
-            actor = (MemberObject)caller;
+            actor = who;
         }
 
         // if this client does not currently control this entity; ignore the request; if no one
@@ -646,7 +639,7 @@ public class RoomManager extends SpotSceneManager
     public void publishRoom (ClientObject caller, RoomService.InvocationListener listener)
         throws InvocationException
     {
-        MemberObject user = (MemberObject) caller;
+        MemberObject user = _locator.requireMember(caller);
         if (!canManage(user)) {
             throw new InvocationException(RoomCodes.E_ACCESS_DENIED);
         }
@@ -663,8 +656,10 @@ public class RoomManager extends SpotSceneManager
         ClientObject caller, ItemIdent ident, String key, byte[] newValue,
         RoomService.ResultListener listener)
     {
+        MemberObject user = _locator.requireMember(caller);
+
         // do any first-level validation based on the item and the caller
-        if (!validateMemoryUpdate((MemberObject)caller, ident)) {
+        if (!validateMemoryUpdate(user, ident)) {
             listener.requestProcessed(Boolean.FALSE);
             return;
         }
@@ -842,7 +837,7 @@ public class RoomManager extends SpotSceneManager
                               RoomService.ConfirmListener lner)
         throws InvocationException
     {
-        final MemberObject sender = (MemberObject)caller;
+        final MemberObject sender = _locator.requireMember(caller);
 
         // sanity check
         if (recips.length > 25) {
@@ -1319,8 +1314,9 @@ public class RoomManager extends SpotSceneManager
                     if (isAgent(caller)) {
                         return;
                     }
-                } else if (caller instanceof MemberObject) {
-                    if (((MemberObject)caller).game.gameId == gameId) {
+                } else {
+                    MemberObject user = _locator.lookupMember(caller);
+                    if (user != null && user.game.gameId == gameId) {
                         return;
                     }
                 }

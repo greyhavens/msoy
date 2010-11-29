@@ -88,7 +88,7 @@ public class WorldManager
         ClientObject caller, InvocationService.ResultListener listener)
         throws InvocationException
     {
-        MemberObject memObj = (MemberObject) caller;
+        MemberObject memObj = _locator.requireMember(caller);
         final MemberExperience[] experiences = new MemberExperience[memObj.experiences.size()];
         memObj.experiences.toArray(experiences);
         final boolean onTour = memObj.onTour;
@@ -114,7 +114,7 @@ public class WorldManager
                            HomeResultListener listener)
         throws InvocationException
     {
-        final MemberObject memobj = (MemberObject)caller;
+        final MemberObject memobj = _locator.requireMember(caller);
         final boolean tofu = (memobj.avatar == null || memobj.avatar.itemId == 0);
 
         if (ownerId == 0) {
@@ -157,7 +157,8 @@ public class WorldManager
         ClientObject caller, final int giftCatalogId, ConfirmListener listener)
         throws InvocationException
     {
-        _invoker.postUnit(new GiftUnit((MemberObject)caller, giftCatalogId, listener));
+        final MemberObject memObj = _locator.requireMember(caller);
+        _invoker.postUnit(new GiftUnit(memObj, giftCatalogId, listener));
     }
 
     @Override // from interface WorldProvider
@@ -165,7 +166,7 @@ public class WorldManager
                                 final int sceneId, final ConfirmListener listener)
         throws InvocationException
     {
-        final MemberObject member = (MemberObject) caller;
+        final MemberObject member = _locator.requireMember(caller);
         _invoker.postUnit(new PersistingUnit("setHomeSceneId", listener, "who", member.who()) {
             @Override public void invokePersistent () throws Exception {
                 final int memberId = member.getMemberId();
@@ -202,7 +203,7 @@ public class WorldManager
                                 final InvocationService.InvocationListener listener)
         throws InvocationException
     {
-        final MemberObject user = (MemberObject) caller;
+        final MemberObject user = _locator.requireMember(caller);
 
         // make sure the target member is online and in the same room as the requester
         final MemberObject target = _locator.lookupMember(memberId);
@@ -222,7 +223,7 @@ public class WorldManager
                               final InvocationService.InvocationListener listener)
         throws InvocationException
     {
-        final MemberObject user = (MemberObject) caller;
+        final MemberObject user = _locator.requireMember(caller);
 
         // if the caller is requesting to clear their follow, do so
         if (memberId == 0) {
@@ -252,7 +253,7 @@ public class WorldManager
                                InvocationService.InvocationListener listener)
         throws InvocationException
     {
-        MemberObject leader = (MemberObject) caller;
+        final MemberObject leader = _locator.requireMember(caller);
 
         if (followerId == 0) { // Clear all followers
             for (MemberName follower : leader.followers) {
@@ -279,7 +280,8 @@ public class WorldManager
     public void setAvatar (ClientObject caller, int avatarItemId, final ConfirmListener listener)
         throws InvocationException
     {
-        doSetAvatar((MemberObject)caller, avatarItemId, listener);
+        final MemberObject user = _locator.requireMember(caller);
+        doSetAvatar(user, avatarItemId, listener);
     }
 
     /**

@@ -32,6 +32,7 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.game.data.MsoyGameCodes;
 import com.threerings.msoy.item.data.all.MsoyItemType;
+import com.threerings.msoy.server.MemberLocator;
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.ServerMessages;
 import com.threerings.msoy.server.util.ServiceUnit;
@@ -304,7 +305,7 @@ public class ItemManager
         ClientObject caller, final ItemIdent ident, final InvocationService.ResultListener rl)
         throws InvocationException
     {
-        final MemberObject user = (MemberObject) caller;
+        final MemberObject user = _locator.requireMember(caller);
 
         getItem(ident, new ResultAdapter<Item>(rl) {
             public void requestCompleted (Item item) {
@@ -348,7 +349,8 @@ public class ItemManager
     public void peepItem (ClientObject caller, ItemIdent ident, InvocationService.ResultListener rl)
         throws InvocationException
     {
-        final MemberObject user = (MemberObject) caller;
+        final MemberObject user = _locator.requireMember(caller);
+
         getItem(ident, new ResultAdapter<Item>(rl) {
             public void requestCompleted (Item item) {
                 if (item.ownerId == user.getMemberId()) {
@@ -366,7 +368,7 @@ public class ItemManager
         InvocationService.ConfirmListener cl)
         throws InvocationException
     {
-        final MemberObject user = (MemberObject) caller;
+        final MemberObject user = _locator.requireMember(caller);
 
         _invoker.postUnit(new ServiceUnit("addFlag", cl) {
             @Override public void invokePersistent ()
@@ -439,7 +441,7 @@ public class ItemManager
                              final InvocationService.ConfirmListener lner)
         throws InvocationException
     {
-        final MemberObject user = (MemberObject) caller;
+        final MemberObject user = _locator.requireMember(caller);
         if (item.type == MsoyItemType.AVATAR) {
             log.warning("Tried to reclaim invalid item type", "who", user.who(), "item", item);
             throw new InvocationException(InvocationCodes.INTERNAL_ERROR);
@@ -474,6 +476,7 @@ public class ItemManager
     @Inject protected @MainInvoker Invoker _invoker;
     @Inject protected BodyManager _bodyMan;
     @Inject protected ItemLogic _itemLogic;
+    @Inject protected MemberLocator _locator;
     @Inject protected MsoyEventLogger _eventLog;
     @Inject protected SceneRegistry _sceneReg;
     @Inject protected ServerMessages _serverMsgs;
