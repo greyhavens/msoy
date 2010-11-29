@@ -3,22 +3,17 @@
 
 package com.threerings.msoy.ui {
 
-import flash.display.DisplayObject;
 import flash.display.Sprite;
-
-import flash.filters.GlowFilter;
 
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 import flash.text.TextFormat;
 
 import com.threerings.text.TextFieldUtil;
-import com.threerings.util.Log;
 
 import com.threerings.crowd.data.OccupantInfo;
 
 import com.threerings.msoy.client.MsoyController;
-import com.threerings.msoy.data.MsoyBodyObject;
 import com.threerings.msoy.data.MsoyUserOccupantInfo;
 import com.threerings.msoy.room.data.MemberInfo;
 import com.threerings.msoy.room.data.PuppetName;
@@ -57,7 +52,7 @@ public class MsoyNameLabel extends Sprite
      * Set the displayed name.
      */
     public function setName (name :String) :void
-    { 
+    {
         TextFieldUtil.updateText(_label, name);
     }
 

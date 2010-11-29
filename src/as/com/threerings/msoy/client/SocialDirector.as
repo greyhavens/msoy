@@ -120,7 +120,7 @@ public class SocialDirector extends BasicDirector
         var memId :int = name.getId();
         // if we're not logged on to the world server yet or this member is us or already our
         // friend or we've already added them to the seen list, skip 'em
-        var member :MemberObject = MemberObject(_mctx.getMsoyClient().getClientObject());
+        var member :MemberObject = _mctx.getMemberObject();
         return (member != null) && (memId != member.getMemberId()) && (_shown[memId] == null) &&
             !member.isOnlineFriend(memId) &&
             !WorldContext(_mctx).getPartyDirector().partyContainsPlayer(memId);

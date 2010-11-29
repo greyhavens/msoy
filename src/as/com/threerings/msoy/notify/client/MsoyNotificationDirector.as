@@ -225,10 +225,9 @@ public class MsoyNotificationDirector extends NotificationDirector
     {
         super.showStartupNotifications();
 
-        const clobj :Object = _ctx.getClient().getClientObject();
-        const newMail :int = (clobj is MemberObject) ? MemberObject(clobj).newMailCount : 0;
-        if (newMail > 0) {
-            notifyNewMail(newMail);
+        const memobj :MemberObject = _mctx.getMemberObject();
+        if (memobj.newMailCount > 0) {
+            notifyNewMail(memobj.newMailCount);
         }
 
         // check their flash version
@@ -245,8 +244,7 @@ public class MsoyNotificationDirector extends NotificationDirector
 
     protected function statusDelayExpired (memberId :int) :void
     {
-        var entry :FriendEntry = MemberObject(_mctx.getClient().getClientObject()).friends.get(
-            memberId) as FriendEntry;
+        var entry :FriendEntry = _mctx.getMemberObject().friends.get(memberId) as FriendEntry;
         if (entry != null) {
             var statusString :String =
                 _mctx.getChatDirector().filter(entry.status, entry.name, false);

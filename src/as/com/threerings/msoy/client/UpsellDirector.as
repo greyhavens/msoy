@@ -86,8 +86,7 @@ public class UpsellDirector extends BasicDirector
 
         var placeInfo :PlaceInfo = _mctx.getMsoyController().getPlaceInfo();
         var embed :String = _mctx.getMsoyClient().isEmbedded() ? "embed" : "site";
-        var guest :String = MemberObject(_mctx.getClient().getClientObject()).isPermaguest() ?
-            "guest" : "mem";
+        var guest :String = (_mctx.getMemberObject()).isPermaguest() ? "guest" : "mem";
         var place :String = placeInfo.inGame ? "game" : "room";
         var mins :String = (event == null) ? "-1" : String(_timer.currentCount);
 

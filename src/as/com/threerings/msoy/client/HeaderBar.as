@@ -214,7 +214,7 @@ public class HeaderBar extends HBox
      */
     protected function clientDidChange (... ignored) :void
     {
-        const cliObj :MemberObject = _ctx.getClient().getClientObject() as MemberObject;
+        const cliObj :MemberObject = _ctx.getMemberObject();
         if (cliObj != null) {
             cliObj.addListener(new AttributeChangeAdapter(clientAttrChanged));
             if (_moneyEnabled) {

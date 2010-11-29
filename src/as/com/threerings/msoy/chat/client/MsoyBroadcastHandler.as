@@ -63,7 +63,7 @@ public class MsoyBroadcastHandler extends BroadcastHandler
 
     protected function getBody (ctx :CrowdContext) :BodyObject
     {
-        return BodyObject(ctx.getClient().getClientObject());
+        return getMsoyContext(ctx).getMemberObject();
     }
 
     protected function getMsoyContext (ctx :CrowdContext) :MsoyContext

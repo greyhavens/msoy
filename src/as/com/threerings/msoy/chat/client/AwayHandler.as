@@ -39,8 +39,7 @@ public class AwayHandler extends CommandHandler
                 return "m.usage_back"; // back can only be used to disable awayness
             }
 
-        } else if (hasMsg || (cmd != "dnd") ||
-                !MemberObject(mctx.getClient().getClientObject()).isAway()) {
+        } else if (hasMsg || (cmd != "dnd") || !mctx.getMemberObject().isAway()) {
             msg = hasMsg ? args : Msgs.GENERAL.get("m.awayDefault");
         }
         // do the change, give feedback
