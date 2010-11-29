@@ -24,6 +24,7 @@ import com.threerings.crowd.server.BodyLocator;
 
 import com.threerings.msoy.data.MemberClientObject;
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.MsoyAuthName;
 import com.threerings.msoy.data.all.MemberName;
 
 import java.util.Collection;
@@ -63,8 +64,7 @@ public class MemberLocator extends BodyLocator
     public MemberObject lookupMember (ClientObject loader)
     {
         if (loader instanceof MemberClientObject) {
-            int memberId = ((MemberName) loader.username).getId();
-            return lookupMember(memberId);
+            return ((MemberClientObject) loader).memobj;
         }
         return null;
     }
@@ -77,13 +77,12 @@ public class MemberLocator extends BodyLocator
     public MemberObject requireMember (ClientObject loader)
     {
         if (loader instanceof MemberClientObject) {
-            int memberId = ((MemberName) loader.username).getId();
-            MemberObject memobj = lookupMember(memberId);
+            MemberObject memobj = ((MemberClientObject) loader).memobj;
             if (memobj != null) {
                 return memobj;
             }
-            log.warning("Invocation from Member that's not done loading", "memberId", memberId);
-            throw new IllegalStateException("Member not yet loaded");
+            log.warning("Invocation from client that's not connected", "client", loader);
+            throw new IllegalStateException("Client not connected");
         }
         log.warning("Expected source to be MemberClientObject", "client", loader);
         throw new IllegalStateException("Unexpected client type");
