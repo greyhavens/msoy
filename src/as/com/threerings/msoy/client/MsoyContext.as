@@ -30,6 +30,7 @@ import com.threerings.crowd.util.CrowdContext;
 
 import com.threerings.crowd.chat.client.ChatDirector;
 
+import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyAuthResponseData;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.MsoyCredentials;
@@ -117,12 +118,17 @@ public /*abstract*/ class MsoyContext
         return _topPanel.getControlBar();
     }
 
+    public function getBody () :MemberObject
+    {
+        return (_client.loader != null) ? _client.loader.getBody() : null;
+    }
+
     /**
      * Return's this client's member name.
      */
     public function getMyName () :MemberName
     {
-        var body :BodyObject = (_client.getClientObject() as BodyObject);
+        var body :BodyObject = getBody();
         return (body == null) ? null : body.getVisibleName() as MemberName;
     }
 
@@ -140,7 +146,7 @@ public /*abstract*/ class MsoyContext
      */
     public function isRegistered () :Boolean
     {
-        var body :BodyObject = (_client.getClientObject() as BodyObject);
+        var body :BodyObject = getBody();
         return (body != null) && !(body.getVisibleName() as MemberName).isViewer() &&
             !MemberMailUtil.isPermaguest(body.username.toString());
     }
