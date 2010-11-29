@@ -59,7 +59,7 @@ public class FriendsListPanel extends FlyingPanel
         width = POPUP_WIDTH;
 
         _cliObs = new ClientAdapter(null, clientDidLogon);
-        _wctx.getClient().addClientObserver(_cliObs);
+        _wctx.getClient().loader.addClientObserver(_cliObs);
         _wctx.getMuteDirector().addMuteObserver(this);
 
         open();
@@ -75,7 +75,7 @@ public class FriendsListPanel extends FlyingPanel
             _friendsList.shutdown();
         }
         _wctx.getMuteDirector().removeMuteObserver(this);
-        _wctx.getClient().removeClientObserver(_cliObs);
+        _wctx.getClient().loader.removeClientObserver(_cliObs);
 
         super.close();
     }

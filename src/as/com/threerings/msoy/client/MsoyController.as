@@ -175,7 +175,7 @@ public class MsoyController extends Controller
     {
         _mctx = mctx;
         _mctx.getClient().addServiceGroup(CrowdCodes.CROWD_GROUP);
-        _mctx.getClient().addClientObserver(this);
+        _mctx.getClient().loader.addClientObserver(this);
         _topPanel = topPanel;
 
         // create a timer to poll mouse position and track timing

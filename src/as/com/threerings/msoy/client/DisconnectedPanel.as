@@ -60,9 +60,9 @@ public class DisconnectedPanel extends VBox
         super.parentChanged(p);
 
         if (p != null) {
-            _client.addClientObserver(_clientObs);
+            _client.loader.addClientObserver(_clientObs);
         } else {
-            _client.removeClientObserver(_clientObs);
+            _client.loader.removeClientObserver(_clientObs);
         }
     }
 

@@ -111,6 +111,9 @@ public /*abstract*/ class MsoyClient extends CrowdClient
         log.info("Starting up", "capabilities", Capabilities.serverString,
             "preloader", (getTimer() - Preloader.preloaderStart));
 
+        // instantiate the mechanism by which MemberObject is loaded
+        _loader = new BodyLoader(this);
+
         // wire up our JavaScript bridge functions
         try {
             if (ExternalInterface.available) {
@@ -135,6 +138,8 @@ public /*abstract*/ class MsoyClient extends CrowdClient
         _creds = createStartupCreds(null);
         _ctx = createContext();
 
+        _loader.init(_ctx);
+
         // wire up a listener for bridge events from the embed stub
         configureBridgeFunctions(UberClient.getApplication().loaderInfo.sharedEvents);
         // then report to the embed stub that we're ready to receive bridge events
@@ -142,7 +147,7 @@ public /*abstract*/ class MsoyClient extends CrowdClient
             new Event(UberClientModes.CLIENT_READY, true));
 
         // prior to logging on to a server, set up our security policy for that server
-        addClientObserver(
+        loader.addClientObserver(
             new ClientAdapter(clientWillLogon, clientDidLogon, null, clientDidLogoff));
 
         // configure our server and port info
@@ -153,6 +158,11 @@ public /*abstract*/ class MsoyClient extends CrowdClient
         menu.hideBuiltInItems();
         UberClient.getApplication().contextMenu = menu;
         menu.addEventListener(ContextMenuEvent.MENU_SELECT, contextMenuWillPopUp);
+    }
+
+    public function get loader () :BodyLoader
+    {
+        return _loader;
     }
 
     // from Client
@@ -380,7 +390,7 @@ public /*abstract*/ class MsoyClient extends CrowdClient
             return;
         }
 
-        var member :MemberObject = _clobj as MemberObject;
+        var member :MemberObject = loader.getBody() as MemberObject;
         if (_featuredPlaceView || member == null) {
             return;
         }
@@ -542,6 +552,7 @@ public /*abstract*/ class MsoyClient extends CrowdClient
 
     protected var _ctx :MsoyContext;
     protected var _stage :Stage;
+    protected var _loader :BodyLoader;
 
     protected var _minimized :Boolean;
     protected var _embedding :Embedding;
