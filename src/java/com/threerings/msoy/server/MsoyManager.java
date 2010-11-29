@@ -75,7 +75,8 @@ public class MsoyManager
         ClientObject caller, int groupId, boolean hear, InvocationService.ConfirmListener listener)
         throws InvocationException
     {
-        caller.getLocal(MemberLocal.class).setHearingGroupChat(groupId, hear);
+        MemberObject member = _locator.requireMember(caller);
+        member.getLocal(MemberLocal.class).setHearingGroupChat(groupId, hear);
         listener.requestProcessed();
     }
 

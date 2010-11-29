@@ -60,6 +60,7 @@ import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.crowd.server.CrowdObjectAccess;
+import com.threerings.crowd.server.CrowdObjectAccess.PlaceAccessController;
 import com.threerings.crowd.server.LocationManager;
 
 import com.threerings.crowd.chat.server.SpeakUtil;
@@ -71,6 +72,7 @@ import com.threerings.whirled.spot.data.Portal;
 import com.threerings.whirled.spot.data.SceneLocation;
 import com.threerings.whirled.spot.server.SpotSceneManager;
 
+import com.google.inject.Singleton;
 import com.whirled.bureau.data.BureauTypes;
 
 import com.whirled.game.data.PropertySetEvent;
@@ -82,7 +84,6 @@ import com.whirled.game.server.WhirledGameMessageDispatcher;
 import com.whirled.game.server.WhirledGameMessageHandler;
 
 import com.threerings.msoy.data.HomePageItem;
-import com.threerings.msoy.data.MemberClientObject;
 import com.threerings.msoy.data.MemberExperience;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyBodyObject;
@@ -1099,7 +1100,7 @@ public class RoomManager extends SpotSceneManager
     @Override
     protected AccessController getAccessController ()
     {
-        return ROOM;
+        return _injector.getInstance(RoomAccessController.class);
     }
 
     @Override // from PlaceManager
@@ -2203,9 +2204,11 @@ public class RoomManager extends SpotSceneManager
      * powers to {@link WindowClientObject} instances; these are the world server representatives
      * of server-side agents. We need this for AVRGs to be able to access room data.
      */
-    protected static AccessController ROOM = new AccessController()
+    @Singleton
+    protected static class RoomAccessController extends PlaceAccessController
     {
         // documentation inherited from interface
+        @Override
         public boolean allowSubscribe (DObject object, Subscriber<?> sub)
         {
             if (sub instanceof ProxySubscriber) {
@@ -2213,18 +2216,8 @@ public class RoomManager extends SpotSceneManager
                 if (co instanceof WindowClientObject) {
                     return true;
                 }
-                if (co instanceof MemberClientObject) {
-                    return ((PlaceObject)object).occupants.contains(
-                        ((MemberClientObject) co).memobj.getOid());
-                }
             }
-            return CrowdObjectAccess.PLACE.allowSubscribe(object, sub);
-        }
-
-        // documentation inherited from interface
-        public boolean allowDispatch (DObject object, DEvent event)
-        {
-            return CrowdObjectAccess.PLACE.allowDispatch(object, event);
+            return super.allowSubscribe(object, sub);
         }
     };
 

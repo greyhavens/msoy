@@ -3,6 +3,9 @@
 
 package com.threerings.msoy.server;
 
+import com.threerings.crowd.data.BodyObject;
+import com.threerings.crowd.server.BodyLocator;
+
 import com.threerings.bureau.data.BureauClientObject;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.dobj.AccessController;
@@ -13,6 +16,12 @@ import com.threerings.presents.dobj.ProxySubscriber;
 import com.threerings.presents.dobj.Subscriber;
 import com.threerings.presents.server.PresentsObjectAccess;
 
+import com.threerings.msoy.data.MemberClientObject;
+
+import com.google.inject.Inject;
+
+import static com.threerings.presents.Log.log;
+
 /**
  * Contains standard access controllers for msoy.
  */
@@ -21,8 +30,35 @@ public class MsoyObjectAccess
     /** The default access controller. */
     public static AccessController DEFAULT = PresentsObjectAccess.DEFAULT;
 
-    /** The user access controller. */
-    public static AccessController USER = PresentsObjectAccess.DEFAULT;
+    public static AccessController USER = new AccessController ()
+    {
+        public boolean allowSubscribe (DObject object, Subscriber<?> sub)
+        {
+            if (sub instanceof ProxySubscriber) {
+                ClientObject co = ((ProxySubscriber)sub).getClientObject();
+                if (co instanceof BureauClientObject) {
+                    return true;
+                }
+                BodyObject body = null;
+                if (co instanceof MemberClientObject) {
+                    body = ((MemberClientObject) co).memobj;
+                }
+                if (object != body && object != co) {
+                    log.warning("Refusing ClientObject subscription request",
+                                "obj", ((ClientObject)object).who(), "sub", co.who());
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        public boolean allowDispatch (DObject object, DEvent event)
+        {
+            return PresentsObjectAccess.CLIENT.allowDispatch(object, event);
+        }
+
+        @Inject BodyLocator _locator;
+    };
 
     /**
      * The player access controller is identical to the user one, except it also allows bureau

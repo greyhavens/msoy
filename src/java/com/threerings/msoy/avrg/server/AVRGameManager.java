@@ -650,7 +650,7 @@ public class AVRGameManager extends PlaceManager
     @Override
     protected AccessController getAccessController ()
     {
-        return CrowdObjectAccess.BUREAU_ACCESS_PLACE;
+        return _injector.getInstance(CrowdObjectAccess.BureauAccessController.class);
     }
 
     @Override
