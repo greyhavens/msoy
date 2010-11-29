@@ -118,7 +118,7 @@ public /*abstract*/ class MsoyContext
         return _topPanel.getControlBar();
     }
 
-    public function getBody () :MemberObject
+    public function getMemberObject () :MemberObject
     {
         return (_client.loader != null) ? _client.loader.getBody() : null;
     }
@@ -128,7 +128,7 @@ public /*abstract*/ class MsoyContext
      */
     public function getMyName () :MemberName
     {
-        var body :BodyObject = getBody();
+        var body :BodyObject = getMemberObject();
         return (body == null) ? null : body.getVisibleName() as MemberName;
     }
 
@@ -146,7 +146,7 @@ public /*abstract*/ class MsoyContext
      */
     public function isRegistered () :Boolean
     {
-        var body :BodyObject = getBody();
+        var body :BodyObject = getMemberObject();
         return (body != null) && !(body.getVisibleName() as MemberName).isViewer() &&
             !MemberMailUtil.isPermaguest(body.username.toString());
     }
