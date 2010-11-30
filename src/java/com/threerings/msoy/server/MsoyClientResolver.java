@@ -14,7 +14,6 @@ import com.google.common.collect.Maps;
 
 import com.google.inject.Inject;
 
-import com.samskivert.util.Invoker;
 import com.samskivert.util.Tuple;
 
 import com.threerings.io.Streamable;
@@ -22,7 +21,6 @@ import com.threerings.io.Streamable;
 import com.threerings.msoy.mail.server.MailLogic;
 
 import com.threerings.presents.Log;
-import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.server.ClientResolutionListener;
 import com.threerings.util.StreamableArrayIntSet;
 
@@ -42,6 +40,8 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.data.all.VizMemberName;
+import com.threerings.msoy.server.ResolutionQueue.Listener;
+import com.threerings.msoy.server.ResolutionQueue.Task;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 
@@ -86,36 +86,12 @@ public class MsoyClientResolver extends CrowdClientResolver
         return null;
     }
 
-    // we have to stop ClientResolver from prematurely telling ClientManager that the session
-    // is ready to go; we don't want to trigger that until we're done resolving the actual
-    // MemberObject, which could be quite a while from now
     @Override
-    public void handleResult ()
+    public void objectAvailable (ClientObject object)
     {
-        // if we haven't failed, finish resolution on the dobj thread
-        if (_failure == null) {
-            try {
-                finishResolution(_clobj);
-            } catch (Exception e) {
-                _failure = e;
-            }
-        }
-        if (_failure != null) {
-            // destroy the dangling user object
-            _omgr.destroyObject(_clobj.getOid());
-            // let our listener know that we're hosed
-            reportFailure(_failure);
-        }
-    }
+        _clobj = object;
 
-
-    @Override // from ClientResolver
-    protected void resolveClientData (final ClientObject clobj)
-        throws Exception
-    {
-        super.resolveClientData(clobj);
-
-        MemberClientObject mcobj = (MemberClientObject) clobj;
+        final MemberClientObject mcobj = (MemberClientObject) _clobj;
         mcobj.username = _username;
 
         // see if we have a member object forwarded from our peer
@@ -127,22 +103,14 @@ public class MsoyClientResolver extends CrowdClientResolver
             for (Streamable local : _fwddata.right) {
                 @SuppressWarnings("unchecked") Class<Streamable> lclass =
                     (Class<Streamable>)local.getClass();
-                clobj.setLocal(lclass, null); // delete any stock local
-                clobj.setLocal(lclass, local); // configure our forwarded data
+                _clobj.setLocal(lclass, null); // delete any stock local
+                _clobj.setLocal(lclass, local); // configure our forwarded data
             }
         }
-    }
-
-    @Override // from ClientResolver
-    protected void finishResolution (ClientObject clobj)
-    {
-        super.finishResolution(clobj);
-
-        final MemberClientObject mcobj = (MemberClientObject) clobj;
 
         if (mcobj.bodyOid != 0) {
             // we're done
-            log.debug("Resolved forwarded session", "clobj", clobj.who());
+            log.debug("Resolved forwarded session", "clobj", _clobj.who());
             return;
         }
 
@@ -191,48 +159,40 @@ public class MsoyClientResolver extends CrowdClientResolver
             local.inProgressBadges = new InProgressBadgeSet();
 
         } else {
-            // otherwise we resolve the full thing; later, this is where we'll queue them up
-            _invoker.postUnit(new Invoker.Unit() {
-                public boolean invoke () {
-                    try {
-                        resolveMember(memobj);
-                    } catch (Exception e) {
-                        _exception = e;
-                    }
-                    return true;
+            Task task = new Task() {
+                @Override public void resolve () throws Exception {
+                    resolveMember(memobj);
+                    Thread.sleep(10000);
                 }
-
-                public void handleResult () {
-                    // if resolution went well, try to finish up
-                    if (_exception == null) {
-                        try {
-                            // resolve this user's party info
-                            memobj.setParty(_peerMan.getPartySummary(memobj.getMemberId()));
-                        } catch (Exception e) {
-                            _exception = e;
-                        }
-                    }
-
-                    // if there's an error at any point, handle it here
-                    if (_exception != null) {
-                        // destroy the dangling user object
-                        _omgr.destroyObject(_clobj.getOid());
-                        // let our listeners know that we're hosed
-                        reportFailure(_exception);
-
-                    } else {
-                        // otherwise tell the client and our observers to go ahead
-                        announce(memobj, mcobj);
-                    }
+                @Override public void handle () throws Exception {
+                    // resolve this user's party info
+                    memobj.setParty(_peerMan.getPartySummary(memobj.getMemberId()));
                 }
-                protected Exception _exception;
-            });
-            log.debug("Resolved unforwarded session", "clobj", clobj.who());
+            };
+            Listener listener = new Listener() {
+                @Override public void progress (int position) {
+                    log.info("Progress", "name", mcobj.username, "position", position);
+                }
+                @Override public void done (Task task) {
+                    announce(memobj, mcobj);
+                }
+                @Override public void failed (Task task, Exception e) {
+                    // destroy the dangling user object
+                    _omgr.destroyObject(_clobj.getOid());
+                    // let our listeners know that we're hosed
+                    reportFailure(e);
+                }
+            };
+
+            _queue.addTask(task, listener);
+
+            log.debug("Resolved unforwarded session", "clobj", _clobj.who());
             return;
         }
-        log.debug("Resolved simple session", "clobj", clobj.who());
+        log.debug("Resolved simple session", "clobj", _clobj.who());
 
         announce(memobj, mcobj);
+
     }
 
     /**
@@ -366,7 +326,7 @@ public class MsoyClientResolver extends CrowdClientResolver
             }
         }
 
-        // just setting the oid should triggeer the client's DID_LOGON joy
+        // just setting the oid should trigger the client's DID_LOGON joy
         mcobj.setBodyOid(obj.getOid());
     }
 
@@ -437,8 +397,6 @@ public class MsoyClientResolver extends CrowdClientResolver
     /** Info on our member object forwarded from another server. */
     protected Tuple<MemberObject,Streamable[]> _fwddata;
 
-    // dependencies
-    @Inject @MainInvoker protected Invoker _invoker;
     @Inject protected BadgeManager _badgeMan;
     @Inject protected BadgeRepository _badgeRepo;
     @Inject protected GroupRepository _groupRepo;
@@ -452,5 +410,6 @@ public class MsoyClientResolver extends CrowdClientResolver
     @Inject protected MoneyLogic _moneyLogic;
     @Inject protected MsoyPeerManager _peerMan;
     @Inject protected ProfileRepository _profileRepo;
+    @Inject protected ResolutionQueue _queue;
     @Inject protected StatRepository _statRepo;
 }
