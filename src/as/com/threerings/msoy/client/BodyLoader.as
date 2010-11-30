@@ -104,7 +104,7 @@ public class BodyLoader extends EventDispatcher
         this.dispatchEvent(event);
     }
 
-    public function didLogon (event :ClientEvent) :void 
+    public function didLogon (event :ClientEvent) :void
     {
         _switching = event.isSwitchingServers();
         _loader = _client.getClientObject() as MemberClientObject;
@@ -149,6 +149,7 @@ public class BodyLoader extends EventDispatcher
     protected function gotBodyObject (obj :MemberObject) :void
     {
         _body = obj;
+        _loader.setMemberObject(obj);
 
         dispatchEvent(new ClientEvent(ClientEvent.CLIENT_DID_LOGON, _client, _switching, null));
     }
