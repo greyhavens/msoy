@@ -184,7 +184,7 @@ public class MsoyClientResolver extends CrowdClientResolver
             };
 
             _queue.addTask(task, listener);
-
+            
             log.debug("Resolved unforwarded session", "clobj", _clobj.who());
             return;
         }

@@ -53,7 +53,7 @@ public class ResolutionQueue
     /**
      * Queue another task, possibly starting the loop up if it isn't running.
      */
-    void addTask (Task task, Listener listener)
+    public void addTask (Task task, Listener listener)
     {
         _queue.add(new Entry(task, listener));
         log.info("Added new entry", "queue", _queue);
@@ -61,6 +61,14 @@ public class ResolutionQueue
             log.info("Starting loop");
             loop();
         }
+    }
+
+    /**
+     * Let interested parties know how long our queue is right now.
+     */
+    public int queryQueueSize ()
+    {
+        return _queue.size();
     }
 
     /**
