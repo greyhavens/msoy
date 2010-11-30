@@ -162,7 +162,6 @@ public class MsoyClientResolver extends CrowdClientResolver
             Task task = new Task() {
                 @Override public void resolve () throws Exception {
                     resolveMember(memobj);
-                    Thread.sleep(10000);
                 }
                 @Override public void handle () throws Exception {
                     // resolve this user's party info
