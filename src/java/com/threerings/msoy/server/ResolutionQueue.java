@@ -14,6 +14,10 @@ import com.samskivert.util.Invoker.Unit;
 
 import com.threerings.presents.annotation.BlockingThread;
 import com.threerings.presents.annotation.EventThread;
+import com.threerings.presents.annotation.MainInvoker;
+
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
 import static com.threerings.msoy.Log.log;
 
@@ -21,14 +25,9 @@ import static com.threerings.msoy.Log.log;
  * A queue that puts tasks onto the invoker thread sequentially, one after the other, and lets
  * all the tasks in the queue know what their position is.
  */
-@EventThread
+@Singleton @EventThread
 public class ResolutionQueue
 {
-    public ResolutionQueue (Invoker invoker)
-    {
-        _invoker = invoker;
-    }
-
     @EventThread
     public static interface Listener
     {
@@ -57,7 +56,9 @@ public class ResolutionQueue
     void addTask (Task task, Listener listener)
     {
         _queue.add(new Entry(task, listener));
+        log.info("Added new entry", "queue", _queue);
         if (!_running) {
+            log.info("Starting loop");
             loop();
         }
     }
@@ -73,6 +74,7 @@ public class ResolutionQueue
     {
         // pop the next entry off the queue
         final Entry next = _queue.poll();
+        log.info("Popped entry", "queue", _queue);
         if (next == null) {
             // internal error
             log.warning("Did not expect to find queue empty here");
@@ -96,6 +98,7 @@ public class ResolutionQueue
     @EventThread
     protected void aftermath ()
     {
+        log.info("Informing listeners", "queue", _queue);
         // go through all existing entries
         for (Entry entry : _queue) {
             if (entry.listener != null) {
@@ -125,7 +128,9 @@ public class ResolutionQueue
         public boolean invoke () {
             // fulfill the task's persistent yearnings
             try {
+                log.info("Invoking task", "ix", _entry.ix);
                 _entry.task.resolve();
+                log.info("Completed invocation", "ix", _entry.ix);
 
             } catch (Exception e) {
                 // if there's an error, remember for later
@@ -183,15 +188,15 @@ public class ResolutionQueue
             this.task = task;
             this.listener = listener;
             this.timestamp = new Date();
-            this.ix = _headIx + _queue.size();
+            this.ix = _nextIx ++;
         }
     }
 
-    /** The invoker to which we submit tasks. */
-    protected Invoker _invoker;
-
     /** The list of entries we have to work through. */
     protected Queue<Entry> _queue = Lists.newLinkedList();
+
+    /** The next unique integer to assign to a new entry. */
+    protected int _nextIx;
 
     /** The index of the entry at the head of the queue, or of the last entry if it's empty. */
     protected int _headIx;
@@ -199,4 +204,6 @@ public class ResolutionQueue
     /** Whether or not we currently have a unit in the invoker pipeline. */
     protected boolean _running;
 
+    /** The invoker to which we submit tasks. */
+    @Inject @MainInvoker protected Invoker _invoker;
 }
