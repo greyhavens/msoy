@@ -14,10 +14,16 @@ public class MemberClientObject extends ClientObject
     // AUTO-GENERATED: FIELDS START
     /** The field name of the <code>bodyOid</code> field. */
     public static const BODY_OID :String = "bodyOid";
+
+    /** The field name of the <code>position</code> field. */
+    public static const POSITION :String = "position";
     // AUTO-GENERATED: FIELDS END
 
     /** The oid of the {@link MemberObject} once it's loaded; zero until then. */
     public var bodyOid :int;
+
+    /** Our position in the login queue. */
+    public var position :int;
 
     public function get memobj () :MemberObject
     {
@@ -38,6 +44,7 @@ public class MemberClientObject extends ClientObject
         super.readObject(ins);
 
         bodyOid = ins.readInt();
+        position = ins.readInt();
     }
 
     /** Not part of streaming, set only when {@link BodyLoader} finishes. */

@@ -170,7 +170,7 @@ public class MsoyClientResolver extends CrowdClientResolver
             };
             Listener listener = new Listener() {
                 @Override public void progress (int position) {
-                    log.info("Progress", "name", mcobj.username, "position", position);
+                    mcobj.setPosition(position);
                 }
                 @Override public void done (Task task) {
                     announce(memobj, mcobj);
