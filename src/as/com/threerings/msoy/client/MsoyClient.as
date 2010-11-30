@@ -2,6 +2,7 @@
 // $Id$
 
 package com.threerings.msoy.client {
+import com.threerings.crowd.data.BodyObject;
 
 import flash.display.Stage;
 import flash.display.StageDisplayState;
@@ -194,6 +195,13 @@ public /*abstract*/ class MsoyClient extends CrowdClient
             _ctx.getMuteDirector().setMutedMemberIds(mbData.mutedMemberIds);
         }
     }
+
+    // from CrowdClient
+    override public function bodyOf () :BodyObject
+    {
+        return _loader.getBody();
+    }
+
 
     /**
      * Return the Stage.
