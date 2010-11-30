@@ -191,6 +191,7 @@
     <artifact:dependencies filesetId="runtime.remote.fileset">
       <dependency groupId="stax" artifactId="stax" version="1.2.0"/>
       <dependency groupId="com.google.gwt" artifactId="gwt-servlet" version="2.1.0"/>
+      <dependency groupId="postgresql" artifactid="postgresql" version="9.0-801.jdbc4"/>
     </artifact:dependencies>
     <copy todir="${deploy.dir}/lib">
       <fileset refid="runtime.fileset"/>
@@ -227,6 +228,8 @@
                   version="1.0-SNAPSHOT" type="swc"/>
       <dependency groupId="com.threerings" artifactId="naryalib"
                   version="1.3-SNAPSHOT" type="swc"/>
+      <dependency groupId="com.threerings" artifactId="vilyalib"
+                  version="1.1-SNAPSHOT" type="swc"/>
       <dependency groupId="com.threerings" artifactId="vilyalib"
                   version="1.1-SNAPSHOT" type="swc"/>
       <dependency groupId="com.threerings" artifactId="orthlib"
@@ -533,7 +536,7 @@
   </target>
 
   <!-- prepares to build our Flash client -->
-  <target name="asprepare" depends="prepare,mavendeps-as">
+  <target name="asprepare" depends="prepare">
     <!-- locate our flex sdk -->
     <condition property="rel.flexsdk.dir" value="../flex/current">
       <available file="../flex/current/lib/compc.jar"/>
@@ -606,15 +609,15 @@
       <arg value="${deploy.dir}/msoy-config.xml"/>
       <arg value="${flex.extra-arg}"/>
       <arg value="${flex.extra-arg-2}"/>
-      <arg value="-compiler.library-path+=${com.threerings:aspirin:swc}"/>
-      <arg value="-compiler.library-path+=${com.threerings:naryalib:swc}"/>
-      <arg value="-compiler.library-path+=${com.threerings:nenyalib:swc}"/>
-      <arg value="-compiler.library-path+=${com.threerings:vilyalib:swc}"/>
-      <arg value="-compiler.library-path+=${com.threerings:whirledlib:swc}"/>
-      <arg value="-compiler.library-path+=${com.threerings:orthlib:swc}"/>
-      <arg value="-compiler.library-path+=${com.threerings:toyboxlib:swc}"/>
-      <arg value="-compiler.library-path+=${com.adobe:as3corelib:swc}"/>
-      <arg value="-compiler.library-path+=${flexlib:flexlib-bin:swc}"/>
+      <arg value="-compiler.library-path+=${deploy.dir}/lib/aspirin-1.7-SNAPSHOT.swc"/>
+      <arg value="-compiler.library-path+=${deploy.dir}/lib/naryalib-1.3-SNAPSHOT.swc"/>
+      <arg value="-compiler.library-path+=${deploy.dir}/lib/nenyalib-1.0.swc"/>
+      <arg value="-compiler.library-path+=${deploy.dir}/lib/vilyalib-1.1-SNAPSHOT.swc"/>
+      <arg value="-compiler.library-path+=${deploy.dir}/lib/whirledlib-1.1-SNAPSHOT.swc"/>
+      <arg value="-compiler.library-path+=${deploy.dir}/lib/orthlib-1.0-SNAPSHOT.swc"/>
+      <arg value="-compiler.library-path+=${deploy.dir}/lib/toyboxlib-1.0-SNAPSHOT.swc"/>
+      <arg value="-compiler.library-path+=${deploy.dir}/lib/as3corelib-0.93.swc"/>
+      <arg value="-compiler.library-path+=${deploy.dir}/lib/flexlib-bin-2.4.swc"/>
       <arg value="-compiler.library-path+=${deploy.dir}/lib/tweener.swc"/>
       <arg value="-compiler.library-path+=${deploy.dir}/lib/KongregateAPI.swc"/>
       <arg value="-compiler.source-path=${asrc.dir}/"/>
@@ -1070,7 +1073,8 @@
 
   <!-- rebuilds all subprojects and the whole top-level distribution -->
   <target name="distbits" depends="distprojects,dist,flashapps,thane-client"/>
-  <target name="distall-package" depends="prepare,mavendeps,distbits,tests,checkstyle,gclients"
+  <target name="distall-package"
+          depends="prepare,mavendeps,mavendeps-as,distbits,tests,checkstyle,gclients"
           description="Rebuilds all architecture independent targets."/>
   <target name="distall" depends="copythanebinaries,distall-package"
           description="Rebuilds all subprojects and whole top-level distribution."/>
