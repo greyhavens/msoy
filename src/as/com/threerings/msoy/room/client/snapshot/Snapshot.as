@@ -42,7 +42,9 @@ import com.threerings.msoy.client.PlaceBox;
 
 import com.threerings.msoy.world.client.WorldContext;
 
+import com.threerings.msoy.room.client.EntitySprite;
 import com.threerings.msoy.room.client.OccupantSprite;
+import com.threerings.msoy.room.client.RoomElement;
 import com.threerings.msoy.room.client.RoomView;
 
 /**
@@ -151,7 +153,8 @@ public class Snapshot extends EventDispatcher
         var occPredicate :Function = null;
         if (!includeOccupants) {
             occPredicate = function (child :DisplayObject) :Boolean {
-                return !(child is OccupantSprite);
+                var element :RoomElement = _view.vizToEntity(child);
+                return (element == null) || !(element is OccupantSprite);
             };
         }
 
