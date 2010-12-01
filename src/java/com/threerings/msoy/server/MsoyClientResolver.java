@@ -208,14 +208,14 @@ public class MsoyClientResolver extends CrowdClientResolver
             //     }
             // };
 
-            // _queue.addTask(fake, null);
-            // _queue.addTask(fake, null);
-            // _queue.addTask(fake, null);
-            // _queue.addTask(fake, null);
-            // _queue.addTask(fake, null);
-            // _queue.addTask(fake, null);
+            // _queue.queueTask(fake, null);
+            // _queue.queueTask(fake, null);
+            // _queue.queueTask(fake, null);
+            // _queue.queueTask(fake, null);
+            // _queue.queueTask(fake, null);
+            // _queue.queueTask(fake, null);
 
-            _queue.addTask(task, listener);
+            _queue.queueTask(task, listener);
             
             log.debug("Resolved unforwarded session", "clobj", _clobj.who());
             return;

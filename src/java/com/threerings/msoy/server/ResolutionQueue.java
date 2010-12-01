@@ -53,12 +53,20 @@ public class ResolutionQueue
     /**
      * Queue another task, possibly starting the loop up if it isn't running.
      */
-    public void addTask (Task task, Listener listener)
+    public void queueTask (Task task, Listener listener)
     {
         _queue.add(new Entry(task, listener));
         if (!_running) {
             loop();
         }
+    }
+
+    /**
+     * Execute a task directly, bypassing the queue.
+     */
+    public void executeTask (Task task, Listener listener)
+    {
+        _invoker.postUnit(new TaskUnit(new Entry(task, listener), null));
     }
 
     /**
@@ -92,7 +100,11 @@ public class ResolutionQueue
         // note that we're running
         _running = true;
         // and ask the invoker to execute the task
-        _invoker.postUnit(new TaskUnit(next));
+        _invoker.postUnit(new TaskUnit(next, new Runnable () {
+            public void run () {
+                aftermath();
+            }
+        }));
     }
 
     /**
@@ -123,9 +135,10 @@ public class ResolutionQueue
      */
     protected class TaskUnit extends Unit
     {
-        public TaskUnit (Entry entry)
+        public TaskUnit (Entry entry, Runnable after)
         {
             _entry = entry;
+            _after = after;
         }
 
         @BlockingThread
@@ -170,11 +183,14 @@ public class ResolutionQueue
                 }
             }
 
-            // call back to the second half of our loop system
-            aftermath();
+            // call back to our originator
+            if (_after != null) {
+                _after.run();
+            }
         }
 
         final protected Entry _entry;
+        final protected Runnable _after;
         protected Exception _failure;
     }
 
