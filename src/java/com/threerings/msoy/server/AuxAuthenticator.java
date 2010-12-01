@@ -72,9 +72,6 @@ public abstract class AuxAuthenticator<T extends MsoyCredentials> extends Chaine
 
             // if the client supplied no token, create a new permaguest account
             if (creds.sessionToken == null) {
-                // bail if the server is too busy for a guest
-                _authLogic.requireServerAvailabile(null);
-
                 MemberRecord guest = null;
 
                 // maybe a returning guest?
@@ -109,9 +106,6 @@ public abstract class AuxAuthenticator<T extends MsoyCredentials> extends Chaine
                 if (member == null || member.isDeleted()) {
                     throw new ServiceException(MsoyAuthCodes.SESSION_EXPIRED);
                 }
-
-                // bail if the server is too busy
-                _authLogic.requireServerAvailabile(member);
 
                 memberId = member.memberId;
                 accountName = member.accountName;

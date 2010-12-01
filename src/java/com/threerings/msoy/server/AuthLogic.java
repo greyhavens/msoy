@@ -70,29 +70,6 @@ public class AuthLogic
     }
 
     /**
-     * Throws an exception if the server is currently too busy to authenticate the given member. If
-     * the member is null, proceeds as though checking for normal guest member.
-     */
-    public void requireServerAvailabile (MemberRecord member)
-        throws ServiceException
-    {
-        if ((member == null || !member.isSupport()) && isServerBusy()) {
-            throw new ServiceException(MsoyAuthCodes.UNDER_LOAD);
-        }
-    }
-
-    /**
-     * Tests if the number of pending clients or invoker queue size exceed the limits specified in
-     * the runtime configuration.
-     */
-    protected boolean isServerBusy ()
-    {
-        int pendingResolutions = _clmgr.getOutstandingResolutionCount();
-        return pendingResolutions >= _runtime.server.maxPendingClientResolutions ||
-            _invoker.getPendingUnits() >= _runtime.server.maxInvokerQueueSize;
-    }
-
-    /**
      * Generates a checksum for an ident.
      */
     protected static String generateIdentChecksum (final String seed)

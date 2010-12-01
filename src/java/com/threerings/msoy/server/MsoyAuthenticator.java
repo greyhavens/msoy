@@ -269,8 +269,6 @@ public class MsoyAuthenticator extends Authenticator
             authenticateLurker(conn, creds, rdata, 0);
             return null;
         }
-        // bail if the server is too busy for a guest
-        _authLogic.requireServerAvailabile(null);
 
         // create a new guest account
         MemberRecord mrec = _accountLogic.createGuestAccount(
@@ -338,9 +336,6 @@ public class MsoyAuthenticator extends Authenticator
             // if this is their first logon, make a note of it
             account.firstLogon = (member.sessions == 0);
         }
-
-        // bail if the server is too busy
-        _authLogic.requireServerAvailabile(member);
 
         if (needSessionToken) {
             rdata.sessionToken = _memberRepo.startOrJoinSession(member.memberId, 1);
