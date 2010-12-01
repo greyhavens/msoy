@@ -120,8 +120,6 @@ public class MsoyClientResolver extends CrowdClientResolver
 
         // give the MemberObject the same (auth) username as we gave MemberClientObject
         memobj.username = _username;
-        // make sure the new body has the same permissions, too
-        memobj.setPermissionPolicy(createPermissionPolicy());
 
         // otherwise we're creating a new MemberObject
         MemberLocal local = new MemberLocal();
