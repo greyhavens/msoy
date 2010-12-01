@@ -114,14 +114,17 @@ public class MsoyClientResolver extends CrowdClientResolver
             return;
         }
 
+        // otherwise we're creating a new MemberObject
         final MemberObject memobj = new MemberObject();
+        // register it with the presents system
         _omgr.registerObject(memobj);
+        // hook the client object up with the body
         mcobj.memobj = memobj;
 
         // give the MemberObject the same (auth) username as we gave MemberClientObject
         memobj.username = _username;
 
-        // otherwise we're creating a new MemberObject
+        // and put the local into place. this completes what's normally done in clientmanager.
         MemberLocal local = new MemberLocal();
         memobj.setLocal(ClientLocal.class, local);
 
@@ -182,6 +185,7 @@ public class MsoyClientResolver extends CrowdClientResolver
             };
 
             _queue.addTask(task, listener);
+            mcobj.setPosition(_queue.getQueueSize());
             
             log.debug("Resolved unforwarded session", "clobj", _clobj.who());
             return;
