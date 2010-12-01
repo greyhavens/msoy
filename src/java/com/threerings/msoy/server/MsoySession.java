@@ -77,11 +77,11 @@ public class MsoySession extends WhirledSession
 
         MsoyBootstrapData mData = (MsoyBootstrapData) data;
 
-        MemberLocal local = _memobj.getLocal(MemberLocal.class);
-        if (local.mutedMemberIds != null) {
-            mData.mutedMemberIds = local.mutedMemberIds;
-            local.mutedMemberIds = null;
-        }
+//        MemberLocal local = _memobj.getLocal(MemberLocal.class);
+//        if (local.mutedMemberIds != null) {
+//            mData.mutedMemberIds = local.mutedMemberIds;
+//            local.mutedMemberIds = null;
+//        }
     }
 
     @Override // from PresentsSession
@@ -90,6 +90,28 @@ public class MsoySession extends WhirledSession
         super.sessionWillStart();
 
         _mcobj = (MemberClientObject) _clobj;
+        if (_mcobj.memobj != null) {
+            // the member object might have already been resolved; skip ahead
+            gotMemberObject();
+            return;
+        }
+
+        // otherwise listen for bodyOid to be set
+        _mcobj.addListener(new AttributeChangeListener() {
+            public void attributeChanged (AttributeChangedEvent event) {
+                if (MemberClientObject.BODY_OID.equals(event.getName())) {
+                    gotMemberObject();
+                }
+            }
+        });
+    }
+
+    protected void gotMemberObject()
+    {
+        if (_mcobj.memobj == null) {
+            log.warning("Huh? No body on the client object after all?", "who", _mcobj.username);
+            return;
+        }
 
         _memobj = _mcobj.memobj;
         _memobj.setAccessController(MsoyObjectAccess.USER);
