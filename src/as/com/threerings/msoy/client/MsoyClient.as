@@ -123,7 +123,7 @@ public /*abstract*/ class MsoyClient extends CrowdClient
             }
         } catch (err :Error) {
             // nada: ExternalInterface isn't there. Oh well!
-            log.info("Unable to configure external functions.");
+            log.warning("Unable to configure external functions.");
         }
 
         log.info("Detected embedding", "value", _embedding);
@@ -324,7 +324,7 @@ public /*abstract*/ class MsoyClient extends CrowdClient
                     return result as String;
                 }
             } catch (e :Error) {
-                log.info("ExternalInterface.call('getVisitorId') failed", e);
+                log.warning("ExternalInterface.call('getVisitorId') failed", e);
             }
         }
         return null;
@@ -342,7 +342,7 @@ public /*abstract*/ class MsoyClient extends CrowdClient
                 var session :String = ExternalInterface.call("getFacebookSession") as String;
                 return (id == null) ? null : [ id, session ];
             } catch (e :Error) {
-                log.info("ExternalInterface.call('getFacebookId') failed", e);
+                log.warning("ExternalInterface.call('getFacebookId') failed", e);
             }
         }
         return null;
