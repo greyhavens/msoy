@@ -8,6 +8,7 @@ import com.google.inject.Singleton;
 import com.samskivert.util.Lifecycle;
 import com.samskivert.util.ObserverList;
 
+import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.dobj.AttributeChangedEvent;
 import com.threerings.presents.dobj.AttributeChangeListener;
 import com.threerings.presents.server.ClientManager;
@@ -34,15 +35,22 @@ public class MsoyClientManager extends ClientManager
     @Override // from ClientManager
     protected void clientSessionDidStart (final PresentsSession session)
     {
-        // listen for bodyOid to be set
-        session.getClientObject().addListener(new AttributeChangeListener() {
-            public void attributeChanged (AttributeChangedEvent event) {
-                if (MemberClientObject.BODY_OID.equals(event.getName())) {
-                    clientSessionReallyDidStart(session);
-                }
+        ClientObject clobj = session.getClientObject();
+        if (clobj instanceof MemberClientObject) {
+            if (((MemberClientObject) clobj).bodyOid == 0) {
+                // listen for bodyOid to be set
+                session.getClientObject().addListener(new AttributeChangeListener() {
+                    public void attributeChanged (AttributeChangedEvent event) {
+                        if (MemberClientObject.BODY_OID.equals(event.getName())) {
+                            clientSessionReallyDidStart(session);
+                        }
+                    }
+                });
+                return;
             }
-        });
-
+        }
+        // else go right now
+        clientSessionReallyDidStart (session);
     }
 
     protected void clientSessionReallyDidStart (final PresentsSession session)
