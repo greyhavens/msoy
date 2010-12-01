@@ -36,6 +36,7 @@ import com.threerings.presents.net.AuthRequest;
 import com.threerings.presents.peer.server.EHCachePeerCoordinator;
 import com.threerings.presents.peer.server.PeerManager;
 import com.threerings.presents.server.Authenticator;
+import com.threerings.presents.server.ClientManager;
 import com.threerings.presents.server.ClientResolver;
 import com.threerings.presents.server.PresentsSession;
 import com.threerings.presents.server.SessionFactory;
@@ -85,6 +86,7 @@ import com.threerings.msoy.room.server.MsoySceneFactory;
 import com.threerings.msoy.room.server.MsoySceneRegistry;
 import com.threerings.msoy.room.server.PetManager;
 import com.threerings.msoy.room.server.SceneLogic;
+import com.threerings.msoy.server.MsoyClientManager;
 import com.threerings.msoy.spam.server.SpamLogic;
 import com.threerings.msoy.web.server.MsoyHttpServer;
 import com.threerings.msoy.world.server.WorldManager;
@@ -111,6 +113,7 @@ public class MsoyServer extends MsoyBaseServer
 
             // presents dependencies
             bind(Authenticator.class).to(MsoyAuthenticator.class);
+            bind(ClientManager.class).to(MsoyClientManager.class);
             bind(PeerManager.class).to(MsoyPeerManager.class);
             bind(ConfigRegistry.class).to(PeeredDatabaseConfigRegistry.class);
             bind(AdminManager.class).to(MsoyAdminManager.class);
