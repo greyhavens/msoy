@@ -56,9 +56,7 @@ public class ResolutionQueue
     public void addTask (Task task, Listener listener)
     {
         _queue.add(new Entry(task, listener));
-        log.info("Added new entry", "queue", _queue);
         if (!_running) {
-            log.info("Starting loop");
             loop();
         }
     }
@@ -82,7 +80,6 @@ public class ResolutionQueue
     {
         // pop the next entry off the queue
         final Entry next = _queue.poll();
-        log.info("Popped entry", "queue", _queue);
         if (next == null) {
             // internal error
             log.warning("Did not expect to find queue empty here");
@@ -106,7 +103,6 @@ public class ResolutionQueue
     @EventThread
     protected void aftermath ()
     {
-        log.info("Informing listeners", "queue", _queue);
         // go through all existing entries
         for (Entry entry : _queue) {
             if (entry.listener != null) {
@@ -136,9 +132,7 @@ public class ResolutionQueue
         public boolean invoke () {
             // fulfill the task's persistent yearnings
             try {
-                log.info("Invoking task", "ix", _entry.ix);
                 _entry.task.resolve();
-                log.info("Completed invocation", "ix", _entry.ix);
 
             } catch (Exception e) {
                 // if there's an error, remember for later
