@@ -77,11 +77,11 @@ public class MsoySession extends WhirledSession
 
         MsoyBootstrapData mData = (MsoyBootstrapData) data;
 
-//        MemberLocal local = _memobj.getLocal(MemberLocal.class);
-//        if (local.mutedMemberIds != null) {
-//            mData.mutedMemberIds = local.mutedMemberIds;
-//            local.mutedMemberIds = null;
-//        }
+        MemberClientLocal local = _mcobj.getLocal(MemberClientLocal.class);
+        if (local.mutedMemberIds != null) {
+            mData.mutedMemberIds = local.mutedMemberIds;
+            local.mutedMemberIds = null;
+        }
     }
 
     @Override // from PresentsSession
@@ -90,7 +90,7 @@ public class MsoySession extends WhirledSession
         super.sessionWillStart();
 
         _mcobj = (MemberClientObject) _clobj;
-        if (_mcobj.memobj != null) {
+        if (_mcobj.bodyOid != 0) {
             // the member object might have already been resolved; skip ahead
             gotMemberObject();
             return;
