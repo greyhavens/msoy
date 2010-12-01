@@ -66,11 +66,6 @@ public class MemberLocal extends BodyLocal
     /** The memories of the member's avatar. */
     public EntityMemories memories;
 
-    /** The member ids that this user has muted in previous sessions. May be null.
-     * Note: Only valid between client resolution and sending the bootstrap,
-     * and is always null otherwise and never transmitted between nodes. */
-    public transient int[] mutedMemberIds;
-
     public List<Notification> getAndClearDeferredNotifications ()
     {
         List<Notification> notifications = deferredNotifications;
