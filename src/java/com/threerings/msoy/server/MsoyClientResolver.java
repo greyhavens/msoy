@@ -77,7 +77,9 @@ public class MsoyClientResolver extends CrowdClientResolver
     @Override
     public ClientObject createClientObject ()
     {
-        return new MemberClientObject();
+        _mcobj = new MemberClientObject();
+        _mcobj.setPosition(_queue.getQueueSize());
+        return _mcobj;
     }
 
     @Override
@@ -91,15 +93,14 @@ public class MsoyClientResolver extends CrowdClientResolver
     {
         _clobj = object;
 
-        final MemberClientObject mcobj = (MemberClientObject) _clobj;
-        mcobj.username = _username;
+        _mcobj.username = _username;
 
         // see if we have a member object forwarded from our peer
         _fwddata = _peerMan.getForwardedMemberObject(_username);
         if (_fwddata != null) {
             MemberObject memobj = _fwddata.left;
-            mcobj.memobj = memobj;
-            mcobj.bodyOid = memobj.getOid();
+            _mcobj.memobj = memobj;
+            _mcobj.bodyOid = memobj.getOid();
             for (Streamable local : _fwddata.right) {
                 @SuppressWarnings("unchecked") Class<Streamable> lclass =
                     (Class<Streamable>)local.getClass();
@@ -108,7 +109,21 @@ public class MsoyClientResolver extends CrowdClientResolver
             }
         }
 
-        if (mcobj.bodyOid != 0) {
+        // now we let the ClientResolutionListeners know (this is usually handled by the
+        // ClientResolver subclass, but we override it)
+        for (int ii = 0, ll = _listeners.size(); ii < ll; ii++) {
+            ClientResolutionListener crl = _listeners.get(ii);
+            try {
+                // add a reference for each listener
+                _clobj.reference();
+                crl.clientResolved(_username, _clobj);
+
+            } catch (Exception e) {
+                Log.log.warning("Client resolution listener choked in clientResolved() " + crl, e);
+            }
+        }
+
+        if (_mcobj.memobj != null) {
             // we're done
             log.debug("Resolved forwarded session", "clobj", _clobj.who());
             return;
@@ -119,7 +134,7 @@ public class MsoyClientResolver extends CrowdClientResolver
         // register it with the presents system
         _omgr.registerObject(memobj);
         // hook the client object up with the body
-        mcobj.memobj = memobj;
+        _mcobj.memobj = memobj;
 
         // give the MemberObject the same (auth) username as we gave MemberClientObject
         memobj.username = _username;
@@ -171,10 +186,10 @@ public class MsoyClientResolver extends CrowdClientResolver
             };
             Listener listener = new Listener() {
                 @Override public void progress (int position) {
-                    mcobj.setPosition(position);
+                    _mcobj.setPosition(position);
                 }
                 @Override public void done (Task task) {
-                    announce(memobj, mcobj);
+                    announce(memobj);
                 }
                 @Override public void failed (Task task, Exception e) {
                     // destroy the dangling user object
@@ -184,15 +199,29 @@ public class MsoyClientResolver extends CrowdClientResolver
                 }
             };
 
+            // Task fake = new Task() {
+            //     @Override public void resolve () throws Exception {
+            //         Thread.sleep(2000);
+            //     }
+            //     @Override public void handle () throws Exception {
+            //     }
+            // };
+
+            // _queue.addTask(fake, null);
+            // _queue.addTask(fake, null);
+            // _queue.addTask(fake, null);
+            // _queue.addTask(fake, null);
+            // _queue.addTask(fake, null);
+            // _queue.addTask(fake, null);
+
             _queue.addTask(task, listener);
-            mcobj.setPosition(_queue.getQueueSize());
             
             log.debug("Resolved unforwarded session", "clobj", _clobj.who());
             return;
         }
         log.debug("Resolved simple session", "clobj", _clobj.who());
 
-        announce(memobj, mcobj);
+        announce(memobj);
 
     }
 
@@ -312,23 +341,10 @@ public class MsoyClientResolver extends CrowdClientResolver
         profiler.complete();
     }
 
-    protected void announce (MemberObject obj, MemberClientObject mcobj)
+    protected void announce (MemberObject obj)
     {
-        // now we let the ClientResolutionListeners know (this is usually handled by the
-        // ClientResolver subclass, but we override it)
-        for (int ii = 0, ll = _listeners.size(); ii < ll; ii++) {
-            ClientResolutionListener crl = _listeners.get(ii);
-            try {
-                // add a reference for each listener
-                _clobj.reference();
-                crl.clientResolved(_username, _clobj);
-            } catch (Exception e) {
-                Log.log.warning("Client resolution listener choked in clientResolved() " + crl, e);
-            }
-        }
-
-        // just setting the oid should trigger the client's DID_LOGON joy
-        mcobj.setBodyOid(obj.getOid());
+        // setting the oid should complete the client's two-phase loading process
+        _mcobj.setBodyOid(obj.getOid());
     }
 
     protected enum Step {
@@ -397,6 +413,8 @@ public class MsoyClientResolver extends CrowdClientResolver
 
     /** Info on our member object forwarded from another server. */
     protected Tuple<MemberObject,Streamable[]> _fwddata;
+
+    protected MemberClientObject _mcobj;
 
     @Inject protected BadgeManager _badgeMan;
     @Inject protected BadgeRepository _badgeRepo;
