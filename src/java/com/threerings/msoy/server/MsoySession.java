@@ -185,10 +185,14 @@ public class MsoySession extends WhirledSession
     {
         super.sessionConnectionClosed();
 
-        // end our session when the connection is closed, it's easy enough to get back to where you
-        // were with a browser reload
-        if (!_resumingSession && // but not if we're not in the middle of resuming our session
-            _memobj != null) {   // and not if we never fully started our session
+        // if we disconnect while we're still in the login queue, we end the session
+        if (_memobj == null) {
+            endSession();
+            return;
+        }
+
+        // actually we always end the session, unless we're actually in mid-resume
+        if (!_resumingSession) {
             endSession();
         }
     }
