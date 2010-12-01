@@ -5,11 +5,16 @@ package com.threerings.msoy.client {
 
 import mx.containers.Canvas;
 
+import com.threerings.util.Log;
+
 import com.threerings.crowd.client.PlaceView;
 import com.threerings.crowd.data.PlaceObject;
+import com.threerings.presents.dobj.AttributeChangeListener;
+import com.threerings.presents.dobj.AttributeChangedEvent;
 
 import com.threerings.flex.FlexWrapper;
 
+import com.threerings.msoy.data.MemberClientObject;
 import com.threerings.msoy.ui.LoadingSpinner;
 
 /**
@@ -17,7 +22,7 @@ import com.threerings.msoy.ui.LoadingSpinner;
  * graphics with a status message.
  */
 public class BlankPlaceView extends Canvas
-    implements PlaceView
+    implements PlaceView, AttributeChangeListener
 {
     public function BlankPlaceView (ctx :MsoyContext)
     {
@@ -32,19 +37,41 @@ public class BlankPlaceView extends Canvas
 //            hheight += EmbedHeader.HEIGHT;
 //        }
 
-        var spinner :LoadingSpinner = new LoadingSpinner();
-        addChild(new FlexWrapper(spinner));
-        spinner.x = (swidth - LoadingSpinner.WIDTH) / 2;
-        spinner.y = (sheight - LoadingSpinner.HEIGHT) / 2 - hheight;
+        _spinner = new LoadingSpinner();
+        addChild(new FlexWrapper(_spinner));
+        _spinner.x = (swidth - LoadingSpinner.WIDTH) / 2;
+        _spinner.y = (sheight - LoadingSpinner.HEIGHT) / 2 - hheight;
 
         // if we're upselling, we want to preserve continuity with the preloader splash
         if (ctx.getMsoyClient().getEmbedding().shouldUpsellWhirled()) {
-            spinner.setStatus(""); // use a blank status, we have our splash text already
+            _spinner.setStatus(""); // use a blank status, we have our splash text already
             // TODO: could use createSharableLink here except we're not logged on
             var msg :String = Msgs.GENERAL.get("m.embed_splash", DeploymentConfig.serverURL);
-            addChild(new FlexWrapper(Preloader.makeSplashText(msg, swidth, spinner.y)));
+            addChild(new FlexWrapper(Preloader.makeSplashText(msg, swidth, _spinner.y)));
         } else {
-            spinner.setStatus(Msgs.GENERAL.get("m.ls_connecting"));
+            _spinner.setStatus(Msgs.GENERAL.get("m.ls_connecting"));
+        }
+    }
+
+    /**
+     * When we successfully log into the Whirled server, we will be given a MemberClientObject
+     * in preparation for the loading of the full MemberObject. At this point we can start
+     * showing progress information.
+     */
+    public function gotClientObject (clobj :MemberClientObject) :void
+    {
+        Log.getLog(this).info("gotClientObject()", "position", clobj.position);
+        // only bother if there's at least 3 people in line before us
+        if (clobj.position > 2) {
+            clobj.addListener(this);
+        }
+    }
+
+    // from interface AttributeChangeListener
+    public function attributeChanged (event :AttributeChangedEvent) :void
+    {
+        if (MemberClientObject.POSITION == event.getName()) {
+            _spinner.setStatus(Msgs.GENERAL.get("m.ls_queue", event.getValue()));
         }
     }
 
@@ -59,5 +86,7 @@ public class BlankPlaceView extends Canvas
     {
         // nada
     }
+
+    protected var _spinner :LoadingSpinner;
 }
 }

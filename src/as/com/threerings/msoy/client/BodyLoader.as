@@ -120,6 +120,11 @@ public class BodyLoader extends EventDispatcher
         } else {
             // else wait until it's ready
             _loader.addListener(this);
+
+            // and possibly show a login progress bar
+            if (_ctx.getPlaceView() is BlankPlaceView) {
+                (_ctx.getPlaceView() as BlankPlaceView).gotClientObject(_loader);
+            }
         }
     }
 
