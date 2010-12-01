@@ -53,12 +53,19 @@ public class ResolutionQueue
     /**
      * Queue another task, possibly starting the loop up if it isn't running.
      */
-    public void queueTask (Task task, Listener listener)
+    public int queueTask (Task task, Listener listener)
     {
-        _queue.add(new Entry(task, listener));
+        Entry entry = new Entry(task, listener);
+        _queue.add(entry);
         if (!_running) {
             loop();
         }
+        return entry.ix;
+    }
+
+    public boolean dequeueTask (int ix)
+    {
+        return _queue.remove(new Entry(ix));
     }
 
     /**
@@ -201,6 +208,9 @@ public class ResolutionQueue
         Date timestamp;
         int ix;
 
+        /**
+         * Creates a new Entry configured with the given task and listener.
+         */
         protected Entry (Task task, Listener listener)
         {
             this.task = task;
@@ -208,13 +218,31 @@ public class ResolutionQueue
             this.timestamp = new Date();
             this.ix = _nextIx ++;
         }
+
+        /**
+         * Creates a fake Entry whose only purpose is to remove an existing entry by index.
+         */
+        protected Entry (int ix)
+        {
+            this.ix = ix;
+        }
+
+        public int hashCode ()
+        {
+            return ix;
+        }
+
+        public boolean equals (Object other)
+        {
+            return other.getClass().equals(Entry.class) && (((Entry) other).ix == ix);
+        }
     }
 
     /** The list of entries we have to work through. */
     protected Queue<Entry> _queue = Lists.newLinkedList();
 
     /** The next unique integer to assign to a new entry. */
-    protected int _nextIx;
+    protected int _nextIx = 1;
 
     /** The index of the entry at the head of the queue, or of the last entry if it's empty. */
     protected int _headIx;
