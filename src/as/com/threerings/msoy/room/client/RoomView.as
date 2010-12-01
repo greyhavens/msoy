@@ -1115,7 +1115,6 @@ public class RoomView extends Sprite
     protected function addToElementMap (element :RoomElement) :void
     {
         _elements.put(element.getVisualization(), element);
-        log.debug("addToElementMap()", "element", element, "mapSize", _elements.size());
     }
 
     /**
@@ -1124,7 +1123,6 @@ public class RoomView extends Sprite
     protected function removeFromElementMap (element :RoomElement) :void
     {
         _elements.remove(element.getVisualization());
-        log.debug("removeFromElementMap()", "element", element, "mapSize", _elements.size());
     }
 
     /**

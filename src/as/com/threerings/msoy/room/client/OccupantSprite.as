@@ -86,8 +86,6 @@ public class OccupantSprite extends EntitySprite
         _sprite.addChild(_extras);
         _extras.addChild(_label);
 
-        log.info("OccupantSprite instantiated", "occInfo", occInfo);
-
         if (occInfo != null) {
             setOccupantInfo(occInfo, extraInfo);
         }
