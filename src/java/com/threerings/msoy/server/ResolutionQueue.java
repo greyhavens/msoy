@@ -66,7 +66,7 @@ public class ResolutionQueue
     /**
      * Let interested parties know how long our queue is right now.
      */
-    public int queryQueueSize ()
+    public int getQueueSize ()
     {
         return _queue.size();
     }
