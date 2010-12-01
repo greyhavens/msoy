@@ -21,12 +21,15 @@ import com.threerings.io.Streamable;
 import com.threerings.msoy.mail.server.MailLogic;
 
 import com.threerings.presents.Log;
+import com.threerings.presents.server.ClientManager;
+import com.threerings.presents.server.ClientManager.ClientObserver;
 import com.threerings.presents.server.ClientResolutionListener;
 import com.threerings.util.StreamableArrayIntSet;
 
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.dobj.DSet;
 import com.threerings.presents.server.ClientLocal;
+import com.threerings.presents.server.PresentsSession;
 
 import com.threerings.crowd.server.CrowdClientResolver;
 
@@ -111,7 +114,7 @@ public class MsoyClientResolver extends CrowdClientResolver
 
         if (_mcobj.bodyOid != 0) {
             // we're done
-            log.info("Resolved forwarded session", "clobj", _clobj.who());
+            log.debug("Resolved forwarded session", "clobj", _clobj.who());
 
             reportSuccess();
             return;
@@ -156,7 +159,7 @@ public class MsoyClientResolver extends CrowdClientResolver
             local.friendIds = new StreamableArrayIntSet(0);
             local.inProgressBadges = new InProgressBadgeSet();
 
-            log.info("Resolved guest session", "guest", _memobj);
+            log.debug("Resolved guest session", "guest", _memobj);
             reportSuccess();
             announce();
             return;
@@ -170,7 +173,7 @@ public class MsoyClientResolver extends CrowdClientResolver
             local.friendIds = new StreamableArrayIntSet(0);
             local.inProgressBadges = new InProgressBadgeSet();
 
-            log.info("Resolved lurker session", "guest", _memobj);
+            log.debug("Resolved lurker session", "guest", _memobj);
             reportSuccess();
             announce();
             return;
@@ -234,7 +237,7 @@ public class MsoyClientResolver extends CrowdClientResolver
             }
             @Override public void done (Task task) {
                 // note: reportSuccess() has already been called by our superclass
-                announce();
+                didLeaveQueue();
             }
             @Override public void failed (Task task, Exception e) {
                 // destroy the dangling user object
@@ -262,12 +265,49 @@ public class MsoyClientResolver extends CrowdClientResolver
             _queue.queueTask(fake, null);
         }
 
-        _queue.queueTask(task, listener);
+        _taskIx = _queue.queueTask(task, listener);
 
         // update the queue size, things might have happened since the object was created
         _mcobj.position = _queue.getQueueSize();
 
-        log.info("Resolved unforwarded session", "clobj", _clobj.who());
+        // register ourselves as interested in client sessions, so we can dequeue if needed
+        _clmgr.addClientObserver(_sessionObserver);
+
+        log.debug("Resolved unforwarded session", "clobj", _clobj.who());
+    }
+
+    protected void didDisconnect ()
+    {
+        if (_taskIx != 0) {
+            // should always be true
+            _queue.dequeueTask(_taskIx);
+        }
+    }
+
+    protected void didLeaveQueue ()
+    {
+        // renounce our interest in the birth and death of session
+        _clmgr.removeClientObserver(_sessionObserver);
+
+        // and let the world know of the new memberobject's oid
+        announce();
+    }
+
+    protected void announce ()
+    {
+        // setting the oid should complete the client's two-phase loading process
+        _mcobj.setBodyOid(_memobj.getOid());
+    }
+
+    @Override
+    protected void reportSuccess ()
+    {
+        super.reportSuccess();
+
+        /** If finishResolution() flagged the need for an announce here, do it */
+        if (_needAnnounce) {
+            announce();
+        }
     }
 
     /**
@@ -372,31 +412,13 @@ public class MsoyClientResolver extends CrowdClientResolver
         profiler.complete();
     }
 
-    protected void announce ()
-    {
-        // setting the oid should complete the client's two-phase loading process
-        _mcobj.setBodyOid(_memobj.getOid());
-    }
-
-    @Override
-    protected void reportSuccess ()
-    {
-        super.reportSuccess();
-
-        /** If finishResolution() flagged the need for an announce here, do it */
-        if (_needAnnounce) {
-            announce();
-        }
-    }
-
     protected enum Step {
         MEMBER, MONEY, PROFILE, STATS, BADGES, FRIENDS, GROUPS, MAIL, AVATAR, THEME,
     }
 
     /**
      * Keep track of how much time we spend performing each logically discrete step in
-     * the MemberObject (and MemberLocal) resolution process. We additionally abort the
-     * resolution if the member has disconnected.
+     * the MemberObject (and MemberLocal) resolution process.
      */
     protected class ResolutionProfiler
     {
@@ -451,6 +473,16 @@ public class MsoyClientResolver extends CrowdClientResolver
         protected long _stamp = System.nanoTime();
     }
 
+    /** An observer that dequeues our resolution task if we disconnect. */
+    protected ClientObserver _sessionObserver = new ClientObserver() {
+        public void clientSessionDidStart (PresentsSession session) { /* don't care */ }
+        public void clientSessionDidEnd (PresentsSession session) {
+            if (session.getAuthName().equals(_username)) {
+                // the very session we're resolving for disconnected: terminate!
+                didDisconnect();
+            }
+        }
+    };
 
     /** Info on our member object forwarded from another server. */
     protected Tuple<MemberObject,Streamable[]> _fwddata;
@@ -464,11 +496,15 @@ public class MsoyClientResolver extends CrowdClientResolver
     /** Our MemberRecord, which needs to be passed this way from invoker to dobj thread. */
     protected MemberRecord _mrec;
 
+    /** The resolution task we send off to the {@link ResolutionQueue}. */
+    protected int _taskIx;
+
     /** Whether or not we need to automatically announce() after reportSuccess() finishes. */
     protected boolean _needAnnounce;
 
     @Inject protected BadgeManager _badgeMan;
     @Inject protected BadgeRepository _badgeRepo;
+    @Inject protected ClientManager _clmgr;
     @Inject protected GroupRepository _groupRepo;
     @Inject protected ItemLogic _itemLogic;
     @Inject protected ItemManager _itemMan;
