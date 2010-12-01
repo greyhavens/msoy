@@ -79,7 +79,6 @@ public class MsoyClientResolver extends CrowdClientResolver
     {
         _mcobj = new MemberClientObject();
         _mcobj.position = _queue.getQueueSize();
-        _mcobj.position = 10;
         return _mcobj;
     }
 
