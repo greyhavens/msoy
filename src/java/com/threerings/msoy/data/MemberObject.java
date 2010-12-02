@@ -372,12 +372,6 @@ public class MemberObject extends BodyObject
     }
 
     // from interface MsoyUserObject
-
-    @Override public int getPlaceOid ()
-    {
-        return 0;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
     public MemberName getMemberName ()
     {
         return memberName;
