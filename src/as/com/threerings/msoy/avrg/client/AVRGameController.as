@@ -430,10 +430,9 @@ public class AVRGameController extends PlaceController
             _lastDispatchedSceneId = sceneId;
 
         } else {
-            log.debug(playerIdStr(),
-                "Would dispatch but... [roomProps=" + roomProps + ", ploc=" + ploc +
-                ", sceneId=" + sceneId + ", placeId=" + placeId + ", roomOid=" + roomOid +
-                ", connected=" + connected + ", why=" + why + "]");
+            log.debug("Would dispatch but...", "player", playerIdStr(), "roomProps", roomProps,
+                      "ploc", ploc, "sceneId", sceneId, "placeId", placeId, "roomOid", roomOid,
+                      "connected", connected, "why", why);
         }
     }
 
