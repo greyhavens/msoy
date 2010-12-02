@@ -991,6 +991,7 @@ public class RoomManager extends SpotSceneManager
      */
     protected boolean ensureEntityControl (ClientObject who, ItemIdent item, String from)
     {
+        BodyObject body = _locator.forClient(who);
         Integer memberOid = _avatarIdents.get(item);
         if (memberOid != null) {
             if (who instanceof WindowClientObject) {
@@ -998,18 +999,18 @@ public class RoomManager extends SpotSceneManager
                 MemberObject target = (MemberObject)_omgr.getObject(memberOid);
                 if (target.game == null || !target.game.avrGame ||
                     !WindowClientObject.isForGame(who, target.game.gameId)) {
-                    log.info("Agent attempting control of non-player avatar", "who",
+                    log.info("AVRG Agent attempting control of non-player avatar", "who",
                         who.who(), "avatar", item);
                     return false;
                 }
                 return true;
 
-            } else if (who.getOid() == memberOid.intValue()) {
+            } else if (body.getOid() == memberOid.intValue()) {
                 // yes, you may control your own avatar
                 return true;
             }
             log.warning("Some user is trying to control another's avatar", "who", who.who(),
-                "avatar", item, "member", memberOid);
+                "body", body, "avatar", item, "member", memberOid);
             return false;
         }
         // otherwise, it's for some entity other than a user's avatar...
@@ -1018,10 +1019,10 @@ public class RoomManager extends SpotSceneManager
         EntityControl ctrl = _roomObj.controllers.get(reference);
         if (ctrl == null) {
             //log.info("Assigning control", "item", item, "to", who.who());
-            _roomObj.addToControllers(new EntityControl(reference, who.getOid()));
+            _roomObj.addToControllers(new EntityControl(reference, body.getOid()));
             return true;
         }
-        return (ctrl.controllerOid == who.getOid());
+        return (ctrl.controllerOid == body.getOid());
     }
 
     /**
