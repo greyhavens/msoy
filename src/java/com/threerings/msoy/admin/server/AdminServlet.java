@@ -449,7 +449,7 @@ public class AdminServlet extends MsoyServiceServlet
 
         // attach a note to the creator's support history
         _supportLogic.addNote(memrec.getName(), item.creatorId, subject,
-            note.toString(), item.toItem().getPrimaryMedia().getMediaPath());
+            note.toString(), item.toItem().getPrimaryMedia().toString());
 
         return result;
     }
