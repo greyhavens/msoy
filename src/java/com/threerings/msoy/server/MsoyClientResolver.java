@@ -20,10 +20,8 @@ import com.threerings.io.Streamable;
 
 import com.threerings.msoy.mail.server.MailLogic;
 
-import com.threerings.presents.Log;
 import com.threerings.presents.server.ClientManager;
 import com.threerings.presents.server.ClientManager.ClientObserver;
-import com.threerings.presents.server.ClientResolutionListener;
 import com.threerings.util.StreamableArrayIntSet;
 
 import com.threerings.presents.data.ClientObject;
@@ -211,8 +209,8 @@ public class MsoyClientResolver extends CrowdClientResolver
     @Override // from ClientResolver
     protected void finishResolution (ClientObject clobj)
     {
-        // if we're support, we already resolved, just finish up here   
-        if (_mrec.isSupport()) {        
+        // if we're support, we already resolved, just finish up here
+        if (_mrec.isSupport()) {
             _memobj.setParty(_peerMan.getPartySummary(_memobj.getMemberId()));
 
             // reportSuccess() will be called automatically by our superclass, but we
@@ -247,25 +245,9 @@ public class MsoyClientResolver extends CrowdClientResolver
             }
         };
 
-        // DEBUGGING
-        if (true) {
-            Task fake = new Task() {
-                @Override public void resolve () throws Exception {
-                    Thread.sleep(2000);
-                }
-                @Override public void handle () throws Exception {
-                }
-            };
-
-            _queue.queueTask(fake, null);
-            _queue.queueTask(fake, null);
-            _queue.queueTask(fake, null);
-            _queue.queueTask(fake, null);
-            _queue.queueTask(fake, null);
-            _queue.queueTask(fake, null);
-        }
-
         _taskIx = _queue.queueTask(task, listener);
+        log.info("Queueing resolution task", "who", _clobj.who(),
+            "queue size", _queue.getQueueSize(), "taskIx", _taskIx);
 
         // update the queue size, things might have happened since the object was created
         _mcobj.position = _queue.getQueueSize();
@@ -278,6 +260,7 @@ public class MsoyClientResolver extends CrowdClientResolver
 
     protected void didDisconnect ()
     {
+        log.info("Dequeueing entry due to disconnect", "who", _clobj.who(), "taskIx", _taskIx);
         if (_taskIx != 0) {
             // should always be true
             _queue.dequeueTask(_taskIx);
