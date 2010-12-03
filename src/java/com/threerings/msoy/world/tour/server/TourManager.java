@@ -28,7 +28,6 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.all.DeploymentConfig;
-import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MemberLocal;
 import com.threerings.msoy.server.MemberLocator;
 import com.threerings.msoy.server.MemberManager;
@@ -78,7 +77,7 @@ public class TourManager
         InvocationService.ResultListener listener)
         throws InvocationException
     {
-        final MemberObject memObj = _locator.lookupMember((MemberName) caller.username);
+        final MemberObject memObj = _locator.lookupMember(caller);
 
         // put them "on tour" if they're not already
         if (!memObj.onTour) {
