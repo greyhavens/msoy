@@ -121,10 +121,12 @@ public class MemberManager
         repMan.registerReporter(CLIENTS_REPORT_TYPE, new ReportManager.Reporter() {
             public void appendReport (StringBuilder buf, long now, long sinceLast, boolean reset) {
                 for (ClientObject clobj : _clmgr.clientObjects()) {
-                    if (!(clobj instanceof BodyObject)) {
+                    BodyObject body = (clobj instanceof BodyObject) ?
+                        (BodyObject) clobj : _locator.lookupMember(clobj);
+                    if (body == null) {
                         buf.append("- ").append(clobj.getClass().getSimpleName()).append("\n");
                     } else {
-                        appendBody(buf, (BodyObject)clobj);
+                        appendBody(buf, body);
                     }
                 }
             }
