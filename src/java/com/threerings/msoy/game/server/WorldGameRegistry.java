@@ -33,6 +33,7 @@ import com.threerings.presents.server.InvocationManager;
 import com.threerings.presents.server.SessionFactory;
 import com.threerings.presents.server.net.PresentsConnectionManager;
 
+import com.threerings.crowd.server.BodyLocator;
 import com.threerings.crowd.server.BodyManager;
 import com.threerings.crowd.server.PlaceManager;
 import com.threerings.crowd.server.PlaceRegistry;
@@ -197,7 +198,7 @@ public class WorldGameRegistry
     // from interface MsoyGameProvider
     public void inviteFriends (ClientObject caller, final int gameId, final int[] friendIds)
     {
-        final MemberObject memobj = (MemberObject)caller;
+        final MemberObject memobj = (MemberObject) _locator.forClient(caller);
 
         // sanity check; if this breaks some day in real usage, I will be amused
         if (friendIds.length > 255) {
@@ -420,6 +421,7 @@ public class WorldGameRegistry
     // dependencies
     @Inject protected @MainInvoker Invoker _invoker;
     @Inject protected BodyManager _bodyMan;
+    @Inject protected BodyLocator _locator;
     @Inject protected Injector _injector;
     @Inject protected MsoyGameRepository _mgameRepo;
     @Inject protected MsoyPeerManager _peerMan;
