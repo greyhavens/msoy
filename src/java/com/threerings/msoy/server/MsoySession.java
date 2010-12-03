@@ -185,14 +185,9 @@ public class MsoySession extends WhirledSession
     {
         super.sessionConnectionClosed();
 
-        // if we disconnect while we're still in the login queue, we end the session
-        if (_memobj == null) {
-            endSession();
-            return;
-        }
-
         // actually we always end the session, unless we're actually in mid-resume
         if (!_resumingSession) {
+            log.info("La la ending session");
             endSession();
         }
     }
