@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -238,7 +240,7 @@ public class AwardDelegate extends RatingDelegate
         stopTracking();
         resetTracking();
 
-        for (int id : _flowRecords.keySet()) {
+        for (int id : ImmutableSet.copyOf(_flowRecords.keySet())) {
             payoutPlayer(id);
         }
 
