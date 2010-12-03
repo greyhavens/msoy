@@ -991,7 +991,6 @@ public class RoomManager extends SpotSceneManager
      */
     protected boolean ensureEntityControl (ClientObject who, ItemIdent item, String from)
     {
-        BodyObject body = _locator.forClient(who);
         Integer memberOid = _avatarIdents.get(item);
         if (memberOid != null) {
             if (who instanceof WindowClientObject) {
@@ -1004,8 +1003,9 @@ public class RoomManager extends SpotSceneManager
                     return false;
                 }
                 return true;
-
-            } else if (body.getOid() == memberOid.intValue()) {
+            }
+            BodyObject body = _locator.forClient(who);
+            if (body.getOid() == memberOid.intValue()) {
                 // yes, you may control your own avatar
                 return true;
             }
@@ -1017,6 +1017,7 @@ public class RoomManager extends SpotSceneManager
 
         Controllable reference = new ControllableEntity(item);
         EntityControl ctrl = _roomObj.controllers.get(reference);
+        BodyObject body = _locator.forClient(who);
         if (ctrl == null) {
             //log.info("Assigning control", "item", item, "to", who.who());
             _roomObj.addToControllers(new EntityControl(reference, body.getOid()));
