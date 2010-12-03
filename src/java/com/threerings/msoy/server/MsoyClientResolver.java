@@ -124,9 +124,6 @@ public class MsoyClientResolver extends CrowdClientResolver
         // register it with the presents system
         _omgr.registerObject(_memobj);
 
-        // hook the client object up with the body
-        _mcobj.memobj = _memobj;
-
         // give the MemberObject the same (auth) username as we gave MemberClientObject
         _memobj.username = _username;
 
@@ -278,6 +275,9 @@ public class MsoyClientResolver extends CrowdClientResolver
 
     protected void announce ()
     {
+        // hook the client object up with the body
+        _mcobj.memobj = _memobj;
+        
         // setting the oid should complete the client's two-phase loading process
         _mcobj.setBodyOid(_memobj.getOid());
     }
