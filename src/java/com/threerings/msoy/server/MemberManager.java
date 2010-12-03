@@ -435,7 +435,7 @@ public class MemberManager
     @Override // from interface MemberProvider
     public void acknowledgeWarning (final ClientObject caller)
     {
-        final MemberObject user = (MemberObject) caller;
+        final MemberObject user = (MemberObject) _locator.forClient(caller);
         _invoker.postUnit(new WriteOnlyUnit("acknowledgeWarning(" + user.getMemberId() + ")") {
             @Override public void invokePersist () throws Exception {
                 _memberRepo.clearMemberWarning(user.getMemberId());
@@ -447,7 +447,7 @@ public class MemberManager
     public void complainMember (ClientObject caller, final int memberId, String complaint)
     {
         MemberObject target = _locator.lookupMember(memberId);
-        complainMember((BodyObject) caller, memberId,  complaint,
+        complainMember(target, memberId,  complaint,
             (target != null) ? target.getMemberName() : null);
     }
 
