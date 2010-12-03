@@ -97,22 +97,23 @@ public class MsoyClientResolver extends CrowdClientResolver
         _mcobj.username = _username;
 
         // see if we have a member object forwarded from our peer
-        _fwddata = _peerMan.getForwardedMemberObject(_username);
-        if (_fwddata != null) {
-            _memobj = _fwddata.left;
+        Tuple<MemberObject, Streamable[]> fwdData = _peerMan.getForwardedMemberObject(_username);
+        if (fwdData != null) {
+            _memobj = fwdData.left;
             _mcobj.memobj = _memobj;
-            _mcobj.bodyOid = _memobj.getOid();
-            for (Streamable local : _fwddata.right) {
+            // the forwarded MemberObjects need to be re-registered as an active DObject
+            _mcobj.bodyOid = _omgr.registerObject(_memobj).getOid();
+            for (Streamable local : fwdData.right) {
                 @SuppressWarnings("unchecked") Class<Streamable> lclass =
                     (Class<Streamable>)local.getClass();
-                _clobj.setLocal(lclass, null); // delete any stock local
-                _clobj.setLocal(lclass, local); // configure our forwarded data
+                _memobj.setLocal(lclass, null); // delete any stock local
+                _memobj.setLocal(lclass, local); // configure our forwarded data
             }
         }
 
         if (_mcobj.bodyOid != 0) {
             // we're done
-            log.debug("Resolved forwarded session", "clobj", _clobj.who());
+            log.info("Resolved forwarded session", "clobj", _clobj.who());
 
             reportSuccess();
             return;
@@ -154,7 +155,7 @@ public class MsoyClientResolver extends CrowdClientResolver
             local.friendIds = new StreamableArrayIntSet(0);
             local.inProgressBadges = new InProgressBadgeSet();
 
-            log.debug("Resolved guest session", "guest", _memobj);
+            log.info("Resolved guest session", "guest", _memobj);
             reportSuccess();
             announce();
             return;
@@ -168,7 +169,7 @@ public class MsoyClientResolver extends CrowdClientResolver
             local.friendIds = new StreamableArrayIntSet(0);
             local.inProgressBadges = new InProgressBadgeSet();
 
-            log.debug("Resolved lurker session", "guest", _memobj);
+            log.info("Resolved lurker session", "guest", _memobj);
             reportSuccess();
             announce();
             return;
@@ -213,6 +214,8 @@ public class MsoyClientResolver extends CrowdClientResolver
             // reportSuccess() will be called automatically by our superclass, but we
             // still want the availability of the MemberObject announced aftwards
             _needAnnounce = true;
+            log.info("Resolved support session", "clobj", _clobj.who());
+
             return;
         }
 
@@ -252,7 +255,7 @@ public class MsoyClientResolver extends CrowdClientResolver
         // register ourselves as interested in client sessions, so we can dequeue if needed
         _clmgr.addClientObserver(_sessionObserver);
 
-        log.debug("Resolved unforwarded session", "clobj", _clobj.who());
+        log.info("Resolved unforwarded session", "clobj", _clobj.who());
     }
 
     protected void didDisconnect ()
@@ -277,7 +280,7 @@ public class MsoyClientResolver extends CrowdClientResolver
     {
         // hook the client object up with the body
         _mcobj.memobj = _memobj;
-        
+
         // setting the oid should complete the client's two-phase loading process
         _mcobj.setBodyOid(_memobj.getOid());
     }
@@ -466,9 +469,6 @@ public class MsoyClientResolver extends CrowdClientResolver
             }
         }
     };
-
-    /** Info on our member object forwarded from another server. */
-    protected Tuple<MemberObject,Streamable[]> _fwddata;
 
     /** Our actual client object, constructed very early in the process. */
     protected MemberClientObject _mcobj;
