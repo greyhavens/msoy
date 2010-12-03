@@ -26,7 +26,6 @@
   <property name="version" value="0"/>
 
   <!-- define our subprojects and include the standard build system -->
-  <property name="projects" value="thane"/>
   <import file="build/etc/build-support.xml"/>
   <fileset dir="." id="check.paths">
     <include name="${src.dir}/**/*.java"/>
@@ -226,6 +225,8 @@
                   version="1.0-SNAPSHOT" type="swc"/>
       <dependency groupId="com.threerings" artifactId="whirledthanelib"
                   version="1.0-SNAPSHOT" type="swc"/>
+      <dependency groupId="com.threerings" artifactId="thane"
+                  version="1.0-SNAPSHOT" type="swc"/>
       <dependency groupId="com.threerings" artifactId="naryalib"
                   version="1.3-SNAPSHOT" type="swc"/>
       <dependency groupId="com.threerings" artifactId="vilyalib"
@@ -241,7 +242,11 @@
     </artifact:dependencies>
     <copy todir="${deploy.dir}/lib">
       <fileset refid="aslib.fileset"/>
-      <mapper type="flatten"/>
+      <chainedmapper>
+        <mapper type="flatten"/>
+        <mapper type="regexp" from="(.+?)(-SNAPSHOT)?.swc" to="\1.swc"/>
+        <mapper type="regexp" from="(.*)-([^-])+.swc" to="\1.swc"/>
+      </chainedmapper>
     </copy>
   </target>
 
@@ -608,15 +613,15 @@
       <arg value="${deploy.dir}/msoy-config.xml"/>
       <arg value="${flex.extra-arg}"/>
       <arg value="${flex.extra-arg-2}"/>
-      <arg value="-compiler.library-path+=${deploy.dir}/lib/aspirin-1.7-SNAPSHOT.swc"/>
-      <arg value="-compiler.library-path+=${deploy.dir}/lib/naryalib-1.3-SNAPSHOT.swc"/>
-      <arg value="-compiler.library-path+=${deploy.dir}/lib/nenyalib-1.0.swc"/>
-      <arg value="-compiler.library-path+=${deploy.dir}/lib/vilyalib-1.1-SNAPSHOT.swc"/>
-      <arg value="-compiler.library-path+=${deploy.dir}/lib/whirledlib-1.1-SNAPSHOT.swc"/>
-      <arg value="-compiler.library-path+=${deploy.dir}/lib/orthlib-1.0-SNAPSHOT.swc"/>
-      <arg value="-compiler.library-path+=${deploy.dir}/lib/toyboxlib-1.0-SNAPSHOT.swc"/>
-      <arg value="-compiler.library-path+=${deploy.dir}/lib/as3corelib-0.93.swc"/>
-      <arg value="-compiler.library-path+=${deploy.dir}/lib/flexlib-bin-2.4.swc"/>
+      <arg value="-compiler.library-path+=${deploy.dir}/lib/aspirin.swc"/>
+      <arg value="-compiler.library-path+=${deploy.dir}/lib/naryalib.swc"/>
+      <arg value="-compiler.library-path+=${deploy.dir}/lib/nenyalib.swc"/>
+      <arg value="-compiler.library-path+=${deploy.dir}/lib/vilyalib.swc"/>
+      <arg value="-compiler.library-path+=${deploy.dir}/lib/whirledlib.swc"/>
+      <arg value="-compiler.library-path+=${deploy.dir}/lib/orthlib.swc"/>
+      <arg value="-compiler.library-path+=${deploy.dir}/lib/toyboxlib.swc"/>
+      <arg value="-compiler.library-path+=${deploy.dir}/lib/as3corelib.swc"/>
+      <arg value="-compiler.library-path+=${deploy.dir}/lib/flexlib-bin.swc"/>
       <arg value="-compiler.library-path+=${deploy.dir}/lib/tweener.swc"/>
       <arg value="-compiler.library-path+=${deploy.dir}/lib/KongregateAPI.swc"/>
       <arg value="-compiler.source-path=${asrc.dir}/"/>
@@ -1045,12 +1050,12 @@
           description="Rebuilds all of our Flash clients and applets.">
   </target>
 
-  <target name="copythanebinaries" depends="prepare,distprojects">
+  <target name="copythanebinaries" depends="prepare">
     <!-- Run a special target in thane that will copy the right executable file into the -->
     <!-- thane/dist directory. -->
     <ant dir="projects/thane" target="distbinary"/>
 
-    <!-- this is not copied automatically because the thane build doesn't know about our deploy dir! :) -->
+    <!-- copy the distbinary result into our dist directory -->
     <if><available file="projects/thane/dist/avmthane"/><then>
         <property name="avmthane" value="avmthane"/>
     </then><else>
@@ -1071,7 +1076,7 @@
   </target>
 
   <!-- rebuilds all subprojects and the whole top-level distribution -->
-  <target name="distbits" depends="distprojects,dist,flashapps,thane-client"/>
+  <target name="distbits" depends="dist,flashapps,thane-client"/>
   <target name="distall-package"
           depends="prepare,mavendeps,mavendeps-as,distbits,tests,checkstyle,gclients"
           description="Rebuilds all architecture independent targets."/>
@@ -1116,7 +1121,7 @@
   </target>
 
   <!-- fully cleans out the application and all subprojects -->
-  <target name="distcleanall" depends="distcleanprojects,distclean"
+  <target name="distcleanall" depends="distclean"
         description="Fully cleans out the application and all subprojects."/>
 
   <!-- assigns a version number to this build -->
