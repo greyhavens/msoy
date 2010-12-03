@@ -448,8 +448,9 @@ public class MemberManager
     @Override // from interface MemberProvider
     public void complainMember (ClientObject caller, final int memberId, String complaint)
     {
+        MemberObject member = _locator.requireMember(caller);
         MemberObject target = _locator.lookupMember(memberId);
-        complainMember(target, memberId,  complaint,
+        complainMember(member, memberId,  complaint,
             (target != null) ? target.getMemberName() : null);
     }
 
