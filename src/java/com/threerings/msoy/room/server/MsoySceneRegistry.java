@@ -13,6 +13,7 @@ import com.samskivert.util.Invoker;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.Tuple;
 
+import com.threerings.presents.server.ClientManager;
 import com.threerings.util.Name;
 
 import com.threerings.presents.annotation.MainInvoker;
@@ -28,9 +29,11 @@ import com.threerings.whirled.data.SceneCodes;
 import com.threerings.whirled.data.ScenePlace;
 import com.threerings.whirled.server.SceneManager;
 import com.threerings.whirled.server.SceneMoveHandler;
+import com.threerings.whirled.server.SceneSender;
 import com.threerings.whirled.spot.data.Portal;
 import com.threerings.whirled.spot.server.SpotSceneRegistry;
 
+import com.threerings.msoy.data.MemberClientObject;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MemberLocator;
@@ -278,6 +281,26 @@ public class MsoySceneRegistry extends SpotSceneRegistry
         _peerMan.forwardMemberObject(nodeName, memobj);
     }
 
+    // This is a hopefully temporary fix at the MSOY level to something that needs to be fixed
+    // at the narya/vilya level; moveBody() takes a body object, but SceneSender actually needs
+    // the associated ClientObject. Note: we do not call super() !
+    @Override // from SceneRegistry
+    public void moveBody (BodyObject source, int sceneId)
+    {
+        // first remove them from their old place
+        _locman.leaveOccupiedPlace(source);
+
+        // then send a forced move notification -to their client object-
+        ClientObject clobj = _clmgr.getClientObject(source.username);
+        // sanity check
+        if (!(clobj instanceof MemberClientObject)) {
+            log.warning("Really expected a MemberClientObject here", "clobj", clobj);
+        }
+        SceneSender.forcedMove(clobj, sceneId);
+    }
+
+
+
     protected interface ThemeMoveHandler
     {
         void finish (Integer candidateAvatarId);
@@ -288,6 +311,7 @@ public class MsoySceneRegistry extends SpotSceneRegistry
     // our dependencies
     @Inject protected @MainInvoker Invoker _invoker;
     @Inject protected Injector _injector;
+    @Inject protected ClientManager _clmgr;
     @Inject protected MemberLocator _locator;
     @Inject protected MsoyEventLogger _eventLog;
     @Inject protected MsoyPeerManager _peerMan;
