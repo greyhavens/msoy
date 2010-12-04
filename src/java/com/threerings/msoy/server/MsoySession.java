@@ -187,7 +187,6 @@ public class MsoySession extends WhirledSession
 
         // actually we always end the session, unless we're actually in mid-resume
         if (!_resumingSession) {
-            log.info("La la ending session");
             endSession();
         }
     }
