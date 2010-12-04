@@ -95,6 +95,7 @@ public class MsoyClientResolver extends CrowdClientResolver
         _clobj = object;
 
         _mcobj.username = _username;
+        MemberLocal local = null;
 
         // see if we have a member object forwarded from our peer
         Tuple<MemberObject, Streamable[]> fwdData = _peerMan.getForwardedMemberObject(_username);
@@ -103,34 +104,36 @@ public class MsoyClientResolver extends CrowdClientResolver
             _mcobj.memobj = _memobj;
             // the forwarded MemberObjects need to be re-registered as an active DObject
             _mcobj.bodyOid = _omgr.registerObject(_memobj).getOid();
-            for (Streamable local : fwdData.right) {
+            for (Streamable fwdLocal : fwdData.right) {
                 @SuppressWarnings("unchecked") Class<Streamable> lclass =
-                    (Class<Streamable>)local.getClass();
+                    (Class<Streamable>)fwdLocal.getClass();
                 _memobj.setLocal(lclass, null); // delete any stock local
-                _memobj.setLocal(lclass, local); // configure our forwarded data
+                _memobj.setLocal(lclass, fwdLocal); // configure our forwarded data
             }
+
+            // this was a forwarded object, we just set up its locals, grab the Member one
+            local = _memobj.getLocal(MemberLocal.class);
+            if (local == null) {
+                log.warning("What!? The forwared MemberObject has no MemberLocal",
+                    "who", _clobj.username);
+                // emergency recovery, not needed once we reach stability
+                _memobj.setLocal(MemberLocal.class, (local = new MemberLocal()));
+            }
+
+        } else {
+            // otherwise we're creating a new MemberObject
+            _memobj = new MemberObject();
+
+            // register it with the presents system
+            _omgr.registerObject(_memobj);
+
+            // give the MemberObject the same (auth) username as we gave MemberClientObject
+            _memobj.username = _username;
+
+            // create and put the local into place.
+            local = new MemberLocal();
+            _memobj.setLocal(ClientLocal.class, local);
         }
-
-        if (_mcobj.bodyOid != 0) {
-            // we're done
-            log.info("Resolved forwarded session", "clobj", _clobj.who());
-
-            reportSuccess();
-            return;
-        }
-
-        // otherwise we're creating a new MemberObject
-        _memobj = new MemberObject();
-
-        // register it with the presents system
-        _omgr.registerObject(_memobj);
-
-        // give the MemberObject the same (auth) username as we gave MemberClientObject
-        _memobj.username = _username;
-
-        // and put the local into place. this completes what's normally done in clientmanager.
-        MemberLocal local = new MemberLocal();
-        _memobj.setLocal(ClientLocal.class, local);
 
         // create a deferred notifications array so that we can track any notifications dispatched
         // to this client until they're ready to read them; we'd have MsoyNotificationManager do
@@ -142,6 +145,14 @@ public class MsoyClientResolver extends CrowdClientResolver
         // do some stats-related hackery
         if (local.stats instanceof ServerStatSet) {
             ((ServerStatSet)local.stats).init(_badgeMan, _memobj);
+        }
+
+        if (_mcobj.bodyOid != 0) {
+            // we're done
+            log.info("Resolved forwarded session", "clobj", _clobj.who());
+
+            reportSuccess();
+            return;
         }
 
         // guests have MemberName as an auth username, members have Name
