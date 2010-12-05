@@ -45,7 +45,7 @@ public class MsoyObjectAccess
                 if (object != body && object != co) {
                     log.warning("Refusing ClientObject subscription request",
                         "body", (body != null) ? body.who() : "null", "sub", co.who(),
-                        "obj", obj);
+                        "obj", object);
                     return false;
                 }
             }
