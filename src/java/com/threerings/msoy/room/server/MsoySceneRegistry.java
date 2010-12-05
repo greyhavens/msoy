@@ -220,7 +220,7 @@ public class MsoySceneRegistry extends SpotSceneRegistry
                         MsoyLocation destLoc, MsoySceneMoveListener listener)
         throws InvocationException
     {
-        final BodyObject mover = _locator.lookupMember(caller);
+        final BodyObject mover = _locator.forClient(caller);
         final MemberObject memobj = (mover instanceof MemberObject) ? (MemberObject)mover : null;
 
         // if they are departing a scene hosted by this server, move them to the exit; if we fail
