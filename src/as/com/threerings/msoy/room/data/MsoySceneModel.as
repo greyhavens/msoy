@@ -218,6 +218,7 @@ public class MsoySceneModel extends SceneModel
         model.ownerType = ownerType;
         model.ownerId = ownerId;
         model.ownerName = ownerName;
+        model.mogId = mogId;
         model.gameId = gameId;
         model.furnis = (furnis.clone() as TypedArray);
         model.entrance = (entrance.clone() as MsoyLocation);
@@ -237,6 +238,7 @@ public class MsoySceneModel extends SceneModel
         out.writeByte(ownerType);
         out.writeInt(ownerId);
         out.writeObject(ownerName);
+        out.writeInt(mogId);
         out.writeInt(gameId);
         out.writeObject(furnis);
         out.writeObject(entrance);
