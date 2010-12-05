@@ -95,7 +95,6 @@ public class MsoySceneRepository extends DepotRepository
                 log.info("Deleted null RoomPropertyRecord properties", "count", count);
             }
         });
-
     }
 
     /**
