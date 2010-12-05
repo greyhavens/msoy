@@ -67,10 +67,6 @@ public class MsoyNotificationDirector extends NotificationDirector
         var ndheight :int = ctx.getControlBar().getControlHeight();
         ctx.getControlBar().setNotificationDisplay(
             _notificationDisplay = new MsoyNotificationDisplay(ctx, ndheight));
-
-        // clear our display if we lose connection to the server
-        ctx.getClient().addClientObserver(new ClientAdapter(null, null, null, null, null,
-            clearNotifications, null, null));
     }
 
     override protected function getDisplay ():NotificationDisplay
