@@ -991,8 +991,14 @@ public class RoomManager extends SpotSceneManager
      */
     protected boolean ensureEntityControl (ClientObject who, ItemIdent item, String from)
     {
-        Integer memberOid = _avatarIdents.get(item);
-        if (memberOid != null) {
+        if (item.type == MsoyItemType.AVATAR) {
+            Integer memberOid = _avatarIdents.get(item);
+            if (memberOid == null) {
+                log.warning("Attemping to control avatar that's not in this room",
+                    "who", who.who(), "avatar", item);
+                return false;
+            }
+
             if (who instanceof WindowClientObject) {
                 // Agents may control avatars that are playing their game
                 MemberObject target = (MemberObject)_omgr.getObject(memberOid);
@@ -1013,6 +1019,7 @@ public class RoomManager extends SpotSceneManager
                 "body", body, "avatar", item, "member", memberOid);
             return false;
         }
+
         // otherwise, it's for some entity other than a user's avatar...
 
         Controllable reference = new ControllableEntity(item);
