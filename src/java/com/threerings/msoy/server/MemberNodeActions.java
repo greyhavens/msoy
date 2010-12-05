@@ -786,12 +786,7 @@ public class MemberNodeActions
             }
             // now send the notification to the client to switch scenes
 
-            ClientObject clobj = _clmgr.getClientObject(memObj.username);
-            // sanity check
-            if (!(clobj instanceof MemberClientObject)) {
-                log.warning("Really expected a MemberClientObject here", "clobj", clobj);
-            }
-            SceneSender.forcedMove(clobj, _sceneId);
+            SceneSender.forcedMove(memObj.getClientObject(), _sceneId);
         }
 
         protected int _sceneId;
