@@ -4,7 +4,6 @@
 package com.threerings.msoy.server;
 
 import com.threerings.crowd.data.BodyObject;
-import com.threerings.crowd.server.BodyLocator;
 
 import com.threerings.bureau.data.BureauClientObject;
 import com.threerings.presents.data.ClientObject;
@@ -45,7 +44,8 @@ public class MsoyObjectAccess
                 }
                 if (object != body && object != co) {
                     log.warning("Refusing ClientObject subscription request",
-                                "obj", ((ClientObject)object).who(), "sub", co.who());
+                        "body", (body != null) ? body.who() : "null", "sub", co.who(),
+                        "obj", obj);
                     return false;
                 }
             }
@@ -56,8 +56,6 @@ public class MsoyObjectAccess
         {
             return PresentsObjectAccess.CLIENT.allowDispatch(object, event);
         }
-
-        @Inject BodyLocator _locator;
     };
 
     /**
