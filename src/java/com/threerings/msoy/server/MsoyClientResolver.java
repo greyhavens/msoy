@@ -246,7 +246,10 @@ public class MsoyClientResolver extends CrowdClientResolver
                 resolveMember();
             }
             @Override public void handle () throws Exception {
-                _memobj.setParty(_peerMan.getPartySummary(_memobj.getMemberId()));
+                // they might have disconnected during resolution, be careful
+                if (_memobj != null) {
+                    _memobj.setParty(_peerMan.getPartySummary(_memobj.getMemberId()));
+                }
             }
         };
         Listener listener = new Listener() {
