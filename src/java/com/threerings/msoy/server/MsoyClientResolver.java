@@ -294,6 +294,8 @@ public class MsoyClientResolver extends CrowdClientResolver
     {
         // renounce our interest in the birth and death of session
         _clmgr.removeClientObserver(_sessionObserver);
+
+        announce();
     }
 
     protected void announce ()
