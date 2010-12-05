@@ -281,26 +281,6 @@ public class MsoySceneRegistry extends SpotSceneRegistry
         _peerMan.forwardMemberObject(nodeName, memobj);
     }
 
-    // This is a hopefully temporary fix at the MSOY level to something that needs to be fixed
-    // at the narya/vilya level; moveBody() takes a body object, but SceneSender actually needs
-    // the associated ClientObject. Note: we do not call super() !
-    @Override // from SceneRegistry
-    public void moveBody (BodyObject source, int sceneId)
-    {
-        // first remove them from their old place
-        _locman.leaveOccupiedPlace(source);
-
-        // then send a forced move notification -to their client object-
-        ClientObject clobj = _clmgr.getClientObject(source.username);
-        // sanity check
-        if (!(clobj instanceof MemberClientObject)) {
-            log.warning("Really expected a MemberClientObject here", "clobj", clobj);
-        }
-        SceneSender.forcedMove(clobj, sceneId);
-    }
-
-
-
     protected interface ThemeMoveHandler
     {
         void finish (Integer candidateAvatarId);
