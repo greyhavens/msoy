@@ -261,6 +261,7 @@ public class MemberObject extends BodyObject
     /**
      * Return the client object connecting us to the user.
      */
+    @Override
     public MemberClientObject getClientObject ()
     {
         return _mcobj;
