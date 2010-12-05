@@ -276,19 +276,24 @@ public class MsoyClientResolver extends CrowdClientResolver
             // should always be true
             _queue.dequeueTask(_taskIx);
         }
+        _taskIx = 0;
+        _mcobj = null;
+        _memobj = null;
     }
 
     protected void didLeaveQueue ()
     {
         // renounce our interest in the birth and death of session
         _clmgr.removeClientObserver(_sessionObserver);
-
-        // and let the world know of the new memberobject's oid
-        announce();
     }
 
     protected void announce ()
     {
+        // if we disconnected last-minute, don't go through with it
+        if (_mcobj == null) {
+            return;
+        }
+
         // hook the client object up with the body
         _mcobj.memobj = _memobj;
 
