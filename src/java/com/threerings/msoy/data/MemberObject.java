@@ -226,6 +226,14 @@ public class MemberObject extends BodyObject
     /** List of experiences this member has had recently. */
     public DSet<MemberExperience> experiences = new DSet<MemberExperience>();
 
+    public void initWithClient (MemberClientObject mcobj)
+    {
+        if (_mcobj != null) {
+            throw new IllegalStateException("Already initialized!");
+        }
+        _mcobj = mcobj;
+    }
+
     /**
      * Return true if this user is only viewing the scene and should not be rendered within it.
      */
@@ -248,6 +256,14 @@ public class MemberObject extends BodyObject
     public boolean isAway ()
     {
         return awayMessage != null; // message is set to non-null when we're away
+    }
+
+    /**
+     * Return the client object connecting us to the user.
+     */
+    public MemberClientObject getClientObject ()
+    {
+        return _mcobj;
     }
 
     // from MsoyBodyObject

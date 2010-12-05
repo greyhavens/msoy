@@ -101,7 +101,13 @@ public class MsoyClientResolver extends CrowdClientResolver
         Tuple<MemberObject, Streamable[]> fwdData = _peerMan.getForwardedMemberObject(_username);
         if (fwdData != null) {
             _memobj = fwdData.left;
+
+            // let the MemberObject know who's driving it
+            _memobj.initWithClient(_mcobj);
+
+            // let the MemberClientObject know what it's driving
             _mcobj.memobj = _memobj;
+
             // the forwarded MemberObjects need to be re-registered as an active DObject
             _mcobj.bodyOid = _omgr.registerObject(_memobj).getOid();
             for (Streamable fwdLocal : fwdData.right) {
@@ -129,6 +135,9 @@ public class MsoyClientResolver extends CrowdClientResolver
 
             // give the MemberObject the same (auth) username as we gave MemberClientObject
             _memobj.username = _username;
+
+            // let the MemberObject know who's driving it
+            _memobj.initWithClient(_mcobj);
 
             // create and put the local into place.
             local = new MemberLocal();
