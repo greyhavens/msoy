@@ -164,7 +164,7 @@ public class MemberLocator extends BodyLocator
     public BodyObject forClient (ClientObject client)
     {
         if (client instanceof MemberClientObject) {
-            return requireMember(client);
+            return lookupMember(client);
         } else {
             return super.forClient(client);
         }
