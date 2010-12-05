@@ -202,7 +202,6 @@ public /*abstract*/ class MsoyClient extends CrowdClient
         return _loader.getBody();
     }
 
-
     /**
      * Return the Stage.
      */
