@@ -79,10 +79,10 @@ public class MemberLocator extends BodyLocator
             if (memobj != null) {
                 return memobj;
             }
-            log.warning("Invocation from client that's not connected", "client", loader);
+            log.warning("Invocation from client that's not connected", "client", loader.who());
             throw new IllegalStateException("Client not connected");
         }
-        log.warning("Expected source to be MemberClientObject", "client", loader);
+        log.warning("Expected source to be MemberClientObject", "client", loader.who());
         throw new IllegalStateException("Unexpected client type");
     }
 
