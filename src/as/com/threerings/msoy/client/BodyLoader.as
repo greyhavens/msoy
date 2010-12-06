@@ -23,13 +23,11 @@ import com.threerings.msoy.data.MemberClientObject;
 import com.threerings.msoy.data.MemberObject;
 
 /**
- * This class inserts itself into the client object resolution chain. The idea is that when we login,
- * the server sends us a tiny client object. It then enters us into a login queue, eventually getting
- * around to resolving our full client object. At that point, it updates the tiny one. We detect this,
- * subscribe to the large one, and when all is ready, then we finally dispatch the DID_LOGON.
- *
- * Note: This only works if all (relevant) code in the system registers their ClientObservers with this
- * object rather than with the real client.
+ * This class inserts itself into the client object resolution chain. The idea is that when we
+ * login, the server sends us a tiny client object. It then enters us into a login queue,
+ * eventually getting around to resolving our full client object. At that point, it updates the
+ * tiny one. We detect this, subscribe to the large one, and when all is ready, then we finally
+ * dispatch the DID_LOGON.
  */
 public class BodyLoader extends EventDispatcher
     implements AttributeChangeListener
