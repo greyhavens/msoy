@@ -824,7 +824,7 @@ public class RoomManager extends SpotSceneManager
                           final RoomService.InvocationListener listener)
         throws InvocationException
     {
-        final MemberObject member = (MemberObject) caller;
+        final MemberObject member = _locator.requireMember(caller);
         _invoker.postUnit(new WriteOnlyUnit("rateRoom") {
             public void invokePersist () throws Exception {
                 _sceneRepo.getRatingRepository().rate(getScene().getId(),
