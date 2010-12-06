@@ -28,6 +28,7 @@ import com.threerings.ui.MenuUtil;
 import com.threerings.presents.client.ClientAdapter;
 import com.threerings.presents.client.ClientEvent;
 import com.threerings.presents.client.InvocationService_ResultListener;
+import com.threerings.presents.client.ServerSwitcher;
 import com.threerings.presents.client.SessionObserver;
 
 import com.threerings.presents.dobj.DObjectManager;
@@ -167,11 +168,18 @@ public /*abstract*/ class MsoyClient extends CrowdClient
         return _loader;
     }
 
-    // from client
+    // from Client
     override public function addClientObserver (observer :SessionObserver) :void
     {
         // hijack all normal client observer requests and divert them to our special loader
         _loader.addClientObserver(observer);
+    }
+
+    // from Client
+    override public function removeClientObserver (observer :SessionObserver) :void
+    {
+        // hijack all normal client observer requests and divert them to our special loader
+        _loader.removeClientObserver(observer);
     }
 
     public function addRealClientObserver (observer :SessionObserver) :void
