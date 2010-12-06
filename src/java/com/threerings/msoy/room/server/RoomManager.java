@@ -991,7 +991,7 @@ public class RoomManager extends SpotSceneManager
      */
     protected boolean ensureEntityControl (ClientObject who, ItemIdent item, String from)
     {
-        if (item.type == MsoyItemType.AVATAR) {
+        if (item.type == MsoyItemType.AVATAR || item.type == MsoyItemType.OCCUPANT) {
             Integer memberOid = _avatarIdents.get(item);
             if (memberOid == null) {
                 log.warning("Attemping to control avatar that's not in this room",
