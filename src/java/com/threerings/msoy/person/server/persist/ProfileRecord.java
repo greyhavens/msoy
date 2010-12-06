@@ -202,11 +202,14 @@ public class ProfileRecord extends PersistentRecord
      */
     public void setPhoto (MediaDesc photo)
     {
-        if (photo != null) {
-            photoHash = HashMediaDesc.unmakeHash(photo);
-            photoMimeType = photo.getMimeType();
-            photoConstraint = photo.getConstraint();
+        // encode the default as null
+        if (photo == null || photo.equals(MemberCard.DEFAULT_PHOTO)) {
+            return;
         }
+
+        photoHash = HashMediaDesc.unmakeHash(photo);
+        photoMimeType = photo.getMimeType();
+        photoConstraint = photo.getConstraint();
     }
 
     /**
