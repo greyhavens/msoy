@@ -2,7 +2,6 @@
 // $Id$
 
 package com.threerings.msoy.room.client {
-import com.threerings.orth.data.MediaDescSize;
 
 import flash.events.Event;
 import flash.events.KeyboardEvent;
@@ -32,7 +31,9 @@ import com.threerings.flex.CommandMenu;
 
 import com.threerings.whirled.data.SceneUpdate;
 
+import com.threerings.orth.data.MediaDescSize;
 import com.threerings.orth.notify.data.Notification;
+import com.threerings.orth.room.client.PetService;
 
 import com.threerings.msoy.client.BootablePlaceController;
 import com.threerings.msoy.client.Msgs;

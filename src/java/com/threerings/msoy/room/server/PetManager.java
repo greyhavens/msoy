@@ -30,6 +30,10 @@ import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.server.PlaceManager;
 import com.threerings.crowd.server.PlaceRegistry;
 
+import com.threerings.orth.room.client.PetService;
+import com.threerings.orth.room.server.PetDispatcher;
+import com.threerings.orth.room.server.PetProvider;
+
 import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.server.MemberLocator;
@@ -41,7 +45,6 @@ import com.threerings.msoy.item.data.all.Pet;
 import com.threerings.msoy.item.server.persist.PetRecord;
 import com.threerings.msoy.item.server.persist.PetRepository;
 
-import com.threerings.msoy.room.client.PetService;
 import com.threerings.msoy.room.data.EntityMemories;
 import com.threerings.msoy.room.data.PetCodes;
 import com.threerings.msoy.room.data.PetInfo;
