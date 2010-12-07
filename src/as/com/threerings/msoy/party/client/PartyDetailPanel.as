@@ -2,6 +2,7 @@
 // $Id$
 
 package com.threerings.msoy.party.client {
+import com.threerings.orth.ui.PlayerList;
 
 import mx.containers.HBox;
 import mx.containers.VBox;
@@ -14,7 +15,6 @@ import com.threerings.flex.FlexUtil;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.ui.FloatingPanel;
 import com.threerings.orth.ui.MediaWrapper;
-import com.threerings.msoy.ui.PlayerList;
 
 import com.threerings.msoy.group.data.all.Group;
 

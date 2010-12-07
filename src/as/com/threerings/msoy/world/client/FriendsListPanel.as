@@ -31,17 +31,15 @@ import com.threerings.util.Name;
 import com.threerings.util.StringUtil;
 
 import com.threerings.flex.CommandButton;
-import com.threerings.flex.DSetList;
 import com.threerings.flex.FlexUtil;
 
 import com.threerings.msoy.ui.FlyingPanel;
-import com.threerings.msoy.ui.PlayerList;
+import com.threerings.orth.ui.PlayerList;
 
 import com.threerings.msoy.client.MemberService;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.data.MemberObject;
-import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.PlayerEntry;
 
