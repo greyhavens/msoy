@@ -23,8 +23,8 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.util.StringUtil;
 
 import com.threerings.orth.data.MediaDesc;
+import com.threerings.orth.data.MediaDescSize;
 
-import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.edgame.gwt.GameCode;
 import com.threerings.msoy.game.gwt.GameInfo;
 import com.threerings.msoy.item.data.all.Item;

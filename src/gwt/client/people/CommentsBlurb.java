@@ -3,10 +3,11 @@
 
 package client.people;
 
+import com.threerings.orth.data.MediaDescSize;
+
 import com.google.gwt.core.client.GWT;
 
 import com.threerings.msoy.comment.data.all.CommentType;
-import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.profile.gwt.ProfileService;
 
 import client.comment.CommentsPanel;

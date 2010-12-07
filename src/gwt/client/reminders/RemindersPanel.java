@@ -19,7 +19,7 @@ import com.threerings.gwt.ui.AbsoluteCSSPanel;
 import com.threerings.gwt.util.CookieUtil;
 
 import com.threerings.orth.data.MediaDesc;
-import com.threerings.msoy.data.all.MediaDescSize;
+import com.threerings.orth.data.MediaDescSize;
 import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.reminders.gwt.Reminder;
 import com.threerings.msoy.reminders.gwt.ReminderType;

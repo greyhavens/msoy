@@ -10,7 +10,7 @@ import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.orth.data.MediaDesc;
 
-import com.threerings.msoy.data.all.MediaDescSize;
+import com.threerings.orth.data.MediaDescSize;
 import com.threerings.msoy.data.all.MediaMimeTypes;
 
 import client.ui.MsoyUI;

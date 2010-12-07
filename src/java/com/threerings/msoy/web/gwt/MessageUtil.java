@@ -11,7 +11,7 @@ import com.threerings.orth.data.MediaDesc;
 
 import com.threerings.msoy.data.all.CloudfrontMediaDesc;
 import com.threerings.msoy.data.all.DeploymentConfig;
-import com.threerings.msoy.data.all.MediaDescSize;
+import com.threerings.orth.data.MediaDescSize;
 
 /**
  * Message (forum and other) related utilities.

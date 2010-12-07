@@ -31,7 +31,7 @@ import com.google.common.collect.ImmutableMap;
 
 import com.samskivert.util.StringUtil;
 
-import com.threerings.msoy.data.all.MediaDescSize;
+import com.threerings.orth.data.MediaDescSize;
 import com.threerings.msoy.data.all.MediaDescUtil;
 import com.threerings.msoy.data.all.MediaMimeTypes;
 import com.threerings.msoy.item.data.all.Item;

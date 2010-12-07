@@ -23,7 +23,8 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.util.PagedResult;
 import com.threerings.gwt.util.StringUtil;
 
-import com.threerings.msoy.data.all.MediaDescSize;
+import com.threerings.orth.data.MediaDescSize;
+
 import com.threerings.msoy.group.gwt.GroupCard;
 import com.threerings.msoy.group.gwt.GroupService;
 import com.threerings.msoy.group.gwt.GroupServiceAsync;
@@ -191,7 +192,7 @@ public class GroupListPanel extends FlowPanel
     protected PagedGrid<GroupCard> _groupGrid;
 
     protected GroupService.GroupQuery _query;
-    
+
     protected static final GroupsMessages _msgs = GWT.create(GroupsMessages.class);
     protected static final GroupServiceAsync _groupsvc = GWT.create(GroupService.class);
 

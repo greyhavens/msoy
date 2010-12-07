@@ -26,9 +26,9 @@ import com.threerings.gwt.ui.EnterClickAdapter;
 import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.orth.data.MediaDesc;
+import com.threerings.orth.data.MediaDescSize;
 
 import com.threerings.msoy.data.all.CharityInfo;
-import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.gwt.AccountInfo;
 import com.threerings.msoy.web.gwt.ExternalSiteId;

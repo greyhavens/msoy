@@ -14,7 +14,7 @@ import com.google.gwt.user.client.ui.TextBox;
 
 
 import com.threerings.orth.data.MediaDesc;
-import com.threerings.msoy.data.all.MediaDescSize;
+import com.threerings.orth.data.MediaDescSize;
 import com.threerings.msoy.edgame.gwt.EditGameService.GameData;
 import com.threerings.msoy.game.gwt.GameGenre;
 import com.threerings.msoy.game.gwt.GameInfo;

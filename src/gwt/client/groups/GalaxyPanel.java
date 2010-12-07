@@ -15,7 +15,7 @@ import com.threerings.gwt.ui.FloatPanel;
 import com.threerings.gwt.ui.InlinePanel;
 import com.threerings.gwt.ui.SmartTable;
 
-import com.threerings.msoy.data.all.MediaDescSize;
+import com.threerings.orth.data.MediaDescSize;
 import com.threerings.msoy.group.gwt.GalaxyData;
 import com.threerings.msoy.group.gwt.GroupCard;
 import com.threerings.msoy.group.gwt.GroupService;
@@ -164,7 +164,7 @@ public class GalaxyPanel extends FlowPanel
 
     /* dynamic widgets */
     protected CategoryLinks _categoryLinks;
-    
+
     protected static final GroupsMessages _msgs = GWT.create(GroupsMessages.class);
     protected static final GroupServiceAsync _groupsvc = GWT.create(GroupService.class);
 

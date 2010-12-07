@@ -17,7 +17,7 @@ import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.util.DateUtil;
 import com.threerings.gwt.util.SimpleDataModel;
 
-import com.threerings.msoy.data.all.MediaDescSize;
+import com.threerings.orth.data.MediaDescSize;
 import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.game.gwt.GameService;
 import com.threerings.msoy.game.gwt.GameServiceAsync;

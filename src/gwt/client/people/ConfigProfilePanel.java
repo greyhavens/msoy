@@ -19,7 +19,7 @@ import com.threerings.gwt.util.DateUtil;
 
 import com.threerings.orth.data.MediaDesc;
 
-import com.threerings.msoy.data.all.MediaDescSize;
+import com.threerings.orth.data.MediaDescSize;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.profile.gwt.Profile;
 import com.threerings.msoy.profile.gwt.ProfileService;

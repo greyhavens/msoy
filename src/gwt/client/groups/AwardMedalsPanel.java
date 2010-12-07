@@ -23,7 +23,7 @@ import com.google.gwt.user.client.ui.TextBox;
 
 import com.threerings.gwt.ui.EnterClickAdapter;
 
-import com.threerings.msoy.data.all.MediaDescSize;
+import com.threerings.orth.data.MediaDescSize;
 import com.threerings.msoy.data.all.VizMemberName;
 import com.threerings.msoy.group.data.all.Medal;
 import com.threerings.msoy.group.gwt.GroupService;

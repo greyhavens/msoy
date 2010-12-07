@@ -24,7 +24,9 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.CenteredBox;
-import com.threerings.msoy.data.all.MediaDescSize;
+
+import com.threerings.orth.data.MediaDescSize;
+
 import com.threerings.msoy.item.data.all.Photo;
 import com.threerings.msoy.person.gwt.Gallery;
 import com.threerings.msoy.person.gwt.GalleryData;

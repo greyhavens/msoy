@@ -22,8 +22,9 @@ import com.threerings.gwt.util.SimpleDataModel;
 import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.ui.PagedWidget;
 
+import com.threerings.orth.data.MediaDescSize;
+
 import com.threerings.msoy.data.all.GroupName;
-import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.data.all.VizMemberName;
 import com.threerings.msoy.group.data.all.GroupMembership.Rank;
 import com.threerings.msoy.group.data.all.Medal;

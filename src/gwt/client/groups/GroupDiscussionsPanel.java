@@ -17,7 +17,8 @@ import com.threerings.gwt.ui.Anchor;
 import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.util.DateUtil;
 
-import com.threerings.msoy.data.all.MediaDescSize;
+import com.threerings.orth.data.MediaDescSize;
+
 import com.threerings.msoy.fora.gwt.ForumThread;
 import com.threerings.msoy.group.gwt.GroupDetail;
 import com.threerings.msoy.web.gwt.MessageUtil;

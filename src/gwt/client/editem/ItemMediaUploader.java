@@ -14,8 +14,8 @@ import com.google.gwt.user.client.ui.Label;
 import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.orth.data.MediaDesc;
+import com.threerings.orth.data.MediaDescSize;
 
-import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.item.data.all.Item;
 
 import client.shell.CShell;

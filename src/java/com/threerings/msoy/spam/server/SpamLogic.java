@@ -31,6 +31,8 @@ import com.threerings.cron.server.CronLogic;
 import com.threerings.web.gwt.ServiceException;
 
 import com.threerings.orth.data.MediaDesc;
+import com.threerings.orth.data.MediaDescSize;
+
 import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.presents.annotation.BlockingThread;
 
@@ -38,7 +40,6 @@ import com.threerings.util.MessageBundle;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.HashMediaDesc;
-import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.data.all.MemberMailUtil;
 import com.threerings.msoy.fora.gwt.ForumThread;
 import com.threerings.msoy.fora.server.ForumLogic;

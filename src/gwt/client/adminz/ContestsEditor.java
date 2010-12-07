@@ -21,8 +21,8 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.util.DateUtil;
 
 import com.threerings.orth.data.MediaDesc;
+import com.threerings.orth.data.MediaDescSize;
 
-import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.web.gwt.Contest;
 
 import client.imagechooser.ImageChooserPopup;

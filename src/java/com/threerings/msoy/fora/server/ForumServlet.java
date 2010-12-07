@@ -16,9 +16,10 @@ import com.samskivert.util.IntIntMap;
 
 import com.threerings.web.gwt.ServiceException;
 
+import com.threerings.orth.data.MediaDescSize;
+
 import com.threerings.msoy.data.all.CloudfrontMediaDesc;
 import com.threerings.msoy.data.all.GroupName;
-import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
 import com.threerings.msoy.room.server.persist.SceneRecord;

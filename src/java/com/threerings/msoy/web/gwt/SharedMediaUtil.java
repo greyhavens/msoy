@@ -5,7 +5,7 @@ package com.threerings.msoy.web.gwt;
 
 import com.threerings.orth.data.MediaDesc;
 
-import com.threerings.msoy.data.all.MediaDescSize;
+import com.threerings.orth.data.MediaDescSize;
 
 /**
  * Utility routines for displaying media or generating html code to display media.
