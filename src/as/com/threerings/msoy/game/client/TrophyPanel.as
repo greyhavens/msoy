@@ -19,7 +19,7 @@ import com.threerings.io.TypedArray;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.ui.FloatingPanel;
-import com.threerings.msoy.ui.MediaWrapper;
+import com.threerings.orth.ui.MediaWrapper;
 import com.threerings.msoy.ui.MsoyMediaContainer;
 
 import com.threerings.msoy.game.data.all.Trophy;

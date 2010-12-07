@@ -24,9 +24,9 @@ import com.whirled.game.data.WhirledGameConfig;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;
 import com.threerings.orth.data.MediaDesc;
-import com.threerings.msoy.data.all.MediaDescSize;
+import com.threerings.orth.data.MediaDescSize;
 import com.threerings.msoy.data.all.VizMemberName;
-import com.threerings.msoy.ui.MediaWrapper;
+import com.threerings.orth.ui.MediaWrapper;
 import com.threerings.msoy.ui.InfoTipper;
 
 import com.threerings.msoy.game.data.LobbyObject;

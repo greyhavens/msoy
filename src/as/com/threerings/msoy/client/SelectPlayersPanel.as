@@ -227,9 +227,9 @@ import mx.containers.HBox;
 import mx.controls.Label;
 import mx.core.ScrollPolicy;
 
-import com.threerings.msoy.ui.MediaWrapper;
+import com.threerings.orth.ui.MediaWrapper;
 
-import com.threerings.msoy.data.all.MediaDescSize;
+import com.threerings.orth.data.MediaDescSize;
 import com.threerings.msoy.data.all.VizMemberName;
 
 class PlayerBox extends HBox

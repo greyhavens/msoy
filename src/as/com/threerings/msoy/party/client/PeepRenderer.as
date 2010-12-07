@@ -14,7 +14,7 @@ import mx.core.IFactory;
 import com.threerings.flex.FlexUtil;
 
 import com.threerings.msoy.client.PlayerRenderer;
-import com.threerings.msoy.data.all.MediaDescSize;
+import com.threerings.orth.data.MediaDescSize;
 
 import com.threerings.msoy.world.client.WorldContext;
 

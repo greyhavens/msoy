@@ -25,7 +25,7 @@ import com.threerings.flex.CommandButton;
 import com.threerings.flex.FlexUtil;
 
 import com.threerings.orth.data.MediaDesc;
-import com.threerings.msoy.ui.MediaWrapper;
+import com.threerings.orth.ui.MediaWrapper;
 
 import com.threerings.msoy.client.MsoyController;
 

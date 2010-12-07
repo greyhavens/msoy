@@ -10,7 +10,7 @@ import com.threerings.util.CommandEvent;
 
 import com.threerings.crowd.data.OccupantInfo;
 
-import com.threerings.msoy.data.all.MediaDescSize;
+import com.threerings.orth.data.MediaDescSize;
 import com.threerings.msoy.game.data.GameSummary;
 
 import com.threerings.msoy.world.client.WorldContext;
@@ -265,10 +265,10 @@ import com.threerings.text.TextFieldUtil;
 
 import com.threerings.msoy.client.Msgs;
 import com.threerings.orth.data.MediaDesc;
-import com.threerings.msoy.data.all.MediaDescSize;
+import com.threerings.orth.data.MediaDescSize;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.ui.GlowSprite;
-import com.threerings.msoy.ui.ScalingMsoyMediaContainer;
+import com.threerings.orth.ui.ScalingMediaDescContainer;
 
 import com.threerings.msoy.game.data.GameSummary;
 import com.threerings.msoy.group.data.all.Group;
@@ -291,7 +291,7 @@ class TableIcon extends GlowSprite
         _gameSummary = gameSummary;
         var iconSize :int = gameSummary.avrGame ? MediaDescSize.HALF_THUMBNAIL_SIZE
                                                 : MediaDescSize.THUMBNAIL_SIZE;
-        _gameThumb = ScalingMsoyMediaContainer.createView(gameSummary.thumbMedia, iconSize);
+        _gameThumb = ScalingMediaDescContainer.createView(gameSummary.thumbMedia, iconSize);
         _gameThumb.x = _gameThumb.maxW / -2; // position with 0 at center
         addChild(_gameThumb);
 
@@ -349,7 +349,7 @@ class TableIcon extends GlowSprite
 
     protected var _host :MemberSprite;
     protected var _gameSummary :GameSummary;
-    protected var _gameThumb :ScalingMsoyMediaContainer;
+    protected var _gameThumb :ScalingMediaDescContainer;
 }
 
 class PartyIcon extends GlowSprite
@@ -368,7 +368,7 @@ class PartyIcon extends GlowSprite
             return;
         }
 
-        _icon = ScalingMsoyMediaContainer.createView(
+        _icon = ScalingMediaDescContainer.createView(
             Group.logo(summ.icon), MediaDescSize.QUARTER_THUMBNAIL_SIZE);
         _icon.x = _icon.maxW / -2; // position with 0 at center
         addChild(_icon);
@@ -392,5 +392,5 @@ class PartyIcon extends GlowSprite
     }
 
     protected var _host :MemberSprite;
-    protected var _icon :ScalingMsoyMediaContainer;
+    protected var _icon :ScalingMediaDescContainer;
 }

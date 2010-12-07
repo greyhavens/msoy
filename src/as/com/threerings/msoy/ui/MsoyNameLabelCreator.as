@@ -59,9 +59,9 @@ import com.threerings.flex.FlexWrapper;
 import com.threerings.crowd.data.OccupantInfo;
 
 import com.threerings.msoy.client.MsoyContext;
-import com.threerings.msoy.data.all.MediaDescSize;
+import com.threerings.orth.data.MediaDescSize;
 import com.threerings.msoy.data.all.VizMemberName;
-import com.threerings.msoy.ui.MediaWrapper;
+import com.threerings.orth.ui.MediaWrapper;
 import com.threerings.msoy.ui.MsoyNameLabel;
 
 import com.threerings.msoy.room.client.RoomObjectView;

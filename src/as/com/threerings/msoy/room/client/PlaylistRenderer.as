@@ -20,9 +20,9 @@ import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.orth.data.MediaDesc;
-import com.threerings.msoy.data.all.MediaDescSize;
+import com.threerings.orth.data.MediaDescSize;
 import com.threerings.msoy.ui.MediaControls;
-import com.threerings.msoy.ui.MediaWrapper;
+import com.threerings.orth.ui.MediaWrapper;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.Audio;

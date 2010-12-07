@@ -9,11 +9,11 @@ import mx.containers.VBox;
 import mx.core.ScrollPolicy;
 
 
-import com.threerings.msoy.ui.MediaWrapper;
+import com.threerings.orth.ui.MediaWrapper;
 
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.data.all.PlayerEntry;
-import com.threerings.msoy.data.all.MediaDescSize;
+import com.threerings.orth.data.MediaDescSize;
 
 public class PlayerRenderer extends HBox
 {

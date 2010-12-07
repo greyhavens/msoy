@@ -27,7 +27,7 @@ import com.threerings.parlor.data.Table;
 import com.whirled.game.data.WhirledGameConfig;
 
 import com.threerings.msoy.client.Msgs;
-import com.threerings.msoy.data.all.MediaDescSize;
+import com.threerings.orth.data.MediaDescSize;
 import com.threerings.msoy.ui.CopyableText;
 import com.threerings.msoy.ui.SimpleGrid;
 
@@ -229,9 +229,9 @@ import com.threerings.flex.FlexUtil;
 import com.threerings.parlor.data.Table;
 
 import com.threerings.msoy.client.Msgs;
-import com.threerings.msoy.data.all.MediaDescSize;
+import com.threerings.orth.data.MediaDescSize;
 import com.threerings.msoy.data.all.VizMemberName;
-import com.threerings.msoy.ui.MediaWrapper;
+import com.threerings.orth.ui.MediaWrapper;
 
 import com.threerings.msoy.item.data.all.Item;
 

@@ -17,7 +17,7 @@ import com.threerings.msoy.client.UberClient;
 import com.threerings.orth.data.MediaDesc;
 
 import com.threerings.msoy.utils.TextUtil;
-import com.threerings.msoy.ui.MediaWrapper;
+import com.threerings.orth.ui.MediaWrapper;
 
 public class SubtitleGlyph extends ChatGlyph
 {

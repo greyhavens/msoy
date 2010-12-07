@@ -19,7 +19,7 @@ import com.whirled.game.data.GameData;
 import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.data.all.VizMemberName;
 
-import com.threerings.msoy.ui.ScalingMsoyMediaContainer;
+import com.threerings.orth.ui.ScalingMediaDescContainer;
 
 import com.threerings.msoy.item.data.all.ItemTypes;
 
@@ -64,7 +64,7 @@ public class ParlorGameBackend extends WhirledGameBackend
                 var vizName :VizMemberName = info.username as VizMemberName;
                 if (vizName != null) {
                     // now, we return a new one every time (in case the game wants to use two.)
-                    return new Thumbnail(ScalingMsoyMediaContainer.createView(vizName.getPhoto()));
+                    return new Thumbnail(ScalingMediaDescContainer.createView(vizName.getPhoto()));
                 }
                 break;
             }

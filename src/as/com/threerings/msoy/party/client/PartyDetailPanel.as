@@ -13,7 +13,7 @@ import com.threerings.flex.FlexUtil;
 
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.ui.FloatingPanel;
-import com.threerings.msoy.ui.MediaWrapper;
+import com.threerings.orth.ui.MediaWrapper;
 import com.threerings.msoy.ui.PlayerList;
 
 import com.threerings.msoy.group.data.all.Group;

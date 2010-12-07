@@ -29,7 +29,7 @@ import com.threerings.orth.data.MediaDesc;
 import com.threerings.msoy.notify.client.MsoyNotificationDisplay;
 
 import com.threerings.msoy.ui.FloatingPanel;
-import com.threerings.msoy.ui.ScalingMsoyMediaContainer;
+import com.threerings.orth.ui.ScalingMediaDescContainer;
 import com.threerings.msoy.ui.SliderPopup;
 import com.threerings.msoy.ui.skins.VolumeButton;
 
@@ -386,7 +386,7 @@ public class ControlBar extends HBox
         if (icon == null) {
             gameBtn.styleName = "controlBarGameButton";
         } else {
-            var smc :ScalingMsoyMediaContainer = new ScalingMsoyMediaContainer(22, 22);
+            var smc :ScalingMediaDescContainer = new ScalingMediaDescContainer(22, 22);
             smc.setMediaDesc(icon);
             gameBtn.setStyle("image", smc);
         }

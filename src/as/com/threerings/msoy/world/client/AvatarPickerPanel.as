@@ -18,10 +18,10 @@ import com.threerings.flex.CommandButton;
 
 import com.threerings.msoy.client.Msgs;
 import com.threerings.orth.data.MediaDesc;
-import com.threerings.msoy.data.all.MediaDescSize;
+import com.threerings.orth.data.MediaDescSize;
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.ui.FloatingPanel;
-import com.threerings.msoy.ui.MediaWrapper;
+import com.threerings.orth.ui.MediaWrapper;
 
 import com.threerings.util.Log;
 import com.threerings.util.Util;

@@ -2,6 +2,7 @@
 // $Id$
 
 package com.threerings.msoy.room.client {
+import com.threerings.orth.data.MediaDescSize;
 
 import flash.events.Event;
 import flash.events.KeyboardEvent;
@@ -41,7 +42,6 @@ import com.threerings.msoy.client.TopPanel;
 import com.threerings.msoy.client.UberClient;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
-import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.ui.BubblePopup;
 
@@ -83,7 +83,7 @@ import com.threerings.msoy.room.data.PuppetName;
 import com.threerings.msoy.room.data.RoomObject;
 import com.threerings.msoy.room.data.SceneAttrsUpdate;
 
-import com.threerings.msoy.ui.MediaWrapper;
+import com.threerings.orth.ui.MediaWrapper;
 
 import com.threerings.msoy.chat.client.ChatOverlay;
 

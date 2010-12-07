@@ -15,11 +15,12 @@ import mx.core.ISWFBridgeProvider;
 import mx.events.SWFBridgeEvent;
 
 import com.threerings.util.NamedValueEvent;
-import com.threerings.util.Util;
 
-import com.threerings.media.MediaContainer;
 import com.threerings.ui.MenuUtil;
 import com.threerings.media.VideoPlayer;
+
+import com.threerings.orth.data.MediaDesc;
+import com.threerings.orth.ui.MediaDescContainer;
 
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.ContextMenuProvider;
@@ -27,24 +28,19 @@ import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.utils.Capabilities;
 
-import com.threerings.orth.data.MediaDesc;
 import com.threerings.msoy.data.all.MediaMimeTypes;
 import com.threerings.msoy.item.client.ExternalMediaUtil;
 import com.threerings.msoy.item.client.YouTubePlayer;
 import com.threerings.msoy.item.data.all.DefaultItemMediaDesc;
 import com.threerings.msoy.item.data.all.Item;
 
-public class MsoyMediaContainer extends MediaContainer
+public class MsoyMediaContainer extends MediaDescContainer
     implements ContextMenuProvider, ISWFBridgeProvider
 {
-    public function MsoyMediaContainer (
-        desc :MediaDesc = null, bleepInMenu :Boolean = true, suppressHitTestPoint :Boolean = false,
-        blockType :String = null)
+    public function MsoyMediaContainer (desc:MediaDesc = null, bleepInMenu :Boolean = true,
+        suppressHitTestPoint :Boolean = false, blockType :String = null)
     {
-        super(null);
-        if (desc != null) {
-            setMediaDesc(desc);
-        }
+        super(desc);
         _bleepInMenu = bleepInMenu;
         _blockType = blockType;
         _suppressHitTestPoint = suppressHitTestPoint;
@@ -53,36 +49,13 @@ public class MsoyMediaContainer extends MediaContainer
         Prefs.events.addEventListener(Prefs.BLEEPED_MEDIA, handleBleepChange, false, 0, true);
     }
 
-    /**
-     * ATTENTION: don't use this method in msoy unless you know what you're doing.
-     * MediaDescs should almost always be used in msoy instead of urls.
-     */
-    override public function setMedia (url :String) :void
+    override public function setMediaDesc (desc :MediaDesc) :Boolean
     {
-        // this method exists purely for the change in documentation.
-        super.setMedia(url);
-    }
-
-    /**
-     * Set a new MediaDescriptor.
-     */
-    public function setMediaDesc (desc :MediaDesc) :void
-    {
-        if (Util.equals(desc, _desc)) {
-            return;
+        if (super.setMediaDesc(desc)) {
+            checkBlocked();
+            return true;
         }
-
-        _desc = desc;
-        checkBlocked();
-    }
-
-    /**
-     * Retrieve the MediaDescriptor we're configured with, or null if we're not fully configured
-     * yet, or media was configured through setMedia().
-     */
-    public function getMediaDesc () :MediaDesc
-    {
-        return _desc;
+        return false;
     }
 
     /**
@@ -364,9 +337,6 @@ public class MsoyMediaContainer extends MediaContainer
 
     /** The media scale to use when we are not blocked. */
     protected var _spriteMediaScaleY :Number = 1.0;
-
-    /** Our Media descriptor. */
-    protected var _desc :MediaDesc;
 
     /** Whether or not we should populate the context menu with a bleep action. */
     protected var _bleepInMenu :Boolean;
