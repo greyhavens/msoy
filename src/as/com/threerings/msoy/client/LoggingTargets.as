@@ -72,18 +72,6 @@ class FireBugTarget
     // from LogTarget
     public function log (msg :String) :void
     {
-/*
-        // TEMP: needed because of bug in ExternalInterface
-        // (long lines are unterminated)
-        var max_length :int = 79;
-        while (msg.length > max_length) {
-            ExternalInterface.call("console.debug",
-                msg.substring(0, max_length));
-            msg = msg.substring(max_length);
-        }
-        // END: temp
-*/
-
         try {
             ExternalInterface.call("console.debug", msg);
         } catch (err :Error) {
