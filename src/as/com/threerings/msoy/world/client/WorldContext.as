@@ -16,7 +16,7 @@ import com.threerings.msoy.room.client.WorldProperties;
 import com.threerings.msoy.client.ControlBar;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.MsoyController;
-import com.threerings.msoy.client.persist.RuntimeSceneRepository;
+import com.threerings.orth.room.client.persist.RuntimeSceneRepository;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyTokenRing;
 
