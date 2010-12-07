@@ -60,7 +60,6 @@ public class ThemeRepository extends DepotRepository
         return findAll(ThemeRecord.class, new Where(ThemeRecord.POPULARITY.greaterThan(0)));
     }
 
-
     /**
      * Load the themes in which the given member has at least the given rank. This warrants
      * a repository function because the quick way to do it is through a join.

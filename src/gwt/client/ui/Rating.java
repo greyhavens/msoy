@@ -242,7 +242,6 @@ public class Rating extends FlexTable
          // we don't actually show ourselves until we receive the data (bad UI)
     }
 
-
     /** True if both Stars are to be laid out on the same row. */
     protected boolean _horiz;
 

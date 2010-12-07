@@ -10,7 +10,6 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.web.gwt.MessageUtil;
 
-
 /**
  * HTML message editor implementation using GWT's builtin rich text area with a custom toolbar.
  */

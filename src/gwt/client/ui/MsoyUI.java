@@ -329,7 +329,6 @@ public class MsoyUI
         return button;
     }
 
-
     /**
      * Creates an orange button of the specified size with the supplied text.
      */

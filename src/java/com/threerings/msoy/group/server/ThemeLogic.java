@@ -98,7 +98,6 @@ public class ThemeLogic
         return _itemLogic.getRepository(itemType).containsListedItem(itemIds, catalogId);
     }
 
-
     public boolean isTheme (int groupId)
     {
         return _themeRepo.loadTheme(groupId) != null;

@@ -32,7 +32,6 @@ import com.samskivert.util.StringUtil;
 
 import com.samskivert.depot.CacheInvalidator.TraverseWithFilter;
 import com.samskivert.depot.CountRecord;
-import com.samskivert.depot.DataMigration;
 import com.samskivert.depot.DatabaseException;
 import com.samskivert.depot.DateFuncs;
 import com.samskivert.depot.DepotRepository;
@@ -79,7 +78,6 @@ import com.threerings.msoy.room.server.persist.MemoryRepository;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.gwt.CatalogListing;
 import com.threerings.msoy.item.gwt.CatalogQuery;
-import com.threerings.msoy.item.gwt.ItemPrices;
 
 import static com.threerings.msoy.Log.log;
 
@@ -154,10 +152,6 @@ public abstract class ItemRepository<T extends ItemRecord>
 
             // look up each word as a tag
             _tagIds = Sets.newHashSet();
-
-
-
-
 
             if (searchTerms.length > 0) {
                 for (TagNameRecord tRec : getTagRepository().getTags(searchTerms)) {

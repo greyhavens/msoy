@@ -6,7 +6,6 @@ package client.people;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 
-
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.gwt.WebMemberService;
 import com.threerings.msoy.web.gwt.WebMemberServiceAsync;

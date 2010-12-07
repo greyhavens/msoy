@@ -802,7 +802,6 @@ public class GroupServlet extends MsoyServiceServlet
         return mrec.isSupport() || _groupRepo.getRank(groupId, mrec.memberId) == Rank.MANAGER;
     }
 
-
     protected static List<VizMemberName> toVizMemberNames (Iterable<MemberCardRecord> records)
     {
         return Lists.newArrayList(

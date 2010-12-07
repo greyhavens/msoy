@@ -5,7 +5,6 @@ package client.rooms;
 
 import com.google.gwt.core.client.GWT;
 
-
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 

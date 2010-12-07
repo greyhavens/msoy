@@ -5,7 +5,6 @@ package client.adminz;
 
 import com.google.gwt.core.client.GWT;
 
-
 import com.threerings.msoy.admin.gwt.AdminService;
 import com.threerings.msoy.admin.gwt.AdminServiceAsync;
 

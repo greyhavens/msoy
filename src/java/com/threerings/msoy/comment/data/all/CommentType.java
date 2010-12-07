@@ -1,7 +1,6 @@
 //
 // $Id: $
 
-
 package com.threerings.msoy.comment.data.all;
 
 import com.samskivert.util.ByteEnumUtil;

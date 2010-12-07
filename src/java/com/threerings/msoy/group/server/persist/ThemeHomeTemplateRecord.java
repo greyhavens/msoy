@@ -32,7 +32,6 @@ public class ThemeHomeTemplateRecord extends PersistentRecord
         }
     };
 
-
     /** The groupId of the theme for which we're enumerating home room templates. */
     @Id
     public int groupId;

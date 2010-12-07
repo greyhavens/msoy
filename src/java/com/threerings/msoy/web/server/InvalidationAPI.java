@@ -1,7 +1,6 @@
 //
 // $Id: $
 
-
 package com.threerings.msoy.web.server;
 
 import javax.xml.stream.XMLStreamException;

@@ -41,7 +41,6 @@ import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.server.PopularPlacesSnapshot;
 
-
 /**
  * Maintains information regarding existing themes and which ones we're responsible
  * for persisting popularity changes to.

@@ -1256,7 +1256,6 @@ public class MoneyLogic
                         result, listing.item.creatorId, totalPayout.currency, listingPayout);
                 }
 
-
             } else {
                 log.warning("Payout or cost too small for divvying", "totalCost", totalCost,
                     "listingPortion", listing.cost - lastCost, "totalPayout", totalPayout,

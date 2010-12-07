@@ -14,7 +14,6 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import com.samskivert.util.CollectionUtil;
-import com.samskivert.util.Comparators;
 import com.samskivert.util.RandomUtil;
 
 import com.threerings.presents.annotation.EventThread;

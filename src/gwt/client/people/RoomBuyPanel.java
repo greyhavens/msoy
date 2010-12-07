@@ -8,7 +8,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 
-
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.PurchaseResult;

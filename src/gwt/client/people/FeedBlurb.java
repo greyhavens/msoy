@@ -5,7 +5,6 @@ package client.people;
 
 import com.google.gwt.core.client.GWT;
 
-
 import com.threerings.msoy.profile.gwt.ProfileService;
 import com.threerings.msoy.profile.gwt.ProfileServiceAsync;
 

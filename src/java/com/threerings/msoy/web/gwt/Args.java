@@ -6,7 +6,6 @@ package com.threerings.msoy.web.gwt;
 import com.samskivert.util.ByteEnum;
 import com.samskivert.util.ByteEnumUtil;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -123,7 +122,6 @@ public class Args
             return defval;
         }
     }
-
 
     /**
      * Parses and returns the specified argument as an integer. Returns the default if the argument

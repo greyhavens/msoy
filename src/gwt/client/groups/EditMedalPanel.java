@@ -16,7 +16,6 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-
 import com.threerings.orth.data.MediaDesc;
 import com.threerings.orth.data.MediaDescSize;
 

@@ -191,8 +191,6 @@ public class ItemServlet extends MsoyServiceServlet
         return _ratingLogic.getRatingHistory(iident.itemId, ratingRepo, 0, 0);
     }
 
-
-
     // from interface ItemService
     public List<String> getTags (ItemIdent iident)
         throws ServiceException

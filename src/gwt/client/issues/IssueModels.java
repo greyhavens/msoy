@@ -11,7 +11,6 @@ import com.google.common.collect.Maps;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-
 import com.threerings.msoy.fora.gwt.Issue;
 import com.threerings.msoy.fora.gwt.IssueService;
 import com.threerings.msoy.fora.gwt.IssueServiceAsync;

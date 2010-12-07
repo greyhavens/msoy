@@ -6,7 +6,6 @@ package com.threerings.msoy.admin.server;
 import com.google.inject.Singleton;
 import com.google.inject.Inject;
 
-import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.dobj.AccessController;
 import com.threerings.presents.dobj.AttributeChangedEvent;
 import com.threerings.presents.dobj.DEvent;
@@ -22,7 +21,6 @@ import com.threerings.msoy.admin.data.CostsConfigObject;
 import com.threerings.msoy.admin.data.MoneyConfigObject;
 import com.threerings.msoy.admin.data.ServerConfigObject;
 import com.threerings.msoy.admin.data.SubscriptionConfigObject;
-import com.threerings.msoy.data.MemberClientObject;
 import com.threerings.msoy.data.MemberObject;
 
 import com.threerings.msoy.money.server.MoneyExchange;

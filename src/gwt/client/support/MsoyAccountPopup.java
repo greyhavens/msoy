@@ -6,7 +6,6 @@ package client.support;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.ListBox;
 
-
 import com.threerings.underwire.gwt.client.AccountPopup;
 import com.threerings.underwire.gwt.client.WebContext;
 import com.threerings.underwire.web.data.Account;

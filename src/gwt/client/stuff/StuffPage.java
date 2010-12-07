@@ -12,7 +12,6 @@ import com.google.common.collect.Sets;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.History;
 
-
 import com.threerings.msoy.item.data.all.GameItem;
 import com.threerings.msoy.item.data.all.IdentGameItem;
 import com.threerings.msoy.item.data.all.Item;

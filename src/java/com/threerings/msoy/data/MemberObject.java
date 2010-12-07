@@ -7,7 +7,6 @@ import java.util.Set;
 import javax.annotation.Generated;
 
 import com.threerings.presents.data.ClientObject;
-import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.dobj.DSet;
 import com.threerings.util.Name;
 

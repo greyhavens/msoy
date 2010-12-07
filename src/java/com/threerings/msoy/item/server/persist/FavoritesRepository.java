@@ -118,7 +118,6 @@ public class FavoritesRepository extends DepotRepository
             FavoriteItemRecord.getKey(memberId, itemType, catalogId));
     }
 
-
     /**
      * Notes that the specified member favorited the specified item.
      *

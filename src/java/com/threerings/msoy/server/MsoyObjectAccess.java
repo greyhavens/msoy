@@ -17,8 +17,6 @@ import com.threerings.presents.server.PresentsObjectAccess;
 
 import com.threerings.msoy.data.MemberClientObject;
 
-import com.google.inject.Inject;
-
 import static com.threerings.presents.Log.log;
 
 /**

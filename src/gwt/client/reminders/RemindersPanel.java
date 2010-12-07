@@ -34,7 +34,6 @@ import client.util.InfoCallback;
 import client.util.MediaUtil;
 import client.util.events.TrophyEvent;
 
-
 /**
  * Displays messages of interest to the user reminding them that they work for us.
  */

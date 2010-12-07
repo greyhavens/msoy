@@ -511,7 +511,6 @@ public class MemberRepository extends DepotRepository
         return findAll(FunnelByVectorRecord.class, clauses);
     }
 
-
     /**
      * Loads ids of member records that are initial candidates for a retention email. Members are
      * selected if 1. their last login time is between two timestamps, and 2. if they have not

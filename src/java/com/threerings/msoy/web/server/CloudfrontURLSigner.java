@@ -13,8 +13,6 @@ import java.security.spec.PKCS8EncodedKeySpec;
 
 import org.apache.commons.codec.binary.Base64;
 
-import static com.threerings.msoy.Log.log;
-
 /**
  * A class dedicated to the creation of Signed URLs for CloudFront, as specified in
  *

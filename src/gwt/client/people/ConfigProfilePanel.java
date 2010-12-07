@@ -122,13 +122,6 @@ public class ConfigProfilePanel extends FlowPanel
         _preview.setText(1, 1, DateUtil.formatDate(new Date(profile.memberSince), false));
         configAndPreview.add(MsoyUI.createFlowPanel("PreviewContainer", _preview));
 
-
-
-
-
-
-
-
 //        _profile = profile;
 //        _bits.clear();
 //

@@ -207,7 +207,6 @@ public class MsoyEvents
             protected byte _b;
         }
 
-
         @Index @Field final public Date timestamp;
         @Field final public int memberId;
         @Field final public byte itemType;

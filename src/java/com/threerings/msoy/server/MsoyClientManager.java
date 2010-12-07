@@ -17,8 +17,6 @@ import com.threerings.presents.server.ReportManager;
 
 import com.threerings.msoy.data.MemberClientObject;
 
-import static com.threerings.msoy.Log.log;
-
 /**
  */
 @Singleton

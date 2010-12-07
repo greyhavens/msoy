@@ -1056,9 +1056,6 @@ public class ItemLogic
         List<? extends MogMarkRecord> stampRecs = getRepository(itemType).loadItemStamps(itemId);
         Set<Integer> themeIds = Sets.newHashSet();
 
-
-
-
         for (MogMarkRecord rec : stampRecs) {
             themeIds.add(rec.groupId);
         }

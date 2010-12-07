@@ -12,7 +12,6 @@ import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
 
-
 import com.threerings.orth.data.MediaDesc;
 import com.threerings.orth.data.MediaDescSize;
 import com.threerings.msoy.edgame.gwt.EditGameService.GameData;

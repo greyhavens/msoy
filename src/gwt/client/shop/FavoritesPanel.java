@@ -14,7 +14,6 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.item.gwt.ListingCard;
 import com.threerings.msoy.web.gwt.Pages;

@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.room.server;
 
-
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -29,11 +28,9 @@ import com.threerings.whirled.data.SceneCodes;
 import com.threerings.whirled.data.ScenePlace;
 import com.threerings.whirled.server.SceneManager;
 import com.threerings.whirled.server.SceneMoveHandler;
-import com.threerings.whirled.server.SceneSender;
 import com.threerings.whirled.spot.data.Portal;
 import com.threerings.whirled.spot.server.SpotSceneRegistry;
 
-import com.threerings.msoy.data.MemberClientObject;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MemberLocator;

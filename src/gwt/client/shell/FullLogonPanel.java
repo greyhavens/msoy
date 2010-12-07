@@ -6,7 +6,6 @@ package client.shell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.HasAlignment;
 
-
 import client.shell.LogonPanel;
 import client.ui.MsoyUI;
 

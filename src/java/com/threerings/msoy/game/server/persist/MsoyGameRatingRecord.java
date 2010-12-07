@@ -21,7 +21,6 @@ public class MsoyGameRatingRecord extends RatingRecord
     public static final ColumnExp TIMESTAMP = colexp(_R, "timestamp");
     // AUTO-GENERATED: FIELDS END
 
-
     // AUTO-GENERATED: METHODS START
     /**
      * Create and return a primary {@link Key} to identify a {@link MsoyGameRatingRecord}

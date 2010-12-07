@@ -8,15 +8,12 @@ import java.util.List;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.depot.DataMigration;
-import com.samskivert.depot.DatabaseException;
 import com.samskivert.util.ByteEnumUtil;
 import com.samskivert.util.Calendars;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.cron.server.CronLogic;
 
-import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.presents.annotation.BlockingThread;
 

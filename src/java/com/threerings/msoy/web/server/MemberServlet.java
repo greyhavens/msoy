@@ -398,12 +398,6 @@ public class MemberServlet extends MsoyServiceServlet
         MemberRecord memrec = requireAuthedUser();
         Set<Integer> groupIds = Sets.newHashSet();
 
-
-
-
-
-
-
         for (ThemeRecord rec : _themeRepo.getManagedThemes(memrec.memberId, Rank.MANAGER)) {
             groupIds.add(rec.groupId);
         }

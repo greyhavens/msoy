@@ -5,7 +5,6 @@ package com.threerings.msoy.item.gwt;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MsoyItemType;
 
 /**

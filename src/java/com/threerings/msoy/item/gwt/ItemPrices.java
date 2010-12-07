@@ -3,12 +3,10 @@
 
 package com.threerings.msoy.item.gwt;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
 
-import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.money.data.all.Currency;
 

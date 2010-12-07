@@ -92,7 +92,6 @@ public class PhotoChoiceBox extends FlexTable
         setMedia(_initialMedia);
     }
 
-
     protected Button _clearButton, _revertButton;
     protected MediaDesc _currentMedia, _initialMedia, _defaultMedia;
     protected SimplePanel _preview;

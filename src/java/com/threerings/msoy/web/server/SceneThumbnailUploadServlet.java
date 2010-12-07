@@ -10,7 +10,6 @@ import java.util.Date;
 import org.apache.commons.fileupload.FileUploadException;
 import com.google.inject.Inject;
 
-import com.threerings.msoy.data.all.CloudfrontMediaDesc;
 import com.threerings.msoy.data.all.MediaMimeTypes;
 import com.threerings.msoy.person.gwt.FeedMessageType;
 import com.threerings.msoy.person.server.FeedLogic;

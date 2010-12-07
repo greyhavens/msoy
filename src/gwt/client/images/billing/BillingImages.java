@@ -6,7 +6,6 @@ package client.images.billing;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.ImageResource;
 
-
 /**
  * Images used on the billing page.
  */

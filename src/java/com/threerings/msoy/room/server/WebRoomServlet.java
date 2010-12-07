@@ -349,7 +349,6 @@ public class WebRoomServlet extends MsoyServiceServlet
         return mrec;
     }
 
-
     /**
      * Get a price quote for a new room.
      */

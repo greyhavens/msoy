@@ -27,7 +27,6 @@ import client.ui.MsoyUI;
 import client.util.ArrayUtil;
 import client.util.InfoCallback;
 
-
 /**
  * Server FBML panel for sending requests to friends. Currently deals with site invitations and
  * challenges.

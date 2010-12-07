@@ -11,7 +11,6 @@ import com.samskivert.jdbc.RepositoryUnit;
 
 import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
-import com.samskivert.util.StringUtil;
 
 import com.threerings.crowd.data.PlaceObject;
 

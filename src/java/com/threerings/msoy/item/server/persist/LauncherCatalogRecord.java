@@ -29,7 +29,6 @@ public class LauncherCatalogRecord extends CatalogRecord
     public static final ColumnExp DERIVATION_COUNT = colexp(_R, "derivationCount");
     // AUTO-GENERATED: FIELDS END
 
-
     // AUTO-GENERATED: METHODS START
     /**
      * Create and return a primary {@link Key} to identify a {@link LauncherCatalogRecord}

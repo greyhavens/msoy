@@ -194,7 +194,6 @@ public class IssueServlet extends MsoyServiceServlet
         if (irecs.size() > 0) {
             Set<Integer> members = Sets.newHashSet();
 
-
             for (IssueRecord record : irecs) {
                 members.add(record.creatorId);
                 if (record.ownerId != -1) {

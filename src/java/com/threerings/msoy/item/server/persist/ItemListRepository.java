@@ -27,7 +27,6 @@ import com.samskivert.depot.expression.SQLExpression;
 import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.presents.annotation.BlockingThread;
 
-import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.ItemListQuery;
 

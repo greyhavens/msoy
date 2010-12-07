@@ -3,9 +3,6 @@
 
 package client.adminz;
 
-import java.util.Arrays;
-import java.util.Comparator;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
 
@@ -15,7 +12,6 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.ListBox;
 
 import com.threerings.msoy.admin.gwt.AdminService;

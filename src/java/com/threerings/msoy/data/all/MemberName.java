@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.data.all;
 
-import java.util.Comparator;
-
 import com.google.common.base.Predicate;
 
 import com.threerings.util.Name;

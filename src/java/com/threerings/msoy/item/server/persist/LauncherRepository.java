@@ -17,7 +17,6 @@ import com.threerings.msoy.server.persist.RatingRepository;
 import com.threerings.msoy.server.persist.TagHistoryRecord;
 import com.threerings.msoy.server.persist.TagRecord;
 
-
 /**
  * Manages the persistent store of {@link LauncherRecord} items.
  */

@@ -240,7 +240,6 @@ public class TagDetailPanel extends VerticalPanel
          // so oddly organized
          pager.setStyleName("pagedGrid");
 
-
          _tagHistory = new BorderedPopup(true);
          _tagHistory.setWidget(pager);
 

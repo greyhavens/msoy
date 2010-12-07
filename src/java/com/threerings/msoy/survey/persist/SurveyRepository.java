@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.survey.persist;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 

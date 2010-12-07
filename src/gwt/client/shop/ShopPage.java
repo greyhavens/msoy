@@ -7,7 +7,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-
 import com.samskivert.util.ByteEnumUtil;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.Theme;

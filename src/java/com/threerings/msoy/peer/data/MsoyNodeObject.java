@@ -5,7 +5,6 @@ package com.threerings.msoy.peer.data;
 
 import javax.annotation.Generated;
 import com.threerings.presents.dobj.DSet;
-import com.threerings.crowd.peer.data.CrowdNodeObject;
 
 import com.threerings.orth.peer.data.OrthNodeObject;
 

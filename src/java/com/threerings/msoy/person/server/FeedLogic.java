@@ -307,7 +307,6 @@ public class FeedLogic
         return StringUtil.join(args, "\t");
     }
 
-
     @Inject protected FeedRepository _feedRepo;
     @Inject protected GroupLogic _groupLogic;
     @Inject protected GroupRepository _groupRepo;

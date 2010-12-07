@@ -53,7 +53,6 @@ public class MsoyUserLogic extends SupportUserLogic
         return super.findAccountsByEmail(query.toLowerCase());
     }
 
-
     @Override // from SupportUserLogic
     public Caller loadCaller (String authtok)
         throws UnderwireException

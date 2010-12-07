@@ -15,7 +15,6 @@ import java.security.cert.Certificate;
 
 import javax.swing.JApplet;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.collect.Lists;

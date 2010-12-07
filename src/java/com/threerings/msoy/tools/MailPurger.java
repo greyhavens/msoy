@@ -10,7 +10,6 @@ import com.google.inject.Injector;
 
 import com.samskivert.depot.Ops;
 import com.samskivert.depot.PersistenceContext;
-import com.samskivert.depot.annotation.Computed;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.util.Calendars;
