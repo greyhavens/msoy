@@ -4,15 +4,6 @@
 package com.threerings.msoy.ui {
 
 import flash.display.DisplayObject;
-import flash.display.LoaderInfo;
-
-import flash.events.Event;
-import flash.events.IEventDispatcher;
-
-import mx.core.Application;
-import mx.core.ISWFBridgeProvider;
-
-import mx.events.SWFBridgeEvent;
 
 import com.threerings.util.NamedValueEvent;
 
@@ -20,13 +11,13 @@ import com.threerings.ui.MenuUtil;
 import com.threerings.media.VideoPlayer;
 
 import com.threerings.orth.data.MediaDesc;
-import com.threerings.orth.ui.MediaDescContainer;
+
+import com.threerings.orth.room.client.EntityMediaContainer;
 
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.ContextMenuProvider;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.Prefs;
-import com.threerings.msoy.utils.Capabilities;
 
 import com.threerings.msoy.data.all.MediaMimeTypes;
 import com.threerings.msoy.item.client.ExternalMediaUtil;
@@ -34,16 +25,15 @@ import com.threerings.msoy.item.client.YouTubePlayer;
 import com.threerings.msoy.item.data.all.DefaultItemMediaDesc;
 import com.threerings.msoy.item.data.all.Item;
 
-public class MsoyMediaContainer extends MediaDescContainer
-    implements ContextMenuProvider, ISWFBridgeProvider
+public class MsoyMediaContainer extends EntityMediaContainer
+    implements ContextMenuProvider
 {
     public function MsoyMediaContainer (desc:MediaDesc = null, bleepInMenu :Boolean = true,
         suppressHitTestPoint :Boolean = false, blockType :String = null)
     {
-        super(desc);
+        super(desc, suppressHitTestPoint);
         _bleepInMenu = bleepInMenu;
         _blockType = blockType;
-        _suppressHitTestPoint = suppressHitTestPoint;
 
         // have this container listen for bleep changes during its lifetime
         Prefs.events.addEventListener(Prefs.BLEEPED_MEDIA, handleBleepChange, false, 0, true);
@@ -115,33 +105,12 @@ public class MsoyMediaContainer extends MediaDescContainer
         setIsBlocked(getBlockType());
     }
 
-    public function setSuppressHitTestPoint (suppress :Boolean) :void
-    {
-        _suppressHitTestPoint = suppress;
-    }
-
-    public function setMaxContentDimensions (width :int, height :int) :void
-    {
-        _maxWidth = width;
-        _maxHeight = height;
-    }
-
-    // documentation inherited
-    override public function hitTestPoint (
-        x :Number, y :Number, shapeFlag :Boolean = false) :Boolean
-    {
-        if (_suppressHitTestPoint) {
-            return false;
-        }
-        return super.hitTestPoint(x, y, shapeFlag);
-    }
-
     /** @inheritDoc */
     // from MediaContainer
     override public function getMediaScaleX () :Number
     {
         // use a fixed scale for blocked media
-        return isBlocked() ? 1 : _spriteMediaScaleX;
+        return isBlocked() ? 1 : super.getMediaScaleX();
     }
 
     /** @inheritDoc */
@@ -149,36 +118,7 @@ public class MsoyMediaContainer extends MediaDescContainer
     override public function getMediaScaleY () :Number
     {
         // use a fixed scale for blocked media
-        return isBlocked() ? 1 : _spriteMediaScaleY;
-    }
-
-    /**
-     * Set the media scale to use when we are not displaying a blocked state.
-     */
-    public function setSpriteMediaScale (scaleX :Number, scaleY :Number) :void
-    {
-        _spriteMediaScaleX = scaleX;
-        _spriteMediaScaleY = scaleY;
-    }
-
-    override public function getMaxContentWidth () :int
-    {
-        return _maxWidth;
-    }
-
-    override public function getMaxContentHeight () :int
-    {
-        return _maxHeight;
-    }
-
-    public function getUnscaledWidth () :Number
-    {
-        return _w;
-    }
-
-    public function getUnscaledHeight () :Number
-    {
-        return _h;
+        return isBlocked() ? 1 : super.getMediaScaleY();
     }
 
     // from ContextMenuProvider
@@ -194,57 +134,6 @@ public class MsoyMediaContainer extends MediaDescContainer
                 Msgs.GENERAL.get(isBleeped ? "b.unbleep_media" : "b.bleep_media"),
                 toggleBleeped, ctx));
         }
-    }
-
-    // from ISWFBridgeProvider
-    public function get swfBridge () :IEventDispatcher
-    {
-        return _bridge;
-    }
-
-    // from ISWFBridgeProvider
-    public function get childAllowsParent () :Boolean
-    {
-        return true;
-    }
-
-    // from ISWFBridgeProvider
-    public function get parentAllowsChild () :Boolean
-    {
-        return false;
-    }
-
-    override protected function addListeners (info :LoaderInfo) :void
-    {
-        super.addListeners(info);
-
-        if (Capabilities.isFlash10() && "uncaughtErrorEvents" in Object(info.loader)) {
-            Object(info.loader).uncaughtErrorEvents.addEventListener(
-                "uncaughtError", handleUncaughtErrors);
-        }
-        info.sharedEvents.addEventListener(SWFBridgeEvent.BRIDGE_NEW_APPLICATION, bridgeApp);
-    }
-
-    override protected function removeListeners (info :LoaderInfo) :void
-    {
-        super.removeListeners(info);
-
-        if (Capabilities.isFlash10() && "uncaughtErrorEvents" in Object(info.loader)) {
-            Object(info.loader).uncaughtErrorEvents.removeEventListener(
-                "uncaughtError", handleUncaughtErrors);
-        }
-        info.sharedEvents.removeEventListener(SWFBridgeEvent.BRIDGE_NEW_APPLICATION, bridgeApp);
-    }
-
-    protected function handleUncaughtErrors (event :*) :void
-    {
-        log.info("Uncaught Error", "media", _desc, event);
-    }
-
-    protected function bridgeApp (event :Event) :void
-    {
-        _bridge = IEventDispatcher(event.currentTarget);
-        Application(Application.application).systemManager.addChildBridge(_bridge, this);
     }
 
     override protected function showNewMedia (url :String) :void
@@ -328,23 +217,10 @@ public class MsoyMediaContainer extends MediaDescContainer
         }
     }
 
-    protected var _suppressHitTestPoint :Boolean;
-
-    protected var _maxWidth :int = int.MAX_VALUE;
-    protected var _maxHeight :int = int.MAX_VALUE;
-
-    /** The media scale to use when we are not blocked. */
-    protected var _spriteMediaScaleX :Number = 1.0;
-
-    /** The media scale to use when we are not blocked. */
-    protected var _spriteMediaScaleY :Number = 1.0;
-
     /** Whether or not we should populate the context menu with a bleep action. */
     protected var _bleepInMenu :Boolean;
 
     /** A settable block type that will, if non-null, override bleep considerations. */
     protected var _blockType :String;
-
-    protected var _bridge :IEventDispatcher;
 }
 }
