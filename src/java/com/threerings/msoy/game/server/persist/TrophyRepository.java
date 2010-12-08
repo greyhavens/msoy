@@ -13,15 +13,9 @@ import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.depot.CountRecord;
 import com.samskivert.depot.DepotRepository;
-import com.samskivert.depot.Ops;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
-import com.samskivert.depot.clause.FromOverride;
-import com.samskivert.depot.clause.Limit;
-import com.samskivert.depot.clause.OrderBy;
-import com.samskivert.depot.clause.Where;
 
 import com.threerings.presents.annotation.BlockingThread;
 
@@ -46,9 +40,8 @@ public class TrophyRepository extends DepotRepository
      */
     public List<TrophyRecord> loadTrophies (int memberId)
     {
-        return findAll(TrophyRecord.class, new Where(Ops.and(
-            TrophyRecord.MEMBER_ID.eq(memberId),
-            TrophyRecord.GAME_ID.greaterThan(0))));
+        return from(TrophyRecord.class).where(
+            TrophyRecord.MEMBER_ID.eq(memberId), TrophyRecord.GAME_ID.greaterThan(0)).select();
     }
 
     /**
@@ -56,12 +49,9 @@ public class TrophyRepository extends DepotRepository
      */
     public List<TrophyRecord> loadRecentTrophies (int memberId, int count)
     {
-        Where whereClause = new Where(Ops.and(
-            TrophyRecord.MEMBER_ID.eq(memberId),
-            TrophyRecord.GAME_ID.greaterThan(0)));
-        return findAll(TrophyRecord.class, whereClause,
-                       OrderBy.descending(TrophyRecord.WHEN_EARNED),
-                       new Limit(0, count));
+        return from(TrophyRecord.class).
+            where(TrophyRecord.MEMBER_ID.eq(memberId), TrophyRecord.GAME_ID.greaterThan(0)).
+            descending(TrophyRecord.WHEN_EARNED).limit(count).select();
     }
 
     /**
@@ -69,8 +59,8 @@ public class TrophyRepository extends DepotRepository
      */
     public List<TrophyRecord> loadTrophies (int gameId, int memberId)
     {
-        return findAll(TrophyRecord.class, new Where(TrophyRecord.GAME_ID, gameId,
-                                                     TrophyRecord.MEMBER_ID, memberId));
+        return from(TrophyRecord.class).where(
+            TrophyRecord.GAME_ID, gameId, TrophyRecord.MEMBER_ID, memberId).select();
     }
 
     /**
@@ -78,8 +68,8 @@ public class TrophyRepository extends DepotRepository
      */
     public int countTrophies (int gameId, int memberId)
     {
-        return load(CountRecord.class, new Where(Ops.and(TrophyRecord.GAME_ID.eq(gameId),
-            TrophyRecord.MEMBER_ID.eq(memberId))), new FromOverride(TrophyRecord.class)).count;
+        return from(TrophyRecord.class).where(
+            TrophyRecord.GAME_ID.eq(gameId), TrophyRecord.MEMBER_ID.eq(memberId)).selectCount();
     }
 
     /**
@@ -89,8 +79,7 @@ public class TrophyRepository extends DepotRepository
      */
     public int countTrophies (int memberId)
     {
-        return load(CountRecord.class, new Where(TrophyRecord.MEMBER_ID.eq(memberId)),
-            new FromOverride(TrophyRecord.class)).count;
+        return from(TrophyRecord.class).where(TrophyRecord.MEMBER_ID.eq(memberId)).selectCount();
     }
 
     /**
@@ -100,8 +89,8 @@ public class TrophyRepository extends DepotRepository
     public List<String> loadTrophyOwnership (int gameId, int memberId)
     {
         ArrayList<String> idents = Lists.newArrayList();
-        Where where = new Where(TrophyRecord.GAME_ID, gameId, TrophyRecord.MEMBER_ID, memberId);
-        for (TrophyOwnershipRecord orec : findAll(TrophyOwnershipRecord.class, where)) {
+        for (TrophyOwnershipRecord orec : from(TrophyOwnershipRecord.class).where(
+                 TrophyRecord.GAME_ID, gameId, TrophyRecord.MEMBER_ID, memberId).select()) {
             idents.add(orec.ident);
         }
         return idents;
@@ -117,9 +106,8 @@ public class TrophyRepository extends DepotRepository
                 gameId, "memberId", memberId);
             return;
         }
-
-        deleteAll(TrophyRecord.class, new Where(Ops.and(TrophyRecord.MEMBER_ID.eq(memberId),
-                                                        TrophyRecord.GAME_ID.eq(gameId))));
+        from(TrophyRecord.class).where(
+            TrophyRecord.MEMBER_ID.eq(memberId), TrophyRecord.GAME_ID.eq(gameId)).delete();
     }
 
     /**
@@ -136,7 +124,7 @@ public class TrophyRepository extends DepotRepository
      */
     public void purgeMembers (Collection<Integer> memberIds)
     {
-        deleteAll(TrophyRecord.class, new Where(TrophyRecord.MEMBER_ID.in(memberIds)));
+        from(TrophyRecord.class).where(TrophyRecord.MEMBER_ID.in(memberIds)).delete();
     }
 
     /**
@@ -144,9 +132,9 @@ public class TrophyRepository extends DepotRepository
      */
     public void purgeGame (int gameId)
     {
-        deleteAll(TrophyRecord.class, new Where(TrophyRecord.GAME_ID, gameId), null);
+        from(TrophyRecord.class).where(TrophyRecord.GAME_ID, gameId).delete(null);
         int devGameId = GameInfo.toDevId(gameId);
-        deleteAll(TrophyRecord.class, new Where(TrophyRecord.GAME_ID, devGameId), null);
+        from(TrophyRecord.class).where(TrophyRecord.GAME_ID, devGameId).delete(null);
     }
 
     @Override // from DepotRepository

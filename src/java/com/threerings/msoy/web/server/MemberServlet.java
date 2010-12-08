@@ -416,7 +416,6 @@ public class MemberServlet extends MsoyServiceServlet
         // else they left the theme before the service call landed, that's fine with us
     }
 
-
     // our dependencies
     @Inject protected ABTestLogic _testLogic;
     @Inject protected FriendManager _friendMan;

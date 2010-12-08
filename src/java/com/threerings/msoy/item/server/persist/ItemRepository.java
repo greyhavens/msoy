@@ -161,10 +161,6 @@ public abstract class ItemRepository<T extends ItemRecord>
 
             _memberIds = Sets.newHashSet();
 
-
-
-
-
             // look up the first 100 members whose name matches each search term exactly
             for (String term : searchTerms) {
                 _memberIds.addAll(_memberRepo.findMembersByExactDisplayName(term, 100));

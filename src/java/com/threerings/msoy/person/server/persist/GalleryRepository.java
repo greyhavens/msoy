@@ -12,11 +12,8 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.samskivert.depot.DepotRepository;
-import com.samskivert.depot.Ops;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
-import com.samskivert.depot.clause.OrderBy;
-import com.samskivert.depot.clause.Where;
 
 import com.threerings.msoy.person.gwt.Gallery;
 
@@ -36,9 +33,8 @@ public class GalleryRepository extends DepotRepository
      */
     public List<GalleryInfoRecord> loadGalleries (int memberId)
     {
-        return findAll(GalleryInfoRecord.class,
-            new Where(GalleryRecord.OWNER_ID.eq(memberId)),
-                      OrderBy.descending(GalleryRecord.LAST_MODIFIED));
+        return from(GalleryInfoRecord.class).where(GalleryRecord.OWNER_ID.eq(memberId)).
+            descending(GalleryRecord.LAST_MODIFIED).select();
     }
 
     /**
@@ -46,10 +42,8 @@ public class GalleryRepository extends DepotRepository
      */
     public GalleryRecord loadMeGallery (int memberId)
     {
-        return load(GalleryRecord.class,
-                    new Where(Ops.and(GalleryRecord.OWNER_ID.eq(memberId),
-                                      // a null gallery name indicates the "Me" gallery
-                                      GalleryRecord.NAME.isNull())));
+        return from(GalleryRecord.class).where( // a null gallery name indicates the "Me" gallery
+            GalleryRecord.OWNER_ID.eq(memberId), GalleryRecord.NAME.isNull()).load();
     }
 
     /**
@@ -103,7 +97,7 @@ public class GalleryRepository extends DepotRepository
      */
     public void purgeMembers (Collection<Integer> memberIds)
     {
-        deleteAll(GalleryRecord.class, new Where(GalleryRecord.OWNER_ID.in(memberIds)));
+        from(GalleryRecord.class).where(GalleryRecord.OWNER_ID.in(memberIds)).delete();
     }
 
     /**

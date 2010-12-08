@@ -12,7 +12,6 @@ import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.Exps;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
-import com.samskivert.depot.clause.Where;
 
 import com.threerings.presents.annotation.BlockingThread;
 
@@ -42,8 +41,8 @@ public class MediaBlacklistRepository extends DepotRepository
      */
     public boolean isBlacklisted (byte[] hash)
     {
-        return null != load(MediaBlacklistRecord.class, new Where(
-            MediaBlacklistRecord.MEDIA_HASH.eq(Exps.value(hash))));
+        return null != from(MediaBlacklistRecord.class).where(
+            MediaBlacklistRecord.MEDIA_HASH.eq(Exps.value(hash))).load();
     }
 
     public void blacklist (HashMediaDesc desc, String note)

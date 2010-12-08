@@ -23,7 +23,6 @@ public abstract class BasicMediaDesc extends MediaDescImpl
         _constraint = constraint;
     }
 
-
     @Override public byte getMimeType ()
     {
         return _mimeType;

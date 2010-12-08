@@ -15,9 +15,6 @@ import com.samskivert.depot.DatabaseException;
 import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
-import com.samskivert.depot.clause.Limit;
-import com.samskivert.depot.clause.OrderBy;
-import com.samskivert.depot.clause.Where;
 
 import com.threerings.presents.annotation.BlockingThread;
 
@@ -32,8 +29,8 @@ public class BadgeRepository extends DepotRepository
         registerMigration(new DataMigration("2008_10_28_erase_hidden_badge") {
             public void invoke () throws DatabaseException
             {
-                deleteAll(InProgressBadgeRecord.class,
-                    new Where(InProgressBadgeRecord.BADGE_CODE, 0x78a52e3b));
+                from(InProgressBadgeRecord.class).where(
+                    InProgressBadgeRecord.BADGE_CODE, 0x78a52e3b).delete();
             }
         });
     }
@@ -61,7 +58,7 @@ public class BadgeRepository extends DepotRepository
      */
     public List<EarnedBadgeRecord> loadEarnedBadges (int memberId)
     {
-        return findAll(EarnedBadgeRecord.class, new Where(EarnedBadgeRecord.MEMBER_ID, memberId));
+        return from(EarnedBadgeRecord.class).where(EarnedBadgeRecord.MEMBER_ID, memberId).select();
     }
 
     /**
@@ -69,8 +66,8 @@ public class BadgeRepository extends DepotRepository
      */
     public List<EarnedBadgeRecord> loadRecentEarnedBadges (int memberId, int limit)
     {
-        return findAll(EarnedBadgeRecord.class, new Where(EarnedBadgeRecord.MEMBER_ID, memberId),
-            new Limit(0, limit), OrderBy.descending(EarnedBadgeRecord.WHEN_EARNED));
+        return from(EarnedBadgeRecord.class).where(EarnedBadgeRecord.MEMBER_ID, memberId).
+            limit(limit).descending(EarnedBadgeRecord.WHEN_EARNED).select();
     }
 
     /**
@@ -78,8 +75,8 @@ public class BadgeRepository extends DepotRepository
      */
     public List<InProgressBadgeRecord> loadInProgressBadges (int memberId)
     {
-        return findAll(InProgressBadgeRecord.class, new Where(InProgressBadgeRecord.MEMBER_ID,
-            memberId));
+        return from(InProgressBadgeRecord.class).
+            where(InProgressBadgeRecord.MEMBER_ID, memberId).select();
     }
 
     /**
@@ -87,7 +84,7 @@ public class BadgeRepository extends DepotRepository
      */
     public EarnedBadgeRecord loadEarnedBadge (int memberId, int badgeCode)
     {
-        return load(EarnedBadgeRecord.class, EarnedBadgeRecord.getKey(memberId, badgeCode));
+        return load(EarnedBadgeRecord.getKey(memberId, badgeCode));
     }
 
     /**
@@ -95,7 +92,7 @@ public class BadgeRepository extends DepotRepository
      */
     public InProgressBadgeRecord loadInProgressBadge (int memberId, int badgeCode)
     {
-        return load(InProgressBadgeRecord.class, InProgressBadgeRecord.getKey(memberId, badgeCode));
+        return load(InProgressBadgeRecord.getKey(memberId, badgeCode));
     }
 
     /**
@@ -114,10 +111,9 @@ public class BadgeRepository extends DepotRepository
      */
     public void purgeMembers (Collection<Integer> memberIds)
     {
-        deleteAll(EarnedBadgeRecord.class,
-                  new Where(EarnedBadgeRecord.MEMBER_ID.in(memberIds)));
-        deleteAll(InProgressBadgeRecord.class,
-                  new Where(InProgressBadgeRecord.MEMBER_ID.in(memberIds)));
+        from(EarnedBadgeRecord.class).where(EarnedBadgeRecord.MEMBER_ID.in(memberIds)).delete();
+        from(InProgressBadgeRecord.class).where(
+            InProgressBadgeRecord.MEMBER_ID.in(memberIds)).delete();
     }
 
     @Override

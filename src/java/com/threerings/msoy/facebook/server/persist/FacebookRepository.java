@@ -14,12 +14,9 @@ import com.google.inject.Singleton;
 import com.samskivert.depot.DataMigration;
 import com.samskivert.depot.DatabaseException;
 import com.samskivert.depot.DepotRepository;
-import com.samskivert.depot.Ops;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.SchemaMigration;
-import com.samskivert.depot.clause.Limit;
-import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.expression.SQLExpression;
@@ -153,8 +150,8 @@ public class FacebookRepository extends DepotRepository
      */
     public List<FacebookTemplateRecord> loadTemplates (int appId)
     {
-        return findAll(FacebookTemplateRecord.class, CacheStrategy.NONE, new Where(
-            FacebookTemplateRecord.APP_ID.eq(appId)));
+        return from(FacebookTemplateRecord.class).where(FacebookTemplateRecord.APP_ID.eq(appId)).
+            noCache().select();
     }
 
     /**
@@ -162,9 +159,9 @@ public class FacebookRepository extends DepotRepository
      */
     public List<FacebookTemplateRecord> loadVariants (int appId, String code)
     {
-        return findAll(FacebookTemplateRecord.class, new Where(Ops.and(
+        return from(FacebookTemplateRecord.class).where(
             FacebookTemplateRecord.CODE.eq(code), FacebookTemplateRecord.APP_ID.eq(appId),
-            FacebookTemplateRecord.ENABLED.eq(Boolean.TRUE))));
+            FacebookTemplateRecord.ENABLED.eq(Boolean.TRUE)).select();
     }
 
     /**
@@ -181,9 +178,9 @@ public class FacebookRepository extends DepotRepository
     public FacebookActionRecord getLastAction (
         int appId, int memberId, FacebookActionRecord.Type type)
     {
-        List<FacebookActionRecord> visits = findAll(FacebookActionRecord.class, new Where(Ops.and(
-            FacebookActionRecord.TYPE.eq(type), FacebookActionRecord.MEMBER_ID.eq(memberId))),
-            new Limit(0, 1), OrderBy.descending(FacebookActionRecord.TIMESTAMP));
+        List<FacebookActionRecord> visits = from(FacebookActionRecord.class).where(
+            FacebookActionRecord.TYPE.eq(type), FacebookActionRecord.MEMBER_ID.eq(memberId)).
+            limit(1).descending(FacebookActionRecord.TIMESTAMP).select();
         return visits.size() > 0 ? visits.get(0) : null;
     }
 
@@ -192,8 +189,8 @@ public class FacebookRepository extends DepotRepository
      */
     public List<FacebookActionRecord> loadActions (int appId, int memberId)
     {
-        return findAll(FacebookActionRecord.class, new Where(
-            FacebookActionRecord.MEMBER_ID, memberId));
+        return from(FacebookActionRecord.class).where(
+            FacebookActionRecord.MEMBER_ID, memberId).select();
     }
 
     /**
@@ -202,8 +199,9 @@ public class FacebookRepository extends DepotRepository
     public List<FacebookActionRecord> loadActions (
         int appId, Collection<Integer> memberIds, FacebookActionRecord.Type type)
     {
-        return findAll(FacebookActionRecord.class, new Where(Ops.and(
-            FacebookActionRecord.TYPE.eq(type), FacebookActionRecord.MEMBER_ID.in(memberIds))));
+        return from(FacebookActionRecord.class).where(
+            FacebookActionRecord.TYPE.eq(type),
+            FacebookActionRecord.MEMBER_ID.in(memberIds)).select();
     }
 
     /**
@@ -299,13 +297,13 @@ public class FacebookRepository extends DepotRepository
         if (code != null) {
             conditions.add(FeedThumbnailRecord.CODE.eq(code));
         }
-        return findAll(FeedThumbnailRecord.class, new Where(Ops.and(conditions)));
+        return from(FeedThumbnailRecord.class).where(conditions).select();
     }
 
     protected void saveThumbnails (int gameId, int appId, List<FeedThumbnailRecord> thumbs)
     {
-        deleteAll(FeedThumbnailRecord.class, new Where(Ops.and(
-            FeedThumbnailRecord.GAME_ID.eq(gameId), FeedThumbnailRecord.APP_ID.eq(appId))));
+        from(FeedThumbnailRecord.class).where(FeedThumbnailRecord.GAME_ID.eq(gameId),
+                                              FeedThumbnailRecord.APP_ID.eq(appId)).delete();
         for (FeedThumbnailRecord thumb : thumbs) {
             insert(thumb);
         }

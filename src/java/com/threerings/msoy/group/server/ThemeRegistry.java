@@ -64,7 +64,6 @@ public class ThemeRegistry
         /** Is this theme currently hosted on any server? */
         public boolean hosted;
 
-
         public ThemeEntry (int themeId, String name, int popularity, boolean hosted) {
             this.themeId = themeId;
             this.name = name;

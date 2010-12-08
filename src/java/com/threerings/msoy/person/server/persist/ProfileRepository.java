@@ -15,14 +15,9 @@ import com.google.inject.Singleton;
 import com.samskivert.depot.DataMigration;
 import com.samskivert.depot.DatabaseException;
 import com.samskivert.depot.DepotRepository;
-import com.samskivert.depot.Ops;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
-import com.samskivert.depot.clause.FieldDefinition;
-import com.samskivert.depot.clause.FromOverride;
 import com.samskivert.depot.clause.Join;
-import com.samskivert.depot.clause.Limit;
-import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.operator.FullText;
 
@@ -51,13 +46,10 @@ public class ProfileRepository extends DepotRepository
             {
                 // select all the MemberRecords with missing ProfileRecords
                 // only search for memberIds < 400 for efficiency, only these are affected
-                List<MemberRecord> members = findAll(MemberRecord.class,
-                    new Join(MemberRecord.MEMBER_ID,
-                        ProfileRecord.MEMBER_ID).setType(Join.Type.LEFT_OUTER),
-                    new Where(Ops.and(
-                        MemberRecord.MEMBER_ID.lessEq(400),
-                        ProfileRecord.MEMBER_ID.isNull())
-                    ));
+                List<MemberRecord> members = from(MemberRecord.class).
+                    join(MemberRecord.MEMBER_ID, ProfileRecord.MEMBER_ID, Join.Type.LEFT_OUTER).
+                    where(MemberRecord.MEMBER_ID.lessEq(400),
+                          ProfileRecord.MEMBER_ID.isNull()).select();
 
                 // create blank ProfileRecords with all defaults
                 for (MemberRecord member : members) {
@@ -101,7 +93,7 @@ public class ProfileRepository extends DepotRepository
      */
     public List<InterestRecord> loadInterests (int memberId)
     {
-        return findAll(InterestRecord.class, new Where(InterestRecord.MEMBER_ID, memberId));
+        return from(InterestRecord.class).where(InterestRecord.MEMBER_ID, memberId).select();
     }
 
     /**
@@ -131,11 +123,9 @@ public class ProfileRepository extends DepotRepository
     public List<MemberSearchRecord> findMembersByRealName (String search, int limit)
     {
         FullText fts = new FullText(ProfileRecord.class, ProfileRecord.FTS_REAL_NAME, search);
-        return findAll(MemberSearchRecord.class, new FromOverride(ProfileRecord.class),
-            new FieldDefinition("rank", fts.rank()),
-            new FieldDefinition("memberId", ProfileRecord.MEMBER_ID),
-            OrderBy.descending(fts.rank()),
-            new Where(fts.match()), new Limit(0, limit));
+        return from(MemberSearchRecord.class).override(ProfileRecord.class).
+            fieldDef("rank", fts.rank()).fieldDef("memberId", ProfileRecord.MEMBER_ID).
+            where(fts.match()).descending(fts.rank()).limit(limit).select();
     }
 
     /**
@@ -143,11 +133,10 @@ public class ProfileRepository extends DepotRepository
      */
     public List<Integer> findMembersByInterest (String search, int limit)
     {
-        Where where = new Where(
-            new FullText(InterestRecord.class, InterestRecord.FTS_INTERESTS, search).match());
+        FullText fts = new FullText(InterestRecord.class, InterestRecord.FTS_INTERESTS, search);
         Set<Integer> ids = Sets.newHashSet();
-
-        for (InterestRecord irec : findAll(InterestRecord.class, where, new Limit(0, limit))) {
+        for (InterestRecord irec :
+                 from(InterestRecord.class).where(fts.match()).limit(limit).select()) {
             ids.add(irec.memberId);
         }
 
@@ -178,7 +167,7 @@ public class ProfileRepository extends DepotRepository
         // we don't delete their ProfileRecord because we need their member card to work for the
         // rest of time because they may have forum posts or other shit
         // deleteAll(ProfileRecord.class, new Where(ProfileRecord.MEMBER_ID.in(memberIds)));
-        deleteAll(InterestRecord.class, new Where(InterestRecord.MEMBER_ID.in(memberIds)));
+        from(InterestRecord.class).where(InterestRecord.MEMBER_ID.in(memberIds)).delete();
     }
 
     @Override // from DepotRepository

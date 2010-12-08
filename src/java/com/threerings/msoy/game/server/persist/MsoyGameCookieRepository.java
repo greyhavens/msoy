@@ -3,22 +3,16 @@
 
 package com.threerings.msoy.game.server.persist;
 
-import java.util.List;
 import java.util.Set;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.depot.Ops;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.annotation.Computed;
 import com.samskivert.depot.annotation.Entity;
-import com.samskivert.depot.clause.FromOverride;
-import com.samskivert.depot.clause.QueryClause;
-import com.samskivert.depot.clause.Where;
 
 import com.whirled.game.server.persist.GameCookieRecord;
 import com.whirled.game.server.persist.GameCookieRepository;
@@ -55,13 +49,10 @@ public class MsoyGameCookieRepository extends GameCookieRepository
             return playerIds;
         }
 
-        List<QueryClause> clauses = Lists.newArrayList(
-            new Where(Ops.and(GameCookieRecord.GAME_ID.eq(gameId),
-                              GameCookieRecord.USER_ID.in(playerIds))),
-            new FromOverride(GameCookieRecord.class));
-
         playerIds = Sets.newHashSet();
-        for (HasCookieRecord count : findAll(HasCookieRecord.class, clauses)) {
+        for (HasCookieRecord count : from(HasCookieRecord.class).override(GameCookieRecord.class).
+                 where(GameCookieRecord.GAME_ID.eq(gameId),
+                       GameCookieRecord.USER_ID.in(playerIds)).select()) {
             playerIds.add(count.USER_ID);
         }
         return playerIds;

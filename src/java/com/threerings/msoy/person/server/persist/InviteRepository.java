@@ -15,7 +15,6 @@ import com.google.inject.Singleton;
 import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
-import com.samskivert.depot.clause.Where;
 
 import com.threerings.presents.annotation.BlockingThread;
 
@@ -59,8 +58,8 @@ public class InviteRepository extends DepotRepository
      */
     public InvitationRecord inviteAvailable (String inviteId)
     {
-        InvitationRecord rec = load(
-            InvitationRecord.class, new Where(InvitationRecord.INVITE_ID, inviteId));
+        InvitationRecord rec = from(InvitationRecord.class).where(
+            InvitationRecord.INVITE_ID, inviteId).load();
         return (rec == null || rec.inviteeId != 0) ? null : rec;
     }
 
@@ -80,10 +79,8 @@ public class InviteRepository extends DepotRepository
      */
     public List<InvitationRecord> loadPendingInvites (int memberId)
     {
-        return findAll(
-            InvitationRecord.class,
-            new Where(InvitationRecord.INVITER_ID, memberId,
-                      InvitationRecord.INVITEE_ID, 0));
+        return from(InvitationRecord.class).where(
+            InvitationRecord.INVITER_ID, memberId, InvitationRecord.INVITEE_ID, 0).select();
     }
 
     /**
@@ -105,9 +102,9 @@ public class InviteRepository extends DepotRepository
     public InvitationRecord loadInviteByEmail (String inviteeEmail, int inviterId)
     {
         // TODO: This does a row scan on email after using ixInviter. Should be OK, but let's check.
-        return load(InvitationRecord.class, new Where(
+        return from(InvitationRecord.class).where(
             InvitationRecord.INVITEE_EMAIL, inviteeEmail,
-            InvitationRecord.INVITER_ID, inviterId));
+            InvitationRecord.INVITER_ID, inviterId).load();
     }
 
     /**
@@ -126,8 +123,8 @@ public class InviteRepository extends DepotRepository
      */
     public GameInvitationRecord loadGameInvite (String inviteId)
     {
-        return load(GameInvitationRecord.class,
-            new Where(GameInvitationRecord.INVITE_ID, inviteId));
+        return from(GameInvitationRecord.class).where(
+            GameInvitationRecord.INVITE_ID, inviteId).load();
     }
 
     /**
@@ -160,7 +157,7 @@ public class InviteRepository extends DepotRepository
      */
     public void purgeMembers (Collection<Integer> memberIds)
     {
-        deleteAll(InviterRecord.class, new Where(InviterRecord.MEMBER_ID.in(memberIds)));
+        from(InviterRecord.class).where(InviterRecord.MEMBER_ID.in(memberIds)).delete();
     }
 
     @Override // from DepotRepository

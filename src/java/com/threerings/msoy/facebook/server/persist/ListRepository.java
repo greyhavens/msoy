@@ -18,8 +18,6 @@ import com.samskivert.depot.Ops;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.clause.Join;
-import com.samskivert.depot.clause.OrderBy;
-import com.samskivert.depot.clause.Where;
 
 /**
  * Maintains persistent lists of string ids and cursors that refer to them.
@@ -44,13 +42,14 @@ public class ListRepository extends DepotRepository
     public List<String> getList (String listId, boolean useCache)
     {
         CacheStrategy strat = useCache ? CacheStrategy.BEST : CacheStrategy.NONE;
-        return Lists.transform(findAll(ListItemRecord.class, strat,
-            new Where(ListItemRecord.LIST_ID.eq(listId)), OrderBy.ascending(ListItemRecord.INDEX)),
-                new Function<ListItemRecord, String>() {
-                public String apply (ListItemRecord rec) {
-                    return rec.id;
-                }
-            });
+        return Lists.transform(from(ListItemRecord.class).cache(strat).
+                               where(ListItemRecord.LIST_ID.eq(listId)).
+                               ascending(ListItemRecord.INDEX).select(),
+            new Function<ListItemRecord, String>() {
+            public String apply (ListItemRecord rec) {
+                return rec.id;
+            }
+        });
     }
 
     /**
@@ -59,8 +58,8 @@ public class ListRepository extends DepotRepository
      */
     public void setList (String listId, List<String> ids)
     {
-        deleteAll(ListItemRecord.class, new Where(ListItemRecord.LIST_ID.eq(listId)));
-        deleteAll(ListCursorRecord.class, new Where(ListCursorRecord.LIST_ID.eq(listId)));
+        from(ListItemRecord.class).where(ListItemRecord.LIST_ID.eq(listId)).delete();
+        from(ListCursorRecord.class).where(ListCursorRecord.LIST_ID.eq(listId)).delete();
         for (int ii = 0, ll = ids.size(); ii < ll; ++ii) {
             ListItemRecord item = new ListItemRecord();
             item.listId = listId;
@@ -89,9 +88,8 @@ public class ListRepository extends DepotRepository
             ListCursorRecord.LIST_ID.eq(ListItemRecord.LIST_ID),
             ListCursorRecord.INDEX.eq(ListItemRecord.INDEX))).setType(Join.Type.INNER);
 
-        ListItemRecord item = load(ListItemRecord.class, new Where(
-            ListItemRecord.LIST_ID.eq(listId)), join);
-
+        ListItemRecord item = from(ListItemRecord.class).join(join).where(
+            ListItemRecord.LIST_ID.eq(listId)).load();
         return (item == null) ? null : item.id;
     }
 
@@ -118,8 +116,8 @@ public class ListRepository extends DepotRepository
             ListCursorRecord.INDEX.eq(ListItemRecord.INDEX))).setType(Join.Type.INNER);
 
         Map<String, ListItemRecord> items = Maps.newHashMap();
-        for (ListItemRecord item : findAll(ListItemRecord.class, new Where(
-            ListItemRecord.LIST_ID.in(listIds)), join)) {
+        for (ListItemRecord item : from(ListItemRecord.class).join(join).where(
+                 ListItemRecord.LIST_ID.in(listIds)).select()) {
             items.put(item.listId, item);
         }
 

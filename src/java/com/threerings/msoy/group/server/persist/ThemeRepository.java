@@ -152,7 +152,6 @@ public class ThemeRepository extends DepotRepository
             new Where(ThemeAvatarLineupRecord.CATALOG_ID, catalogId));
     }
 
-
     /**
      * Add or modify an avatar to a lineup. Returns true if the avatar did not previously
      * exist in the lineup.

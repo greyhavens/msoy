@@ -22,10 +22,9 @@ import com.samskivert.depot.Exps;
 import com.samskivert.depot.Ops;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
+import com.samskivert.depot.QueryBuilder;
 import com.samskivert.depot.SchemaMigration;
 import com.samskivert.depot.annotation.Computed;
-import com.samskivert.depot.clause.GroupBy;
-import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.QueryClause;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.expression.SQLExpression;
@@ -69,7 +68,7 @@ public class ABTestRepository extends DepotRepository
      */
     public List<ABTestRecord> loadTests ()
     {
-        return findAll(ABTestRecord.class, OrderBy.descending(ABTestRecord.TEST_ID));
+        return from(ABTestRecord.class).descending(ABTestRecord.TEST_ID).select();
     }
 
     /**
@@ -77,7 +76,7 @@ public class ABTestRepository extends DepotRepository
      */
     public ABTestRecord loadTestByName (String name)
     {
-        return load(ABTestRecord.class, new Where(ABTestRecord.NAME, name));
+        return from(ABTestRecord.class).where(ABTestRecord.NAME, name).load();
     }
 
     /**
@@ -96,7 +95,7 @@ public class ABTestRepository extends DepotRepository
     {
         // load and store to avoid doing a write after the first time this method is called; it
         // will be called every time the client does whatever triggers the A/B group assignment
-        if (load(ABGroupRecord.class, ABGroupRecord.getKey(testId, visitorId)) == null) {
+        if (load(ABGroupRecord.getKey(testId, visitorId)) == null) {
             ABGroupRecord record = new ABGroupRecord();
             record.testId = testId;
             record.visitorId = visitorId;
@@ -147,14 +146,14 @@ public class ABTestRepository extends DepotRepository
         sum.groups = Lists.newArrayList();
 
         Multimap<Integer, ABActionSummaryRecord> actions = HashMultimap.create();
-        for (ABActionSummaryRecord arec : findAll(
-                 ABActionSummaryRecord.class, new Where(ABActionSummaryRecord.TEST_ID, testId))) {
+        for (ABActionSummaryRecord arec : from(ABActionSummaryRecord.class).
+                 where(ABActionSummaryRecord.TEST_ID, testId).select()) {
             actions.put(arec.group, arec);
         }
 
-        for (ABGroupSummaryRecord gsum : findAll(
-                 ABGroupSummaryRecord.class, new Where(ABGroupSummaryRecord.TEST_ID, testId),
-                 OrderBy.ascending(ABGroupSummaryRecord.GROUP))) {
+        for (ABGroupSummaryRecord gsum : from(ABGroupSummaryRecord.class).
+                 where(ABGroupSummaryRecord.TEST_ID, testId).
+                 ascending(ABGroupSummaryRecord.GROUP).select()) {
             ABTestSummary.Group group = new ABTestSummary.Group();
             group.group = gsum.group;
             group.assigned = gsum.assigned;
@@ -178,14 +177,12 @@ public class ABTestRepository extends DepotRepository
      */
     public void summarizeTest (int testId)
     {
-        List<QueryClause> exprs = Lists.newArrayList();
-        exprs.add(new GroupBy(ABGroupRecord.GROUP));
+        QueryBuilder<GroupCountRecord> qb =
+            from(GroupCountRecord.class).groupBy(ABGroupRecord.GROUP).noCache();
 
         // first determine the number of visitors assigned to the test groups
         Map<Integer, ABGroupSummaryRecord> groups = Maps.newHashMap();
-        SQLExpression where = ABGroupRecord.TEST_ID.eq(testId);
-        for (GroupCountRecord rec : findAll(
-                 GroupCountRecord.class, CacheStrategy.NONE, where(exprs, where))) {
+        for (GroupCountRecord rec : qb.clone().where(ABGroupRecord.TEST_ID.eq(testId)).select()) {
             ABGroupSummaryRecord sumrec = new ABGroupSummaryRecord();
             sumrec.testId = testId;
             sumrec.group = rec.group;
@@ -194,45 +191,39 @@ public class ABTestRepository extends DepotRepository
         }
 
         // now determine how many of those members played
-        exprs.add(ABGroupRecord.VISITOR_ID.join(EntryVectorRecord.VISITOR_ID));
-        where = Ops.and(ABGroupRecord.TEST_ID.eq(testId), EntryVectorRecord.MEMBER_ID.notEq(0));
-        for (GroupCountRecord rec : findAll(
-                 GroupCountRecord.class, CacheStrategy.NONE, where(exprs, where))) {
+        qb = qb.join(ABGroupRecord.VISITOR_ID, EntryVectorRecord.VISITOR_ID);
+        for (GroupCountRecord rec : qb.clone().where(
+                 ABGroupRecord.TEST_ID.eq(testId), EntryVectorRecord.MEMBER_ID.notEq(0)).select()) {
             groups.get(rec.group).played = rec.count;
         }
 
         // now determine how many of those members registered
-        exprs.add(EntryVectorRecord.MEMBER_ID.join(MemberRecord.MEMBER_ID));
-        where = Ops.and(ABGroupRecord.TEST_ID.eq(testId),
-                        Ops.not(MemberRecord.ACCOUNT_NAME.like(PERMA_PATTERN)));
-        for (GroupCountRecord rec : findAll(
-                 GroupCountRecord.class, CacheStrategy.NONE, where(exprs, where))) {
+        qb = qb.join(EntryVectorRecord.MEMBER_ID, MemberRecord.MEMBER_ID);
+        for (GroupCountRecord rec : qb.clone().where(
+                 ABGroupRecord.TEST_ID.eq(testId),
+                 Ops.not(MemberRecord.ACCOUNT_NAME.like(PERMA_PATTERN))).select()) {
             groups.get(rec.group).registered = rec.count;
         }
 
         // now determine how many of those members validated their email
-        where = Ops.and(ABGroupRecord.TEST_ID.eq(testId),
-                        MemberRecord.FLAGS.bitAnd(MemberRecord.Flag.VALIDATED.getBit()).notEq(0));
-        for (GroupCountRecord rec : findAll(
-                 GroupCountRecord.class, CacheStrategy.NONE, where(exprs, where))) {
+        for (GroupCountRecord rec : qb.clone().where(
+                 ABGroupRecord.TEST_ID.eq(testId), MemberRecord.FLAGS.bitAnd(
+                     MemberRecord.Flag.VALIDATED.getBit()).notEq(0)).select()) {
             groups.get(rec.group).validated = rec.count;
         }
 
         // now determine how many of those members returned
         SQLExpression since = MemberRecord.LAST_SESSION.minus(Exps.days(2)).
             greaterThan(MemberRecord.CREATED);
-        where = Ops.and(ABGroupRecord.TEST_ID.eq(testId), since);
-        for (GroupCountRecord rec : findAll(
-                 GroupCountRecord.class, CacheStrategy.NONE, where(exprs, where))) {
+        for (GroupCountRecord rec : qb.clone().where(
+                 ABGroupRecord.TEST_ID.eq(testId), since).select()) {
             groups.get(rec.group).returned = rec.count;
         }
 
         // now determine how many of those members were retained
-        since = MemberRecord.LAST_SESSION.minus(Exps.days(7)).
-            greaterThan(MemberRecord.CREATED);
-        where = Ops.and(ABGroupRecord.TEST_ID.eq(testId), since);
-        for (GroupCountRecord rec : findAll(
-                 GroupCountRecord.class, CacheStrategy.NONE, where(exprs, where))) {
+        since = MemberRecord.LAST_SESSION.minus(Exps.days(7)).greaterThan(MemberRecord.CREATED);
+        for (GroupCountRecord rec : qb.clone().where(
+                 ABGroupRecord.TEST_ID.eq(testId), since).select()) {
             groups.get(rec.group).retained = rec.count;
         }
 
@@ -242,11 +233,10 @@ public class ABTestRepository extends DepotRepository
         }
 
         // lastly summarize the actions
-        for (ActionCountRecord rec : findAll(
-                 ActionCountRecord.class, CacheStrategy.NONE,
-                 new GroupBy(ABGroupRecord.GROUP, ABActionRecord.ACTION),
-                 ABActionRecord.VISITOR_ID.join(ABGroupRecord.VISITOR_ID),
-                 new Where(ABActionRecord.TEST_ID, testId))) {
+        for (ActionCountRecord rec : from(ActionCountRecord.class).noCache().
+                 groupBy(ABGroupRecord.GROUP, ABActionRecord.ACTION).
+                 join(ABActionRecord.VISITOR_ID, ABGroupRecord.VISITOR_ID).
+                 where(ABActionRecord.TEST_ID, testId).select()) {
             ABActionSummaryRecord sumrec = new ABActionSummaryRecord();
             sumrec.testId = testId;
             sumrec.group = rec.group;
