@@ -131,7 +131,7 @@ public abstract class ItemRepository<T extends ItemRecord>
                 Ops.and(getTagColumn(TagRecord.TARGET_ID).eq(itemColumn),
                         getTagColumn(TagRecord.TAG_ID).in(_tagIds)));
             return Ops.exists(new SelectClause(getTagRepository().getTagClass(),
-                                               new ColumnExp<?>[] { TagRecord.TAG_ID }, where));
+                new ColumnExp<?>[] { getTagColumn(TagRecord.TAG_ID) }, where));
         }
 
         public SQLExpression madeByExpression ()
