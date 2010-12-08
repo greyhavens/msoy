@@ -170,8 +170,12 @@
   <target name="mavendeps" depends="prepare">
     <!-- these libraries we need for building and for the server runtime -->
     <artifact:dependencies filesetId="runtime.fileset">
+      <dependency groupId="stax" artifactId="stax" version="1.2.0"/>
+      <dependency groupId="com.google.gwt" artifactId="gwt-servlet" version="2.1.0"/>
+      <dependency groupId="postgresql" artifactid="postgresql" version="9.0-801.jdbc4"/>
       <remoteRepository refid="ooo.maven.depends.repo"/>
       <dependency groupId="com.samskivert" artifactId="samskivert" version="1.2-SNAPSHOT"/>
+      <dependency groupId="com.samskivert" artifactId="depot" version="1.2-SNAPSHOT"/>
       <dependency groupId="com.threerings.panopticon" artifactId="panopticon-client"
                   version="0.0-SNAPSHOT"/>
       <dependency groupId="com.threerings" artifactId="gwt-utils" version="1.3-SNAPSHOT"/>
@@ -187,32 +191,23 @@
       <dependency groupId="org.jivesoftware.smack" artifactId="smack-component"
                   version="0.0-SNAPSHOT"/>
     </artifact:dependencies>
-    <artifact:dependencies filesetId="runtime.remote.fileset">
-      <dependency groupId="stax" artifactId="stax" version="1.2.0"/>
-      <dependency groupId="com.google.gwt" artifactId="gwt-servlet" version="2.1.0"/>
-      <dependency groupId="postgresql" artifactid="postgresql" version="9.0-801.jdbc4"/>
-    </artifact:dependencies>
     <copy todir="${deploy.dir}/lib">
       <fileset refid="runtime.fileset"/>
-      <fileset refid="runtime.remote.fileset"/>
       <mapper type="flatten"/>
     </copy>
 
     <!-- these libraries we only need to build -->
     <artifact:dependencies filesetId="build.fileset">
+      <dependency groupId="com.google.gwt" artifactId="gwt-user" version="2.1.0"/>
+      <dependency groupId="com.google.gwt" artifactId="gwt-incubator" version="2.0.1"/>
       <remoteRepository refid="ooo.maven.depends.repo"/>
       <dependency groupId="com.samskivert" artifactId="samskivert-gwt" version="1.2-SNAPSHOT"/>
       <dependency groupId="com.threerings" artifactId="narya-gwt" version="1.3-SNAPSHOT"/>
       <dependency groupId="com.threerings" artifactId="orth-gwt" version="1.0-SNAPSHOT"/>
       <dependency groupId="com.threerings" artifactId="underwire-gwt" version="1.0-SNAPSHOT"/>
     </artifact:dependencies>
-    <artifact:dependencies filesetId="build.remote.fileset">
-      <dependency groupId="com.google.gwt" artifactId="gwt-user" version="2.1.0"/>
-      <dependency groupId="com.google.gwt" artifactId="gwt-incubator" version="2.0.1"/>
-    </artifact:dependencies>
     <copy todir="${deploy.dir}/build">
       <fileset refid="build.fileset"/>
-      <fileset refid="build.remote.fileset"/>
       <mapper type="flatten"/>
     </copy>
   </target>
