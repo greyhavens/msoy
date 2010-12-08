@@ -14,6 +14,8 @@ import com.threerings.presents.client.ClientAdapter;
 import com.threerings.crowd.client.LocationAdapter;
 import com.threerings.crowd.data.PlaceObject;
 
+import com.threerings.orth.room.data.PetMarshaller;
+
 import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.MemberService;
 import com.threerings.msoy.client.Msgs;
@@ -24,7 +26,6 @@ import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.item.data.all.Avatar;
 
 import com.threerings.msoy.room.data.MsoySceneModel;
-import com.threerings.msoy.room.data.PetMarshaller;
 import com.threerings.msoy.room.data.RoomConfig;
 import com.threerings.msoy.room.data.RoomObject;
 
