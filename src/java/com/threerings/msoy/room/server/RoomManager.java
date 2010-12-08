@@ -579,7 +579,7 @@ public class RoomManager extends SpotSceneManager
 
         // make sure the actor to be state-changed is also in this room
         MsoyBodyObject actor;
-        if (caller.getOid() != actorOid) {
+        if (who == null || who.getOid() != actorOid) {
             if (!_roomObj.occupants.contains(actorOid)) {
                 return;
             }
@@ -990,40 +990,41 @@ public class RoomManager extends SpotSceneManager
      */
     protected boolean ensureEntityControl (ClientObject who, ItemIdent item, String from)
     {
-        if (item.type == MsoyItemType.AVATAR || item.type == MsoyItemType.OCCUPANT) {
-            Integer memberOid = _avatarIdents.get(item);
-            if (memberOid == null) {
-                log.warning("Attemping to control avatar that's not in this room",
-                    "who", who.who(), "avatar", item);
+        BodyObject body = null;
+        if (!(who instanceof WindowClientObject)) {
+            body = _locator.forClient(who);
+            if (body == null) {
+                log.warning("Refusing control to bodyless client", "who", who.who());
                 return false;
             }
+        }
+        // at this point, body is reliably non-null iff who is not an AVRG agent
 
-            if (who instanceof WindowClientObject) {
+        Integer memberOid = _avatarIdents.get(item);
+        if (memberOid != null) {
+            if (body == null) {
                 // Agents may control avatars that are playing their game
                 MemberObject target = (MemberObject)_omgr.getObject(memberOid);
                 if (target.game == null || !target.game.avrGame ||
                     !WindowClientObject.isForGame(who, target.game.gameId)) {
-                    log.info("AVRG Agent attempting control of non-player avatar", "who",
+                    log.info("Agent attempting control of non-player avatar", "who",
                         who.who(), "avatar", item);
                     return false;
                 }
                 return true;
-            }
-            BodyObject body = _locator.forClient(who);
-            if (body.getOid() == memberOid.intValue()) {
+
+            } else if (body.getOid() == memberOid.intValue()) {
                 // yes, you may control your own avatar
                 return true;
             }
             log.warning("Some user is trying to control another's avatar", "who", who.who(),
-                "body", body, "avatar", item, "member", memberOid);
+                "avatar", item, "member", memberOid);
             return false;
         }
-
         // otherwise, it's for some entity other than a user's avatar...
 
         Controllable reference = new ControllableEntity(item);
         EntityControl ctrl = _roomObj.controllers.get(reference);
-        BodyObject body = _locator.forClient(who);
         if (ctrl == null) {
             //log.info("Assigning control", "item", item, "to", who.who());
             _roomObj.addToControllers(new EntityControl(reference, body.getOid()));
