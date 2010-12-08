@@ -21,6 +21,7 @@ import com.threerings.presents.server.PresentsDObjectMgr;
 import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.server.BodyLocator;
 
+import com.threerings.msoy.bureau.data.WindowClientObject;
 import com.threerings.msoy.data.MemberClientObject;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.MemberName;
@@ -165,6 +166,9 @@ public class MemberLocator extends BodyLocator
     {
         if (client instanceof MemberClientObject) {
             return lookupMember(client);
+        } else if (client instanceof WindowClientObject) {
+            log.warning("Request to find body for WindowClientObject", "client", client);
+            throw new IllegalArgumentException("Unexpected body request");
         } else {
             return super.forClient(client);
         }
