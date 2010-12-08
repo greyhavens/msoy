@@ -94,6 +94,7 @@ public class MsoyMediaContainer extends MediaDescContainer
     public function setBlocked (blockType :String) :void
     {
         _blockType = blockType;
+        checkBlocked();
     }
 
     /**
