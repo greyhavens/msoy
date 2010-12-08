@@ -17,10 +17,10 @@ public class ThemeAvatarUseRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<ThemeAvatarUseRecord> _R = ThemeAvatarUseRecord.class;
-    public static final ColumnExp MEMBER_ID = colexp(_R, "memberId");
-    public static final ColumnExp GROUP_ID = colexp(_R, "groupId");
-    public static final ColumnExp ITEM_ID = colexp(_R, "itemId");
-    public static final ColumnExp LAST_WORN = colexp(_R, "lastWorn");
+    public static final ColumnExp<Integer> MEMBER_ID = colexp(_R, "memberId");
+    public static final ColumnExp<Integer> GROUP_ID = colexp(_R, "groupId");
+    public static final ColumnExp<Integer> ITEM_ID = colexp(_R, "itemId");
+    public static final ColumnExp<Timestamp> LAST_WORN = colexp(_R, "lastWorn");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that

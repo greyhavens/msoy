@@ -125,7 +125,7 @@ public class SubscriptionRepository extends DepotRepository
      */
     public void noteBarsGranted (int memberId)
     {
-        Map<ColumnExp,SQLExpression> updates = Maps.newHashMap();
+        Map<ColumnExp<?>,SQLExpression> updates = Maps.newHashMap();
         updates.put(SubscriptionRecord.LAST_GRANT,
             Exps.value(new Timestamp(System.currentTimeMillis())));
         updates.put(SubscriptionRecord.GRANTS_LEFT, SubscriptionRecord.GRANTS_LEFT.minus(1));
@@ -141,7 +141,7 @@ public class SubscriptionRepository extends DepotRepository
      */
     public void noteSpecialItemGranted (int memberId, MsoyItemType type, int itemId)
     {
-        Map<ColumnExp,SQLExpression> updates = Maps.newHashMap();
+        Map<ColumnExp<?>,SQLExpression> updates = Maps.newHashMap();
         updates.put(SubscriptionRecord.SPECIAL_ITEM_TYPE, Exps.value(type));
         updates.put(SubscriptionRecord.SPECIAL_ITEM_ID, Exps.value(itemId));
 

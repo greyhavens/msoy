@@ -15,9 +15,9 @@ public class ABGroupRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<ABGroupRecord> _R = ABGroupRecord.class;
-    public static final ColumnExp TEST_ID = colexp(_R, "testId");
-    public static final ColumnExp VISITOR_ID = colexp(_R, "visitorId");
-    public static final ColumnExp GROUP = colexp(_R, "group");
+    public static final ColumnExp<Integer> TEST_ID = colexp(_R, "testId");
+    public static final ColumnExp<String> VISITOR_ID = colexp(_R, "visitorId");
+    public static final ColumnExp<Integer> GROUP = colexp(_R, "group");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that

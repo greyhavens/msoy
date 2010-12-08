@@ -16,8 +16,8 @@ public class ThemeHomeTemplateRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<ThemeHomeTemplateRecord> _R = ThemeHomeTemplateRecord.class;
-    public static final ColumnExp GROUP_ID = colexp(_R, "groupId");
-    public static final ColumnExp SCENE_ID = colexp(_R, "sceneId");
+    public static final ColumnExp<Integer> GROUP_ID = colexp(_R, "groupId");
+    public static final ColumnExp<Integer> SCENE_ID = colexp(_R, "sceneId");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that

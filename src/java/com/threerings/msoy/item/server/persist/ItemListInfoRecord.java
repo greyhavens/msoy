@@ -27,10 +27,10 @@ public class ItemListInfoRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<ItemListInfoRecord> _R = ItemListInfoRecord.class;
-    public static final ColumnExp LIST_ID = colexp(_R, "listId");
-    public static final ColumnExp MEMBER_ID = colexp(_R, "memberId");
-    public static final ColumnExp TYPE = colexp(_R, "type");
-    public static final ColumnExp NAME = colexp(_R, "name");
+    public static final ColumnExp<Integer> LIST_ID = colexp(_R, "listId");
+    public static final ColumnExp<Integer> MEMBER_ID = colexp(_R, "memberId");
+    public static final ColumnExp<Byte> TYPE = colexp(_R, "type");
+    public static final ColumnExp<String> NAME = colexp(_R, "name");
     // AUTO-GENERATED: FIELDS END
 
     /** Our depot schema version. */

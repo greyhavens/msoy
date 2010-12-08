@@ -26,12 +26,12 @@ public class GalleryInfoRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<GalleryInfoRecord> _R = GalleryInfoRecord.class;
-    public static final ColumnExp GALLERY_ID = colexp(_R, "galleryId");
-    public static final ColumnExp NAME = colexp(_R, "name");
-    public static final ColumnExp LAST_MODIFIED = colexp(_R, "lastModified");
-    public static final ColumnExp THUMB_MEDIA_HASH = colexp(_R, "thumbMediaHash");
-    public static final ColumnExp THUMB_MIME_TYPE = colexp(_R, "thumbMimeType");
-    public static final ColumnExp THUMB_CONSTRAINT = colexp(_R, "thumbConstraint");
+    public static final ColumnExp<Integer> GALLERY_ID = colexp(_R, "galleryId");
+    public static final ColumnExp<String> NAME = colexp(_R, "name");
+    public static final ColumnExp<Timestamp> LAST_MODIFIED = colexp(_R, "lastModified");
+    public static final ColumnExp<byte[]> THUMB_MEDIA_HASH = colexp(_R, "thumbMediaHash");
+    public static final ColumnExp<Byte> THUMB_MIME_TYPE = colexp(_R, "thumbMimeType");
+    public static final ColumnExp<Byte> THUMB_CONSTRAINT = colexp(_R, "thumbConstraint");
     // AUTO-GENERATED: FIELDS END
 
     /** Converts persistent records into runtime records. */

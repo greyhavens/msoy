@@ -25,14 +25,14 @@ public class SurveyRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<SurveyRecord> _R = SurveyRecord.class;
-    public static final ColumnExp SURVEY_ID = colexp(_R, "surveyId");
-    public static final ColumnExp NAME = colexp(_R, "name");
-    public static final ColumnExp START = colexp(_R, "start");
-    public static final ColumnExp FINISH = colexp(_R, "finish");
-    public static final ColumnExp ENABLED = colexp(_R, "enabled");
-    public static final ColumnExp MAX_SUBMISSIONS = colexp(_R, "maxSubmissions");
-    public static final ColumnExp COIN_AWARD = colexp(_R, "coinAward");
-    public static final ColumnExp LINKED_PROMO_ID = colexp(_R, "linkedPromoId");
+    public static final ColumnExp<Integer> SURVEY_ID = colexp(_R, "surveyId");
+    public static final ColumnExp<String> NAME = colexp(_R, "name");
+    public static final ColumnExp<Date> START = colexp(_R, "start");
+    public static final ColumnExp<Date> FINISH = colexp(_R, "finish");
+    public static final ColumnExp<Boolean> ENABLED = colexp(_R, "enabled");
+    public static final ColumnExp<Integer> MAX_SUBMISSIONS = colexp(_R, "maxSubmissions");
+    public static final ColumnExp<Integer> COIN_AWARD = colexp(_R, "coinAward");
+    public static final ColumnExp<String> LINKED_PROMO_ID = colexp(_R, "linkedPromoId");
     // AUTO-GENERATED: FIELDS END
 
     /** Unique integer key of this survey. */

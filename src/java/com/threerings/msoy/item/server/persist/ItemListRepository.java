@@ -118,10 +118,8 @@ public class ItemListRepository extends DepotRepository
      */
     public List<ItemListInfoRecord> loadInfos (int memberId, byte type)
     {
-        // query by type
-        Where where = new Where(ItemListInfoRecord.MEMBER_ID, Integer.valueOf(memberId),
-            ItemListInfoRecord.TYPE, Integer.valueOf(type));
-        return findAll(ItemListInfoRecord.class, where);
+        return findAll(ItemListInfoRecord.class, new Where(ItemListInfoRecord.MEMBER_ID, memberId,
+                                                           ItemListInfoRecord.TYPE, type));
     }
 
     /**

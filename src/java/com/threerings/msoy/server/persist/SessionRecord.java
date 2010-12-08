@@ -19,9 +19,9 @@ public class SessionRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<SessionRecord> _R = SessionRecord.class;
-    public static final ColumnExp TOKEN = colexp(_R, "token");
-    public static final ColumnExp MEMBER_ID = colexp(_R, "memberId");
-    public static final ColumnExp EXPIRES = colexp(_R, "expires");
+    public static final ColumnExp<String> TOKEN = colexp(_R, "token");
+    public static final ColumnExp<Integer> MEMBER_ID = colexp(_R, "memberId");
+    public static final ColumnExp<Date> EXPIRES = colexp(_R, "expires");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent

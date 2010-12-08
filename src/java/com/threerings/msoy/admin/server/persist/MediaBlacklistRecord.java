@@ -21,10 +21,10 @@ public class MediaBlacklistRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<MediaBlacklistRecord> _R = MediaBlacklistRecord.class;
-    public static final ColumnExp MEDIA_HASH = colexp(_R, "mediaHash");
-    public static final ColumnExp MIME_TYPE = colexp(_R, "mimeType");
-    public static final ColumnExp TIMESTAMP = colexp(_R, "timestamp");
-    public static final ColumnExp NOTE = colexp(_R, "note");
+    public static final ColumnExp<byte[]> MEDIA_HASH = colexp(_R, "mediaHash");
+    public static final ColumnExp<Byte> MIME_TYPE = colexp(_R, "mimeType");
+    public static final ColumnExp<Timestamp> TIMESTAMP = colexp(_R, "timestamp");
+    public static final ColumnExp<String> NOTE = colexp(_R, "note");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that

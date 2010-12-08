@@ -26,15 +26,15 @@ public class MemberAccountRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<MemberAccountRecord> _R = MemberAccountRecord.class;
-    public static final ColumnExp MEMBER_ID = colexp(_R, "memberId");
-    public static final ColumnExp COINS = colexp(_R, "coins");
-    public static final ColumnExp BARS = colexp(_R, "bars");
-    public static final ColumnExp BLING = colexp(_R, "bling");
-    public static final ColumnExp ACC_COINS = colexp(_R, "accCoins");
-    public static final ColumnExp ACC_BARS = colexp(_R, "accBars");
-    public static final ColumnExp ACC_BLING = colexp(_R, "accBling");
-    public static final ColumnExp CASH_OUT_BLING = colexp(_R, "cashOutBling");
-    public static final ColumnExp CASH_OUT_BLING_WORTH = colexp(_R, "cashOutBlingWorth");
+    public static final ColumnExp<Integer> MEMBER_ID = colexp(_R, "memberId");
+    public static final ColumnExp<Integer> COINS = colexp(_R, "coins");
+    public static final ColumnExp<Integer> BARS = colexp(_R, "bars");
+    public static final ColumnExp<Integer> BLING = colexp(_R, "bling");
+    public static final ColumnExp<Long> ACC_COINS = colexp(_R, "accCoins");
+    public static final ColumnExp<Long> ACC_BARS = colexp(_R, "accBars");
+    public static final ColumnExp<Long> ACC_BLING = colexp(_R, "accBling");
+    public static final ColumnExp<Integer> CASH_OUT_BLING = colexp(_R, "cashOutBling");
+    public static final ColumnExp<Float> CASH_OUT_BLING_WORTH = colexp(_R, "cashOutBlingWorth");
     // AUTO-GENERATED: FIELDS END
 
     public static final int SCHEMA_VERSION = 7;
@@ -72,7 +72,7 @@ public class MemberAccountRecord extends PersistentRecord
     /**
      * Return the column name for the specified currency.
      */
-    public static ColumnExp getColumn (Currency currency)
+    public static ColumnExp<Integer> getColumn (Currency currency)
     {
         switch (currency) {
         case COINS: return COINS;
@@ -85,7 +85,7 @@ public class MemberAccountRecord extends PersistentRecord
     /**
      * Return the column name for the specified currency.
      */
-    public static ColumnExp getAccColumn (Currency currency)
+    public static ColumnExp<Long> getAccColumn (Currency currency)
     {
         switch (currency) {
         case COINS: return ACC_COINS;

@@ -61,7 +61,7 @@ public class FacebookRepository extends DepotRepository
         // set the default values for the new stream publishing columns - we don't want these to
         // be nullable or have permanent default values
         context.registerMigration(FacebookTemplateRecord.class,
-            new SchemaMigration.Add(4, new ColumnExp(
+            new SchemaMigration.Add(4, new ColumnExp<String>(
                 FacebookTemplateRecord.class, "caption"), "''"));
         context.registerMigration(FacebookTemplateRecord.class,
             new SchemaMigration.Add(4, FacebookTemplateRecord.DESCRIPTION, "''"));

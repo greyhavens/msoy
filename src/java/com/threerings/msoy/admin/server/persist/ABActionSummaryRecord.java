@@ -15,10 +15,10 @@ public class ABActionSummaryRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<ABActionSummaryRecord> _R = ABActionSummaryRecord.class;
-    public static final ColumnExp TEST_ID = colexp(_R, "testId");
-    public static final ColumnExp GROUP = colexp(_R, "group");
-    public static final ColumnExp ACTION = colexp(_R, "action");
-    public static final ColumnExp TAKERS = colexp(_R, "takers");
+    public static final ColumnExp<Integer> TEST_ID = colexp(_R, "testId");
+    public static final ColumnExp<Integer> GROUP = colexp(_R, "group");
+    public static final ColumnExp<String> ACTION = colexp(_R, "action");
+    public static final ColumnExp<Integer> TAKERS = colexp(_R, "takers");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that

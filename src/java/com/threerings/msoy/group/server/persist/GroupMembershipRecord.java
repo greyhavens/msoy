@@ -29,10 +29,10 @@ public class GroupMembershipRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<GroupMembershipRecord> _R = GroupMembershipRecord.class;
-    public static final ColumnExp MEMBER_ID = colexp(_R, "memberId");
-    public static final ColumnExp GROUP_ID = colexp(_R, "groupId");
-    public static final ColumnExp RANK = colexp(_R, "rank");
-    public static final ColumnExp RANK_ASSIGNED = colexp(_R, "rankAssigned");
+    public static final ColumnExp<Integer> MEMBER_ID = colexp(_R, "memberId");
+    public static final ColumnExp<Integer> GROUP_ID = colexp(_R, "groupId");
+    public static final ColumnExp<GroupMembership.Rank> RANK = colexp(_R, "rank");
+    public static final ColumnExp<Timestamp> RANK_ASSIGNED = colexp(_R, "rankAssigned");
     // AUTO-GENERATED: FIELDS END
 
     public static final int SCHEMA_VERSION = 3;

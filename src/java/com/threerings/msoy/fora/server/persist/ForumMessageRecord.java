@@ -32,14 +32,14 @@ public class ForumMessageRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<ForumMessageRecord> _R = ForumMessageRecord.class;
-    public static final ColumnExp MESSAGE_ID = colexp(_R, "messageId");
-    public static final ColumnExp THREAD_ID = colexp(_R, "threadId");
-    public static final ColumnExp IN_REPLY_TO = colexp(_R, "inReplyTo");
-    public static final ColumnExp POSTER_ID = colexp(_R, "posterId");
-    public static final ColumnExp ISSUE_ID = colexp(_R, "issueId");
-    public static final ColumnExp CREATED = colexp(_R, "created");
-    public static final ColumnExp LAST_EDITED = colexp(_R, "lastEdited");
-    public static final ColumnExp MESSAGE = colexp(_R, "message");
+    public static final ColumnExp<Integer> MESSAGE_ID = colexp(_R, "messageId");
+    public static final ColumnExp<Integer> THREAD_ID = colexp(_R, "threadId");
+    public static final ColumnExp<Integer> IN_REPLY_TO = colexp(_R, "inReplyTo");
+    public static final ColumnExp<Integer> POSTER_ID = colexp(_R, "posterId");
+    public static final ColumnExp<Integer> ISSUE_ID = colexp(_R, "issueId");
+    public static final ColumnExp<Timestamp> CREATED = colexp(_R, "created");
+    public static final ColumnExp<Timestamp> LAST_EDITED = colexp(_R, "lastEdited");
+    public static final ColumnExp<String> MESSAGE = colexp(_R, "message");
     // AUTO-GENERATED: FIELDS END
 
     /** The identifier for the full text search index on {@link #message} */

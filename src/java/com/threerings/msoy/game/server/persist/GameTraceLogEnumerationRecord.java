@@ -15,9 +15,9 @@ public class GameTraceLogEnumerationRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<GameTraceLogEnumerationRecord> _R = GameTraceLogEnumerationRecord.class;
-    public static final ColumnExp LOG_ID = colexp(_R, "logId");
-    public static final ColumnExp GAME_ID = colexp(_R, "gameId");
-    public static final ColumnExp RECORDED = colexp(_R, "recorded");
+    public static final ColumnExp<Integer> LOG_ID = colexp(_R, "logId");
+    public static final ColumnExp<Integer> GAME_ID = colexp(_R, "gameId");
+    public static final ColumnExp<Timestamp> RECORDED = colexp(_R, "recorded");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that

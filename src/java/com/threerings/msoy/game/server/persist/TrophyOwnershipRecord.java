@@ -17,7 +17,7 @@ public class TrophyOwnershipRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<TrophyOwnershipRecord> _R = TrophyOwnershipRecord.class;
-    public static final ColumnExp IDENT = colexp(_R, "ident");
+    public static final ColumnExp<String> IDENT = colexp(_R, "ident");
     // AUTO-GENERATED: FIELDS END
 
     /** The identifier of a trophy owned by a player. */

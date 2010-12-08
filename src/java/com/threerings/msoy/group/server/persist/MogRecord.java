@@ -18,8 +18,8 @@ public class MogRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<MogRecord> _R = MogRecord.class;
-    public static final ColumnExp GROUP_ID = colexp(_R, "groupId");
-    public static final ColumnExp MOG_ID = colexp(_R, "mogId");
+    public static final ColumnExp<Integer> GROUP_ID = colexp(_R, "groupId");
+    public static final ColumnExp<String> MOG_ID = colexp(_R, "mogId");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that

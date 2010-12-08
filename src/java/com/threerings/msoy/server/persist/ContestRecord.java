@@ -25,17 +25,17 @@ public class ContestRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<ContestRecord> _R = ContestRecord.class;
-    public static final ColumnExp CONTEST_ID = colexp(_R, "contestId");
-    public static final ColumnExp ICON_HASH = colexp(_R, "iconHash");
-    public static final ColumnExp ICON_MIME_TYPE = colexp(_R, "iconMimeType");
-    public static final ColumnExp ICON_CONSTRAINT = colexp(_R, "iconConstraint");
-    public static final ColumnExp NAME = colexp(_R, "name");
-    public static final ColumnExp BLURB = colexp(_R, "blurb");
-    public static final ColumnExp STATUS = colexp(_R, "status");
-    public static final ColumnExp PRIZES = colexp(_R, "prizes");
-    public static final ColumnExp PAST_BLURB = colexp(_R, "pastBlurb");
-    public static final ColumnExp STARTS = colexp(_R, "starts");
-    public static final ColumnExp ENDS = colexp(_R, "ends");
+    public static final ColumnExp<String> CONTEST_ID = colexp(_R, "contestId");
+    public static final ColumnExp<byte[]> ICON_HASH = colexp(_R, "iconHash");
+    public static final ColumnExp<Byte> ICON_MIME_TYPE = colexp(_R, "iconMimeType");
+    public static final ColumnExp<Byte> ICON_CONSTRAINT = colexp(_R, "iconConstraint");
+    public static final ColumnExp<String> NAME = colexp(_R, "name");
+    public static final ColumnExp<String> BLURB = colexp(_R, "blurb");
+    public static final ColumnExp<String> STATUS = colexp(_R, "status");
+    public static final ColumnExp<String> PRIZES = colexp(_R, "prizes");
+    public static final ColumnExp<String> PAST_BLURB = colexp(_R, "pastBlurb");
+    public static final ColumnExp<Timestamp> STARTS = colexp(_R, "starts");
+    public static final ColumnExp<Timestamp> ENDS = colexp(_R, "ends");
     // AUTO-GENERATED: FIELDS END
 
     /** Converts persistent records to runtime records. */

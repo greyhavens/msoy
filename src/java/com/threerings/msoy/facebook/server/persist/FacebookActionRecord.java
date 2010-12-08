@@ -26,11 +26,11 @@ public class FacebookActionRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<FacebookActionRecord> _R = FacebookActionRecord.class;
-    public static final ColumnExp APP_ID = colexp(_R, "appId");
-    public static final ColumnExp MEMBER_ID = colexp(_R, "memberId");
-    public static final ColumnExp TYPE = colexp(_R, "type");
-    public static final ColumnExp ID = colexp(_R, "id");
-    public static final ColumnExp TIMESTAMP = colexp(_R, "timestamp");
+    public static final ColumnExp<Integer> APP_ID = colexp(_R, "appId");
+    public static final ColumnExp<Integer> MEMBER_ID = colexp(_R, "memberId");
+    public static final ColumnExp<FacebookActionRecord.Type> TYPE = colexp(_R, "type");
+    public static final ColumnExp<String> ID = colexp(_R, "id");
+    public static final ColumnExp<Timestamp> TIMESTAMP = colexp(_R, "timestamp");
     // AUTO-GENERATED: FIELDS END
 
     public static final int SCHEMA_VERSION = 2;

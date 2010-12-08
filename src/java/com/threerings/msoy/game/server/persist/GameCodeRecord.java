@@ -23,16 +23,16 @@ public class GameCodeRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<GameCodeRecord> _R = GameCodeRecord.class;
-    public static final ColumnExp GAME_ID = colexp(_R, "gameId");
-    public static final ColumnExp IS_DEVELOPMENT = colexp(_R, "isDevelopment");
-    public static final ColumnExp CONFIG = colexp(_R, "config");
-    public static final ColumnExp CLIENT_MEDIA_HASH = colexp(_R, "clientMediaHash");
-    public static final ColumnExp CLIENT_MIME_TYPE = colexp(_R, "clientMimeType");
-    public static final ColumnExp SERVER_MEDIA_HASH = colexp(_R, "serverMediaHash");
-    public static final ColumnExp SERVER_MIME_TYPE = colexp(_R, "serverMimeType");
-    public static final ColumnExp SPLASH_MEDIA_HASH = colexp(_R, "splashMediaHash");
-    public static final ColumnExp SPLASH_MIME_TYPE = colexp(_R, "splashMimeType");
-    public static final ColumnExp LAST_UPDATED = colexp(_R, "lastUpdated");
+    public static final ColumnExp<Integer> GAME_ID = colexp(_R, "gameId");
+    public static final ColumnExp<Boolean> IS_DEVELOPMENT = colexp(_R, "isDevelopment");
+    public static final ColumnExp<String> CONFIG = colexp(_R, "config");
+    public static final ColumnExp<byte[]> CLIENT_MEDIA_HASH = colexp(_R, "clientMediaHash");
+    public static final ColumnExp<Byte> CLIENT_MIME_TYPE = colexp(_R, "clientMimeType");
+    public static final ColumnExp<byte[]> SERVER_MEDIA_HASH = colexp(_R, "serverMediaHash");
+    public static final ColumnExp<Byte> SERVER_MIME_TYPE = colexp(_R, "serverMimeType");
+    public static final ColumnExp<byte[]> SPLASH_MEDIA_HASH = colexp(_R, "splashMediaHash");
+    public static final ColumnExp<Byte> SPLASH_MIME_TYPE = colexp(_R, "splashMimeType");
+    public static final ColumnExp<Timestamp> LAST_UPDATED = colexp(_R, "lastUpdated");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this if you make a schema impacting change to this record. */

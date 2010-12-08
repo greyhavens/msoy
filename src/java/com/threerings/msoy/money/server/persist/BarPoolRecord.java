@@ -16,9 +16,9 @@ public class BarPoolRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<BarPoolRecord> _R = BarPoolRecord.class;
-    public static final ColumnExp ID = colexp(_R, "id");
-    public static final ColumnExp BAR_POOL = colexp(_R, "barPool");
-    public static final ColumnExp COIN_BALANCE = colexp(_R, "coinBalance");
+    public static final ColumnExp<Integer> ID = colexp(_R, "id");
+    public static final ColumnExp<Integer> BAR_POOL = colexp(_R, "barPool");
+    public static final ColumnExp<Integer> COIN_BALANCE = colexp(_R, "coinBalance");
     // AUTO-GENERATED: FIELDS END
 
     /** This can be incremented when we change this record. */

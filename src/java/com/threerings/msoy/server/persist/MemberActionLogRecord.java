@@ -18,10 +18,10 @@ public class MemberActionLogRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<MemberActionLogRecord> _R = MemberActionLogRecord.class;
-    public static final ColumnExp MEMBER_ID = colexp(_R, "memberId");
-    public static final ColumnExp ACTION_ID = colexp(_R, "actionId");
-    public static final ColumnExp ACTION_TIME = colexp(_R, "actionTime");
-    public static final ColumnExp DATA = colexp(_R, "data");
+    public static final ColumnExp<Integer> MEMBER_ID = colexp(_R, "memberId");
+    public static final ColumnExp<Integer> ACTION_ID = colexp(_R, "actionId");
+    public static final ColumnExp<Timestamp> ACTION_TIME = colexp(_R, "actionTime");
+    public static final ColumnExp<String> DATA = colexp(_R, "data");
     // AUTO-GENERATED: FIELDS END
 
     public static final int SCHEMA_VERSION = 2;

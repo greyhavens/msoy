@@ -20,10 +20,10 @@ public class SurveyResponseRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<SurveyResponseRecord> _R = SurveyResponseRecord.class;
-    public static final ColumnExp SURVEY_ID = colexp(_R, "surveyId");
-    public static final ColumnExp MEMBER_ID = colexp(_R, "memberId");
-    public static final ColumnExp QUESTION_INDEX = colexp(_R, "questionIndex");
-    public static final ColumnExp RESPONSE = colexp(_R, "response");
+    public static final ColumnExp<Integer> SURVEY_ID = colexp(_R, "surveyId");
+    public static final ColumnExp<Integer> MEMBER_ID = colexp(_R, "memberId");
+    public static final ColumnExp<Integer> QUESTION_INDEX = colexp(_R, "questionIndex");
+    public static final ColumnExp<String> RESPONSE = colexp(_R, "response");
     // AUTO-GENERATED: FIELDS END
 
     /** The id of the survey this response is for. */

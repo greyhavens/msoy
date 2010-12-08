@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.person.server.persist;
 
+import java.sql.Timestamp;
 import java.util.Map;
 import java.util.Set;
 
@@ -23,11 +24,11 @@ public class FriendFeedMessageRecord extends FeedMessageRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<FriendFeedMessageRecord> _R = FriendFeedMessageRecord.class;
-    public static final ColumnExp ACTOR_ID = colexp(_R, "actorId");
-    public static final ColumnExp MESSAGE_ID = colexp(_R, "messageId");
-    public static final ColumnExp TYPE = colexp(_R, "type");
-    public static final ColumnExp DATA = colexp(_R, "data");
-    public static final ColumnExp POSTED = colexp(_R, "posted");
+    public static final ColumnExp<Integer> ACTOR_ID = colexp(_R, "actorId");
+    public static final ColumnExp<Integer> MESSAGE_ID = colexp(_R, "messageId");
+    public static final ColumnExp<Integer> TYPE = colexp(_R, "type");
+    public static final ColumnExp<String> DATA = colexp(_R, "data");
+    public static final ColumnExp<Timestamp> POSTED = colexp(_R, "posted");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that

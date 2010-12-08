@@ -22,14 +22,14 @@ public class FeedThumbnailRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<FeedThumbnailRecord> _R = FeedThumbnailRecord.class;
-    public static final ColumnExp APP_ID = colexp(_R, "appId");
-    public static final ColumnExp GAME_ID = colexp(_R, "gameId");
-    public static final ColumnExp CODE = colexp(_R, "code");
-    public static final ColumnExp VARIANT = colexp(_R, "variant");
-    public static final ColumnExp POS = colexp(_R, "pos");
-    public static final ColumnExp HASH = colexp(_R, "hash");
-    public static final ColumnExp MIME_TYPE = colexp(_R, "mimeType");
-    public static final ColumnExp CONSTRAINT = colexp(_R, "constraint");
+    public static final ColumnExp<Integer> APP_ID = colexp(_R, "appId");
+    public static final ColumnExp<Integer> GAME_ID = colexp(_R, "gameId");
+    public static final ColumnExp<String> CODE = colexp(_R, "code");
+    public static final ColumnExp<String> VARIANT = colexp(_R, "variant");
+    public static final ColumnExp<Byte> POS = colexp(_R, "pos");
+    public static final ColumnExp<byte[]> HASH = colexp(_R, "hash");
+    public static final ColumnExp<Byte> MIME_TYPE = colexp(_R, "mimeType");
+    public static final ColumnExp<Byte> CONSTRAINT = colexp(_R, "constraint");
     // AUTO-GENERATED: FIELDS END
 
     public static final int SCHEMA_VERSION = 1;

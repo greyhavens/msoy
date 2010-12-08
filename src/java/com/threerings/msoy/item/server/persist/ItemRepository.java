@@ -122,7 +122,7 @@ public abstract class ItemRepository<T extends ItemRecord>
             return _cloneFts.rank();
         }
 
-        public SQLExpression tagExistsExpression (ColumnExp itemColumn)
+        public SQLExpression tagExistsExpression (ColumnExp<?> itemColumn)
         {
             if (_tagIds.size() == 0) {
                 return null;
@@ -131,7 +131,7 @@ public abstract class ItemRepository<T extends ItemRecord>
                 Ops.and(getTagColumn(TagRecord.TARGET_ID).eq(itemColumn),
                         getTagColumn(TagRecord.TAG_ID).in(_tagIds)));
             return Ops.exists(new SelectClause(getTagRepository().getTagClass(),
-                                               new ColumnExp[] { TagRecord.TAG_ID }, where));
+                                               new ColumnExp<?>[] { TagRecord.TAG_ID }, where));
         }
 
         public SQLExpression madeByExpression ()
@@ -444,7 +444,7 @@ public abstract class ItemRepository<T extends ItemRecord>
                 getMogMarkColumn(MogMarkRecord.GROUP_ID).eq(themeId));
             cloneClauses = ArrayUtil.append(cloneClauses,
                 new Join(getCloneColumn(CloneRecord.ORIGINAL_ITEM_ID),
-                    new ColumnExp(getMogMarkClass(), MogMarkRecord.ITEM_ID.name)));
+                         MogMarkRecord.ITEM_ID.as(getMogMarkClass())));
         }
 
         List<CloneRecord> cloneRecords = loadAllWithWhere(
@@ -1002,7 +1002,7 @@ public abstract class ItemRepository<T extends ItemRecord>
     public int nudgeListing (CatalogRecord record, boolean purchased)
     {
         int newCost = record.cost;
-        Map<ColumnExp, SQLExpression> updates = Maps.newHashMap();
+        Map<ColumnExp<?>, SQLExpression> updates = Maps.newHashMap();
         if (purchased) {
             updates.put(CatalogRecord.PURCHASES,
                         getCatalogColumn(CatalogRecord.PURCHASES).plus(1));
@@ -1188,7 +1188,7 @@ public abstract class ItemRepository<T extends ItemRecord>
                 }
             };
         Where where = new Where(getCatalogColumn(CatalogRecord.BASIS_ID), basisId);
-        ColumnExp cost = getCatalogColumn(CatalogRecord.COST);
+        ColumnExp<Integer> cost = getCatalogColumn(CatalogRecord.COST);
         return updatePartial(getCatalogClass(), where, invalidator, cost, cost.plus(change));
     }
 
@@ -1268,7 +1268,7 @@ public abstract class ItemRepository<T extends ItemRecord>
             _tagRepo.deleteTags(itemId);
 
             // delete support flags on this item
-            _itemFlagRepo.removeItemFlags(_itemType.toByte(), itemId);
+            _itemFlagRepo.removeItemFlags(_itemType, itemId);
         }
 
         // delete any entity memory for this item as well
@@ -1400,7 +1400,7 @@ public abstract class ItemRepository<T extends ItemRecord>
      */
     protected void noteBasisAssigned (int catalogId, boolean add)
     {
-        ColumnExp count = getCatalogColumn(CatalogRecord.DERIVATION_COUNT);
+        ColumnExp<Integer> count = getCatalogColumn(CatalogRecord.DERIVATION_COUNT);
         updatePartial(getCatalogKey(catalogId), count, count.plus(add ? 1 : -1));
     }
 
@@ -1502,7 +1502,7 @@ public abstract class ItemRepository<T extends ItemRecord>
      * are tagged with those tags.
      */
     protected void addTagMatchClause (
-        List<SQLExpression> matches, ColumnExp itemColumn, WordSearch search)
+        List<SQLExpression> matches, ColumnExp<?> itemColumn, WordSearch search)
     {
         // build a query to check tags if one or more tags exists
         SQLExpression op = search.tagExistsExpression(itemColumn);
@@ -1709,35 +1709,34 @@ public abstract class ItemRepository<T extends ItemRecord>
         return Sets.newHashSet(Iterables.filter(itemIds, IS_CLONE_ID));
     }
 
-    protected ColumnExp getItemColumn (ColumnExp pcol)
+    protected <T> ColumnExp<T> getItemColumn (ColumnExp<T> pcol)
     {
-        return new ColumnExp(getItemClass(), pcol.name);
+        return pcol.as(getItemClass());
     }
 
-    protected ColumnExp getCatalogColumn (ColumnExp pcol)
+    protected <T> ColumnExp<T> getCatalogColumn (ColumnExp<T> pcol)
     {
-        return new ColumnExp(getCatalogClass(), pcol.name);
+        return pcol.as(getCatalogClass());
     }
 
-    protected ColumnExp getCloneColumn (ColumnExp pcol)
+    protected <T> ColumnExp<T> getCloneColumn (ColumnExp<T> pcol)
     {
-        return new ColumnExp(getCloneClass(), pcol.name);
+        return pcol.as(getCloneClass());
     }
 
-//    protected ColumnExp getRatingColumn (ColumnExp pcol)
+//    protected <T> ColumnExp<T> getRatingColumn (ColumnExp<T> pcol)
 //    {
-//        return new ColumnExp(getRatingClass(), pcol.name);
+//        return pcol.as(getRatingClass());
 //    }
 
-    protected ColumnExp getMogMarkColumn (ColumnExp pcol)
+    protected <T> ColumnExp<T> getMogMarkColumn (ColumnExp<T> pcol)
     {
-        return new ColumnExp(getMogMarkClass(), pcol.name);
-
+        return pcol.as(getMogMarkClass());
     }
 
-    protected ColumnExp getTagColumn (ColumnExp pcol)
+    protected <T> ColumnExp<T> getTagColumn (ColumnExp<T> pcol)
     {
-        return new ColumnExp(getTagRepository().getTagClass(), pcol.name);
+        return pcol.as(getTagRepository().getTagClass());
     }
 
     protected FluentExp getRatingExpression ()

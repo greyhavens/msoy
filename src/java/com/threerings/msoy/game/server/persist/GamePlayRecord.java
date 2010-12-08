@@ -18,12 +18,12 @@ public class GamePlayRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<GamePlayRecord> _R = GamePlayRecord.class;
-    public static final ColumnExp GAME_ID = colexp(_R, "gameId");
-    public static final ColumnExp RECORDED = colexp(_R, "recorded");
-    public static final ColumnExp MULTI_PLAYER = colexp(_R, "multiPlayer");
-    public static final ColumnExp PLAYER_GAMES = colexp(_R, "playerGames");
-    public static final ColumnExp PLAYER_MINS = colexp(_R, "playerMins");
-    public static final ColumnExp FLOW_AWARDED = colexp(_R, "flowAwarded");
+    public static final ColumnExp<Integer> GAME_ID = colexp(_R, "gameId");
+    public static final ColumnExp<Timestamp> RECORDED = colexp(_R, "recorded");
+    public static final ColumnExp<Boolean> MULTI_PLAYER = colexp(_R, "multiPlayer");
+    public static final ColumnExp<Integer> PLAYER_GAMES = colexp(_R, "playerGames");
+    public static final ColumnExp<Integer> PLAYER_MINS = colexp(_R, "playerMins");
+    public static final ColumnExp<Integer> FLOW_AWARDED = colexp(_R, "flowAwarded");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that

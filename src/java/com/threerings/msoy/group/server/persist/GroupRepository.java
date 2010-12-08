@@ -312,7 +312,7 @@ public class GroupRepository extends DepotRepository
     /**
      * Updates the specified group record with supplied field/value mapping.
      */
-    public void updateGroup (int groupId, Map<ColumnExp, Object> updates)
+    public void updateGroup (int groupId, Map<ColumnExp<?>, Object> updates)
     {
         updatePartial(GroupRecord.getKey(groupId), updates);
     }

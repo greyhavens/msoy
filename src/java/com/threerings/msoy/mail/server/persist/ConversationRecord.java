@@ -25,13 +25,13 @@ public class ConversationRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<ConversationRecord> _R = ConversationRecord.class;
-    public static final ColumnExp CONVERSATION_ID = colexp(_R, "conversationId");
-    public static final ColumnExp INITIATOR_ID = colexp(_R, "initiatorId");
-    public static final ColumnExp TARGET_ID = colexp(_R, "targetId");
-    public static final ColumnExp SUBJECT = colexp(_R, "subject");
-    public static final ColumnExp LAST_SENT = colexp(_R, "lastSent");
-    public static final ColumnExp LAST_AUTHOR_ID = colexp(_R, "lastAuthorId");
-    public static final ColumnExp LAST_SNIPPET = colexp(_R, "lastSnippet");
+    public static final ColumnExp<Integer> CONVERSATION_ID = colexp(_R, "conversationId");
+    public static final ColumnExp<Integer> INITIATOR_ID = colexp(_R, "initiatorId");
+    public static final ColumnExp<Integer> TARGET_ID = colexp(_R, "targetId");
+    public static final ColumnExp<String> SUBJECT = colexp(_R, "subject");
+    public static final ColumnExp<Timestamp> LAST_SENT = colexp(_R, "lastSent");
+    public static final ColumnExp<Integer> LAST_AUTHOR_ID = colexp(_R, "lastAuthorId");
+    public static final ColumnExp<String> LAST_SNIPPET = colexp(_R, "lastSnippet");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that

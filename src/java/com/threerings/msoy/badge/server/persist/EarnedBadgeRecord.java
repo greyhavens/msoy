@@ -22,10 +22,10 @@ public class EarnedBadgeRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<EarnedBadgeRecord> _R = EarnedBadgeRecord.class;
-    public static final ColumnExp MEMBER_ID = colexp(_R, "memberId");
-    public static final ColumnExp BADGE_CODE = colexp(_R, "badgeCode");
-    public static final ColumnExp LEVEL = colexp(_R, "level");
-    public static final ColumnExp WHEN_EARNED = colexp(_R, "whenEarned");
+    public static final ColumnExp<Integer> MEMBER_ID = colexp(_R, "memberId");
+    public static final ColumnExp<Integer> BADGE_CODE = colexp(_R, "badgeCode");
+    public static final ColumnExp<Integer> LEVEL = colexp(_R, "level");
+    public static final ColumnExp<Timestamp> WHEN_EARNED = colexp(_R, "whenEarned");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that

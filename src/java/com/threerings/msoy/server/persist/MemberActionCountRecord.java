@@ -14,8 +14,8 @@ public class MemberActionCountRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<MemberActionCountRecord> _R = MemberActionCountRecord.class;
-    public static final ColumnExp ACTION_ID = colexp(_R, "actionId");
-    public static final ColumnExp COUNT = colexp(_R, "count");
+    public static final ColumnExp<Integer> ACTION_ID = colexp(_R, "actionId");
+    public static final ColumnExp<Integer> COUNT = colexp(_R, "count");
     // AUTO-GENERATED: FIELDS END
 
     /** The id of the action this entry counts. */

@@ -25,9 +25,9 @@ public class AppInfoRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<AppInfoRecord> _R = AppInfoRecord.class;
-    public static final ColumnExp APP_ID = colexp(_R, "appId");
-    public static final ColumnExp NAME = colexp(_R, "name");
-    public static final ColumnExp CLIENT_MODE = colexp(_R, "clientMode");
+    public static final ColumnExp<Integer> APP_ID = colexp(_R, "appId");
+    public static final ColumnExp<String> NAME = colexp(_R, "name");
+    public static final ColumnExp<ClientMode> CLIENT_MODE = colexp(_R, "clientMode");
     // AUTO-GENERATED: FIELDS END
 
     /**

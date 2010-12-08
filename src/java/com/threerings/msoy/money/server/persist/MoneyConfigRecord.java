@@ -27,9 +27,9 @@ public class MoneyConfigRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<MoneyConfigRecord> _R = MoneyConfigRecord.class;
-    public static final ColumnExp LAST_DISTRIBUTED_BLING = colexp(_R, "lastDistributedBling");
-    public static final ColumnExp ID = colexp(_R, "id");
-    public static final ColumnExp LOCKED = colexp(_R, "locked");
+    public static final ColumnExp<Date> LAST_DISTRIBUTED_BLING = colexp(_R, "lastDistributedBling");
+    public static final ColumnExp<Integer> ID = colexp(_R, "id");
+    public static final ColumnExp<Boolean> LOCKED = colexp(_R, "locked");
     // AUTO-GENERATED: FIELDS END
 
     public static final int SCHEMA_VERSION = 3;

@@ -26,12 +26,12 @@ public class ExchangeRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<ExchangeRecord> _R = ExchangeRecord.class;
-    public static final ColumnExp ID = colexp(_R, "id");
-    public static final ColumnExp TIMESTAMP = colexp(_R, "timestamp");
-    public static final ColumnExp BARS = colexp(_R, "bars");
-    public static final ColumnExp COINS = colexp(_R, "coins");
-    public static final ColumnExp RATE = colexp(_R, "rate");
-    public static final ColumnExp REFERENCE_TX_ID = colexp(_R, "referenceTxId");
+    public static final ColumnExp<Integer> ID = colexp(_R, "id");
+    public static final ColumnExp<Timestamp> TIMESTAMP = colexp(_R, "timestamp");
+    public static final ColumnExp<Integer> BARS = colexp(_R, "bars");
+    public static final ColumnExp<Integer> COINS = colexp(_R, "coins");
+    public static final ColumnExp<Double> RATE = colexp(_R, "rate");
+    public static final ColumnExp<Integer> REFERENCE_TX_ID = colexp(_R, "referenceTxId");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment when you change fields. */

@@ -17,15 +17,15 @@ public class MsoyPulseRecord extends PulseRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<MsoyPulseRecord> _R = MsoyPulseRecord.class;
-    public static final ColumnExp MEMBERS = colexp(_R, "members");
-    public static final ColumnExp GAMERS = colexp(_R, "gamers");
-    public static final ColumnExp PARTIERS = colexp(_R, "partiers");
-    public static final ColumnExp ROOMS = colexp(_R, "rooms");
-    public static final ColumnExp GAMES = colexp(_R, "games");
-    public static final ColumnExp CHANNELS = colexp(_R, "channels");
-    public static final ColumnExp PARTIES = colexp(_R, "parties");
-    public static final ColumnExp RECORDED = colexp(_R, "recorded");
-    public static final ColumnExp SERVER = colexp(_R, "server");
+    public static final ColumnExp<Integer> MEMBERS = colexp(_R, "members");
+    public static final ColumnExp<Integer> GAMERS = colexp(_R, "gamers");
+    public static final ColumnExp<Integer> PARTIERS = colexp(_R, "partiers");
+    public static final ColumnExp<Integer> ROOMS = colexp(_R, "rooms");
+    public static final ColumnExp<Integer> GAMES = colexp(_R, "games");
+    public static final ColumnExp<Integer> CHANNELS = colexp(_R, "channels");
+    public static final ColumnExp<Integer> PARTIES = colexp(_R, "parties");
+    public static final ColumnExp<Timestamp> RECORDED = colexp(_R, "recorded");
+    public static final ColumnExp<String> SERVER = colexp(_R, "server");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this when making any schema changes. */

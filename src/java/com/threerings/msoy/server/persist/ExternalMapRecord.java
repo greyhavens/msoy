@@ -23,11 +23,11 @@ public class ExternalMapRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<ExternalMapRecord> _R = ExternalMapRecord.class;
-    public static final ColumnExp AUTHER = colexp(_R, "auther");
-    public static final ColumnExp SITE_ID = colexp(_R, "siteId");
-    public static final ColumnExp EXTERNAL_ID = colexp(_R, "externalId");
-    public static final ColumnExp MEMBER_ID = colexp(_R, "memberId");
-    public static final ColumnExp SESSION_KEY = colexp(_R, "sessionKey");
+    public static final ColumnExp<ExternalSiteId.Auther> AUTHER = colexp(_R, "auther");
+    public static final ColumnExp<Integer> SITE_ID = colexp(_R, "siteId");
+    public static final ColumnExp<String> EXTERNAL_ID = colexp(_R, "externalId");
+    public static final ColumnExp<Integer> MEMBER_ID = colexp(_R, "memberId");
+    public static final ColumnExp<String> SESSION_KEY = colexp(_R, "sessionKey");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that

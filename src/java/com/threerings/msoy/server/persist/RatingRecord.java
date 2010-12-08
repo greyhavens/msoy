@@ -24,10 +24,10 @@ public abstract class RatingRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<RatingRecord> _R = RatingRecord.class;
-    public static final ColumnExp TARGET_ID = colexp(_R, "targetId");
-    public static final ColumnExp MEMBER_ID = colexp(_R, "memberId");
-    public static final ColumnExp RATING = colexp(_R, "rating");
-    public static final ColumnExp TIMESTAMP = colexp(_R, "timestamp");
+    public static final ColumnExp<Integer> TARGET_ID = colexp(_R, "targetId");
+    public static final ColumnExp<Integer> MEMBER_ID = colexp(_R, "memberId");
+    public static final ColumnExp<Byte> RATING = colexp(_R, "rating");
+    public static final ColumnExp<Timestamp> TIMESTAMP = colexp(_R, "timestamp");
     // AUTO-GENERATED: FIELDS END
 
     public static final int SCHEMA_VERSION = 3;

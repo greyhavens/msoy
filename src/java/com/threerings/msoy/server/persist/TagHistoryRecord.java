@@ -21,11 +21,11 @@ public abstract class TagHistoryRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<TagHistoryRecord> _R = TagHistoryRecord.class;
-    public static final ColumnExp TARGET_ID = colexp(_R, "targetId");
-    public static final ColumnExp TAG_ID = colexp(_R, "tagId");
-    public static final ColumnExp MEMBER_ID = colexp(_R, "memberId");
-    public static final ColumnExp ACTION = colexp(_R, "action");
-    public static final ColumnExp TIME = colexp(_R, "time");
+    public static final ColumnExp<Integer> TARGET_ID = colexp(_R, "targetId");
+    public static final ColumnExp<Integer> TAG_ID = colexp(_R, "tagId");
+    public static final ColumnExp<Integer> MEMBER_ID = colexp(_R, "memberId");
+    public static final ColumnExp<Byte> ACTION = colexp(_R, "action");
+    public static final ColumnExp<Timestamp> TIME = colexp(_R, "time");
     // AUTO-GENERATED: FIELDS END
 
     public static final int SCHEMA_VERSION = 2;

@@ -19,6 +19,8 @@ import com.samskivert.depot.clause.Limit;
 import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.Where;
 
+import com.threerings.msoy.item.data.all.MsoyItemType;
+
 // TODO: doc
 
 @Singleton
@@ -49,7 +51,7 @@ public class ItemFlagRepository extends DepotRepository
         insert(itemFlag);
     }
 
-    public void removeItemFlags (byte itemType, int itemId)
+    public void removeItemFlags (MsoyItemType itemType, int itemId)
     {
         deleteAll(ItemFlagRecord.class, new Where(
             ItemFlagRecord.ITEM_TYPE, itemType, ItemFlagRecord.ITEM_ID, itemId));

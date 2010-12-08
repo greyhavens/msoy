@@ -18,8 +18,8 @@ public class MuteRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<MuteRecord> _R = MuteRecord.class;
-    public static final ColumnExp MUTER_ID = colexp(_R, "muterId");
-    public static final ColumnExp MUTEE_ID = colexp(_R, "muteeId");
+    public static final ColumnExp<Integer> MUTER_ID = colexp(_R, "muterId");
+    public static final ColumnExp<Integer> MUTEE_ID = colexp(_R, "muteeId");
     // AUTO-GENERATED: FIELDS END
 
     public static final int SCHEMA_VERSION = 1;

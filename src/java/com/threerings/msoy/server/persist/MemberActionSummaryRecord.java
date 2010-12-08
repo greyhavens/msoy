@@ -16,9 +16,9 @@ public class MemberActionSummaryRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<MemberActionSummaryRecord> _R = MemberActionSummaryRecord.class;
-    public static final ColumnExp MEMBER_ID = colexp(_R, "memberId");
-    public static final ColumnExp ACTION_ID = colexp(_R, "actionId");
-    public static final ColumnExp COUNT = colexp(_R, "count");
+    public static final ColumnExp<Integer> MEMBER_ID = colexp(_R, "memberId");
+    public static final ColumnExp<Integer> ACTION_ID = colexp(_R, "actionId");
+    public static final ColumnExp<Integer> COUNT = colexp(_R, "count");
     // AUTO-GENERATED: FIELDS END
 
     public static final int SCHEMA_VERSION = 1;

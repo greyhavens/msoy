@@ -26,17 +26,17 @@ public class FacebookTemplateRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<FacebookTemplateRecord> _R = FacebookTemplateRecord.class;
-    public static final ColumnExp APP_ID = colexp(_R, "appId");
-    public static final ColumnExp CODE = colexp(_R, "code");
-    public static final ColumnExp VARIANT = colexp(_R, "variant");
-    public static final ColumnExp ENABLED = colexp(_R, "enabled");
-    public static final ColumnExp BUNDLE_ID = colexp(_R, "bundleId");
-    public static final ColumnExp CAPTION_MALE = colexp(_R, "captionMale");
-    public static final ColumnExp CAPTION_FEMALE = colexp(_R, "captionFemale");
-    public static final ColumnExp CAPTION_NEUTRAL = colexp(_R, "captionNeutral");
-    public static final ColumnExp DESCRIPTION = colexp(_R, "description");
-    public static final ColumnExp PROMPT = colexp(_R, "prompt");
-    public static final ColumnExp LINK_TEXT = colexp(_R, "linkText");
+    public static final ColumnExp<Integer> APP_ID = colexp(_R, "appId");
+    public static final ColumnExp<String> CODE = colexp(_R, "code");
+    public static final ColumnExp<String> VARIANT = colexp(_R, "variant");
+    public static final ColumnExp<Boolean> ENABLED = colexp(_R, "enabled");
+    public static final ColumnExp<Long> BUNDLE_ID = colexp(_R, "bundleId");
+    public static final ColumnExp<String> CAPTION_MALE = colexp(_R, "captionMale");
+    public static final ColumnExp<String> CAPTION_FEMALE = colexp(_R, "captionFemale");
+    public static final ColumnExp<String> CAPTION_NEUTRAL = colexp(_R, "captionNeutral");
+    public static final ColumnExp<String> DESCRIPTION = colexp(_R, "description");
+    public static final ColumnExp<String> PROMPT = colexp(_R, "prompt");
+    public static final ColumnExp<String> LINK_TEXT = colexp(_R, "linkText");
     // AUTO-GENERATED: FIELDS END
 
     /** Determines compatible schema versions. */

@@ -16,9 +16,9 @@ public class ThemeAvatarLineupRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<ThemeAvatarLineupRecord> _R = ThemeAvatarLineupRecord.class;
-    public static final ColumnExp GROUP_ID = colexp(_R, "groupId");
-    public static final ColumnExp CATALOG_ID = colexp(_R, "catalogId");
-    public static final ColumnExp GENDER = colexp(_R, "gender");
+    public static final ColumnExp<Integer> GROUP_ID = colexp(_R, "groupId");
+    public static final ColumnExp<Integer> CATALOG_ID = colexp(_R, "catalogId");
+    public static final ColumnExp<Byte> GENDER = colexp(_R, "gender");
     // AUTO-GENERATED: FIELDS END
 
     public static final byte GENDER_MALE = 1;

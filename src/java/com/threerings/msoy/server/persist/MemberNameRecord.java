@@ -19,9 +19,9 @@ public class MemberNameRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<MemberNameRecord> _R = MemberNameRecord.class;
-    public static final ColumnExp MEMBER_ID = colexp(_R, "memberId");
-    public static final ColumnExp ACCOUNT_NAME = colexp(_R, "accountName");
-    public static final ColumnExp NAME = colexp(_R, "name");
+    public static final ColumnExp<Integer> MEMBER_ID = colexp(_R, "memberId");
+    public static final ColumnExp<String> ACCOUNT_NAME = colexp(_R, "accountName");
+    public static final ColumnExp<String> NAME = colexp(_R, "name");
     // AUTO-GENERATED: FIELDS END
 
     /** This member's unique id. */

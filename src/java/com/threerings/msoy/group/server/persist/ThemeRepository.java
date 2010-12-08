@@ -85,7 +85,7 @@ public class ThemeRepository extends DepotRepository
     /**
      * Updates the specified theme record with supplied field/value mapping.
      */
-    public void updateTheme (int groupId, Map<ColumnExp, Object> updates)
+    public void updateTheme (int groupId, Map<ColumnExp<?>, Object> updates)
     {
         updatePartial(ThemeRecord.getKey(groupId), updates);
     }

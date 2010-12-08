@@ -18,9 +18,9 @@ public class GameStateRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<GameStateRecord> _R = GameStateRecord.class;
-    public static final ColumnExp GAME_ID = colexp(_R, "gameId");
-    public static final ColumnExp DATUM_KEY = colexp(_R, "datumKey");
-    public static final ColumnExp DATUM_VALUE = colexp(_R, "datumValue");
+    public static final ColumnExp<Integer> GAME_ID = colexp(_R, "gameId");
+    public static final ColumnExp<String> DATUM_KEY = colexp(_R, "datumKey");
+    public static final ColumnExp<byte[]> DATUM_VALUE = colexp(_R, "datumValue");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent

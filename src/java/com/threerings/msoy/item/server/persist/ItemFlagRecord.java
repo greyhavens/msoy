@@ -25,12 +25,12 @@ public class ItemFlagRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<ItemFlagRecord> _R = ItemFlagRecord.class;
-    public static final ColumnExp MEMBER_ID = colexp(_R, "memberId");
-    public static final ColumnExp ITEM_TYPE = colexp(_R, "itemType");
-    public static final ColumnExp ITEM_ID = colexp(_R, "itemId");
-    public static final ColumnExp KIND = colexp(_R, "kind");
-    public static final ColumnExp TIMESTAMP = colexp(_R, "timestamp");
-    public static final ColumnExp COMMENT = colexp(_R, "comment");
+    public static final ColumnExp<Integer> MEMBER_ID = colexp(_R, "memberId");
+    public static final ColumnExp<MsoyItemType> ITEM_TYPE = colexp(_R, "itemType");
+    public static final ColumnExp<Integer> ITEM_ID = colexp(_R, "itemId");
+    public static final ColumnExp<ItemFlag.Kind> KIND = colexp(_R, "kind");
+    public static final ColumnExp<Timestamp> TIMESTAMP = colexp(_R, "timestamp");
+    public static final ColumnExp<String> COMMENT = colexp(_R, "comment");
     // AUTO-GENERATED: FIELDS END
 
     public static final int SCHEMA_VERSION = 3;

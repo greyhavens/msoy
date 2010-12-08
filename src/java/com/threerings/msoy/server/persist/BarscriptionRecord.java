@@ -19,8 +19,8 @@ public class BarscriptionRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<BarscriptionRecord> _R = BarscriptionRecord.class;
-    public static final ColumnExp MEMBER_ID = colexp(_R, "memberId");
-    public static final ColumnExp EXPIRES = colexp(_R, "expires");
+    public static final ColumnExp<Integer> MEMBER_ID = colexp(_R, "memberId");
+    public static final ColumnExp<Timestamp> EXPIRES = colexp(_R, "expires");
     // AUTO-GENERATED: FIELDS END
 
     /** Schema version. */

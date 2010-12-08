@@ -405,7 +405,7 @@ public class ForumRepository extends DepotRepository
         }
 
         // otherwise decrement the post count
-        Map<ColumnExp, SQLExpression> updates = Maps.newHashMap();
+        Map<ColumnExp<?>, SQLExpression> updates = Maps.newHashMap();
         updates.put(ForumThreadRecord.POSTS, ForumThreadRecord.POSTS.minus(1));
         // and update the last post/poster/etc. if we just deleted the last post
         if (ftr.mostRecentPostId == fmr.messageId) {

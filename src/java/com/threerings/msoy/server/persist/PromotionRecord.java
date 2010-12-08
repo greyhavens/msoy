@@ -25,13 +25,13 @@ public class PromotionRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<PromotionRecord> _R = PromotionRecord.class;
-    public static final ColumnExp PROMO_ID = colexp(_R, "promoId");
-    public static final ColumnExp ICON_HASH = colexp(_R, "iconHash");
-    public static final ColumnExp ICON_MIME_TYPE = colexp(_R, "iconMimeType");
-    public static final ColumnExp ICON_CONSTRAINT = colexp(_R, "iconConstraint");
-    public static final ColumnExp BLURB = colexp(_R, "blurb");
-    public static final ColumnExp STARTS = colexp(_R, "starts");
-    public static final ColumnExp ENDS = colexp(_R, "ends");
+    public static final ColumnExp<String> PROMO_ID = colexp(_R, "promoId");
+    public static final ColumnExp<byte[]> ICON_HASH = colexp(_R, "iconHash");
+    public static final ColumnExp<Byte> ICON_MIME_TYPE = colexp(_R, "iconMimeType");
+    public static final ColumnExp<Byte> ICON_CONSTRAINT = colexp(_R, "iconConstraint");
+    public static final ColumnExp<String> BLURB = colexp(_R, "blurb");
+    public static final ColumnExp<Timestamp> STARTS = colexp(_R, "starts");
+    public static final ColumnExp<Timestamp> ENDS = colexp(_R, "ends");
     // AUTO-GENERATED: FIELDS END
 
     /** Converts persistent records to runtime records. */

@@ -17,9 +17,9 @@ public class FunnelByDateRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<FunnelByDateRecord> _R = FunnelByDateRecord.class;
-    public static final ColumnExp VECTOR = colexp(_R, "vector");
-    public static final ColumnExp DATE = colexp(_R, "date");
-    public static final ColumnExp COUNT = colexp(_R, "count");
+    public static final ColumnExp<String> VECTOR = colexp(_R, "vector");
+    public static final ColumnExp<Timestamp> DATE = colexp(_R, "date");
+    public static final ColumnExp<Integer> COUNT = colexp(_R, "count");
     // AUTO-GENERATED: FIELDS END
 
     @Id

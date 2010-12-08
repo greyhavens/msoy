@@ -40,20 +40,20 @@ public class ProfileRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<ProfileRecord> _R = ProfileRecord.class;
-    public static final ColumnExp MEMBER_ID = colexp(_R, "memberId");
-    public static final ColumnExp MODIFICATIONS = colexp(_R, "modifications");
-    public static final ColumnExp PHOTO_HASH = colexp(_R, "photoHash");
-    public static final ColumnExp PHOTO_MIME_TYPE = colexp(_R, "photoMimeType");
-    public static final ColumnExp PHOTO_CONSTRAINT = colexp(_R, "photoConstraint");
-    public static final ColumnExp HOME_PAGE_URL = colexp(_R, "homePageURL");
-    public static final ColumnExp HEADLINE = colexp(_R, "headline");
-    public static final ColumnExp SEX = colexp(_R, "sex");
-    public static final ColumnExp BIRTHDAY = colexp(_R, "birthday");
-    public static final ColumnExp SHOW_AGE = colexp(_R, "showAge");
-    public static final ColumnExp LOCATION = colexp(_R, "location");
-    public static final ColumnExp REAL_NAME = colexp(_R, "realName");
-    public static final ColumnExp PROFILE_BADGE_CODE = colexp(_R, "profileBadgeCode");
-    public static final ColumnExp PROFILE_MEDAL_ID = colexp(_R, "profileMedalId");
+    public static final ColumnExp<Integer> MEMBER_ID = colexp(_R, "memberId");
+    public static final ColumnExp<Integer> MODIFICATIONS = colexp(_R, "modifications");
+    public static final ColumnExp<byte[]> PHOTO_HASH = colexp(_R, "photoHash");
+    public static final ColumnExp<Byte> PHOTO_MIME_TYPE = colexp(_R, "photoMimeType");
+    public static final ColumnExp<Byte> PHOTO_CONSTRAINT = colexp(_R, "photoConstraint");
+    public static final ColumnExp<String> HOME_PAGE_URL = colexp(_R, "homePageURL");
+    public static final ColumnExp<String> HEADLINE = colexp(_R, "headline");
+    public static final ColumnExp<Byte> SEX = colexp(_R, "sex");
+    public static final ColumnExp<Date> BIRTHDAY = colexp(_R, "birthday");
+    public static final ColumnExp<Boolean> SHOW_AGE = colexp(_R, "showAge");
+    public static final ColumnExp<String> LOCATION = colexp(_R, "location");
+    public static final ColumnExp<String> REAL_NAME = colexp(_R, "realName");
+    public static final ColumnExp<Integer> PROFILE_BADGE_CODE = colexp(_R, "profileBadgeCode");
+    public static final ColumnExp<Integer> PROFILE_MEDAL_ID = colexp(_R, "profileMedalId");
     // AUTO-GENERATED: FIELDS END
 
     /** The identifier for the full text search index on Real Name */

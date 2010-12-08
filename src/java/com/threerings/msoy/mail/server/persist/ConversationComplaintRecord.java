@@ -17,8 +17,8 @@ public class ConversationComplaintRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<ConversationComplaintRecord> _R = ConversationComplaintRecord.class;
-    public static final ColumnExp CONVERSATION_ID = colexp(_R, "conversationId");
-    public static final ColumnExp COMPLAINER_ID = colexp(_R, "complainerId");
+    public static final ColumnExp<Integer> CONVERSATION_ID = colexp(_R, "conversationId");
+    public static final ColumnExp<Integer> COMPLAINER_ID = colexp(_R, "complainerId");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that

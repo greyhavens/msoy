@@ -23,12 +23,12 @@ public class InvitationRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<InvitationRecord> _R = InvitationRecord.class;
-    public static final ColumnExp INVITEE_EMAIL = colexp(_R, "inviteeEmail");
-    public static final ColumnExp INVITER_ID = colexp(_R, "inviterId");
-    public static final ColumnExp INVITE_ID = colexp(_R, "inviteId");
-    public static final ColumnExp INVITEE_ID = colexp(_R, "inviteeId");
-    public static final ColumnExp ISSUED = colexp(_R, "issued");
-    public static final ColumnExp VIEWED = colexp(_R, "viewed");
+    public static final ColumnExp<String> INVITEE_EMAIL = colexp(_R, "inviteeEmail");
+    public static final ColumnExp<Integer> INVITER_ID = colexp(_R, "inviterId");
+    public static final ColumnExp<String> INVITE_ID = colexp(_R, "inviteId");
+    public static final ColumnExp<Integer> INVITEE_ID = colexp(_R, "inviteeId");
+    public static final ColumnExp<Timestamp> ISSUED = colexp(_R, "issued");
+    public static final ColumnExp<Timestamp> VIEWED = colexp(_R, "viewed");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that

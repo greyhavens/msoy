@@ -20,8 +20,8 @@ public abstract class TagRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<TagRecord> _R = TagRecord.class;
-    public static final ColumnExp TAG_ID = colexp(_R, "tagId");
-    public static final ColumnExp TARGET_ID = colexp(_R, "targetId");
+    public static final ColumnExp<Integer> TAG_ID = colexp(_R, "tagId");
+    public static final ColumnExp<Integer> TARGET_ID = colexp(_R, "targetId");
     // AUTO-GENERATED: FIELDS END
 
     public static final int SCHEMA_VERSION = 3;

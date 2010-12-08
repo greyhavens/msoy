@@ -87,9 +87,9 @@ public abstract class TagRepository extends DepotRepository
      * Converts a column expression from {@link TagRecord} to one of the appropriate derived type
      * for the records handled by this repository.
      */
-    public ColumnExp getTagColumn (ColumnExp col)
+    public <T> ColumnExp<T> getTagColumn (ColumnExp<T> col)
     {
-        return new ColumnExp(getTagClass(), col.name);
+        return col.as(getTagClass());
     }
 
     /**
@@ -104,9 +104,9 @@ public abstract class TagRepository extends DepotRepository
      * Converts a column expression from {@link TagHistoryRecord} to one of the appropriate derived
      * type for the records handled by this repository.
      */
-    public ColumnExp getTagHistoryColumn (ColumnExp col)
+    public <T> ColumnExp<T> getTagHistoryColumn (ColumnExp<T> col)
     {
-        return new ColumnExp(getTagHistoryClass(), col.name);
+        return col.as(getTagHistoryClass());
     }
 
     /**

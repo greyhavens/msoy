@@ -28,10 +28,10 @@ public abstract class FeedMessageRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<FeedMessageRecord> _R = FeedMessageRecord.class;
-    public static final ColumnExp MESSAGE_ID = colexp(_R, "messageId");
-    public static final ColumnExp TYPE = colexp(_R, "type");
-    public static final ColumnExp DATA = colexp(_R, "data");
-    public static final ColumnExp POSTED = colexp(_R, "posted");
+    public static final ColumnExp<Integer> MESSAGE_ID = colexp(_R, "messageId");
+    public static final ColumnExp<Integer> TYPE = colexp(_R, "type");
+    public static final ColumnExp<String> DATA = colexp(_R, "data");
+    public static final ColumnExp<Timestamp> POSTED = colexp(_R, "posted");
     // AUTO-GENERATED: FIELDS END
 
     /** Compares records by {@link #posted} time. Newer first. */

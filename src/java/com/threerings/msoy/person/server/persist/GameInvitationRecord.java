@@ -17,8 +17,8 @@ public class GameInvitationRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<GameInvitationRecord> _R = GameInvitationRecord.class;
-    public static final ColumnExp INVITEE_EMAIL = colexp(_R, "inviteeEmail");
-    public static final ColumnExp INVITE_ID = colexp(_R, "inviteId");
+    public static final ColumnExp<String> INVITEE_EMAIL = colexp(_R, "inviteeEmail");
+    public static final ColumnExp<String> INVITE_ID = colexp(_R, "inviteId");
     // AUTO-GENERATED: FIELDS END
 
     public static final int SCHEMA_VERSION = 2;

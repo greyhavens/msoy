@@ -20,9 +20,9 @@ public class FriendPayoutRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<FriendPayoutRecord> _R = FriendPayoutRecord.class;
-    public static final ColumnExp FRIEND_ID = colexp(_R, "friendId");
-    public static final ColumnExp PAID_MEMBER_ID = colexp(_R, "paidMemberId");
-    public static final ColumnExp TIME = colexp(_R, "time");
+    public static final ColumnExp<Integer> FRIEND_ID = colexp(_R, "friendId");
+    public static final ColumnExp<Integer> PAID_MEMBER_ID = colexp(_R, "paidMemberId");
+    public static final ColumnExp<Timestamp> TIME = colexp(_R, "time");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that

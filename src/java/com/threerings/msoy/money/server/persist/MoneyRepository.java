@@ -103,11 +103,11 @@ public class MoneyRepository extends DepotRepository
     {
         Preconditions.checkArgument(amount >= 0, "Amount to accumulate must be 0 or greater.");
 
-        ColumnExp currencyCol = MemberAccountRecord.getColumn(currency);
-        Map<ColumnExp,SQLExpression> updates = Maps.newHashMap();
+        ColumnExp<Integer> currencyCol = MemberAccountRecord.getColumn(currency);
+        Map<ColumnExp<?>,SQLExpression> updates = Maps.newHashMap();
         updates.put(currencyCol, currencyCol.plus(amount));
         if (updateAcc) {
-            ColumnExp currencyAccCol = MemberAccountRecord.getAccColumn(currency);
+            ColumnExp<Long> currencyAccCol = MemberAccountRecord.getAccColumn(currency);
             updates.put(currencyAccCol, currencyAccCol.plus(amount));
         }
 
@@ -127,9 +127,9 @@ public class MoneyRepository extends DepotRepository
 
     }
 
-    protected ColumnExp getColumn (Currency currency, ColumnExp pcol)
+    protected <T> ColumnExp<T> getColumn (Currency currency, ColumnExp<T> pcol)
     {
-        return new ColumnExp(getTransactionRecordClass(currency), pcol.name);
+        return pcol.as(getTransactionRecordClass(currency));
     }
 
     protected Class<? extends MoneyTransactionRecord> getTransactionRecordClass (Currency currency)
@@ -177,7 +177,7 @@ public class MoneyRepository extends DepotRepository
     {
         Preconditions.checkArgument(amount >= 0, "Amount to deduct must be 0 or greater.");
 
-        ColumnExp currencyCol = MemberAccountRecord.getColumn(currency);
+        ColumnExp<Integer> currencyCol = MemberAccountRecord.getColumn(currency);
         Key<MemberAccountRecord> key = MemberAccountRecord.getKey(memberId);
         Where where = new Where(Ops.and(MemberAccountRecord.MEMBER_ID.eq(memberId),
                                         currencyCol.greaterEq(amount)));
@@ -254,7 +254,7 @@ public class MoneyRepository extends DepotRepository
     {
         Preconditions.checkArgument(deduction.amount <= 0, "Only deductions can be rolled back.");
         Preconditions.checkArgument(deduction.id == 0, "Transaction has already been inserted!");
-        ColumnExp currencyCol = MemberAccountRecord.getColumn(deduction.getCurrency());
+        ColumnExp<Integer> currencyCol = MemberAccountRecord.getColumn(deduction.getCurrency());
         Key<MemberAccountRecord> key = MemberAccountRecord.getKey(deduction.memberId);
         if (updatePartial(MemberAccountRecord.class, key, key,
                           currencyCol, currencyCol.plus(-deduction.amount)) == 0) {

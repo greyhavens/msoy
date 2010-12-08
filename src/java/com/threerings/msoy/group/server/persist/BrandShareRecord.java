@@ -20,9 +20,9 @@ public class BrandShareRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<BrandShareRecord> _R = BrandShareRecord.class;
-    public static final ColumnExp MEMBER_ID = colexp(_R, "memberId");
-    public static final ColumnExp GROUP_ID = colexp(_R, "groupId");
-    public static final ColumnExp SHARES = colexp(_R, "shares");
+    public static final ColumnExp<Integer> MEMBER_ID = colexp(_R, "memberId");
+    public static final ColumnExp<Integer> GROUP_ID = colexp(_R, "groupId");
+    public static final ColumnExp<Integer> SHARES = colexp(_R, "shares");
     // AUTO-GENERATED: FIELDS END
 
     public static final int SCHEMA_VERSION = 1;

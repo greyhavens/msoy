@@ -20,9 +20,9 @@ public class ParticipantRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<ParticipantRecord> _R = ParticipantRecord.class;
-    public static final ColumnExp CONVERSATION_ID = colexp(_R, "conversationId");
-    public static final ColumnExp PARTICIPANT_ID = colexp(_R, "participantId");
-    public static final ColumnExp LAST_READ = colexp(_R, "lastRead");
+    public static final ColumnExp<Integer> CONVERSATION_ID = colexp(_R, "conversationId");
+    public static final ColumnExp<Integer> PARTICIPANT_ID = colexp(_R, "participantId");
+    public static final ColumnExp<Timestamp> LAST_READ = colexp(_R, "lastRead");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that

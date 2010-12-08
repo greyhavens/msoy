@@ -20,11 +20,11 @@ public class CommentRatingRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<CommentRatingRecord> _R = CommentRatingRecord.class;
-    public static final ColumnExp ENTITY_TYPE = colexp(_R, "entityType");
-    public static final ColumnExp ENTITY_ID = colexp(_R, "entityId");
-    public static final ColumnExp MEMBER_ID = colexp(_R, "memberId");
-    public static final ColumnExp POSTED = colexp(_R, "posted");
-    public static final ColumnExp RATING = colexp(_R, "rating");
+    public static final ColumnExp<Integer> ENTITY_TYPE = colexp(_R, "entityType");
+    public static final ColumnExp<Integer> ENTITY_ID = colexp(_R, "entityId");
+    public static final ColumnExp<Integer> MEMBER_ID = colexp(_R, "memberId");
+    public static final ColumnExp<Timestamp> POSTED = colexp(_R, "posted");
+    public static final ColumnExp<Boolean> RATING = colexp(_R, "rating");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that

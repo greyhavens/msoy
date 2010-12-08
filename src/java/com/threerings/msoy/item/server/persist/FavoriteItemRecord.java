@@ -22,10 +22,10 @@ public class FavoriteItemRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<FavoriteItemRecord> _R = FavoriteItemRecord.class;
-    public static final ColumnExp MEMBER_ID = colexp(_R, "memberId");
-    public static final ColumnExp ITEM_TYPE = colexp(_R, "itemType");
-    public static final ColumnExp CATALOG_ID = colexp(_R, "catalogId");
-    public static final ColumnExp NOTED_ON = colexp(_R, "notedOn");
+    public static final ColumnExp<Integer> MEMBER_ID = colexp(_R, "memberId");
+    public static final ColumnExp<MsoyItemType> ITEM_TYPE = colexp(_R, "itemType");
+    public static final ColumnExp<Integer> CATALOG_ID = colexp(_R, "catalogId");
+    public static final ColumnExp<Timestamp> NOTED_ON = colexp(_R, "notedOn");
     // AUTO-GENERATED: FIELDS END
 
     public static final int SCHEMA_VERSION = 1;

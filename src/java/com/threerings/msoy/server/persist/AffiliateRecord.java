@@ -16,8 +16,8 @@ public class AffiliateRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<AffiliateRecord> _R = AffiliateRecord.class;
-    public static final ColumnExp MEMBER_ID = colexp(_R, "memberId");
-    public static final ColumnExp AFFILIATE = colexp(_R, "affiliate");
+    public static final ColumnExp<Integer> MEMBER_ID = colexp(_R, "memberId");
+    public static final ColumnExp<String> AFFILIATE = colexp(_R, "affiliate");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that

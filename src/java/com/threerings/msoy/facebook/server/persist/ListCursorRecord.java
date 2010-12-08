@@ -16,9 +16,9 @@ public class ListCursorRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<ListCursorRecord> _R = ListCursorRecord.class;
-    public static final ColumnExp LIST_ID = colexp(_R, "listId");
-    public static final ColumnExp CURSOR_ID = colexp(_R, "cursorId");
-    public static final ColumnExp INDEX = colexp(_R, "index");
+    public static final ColumnExp<String> LIST_ID = colexp(_R, "listId");
+    public static final ColumnExp<String> CURSOR_ID = colexp(_R, "cursorId");
+    public static final ColumnExp<Integer> INDEX = colexp(_R, "index");
     // AUTO-GENERATED: FIELDS END
 
     /** Increase whenever any change requires a table alteration to work. */

@@ -23,10 +23,10 @@ public class BroadcastHistoryRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<BroadcastHistoryRecord> _R = BroadcastHistoryRecord.class;
-    public static final ColumnExp TIME_SENT = colexp(_R, "timeSent");
-    public static final ColumnExp MEMBER_ID = colexp(_R, "memberId");
-    public static final ColumnExp BARS_PAID = colexp(_R, "barsPaid");
-    public static final ColumnExp MESSAGE = colexp(_R, "message");
+    public static final ColumnExp<Timestamp> TIME_SENT = colexp(_R, "timeSent");
+    public static final ColumnExp<Integer> MEMBER_ID = colexp(_R, "memberId");
+    public static final ColumnExp<Integer> BARS_PAID = colexp(_R, "barsPaid");
+    public static final ColumnExp<String> MESSAGE = colexp(_R, "message");
     // AUTO-GENERATED: FIELDS END
 
     public static final int SCHEMA_VERSION = 1;

@@ -235,7 +235,7 @@ public class GroupLogic
             if (!mrec.isSupport() && !group.name.equals(grec.name)) {
                 throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
             }
-            Map<ColumnExp, Object> updates = grec.findUpdates(group, extras);
+            Map<ColumnExp<?>, Object> updates = grec.findUpdates(group, extras);
             if (updates.size() > 0) {
                 _groupRepo.updateGroup(group.groupId, updates);
             }

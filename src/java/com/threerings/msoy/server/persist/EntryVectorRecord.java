@@ -20,10 +20,10 @@ public class EntryVectorRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<EntryVectorRecord> _R = EntryVectorRecord.class;
-    public static final ColumnExp VISITOR_ID = colexp(_R, "visitorId");
-    public static final ColumnExp VECTOR = colexp(_R, "vector");
-    public static final ColumnExp MEMBER_ID = colexp(_R, "memberId");
-    public static final ColumnExp CREATED = colexp(_R, "created");
+    public static final ColumnExp<String> VISITOR_ID = colexp(_R, "visitorId");
+    public static final ColumnExp<String> VECTOR = colexp(_R, "vector");
+    public static final ColumnExp<Integer> MEMBER_ID = colexp(_R, "memberId");
+    public static final ColumnExp<Timestamp> CREATED = colexp(_R, "created");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that

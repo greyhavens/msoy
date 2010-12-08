@@ -19,9 +19,9 @@ public class InviterRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<InviterRecord> _R = InviterRecord.class;
-    public static final ColumnExp MEMBER_ID = colexp(_R, "memberId");
-    public static final ColumnExp INVITES_GRANTED = colexp(_R, "invitesGranted");
-    public static final ColumnExp INVITES_SENT = colexp(_R, "invitesSent");
+    public static final ColumnExp<Integer> MEMBER_ID = colexp(_R, "memberId");
+    public static final ColumnExp<Integer> INVITES_GRANTED = colexp(_R, "invitesGranted");
+    public static final ColumnExp<Integer> INVITES_SENT = colexp(_R, "invitesSent");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent

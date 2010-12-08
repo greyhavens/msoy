@@ -26,18 +26,18 @@ public class IssueRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<IssueRecord> _R = IssueRecord.class;
-    public static final ColumnExp ISSUE_ID = colexp(_R, "issueId");
-    public static final ColumnExp CREATOR_ID = colexp(_R, "creatorId");
-    public static final ColumnExp OWNER_ID = colexp(_R, "ownerId");
-    public static final ColumnExp SUMMARY = colexp(_R, "summary");
-    public static final ColumnExp DESCRIPTION = colexp(_R, "description");
-    public static final ColumnExp STATE = colexp(_R, "state");
-    public static final ColumnExp PRIORITY = colexp(_R, "priority");
-    public static final ColumnExp TYPE = colexp(_R, "type");
-    public static final ColumnExp CATEGORY = colexp(_R, "category");
-    public static final ColumnExp CREATED_TIME = colexp(_R, "createdTime");
-    public static final ColumnExp CLOSED_TIME = colexp(_R, "closedTime");
-    public static final ColumnExp CLOSE_COMMENT = colexp(_R, "closeComment");
+    public static final ColumnExp<Integer> ISSUE_ID = colexp(_R, "issueId");
+    public static final ColumnExp<Integer> CREATOR_ID = colexp(_R, "creatorId");
+    public static final ColumnExp<Integer> OWNER_ID = colexp(_R, "ownerId");
+    public static final ColumnExp<String> SUMMARY = colexp(_R, "summary");
+    public static final ColumnExp<String> DESCRIPTION = colexp(_R, "description");
+    public static final ColumnExp<Integer> STATE = colexp(_R, "state");
+    public static final ColumnExp<Integer> PRIORITY = colexp(_R, "priority");
+    public static final ColumnExp<Integer> TYPE = colexp(_R, "type");
+    public static final ColumnExp<Integer> CATEGORY = colexp(_R, "category");
+    public static final ColumnExp<Timestamp> CREATED_TIME = colexp(_R, "createdTime");
+    public static final ColumnExp<Timestamp> CLOSED_TIME = colexp(_R, "closedTime");
+    public static final ColumnExp<String> CLOSE_COMMENT = colexp(_R, "closeComment");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that

@@ -20,10 +20,10 @@ public class ArcadeEntryRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<ArcadeEntryRecord> _R = ArcadeEntryRecord.class;
-    public static final ColumnExp PORTAL = colexp(_R, "portal");
-    public static final ColumnExp GAME_ID = colexp(_R, "gameId");
-    public static final ColumnExp ORDER = colexp(_R, "order");
-    public static final ColumnExp FEATURED = colexp(_R, "featured");
+    public static final ColumnExp<ArcadeData.Portal> PORTAL = colexp(_R, "portal");
+    public static final ColumnExp<Integer> GAME_ID = colexp(_R, "gameId");
+    public static final ColumnExp<Integer> ORDER = colexp(_R, "order");
+    public static final ColumnExp<Boolean> FEATURED = colexp(_R, "featured");
     // AUTO-GENERATED: FIELDS END
 
     public static final int SCHEMA_VERSION = 1;

@@ -20,8 +20,8 @@ public class InstructionsRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<InstructionsRecord> _R = InstructionsRecord.class;
-    public static final ColumnExp GAME_ID = colexp(_R, "gameId");
-    public static final ColumnExp INSTRUCTIONS = colexp(_R, "instructions");
+    public static final ColumnExp<Integer> GAME_ID = colexp(_R, "gameId");
+    public static final ColumnExp<String> INSTRUCTIONS = colexp(_R, "instructions");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that

@@ -346,7 +346,7 @@ public class MsoySceneRepository extends DepotRepository
 
         } else if (update instanceof SceneOwnershipUpdate) {
             SceneOwnershipUpdate sou = (SceneOwnershipUpdate)update;
-            Map<ColumnExp,Object> updates = Maps.newHashMap();
+            Map<ColumnExp<?>,Object> updates = Maps.newHashMap();
             updates.put(SceneRecord.OWNER_TYPE, sou.ownerType);
             updates.put(SceneRecord.OWNER_ID, sou.ownerId);
             if (sou.lockToOwner) {

@@ -20,9 +20,9 @@ public class KontagentInfoRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<KontagentInfoRecord> _R = KontagentInfoRecord.class;
-    public static final ColumnExp APP_ID = colexp(_R, "appId");
-    public static final ColumnExp API_KEY = colexp(_R, "apiKey");
-    public static final ColumnExp API_SECRET = colexp(_R, "apiSecret");
+    public static final ColumnExp<Integer> APP_ID = colexp(_R, "appId");
+    public static final ColumnExp<String> API_KEY = colexp(_R, "apiKey");
+    public static final ColumnExp<String> API_SECRET = colexp(_R, "apiSecret");
     // AUTO-GENERATED: FIELDS END
 
     /** Tracks code changes that require table alterations. */

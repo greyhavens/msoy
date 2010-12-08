@@ -18,12 +18,12 @@ public class SubscriptionRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<SubscriptionRecord> _R = SubscriptionRecord.class;
-    public static final ColumnExp MEMBER_ID = colexp(_R, "memberId");
-    public static final ColumnExp SUBSCRIBER = colexp(_R, "subscriber");
-    public static final ColumnExp GRANTS_LEFT = colexp(_R, "grantsLeft");
-    public static final ColumnExp LAST_GRANT = colexp(_R, "lastGrant");
-    public static final ColumnExp SPECIAL_ITEM_TYPE = colexp(_R, "specialItemType");
-    public static final ColumnExp SPECIAL_ITEM_ID = colexp(_R, "specialItemId");
+    public static final ColumnExp<Integer> MEMBER_ID = colexp(_R, "memberId");
+    public static final ColumnExp<Boolean> SUBSCRIBER = colexp(_R, "subscriber");
+    public static final ColumnExp<Integer> GRANTS_LEFT = colexp(_R, "grantsLeft");
+    public static final ColumnExp<Timestamp> LAST_GRANT = colexp(_R, "lastGrant");
+    public static final ColumnExp<MsoyItemType> SPECIAL_ITEM_TYPE = colexp(_R, "specialItemType");
+    public static final ColumnExp<Integer> SPECIAL_ITEM_ID = colexp(_R, "specialItemId");
     // AUTO-GENERATED: FIELDS END
 
     /** To be updated when the structure of this class changes. */

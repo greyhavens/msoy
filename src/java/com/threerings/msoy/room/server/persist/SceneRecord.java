@@ -99,28 +99,28 @@ public class SceneRecord extends PersistentRecord
 
     // AUTO-GENERATED: FIELDS START
     public static final Class<SceneRecord> _R = SceneRecord.class;
-    public static final ColumnExp SCENE_ID = colexp(_R, "sceneId");
-    public static final ColumnExp ACCESS_CONTROL = colexp(_R, "accessControl");
-    public static final ColumnExp OWNER_TYPE = colexp(_R, "ownerType");
-    public static final ColumnExp OWNER_ID = colexp(_R, "ownerId");
-    public static final ColumnExp VERSION = colexp(_R, "version");
-    public static final ColumnExp NAME = colexp(_R, "name");
-    public static final ColumnExp THEME_GROUP_ID = colexp(_R, "themeGroupId");
-    public static final ColumnExp DECOR_ID = colexp(_R, "decorId");
-    public static final ColumnExp PLAYLIST_CONTROL = colexp(_R, "playlistControl");
-    public static final ColumnExp CANONICAL_IMAGE_HASH = colexp(_R, "canonicalImageHash");
-    public static final ColumnExp CANONICAL_IMAGE_TYPE = colexp(_R, "canonicalImageType");
-    public static final ColumnExp THUMBNAIL_HASH = colexp(_R, "thumbnailHash");
-    public static final ColumnExp THUMBNAIL_TYPE = colexp(_R, "thumbnailType");
-    public static final ColumnExp ENTRANCE_X = colexp(_R, "entranceX");
-    public static final ColumnExp ENTRANCE_Y = colexp(_R, "entranceY");
-    public static final ColumnExp ENTRANCE_Z = colexp(_R, "entranceZ");
-    public static final ColumnExp RATING_SUM = colexp(_R, "ratingSum");
-    public static final ColumnExp RATING_COUNT = colexp(_R, "ratingCount");
-    public static final ColumnExp RATING = colexp(_R, "rating");
-    public static final ColumnExp BACKGROUND_COLOR = colexp(_R, "backgroundColor");
-    public static final ColumnExp FLAGS = colexp(_R, "flags");
-    public static final ColumnExp LAST_PUBLISHED = colexp(_R, "lastPublished");
+    public static final ColumnExp<Integer> SCENE_ID = colexp(_R, "sceneId");
+    public static final ColumnExp<Byte> ACCESS_CONTROL = colexp(_R, "accessControl");
+    public static final ColumnExp<Byte> OWNER_TYPE = colexp(_R, "ownerType");
+    public static final ColumnExp<Integer> OWNER_ID = colexp(_R, "ownerId");
+    public static final ColumnExp<Integer> VERSION = colexp(_R, "version");
+    public static final ColumnExp<String> NAME = colexp(_R, "name");
+    public static final ColumnExp<Integer> THEME_GROUP_ID = colexp(_R, "themeGroupId");
+    public static final ColumnExp<Integer> DECOR_ID = colexp(_R, "decorId");
+    public static final ColumnExp<Byte> PLAYLIST_CONTROL = colexp(_R, "playlistControl");
+    public static final ColumnExp<byte[]> CANONICAL_IMAGE_HASH = colexp(_R, "canonicalImageHash");
+    public static final ColumnExp<Byte> CANONICAL_IMAGE_TYPE = colexp(_R, "canonicalImageType");
+    public static final ColumnExp<byte[]> THUMBNAIL_HASH = colexp(_R, "thumbnailHash");
+    public static final ColumnExp<Byte> THUMBNAIL_TYPE = colexp(_R, "thumbnailType");
+    public static final ColumnExp<Float> ENTRANCE_X = colexp(_R, "entranceX");
+    public static final ColumnExp<Float> ENTRANCE_Y = colexp(_R, "entranceY");
+    public static final ColumnExp<Float> ENTRANCE_Z = colexp(_R, "entranceZ");
+    public static final ColumnExp<Integer> RATING_SUM = colexp(_R, "ratingSum");
+    public static final ColumnExp<Integer> RATING_COUNT = colexp(_R, "ratingCount");
+    public static final ColumnExp<Float> RATING = colexp(_R, "rating");
+    public static final ColumnExp<Integer> BACKGROUND_COLOR = colexp(_R, "backgroundColor");
+    public static final ColumnExp<Integer> FLAGS = colexp(_R, "flags");
+    public static final ColumnExp<Timestamp> LAST_PUBLISHED = colexp(_R, "lastPublished");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that

@@ -17,9 +17,9 @@ public class ListItemRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<ListItemRecord> _R = ListItemRecord.class;
-    public static final ColumnExp LIST_ID = colexp(_R, "listId");
-    public static final ColumnExp INDEX = colexp(_R, "index");
-    public static final ColumnExp ID = colexp(_R, "id");
+    public static final ColumnExp<String> LIST_ID = colexp(_R, "listId");
+    public static final ColumnExp<Integer> INDEX = colexp(_R, "index");
+    public static final ColumnExp<String> ID = colexp(_R, "id");
     // AUTO-GENERATED: FIELDS END
 
     /** Increase whenever any change requires a table alteration to work. */

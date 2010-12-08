@@ -18,10 +18,10 @@ public class RoomPropertyRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<RoomPropertyRecord> _R = RoomPropertyRecord.class;
-    public static final ColumnExp OWNER_ID = colexp(_R, "ownerId");
-    public static final ColumnExp SCENE_ID = colexp(_R, "sceneId");
-    public static final ColumnExp NAME = colexp(_R, "name");
-    public static final ColumnExp VALUE = colexp(_R, "value");
+    public static final ColumnExp<Integer> OWNER_ID = colexp(_R, "ownerId");
+    public static final ColumnExp<Integer> SCENE_ID = colexp(_R, "sceneId");
+    public static final ColumnExp<String> NAME = colexp(_R, "name");
+    public static final ColumnExp<byte[]> VALUE = colexp(_R, "value");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent

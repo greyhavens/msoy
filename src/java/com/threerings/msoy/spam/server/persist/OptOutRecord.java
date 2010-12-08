@@ -18,7 +18,7 @@ public class OptOutRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<OptOutRecord> _R = OptOutRecord.class;
-    public static final ColumnExp EMAIL = colexp(_R, "email");
+    public static final ColumnExp<String> EMAIL = colexp(_R, "email");
     // AUTO-GENERATED: FIELDS END
 
     public static final int SCHEMA_VERSION = 2;

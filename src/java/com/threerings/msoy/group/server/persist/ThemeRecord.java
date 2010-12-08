@@ -25,23 +25,23 @@ public class ThemeRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<ThemeRecord> _R = ThemeRecord.class;
-    public static final ColumnExp GROUP_ID = colexp(_R, "groupId");
-    public static final ColumnExp PLAY_ON_ENTER = colexp(_R, "playOnEnter");
-    public static final ColumnExp POPULARITY = colexp(_R, "popularity");
-    public static final ColumnExp LOGO_MEDIA_HASH = colexp(_R, "logoMediaHash");
-    public static final ColumnExp LOGO_MIME_TYPE = colexp(_R, "logoMimeType");
-    public static final ColumnExp LOGO_MEDIA_CONSTRAINT = colexp(_R, "logoMediaConstraint");
-    public static final ColumnExp NAV_MEDIA_HASH = colexp(_R, "navMediaHash");
-    public static final ColumnExp NAV_MIME_TYPE = colexp(_R, "navMimeType");
-    public static final ColumnExp NAV_MEDIA_CONSTRAINT = colexp(_R, "navMediaConstraint");
-    public static final ColumnExp NAV_SEL_MEDIA_HASH = colexp(_R, "navSelMediaHash");
-    public static final ColumnExp NAV_SEL_MIME_TYPE = colexp(_R, "navSelMimeType");
-    public static final ColumnExp NAV_SEL_MEDIA_CONSTRAINT = colexp(_R, "navSelMediaConstraint");
-    public static final ColumnExp NAV_COLOR = colexp(_R, "navColor");
-    public static final ColumnExp NAV_SEL_COLOR = colexp(_R, "navSelColor");
-    public static final ColumnExp STATUS_LINKS_COLOR = colexp(_R, "statusLinksColor");
-    public static final ColumnExp STATUS_LEVELS_COLOR = colexp(_R, "statusLevelsColor");
-    public static final ColumnExp BACKGROUND_COLOR = colexp(_R, "backgroundColor");
+    public static final ColumnExp<Integer> GROUP_ID = colexp(_R, "groupId");
+    public static final ColumnExp<Boolean> PLAY_ON_ENTER = colexp(_R, "playOnEnter");
+    public static final ColumnExp<Integer> POPULARITY = colexp(_R, "popularity");
+    public static final ColumnExp<byte[]> LOGO_MEDIA_HASH = colexp(_R, "logoMediaHash");
+    public static final ColumnExp<Byte> LOGO_MIME_TYPE = colexp(_R, "logoMimeType");
+    public static final ColumnExp<Byte> LOGO_MEDIA_CONSTRAINT = colexp(_R, "logoMediaConstraint");
+    public static final ColumnExp<byte[]> NAV_MEDIA_HASH = colexp(_R, "navMediaHash");
+    public static final ColumnExp<Byte> NAV_MIME_TYPE = colexp(_R, "navMimeType");
+    public static final ColumnExp<Byte> NAV_MEDIA_CONSTRAINT = colexp(_R, "navMediaConstraint");
+    public static final ColumnExp<byte[]> NAV_SEL_MEDIA_HASH = colexp(_R, "navSelMediaHash");
+    public static final ColumnExp<Byte> NAV_SEL_MIME_TYPE = colexp(_R, "navSelMimeType");
+    public static final ColumnExp<Byte> NAV_SEL_MEDIA_CONSTRAINT = colexp(_R, "navSelMediaConstraint");
+    public static final ColumnExp<Integer> NAV_COLOR = colexp(_R, "navColor");
+    public static final ColumnExp<Integer> NAV_SEL_COLOR = colexp(_R, "navSelColor");
+    public static final ColumnExp<Integer> STATUS_LINKS_COLOR = colexp(_R, "statusLinksColor");
+    public static final ColumnExp<Integer> STATUS_LEVELS_COLOR = colexp(_R, "statusLevelsColor");
+    public static final ColumnExp<Integer> BACKGROUND_COLOR = colexp(_R, "backgroundColor");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that

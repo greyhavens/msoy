@@ -19,9 +19,9 @@ public class InterestRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<InterestRecord> _R = InterestRecord.class;
-    public static final ColumnExp MEMBER_ID = colexp(_R, "memberId");
-    public static final ColumnExp TYPE = colexp(_R, "type");
-    public static final ColumnExp INTERESTS = colexp(_R, "interests");
+    public static final ColumnExp<Integer> MEMBER_ID = colexp(_R, "memberId");
+    public static final ColumnExp<Integer> TYPE = colexp(_R, "type");
+    public static final ColumnExp<String> INTERESTS = colexp(_R, "interests");
     // AUTO-GENERATED: FIELDS END
 
     /** The name of the full text index on the {@link #interests} field. */

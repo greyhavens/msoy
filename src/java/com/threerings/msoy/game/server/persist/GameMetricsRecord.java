@@ -20,13 +20,13 @@ public class GameMetricsRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<GameMetricsRecord> _R = GameMetricsRecord.class;
-    public static final ColumnExp GAME_ID = colexp(_R, "gameId");
-    public static final ColumnExp GAMES_PLAYED = colexp(_R, "gamesPlayed");
-    public static final ColumnExp AVG_SINGLE_DURATION = colexp(_R, "avgSingleDuration");
-    public static final ColumnExp AVG_MULTI_DURATION = colexp(_R, "avgMultiDuration");
-    public static final ColumnExp PAYOUT_FACTOR = colexp(_R, "payoutFactor");
-    public static final ColumnExp FLOW_TO_NEXT_RECALC = colexp(_R, "flowToNextRecalc");
-    public static final ColumnExp LAST_PAYOUT = colexp(_R, "lastPayout");
+    public static final ColumnExp<Integer> GAME_ID = colexp(_R, "gameId");
+    public static final ColumnExp<Integer> GAMES_PLAYED = colexp(_R, "gamesPlayed");
+    public static final ColumnExp<Integer> AVG_SINGLE_DURATION = colexp(_R, "avgSingleDuration");
+    public static final ColumnExp<Integer> AVG_MULTI_DURATION = colexp(_R, "avgMultiDuration");
+    public static final ColumnExp<Integer> PAYOUT_FACTOR = colexp(_R, "payoutFactor");
+    public static final ColumnExp<Integer> FLOW_TO_NEXT_RECALC = colexp(_R, "flowToNextRecalc");
+    public static final ColumnExp<Timestamp> LAST_PAYOUT = colexp(_R, "lastPayout");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that

@@ -31,13 +31,13 @@ public class TrophyRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<TrophyRecord> _R = TrophyRecord.class;
-    public static final ColumnExp GAME_ID = colexp(_R, "gameId");
-    public static final ColumnExp MEMBER_ID = colexp(_R, "memberId");
-    public static final ColumnExp IDENT = colexp(_R, "ident");
-    public static final ColumnExp NAME = colexp(_R, "name");
-    public static final ColumnExp TROPHY_MEDIA_HASH = colexp(_R, "trophyMediaHash");
-    public static final ColumnExp TROPHY_MIME_TYPE = colexp(_R, "trophyMimeType");
-    public static final ColumnExp WHEN_EARNED = colexp(_R, "whenEarned");
+    public static final ColumnExp<Integer> GAME_ID = colexp(_R, "gameId");
+    public static final ColumnExp<Integer> MEMBER_ID = colexp(_R, "memberId");
+    public static final ColumnExp<String> IDENT = colexp(_R, "ident");
+    public static final ColumnExp<String> NAME = colexp(_R, "name");
+    public static final ColumnExp<byte[]> TROPHY_MEDIA_HASH = colexp(_R, "trophyMediaHash");
+    public static final ColumnExp<Byte> TROPHY_MIME_TYPE = colexp(_R, "trophyMimeType");
+    public static final ColumnExp<Timestamp> WHEN_EARNED = colexp(_R, "whenEarned");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that

@@ -171,7 +171,7 @@ public class ThemeLogic
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
 
-        Map<ColumnExp, Object> updates = Maps.newHashMap();
+        Map<ColumnExp<?>, Object> updates = Maps.newHashMap();
         if (theme.playOnEnter != trec.playOnEnter) {
             updates.put(ThemeRecord.PLAY_ON_ENTER, theme.playOnEnter);
         }

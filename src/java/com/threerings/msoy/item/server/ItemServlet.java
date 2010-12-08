@@ -287,7 +287,7 @@ public class ItemServlet extends MsoyServiceServlet
         throws ServiceException
     {
         requireSupportUser();
-        _itemFlagRepo.removeItemFlags(iitem.type.toByte(), iitem.itemId);
+        _itemFlagRepo.removeItemFlags(iitem.type, iitem.itemId);
     }
 
     // from ItemService interface

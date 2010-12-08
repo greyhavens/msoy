@@ -17,10 +17,10 @@ public class ReadTrackingRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<ReadTrackingRecord> _R = ReadTrackingRecord.class;
-    public static final ColumnExp MEMBER_ID = colexp(_R, "memberId");
-    public static final ColumnExp THREAD_ID = colexp(_R, "threadId");
-    public static final ColumnExp LAST_READ_POST_ID = colexp(_R, "lastReadPostId");
-    public static final ColumnExp LAST_READ_POST_INDEX = colexp(_R, "lastReadPostIndex");
+    public static final ColumnExp<Integer> MEMBER_ID = colexp(_R, "memberId");
+    public static final ColumnExp<Integer> THREAD_ID = colexp(_R, "threadId");
+    public static final ColumnExp<Integer> LAST_READ_POST_ID = colexp(_R, "lastReadPostId");
+    public static final ColumnExp<Integer> LAST_READ_POST_INDEX = colexp(_R, "lastReadPostIndex");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that

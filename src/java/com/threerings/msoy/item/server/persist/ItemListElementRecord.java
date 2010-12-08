@@ -25,10 +25,10 @@ public class ItemListElementRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<ItemListElementRecord> _R = ItemListElementRecord.class;
-    public static final ColumnExp LIST_ID = colexp(_R, "listId");
-    public static final ColumnExp TYPE = colexp(_R, "type");
-    public static final ColumnExp ITEM_ID = colexp(_R, "itemId");
-    public static final ColumnExp SEQUENCE = colexp(_R, "sequence");
+    public static final ColumnExp<Integer> LIST_ID = colexp(_R, "listId");
+    public static final ColumnExp<MsoyItemType> TYPE = colexp(_R, "type");
+    public static final ColumnExp<Integer> ITEM_ID = colexp(_R, "itemId");
+    public static final ColumnExp<Short> SEQUENCE = colexp(_R, "sequence");
     // AUTO-GENERATED: FIELDS END
 
     /** The schema version of this record. */

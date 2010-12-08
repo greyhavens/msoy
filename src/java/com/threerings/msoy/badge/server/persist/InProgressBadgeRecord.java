@@ -18,10 +18,10 @@ public class InProgressBadgeRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<InProgressBadgeRecord> _R = InProgressBadgeRecord.class;
-    public static final ColumnExp MEMBER_ID = colexp(_R, "memberId");
-    public static final ColumnExp BADGE_CODE = colexp(_R, "badgeCode");
-    public static final ColumnExp NEXT_LEVEL = colexp(_R, "nextLevel");
-    public static final ColumnExp PROGRESS = colexp(_R, "progress");
+    public static final ColumnExp<Integer> MEMBER_ID = colexp(_R, "memberId");
+    public static final ColumnExp<Integer> BADGE_CODE = colexp(_R, "badgeCode");
+    public static final ColumnExp<Integer> NEXT_LEVEL = colexp(_R, "nextLevel");
+    public static final ColumnExp<Float> PROGRESS = colexp(_R, "progress");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that

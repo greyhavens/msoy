@@ -31,24 +31,24 @@ public class BlingCashOutRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<BlingCashOutRecord> _R = BlingCashOutRecord.class;
-    public static final ColumnExp ID = colexp(_R, "id");
-    public static final ColumnExp MEMBER_ID = colexp(_R, "memberId");
-    public static final ColumnExp FIRST_NAME = colexp(_R, "firstName");
-    public static final ColumnExp LAST_NAME = colexp(_R, "lastName");
-    public static final ColumnExp PAYPAL_EMAIL_ADDRESS = colexp(_R, "paypalEmailAddress");
-    public static final ColumnExp PHONE_NUMBER = colexp(_R, "phoneNumber");
-    public static final ColumnExp STREET_ADDRESS = colexp(_R, "streetAddress");
-    public static final ColumnExp CITY = colexp(_R, "city");
-    public static final ColumnExp STATE = colexp(_R, "state");
-    public static final ColumnExp POSTAL_CODE = colexp(_R, "postalCode");
-    public static final ColumnExp COUNTRY = colexp(_R, "country");
-    public static final ColumnExp TIME_REQUESTED = colexp(_R, "timeRequested");
-    public static final ColumnExp TIME_FINISHED = colexp(_R, "timeFinished");
-    public static final ColumnExp SUCCESSFUL = colexp(_R, "successful");
-    public static final ColumnExp BLING_AMOUNT = colexp(_R, "blingAmount");
-    public static final ColumnExp BLING_WORTH = colexp(_R, "blingWorth");
-    public static final ColumnExp CANCEL_REASON = colexp(_R, "cancelReason");
-    public static final ColumnExp ACTUAL_CASHED_OUT = colexp(_R, "actualCashedOut");
+    public static final ColumnExp<Integer> ID = colexp(_R, "id");
+    public static final ColumnExp<Integer> MEMBER_ID = colexp(_R, "memberId");
+    public static final ColumnExp<String> FIRST_NAME = colexp(_R, "firstName");
+    public static final ColumnExp<String> LAST_NAME = colexp(_R, "lastName");
+    public static final ColumnExp<String> PAYPAL_EMAIL_ADDRESS = colexp(_R, "paypalEmailAddress");
+    public static final ColumnExp<String> PHONE_NUMBER = colexp(_R, "phoneNumber");
+    public static final ColumnExp<String> STREET_ADDRESS = colexp(_R, "streetAddress");
+    public static final ColumnExp<String> CITY = colexp(_R, "city");
+    public static final ColumnExp<String> STATE = colexp(_R, "state");
+    public static final ColumnExp<String> POSTAL_CODE = colexp(_R, "postalCode");
+    public static final ColumnExp<String> COUNTRY = colexp(_R, "country");
+    public static final ColumnExp<Timestamp> TIME_REQUESTED = colexp(_R, "timeRequested");
+    public static final ColumnExp<Timestamp> TIME_FINISHED = colexp(_R, "timeFinished");
+    public static final ColumnExp<Boolean> SUCCESSFUL = colexp(_R, "successful");
+    public static final ColumnExp<Integer> BLING_AMOUNT = colexp(_R, "blingAmount");
+    public static final ColumnExp<Integer> BLING_WORTH = colexp(_R, "blingWorth");
+    public static final ColumnExp<String> CANCEL_REASON = colexp(_R, "cancelReason");
+    public static final ColumnExp<Integer> ACTUAL_CASHED_OUT = colexp(_R, "actualCashedOut");
     // AUTO-GENERATED: FIELDS END
 
     /** Unique ID of the record. */

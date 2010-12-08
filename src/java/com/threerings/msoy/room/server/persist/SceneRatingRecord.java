@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.room.server.persist;
 
+import java.sql.Timestamp;
+
 import com.samskivert.depot.Key;
 import com.samskivert.depot.expression.ColumnExp;
 
@@ -13,10 +15,10 @@ public class SceneRatingRecord extends RatingRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<SceneRatingRecord> _R = SceneRatingRecord.class;
-    public static final ColumnExp TARGET_ID = colexp(_R, "targetId");
-    public static final ColumnExp MEMBER_ID = colexp(_R, "memberId");
-    public static final ColumnExp RATING = colexp(_R, "rating");
-    public static final ColumnExp TIMESTAMP = colexp(_R, "timestamp");
+    public static final ColumnExp<Integer> TARGET_ID = colexp(_R, "targetId");
+    public static final ColumnExp<Integer> MEMBER_ID = colexp(_R, "memberId");
+    public static final ColumnExp<Byte> RATING = colexp(_R, "rating");
+    public static final ColumnExp<Timestamp> TIMESTAMP = colexp(_R, "timestamp");
     // AUTO-GENERATED: FIELDS END
 
     // AUTO-GENERATED: METHODS START

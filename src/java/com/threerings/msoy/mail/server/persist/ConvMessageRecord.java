@@ -34,12 +34,12 @@ public class ConvMessageRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<ConvMessageRecord> _R = ConvMessageRecord.class;
-    public static final ColumnExp CONVERSATION_ID = colexp(_R, "conversationId");
-    public static final ColumnExp SENT = colexp(_R, "sent");
-    public static final ColumnExp AUTHOR_ID = colexp(_R, "authorId");
-    public static final ColumnExp BODY = colexp(_R, "body");
-    public static final ColumnExp PAYLOAD_TYPE = colexp(_R, "payloadType");
-    public static final ColumnExp PAYLOAD_STATE = colexp(_R, "payloadState");
+    public static final ColumnExp<Integer> CONVERSATION_ID = colexp(_R, "conversationId");
+    public static final ColumnExp<Timestamp> SENT = colexp(_R, "sent");
+    public static final ColumnExp<Integer> AUTHOR_ID = colexp(_R, "authorId");
+    public static final ColumnExp<String> BODY = colexp(_R, "body");
+    public static final ColumnExp<Integer> PAYLOAD_TYPE = colexp(_R, "payloadType");
+    public static final ColumnExp<byte[]> PAYLOAD_STATE = colexp(_R, "payloadState");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that

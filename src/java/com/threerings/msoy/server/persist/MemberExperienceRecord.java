@@ -27,11 +27,11 @@ public class MemberExperienceRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<MemberExperienceRecord> _R = MemberExperienceRecord.class;
-    public static final ColumnExp ID = colexp(_R, "id");
-    public static final ColumnExp MEMBER_ID = colexp(_R, "memberId");
-    public static final ColumnExp DATE_OCCURRED = colexp(_R, "dateOccurred");
-    public static final ColumnExp ACTION = colexp(_R, "action");
-    public static final ColumnExp DATA = colexp(_R, "data");
+    public static final ColumnExp<Integer> ID = colexp(_R, "id");
+    public static final ColumnExp<Integer> MEMBER_ID = colexp(_R, "memberId");
+    public static final ColumnExp<Timestamp> DATE_OCCURRED = colexp(_R, "dateOccurred");
+    public static final ColumnExp<Byte> ACTION = colexp(_R, "action");
+    public static final ColumnExp<String> DATA = colexp(_R, "data");
     // AUTO-GENERATED: FIELDS END
 
     public static final int SCHEMA_VERSION = 2;

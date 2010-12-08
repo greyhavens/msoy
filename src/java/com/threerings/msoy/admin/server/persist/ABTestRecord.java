@@ -31,13 +31,13 @@ public class ABTestRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<ABTestRecord> _R = ABTestRecord.class;
-    public static final ColumnExp TEST_ID = colexp(_R, "testId");
-    public static final ColumnExp NAME = colexp(_R, "name");
-    public static final ColumnExp NUM_GROUPS = colexp(_R, "numGroups");
-    public static final ColumnExp ONLY_NEW_VISITORS = colexp(_R, "onlyNewVisitors");
-    public static final ColumnExp LANDING_COOKIE = colexp(_R, "landingCookie");
-    public static final ColumnExp STARTED = colexp(_R, "started");
-    public static final ColumnExp ENDED = colexp(_R, "ended");
+    public static final ColumnExp<Integer> TEST_ID = colexp(_R, "testId");
+    public static final ColumnExp<String> NAME = colexp(_R, "name");
+    public static final ColumnExp<Integer> NUM_GROUPS = colexp(_R, "numGroups");
+    public static final ColumnExp<Boolean> ONLY_NEW_VISITORS = colexp(_R, "onlyNewVisitors");
+    public static final ColumnExp<Boolean> LANDING_COOKIE = colexp(_R, "landingCookie");
+    public static final ColumnExp<Timestamp> STARTED = colexp(_R, "started");
+    public static final ColumnExp<Timestamp> ENDED = colexp(_R, "ended");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that

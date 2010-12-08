@@ -35,15 +35,15 @@ public class ForumThreadRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<ForumThreadRecord> _R = ForumThreadRecord.class;
-    public static final ColumnExp THREAD_ID = colexp(_R, "threadId");
-    public static final ColumnExp GROUP_ID = colexp(_R, "groupId");
-    public static final ColumnExp FLAGS = colexp(_R, "flags");
-    public static final ColumnExp SUBJECT = colexp(_R, "subject");
-    public static final ColumnExp MOST_RECENT_POST_ID = colexp(_R, "mostRecentPostId");
-    public static final ColumnExp MOST_RECENT_POST_TIME = colexp(_R, "mostRecentPostTime");
-    public static final ColumnExp MOST_RECENT_POSTER_ID = colexp(_R, "mostRecentPosterId");
-    public static final ColumnExp POSTS = colexp(_R, "posts");
-    public static final ColumnExp STICKY = colexp(_R, "sticky");
+    public static final ColumnExp<Integer> THREAD_ID = colexp(_R, "threadId");
+    public static final ColumnExp<Integer> GROUP_ID = colexp(_R, "groupId");
+    public static final ColumnExp<Integer> FLAGS = colexp(_R, "flags");
+    public static final ColumnExp<String> SUBJECT = colexp(_R, "subject");
+    public static final ColumnExp<Integer> MOST_RECENT_POST_ID = colexp(_R, "mostRecentPostId");
+    public static final ColumnExp<Timestamp> MOST_RECENT_POST_TIME = colexp(_R, "mostRecentPostTime");
+    public static final ColumnExp<Integer> MOST_RECENT_POSTER_ID = colexp(_R, "mostRecentPosterId");
+    public static final ColumnExp<Integer> POSTS = colexp(_R, "posts");
+    public static final ColumnExp<Boolean> STICKY = colexp(_R, "sticky");
     // AUTO-GENERATED: FIELDS END
 
     /** The identifier for the full text search index on {@link #subject} */

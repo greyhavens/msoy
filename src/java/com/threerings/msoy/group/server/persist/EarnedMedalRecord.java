@@ -18,9 +18,9 @@ public class EarnedMedalRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<EarnedMedalRecord> _R = EarnedMedalRecord.class;
-    public static final ColumnExp MEDAL_ID = colexp(_R, "medalId");
-    public static final ColumnExp MEMBER_ID = colexp(_R, "memberId");
-    public static final ColumnExp WHEN_EARNED = colexp(_R, "whenEarned");
+    public static final ColumnExp<Integer> MEDAL_ID = colexp(_R, "medalId");
+    public static final ColumnExp<Integer> MEMBER_ID = colexp(_R, "memberId");
+    public static final ColumnExp<Timestamp> WHEN_EARNED = colexp(_R, "whenEarned");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that

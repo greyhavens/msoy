@@ -62,12 +62,12 @@ public class AvatarRepository extends ItemRepository<AvatarRecord>
         }
 
         QueryClause join = new Join(getItemColumn(ItemRecord.ITEM_ID),
-            new ColumnExp(getMogMarkClass(), MogMarkRecord.ITEM_ID.name));
+            new ColumnExp<Object>(getMogMarkClass(), MogMarkRecord.ITEM_ID.name));
 
         // locate all matching original items
         List<AvatarRecord> results = findAll(
             getItemClass(), CacheStrategy.NONE, join, new Where(Ops.and(
-                new ColumnExp(getMogMarkClass(), MogMarkRecord.GROUP_ID.name).eq(themeId),
+                new ColumnExp<Object>(getMogMarkClass(), MogMarkRecord.GROUP_ID.name).eq(themeId),
                 getItemColumn(ItemRecord.OWNER_ID).eq(ownerId))));
 
         // add in the clones
@@ -76,7 +76,7 @@ public class AvatarRepository extends ItemRepository<AvatarRecord>
                      getItemColumn(ItemRecord.ITEM_ID)),
             join,
             new Where(Ops.and(
-                new ColumnExp(getMogMarkClass(), MogMarkRecord.GROUP_ID.name).eq(themeId),
+                new ColumnExp<Object>(getMogMarkClass(), MogMarkRecord.GROUP_ID.name).eq(themeId),
                 getCloneColumn(CloneRecord.OWNER_ID).eq(ownerId))))));
 
         return results;

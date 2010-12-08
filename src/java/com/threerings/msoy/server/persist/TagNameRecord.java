@@ -33,8 +33,8 @@ public class TagNameRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<TagNameRecord> _R = TagNameRecord.class;
-    public static final ColumnExp TAG_ID = colexp(_R, "tagId");
-    public static final ColumnExp TAG = colexp(_R, "tag");
+    public static final ColumnExp<Integer> TAG_ID = colexp(_R, "tagId");
+    public static final ColumnExp<String> TAG = colexp(_R, "tag");
     // AUTO-GENERATED: FIELDS END
 
     /** Defines the index on {@link #tag} converted to lower case. */

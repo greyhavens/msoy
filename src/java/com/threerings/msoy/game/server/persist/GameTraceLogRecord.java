@@ -21,10 +21,10 @@ public class GameTraceLogRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<GameTraceLogRecord> _R = GameTraceLogRecord.class;
-    public static final ColumnExp LOG_ID = colexp(_R, "logId");
-    public static final ColumnExp GAME_ID = colexp(_R, "gameId");
-    public static final ColumnExp RECORDED = colexp(_R, "recorded");
-    public static final ColumnExp LOG_DATA = colexp(_R, "logData");
+    public static final ColumnExp<Integer> LOG_ID = colexp(_R, "logId");
+    public static final ColumnExp<Integer> GAME_ID = colexp(_R, "gameId");
+    public static final ColumnExp<Timestamp> RECORDED = colexp(_R, "recorded");
+    public static final ColumnExp<String> LOG_DATA = colexp(_R, "logData");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that

@@ -19,8 +19,8 @@ public class GroupNameRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<GroupNameRecord> _R = GroupNameRecord.class;
-    public static final ColumnExp GROUP_ID = colexp(_R, "groupId");
-    public static final ColumnExp NAME = colexp(_R, "name");
+    public static final ColumnExp<Integer> GROUP_ID = colexp(_R, "groupId");
+    public static final ColumnExp<String> NAME = colexp(_R, "name");
     // AUTO-GENERATED: FIELDS END
 
     /** The group's unique id. */

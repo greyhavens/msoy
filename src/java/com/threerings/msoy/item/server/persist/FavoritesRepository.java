@@ -103,7 +103,7 @@ public class FavoritesRepository extends DepotRepository
         Where where = (itemType == MsoyItemType.NOT_A_TYPE) ?
             new Where(FavoriteItemRecord.MEMBER_ID, memberId) :
             new Where(FavoriteItemRecord.MEMBER_ID, memberId,
-                      FavoriteItemRecord.ITEM_TYPE, itemType.toByte());
+                      FavoriteItemRecord.ITEM_TYPE, itemType);
         return findAll(FavoritedItemResultRecord.class, where,
                        OrderBy.descending(FavoriteItemRecord.NOTED_ON));
     }

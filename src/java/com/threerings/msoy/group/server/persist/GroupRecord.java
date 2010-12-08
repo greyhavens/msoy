@@ -44,25 +44,25 @@ public class GroupRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<GroupRecord> _R = GroupRecord.class;
-    public static final ColumnExp GROUP_ID = colexp(_R, "groupId");
-    public static final ColumnExp NAME = colexp(_R, "name");
-    public static final ColumnExp HOMEPAGE_URL = colexp(_R, "homepageUrl");
-    public static final ColumnExp BLURB = colexp(_R, "blurb");
-    public static final ColumnExp CHARTER = colexp(_R, "charter");
-    public static final ColumnExp LOGO_MEDIA_HASH = colexp(_R, "logoMediaHash");
-    public static final ColumnExp LOGO_MIME_TYPE = colexp(_R, "logoMimeType");
-    public static final ColumnExp LOGO_MEDIA_CONSTRAINT = colexp(_R, "logoMediaConstraint");
-    public static final ColumnExp CREATOR_ID = colexp(_R, "creatorId");
-    public static final ColumnExp HOME_SCENE_ID = colexp(_R, "homeSceneId");
-    public static final ColumnExp CREATION_DATE = colexp(_R, "creationDate");
-    public static final ColumnExp POLICY = colexp(_R, "policy");
-    public static final ColumnExp FORUM_PERMS = colexp(_R, "forumPerms");
-    public static final ColumnExp PARTY_PERMS = colexp(_R, "partyPerms");
-    public static final ColumnExp MEMBER_COUNT = colexp(_R, "memberCount");
-    public static final ColumnExp CATALOG_ITEM_TYPE = colexp(_R, "catalogItemType");
-    public static final ColumnExp CATALOG_TAG = colexp(_R, "catalogTag");
-    public static final ColumnExp GAME_ID = colexp(_R, "gameId");
-    public static final ColumnExp OFFICIAL = colexp(_R, "official");
+    public static final ColumnExp<Integer> GROUP_ID = colexp(_R, "groupId");
+    public static final ColumnExp<String> NAME = colexp(_R, "name");
+    public static final ColumnExp<String> HOMEPAGE_URL = colexp(_R, "homepageUrl");
+    public static final ColumnExp<String> BLURB = colexp(_R, "blurb");
+    public static final ColumnExp<String> CHARTER = colexp(_R, "charter");
+    public static final ColumnExp<byte[]> LOGO_MEDIA_HASH = colexp(_R, "logoMediaHash");
+    public static final ColumnExp<Byte> LOGO_MIME_TYPE = colexp(_R, "logoMimeType");
+    public static final ColumnExp<Byte> LOGO_MEDIA_CONSTRAINT = colexp(_R, "logoMediaConstraint");
+    public static final ColumnExp<Integer> CREATOR_ID = colexp(_R, "creatorId");
+    public static final ColumnExp<Integer> HOME_SCENE_ID = colexp(_R, "homeSceneId");
+    public static final ColumnExp<Date> CREATION_DATE = colexp(_R, "creationDate");
+    public static final ColumnExp<Group.Policy> POLICY = colexp(_R, "policy");
+    public static final ColumnExp<Byte> FORUM_PERMS = colexp(_R, "forumPerms");
+    public static final ColumnExp<Group.Perm> PARTY_PERMS = colexp(_R, "partyPerms");
+    public static final ColumnExp<Integer> MEMBER_COUNT = colexp(_R, "memberCount");
+    public static final ColumnExp<MsoyItemType> CATALOG_ITEM_TYPE = colexp(_R, "catalogItemType");
+    public static final ColumnExp<String> CATALOG_TAG = colexp(_R, "catalogTag");
+    public static final ColumnExp<Integer> GAME_ID = colexp(_R, "gameId");
+    public static final ColumnExp<Boolean> OFFICIAL = colexp(_R, "official");
     // AUTO-GENERATED: FIELDS END
 
     /** The identifier for the full text search index on Name, Blurb, Charter */
@@ -224,9 +224,9 @@ public class GroupRecord extends PersistentRecord
      * of the entries that are non-null and different from what's in the object currently. Returns
      * null if the group is not found.
      */
-    public Map<ColumnExp, Object> findUpdates (Group groupDef, GroupExtras extrasDef)
+    public Map<ColumnExp<?>, Object> findUpdates (Group groupDef, GroupExtras extrasDef)
     {
-        Map<ColumnExp, Object> updates = Maps.newHashMap();
+        Map<ColumnExp<?>, Object> updates = Maps.newHashMap();
         if (groupDef.name != null && !groupDef.name.equals(name)) {
             updates.put(NAME, groupDef.name);
         }

@@ -25,12 +25,12 @@ public class MedalRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<MedalRecord> _R = MedalRecord.class;
-    public static final ColumnExp MEDAL_ID = colexp(_R, "medalId");
-    public static final ColumnExp GROUP_ID = colexp(_R, "groupId");
-    public static final ColumnExp NAME = colexp(_R, "name");
-    public static final ColumnExp DESCRIPTION = colexp(_R, "description");
-    public static final ColumnExp ICON_HASH = colexp(_R, "iconHash");
-    public static final ColumnExp ICON_MIME_TYPE = colexp(_R, "iconMimeType");
+    public static final ColumnExp<Integer> MEDAL_ID = colexp(_R, "medalId");
+    public static final ColumnExp<Integer> GROUP_ID = colexp(_R, "groupId");
+    public static final ColumnExp<String> NAME = colexp(_R, "name");
+    public static final ColumnExp<String> DESCRIPTION = colexp(_R, "description");
+    public static final ColumnExp<byte[]> ICON_HASH = colexp(_R, "iconHash");
+    public static final ColumnExp<Byte> ICON_MIME_TYPE = colexp(_R, "iconMimeType");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that

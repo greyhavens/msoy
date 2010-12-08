@@ -20,11 +20,11 @@ public class SpamRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<SpamRecord> _R = SpamRecord.class;
-    public static final ColumnExp MEMBER_ID = colexp(_R, "memberId");
-    public static final ColumnExp RETENTION_SENT = colexp(_R, "retentionSent");
-    public static final ColumnExp RETENTION_STATUS = colexp(_R, "retentionStatus");
-    public static final ColumnExp RETENTION_COUNT = colexp(_R, "retentionCount");
-    public static final ColumnExp RETENTION_COUNT_SINCE_LOGIN = colexp(_R, "retentionCountSinceLogin");
+    public static final ColumnExp<Integer> MEMBER_ID = colexp(_R, "memberId");
+    public static final ColumnExp<Date> RETENTION_SENT = colexp(_R, "retentionSent");
+    public static final ColumnExp<Integer> RETENTION_STATUS = colexp(_R, "retentionStatus");
+    public static final ColumnExp<Integer> RETENTION_COUNT = colexp(_R, "retentionCount");
+    public static final ColumnExp<Integer> RETENTION_COUNT_SINCE_LOGIN = colexp(_R, "retentionCountSinceLogin");
     // AUTO-GENERATED: FIELDS END
 
     /** Member id that is the target of the emails. */

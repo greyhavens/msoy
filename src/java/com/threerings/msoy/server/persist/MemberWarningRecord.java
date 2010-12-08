@@ -20,9 +20,9 @@ public class MemberWarningRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<MemberWarningRecord> _R = MemberWarningRecord.class;
-    public static final ColumnExp MEMBER_ID = colexp(_R, "memberId");
-    public static final ColumnExp WARNING = colexp(_R, "warning");
-    public static final ColumnExp BAN_EXPIRES = colexp(_R, "banExpires");
+    public static final ColumnExp<Integer> MEMBER_ID = colexp(_R, "memberId");
+    public static final ColumnExp<String> WARNING = colexp(_R, "warning");
+    public static final ColumnExp<Timestamp> BAN_EXPIRES = colexp(_R, "banExpires");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that

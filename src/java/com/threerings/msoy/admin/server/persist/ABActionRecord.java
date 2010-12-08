@@ -18,9 +18,9 @@ public class ABActionRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<ABActionRecord> _R = ABActionRecord.class;
-    public static final ColumnExp TEST_ID = colexp(_R, "testId");
-    public static final ColumnExp VISITOR_ID = colexp(_R, "visitorId");
-    public static final ColumnExp ACTION = colexp(_R, "action");
+    public static final ColumnExp<Integer> TEST_ID = colexp(_R, "testId");
+    public static final ColumnExp<String> VISITOR_ID = colexp(_R, "visitorId");
+    public static final ColumnExp<String> ACTION = colexp(_R, "action");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that

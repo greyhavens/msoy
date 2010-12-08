@@ -16,9 +16,9 @@ public class CharityRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<CharityRecord> _R = CharityRecord.class;
-    public static final ColumnExp MEMBER_ID = colexp(_R, "memberId");
-    public static final ColumnExp CORE = colexp(_R, "core");
-    public static final ColumnExp DESCRIPTION = colexp(_R, "description");
+    public static final ColumnExp<Integer> MEMBER_ID = colexp(_R, "memberId");
+    public static final ColumnExp<Boolean> CORE = colexp(_R, "core");
+    public static final ColumnExp<String> DESCRIPTION = colexp(_R, "description");
     // AUTO-GENERATED: FIELDS END
 
     public static final int SCHEMA_VERSION = 2;

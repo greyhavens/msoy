@@ -12,9 +12,9 @@ public class FriendshipRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<FriendshipRecord> _R = FriendshipRecord.class;
-    public static final ColumnExp MEMBER_ID = colexp(_R, "memberId");
-    public static final ColumnExp FRIEND_ID = colexp(_R, "friendId");
-    public static final ColumnExp VALID = colexp(_R, "valid");
+    public static final ColumnExp<Integer> MEMBER_ID = colexp(_R, "memberId");
+    public static final ColumnExp<Integer> FRIEND_ID = colexp(_R, "friendId");
+    public static final ColumnExp<Boolean> VALID = colexp(_R, "valid");
     // AUTO-GENERATED: FIELDS END
 
     /** The version of this record. */

@@ -14,10 +14,10 @@ public abstract class MogMarkRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<MogMarkRecord> _R = MogMarkRecord.class;
-    public static final ColumnExp ITEM_ID = colexp(_R, "itemId");
-    public static final ColumnExp GROUP_ID = colexp(_R, "groupId");
-    public static final ColumnExp STAMPER_ID = colexp(_R, "stamperId");
-    public static final ColumnExp LAST_STAMPED = colexp(_R, "lastStamped");
+    public static final ColumnExp<Integer> ITEM_ID = colexp(_R, "itemId");
+    public static final ColumnExp<Integer> GROUP_ID = colexp(_R, "groupId");
+    public static final ColumnExp<Integer> STAMPER_ID = colexp(_R, "stamperId");
+    public static final ColumnExp<Timestamp> LAST_STAMPED = colexp(_R, "lastStamped");
     // AUTO-GENERATED: FIELDS END
 
     public static final int SCHEMA_VERSION = 2;

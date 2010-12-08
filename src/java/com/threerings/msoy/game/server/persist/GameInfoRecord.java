@@ -50,23 +50,23 @@ public class GameInfoRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<GameInfoRecord> _R = GameInfoRecord.class;
-    public static final ColumnExp GAME_ID = colexp(_R, "gameId");
-    public static final ColumnExp NAME = colexp(_R, "name");
-    public static final ColumnExp GENRE = colexp(_R, "genre");
-    public static final ColumnExp IS_AVRG = colexp(_R, "isAVRG");
-    public static final ColumnExp CREATOR_ID = colexp(_R, "creatorId");
-    public static final ColumnExp DESCRIPTION = colexp(_R, "description");
-    public static final ColumnExp THUMB_MEDIA_HASH = colexp(_R, "thumbMediaHash");
-    public static final ColumnExp THUMB_MIME_TYPE = colexp(_R, "thumbMimeType");
-    public static final ColumnExp THUMB_CONSTRAINT = colexp(_R, "thumbConstraint");
-    public static final ColumnExp SHOT_MEDIA_HASH = colexp(_R, "shotMediaHash");
-    public static final ColumnExp SHOT_MIME_TYPE = colexp(_R, "shotMimeType");
-    public static final ColumnExp GROUP_ID = colexp(_R, "groupId");
-    public static final ColumnExp SHOP_TAG = colexp(_R, "shopTag");
-    public static final ColumnExp RATING_SUM = colexp(_R, "ratingSum");
-    public static final ColumnExp RATING_COUNT = colexp(_R, "ratingCount");
-    public static final ColumnExp INTEGRATED = colexp(_R, "integrated");
-    public static final ColumnExp BLING_POOL = colexp(_R, "blingPool");
+    public static final ColumnExp<Integer> GAME_ID = colexp(_R, "gameId");
+    public static final ColumnExp<String> NAME = colexp(_R, "name");
+    public static final ColumnExp<GameGenre> GENRE = colexp(_R, "genre");
+    public static final ColumnExp<Boolean> IS_AVRG = colexp(_R, "isAVRG");
+    public static final ColumnExp<Integer> CREATOR_ID = colexp(_R, "creatorId");
+    public static final ColumnExp<String> DESCRIPTION = colexp(_R, "description");
+    public static final ColumnExp<byte[]> THUMB_MEDIA_HASH = colexp(_R, "thumbMediaHash");
+    public static final ColumnExp<Byte> THUMB_MIME_TYPE = colexp(_R, "thumbMimeType");
+    public static final ColumnExp<Byte> THUMB_CONSTRAINT = colexp(_R, "thumbConstraint");
+    public static final ColumnExp<byte[]> SHOT_MEDIA_HASH = colexp(_R, "shotMediaHash");
+    public static final ColumnExp<Byte> SHOT_MIME_TYPE = colexp(_R, "shotMimeType");
+    public static final ColumnExp<Integer> GROUP_ID = colexp(_R, "groupId");
+    public static final ColumnExp<String> SHOP_TAG = colexp(_R, "shopTag");
+    public static final ColumnExp<Integer> RATING_SUM = colexp(_R, "ratingSum");
+    public static final ColumnExp<Integer> RATING_COUNT = colexp(_R, "ratingCount");
+    public static final ColumnExp<Boolean> INTEGRATED = colexp(_R, "integrated");
+    public static final ColumnExp<Boolean> BLING_POOL = colexp(_R, "blingPool");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that

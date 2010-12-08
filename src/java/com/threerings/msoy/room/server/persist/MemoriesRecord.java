@@ -37,9 +37,9 @@ public class MemoriesRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<MemoriesRecord> _R = MemoriesRecord.class;
-    public static final ColumnExp ITEM_TYPE = colexp(_R, "itemType");
-    public static final ColumnExp ITEM_ID = colexp(_R, "itemId");
-    public static final ColumnExp DATA = colexp(_R, "data");
+    public static final ColumnExp<MsoyItemType> ITEM_TYPE = colexp(_R, "itemType");
+    public static final ColumnExp<Integer> ITEM_ID = colexp(_R, "itemId");
+    public static final ColumnExp<byte[]> DATA = colexp(_R, "data");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent

@@ -49,8 +49,8 @@ public abstract class RatingRepository extends DepotRepository
     /**
      * Creates a tag repository for the supplied tag and tag history record classes.
      */
-    public RatingRepository (PersistenceContext ctx, ColumnExp id,
-        ColumnExp ratingSum, ColumnExp ratingCount)
+    public RatingRepository (PersistenceContext ctx, ColumnExp<Integer> id,
+        ColumnExp<Integer> ratingSum, ColumnExp<Integer> ratingCount)
     {
         super(ctx);
 
@@ -221,9 +221,9 @@ public abstract class RatingRepository extends DepotRepository
     /** Exports the specific target (item or room) rated by this repository. */
     protected abstract Class<? extends PersistentRecord> getTargetClass ();
 
-    protected ColumnExp getRatingColumn (ColumnExp col)
+    protected <T> ColumnExp<T> getRatingColumn (ColumnExp<T> col)
     {
-        return new ColumnExp(getRatingClass(), col.name);
+        return col.as(getRatingClass());
     }
 
     protected Key<RatingRecord> getRatingKey (int targetId, int memberId)
@@ -243,5 +243,5 @@ public abstract class RatingRepository extends DepotRepository
         classes.add(getRatingClass());
     }
 
-    protected ColumnExp _targetId, _ratingSum, _ratingCount;
+    protected ColumnExp<Integer> _targetId, _ratingSum, _ratingCount;
 }

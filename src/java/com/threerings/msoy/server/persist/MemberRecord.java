@@ -125,24 +125,24 @@ public class MemberRecord extends PersistentRecord
 
     // AUTO-GENERATED: FIELDS START
     public static final Class<MemberRecord> _R = MemberRecord.class;
-    public static final ColumnExp MEMBER_ID = colexp(_R, "memberId");
-    public static final ColumnExp ACCOUNT_NAME = colexp(_R, "accountName");
-    public static final ColumnExp NAME = colexp(_R, "name");
-    public static final ColumnExp PERMA_NAME = colexp(_R, "permaName");
-    public static final ColumnExp HOME_SCENE_ID = colexp(_R, "homeSceneId");
-    public static final ColumnExp AVATAR_ID = colexp(_R, "avatarId");
-    public static final ColumnExp THEME_GROUP_ID = colexp(_R, "themeGroupId");
-    public static final ColumnExp CREATED = colexp(_R, "created");
-    public static final ColumnExp SESSIONS = colexp(_R, "sessions");
-    public static final ColumnExp SESSION_MINUTES = colexp(_R, "sessionMinutes");
-    public static final ColumnExp LAST_SESSION = colexp(_R, "lastSession");
-    public static final ColumnExp EXPERIENCES = colexp(_R, "experiences");
-    public static final ColumnExp FLAGS = colexp(_R, "flags");
-    public static final ColumnExp AFFILIATE_MEMBER_ID = colexp(_R, "affiliateMemberId");
-    public static final ColumnExp LEVEL = colexp(_R, "level");
-    public static final ColumnExp BADGES_VERSION = colexp(_R, "badgesVersion");
-    public static final ColumnExp VISITOR_ID = colexp(_R, "visitorId");
-    public static final ColumnExp CHARITY_MEMBER_ID = colexp(_R, "charityMemberId");
+    public static final ColumnExp<Integer> MEMBER_ID = colexp(_R, "memberId");
+    public static final ColumnExp<String> ACCOUNT_NAME = colexp(_R, "accountName");
+    public static final ColumnExp<String> NAME = colexp(_R, "name");
+    public static final ColumnExp<String> PERMA_NAME = colexp(_R, "permaName");
+    public static final ColumnExp<Integer> HOME_SCENE_ID = colexp(_R, "homeSceneId");
+    public static final ColumnExp<Integer> AVATAR_ID = colexp(_R, "avatarId");
+    public static final ColumnExp<Integer> THEME_GROUP_ID = colexp(_R, "themeGroupId");
+    public static final ColumnExp<Date> CREATED = colexp(_R, "created");
+    public static final ColumnExp<Integer> SESSIONS = colexp(_R, "sessions");
+    public static final ColumnExp<Integer> SESSION_MINUTES = colexp(_R, "sessionMinutes");
+    public static final ColumnExp<Timestamp> LAST_SESSION = colexp(_R, "lastSession");
+    public static final ColumnExp<Integer> EXPERIENCES = colexp(_R, "experiences");
+    public static final ColumnExp<Integer> FLAGS = colexp(_R, "flags");
+    public static final ColumnExp<Integer> AFFILIATE_MEMBER_ID = colexp(_R, "affiliateMemberId");
+    public static final ColumnExp<Integer> LEVEL = colexp(_R, "level");
+    public static final ColumnExp<Short> BADGES_VERSION = colexp(_R, "badgesVersion");
+    public static final ColumnExp<String> VISITOR_ID = colexp(_R, "visitorId");
+    public static final ColumnExp<Integer> CHARITY_MEMBER_ID = colexp(_R, "charityMemberId");
     // AUTO-GENERATED: FIELDS END
 
     /** The identifer for the full text index on the display name. */

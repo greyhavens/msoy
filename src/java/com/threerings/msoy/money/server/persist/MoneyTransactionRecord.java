@@ -74,18 +74,18 @@ public abstract class MoneyTransactionRecord extends PersistentRecord
 
     // AUTO-GENERATED: FIELDS START
     public static final Class<MoneyTransactionRecord> _R = MoneyTransactionRecord.class;
-    public static final ColumnExp ID = colexp(_R, "id");
-    public static final ColumnExp MEMBER_ID = colexp(_R, "memberId");
-    public static final ColumnExp TIMESTAMP = colexp(_R, "timestamp");
-    public static final ColumnExp TRANSACTION_TYPE = colexp(_R, "transactionType");
-    public static final ColumnExp AMOUNT = colexp(_R, "amount");
-    public static final ColumnExp BALANCE = colexp(_R, "balance");
-    public static final ColumnExp DESCRIPTION = colexp(_R, "description");
-    public static final ColumnExp SUBJECT_TYPE = colexp(_R, "subjectType");
-    public static final ColumnExp SUBJECT_ID_TYPE = colexp(_R, "subjectIdType");
-    public static final ColumnExp SUBJECT_ID = colexp(_R, "subjectId");
-    public static final ColumnExp REFERENCE_TX_ID = colexp(_R, "referenceTxId");
-    public static final ColumnExp REFERENCE_MEMBER_ID = colexp(_R, "referenceMemberId");
+    public static final ColumnExp<Integer> ID = colexp(_R, "id");
+    public static final ColumnExp<Integer> MEMBER_ID = colexp(_R, "memberId");
+    public static final ColumnExp<Timestamp> TIMESTAMP = colexp(_R, "timestamp");
+    public static final ColumnExp<TransactionType> TRANSACTION_TYPE = colexp(_R, "transactionType");
+    public static final ColumnExp<Integer> AMOUNT = colexp(_R, "amount");
+    public static final ColumnExp<Integer> BALANCE = colexp(_R, "balance");
+    public static final ColumnExp<String> DESCRIPTION = colexp(_R, "description");
+    public static final ColumnExp<Byte> SUBJECT_TYPE = colexp(_R, "subjectType");
+    public static final ColumnExp<MsoyItemType> SUBJECT_ID_TYPE = colexp(_R, "subjectIdType");
+    public static final ColumnExp<Integer> SUBJECT_ID = colexp(_R, "subjectId");
+    public static final ColumnExp<Integer> REFERENCE_TX_ID = colexp(_R, "referenceTxId");
+    public static final ColumnExp<Integer> REFERENCE_MEMBER_ID = colexp(_R, "referenceMemberId");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this if you change this object's schema. */

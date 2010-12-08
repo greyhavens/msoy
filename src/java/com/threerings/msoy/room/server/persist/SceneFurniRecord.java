@@ -22,23 +22,23 @@ public class SceneFurniRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<SceneFurniRecord> _R = SceneFurniRecord.class;
-    public static final ColumnExp SCENE_ID = colexp(_R, "sceneId");
-    public static final ColumnExp FURNI_ID = colexp(_R, "furniId");
-    public static final ColumnExp ITEM_TYPE = colexp(_R, "itemType");
-    public static final ColumnExp ITEM_ID = colexp(_R, "itemId");
-    public static final ColumnExp MEDIA_HASH = colexp(_R, "mediaHash");
-    public static final ColumnExp MEDIA_TYPE = colexp(_R, "mediaType");
-    public static final ColumnExp X = colexp(_R, "x");
-    public static final ColumnExp Y = colexp(_R, "y");
-    public static final ColumnExp Z = colexp(_R, "z");
-    public static final ColumnExp LAYOUT_INFO = colexp(_R, "layoutInfo");
-    public static final ColumnExp SCALE_X = colexp(_R, "scaleX");
-    public static final ColumnExp SCALE_Y = colexp(_R, "scaleY");
-    public static final ColumnExp ROTATION = colexp(_R, "rotation");
-    public static final ColumnExp HOT_SPOT_X = colexp(_R, "hotSpotX");
-    public static final ColumnExp HOT_SPOT_Y = colexp(_R, "hotSpotY");
-    public static final ColumnExp ACTION_TYPE = colexp(_R, "actionType");
-    public static final ColumnExp ACTION_DATA = colexp(_R, "actionData");
+    public static final ColumnExp<Integer> SCENE_ID = colexp(_R, "sceneId");
+    public static final ColumnExp<Short> FURNI_ID = colexp(_R, "furniId");
+    public static final ColumnExp<MsoyItemType> ITEM_TYPE = colexp(_R, "itemType");
+    public static final ColumnExp<Integer> ITEM_ID = colexp(_R, "itemId");
+    public static final ColumnExp<byte[]> MEDIA_HASH = colexp(_R, "mediaHash");
+    public static final ColumnExp<Byte> MEDIA_TYPE = colexp(_R, "mediaType");
+    public static final ColumnExp<Float> X = colexp(_R, "x");
+    public static final ColumnExp<Float> Y = colexp(_R, "y");
+    public static final ColumnExp<Float> Z = colexp(_R, "z");
+    public static final ColumnExp<Byte> LAYOUT_INFO = colexp(_R, "layoutInfo");
+    public static final ColumnExp<Float> SCALE_X = colexp(_R, "scaleX");
+    public static final ColumnExp<Float> SCALE_Y = colexp(_R, "scaleY");
+    public static final ColumnExp<Float> ROTATION = colexp(_R, "rotation");
+    public static final ColumnExp<Short> HOT_SPOT_X = colexp(_R, "hotSpotX");
+    public static final ColumnExp<Short> HOT_SPOT_Y = colexp(_R, "hotSpotY");
+    public static final ColumnExp<Byte> ACTION_TYPE = colexp(_R, "actionType");
+    public static final ColumnExp<String> ACTION_DATA = colexp(_R, "actionData");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that

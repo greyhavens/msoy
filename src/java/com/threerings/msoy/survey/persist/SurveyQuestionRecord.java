@@ -24,12 +24,12 @@ public class SurveyQuestionRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<SurveyQuestionRecord> _R = SurveyQuestionRecord.class;
-    public static final ColumnExp SURVEY_ID = colexp(_R, "surveyId");
-    public static final ColumnExp QUESTION_INDEX = colexp(_R, "questionIndex");
-    public static final ColumnExp QUESTION_TYPE = colexp(_R, "questionType");
-    public static final ColumnExp TEXT = colexp(_R, "text");
-    public static final ColumnExp DESCRIPTOR = colexp(_R, "descriptor");
-    public static final ColumnExp OPTIONAL = colexp(_R, "optional");
+    public static final ColumnExp<Integer> SURVEY_ID = colexp(_R, "surveyId");
+    public static final ColumnExp<Integer> QUESTION_INDEX = colexp(_R, "questionIndex");
+    public static final ColumnExp<SurveyQuestion.Type> QUESTION_TYPE = colexp(_R, "questionType");
+    public static final ColumnExp<String> TEXT = colexp(_R, "text");
+    public static final ColumnExp<String> DESCRIPTOR = colexp(_R, "descriptor");
+    public static final ColumnExp<Boolean> OPTIONAL = colexp(_R, "optional");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that

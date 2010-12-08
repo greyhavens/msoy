@@ -18,13 +18,13 @@ public class FacebookInfoRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<FacebookInfoRecord> _R = FacebookInfoRecord.class;
-    public static final ColumnExp GAME_ID = colexp(_R, "gameId");
-    public static final ColumnExp APP_ID = colexp(_R, "appId");
-    public static final ColumnExp API_KEY = colexp(_R, "apiKey");
-    public static final ColumnExp APP_SECRET = colexp(_R, "appSecret");
-    public static final ColumnExp FB_UID = colexp(_R, "fbUid");
-    public static final ColumnExp CHROMELESS = colexp(_R, "chromeless");
-    public static final ColumnExp CANVAS_NAME = colexp(_R, "canvasName");
+    public static final ColumnExp<Integer> GAME_ID = colexp(_R, "gameId");
+    public static final ColumnExp<Integer> APP_ID = colexp(_R, "appId");
+    public static final ColumnExp<String> API_KEY = colexp(_R, "apiKey");
+    public static final ColumnExp<String> APP_SECRET = colexp(_R, "appSecret");
+    public static final ColumnExp<Long> FB_UID = colexp(_R, "fbUid");
+    public static final ColumnExp<Boolean> CHROMELESS = colexp(_R, "chromeless");
+    public static final ColumnExp<String> CANVAS_NAME = colexp(_R, "canvasName");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that

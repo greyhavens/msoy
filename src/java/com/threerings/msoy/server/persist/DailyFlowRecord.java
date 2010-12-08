@@ -20,9 +20,9 @@ public class DailyFlowRecord extends PersistentRecord
 
     // AUTO-GENERATED: FIELDS START
     public static final Class<DailyFlowRecord> _R = DailyFlowRecord.class;
-    public static final ColumnExp TYPE = colexp(_R, "type");
-    public static final ColumnExp DATE = colexp(_R, "date");
-    public static final ColumnExp AMOUNT = colexp(_R, "amount");
+    public static final ColumnExp<String> TYPE = colexp(_R, "type");
+    public static final ColumnExp<Date> DATE = colexp(_R, "date");
+    public static final ColumnExp<Integer> AMOUNT = colexp(_R, "amount");
     // AUTO-GENERATED: FIELDS END
 
     /** The type of grant or expenditure  summarized by this entry. */

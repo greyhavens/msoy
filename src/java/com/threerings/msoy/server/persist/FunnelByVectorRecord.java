@@ -15,8 +15,8 @@ public class FunnelByVectorRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<FunnelByVectorRecord> _R = FunnelByVectorRecord.class;
-    public static final ColumnExp VECTOR = colexp(_R, "vector");
-    public static final ColumnExp COUNT = colexp(_R, "count");
+    public static final ColumnExp<String> VECTOR = colexp(_R, "vector");
+    public static final ColumnExp<Integer> COUNT = colexp(_R, "count");
     // AUTO-GENERATED: FIELDS END
 
     @Id

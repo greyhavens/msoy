@@ -20,9 +20,9 @@ public class TagPopularityRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<TagPopularityRecord> _R = TagPopularityRecord.class;
-    public static final ColumnExp TAG_ID = colexp(_R, "tagId");
-    public static final ColumnExp TAG = colexp(_R, "tag");
-    public static final ColumnExp COUNT = colexp(_R, "count");
+    public static final ColumnExp<Integer> TAG_ID = colexp(_R, "tagId");
+    public static final ColumnExp<String> TAG = colexp(_R, "tag");
+    public static final ColumnExp<Integer> COUNT = colexp(_R, "count");
     // AUTO-GENERATED: FIELDS END
 
     /** The ID of this tag. */

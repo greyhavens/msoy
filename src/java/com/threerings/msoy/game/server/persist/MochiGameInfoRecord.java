@@ -26,16 +26,16 @@ public class MochiGameInfoRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<MochiGameInfoRecord> _R = MochiGameInfoRecord.class;
-    public static final ColumnExp ID = colexp(_R, "id");
-    public static final ColumnExp NAME = colexp(_R, "name");
-    public static final ColumnExp TAG = colexp(_R, "tag");
-    public static final ColumnExp CATEGORIES = colexp(_R, "categories");
-    public static final ColumnExp AUTHOR = colexp(_R, "author");
-    public static final ColumnExp DESC = colexp(_R, "desc");
-    public static final ColumnExp THUMB_URL = colexp(_R, "thumbURL");
-    public static final ColumnExp SWF_URL = colexp(_R, "swfURL");
-    public static final ColumnExp WIDTH = colexp(_R, "width");
-    public static final ColumnExp HEIGHT = colexp(_R, "height");
+    public static final ColumnExp<Integer> ID = colexp(_R, "id");
+    public static final ColumnExp<String> NAME = colexp(_R, "name");
+    public static final ColumnExp<String> TAG = colexp(_R, "tag");
+    public static final ColumnExp<String> CATEGORIES = colexp(_R, "categories");
+    public static final ColumnExp<String> AUTHOR = colexp(_R, "author");
+    public static final ColumnExp<String> DESC = colexp(_R, "desc");
+    public static final ColumnExp<String> THUMB_URL = colexp(_R, "thumbURL");
+    public static final ColumnExp<String> SWF_URL = colexp(_R, "swfURL");
+    public static final ColumnExp<Integer> WIDTH = colexp(_R, "width");
+    public static final ColumnExp<Integer> HEIGHT = colexp(_R, "height");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that
