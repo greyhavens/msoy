@@ -180,15 +180,17 @@ public class ForumRepository extends DepotRepository
      */
     public List<ForumThreadRecord> findThreads (int groupId, String search, int limit)
     {
+        FullText ftsSubject = new FullText(ForumThreadRecord.class,
+            ForumThreadRecord.FTS_SUBJECT, search);
+        FullText ftsMessage = new FullText(ForumMessageRecord.class,
+            ForumMessageRecord.FTS_MESSAGE, search);
         SQLExpression<?> where = Ops.and(
-            ForumThreadRecord.GROUP_ID.eq(groupId),
-            Ops.or(new FullText(ForumThreadRecord.class,
-                                ForumThreadRecord.FTS_SUBJECT, search).match(),
-                   new FullText(ForumMessageRecord.class,
-                                ForumMessageRecord.FTS_MESSAGE, search).match()));
+            ForumThreadRecord.GROUP_ID.eq(groupId), Ops.or(ftsSubject.match(), ftsMessage.match()));
+        SQLExpression<?> rank = ftsSubject.rank().times(5).plus(ftsMessage.rank());
+
         return findAll(ForumThreadRecord.class,
                        ForumThreadRecord.THREAD_ID.join(ForumMessageRecord.THREAD_ID),
-                       new Where(where), new Limit(0, limit));
+                       new Where(where), OrderBy.descending(rank), new Limit(0, limit));
     }
 
     /**
