@@ -897,26 +897,6 @@
     </instream>
   </target>
 
-  <!-- generates ActionScript versions of our Streamable classes -->
-  <target name="genascript" depends="dist">
-    <!-- now generate the associated files -->
-    <genascript header="lib/SOURCE_HEADER" asroot="${asrc.dir}">
-      <fileset dir="${src.dir}">
-        <include name="**/msoy/data/*.java"/>
-        <include name="**/msoy/data/all/*.java"/>
-        <include name="**/msoy/game/data/*.java"/>
-        <exclude name="**/*CustomFieldSerializer.java"/> <!-- fucking GWT -->
-        <exclude name="**/MemberName.java"/> <!-- alas, too fiddly -->
-        <include name="**/msoy/item/data/all/*.java"/>
-        <exclude name="**/Item.java"/> <!-- alas, too fiddly -->
-        <exclude name="**/Game.java"/> <!-- alas, too fiddly -->
-        <exclude name="**/MediaDesc.java"/> <!-- alas, too fiddly -->
-        <exclude name="**/GameMemberInfo.java"/> <!-- can't handle WhirledOccupantInfo -->
-        <include name="**/msoy/chat/data/*.java"/>
-      </fileset>
-    </genascript>
-  </target>
-
   <!-- generates our FooServiceAsync interfaces for GWT -->
   <target name="genasync" description="Regenerates GWT Async interfaces.">
     <!-- make sure the record class files are all compiled -->
