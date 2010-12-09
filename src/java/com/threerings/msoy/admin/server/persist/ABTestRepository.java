@@ -22,7 +22,7 @@ import com.samskivert.depot.Exps;
 import com.samskivert.depot.Ops;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
-import com.samskivert.depot.QueryBuilder;
+import com.samskivert.depot.Query;
 import com.samskivert.depot.SchemaMigration;
 import com.samskivert.depot.annotation.Computed;
 import com.samskivert.depot.clause.QueryClause;
@@ -178,7 +178,7 @@ public class ABTestRepository extends DepotRepository
      */
     public void summarizeTest (int testId)
     {
-        QueryBuilder<GroupCountRecord> qb =
+        Query<GroupCountRecord> qb =
             from(GroupCountRecord.class).groupBy(ABGroupRecord.GROUP).noCache();
 
         // first determine the number of visitors assigned to the test groups
