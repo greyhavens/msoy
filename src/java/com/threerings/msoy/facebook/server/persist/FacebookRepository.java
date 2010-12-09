@@ -291,7 +291,7 @@ public class FacebookRepository extends DepotRepository
 
     protected List<FeedThumbnailRecord> loadThumbnails (String code, int gameId, int appId)
     {
-        List<SQLExpression> conditions = Lists.newArrayList();
+        List<SQLExpression<?>> conditions = Lists.newArrayList();
         conditions.add(FeedThumbnailRecord.GAME_ID.eq(gameId));
         conditions.add(FeedThumbnailRecord.APP_ID.eq(appId));
         if (code != null) {

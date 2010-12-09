@@ -214,7 +214,7 @@ public class ABTestRepository extends DepotRepository
         }
 
         // now determine how many of those members returned
-        SQLExpression since = MemberRecord.LAST_SESSION.minus(Exps.days(2)).
+        SQLExpression<?> since = MemberRecord.LAST_SESSION.minus(Exps.days(2)).
             greaterThan(MemberRecord.CREATED);
         for (GroupCountRecord rec : qb.clone().where(
                  ABGroupRecord.TEST_ID.eq(testId), since).select()) {
@@ -272,7 +272,7 @@ public class ABTestRepository extends DepotRepository
         }
     }
 
-    protected List<QueryClause> where (List<QueryClause> exprs, SQLExpression where)
+    protected List<QueryClause> where (List<QueryClause> exprs, SQLExpression<?> where)
     {
         return Lists.asList(new Where(where), exprs.toArray(new QueryClause[exprs.size()]));
     }

@@ -104,7 +104,7 @@ public class MoneyRepository extends DepotRepository
         Preconditions.checkArgument(amount >= 0, "Amount to accumulate must be 0 or greater.");
 
         ColumnExp<Integer> currencyCol = MemberAccountRecord.getColumn(currency);
-        Map<ColumnExp<?>,SQLExpression> updates = Maps.newHashMap();
+        Map<ColumnExp<?>,SQLExpression<?>> updates = Maps.newHashMap();
         updates.put(currencyCol, currencyCol.plus(amount));
         if (updateAcc) {
             ColumnExp<Long> currencyAccCol = MemberAccountRecord.getAccColumn(currency);
@@ -281,7 +281,7 @@ public class MoneyRepository extends DepotRepository
         int memberId, Set<TransactionType> transactionTypes, Currency currency,
         int start, int count, boolean descending)
     {
-        List<SQLExpression> where = Lists.newArrayList();
+        List<SQLExpression<?>> where = Lists.newArrayList();
         where.add(getColumn(currency, MoneyTransactionRecord.MEMBER_ID).eq(memberId));
         if (transactionTypes != null) {
             where.add(getColumn(currency, MoneyTransactionRecord.TRANSACTION_TYPE)
@@ -616,7 +616,7 @@ public class MoneyRepository extends DepotRepository
     {
         MoneyTransactionRecord.Subject subj = new MoneyTransactionRecord.Subject(subject);
 
-        List<SQLExpression> where = Lists.newArrayList();
+        List<SQLExpression<?>> where = Lists.newArrayList();
         where.add(getColumn(currency, MoneyTransactionRecord.SUBJECT_TYPE).eq(subj.type));
         where.add(getColumn(currency, MoneyTransactionRecord.SUBJECT_ID_TYPE).eq(subj.idType));
         where.add(getColumn(currency, MoneyTransactionRecord.SUBJECT_ID).eq(subj.id));

@@ -217,7 +217,7 @@ public class MsoySceneRepository extends DepotRepository
         List<QueryClause> clauses = Lists.newArrayList();
         clauses.add(new Limit(offset, rows));
 
-        List<SQLExpression> exprs = Lists.newArrayList();
+        List<SQLExpression<?>> exprs = Lists.newArrayList();
         List<OrderBy.Order> orders = Lists.newArrayList();
 
         // only load public, published rooms
@@ -228,7 +228,7 @@ public class MsoySceneRepository extends DepotRepository
         exprs.add(NEW_AND_HOT_ORDER);
         orders.add(OrderBy.Order.DESC);
 
-        clauses.add(new OrderBy(exprs.toArray(new SQLExpression[exprs.size()]),
+        clauses.add(new OrderBy(exprs.toArray(new SQLExpression<?>[exprs.size()]),
                                 orders.toArray(new OrderBy.Order[orders.size()])));
 
         return findAll(SceneRecord.class, clauses);
@@ -475,12 +475,12 @@ public class MsoySceneRepository extends DepotRepository
         }
     }
 
-    protected static FluentExp getRatingExpression ()
+    protected static FluentExp<? extends Number> getRatingExpression ()
     {
         // TODO: PostgreSQL flips out when you CREATE INDEX using a prepared statement
         // TODO: with parameters. So we trick Depot using a literal expression here. :/
         return SceneRecord.RATING_SUM.div(
-            Funcs.greatest(SceneRecord.RATING_COUNT, Exps.literal("1.0")));
+            Funcs.greatest(SceneRecord.RATING_COUNT, Exps.<Number>literal("1.0")));
     }
 
     @Override // from DepotRepository
@@ -495,10 +495,11 @@ public class MsoySceneRepository extends DepotRepository
     protected RatingRepository _ratingRepo;
 
     /** Order for New & Hot. If you change this, also migrate the {@link SceneRecord} index. */
-    protected static final SQLExpression NEW_AND_HOT_ORDER =
+    protected static final SQLExpression<Number> NEW_AND_HOT_ORDER =
         getRatingExpression().plus(
             // TODO: PostgreSQL flips out when you CREATE INDEX
             // using a prepared statement with parameters. So we
             // trick Depot using a literal expression here. This is PG only! :/
-            Exps.literal("date_part('epoch', \"lastPublished\")/" +HotnessConfig.DROPOFF_SECONDS));
+            Exps.<Number>literal("date_part('epoch', \"lastPublished\")/" +
+                                 HotnessConfig.DROPOFF_SECONDS));
 }

@@ -170,7 +170,7 @@ public class CommentRepository extends DepotRepository
 
             // then update the sums in the comment
             Key<CommentRecord> comment = CommentRecord.getKey(entityType, entityId, postedStamp);
-            Map<ColumnExp<?>, SQLExpression> updates = Maps.newHashMap();
+            Map<ColumnExp<?>, SQLExpression<?>> updates = Maps.newHashMap();
             updates.put(CommentRecord.CURRENT_RATING,
                         CommentRecord.CURRENT_RATING.plus(adjustment));
             if (record != null) {

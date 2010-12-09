@@ -128,7 +128,7 @@ public class SceneRecord extends PersistentRecord
     public static final int SCHEMA_VERSION = 15;
 
     /** Define the sort order for the new & hot queries. */
-    public static Tuple<SQLExpression, Order> ixNewAndHot_v3 ()
+    public static Tuple<? extends SQLExpression<?>, Order> ixNewAndHot_v3 ()
     {
         return Tuple.newTuple(MsoySceneRepository.NEW_AND_HOT_ORDER, OrderBy.Order.ASC);
     }

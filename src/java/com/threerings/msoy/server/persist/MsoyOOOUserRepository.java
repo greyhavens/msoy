@@ -120,7 +120,7 @@ public class MsoyOOOUserRepository extends DepotUserRepository
         } catch (NumberFormatException nfe) {
             return null;
         }
-        SQLExpression joinCondition = Ops.and(
+        SQLExpression<?> joinCondition = Ops.and(
                 MemberRecord.MEMBER_ID.eq(memberId),
                 OOOUserRecord.EMAIL.eq(MemberRecord.ACCOUNT_NAME));
         return toUser(load(OOOUserRecord.class, new Join(MemberRecord.class, joinCondition)));

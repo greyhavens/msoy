@@ -161,8 +161,8 @@ public class ForumRepository extends DepotRepository
                        new Where(ForumThreadRecord.GROUP_ID, groupId),
                        new Limit(offset, count),
                        new OrderBy(
-                           new SQLExpression[] { ForumThreadRecord.STICKY,
-                                                 ForumThreadRecord.MOST_RECENT_POST_ID },
+                           new SQLExpression<?>[] { ForumThreadRecord.STICKY,
+                                                    ForumThreadRecord.MOST_RECENT_POST_ID },
                            new OrderBy.Order[] { OrderBy.Order.DESC, OrderBy.Order.DESC })));
     }
 
@@ -180,7 +180,7 @@ public class ForumRepository extends DepotRepository
      */
     public List<ForumThreadRecord> findThreads (int groupId, String search, int limit)
     {
-        SQLExpression where = Ops.and(
+        SQLExpression<?> where = Ops.and(
             ForumThreadRecord.GROUP_ID.eq(groupId),
             Ops.or(new FullText(ForumThreadRecord.class,
                                 ForumThreadRecord.FTS_SUBJECT, search).match(),
@@ -202,11 +202,11 @@ public class ForumRepository extends DepotRepository
             return Collections.emptyList();
         }
 
-        SQLExpression cacheJoinAnd = Ops.and(
+        SQLExpression<?> cacheJoinAnd = Ops.and(
             ForumThreadRecord.THREAD_ID.eq(ReadTrackingRecord.THREAD_ID),
             ReadTrackingRecord.MEMBER_ID.eq(memberId)
         );
-        SQLExpression where = Ops.and(
+        SQLExpression<?> where = Ops.and(
             ForumThreadRecord.GROUP_ID.in(groupIds),
             Ops.or(new FullText(ForumThreadRecord.class,
                                 ForumThreadRecord.FTS_SUBJECT, search).match(),
@@ -238,7 +238,7 @@ public class ForumRepository extends DepotRepository
      */
     public List<ForumMessageRecord> findMessages (int threadId, String search, int limit)
     {
-        SQLExpression where = Ops.and(ForumMessageRecord.THREAD_ID.eq(threadId),
+        SQLExpression<?> where = Ops.and(ForumMessageRecord.THREAD_ID.eq(threadId),
                                       new FullText(ForumMessageRecord.class,
                                                    ForumMessageRecord.FTS_MESSAGE, search).match());
         return findAll(ForumMessageRecord.class, new Where(where), new Limit(0, limit));
@@ -405,7 +405,7 @@ public class ForumRepository extends DepotRepository
         }
 
         // otherwise decrement the post count
-        Map<ColumnExp<?>, SQLExpression> updates = Maps.newHashMap();
+        Map<ColumnExp<?>, SQLExpression<?>> updates = Maps.newHashMap();
         updates.put(ForumThreadRecord.POSTS, ForumThreadRecord.POSTS.minus(1));
         // and update the last post/poster/etc. if we just deleted the last post
         if (ftr.mostRecentPostId == fmr.messageId) {
@@ -461,11 +461,11 @@ public class ForumRepository extends DepotRepository
 
     protected List<QueryClause> getUnreadThreadsClauses (int memberId, Set<Integer> groupIds)
     {
-        SQLExpression join = Ops.and(
+        SQLExpression<?> join = Ops.and(
             ForumThreadRecord.THREAD_ID.eq(ReadTrackingRecord.THREAD_ID),
             ReadTrackingRecord.MEMBER_ID.eq(memberId)
         );
-        SQLExpression where = Ops.and(
+        SQLExpression<?> where = Ops.and(
             ForumThreadRecord.GROUP_ID.in(groupIds),
             ForumThreadRecord.MOST_RECENT_POST_TIME.greaterThan(
                 RepositoryUtil.getCutoff(UNREAD_POSTS_CUTOFF)),
@@ -482,14 +482,14 @@ public class ForumRepository extends DepotRepository
         int memberId, Set<Integer> authorIds, Set<Integer> hiddenGroupIds)
     {
         // join expressions
-        SQLExpression joinRead = Ops.and(
+        SQLExpression<?> joinRead = Ops.and(
             ForumThreadRecord.THREAD_ID.eq(ReadTrackingRecord.THREAD_ID),
             ReadTrackingRecord.MEMBER_ID.eq(memberId));
-        SQLExpression joinThread = Ops.and(
+        SQLExpression<?> joinThread = Ops.and(
             ForumThreadRecord.THREAD_ID.eq(ForumMessageRecord.THREAD_ID));
 
         // filtering expressions
-        List<SQLExpression> conditions = Lists.newArrayListWithCapacity(4);
+        List<SQLExpression<?>> conditions = Lists.newArrayListWithCapacity(4);
         conditions.add(ForumMessageRecord.POSTER_ID.in(authorIds));
         conditions.add(Ops.or(ReadTrackingRecord.THREAD_ID.isNull(),
                               Ops.and(ReadTrackingRecord.MEMBER_ID.eq(memberId),

@@ -156,7 +156,7 @@ public class MsoyGameRepository extends DepotRepository
         List<QueryClause> clauses = Lists.newArrayList();
 
         // build the where clause with genre and/or search string
-        List<SQLExpression> whereBits = Lists.newArrayList();
+        List<SQLExpression<?>> whereBits = Lists.newArrayList();
         if (genre == GameGenre.ALL || genre == GameGenre.HIDDEN) {
             whereBits.add(GameInfoRecord.GENRE.notEq(GameGenre.HIDDEN));
         } else {
@@ -170,8 +170,8 @@ public class MsoyGameRepository extends DepotRepository
 
         } else {
             // if we have no search ranking, sort by descending average rating
-            SQLExpression count =  Funcs.greatest(GameInfoRecord.RATING_COUNT, Exps.value(1.0));
-            clauses.add(OrderBy.descending(GameInfoRecord.RATING_SUM.div(count)));
+            clauses.add(OrderBy.descending(GameInfoRecord.RATING_SUM.div(
+                Funcs.greatest(GameInfoRecord.RATING_COUNT, Exps.value(1.0)))));
         }
 
         // filter out games that aren't integrated with Whirled
@@ -399,8 +399,8 @@ public class MsoyGameRepository extends DepotRepository
         insert(gprec);
 
         // update our games played and flow to next recalc in the detail record
-        SQLExpression add = GameMetricsRecord.GAMES_PLAYED.plus(playerGames);
-        SQLExpression sub = GameMetricsRecord.FLOW_TO_NEXT_RECALC.minus(flowAwarded);
+        SQLExpression<?> add = GameMetricsRecord.GAMES_PLAYED.plus(playerGames);
+        SQLExpression<?> sub = GameMetricsRecord.FLOW_TO_NEXT_RECALC.minus(flowAwarded);
         updatePartial(GameMetricsRecord.getKey(Math.abs(gprec.gameId)),
                       ImmutableMap.of(GameMetricsRecord.GAMES_PLAYED, add,
                                       GameMetricsRecord.FLOW_TO_NEXT_RECALC, sub,
@@ -572,12 +572,12 @@ public class MsoyGameRepository extends DepotRepository
         Timestamp listedCutoffTimestamp = new Timestamp(listedCutoff.getTimeInMillis());
 
         // Create conditionals for distinguishing dev from listed games
-        ColumnExp gameId = GameTraceLogRecord.GAME_ID;
-        SQLExpression isDev = gameId.lessThan(0);
-        SQLExpression isListed = gameId.greaterThan(0);
+        ColumnExp<Integer> gameId = GameTraceLogRecord.GAME_ID;
+        SQLExpression<Boolean> isDev = gameId.lessThan(0);
+        SQLExpression<Boolean> isListed = gameId.greaterThan(0);
 
         // Perform deletion
-        ColumnExp recorded = GameTraceLogRecord.RECORDED;
+        ColumnExp<Timestamp> recorded = GameTraceLogRecord.RECORDED;
         int rows = deleteAll(GameTraceLogRecord.class, new Where(Ops.or(
             Ops.and(isDev, recorded.lessThan(devCutoffTimestamp)),
             Ops.and(isListed, recorded.lessThan(listedCutoffTimestamp)))));

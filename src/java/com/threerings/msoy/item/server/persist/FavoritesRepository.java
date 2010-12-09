@@ -55,9 +55,10 @@ public class FavoritesRepository extends DepotRepository
      * Loads up to <code>count</code> items recently favorited by subscribers. If the
      * type is {@link MsoyItemType#NOT_A_TYPE}, all types will be returned.
      */
-    public List<FavoritedItemResultRecord> loadRecentFavorites (int offset, int rows, MsoyItemType type)
+    public List<FavoritedItemResultRecord> loadRecentFavorites (
+        int offset, int rows, MsoyItemType type)
     {
-        List<SQLExpression> conditions = Lists.newArrayList();
+        List<SQLExpression<?>> conditions = Lists.newArrayList();
 
         // only care about members with a subscriber bit set
         int subscriberBits = (Flag.SUBSCRIBER.getBit() | Flag.SUBSCRIBER_PERMANENT.getBit());

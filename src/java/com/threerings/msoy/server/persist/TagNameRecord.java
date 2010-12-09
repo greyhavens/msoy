@@ -38,9 +38,9 @@ public class TagNameRecord extends PersistentRecord
     // AUTO-GENERATED: FIELDS END
 
     /** Defines the index on {@link #tag} converted to lower case. */
-    public static Tuple<SQLExpression, Order> ixLowerTag ()
+    public static Tuple<SQLExpression<?>, Order> ixLowerTag ()
     {
-        return new Tuple<SQLExpression, Order>(StringFuncs.lower(TagNameRecord.TAG), Order.ASC);
+        return new Tuple<SQLExpression<?>, Order>(StringFuncs.lower(TagNameRecord.TAG), Order.ASC);
     }
 
     public static final int SCHEMA_VERSION = 3;

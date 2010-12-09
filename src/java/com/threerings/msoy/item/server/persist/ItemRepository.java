@@ -122,7 +122,7 @@ public abstract class ItemRepository<T extends ItemRecord>
             return _cloneFts.rank();
         }
 
-        public SQLExpression tagExistsExpression (ColumnExp<?> itemColumn)
+        public SQLExpression<?> tagExistsExpression (ColumnExp<?> itemColumn)
         {
             if (_tagIds.size() == 0) {
                 return null;
@@ -134,7 +134,7 @@ public abstract class ItemRepository<T extends ItemRecord>
                 new ColumnExp<?>[] { getTagColumn(TagRecord.TAG_ID) }, where));
         }
 
-        public SQLExpression madeByExpression ()
+        public SQLExpression<?> madeByExpression ()
         {
             if (_memberIds.size() == 0) {
                 return null;
@@ -381,7 +381,7 @@ public abstract class ItemRepository<T extends ItemRecord>
             throw new IllegalArgumentException("Refusing to enumerate inventory of ownerId=0");
         }
         WordSearch queryContext = buildWordSearch(query);
-        List<SQLExpression> matches = Lists.newArrayList();
+        List<SQLExpression<?>> matches = Lists.newArrayList();
 
         // original items only match on the text and creator (they cannot be tagged)
         if (queryContext != null) {
@@ -390,7 +390,7 @@ public abstract class ItemRepository<T extends ItemRecord>
         }
 
         QueryClause[] clauses = new QueryClause[0];
-        SQLExpression[] whereBits = new SQLExpression[0];
+        SQLExpression<?>[] whereBits = new SQLExpression<?>[0];
 
         if (themeId != 0) {
             List<? extends MogMarkRecord> originalRecs = findAll(getMogMarkClass(),
@@ -399,7 +399,7 @@ public abstract class ItemRepository<T extends ItemRecord>
                 Lists.transform(originalRecs, MogMarkRecord.TO_ITEM_ID)));
         }
 
-        SQLExpression[] originalBits = ArrayUtil.append(
+        SQLExpression<?>[] originalBits = ArrayUtil.append(
             whereBits, getItemColumn(ItemRecord.OWNER_ID).eq(ownerId));
         if (matches.size() > 0) {
             originalBits = ArrayUtil.append(originalBits, makeSearchClause(matches));
@@ -415,7 +415,7 @@ public abstract class ItemRepository<T extends ItemRecord>
             matches.add(queryContext.cloneTextMatch());
         }
 
-        SQLExpression[] cloneBits = ArrayUtil.append(
+        SQLExpression<?>[] cloneBits = ArrayUtil.append(
             whereBits, getCloneColumn(CloneRecord.OWNER_ID).eq(ownerId));
         if (matches.size() > 0) {
             cloneBits = ArrayUtil.append(cloneBits, makeSearchClause(matches));
@@ -434,7 +434,7 @@ public abstract class ItemRepository<T extends ItemRecord>
      */
     public List<T> loadRecentlyTouched (int ownerId, int themeId, int maxCount)
     {
-        SQLExpression[] baseWhere = new SQLExpression[0];
+        SQLExpression<?>[] baseWhere = new SQLExpression<?>[0];
         QueryClause[] cloneClauses = new QueryClause[] {
             new Limit(0, maxCount),
             OrderBy.descending(getCloneColumn(CloneRecord.LAST_TOUCHED))
@@ -685,10 +685,10 @@ public abstract class ItemRepository<T extends ItemRecord>
                              getItemColumn(ItemRecord.ITEM_ID)));
 
         // sort out the primary and secondary order by clauses
-        List<SQLExpression> obExprs = Lists.newArrayList();
+        List<SQLExpression<?>> obExprs = Lists.newArrayList();
         List<OrderBy.Order> obOrders = Lists.newArrayList();
         // and keep track of additional constraints on the query
-        List<SQLExpression> whereBits = Lists.newArrayList();
+        List<SQLExpression<?>> whereBits = Lists.newArrayList();
         switch(sortBy) {
         case CatalogQuery.SORT_BY_LIST_DATE:
             addOrderByListDate(obExprs, obOrders);
@@ -728,7 +728,7 @@ public abstract class ItemRepository<T extends ItemRecord>
         }
         if (obExprs.size() > 0) {
             clauses.add(new OrderBy(
-                obExprs.toArray(new SQLExpression[obExprs.size()]),
+                obExprs.toArray(new SQLExpression<?>[obExprs.size()]),
                 obOrders.toArray(new OrderBy.Order[obOrders.size()])).
                     thenAscending(getCatalogColumn(CatalogRecord.CATALOG_ID)));
         }
@@ -1002,7 +1002,7 @@ public abstract class ItemRepository<T extends ItemRecord>
     public int nudgeListing (CatalogRecord record, boolean purchased)
     {
         int newCost = record.cost;
-        Map<ColumnExp<?>, SQLExpression> updates = Maps.newHashMap();
+        Map<ColumnExp<?>, SQLExpression<?>> updates = Maps.newHashMap();
         if (purchased) {
             updates.put(CatalogRecord.PURCHASES,
                         getCatalogColumn(CatalogRecord.PURCHASES).plus(1));
@@ -1329,7 +1329,7 @@ public abstract class ItemRepository<T extends ItemRecord>
      */
     public void incrementFavoriteCount (int catalogId, int increment)
     {
-        SQLExpression add = getCatalogColumn(CatalogRecord.FAVORITE_COUNT).plus(increment);
+        SQLExpression<?> add = getCatalogColumn(CatalogRecord.FAVORITE_COUNT).plus(increment);
         if (updatePartial(getCatalogKey(catalogId), CatalogRecord.FAVORITE_COUNT, add) == 0) {
             log.warning("Could not update favorite count on catalog record.",
                         "catalogId", catalogId, "increment", increment);
@@ -1344,8 +1344,8 @@ public abstract class ItemRepository<T extends ItemRecord>
     public List<Integer> loadDerivativeIds (int catalogId, int maximum)
     {
         List<QueryClause> clauses = Lists.newArrayList();
-        SQLExpression derived = getCatalogColumn(CatalogRecord.BASIS_ID).eq(catalogId);
-        SQLExpression visible = Ops.not(
+        SQLExpression<?> derived = getCatalogColumn(CatalogRecord.BASIS_ID).eq(catalogId);
+        SQLExpression<?> visible = Ops.not(
             getCatalogColumn(CatalogRecord.PRICING).eq(CatalogListing.PRICING_HIDDEN));
         clauses.add(new Where(Ops.and(derived, visible)));
         if (maximum > 0) {
@@ -1409,7 +1409,7 @@ public abstract class ItemRepository<T extends ItemRecord>
      * that to the supplied list of clauses, finally executing findAll() on the whole shebang.
      */
     protected <U extends PersistentRecord> List<U> loadAllWithWhere (
-        Class<U> itemClass, SQLExpression[] whereBits, QueryClause[] clauses)
+        Class<U> itemClass, SQLExpression<?>[] whereBits, QueryClause[] clauses)
     {
         return findAll(itemClass,
             ArrayUtil.append(clauses, new Where(Ops.and(whereBits))));
@@ -1471,7 +1471,7 @@ public abstract class ItemRepository<T extends ItemRecord>
     /**
      * Adds a full-text match on item name and description to the supplied list.
      */
-    protected void addTextMatchClause (List<SQLExpression> matches, WordSearch search)
+    protected void addTextMatchClause (List<SQLExpression<?>> matches, WordSearch search)
     {
         // search item name and description
         matches.add(search.fullTextMatch());
@@ -1480,9 +1480,9 @@ public abstract class ItemRepository<T extends ItemRecord>
     /**
      * Adds a match on the name of the creator to the supplied list.
      */
-    protected void addCreatorMatchClause (List<SQLExpression> matches, WordSearch search)
+    protected void addCreatorMatchClause (List<SQLExpression<?>> matches, WordSearch search)
     {
-        SQLExpression op = search.madeByExpression();
+        SQLExpression<?> op = search.madeByExpression();
         if (op != null) {
             matches.add(op);
         }
@@ -1502,10 +1502,10 @@ public abstract class ItemRepository<T extends ItemRecord>
      * are tagged with those tags.
      */
     protected void addTagMatchClause (
-        List<SQLExpression> matches, ColumnExp<?> itemColumn, WordSearch search)
+        List<SQLExpression<?>> matches, ColumnExp<?> itemColumn, WordSearch search)
     {
         // build a query to check tags if one or more tags exists
-        SQLExpression op = search.tagExistsExpression(itemColumn);
+        SQLExpression<?> op = search.tagExistsExpression(itemColumn);
         if (op != null) {
             matches.add(op);
         }
@@ -1514,7 +1514,7 @@ public abstract class ItemRepository<T extends ItemRecord>
     /**
      * Composes the supplied list of search match clauses into a single operator.
      */
-    protected SQLExpression makeSearchClause (List<SQLExpression> matches)
+    protected SQLExpression<?> makeSearchClause (List<SQLExpression<?>> matches)
     {
         switch (matches.size()) {
         case 0:
@@ -1532,9 +1532,9 @@ public abstract class ItemRepository<T extends ItemRecord>
      * Builds a search clause that matches item text, creator name and tags (against listed catalog
      * items).
      */
-    protected SQLExpression buildSearchClause (WordSearch queryContext)
+    protected SQLExpression<?> buildSearchClause (WordSearch queryContext)
     {
-        List<SQLExpression> matches = Lists.newArrayList();
+        List<SQLExpression<?>> matches = Lists.newArrayList();
 
         addTextMatchClause(matches, queryContext);
         addCreatorMatchClause(matches, queryContext);
@@ -1548,7 +1548,7 @@ public abstract class ItemRepository<T extends ItemRecord>
      * that we can heuristically claim that the query will not match enormous numbers of rows.
      */
     protected boolean addSearchClause (
-        List<QueryClause> clauses, List<SQLExpression> whereBits, boolean mature,
+        List<QueryClause> clauses, List<SQLExpression<?>> whereBits, boolean mature,
         WordSearch queryContext, int tag, int creator, Float minRating, int themeId, int gameId)
     {
         boolean significantlyConstrained = false;
@@ -1601,19 +1601,19 @@ public abstract class ItemRepository<T extends ItemRecord>
         return significantlyConstrained;
     }
 
-    protected void addOrderByListDate (List<SQLExpression> exprs, List<OrderBy.Order> orders)
+    protected void addOrderByListDate (List<SQLExpression<?>> exprs, List<OrderBy.Order> orders)
     {
         exprs.add(getCatalogColumn(CatalogRecord.LISTED_DATE));
         orders.add(OrderBy.Order.DESC);
     }
 
-    protected void addOrderByRating (List<SQLExpression> exprs, List<OrderBy.Order> orders)
+    protected void addOrderByRating (List<SQLExpression<?>> exprs, List<OrderBy.Order> orders)
     {
         exprs.add(getRatingExpression());
         orders.add(OrderBy.Order.DESC);
     }
 
-    protected void addOrderByPrice (List<SQLExpression> exprs, List<OrderBy.Order> orders,
+    protected void addOrderByPrice (List<SQLExpression<?>> exprs, List<OrderBy.Order> orders,
                                     OrderBy.Order order, float exchangeRate)
     {
         // Multiply bar prices by the current exchange rate.
@@ -1628,14 +1628,14 @@ public abstract class ItemRepository<T extends ItemRecord>
         orders.add(order);
     }
 
-    protected void addOrderByPurchases (List<SQLExpression> exprs, List<OrderBy.Order> orders)
+    protected void addOrderByPurchases (List<SQLExpression<?>> exprs, List<OrderBy.Order> orders)
     {
         // TODO: someday make an indexed column that represents (purchases-returns)
         exprs.add(getCatalogColumn(CatalogRecord.PURCHASES));
         orders.add(OrderBy.Order.DESC);
     }
 
-    protected void addOrderByNewAndHot (List<SQLExpression> exprs, List<OrderBy.Order> orders)
+    protected void addOrderByNewAndHot (List<SQLExpression<?>> exprs, List<OrderBy.Order> orders)
     {
         exprs.add(getRatingExpression().plus(
             DateFuncs.epoch(getCatalogColumn(CatalogRecord.LISTED_DATE)).
@@ -1645,39 +1645,33 @@ public abstract class ItemRepository<T extends ItemRecord>
 
     // Construct a relevance ordering for item searches
     protected void addOrderByRelevance (
-        List<SQLExpression> exprs, List<OrderBy.Order> orders, WordSearch context)
+        List<SQLExpression<?>> exprs, List<OrderBy.Order> orders, WordSearch context)
     {
-        // The relevance of a catalog entry is a product of several factors, each chosen
-        // to have a tunable impact. The actual value is not important, only the relative
-        // sizes.
-        SQLExpression[] ops = new SQLExpression[] {
-            // The base value is just the Full Text Search rank value, the scale of which is
-            // entirely unknown. We give it a tiny linear shift so that the creator and tag factors
-            // below have something non-zero to work with when there is no full text hit at all
-            context.fullTextRank().plus(0.1),
+        // The relevance of a catalog entry is a product of several factors, each chosen to have a
+        // tunable impact. The actual value is not important, only the relative sizes.
+        List<SQLExpression<Double>> ops = Lists.newArrayList();
+        // The base value is just the Full Text Search rank value, the scale of which is entirely
+        // unknown. We give it a tiny linear shift so that the creator and tag factors below have
+        // something non-zero to work with when there is no full text hit at all
+        ops.add(context.fullTextRank().plus(0.1));
+        // adjust the FTS rank by (rating + 5), which means a 5-star item is rated
+        // (approximately) twice as high rated as a 1-star item
+        ops.add(getRatingExpression().plus(1.0));
+        // then boost by (log10(purchases+1) + 3), thus an item that's sold 1,000 copies is rated
+        // twice as high as something that's sold 1 copy
+        ops.add(MathFuncs.log10(getCatalogColumn(CatalogRecord.PURCHASES).plus(1.0)).plus(3.0));
 
-            // adjust the FTS rank by (rating + 5), which means a 5-star item is rated
-            // (approximately) twice as high rated as a 1-star item
-            getRatingExpression().plus(1.0),
-
-            // then boost by (log10(purchases+1) + 3), thus an item that's sold 1,000 copies
-            // is rated twice as high as something that's sold 1 copy
-            MathFuncs.log10(getCatalogColumn(CatalogRecord.PURCHASES).plus(1.0)).plus(3.0),
-        };
-
-        SQLExpression tagExistsExp =
+        SQLExpression<?> tagExistsExp =
             context.tagExistsExpression(getCatalogColumn(CatalogRecord.LISTED_ITEM_ID));
         if (tagExistsExp != null) {
             // if there is a tag match, immediately boost relevance by 25%
-            ops = ArrayUtil.append(ops,
-                new Case(tagExistsExp, Exps.value(1.25), Exps.value(1.0)));
+            ops.add(new Case<Double>(tagExistsExp, Exps.value(1.25), Exps.value(1.0)));
         }
 
-        SQLExpression madeByExp = context.madeByExpression();
+        SQLExpression<?> madeByExp = context.madeByExpression();
         if (madeByExp != null) {
             // if the item was made by a creator who matches the description, also boost by 50%
-            ops = ArrayUtil.append(ops,
-                new Case(madeByExp, Exps.value(1.5), Exps.value(1.0)));
+            ops.add(new Case<Double>(madeByExp, Exps.value(1.5), Exps.value(1.0)));
         }
 
         exprs.add(Ops.mul(ops));
@@ -1687,7 +1681,7 @@ public abstract class ItemRepository<T extends ItemRecord>
         orders.add(OrderBy.Order.DESC);
     }
 
-    protected void addOrderByFavorites (List<SQLExpression> exprs, List<OrderBy.Order> orders)
+    protected void addOrderByFavorites (List<SQLExpression<?>> exprs, List<OrderBy.Order> orders)
     {
         exprs.add(getCatalogColumn(CatalogRecord.FAVORITE_COUNT));
         orders.add(OrderBy.Order.DESC);
@@ -1739,7 +1733,7 @@ public abstract class ItemRepository<T extends ItemRecord>
         return pcol.as(getTagRepository().getTagClass());
     }
 
-    protected FluentExp getRatingExpression ()
+    protected FluentExp<? extends Number> getRatingExpression ()
     {
         return getItemColumn(ItemRecord.RATING_SUM).div(
             Funcs.greatest(getItemColumn(ItemRecord.RATING_COUNT), Exps.value(1.0)));

@@ -51,7 +51,7 @@ public class IssueRepository extends DepotRepository
      */
     public List<IssueRecord> loadIssues (Set<Integer> states, int ownerId, int offset, int count)
     {
-        List<SQLExpression> whereBits = Lists.newArrayList();
+        List<SQLExpression<?>> whereBits = Lists.newArrayList();
         whereBits.add(IssueRecord.STATE.in(states));
         if (ownerId > 0) {
             whereBits.add(IssueRecord.OWNER_ID.eq(ownerId));
@@ -61,7 +61,7 @@ public class IssueRepository extends DepotRepository
             orderBy = OrderBy.descending(IssueRecord.CLOSED_TIME);
         } else {
             orderBy = new OrderBy(
-                new SQLExpression[] { IssueRecord.PRIORITY, IssueRecord.CREATED_TIME },
+                new SQLExpression<?>[] { IssueRecord.PRIORITY, IssueRecord.CREATED_TIME },
                 new OrderBy.Order[] { OrderBy.Order.DESC, OrderBy.Order.DESC });
         }
         return findAll(IssueRecord.class, new Where(Ops.and(whereBits)),
@@ -81,7 +81,7 @@ public class IssueRepository extends DepotRepository
      */
     public int loadIssueCount (Set<Integer> states)
     {
-        List<SQLExpression> whereBits = Lists.newArrayList();
+        List<SQLExpression<?>> whereBits = Lists.newArrayList();
         if (states != null) {
             whereBits.add(IssueRecord.STATE.in(states));
         }

@@ -48,8 +48,9 @@ public class MailRepository extends DepotRepository
      */
     public int loadUnreadConvoCount (int memberId, Iterable<Integer> muted)
     {
-        SQLExpression isMe = ParticipantRecord.PARTICIPANT_ID.eq(memberId);
-        SQLExpression isNew = ConversationRecord.LAST_SENT.greaterThan(ParticipantRecord.LAST_READ);
+        SQLExpression<?> isMe = ParticipantRecord.PARTICIPANT_ID.eq(memberId);
+        SQLExpression<?> isNew =
+            ConversationRecord.LAST_SENT.greaterThan(ParticipantRecord.LAST_READ);
         return load(CountRecord.class,
                     new FromOverride(ParticipantRecord.class),
                     ParticipantRecord.CONVERSATION_ID.join(ConversationRecord.CONVERSATION_ID),
@@ -63,7 +64,7 @@ public class MailRepository extends DepotRepository
     public List<ConversationRecord> loadConversations (
         int participantId, Iterable<Integer> muted, int offset, int count)
     {
-        SQLExpression isMe = ParticipantRecord.PARTICIPANT_ID.eq(participantId);
+        SQLExpression<?> isMe = ParticipantRecord.PARTICIPANT_ID.eq(participantId);
         return findAll(ConversationRecord.class, CacheStrategy.RECORDS, Lists.newArrayList(
             ConversationRecord.CONVERSATION_ID.join(ParticipantRecord.CONVERSATION_ID),
             new Where(Ops.and(isMe, nonMuted(muted))),
@@ -281,7 +282,7 @@ public class MailRepository extends DepotRepository
         classes.add(ConversationComplaintRecord.class);
     }
 
-    protected static SQLExpression nonMuted (Iterable<Integer> muted)
+    protected static SQLExpression<?> nonMuted (Iterable<Integer> muted)
     {
         return Ops.not(Ops.or(
             ConversationRecord.TARGET_ID.in(muted),

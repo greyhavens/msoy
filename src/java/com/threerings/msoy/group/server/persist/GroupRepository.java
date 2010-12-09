@@ -96,7 +96,7 @@ public class GroupRepository extends DepotRepository
             return _fts.rank();
         }
 
-        public SQLExpression tagExistsExpression ()
+        public SQLExpression<?> tagExistsExpression ()
         {
             if (_tagIds.size() == 0) {
                 return null;
@@ -433,7 +433,7 @@ public class GroupRepository extends DepotRepository
     {
         return findAll(BrandShareRecord.class,
             new Where(BrandShareRecord.GROUP_ID, groupId),
-            new OrderBy(new SQLExpression[] {
+            new OrderBy(new SQLExpression<?>[] {
                 BrandShareRecord.SHARES, BrandShareRecord.MEMBER_ID,
             }, new OrderBy.Order[] { Order.DESC, Order.ASC }));
     }
@@ -649,7 +649,7 @@ public class GroupRepository extends DepotRepository
     {
         List<QueryClause> clauses = Lists.newArrayList();
 
-        List<SQLExpression> conditions = Lists.newArrayList();
+        List<SQLExpression<?>> conditions = Lists.newArrayList();
 
         if (!support) {
             // if we're not support, skip exclusive groups in the result
@@ -657,9 +657,9 @@ public class GroupRepository extends DepotRepository
         }
 
         if (search != null) {
-            List<SQLExpression> wordBits =
-                Lists.<SQLExpression>newArrayList(search.fullTextMatch());
-            SQLExpression tagOp = search.tagExistsExpression();
+            List<SQLExpression<?>> wordBits =
+                Lists.<SQLExpression<?>>newArrayList(search.fullTextMatch());
+            SQLExpression<?> tagOp = search.tagExistsExpression();
             if (tagOp != null) {
                 wordBits.add(tagOp);
             }
@@ -694,12 +694,12 @@ public class GroupRepository extends DepotRepository
             return OrderBy.descending(GroupRecord.MEMBER_COUNT).thenAscending(GroupRecord.NAME);
 
         } else if (search != null) {
-            SQLExpression tagExistsExp = search.tagExistsExpression();
+            SQLExpression<?> tagExistsExp = search.tagExistsExpression();
             if (tagExistsExp != null) {
                 // the rank is (1 + fts rank), boosted by 25% if there's a tag match
                 return OrderBy.descending(Ops.mul(
                     search.fullTextRank().plus(Exps.value(1.0)),
-                    new Case(tagExistsExp, Exps.value(1.25), Exps.value(1.0)))).
+                    new Case<Double>(tagExistsExp, Exps.value(1.25), Exps.value(1.0)))).
                         thenDescending(GroupRecord.MEMBER_COUNT).
                         thenAscending(GroupRecord.NAME);
 
@@ -723,7 +723,7 @@ public class GroupRepository extends DepotRepository
      */
     protected List<Integer> getMemberIds (int groupId, Rank rank)
     {
-        SQLExpression test = GroupMembershipRecord.GROUP_ID.eq(groupId);
+        SQLExpression<?> test = GroupMembershipRecord.GROUP_ID.eq(groupId);
         if (rank != null) {
             test = Ops.and(test, GroupMembershipRecord.RANK.eq(rank));
         }

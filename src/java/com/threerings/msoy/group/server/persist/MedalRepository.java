@@ -65,8 +65,8 @@ public class MedalRepository extends DepotRepository
      */
     public boolean groupContainsMedalName (int groupId, String name)
     {
-        SQLExpression groupIdEquals = MedalRecord.GROUP_ID.eq(groupId);
-        SQLExpression nameEquals = MedalRecord.NAME.eq(name);
+        SQLExpression<?> groupIdEquals = MedalRecord.GROUP_ID.eq(groupId);
+        SQLExpression<?> nameEquals = MedalRecord.NAME.eq(name);
         return load(MedalRecord.class, new Where(Ops.and(groupIdEquals, nameEquals))) != null;
     }
 

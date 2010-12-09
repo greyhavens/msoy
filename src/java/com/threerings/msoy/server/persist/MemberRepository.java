@@ -329,7 +329,7 @@ public class MemberRepository extends DepotRepository
         int valbit = MemberRecord.Flag.VALIDATED.getBit();
         int bits = (MemberRecord.Flag.NO_ANNOUNCE_EMAIL.getBit() |
                     MemberRecord.Flag.SPANKED.getBit() | valbit);
-        SQLExpression where = MemberRecord.FLAGS.bitAnd(bits).eq(valbit);
+        SQLExpression<?> where = MemberRecord.FLAGS.bitAnd(bits).eq(valbit);
         List<Tuple<Integer, String>> emails = Lists.newArrayList();
         for (MemberEmailRecord record : findAll(MemberEmailRecord.class, new Where(where))) {
             // !MemberMailUtil.isPlaceholderAddress(record.accountName) (no longer needed)
@@ -359,7 +359,7 @@ public class MemberRepository extends DepotRepository
      */
     public MemberCard loadMemberCard (int memberId, boolean filterDeleted)
     {
-        SQLExpression where = MemberRecord.MEMBER_ID.eq(memberId);
+        SQLExpression<?> where = MemberRecord.MEMBER_ID.eq(memberId);
         if (filterDeleted) {
             where = Ops.and(where, MemberRecord.ACCOUNT_NAME.notEq(
                                 memberId + MemberRecord.DELETED_SUFFIX));
@@ -464,7 +464,8 @@ public class MemberRepository extends DepotRepository
      * Execute a funnel report query that summarizes entry records by (date, vector group),
      * optionally joined with the given external column and/or the given where condition.
      */
-    public List<FunnelByDateRecord> funnelByDate (ColumnExp joinColumn, SQLExpression whereBit)
+    public List<FunnelByDateRecord> funnelByDate (ColumnExp<?> joinColumn,
+                                                  SQLExpression<?> whereBit)
     {
         final FluentExp dateExp = DateFuncs.date(EntryVectorRecord.CREATED);
         List<QueryClause> clauses = Lists.newArrayList(
@@ -477,10 +478,10 @@ public class MemberRepository extends DepotRepository
             clauses.add(new Join(EntryVectorRecord.MEMBER_ID, joinColumn));
         }
 
-        FluentExp condition = DateFuncs.now().minus(EntryVectorRecord.CREATED)
-            .lessEq(Exps.days(FUNNEL_TOTAL_DAYS));
+        FluentExp<Boolean> condition = DateFuncs.now().dateSub(EntryVectorRecord.CREATED).lessEq(
+            Exps.days(FUNNEL_TOTAL_DAYS));
         if (whereBit != null) {
-            condition = condition.and(whereBit);
+            condition = Ops.and(condition, whereBit);
         }
         clauses.add(new Where(condition));
 
@@ -491,7 +492,8 @@ public class MemberRepository extends DepotRepository
      * Execute a funnel report query that summarizes entry records grouped by vector,
      * optionally joined with the given external column and/or the given where condition.
      */
-    public List<FunnelByVectorRecord> funnelByVector (ColumnExp joinColumn, SQLExpression whereBit)
+    public List<FunnelByVectorRecord> funnelByVector (ColumnExp<?> joinColumn,
+                                                      SQLExpression<?> whereBit)
     {
         List<QueryClause> clauses = Lists.newArrayList(
             new FromOverride(EntryVectorRecord.class),
@@ -501,10 +503,10 @@ public class MemberRepository extends DepotRepository
             clauses.add(new Join(EntryVectorRecord.MEMBER_ID, joinColumn));
         }
 
-        FluentExp condition = DateFuncs.now().minus(EntryVectorRecord.CREATED)
+        FluentExp<Boolean> condition = DateFuncs.now().dateSub(EntryVectorRecord.CREATED)
             .lessEq(Exps.days(FUNNEL_TOTAL_DAYS));
         if (whereBit != null) {
-            condition = condition.and(whereBit);
+            condition = Ops.and(condition, whereBit);
         }
         clauses.add(new Where(condition));
 
@@ -518,7 +520,7 @@ public class MemberRepository extends DepotRepository
      */
     public List<Integer> findRetentionCandidates (Date earliestLastSession, Date latestLastSession)
     {
-        ColumnExp lastSess = MemberRecord.LAST_SESSION;
+        ColumnExp<Timestamp> lastSess = MemberRecord.LAST_SESSION;
         int noBits = Flag.NO_ANNOUNCE_EMAIL.getBit() | Flag.SPANKED.getBit();
         int yesBits = Flag.VALIDATED.getBit();
         Where where = new Where(Ops.and(lastSess.greaterThan(earliestLastSession),
@@ -1541,7 +1543,7 @@ public class MemberRepository extends DepotRepository
 
     @Inject protected UserActionRepository _actionRepo;
 
-    protected static final SQLExpression GREETER_FLAG_IS_SET =
+    protected static final SQLExpression<?> GREETER_FLAG_IS_SET =
         MemberRecord.FLAGS.bitAnd(MemberRecord.Flag.GREETER.getBit()).notEq(0);
 
     /**

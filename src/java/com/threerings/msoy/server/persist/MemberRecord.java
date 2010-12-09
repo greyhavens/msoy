@@ -218,9 +218,9 @@ public class MemberRecord extends PersistentRecord
     public int charityMemberId = 0;
 
     /** Defnies the index on {@link #name} converted to lower case. */
-    public static Tuple<SQLExpression, Order> ixLowerName ()
+    public static Tuple<SQLExpression<?>, Order> ixLowerName ()
     {
-        return new Tuple<SQLExpression, Order>(StringFuncs.lower(MemberRecord.NAME), Order.ASC);
+        return new Tuple<SQLExpression<?>, Order>(StringFuncs.lower(MemberRecord.NAME), Order.ASC);
     }
 
     /**

@@ -95,12 +95,12 @@ public class FunnelByVector implements JSONReporter
 
         // people who RETURNED have a session at least 24 hours after their creation time
         fromRecords(Phase.RETURNED, null, _memberRepo.funnelByVector(
-            MemberRecord.MEMBER_ID, MemberRecord.LAST_SESSION.minus(EntryVectorRecord.CREATED)
+            MemberRecord.MEMBER_ID, MemberRecord.LAST_SESSION.dateSub(EntryVectorRecord.CREATED)
                 .greaterEq(Exps.days(MemberRepository.FUNNEL_RETURNED_DAYS))));
 
         // people who were RETAINED are REGISTERED and also played at least 7 days after creation
         fromRecords(Phase.RETAINED, Phase.REGISTERED, _memberRepo.funnelByVector(
-            MemberRecord.MEMBER_ID, MemberRecord.LAST_SESSION.minus(EntryVectorRecord.CREATED)
+            MemberRecord.MEMBER_ID, MemberRecord.LAST_SESSION.dateSub(EntryVectorRecord.CREATED)
                     .greaterEq(Exps.days(MemberRepository.FUNNEL_RETAINED_DAYS))));
 
         // people who PAID are RETAINED who have also accumulated bars one way or another

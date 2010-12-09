@@ -47,16 +47,16 @@ public class FeedRepository extends DepotRepository
     public void loadPersonalFeed (int memberId, List<FeedMessageRecord> messages,
                                   Collection<Integer> friendIds, int cutoffDays)
     {
-        SQLExpression self = SelfFeedMessageRecord.TARGET_ID.eq(memberId);
+        SQLExpression<Boolean> self = SelfFeedMessageRecord.TARGET_ID.eq(memberId);
         loadFeedMessages(messages, SelfFeedMessageRecord.class, self, cutoffDays);
         if (!friendIds.isEmpty()) {
-            SQLExpression actors = null;
+            SQLExpression<Boolean> actors = null;
             actors = FriendFeedMessageRecord.ACTOR_ID.in(friendIds);
             loadFeedMessages(messages, FriendFeedMessageRecord.class, actors, cutoffDays);
         }
 
         // include actions the member has performed
-        SQLExpression actor = FriendFeedMessageRecord.ACTOR_ID.eq(memberId);
+        SQLExpression<Boolean> actor = FriendFeedMessageRecord.ACTOR_ID.eq(memberId);
         loadFeedMessages(messages, FriendFeedMessageRecord.class, actor, cutoffDays);
     }
 
@@ -70,7 +70,7 @@ public class FeedRepository extends DepotRepository
     {
         loadFeedMessages(messages, GlobalFeedMessageRecord.class, null, cutoffDays);
         if (!groupIds.isEmpty()) {
-            SQLExpression groups = null;
+            SQLExpression<Boolean> groups = null;
             groups = GroupFeedMessageRecord.GROUP_ID.in(groupIds);
             loadFeedMessages(messages, GroupFeedMessageRecord.class, groups, cutoffDays);
         }
@@ -203,9 +203,9 @@ public class FeedRepository extends DepotRepository
 
     protected void loadFeedMessages (List<FeedMessageRecord> messages,
                                      Class<? extends FeedMessageRecord> pClass,
-                                     SQLExpression main, int cutoffDays)
+                                     SQLExpression<?> main, int cutoffDays)
     {
-        List<SQLExpression> whereBits = Lists.newArrayList();
+        List<SQLExpression<?>> whereBits = Lists.newArrayList();
         if (main != null) {
             whereBits.add(main);
         }
