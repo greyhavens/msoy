@@ -3,9 +3,6 @@
 
 package client.msgs;
 
-import java.util.List;
-
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -31,9 +28,10 @@ public class FriendThreadListPanel extends ThreadListPanel
     }
 
     @Override // from ThreadListPanel
-    protected void doSearch (String query, AsyncCallback<List<ForumThread>> callback)
+    protected DataModel<ForumThread> doSearch (String query)
     {
         // TODO: this is not called because the search box is disabled in ForumPanel
+        return null;
     }
 
     @Override // from ThreadListPanel

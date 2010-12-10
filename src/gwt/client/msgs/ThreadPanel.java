@@ -5,6 +5,7 @@ package client.msgs;
 
 import java.util.List;
 
+import client.util.NonCountingDataModel;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DeferredCommand;
@@ -101,18 +102,21 @@ public class ThreadPanel extends TitledListPanel
     }
 
     // from interface SearchBox.Listener
-    public void search (String query)
+    public void search (final String query)
     {
         // replace search box with loading animation while fetching
         _theader.setWidget(0, 3, new MiniNowLoadingWidget(), 1, "Search");
 
-        _forumsvc.findMessages(_threadId, query, MAX_RESULTS,
-                               new InfoCallback<List<ForumMessage>>() {
-            public void onSuccess (List<ForumMessage> messages) {
-                _theader.setWidget(0, 3, _search, 1, "Search");
-                _mpanel.setModel(new SimpleDataModel<ForumMessage>(messages), 0);
+        _mpanel.setModel(new NonCountingDataModel<ForumMessage, List<ForumMessage>>() {
+            @Override protected void callFetchService (int start, int count, boolean needCount,
+                AsyncCallback<List<ForumMessage>> callback) {
+                _forumsvc.findMessages(_threadId, query, start, count, callback);
             }
-        });
+            @Override protected List<ForumMessage> getRows (List<ForumMessage> result) {
+                _theader.setWidget(0, 3, _search, 1, "Search");
+                return result;
+            }
+        }, 0);
     }
 
     // from interface SearchBox.Listener

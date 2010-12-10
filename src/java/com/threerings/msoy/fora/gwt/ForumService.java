@@ -63,44 +63,43 @@ public interface ForumService extends RemoteService
      * which there are messages not yet read by same. The threads are sorted from most to least
      * recently active.
      */
-    List<ForumThread> loadUnreadThreads (int maximum)
+    List<ForumThread> loadUnreadThreads (int offset, int count)
         throws ServiceException;
 
     /**
      * Loads up to <code>maximum</code> threads which contain unread posts by the caller's friends.
      */
-    List<ForumThread> loadUnreadFriendThreads (int maximum)
+    List<ForumThread> loadUnreadFriendThreads (int offset, int count)
         throws ServiceException;
 
     /**
      * Loads the specified range of threads for the specified group.
      */
-    ThreadResult loadThreads (int groupId, int offset, int count, boolean needTotalCount)
+    ThreadResult loadThreads (int groupId, int offset, int count)
         throws ServiceException;
 
     /**
      * Searches the subjects and messages in all threads in the specified group.
      */
-    List<ForumThread> findThreads (int groupId, String search, int limit)
+    List<ForumThread> findThreads (int groupId, String search, int offset, int count)
         throws ServiceException;
 
     /**
      * Searches the subjects and messages in all threads in groups to which the caller belongs
      */
-    List<ForumThread> findMyThreads (String search, int limit)
+    List<ForumThread> findMyThreads (String search, int offset, int count)
         throws ServiceException;
 
     /**
      * Loads the specified range of messages for the specified thread.
      */
-    MessageResult loadMessages (int threadId, int lastReadPostId, int offset, int count,
-                                boolean needTotalCount)
+    MessageResult loadMessages (int threadId, int lastReadPostId, int offset, int count, boolean needCount)
         throws ServiceException;
 
     /**
      * Searches the messages in a particular thread.
      */
-    List<ForumMessage> findMessages (int threadId, String search, int limit)
+    List<ForumMessage> findMessages (int threadId, String search, int offset, int count)
         throws ServiceException;
 
     /**

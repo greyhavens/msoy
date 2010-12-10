@@ -90,12 +90,12 @@ public class ForumLogic
     /**
      * Loads up to a maximum number threads that contain unread posts by the given member's friends.
      */
-    public List<ForumThread> loadUnreadFriendThreads (MemberRecord mrec, int maximum)
+    public List<ForumThread> loadUnreadFriendThreads (MemberRecord mrec, int offset, int count)
     {
         // load up the meta data of unread posts by friends
         List<ForumThreadRecord> threads = _forumRepo.loadUnreadFriendThreads(mrec.memberId,
             _memberRepo.loadFriendIds(mrec.memberId), _groupLogic.getHiddenGroupIds(
-                mrec.memberId, null), maximum);
+                mrec.memberId, null), offset, count);
 
         Map<Integer, GroupName> groupNames = _groupRepo.loadGroupNames(
             threads, new Function<ForumThreadRecord, Integer> () {

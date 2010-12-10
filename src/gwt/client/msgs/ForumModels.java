@@ -8,21 +8,22 @@ import java.util.List;
 
 import com.google.common.collect.Maps;
 
+import client.util.NonCountingDataModel;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
+import com.threerings.gwt.util.DataModel;
 import com.threerings.gwt.util.ListenerList;
-import com.threerings.gwt.util.SimpleDataModel;
 
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.fora.gwt.ForumMessage;
 import com.threerings.msoy.fora.gwt.ForumService;
+import com.threerings.msoy.fora.gwt.ForumService.ThreadResult;
 import com.threerings.msoy.fora.gwt.ForumServiceAsync;
 import com.threerings.msoy.fora.gwt.ForumThread;
 
 import client.shell.CShell;
-import client.util.MsoyPagedServiceDataModel;
 import client.util.MsoyServiceBackedDataModel;
 
 /**
@@ -32,7 +33,7 @@ public class ForumModels
 {
     /** A data model that provides a particular group's threads. */
     public class GroupThreads
-        extends MsoyPagedServiceDataModel<ForumThread, ForumService.ThreadResult>
+        extends NonCountingDataModel<ForumThread, ForumService.ThreadResult>
         implements ThreadContainer
     {
         public GroupThreads (int groupId) {
@@ -111,7 +112,13 @@ public class ForumModels
         }
 
         @Override // from ServiceBackedDataModel
-        protected void setCurrentResult (ForumService.ThreadResult result)
+        protected void callFetchService (int start, int count, boolean needCount,
+            AsyncCallback<ForumService.ThreadResult> callback)
+        {
+            _forumsvc.loadThreads(_groupId, start, count, callback);
+        }
+
+        @Override protected List<ForumThread> getRows (ThreadResult result)
         {
             _fetched = true;
             _canStartThread = result.canStartThread;
@@ -125,13 +132,7 @@ public class ForumModels
             if (result.page.size() > 0) {
                 gotGroupName(result.page.get(0).group);
             }
-        }
-
-        @Override // from ServiceBackedDataModel
-        protected void callFetchService (int start, int count, boolean needCount,
-            AsyncCallback<ForumService.ThreadResult> callback)
-        {
-            _forumsvc.loadThreads(_groupId, start, count, needCount, callback);
+            return result.page;
         }
 
         protected void gotGroupName (GroupName group) {
@@ -155,82 +156,54 @@ public class ForumModels
     }
 
     /** A data model that provides all threads unread by the authenticated user. */
-    public class UnreadThreads extends SimpleDataModel<ForumThread>
+    public class UnreadThreads extends NonCountingDataModel<ForumThread, List<ForumThread>>
         implements ThreadContainer
     {
-        public UnreadThreads ()
+        @Override protected void callFetchService (int start, int count, boolean needCount,
+            AsyncCallback<List<ForumThread>> callback)
         {
-            super(null);
+            _forumsvc.loadUnreadThreads(start, count, callback);
         }
 
-        // from interface DataModel
-        public void doFetchRows (
-            final int start, final int count, final AsyncCallback<List<ForumThread>> callback)
+        @Override
+        protected List<ForumThread> getRows (List<ForumThread> result)
         {
-            if (_items != null) {
-                super.doFetchRows(start, count, callback);
-                return;
+            for (ForumThread thread : result) {
+                updateThread(thread, UnreadThreads.this);
             }
-
-            _forumsvc.loadUnreadThreads(MAX_UNREAD_THREADS,
-                                        new AsyncCallback<List<ForumThread>>() {
-                public void onSuccess (List<ForumThread> result) {
-                    _items = result;
-                    for (ForumThread thread : result) {
-                        updateThread(thread, UnreadThreads.this);
-                    }
-                    doFetchRows(start, count, callback);
-                }
-                public void onFailure (Throwable failure) {
-                    callback.onFailure(failure);
-                }
-           });
+            return result;
         }
 
         // from ThreadContainer
         public void registerUpdate (ForumThread thread)
         {
-            ForumModels.replaceItem(_items, thread);
+            ForumModels.replaceItem(_pageItems, thread);
         }
     }
 
     /** A data model that provides all threads with unread posts by friends.  */
-    public class UnreadFriendsThreads extends SimpleDataModel<ForumThread>
+    public class UnreadFriendsThreads extends NonCountingDataModel<ForumThread, List<ForumThread>>
         implements ThreadContainer
     {
-        public UnreadFriendsThreads ()
+        @Override protected void callFetchService (int start, int count, boolean needCount,
+            AsyncCallback<List<ForumThread>> callback)
         {
-            super(null);
+            _forumsvc.loadUnreadFriendThreads(start, count, callback);
         }
 
-        // from interface DataModel
-        public void doFetchRows (
-            final int start, final int count, final AsyncCallback<List<ForumThread>> callback)
+        @Override
+        protected List<ForumThread> getRows (List<ForumThread> result)
         {
-            if (_items != null) {
-                super.doFetchRows(start, count, callback);
-                return;
+            for (ForumThread thread : result) {
+                updateThread(thread, UnreadFriendsThreads.this);
             }
-
-            _forumsvc.loadUnreadFriendThreads(MAX_UNREAD_THREADS,
-                                              new AsyncCallback<List<ForumThread>>()  {
-                public void onSuccess (List<ForumThread> result) {
-                    _items = result;
-                    for (ForumThread ft : result) {
-                        updateThread(ft, UnreadFriendsThreads.this);
-                    }
-                    doFetchRows(start, count, callback);
-                }
-                public void onFailure (Throwable failure) {
-                    callback.onFailure(failure);
-                }
-           });
+            return result;
         }
 
         // from ThreadContainer
         public void registerUpdate (ForumThread thread)
         {
-            ForumModels.replaceItem(_items, thread);
+            ForumModels.replaceItem(_pageItems, thread);
         }
     }
 
@@ -412,13 +385,12 @@ public class ForumModels
     /**
      * Searches a group's threads for a string and invokes a callback when the results are ready.
      */
-    public void searchGroupThreads (int groupId, String query,
-                                    AsyncCallback<List<ForumThread>> callback)
+    public DataModel<ForumThread> searchGroupThreads (int groupId, String query)
     {
         if (_search == null || !_search.equals(groupId, query)) {
             _search = new Search(groupId, query);
         }
-        _search.execute(callback);
+        return _search;
     }
 
     /**
@@ -472,6 +444,7 @@ public class ForumModels
      * Parameters and results of searching a group's threads or the user's unread threads.
      */
     protected static class Search
+        extends NonCountingDataModel<ForumThread, List<ForumThread>>
     {
         public Search (int groupId, String query) {
             _groupId = groupId;
@@ -482,27 +455,19 @@ public class ForumModels
             return _query.equals(query) && _groupId == groupId;
         }
 
-        public void execute (final AsyncCallback<List<ForumThread>> callback) {
-            if (_result != null) {
-                callback.onSuccess(_result);
+        @Override protected void callFetchService (int start, int count, boolean needCount,
+            AsyncCallback<List<ForumThread>> callback)
+        {
+            if (_groupId == 0) {
+                _forumsvc.findMyThreads(_query, start, count, callback);
+            } else {
+                _forumsvc.findThreads(_groupId, _query, start, count, callback);
             }
-            doSearch(new AsyncCallback<List<ForumThread>> () {
-                public void onSuccess (List<ForumThread> result) {
-                    _result = result;
-                    callback.onSuccess(result);
-                }
-                public void onFailure (Throwable cause) {
-                    callback.onFailure(cause);
-                }
-            });
         }
 
-        protected void doSearch (AsyncCallback<List<ForumThread>> callback) {
-            if (_groupId == 0) {
-                _forumsvc.findMyThreads(_query, MAX_RESULTS, callback);
-            } else {
-                _forumsvc.findThreads(_groupId, _query, MAX_RESULTS, callback);
-            }
+        @Override protected List<ForumThread> getRows (List<ForumThread> result)
+        {
+            return result;
         }
 
         protected int _groupId;

@@ -14,37 +14,37 @@ public interface ForumServiceAsync
     /**
      * The async version of {@link ForumService#loadUnreadThreads}.
      */
-    void loadUnreadThreads (int maximum, AsyncCallback<List<ForumThread>> callback);
+    void loadUnreadThreads (int offset, int count, AsyncCallback<List<ForumThread>> callback);
 
     /**
      * The async version of {@link ForumService#loadUnreadFriendThreads}.
      */
-    void loadUnreadFriendThreads (int maximum, AsyncCallback<List<ForumThread>> callback);
+    void loadUnreadFriendThreads (int offset, int count, AsyncCallback<List<ForumThread>> callback);
 
     /**
      * The async version of {@link ForumService#loadThreads}.
      */
-    void loadThreads (int groupId, int offset, int count, boolean needTotalCount, AsyncCallback<ForumService.ThreadResult> callback);
+    void loadThreads (int groupId, int offset, int count, AsyncCallback<ForumService.ThreadResult> callback);
 
     /**
      * The async version of {@link ForumService#findThreads}.
      */
-    void findThreads (int groupId, String search, int limit, AsyncCallback<List<ForumThread>> callback);
+    void findThreads (int groupId, String search, int offset, int count, AsyncCallback<List<ForumThread>> callback);
 
     /**
      * The async version of {@link ForumService#findMyThreads}.
      */
-    void findMyThreads (String search, int limit, AsyncCallback<List<ForumThread>> callback);
+    void findMyThreads (String search, int offset, int count, AsyncCallback<List<ForumThread>> callback);
 
     /**
      * The async version of {@link ForumService#loadMessages}.
      */
-    void loadMessages (int threadId, int lastReadPostId, int offset, int count, boolean needTotalCount, AsyncCallback<ForumService.MessageResult> callback);
+    void loadMessages (int threadId, int lastReadPostId, int offset, int count, boolean needCount, AsyncCallback<ForumService.MessageResult> callback);
 
     /**
      * The async version of {@link ForumService#findMessages}.
      */
-    void findMessages (int threadId, String search, int limit, AsyncCallback<List<ForumMessage>> callback);
+    void findMessages (int threadId, String search, int offset, int count, AsyncCallback<List<ForumMessage>> callback);
 
     /**
      * The async version of {@link ForumService#createThread}.

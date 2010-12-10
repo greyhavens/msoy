@@ -171,13 +171,11 @@ public class RoomObjectController extends RoomController
 
         // then add our custom menu items
         if (occInfo.bodyOid == us.getOid()) {
-            // see if we can control our own avatar right now...
-            const canControl :Boolean = _wdctx.worldProps.userControlsAvatar;
             // if we're not a guest add a menu for changing avatars
-            menuItems.push(createChangeAvatarMenu(us, canControl));
+            menuItems.push(createChangeAvatarMenu(us, true));
             // add our custom menu items (avatar actions and states)
             if (avatar != null) {
-                addSelfMenuItems(avatar, menuItems, canControl);
+                addSelfMenuItems(avatar, menuItems, true);
             }
 
         } else { // shown when clicking on someone else

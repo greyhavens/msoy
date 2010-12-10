@@ -27,13 +27,13 @@ public class UnreadThreadListPanel extends ThreadListPanel
 {
     public UnreadThreadListPanel (ForumPanel parent, ForumModels fmodels)
     {
-        super(parent, fmodels, new String[] {"unread"});
+        super(parent, fmodels, new String[]{"unread"});
     }
 
     @Override // from ThreadListPanel
-    protected void doSearch (String query, AsyncCallback<List<ForumThread>> callback)
+    protected DataModel<ForumThread> doSearch (String query)
     {
-        _fmodels.searchGroupThreads(0, query, callback);
+        return _fmodels.searchGroupThreads(0, query);
     }
 
     @Override // from ThreadListPanel

@@ -73,7 +73,7 @@ public class ForumServlet extends MsoyServiceServlet
     implements ForumService
 {
     // from interface ForumService
-    public List<ForumThread> loadUnreadThreads (int maximum)
+    public List<ForumThread> loadUnreadThreads (int offset, int count)
         throws ServiceException
     {
         MemberRecord mrec = requireAuthedUser();
@@ -95,22 +95,22 @@ public class ForumServlet extends MsoyServiceServlet
         if (groups.size() == 0) {
             thrrecs = Collections.emptyList();
         } else {
-            thrrecs = _forumRepo.loadUnreadThreads(mrec.memberId, groups.keySet(), maximum);
+            thrrecs = _forumRepo.loadUnreadThreads(mrec.memberId, groups.keySet(), offset, count);
         }
 
         return _forumLogic.resolveThreads(mrec, thrrecs, groups, true, false);
     }
 
     // from interface ForumService
-    public List<ForumThread> loadUnreadFriendThreads (int maximum)
+    public List<ForumThread> loadUnreadFriendThreads (int offset, int count)
         throws ServiceException
     {
         MemberRecord mrec = requireAuthedUser();
-        return _forumLogic.loadUnreadFriendThreads(mrec, maximum);
+        return _forumLogic.loadUnreadFriendThreads(mrec, offset, count);
     }
 
     // from interface ForumService
-    public ThreadResult loadThreads (int groupId, int offset, int count, boolean needTotalCount)
+    public ThreadResult loadThreads (int groupId, int offset, int count)
         throws ServiceException
     {
         MemberRecord mrec = getAuthedUser();
@@ -138,17 +138,11 @@ public class ForumServlet extends MsoyServiceServlet
         result.isManager = (mrec != null && mrec.isSupport()) || (groupRank == Rank.MANAGER);
         result.isAnnounce = (groupId == ServerConfig.getAnnounceGroupId());
 
-        // fill in our total thread count if needed
-        if (needTotalCount) {
-            result.total = (result.page.size() < count && offset == 0) ?
-                result.page.size() : _forumRepo.loadThreadCount(groupId);
-        }
-
         return result;
     }
 
     // from interface ForumService
-    public List<ForumThread> findThreads (int groupId, String search, int limit)
+    public List<ForumThread> findThreads (int groupId, String search, int offset, int count)
         throws ServiceException
     {
         MemberRecord mrec = getAuthedUser();
@@ -161,11 +155,11 @@ public class ForumServlet extends MsoyServiceServlet
 
         Map<Integer,GroupName> gmap = Collections.singletonMap(group.groupId, group.getName());
         return _forumLogic.resolveThreads(
-            mrec, _forumRepo.findThreads(groupId, search, limit), gmap, true, false);
+            mrec, _forumRepo.findThreads(groupId, search, offset, count), gmap, true, false);
     }
 
     // from interface ForumService
-    public List<ForumThread> findMyThreads (String search, int limit)
+    public List<ForumThread> findMyThreads (String search, int offset, int count)
         throws ServiceException
     {
         MemberRecord mrec = getAuthedUser();
@@ -178,7 +172,7 @@ public class ForumServlet extends MsoyServiceServlet
 
         // find the thread records and resolve them
         List<ForumThreadRecord> thrrecs = _forumRepo.findThreadsIn(
-            mrec.memberId, groups.keySet(), search, limit);
+            mrec.memberId, groups.keySet(), search, offset, count);
         return _forumLogic.resolveThreads(mrec, thrrecs, groups, true, false);
     }
 
@@ -251,7 +245,7 @@ public class ForumServlet extends MsoyServiceServlet
     }
 
     // from interface ForumService
-    public List<ForumMessage> findMessages (int threadId, String search, int limit)
+    public List<ForumMessage> findMessages (int threadId, String search, int offset, int count)
         throws ServiceException
     {
         MemberRecord mrec = getAuthedUser();
@@ -269,7 +263,7 @@ public class ForumServlet extends MsoyServiceServlet
 
         // do the search
         List<ForumMessage> messages = _forumLogic.resolveMessages(
-            _forumRepo.findMessages(threadId, search, limit));
+            _forumRepo.findMessages(threadId, search, offset, count));
 
         // fill in the index for permalinks
         IntIntMap idToIndex = _forumRepo.loadMessageIds(threadId);

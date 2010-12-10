@@ -89,7 +89,7 @@ public abstract class ThreadListPanel extends PagedGrid<ForumThread>
      * Performs a search on the contents of this thread list using the supplied query. This will
      * normally involve a call to a model from {@link ForumModels}.
      */
-    protected abstract void doSearch (String query, AsyncCallback<List<ForumThread>> callback);
+    protected abstract DataModel<ForumThread> doSearch (String query);
 
     /**
      * Same as {@link #setPage(String, int)}, but optionally forces the model to be reset to that
@@ -106,11 +106,7 @@ public abstract class ThreadListPanel extends PagedGrid<ForumThread>
             if (StringUtil.isBlank(query)) {
                 setModel(getThreadListModel(), page);
             } else {
-                doSearch(query, new InfoCallback<List<ForumThread>>() {
-                    public void onSuccess (List<ForumThread> threads) {
-                        setModel(new SimpleDataModel<ForumThread>(threads), page);
-                    }
-                });
+                setModel(doSearch(query), page);
             }
         }
     }

@@ -15,7 +15,10 @@ import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.depot.CountRecord;
+import com.samskivert.util.IntIntMap;
+
+import com.threerings.presents.annotation.BlockingThread;
+
 import com.samskivert.depot.DatabaseException;
 import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.Exps;
@@ -23,20 +26,15 @@ import com.samskivert.depot.Key;
 import com.samskivert.depot.Ops;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
+import com.samskivert.depot.Query;
 import com.samskivert.depot.SchemaMigration;
-import com.samskivert.depot.clause.FromOverride;
-import com.samskivert.depot.clause.GroupBy;
 import com.samskivert.depot.clause.Join;
 import com.samskivert.depot.clause.Limit;
 import com.samskivert.depot.clause.OrderBy;
-import com.samskivert.depot.clause.QueryClause;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.expression.SQLExpression;
 import com.samskivert.depot.operator.FullText;
-import com.samskivert.util.IntIntMap;
-
-import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.msoy.fora.gwt.ForumThread;
 import com.threerings.msoy.server.persist.RepositoryUtil;
@@ -62,12 +60,14 @@ public class ForumRepository extends DepotRepository
      * have messages that are unread by the specified member. The results are ordered from newest
      * to oldest.
      */
-    public List<ForumThreadRecord> loadUnreadThreads (int memberId, Set<Integer> groupIds, int max)
+    public List<ForumThreadRecord> loadUnreadThreads (
+        int memberId, Set<Integer> groupIds, int start, int count)
     {
-        List<QueryClause> clauses = getUnreadThreadsClauses(memberId, groupIds);
-        clauses.add(new Limit(0, max));
-        clauses.add(OrderBy.descending(ForumThreadRecord.MOST_RECENT_POST_ID));
-        return findAll(ForumThreadRecord.class, CacheStrategy.RECORDS, clauses);
+        return forUnreadThreads(from(ForumThreadRecord.class), memberId, groupIds)
+            .limit(start, count)
+            .descending(ForumThreadRecord.MOST_RECENT_POST_ID)
+            .cache(CacheStrategy.RECORDS)
+        .select();
     }
 
     /**
@@ -76,9 +76,7 @@ public class ForumRepository extends DepotRepository
      */
     public int countUnreadThreads (int memberId, Set<Integer> groupIds)
     {
-        List<QueryClause> clauses = getUnreadThreadsClauses(memberId, groupIds);
-        clauses.add(new FromOverride(ForumThreadRecord.class));
-        return load(CountRecord.class, clauses.toArray(new QueryClause[clauses.size()])).count;
+        return forUnreadThreads(from(ForumThreadRecord.class), memberId, groupIds).selectCount();
     }
 
     /**
@@ -86,16 +84,16 @@ public class ForumRepository extends DepotRepository
      * member, up to a maximum. Threads for the given hidden groups are not returned.
      */
     public List<ForumThreadRecord> loadUnreadFriendThreads (
-        int memberId, Set<Integer> posterIds, Set<Integer> hiddenGroupIds, int max)
+        int memberId, Set<Integer> posterIds, Set<Integer> hiddenGroupIds, int offset, int count)
     {
         if (posterIds.isEmpty()) {
             return Collections.emptyList();
         }
-        List<QueryClause> clauses = getUnreadFriendThreadsClauses(
-            memberId, posterIds, hiddenGroupIds);
-        clauses.add(new Limit(0, max));
-        clauses.add(OrderBy.descending(ForumThreadRecord.MOST_RECENT_POST_ID));
-        return findAll(ForumThreadRecord.class, clauses);
+        return forUnreadFriendThreads(
+            from(ForumThreadRecord.class), memberId, posterIds, hiddenGroupIds)
+            .limit(offset, count)
+            .descending(ForumThreadRecord.MOST_RECENT_POST_ID)
+            .select();
     }
 
     /**
@@ -108,13 +106,9 @@ public class ForumRepository extends DepotRepository
         if (posterIds.isEmpty()) {
             return 0;
         }
-        List<QueryClause> clauses = getUnreadFriendThreadsClauses(
-            memberId, posterIds, hiddenGroupIds);
-        clauses.add(new FromOverride(ForumThreadRecord.class));
-        // This will count the number of unread friends posts in each thread. Since we only care
-        // about the number of threads, return only the number of grouped counts returned.
-        // TODO: there must be a more efficient SQL-native way to do this, maybe count(count(*))?
-        return findAll(CountRecord.class, clauses).size();
+        return forUnreadFriendThreads(
+            from(ForumThreadRecord.class), memberId, posterIds, hiddenGroupIds)
+            .selectCount();
     }
 
     /**
@@ -122,10 +116,8 @@ public class ForumRepository extends DepotRepository
      */
     public List<ForumThreadRecord> loadRecentThreads (int groupId, int count)
     {
-        return findAll(ForumThreadRecord.class,
-                       new Where(ForumThreadRecord.GROUP_ID, groupId),
-                       new Limit(0, count),
-                       OrderBy.descending(ForumThreadRecord.THREAD_ID));
+        return from(ForumThreadRecord.class).where(ForumThreadRecord.GROUP_ID, groupId)
+            .limit(count).descending(ForumThreadRecord.THREAD_ID).select();
     }
 
     /**
@@ -133,9 +125,8 @@ public class ForumRepository extends DepotRepository
      */
     public int loadThreadCount (int groupId)
     {
-        return load(CountRecord.class,
-                    new FromOverride(ForumThreadRecord.class),
-                    new Where(ForumThreadRecord.GROUP_ID, groupId)).count;
+        return from(ForumThreadRecord.class).where(ForumThreadRecord.GROUP_ID, groupId)
+            .selectCount();
     }
 
     /**
@@ -143,12 +134,10 @@ public class ForumRepository extends DepotRepository
      */
     public int loadMessageCount (int groupId)
     {
-        return load(CountRecord.class,
-            new FromOverride(ForumThreadRecord.class, ForumMessageRecord.class),
-            new Where(Ops.and(
-                ForumThreadRecord.GROUP_ID.eq(groupId),
-                ForumThreadRecord.THREAD_ID.eq(ForumMessageRecord.THREAD_ID)))
-            ).count;
+        return from(ForumThreadRecord.class).where(
+            ForumThreadRecord.GROUP_ID.eq(groupId),
+            ForumThreadRecord.THREAD_ID.eq(ForumMessageRecord.THREAD_ID))
+            .selectCount();
     }
 
     /**
@@ -157,13 +146,14 @@ public class ForumRepository extends DepotRepository
      */
     public List<ForumThreadRecord> loadThreads (int groupId, int offset, int count)
     {
-        return findAll(ForumThreadRecord.class, CacheStrategy.RECORDS, Lists.newArrayList(
-                       new Where(ForumThreadRecord.GROUP_ID, groupId),
-                       new Limit(offset, count),
-                       new OrderBy(
-                           new SQLExpression<?>[] { ForumThreadRecord.STICKY,
-                                                    ForumThreadRecord.MOST_RECENT_POST_ID },
-                           new OrderBy.Order[] { OrderBy.Order.DESC, OrderBy.Order.DESC })));
+        return from(ForumThreadRecord.class).cacheRecords()
+            .where(ForumThreadRecord.GROUP_ID, groupId)
+            .limit(offset, count)
+            .orderBy(new OrderBy(
+                new SQLExpression<?>[]{ForumThreadRecord.STICKY,
+                        ForumThreadRecord.MOST_RECENT_POST_ID},
+                    new OrderBy.Order[]{OrderBy.Order.DESC, OrderBy.Order.DESC}))
+            .select();
     }
 
     /**
@@ -171,26 +161,28 @@ public class ForumRepository extends DepotRepository
      */
     public List<ForumThreadRecord> loadThreads (Collection<Integer> threadIds)
     {
-        return loadAll(ForumThreadRecord.class, threadIds);
+        return from(ForumThreadRecord.class).
+            where(ForumThreadRecord.THREAD_ID.in(threadIds))
+            .select();
     }
 
     /**
      * Finds all threads that match the specified search in their subject or for which one or more
      * of their messages matches the supplied search.
      */
-    public List<ForumThreadRecord> findThreads (int groupId, String search, int limit)
+    public List<ForumThreadRecord> findThreads (int groupId, String search, int offset, int count)
     {
         FullText ftsSubject = new FullText(ForumThreadRecord.class,
             ForumThreadRecord.FTS_SUBJECT, search);
         FullText ftsMessage = new FullText(ForumMessageRecord.class,
             ForumMessageRecord.FTS_MESSAGE, search);
-        SQLExpression<?> where = Ops.and(
-            ForumThreadRecord.GROUP_ID.eq(groupId), Ops.or(ftsSubject.match(), ftsMessage.match()));
-        SQLExpression<?> rank = ftsSubject.rank().times(5).plus(ftsMessage.rank());
-
-        return findAll(ForumThreadRecord.class,
-                       ForumThreadRecord.THREAD_ID.join(ForumMessageRecord.THREAD_ID),
-                       new Where(where), OrderBy.descending(rank), new Limit(0, limit));
+        return from(ForumThreadRecord.class)
+            .join(ForumThreadRecord.THREAD_ID, ForumMessageRecord.THREAD_ID)
+            .where(ForumThreadRecord.GROUP_ID.eq(groupId),
+                   Ops.or(ftsSubject.match(), ftsMessage.match()))
+            .descending(ftsSubject.rank().times(5).plus(ftsMessage.rank()))
+            .limit(offset, count)
+            .select();
     }
 
     /**
@@ -198,29 +190,24 @@ public class ForumRepository extends DepotRepository
      * for which one or more of their messages matches the supplied search.
      */
     public List<ForumThreadRecord> findThreadsIn (
-        int memberId, Set<Integer> groupIds, String search, int limit)
+        int memberId, Set<Integer> groupIds, String search, int offset, int count)
     {
         if (groupIds.isEmpty()) {
             return Collections.emptyList();
         }
 
-        SQLExpression<?> cacheJoinAnd = Ops.and(
-            ForumThreadRecord.THREAD_ID.eq(ReadTrackingRecord.THREAD_ID),
-            ReadTrackingRecord.MEMBER_ID.eq(memberId)
-        );
-        SQLExpression<?> where = Ops.and(
-            ForumThreadRecord.GROUP_ID.in(groupIds),
-            Ops.or(new FullText(ForumThreadRecord.class,
-                                ForumThreadRecord.FTS_SUBJECT, search).match(),
-                   new FullText(ForumMessageRecord.class,
-                                ForumMessageRecord.FTS_MESSAGE, search).match()));
+        FullText ftsSubject = new FullText(ForumThreadRecord.class,
+            ForumThreadRecord.FTS_SUBJECT, search);
+        FullText ftsMessage = new FullText(ForumMessageRecord.class,
+            ForumMessageRecord.FTS_MESSAGE, search);
 
-        // consult the cache for records, but not for the keyset
-        return findAll(ForumThreadRecord.class, CacheStrategy.RECORDS, Lists.newArrayList(
-            ForumThreadRecord.THREAD_ID.join(ForumMessageRecord.THREAD_ID),
-            new Join(ReadTrackingRecord.class, cacheJoinAnd).setType(Join.Type.LEFT_OUTER),
-            new Where(where),
-            new Limit(0, limit)));
+        return from(ForumThreadRecord.class).cacheRecords()
+            .join(ForumThreadRecord.THREAD_ID, ForumMessageRecord.THREAD_ID)
+            .where(ForumThreadRecord.GROUP_ID.in(groupIds),
+                Ops.or(ftsSubject.match(), ftsMessage.match()))
+            .limit(offset, count)
+            .descending(ftsSubject.rank().times(5).plus(ftsMessage.rank()))
+            .select();
     }
 
     /**
@@ -229,21 +216,26 @@ public class ForumRepository extends DepotRepository
      */
     public List<ForumMessageRecord> loadMessages (int threadId, int offset, int count)
     {
-        return findAll(ForumMessageRecord.class,
-                       new Where(ForumMessageRecord.THREAD_ID, threadId),
-                       new Limit(offset, count),
-                       OrderBy.ascending(ForumMessageRecord.CREATED));
+        return from(ForumMessageRecord.class)
+            .where(ForumMessageRecord.THREAD_ID, threadId)
+            .limit(offset, count)
+            .ascending(ForumMessageRecord.CREATED)
+            .select();
     }
 
     /**
      * Searches the messages in a particular thread for a search string.
      */
-    public List<ForumMessageRecord> findMessages (int threadId, String search, int limit)
+    public List<ForumMessageRecord> findMessages (
+        int threadId, String search, int offset, int count)
     {
-        SQLExpression<?> where = Ops.and(ForumMessageRecord.THREAD_ID.eq(threadId),
-                                      new FullText(ForumMessageRecord.class,
-                                                   ForumMessageRecord.FTS_MESSAGE, search).match());
-        return findAll(ForumMessageRecord.class, new Where(where), new Limit(0, limit));
+        FullText ftsMessage = new FullText(ForumMessageRecord.class,
+            ForumMessageRecord.FTS_MESSAGE, search);
+        return from(ForumMessageRecord.class)
+            .where(ForumMessageRecord.THREAD_ID.eq(threadId), ftsMessage.match())
+            .descending(ftsMessage.rank())
+            .limit(offset, count)
+            .select();
     }
 
     /**
@@ -251,11 +243,14 @@ public class ForumRepository extends DepotRepository
      */
     public IntIntMap loadMessageIds (int threadId)
     {
+        List<Key<ForumMessageRecord>> keys = from(ForumMessageRecord.class)
+            .where(ForumMessageRecord.THREAD_ID.eq(threadId))
+            .ascending(ForumMessageRecord.CREATED)
+            .selectKeys(false);
+
         IntIntMap idToIndex = new IntIntMap();
         int index = 0;
-        for (Key<ForumMessageRecord> key : findAllKeys(ForumMessageRecord.class, false,
-            new Where(ForumMessageRecord.THREAD_ID.eq(threadId)),
-            OrderBy.ascending(ForumMessageRecord.CREATED))) {
+        for (Key<ForumMessageRecord> key : keys) {
             idToIndex.put(ForumMessageRecord.extractMessageId(key), index++);
         }
         return idToIndex;
@@ -461,34 +456,40 @@ public class ForumRepository extends DepotRepository
                   new Where(ReadTrackingRecord.MEMBER_ID.in(memberIds)));
     }
 
-    protected List<QueryClause> getUnreadThreadsClauses (int memberId, Set<Integer> groupIds)
+    protected Query<ForumThreadRecord> forUnreadThreads (
+        Query<ForumThreadRecord> builder, int memberId, Set<Integer> groupIds)
     {
-        SQLExpression<?> join = Ops.and(
+        Join join = new Join(ReadTrackingRecord.class, Ops.and(
             ForumThreadRecord.THREAD_ID.eq(ReadTrackingRecord.THREAD_ID),
-            ReadTrackingRecord.MEMBER_ID.eq(memberId)
-        );
-        SQLExpression<?> where = Ops.and(
-            ForumThreadRecord.GROUP_ID.in(groupIds),
-            ForumThreadRecord.MOST_RECENT_POST_TIME.greaterThan(
-                RepositoryUtil.getCutoff(UNREAD_POSTS_CUTOFF)),
-            Ops.or(ReadTrackingRecord.THREAD_ID.isNull(),
-                   Ops.and(ReadTrackingRecord.MEMBER_ID.eq(memberId),
-                           ForumThreadRecord.MOST_RECENT_POST_ID.greaterThan(
-                               ReadTrackingRecord.LAST_READ_POST_ID))));
-        return Lists.newArrayList(
-            new Join(ReadTrackingRecord.class, join).setType(Join.Type.LEFT_OUTER),
-            new Where(where));
+            ReadTrackingRecord.MEMBER_ID.eq(memberId)));
+        join.setType(Join.Type.LEFT_OUTER);
+
+        return builder.join(join)
+            .where(Ops.and(
+                ReadTrackingRecord.MEMBER_ID.eq(memberId),
+                ForumThreadRecord.GROUP_ID.in(groupIds),
+                ForumThreadRecord.MOST_RECENT_POST_TIME.greaterThan(
+                    RepositoryUtil.getCutoff(UNREAD_POSTS_CUTOFF)),
+                Ops.or(ReadTrackingRecord.THREAD_ID.isNull(),
+                    Ops.and(ReadTrackingRecord.MEMBER_ID.eq(memberId),
+                        ForumThreadRecord.MOST_RECENT_POST_ID.greaterThan(
+                            ReadTrackingRecord.LAST_READ_POST_ID)))));
     }
 
-    protected List<QueryClause> getUnreadFriendThreadsClauses (
-        int memberId, Set<Integer> authorIds, Set<Integer> hiddenGroupIds)
+    protected Query<ForumThreadRecord> forUnreadFriendThreads (
+        Query<ForumThreadRecord> builder, int memberId, Set<Integer> authorIds,
+        Set<Integer> hiddenGroupIds)
     {
-        // join expressions
-        SQLExpression<?> joinRead = Ops.and(
+        Join joinRead = new Join(ReadTrackingRecord.class, Ops.and(
             ForumThreadRecord.THREAD_ID.eq(ReadTrackingRecord.THREAD_ID),
-            ReadTrackingRecord.MEMBER_ID.eq(memberId));
-        SQLExpression<?> joinThread = Ops.and(
+            ReadTrackingRecord.MEMBER_ID.eq(memberId)));
+        joinRead.setType(Join.Type.LEFT_OUTER);
+
+        Join joinThread = new Join(ForumMessageRecord.class,
             ForumThreadRecord.THREAD_ID.eq(ForumMessageRecord.THREAD_ID));
+        joinThread.setType(Join.Type.INNER);
+
+        builder.join(joinRead).join(joinThread);
 
         // filtering expressions
         List<SQLExpression<?>> conditions = Lists.newArrayListWithCapacity(4);
@@ -503,12 +504,8 @@ public class ForumRepository extends DepotRepository
         conditions.add(ForumMessageRecord.CREATED.greaterThan(
                            RepositoryUtil.getCutoff(UNREAD_POSTS_CUTOFF)));
 
-        // joins + group + filter
-        return Lists.newArrayList(
-            new Join(ReadTrackingRecord.class, joinRead).setType(Join.Type.LEFT_OUTER),
-            new Join(ForumMessageRecord.class, joinThread).setType(Join.Type.INNER),
-            new GroupBy(ForumThreadRecord.THREAD_ID, ForumThreadRecord.MOST_RECENT_POST_ID),
-            new Where(Ops.and(conditions)));
+        return builder.where(conditions)
+            .groupBy(ForumThreadRecord.THREAD_ID, ForumThreadRecord.MOST_RECENT_POST_ID);
     }
 
     @Override // from DepotRepository
