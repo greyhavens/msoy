@@ -22,7 +22,9 @@ public class PrizeEditor extends IdentGameItemEditor
     @Override // from ItemEditor
     public Item createBlankItem ()
     {
-        return new Prize();
+        Prize prize = new Prize();
+        prize.targetType = MsoyItemType.AVATAR;
+        return prize;
     }
 
     @Override // from ItemEditor
@@ -31,7 +33,7 @@ public class PrizeEditor extends IdentGameItemEditor
         super.setItem(item);
         _prize = (Prize)item;
 
-        String targetType = ""+_prize.targetType;
+        String targetType = Byte.toString(_prize.targetType.toByte());
         for (int ii = 0; ii < _targetType.getItemCount(); ii++) {
             if (_targetType.getValue(ii).equals(targetType)) {
                 _targetType.setSelectedIndex(ii);
@@ -53,7 +55,7 @@ public class PrizeEditor extends IdentGameItemEditor
         _targetType.addItem(_emsgs.prizeSelectType(), "0");
         for (MsoyItemType type : MsoyItemType.values()) {
             if (type.isGiftType()) {
-                _targetType.addItem(_dmsgs.xlateItemType(type), ""+type);
+                _targetType.addItem(_dmsgs.xlateItemType(type), Byte.toString(type.toByte()));
             }
         }
 
