@@ -598,7 +598,8 @@ public class SpamLogic
         }
 
         // list of threads with unread posts from friends
-        List<ForumThread> threads = _forumLogic.loadUnreadFriendThreads(mrec, FRIEND_THREAD_COUNT);
+        List<ForumThread> threads =
+            _forumLogic.loadUnreadFriendThreads(mrec, 0, FRIEND_THREAD_COUNT);
         if (threads.size() > 0) {
             params.set("threads", Lists.transform(threads,
                 new Function<ForumThread, EmailForumThread>() {
