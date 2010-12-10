@@ -16,6 +16,7 @@ import com.threerings.presents.dobj.AttributeChangedEvent;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 
+import com.threerings.msoy.world.client.WorldClient;
 import com.threerings.msoy.world.client.WorldContext;
 
 import com.threerings.msoy.room.client.RoomObjectView;
@@ -125,7 +126,7 @@ public class TourDirector extends BasicDirector
     {
         super.clientObjectUpdated(client);
 
-        client.getClientObject().addListener(new AttributeChangeAdapter(cliObjAttrChanged));
+        WorldClient(client).bodyOf().addListener(new AttributeChangeAdapter(cliObjAttrChanged));
         checkTouringStatus();
     }
 

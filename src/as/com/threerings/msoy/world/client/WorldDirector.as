@@ -22,6 +22,7 @@ import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.world.client.WorldClient;
 
 import com.threerings.msoy.item.data.all.Avatar;
 
@@ -187,7 +188,7 @@ public class WorldDirector extends BasicDirector
     override protected function clientObjectUpdated (client :Client) :void
     {
         super.clientObjectUpdated(client);
-        client.getClientObject().addListener(_followingNotifier);
+        WorldClient(client).bodyOf().addListener(_followingNotifier);
     }
 
     // from BasicDirector
