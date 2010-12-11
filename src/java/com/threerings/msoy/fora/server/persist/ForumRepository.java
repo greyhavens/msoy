@@ -466,7 +466,6 @@ public class ForumRepository extends DepotRepository
 
         return builder.join(join)
             .where(Ops.and(
-                ReadTrackingRecord.MEMBER_ID.eq(memberId),
                 ForumThreadRecord.GROUP_ID.in(groupIds),
                 ForumThreadRecord.MOST_RECENT_POST_TIME.greaterThan(
                     RepositoryUtil.getCutoff(UNREAD_POSTS_CUTOFF)),
