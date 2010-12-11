@@ -153,10 +153,8 @@ public class MsoyServer extends MsoyBaseServer
             return;
         }
 
-        // if we're on the dev server, up our long invoker warning to 3 seconds
-        if (ServerConfig.autoRestart) {
-            Invoker.setDefaultLongThreshold(3000L);
-        }
+        // configure the invoker with the correct warning threshold
+        Invoker.setDefaultLongThreshold(ServerConfig.longInvokerUnit);
 
         runServer(new MsoyModule(), new PresentsServerModule(MsoyServer.class));
     }

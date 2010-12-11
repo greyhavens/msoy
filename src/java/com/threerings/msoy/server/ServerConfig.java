@@ -130,6 +130,9 @@ public class ServerConfig
     /** True if the server should restart when code changes. */
     public static boolean autoRestart;
 
+    /** How many milliseconds an invoker unit should run before it's logged as a warning. */
+    public static int longInvokerUnit;
+
     /**
      * Returns a provider of JDBC connections.
      */
@@ -388,5 +391,6 @@ public class ServerConfig
         localBureaus = config.getValue("local_bureaus", true);
         windowSharedSecret = config.getValue("window_secret", "");
         autoRestart = config.getValue("auto_restart", false);
+        longInvokerUnit = config.getValue("long_invoker_unit", 3000);
     }
 }

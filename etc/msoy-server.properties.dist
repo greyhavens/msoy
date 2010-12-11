@@ -89,6 +89,11 @@ server_root = /export/msoy
 # auto_restart = false
 
 #
+# How many milliseconds an invoker unit may run before it's logged as a warning.
+
+# long_invoker_unit = 3000
+
+#
 # Email addresses used by the server
 
 from_address = "Whirled Mailbot" <peas@whirled.com>
