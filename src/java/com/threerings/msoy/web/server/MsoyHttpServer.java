@@ -132,7 +132,7 @@ public class MsoyHttpServer extends JettyPulseHttpServer
 
     @Inject public MsoyHttpServer (Injector injector, Lifecycle cycle)
     {
-        super(2000, 10000);
+        super(8000, 20000);
         // turn our servlet classes into instances with fully resolved dependencies
         for (Map.Entry<String, Class<? extends HttpServlet>> entry : SERVLETS.entrySet()) {
             _servlets.put(entry.getKey(), injector.getInstance(entry.getValue()));
