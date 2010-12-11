@@ -120,7 +120,7 @@ public class MsoySceneRegistry extends SpotSceneRegistry
                             // if we successfully hosted the scene, see if theme also needs to be
                             int themeId = ((MsoyScene)(scmgr.getScene())).getThemeId();
                             if (themeId != 0) {
-                                _themeReg.maybeHostTheme(themeId, new NOOP<Integer>());
+                                _themeReg.noteThemeVisisted(themeId);
                             }
                         }
                         public void sceneFailedToResolve (int sceneId, Exception reason) {

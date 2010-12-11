@@ -45,7 +45,6 @@ import com.threerings.msoy.server.PopularPlacesSnapshot;
  * Maintains information regarding existing themes and which ones we're responsible
  * for persisting popularity changes to.
  */
-
 @Singleton
 public class ThemeRegistry
     implements Lifecycle.Component
@@ -64,7 +63,8 @@ public class ThemeRegistry
         /** Is this theme currently hosted on any server? */
         public boolean hosted;
 
-        public ThemeEntry (int themeId, String name, int popularity, boolean hosted) {
+        public ThemeEntry (int themeId, String name, int popularity, boolean hosted)
+        {
             this.themeId = themeId;
             this.name = name;
             this.popularity = popularity;
@@ -84,9 +84,8 @@ public class ThemeRegistry
         @Override
         public boolean equals (Object obj)
         {
-            return (this == obj ||
-                    (obj != null && getClass() == obj.getClass() &&
-                            ((ThemeEntry) obj).themeId == themeId));
+            return (this == obj || (obj != null && getClass() == obj.getClass() &&
+                    ((ThemeEntry) obj).themeId == themeId));
         }
 
         @Override
@@ -132,7 +131,8 @@ public class ThemeRegistry
 
         // initialize our theme mapping with these records
         for (ThemeRecord rec : records) {
-            _themes.put(rec.groupId, new ThemeEntry(groupNames.get(rec.groupId), rec.popularity, false));
+            _themes.put(rec.groupId,
+                new ThemeEntry(groupNames.get(rec.groupId), rec.popularity, false));
         }
     }
 
@@ -218,7 +218,50 @@ public class ThemeRegistry
         });
     }
 
-    public void maybeHostTheme (final int themeId, final ResultListener<Integer> listener)
+    /**
+     * Whenever another part of the code base spots the existence of a theme, e.g. by a
+     * player walking into a themed room, that code may call this method which will check
+     * if the theme is hosted, and if not try to resolve it from the database, and if it
+     * exists there, will host it.
+     */
+    public void noteThemeVisisted (final int themeId)
+    {
+        // check to see if the theme is already hosted on a server
+        if (_peerMan.getThemeHost(themeId) != null) {
+            // if so we're happy already
+            return;
+        }
+
+        // otherwise see if it exists or if our caller is perhaps confused
+        _invoker.postUnit(new Invoker.Unit("loadVisitedTheme") {
+            @Override public boolean invoke () {
+                // resolve theme from database
+                ThemeRecord rec = _themeRepo.loadTheme(themeId);
+                if (rec != null) {
+                    _entry = new ThemeEntry(
+                        _groupRepo.loadGroupName(rec.groupId), rec.popularity, false);
+                }
+                return true;
+            }
+            @Override public void handleResult () {
+                if (_entry == null) {
+                    log.warning("Unknown theme sent to noteThemeVisited", "themeId", themeId);
+                    return;
+                }
+                // if the theme really existed, host it
+                _themes.put(themeId, _entry);
+                hostTheme(themeId, new NOOP<Integer>());
+            }
+            protected ThemeEntry _entry;
+        });
+    }
+
+    /**
+     * Given the idenfitier of a theme we're already aware of, see if it needs hosting
+     * and if so, do it. This method relies on the theme having already been resolved or
+     * or otherwise instantiated, and registered in the _themes data structure.
+     */
+    public void maybeHostTheme (int themeId, ResultListener<Integer> listener)
     {
         // check to see if the theme is already hosted on a server
         if (_peerMan.getThemeHost(themeId) != null) {
@@ -228,6 +271,11 @@ public class ThemeRegistry
         }
 
         // if not, we'll host it
+        hostTheme(themeId, listener);
+    }
+
+    protected void hostTheme (final int themeId, final ResultListener<Integer> listener)
+    {
         final Lock themeLock = MsoyPeerManager.getThemeLock(themeId);
         _peerMan.acquireLock(themeLock, new ResultListener<String>() {
             public void requestCompleted (String nodeName) {
@@ -235,13 +283,15 @@ public class ThemeRegistry
                     log.debug("Got lock, resolving theme", "themeId", themeId);
 
                     ThemeEntry entry = _themes.get(themeId);
-                    if (entry == null) {
-                        log.warning("WTF? Unknown theme", "theme", themeId);
-                    } else {
+                    if (entry != null) {
                         log.info("Successfully hosting theme", "theme", entry);
                         ((MsoyNodeObject) _peerMan.getNodeObject()).addToHostedThemes(
                             new HostedTheme(themeId, entry.name, entry.popularity));
-                        _themes.put(themeId, new ThemeEntry(themeId, entry.name, entry.popularity, true));
+                        _themes.put(themeId,
+                            new ThemeEntry(themeId, entry.name, entry.popularity, true));
+
+                    } else {
+                        log.warning("Unknown theme in hostTheme", "theme", themeId);
                     }
                     releaseLock();
 
