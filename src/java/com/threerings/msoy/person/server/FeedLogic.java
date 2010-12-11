@@ -217,7 +217,7 @@ public class FeedLogic
     {
         // publish to our local Whirled feed
         publishMemberMessage(memberId, FeedMessageType.FRIEND_WON_TROPHY,
-            name, gameId, CloudfrontMediaDesc.cfmdToString((CloudfrontMediaDesc) trophyMedia));
+            name, gameId, trophyMedia));
     }
 
     /**
@@ -233,8 +233,7 @@ public class FeedLogic
         // TODO: use the scores too, but always replace previous feed items with the higher score
         if (playerIds.length == 1) {
             publishMemberMessage(playerIds[0], FeedMessageType.FRIEND_PLAYED_GAME,
-                game.name, game.gameId, CloudfrontMediaDesc.cfmdToString(
-                    (CloudfrontMediaDesc) game.getThumbMedia()));
+                game.name, game.gameId, game.getThumbMedia());
 
         } else {
             // TODO: multiplayer message
@@ -297,7 +296,7 @@ public class FeedLogic
             if (args[ii] instanceof HashMediaDesc) {
                 // note that we do not persist CloudfrontMediaDesc's expiration/signature!
                 Object foo = args[ii];
-                args[ii] = HashMediaDesc.hmdToString((CloudfrontMediaDesc) args[ii]);
+                args[ii] = HashMediaDesc.hmdToString((HashMediaDesc) args[ii]);
                 log.info("Unpacking bit", "desc", foo, "bit", args[ii]);
             } else if (args[ii] instanceof MediaDesc) {
                 log.warning("Unknown media descriptor in feed", "desc", args[ii]);
