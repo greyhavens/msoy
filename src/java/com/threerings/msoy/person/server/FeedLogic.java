@@ -217,7 +217,7 @@ public class FeedLogic
     {
         // publish to our local Whirled feed
         publishMemberMessage(memberId, FeedMessageType.FRIEND_WON_TROPHY,
-            name, gameId, trophyMedia));
+            name, gameId, trophyMedia);
     }
 
     /**
