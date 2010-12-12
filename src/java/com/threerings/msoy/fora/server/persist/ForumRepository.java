@@ -19,6 +19,7 @@ import com.samskivert.util.IntIntMap;
 
 import com.threerings.presents.annotation.BlockingThread;
 
+import com.samskivert.depot.CountRecord;
 import com.samskivert.depot.DatabaseException;
 import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.Exps;
@@ -108,7 +109,7 @@ public class ForumRepository extends DepotRepository
         }
         return forUnreadFriendThreads(
             from(ForumThreadRecord.class), memberId, posterIds, hiddenGroupIds)
-            .selectCount();
+            .select(ForumThreadRecord.THREAD_ID).size();
     }
 
     /**
