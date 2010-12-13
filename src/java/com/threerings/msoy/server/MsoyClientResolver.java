@@ -204,6 +204,11 @@ public class MsoyClientResolver extends CrowdClientResolver
     protected void resolveClientData (ClientObject clobj)
         throws Exception
     {
+        if (_mcobj == null) {
+            // it's possible we disconnected just before we got here
+            return;
+        }
+        
         // load their record
         _mrec = _memberRepo.loadMember(_username.toString());
         if (_mrec == null) {
