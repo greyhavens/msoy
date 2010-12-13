@@ -107,7 +107,7 @@ public class AwardDelegate extends RatingDelegate
         // note whether any guests were involved in this game
         _gameInvolvedGuest = Iterables.any(players.values(), IS_GUEST);
 
-        log.info("endGameWithScores", "game", where(), "payoutType", payoutType,
+        log.debug("endGameWithScores", "game", where(), "payoutType", payoutType,
                  "players", players.values());
 
         // if we have no non-zero scores then end the game without awarding flow or updating
@@ -426,7 +426,7 @@ public class AwardDelegate extends RatingDelegate
         rating.experience++;
         rating.modified = true;
 
-        log.info("Updated rating", "game", where(), "who", rating.playerName, "orat", orat,
+        log.debug("Updated rating", "game", where(), "who", rating.playerName, "orat", orat,
                  "erat", erat, "diff", pctdiff, "K", K, "nrat", nrat);
     }
 
@@ -528,7 +528,7 @@ public class AwardDelegate extends RatingDelegate
         } // end: case PROPORTIONAL
         }
 
-        log.info("Awarding flow", "game", where(), "type", payoutType, "to", players.values());
+        log.debug("Awarding flow", "game", where(), "type", payoutType, "to", players.values());
 
         // finally, award the flow and report it to the player
         boolean actuallyAward = !_content.isDevelopmentVersion();
@@ -691,9 +691,9 @@ public class AwardDelegate extends RatingDelegate
 
         // log things for a while so we can see how often and to what extent this happens
         if (awardMins != avgMins) {
-            log.info("Scaling player's awardable flow due to short game", "game", where(),
-                     "who", record.name, "avgMins", avgMins, "playerMins", playerMins,
-                     "awardMins", awardMins);
+            log.debug("Scaling player's awardable flow due to short game", "game", where(),
+                      "who", record.name, "avgMins", avgMins, "playerMins", playerMins,
+                      "awardMins", awardMins);
         }
 
         return Math.round(_flowPerMinute * awardMins);

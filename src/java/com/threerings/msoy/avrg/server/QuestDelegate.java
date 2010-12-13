@@ -325,7 +325,7 @@ public class QuestDelegate extends PlayManagerDelegate
          */
         public void pauseAccrual () {
             if (!_paused) {
-                log.info("Pausing AVRG attention time accrual", "player", playerObject.who(),
+                log.debug("Pausing AVRG attention time accrual", "player", playerObject.who(),
                          "game", _gameId);
                 timeAccrued += getPlayTime(now());
                 _paused = true;
@@ -340,7 +340,7 @@ public class QuestDelegate extends PlayManagerDelegate
          */
         public void resumeAccrual () {
             if (_paused) {
-                log.info("Resuming AVRG attention time accrual", "player", playerObject.who(),
+                log.debug("Resuming AVRG attention time accrual", "player", playerObject.who(),
                          "game", _gameId);
                 _beganStamp = now();
                 _paused = false;

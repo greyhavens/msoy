@@ -158,7 +158,7 @@ public class MsoyClientResolver extends CrowdClientResolver
 
         if (_mcobj.bodyOid != 0) {
             // we're done
-            log.info("Resolved forwarded session", "clobj", _clobj.who());
+            log.debug("Resolved forwarded session", "clobj", _clobj.who());
 
             reportSuccess();
             return;
@@ -175,7 +175,7 @@ public class MsoyClientResolver extends CrowdClientResolver
             local.friendIds = new StreamableArrayIntSet(0);
             local.inProgressBadges = new InProgressBadgeSet();
 
-            log.info("Resolved guest session", "guest", _memobj);
+            log.debug("Resolved guest session", "guest", _memobj);
             reportSuccess();
             announce();
             return;
@@ -189,7 +189,7 @@ public class MsoyClientResolver extends CrowdClientResolver
             local.friendIds = new StreamableArrayIntSet(0);
             local.inProgressBadges = new InProgressBadgeSet();
 
-            log.info("Resolved lurker session", "guest", _memobj);
+            log.debug("Resolved lurker session", "guest", _memobj);
             reportSuccess();
             announce();
             return;
@@ -234,7 +234,7 @@ public class MsoyClientResolver extends CrowdClientResolver
             // reportSuccess() will be called automatically by our superclass, but we
             // still want the availability of the MemberObject announced aftwards
             _needAnnounce = true;
-            log.info("Resolved support session", "clobj", _clobj.who());
+            log.debug("Resolved support session", "clobj", _clobj.who());
 
             return;
         }
@@ -269,7 +269,7 @@ public class MsoyClientResolver extends CrowdClientResolver
         };
 
         _taskIx = _queue.queueTask(task, listener);
-        log.info("Queueing resolution task", "who", _clobj.who(),
+        log.debug("Queueing resolution task", "who", _clobj.who(),
             "queue size", _queue.getQueueSize(), "taskIx", _taskIx);
 
         // update the queue size, things might have happened since the object was created
@@ -278,12 +278,12 @@ public class MsoyClientResolver extends CrowdClientResolver
         // register ourselves as interested in client sessions, so we can dequeue if needed
         _clmgr.addClientObserver(_sessionObserver);
 
-        log.info("Resolved unforwarded session", "clobj", _clobj.who());
+        log.debug("Resolved unforwarded session", "clobj", _clobj.who());
     }
 
     protected void didDisconnect ()
     {
-        log.info("Dequeueing entry due to disconnect", "who", _clobj.who(), "taskIx", _taskIx);
+        log.debug("Dequeueing entry due to disconnect", "who", _clobj.who(), "taskIx", _taskIx);
         if (_taskIx != 0) {
             // should always be true
             _queue.dequeueTask(_taskIx);
@@ -452,7 +452,7 @@ public class MsoyClientResolver extends CrowdClientResolver
 
             } catch (ClientDisconnectedException cde) {
                 // let the world know how far we got
-                log.info("Disconnected", "step", step, "profile", buildProfile());
+                log.debug("Disconnected", "step", step, "profile", buildProfile());
                 // then finish freaking out
                 throw cde;
             }
@@ -466,7 +466,7 @@ public class MsoyClientResolver extends CrowdClientResolver
         protected void complete ()
         {
             // if we're entirely done, let the world know
-            log.info("Completed", "profile", buildProfile());
+            log.debug("Completed", "profile", buildProfile());
         }
 
         protected String buildProfile ()
