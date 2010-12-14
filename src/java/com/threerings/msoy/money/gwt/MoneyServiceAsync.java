@@ -11,7 +11,6 @@ import com.threerings.msoy.money.data.all.CashOutBillingInfo;
 import com.threerings.msoy.money.data.all.CashOutEntry;
 import com.threerings.msoy.money.data.all.CharityBlingInfo;
 import com.threerings.msoy.money.data.all.Currency;
-import com.threerings.msoy.money.data.all.ExchangeStatusData;
 import com.threerings.msoy.money.data.all.ReportType;
 import com.threerings.msoy.money.data.all.TransactionPageResult;
 
@@ -54,11 +53,6 @@ public interface MoneyServiceAsync
      * The async version of {@link MoneyService#supportAdjust}.
      */
     void supportAdjust (int memberId, Currency currency, int delta, AsyncCallback<Void> callback);
-
-    /**
-     * The async version of {@link MoneyService#getExchangeStatus}.
-     */
-    void getExchangeStatus (int start, int count, AsyncCallback<ExchangeStatusData> callback);
 
     /**
      * The async version of {@link MoneyService#getCharityBlingInfo}.

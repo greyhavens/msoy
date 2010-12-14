@@ -130,50 +130,16 @@ public class MoneyExchange
             bars = quote.getBars();
             coins = -1 * (quote.getCoins() + quote.getCoinChange());
         }
-
-        // record everything about the exchange
-        _moneyRepo.recordExchange(bars, coins, quote.getExchangeRate(), txId);
-
-/// FixedExchange
-///        // immediately recalculate
-///        recalculateRate();
     }
 
     // from interface Lifecycle.Component
     public void init ()
     {
-        // create the recalculating interval
-        _recalcInterval = new Interval(_invoker) {
-            public void expired () {
-                recalculateRate();
-            }
-        };
-        recalculateRate();
-        _runtime.money.addListener(_moneyListener);
     }
 
     // from interface Lifecycle.Component
     public void shutdown ()
     {
-        _recalcInterval.cancel();
-        _recalcInterval = null;
-    }
-
-    /**
-     * Recalculate the exchange rate.
-     */
-    @BlockingThread
-    protected void recalculateRate ()
-    {
-        int pool = _moneyRepo.getBarPool(_runtime.money.barPoolSize)[0];
-        // the more bars in the pool: the lower the exchange rate
-        calculateRate(pool);
-
-/// FixedExchange
-///        // If not shutting down, schedule the next recalculation, always a minute from now
-///        if (_recalcInterval != null) {
-///            _recalcInterval.schedule(RECALCULATE_INTERVAL);
-///        }
     }
 
     /**
@@ -185,33 +151,6 @@ public class MoneyExchange
     {
         // FixedExchange
         _rate = _runtime.money.targetExchangeRate;
-/// FixedExchange
-///        int barPoolTarget = _runtime.money.barPoolSize;
-///        if (pool <= 0) {
-///            _rate = Float.POSITIVE_INFINITY;
-///
-///        } else if (pool >= (barPoolTarget * 2)) {
-///            _rate = 0;
-///
-///        } else if (pool >= barPoolTarget) {
-///            float x = 1 - ((pool - barPoolTarget) / ((float) barPoolTarget));
-///            _rate = (_runtime.money.targetExchangeRate / (1 / x));
-///
-///        } else {
-///            float x = pool / ((float) barPoolTarget);
-///            _rate = (_runtime.money.targetExchangeRate * (1 / x));
-///        }
-    }
-
-    /**
-     * Adjust the desired bar pool size. This is called in direct reaction to adjusting
-     * the runtime config.
-     */
-    @BlockingThread
-    protected void adjustDesiredBarPool (int delta)
-    {
-        _moneyRepo.adjustBarPool(delta);
-        recalculateRate();
     }
 
     @AnyThread
@@ -240,106 +179,11 @@ public class MoneyExchange
         return (int) (Math.floor(barPrice * rate) - coinPrice);
     }
 
-//    protected void runTests ()
-//    {
-//        final int barPoolTarget = _runtime.money.barPoolSize;
-////        System.err.println("Rate 0: " + calcRate((int) (0.0 * barPoolTarget)));
-////        System.err.println("Rate .125: " + calcRate((int) (0.125 * barPoolTarget)));
-////        System.err.println("Rate .25: " + calcRate((int) (.25 * barPoolTarget)));
-////        System.err.println("Rate .50: " + calcRate((int) (.5 * barPoolTarget)));
-////        System.err.println("Rate .75: " + calcRate((int) (.75 * barPoolTarget)));
-////        System.err.println("Rate 1.0: " + calcRate((int) (1.0 * barPoolTarget)));
-////        System.err.println("Rate 1.25: " + calcRate((int) (1.25 * barPoolTarget)));
-////        System.err.println("Rate 1.5: " + calcRate((int) (1.5 * barPoolTarget)));
-////        System.err.println("Rate 1.75: " + calcRate((int) (1.75 * barPoolTarget)));
-////        System.err.println("Rate 2.0: " + calcRate((int) (2.0 * barPoolTarget)));
-////
-////        System.err.println("maxinf casted: " + ((int) (Float.POSITIVE_INFINITY * 2)));
-//
-//        System.err.println("Draining bar pool...");
-//        calculateRate(0);
-//        testPrices();
-//
-//        System.err.println("Overfilling bar pool...");
-//        calculateRate(2 * barPoolTarget);
-//        testPrices();
-//
-//        System.err.println("Half-overfilling bar pool...");
-//        calculateRate((int) (1.5 * barPoolTarget));
-//        testPrices();
-//
-//        System.err.println("Half-filling bar pool...");
-//        calculateRate((int) (.5 * barPoolTarget));
-//        testPrices();
-//    }
-//
-//    protected void testPrices ()
-//    {
-//        PriceQuote p;
-//        p = secureQuote(Currency.COINS, 0);
-//        System.err.println("coins:0, bars: " + p.getBars());
-//        p = secureQuote(Currency.COINS, 1);
-//        System.err.println("coins:1, bars: " + p.getBars());
-//        p = secureQuote(Currency.COINS, 1000000);
-//        System.err.println("coins:1000000, bars: " + p.getBars());
-//
-//        p = secureQuote(Currency.BARS, 0);
-//        System.err.println("bars:0, coins: " + p.getCoins());
-//        p = secureQuote(Currency.BARS, 1);
-//        System.err.println("bars:1, coins: " + p.getCoins());
-//        p = secureQuote(Currency.BARS, 1000000);
-//        System.err.println("bars:1000000, coins: " + p.getCoins());
-//    }
-
-    /** Listens for changes to the desired bar pool size and makes adjustments as necessary. */
-    protected AttributeChangeListener _moneyListener = new AttributeChangeListener() {
-        @EventThread
-        public void attributeChanged (AttributeChangedEvent event)
-        {
-            String name = event.getName();
-            if (MoneyConfigObject.BAR_POOL_SIZE.equals(name)) {
-                if (-1 == event.getSourceOid()) {
-                    // for server-originated changes, do no validation, just recompute our rate
-                    _recalcInterval.schedule(0);
-                    return;
-                }
-
-                // otherwise, make sure the target bar pool is not below 1
-                int newValue = event.getIntValue();
-                int oldValue = (Integer) event.getOldValue();
-                if (newValue < 1) {
-                    _runtime.money.setBarPoolSize(Math.max(1, oldValue)); // rollback to old value
-
-                } else {
-                    // it's a normal, valid adjustment
-                    final int adjustmentSize = newValue - oldValue;
-                    _invoker.postRunnable(new Runnable() {
-                        public void run () {
-                            adjustDesiredBarPool(adjustmentSize);
-                        }
-                    });
-                }
-
-            } else if (MoneyConfigObject.TARGET_EXCHANGE_RATE.equals(name)) {
-                _recalcInterval.schedule(0);
-            }
-        }
-    };
-
-    /** The interval to recalculate the exchange rate every minute, (because transactions can take
-     * place on other peers) or null if we're shutting down. */
-    protected Interval _recalcInterval;
-
-    /** The current exchange rate. Can vary from 0 to Float.POSITIVE_INFINITY. */
+    /** The current exchange rate. Currently fixed, runtime-configured. */
     protected float _rate;
 
     // our dependencies
     @Inject protected @MainInvoker Invoker _invoker;
     @Inject protected MoneyRepository _moneyRepo;
     @Inject protected RuntimeConfig _runtime;
-
-/// FixedExchange
-///    /** How often we re-check the exchange rate, even if no cross-currency purchases have been
-///     * made during this time. */
-///    protected static final long RECALCULATE_INTERVAL = 60 * 1000L; // every minute
 }

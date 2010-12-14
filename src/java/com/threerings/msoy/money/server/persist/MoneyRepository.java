@@ -327,63 +327,6 @@ public class MoneyRepository extends DepotRepository
     }
 
     /**
-     * Get the number of bars and the coin balance in the bar pool.
-     */
-    public int[] getBarPool (int defaultBarPoolSize)
-    {
-        BarPoolRecord bpRec = load(BarPoolRecord.class, BarPoolRecord.KEY);
-        if (bpRec == null) {
-            bpRec = createBarPoolRecord(defaultBarPoolSize);
-        }
-        return new int[] { bpRec.barPool, bpRec.coinBalance };
-    }
-
-    /**
-     * Adjust the bar pool as a result of an exchange.
-     *
-     * @param barDelta a positive number if bars were used to purchase coin-listed stuff
-     *                 a negative number if coins were used to purchase bar-listed stuff.
-     */
-    public void recordExchange (int barDelta, int coinDelta, float rate, int referenceTxId)
-    {
-        updatePartial(BarPoolRecord.class, BarPoolRecord.KEY, BarPoolRecord.KEY,
-                      BarPoolRecord.BAR_POOL, BarPoolRecord.BAR_POOL.plus(barDelta),
-                      BarPoolRecord.COIN_BALANCE, BarPoolRecord.COIN_BALANCE.plus(coinDelta));
-        insert(new ExchangeRecord(barDelta, coinDelta, rate, referenceTxId));
-    }
-
-    public List<ExchangeRecord> getExchangeData (int start, int count)
-    {
-        return findAll(ExchangeRecord.class, OrderBy.descending(ExchangeRecord.TIMESTAMP),
-            new Limit(start, count));
-    }
-
-    /**
-     * Adjust the bar pool.
-     * This is used in two circumstances:
-     * 1. When we react to adjustments in the *size* of the target bar pool size, we automatically
-     * remove or add bars.
-     * 2. Sometimes Daniel dumps more bars in, cuz we're crazy like that. These are done manually.
-     */
-    public void adjustBarPool (int delta)
-    {
-        updatePartial(BarPoolRecord.class, BarPoolRecord.KEY, BarPoolRecord.KEY,
-                      BarPoolRecord.BAR_POOL, BarPoolRecord.BAR_POOL.plus(delta));
-    }
-
-    public int getExchangeDataCount ()
-    {
-        return load(CountRecord.class, new FromOverride(ExchangeRecord.class)).count;
-    }
-
-    public int deleteOldExchangeRecords (long maxAge)
-    {
-        final long oldestTimestamp = System.currentTimeMillis() - maxAge;
-        return deleteAll(ExchangeRecord.class, new Where(ExchangeRecord.TIMESTAMP.lessThan(
-                                                             new Timestamp(oldestTimestamp))));
-    }
-
-    /**
      * Loads the current money configuration record, optionally locking on the record.
      *
      * @param lock If true, the record will be selected using SELECT ... FOR UPDATE to grab
@@ -590,28 +533,6 @@ public class MoneyRepository extends DepotRepository
             BroadcastHistoryRecord.TIME_SENT), new Limit(offset, count));
     }
 
-    /**
-     * Create the singleton BarPoolRecord in the database.
-     */
-    protected BarPoolRecord createBarPoolRecord (int defaultBarPoolSize)
-    {
-        BarPoolRecord bpRec = new BarPoolRecord();
-        bpRec.id = BarPoolRecord.RECORD_ID;
-        bpRec.barPool = defaultBarPoolSize;
-        try {
-            insert(bpRec);
-            // log a warning, hopefully we ever only do this once.
-            log.warning("Populated initial exchange bar pool");
-        } catch (Exception e) {
-            // hmm, beaten to the punch?
-            bpRec = load(BarPoolRecord.class, BarPoolRecord.KEY);
-            if (bpRec == null) {
-                throw new DatabaseException("What in the whirled? Can't populate BarPoolRecord.");
-            }
-        }
-        return bpRec;
-    }
-
     protected Where makeSubjectSearch (Currency currency, Object subject)
     {
         MoneyTransactionRecord.Subject subj = new MoneyTransactionRecord.Subject(subject);
@@ -632,8 +553,6 @@ public class MoneyRepository extends DepotRepository
         classes.add(BlingMoneyTransactionRecord.class);
         classes.add(MoneyConfigRecord.class);
         classes.add(BlingCashOutRecord.class);
-        classes.add(BarPoolRecord.class);
-        classes.add(ExchangeRecord.class);
         classes.add(BroadcastHistoryRecord.class);
     }
 

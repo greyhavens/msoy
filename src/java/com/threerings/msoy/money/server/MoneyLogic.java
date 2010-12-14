@@ -59,8 +59,6 @@ import com.threerings.msoy.money.data.all.BlingInfo;
 import com.threerings.msoy.money.data.all.CashOutBillingInfo;
 import com.threerings.msoy.money.data.all.CashOutInfo;
 import com.threerings.msoy.money.data.all.Currency;
-import com.threerings.msoy.money.data.all.ExchangeData;
-import com.threerings.msoy.money.data.all.ExchangeStatusData;
 import com.threerings.msoy.money.data.all.MemberMoney;
 import com.threerings.msoy.money.data.all.MoneyTransaction;
 import com.threerings.msoy.money.data.all.PriceQuote;
@@ -68,7 +66,6 @@ import com.threerings.msoy.money.data.all.TransactionType;
 import com.threerings.msoy.money.gwt.CostUpdatedException;
 import com.threerings.msoy.money.gwt.InsufficientFundsException;
 import com.threerings.msoy.money.server.persist.BlingCashOutRecord;
-import com.threerings.msoy.money.server.persist.ExchangeRecord;
 import com.threerings.msoy.money.server.persist.MemberAccountRecord;
 import com.threerings.msoy.money.server.persist.MoneyRepository;
 import com.threerings.msoy.money.server.persist.MoneyTransactionRecord;
@@ -1114,21 +1111,6 @@ public class MoneyLogic
     }
 
     /**
-     * Get current exchange status.
-     */
-    public ExchangeStatusData getExchangeStatus (int start, int count)
-    {
-        List<ExchangeData> page = Lists.newArrayList(Iterables.transform(
-            _repo.getExchangeData(start, count), ExchangeRecord.TO_EXCHANGE_DATA));
-        int total = _repo.getExchangeDataCount();
-        int[] barPoolData = _repo.getBarPool(_runtime.money.barPoolSize);
-
-        return new ExchangeStatusData(total, page,
-            _exchange.getRate(), _runtime.money.targetExchangeRate,
-            barPoolData[0], _runtime.money.barPoolSize, barPoolData[1]);
-    }
-
-    /**
      * Secures a price for an item. This ensures the user will be able to purchase an item for a
      * set price. This price will remain available for some amount of time (specified by {@link
      * PriceQuoteCache#SECURED_PRICE_DURATION}. The secured price may also be removed if the
@@ -1148,11 +1130,8 @@ public class MoneyLogic
         int buyerId, CatalogIdent item, Currency listedCurrency, int listedAmount)
     {
         Preconditions.checkArgument(isValid(item), "item is invalid: %s", item);
-        // FixedExchange
         return securePrice(buyerId, item, listedCurrency, listedAmount,
             (listedCurrency == Currency.COINS));
-/// FixedExchange
-///        return securePrice(buyerId, (Object)item, listedCurrency, listedAmount);
     }
 
     /**

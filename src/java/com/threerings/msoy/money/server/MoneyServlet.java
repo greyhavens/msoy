@@ -38,7 +38,6 @@ import com.threerings.msoy.money.data.all.CashOutEntry;
 import com.threerings.msoy.money.data.all.CashOutInfo;
 import com.threerings.msoy.money.data.all.CharityBlingInfo;
 import com.threerings.msoy.money.data.all.Currency;
-import com.threerings.msoy.money.data.all.ExchangeStatusData;
 import com.threerings.msoy.money.data.all.MemberMoney;
 import com.threerings.msoy.money.data.all.MoneyTransaction;
 import com.threerings.msoy.money.data.all.ReportType;
@@ -198,14 +197,6 @@ public class MoneyServlet extends MsoyServiceServlet
         }
 
         _moneyLogic.cancelCashOutBling(memberId, reason);
-    }
-
-    public ExchangeStatusData getExchangeStatus (int start, int count)
-        throws ServiceException
-    {
-        requireAdminUser();
-
-        return _moneyLogic.getExchangeStatus(start, count);
     }
 
     /**

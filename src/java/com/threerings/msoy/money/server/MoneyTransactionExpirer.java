@@ -79,10 +79,9 @@ public class MoneyTransactionExpirer
         } else {
             bars = bling = 0;
         }
-        int exchange = _repo.deleteOldExchangeRecords(EXCHANGE_MAX_AGE);
-        if (coins > 0 || bars > 0 || bling > 0 || exchange > 0) {
+        if (coins > 0 || bars > 0 || bling > 0) {
             log.info("Removed old money transaction records.",
-                 "coins", coins, "bars", bars, "bling", bling, "exchange", exchange);
+                "coins", coins, "bars", bars, "bling", bling);
         }
     }
 
@@ -95,7 +94,6 @@ public class MoneyTransactionExpirer
     protected static final long DAY = 24L * 60 * 60 * 1000L; // the length of 99.4% of days
     protected static final long COIN_MAX_AGE = 10L * DAY; // 10 days
     protected static final long BAR_MAX_AGE = -1L; // never expire
-    protected static final long EXCHANGE_MAX_AGE = 30L * DAY; // 30 days
 
     protected static final long PURGE_INTERVAL = 60 * 60 * 1000; // 1 hour
 }
