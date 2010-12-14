@@ -43,7 +43,7 @@ public class MoneyExchange
     @AnyThread
     public float getRate ()
     {
-        return _rate;
+        return _runtime.money.targetExchangeRate;
     }
 
     /**
@@ -52,7 +52,7 @@ public class MoneyExchange
     @AnyThread
     public PriceQuote secureQuote (Currency listedCurrency, int amount, boolean allowExchange)
     {
-        float rate = _rate; // lock in the rate for the remainder of this method
+        float rate = getRate(); // lock in the rate for the remainder of this method
         switch (listedCurrency) {
         case COINS:
             int bars = allowExchange ? coinsToBars(amount, rate) : -1;
@@ -75,7 +75,7 @@ public class MoneyExchange
     @AnyThread
     public int coinsToBars (int coins)
     {
-        return coinsToBars(coins, _rate);
+        return coinsToBars(coins, getRate());
     }
 
     /**
@@ -84,7 +84,7 @@ public class MoneyExchange
     @AnyThread
     public int barsToCoins (int bars)
     {
-        return barsToCoins(bars, _rate);
+        return barsToCoins(bars, getRate());
     }
 
     /**
@@ -95,7 +95,7 @@ public class MoneyExchange
     @AnyThread
     public int barsToCoinsFloor (int bars)
     {
-        return barsToCoinsFloor(bars, _rate);
+        return barsToCoinsFloor(bars, getRate());
     }
 
     /**
@@ -104,7 +104,7 @@ public class MoneyExchange
     @AnyThread
     public int coinChange (int coinPrice, int barPrice)
     {
-        return coinChange(coinPrice, barPrice, _rate);
+        return coinChange(coinPrice, barPrice, getRate());
     }
 
     /**
@@ -149,8 +149,6 @@ public class MoneyExchange
     @AnyThread
     protected void calculateRate (int pool)
     {
-        // FixedExchange
-        _rate = _runtime.money.targetExchangeRate;
     }
 
     @AnyThread
@@ -178,9 +176,6 @@ public class MoneyExchange
     {
         return (int) (Math.floor(barPrice * rate) - coinPrice);
     }
-
-    /** The current exchange rate. Currently fixed, runtime-configured. */
-    protected float _rate;
 
     // our dependencies
     @Inject protected @MainInvoker Invoker _invoker;
