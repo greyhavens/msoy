@@ -93,7 +93,7 @@ public class AdminPage extends Page
             setContent("Broadcasts", new BroadcastHistoryPanel());
 
         } else if (action.equals("config")) {
-            setContent("Config", new ConfigEditorPanel() {
+            setContent("Config", new ConfigEditorPanel(30) {
                 @Override protected String getServiceEntryPoint () {
                     return CONFIG_SERVICE_ENTRY_POINT;
                 }
