@@ -15,6 +15,8 @@ import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.RequiresResize;
+import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -354,7 +356,11 @@ public abstract class Page
         }
         _content = content;
         if (_content != null) {
-            contentDiv.add(_content);
+            if (content instanceof RequiresResize) {
+                RootLayoutPanel.get().add(content);
+            } else {
+                contentDiv.add(content);
+            }
         }
 
         // clear out any lingering dialog
