@@ -216,15 +216,13 @@ public class ABTestRepository extends DepotRepository
         // now determine how many of those members returned
         SQLExpression<?> since = MemberRecord.LAST_SESSION.minus(Exps.days(2)).
             greaterThan(MemberRecord.CREATED);
-        for (GroupCountRecord rec : qb.where(
-                 ABGroupRecord.TEST_ID.eq(testId), since).select()) {
+        for (GroupCountRecord rec : qb.where(ABGroupRecord.TEST_ID.eq(testId), since).select()) {
             groups.get(rec.group).returned = rec.count;
         }
 
         // now determine how many of those members were retained
         since = MemberRecord.LAST_SESSION.minus(Exps.days(7)).greaterThan(MemberRecord.CREATED);
-        for (GroupCountRecord rec : qb.where(
-                 ABGroupRecord.TEST_ID.eq(testId), since).select()) {
+        for (GroupCountRecord rec : qb.where(ABGroupRecord.TEST_ID.eq(testId), since).select()) {
             groups.get(rec.group).retained = rec.count;
         }
 
