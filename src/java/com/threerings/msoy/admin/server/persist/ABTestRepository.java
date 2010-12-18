@@ -183,7 +183,7 @@ public class ABTestRepository extends DepotRepository
 
         // first determine the number of visitors assigned to the test groups
         Map<Integer, ABGroupSummaryRecord> groups = Maps.newHashMap();
-        for (GroupCountRecord rec : qb.clone().where(ABGroupRecord.TEST_ID.eq(testId)).select()) {
+        for (GroupCountRecord rec : qb.where(ABGroupRecord.TEST_ID.eq(testId)).select()) {
             ABGroupSummaryRecord sumrec = new ABGroupSummaryRecord();
             sumrec.testId = testId;
             sumrec.group = rec.group;
@@ -193,21 +193,21 @@ public class ABTestRepository extends DepotRepository
 
         // now determine how many of those members played
         qb = qb.join(ABGroupRecord.VISITOR_ID, EntryVectorRecord.VISITOR_ID);
-        for (GroupCountRecord rec : qb.clone().where(
+        for (GroupCountRecord rec : qb.where(
                  ABGroupRecord.TEST_ID.eq(testId), EntryVectorRecord.MEMBER_ID.notEq(0)).select()) {
             groups.get(rec.group).played = rec.count;
         }
 
         // now determine how many of those members registered
         qb = qb.join(EntryVectorRecord.MEMBER_ID, MemberRecord.MEMBER_ID);
-        for (GroupCountRecord rec : qb.clone().where(
+        for (GroupCountRecord rec : qb.where(
                  ABGroupRecord.TEST_ID.eq(testId),
                  Ops.not(MemberRecord.ACCOUNT_NAME.like(PERMA_PATTERN))).select()) {
             groups.get(rec.group).registered = rec.count;
         }
 
         // now determine how many of those members validated their email
-        for (GroupCountRecord rec : qb.clone().where(
+        for (GroupCountRecord rec : qb.where(
                  ABGroupRecord.TEST_ID.eq(testId), MemberRecord.FLAGS.bitAnd(
                      MemberRecord.Flag.VALIDATED.getBit()).notEq(0)).select()) {
             groups.get(rec.group).validated = rec.count;
@@ -216,14 +216,14 @@ public class ABTestRepository extends DepotRepository
         // now determine how many of those members returned
         SQLExpression<?> since = MemberRecord.LAST_SESSION.minus(Exps.days(2)).
             greaterThan(MemberRecord.CREATED);
-        for (GroupCountRecord rec : qb.clone().where(
+        for (GroupCountRecord rec : qb.where(
                  ABGroupRecord.TEST_ID.eq(testId), since).select()) {
             groups.get(rec.group).returned = rec.count;
         }
 
         // now determine how many of those members were retained
         since = MemberRecord.LAST_SESSION.minus(Exps.days(7)).greaterThan(MemberRecord.CREATED);
-        for (GroupCountRecord rec : qb.clone().where(
+        for (GroupCountRecord rec : qb.where(
                  ABGroupRecord.TEST_ID.eq(testId), since).select()) {
             groups.get(rec.group).retained = rec.count;
         }
