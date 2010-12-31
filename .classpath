@@ -107,6 +107,7 @@
 	<classpathentry kind="lib" path="dist/lib/panopticon-client-0.0-SNAPSHOT.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/toybox"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/underwire"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/orth"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/gwt-utils"/>
 	<classpathentry kind="lib" path="etc"/>
 	<classpathentry kind="lib" path="extlibs/java/aopalliance.jar"/>
