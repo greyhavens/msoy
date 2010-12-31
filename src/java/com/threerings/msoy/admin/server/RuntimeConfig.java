@@ -10,7 +10,6 @@ import com.threerings.presents.dobj.AccessController;
 import com.threerings.presents.dobj.AttributeChangedEvent;
 import com.threerings.presents.dobj.DEvent;
 import com.threerings.presents.dobj.DObject;
-import com.threerings.presents.dobj.ObjectAccessException;
 import com.threerings.presents.dobj.ProxySubscriber;
 import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.presents.dobj.Subscriber;
@@ -62,13 +61,8 @@ public class RuntimeConfig
      */
     public int getCoinCost (String costsFieldName)
     {
-        try {
-            int value = ((Integer)costs.getAttribute(costsFieldName)).intValue();
-            return (value >= 0) ? value : _exchange.barsToCoinsFloor(-value);
-        } catch (ObjectAccessException oae) {
-            // Shouldn't happen as long as you're using CostsConfigObject constants in your code...
-            throw new RuntimeException(oae);
-        }
+        int value = ((Integer)costs.getAttribute(costsFieldName)).intValue();
+        return (value >= 0) ? value : _exchange.barsToCoinsFloor(-value);
     }
 
     /**
@@ -76,13 +70,8 @@ public class RuntimeConfig
      */
     public int getBarCost (String costsFieldName)
     {
-        try {
-            int value = ((Integer)costs.getAttribute(costsFieldName)).intValue();
-            return (value <= 0) ? -value : _exchange.coinsToBars(value);
-        } catch (ObjectAccessException oae) {
-            // Shouldn't happen as long as you're using CostsConfigObject constants in your code...
-            throw new RuntimeException(oae);
-        }
+        int value = ((Integer)costs.getAttribute(costsFieldName)).intValue();
+        return (value <= 0) ? -value : _exchange.coinsToBars(value);
     }
 
     protected void registerObject (RootDObjectManager omgr, ConfigRegistry confReg,
