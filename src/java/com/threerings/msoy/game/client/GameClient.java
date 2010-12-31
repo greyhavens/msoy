@@ -94,8 +94,7 @@ public class GameClient
             protected void updateIdle (boolean isIdle) {
                 if (_ctx.getClient().isLoggedOn()) {
                     log.info("Setting idle " + isIdle + ".");
-                    BodyService bsvc = _ctx.getClient().requireService(BodyService.class);
-                    bsvc.setIdle(_ctx.getClient(), isIdle);
+                    _ctx.getClient().requireService(BodyService.class).setIdle(isIdle);
                 }
             }
             protected void abandonedShip () {

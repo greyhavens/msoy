@@ -254,7 +254,7 @@ public class StatusServlet extends HttpServlet
 
         } else {
             final FutureResult<String> report = new FutureResult<String>();
-            nodeobj.peerService.generateReport(client, type, report);
+            nodeobj.peerService.generateReport(type, report);
             info.details = new Callable<String>() {
                 public String call () throws Exception {
                     try {
