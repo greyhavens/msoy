@@ -4,9 +4,9 @@
 package com.threerings.msoy.game.data;
 
 import com.threerings.util.ActionScript;
-import com.threerings.toybox.data.ToyBoxGameConfig;
 
 import com.whirled.game.data.GameDefinition;
+import com.whirled.game.data.WhirledGameConfig;
 
 import com.threerings.orth.data.MediaDesc;
 
@@ -14,7 +14,7 @@ import com.threerings.orth.data.MediaDesc;
  * Configuration for a Parlor game. Parlor games take over the entire display and don't leverage
  * any of the Whirled virtual world stuff.
  */
-public class ParlorGameConfig extends ToyBoxGameConfig
+public class ParlorGameConfig extends WhirledGameConfig
     implements MsoyGameConfig
 {
     /** Info on the game being played. */
