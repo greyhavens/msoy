@@ -20,14 +20,14 @@ public interface MsoyService extends InvocationService
     /**
      * Indicate whether we want to hear the group chat of the specified group.
      */
-    void setHearingGroupChat (Client client, int groupId, boolean hear, ConfirmListener listener);
+    void setHearingGroupChat (int groupId, boolean hear, ConfirmListener listener);
 
     /**
      * Shares a scene or parlor game by emailing offsite friends.
      * @param friend if set, the link that is sent will cookie the follower so that they send a
      * friend request upon registration
      */
-    void emailShare (Client client, boolean isGame, String placeName, int placeId,
+    void emailShare (boolean isGame, String placeName, int placeId,
                      String[] emails, String message, boolean friend, ConfirmListener listener);
 
     /**
@@ -39,19 +39,19 @@ public interface MsoyService extends InvocationService
     /**
      * Reports that the client took an action in the specified test.
      */
-    void trackTestAction (Client client, String test, String action);
+    void trackTestAction (String test, String action);
 
     /**
      * Requests a quote for sending a global broadcast. On success, the listener will receive an
      * a {@link PriceQuote} indicating the secured price of sending a broadcast.
      * @see com.threerings.msoy.chat.data.MsoyChatCodes#PAID_BROADCAST_MODE
      */
-    void secureBroadcastQuote (Client client, ResultListener listener);
+    void secureBroadcastQuote (ResultListener listener);
 
     /**
      * Sends a global user paid broadcast message for the previously quoted bar cost. Fails if the
      * user does not have sufficient funds or if the price has changed.
      */
-    void purchaseAndSendBroadcast (Client client, int authedCost, String message,
+    void purchaseAndSendBroadcast (int authedCost, String message,
         ResultListener listener);
 }

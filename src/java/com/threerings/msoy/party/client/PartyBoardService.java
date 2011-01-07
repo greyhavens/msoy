@@ -31,17 +31,17 @@ public interface PartyBoardService extends InvocationService
     /**
      * Retrieve a list of parties. Replies with a List<PartyBoardInfo>.
      */
-    void getPartyBoard (Client client, byte mode, ResultListener rl);
+    void getPartyBoard (byte mode, ResultListener rl);
 
     /**
      * Locates the specified party in the wide-Whirled.
      */
-    void locateParty (Client client, int partyId, JoinListener jl);
+    void locateParty (int partyId, JoinListener jl);
 
     /**
      * Get the cost of creating a party. Replies with a PriceQuote.
      */
-    void getCreateCost (Client client, ResultListener rl);
+    void getCreateCost (ResultListener rl);
 
     /**
      * Creates a new party with the requester as its leader.
@@ -53,5 +53,5 @@ public interface PartyBoardService extends InvocationService
     /**
      * Retrieve detailed information on a party. Replies with a PartyDetail object.
      */
-    void getPartyDetail (Client client, int partyId, ResultListener rl);
+    void getPartyDetail (int partyId, ResultListener rl);
 }

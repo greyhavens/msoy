@@ -20,18 +20,18 @@ public interface WorldGameService extends InvocationService
     /**
      * Locates (potentially resolving in the process) the server on which a game is hosted.
      */
-    void locateGame (Client client, int gameId, LocationListener listener);
+    void locateGame (int gameId, LocationListener listener);
 
     /**
      * Issues a request to the specified friends to invite them to join the requesting player's
      * game. If the game is still being match-made, they'll join the table in question, if it's in
      * play, they'll join the game if possible and watch otherwise.
      */
-    void inviteFriends (Client client, int gameId, int[] friendIds);
+    void inviteFriends (int gameId, int[] friendIds);
 
     /**
      * Returns a list of TablesWaiting objects, detailing games that actually have people
      * waiting to play.
      */
-    void getTablesWaiting (Client client, ResultListener listener);
+    void getTablesWaiting (ResultListener listener);
 }

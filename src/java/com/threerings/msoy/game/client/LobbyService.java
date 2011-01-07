@@ -16,7 +16,7 @@ public interface LobbyService extends InvocationService
      *
      * @param gameId the item id of a Game-type item.
      */
-    void identifyLobby (Client client, int gameId, ResultListener listener);
+    void identifyLobby (int gameId, ResultListener listener);
 
     /**
      * Requests to immediately start playing a game. If a game could be started and/or located, 0
@@ -25,5 +25,5 @@ public interface LobbyService extends InvocationService
      
      * @param playerId the player whose game we wish to join or 0.
      */
-    void playNow (Client client, int gameId, int playerId, ResultListener listener);
+    void playNow (int gameId, int playerId, ResultListener listener);
 }

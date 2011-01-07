@@ -15,15 +15,15 @@ public interface GameGameService extends InvocationService
      * Returns a list of all trophies awarded by the specified game along with information on when
      * the caller earned those trophies, if they've earned them.
      */
-    void getTrophies (Client client, int gameId, ResultListener listener);
+    void getTrophies (int gameId, ResultListener listener);
 
     /**
      * Removes the trophies for this player from this in-development game.
      */
-    void removeDevelopmentTrophies (Client client, int gameId, ConfirmListener listener);
+    void removeDevelopmentTrophies (int gameId, ConfirmListener listener);
     
     /**
      * Posts a complaint event in underwire.
      */
-    void complainPlayer (Client client, int memberId, String complaint);    
+    void complainPlayer (int memberId, String complaint);    
 }

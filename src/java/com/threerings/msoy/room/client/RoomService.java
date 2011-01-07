@@ -25,7 +25,7 @@ public interface RoomService extends InvocationService
      * are requested, but if an entity simply wishes to start ticking itself locally, it must first
      * request control to ensure that the right client handles the ticking.
      */
-    void requestControl (Client client, ItemIdent item);
+    void requestControl (ItemIdent item);
 
     /**
      * Requests to send a sprite message.
@@ -36,7 +36,7 @@ public interface RoomService extends InvocationService
      * @param arg the data
      * @param isAction if the message is a "action".
      */
-    void sendSpriteMessage (Client client, ItemIdent item, String name, byte[] arg,
+    void sendSpriteMessage (ItemIdent item, String name, byte[] arg,
                             boolean isAction);
 
     /**
@@ -45,45 +45,45 @@ public interface RoomService extends InvocationService
      * @param name the message name.
      * @param arg the data
      */
-    void sendSpriteSignal (Client client, String name, byte[] arg);
+    void sendSpriteSignal (String name, byte[] arg);
 
     /**
      * Requests to update an actor's state.
      */
-    void setActorState (Client client, ItemIdent item, int actorOid, String state);
+    void setActorState (ItemIdent item, int actorOid, String state);
 
     /**
      * Requests to add or remove a song from the playlist.
      */
-    void modifyPlaylist (Client client, int audioId, boolean add, ConfirmListener listener);
+    void modifyPlaylist (int audioId, boolean add, ConfirmListener listener);
 
     /**
      * For managers, request to jump to a particular song.
      */
-    void jumpToSong (Client client, int audioId, ConfirmListener listener);
+    void jumpToSong (int audioId, ConfirmListener listener);
 
     /**
      * A callback from a client to indicate that a song has ended and the playlist
      * should move to the next song.
      */
-    void songEnded (Client client, int playCount);
+    void songEnded (int playCount);
 
     /**
      * Requests to edit the client's current room.
      *
      * @param listener will be informed with an array of items in the room.
      */
-    void editRoom (Client client, ResultListener listener);
+    void editRoom (ResultListener listener);
 
     /**
      * Requests to apply the specified scene update to the room.
      */
-    void updateRoom (Client client, SceneUpdate update, InvocationListener listener);
+    void updateRoom (SceneUpdate update, InvocationListener listener);
 
     /**
      * Requests to publish this room to the rest of friends and the rest of Whirled.
      */
-    void publishRoom (Client client, InvocationListener listener);
+    void publishRoom (InvocationListener listener);
 
     /**
      * Issues a request to update the memory of the specified entity (which is associated with a
@@ -96,7 +96,7 @@ public interface RoomService extends InvocationService
      * Issues a request to update the current scene location of the specified item. This is called
      * by Pets and other MOBs that want to move around the room.
      */
-    void changeLocation (Client client, ItemIdent item, Location newloc);
+    void changeLocation (ItemIdent item, Location newloc);
 
     /**
      * Requests the placement of a MOB in the current scene location.

@@ -17,5 +17,5 @@ public interface PeerAdminService extends InvocationService
      * Compiles statistics for the supplied report type. The result provided to the listener
      * depends on the type of statistics requested.
      */
-    void compileStatistics (Client client, StatsModel.Type type, ResultListener listener);
+    void compileStatistics (StatsModel.Type type, ResultListener listener);
 }

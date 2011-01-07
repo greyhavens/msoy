@@ -31,10 +31,10 @@ public interface AVRService extends InvocationService
      * @param gameId the item id of a Game-type item.
      * @param listener a listener to return result to or notify on failure.
      */
-    void activateGame (Client client, int gameId, AVRGameJoinListener listener);
+    void activateGame (int gameId, AVRGameJoinListener listener);
 
     /**
      * Requests to deactivate the given AVR Game, which must be current to the player.
      */
-    void deactivateGame (Client client, int gameId, ConfirmListener listener);
+    void deactivateGame (int gameId, ConfirmListener listener);
 }

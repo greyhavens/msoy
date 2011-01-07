@@ -36,47 +36,47 @@ public interface WorldService extends InvocationService
      * {@link HomePageItem}. This should eventually take a parameter so that the top 3 "whirled"
      * items are a separate request from the very cachable 6 "what I've done recently" items.
      */
-    void getHomePageGridItems (Client client, ResultListener listener);
+    void getHomePageGridItems (ResultListener listener);
 
     /**
      * Request to know the home scene id for the specified owner.
      * @see {@link com.threerings.msoy.room.data.MsoySceneModel}.
      */
-    void getHomeId (Client client, byte ownerType, int ownerId, HomeResultListener listener);
+    void getHomeId (byte ownerType, int ownerId, HomeResultListener listener);
 
     /**
      * Dresses the user in the avatar of the specified catalog id, adding it to their inventory
      * and returns the home scene id to go to. The catalog id must be chosen from a previously
      * returned gift list ({@link HomeResultListener#selectGift()}).
      */
-    void acceptAndProceed (Client client, int giftCatalogId, ConfirmListener listener);
+    void acceptAndProceed (int giftCatalogId, ConfirmListener listener);
 
     /**
      * Set the given scene as the owner's home scene
      */
-    void setHomeSceneId (Client client, int ownerType, int ownerId, int sceneId,
+    void setHomeSceneId (int ownerType, int ownerId, int sceneId,
                          ConfirmListener listener);
 
     /**
      * Invites the specified member to follow the caller. Passing 0 for the memberId will clear all
      * of the caller's followers.
      */
-    void inviteToFollow (Client client, int memberId, InvocationListener listener);
+    void inviteToFollow (int memberId, InvocationListener listener);
 
     /**
      * Requests to follow the specified member who must have previously issued an invitation to the
      * caller to follow them. Passing 0 for memberId will clear the caller's following status.
      */
-    void followMember (Client client, int memberId, InvocationListener listener);
+    void followMember (int memberId, InvocationListener listener);
 
     /**
      * Removes a player from the caller's list of followers. Passing 0 for memberId will clear all
      * the caller's followers.
      */
-    void ditchFollower (Client client, int memberId, InvocationListener listener);
+    void ditchFollower (int memberId, InvocationListener listener);
 
     /**
      * Set the avatar in use by this user.
      */
-    void setAvatar (Client client, int avatarId, ConfirmListener listener);
+    void setAvatar (int avatarId, ConfirmListener listener);
 }
