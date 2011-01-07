@@ -61,9 +61,12 @@ import com.whirled.game.data.GameContentOwnership;
 import com.whirled.game.data.GameData;
 import com.whirled.game.server.PropertySpaceDelegate;
 
+import com.threerings.msoy.avrg.data.AVRMarshaller;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.UserAction;
+import com.threerings.msoy.game.data.GameGameMarshaller;
+import com.threerings.msoy.game.data.LobbyMarshaller;
 import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.server.BureauManager;
 import com.threerings.msoy.server.MemberManager;
@@ -93,7 +96,6 @@ import com.threerings.msoy.person.server.FeedLogic;
 
 import com.threerings.msoy.avrg.client.AVRService;
 import com.threerings.msoy.avrg.data.AVRGameConfig;
-import com.threerings.msoy.avrg.server.AVRDispatcher;
 import com.threerings.msoy.avrg.server.AVRGameManager;
 import com.threerings.msoy.avrg.server.AVRProvider;
 import com.threerings.msoy.avrg.server.AgentPropertySpaceDelegate;
