@@ -20,5 +20,5 @@ public interface TourService extends InvocationService
     /**
      * End any tour the client is involved in. There is no listener because this cannot fail.
      */
-    void endTour (Client client);
+    void endTour ();
 }

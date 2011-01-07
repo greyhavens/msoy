@@ -16,10 +16,10 @@ public interface BureauLauncherService extends InvocationService
     /**
      * Lets the server know that this launcher is ready to go.
      */
-    void launcherInitialized (Client caller);
+    void launcherInitialized ();
 
     /**
      * Updates the msoy server with information about a launcher.
      */
-    void setBureauLauncherInfo (Client caller, BureauLauncherInfo info);
+    void setBureauLauncherInfo (BureauLauncherInfo info);
 }

@@ -15,7 +15,7 @@ public interface MsoyService extends InvocationService
     /**
      * Requests that any notifications that were deferred on the MemberObject be dispatched now
      */
-    void dispatchDeferredNotifications (Client client);
+    void dispatchDeferredNotifications ();
 
     /**
      * Indicate whether we want to hear the group chat of the specified group.
@@ -34,7 +34,7 @@ public interface MsoyService extends InvocationService
      * Calculate the visitor's a/b test group (eg 1 or 2) or < 0 for no group.
      */
     void getABTestGroup (
-        String testName, boolean logEvent, ResultListener listener);
+        Client client, String testName, boolean logEvent, ResultListener listener);
 
     /**
      * Reports that the client took an action in the specified test.

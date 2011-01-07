@@ -15,5 +15,5 @@ public interface ThaneWorldService extends InvocationService
      * Lookup the room object id for a given scene. If successful, the listener will be called
      * with an Integer containing the id of the room object.
      */
-    void locateRoom (Client caller, int sceneId, ResultListener listener);
+    void locateRoom (int sceneId, ResultListener listener);
 }

@@ -103,31 +103,31 @@ public interface RoomService extends InvocationService
      *
      * @see MobInfo
      */
-    void spawnMob (Client caller, int gameId, String mobId, String mobName, Location startLoc,
+    void spawnMob (int gameId, String mobId, String mobName, Location startLoc,
                    InvocationListener listener);
 
     /**
      * Requests a mob be moved to a new location.
      */
-    void moveMob (Client caller, int gameId, String mobId, Location newLoc,
+    void moveMob (int gameId, String mobId, Location newLoc,
                   InvocationListener listener);
 
     /**
      * Requests the removal of a MOB from the current scene location.
      */
-    void despawnMob (Client caller, int gameId, String mobId, InvocationListener listener);
+    void despawnMob (int gameId, String mobId, InvocationListener listener);
 
     /**
      * Requests to assign this user rating to the room. Returns a {@link RatingResult}.
      */
-    void rateRoom (Client caller, byte rating, InvocationListener listener);
+    void rateRoom (byte rating, InvocationListener listener);
 
     /**
      * Requests to send a postcard email containing a snapshot of this room.
      *
      * @param snapURL the URL of the snapshot or null to send the canonical snapshot.
      */
-    void sendPostcard (Client caller, String[] recips, String subject, String caption,
+    void sendPostcard (String[] recips, String subject, String caption,
                        String snapURL, ConfirmListener listener);
 
 }
