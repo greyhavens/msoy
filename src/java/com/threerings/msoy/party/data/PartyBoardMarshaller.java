@@ -8,7 +8,6 @@ import javax.annotation.Generated;
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.PriceQuote;
 import com.threerings.msoy.party.client.PartyBoardService;
-import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.InvocationMarshaller;
 import com.threerings.presents.dobj.InvocationResponseEvent;
@@ -82,12 +81,12 @@ public class PartyBoardMarshaller extends InvocationMarshaller
     public static final int CREATE_PARTY = 1;
 
     // from interface PartyBoardService
-    public void createParty (Client arg1, Currency arg2, int arg3, String arg4, int arg5, boolean arg6, PartyBoardService.JoinListener arg7)
+    public void createParty (Currency arg1, int arg2, String arg3, int arg4, boolean arg5, PartyBoardService.JoinListener arg6)
     {
-        PartyBoardMarshaller.JoinMarshaller listener7 = new PartyBoardMarshaller.JoinMarshaller();
-        listener7.listener = arg7;
-        sendRequest(arg1, CREATE_PARTY, new Object[] {
-            arg2, Integer.valueOf(arg3), arg4, Integer.valueOf(arg5), Boolean.valueOf(arg6), listener7
+        PartyBoardMarshaller.JoinMarshaller listener6 = new PartyBoardMarshaller.JoinMarshaller();
+        listener6.listener = arg6;
+        sendRequest(CREATE_PARTY, new Object[] {
+            arg1, Integer.valueOf(arg2), arg3, Integer.valueOf(arg4), Boolean.valueOf(arg5), listener6
         });
     }
 
@@ -95,12 +94,12 @@ public class PartyBoardMarshaller extends InvocationMarshaller
     public static final int GET_CREATE_COST = 2;
 
     // from interface PartyBoardService
-    public void getCreateCost (Client arg1, InvocationService.ResultListener arg2)
+    public void getCreateCost (InvocationService.ResultListener arg1)
     {
-        InvocationMarshaller.ResultMarshaller listener2 = new InvocationMarshaller.ResultMarshaller();
-        listener2.listener = arg2;
-        sendRequest(arg1, GET_CREATE_COST, new Object[] {
-            listener2
+        InvocationMarshaller.ResultMarshaller listener1 = new InvocationMarshaller.ResultMarshaller();
+        listener1.listener = arg1;
+        sendRequest(GET_CREATE_COST, new Object[] {
+            listener1
         });
     }
 
@@ -108,12 +107,12 @@ public class PartyBoardMarshaller extends InvocationMarshaller
     public static final int GET_PARTY_BOARD = 3;
 
     // from interface PartyBoardService
-    public void getPartyBoard (Client arg1, byte arg2, InvocationService.ResultListener arg3)
+    public void getPartyBoard (byte arg1, InvocationService.ResultListener arg2)
     {
-        InvocationMarshaller.ResultMarshaller listener3 = new InvocationMarshaller.ResultMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, GET_PARTY_BOARD, new Object[] {
-            Byte.valueOf(arg2), listener3
+        InvocationMarshaller.ResultMarshaller listener2 = new InvocationMarshaller.ResultMarshaller();
+        listener2.listener = arg2;
+        sendRequest(GET_PARTY_BOARD, new Object[] {
+            Byte.valueOf(arg1), listener2
         });
     }
 
@@ -121,12 +120,12 @@ public class PartyBoardMarshaller extends InvocationMarshaller
     public static final int GET_PARTY_DETAIL = 4;
 
     // from interface PartyBoardService
-    public void getPartyDetail (Client arg1, int arg2, InvocationService.ResultListener arg3)
+    public void getPartyDetail (int arg1, InvocationService.ResultListener arg2)
     {
-        InvocationMarshaller.ResultMarshaller listener3 = new InvocationMarshaller.ResultMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, GET_PARTY_DETAIL, new Object[] {
-            Integer.valueOf(arg2), listener3
+        InvocationMarshaller.ResultMarshaller listener2 = new InvocationMarshaller.ResultMarshaller();
+        listener2.listener = arg2;
+        sendRequest(GET_PARTY_DETAIL, new Object[] {
+            Integer.valueOf(arg1), listener2
         });
     }
 
@@ -134,12 +133,12 @@ public class PartyBoardMarshaller extends InvocationMarshaller
     public static final int LOCATE_PARTY = 5;
 
     // from interface PartyBoardService
-    public void locateParty (Client arg1, int arg2, PartyBoardService.JoinListener arg3)
+    public void locateParty (int arg1, PartyBoardService.JoinListener arg2)
     {
-        PartyBoardMarshaller.JoinMarshaller listener3 = new PartyBoardMarshaller.JoinMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, LOCATE_PARTY, new Object[] {
-            Integer.valueOf(arg2), listener3
+        PartyBoardMarshaller.JoinMarshaller listener2 = new PartyBoardMarshaller.JoinMarshaller();
+        listener2.listener = arg2;
+        sendRequest(LOCATE_PARTY, new Object[] {
+            Integer.valueOf(arg1), listener2
         });
     }
 }

@@ -6,7 +6,6 @@ package com.threerings.msoy.party.data;
 import javax.annotation.Generated;
 
 import com.threerings.msoy.party.client.PeerPartyService;
-import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.InvocationMarshaller;
 
@@ -26,12 +25,12 @@ public class PeerPartyMarshaller extends InvocationMarshaller
     public static final int GET_PARTY_DETAIL = 1;
 
     // from interface PeerPartyService
-    public void getPartyDetail (Client arg1, int arg2, InvocationService.ResultListener arg3)
+    public void getPartyDetail (int arg1, InvocationService.ResultListener arg2)
     {
-        InvocationMarshaller.ResultMarshaller listener3 = new InvocationMarshaller.ResultMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, GET_PARTY_DETAIL, new Object[] {
-            Integer.valueOf(arg2), listener3
+        InvocationMarshaller.ResultMarshaller listener2 = new InvocationMarshaller.ResultMarshaller();
+        listener2.listener = arg2;
+        sendRequest(GET_PARTY_DETAIL, new Object[] {
+            Integer.valueOf(arg1), listener2
         });
     }
 }

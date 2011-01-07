@@ -6,7 +6,6 @@ package com.threerings.msoy.game.data;
 import javax.annotation.Generated;
 
 import com.threerings.msoy.game.client.LobbyService;
-import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.InvocationMarshaller;
 
@@ -26,12 +25,12 @@ public class LobbyMarshaller extends InvocationMarshaller
     public static final int IDENTIFY_LOBBY = 1;
 
     // from interface LobbyService
-    public void identifyLobby (Client arg1, int arg2, InvocationService.ResultListener arg3)
+    public void identifyLobby (int arg1, InvocationService.ResultListener arg2)
     {
-        InvocationMarshaller.ResultMarshaller listener3 = new InvocationMarshaller.ResultMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, IDENTIFY_LOBBY, new Object[] {
-            Integer.valueOf(arg2), listener3
+        InvocationMarshaller.ResultMarshaller listener2 = new InvocationMarshaller.ResultMarshaller();
+        listener2.listener = arg2;
+        sendRequest(IDENTIFY_LOBBY, new Object[] {
+            Integer.valueOf(arg1), listener2
         });
     }
 
@@ -39,12 +38,12 @@ public class LobbyMarshaller extends InvocationMarshaller
     public static final int PLAY_NOW = 2;
 
     // from interface LobbyService
-    public void playNow (Client arg1, int arg2, int arg3, InvocationService.ResultListener arg4)
+    public void playNow (int arg1, int arg2, InvocationService.ResultListener arg3)
     {
-        InvocationMarshaller.ResultMarshaller listener4 = new InvocationMarshaller.ResultMarshaller();
-        listener4.listener = arg4;
-        sendRequest(arg1, PLAY_NOW, new Object[] {
-            Integer.valueOf(arg2), Integer.valueOf(arg3), listener4
+        InvocationMarshaller.ResultMarshaller listener3 = new InvocationMarshaller.ResultMarshaller();
+        listener3.listener = arg3;
+        sendRequest(PLAY_NOW, new Object[] {
+            Integer.valueOf(arg1), Integer.valueOf(arg2), listener3
         });
     }
 }

@@ -6,7 +6,6 @@ package com.threerings.msoy.party.data;
 import javax.annotation.Generated;
 
 import com.threerings.msoy.party.client.PartyService;
-import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.InvocationMarshaller;
 
@@ -26,12 +25,12 @@ public class PartyMarshaller extends InvocationMarshaller
     public static final int ASSIGN_LEADER = 1;
 
     // from interface PartyService
-    public void assignLeader (Client arg1, int arg2, InvocationService.InvocationListener arg3)
+    public void assignLeader (int arg1, InvocationService.InvocationListener arg2)
     {
-        ListenerMarshaller listener3 = new ListenerMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, ASSIGN_LEADER, new Object[] {
-            Integer.valueOf(arg2), listener3
+        ListenerMarshaller listener2 = new ListenerMarshaller();
+        listener2.listener = arg2;
+        sendRequest(ASSIGN_LEADER, new Object[] {
+            Integer.valueOf(arg1), listener2
         });
     }
 
@@ -39,12 +38,12 @@ public class PartyMarshaller extends InvocationMarshaller
     public static final int BOOT_MEMBER = 2;
 
     // from interface PartyService
-    public void bootMember (Client arg1, int arg2, InvocationService.InvocationListener arg3)
+    public void bootMember (int arg1, InvocationService.InvocationListener arg2)
     {
-        ListenerMarshaller listener3 = new ListenerMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, BOOT_MEMBER, new Object[] {
-            Integer.valueOf(arg2), listener3
+        ListenerMarshaller listener2 = new ListenerMarshaller();
+        listener2.listener = arg2;
+        sendRequest(BOOT_MEMBER, new Object[] {
+            Integer.valueOf(arg1), listener2
         });
     }
 
@@ -52,12 +51,12 @@ public class PartyMarshaller extends InvocationMarshaller
     public static final int INVITE_MEMBER = 3;
 
     // from interface PartyService
-    public void inviteMember (Client arg1, int arg2, InvocationService.InvocationListener arg3)
+    public void inviteMember (int arg1, InvocationService.InvocationListener arg2)
     {
-        ListenerMarshaller listener3 = new ListenerMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, INVITE_MEMBER, new Object[] {
-            Integer.valueOf(arg2), listener3
+        ListenerMarshaller listener2 = new ListenerMarshaller();
+        listener2.listener = arg2;
+        sendRequest(INVITE_MEMBER, new Object[] {
+            Integer.valueOf(arg1), listener2
         });
     }
 
@@ -65,12 +64,12 @@ public class PartyMarshaller extends InvocationMarshaller
     public static final int MOVE_PARTY = 4;
 
     // from interface PartyService
-    public void moveParty (Client arg1, int arg2, InvocationService.InvocationListener arg3)
+    public void moveParty (int arg1, InvocationService.InvocationListener arg2)
     {
-        ListenerMarshaller listener3 = new ListenerMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, MOVE_PARTY, new Object[] {
-            Integer.valueOf(arg2), listener3
+        ListenerMarshaller listener2 = new ListenerMarshaller();
+        listener2.listener = arg2;
+        sendRequest(MOVE_PARTY, new Object[] {
+            Integer.valueOf(arg1), listener2
         });
     }
 
@@ -78,12 +77,12 @@ public class PartyMarshaller extends InvocationMarshaller
     public static final int SET_GAME = 5;
 
     // from interface PartyService
-    public void setGame (Client arg1, int arg2, byte arg3, int arg4, InvocationService.InvocationListener arg5)
+    public void setGame (int arg1, byte arg2, int arg3, InvocationService.InvocationListener arg4)
     {
-        ListenerMarshaller listener5 = new ListenerMarshaller();
-        listener5.listener = arg5;
-        sendRequest(arg1, SET_GAME, new Object[] {
-            Integer.valueOf(arg2), Byte.valueOf(arg3), Integer.valueOf(arg4), listener5
+        ListenerMarshaller listener4 = new ListenerMarshaller();
+        listener4.listener = arg4;
+        sendRequest(SET_GAME, new Object[] {
+            Integer.valueOf(arg1), Byte.valueOf(arg2), Integer.valueOf(arg3), listener4
         });
     }
 
@@ -91,12 +90,12 @@ public class PartyMarshaller extends InvocationMarshaller
     public static final int UPDATE_DISBAND = 6;
 
     // from interface PartyService
-    public void updateDisband (Client arg1, boolean arg2, InvocationService.InvocationListener arg3)
+    public void updateDisband (boolean arg1, InvocationService.InvocationListener arg2)
     {
-        ListenerMarshaller listener3 = new ListenerMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, UPDATE_DISBAND, new Object[] {
-            Boolean.valueOf(arg2), listener3
+        ListenerMarshaller listener2 = new ListenerMarshaller();
+        listener2.listener = arg2;
+        sendRequest(UPDATE_DISBAND, new Object[] {
+            Boolean.valueOf(arg1), listener2
         });
     }
 
@@ -104,12 +103,12 @@ public class PartyMarshaller extends InvocationMarshaller
     public static final int UPDATE_RECRUITMENT = 7;
 
     // from interface PartyService
-    public void updateRecruitment (Client arg1, byte arg2, InvocationService.InvocationListener arg3)
+    public void updateRecruitment (byte arg1, InvocationService.InvocationListener arg2)
     {
-        ListenerMarshaller listener3 = new ListenerMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, UPDATE_RECRUITMENT, new Object[] {
-            Byte.valueOf(arg2), listener3
+        ListenerMarshaller listener2 = new ListenerMarshaller();
+        listener2.listener = arg2;
+        sendRequest(UPDATE_RECRUITMENT, new Object[] {
+            Byte.valueOf(arg1), listener2
         });
     }
 
@@ -117,12 +116,12 @@ public class PartyMarshaller extends InvocationMarshaller
     public static final int UPDATE_STATUS = 8;
 
     // from interface PartyService
-    public void updateStatus (Client arg1, String arg2, InvocationService.InvocationListener arg3)
+    public void updateStatus (String arg1, InvocationService.InvocationListener arg2)
     {
-        ListenerMarshaller listener3 = new ListenerMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, UPDATE_STATUS, new Object[] {
-            arg2, listener3
+        ListenerMarshaller listener2 = new ListenerMarshaller();
+        listener2.listener = arg2;
+        sendRequest(UPDATE_STATUS, new Object[] {
+            arg1, listener2
         });
     }
 }

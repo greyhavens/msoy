@@ -7,7 +7,6 @@ import javax.annotation.Generated;
 
 import com.threerings.msoy.admin.client.PeerAdminService;
 import com.threerings.msoy.admin.gwt.StatsModel;
-import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.InvocationMarshaller;
 
@@ -27,12 +26,12 @@ public class PeerAdminMarshaller extends InvocationMarshaller
     public static final int COMPILE_STATISTICS = 1;
 
     // from interface PeerAdminService
-    public void compileStatistics (Client arg1, StatsModel.Type arg2, InvocationService.ResultListener arg3)
+    public void compileStatistics (StatsModel.Type arg1, InvocationService.ResultListener arg2)
     {
-        InvocationMarshaller.ResultMarshaller listener3 = new InvocationMarshaller.ResultMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, COMPILE_STATISTICS, new Object[] {
-            arg2, listener3
+        InvocationMarshaller.ResultMarshaller listener2 = new InvocationMarshaller.ResultMarshaller();
+        listener2.listener = arg2;
+        sendRequest(COMPILE_STATISTICS, new Object[] {
+            arg1, listener2
         });
     }
 }

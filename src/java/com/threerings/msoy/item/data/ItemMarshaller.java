@@ -8,7 +8,6 @@ import javax.annotation.Generated;
 import com.threerings.msoy.item.client.ItemService;
 import com.threerings.msoy.item.data.all.ItemFlag;
 import com.threerings.msoy.item.data.all.ItemIdent;
-import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.InvocationMarshaller;
 
@@ -28,12 +27,12 @@ public class ItemMarshaller extends InvocationMarshaller
     public static final int ADD_FLAG = 1;
 
     // from interface ItemService
-    public void addFlag (Client arg1, ItemIdent arg2, ItemFlag.Kind arg3, String arg4, InvocationService.ConfirmListener arg5)
+    public void addFlag (ItemIdent arg1, ItemFlag.Kind arg2, String arg3, InvocationService.ConfirmListener arg4)
     {
-        InvocationMarshaller.ConfirmMarshaller listener5 = new InvocationMarshaller.ConfirmMarshaller();
-        listener5.listener = arg5;
-        sendRequest(arg1, ADD_FLAG, new Object[] {
-            arg2, arg3, arg4, listener5
+        InvocationMarshaller.ConfirmMarshaller listener4 = new InvocationMarshaller.ConfirmMarshaller();
+        listener4.listener = arg4;
+        sendRequest(ADD_FLAG, new Object[] {
+            arg1, arg2, arg3, listener4
         });
     }
 
@@ -41,12 +40,12 @@ public class ItemMarshaller extends InvocationMarshaller
     public static final int DELETE_ITEM = 2;
 
     // from interface ItemService
-    public void deleteItem (Client arg1, ItemIdent arg2, InvocationService.ConfirmListener arg3)
+    public void deleteItem (ItemIdent arg1, InvocationService.ConfirmListener arg2)
     {
-        InvocationMarshaller.ConfirmMarshaller listener3 = new InvocationMarshaller.ConfirmMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, DELETE_ITEM, new Object[] {
-            arg2, listener3
+        InvocationMarshaller.ConfirmMarshaller listener2 = new InvocationMarshaller.ConfirmMarshaller();
+        listener2.listener = arg2;
+        sendRequest(DELETE_ITEM, new Object[] {
+            arg1, listener2
         });
     }
 
@@ -54,12 +53,12 @@ public class ItemMarshaller extends InvocationMarshaller
     public static final int GET_CATALOG_ID = 3;
 
     // from interface ItemService
-    public void getCatalogId (Client arg1, ItemIdent arg2, InvocationService.ResultListener arg3)
+    public void getCatalogId (ItemIdent arg1, InvocationService.ResultListener arg2)
     {
-        InvocationMarshaller.ResultMarshaller listener3 = new InvocationMarshaller.ResultMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, GET_CATALOG_ID, new Object[] {
-            arg2, listener3
+        InvocationMarshaller.ResultMarshaller listener2 = new InvocationMarshaller.ResultMarshaller();
+        listener2.listener = arg2;
+        sendRequest(GET_CATALOG_ID, new Object[] {
+            arg1, listener2
         });
     }
 
@@ -67,12 +66,12 @@ public class ItemMarshaller extends InvocationMarshaller
     public static final int GET_ITEM_NAMES = 4;
 
     // from interface ItemService
-    public void getItemNames (Client arg1, ItemIdent[] arg2, InvocationService.ResultListener arg3)
+    public void getItemNames (ItemIdent[] arg1, InvocationService.ResultListener arg2)
     {
-        InvocationMarshaller.ResultMarshaller listener3 = new InvocationMarshaller.ResultMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, GET_ITEM_NAMES, new Object[] {
-            arg2, listener3
+        InvocationMarshaller.ResultMarshaller listener2 = new InvocationMarshaller.ResultMarshaller();
+        listener2.listener = arg2;
+        sendRequest(GET_ITEM_NAMES, new Object[] {
+            arg1, listener2
         });
     }
 
@@ -80,12 +79,12 @@ public class ItemMarshaller extends InvocationMarshaller
     public static final int PEEP_ITEM = 5;
 
     // from interface ItemService
-    public void peepItem (Client arg1, ItemIdent arg2, InvocationService.ResultListener arg3)
+    public void peepItem (ItemIdent arg1, InvocationService.ResultListener arg2)
     {
-        InvocationMarshaller.ResultMarshaller listener3 = new InvocationMarshaller.ResultMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, PEEP_ITEM, new Object[] {
-            arg2, listener3
+        InvocationMarshaller.ResultMarshaller listener2 = new InvocationMarshaller.ResultMarshaller();
+        listener2.listener = arg2;
+        sendRequest(PEEP_ITEM, new Object[] {
+            arg1, listener2
         });
     }
 
@@ -93,12 +92,12 @@ public class ItemMarshaller extends InvocationMarshaller
     public static final int RECLAIM_ITEM = 6;
 
     // from interface ItemService
-    public void reclaimItem (Client arg1, ItemIdent arg2, InvocationService.ConfirmListener arg3)
+    public void reclaimItem (ItemIdent arg1, InvocationService.ConfirmListener arg2)
     {
-        InvocationMarshaller.ConfirmMarshaller listener3 = new InvocationMarshaller.ConfirmMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, RECLAIM_ITEM, new Object[] {
-            arg2, listener3
+        InvocationMarshaller.ConfirmMarshaller listener2 = new InvocationMarshaller.ConfirmMarshaller();
+        listener2.listener = arg2;
+        sendRequest(RECLAIM_ITEM, new Object[] {
+            arg1, listener2
         });
     }
 }

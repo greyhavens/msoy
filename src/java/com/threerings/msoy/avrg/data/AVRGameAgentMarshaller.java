@@ -6,7 +6,6 @@ package com.threerings.msoy.avrg.data;
 import javax.annotation.Generated;
 
 import com.threerings.msoy.avrg.client.AVRGameAgentService;
-import com.threerings.presents.client.Client;
 import com.threerings.presents.data.InvocationMarshaller;
 
 /**
@@ -25,10 +24,10 @@ public class AVRGameAgentMarshaller extends InvocationMarshaller
     public static final int LEAVE_GAME = 1;
 
     // from interface AVRGameAgentService
-    public void leaveGame (Client arg1, int arg2)
+    public void leaveGame (int arg1)
     {
-        sendRequest(arg1, LEAVE_GAME, new Object[] {
-            Integer.valueOf(arg2)
+        sendRequest(LEAVE_GAME, new Object[] {
+            Integer.valueOf(arg1)
         });
     }
 
@@ -36,10 +35,10 @@ public class AVRGameAgentMarshaller extends InvocationMarshaller
     public static final int ROOM_SUBSCRIPTION_COMPLETE = 2;
 
     // from interface AVRGameAgentService
-    public void roomSubscriptionComplete (Client arg1, int arg2)
+    public void roomSubscriptionComplete (int arg1)
     {
-        sendRequest(arg1, ROOM_SUBSCRIPTION_COMPLETE, new Object[] {
-            Integer.valueOf(arg2)
+        sendRequest(ROOM_SUBSCRIPTION_COMPLETE, new Object[] {
+            Integer.valueOf(arg1)
         });
     }
 }

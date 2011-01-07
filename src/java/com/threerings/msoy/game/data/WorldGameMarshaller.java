@@ -6,7 +6,6 @@ package com.threerings.msoy.game.data;
 import javax.annotation.Generated;
 
 import com.threerings.msoy.game.client.WorldGameService;
-import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.InvocationMarshaller;
 import com.threerings.presents.dobj.InvocationResponseEvent;
@@ -62,12 +61,12 @@ public class WorldGameMarshaller extends InvocationMarshaller
     public static final int GET_TABLES_WAITING = 1;
 
     // from interface WorldGameService
-    public void getTablesWaiting (Client arg1, InvocationService.ResultListener arg2)
+    public void getTablesWaiting (InvocationService.ResultListener arg1)
     {
-        InvocationMarshaller.ResultMarshaller listener2 = new InvocationMarshaller.ResultMarshaller();
-        listener2.listener = arg2;
-        sendRequest(arg1, GET_TABLES_WAITING, new Object[] {
-            listener2
+        InvocationMarshaller.ResultMarshaller listener1 = new InvocationMarshaller.ResultMarshaller();
+        listener1.listener = arg1;
+        sendRequest(GET_TABLES_WAITING, new Object[] {
+            listener1
         });
     }
 
@@ -75,10 +74,10 @@ public class WorldGameMarshaller extends InvocationMarshaller
     public static final int INVITE_FRIENDS = 2;
 
     // from interface WorldGameService
-    public void inviteFriends (Client arg1, int arg2, int[] arg3)
+    public void inviteFriends (int arg1, int[] arg2)
     {
-        sendRequest(arg1, INVITE_FRIENDS, new Object[] {
-            Integer.valueOf(arg2), arg3
+        sendRequest(INVITE_FRIENDS, new Object[] {
+            Integer.valueOf(arg1), arg2
         });
     }
 
@@ -86,12 +85,12 @@ public class WorldGameMarshaller extends InvocationMarshaller
     public static final int LOCATE_GAME = 3;
 
     // from interface WorldGameService
-    public void locateGame (Client arg1, int arg2, WorldGameService.LocationListener arg3)
+    public void locateGame (int arg1, WorldGameService.LocationListener arg2)
     {
-        WorldGameMarshaller.LocationMarshaller listener3 = new WorldGameMarshaller.LocationMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, LOCATE_GAME, new Object[] {
-            Integer.valueOf(arg2), listener3
+        WorldGameMarshaller.LocationMarshaller listener2 = new WorldGameMarshaller.LocationMarshaller();
+        listener2.listener = arg2;
+        sendRequest(LOCATE_GAME, new Object[] {
+            Integer.valueOf(arg1), listener2
         });
     }
 }

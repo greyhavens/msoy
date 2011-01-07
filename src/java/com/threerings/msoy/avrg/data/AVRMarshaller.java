@@ -6,7 +6,6 @@ package com.threerings.msoy.avrg.data;
 import javax.annotation.Generated;
 
 import com.threerings.msoy.avrg.client.AVRService;
-import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.InvocationMarshaller;
 import com.threerings.presents.dobj.InvocationResponseEvent;
@@ -62,12 +61,12 @@ public class AVRMarshaller extends InvocationMarshaller
     public static final int ACTIVATE_GAME = 1;
 
     // from interface AVRService
-    public void activateGame (Client arg1, int arg2, AVRService.AVRGameJoinListener arg3)
+    public void activateGame (int arg1, AVRService.AVRGameJoinListener arg2)
     {
-        AVRMarshaller.AVRGameJoinMarshaller listener3 = new AVRMarshaller.AVRGameJoinMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, ACTIVATE_GAME, new Object[] {
-            Integer.valueOf(arg2), listener3
+        AVRMarshaller.AVRGameJoinMarshaller listener2 = new AVRMarshaller.AVRGameJoinMarshaller();
+        listener2.listener = arg2;
+        sendRequest(ACTIVATE_GAME, new Object[] {
+            Integer.valueOf(arg1), listener2
         });
     }
 
@@ -75,12 +74,12 @@ public class AVRMarshaller extends InvocationMarshaller
     public static final int DEACTIVATE_GAME = 2;
 
     // from interface AVRService
-    public void deactivateGame (Client arg1, int arg2, InvocationService.ConfirmListener arg3)
+    public void deactivateGame (int arg1, InvocationService.ConfirmListener arg2)
     {
-        InvocationMarshaller.ConfirmMarshaller listener3 = new InvocationMarshaller.ConfirmMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, DEACTIVATE_GAME, new Object[] {
-            Integer.valueOf(arg2), listener3
+        InvocationMarshaller.ConfirmMarshaller listener2 = new InvocationMarshaller.ConfirmMarshaller();
+        listener2.listener = arg2;
+        sendRequest(DEACTIVATE_GAME, new Object[] {
+            Integer.valueOf(arg1), listener2
         });
     }
 }

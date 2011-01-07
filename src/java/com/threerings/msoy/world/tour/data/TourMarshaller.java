@@ -6,7 +6,6 @@ package com.threerings.msoy.world.tour.data;
 import javax.annotation.Generated;
 
 import com.threerings.msoy.world.tour.client.TourService;
-import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.InvocationMarshaller;
 
@@ -26,21 +25,22 @@ public class TourMarshaller extends InvocationMarshaller
     public static final int END_TOUR = 1;
 
     // from interface TourService
-    public void endTour (Client arg1)
+    public void endTour ()
     {
-        sendRequest(arg1, END_TOUR, new Object[] {});
+        sendRequest(END_TOUR, new Object[] {
+        });
     }
 
     /** The method id used to dispatch {@link #nextRoom} requests. */
     public static final int NEXT_ROOM = 2;
 
     // from interface TourService
-    public void nextRoom (Client arg1, boolean arg2, InvocationService.ResultListener arg3)
+    public void nextRoom (boolean arg1, InvocationService.ResultListener arg2)
     {
-        InvocationMarshaller.ResultMarshaller listener3 = new InvocationMarshaller.ResultMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, NEXT_ROOM, new Object[] {
-            Boolean.valueOf(arg2), listener3
+        InvocationMarshaller.ResultMarshaller listener2 = new InvocationMarshaller.ResultMarshaller();
+        listener2.listener = arg2;
+        sendRequest(NEXT_ROOM, new Object[] {
+            Boolean.valueOf(arg1), listener2
         });
     }
 }

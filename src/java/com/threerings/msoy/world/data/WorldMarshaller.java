@@ -7,7 +7,6 @@ import javax.annotation.Generated;
 
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.world.client.WorldService;
-import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.InvocationMarshaller;
 import com.threerings.presents.dobj.InvocationResponseEvent;
@@ -81,12 +80,12 @@ public class WorldMarshaller extends InvocationMarshaller
     public static final int ACCEPT_AND_PROCEED = 1;
 
     // from interface WorldService
-    public void acceptAndProceed (Client arg1, int arg2, InvocationService.ConfirmListener arg3)
+    public void acceptAndProceed (int arg1, InvocationService.ConfirmListener arg2)
     {
-        InvocationMarshaller.ConfirmMarshaller listener3 = new InvocationMarshaller.ConfirmMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, ACCEPT_AND_PROCEED, new Object[] {
-            Integer.valueOf(arg2), listener3
+        InvocationMarshaller.ConfirmMarshaller listener2 = new InvocationMarshaller.ConfirmMarshaller();
+        listener2.listener = arg2;
+        sendRequest(ACCEPT_AND_PROCEED, new Object[] {
+            Integer.valueOf(arg1), listener2
         });
     }
 
@@ -94,12 +93,12 @@ public class WorldMarshaller extends InvocationMarshaller
     public static final int DITCH_FOLLOWER = 2;
 
     // from interface WorldService
-    public void ditchFollower (Client arg1, int arg2, InvocationService.InvocationListener arg3)
+    public void ditchFollower (int arg1, InvocationService.InvocationListener arg2)
     {
-        ListenerMarshaller listener3 = new ListenerMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, DITCH_FOLLOWER, new Object[] {
-            Integer.valueOf(arg2), listener3
+        ListenerMarshaller listener2 = new ListenerMarshaller();
+        listener2.listener = arg2;
+        sendRequest(DITCH_FOLLOWER, new Object[] {
+            Integer.valueOf(arg1), listener2
         });
     }
 
@@ -107,12 +106,12 @@ public class WorldMarshaller extends InvocationMarshaller
     public static final int FOLLOW_MEMBER = 3;
 
     // from interface WorldService
-    public void followMember (Client arg1, int arg2, InvocationService.InvocationListener arg3)
+    public void followMember (int arg1, InvocationService.InvocationListener arg2)
     {
-        ListenerMarshaller listener3 = new ListenerMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, FOLLOW_MEMBER, new Object[] {
-            Integer.valueOf(arg2), listener3
+        ListenerMarshaller listener2 = new ListenerMarshaller();
+        listener2.listener = arg2;
+        sendRequest(FOLLOW_MEMBER, new Object[] {
+            Integer.valueOf(arg1), listener2
         });
     }
 
@@ -120,12 +119,12 @@ public class WorldMarshaller extends InvocationMarshaller
     public static final int GET_HOME_ID = 4;
 
     // from interface WorldService
-    public void getHomeId (Client arg1, byte arg2, int arg3, WorldService.HomeResultListener arg4)
+    public void getHomeId (byte arg1, int arg2, WorldService.HomeResultListener arg3)
     {
-        WorldMarshaller.HomeResultMarshaller listener4 = new WorldMarshaller.HomeResultMarshaller();
-        listener4.listener = arg4;
-        sendRequest(arg1, GET_HOME_ID, new Object[] {
-            Byte.valueOf(arg2), Integer.valueOf(arg3), listener4
+        WorldMarshaller.HomeResultMarshaller listener3 = new WorldMarshaller.HomeResultMarshaller();
+        listener3.listener = arg3;
+        sendRequest(GET_HOME_ID, new Object[] {
+            Byte.valueOf(arg1), Integer.valueOf(arg2), listener3
         });
     }
 
@@ -133,12 +132,12 @@ public class WorldMarshaller extends InvocationMarshaller
     public static final int GET_HOME_PAGE_GRID_ITEMS = 5;
 
     // from interface WorldService
-    public void getHomePageGridItems (Client arg1, InvocationService.ResultListener arg2)
+    public void getHomePageGridItems (InvocationService.ResultListener arg1)
     {
-        InvocationMarshaller.ResultMarshaller listener2 = new InvocationMarshaller.ResultMarshaller();
-        listener2.listener = arg2;
-        sendRequest(arg1, GET_HOME_PAGE_GRID_ITEMS, new Object[] {
-            listener2
+        InvocationMarshaller.ResultMarshaller listener1 = new InvocationMarshaller.ResultMarshaller();
+        listener1.listener = arg1;
+        sendRequest(GET_HOME_PAGE_GRID_ITEMS, new Object[] {
+            listener1
         });
     }
 
@@ -146,12 +145,12 @@ public class WorldMarshaller extends InvocationMarshaller
     public static final int INVITE_TO_FOLLOW = 6;
 
     // from interface WorldService
-    public void inviteToFollow (Client arg1, int arg2, InvocationService.InvocationListener arg3)
+    public void inviteToFollow (int arg1, InvocationService.InvocationListener arg2)
     {
-        ListenerMarshaller listener3 = new ListenerMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, INVITE_TO_FOLLOW, new Object[] {
-            Integer.valueOf(arg2), listener3
+        ListenerMarshaller listener2 = new ListenerMarshaller();
+        listener2.listener = arg2;
+        sendRequest(INVITE_TO_FOLLOW, new Object[] {
+            Integer.valueOf(arg1), listener2
         });
     }
 
@@ -159,12 +158,12 @@ public class WorldMarshaller extends InvocationMarshaller
     public static final int SET_AVATAR = 7;
 
     // from interface WorldService
-    public void setAvatar (Client arg1, int arg2, InvocationService.ConfirmListener arg3)
+    public void setAvatar (int arg1, InvocationService.ConfirmListener arg2)
     {
-        InvocationMarshaller.ConfirmMarshaller listener3 = new InvocationMarshaller.ConfirmMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, SET_AVATAR, new Object[] {
-            Integer.valueOf(arg2), listener3
+        InvocationMarshaller.ConfirmMarshaller listener2 = new InvocationMarshaller.ConfirmMarshaller();
+        listener2.listener = arg2;
+        sendRequest(SET_AVATAR, new Object[] {
+            Integer.valueOf(arg1), listener2
         });
     }
 
@@ -172,12 +171,12 @@ public class WorldMarshaller extends InvocationMarshaller
     public static final int SET_HOME_SCENE_ID = 8;
 
     // from interface WorldService
-    public void setHomeSceneId (Client arg1, int arg2, int arg3, int arg4, InvocationService.ConfirmListener arg5)
+    public void setHomeSceneId (int arg1, int arg2, int arg3, InvocationService.ConfirmListener arg4)
     {
-        InvocationMarshaller.ConfirmMarshaller listener5 = new InvocationMarshaller.ConfirmMarshaller();
-        listener5.listener = arg5;
-        sendRequest(arg1, SET_HOME_SCENE_ID, new Object[] {
-            Integer.valueOf(arg2), Integer.valueOf(arg3), Integer.valueOf(arg4), listener5
+        InvocationMarshaller.ConfirmMarshaller listener4 = new InvocationMarshaller.ConfirmMarshaller();
+        listener4.listener = arg4;
+        sendRequest(SET_HOME_SCENE_ID, new Object[] {
+            Integer.valueOf(arg1), Integer.valueOf(arg2), Integer.valueOf(arg3), listener4
         });
     }
 }

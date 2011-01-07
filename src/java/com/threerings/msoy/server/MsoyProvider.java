@@ -32,7 +32,7 @@ public interface MsoyProvider extends InvocationProvider
     /**
      * Handles a {@link MsoyService#getABTestGroup} request.
      */
-    void getABTestGroup (ClientObject caller, String arg1, boolean arg2, InvocationService.ResultListener arg3)
+    void getABTestGroup (ClientObject caller, Client arg1, String arg2, boolean arg3, InvocationService.ResultListener arg4)
         throws InvocationException;
 
     /**

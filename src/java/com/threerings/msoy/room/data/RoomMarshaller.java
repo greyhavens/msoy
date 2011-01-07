@@ -7,7 +7,6 @@ import javax.annotation.Generated;
 
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.room.client.RoomService;
-import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.InvocationMarshaller;
 import com.threerings.whirled.data.SceneUpdate;
@@ -29,10 +28,10 @@ public class RoomMarshaller extends InvocationMarshaller
     public static final int CHANGE_LOCATION = 1;
 
     // from interface RoomService
-    public void changeLocation (Client arg1, ItemIdent arg2, Location arg3)
+    public void changeLocation (ItemIdent arg1, Location arg2)
     {
-        sendRequest(arg1, CHANGE_LOCATION, new Object[] {
-            arg2, arg3
+        sendRequest(CHANGE_LOCATION, new Object[] {
+            arg1, arg2
         });
     }
 
@@ -40,12 +39,12 @@ public class RoomMarshaller extends InvocationMarshaller
     public static final int DESPAWN_MOB = 2;
 
     // from interface RoomService
-    public void despawnMob (Client arg1, int arg2, String arg3, InvocationService.InvocationListener arg4)
+    public void despawnMob (int arg1, String arg2, InvocationService.InvocationListener arg3)
     {
-        ListenerMarshaller listener4 = new ListenerMarshaller();
-        listener4.listener = arg4;
-        sendRequest(arg1, DESPAWN_MOB, new Object[] {
-            Integer.valueOf(arg2), arg3, listener4
+        ListenerMarshaller listener3 = new ListenerMarshaller();
+        listener3.listener = arg3;
+        sendRequest(DESPAWN_MOB, new Object[] {
+            Integer.valueOf(arg1), arg2, listener3
         });
     }
 
@@ -53,12 +52,12 @@ public class RoomMarshaller extends InvocationMarshaller
     public static final int EDIT_ROOM = 3;
 
     // from interface RoomService
-    public void editRoom (Client arg1, InvocationService.ResultListener arg2)
+    public void editRoom (InvocationService.ResultListener arg1)
     {
-        InvocationMarshaller.ResultMarshaller listener2 = new InvocationMarshaller.ResultMarshaller();
-        listener2.listener = arg2;
-        sendRequest(arg1, EDIT_ROOM, new Object[] {
-            listener2
+        InvocationMarshaller.ResultMarshaller listener1 = new InvocationMarshaller.ResultMarshaller();
+        listener1.listener = arg1;
+        sendRequest(EDIT_ROOM, new Object[] {
+            listener1
         });
     }
 
@@ -66,12 +65,12 @@ public class RoomMarshaller extends InvocationMarshaller
     public static final int JUMP_TO_SONG = 4;
 
     // from interface RoomService
-    public void jumpToSong (Client arg1, int arg2, InvocationService.ConfirmListener arg3)
+    public void jumpToSong (int arg1, InvocationService.ConfirmListener arg2)
     {
-        InvocationMarshaller.ConfirmMarshaller listener3 = new InvocationMarshaller.ConfirmMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, JUMP_TO_SONG, new Object[] {
-            Integer.valueOf(arg2), listener3
+        InvocationMarshaller.ConfirmMarshaller listener2 = new InvocationMarshaller.ConfirmMarshaller();
+        listener2.listener = arg2;
+        sendRequest(JUMP_TO_SONG, new Object[] {
+            Integer.valueOf(arg1), listener2
         });
     }
 
@@ -79,12 +78,12 @@ public class RoomMarshaller extends InvocationMarshaller
     public static final int MODIFY_PLAYLIST = 5;
 
     // from interface RoomService
-    public void modifyPlaylist (Client arg1, int arg2, boolean arg3, InvocationService.ConfirmListener arg4)
+    public void modifyPlaylist (int arg1, boolean arg2, InvocationService.ConfirmListener arg3)
     {
-        InvocationMarshaller.ConfirmMarshaller listener4 = new InvocationMarshaller.ConfirmMarshaller();
-        listener4.listener = arg4;
-        sendRequest(arg1, MODIFY_PLAYLIST, new Object[] {
-            Integer.valueOf(arg2), Boolean.valueOf(arg3), listener4
+        InvocationMarshaller.ConfirmMarshaller listener3 = new InvocationMarshaller.ConfirmMarshaller();
+        listener3.listener = arg3;
+        sendRequest(MODIFY_PLAYLIST, new Object[] {
+            Integer.valueOf(arg1), Boolean.valueOf(arg2), listener3
         });
     }
 
@@ -92,12 +91,12 @@ public class RoomMarshaller extends InvocationMarshaller
     public static final int MOVE_MOB = 6;
 
     // from interface RoomService
-    public void moveMob (Client arg1, int arg2, String arg3, Location arg4, InvocationService.InvocationListener arg5)
+    public void moveMob (int arg1, String arg2, Location arg3, InvocationService.InvocationListener arg4)
     {
-        ListenerMarshaller listener5 = new ListenerMarshaller();
-        listener5.listener = arg5;
-        sendRequest(arg1, MOVE_MOB, new Object[] {
-            Integer.valueOf(arg2), arg3, arg4, listener5
+        ListenerMarshaller listener4 = new ListenerMarshaller();
+        listener4.listener = arg4;
+        sendRequest(MOVE_MOB, new Object[] {
+            Integer.valueOf(arg1), arg2, arg3, listener4
         });
     }
 
@@ -105,12 +104,12 @@ public class RoomMarshaller extends InvocationMarshaller
     public static final int PUBLISH_ROOM = 7;
 
     // from interface RoomService
-    public void publishRoom (Client arg1, InvocationService.InvocationListener arg2)
+    public void publishRoom (InvocationService.InvocationListener arg1)
     {
-        ListenerMarshaller listener2 = new ListenerMarshaller();
-        listener2.listener = arg2;
-        sendRequest(arg1, PUBLISH_ROOM, new Object[] {
-            listener2
+        ListenerMarshaller listener1 = new ListenerMarshaller();
+        listener1.listener = arg1;
+        sendRequest(PUBLISH_ROOM, new Object[] {
+            listener1
         });
     }
 
@@ -118,12 +117,12 @@ public class RoomMarshaller extends InvocationMarshaller
     public static final int RATE_ROOM = 8;
 
     // from interface RoomService
-    public void rateRoom (Client arg1, byte arg2, InvocationService.InvocationListener arg3)
+    public void rateRoom (byte arg1, InvocationService.InvocationListener arg2)
     {
-        ListenerMarshaller listener3 = new ListenerMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, RATE_ROOM, new Object[] {
-            Byte.valueOf(arg2), listener3
+        ListenerMarshaller listener2 = new ListenerMarshaller();
+        listener2.listener = arg2;
+        sendRequest(RATE_ROOM, new Object[] {
+            Byte.valueOf(arg1), listener2
         });
     }
 
@@ -131,10 +130,10 @@ public class RoomMarshaller extends InvocationMarshaller
     public static final int REQUEST_CONTROL = 9;
 
     // from interface RoomService
-    public void requestControl (Client arg1, ItemIdent arg2)
+    public void requestControl (ItemIdent arg1)
     {
-        sendRequest(arg1, REQUEST_CONTROL, new Object[] {
-            arg2
+        sendRequest(REQUEST_CONTROL, new Object[] {
+            arg1
         });
     }
 
@@ -142,12 +141,12 @@ public class RoomMarshaller extends InvocationMarshaller
     public static final int SEND_POSTCARD = 10;
 
     // from interface RoomService
-    public void sendPostcard (Client arg1, String[] arg2, String arg3, String arg4, String arg5, InvocationService.ConfirmListener arg6)
+    public void sendPostcard (String[] arg1, String arg2, String arg3, String arg4, InvocationService.ConfirmListener arg5)
     {
-        InvocationMarshaller.ConfirmMarshaller listener6 = new InvocationMarshaller.ConfirmMarshaller();
-        listener6.listener = arg6;
-        sendRequest(arg1, SEND_POSTCARD, new Object[] {
-            arg2, arg3, arg4, arg5, listener6
+        InvocationMarshaller.ConfirmMarshaller listener5 = new InvocationMarshaller.ConfirmMarshaller();
+        listener5.listener = arg5;
+        sendRequest(SEND_POSTCARD, new Object[] {
+            arg1, arg2, arg3, arg4, listener5
         });
     }
 
@@ -155,10 +154,10 @@ public class RoomMarshaller extends InvocationMarshaller
     public static final int SEND_SPRITE_MESSAGE = 11;
 
     // from interface RoomService
-    public void sendSpriteMessage (Client arg1, ItemIdent arg2, String arg3, byte[] arg4, boolean arg5)
+    public void sendSpriteMessage (ItemIdent arg1, String arg2, byte[] arg3, boolean arg4)
     {
-        sendRequest(arg1, SEND_SPRITE_MESSAGE, new Object[] {
-            arg2, arg3, arg4, Boolean.valueOf(arg5)
+        sendRequest(SEND_SPRITE_MESSAGE, new Object[] {
+            arg1, arg2, arg3, Boolean.valueOf(arg4)
         });
     }
 
@@ -166,10 +165,10 @@ public class RoomMarshaller extends InvocationMarshaller
     public static final int SEND_SPRITE_SIGNAL = 12;
 
     // from interface RoomService
-    public void sendSpriteSignal (Client arg1, String arg2, byte[] arg3)
+    public void sendSpriteSignal (String arg1, byte[] arg2)
     {
-        sendRequest(arg1, SEND_SPRITE_SIGNAL, new Object[] {
-            arg2, arg3
+        sendRequest(SEND_SPRITE_SIGNAL, new Object[] {
+            arg1, arg2
         });
     }
 
@@ -177,10 +176,10 @@ public class RoomMarshaller extends InvocationMarshaller
     public static final int SET_ACTOR_STATE = 13;
 
     // from interface RoomService
-    public void setActorState (Client arg1, ItemIdent arg2, int arg3, String arg4)
+    public void setActorState (ItemIdent arg1, int arg2, String arg3)
     {
-        sendRequest(arg1, SET_ACTOR_STATE, new Object[] {
-            arg2, Integer.valueOf(arg3), arg4
+        sendRequest(SET_ACTOR_STATE, new Object[] {
+            arg1, Integer.valueOf(arg2), arg3
         });
     }
 
@@ -188,10 +187,10 @@ public class RoomMarshaller extends InvocationMarshaller
     public static final int SONG_ENDED = 14;
 
     // from interface RoomService
-    public void songEnded (Client arg1, int arg2)
+    public void songEnded (int arg1)
     {
-        sendRequest(arg1, SONG_ENDED, new Object[] {
-            Integer.valueOf(arg2)
+        sendRequest(SONG_ENDED, new Object[] {
+            Integer.valueOf(arg1)
         });
     }
 
@@ -199,12 +198,12 @@ public class RoomMarshaller extends InvocationMarshaller
     public static final int SPAWN_MOB = 15;
 
     // from interface RoomService
-    public void spawnMob (Client arg1, int arg2, String arg3, String arg4, Location arg5, InvocationService.InvocationListener arg6)
+    public void spawnMob (int arg1, String arg2, String arg3, Location arg4, InvocationService.InvocationListener arg5)
     {
-        ListenerMarshaller listener6 = new ListenerMarshaller();
-        listener6.listener = arg6;
-        sendRequest(arg1, SPAWN_MOB, new Object[] {
-            Integer.valueOf(arg2), arg3, arg4, arg5, listener6
+        ListenerMarshaller listener5 = new ListenerMarshaller();
+        listener5.listener = arg5;
+        sendRequest(SPAWN_MOB, new Object[] {
+            Integer.valueOf(arg1), arg2, arg3, arg4, listener5
         });
     }
 
@@ -212,12 +211,12 @@ public class RoomMarshaller extends InvocationMarshaller
     public static final int UPDATE_MEMORY = 16;
 
     // from interface RoomService
-    public void updateMemory (Client arg1, ItemIdent arg2, String arg3, byte[] arg4, InvocationService.ResultListener arg5)
+    public void updateMemory (ItemIdent arg1, String arg2, byte[] arg3, InvocationService.ResultListener arg4)
     {
-        InvocationMarshaller.ResultMarshaller listener5 = new InvocationMarshaller.ResultMarshaller();
-        listener5.listener = arg5;
-        sendRequest(arg1, UPDATE_MEMORY, new Object[] {
-            arg2, arg3, arg4, listener5
+        InvocationMarshaller.ResultMarshaller listener4 = new InvocationMarshaller.ResultMarshaller();
+        listener4.listener = arg4;
+        sendRequest(UPDATE_MEMORY, new Object[] {
+            arg1, arg2, arg3, listener4
         });
     }
 
@@ -225,12 +224,12 @@ public class RoomMarshaller extends InvocationMarshaller
     public static final int UPDATE_ROOM = 17;
 
     // from interface RoomService
-    public void updateRoom (Client arg1, SceneUpdate arg2, InvocationService.InvocationListener arg3)
+    public void updateRoom (SceneUpdate arg1, InvocationService.InvocationListener arg2)
     {
-        ListenerMarshaller listener3 = new ListenerMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, UPDATE_ROOM, new Object[] {
-            arg2, listener3
+        ListenerMarshaller listener2 = new ListenerMarshaller();
+        listener2.listener = arg2;
+        sendRequest(UPDATE_ROOM, new Object[] {
+            arg1, listener2
         });
     }
 }

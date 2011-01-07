@@ -6,7 +6,6 @@ package com.threerings.msoy.game.data;
 import javax.annotation.Generated;
 
 import com.threerings.msoy.game.client.GameGameService;
-import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.InvocationMarshaller;
 
@@ -26,10 +25,10 @@ public class GameGameMarshaller extends InvocationMarshaller
     public static final int COMPLAIN_PLAYER = 1;
 
     // from interface GameGameService
-    public void complainPlayer (Client arg1, int arg2, String arg3)
+    public void complainPlayer (int arg1, String arg2)
     {
-        sendRequest(arg1, COMPLAIN_PLAYER, new Object[] {
-            Integer.valueOf(arg2), arg3
+        sendRequest(COMPLAIN_PLAYER, new Object[] {
+            Integer.valueOf(arg1), arg2
         });
     }
 
@@ -37,12 +36,12 @@ public class GameGameMarshaller extends InvocationMarshaller
     public static final int GET_TROPHIES = 2;
 
     // from interface GameGameService
-    public void getTrophies (Client arg1, int arg2, InvocationService.ResultListener arg3)
+    public void getTrophies (int arg1, InvocationService.ResultListener arg2)
     {
-        InvocationMarshaller.ResultMarshaller listener3 = new InvocationMarshaller.ResultMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, GET_TROPHIES, new Object[] {
-            Integer.valueOf(arg2), listener3
+        InvocationMarshaller.ResultMarshaller listener2 = new InvocationMarshaller.ResultMarshaller();
+        listener2.listener = arg2;
+        sendRequest(GET_TROPHIES, new Object[] {
+            Integer.valueOf(arg1), listener2
         });
     }
 
@@ -50,12 +49,12 @@ public class GameGameMarshaller extends InvocationMarshaller
     public static final int REMOVE_DEVELOPMENT_TROPHIES = 3;
 
     // from interface GameGameService
-    public void removeDevelopmentTrophies (Client arg1, int arg2, InvocationService.ConfirmListener arg3)
+    public void removeDevelopmentTrophies (int arg1, InvocationService.ConfirmListener arg2)
     {
-        InvocationMarshaller.ConfirmMarshaller listener3 = new InvocationMarshaller.ConfirmMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, REMOVE_DEVELOPMENT_TROPHIES, new Object[] {
-            Integer.valueOf(arg2), listener3
+        InvocationMarshaller.ConfirmMarshaller listener2 = new InvocationMarshaller.ConfirmMarshaller();
+        listener2.listener = arg2;
+        sendRequest(REMOVE_DEVELOPMENT_TROPHIES, new Object[] {
+            Integer.valueOf(arg1), listener2
         });
     }
 }

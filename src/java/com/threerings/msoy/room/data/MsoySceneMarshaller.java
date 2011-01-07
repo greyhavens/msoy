@@ -8,7 +8,6 @@ import javax.annotation.Generated;
 import com.threerings.crowd.data.PlaceConfig;
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.room.client.MsoySceneService;
-import com.threerings.presents.client.Client;
 import com.threerings.presents.data.InvocationMarshaller;
 import com.threerings.presents.dobj.InvocationResponseEvent;
 import com.threerings.whirled.data.SceneModel;
@@ -155,12 +154,12 @@ public class MsoySceneMarshaller extends InvocationMarshaller
     public static final int MOVE_TO = 1;
 
     // from interface MsoySceneService
-    public void moveTo (Client arg1, int arg2, int arg3, int arg4, MsoyLocation arg5, MsoySceneService.MsoySceneMoveListener arg6)
+    public void moveTo (int arg1, int arg2, int arg3, MsoyLocation arg4, MsoySceneService.MsoySceneMoveListener arg5)
     {
-        MsoySceneMarshaller.MsoySceneMoveMarshaller listener6 = new MsoySceneMarshaller.MsoySceneMoveMarshaller();
-        listener6.listener = arg6;
-        sendRequest(arg1, MOVE_TO, new Object[] {
-            Integer.valueOf(arg2), Integer.valueOf(arg3), Integer.valueOf(arg4), arg5, listener6
+        MsoySceneMarshaller.MsoySceneMoveMarshaller listener5 = new MsoySceneMarshaller.MsoySceneMoveMarshaller();
+        listener5.listener = arg5;
+        sendRequest(MOVE_TO, new Object[] {
+            Integer.valueOf(arg1), Integer.valueOf(arg2), Integer.valueOf(arg3), arg4, listener5
         });
     }
 }

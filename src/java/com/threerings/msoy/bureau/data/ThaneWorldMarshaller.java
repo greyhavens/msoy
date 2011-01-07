@@ -6,7 +6,6 @@ package com.threerings.msoy.bureau.data;
 import javax.annotation.Generated;
 
 import com.threerings.msoy.bureau.client.ThaneWorldService;
-import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.InvocationMarshaller;
 
@@ -26,12 +25,12 @@ public class ThaneWorldMarshaller extends InvocationMarshaller
     public static final int LOCATE_ROOM = 1;
 
     // from interface ThaneWorldService
-    public void locateRoom (Client arg1, int arg2, InvocationService.ResultListener arg3)
+    public void locateRoom (int arg1, InvocationService.ResultListener arg2)
     {
-        InvocationMarshaller.ResultMarshaller listener3 = new InvocationMarshaller.ResultMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, LOCATE_ROOM, new Object[] {
-            Integer.valueOf(arg2), listener3
+        InvocationMarshaller.ResultMarshaller listener2 = new InvocationMarshaller.ResultMarshaller();
+        listener2.listener = arg2;
+        sendRequest(LOCATE_ROOM, new Object[] {
+            Integer.valueOf(arg1), listener2
         });
     }
 }

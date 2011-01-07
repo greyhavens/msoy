@@ -7,7 +7,6 @@ import javax.annotation.Generated;
 
 import com.threerings.msoy.avrg.client.AVRGameService;
 import com.threerings.msoy.room.data.MsoyLocation;
-import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.InvocationMarshaller;
 
@@ -27,12 +26,12 @@ public class AVRGameMarshaller extends InvocationMarshaller
     public static final int COMPLETE_TASK = 1;
 
     // from interface AVRGameService
-    public void completeTask (Client arg1, int arg2, String arg3, float arg4, InvocationService.ConfirmListener arg5)
+    public void completeTask (int arg1, String arg2, float arg3, InvocationService.ConfirmListener arg4)
     {
-        InvocationMarshaller.ConfirmMarshaller listener5 = new InvocationMarshaller.ConfirmMarshaller();
-        listener5.listener = arg5;
-        sendRequest(arg1, COMPLETE_TASK, new Object[] {
-            Integer.valueOf(arg2), arg3, Float.valueOf(arg4), listener5
+        InvocationMarshaller.ConfirmMarshaller listener4 = new InvocationMarshaller.ConfirmMarshaller();
+        listener4.listener = arg4;
+        sendRequest(COMPLETE_TASK, new Object[] {
+            Integer.valueOf(arg1), arg2, Float.valueOf(arg3), listener4
         });
     }
 
@@ -40,12 +39,12 @@ public class AVRGameMarshaller extends InvocationMarshaller
     public static final int LOAD_OFFLINE_PLAYER = 2;
 
     // from interface AVRGameService
-    public void loadOfflinePlayer (Client arg1, int arg2, InvocationService.ResultListener arg3)
+    public void loadOfflinePlayer (int arg1, InvocationService.ResultListener arg2)
     {
-        InvocationMarshaller.ResultMarshaller listener3 = new InvocationMarshaller.ResultMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, LOAD_OFFLINE_PLAYER, new Object[] {
-            Integer.valueOf(arg2), listener3
+        InvocationMarshaller.ResultMarshaller listener2 = new InvocationMarshaller.ResultMarshaller();
+        listener2.listener = arg2;
+        sendRequest(LOAD_OFFLINE_PLAYER, new Object[] {
+            Integer.valueOf(arg1), listener2
         });
     }
 
@@ -53,12 +52,12 @@ public class AVRGameMarshaller extends InvocationMarshaller
     public static final int MOVE_PLAYER_TO_ROOM = 3;
 
     // from interface AVRGameService
-    public void movePlayerToRoom (Client arg1, int arg2, int arg3, MsoyLocation arg4, InvocationService.InvocationListener arg5)
+    public void movePlayerToRoom (int arg1, int arg2, MsoyLocation arg3, InvocationService.InvocationListener arg4)
     {
-        ListenerMarshaller listener5 = new ListenerMarshaller();
-        listener5.listener = arg5;
-        sendRequest(arg1, MOVE_PLAYER_TO_ROOM, new Object[] {
-            Integer.valueOf(arg2), Integer.valueOf(arg3), arg4, listener5
+        ListenerMarshaller listener4 = new ListenerMarshaller();
+        listener4.listener = arg4;
+        sendRequest(MOVE_PLAYER_TO_ROOM, new Object[] {
+            Integer.valueOf(arg1), Integer.valueOf(arg2), arg3, listener4
         });
     }
 
@@ -66,12 +65,12 @@ public class AVRGameMarshaller extends InvocationMarshaller
     public static final int SET_IDLE = 4;
 
     // from interface AVRGameService
-    public void setIdle (Client arg1, boolean arg2, InvocationService.ConfirmListener arg3)
+    public void setIdle (boolean arg1, InvocationService.ConfirmListener arg2)
     {
-        InvocationMarshaller.ConfirmMarshaller listener3 = new InvocationMarshaller.ConfirmMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, SET_IDLE, new Object[] {
-            Boolean.valueOf(arg2), listener3
+        InvocationMarshaller.ConfirmMarshaller listener2 = new InvocationMarshaller.ConfirmMarshaller();
+        listener2.listener = arg2;
+        sendRequest(SET_IDLE, new Object[] {
+            Boolean.valueOf(arg1), listener2
         });
     }
 
@@ -79,12 +78,12 @@ public class AVRGameMarshaller extends InvocationMarshaller
     public static final int SET_OFFLINE_PLAYER_PROPERTY = 5;
 
     // from interface AVRGameService
-    public void setOfflinePlayerProperty (Client arg1, int arg2, String arg3, Object arg4, Integer arg5, boolean arg6, InvocationService.ConfirmListener arg7)
+    public void setOfflinePlayerProperty (int arg1, String arg2, Object arg3, Integer arg4, boolean arg5, InvocationService.ConfirmListener arg6)
     {
-        InvocationMarshaller.ConfirmMarshaller listener7 = new InvocationMarshaller.ConfirmMarshaller();
-        listener7.listener = arg7;
-        sendRequest(arg1, SET_OFFLINE_PLAYER_PROPERTY, new Object[] {
-            Integer.valueOf(arg2), arg3, arg4, arg5, Boolean.valueOf(arg6), listener7
+        InvocationMarshaller.ConfirmMarshaller listener6 = new InvocationMarshaller.ConfirmMarshaller();
+        listener6.listener = arg6;
+        sendRequest(SET_OFFLINE_PLAYER_PROPERTY, new Object[] {
+            Integer.valueOf(arg1), arg2, arg3, arg4, Boolean.valueOf(arg5), listener6
         });
     }
 }

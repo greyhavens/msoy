@@ -7,7 +7,6 @@ import javax.annotation.Generated;
 
 import com.threerings.msoy.chat.client.JabberService;
 import com.threerings.msoy.data.all.JabberName;
-import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.InvocationMarshaller;
 
@@ -27,12 +26,12 @@ public class JabberMarshaller extends InvocationMarshaller
     public static final int REGISTER_IM = 1;
 
     // from interface JabberService
-    public void registerIM (Client arg1, String arg2, String arg3, String arg4, InvocationService.InvocationListener arg5)
+    public void registerIM (String arg1, String arg2, String arg3, InvocationService.InvocationListener arg4)
     {
-        ListenerMarshaller listener5 = new ListenerMarshaller();
-        listener5.listener = arg5;
-        sendRequest(arg1, REGISTER_IM, new Object[] {
-            arg2, arg3, arg4, listener5
+        ListenerMarshaller listener4 = new ListenerMarshaller();
+        listener4.listener = arg4;
+        sendRequest(REGISTER_IM, new Object[] {
+            arg1, arg2, arg3, listener4
         });
     }
 
@@ -40,12 +39,12 @@ public class JabberMarshaller extends InvocationMarshaller
     public static final int SEND_MESSAGE = 2;
 
     // from interface JabberService
-    public void sendMessage (Client arg1, JabberName arg2, String arg3, InvocationService.ResultListener arg4)
+    public void sendMessage (JabberName arg1, String arg2, InvocationService.ResultListener arg3)
     {
-        InvocationMarshaller.ResultMarshaller listener4 = new InvocationMarshaller.ResultMarshaller();
-        listener4.listener = arg4;
-        sendRequest(arg1, SEND_MESSAGE, new Object[] {
-            arg2, arg3, listener4
+        InvocationMarshaller.ResultMarshaller listener3 = new InvocationMarshaller.ResultMarshaller();
+        listener3.listener = arg3;
+        sendRequest(SEND_MESSAGE, new Object[] {
+            arg1, arg2, listener3
         });
     }
 
@@ -53,12 +52,12 @@ public class JabberMarshaller extends InvocationMarshaller
     public static final int UNREGISTER_IM = 3;
 
     // from interface JabberService
-    public void unregisterIM (Client arg1, String arg2, InvocationService.InvocationListener arg3)
+    public void unregisterIM (String arg1, InvocationService.InvocationListener arg2)
     {
-        ListenerMarshaller listener3 = new ListenerMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, UNREGISTER_IM, new Object[] {
-            arg2, listener3
+        ListenerMarshaller listener2 = new ListenerMarshaller();
+        listener2.listener = arg2;
+        sendRequest(UNREGISTER_IM, new Object[] {
+            arg1, listener2
         });
     }
 }
