@@ -28,12 +28,12 @@ public interface MsoyPeerService extends InvocationService
      * Forwards a request to reclaim an item from out of a room.
      */
     void reclaimItem (
-        Client client, int sceneId, int memberId, ItemIdent item, ConfirmListener listener);
+        int sceneId, int memberId, ItemIdent item, ConfirmListener listener);
 
     /**
      * Forwards a request to transfer room ownership.
      */
     void transferRoomOwnership (
-        Client client, int sceneId, byte ownerType, int ownerId, Name ownerName,
+        int sceneId, byte ownerType, int ownerId, Name ownerName,
         boolean lockToOwner, ConfirmListener listener);
 }

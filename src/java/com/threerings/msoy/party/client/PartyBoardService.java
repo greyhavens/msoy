@@ -47,7 +47,7 @@ public interface PartyBoardService extends InvocationService
      * Creates a new party with the requester as its leader.
      */
     void createParty (
-        Client client, Currency currency, int authedCost,
+        Currency currency, int authedCost,
         String name, int groupId, boolean inviteAllFriends, JoinListener jl);
 
     /**

@@ -90,7 +90,7 @@ public interface RoomService extends InvocationService
      * particular item).
      */
     void updateMemory (
-        Client client, ItemIdent ident, String key, byte[] newValue, ResultListener listener);
+        ItemIdent ident, String key, byte[] newValue, ResultListener listener);
 
     /**
      * Issues a request to update the current scene location of the specified item. This is called

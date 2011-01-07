@@ -30,7 +30,7 @@ public interface ItemService extends InvocationService
      * Cause this item to become unused, removing it from the room that its in.
      */
     public void reclaimItem (
-        Client client, ItemIdent item, ConfirmListener listener);
+        ItemIdent item, ConfirmListener listener);
 
     /**
      * Retrieve the catalog id for the specified item.
@@ -51,6 +51,6 @@ public interface ItemService extends InvocationService
      * Adds a user flag to an item, for subsequent review by support.
      */
     void addFlag (
-        Client client, ItemIdent item, ItemFlag.Kind kind, String comment,
+        ItemIdent item, ItemFlag.Kind kind, String comment,
         ConfirmListener listener);
 }
