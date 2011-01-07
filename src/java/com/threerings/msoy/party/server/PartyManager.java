@@ -22,7 +22,6 @@ import com.threerings.presents.dobj.ObjectDeathListener;
 import com.threerings.presents.dobj.ObjectDestroyedEvent;
 import com.threerings.presents.dobj.RootDObjectManager;
 
-//import com.threerings.crowd.chat.server.SpeakDispatcher;
 //import com.threerings.crowd.chat.server.SpeakHandler;
 
 import com.threerings.msoy.data.MemberObject;
@@ -89,7 +88,7 @@ public class PartyManager
             // also publish a partyInfo to the node object in this transaction
             _partyObj.startTransaction();
             try {
-                _partyObj.setPartyService(_invMgr.registerDispatcher(new PartyDispatcher(this)));
+                _partyObj.setPartyService(_invMgr.registerProvider(this, PartyMarshaller.class));
     //            _partyObj.setSpeakService(_invMgr.registerDispatcher(
     //                new SpeakDispatcher(new SpeakHandler(_partyObj, this))));
                 updateStatus();

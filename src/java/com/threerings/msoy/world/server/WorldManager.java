@@ -80,7 +80,7 @@ public class WorldManager
     @Inject public WorldManager (InvocationManager invmgr)
     {
         // register our bootstrap invocation service
-        invmgr.registerDispatcher(new WorldDispatcher(this), MsoyCodes.WORLD_GROUP);
+        invmgr.registerProvider(this, WorldMarshaller.class, MsoyCodes.WORLD_GROUP);
     }
 
     @Override // from interface WorldProvider

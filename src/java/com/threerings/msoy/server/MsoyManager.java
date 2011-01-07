@@ -1,4 +1,4 @@
-//
+s//
 // $Id$
 
 package com.threerings.msoy.server;
@@ -67,7 +67,7 @@ public class MsoyManager
     @Inject public MsoyManager (InvocationManager invmgr)
     {
         // register our bootstrap invocation service
-        invmgr.registerDispatcher(new MsoyDispatcher(this), MsoyCodes.MSOY_GROUP);
+        invmgr.registerProvider(this, MsoyMarshaller.class, MsoyCodes.MSOY_GROUP);
     }
 
     // from interface MemberProvider

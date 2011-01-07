@@ -78,7 +78,7 @@ public class WorldGameRegistry
     @Inject public WorldGameRegistry (InvocationManager invmgr, PresentsConnectionManager conmgr,
                                       ClientManager clmgr, GameAuthenticator gameAuthor)
     {
-        invmgr.registerDispatcher(new WorldGameDispatcher(this), MsoyCodes.GAME_GROUP);
+        invmgr.registerProvider(this, WorldGameMarshaller.class, MsoyCodes.GAME_GROUP);
         conmgr.addChainedAuthenticator(gameAuthor);
         clmgr.addSessionFactory(SessionFactory.newSessionFactory(
                                     GameCredentials.class, GameSession.class,

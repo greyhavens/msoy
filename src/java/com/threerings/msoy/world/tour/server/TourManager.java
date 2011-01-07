@@ -48,7 +48,7 @@ public class TourManager
 {
     @Inject public TourManager (InvocationManager invmgr, Lifecycle cycle)
     {
-        invmgr.registerDispatcher(new TourDispatcher(this), MsoyCodes.WORLD_GROUP);
+        invmgr.registerProvider(this, TourMarshaller.class, MsoyCodes.WORLD_GROUP);
         cycle.addComponent(this);
     }
 

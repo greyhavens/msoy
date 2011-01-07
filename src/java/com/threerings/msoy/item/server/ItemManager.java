@@ -68,7 +68,7 @@ public class ItemManager
     @Inject public ItemManager (InvocationManager invmgr)
     {
         // register our invocation service
-        invmgr.registerDispatcher(new ItemDispatcher(this), MsoyCodes.WORLD_GROUP);
+        invmgr.registerProvider(this, ItemMarshaller.class, MsoyCodes.WORLD_GROUP);
     }
 
     /**

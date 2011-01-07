@@ -84,7 +84,7 @@ public class MsoySceneRegistry extends SpotSceneRegistry
     @Inject public MsoySceneRegistry (InvocationManager invmgr)
     {
         super(invmgr);
-        invmgr.registerDispatcher(new MsoySceneDispatcher(this), SceneCodes.WHIRLED_GROUP);
+        invmgr.registerProvider(this, MsoySceneMarshaller.class, SceneCodes.WHIRLED_GROUP);
     }
 
     /**

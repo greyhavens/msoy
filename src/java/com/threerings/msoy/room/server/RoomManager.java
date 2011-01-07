@@ -1119,13 +1119,12 @@ public class RoomManager extends SpotSceneManager
 
         // set up our room object
         _roomObj = (RoomObject) _plobj;
-        _roomObj.setRoomService(addDispatcher(new RoomDispatcher(this)));
+        _roomObj.setRoomService(addProvider(this, RoomMarshaller.class));
         _roomObj.addListener(_roomListener);
 
-        // register ourselves in our peer object
+        // registerProvider in our peer object
         MsoyScene mscene = (MsoyScene) _scene;
-        _peerMan.roomDidStartup(
-            mscene.getId(), mscene.getName(), mscene.getThemeId(),
+        _peerMan.roomDidStartup(), mscene.getName(), mscene.getThemeId(),
             mscene.getOwnerId(), mscene.getOwnerType(), mscene.getAccessControl());
 
         _roomObj.startTransaction();
@@ -1365,9 +1364,9 @@ public class RoomManager extends SpotSceneManager
 
                 // Set members
                 props.setPropertiesService(
-                    _invmgr.registerDispatcher(new PropertySpaceDispatcher(propertyService)));
+                    _invmgr.registerProvider(propertyService, PropertySpaceMarshaller.class));
                 props.setMessageService(
-                    _invmgr.registerDispatcher(new WhirledGameMessageDispatcher(messageService)));
+                    _invmgr.registerProvider(messageService, WhirledGameMessageMarshaller.class));
 
                 // Add to room
                 RoomPropertiesEntry entry = new RoomPropertiesEntry();

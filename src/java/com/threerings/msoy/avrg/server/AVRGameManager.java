@@ -47,12 +47,12 @@ import com.whirled.bureau.data.BureauTypes;
 import com.whirled.game.data.GameContentOwnership;
 import com.whirled.game.data.GameData;
 import com.whirled.game.data.PropertySpaceObject;
+import com.whirled.game.data.PropertySpaceMarshaller;
 import com.whirled.game.data.WhirledPlayerObject;
 import com.whirled.game.server.ContentDispatcher;
 import com.whirled.game.server.ContentProvider;
 import com.whirled.game.server.PrizeDispatcher;
 import com.whirled.game.server.PrizeProvider;
-import com.whirled.game.server.PropertySpaceDispatcher;
 import com.whirled.game.server.PropertySpaceHandler;
 import com.whirled.game.server.PropertySpaceHelper;
 import com.whirled.game.server.WhirledGameManager;
@@ -234,36 +234,37 @@ public class AVRGameManager extends PlaceManager
 
         _gameObj = (AVRGameObject)_plobj;
         _gameObj.setIsApproved(_contentDelegate.getContent().isApproved);
-        _gameObj.setAvrgService(addDispatcher(new AVRGameDispatcher(this)));
-        _gameObj.setContentService(addDispatcher(new ContentDispatcher(this)));
-        _gameObj.setPrizeService(addDispatcher(new PrizeDispatcher(this)));
-        _gameObj.setMessageService(addDispatcher(new WhirledGameMessageDispatcher(
-            new WhirledGameMessageHandler(_gameObj) {
-                @Override protected ClientObject getAudienceMember (int id)
-                    throws InvocationException {
-                    ClientObject target = null;
-                    if (id == SERVER_AGENT) {
-                        if (_gameAgentObj != null && _gameAgentObj.clientOid != 0) {
-                            target = (ClientObject)_omgr.getObject(_gameAgentObj.clientOid);
-                        }
-                    } else {
-                        target = _locator.lookupPlayer(id);
-                    }
-                    if (target == null) {
-                        throw new InvocationException("m.player_not_around");
-                    }
-                    return target;
-                }
+        _gameObj.setAvrgService(addProvider(this, AVRGameMarshaller.class));
+        _gameObj.setContentService(addProvider(this, ContentMarshaller.class));
+        _gameObj.setPrizeService(addProvider(this, PrizeMarshaller.class));
 
-                @Override protected void validateSender (ClientObject caller)
-                    throws InvocationException {
-                    validateUser(caller);
+        WhirledGameMessageProvider prov = new WhirledGameMessageHandler(_gameObj) {
+            @Override protected ClientObject getAudienceMember (int id)
+                throws InvocationException {
+                ClientObject target = null;
+                if (id == SERVER_AGENT) {
+                    if (_gameAgentObj != null && _gameAgentObj.clientOid != 0) {
+                        target = (ClientObject)_omgr.getObject(_gameAgentObj.clientOid);
+                    }
+                } else {
+                    target = _locator.lookupPlayer(id);
                 }
+                if (target == null) {
+                    throw new InvocationException("m.player_not_around");
+                }
+                return target;
+            }
 
-                @Override protected boolean isAgent (ClientObject caller) {
-                    return AVRGameManager.this.isAgent(caller);
-                }
-            })));
+            @Override protected void validateSender (ClientObject caller)
+                throws InvocationException {
+                validateUser(caller);
+            }
+
+            @Override protected boolean isAgent (ClientObject caller) {
+                return AVRGameManager.this.isAgent(caller);
+            }
+        };
+        _gameObj.setMessageService(addDispatcher(prov, WhirledGameMessageMarshaller.class));
 
         _gameObj.setPropertiesService(addDispatcher(new PropertySpaceDispatcher(
             new PropertySpaceHandler(_gameObj) {
@@ -690,7 +691,7 @@ public class AVRGameManager extends PlaceManager
                 AVRGameManager.this.validateUser(caller);
             }
         };
-        player.setPropertyService(_invmgr.registerDispatcher(new PropertySpaceDispatcher(handler)));
+        player.setPropertyService(_invmgr.registerProvider(handler, PropertySpaceMarshaller.class));
 
         if (_gameAgentObj != null) {
             MsoyBureauClient client = (MsoyBureauClient)_breg.lookupClient(_gameAgentObj.bureauId);

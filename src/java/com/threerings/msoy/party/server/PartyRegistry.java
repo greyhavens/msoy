@@ -97,7 +97,7 @@ public class PartyRegistry
     @Inject public PartyRegistry (InvocationManager invmgr, PresentsConnectionManager conmgr,
                                   ClientManager clmgr, PartyAuthenticator partyAuthor)
     {
-        invmgr.registerDispatcher(new PartyBoardDispatcher(this), MsoyCodes.WORLD_GROUP);
+        invmgr.registerProvider(this, PartyBoardMarshaller.class, MsoyCodes.WORLD_GROUP);
         partyAuthor.init(this); // fiddling to work around a circular dependency
         conmgr.addChainedAuthenticator(partyAuthor);
         clmgr.addSessionFactory(SessionFactory.newSessionFactory(
@@ -111,7 +111,7 @@ public class PartyRegistry
     public void init ()
     {
         _peerMgr.getMsoyNodeObject().setPeerPartyService(
-            _invmgr.registerDispatcher(new PeerPartyDispatcher(this)));
+            _invmgr.registerProvider(this, PeerPartyMarshaller.class));
     }
 
     /**

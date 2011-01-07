@@ -31,7 +31,6 @@ import com.threerings.crowd.server.PlaceManager;
 import com.threerings.crowd.server.PlaceRegistry;
 
 import com.threerings.orth.room.client.PetService;
-import com.threerings.orth.room.server.PetDispatcher;
 import com.threerings.orth.room.server.PetProvider;
 
 import com.threerings.msoy.item.data.all.MsoyItemType;
@@ -66,7 +65,7 @@ public class PetManager
                                MsoyPeerManager peerMan)
     {
         // register our pet invocation services
-        invmgr.registerDispatcher(new PetDispatcher(this), MsoyCodes.WORLD_GROUP);
+        invmgr.registerProvider(this, PetMarshaller.class, MsoyCodes.WORLD_GROUP);
 
         // register a member forward participant that handles walked pets
         peerMan.memberFwdObs.add(new MsoyPeerManager.MemberForwardObserver() {

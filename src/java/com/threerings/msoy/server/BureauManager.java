@@ -84,7 +84,8 @@ public class BureauManager
             log.info("Running thane bureaus remotely");
             _bureauReg.setLauncher(
                 BureauTypes.THANE_BUREAU_TYPE, new RemoteBureauLauncher(), BUREAU_TIMEOUT);
-            _invmgr.registerDispatcher(new BureauLauncherDispatcher(new BureauLauncherProvider() {
+
+            BureauLauncherProvider prov = new BureauLauncherProvider() {
                 public void launcherInitialized (ClientObject caller) {
                     BureauManager.this.launcherInitialized(caller);
                 }
@@ -92,7 +93,10 @@ public class BureauManager
                     ClientObject caller, BureauLauncherInfo info) {
                     BureauManager.this.setBureauLauncherInfo(caller, info);
                 }
-            }), BureauLauncherCodes.BUREAU_LAUNCHER_GROUP);
+            };
+
+            _invmgr.registerProvider(
+                prov, BureauLauncherMarshaller.class, BureauLauncherCodes.BUREAU_LAUNCHER_GROUP);
         }
     }
 

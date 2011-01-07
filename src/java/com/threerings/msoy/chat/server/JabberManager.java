@@ -55,6 +55,7 @@ import com.threerings.crowd.chat.data.UserMessage;
 import com.threerings.crowd.chat.server.ChatProvider;
 import com.threerings.crowd.chat.server.SpeakUtil;
 
+import com.threerings.msoy.chat.data.JabberMarshaller;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.ContactEntry;
@@ -81,7 +82,7 @@ public class JabberManager
     {
         cycle.addComponent(this);
         clmgr.addClientObserver(this);
-        invmgr.registerDispatcher(new JabberDispatcher(this), MsoyCodes.WORLD_GROUP);
+        invmgr.registerProvider(this, JabberMarshaller.class, MsoyCodes.WORLD_GROUP);
     }
 
     // from interface Lifecycle.Component

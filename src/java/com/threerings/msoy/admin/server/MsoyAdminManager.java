@@ -39,6 +39,7 @@ import com.threerings.presents.server.RebootManager;
 
 import com.threerings.pulse.server.PresentsPulseManager;
 
+import com.threerings.msoy.admin.data.PeerAdminMarshaller;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.server.MemberLocator;
@@ -87,7 +88,7 @@ public class MsoyAdminManager extends AdminManager
 
         // register our peer service (now that the peer node object is created)
         _peerMan.getMsoyNodeObject().setPeerAdminService(
-            invmgr.registerDispatcher(new PeerAdminDispatcher(this)));
+            invmgr.registerProvider(this, PeerAdminMarshaller.class));
 
         // register our stat collectors
         _collectors.put(StatsModel.Type.DEPOT, new DepotStatCollector(_perCtx));

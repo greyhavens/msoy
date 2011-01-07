@@ -647,7 +647,7 @@ public class MsoyPeerManager extends OrthPeerManager
         super.didInit();
 
         // register our custom invocation service
-        _mnobj.setMsoyPeerService(_invmgr.registerDispatcher(new MsoyPeerDispatcher(this)));
+        _mnobj.setMsoyPeerService(_invmgr.registerProvider(this, MsoyPeerMarshaller.class));
     }
 
     /**

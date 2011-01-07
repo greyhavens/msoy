@@ -45,7 +45,7 @@ public class RoomRegistry extends PlaceRegistry
         super(cycle);
 
         // register thane world service
-        invmgr.registerDispatcher(new ThaneWorldDispatcher(this), ThaneCodes.THANE_GROUP);
+        invmgr.registerProvider(this, ThaneWorldMarshaller.class, ThaneCodes.THANE_GROUP);
     }
 
     // from ThaneWorldProvider

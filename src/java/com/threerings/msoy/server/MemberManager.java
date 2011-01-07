@@ -93,7 +93,7 @@ public class MemberManager
                                   MemberLocator locator, ReportManager repMan)
     {
         // register our bootstrap invocation service
-        invmgr.registerDispatcher(new MemberDispatcher(this), MsoyCodes.MSOY_GROUP);
+        invmgr.registerProvider(this, MemberMarshaller.class, MsoyCodes.MSOY_GROUP);
 
         // register to hear when members logon and off
         locator.addObserver(this);

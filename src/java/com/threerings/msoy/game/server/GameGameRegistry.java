@@ -136,9 +136,9 @@ public class GameGameRegistry
         cycle.addComponent(this);
 
         // register game-related bootstrap services
-        invmgr.registerDispatcher(new LobbyDispatcher(this), MsoyCodes.GAME_GROUP);
-        invmgr.registerDispatcher(new AVRDispatcher(this), MsoyCodes.WORLD_GROUP);
-        invmgr.registerDispatcher(new GameGameDispatcher(this), MsoyCodes.GAME_GROUP);
+        invmgr.registerProvider(this, LobbyMarshaller.class, MsoyCodes.GAME_GROUP);
+        invmgr.registerProvider(this, AVRMarshaller.class, MsoyCodes.WORLD_GROUP);
+        invmgr.registerProvider(this, GameGameMarshaller.class, MsoyCodes.GAME_GROUP);
     }
 
     /**
