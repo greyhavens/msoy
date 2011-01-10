@@ -11,7 +11,7 @@ import flash.geom.Rectangle;
 import mx.binding.utils.BindingUtils;
 import mx.containers.Canvas;
 import mx.controls.VSlider;
-import mx.core.FlexGlobals;
+import mx.core.Application;
 import mx.core.ScrollPolicy;
 import mx.events.SliderEvent;
 
@@ -56,7 +56,7 @@ public class SliderPopup extends Canvas
         styleName = "sliderPopup";
 
         _trigger = trigger;
-        owner = DisplayObjectContainer(FlexGlobals.application.systemManager);
+        owner = DisplayObjectContainer(Application.application.systemManager);
         owner.addEventListener(MouseEvent.CLICK, handleOutsideClick);
 
         // Initialize the window
