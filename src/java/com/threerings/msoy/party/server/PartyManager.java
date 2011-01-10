@@ -70,8 +70,8 @@ public class PartyManager
      */
     public PartyDetail getPartyDetail ()
     {
-        return new PartyDetail(
-            _summary, _lastInfo, _partyObj.peeps.toArray(new PartyPeep[_partyObj.peeps.size()]));
+        List<PartyPeep> list = Lists.newArrayList(_partyObj.peeps);
+        return new PartyDetail(_summary, _lastInfo, list.toArray(new PartyPeep[_list.size()]));
     }
 
     public void init (PartyObject partyObj, int creatorId)
