@@ -1,4 +1,4 @@
-s//
+//
 // $Id$
 
 package com.threerings.msoy.fora.server;
