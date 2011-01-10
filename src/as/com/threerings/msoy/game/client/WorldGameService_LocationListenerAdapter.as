@@ -26,7 +26,7 @@ public class WorldGameService_LocationListenerAdapter
     public function gameLocated (arg1 :String, arg2 :int, arg3 :Boolean) :void
     {
         if (_gameLocated != null) {
-            _gameLocated(arg0, arg1, arg2);
+            _gameLocated(arg1, arg2, arg3);
         }
     }
 
