@@ -53,6 +53,7 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyAuthName;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.peer.data.MsoyPeerMarshaller;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
 
@@ -533,7 +534,7 @@ public class MsoyPeerManager extends OrthPeerManager
 
         // do the forwarding deed
         ((MsoyNodeObject)node.nodeobj).msoyPeerService.forwardMemberObject(
-            node.getClient(), memobj, locals.toArray(new Streamable[locals.size()]));
+            memobj, locals.toArray(new Streamable[locals.size()]));
     }
 
     // from interface MsoyPeerProvider
@@ -575,7 +576,7 @@ public class MsoyPeerManager extends OrthPeerManager
             return;
         }
         ((MsoyNodeObject)node.nodeobj).msoyPeerService.reclaimItem(
-            node.getClient(), sceneId, memberId, item, new InvocationService.ConfirmListener() {
+            sceneId, memberId, item, new InvocationService.ConfirmListener() {
                 public void requestProcessed () {
                     listener.requestCompleted(null);
                 }
@@ -602,7 +603,7 @@ public class MsoyPeerManager extends OrthPeerManager
             return;
         }
         ((MsoyNodeObject)node.nodeobj).msoyPeerService.transferRoomOwnership(
-            node.getClient(), sceneId, ownerType, ownerId, ownerName, lockToOwner,
+            sceneId, ownerType, ownerId, ownerName, lockToOwner,
             new InvocationService.ConfirmListener() {
                 public void requestProcessed () {
                     listener.requestCompleted(null);
