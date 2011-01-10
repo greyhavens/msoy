@@ -40,7 +40,7 @@ public class BureauLauncherClient extends Client
                 _launcher.shutdownLauncher();
             }
             public void requestInfo () {
-                _service.setBureauLauncherInfo(BureauLauncherClient.this, _launcher.getInfo());
+                _service.setBureauLauncherInfo(_launcher.getInfo());
             }
         };
         getInvocationDirector().registerReceiver(new BureauLauncherDecoder(receiver));
@@ -57,7 +57,7 @@ public class BureauLauncherClient extends Client
     {
         super.gotClientObject(clobj);
         _service = getService(BureauLauncherService.class);
-        _service.launcherInitialized(BureauLauncherClient.this);
+        _service.launcherInitialized();
     }
 
     protected BureauLauncherService _service;

@@ -31,6 +31,7 @@ import com.threerings.crowd.server.PlaceManager;
 import com.threerings.crowd.server.PlaceRegistry;
 
 import com.threerings.orth.room.client.PetService;
+import com.threerings.orth.room.data.PetMarshaller;
 import com.threerings.orth.room.server.PetProvider;
 
 import com.threerings.msoy.item.data.all.MsoyItemType;
