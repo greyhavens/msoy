@@ -125,7 +125,7 @@ public class EnterGameClient
         {
             // first locate the game since that's what a normal client would do
             _client.requireService(WorldGameService.class).locateGame(
-                _client, gameId, new WorldGameService.LocationListener() {
+                gameId, new WorldGameService.LocationListener() {
                 public void gameLocated (String host, int port, boolean isAVRG) {
                     log.info(_id + " locateGame -> " + host + ":" + port);
                     playGame(gameId);
@@ -140,7 +140,7 @@ public class EnterGameClient
         protected void playGame (int gameId)
         {
             _client.requireService(LobbyService.class).playNow(
-                _client, gameId, 0, new LobbyService.ResultListener() {
+                gameId, 0, new LobbyService.ResultListener() {
                 public void requestProcessed (Object result) {
                     log.info(_id + " playNow -> " + result);
                 }
