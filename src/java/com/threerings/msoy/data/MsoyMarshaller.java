@@ -6,7 +6,6 @@ package com.threerings.msoy.data;
 import javax.annotation.Generated;
 
 import com.threerings.msoy.client.MsoyService;
-import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.InvocationMarshaller;
 
@@ -49,12 +48,12 @@ public class MsoyMarshaller extends InvocationMarshaller
     public static final int GET_ABTEST_GROUP = 3;
 
     // from interface MsoyService
-    public void getABTestGroup (Client arg1, String arg2, boolean arg3, InvocationService.ResultListener arg4)
+    public void getABTestGroup (String arg1, boolean arg2, InvocationService.ResultListener arg3)
     {
-        InvocationMarshaller.ResultMarshaller listener4 = new InvocationMarshaller.ResultMarshaller();
-        listener4.listener = arg4;
+        InvocationMarshaller.ResultMarshaller listener3 = new InvocationMarshaller.ResultMarshaller();
+        listener3.listener = arg3;
         sendRequest(GET_ABTEST_GROUP, new Object[] {
-            arg1, arg2, Boolean.valueOf(arg3), listener4
+            arg1, Boolean.valueOf(arg2), listener3
         });
     }
 

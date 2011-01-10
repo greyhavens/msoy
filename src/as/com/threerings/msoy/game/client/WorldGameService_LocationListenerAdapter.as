@@ -12,8 +12,8 @@ public class WorldGameService_LocationListenerAdapter
     implements WorldGameService_LocationListener
 {
     /**
-     * Creates a new WorldGame service Location listener that will delegate to the given
-     * function(s). Any Function that is null will simply not be called.
+     * Creates a new WorldGame service Location listener that will delegate to the
+     * given function(s). Any Function that is null will simply not be called.
      */
     public function WorldGameService_LocationListenerAdapter (
         gameLocated :Function, failed :Function)
@@ -26,7 +26,7 @@ public class WorldGameService_LocationListenerAdapter
     public function gameLocated (arg1 :String, arg2 :int, arg3 :Boolean) :void
     {
         if (_gameLocated != null) {
-            _gameLocated(arg1, arg2, arg3);
+            _gameLocated(arg0, arg1, arg2);
         }
     }
 

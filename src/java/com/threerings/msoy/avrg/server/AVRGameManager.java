@@ -44,21 +44,25 @@ import com.threerings.parlor.server.PlayManager;
 
 import com.whirled.bureau.data.BureauTypes;
 
+import com.whirled.game.data.ContentMarshaller;
 import com.whirled.game.data.GameContentOwnership;
 import com.whirled.game.data.GameData;
+import com.whirled.game.data.PrizeMarshaller;
 import com.whirled.game.data.PropertySpaceObject;
 import com.whirled.game.data.PropertySpaceMarshaller;
+import com.whirled.game.data.WhirledGameMessageMarshaller;
 import com.whirled.game.data.WhirledPlayerObject;
-import com.whirled.game.server.ContentDispatcher;
 import com.whirled.game.server.ContentProvider;
-import com.whirled.game.server.PrizeDispatcher;
 import com.whirled.game.server.PrizeProvider;
+import com.whirled.game.server.PropertySpaceDispatcher;
 import com.whirled.game.server.PropertySpaceHandler;
 import com.whirled.game.server.PropertySpaceHelper;
 import com.whirled.game.server.WhirledGameManager;
-import com.whirled.game.server.WhirledGameMessageDispatcher;
 import com.whirled.game.server.WhirledGameMessageHandler;
+import com.whirled.game.server.WhirledGameMessageProvider;
 
+import com.threerings.msoy.avrg.data.AVRGameAgentMarshaller;
+import com.threerings.msoy.avrg.data.AVRGameMarshaller;
 import com.threerings.msoy.data.MsoyUserObject;
 import com.threerings.msoy.server.MemberNodeActions;
 
@@ -89,7 +93,6 @@ import com.threerings.msoy.avrg.data.AVRGameObject;
 import com.threerings.msoy.avrg.data.PlayerLocation;
 import com.threerings.msoy.avrg.data.PropertySpaceObjectImpl;
 import com.threerings.msoy.avrg.data.SceneInfo;
-import com.threerings.msoy.avrg.server.AVRGameDispatcher;
 import com.threerings.msoy.avrg.server.persist.AVRGameRepository;
 import com.threerings.msoy.avrg.server.persist.PlayerGameStateRecord;
 
@@ -238,7 +241,7 @@ public class AVRGameManager extends PlaceManager
         _gameObj.setContentService(addProvider(this, ContentMarshaller.class));
         _gameObj.setPrizeService(addProvider(this, PrizeMarshaller.class));
 
-        WhirledGameMessageProvider prov = new WhirledGameMessageHandler(_gameObj) {
+        WhirledGameMessageProvider wgmpProv = new WhirledGameMessageHandler(_gameObj) {
             @Override protected ClientObject getAudienceMember (int id)
                 throws InvocationException {
                 ClientObject target = null;
@@ -264,17 +267,16 @@ public class AVRGameManager extends PlaceManager
                 return AVRGameManager.this.isAgent(caller);
             }
         };
-        _gameObj.setMessageService(addDispatcher(prov, WhirledGameMessageMarshaller.class));
-
-        _gameObj.setPropertiesService(addDispatcher(new PropertySpaceDispatcher(
-            new PropertySpaceHandler(_gameObj) {
-                @Override protected void validateUser (ClientObject caller)
+        _gameObj.setMessageService(addProvider(wgmpProv, WhirledGameMessageMarshaller.class));
+        PropertySpaceHandler psProv = new PropertySpaceHandler(_gameObj) {
+            @Override protected void validateUser (ClientObject caller)
                     throws InvocationException {
-                    if (!isAgent(caller)) {
-                        throw new InvocationException(InvocationCodes.ACCESS_DENIED);
-                    }
+                if (!isAgent(caller)) {
+                    throw new InvocationException(InvocationCodes.ACCESS_DENIED);
                 }
-            })));
+            }
+        };
+        _gameObj.setPropertiesService(addProvider(psProv, PropertySpaceMarshaller.class));
 
         _sceneCheck = new Interval(_omgr) {
             public void expired () {
@@ -930,16 +932,18 @@ public class AVRGameManager extends PlaceManager
         agent.bureauType = BureauTypes.THANE_BUREAU_TYPE;
         agent.gameId = gameId;
         agent.code = code;
-        agent.agentService = addDispatcher(new AVRGameAgentDispatcher(this));
+        agent.agentService = addProvider(this, AVRGameAgentMarshaller.class);
         agent.propertiesService =
-            addDispatcher(new PropertySpaceDispatcher(new PropertySpaceHandler(agent) {
-            @Override protected void validateUser (ClientObject caller)
-                throws InvocationException {
-                if (!isAgent(caller)) {
-                    throw new InvocationException(InvocationCodes.ACCESS_DENIED);
+            addDispatcher(new PropertySpaceDispatcher(new PropertySpaceHandler(agent)
+            {
+                @Override protected void validateUser (ClientObject caller)
+                    throws InvocationException
+                {
+                    if (!isAgent(caller)) {
+                        throw new InvocationException(InvocationCodes.ACCESS_DENIED);
+                    }
                 }
-            }
-        }));
+            }));
         agent.className = StringUtil.getOr(def.server, WhirledGameManager.DEFAULT_SERVER_CLASS);
         return agent;
     }

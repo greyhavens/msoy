@@ -29,7 +29,7 @@ import com.threerings.msoy.admin.gwt.BureauLauncherInfo;
 
 import com.threerings.msoy.bureau.data.BureauLauncherClientObject;
 import com.threerings.msoy.bureau.data.BureauLauncherCodes;
-import com.threerings.msoy.bureau.server.BureauLauncherDispatcher;
+import com.threerings.msoy.bureau.data.BureauLauncherMarshaller;
 import com.threerings.msoy.bureau.server.BureauLauncherProvider;
 import com.threerings.msoy.bureau.server.BureauLauncherSender;
 import com.threerings.nio.conman.ConnectionManager;

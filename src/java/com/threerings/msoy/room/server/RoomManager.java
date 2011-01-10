@@ -75,7 +75,9 @@ import com.google.inject.Singleton;
 import com.whirled.bureau.data.BureauTypes;
 
 import com.whirled.game.data.PropertySetEvent;
+import com.whirled.game.data.PropertySpaceMarshaller;
 import com.whirled.game.data.PropertySpaceObject.PropertySetException;
+import com.whirled.game.data.WhirledGameMessageMarshaller;
 import com.whirled.game.server.PropertySpaceDispatcher;
 import com.whirled.game.server.PropertySpaceHandler;
 import com.whirled.game.server.PropertySpaceHelper;
@@ -92,6 +94,7 @@ import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.orth.data.MediaDesc;
 import com.threerings.msoy.item.data.all.MsoyItemType;
+import com.threerings.msoy.room.data.*;
 import com.threerings.msoy.server.BootablePlaceManager;
 import com.threerings.msoy.server.MemberLocal;
 import com.threerings.msoy.server.MemberLocator;
@@ -117,28 +120,6 @@ import com.threerings.msoy.item.server.persist.AvatarRecord;
 import com.threerings.msoy.party.server.PartyRegistry;
 
 import com.threerings.msoy.room.client.RoomService;
-import com.threerings.msoy.room.data.ActorInfo;
-import com.threerings.msoy.room.data.Controllable;
-import com.threerings.msoy.room.data.ControllableEntity;
-import com.threerings.msoy.room.data.EntityControl;
-import com.threerings.msoy.room.data.EntityMemories;
-import com.threerings.msoy.room.data.FurniData;
-import com.threerings.msoy.room.data.FurniUpdate;
-import com.threerings.msoy.room.data.MemberInfo;
-import com.threerings.msoy.room.data.MobObject;
-import com.threerings.msoy.room.data.MsoyLocation;
-import com.threerings.msoy.room.data.MsoyPortal;
-import com.threerings.msoy.room.data.MsoyScene;
-import com.threerings.msoy.room.data.MsoySceneModel;
-import com.threerings.msoy.room.data.ObserverInfo;
-import com.threerings.msoy.room.data.PuppetName;
-import com.threerings.msoy.room.data.RoomCodes;
-import com.threerings.msoy.room.data.RoomLocal;
-import com.threerings.msoy.room.data.RoomObject;
-import com.threerings.msoy.room.data.RoomPropertiesEntry;
-import com.threerings.msoy.room.data.RoomPropertiesObject;
-import com.threerings.msoy.room.data.SceneAttrsUpdate;
-import com.threerings.msoy.room.data.SceneOwnershipUpdate;
 import com.threerings.msoy.room.server.persist.MemoriesRecord;
 import com.threerings.msoy.room.server.persist.MemoryRepository;
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
@@ -1124,7 +1105,7 @@ public class RoomManager extends SpotSceneManager
 
         // registerProvider in our peer object
         MsoyScene mscene = (MsoyScene) _scene;
-        _peerMan.roomDidStartup(), mscene.getName(), mscene.getThemeId(),
+        _peerMan.roomDidStartup(mscene.getId(), mscene.getName(), mscene.getThemeId(),
             mscene.getOwnerId(), mscene.getOwnerType(), mscene.getAccessControl());
 
         _roomObj.startTransaction();

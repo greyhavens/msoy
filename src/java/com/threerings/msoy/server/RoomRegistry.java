@@ -17,8 +17,8 @@ import com.threerings.crowd.server.BodyLocator;
 import com.threerings.crowd.server.PlaceManager;
 import com.threerings.crowd.server.PlaceRegistry;
 import com.threerings.msoy.bureau.data.ThaneCodes;
+import com.threerings.msoy.bureau.data.ThaneWorldMarshaller;
 import com.threerings.msoy.bureau.data.WindowClientObject;
-import com.threerings.msoy.bureau.server.ThaneWorldDispatcher;
 import com.threerings.msoy.bureau.server.ThaneWorldProvider;
 
 import com.threerings.msoy.room.data.RoomObject;
