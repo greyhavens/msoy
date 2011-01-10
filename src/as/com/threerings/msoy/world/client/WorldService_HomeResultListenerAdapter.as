@@ -28,7 +28,7 @@ public class WorldService_HomeResultListenerAdapter
     public function readyToEnter (arg1 :int) :void
     {
         if (_readyToEnter != null) {
-            _readyToEnter(arg0);
+            _readyToEnter(arg1);
         }
     }
 
@@ -36,7 +36,7 @@ public class WorldService_HomeResultListenerAdapter
     public function selectGift (arg1 :TypedArray /* of class com.threerings.msoy.item.data.all.Avatar */, arg2 :int) :void
     {
         if (_selectGift != null) {
-            _selectGift(arg0, arg1);
+            _selectGift(arg1, arg2);
         }
     }
 
