@@ -390,9 +390,7 @@ public class JabberManager
         }
         juser.user.startTransaction();
         try {
-            GatewayEntry[] gents = juser.user.gateways.toArray(
-                    new GatewayEntry[juser.user.gateways.size()]);
-            for (GatewayEntry gent : gents) {
+            for (GatewayEntry gent : juser.user.gateways) {
                 if (!gent.online) {
                     continue;
                 }

@@ -15,6 +15,7 @@ import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Ordering;
 import com.google.common.collect.Sets;
 import com.google.common.collect.Table;
 import com.google.inject.Inject;
@@ -1878,13 +1879,14 @@ public class RoomManager extends SpotSceneManager
 
         // else, make a list of all the songs, sort them according to "playlist order"
         // (by lastTouched ordering, oldest first) and try to move to the next song
-        Audio[] songs = _roomObj.playlist.toArray(new Audio[size]);
-        QuickSort.rsort(songs);
+
+        List<Audio> songs = Lists.newArrayList(_roomObj.playlist);
+        Collections.sort(songs, Ordering.natural().reverse());
 
         // find the index of the currently playing song
         int curDex = -1;
-        for (int ii = 0; ii < size; ii++) {
-            if (songs[ii].itemId == _roomObj.currentSongId) {
+        for (int ii = 0; ii < songs.size(); ii++) {
+            if (songs.get(ii).itemId == _roomObj.currentSongId) {
                 curDex = ii;
                 break;
             }
@@ -1896,7 +1898,7 @@ public class RoomManager extends SpotSceneManager
         } else {
             curDex = size - 1; // play the last song in the list..
         }
-        playSong(songs[curDex].itemId);
+        playSong(songs.get(curDex).itemId);
     }
 
     /**

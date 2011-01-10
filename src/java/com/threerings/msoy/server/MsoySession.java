@@ -244,7 +244,7 @@ public class MsoySession extends WhirledSession
             _invoker.postUnit(new WriteOnlyUnit("sessionDidEnd:" + _memobj.memberName) {
                 @Override public void invokePersist () throws Exception {
                     // write out any modified stats
-                    _statRepo.writeModified(memberId, stats.toArray(new Stat[stats.size()]));
+                    _statRepo.writeModified(memberId, stats);
 
                     // increment their session and minutes online counters
                     _memberRepo.noteSessionEnded(memberId, activeMins);

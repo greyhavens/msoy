@@ -91,16 +91,10 @@ public class WorldManager
         throws InvocationException
     {
         MemberObject memObj = _locator.requireMember(caller);
-        final MemberExperience[] experiences = new MemberExperience[memObj.experiences.size()];
-        memObj.experiences.toArray(experiences);
-        final boolean onTour = memObj.onTour;
-        final int memberId = memObj.getMemberId();
-        final short badgesVersion = memObj.getLocal(MemberLocal.class).badgesVersion;
 
         _invoker.postUnit(new PersistingUnit("getHPGridItems", listener, "who", memObj.who()) {
             @Override public void invokePersistent () throws Exception {
-                _result = _memberLogic.getHomePageGridItems(
-                    memberId, experiences, onTour, badgesVersion);
+                _result = _memberLogic.getHomePageGridItems();
             }
 
             @Override public void handleSuccess () {

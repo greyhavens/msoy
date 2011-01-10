@@ -321,8 +321,7 @@ public class MemberLogic
     /**
      * Loads up the specified member's home page grid items.
      */
-    public HomePageItem[] getHomePageGridItems (
-        int memberId, final MemberExperience[] rawExperiences, boolean onTour, short badgesVersion)
+    public HomePageItem[] getHomePageGridItems ()
     {
         // HACK for A/B testing!
         // TODO: measure test results and change this
