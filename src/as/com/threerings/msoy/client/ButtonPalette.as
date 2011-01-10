@@ -10,7 +10,7 @@ import flash.events.Event;
 
 import flash.geom.Point;
 
-import mx.core.Application;
+import mx.core.FlexGlobals;
 import mx.core.UIComponent;
 
 import mx.containers.Canvas;
@@ -46,7 +46,7 @@ public class ButtonPalette extends Canvas
         // TODO: why add "1"? do we need to pass in tileWidth & tileHeight?
         _tile.tileHeight = tileSize + 1;
         _tile.styleName = "buttonPalette";
-        _tile.owner = DisplayObjectContainer(Application.application.systemManager);
+        _tile.owner = DisplayObjectContainer(FlexGlobals.application.systemManager);
 
         CommandEvent.configureBridge(_tile, parent);
 
