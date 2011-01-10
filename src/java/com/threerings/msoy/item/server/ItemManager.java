@@ -31,6 +31,7 @@ import com.threerings.whirled.server.SceneRegistry;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.game.data.MsoyGameCodes;
+import com.threerings.msoy.item.data.ItemMarshaller;
 import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.server.MemberLocator;
 import com.threerings.msoy.server.MsoyEventLogger;

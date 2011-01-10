@@ -33,6 +33,7 @@ import com.threerings.whirled.spot.server.SpotSceneRegistry;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.room.data.MsoySceneMarshaller;
 import com.threerings.msoy.server.MemberLocator;
 import com.threerings.msoy.server.MemberNodeActions;
 import com.threerings.msoy.server.MsoyEventLogger;

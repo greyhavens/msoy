@@ -68,6 +68,8 @@ import com.threerings.msoy.item.server.ItemManager;
 import com.threerings.msoy.item.server.persist.AvatarRecord;
 import com.threerings.msoy.item.server.persist.AvatarRepository;
 import com.threerings.msoy.item.server.persist.CatalogRecord;
+import com.threerings.msoy.world.data.WorldMarshaller;
+
 import static com.threerings.msoy.Log.log;
 
 /**

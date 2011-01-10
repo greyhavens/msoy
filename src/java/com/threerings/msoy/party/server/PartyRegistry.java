@@ -46,6 +46,8 @@ import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.MsoyUserObject;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.notify.server.MsoyNotificationManager;
+import com.threerings.msoy.party.data.PartyBoardMarshaller;
+import com.threerings.msoy.party.data.PeerPartyMarshaller;
 import com.threerings.msoy.server.MemberLocator;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.util.ServiceUnit;
@@ -373,7 +375,7 @@ public class PartyRegistry
                 if (!mnode.hostedParties.containsKey(partyId)) {
                     return false;
                 }
-                mnode.peerPartyService.getPartyDetail(clinode.left, partyId, rl);
+                mnode.peerPartyService.getPartyDetail(partyId, rl);
                 return true;
             }
         });

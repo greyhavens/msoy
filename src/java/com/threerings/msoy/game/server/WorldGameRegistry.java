@@ -45,6 +45,7 @@ import com.threerings.orth.peer.data.OrthNodeObject;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.game.data.WorldGameMarshaller;
 import com.threerings.msoy.server.ServerConfig;
 
 import com.threerings.msoy.notify.server.MsoyNotificationManager;

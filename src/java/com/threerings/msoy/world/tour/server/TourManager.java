@@ -36,6 +36,7 @@ import com.threerings.msoy.server.StatLogic;
 
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
 import com.threerings.msoy.room.server.persist.SceneRecord;
+import com.threerings.msoy.world.tour.data.TourMarshaller;
 
 import static com.threerings.msoy.Log.log;
 

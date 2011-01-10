@@ -30,6 +30,7 @@ import com.threerings.msoy.chat.data.MsoyChatCodes;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.data.MsoyMarshaller;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.notify.server.MsoyNotificationManager;

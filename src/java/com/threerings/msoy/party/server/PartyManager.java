@@ -28,6 +28,7 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.group.data.all.GroupMembership.Rank;
 import com.threerings.msoy.notify.server.MsoyNotificationManager;
+import com.threerings.msoy.party.data.PartyMarshaller;
 import com.threerings.msoy.server.MemberNodeActions;
 
 import com.threerings.msoy.peer.data.HostedGame;
