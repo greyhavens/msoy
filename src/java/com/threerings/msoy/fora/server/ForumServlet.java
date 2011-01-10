@@ -1,4 +1,4 @@
-//
+s//
 // $Id$
 
 package com.threerings.msoy.fora.server;
@@ -319,8 +319,7 @@ public class ForumServlet extends MsoyServiceServlet
         // otherwise, if the thread is an announcement thread, post a feed message about it
         } else if (thread.isAnnouncement()) {
             _feedLogic.publishGroupMessage(groupId, FeedMessageType.GROUP_ANNOUNCEMENT, group.name,
-            subject, thread.threadId, CloudfrontMediaDesc.cfmdToString(
-                    (CloudfrontMediaDesc) group.getLogo()));
+                                           subject, thread.threadId, group.getLogo());
         }
 
         return thread;
