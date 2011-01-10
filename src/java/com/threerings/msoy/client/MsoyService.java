@@ -34,7 +34,7 @@ public interface MsoyService extends InvocationService
      * Calculate the visitor's a/b test group (eg 1 or 2) or < 0 for no group.
      */
     void getABTestGroup (
-        Client client, String testName, boolean logEvent, ResultListener listener);
+        String testName, boolean logEvent, ResultListener listener);
 
     /**
      * Reports that the client took an action in the specified test.
