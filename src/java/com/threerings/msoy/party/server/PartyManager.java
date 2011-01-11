@@ -6,6 +6,7 @@ package com.threerings.msoy.party.server;
 import java.util.List;
 import java.util.Set;
 
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
@@ -72,8 +73,8 @@ public class PartyManager
      */
     public PartyDetail getPartyDetail ()
     {
-        List<PartyPeep> list = Lists.newArrayList(_partyObj.peeps);
-        return new PartyDetail(_summary, _lastInfo, list.toArray(new PartyPeep[list.size()]));
+        return new PartyDetail(_summary, _lastInfo,
+            Iterables.toArray(_partyObj.peeps, PartyPeep.class));
     }
 
     public void init (PartyObject partyObj, int creatorId)
