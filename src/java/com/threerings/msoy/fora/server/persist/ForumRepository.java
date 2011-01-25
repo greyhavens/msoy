@@ -15,6 +15,7 @@ import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import com.samskivert.depot.Funcs;
 import com.samskivert.util.IntIntMap;
 
 import com.threerings.presents.annotation.BlockingThread;
@@ -77,7 +78,8 @@ public class ForumRepository extends DepotRepository
      */
     public int countUnreadThreads (int memberId, Set<Integer> groupIds)
     {
-        return forUnreadThreads(from(ForumThreadRecord.class), memberId, groupIds).selectCount();
+        return ((Number) forUnreadThreads(from(ForumThreadRecord.class), memberId, groupIds).
+            load(Funcs.countStar())).intValue();
     }
 
     /**
@@ -489,7 +491,7 @@ public class ForumRepository extends DepotRepository
             ForumThreadRecord.THREAD_ID.eq(ForumMessageRecord.THREAD_ID));
         joinThread.setType(Join.Type.INNER);
 
-        builder.join(joinRead).join(joinThread);
+        builder = builder.join(joinRead).join(joinThread);
 
         // filtering expressions
         List<SQLExpression<?>> conditions = Lists.newArrayListWithCapacity(4);
