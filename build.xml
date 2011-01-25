@@ -201,7 +201,6 @@
       <dependency groupId="com.google.gwt" artifactId="gwt-user" version="2.1.0"/>
       <dependency groupId="com.google.gwt" artifactId="gwt-incubator" version="2.0.1"/>
       <remoteRepository refid="ooo.maven.depends.repo"/>
-      <dependency groupId="com.samskivert" artifactId="samskivert-gwt" version="1.2-SNAPSHOT"/>
       <dependency groupId="com.threerings" artifactId="narya-gwt" version="1.4-SNAPSHOT"/>
       <dependency groupId="com.threerings" artifactId="orth-gwt" version="0.9"/>
       <dependency groupId="com.threerings" artifactId="underwire-gwt" version="1.0-SNAPSHOT"/>
