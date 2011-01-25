@@ -175,17 +175,17 @@ public class ThemeLogic
         if (theme.playOnEnter != trec.playOnEnter) {
             updates.put(ThemeRecord.PLAY_ON_ENTER, theme.playOnEnter);
         }
-        if (theme.logo != null && !theme.logo.equals(trec.toLogo())) {
+        if (theme.logo instanceof HashMediaDesc && !theme.logo.equals(trec.toLogo())) {
             updates.put(ThemeRecord.LOGO_MEDIA_HASH, HashMediaDesc.unmakeHash(theme.logo));
             updates.put(ThemeRecord.LOGO_MIME_TYPE, theme.logo.getMimeType());
             updates.put(ThemeRecord.LOGO_MEDIA_CONSTRAINT, theme.logo.getConstraint());
         }
-        if (theme.navButton != null && !theme.navButton.equals(trec.toNavButton())) {
+        if (theme.navButton instanceof HashMediaDesc && !theme.navButton.equals(trec.toNavButton())) {
             updates.put(ThemeRecord.NAV_MEDIA_HASH, HashMediaDesc.unmakeHash(theme.navButton));
             updates.put(ThemeRecord.NAV_MIME_TYPE, theme.navButton.getMimeType());
             updates.put(ThemeRecord.NAV_MEDIA_CONSTRAINT, theme.navButton.getConstraint());
         }
-        if (theme.navSelButton != null && !theme.navSelButton.equals(trec.toNavSelButton())) {
+        if (theme.navSelButton instanceof HashMediaDesc && !theme.navSelButton.equals(trec.toNavSelButton())) {
             updates.put(ThemeRecord.NAV_SEL_MEDIA_HASH, HashMediaDesc.unmakeHash(theme.navSelButton));
             updates.put(ThemeRecord.NAV_SEL_MIME_TYPE, theme.navSelButton.getMimeType());
             updates.put(ThemeRecord.NAV_SEL_MEDIA_CONSTRAINT, theme.navSelButton.getConstraint());
