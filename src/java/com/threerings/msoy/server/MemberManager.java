@@ -463,6 +463,8 @@ public class MemberManager
     public void complainMember (final BodyObject complainer, final int targetId,
         final String complaint, final MemberName optTargetName)
     {
+        log.info("complainMember", "complainer", complainer.who(), "targetId", targetId,
+            "complaint", complaint);
         ResultListener<ChatHistoryResult> listener = new ResultListener<ChatHistoryResult>() {
             @Override public void requestFailed (Exception cause) {
                 log.warning("Failed to collect chat history for a complaint", "cause", cause);
@@ -523,6 +525,8 @@ public class MemberManager
             event.targetHandle = optTargetName.toString();
             event.target = Integer.toString(optTargetName.getId());
         }
+
+        log.info("Running addComplaint invoker", "event", event);
 
         _invoker.postUnit(new Invoker.Unit("addComplaint") {
             @Override public boolean invoke () {
