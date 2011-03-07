@@ -215,6 +215,7 @@
     <!-- these libraries we need for building actionscript -->
     <artifact:dependencies filesetId="aslib.fileset">
       <remoteRepository refid="ooo.maven.depends.repo"/>
+      <remoteRepository id="ooo-public" url="http://ooo-maven.googlecode.com/hg/repository"/>
       <dependency groupId="com.threerings" artifactId="toyboxlib"
                   version="1.0-SNAPSHOT" type="swc"/>
       <dependency groupId="com.threerings" artifactId="whirledthanelib"
@@ -225,8 +226,7 @@
                   version="1.4-SNAPSHOT" type="swc"/>
       <dependency groupId="com.threerings" artifactId="vilyalib"
                   version="1.1-SNAPSHOT" type="swc"/>
-      <dependency groupId="com.threerings" artifactId="vilyalib"
-                  version="1.1-SNAPSHOT" type="swc"/>
+      <dependency groupId="nochump" artifactId="zip" version="1.0" type="swc"/>
       <dependency groupId="com.threerings" artifactId="orthlib"
                   version="0.9" type="swc"/>
       <dependency groupId="com.threerings" artifactId="whirledlib"
