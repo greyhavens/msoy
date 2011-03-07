@@ -611,6 +611,7 @@
       <arg value="-compiler.library-path+=${deploy.dir}/lib/naryalib.swc"/>
       <arg value="-compiler.library-path+=${deploy.dir}/lib/nenyalib.swc"/>
       <arg value="-compiler.library-path+=${deploy.dir}/lib/vilyalib.swc"/>
+      <arg value="-compiler.library-path+=${deploy.dir}/lib/zip.swc"/>
       <arg value="-compiler.library-path+=${deploy.dir}/lib/whirledlib.swc"/>
       <arg value="-compiler.library-path+=${deploy.dir}/lib/orthlib.swc"/>
       <arg value="-compiler.library-path+=${deploy.dir}/lib/toyboxlib.swc"/>
