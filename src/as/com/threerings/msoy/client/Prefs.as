@@ -125,7 +125,7 @@ public class Prefs
 
     public static function isAprilFoolsEnabled () :Boolean
     {
-        return IS_APRIL_FOOLS && _config.getValue(APRIL_FOOLS, true);
+        return false && IS_APRIL_FOOLS && _config.getValue(APRIL_FOOLS, true);
     }
 
     public static function setAprilFoolsEnabled (enabled :Boolean) :void
