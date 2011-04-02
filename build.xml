@@ -174,20 +174,20 @@
       <dependency groupId="com.google.gwt" artifactId="gwt-servlet" version="2.1.0"/>
       <dependency groupId="postgresql" artifactid="postgresql" version="9.0-801.jdbc4"/>
       <remoteRepository refid="ooo.maven.depends.repo"/>
-      <dependency groupId="com.samskivert" artifactId="samskivert" version="1.2-SNAPSHOT"/>
-      <dependency groupId="com.samskivert" artifactId="depot" version="1.2-SNAPSHOT"/>
+      <dependency groupId="com.samskivert" artifactId="samskivert" version="1.2"/>
+      <dependency groupId="com.samskivert" artifactId="depot" version="1.2"/>
       <dependency groupId="com.threerings.panopticon" artifactId="panopticon-client"
                   version="0.0-SNAPSHOT"/>
       <dependency groupId="com.threerings" artifactId="gwt-utils" version="1.3-SNAPSHOT"/>
-      <dependency groupId="com.threerings" artifactId="narya" version="1.4-SNAPSHOT"/>
-      <dependency groupId="com.threerings" artifactId="vilya" version="1.1-SNAPSHOT"/>
+      <dependency groupId="com.threerings" artifactId="narya" version="1.4"/>
+      <dependency groupId="com.threerings" artifactId="vilya" version="1.1"/>
       <dependency groupId="com.threerings" artifactId="orth" version="0.9"/>
       <dependency groupId="com.threerings" artifactId="whirled-code" version="1.1-SNAPSHOT"/>
-      <dependency groupId="com.threerings" artifactId="pulse" version="1.1-SNAPSHOT"/>
-      <dependency groupId="com.threerings" artifactId="threerings" version="1.1-SNAPSHOT"/>
+      <dependency groupId="com.threerings" artifactId="pulse" version="1.1"/>
+      <dependency groupId="com.threerings" artifactId="threerings" version="1.1"/>
       <dependency groupId="com.threerings" artifactId="database-utils" version="1.0-SNAPSHOT"/>
-      <dependency groupId="com.threerings" artifactId="toybox" version="1.1-SNAPSHOT"/>
-      <dependency groupId="com.threerings" artifactId="underwire" version="1.0-SNAPSHOT"/>
+      <dependency groupId="com.threerings" artifactId="toybox" version="1.0"/>
+      <dependency groupId="com.threerings" artifactId="underwire" version="1.0"/>
       <dependency groupId="org.jivesoftware.smack" artifactId="smack-component"
                   version="0.0-SNAPSHOT"/>
     </artifact:dependencies>
@@ -201,9 +201,9 @@
       <dependency groupId="com.google.gwt" artifactId="gwt-user" version="2.1.0"/>
       <dependency groupId="com.google.gwt" artifactId="gwt-incubator" version="2.0.1"/>
       <remoteRepository refid="ooo.maven.depends.repo"/>
-      <dependency groupId="com.threerings" artifactId="narya-gwt" version="1.4-SNAPSHOT"/>
+      <dependency groupId="com.threerings" artifactId="narya-gwt" version="1.4"/>
       <dependency groupId="com.threerings" artifactId="orth-gwt" version="0.9"/>
-      <dependency groupId="com.threerings" artifactId="underwire-gwt" version="1.0-SNAPSHOT"/>
+      <dependency groupId="com.threerings" artifactId="underwire-gwt" version="1.0"/>
     </artifact:dependencies>
     <copy todir="${deploy.dir}/build">
       <fileset refid="build.fileset"/>
@@ -217,15 +217,15 @@
       <remoteRepository refid="ooo.maven.depends.repo"/>
       <remoteRepository id="ooo-public" url="http://ooo-maven.googlecode.com/hg/repository"/>
       <dependency groupId="com.threerings" artifactId="toyboxlib"
-                  version="1.0-SNAPSHOT" type="swc"/>
+                  version="1.0" type="swc"/>
       <dependency groupId="com.threerings" artifactId="whirledthanelib"
                   version="1.0-SNAPSHOT" type="swc"/>
       <dependency groupId="com.threerings" artifactId="thane"
                   version="1.0-SNAPSHOT" type="swc"/>
       <dependency groupId="com.threerings" artifactId="naryalib"
-                  version="1.4-SNAPSHOT" type="swc"/>
+                  version="1.4" type="swc"/>
       <dependency groupId="com.threerings" artifactId="vilyalib"
-                  version="1.1-SNAPSHOT" type="swc"/>
+                  version="1.1" type="swc"/>
       <dependency groupId="nochump" artifactId="zip" version="1.0" type="swc"/>
       <dependency groupId="com.threerings" artifactId="orthlib"
                   version="0.9" type="swc"/>
