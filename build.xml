@@ -219,9 +219,9 @@
       <dependency groupId="com.threerings" artifactId="toyboxlib"
                   version="1.0" type="swc"/>
       <dependency groupId="com.threerings" artifactId="whirledthanelib"
-                  version="1.0-SNAPSHOT" type="swc"/>
+                  version="1.0" type="swc"/>
       <dependency groupId="com.threerings" artifactId="thane"
-                  version="1.0-SNAPSHOT" type="swc"/>
+                  version="1.0" type="swc"/>
       <dependency groupId="com.threerings" artifactId="naryalib"
                   version="1.4" type="swc"/>
       <dependency groupId="com.threerings" artifactId="vilyalib"
