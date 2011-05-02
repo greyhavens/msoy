@@ -15,11 +15,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import com.threerings.web.gwt.ServiceException;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -32,6 +31,10 @@ import com.google.inject.Inject;
 import com.samskivert.io.StreamUtil;
 import com.samskivert.util.ObjectUtil;
 import com.samskivert.util.StringUtil;
+
+import com.threerings.web.gwt.ServiceException;
+
+import com.threerings.user.OOOUser;
 
 import com.threerings.presents.server.PresentsDObjectMgr;
 
@@ -63,6 +66,8 @@ import com.threerings.msoy.server.StatLogic;
 import com.threerings.msoy.server.PopularPlacesSnapshot.Place;
 import com.threerings.msoy.server.persist.CharityRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.MemberWarningRecord;
+import com.threerings.msoy.server.persist.MsoyOOOUserRepository;
 import com.threerings.msoy.server.util.MailSender;
 import com.threerings.msoy.server.util.MailSender.By;
 
@@ -85,6 +90,7 @@ import com.threerings.msoy.person.server.persist.ProfileRecord;
 import com.threerings.msoy.person.server.persist.ProfileRepository;
 
 import com.threerings.msoy.web.gwt.AccountInfo;
+import com.threerings.msoy.web.gwt.BannedException;
 import com.threerings.msoy.web.gwt.CaptchaException;
 import com.threerings.msoy.web.gwt.ConnectConfig;
 import com.threerings.msoy.web.gwt.ExternalCreds;
@@ -482,6 +488,23 @@ public class WebUserServlet extends MsoyServiceServlet
             return null; // invalido!
         }
 
+        // are they banned?
+        OOOUser user = _authrep.loadUserByEmail(mrec.accountName, false);
+        if (user == null || user.holdsToken(OOOUser.MSOY_BANNED)) {
+            throw new BannedException(MsoyAuthCodes.BANNED, null);
+        }        
+
+        // are they temp-banned?
+        MemberWarningRecord record = _memberRepo.loadMemberWarningRecord(memberId);
+        if (record != null && record.banExpires != null) {
+            // figure out how many seconds are left on the temp ban
+            Date now = new Date();
+            if (now.before(record.banExpires)) {
+                int expires = (int)((record.banExpires.getTime() - now.getTime())/1000L);
+                throw new BannedException(MsoyAuthCodes.TEMP_BANNED, record.warning, expires);
+            }
+        }
+
         // update their validated flag in the repository
         mrec.setFlag(MemberRecord.Flag.VALIDATED, true);
         _memberRepo.storeFlags(mrec);
@@ -716,6 +739,7 @@ public class WebUserServlet extends MsoyServiceServlet
     @Inject protected MemberManager _memberMan;
     @Inject protected MoneyLogic _moneyLogic;
     @Inject protected MsoyAuthenticator _author;
+    @Inject protected MsoyOOOUserRepository _authrep;
     @Inject protected MsoyPeerManager _peerMan;
     @Inject protected MsoyNotificationManager _notifyMan;
     @Inject protected PresentsDObjectMgr _omgr;
