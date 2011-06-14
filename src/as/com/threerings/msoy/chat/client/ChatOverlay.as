@@ -760,7 +760,7 @@ public class ChatOverlay
     protected function formatMessage (
         msg :ChatMessage, type :int, forceSpeaker :Boolean, userSpeakFmt :TextFormat) :Array
     {
-        var texts :Array = TextUtil.parseLinks(msg.message, userSpeakFmt, true);
+        var texts :Array = TextUtil.parseLinks(msg.message, userSpeakFmt, msg is SystemMessage);
 
         var format :String = (type == PAID_BROADCAST) ? "m.paid_broadcast_format" : msg.getFormat();
         if ((format != null) && (forceSpeaker || alwaysUseSpeaker(type))) {

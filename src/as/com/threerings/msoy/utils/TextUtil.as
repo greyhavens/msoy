@@ -23,12 +23,12 @@ public class TextUtil
     * @param defaultFormat The format to use for normal text.  If left null,
     *        ChatOverlay.createChatFormat() is used.
     * @param parseSpecial If true, parsing will look for special links, such as those we use in
-    *                     translation messages.
+    *                     translation messages and commands.
     * @param useDefaultColor If true, the color from the defaultFormat will be used for links,
     *                        otherwise links will be displayed in blue.
     */
     public static function parseLinks (
-        text :String, defaultFormat :TextFormat = null, parseSpecial :Boolean = true,
+        text :String, defaultFormat :TextFormat = null, parseSpecial :Boolean = false,
         useDefaultColor :Boolean = false) :Array
     {
         defaultFormat = defaultFormat || ChatOverlay.createChatFormat();
@@ -44,10 +44,14 @@ public class TextUtil
             } else {
                 var links :Array = StringUtil.parseURLs(String(bits[ii]));
                 for (var jj :int = 0; jj < links.length; jj++) {
-                    retval.push((jj % 2 == 0)
-                        ? lastFmt
-                        : createLinkFormat(String(links[jj]), defaultFormat, useDefaultColor),
-                        links[jj]);
+                    var str :String = links[jj];
+                    // Only linkify commands unless parseSpecial is true
+                    var linkify :Boolean = (jj % 2 == 1)
+                        && (parseSpecial || !StringUtil.startsWith(str, "command://"));
+                    retval.push(linkify
+                        ? createLinkFormat(str, defaultFormat, useDefaultColor)
+                        : lastFmt);
+                    retval.push(str);
                 }
             }
         }
