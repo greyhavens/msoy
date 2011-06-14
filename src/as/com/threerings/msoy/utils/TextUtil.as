@@ -45,8 +45,10 @@ public class TextUtil
                 var links :Array = StringUtil.parseURLs(String(bits[ii]));
                 for (var jj :int = 0; jj < links.length; jj++) {
                     var str :String = links[jj];
-                    // Only linkify commands unless parseSpecial is true
                     var linkify :Boolean = (jj % 2 == 1)
+                        // Avoid linkifying if we already have a URL
+                        && lastFmt.url == ""
+                        // Only linkify commands if parseSpecial is on
                         && (parseSpecial || !StringUtil.startsWith(str, "command://"));
                     retval.push(linkify
                         ? createLinkFormat(str, defaultFormat, useDefaultColor)
