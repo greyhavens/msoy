@@ -48,6 +48,9 @@ public class Comment
     /** The time at which this comment was posted. */
     public long posted;
 
+    /** The posted time of the original comment this comment is replying to, or 0 if not a reply. */
+    public long replyTo;
+
     /** The absolute rating of this comment. */
     public int currentRating;
 
@@ -56,4 +59,9 @@ public class Comment
 
     /** The text of this comment. */
     public String text;
+
+    public boolean isReply ()
+    {
+        return replyTo != 0;
+    }
 }

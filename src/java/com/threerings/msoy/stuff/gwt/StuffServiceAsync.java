@@ -3,14 +3,12 @@
 
 package com.threerings.msoy.stuff.gwt;
 
-import com.threerings.orth.data.MediaDesc;
-
 import com.google.gwt.user.client.rpc.AsyncCallback;
-
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.MsoyItemType;
+import com.threerings.orth.data.MediaDesc;
 
 /**
  * Provides the asynchronous version of {@link StuffService}.
@@ -18,14 +16,14 @@ import com.threerings.msoy.item.data.all.MsoyItemType;
 public interface StuffServiceAsync
 {
     /**
-     * The async version of {@link StuffService#publishExternalMedia}.
-     */
-    void publishExternalMedia (String data, byte mimeType, AsyncCallback<MediaDesc> callback);
-
-    /**
      * The async version of {@link StuffService#createItem}.
      */
     void createItem (Item item, AsyncCallback<Item> callback);
+
+    /**
+     * The async version of {@link StuffService#publishExternalMedia}.
+     */
+    void publishExternalMedia (String data, byte mimeType, AsyncCallback<MediaDesc> callback);
 
     /**
      * The async version of {@link StuffService#updateItem}.

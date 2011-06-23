@@ -19,11 +19,6 @@ import com.threerings.msoy.web.gwt.WebCreds;
 public interface AdminServiceAsync
 {
     /**
-     * The async version of {@link AdminService#setDisplayName}.
-     */
-    void setDisplayName (int memberId, String name, AsyncCallback<Void> callback);
-
-    /**
      * The async version of {@link AdminService#getMemberInfo}.
      */
     void getMemberInfo (int memberId, int affiliateOfCount, AsyncCallback<MemberAdminInfo> callback);
@@ -37,6 +32,11 @@ public interface AdminServiceAsync
      * The async version of {@link AdminService#setRole}.
      */
     void setRole (int memberId, WebCreds.Role role, AsyncCallback<Void> callback);
+
+    /**
+     * The async version of {@link AdminService#setDisplayName}.
+     */
+    void setDisplayName (int memberId, String name, AsyncCallback<Void> callback);
 
     /**
      * The async version of {@link AdminService#setValidated}.

@@ -13,9 +13,9 @@ import com.threerings.msoy.data.all.MemberName;
 public interface IssueServiceAsync
 {
     /**
-     * The async version of {@link IssueService#loadMessages}.
+     * The async version of {@link IssueService#loadMessage}.
      */
-    void loadMessages (int issueId, int messageId, AsyncCallback<List<ForumMessage>> callback);
+    void loadMessage (int messageId, AsyncCallback<ForumMessage> callback);
 
     /**
      * The async version of {@link IssueService#loadIssues}.
@@ -23,19 +23,9 @@ public interface IssueServiceAsync
     void loadIssues (boolean open, int offset, int count, boolean needTotalCount, AsyncCallback<IssueService.IssueResult> callback);
 
     /**
-     * The async version of {@link IssueService#loadOwnedIssues}.
+     * The async version of {@link IssueService#loadMessages}.
      */
-    void loadOwnedIssues (boolean open, int offset, int count, boolean needTotalCount, AsyncCallback<IssueService.IssueResult> callback);
-
-    /**
-     * The async version of {@link IssueService#loadIssue}.
-     */
-    void loadIssue (int issueId, AsyncCallback<Issue> callback);
-
-    /**
-     * The async version of {@link IssueService#loadMessage}.
-     */
-    void loadMessage (int messageId, AsyncCallback<ForumMessage> callback);
+    void loadMessages (int issueId, int messageId, AsyncCallback<List<ForumMessage>> callback);
 
     /**
      * The async version of {@link IssueService#createIssue}.
@@ -61,4 +51,14 @@ public interface IssueServiceAsync
      * The async version of {@link IssueService#loadOwners}.
      */
     void loadOwners (AsyncCallback<List<MemberName>> callback);
+
+    /**
+     * The async version of {@link IssueService#loadOwnedIssues}.
+     */
+    void loadOwnedIssues (boolean open, int offset, int count, boolean needTotalCount, AsyncCallback<IssueService.IssueResult> callback);
+
+    /**
+     * The async version of {@link IssueService#loadIssue}.
+     */
+    void loadIssue (int issueId, AsyncCallback<Issue> callback);
 }

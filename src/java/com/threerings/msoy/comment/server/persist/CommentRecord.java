@@ -36,7 +36,7 @@ public class CommentRecord extends PersistentRecord
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 2;
+    public static final int SCHEMA_VERSION = 3;
 
     /** The type of entity on which this comment was made (see {@link Comment}). */
     @Id
@@ -65,6 +65,10 @@ public class CommentRecord extends PersistentRecord
     @Column(length=Comment.MAX_TEXT_LENGTH)
     public String text;
 
+    /** The post date of the original comment this comment is replying to. Null if not a reply. */
+    @Column(nullable=true)
+    public Timestamp replyTo;
+
     /**
      * Converts this persistent record to a runtime record.
      *
@@ -80,6 +84,9 @@ public class CommentRecord extends PersistentRecord
             comment.photo = card.photo;
         }
         comment.posted = posted.getTime();
+        if (replyTo != null) {
+            comment.replyTo = replyTo.getTime();
+        }
 
         comment.currentRating = currentRating;
         comment.totalRatings = totalRatings;

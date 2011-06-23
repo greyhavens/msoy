@@ -5,27 +5,19 @@ package com.threerings.msoy.edgame.gwt;
 
 import java.util.List;
 import java.util.Set;
-
-import com.threerings.orth.data.MediaDesc;
-
 import com.google.gwt.user.client.rpc.AsyncCallback;
-
 import com.threerings.msoy.facebook.gwt.FacebookInfo;
 import com.threerings.msoy.facebook.gwt.FeedThumbnail;
 import com.threerings.msoy.game.gwt.ArcadeData;
 import com.threerings.msoy.game.gwt.GameInfo;
 import com.threerings.msoy.item.data.all.MsoyItemType;
+import com.threerings.orth.data.MediaDesc;
 
 /**
  * Provides the asynchronous version of {@link EditGameService}.
  */
 public interface EditGameServiceAsync
 {
-    /**
-     * The async version of {@link EditGameService#updateFacebookInfo}.
-     */
-    void updateFacebookInfo (FacebookInfo info, AsyncCallback<Void> callback);
-
     /**
      * The async version of {@link EditGameService#loadMyGames}.
      */
@@ -115,4 +107,9 @@ public interface EditGameServiceAsync
      * The async version of {@link EditGameService#testRollFeaturedGames}.
      */
     void testRollFeaturedGames (AsyncCallback<Void> callback);
+
+    /**
+     * The async version of {@link EditGameService#updateFacebookInfo}.
+     */
+    void updateFacebookInfo (FacebookInfo info, AsyncCallback<Void> callback);
 }

@@ -12,16 +12,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 public interface MailServiceAsync
 {
     /**
-     * The async version of {@link MailService#loadConversations}.
-     */
-    void loadConversations (int offset, int count, boolean needCount, AsyncCallback<MailService.ConvosResult> callback);
-
-    /**
-     * The async version of {@link MailService#loadConversation}.
-     */
-    void loadConversation (int convoId, AsyncCallback<MailService.ConvoResult> callback);
-
-    /**
      * The async version of {@link MailService#startConversation}.
      */
     void startConversation (int recipientId, String subject, String body, MailPayload attachment, AsyncCallback<Void> callback);
@@ -50,4 +40,14 @@ public interface MailServiceAsync
      * The async version of {@link MailService#complainConversation}.
      */
     void complainConversation (int convoId, String reason, AsyncCallback<Void> callback);
+
+    /**
+     * The async version of {@link MailService#loadConversations}.
+     */
+    void loadConversations (int offset, int count, boolean needCount, AsyncCallback<MailService.ConvosResult> callback);
+
+    /**
+     * The async version of {@link MailService#loadConversation}.
+     */
+    void loadConversation (int convoId, AsyncCallback<MailService.ConvoResult> callback);
 }

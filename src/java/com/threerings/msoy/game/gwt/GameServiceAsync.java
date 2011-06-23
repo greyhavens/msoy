@@ -14,6 +14,11 @@ import com.threerings.msoy.game.data.all.Trophy;
 public interface GameServiceAsync
 {
     /**
+     * The async version of {@link GameService#loadGameLogs}.
+     */
+    void loadGameLogs (int gameId, AsyncCallback<GameLogs> callback);
+
+    /**
      * The async version of {@link GameService#loadArcadeData}.
      */
     void loadArcadeData (ArcadeData.Portal portal, AsyncCallback<ArcadeData> callback);
@@ -32,11 +37,6 @@ public interface GameServiceAsync
      * The async version of {@link GameService#loadGameMetrics}.
      */
     void loadGameMetrics (int gameId, AsyncCallback<GameDistribs> callback);
-
-    /**
-     * The async version of {@link GameService#loadGameLogs}.
-     */
-    void loadGameLogs (int gameId, AsyncCallback<GameLogs> callback);
 
     /**
      * The async version of {@link GameService#resetGameScores}.

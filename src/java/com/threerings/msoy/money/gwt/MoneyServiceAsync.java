@@ -20,14 +20,14 @@ import com.threerings.msoy.money.data.all.TransactionPageResult;
 public interface MoneyServiceAsync
 {
     /**
-     * The async version of {@link MoneyService#getTransactionHistory}.
-     */
-    void getTransactionHistory (int memberId, ReportType report, int from, int count, AsyncCallback<TransactionPageResult> callback);
-
-    /**
      * The async version of {@link MoneyService#exchangeBlingForBars}.
      */
     void exchangeBlingForBars (int memberId, int blingAmount, AsyncCallback<BlingExchangeResult> callback);
+
+    /**
+     * The async version of {@link MoneyService#getTransactionHistory}.
+     */
+    void getTransactionHistory (int memberId, ReportType report, int from, int count, AsyncCallback<TransactionPageResult> callback);
 
     /**
      * The async version of {@link MoneyService#requestCashOutBling}.
@@ -38,11 +38,6 @@ public interface MoneyServiceAsync
      * The async version of {@link MoneyService#getBlingCashOutRequests}.
      */
     void getBlingCashOutRequests (AsyncCallback<List<CashOutEntry>> callback);
-
-    /**
-     * The async version of {@link MoneyService#cashOutBling}.
-     */
-    void cashOutBling (int memberId, int blingAmount, AsyncCallback<Void> callback);
 
     /**
      * The async version of {@link MoneyService#cancelCashOut}.
@@ -63,4 +58,9 @@ public interface MoneyServiceAsync
      * The async version of {@link MoneyService#charityCashOutBling}.
      */
     void charityCashOutBling (int memberId, int blingAmount, AsyncCallback<Void> callback);
+
+    /**
+     * The async version of {@link MoneyService#cashOutBling}.
+     */
+    void cashOutBling (int memberId, int blingAmount, AsyncCallback<Void> callback);
 }

@@ -30,11 +30,6 @@ public interface MeServiceAsync
     void loadFeedCategory (FeedMessageType.Category category, boolean fullSize, AsyncCallback<MyWhirledData.FeedCategory> callback);
 
     /**
-     * The async version of {@link MeService#loadBadges}.
-     */
-    void loadBadges (int memberId, AsyncCallback<PassportData> callback);
-
-    /**
      * The async version of {@link MeService#loadAllBadges}.
      */
     void loadAllBadges (AsyncCallback<List<Badge>> callback);
@@ -48,4 +43,9 @@ public interface MeServiceAsync
      * The async version of {@link MeService#selectProfileAward}.
      */
     void selectProfileAward (Award.AwardType type, int awardId, AsyncCallback<Void> callback);
+
+    /**
+     * The async version of {@link MeService#loadBadges}.
+     */
+    void loadBadges (int memberId, AsyncCallback<PassportData> callback);
 }

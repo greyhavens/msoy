@@ -4,10 +4,8 @@
 package com.threerings.msoy.comment.gwt;
 
 import java.util.Collection;
-
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.threerings.gwt.util.PagedResult;
-
 import com.threerings.msoy.comment.data.all.Comment;
 import com.threerings.msoy.comment.data.all.CommentType;
 
@@ -17,19 +15,19 @@ import com.threerings.msoy.comment.data.all.CommentType;
 public interface CommentServiceAsync
 {
     /**
-     * The async version of {@link CommentService#loadComments}.
+     * The async version of {@link CommentService#rateComment}.
      */
-    void loadComments (CommentType entityType, int entityId, int offset, int count, boolean needCount, AsyncCallback<PagedResult<Comment>> callback);
+    void rateComment (CommentType entityType, int entityId, long posted, boolean rating, AsyncCallback<Integer> callback);
 
     /**
      * The async version of {@link CommentService#postComment}.
      */
-    void postComment (CommentType entityType, int entityId, String text, AsyncCallback<Comment> callback);
+    void postComment (CommentType entityType, int entityId, long replyTo, String text, AsyncCallback<Comment> callback);
 
     /**
-     * The async version of {@link CommentService#rateComment}.
+     * The async version of {@link CommentService#complainComment}.
      */
-    void rateComment (CommentType entityType, int entityId, long posted, boolean rating, AsyncCallback<Integer> callback);
+    void complainComment (String subject, CommentType entityType, int entityId, long when, AsyncCallback<Void> callback);
 
     /**
      * The async version of {@link CommentService#deleteComments}.
@@ -37,7 +35,7 @@ public interface CommentServiceAsync
     void deleteComments (CommentType entityType, int entityId, Collection<Long> when, AsyncCallback<Integer> callback);
 
     /**
-     * The async version of {@link CommentService#complainComment}.
+     * The async version of {@link CommentService#loadComments}.
      */
-    void complainComment (String subject, CommentType entityType, int entityId, long when, AsyncCallback<Void> callback);
+    void loadComments (CommentType entityType, int entityId, int offset, int count, boolean needCount, AsyncCallback<PagedResult<Comment>> callback);
 }

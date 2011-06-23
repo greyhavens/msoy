@@ -8,7 +8,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.threerings.msoy.data.all.RatingResult;
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.PurchaseResult;
-import com.threerings.msoy.room.gwt.WebRoomService.TemplatesResult;
 
 /**
  * Provides the asynchronous version of {@link WebRoomService}.
@@ -19,11 +18,6 @@ public interface WebRoomServiceAsync
      * The async version of {@link WebRoomService#loadRoomDetail}.
      */
     void loadRoomDetail (int sceneId, AsyncCallback<RoomDetail> callback);
-
-    /**
-     * The async version of {@link WebRoomService#canGiftRoom}.
-     */
-    void canGiftRoom (int sceneId, AsyncCallback<Void> callback);
 
     /**
      * The async version of {@link WebRoomService#loadMemberRooms}.
@@ -68,6 +62,10 @@ public interface WebRoomServiceAsync
     /**
      * The async version of {@link WebRoomService#loadThemeTemplates}.
      */
-    void loadThemeTemplates (int groupId, AsyncCallback<TemplatesResult> callback);
+    void loadThemeTemplates (int groupId, AsyncCallback<WebRoomService.TemplatesResult> callback);
 
+    /**
+     * The async version of {@link WebRoomService#canGiftRoom}.
+     */
+    void canGiftRoom (int sceneId, AsyncCallback<Void> callback);
 }

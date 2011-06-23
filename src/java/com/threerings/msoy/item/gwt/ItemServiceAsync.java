@@ -20,9 +20,19 @@ import com.threerings.msoy.web.gwt.TagHistory;
 public interface ItemServiceAsync
 {
     /**
-     * The async version of {@link ItemService#scaleAvatar}.
+     * The async version of {@link ItemService#getTagHistory}.
      */
-    void scaleAvatar (int avatarId, float newScale, AsyncCallback<Void> callback);
+    void getTagHistory (ItemIdent item, AsyncCallback<List<TagHistory>> callback);
+
+    /**
+     * The async version of {@link ItemService#getTags}.
+     */
+    void getTags (ItemIdent item, AsyncCallback<List<String>> callback);
+
+    /**
+     * The async version of {@link ItemService#addFlag}.
+     */
+    void addFlag (ItemIdent item, ItemFlag.Kind kind, String comment, AsyncCallback<Void> callback);
 
     /**
      * The async version of {@link ItemService#rateItem}.
@@ -35,29 +45,19 @@ public interface ItemServiceAsync
     void getRatingHistory (ItemIdent item, AsyncCallback<RatingHistoryResult> callback);
 
     /**
-     * The async version of {@link ItemService#getTags}.
+     * The async version of {@link ItemService#removeAllFlags}.
      */
-    void getTags (ItemIdent item, AsyncCallback<List<String>> callback);
+    void removeAllFlags (ItemIdent iitem, AsyncCallback<Void> callback);
 
     /**
-     * The async version of {@link ItemService#getTagHistory}.
+     * The async version of {@link ItemService#scaleAvatar}.
      */
-    void getTagHistory (ItemIdent item, AsyncCallback<List<TagHistory>> callback);
+    void scaleAvatar (int avatarId, float newScale, AsyncCallback<Void> callback);
 
     /**
      * The async version of {@link ItemService#tagItem}.
      */
     void tagItem (ItemIdent item, String tag, boolean set, AsyncCallback<TagHistory> callback);
-
-    /**
-     * The async version of {@link ItemService#addFlag}.
-     */
-    void addFlag (ItemIdent item, ItemFlag.Kind kind, String comment, AsyncCallback<Void> callback);
-
-    /**
-     * The async version of {@link ItemService#removeAllFlags}.
-     */
-    void removeAllFlags (ItemIdent iitem, AsyncCallback<Void> callback);
 
     /**
      * The async version of {@link ItemService#setMature}.

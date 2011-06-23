@@ -22,14 +22,14 @@ public interface GalleryServiceAsync
     void loadMeGallery (int memberId, AsyncCallback<GalleryData> callback);
 
     /**
-     * The async version of {@link GalleryService#loadGallery}.
-     */
-    void loadGallery (int galleryId, AsyncCallback<GalleryData> callback);
-
-    /**
      * The async version of {@link GalleryService#createGallery}.
      */
     void createGallery (Gallery gallery, List<Integer> photoItemIds, AsyncCallback<Gallery> callback);
+
+    /**
+     * The async version of {@link GalleryService#loadGallery}.
+     */
+    void loadGallery (int galleryId, AsyncCallback<GalleryData> callback);
 
     /**
      * The async version of {@link GalleryService#updateGallery}.

@@ -22,11 +22,6 @@ public interface ForumServiceAsync
     void loadUnreadFriendThreads (int offset, int count, AsyncCallback<List<ForumThread>> callback);
 
     /**
-     * The async version of {@link ForumService#loadThreads}.
-     */
-    void loadThreads (int groupId, int offset, int count, AsyncCallback<ForumService.ThreadResult> callback);
-
-    /**
      * The async version of {@link ForumService#findThreads}.
      */
     void findThreads (int groupId, String search, int offset, int count, AsyncCallback<List<ForumThread>> callback);
@@ -35,6 +30,11 @@ public interface ForumServiceAsync
      * The async version of {@link ForumService#findMyThreads}.
      */
     void findMyThreads (String search, int offset, int count, AsyncCallback<List<ForumThread>> callback);
+
+    /**
+     * The async version of {@link ForumService#loadThreads}.
+     */
+    void loadThreads (int groupId, int offset, int count, AsyncCallback<ForumService.ThreadResult> callback);
 
     /**
      * The async version of {@link ForumService#loadMessages}.

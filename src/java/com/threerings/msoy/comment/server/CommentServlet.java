@@ -96,7 +96,7 @@ public class CommentServlet extends MsoyServiceServlet
     }
 
     // from interface CommentService
-    public Comment postComment (CommentType etype, int eid, String text)
+    public Comment postComment (CommentType etype, int eid, long replyTo, String text)
         throws ServiceException
     {
         MemberRecord mrec = requireValidatedUser();
@@ -110,7 +110,7 @@ public class CommentServlet extends MsoyServiceServlet
         }
 
         // record the comment to the data-ma-base
-        CommentRecord crec = _commentRepo.postComment(etype.toByte(), eid, mrec.memberId, text);
+        CommentRecord crec = _commentRepo.postComment(etype.toByte(), eid, 0, mrec.memberId, text);
 
         // find out the owner id of and the entity name for the entity that was commented on
         int ownerId = 0;
@@ -129,6 +129,7 @@ public class CommentServlet extends MsoyServiceServlet
 
         } else if (etype.forProfileWall()) {
             ownerId = eid;
+            // TODO(bruno): Post a feed message here too
 
         // comment on an item
         } else  if (etype.isItemType()) {

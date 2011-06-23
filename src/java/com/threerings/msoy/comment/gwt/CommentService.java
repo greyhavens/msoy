@@ -44,7 +44,7 @@ public interface CommentService extends RemoteService
      *
      * @return the comment that was posted, throws an exception on failure.
      */
-    Comment postComment (CommentType entityType, int entityId, String text)
+    Comment postComment (CommentType entityType, int entityId, long replyTo, String text)
         throws ServiceException;
 
     /**

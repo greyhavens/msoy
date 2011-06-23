@@ -111,7 +111,8 @@ public class CommentRepository extends DepotRepository
     /**
      * Posts a new comment on the specified entity by the specified member.
      */
-    public CommentRecord postComment (int entityType, int entityId, int memberId, String text)
+    public CommentRecord postComment (int entityType, int entityId, long replyTo,
+        int memberId, String text)
     {
         if (text.length() > Comment.MAX_TEXT_LENGTH) { // sanity check
             throw new DatabaseException(
@@ -126,6 +127,9 @@ public class CommentRepository extends DepotRepository
         record.memberId = memberId;
         record.currentRating = 1;
         record.text = text;
+        if (replyTo > 0) {
+            record.replyTo = new Timestamp(replyTo);
+        }
         insert(record);
 
         return record;

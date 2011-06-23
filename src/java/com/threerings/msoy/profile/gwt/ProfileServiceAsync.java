@@ -14,6 +14,11 @@ import com.threerings.msoy.web.gwt.MemberCard;
 public interface ProfileServiceAsync
 {
     /**
+     * The async version of {@link ProfileService#findProfiles}.
+     */
+    void findProfiles (String search, AsyncCallback<List<MemberCard>> callback);
+
+    /**
      * The async version of {@link ProfileService#loadProfile}.
      */
     void loadProfile (int memberId, AsyncCallback<ProfileService.ProfileResult> callback);
@@ -27,11 +32,6 @@ public interface ProfileServiceAsync
      * The async version of {@link ProfileService#updateInterests}.
      */
     void updateInterests (int memberId, List<Interest> interests, AsyncCallback<Void> callback);
-
-    /**
-     * The async version of {@link ProfileService#findProfiles}.
-     */
-    void findProfiles (String search, AsyncCallback<List<MemberCard>> callback);
 
     /**
      * The async version of {@link ProfileService#sendRetentionEmail}.

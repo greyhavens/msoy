@@ -13,16 +13,6 @@ import com.threerings.msoy.data.all.VisitorInfo;
 public interface WebUserServiceAsync
 {
     /**
-     * The async version of {@link WebUserService#register}.
-     */
-    void register (String clientVersion, RegisterInfo info, boolean forceValidation, AsyncCallback<WebUserService.RegisterData> callback);
-
-    /**
-     * The async version of {@link WebUserService#getApp}.
-     */
-    void getApp (int appId, AsyncCallback<WebUserService.AppResult> callback);
-
-    /**
      * The async version of {@link WebUserService#logon}.
      */
     void logon (String clientVersion, String email, String password, int expireDays, AsyncCallback<SessionData> callback);
@@ -116,4 +106,14 @@ public interface WebUserServiceAsync
      * The async version of {@link WebUserService#deleteAccount}.
      */
     void deleteAccount (String password, String code, AsyncCallback<Void> callback);
+
+    /**
+     * The async version of {@link WebUserService#register}.
+     */
+    void register (String clientVersion, RegisterInfo info, boolean forceValidation, AsyncCallback<WebUserService.RegisterData> callback);
+
+    /**
+     * The async version of {@link WebUserService#getApp}.
+     */
+    void getApp (int appId, AsyncCallback<WebUserService.AppResult> callback);
 }

@@ -11,11 +11,8 @@ import com.threerings.msoy.item.data.all.MsoyItemType;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-/**
-*
-*/
 public class CommentType
-implements IsSerializable, Streamable
+    implements IsSerializable, Streamable
 {
     public static CommentType forItemType (MsoyItemType type)
     {

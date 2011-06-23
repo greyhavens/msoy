@@ -18,11 +18,6 @@ public interface SurveyServiceAsync
     void getAllSurveys (AsyncCallback<List<SurveyMetaData>> callback);
 
     /**
-     * The async version of {@link SurveyService#getQuestions}.
-     */
-    void getQuestions (int surveyId, AsyncCallback<List<SurveyQuestion>> callback);
-
-    /**
      * The async version of {@link SurveyService#updateSurvey}.
      */
     void updateSurvey (SurveyMetaData survey, AsyncCallback<SurveyMetaData> callback);
@@ -46,6 +41,11 @@ public interface SurveyServiceAsync
      * The async version of {@link SurveyService#getSurvey}.
      */
     void getSurvey (int surveyId, AsyncCallback<Survey> callback);
+
+    /**
+     * The async version of {@link SurveyService#getQuestions}.
+     */
+    void getQuestions (int surveyId, AsyncCallback<List<SurveyQuestion>> callback);
 
     /**
      * The async version of {@link SurveyService#submitResponse}.

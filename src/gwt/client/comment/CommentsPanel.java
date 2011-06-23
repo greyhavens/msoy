@@ -189,9 +189,9 @@ public class CommentsPanel extends PagedGrid<Comment>
         return CShell.isValidated() && (CShell.getMemberId() != comment.commentor.getId());
     }
 
-    protected void postComment (String text)
+    protected void postComment (long replyTo, String text)
     {
-        _commentsvc.postComment(_etype, _entityId, text, new InfoCallback<Comment>() {
+        _commentsvc.postComment(_etype, _entityId, replyTo, text, new InfoCallback<Comment>() {
             public void onSuccess (Comment result) {
                 postedComment(result);
             }
@@ -343,7 +343,7 @@ public class CommentsPanel extends PagedGrid<Comment>
                         MsoyUI.error(_cmsgs.commentInvalid());
                         return;
                     }
-                    postComment(text);
+                    postComment(0, text);
                 }
             }));
         }

@@ -15,11 +15,6 @@ import com.threerings.msoy.web.gwt.MemberCard;
 public interface InviteServiceAsync
 {
     /**
-     * The async version of {@link InviteService#getWebMailAddresses}.
-     */
-    void getWebMailAddresses (String email, String password, AsyncCallback<List<EmailContact>> callback);
-
-    /**
      * The async version of {@link InviteService#sendInvites}.
      */
     void sendInvites (List<EmailContact> addresses, String fromName, String subject, String customMessage, boolean anonymous, AsyncCallback<InvitationResults> callback);
@@ -43,4 +38,9 @@ public interface InviteServiceAsync
      * The async version of {@link InviteService#getFriends}.
      */
     void getFriends (int gameId, int count, AsyncCallback<List<MemberCard>> callback);
+
+    /**
+     * The async version of {@link InviteService#getWebMailAddresses}.
+     */
+    void getWebMailAddresses (String email, String password, AsyncCallback<List<EmailContact>> callback);
 }
