@@ -56,6 +56,18 @@ public class CommentPanel extends MessagePanel
     {
         super.addInfo(info);
 
+        if (!_comment.isReply()) {
+            InlineLabel reply = new InlineLabel(_cmsgs.replyToPost(), false, true, false);
+            reply.addClickHandler(new ClickHandler() {
+                public void onClick (ClickEvent event) {
+                    _parent.showPostPopup(_comment.posted);
+                }
+            });
+            reply.addStyleName("Posted");
+            reply.addStyleName("actionLabel");
+            info.add(reply);
+        }
+
         if (_parent.canDelete(_comment)) {
             InlineLabel delete = new InlineLabel(_cmsgs.deletePost(), false, true, false);
             delete.addClickHandler(new PromptPopup(_cmsgs.deletePostConfirm(),

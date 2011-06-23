@@ -110,7 +110,8 @@ public class CommentServlet extends MsoyServiceServlet
         }
 
         // record the comment to the data-ma-base
-        CommentRecord crec = _commentRepo.postComment(etype.toByte(), eid, 0, mrec.memberId, text);
+        CommentRecord crec = _commentRepo.postComment(
+            etype.toByte(), eid, replyTo, mrec.memberId, text);
 
         // find out the owner id of and the entity name for the entity that was commented on
         int ownerId = 0;

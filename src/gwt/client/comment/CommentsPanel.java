@@ -93,11 +93,16 @@ public class CommentsPanel extends PagedGrid<Comment>
 
     public void showPostPopup ()
     {
+        showPostPopup(0);
+    }
+
+    public void showPostPopup (long replyTo)
+    {
         if (!MsoyUI.requireValidated()) {
             return;
         }
         _post.setEnabled(false);
-        new PostPanel().show();
+        new PostPanel(replyTo).show();
     }
 
     @Override
@@ -315,7 +320,7 @@ public class CommentsPanel extends PagedGrid<Comment>
 
     protected class PostPanel extends BorderedDialog
     {
-        public PostPanel () {
+        public PostPanel (final long replyTo) {
             super(false, false, false);
             setHeaderTitle(_cmsgs.commentPostTitle());
 
@@ -343,7 +348,7 @@ public class CommentsPanel extends PagedGrid<Comment>
                         MsoyUI.error(_cmsgs.commentInvalid());
                         return;
                     }
-                    postComment(0, text);
+                    postComment(replyTo, text);
                 }
             }));
         }
@@ -375,12 +380,12 @@ public class CommentsPanel extends PagedGrid<Comment>
 
         protected Comment _comment;
         protected CommentType _type;
-		protected int _id;
+        protected int _id;
     }
 
     protected CommentType _etype;
 
-	protected int _entityId;
+    protected int _entityId;
     protected int _commentCount = -1;
 
     protected DeleteClickCallback _batchDelete;
