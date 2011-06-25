@@ -32,6 +32,7 @@ public class CommentRecord extends PersistentRecord
     public static final ColumnExp<Integer> CURRENT_RATING = colexp(_R, "currentRating");
     public static final ColumnExp<Integer> TOTAL_RATINGS = colexp(_R, "totalRatings");
     public static final ColumnExp<String> TEXT = colexp(_R, "text");
+    public static final ColumnExp<Timestamp> REPLY_TO = colexp(_R, "replyTo");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that
