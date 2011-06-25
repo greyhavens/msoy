@@ -53,7 +53,6 @@
   <filelist dir="." id="build.libs">
     <file name="${extlibs.dir}/advanced-components-1.4.1.jar"/>
     <file name="${extlibs.dir}/gwt-dnd.jar"/>
-    <file name="${extlibs.dir}/guava-gwt.jar"/>
     <file name="${extlibs.dir}/junit-3.7.jar"/>
     <file name="${extlibs.dir}/junit4.jar"/>
     <!--<file name="${extlibs.dir}/retroweaver-all-1.2.2.jar"/>
@@ -204,6 +203,7 @@
       <dependency groupId="com.threerings" artifactId="narya-gwt" version="1.4"/>
       <dependency groupId="com.threerings" artifactId="orth-gwt" version="0.9"/>
       <dependency groupId="com.threerings" artifactId="underwire-gwt" version="1.0"/>
+      <dependency groupId="com.threerings" artifactId="gwt-utils" version="1.5-SNAPSHOT"/>
     </artifact:dependencies>
     <copy todir="${deploy.dir}/build">
       <fileset refid="build.fileset"/>
@@ -261,8 +261,6 @@
   <!-- declare our GWT classpath -->
   <path id="gwt.classpath">
     <fileset dir="${deploy.dir}/build" includes="*.jar"/>
-    <!-- guava.jar is needed because otherwise GWTC freaks out about @Beta, sigh -->
-    <fileset dir="${deploy.dir}/lib" includes="guava-r07.jar"/>
     <pathelement location="${src.dir}"/>
     <pathelement location="${gsrc.dir}"/>
   </path>
