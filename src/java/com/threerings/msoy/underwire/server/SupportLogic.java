@@ -19,10 +19,11 @@ import com.threerings.underwire.server.persist.EventRecord;
 import com.threerings.underwire.server.persist.UnderwireRepository;
 import com.threerings.underwire.web.data.Event;
 
+import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.server.MemberLocator;
 import com.threerings.msoy.server.persist.MemberRepository;
-
-import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.web.gwt.Pages;
 
 import static com.threerings.msoy.Log.log;
 
@@ -34,7 +35,7 @@ public class SupportLogic
 {
     @Inject public SupportLogic (PersistenceContext perCtx)
     {
-        _underrepo = new UnderwireRepository(perCtx);
+        _underRepo = new UnderwireRepository(perCtx);
     }
 
     /**
@@ -49,7 +50,7 @@ public class SupportLogic
         event.chatHistory = "";
         event.status = Event.RESOLVED_CLOSED;
         event.subject = reason;
-        _underrepo.insertEvent(event);
+        _underRepo.insertEvent(event);
     }
 
     /**
@@ -69,7 +70,7 @@ public class SupportLogic
         }
 
         // add the event to the repository
-        _underrepo.insertEvent(event);
+        _underRepo.insertEvent(event);
     }
 
     /**
@@ -93,7 +94,7 @@ public class SupportLogic
         } else {
             event.targetHandle = target.toString();
         }
-        _underrepo.insertEvent(event);
+        _underRepo.insertEvent(event);
     }
 
     /**
@@ -120,10 +121,26 @@ public class SupportLogic
         } else {
             event.targetHandle = target.toString();
         }
-        _underrepo.insertEvent(event);
+        _underRepo.insertEvent(event);
     }
 
-    protected UnderwireRepository _underrepo;
+    /**
+     * Adds an automated duplicate item report to the queue.
+     */
+    public void addTheftReport (MemberName thief, ItemRecord newItem, ItemRecord existingItem)
+    {
+        EventRecord event = new EventRecord();
+        event.source = String.valueOf(thief.getId());
+        event.sourceHandle = thief.toString();
+        event.status = Event.OPEN;
+        event.subject = "[auto] Duplicate item";
+        event.link = Pages.STUFF.makeURL("d", newItem.getType(), newItem.itemId);
+        event.chatHistory = "This item appears to conflict with '" + existingItem.name + "': " +
+            Pages.STUFF.makeURL("d", existingItem.getType(), existingItem.itemId);
+        _underRepo.insertEvent(event);
+    }
+
+    protected UnderwireRepository _underRepo;
 
     @Inject protected @MainInvoker Invoker _invoker;
     @Inject protected MemberLocator _locator;

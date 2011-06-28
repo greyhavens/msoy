@@ -22,6 +22,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.google.common.primitives.Bytes;
 import com.google.inject.Inject;
 
 import com.samskivert.util.ArrayUtil;
@@ -78,6 +79,7 @@ import com.threerings.msoy.room.server.persist.MemoryRepository;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.gwt.CatalogListing;
 import com.threerings.msoy.item.gwt.CatalogQuery;
+import com.threerings.msoy.data.all.HashMediaDesc;
 
 import static com.threerings.msoy.Log.log;
 
@@ -1384,6 +1386,24 @@ public abstract class ItemRepository<T extends ItemRecord>
             return true;
         }
         return false;
+    }
+
+    /**
+     * Returns true if this item's content already exists from a different player.
+     */
+    public ItemRecord loadConflictingItem (int creatorId, Item item)
+    {
+        byte[] hash = HashMediaDesc.unmakeHash(item.getPrimaryMedia());
+        return load(getItemClass(),
+            new Where(Ops.and(
+                getItemColumn(ItemRecord.FURNI_MEDIA_HASH).eq(Exps.value(hash)),
+                getItemColumn(ItemRecord.CREATOR_ID).notEq(creatorId))));
+        // CountRecord crec = load(CountRecord._R,
+        //     new FromOverride(getItemClass()),
+        //     new Where(Ops.and(
+        //         getItemColumn(ItemRecord.FURNI_MEDIA_HASH).eq(Exps.value(hash)),
+        //         getItemColumn(ItemRecord.CREATOR_ID).notEq(creatorId))));
+        // return (crec.count > 0);
     }
 
     /**

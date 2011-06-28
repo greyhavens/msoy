@@ -298,6 +298,17 @@ public class ItemLogic
         // write the item to the database
         repo.insertOriginalItem(record, false);
 
+        // check for a duplicate upload
+        if (item.getType() != MsoyItemType.AUDIO) {
+            ItemRecord existingItem = repo.loadConflictingItem(creatorId, item);
+            if (existingItem != null) {
+                MemberRecord thief = _memberRepo.loadMember(creatorId);
+                log.info("Reporting possibly stolen item", "from", creatorId, "item", item);
+                _supportLogic.addTheftReport(thief.getName(), record, existingItem);
+            }
+        }
+
+
         // now do any post update stuff (but don't let its failure fail our request)
         itemUpdated(null, record);
 
