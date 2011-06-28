@@ -130,8 +130,9 @@ public class SupportLogic
     public void addTheftReport (MemberName thief, ItemRecord newItem, ItemRecord existingItem)
     {
         EventRecord event = new EventRecord();
-        event.source = String.valueOf(thief.getId());
-        event.sourceHandle = thief.toString();
+        event.source = "";
+        event.target = String.valueOf(thief.getId());
+        event.targetHandle = thief.toString();
         event.status = Event.OPEN;
         event.subject = "[auto] Duplicate item";
         event.link = Pages.STUFF.makeURL("d", newItem.getType(), newItem.itemId);
