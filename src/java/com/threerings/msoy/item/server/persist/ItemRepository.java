@@ -1398,12 +1398,6 @@ public abstract class ItemRepository<T extends ItemRecord>
             new Where(Ops.and(
                 getItemColumn(ItemRecord.FURNI_MEDIA_HASH).eq(Exps.value(hash)),
                 getItemColumn(ItemRecord.CREATOR_ID).notEq(creatorId))));
-        // CountRecord crec = load(CountRecord._R,
-        //     new FromOverride(getItemClass()),
-        //     new Where(Ops.and(
-        //         getItemColumn(ItemRecord.FURNI_MEDIA_HASH).eq(Exps.value(hash)),
-        //         getItemColumn(ItemRecord.CREATOR_ID).notEq(creatorId))));
-        // return (crec.count > 0);
     }
 
     /**
