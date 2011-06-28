@@ -53,5 +53,5 @@ public class CommentsBlurb extends Blurb
     protected static final PeopleMessages _msgs = GWT.create(PeopleMessages.class);
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
 
-    protected static final int COMMENTS_PER_PAGE = 20;
+    protected static final int COMMENTS_PER_PAGE = 3;
 }

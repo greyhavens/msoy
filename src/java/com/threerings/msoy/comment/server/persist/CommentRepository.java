@@ -10,6 +10,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.base.Function;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
@@ -57,13 +60,23 @@ public class CommentRepository extends DepotRepository
     public List<CommentRecord> loadComments (
         int entityType, int entityId, int start, int count, boolean byRating)
     {
-        // load up the specified comment set
-        return findAll(CommentRecord.class,
-                       new Where(CommentRecord.ENTITY_TYPE, entityType,
-                                 CommentRecord.ENTITY_ID, entityId),
-                       byRating ? OrderBy.descending(CommentRecord.CURRENT_RATING) :
-                                  OrderBy.descending(CommentRecord.POSTED),
-                       new Limit(start, count));
+        // Fetch the non-reply comments for this page
+        List<CommentRecord> comments = findAll(CommentRecord._R,
+            new Where(CommentRecord.ENTITY_TYPE, entityType,
+                      CommentRecord.ENTITY_ID, entityId,
+                      CommentRecord.REPLY_TO, null),
+            OrderBy.descending(CommentRecord.POSTED),
+            new Limit(start, count));
+
+        // And also the replies to those comments
+        Collection<Timestamp> postIds = Lists.transform(comments, TO_POSTED);
+        List<CommentRecord> replies = from(CommentRecord._R)
+            .where(CommentRecord.ENTITY_TYPE.eq(entityType),
+                   CommentRecord.ENTITY_ID.eq(entityId),
+                   CommentRecord.REPLY_TO.in(postIds))
+            .select();
+
+        return ImmutableList.copyOf(Iterables.concat(comments, replies));
     }
 
     /**
@@ -97,14 +110,15 @@ public class CommentRepository extends DepotRepository
     }
 
     /**
-     * Loads the total number of comments posted to the specified entity.
+     * Loads the total number of non-reply comments posted to the specified entity.
      */
     public int loadCommentCount (int entityType, int entityId)
     {
         List<QueryClause> clauses = Lists.newArrayList();
         clauses.add(new FromOverride(CommentRecord.class));
         clauses.add(new Where(CommentRecord.ENTITY_TYPE, entityType,
-                              CommentRecord.ENTITY_ID, entityId));
+                              CommentRecord.ENTITY_ID, entityId,
+                              CommentRecord.REPLY_TO, null));
         return load(CountRecord.class, clauses.toArray(new QueryClause[clauses.size()])).count;
     }
 
@@ -249,4 +263,11 @@ public class CommentRepository extends DepotRepository
         classes.add(CommentRecord.class);
         classes.add(CommentRatingRecord.class);
     }
+
+    public static Function<CommentRecord, Timestamp> TO_POSTED =
+        new Function<CommentRecord, Timestamp>() {
+            public Timestamp apply (CommentRecord comment) {
+                return comment.posted;
+            }
+        };
 }
