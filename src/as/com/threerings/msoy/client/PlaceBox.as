@@ -19,7 +19,7 @@ import caurina.transitions.Tweener;
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.FlexUtil;
 
-import com.threerings.util.ArrayUtil;
+import com.threerings.util.Arrays;
 import com.threerings.util.NamedValueEvent;
 import com.threerings.util.StringUtil;
 
@@ -326,7 +326,7 @@ public class PlaceBox extends LayeredContainer
         }
 
         var zooms :Array = zoomable.defineZooms();
-        var idx :int = ArrayUtil.indexOf(zooms, zoomable.getZoom());
+        var idx :int = Arrays.indexOf(zooms, zoomable.getZoom());
         idx = (idx + 1) % zooms.length;
 
         const SIZE :int = 18;

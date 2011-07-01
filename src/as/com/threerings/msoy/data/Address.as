@@ -3,7 +3,7 @@
 
 package com.threerings.msoy.data {
 
-import com.threerings.util.ArrayUtil;
+import com.threerings.util.Arrays;
 import com.threerings.util.Equalable;
 import com.threerings.util.Joiner;
 
@@ -119,7 +119,7 @@ public class Address
         }
 
         var a :Address = Address(obj);
-        return a._page == _page && ArrayUtil.equals(a._args, _args);
+        return a._page == _page && Arrays.equals(a._args, _args);
     }
 
     /** @inheritDoc */ // from Object

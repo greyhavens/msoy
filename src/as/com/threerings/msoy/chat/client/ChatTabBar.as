@@ -18,7 +18,7 @@ import mx.core.ScrollPolicy;
 
 import com.threerings.flex.FlexWrapper;
 
-import com.threerings.util.ArrayUtil;
+import com.threerings.util.Arrays;
 import com.threerings.util.Log;
 import com.threerings.util.MessageBundle;
 import com.threerings.util.Name;
@@ -430,7 +430,7 @@ public class ChatTabBar extends HBox
     {
         var tab :ChatTab = event.target as ChatTab;
         if (tab != null) {
-            var ii :int = ArrayUtil.indexOf(_tabs, tab);
+            var ii :int = Arrays.indexOf(_tabs, tab);
             if (ii != -1) {
                 selectedIndex = ii;
             }
@@ -464,7 +464,7 @@ public class ChatTabBar extends HBox
 
     protected function removeTab (tab :ChatTab) :void
     {
-        var index :int = ArrayUtil.indexOf(_tabs, tab);
+        var index :int = Arrays.indexOf(_tabs, tab);
         if (index != -1) {
             removeTabAt(index);
         }

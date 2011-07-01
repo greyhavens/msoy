@@ -31,7 +31,7 @@ import com.whirled.game.data.WhirledGameCodes;
 
 import com.whirled.ui.PlayerList;
 
-import com.threerings.util.ArrayUtil;
+import com.threerings.util.Arrays;
 import com.threerings.util.NamedValueEvent;
 import com.threerings.util.Log;
 import com.threerings.util.Map;
@@ -292,7 +292,7 @@ public class ChatOverlay
      */
     public function glyphExpired (glyph :ChatGlyph) :void
     {
-        ArrayUtil.removeFirst(_subtitles, glyph);
+        Arrays.removeFirst(_subtitles, glyph);
         if (getOverlays().indexOf(glyph.parent) != -1) {
             removeGlyph(glyph);
         }

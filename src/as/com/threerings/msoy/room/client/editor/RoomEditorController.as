@@ -11,7 +11,7 @@ import com.threerings.msoy.client.Msgs;
 
 import com.threerings.msoy.data.MsoyCodes;
 
-import com.threerings.util.ArrayUtil;
+import com.threerings.util.Arrays;
 import com.threerings.util.Log;
 import com.threerings.util.Map;
 import com.threerings.util.Maps;
@@ -263,7 +263,7 @@ public class RoomEditorController
         if (_edit.target == null || ! _edit.target.getFurniData().getItemIdent().equals(ident)) {
             var sprites :Array = _view.getFurniSprites().values();
             // unfortunately, we have to search through all sprites to find the one we want
-            var index :int = ArrayUtil.indexIf(sprites, function (sprite :FurniSprite) :Boolean {
+            var index :int = Arrays.indexIf(sprites, function (sprite :FurniSprite) :Boolean {
                     return sprite.getFurniData().getItemIdent().equals(ident);
                 });
             setTarget(index == -1 ? null : sprites[index], null);
@@ -669,7 +669,7 @@ public class RoomEditorController
                 return furni.getItemIdent();
             });
         var defs :Array = _names.values().filter(function (def :Object, ... ignored) :Boolean {
-            return ArrayUtil.contains(idents, def.data);
+            return Arrays.contains(idents, def.data);
         });
 
         defs.push(_names.get(EntranceFurniData.ITEM_IDENT));

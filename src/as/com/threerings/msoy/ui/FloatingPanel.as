@@ -22,7 +22,7 @@ import mx.events.CloseEvent;
 
 import mx.managers.PopUpManager;
 
-import com.threerings.util.ArrayUtil;
+import com.threerings.util.Arrays;
 import com.threerings.util.Command;
 import com.threerings.util.CommandEvent;
 
@@ -209,7 +209,7 @@ public class FloatingPanel extends TitleWindow
             addChild(box);
         }
 
-        ArrayUtil.stableSort(buttonSources, buttonSort);
+        Arrays.stableSort(buttonSources, buttonSort);
         for each (var source :Object in buttonSources) {
             if (source is Button) {
                 _buttonBar.addChild(source as Button);

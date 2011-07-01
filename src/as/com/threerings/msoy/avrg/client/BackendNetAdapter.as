@@ -6,7 +6,7 @@ package com.threerings.msoy.avrg.client {
 import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.dobj.MessageEvent;
 import com.threerings.presents.dobj.MessageListener;
-import com.threerings.util.ArrayUtil;
+import com.threerings.util.Arrays;
 import com.threerings.util.Integer;
 import com.threerings.util.ObjectMarshaller;
 import com.whirled.game.data.PropertySetEvent;
@@ -98,7 +98,7 @@ public class BackendNetAdapter
             return;
         }
 
-        if (ArrayUtil.contains(_messageNames, event.getName())) {
+        if (Arrays.contains(_messageNames, event.getName())) {
             var args :Array = event.getArgs();
             var mname :String = (args[0] as String);
             var data :Object = ObjectMarshaller.decode(args[1]);

@@ -9,7 +9,7 @@ import flash.events.MouseEvent;
 import flash.ui.Keyboard;
 import flash.utils.ByteArray;
 
-import com.threerings.util.ArrayUtil;
+import com.threerings.util.Arrays;
 import com.threerings.util.MessageBundle;
 import com.threerings.util.Name;
 import com.threerings.util.ObjectMarshaller;
@@ -400,7 +400,7 @@ public class RoomObjectController extends RoomController
     {
         var avItems :Array = [];
         var avatars :Array = (us.avatarCache != null) ? us.avatarCache.toArray() : [];
-        ArrayUtil.sort(avatars);
+        Arrays.sort(avatars);
 
         avItems.push({ label: Msgs.GENERAL.get("b.avatars_full"),
             command: WorldController.VIEW_STUFF, arg: Item.AVATAR });
@@ -1009,9 +1009,9 @@ public class RoomObjectController extends RoomController
         if (items.length > 0) {
             CommandMenu.addSeparator(items);
             // add the items after the first separator (should be right after the title)
-            var dex :int = ArrayUtil.indexIf(menuItems,
+            var dex :int = Arrays.indexIf(menuItems,
                 Predicates.createPropertyEquals("type", "separator"));
-            ArrayUtil.splice(menuItems, dex + 1, 0, items);
+            Arrays.splice(menuItems, dex + 1, 0, items);
         }
     }
 

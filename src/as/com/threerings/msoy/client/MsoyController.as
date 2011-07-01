@@ -28,7 +28,7 @@ import mx.controls.Menu;
 import mx.core.IUITextField;
 import mx.events.MenuEvent;
 
-import com.threerings.util.ArrayUtil;
+import com.threerings.util.Arrays;
 import com.threerings.util.CommandEvent;
 import com.threerings.util.Controller;
 import com.threerings.util.Log;
@@ -279,7 +279,7 @@ public class MsoyController extends Controller
      */
     public function removePlaceExitHandler (fn :Function) :void
     {
-        ArrayUtil.removeAll(_placeExitHandlers, fn);
+        Arrays.removeAll(_placeExitHandlers, fn);
     }
 
     /**

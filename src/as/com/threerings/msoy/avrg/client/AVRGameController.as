@@ -3,7 +3,7 @@
 
 package com.threerings.msoy.avrg.client {
 
-import com.threerings.util.ArrayUtil;
+import com.threerings.util.Arrays;
 import com.threerings.util.MessageBundle;
 import com.threerings.util.Log;
 import com.threerings.util.Name;
@@ -206,7 +206,7 @@ public class AVRGameController extends PlaceController
      */
     public function removeDeactivateHandler (fn :Function) :void
     {
-        ArrayUtil.removeAll(_deactivateHandlers, fn);
+        Arrays.removeAll(_deactivateHandlers, fn);
     }
 
     /**

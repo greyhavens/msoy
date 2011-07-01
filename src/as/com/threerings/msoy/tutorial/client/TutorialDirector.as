@@ -12,7 +12,7 @@ import mx.core.UIComponent;
 
 import mx.managers.PopUpManager;
 
-import com.threerings.util.ArrayUtil;
+import com.threerings.util.Arrays;
 import com.threerings.util.Map;
 import com.threerings.util.Maps;
 import com.threerings.util.Util;
@@ -101,7 +101,7 @@ public class TutorialDirector
         if (isImmediate(item.kind)) {
             // either show this item now or just ignore it
             if (!ignored && item.isAvailable() && !item.equals(_current) &&
-                ArrayUtil.indexOf(_suggestions, item) == -1) {
+                Arrays.indexOf(_suggestions, item) == -1) {
                 _suggestions.push(item);
                 update();
             }
@@ -233,7 +233,7 @@ public class TutorialDirector
             } else {
                 // compute the candidate list of unseen tips and shuffle
                 var unseen :Array = Maps.filter(_pool, isUnseen, Maps.selectKey);
-                ArrayUtil.shuffle(unseen);
+                Arrays.shuffle(unseen);
 
                 // start from the end and find one that is not ignored and is available
                 var changed :Boolean = false;

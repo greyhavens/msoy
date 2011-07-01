@@ -4,7 +4,7 @@
 package com.threerings.msoy.room.data {
 
 import com.threerings.util.ArrayIterator;
-import com.threerings.util.ArrayUtil;
+import com.threerings.util.Arrays;
 import com.threerings.util.Iterator;
 import com.threerings.util.Map;
 import com.threerings.util.Maps;
@@ -102,7 +102,7 @@ public class MsoySceneModel extends SceneModel
      */
     public function removeFurni (furni :FurniData) :void
     {
-        ArrayUtil.removeFirst(furnis, furni);
+        Arrays.removeFirst(furnis, furni);
         invalidatePortalInfo(furni);
     }
 

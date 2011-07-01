@@ -18,7 +18,7 @@ import com.threerings.crowd.chat.data.ChatMessage;
 import com.threerings.crowd.chat.data.SystemMessage;
 import com.threerings.crowd.chat.data.UserMessage;
 
-import com.threerings.util.ArrayUtil;
+import com.threerings.util.Arrays;
 import com.threerings.util.Log;
 import com.threerings.util.Map;
 import com.threerings.util.Maps;
@@ -162,7 +162,7 @@ public class ComicOverlay extends ChatOverlay
             var cloud :BubbleCloud = _bubbles.get(bubble.getSpeaker());
             if (cloud != null) {
                 cloud.removeBubble(bubble);
-                ArrayUtil.removeFirst(_allBubbles, bubble);
+                Arrays.removeFirst(_allBubbles, bubble);
             }
         }
         super.glyphExpired(glyph);
