@@ -223,6 +223,9 @@ public abstract class ItemRepository<T extends ItemRecord>
                                        22 * ItemRecord.BASE_MULTIPLIER,
                                        "suiteId", GameItemRecord.GAME_ID));
         }
+
+        _ctx.registerMigration(getItemClass(), new SchemaMigration.Retype(
+            23 * ItemRecord.BASE_MULTIPLIER, ItemRecord.FURNI_MEDIA_HASH));
     }
 
     /**
