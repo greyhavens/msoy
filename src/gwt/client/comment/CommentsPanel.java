@@ -15,6 +15,7 @@ import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
@@ -117,7 +118,12 @@ public class CommentsPanel extends PagedGrid<Comment>
     @Override // from PagedGrid
     protected Widget createWidget (Comment comment)
     {
-        return new CommentPanel(this, comment);
+        VerticalPanel panel = new VerticalPanel();
+        panel.add(new CommentPanel(this, comment));
+        for (Comment reply : comment.replies) {
+            panel.add(new CommentPanel(this, reply));
+        }
+        return panel;
     }
 
     @Override // from PagedGrid

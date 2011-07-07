@@ -19,6 +19,7 @@ import com.google.gwt.user.client.ui.PushButton;
 
 import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.InlinePanel;
+import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.comment.data.all.Comment;
 import com.threerings.msoy.web.gwt.MemberCard;
@@ -194,6 +195,13 @@ public class CommentPanel extends MessagePanel
             setMessage(card, new Date(_comment.posted), _comment.text);
         } else {
             setMessage(card, new Date(_comment.posted), null);
+        }
+
+        // Put an indent on replies
+        if (_comment.isReply()) {
+            insertCell(0, 0);
+            getFlexCellFormatter().setRowSpan(0, 0, 2);
+            setWidget(0, 0, WidgetUtil.makeShim(45, 0));
         }
     }
 

@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 
@@ -75,18 +76,27 @@ public class CommentServlet extends MsoyServiceServlet
         Map<Integer, MemberCard> cards = MemberCardRecord.toMap(_memberRepo.loadMemberCards(memIds));
 
         // convert the comment records to runtime records
-        List<Comment> comments = Lists.newArrayList();
+        Map<Long, Comment> comments = Maps.newHashMap();
         for (CommentRecord record : records) {
             Comment comment = record.toComment(cards);
             if (comment.commentor == null) {
                 continue; // this member was deleted, shouldn't happen
             }
-            comments.add(comment);
+            if (comment.isReply()) {
+                Comment subject = comments.get(comment.replyTo);
+                if (subject != null) {
+                    subject.replies.add(comment);
+                } else {
+                    // Errr...
+                }
+            } else {
+                comments.put(comment.posted, comment);
+            }
         }
 
         // prepare and deliver the final result
         PagedResult<Comment> result = new PagedResult<Comment>();
-        result.page = comments;
+        result.page = Lists.newArrayList(comments.values());
         if (needCount) {
             result.total = (records.size() < count && offset == 0) ?
                 records.size() : _commentRepo.loadCommentCount(etype.toByte(), eid);

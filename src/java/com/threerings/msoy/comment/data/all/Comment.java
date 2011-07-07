@@ -3,6 +3,10 @@
 
 package com.threerings.msoy.comment.data.all;
 
+import java.util.List;
+
+import com.google.common.collect.Lists;
+
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.orth.data.MediaDesc;
@@ -59,6 +63,9 @@ public class Comment
 
     /** The text of this comment. */
     public String text;
+
+    /** The other comments that are in reply to this one. */
+    public List<Comment> replies = Lists.newArrayList();
 
     public boolean isReply ()
     {
