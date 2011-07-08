@@ -8,11 +8,12 @@ import java.util.Collection;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
-import com.threerings.web.gwt.ServiceException;
 import com.threerings.gwt.util.PagedResult;
+import com.threerings.web.gwt.ServiceException;
 
 import com.threerings.msoy.comment.data.all.Comment;
 import com.threerings.msoy.comment.data.all.CommentType;
+import com.threerings.msoy.web.gwt.Activity;
 
 /**
  * Service methods for reading and posting comments on various Whirled entities (items, profiles,
@@ -35,7 +36,7 @@ public interface CommentService extends RemoteService
     /**
      * Loads recent comments made about the specified entity.
      */
-    PagedResult<Comment> loadComments (
+    PagedResult<Activity> loadComments (
         CommentType entityType, int entityId, int offset, int count, boolean needCount)
         throws ServiceException;
 

@@ -5,11 +5,13 @@ package com.threerings.msoy.person.gwt;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
+import com.threerings.msoy.web.gwt.Activity;
+
 /**
  * Contains information on a feed message.
  */
 public class FeedMessage
-    implements IsSerializable
+    implements IsSerializable, Activity
 {
     /** The type of feed message. */
     public FeedMessageType type;
@@ -35,5 +37,11 @@ public class FeedMessage
         this.type = type;
         this.data = data;
         this.posted = posted;
+    }
+
+    @Override
+    public long startedAt ()
+    {
+        return posted;
     }
 }

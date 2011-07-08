@@ -70,6 +70,7 @@ public class PlayerFeedPanel extends FlowPanel
         {
             this(_dateFormater.format(date));
         }
+
         public DateWidget (String label)
         {
             setStyleName("FeedWidget");

@@ -11,11 +11,13 @@ import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 import com.threerings.web.gwt.ServiceException;
+import com.threerings.gwt.util.PagedResult;
 
 import com.threerings.msoy.data.all.Award;
 import com.threerings.msoy.data.all.Friendship;
 import com.threerings.msoy.data.all.MemberName;
 
+import com.threerings.msoy.web.gwt.Activity;
 import com.threerings.msoy.web.gwt.MemberCard;
 
 import com.threerings.msoy.badge.data.all.EarnedBadge;
@@ -129,6 +131,12 @@ public interface ProfileService extends RemoteService
      * Loads the specified member's profile information.
      */
     ProfileResult loadProfile (int memberId)
+        throws ServiceException;
+
+    /**
+     * Loads a page of recent activity (comments and other player history).
+     */
+    PagedResult<Activity> loadActivity (int memberId, int offset, int count, boolean needCount)
         throws ServiceException;
 
     /**

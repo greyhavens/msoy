@@ -43,6 +43,7 @@ import com.threerings.msoy.underwire.server.SupportLogic;
 import com.threerings.msoy.person.gwt.FeedMessageType;
 import com.threerings.msoy.person.server.FeedLogic;
 
+import com.threerings.msoy.web.gwt.Activity;
 import com.threerings.msoy.web.gwt.MemberCard;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.ServiceCodes;
@@ -61,45 +62,20 @@ public class CommentServlet extends MsoyServiceServlet
     implements CommentService
 {
     // from interface CommentService
-    public PagedResult<Comment> loadComments (
+    public PagedResult<Activity> loadComments (
         CommentType etype, int eid, int offset, int count, boolean needCount)
         throws ServiceException
     {
         // no authentication required to view comments
-        List<CommentRecord> records = _commentRepo.loadComments(etype.toByte(), eid, offset, count, false);
-
-        // resolve the member cards for all commentors
-        Set<Integer> memIds = Sets.newHashSet();
-        for (CommentRecord record : records) {
-            memIds.add(record.memberId);
-        }
-        Map<Integer, MemberCard> cards = MemberCardRecord.toMap(_memberRepo.loadMemberCards(memIds));
-
-        // convert the comment records to runtime records
-        Map<Long, Comment> comments = Maps.newHashMap();
-        for (CommentRecord record : records) {
-            Comment comment = record.toComment(cards);
-            if (comment.commentor == null) {
-                continue; // this member was deleted, shouldn't happen
-            }
-            if (comment.isReply()) {
-                Comment subject = comments.get(comment.replyTo);
-                if (subject != null) {
-                    subject.replies.add(comment);
-                } else {
-                    // Errr...
-                }
-            } else {
-                comments.put(comment.posted, comment);
-            }
-        }
+        List<Comment> comments = _commentLogic.loadComments(etype, eid, offset, count);
 
         // prepare and deliver the final result
-        PagedResult<Comment> result = new PagedResult<Comment>();
-        result.page = Lists.newArrayList(comments.values());
+        PagedResult<Activity> result = new PagedResult<Activity>();
+        @SuppressWarnings("unchecked") List<Activity> activities = (List) comments;
+        result.page = activities;
         if (needCount) {
-            result.total = (records.size() < count && offset == 0) ?
-                records.size() : _commentRepo.loadCommentCount(etype.toByte(), eid);
+            result.total = (comments.size() < count && offset == 0) ?
+                comments.size() : _commentRepo.loadCommentCount(etype.toByte(), eid);
         }
 
         return result;
@@ -248,12 +224,13 @@ public class CommentServlet extends MsoyServiceServlet
     }
 
     // our dependencies
+    @Inject protected CommentLogic _commentLogic;
     @Inject protected CommentRepository _commentRepo;
     @Inject protected FeedLogic _feedLogic;
     @Inject protected ItemLogic _itemLogic;
     @Inject protected MsoyGameRepository _msoyGameRepo;
-    @Inject protected MsoySceneRepository _sceneRepo;
     @Inject protected MsoyNotificationManager _notifyMan;
+    @Inject protected MsoySceneRepository _sceneRepo;
     @Inject protected StatLogic _statLogic;
     @Inject protected SupportLogic _supportLogic;
 }

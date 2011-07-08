@@ -36,6 +36,7 @@ import com.threerings.msoy.comment.data.all.Comment;
 import com.threerings.msoy.comment.data.all.CommentType;
 import com.threerings.msoy.comment.gwt.CommentService;
 import com.threerings.msoy.comment.gwt.CommentServiceAsync;
+import com.threerings.msoy.web.gwt.Activity;
 import com.threerings.orth.data.MediaDescSize;
 
 import client.shell.CShell;
@@ -51,7 +52,7 @@ import client.util.MsoyPagedServiceDataModel;
 /**
  * Displays comments on a particular entity and allows posting.
  */
-public class CommentsPanel extends PagedGrid<Comment>
+public class CommentsPanel extends PagedGrid<Activity>
 {
     public CommentsPanel (CommentType entityType, int entityId, boolean rated)
     {
@@ -89,7 +90,7 @@ public class CommentsPanel extends PagedGrid<Comment>
             }
         }
 
-        setModel(new CommentModel(), 0);
+        setModel(createModel(), 0);
     }
 
     public void showPostPopup ()
@@ -107,7 +108,7 @@ public class CommentsPanel extends PagedGrid<Comment>
     }
 
     @Override
-    protected Widget createContents (int start, int count, List<Comment> list)
+    protected Widget createContents (int start, int count, List<Activity> list)
     {
         if (_batchDelete != null) {
             _batchDelete.clear();
@@ -116,14 +117,18 @@ public class CommentsPanel extends PagedGrid<Comment>
     }
 
     @Override // from PagedGrid
-    protected Widget createWidget (Comment comment)
+    protected Widget createWidget (Activity activity)
     {
-        VerticalPanel panel = new VerticalPanel();
-        panel.add(new CommentPanel(this, comment));
-        for (Comment reply : comment.replies) {
-            panel.add(new CommentPanel(this, reply));
+        if (activity instanceof Comment) {
+            Comment comment = (Comment) activity;
+            VerticalPanel panel = new VerticalPanel();
+            panel.add(new CommentPanel(this, comment));
+            for (Comment reply : comment.replies) {
+                panel.add(new CommentPanel(this, reply));
+            }
+            return panel;
         }
-        return panel;
+        throw new IllegalArgumentException("Unsupported activity type!");
     }
 
     @Override // from PagedGrid
@@ -146,6 +151,11 @@ public class CommentsPanel extends PagedGrid<Comment>
         _commentControls = new HorizontalPanel();
 
         _controls.setWidget(0, 0, _commentControls);
+    }
+
+    protected MsoyPagedServiceDataModel<Activity, PagedResult<Activity>> createModel ()
+    {
+        return new CommentModel();
     }
 
     /**
@@ -212,7 +222,8 @@ public class CommentsPanel extends PagedGrid<Comment>
     protected void postedComment (Comment comment)
     {
         if (_page == 0) {
-            ((CommentModel)_model).prependItem(comment);
+            ((MsoyPagedServiceDataModel<Activity, PagedResult<Activity>>)
+                _model).prependItem(comment);
             _commentCount = -1;
             displayPage(0, true);
         } else {
@@ -315,11 +326,11 @@ public class CommentsPanel extends PagedGrid<Comment>
         protected Map<Long, Comment> _batchComments = Maps.newHashMap();
     }
 
-    protected class CommentModel extends MsoyPagedServiceDataModel<Comment, PagedResult<Comment>>
+    protected class CommentModel extends MsoyPagedServiceDataModel<Activity, PagedResult<Activity>>
     {
         @Override
         protected void callFetchService (int start, int count, boolean needCount,
-                                         AsyncCallback<PagedResult<Comment>> callback) {
+                                         AsyncCallback<PagedResult<Activity>> callback) {
             _commentsvc.loadComments(_etype, _entityId, start, count, needCount, callback);
         }
     }

@@ -13,13 +13,14 @@ import com.threerings.orth.data.MediaDesc;
 
 import com.threerings.msoy.comment.data.all.CommentType;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.web.gwt.Activity;
 import com.threerings.msoy.web.gwt.MemberCard;
 
 /**
  * Contains runtime data for a comment made by a member on something.
  */
 public class Comment
-    implements IsSerializable
+    implements IsSerializable, Activity
 {
 
     /** The maximum length of comment text. */
@@ -70,5 +71,11 @@ public class Comment
     public boolean isReply ()
     {
         return replyTo != 0;
+    }
+
+    @Override
+    public long startedAt ()
+    {
+        return posted;
     }
 }

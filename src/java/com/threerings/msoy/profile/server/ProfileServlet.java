@@ -42,7 +42,9 @@ import com.threerings.msoy.web.gwt.MemberCard;
 import com.threerings.msoy.web.gwt.ServiceCodes;
 
 import com.threerings.web.gwt.ServiceException;
+import com.threerings.gwt.util.PagedResult;
 
+import com.threerings.msoy.web.gwt.Activity;
 import com.threerings.msoy.web.gwt.MemberCard.NotOnline;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 
@@ -192,8 +194,18 @@ public class ProfileServlet extends MsoyServiceServlet
         return result;
     }
 
+    public PagedResult<Activity> loadActivity (int memberId, int offset, int count, boolean needCount)
+        throws ServiceException
+    {
+        PagedResult<Activity> result = new PagedResult<Activity>();
+        result.page = _feedLogic.loadMemberActivity(memberId, offset, count);
+        result.total = 100; // TODO
+        return result;
+    }
+
     // from interface ProfileService
-    public void updateProfile (int memberId, String displayName, boolean greeter, final Profile profile)
+    public void updateProfile (
+        int memberId, String displayName, boolean greeter, final Profile profile)
         throws ServiceException
     {
         final MemberRecord tgtrec = _memberRepo.loadMember(memberId);
