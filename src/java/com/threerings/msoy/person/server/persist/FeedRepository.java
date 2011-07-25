@@ -80,7 +80,7 @@ public class FeedRepository extends DepotRepository
      * Loads feed messages by the specified member up to the specified limit. They are sorted from
      * most recently occurring to least.
      */
-    public List <FeedMessageRecord> loadMemberFeed (int memberId, int limit)
+    public List<FeedMessageRecord> loadMemberFeed (int memberId, int limit)
     {
         List<FeedMessageRecord> messages = Lists.newArrayList();
         messages.addAll(from(FriendFeedMessageRecord.class).
