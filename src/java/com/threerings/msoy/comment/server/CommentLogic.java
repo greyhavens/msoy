@@ -30,37 +30,36 @@ import com.threerings.msoy.web.gwt.MemberCard;
 public class CommentLogic
 {
     public List<Comment> loadComments (CommentType etype, int eid, int offset, int count)
-        // throws ServiceException
     {
-        List<CommentRecord> records = _commentRepo.loadComments(etype.toByte(), eid, offset, count, false);
+        List<CommentRepository.CommentThread> threads = _commentRepo.loadComments(
+            etype.toByte(), eid, offset, count, 2);
 
         // resolve the member cards for all commentors
         Set<Integer> memIds = Sets.newHashSet();
-        for (CommentRecord record : records) {
-            memIds.add(record.memberId);
+        for (CommentRepository.CommentThread thread : threads) {
+            memIds.add(thread.comment.memberId);
+            for (CommentRecord reply : thread.replies) {
+                memIds.add(reply.memberId);
+            }
         }
-        Map<Integer, MemberCard> cards = MemberCardRecord.toMap(_memberRepo.loadMemberCards(memIds));
+        Map<Integer, MemberCard> cards = MemberCardRecord.toMap(
+            _memberRepo.loadMemberCards(memIds));
 
         // convert the comment records to runtime records
-        Map<Long, Comment> comments = Maps.newTreeMap();
-        for (CommentRecord record : records) {
-            Comment comment = record.toComment(cards);
+        List<Comment> comments = Lists.newArrayList();
+        for (CommentRepository.CommentThread thread : threads) {
+            Comment comment = thread.comment.toComment(cards);
             if (comment.commentor == null) {
                 continue; // this member was deleted, shouldn't happen
             }
-            if (comment.isReply()) {
-                Comment subject = comments.get(comment.replyTo);
-                if (subject != null) {
-                    subject.replies.add(comment);
-                } else {
-                    // Errr...
-                }
-            } else {
-                comments.put(comment.posted, comment);
+            for (CommentRecord reply : thread.replies) {
+                comment.replies.add(reply.toComment(cards));
             }
+            comment.hasMoreReplies = thread.hasMoreReplies;
+            comments.add(comment);
         }
 
-        return Lists.reverse(Lists.newArrayList(comments.values()));
+        return comments;
     }
 
     @Inject protected CommentRepository _commentRepo;

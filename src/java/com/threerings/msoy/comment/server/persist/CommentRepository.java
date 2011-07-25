@@ -15,6 +15,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -57,8 +58,8 @@ public class CommentRepository extends DepotRepository
      * @param start the offset into the comments (in reverse time order) to load.
      * @param count the number of comments to load.
      */
-    public List<CommentRecord> loadComments (
-        int entityType, int entityId, int start, int count, boolean byRating)
+    public List<CommentThread> loadComments (
+        int entityType, int entityId, int start, int count, int repliesPerComment)
     {
         // Fetch the non-reply comments for this page
         List<CommentRecord> comments = findAll(CommentRecord._R,
@@ -68,15 +69,47 @@ public class CommentRepository extends DepotRepository
             OrderBy.descending(CommentRecord.POSTED),
             new Limit(start, count));
 
-        // And also the replies to those comments
-        Collection<Timestamp> postIds = Lists.transform(comments, TO_POSTED);
-        List<CommentRecord> replies = from(CommentRecord._R)
-            .where(CommentRecord.ENTITY_TYPE.eq(entityType),
+        // Assemble this page's threads
+        Map<Timestamp, CommentThread> threads = Maps.newTreeMap();
+        for (CommentRecord comment : comments) {
+            threads.put(comment.posted, new CommentThread(comment));
+        }
+
+        // Load the replies for each thread
+        Set<Timestamp> postIds = Sets.newHashSet(Lists.transform(comments, TO_POSTED));
+        for (int replyOffset = 0; !postIds.isEmpty(); replyOffset += repliesPerComment) {
+
+            // Load up a block of replies
+            List<CommentRecord> replies = from(CommentRecord._R)
+                .where(CommentRecord.ENTITY_TYPE.eq(entityType),
                    CommentRecord.ENTITY_ID.eq(entityId),
                    CommentRecord.REPLY_TO.in(postIds))
-            .select();
+                .limit(replyOffset, count*repliesPerComment)
+                .descending(CommentRecord.POSTED)
+                .select();
 
-        return ImmutableList.copyOf(Iterables.concat(comments, replies));
+            if (replies.isEmpty()) {
+                // Ran out of replies early, we're done
+                break;
+            }
+            for (CommentRecord reply : replies) {
+                CommentThread thread = threads.get(reply.replyTo);
+                if (thread.replies.size() < repliesPerComment) {
+                    thread.replies.add(0, reply);
+                } else {
+                    thread.hasMoreReplies = true;
+                    postIds.remove(reply.replyTo);
+                }
+            }
+        }
+
+        return ImmutableList.copyOf(threads.values());
+    }
+
+    public List<CommentRecord> loadReplies (
+        int entityType, int entityId, long posted, int offset, int count)
+    {
+        return null; // TODO
     }
 
     /**
@@ -255,6 +288,19 @@ public class CommentRepository extends DepotRepository
         deleteAll(CommentRecord.class, KeySet.newKeySet(CommentRecord.class, keys));
 
         // TODO: delete all rating records made on the above comments
+    }
+
+    // Just used as a return structure for loadComments()
+    public static class CommentThread
+    {
+        public CommentRecord comment;
+        public List<CommentRecord> replies = Lists.newArrayList();
+        public boolean hasMoreReplies;
+
+        public CommentThread (CommentRecord comment)
+        {
+            this.comment = comment;
+        }
     }
 
     @Override // from DepotRepository

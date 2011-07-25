@@ -65,8 +65,11 @@ public class Comment
     /** The text of this comment. */
     public String text;
 
-    /** The other comments that are in reply to this one. */
+    /** A few comments that are in reply to this one. */
     public List<Comment> replies = Lists.newArrayList();
+
+    /** True iff there are extra replies that were not included. */
+    public boolean hasMoreReplies;
 
     public boolean isReply ()
     {
