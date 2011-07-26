@@ -81,19 +81,21 @@ public class CommentRepository extends DepotRepository
             // Load up a block of replies
             List<CommentRecord> replies = from(CommentRecord._R)
                 .where(CommentRecord.ENTITY_TYPE.eq(entityType),
-                   CommentRecord.ENTITY_ID.eq(entityId),
-                   CommentRecord.REPLY_TO.in(postIds))
+                    CommentRecord.ENTITY_ID.eq(entityId),
+                    CommentRecord.REPLY_TO.in(postIds))
                 .limit(count*repliesPerComment)
                 .descending(CommentRecord.POSTED)
                 .select();
 
             for (CommentRecord reply : replies) {
                 CommentThread thread = threads.get(reply.replyTo);
-                if (thread.replies.size() < repliesPerComment) {
-                    thread.replies.add(reply);
-                } else {
-                    thread.hasMoreReplies = true;
-                    postIds.remove(reply.replyTo);
+                if (!thread.replies.contains(reply)) {
+                    if (thread.replies.size() < repliesPerComment) {
+                        thread.replies.add(reply);
+                    } else {
+                        thread.hasMoreReplies = true;
+                        postIds.remove(reply.replyTo);
+                    }
                 }
             }
 
@@ -106,10 +108,29 @@ public class CommentRepository extends DepotRepository
         return ImmutableList.copyOf(threads.values());
     }
 
-    public List<CommentRecord> loadReplies (
-        int entityType, int entityId, long posted, int offset, int count)
+    /**
+     * Loads count replies that were made after timestamp.
+     */
+    public CommentThread loadReplies (
+        int entityType, int entityId, long replyTo, long timestamp, int count)
     {
-        return null; // TODO
+        List<CommentRecord> replies = from(CommentRecord._R)
+            .where(CommentRecord.ENTITY_TYPE.eq(entityType),
+               CommentRecord.ENTITY_ID.eq(entityId),
+               CommentRecord.REPLY_TO.eq(new Timestamp(replyTo)),
+               CommentRecord.POSTED.lessThan(new Timestamp(timestamp)))
+            .limit(count + 1) // Request one extra
+            .descending(CommentRecord.POSTED)
+            .select();
+
+        CommentThread thread = new CommentThread(null);
+        if (replies.size() > count) {
+            replies = replies.subList(0, count);
+            thread.hasMoreReplies = true;
+        }
+        thread.replies = Sets.newTreeSet(replies);
+
+        return thread;
     }
 
     /**

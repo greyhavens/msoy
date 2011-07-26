@@ -28,8 +28,10 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.gwt.ui.ExpanderWidget;
 import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.ui.WidgetUtil;
+import com.threerings.gwt.util.ExpanderResult;
 import com.threerings.gwt.util.PagedResult;
 
 import com.threerings.msoy.comment.data.all.Comment;
@@ -123,6 +125,9 @@ public class CommentsPanel extends PagedGrid<Activity>
             Comment comment = (Comment) activity;
             VerticalPanel panel = new VerticalPanel();
             panel.add(new CommentPanel(this, comment));
+            if (comment.hasMoreReplies) {
+                panel.add(new ReplyExpander(comment));
+            }
             for (Comment reply : comment.replies) {
                 panel.add(new CommentPanel(this, reply));
             }
@@ -398,6 +403,34 @@ public class CommentsPanel extends PagedGrid<Activity>
         protected Comment _comment;
         protected CommentType _type;
         protected int _id;
+    }
+
+    protected class ReplyExpander extends ExpanderWidget<Comment>
+    {
+        public ReplyExpander (Comment comment)
+        {
+            // TODO(bruno): Prettify
+            super(new Button("Click to see more"));
+
+            _comment = comment;
+            for (Comment reply : comment.replies) {
+                _earliest = Math.min(_earliest, reply.posted);
+            }
+        }
+
+        protected Widget createElement (Comment reply)
+        {
+            _earliest = Math.min(_earliest, reply.posted);
+            return new CommentPanel(CommentsPanel.this, reply);
+        }
+
+        protected void fetchElements (AsyncCallback<ExpanderResult<Comment>> callback)
+        {
+            _commentsvc.loadReplies(_etype, _entityId, _comment.posted, _earliest, 15, callback);
+        }
+
+        protected Comment _comment;
+        protected long _earliest = Long.MAX_VALUE;
     }
 
     protected CommentType _etype;

@@ -19,6 +19,7 @@ import com.samskivert.depot.DatabaseException;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.web.gwt.ServiceException;
+import com.threerings.gwt.util.ExpanderResult;
 import com.threerings.gwt.util.PagedResult;
 
 import com.threerings.msoy.comment.data.all.Comment;
@@ -66,6 +67,11 @@ public class CommentServlet extends MsoyServiceServlet
         CommentType etype, int eid, int offset, int count, boolean needCount)
         throws ServiceException
     {
+        // Sanity check
+        if (count > 100) {
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
+
         // no authentication required to view comments
         List<Comment> comments = _commentLogic.loadComments(etype, eid, offset, count);
 
@@ -79,6 +85,19 @@ public class CommentServlet extends MsoyServiceServlet
         }
 
         return result;
+    }
+
+    // from interface CommentService
+    public ExpanderResult<Comment> loadReplies (
+        CommentType etype, int eid, long replyTo, long timestamp, int count)
+        throws ServiceException
+    {
+        // Sanity check
+        if (count > 100) {
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
+
+        return _commentLogic.loadReplies(etype, eid, replyTo, timestamp, count);
     }
 
     // from interface CommentService

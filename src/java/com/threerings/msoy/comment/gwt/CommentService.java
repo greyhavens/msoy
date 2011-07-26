@@ -8,6 +8,7 @@ import java.util.Collection;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
+import com.threerings.gwt.util.ExpanderResult;
 import com.threerings.gwt.util.PagedResult;
 import com.threerings.web.gwt.ServiceException;
 
@@ -38,6 +39,13 @@ public interface CommentService extends RemoteService
      */
     PagedResult<Activity> loadComments (
         CommentType entityType, int entityId, int offset, int count, boolean needCount)
+        throws ServiceException;
+
+    /**
+     * Load a page of replies that occur after a timestamp.
+     */
+    ExpanderResult<Comment> loadReplies (
+        CommentType entityType, int entityId, long replyTo, long timestamp, int count)
         throws ServiceException;
 
     /**
