@@ -22,6 +22,7 @@ import com.threerings.msoy.web.gwt.MemberCard;
  */
 @Entity
 public class CommentRecord extends PersistentRecord
+    implements Comparable<CommentRecord>
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<CommentRecord> _R = CommentRecord.class;
@@ -93,6 +94,11 @@ public class CommentRecord extends PersistentRecord
         comment.totalRatings = totalRatings;
         comment.text = text;
         return comment;
+    }
+
+    public int compareTo (CommentRecord that)
+    {
+        return this.posted.compareTo(that.posted);
     }
 
     // AUTO-GENERATED: METHODS START

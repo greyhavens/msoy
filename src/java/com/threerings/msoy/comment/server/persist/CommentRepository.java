@@ -77,29 +77,29 @@ public class CommentRepository extends DepotRepository
 
         // Load the replies for each thread
         Set<Timestamp> postIds = Sets.newHashSet(Lists.transform(comments, TO_POSTED));
-        for (int replyOffset = 0; !postIds.isEmpty(); replyOffset += repliesPerComment) {
-
+        while (!postIds.isEmpty()) {
             // Load up a block of replies
             List<CommentRecord> replies = from(CommentRecord._R)
                 .where(CommentRecord.ENTITY_TYPE.eq(entityType),
                    CommentRecord.ENTITY_ID.eq(entityId),
                    CommentRecord.REPLY_TO.in(postIds))
-                .limit(replyOffset, count*repliesPerComment)
+                .limit(count*repliesPerComment)
                 .descending(CommentRecord.POSTED)
                 .select();
 
-            if (replies.isEmpty()) {
-                // Ran out of replies early, we're done
-                break;
-            }
             for (CommentRecord reply : replies) {
                 CommentThread thread = threads.get(reply.replyTo);
                 if (thread.replies.size() < repliesPerComment) {
-                    thread.replies.add(0, reply);
+                    thread.replies.add(reply);
                 } else {
                     thread.hasMoreReplies = true;
                     postIds.remove(reply.replyTo);
                 }
+            }
+
+            if (replies.size() < count*repliesPerComment) {
+                // Stop if we're definitely out of remaining replies
+                break;
             }
         }
 
@@ -294,7 +294,7 @@ public class CommentRepository extends DepotRepository
     public static class CommentThread
     {
         public CommentRecord comment;
-        public List<CommentRecord> replies = Lists.newArrayList();
+        public Set<CommentRecord> replies = Sets.newTreeSet();
         public boolean hasMoreReplies;
 
         public CommentThread (CommentRecord comment)
