@@ -17,6 +17,12 @@ import client.item.ListingBox;
  */
 public class FavoritesBlurb extends Blurb
 {
+    @Override // from Blurb
+    public boolean shouldDisplay (ProfileService.ProfileResult pdata)
+    {
+        return !pdata.faves.isEmpty();
+    }
+
     @Override// from Blurb
     public void init (ProfileService.ProfileResult pdata)
     {
