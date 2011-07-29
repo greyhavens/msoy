@@ -12,7 +12,6 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -42,7 +41,7 @@ import client.util.MediaUtil;
 /**
  * Display a single news feed item, formatted based on type.
  */
-public class FeedMessagePanel extends FocusPanel
+public class FeedMessagePanel extends FlowPanel
 {
     /**
      * @param usePronouns If true, say e.g. "You earned the trophy" if current member is the actor.
