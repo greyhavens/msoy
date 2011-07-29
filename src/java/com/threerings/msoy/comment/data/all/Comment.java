@@ -27,7 +27,7 @@ public class Comment
     public static final int MAX_TEXT_LENGTH = 1024;
 
     /** The number of comments displayed per page. */
-    public static final int COMMENTS_PER_PAGE = 12;
+    public static final int COMMENTS_PER_PAGE = 8;
 
     /** The rating below which comments are hidden in the interface. */
     public static final int RATED_HIDDEN = -2;

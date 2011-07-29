@@ -982,6 +982,10 @@ img, embed, applet, object {
   font-size: 11px;
 }
 
+.commentControls {
+  margin: 10px 0;
+}
+
 .PostComment {
   padding: 15px 15px 0px 15px;
 }

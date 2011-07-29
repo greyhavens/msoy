@@ -91,6 +91,7 @@ public class CommentsPanel extends ExpanderWidget<Activity>
                 _commentControls.add(batchButton);
             }
 
+            _commentControls.addStyleName("commentControls");
             insert(_commentControls, 0);
         }
     }
