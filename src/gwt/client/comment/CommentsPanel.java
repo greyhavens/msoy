@@ -16,6 +16,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -328,17 +329,14 @@ public class CommentsPanel extends ExpanderWidget<Activity>
             _text.setWidth("450px");
             _text.setVisibleLines(3);
             contents.add(MsoyUI.createLabel("", "clear")); // forces a line break
-            contents.add(_agree = new CheckBox(_cmsgs.commentAmNotAsshole(), true));
-            SafeHTML.fixAnchors(_agree.getElement()); // doctor up the external link
+            HTML notice = MsoyUI.createHTML(_cmsgs.commentBeNice(), "commentBeNice");
+            contents.add(notice);
+            SafeHTML.fixAnchors(notice.getElement()); // doctor up the external link
             setContents(contents);
 
             addButton(new Button(_cmsgs.cancel(), onCancel()));
             addButton(new Button(_cmsgs.send(), new ClickHandler() {
                 public void onClick (ClickEvent event) {
-                    if (!_agree.getValue()) {
-                        MsoyUI.errorNear(_cmsgs.commentMustNotBeAsshole(), _agree);
-                        return;
-                    }
                     hide(); // hide now, if they fail validation, they get to type everything anew
 
                     String text = _text.getText();
@@ -357,7 +355,6 @@ public class CommentsPanel extends ExpanderWidget<Activity>
         }
 
         protected TextArea _text;
-        protected CheckBox _agree;
     }
 
     protected class CommentComplainPopup extends ComplainPopup

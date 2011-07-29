@@ -1019,6 +1019,10 @@ img, embed, applet, object {
   margin-left: 50px;
 }
 
+.commentBeNice {
+  font-size: 12px;
+}
+
 /** Role box and label styles */
 .roleBox {
   display: table;
