@@ -13,6 +13,7 @@ import com.google.common.collect.Maps;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -58,7 +59,8 @@ public class CommentsPanel extends ExpanderWidget<Activity>
 {
     public CommentsPanel (CommentType entityType, int entityId, boolean rated)
     {
-        super(new Button("More comments"));
+        super(_cmsgs.seeMoreComments());
+        _expandLabel.addStyleName("CommentsExpand");
 
         addStyleName("CommentsPanel");
         addStyleName("dottedGrid");
@@ -68,7 +70,7 @@ public class CommentsPanel extends ExpanderWidget<Activity>
         _etype = entityType;
         _entityId = entityId;
 
-        _expandButton.setVisible(false);
+        _expandLabel.setVisible(false);
         add(_loadingMessage = new Label(_cmsgs.loadingComments()));
         expand();
 
@@ -382,8 +384,8 @@ public class CommentsPanel extends ExpanderWidget<Activity>
     {
         public ReplyExpander (Comment comment)
         {
-            // TODO(bruno): Prettify
-            super(new Button("Click to see more"));
+            super(_cmsgs.seeMoreReplies());
+            _expandLabel.addStyleName("RepliesExpand");
 
             _comment = comment;
             for (Comment reply : comment.replies) {

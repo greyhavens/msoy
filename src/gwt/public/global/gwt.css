@@ -986,6 +986,35 @@ img, embed, applet, object {
   padding: 15px 15px 0px 15px;
 }
 
+.CommentsExpand, .RepliesExpand {
+  cursor: pointer;
+}
+
+.CommentsExpand {
+  width: 100%;
+  background: #d7edfb;
+  margin-top: 5px;
+  color: #0D496D;
+  padding: 5px 0 5px 0;
+  border-bottom: 1px dashed #0D496D;
+  text-align: center;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.RepliesExpand {
+  font-size: 10px;
+  background: #eee;
+  color: #999;
+  margin-top: 3px;
+  margin-bottom: 3px;
+  border-top: 1px dashed #999;
+  width: 200px;
+  padding: 4px;
+  padding-left: 45px;
+  margin-left: 50px;
+}
+
 /** Role box and label styles */
 .roleBox {
   display: table;
