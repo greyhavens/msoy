@@ -203,6 +203,7 @@ public class CommentPanel extends MessagePanel
 
         // Put an indent on replies
         if (_comment.isReply()) {
+            addStyleName("Reply");
             insertCell(0, 0);
             getFlexCellFormatter().setRowSpan(0, 0, 2);
             setWidget(0, 0, WidgetUtil.makeShim(45, 0));
