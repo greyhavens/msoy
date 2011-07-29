@@ -81,7 +81,6 @@ import com.threerings.msoy.money.server.BlingPoolDistributor;
 import com.threerings.msoy.money.server.MoneyLogic;
 import com.threerings.msoy.party.server.PartyRegistry;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
-import com.threerings.msoy.person.server.persist.FeedRepository;
 import com.threerings.msoy.room.server.MsoySceneFactory;
 import com.threerings.msoy.room.server.MsoySceneRegistry;
 import com.threerings.msoy.room.server.PetManager;
@@ -234,13 +233,6 @@ public class MsoyServer extends MsoyBaseServer
             new AutoRestartChecker().schedule(AUTO_RESTART_CHECK_INTERVAL, true);
         }
 
-        _feedPruner = new Interval(_batchInvoker) {
-            @Override public void expired() {
-                _feedRepo.pruneFeeds();
-            }
-        };
-        _feedPruner.schedule(FEED_PRUNING_INTERVAL, true);
-
         // kick off spam jobs
         _spamLogic.init();
 
@@ -365,17 +357,11 @@ public class MsoyServer extends MsoyBaseServer
      * that need to be accepted by the policy server. */
     protected Set<Integer> _otherNodePorts;
 
-    /** Prunes the feeds every so often. */
-    protected Interval _feedPruner;
-
     /** Distributes Bling once a day; referenced here so it'll load. */
     @Inject protected BlingPoolDistributor _blingDistributor;
 
     /** Handles dictionary services for games. */
     @Inject protected DictionaryManager _dictMan;
-
-    /** The feed repository, so that we may prune. */
-    @Inject protected FeedRepository _feedRepo;
 
     /** Handles management of member's friends lists. */
     @Inject protected FriendManager _friendMan;
@@ -451,9 +437,6 @@ public class MsoyServer extends MsoyBaseServer
             }
         };
     }
-
-    /** Prune the feeds once every 3 hours. On all servers at once? @TODO Fix. */
-    protected static final long FEED_PRUNING_INTERVAL = 3 * 60 * 60 * 1000;
 
     /** Check for modified code every 30 seconds. */
     protected static final long AUTO_RESTART_CHECK_INTERVAL = 30 * 1000L;

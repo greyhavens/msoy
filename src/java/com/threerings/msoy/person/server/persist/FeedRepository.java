@@ -198,23 +198,6 @@ public class FeedRepository extends DepotRepository
     }
 
     /**
-     * Prunes feed messages of all types that have expired.
-     */
-    public void pruneFeeds ()
-    {
-        Timestamp cutoff = new Timestamp(System.currentTimeMillis() - FEED_EXPIRATION_PERIOD);
-        int global = from(GlobalFeedMessageRecord.class).where(
-            GlobalFeedMessageRecord.POSTED.lessThan(cutoff)).delete(null);
-        int friend = from(FriendFeedMessageRecord.class).where(
-            FriendFeedMessageRecord.POSTED.lessThan(cutoff)).delete(null);
-        int group = from(GroupFeedMessageRecord.class).where(
-            GroupFeedMessageRecord.POSTED.lessThan(cutoff)).delete(null);
-        int self = from(SelfFeedMessageRecord.class).where(
-            SelfFeedMessageRecord.POSTED.lessThan(cutoff)).delete(null);
-        log.info("Feeds pruned", "global", global, "friend", friend, "group", group, "self", self);
-    }
-
-    /**
      * Deletes all data associated with the supplied members. This is done as a part of purging
      * member accounts.
      */
