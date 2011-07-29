@@ -163,8 +163,7 @@ public class CommentsPanel extends ExpanderWidget<Activity>
 
     protected boolean commentsCanBeBatchDeleted ()
     {
-        return CShell.isSupport() ||
-            (_etype.forProfileWall() && _entityId == CShell.getMemberId());
+        return CShell.isSupport();
     }
 
     /**
