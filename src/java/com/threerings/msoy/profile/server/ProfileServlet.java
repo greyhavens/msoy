@@ -184,9 +184,6 @@ public class ProfileServlet extends MsoyServiceServlet
         // figure out which brands the player has a share in
         result.brands = resolveBrandShares(result.grantable, memrec, tgtrec);
 
-        // load feed
-        result.feed = _feedLogic.loadMemberFeed(memberId, MAX_FEED_ENTRIES);
-
         // load recent favorites
         result.faves = _itemLogic.resolveFavorites(
             _faveRepo.loadRecentFavorites(memberId, MAX_PROFILE_FAVORITES));

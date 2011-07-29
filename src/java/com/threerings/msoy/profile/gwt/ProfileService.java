@@ -26,7 +26,6 @@ import com.threerings.msoy.game.gwt.GameRating;
 import com.threerings.msoy.group.gwt.BrandDetail;
 import com.threerings.msoy.group.gwt.GroupCard;
 import com.threerings.msoy.item.gwt.ListingCard;
-import com.threerings.msoy.person.gwt.FeedMessage;
 import com.threerings.msoy.person.gwt.Gallery;
 import com.threerings.msoy.person.gwt.Interest;
 
@@ -109,11 +108,6 @@ public interface ProfileService extends RemoteService
          * This user's recently earned trophies.
          */
         public List<Trophy> trophies;
-
-        /**
-         * This member's recent self feed messages.
-         */
-        public List<FeedMessage> feed;
 
         /**
          * This member's recently favorited items.
