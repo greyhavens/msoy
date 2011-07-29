@@ -120,7 +120,7 @@ public class CommentRepository extends DepotRepository
             }
         }
 
-        result.page = ImmutableList.copyOf(threads.values());
+        result.page = ImmutableList.copyOf(threads.values()).reverse();
         return result;
     }
 
@@ -154,7 +154,7 @@ public class CommentRepository extends DepotRepository
      */
     public List<CommentRatingRecord> loadRatings (int entityType, int entityId, int memberId)
     {
-        return findAll(CommentRatingRecord.class,
+        return findAll(CommentRatingRecord._R,
                        new Where(CommentRatingRecord.ENTITY_TYPE, entityType,
                                  CommentRatingRecord.ENTITY_ID, entityId,
                                  CommentRatingRecord.MEMBER_ID, memberId));
@@ -166,7 +166,7 @@ public class CommentRepository extends DepotRepository
     public CommentRatingRecord loadRating (
         int entityType, int entityId, long posted, int memberId)
     {
-        return load(CommentRatingRecord.class, CommentRatingRecord.getKey(
+        return load(CommentRatingRecord._R, CommentRatingRecord.getKey(
                         entityType, entityId, memberId, new Timestamp(posted)));
     }
 
@@ -175,7 +175,7 @@ public class CommentRepository extends DepotRepository
      */
     public CommentRecord loadComment (int entityType, int entityId, long posted)
     {
-        return load(CommentRecord.class,
+        return load(CommentRecord._R,
                     CommentRecord.getKey(entityType, entityId, new Timestamp(posted)));
     }
 
@@ -185,11 +185,11 @@ public class CommentRepository extends DepotRepository
     public int loadCommentCount (int entityType, int entityId)
     {
         List<QueryClause> clauses = Lists.newArrayList();
-        clauses.add(new FromOverride(CommentRecord.class));
+        clauses.add(new FromOverride(CommentRecord._R));
         clauses.add(new Where(CommentRecord.ENTITY_TYPE, entityType,
                               CommentRecord.ENTITY_ID, entityId,
                               CommentRecord.REPLY_TO, null));
-        return load(CountRecord.class, clauses.toArray(new QueryClause[clauses.size()])).count;
+        return load(CountRecord._R, clauses.toArray(new QueryClause[clauses.size()])).count;
     }
 
     /**
@@ -229,7 +229,7 @@ public class CommentRepository extends DepotRepository
         Timestamp postedStamp = new Timestamp(posted);
         try {
             // see if this person has rated this record before
-            CommentRatingRecord record = load(CommentRatingRecord.class,
+            CommentRatingRecord record = load(CommentRatingRecord._R,
                 CommentRatingRecord.getKey(entityType, entityId, memberId, postedStamp));
 
             int adjustment;
@@ -264,7 +264,7 @@ public class CommentRepository extends DepotRepository
             if (record != null) {
                 updates.put(CommentRecord.TOTAL_RATINGS, CommentRecord.TOTAL_RATINGS.plus(1));
             }
-            updatePartial(CommentRecord.class, comment, comment, updates);
+            updatePartial(CommentRecord._R, comment, comment, updates);
             return adjustment;
 
         } catch (DuplicateKeyException dke) {
@@ -286,10 +286,15 @@ public class CommentRepository extends DepotRepository
         delete(CommentRecord.getKey(entityType, entityId, postedStamp));
 
         // delete all its ratings
-        deleteAll(CommentRatingRecord.class,
+        deleteAll(CommentRatingRecord._R,
                   new Where(CommentRatingRecord.ENTITY_TYPE, entityType,
                             CommentRatingRecord.ENTITY_ID, entityId,
                             CommentRatingRecord.POSTED, postedStamp));
+
+        // delete all its replies
+        deleteAll(CommentRecord._R, new Where(CommentRecord.REPLY_TO, postedStamp));
+
+        // TODO(bruno): Also delete the ratings of those replies
     }
 
     /**
@@ -298,33 +303,34 @@ public class CommentRepository extends DepotRepository
     public void deleteComments (int entityType, int entityId)
     {
         // delete the comments
-        deleteAll(CommentRecord.class, new Where(CommentRecord.ENTITY_TYPE, entityType,
+        deleteAll(CommentRecord._R, new Where(CommentRecord.ENTITY_TYPE, entityType,
                                                  CommentRecord.ENTITY_ID, entityId), null);
 
         // delete the comment ratings
-        deleteAll(CommentRatingRecord.class,
+        deleteAll(CommentRatingRecord._R,
                   new Where(CommentRatingRecord.ENTITY_TYPE, entityType,
                             CommentRatingRecord.ENTITY_ID, entityId), null);
     }
 
     /**
-     * Deletes all data associated with the supplied members. This is done as a part of purging *
+     * Deletes all data associated with the supplied members. This is done as a part of purging
      * member accounts.
      */
     public void purgeMembers (Collection<Integer> memberIds)
     {
         // delete all ratings made by these members
-        deleteAll(CommentRatingRecord.class,
+        deleteAll(CommentRatingRecord._R,
                   new Where(CommentRatingRecord.MEMBER_ID.in(memberIds)));
 
         // load up the ids of all comments made by these members
         List<Key<CommentRecord>> keys = findAllKeys(
-            CommentRecord.class, false, new Where(CommentRecord.MEMBER_ID.in(memberIds)));
+            CommentRecord._R, false, new Where(CommentRecord.MEMBER_ID.in(memberIds)));
 
         // delete those comments
-        deleteAll(CommentRecord.class, KeySet.newKeySet(CommentRecord.class, keys));
+        deleteAll(CommentRecord._R, KeySet.newKeySet(CommentRecord._R, keys));
 
         // TODO: delete all rating records made on the above comments
+        // TODO(bruno): Delete replies to member's comments... and ratings of those replies
     }
 
     // Just used as a return structure for loadComments()
@@ -343,8 +349,8 @@ public class CommentRepository extends DepotRepository
     @Override // from DepotRepository
     protected void getManagedRecords (Set<Class<? extends PersistentRecord>> classes)
     {
-        classes.add(CommentRecord.class);
-        classes.add(CommentRatingRecord.class);
+        classes.add(CommentRecord._R);
+        classes.add(CommentRatingRecord._R);
     }
 
     public static Function<CommentRecord, Timestamp> TO_POSTED =
