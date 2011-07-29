@@ -120,9 +120,13 @@ public class CommentPanel extends MessagePanel
 
     protected void addRatingUI (InlinePanel tools)
     {
-        InlineLabel rating = new InlineLabel("" + _comment.currentRating, false, true, false);
-        rating.addStyleName("Posted");
-        tools.add(rating);
+        int adjustedRating = _comment.currentRating - 1;
+        if (adjustedRating != 0) {
+            String plus = (adjustedRating > 0) ? "+" : "";
+            InlineLabel rating = new InlineLabel(plus + adjustedRating, false, true, false);
+            rating.addStyleName("Posted");
+            tools.add(rating);
+        }
 
         if (!_displayed) {
             InlineLabel showComment = new InlineLabel(_cmsgs.showComment(), false, true, false);
