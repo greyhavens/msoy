@@ -37,6 +37,8 @@ import com.samskivert.depot.expression.SQLExpression;
 
 import com.threerings.presents.annotation.BlockingThread;
 
+import com.threerings.gwt.util.ExpanderResult;
+
 import com.threerings.msoy.comment.data.all.Comment;
 
 import static com.threerings.msoy.Log.log;
@@ -55,19 +57,32 @@ public class CommentRepository extends DepotRepository
     /**
      * Loads the most recent comments for the specified entity type and identifier.
      *
-     * @param start the offset into the comments (in reverse time order) to load.
+     * @param beforeTime the time offset into the comments to load.
      * @param count the number of comments to load.
      */
-    public List<CommentThread> loadComments (
-        int entityType, int entityId, int start, int count, int repliesPerComment)
+    public ExpanderResult<CommentThread> loadComments (
+        int entityType, int entityId, long beforeTime, int count, int repliesPerComment)
     {
+        List<SQLExpression<?>> conditions = Lists.newArrayList();
+        conditions.add(CommentRecord.ENTITY_TYPE.eq(entityType));
+        conditions.add(CommentRecord.ENTITY_ID.eq(entityId));
+        conditions.add(CommentRecord.REPLY_TO.isNull());
+        if (beforeTime < Long.MAX_VALUE) {
+            conditions.add(CommentRecord.POSTED.lessThan(new Timestamp(beforeTime)));
+        }
+
         // Fetch the non-reply comments for this page
-        List<CommentRecord> comments = findAll(CommentRecord._R,
-            new Where(CommentRecord.ENTITY_TYPE, entityType,
-                      CommentRecord.ENTITY_ID, entityId,
-                      CommentRecord.REPLY_TO, null),
-            OrderBy.descending(CommentRecord.POSTED),
-            new Limit(start, count));
+        List<CommentRecord> comments = from(CommentRecord._R)
+            .where(conditions)
+            .descending(CommentRecord.POSTED)
+            .limit(count + 1)
+            .select();
+
+        ExpanderResult<CommentThread> result = new ExpanderResult<CommentThread>();
+        if (comments.size() > count) {
+            comments = comments.subList(0, count);
+            result.hasMore = true;
+        }
 
         // Assemble this page's threads
         Map<Timestamp, CommentThread> threads = Maps.newTreeMap();
@@ -105,20 +120,21 @@ public class CommentRepository extends DepotRepository
             }
         }
 
-        return ImmutableList.copyOf(threads.values());
+        result.page = ImmutableList.copyOf(threads.values());
+        return result;
     }
 
     /**
-     * Loads count replies that were made after timestamp.
+     * Loads count replies that were made before a timestamp.
      */
     public CommentThread loadReplies (
-        int entityType, int entityId, long replyTo, long timestamp, int count)
+        int entityType, int entityId, long replyTo, long beforeTime, int count)
     {
         List<CommentRecord> replies = from(CommentRecord._R)
             .where(CommentRecord.ENTITY_TYPE.eq(entityType),
                CommentRecord.ENTITY_ID.eq(entityId),
                CommentRecord.REPLY_TO.eq(new Timestamp(replyTo)),
-               CommentRecord.POSTED.lessThan(new Timestamp(timestamp)))
+               CommentRecord.POSTED.lessThan(new Timestamp(beforeTime)))
             .limit(count + 1) // Request one extra
             .descending(CommentRecord.POSTED)
             .select();

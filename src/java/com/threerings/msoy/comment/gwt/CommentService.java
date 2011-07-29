@@ -37,15 +37,15 @@ public interface CommentService extends RemoteService
     /**
      * Loads recent comments made about the specified entity.
      */
-    PagedResult<Activity> loadComments (
-        CommentType entityType, int entityId, int offset, int count, boolean needCount)
+    ExpanderResult<Activity> loadComments (
+        CommentType entityType, int entityId, long beforeTime, int count)
         throws ServiceException;
 
     /**
      * Load a page of replies that occur after a timestamp.
      */
     ExpanderResult<Comment> loadReplies (
-        CommentType entityType, int entityId, long replyTo, long timestamp, int count)
+        CommentType entityType, int entityId, long replyTo, long beforeTime, int count)
         throws ServiceException;
 
     /**

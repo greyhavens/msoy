@@ -42,7 +42,7 @@ import com.threerings.msoy.web.gwt.MemberCard;
 import com.threerings.msoy.web.gwt.ServiceCodes;
 
 import com.threerings.web.gwt.ServiceException;
-import com.threerings.gwt.util.PagedResult;
+import com.threerings.gwt.util.ExpanderResult;
 
 import com.threerings.msoy.web.gwt.Activity;
 import com.threerings.msoy.web.gwt.MemberCard.NotOnline;
@@ -194,13 +194,15 @@ public class ProfileServlet extends MsoyServiceServlet
         return result;
     }
 
-    public PagedResult<Activity> loadActivity (int memberId, int offset, int count, boolean needCount)
+    public ExpanderResult<Activity> loadActivity (int memberId, long beforeTime, int count)
         throws ServiceException
     {
-        PagedResult<Activity> result = new PagedResult<Activity>();
-        result.page = _feedLogic.loadMemberActivity(memberId, offset, count);
-        result.total = 100; // TODO
-        return result;
+        // Sanity check
+        if (count > 100) {
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
+
+        return _feedLogic.loadMemberActivity(memberId, beforeTime, count);
     }
 
     // from interface ProfileService

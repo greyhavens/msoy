@@ -20,7 +20,6 @@ import com.samskivert.util.StringUtil;
 
 import com.threerings.web.gwt.ServiceException;
 import com.threerings.gwt.util.ExpanderResult;
-import com.threerings.gwt.util.PagedResult;
 
 import com.threerings.msoy.comment.data.all.Comment;
 import com.threerings.msoy.comment.data.all.CommentType;
@@ -63,8 +62,8 @@ public class CommentServlet extends MsoyServiceServlet
     implements CommentService
 {
     // from interface CommentService
-    public PagedResult<Activity> loadComments (
-        CommentType etype, int eid, int offset, int count, boolean needCount)
+    public ExpanderResult<Activity> loadComments (
+        CommentType etype, int eid, long beforeTime, int count)
         throws ServiceException
     {
         // Sanity check
@@ -73,23 +72,14 @@ public class CommentServlet extends MsoyServiceServlet
         }
 
         // no authentication required to view comments
-        List<Comment> comments = _commentLogic.loadComments(etype, eid, offset, count);
-
-        // prepare and deliver the final result
-        PagedResult<Activity> result = new PagedResult<Activity>();
-        @SuppressWarnings("unchecked") List<Activity> activities = (List) comments;
-        result.page = activities;
-        if (needCount) {
-            result.total = (comments.size() < count && offset == 0) ?
-                comments.size() : _commentRepo.loadCommentCount(etype.toByte(), eid);
-        }
-
+        @SuppressWarnings("unchecked") ExpanderResult<Activity> result =
+            (ExpanderResult) _commentLogic.loadComments(etype, eid, beforeTime, count);
         return result;
     }
 
     // from interface CommentService
     public ExpanderResult<Comment> loadReplies (
-        CommentType etype, int eid, long replyTo, long timestamp, int count)
+        CommentType etype, int eid, long replyTo, long beforeTime, int count)
         throws ServiceException
     {
         // Sanity check
@@ -97,7 +87,7 @@ public class CommentServlet extends MsoyServiceServlet
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
 
-        return _commentLogic.loadReplies(etype, eid, replyTo, timestamp, count);
+        return _commentLogic.loadReplies(etype, eid, replyTo, beforeTime, count);
     }
 
     // from interface CommentService

@@ -22,6 +22,8 @@ import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.orth.data.MediaDesc;
 
+import com.threerings.gwt.util.ExpanderResult;
+
 import com.threerings.msoy.data.all.CloudfrontMediaDesc;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.HashMediaDesc;
@@ -171,21 +173,24 @@ public class FeedLogic
     // TODO(bruno): Remove
     public List<FeedMessage> loadMemberFeed (int memberId, int limit)
     {
-        return resolveFeedMessages(_feedRepo.loadMemberFeed(memberId, limit));
+        return resolveFeedMessages(_feedRepo.loadMemberFeed(memberId, Long.MAX_VALUE, limit).page);
     }
 
     /**
      * Loads the general activity (feed and comments) for the specified member.
      */
-    public List<Activity> loadMemberActivity (int memberId, int offset, int count)
+    public ExpanderResult<Activity> loadMemberActivity (int memberId, long beforeTime, int count)
     {
-        List<Comment> comments = _commentLogic.loadComments(
-            CommentType.PROFILE_WALL, memberId, offset, count);
+        ExpanderResult<Comment> comments = _commentLogic.loadComments(
+            CommentType.PROFILE_WALL, memberId, beforeTime, count);
+        ExpanderResult<FeedMessageRecord> messages =
+            _feedRepo.loadMemberFeed(memberId, beforeTime, count);
 
-        List<FeedMessage> messages = resolveFeedMessages(
-            _feedRepo.loadMemberFeed(memberId, count));
-
-        return Lists.newArrayList(Iterables.concat(comments, messages));
+        ExpanderResult<Activity> result = new ExpanderResult<Activity>();
+        result.page = Lists.newArrayList(
+            Iterables.concat(comments.page, resolveFeedMessages(messages.page)));
+        result.hasMore = comments.hasMore || messages.hasMore;
+        return result;
     }
 
     /**

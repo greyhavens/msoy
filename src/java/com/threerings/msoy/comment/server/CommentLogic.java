@@ -17,7 +17,6 @@ import com.google.inject.Singleton;
 import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.gwt.util.ExpanderResult;
-import com.threerings.gwt.util.PagedResult;
 
 import com.threerings.msoy.server.persist.MemberCardRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
@@ -34,15 +33,16 @@ import com.threerings.msoy.web.gwt.MemberCard;
 @BlockingThread @Singleton
 public class CommentLogic
 {
-    public List<Comment> loadComments (CommentType etype, int eid, int offset, int count)
+    public ExpanderResult<Comment> loadComments (
+        CommentType etype, int eid, long beforeTime, int count)
     {
-        List<CommentThread> threads = _commentRepo.loadComments(
-            etype.toByte(), eid, offset, count, 2);
-        Map<Integer, MemberCard> cards = resolveCards(threads);
+        ExpanderResult<CommentThread> threads = _commentRepo.loadComments(
+            etype.toByte(), eid, beforeTime, count, 2);
+        Map<Integer, MemberCard> cards = resolveCards(threads.page);
 
         // convert the comment records to runtime records
         List<Comment> comments = Lists.newArrayList();
-        for (CommentThread thread : threads) {
+        for (CommentThread thread : threads.page) {
             Comment comment = thread.comment.toComment(cards);
             if (comment.commentor == null) {
                 continue; // this member was deleted, shouldn't happen
@@ -54,14 +54,17 @@ public class CommentLogic
             comments.add(comment);
         }
 
-        return comments;
+        ExpanderResult<Comment> result = new ExpanderResult<Comment>();
+        result.page = comments;
+        result.hasMore = threads.hasMore;
+        return result;
     }
 
     public ExpanderResult<Comment> loadReplies (
-        CommentType etype, int eid, long replyTo, long timestamp, int count)
+        CommentType etype, int eid, long replyTo, long beforeTime, int count)
     {
         CommentThread thread = _commentRepo.loadReplies(
-            etype.toByte(), eid, replyTo, timestamp, count);
+            etype.toByte(), eid, replyTo, beforeTime, count);
         Map<Integer, MemberCard> cards = resolveCards(ImmutableList.of(thread));
 
         ExpanderResult<Comment> result = new ExpanderResult<Comment>();

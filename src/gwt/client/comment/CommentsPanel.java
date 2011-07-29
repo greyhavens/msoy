@@ -54,25 +54,23 @@ import client.util.MsoyPagedServiceDataModel;
 /**
  * Displays comments on a particular entity and allows posting.
  */
-public class CommentsPanel extends PagedGrid<Activity>
+public class CommentsPanel extends ExpanderWidget<Activity>
 {
     public CommentsPanel (CommentType entityType, int entityId, boolean rated)
     {
-        this(entityType, entityId, Comment.COMMENTS_PER_PAGE, rated);
-    }
+        super(new Button("More comments"));
 
-    public CommentsPanel (CommentType entityType, int entityId, int commentsPerPage, boolean rated)
-    {
-        super(commentsPerPage, 1, NAV_ON_BOTTOM);
         addStyleName("CommentsPanel");
         addStyleName("dottedGrid");
-        setCellAlignment(HasAlignment.ALIGN_LEFT, HasAlignment.ALIGN_MIDDLE);
+        // setCellAlignment(HasAlignment.ALIGN_LEFT, HasAlignment.ALIGN_MIDDLE);
 
         _rated = rated;
         _etype = entityType;
         _entityId = entityId;
 
-        add(new Label(_cmsgs.loadingComments()));
+        _expandButton.setVisible(false);
+        add(_loadingMessage = new Label(_cmsgs.loadingComments()));
+        expand();
 
         // if we're a validated member, display a button for posting a comment
         if (CShell.isRegistered()) {
@@ -90,9 +88,9 @@ public class CommentsPanel extends PagedGrid<Activity>
                     batchButton, "Are you sure you want to delete these comments?");
                 _commentControls.add(batchButton);
             }
-        }
 
-        setModel(createModel(), 0);
+            insert(_commentControls, 0);
+        }
     }
 
     public void showPostPopup ()
@@ -110,16 +108,7 @@ public class CommentsPanel extends PagedGrid<Activity>
     }
 
     @Override
-    protected Widget createContents (int start, int count, List<Activity> list)
-    {
-        if (_batchDelete != null) {
-            _batchDelete.clear();
-        }
-        return super.createContents(start, count, list);
-    }
-
-    @Override // from PagedGrid
-    protected Widget createWidget (Activity activity)
+    protected Widget createElement (Activity activity)
     {
         if (activity instanceof Comment) {
             Comment comment = (Comment) activity;
@@ -136,32 +125,28 @@ public class CommentsPanel extends PagedGrid<Activity>
         throw new IllegalArgumentException("Unsupported activity type!");
     }
 
-    @Override // from PagedGrid
-    protected String getEmptyMessage ()
+    @Override
+    protected void fetchElements (AsyncCallback<ExpanderResult<Activity>> callback)
     {
-        return _cmsgs.noComments();
+        _commentsvc.loadComments(_etype, _entityId, _earliest, Comment.COMMENTS_PER_PAGE, callback);
     }
 
-    @Override // from PagedGrid
-    protected boolean displayNavi (int items)
+    @Override
+    public void addElements (List<Activity> activities)
     {
-        return true; // we always need our navigation because it has the "post" button
+        remove(_loadingMessage);
+        for (Activity activity : activities) {
+            _earliest = Math.min(_earliest, activity.startedAt());
+        }
+        super.addElements(activities);
     }
 
-    @Override // from PagedGrid
-    protected void addCustomControls (FlexTable controls)
-    {
-        super.addCustomControls(controls);
-
-        _commentControls = new HorizontalPanel();
-
-        _controls.setWidget(0, 0, _commentControls);
-    }
-
-    protected MsoyPagedServiceDataModel<Activity, PagedResult<Activity>> createModel ()
-    {
-        return new CommentModel();
-    }
+    // TODO(bruno): Handle an empty wall
+    // @Override // from PagedGrid
+    // protected String getEmptyMessage ()
+    // {
+    //     return _cmsgs.noComments();
+    // }
 
     /**
      * Returns the size of thumbnail image to use next to our comments.
@@ -226,13 +211,10 @@ public class CommentsPanel extends PagedGrid<Activity>
 
     protected void postedComment (Comment comment)
     {
-        if (_page == 0) {
-            ((MsoyPagedServiceDataModel<Activity, PagedResult<Activity>>)
-                _model).prependItem(comment);
-            _commentCount = -1;
-            displayPage(0, true);
+        if (!comment.isReply()) {
+            addElements(new LinkedList<Activity>(Collections.singleton(comment)));
         } else {
-            MsoyUI.info(_cmsgs.commentPosted());
+            // TODO(bruno): Add the new comment to the right thread.
         }
     }
 
@@ -250,9 +232,11 @@ public class CommentsPanel extends PagedGrid<Activity>
                 _commentsvc.deleteComments(_etype, _entityId, single, new InfoCallback<Integer>() {
                     public void onSuccess (Integer deleted) {
                         if (deleted > 0) {
-                            MsoyUI.info(_cmsgs.commentDeleted());
-                            _commentCount = -1;
-                            removeItem(comment);
+                            if (!comment.isReply()) {
+                                removeElement(comment);
+                            } else {
+                                // TODO(bruno): Remove comments from the right thread
+                            }
                             _batchDelete.remove(comment);
                         } else {
                             MsoyUI.error(_cmsgs.commentDeletionNotAllowed());
@@ -321,23 +305,13 @@ public class CommentsPanel extends PagedGrid<Activity>
 
         @Override protected boolean gotResult (Integer result) {
             for (Comment comment : _batchComments.values()) {
-                removeItem(comment);
+                removeElement(comment);
             }
-            _commentCount = -1;
             _batchComments.clear();
             return false;
         }
 
         protected Map<Long, Comment> _batchComments = Maps.newHashMap();
-    }
-
-    protected class CommentModel extends MsoyPagedServiceDataModel<Activity, PagedResult<Activity>>
-    {
-        @Override
-        protected void callFetchService (int start, int count, boolean needCount,
-                                         AsyncCallback<PagedResult<Activity>> callback) {
-            _commentsvc.loadComments(_etype, _entityId, start, count, needCount, callback);
-        }
     }
 
     protected class PostPanel extends BorderedDialog
@@ -434,13 +408,13 @@ public class CommentsPanel extends PagedGrid<Activity>
     }
 
     protected CommentType _etype;
-
     protected int _entityId;
-    protected int _commentCount = -1;
+    protected long _earliest = Long.MAX_VALUE;
+    protected Widget _loadingMessage;
 
     protected DeleteClickCallback _batchDelete;
 
-    protected Panel _commentControls;
+    protected Panel _commentControls = new HorizontalPanel();
 
     protected boolean _rated;
     protected Button _post;

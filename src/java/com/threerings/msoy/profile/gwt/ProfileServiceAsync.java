@@ -5,7 +5,7 @@ package com.threerings.msoy.profile.gwt;
 
 import java.util.List;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.threerings.gwt.util.PagedResult;
+import com.threerings.gwt.util.ExpanderResult;
 import com.threerings.msoy.person.gwt.Interest;
 import com.threerings.msoy.web.gwt.Activity;
 import com.threerings.msoy.web.gwt.MemberCard;
@@ -23,7 +23,7 @@ public interface ProfileServiceAsync
     /**
      * The async version of {@link ProfileService#loadActivity}.
      */
-    void loadActivity (int memberId, int offset, int count, boolean needCount, AsyncCallback<PagedResult<Activity>> callback);
+    void loadActivity (int memberId, long before, int count, AsyncCallback<ExpanderResult<Activity>> callback);
 
     /**
      * The async version of {@link ProfileService#updateProfile}.

@@ -11,7 +11,7 @@ import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 import com.threerings.web.gwt.ServiceException;
-import com.threerings.gwt.util.PagedResult;
+import com.threerings.gwt.util.ExpanderResult;
 
 import com.threerings.msoy.data.all.Award;
 import com.threerings.msoy.data.all.Friendship;
@@ -136,7 +136,7 @@ public interface ProfileService extends RemoteService
     /**
      * Loads a page of recent activity (comments and other player history).
      */
-    PagedResult<Activity> loadActivity (int memberId, int offset, int count, boolean needCount)
+    ExpanderResult<Activity> loadActivity (int memberId, long beforeTime, int count)
         throws ServiceException;
 
     /**

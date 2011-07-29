@@ -22,6 +22,8 @@ import com.samskivert.depot.expression.SQLExpression;
 
 import com.threerings.presents.annotation.BlockingThread;
 
+import com.threerings.gwt.util.ExpanderResult;
+
 import com.threerings.msoy.person.gwt.FeedMessageType;
 import com.threerings.msoy.person.server.FeedLogic;
 import com.threerings.msoy.server.persist.RepositoryUtil;
@@ -77,21 +79,44 @@ public class FeedRepository extends DepotRepository
     }
 
     /**
-     * Loads feed messages by the specified member up to the specified limit. They are sorted from
+     * Loads feed messages by the specified member up to the specified count. They are sorted from
      * most recently occurring to least.
      */
-    public List<FeedMessageRecord> loadMemberFeed (int memberId, int limit)
+    public ExpanderResult<FeedMessageRecord> loadMemberFeed (int memberId, long beforeTime, int count)
     {
         List<FeedMessageRecord> messages = Lists.newArrayList();
-        messages.addAll(from(FriendFeedMessageRecord.class).
-                        where(FriendFeedMessageRecord.ACTOR_ID, memberId).
-                        descending(FriendFeedMessageRecord.POSTED).limit(limit).select());
-        messages.addAll(from(SelfFeedMessageRecord.class).
-                        where(SelfFeedMessageRecord.TARGET_ID, memberId).
-                        descending(SelfFeedMessageRecord.POSTED).limit(limit).select());
+
+        List<SQLExpression<?>> conditions = Lists.newArrayList();
+        conditions.add(FriendFeedMessageRecord.ACTOR_ID.eq(memberId));
+        if (beforeTime < Long.MAX_VALUE) {
+            conditions.add(FriendFeedMessageRecord.POSTED.lessThan(new Timestamp(beforeTime)));
+        }
+        messages.addAll(from(FriendFeedMessageRecord.class)
+            .where(conditions)
+            .descending(FriendFeedMessageRecord.POSTED)
+            .limit(count + 1)
+            .select());
+
+        conditions = Lists.newArrayList();
+        conditions.add(SelfFeedMessageRecord.TARGET_ID.eq(memberId));
+        if (beforeTime < Long.MAX_VALUE) {
+            conditions.add(SelfFeedMessageRecord.POSTED.lessThan(new Timestamp(beforeTime)));
+        }
+        messages.addAll(from(SelfFeedMessageRecord.class)
+            .where(conditions)
+            .descending(SelfFeedMessageRecord.POSTED)
+            .limit(count + 1)
+            .select());
+
         Collections.sort(messages, FeedMessageRecord.BY_POSTED);
-        CollectionUtil.limit(messages, limit);
-        return messages;
+
+        ExpanderResult<FeedMessageRecord> result = new ExpanderResult<FeedMessageRecord>();
+        if (messages.size() > count) {
+            result.hasMore = true;
+            CollectionUtil.limit(messages, count);
+        }
+        result.page = messages;
+        return result;
     }
 
     /**
