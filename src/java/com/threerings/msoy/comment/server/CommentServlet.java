@@ -170,9 +170,9 @@ public class CommentServlet extends MsoyServiceServlet
         }
 
         // convert the record to a runtime record to return to the caller
-        Comment comment = crec.toComment(Collections.<Integer, MemberCard>emptyMap());
-        comment.commentor = mrec.getName();
-        return comment;
+        Map<Integer, MemberCard> map = Maps.newHashMap();
+        map.put(mrec.memberId, _memberRepo.loadMemberCard(mrec.memberId, false));
+        return crec.toComment(map);
     }
 
     // from interface CommentService

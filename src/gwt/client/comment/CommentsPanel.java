@@ -122,7 +122,9 @@ public class CommentsPanel extends ExpanderWidget<Activity>
                 panel.add(new ReplyExpander(comment));
             }
             for (Comment reply : comment.replies) {
-                panel.add(new CommentPanel(this, reply));
+                CommentPanel replyPanel = new CommentPanel(this, reply);
+                _elements.put(reply, replyPanel); // so we can easily remove it later
+                panel.add(replyPanel);
             }
             return panel;
         }
@@ -212,12 +214,25 @@ public class CommentsPanel extends ExpanderWidget<Activity>
         });
     }
 
+    protected Activity findActivity (long posted)
+    {
+        for (Activity activity : _elements.keySet()) {
+            if (posted == activity.startedAt()) {
+                return activity;
+            }
+        }
+        return null;
+    }
+
     protected void postedComment (Comment comment)
     {
-        if (!comment.isReply()) {
-            addElements(new LinkedList<Activity>(Collections.singleton(comment)));
+        if (comment.isReply()) {
+            Panel panel = (Panel) _elements.get(findActivity(comment.replyTo));
+            CommentPanel replyPanel = new CommentPanel(this, comment);
+            _elements.put(comment, replyPanel); // so we can easily remove it later
+            panel.add(replyPanel);
         } else {
-            // TODO(bruno): Add the new comment to the right thread.
+            addElements(new LinkedList<Activity>(Collections.singleton(comment)), false);
         }
     }
 
@@ -235,11 +250,7 @@ public class CommentsPanel extends ExpanderWidget<Activity>
                 _commentsvc.deleteComments(_etype, _entityId, single, new InfoCallback<Integer>() {
                     public void onSuccess (Integer deleted) {
                         if (deleted > 0) {
-                            if (!comment.isReply()) {
-                                removeElement(comment);
-                            } else {
-                                // TODO(bruno): Remove comments from the right thread
-                            }
+                            removeElement(comment);
                             _batchDelete.remove(comment);
                         } else {
                             MsoyUI.error(_cmsgs.commentDeletionNotAllowed());
