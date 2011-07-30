@@ -12,6 +12,7 @@ import com.google.common.primitives.Longs;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.util.ExpanderResult;
@@ -40,7 +41,7 @@ public class CommentsBlurb extends Blurb
     {
         super.init(pdata);
 
-        setHeader(_msgs.commentsTitle());
+        setHeader(_msgs.commentsTitle(), new Image("/images/me/icon_social.png"));
         setContent(_wall = new WallPanel(pdata.name.getId()));
     }
 
