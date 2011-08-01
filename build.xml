@@ -232,7 +232,7 @@
       <dependency groupId="com.threerings" artifactId="whirledlib"
                   version="1.1-SNAPSHOT" type="swc"/>
       <dependency groupId="com.threerings" artifactId="aspirin"
-                  version="1.7-SNAPSHOT" type="swc"/>
+                  version="1.10-SNAPSHOT" type="swc"/>
     </artifact:dependencies>
     <copy todir="${deploy.dir}/lib">
       <fileset refid="aslib.fileset"/>
