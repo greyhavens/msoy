@@ -48,6 +48,7 @@ public class CommentPanel extends MessagePanel
         _displayed = _parent.commentsCanBeRated() ? _parent.shouldDisplay(_comment) : true;
 
         addStyleName("commentPanel");
+        addStyleName(_comment.isReply() ? "Reply" : "Subject");
 
         updateComment();
     }
@@ -199,14 +200,6 @@ public class CommentPanel extends MessagePanel
             setMessage(card, new Date(_comment.posted), _comment.text);
         } else {
             setMessage(card, new Date(_comment.posted), null);
-        }
-
-        // Put an indent on replies
-        if (_comment.isReply()) {
-            addStyleName("Reply");
-            insertCell(0, 0);
-            getFlexCellFormatter().setRowSpan(0, 0, 2);
-            setWidget(0, 0, WidgetUtil.makeShim(45, 0));
         }
     }
 

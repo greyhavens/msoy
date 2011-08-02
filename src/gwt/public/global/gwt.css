@@ -982,6 +982,26 @@ img, embed, applet, object {
   font-size: 11px;
 }
 
+.CommentsPanel .Subject {
+  background: #eee;
+}
+
+.CommentsPanel .Reply {
+  background: #eee;
+  margin-left: 45px;
+}
+
+.CommentsPanel .Thread {
+  background: #eee;
+  margin-bottom: 10px;
+}
+
+.CommentsPanel .Reply {
+  background: #eee;
+  margin-left: 45px;
+  margin-top: 2px;
+}
+
 .commentControls {
   margin: 10px 0;
 }
@@ -1046,6 +1066,7 @@ img, embed, applet, object {
 .messagePanel .Tools {
   padding-top: 5px;
   text-align: right;
+  padding-right: 4px;
 }
 
 .messagePanel .Author {

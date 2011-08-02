@@ -117,6 +117,7 @@ public class CommentsPanel extends ExpanderWidget<Activity>
         if (activity instanceof Comment) {
             Comment comment = (Comment) activity;
             VerticalPanel panel = new VerticalPanel();
+            panel.addStyleName("Thread");
             panel.add(new CommentPanel(this, comment));
             if (comment.hasMoreReplies) {
                 panel.add(new ReplyExpander(comment));

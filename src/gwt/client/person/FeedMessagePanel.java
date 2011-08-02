@@ -55,7 +55,7 @@ public class FeedMessagePanel extends FlowPanel
                         Link.go(page, args);
                     }
                 };
-                int size = MediaDescSize.HALF_THUMBNAIL_SIZE;
+                int size = MediaDescSize.QUARTER_THUMBNAIL_SIZE;
                 if (page == Pages.WORLD && args.get(0, "").startsWith("s")) {
                     // snapshots are unconstrained at a set size; fake a width constraint for
                     // TINY_SIZE.
