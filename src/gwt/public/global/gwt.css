@@ -952,6 +952,7 @@ img, embed, applet, object {
 
 .CommentsPanel .messagePanel {
   padding: 0px;
+  padding-top: 4px;
 }
 
 .CommentsPanel .messagePanel .Photo {
@@ -992,7 +993,6 @@ img, embed, applet, object {
 }
 
 .CommentsPanel .Thread {
-  background: #eee;
   margin-bottom: 10px;
 }
 
@@ -1015,7 +1015,6 @@ img, embed, applet, object {
 }
 
 .CommentsExpand {
-  width: 100%;
   background: #d7edfb;
   margin-top: 5px;
   color: #3382AD;
@@ -1028,15 +1027,14 @@ img, embed, applet, object {
 
 .RepliesExpand {
   font-size: 10px;
-  background: #eee;
   color: #999;
+  width: 200px;
   margin-top: 3px;
   margin-bottom: 3px;
   border-top: 1px dashed #999;
-  width: 200px;
-  padding: 4px;
-  padding-left: 45px;
-  margin-left: 50px;
+  padding-top: 4px;
+  padding-left: 50px;
+  margin-left: 45px;
 }
 
 .commentBeNice {
