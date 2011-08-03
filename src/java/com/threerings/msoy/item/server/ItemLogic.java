@@ -301,7 +301,7 @@ public class ItemLogic
         // check for a duplicate upload
         if (item.getType() != MsoyItemType.AUDIO
                 && item.getType() != MsoyItemType.PHOTO
-                && item.getType() != MSoyItemType.VIDEO) {
+                && item.getType() != MsoyItemType.VIDEO) {
             ItemRecord existingItem = repo.loadConflictingItem(creatorId, item);
             if (existingItem != null) {
                 MemberRecord thief = _memberRepo.loadMember(creatorId);
