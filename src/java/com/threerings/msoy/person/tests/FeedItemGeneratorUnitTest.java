@@ -472,9 +472,9 @@ public class FeedItemGeneratorUnitTest
     {
         public MethodCounter calls = new MethodCounter();
 
-        public String action (FeedMessageType type, String subject, String object, Plural plural) {
+        public String action (FeedMessage message, String subject, String object, Plural plural) {
             calls.count();
-            return simpleToString("action", "subject", subject, "type", type, "object", object,
+            return simpleToString("action", "subject", subject, "type", message.type, "object", object,
                 "plural", plural);
         }
 

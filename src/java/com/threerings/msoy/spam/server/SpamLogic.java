@@ -1003,8 +1003,8 @@ public class SpamLogic
 
         // from Messages
         public String action (
-            FeedMessageType type, String subject, String object, Plural plural) {
-            switch (type) {
+            FeedMessage message, String subject, String object, Plural plural) {
+            switch (message) {
             case GLOBAL_ANNOUNCEMENT:
                 return _pmsgs.get("globalAnnouncement", object);
 
@@ -1050,13 +1050,14 @@ public class SpamLogic
                 return _pmsgs.get("friendUpdatedRoom", subject, object);
 
             case SELF_ROOM_COMMENT:
-                return _pmsgs.get("selfRoomComment", subject, object);
-
             case SELF_ITEM_COMMENT:
-                return _pmsgs.get("selfItemComment", subject, object);
-
             case SELF_GAME_COMMENT:
-                return _pmsgs.get("selfGameComment", subject, object);
+                return _pmsgs.get(message.isCommentReply() ? "selfCommentReply" : "selfComment",
+                    subject, object);
+
+            case SELF_PROFILE_COMMENT:
+                return _pmsgs.get(message.isCommentReply() ? "selfCommentReply" : "selfComment",
+                    subject, _pmsgs.wall(object));
 
             case SELF_FORUM_REPLY:
                 switch (plural) {
@@ -1100,7 +1101,7 @@ public class SpamLogic
                     _pmsgs.get("friendSubscribed", subject);
             }
 
-            return subject + " " + type + " " + object + " (plural: " + plural + ").";
+            return subject + " " + message.type + " " + object + " (plural: " + plural + ").";
         }
 
         // from Messages
