@@ -166,15 +166,21 @@ public class FeedMessageAggregator
 
         case SELF_ROOM_COMMENT:
             // one or more people commented on your room; scene id is the key
-            return MessageKey.id(message, 0);
+            // Use the reply field too
+            return MessageKey.dataHash(message, 0, 3);
 
         case SELF_ITEM_COMMENT:
             // one or more people commented on your shop item; catalog id is the key
-            return MessageKey.id(message, 1);
+            // Use the reply field too
+            return MessageKey.dataHash(message, 1, 4);
 
         case SELF_GAME_COMMENT:
             // one or more people commented on your game; game id is the key
-            return MessageKey.id(message, 0);
+            // Use the reply field too
+            return MessageKey.dataHash(message, 0, 3);
+
+        case SELF_PROFILE_COMMENT:
+            return MessageKey.dataHash(message, 0, 2);
 
         case SELF_FORUM_REPLY:
             // one or more replies to a forum post; thread id is the key
@@ -199,8 +205,12 @@ public class FeedMessageAggregator
 
         public static MessageKey dataHash (FeedMessage msg, int dataIdx1, int dataIdx2)
         {
-            int key = msg.data[dataIdx1].concat(msg.data[dataIdx2]).hashCode();
-            return new MessageKey(msg.type, key);
+            if (dataIdx2 < msg.data.length) {
+                int key = msg.data[dataIdx1].concat(msg.data[dataIdx2]).hashCode();
+                return new MessageKey(msg.type, key);
+            } else {
+                return id(msg, dataIdx1);
+            }
         }
 
         public static MessageKey explicit (FeedMessage msg, int key)

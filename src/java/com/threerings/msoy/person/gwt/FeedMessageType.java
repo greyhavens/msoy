@@ -41,6 +41,7 @@ public enum FeedMessageType
     SELF_ITEM_COMMENT(301, Category.COMMENTS),
     SELF_FORUM_REPLY(302, Category.FORUMS),
     SELF_GAME_COMMENT(303, Category.COMMENTS),
+    SELF_PROFILE_COMMENT(304, Category.COMMENTS),
 
     UNUSED(999, null);
 

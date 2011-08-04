@@ -112,6 +112,11 @@ public class CommentServlet extends MsoyServiceServlet
         int ownerId = 0;
         String entityName = null;
 
+        // resolve who posted the original comment, for use in feed messages
+        CommentRecord subject = (replyTo != 0) ?
+            _commentRepo.loadComment(etype.toByte(), eid, replyTo) : null;
+        boolean notifyReply = (subject != null && subject.memberId != mrec.memberId);
+
         // if this is a comment on a user room, post a self feed message
         if (etype.forRoom()) {
             SceneRecord scene = _sceneRepo.loadScene(eid);
@@ -122,10 +127,20 @@ public class CommentServlet extends MsoyServiceServlet
                 ownerId = scene.ownerId;
                 entityName = scene.name;
             }
+            if (notifyReply) {
+                _feedLogic.publishSelfMessage(
+                    subject.memberId,  mrec.memberId, FeedMessageType.SELF_ROOM_COMMENT,
+                    scene.sceneId, scene.name, scene.getSnapshotThumb(), true);
+            }
 
         } else if (etype.forProfileWall()) {
             ownerId = eid;
-            // TODO(bruno): Post a feed message here too
+            if (notifyReply) {
+                MemberRecord wallOwner = _memberRepo.loadMember(ownerId);
+                _feedLogic.publishSelfMessage(
+                    subject.memberId, mrec.memberId, FeedMessageType.SELF_PROFILE_COMMENT,
+                    ownerId, wallOwner.name, true);
+            }
 
         // comment on an item
         } else  if (etype.isItemType()) {
@@ -143,6 +158,13 @@ public class CommentServlet extends MsoyServiceServlet
                             ownerId, mrec.memberId, FeedMessageType.SELF_ITEM_COMMENT,
                             item.getType().toByte(), listing.catalogId, item.name,
                             item.getThumbMediaDesc());
+
+                        if (notifyReply) {
+                            _feedLogic.publishSelfMessage(
+                                subject.memberId, mrec.memberId, FeedMessageType.SELF_ITEM_COMMENT,
+                                item.getType().toByte(), listing.catalogId, item.name,
+                                item.getThumbMediaDesc(), true);
+                        }
                     }
                 }
 
@@ -161,6 +183,12 @@ public class CommentServlet extends MsoyServiceServlet
                 entityName = game.name;
                 _feedLogic.publishSelfMessage(ownerId, mrec.memberId,
                     FeedMessageType.SELF_GAME_COMMENT, eid, game.name, game.getThumbMedia());
+
+                if (notifyReply) {
+                    _feedLogic.publishSelfMessage(subject.memberId, mrec.memberId,
+                        FeedMessageType.SELF_GAME_COMMENT, eid, game.name, game.getThumbMedia(),
+                        true);
+                }
             }
         }
 
@@ -168,6 +196,7 @@ public class CommentServlet extends MsoyServiceServlet
         if (ownerId > 0 && ownerId != mrec.memberId) {
             _notifyMan.notifyEntityCommented(ownerId, etype, eid, entityName);
         }
+        // TODO(bruno): Send a flash notification for replies as well
 
         // convert the record to a runtime record to return to the caller
         Map<Integer, MemberCard> map = Maps.newHashMap();

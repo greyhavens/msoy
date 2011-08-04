@@ -44,4 +44,22 @@ public class FeedMessage
     {
         return posted;
     }
+
+    public boolean isCommentReply ()
+    {
+        int idx = -1;
+        switch (type) {
+            case SELF_ROOM_COMMENT:
+            case SELF_GAME_COMMENT:
+                idx = 3;
+                break;
+            case SELF_ITEM_COMMENT:
+                idx = 4;
+                break;
+            case SELF_PROFILE_COMMENT:
+                idx = 2;
+                break;
+        }
+        return (idx >= 0 && idx < data.length && Boolean.parseBoolean(data[idx]));
+    }
 }

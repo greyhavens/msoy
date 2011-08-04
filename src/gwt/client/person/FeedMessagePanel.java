@@ -124,8 +124,8 @@ public class FeedMessagePanel extends FlowPanel
             }
 
             public String action (
-                FeedMessageType type, String subject, String object, Plural plural) {
-                switch (type) {
+                FeedMessage message, String subject, String object, Plural plural) {
+                switch (message.type) {
                 case GLOBAL_ANNOUNCEMENT:
                     return _pmsgs.globalAnnouncement(object);
 
@@ -186,13 +186,16 @@ public class FeedMessagePanel extends FlowPanel
                     return _pmsgs.friendUpdatedRoom(subject, object);
 
                 case SELF_ROOM_COMMENT:
-                    return _pmsgs.selfRoomComment(subject, object);
-
                 case SELF_ITEM_COMMENT:
-                    return _pmsgs.selfItemComment(subject, object);
-
                 case SELF_GAME_COMMENT:
-                    return _pmsgs.selfGameComment(subject, object);
+                    return message.isCommentReply() ?
+                        _pmsgs.selfCommentReply(subject, object) :
+                        _pmsgs.selfComment(subject, object);
+
+                case SELF_PROFILE_COMMENT:
+                    return message.isCommentReply() ?
+                        _pmsgs.selfCommentReply(subject, _pmsgs.wall(object)) :
+                        _pmsgs.selfComment(subject, _pmsgs.wall(object));
 
                 case SELF_FORUM_REPLY:
                     switch (plural) {
@@ -211,7 +214,8 @@ public class FeedMessagePanel extends FlowPanel
                     }
 
                 default:
-                    return subject + " " + type + " " + object + " (plural: " + plural + ").";
+                    return subject + " " + message.type + " " + object +
+                        " (plural: " + plural + ").";
                 }
             }
 
