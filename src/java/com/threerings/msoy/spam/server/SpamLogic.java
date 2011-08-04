@@ -1004,7 +1004,7 @@ public class SpamLogic
         // from Messages
         public String action (
             FeedMessage message, String subject, String object, Plural plural) {
-            switch (message) {
+            switch (message.type) {
             case GLOBAL_ANNOUNCEMENT:
                 return _pmsgs.get("globalAnnouncement", object);
 
@@ -1057,7 +1057,7 @@ public class SpamLogic
 
             case SELF_PROFILE_COMMENT:
                 return _pmsgs.get(message.isCommentReply() ? "selfCommentReply" : "selfComment",
-                    subject, _pmsgs.wall(object));
+                    subject, _pmsgs.get("wall", object));
 
             case SELF_FORUM_REPLY:
                 switch (plural) {
