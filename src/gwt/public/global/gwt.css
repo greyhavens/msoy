@@ -984,22 +984,17 @@ img, embed, applet, object {
 }
 
 .CommentsPanel .Subject {
-  background: #eee;
+  background: #f0f0f0;
 }
 
 .CommentsPanel .Reply {
-  background: #eee;
+  background: #f0f0f0;
   margin-left: 45px;
+  margin-top: 2px;
 }
 
 .CommentsPanel .Thread {
   margin-bottom: 10px;
-}
-
-.CommentsPanel .Reply {
-  background: #eee;
-  margin-left: 45px;
-  margin-top: 2px;
 }
 
 .commentControls {
