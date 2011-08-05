@@ -254,6 +254,7 @@ public class FeedItemGenerator
         case FRIEND_PLAYED_GAME:
         case FRIEND_LISTED_ITEM:
         case SELF_FORUM_REPLY:
+        case SELF_POKE:
             String text = action(
                 message, subject, makeStringList(list, ListMode.OBJECT), Plural.OBJECT);
             addMedia(media, text);
@@ -292,6 +293,7 @@ public class FeedItemGenerator
         case SELF_ITEM_COMMENT:
         case SELF_GAME_COMMENT:
         case SELF_FORUM_REPLY:
+        case SELF_POKE:
             addMedia(media, text);
             break;
 
@@ -382,6 +384,9 @@ public class FeedItemGenerator
             } else if (message.type == FeedMessageType.SELF_PROFILE_COMMENT) {
                 return _builder.createLink(message.data[1], Pages.PEOPLE,
                     Args.compose(message.data[0]));
+
+            } else if (message.type == FeedMessageType.SELF_POKE) {
+                return profileString(message.data[1], message.data[0]);
             }
             break;
 
@@ -454,6 +459,8 @@ public class FeedItemGenerator
                 return buildMedia(message, 2, Pages.GAMES, "d", message.data[0], "c");
             } else if (message.type == FeedMessageType.SELF_PROFILE_COMMENT) {
                 return buildMedia(message, -1, Pages.PEOPLE, message.data[0]);
+            } else if (message.type == FeedMessageType.SELF_POKE) {
+                return buildMedia(message, 2, Pages.PEOPLE, message.data[0]);
             }
         }
         return null;

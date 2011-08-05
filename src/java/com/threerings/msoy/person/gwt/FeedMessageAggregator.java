@@ -182,6 +182,9 @@ public class FeedMessageAggregator
         case SELF_PROFILE_COMMENT:
             return MessageKey.dataHash(message, 0, 2);
 
+        case SELF_POKE:
+            return MessageKey.id(message, 1);
+
         case SELF_FORUM_REPLY:
             // one or more replies to a forum post; thread id is the key
             return MessageKey.id(message, 0);

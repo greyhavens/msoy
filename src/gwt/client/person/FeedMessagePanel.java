@@ -202,6 +202,9 @@ public class FeedMessagePanel extends FlowPanel
                         _pmsgs.selfCommentReply(subject, possessive, object) :
                         _pmsgs.selfComment(subject, object);
 
+                case SELF_POKE:
+                    return _pmsgs.selfPoke(subject, object);
+
                 case SELF_FORUM_REPLY:
                     switch (plural) {
                     default:

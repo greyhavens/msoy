@@ -18,12 +18,12 @@ public interface CommentServiceAsync
     /**
      * The async version of {@link CommentService#loadComments}.
      */
-    void loadComments (CommentType entityType, int entityId, long before, int count, AsyncCallback<ExpanderResult<Activity>> callback);
+    void loadComments (CommentType entityType, int entityId, long beforeTime, int count, AsyncCallback<ExpanderResult<Activity>> callback);
 
     /**
      * The async version of {@link CommentService#loadReplies}.
      */
-    void loadReplies (CommentType entityType, int entityId, long replyTo, long before, int count, AsyncCallback<ExpanderResult<Comment>> callback);
+    void loadReplies (CommentType entityType, int entityId, long replyTo, long beforeTime, int count, AsyncCallback<ExpanderResult<Comment>> callback);
 
     /**
      * The async version of {@link CommentService#postComment}.

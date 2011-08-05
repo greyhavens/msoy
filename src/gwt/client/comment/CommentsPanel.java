@@ -77,23 +77,27 @@ public class CommentsPanel extends ExpanderWidget<Activity>
 
         // if we're a validated member, display a button for posting a comment
         if (CShell.isRegistered()) {
-            _post = new Button(_cmsgs.postComment(), new ClickHandler() {
-                public void onClick (ClickEvent event) {
-                    showPostPopup();
-                }
-            });
-            _commentControls.add(_post);
-
-            if (commentsCanBeBatchDeleted()) {
-                _commentControls.add(WidgetUtil.makeShim(7, 1));
-                Button batchButton = new Button("Delete Checked");
-                _batchDelete = new DeleteClickCallback(
-                    batchButton, "Are you sure you want to delete these comments?");
-                _commentControls.add(batchButton);
-            }
-
+            addControls();
             _commentControls.addStyleName("commentControls");
             insert(_commentControls, 0);
+        }
+    }
+
+    protected void addControls ()
+    {
+        _post = new Button(_cmsgs.postComment(), new ClickHandler() {
+            public void onClick (ClickEvent event) {
+                showPostPopup();
+            }
+        });
+        _commentControls.add(_post);
+
+        if (commentsCanBeBatchDeleted()) {
+            _commentControls.add(WidgetUtil.makeShim(7, 1));
+            Button batchButton = new Button("Delete Checked");
+            _batchDelete = new DeleteClickCallback(
+                batchButton, "Are you sure you want to delete these comments?");
+            _commentControls.add(batchButton);
         }
     }
 
@@ -139,13 +143,13 @@ public class CommentsPanel extends ExpanderWidget<Activity>
     }
 
     @Override
-    public void addElements (List<Activity> activities)
+    public void addElements (List<Activity> activities, boolean append)
     {
         remove(_loadingMessage);
         for (Activity activity : activities) {
             _earliest = Math.min(_earliest, activity.startedAt());
         }
-        super.addElements(activities);
+        super.addElements(activities, append);
     }
 
     // TODO(bruno): Handle an empty wall
@@ -233,7 +237,7 @@ public class CommentsPanel extends ExpanderWidget<Activity>
             _elements.put(comment, replyPanel); // so we can easily remove it later
             panel.add(replyPanel);
         } else {
-            addElements(new LinkedList<Activity>(Collections.singleton(comment)), false);
+            addElements(Collections.singletonList((Activity) comment), false);
         }
     }
 
@@ -247,7 +251,7 @@ public class CommentsPanel extends ExpanderWidget<Activity>
     {
         return new Command() {
             public void execute () {
-                List<Long> single = new LinkedList<Long>(Collections.singleton(comment.posted));
+                List<Long> single = Collections.singletonList(comment.posted);
                 _commentsvc.deleteComments(_etype, _entityId, single, new InfoCallback<Integer>() {
                     public void onSuccess (Integer deleted) {
                         if (deleted > 0) {

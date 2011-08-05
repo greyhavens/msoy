@@ -134,8 +134,22 @@ public class FeedRepository extends DepotRepository
     /**
      * Use {@link FeedLogic#publishSelfMessage}.
      */
-    public void publishSelfMessage (int targetId, int actorId, FeedMessageType type, String data)
+    public boolean publishSelfMessage (
+        int targetId, int actorId, FeedMessageType type, String data, boolean throttle)
     {
+        if (throttle && type.getThrottleCount() > 0) {
+            Timestamp threshold = new Timestamp(
+                System.currentTimeMillis() - type.getThrottlePeriod());
+            int count = from(SelfFeedMessageRecord.class).where(
+                SelfFeedMessageRecord.TARGET_ID.eq(targetId),
+                SelfFeedMessageRecord.ACTOR_ID.eq(actorId),
+                SelfFeedMessageRecord.TYPE.eq(type.getCode()),
+                SelfFeedMessageRecord.POSTED.greaterThan(threshold)).selectCount();
+            if (count >= type.getThrottleCount()) {
+                return false;
+            }
+        }
+
         SelfFeedMessageRecord message = new SelfFeedMessageRecord();
         message.targetId = targetId;
         message.actorId = actorId;
@@ -143,6 +157,7 @@ public class FeedRepository extends DepotRepository
         message.data = data;
         message.posted = new Timestamp(System.currentTimeMillis());
         insert(message);
+        return true;
     }
 
     /**

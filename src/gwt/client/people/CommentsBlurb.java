@@ -4,18 +4,24 @@
 package client.people;
 
 import java.util.List;
+import java.util.LinkedList;
 import java.util.Collections;
 import java.util.Comparator;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.ImmutableList;
 import com.google.common.primitives.Longs;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.util.ExpanderResult;
+import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.orth.data.MediaDescSize;
 
@@ -30,6 +36,7 @@ import client.comment.CommentsPanel;
 import client.person.FeedMessagePanel;
 import client.shell.CShell;
 import client.shell.ShellMessages;
+import client.util.ClickCallback;
 import client.util.MsoyPagedServiceDataModel;
 
 /**
@@ -56,6 +63,18 @@ public class CommentsBlurb extends Blurb
         }
 
         @Override
+        protected void addControls ()
+        {
+            super.addControls();
+            if (CShell.getMemberId() != _name.getId()) {
+                _commentControls.add(WidgetUtil.makeShim(7, 1));
+                Button pokeButton = new Button(_msgs.poke());
+                new PokeClickCallback(pokeButton, _msgs.pokeConfirm(_name.toString()));
+                _commentControls.add(pokeButton);
+            }
+        }
+
+        @Override
         protected Widget createElement (Activity activity)
         {
             if (activity instanceof FeedMessage) {
@@ -74,7 +93,7 @@ public class CommentsBlurb extends Blurb
         }
 
         @Override
-        public void addElements (List<Activity> result)
+        public void addElements (List<Activity> result, boolean append)
         {
             result = Lists.newArrayList(result);
 
@@ -95,7 +114,7 @@ public class CommentsBlurb extends Blurb
             }
             aggregate(activities, messages);
 
-            super.addElements(activities);
+            super.addElements(activities, append);
         }
 
         protected void aggregate (List<Activity> activities, List<FeedMessage> messages)
@@ -104,6 +123,28 @@ public class CommentsBlurb extends Blurb
                 activities.addAll(FeedMessageAggregator.aggregate(messages, false));
                 messages.clear();
             }
+        }
+    }
+
+    protected class PokeClickCallback extends ClickCallback<FeedMessage>
+    {
+        protected PokeClickCallback (Button button, String confirmMessage)
+        {
+            super(button, confirmMessage);
+        }
+
+        @Override
+        protected boolean callService ()
+        {
+            _profilesvc.poke(_name.getId(), this);
+            return true;
+        }
+
+        @Override
+        protected boolean gotResult (FeedMessage message)
+        {
+            _wall.addElements(Collections.singletonList((Activity) message), false);
+            return false;
         }
     }
 

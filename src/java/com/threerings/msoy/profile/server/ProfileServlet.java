@@ -73,6 +73,9 @@ import com.threerings.msoy.group.server.persist.MedalRepository;
 import com.threerings.msoy.item.server.ItemLogic;
 import com.threerings.msoy.item.server.persist.FavoritesRepository;
 import com.threerings.msoy.money.server.MoneyLogic;
+import com.threerings.msoy.person.gwt.FeedMessage;
+import com.threerings.msoy.person.gwt.SelfFeedMessage;
+import com.threerings.msoy.person.gwt.FeedMessageType;
 import com.threerings.msoy.person.gwt.Interest;
 import com.threerings.msoy.person.gwt.ProfileCodes;
 import com.threerings.msoy.person.server.FeedLogic;
@@ -422,6 +425,23 @@ public class ProfileServlet extends MsoyServiceServlet
         // TODO: if they're online right now, show that
 
         return profile;
+    }
+
+    public FeedMessage poke (int memberId)
+        throws ServiceException
+    {
+        MemberRecord mrec = requireAuthedUser();
+        MemberRecord target = _memberRepo.loadMember(memberId);
+        MemberCard myCard = _memberRepo.loadMemberCard(mrec.memberId, true);
+
+        _feedLogic.publishSelfMessage(
+            memberId, mrec.memberId, true, FeedMessageType.SELF_POKE,
+            target.memberId, target.name, myCard.photo);
+
+        // Mock up a feed message for the sole purpose of giving the client something to display
+        return new SelfFeedMessage(FeedMessageType.SELF_POKE, myCard.name,
+            new String[] { ""+target.memberId, target.name, myCard.photo.toString() },
+            System.currentTimeMillis());
     }
 
     protected List<GroupCard> resolveGroupsData (MemberRecord reqrec, MemberRecord tgtrec)

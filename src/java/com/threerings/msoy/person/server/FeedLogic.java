@@ -216,12 +216,18 @@ public class FeedLogic
     }
 
     /**
-     * Publishes a self feed message, that will show up on the target's profile. These are
-     * currently not throttled.
+     * Publishes a self feed message, that will show up on the target's profile.
      */
-    public void publishSelfMessage (int targetId, int actorId, FeedMessageType type, Object...args)
+    public boolean publishSelfMessage (int targetId, int actorId,
+        FeedMessageType type, Object...args)
     {
-        _feedRepo.publishSelfMessage(targetId, actorId, type, feedToString(args));
+        return publishSelfMessage(targetId, actorId, false, type, args);
+    }
+
+    public boolean publishSelfMessage (int targetId, int actorId, boolean throttle,
+        FeedMessageType type, Object...args)
+    {
+        return _feedRepo.publishSelfMessage(targetId, actorId, type, feedToString(args), throttle);
     }
 
     /**

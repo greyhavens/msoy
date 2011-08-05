@@ -26,6 +26,7 @@ import com.threerings.msoy.game.gwt.GameRating;
 import com.threerings.msoy.group.gwt.BrandDetail;
 import com.threerings.msoy.group.gwt.GroupCard;
 import com.threerings.msoy.item.gwt.ListingCard;
+import com.threerings.msoy.person.gwt.FeedMessage;
 import com.threerings.msoy.person.gwt.Gallery;
 import com.threerings.msoy.person.gwt.Interest;
 
@@ -157,5 +158,12 @@ public interface ProfileService extends RemoteService
      * address.
      */
     void sendRetentionEmail (int profileMemberId)
+        throws ServiceException;
+
+    /**
+     * Sends a poke to another player.
+     * @return The feed message generated
+     */
+    FeedMessage poke (int memberId)
         throws ServiceException;
 }
