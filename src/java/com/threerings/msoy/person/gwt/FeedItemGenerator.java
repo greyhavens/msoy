@@ -9,6 +9,8 @@ import com.google.common.collect.Lists;
 
 import com.threerings.orth.data.MediaDesc;
 
+import com.threerings.gwt.util.StringUtil;
+
 import com.threerings.msoy.badge.data.all.Badge;
 import com.threerings.msoy.badge.data.all.EarnedBadge;
 import com.threerings.msoy.data.all.CloudfrontMediaDesc;
@@ -161,6 +163,13 @@ public class FeedItemGenerator
         }
     }
 
+    protected String action (FeedMessage message, String subject, String object, Plural plural)
+    {
+        // Capitalize the first letter, mostly to handle the capitalization of "You". This won't
+        // touch user names since they're hyperlinked.
+        return StringUtil.capitalize(_messages.action(message, subject, object, plural));
+    }
+
     /**
      * Adds one friend message to the feed.
      */
@@ -169,7 +178,7 @@ public class FeedItemGenerator
         Media media = buildMedia(message);
         String subject = buildSubject(message);
         String object = buildObject(message);
-        String text = _messages.action(message, subject, object, Plural.NONE);
+        String text = action(message, subject, object, Plural.NONE);
         switch (message.type) {
         case FRIEND_ADDED_FRIEND:
         case FRIEND_UPDATED_ROOM:
@@ -185,7 +194,7 @@ public class FeedItemGenerator
 
         case FRIEND_GAINED_LEVEL:
             _builder.addIcon(_builder.createGainedLevelIcon(
-                _messages.action(message, subject, object, Plural.NONE)));
+                action(message, subject, object, Plural.NONE)));
             break;
         }
     }
@@ -199,14 +208,14 @@ public class FeedItemGenerator
         String object = buildObject(message);
         switch (message.type) {
         case GROUP_ANNOUNCEMENT:
-            addMedia(media, _messages.action(
+            addMedia(media, action(
                 message, message.data[0], object, Plural.NONE));
             break;
 
         case GROUP_UPDATED_ROOM:
             String groupLink = _builder.createLink(message.group.toString(), Pages.GROUPS,
                 Args.compose("f", message.group.getGroupId()));
-            addMedia(media, _messages.action(
+            addMedia(media, action(
                 message, groupLink, object, Plural.NONE));
             break;
 
@@ -223,7 +232,7 @@ public class FeedItemGenerator
         Media media = buildMedia(message);
         String subject = buildSubject(message);
         String object = buildObject(message);
-        String text = _messages.action(message, subject, object, Plural.NONE);
+        String text = action(message, subject, object, Plural.NONE);
         addMedia(media, text);
     }
 
@@ -245,14 +254,14 @@ public class FeedItemGenerator
         case FRIEND_PLAYED_GAME:
         case FRIEND_LISTED_ITEM:
         case SELF_FORUM_REPLY:
-            String text = _messages.action(
+            String text = action(
                 message, subject, makeStringList(list, ListMode.OBJECT), Plural.OBJECT);
             addMedia(media, text);
             break;
 
         case FRIEND_GAINED_LEVEL:
             // display all levels gained by all friends together
-            _builder.addIcon(_builder.createGainedLevelIcon(_messages.action(
+            _builder.addIcon(_builder.createGainedLevelIcon(action(
                 message, makeStringList(list, ListMode.LEVELGAIN), "", Plural.SUBJECT)));
             break;
 
@@ -272,7 +281,7 @@ public class FeedItemGenerator
         String friendLinks = makeStringList(list, ListMode.SUBJECT);
         String object = buildObject(message);
         Media media = buildMedia(message);
-        String text = _messages.action(message, friendLinks, object, Plural.SUBJECT);
+        String text = action(message, friendLinks, object, Plural.SUBJECT);
         switch (message.type) {
         case FRIEND_ADDED_FRIEND:
         case FRIEND_WON_TROPHY:
@@ -298,7 +307,7 @@ public class FeedItemGenerator
     protected void addGlobalMessage (FeedMessage message)
     {
         String object = buildObject(message);
-        String text = _messages.action(message, "", object, Plural.NONE);
+        String text = action(message, "", object, Plural.NONE);
         switch (message.type) {
         case GLOBAL_ANNOUNCEMENT:
             _builder.addText(text);

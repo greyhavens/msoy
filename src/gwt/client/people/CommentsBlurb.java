@@ -28,6 +28,7 @@ import com.threerings.msoy.web.gwt.Activity;
 
 import client.comment.CommentsPanel;
 import client.person.FeedMessagePanel;
+import client.shell.CShell;
 import client.shell.ShellMessages;
 import client.util.MsoyPagedServiceDataModel;
 
@@ -59,7 +60,9 @@ public class CommentsBlurb extends Blurb
         {
             if (activity instanceof FeedMessage) {
                 FeedMessage message = (FeedMessage) activity;
-                return new FeedMessagePanel(message, false);
+                String possessive = (_name.getId() == CShell.getMemberId()) ?
+                    _msgs.your() : _msgs.their(_name.toString());
+                return new FeedMessagePanel(message, true, possessive);
             }
             return super.createElement(activity);
         }

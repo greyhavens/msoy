@@ -21,6 +21,7 @@ import client.ui.MsoyUI;
 /**
  * Display a News Feed of activities a specific player has been up to, for their profile.
  */
+@Deprecated
 public class PlayerFeedPanel extends FlowPanel
 {
     public PlayerFeedPanel (String emptyMessage, List<FeedMessage> feed)

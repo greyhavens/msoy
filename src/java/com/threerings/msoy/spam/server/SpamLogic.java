@@ -1052,12 +1052,14 @@ public class SpamLogic
             case SELF_ROOM_COMMENT:
             case SELF_ITEM_COMMENT:
             case SELF_GAME_COMMENT:
-                return _pmsgs.get(message.isCommentReply() ? "selfCommentReply" : "selfComment",
-                    subject, object);
-
             case SELF_PROFILE_COMMENT:
-                return _pmsgs.get(message.isCommentReply() ? "selfCommentReply" : "selfComment",
-                    subject, _pmsgs.get("wall", object));
+                if (message.type == FeedMessageType.SELF_PROFILE_COMMENT) {
+                    object = _pmsgs.get("wall", object);
+                }
+                return message.isCommentReply() ?
+                    // We can assume "your" here, others won't be viewing your self feed messages
+                    _pmsgs.get("selfCommentReply", subject, _pmsgs.get("your"), object) :
+                    _pmsgs.get("selfComment", subject, object);
 
             case SELF_FORUM_REPLY:
                 switch (plural) {

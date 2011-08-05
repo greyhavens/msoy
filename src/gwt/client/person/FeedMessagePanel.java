@@ -43,10 +43,16 @@ import client.util.MediaUtil;
  */
 public class FeedMessagePanel extends FlowPanel
 {
+    public FeedMessagePanel (FeedMessage message, boolean usePronouns)
+    {
+        this(message, usePronouns, _pmsgs.their());
+    }
+
     /**
      * @param usePronouns If true, say e.g. "You earned the trophy" if current member is the actor.
+     * @param possessive The "your" possessive to use in some messages.
      */
-    public FeedMessagePanel (FeedMessage message, boolean usePronouns)
+    public FeedMessagePanel (FeedMessage message, boolean usePronouns, final String possessive)
     {
         Builder builder = new Builder() {
             public Media createMedia (MediaDesc md, final Pages page, final Args args) {
@@ -103,7 +109,7 @@ public class FeedMessagePanel extends FlowPanel
             }
 
             public String you () {
-                return "<b>" + _pmsgs.feedProfileMemberYou() + "</b>";
+                return _pmsgs.feedProfileMemberYou();
             }
 
             public String describeItem (String typeName, String itemName) {
@@ -188,14 +194,13 @@ public class FeedMessagePanel extends FlowPanel
                 case SELF_ROOM_COMMENT:
                 case SELF_ITEM_COMMENT:
                 case SELF_GAME_COMMENT:
-                    return message.isCommentReply() ?
-                        _pmsgs.selfCommentReply(subject, object) :
-                        _pmsgs.selfComment(subject, object);
-
                 case SELF_PROFILE_COMMENT:
+                    if (message.type == FeedMessageType.SELF_PROFILE_COMMENT) {
+                        object = _pmsgs.wall(object);
+                    }
                     return message.isCommentReply() ?
-                        _pmsgs.selfCommentReply(subject, _pmsgs.wall(object)) :
-                        _pmsgs.selfComment(subject, _pmsgs.wall(object));
+                        _pmsgs.selfCommentReply(subject, possessive, object) :
+                        _pmsgs.selfComment(subject, object);
 
                 case SELF_FORUM_REPLY:
                     switch (plural) {
