@@ -292,6 +292,7 @@ public class FeedItemGenerator
         case SELF_ROOM_COMMENT:
         case SELF_ITEM_COMMENT:
         case SELF_GAME_COMMENT:
+        case SELF_PROFILE_COMMENT:
         case SELF_FORUM_REPLY:
         case SELF_POKE:
             addMedia(media, text);
