@@ -1392,6 +1392,14 @@ public abstract class ItemRepository<T extends ItemRecord>
     }
 
     /**
+     * Returns the column used to check for duplicate uploads.
+     */
+    protected ColumnExp<byte[]> getPrimaryMediaColumn ()
+    {
+        return getItemColumn(ItemRecord.FURNI_MEDIA_HASH);
+    }
+
+    /**
      * Returns true if this item's content already exists from a different player.
      */
     public ItemRecord loadConflictingItem (int creatorId, Item item)
@@ -1399,7 +1407,7 @@ public abstract class ItemRepository<T extends ItemRecord>
         byte[] hash = HashMediaDesc.unmakeHash(item.getPrimaryMedia());
         return load(getItemClass(),
             new Where(Ops.and(
-                getItemColumn(ItemRecord.FURNI_MEDIA_HASH).eq(Exps.value(hash)),
+                getPrimaryMediaColumn().eq(Exps.value(hash)),
                 getItemColumn(ItemRecord.CREATOR_ID).notEq(creatorId))));
     }
 

@@ -136,4 +136,10 @@ public class AvatarRepository extends ItemRepository<AvatarRecord>
     {
         return new AvatarTagHistoryRecord();
     }
+
+    @Override
+    protected ColumnExp<byte[]> getPrimaryMediaColumn ()
+    {
+        return getItemColumn(AvatarRecord.AVATAR_MEDIA_HASH);
+    }
 }
