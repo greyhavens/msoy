@@ -23,7 +23,7 @@ public interface CommentServiceAsync
     /**
      * The async version of {@link CommentService#loadReplies}.
      */
-    void loadReplies (CommentType entityType, int entityId, long replyTo, long beforeTime, int count, AsyncCallback<ExpanderResult<Comment>> callback);
+    void loadReplies (CommentType entityType, int entityId, long replyTo, long beforeTime, int count, AsyncCallback<ExpanderResult<Activity>> callback);
 
     /**
      * The async version of {@link CommentService#postComment}.

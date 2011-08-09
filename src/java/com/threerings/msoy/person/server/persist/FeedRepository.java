@@ -43,46 +43,43 @@ public class FeedRepository extends DepotRepository
 
     /**
      * Loads all applicable personal feed messages for the specified member.
-     *
-     * @param cutoffDays the number of days in the past before which not to load messages.
      */
     public void loadPersonalFeed (int memberId, List<FeedMessageRecord> messages,
-                                  Collection<Integer> friendIds, int cutoffDays)
+        Collection<Integer> friendIds, long beforeTime, int count)
     {
         SQLExpression<Boolean> self = SelfFeedMessageRecord.TARGET_ID.eq(memberId);
-        loadFeedMessages(messages, SelfFeedMessageRecord.class, self, cutoffDays);
+        loadFeedMessages(messages, SelfFeedMessageRecord.class, self, beforeTime, count);
         if (!friendIds.isEmpty()) {
             SQLExpression<Boolean> actors = null;
             actors = FriendFeedMessageRecord.ACTOR_ID.in(friendIds);
-            loadFeedMessages(messages, FriendFeedMessageRecord.class, actors, cutoffDays);
+            loadFeedMessages(messages, FriendFeedMessageRecord.class, actors, beforeTime, count);
         }
 
         // include actions the member has performed
         SQLExpression<Boolean> actor = FriendFeedMessageRecord.ACTOR_ID.eq(memberId);
-        loadFeedMessages(messages, FriendFeedMessageRecord.class, actor, cutoffDays);
+        loadFeedMessages(messages, FriendFeedMessageRecord.class, actor, beforeTime, count);
     }
 
     /**
      * Loads all global and group feed messages for the given groups.
-     *
-     * @param cutoffDays the number of days in the past before which not to load messages.
      */
     public void loadGroupFeeds (
-        List<FeedMessageRecord> messages, Collection<Integer> groupIds, int cutoffDays)
+        List<FeedMessageRecord> messages, Collection<Integer> groupIds, long beforeTime, int count)
     {
-        loadFeedMessages(messages, GlobalFeedMessageRecord.class, null, cutoffDays);
+        loadFeedMessages(messages, GlobalFeedMessageRecord.class, null, beforeTime, count);
         if (!groupIds.isEmpty()) {
             SQLExpression<Boolean> groups = null;
             groups = GroupFeedMessageRecord.GROUP_ID.in(groupIds);
-            loadFeedMessages(messages, GroupFeedMessageRecord.class, groups, cutoffDays);
+            loadFeedMessages(messages, GroupFeedMessageRecord.class, groups, beforeTime, count);
         }
     }
 
     /**
-     * Loads feed messages by the specified member up to the specified count. They are sorted from
-     * most recently occurring to least.
+     * Loads feed messages by the specified member, using a count as a guideline. May return more
+     * records than you asked for.
      */
-    public ExpanderResult<FeedMessageRecord> loadMemberFeed (int memberId, long beforeTime, int count)
+    public List<FeedMessageRecord> loadMemberFeed (
+        int memberId, long beforeTime, int count)
     {
         List<FeedMessageRecord> messages = Lists.newArrayList();
 
@@ -94,7 +91,7 @@ public class FeedRepository extends DepotRepository
         messages.addAll(from(FriendFeedMessageRecord.class)
             .where(conditions)
             .descending(FriendFeedMessageRecord.POSTED)
-            .limit(count + 1)
+            .limit(count)
             .select());
 
         conditions = Lists.newArrayList();
@@ -105,18 +102,10 @@ public class FeedRepository extends DepotRepository
         messages.addAll(from(SelfFeedMessageRecord.class)
             .where(conditions)
             .descending(SelfFeedMessageRecord.POSTED)
-            .limit(count + 1)
+            .limit(count)
             .select());
 
-        Collections.sort(messages, FeedMessageRecord.BY_POSTED);
-
-        ExpanderResult<FeedMessageRecord> result = new ExpanderResult<FeedMessageRecord>();
-        if (messages.size() > count) {
-            result.hasMore = true;
-            CollectionUtil.limit(messages, count);
-        }
-        result.page = messages;
-        return result;
+        return messages;
     }
 
     /**
@@ -225,16 +214,19 @@ public class FeedRepository extends DepotRepository
     }
 
     protected void loadFeedMessages (List<FeedMessageRecord> messages,
-                                     Class<? extends FeedMessageRecord> pClass,
-                                     SQLExpression<?> main, int cutoffDays)
+        Class<? extends FeedMessageRecord> pClass,
+        SQLExpression<?> condition, long beforeTime, int count)
     {
         List<SQLExpression<?>> whereBits = Lists.newArrayList();
-        if (main != null) {
-            whereBits.add(main);
+        if (condition != null) {
+            whereBits.add(condition);
         }
-        whereBits.add(FeedMessageRecord.POSTED.as(pClass).greaterEq(
-                          RepositoryUtil.getCutoff(cutoffDays)));
-        messages.addAll(from(pClass).where(whereBits).select());
+        whereBits.add(FeedMessageRecord.POSTED.as(pClass).lessThan(new Timestamp(beforeTime)));
+        messages.addAll(from(pClass)
+            .where(whereBits)
+            .descending(FeedMessageRecord.POSTED.as(pClass))
+            .limit(count)
+            .select());
     }
 
     @Override // from DepotRepository

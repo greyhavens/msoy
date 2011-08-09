@@ -12,10 +12,11 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.google.common.primitives.Longs;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.util.ArrayIntSet;
+import com.samskivert.util.CollectionUtil;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.presents.annotation.BlockingThread;
@@ -29,10 +30,12 @@ import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MediaDescFactory;
+import com.threerings.msoy.server.persist.MemberCardRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.game.server.persist.GameInfoRecord;
 import com.threerings.msoy.web.gwt.Activity;
+import com.threerings.msoy.web.gwt.MemberCard;
 
 import com.threerings.msoy.group.server.GroupLogic;
 import com.threerings.msoy.group.server.persist.GroupRecord;
@@ -40,7 +43,9 @@ import com.threerings.msoy.group.server.persist.GroupRepository;
 
 import com.threerings.msoy.comment.data.all.Comment;
 import com.threerings.msoy.comment.data.all.CommentType;
-import com.threerings.msoy.comment.server.CommentLogic;
+import com.threerings.msoy.comment.server.persist.CommentRecord;
+import com.threerings.msoy.comment.server.persist.CommentRepository;
+import com.threerings.msoy.comment.server.persist.CommentRepository.CommentThread;
 
 import com.threerings.msoy.person.gwt.FeedMessage;
 import com.threerings.msoy.person.gwt.FeedMessageType.Category;
@@ -60,111 +65,31 @@ import static com.threerings.msoy.Log.log;
 public class FeedLogic
 {
     /**
-     * Pull up a list of news feed events for the current member, grouped by category. Only
-     * itemsPerCategory items will be returned, or in the case of aggregation only items from the
-     * first itemsPerCategory actors.
-     *
-     * @param onlyCategory If null, load all categories, otherwise only load that one.
+     * Loads all news stream activity for the specified member.
      */
-    public List<FeedCategory> loadFeedCategories (
-        MemberRecord mrec, Set<Integer> friendIds, int itemsPerCategory, Category onlyCategory)
+    public ExpanderResult<Activity> loadStreamActivity (int memberId, long beforeTime, int count)
     {
-        int feedDays = MAX_PERSONAL_FEED_CUTOFF_DAYS;
+        List<FeedMessageRecord> feedRecords = Lists.newArrayList();
+        Set<Integer> friends = _memberRepo.loadFriendIds(memberId);
+        _feedRepo.loadPersonalFeed(memberId, feedRecords, friends, beforeTime, count + 1);
 
-        // if we're loading all categories, adjust the number of days of data we load based on how
-        // many friends this member has
-        if (onlyCategory == null) {
-            feedDays = Math.max(
-                MIN_PERSONAL_FEED_CUTOFF_DAYS, feedDays - friendIds.size() / FRIENDS_PER_DAY);
-        }
+        Set<Integer> groups = _groupLogic.getMemberGroupIds(memberId);
+        _feedRepo.loadGroupFeeds(feedRecords, groups, beforeTime, count + 1);
 
-        // fetch all messages for the member's friends & groups from the past feedDays days
-        Set<Integer> groups = _groupLogic.getMemberGroupIds(mrec.memberId);
-        List<FeedMessageRecord> allRecords = Lists.newArrayList();
-        _feedRepo.loadPersonalFeed(mrec.memberId, allRecords, friendIds, feedDays);
-        // TODO: use different cutoffs for different groups.size()?
-        _feedRepo.loadGroupFeeds(allRecords, groups, GROUP_FEED_CUTOFF_DAYS);
+        // TODO: Load your friends' comment walls too
+        List<CommentThread> threads = _commentRepo.loadComments(
+            CommentType.PROFILE_WALL.toByte(), memberId, beforeTime, count + 1, 2);
 
-        // sort all the records by date
-        Collections.sort(allRecords, FeedMessageRecord.BY_POSTED);
+        List<Activity> activities = Lists.newArrayList(Iterables.concat(threads, feedRecords));
 
-        List<FeedMessageRecord> allChosenRecords = Lists.newArrayList();
-        Map<Category, List<String>> keysByCategory = Maps.newHashMap();
+        ExpanderResult<Activity> result = new ExpanderResult<Activity>();
+        result.hasMore = (activities.size() > count);
 
-        // limit the feed messages to itemsPerCategory per category
-        for (FeedMessageRecord record : allRecords) {
-            FeedMessageType type = FeedMessageType.fromCode(record.type);
-            Category category = type.getCategory();
+        Collections.sort(activities, Activity.MOST_RECENT_FIRST);
+        CollectionUtil.limit(activities, count);
+        result.page = resolveActivities(activities);
 
-            // skip all categories except the one we care about
-            if (onlyCategory != null && category != onlyCategory) {
-                continue;
-            }
-
-            List<String> typeKeys = keysByCategory.get(category);
-            if (typeKeys == null) {
-                typeKeys = Lists.newArrayList();
-                keysByCategory.put(category, typeKeys);
-            }
-
-            String key;
-            if (type == FeedMessageType.FRIEND_GAINED_LEVEL) {
-                // all levelling records are returned, they get aggregated into a single item
-                key = "";
-            } else if (type == FeedMessageType.GROUP_UPDATED_ROOM) {
-                // include room updates from the first itemsPerCategory groups
-                key = "group_" + ((GroupFeedMessageRecord)record).groupId + "";
-            } else if (type == FeedMessageType.SELF_ROOM_COMMENT) {
-                // include comments on the first itemsPerCategory rooms
-                key = "room_" + record.data.split("\t")[0];
-            } else if (type == FeedMessageType.SELF_ITEM_COMMENT) {
-                // include comments on the first itemsPerCategory items
-                key = "item_" + record.data.split("\t")[1];
-            } else if (type == FeedMessageType.SELF_GAME_COMMENT) {
-                // include comments on the first itemsPerCategory games
-                key = "game_" + record.data.split("\t")[1];
-            } else if (record instanceof FriendFeedMessageRecord) {
-                // include friend activities from the first itemsPerCategory friends
-                key = "member_" + ((FriendFeedMessageRecord)record).actorId + "";
-            } else {
-                // include the first itemsPerCategory non-friend messages in each category
-                key = typeKeys.size() + "";
-            }
-
-            if (typeKeys.contains(key)) {
-                allChosenRecords.add(record);
-            } else if (typeKeys.size() < itemsPerCategory) {
-                allChosenRecords.add(record);
-                typeKeys.add(key);
-            }
-        }
-
-        // resolve all the chosen messages at the same time
-        List<FeedMessage> allChosenMessages = resolveFeedMessages(allChosenRecords);
-
-        // group up the resolved messages by category
-        List<FeedCategory> feed = Lists.newArrayList();
-        for (Category category : FeedMessageType.Category.values()) {
-
-            // pull out messages of the right category (combine global & group announcements)
-            List<FeedMessage> typeMessages = Lists.newArrayList();
-            for (FeedMessage message : allChosenMessages) {
-                if (message.type.getCategory() == category) {
-                    typeMessages.add(message);
-                }
-            }
-            allChosenMessages.removeAll(typeMessages);
-
-            if (typeMessages.size() == 0) {
-                continue;
-            }
-
-            FeedCategory feedCategory = new FeedCategory();
-            feedCategory.category = category;
-            feedCategory.messages = typeMessages.toArray(new FeedMessage[typeMessages.size()]);
-            feed.add(feedCategory);
-        }
-        return feed;
+        return result;
     }
 
     /**
@@ -172,16 +97,122 @@ public class FeedLogic
      */
     public ExpanderResult<Activity> loadMemberActivity (int memberId, long beforeTime, int count)
     {
-        ExpanderResult<Comment> comments = _commentLogic.loadComments(
-            CommentType.PROFILE_WALL, memberId, beforeTime, count);
-        ExpanderResult<FeedMessageRecord> messages =
-            _feedRepo.loadMemberFeed(memberId, beforeTime, count);
+        List<FeedMessageRecord> feedRecords =
+            _feedRepo.loadMemberFeed(memberId, beforeTime, count + 1);
+
+        List<CommentThread> threads = _commentRepo.loadComments(
+            CommentType.PROFILE_WALL.toByte(), memberId, beforeTime, count + 1, 2);
+
+        List<Activity> activities = Lists.newArrayList(Iterables.concat(threads, feedRecords));
 
         ExpanderResult<Activity> result = new ExpanderResult<Activity>();
-        result.page = Lists.newArrayList(
-            Iterables.concat(comments.page, resolveFeedMessages(messages.page)));
-        result.hasMore = comments.hasMore || messages.hasMore;
+        result.hasMore = (activities.size() > count);
+
+        Collections.sort(activities, Activity.MOST_RECENT_FIRST);
+        CollectionUtil.limit(activities, count);
+        result.page = resolveActivities(activities);
+
         return result;
+    }
+
+    public ExpanderResult<Activity> loadComments (
+        CommentType etype, int eid, long beforeTime, int count)
+    {
+        List<CommentThread> threads = _commentRepo.loadComments(
+            etype.toByte(), eid, beforeTime, count, 2);
+
+        ExpanderResult<Activity> result = new ExpanderResult<Activity>();
+        result.hasMore = (threads.size() > count);
+
+        Collections.sort(threads, Activity.MOST_RECENT_FIRST);
+        CollectionUtil.limit(threads, count);
+        result.page = resolveActivities(threads);
+
+        return result;
+    }
+
+    public ExpanderResult<Activity> loadReplies (
+        CommentType etype, int eid, long replyTo, long beforeTime, int count)
+    {
+        CommentThread thread = _commentRepo.loadReplies(
+            etype.toByte(), eid, replyTo, beforeTime, count);
+
+        ExpanderResult<Activity> result = new ExpanderResult<Activity>();
+        result.hasMore = thread.hasMoreReplies;
+        result.page = resolveActivities(Collections.singletonList(thread));
+        return result;
+    }
+
+    protected List<Activity> resolveActivities (List<? extends Activity> activities)
+    {
+        Set<Integer> commentMembers = Sets.newHashSet(),
+                     messageMembers = Sets.newHashSet(),
+                     messageGroups = Sets.newHashSet();
+
+        // Run through and collect all the extra info we need to lookup
+        for (Activity activity : activities) {
+            if (activity instanceof CommentThread) {
+                CommentThread thread = (CommentThread) activity;
+                if (thread.comment != null) {
+                    commentMembers.add(thread.comment.memberId);
+                }
+                for (CommentRecord reply : thread.replies) {
+                    commentMembers.add(reply.memberId);
+                }
+
+            } else if (activity instanceof FeedMessageRecord) {
+                FeedMessageRecord record = (FeedMessageRecord) activity;
+                record.addReferences(messageMembers, messageGroups);
+
+            } else {
+                throw new IllegalArgumentException();
+            }
+        }
+
+        // Lookup member cards for comments
+        Map<Integer, MemberCard> commentCards = MemberCardRecord.toMap(
+            _memberRepo.loadMemberCards(commentMembers));
+
+        // Lookup member names for feeds
+        Map<Integer, MemberName> memberNames = _memberRepo.loadMemberNames(messageMembers);
+
+        // Lookup group names for feeds
+        Map<Integer, GroupName> groupNames = Maps.newHashMap();
+        for (GroupRecord group : _groupRepo.loadGroups(messageGroups)) {
+            groupNames.put(group.groupId, group.toGroupName());
+        }
+
+        // Convert the whole thing into a list that can be sent to the client
+        List<Activity> resolved = Lists.newArrayList();
+        for (Activity activity : activities) {
+            if (activity instanceof CommentThread) {
+                CommentThread thread = (CommentThread) activity;
+                if (thread.comment != null) {
+                    Comment comment = thread.comment.toComment(commentCards);
+                    if (comment.commentor == null) {
+                        continue; // this member was deleted, shouldn't usually happen
+                    }
+                    for (CommentRecord reply : thread.replies) {
+                        comment.replies.add(reply.toComment(commentCards));
+                    }
+                    comment.hasMoreReplies = thread.hasMoreReplies;
+                    resolved.add(comment);
+
+                } else {
+                    // If we're going through loadReplies()
+                    for (CommentRecord reply : thread.replies) {
+                        resolved.add(reply.toComment(commentCards));
+                    }
+                }
+
+            } else if (activity instanceof FeedMessageRecord) {
+                FeedMessageRecord record = (FeedMessageRecord) activity;
+                FeedMessage message = record.toMessage(memberNames, groupNames);
+                signAllMedia(message);
+                resolved.add(message);
+            }
+        }
+        return resolved;
     }
 
     /**
@@ -263,38 +294,6 @@ public class FeedLogic
         }
     }
 
-    /**
-     * Resolves the necessary names and converts the supplied list of feed messages to runtime
-     * records.
-     */
-    protected List<FeedMessage> resolveFeedMessages (List<FeedMessageRecord> records)
-    {
-        // find out which member and group names we'll need
-        Set<Integer> memberIds = new ArrayIntSet(), groupIds = Sets.newHashSet();
-        for (FeedMessageRecord record : records) {
-            record.addReferences(memberIds, groupIds);
-        }
-
-        // generate a lookup for the member names
-        Map<Integer, MemberName> memberNames = _memberRepo.loadMemberNames(memberIds);
-
-        // generate a lookup for the group names
-        Map<Integer, GroupName> groupNames = Maps.newHashMap();
-        for (GroupRecord group : _groupRepo.loadGroups(groupIds)) {
-            groupNames.put(group.groupId, group.toGroupName());
-        }
-
-        // create our list of feed messages
-        List<FeedMessage> messages = Lists.newArrayList();
-        for (FeedMessageRecord record : records) {
-            FeedMessage message = record.toMessage(memberNames, groupNames);
-            signAllMedia(message);
-            messages.add(message);
-        }
-
-        return messages;
-    }
-
     /** Prepare message arguments for viewing on the client. */
     protected void signAllMedia (FeedMessage message)
     {
@@ -329,7 +328,7 @@ public class FeedLogic
         return StringUtil.join(args, "\t");
     }
 
-    @Inject protected CommentLogic _commentLogic;
+    @Inject protected CommentRepository _commentRepo;
     @Inject protected FeedRepository _feedRepo;
     @Inject protected GroupLogic _groupLogic;
     @Inject protected GroupRepository _groupRepo;

@@ -18,7 +18,6 @@ import com.threerings.msoy.person.gwt.MeServiceAsync;
 import com.threerings.msoy.person.gwt.MyWhirledData;
 import com.threerings.msoy.web.gwt.Pages;
 
-import client.person.FriendsFeedPanel;
 import client.person.PersonMessages;
 import client.shell.CShell;
 import client.ui.MsoyUI;
@@ -57,7 +56,6 @@ public class MyWhirled extends FlowPanel
         StreamPanel stream = new StreamPanel(data.stream);
         stream.expand();
         FlowPanel feedBox = MsoyUI.createFlowPanel("FeedBox");
-        feedBox.add(new Image("/images/me/me_feed_topcorners.png"));
         feedBox.add(MsoyUI.createLabel(_msgs.newsTitle(), "NewsTitle"));
         if (data.updatedThreads > 0) {
             feedBox.add(MsoyUI.createHTML(_msgs.myDiscussionsQuickSummary(
@@ -68,7 +66,6 @@ public class MyWhirled extends FlowPanel
                                               String.valueOf(data.unreadFriendPosts)), "NewsLink"));
         }
         feedBox.add(stream);
-        feedBox.add(new Image("/images/me/me_feed_bottomcorners.png"));
 
         // promo and news feed on the left, bits and friends on the right
         HorizontalPanel horiz = new HorizontalPanel();

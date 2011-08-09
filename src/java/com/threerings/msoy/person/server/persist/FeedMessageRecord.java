@@ -19,12 +19,14 @@ import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.person.gwt.FeedMessage;
 import com.threerings.msoy.person.gwt.FeedMessageType;
+import com.threerings.msoy.web.gwt.Activity;
 
 /**
  * Contains information on a feed message.
  */
 @Entity
 public abstract class FeedMessageRecord extends PersistentRecord
+    implements Activity
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<FeedMessageRecord> _R = FeedMessageRecord.class;
@@ -33,14 +35,6 @@ public abstract class FeedMessageRecord extends PersistentRecord
     public static final ColumnExp<String> DATA = colexp(_R, "data");
     public static final ColumnExp<Timestamp> POSTED = colexp(_R, "posted");
     // AUTO-GENERATED: FIELDS END
-
-    /** Compares records by {@link #posted} time. Newer first. */
-    public static final Comparator<FeedMessageRecord> BY_POSTED =
-        new Comparator<FeedMessageRecord>() {
-        public int compare (FeedMessageRecord one, FeedMessageRecord two) {
-            return two.posted.compareTo(one.posted);
-        }
-    };
 
     /** A unique identifier for this message. */
     @Id @GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -83,5 +77,10 @@ public abstract class FeedMessageRecord extends PersistentRecord
     protected long getPosted ()
     {
         return posted.getTime();
+    }
+
+    public long startedAt ()
+    {
+        return getPosted();
     }
 }

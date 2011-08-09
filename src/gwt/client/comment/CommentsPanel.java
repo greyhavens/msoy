@@ -392,7 +392,7 @@ public class CommentsPanel extends ExpanderWidget<Activity>
         protected int _id;
     }
 
-    protected class ReplyExpander extends ExpanderWidget<Comment>
+    protected class ReplyExpander extends ExpanderWidget<Activity>
     {
         public ReplyExpander (Comment comment)
         {
@@ -405,13 +405,14 @@ public class CommentsPanel extends ExpanderWidget<Activity>
             }
         }
 
-        protected Widget createElement (Comment reply)
+        protected Widget createElement (Activity activity)
         {
+            Comment reply = (Comment) activity;
             _earliest = Math.min(_earliest, reply.posted);
             return new CommentPanel(CommentsPanel.this, reply);
         }
 
-        protected void fetchElements (AsyncCallback<ExpanderResult<Comment>> callback)
+        protected void fetchElements (AsyncCallback<ExpanderResult<Activity>> callback)
         {
             _commentsvc.loadReplies(_etype, _entityId, _comment.posted, _earliest, 15, callback);
         }

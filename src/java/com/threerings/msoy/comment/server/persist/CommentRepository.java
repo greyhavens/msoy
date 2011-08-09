@@ -40,6 +40,7 @@ import com.threerings.presents.annotation.BlockingThread;
 import com.threerings.gwt.util.ExpanderResult;
 
 import com.threerings.msoy.comment.data.all.Comment;
+import com.threerings.msoy.web.gwt.Activity;
 
 import static com.threerings.msoy.Log.log;
 
@@ -60,7 +61,7 @@ public class CommentRepository extends DepotRepository
      * @param beforeTime the time offset into the comments to load.
      * @param count the number of comments to load.
      */
-    public ExpanderResult<CommentThread> loadComments (
+    public List<CommentThread> loadComments (
         int entityType, int entityId, long beforeTime, int count, int repliesPerComment)
     {
         List<SQLExpression<?>> conditions = Lists.newArrayList();
@@ -75,17 +76,11 @@ public class CommentRepository extends DepotRepository
         List<CommentRecord> comments = from(CommentRecord._R)
             .where(conditions)
             .descending(CommentRecord.POSTED)
-            .limit(count + 1)
+            .limit(count)
             .select();
 
-        ExpanderResult<CommentThread> result = new ExpanderResult<CommentThread>();
-        if (comments.size() > count) {
-            comments = comments.subList(0, count);
-            result.hasMore = true;
-        }
-
         // Assemble this page's threads
-        Map<Timestamp, CommentThread> threads = Maps.newTreeMap();
+        Map<Timestamp, CommentThread> threads = Maps.newHashMap();
         for (CommentRecord comment : comments) {
             threads.put(comment.posted, new CommentThread(comment));
         }
@@ -120,8 +115,8 @@ public class CommentRepository extends DepotRepository
             }
         }
 
-        result.page = ImmutableList.copyOf(threads.values()).reverse();
-        return result;
+        // Returns unsorted!
+        return Lists.newArrayList(threads.values());
     }
 
     /**
@@ -335,6 +330,7 @@ public class CommentRepository extends DepotRepository
 
     // Just used as a return structure for loadComments()
     public static class CommentThread
+        implements Activity
     {
         public CommentRecord comment;
         public Set<CommentRecord> replies = Sets.newTreeSet();
@@ -343,6 +339,11 @@ public class CommentRepository extends DepotRepository
         public CommentThread (CommentRecord comment)
         {
             this.comment = comment;
+        }
+
+        public long startedAt ()
+        {
+            return comment.posted.getTime();
         }
     }
 

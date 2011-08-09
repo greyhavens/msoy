@@ -527,8 +527,7 @@ public class SpamLogic
 
         // load up friends and feed categories
         Set<Integer> friendIds = _memberRepo.loadFriendIds(mrec.memberId);
-        List<FeedCategory> categories = _feedLogic.loadFeedCategories(
-            mrec, friendIds, ITEMS_PER_CATEGORY, null);
+        List<FeedCategory> categories = Lists.newArrayList(); // FIXME(bruno)
 
         // count up all messages and ones that are personal
         int count = 0;

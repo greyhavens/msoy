@@ -72,13 +72,11 @@ public class CommentServlet extends MsoyServiceServlet
         }
 
         // no authentication required to view comments
-        @SuppressWarnings("unchecked") ExpanderResult<Activity> result =
-            (ExpanderResult) _commentLogic.loadComments(etype, eid, beforeTime, count);
-        return result;
+        return _feedLogic.loadComments(etype, eid, beforeTime, count);
     }
 
     // from interface CommentService
-    public ExpanderResult<Comment> loadReplies (
+    public ExpanderResult<Activity> loadReplies (
         CommentType etype, int eid, long replyTo, long beforeTime, int count)
         throws ServiceException
     {
@@ -87,7 +85,7 @@ public class CommentServlet extends MsoyServiceServlet
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
 
-        return _commentLogic.loadReplies(etype, eid, replyTo, beforeTime, count);
+        return _feedLogic.loadReplies(etype, eid, replyTo, beforeTime, count);
     }
 
     // from interface CommentService
@@ -262,7 +260,6 @@ public class CommentServlet extends MsoyServiceServlet
     }
 
     // our dependencies
-    @Inject protected CommentLogic _commentLogic;
     @Inject protected CommentRepository _commentRepo;
     @Inject protected FeedLogic _feedLogic;
     @Inject protected ItemLogic _itemLogic;

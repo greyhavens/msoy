@@ -27,11 +27,6 @@ public interface MeServiceAsync
     void getMyWhirled (AsyncCallback<MyWhirledData> callback);
 
     /**
-     * The async version of {@link MeService#loadFeedCategory}.
-     */
-    void loadFeedCategory (FeedMessageType.Category category, boolean fullSize, AsyncCallback<MyWhirledData.FeedCategory> callback);
-
-    /**
      * The async version of {@link MeService#loadStream}.
      */
     void loadStream (long beforeTime, int count, AsyncCallback<ExpanderResult<Activity>> callback);

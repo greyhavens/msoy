@@ -48,7 +48,6 @@ import com.threerings.msoy.badge.server.persist.BadgeRepository;
 import com.threerings.msoy.badge.server.persist.EarnedBadgeRecord;
 
 import com.threerings.msoy.person.gwt.MeService;
-import com.threerings.msoy.person.gwt.MyWhirledData.FeedCategory;
 import com.threerings.msoy.person.gwt.FeedMessageType;
 import com.threerings.msoy.person.gwt.MyWhirledData;
 import com.threerings.msoy.person.gwt.PassportData;
@@ -138,24 +137,13 @@ public class MeServlet extends MsoyServiceServlet
             _profiler.swap("stream");
         }
 
-        data.stream = _feedLogic.loadMemberActivity(mrec.memberId, System.currentTimeMillis(), 10);
+        data.stream = _feedLogic.loadStreamActivity(mrec.memberId, System.currentTimeMillis(), 10);
 
         if (PROFILING_ENABLED) {
             _profiler.exit(null);
         }
 
         return data;
-    }
-
-    // from interface MeService
-    public FeedCategory loadFeedCategory (FeedMessageType.Category category, boolean fullSize)
-        throws ServiceException
-    {
-        MemberRecord mrec = requireAuthedUser();
-        int itemsPerCategory = fullSize ? FeedCategory.FULL_COUNT : FeedCategory.DEFAULT_COUNT;
-        List<FeedCategory> categories = _feedLogic.loadFeedCategories(
-            mrec, _memberRepo.loadFriendIds(mrec.memberId), itemsPerCategory, category);
-        return (categories.size() > 0) ? categories.get(0) : null;
     }
 
     // from interface MeService
@@ -168,7 +156,7 @@ public class MeServlet extends MsoyServiceServlet
         }
 
         MemberRecord mrec = requireAuthedUser();
-        return _feedLogic.loadMemberActivity(mrec.memberId, beforeTime, count);
+        return _feedLogic.loadStreamActivity(mrec.memberId, beforeTime, count);
     }
 
     // from interface MeService

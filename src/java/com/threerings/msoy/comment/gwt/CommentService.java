@@ -44,7 +44,7 @@ public interface CommentService extends RemoteService
     /**
      * Load a page of replies that occur after a timestamp.
      */
-    ExpanderResult<Comment> loadReplies (
+    ExpanderResult<Activity> loadReplies (
         CommentType entityType, int entityId, long replyTo, long beforeTime, int count)
         throws ServiceException;
 
