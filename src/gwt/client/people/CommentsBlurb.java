@@ -6,11 +6,9 @@ package client.people;
 import java.util.List;
 import java.util.LinkedList;
 import java.util.Collections;
-import java.util.Comparator;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.ImmutableList;
-import com.google.common.primitives.Longs;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -33,6 +31,7 @@ import com.threerings.msoy.profile.gwt.ProfileService;
 import com.threerings.msoy.web.gwt.Activity;
 
 import client.comment.CommentsPanel;
+import client.person.FeedUtil;
 import client.person.FeedMessagePanel;
 import client.shell.CShell;
 import client.shell.ShellMessages;
@@ -51,6 +50,7 @@ public class CommentsBlurb extends Blurb
 
         setHeader(_msgs.commentsTitle(), new Image("/images/me/icon_social.png"));
         setContent(_wall = new WallPanel(pdata.name.getId()));
+        _wall.expand();
     }
 
     protected class WallPanel extends CommentsPanel
@@ -58,8 +58,6 @@ public class CommentsBlurb extends Blurb
         public WallPanel (int memberId) {
             super(CommentType.PROFILE_WALL, memberId, true);
             addStyleName("Wall");
-            removeStyleName("dottedGrid");
-            setVisible(true); // trigger immediate loading of our model
         }
 
         @Override
@@ -95,34 +93,9 @@ public class CommentsBlurb extends Blurb
         @Override
         public void addElements (List<Activity> result, boolean append)
         {
-            result = Lists.newArrayList(result);
-
-            Collections.sort(result, MOST_RECENT_FIRST);
-
-            List<Activity> activities = Lists.newArrayList();
-            List<FeedMessage> messages = Lists.newArrayList();
-
-            // Aggregate continuous sections of feed messages
-            for (Activity activity : result) {
-                if (activity instanceof FeedMessage) {
-                    messages.add((FeedMessage) activity);
-                    _earliest = Math.min(_earliest, activity.startedAt());
-                } else {
-                    aggregate(activities, messages);
-                    activities.add(activity);
-                }
-            }
-            aggregate(activities, messages);
-
-            super.addElements(activities, append);
-        }
-
-        protected void aggregate (List<Activity> activities, List<FeedMessage> messages)
-        {
-            if (!messages.isEmpty()) {
-                activities.addAll(FeedMessageAggregator.aggregate(messages, false));
-                messages.clear();
-            }
+            List<Activity> aggregated = Lists.newArrayList();
+            _earliest = FeedUtil.aggregate(result, aggregated);
+            super.addElements(aggregated, append);
         }
     }
 
@@ -147,12 +120,6 @@ public class CommentsBlurb extends Blurb
             return false;
         }
     }
-
-    protected static final Comparator<Activity> MOST_RECENT_FIRST = new Comparator<Activity>() {
-        public int compare (Activity a1, Activity a2) {
-            return Longs.compare(a2.startedAt(), a1.startedAt());
-        }
-    };
 
     protected WallPanel _wall;
 

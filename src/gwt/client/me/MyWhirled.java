@@ -54,8 +54,8 @@ public class MyWhirled extends FlowPanel
         rbits.add(makeQuickLink("Share Whirled", Pages.PEOPLE, "invites", "links"));
         rbits.add(makeQuickLink("Contests", Pages.ME, "contests"));
 
-        String empty = data.friendCount > 0 ? _pmsgs.emptyFeed() : _pmsgs.emptyFeedNoFriends();
-        FriendsFeedPanel feed = new FriendsFeedPanel(empty, data.feed);
+        StreamPanel stream = new StreamPanel(data.stream);
+        stream.expand();
         FlowPanel feedBox = MsoyUI.createFlowPanel("FeedBox");
         feedBox.add(new Image("/images/me/me_feed_topcorners.png"));
         feedBox.add(MsoyUI.createLabel(_msgs.newsTitle(), "NewsTitle"));
@@ -67,7 +67,7 @@ public class MyWhirled extends FlowPanel
             feedBox.add(MsoyUI.createHTML(_msgs.myFriendsDiscussionsQuickSummary(
                                               String.valueOf(data.unreadFriendPosts)), "NewsLink"));
         }
-        feedBox.add(feed);
+        feedBox.add(stream);
         feedBox.add(new Image("/images/me/me_feed_bottomcorners.png"));
 
         // promo and news feed on the left, bits and friends on the right

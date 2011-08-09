@@ -152,8 +152,9 @@ public class RoomDetailPanel extends SmartTable
         getFlexCellFormatter().setVerticalAlignment(0, 1, HasAlignment.ALIGN_TOP);
 
         StyledTabPanel tabs = new StyledTabPanel();
-        tabs.add(new CommentsPanel(CommentType.ROOM, detail.info.sceneId, true),
-                 _msgs.tabComments());
+        CommentsPanel comments = new CommentsPanel(CommentType.ROOM, detail.info.sceneId, true);
+        comments.expand();
+        tabs.add(comments, _msgs.tabComments());
         addWidget(tabs, 2);
         tabs.selectTab(0);
     }

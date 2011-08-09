@@ -143,7 +143,9 @@ public class GameDetailPanel extends SmartTable
         // add comments tab
         addTab(GameDetails.COMMENTS, _msgs.tabComments(), new LazyPanel() {
             protected Widget createWidget () {
-                return new CommentsPanel(CommentType.GAME, info.gameId, true);
+                CommentsPanel comments = new CommentsPanel(CommentType.GAME, info.gameId, true);
+                comments.expand();
+                return comments;
             }
         });
 

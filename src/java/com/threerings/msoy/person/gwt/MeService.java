@@ -8,6 +8,7 @@ import java.util.List;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
+import com.threerings.gwt.util.ExpanderResult;
 import com.threerings.web.gwt.ServiceException;
 
 import com.threerings.msoy.badge.data.all.Badge;
@@ -15,6 +16,7 @@ import com.threerings.msoy.badge.data.all.Badge;
 import com.threerings.msoy.person.gwt.MyWhirledData.FeedCategory;
 
 import com.threerings.msoy.data.all.Award.AwardType;
+import com.threerings.msoy.web.gwt.Activity;
 import com.threerings.msoy.web.gwt.Contest;
 
 /**
@@ -40,6 +42,9 @@ public interface MeService extends RemoteService
      * to 50 items from the last week, otherwise 3.
      */
     FeedCategory loadFeedCategory (FeedMessageType.Category category, boolean fullSize)
+        throws ServiceException;
+
+    ExpanderResult<Activity> loadStream (long beforeTime, int count)
         throws ServiceException;
 
     /**

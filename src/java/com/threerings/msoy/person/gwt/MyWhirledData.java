@@ -7,6 +7,9 @@ import java.util.List;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
+import com.threerings.gwt.util.ExpanderResult;
+
+import com.threerings.msoy.web.gwt.Activity;
 import com.threerings.msoy.web.gwt.MemberCard;
 import com.threerings.msoy.web.gwt.Promotion;
 
@@ -53,11 +56,6 @@ public class MyWhirledData
     public List<MemberCard> greeters;
 
     /**
-     * This member's recent feed messages broken up by category.
-     */
-    public List<FeedCategory> feed;
-
-    /**
      * The number of threads in this member's groups with unread posts.
      */
     public int updatedThreads;
@@ -66,4 +64,9 @@ public class MyWhirledData
      * The number of threads with unread posts from this member's friends.
      */
     public int unreadFriendPosts;
+
+    /**
+     * News stream activity.
+     */
+    public ExpanderResult<Activity> stream;
 }

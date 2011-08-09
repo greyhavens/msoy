@@ -64,7 +64,6 @@ public class CommentsPanel extends ExpanderWidget<Activity>
         _expandLabel.addStyleName("CommentsExpand");
 
         addStyleName("CommentsPanel");
-        addStyleName("dottedGrid");
         // setCellAlignment(HasAlignment.ALIGN_LEFT, HasAlignment.ALIGN_MIDDLE);
 
         _rated = rated;
@@ -73,7 +72,6 @@ public class CommentsPanel extends ExpanderWidget<Activity>
 
         _expandLabel.setVisible(false);
         add(_loadingMessage = new Label(_cmsgs.loadingComments()));
-        expand();
 
         // if we're a validated member, display a button for posting a comment
         if (CShell.isRegistered()) {

@@ -1,12 +1,13 @@
 <module>
   <inherits name="person"/>
   <inherits name="survey"/>
+  <inherits name="comment"/>
 
   <source path="com/threerings/msoy/badge/data/all"/>
   <source path="com/threerings/msoy/badge/gwt"/>
   <source path="com/threerings/msoy/money/data/all"/>
   <source path="com/threerings/msoy/money/gwt"/>
-  
+
   <source path="client/me"/>
 
   <public path="public/me"/>

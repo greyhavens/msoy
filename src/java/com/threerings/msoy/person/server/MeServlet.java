@@ -21,6 +21,7 @@ import com.google.inject.Inject;
 
 import com.samskivert.util.CollectionUtil;
 
+import com.threerings.gwt.util.ExpanderResult;
 import com.threerings.web.gwt.ServiceException;
 
 import com.threerings.msoy.fora.server.persist.ForumRepository;
@@ -61,6 +62,7 @@ import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.persist.PromotionRecord;
 import com.threerings.msoy.server.persist.PromotionRepository;
 
+import com.threerings.msoy.web.gwt.Activity;
 import com.threerings.msoy.web.gwt.Contest;
 import com.threerings.msoy.web.gwt.ServiceCodes;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
@@ -104,14 +106,6 @@ public class MeServlet extends MsoyServiceServlet
         }
 
         if (PROFILING_ENABLED) {
-            _profiler.swap("feed");
-        }
-
-        // load their feed
-        data.feed = _feedLogic.loadFeedCategories(
-            mrec, friendIds, FeedCategory.DEFAULT_COUNT, null);
-
-        if (PROFILING_ENABLED) {
             _profiler.swap("greeters");
         }
 
@@ -141,6 +135,12 @@ public class MeServlet extends MsoyServiceServlet
             mrec.memberId, friendIds, _groupLogic.getHiddenGroupIds(mrec.memberId, groupIds));
 
         if (PROFILING_ENABLED) {
+            _profiler.swap("stream");
+        }
+
+        data.stream = _feedLogic.loadMemberActivity(mrec.memberId, System.currentTimeMillis(), 10);
+
+        if (PROFILING_ENABLED) {
             _profiler.exit(null);
         }
 
@@ -156,6 +156,19 @@ public class MeServlet extends MsoyServiceServlet
         List<FeedCategory> categories = _feedLogic.loadFeedCategories(
             mrec, _memberRepo.loadFriendIds(mrec.memberId), itemsPerCategory, category);
         return (categories.size() > 0) ? categories.get(0) : null;
+    }
+
+    // from interface MeService
+    public ExpanderResult<Activity> loadStream (long beforeTime, int count)
+        throws ServiceException
+    {
+        // Sanity check
+        if (count > 100) {
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
+
+        MemberRecord mrec = requireAuthedUser();
+        return _feedLogic.loadMemberActivity(mrec.memberId, beforeTime, count);
     }
 
     // from interface MeService
