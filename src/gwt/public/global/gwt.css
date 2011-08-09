@@ -347,7 +347,7 @@ img, embed, applet, object {
 .tongueBox .THeader .Base a {
   color: white;
 }
-  
+
 .tongueBox .THeader .Base .BaseContents .BaseText {
   padding-left: 10px;
 }
@@ -679,17 +679,22 @@ img, embed, applet, object {
   margin-right: 5px;
 }
 
+/** Override styles in gwt-utils.css */
 .actionLabel, .thingBox .Name {
-  cursor: pointer; /* for modern browsers */
-  cursor: hand; /* for IE5 */
-  text-decoration: underline;
+  cursor: pointer;
+  text-decoration: none !important;
 }
 
+.actionLabel:hover {
+  text-decoration: underline !important;
+}
+
+/* TODO(bruno): Unused? */
 .hoverActionLabel {
-  cursor: pointer; /* for modern browsers */
-  cursor: hand; /* for IE5 */
+  cursor: pointer;
 }
 
+/* TODO(bruno): Unused? */
 .hoverActionLabel:hover {
   text-decoration: underline;
 }

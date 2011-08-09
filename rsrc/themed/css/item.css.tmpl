@@ -109,9 +109,14 @@
   font-size: small;
 }
 
-.itemDetailPanel .LabelLink {
- cursor: pointer;
- text-decoration: underline;
+/* TODO(bruno): Use an actionLabel instead */
+.LabelLink {
+  cursor: pointer;
+  text-decoration: none;
+  color: #216CA3;
+}
+.LabelLink:hover {
+  text-decoration: underline;
 }
 
 .tagDetailPanel {
@@ -124,7 +129,6 @@
 
 .borderedDialog .tagDetailPanel .LabelLink {
   cursor: pointer;
-  text-decoration: underline;
   color: white;
 }
 
@@ -243,11 +247,11 @@
 
 .sideBar .NaviPanel .Cell a {
   color: #FFFFFF;
-  text-decoration: none;
 }
 
 .sideBar .NaviPanel .Cell a:hover {
   color: #E78917;
+  text-decoration: none !important;
 }
 
 .sideBar .NaviPanel .SubCell {
