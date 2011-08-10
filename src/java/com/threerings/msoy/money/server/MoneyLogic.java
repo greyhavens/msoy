@@ -236,8 +236,6 @@ public class MoneyLogic
     public void supportAdjust (int memberId, Currency currency, int delta, MemberName support)
         throws ServiceException
     {
-        Preconditions.checkArgument(delta <= 0, "Only deduction supported.");
-
         UserAction action = UserAction.supportAdjust(memberId, support);
         MoneyTransactionRecord tx;
         if (delta > 0) {

@@ -9,6 +9,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.TextBox;
 
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.gwt.MoneyService;
@@ -17,25 +18,20 @@ import com.threerings.msoy.money.gwt.MoneyServiceAsync;
 import client.shell.CShell;
 import client.shell.DynamicLookup;
 import client.ui.MsoyUI;
-import client.ui.NumberTextBox;
 
 public class DeductPanel extends HorizontalPanel
 {
     public DeductPanel (final int memberId, final Currency currency)
     {
-        final NumberTextBox text = new NumberTextBox(currency == Currency.BLING);
+        final TextBox text = new TextBox();
         add(MsoyUI.createLabel(_msgs.deductTip(_dmsgs.xlate(currency.getKey())), null));
         add(text);
         add(new Button(_msgs.deductButton(), new ClickHandler() {
             public void onClick (ClickEvent event) {
-                // We don't want to allow deducting a *negative* amount, now do we?
-                if (text.getNumber().floatValue() <= 0.0f) {
-                    MsoyUI.error(_msgs.deductMustBePositive());
-                    return;
-                }
-                deduct(memberId, currency, (currency == Currency.BLING ?
-                    (int)(text.getNumber().floatValue() * 100.0) : // convert to centibling
-                    text.getNumber().intValue()));
+                float value = Float.parseFloat(text.getText());
+                deduct(memberId, currency, (int)(currency == Currency.BLING ?
+                    (value * 100.0) : // convert to centibling
+                    value));
             }
         }));
     }
@@ -47,7 +43,7 @@ public class DeductPanel extends HorizontalPanel
                 MsoyUI.error(CShell.serverError(t));
             }
             public void onSuccess (Void v) {
-                MsoyUI.info(_msgs.deductSuccess(currency.format(amount), 
+                MsoyUI.info(_msgs.deductSuccess(currency.format(amount),
                     _dmsgs.xlate(currency.getKey())));
             }
         });
