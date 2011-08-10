@@ -70,15 +70,14 @@ public class FeedLogic
     public ExpanderResult<Activity> loadStreamActivity (int memberId, long beforeTime, int count)
     {
         List<FeedMessageRecord> feedRecords = Lists.newArrayList();
-        Set<Integer> friends = _memberRepo.loadFriendIds(memberId);
+        List<Integer> friends = _memberRepo.loadActiveFriendIds(memberId);
         _feedRepo.loadPersonalFeed(memberId, feedRecords, friends, beforeTime, count + 1);
 
         Set<Integer> groups = _groupLogic.getMemberGroupIds(memberId);
         _feedRepo.loadGroupFeeds(feedRecords, groups, beforeTime, count + 1);
 
-        // TODO: Load your friends' comment walls too
-        List<CommentThread> threads = _commentRepo.loadComments(
-            CommentType.PROFILE_WALL.toByte(), memberId, beforeTime, count + 1, 2);
+        List<CommentThread> threads = _commentRepo.loadStreamComments(
+            memberId, friends, beforeTime, count + 1, 2);
 
         List<Activity> activities = Lists.newArrayList(Iterables.concat(threads, feedRecords));
 

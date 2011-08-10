@@ -25,6 +25,7 @@ import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.DuplicateKeyException;
 import com.samskivert.depot.Key;
 import com.samskivert.depot.KeySet;
+import com.samskivert.depot.Ops;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.clause.FromOverride;
@@ -40,6 +41,7 @@ import com.threerings.presents.annotation.BlockingThread;
 import com.threerings.gwt.util.ExpanderResult;
 
 import com.threerings.msoy.comment.data.all.Comment;
+import com.threerings.msoy.comment.data.all.CommentType;
 import com.threerings.msoy.web.gwt.Activity;
 
 import static com.threerings.msoy.Log.log;
@@ -64,9 +66,31 @@ public class CommentRepository extends DepotRepository
     public List<CommentThread> loadComments (
         int entityType, int entityId, long beforeTime, int count, int repliesPerComment)
     {
+        return loadComments(entityType, beforeTime, count, repliesPerComment,
+            CommentRecord.ENTITY_ID.eq(entityId));
+    }
+
+    public List<CommentThread> loadStreamComments (
+        int memberId, List<Integer> friends, long beforeTime,
+        int count, int repliesPerComment)
+    {
+        return loadComments(CommentType.PROFILE_WALL.toByte(), beforeTime, count, repliesPerComment,
+            Ops.or(
+                // Load all posts on your own wall
+                CommentRecord.ENTITY_ID.eq(memberId),
+                // Posts made by friends on their own walls
+                Ops.and(CommentRecord.ENTITY_ID.eq(CommentRecord.MEMBER_ID),
+                    CommentRecord.ENTITY_ID.in(friends))
+            ));
+    }
+
+    protected List<CommentThread> loadComments (
+        int entityType, long beforeTime, int count,
+        int repliesPerComment, SQLExpression<Boolean> condition)
+    {
         List<SQLExpression<?>> conditions = Lists.newArrayList();
         conditions.add(CommentRecord.ENTITY_TYPE.eq(entityType));
-        conditions.add(CommentRecord.ENTITY_ID.eq(entityId));
+        conditions.add(condition);
         conditions.add(CommentRecord.REPLY_TO.isNull());
         if (beforeTime < Long.MAX_VALUE) {
             conditions.add(CommentRecord.POSTED.lessThan(new Timestamp(beforeTime)));
@@ -91,8 +115,7 @@ public class CommentRepository extends DepotRepository
             // Load up a block of replies
             List<CommentRecord> replies = from(CommentRecord._R)
                 .where(CommentRecord.ENTITY_TYPE.eq(entityType),
-                    CommentRecord.ENTITY_ID.eq(entityId),
-                    CommentRecord.REPLY_TO.in(postIds))
+                    CommentRecord.REPLY_TO.in(postIds), condition)
                 .limit(count*repliesPerComment)
                 .descending(CommentRecord.POSTED)
                 .select();

@@ -1010,6 +1010,29 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
+     * Loads the friend IDs that have logged in in the last month.
+     */
+    public List<Integer> loadActiveFriendIds (int memberId)
+    {
+        Timestamp cutoff = new Timestamp(System.currentTimeMillis() - 30*24*60*60*1000);
+
+        // load up the ids of this member's friends (ordered from most recently online to least)
+        List<QueryClause> clauses = Lists.newArrayList();
+        clauses.add(new Where(Ops.and(
+            MemberRecord.LAST_SESSION.greaterThan(cutoff),
+            FriendshipRecord.MEMBER_ID.eq(memberId),
+            FriendshipRecord.VALID.eq(true))));
+        clauses.add(FriendshipRecord.FRIEND_ID.join(MemberRecord.MEMBER_ID));
+
+        List<Integer> friendIds = Lists.newArrayList();
+        for (FriendshipRecord frec : findAll(FriendshipRecord.class, clauses)) {
+            friendIds.add(frec.friendId);
+        }
+        return friendIds;
+    }
+
+
+    /**
      * Return a mapping of all friend relationships extending from this member. This means
      * that only FRIENDS and INVITED will be returned.
      */
