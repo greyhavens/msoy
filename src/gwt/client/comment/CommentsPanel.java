@@ -21,6 +21,9 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyPressEvent;
+import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
@@ -110,7 +113,9 @@ public class CommentsPanel extends ExpanderWidget<Activity>
             return;
         }
         _post.setEnabled(false);
-        new PostPanel(replyTo).show();
+        PostPanel panel = new PostPanel(replyTo);
+        panel.show();
+        panel.focus();
     }
 
     protected CommentPanel createCommentPanel (Comment comment)
@@ -338,8 +343,9 @@ public class CommentsPanel extends ExpanderWidget<Activity>
 
     protected class PostPanel extends BorderedDialog
     {
-        public PostPanel (final long replyTo) {
+        public PostPanel (long replyTo) {
             super(false, false, false);
+            _replyTo = replyTo;
             setHeaderTitle(_cmsgs.commentPostTitle());
 
             FlowPanel contents = MsoyUI.createFlowPanel("PostComment");
@@ -356,16 +362,34 @@ public class CommentsPanel extends ExpanderWidget<Activity>
             addButton(new Button(_cmsgs.cancel(), onCancel()));
             addButton(new Button(_cmsgs.send(), new ClickHandler() {
                 public void onClick (ClickEvent event) {
-                    hide(); // hide now, if they fail validation, they get to type everything anew
-
-                    String text = _text.getText();
-                    if (!mayPostComment(text)) {
-                        MsoyUI.error(_cmsgs.commentInvalid());
-                        return;
-                    }
-                    postComment(replyTo, text);
+                    post();
                 }
             }));
+
+            _text.addKeyPressHandler(new KeyPressHandler() {
+                public void onKeyPress (KeyPressEvent event) {
+                    if (event.getNativeEvent().getKeyCode() == KeyCodes.KEY_ENTER) {
+                        post();
+                    }
+                }
+            });
+        }
+
+        protected void post ()
+        {
+            hide(); // hide now, if they fail validation, they get to type everything anew
+
+            String text = _text.getText();
+            if (!mayPostComment(text)) {
+                MsoyUI.error(_cmsgs.commentInvalid());
+                return;
+            }
+            postComment(_replyTo, text);
+        }
+
+        public void focus ()
+        {
+            _text.setFocus(true);
         }
 
         protected void onClosed (boolean autoClosed)
@@ -374,6 +398,7 @@ public class CommentsPanel extends ExpanderWidget<Activity>
         }
 
         protected TextArea _text;
+        protected long _replyTo;
     }
 
     protected class CommentComplainPopup extends ComplainPopup
