@@ -1014,7 +1014,7 @@ public class MemberRepository extends DepotRepository
      */
     public List<Integer> loadActiveFriendIds (int memberId)
     {
-        Timestamp cutoff = new Timestamp(System.currentTimeMillis() - 30*24*60*60*1000);
+        Timestamp cutoff = new Timestamp(System.currentTimeMillis() - 30*24*60*60*1000L);
 
         // load up the ids of this member's friends (ordered from most recently online to least)
         List<QueryClause> clauses = Lists.newArrayList();
