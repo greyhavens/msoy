@@ -973,13 +973,10 @@ img, embed, applet, object {
   color: green;
 }
 
-.CommentsPanel .messagePanel .MsgInfo {
-  padding-top: 1px;
-  font-size: 11px;
-}
-
+.CommentsPanel .messagePanel .MsgInfo,
 .CommentsPanel .messagePanel .Tools {
   padding-top: 1px;
+  font-size: 11px;
 }
 
 .CommentsPanel .Subject {
@@ -1059,6 +1056,7 @@ img, embed, applet, object {
 
 .messagePanel .Tools {
   padding-top: 5px;
+  font-size: 12px;
   text-align: right;
   padding-right: 4px;
 }
