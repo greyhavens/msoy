@@ -46,7 +46,7 @@ public class Interest implements IsSerializable
      */
     public static boolean isLinkedType (int type)
     {
-        return (type != RANDOM);
+        return false;
     }
 
     /** The type of interest, e.g. {@link #ACTIVITIES}. */
