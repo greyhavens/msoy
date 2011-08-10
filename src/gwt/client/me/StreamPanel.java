@@ -11,12 +11,13 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.gwt.util.ExpanderResult;
 
+import com.threerings.msoy.comment.data.all.Comment;
 import com.threerings.msoy.comment.data.all.CommentType;
 import com.threerings.msoy.person.gwt.FeedMessage;
 import com.threerings.msoy.person.gwt.FeedMessageAggregator;
@@ -24,14 +25,15 @@ import com.threerings.msoy.person.gwt.MeService;
 import com.threerings.msoy.person.gwt.MeServiceAsync;
 import com.threerings.msoy.person.gwt.MyWhirledData.FeedCategory;
 import com.threerings.msoy.web.gwt.Activity;
+import com.threerings.msoy.web.gwt.Pages;
 
+import client.comment.CommentPanel;
 import client.comment.CommentsPanel;
 import client.person.FeedUtil;
 import client.person.FeedMessagePanel;
 import client.shell.CShell;
 import client.ui.MsoyUI;
-
-import com.threerings.gwt.util.Console;
+import client.util.Link;
 
 public class StreamPanel extends CommentsPanel
 {
@@ -39,8 +41,6 @@ public class StreamPanel extends CommentsPanel
     {
         super(CommentType.PROFILE_WALL, CShell.getMemberId(), true);
         addStyleName("Stream");
-
-        Console.log("StreamPanel", "stream", stream);
 
         _preloaded = stream;
     }
@@ -58,16 +58,27 @@ public class StreamPanel extends CommentsPanel
     @Override
     protected void fetchElements (AsyncCallback<ExpanderResult<Activity>> callback)
     {
-        Console.log("fetchElements");
-
         if (_preloaded != null) {
             callback.onSuccess(_preloaded);
             _preloaded = null;
         } else {
             _mesvc.loadStream(_earliest, 10, callback);
         }
+    }
 
-        Console.log("okbye");
+    protected CommentPanel createCommentPanel (Comment comment)
+    {
+        FlowPanel authorBits = null;
+        if (comment.commentor.getId() != comment.entityId
+                && comment.entityId == _entityId
+                && !comment.isReply()) {
+            authorBits = new FlowPanel();
+            authorBits.addStyleName("inline");
+            authorBits.add(new InlineLabel(" " + _msgs.on() + " "));
+            authorBits.add(Link.create(_msgs.yourWall(), "Author",
+                Pages.PEOPLE, ""+CShell.creds.name.getId()));
+        }
+        return new CommentPanel(this, comment, authorBits);
     }
 
     @Override
@@ -79,6 +90,7 @@ public class StreamPanel extends CommentsPanel
     }
 
     protected static final MeServiceAsync _mesvc = GWT.create(MeService.class);
+    protected static final MeMessages _msgs = (MeMessages)GWT.create(MeMessages.class);
 
     protected ExpanderResult<Activity> _preloaded;
 }

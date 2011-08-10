@@ -113,6 +113,11 @@ public class CommentsPanel extends ExpanderWidget<Activity>
         new PostPanel(replyTo).show();
     }
 
+    protected CommentPanel createCommentPanel (Comment comment)
+    {
+        return new CommentPanel(this, comment);
+    }
+
     @Override
     protected Widget createElement (Activity activity)
     {
@@ -120,12 +125,12 @@ public class CommentsPanel extends ExpanderWidget<Activity>
             Comment comment = (Comment) activity;
             VerticalPanel panel = new VerticalPanel();
             panel.addStyleName("Thread");
-            panel.add(new CommentPanel(this, comment));
+            panel.add(createCommentPanel(comment));
             if (comment.hasMoreReplies) {
                 panel.add(new ReplyExpander(comment));
             }
             for (Comment reply : comment.replies) {
-                CommentPanel replyPanel = new CommentPanel(this, reply);
+                CommentPanel replyPanel = createCommentPanel(reply);
                 _elements.put(reply, replyPanel); // so we can easily remove it later
                 panel.add(replyPanel);
             }
@@ -181,7 +186,7 @@ public class CommentsPanel extends ExpanderWidget<Activity>
     protected boolean canDelete (Comment comment)
     {
         return CShell.isSupport() || Comment.canDelete(
-            _etype, _entityId, comment.commentor.getId(), CShell.getMemberId());
+            _etype, comment.entityId, comment.commentor.getId(), CShell.getMemberId());
     }
 
     /**
@@ -231,7 +236,7 @@ public class CommentsPanel extends ExpanderWidget<Activity>
     {
         if (comment.isReply()) {
             Panel panel = (Panel) _elements.get(findActivity(comment.replyTo));
-            CommentPanel replyPanel = new CommentPanel(this, comment);
+            CommentPanel replyPanel = createCommentPanel(comment);
             _elements.put(comment, replyPanel); // so we can easily remove it later
             panel.add(replyPanel);
         } else {
@@ -409,7 +414,7 @@ public class CommentsPanel extends ExpanderWidget<Activity>
         {
             Comment reply = (Comment) activity;
             _earliest = Math.min(_earliest, reply.posted);
-            return new CommentPanel(CommentsPanel.this, reply);
+            return createCommentPanel(reply);
         }
 
         protected void fetchElements (AsyncCallback<ExpanderResult<Activity>> callback)

@@ -975,18 +975,11 @@ img, embed, applet, object {
 
 .CommentsPanel .messagePanel .MsgInfo {
   padding-top: 1px;
+  font-size: 11px;
 }
 
 .CommentsPanel .messagePanel .Tools {
   padding-top: 1px;
-}
-
-.CommentsPanel .messagePanel .Author {
-  font-size: 11px;
-}
-
-.CommentsPanel .messagePanel .Posted {
-  font-size: 11px;
 }
 
 .CommentsPanel .Subject {
@@ -1060,6 +1053,8 @@ img, embed, applet, object {
 
 .messagePanel .MsgInfo {
   padding-top: 5px;
+  font-size: 12px;
+  color: #999999;
 }
 
 .messagePanel .Tools {
@@ -1068,9 +1063,8 @@ img, embed, applet, object {
   padding-right: 4px;
 }
 
-.messagePanel .Author {
+.messagePanel .MsgInfo a {
   font-weight: bold;
-  font-size: 12px;
 }
 
 .messagePanel .Icon, .messagePanel .ActionIcon {
@@ -1087,7 +1081,6 @@ img, embed, applet, object {
 }
 
 .messagePanel .Posted {
-  font-size: 12px;
   color: #999999;
 }
 

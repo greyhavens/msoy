@@ -16,6 +16,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.PushButton;
+import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.InlinePanel;
@@ -40,8 +41,14 @@ public class CommentPanel extends MessagePanel
 {
     public CommentPanel (CommentsPanel parent, Comment comment)
     {
+        this(parent, comment, null);
+    }
+
+    public CommentPanel (CommentsPanel parent, Comment comment, Widget authorBits)
+    {
         _parent = parent;
         _comment = comment;
+        _authorBits = authorBits;
 
         _rated = false;
 
@@ -51,6 +58,14 @@ public class CommentPanel extends MessagePanel
         addStyleName(_comment.isReply() ? "Reply" : "Subject");
 
         updateComment();
+    }
+
+    @Override // from MessagePanel
+    protected void addAuthorInfo (FlowPanel info)
+    {
+        if (_authorBits != null) {
+            info.add(_authorBits);
+        }
     }
 
     @Override // from MessagePanel
@@ -227,6 +242,7 @@ public class CommentPanel extends MessagePanel
 
     protected CommentsPanel _parent;
     protected Comment _comment;
+    protected Widget _authorBits;
 
     protected boolean _displayed;
     protected boolean _rated;

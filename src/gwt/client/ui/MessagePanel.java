@@ -68,9 +68,10 @@ public class MessagePanel extends FlexTable
 
         info.add(Link.create(poster.name.toString(), "Author",
                              Pages.PEOPLE, ""+poster.name.getId()));
+        addAuthorInfo(info);
 
         // TODO: switch to "XX days/minutes ago"
-        String when = _cmsgs.postedOn(DateUtil.formatDateTime(whenPosted));
+        String when = DateUtil.formatDateTime(whenPosted);
         InlineLabel posted = new InlineLabel(when, false, true, false);
         posted.addStyleName("Posted");
         info.add(posted);
@@ -160,6 +161,11 @@ public class MessagePanel extends FlexTable
     protected int getThumbnailSize ()
     {
         return MediaDescSize.THUMBNAIL_SIZE;
+    }
+
+    /** Override to add widgets right after the author name. */
+    protected void addAuthorInfo (FlowPanel info)
+    {
     }
 
     /**

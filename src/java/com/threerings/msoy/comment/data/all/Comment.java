@@ -50,6 +50,9 @@ public class Comment
     /** The member's profile photo (or the default). */
     public MediaDesc photo = MemberCard.DEFAULT_PHOTO;
 
+    /** The entity this comment was posted to. */
+    public int entityId;
+
     /** The time at which this comment was posted. */
     public long posted;
 

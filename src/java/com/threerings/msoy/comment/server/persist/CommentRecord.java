@@ -91,6 +91,7 @@ public class CommentRecord extends PersistentRecord
         }
 
         comment.currentRating = currentRating;
+        comment.entityId = entityId;
         comment.totalRatings = totalRatings;
         comment.text = text;
         return comment;
