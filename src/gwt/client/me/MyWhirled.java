@@ -53,18 +53,25 @@ public class MyWhirled extends FlowPanel
         rbits.add(makeQuickLink("Share Whirled", Pages.PEOPLE, "invites", "links"));
         rbits.add(makeQuickLink("Contests", Pages.ME, "contests"));
 
+        FlowPanel feedBox = MsoyUI.createFlowPanel("FeedBox");
+
+        FlowPanel titleBar = new FlowPanel();
+        titleBar.addStyleName("NewsBar");
+        titleBar.add(MsoyUI.createInlineLabel(_msgs.newsTitle(), "NewsTitle"));
+        if (data.updatedThreads > 0) {
+            titleBar.add(Link.create(
+                _msgs.unreadThreads(""+data.updatedThreads), "NewsLink", Pages.GROUPS, "unread"));
+        }
+        feedBox.add(titleBar);
+
+        // TODO: Don't query for unreadFriendPosts
+        // if (data.unreadFriendPosts > 0) {
+        //     feedBox.add(MsoyUI.createHTML(_msgs.myFriendsDiscussionsQuickSummary(
+        //                                       String.valueOf(data.unreadFriendPosts)), "NewsLink"));
+        // }
+
         StreamPanel stream = new StreamPanel(data.stream);
         stream.expand();
-        FlowPanel feedBox = MsoyUI.createFlowPanel("FeedBox");
-        feedBox.add(MsoyUI.createLabel(_msgs.newsTitle(), "NewsTitle"));
-        if (data.updatedThreads > 0) {
-            feedBox.add(MsoyUI.createHTML(_msgs.myDiscussionsQuickSummary(
-                                              String.valueOf(data.updatedThreads)), "NewsLink"));
-        }
-        if (data.unreadFriendPosts > 0) {
-            feedBox.add(MsoyUI.createHTML(_msgs.myFriendsDiscussionsQuickSummary(
-                                              String.valueOf(data.unreadFriendPosts)), "NewsLink"));
-        }
         feedBox.add(stream);
 
         // promo and news feed on the left, bits and friends on the right

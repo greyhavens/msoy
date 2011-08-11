@@ -35,16 +35,23 @@
   width: 182px;
 }
 
-.myWhirled .NewsTitle {
-  color: #216CA3;
+.myWhirled .NewsBar {
   background: url(/images/me/me_news_title_bg.png) repeat-x bottom left;
   margin: 5px;
   padding: 5px;
+  position: relative;
+}
+
+.myWhirled .NewsTitle {
+  color: #216CA3;
   font-size: 20px;
 }
 
 .myWhirled .NewsLink {
-  padding: 0 0 5px 20px;
+  position: absolute; /* hackity hack */
+  right: 0;
+  font-size: 11px;
+  top: 12px;
 }
 
 /* FeedBox also appears on profile; base styles in person.css */

@@ -92,6 +92,18 @@ public class MsoyUI
     }
 
     /**
+     * Creates an inline label with the supplied text and style.
+     */
+    public static InlineLabel createInlineLabel (String text, String styleName)
+    {
+        InlineLabel label = new InlineLabel(text);
+        if (styleName != null) {
+            label.setStyleName(styleName);
+        }
+        return label;
+    }
+
+    /**
      * Creates an HTML label with the supplied text and style. <em>Warning:</em> never pass user
      * supplied text into an HTML label. Cross-site-scripting-o-rama!
      */
