@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.chat.client {
 
-import com.threerings.who.chat.client.ChatGlyph;
 import flash.display.BlendMode;
 import flash.display.DisplayObject;
 import flash.display.Graphics;
