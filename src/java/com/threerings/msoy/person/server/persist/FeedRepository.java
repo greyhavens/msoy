@@ -16,6 +16,7 @@ import com.google.inject.Singleton;
 import com.samskivert.util.CollectionUtil;
 
 import com.samskivert.depot.DepotRepository;
+import com.samskivert.depot.Ops;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.expression.SQLExpression;
@@ -47,12 +48,21 @@ public class FeedRepository extends DepotRepository
     public void loadPersonalFeed (int memberId, List<FeedMessageRecord> messages,
         Collection<Integer> friendIds, long beforeTime, int count)
     {
+        // Load all the player's self feed messages
         SQLExpression<Boolean> self = SelfFeedMessageRecord.TARGET_ID.eq(memberId);
         loadFeedMessages(messages, SelfFeedMessageRecord.class, self, beforeTime, count);
+
         if (!friendIds.isEmpty()) {
-            SQLExpression<Boolean> actors = null;
-            actors = FriendFeedMessageRecord.ACTOR_ID.in(friendIds);
-            loadFeedMessages(messages, FriendFeedMessageRecord.class, actors, beforeTime, count);
+            // Load the friend feed message types we care about
+            SQLExpression<Boolean> condition = Ops.and(
+                FriendFeedMessageRecord.TYPE.in(
+                    FeedMessageType.FRIEND_UPDATED_ROOM.getCode(),
+                    FeedMessageType.FRIEND_LISTED_ITEM.getCode(),
+                    FeedMessageType.FRIEND_CREATED_GROUP.getCode(),
+                    FeedMessageType.FRIEND_JOINED_GROUP.getCode()),
+                FriendFeedMessageRecord.ACTOR_ID.in(friendIds)
+            );
+            loadFeedMessages(messages, FriendFeedMessageRecord.class, condition, beforeTime, count);
         }
 
         // include actions the member has performed
