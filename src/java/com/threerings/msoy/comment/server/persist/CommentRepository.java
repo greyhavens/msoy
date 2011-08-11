@@ -114,8 +114,11 @@ public class CommentRepository extends DepotRepository
         while (!postIds.isEmpty()) {
             // Load up a block of replies
             List<CommentRecord> replies = from(CommentRecord._R)
-                .where(CommentRecord.ENTITY_TYPE.eq(entityType),
-                    CommentRecord.REPLY_TO.in(postIds), condition)
+                .where(
+                    // Missing a check for ENTITY_ID here, but this would make this code a LOT
+                    // hairier and posted timestamp conflicts are incredibly rare
+                    CommentRecord.ENTITY_TYPE.eq(entityType),
+                    CommentRecord.REPLY_TO.in(postIds))
                 .limit(count*repliesPerComment)
                 .descending(CommentRecord.POSTED)
                 .select();
