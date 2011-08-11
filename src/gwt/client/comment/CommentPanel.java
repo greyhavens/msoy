@@ -77,7 +77,7 @@ public class CommentPanel extends MessagePanel
             InlineLabel reply = new InlineLabel(_cmsgs.replyToPost(), false, true, false);
             reply.addClickHandler(new ClickHandler() {
                 public void onClick (ClickEvent event) {
-                    _parent.showPostPopup(_comment.posted);
+                    _parent.showPostPopup(_comment);
                 }
             });
             reply.addStyleName("Posted");

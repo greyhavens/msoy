@@ -104,16 +104,16 @@ public class CommentsPanel extends ExpanderWidget<Activity>
 
     public void showPostPopup ()
     {
-        showPostPopup(0);
+        showPostPopup(null);
     }
 
-    public void showPostPopup (long replyTo)
+    public void showPostPopup (Comment subject)
     {
         if (!MsoyUI.requireValidated()) {
             return;
         }
         _post.setEnabled(false);
-        PostPanel panel = new PostPanel(replyTo);
+        PostPanel panel = new PostPanel(subject);
         panel.show();
         panel.focus();
     }
@@ -218,9 +218,11 @@ public class CommentsPanel extends ExpanderWidget<Activity>
         return CShell.isValidated() && (CShell.getMemberId() != comment.commentor.getId());
     }
 
-    protected void postComment (long replyTo, String text)
+    protected void postComment (Comment subject, String text)
     {
-        _commentsvc.postComment(_etype, _entityId, replyTo, text, new InfoCallback<Comment>() {
+        int entityId = (subject != null) ? subject.entityId : _entityId;
+        long replyTo = (subject != null) ? subject.posted : 0;
+        _commentsvc.postComment(_etype, entityId, replyTo, text, new InfoCallback<Comment>() {
             public void onSuccess (Comment result) {
                 postedComment(result);
             }
@@ -343,9 +345,9 @@ public class CommentsPanel extends ExpanderWidget<Activity>
 
     protected class PostPanel extends BorderedDialog
     {
-        public PostPanel (long replyTo) {
+        public PostPanel (Comment subject) {
             super(false, false, false);
-            _replyTo = replyTo;
+            _subject = subject;
             setHeaderTitle(_cmsgs.commentPostTitle());
 
             FlowPanel contents = MsoyUI.createFlowPanel("PostComment");
@@ -384,7 +386,7 @@ public class CommentsPanel extends ExpanderWidget<Activity>
                 MsoyUI.error(_cmsgs.commentInvalid());
                 return;
             }
-            postComment(_replyTo, text);
+            postComment(_subject, text);
         }
 
         public void focus ()
@@ -398,7 +400,7 @@ public class CommentsPanel extends ExpanderWidget<Activity>
         }
 
         protected TextArea _text;
-        protected long _replyTo;
+        protected Comment _subject;
     }
 
     protected class CommentComplainPopup extends ComplainPopup
