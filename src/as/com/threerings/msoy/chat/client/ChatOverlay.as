@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.chat.client {
 
+import com.threerings.who.chat.client.ChatGlyph;
 import flash.display.BlendMode;
 import flash.display.DisplayObject;
 import flash.display.Graphics;
@@ -760,7 +761,9 @@ public class ChatOverlay
     protected function formatMessage (
         msg :ChatMessage, type :int, forceSpeaker :Boolean, userSpeakFmt :TextFormat) :Array
     {
-        var texts :Array = TextUtil.parseLinks(msg.message, userSpeakFmt, msg is SystemMessage);
+        // Broadcasts may have controller commands embedded in them for now
+        var parseSpecial :Boolean = (msg is SystemMessage) || (type == PAID_BROADCAST);
+        var texts :Array = TextUtil.parseLinks(msg.message, userSpeakFmt, parseSpecial);
 
         var format :String = (type == PAID_BROADCAST) ? "m.paid_broadcast_format" : msg.getFormat();
         if ((format != null) && (forceSpeaker || alwaysUseSpeaker(type))) {
