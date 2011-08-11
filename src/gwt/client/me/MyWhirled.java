@@ -64,12 +64,6 @@ public class MyWhirled extends FlowPanel
         }
         feedBox.add(titleBar);
 
-        // TODO: Don't query for unreadFriendPosts
-        // if (data.unreadFriendPosts > 0) {
-        //     feedBox.add(MsoyUI.createHTML(_msgs.myFriendsDiscussionsQuickSummary(
-        //                                       String.valueOf(data.unreadFriendPosts)), "NewsLink"));
-        // }
-
         StreamPanel stream = new StreamPanel(data.stream);
         stream.expand();
         feedBox.add(stream);

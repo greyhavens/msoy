@@ -61,11 +61,6 @@ public class MyWhirledData
     public int updatedThreads;
 
     /**
-     * The number of threads with unread posts from this member's friends.
-     */
-    public int unreadFriendPosts;
-
-    /**
      * News stream activity.
      */
     public ExpanderResult<Activity> stream;
