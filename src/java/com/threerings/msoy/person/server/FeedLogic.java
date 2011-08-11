@@ -118,7 +118,7 @@ public class FeedLogic
         CommentType etype, int eid, long beforeTime, int count)
     {
         List<CommentThread> threads = _commentRepo.loadComments(
-            etype.toByte(), eid, beforeTime, count, 2);
+            etype.toByte(), eid, beforeTime, count + 1, 2);
 
         ExpanderResult<Activity> result = new ExpanderResult<Activity>();
         result.hasMore = (threads.size() > count);
