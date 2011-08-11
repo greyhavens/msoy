@@ -23,7 +23,7 @@ import com.threerings.msoy.person.gwt.FeedMessage;
 import com.threerings.msoy.person.gwt.FeedMessageAggregator;
 import com.threerings.msoy.person.gwt.MeService;
 import com.threerings.msoy.person.gwt.MeServiceAsync;
-import com.threerings.msoy.person.gwt.MyWhirledData.FeedCategory;
+import com.threerings.msoy.person.gwt.MyWhirledData;
 import com.threerings.msoy.web.gwt.Activity;
 import com.threerings.msoy.web.gwt.Pages;
 
@@ -62,7 +62,7 @@ public class StreamPanel extends CommentsPanel
             callback.onSuccess(_preloaded);
             _preloaded = null;
         } else {
-            _mesvc.loadStream(_earliest, 10, callback);
+            _mesvc.loadStream(_earliest, MyWhirledData.STREAM_PAGE_LENGTH, callback);
         }
     }
 

@@ -19,6 +19,9 @@ import com.threerings.msoy.web.gwt.Promotion;
 public class MyWhirledData
     implements IsSerializable
 {
+    /** How many items to show in a news stream page. */
+    public static int STREAM_PAGE_LENGTH = 40;
+
     /** Hold a list of feed messages of a particular category. */
     public static class FeedCategory
         implements IsSerializable

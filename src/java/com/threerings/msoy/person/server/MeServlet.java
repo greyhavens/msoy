@@ -135,7 +135,8 @@ public class MeServlet extends MsoyServiceServlet
             _profiler.swap("stream");
         }
 
-        data.stream = _feedLogic.loadStreamActivity(mrec.memberId, System.currentTimeMillis(), 10);
+        data.stream = _feedLogic.loadStreamActivity(mrec.memberId, System.currentTimeMillis(),
+            MyWhirledData.STREAM_PAGE_LENGTH);
 
         if (PROFILING_ENABLED) {
             _profiler.exit(null);
