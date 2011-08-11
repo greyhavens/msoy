@@ -87,7 +87,7 @@ public class CommentsBlurb extends Blurb
         @Override
         protected void fetchElements (AsyncCallback<ExpanderResult<Activity>> callback)
         {
-            _profilesvc.loadActivity(_name.getId(), _earliest, 10, callback);
+            _profilesvc.loadActivity(_name.getId(), _earliest, 20, callback);
         }
 
         @Override
