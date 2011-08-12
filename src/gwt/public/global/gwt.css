@@ -959,10 +959,13 @@ img, embed, applet, object {
 .CommentsPanel .messagePanel {
   padding: 0px;
   padding-top: 4px;
+  background: #f0f0f6;
+  border-bottom: 1px solid #e0e0e0;
 }
 
 .CommentsPanel .messagePanel .Photo {
-  padding: 1px;
+  padding: 5px 1px 1px;
+  background: none;
 }
 
 .CommentsPanel .messagePanel .Text {
@@ -980,11 +983,9 @@ img, embed, applet, object {
 }
 
 .CommentsPanel .Subject {
-  background: #f0f0f0;
 }
 
 .CommentsPanel .Reply {
-  background: #f0f0f0;
   margin-left: 45px;
   margin-top: 2px;
 }
