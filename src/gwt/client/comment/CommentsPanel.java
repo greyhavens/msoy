@@ -252,9 +252,9 @@ public class CommentsPanel extends ExpanderWidget<Activity>
     }
 
     protected void rateComment (
-        final Comment comment, final boolean rating, InfoCallback<Integer> callback)
+        Comment comment, boolean rating, InfoCallback<Integer> callback)
     {
-        _commentsvc.rateComment(_etype, _entityId, comment.posted, rating, callback);
+        _commentsvc.rateComment(_etype, comment.entityId, comment.posted, rating, callback);
     }
 
     protected Command deleteComment (final Comment comment)
@@ -262,16 +262,17 @@ public class CommentsPanel extends ExpanderWidget<Activity>
         return new Command() {
             public void execute () {
                 List<Long> single = Collections.singletonList(comment.posted);
-                _commentsvc.deleteComments(_etype, _entityId, single, new InfoCallback<Integer>() {
-                    public void onSuccess (Integer deleted) {
-                        if (deleted > 0) {
-                            removeElement(comment);
-                            _batchDelete.remove(comment);
-                        } else {
-                            MsoyUI.error(_cmsgs.commentDeletionNotAllowed());
+                _commentsvc.deleteComments(_etype, comment.entityId, single,
+                    new InfoCallback<Integer>() {
+                        public void onSuccess (Integer deleted) {
+                            if (deleted > 0) {
+                                removeElement(comment);
+                                _batchDelete.remove(comment);
+                            } else {
+                                MsoyUI.error(_cmsgs.commentDeletionNotAllowed());
+                            }
                         }
-                    }
-                });
+                    });
             }
         };
     }
@@ -288,7 +289,7 @@ public class CommentsPanel extends ExpanderWidget<Activity>
 
     protected void complainComment (Comment comment)
     {
-        new CommentComplainPopup(comment, _etype, _entityId).show();
+        new CommentComplainPopup(comment, _etype).show();
     }
 
     protected static boolean mayPostComment (String comment)
@@ -405,23 +406,22 @@ public class CommentsPanel extends ExpanderWidget<Activity>
 
     protected class CommentComplainPopup extends ComplainPopup
     {
-        public CommentComplainPopup (Comment comment, CommentType type, int id)
+        public CommentComplainPopup (Comment comment, CommentType type)
         {
             super(CommentService.MAX_COMPLAINT_LENGTH);
             _comment = comment;
             _type = type;
-            _id = id;
         }
 
         protected boolean callService ()
         {
-            _commentsvc.complainComment(_description.getText(), _type, _id, _comment.posted, this);
+            _commentsvc.complainComment(_description.getText(), _type,
+                _comment.entityId, _comment.posted, this);
             return true;
         }
 
         protected Comment _comment;
         protected CommentType _type;
-        protected int _id;
     }
 
     protected class ReplyExpander extends ExpanderWidget<Activity>
@@ -446,7 +446,8 @@ public class CommentsPanel extends ExpanderWidget<Activity>
 
         protected void fetchElements (AsyncCallback<ExpanderResult<Activity>> callback)
         {
-            _commentsvc.loadReplies(_etype, _entityId, _comment.posted, _earliest, 15, callback);
+            _commentsvc.loadReplies(_etype, _comment.entityId,
+                _comment.posted, _earliest, 15, callback);
         }
 
         protected Comment _comment;
