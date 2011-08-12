@@ -89,6 +89,12 @@ public class StreamPanel extends CommentsPanel
         super.addElements(aggregated, append);
     }
 
+    @Override
+    protected boolean commentsCanBeBatchDeleted ()
+    {
+        return false;
+    }
+
     protected static final MeServiceAsync _mesvc = GWT.create(MeService.class);
     protected static final MeMessages _msgs = (MeMessages)GWT.create(MeMessages.class);
 
