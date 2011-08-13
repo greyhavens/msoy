@@ -4,6 +4,7 @@
 package com.threerings.msoy.server;
 
 import java.util.Collections;
+import java.util.List;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -200,7 +201,7 @@ public class AccountLogic
         AccountData data = new AccountData(true, email, "", displayName, vinfo, themeId, affiliate);
         data.exSite = exSite;
         data.exAuthUserId = exAuthUserId;
-        // TODO: import more information as long as it is not a privacy violiation
+        // TODO: import more information as long as it is not a privacy violation
         if (profile != null) {
             if (profile.birthday != null) {
                 data.birthdayYMD = ProfileRecord.toDateVec(profile.birthday);
@@ -378,6 +379,13 @@ public class AccountLogic
             // keep on keepin' on
         }
 
+        // Give the new player a few greeter friends to start out
+        List<Integer> greeters = _memberMan.getPPSnapshot().getOnlineGreeters();
+        greeters = greeters.subList(0, Math.min(5, greeters.size()));
+        for (int greeterId : greeters) {
+            _memberLogic.establishFriendship(mrec.memberId, greeterId);
+        }
+
         return mrec;
     }
 
@@ -551,6 +559,7 @@ public class AccountLogic
     @Inject protected AuthenticationDomain _defaultDomain;
     @Inject protected MailSender _mailer;
     @Inject protected MemberLogic _memberLogic;
+    @Inject protected MemberManager _memberMan;
     @Inject protected MemberRepository _memberRepo;
     @Inject protected MoneyLogic _moneyLogic;
     @Inject protected MsoyEventLogger _eventLog;
