@@ -17,6 +17,17 @@
       <arg value="-compiler.optimize"/>
       <arg value="-load-config"/>
       <arg value="${build.root}/${deploy.dir}/msoy-config.xml"/>
+      <arg value="-compiler.library-path+=${build.root}/${deploy.dir}/lib/aspirin.swc"/>
+      <arg value="-compiler.library-path+=${build.root}/${deploy.dir}/lib/naryalib.swc"/>
+      <arg value="-compiler.library-path+=${build.root}/${deploy.dir}/lib/nenyalib.swc"/>
+      <arg value="-compiler.library-path+=${build.root}/${deploy.dir}/lib/vilyalib.swc"/>
+      <arg value="-compiler.library-path+=${build.root}/${deploy.dir}/lib/zip.swc"/>
+      <arg value="-compiler.library-path+=${build.root}/${deploy.dir}/lib/whirledlib.swc"/>
+      <arg value="-compiler.library-path+=${build.root}/${deploy.dir}/lib/orthlib.swc"/>
+      <arg value="-compiler.library-path+=${build.root}/${deploy.dir}/lib/toyboxlib.swc"/>
+      <arg value="-compiler.library-path+=${build.root}/${deploy.dir}/lib/as3corelib.swc"/>
+      <arg value="-compiler.library-path+=${build.root}/${deploy.dir}/lib/flexlib-bin.swc"/>
+      <arg value="-compiler.library-path+=${build.root}/${deploy.dir}/lib/tweener.swc"/>
       <arg value="-compiler.source-path=src/as"/>
       <arg value="-compiler.source-path=rsrc/{locale}/i18n"/>
       <arg value="-compiler.source-path=${build.root}/src/as"/>

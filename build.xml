@@ -1088,7 +1088,7 @@
   <!-- fully cleans out all build results -->
   <target name="distclean" depends="clean,asclean,gclean,postclean">
     <delete dir="${deploy.dir}"/>
-    <!--<ant dir="projects/whirledmap" target="clean" inheritAll="false"/>-->
+    <ant dir="projects/whirledmap" target="clean" inheritAll="false"/>
     <ant dir="projects/mchooser" target="distclean" inheritAll="false"/>
     <ant dir="projects/mcell" target="distclean" inheritAll="false"/>
   </target>

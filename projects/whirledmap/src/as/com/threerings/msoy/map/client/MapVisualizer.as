@@ -4,13 +4,13 @@
 package com.threerings.msoy.map.client {
 
 import com.threerings.display.DisplayUtil;
-import com.threerings.util.NetUtil;
 import com.threerings.flex.FlexUtil;
 import com.threerings.media.ScalingMediaContainer;
 import com.threerings.msoy.client.DeploymentConfig;
-import com.threerings.msoy.data.all.MediaDescSize;
 import com.threerings.msoy.map.data.Whirled;
 import com.threerings.msoy.map.data.WhirledMap;
+import com.threerings.orth.data.MediaDescSize;
+import com.threerings.util.NetUtil;
 
 import com.adobe.serialization.json.JSONDecoder;
 

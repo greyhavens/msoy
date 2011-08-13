@@ -19,7 +19,7 @@ public class WhirledMap
      */
     public static function fromParameters (data :String) :WhirledMap
     {
-        return fromJSON(new JSONDecoder(data).getValue());
+        return fromJSON(new JSONDecoder(data, false).getValue());
     }
 
     /**
@@ -31,6 +31,10 @@ public class WhirledMap
         map.whirleds = new Array();
 
         if (json.themes != null) {
+            if (!(json.themes is Array)) {
+                // If there's only one theme, it won't come in an array
+                json.themes = [ json.themes ];
+            }
             for (var ii :int = 0; ii < json.themes.length; ii ++) {
                 map.whirleds[ii] = Whirled.fromJSON(json.themes[ii]);
             }
