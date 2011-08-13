@@ -32,11 +32,11 @@ public enum BadgeType
 
     // social badges
     FRIENDLY(StampCategory.SOCIAL, StatType.FRIENDS_MADE, new Level[] {
-        new Level(1, 250),
-        new Level(5, 500),
-        new Level(15, 1000),
-        new Level(50, 1500),
-        new Level(150, 2000),
+        new Level(6, 250),
+        new Level(10, 500),
+        new Level(50, 1000),
+        new Level(100, 1500),
+        new Level(200, 2000),
         new Level(500, 10000)
     }),
 
@@ -293,7 +293,7 @@ public enum BadgeType
 
     /** The version number of the set of badges. If you add a new badge, this needs to be
      * incremented. */
-    public static final short VERSION = 1;
+    public static final short VERSION = 2;
 
     /** Function to get the badgeCode out of a Badge */
     public static final Function<Badge, Integer> BADGE_TO_CODE = new Function<Badge, Integer>() {
