@@ -964,7 +964,7 @@ img, embed, applet, object {
 }
 
 .CommentsPanel .messagePanel .Photo {
-  padding: 5px 1px 1px;
+  padding: 1px;
   background: none;
 }
 
