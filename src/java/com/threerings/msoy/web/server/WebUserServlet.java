@@ -492,7 +492,7 @@ public class WebUserServlet extends MsoyServiceServlet
         OOOUser user = _authrep.loadUserByEmail(mrec.accountName, false);
         if (user == null || user.holdsToken(OOOUser.MSOY_BANNED)) {
             throw new BannedException(MsoyAuthCodes.BANNED, null);
-        }        
+        }
 
         // are they temp-banned?
         MemberWarningRecord record = _memberRepo.loadMemberWarningRecord(memberId);

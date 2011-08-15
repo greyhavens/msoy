@@ -6,6 +6,7 @@ package com.threerings.msoy.server;
 import java.util.Collections;
 import java.util.List;
 
+import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -79,7 +80,17 @@ public class AccountLogic
         data.realName = realName;
         data.invite = invite;
         data.birthdayYMD = birthdayYMD;
-        return createAccount(data);
+        MemberRecord mrec = createAccount(data);
+
+        // Give the new player a few greeter friends to start out
+        List<Integer> greeters = Lists.newArrayList(_memberMan.getPPSnapshot().getOnlineGreeters());
+        Collections.shuffle(greeters);
+        greeters = greeters.subList(0, Math.min(5, greeters.size()));
+        for (int greeterId : greeters) {
+            _memberLogic.establishFriendship(mrec.memberId, greeterId);
+        }
+
+        return mrec;
     }
 
     /**
@@ -377,13 +388,6 @@ public class AccountLogic
         } catch (Exception e) {
             log.warning("Failed to create initial profile", "prec", prec, e);
             // keep on keepin' on
-        }
-
-        // Give the new player a few greeter friends to start out
-        List<Integer> greeters = _memberMan.getPPSnapshot().getOnlineGreeters();
-        greeters = greeters.subList(0, Math.min(5, greeters.size()));
-        for (int greeterId : greeters) {
-            _memberLogic.establishFriendship(mrec.memberId, greeterId);
         }
 
         return mrec;
