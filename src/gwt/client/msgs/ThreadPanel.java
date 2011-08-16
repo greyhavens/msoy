@@ -150,8 +150,9 @@ public class ThreadPanel extends TitledListPanel
             if (inReplyTo != null) {
                 // set the quote text if available
                 if (quote) {
-                    _editor.setHTML(_mmsgs.replyQuote(inReplyTo.poster.name.toString(),
-                                                           inReplyTo.message));
+                    _editor.setHTML(_mmsgs.replyQuote(
+                        MsoyUI.escapeHTML(inReplyTo.poster.name.toString()),
+                        inReplyTo.message));
                     DeferredCommand.addCommand(new Command() {
                         public void execute () {
                             _editor.selectAll();
