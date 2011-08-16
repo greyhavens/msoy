@@ -24,13 +24,13 @@ public class Theme extends SimpleStreamableObject
     public static final Theme DEFAULT_THEME = createDefaultTheme();
 
     /** The default color of the nav button text. */
-    public static final int DEFAULT_NAV_COLOR = 0x0d496d;
+    public static final int DEFAULT_NAV_COLOR = 0x216ca3;
 
     /** The default color of the nav selected button text. */
     public static final int DEFAULT_NAV_SEL_COLOR = 0xffffff;
 
     /** The default color of the links in the status panel. */
-    public static final int DEFAULT_STATUS_LINKS_COLOR = 0x0064b8;
+    public static final int DEFAULT_STATUS_LINKS_COLOR = 0x216ca3;
 
     /** The default color of the levels in the status panel. */
     public static final int DEFAULT_STATUS_LEVELS_COLOR = 0x474b4d;
