@@ -24,6 +24,11 @@ public class PokeNotification extends Notification
         _poker = MemberName(ins.readObject());
     }
 
+    override public function getCategory () :int
+    {
+        return PERSONAL;
+    }
+
     override public function getSender () :Name
     {
         return _poker;

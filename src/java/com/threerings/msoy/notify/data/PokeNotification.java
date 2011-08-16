@@ -33,6 +33,12 @@ public class PokeNotification extends Notification
     }
 
     @Override
+    public byte getCategory ()
+    {
+        return PERSONAL;
+    }
+
+    @Override
     public Name getSender ()
     {
         return _poker;
