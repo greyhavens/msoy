@@ -126,7 +126,7 @@ public class AccountLogic
 
         // configure our new email address, display name and password (the first might fail if
         // we're using an in-use email, so we have to do that first)
-        updateAccountName(mrec, email);
+        updateAccountName(mrec, email, false);
         _memberRepo.configureDisplayName(memberId, displayName);
         mrec.name = displayName;
         updatePassword(mrec, password);
@@ -226,7 +226,7 @@ public class AccountLogic
     /**
      * Updates the authentication name (email address) for the supplied member.
      */
-    public void updateAccountName (MemberRecord mrec, String newAccountName)
+    public void updateAccountName (MemberRecord mrec, String newAccountName, boolean sendEmail)
         throws ServiceException
     {
         final String oldAccountName = mrec.accountName;
@@ -264,7 +264,16 @@ public class AccountLogic
 
         // and send a new validation email
         mrec.accountName = newAccountName;
-        sendValidationEmail(mrec);
+
+        if (sendEmail) {
+            sendValidationEmail(mrec);
+        }
+    }
+
+    public void updateAccountName (MemberRecord mrec, String newAccountName)
+        throws ServiceException
+    {
+        updateAccountName(mrec, newAccountName, true);
     }
 
     /**
