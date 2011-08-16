@@ -133,7 +133,7 @@ public class ReviewPanel extends FlowPanel
             nameTime.add(time);
             add(nameTime);
             if (item.comment.length() > 0) {
-                HTML comment = MsoyUI.createRestrictedHTML(item.comment, false);
+                HTML comment = MsoyUI.createRestrictedHTML(item.comment);
                 comment.setStyleName("CommentText");
                 add(comment);
             } else {

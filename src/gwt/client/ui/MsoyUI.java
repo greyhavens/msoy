@@ -239,32 +239,18 @@ public class MsoyUI
      */
     public static HTML createRestrictedHTML (String html)
     {
-        return createRestrictedHTML(html, true);
-    }
-
-    /**
-     * Creates a safe, restricted HTML from user input. URLs are automatically turned into links,
-     * other text is escaped. Optionally, the URLs that get converted may be limited yo only those
-     * in a whirled.com subdomain.
-     */
-    public static HTML createRestrictedHTML (String html, boolean whirledOnly)
-    {
         String id = "[-0-9a-zA-Z]+";
         String idd = "(" + id + "\\.)";
         String idds = "(" + idd + "+)";
-        String http = "http://";
+        String http = "https?://";
         String port = "(:[0-9]+)?";
         String path = "/([^ ]*)";
         html = escapeHTML(html);
-        if (whirledOnly) {
-            html = html.replaceAll("(" + http + idds + "?" + "whirled.com" + path + ")",
-                "<a href=\"$1\">$4</a>");
 
-        } else {
-            // TODO: java.net.IDN
-            html = html.replaceAll("(" + http + "(" + idds + id + port + "(" + path + ")?))",
-                "<a href=\"$1\">$2</a>");
-        }
+        // TODO: java.net.IDN
+        html = html.replaceAll("(" + http + "(" + idds + id + port + "(" + path + ")?))",
+            "<a href=\"$1\">$2</a>");
+
         return createHTML(html, null);
     }
 
