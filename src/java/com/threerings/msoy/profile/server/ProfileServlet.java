@@ -69,6 +69,7 @@ import com.threerings.msoy.group.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.group.server.persist.MedalRecord;
 import com.threerings.msoy.group.server.persist.MedalRepository;
+import com.threerings.msoy.notify.server.MsoyNotificationManager;
 
 import com.threerings.msoy.item.server.ItemLogic;
 import com.threerings.msoy.item.server.persist.FavoritesRepository;
@@ -434,9 +435,13 @@ public class ProfileServlet extends MsoyServiceServlet
         MemberRecord target = _memberRepo.loadMember(memberId);
         MemberCard myCard = _memberRepo.loadMemberCard(mrec.memberId, true);
 
-        _feedLogic.publishSelfMessage(
+        boolean poked = _feedLogic.publishSelfMessage(
             memberId, mrec.memberId, true, FeedMessageType.SELF_POKE,
             target.memberId, target.name, myCard.photo);
+
+        if (poked) {
+            _notifyMan.notifyPoke(memberId, myCard.name);
+        }
 
         // Mock up a feed message for the sole purpose of giving the client something to display
         return new SelfFeedMessage(FeedMessageType.SELF_POKE, myCard.name,
@@ -569,6 +574,7 @@ public class ProfileServlet extends MsoyServiceServlet
     @Inject protected MemberLogic _memberLogic;
     @Inject protected MoneyLogic _moneyLogic;
     @Inject protected MsoyGameRepository _mgameRepo;
+    @Inject protected MsoyNotificationManager _notifyMan;
     @Inject protected ProfileRepository _profileRepo;
     @Inject protected RatingRepository _ratingRepo;
     @Inject protected SpamLogic _spamLogic;

@@ -39,12 +39,13 @@ import com.threerings.msoy.data.MsoyCodes;
 
 import com.threerings.msoy.notify.data.BadgeEarnedNotification;
 import com.threerings.msoy.notify.data.EntityCommentedNotification;
-import com.threerings.msoy.notify.data.LevelUpNotification;
 import com.threerings.msoy.notify.data.FollowInviteNotification;
 import com.threerings.msoy.notify.data.GameInviteNotification;
 import com.threerings.msoy.notify.data.InviteAcceptedNotification;
+import com.threerings.msoy.notify.data.LevelUpNotification;
 import com.threerings.msoy.notify.data.MoneyNotification;
 import com.threerings.msoy.notify.data.PartyInviteNotification;
+import com.threerings.msoy.notify.data.PokeNotification;
 
 public class MsoyNotificationDirector extends NotificationDirector
     implements AttributeChangeListener, SetListener
@@ -58,6 +59,7 @@ public class MsoyNotificationDirector extends NotificationDirector
     LevelUpNotification;
     MoneyNotification;
     PartyInviteNotification;
+    PokeNotification;
 
     public function MsoyNotificationDirector (ctx :MsoyContext)
     {

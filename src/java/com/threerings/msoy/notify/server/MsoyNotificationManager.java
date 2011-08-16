@@ -20,6 +20,7 @@ import com.threerings.msoy.notify.data.EntityCommentedNotification;
 import com.threerings.msoy.notify.data.FollowInviteNotification;
 import com.threerings.msoy.notify.data.InviteAcceptedNotification;
 import com.threerings.msoy.notify.data.GameInviteNotification;
+import com.threerings.msoy.notify.data.PokeNotification;
 
 import com.threerings.msoy.data.all.MemberName;
 
@@ -70,6 +71,14 @@ public class MsoyNotificationManager extends NotificationManager
     public void notifyFollowInvite (MemberObject target, MemberName inviter)
     {
         notify(target, new FollowInviteNotification(inviter));
+    }
+
+    /**
+     * Notifies a player that they've received a poke.
+     */
+    public void notifyPoke (int memberId, MemberName poker)
+    {
+        MemberNodeActions.sendNotification(memberId, new PokeNotification(poker));
     }
 
     @Override protected NotificationLocal getLocal (DObject target)
