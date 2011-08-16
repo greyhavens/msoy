@@ -198,9 +198,14 @@ public class FeedMessagePanel extends FlowPanel
                     if (message.type == FeedMessageType.SELF_PROFILE_COMMENT) {
                         object = _pmsgs.wall(object);
                     }
-                    return message.isCommentReply() ?
-                        _pmsgs.selfCommentReply(subject, possessive, object) :
-                        _pmsgs.selfComment(subject, object);
+                    switch (message.getCommentVerb()) {
+                    case FeedMessage.COMMENT_REPLIED:
+                        return _pmsgs.selfCommentReply(subject, possessive, object);
+                    case FeedMessage.COMMENT_FOLLOWED_UP:
+                        return _pmsgs.selfCommentFollowUp(subject, possessive, object);
+                    default:
+                        return _pmsgs.selfComment(subject, object);
+                    }
 
                 case SELF_POKE:
                     return _pmsgs.selfPoke(subject, object);

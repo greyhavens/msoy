@@ -1055,10 +1055,15 @@ public class SpamLogic
                 if (message.type == FeedMessageType.SELF_PROFILE_COMMENT) {
                     object = _pmsgs.get("wall", object);
                 }
-                return message.isCommentReply() ?
+                switch (message.getCommentVerb()) {
+                case FeedMessage.COMMENT_REPLIED:
                     // We can assume "your" here, others won't be viewing your self feed messages
-                    _pmsgs.get("selfCommentReply", subject, _pmsgs.get("your"), object) :
-                    _pmsgs.get("selfComment", subject, object);
+                    return _pmsgs.get("selfCommentReply", subject, _pmsgs.get("your"), object);
+                case FeedMessage.COMMENT_FOLLOWED_UP:
+                    return _pmsgs.get("selfCommentFollowUp", subject, _pmsgs.get("your"), object);
+                default:
+                    return _pmsgs.get("selfComment", subject, object);
+                }
 
             case SELF_FORUM_REPLY:
                 switch (plural) {

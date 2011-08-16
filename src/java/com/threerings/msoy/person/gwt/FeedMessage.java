@@ -13,6 +13,10 @@ import com.threerings.msoy.web.gwt.Activity;
 public class FeedMessage
     implements IsSerializable, Activity
 {
+    public static final int COMMENT_POSTED = 0;
+    public static final int COMMENT_REPLIED = 1;
+    public static final int COMMENT_FOLLOWED_UP = 2;
+
     /** The type of feed message. */
     public FeedMessageType type;
 
@@ -45,7 +49,7 @@ public class FeedMessage
         return posted;
     }
 
-    public boolean isCommentReply ()
+    public int getCommentVerb ()
     {
         int idx = -1;
         switch (type) {
@@ -60,6 +64,14 @@ public class FeedMessage
                 idx = 2;
                 break;
         }
-        return (idx >= 0 && idx < data.length && Boolean.parseBoolean(data[idx]));
+        if (idx >= 0 && idx < data.length) {
+            String param = data[idx];
+            if (param.equals("true")) {
+                // Old messages used another format
+                return COMMENT_REPLIED;
+            }
+            return Integer.parseInt(param);
+        }
+        return COMMENT_POSTED;
     }
 }

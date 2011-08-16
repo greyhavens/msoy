@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -40,6 +42,7 @@ import com.threerings.msoy.server.StatLogic;
 import com.threerings.msoy.server.persist.MemberCardRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.underwire.server.SupportLogic;
+import com.threerings.msoy.person.gwt.FeedMessage;
 import com.threerings.msoy.person.gwt.FeedMessageType;
 import com.threerings.msoy.person.server.FeedLogic;
 
@@ -102,43 +105,28 @@ public class CommentServlet extends MsoyServiceServlet
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
 
-        // record the comment to the data-ma-base
-        CommentRecord crec = _commentRepo.postComment(
-            etype.toByte(), eid, replyTo, mrec.memberId, text);
-
         // find out the owner id of and the entity name for the entity that was commented on
         int ownerId = 0;
         String entityName = null;
 
-        // resolve who posted the original comment, for use in feed messages
-        CommentRecord subject = (replyTo != 0) ?
-            _commentRepo.loadComment(etype.toByte(), eid, replyTo) : null;
-        boolean notifyReply = (subject != null && subject.memberId != mrec.memberId);
+        FeedMessageType feedType = null;
+        List<Object> feedArgs = null;
 
         // if this is a comment on a user room, post a self feed message
         if (etype.forRoom()) {
             SceneRecord scene = _sceneRepo.loadScene(eid);
             if (scene.ownerType == MsoySceneModel.OWNER_TYPE_MEMBER) {
-                _feedLogic.publishSelfMessage(
-                    scene.ownerId,  mrec.memberId, FeedMessageType.SELF_ROOM_COMMENT,
-                    scene.sceneId, scene.name, scene.getSnapshotThumb());
                 ownerId = scene.ownerId;
                 entityName = scene.name;
             }
-            if (notifyReply) {
-                _feedLogic.publishSelfMessage(
-                    subject.memberId,  mrec.memberId, FeedMessageType.SELF_ROOM_COMMENT,
-                    scene.sceneId, scene.name, scene.getSnapshotThumb(), true);
-            }
+            feedType = FeedMessageType.SELF_ROOM_COMMENT;
+            feedArgs = ImmutableList.of(scene.sceneId, scene.name, scene.getSnapshotThumb());
 
         } else if (etype.forProfileWall()) {
+            MemberRecord wallOwner = _memberRepo.loadMember(eid);
             ownerId = eid;
-            if (notifyReply) {
-                MemberRecord wallOwner = _memberRepo.loadMember(ownerId);
-                _feedLogic.publishSelfMessage(
-                    subject.memberId, mrec.memberId, FeedMessageType.SELF_PROFILE_COMMENT,
-                    ownerId, wallOwner.name, true);
-            }
+            feedType = FeedMessageType.SELF_PROFILE_COMMENT;
+            feedArgs = ImmutableList.of((Object) ownerId, wallOwner.name);
 
         // comment on an item
         } else  if (etype.isItemType()) {
@@ -151,18 +139,10 @@ public class CommentServlet extends MsoyServiceServlet
                         ownerId = item.creatorId;
                         entityName = item.name;
 
-                        // when commenting on a listed item, post a self feed message
-                        _feedLogic.publishSelfMessage(
-                            ownerId, mrec.memberId, FeedMessageType.SELF_ITEM_COMMENT,
+                        feedType = FeedMessageType.SELF_ITEM_COMMENT;
+                        feedArgs = ImmutableList.of(
                             item.getType().toByte(), listing.catalogId, item.name,
                             item.getThumbMediaDesc());
-
-                        if (notifyReply) {
-                            _feedLogic.publishSelfMessage(
-                                subject.memberId, mrec.memberId, FeedMessageType.SELF_ITEM_COMMENT,
-                                item.getType().toByte(), listing.catalogId, item.name,
-                                item.getThumbMediaDesc(), true);
-                        }
                     }
                 }
 
@@ -179,22 +159,51 @@ public class CommentServlet extends MsoyServiceServlet
             if (game != null) {
                 ownerId = game.creatorId;
                 entityName = game.name;
-                _feedLogic.publishSelfMessage(ownerId, mrec.memberId,
-                    FeedMessageType.SELF_GAME_COMMENT, eid, game.name, game.getThumbMedia());
+                feedType = FeedMessageType.SELF_GAME_COMMENT;
+                feedArgs = ImmutableList.of(eid, game.name, game.getThumbMedia());
+            }
+        }
 
-                if (notifyReply) {
-                    _feedLogic.publishSelfMessage(subject.memberId, mrec.memberId,
-                        FeedMessageType.SELF_GAME_COMMENT, eid, game.name, game.getThumbMedia(),
-                        true);
+        // If this is a reply, send feed messages to everyone involved
+        // TODO(bruno): Send flash notifications too
+        if (replyTo != 0) {
+            CommentRecord subject = _commentRepo.loadComment(etype.toByte(), eid, replyTo);
+
+            if (subject.memberId != mrec.memberId) {
+                // Notify the original subject poster of a reply to their comment
+                _feedLogic.publishSelfMessage(subject.memberId, mrec.memberId, feedType,
+                    Iterables.toArray(Iterables.concat(feedArgs,
+                        Collections.singleton(FeedMessage.COMMENT_REPLIED)),
+                        Object.class));
+            }
+
+            Set<CommentRecord> recentReplies = _commentRepo.loadReplies(
+                etype.toByte(), eid, replyTo, System.currentTimeMillis(), 5).replies;
+            Set<Integer> notified = Sets.newHashSet();
+            for (CommentRecord reply : recentReplies) {
+                // Notify other repliers in this thread
+                boolean shouldNotify = reply.memberId != mrec.memberId
+                    && reply.memberId != subject.memberId;
+                if (shouldNotify && notified.add(reply.memberId)) {
+                    _feedLogic.publishSelfMessage(reply.memberId, mrec.memberId, feedType,
+                        Iterables.toArray(Iterables.concat(feedArgs,
+                            Collections.singleton(FeedMessage.COMMENT_FOLLOWED_UP)),
+                            Object.class));
                 }
             }
         }
 
         // notify the item creator that a comment was made
         if (ownerId > 0 && ownerId != mrec.memberId) {
+            if (!etype.forProfileWall()) {
+                _feedLogic.publishSelfMessage(ownerId, mrec.memberId, feedType, feedArgs.toArray());
+            }
             _notifyMan.notifyEntityCommented(ownerId, etype, eid, entityName);
         }
-        // TODO(bruno): Send a flash notification for replies as well
+
+        // record the comment to the data-ma-base
+        CommentRecord crec = _commentRepo.postComment(
+            etype.toByte(), eid, replyTo, mrec.memberId, text);
 
         // convert the record to a runtime record to return to the caller
         Map<Integer, MemberCard> map = Maps.newHashMap();
