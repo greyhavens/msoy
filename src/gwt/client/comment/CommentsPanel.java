@@ -428,7 +428,7 @@ public class CommentsPanel extends ExpanderWidget<Activity>
     {
         public ReplyExpander (Comment comment)
         {
-            super(_cmsgs.seeMoreReplies());
+            super(_cmsgs.seeMoreReplies(), false);
             _expandLabel.addStyleName("RepliesExpand");
 
             _comment = comment;
