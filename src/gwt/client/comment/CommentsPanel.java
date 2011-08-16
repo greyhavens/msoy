@@ -382,12 +382,10 @@ public class CommentsPanel extends ExpanderWidget<Activity>
         {
             hide(); // hide now, if they fail validation, they get to type everything anew
 
-            String text = _text.getText();
-            if (!mayPostComment(text)) {
-                MsoyUI.error(_cmsgs.commentInvalid());
-                return;
+            String text = _text.getText().trim();
+            if (!text.isEmpty()) {
+                postComment(_subject, text);
             }
-            postComment(_subject, text);
         }
 
         public void focus ()
