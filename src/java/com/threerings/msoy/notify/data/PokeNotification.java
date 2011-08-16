@@ -5,6 +5,7 @@ package com.threerings.msoy.notify.data;
 
 import com.threerings.util.ActionScript;
 import com.threerings.util.MessageBundle;
+import com.threerings.util.Name;
 
 import com.threerings.orth.notify.data.Notification;
 
@@ -25,10 +26,16 @@ public class PokeNotification extends Notification
         _poker = poker;
     }
 
-    // from Notification
+    @Override
     public String getAnnouncement ()
     {
         return MessageBundle.tcompose("m.profile_poked", _poker.toString(), _poker.getId());
+    }
+
+    @Override
+    public Name getSender ()
+    {
+        return _poker;
     }
 
     protected MemberName _poker;
