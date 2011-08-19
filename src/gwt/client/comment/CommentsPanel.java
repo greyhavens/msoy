@@ -292,12 +292,6 @@ public class CommentsPanel extends ExpanderWidget<Activity>
         new CommentComplainPopup(comment, _etype).show();
     }
 
-    protected static boolean mayPostComment (String comment)
-    {
-        comment = comment.trim();
-        return comment.length() >= 8;
-    }
-
     protected class DeleteClickCallback extends ClickCallback<Integer>
     {
         protected DeleteClickCallback (HasClickHandlers trigger, String confirmMessage)
