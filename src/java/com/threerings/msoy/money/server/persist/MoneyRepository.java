@@ -296,6 +296,14 @@ public class MoneyRepository extends DepotRepository
             new Limit(start, count));
     }
 
+    public List<BlingMoneyTransactionRecord> getBlingPoolTransactions (long start, long end)
+    {
+        return findAll(BlingMoneyTransactionRecord._R, new Where(Ops.and(
+            BlingMoneyTransactionRecord.TRANSACTION_TYPE.eq(TransactionType.BLING_POOL),
+            BlingMoneyTransactionRecord.TIMESTAMP.greaterThan(new Timestamp(start)),
+            BlingMoneyTransactionRecord.TIMESTAMP.lessThan(new Timestamp(end)))));
+    }
+
     public int deleteOldTransactions (Currency currency, long maxAge)
     {
         Timestamp cutoff = new Timestamp(System.currentTimeMillis() - maxAge);

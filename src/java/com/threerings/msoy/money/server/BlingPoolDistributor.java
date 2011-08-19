@@ -7,9 +7,10 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import com.google.inject.Inject;
 
@@ -27,6 +28,7 @@ import org.quartz.impl.DirectSchedulerFactory;
 import org.quartz.spi.JobFactory;
 import org.quartz.spi.TriggerFiredBundle;
 
+import com.samskivert.text.MessageUtil;
 import com.samskivert.util.Calendars;
 import com.samskivert.util.Lifecycle;
 
@@ -41,6 +43,7 @@ import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.TransactionType;
+import com.threerings.msoy.money.server.persist.BlingMoneyTransactionRecord;
 import com.threerings.msoy.money.server.persist.MoneyConfigRecord;
 import com.threerings.msoy.money.server.persist.MoneyRepository;
 import com.threerings.msoy.server.persist.CharityRecord;
@@ -99,6 +102,38 @@ public class BlingPoolDistributor
             _scheduler.start();
         } catch (SchedulerException se) {
             throw new IllegalStateException(se);
+        }
+
+        // Temporary bling pool repairing, remove after this runs on production
+        confRecord = _repo.getMoneyConfig(true);
+        if (confRecord != null) {
+            try {
+                int blingPool = _runtime.money.blingPoolSize * 100;
+
+                Calendar lastRun = Calendars.at(confRecord.lastDistributedBling).zeroTime().asCalendar();
+                Calendar midnight1 = Calendars.at(2011, 6, 22).zeroTime().asCalendar();
+                Calendar midnight2 = Calendars.at(midnight1.getTime()).addDays(1).asCalendar();
+                int days = Calendars.getDaysBetween(midnight1, lastRun);
+
+                log.info("Repairing bling pool", "days", days,
+                    "lastDistributedBling", DateFormat.getDateInstance().format(lastRun.getTime()),
+                    "midnight1", DateFormat.getDateInstance().format(midnight1.getTime()),
+                    "midnight2", DateFormat.getDateInstance().format(midnight2.getTime()));
+
+                for (int ii = 0; ii < days; ii++) {
+                    repairBling(blingPool, midnight1, midnight2);
+                    // increment one day each
+                    midnight1.add(Calendar.DATE, 1);
+                    midnight2.add(Calendar.DATE, 1);
+                }
+            } catch (Exception e) {
+                log.warning("Oh hell, failed to repair the bling pool?!", "error", e);
+            } finally {
+                // Release the lock
+                _repo.completeBlingDistribution(confRecord.lastDistributedBling);
+            }
+        } else {
+            log.info("Another server is repairing bling, never mind");
         }
     }
 
@@ -191,6 +226,62 @@ public class BlingPoolDistributor
             for (Entry<Integer, Long> entry : minutesPerGame.entrySet()) {
                 int awardedBling = (int)(blingPool * entry.getValue() / totalMinutes);
                 awardBling(entry.getKey(), gameMap.get(entry.getKey()), awardedBling);
+            }
+        }
+    }
+
+    protected void repairBling (int blingPool, Calendar midnight1, Calendar midnight2)
+    {
+        log.info("Back-populating nightly bling",
+            "day", DateFormat.getDateInstance().format(midnight1.getTime()),
+            "bling", _runtime.money.blingPoolSize); // don't log centibling..
+
+        Collection<GamePlayRecord> gamePlays = _mgameRepo.getGamePlaysBetween(
+            midnight1.getTimeInMillis(), midnight2.getTimeInMillis());
+        Map<Integer, GameInfoRecord> gameMap = loadEligibleGames(gamePlays);
+        Map<Integer, GameInfoRecord> brokenGames = Maps.newHashMap(gameMap);
+
+        // Filter out games from brokenGames that already received a bling pool payment
+        long start = midnight2.getTimeInMillis();
+        long end = start + 1000L*60*60*12; // Expect a bling payment 12 hours after midnight2
+        List<BlingMoneyTransactionRecord> awarded = _repo.getBlingPoolTransactions(start, end);
+        for (BlingMoneyTransactionRecord tx : awarded) {
+            // Try to scrape the game ID from the description...
+            String[] params = MessageUtil.decompose(tx.description);
+            if (params.length > 1) {
+                int gameId = Integer.parseInt(params[1]);
+                log.info("This game already received bling today",
+                    "midnight2", midnight2, "gameId", gameId, "description", tx.description);
+                brokenGames.remove(gameId);
+            } else {
+                log.info("Malformed bling pool transaction?",
+                    "memberId", tx.memberId, "description", tx.description);
+            }
+        }
+
+        // Calculate a total and a map of game ID to the total minutes spent in the game.
+        long totalMinutes = 0;
+        Map<Integer, Long> minutesPerGame = Maps.newHashMap();
+        for (GamePlayRecord gamePlay : gamePlays) {
+            if (gameMap.containsKey(gamePlay.gameId)) {
+                totalMinutes += gamePlay.playerMins;
+                Long curMins = minutesPerGame.get(gamePlay.gameId);
+                minutesPerGame.put(gamePlay.gameId,
+                    ((curMins == null) ? 0L : curMins.longValue()) + gamePlay.playerMins);
+            }
+        }
+
+        // Assuming we have a non-zero number of minutes games were played this day, grant a
+        // portion of the bling pool to each game's creator.
+        if (totalMinutes > 0) {
+            for (Entry<Integer, Long> entry : minutesPerGame.entrySet()) {
+                int gameId = entry.getKey();
+                // Assign bling only to the broken games
+                if (brokenGames.containsKey(gameId)) {
+                    int awardedBling = (int)(blingPool * entry.getValue() / totalMinutes);
+                    awardBling(entry.getKey(), brokenGames.get(gameId), awardedBling);
+                    log.info("Restoring bling to broken game", "gameId", gameId, "awarded", awardedBling);
+                }
             }
         }
     }
