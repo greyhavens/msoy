@@ -35,6 +35,7 @@ import client.person.FeedUtil;
 import client.person.FeedMessagePanel;
 import client.shell.CShell;
 import client.shell.ShellMessages;
+import client.ui.MsoyUI;
 import client.util.ClickCallback;
 import client.util.MsoyPagedServiceDataModel;
 
@@ -78,7 +79,7 @@ public class CommentsBlurb extends Blurb
             if (activity instanceof FeedMessage) {
                 FeedMessage message = (FeedMessage) activity;
                 String possessive = (_name.getId() == CShell.getMemberId()) ?
-                    _msgs.your() : _msgs.their(_name.toString());
+                    _msgs.your() : _msgs.their(MsoyUI.escapeHTML(_name.toString()));
                 return new FeedMessagePanel(message, true, possessive);
             }
             return super.createElement(activity);
