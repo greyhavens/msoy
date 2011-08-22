@@ -82,8 +82,9 @@ public class RSSServlet extends HttpServlet
                 }
                 rss = generateRSS(group, threads, messages, numThreads);
             }
-            rsp.setHeader("Content-Type", "application/xhtml+xml");
-            rsp.getOutputStream().print(rss);
+            rsp.setContentType("application/xhtml+xml; charset=UTF-8");
+            rsp.getWriter().print(rss);
+            rsp.getWriter().flush();
 
         } catch (Exception e) {
             log.warning("Failed to generate rss feed [groupId=" + groupId + "].", e);
