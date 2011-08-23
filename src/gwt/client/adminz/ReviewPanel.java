@@ -78,7 +78,7 @@ public class ReviewPanel extends FlowPanel
         if (_contents != null) {
             remove(_contents);
         }
-        _contents = new PagedTable<ItemFlag>(5) {
+        _contents = new PagedTable<ItemFlag>(20) {
             @Override protected List<Widget> createHeader () {
                 List<Widget> header = Lists.newArrayList();
                 header.add(MsoyUI.createLabel(_msgs.reviewColumnThumbnail(), null));
