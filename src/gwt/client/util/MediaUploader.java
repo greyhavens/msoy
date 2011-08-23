@@ -65,6 +65,7 @@ public class MediaUploader extends FormPanel
 
         _upload = new SmartFileUpload();
         _upload.setName(mediaId);
+        _upload.getElement().setAttribute("size", "8"); // Don't be so huge
         _upload.addValueChangeHandler(new ValueChangeHandler<String>() {
             public void onValueChange (ValueChangeEvent<String> event) {
                 String toUpload = _upload.getFilename();

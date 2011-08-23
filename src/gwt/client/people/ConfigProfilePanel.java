@@ -21,18 +21,20 @@ import com.threerings.orth.data.MediaDesc;
 
 import com.threerings.orth.data.MediaDescSize;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.profile.gwt.Profile;
 import com.threerings.msoy.profile.gwt.ProfileService;
 import com.threerings.msoy.profile.gwt.ProfileServiceAsync;
 import com.threerings.msoy.web.gwt.Pages;
 
-import client.imagechooser.ImageChooserPopup;
+import client.imagechooser.ImageChooserMessages;
 import client.shell.CShell;
 import client.shell.ShellMessages;
 import client.ui.MsoyUI;
 import client.ui.StretchButton;
 import client.util.ClickCallback;
 import client.util.Link;
+import client.util.MediaUploader;
 import client.util.MediaUtil;
 import client.util.InfoCallback;
 import client.util.TextBoxUtil;
@@ -91,7 +93,7 @@ public class ConfigProfilePanel extends FlowPanel
         configAndPreview.add(config);
         int row = 0;
         config.setText(row, 0, _msgs.cpPickName());
-        _name = MsoyUI.createTextBox(name.toString(), MemberName.MAX_DISPLAY_NAME_LENGTH, 20);
+        _name = MsoyUI.createTextBox("", MemberName.MAX_DISPLAY_NAME_LENGTH, 20);
         TextBoxUtil.addTypingListener(_name, new Command() {
             public void execute () {
                 _preview.setText(0, 1, fiddleName(_name.getText().trim()));
@@ -99,17 +101,19 @@ public class ConfigProfilePanel extends FlowPanel
         });
         config.setWidget(row++, 1, _name);
         config.setText(row, 0, _msgs.cpUploadPhoto());
-        config.setWidget(row++, 1, new Button(_msgs.cpSelect(), new ClickHandler() {
-            public void onClick (ClickEvent event) {
-                ImageChooserPopup.displayImageChooser(true, new InfoCallback<MediaDesc>() {
-                    public void onSuccess (MediaDesc photo) {
-                        if (photo != null) {
-                            _profile.photo = photo;
-                            _preview.setWidget(0, 0, MediaUtil.createMediaView(photo,
-                                MediaDescSize.THUMBNAIL_SIZE));
-                        }
-                    }
-                });
+
+        // Use a simple MediaUploader rather than an ImageChooser, since a new user's image
+        // inventory will always be empty. Maybe use ImageChooser if it ever gets FB/Flickr
+        // integration.
+        config.setWidget(row++, 1, new MediaUploader(Item.THUMB_MEDIA, new MediaUploader.Listener() {
+            @Override public void mediaUploaded (String name, MediaDesc desc, int width, int height) {
+                if (desc.isImage()) {
+                    _profile.photo = desc;
+                    _preview.setWidget(0, 0, MediaUtil.createMediaView(desc,
+                        MediaDescSize.THUMBNAIL_SIZE));
+                } else {
+                    MsoyUI.error(_imsgs.errPhotoNotImage());
+                }
             }
         }));
 
@@ -200,5 +204,6 @@ public class ConfigProfilePanel extends FlowPanel
 
     protected static final PeopleMessages _msgs = GWT.create(PeopleMessages.class);
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
+    protected static final ImageChooserMessages _imsgs = GWT.create(ImageChooserMessages.class);
     protected static final ProfileServiceAsync _profilesvc = GWT.create(ProfileService.class);
 }

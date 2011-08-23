@@ -162,14 +162,12 @@ public class RegisterPanel extends FlowPanel
 
     protected void setComplete (WebUserService.RegisterData session)
     {
-        clear();
-        addHeader(true);
-        add(MsoyUI.createHTML(_cmsgs.regiEmailConfirm(session.creds.accountName), null));
-
         if (!DeploymentConfig.devDeployment) {
             add(createAdWordsTracker());
             add(createBeacon(session.entryVector));
         }
+
+        CShell.frame.dispatchDidLogon(session);
     }
 
     protected void addHeader (boolean complete)

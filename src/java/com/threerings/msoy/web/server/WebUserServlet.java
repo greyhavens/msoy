@@ -238,6 +238,9 @@ public class WebUserServlet extends MsoyServiceServlet
         // and load up our entry vector and send it back to GWT for its nefarious porpoises
         data.entryVector = _memberRepo.loadEntryVector(mrec.memberId);
 
+        // we are not doing a test, but assign them a group to indicate a new account
+        data.group = SessionData.Group.A;
+
         return data;
     }
 
