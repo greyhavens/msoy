@@ -49,9 +49,10 @@ public class RegisterPanel extends FlowPanel
 {
     public RegisterPanel ()
     {
-        // use HTML5 placeholder attribute to hint to users
+        // Use HTML5 accessibility hints
         // TODO: someday GWT may support this directly
-        _newemail.getElement().setAttribute("placeholder", "example@domain.com");
+        _newemail.getElement().setAttribute("type", "email");
+        // _newemail.getElement().setAttribute("placeholder", "example@domain.com");
 
         setStyleName("register");
         setStepOne();
