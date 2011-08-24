@@ -128,6 +128,7 @@ public class FeedMessageAggregator
             return MessageKey.explicit(message, ((FriendFeedMessage)message).friend.getId());
 
         case FRIEND_GAINED_LEVEL:
+        case FRIEND_SUBSCRIBED:
             // all level gains by all friends are displayed together
             return MessageKey.explicit(message, 0);
 

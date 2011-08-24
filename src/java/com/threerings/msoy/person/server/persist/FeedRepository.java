@@ -56,6 +56,7 @@ public class FeedRepository extends DepotRepository
             // Load the friend feed message types we care about
             SQLExpression<Boolean> condition = Ops.and(
                 FriendFeedMessageRecord.TYPE.in(
+                    FeedMessageType.FRIEND_SUBSCRIBED.getCode(),
                     FeedMessageType.FRIEND_UPDATED_ROOM.getCode(),
                     FeedMessageType.FRIEND_LISTED_ITEM.getCode(),
                     FeedMessageType.FRIEND_CREATED_GROUP.getCode(),

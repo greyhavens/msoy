@@ -85,6 +85,10 @@ public class FeedMessagePanel extends FlowPanel
                 return new WidgetWrapper(new IconWidget("friend_gained_level", message));
             }
 
+            public Icon createSubscribedIcon (String message) {
+                return new WidgetWrapper(new IconWidget("friend_subscribed", message));
+            }
+
             public void addIcon (Icon icon) {
                 add(((WidgetWrapper)icon).widget);
             }

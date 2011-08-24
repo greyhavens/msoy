@@ -750,8 +750,18 @@ public class SpamLogic
     {
         // from Builder
         public Icon createGainedLevelIcon (String text) {
+            return createStaticIcon(text, "images/whirled/friend_gained_level.png");
+        }
+
+        // from Builder
+        public Icon createSubscribedIcon (String text) {
+            return createStaticIcon(text, "images/whirled/friend_subscribed.png");
+        }
+
+        protected Icon createStaticIcon (String text, String imageSrc)
+        {
             return new StringWrapper(_html.reset().open("img",
-                "src", "images/whirled/friend_gained_level.png",
+                "src", imageSrc,
                 "style", imgStyle(new Dimensions("30px", "20px"))).close().append(text).finish());
         }
 
@@ -813,6 +823,11 @@ public class SpamLogic
     {
         // from Builder
         public Icon createGainedLevelIcon (String text) {
+            return new StringWrapper(text);
+        }
+
+        // from Builder
+        public Icon createSubscribedIcon (String text) {
             return new StringWrapper(text);
         }
 

@@ -55,6 +55,9 @@ public class FeedItemGenerator
          */
         Icon createGainedLevelIcon (String text);
 
+        /** Static icon for club whirled subscriptions. */
+        Icon createSubscribedIcon (String text);
+
         /**
          * Adds a previously created media object to the feed with the given message. The passed
          * media will never be null.
@@ -196,6 +199,11 @@ public class FeedItemGenerator
             _builder.addIcon(_builder.createGainedLevelIcon(
                 action(message, subject, object, Plural.NONE)));
             break;
+
+        case FRIEND_SUBSCRIBED:
+            _builder.addIcon(_builder.createSubscribedIcon(
+                action(message, subject, object, Plural.NONE)));
+            break;
         }
     }
 
@@ -263,6 +271,11 @@ public class FeedItemGenerator
         case FRIEND_GAINED_LEVEL:
             // display all levels gained by all friends together
             _builder.addIcon(_builder.createGainedLevelIcon(action(
+                message, makeStringList(list, ListMode.LEVELGAIN), "", Plural.SUBJECT)));
+            break;
+
+        case FRIEND_SUBSCRIBED:
+            _builder.addIcon(_builder.createSubscribedIcon(action(
                 message, makeStringList(list, ListMode.LEVELGAIN), "", Plural.SUBJECT)));
             break;
 
