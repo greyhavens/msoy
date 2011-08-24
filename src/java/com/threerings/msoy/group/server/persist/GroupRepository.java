@@ -709,8 +709,8 @@ public class GroupRepository extends DepotRepository
             }
 
         } else {
-            // SORT_BY_NEW_AND_POPULAR: subtract 2 members per day the group has been around
-            long membersPerDay = (24 * 60 * 60) / 2;
+            // SORT_BY_NEW_AND_POPULAR: subtract 8 members per day the group has been around
+            long membersPerDay = (24 * 60 * 60) / 8;
             return OrderBy.descending(DateFuncs.epoch(GroupRecord.CREATION_DATE).
                                       div(membersPerDay).plus(GroupRecord.MEMBER_COUNT)).
                 thenAscending(GroupRecord.NAME);
