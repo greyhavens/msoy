@@ -25,7 +25,6 @@ import com.google.inject.Singleton;
 import com.samskivert.depot.CacheInvalidator.TraverseWithFilter;
 import com.samskivert.depot.CountRecord;
 import com.samskivert.depot.DatabaseException;
-import com.samskivert.depot.DataMigration;
 import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.DuplicateKeyException;
 import com.samskivert.depot.Key;
@@ -47,7 +46,6 @@ import com.threerings.msoy.money.data.all.CashOutBillingInfo;
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.TransactionType;
 import com.threerings.msoy.money.gwt.InsufficientFundsException;
-import com.threerings.msoy.money.server.BlingPoolDistributor;
 
 import static com.threerings.msoy.Log.log;
 
@@ -66,16 +64,6 @@ public class MoneyRepository extends DepotRepository
     public MoneyRepository (final PersistenceContext ctx)
     {
         super(ctx);
-    }
-
-    // Temporary bling pool repairing, remove after this runs on production
-    public void registerBlingRepairMigration (final BlingPoolDistributor distributor)
-    {
-        registerMigration(new DataMigration("2011-08-22 bling pool repair") {
-            @Override public void invoke () {
-                distributor.repairBling();
-            }
-        });
     }
 
     /**
