@@ -249,8 +249,7 @@ public class MemberRepository extends DepotRepository
         int deleted = deleteAll(
             EntryVectorRecord.class,
             new Where(Ops.and(EntryVectorRecord.MEMBER_ID.eq(0),
-                              EntryVectorRecord.CREATED.lessThan(cutoff))),
-            null); // no cache invalidator needed
+                              EntryVectorRecord.CREATED.lessThan(cutoff))));
         if (deleted > 0) {
             log.info("Purged " + deleted + " expired entry vector records.");
         }
@@ -433,7 +432,7 @@ public class MemberRepository extends DepotRepository
      */
     public List<MemberSearchRecord> findMembersByDisplayName (String search, int limit)
     {
-        FullText fts = new FullText(MemberRecord.class, MemberRecord.FTS_NAME, search);
+        FullText fts = new FullText(MemberRecord.class, MemberRecord.FTS_NAME, search, true);
 
         return findAll(MemberSearchRecord.class, new FromOverride(MemberRecord.class),
             new FieldDefinition("memberId", MemberRecord.MEMBER_ID),
@@ -649,8 +648,7 @@ public class MemberRepository extends DepotRepository
     {
         Timestamp cutoff = new Timestamp(System.currentTimeMillis() - SESSION_RECORD_EXPIRE);
         int deleted = deleteAll(SessionRecord.class,
-            new Where(SessionRecord.EXPIRES.lessThan(cutoff)),
-            null);
+            new Where(SessionRecord.EXPIRES.lessThan(cutoff)));
         if (deleted > 0) {
             log.info("Purged " + deleted + " expired session records.");
         }

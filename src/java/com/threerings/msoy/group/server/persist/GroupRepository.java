@@ -124,7 +124,7 @@ public class GroupRepository extends DepotRepository
                 }
             }
 
-            _fts = new FullText(GroupRecord.class, GroupRecord.FTS_NBC, search);
+            _fts = new FullText(GroupRecord.class, GroupRecord.FTS_NBC, search, true);
         }
 
         protected Set<Integer> _tagIds;

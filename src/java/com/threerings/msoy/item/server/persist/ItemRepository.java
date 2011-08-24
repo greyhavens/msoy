@@ -168,8 +168,8 @@ public abstract class ItemRepository<T extends ItemRecord>
                 _memberIds.addAll(_memberRepo.findMembersByExactDisplayName(term, 100));
             }
 
-            _itemFts = new FullText(getItemClass(), ItemRecord.FTS_ND, search);
-            _cloneFts = new FullText(getCloneClass(), CloneRecord.FTS_N, search);
+            _itemFts = new FullText(getItemClass(), ItemRecord.FTS_ND, search, true);
+            _cloneFts = new FullText(getCloneClass(), CloneRecord.FTS_N, search, true);
 
         }
 

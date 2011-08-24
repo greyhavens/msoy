@@ -164,7 +164,7 @@ public class MsoyGameRepository extends DepotRepository
         }
 
         if (!StringUtil.isBlank(search)) {
-            FullText fts = new FullText(GameInfoRecord.class, GameInfoRecord.FTS_ND, search);
+            FullText fts = new FullText(GameInfoRecord.class, GameInfoRecord.FTS_ND, search, true);
             whereBits.add(fts.match());
             clauses.add(OrderBy.descending(fts.rank()));
 
@@ -593,15 +593,15 @@ public class MsoyGameRepository extends DepotRepository
      */
     public void deleteGame (int gameId)
     {
-        deleteAll(ArcadeEntryRecord.class, new Where(ArcadeEntryRecord.GAME_ID, gameId), null);
+        deleteAll(ArcadeEntryRecord.class, new Where(ArcadeEntryRecord.GAME_ID, gameId));
         delete(GameCodeRecord.getKey(gameId, true));
         delete(GameCodeRecord.getKey(gameId, false));
         delete(GameInfoRecord.getKey(gameId));
         delete(GameMetricsRecord.getKey(gameId));
-        deleteAll(GamePlayRecord.class, new Where(GamePlayRecord.GAME_ID, gameId), null);
+        deleteAll(GamePlayRecord.class, new Where(GamePlayRecord.GAME_ID, gameId));
         int devGameId = GameInfo.toDevId(gameId);
-        deleteAll(GameTraceLogRecord.class, new Where(GameTraceLogRecord.GAME_ID, gameId), null);
-        deleteAll(GameTraceLogRecord.class, new Where(GameTraceLogRecord.GAME_ID, devGameId), null);
+        deleteAll(GameTraceLogRecord.class, new Where(GameTraceLogRecord.GAME_ID, gameId));
+        deleteAll(GameTraceLogRecord.class, new Where(GameTraceLogRecord.GAME_ID, devGameId));
         delete(InstructionsRecord.getKey(gameId));
         _ratingRepo.deleteRatings(gameId);
     }

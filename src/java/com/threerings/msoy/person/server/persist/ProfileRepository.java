@@ -122,7 +122,7 @@ public class ProfileRepository extends DepotRepository
      */
     public List<MemberSearchRecord> findMembersByRealName (String search, int limit)
     {
-        FullText fts = new FullText(ProfileRecord.class, ProfileRecord.FTS_REAL_NAME, search);
+        FullText fts = new FullText(ProfileRecord.class, ProfileRecord.FTS_REAL_NAME, search, true);
         return from(MemberSearchRecord.class).override(ProfileRecord.class).
             fieldDef("rank", fts.rank()).fieldDef("memberId", ProfileRecord.MEMBER_ID).
             where(fts.match()).descending(fts.rank()).limit(limit).select();
@@ -133,7 +133,8 @@ public class ProfileRepository extends DepotRepository
      */
     public List<Integer> findMembersByInterest (String search, int limit)
     {
-        FullText fts = new FullText(InterestRecord.class, InterestRecord.FTS_INTERESTS, search);
+        FullText fts = new FullText(
+            InterestRecord.class, InterestRecord.FTS_INTERESTS, search, true);
         Set<Integer> ids = Sets.newHashSet();
         for (InterestRecord irec :
                  from(InterestRecord.class).where(fts.match()).limit(limit).select()) {

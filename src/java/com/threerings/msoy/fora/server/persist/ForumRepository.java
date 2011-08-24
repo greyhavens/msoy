@@ -176,9 +176,9 @@ public class ForumRepository extends DepotRepository
     public List<ForumThreadRecord> findThreads (int groupId, String search, int offset, int count)
     {
         FullText ftsSubject = new FullText(ForumThreadRecord.class,
-            ForumThreadRecord.FTS_SUBJECT, search);
+            ForumThreadRecord.FTS_SUBJECT, search, true);
         FullText ftsMessage = new FullText(ForumMessageRecord.class,
-            ForumMessageRecord.FTS_MESSAGE, search);
+            ForumMessageRecord.FTS_MESSAGE, search, true);
         return from(ForumThreadRecord.class)
             .join(ForumThreadRecord.THREAD_ID, ForumMessageRecord.THREAD_ID)
             .where(ForumThreadRecord.GROUP_ID.eq(groupId),
@@ -200,9 +200,9 @@ public class ForumRepository extends DepotRepository
         }
 
         FullText ftsSubject = new FullText(ForumThreadRecord.class,
-            ForumThreadRecord.FTS_SUBJECT, search);
+            ForumThreadRecord.FTS_SUBJECT, search, true);
         FullText ftsMessage = new FullText(ForumMessageRecord.class,
-            ForumMessageRecord.FTS_MESSAGE, search);
+            ForumMessageRecord.FTS_MESSAGE, search, true);
 
         return from(ForumThreadRecord.class).cacheRecords()
             .join(ForumThreadRecord.THREAD_ID, ForumMessageRecord.THREAD_ID)
@@ -233,7 +233,7 @@ public class ForumRepository extends DepotRepository
         int threadId, String search, int offset, int count)
     {
         FullText ftsMessage = new FullText(ForumMessageRecord.class,
-            ForumMessageRecord.FTS_MESSAGE, search);
+            ForumMessageRecord.FTS_MESSAGE, search, true);
         return from(ForumMessageRecord.class)
             .where(ForumMessageRecord.THREAD_ID.eq(threadId), ftsMessage.match())
             .descending(ftsMessage.rank())

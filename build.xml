@@ -174,7 +174,7 @@
       <dependency groupId="postgresql" artifactid="postgresql" version="9.0-801.jdbc4"/>
       <remoteRepository refid="ooo.maven.depends.repo"/>
       <dependency groupId="com.samskivert" artifactId="samskivert" version="1.2"/>
-      <dependency groupId="com.samskivert" artifactId="depot" version="1.2"/>
+      <dependency groupId="com.samskivert" artifactId="depot" version="1.5-SNAPSHOT"/>
       <dependency groupId="com.threerings.panopticon" artifactId="panopticon-client"
                   version="0.0-SNAPSHOT"/>
       <dependency groupId="com.threerings" artifactId="gwt-utils" version="1.5-SNAPSHOT"/>
