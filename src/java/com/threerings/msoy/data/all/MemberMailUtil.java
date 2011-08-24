@@ -58,4 +58,21 @@ public class MemberMailUtil
     {
         return PERMAGUEST_EMAIL_PREFIX + hash + PERMAGUEST_EMAIL_SUFFIX;
     }
+
+    /**
+     * Checks the supplied address against a regular expression that (for
+     * the most part) matches only valid email addresses. It's not
+     * perfect, but the omissions and inclusions are so obscure that we
+     * can't be bothered to worry about them.
+     *
+     * (Copied out of com.samskivert.net.MailUtil to work in GWT)
+     */
+    public static boolean isValidAddress (String address)
+    {
+        return address.matches(EMAIL_REGEX);
+    }
+
+    /** Originally formulated by lambert@nas.nasa.gov. */
+    protected static final String EMAIL_REGEX = "^([-A-Za-z0-9_.!%+]+@" +
+        "[-a-zA-Z0-9]+(\\.[-a-zA-Z0-9]+)*\\.[-a-zA-Z0-9]+)$";
 }

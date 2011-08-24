@@ -25,6 +25,7 @@ import com.threerings.gwt.util.DateUtil;
 import com.threerings.gwt.util.StringUtil;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
+import com.threerings.msoy.data.all.MemberMailUtil;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.gwt.AccountInfo;
 import com.threerings.msoy.web.gwt.CaptchaException;
@@ -34,6 +35,7 @@ import com.threerings.msoy.web.gwt.WebUserService;
 import com.threerings.msoy.web.gwt.WebUserServiceAsync;
 
 import client.shell.CShell;
+import client.shell.ServerMessages;
 import client.shell.ShellMessages;
 import client.ui.MsoyUI;
 import client.util.ClickCallback;
@@ -94,6 +96,8 @@ public class RegisterPanel extends FlowPanel
                     MsoyUI.errorNear(_cmsgs.regiFillAll(), _newpass);
                 } else if (!isThirteen()) {
                     MsoyUI.errorNear(_cmsgs.regiNotThirteen(), _birthday);
+                } else if (!MemberMailUtil.isValidAddress(_newemail.getValue())) {
+                    MsoyUI.errorNear(_smsgs.invalid_email(), _newemail);
                 } else {
                     setStepTwo();
                 }
@@ -259,6 +263,7 @@ public class RegisterPanel extends FlowPanel
     protected Widget _birthday;
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
+    protected static final ServerMessages _smsgs = GWT.create(ServerMessages.class);
     protected static final WebUserServiceAsync _usersvc = GWT.create(WebUserService.class);
 
     // post-registration beacon URLs: yay for partners!
