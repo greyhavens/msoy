@@ -145,8 +145,7 @@ public abstract class RatingRepository extends DepotRepository
      */
     public void deleteRatings (int targetId)
     {
-        deleteAll(getRatingClass(),
-                  new Where(getRatingColumn(RatingRecord.TARGET_ID), targetId), null);
+        deleteAll(getRatingClass(), new Where(getRatingColumn(RatingRecord.TARGET_ID), targetId));
     }
 
     // TODO: Doc me

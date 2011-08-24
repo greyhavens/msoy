@@ -325,12 +325,12 @@ public class CommentRepository extends DepotRepository
     {
         // delete the comments
         deleteAll(CommentRecord._R, new Where(CommentRecord.ENTITY_TYPE, entityType,
-                                                 CommentRecord.ENTITY_ID, entityId), null);
+                                                 CommentRecord.ENTITY_ID, entityId));
 
         // delete the comment ratings
         deleteAll(CommentRatingRecord._R,
                   new Where(CommentRatingRecord.ENTITY_TYPE, entityType,
-                            CommentRatingRecord.ENTITY_ID, entityId), null);
+                            CommentRatingRecord.ENTITY_ID, entityId));
     }
 
     /**

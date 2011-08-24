@@ -168,7 +168,7 @@ public class DatabaseMover
             insert(record);
         }
         public <T extends PersistentRecord> void clear (Class<T> type) throws DatabaseException {
-            deleteAll(type, new Where(Exps.value(true)), null);
+            deleteAll(type, new Where(Exps.value(true)));
         }
         protected void getManagedRecords (Set<Class<? extends PersistentRecord>> classes) {
         }

@@ -69,7 +69,7 @@ public class ForumRepository extends DepotRepository
             .limit(start, count)
             .descending(ForumThreadRecord.MOST_RECENT_POST_ID)
             .cache(CacheStrategy.RECORDS)
-        .select();
+            .select();
     }
 
     /**
@@ -78,8 +78,9 @@ public class ForumRepository extends DepotRepository
      */
     public int countUnreadThreads (int memberId, Set<Integer> groupIds)
     {
-        return ((Number) forUnreadThreads(from(ForumThreadRecord.class), memberId, groupIds).
-            load(Funcs.countStar())).intValue();
+        return forUnreadThreads(from(ForumThreadRecord.class), memberId, groupIds)
+            .load(Funcs.countStar())
+            .intValue();
     }
 
     /**

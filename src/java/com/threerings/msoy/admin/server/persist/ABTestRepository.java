@@ -265,8 +265,8 @@ public class ABTestRepository extends DepotRepository
         // summarize and purge the tests that we just ended
         for (ABTestRecord rec : findAll(ABTestRecord.class, new Where(ABTestRecord.ENDED, now))) {
             summarizeTest(rec.testId);
-            deleteAll(ABGroupRecord.class, new Where(ABGroupRecord.TEST_ID, rec.testId), null);
-            deleteAll(ABActionRecord.class, new Where(ABActionRecord.TEST_ID, rec.testId), null);
+            deleteAll(ABGroupRecord.class, new Where(ABGroupRecord.TEST_ID, rec.testId));
+            deleteAll(ABActionRecord.class, new Where(ABActionRecord.TEST_ID, rec.testId));
         }
     }
 

@@ -320,8 +320,7 @@ public class MoneyRepository extends DepotRepository
     {
         Timestamp cutoff = new Timestamp(System.currentTimeMillis() - maxAge);
         return deleteAll(getTransactionRecordClass(currency),
-            new Where(getColumn(currency, MoneyTransactionRecord.TIMESTAMP).lessThan(cutoff)),
-            null /* no cache invalidation */);
+            new Where(getColumn(currency, MoneyTransactionRecord.TIMESTAMP).lessThan(cutoff)));
     }
 
     /**
