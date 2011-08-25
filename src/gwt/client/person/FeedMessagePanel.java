@@ -252,6 +252,8 @@ public class FeedMessagePanel extends FlowPanel
         FeedItemGenerator gen = new FeedItemGenerator(
             CShell.getMemberId(), usePronouns, builder, messages);
         gen.addMessage(message);
+
+        setStyleName("FeedWidget");
     }
 
     protected static class WidgetWrapper
@@ -269,7 +271,6 @@ public class FeedMessagePanel extends FlowPanel
     {
         public IconWidget (String icon, String html)
         {
-            setStyleName("FeedWidget");
             setCellSpacing(0);
             setCellPadding(0);
 
@@ -292,7 +293,6 @@ public class FeedMessagePanel extends FlowPanel
 
         public ThumbnailWidget (Widget[] icons, String html)
         {
-            setStyleName("FeedWidget");
             InlinePanel contents = new InlinePanel("ThumbnailWidget");
             add(contents);
             if (icons != null && icons.length > 0) {
@@ -309,7 +309,6 @@ public class FeedMessagePanel extends FlowPanel
     {
         public BasicWidget (String html)
         {
-            setStyleName("FeedWidget");
             addStyleName("FeedBasic");
             add(MsoyUI.createHTML(html, null));
         }

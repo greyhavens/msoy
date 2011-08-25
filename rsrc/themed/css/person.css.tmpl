@@ -12,10 +12,16 @@
 
 .FeedWidget {
   width: 600px;
-  background-color: #FFFFFF;
   overflow: hidden;
-  margin-bottom: 6px;
-  margin-left: 6px;
+  font-size: 12px;
+}
+
+.FeedWidget + .Thread, .Thread + .FeedWidget {
+  margin-top: 15px;
+}
+
+.FeedWidget + .FeedWidget {
+  margin-top: 4px;
 }
 
 .FeedBasic {
@@ -28,10 +34,6 @@
 }
 
 .FeedWidget .TextContainer {
-  font-size: 12px;
-  padding: 3px 3px 3px 6px;
-  width: 100%;
-  text-align: left;
 }
 
 .FeedWidget .TextContainer div {

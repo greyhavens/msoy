@@ -957,8 +957,7 @@ img, embed, applet, object {
 }
 
 .CommentsPanel .messagePanel {
-  padding: 0px;
-  padding-top: 4px;
+  padding: 4px 0;
   background: #f0f0f6;
   border-bottom: 1px solid #e0e0e0;
 }
@@ -990,8 +989,8 @@ img, embed, applet, object {
   margin-top: 2px;
 }
 
-.CommentsPanel .Thread {
-  margin-bottom: 10px;
+.Thread + .Thread {
+  margin-top: 5px;
 }
 
 .commentControls {
@@ -1375,7 +1374,7 @@ img, embed, applet, object {
   font-weight: bold;
   margin-bottom: 10px;
 }
-.contestBox .ContestName, 
+.contestBox .ContestName,
 .contestBox .ContestName a {
   color: #4c8db9;
 }
