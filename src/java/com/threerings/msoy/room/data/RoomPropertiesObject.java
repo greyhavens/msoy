@@ -22,6 +22,7 @@ import com.whirled.game.server.PropertySpaceHelper;
 /**
  * Provides a property space for a room.
  */
+@com.threerings.util.ActionScript(omit=true)
 public class RoomPropertiesObject extends DObject
     implements PropertySpaceObject
 {

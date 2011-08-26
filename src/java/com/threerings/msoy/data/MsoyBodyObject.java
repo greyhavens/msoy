@@ -8,6 +8,7 @@ import com.threerings.crowd.data.BodyObject;
 /**
  * Contains additional information for a body in Whirled.
  */
+@com.threerings.util.ActionScript(omit=true)
 public interface MsoyBodyObject
 {
     /**

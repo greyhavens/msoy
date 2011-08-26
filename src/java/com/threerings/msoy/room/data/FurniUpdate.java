@@ -9,6 +9,7 @@ import com.threerings.whirled.data.SceneUpdate;
 /**
  * The base for all furni updates.
  */
+@com.threerings.util.ActionScript(omit=true)
 public abstract class FurniUpdate extends SceneUpdate
 {
     /** Indicates that furniture has been added to a scene. */

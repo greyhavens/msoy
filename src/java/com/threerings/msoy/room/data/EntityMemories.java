@@ -18,6 +18,7 @@ import com.threerings.msoy.item.data.all.ItemIdent;
  * This class is cloneable so that we may clone the memories of a user when they leave the room
  * and we wish to leave their puppet behind with the latest updates.
  */
+@com.threerings.util.ActionScript(omit=true)
 public class EntityMemories
     implements DSet.Entry, Cloneable
 {

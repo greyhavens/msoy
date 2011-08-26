@@ -8,6 +8,7 @@ import com.threerings.msoy.data.all.MemberName;
 /**
  * A marker class that indicates that the user is not real, it's a puppet.
  */
+@com.threerings.util.ActionScript(omit=true)
 public class PuppetName extends MemberName
 {
     /** Deserialization. */

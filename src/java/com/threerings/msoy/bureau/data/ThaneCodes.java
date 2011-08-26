@@ -8,6 +8,7 @@ import com.threerings.presents.data.InvocationCodes;
 /**
  * Codes for operations between the server and thane clients.
  */
+@com.threerings.util.ActionScript(omit=true)
 public interface ThaneCodes extends InvocationCodes
 {
     /**

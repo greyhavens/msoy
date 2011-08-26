@@ -19,6 +19,7 @@ import com.threerings.msoy.admin.util.AdminContext;
 /**
  * Contains runtime configurable general server configuration.
  */
+@com.threerings.util.ActionScript(omit=true)
 public class ServerConfigObject extends ConfigObject
 {
     // AUTO-GENERATED: FIELDS START

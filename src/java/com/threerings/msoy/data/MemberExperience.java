@@ -18,6 +18,7 @@ import com.threerings.presents.dobj.DSet;
  *
  * @author Kyle Sampson <kyle@threerings.net>
  */
+@com.threerings.util.ActionScript(omit=true)
 public class MemberExperience
     implements DSet.Entry, Comparable<MemberExperience>
 {

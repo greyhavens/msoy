@@ -8,6 +8,7 @@ import com.threerings.whirled.spot.data.Location;
 /**
  * Extends basic the basic Location with a z-coordinate.
  */
+@com.threerings.util.ActionScript(omit=true)
 public class MsoyLocation
     implements Location
 {

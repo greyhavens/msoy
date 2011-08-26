@@ -16,6 +16,7 @@ import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.group.data.all.GroupMembership.Rank;
 
+@com.threerings.util.ActionScript(omit=true)
 public class PartyObject extends DObject
     implements /*SpeakObject,*/ Cloneable
 {

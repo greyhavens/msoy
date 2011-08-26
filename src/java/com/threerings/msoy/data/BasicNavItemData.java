@@ -11,6 +11,7 @@ import com.threerings.msoy.data.all.NavItemData;
  *
  * @author Kyle Sampson <kyle@threerings.net>
  */
+@com.threerings.util.ActionScript(omit=true)
 public class BasicNavItemData
     implements NavItemData
 {

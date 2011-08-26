@@ -13,6 +13,7 @@ import com.threerings.msoy.data.all.MemberName;
 /**
  * Notifies a user that they have been requested to play a game
  */
+@com.threerings.util.ActionScript(omit=true)
 public class FollowInviteNotification extends Notification
 {
     public FollowInviteNotification ()

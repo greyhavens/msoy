@@ -7,6 +7,7 @@ package com.threerings.msoy.party.data;
  * An OccupantInfo stuffed into PartyPlaceObjects occupied
  * by partiers.
  */
+@com.threerings.util.ActionScript(omit=true)
 public interface PartyOccupantInfo
 {
     /**

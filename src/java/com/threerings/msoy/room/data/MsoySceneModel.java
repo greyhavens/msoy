@@ -28,6 +28,7 @@ import static com.threerings.msoy.Log.log;
 /**
  * Extends basic scene model with scene type.
  */
+@com.threerings.util.ActionScript(omit=true)
 public class MsoySceneModel extends SceneModel
 {
     /** Constant for Member room owners **/

@@ -26,6 +26,7 @@ import com.threerings.msoy.badge.gwt.StampCategory;
 import com.threerings.msoy.data.StatType;
 
 /** Defines the various badge types. */
+@com.threerings.util.ActionScript(omit=true)
 public enum BadgeType
 {
     // Note: If you add a new BadgeType, VERSION should be incremented.

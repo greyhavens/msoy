@@ -8,6 +8,7 @@ import com.threerings.msoy.data.MsoyCredentials;
 /**
  * Used to authenticate a party session.
  */
+@com.threerings.util.ActionScript(omit=true)
 public class PartyCredentials extends MsoyCredentials
 {
     /** The party that the authenticating user wishes to join. */

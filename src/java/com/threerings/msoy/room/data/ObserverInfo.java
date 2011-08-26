@@ -9,6 +9,7 @@ import com.threerings.crowd.data.OccupantInfo;
 /**
  * An occupant info for use by "Whirledwide" guest observers.
  */
+@com.threerings.util.ActionScript(omit=true)
 public class ObserverInfo extends OccupantInfo
 {
     /** Creates an info record for the specified body. */

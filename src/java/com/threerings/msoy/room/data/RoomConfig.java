@@ -8,6 +8,7 @@ import com.threerings.crowd.data.PlaceConfig;
 /**
  * Probably temporary.
  */
+@com.threerings.util.ActionScript(omit=true)
 public class RoomConfig extends PlaceConfig
 {
     public String getManagerClassName ()

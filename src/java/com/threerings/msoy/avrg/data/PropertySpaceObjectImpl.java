@@ -18,6 +18,7 @@ import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
 import com.threerings.io.SimpleStreamableObject;
 
+@com.threerings.util.ActionScript(omit=true)
 public class PropertySpaceObjectImpl extends SimpleStreamableObject
     implements PropertySpaceObject
 {

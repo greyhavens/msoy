@@ -16,6 +16,7 @@ import com.threerings.msoy.item.data.all.Item;
 /**
  * Notifies a user that something they created has been commented on.
  */
+@com.threerings.util.ActionScript(omit=true)
 public class EntityCommentedNotification extends Notification
 {
     public EntityCommentedNotification ()

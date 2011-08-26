@@ -11,6 +11,7 @@ import com.threerings.presents.net.Credentials;
 /**
  * Contains extra information used during authentication with the game server.
  */
+@com.threerings.util.ActionScript(omit=true)
 public class MsoyCredentials extends Credentials
 {
     /** A session token that identifies a user without requiring username or password. */

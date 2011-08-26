@@ -5,6 +5,7 @@ package com.threerings.msoy.data;
 
 import com.threerings.msoy.data.all.NavItemData;
 
+@com.threerings.util.ActionScript(omit=true)
 public class GwtPageNavItemData
     implements NavItemData
 {

@@ -12,6 +12,7 @@ import com.threerings.msoy.data.MsoyBodyObject;
  * Provides a way for the {@link MemberObject} and {@link PetObject} to obtain information from the
  * RoomManager when configuring their {@link OccupantInfo}.
  */
+@com.threerings.util.ActionScript(omit=true)
 public interface RoomLocal
 {
     /** Whether or not we should use static media. */

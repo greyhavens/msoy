@@ -14,6 +14,7 @@ import com.threerings.orth.data.MediaDesc;
  * Configuration for a Parlor game. Parlor games take over the entire display and don't leverage
  * any of the Whirled virtual world stuff.
  */
+@com.threerings.util.ActionScript(omit=true)
 public class ParlorGameConfig extends WhirledGameConfig
     implements MsoyGameConfig
 {

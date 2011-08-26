@@ -18,6 +18,7 @@ import static com.threerings.msoy.Log.log;
 /**
  * Defines Whirled's chat channel types.
  */
+@com.threerings.util.ActionScript(omit=true)
 public class MsoyChatChannel extends ChatChannel
 {
     /** A chat channel between two players. Implemented using tells. */

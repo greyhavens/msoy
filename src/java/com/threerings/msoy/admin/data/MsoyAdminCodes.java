@@ -8,6 +8,7 @@ import com.threerings.presents.data.InvocationCodes;
 /**
  * Defines codes and constants relating to the admin services.
  */
+@com.threerings.util.ActionScript(omit=true)
 public interface MsoyAdminCodes extends InvocationCodes
 {
     /** Identifies our admin message bundle. */

@@ -9,6 +9,7 @@ import com.threerings.admin.data.ConfigObject;
 /**
  * Contains runtime configurable money configuration.
  */
+@com.threerings.util.ActionScript(omit=true)
 public class MoneyConfigObject extends ConfigObject
 {
     // AUTO-GENERATED: FIELDS START

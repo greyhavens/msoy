@@ -17,6 +17,7 @@ import com.threerings.msoy.item.data.all.MsoyItemType;
 /**
  * Contains information on the location of furniture in a scene.
  */
+@com.threerings.util.ActionScript(omit=true)
 public class FurniData extends SimpleStreamableObject
     implements Cloneable, DSet.Entry
 {

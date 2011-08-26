@@ -9,6 +9,7 @@ import com.threerings.whirled.spot.data.Portal;
  * In Whirled, portals include the location in the destination scene at which to arrive rather than
  * requiring that portals be bound to another portal in the target room.
  */
+@com.threerings.util.ActionScript(omit=true)
 public class MsoyPortal extends Portal
 {
     /** The location at which to arrive in the target scene. May be null in which case the body is

@@ -9,6 +9,7 @@ import com.threerings.admin.data.ConfigObject;
 /**
  * Contains runtime configurable subscription attributes.
  */
+@com.threerings.util.ActionScript(omit=true)
 public class SubscriptionConfigObject extends ConfigObject
 {
     // AUTO-GENERATED: FIELDS START

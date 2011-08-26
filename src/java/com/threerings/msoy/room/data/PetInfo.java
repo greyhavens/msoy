@@ -12,6 +12,7 @@ import com.threerings.msoy.item.data.all.Pet;
 /**
  * Contains published information on a pet in a scene.
  */
+@com.threerings.util.ActionScript(omit=true)
 public class PetInfo extends ActorInfo
 {
     /**

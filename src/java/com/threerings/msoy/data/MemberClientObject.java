@@ -9,6 +9,7 @@ import com.threerings.presents.data.ClientObject;
 /**
  * The tiny loader client for a member.
  */
+@com.threerings.util.ActionScript(omit=true)
 public class MemberClientObject extends ClientObject
 {
     // AUTO-GENERATED: FIELDS START

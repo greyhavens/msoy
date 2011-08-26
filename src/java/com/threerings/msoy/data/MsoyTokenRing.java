@@ -8,6 +8,7 @@ import com.threerings.crowd.data.TokenRing;
 /**
  * Provides custom access controls.
  */
+@com.threerings.util.ActionScript(omit=true)
 public class MsoyTokenRing extends TokenRing
 {
     /** Indicates that the user has support privileges. */

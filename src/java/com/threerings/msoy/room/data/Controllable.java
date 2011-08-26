@@ -12,6 +12,7 @@ import com.threerings.msoy.data.MemberObject;
  *
  * @see EntityControl
  */
+@com.threerings.util.ActionScript(omit=true)
 public abstract class Controllable extends SimpleStreamableObject
     implements Comparable<Controllable>
 {

@@ -10,6 +10,7 @@ import com.threerings.presents.data.ClientObject;
 import com.whirled.bureau.data.BureauTypes;
 
 /** Client object purely for distinguishing windows in service methods. */
+@com.threerings.util.ActionScript(omit=true)
 public class WindowClientObject extends ClientObject
 {
     // AUTO-GENERATED: FIELDS START

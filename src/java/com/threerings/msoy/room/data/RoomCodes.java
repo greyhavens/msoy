@@ -13,6 +13,7 @@ import com.threerings.msoy.data.all.StaticMediaDesc;
 /**
  * Codes and constants relating to the Room services.
  */
+@com.threerings.util.ActionScript(omit=true)
 public interface RoomCodes extends InvocationCodes
 {
     /** A message event type dispatched on the room object. */

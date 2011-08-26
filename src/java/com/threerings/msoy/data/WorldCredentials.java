@@ -10,6 +10,7 @@ import com.threerings.msoy.data.MsoyCredentials;
 /**
  * Contains information used during authentication of a world session.
  */
+@com.threerings.util.ActionScript(omit=true)
 public class WorldCredentials extends MsoyCredentials
 {
     /** The machine identifier of the client, if one is known. */

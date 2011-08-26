@@ -8,6 +8,7 @@ import com.threerings.presents.net.ServiceCreds;
 /**
  * Extends the basic credentials to provide window-specific fields.
  */
+@com.threerings.util.ActionScript(omit=true)
 public class WindowCredentials extends ServiceCreds
 {
     /**

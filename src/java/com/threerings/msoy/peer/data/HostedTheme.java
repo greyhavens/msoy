@@ -9,6 +9,7 @@ import com.threerings.presents.dobj.DSet;
 /**
  * Represents a hosted theme on a particular server.
  */
+@com.threerings.util.ActionScript(omit=true)
 public class HostedTheme extends HostedPlace
     implements DSet.Entry
 {

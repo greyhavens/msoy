@@ -10,6 +10,7 @@ import com.threerings.orth.data.MediaDesc;
 /**
  * Contains metadata about a game for which a player is currently matchmaking.
  */
+@com.threerings.util.ActionScript(omit=true)
 public class GameSummary extends SimpleStreamableObject
     implements Cloneable
 {

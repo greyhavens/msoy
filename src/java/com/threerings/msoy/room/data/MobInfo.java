@@ -9,6 +9,7 @@ import com.threerings.crowd.data.OccupantInfo;
  * Represents an AVRG MOB, a room occupant that is not backed up by an entity but rather acquires
  * its visualization from an AVRG in the client.
  */
+@com.threerings.util.ActionScript(omit=true)
 public class MobInfo extends OccupantInfo
 {
     /**

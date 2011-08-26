@@ -11,6 +11,7 @@ import com.threerings.orth.notify.data.Notification;
 /**
  * Notifies a user that they've leveled up.
  */
+@com.threerings.util.ActionScript(omit=true)
 public class LevelUpNotification extends Notification
 {
     public LevelUpNotification ()

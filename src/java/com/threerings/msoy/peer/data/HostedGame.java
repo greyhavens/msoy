@@ -6,6 +6,7 @@ package com.threerings.msoy.peer.data;
 /**
  * Represents a hosted game on a particular server.
  */
+@com.threerings.util.ActionScript(omit=true)
 public class HostedGame extends HostedPlace
 {
     /** True if this game is an AVRG. */

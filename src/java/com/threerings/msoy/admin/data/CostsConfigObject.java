@@ -13,6 +13,7 @@ import com.threerings.admin.data.ConfigObject;
  * (Each cost is specified in coins, 0 for free, or a negative number to peg it to the value
  * of the magnitude of bars.)
  */
+@com.threerings.util.ActionScript(omit=true)
 public class CostsConfigObject extends ConfigObject
 {
     // AUTO-GENERATED: FIELDS START

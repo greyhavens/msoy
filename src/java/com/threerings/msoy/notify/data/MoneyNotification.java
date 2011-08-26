@@ -10,6 +10,7 @@ import com.threerings.msoy.money.data.all.Currency;
 /**
  * Base class for money notifications.
  */
+@com.threerings.util.ActionScript(omit=true)
 public class MoneyNotification extends Notification
 {
     /** The type of money this notification is concerned with. */

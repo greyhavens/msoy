@@ -15,6 +15,7 @@ import com.threerings.orth.data.MediaDesc;
  * should be required to engage in the activity. For example, the game item goes straight to a game
  * lobby rather than a screenload of links to other games.
  */
+@com.threerings.util.ActionScript(omit=true)
 public class HomePageItem extends SimpleStreamableObject
 {
     /** Non action. */

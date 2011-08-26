@@ -22,6 +22,7 @@ import static com.threerings.msoy.Log.log;
 /**
  * Implementation of the Msoy scene interface.
  */
+@com.threerings.util.ActionScript(omit=true)
 public class MsoyScene extends SceneImpl
     implements Scene, SpotScene, Cloneable
 {

@@ -16,6 +16,7 @@ import com.threerings.msoy.item.data.all.Pet;
 /**
  * Contains the distributed state associated with a Pet.
  */
+@com.threerings.util.ActionScript(omit=true)
 public class PetObject extends BodyObject
     implements MsoyBodyObject
 {

@@ -14,6 +14,7 @@ import com.threerings.msoy.data.all.GroupName;
  * Contains a summary of immutable party information, published in node objects and copied
  * into any PartyPlaceObject that any partier joins.
  */
+@com.threerings.util.ActionScript(omit=true)
 public class PartySummary extends SimpleStreamableObject
     implements DSet.Entry
 {

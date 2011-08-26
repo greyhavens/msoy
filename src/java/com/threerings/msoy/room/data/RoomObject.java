@@ -23,6 +23,7 @@ import static com.threerings.msoy.Log.log;
 /**
  * Room stuff.
  */
+@com.threerings.util.ActionScript(omit=true)
 public class RoomObject extends SpotSceneObject
     implements PartyPlaceObject
 {

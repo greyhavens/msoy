@@ -19,6 +19,7 @@ import com.whirled.game.data.GameDefinition;
 /**
  * Represents a lobby for a particular game.
  */
+@com.threerings.util.ActionScript(omit=true)
 public class LobbyObject extends DObject implements TableLobbyObject
 {
     /** Used on the server to listen to subscriber count changes to a lobby object. */

@@ -9,6 +9,7 @@ import com.threerings.presents.dobj.DSet;
 /**
  * Represents a hosted scene on a particular server.
  */
+@com.threerings.util.ActionScript(omit=true)
 public class HostedPlace extends SimpleStreamableObject
     implements DSet.Entry
 {

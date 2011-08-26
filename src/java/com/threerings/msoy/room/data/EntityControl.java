@@ -11,6 +11,7 @@ import com.threerings.presents.dobj.DSet;
  * entity (item) or an AVRG. This mechanism elevates one specific client-side instance to play the
  * role usually reserved for server-side logic.
  */
+@com.threerings.util.ActionScript(omit=true)
 public class EntityControl extends SimpleStreamableObject
     implements DSet.Entry
 {

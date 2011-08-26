@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.data;
 
+@com.threerings.util.ActionScript(omit=true)
 public interface MsoyUserOccupantInfo
 {
     /**

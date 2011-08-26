@@ -8,6 +8,7 @@ import com.threerings.parlor.game.data.GameCodes;
 /**
  * Codes and constants relating to the MSOY game services.
  */
+@com.threerings.util.ActionScript(omit=true)
 public interface MsoyGameCodes extends GameCodes
 {
     /** A message sent (on the PlayerObject) when the player earns a trophy. The payload will be a

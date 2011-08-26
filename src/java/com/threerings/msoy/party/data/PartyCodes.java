@@ -6,6 +6,7 @@ package com.threerings.msoy.party.data;
 /**
  * Party constants.
  */
+@com.threerings.util.ActionScript(omit=true)
 public class PartyCodes
 {
     /** Recruitment constant indicating anyone may join the party. */

@@ -35,6 +35,7 @@ import com.threerings.msoy.party.data.PartySummary;
 /**
  * The data shared between server, clients and agent for an AVR game.
  */
+@com.threerings.util.ActionScript(omit=true)
 public class AVRGameObject extends PlaceObject
     implements PropertySpaceObject, GameDataObject, PartyPlaceObject
 {

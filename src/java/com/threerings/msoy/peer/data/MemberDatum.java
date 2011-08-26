@@ -9,6 +9,7 @@ import com.threerings.presents.dobj.DSet;
 /**
  * Tracks a piece of information for a particular member in the network.
  */
+@com.threerings.util.ActionScript(omit=true)
 public class MemberDatum extends SimpleStreamableObject
     implements DSet.Entry
 {

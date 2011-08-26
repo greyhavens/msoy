@@ -14,6 +14,7 @@ import com.threerings.presents.dobj.DSet;
  * NOTE: please be careful about what fields you add. If fields are added that are needed by
  * one usage but not the other, we may need to consider having two different objects...
  */
+@com.threerings.util.ActionScript(omit=true)
 public class PartyInfo extends SimpleStreamableObject
     implements DSet.Entry
 {

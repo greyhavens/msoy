@@ -8,6 +8,7 @@ import com.threerings.msoy.room.data.MsoySceneModel;
 /**
  * Represents a hosted room on a particular server.
  */
+@com.threerings.util.ActionScript(omit=true)
 public class HostedRoom extends HostedPlace
 {
     /** Theme id, to find out if a peer transition also involves moving into or out of a Theme. */

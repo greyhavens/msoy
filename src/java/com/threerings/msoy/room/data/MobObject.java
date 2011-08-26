@@ -15,6 +15,7 @@ import com.threerings.msoy.data.MsoyBodyObject;
 /**
  * Contains the distributed state associated with an AVRG MOB.
  */
+@com.threerings.util.ActionScript(omit=true)
 public class MobObject extends BodyObject
     implements MsoyBodyObject
 {

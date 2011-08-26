@@ -7,6 +7,7 @@ import com.threerings.orth.notify.data.Notification;
 
 import com.threerings.msoy.data.all.MemberName;
 
+@com.threerings.util.ActionScript(omit=true)
 public class PartyInviteNotification extends Notification
 {
     /** Suitable for unserialization. */

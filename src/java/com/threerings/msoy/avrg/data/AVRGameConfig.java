@@ -17,6 +17,7 @@ import com.threerings.orth.data.MediaDesc;
  * Configuration for an AVR game. This is basically BaseGameConfig + ParlorGameConfig,
  * but without the GameConfig dependency.
  */
+@com.threerings.util.ActionScript(omit=true)
 public class AVRGameConfig extends PlaceConfig
     implements MsoyGameConfig
 {

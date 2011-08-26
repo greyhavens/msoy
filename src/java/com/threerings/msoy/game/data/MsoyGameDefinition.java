@@ -9,6 +9,7 @@ import com.whirled.game.data.GameDefinition;
  * Customizes the standard {@link GameDefinition} for MSOY which mainly means looking for our game
  * jar files using a different naming scheme.
  */
+@com.threerings.util.ActionScript(omit=true)
 public class MsoyGameDefinition extends GameDefinition
 {
     /** If true, the game requires the LWJGL libraries. */

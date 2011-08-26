@@ -6,6 +6,7 @@ package com.threerings.msoy.badge.data;
 /**
  * Information about the progress in being awarded a new badge.
  */
+@com.threerings.util.ActionScript(omit=true)
 public class BadgeProgress
 {
     /** The highest level that the user is currently qualified for. */

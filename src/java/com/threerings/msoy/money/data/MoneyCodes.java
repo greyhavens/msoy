@@ -5,6 +5,7 @@ package com.threerings.msoy.money.data;
 
 import com.threerings.presents.data.InvocationCodes;
 
+@com.threerings.util.ActionScript(omit=true)
 public interface MoneyCodes extends InvocationCodes
 {
     /** Occurs when the user attempts to cash out bling when they've already cashed out. */

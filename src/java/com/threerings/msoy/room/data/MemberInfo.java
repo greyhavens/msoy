@@ -20,6 +20,7 @@ import com.threerings.msoy.party.data.PartyOccupantInfo;
 /**
  * Contains published information about a member in a scene.
  */
+@com.threerings.util.ActionScript(omit=true)
 public class MemberInfo extends ActorInfo
     implements MsoyUserOccupantInfo, PartyOccupantInfo
 {

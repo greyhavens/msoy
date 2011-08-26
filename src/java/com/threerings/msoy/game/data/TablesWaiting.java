@@ -10,6 +10,7 @@ import com.threerings.presents.dobj.DSet;
  * An entry published to the node object whenever there are pending tables
  * for the specified parlor game.
  */
+@com.threerings.util.ActionScript(omit=true)
 public class TablesWaiting extends SimpleStreamableObject
     implements DSet.Entry
 {

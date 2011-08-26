@@ -8,6 +8,7 @@ import com.threerings.orth.data.AuthName;
 /**
  * Identifies the auth-username of a party authentication request.
  */
+@com.threerings.util.ActionScript(omit=true)
 public class PartyAuthName extends AuthName
 {
     /**

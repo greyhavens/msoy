@@ -12,6 +12,7 @@ import com.threerings.whirled.data.SceneUpdate;
  * contains all attributes, even ones that have not changed.  In other words, a field being null
  * doesn't mean that the field isn't updated, it means the new value should be null.
  */
+@com.threerings.util.ActionScript(omit=true)
 public class SceneAttrsUpdate extends SceneUpdate
 {
     /** The new name. */

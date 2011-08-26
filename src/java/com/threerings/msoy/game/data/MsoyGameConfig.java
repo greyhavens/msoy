@@ -8,6 +8,7 @@ import com.whirled.game.data.GameDefinition;
 /**
  * An interface implemented by both Parlor and AVR games in Whirled.
  */
+@com.threerings.util.ActionScript(omit=true)
 public interface MsoyGameConfig
 {
     /** Returns the id of this game. */

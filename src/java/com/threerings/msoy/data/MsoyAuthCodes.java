@@ -10,6 +10,7 @@ import com.threerings.msoy.data.all.GwtAuthCodes;
 /**
  * Additional auth codes for the MetaSOY server.
  */
+@com.threerings.util.ActionScript(omit=true)
 public interface MsoyAuthCodes extends AuthCodes, GwtAuthCodes
 {
     /** An error code we use on msoy when the username or password are invalid. We 

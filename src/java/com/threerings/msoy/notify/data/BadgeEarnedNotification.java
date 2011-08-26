@@ -7,6 +7,7 @@ import com.threerings.orth.notify.data.Notification;
 
 import com.threerings.msoy.badge.data.all.EarnedBadge;
 
+@com.threerings.util.ActionScript(omit=true)
 public class BadgeEarnedNotification extends Notification
 {
     public BadgeEarnedNotification (EarnedBadge badge)

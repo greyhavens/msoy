@@ -9,6 +9,7 @@ import com.threerings.presents.dobj.DSet;
 /**
  * Maps a Party to its leader in a PartyPlaceObject.
  */
+@com.threerings.util.ActionScript(omit=true)
 public class PartyLeader extends SimpleStreamableObject
     implements DSet.Entry
 {

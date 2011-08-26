@@ -5,6 +5,7 @@ package com.threerings.msoy.game.data;
 
 import com.google.common.primitives.Floats;
 
+@com.threerings.util.ActionScript(omit=true)
 public class PerfRecord
     implements Comparable<PerfRecord>
 {

@@ -12,6 +12,7 @@ import com.threerings.presents.dobj.DSet;
 /**
  * Helps an AVRG keep track of which scene a player is in.
  */
+@com.threerings.util.ActionScript(omit=true)
 public class PlayerLocation extends SimpleStreamableObject
     implements DSet.Entry, Comparable<PlayerLocation>
 {

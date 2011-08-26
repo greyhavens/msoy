@@ -13,6 +13,7 @@ import com.threerings.msoy.item.data.all.ItemIdent;
 /**
  * Contains published information about an actor in a scene (members and pets).
  */
+@com.threerings.util.ActionScript(omit=true)
 public abstract class ActorInfo extends OccupantInfo
 {
     /**

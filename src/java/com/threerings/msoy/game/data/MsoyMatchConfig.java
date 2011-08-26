@@ -8,6 +8,7 @@ import com.whirled.game.data.TableMatchConfig;
 /**
  * Class to encapsulate extended properties to table matches for Whirled.
  */
+@com.threerings.util.ActionScript(omit=true)
 public class MsoyMatchConfig extends TableMatchConfig
 {
     /** The creator configured matchmaking type. */

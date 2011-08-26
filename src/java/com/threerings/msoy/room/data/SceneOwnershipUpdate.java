@@ -8,6 +8,7 @@ import com.threerings.util.Name;
 import com.threerings.whirled.data.SceneModel;
 import com.threerings.whirled.data.SceneUpdate;
 
+@com.threerings.util.ActionScript(omit=true)
 public class SceneOwnershipUpdate extends SceneUpdate
 {
     /** The new owner type. */

@@ -9,6 +9,7 @@ import com.threerings.presents.data.AuthCodes;
 /**
  * Codes returned by the facebook servlets.
  */
+@com.threerings.util.ActionScript(omit=true)
 public interface FacebookCodes extends AuthCodes, GwtAuthCodes
 {
     /** Error code when the facebook session is not available. */

@@ -10,6 +10,7 @@ import com.threerings.util.Name;
 /**
  * Uniquely identifies a pet, so that they may be muted.
  */
+@com.threerings.util.ActionScript(omit=true)
 public class PetName extends Name
 {
     /** For unserialization. */

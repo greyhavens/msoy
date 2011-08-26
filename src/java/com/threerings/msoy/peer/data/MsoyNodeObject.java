@@ -18,6 +18,7 @@ import com.threerings.msoy.party.data.PeerPartyMarshaller;
 /**
  * Maintains information on an MSOY peer server.
  */
+@com.threerings.util.ActionScript(omit=true)
 public class MsoyNodeObject extends OrthNodeObject
 {
     // AUTO-GENERATED: FIELDS START

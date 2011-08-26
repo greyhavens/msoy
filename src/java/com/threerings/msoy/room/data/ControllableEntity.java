@@ -9,6 +9,7 @@ import com.threerings.msoy.item.data.all.ItemIdent;
 /**
  * A reference to a controllable entity.
  */
+@com.threerings.util.ActionScript(omit=true)
 public class ControllableEntity extends Controllable
 {
     public ControllableEntity (ItemIdent ident)

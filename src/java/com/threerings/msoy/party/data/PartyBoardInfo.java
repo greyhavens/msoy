@@ -12,6 +12,7 @@ import com.threerings.msoy.data.MemberObject;
 /**
  * Contains general info about a party for the party board.
  */
+@com.threerings.util.ActionScript(omit=true)
 public class PartyBoardInfo extends SimpleStreamableObject
     implements Comparable<PartyBoardInfo> // server only
 {

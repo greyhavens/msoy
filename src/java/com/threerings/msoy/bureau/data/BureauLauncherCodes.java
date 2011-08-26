@@ -8,6 +8,7 @@ import com.threerings.presents.data.InvocationCodes;
 /**
  * Constants for the msoy bureau launcher system.
  */
+@com.threerings.util.ActionScript(omit=true)
 public interface BureauLauncherCodes extends InvocationCodes
 {
     /** Defines our invocation services group. */

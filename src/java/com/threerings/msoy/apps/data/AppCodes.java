@@ -9,6 +9,7 @@ import com.threerings.presents.data.AuthCodes;
 /**
  * Codes returned by the app servlet.
  */
+@com.threerings.util.ActionScript(omit=true)
 public interface AppCodes extends AuthCodes, GwtAuthCodes
 {
     public static final String E_DAILY_NOTIFICATIONS_NOT_SUPPORTED =

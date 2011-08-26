@@ -9,6 +9,7 @@ import com.threerings.presents.dobj.DSet;
 /**
  * A distributed class containing {@link InProgressBadge} objects.
  */
+@com.threerings.util.ActionScript(omit=true)
 public final class InProgressBadgeSet extends DSet<InProgressBadge>
 {
     /** Creates a BadgeSet with the specified contents. */

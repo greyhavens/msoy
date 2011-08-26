@@ -8,6 +8,7 @@ import com.threerings.presents.net.ServiceCreds;
 /**
  * Provides credentials for a bureau launcher client.
  */
+@com.threerings.util.ActionScript(omit=true)
 public class BureauLauncherCreds extends ServiceCreds
 {
     public BureauLauncherCreds (String nodeName, String sharedSecret)

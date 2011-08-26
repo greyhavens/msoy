@@ -10,6 +10,7 @@ import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.party.data.PartyOccupantInfo;
 import com.threerings.msoy.party.data.PartySummary;
 
+@com.threerings.util.ActionScript(omit=true)
 public class AVRGameOccupantInfo extends OccupantInfo
     implements PartyOccupantInfo
 {

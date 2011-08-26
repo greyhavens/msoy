@@ -9,6 +9,7 @@ import com.threerings.presents.dobj.DSet;
 /**
  * Contains basic information on the current party of a member on a peer.
  */
+@com.threerings.util.ActionScript(omit=true)
 public class MemberParty extends SimpleStreamableObject
     implements DSet.Entry
 {

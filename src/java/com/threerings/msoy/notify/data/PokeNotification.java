@@ -14,6 +14,7 @@ import com.threerings.msoy.data.all.MemberName;
 /**
  * Notifies a user that they've been poked.
  */
+@com.threerings.util.ActionScript(omit=true)
 public class PokeNotification extends Notification
 {
     public PokeNotification ()

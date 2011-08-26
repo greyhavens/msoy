@@ -9,6 +9,7 @@ import com.threerings.presents.dobj.DSet;
 /**
  * A distributed class containing {@link EarnedBadge} objects.
  */
+@com.threerings.util.ActionScript(omit=true)
 public final class EarnedBadgeSet extends DSet<EarnedBadge>
 {
     /** Creates a BadgeSet with the specified contents. */

@@ -8,6 +8,7 @@ import com.threerings.io.SimpleStreamableObject;
 /**
  * Contains information on the current location of a member on a peer.
  */
+@com.threerings.util.ActionScript(omit=true)
 public class MemberLocation extends SimpleStreamableObject
 {
     /** The id of the member represented by this location. */

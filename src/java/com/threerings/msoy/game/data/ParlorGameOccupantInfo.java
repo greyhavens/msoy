@@ -11,6 +11,7 @@ import com.threerings.msoy.data.MsoyUserOccupantInfo;
 import com.threerings.msoy.party.data.PartyOccupantInfo;
 import com.threerings.msoy.party.data.PartySummary;
 
+@com.threerings.util.ActionScript(omit=true)
 public class ParlorGameOccupantInfo extends WhirledGameOccupantInfo
     implements MsoyUserOccupantInfo, PartyOccupantInfo
 {

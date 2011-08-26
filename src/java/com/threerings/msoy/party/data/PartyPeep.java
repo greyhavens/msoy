@@ -9,6 +9,7 @@ import com.threerings.msoy.data.all.VizMemberName;
 /**
  * Represents a fellow party-goer connection.
  */
+@com.threerings.util.ActionScript(omit=true)
 public class PartyPeep extends PlayerEntry
 {
     /**

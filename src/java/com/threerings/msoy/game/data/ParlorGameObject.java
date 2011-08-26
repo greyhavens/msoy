@@ -17,6 +17,7 @@ import com.threerings.msoy.party.data.PartySummary;
 /**
  * Extends Whirled game stuff with party awareness.
  */
+@com.threerings.util.ActionScript(omit=true)
 public class ParlorGameObject extends WhirledGameObject
     implements PartyPlaceObject
 {

@@ -9,6 +9,7 @@ import com.threerings.presents.dobj.DSet;
  * Binds together an owner id, typically the id of an avr game and the id of the properties object
  * associated with the owner's agent and clients.
  */
+@com.threerings.util.ActionScript(omit=true)
 public class RoomPropertiesEntry
     implements DSet.Entry
 {

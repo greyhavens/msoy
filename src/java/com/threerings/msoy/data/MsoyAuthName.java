@@ -10,6 +10,7 @@ import com.threerings.orth.data.AuthName;
  * WorldAuthName, but we use MsoyFoo for all of the "primary" connection classes:
  * MsoyAuthenticator, MsoyClientResolver, etc.
  */
+@com.threerings.util.ActionScript(omit=true)
 public class MsoyAuthName extends AuthName
 {
     /**

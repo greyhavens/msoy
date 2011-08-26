@@ -22,6 +22,7 @@ import com.whirled.game.server.PropertySpaceHelper;
 /**
  * The data shared between server and agent for an AVR game.
  */
+@com.threerings.util.ActionScript(omit=true)
 public class AVRGameAgentObject extends AgentObject
     implements PropertySpaceObject
 {

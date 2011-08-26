@@ -10,6 +10,7 @@ import com.threerings.crowd.data.OccupantInfo;
 /**
  * An interface implemented by places that host partiers.
  */
+@com.threerings.util.ActionScript(omit=true)
 public interface PartyPlaceObject
 {
     /**

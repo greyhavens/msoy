@@ -42,6 +42,7 @@ import static com.threerings.msoy.Log.log;
 /**
  * Contains information on a player logged on to an MSOY Game server.
  */
+@com.threerings.util.ActionScript(omit=true)
 public class PlayerObject extends WhirledPlayerObject
     implements MsoyUserObject, PropertySpaceObject
 {

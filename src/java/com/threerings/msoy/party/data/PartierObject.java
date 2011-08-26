@@ -13,6 +13,7 @@ import com.threerings.msoy.data.all.VizMemberName;
 /**
  * Contains information on a party member logged into the server.
  */
+@com.threerings.util.ActionScript(omit=true)
 public class PartierObject extends BodyObject
 {
     // AUTO-GENERATED: FIELDS START

@@ -6,6 +6,7 @@ package com.threerings.msoy.chat.data;
 import com.samskivert.util.ArrayUtil;
 import com.threerings.crowd.chat.data.ChatCodes;
 
+@com.threerings.util.ActionScript(omit=true)
 public interface MsoyChatCodes extends ChatCodes
 {
     /** A user chat mode for a paid broadcast message. */

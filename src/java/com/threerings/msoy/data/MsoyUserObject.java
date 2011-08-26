@@ -11,6 +11,7 @@ import com.threerings.msoy.party.data.PartySummary;
 /**
  * Defines the interface provided by both {@link MemberObject} and {@link PlayerObject}.
  */
+@com.threerings.util.ActionScript(omit=true)
 public interface MsoyUserObject
 {
     /**

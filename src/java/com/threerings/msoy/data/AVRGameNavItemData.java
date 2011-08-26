@@ -6,6 +6,7 @@ package com.threerings.msoy.data;
 /**
  * Data for an AVRG home page item, which requires the group id.
  */
+@com.threerings.util.ActionScript(omit=true)
 public class AVRGameNavItemData extends BasicNavItemData
 {
     // for serialization

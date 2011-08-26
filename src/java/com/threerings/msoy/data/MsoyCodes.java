@@ -8,6 +8,7 @@ import com.threerings.presents.data.InvocationCodes;
 /**
  * General codes and constants for the whole shebang.
  */
+@com.threerings.util.ActionScript(omit=true)
 public interface MsoyCodes extends InvocationCodes
 {
     /** Defines our msoy (shared) invocation services group. */

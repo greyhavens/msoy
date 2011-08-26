@@ -6,6 +6,7 @@ package com.threerings.msoy.peer.data;
 /**
  * Tracks the current scene occupied by a member.
  */
+@com.threerings.util.ActionScript(omit=true)
 public class MemberScene extends MemberDatum
 {
     /** The id of the scene occupied by this member. */

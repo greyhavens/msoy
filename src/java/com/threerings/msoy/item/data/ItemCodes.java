@@ -8,6 +8,7 @@ import com.threerings.presents.data.InvocationCodes;
 /**
  * Codes and constants relating to the item services.
  */
+@com.threerings.util.ActionScript(omit=true)
 public interface ItemCodes extends InvocationCodes
 {
     /** An error code returned by the item services. */

@@ -6,6 +6,7 @@ package com.threerings.msoy.peer.data;
 /**
  * Tracks the current game (or game lobby) occupied by a member.
  */
+@com.threerings.util.ActionScript(omit=true)
 public class MemberGame extends MemberDatum
 {
     /** The id of the game (or game lobby) occupied by this member. */

@@ -8,6 +8,7 @@ import com.threerings.parlor.data.TableConfig;
 /**
  * A table configuration with Msoy-specific extras.
  */
+@com.threerings.util.ActionScript(omit=true)
 public class MsoyTableConfig extends TableConfig
 {
     /** The display text for this table. */

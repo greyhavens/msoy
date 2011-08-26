@@ -7,6 +7,7 @@ import com.threerings.presents.dobj.ChangeListener;
 
 import com.threerings.msoy.item.data.all.ItemIdent;
 
+@com.threerings.util.ActionScript(omit=true)
 public interface MemoryChangedListener extends ChangeListener
 {
     /**

@@ -13,6 +13,7 @@ import com.threerings.msoy.data.all.MemberName;
 /**
  * Notifies a user that an invitation was accepted
  */
+@com.threerings.util.ActionScript(omit=true)
 public class InviteAcceptedNotification extends Notification
 {
     public InviteAcceptedNotification ()
