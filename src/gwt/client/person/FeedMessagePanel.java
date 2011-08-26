@@ -89,6 +89,22 @@ public class FeedMessagePanel extends FlowPanel
                 return new WidgetWrapper(new IconWidget("friend_subscribed", message));
             }
 
+            public Icon createCommentedIcon (String message) {
+                return new WidgetWrapper(new IconWidget("friend_commented", message));
+            }
+
+            public Icon createPokedIcon (String message) {
+                return new WidgetWrapper(new IconWidget("friend_added_friend", message));
+            }
+
+            public Icon createFoundedGroupIcon (String message) {
+                return new WidgetWrapper(new IconWidget("friend_created_group", message));
+            }
+
+            public Icon createListedItemIcon (String message) {
+                return new WidgetWrapper(new IconWidget("friend_listed_item", message));
+            }
+
             public void addIcon (Icon icon) {
                 add(((WidgetWrapper)icon).widget);
             }

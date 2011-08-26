@@ -435,6 +435,30 @@ public class FeedItemGeneratorUnitTest
             return new StubItem(text);
         }
 
+        public Icon createCommentedIcon (String text) {
+            calls.count();
+            assertNotNull(text);
+            return new StubItem(text);
+        }
+
+        public Icon createPokedIcon (String text) {
+            calls.count();
+            assertNotNull(text);
+            return new StubItem(text);
+        }
+
+        public Icon createFoundedGroupIcon (String text) {
+            calls.count();
+            assertNotNull(text);
+            return new StubItem(text);
+        }
+
+        public Icon createListedItemIcon (String text) {
+            calls.count();
+            assertNotNull(text);
+            return new StubItem(text);
+        }
+
         public String createLink (String label, Pages page, Args args) {
             calls.count();
             assertNotNull(label);

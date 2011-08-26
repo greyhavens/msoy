@@ -758,6 +758,26 @@ public class SpamLogic
             return createStaticIcon(text, "images/whirled/friend_subscribed.png");
         }
 
+        // from Builder
+        public Icon createCommentedIcon (String text) {
+            return createStaticIcon(text, "images/whirled/friend_commented.png");
+        }
+
+        // from Builder
+        public Icon createPokedIcon (String text) {
+            return createStaticIcon(text, "images/whirled/friend_added_friend.png");
+        }
+
+        // from Builder
+        public Icon createFoundedGroupIcon (String text) {
+            return createStaticIcon(text, "images/whirled/friend_created_group.png");
+        }
+
+        // from Builder
+        public Icon createListedItemIcon (String text) {
+            return createStaticIcon(text, "images/whirled/friend_listed_item.png");
+        }
+
         protected Icon createStaticIcon (String text, String imageSrc)
         {
             return new StringWrapper(_html.reset().open("img",
@@ -828,6 +848,26 @@ public class SpamLogic
 
         // from Builder
         public Icon createSubscribedIcon (String text) {
+            return new StringWrapper(text);
+        }
+
+        // from Builder
+        public Icon createCommentedIcon (String text) {
+            return new StringWrapper(text);
+        }
+
+        // from Builder
+        public Icon createPokedIcon (String text) {
+            return new StringWrapper(text);
+        }
+
+        // from Builder
+        public Icon createFoundedGroupIcon (String text) {
+            return new StringWrapper(text);
+        }
+
+        // from Builder
+        public Icon createListedItemIcon (String text) {
             return new StringWrapper(text);
         }
 

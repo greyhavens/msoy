@@ -50,13 +50,23 @@ public class FeedItemGenerator
          */
         String createLink (String label, Pages page, Args args);
 
-        /**
-         * Creates a context-free icon for when a user or users gains a level.
-         */
-        Icon createGainedLevelIcon (String text);
+        /** Creates a context-free icon for when a user or users gains a level. */
+        Icon createGainedLevelIcon (String html);
 
-        /** Static icon for club whirled subscriptions. */
-        Icon createSubscribedIcon (String text);
+        /** Creates a context-free icon for club whirled subscriptions. */
+        Icon createSubscribedIcon (String html);
+
+        /** Creates a context-free icon for comment and forum reply notifications. */
+        Icon createCommentedIcon (String html);
+
+        /** Creates a context-free icon for poke notifications. */
+        Icon createPokedIcon (String html);
+
+        /** Creates a context-free icon for when a user founded a new group. */
+        Icon createFoundedGroupIcon (String html);
+
+        /** Creates a context-free icon for when a user listed a new item in the shop. */
+        Icon createListedItemIcon (String html);
 
         /**
          * Adds a previously created media object to the feed with the given message. The passed
@@ -178,7 +188,6 @@ public class FeedItemGenerator
      */
     protected void addFriendMessage (FriendFeedMessage message)
     {
-        Media media = buildMedia(message);
         String subject = buildSubject(message);
         String object = buildObject(message);
         String text = action(message, subject, object, Plural.NONE);
@@ -187,12 +196,21 @@ public class FeedItemGenerator
         case FRIEND_UPDATED_ROOM:
         case FRIEND_WON_TROPHY:
         case FRIEND_PLAYED_GAME:
-        case FRIEND_LISTED_ITEM:
         case FRIEND_WON_BADGE:
         case FRIEND_WON_MEDAL:
-        case FRIEND_CREATED_GROUP:
         case FRIEND_JOINED_GROUP:
+            Media media = buildMedia(message);
             addMedia(media, text);
+            break;
+
+        case FRIEND_CREATED_GROUP:
+            _builder.addIcon(_builder.createFoundedGroupIcon(
+                action(message, subject, object, Plural.NONE)));
+            break;
+
+        case FRIEND_LISTED_ITEM:
+            _builder.addIcon(_builder.createListedItemIcon(
+                action(message, subject, object, Plural.NONE)));
             break;
 
         case FRIEND_GAINED_LEVEL:
@@ -237,11 +255,27 @@ public class FeedItemGenerator
      */
     protected void addSelfMessage (SelfFeedMessage message)
     {
-        Media media = buildMedia(message);
         String subject = buildSubject(message);
         String object = buildObject(message);
         String text = action(message, subject, object, Plural.NONE);
-        addMedia(media, text);
+        switch (message.type) {
+        case SELF_FORUM_REPLY:
+        case SELF_ROOM_COMMENT:
+        case SELF_ITEM_COMMENT:
+        case SELF_GAME_COMMENT:
+        case SELF_PROFILE_COMMENT:
+            _builder.addIcon(_builder.createCommentedIcon(text));
+            break;
+
+        case SELF_POKE:
+            _builder.addIcon(_builder.createPokedIcon(text));
+            break;
+
+        default:
+            Media media = buildMedia(message);
+            addMedia(media, text);
+            break;
+        }
     }
 
     /**
@@ -251,8 +285,6 @@ public class FeedItemGenerator
     protected void addMultiActionsMessage (List<FeedMessage> list)
     {
         FeedMessage message = list.get(0);
-        String subject = buildSubject(message);
-        Media[] media = buildMediaArray(list);
         switch (message.type) {
         case FRIEND_WON_BADGE:
         case FRIEND_WON_MEDAL:
@@ -260,12 +292,30 @@ public class FeedItemGenerator
         case FRIEND_UPDATED_ROOM:
         case FRIEND_WON_TROPHY:
         case FRIEND_PLAYED_GAME:
-        case FRIEND_LISTED_ITEM:
-        case SELF_FORUM_REPLY:
-        case SELF_POKE:
+            String subject = buildSubject(message);
+            Media[] media = buildMediaArray(list);
             String text = action(
                 message, subject, makeStringList(list, ListMode.OBJECT), Plural.OBJECT);
             addMedia(media, text);
+            break;
+
+        case FRIEND_LISTED_ITEM:
+            _builder.addIcon(_builder.createListedItemIcon(action(
+                message, makeStringList(list, ListMode.OBJECT), "", Plural.OBJECT)));
+            break;
+
+        case SELF_FORUM_REPLY:
+        case SELF_ROOM_COMMENT:
+        case SELF_ITEM_COMMENT:
+        case SELF_GAME_COMMENT:
+        case SELF_PROFILE_COMMENT:
+            _builder.addIcon(_builder.createCommentedIcon(action(
+                message, makeStringList(list, ListMode.OBJECT), "", Plural.OBJECT)));
+            break;
+
+        case SELF_POKE:
+            _builder.addIcon(_builder.createPokedIcon(action(
+                message, makeStringList(list, ListMode.OBJECT), "", Plural.OBJECT)));
             break;
 
         case FRIEND_GAINED_LEVEL:
@@ -294,7 +344,6 @@ public class FeedItemGenerator
         FeedMessage message = list.get(0);
         String friendLinks = makeStringList(list, ListMode.SUBJECT);
         String object = buildObject(message);
-        Media media = buildMedia(message);
         String text = action(message, friendLinks, object, Plural.SUBJECT);
         switch (message.type) {
         case FRIEND_ADDED_FRIEND:
@@ -302,13 +351,20 @@ public class FeedItemGenerator
         case FRIEND_PLAYED_GAME:
         case FRIEND_WON_BADGE:
         case FRIEND_WON_MEDAL:
+            Media media = buildMedia(message);
+            addMedia(media, text);
+            break;
+
         case SELF_ROOM_COMMENT:
         case SELF_ITEM_COMMENT:
         case SELF_GAME_COMMENT:
         case SELF_PROFILE_COMMENT:
         case SELF_FORUM_REPLY:
+            _builder.addIcon(_builder.createCommentedIcon(text));
+            break;
+
         case SELF_POKE:
-            addMedia(media, text);
+            _builder.addIcon(_builder.createPokedIcon(text));
             break;
 
         default:
@@ -429,9 +485,6 @@ public class FeedItemGenerator
     {
         MediaDesc media;
         switch (message.type.getCategory()) {
-        case FRIENDINGS:
-            return buildMedia(message, 2, Pages.PEOPLE, message.data[1]);
-
         case ROOMS:
             return buildMedia(message, 2, Pages.WORLD, "s" + message.data[0]);
 
@@ -439,13 +492,8 @@ public class FeedItemGenerator
             if (message.type == FeedMessageType.FRIEND_WON_TROPHY) {
                 return buildMedia(message, 2, Pages.GAMES,
                     SharedNaviUtil.GameDetails.TROPHIES.args(Integer.valueOf(message.data[1])));
-            } else if (message.type == FeedMessageType.FRIEND_PLAYED_GAME) {
-                return buildMedia(message, 2, Pages.GAMES, Args.compose("d", message.data[1]));
             }
             break;
-
-        case LISTED_ITEMS:
-            return buildMedia(message, 3, Pages.SHOP, "l", message.data[1], message.data[2]);
 
         case BADGES:
             int badgeCode = Integer.parseInt(message.data[0]);
@@ -458,24 +506,8 @@ public class FeedItemGenerator
             int friendId = ((FriendFeedMessage)message).friend.getId();
             return buildMedia(message, 1, Pages.ME, "medals", friendId);
 
-        case GROUPS:
-            return buildMedia(message, 2, Pages.GROUPS, "d", message.data[0]);
-
         case ANNOUNCEMENTS:
             return buildMedia(message, 3, Pages.GROUPS, "t", message.data[2]);
-
-        case COMMENTS:
-            if (message.type == FeedMessageType.SELF_ROOM_COMMENT) {
-                return buildMedia(message, 2, Pages.WORLD, "s", message.data[0]);
-            } else if (message.type == FeedMessageType.SELF_ITEM_COMMENT) {
-                return buildMedia(message, 3, Pages.SHOP, "l", message.data[0], message.data[1]);
-            } else if (message.type == FeedMessageType.SELF_GAME_COMMENT) {
-                return buildMedia(message, 2, Pages.GAMES, "d", message.data[0], "c");
-            } else if (message.type == FeedMessageType.SELF_PROFILE_COMMENT) {
-                return buildMedia(message, -1, Pages.PEOPLE, message.data[0]);
-            } else if (message.type == FeedMessageType.SELF_POKE) {
-                return buildMedia(message, 2, Pages.PEOPLE, message.data[0]);
-            }
         }
         return null;
     }
