@@ -25,6 +25,9 @@
   <!-- defines the build version (normally zero unless we're doing a package build) -->
   <property name="version" value="0"/>
 
+  <!-- import any custom configuration -->
+  <property file="build.properties"/>
+
   <!-- define our subprojects and include the standard build system -->
   <import file="build/etc/build-support.xml"/>
   <fileset dir="." id="check.paths">
@@ -358,7 +361,7 @@
   <target name="toolprep" depends="prepare">
     <artifact:dependencies pathId="tools.classpath">
       <remoteRepository refid="ooo.maven.depends.repo"/>
-      <dependency groupId="com.threerings" artifactId="narya-tools" version="1.4"/>
+      <dependency groupId="com.threerings" artifactId="narya-tools" version="1.9-SNAPSHOT"/>
     </artifact:dependencies>
     <taskdef resource="com/threerings/presents/tools.properties"
              classpathref="tools.classpath"/>
@@ -836,6 +839,24 @@
     <gendobj classpathref="classpath">
       <fileset dir="${src.dir}" includes="**/*Object.java"/>
     </gendobj>
+    <genascriptstreamable classpathref="classpath" header="lib/SOURCE_HEADER" asroot="${asrc.dir}">
+      <fileset dir="${src.dir}" includes="**/*Object.java"/>
+    </genascriptstreamable>
+    <!-- <asimports srcdir="${asrc.dir}"/> -->
+  </target>
+
+  <target name="genstreamable" depends="toolprep">
+    <!-- make sure the streamable class files are all compiled -->
+    <javac srcdir="${src.dir}" destdir="${classes.dir}" includeAntRuntime="false"
+           debug="on" optimize="${build.optimize}" deprecation="on" source="1.5" target="1.5">
+      <classpath refid="classpath"/>
+      <include name="**/data/*.java"/>
+    </javac>
+    <genascriptstreamable classpathref="classpath" header="lib/SOURCE_HEADER"
+      asroot="${asrc.dir}">
+      <fileset dir="${src.dir}" includes="**/data/*.java" excludes="**/*Object.java"/>
+    </genascriptstreamable>
+    <!-- <asimports srcdir="${asrc.dir}"/> -->
   </target>
 
   <!-- generates marshaller and dispatcher classes for all invocation service declarations -->
@@ -867,6 +888,7 @@
         <include name="**/client/BureauLauncherService.java"/>
       </fileset>
     </genservice>
+    <!-- <asimports srcdir="${asrc.dir}"/> -->
   </target>
 
   <!-- generates sender and decoder classes for all invocation receiver declarations -->
@@ -883,9 +905,10 @@
         <include name="**/*Receiver.java"/>
       </fileset>
     </genreceiver>
+    <!-- <asimports srcdir="${asrc.dir}"/> -->
   </target>
 
-  <!-- adds readField and writeField methods to Stremable classes -->
+  <!-- adds readField and writeField methods to Streamable classes -->
   <target name="procstream" depends="toolprep">
     <!-- now instrument the associated files -->
     <instream outdir="${classes.dir}">
