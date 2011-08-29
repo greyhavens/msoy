@@ -367,6 +367,17 @@
              classpathref="tools.classpath"/>
   </target>
 
+  <target name="flexserver" depends="toolprep">
+    <java classname="com.martiansoftware.nailgun.NGServer" maxmemory="256m" fork="true">
+      <classpath>
+        <pathelement location="${flexsdk.dir}/lib/mxmlc.jar"/>
+        <pathelement location="${flexsdk.dir}/lib/compc.jar"/>
+        <pathelement location="${extlibs.dir}/nailgun.jar"/>
+      </classpath>
+      <jvmarg value="-Djava.awt.headless=true"/>
+    </java>
+  </target>
+
   <!-- creates page.gwt.xml from page.gwt.xml.in, doing user agent fiddling -->
   <target name="preppage">
     <if><isset property="gwt_user_agent"/><then>
@@ -603,11 +614,12 @@
     <property name="flex.extra-arg" value="-externs=DummyValueIgnore"/>
     <property name="flex.extra-arg-2" value="-externs=DummyValueIgnore"/>
     <property name="copydir" value="pages/clients/${version}"/>
-    <exec executable="${flexsdk.dir}/bin/mxmlc" failonerror="true">
-      <arg value="-load-config"/>
-      <arg value="${deploy.dir}/msoy-config.xml"/>
+    <mxmlc dest="${deploy.dir}/${swfname}.swf"
+        srcdir="${asrc.dir}" main="com/threerings/msoy/${aspath}"
+        stacktraces="${dev_deployment}" config="${deploy.dir}/msoy-config.xml">
       <arg value="${flex.extra-arg}"/>
       <arg value="${flex.extra-arg-2}"/>
+      <arg value="-compiler.optimize"/>
       <arg value="-compiler.library-path+=${deploy.dir}/lib/aspirin.swc"/>
       <arg value="-compiler.library-path+=${deploy.dir}/lib/naryalib.swc"/>
       <arg value="-compiler.library-path+=${deploy.dir}/lib/nenyalib.swc"/>
@@ -620,19 +632,13 @@
       <arg value="-compiler.library-path+=${deploy.dir}/lib/flexlib-bin.swc"/>
       <arg value="-compiler.library-path+=${deploy.dir}/lib/tweener.swc"/>
       <arg value="-compiler.library-path+=${deploy.dir}/lib/KongregateAPI.swc"/>
-      <arg value="-compiler.source-path=${asrc.dir}/"/>
-      <arg value="-compiler.source-path=rsrc/{locale}/i18n"/>
-      <arg value="-compiler.verbose-stacktraces=${dev_deployment}"/>
+      <arg value="-compiler.source-path+=rsrc/{locale}/i18n"/>
       <!-- This sets the SWF size, not the app size, and we set it to
            this size for the avatar viewer's native size. -->
       <arg value="-default-size"/>
       <arg value="600"/>
       <arg value="488"/>
-      <arg value="-output"/>
-      <arg value="${deploy.dir}/${swfname}.swf"/>
-      <arg value="-file-specs"/>
-      <arg value="${asrc.dir}/com/threerings/msoy/${aspath}"/>
-    </exec>
+    </mxmlc>
     <if><not><equals arg1="${copydir}" arg2=""/></not>
       <then>
         <copy file="${deploy.dir}/${swfname}.swf" todir="${copydir}"/>
