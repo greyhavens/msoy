@@ -23,7 +23,6 @@ import static com.threerings.msoy.Log.log;
 /**
  * Room stuff.
  */
-@com.threerings.util.ActionScript(omit=true)
 public class RoomObject extends SpotSceneObject
     implements PartyPlaceObject
 {
@@ -72,6 +71,18 @@ public class RoomObject extends SpotSceneObject
     @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String CURRENT_SONG_ID = "currentSongId";
 
+    /** The field name of the <code>deejays</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
+    public static final String DEEJAYS = "deejays";
+
+    /** The field name of the <code>track</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
+    public static final String TRACK = "track";
+
+    /** The field name of the <code>recentTracks</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
+    public static final String RECENT_TRACKS = "recentTracks";
+
     /** The field name of the <code>playCount</code> field. */
     @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String PLAY_COUNT = "playCount";
@@ -107,8 +118,17 @@ public class RoomObject extends SpotSceneObject
     /** The set of songs in the playlist. */
     public DSet<Audio> playlist = DSet.newDSet();
 
-    /** The item id of the current song. */
+    /** The item id of the current song, if not in DJ mode. */
     public int currentSongId;
+
+    /** The DJs currently in this room, if any. */
+    public DSet<Deejay> deejays = DSet.newDSet();
+
+    /** The song currently being DJed, if in DJ mode. */
+    public Track track;
+
+    /** A list of songs that were recently DJed. */
+    public DSet<RecentTrack> recentTracks = DSet.newDSet();
 
     /** A monotonically increasing integer used to indicate which song we're playing since
       * the room was first resolved. */
@@ -504,6 +524,125 @@ public class RoomObject extends SpotSceneObject
         requestAttributeChange(
             CURRENT_SONG_ID, Integer.valueOf(value), Integer.valueOf(ovalue));
         this.currentSongId = value;
+    }
+
+    /**
+     * Requests that the specified entry be added to the
+     * <code>deejays</code> set. The set will not change until the event is
+     * actually propagated through the system.
+     */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
+    public void addToDeejays (Deejay elem)
+    {
+        requestEntryAdd(DEEJAYS, deejays, elem);
+    }
+
+    /**
+     * Requests that the entry matching the supplied key be removed from
+     * the <code>deejays</code> set. The set will not change until the
+     * event is actually propagated through the system.
+     */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
+    public void removeFromDeejays (Comparable<?> key)
+    {
+        requestEntryRemove(DEEJAYS, deejays, key);
+    }
+
+    /**
+     * Requests that the specified entry be updated in the
+     * <code>deejays</code> set. The set will not change until the event is
+     * actually propagated through the system.
+     */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
+    public void updateDeejays (Deejay elem)
+    {
+        requestEntryUpdate(DEEJAYS, deejays, elem);
+    }
+
+    /**
+     * Requests that the <code>deejays</code> field be set to the
+     * specified value. Generally one only adds, updates and removes
+     * entries of a distributed set, but certain situations call for a
+     * complete replacement of the set value. The local value will be
+     * updated immediately and an event will be propagated through the
+     * system to notify all listeners that the attribute did
+     * change. Proxied copies of this object (on clients) will apply the
+     * value change when they received the attribute changed notification.
+     */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
+    public void setDeejays (DSet<Deejay> value)
+    {
+        requestAttributeChange(DEEJAYS, value, this.deejays);
+        DSet<Deejay> clone = (value == null) ? null : value.clone();
+        this.deejays = clone;
+    }
+
+    /**
+     * Requests that the <code>track</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
+    public void setTrack (Track value)
+    {
+        Track ovalue = this.track;
+        requestAttributeChange(
+            TRACK, value, ovalue);
+        this.track = value;
+    }
+
+    /**
+     * Requests that the specified entry be added to the
+     * <code>recentTracks</code> set. The set will not change until the event is
+     * actually propagated through the system.
+     */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
+    public void addToRecentTracks (RecentTrack elem)
+    {
+        requestEntryAdd(RECENT_TRACKS, recentTracks, elem);
+    }
+
+    /**
+     * Requests that the entry matching the supplied key be removed from
+     * the <code>recentTracks</code> set. The set will not change until the
+     * event is actually propagated through the system.
+     */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
+    public void removeFromRecentTracks (Comparable<?> key)
+    {
+        requestEntryRemove(RECENT_TRACKS, recentTracks, key);
+    }
+
+    /**
+     * Requests that the specified entry be updated in the
+     * <code>recentTracks</code> set. The set will not change until the event is
+     * actually propagated through the system.
+     */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
+    public void updateRecentTracks (RecentTrack elem)
+    {
+        requestEntryUpdate(RECENT_TRACKS, recentTracks, elem);
+    }
+
+    /**
+     * Requests that the <code>recentTracks</code> field be set to the
+     * specified value. Generally one only adds, updates and removes
+     * entries of a distributed set, but certain situations call for a
+     * complete replacement of the set value. The local value will be
+     * updated immediately and an event will be propagated through the
+     * system to notify all listeners that the attribute did
+     * change. Proxied copies of this object (on clients) will apply the
+     * value change when they received the attribute changed notification.
+     */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
+    public void setRecentTracks (DSet<RecentTrack> value)
+    {
+        requestAttributeChange(RECENT_TRACKS, value, this.recentTracks);
+        DSet<RecentTrack> clone = (value == null) ? null : value.clone();
+        this.recentTracks = clone;
     }
 
     /**

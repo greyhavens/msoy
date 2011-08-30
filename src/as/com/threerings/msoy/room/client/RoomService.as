@@ -3,22 +3,28 @@
 
 package com.threerings.msoy.room.client {
 
+import flash.utils.ByteArray;
+
 import com.threerings.io.TypedArray;
-import com.threerings.msoy.item.data.all.ItemIdent;
-import com.threerings.presents.client.Client;
+
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.client.InvocationService_ConfirmListener;
 import com.threerings.presents.client.InvocationService_InvocationListener;
 import com.threerings.presents.client.InvocationService_ResultListener;
+
 import com.threerings.whirled.data.SceneUpdate;
 import com.threerings.whirled.spot.data.Location;
-import flash.utils.ByteArray;
+
+import com.threerings.msoy.item.data.all.ItemIdent;
 
 /**
  * An ActionScript version of the Java RoomService interface.
  */
 public interface RoomService extends InvocationService
 {
+    // from Java interface RoomService
+    function addOrRemoveSong (arg1 :int, arg2 :Boolean, arg3 :InvocationService_ConfirmListener) :void;
+
     // from Java interface RoomService
     function changeLocation (arg1 :ItemIdent, arg2 :Location) :void;
 
@@ -30,9 +36,6 @@ public interface RoomService extends InvocationService
 
     // from Java interface RoomService
     function jumpToSong (arg1 :int, arg2 :InvocationService_ConfirmListener) :void;
-
-    // from Java interface RoomService
-    function modifyPlaylist (arg1 :int, arg2 :Boolean, arg3 :InvocationService_ConfirmListener) :void;
 
     // from Java interface RoomService
     function moveMob (arg1 :int, arg2 :String, arg3 :Location, arg4 :InvocationService_InvocationListener) :void;

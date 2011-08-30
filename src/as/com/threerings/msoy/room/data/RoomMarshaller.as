@@ -3,10 +3,14 @@
 
 package com.threerings.msoy.room.data {
 
+import flash.utils.ByteArray;
+
 import com.threerings.io.TypedArray;
-import com.threerings.msoy.item.data.all.ItemIdent;
-import com.threerings.msoy.room.client.RoomService;
-import com.threerings.presents.client.Client;
+
+import com.threerings.util.Byte;
+import com.threerings.util.Integer;
+import com.threerings.util.langBoolean;
+
 import com.threerings.presents.client.InvocationService_ConfirmListener;
 import com.threerings.presents.client.InvocationService_InvocationListener;
 import com.threerings.presents.client.InvocationService_ResultListener;
@@ -14,12 +18,12 @@ import com.threerings.presents.data.InvocationMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ConfirmMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ListenerMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ResultMarshaller;
-import com.threerings.util.Byte;
-import com.threerings.util.Integer;
-import com.threerings.util.langBoolean;
+
 import com.threerings.whirled.data.SceneUpdate;
 import com.threerings.whirled.spot.data.Location;
-import flash.utils.ByteArray;
+
+import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.room.client.RoomService;
 
 /**
  * Provides the implementation of the <code>RoomService</code> interface
@@ -31,8 +35,21 @@ import flash.utils.ByteArray;
 public class RoomMarshaller extends InvocationMarshaller
     implements RoomService
 {
+    /** The method id used to dispatch <code>addOrRemoveSong</code> requests. */
+    public static const ADD_OR_REMOVE_SONG :int = 1;
+
+    // from interface RoomService
+    public function addOrRemoveSong (arg1 :int, arg2 :Boolean, arg3 :InvocationService_ConfirmListener) :void
+    {
+        var listener3 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
+        listener3.listener = arg3;
+        sendRequest(ADD_OR_REMOVE_SONG, [
+            Integer.valueOf(arg1), langBoolean.valueOf(arg2), listener3
+        ]);
+    }
+
     /** The method id used to dispatch <code>changeLocation</code> requests. */
-    public static const CHANGE_LOCATION :int = 1;
+    public static const CHANGE_LOCATION :int = 2;
 
     // from interface RoomService
     public function changeLocation (arg1 :ItemIdent, arg2 :Location) :void
@@ -43,7 +60,7 @@ public class RoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch <code>despawnMob</code> requests. */
-    public static const DESPAWN_MOB :int = 2;
+    public static const DESPAWN_MOB :int = 3;
 
     // from interface RoomService
     public function despawnMob (arg1 :int, arg2 :String, arg3 :InvocationService_InvocationListener) :void
@@ -56,7 +73,7 @@ public class RoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch <code>editRoom</code> requests. */
-    public static const EDIT_ROOM :int = 3;
+    public static const EDIT_ROOM :int = 4;
 
     // from interface RoomService
     public function editRoom (arg1 :InvocationService_ResultListener) :void
@@ -69,7 +86,7 @@ public class RoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch <code>jumpToSong</code> requests. */
-    public static const JUMP_TO_SONG :int = 4;
+    public static const JUMP_TO_SONG :int = 5;
 
     // from interface RoomService
     public function jumpToSong (arg1 :int, arg2 :InvocationService_ConfirmListener) :void
@@ -78,19 +95,6 @@ public class RoomMarshaller extends InvocationMarshaller
         listener2.listener = arg2;
         sendRequest(JUMP_TO_SONG, [
             Integer.valueOf(arg1), listener2
-        ]);
-    }
-
-    /** The method id used to dispatch <code>modifyPlaylist</code> requests. */
-    public static const MODIFY_PLAYLIST :int = 5;
-
-    // from interface RoomService
-    public function modifyPlaylist (arg1 :int, arg2 :Boolean, arg3 :InvocationService_ConfirmListener) :void
-    {
-        var listener3 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
-        listener3.listener = arg3;
-        sendRequest(MODIFY_PLAYLIST, [
-            Integer.valueOf(arg1), langBoolean.valueOf(arg2), listener3
         ]);
     }
 

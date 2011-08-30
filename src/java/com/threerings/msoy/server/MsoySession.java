@@ -160,7 +160,7 @@ public class MsoySession extends WhirledSession
         if (acct != null) {
             _memobj.setTokens(acct.tokens);
         } else {
-            _memobj.setTokens(new MsoyTokenRing());
+            _memobj.setTokens(new MsoyTokenRing(0));
         }
 
         // start active/idle metrics on this server - the player starts out active

@@ -15,8 +15,4 @@ public class WindowAuthName extends Name
     {
         super(bureauId);
     }
-
-    public WindowAuthName ()
-    {
-    }
 }

@@ -13,11 +13,6 @@ import com.threerings.util.Name;
 @com.threerings.util.ActionScript(omit=true)
 public class PetName extends Name
 {
-    /** For unserialization. */
-    public PetName ()
-    {
-    }
-
     public PetName (String displayName, int petId, int ownerId)
     {
         super(displayName);

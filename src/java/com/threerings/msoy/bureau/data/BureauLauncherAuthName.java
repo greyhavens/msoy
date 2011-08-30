@@ -15,8 +15,4 @@ public class BureauLauncherAuthName extends Name
     {
         super(burlId);
     }
-
-    public BureauLauncherAuthName ()
-    {
-    }
 }

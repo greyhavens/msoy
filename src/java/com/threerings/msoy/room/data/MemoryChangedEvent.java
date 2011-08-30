@@ -14,11 +14,6 @@ import static com.threerings.msoy.Log.log;
 @com.threerings.util.ActionScript(omit=true)
 public class MemoryChangedEvent extends NamedEvent
 {
-    /** Suitable for serialization. */
-    public MemoryChangedEvent ()
-    {
-    }
-
     public MemoryChangedEvent (
         int targetOid, String name, ItemIdent ident, String key, byte[] newValue)
     {

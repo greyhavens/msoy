@@ -3,14 +3,14 @@
 
 package com.threerings.msoy.chat.data {
 
-import com.threerings.msoy.chat.client.JabberService;
-import com.threerings.msoy.data.all.JabberName;
-import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService_InvocationListener;
 import com.threerings.presents.client.InvocationService_ResultListener;
 import com.threerings.presents.data.InvocationMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ListenerMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ResultMarshaller;
+
+import com.threerings.msoy.chat.client.JabberService;
+import com.threerings.msoy.data.all.JabberName;
 
 /**
  * Provides the implementation of the <code>JabberService</code> interface

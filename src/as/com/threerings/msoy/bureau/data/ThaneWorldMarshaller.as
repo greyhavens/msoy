@@ -3,12 +3,13 @@
 
 package com.threerings.msoy.bureau.data {
 
-import com.threerings.msoy.bureau.client.ThaneWorldService;
-import com.threerings.presents.client.Client;
+import com.threerings.util.Integer;
+
 import com.threerings.presents.client.InvocationService_ResultListener;
 import com.threerings.presents.data.InvocationMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ResultMarshaller;
-import com.threerings.util.Integer;
+
+import com.threerings.msoy.bureau.client.ThaneWorldService;
 
 /**
  * Provides the implementation of the <code>ThaneWorldService</code> interface

@@ -53,12 +53,12 @@ public interface RoomService extends InvocationService
     void setActorState (ItemIdent item, int actorOid, String state);
 
     /**
-     * Requests to add or remove a song from the playlist.
+     * Requests to add or remove a song from the room.
      */
-    void modifyPlaylist (int audioId, boolean add, ConfirmListener listener);
+    void addOrRemoveSong (int audioId, boolean add, ConfirmListener listener);
 
     /**
-     * For managers, request to jump to a particular song.
+     * For managers, request to jump to a particular song in the playlist.
      */
     void jumpToSong (int audioId, ConfirmListener listener);
 

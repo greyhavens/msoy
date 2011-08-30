@@ -4,15 +4,17 @@
 package com.threerings.msoy.data {
 
 import com.threerings.io.TypedArray;
-import com.threerings.msoy.client.MsoyService;
-import com.threerings.presents.client.Client;
+
+import com.threerings.util.Integer;
+import com.threerings.util.langBoolean;
+
 import com.threerings.presents.client.InvocationService_ConfirmListener;
 import com.threerings.presents.client.InvocationService_ResultListener;
 import com.threerings.presents.data.InvocationMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ConfirmMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ResultMarshaller;
-import com.threerings.util.Integer;
-import com.threerings.util.langBoolean;
+
+import com.threerings.msoy.client.MsoyService;
 
 /**
  * Provides the implementation of the <code>MsoyService</code> interface
@@ -31,7 +33,6 @@ public class MsoyMarshaller extends InvocationMarshaller
     public function dispatchDeferredNotifications () :void
     {
         sendRequest(DISPATCH_DEFERRED_NOTIFICATIONS, [
-            
         ]);
     }
 

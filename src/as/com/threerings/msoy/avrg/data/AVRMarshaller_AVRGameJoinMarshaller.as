@@ -3,8 +3,9 @@
 
 package com.threerings.msoy.avrg.data {
 
-import com.threerings.msoy.avrg.client.AVRService_AVRGameJoinListener;
 import com.threerings.presents.data.InvocationMarshaller_ListenerMarshaller;
+
+import com.threerings.msoy.avrg.client.AVRService_AVRGameJoinListener;
 
 /**
  * Marshalls instances of the AVRService_AVRGameJoinMarshaller interface.

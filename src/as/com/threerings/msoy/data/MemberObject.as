@@ -25,6 +25,7 @@ import com.threerings.msoy.game.data.GameSummary;
 
 import com.threerings.msoy.group.data.all.GroupMembership;
 import com.threerings.msoy.group.data.all.GroupMembership_Rank;
+import com.threerings.msoy.room.data.Track;
 
 import com.threerings.msoy.item.data.all.Avatar;
 
@@ -108,6 +109,8 @@ public class MemberObject extends BodyObject
      * Format: [ Notification ]. */
     public static const NOTIFICATION :String = "notification";
 
+    public static const TRACKS :String = "tracks";
+
     /** The member name and id for this user. */
     public var memberName :VizMemberName;
 
@@ -179,6 +182,9 @@ public class MemberObject extends BodyObject
 
     /** Experiences this player has had. */
     public var experiences :DSet; /* of */ MemberExperience;
+
+    /** If this player is DJ-ing, the songs they have queued up. */
+    public var tracks :DSet; /* of */ Track;
 
     /**
      * Return this member's unique id.
@@ -343,6 +349,7 @@ public class MemberObject extends BodyObject
         onTour = ins.readBoolean();
         partyId = ins.readInt();
         experiences = DSet(ins.readObject());
+        tracks = DSet(ins.readObject());
     }
 }
 }

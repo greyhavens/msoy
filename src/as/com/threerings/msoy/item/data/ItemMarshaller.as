@@ -4,15 +4,16 @@
 package com.threerings.msoy.item.data {
 
 import com.threerings.io.TypedArray;
-import com.threerings.msoy.item.client.ItemService;
-import com.threerings.msoy.item.data.all.ItemFlag_Kind;
-import com.threerings.msoy.item.data.all.ItemIdent;
-import com.threerings.presents.client.Client;
+
 import com.threerings.presents.client.InvocationService_ConfirmListener;
 import com.threerings.presents.client.InvocationService_ResultListener;
 import com.threerings.presents.data.InvocationMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ConfirmMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ResultMarshaller;
+
+import com.threerings.msoy.item.client.ItemService;
+import com.threerings.msoy.item.data.all.ItemFlag_Kind;
+import com.threerings.msoy.item.data.all.ItemIdent;
 
 /**
  * Provides the implementation of the <code>ItemService</code> interface

@@ -5,9 +5,10 @@ package com.threerings.msoy.party.data;
 
 import javax.annotation.Generated;
 
-import com.threerings.msoy.party.client.PeerPartyService;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.InvocationMarshaller;
+
+import com.threerings.msoy.party.client.PeerPartyService;
 
 /**
  * Provides the implementation of the {@link PeerPartyService} interface

@@ -5,14 +5,16 @@ package com.threerings.msoy.room.server;
 
 import javax.annotation.Generated;
 
-import com.threerings.msoy.item.data.all.ItemIdent;
-import com.threerings.msoy.room.client.RoomService;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationProvider;
+
 import com.threerings.whirled.data.SceneUpdate;
 import com.threerings.whirled.spot.data.Location;
+
+import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.room.client.RoomService;
 
 /**
  * Defines the server-side of the {@link RoomService}.
@@ -21,6 +23,12 @@ import com.threerings.whirled.spot.data.Location;
            comments="Derived from RoomService.java.")
 public interface RoomProvider extends InvocationProvider
 {
+    /**
+     * Handles a {@link RoomService#addOrRemoveSong} request.
+     */
+    void addOrRemoveSong (ClientObject caller, int arg1, boolean arg2, InvocationService.ConfirmListener arg3)
+        throws InvocationException;
+
     /**
      * Handles a {@link RoomService#changeLocation} request.
      */
@@ -42,12 +50,6 @@ public interface RoomProvider extends InvocationProvider
      * Handles a {@link RoomService#jumpToSong} request.
      */
     void jumpToSong (ClientObject caller, int arg1, InvocationService.ConfirmListener arg2)
-        throws InvocationException;
-
-    /**
-     * Handles a {@link RoomService#modifyPlaylist} request.
-     */
-    void modifyPlaylist (ClientObject caller, int arg1, boolean arg2, InvocationService.ConfirmListener arg3)
         throws InvocationException;
 
     /**

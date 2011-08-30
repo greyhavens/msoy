@@ -24,13 +24,6 @@ public class MsoyTokenRing extends TokenRing
     public static final int SUBSCRIBER = (1 << 4);
 
     /**
-     * A default constructor, used when unserializing token rings.
-     */
-    public MsoyTokenRing ()
-    {
-    }
-
-    /**
      * Constructs a token ring with the supplied set of tokens.
      */
     public MsoyTokenRing (int tokens)

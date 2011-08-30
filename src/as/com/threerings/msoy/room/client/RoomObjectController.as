@@ -611,7 +611,7 @@ public class RoomObjectController extends RoomController
                 } else if (item.getType() == Item.AUDIO) {
                     // audio is different
                     var rsp :String = "m.music_added" + (canManageRoom(0, false) ? "" : "_temp");
-                    _roomObj.roomService.modifyPlaylist(item.itemId, true,
+                    _roomObj.roomService.addOrRemoveSong(item.itemId, true,
                         _wdctx.confirmListener(rsp, MsoyCodes.WORLD_MSGS));
 
                 } else {
@@ -674,7 +674,7 @@ public class RoomObjectController extends RoomController
         } else if (itemType == Item.AUDIO) {
             // only send a request if it's even here
             if (_roomObj.playlist.containsKey(new ItemIdent(itemType, itemId))) {
-                _roomObj.roomService.modifyPlaylist(itemId, false,
+                _roomObj.roomService.addOrRemoveSong(itemId, false,
                     _wdctx.confirmListener("m.music_removed", MsoyCodes.WORLD_MSGS));
             }
 

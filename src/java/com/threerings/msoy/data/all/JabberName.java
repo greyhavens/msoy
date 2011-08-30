@@ -13,11 +13,6 @@ import com.threerings.util.Name;
 public class JabberName extends Name
     implements IsSerializable
 {
-    /** Used when unserializing. */
-    public JabberName ()
-    {
-    }
-
     /**
      * Creates an instance with the specified name.
      */

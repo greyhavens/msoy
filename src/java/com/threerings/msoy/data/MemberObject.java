@@ -37,6 +37,7 @@ import com.threerings.msoy.party.data.PartySummary;
 import com.threerings.msoy.room.data.MemberInfo;
 import com.threerings.msoy.room.data.MsoySceneModel;
 import com.threerings.msoy.room.data.ObserverInfo;
+import com.threerings.msoy.room.data.Track;
 
 import static com.threerings.msoy.Log.log;
 
@@ -225,6 +226,9 @@ public class MemberObject extends BodyObject
 
     /** List of experiences this member has had recently. */
     public DSet<MemberExperience> experiences = new DSet<MemberExperience>();
+
+    /** If this player is DJ-ing, the tracks they have queued up. */
+    public DSet<Track> tracks;
 
     public void initWithClient (MemberClientObject mcobj)
     {

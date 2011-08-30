@@ -5,12 +5,14 @@ package com.threerings.msoy.room.data;
 
 import javax.annotation.Generated;
 
-import com.threerings.msoy.item.data.all.ItemIdent;
-import com.threerings.msoy.room.client.RoomService;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.InvocationMarshaller;
+
 import com.threerings.whirled.data.SceneUpdate;
 import com.threerings.whirled.spot.data.Location;
+
+import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.room.client.RoomService;
 
 /**
  * Provides the implementation of the {@link RoomService} interface
@@ -24,8 +26,21 @@ import com.threerings.whirled.spot.data.Location;
 public class RoomMarshaller extends InvocationMarshaller
     implements RoomService
 {
+    /** The method id used to dispatch {@link #addOrRemoveSong} requests. */
+    public static final int ADD_OR_REMOVE_SONG = 1;
+
+    // from interface RoomService
+    public void addOrRemoveSong (int arg1, boolean arg2, InvocationService.ConfirmListener arg3)
+    {
+        InvocationMarshaller.ConfirmMarshaller listener3 = new InvocationMarshaller.ConfirmMarshaller();
+        listener3.listener = arg3;
+        sendRequest(ADD_OR_REMOVE_SONG, new Object[] {
+            Integer.valueOf(arg1), Boolean.valueOf(arg2), listener3
+        });
+    }
+
     /** The method id used to dispatch {@link #changeLocation} requests. */
-    public static final int CHANGE_LOCATION = 1;
+    public static final int CHANGE_LOCATION = 2;
 
     // from interface RoomService
     public void changeLocation (ItemIdent arg1, Location arg2)
@@ -36,7 +51,7 @@ public class RoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #despawnMob} requests. */
-    public static final int DESPAWN_MOB = 2;
+    public static final int DESPAWN_MOB = 3;
 
     // from interface RoomService
     public void despawnMob (int arg1, String arg2, InvocationService.InvocationListener arg3)
@@ -49,7 +64,7 @@ public class RoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #editRoom} requests. */
-    public static final int EDIT_ROOM = 3;
+    public static final int EDIT_ROOM = 4;
 
     // from interface RoomService
     public void editRoom (InvocationService.ResultListener arg1)
@@ -62,7 +77,7 @@ public class RoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #jumpToSong} requests. */
-    public static final int JUMP_TO_SONG = 4;
+    public static final int JUMP_TO_SONG = 5;
 
     // from interface RoomService
     public void jumpToSong (int arg1, InvocationService.ConfirmListener arg2)
@@ -71,19 +86,6 @@ public class RoomMarshaller extends InvocationMarshaller
         listener2.listener = arg2;
         sendRequest(JUMP_TO_SONG, new Object[] {
             Integer.valueOf(arg1), listener2
-        });
-    }
-
-    /** The method id used to dispatch {@link #modifyPlaylist} requests. */
-    public static final int MODIFY_PLAYLIST = 5;
-
-    // from interface RoomService
-    public void modifyPlaylist (int arg1, boolean arg2, InvocationService.ConfirmListener arg3)
-    {
-        InvocationMarshaller.ConfirmMarshaller listener3 = new InvocationMarshaller.ConfirmMarshaller();
-        listener3.listener = arg3;
-        sendRequest(MODIFY_PLAYLIST, new Object[] {
-            Integer.valueOf(arg1), Boolean.valueOf(arg2), listener3
         });
     }
 

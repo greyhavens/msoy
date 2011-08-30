@@ -25,11 +25,6 @@ import com.threerings.util.Name;
 public class RoomName extends Name
     implements IsSerializable
 {
-    /** Used when unserializing */
-    public RoomName ()
-    {
-    }
-
     /**
      * Creates a room name with the specified information.
      */

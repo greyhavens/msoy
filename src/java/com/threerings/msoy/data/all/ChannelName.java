@@ -31,11 +31,6 @@ public class ChannelName extends Name
     /** The minimum length of a channel name */
     public static final int LENGTH_MIN = 3;
 
-    /** Used when unserializing */
-    public ChannelName ()
-    {
-    }
-
     /**
      * Creates an instance with the specified name and creator.
      */

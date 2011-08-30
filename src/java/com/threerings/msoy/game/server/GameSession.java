@@ -36,7 +36,7 @@ public class GameSession extends CrowdSession
 
         // configure their access control tokens
         MsoyTokenRing tokens = (MsoyTokenRing) _authdata;
-        _plobj.setTokens(tokens == null ? new MsoyTokenRing() : tokens);
+        _plobj.setTokens(tokens == null ? new MsoyTokenRing(0) : tokens);
 
         GameCredentials creds = (GameCredentials)getCredentials();
         final String vector = StringUtil.getOr(creds.vector, "game_session");

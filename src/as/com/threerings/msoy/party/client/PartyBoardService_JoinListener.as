@@ -3,8 +3,9 @@
 
 package com.threerings.msoy.party.client {
 
-import com.threerings.msoy.money.data.all.PriceQuote;
 import com.threerings.presents.client.InvocationService_InvocationListener;
+
+import com.threerings.msoy.money.data.all.PriceQuote;
 
 /**
  * An ActionScript version of the Java PartyBoardService_JoinListener interface.

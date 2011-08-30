@@ -114,7 +114,7 @@ public class PlaylistRenderer extends HBox
 
     protected function doRemove () :void
     {
-        roomObj.roomService.modifyPlaylist(Audio(data).itemId, false,
+        roomObj.roomService.addOrRemoveSong(Audio(data).itemId, false,
             wctx.confirmListener(null, MsoyCodes.WORLD_MSGS));
         _removeBtn.enabled = false;
     }

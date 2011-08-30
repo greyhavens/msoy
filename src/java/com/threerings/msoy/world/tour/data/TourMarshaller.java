@@ -5,9 +5,10 @@ package com.threerings.msoy.world.tour.data;
 
 import javax.annotation.Generated;
 
-import com.threerings.msoy.world.tour.client.TourService;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.InvocationMarshaller;
+
+import com.threerings.msoy.world.tour.client.TourService;
 
 /**
  * Provides the implementation of the {@link TourService} interface

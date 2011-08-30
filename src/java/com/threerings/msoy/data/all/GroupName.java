@@ -49,11 +49,6 @@ public class GroupName extends Name
         return new GroupName(null, groupId);
     }
 
-    /** Used when unserializing */
-    public GroupName ()
-    {
-    }
-
     /**
      * Creates a group name with the specified information.
      */

@@ -6,14 +6,17 @@ package com.threerings.msoy.peer.server;
 import javax.annotation.Generated;
 
 import com.threerings.io.Streamable;
-import com.threerings.msoy.data.MemberObject;
-import com.threerings.msoy.item.data.all.ItemIdent;
-import com.threerings.msoy.peer.client.MsoyPeerService;
+
+import com.threerings.util.Name;
+
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationProvider;
-import com.threerings.util.Name;
+
+import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.peer.client.MsoyPeerService;
 
 /**
  * Defines the server-side of the {@link MsoyPeerService}.

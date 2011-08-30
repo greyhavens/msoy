@@ -5,11 +5,12 @@ package com.threerings.msoy.room.server;
 
 import javax.annotation.Generated;
 
-import com.threerings.msoy.room.client.MsoySceneService;
-import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationProvider;
+
+import com.threerings.msoy.room.client.MsoySceneService;
+import com.threerings.msoy.room.data.MsoyLocation;
 
 /**
  * Defines the server-side of the {@link MsoySceneService}.

@@ -34,8 +34,8 @@ public class MoneyTransactionExpirer
         cycle.addComponent(this);
 
         // note: this Interval doesn't post to the omgr: it doesn't need to.
-        _interval = new Interval() {
-            @Override public void expired () {
+        _interval = _intervalFactory.newInterval(new Runnable() {
+            public void run () {
                 _batchInvoker.postUnit(new Invoker.Unit("MoneyTransactionExpirer") {
                     @Override public boolean invoke () {
                         doPurge();
@@ -46,7 +46,7 @@ public class MoneyTransactionExpirer
                     }
                 });
             }
-        };
+        });
     }
 
     // from interface Lifecycle.Component
@@ -89,6 +89,7 @@ public class MoneyTransactionExpirer
 
     // dependencies
     @Inject protected @BatchInvoker Invoker _batchInvoker;
+    @Inject protected Interval.Factory _intervalFactory;
     @Inject protected MoneyRepository _repo;
 
     protected static final long DAY = 24L * 60 * 60 * 1000L; // the length of 99.4% of days

@@ -5,10 +5,10 @@ package com.threerings.msoy.game.data;
 
 import javax.annotation.Generated;
 
-import com.threerings.msoy.game.client.WorldGameService;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.InvocationMarshaller;
-import com.threerings.presents.dobj.InvocationResponseEvent;
+
+import com.threerings.msoy.game.client.WorldGameService;
 
 /**
  * Provides the implementation of the {@link WorldGameService} interface
@@ -23,7 +23,7 @@ public class WorldGameMarshaller extends InvocationMarshaller
     implements WorldGameService
 {
     /**
-     * Marshalls results to implementations of {@link WorldGameService.LocationListener}.
+     * Marshalls results to implementations of {@code WorldGameService.LocationListener}.
      */
     public static class LocationMarshaller extends ListenerMarshaller
         implements LocationListener
@@ -35,10 +35,7 @@ public class WorldGameMarshaller extends InvocationMarshaller
         // from interface LocationMarshaller
         public void gameLocated (String arg1, int arg2, boolean arg3)
         {
-            _invId = null;
-            omgr.postEvent(new InvocationResponseEvent(
-                               callerOid, requestId, GAME_LOCATED,
-                               new Object[] { arg1, Integer.valueOf(arg2), Boolean.valueOf(arg3) }, transport));
+            sendResponse(GAME_LOCATED, new Object[] { arg1, Integer.valueOf(arg2), Boolean.valueOf(arg3) });
         }
 
         @Override // from InvocationMarshaller

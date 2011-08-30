@@ -3,11 +3,12 @@
 
 package com.threerings.msoy.room.data {
 
+import com.threerings.util.Integer;
+
+import com.threerings.presents.data.InvocationMarshaller;
+
 import com.threerings.msoy.room.client.MsoySceneService;
 import com.threerings.msoy.room.client.MsoySceneService_MsoySceneMoveListener;
-import com.threerings.presents.client.Client;
-import com.threerings.presents.data.InvocationMarshaller;
-import com.threerings.util.Integer;
 
 /**
  * Provides the implementation of the <code>MsoySceneService</code> interface

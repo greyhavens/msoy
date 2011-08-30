@@ -40,8 +40,8 @@ import com.threerings.presents.server.ReportManager;
 import com.threerings.presents.util.PersistingUnit;
 
 import com.threerings.crowd.chat.data.UserMessage;
+import com.threerings.crowd.chat.server.ChatHistory;
 import com.threerings.crowd.chat.server.SpeakUtil;
-import com.threerings.crowd.chat.server.SpeakUtil.ChatHistoryEntry;
 import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.chat.server.ChatChannelManager.ChatHistoryResult;
 import com.threerings.crowd.server.BodyManager;
@@ -169,7 +169,7 @@ public class MemberManager
         _greeterIdsSnapshot = _memberRepo.loadGreeterIds();
 
         // create the interval to post the unit
-        _greeterIdsInvalidator = new Interval() {
+        _greeterIdsInvalidator = new Interval(_omgr) {
             @Override public void expired() {
                 _batchInvoker.postUnit(loadGreeters);
             }
@@ -501,7 +501,7 @@ public class MemberManager
         }
         // TODO: break up the formatting by channel and remove the "mode" infix
         SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss");
-        for (ChatHistoryEntry entry : SpeakUtil.getChatHistory(complainerName)) {
+        for (ChatHistory.Entry entry : _chatHistory.get(complainerName)) {
             UserMessage umsg = (UserMessage)entry.message;
             chatHistory.append(df.format(new Date(umsg.timestamp))).append(' ');
             MsoyChatChannel channel = (MsoyChatChannel)entry.channel;
@@ -654,6 +654,7 @@ public class MemberManager
     @Inject protected BodyManager _bodyMan;
     @Inject protected ClientManager _clmgr;
     @Inject protected ChatChannelManager _chatChanMgr;
+    @Inject protected ChatHistory _chatHistory;
     @Inject protected CronLogic _cronLogic;
     @Inject protected GroupRepository _groupRepo;
     @Inject protected MemberLocator _locator;

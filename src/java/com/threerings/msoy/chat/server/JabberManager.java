@@ -592,7 +592,7 @@ public class JabberManager
             if (entry != null) {
                 jname = entry.name;
             }
-            _chatprov.deliverTell(_user, new UserMessage(jname, message.getBody()));
+            _chatprov.deliverTell(_user, UserMessage.create(jname, message.getBody()));
         }
 
         protected MemberObject _user;

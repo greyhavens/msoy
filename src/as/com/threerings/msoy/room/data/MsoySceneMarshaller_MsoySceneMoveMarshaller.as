@@ -3,11 +3,15 @@
 
 package com.threerings.msoy.room.data {
 
-import com.threerings.crowd.data.PlaceConfig;
 import com.threerings.io.TypedArray;
-import com.threerings.msoy.room.client.MsoySceneService_MsoySceneMoveListener;
+
 import com.threerings.presents.data.InvocationMarshaller_ListenerMarshaller;
+
+import com.threerings.crowd.data.PlaceConfig;
+
 import com.threerings.whirled.data.SceneModel;
+
+import com.threerings.msoy.room.client.MsoySceneService_MsoySceneMoveListener;
 
 /**
  * Marshalls instances of the MsoySceneService_MsoySceneMoveMarshaller interface.

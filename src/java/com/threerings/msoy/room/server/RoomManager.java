@@ -452,13 +452,20 @@ public class RoomManager extends SpotSceneManager
         _roomObj.postMessage(RoomCodes.SPRITE_SIGNAL, name, arg);
     }
 
-    // documentation inherited from RoomProvider
-    public void modifyPlaylist (
-        ClientObject caller, int audioItemId, final boolean add,
+    public void addOrRemoveSong (
+        ClientObject caller, int audioItemId, boolean add,
+        InvocationService.ConfirmListener listener)
+        throws InvocationException
+    {
+        MemberObject who = _locator.requireMember(caller);
+        modifyPlaylist(who, audioItemId, add, listener);
+    }
+
+    protected void modifyPlaylist (
+        final MemberObject who, int audioItemId, final boolean add,
         final InvocationService.ConfirmListener listener)
         throws InvocationException
     {
-        final MemberObject who = _locator.requireMember(caller);
         ItemIdent key = new ItemIdent(MsoyItemType.AUDIO, audioItemId);
         Audio current = _roomObj.playlist.get(key);
 
