@@ -8,10 +8,9 @@ import mx.core.UIComponent;
 
 import com.threerings.flex.FlexUtil;
 
-import com.threerings.msoy.ui.FloatingPanel;
 import com.threerings.msoy.client.Msgs;
-
 import com.threerings.msoy.game.data.LobbyObject;
+import com.threerings.msoy.ui.FloatingPanel;
 
 /**
  * A panel that displays pending table games.

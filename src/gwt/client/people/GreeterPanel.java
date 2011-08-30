@@ -12,9 +12,9 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.web.gwt.MemberCard;
+import com.threerings.msoy.web.gwt.WebMemberService.FriendsResult;
 import com.threerings.msoy.web.gwt.WebMemberService;
 import com.threerings.msoy.web.gwt.WebMemberServiceAsync;
-import com.threerings.msoy.web.gwt.WebMemberService.FriendsResult;
 
 import client.ui.HeaderBox;
 import client.util.MsoyServiceBackedDataModel;

@@ -4,6 +4,7 @@
 package com.threerings.msoy.server;
 
 import com.threerings.web.gwt.ServiceException;
+
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.MsoyTokenRing;
 

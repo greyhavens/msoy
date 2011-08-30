@@ -6,7 +6,8 @@ package com.threerings.msoy.person.server;
 import java.util.List;
 import java.util.Set;
 
-import com.threerings.web.gwt.ServiceException;
+import com.google.common.collect.Lists;
+import com.google.inject.Inject;
 
 import octazen.addressbook.AddressBookAuthenticationException;
 import octazen.addressbook.AddressBookException;
@@ -15,34 +16,21 @@ import octazen.addressbook.SimpleAddressBookImporter;
 import octazen.addressbook.UnexpectedFormatException;
 import octazen.http.UserInputRequiredException;
 
-import com.google.common.collect.Lists;
-import com.google.inject.Inject;
-
 import com.samskivert.net.MailUtil;
 import com.samskivert.util.IntIntMap;
 import com.samskivert.util.StringUtil;
 
+import com.threerings.web.gwt.ServiceException;
+
+import com.threerings.msoy.avrg.server.persist.AVRGameRepository;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.Friendship;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.server.ServerConfig;
-import com.threerings.msoy.server.persist.MemberCardRecord;
-import com.threerings.msoy.server.persist.MemberRecord;
-import com.threerings.msoy.server.util.MailSender;
-
-import com.threerings.msoy.avrg.server.persist.AVRGameRepository;
 import com.threerings.msoy.game.gwt.GameGenre;
 import com.threerings.msoy.game.server.GameUtil;
 import com.threerings.msoy.game.server.persist.GameInfoRecord;
 import com.threerings.msoy.game.server.persist.MsoyGameCookieRepository;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
-
-import com.threerings.msoy.web.gwt.EmailContact;
-import com.threerings.msoy.web.gwt.Invitation;
-import com.threerings.msoy.web.gwt.MemberCard;
-import com.threerings.msoy.web.gwt.ServiceCodes;
-import com.threerings.msoy.web.server.MsoyServiceServlet;
-
 import com.threerings.msoy.mail.gwt.GameInvitePayload;
 import com.threerings.msoy.mail.server.MailLogic;
 import com.threerings.msoy.person.gwt.InvitationResults;
@@ -50,7 +38,16 @@ import com.threerings.msoy.person.gwt.InviteService;
 import com.threerings.msoy.person.gwt.ProfileCodes;
 import com.threerings.msoy.person.server.persist.GameInvitationRecord;
 import com.threerings.msoy.person.server.persist.InviteRepository;
+import com.threerings.msoy.server.ServerConfig;
+import com.threerings.msoy.server.persist.MemberCardRecord;
+import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.util.MailSender;
 import com.threerings.msoy.spam.server.persist.SpamRepository;
+import com.threerings.msoy.web.gwt.EmailContact;
+import com.threerings.msoy.web.gwt.Invitation;
+import com.threerings.msoy.web.gwt.MemberCard;
+import com.threerings.msoy.web.gwt.ServiceCodes;
+import com.threerings.msoy.web.server.MsoyServiceServlet;
 
 import static com.threerings.msoy.Log.log;
 

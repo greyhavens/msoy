@@ -5,9 +5,8 @@ package com.threerings.msoy.applets.remixer {
 
 import flash.events.Event;
 
-import mx.controls.Label;
-
 import mx.containers.Grid;
+import mx.controls.Label;
 
 import com.threerings.flex.GridUtil;
 

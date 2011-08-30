@@ -13,7 +13,6 @@ import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.msoy.data.all.MemberName;
-
 import com.threerings.msoy.party.data.PartyLeader;
 import com.threerings.msoy.party.data.PartyOccupantInfo;
 import com.threerings.msoy.party.data.PartyPlaceObject;

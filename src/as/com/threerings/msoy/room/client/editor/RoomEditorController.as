@@ -7,10 +7,6 @@ import flash.events.MouseEvent;
 
 import com.threerings.io.TypedArray;
 
-import com.threerings.msoy.client.Msgs;
-
-import com.threerings.msoy.data.MsoyCodes;
-
 import com.threerings.util.Arrays;
 import com.threerings.util.Log;
 import com.threerings.util.Map;
@@ -20,23 +16,18 @@ import com.threerings.util.Util;
 
 import com.threerings.whirled.data.SceneUpdate;
 
-import com.threerings.msoy.data.Address;
-
 import com.threerings.msoy.client.DeploymentConfig;
-
+import com.threerings.msoy.client.Msgs;
+import com.threerings.msoy.data.Address;
+import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.item.client.ItemService;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
-
-import com.threerings.msoy.world.client.WorldContext;
-import com.threerings.msoy.world.client.WorldService;
-
-import com.threerings.msoy.room.client.FurniSprite;
 import com.threerings.msoy.room.client.EntitySprite;
+import com.threerings.msoy.room.client.FurniSprite;
 import com.threerings.msoy.room.client.RoomObjectView;
 import com.threerings.msoy.room.client.updates.FurniUpdateAction;
 import com.threerings.msoy.room.client.updates.SceneUpdateAction;
-
 import com.threerings.msoy.room.data.FurniData;
 import com.threerings.msoy.room.data.FurniUpdate_Add;
 import com.threerings.msoy.room.data.FurniUpdate_Change;
@@ -45,8 +36,9 @@ import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.msoy.room.data.MsoyScene;
 import com.threerings.msoy.room.data.MsoySceneModel;
 import com.threerings.msoy.room.data.SceneAttrsUpdate;
-
 import com.threerings.msoy.tutorial.client.TutorialSequenceBuilder;
+import com.threerings.msoy.world.client.WorldContext;
+import com.threerings.msoy.world.client.WorldService;
 
 /**
  * Controller for the room editing panel. It starts up two different types of UI: one is

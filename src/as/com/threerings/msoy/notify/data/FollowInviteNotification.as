@@ -4,12 +4,13 @@
 package com.threerings.msoy.notify.data {
 
 import com.threerings.io.ObjectInputStream;
+
 import com.threerings.util.MessageBundle;
+import com.threerings.util.Name;
 
 import com.threerings.orth.notify.data.Notification;
 
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.util.Name;
 
 /**
  * Notifies a user they have been requested to follow someone

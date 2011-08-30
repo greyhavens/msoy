@@ -13,7 +13,7 @@ import com.threerings.msoy.data.all.GwtAuthCodes;
 @com.threerings.util.ActionScript(omit=true)
 public interface MsoyAuthCodes extends AuthCodes, GwtAuthCodes
 {
-    /** An error code we use on msoy when the username or password are invalid. We 
+    /** An error code we use on msoy when the username or password are invalid. We
      * do not tell people if an email address is valid, that's a security risk. */
     public static final String INVALID_LOGON = "m.invalid_logon";
 }

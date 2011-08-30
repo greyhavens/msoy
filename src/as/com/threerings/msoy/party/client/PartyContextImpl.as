@@ -7,14 +7,11 @@ import com.threerings.presents.client.Client;
 import com.threerings.presents.dobj.DObjectManager;
 
 import com.threerings.msoy.client.DeploymentConfig;
-import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.MsoyCredentials;
-
-import com.threerings.msoy.world.client.WorldContext;
-
 import com.threerings.msoy.party.data.PartierObject;
 import com.threerings.msoy.party.data.PartyCredentials;
+import com.threerings.msoy.world.client.WorldContext;
 
 /**
  * Provides an implementation of the PartyContext.

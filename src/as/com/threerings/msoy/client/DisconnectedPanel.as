@@ -7,10 +7,8 @@ import flash.display.DisplayObjectContainer;
 import flash.filters.GlowFilter;
 
 import mx.containers.VBox;
-
 import mx.controls.Text;
 
-import com.threerings.flex.CommandButton;
 import com.threerings.util.MessageBundle;
 
 import com.threerings.presents.client.Client;
@@ -20,6 +18,8 @@ import com.threerings.presents.client.LogonError;
 
 import com.threerings.crowd.client.PlaceView;
 import com.threerings.crowd.data.PlaceObject;
+
+import com.threerings.flex.CommandButton;
 
 /**
  * Shown to users when we're disconnected.

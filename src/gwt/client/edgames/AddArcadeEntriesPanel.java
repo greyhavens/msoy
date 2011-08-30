@@ -8,12 +8,6 @@ import java.util.Set;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-
-import client.game.GameGenrePanel;
-import client.util.ClickCallback;
-import client.util.InfoCallback;
-import client.util.Link;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -24,9 +18,14 @@ import com.threerings.msoy.edgame.gwt.EditGameService;
 import com.threerings.msoy.edgame.gwt.EditGameServiceAsync;
 import com.threerings.msoy.game.gwt.ArcadeData;
 import com.threerings.msoy.game.gwt.GameGenre;
-import com.threerings.msoy.game.gwt.GameInfo;
 import com.threerings.msoy.game.gwt.GameInfo.Sort;
+import com.threerings.msoy.game.gwt.GameInfo;
 import com.threerings.msoy.web.gwt.Pages;
+
+import client.game.GameGenrePanel;
+import client.util.ClickCallback;
+import client.util.InfoCallback;
+import client.util.Link;
 
 /**
  * User interface for adding games to an arcade. This is mostly the same as a game genre list

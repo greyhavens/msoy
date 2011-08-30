@@ -4,7 +4,6 @@
 package com.threerings.msoy.web.gwt;
 
 import com.threerings.orth.data.MediaDesc;
-
 import com.threerings.orth.data.MediaDescSize;
 
 /**

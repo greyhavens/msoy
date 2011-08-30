@@ -10,16 +10,15 @@ import flash.events.MouseEvent;
 import flash.events.TimerEvent;
 import flash.geom.Point;
 import flash.ui.Keyboard;
-import flash.utils.getTimer; // function
 import flash.utils.ByteArray;
 import flash.utils.Dictionary;
 import flash.utils.Timer;
-
-import mx.events.MenuEvent;
+import flash.utils.getTimer;
 
 import mx.core.Application;
 import mx.core.IToolTip;
 import mx.core.UIComponent;
+import mx.events.MenuEvent;
 import mx.managers.ISystemManager;
 import mx.managers.ToolTipManager;
 
@@ -28,9 +27,6 @@ import com.threerings.util.Map;
 import com.threerings.util.Maps;
 import com.threerings.util.ObjectMarshaller;
 
-import com.threerings.flex.CommandMenu;
-import com.threerings.flex.PopUpUtil;
-
 import com.threerings.crowd.client.PlaceView;
 import com.threerings.crowd.data.PlaceConfig;
 import com.threerings.crowd.data.PlaceObject;
@@ -38,23 +34,22 @@ import com.threerings.crowd.util.CrowdContext;
 
 import com.threerings.whirled.client.SceneController;
 
+import com.threerings.flex.CommandMenu;
+import com.threerings.flex.PopUpUtil;
+
+import com.threerings.msoy.chat.client.ChatOverlay;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.PlaceBox;
 import com.threerings.msoy.client.UberClient;
 import com.threerings.msoy.data.all.MemberName;
-
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.ItemTypes;
-
-import com.threerings.msoy.world.client.WorldContext;
-import com.threerings.msoy.world.client.WorldControlBar;
-
-import com.threerings.msoy.chat.client.ChatOverlay;
-
 import com.threerings.msoy.room.data.ActorInfo;
 import com.threerings.msoy.room.data.EntityMemories;
 import com.threerings.msoy.room.data.FurniData;
 import com.threerings.msoy.room.data.MsoyLocation;
+import com.threerings.msoy.world.client.WorldContext;
+import com.threerings.msoy.world.client.WorldControlBar;
 
 /**
  * Manages the various interactions that take place in a room scene.
@@ -1055,7 +1050,6 @@ import com.threerings.util.Log;
 import com.threerings.util.Throttle;
 
 import com.threerings.msoy.item.data.all.ItemIdent;
-
 import com.threerings.msoy.room.client.RoomElementSprite;
 import com.threerings.msoy.room.data.RoomCodes;
 

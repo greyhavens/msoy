@@ -6,26 +6,22 @@ package com.threerings.msoy.avrg.client {
 import com.threerings.util.Log;
 
 import com.threerings.presents.client.ClientEvent;
-
 import com.threerings.presents.dobj.AttributeChangeAdapter;
 import com.threerings.presents.dobj.AttributeChangedEvent;
 import com.threerings.presents.dobj.MessageEvent;
 
-import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.client.PlaceController;
-
-import com.threerings.msoy.data.MsoyCodes;
-
-import com.threerings.msoy.world.client.WorldContext;
-
-import com.threerings.msoy.game.client.GameLiaison;
-import com.threerings.msoy.game.client.SplashPlaceView;
+import com.threerings.crowd.data.BodyObject;
 
 import com.threerings.msoy.avrg.client.AVRService_AVRGameJoinListener;
 import com.threerings.msoy.avrg.data.AVRGameConfig;
 import com.threerings.msoy.avrg.data.AVRGameMarshaller;
 import com.threerings.msoy.avrg.data.AVRGameObject;
 import com.threerings.msoy.avrg.data.AVRMarshaller;
+import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.game.client.GameLiaison;
+import com.threerings.msoy.game.client.SplashPlaceView;
+import com.threerings.msoy.world.client.WorldContext;
 
 /**
  * Handles the AVRG-specific aspects of the game server connection.

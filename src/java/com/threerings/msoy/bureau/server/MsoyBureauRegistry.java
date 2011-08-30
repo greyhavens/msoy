@@ -20,14 +20,13 @@ import com.threerings.presents.server.net.PresentsConnectionManager;
 import com.threerings.bureau.server.BureauRegistry;
 import com.threerings.bureau.server.BureauSession;
 
-import com.threerings.msoy.server.ServerConfig;
-
 import com.threerings.msoy.bureau.data.BureauLauncherAuthName;
 import com.threerings.msoy.bureau.data.BureauLauncherClientObject;
 import com.threerings.msoy.bureau.data.BureauLauncherCreds;
 import com.threerings.msoy.bureau.data.WindowAuthName;
 import com.threerings.msoy.bureau.data.WindowClientObject;
 import com.threerings.msoy.bureau.data.WindowCredentials;
+import com.threerings.msoy.server.ServerConfig;
 
 /**
  * Customizes the stock BureauRegistry with some MSOY bits.

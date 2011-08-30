@@ -7,7 +7,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +14,9 @@ import java.util.Set;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+
+import com.samskivert.jdbc.DatabaseLiaison;
+import com.samskivert.jdbc.JDBCUtil;
 
 import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.Key;
@@ -29,8 +31,7 @@ import com.samskivert.depot.clause.QueryClause;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.impl.Modifier;
-import com.samskivert.jdbc.DatabaseLiaison;
-import com.samskivert.jdbc.JDBCUtil;
+
 import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.msoy.data.all.DeploymentConfig;

@@ -17,33 +17,46 @@ import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.depot.DuplicateKeyException;
+import com.whirled.game.server.persist.GameCookieRepository;
+
 import com.samskivert.util.ArrayUtil;
 import com.samskivert.util.StringUtil;
 
-import com.threerings.web.gwt.ServiceException;
+import com.samskivert.depot.DuplicateKeyException;
+
 import com.threerings.presents.annotation.BlockingThread;
 import com.threerings.presents.server.PresentsDObjectMgr;
 
 import com.threerings.parlor.rating.server.persist.RatingRepository;
+
 import com.threerings.stats.server.persist.StatRepository;
 
 import com.threerings.orth.data.MediaDesc;
 
-import com.whirled.game.server.persist.GameCookieRepository;
-
-import com.threerings.msoy.peer.server.MemberNodeAction;
-import com.threerings.msoy.peer.server.MsoyPeerManager;
-import com.threerings.msoy.web.gwt.Args;
-import com.threerings.msoy.web.gwt.MemberCard;
-import com.threerings.msoy.web.gwt.Pages;
-import com.threerings.msoy.web.gwt.ServiceCodes;
+import com.threerings.web.gwt.ServiceException;
 
 import com.threerings.msoy.avrg.server.persist.AVRGameRepository;
 import com.threerings.msoy.badge.data.all.InProgressBadge;
 import com.threerings.msoy.badge.server.BadgeLogic;
 import com.threerings.msoy.badge.server.persist.BadgeRepository;
 import com.threerings.msoy.comment.server.persist.CommentRepository;
+import com.threerings.msoy.data.AVRGameNavItemData;
+import com.threerings.msoy.data.BasicNavItemData;
+import com.threerings.msoy.data.GwtPageNavItemData;
+import com.threerings.msoy.data.HomePageItem;
+import com.threerings.msoy.data.MemberExperience;
+import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.MsoyAuthCodes;
+import com.threerings.msoy.data.StatType;
+import com.threerings.msoy.data.UserAction;
+import com.threerings.msoy.data.all.DeploymentConfig;
+import com.threerings.msoy.data.all.FriendEntry;
+import com.threerings.msoy.data.all.MediaMimeTypes;
+import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.data.all.NavItemData;
+import com.threerings.msoy.data.all.StaticMediaDesc;
+import com.threerings.msoy.data.all.VisitorInfo;
+import com.threerings.msoy.data.all.VizMemberName;
 import com.threerings.msoy.fora.server.persist.ForumRepository;
 import com.threerings.msoy.game.gwt.GameGenre;
 import com.threerings.msoy.game.server.PlayerNodeActions;
@@ -65,6 +78,8 @@ import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.TransactionType;
 import com.threerings.msoy.money.server.MoneyLogic;
 import com.threerings.msoy.money.server.persist.MoneyRepository;
+import com.threerings.msoy.peer.server.MemberNodeAction;
+import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.person.gwt.FeedMessageType;
 import com.threerings.msoy.person.server.FeedLogic;
 import com.threerings.msoy.person.server.persist.FeedRepository;
@@ -76,29 +91,15 @@ import com.threerings.msoy.room.data.RoomCodes;
 import com.threerings.msoy.room.server.SceneLogic;
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
 import com.threerings.msoy.room.server.persist.SceneRecord;
-
-import com.threerings.msoy.data.AVRGameNavItemData;
-import com.threerings.msoy.data.BasicNavItemData;
-import com.threerings.msoy.data.GwtPageNavItemData;
-import com.threerings.msoy.data.HomePageItem;
-import com.threerings.msoy.data.MemberExperience;
-import com.threerings.msoy.data.MemberObject;
-import com.threerings.msoy.data.MsoyAuthCodes;
-import com.threerings.msoy.data.StatType;
-import com.threerings.msoy.data.UserAction;
-import com.threerings.msoy.data.all.DeploymentConfig;
-import com.threerings.msoy.data.all.FriendEntry;
-import com.threerings.msoy.data.all.MediaMimeTypes;
-import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.data.all.NavItemData;
-import com.threerings.msoy.data.all.StaticMediaDesc;
-import com.threerings.msoy.data.all.VisitorInfo;
-import com.threerings.msoy.data.all.VizMemberName;
 import com.threerings.msoy.server.persist.MemberExperienceRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.persist.MsoyOOOUserRepository;
 import com.threerings.msoy.server.persist.UserActionRepository;
+import com.threerings.msoy.web.gwt.Args;
+import com.threerings.msoy.web.gwt.MemberCard;
+import com.threerings.msoy.web.gwt.Pages;
+import com.threerings.msoy.web.gwt.ServiceCodes;
 
 import static com.threerings.msoy.Log.log;
 

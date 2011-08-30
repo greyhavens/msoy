@@ -9,8 +9,8 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.gwt.ui.WidgetUtil.FlashObject;
+import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.UberClientModes;

@@ -5,10 +5,8 @@ package com.threerings.msoy.applets.remixer {
 
 import flash.geom.Rectangle;
 
-import mx.controls.TextInput;
-
 import mx.containers.Grid;
-
+import mx.controls.TextInput;
 import mx.events.ValidationResultEvent;
 
 import com.threerings.flex.GridUtil;

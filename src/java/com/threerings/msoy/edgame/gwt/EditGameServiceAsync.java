@@ -5,13 +5,16 @@ package com.threerings.msoy.edgame.gwt;
 
 import java.util.List;
 import java.util.Set;
+
 import com.google.gwt.user.client.rpc.AsyncCallback;
+
+import com.threerings.orth.data.MediaDesc;
+
 import com.threerings.msoy.facebook.gwt.FacebookInfo;
 import com.threerings.msoy.facebook.gwt.FeedThumbnail;
 import com.threerings.msoy.game.gwt.ArcadeData;
 import com.threerings.msoy.game.gwt.GameInfo;
 import com.threerings.msoy.item.data.all.MsoyItemType;
-import com.threerings.orth.data.MediaDesc;
 
 /**
  * Provides the asynchronous version of {@link EditGameService}.

@@ -11,6 +11,7 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.msoy.group.gwt.GroupDetail;
 import com.threerings.msoy.room.gwt.WebRoomService;
 import com.threerings.msoy.room.gwt.WebRoomServiceAsync;
+
 import client.room.RoomWidget;
 import client.ui.TongueBox;
 import client.util.InfoCallback;

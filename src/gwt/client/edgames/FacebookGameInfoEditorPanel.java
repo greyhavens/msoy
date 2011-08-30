@@ -6,7 +6,6 @@ package client.edgames;
 import java.util.List;
 
 import com.google.common.collect.Lists;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -21,9 +20,9 @@ import com.threerings.msoy.facebook.gwt.FacebookService;
 import com.threerings.msoy.facebook.gwt.FeedThumbnail;
 
 import client.edutil.EditorTable;
-import client.edutil.ThumbnailSet;
 import client.edutil.EditorUtil.ConfigException;
 import client.edutil.FacebookInfoEditorPanel;
+import client.edutil.ThumbnailSet;
 import client.ui.MsoyUI;
 import client.util.ClickCallback;
 import client.util.InfoCallback;

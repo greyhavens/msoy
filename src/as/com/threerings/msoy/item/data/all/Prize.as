@@ -6,8 +6,9 @@ package com.threerings.msoy.item.data.all {
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
 
-import com.threerings.orth.data.MediaDesc;
 import com.threerings.util.ByteEnum;
+
+import com.threerings.orth.data.MediaDesc;
 
 /**
  * Contains the runtime data for a Prize item.

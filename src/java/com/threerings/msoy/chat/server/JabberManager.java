@@ -11,13 +11,6 @@ import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.util.Interval;
-import com.samskivert.util.Lifecycle;
-import com.samskivert.util.ResultListener;
-import com.samskivert.util.StringUtil;
-
-import org.jivesoftware.smack.util.StringUtils;
-
 import org.jivesoftware.smack.Chat;
 import org.jivesoftware.smack.ChatManagerListener;
 import org.jivesoftware.smack.ConnectionConfiguration;
@@ -28,16 +21,20 @@ import org.jivesoftware.smack.SmackConfiguration;
 import org.jivesoftware.smack.TimedPacketResponder;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
-
 import org.jivesoftware.smack.filter.PacketIDFilter;
 import org.jivesoftware.smack.filter.ToContainsFilter;
-
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.Registration;
 import org.jivesoftware.smack.packet.RosterPacket;
+import org.jivesoftware.smack.util.StringUtils;
+
+import com.samskivert.util.Interval;
+import com.samskivert.util.Lifecycle;
+import com.samskivert.util.ResultListener;
+import com.samskivert.util.StringUtil;
 
 import com.threerings.util.MessageBundle;
 import com.threerings.util.MessageManager;
@@ -55,6 +52,7 @@ import com.threerings.crowd.chat.data.UserMessage;
 import com.threerings.crowd.chat.server.ChatProvider;
 import com.threerings.crowd.chat.server.SpeakUtil;
 
+import com.threerings.msoy.chat.client.JabberService;
 import com.threerings.msoy.chat.data.JabberMarshaller;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
@@ -64,8 +62,6 @@ import com.threerings.msoy.data.all.GatewayEntry;
 import com.threerings.msoy.data.all.JabberName;
 import com.threerings.msoy.server.MemberLocator;
 import com.threerings.msoy.server.ServerConfig;
-
-import com.threerings.msoy.chat.client.JabberService;
 
 import static com.threerings.msoy.Log.log;
 

@@ -7,16 +7,15 @@ import java.util.Date;
 import java.util.Queue;
 
 import com.google.common.collect.Lists;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
-import com.samskivert.util.Invoker;
 import com.samskivert.util.Invoker.Unit;
+import com.samskivert.util.Invoker;
 
 import com.threerings.presents.annotation.BlockingThread;
 import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.annotation.MainInvoker;
-
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
 
 import static com.threerings.msoy.Log.log;
 

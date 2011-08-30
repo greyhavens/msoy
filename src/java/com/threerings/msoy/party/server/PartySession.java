@@ -8,11 +8,10 @@ import com.google.inject.Inject;
 import com.threerings.presents.net.BootstrapData;
 import com.threerings.presents.server.PresentsSession;
 
-import com.threerings.msoy.server.MsoyObjectAccess;
-
 import com.threerings.msoy.party.data.PartierObject;
 import com.threerings.msoy.party.data.PartyBootstrapData;
 import com.threerings.msoy.party.data.PartyCredentials;
+import com.threerings.msoy.server.MsoyObjectAccess;
 
 import static com.threerings.msoy.Log.log;
 
@@ -52,7 +51,7 @@ public class PartySession extends PresentsSession
     {
         super.populateBootstrapData(data);
 
-        // fill in the oid 
+        // fill in the oid
         PartyBootstrapData pdata = (PartyBootstrapData)data;
         int partyId = ((PartyCredentials)_areq.getCredentials()).partyId;
         PartyManager pmgr = _partyReg.getPartyManager(partyId);

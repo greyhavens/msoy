@@ -3,9 +3,9 @@
 
 package com.threerings.msoy.client;
 
-import com.threerings.msoy.money.data.all.PriceQuote;
-import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
+
+import com.threerings.msoy.money.data.all.PriceQuote;
 
 /**
  * Provides global non-member-related services.

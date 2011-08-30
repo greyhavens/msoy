@@ -5,14 +5,15 @@ package com.threerings.msoy.server;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+
 import com.samskivert.util.Lifecycle;
 import com.samskivert.util.ObserverList;
 
 import com.threerings.util.Name;
 
 import com.threerings.presents.data.ClientObject;
-import com.threerings.presents.dobj.AttributeChangedEvent;
 import com.threerings.presents.dobj.AttributeChangeListener;
+import com.threerings.presents.dobj.AttributeChangedEvent;
 import com.threerings.presents.dobj.ObjectDeathListener;
 import com.threerings.presents.dobj.ObjectDestroyedEvent;
 import com.threerings.presents.server.ClientManager;

@@ -10,15 +10,12 @@ import flash.events.HTTPStatusEvent;
 import flash.events.IOErrorEvent;
 import flash.events.ProgressEvent;
 import flash.events.SecurityErrorEvent;
-
 import flash.net.FileReference;
-
-import mx.controls.Label;
-import mx.controls.ProgressBar;
 
 import mx.containers.TitleWindow;
 import mx.containers.VBox;
-
+import mx.controls.Label;
+import mx.controls.ProgressBar;
 import mx.managers.PopUpManager;
 
 import com.threerings.util.ValueEvent;

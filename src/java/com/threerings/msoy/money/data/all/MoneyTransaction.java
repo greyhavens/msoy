@@ -6,6 +6,7 @@ package com.threerings.msoy.money.data.all;
 import java.util.Date;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
+
 import com.threerings.msoy.data.all.MemberName;
 
 /**

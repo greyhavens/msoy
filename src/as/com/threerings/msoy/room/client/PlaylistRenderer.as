@@ -12,6 +12,10 @@ import mx.controls.scrollClasses.ScrollBar;
 import com.threerings.util.CommandEvent;
 import com.threerings.util.NamedValueEvent;
 
+import com.threerings.orth.data.MediaDesc;
+import com.threerings.orth.data.MediaDescSize;
+import com.threerings.orth.ui.MediaWrapper;
+
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.FlexUtil;
 
@@ -19,18 +23,11 @@ import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.data.MsoyCodes;
-import com.threerings.orth.data.MediaDesc;
-import com.threerings.orth.data.MediaDescSize;
-import com.threerings.msoy.ui.MediaControls;
-import com.threerings.orth.ui.MediaWrapper;
-
-import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.Audio;
-
-import com.threerings.msoy.world.client.WorldContext;
-
 import com.threerings.msoy.room.data.MemberInfo;
 import com.threerings.msoy.room.data.RoomObject;
+import com.threerings.msoy.ui.MediaControls;
+import com.threerings.msoy.world.client.WorldContext;
 
 public class PlaylistRenderer extends HBox
 {

@@ -7,18 +7,18 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
-import com.samskivert.depot.PersistenceContext;
-import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.util.Lifecycle;
 
-import com.threerings.msoy.server.ServerConfig;
+import com.samskivert.jdbc.ConnectionProvider;
+
+import com.samskivert.depot.PersistenceContext;
 
 import com.threerings.msoy.game.server.persist.GameInfoRecord;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 import com.threerings.msoy.item.server.persist.TrophySourceRecord;
 import com.threerings.msoy.item.server.persist.TrophySourceRepository;
-
 import com.threerings.msoy.person.server.FeedLogic;
+import com.threerings.msoy.server.ServerConfig;
 
 /**
  * Tests the publishing of a trophy.

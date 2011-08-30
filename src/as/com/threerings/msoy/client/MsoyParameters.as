@@ -4,9 +4,7 @@
 package com.threerings.msoy.client {
 
 import flash.display.DisplayObject;
-
 import flash.external.ExternalInterface;
-
 import flash.net.URLVariables;
 
 import com.threerings.util.ParameterUtil;

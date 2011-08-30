@@ -5,6 +5,7 @@ package client.me;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.FlowPanel;
+
 import com.threerings.gwt.ui.WidgetUtil;
 
 import client.ui.MsoyUI;

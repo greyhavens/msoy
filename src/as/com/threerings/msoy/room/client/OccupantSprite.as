@@ -2,14 +2,10 @@
 // $Id$
 
 package com.threerings.msoy.room.client {
-import com.threerings.media.MediaContainer;
-import com.threerings.util.ValueEvent;
-
 import flash.display.BitmapData;
 import flash.display.DisplayObject;
 import flash.display.Loader;
 import flash.display.Sprite;
-
 import flash.events.MouseEvent;
 import flash.events.ProgressEvent;
 import flash.geom.Matrix;
@@ -18,19 +14,20 @@ import flash.geom.Rectangle;
 
 import com.threerings.util.Arrays;
 import com.threerings.util.Comparators;
-
-import com.threerings.display.FilterUtil;
+import com.threerings.util.ValueEvent;
 
 import com.threerings.crowd.data.OccupantInfo;
 
-import com.threerings.msoy.ui.MsoyNameLabel;
+import com.threerings.display.FilterUtil;
+
+import com.threerings.media.MediaContainer;
 
 import com.threerings.msoy.chat.client.ComicOverlay;
 import com.threerings.msoy.client.Prefs;
-import com.threerings.msoy.world.client.WorldContext;
-
 import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.msoy.room.data.MsoyScene;
+import com.threerings.msoy.ui.MsoyNameLabel;
+import com.threerings.msoy.world.client.WorldContext;
 
 /**
  * Displays a visualization of an occupant in a scene (could be a member, a pet, a MOB, all sorts

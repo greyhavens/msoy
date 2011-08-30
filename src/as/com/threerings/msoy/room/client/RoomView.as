@@ -6,15 +6,11 @@ package com.threerings.msoy.room.client {
 import flash.display.BitmapData;
 import flash.display.DisplayObject;
 import flash.display.Sprite;
-
 import flash.events.Event;
-
 import flash.geom.Matrix;
 import flash.geom.Point;
 import flash.geom.Rectangle;
-
 import flash.ui.Mouse;
-
 import flash.utils.ByteArray;
 
 import com.threerings.util.Arrays;
@@ -32,30 +28,28 @@ import com.threerings.ui.MenuUtil;
 import com.threerings.whirled.spot.data.Location;
 import com.threerings.whirled.spot.data.Portal;
 
+import com.threerings.orth.data.MediaDesc;
+
 import com.threerings.msoy.client.ContextMenuProvider;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.MsoyPlaceView;
 import com.threerings.msoy.client.PlaceBox;
 import com.threerings.msoy.client.Prefs;
-import com.threerings.msoy.client.Snapshottable;
 import com.threerings.msoy.client.SnapshotUtil;
+import com.threerings.msoy.client.Snapshottable;
 import com.threerings.msoy.client.UberClient;
 import com.threerings.msoy.client.Zoomable;
-
-import com.threerings.orth.data.MediaDesc;
-
 import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.ItemIdent;
-import com.threerings.msoy.world.client.WorldContext;
-import com.threerings.msoy.world.client.WorldControlBar;
-
 import com.threerings.msoy.room.client.layout.RoomLayout;
 import com.threerings.msoy.room.client.layout.RoomLayoutFactory;
 import com.threerings.msoy.room.data.FurniData;
 import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.msoy.room.data.MsoyScene;
 import com.threerings.msoy.room.data.RoomObject;
+import com.threerings.msoy.world.client.WorldContext;
+import com.threerings.msoy.world.client.WorldControlBar;
 
 /**
  * The base room view. Should not contain any RoomObject or other network-specific crap.

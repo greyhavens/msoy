@@ -7,25 +7,23 @@ import flash.display.DisplayObject;
 import flash.display.Graphics;
 import flash.display.Sprite;
 
+import caurina.transitions.Tweener;
+
+import mx.containers.Canvas;
+import mx.containers.HBox;
+import mx.controls.Text;
 import mx.core.Container;
 import mx.core.ScrollPolicy;
 import mx.core.UIComponent;
-import mx.controls.Text;
-import mx.containers.Canvas;
-import mx.containers.HBox;
-
-import caurina.transitions.Tweener;
-
-import com.threerings.util.Util;
-
-import com.threerings.flex.CommandLinkButton;
-import com.threerings.flex.CommandButton;
-import com.threerings.flex.FlexUtil;
 
 import com.threerings.util.MultiLoader;
+import com.threerings.util.Util;
+
+import com.threerings.flex.CommandButton;
+import com.threerings.flex.CommandLinkButton;
+import com.threerings.flex.FlexUtil;
 
 import com.threerings.msoy.client.Msgs;
-import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.Prefs;
 
 /**

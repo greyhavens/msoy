@@ -3,23 +3,19 @@
 
 package com.threerings.msoy.applets.net {
 
-import flash.events.Event;
 import flash.events.ErrorEvent;
+import flash.events.Event;
 import flash.events.HTTPStatusEvent;
 import flash.events.IOErrorEvent;
 import flash.events.SecurityErrorEvent;
-
 import flash.net.URLLoader;
 import flash.net.URLLoaderDataFormat;
 import flash.net.URLRequest;
 
+import mx.containers.TitleWindow;
 import mx.controls.ProgressBar;
 import mx.controls.TextArea;
-
-import mx.containers.TitleWindow;
-
 import mx.events.CloseEvent;
-
 import mx.managers.PopUpManager;
 
 import com.threerings.util.ValueEvent;

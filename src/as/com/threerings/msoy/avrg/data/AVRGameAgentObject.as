@@ -3,13 +3,17 @@
 
 package com.threerings.msoy.avrg.data {
 
-import com.threerings.bureau.data.AgentObject;
 import com.whirled.game.client.PropertySpaceHelper;
 import com.whirled.game.data.PropertySpaceMarshaller;
 import com.whirled.game.data.PropertySpaceObject;
-import com.threerings.presents.dobj.DSet;
-import com.threerings.msoy.avrg.data.SceneInfo;
+
 import com.threerings.io.ObjectInputStream;
+
+import com.threerings.presents.dobj.DSet;
+
+import com.threerings.bureau.data.AgentObject;
+
+import com.threerings.msoy.avrg.data.SceneInfo;
 
 public class AVRGameAgentObject extends AgentObject
     implements PropertySpaceObject

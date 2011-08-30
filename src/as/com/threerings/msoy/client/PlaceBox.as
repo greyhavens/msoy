@@ -11,24 +11,24 @@ import flash.filters.GlowFilter;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 
-import mx.controls.Label;
-import mx.core.UIComponent;
-
 import caurina.transitions.Tweener;
 
-import com.threerings.flex.CommandButton;
-import com.threerings.flex.FlexUtil;
+import mx.controls.Label;
+import mx.core.UIComponent;
 
 import com.threerings.util.Arrays;
 import com.threerings.util.NamedValueEvent;
 import com.threerings.util.StringUtil;
 
+import com.threerings.crowd.client.PlaceView;
+
 import com.threerings.display.DisplayUtil;
 
-import com.threerings.crowd.client.PlaceView;
+import com.threerings.flex.CommandButton;
+import com.threerings.flex.FlexUtil;
+
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.MsoyPlaceView;
-import com.threerings.msoy.client.DeploymentConfig;
 
 /**
  * A component that holds our place views and sets up a mask to ensure that the place view does not

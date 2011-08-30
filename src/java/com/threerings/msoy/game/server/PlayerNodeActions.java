@@ -6,7 +6,6 @@ package com.threerings.msoy.game.server;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.presents.peer.data.NodeObject;
 
 import com.threerings.crowd.data.OccupantInfo;
@@ -15,14 +14,13 @@ import com.threerings.crowd.server.BodyManager;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VizMemberName;
-
-import com.threerings.msoy.peer.data.MsoyNodeObject;
-import com.threerings.msoy.peer.server.MemberNodeAction;
-import com.threerings.msoy.peer.server.MsoyPeerManager;
-
 import com.threerings.msoy.game.data.GameAuthName;
 import com.threerings.msoy.game.data.GameSummary;
 import com.threerings.msoy.game.data.PlayerObject;
+import com.threerings.msoy.item.data.all.MsoyItemType;
+import com.threerings.msoy.peer.data.MsoyNodeObject;
+import com.threerings.msoy.peer.server.MemberNodeAction;
+import com.threerings.msoy.peer.server.MsoyPeerManager;
 
 /**
  * Provides a simple interface for dispatching node actions for players.

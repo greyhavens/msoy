@@ -5,8 +5,10 @@ package com.threerings.msoy.avrg.data {
 
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
-import com.threerings.presents.dobj.DSet_Entry;
+
 import com.threerings.util.StringUtil;
+
+import com.threerings.presents.dobj.DSet_Entry;
 
 /**
  * Helps an AVRG keep track of which scene a player is in.

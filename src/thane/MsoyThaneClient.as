@@ -4,9 +4,12 @@
 package {
 
 import avmplus.System;
-import com.threerings.util.Log;
-import com.threerings.msoy.bureau.client.MsoyBureauClient;
+
 import com.whirled.thane.HttpUserCodeLoader;
+
+import com.threerings.util.Log;
+
+import com.threerings.msoy.bureau.client.MsoyBureauClient;
 
 public class MsoyThaneClient
 {

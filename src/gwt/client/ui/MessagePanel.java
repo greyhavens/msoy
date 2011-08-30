@@ -13,10 +13,10 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.orth.data.MediaDescSize;
+
 import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.util.DateUtil;
-
-import com.threerings.orth.data.MediaDescSize;
 
 import com.threerings.msoy.web.gwt.MemberCard;
 import com.threerings.msoy.web.gwt.MessageUtil;

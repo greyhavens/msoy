@@ -4,11 +4,8 @@
 package com.threerings.msoy.applets {
 
 import flash.display.Sprite;
-
 import flash.events.Event;
-
 import flash.external.ExternalInterface;
-
 import flash.system.Security;
 
 import com.threerings.util.ParameterUtil;

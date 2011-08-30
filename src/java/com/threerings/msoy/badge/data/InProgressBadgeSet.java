@@ -3,8 +3,9 @@
 
 package com.threerings.msoy.badge.data;
 
-import com.threerings.msoy.badge.data.all.InProgressBadge;
 import com.threerings.presents.dobj.DSet;
+
+import com.threerings.msoy.badge.data.all.InProgressBadge;
 
 /**
  * A distributed class containing {@link InProgressBadge} objects.

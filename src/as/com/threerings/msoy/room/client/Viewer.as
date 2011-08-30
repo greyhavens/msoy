@@ -4,9 +4,7 @@
 package com.threerings.msoy.room.client {
 
 import flash.display.Bitmap;
-import flash.display.DisplayObject;
 import flash.display.Sprite;
-
 import flash.utils.ByteArray;
 
 import com.threerings.util.ValueEvent;
@@ -77,7 +75,6 @@ public class Viewer extends Sprite
 }
 
 import com.threerings.msoy.room.client.FurniSprite;
-
 import com.threerings.msoy.room.data.FurniData;
 
 /**

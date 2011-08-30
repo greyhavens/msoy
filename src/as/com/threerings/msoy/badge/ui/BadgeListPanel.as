@@ -4,15 +4,12 @@
 package com.threerings.msoy.badge.ui {
 
 import mx.collections.ArrayCollection;
-
 import mx.controls.List;
-
 import mx.core.ClassFactory;
 import mx.core.ScrollPolicy;
 
-import com.threerings.msoy.ui.FlyingPanel;
-
 import com.threerings.msoy.client.MsoyContext;
+import com.threerings.msoy.ui.FlyingPanel;
 
 /**
  * A flying panel that display an array of EarnedBadges in a giant vertical List.  This is only
@@ -54,20 +51,16 @@ public class BadgeListPanel extends FlyingPanel
 
 import mx.containers.HBox;
 import mx.containers.VBox;
-
 import mx.controls.Label;
-
 import mx.core.ScrollPolicy;
 
 import com.threerings.media.MediaContainer;
 
 import com.threerings.flex.FlexWrapper;
 
-import com.threerings.msoy.client.MsoyContext;
-
-import com.threerings.msoy.data.MsoyCodes;
-
 import com.threerings.msoy.badge.data.all.EarnedBadge;
+import com.threerings.msoy.client.MsoyContext;
+import com.threerings.msoy.data.MsoyCodes;
 
 class BadgeRenderer extends HBox
 {

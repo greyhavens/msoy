@@ -6,9 +6,10 @@ package com.threerings.msoy.server.persist;
 import java.sql.Timestamp;
 
 import com.google.common.base.Function;
+
 import com.samskivert.depot.PersistentRecord;
-import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.annotation.Entity;
+import com.samskivert.depot.expression.ColumnExp;
 
 import com.threerings.io.Streamable;
 

@@ -25,37 +25,26 @@ import com.threerings.orth.notify.data.Notification;
 
 import com.threerings.msoy.badge.data.all.EarnedBadge;
 import com.threerings.msoy.badge.data.all.InProgressBadge;
-
 import com.threerings.msoy.badge.server.persist.EarnedBadgeRecord;
 import com.threerings.msoy.badge.server.persist.InProgressBadgeRecord;
-
 import com.threerings.msoy.data.MemberExperience;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyAuthName;
 import com.threerings.msoy.data.MsoyTokenRing;
 import com.threerings.msoy.data.MsoyUserOccupantInfo;
-
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
-
 import com.threerings.msoy.game.data.PlayerObject;
-
 import com.threerings.msoy.group.data.all.GroupMembership;
-
 import com.threerings.msoy.item.data.all.Avatar.QuicklistState;
 import com.threerings.msoy.item.server.ItemManager;
-
 import com.threerings.msoy.notify.data.BadgeEarnedNotification;
-
 import com.threerings.msoy.notify.server.MsoyNotificationManager;
-
 import com.threerings.msoy.party.server.PartyRegistry;
-
 import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.peer.server.MemberNodeAction;
 import com.threerings.msoy.peer.server.MemberPlayerNodeAction;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
-
 import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.msoy.room.data.MsoyPortal;
 import com.threerings.msoy.room.data.RoomCodes;

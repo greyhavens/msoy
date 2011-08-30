@@ -4,6 +4,7 @@
 package com.threerings.msoy.reminders.gwt;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
+
 import com.threerings.msoy.game.data.all.Trophy;
 
 /**

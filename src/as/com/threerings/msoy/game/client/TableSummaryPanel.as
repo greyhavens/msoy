@@ -3,35 +3,33 @@
 
 package com.threerings.msoy.game.client {
 
+import com.whirled.game.data.WhirledGameConfig;
+
 import mx.containers.HBox;
 import mx.containers.VBox;
-
 import mx.controls.Label;
 
 import com.threerings.util.Name;
 import com.threerings.util.Predicates;
 import com.threerings.util.StringUtil;
 
-import com.threerings.flex.CommandButton;
-import com.threerings.flex.FlexUtil;
-
 import com.threerings.parlor.data.Parameter;
 import com.threerings.parlor.data.Table;
 import com.threerings.parlor.game.data.GameConfig;
 
-import com.whirled.game.data.WhirledGameConfig;
-
-import com.threerings.msoy.client.Msgs;
-import com.threerings.msoy.client.MsoyController;
 import com.threerings.orth.data.MediaDesc;
 import com.threerings.orth.data.MediaDescSize;
-import com.threerings.msoy.data.all.VizMemberName;
 import com.threerings.orth.ui.MediaWrapper;
-import com.threerings.msoy.ui.InfoTipper;
 
+import com.threerings.flex.CommandButton;
+import com.threerings.flex.FlexUtil;
+
+import com.threerings.msoy.client.Msgs;
+import com.threerings.msoy.data.all.VizMemberName;
 import com.threerings.msoy.game.data.LobbyObject;
 import com.threerings.msoy.game.data.MsoyMatchConfig;
 import com.threerings.msoy.game.data.MsoyTableConfig;
+import com.threerings.msoy.ui.InfoTipper;
 
 /**
  * Displays a summary of a table for use in a TableList.

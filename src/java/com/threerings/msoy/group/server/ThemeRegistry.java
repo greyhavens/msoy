@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.group.server;
 
-import static com.threerings.msoy.Log.log;
-
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -22,10 +20,10 @@ import com.google.inject.Singleton;
 
 import com.samskivert.util.Invoker;
 import com.samskivert.util.Lifecycle;
+import com.samskivert.util.ResultListener.NOOP;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.StringUtil;
 import com.samskivert.util.Tuple;
-import com.samskivert.util.ResultListener.NOOP;
 
 import com.threerings.presents.annotation.BlockingThread;
 import com.threerings.presents.annotation.MainInvoker;
@@ -40,6 +38,8 @@ import com.threerings.msoy.peer.data.HostedTheme;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.server.PopularPlacesSnapshot;
+
+import static com.threerings.msoy.Log.log;
 
 /**
  * Maintains information regarding existing themes and which ones we're responsible

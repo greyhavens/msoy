@@ -3,7 +3,9 @@
 
 package com.threerings.msoy.chat.client {
 
-import flash.utils.getTimer; // function
+import flash.utils.getTimer;
+
+import com.whirled.ui.PlayerList;
 
 import com.threerings.util.ClassUtil;
 import com.threerings.util.Log;
@@ -16,11 +18,8 @@ import com.threerings.presents.client.ClientEvent;
 import com.threerings.presents.client.InvocationAdapter;
 import com.threerings.presents.client.ResultAdapter;
 
-import com.threerings.crowd.data.PlaceObject;
-import com.threerings.crowd.util.CrowdContext;
-
-import com.threerings.crowd.chat.client.ChatDirector;
 import com.threerings.crowd.chat.client.ChannelSpeakService;
+import com.threerings.crowd.chat.client.ChatDirector;
 import com.threerings.crowd.chat.client.SpeakService;
 import com.threerings.crowd.chat.data.ChannelSpeakMarshaller;
 import com.threerings.crowd.chat.data.ChatChannel;
@@ -29,10 +28,11 @@ import com.threerings.crowd.chat.data.ChatMessage;
 import com.threerings.crowd.chat.data.SystemMessage;
 import com.threerings.crowd.chat.data.TellFeedbackMessage;
 import com.threerings.crowd.chat.data.UserMessage;
+import com.threerings.crowd.data.PlaceObject;
 
-import com.whirled.ui.PlayerList;
-
-import com.threerings.msoy.client.DeploymentConfig;
+import com.threerings.msoy.chat.client.JabberService;
+import com.threerings.msoy.chat.data.JabberMarshaller;
+import com.threerings.msoy.chat.data.MsoyChatChannel;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.data.MemberObject;
@@ -43,11 +43,6 @@ import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.JabberName;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.RoomName;
-
-import com.threerings.msoy.chat.data.MsoyChatChannel;
-import com.threerings.msoy.chat.data.JabberMarshaller;
-import com.threerings.msoy.chat.client.JabberService;
-
 import com.threerings.msoy.room.data.RoomObject;
 
 /**

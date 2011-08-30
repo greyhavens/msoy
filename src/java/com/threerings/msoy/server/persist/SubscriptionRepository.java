@@ -4,16 +4,16 @@
 package com.threerings.msoy.server.persist;
 
 import java.sql.Timestamp;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+
+import com.samskivert.util.Calendars;
 
 import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.Exps;
@@ -26,10 +26,9 @@ import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.expression.SQLExpression;
 
-import com.samskivert.util.Calendars;
+import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.msoy.item.data.all.MsoyItemType;
-import com.threerings.presents.annotation.BlockingThread;
 
 import static com.threerings.msoy.Log.log;
 

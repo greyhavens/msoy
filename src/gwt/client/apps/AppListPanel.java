@@ -5,16 +5,17 @@ package client.apps;
 
 import java.util.List;
 
-import client.util.InfoCallback;
-import client.util.Link;
-
 import com.google.gwt.core.client.GWT;
 
 import com.threerings.gwt.ui.SmartTable;
+
 import com.threerings.msoy.apps.gwt.AppInfo;
 import com.threerings.msoy.apps.gwt.AppService;
 import com.threerings.msoy.apps.gwt.AppServiceAsync;
 import com.threerings.msoy.web.gwt.Pages;
+
+import client.util.InfoCallback;
+import client.util.Link;
 
 /**
  * Panel for viewing a list of all defined applications.

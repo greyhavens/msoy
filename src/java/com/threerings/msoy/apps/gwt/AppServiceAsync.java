@@ -6,10 +6,11 @@ package com.threerings.msoy.apps.gwt;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import com.google.gwt.user.client.rpc.AsyncCallback;
+
 import com.threerings.msoy.facebook.gwt.FacebookInfo;
 import com.threerings.msoy.facebook.gwt.FacebookTemplate;
-
 import com.threerings.msoy.facebook.gwt.FeedThumbnail;
 import com.threerings.msoy.facebook.gwt.KontagentInfo;
 

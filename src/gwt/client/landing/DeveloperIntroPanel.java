@@ -6,6 +6,7 @@ package client.landing;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.FlowPanel;
+
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.ui.MsoyUI;
@@ -32,7 +33,7 @@ public class DeveloperIntroPanel extends FlowPanel
         header.add(MsoyUI.createActionImage("/images/landing/blue_landing_join_now.png",
             NaviUtil.onSignUp()), 750, 0);
 
-        content.add(new WideContentBox(_msgs.devintroWhatTitle(), _msgs.devintroWhatText(), 
+        content.add(new WideContentBox(_msgs.devintroWhatTitle(), _msgs.devintroWhatText(),
             false));
         content.add(new WideContentBox(_msgs.devintroRevenueTitle(), _msgs.devintroRevenueText(),
             true));

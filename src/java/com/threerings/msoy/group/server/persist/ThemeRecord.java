@@ -4,6 +4,7 @@
 package com.threerings.msoy.group.server.persist;
 
 import com.google.common.base.Function;
+
 import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.annotation.Column;
@@ -14,8 +15,8 @@ import com.samskivert.depot.expression.ColumnExp;
 import com.threerings.orth.data.MediaDesc;
 
 import com.threerings.msoy.data.all.GroupName;
-import com.threerings.msoy.server.MediaDescFactory;
 import com.threerings.msoy.data.all.Theme;
+import com.threerings.msoy.server.MediaDescFactory;
 
 /**
  *  Contains data specific to the theme aspect of a group.

@@ -7,23 +7,20 @@ import com.google.inject.Inject;
 
 import com.samskivert.servlet.util.CookieUtil;
 
-import com.threerings.web.gwt.ServiceException;
-import com.threerings.user.OOOUser;
-
 import com.threerings.underwire.server.UnderContext;
 import com.threerings.underwire.web.client.AuthenticationException;
 import com.threerings.underwire.web.client.UnderwireException;
 import com.threerings.underwire.web.server.UnderwireServlet;
+import com.threerings.user.OOOUser;
+import com.threerings.web.gwt.ServiceException;
 
 import com.threerings.msoy.server.MemberNodeActions;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
-
-import com.threerings.msoy.web.gwt.WebCreds;
-import com.threerings.msoy.web.server.MemberHelper;
-
 import com.threerings.msoy.underwire.gwt.MsoyAccount.SocialStatus;
 import com.threerings.msoy.underwire.gwt.SupportService;
+import com.threerings.msoy.web.gwt.WebCreds;
+import com.threerings.msoy.web.server.MemberHelper;
 
 /**
  * An underwire servlet which uses a the msoy connection provider and user manager.

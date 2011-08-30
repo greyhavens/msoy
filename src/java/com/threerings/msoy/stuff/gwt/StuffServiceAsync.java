@@ -4,11 +4,13 @@
 package com.threerings.msoy.stuff.gwt;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
+
+import com.threerings.orth.data.MediaDesc;
+
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.MsoyItemType;
-import com.threerings.orth.data.MediaDesc;
 
 /**
  * Provides the asynchronous version of {@link StuffService}.

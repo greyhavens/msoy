@@ -4,10 +4,9 @@
 package com.threerings.msoy.item.data.all;
 
 import com.google.common.collect.ComparisonChain;
+import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.io.Streamable;
-
-import com.google.gwt.user.client.rpc.IsSerializable;
 
 /**
  * A fully qualified item identifier (type and integer id).

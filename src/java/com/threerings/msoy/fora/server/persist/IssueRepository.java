@@ -3,10 +3,9 @@
 
 package com.threerings.msoy.fora.server.persist;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Set;
-
-import java.sql.Timestamp;
 
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;

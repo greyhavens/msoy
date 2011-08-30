@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.admin.client;
 
-import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 
 import com.threerings.msoy.admin.gwt.StatsModel;

@@ -5,15 +5,12 @@ package com.threerings.msoy.person.server.persist;
 
 import java.sql.Timestamp;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-
-import com.samskivert.util.CollectionUtil;
 
 import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.Ops;
@@ -23,13 +20,8 @@ import com.samskivert.depot.expression.SQLExpression;
 
 import com.threerings.presents.annotation.BlockingThread;
 
-import com.threerings.gwt.util.ExpanderResult;
-
 import com.threerings.msoy.person.gwt.FeedMessageType;
 import com.threerings.msoy.person.server.FeedLogic;
-import com.threerings.msoy.server.persist.RepositoryUtil;
-
-import static com.threerings.msoy.Log.log;
 
 /**
  * Maintains persistent data for feeds.

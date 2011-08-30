@@ -5,10 +5,10 @@ package com.threerings.msoy.game.client {
 
 import caurina.transitions.Tweener;
 
+import com.threerings.orth.ui.ScalingMediaDescContainer;
+
 import com.threerings.msoy.client.PlaceBox;
 import com.threerings.msoy.client.PlaceLoadingDisplay;
-
-import com.threerings.orth.ui.ScalingMediaDescContainer;
 
 public class GameLoadingDisplay extends PlaceLoadingDisplay
 {

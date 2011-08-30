@@ -12,26 +12,22 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 
+import com.threerings.web.gwt.ServiceException;
+
 import com.threerings.msoy.facebook.server.FacebookLogic;
 import com.threerings.msoy.facebook.server.persist.FacebookActionRecord;
 import com.threerings.msoy.facebook.server.persist.FacebookRepository;
-
 import com.threerings.msoy.game.gwt.ArcadeData;
 import com.threerings.msoy.game.server.persist.ArcadeEntryRecord;
 import com.threerings.msoy.game.server.persist.GameInfoRecord;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 import com.threerings.msoy.game.server.persist.TrophyRecord;
 import com.threerings.msoy.game.server.persist.TrophyRepository;
-
 import com.threerings.msoy.item.server.persist.TrophySourceRepository;
-
 import com.threerings.msoy.reminders.gwt.Reminder;
 import com.threerings.msoy.reminders.gwt.ReminderType;
 import com.threerings.msoy.reminders.gwt.RemindersService;
-
 import com.threerings.msoy.server.persist.MemberRecord;
-
-import com.threerings.web.gwt.ServiceException;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 
 /**

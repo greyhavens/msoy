@@ -6,16 +6,11 @@ package com.threerings.msoy.game.data;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
+
 import javax.annotation.Generated;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-
-import com.threerings.util.Name;
-
-import com.threerings.crowd.data.OccupantInfo;
-import com.threerings.crowd.data.PlaceObject;
-import com.threerings.crowd.data.TokenRing;
 
 import com.whirled.game.data.PropertySpaceMarshaller;
 import com.whirled.game.data.PropertySpaceObject;
@@ -24,17 +19,23 @@ import com.whirled.game.server.PropertySpaceHelper;
 
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
+
+import com.threerings.util.Name;
+
+import com.threerings.crowd.data.OccupantInfo;
+import com.threerings.crowd.data.PlaceObject;
+import com.threerings.crowd.data.TokenRing;
+
+import com.threerings.orth.data.MediaDesc;
+
+import com.threerings.msoy.avrg.data.AVRGameObject;
+import com.threerings.msoy.avrg.data.AVRGameOccupantInfo;
 import com.threerings.msoy.data.MsoyTokenRing;
 import com.threerings.msoy.data.MsoyUserObject;
-import com.threerings.orth.data.MediaDesc;
 import com.threerings.msoy.data.all.MemberMailUtil;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.data.all.VizMemberName;
-
-import com.threerings.msoy.avrg.data.AVRGameObject;
-import com.threerings.msoy.avrg.data.AVRGameOccupantInfo;
-
 import com.threerings.msoy.party.data.PartySummary;
 
 import static com.threerings.msoy.Log.log;

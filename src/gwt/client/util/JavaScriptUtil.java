@@ -99,7 +99,7 @@ public class JavaScriptUtil
      * method. Returns null in the event of an exception and logs the error to the console, if
      * active. Note that each value must be a JSNI type. However, since map values are non-
      * primitive, the values are effectively limited to (String, JavaScriptObject). As far as I'm
-     * aware, the map key type must be String. 
+     * aware, the map key type must be String.
      */
     public static native <K, V> JavaScriptObject createDictionaryFromMap (Map<K, V> map) /*-{
         try {

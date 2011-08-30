@@ -2,17 +2,13 @@
 // $Id$
 
 package com.threerings.msoy.notify.client {
-import com.threerings.orth.notify.client.NotificationDisplay;
-import com.threerings.util.Name;
-
-import flash.utils.setTimeout; // function
+import flash.utils.setTimeout;
 
 import com.threerings.util.MessageBundle;
+import com.threerings.util.Name;
 import com.threerings.util.Set;
 import com.threerings.util.Sets;
 import com.threerings.util.StringUtil;
-
-import com.threerings.presents.client.ClientAdapter;
 
 import com.threerings.presents.dobj.AttributeChangeListener;
 import com.threerings.presents.dobj.AttributeChangedEvent;
@@ -22,21 +18,17 @@ import com.threerings.presents.dobj.EntryUpdatedEvent;
 import com.threerings.presents.dobj.SetListener;
 
 import com.threerings.orth.notify.client.NotificationDirector;
+import com.threerings.orth.notify.client.NotificationDisplay;
 import com.threerings.orth.notify.data.Notification;
 
 import com.threerings.msoy.badge.data.all.Badge;
-import com.threerings.msoy.game.data.all.Trophy;
-import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.ui.AwardPanel;
-import com.threerings.msoy.utils.Capabilities;
-
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.MsoyService;
-
-import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
-
+import com.threerings.msoy.data.all.FriendEntry;
+import com.threerings.msoy.game.data.all.Trophy;
+import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.notify.data.BadgeEarnedNotification;
 import com.threerings.msoy.notify.data.EntityCommentedNotification;
 import com.threerings.msoy.notify.data.FollowInviteNotification;
@@ -46,6 +38,8 @@ import com.threerings.msoy.notify.data.LevelUpNotification;
 import com.threerings.msoy.notify.data.MoneyNotification;
 import com.threerings.msoy.notify.data.PartyInviteNotification;
 import com.threerings.msoy.notify.data.PokeNotification;
+import com.threerings.msoy.ui.AwardPanel;
+import com.threerings.msoy.utils.Capabilities;
 
 public class MsoyNotificationDirector extends NotificationDirector
     implements AttributeChangeListener, SetListener

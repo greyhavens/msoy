@@ -6,8 +6,8 @@ package client.editem;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.TextBox;
 
-import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.IdentGameItem;
+import com.threerings.msoy.item.data.all.Item;
 
 /**
  * Handles the editing of game items with an identifier.

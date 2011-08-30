@@ -18,10 +18,10 @@ import com.samskivert.util.Invoker;
 import com.samskivert.util.Lifecycle;
 
 import com.threerings.presents.annotation.MainInvoker;
+
 import com.threerings.whirled.data.SceneUpdate;
 
 import com.threerings.msoy.item.data.all.ItemIdent;
-
 import com.threerings.msoy.room.data.FurniUpdate;
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
 

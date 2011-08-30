@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.game.server;
 
-import static com.threerings.msoy.Log.log;
-
 import java.io.IOException;
 
 import javax.servlet.http.HttpServlet;
@@ -14,16 +12,17 @@ import javax.servlet.http.HttpServletResponse;
 import com.google.inject.Inject;
 
 import com.samskivert.io.StreamUtil;
+
 import com.samskivert.servlet.util.CookieUtil;
 
-import com.threerings.msoy.server.persist.MemberRecord;
-
-import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 import com.threerings.msoy.game.server.persist.GameTraceLogEnumerationRecord;
 import com.threerings.msoy.game.server.persist.GameTraceLogRecord;
-
+import com.threerings.msoy.game.server.persist.MsoyGameRepository;
+import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.web.gwt.WebCreds;
 import com.threerings.msoy.web.server.MemberHelper;
+
+import static com.threerings.msoy.Log.log;
 
 /**
  * Exports trace logs for server-side game components.

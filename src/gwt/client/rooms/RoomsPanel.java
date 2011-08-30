@@ -14,19 +14,18 @@ import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.util.SimpleDataModel;
 
-import com.threerings.msoy.web.gwt.Pages;
-
 import com.threerings.msoy.room.gwt.RoomInfo;
 import com.threerings.msoy.room.gwt.WebRoomService;
 import com.threerings.msoy.room.gwt.WebRoomServiceAsync;
+import com.threerings.msoy.web.gwt.Pages;
 
 import client.room.RoomWidget;
 import client.ui.Marquee;
 import client.ui.MsoyUI;
 import client.ui.TongueBox;
 import client.util.FlashClients;
-import client.util.Link;
 import client.util.InfoCallback;
+import client.util.Link;
 
 public class RoomsPanel extends FlowPanel
 {

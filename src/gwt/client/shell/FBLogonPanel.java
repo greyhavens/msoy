@@ -1,17 +1,18 @@
 package client.shell;
 
-import client.ui.MsoyUI;
-import client.util.InfoCallback;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
+
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.web.gwt.FacebookCreds;
 import com.threerings.msoy.web.gwt.SessionData;
 import com.threerings.msoy.web.gwt.WebUserService;
 import com.threerings.msoy.web.gwt.WebUserServiceAsync;
+
+import client.ui.MsoyUI;
+import client.util.InfoCallback;
 
 /**
  * Implement Facebook Connect authentication. Any GWT app  that wishes to use it should include

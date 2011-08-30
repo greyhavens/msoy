@@ -6,8 +6,9 @@ package com.threerings.msoy.admin.data;
 import java.lang.reflect.Field;
 import java.text.DateFormat;
 import java.util.Date;
-import javax.swing.JPanel;
+
 import javax.annotation.Generated;
+import javax.swing.JPanel;
 
 import com.threerings.presents.util.PresentsContext;
 

@@ -4,7 +4,6 @@
 package com.threerings.msoy.data.all;
 
 import com.google.common.primitives.Ints;
-
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.util.Name;

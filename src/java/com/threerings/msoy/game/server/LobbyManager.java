@@ -6,8 +6,12 @@ package com.threerings.msoy.game.server;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 
+import com.whirled.game.data.GameDefinition;
+import com.whirled.game.data.TableMatchConfig;
+
 import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
+
 import com.threerings.util.Name;
 
 import com.threerings.presents.annotation.EventThread;
@@ -23,19 +27,15 @@ import com.threerings.parlor.data.Table;
 import com.threerings.parlor.game.server.GameManager;
 import com.threerings.parlor.server.ParlorSender;
 
-import com.whirled.game.data.GameDefinition;
-import com.whirled.game.data.TableMatchConfig;
-
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.server.MsoyEventLogger;
-import com.threerings.msoy.server.ServerConfig;
-
 import com.threerings.msoy.game.data.LobbyObject;
 import com.threerings.msoy.game.data.MsoyMatchConfig;
 import com.threerings.msoy.game.data.MsoyTableConfig;
 import com.threerings.msoy.game.data.ParlorGameConfig;
 import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.game.xml.MsoyGameParser;
+import com.threerings.msoy.server.MsoyEventLogger;
+import com.threerings.msoy.server.ServerConfig;
 
 import static com.threerings.msoy.Log.log;
 

@@ -3,9 +3,6 @@
 
 package com.threerings.msoy.server;
 
-import com.threerings.crowd.data.BodyObject;
-
-import com.threerings.bureau.data.BureauClientObject;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.dobj.AccessController;
 import com.threerings.presents.dobj.DEvent;
@@ -14,6 +11,10 @@ import com.threerings.presents.dobj.MessageEvent;
 import com.threerings.presents.dobj.ProxySubscriber;
 import com.threerings.presents.dobj.Subscriber;
 import com.threerings.presents.server.PresentsObjectAccess;
+
+import com.threerings.crowd.data.BodyObject;
+
+import com.threerings.bureau.data.BureauClientObject;
 
 import com.threerings.msoy.data.MemberClientObject;
 

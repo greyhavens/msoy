@@ -5,35 +5,31 @@ package com.threerings.msoy.game.client {
 
 import flash.display.DisplayObjectContainer;
 
+import com.whirled.game.data.WhirledGameConfig;
+
 import mx.containers.HBox;
 import mx.containers.VBox;
 import mx.controls.Label;
 import mx.controls.Text;
 import mx.controls.TextInput;
 import mx.core.ScrollPolicy;
-import mx.core.UIComponent;
 
 import com.threerings.util.StringUtil;
 import com.threerings.util.Util;
-
-import com.threerings.flex.CommandButton;
-//import com.threerings.flex.CommandLinkButton;
-import com.threerings.flex.FlexUtil;
 
 import com.threerings.parlor.client.TableObserver;
 import com.threerings.parlor.data.Parameter;
 import com.threerings.parlor.data.Table;
 
-import com.whirled.game.data.WhirledGameConfig;
+import com.threerings.flex.CommandButton;
+import com.threerings.flex.FlexUtil;
 
 import com.threerings.msoy.client.Msgs;
-import com.threerings.orth.data.MediaDescSize;
-import com.threerings.msoy.ui.CopyableText;
-import com.threerings.msoy.ui.SimpleGrid;
-
 import com.threerings.msoy.game.client.GameContext;
 import com.threerings.msoy.game.data.LobbyObject;
 import com.threerings.msoy.game.data.MsoyTableConfig;
+import com.threerings.msoy.ui.CopyableText;
+import com.threerings.msoy.ui.SimpleGrid;
 
 /**
  * Displays information on a table that is currently being matchmade.
@@ -223,22 +219,20 @@ import mx.containers.Canvas;
 import mx.containers.VBox;
 import mx.controls.Label;
 
+import com.threerings.parlor.data.Table;
+
+import com.threerings.orth.data.MediaDescSize;
+import com.threerings.orth.ui.MediaWrapper;
+
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.FlexUtil;
 
-import com.threerings.parlor.data.Table;
-
-import com.threerings.msoy.client.Msgs;
-import com.threerings.orth.data.MediaDescSize;
 import com.threerings.msoy.data.all.VizMemberName;
-import com.threerings.orth.ui.MediaWrapper;
-
-import com.threerings.msoy.item.data.all.Item;
-
 import com.threerings.msoy.game.client.GameContext;
 import com.threerings.msoy.game.client.LobbyController;
 import com.threerings.msoy.game.client.LobbyPanel;
 import com.threerings.msoy.game.client.LobbyTablePanel;
+import com.threerings.msoy.item.data.all.Item;
 
 class SeatPanel extends VBox
 {

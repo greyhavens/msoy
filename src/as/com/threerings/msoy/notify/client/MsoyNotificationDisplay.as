@@ -2,48 +2,41 @@
 // $Id$
 
 package com.threerings.msoy.notify.client {
-import com.threerings.orth.notify.client.NotificationDisplay;
-
 import flash.display.DisplayObject;
-import flash.utils.Timer;
-
 import flash.events.MouseEvent;
 import flash.events.TextEvent;
 import flash.events.TimerEvent;
-
 import flash.geom.Point;
-
 import flash.text.AntiAliasType;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 import flash.text.TextFormat;
+import flash.utils.Timer;
+import flash.utils.setTimeout;
+
+import caurina.transitions.Tweener;
 
 import mx.containers.Canvas;
 import mx.containers.HBox;
-
-import mx.core.UIComponent;
 import mx.core.ScrollPolicy;
-
+import mx.core.UIComponent;
 import mx.managers.PopUpManager;
-
-import caurina.transitions.Tweener;
 
 import com.threerings.util.ClassUtil;
 import com.threerings.util.Log;
 
 import com.threerings.text.TextFieldUtil;
+
+import com.threerings.orth.notify.client.NotificationDisplay;
+import com.threerings.orth.notify.data.Notification;
+
 import com.threerings.flex.CommandCheckBox;
 import com.threerings.flex.FlexWrapper;
 
-import com.threerings.orth.notify.data.Notification;
-
+import com.threerings.msoy.chat.client.ChatOverlay;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.utils.TextUtil;
-
-import com.threerings.msoy.chat.client.ChatOverlay;
-
-import flash.utils.setTimeout; // function import
 
 public class MsoyNotificationDisplay extends HBox
     implements NotificationDisplay

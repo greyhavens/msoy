@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.game.client;
 
-import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 
 /**
@@ -22,7 +21,7 @@ public interface LobbyService extends InvocationService
      * Requests to immediately start playing a game. If a game could be started and/or located, 0
      * will be returned, otherwise the oid of the lobby will be returned so that the client can
      * fall back to displaying the lobby.
-     
+
      * @param playerId the player whose game we wish to join or 0.
      */
     void playNow (int gameId, int playerId, ResultListener listener);

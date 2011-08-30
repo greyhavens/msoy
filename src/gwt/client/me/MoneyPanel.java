@@ -6,7 +6,6 @@ package client.me;
 import java.util.List;
 
 import com.google.common.collect.Lists;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasAlignment;

@@ -4,21 +4,16 @@
 package com.threerings.msoy.applets.net {
 
 import flash.errors.IllegalOperationError;
-
 import flash.events.Event;
 import flash.events.HTTPStatusEvent;
 import flash.events.IOErrorEvent;
 import flash.events.ProgressEvent;
 import flash.events.SecurityErrorEvent;
-
 import flash.net.URLLoader;
-
 import flash.utils.ByteArray;
 
-import mx.controls.ProgressBar;
-
 import mx.containers.TitleWindow;
-
+import mx.controls.ProgressBar;
 import mx.managers.PopUpManager;
 
 import com.threerings.msoy.applets.AppletContext;

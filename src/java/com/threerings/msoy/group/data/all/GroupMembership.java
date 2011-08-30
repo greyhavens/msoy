@@ -8,6 +8,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 import com.samskivert.util.ByteEnum;
 
 import com.threerings.io.Streamable;
+
 import com.threerings.presents.dobj.DSet;
 
 import com.threerings.msoy.data.all.GroupName;

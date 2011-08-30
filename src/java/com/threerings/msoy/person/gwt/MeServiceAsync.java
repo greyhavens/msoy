@@ -4,8 +4,11 @@
 package com.threerings.msoy.person.gwt;
 
 import java.util.List;
+
 import com.google.gwt.user.client.rpc.AsyncCallback;
+
 import com.threerings.gwt.util.ExpanderResult;
+
 import com.threerings.msoy.badge.data.all.Badge;
 import com.threerings.msoy.data.all.Award;
 import com.threerings.msoy.web.gwt.Activity;

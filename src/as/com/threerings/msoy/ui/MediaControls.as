@@ -7,23 +7,22 @@ import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 import flash.display.Graphics;
 import flash.display.Sprite;
-
 import flash.events.Event;
 import flash.events.MouseEvent;
-
 import flash.geom.Point;
 import flash.geom.Rectangle;
-
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 
 import com.threerings.util.Log;
 import com.threerings.util.ValueEvent;
 
-import com.threerings.ui.SimpleIconButton;
-import com.threerings.text.TextFieldUtil;
 import com.threerings.media.MediaPlayer;
 import com.threerings.media.MediaPlayerCodes;
+
+import com.threerings.text.TextFieldUtil;
+
+import com.threerings.ui.SimpleIconButton;
 
 import com.threerings.msoy.ui.skins.CommentButton;
 import com.threerings.msoy.ui.skins.VolumeButton;

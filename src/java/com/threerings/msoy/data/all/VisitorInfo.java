@@ -9,7 +9,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.google.common.collect.Lists;
-
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.io.Streamable;

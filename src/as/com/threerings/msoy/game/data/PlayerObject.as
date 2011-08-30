@@ -3,18 +3,20 @@
 
 package com.threerings.msoy.game.data {
 
-import com.threerings.io.ObjectInputStream;
-import com.threerings.util.Name;
-
-import com.threerings.crowd.data.TokenRing;
-
 import com.whirled.game.client.PropertySpaceHelper;
 import com.whirled.game.data.PropertySpaceMarshaller;
 import com.whirled.game.data.PropertySpaceObject;
 import com.whirled.game.data.WhirledPlayerObject;
 
-import com.threerings.msoy.data.MsoyTokenRing;
+import com.threerings.io.ObjectInputStream;
+
+import com.threerings.util.Name;
+
+import com.threerings.crowd.data.TokenRing;
+
 import com.threerings.orth.data.MediaDesc;
+
+import com.threerings.msoy.data.MsoyTokenRing;
 import com.threerings.msoy.data.all.MemberMailUtil;
 import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.data.all.VizMemberName;

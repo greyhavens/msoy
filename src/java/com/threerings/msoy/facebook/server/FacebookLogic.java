@@ -17,6 +17,14 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.google.code.facebookapi.DefaultCommunicationStrategy;
+import com.google.code.facebookapi.FacebookException;
+import com.google.code.facebookapi.FacebookJaxbRestClient;
+import com.google.code.facebookapi.ProfileField;
+import com.google.code.facebookapi.schema.FriendsGetResponse;
+import com.google.code.facebookapi.schema.Location;
+import com.google.code.facebookapi.schema.User;
+import com.google.code.facebookapi.schema.UsersGetStandardInfoResponse;
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
@@ -24,7 +32,6 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -34,18 +41,11 @@ import com.samskivert.util.Lifecycle;
 import com.samskivert.util.StringUtil;
 import com.samskivert.util.Tuple;
 
-import com.google.code.facebookapi.DefaultCommunicationStrategy;
-import com.google.code.facebookapi.FacebookException;
-import com.google.code.facebookapi.FacebookJaxbRestClient;
-import com.google.code.facebookapi.ProfileField;
-import com.google.code.facebookapi.schema.FriendsGetResponse;
-import com.google.code.facebookapi.schema.Location;
-import com.google.code.facebookapi.schema.User;
-import com.google.code.facebookapi.schema.UsersGetStandardInfoResponse;
-
 import com.threerings.cron.server.CronLogic;
 import com.threerings.facebook.FQL;
 import com.threerings.facebook.FQLQuery;
+import com.threerings.web.gwt.ServiceException;
+
 import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.apps.server.persist.AppInfoRecord;
 import com.threerings.msoy.apps.server.persist.AppRepository;
@@ -70,9 +70,6 @@ import com.threerings.msoy.web.gwt.ArgNames.FBParam;
 import com.threerings.msoy.web.gwt.CookieNames;
 import com.threerings.msoy.web.gwt.ExternalSiteId;
 import com.threerings.msoy.web.gwt.FacebookCreds;
-
-import com.threerings.web.gwt.ServiceException;
-
 import com.threerings.msoy.web.gwt.SessionData;
 import com.threerings.msoy.web.gwt.SharedNaviUtil;
 

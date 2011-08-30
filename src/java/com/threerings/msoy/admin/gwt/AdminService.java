@@ -12,22 +12,18 @@ import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 import com.threerings.gwt.util.PagedResult;
-
-import com.threerings.msoy.web.gwt.Contest;
-import com.threerings.msoy.web.gwt.Promotion;
 import com.threerings.web.gwt.ServiceException;
-import com.threerings.msoy.web.gwt.WebCreds;
 
 import com.threerings.msoy.data.all.CharityInfo;
 import com.threerings.msoy.data.all.MemberName;
-
 import com.threerings.msoy.item.data.all.ItemFlag;
 import com.threerings.msoy.item.data.all.ItemIdent;
-
 import com.threerings.msoy.item.gwt.ItemDetail;
-
 import com.threerings.msoy.money.data.all.MoneyTransaction;
 import com.threerings.msoy.money.gwt.BroadcastHistory;
+import com.threerings.msoy.web.gwt.Contest;
+import com.threerings.msoy.web.gwt.Promotion;
+import com.threerings.msoy.web.gwt.WebCreds;
 
 /**
  * Defines remote services available to admins.

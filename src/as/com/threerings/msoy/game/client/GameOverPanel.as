@@ -3,9 +3,10 @@
 
 package com.threerings.msoy.game.client {
 
+import com.whirled.game.data.WhirledGameCodes;
+
 import mx.containers.Grid;
 import mx.containers.VBox;
-
 import mx.core.UIComponent;
 
 import com.threerings.util.MessageBundle;
@@ -14,11 +15,8 @@ import com.threerings.flex.CommandButton;
 import com.threerings.flex.FlexUtil;
 import com.threerings.flex.GridUtil;
 
-import com.whirled.game.data.WhirledGameCodes;
-
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;
-
 import com.threerings.msoy.ui.FloatingPanel;
 
 /**

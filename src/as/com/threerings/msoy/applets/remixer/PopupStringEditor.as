@@ -7,14 +7,11 @@ import flash.events.Event;
 import flash.events.IEventDispatcher;
 import flash.events.TextEvent;
 
+import mx.containers.Grid;
 import mx.controls.TextArea;
 import mx.controls.TextInput;
-
-import mx.containers.Grid;
-
 import mx.events.FlexEvent;
 import mx.events.ValidationResultEvent;
-
 import mx.validators.Validator;
 
 import com.threerings.flex.GridUtil;

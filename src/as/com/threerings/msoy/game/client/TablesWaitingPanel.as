@@ -11,10 +11,9 @@ import mx.core.ScrollPolicy;
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.FlexUtil;
 
-import com.threerings.msoy.ui.FlyingPanel;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;
-
+import com.threerings.msoy.ui.FlyingPanel;
 import com.threerings.msoy.world.client.WorldContext;
 
 /**
@@ -80,13 +79,9 @@ import mx.controls.Label;
 import mx.core.ScrollPolicy;
 
 import com.threerings.flex.CommandButton;
-import com.threerings.flex.FlexUtil;
 
 import com.threerings.msoy.client.Msgs;
-
-import com.threerings.msoy.game.client.TablesWaitingPanel;
 import com.threerings.msoy.game.data.TablesWaiting;
-
 import com.threerings.msoy.world.client.WorldController;
 
 class TablesWaitingRenderer extends HBox

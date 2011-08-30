@@ -4,6 +4,7 @@
 package client.shell;
 
 import com.threerings.gwt.util.MessagesLookup;
+
 import com.threerings.msoy.item.data.all.MsoyItemType;
 
 /**

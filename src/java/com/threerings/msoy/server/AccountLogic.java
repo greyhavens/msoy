@@ -10,38 +10,36 @@ import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.threerings.web.gwt.ServiceException;
-
 import org.apache.commons.codec.binary.Base64;
-
-import com.samskivert.depot.DuplicateKeyException;
 
 import com.samskivert.net.MailUtil;
 import com.samskivert.util.Calendars;
 import com.samskivert.util.StringUtil;
 
+import com.samskivert.depot.DuplicateKeyException;
+
 import com.threerings.presents.annotation.BlockingThread;
 
-import com.threerings.msoy.web.gwt.ExternalSiteId;
-import com.threerings.msoy.web.gwt.ServiceCodes;
-import com.threerings.msoy.web.server.AffiliateCookie;
+import com.threerings.web.gwt.ServiceException;
 
-import com.threerings.msoy.money.server.MoneyLogic;
-import com.threerings.msoy.person.server.persist.InvitationRecord;
-import com.threerings.msoy.person.server.persist.ProfileRecord;
-import com.threerings.msoy.person.server.persist.ProfileRepository;
-import com.threerings.msoy.room.server.persist.MsoySceneRepository;
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.all.CoinAwards;
 import com.threerings.msoy.data.all.MemberMailUtil;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VisitorInfo;
-
+import com.threerings.msoy.money.server.MoneyLogic;
+import com.threerings.msoy.person.server.persist.InvitationRecord;
+import com.threerings.msoy.person.server.persist.ProfileRecord;
+import com.threerings.msoy.person.server.persist.ProfileRepository;
+import com.threerings.msoy.room.server.persist.MsoySceneRepository;
 import com.threerings.msoy.server.AuthenticationDomain.Account;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.util.MailSender;
+import com.threerings.msoy.web.gwt.ExternalSiteId;
+import com.threerings.msoy.web.gwt.ServiceCodes;
+import com.threerings.msoy.web.server.AffiliateCookie;
 
 import static com.threerings.msoy.Log.log;
 

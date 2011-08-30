@@ -12,11 +12,11 @@ import com.samskivert.util.Invoker;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.Tuple;
 
-import com.threerings.presents.server.ClientManager;
 import com.threerings.util.Name;
 
 import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.data.ClientObject;
+import com.threerings.presents.server.ClientManager;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
 
@@ -33,20 +33,19 @@ import com.threerings.whirled.spot.server.SpotSceneRegistry;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.room.data.MsoySceneMarshaller;
-import com.threerings.msoy.server.MemberLocator;
-import com.threerings.msoy.server.MemberNodeActions;
-import com.threerings.msoy.server.MsoyEventLogger;
-import com.threerings.msoy.peer.data.HostedRoom;
-import com.threerings.msoy.peer.server.MsoyPeerManager;
-
 import com.threerings.msoy.group.server.ThemeRegistry;
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.peer.data.HostedRoom;
+import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.room.client.MsoySceneService.MsoySceneMoveListener;
 import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.msoy.room.data.MsoyScene;
+import com.threerings.msoy.room.data.MsoySceneMarshaller;
 import com.threerings.msoy.room.data.RoomCodes;
+import com.threerings.msoy.server.MemberLocator;
+import com.threerings.msoy.server.MemberNodeActions;
+import com.threerings.msoy.server.MsoyEventLogger;
 
 import static com.threerings.msoy.Log.log;
 

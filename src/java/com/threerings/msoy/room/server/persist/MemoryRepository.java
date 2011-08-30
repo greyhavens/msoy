@@ -5,7 +5,6 @@ package com.threerings.msoy.room.server.persist;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -13,6 +12,8 @@ import java.util.Set;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+
+import com.samskivert.jdbc.DatabaseLiaison;
 
 import com.samskivert.depot.DataMigration;
 import com.samskivert.depot.DatabaseException;
@@ -23,8 +24,6 @@ import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.impl.Modifier;
-
-import com.samskivert.jdbc.DatabaseLiaison;
 
 import com.threerings.presents.annotation.BlockingThread;
 

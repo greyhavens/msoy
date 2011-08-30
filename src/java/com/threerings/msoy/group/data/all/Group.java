@@ -6,11 +6,11 @@ package com.threerings.msoy.group.data.all;
 import java.util.Date;
 
 import com.google.common.collect.ComparisonChain;
-
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.samskivert.util.ByteEnum;
 import com.samskivert.util.ByteEnumUtil;
+
 import com.threerings.io.Streamable;
 
 import com.threerings.orth.data.MediaDesc;

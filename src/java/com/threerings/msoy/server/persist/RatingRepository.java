@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.google.common.collect.Lists;
+
 import com.samskivert.util.StringUtil;
 import com.samskivert.util.Tuple;
 
@@ -29,8 +30,9 @@ import com.samskivert.depot.clause.QueryClause;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.expression.ColumnExp;
 
-import com.threerings.msoy.data.all.RatingResult;
 import com.threerings.presents.annotation.BlockingThread;
+
+import com.threerings.msoy.data.all.RatingResult;
 
 import static com.threerings.msoy.Log.log;
 

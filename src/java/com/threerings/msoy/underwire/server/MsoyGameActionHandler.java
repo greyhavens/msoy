@@ -10,14 +10,14 @@ import com.google.inject.Singleton;
 
 import com.samskivert.util.StringUtil;
 
+import com.threerings.underwire.server.GameActionHandler;
+
 import com.threerings.msoy.server.MemberNodeActions;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.util.MailSender;
 import com.threerings.msoy.web.server.MemberHelper;
-
-import com.threerings.underwire.server.GameActionHandler;
 
 import static com.threerings.msoy.Log.log;
 

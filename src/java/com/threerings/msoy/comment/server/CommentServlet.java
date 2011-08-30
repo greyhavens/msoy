@@ -12,49 +12,43 @@ import java.util.Set;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 
-import com.samskivert.depot.DatabaseException;
 import com.samskivert.util.StringUtil;
 
-import com.threerings.web.gwt.ServiceException;
+import com.samskivert.depot.DatabaseException;
+
 import com.threerings.gwt.util.ExpanderResult;
+import com.threerings.web.gwt.ServiceException;
 
 import com.threerings.msoy.comment.data.all.Comment;
 import com.threerings.msoy.comment.data.all.CommentType;
-import com.threerings.msoy.notify.server.MsoyNotificationManager;
+import com.threerings.msoy.comment.gwt.CommentService;
+import com.threerings.msoy.comment.server.persist.CommentRecord;
+import com.threerings.msoy.comment.server.persist.CommentRepository;
 import com.threerings.msoy.game.server.persist.GameInfoRecord;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
-
 import com.threerings.msoy.item.server.ItemLogic;
 import com.threerings.msoy.item.server.persist.CatalogRecord;
 import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
-
-import com.threerings.msoy.comment.gwt.CommentService;
-import com.threerings.msoy.comment.server.persist.CommentRecord;
-import com.threerings.msoy.comment.server.persist.CommentRepository;
-
-import com.threerings.msoy.server.StatLogic;
-import com.threerings.msoy.server.persist.MemberCardRecord;
-import com.threerings.msoy.server.persist.MemberRecord;
-import com.threerings.msoy.underwire.server.SupportLogic;
+import com.threerings.msoy.notify.server.MsoyNotificationManager;
 import com.threerings.msoy.person.gwt.FeedMessage;
 import com.threerings.msoy.person.gwt.FeedMessageType;
 import com.threerings.msoy.person.server.FeedLogic;
-
+import com.threerings.msoy.room.data.MsoySceneModel;
+import com.threerings.msoy.room.server.persist.MsoySceneRepository;
+import com.threerings.msoy.room.server.persist.SceneRecord;
+import com.threerings.msoy.server.StatLogic;
+import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.underwire.server.SupportLogic;
 import com.threerings.msoy.web.gwt.Activity;
 import com.threerings.msoy.web.gwt.MemberCard;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.ServiceCodes;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
-
-import com.threerings.msoy.room.data.MsoySceneModel;
-import com.threerings.msoy.room.server.persist.MsoySceneRepository;
-import com.threerings.msoy.room.server.persist.SceneRecord;
 
 import static com.threerings.msoy.Log.log;
 

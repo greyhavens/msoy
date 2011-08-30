@@ -3,15 +3,13 @@
 
 package com.threerings.msoy.bureau.client {
 
-import com.whirled.bureau.client.GameAgentController;
 import com.whirled.bureau.client.BaseGameAgent;
-
-import com.threerings.msoy.bureau.util.MsoyBureauContext;
-
-import com.threerings.msoy.avrg.data.AVRGameAgentObject;
-import com.threerings.msoy.avrg.data.AVRGameObject;
+import com.whirled.bureau.client.GameAgentController;
 
 import com.threerings.msoy.avrg.client.ThaneAVRGameController;
+import com.threerings.msoy.avrg.data.AVRGameAgentObject;
+import com.threerings.msoy.avrg.data.AVRGameObject;
+import com.threerings.msoy.bureau.util.MsoyBureauContext;
 
 /** The container for a user's avr game control code. */
 public class AVRGameAgent extends BaseGameAgent

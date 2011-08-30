@@ -4,23 +4,20 @@
 package com.threerings.msoy.client {
 
 import flash.display.DisplayObject;
-
 import flash.system.Security;
 
 import mx.core.Application;
 
-import com.threerings.flex.FlexUtil;
-
 import com.threerings.util.Log;
+
+import com.threerings.flex.FlexUtil;
 
 import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.data.UberClientModes;
-import com.threerings.msoy.utils.UberClientLoader;
-
 import com.threerings.msoy.room.client.RoomStudioView;
 import com.threerings.msoy.room.client.StudioClient;
 import com.threerings.msoy.room.client.Viewer;
-
+import com.threerings.msoy.utils.UberClientLoader;
 import com.threerings.msoy.world.client.WorldClient;
 
 /**

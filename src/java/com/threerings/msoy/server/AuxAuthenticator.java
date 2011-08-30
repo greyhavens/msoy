@@ -5,7 +5,6 @@ package com.threerings.msoy.server;
 
 import com.google.inject.Inject;
 
-import com.threerings.web.gwt.ServiceException;
 import com.threerings.util.MessageBundle;
 
 import com.threerings.presents.net.AuthRequest;
@@ -15,6 +14,8 @@ import com.threerings.presents.server.ChainedAuthenticator;
 import com.threerings.presents.server.net.AuthingConnection;
 
 import com.threerings.orth.data.AuthName;
+
+import com.threerings.web.gwt.ServiceException;
 
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.MsoyAuthResponseData;

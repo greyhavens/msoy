@@ -7,30 +7,25 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Set;
 
-import org.apache.mina.common.IoAcceptor;
-
 import com.google.common.base.Predicate;
 import com.google.common.collect.Sets;
 import com.google.common.primitives.Ints;
-
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
+
+import com.whirled.game.server.DictionaryManager;
+import com.whirled.game.server.GameCookieManager;
+import com.whirled.game.server.RepoCookieManager;
+import com.whirled.game.server.persist.GameCookieRepository;
+
+import org.apache.mina.common.IoAcceptor;
 
 import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.Lifecycle;
 
-import com.threerings.msoy.admin.server.MsoyPulseRecorder;
-import com.threerings.pulse.server.DepotPulseRecorder;
-import com.threerings.pulse.server.PeerPulseRecorder;
-import com.threerings.pulse.server.PresentsPulseRecorder;
 import com.threerings.util.Name;
-
-import com.threerings.messaging.DelayedMessageConnection;
-import com.threerings.messaging.MessageConnection;
-import com.threerings.messaging.amqp.AMQPMessageConfig;
-import com.threerings.messaging.amqp.AMQPMessageConnection;
 
 import com.threerings.presents.net.AuthRequest;
 import com.threerings.presents.peer.server.EHCachePeerCoordinator;
@@ -40,18 +35,17 @@ import com.threerings.presents.server.ClientManager;
 import com.threerings.presents.server.ClientResolver;
 import com.threerings.presents.server.PresentsSession;
 import com.threerings.presents.server.SessionFactory;
+
 import com.threerings.crowd.chat.server.ChatChannelManager;
 import com.threerings.crowd.peer.server.CrowdPeerManager;
 import com.threerings.crowd.server.BodyLocator;
 import com.threerings.crowd.server.PlaceRegistry;
 
-import com.threerings.pulse.server.JVMPulseRecorder;
-import com.threerings.pulse.server.PulseModule;
-import com.threerings.bureau.server.BureauRegistry;
-
 import com.threerings.admin.server.AdminManager;
 import com.threerings.admin.server.ConfigRegistry;
 import com.threerings.admin.server.PeeredDatabaseConfigRegistry;
+
+import com.threerings.bureau.server.BureauRegistry;
 
 import com.threerings.parlor.game.data.UserIdentifier;
 import com.threerings.parlor.server.ParlorManager;
@@ -60,18 +54,23 @@ import com.threerings.whirled.server.SceneRegistry;
 import com.threerings.whirled.server.persist.SceneRepository;
 import com.threerings.whirled.util.SceneFactory;
 
-import com.whirled.game.server.DictionaryManager;
-import com.whirled.game.server.GameCookieManager;
-import com.whirled.game.server.RepoCookieManager;
-import com.whirled.game.server.persist.GameCookieRepository;
-
-import com.threerings.msoy.data.all.DeploymentConfig;
-import com.threerings.msoy.data.all.MemberName;
+import com.threerings.messaging.DelayedMessageConnection;
+import com.threerings.messaging.MessageConnection;
+import com.threerings.messaging.amqp.AMQPMessageConfig;
+import com.threerings.messaging.amqp.AMQPMessageConnection;
+import com.threerings.pulse.server.DepotPulseRecorder;
+import com.threerings.pulse.server.JVMPulseRecorder;
+import com.threerings.pulse.server.PeerPulseRecorder;
+import com.threerings.pulse.server.PresentsPulseRecorder;
+import com.threerings.pulse.server.PulseModule;
 
 import com.threerings.msoy.admin.server.MsoyAdminManager;
+import com.threerings.msoy.admin.server.MsoyPulseRecorder;
 import com.threerings.msoy.bureau.server.MsoyBureauRegistry;
 import com.threerings.msoy.chat.server.JabberManager;
 import com.threerings.msoy.chat.server.MsoyChatChannelManager;
+import com.threerings.msoy.data.all.DeploymentConfig;
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.game.data.MsoyUserIdentifier;
 import com.threerings.msoy.game.server.GameGameRegistry;
 import com.threerings.msoy.game.server.WorldGameRegistry;

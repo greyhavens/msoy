@@ -3,8 +3,12 @@
 
 package com.threerings.msoy.game.client {
 
+import com.whirled.game.client.WhirledGameBackend;
+import com.whirled.game.client.WhirledGameController;
+
 import com.threerings.util.Log;
 
+import com.threerings.presents.client.ClientAdapter;
 import com.threerings.presents.client.ClientEvent;
 import com.threerings.presents.client.ResultAdapter;
 
@@ -14,15 +18,9 @@ import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.parlor.client.GameReadyObserver;
 
-import com.whirled.game.client.WhirledGameBackend;
-import com.whirled.game.client.WhirledGameController;
-
 import com.threerings.msoy.data.MsoyCodes;
-
-import com.threerings.msoy.world.client.WorldContext;
-
 import com.threerings.msoy.game.data.ParlorGameConfig;
-import com.threerings.presents.client.ClientAdapter;
+import com.threerings.msoy.world.client.WorldContext;
 
 /**
  * Handles the lobby-specific aspects of the game server connection.

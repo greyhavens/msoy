@@ -3,13 +3,12 @@
 
 package com.threerings.msoy.data {
 
+import com.threerings.io.ObjectOutputStream;
+
 import com.threerings.util.Joiner;
 import com.threerings.util.Name;
 
 import com.threerings.presents.net.Credentials;
-
-import com.threerings.io.ObjectInputStream;
-import com.threerings.io.ObjectOutputStream;
 
 /**
  * Contains information needed to authenticate with the MSOY server.

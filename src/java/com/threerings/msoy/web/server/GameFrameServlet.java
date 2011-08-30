@@ -5,7 +5,6 @@ package com.threerings.msoy.web.server;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-
 import java.text.MessageFormat;
 
 import javax.servlet.http.HttpServlet;

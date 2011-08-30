@@ -9,42 +9,39 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
-
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Anchor;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.event.dom.client.KeyPressHandler;
-import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Anchor;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.TextArea;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+
+import com.threerings.orth.data.MediaDescSize;
 
 import com.threerings.gwt.ui.ExpanderWidget;
 import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.gwt.util.ExpanderResult;
-import com.threerings.gwt.util.PagedResult;
 
 import com.threerings.msoy.comment.data.all.Comment;
 import com.threerings.msoy.comment.data.all.CommentType;
 import com.threerings.msoy.comment.gwt.CommentService;
 import com.threerings.msoy.comment.gwt.CommentServiceAsync;
 import com.threerings.msoy.web.gwt.Activity;
-import com.threerings.orth.data.MediaDescSize;
 
 import client.shell.CShell;
 import client.shell.ShellMessages;
@@ -54,7 +51,6 @@ import client.ui.MsoyUI;
 import client.ui.SafeHTML;
 import client.util.ClickCallback;
 import client.util.InfoCallback;
-import client.util.MsoyPagedServiceDataModel;
 
 /**
  * Displays comments on a particular entity and allows posting.

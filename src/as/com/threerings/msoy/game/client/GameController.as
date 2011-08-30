@@ -7,13 +7,10 @@ import com.threerings.util.Log;
 
 import com.threerings.presents.client.ClientEvent;
 
-import com.threerings.msoy.client.ControlBar;
-import com.threerings.msoy.client.HeaderBar;
 import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.client.MsoyParameters;
 import com.threerings.msoy.client.TopPanel;
 import com.threerings.msoy.data.MsoyCodes;
-
 import com.threerings.msoy.game.client.LobbyService;
 
 /**

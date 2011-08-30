@@ -10,6 +10,7 @@ package client.item;
 //import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.orth.data.MediaDesc;
+
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.ui.ClickBox;

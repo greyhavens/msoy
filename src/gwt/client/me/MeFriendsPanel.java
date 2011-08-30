@@ -7,23 +7,22 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
-
 import com.google.gwt.core.client.GWT;
-
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.orth.data.MediaDescSize;
+
 import com.threerings.gwt.ui.EnterClickAdapter;
 import com.threerings.gwt.ui.FloatPanel;
 import com.threerings.gwt.ui.SmartTable;
-import com.threerings.msoy.person.gwt.MyWhirledData;
 
-import com.threerings.orth.data.MediaDescSize;
+import com.threerings.msoy.person.gwt.MyWhirledData;
 import com.threerings.msoy.web.gwt.MemberCard;
 import com.threerings.msoy.web.gwt.Pages;
 

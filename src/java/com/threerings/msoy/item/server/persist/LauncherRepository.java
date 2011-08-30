@@ -10,7 +10,6 @@ import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.annotation.Entity;
 
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
-
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
 import com.threerings.msoy.server.persist.RatingRecord;
 import com.threerings.msoy.server.persist.RatingRepository;

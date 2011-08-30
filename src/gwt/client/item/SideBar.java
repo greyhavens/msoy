@@ -6,17 +6,17 @@ package client.item;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.msoy.item.data.all.MsoyItemType;
+
 import client.images.item.ItemImages;
 import client.shell.DynamicLookup;
 import client.ui.MsoyUI;
-import com.threerings.msoy.item.data.all.MsoyItemType;
 
 /**
  * Shown next to our catalog listings and our catalog landing page.

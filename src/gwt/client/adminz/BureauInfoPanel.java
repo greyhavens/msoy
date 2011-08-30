@@ -23,8 +23,8 @@ import com.threerings.gwt.util.DateUtil;
 
 import com.threerings.msoy.admin.gwt.AdminService;
 import com.threerings.msoy.admin.gwt.AdminServiceAsync;
-import com.threerings.msoy.admin.gwt.BureauLauncherInfo;
 import com.threerings.msoy.admin.gwt.BureauLauncherInfo.BureauInfo;
+import com.threerings.msoy.admin.gwt.BureauLauncherInfo;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.util.ClickCallback;

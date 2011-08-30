@@ -6,13 +6,13 @@ package client.facebook;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.FlowPanel;
 
-import com.threerings.gwt.ui.AbsoluteCSSPanel;
 import com.threerings.orth.data.MediaDescSize;
 
-import com.threerings.msoy.web.gwt.Pages;
+import com.threerings.gwt.ui.AbsoluteCSSPanel;
 
-import com.threerings.msoy.facebook.gwt.FacebookFriendInfo;
 import com.threerings.msoy.facebook.gwt.FacebookFriendInfo.Thumbnail;
+import com.threerings.msoy.facebook.gwt.FacebookFriendInfo;
+import com.threerings.msoy.web.gwt.Pages;
 
 import client.ui.MsoyUI;
 import client.ui.ThumbBox;

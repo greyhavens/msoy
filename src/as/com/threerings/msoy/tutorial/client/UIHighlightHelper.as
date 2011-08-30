@@ -9,14 +9,12 @@ import flash.events.Event;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 
-import mx.core.UIComponent;
 import mx.core.IFlexDisplayObject;
+import mx.core.UIComponent;
 import mx.managers.PopUpManager;
 import mx.managers.PopUpManagerChildList;
 
 import com.threerings.util.MultiLoader;
-
-import com.threerings.flex.FlexUtil;
 
 import com.threerings.msoy.client.TopPanel;
 

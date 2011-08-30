@@ -5,15 +5,12 @@ package com.threerings.msoy.ui {
 
 import flash.events.Event;
 
+import mx.binding.utils.BindingUtils;
+import mx.containers.Grid;
 import mx.controls.ColorPicker;
 import mx.controls.RadioButton;
 import mx.controls.RadioButtonGroup;
-
-import mx.containers.Grid;
-
 import mx.events.ColorPickerEvent;
-
-import mx.binding.utils.BindingUtils;
 
 import com.threerings.flex.GridUtil;
 

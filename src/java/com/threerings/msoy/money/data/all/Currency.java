@@ -3,9 +3,9 @@
 
 package com.threerings.msoy.money.data.all;
 
-import com.samskivert.util.ByteEnum;
-
 import com.google.gwt.user.client.rpc.IsSerializable;
+
+import com.samskivert.util.ByteEnum;
 
 /**
  * Indicates the type of money.

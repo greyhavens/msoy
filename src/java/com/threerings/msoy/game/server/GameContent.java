@@ -7,17 +7,16 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
-import com.threerings.msoy.item.data.all.ItemPack;
-import com.threerings.msoy.item.data.all.LevelPack;
-import com.threerings.msoy.item.data.all.Prize;
-import com.threerings.msoy.item.data.all.TrophySource;
-
 import com.threerings.msoy.edgame.gwt.GameCode;
 import com.threerings.msoy.facebook.server.persist.FacebookInfoRecord;
 import com.threerings.msoy.game.data.GameSummary;
 import com.threerings.msoy.game.server.GameUtil;
 import com.threerings.msoy.game.server.persist.GameInfoRecord;
 import com.threerings.msoy.game.server.persist.GameMetricsRecord;
+import com.threerings.msoy.item.data.all.ItemPack;
+import com.threerings.msoy.item.data.all.LevelPack;
+import com.threerings.msoy.item.data.all.Prize;
+import com.threerings.msoy.item.data.all.TrophySource;
 
 /**
  * Contains the gobs of game metadata that we load when a lobby or an AVRG is resolved and pass

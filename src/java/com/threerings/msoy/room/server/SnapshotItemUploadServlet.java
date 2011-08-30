@@ -12,15 +12,13 @@ import com.google.inject.Inject;
 import com.samskivert.io.StreamUtil;
 import com.samskivert.util.StringUtil;
 
+import com.threerings.web.gwt.ServiceException;
+
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MediaMimeTypes;
-
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.Photo;
 import com.threerings.msoy.item.server.ItemLogic;
-
-import com.threerings.web.gwt.ServiceException;
-
 import com.threerings.msoy.web.server.UploadUtil.MediaInfo;
 
 /**

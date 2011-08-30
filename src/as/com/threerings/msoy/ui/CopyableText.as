@@ -3,8 +3,8 @@
 
 package com.threerings.msoy.ui {
 
-import flash.system.System;
 import flash.events.FocusEvent;
+import flash.system.System;
 
 import mx.containers.HBox;
 import mx.controls.TextInput;

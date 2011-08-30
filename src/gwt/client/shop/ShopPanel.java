@@ -6,16 +6,18 @@ package client.shop;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
-
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.ListBox;
 
+import com.threerings.orth.data.MediaDescSize;
+
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
+import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.item.gwt.CatalogQuery;
 import com.threerings.msoy.item.gwt.CatalogService;
@@ -24,17 +26,13 @@ import com.threerings.msoy.item.gwt.ListingCard;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
-import com.threerings.msoy.data.all.GroupName;
-import com.threerings.orth.data.MediaDescSize;
-
+import client.item.ItemMessages;
+import client.item.SideBar;
 import client.shell.DynamicLookup;
 import client.ui.MsoyUI;
 import client.ui.SearchBox;
 import client.ui.ThumbBox;
-
 import client.util.Link;
-import client.item.ItemMessages;
-import client.item.SideBar;
 
 /**
  * Displays the main catalog landing page.

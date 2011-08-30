@@ -6,7 +6,6 @@ package com.threerings.msoy.avrg.data;
 import com.threerings.crowd.data.OccupantInfo;
 
 import com.threerings.msoy.game.data.PlayerObject;
-
 import com.threerings.msoy.party.data.PartyOccupantInfo;
 import com.threerings.msoy.party.data.PartySummary;
 

@@ -3,26 +3,30 @@
 
 package com.threerings.msoy.money.server;
 
-import static com.threerings.msoy.Log.log;
-
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
 import com.google.inject.Inject;
+
 import com.samskivert.util.Invoker;
 import com.samskivert.util.Lifecycle;
 import com.samskivert.util.StringUtil;
+
+import com.threerings.presents.annotation.MainInvoker;
+
+import com.threerings.messaging.AckingMessageListener;
 import com.threerings.messaging.AddressedMessageListener;
 import com.threerings.messaging.DestinationAddress;
 import com.threerings.messaging.InMessage;
 import com.threerings.messaging.IntMessage;
 import com.threerings.messaging.MessageConnection;
-import com.threerings.messaging.AckingMessageListener;
+
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.SubscriptionLogic;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
-import com.threerings.presents.annotation.MainInvoker;
+
+import static com.threerings.msoy.Log.log;
 
 /**
  * Responsible for receiving messages from outside systems (such as billing) and calling

@@ -10,8 +10,8 @@ import com.samskivert.util.Invoker;
 import com.samskivert.util.Lifecycle;
 
 import com.threerings.msoy.money.data.all.Currency;
-import com.threerings.msoy.money.server.persist.MoneyTransactionRecord;
 import com.threerings.msoy.money.server.persist.MoneyRepository;
+import com.threerings.msoy.money.server.persist.MoneyTransactionRecord;
 import com.threerings.msoy.server.persist.BatchInvoker;
 
 import static com.threerings.msoy.Log.log;

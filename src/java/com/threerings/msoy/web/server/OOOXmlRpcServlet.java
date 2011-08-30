@@ -7,14 +7,13 @@ import javax.servlet.ServletException;
 
 import com.google.inject.Inject;
 
-import com.threerings.web.gwt.ServiceException;
-
 import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.server.PropertyHandlerMapping;
 import org.apache.xmlrpc.server.XmlRpcHandlerMapping;
 import org.apache.xmlrpc.webserver.XmlRpcServlet;
 
 import com.threerings.user.OOOXmlRpcService;
+import com.threerings.web.gwt.ServiceException;
 
 import com.threerings.msoy.server.MsoyAuthenticator;
 import com.threerings.msoy.server.persist.MemberRecord;

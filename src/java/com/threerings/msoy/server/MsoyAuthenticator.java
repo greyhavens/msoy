@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.server;
 
-import static com.threerings.msoy.Log.log;
-
 import java.util.Date;
 
 import com.google.inject.Inject;
@@ -12,7 +10,6 @@ import com.google.inject.Singleton;
 
 import com.samskivert.util.StringUtil;
 
-import com.threerings.web.gwt.ServiceException;
 import com.threerings.util.MessageBundle;
 import com.threerings.util.TimeUtil;
 
@@ -22,6 +19,9 @@ import com.threerings.presents.net.AuthResponseData;
 import com.threerings.presents.server.Authenticator;
 import com.threerings.presents.server.net.AuthingConnection;
 
+import com.threerings.web.gwt.ServiceException;
+
+import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.data.LurkerName;
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.MsoyAuthName;
@@ -30,22 +30,18 @@ import com.threerings.msoy.data.WorldCredentials;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.GwtAuthCodes;
 import com.threerings.msoy.data.all.VisitorInfo;
-
+import com.threerings.msoy.peer.server.MsoyPeerManager;
+import com.threerings.msoy.person.server.persist.ProfileRepository;
 import com.threerings.msoy.server.AuthenticationDomain.Account;
-
 import com.threerings.msoy.server.persist.ExternalMapRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.persist.MemberWarningRecord;
-
 import com.threerings.msoy.web.gwt.BannedException;
 import com.threerings.msoy.web.gwt.ExternalCreds;
-// import com.threerings.msoy.web.gwt.FacebookCreds;
 import com.threerings.msoy.web.server.AffiliateCookie;
 
-import com.threerings.msoy.admin.server.RuntimeConfig;
-import com.threerings.msoy.peer.server.MsoyPeerManager;
-import com.threerings.msoy.person.server.persist.ProfileRepository;
+import static com.threerings.msoy.Log.log;
 
 /**
  * Handles authentication for the MetaSOY server. We rely on underlying authentication domain

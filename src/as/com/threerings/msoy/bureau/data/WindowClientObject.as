@@ -4,6 +4,7 @@
 package com.threerings.msoy.bureau.data {
 
 import com.threerings.io.ObjectInputStream;
+
 import com.threerings.presents.data.ClientObject;
 
 /** Client object purely for distinguishing windows in service methods. */

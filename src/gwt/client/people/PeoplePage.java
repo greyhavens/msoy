@@ -13,9 +13,9 @@ import client.person.GalleryActions;
 import client.person.GalleryEditPanel;
 import client.person.GalleryPanel;
 import client.person.GalleryViewPanel;
-import client.ui.NoNavPanel;
 import client.shell.CShell;
 import client.shell.Page;
+import client.ui.NoNavPanel;
 
 /**
  * Displays a profile's "portal" page with their profile information, friends,

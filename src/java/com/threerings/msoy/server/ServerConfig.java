@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.server;
 
-import static com.threerings.msoy.Log.log;
-
 import java.io.File;
 import java.util.List;
 import java.util.Set;
@@ -15,16 +13,19 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.common.primitives.Ints;
 
-import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.util.Config;
 import com.samskivert.util.StringUtil;
 
-import com.threerings.messaging.amqp.AMQPMessageConfig;
+import com.samskivert.jdbc.ConnectionProvider;
 
 import com.threerings.presents.client.Client;
 
+import com.threerings.messaging.amqp.AMQPMessageConfig;
+
 import com.threerings.msoy.game.gwt.GameInfo;
 import com.threerings.msoy.server.persist.RepositoryUtil;
+
+import static com.threerings.msoy.Log.log;
 
 /**
  * Provides access to installation specific configuration. Properties that

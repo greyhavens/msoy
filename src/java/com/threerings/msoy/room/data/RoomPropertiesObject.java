@@ -6,18 +6,21 @@ package com.threerings.msoy.room.data;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
+
 import javax.annotation.Generated;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-import com.threerings.io.ObjectInputStream;
-import com.threerings.io.ObjectOutputStream;
-import com.threerings.presents.dobj.DObject;
 import com.whirled.game.data.PropertySpaceMarshaller;
 import com.whirled.game.data.PropertySpaceObject;
 import com.whirled.game.data.WhirledGameMessageMarshaller;
 import com.whirled.game.server.PropertySpaceHelper;
+
+import com.threerings.io.ObjectInputStream;
+import com.threerings.io.ObjectOutputStream;
+
+import com.threerings.presents.dobj.DObject;
 
 /**
  * Provides a property space for a room.

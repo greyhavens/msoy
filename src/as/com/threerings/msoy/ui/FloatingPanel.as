@@ -4,22 +4,17 @@
 package com.threerings.msoy.ui {
 
 import flash.display.DisplayObject;
-
 import flash.events.Event;
 import flash.events.MouseEvent;
 import flash.events.TextEvent;
 
 import mx.containers.TitleWindow;
 import mx.containers.VBox;
-
 import mx.controls.Button;
 import mx.controls.ButtonBar;
-
-import mx.core.mx_internal; // namespace
 import mx.core.UIComponent;
-
+import mx.core.mx_internal;
 import mx.events.CloseEvent;
-
 import mx.managers.PopUpManager;
 
 import com.threerings.util.Arrays;
@@ -29,8 +24,8 @@ import com.threerings.util.CommandEvent;
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.PopUpUtil;
 
-import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.Msgs;
+import com.threerings.msoy.client.MsoyContext;
 
 /**
  * Dispatched when the dialog closes due to a CloseEvent or a call to <code>close()</code>.

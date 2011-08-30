@@ -5,8 +5,8 @@ package com.threerings.msoy.ui {
 
 import flash.events.MouseEvent;
 
-import mx.controls.Image;
 import mx.containers.HBox;
+import mx.controls.Image;
 
 import com.threerings.util.Command;
 import com.threerings.util.ValueEvent;

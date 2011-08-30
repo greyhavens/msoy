@@ -5,13 +5,9 @@ package client.msgs;
 
 import java.util.List;
 
-import client.ui.MsoyUI;
-import client.util.ClickCallback;
-
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -19,6 +15,9 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.util.DataModel;
 
 import com.threerings.msoy.fora.gwt.ForumThread;
+
+import client.ui.MsoyUI;
+import client.util.ClickCallback;
 
 /**
  * Overrides and adds functionality to the threads list for displaying unread threads.

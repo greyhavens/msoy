@@ -3,12 +3,12 @@
 
 package com.threerings.msoy.data.all;
 
-import com.threerings.orth.data.OrthName;
-import com.threerings.orth.data.OrthName_CustomFieldSerializer;
-
 import com.google.gwt.user.client.rpc.SerializationException;
 import com.google.gwt.user.client.rpc.SerializationStreamReader;
 import com.google.gwt.user.client.rpc.SerializationStreamWriter;
+
+import com.threerings.orth.data.OrthName;
+import com.threerings.orth.data.OrthName_CustomFieldSerializer;
 
 /**
  * Custom field serializer for {@link MemberName}.

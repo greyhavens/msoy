@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.avrg.server;
 
-import static com.threerings.msoy.Log.log;
-
 import java.util.Map;
 
 import com.google.common.base.Predicate;
@@ -14,7 +12,6 @@ import com.google.inject.Inject;
 
 import com.samskivert.util.Invoker;
 
-import com.threerings.parlor.server.PlayManagerDelegate;
 import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
@@ -23,21 +20,20 @@ import com.threerings.presents.server.InvocationException;
 
 import com.threerings.crowd.data.PlaceObject;
 
-import com.threerings.msoy.admin.server.RuntimeConfig;
+import com.threerings.parlor.server.PlayManagerDelegate;
 
+import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.avrg.data.AVRGameObject;
 import com.threerings.msoy.avrg.server.persist.AVRGameRepository;
-
 import com.threerings.msoy.data.UserAction;
-
 import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.game.server.GameContent;
 import com.threerings.msoy.game.server.GameGameRegistry;
 import com.threerings.msoy.game.server.PlayerNodeActions;
-
 import com.threerings.msoy.party.server.PartyRegistry;
-
 import com.threerings.msoy.server.MsoyEventLogger;
+
+import static com.threerings.msoy.Log.log;
 
 /**
  * Handles the completeTask service call, including awarding coins.

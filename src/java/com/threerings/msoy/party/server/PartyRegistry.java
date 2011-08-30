@@ -30,52 +30,40 @@ import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.presents.peer.data.NodeObject;
 import com.threerings.presents.server.ClientManager;
 import com.threerings.presents.server.InvocationException;
+import com.threerings.presents.server.InvocationManager;
 import com.threerings.presents.server.SessionFactory;
 import com.threerings.presents.server.net.PresentsConnectionManager;
-import com.threerings.presents.server.InvocationManager;
 
 import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.server.BodyManager;
 import com.threerings.crowd.server.PlaceManager;
 import com.threerings.crowd.server.PlaceRegistry;
+
 import com.threerings.whirled.data.ScenePlace;
 
+import com.threerings.msoy.admin.data.CostsConfigObject;
+import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.MsoyUserObject;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.notify.server.MsoyNotificationManager;
-import com.threerings.msoy.party.data.PartyBoardMarshaller;
-import com.threerings.msoy.party.data.PeerPartyMarshaller;
-import com.threerings.msoy.server.MemberLocator;
-import com.threerings.msoy.server.ServerConfig;
-import com.threerings.msoy.server.util.ServiceUnit;
-
+import com.threerings.msoy.game.server.PlayerLocator;
 import com.threerings.msoy.group.data.all.Group;
-import com.threerings.msoy.group.data.all.GroupMembership;
 import com.threerings.msoy.group.data.all.GroupMembership.Rank;
+import com.threerings.msoy.group.data.all.GroupMembership;
 import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
-
-import com.threerings.msoy.notify.data.PartyInviteNotification;
-
-import com.threerings.msoy.peer.data.MsoyNodeObject;
-import com.threerings.msoy.peer.server.MsoyPeerManager;
-
-import com.threerings.msoy.admin.data.CostsConfigObject;
-import com.threerings.msoy.admin.server.RuntimeConfig;
-
-import com.threerings.msoy.game.server.PlayerLocator;
-
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.PriceQuote;
 import com.threerings.msoy.money.gwt.CostUpdatedException;
 import com.threerings.msoy.money.server.MoneyLogic;
-
+import com.threerings.msoy.notify.data.PartyInviteNotification;
+import com.threerings.msoy.notify.server.MsoyNotificationManager;
 import com.threerings.msoy.party.client.PartyBoardService;
 import com.threerings.msoy.party.data.PartyAuthName;
 import com.threerings.msoy.party.data.PartyBoardInfo;
+import com.threerings.msoy.party.data.PartyBoardMarshaller;
 import com.threerings.msoy.party.data.PartyCodes;
 import com.threerings.msoy.party.data.PartyCredentials;
 import com.threerings.msoy.party.data.PartyInfo;
@@ -84,6 +72,12 @@ import com.threerings.msoy.party.data.PartyObject;
 import com.threerings.msoy.party.data.PartyOccupantInfo;
 import com.threerings.msoy.party.data.PartyPlaceObject;
 import com.threerings.msoy.party.data.PartySummary;
+import com.threerings.msoy.party.data.PeerPartyMarshaller;
+import com.threerings.msoy.peer.data.MsoyNodeObject;
+import com.threerings.msoy.peer.server.MsoyPeerManager;
+import com.threerings.msoy.server.MemberLocator;
+import com.threerings.msoy.server.ServerConfig;
+import com.threerings.msoy.server.util.ServiceUnit;
 
 import static com.threerings.msoy.Log.log;
 

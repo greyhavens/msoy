@@ -18,9 +18,9 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.gwt.util.StringUtil;
 
+import com.threerings.msoy.edgame.gwt.EditGameService.MochiGameBucket;
 import com.threerings.msoy.edgame.gwt.EditGameService;
 import com.threerings.msoy.edgame.gwt.EditGameServiceAsync;
-import com.threerings.msoy.edgame.gwt.EditGameService.MochiGameBucket;
 import com.threerings.msoy.game.gwt.MochiGameInfo;
 
 import client.ui.MsoyUI;

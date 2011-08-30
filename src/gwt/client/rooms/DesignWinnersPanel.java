@@ -13,16 +13,15 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.FloatPanel;
 
-import com.threerings.msoy.web.gwt.Pages;
-
 import com.threerings.msoy.room.gwt.RoomInfo;
 import com.threerings.msoy.room.gwt.WebRoomService;
 import com.threerings.msoy.room.gwt.WebRoomServiceAsync;
+import com.threerings.msoy.web.gwt.Pages;
 
 import client.room.SceneUtil;
 import client.ui.MsoyUI;
-import client.util.Link;
 import client.util.InfoCallback;
+import client.util.Link;
 
 /**
  * Winning rooms of the Design Your Whirled contest, excluding the first DeviantArt contest.

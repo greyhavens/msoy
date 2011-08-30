@@ -9,7 +9,6 @@ import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 import com.threerings.gwt.util.ExpanderResult;
-import com.threerings.gwt.util.PagedResult;
 import com.threerings.web.gwt.ServiceException;
 
 import com.threerings.msoy.comment.data.all.Comment;

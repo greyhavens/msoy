@@ -3,8 +3,9 @@
 
 package com.threerings.msoy.apps.data;
 
-import com.threerings.msoy.data.all.GwtAuthCodes;
 import com.threerings.presents.data.AuthCodes;
+
+import com.threerings.msoy.data.all.GwtAuthCodes;
 
 /**
  * Codes returned by the app servlet.

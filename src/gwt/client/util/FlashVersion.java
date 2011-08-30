@@ -25,8 +25,8 @@ public class FlashVersion
 
     /**
      * Checks that the Flash player that is installed is sufficiently new.
-     * 
-     * @return null if everything is OK, or a string of HTML to display instead of the Flash client 
+     *
+     * @return null if everything is OK, or a string of HTML to display instead of the Flash client
      * in the event that the player is not installed or out of date.
      */
     public static String checkFlashVersion (int width, int height)

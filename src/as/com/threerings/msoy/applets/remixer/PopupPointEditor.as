@@ -5,15 +5,11 @@ package com.threerings.msoy.applets.remixer {
 
 import flash.events.Event;
 import flash.events.IEventDispatcher;
-
 import flash.geom.Point;
 
-import mx.controls.TextInput;
-
 import mx.containers.Grid;
-
+import mx.controls.TextInput;
 import mx.events.ValidationResultEvent;
-
 import mx.validators.NumberValidator;
 
 import com.threerings.flex.GridUtil;

@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.web.server;
 
-import static com.threerings.msoy.Log.log;
-
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -15,18 +13,23 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.inject.Inject;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.google.inject.Inject;
 import com.samskivert.io.StreamUtil;
+
 import com.samskivert.servlet.util.CookieUtil;
+
 import com.threerings.msoy.money.data.all.MemberMoney;
 import com.threerings.msoy.money.server.MoneyLogic;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.web.gwt.MemberCard;
 import com.threerings.msoy.web.gwt.WebCreds;
+
+import static com.threerings.msoy.Log.log;
 
 /**
  * Reports server status in plain text.

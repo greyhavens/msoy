@@ -7,22 +7,24 @@ import java.util.Map;
 import java.util.prefs.Preferences;
 
 import com.google.common.collect.Maps;
+
 import com.samskivert.util.BasicRunQueue;
 import com.samskivert.util.Config;
 import com.samskivert.util.RunQueue;
 
+import com.threerings.util.MessageManager;
+
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.ClientAdapter;
 import com.threerings.presents.dobj.DObjectManager;
-import com.threerings.util.MessageManager;
 
 import com.threerings.crowd.chat.client.ChatDirector;
-import com.threerings.crowd.util.CrowdContext;
-import com.threerings.crowd.data.PlaceConfig;
 import com.threerings.crowd.client.LocationDirector;
 import com.threerings.crowd.client.OccupantDirector;
 import com.threerings.crowd.client.PlaceController;
 import com.threerings.crowd.client.PlaceView;
+import com.threerings.crowd.data.PlaceConfig;
+import com.threerings.crowd.util.CrowdContext;
 
 import com.threerings.parlor.client.ParlorDirector;
 import com.threerings.parlor.util.ParlorContext;

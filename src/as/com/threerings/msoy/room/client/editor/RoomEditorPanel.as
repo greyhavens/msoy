@@ -4,7 +4,6 @@
 package com.threerings.msoy.room.client.editor {
 
 import flash.events.Event;
-
 import flash.geom.Rectangle;
 
 import mx.containers.Box;
@@ -19,26 +18,24 @@ import mx.core.Container;
 import mx.core.UIComponent;
 import mx.events.ColorPickerEvent;
 
+import com.threerings.util.CommandEvent;
+
 import com.threerings.flex.CommandButton;
-import com.threerings.flex.CommandComboBox;
 import com.threerings.flex.CommandCheckBox;
+import com.threerings.flex.CommandComboBox;
 import com.threerings.flex.FlexUtil;
 import com.threerings.flex.GridUtil;
-import com.threerings.util.CommandEvent;
-import com.threerings.msoy.ui.FlyingPanel;
-import com.threerings.msoy.ui.SkinnableImage;
 
 import com.threerings.msoy.client.Msgs;
-
 import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.Item;
-
-import com.threerings.msoy.world.client.WorldContext;
-import com.threerings.msoy.world.client.WorldController;
-
 import com.threerings.msoy.room.client.FurniSprite;
 import com.threerings.msoy.room.data.FurniData;
 import com.threerings.msoy.room.data.MsoySceneModel;
+import com.threerings.msoy.ui.FlyingPanel;
+import com.threerings.msoy.ui.SkinnableImage;
+import com.threerings.msoy.world.client.WorldContext;
+import com.threerings.msoy.world.client.WorldController;
 
 /**
  * A separate room editing panel, which lets the player edit furniture inside the room.

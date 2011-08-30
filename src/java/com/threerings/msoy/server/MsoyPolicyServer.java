@@ -6,9 +6,9 @@ package com.threerings.msoy.server;
 import java.io.IOException;
 import java.net.URL;
 
-import org.apache.mina.common.IoAcceptor;
-
 import com.whirled.server.PolicyServer;
+
+import org.apache.mina.common.IoAcceptor;
 
 import static com.threerings.msoy.Log.log;
 

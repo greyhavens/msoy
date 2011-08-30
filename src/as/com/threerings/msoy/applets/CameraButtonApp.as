@@ -7,8 +7,8 @@ import flash.display.Sprite;
 import flash.events.MouseEvent;
 import flash.external.ExternalInterface;
 import flash.media.Camera;
-import flash.text.TextFieldAutoSize;
 import flash.system.Security;
+import flash.text.TextFieldAutoSize;
 
 import com.threerings.util.ParameterUtil;
 

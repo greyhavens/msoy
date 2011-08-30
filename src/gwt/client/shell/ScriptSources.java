@@ -5,6 +5,7 @@ package client.shell;
 
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
+
 import com.threerings.msoy.web.gwt.ArgNames;
 import com.threerings.msoy.web.gwt.SharedNaviUtil;
 

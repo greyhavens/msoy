@@ -14,13 +14,14 @@ import mx.controls.Text;
 import mx.core.ClassFactory;
 import mx.core.ScrollPolicy;
 
-import com.threerings.flex.CommandButton;
-import com.threerings.flex.FlexUtil;
 import com.threerings.util.Integer;
 
 import com.threerings.parlor.client.TableObserver;
 import com.threerings.parlor.data.Table;
 import com.threerings.parlor.game.data.GameConfig;
+
+import com.threerings.flex.CommandButton;
+import com.threerings.flex.FlexUtil;
 
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.game.client.GameContext;
@@ -208,6 +209,7 @@ public class LobbyMatchPanel extends VBox
 }
 
 import flash.display.Sprite;
+
 import mx.controls.List;
 
 class TableList extends List

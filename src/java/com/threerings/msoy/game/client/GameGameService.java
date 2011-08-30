@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.game.client;
 
-import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 
 /**
@@ -21,9 +20,9 @@ public interface GameGameService extends InvocationService
      * Removes the trophies for this player from this in-development game.
      */
     void removeDevelopmentTrophies (int gameId, ConfirmListener listener);
-    
+
     /**
      * Posts a complaint event in underwire.
      */
-    void complainPlayer (int memberId, String complaint);    
+    void complainPlayer (int memberId, String complaint);
 }

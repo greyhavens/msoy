@@ -7,28 +7,24 @@ import flash.events.ErrorEvent;
 import flash.events.Event;
 import flash.events.IOErrorEvent;
 import flash.events.SecurityErrorEvent;
-
 import flash.net.FileReference;
 import flash.net.URLRequest;
 
-import mx.core.BitmapAsset;
-import mx.controls.Image;
-import mx.controls.ProgressBar;
-import mx.controls.Label;
-
 import mx.containers.HBox;
+import mx.controls.Image;
+import mx.controls.Label;
+import mx.controls.ProgressBar;
+import mx.core.BitmapAsset;
 
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.CommandCheckBox;
 import com.threerings.flex.FlexUtil;
 
 import com.threerings.msoy.client.Msgs;
-import com.threerings.msoy.ui.FloatingPanel;
-
-import com.threerings.msoy.world.client.WorldContext;
-
 import com.threerings.msoy.room.client.RoomPostcardPanel;
 import com.threerings.msoy.room.client.RoomView;
+import com.threerings.msoy.ui.FloatingPanel;
+import com.threerings.msoy.world.client.WorldContext;
 
 public class SnapshotPanel extends FloatingPanel
 {

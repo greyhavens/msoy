@@ -5,23 +5,24 @@ package com.threerings.msoy.game.server;
 
 import java.util.List;
 
-import com.samskivert.jdbc.RepositoryUnit;
-import com.samskivert.util.CountHashMap;
-
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+
 import com.whirled.game.data.GameContentOwnership;
 import com.whirled.game.data.GameData;
 
+import com.samskivert.util.CountHashMap;
+
+import com.samskivert.jdbc.RepositoryUnit;
+
+import com.threerings.msoy.game.server.persist.TrophyRepository;
+import com.threerings.msoy.item.server.persist.IdentGameItemRecord;
 import com.threerings.msoy.item.server.persist.ItemPackRecord;
 import com.threerings.msoy.item.server.persist.ItemPackRepository;
 import com.threerings.msoy.item.server.persist.LevelPackRecord;
 import com.threerings.msoy.item.server.persist.LevelPackRepository;
-import com.threerings.msoy.item.server.persist.IdentGameItemRecord;
-
-import com.threerings.msoy.game.server.persist.TrophyRepository;
 
 public abstract class ContentOwnershipUnit extends RepositoryUnit
 {

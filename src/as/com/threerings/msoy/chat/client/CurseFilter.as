@@ -5,8 +5,8 @@ package com.threerings.msoy.chat.client {
 
 import com.threerings.crowd.chat.client.CurseFilter;
 
-import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.Msgs;
+import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.Prefs;
 
 public class CurseFilter extends com.threerings.crowd.chat.client.CurseFilter

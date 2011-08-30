@@ -6,7 +6,6 @@ package com.threerings.msoy.comment.data.all;
 import java.util.List;
 
 import com.google.common.collect.Lists;
-
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.orth.data.MediaDesc;

@@ -7,8 +7,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -24,20 +24,15 @@ import com.google.inject.Inject;
 
 import com.samskivert.util.CollectionUtil;
 
-import com.threerings.web.gwt.ServiceException;
 import com.threerings.parlor.rating.server.persist.RatingRecord;
 import com.threerings.parlor.rating.server.persist.RatingRepository;
 import com.threerings.parlor.rating.util.Percentiler;
 
-import com.threerings.msoy.item.data.ItemCodes;
-import com.threerings.msoy.item.server.persist.TrophySourceRecord;
-import com.threerings.msoy.item.server.persist.TrophySourceRepository;
+import com.threerings.web.gwt.ServiceException;
 
-import com.threerings.msoy.person.server.persist.ProfileRecord;
-import com.threerings.msoy.person.server.persist.ProfileRepository;
-
+import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.data.all.RatingResult;
 import com.threerings.msoy.facebook.server.FacebookLogic;
-
 import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.game.gwt.ArcadeData;
 import com.threerings.msoy.game.gwt.GameCard;
@@ -50,23 +45,24 @@ import com.threerings.msoy.game.gwt.GameService;
 import com.threerings.msoy.game.gwt.MochiGameInfo;
 import com.threerings.msoy.game.gwt.PlayerRating;
 import com.threerings.msoy.game.gwt.TrophyCase;
+import com.threerings.msoy.game.server.persist.ArcadeEntryRecord;
 import com.threerings.msoy.game.server.persist.GameInfoRecord;
 import com.threerings.msoy.game.server.persist.GameTraceLogEnumerationRecord;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
-import com.threerings.msoy.game.server.persist.ArcadeEntryRecord;
 import com.threerings.msoy.game.server.persist.TrophyRecord;
 import com.threerings.msoy.game.server.persist.TrophyRepository;
-
-import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.data.all.RatingResult;
+import com.threerings.msoy.item.data.ItemCodes;
+import com.threerings.msoy.item.server.persist.TrophySourceRecord;
+import com.threerings.msoy.item.server.persist.TrophySourceRepository;
+import com.threerings.msoy.person.server.persist.ProfileRecord;
+import com.threerings.msoy.person.server.persist.ProfileRepository;
+import com.threerings.msoy.server.MediaDescFactory;
 import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.PopularPlacesSnapshot;
 import com.threerings.msoy.server.persist.MemberCardRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.util.HTMLSanitizer;
-
-import com.threerings.msoy.server.MediaDescFactory;
 import com.threerings.msoy.web.gwt.MemberCard;
 import com.threerings.msoy.web.gwt.ServiceCodes;
 import com.threerings.msoy.web.server.MsoyServiceServlet;

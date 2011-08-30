@@ -4,6 +4,7 @@
 package com.threerings.msoy.facebook.gwt;
 
 import java.util.List;
+
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**

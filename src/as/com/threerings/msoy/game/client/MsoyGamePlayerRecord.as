@@ -3,9 +3,9 @@
 
 package com.threerings.msoy.game.client {
 
-import com.threerings.crowd.data.OccupantInfo;
-
 import com.whirled.game.client.GamePlayerRecord;
+
+import com.threerings.crowd.data.OccupantInfo;
 
 import com.threerings.msoy.data.MsoyUserOccupantInfo;
 

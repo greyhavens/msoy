@@ -4,22 +4,23 @@
 package client.mail;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.orth.data.MediaDescSize;
+
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.gwt.util.DateUtil;
 
-import com.threerings.orth.data.MediaDescSize;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.mail.gwt.ConvMessage;
 import com.threerings.msoy.mail.gwt.MailService;
@@ -29,14 +30,12 @@ import com.threerings.msoy.web.gwt.WebMemberServiceAsync;
 
 import client.shell.CShell;
 import client.shell.ShellMessages;
-
 import client.ui.BorderedDialog;
 import client.ui.MsoyUI;
 import client.ui.ThumbBox;
-
 import client.util.ClickCallback;
-import client.util.Link;
 import client.util.InfoCallback;
+import client.util.Link;
 
 /**
  * Displays a single conversation.

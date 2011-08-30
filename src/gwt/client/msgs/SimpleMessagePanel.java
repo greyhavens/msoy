@@ -4,6 +4,7 @@
 package client.msgs;
 
 import com.threerings.gwt.util.DateUtil;
+
 import com.threerings.msoy.fora.gwt.ForumMessage;
 
 import client.ui.MessagePanel;

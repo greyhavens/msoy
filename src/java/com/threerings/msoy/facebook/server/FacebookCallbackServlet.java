@@ -14,9 +14,10 @@ import javax.servlet.http.HttpServletResponse;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 
+import com.samskivert.util.StringUtil;
+
 import com.samskivert.servlet.util.CookieUtil;
 import com.samskivert.servlet.util.ParameterUtil;
-import com.samskivert.util.StringUtil;
 
 import com.threerings.web.gwt.ServiceException;
 
@@ -24,20 +25,16 @@ import com.threerings.msoy.apps.server.persist.AppInfoRecord;
 import com.threerings.msoy.apps.server.persist.AppRepository;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.VisitorInfo;
-
-import com.threerings.msoy.server.MemberLogic;
-import com.threerings.msoy.server.MsoyAuthenticator;
-import com.threerings.msoy.server.persist.MemberRecord;
-import com.threerings.msoy.server.persist.MemberRepository;
-
 import com.threerings.msoy.facebook.gwt.FacebookGame;
 import com.threerings.msoy.facebook.gwt.FacebookTemplate;
 import com.threerings.msoy.facebook.server.persist.FacebookInfoRecord;
 import com.threerings.msoy.facebook.server.persist.FacebookRepository;
-
 import com.threerings.msoy.game.server.persist.GameInfoRecord;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
-
+import com.threerings.msoy.server.MemberLogic;
+import com.threerings.msoy.server.MsoyAuthenticator;
+import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.web.gwt.ArgNames;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.ClientMode;
@@ -47,7 +44,6 @@ import com.threerings.msoy.web.gwt.ExternalSiteId;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.SharedNaviUtil;
 import com.threerings.msoy.web.gwt.WebCreds;
-
 import com.threerings.msoy.web.server.AffiliateCookie;
 import com.threerings.msoy.web.server.MsoyHttpServer;
 import com.threerings.msoy.web.server.SwizzleServlet;

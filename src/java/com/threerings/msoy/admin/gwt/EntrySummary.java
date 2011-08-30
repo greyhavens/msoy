@@ -4,7 +4,6 @@
 package com.threerings.msoy.admin.gwt;
 
 import com.google.common.primitives.Ints;
-
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 /**

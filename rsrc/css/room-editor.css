@@ -56,7 +56,7 @@ BasePanel {
   paddingBottom: 2;
 }
 
-.roomEditButtonBar { 
+.roomEditButtonBar {
   borderStyle: "none";
   paddingBottom: 0;
   paddingTop: 0;
@@ -64,7 +64,7 @@ BasePanel {
   paddingRight: 0;
   horizontalGap: 3;
   verticalAlign: "middle";
-} 
+}
 
 .roomEditAccessButtons {
   buttonStyleName: "roomEditAccessButtonStyle";
@@ -78,23 +78,23 @@ BasePanel {
   fillAlphas: 0.6, 0.4, 0.6, 0.4;
 }
 
-.roomEditAdvanced { 
+.roomEditAdvanced {
   paddingBottom: 0;
   paddingTop: 3;
   paddingLeft: 0;
   paddingRight: 0;
   verticalGap: 0;
-} 
+}
 
-.roomEditContents { 
+.roomEditContents {
   paddingBottom: 5;
   paddingTop: 5;
   paddingLeft: 8;
   paddingRight: 8;
   verticalGap: 2;
-} 
+}
 
-.roomEditLabelContainer { 
+.roomEditLabelContainer {
   borderStyle: "none";
   borderThickness: 0;
   borderThicknessLeft: 0;
@@ -109,7 +109,7 @@ BasePanel {
   verticalGap: 0;
 }
 
-.roomEditCollapsingContainer { 
+.roomEditCollapsingContainer {
   borderStyle: "none";
   paddingBottom: 0;
   paddingTop: 0;
@@ -118,21 +118,21 @@ BasePanel {
   verticalGap: 1;
 }
 
-.roomEditCollapsingContents { 
+.roomEditCollapsingContents {
   paddingBottom: 5;
   paddingTop: 2;
 }
 
-.roomEditLeft { 
+.roomEditLeft {
   verticalAlign: "bottom";
   verticalGap: 15;
 }
 
 .roomEditDiv {
   backgroundSkin: Embed(source="../media/skins/button/roomeditor/dot-separator.png");
-} 
+}
 
-.roomEditRight { 
+.roomEditRight {
   horizontalAlign: "center";
   verticalAlign: "bottom";
   verticalGap: 15;
@@ -198,7 +198,7 @@ BasePanel {
   image: url("images/ui/editor/undo-shape.png");
 }
 
-.roomEditCustom { 
+.roomEditCustom {
   image: url("images/item/config.png");
 }
 
@@ -214,11 +214,11 @@ BasePanel {
   textAlign: "center";
 }
 
-.roomEditPanelButton { 
+.roomEditPanelButton {
   paddingBottom: 0;
   right: 0;
 }
-  
+
 .roomEditLabel {
     color: #000000;
     themeColor: #54a9da;
@@ -242,7 +242,7 @@ BasePanel {
   selectedOverSkin: Embed(source="../media/skins/button/roomeditor/rollout_minus.png");
   selectedDownSkin: Embed(source="../media/skins/button/roomeditor/rollout_minus.png");
   selectedDisabledSkin: Embed(source="../media/skins/button/roomeditor/rollout_minus.png");
-} 
+}
 
 .roomEditAdvancedContainer {
   borderStyle: "none";

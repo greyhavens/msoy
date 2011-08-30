@@ -3,14 +3,14 @@
 
 package client.ui;
 
-import client.ui.impl.HrefImpl;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.user.client.ui.HTML;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
+
+import client.ui.impl.HrefImpl;
 
 /**
  * Displays HTML entered by the user (be sure to validate all user-supplied HTML on the server

@@ -8,26 +8,22 @@ import flash.display.Loader;
 import flash.display.LoaderInfo;
 import flash.display.MovieClip;
 import flash.display.Sprite;
-
 import flash.events.Event;
-
 import flash.text.TextField;
 
 import caurina.transitions.Tweener;
 
-import com.threerings.media.MediaContainer;
-
 import com.threerings.util.Log;
 import com.threerings.util.MultiLoader;
 
-import com.threerings.msoy.badge.data.all.Badge;
+import com.threerings.media.MediaContainer;
 
-import com.threerings.msoy.client.MsoyContext;
-import com.threerings.msoy.client.PlaceBox;
-
-import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.orth.data.MediaDesc;
 
+import com.threerings.msoy.badge.data.all.Badge;
+import com.threerings.msoy.client.MsoyContext;
+import com.threerings.msoy.client.PlaceBox;
+import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.item.data.all.Item;
 

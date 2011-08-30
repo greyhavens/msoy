@@ -5,29 +5,29 @@ package client.person;
 
 import java.util.List;
 
-import com.google.common.collect.Lists;
+import com.allen_sauer.gwt.dnd.client.DragContext;
+import com.allen_sauer.gwt.dnd.client.PickupDragController;
+import com.allen_sauer.gwt.dnd.client.VetoDragException;
+import com.allen_sauer.gwt.dnd.client.drop.SimpleDropController;
 
+import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.ui.AbsolutePanel;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.AbsolutePanel;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.allen_sauer.gwt.dnd.client.DragContext;
-import com.allen_sauer.gwt.dnd.client.PickupDragController;
-import com.allen_sauer.gwt.dnd.client.VetoDragException;
-import com.allen_sauer.gwt.dnd.client.drop.SimpleDropController;
+import com.threerings.orth.data.MediaDescSize;
 
 import com.threerings.gwt.ui.CenteredBox;
 import com.threerings.gwt.util.DataModel;
 import com.threerings.gwt.util.SimpleDataModel;
 
-import com.threerings.orth.data.MediaDescSize;
 import com.threerings.msoy.imagechooser.gwt.ImageChooserService;
 import com.threerings.msoy.imagechooser.gwt.ImageChooserServiceAsync;
 import com.threerings.msoy.item.data.all.MsoyItemType;
@@ -45,9 +45,9 @@ import client.dnd.PayloadWidget;
 import client.dnd.SimpleDropModel;
 import client.shell.CShell;
 import client.ui.MsoyUI;
+import client.util.InfoCallback;
 import client.util.Link;
 import client.util.MediaUtil;
-import client.util.InfoCallback;
 
 /**
  * Allows a user to edit one of their galleries.

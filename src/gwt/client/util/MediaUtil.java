@@ -10,11 +10,11 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.orth.data.MediaDesc;
 import com.threerings.orth.data.MediaDescSize;
 
+import com.threerings.gwt.ui.WidgetUtil;
+
 import com.threerings.msoy.data.all.MediaMimeTypes;
 import com.threerings.msoy.data.all.StaticMediaDesc;
 import com.threerings.msoy.web.gwt.SharedMediaUtil;
-
-import com.threerings.gwt.ui.WidgetUtil;
 
 /**
  * Extends the server-side shared media utilities with client specific routines for displaying

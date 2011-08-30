@@ -6,12 +6,12 @@ package client.groups;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -28,13 +28,12 @@ import com.threerings.msoy.group.gwt.GroupExtras;
 import com.threerings.msoy.group.gwt.GroupService;
 import com.threerings.msoy.group.gwt.GroupServiceAsync;
 import com.threerings.msoy.item.data.all.MsoyItemType;
-import com.threerings.msoy.web.gwt.Args;
-import com.threerings.msoy.web.gwt.Pages;
-import com.threerings.msoy.web.gwt.TagHistory;
-
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.PriceQuote;
 import com.threerings.msoy.money.data.all.PurchaseResult;
+import com.threerings.msoy.web.gwt.Args;
+import com.threerings.msoy.web.gwt.Pages;
+import com.threerings.msoy.web.gwt.TagHistory;
 
 import client.item.TagDetailPanel;
 import client.money.BuyPanel;
@@ -44,8 +43,8 @@ import client.shell.ShellMessages;
 import client.ui.LimitedTextArea;
 import client.ui.MsoyUI;
 import client.ui.PopupMenu;
-import client.util.Link;
 import client.util.InfoCallback;
+import client.util.Link;
 
 /**
  * A popup that lets a member of sufficient rank modify a group's metadata.

@@ -3,16 +3,11 @@
 
 package client.person;
 
-import client.dnd.PayloadWidget;
-import client.ui.CreatorLabel;
-import client.ui.LimitedTextArea;
-import client.ui.MsoyUI;
-import client.util.MediaUtil;
-
 import com.allen_sauer.gwt.dnd.client.DragContext;
 import com.allen_sauer.gwt.dnd.client.PickupDragController;
 import com.allen_sauer.gwt.dnd.client.VetoDragException;
 import com.allen_sauer.gwt.dnd.client.drop.SimpleDropController;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -23,13 +18,19 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.gwt.ui.CenteredBox;
-
 import com.threerings.orth.data.MediaDescSize;
+
+import com.threerings.gwt.ui.CenteredBox;
 
 import com.threerings.msoy.item.data.all.Photo;
 import com.threerings.msoy.person.gwt.Gallery;
 import com.threerings.msoy.person.gwt.GalleryData;
+
+import client.dnd.PayloadWidget;
+import client.ui.CreatorLabel;
+import client.ui.LimitedTextArea;
+import client.ui.MsoyUI;
+import client.util.MediaUtil;
 
 /**
 * Displays the Gallery meta data for edit.

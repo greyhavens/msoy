@@ -19,25 +19,36 @@ import com.google.common.collect.Ordering;
 import com.google.common.collect.Sets;
 import com.google.common.collect.Table;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
-import com.samskivert.jdbc.RepositoryUnit;
-import com.samskivert.jdbc.WriteOnlyUnit;
+import com.whirled.bureau.data.BureauTypes;
+import com.whirled.game.data.PropertySetEvent;
+import com.whirled.game.data.PropertySpaceMarshaller;
+import com.whirled.game.data.PropertySpaceObject.PropertySetException;
+import com.whirled.game.data.WhirledGameMessageMarshaller;
+import com.whirled.game.server.PropertySpaceHandler;
+import com.whirled.game.server.PropertySpaceHelper;
+import com.whirled.game.server.WhirledGameMessageHandler;
+
 import com.samskivert.text.MessageUtil;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.ComplainingListener;
 import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.ObjectUtil;
-import com.samskivert.util.QuickSort;
 import com.samskivert.util.StringUtil;
 import com.samskivert.util.Throttle;
+
+import com.samskivert.jdbc.RepositoryUnit;
+import com.samskivert.jdbc.WriteOnlyUnit;
+
 import com.threerings.util.MessageBundle;
 import com.threerings.util.Name;
 
 import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.annotation.MainInvoker;
-import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.client.InvocationService.InvocationListener;
+import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.dobj.AccessController;
@@ -55,15 +66,13 @@ import com.threerings.presents.util.ConfirmAdapter;
 import com.threerings.presents.util.IgnoreConfirmAdapter;
 import com.threerings.presents.util.PersistingUnit;
 
+import com.threerings.crowd.chat.server.SpeakUtil;
 import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.data.PlaceObject;
-
-import com.threerings.crowd.server.CrowdObjectAccess;
 import com.threerings.crowd.server.CrowdObjectAccess.PlaceAccessController;
+import com.threerings.crowd.server.CrowdObjectAccess;
 import com.threerings.crowd.server.LocationManager;
-
-import com.threerings.crowd.chat.server.SpeakUtil;
 
 import com.threerings.whirled.data.SceneUpdate;
 import com.threerings.whirled.server.SceneRegistry;
@@ -72,19 +81,9 @@ import com.threerings.whirled.spot.data.Portal;
 import com.threerings.whirled.spot.data.SceneLocation;
 import com.threerings.whirled.spot.server.SpotSceneManager;
 
-import com.google.inject.Singleton;
-import com.whirled.bureau.data.BureauTypes;
+import com.threerings.orth.data.MediaDesc;
 
-import com.whirled.game.data.PropertySetEvent;
-import com.whirled.game.data.PropertySpaceMarshaller;
-import com.whirled.game.data.PropertySpaceObject.PropertySetException;
-import com.whirled.game.data.WhirledGameMessageMarshaller;
-import com.whirled.game.server.PropertySpaceDispatcher;
-import com.whirled.game.server.PropertySpaceHandler;
-import com.whirled.game.server.PropertySpaceHelper;
-import com.whirled.game.server.WhirledGameMessageDispatcher;
-import com.whirled.game.server.WhirledGameMessageHandler;
-
+import com.threerings.msoy.bureau.data.WindowClientObject;
 import com.threerings.msoy.data.HomePageItem;
 import com.threerings.msoy.data.MemberExperience;
 import com.threerings.msoy.data.MemberObject;
@@ -93,39 +92,33 @@ import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.MsoyUserObject;
 import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.all.DeploymentConfig;
-import com.threerings.orth.data.MediaDesc;
-import com.threerings.msoy.item.data.all.MsoyItemType;
-import com.threerings.msoy.room.data.*;
-import com.threerings.msoy.server.BootablePlaceManager;
-import com.threerings.msoy.server.MemberLocal;
-import com.threerings.msoy.server.MemberLocator;
-import com.threerings.msoy.server.MemberManager;
-import com.threerings.msoy.server.persist.MemberRecord;
-import com.threerings.msoy.server.persist.MemberRepository;
-import com.threerings.msoy.server.MsoyEventLogger;
-import com.threerings.msoy.server.util.MailSender;
-
-import com.threerings.msoy.bureau.data.WindowClientObject;
-import com.threerings.msoy.peer.server.MsoyPeerManager;
-
 import com.threerings.msoy.group.server.persist.ThemeRepository;
 import com.threerings.msoy.item.data.all.Audio;
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.item.server.ItemLogic;
 import com.threerings.msoy.item.server.ItemManager;
 import com.threerings.msoy.item.server.persist.AvatarRecord;
-
 import com.threerings.msoy.party.server.PartyRegistry;
-
+import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.room.client.RoomService;
+import com.threerings.msoy.room.data.*;
 import com.threerings.msoy.room.server.persist.MemoriesRecord;
 import com.threerings.msoy.room.server.persist.MemoryRepository;
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
 import com.threerings.msoy.room.server.persist.RoomPropertyRecord;
 import com.threerings.msoy.room.server.persist.SceneRecord;
+import com.threerings.msoy.server.BootablePlaceManager;
+import com.threerings.msoy.server.MemberLocal;
+import com.threerings.msoy.server.MemberLocator;
+import com.threerings.msoy.server.MemberManager;
+import com.threerings.msoy.server.MsoyEventLogger;
+import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.MemberRepository;
+import com.threerings.msoy.server.util.MailSender;
 
 import static com.threerings.msoy.Log.log;
 

@@ -12,8 +12,8 @@ import com.samskivert.depot.annotation.Entity;
 import com.threerings.msoy.item.data.all.Pet;
 import com.threerings.msoy.server.persist.RatingRecord;
 import com.threerings.msoy.server.persist.RatingRepository;
-import com.threerings.msoy.server.persist.TagRecord;
 import com.threerings.msoy.server.persist.TagHistoryRecord;
+import com.threerings.msoy.server.persist.TagRecord;
 
 /**
  * Manages the persistent store of {@link Pet} items.

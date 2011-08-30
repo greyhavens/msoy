@@ -3,10 +3,10 @@
 
 package com.threerings.msoy.game.client {
 
-import com.threerings.parlor.game.data.UserIdentifier;
-
 import com.whirled.game.client.ThaneGameBackend;
 import com.whirled.game.client.ThaneGameController;
+
+import com.threerings.parlor.game.data.UserIdentifier;
 
 import com.threerings.msoy.game.data.MsoyUserIdentifier;
 import com.threerings.msoy.game.data.ParlorGameObject;

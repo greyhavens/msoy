@@ -6,24 +6,21 @@ package com.threerings.msoy.client {
 import flash.events.Event;
 import flash.geom.Rectangle;
 
+import mx.containers.Canvas;
+import mx.controls.Label;
+import mx.controls.scrollClasses.ScrollBar;
 import mx.core.Application;
 import mx.core.ScrollPolicy;
 import mx.core.UIComponent;
 
-import mx.containers.Canvas;
-
-import mx.controls.Label;
-import mx.controls.scrollClasses.ScrollBar;
-
-import com.threerings.crowd.client.PlaceView;
 import com.threerings.util.ValueEvent;
 
-import com.threerings.msoy.chat.client.ChatTabBar;
+import com.threerings.crowd.client.PlaceView;
+
 import com.threerings.msoy.chat.client.ChatOverlay;
+import com.threerings.msoy.chat.client.ChatTabBar;
 import com.threerings.msoy.chat.client.ComicOverlay;
-
 import com.threerings.msoy.room.client.RoomObjectView;
-
 import com.threerings.msoy.tutorial.client.TutorialPanel;
 
 /**

@@ -11,6 +11,7 @@ import com.google.common.collect.Maps;
 import com.google.inject.Singleton;
 
 import com.threerings.presents.annotation.EventThread;
+
 import com.threerings.crowd.data.PlaceConfig;
 
 import com.threerings.msoy.game.data.ParlorGameConfig;

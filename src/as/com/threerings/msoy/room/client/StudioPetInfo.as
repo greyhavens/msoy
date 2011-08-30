@@ -7,7 +7,6 @@ import com.threerings.util.Name;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
-
 import com.threerings.msoy.room.data.PetInfo;
 
 public class StudioPetInfo extends PetInfo

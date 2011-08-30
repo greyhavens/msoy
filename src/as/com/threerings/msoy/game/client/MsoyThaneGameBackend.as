@@ -3,14 +3,13 @@
 
 package com.threerings.msoy.game.client {
 
-import com.threerings.presents.util.PresentsContext;
-
 import com.whirled.game.client.ThaneGameBackend;
 
-import com.threerings.msoy.party.client.PartyGameHelper;
+import com.threerings.presents.util.PresentsContext;
 
 import com.threerings.msoy.game.data.ParlorGameObject;
 import com.threerings.msoy.game.data.PlayerObject;
+import com.threerings.msoy.party.client.PartyGameHelper;
 
 /** Msoy-specific thane game backend. */
 public class MsoyThaneGameBackend extends ThaneGameBackend

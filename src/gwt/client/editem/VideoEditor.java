@@ -3,16 +3,16 @@
 
 package client.editem;
 
-import com.threerings.orth.data.MediaDesc;
-import com.threerings.orth.data.MediaDescSize;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.ui.TextBox;
 
+import com.threerings.orth.data.MediaDesc;
+import com.threerings.orth.data.MediaDescSize;
+
 import com.threerings.msoy.data.all.MediaMimeTypes;
-import com.threerings.msoy.item.data.all.Video;
 import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.Video;
 
 import client.ui.MsoyUI;
 import client.util.FlashClients;

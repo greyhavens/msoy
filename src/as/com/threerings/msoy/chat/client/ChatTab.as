@@ -4,15 +4,12 @@
 package com.threerings.msoy.chat.client {
 
 import flash.display.DisplayObject;
-
 import flash.events.Event;
 import flash.events.MouseEvent;
 
 import mx.containers.Canvas;
 import mx.containers.HBox;
-
 import mx.controls.Label;
-
 import mx.core.IFlexDisplayObject;
 import mx.core.UIComponent;
 
@@ -21,7 +18,6 @@ import com.threerings.util.Log;
 import com.threerings.crowd.chat.data.ChatCodes;
 
 import com.threerings.msoy.chat.data.MsoyChatChannel
-
 import com.threerings.msoy.client.HeaderBar;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.data.all.MemberName;
@@ -298,9 +294,9 @@ public class ChatTab extends HBox
 
 import flash.events.Event;
 
-import mx.containers.Canvas;
-
 import caurina.transitions.Tweener;
+
+import mx.containers.Canvas;
 
 import com.threerings.util.Util;
 

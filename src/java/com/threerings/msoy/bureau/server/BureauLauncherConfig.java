@@ -5,9 +5,10 @@ package com.threerings.msoy.bureau.server;
 
 import java.io.File;
 
-import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.util.Config;
 import com.samskivert.util.StringUtil;
+
+import com.samskivert.jdbc.ConnectionProvider;
 
 import com.threerings.msoy.server.persist.RepositoryUtil;
 

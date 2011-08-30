@@ -4,23 +4,18 @@
 package com.threerings.msoy.applets.image {
 
 import flash.display.BitmapData;
-
 import flash.events.Event;
 
+import mx.containers.Grid;
+import mx.containers.TitleWindow;
+import mx.containers.VBox;
 import mx.controls.ButtonBar;
 import mx.controls.ColorPicker;
 import mx.controls.RadioButton;
 import mx.controls.RadioButtonGroup;
 import mx.controls.TextInput;
-
-import mx.containers.Grid;
-import mx.containers.TitleWindow;
-import mx.containers.VBox;
-
 import mx.events.ValidationResultEvent;
-
 import mx.managers.PopUpManager;
-
 import mx.validators.NumberValidator;
 
 import com.threerings.util.ValueEvent;

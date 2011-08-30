@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.room.data {
 
-import com.threerings.io.ObjectInputStream;
-
 /**
  * Contains published information on a pet in a scene.
  */

@@ -4,8 +4,11 @@
 package com.threerings.msoy.web.gwt;
 
 import java.util.List;
+
 import com.google.gwt.user.client.rpc.AsyncCallback;
+
 import com.threerings.gwt.util.PagedResult;
+
 import com.threerings.msoy.data.all.Friendship;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.VisitorInfo;

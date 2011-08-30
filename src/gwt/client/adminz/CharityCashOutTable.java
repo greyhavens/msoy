@@ -6,9 +6,9 @@ package client.adminz;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Panel;
@@ -28,9 +28,9 @@ import com.threerings.msoy.money.gwt.MoneyServiceAsync;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.ui.MsoyUI;
+import client.util.InfoCallback;
 import client.util.Link;
 import client.util.MoneyUtil;
-import client.util.InfoCallback;
 
 public class CharityCashOutTable extends PagedGrid<CharityBlingInfo>
 {
@@ -57,13 +57,13 @@ public class CharityCashOutTable extends PagedGrid<CharityBlingInfo>
     {
         return true;
     }
-    
+
     protected void init ()
     {
         addStyleName("dottedGrid");
         reload();
     }
-    
+
     protected void reload ()
     {
         _moneysvc.getCharityBlingInfo(new InfoCallback<List<CharityBlingInfo>>() {
@@ -79,16 +79,16 @@ public class CharityCashOutTable extends PagedGrid<CharityBlingInfo>
         {
             super("cashOutWidget", 0, 3);
             addStyleName("charityCashOutWidget");
-            
+
             this.entry = item;
-            
+
             setWidget(0, 0, Link.create(item.displayName, Pages.PEOPLE,
                          Integer.toString(item.memberId)), 1, "Name");
-            
+
             setWidget(1, 0, new Anchor("mailto:" + item.emailAddress, item.emailAddress));
             setText(0, 1, _msgs.coEntryAmount(Currency.BLING.format(item.blingAmount)));
             setText(1, 1, _msgs.coEntryWorth(MoneyUtil.formatUSD(item.blingWorth)));
-            
+
             SmartTable extras = new SmartTable("Extras", 0, 5);
             Button btn = new Button(_msgs.coEntryTransactionsButton());
             btn.addStyleName("sideButton");
@@ -102,28 +102,28 @@ public class CharityCashOutTable extends PagedGrid<CharityBlingInfo>
                 }
             });
             extras.addWidget(btn, 0);
-            
+
             setWidget(0, 2, extras);
             getFlexCellFormatter().setRowSpan(0, 2, getRowCount());
             getFlexCellFormatter().setHorizontalAlignment(0, 2, HasAlignment.ALIGN_RIGHT);
             getFlexCellFormatter().setVerticalAlignment(0, 2, HasAlignment.ALIGN_TOP);
         }
-        
+
         protected void showPanel (Panel panel)
         {
             setWidget(3, 0, panel, 3, "PopupPanel");
         }
-        
+
         protected class CashOutPanel extends FlowPanel
         {
             public CashOutPanel (int initialAmount)
             {
                 add(new InlineLabel(_msgs.coEntryCashOutPanelAmount()));
-                
+
                 _amountBox = new TextBox();
                 _amountBox.setText(Currency.BLING.format(initialAmount));
                 add(_amountBox);
-                
+
                 Button btn = new Button(_msgs.coEntryCashOutPanelButton());
                 btn.addStyleName("PopupButton");
                 btn.addClickHandler(new ClickHandler() {
@@ -132,10 +132,10 @@ public class CharityCashOutTable extends PagedGrid<CharityBlingInfo>
                     }
                 });
                 add(btn);
-                
+
                 add(_status = new InlineLabel(""));
             }
-            
+
             @Override
             protected void onLoad ()
             {
@@ -143,7 +143,7 @@ public class CharityCashOutTable extends PagedGrid<CharityBlingInfo>
                 _amountBox.setSelectionRange(0, _amountBox.getText().length());
                 _amountBox.setFocus(true);
             }
-            
+
             protected void doCashOut()
             {
                 int blingAmount = Currency.BLING.parse(_amountBox.getText());
@@ -155,15 +155,15 @@ public class CharityCashOutTable extends PagedGrid<CharityBlingInfo>
                     }
                 });
             }
-            
+
             protected final TextBox _amountBox;
             protected final InlineLabel _status;
         }
-        
+
         protected final CharityBlingInfo entry;
     }
-    
+
     protected static final AdminMessages _msgs = GWT.create(AdminMessages.class);
-    
+
     protected static final MoneyServiceAsync _moneysvc = GWT.create(MoneyService.class);
 }

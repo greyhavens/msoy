@@ -8,10 +8,10 @@ import java.util.List;
 import com.google.common.collect.Lists;
 
 import com.threerings.orth.data.MediaDesc;
+import com.threerings.orth.data.MediaDescSize;
 
 import com.threerings.msoy.data.all.CloudfrontMediaDesc;
 import com.threerings.msoy.data.all.DeploymentConfig;
-import com.threerings.orth.data.MediaDescSize;
 
 /**
  * Message (forum and other) related utilities.

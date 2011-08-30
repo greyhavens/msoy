@@ -6,7 +6,6 @@ package client.msgs;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Image;
@@ -17,7 +16,6 @@ import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.util.DataModel;
 import com.threerings.gwt.util.DateUtil;
-import com.threerings.gwt.util.SimpleDataModel;
 import com.threerings.gwt.util.StringUtil;
 
 import com.threerings.msoy.fora.gwt.ForumService;
@@ -30,7 +28,6 @@ import client.ui.MiniNowLoadingWidget;
 import client.ui.MsoyUI;
 import client.ui.SearchBox;
 import client.util.ArrayUtil;
-import client.util.InfoCallback;
 import client.util.Link;
 
 /**

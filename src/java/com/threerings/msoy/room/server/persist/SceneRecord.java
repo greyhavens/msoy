@@ -16,15 +16,14 @@ import com.samskivert.depot.annotation.GeneratedValue;
 import com.samskivert.depot.annotation.GenerationType;
 import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.annotation.Index;
-import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.OrderBy.Order;
+import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.expression.SQLExpression;
 
 import com.threerings.orth.data.MediaDesc;
 
 import com.threerings.msoy.item.data.all.Decor;
-
 import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.msoy.room.data.MsoySceneModel;
 import com.threerings.msoy.room.gwt.RoomDetail;

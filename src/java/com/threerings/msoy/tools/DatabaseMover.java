@@ -11,11 +11,9 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-
 import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.net.URLClassLoader;
-
 import java.util.List;
 import java.util.Set;
 import java.util.jar.JarEntry;
@@ -28,8 +26,8 @@ import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.Exps;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
-import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.annotation.Computed;
+import com.samskivert.depot.clause.Where;
 
 import com.threerings.msoy.server.ServerConfig;
 

@@ -9,12 +9,10 @@ import com.threerings.util.CommandEvent;
 
 import com.threerings.media.VideoPlayer;
 
-import com.threerings.msoy.ui.MsoyVideoDisplay;
-import com.threerings.msoy.ui.DataPackMediaContainer;
-
-import com.threerings.msoy.item.data.all.ItemIdent;
-
 import com.threerings.msoy.client.MsoyController;
+import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.ui.DataPackMediaContainer;
+import com.threerings.msoy.ui.MsoyVideoDisplay;
 
 /**
  * A tiny layer on top of a DataPackMediaContainer that knows it's representing media

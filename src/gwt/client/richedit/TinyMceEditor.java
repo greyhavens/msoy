@@ -6,14 +6,13 @@ package client.richedit;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
-
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.msoy.web.gwt.MessageUtil;
 import com.threerings.msoy.web.gwt.CssUtil;
+import com.threerings.msoy.web.gwt.MessageUtil;
 
 import client.util.JavaScriptUtil;
 
@@ -109,7 +108,7 @@ public class TinyMceEditor extends FlowPanel
     @Override // from MessageEditor.Panel
     public void setHTML (String html)
     {
-        // this can get called before the editor is attached, so postpone if necessary 
+        // this can get called before the editor is attached, so postpone if necessary
         html = MessageUtil.preEditMessage(html);
         if (!_ready) {
             _queuedHTML = html;

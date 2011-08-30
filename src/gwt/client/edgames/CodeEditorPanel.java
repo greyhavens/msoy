@@ -18,19 +18,18 @@ import com.google.gwt.xml.client.Node;
 import com.google.gwt.xml.client.NodeList;
 import com.google.gwt.xml.client.XMLParser;
 
-import com.threerings.gwt.ui.SmartTable;
-
-import com.threerings.gwt.util.StringUtil;
-
 import com.threerings.orth.data.MediaDesc;
 import com.threerings.orth.data.MediaDescSize;
+
+import com.threerings.gwt.ui.SmartTable;
+import com.threerings.gwt.util.StringUtil;
 
 import com.threerings.msoy.edgame.gwt.GameCode;
 import com.threerings.msoy.game.gwt.GameInfo;
 import com.threerings.msoy.item.data.all.Item;
 
-import client.edutil.EditorUtil;
 import client.edutil.EditorUtil.ConfigException;
+import client.edutil.EditorUtil;
 import client.shell.CShell;
 import client.ui.MsoyUI;
 import client.ui.NumberTextBox;

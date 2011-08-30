@@ -3,8 +3,9 @@
 
 package com.threerings.msoy.peer.data;
 
-import com.threerings.msoy.group.server.persist.ThemeRecord;
 import com.threerings.presents.dobj.DSet;
+
+import com.threerings.msoy.group.server.persist.ThemeRecord;
 
 /**
  * Represents a hosted theme on a particular server.

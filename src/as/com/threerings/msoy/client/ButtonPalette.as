@@ -5,21 +5,17 @@ package com.threerings.msoy.client {
 
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
-
 import flash.events.Event;
-
 import flash.geom.Point;
 
-import mx.core.Application;
-import mx.core.UIComponent;
+import caurina.transitions.Tweener;
 
 import mx.containers.Canvas;
 import mx.containers.Tile;
 import mx.containers.ViewStack;
-
+import mx.core.Application;
+import mx.core.UIComponent;
 import mx.events.IndexChangedEvent;
-
-import caurina.transitions.Tweener;
 
 import com.threerings.util.CommandEvent;
 

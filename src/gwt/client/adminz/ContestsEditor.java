@@ -6,10 +6,10 @@ package client.adminz;
 import java.util.Date;
 import java.util.List;
 
-import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -17,11 +17,11 @@ import com.google.gwt.user.client.ui.TextBox;
 
 import org.gwt.advanced.client.ui.widget.DatePicker;
 
-import com.threerings.gwt.ui.SmartTable;
-import com.threerings.gwt.util.DateUtil;
-
 import com.threerings.orth.data.MediaDesc;
 import com.threerings.orth.data.MediaDescSize;
+
+import com.threerings.gwt.ui.SmartTable;
+import com.threerings.gwt.util.DateUtil;
 
 import com.threerings.msoy.web.gwt.Contest;
 
@@ -31,8 +31,8 @@ import client.ui.LimitedTextArea;
 import client.ui.MsoyUI;
 import client.ui.TongueBox;
 import client.util.ClickCallback;
-import client.util.MediaUtil;
 import client.util.InfoCallback;
+import client.util.MediaUtil;
 import client.util.TextBoxUtil;
 
 /**

@@ -3,8 +3,6 @@
 
 package client.game;
 
-import client.ui.MsoyUI;
-
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -16,6 +14,8 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.InlineLabel;
 
 import com.threerings.msoy.game.gwt.GameInfo;
+
+import client.ui.MsoyUI;
 
 /**
  * Displays a sorted list of games with a sort menu and sorting list headers.

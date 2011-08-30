@@ -3,21 +3,20 @@
 
 package client.groups;
 
-import com.threerings.orth.data.MediaDesc;
-
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.SimplePanel;
 
+import com.threerings.orth.data.MediaDesc;
 import com.threerings.orth.data.MediaDescSize;
 
-import client.ui.MsoyUI;
-import client.util.MediaUtil;
-import client.util.InfoCallback;
-
 import client.imagechooser.ImageChooserPopup;
+import client.ui.MsoyUI;
+import client.util.InfoCallback;
+import client.util.MediaUtil;
+
 /**
  * Displays a small preview image and allows the selection of an image from the user's inventory.
  * A null (or reverted) media will be displayed as the default but returned as null.

@@ -19,8 +19,9 @@ import com.threerings.util.StringUtil;
 
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.CommandComboBox;
-import com.threerings.flex.GridUtil;
 import com.threerings.flex.FlexUtil;
+import com.threerings.flex.GridUtil;
+
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.room.data.FurniData;
 

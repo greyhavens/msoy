@@ -4,11 +4,10 @@
 package client.groups;
 
 import com.google.gwt.core.client.GWT;
-
-import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -25,12 +24,11 @@ import com.threerings.msoy.group.gwt.GroupServiceAsync;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.imagechooser.ImageChooserPopup;
-
 import client.ui.LimitedTextArea;
 import client.ui.MsoyUI;
+import client.util.InfoCallback;
 import client.util.Link;
 import client.util.MediaUtil;
-import client.util.InfoCallback;
 import client.util.TextBoxUtil;
 
 public class EditMedalPanel extends FlexTable

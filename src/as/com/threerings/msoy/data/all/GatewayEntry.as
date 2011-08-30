@@ -3,14 +3,14 @@
 
 package com.threerings.msoy.data.all {
 
+import com.threerings.io.ObjectInputStream;
+import com.threerings.io.ObjectOutputStream;
+
 import com.threerings.util.Comparable;
 import com.threerings.util.Hashable;
-
-import com.threerings.io.ObjectOutputStream;
-import com.threerings.io.ObjectInputStream;
+import com.threerings.util.StringUtil;
 
 import com.threerings.presents.dobj.DSet_Entry;
-import com.threerings.util.StringUtil;
 
 /**
  * Information pertaining to a player's IM connections.

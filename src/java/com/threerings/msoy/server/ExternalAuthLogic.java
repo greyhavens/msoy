@@ -9,11 +9,9 @@ import java.util.Set;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.threerings.msoy.web.gwt.ExternalSiteId;
-
 import com.threerings.msoy.facebook.server.FacebookAuthHandler;
-
 import com.threerings.msoy.server.persist.MemberRepository;
+import com.threerings.msoy.web.gwt.ExternalSiteId;
 
 /**
  * Provides access to our {@link ExternalAuthHandler}.

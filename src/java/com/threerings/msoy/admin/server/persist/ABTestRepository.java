@@ -27,7 +27,6 @@ import com.samskivert.depot.SchemaMigration;
 import com.samskivert.depot.annotation.Computed;
 import com.samskivert.depot.clause.QueryClause;
 import com.samskivert.depot.clause.Where;
-import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.expression.SQLExpression;
 
 import com.threerings.presents.annotation.BlockingThread;

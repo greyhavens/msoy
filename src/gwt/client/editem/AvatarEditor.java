@@ -3,9 +3,9 @@
 
 package client.editem;
 
-import com.threerings.orth.data.MediaDesc;
-
 import com.google.gwt.core.client.GWT;
+
+import com.threerings.orth.data.MediaDesc;
 
 import com.threerings.msoy.data.all.MediaMimeTypes;
 import com.threerings.msoy.data.all.StaticMediaDesc;

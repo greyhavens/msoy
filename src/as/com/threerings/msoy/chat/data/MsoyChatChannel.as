@@ -13,11 +13,11 @@ import com.threerings.util.StringUtil;
 import com.threerings.crowd.chat.data.ChatChannel;
 import com.threerings.crowd.chat.data.ChatCodes;
 
-import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.ChannelName;
-import com.threerings.msoy.data.all.RoomName;
+import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.JabberName;
+import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.data.all.RoomName;
 
 /**
  * Defines a particular chat channel.

@@ -3,15 +3,10 @@
 
 package com.threerings.msoy.world.client {
 
-import flash.display.DisplayObject;
-
+import flash.external.ExternalInterface;
 import flash.geom.Point;
 
-import flash.external.ExternalInterface;
-
 import mx.controls.Button;
-
-import mx.styles.StyleManager;
 
 import com.threerings.util.DelayUtil;
 import com.threerings.util.Log;
@@ -19,48 +14,33 @@ import com.threerings.util.MessageBundle;
 import com.threerings.util.Name;
 import com.threerings.util.NamedValueEvent;
 import com.threerings.util.StringUtil;
-import com.threerings.util.ValueEvent;
 import com.threerings.util.Util;
+import com.threerings.util.ValueEvent;
 
 import com.threerings.presents.client.ClientEvent;
 import com.threerings.presents.net.Credentials;
 
 import com.threerings.crowd.client.LocationAdapter;
 import com.threerings.crowd.client.PlaceView;
-
 import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.media.AudioPlayer;
 import com.threerings.media.MediaPlayerCodes;
 import com.threerings.media.Mp3AudioPlayer;
 
-import com.threerings.flex.CommandMenu;
-
 import com.threerings.whirled.data.Scene;
 
-import com.threerings.msoy.utils.Args;
+import com.threerings.orth.data.MediaDesc;
+import com.threerings.orth.data.MediaDescSize;
+import com.threerings.orth.ui.MediaWrapper;
 
-import com.threerings.msoy.chat.client.IMRegisterDialog;
-import com.threerings.msoy.group.data.all.GroupMembership;
-import com.threerings.msoy.item.client.FlagItemDialog;
-import com.threerings.msoy.item.client.ItemService;
-import com.threerings.msoy.item.data.ItemMarshaller;
-import com.threerings.msoy.item.data.all.Audio;
-import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.flex.CommandMenu;
 
 import com.threerings.msoy.avrg.client.AVRGamePanel;
-import com.threerings.msoy.game.client.GameContext;
-import com.threerings.msoy.game.client.GameDirector;
-import com.threerings.msoy.game.client.GameGameService;
-import com.threerings.msoy.game.client.ParlorGamePanel;
-import com.threerings.msoy.game.client.TablesWaitingPanel;
-import com.threerings.msoy.game.data.ParlorGameConfig;
-
+import com.threerings.msoy.chat.client.IMRegisterDialog;
 import com.threerings.msoy.client.BootablePlaceController;
 import com.threerings.msoy.client.ControlBar;
 import com.threerings.msoy.client.DeploymentConfig;
-import com.threerings.msoy.client.HeaderBar;
 import com.threerings.msoy.client.LogonPanel;
 import com.threerings.msoy.client.MemberService;
 import com.threerings.msoy.client.Msgs;
@@ -71,33 +51,33 @@ import com.threerings.msoy.client.PlaceBox;
 import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.client.TopPanel;
 import com.threerings.msoy.client.UberClient;
-
 import com.threerings.msoy.data.Address;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.MsoyCredentials;
 import com.threerings.msoy.data.PlaceInfo;
 import com.threerings.msoy.data.WorldCredentials;
-
 import com.threerings.msoy.data.all.ContactEntry;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.GatewayEntry;
-import com.threerings.orth.data.MediaDesc;
-import com.threerings.orth.data.MediaDescSize;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VizMemberName;
-
-import com.threerings.msoy.ui.ColorPickerPanel;
-import com.threerings.orth.ui.MediaWrapper;
-import com.threerings.msoy.ui.MsoyLoadedAsset;
-import com.threerings.msoy.ui.skins.CommentButton;
-
-import com.threerings.msoy.party.data.PartyCodes;
-
+import com.threerings.msoy.game.client.GameContext;
+import com.threerings.msoy.game.client.GameDirector;
+import com.threerings.msoy.game.client.GameGameService;
+import com.threerings.msoy.game.client.ParlorGamePanel;
+import com.threerings.msoy.game.client.TablesWaitingPanel;
+import com.threerings.msoy.game.data.ParlorGameConfig;
+import com.threerings.msoy.group.data.all.GroupMembership;
+import com.threerings.msoy.item.client.FlagItemDialog;
+import com.threerings.msoy.item.client.ItemService;
+import com.threerings.msoy.item.data.ItemMarshaller;
+import com.threerings.msoy.item.data.all.Audio;
+import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.room.client.PlaylistMusicDialog;
 import com.threerings.msoy.room.client.RoomObjectController;
 import com.threerings.msoy.room.client.RoomObjectView;
-import com.threerings.msoy.room.client.RoomStudioView;
 import com.threerings.msoy.room.client.RoomView;
 import com.threerings.msoy.room.client.snapshot.SnapshotPanel;
 import com.threerings.msoy.room.data.MsoyScene;
@@ -105,6 +85,9 @@ import com.threerings.msoy.room.data.MsoySceneModel;
 import com.threerings.msoy.room.data.PetName;
 import com.threerings.msoy.room.data.PuppetName;
 import com.threerings.msoy.room.data.RoomObject;
+import com.threerings.msoy.ui.ColorPickerPanel;
+import com.threerings.msoy.ui.skins.CommentButton;
+import com.threerings.msoy.utils.Args;
 
 /**
  * Extends the MsoyController with World specific bits.

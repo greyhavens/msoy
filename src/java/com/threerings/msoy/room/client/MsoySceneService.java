@@ -3,10 +3,11 @@
 
 package com.threerings.msoy.room.client;
 
-import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
-import com.threerings.whirled.client.SceneService;
+
 import com.threerings.whirled.client.SceneService.SceneMoveListener;
+import com.threerings.whirled.client.SceneService;
+
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.msoy.world.client.WorldService;

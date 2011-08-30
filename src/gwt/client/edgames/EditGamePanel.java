@@ -12,10 +12,9 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
 
+import com.threerings.msoy.edgame.gwt.EditGameService.GameData;
 import com.threerings.msoy.edgame.gwt.EditGameService;
 import com.threerings.msoy.edgame.gwt.EditGameServiceAsync;
-import com.threerings.msoy.edgame.gwt.EditGameService.GameData;
-
 import com.threerings.msoy.item.data.all.GameItem;
 import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.web.gwt.Args;

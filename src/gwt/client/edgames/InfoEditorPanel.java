@@ -14,6 +14,7 @@ import com.google.gwt.user.client.ui.TextBox;
 
 import com.threerings.orth.data.MediaDesc;
 import com.threerings.orth.data.MediaDescSize;
+
 import com.threerings.msoy.edgame.gwt.EditGameService.GameData;
 import com.threerings.msoy.game.gwt.GameGenre;
 import com.threerings.msoy.game.gwt.GameInfo;
@@ -23,9 +24,9 @@ import com.threerings.msoy.group.gwt.GroupServiceAsync;
 import com.threerings.msoy.item.data.all.Item;
 
 import client.edutil.EditorUtil;
+import client.shell.CShell;
 import client.ui.LimitedTextArea;
 import client.ui.MsoyUI;
-import client.shell.CShell;
 import client.util.ClickCallback;
 import client.util.InfoCallback;
 

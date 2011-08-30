@@ -7,14 +7,10 @@ import flash.display.Loader;
 import flash.display.LoaderInfo;
 import flash.display.MovieClip;
 import flash.display.Sprite;
-
 import flash.events.Event;
-
 import flash.filters.GlowFilter;
-
 import flash.text.TextField;
 import flash.text.TextFormat;
-
 import flash.utils.ByteArray;
 
 // NOTE: minimize any dependancies on non-builtin packages, because this class is

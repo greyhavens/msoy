@@ -5,9 +5,9 @@ package com.threerings.msoy.facebook.gwt;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
+import com.threerings.msoy.web.gwt.ArgNames.FBParam;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
-import com.threerings.msoy.web.gwt.ArgNames.FBParam;
 
 /**
  * Represents a Whirled or Mochi game on Facebook.

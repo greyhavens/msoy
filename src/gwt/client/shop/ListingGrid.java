@@ -5,9 +5,9 @@ package client.shop;
 
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.gwt.ui.PagedGrid;
-
 import com.threerings.orth.data.MediaDescSize;
+
+import com.threerings.gwt.ui.PagedGrid;
 
 import com.threerings.msoy.item.gwt.ListingCard;
 

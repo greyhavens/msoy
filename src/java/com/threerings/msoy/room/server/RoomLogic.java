@@ -8,7 +8,6 @@ import com.google.inject.Singleton;
 
 import com.samskivert.util.ResultListener;
 
-import com.threerings.web.gwt.ServiceException;
 import com.threerings.util.Name;
 
 import com.threerings.presents.annotation.BlockingThread;
@@ -16,15 +15,14 @@ import com.threerings.presents.server.PresentsDObjectMgr;
 
 import com.threerings.whirled.server.SceneRegistry;
 
-import com.threerings.msoy.server.persist.MemberRecord;
-import com.threerings.msoy.server.persist.MemberRepository;
-
-import com.threerings.msoy.web.gwt.ServiceCodes;
+import com.threerings.web.gwt.ServiceException;
 
 import com.threerings.msoy.room.data.MsoySceneModel;
-
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
 import com.threerings.msoy.room.server.persist.SceneRecord;
+import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.MemberRepository;
+import com.threerings.msoy.web.gwt.ServiceCodes;
 
 import static com.threerings.msoy.Log.log;
 

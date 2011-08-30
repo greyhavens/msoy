@@ -9,8 +9,6 @@ import com.threerings.io.ObjectOutputStream;
 import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.data.all.MediaMimeTypes;
 
-import com.threerings.util.Log;
-
 /**
  * Provides a "faked" media descriptor for static media (default thumbnails and
  * furni representations).

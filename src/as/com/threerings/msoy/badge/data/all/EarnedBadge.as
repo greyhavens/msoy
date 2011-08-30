@@ -5,7 +5,9 @@ package com.threerings.msoy.badge.data.all {
 
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
+
 import com.threerings.util.Long;
+
 import com.threerings.msoy.client.DeploymentConfig;
 
 /**

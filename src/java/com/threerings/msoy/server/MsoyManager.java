@@ -9,10 +9,10 @@ import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.jdbc.WriteOnlyUnit;
 import com.samskivert.util.Invoker;
 
-import com.threerings.web.gwt.ServiceException;
+import com.samskivert.jdbc.WriteOnlyUnit;
+
 import com.threerings.util.Name;
 
 import com.threerings.presents.annotation.EventThread;
@@ -26,34 +26,32 @@ import com.threerings.presents.util.PersistingUnit;
 
 import com.threerings.crowd.chat.server.ChatProvider;
 
-import com.threerings.msoy.chat.data.MsoyChatCodes;
+import com.threerings.web.gwt.ServiceException;
 
+import com.threerings.msoy.admin.data.CostsConfigObject;
+import com.threerings.msoy.admin.server.ABTestLogic;
+import com.threerings.msoy.admin.server.RuntimeConfig;
+import com.threerings.msoy.badge.data.BadgeType;
+import com.threerings.msoy.badge.data.all.EarnedBadge;
+import com.threerings.msoy.chat.data.MsoyChatCodes;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.MsoyMarshaller;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.all.VisitorInfo;
+import com.threerings.msoy.money.data.all.Currency;
+import com.threerings.msoy.money.data.all.PriceQuote;
+import com.threerings.msoy.money.data.all.TransactionType;
+import com.threerings.msoy.money.server.MoneyLogic.BuyOperation;
+import com.threerings.msoy.money.server.MoneyLogic;
+import com.threerings.msoy.money.server.persist.MoneyRepository;
 import com.threerings.msoy.notify.server.MsoyNotificationManager;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.util.MailSender;
 import com.threerings.msoy.server.util.ServiceUnit;
-
-import com.threerings.msoy.admin.data.CostsConfigObject;
-import com.threerings.msoy.admin.server.ABTestLogic;
-import com.threerings.msoy.admin.server.RuntimeConfig;
-
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
-
-import com.threerings.msoy.badge.data.BadgeType;
-import com.threerings.msoy.badge.data.all.EarnedBadge;
-import com.threerings.msoy.money.data.all.Currency;
-import com.threerings.msoy.money.data.all.PriceQuote;
-import com.threerings.msoy.money.data.all.TransactionType;
-import com.threerings.msoy.money.server.MoneyLogic;
-import com.threerings.msoy.money.server.MoneyLogic.BuyOperation;
-import com.threerings.msoy.money.server.persist.MoneyRepository;
 
 import static com.threerings.msoy.Log.log;
 

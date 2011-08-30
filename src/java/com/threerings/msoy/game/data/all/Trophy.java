@@ -3,11 +3,11 @@
 
 package com.threerings.msoy.game.data.all;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
+
 import com.threerings.io.SimpleStreamableObject;
 
 import com.threerings.orth.data.MediaDesc;
-
-import com.google.gwt.user.client.rpc.IsSerializable;
 
 /**
  * Contains information on a trophy held by a player.

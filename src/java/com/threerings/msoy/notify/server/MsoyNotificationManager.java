@@ -13,16 +13,14 @@ import com.threerings.orth.notify.server.NotificationManager;
 
 import com.threerings.msoy.comment.data.all.CommentType;
 import com.threerings.msoy.data.MemberObject;
-import com.threerings.msoy.server.MemberLocal;
-import com.threerings.msoy.server.MemberNodeActions;
-
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.notify.data.EntityCommentedNotification;
 import com.threerings.msoy.notify.data.FollowInviteNotification;
-import com.threerings.msoy.notify.data.InviteAcceptedNotification;
 import com.threerings.msoy.notify.data.GameInviteNotification;
+import com.threerings.msoy.notify.data.InviteAcceptedNotification;
 import com.threerings.msoy.notify.data.PokeNotification;
-
-import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.server.MemberLocal;
+import com.threerings.msoy.server.MemberNodeActions;
 
 /**
  * Manages most notifications to users.

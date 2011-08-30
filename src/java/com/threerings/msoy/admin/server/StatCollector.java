@@ -4,6 +4,7 @@
 package com.threerings.msoy.admin.server;
 
 import com.threerings.io.Streamable;
+
 import com.threerings.presents.util.FutureResult;
 
 import com.threerings.msoy.admin.client.PeerAdminService;

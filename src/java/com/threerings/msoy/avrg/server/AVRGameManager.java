@@ -5,24 +5,44 @@ package com.threerings.msoy.avrg.server;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Map;
 import java.util.Set;
-import java.util.Map.Entry;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 
-import com.samskivert.jdbc.RepositoryUnit;
-import com.samskivert.jdbc.WriteOnlyUnit;
+import com.whirled.bureau.data.BureauTypes;
+import com.whirled.game.data.ContentMarshaller;
+import com.whirled.game.data.GameContentOwnership;
+import com.whirled.game.data.GameData;
+import com.whirled.game.data.PrizeMarshaller;
+import com.whirled.game.data.PropertySpaceMarshaller;
+import com.whirled.game.data.PropertySpaceObject;
+import com.whirled.game.data.WhirledGameMessageMarshaller;
+import com.whirled.game.data.WhirledPlayerObject;
+import com.whirled.game.server.ContentProvider;
+import com.whirled.game.server.PrizeProvider;
+import com.whirled.game.server.PropertySpaceDispatcher;
+import com.whirled.game.server.PropertySpaceHandler;
+import com.whirled.game.server.PropertySpaceHelper;
+import com.whirled.game.server.WhirledGameManager;
+import com.whirled.game.server.WhirledGameMessageHandler;
+import com.whirled.game.server.WhirledGameMessageProvider;
+
 import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.StringUtil;
+
+import com.samskivert.jdbc.RepositoryUnit;
+import com.samskivert.jdbc.WriteOnlyUnit;
+
 import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.annotation.MainInvoker;
-import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.client.InvocationService.ConfirmListener;
 import com.threerings.presents.client.InvocationService.ResultListener;
+import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.dobj.AccessController;
@@ -40,38 +60,22 @@ import com.threerings.crowd.server.PlaceManager;
 import com.threerings.crowd.server.PlaceManagerDelegate;
 
 import com.threerings.bureau.server.BureauRegistry;
+
 import com.threerings.parlor.server.PlayManager;
 
-import com.whirled.bureau.data.BureauTypes;
-
-import com.whirled.game.data.ContentMarshaller;
-import com.whirled.game.data.GameContentOwnership;
-import com.whirled.game.data.GameData;
-import com.whirled.game.data.PrizeMarshaller;
-import com.whirled.game.data.PropertySpaceObject;
-import com.whirled.game.data.PropertySpaceMarshaller;
-import com.whirled.game.data.WhirledGameMessageMarshaller;
-import com.whirled.game.data.WhirledPlayerObject;
-import com.whirled.game.server.ContentProvider;
-import com.whirled.game.server.PrizeProvider;
-import com.whirled.game.server.PropertySpaceDispatcher;
-import com.whirled.game.server.PropertySpaceHandler;
-import com.whirled.game.server.PropertySpaceHelper;
-import com.whirled.game.server.WhirledGameManager;
-import com.whirled.game.server.WhirledGameMessageHandler;
-import com.whirled.game.server.WhirledGameMessageProvider;
-
+import com.threerings.msoy.avrg.client.AVRService;
 import com.threerings.msoy.avrg.data.AVRGameAgentMarshaller;
+import com.threerings.msoy.avrg.data.AVRGameAgentObject;
+import com.threerings.msoy.avrg.data.AVRGameConfig;
 import com.threerings.msoy.avrg.data.AVRGameMarshaller;
+import com.threerings.msoy.avrg.data.AVRGameObject;
+import com.threerings.msoy.avrg.data.PlayerLocation;
+import com.threerings.msoy.avrg.data.PropertySpaceObjectImpl;
+import com.threerings.msoy.avrg.data.SceneInfo;
+import com.threerings.msoy.avrg.server.persist.AVRGameRepository;
+import com.threerings.msoy.avrg.server.persist.PlayerGameStateRecord;
+import com.threerings.msoy.bureau.server.MsoyBureauClient;
 import com.threerings.msoy.data.MsoyUserObject;
-import com.threerings.msoy.server.MemberNodeActions;
-
-import com.threerings.msoy.item.server.persist.ItemPackRepository;
-import com.threerings.msoy.item.server.persist.LevelPackRepository;
-
-import com.threerings.msoy.room.data.MsoyLocation;
-import com.threerings.msoy.room.server.RoomManager;
-
 import com.threerings.msoy.game.data.MsoyGameDefinition;
 import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.game.server.AgentTraceDelegate;
@@ -83,20 +87,12 @@ import com.threerings.msoy.game.server.PlayerLocator;
 import com.threerings.msoy.game.server.PlayerNodeActions;
 import com.threerings.msoy.game.server.TrophyDelegate;
 import com.threerings.msoy.game.server.persist.TrophyRepository;
-
-import com.threerings.msoy.bureau.server.MsoyBureauClient;
-
-import com.threerings.msoy.avrg.client.AVRService;
-import com.threerings.msoy.avrg.data.AVRGameAgentObject;
-import com.threerings.msoy.avrg.data.AVRGameConfig;
-import com.threerings.msoy.avrg.data.AVRGameObject;
-import com.threerings.msoy.avrg.data.PlayerLocation;
-import com.threerings.msoy.avrg.data.PropertySpaceObjectImpl;
-import com.threerings.msoy.avrg.data.SceneInfo;
-import com.threerings.msoy.avrg.server.persist.AVRGameRepository;
-import com.threerings.msoy.avrg.server.persist.PlayerGameStateRecord;
-
+import com.threerings.msoy.item.server.persist.ItemPackRepository;
+import com.threerings.msoy.item.server.persist.LevelPackRepository;
 import com.threerings.msoy.party.server.PartyRegistry;
+import com.threerings.msoy.room.data.MsoyLocation;
+import com.threerings.msoy.room.server.RoomManager;
+import com.threerings.msoy.server.MemberNodeActions;
 
 import static com.threerings.msoy.Log.log;
 

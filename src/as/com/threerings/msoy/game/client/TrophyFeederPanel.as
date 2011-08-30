@@ -7,28 +7,21 @@ import mx.containers.Grid;
 import mx.containers.GridRow;
 import mx.containers.HBox;
 import mx.containers.VBox;
-import mx.core.ScrollPolicy;
 import mx.controls.Label;
 import mx.controls.Text;
+import mx.core.ScrollPolicy;
+
+import com.threerings.util.Log;
 
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.GridUtil;
 
-import com.threerings.io.TypedArray;
-
-import com.threerings.util.Log;
-
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;
-
-import com.threerings.msoy.data.MsoyCodes;
-
+import com.threerings.msoy.game.data.all.Trophy;
+import com.threerings.msoy.item.data.all.TrophySource;
 import com.threerings.msoy.ui.FloatingPanel;
 import com.threerings.msoy.ui.MsoyMediaContainer;
-
-import com.threerings.msoy.game.data.all.Trophy;
-
-import com.threerings.msoy.item.data.all.TrophySource;
 
 /**
  * Displays a grid of trophies and allows the user to post the winning of each trophy as an
@@ -51,7 +44,7 @@ public class TrophyFeederPanel extends FloatingPanel
         ctx :MsoyContext, gameName :String, gameDescription :String,
         trophies :Array /* of Trophy */, onClose :Function) :void
     {
-        // these trophies will always be earned 
+        // these trophies will always be earned
         var tfp :TrophyFeederPanel;
         tfp = new TrophyFeederPanel(ctx, trophies, gameName, gameDescription, MODE_NEW);
         tfp.addCloseCallback(onClose);

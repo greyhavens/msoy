@@ -11,7 +11,7 @@ import java.util.List;
  * that are required on the server and on the client. We do this here so that we don't have
  * references between otherwise unrelated classes and services introduced by the fact that we want
  * a Hyperlink from somewhere in Whirled to somewhere (from a code standpoint) totally unrelated.
- * See also NaviUtil in src/gwt. 
+ * See also NaviUtil in src/gwt.
  */
 public class SharedNaviUtil
 {

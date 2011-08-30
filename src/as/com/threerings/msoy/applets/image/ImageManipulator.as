@@ -4,26 +4,20 @@
 package com.threerings.msoy.applets.image {
 
 import flash.events.Event;
-
 import flash.system.Capabilities;
-
 import flash.ui.Keyboard;
-
 import flash.utils.ByteArray;
 
+import mx.containers.Canvas;
+import mx.containers.HBox;
+import mx.containers.VBox;
 import mx.controls.ColorPicker;
 import mx.controls.HSlider;
 import mx.controls.Label;
 import mx.controls.Text;
 import mx.controls.TextInput;
-
-import mx.containers.Canvas;
-import mx.containers.HBox;
-import mx.containers.VBox;
-
 import mx.core.Container;
 import mx.core.ScrollPolicy;
-
 import mx.events.ColorPickerEvent;
 import mx.events.FlexEvent;
 import mx.events.SliderEvent;

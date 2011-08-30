@@ -3,10 +3,12 @@
 
 package com.threerings.msoy.world.data {
 
-import com.threerings.msoy.world.client.WatcherService;
+import com.threerings.util.Integer;
+
 import com.threerings.presents.client.Client;
 import com.threerings.presents.data.InvocationMarshaller;
-import com.threerings.util.Integer;
+
+import com.threerings.msoy.world.client.WatcherService;
 
 /**
  * Provides the implementation of the <code>WatcherService</code> interface

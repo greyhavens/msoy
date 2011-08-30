@@ -4,6 +4,7 @@
 package com.threerings.msoy.group.gwt;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
+
 import com.threerings.msoy.item.data.all.MsoyItemType;
 
 /**

@@ -12,23 +12,19 @@ import flash.display.JointStyle;
 import flash.display.LineScaleMode;
 import flash.display.Shape;
 import flash.display.Sprite;
-
 import flash.events.Event;
 import flash.events.MouseEvent;
-
 import flash.geom.Matrix;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 
-import mx.core.ScrollPolicy;
-
-import mx.controls.scrollClasses.ScrollBar;
-
-import mx.styles.CSSStyleDeclaration;
-import mx.styles.StyleManager;
-
 import com.adobe.images.JPGEncoder;
 import com.adobe.images.PNGEncoder;
+
+import mx.controls.scrollClasses.ScrollBar;
+import mx.core.ScrollPolicy;
+import mx.styles.CSSStyleDeclaration;
+import mx.styles.StyleManager;
 
 import com.threerings.util.ValueEvent;
 
@@ -973,9 +969,7 @@ public class EditCanvas extends DisplayCanvas
 import flash.display.Graphics;
 import flash.display.Shape;
 import flash.display.Sprite;
-
 import flash.events.Event;
-
 import flash.geom.Point;
 
 import com.threerings.util.ValueEvent;

@@ -7,7 +7,6 @@ import com.whirled.game.data.WhirledGameOccupantInfo;
 
 import com.threerings.msoy.data.MsoyTokenRing;
 import com.threerings.msoy.data.MsoyUserOccupantInfo;
-
 import com.threerings.msoy.party.data.PartyOccupantInfo;
 import com.threerings.msoy.party.data.PartySummary;
 

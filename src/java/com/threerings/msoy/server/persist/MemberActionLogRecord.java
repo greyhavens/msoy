@@ -5,10 +5,11 @@ package com.threerings.msoy.server.persist;
 
 import java.sql.Timestamp;
 
-import com.samskivert.depot.PersistentRecord;
-import com.samskivert.depot.annotation.*; // for Depot annotations
-import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.util.StringUtil;
+
+import com.samskivert.depot.PersistentRecord;
+import com.samskivert.depot.annotation.*;
+import com.samskivert.depot.expression.ColumnExp;
 
 /**
  * Maintains a per-member log of timestamped actions with optional extra data.

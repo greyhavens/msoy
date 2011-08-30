@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.party.client;
 
-import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 
 import com.threerings.msoy.money.data.all.Currency;

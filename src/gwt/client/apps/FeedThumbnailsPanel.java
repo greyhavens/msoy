@@ -6,7 +6,6 @@ package client.apps;
 import java.util.List;
 
 import com.google.common.collect.Lists;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -15,19 +14,19 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.TextBox;
 
-import com.threerings.gwt.ui.SmartTable;
-
 import com.threerings.orth.data.MediaDesc;
+import com.threerings.orth.data.MediaDescSize;
+
+import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.apps.gwt.AppInfo;
 import com.threerings.msoy.apps.gwt.AppService;
 import com.threerings.msoy.apps.gwt.AppServiceAsync;
-import com.threerings.orth.data.MediaDescSize;
 import com.threerings.msoy.facebook.gwt.FeedThumbnail;
 
 import client.edutil.EditorTable;
-import client.edutil.ThumbnailSet;
 import client.edutil.EditorUtil.ConfigException;
+import client.edutil.ThumbnailSet;
 import client.ui.MsoyUI;
 import client.util.ClickCallback;
 import client.util.InfoCallback;

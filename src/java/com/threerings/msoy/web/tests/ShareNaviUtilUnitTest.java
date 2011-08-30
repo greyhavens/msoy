@@ -5,10 +5,11 @@ package com.threerings.msoy.web.tests;
 
 import java.util.List;
 
-import org.junit.Test;
-import org.junit.Assert;
-
 import com.google.common.collect.Lists;
+
+import org.junit.Assert;
+import org.junit.Test;
+
 import com.threerings.msoy.web.gwt.SharedNaviUtil;
 
 public class ShareNaviUtilUnitTest

@@ -10,7 +10,6 @@ import com.threerings.util.Joiner;
 import com.threerings.msoy.data.MsoyUserOccupantInfo;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.game.data.GameSummary;
-
 import com.threerings.msoy.party.data.PartyOccupantInfo;
 
 /**

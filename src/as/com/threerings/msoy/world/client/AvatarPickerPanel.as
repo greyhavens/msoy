@@ -3,28 +3,24 @@
 
 package com.threerings.msoy.world.client {
 
-import flash.display.DisplayObject;
-import flash.geom.Point;
 import flash.events.Event;
-import flash.events.MouseEvent;
 
 import mx.containers.HBox;
 import mx.containers.VBox;
 import mx.controls.Label;
-import mx.core.ScrollPolicy;
 import mx.core.UIComponent;
+
+import com.threerings.util.Log;
+
+import com.threerings.orth.data.MediaDesc;
+import com.threerings.orth.data.MediaDescSize;
+import com.threerings.orth.ui.MediaWrapper;
 
 import com.threerings.flex.CommandButton;
 
 import com.threerings.msoy.client.Msgs;
-import com.threerings.orth.data.MediaDesc;
-import com.threerings.orth.data.MediaDescSize;
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.ui.FloatingPanel;
-import com.threerings.orth.ui.MediaWrapper;
-
-import com.threerings.util.Log;
-import com.threerings.util.Util;
 
 /**
  * Panel to show a list of avatar buttons, close on click and return the selected one.

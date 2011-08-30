@@ -6,18 +6,18 @@ package com.threerings.msoy.underwire.server;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.depot.PersistenceContext;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.StringUtil;
+
+import com.samskivert.depot.PersistenceContext;
 
 import com.threerings.presents.annotation.BlockingThread;
 import com.threerings.presents.annotation.MainInvoker;
 
-import com.threerings.user.OOOUser;
-
 import com.threerings.underwire.server.persist.EventRecord;
 import com.threerings.underwire.server.persist.UnderwireRepository;
 import com.threerings.underwire.web.data.Event;
+import com.threerings.user.OOOUser;
 
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.server.persist.ItemRecord;

@@ -2,21 +2,25 @@
 // $Id$
 
 package com.threerings.msoy.world.client {
-import com.threerings.orth.ui.ScalingMediaDescContainer;
-
 import flash.events.MouseEvent;
 import flash.filters.ColorMatrixFilter;
 import flash.geom.Rectangle;
 
-import mx.core.UIComponent;
-import mx.containers.Tile;
 import mx.containers.Canvas;
+import mx.containers.Tile;
 import mx.controls.Text;
+import mx.core.UIComponent;
+
+import com.threerings.io.TypedArray;
+
+import com.threerings.util.Log;
 
 import com.threerings.display.GraphicsUtil;
+
+import com.threerings.orth.ui.MediaWrapper;
+import com.threerings.orth.ui.ScalingMediaDescContainer;
+
 import com.threerings.flex.CommandCheckBox;
-import com.threerings.io.TypedArray;
-import com.threerings.util.Log;
 
 import com.threerings.msoy.badge.data.all.BadgeCodes;
 import com.threerings.msoy.badge.data.all.InProgressBadge;
@@ -28,7 +32,6 @@ import com.threerings.msoy.data.GwtPageNavItemData;
 import com.threerings.msoy.data.HomePageItem;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.ui.FlyingPanel;
-import com.threerings.orth.ui.MediaWrapper;
 
 /**
  * The "My Whirled Places" 3x3 grid of recent games and rooms you have visited, plus stamps and

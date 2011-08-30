@@ -3,10 +3,10 @@
 
 package com.threerings.msoy.web.server;
 
-import java.util.List;
-import java.util.Map;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -16,17 +16,15 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 
-import com.threerings.msoy.web.gwt.MessageUtil;
-import com.threerings.msoy.web.gwt.Pages;
-
 import com.threerings.msoy.fora.server.persist.ForumMessageRecord;
 import com.threerings.msoy.fora.server.persist.ForumRepository;
 import com.threerings.msoy.fora.server.persist.ForumThreadRecord;
-
 import com.threerings.msoy.group.data.all.Group;
 import com.threerings.msoy.group.data.all.GroupMembership;
 import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
+import com.threerings.msoy.web.gwt.MessageUtil;
+import com.threerings.msoy.web.gwt.Pages;
 
 import static com.threerings.msoy.Log.log;
 

@@ -7,10 +7,9 @@ import com.threerings.util.Log;
 
 import com.threerings.whirled.data.SceneUpdate;
 
-import com.threerings.msoy.world.client.WorldContext;
-
 import com.threerings.msoy.room.data.MsoyScene;
 import com.threerings.msoy.room.data.SceneAttrsUpdate;
+import com.threerings.msoy.world.client.WorldContext;
 
 /**
  * Generates a command to update scene attributes.

@@ -10,10 +10,10 @@ import com.threerings.underwire.gwt.client.AccountPopup;
 import com.threerings.underwire.gwt.client.WebContext;
 import com.threerings.underwire.web.data.Account;
 
+import com.threerings.msoy.underwire.gwt.MsoyAccount.SocialStatus;
 import com.threerings.msoy.underwire.gwt.MsoyAccount;
 import com.threerings.msoy.underwire.gwt.SupportService;
 import com.threerings.msoy.underwire.gwt.SupportServiceAsync;
-import com.threerings.msoy.underwire.gwt.MsoyAccount.SocialStatus;
 
 import client.util.ClickCallback;
 
@@ -61,10 +61,10 @@ public class MsoyAccountPopup extends AccountPopup
                 return true;
             }
         };
-        
+
         return row;
     }
-    
+
     protected ListBox _status;
 
     protected static final SupportServiceAsync _supportService = GWT.create(SupportService.class);

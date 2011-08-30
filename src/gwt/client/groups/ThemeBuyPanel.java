@@ -3,21 +3,23 @@
  */
 package client.groups;
 
-import client.money.BuyPanel;
-import client.shell.CShell;
-import client.ui.BorderedDialog;
-import client.ui.MsoyUI;
-import client.util.InfoCallback;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.PopupPanel;
+
 import com.threerings.msoy.data.all.Theme;
 import com.threerings.msoy.group.gwt.GroupService;
 import com.threerings.msoy.group.gwt.GroupServiceAsync;
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.PriceQuote;
 import com.threerings.msoy.money.data.all.PurchaseResult;
+
+import client.money.BuyPanel;
+import client.shell.CShell;
+import client.ui.BorderedDialog;
+import client.ui.MsoyUI;
+import client.util.InfoCallback;
 
 public class ThemeBuyPanel extends BuyPanel<Theme>
 {

@@ -15,13 +15,16 @@ import com.google.common.collect.Sets;
 import com.google.common.primitives.Ints;
 import com.google.inject.Inject;
 
-import com.samskivert.servlet.util.CookieUtil;
 import com.samskivert.util.CollectionUtil;
 import com.samskivert.util.StringUtil;
 
-import com.threerings.web.gwt.ServiceException;
-import com.threerings.gwt.util.PagedResult;
+import com.samskivert.servlet.util.CookieUtil;
 
+import com.threerings.gwt.util.PagedResult;
+import com.threerings.web.gwt.ServiceException;
+
+import com.threerings.msoy.admin.server.ABTestLogic;
+import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.all.Friendship;
 import com.threerings.msoy.data.all.GroupName;
@@ -31,36 +34,29 @@ import com.threerings.msoy.group.data.all.GroupMembership.Rank;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.group.server.persist.ThemeRecord;
 import com.threerings.msoy.group.server.persist.ThemeRepository;
+import com.threerings.msoy.money.data.all.Currency;
+import com.threerings.msoy.money.data.all.PriceQuote;
+import com.threerings.msoy.money.data.all.PurchaseResult;
+import com.threerings.msoy.money.server.MoneyExchange;
+import com.threerings.msoy.money.server.MoneyLogic;
+import com.threerings.msoy.person.server.persist.GameInvitationRecord;
+import com.threerings.msoy.person.server.persist.InvitationRecord;
+import com.threerings.msoy.person.server.persist.InviteRepository;
+import com.threerings.msoy.person.server.persist.ProfileRepository;
 import com.threerings.msoy.server.FriendManager;
 import com.threerings.msoy.server.MemberLogic;
 import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.SubscriptionLogic;
 import com.threerings.msoy.server.persist.MemberCardRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
-
+import com.threerings.msoy.spam.server.SpamUtil;
+import com.threerings.msoy.spam.server.persist.SpamRepository;
 import com.threerings.msoy.web.gwt.CookieNames;
 import com.threerings.msoy.web.gwt.Invitation;
 import com.threerings.msoy.web.gwt.MemberCard;
 import com.threerings.msoy.web.gwt.ServiceCodes;
 import com.threerings.msoy.web.gwt.WebCreds;
 import com.threerings.msoy.web.gwt.WebMemberService;
-
-import com.threerings.msoy.admin.server.ABTestLogic;
-import com.threerings.msoy.admin.server.RuntimeConfig;
-
-import com.threerings.msoy.money.data.all.Currency;
-import com.threerings.msoy.money.data.all.PriceQuote;
-import com.threerings.msoy.money.data.all.PurchaseResult;
-import com.threerings.msoy.money.server.MoneyExchange;
-import com.threerings.msoy.money.server.MoneyLogic;
-
-import com.threerings.msoy.person.server.persist.GameInvitationRecord;
-import com.threerings.msoy.person.server.persist.InvitationRecord;
-import com.threerings.msoy.person.server.persist.InviteRepository;
-import com.threerings.msoy.person.server.persist.ProfileRepository;
-
-import com.threerings.msoy.spam.server.SpamUtil;
-import com.threerings.msoy.spam.server.persist.SpamRepository;
 
 import static com.threerings.msoy.Log.log;
 

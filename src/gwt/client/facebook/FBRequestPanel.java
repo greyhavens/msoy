@@ -13,13 +13,13 @@ import com.threerings.gwt.util.StringUtil;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.facebook.gwt.FacebookGame;
+import com.threerings.msoy.facebook.gwt.FacebookService.InviteInfo;
 import com.threerings.msoy.facebook.gwt.FacebookService;
 import com.threerings.msoy.facebook.gwt.FacebookServiceAsync;
-import com.threerings.msoy.facebook.gwt.FacebookService.InviteInfo;
+import com.threerings.msoy.web.gwt.ArgNames.FBParam;
 import com.threerings.msoy.web.gwt.ArgNames;
 import com.threerings.msoy.web.gwt.CookieNames;
 import com.threerings.msoy.web.gwt.SharedNaviUtil;
-import com.threerings.msoy.web.gwt.ArgNames.FBParam;
 
 import client.facebookbase.FacebookUtil;
 import client.shell.CShell;

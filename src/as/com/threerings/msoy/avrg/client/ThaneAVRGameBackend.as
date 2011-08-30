@@ -5,6 +5,11 @@ package com.threerings.msoy.avrg.client {
 
 import flash.utils.ByteArray;
 
+import com.whirled.game.client.PropertySpaceHelper;
+import com.whirled.game.data.GameData;
+import com.whirled.game.data.PropertySpaceObject;
+import com.whirled.game.data.WhirledPlayerObject;
+
 import com.threerings.util.Integer;
 import com.threerings.util.Iterator;
 import com.threerings.util.Log;
@@ -18,33 +23,22 @@ import com.threerings.crowd.data.OccupantInfo;
 
 import com.threerings.whirled.spot.data.SceneLocation;
 
-import com.whirled.game.client.PropertySpaceHelper;
-import com.whirled.game.data.GameData;
-import com.whirled.game.data.PropertySpaceObject;
-import com.whirled.game.data.WhirledPlayerObject;
-
-import com.threerings.msoy.data.all.MemberName;
-
-import com.threerings.msoy.bureau.util.MsoyBureauContext;
-
-import com.threerings.msoy.item.data.all.Audio;
-import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.item.data.all.ItemIdent;
-
-import com.threerings.msoy.party.client.PartyGameHelper;
-
-import com.threerings.msoy.room.data.ActorInfo;
-import com.threerings.msoy.room.data.MsoyLocation;
-import com.threerings.msoy.room.data.RoomObject;
-import com.threerings.msoy.room.data.RoomPropertiesObject;
-
-import com.threerings.msoy.game.data.PlayerObject;
-
 import com.threerings.msoy.avrg.client.BackendUtils;
 import com.threerings.msoy.avrg.data.AVRGameAgentObject;
 import com.threerings.msoy.avrg.data.AVRGameObject;
 import com.threerings.msoy.avrg.data.PlayerLocation;
 import com.threerings.msoy.avrg.data.PropertySpaceObjectImpl;
+import com.threerings.msoy.bureau.util.MsoyBureauContext;
+import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.game.data.PlayerObject;
+import com.threerings.msoy.item.data.all.Audio;
+import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.party.client.PartyGameHelper;
+import com.threerings.msoy.room.data.ActorInfo;
+import com.threerings.msoy.room.data.MsoyLocation;
+import com.threerings.msoy.room.data.RoomObject;
+import com.threerings.msoy.room.data.RoomPropertiesObject;
 
 /**
  * Manages the connection to the server agent thane user code for an AVRG.

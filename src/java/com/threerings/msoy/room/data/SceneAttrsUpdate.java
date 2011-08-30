@@ -3,9 +3,10 @@
 
 package com.threerings.msoy.room.data;
 
-import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.whirled.data.SceneModel;
 import com.threerings.whirled.data.SceneUpdate;
+
+import com.threerings.msoy.item.data.all.Decor;
 
 /**
  * Encodes a scene update that updates the attributes in the MsoySceneModel.  Note that this

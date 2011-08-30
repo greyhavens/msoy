@@ -13,22 +13,20 @@ import com.google.common.collect.Multimap;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.util.Invoker;
+
+import com.samskivert.jdbc.RepositoryUnit;
 
 import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.annotation.MainInvoker;
-
 import com.threerings.presents.dobj.DSet;
 
 import com.threerings.orth.peer.server.OrthPeerManager.FarSeeingObserver;
 
-import com.threerings.msoy.peer.server.MsoyPeerManager;
-
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
-
+import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.server.persist.MemberRepository;
 
 import static com.threerings.msoy.Log.log;

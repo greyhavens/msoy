@@ -13,13 +13,11 @@ import com.threerings.util.ValueEvent;
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.FlexUtil;
 
+import com.threerings.msoy.client.Msgs;
+import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.ui.FlyingPanel;
 import com.threerings.msoy.ui.Stars;
 import com.threerings.msoy.ui.skins.CommentButton;
-
-import com.threerings.msoy.client.Msgs;
-import com.threerings.msoy.client.MsoyController;
-
 import com.threerings.msoy.world.client.WorldContext;
 import com.threerings.msoy.world.client.WorldController;
 

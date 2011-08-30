@@ -5,12 +5,11 @@ package com.threerings.msoy.game.client {
 
 import flash.filters.GlowFilter;
 
-import mx.controls.Label;
-
-import com.whirled.ui.NameLabelCreator;
-
 import com.whirled.game.client.GamePlayerList;
 import com.whirled.game.client.GamePlayerRecord;
+import com.whirled.ui.NameLabelCreator;
+
+import mx.controls.Label;
 
 public class MsoyGamePlayerList extends GamePlayerList
 {
@@ -51,10 +50,9 @@ public class MsoyGamePlayerList extends GamePlayerList
 }
 }
 
-import flash.filters.GlowFilter;
+import com.whirled.game.client.GamePlayerRenderer;
 
 import com.threerings.msoy.game.client.MsoyGamePlayerList;
-import com.whirled.game.client.GamePlayerRenderer;
 
 class MsoyGamePlayerRenderer extends GamePlayerRenderer
 {

@@ -5,19 +5,18 @@ package client.msgs;
 
 import java.util.List;
 
-import client.ui.MsoyUI;
-import client.util.Link;
-
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 
 import com.threerings.gwt.util.DataModel;
 
 import com.threerings.msoy.fora.gwt.ForumThread;
 import com.threerings.msoy.web.gwt.Pages;
+
+import client.ui.MsoyUI;
+import client.util.Link;
 
 /**
  * Overrides and adds functionality to the threads list for displaying group threads.

@@ -8,18 +8,13 @@ import flash.display.DisplayObject;
 import flash.display.Loader;
 import flash.display.LoaderInfo;
 import flash.display.Sprite;
-
 import flash.events.Event;
-
 import flash.geom.Matrix;
 import flash.geom.Rectangle;
-
 import flash.net.URLRequest;
-
 import flash.system.ApplicationDomain;
 import flash.system.LoaderContext;
 import flash.system.Security;
-
 import flash.utils.ByteArray;
 
 import com.threerings.display.LoaderUtil;

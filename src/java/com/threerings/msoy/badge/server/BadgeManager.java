@@ -9,25 +9,24 @@ import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.jdbc.WriteOnlyUnit;
 import com.samskivert.util.Invoker;
+
+import com.samskivert.jdbc.WriteOnlyUnit;
 
 import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.annotation.MainInvoker;
 
 import com.threerings.orth.notify.data.Notification;
 
-import com.threerings.msoy.data.MemberObject;
-import com.threerings.msoy.notify.server.MsoyNotificationManager;
-import com.threerings.msoy.server.MemberLocal;
-
-import com.threerings.msoy.notify.data.BadgeEarnedNotification;
-
 import com.threerings.msoy.badge.data.BadgeProgress;
 import com.threerings.msoy.badge.data.BadgeType;
 import com.threerings.msoy.badge.data.all.EarnedBadge;
 import com.threerings.msoy.badge.data.all.InProgressBadge;
 import com.threerings.msoy.badge.server.persist.InProgressBadgeRecord;
+import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.notify.data.BadgeEarnedNotification;
+import com.threerings.msoy.notify.server.MsoyNotificationManager;
+import com.threerings.msoy.server.MemberLocal;
 
 import static com.threerings.msoy.Log.log;
 

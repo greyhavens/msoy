@@ -3,11 +3,10 @@
 
 package com.threerings.msoy.data {
 
+import com.threerings.io.ObjectOutputStream;
+
 import com.threerings.util.Joiner;
 import com.threerings.util.Name;
-
-import com.threerings.io.ObjectInputStream;
-import com.threerings.io.ObjectOutputStream;
 
 /**
  * Used to authenticate a world session.

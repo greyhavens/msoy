@@ -12,17 +12,13 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import com.samskivert.swing.GroupLayout;
+import com.whirled.util.WhirledContext;
+
 import com.samskivert.util.Config;
 import com.samskivert.util.RunQueue;
 
-import com.threerings.media.FrameManager;
-import com.threerings.media.image.ImageManager;
-import com.threerings.media.sound.JavaSoundPlayer;
-import com.threerings.media.sound.SoundPlayer;
-import com.threerings.media.tile.TileManager;
+import com.samskivert.swing.GroupLayout;
 
-import com.threerings.resource.ResourceManager;
 import com.threerings.util.IdleTracker;
 import com.threerings.util.KeyDispatcher;
 import com.threerings.util.MessageManager;
@@ -37,11 +33,18 @@ import com.threerings.crowd.client.BodyService;
 import com.threerings.crowd.client.LocationDirector;
 import com.threerings.crowd.client.OccupantDirector;
 import com.threerings.crowd.client.PlaceView;
+
+import com.threerings.media.FrameManager;
+import com.threerings.media.image.ImageManager;
+import com.threerings.media.sound.JavaSoundPlayer;
+import com.threerings.media.sound.SoundPlayer;
+import com.threerings.media.tile.TileManager;
+
+import com.threerings.resource.ResourceManager;
+
 import com.threerings.parlor.client.ParlorDirector;
 
 import com.threerings.toybox.client.ToyBoxDirector;
-
-import com.whirled.util.WhirledContext;
 
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.DeploymentConfig;

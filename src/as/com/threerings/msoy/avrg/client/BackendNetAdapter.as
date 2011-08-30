@@ -3,14 +3,16 @@
 
 package com.threerings.msoy.avrg.client {
 
-import com.threerings.presents.dobj.DObject;
-import com.threerings.presents.dobj.MessageEvent;
-import com.threerings.presents.dobj.MessageListener;
+import com.whirled.game.data.PropertySetEvent;
+import com.whirled.game.data.PropertySetListener;
+
 import com.threerings.util.Arrays;
 import com.threerings.util.Integer;
 import com.threerings.util.ObjectMarshaller;
-import com.whirled.game.data.PropertySetEvent;
-import com.whirled.game.data.PropertySetListener;
+
+import com.threerings.presents.dobj.DObject;
+import com.threerings.presents.dobj.MessageEvent;
+import com.threerings.presents.dobj.MessageListener;
 
 /**
  * Listens for property changes and messages and dispatches to named functions.

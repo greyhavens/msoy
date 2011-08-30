@@ -3,10 +3,10 @@
 
 package com.threerings.msoy.chat.client {
 
-import mx.core.mx_internal;
-
 import com.whirled.ui.NameLabelCreator;
 import com.whirled.ui.PlayerList;
+
+import mx.core.mx_internal;
 
 import com.threerings.presents.dobj.DSet_Entry;
 import com.threerings.presents.dobj.EntryAddedEvent;
@@ -17,8 +17,8 @@ import com.threerings.presents.dobj.SetListener;
 import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.data.PlaceObject;
 
-import com.threerings.msoy.data.all.VizMemberName;
 import com.threerings.msoy.client.MsoyContext;
+import com.threerings.msoy.data.all.VizMemberName;
 import com.threerings.msoy.room.data.MemberInfo;
 import com.threerings.msoy.ui.MsoyNameLabelCreator;
 
@@ -109,8 +109,10 @@ public class RoomOccupantList extends PlayerList
 
 import flash.display.DisplayObject;
 
-import mx.containers.HBox;
+import com.whirled.ui.NameLabel;
+import com.whirled.ui.NameLabelCreator;
 
+import mx.containers.HBox;
 import mx.core.ScrollPolicy;
 
 import com.threerings.util.Comparable;
@@ -118,9 +120,6 @@ import com.threerings.util.Hashable;
 import com.threerings.util.Name;
 
 import com.threerings.crowd.data.OccupantInfo;
-
-import com.whirled.ui.NameLabel;
-import com.whirled.ui.NameLabelCreator;
 
 import com.threerings.orth.data.OrthName;
 

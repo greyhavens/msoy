@@ -12,7 +12,6 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.google.common.primitives.Longs;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -25,36 +24,28 @@ import com.threerings.orth.data.MediaDesc;
 
 import com.threerings.gwt.util.ExpanderResult;
 
+import com.threerings.msoy.comment.data.all.Comment;
+import com.threerings.msoy.comment.data.all.CommentType;
+import com.threerings.msoy.comment.server.persist.CommentRecord;
+import com.threerings.msoy.comment.server.persist.CommentRepository.CommentThread;
+import com.threerings.msoy.comment.server.persist.CommentRepository;
 import com.threerings.msoy.data.all.CloudfrontMediaDesc;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.server.MediaDescFactory;
-import com.threerings.msoy.server.persist.MemberCardRecord;
-import com.threerings.msoy.server.persist.MemberRecord;
-import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.game.server.persist.GameInfoRecord;
-import com.threerings.msoy.web.gwt.Activity;
-import com.threerings.msoy.web.gwt.MemberCard;
-
 import com.threerings.msoy.group.server.GroupLogic;
 import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
-
-import com.threerings.msoy.comment.data.all.Comment;
-import com.threerings.msoy.comment.data.all.CommentType;
-import com.threerings.msoy.comment.server.persist.CommentRecord;
-import com.threerings.msoy.comment.server.persist.CommentRepository;
-import com.threerings.msoy.comment.server.persist.CommentRepository.CommentThread;
-
 import com.threerings.msoy.person.gwt.FeedMessage;
-import com.threerings.msoy.person.gwt.FeedMessageType.Category;
 import com.threerings.msoy.person.gwt.FeedMessageType;
-import com.threerings.msoy.person.gwt.MyWhirledData.FeedCategory;
 import com.threerings.msoy.person.server.persist.FeedMessageRecord;
 import com.threerings.msoy.person.server.persist.FeedRepository;
-import com.threerings.msoy.person.server.persist.FriendFeedMessageRecord;
-import com.threerings.msoy.person.server.persist.GroupFeedMessageRecord;
+import com.threerings.msoy.server.MediaDescFactory;
+import com.threerings.msoy.server.persist.MemberCardRecord;
+import com.threerings.msoy.server.persist.MemberRepository;
+import com.threerings.msoy.web.gwt.Activity;
+import com.threerings.msoy.web.gwt.MemberCard;
 
 import static com.threerings.msoy.Log.log;
 

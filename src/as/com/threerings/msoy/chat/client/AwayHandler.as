@@ -6,17 +6,15 @@ package com.threerings.msoy.chat.client {
 import com.threerings.util.MessageBundle;
 import com.threerings.util.StringUtil;
 
-import com.threerings.crowd.util.CrowdContext;
-
 import com.threerings.crowd.chat.client.CommandHandler;
 import com.threerings.crowd.chat.client.SpeakService;
 import com.threerings.crowd.chat.data.ChatCodes;
+import com.threerings.crowd.util.CrowdContext;
 
 import com.threerings.msoy.client.MemberService;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.data.MemberObject;
-import com.threerings.msoy.data.MsoyCodes;
 
 /**
  * Sets the user's away status.

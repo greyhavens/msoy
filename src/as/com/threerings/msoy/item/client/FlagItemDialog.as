@@ -14,11 +14,10 @@ import com.threerings.flex.GridUtil;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.data.MsoyCodes;
-import com.threerings.msoy.ui.FloatingPanel;
-
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemFlag_Kind;
 import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.ui.FloatingPanel;
 
 public class FlagItemDialog extends FloatingPanel
 {

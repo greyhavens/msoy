@@ -4,13 +4,11 @@
 package client.people;
 
 import com.google.gwt.core.client.GWT;
-
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 import com.threerings.msoy.badge.data.all.Badge;
 import com.threerings.msoy.badge.data.all.EarnedBadge;
-
 import com.threerings.msoy.profile.gwt.ProfileService;
 import com.threerings.msoy.web.gwt.Pages;
 

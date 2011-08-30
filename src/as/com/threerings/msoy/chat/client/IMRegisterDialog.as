@@ -3,16 +3,17 @@
 
 package com.threerings.msoy.chat.client {
 
-import mx.controls.TextInput;
 import mx.containers.Grid;
 import mx.containers.VBox;
+import mx.controls.TextInput;
+
+import com.threerings.util.MessageBundle;
 
 import com.threerings.flex.GridUtil;
 
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.ui.FloatingPanel;
-import com.threerings.util.MessageBundle;
 
 public class IMRegisterDialog extends FloatingPanel
 {

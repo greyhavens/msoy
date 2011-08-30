@@ -4,6 +4,7 @@
 package com.threerings.msoy.data;
 
 import javax.annotation.Generated;
+
 import com.threerings.presents.data.ClientObject;
 
 /**

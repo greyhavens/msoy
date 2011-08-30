@@ -7,8 +7,9 @@ import java.sql.Timestamp;
 
 import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistentRecord;
-import com.samskivert.depot.annotation.*; // for Depot annotations
+import com.samskivert.depot.annotation.*;
 import com.samskivert.depot.expression.ColumnExp;
+
 import com.threerings.msoy.item.data.all.MsoyItemType;
 
 /**

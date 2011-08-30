@@ -6,7 +6,6 @@ package com.threerings.msoy.person.gwt;
 import java.util.HashMap;
 
 import com.google.common.collect.Maps;
-
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 /**

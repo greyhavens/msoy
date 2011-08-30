@@ -3,11 +3,10 @@
 
 package com.threerings.msoy.chat.client {
 
-import com.threerings.crowd.chat.client.ChatDisplay;
-
-import com.threerings.crowd.chat.data.ChatMessage;
-
 import com.threerings.util.Log;
+
+import com.threerings.crowd.chat.client.ChatDisplay;
+import com.threerings.crowd.chat.data.ChatMessage;
 
 /**
  * Maintains chat history.

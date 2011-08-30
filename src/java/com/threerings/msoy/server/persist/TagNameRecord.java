@@ -7,6 +7,8 @@ import java.util.regex.Pattern;
 
 import com.google.common.base.Function;
 
+import com.samskivert.util.Tuple;
+
 import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.StringFuncs;
@@ -16,10 +18,9 @@ import com.samskivert.depot.annotation.GenerationType;
 import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.annotation.Index;
 import com.samskivert.depot.clause.OrderBy.Order;
-
 import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.expression.SQLExpression;
-import com.samskivert.util.Tuple;
+
 import com.threerings.io.Streamable;
 
 import com.threerings.msoy.data.all.TagCodes;

@@ -3,15 +3,11 @@
 
 package com.threerings.msoy.data.all {
 
-import flash.utils.ByteArray;
-
-import com.threerings.util.Equalable;
-import com.threerings.util.Util;
-import com.threerings.util.StringUtil;
-
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
 import com.threerings.io.Streamable;
+
+import com.threerings.util.Equalable;
 
 import com.threerings.orth.data.MediaDesc;
 

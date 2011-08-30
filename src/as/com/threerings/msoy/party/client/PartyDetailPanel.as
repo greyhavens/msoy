@@ -2,27 +2,23 @@
 // $Id$
 
 package com.threerings.msoy.party.client {
-import com.threerings.orth.ui.PlayerList;
-
 import mx.containers.HBox;
 import mx.containers.VBox;
-
 import mx.controls.Label;
+
+import com.threerings.orth.ui.MediaWrapper;
+import com.threerings.orth.ui.PlayerList;
 
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.FlexUtil;
 
 import com.threerings.msoy.client.Msgs;
-import com.threerings.msoy.ui.FloatingPanel;
-import com.threerings.orth.ui.MediaWrapper;
-
 import com.threerings.msoy.group.data.all.Group;
-
-import com.threerings.msoy.world.client.WorldContext;
-import com.threerings.msoy.world.client.WorldController;
-
 import com.threerings.msoy.party.data.PartyDetail;
 import com.threerings.msoy.party.data.PartyPeep;
+import com.threerings.msoy.ui.FloatingPanel;
+import com.threerings.msoy.world.client.WorldContext;
+import com.threerings.msoy.world.client.WorldController;
 
 public class PartyDetailPanel extends FloatingPanel
 {

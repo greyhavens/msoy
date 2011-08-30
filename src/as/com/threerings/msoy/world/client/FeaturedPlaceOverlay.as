@@ -4,7 +4,6 @@
 package com.threerings.msoy.world.client {
 
 import flash.display.Sprite;
-
 import flash.events.MouseEvent;
 
 import com.threerings.util.Command;

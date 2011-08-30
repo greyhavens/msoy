@@ -4,16 +4,16 @@
 package com.threerings.msoy.room.client.layout {
 
 import flash.display.DisplayObject;
-
 import flash.geom.Point;
 import flash.geom.Rectangle;
 
 import com.threerings.util.Log;
 
 import com.threerings.geom.Vector3;
+
 import com.threerings.msoy.item.data.all.Decor;
-import com.threerings.msoy.room.client.ClickLocation;
 import com.threerings.msoy.room.client.ActorSprite;
+import com.threerings.msoy.room.client.ClickLocation;
 import com.threerings.msoy.room.client.DecorSprite;
 import com.threerings.msoy.room.client.FurniSprite;
 import com.threerings.msoy.room.client.RoomElement;

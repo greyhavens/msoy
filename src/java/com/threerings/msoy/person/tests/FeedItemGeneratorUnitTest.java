@@ -5,15 +5,22 @@ package com.threerings.msoy.person.tests;
 
 import java.util.List;
 
+import com.google.common.collect.Lists;
+
 import org.junit.*;
 
-import com.google.common.collect.Lists;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.orth.data.MediaDesc;
-import com.threerings.msoy.data.all.MemberName;
 
+import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.person.gwt.AggregateFeedMessage.Style;
 import com.threerings.msoy.person.gwt.AggregateFeedMessage;
+import com.threerings.msoy.person.gwt.FeedItemGenerator.Builder;
+import com.threerings.msoy.person.gwt.FeedItemGenerator.Icon;
+import com.threerings.msoy.person.gwt.FeedItemGenerator.Media;
+import com.threerings.msoy.person.gwt.FeedItemGenerator.Messages;
+import com.threerings.msoy.person.gwt.FeedItemGenerator.Plural;
 import com.threerings.msoy.person.gwt.FeedItemGenerator;
 import com.threerings.msoy.person.gwt.FeedMessage;
 import com.threerings.msoy.person.gwt.FeedMessageAggregator;
@@ -21,16 +28,8 @@ import com.threerings.msoy.person.gwt.FeedMessageType;
 import com.threerings.msoy.person.gwt.FriendFeedMessage;
 import com.threerings.msoy.person.gwt.GroupFeedMessage;
 import com.threerings.msoy.person.gwt.SelfFeedMessage;
-import com.threerings.msoy.person.gwt.AggregateFeedMessage.Style;
-import com.threerings.msoy.person.gwt.FeedItemGenerator.Builder;
-import com.threerings.msoy.person.gwt.FeedItemGenerator.Icon;
-import com.threerings.msoy.person.gwt.FeedItemGenerator.Media;
-import com.threerings.msoy.person.gwt.FeedItemGenerator.Messages;
-import com.threerings.msoy.person.gwt.FeedItemGenerator.Plural;
-
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
-import com.threerings.orth.data.MediaDesc;
 
 import static org.junit.Assert.*;
 

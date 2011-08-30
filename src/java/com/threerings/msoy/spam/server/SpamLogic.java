@@ -26,17 +26,15 @@ import com.samskivert.util.Invoker;
 import com.samskivert.util.RandomUtil;
 import com.samskivert.util.StringUtil;
 
-import com.threerings.cron.server.CronLogic;
+import com.threerings.util.MessageBundle;
 
-import com.threerings.web.gwt.ServiceException;
+import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.orth.data.MediaDesc;
 import com.threerings.orth.data.MediaDescSize;
 
-import com.threerings.msoy.item.data.all.MsoyItemType;
-import com.threerings.presents.annotation.BlockingThread;
-
-import com.threerings.util.MessageBundle;
+import com.threerings.cron.server.CronLogic;
+import com.threerings.web.gwt.ServiceException;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.HashMediaDesc;
@@ -44,40 +42,36 @@ import com.threerings.msoy.data.all.MemberMailUtil;
 import com.threerings.msoy.fora.gwt.ForumThread;
 import com.threerings.msoy.fora.server.ForumLogic;
 import com.threerings.msoy.group.server.GroupLogic;
-
+import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.item.gwt.CatalogQuery;
 import com.threerings.msoy.item.gwt.ListingCard;
 import com.threerings.msoy.item.server.CatalogLogic;
 import com.threerings.msoy.item.server.ItemLogic;
 import com.threerings.msoy.item.server.persist.FavoritesRepository;
 import com.threerings.msoy.item.server.persist.LauncherRecord;
-
-import com.threerings.msoy.person.gwt.FeedItemGenerator;
 import com.threerings.msoy.person.gwt.FeedItemGenerator.Builder;
 import com.threerings.msoy.person.gwt.FeedItemGenerator.Icon;
 import com.threerings.msoy.person.gwt.FeedItemGenerator.Media;
 import com.threerings.msoy.person.gwt.FeedItemGenerator.Messages;
 import com.threerings.msoy.person.gwt.FeedItemGenerator.Plural;
-import com.threerings.msoy.person.gwt.FeedMessageType.Category;
+import com.threerings.msoy.person.gwt.FeedItemGenerator;
 import com.threerings.msoy.person.gwt.FeedMessage;
 import com.threerings.msoy.person.gwt.FeedMessageAggregator;
+import com.threerings.msoy.person.gwt.FeedMessageType.Category;
 import com.threerings.msoy.person.gwt.FeedMessageType;
 import com.threerings.msoy.person.gwt.MyWhirledData.FeedCategory;
 import com.threerings.msoy.person.server.FeedLogic;
 import com.threerings.msoy.server.MediaDescFactory;
-
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.ServerMessages;
 import com.threerings.msoy.server.persist.BatchInvoker;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
-import com.threerings.msoy.server.util.MailSender;
 import com.threerings.msoy.server.util.MailSender.Parameters;
-
+import com.threerings.msoy.server.util.MailSender;
 import com.threerings.msoy.spam.server.persist.SpamRecord;
 import com.threerings.msoy.spam.server.persist.SpamRepository;
-
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.MarkupBuilder;
 import com.threerings.msoy.web.gwt.Pages;

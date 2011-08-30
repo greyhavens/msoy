@@ -5,14 +5,11 @@ package com.threerings.msoy.applets.image {
 
 import flash.media.Camera;
 
-import mx.controls.ButtonBar;
-
 import mx.containers.HBox;
 import mx.containers.TitleWindow;
 import mx.containers.VBox;
-
+import mx.controls.ButtonBar;
 import mx.core.UIComponent;
-
 import mx.managers.PopUpManager;
 
 import com.threerings.display.CameraSnapshotter;

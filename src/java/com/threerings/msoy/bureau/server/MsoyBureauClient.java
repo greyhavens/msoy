@@ -7,7 +7,9 @@ import com.threerings.presents.client.Client;
 import com.threerings.presents.dobj.DEvent;
 import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.dobj.InvocationResponseEvent;
+
 import com.threerings.bureau.server.BureauSession;
+
 import com.threerings.msoy.game.data.PlayerObject;
 
 /**

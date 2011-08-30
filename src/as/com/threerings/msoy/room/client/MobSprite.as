@@ -6,14 +6,13 @@ package com.threerings.msoy.room.client {
 import flash.display.DisplayObject;
 import flash.display.Sprite;
 
+import com.threerings.util.Log;
+
 import com.threerings.crowd.data.OccupantInfo;
 
 import com.threerings.msoy.avrg.client.AVRGameBackend;
-import com.threerings.msoy.world.client.WorldContext;
-
 import com.threerings.msoy.room.data.MobInfo;
-
-import com.threerings.util.Log;
+import com.threerings.msoy.world.client.WorldContext;
 
 /**
  * Displays a MOB in the world.

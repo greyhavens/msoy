@@ -6,12 +6,9 @@ package com.threerings.msoy.web.server;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-
 import java.text.DateFormat;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -20,7 +17,6 @@ import java.util.TimeZone;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
-
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamConstants;
@@ -31,7 +27,6 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 
 import org.apache.commons.codec.binary.Base64;
-
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HostConfiguration;
 import org.apache.commons.httpclient.HttpClient;

@@ -5,8 +5,8 @@ package client.frame;
 
 import java.util.Map;
 
-import com.threerings.msoy.facebook.gwt.FacebookService;
 import com.threerings.msoy.facebook.gwt.FacebookService.StoryKey;
+import com.threerings.msoy.facebook.gwt.FacebookService;
 
 import client.facebookbase.FacebookUtil;
 import client.facebookbase.StoryFeeder;

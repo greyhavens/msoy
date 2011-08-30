@@ -5,7 +5,6 @@ package com.threerings.msoy.party.client;
 
 import com.threerings.util.ActionScript;
 
-import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 
 /**

@@ -4,31 +4,26 @@
 package com.threerings.msoy.client {
 
 import flash.display.DisplayObject;
-
 import flash.events.MouseEvent;
 
 import mx.containers.Canvas;
 import mx.containers.HBox;
-
 import mx.controls.Label;
-
 import mx.core.ScrollPolicy;
 
-import com.threerings.flex.FlexWrapper;
+import com.threerings.util.Command;
 
 import com.threerings.presents.client.ClientAdapter;
 import com.threerings.presents.client.ClientEvent;
 
-import com.threerings.util.Command;
-
-import com.threerings.flex.CommandButton;
-import com.threerings.flex.FlexUtil;
-
 import com.threerings.orth.data.MediaDesc;
 import com.threerings.orth.ui.MediaWrapper;
 
-import com.threerings.msoy.client.MsoyController;
+import com.threerings.flex.CommandButton;
+import com.threerings.flex.FlexUtil;
+import com.threerings.flex.FlexWrapper;
 
+import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.world.client.WorldContext;
 import com.threerings.msoy.world.client.WorldController;
 

@@ -10,15 +10,17 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.velocity.VelocityContext;
-import org.apache.velocity.app.VelocityEngine;
-import org.mortbay.jetty.servlet.DefaultServlet;
-
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.VelocityEngine;
+
+import org.mortbay.jetty.servlet.DefaultServlet;
+
 import com.samskivert.io.StreamUtil;
 import com.samskivert.util.StringUtil;
+
 import com.samskivert.velocity.VelocityUtil;
 
 import com.threerings.msoy.facebook.server.FacebookLogic;

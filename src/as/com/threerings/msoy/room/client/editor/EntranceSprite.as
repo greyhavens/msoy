@@ -4,15 +4,11 @@
 package com.threerings.msoy.room.client.editor {
 
 import flash.display.BitmapData;
-
 import flash.geom.Matrix;
-
-
-import com.threerings.msoy.world.client.WorldContext;
 
 import com.threerings.msoy.room.client.FurniSprite;
 import com.threerings.msoy.room.data.MsoyLocation;
-import com.threerings.msoy.data.all.MediaDescImpl;
+import com.threerings.msoy.world.client.WorldContext;
 
 public class EntranceSprite extends FurniSprite
 {

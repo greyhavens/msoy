@@ -6,35 +6,29 @@ package com.threerings.msoy.world.client {
 import flash.events.FocusEvent;
 import flash.events.KeyboardEvent;
 import flash.events.MouseEvent;
-
 import flash.geom.Rectangle;
-
 import flash.ui.Keyboard;
 
 import mx.containers.VBox;
-
 import mx.controls.Label;
 import mx.controls.TextInput;
-
 import mx.events.FlexEvent;
-
-import com.threerings.presents.client.InvocationAdapter;
-import com.threerings.presents.client.ClientAdapter;
-
-import com.threerings.presents.dobj.AttributeChangedEvent;
-import com.threerings.presents.dobj.AttributeChangeListener;
-
-import com.threerings.crowd.chat.client.MuteObserver;
 
 import com.threerings.util.Log;
 import com.threerings.util.Name;
 import com.threerings.util.StringUtil;
 
+import com.threerings.presents.client.ClientAdapter;
+import com.threerings.presents.client.InvocationAdapter;
+import com.threerings.presents.dobj.AttributeChangeListener;
+import com.threerings.presents.dobj.AttributeChangedEvent;
+
+import com.threerings.crowd.chat.client.MuteObserver;
+
+import com.threerings.orth.ui.PlayerList;
+
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.FlexUtil;
-
-import com.threerings.msoy.ui.FlyingPanel;
-import com.threerings.orth.ui.PlayerList;
 
 import com.threerings.msoy.client.MemberService;
 import com.threerings.msoy.client.Msgs;
@@ -42,6 +36,7 @@ import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.PlayerEntry;
+import com.threerings.msoy.ui.FlyingPanel;
 
 public class FriendsListPanel extends FlyingPanel
     implements AttributeChangeListener, MuteObserver

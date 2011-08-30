@@ -4,15 +4,14 @@
 package com.threerings.msoy.avrg.data;
 
 import java.io.IOException;
-
 import java.util.Map;
 import java.util.Set;
 
-import com.whirled.game.data.PropertySpaceObject;
-import com.whirled.game.server.PropertySpaceHelper;
-
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+
+import com.whirled.game.data.PropertySpaceObject;
+import com.whirled.game.server.PropertySpaceHelper;
 
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;

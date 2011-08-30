@@ -3,8 +3,8 @@
 
 package com.threerings.msoy.utils {
 
-import flash.text.TextFormat;
 import flash.text.TextField;
+import flash.text.TextFormat;
 
 import com.threerings.util.StringUtil;
 

@@ -5,15 +5,13 @@ package com.threerings.msoy.client {
 
 import mx.containers.HBox;
 import mx.containers.VBox;
-
 import mx.core.ScrollPolicy;
 
-
+import com.threerings.orth.data.MediaDescSize;
 import com.threerings.orth.ui.MediaWrapper;
 
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.data.all.PlayerEntry;
-import com.threerings.orth.data.MediaDescSize;
 
 public class PlayerRenderer extends HBox
 {

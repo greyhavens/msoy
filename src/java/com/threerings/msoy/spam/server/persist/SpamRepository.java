@@ -3,9 +3,8 @@
 
 package com.threerings.msoy.spam.server.persist;
 
-import java.util.Set;
-
 import java.sql.Date;
+import java.util.Set;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;

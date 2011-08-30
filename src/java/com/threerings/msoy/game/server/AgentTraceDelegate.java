@@ -4,23 +4,21 @@
 package com.threerings.msoy.game.server;
 
 import com.google.common.base.Preconditions;
-
 import com.google.inject.Inject;
-
-import com.samskivert.jdbc.RepositoryUnit;
 
 import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
 
-import com.threerings.crowd.data.PlaceObject;
-
-import com.threerings.crowd.server.PlaceManagerDelegate;
+import com.samskivert.jdbc.RepositoryUnit;
 
 import com.threerings.presents.annotation.MainInvoker;
 
+import com.threerings.crowd.data.PlaceObject;
+import com.threerings.crowd.server.PlaceManagerDelegate;
+
 import com.threerings.msoy.avrg.server.AVRGameManager;
-import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 import com.threerings.msoy.game.server.persist.GameTraceLogRecord;
+import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 
 import static com.threerings.msoy.Log.log;
 

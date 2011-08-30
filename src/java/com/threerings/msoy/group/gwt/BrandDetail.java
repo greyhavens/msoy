@@ -6,10 +6,10 @@ package com.threerings.msoy.group.gwt;
 import java.util.List;
 
 import com.google.common.collect.Lists;
-
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.io.Streamable;
+
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
 

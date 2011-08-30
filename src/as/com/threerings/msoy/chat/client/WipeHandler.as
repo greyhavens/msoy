@@ -5,11 +5,10 @@ package com.threerings.msoy.chat.client {
 
 import com.threerings.util.MessageBundle;
 
-import com.threerings.crowd.util.CrowdContext;
-
 import com.threerings.crowd.chat.client.CommandHandler;
 import com.threerings.crowd.chat.client.SpeakService;
 import com.threerings.crowd.chat.data.ChatCodes;
+import com.threerings.crowd.util.CrowdContext;
 
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.Prefs;

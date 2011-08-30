@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -20,15 +19,15 @@ import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.item.gwt.CatalogListing;
 import com.threerings.msoy.item.gwt.CatalogQuery;
-import com.threerings.msoy.item.gwt.CatalogService;
-import com.threerings.msoy.item.gwt.CatalogService.SuiteResult;
-import com.threerings.msoy.item.gwt.CatalogServiceAsync;
-import com.threerings.msoy.item.gwt.ListingCard;
 import com.threerings.msoy.item.gwt.CatalogService.CatalogResult;
 import com.threerings.msoy.item.gwt.CatalogService.FavoritesResult;
+import com.threerings.msoy.item.gwt.CatalogService.SuiteResult;
+import com.threerings.msoy.item.gwt.CatalogService;
+import com.threerings.msoy.item.gwt.CatalogServiceAsync;
+import com.threerings.msoy.item.gwt.ListingCard;
 
-import client.util.LazyDataModel;
 import client.util.InfoCallback;
+import client.util.LazyDataModel;
 
 /**
  * Maintains information on catalog listings.

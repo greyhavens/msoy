@@ -4,14 +4,9 @@
 package com.threerings.msoy.room.client {
 
 import flash.events.Event;
-
 import flash.external.ExternalInterface;
-
-import flash.geom.Point;
-
 import flash.system.Capabilities;
 import flash.system.Security;
-
 import flash.utils.ByteArray;
 
 import com.threerings.util.Log;
@@ -23,23 +18,19 @@ import com.threerings.media.MediaContainer;
 
 import com.threerings.flex.CommandButton;
 
-import com.threerings.msoy.data.UberClientModes;
-
 import com.threerings.msoy.client.ControlBar;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.UberClient;
-
-import com.threerings.msoy.ui.SliderPopup;
-
+import com.threerings.msoy.data.UberClientModes;
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.Furniture;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
-
 import com.threerings.msoy.room.data.ActorInfo;
 import com.threerings.msoy.room.data.FurniData;
 import com.threerings.msoy.room.data.MsoyLocation;
+import com.threerings.msoy.ui.SliderPopup;
 
 /**
  * A non-network RoomView for testing avatars and other room entities.

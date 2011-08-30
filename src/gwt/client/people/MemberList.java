@@ -4,23 +4,20 @@
 package client.people;
 
 import com.google.gwt.core.client.GWT;
-
-import com.google.gwt.user.client.Command;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.data.all.Friendship;
-
 import com.threerings.msoy.web.gwt.MemberCard;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.WebMemberService;
 import com.threerings.msoy.web.gwt.WebMemberServiceAsync;
 
 import client.shell.CShell;
-
 import client.ui.MsoyUI;
 import client.util.Link;
 

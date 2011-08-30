@@ -9,9 +9,8 @@ import java.util.Map;
 
 import com.google.common.collect.Lists;
 
-import com.threerings.msoy.web.server.RPCProfiler;
-
 import com.threerings.msoy.admin.gwt.StatsModel;
+import com.threerings.msoy.web.server.RPCProfiler;
 
 /**
  * Collects stats on GWT servlet RPC performance.

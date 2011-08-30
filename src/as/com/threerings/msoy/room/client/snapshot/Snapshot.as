@@ -3,49 +3,40 @@
 
 package com.threerings.msoy.room.client.snapshot {
 
-import com.threerings.util.Log;
-
 import flash.display.BitmapData;
 import flash.display.DisplayObject;
-
 import flash.events.ErrorEvent;
 import flash.events.Event;
 import flash.events.EventDispatcher;
 import flash.events.IOErrorEvent;
 import flash.events.SecurityErrorEvent;
-
 import flash.geom.Matrix;
 import flash.geom.Rectangle;
-
 import flash.net.URLLoader;
 import flash.net.URLRequest;
 import flash.net.URLRequestMethod;
-
 import flash.utils.ByteArray;
 
 import mx.controls.scrollClasses.ScrollBar;
-
-import com.threerings.display.BackgroundJPGEncoder;
 
 import com.threerings.util.Log;
 import com.threerings.util.StringUtil;
 import com.threerings.util.ValueEvent;
 
+import com.threerings.display.BackgroundJPGEncoder;
+
 import com.threerings.whirled.data.Scene;
 
-import com.threerings.msoy.data.MsoyCodes;
-import com.threerings.msoy.data.MsoyCredentials;
 import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.LayeredContainer;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.PlaceBox;
-
-import com.threerings.msoy.world.client.WorldContext;
-
-import com.threerings.msoy.room.client.EntitySprite;
+import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.data.MsoyCredentials;
 import com.threerings.msoy.room.client.OccupantSprite;
 import com.threerings.msoy.room.client.RoomElement;
 import com.threerings.msoy.room.client.RoomView;
+import com.threerings.msoy.world.client.WorldContext;
 
 /**
  * Represents a particular snapshot

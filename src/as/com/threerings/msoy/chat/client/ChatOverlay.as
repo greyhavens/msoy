@@ -8,37 +8,27 @@ import flash.display.DisplayObject;
 import flash.display.Graphics;
 import flash.display.InteractiveObject;
 import flash.display.Sprite;
-
 import flash.events.MouseEvent;
-
 import flash.geom.Point;
 import flash.geom.Rectangle;
-
 import flash.text.TextFormat;
+import flash.utils.getTimer;
 
-import flash.utils.getTimer; // function import
+import com.whirled.game.data.WhirledGameCodes;
+import com.whirled.ui.PlayerList;
 
+import mx.controls.VScrollBar;
+import mx.controls.scrollClasses.ScrollBar;
+import mx.core.Container;
 import mx.events.FlexEvent;
 import mx.events.ScrollEvent;
 
-import mx.core.Container;
-import mx.core.UIComponent;
-
-import mx.controls.scrollClasses.ScrollBar;
-import mx.controls.VScrollBar;
-
-import com.whirled.game.data.WhirledGameCodes;
-
-import com.whirled.ui.PlayerList;
-
 import com.threerings.util.Arrays;
-import com.threerings.util.NamedValueEvent;
 import com.threerings.util.Log;
 import com.threerings.util.Map;
 import com.threerings.util.Maps;
 import com.threerings.util.Name;
-
-import com.threerings.display.ColorUtil;
+import com.threerings.util.NamedValueEvent;
 
 import com.threerings.crowd.chat.client.ChatDisplay;
 import com.threerings.crowd.chat.data.ChatCodes;
@@ -47,8 +37,10 @@ import com.threerings.crowd.chat.data.SystemMessage;
 import com.threerings.crowd.chat.data.TellFeedbackMessage;
 import com.threerings.crowd.chat.data.UserMessage;
 
-import com.threerings.msoy.utils.TextUtil;
+import com.threerings.display.ColorUtil;
 
+import com.threerings.msoy.chat.data.MsoyChatChannel;
+import com.threerings.msoy.chat.data.MsoyChatCodes;
 import com.threerings.msoy.client.LayeredContainer;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;
@@ -57,13 +49,10 @@ import com.threerings.msoy.client.PlaceBox;
 import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VizMemberName;
-
-import com.threerings.msoy.chat.data.MsoyChatChannel;
-import com.threerings.msoy.chat.data.MsoyChatCodes;
-
 import com.threerings.msoy.room.data.MsoyScene;
 import com.threerings.msoy.room.data.PetName;
 import com.threerings.msoy.room.data.PuppetName;
+import com.threerings.msoy.utils.TextUtil;
 import com.threerings.msoy.world.client.WorldContext;
 
 public class ChatOverlay
@@ -1322,21 +1311,17 @@ public class ChatOverlay
 
 import flash.display.Sprite;
 
-import mx.controls.scrollClasses.ScrollBar;
+import com.whirled.ui.PlayerList;
 
+import mx.controls.scrollClasses.ScrollBar;
 import mx.core.Container;
 import mx.core.ScrollPolicy;
-import mx.core.UIComponent;
-
-import com.threerings.flex.FlexWrapper;
-
-import com.whirled.ui.PlayerList;
 
 import com.threerings.util.Log;
 
-import com.threerings.msoy.client.TopPanel;
+import com.threerings.flex.FlexWrapper;
 
-import com.threerings.msoy.chat.client.ChatOverlay;
+import com.threerings.msoy.client.TopPanel;
 
 /**
  * Used when we put chat into sidebar mode.

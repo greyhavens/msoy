@@ -3,10 +3,10 @@
 
 package com.threerings.msoy.game.data {
 
+import com.whirled.game.data.GameDefinition;
+
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
-
-import com.whirled.game.data.GameDefinition;
 
 /**
  * Customizes the standard {@link GameDefinition} for MSOY which mainly means looking for our game

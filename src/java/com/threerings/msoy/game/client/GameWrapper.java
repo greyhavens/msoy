@@ -5,12 +5,13 @@ package com.threerings.msoy.game.client;
 
 import java.awt.Component;
 import java.awt.Window;
+
 import javax.swing.JApplet;
 import javax.swing.JRootPane;
 
-import com.threerings.media.FrameManager;
-
 import com.threerings.presents.client.Client;
+
+import com.threerings.media.FrameManager;
 
 import static com.threerings.msoy.Log.log;
 

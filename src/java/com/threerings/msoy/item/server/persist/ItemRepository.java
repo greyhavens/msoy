@@ -5,7 +5,6 @@ package com.threerings.msoy.item.server.persist;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -22,7 +21,6 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.google.common.primitives.Bytes;
 import com.google.inject.Inject;
 
 import com.samskivert.util.ArrayUtil;
@@ -60,9 +58,16 @@ import com.samskivert.depot.expression.FluentExp;
 import com.samskivert.depot.expression.SQLExpression;
 import com.samskivert.depot.operator.Case;
 import com.samskivert.depot.operator.FullText;
-import com.threerings.msoy.item.data.all.MsoyItemType;
+
 import com.threerings.presents.annotation.BlockingThread;
 
+import com.threerings.msoy.data.all.HashMediaDesc;
+import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.MsoyItemType;
+import com.threerings.msoy.item.gwt.CatalogListing;
+import com.threerings.msoy.item.gwt.CatalogQuery;
+import com.threerings.msoy.money.data.all.Currency;
+import com.threerings.msoy.room.server.persist.MemoryRepository;
 import com.threerings.msoy.server.persist.HotnessConfig;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.persist.RatingRecord;
@@ -71,15 +76,6 @@ import com.threerings.msoy.server.persist.TagHistoryRecord;
 import com.threerings.msoy.server.persist.TagNameRecord;
 import com.threerings.msoy.server.persist.TagRecord;
 import com.threerings.msoy.server.persist.TagRepository;
-
-import com.threerings.msoy.money.data.all.Currency;
-
-import com.threerings.msoy.room.server.persist.MemoryRepository;
-
-import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.item.gwt.CatalogListing;
-import com.threerings.msoy.item.gwt.CatalogQuery;
-import com.threerings.msoy.data.all.HashMediaDesc;
 
 import static com.threerings.msoy.Log.log;
 

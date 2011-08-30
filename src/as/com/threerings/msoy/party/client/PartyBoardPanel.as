@@ -3,26 +3,22 @@
 
 package com.threerings.msoy.party.client {
 
-import mx.core.ClassFactory;
-import mx.core.ScrollPolicy;
 import mx.containers.HBox;
 import mx.containers.VBox;
 import mx.controls.Image;
 import mx.controls.Label;
 import mx.controls.List;
 import mx.controls.Text;
+import mx.core.ClassFactory;
+import mx.core.ScrollPolicy;
 
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.FlexUtil;
 
-import com.threerings.msoy.ui.FloatingPanel;
-
 import com.threerings.msoy.client.Msgs;
-import com.threerings.msoy.data.MsoyCodes;
-
-import com.threerings.msoy.world.client.WorldContext;
-
 import com.threerings.msoy.party.data.PartyCodes;
+import com.threerings.msoy.ui.FloatingPanel;
+import com.threerings.msoy.world.client.WorldContext;
 
 public class PartyBoardPanel extends FloatingPanel
 {

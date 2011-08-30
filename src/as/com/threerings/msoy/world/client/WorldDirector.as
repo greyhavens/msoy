@@ -4,8 +4,9 @@
 package com.threerings.msoy.world.client {
 
 import com.threerings.io.TypedArray;
-import com.threerings.util.Util;
+
 import com.threerings.util.Log;
+import com.threerings.util.Util;
 
 import com.threerings.presents.client.BasicDirector;
 import com.threerings.presents.client.Client;
@@ -22,16 +23,13 @@ import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
-import com.threerings.msoy.world.client.WorldClient;
-
 import com.threerings.msoy.item.data.all.Avatar;
-
 import com.threerings.msoy.room.data.MsoySceneModel;
 import com.threerings.msoy.room.data.RoomConfig;
 import com.threerings.msoy.room.data.RoomObject;
-
 import com.threerings.msoy.tutorial.client.TutorialDirector;
 import com.threerings.msoy.tutorial.client.TutorialSequenceBuilder;
+import com.threerings.msoy.world.client.WorldClient;
 
 /**
  * Handles moving around in the virtual world.
@@ -282,7 +280,6 @@ import com.threerings.presents.dobj.SetListener;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.MemberName;
-
 import com.threerings.msoy.world.client.WorldContext;
 
 class FollowingNotifier

@@ -6,15 +6,14 @@ package com.threerings.msoy.mail.server.persist;
 import java.sql.Timestamp;
 import java.util.Date;
 
+import com.samskivert.util.StringUtil;
+
 import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.annotation.Column;
 import com.samskivert.depot.annotation.Entity;
 import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.expression.ColumnExp;
-import com.samskivert.util.StringUtil;
-
-import com.threerings.msoy.server.util.JSONMarshaller;
 
 import com.threerings.msoy.mail.gwt.ConvMessage;
 import com.threerings.msoy.mail.gwt.FriendInvitePayload;
@@ -23,6 +22,7 @@ import com.threerings.msoy.mail.gwt.GroupInvitePayload;
 import com.threerings.msoy.mail.gwt.MailPayload;
 import com.threerings.msoy.mail.gwt.PresentPayload;
 import com.threerings.msoy.mail.gwt.RoomGiftPayload;
+import com.threerings.msoy.server.util.JSONMarshaller;
 
 import static com.threerings.msoy.Log.log;
 

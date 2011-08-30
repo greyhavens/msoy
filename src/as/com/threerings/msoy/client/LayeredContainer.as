@@ -5,16 +5,15 @@ package com.threerings.msoy.client {
 
 import flash.display.BitmapData;
 import flash.display.DisplayObject;
-
 import flash.geom.Matrix;
-
 import flash.utils.Dictionary;
 
 import mx.core.Container;
 import mx.core.UIComponent;
 
-import com.threerings.flex.FlexWrapper;
 import com.threerings.util.Log;
+
+import com.threerings.flex.FlexWrapper;
 
 /**
  * Provide an organized way for callers to layer display objects onto one another at

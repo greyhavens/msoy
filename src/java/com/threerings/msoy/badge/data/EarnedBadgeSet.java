@@ -3,8 +3,9 @@
 
 package com.threerings.msoy.badge.data;
 
-import com.threerings.msoy.badge.data.all.EarnedBadge;
 import com.threerings.presents.dobj.DSet;
+
+import com.threerings.msoy.badge.data.all.EarnedBadge;
 
 /**
  * A distributed class containing {@link EarnedBadge} objects.

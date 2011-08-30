@@ -3,16 +3,13 @@
 
 package com.threerings.msoy.avrg.client {
 
-import flash.events.Event;
-
 import flash.display.BitmapData;
 import flash.display.LoaderInfo;
-
+import flash.events.Event;
 import flash.geom.Matrix;
-
-import flash.utils.setInterval;
 import flash.utils.clearInterval;
 import flash.utils.getTimer;
+import flash.utils.setInterval;
 
 import mx.core.UIComponent;
 import mx.events.ResizeEvent;
@@ -23,16 +20,14 @@ import com.threerings.util.ValueEvent;
 import com.threerings.crowd.client.PlaceView;
 import com.threerings.crowd.data.PlaceObject;
 
+import com.threerings.msoy.avrg.data.AVRGameConfig;
+import com.threerings.msoy.avrg.data.AVRGameObject;
 import com.threerings.msoy.client.NoPlaceView;
 import com.threerings.msoy.client.PlaceLayer;
 import com.threerings.msoy.client.Snapshottable;
-import com.threerings.msoy.ui.DataPackMediaContainer;
-
-import com.threerings.msoy.world.client.WorldContext;
-
 import com.threerings.msoy.game.client.GameContext;
-import com.threerings.msoy.avrg.data.AVRGameConfig;
-import com.threerings.msoy.avrg.data.AVRGameObject;
+import com.threerings.msoy.ui.DataPackMediaContainer;
+import com.threerings.msoy.world.client.WorldContext;
 
 public class AVRGamePanel extends UIComponent
     implements PlaceView, PlaceLayer, Snapshottable

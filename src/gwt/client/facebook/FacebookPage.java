@@ -5,13 +5,12 @@ package client.facebook;
 
 import com.google.gwt.core.client.GWT;
 
-import com.threerings.msoy.web.gwt.Args;
-import com.threerings.msoy.web.gwt.Pages;
-
 import com.threerings.msoy.facebook.gwt.FacebookGame;
+import com.threerings.msoy.facebook.gwt.FacebookService.InviteInfo;
 import com.threerings.msoy.facebook.gwt.FacebookService;
 import com.threerings.msoy.facebook.gwt.FacebookServiceAsync;
-import com.threerings.msoy.facebook.gwt.FacebookService.InviteInfo;
+import com.threerings.msoy.web.gwt.Args;
+import com.threerings.msoy.web.gwt.Pages;
 
 import client.shell.Page;
 import client.shell.ShellMessages;

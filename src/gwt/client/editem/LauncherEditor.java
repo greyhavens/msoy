@@ -3,8 +3,8 @@
 
 package client.editem;
 
-import com.threerings.msoy.item.data.all.Launcher;
 import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.Launcher;
 
 /**
  * A class for creating and editing {@link Launcher} digital items.

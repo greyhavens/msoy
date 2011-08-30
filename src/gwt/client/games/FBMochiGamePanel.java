@@ -4,17 +4,18 @@
 package client.games;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 
 import com.threerings.gwt.ui.AbsoluteCSSPanel;
 import com.threerings.gwt.ui.FloatPanel;
+
 import com.threerings.msoy.game.gwt.MochiGameInfo;
 import com.threerings.msoy.web.gwt.Pages;
 

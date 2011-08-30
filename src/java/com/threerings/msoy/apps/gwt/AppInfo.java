@@ -4,6 +4,7 @@
 package com.threerings.msoy.apps.gwt;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
+
 import com.threerings.msoy.web.gwt.ClientMode;
 
 /**

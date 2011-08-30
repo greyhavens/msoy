@@ -11,10 +11,10 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Label;
 
-import com.threerings.gwt.ui.SmartTable;
-
 import com.threerings.orth.data.MediaDesc;
 import com.threerings.orth.data.MediaDescSize;
+
+import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.item.data.all.Item;
 

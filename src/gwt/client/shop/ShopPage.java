@@ -8,6 +8,7 @@ import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.samskivert.util.ByteEnumUtil;
+
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.Theme;
 import com.threerings.msoy.group.gwt.GroupService;
@@ -30,8 +31,8 @@ import client.remix.RemixerHost;
 import client.shell.CShell;
 import client.shell.DynamicLookup;
 import client.shell.Page;
-import client.util.Link;
 import client.util.InfoCallback;
+import client.util.Link;
 
 /**
  * Handles the MetaSOY inventory application.

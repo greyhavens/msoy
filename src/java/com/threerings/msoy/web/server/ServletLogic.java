@@ -9,11 +9,11 @@ import com.google.inject.Singleton;
 
 import com.threerings.presents.dobj.RootDObjectManager;
 
-import com.threerings.msoy.peer.data.MsoyNodeObject;
-import com.threerings.msoy.peer.server.MsoyPeerManager;
-
 import com.threerings.web.gwt.ServiceException;
 import com.threerings.web.server.ServletWaiter;
+
+import com.threerings.msoy.peer.data.MsoyNodeObject;
+import com.threerings.msoy.peer.server.MsoyPeerManager;
 
 /**
  * Provides various services to servlets.

@@ -3,19 +3,18 @@
 
 package com.threerings.msoy.game.client {
 
+import com.whirled.game.client.BaseGameBackend;
+import com.whirled.game.client.WhirledGameController;
+
 import com.threerings.util.ValueEvent;
 
 import com.threerings.crowd.client.PlaceView;
 import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.util.CrowdContext;
 
-import com.whirled.game.client.WhirledGameController;
-import com.whirled.game.client.BaseGameBackend;
-
 import com.threerings.msoy.client.BootablePlaceController;
 import com.threerings.msoy.client.OccupantReporter;
 import com.threerings.msoy.client.TopPanel;
-
 import com.threerings.msoy.game.data.ParlorGameConfig;
 import com.threerings.msoy.game.data.ParlorGameObject;
 

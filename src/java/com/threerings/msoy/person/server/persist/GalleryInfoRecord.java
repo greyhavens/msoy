@@ -3,8 +3,8 @@
 
 package com.threerings.msoy.person.server.persist;
 
-import java.util.Date;
 import java.sql.Timestamp;
+import java.util.Date;
 
 import com.google.common.base.Function;
 
@@ -14,8 +14,8 @@ import com.samskivert.depot.annotation.Computed;
 import com.samskivert.depot.annotation.Entity;
 import com.samskivert.depot.expression.ColumnExp;
 
-import com.threerings.msoy.server.MediaDescFactory;
 import com.threerings.msoy.person.gwt.Gallery;
+import com.threerings.msoy.server.MediaDescFactory;
 
 /**
  * This represents just the gallery meta data, id and name, needed by {@link

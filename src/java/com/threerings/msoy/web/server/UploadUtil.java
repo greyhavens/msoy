@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.web.server;
 
-import static com.threerings.msoy.Log.log;
-
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
@@ -24,20 +22,14 @@ import java.util.Map;
 import javax.imageio.ImageIO;
 import javax.imageio.stream.MemoryCacheImageOutputStream;
 
+import com.google.common.collect.ImmutableMap;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
-
-import com.google.common.collect.ImmutableMap;
 
 import com.samskivert.util.StringUtil;
 
 import com.threerings.orth.data.MediaDescSize;
-import com.threerings.msoy.data.all.MediaDescUtil;
-import com.threerings.msoy.data.all.MediaMimeTypes;
-import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.server.ServerConfig;
-
-import com.threerings.msoy.room.server.SnapshotUploadFile;
 
 import com.threerings.s3.client.MediaType;
 import com.threerings.s3.client.S3Connection;
@@ -45,6 +37,14 @@ import com.threerings.s3.client.S3Exception;
 import com.threerings.s3.client.S3FileObject;
 import com.threerings.s3.client.S3ServerException;
 import com.threerings.s3.client.acl.AccessControlList;
+
+import com.threerings.msoy.data.all.MediaDescUtil;
+import com.threerings.msoy.data.all.MediaMimeTypes;
+import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.room.server.SnapshotUploadFile;
+import com.threerings.msoy.server.ServerConfig;
+
+import static com.threerings.msoy.Log.log;
 
 /**
  * Contains routines for receiving and publishing uploaded media files.

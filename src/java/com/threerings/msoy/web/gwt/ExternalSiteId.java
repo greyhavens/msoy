@@ -4,6 +4,7 @@
 package com.threerings.msoy.web.gwt;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
+
 import com.samskivert.util.ByteEnum;
 
 /**

@@ -3,9 +3,9 @@
 
 package com.threerings.msoy.avrg.client {
 
+import flash.display.DisplayObject;
 import flash.events.Event;
 import flash.events.MouseEvent;
-import flash.display.DisplayObject;
 import flash.geom.Point;
 
 import mx.containers.Grid;
@@ -16,23 +16,24 @@ import mx.controls.Label;
 import mx.controls.TextInput;
 import mx.core.ScrollPolicy;
 
-import com.threerings.presents.dobj.SetListener;
 import com.threerings.presents.dobj.EntryAddedEvent;
 import com.threerings.presents.dobj.EntryRemovedEvent;
 import com.threerings.presents.dobj.EntryUpdatedEvent;
+import com.threerings.presents.dobj.SetListener;
+
 import com.threerings.crowd.client.LocationObserver;
 import com.threerings.crowd.data.PlaceObject;
 
-import com.threerings.whirled.spot.data.SpotSceneObject;
 import com.threerings.whirled.spot.data.SceneLocation;
+import com.threerings.whirled.spot.data.SpotSceneObject;
 
 import com.threerings.flex.GridUtil;
 
 import com.threerings.msoy.client.MsoyContext;
-import com.threerings.msoy.ui.FloatingPanel;
 import com.threerings.msoy.room.client.RoomView;
 import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.msoy.room.data.RoomObject;
+import com.threerings.msoy.ui.FloatingPanel;
 
 /**
  * Floating panel showing some useful information for debugging and understanding the various msoy

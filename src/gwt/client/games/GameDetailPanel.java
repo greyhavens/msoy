@@ -6,7 +6,6 @@ package client.games;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -17,11 +16,12 @@ import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.orth.data.MediaDescSize;
+
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.comment.data.all.CommentType;
-import com.threerings.orth.data.MediaDescSize;
 import com.threerings.msoy.data.all.RatingResult;
 import com.threerings.msoy.game.gwt.GameDetail;
 import com.threerings.msoy.game.gwt.GameInfo;
@@ -37,9 +37,9 @@ import client.game.PlayButton;
 import client.shell.CShell;
 import client.ui.MsoyUI;
 import client.ui.NaviTabPanel;
+import client.ui.Rating.RateService;
 import client.ui.Rating;
 import client.ui.ThumbBox;
-import client.ui.Rating.RateService;
 import client.util.InfoCallback;
 import client.util.Link;
 

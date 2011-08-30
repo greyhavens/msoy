@@ -6,21 +6,17 @@ package client.me;
 import java.util.List;
 
 import com.google.common.collect.Lists;
-
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.gwt.util.ExpanderResult;
 
 import com.threerings.msoy.comment.data.all.Comment;
 import com.threerings.msoy.comment.data.all.CommentType;
 import com.threerings.msoy.person.gwt.FeedMessage;
-import com.threerings.msoy.person.gwt.FeedMessageAggregator;
 import com.threerings.msoy.person.gwt.MeService;
 import com.threerings.msoy.person.gwt.MeServiceAsync;
 import com.threerings.msoy.person.gwt.MyWhirledData;
@@ -29,10 +25,9 @@ import com.threerings.msoy.web.gwt.Pages;
 
 import client.comment.CommentPanel;
 import client.comment.CommentsPanel;
-import client.person.FeedUtil;
 import client.person.FeedMessagePanel;
+import client.person.FeedUtil;
 import client.shell.CShell;
-import client.ui.MsoyUI;
 import client.util.Link;
 
 public class StreamPanel extends CommentsPanel

@@ -76,7 +76,7 @@ public class BillingUtil
      */
     public static boolean isBillingReady ()
     {
-        return (!CShell.isGuest() && !CShell.isPermaguest() 
+        return (!CShell.isGuest() && !CShell.isPermaguest()
             && !MemberMailUtil.isPlaceholderAddress(CShell.creds.accountName));
     }
 

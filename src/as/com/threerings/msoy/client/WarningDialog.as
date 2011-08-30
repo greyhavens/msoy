@@ -6,9 +6,9 @@ package com.threerings.msoy.client {
 import flash.events.TimerEvent;
 import flash.utils.Timer;
 
+import mx.containers.VBox;
 import mx.controls.Label;
 import mx.controls.Text;
-import mx.containers.VBox;
 
 import com.threerings.msoy.client.MemberService;
 import com.threerings.msoy.ui.FloatingPanel;

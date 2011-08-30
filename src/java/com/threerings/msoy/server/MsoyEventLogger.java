@@ -10,21 +10,21 @@ import com.google.inject.Singleton;
 
 import com.samskivert.util.StringUtil;
 
-import com.threerings.msoy.item.data.all.MsoyItemType;
-import com.threerings.msoy.server.MsoyEvents.ItemPurchase.PseudoItem;
-import com.threerings.panopticon.client.EventLogger;
-import com.threerings.presents.server.ReportManager;
 import com.threerings.presents.server.ReportManager.Reporter;
+import com.threerings.presents.server.ReportManager;
 
-import com.threerings.msoy.money.data.all.Currency;
-import com.threerings.msoy.money.data.all.MoneyTransaction;
+import com.threerings.panopticon.client.EventLogger;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VisitorInfo;
+import com.threerings.msoy.item.data.all.MsoyItemType;
+import com.threerings.msoy.money.data.all.Currency;
+import com.threerings.msoy.money.data.all.MoneyTransaction;
 import com.threerings.msoy.server.MemberLocal;
 import com.threerings.msoy.server.MsoyEvents.Experience.Type;
+import com.threerings.msoy.server.MsoyEvents.ItemPurchase.PseudoItem;
 import com.threerings.msoy.server.MsoyEvents.MsoyEvent;
 
 import static com.threerings.msoy.Log.log;

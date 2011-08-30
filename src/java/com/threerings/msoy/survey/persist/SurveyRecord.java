@@ -13,6 +13,7 @@ import com.samskivert.depot.annotation.GeneratedValue;
 import com.samskivert.depot.annotation.GenerationType;
 import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.expression.ColumnExp;
+
 import com.threerings.msoy.survey.gwt.SurveyMetaData;
 
 /**

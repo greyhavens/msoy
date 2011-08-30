@@ -8,6 +8,7 @@ import flash.events.Event;
 import mx.events.CloseEvent;
 
 import com.threerings.io.TypedArray;
+
 import com.threerings.util.Arrays;
 import com.threerings.util.Command;
 import com.threerings.util.Controller;
@@ -15,15 +16,16 @@ import com.threerings.util.Log;
 import com.threerings.util.Name;
 import com.threerings.util.Util;
 
+import com.threerings.presents.client.ClientEvent;
+import com.threerings.presents.dobj.DObject;
+import com.threerings.presents.dobj.ObjectAccessError;
+import com.threerings.presents.util.SafeSubscriber;
+
 import com.threerings.parlor.client.SeatednessObserver;
 import com.threerings.parlor.client.TableDirector;
 import com.threerings.parlor.data.Table;
 import com.threerings.parlor.data.TableConfig;
 import com.threerings.parlor.game.data.GameConfig;
-
-import com.threerings.presents.dobj.DObject;
-import com.threerings.presents.dobj.ObjectAccessError;
-import com.threerings.presents.util.SafeSubscriber;
 
 import com.threerings.msoy.client.BlankPlaceView;
 import com.threerings.msoy.client.NoPlaceView;
@@ -39,8 +41,6 @@ import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.party.client.PartyDirector;
 import com.threerings.msoy.world.client.WorldContext;
-
-import com.threerings.presents.client.ClientEvent;
 
 public class LobbyController extends Controller
     implements SeatednessObserver

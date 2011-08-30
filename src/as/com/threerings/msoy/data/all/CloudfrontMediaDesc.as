@@ -5,8 +5,8 @@ package com.threerings.msoy.data.all {
 
 import flash.utils.ByteArray;
 
-import com.threerings.io.ObjectOutputStream;
 import com.threerings.io.ObjectInputStream;
+import com.threerings.io.ObjectOutputStream;
 
 import com.threerings.msoy.client.DeploymentConfig;
 

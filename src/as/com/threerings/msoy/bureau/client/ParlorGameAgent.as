@@ -3,8 +3,8 @@
 
 package com.threerings.msoy.bureau.client {
 
-import com.whirled.bureau.client.WhirledGameAgent;
 import com.whirled.bureau.client.GameAgentController;
+import com.whirled.bureau.client.WhirledGameAgent;
 import com.whirled.bureau.util.WhirledBureauContext;
 
 import com.threerings.msoy.game.client.MsoyThaneGameController;

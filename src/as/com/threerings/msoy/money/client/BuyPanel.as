@@ -3,9 +3,7 @@
 
 package com.threerings.msoy.money.client {
 
-import mx.containers.HBox;
 import mx.containers.VBox;
-
 import mx.controls.Label;
 
 import com.threerings.flex.CommandLinkButton;
@@ -15,7 +13,6 @@ import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.MsoyController;
-
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.PriceQuote;
 

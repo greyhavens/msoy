@@ -3,10 +3,10 @@
 
 package com.threerings.msoy.game.data;
 
-import com.threerings.util.ActionScript;
-
 import com.whirled.game.data.GameDefinition;
 import com.whirled.game.data.WhirledGameConfig;
+
+import com.threerings.util.ActionScript;
 
 import com.threerings.orth.data.MediaDesc;
 

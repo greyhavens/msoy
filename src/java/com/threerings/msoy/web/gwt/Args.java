@@ -3,13 +3,13 @@
 
 package com.threerings.msoy.web.gwt;
 
-import com.samskivert.util.ByteEnum;
-import com.samskivert.util.ByteEnumUtil;
-
 import java.util.Iterator;
 import java.util.List;
 
 import com.google.common.collect.Lists;
+
+import com.samskivert.util.ByteEnum;
+import com.samskivert.util.ByteEnumUtil;
 
 /**
  * Used to parse the arguments supplied to the page.
@@ -100,7 +100,7 @@ public class Args
 
 			@SuppressWarnings("unchecked")
 			Class<T> clazz = (Class<T>) defval.getClass();
-			
+
 			return ByteEnumUtil.fromByte(clazz, b);
         } catch (Exception e) {
             return defval;

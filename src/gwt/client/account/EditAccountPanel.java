@@ -8,12 +8,12 @@ import java.util.Collections;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasAlignment;
@@ -22,11 +22,11 @@ import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.gwt.ui.EnterClickAdapter;
-import com.threerings.gwt.ui.SmartTable;
-
 import com.threerings.orth.data.MediaDesc;
 import com.threerings.orth.data.MediaDescSize;
+
+import com.threerings.gwt.ui.EnterClickAdapter;
+import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.data.all.CharityInfo;
 import com.threerings.msoy.data.all.MemberName;
@@ -46,9 +46,9 @@ import client.ui.PromptPopup;
 import client.ui.TongueBox;
 import client.util.BillingUtil;
 import client.util.ClickCallback;
+import client.util.InfoCallback;
 import client.util.Link;
 import client.util.MediaUtil;
-import client.util.InfoCallback;
 import client.util.TextBoxUtil;
 
 /**

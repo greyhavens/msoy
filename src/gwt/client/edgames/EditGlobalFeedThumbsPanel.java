@@ -6,7 +6,6 @@ package client.edgames;
 import java.util.List;
 
 import com.google.common.collect.Lists;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -16,11 +15,11 @@ import com.threerings.msoy.edgame.gwt.EditGameServiceAsync;
 import com.threerings.msoy.facebook.gwt.FacebookService;
 import com.threerings.msoy.facebook.gwt.FeedThumbnail;
 
+import client.edutil.EditorUtil.ConfigException;
+import client.edutil.ThumbnailSet;
 import client.ui.MsoyUI;
 import client.util.ClickCallback;
 import client.util.InfoCallback;
-import client.edutil.ThumbnailSet;
-import client.edutil.EditorUtil.ConfigException;
 
 /**
  * Panel for editing Facebook feed story thumbnails.

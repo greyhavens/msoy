@@ -3,12 +3,14 @@
 
 package com.threerings.msoy.room.data {
 
-import com.threerings.io.ObjectInputStream;
-import com.threerings.presents.dobj.DObject;
 import com.whirled.game.client.PropertySpaceHelper;
 import com.whirled.game.data.PropertySpaceMarshaller;
 import com.whirled.game.data.PropertySpaceObject;
 import com.whirled.game.data.WhirledGameMessageMarshaller;
+
+import com.threerings.io.ObjectInputStream;
+
+import com.threerings.presents.dobj.DObject;
 
 /**
  * Provides a property space for a room.

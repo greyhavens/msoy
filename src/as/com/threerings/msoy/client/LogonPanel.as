@@ -5,9 +5,10 @@ package com.threerings.msoy.client {
 
 import flash.events.Event;
 
+import com.adobe.crypto.MD5;
+
 import mx.containers.HBox;
 import mx.containers.VBox;
-
 import mx.controls.Label;
 import mx.controls.Spacer;
 import mx.controls.Text;
@@ -15,21 +16,18 @@ import mx.controls.TextInput;
 import mx.core.UITextField;
 import mx.events.FlexEvent;
 
-import com.adobe.crypto.MD5;
-
 import com.threerings.util.CommandEvent;
 import com.threerings.util.Log;
 import com.threerings.util.Name;
 import com.threerings.util.StringUtil;
 
-import com.threerings.flex.CommandButton;
-import com.threerings.flex.FlexUtil;
-
 import com.threerings.presents.client.ClientAdapter;
 import com.threerings.presents.client.ClientEvent;
 
-import com.threerings.msoy.data.WorldCredentials;
+import com.threerings.flex.CommandButton;
+import com.threerings.flex.FlexUtil;
 
+import com.threerings.msoy.data.WorldCredentials;
 import com.threerings.msoy.ui.FloatingPanel;
 
 public class LogonPanel extends FloatingPanel

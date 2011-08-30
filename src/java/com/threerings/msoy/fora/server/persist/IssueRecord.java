@@ -3,18 +3,15 @@
 
 package com.threerings.msoy.fora.server.persist;
 
-import java.util.Date;
-
 import java.sql.Timestamp;
+import java.util.Date;
 
 import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistentRecord;
-
 import com.samskivert.depot.annotation.Column;
 import com.samskivert.depot.annotation.GeneratedValue;
 import com.samskivert.depot.annotation.GenerationType;
 import com.samskivert.depot.annotation.Id;
-
 import com.samskivert.depot.expression.ColumnExp;
 
 import com.threerings.msoy.fora.gwt.Issue;

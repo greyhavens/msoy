@@ -38,7 +38,7 @@ var isOpera = (navigator.userAgent.indexOf("Opera") != -1) ? true : false;
 function GetSwfVer(i){
 	// NS/Opera version >= 3 check for Flash plugin in plugin array
 	var flashVer = -1;
-	
+
 	if (navigator.plugins != null && navigator.plugins.length > 0) {
 		if (navigator.plugins["Shockwave Flash 2.0"] || navigator.plugins["Shockwave Flash"]) {
 			var swVer2 = navigator.plugins["Shockwave Flash 2.0"] ? " 2.0" : "";
@@ -70,7 +70,7 @@ function GetSwfVer(i){
 				flashVer = axo.GetVariable("$version");
 		      }
     		}catch(e){}
-	}	
+	}
 	return flashVer;
 }
 
@@ -117,13 +117,13 @@ function DetectFlashVer(reqMajorVer, reqMinorVer, reqRevision)
 function AC_AddExtension(src, ext)
 {
   if (src.indexOf('?') != -1)
-    return src.replace(/\?/, ext+'?'); 
+    return src.replace(/\?/, ext+'?');
   else
     return src + ext;
 }
 
-function AC_Generateobj(objAttrs, params, embedAttrs) 
-{ 
+function AC_Generateobj(objAttrs, params, embedAttrs)
+{
   var str = '<object ';
   for (var i in objAttrs)
     str += i + '="' + objAttrs[i] + '" ';
@@ -139,7 +139,7 @@ function AC_Generateobj(objAttrs, params, embedAttrs)
 }
 
 function AC_FL_RunContent(){
-  var ret = 
+  var ret =
     AC_GetArgs
     (  arguments, ".swf", "movie", "clsid:d27cdb6e-ae6d-11cf-96b8-444553540000"
      , "application/x-shockwave-flash"
@@ -153,16 +153,16 @@ function AC_GetArgs(args, ext, srcParamName, classid, mimeType){
   ret.params = new Object();
   ret.objAttrs = new Object();
   for (var i=0; i < args.length; i=i+2){
-    var currArg = args[i].toLowerCase();    
+    var currArg = args[i].toLowerCase();
 
-    switch (currArg){	
+    switch (currArg){
       case "classid":
         break;
       case "pluginspage":
         ret.embedAttrs[args[i]] = args[i+1];
         break;
       case "src":
-      case "movie":	
+      case "movie":
         args[i+1] = AC_AddExtension(args[i+1], ext);
         ret.embedAttrs["src"] = args[i+1];
         ret.params[srcParamName] = args[i+1];
@@ -211,7 +211,7 @@ function AC_GetArgs(args, ext, srcParamName, classid, mimeType){
       case "width":
       case "height":
       case "align":
-      case "vspace": 
+      case "vspace":
       case "hspace":
       case "class":
       case "title":
@@ -247,12 +247,12 @@ Vars = function(qStr) {
 				var nameValue = pair.split('=');
 				var name = nameValue[0];
 				var value = nameValue[1];
-				if(this[name] == null && name.length > 0 && value.length > 0) { 
+				if(this[name] == null && name.length > 0 && value.length > 0) {
 					this[name] = value;
 					this.numVars++;
 				}
 			}
-		} 
+		}
 	}
 }
 Vars.prototype.toString = function(pre) {

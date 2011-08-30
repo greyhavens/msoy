@@ -3,12 +3,12 @@
 
 package com.threerings.msoy.spam.server.persist;
 
+import com.samskivert.util.StringUtil;
+
 import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistentRecord;
-import com.samskivert.depot.annotation.*; // for Depot annotations
+import com.samskivert.depot.annotation.*;
 import com.samskivert.depot.expression.ColumnExp;
-
-import com.samskivert.util.StringUtil;
 
 /**
  * Contains persistent data stored for email addresses that have opted-out of email from Whirled.

@@ -4,7 +4,9 @@
 package com.threerings.msoy.game.gwt;
 
 import java.util.List;
+
 import com.google.gwt.user.client.rpc.AsyncCallback;
+
 import com.threerings.msoy.data.all.RatingResult;
 import com.threerings.msoy.game.data.all.Trophy;
 

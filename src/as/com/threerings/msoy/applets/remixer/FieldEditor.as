@@ -7,11 +7,9 @@ import flash.events.Event;
 
 import mx.containers.HBox;
 import mx.containers.VBox;
-
 import mx.controls.Label;
 import mx.controls.Spacer;
 import mx.controls.Text;
-
 import mx.core.UIComponent;
 
 import com.threerings.flex.CommandButton;

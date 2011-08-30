@@ -3,9 +3,9 @@
 
 package com.threerings.msoy.world.client {
 
+import mx.containers.VBox;
 import mx.controls.Label;
 import mx.controls.TextInput;
-import mx.containers.VBox;
 
 import com.threerings.util.MessageBundle;
 

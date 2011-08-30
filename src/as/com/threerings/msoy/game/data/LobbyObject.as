@@ -5,6 +5,8 @@ package com.threerings.msoy.game.data {
 
 import flash.errors.IllegalOperationError;
 
+import com.whirled.game.data.GameDefinition;
+
 import com.threerings.io.ObjectInputStream;
 
 import com.threerings.presents.dobj.DObject;
@@ -13,8 +15,6 @@ import com.threerings.presents.dobj.DSet;
 import com.threerings.parlor.data.Table;
 import com.threerings.parlor.data.TableLobbyObject;
 import com.threerings.parlor.data.TableMarshaller;
-
-import com.whirled.game.data.GameDefinition;
 
 import com.threerings.orth.data.MediaDesc;
 

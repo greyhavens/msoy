@@ -7,14 +7,11 @@ import java.util.Date;
 import java.util.List;
 
 import com.google.common.collect.Lists;
-
 import com.google.gwt.core.client.GWT;
-
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
@@ -29,13 +26,12 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.util.DateUtil;
 import com.threerings.gwt.util.SimpleDataModel;
 
-import com.threerings.msoy.web.gwt.Args;
-import com.threerings.msoy.web.gwt.Pages;
-
 import com.threerings.msoy.survey.gwt.SurveyMetaData;
 import com.threerings.msoy.survey.gwt.SurveyQuestion;
 import com.threerings.msoy.survey.gwt.SurveyService;
 import com.threerings.msoy.survey.gwt.SurveyServiceAsync;
+import com.threerings.msoy.web.gwt.Args;
+import com.threerings.msoy.web.gwt.Pages;
 
 import client.ui.DateFields;
 import client.ui.MsoyUI;
@@ -120,7 +116,7 @@ public class EditSurveyPanel extends VerticalPanel
                     clear();
                     add(MsoyUI.createLabel(_msgs.errSurveysNotLoaded(caught.getMessage()), null));
                 }
-    
+
                 public void onSuccess (List<SurveyMetaData> result) {
                     clear();
                     init(result);
@@ -209,7 +205,7 @@ public class EditSurveyPanel extends VerticalPanel
                     clear();
                     add(MsoyUI.createLabel(_msgs.errSurveyNotLoaded(caught.getMessage()), null));
                 }
-    
+
                 public void onSuccess (SurveyWithQuestions result) {
                     clear();
                     init(result);
@@ -415,7 +411,7 @@ public class EditSurveyPanel extends VerticalPanel
             {
                 _altering = false;
                 if (_direction != 0) {
-                    // no need to notify the cache here 
+                    // no need to notify the cache here
                     SurveyQuestion tmp = _result.questions.get(_index);
                     _result.questions.set(_index, _result.questions.get(_index + _direction));
                     _result.questions.set(_index + _direction, tmp);

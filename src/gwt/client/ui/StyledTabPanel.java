@@ -3,8 +3,8 @@
 
 package client.ui;
 
-import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.InlineLabel;

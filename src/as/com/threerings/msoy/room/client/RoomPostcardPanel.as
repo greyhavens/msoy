@@ -15,6 +15,7 @@ import mx.core.BitmapAsset;
 import mx.core.UIComponent;
 
 import com.threerings.io.TypedArray;
+
 import com.threerings.util.MailUtil;
 import com.threerings.util.StringUtil;
 
@@ -22,10 +23,9 @@ import com.threerings.presents.client.ConfirmAdapter;
 
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.data.MsoyCodes;
-import com.threerings.msoy.ui.FloatingPanel;
-
 import com.threerings.msoy.room.client.snapshot.Snapshot;
 import com.threerings.msoy.room.data.RoomObject;
+import com.threerings.msoy.ui.FloatingPanel;
 import com.threerings.msoy.world.client.WorldContext;
 
 /**

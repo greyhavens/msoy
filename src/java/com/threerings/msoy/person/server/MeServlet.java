@@ -16,27 +16,12 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-
 import com.google.inject.Inject;
 
 import com.samskivert.util.CollectionUtil;
 
 import com.threerings.gwt.util.ExpanderResult;
 import com.threerings.web.gwt.ServiceException;
-
-import com.threerings.msoy.fora.server.persist.ForumRepository;
-
-import com.threerings.msoy.group.server.GroupLogic;
-import com.threerings.msoy.group.server.persist.EarnedMedalRecord;
-import com.threerings.msoy.group.server.persist.GroupRecord;
-import com.threerings.msoy.group.server.persist.GroupRepository;
-import com.threerings.msoy.group.server.persist.MedalRecord;
-import com.threerings.msoy.group.server.persist.MedalRepository;
-
-import com.threerings.msoy.data.all.Award;
-import com.threerings.msoy.data.all.GroupName;
-import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.data.all.Award.AwardType;
 
 import com.threerings.msoy.badge.data.BadgeType;
 import com.threerings.msoy.badge.data.all.Badge;
@@ -46,13 +31,23 @@ import com.threerings.msoy.badge.gwt.StampCategory;
 import com.threerings.msoy.badge.server.BadgeLogic;
 import com.threerings.msoy.badge.server.persist.BadgeRepository;
 import com.threerings.msoy.badge.server.persist.EarnedBadgeRecord;
-
+import com.threerings.msoy.data.all.Award.AwardType;
+import com.threerings.msoy.data.all.Award;
+import com.threerings.msoy.data.all.GroupName;
+import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.fora.server.persist.ForumRepository;
+import com.threerings.msoy.group.server.GroupLogic;
+import com.threerings.msoy.group.server.persist.EarnedMedalRecord;
+import com.threerings.msoy.group.server.persist.GroupRecord;
+import com.threerings.msoy.group.server.persist.GroupRepository;
+import com.threerings.msoy.group.server.persist.MedalRecord;
+import com.threerings.msoy.group.server.persist.MedalRepository;
 import com.threerings.msoy.person.gwt.MeService;
-import com.threerings.msoy.person.gwt.FeedMessageType;
 import com.threerings.msoy.person.gwt.MyWhirledData;
 import com.threerings.msoy.person.gwt.PassportData;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
 import com.threerings.msoy.person.server.persist.ProfileRepository;
+import com.threerings.msoy.room.server.persist.MsoySceneRepository;
 import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.persist.ContestRecord;
 import com.threerings.msoy.server.persist.ContestRepository;
@@ -60,14 +55,11 @@ import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.persist.PromotionRecord;
 import com.threerings.msoy.server.persist.PromotionRepository;
-
 import com.threerings.msoy.web.gwt.Activity;
 import com.threerings.msoy.web.gwt.Contest;
 import com.threerings.msoy.web.gwt.ServiceCodes;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 import com.threerings.msoy.web.server.RPCProfiler;
-
-import com.threerings.msoy.room.server.persist.MsoySceneRepository;
 
 import static com.threerings.msoy.Log.log;
 

@@ -5,7 +5,9 @@ package com.threerings.msoy.person.gwt;
 
 import java.util.List;
 import java.util.Set;
+
 import com.google.gwt.user.client.rpc.AsyncCallback;
+
 import com.threerings.msoy.web.gwt.EmailContact;
 import com.threerings.msoy.web.gwt.MemberCard;
 

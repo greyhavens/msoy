@@ -3,6 +3,9 @@
 
 package com.threerings.msoy.game.server.persist;
 
+import com.samskivert.util.ArrayUtil;
+import com.samskivert.util.StringUtil;
+
 import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.annotation.Column;
@@ -14,19 +17,17 @@ import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.annotation.Index;
 import com.samskivert.depot.expression.ColumnExp;
 
-import com.samskivert.util.ArrayUtil;
-import com.samskivert.util.StringUtil;
-
-import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.orth.data.MediaDesc;
 
-import com.threerings.msoy.server.MediaDescFactory;
+import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.msoy.data.all.MediaDescUtil;
 import com.threerings.msoy.data.all.MediaMimeTypes;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.StaticMediaDesc;
 import com.threerings.msoy.data.all.TagCodes;
-
+import com.threerings.msoy.game.gwt.GameCard;
+import com.threerings.msoy.game.gwt.GameGenre;
+import com.threerings.msoy.game.gwt.GameInfo;
 import com.threerings.msoy.item.data.all.GameItem;
 import com.threerings.msoy.item.data.all.ItemPack;
 import com.threerings.msoy.item.data.all.Launcher;
@@ -34,10 +35,7 @@ import com.threerings.msoy.item.data.all.LevelPack;
 import com.threerings.msoy.item.data.all.Prize;
 import com.threerings.msoy.item.data.all.Prop;
 import com.threerings.msoy.item.data.all.TrophySource;
-
-import com.threerings.msoy.game.gwt.GameCard;
-import com.threerings.msoy.game.gwt.GameGenre;
-import com.threerings.msoy.game.gwt.GameInfo;
+import com.threerings.msoy.server.MediaDescFactory;
 
 /**
  * Contains details on a single game "title" including the development and published game item ids

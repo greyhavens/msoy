@@ -7,9 +7,8 @@ import com.threerings.util.Arrays;
 import com.threerings.util.Equalable;
 import com.threerings.util.Joiner;
 
-import com.threerings.msoy.utils.Args;
-
 import com.threerings.msoy.item.data.all.ItemTypes;
+import com.threerings.msoy.utils.Args;
 
 /**
  * Represents the address of a specific page on the whirled web site or wiki.

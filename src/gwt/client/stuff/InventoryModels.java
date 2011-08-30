@@ -8,7 +8,6 @@ import java.util.Map;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Maps;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -22,10 +21,10 @@ import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.MsoyItemType;
-import com.threerings.msoy.stuff.gwt.StuffService;
-import com.threerings.msoy.stuff.gwt.StuffServiceAsync;
 import com.threerings.msoy.stuff.gwt.StuffService.DetailOrIdent;
 import com.threerings.msoy.stuff.gwt.StuffService.InventoryResult;
+import com.threerings.msoy.stuff.gwt.StuffService;
+import com.threerings.msoy.stuff.gwt.StuffServiceAsync;
 import com.threerings.msoy.web.gwt.Args;
 
 import client.util.events.FlashEvents;

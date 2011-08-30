@@ -13,7 +13,6 @@ import flash.geom.Point;
 import flash.net.URLLoader;
 import flash.net.URLRequest;
 import flash.net.URLVariables;
-
 import flash.utils.Dictionary;
 
 import com.adobe.crypto.MD5;
@@ -23,13 +22,13 @@ import com.threerings.util.Name;
 
 import com.threerings.presents.client.ClientAdapter;
 import com.threerings.presents.client.ClientEvent;
-import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.dobj.DObjectManager;
 import com.threerings.presents.net.BootstrapData;
 import com.threerings.presents.net.Credentials;
 
 import com.threerings.whirled.data.Scene;
 
+import com.threerings.msoy.chat.data.MsoyChatChannel;
 import com.threerings.msoy.client.ContextMenuProvider;
 import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.GuestSessionCapture;
@@ -38,7 +37,6 @@ import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.MsoyParameters;
 import com.threerings.msoy.client.PlaceBox;
 import com.threerings.msoy.client.Prefs;
-
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyAuthResponseData;
 import com.threerings.msoy.data.UberClientModes;
@@ -47,8 +45,6 @@ import com.threerings.msoy.data.all.ChannelName;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VisitorInfo;
-
-import com.threerings.msoy.chat.data.MsoyChatChannel;
 import com.threerings.msoy.room.client.RoomObjectView;
 import com.threerings.msoy.world.data.WorldMarshaller;
 
@@ -138,7 +134,7 @@ public class WorldClient extends MsoyClient
             "staticMediaURL", DeploymentConfig.staticMediaURL);
     }
 
-    override protected function clientDidLogon (event :ClientEvent) :void    
+    override protected function clientDidLogon (event :ClientEvent) :void
     {
         super.clientDidLogon(event);
 
@@ -413,10 +409,6 @@ public class WorldClient extends MsoyClient
 }
 }
 
-import flash.external.ExternalInterface;
-
-import com.threerings.util.Log;
-
 import com.threerings.presents.dobj.AttributeChangeListener;
 import com.threerings.presents.dobj.AttributeChangedEvent;
 import com.threerings.presents.dobj.EntryAddedEvent;
@@ -424,15 +416,13 @@ import com.threerings.presents.dobj.EntryRemovedEvent;
 import com.threerings.presents.dobj.EntryUpdatedEvent;
 import com.threerings.presents.dobj.SetListener;
 
-import com.threerings.msoy.item.data.all.Avatar;
-import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.item.data.all.Item_UsedAs;
-
 import com.threerings.msoy.client.MsoyClient;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.GroupName;
-
+import com.threerings.msoy.item.data.all.Avatar;
+import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.Item_UsedAs;
 import com.threerings.msoy.world.client.WorldContext;
 
 class AvatarUpdateNotifier implements AttributeChangeListener

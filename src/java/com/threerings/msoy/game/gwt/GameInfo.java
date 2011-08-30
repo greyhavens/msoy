@@ -5,9 +5,9 @@ package com.threerings.msoy.game.gwt;
 
 import java.util.Comparator;
 
-import com.threerings.orth.data.MediaDesc;
-
 import com.google.gwt.user.client.rpc.IsSerializable;
+
+import com.threerings.orth.data.MediaDesc;
 
 import com.threerings.msoy.data.all.MemberName;
 

@@ -5,6 +5,7 @@ package com.threerings.msoy.data {
 
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
+
 import com.threerings.util.ClassUtil;
 import com.threerings.util.Name;
 

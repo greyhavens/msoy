@@ -13,6 +13,8 @@ import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import com.threerings.presents.annotation.BlockingThread;
+
 import com.threerings.web.gwt.ServiceException;
 
 import com.threerings.msoy.data.all.MemberName;
@@ -21,7 +23,6 @@ import com.threerings.msoy.server.persist.TagHistoryRecord;
 import com.threerings.msoy.server.persist.TagNameRecord;
 import com.threerings.msoy.server.persist.TagRepository;
 import com.threerings.msoy.web.gwt.TagHistory;
-import com.threerings.presents.annotation.BlockingThread;
 
 /**
  * Services for tags and tagged objects (items and groups at the time of writing).

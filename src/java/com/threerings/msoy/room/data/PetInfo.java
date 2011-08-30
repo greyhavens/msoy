@@ -4,7 +4,6 @@
 package com.threerings.msoy.room.data;
 
 import com.threerings.msoy.data.MsoyBodyObject;
-
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.item.data.all.Pet;

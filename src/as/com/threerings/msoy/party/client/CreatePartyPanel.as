@@ -4,37 +4,30 @@
 package com.threerings.msoy.party.client {
 
 import mx.containers.Grid;
-
 import mx.controls.CheckBox;
 import mx.controls.Text;
 import mx.controls.TextInput;
-
 import mx.core.ClassFactory;
 
 import com.threerings.util.ComparisonChain;
 import com.threerings.util.StringUtil;
 
+import com.threerings.orth.data.OrthName;
+
 import com.threerings.flex.CommandComboBox;
 import com.threerings.flex.FlexUtil;
 import com.threerings.flex.GridUtil;
 
-import com.threerings.orth.data.OrthName;
-
-import com.threerings.msoy.ui.FloatingPanel;
-
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.data.MemberObject;
-
-import com.threerings.msoy.world.client.WorldContext;
-
 import com.threerings.msoy.group.data.all.GroupMembership;
-
 import com.threerings.msoy.money.client.BuyPanel;
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.PriceQuote;
-
 import com.threerings.msoy.party.data.PartyCodes;
+import com.threerings.msoy.ui.FloatingPanel;
+import com.threerings.msoy.world.client.WorldContext;
 
 /**
  * A dialog used to configure a new party for creation.

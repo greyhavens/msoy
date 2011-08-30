@@ -6,12 +6,13 @@ package com.threerings.msoy.server;
 import java.util.Date;
 
 import com.samskivert.util.ByteEnum;
-import com.threerings.msoy.item.data.all.MsoyItemType;
+
 import com.threerings.panopticon.common.event.annotations.Event;
 import com.threerings.panopticon.common.event.annotations.Field;
 import com.threerings.panopticon.common.event.annotations.Index;
 
 import com.threerings.msoy.data.all.VisitorInfo;
+import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.money.data.all.Currency;
 
 /**

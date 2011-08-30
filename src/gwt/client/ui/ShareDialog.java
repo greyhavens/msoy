@@ -4,18 +4,15 @@
 package client.ui;
 
 import com.google.gwt.core.client.GWT;
-
-import com.google.gwt.http.client.URL;
-
-import com.google.gwt.user.client.Window;
-
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.http.client.URL;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTML;
 
-import com.threerings.gwt.ui.SmartTable;
-
 import com.threerings.orth.data.MediaDesc;
+
+import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.web.gwt.Args;

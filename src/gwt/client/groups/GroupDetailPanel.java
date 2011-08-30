@@ -4,10 +4,9 @@
 package client.groups;
 
 import com.google.gwt.core.client.GWT;
-
-import com.google.gwt.user.client.Command;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
@@ -18,14 +17,14 @@ import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.orth.data.MediaDesc;
+import com.threerings.orth.data.MediaDescSize;
+
 import com.threerings.gwt.ui.FloatPanel;
 import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.util.DateUtil;
 import com.threerings.gwt.util.PopupCallback;
-
-import com.threerings.orth.data.MediaDesc;
-import com.threerings.orth.data.MediaDescSize;
 
 import com.threerings.msoy.data.all.Theme;
 import com.threerings.msoy.group.data.all.Group;
@@ -40,7 +39,6 @@ import com.threerings.msoy.web.gwt.Pages;
 
 import client.groups.GroupsPage.Nav;
 import client.item.ShopUtil;
-
 import client.room.SceneUtil;
 import client.shell.CShell;
 import client.shell.ShellMessages;
@@ -49,9 +47,9 @@ import client.ui.PromptPopup;
 import client.ui.RoundBox;
 import client.ui.ThumbBox;
 import client.util.ClickCallback;
+import client.util.InfoCallback;
 import client.util.Link;
 import client.util.MediaUtil;
-import client.util.InfoCallback;
 
 /**
  * Displays the details of a Group.

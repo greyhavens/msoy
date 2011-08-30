@@ -14,9 +14,9 @@ import com.threerings.gwt.ui.AbsoluteCSSPanel;
 
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
+import com.threerings.msoy.web.gwt.WebUserService.AppResult;
 import com.threerings.msoy.web.gwt.WebUserService;
 import com.threerings.msoy.web.gwt.WebUserServiceAsync;
-import com.threerings.msoy.web.gwt.WebUserService.AppResult;
 
 import client.facebookbase.FacebookUtil;
 import client.shell.CShell;

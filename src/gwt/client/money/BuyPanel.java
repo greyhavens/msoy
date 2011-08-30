@@ -18,19 +18,19 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
-import com.threerings.msoy.money.gwt.CostUpdatedException;
-import com.threerings.msoy.money.gwt.InsufficientFundsException;
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.PriceQuote;
 import com.threerings.msoy.money.data.all.PurchaseResult;
+import com.threerings.msoy.money.gwt.CostUpdatedException;
+import com.threerings.msoy.money.gwt.InsufficientFundsException;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.ui.MsoyUI;
 import client.ui.RoundBox;
 import client.ui.StretchButton;
 import client.util.ClickCallback;
-import client.util.MoneyUtil;
 import client.util.Link;
+import client.util.MoneyUtil;
 
 /**
  * A base-class interface for buying an item in whirled.

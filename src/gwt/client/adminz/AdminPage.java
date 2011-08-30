@@ -5,12 +5,13 @@ package client.adminz;
 
 import com.google.gwt.core.client.GWT;
 
+import com.threerings.admin.web.client.ConfigEditorPanel;
+
 import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.item.gwt.ItemDetail;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
-import com.threerings.admin.web.client.ConfigEditorPanel;
 import client.shell.CShell;
 import client.shell.Page;
 import client.survey.EditSurveyPanel;

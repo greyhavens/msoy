@@ -3,10 +3,12 @@
 
 package com.threerings.msoy.admin.server.persist;
 
-import java.util.Date;
 import java.sql.Timestamp;
+import java.util.Date;
 
 import com.google.common.base.Function;
+
+import com.samskivert.util.StringUtil;
 
 import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistentRecord;
@@ -16,8 +18,6 @@ import com.samskivert.depot.annotation.GeneratedValue;
 import com.samskivert.depot.annotation.GenerationType;
 import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.expression.ColumnExp;
-
-import com.samskivert.util.StringUtil;
 
 import com.threerings.msoy.admin.gwt.ABTest;
 import com.threerings.msoy.web.gwt.ABTestCard;

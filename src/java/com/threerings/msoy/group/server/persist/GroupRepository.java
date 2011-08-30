@@ -19,6 +19,10 @@ import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import com.samskivert.util.ArrayIntSet;
+import com.samskivert.util.ArrayUtil;
+import com.samskivert.util.Tuple;
+
 import com.samskivert.depot.CacheInvalidator;
 import com.samskivert.depot.CountRecord;
 import com.samskivert.depot.DatabaseException;
@@ -43,24 +47,19 @@ import com.samskivert.depot.expression.SQLExpression;
 import com.samskivert.depot.operator.Case;
 import com.samskivert.depot.operator.FullText;
 
-import com.samskivert.util.ArrayIntSet;
-import com.samskivert.util.ArrayUtil;
-import com.samskivert.util.Tuple;
-
 import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.msoy.data.all.GroupName;
+import com.threerings.msoy.group.data.all.Group;
+import com.threerings.msoy.group.data.all.GroupMembership.Rank;
+import com.threerings.msoy.group.data.all.GroupMembership;
+import com.threerings.msoy.group.gwt.GroupCard;
+import com.threerings.msoy.group.gwt.GroupService.GroupQuery;
+import com.threerings.msoy.room.server.persist.MsoySceneRepository;
 import com.threerings.msoy.server.persist.TagHistoryRecord;
 import com.threerings.msoy.server.persist.TagNameRecord;
 import com.threerings.msoy.server.persist.TagRecord;
 import com.threerings.msoy.server.persist.TagRepository;
-
-import com.threerings.msoy.room.server.persist.MsoySceneRepository;
-import com.threerings.msoy.group.data.all.Group;
-import com.threerings.msoy.group.data.all.GroupMembership;
-import com.threerings.msoy.group.data.all.GroupMembership.Rank;
-import com.threerings.msoy.group.gwt.GroupCard;
-import com.threerings.msoy.group.gwt.GroupService.GroupQuery;
 
 /**
  * Manages the persistent store of group data.

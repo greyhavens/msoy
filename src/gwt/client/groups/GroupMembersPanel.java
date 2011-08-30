@@ -29,8 +29,8 @@ import client.ui.MiniNowLoadingWidget;
 import client.ui.MsoyUI;
 import client.ui.PromptPopup;
 import client.ui.ThumbBox;
-import client.util.Link;
 import client.util.InfoCallback;
+import client.util.Link;
 import client.util.MsoyPagedServiceDataModel;
 
 /**

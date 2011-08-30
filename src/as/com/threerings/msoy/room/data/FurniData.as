@@ -2,22 +2,23 @@
 // $Id$
 
 package com.threerings.msoy.room.data {
-import com.threerings.msoy.item.data.all.MsoyItemType;
+import com.threerings.io.ObjectInputStream;
+import com.threerings.io.ObjectOutputStream;
+import com.threerings.io.Streamable;
+
 import com.threerings.util.ByteEnum;
 import com.threerings.util.ClassUtil;
 import com.threerings.util.Cloneable;
 import com.threerings.util.Hashable;
 import com.threerings.util.Util;
 
-import com.threerings.io.ObjectInputStream;
-import com.threerings.io.ObjectOutputStream;
-import com.threerings.io.Streamable;
-
 import com.threerings.presents.dobj.DSet_Entry;
 
 import com.threerings.orth.data.MediaDesc;
+
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.data.all.MsoyItemType;
 
 public class FurniData
     implements Cloneable, Hashable, Streamable, DSet_Entry

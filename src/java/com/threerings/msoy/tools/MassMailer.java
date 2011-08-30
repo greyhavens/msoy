@@ -16,11 +16,13 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
-import com.samskivert.jdbc.ConnectionProvider;
-import com.samskivert.depot.PersistenceContext;
 import com.samskivert.util.Lifecycle;
 import com.samskivert.util.RunQueue;
 import com.samskivert.util.Tuple;
+
+import com.samskivert.jdbc.ConnectionProvider;
+
+import com.samskivert.depot.PersistenceContext;
 
 import com.threerings.presents.annotation.EventQueue;
 import com.threerings.presents.server.PresentsDObjectMgr;
@@ -28,12 +30,11 @@ import com.threerings.presents.server.PresentsDObjectMgr;
 import com.threerings.msoy.fora.server.persist.ForumMessageRecord;
 import com.threerings.msoy.fora.server.persist.ForumRepository;
 import com.threerings.msoy.fora.server.persist.ForumThreadRecord;
-import com.threerings.msoy.spam.server.SpamUtil;
-import com.threerings.msoy.web.gwt.MessageUtil;
-
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.util.MailSender;
+import com.threerings.msoy.spam.server.SpamUtil;
+import com.threerings.msoy.web.gwt.MessageUtil;
 
 import static com.threerings.msoy.Log.log;
 

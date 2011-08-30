@@ -10,7 +10,6 @@ import java.util.Set;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -24,13 +23,10 @@ import com.threerings.msoy.badge.data.all.InProgressBadge;
 import com.threerings.msoy.badge.server.persist.BadgeRepository;
 import com.threerings.msoy.badge.server.persist.EarnedBadgeRecord;
 import com.threerings.msoy.badge.server.persist.InProgressBadgeRecord;
-
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.money.server.MoneyLogic;
-
 import com.threerings.msoy.person.gwt.FeedMessageType;
 import com.threerings.msoy.person.server.FeedLogic;
-
 import com.threerings.msoy.server.MemberNodeActions;
 import com.threerings.msoy.server.persist.MemberRepository;
 

@@ -14,8 +14,10 @@ import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.clause.Where;
-import com.threerings.msoy.data.UserAction;
+
 import com.threerings.presents.annotation.BlockingThread;
+
+import com.threerings.msoy.data.UserAction;
 
 /**
  * Manages persistent information stored on a per-member basis.

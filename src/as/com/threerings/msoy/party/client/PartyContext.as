@@ -5,9 +5,8 @@ package com.threerings.msoy.party.client {
 
 import com.threerings.presents.util.PresentsContext;
 
-import com.threerings.msoy.world.client.WorldContext;
-
 import com.threerings.msoy.party.data.PartierObject;
+import com.threerings.msoy.world.client.WorldContext;
 
 /**
  * Provides access to distributed object services used by the party system.

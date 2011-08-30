@@ -6,7 +6,6 @@ package client.frame;
 import java.util.List;
 
 import com.google.common.collect.Lists;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
@@ -16,6 +15,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 
 import com.threerings.gwt.ui.AbsoluteCSSPanel;
+
 import com.threerings.msoy.facebook.gwt.FacebookService;
 import com.threerings.msoy.facebook.gwt.FacebookServiceAsync;
 import com.threerings.msoy.web.gwt.SessionData;
@@ -25,7 +25,6 @@ import client.shell.Session;
 import client.shell.ShellMessages;
 import client.ui.BorderedDialog;
 import client.ui.MsoyUI;
-
 import client.util.events.FlashEventListener;
 import client.util.events.FlashEvents;
 import client.util.events.StatusChangeEvent;
@@ -231,8 +230,8 @@ public class FacebookStatusPanel extends AbsoluteCSSPanel
     protected List<FlashEventListener> _listeners = Lists.newArrayList();
     // bah, we have to use a static here because the title bar keeps getting re-created but
     // didLogon is only called the first time
-    // TODO: some day sort this out 
+    // TODO: some day sort this out
     protected static Data _data;
-    protected static final ShellMessages _msgs = GWT.create(ShellMessages.class); 
+    protected static final ShellMessages _msgs = GWT.create(ShellMessages.class);
     protected static final FacebookServiceAsync _fbsvc = GWT.create(FacebookService.class);
 }

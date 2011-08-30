@@ -14,37 +14,18 @@ import com.google.inject.Singleton;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.Tuple;
 
-import com.threerings.web.gwt.ServiceException;
-
-import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.presents.annotation.BlockingThread;
 import com.threerings.presents.annotation.MainInvoker;
-
 import com.threerings.presents.dobj.RootDObjectManager;
 
-import com.threerings.msoy.data.all.Friendship;
-import com.threerings.msoy.data.all.DeploymentConfig;
-import com.threerings.msoy.server.MemberLogic;
-import com.threerings.msoy.server.MemberNodeActions;
-import com.threerings.msoy.server.ServerConfig;
-import com.threerings.msoy.server.ServerMessages;
-import com.threerings.msoy.server.persist.MemberRecord;
-import com.threerings.msoy.server.persist.MemberRepository;
-import com.threerings.msoy.server.util.JSONMarshaller;
-import com.threerings.msoy.server.util.MailSender;
-import com.threerings.msoy.spam.server.SpamUtil;
+import com.threerings.web.gwt.ServiceException;
 
+import com.threerings.msoy.data.all.DeploymentConfig;
+import com.threerings.msoy.data.all.Friendship;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.server.ItemLogic;
 import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
-
-import com.threerings.msoy.room.server.RoomLogic;
-
-import com.threerings.msoy.person.gwt.InvitationResults;
-
-import com.threerings.msoy.web.gwt.ServiceCodes;
-
 import com.threerings.msoy.mail.gwt.FriendInvitePayload;
 import com.threerings.msoy.mail.gwt.MailPayload;
 import com.threerings.msoy.mail.gwt.PresentPayload;
@@ -52,6 +33,19 @@ import com.threerings.msoy.mail.gwt.RoomGiftPayload;
 import com.threerings.msoy.mail.server.persist.ConvMessageRecord;
 import com.threerings.msoy.mail.server.persist.ConversationRecord;
 import com.threerings.msoy.mail.server.persist.MailRepository;
+import com.threerings.msoy.person.gwt.InvitationResults;
+import com.threerings.msoy.room.server.RoomLogic;
+import com.threerings.msoy.server.MemberLogic;
+import com.threerings.msoy.server.MemberNodeActions;
+import com.threerings.msoy.server.MsoyEventLogger;
+import com.threerings.msoy.server.ServerConfig;
+import com.threerings.msoy.server.ServerMessages;
+import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.MemberRepository;
+import com.threerings.msoy.server.util.JSONMarshaller;
+import com.threerings.msoy.server.util.MailSender;
+import com.threerings.msoy.spam.server.SpamUtil;
+import com.threerings.msoy.web.gwt.ServiceCodes;
 
 import static com.threerings.msoy.Log.log;
 

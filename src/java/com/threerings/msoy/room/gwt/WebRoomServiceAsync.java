@@ -4,7 +4,9 @@
 package com.threerings.msoy.room.gwt;
 
 import java.util.List;
+
 import com.google.gwt.user.client.rpc.AsyncCallback;
+
 import com.threerings.msoy.data.all.RatingResult;
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.PurchaseResult;

@@ -6,6 +6,7 @@ package com.threerings.msoy.badge.data.all {
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
 import com.threerings.io.SimpleStreamableObject;
+
 import com.threerings.presents.dobj.DSet_Entry;
 
 public /* abstract */ class Badge extends SimpleStreamableObject

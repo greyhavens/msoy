@@ -18,9 +18,8 @@ import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.annotation.Index;
 import com.samskivert.depot.expression.ColumnExp;
 
-import com.threerings.msoy.web.gwt.MemberCard;
-
 import com.threerings.msoy.fora.gwt.ForumMessage;
+import com.threerings.msoy.web.gwt.MemberCard;
 
 /**
  * Contains information on a single post to a thread.

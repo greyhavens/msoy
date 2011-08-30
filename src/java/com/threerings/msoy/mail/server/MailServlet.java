@@ -17,12 +17,6 @@ import com.samskivert.depot.DuplicateKeyException;
 
 import com.threerings.web.gwt.ServiceException;
 
-import com.threerings.msoy.server.MemberNodeActions;
-import com.threerings.msoy.server.persist.MemberCardRecord;
-import com.threerings.msoy.server.persist.MemberRecord;
-import com.threerings.msoy.server.util.JSONMarshaller;
-import com.threerings.msoy.underwire.server.SupportLogic;
-
 import com.threerings.msoy.mail.gwt.ConvMessage;
 import com.threerings.msoy.mail.gwt.Conversation;
 import com.threerings.msoy.mail.gwt.MailPayload;
@@ -30,7 +24,11 @@ import com.threerings.msoy.mail.gwt.MailService;
 import com.threerings.msoy.mail.server.persist.ConvMessageRecord;
 import com.threerings.msoy.mail.server.persist.ConversationRecord;
 import com.threerings.msoy.mail.server.persist.MailRepository;
-
+import com.threerings.msoy.server.MemberNodeActions;
+import com.threerings.msoy.server.persist.MemberCardRecord;
+import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.util.JSONMarshaller;
+import com.threerings.msoy.underwire.server.SupportLogic;
 import com.threerings.msoy.web.gwt.MemberCard;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.ServiceCodes;

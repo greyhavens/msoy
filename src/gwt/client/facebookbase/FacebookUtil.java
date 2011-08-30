@@ -9,7 +9,6 @@ import java.util.Map;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 
@@ -53,7 +52,7 @@ public class FacebookUtil
      * @param actionUrl the href attribute of the images, currently all images go to the same url
      * @param pubImages images to use if running on a local test server; if the images passed to
      *        facebook are not public, the feed story will not post
-     * @param setType whether to also set the "type" attribute to "image" for each item        
+     * @param setType whether to also set the "type" attribute to "image" for each item
      */
     public static JavaScriptObject makeImages (
         List<String> urls, String actionUrl, String[] pubImages, boolean setType)

@@ -3,35 +3,35 @@
 
 package com.threerings.msoy.server;
 
-import static com.threerings.msoy.Log.log;
-
 import java.util.Iterator;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+
 import com.samskivert.util.Lifecycle;
-
-import com.threerings.crowd.data.PlaceConfig;
-import com.threerings.crowd.data.PlaceObject;
-import com.threerings.crowd.server.BodyLocator;
-import com.threerings.crowd.server.PlaceManager;
-import com.threerings.crowd.server.PlaceRegistry;
-import com.threerings.msoy.bureau.data.ThaneCodes;
-import com.threerings.msoy.bureau.data.ThaneWorldMarshaller;
-import com.threerings.msoy.bureau.data.WindowClientObject;
-import com.threerings.msoy.bureau.server.ThaneWorldProvider;
-
-import com.threerings.msoy.room.data.RoomObject;
-import com.threerings.msoy.room.server.RoomManager;
-
-import com.threerings.msoy.game.data.ParlorGameConfig;
-import com.threerings.msoy.game.server.PlayerLocator;
 
 import com.threerings.presents.client.InvocationService.ResultListener;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
+
+import com.threerings.crowd.data.PlaceConfig;
+import com.threerings.crowd.data.PlaceObject;
+import com.threerings.crowd.server.BodyLocator;
+import com.threerings.crowd.server.PlaceManager;
+import com.threerings.crowd.server.PlaceRegistry;
+
+import com.threerings.msoy.bureau.data.ThaneCodes;
+import com.threerings.msoy.bureau.data.ThaneWorldMarshaller;
+import com.threerings.msoy.bureau.data.WindowClientObject;
+import com.threerings.msoy.bureau.server.ThaneWorldProvider;
+import com.threerings.msoy.game.data.ParlorGameConfig;
+import com.threerings.msoy.game.server.PlayerLocator;
+import com.threerings.msoy.room.data.RoomObject;
+import com.threerings.msoy.room.server.RoomManager;
+
+import static com.threerings.msoy.Log.log;
 
 /**
  * Adds msoy functionality to the place registry.

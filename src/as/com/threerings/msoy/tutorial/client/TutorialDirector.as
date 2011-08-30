@@ -3,34 +3,24 @@
 
 package com.threerings.msoy.tutorial.client {
 
-import flash.display.Sprite;
 import flash.events.Event;
 import flash.events.TimerEvent;
 import flash.utils.Timer;
-
-import mx.core.UIComponent;
 
 import mx.managers.PopUpManager;
 
 import com.threerings.util.Arrays;
 import com.threerings.util.Map;
 import com.threerings.util.Maps;
-import com.threerings.util.Util;
-
-import com.threerings.msoy.data.MemberObject;
-import com.threerings.msoy.data.MsoyCodes;
 
 import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.Msgs;
-import com.threerings.msoy.client.UIState;
 import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.client.TopPanel;
-
+import com.threerings.msoy.client.UIState;
+import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.world.client.WorldContext;
-import com.threerings.msoy.world.client.WorldControlBar;
-
-import flash.utils.setTimeout; // function import
-import flash.utils.getTimer; // function import
 
 /**
  * Director for the tutorial. Notionally manages a collection of tutorial items, their display and

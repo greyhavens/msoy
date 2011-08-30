@@ -6,12 +6,12 @@ package client.msgs;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
@@ -36,8 +36,8 @@ import client.ui.MiniNowLoadingWidget;
 import client.ui.MsoyUI;
 import client.ui.PromptPopup;
 import client.util.ClickCallback;
-import client.util.Link;
 import client.util.InfoCallback;
+import client.util.Link;
 
 /**
  * Displays the messages in a particular thread.

@@ -5,36 +5,31 @@ package com.threerings.msoy.client {
 
 import flash.events.Event;
 import flash.events.FullScreenEvent;
-
 import flash.utils.Dictionary;
 
+import mx.containers.HBox;
 import mx.core.ScrollPolicy;
 import mx.core.UIComponent;
-
-import mx.containers.HBox;
 
 import com.threerings.util.Integer;
 import com.threerings.util.NamedValueEvent;
 
+import com.threerings.presents.client.ClientAdapter;
+
 import com.threerings.display.DisplayUtil;
+
+import com.threerings.orth.data.MediaDesc;
+import com.threerings.orth.ui.ScalingMediaDescContainer;
 
 import com.threerings.flex.ChatControl;
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.FlexUtil;
 
-import com.threerings.presents.client.ClientAdapter;
-
-import com.threerings.orth.data.MediaDesc;
-
+import com.threerings.msoy.chat.client.MsoyChatDirector;
 import com.threerings.msoy.notify.client.MsoyNotificationDisplay;
-
 import com.threerings.msoy.ui.FloatingPanel;
-import com.threerings.orth.ui.ScalingMediaDescContainer;
 import com.threerings.msoy.ui.SliderPopup;
 import com.threerings.msoy.ui.skins.VolumeButton;
-
-import com.threerings.msoy.chat.client.MsoyChatDirector;
-
 import com.threerings.msoy.world.client.WorldController;
 
 /**

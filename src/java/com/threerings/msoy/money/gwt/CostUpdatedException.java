@@ -4,6 +4,7 @@
 package com.threerings.msoy.money.gwt;
 
 import com.threerings.web.gwt.ServiceException;
+
 import com.threerings.msoy.money.data.all.PriceQuote;
 
 /**

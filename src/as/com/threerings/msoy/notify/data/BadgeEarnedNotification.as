@@ -5,10 +5,10 @@ package com.threerings.msoy.notify.data {
 
 import com.threerings.io.ObjectInputStream;
 
-import com.threerings.msoy.badge.data.all.EarnedBadge;
-
-import com.threerings.msoy.badge.ui.BadgeNotificationDisplay;
 import com.threerings.orth.notify.data.Notification;
+
+import com.threerings.msoy.badge.data.all.EarnedBadge;
+import com.threerings.msoy.badge.ui.BadgeNotificationDisplay;
 
 /**
  * Notifies a user that they earned a new badge.

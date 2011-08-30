@@ -3,8 +3,8 @@
 
 package com.threerings.msoy.admin.server;
 
-import com.google.inject.Singleton;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
 import com.threerings.presents.dobj.AccessController;
 import com.threerings.presents.dobj.AttributeChangedEvent;
@@ -21,7 +21,6 @@ import com.threerings.msoy.admin.data.MoneyConfigObject;
 import com.threerings.msoy.admin.data.ServerConfigObject;
 import com.threerings.msoy.admin.data.SubscriptionConfigObject;
 import com.threerings.msoy.data.MemberObject;
-
 import com.threerings.msoy.money.server.MoneyExchange;
 import com.threerings.msoy.server.MemberLocator;
 

@@ -10,13 +10,10 @@ import com.threerings.util.CommandEvent;
 
 import com.threerings.crowd.data.OccupantInfo;
 
-import com.threerings.orth.data.MediaDescSize;
 import com.threerings.msoy.game.data.GameSummary;
-
-import com.threerings.msoy.world.client.WorldContext;
-
 import com.threerings.msoy.room.client.OccupantSprite;
 import com.threerings.msoy.room.data.MemberInfo;
+import com.threerings.msoy.world.client.WorldContext;
 
 /**
  * Displays a sprite for a member in a scene.
@@ -254,31 +251,27 @@ public class MemberSprite extends ActorSprite
 }
 
 import flash.geom.Rectangle;
-import flash.text.TextFieldAutoSize;
 import flash.text.TextField;
+import flash.text.TextFieldAutoSize;
 
-import com.threerings.util.Command;
-import com.threerings.util.CommandEvent;
 import com.threerings.util.Log;
 
 import com.threerings.text.TextFieldUtil;
 
-import com.threerings.msoy.client.Msgs;
 import com.threerings.orth.data.MediaDesc;
 import com.threerings.orth.data.MediaDescSize;
-import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.ui.GlowSprite;
 import com.threerings.orth.ui.ScalingMediaDescContainer;
 
+import com.threerings.msoy.client.Msgs;
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.game.data.GameSummary;
 import com.threerings.msoy.group.data.all.Group;
-import com.threerings.msoy.world.client.WorldController;
-
 import com.threerings.msoy.party.data.PartySummary;
-
-import com.threerings.msoy.room.client.MemberSprite;
 import com.threerings.msoy.room.client.EntitySprite;
+import com.threerings.msoy.room.client.MemberSprite;
 import com.threerings.msoy.room.client.OccupantSprite;
+import com.threerings.msoy.ui.GlowSprite;
+import com.threerings.msoy.world.client.WorldController;
 
 /**
  * A decoration used when this actor is at a table in a lobby.

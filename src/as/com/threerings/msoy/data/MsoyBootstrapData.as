@@ -3,11 +3,10 @@
 
 package com.threerings.msoy.data {
 
-import com.threerings.presents.net.BootstrapData;
-
 import com.threerings.io.ObjectInputStream;
-import com.threerings.io.ObjectOutputStream;
 import com.threerings.io.TypedArray;
+
+import com.threerings.presents.net.BootstrapData;
 
 /**
  * Msoy bootstrap data.

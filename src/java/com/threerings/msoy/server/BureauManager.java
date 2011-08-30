@@ -10,6 +10,8 @@ import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import com.whirled.bureau.data.BureauTypes;
+
 import com.samskivert.util.Interval;
 import com.samskivert.util.Lifecycle;
 import com.samskivert.util.ResultListener;
@@ -25,16 +27,14 @@ import com.threerings.presents.server.PresentsDObjectMgr;
 
 import com.threerings.bureau.server.BureauRegistry;
 
-import com.threerings.msoy.admin.gwt.BureauLauncherInfo;
+import com.threerings.nio.conman.ConnectionManager;
 
+import com.threerings.msoy.admin.gwt.BureauLauncherInfo;
 import com.threerings.msoy.bureau.data.BureauLauncherClientObject;
 import com.threerings.msoy.bureau.data.BureauLauncherCodes;
 import com.threerings.msoy.bureau.data.BureauLauncherMarshaller;
 import com.threerings.msoy.bureau.server.BureauLauncherProvider;
 import com.threerings.msoy.bureau.server.BureauLauncherSender;
-import com.threerings.nio.conman.ConnectionManager;
-
-import com.whirled.bureau.data.BureauTypes;
 
 import static com.threerings.msoy.Log.log;
 

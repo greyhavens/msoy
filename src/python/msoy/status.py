@@ -3,7 +3,7 @@
 import re, httplib, time, operator, datetime, optparse, sys
 
 ##
-## Classes, procedures and functions related to parsing http://www.whirled.com/report/status 
+## Classes, procedures and functions related to parsing http://www.whirled.com/report/status
 ##
 
 
@@ -179,7 +179,7 @@ def getReport ():
     if response.status != 200:
         raise httplib.HTTPException("Could not get status page, response=" + response)
     data = response.read()
-    
+
     # set up parsing variables
     report = Report()
     node = None
@@ -193,13 +193,13 @@ def getReport ():
             queue = None
             report.addNode(node)
             continue
-    
+
         m = reQueue.match(line)
         if node != None and m != None:
             queue = Queue(m.group('name'))
             node.addQueue(queue)
             continue
-    
+
         if queue != None: queue.addLine(line)
         elif node != None: node.addLine(line)
         else: print line

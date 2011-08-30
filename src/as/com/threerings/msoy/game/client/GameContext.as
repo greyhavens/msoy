@@ -5,11 +5,9 @@ package com.threerings.msoy.game.client {
 
 import com.threerings.parlor.util.ParlorContext;
 
-import com.threerings.msoy.world.client.WorldContext;
-
 import com.threerings.msoy.data.all.MemberName;
-
 import com.threerings.msoy.game.data.PlayerObject;
+import com.threerings.msoy.world.client.WorldContext;
 
 /**
  * Provides access to our various game services.

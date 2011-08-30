@@ -7,18 +7,17 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.List;
 
+import com.google.common.collect.Lists;
+
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
-
-import com.google.common.collect.Lists;
 
 import com.samskivert.io.StreamUtil;
 
 import com.threerings.msoy.data.all.CloudfrontMediaDesc;
 import com.threerings.msoy.data.all.MediaMimeTypes;
-import com.threerings.msoy.server.MediaDescFactory;
 import com.threerings.msoy.item.data.all.Item;
-
+import com.threerings.msoy.server.MediaDescFactory;
 import com.threerings.msoy.web.server.AbstractUploadServlet;
 import com.threerings.msoy.web.server.FileItemUploadFile;
 import com.threerings.msoy.web.server.UploadFile;

@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.net.URL;
-
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
@@ -27,14 +26,15 @@ import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.net.MailUtil;
-import com.samskivert.util.Lifecycle;
-import com.samskivert.util.Tuple;
-import com.samskivert.velocity.VelocityUtil;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
+
+import com.samskivert.net.MailUtil;
+import com.samskivert.util.Lifecycle;
+import com.samskivert.util.Tuple;
+
+import com.samskivert.velocity.VelocityUtil;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MemberMailUtil;

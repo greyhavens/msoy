@@ -8,7 +8,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-
 import java.util.List;
 
 import javax.imageio.ImageIO;
@@ -18,11 +17,11 @@ import com.jswiff.SWFReader;
 import com.jswiff.SWFWriter;
 import com.jswiff.listeners.SWFDocumentReader;
 import com.jswiff.swfrecords.AlphaBitmapData;
-import com.jswiff.swfrecords.Rect;
 import com.jswiff.swfrecords.RGBA;
-import com.jswiff.swfrecords.tags.DefinitionTag;
+import com.jswiff.swfrecords.Rect;
 import com.jswiff.swfrecords.tags.DefineBitsJPEG2;
 import com.jswiff.swfrecords.tags.DefineBitsLossless2;
+import com.jswiff.swfrecords.tags.DefinitionTag;
 import com.jswiff.swfrecords.tags.Tag;
 import com.jswiff.swfrecords.tags.TagConstants;
 import com.jswiff.util.ImageUtilities;

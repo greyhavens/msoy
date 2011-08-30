@@ -9,8 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.xml.sax.SAXException;
-
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -19,13 +17,24 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
 
-import com.samskivert.depot.DuplicateKeyException;
-import com.samskivert.jdbc.RepositoryUnit;
-import com.samskivert.jdbc.WriteOnlyUnit;
+import com.whirled.bureau.data.BureauTypes;
+import com.whirled.game.data.GameContentOwnership;
+import com.whirled.game.data.GameData;
+import com.whirled.game.server.PropertySpaceDelegate;
+
+import org.xml.sax.SAXException;
+
 import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.Lifecycle;
 import com.samskivert.util.StringUtil;
+
+import com.samskivert.jdbc.RepositoryUnit;
+import com.samskivert.jdbc.WriteOnlyUnit;
+
+import com.samskivert.depot.DuplicateKeyException;
+
+import com.threerings.util.Name;
 
 import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.client.InvocationService;
@@ -46,56 +55,19 @@ import com.threerings.crowd.server.PlaceManager;
 import com.threerings.crowd.server.PlaceManagerDelegate;
 import com.threerings.crowd.server.PlaceRegistry;
 
+import com.threerings.bureau.server.BureauRegistry;
+
 import com.threerings.parlor.data.Table;
 import com.threerings.parlor.rating.server.persist.RatingRepository;
 import com.threerings.parlor.rating.util.Percentiler;
 import com.threerings.parlor.server.ParlorSender;
 
 import com.threerings.stats.data.Stat;
-import com.threerings.util.Name;
-
-import com.threerings.bureau.server.BureauRegistry;
-
-import com.whirled.bureau.data.BureauTypes;
-import com.whirled.game.data.GameContentOwnership;
-import com.whirled.game.data.GameData;
-import com.whirled.game.server.PropertySpaceDelegate;
-
-import com.threerings.msoy.avrg.data.AVRMarshaller;
-import com.threerings.msoy.data.MsoyCodes;
-import com.threerings.msoy.data.StatType;
-import com.threerings.msoy.data.UserAction;
-import com.threerings.msoy.game.data.GameGameMarshaller;
-import com.threerings.msoy.game.data.LobbyMarshaller;
-import com.threerings.msoy.item.data.all.MsoyItemType;
-import com.threerings.msoy.server.BureauManager;
-import com.threerings.msoy.server.MemberManager;
-import com.threerings.msoy.server.MsoyEventLogger;
-import com.threerings.msoy.server.StatLogic;
-import com.threerings.msoy.server.persist.BatchInvoker;
-import com.threerings.msoy.server.persist.MemberRecord;
-import com.threerings.msoy.server.persist.MemberRepository;
-
-import com.threerings.msoy.item.data.all.ItemPack;
-import com.threerings.msoy.item.data.all.LevelPack;
-import com.threerings.msoy.item.data.all.Prize;
-import com.threerings.msoy.item.data.all.TrophySource;
-import com.threerings.msoy.item.server.persist.ItemPackRecord;
-import com.threerings.msoy.item.server.persist.ItemPackRepository;
-import com.threerings.msoy.item.server.persist.LevelPackRecord;
-import com.threerings.msoy.item.server.persist.LevelPackRepository;
-import com.threerings.msoy.item.server.persist.PrizeRecord;
-import com.threerings.msoy.item.server.persist.PrizeRepository;
-import com.threerings.msoy.item.server.persist.TrophySourceRecord;
-import com.threerings.msoy.item.server.persist.TrophySourceRepository;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;
-import com.threerings.msoy.money.server.MoneyLogic;
-import com.threerings.msoy.money.server.MoneyNodeActions;
-import com.threerings.msoy.person.server.FeedLogic;
-
 import com.threerings.msoy.avrg.client.AVRService;
 import com.threerings.msoy.avrg.data.AVRGameConfig;
+import com.threerings.msoy.avrg.data.AVRMarshaller;
 import com.threerings.msoy.avrg.server.AVRGameManager;
 import com.threerings.msoy.avrg.server.AVRProvider;
 import com.threerings.msoy.avrg.server.AgentPropertySpaceDelegate;
@@ -103,8 +75,12 @@ import com.threerings.msoy.avrg.server.QuestDelegate;
 import com.threerings.msoy.avrg.server.persist.AVRGameRepository;
 import com.threerings.msoy.avrg.server.persist.AgentStateRecord;
 import com.threerings.msoy.avrg.server.persist.GameStateRecord;
-
+import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.data.StatType;
+import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.facebook.server.persist.FacebookRepository;
+import com.threerings.msoy.game.data.GameGameMarshaller;
+import com.threerings.msoy.game.data.LobbyMarshaller;
 import com.threerings.msoy.game.data.LobbyObject;
 import com.threerings.msoy.game.data.MsoyGameCodes;
 import com.threerings.msoy.game.data.MsoyGameConfig;
@@ -119,6 +95,29 @@ import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 import com.threerings.msoy.game.server.persist.TrophyRecord;
 import com.threerings.msoy.game.server.persist.TrophyRepository;
 import com.threerings.msoy.game.xml.MsoyGameParser;
+import com.threerings.msoy.item.data.all.ItemPack;
+import com.threerings.msoy.item.data.all.LevelPack;
+import com.threerings.msoy.item.data.all.MsoyItemType;
+import com.threerings.msoy.item.data.all.Prize;
+import com.threerings.msoy.item.data.all.TrophySource;
+import com.threerings.msoy.item.server.persist.ItemPackRecord;
+import com.threerings.msoy.item.server.persist.ItemPackRepository;
+import com.threerings.msoy.item.server.persist.LevelPackRecord;
+import com.threerings.msoy.item.server.persist.LevelPackRepository;
+import com.threerings.msoy.item.server.persist.PrizeRecord;
+import com.threerings.msoy.item.server.persist.PrizeRepository;
+import com.threerings.msoy.item.server.persist.TrophySourceRecord;
+import com.threerings.msoy.item.server.persist.TrophySourceRepository;
+import com.threerings.msoy.money.server.MoneyLogic;
+import com.threerings.msoy.money.server.MoneyNodeActions;
+import com.threerings.msoy.person.server.FeedLogic;
+import com.threerings.msoy.server.BureauManager;
+import com.threerings.msoy.server.MemberManager;
+import com.threerings.msoy.server.MsoyEventLogger;
+import com.threerings.msoy.server.StatLogic;
+import com.threerings.msoy.server.persist.BatchInvoker;
+import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.MemberRepository;
 
 import static com.threerings.msoy.Log.log;
 

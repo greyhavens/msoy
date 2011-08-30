@@ -5,7 +5,6 @@ package com.threerings.msoy.client {
 
 import flash.utils.Dictionary;
 import flash.utils.Timer;
-import flash.events.TimerEvent;
 
 import com.threerings.util.Log;
 import com.threerings.util.Util;
@@ -18,7 +17,6 @@ import com.threerings.crowd.util.CrowdContext;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VizMemberName;
-
 import com.threerings.msoy.world.client.WorldContext;
 
 /**
@@ -342,23 +340,21 @@ public class SocialDirector extends BasicDirector
 }
 
 import flash.utils.Dictionary;
-import flash.utils.getTimer; // function
+import flash.utils.getTimer;
 
 import com.threerings.util.Name;
-import com.threerings.util.Util;
 
 import com.threerings.presents.dobj.EntryAddedEvent;
 import com.threerings.presents.dobj.EntryRemovedEvent;
 import com.threerings.presents.dobj.EntryUpdatedEvent;
 import com.threerings.presents.dobj.SetAdapter;
 
-import com.threerings.crowd.data.OccupantInfo;
-import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.client.LocationAdapter;
 import com.threerings.crowd.client.LocationDirector;
+import com.threerings.crowd.data.OccupantInfo;
+import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.msoy.client.SocialDirector;
-
 import com.threerings.msoy.data.all.VizMemberName;
 
 /**

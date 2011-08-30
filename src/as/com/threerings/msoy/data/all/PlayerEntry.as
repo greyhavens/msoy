@@ -3,14 +3,14 @@
 
 package com.threerings.msoy.data.all {
 
-import com.threerings.io.ObjectOutputStream;
 import com.threerings.io.ObjectInputStream;
+import com.threerings.io.ObjectOutputStream;
 
 import com.threerings.util.Hashable;
 
-import com.threerings.orth.data.OrthName;
-
 import com.threerings.presents.dobj.DSet_Entry;
+
+import com.threerings.orth.data.OrthName;
 
 /**
  * Represents a friend connection.

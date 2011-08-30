@@ -5,16 +5,17 @@ package com.threerings.msoy.game.data;
 
 import javax.annotation.Generated;
 
-import com.threerings.orth.data.MediaDesc;
-import com.threerings.presents.dobj.DSet;
+import com.whirled.game.data.GameDefinition;
+
 import com.threerings.presents.dobj.DObject;
+import com.threerings.presents.dobj.DSet;
 import com.threerings.presents.dobj.Subscriber;
 
 import com.threerings.parlor.data.Table;
 import com.threerings.parlor.data.TableLobbyObject;
 import com.threerings.parlor.data.TableMarshaller;
 
-import com.whirled.game.data.GameDefinition;
+import com.threerings.orth.data.MediaDesc;
 
 /**
  * Represents a lobby for a particular game.

@@ -11,6 +11,7 @@ import com.samskivert.depot.Key;
 import com.samskivert.depot.annotation.Entity;
 import com.samskivert.depot.annotation.Index;
 import com.samskivert.depot.expression.ColumnExp;
+
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.person.gwt.FeedMessage;

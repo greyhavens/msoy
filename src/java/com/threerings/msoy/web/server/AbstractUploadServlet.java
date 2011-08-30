@@ -12,23 +12,23 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.inject.Inject;
+
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.inject.Inject;
-
 import com.samskivert.io.StreamUtil;
+
 import com.samskivert.servlet.util.CookieUtil;
 
 import com.threerings.msoy.admin.server.persist.MediaBlacklistRepository;
 import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.MemberRecord;
-
 import com.threerings.msoy.web.gwt.WebCreds;
 
 import static com.threerings.msoy.Log.log;

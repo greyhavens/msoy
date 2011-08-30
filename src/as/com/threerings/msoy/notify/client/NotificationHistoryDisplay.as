@@ -4,9 +4,7 @@
 package com.threerings.msoy.notify.client {
 
 import mx.containers.VBox;
-
 import mx.controls.scrollClasses.ScrollBar;
-
 import mx.core.ScrollPolicy;
 import mx.core.UIComponent;
 

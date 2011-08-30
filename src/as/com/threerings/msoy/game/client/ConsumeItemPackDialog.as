@@ -3,12 +3,12 @@
 
 package com.threerings.msoy.game.client {
 
-import com.threerings.flex.FlexUtil;
-import com.threerings.util.StringUtil;
-
-
 import com.whirled.game.client.ContentService;
 import com.whirled.game.data.GameData;
+
+import com.threerings.util.StringUtil;
+
+import com.threerings.flex.FlexUtil;
 
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;

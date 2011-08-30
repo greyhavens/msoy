@@ -8,7 +8,6 @@ import java.sql.Timestamp;
 import com.google.common.base.Function;
 
 import com.samskivert.depot.PersistentRecord;
-import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.annotation.Column;
 import com.samskivert.depot.annotation.Computed;
 import com.samskivert.depot.annotation.Entity;
@@ -18,17 +17,17 @@ import com.samskivert.depot.annotation.GenerationType;
 import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.annotation.Index;
 import com.samskivert.depot.annotation.Transient;
+import com.samskivert.depot.expression.ColumnExp;
 
 import com.threerings.io.Streamable;
 
-import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.orth.data.MediaDesc;
+
+import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.msoy.data.all.MediaMimeTypes;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.server.MediaDescFactory;
-
-import com.threerings.orth.data.MediaDesc;
 
 /**
  * The base class for all digital items in the MSOY system.

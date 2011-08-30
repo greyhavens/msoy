@@ -6,9 +6,9 @@ package client.facebook;
 import java.util.Map;
 
 import com.threerings.msoy.facebook.gwt.FacebookGame;
-import com.threerings.msoy.facebook.gwt.FacebookService;
-import com.threerings.msoy.facebook.gwt.FacebookService.StoryKey;
 import com.threerings.msoy.facebook.gwt.FacebookService.StoryFields;
+import com.threerings.msoy.facebook.gwt.FacebookService.StoryKey;
+import com.threerings.msoy.facebook.gwt.FacebookService;
 
 import client.facebookbase.FacebookUtil;
 import client.facebookbase.StoryFeeder;

@@ -7,9 +7,7 @@ import flash.display.DisplayObject;
 import flash.geom.ColorTransform;
 
 import mx.core.UIComponent;
-
 import mx.states.State;
-
 import mx.styles.StyleManager;
 
 import com.threerings.flex.LoadedAsset;

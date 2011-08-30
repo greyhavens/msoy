@@ -15,21 +15,18 @@ import flash.geom.Matrix;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 
-import com.threerings.media.MediaContainer;
-
 import com.threerings.util.Log;
 import com.threerings.util.StringUtil;
 import com.threerings.util.ValueEvent;
 
 import com.threerings.display.FilterUtil;
 
-import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.media.MediaContainer;
 
+import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.msoy.room.data.RoomCodes;
-
 import com.threerings.msoy.world.client.WorldContext;
-
 
 /**
  * A base sprite that concerns itself with the mundane details of loading and communication with

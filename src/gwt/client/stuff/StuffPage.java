@@ -8,7 +8,6 @@ import java.util.Set;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.History;
 
@@ -31,8 +30,8 @@ import client.shell.CShell;
 import client.shell.DynamicLookup;
 import client.shell.Page;
 import client.ui.MsoyUI;
-import client.util.Link;
 import client.util.InfoCallback;
+import client.util.Link;
 
 /**
  * Handles the MetaSOY inventory application.

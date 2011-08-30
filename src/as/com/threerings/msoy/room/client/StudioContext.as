@@ -5,7 +5,6 @@ package com.threerings.msoy.room.client {
 
 import com.threerings.msoy.client.MsoyParameters;
 import com.threerings.msoy.data.all.MemberName;
-
 import com.threerings.msoy.world.client.WorldContext;
 
 public class StudioContext extends WorldContext

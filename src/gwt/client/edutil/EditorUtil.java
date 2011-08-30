@@ -6,11 +6,11 @@ package client.edutil;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.HasAlignment;
 
+import com.threerings.orth.data.MediaDesc;
+import com.threerings.orth.data.MediaDescSize;
+
 import com.threerings.gwt.ui.SmartTable;
 
-import com.threerings.orth.data.MediaDesc;
-
-import com.threerings.orth.data.MediaDescSize;
 import com.threerings.msoy.data.all.MediaMimeTypes;
 
 import client.ui.MsoyUI;

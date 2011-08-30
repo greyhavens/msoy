@@ -6,12 +6,12 @@ package com.threerings.msoy.item.server.persist;
 import java.sql.Timestamp;
 
 import com.samskivert.depot.Key;
-import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.annotation.TableGenerator;
+import com.samskivert.depot.expression.ColumnExp;
 
+import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.item.data.all.Pet;
-import com.threerings.msoy.item.data.all.Item;
 
 /**
  * Represents a pet that a user can place into a virtual world scene and potentially interact with.

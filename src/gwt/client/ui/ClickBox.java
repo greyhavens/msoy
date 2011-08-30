@@ -6,9 +6,9 @@ package client.ui;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.gwt.ui.SmartTable;
-
 import com.threerings.orth.data.MediaDesc;
+
+import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.web.gwt.Pages;
 

@@ -6,8 +6,9 @@ package client.adminz;
 import java.util.Set;
 
 import com.google.common.collect.Sets;
-
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
@@ -15,8 +16,6 @@ import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.ListBox;
 
 import com.threerings.gwt.ui.SmartTable;
@@ -29,7 +28,7 @@ import client.util.InfoCallback;
 
 /**
  * This panel displays the status of a Panopticon client.
- * 
+ *
  * @author Kyle Sampson <kyle@threerings.net>
  */
 public class PanopticonStatusPanel extends SmartTable
@@ -37,7 +36,7 @@ public class PanopticonStatusPanel extends SmartTable
     public PanopticonStatusPanel ()
     {
         addStyleName("panopticonStatus");
-        
+
         _nodeList = new ListBox(true);
         _nodeList.setVisibleItemCount(10);
         _nodeList.addStyleName("nodeList");
@@ -64,10 +63,10 @@ public class PanopticonStatusPanel extends SmartTable
                 });
             }
         }), 2);
-        
+
         refresh();
     }
-    
+
     public void refresh ()
     {
         _adminsvc.getPeerNodeNames(new InfoCallback<Set<String>>() {
@@ -78,7 +77,7 @@ public class PanopticonStatusPanel extends SmartTable
                 }
             }
         });
-        
+
         RequestBuilder rb = new RequestBuilder(RequestBuilder.GET, "/status/panopticon");
         try {
             rb.sendRequest(null, new RequestCallback() {
@@ -93,9 +92,9 @@ public class PanopticonStatusPanel extends SmartTable
             MsoyUI.error(_msgs.panStatusRequestError());
         }
     }
-    
+
     protected final ListBox _nodeList;
-    
+
     protected static final AdminMessages _msgs = GWT.create(AdminMessages.class);
     protected static final AdminServiceAsync _adminsvc = GWT.create(AdminService.class);
 }

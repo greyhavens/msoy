@@ -8,9 +8,9 @@ import flash.utils.ByteArray;
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
 
-import com.threerings.presents.dobj.DSet_Entry;
-
 import com.threerings.util.StreamableHashMap;
+
+import com.threerings.presents.dobj.DSet_Entry;
 
 import com.threerings.msoy.item.data.all.ItemIdent;
 

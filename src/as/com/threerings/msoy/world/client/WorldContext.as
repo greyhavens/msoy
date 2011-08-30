@@ -7,24 +7,20 @@ import com.threerings.whirled.client.SceneDirector;
 import com.threerings.whirled.spot.client.SpotSceneDirector;
 import com.threerings.whirled.util.WhirledContext;
 
-import com.threerings.msoy.chat.client.MsoyChatDirector;
-import com.threerings.msoy.game.client.GameDirector;
-import com.threerings.msoy.room.client.MediaDirector;
-import com.threerings.msoy.room.client.MsoySceneDirector;
-import com.threerings.msoy.room.client.WorldProperties;
+import com.threerings.orth.room.client.persist.RuntimeSceneRepository;
 
 import com.threerings.msoy.client.ControlBar;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.MsoyController;
-import com.threerings.orth.room.client.persist.RuntimeSceneRepository;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyTokenRing;
-
-import com.threerings.msoy.world.tour.client.TourDirector;
-
+import com.threerings.msoy.game.client.GameDirector;
 import com.threerings.msoy.party.client.PartyDirector;
-
+import com.threerings.msoy.room.client.MediaDirector;
+import com.threerings.msoy.room.client.MsoySceneDirector;
+import com.threerings.msoy.room.client.WorldProperties;
 import com.threerings.msoy.tutorial.client.TutorialDirector;
+import com.threerings.msoy.world.tour.client.TourDirector;
 
 /**
  * Defines services for the World client.

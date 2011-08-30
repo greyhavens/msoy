@@ -6,9 +6,7 @@ package com.threerings.msoy.room.client {
 import flash.events.Event;
 import flash.events.KeyboardEvent;
 import flash.events.MouseEvent;
-
 import flash.external.ExternalInterface;
-
 import flash.utils.ByteArray;
 
 import com.threerings.io.TypedArray;
@@ -26,20 +24,16 @@ import com.threerings.msoy.client.MsoyParameters;
 import com.threerings.msoy.client.PlaceLoadingDisplay;
 import com.threerings.msoy.client.UberClient;
 import com.threerings.msoy.data.UberClientModes;
-
-import com.threerings.msoy.ui.BubblePopup;
-
-import com.threerings.msoy.utils.Base64Decoder;
-import com.threerings.msoy.utils.Base64Encoder;
-
 import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.ItemIdent;
-
 import com.threerings.msoy.room.data.ActorInfo;
 import com.threerings.msoy.room.data.FurniData;
 import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.msoy.room.data.MsoyScene;
 import com.threerings.msoy.room.data.MsoySceneModel;
+import com.threerings.msoy.ui.BubblePopup;
+import com.threerings.msoy.utils.Base64Decoder;
+import com.threerings.msoy.utils.Base64Encoder;
 
 public class RoomStudioController extends RoomController
 {

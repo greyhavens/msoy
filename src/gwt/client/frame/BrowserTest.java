@@ -3,17 +3,17 @@
 
 package client.frame;
 
-import client.shell.CShell;
-import client.ui.MsoyUI;
-
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.util.CookieUtil;
+
+import client.shell.CShell;
+import client.ui.MsoyUI;
 
 /**
  * Determines whether the visitor is using a suppported browser and displays a

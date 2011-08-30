@@ -4,15 +4,18 @@
 package com.threerings.msoy.game.server;
 
 import com.google.inject.Inject;
-import com.samskivert.jdbc.WriteOnlyUnit;
+
 import com.samskivert.util.Invoker;
 import com.samskivert.util.StringUtil;
+
+import com.samskivert.jdbc.WriteOnlyUnit;
+
 import com.threerings.presents.annotation.MainInvoker;
+
 import com.threerings.crowd.server.CrowdSession;
 
 import com.threerings.msoy.data.MsoyTokenRing;
 import com.threerings.msoy.data.all.VisitorInfo;
-
 import com.threerings.msoy.game.data.GameCredentials;
 import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.server.MemberLogic;

@@ -3,11 +3,10 @@
 
 package com.threerings.msoy.chat.client {
 
-import com.threerings.crowd.util.CrowdContext;
-
 import com.threerings.crowd.chat.client.CommandHandler;
 import com.threerings.crowd.chat.client.SpeakService;
 import com.threerings.crowd.chat.data.ChatCodes;
+import com.threerings.crowd.util.CrowdContext;
 
 /**
  * Makes it easy to wire up chat commands to trigger hacky testy stuff. Takes a function with the

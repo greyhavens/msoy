@@ -4,7 +4,9 @@
 package com.threerings.msoy.imagechooser.gwt;
 
 import java.util.List;
+
 import com.google.gwt.user.client.rpc.AsyncCallback;
+
 import com.threerings.msoy.item.data.all.Photo;
 
 /**

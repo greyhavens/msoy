@@ -3,12 +3,12 @@
 
 package com.threerings.msoy.server.persist;
 
+import java.sql.Date;
+
 import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistentRecord;
+import com.samskivert.depot.annotation.*;
 import com.samskivert.depot.expression.ColumnExp;
-import com.samskivert.depot.annotation.*; // for Depot annotations
-
-import java.sql.Date;
 
 /**
  * Contains a mapping from a session token to a member id. Used to persist an

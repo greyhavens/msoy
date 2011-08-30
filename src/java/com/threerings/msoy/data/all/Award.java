@@ -3,9 +3,9 @@
 
 package com.threerings.msoy.data.all;
 
-import com.threerings.orth.data.MediaDesc;
-
 import com.google.gwt.user.client.rpc.IsSerializable;
+
+import com.threerings.orth.data.MediaDesc;
 
 /**
  * A generic class for awards so that awards of new flavors can be brought onto the Passport

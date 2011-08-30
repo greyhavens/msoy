@@ -8,11 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.samskivert.util.Lifecycle;
-import com.samskivert.util.ObserverList;
-import com.samskivert.util.ResultListener;
-import com.samskivert.util.Tuple;
-
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -21,7 +16,13 @@ import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import com.samskivert.util.Lifecycle;
+import com.samskivert.util.ObserverList;
+import com.samskivert.util.ResultListener;
+import com.samskivert.util.Tuple;
+
 import com.threerings.io.Streamable;
+
 import com.threerings.util.Name;
 
 import com.threerings.presents.annotation.EventThread;
@@ -29,6 +30,10 @@ import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.dobj.AttributeChangeListener;
 import com.threerings.presents.dobj.AttributeChangedEvent;
+import com.threerings.presents.peer.client.PeerService;
+import com.threerings.presents.peer.data.ClientInfo;
+import com.threerings.presents.peer.data.NodeObject;
+import com.threerings.presents.peer.server.PeerNode;
 import com.threerings.presents.server.ClientManager;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
@@ -36,40 +41,33 @@ import com.threerings.presents.server.PresentsSession;
 import com.threerings.presents.server.ReportManager;
 import com.threerings.presents.util.ConfirmAdapter;
 
-import com.threerings.presents.peer.client.PeerService;
-import com.threerings.presents.peer.data.ClientInfo;
-import com.threerings.presents.peer.data.NodeObject;
-import com.threerings.presents.peer.server.PeerNode;
-
 import com.threerings.whirled.data.ScenePlace;
 import com.threerings.whirled.server.SceneRegistry;
 
+import com.threerings.orth.data.AuthName;
 import com.threerings.orth.peer.data.OrthClientInfo;
 import com.threerings.orth.peer.server.OrthPeerManager;
 
-import com.threerings.orth.data.AuthName;
 import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyAuthName;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.peer.data.MsoyPeerMarshaller;
-import com.threerings.msoy.server.MsoyServer;
-import com.threerings.msoy.server.ServerConfig;
-
 import com.threerings.msoy.game.data.GameAuthName;
 import com.threerings.msoy.game.data.GameSummary;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.party.data.MemberParty;
 import com.threerings.msoy.party.data.PartySummary;
-import com.threerings.msoy.room.server.MsoySceneRegistry;
-
 import com.threerings.msoy.peer.data.HostedGame;
 import com.threerings.msoy.peer.data.HostedRoom;
 import com.threerings.msoy.peer.data.HostedTheme;
 import com.threerings.msoy.peer.data.MemberGame;
 import com.threerings.msoy.peer.data.MemberScene;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
+import com.threerings.msoy.peer.data.MsoyPeerMarshaller;
+import com.threerings.msoy.room.server.MsoySceneRegistry;
+import com.threerings.msoy.server.MsoyServer;
+import com.threerings.msoy.server.ServerConfig;
 
 import static com.threerings.msoy.Log.log;
 

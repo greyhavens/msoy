@@ -3,6 +3,9 @@
 
 package com.threerings.msoy.client {
 
+import flash.display.DisplayObject;
+import flash.display.Stage;
+import flash.display.StageDisplayState;
 import flash.events.Event;
 import flash.events.FocusEvent;
 import flash.events.IEventDispatcher;
@@ -10,10 +13,6 @@ import flash.events.KeyboardEvent;
 import flash.events.MouseEvent;
 import flash.events.TextEvent;
 import flash.events.TimerEvent;
-
-import flash.display.DisplayObject;
-import flash.display.Stage;
-import flash.display.StageDisplayState;
 import flash.external.ExternalInterface;
 import flash.geom.Point;
 import flash.geom.Rectangle;
@@ -36,34 +35,30 @@ import com.threerings.util.MessageBundle;
 import com.threerings.util.NetUtil;
 import com.threerings.util.StringUtil;
 
+import com.threerings.presents.client.Client;
+import com.threerings.presents.client.ClientEvent;
+import com.threerings.presents.client.ClientObserver;
 import com.threerings.presents.net.Credentials;
 
+import com.threerings.crowd.chat.client.ChatCantStealFocus;
 import com.threerings.crowd.chat.data.ChatCodes;
 import com.threerings.crowd.client.BodyService;
 import com.threerings.crowd.client.LocationAdapter;
 import com.threerings.crowd.data.CrowdCodes;
 import com.threerings.crowd.data.PlaceObject;
 
+import com.threerings.orth.data.MediaDesc;
+
 import com.threerings.flex.ChatControl;
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.CommandMenu;
 
-import com.threerings.presents.client.Client;
-import com.threerings.presents.client.ClientEvent;
-import com.threerings.presents.client.ClientObserver;
-import com.threerings.presents.client.LogonError;
-
-import com.threerings.crowd.chat.client.ChatCantStealFocus;
-
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.PlaceInfo;
-import com.threerings.orth.data.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
-
-import com.threerings.msoy.room.data.PuppetName;
-
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.room.data.PuppetName;
 
 public class MsoyController extends Controller
     implements ClientObserver

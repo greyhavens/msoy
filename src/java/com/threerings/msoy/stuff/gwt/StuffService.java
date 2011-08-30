@@ -9,16 +9,15 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
+import com.threerings.orth.data.MediaDesc;
+
 import com.threerings.web.gwt.ServiceException;
 
-import com.threerings.orth.data.MediaDesc;
-import com.threerings.msoy.item.data.all.MsoyItemType;
-
 import com.threerings.msoy.data.all.GroupName;
-
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.item.gwt.ItemDetail;
 
 /**

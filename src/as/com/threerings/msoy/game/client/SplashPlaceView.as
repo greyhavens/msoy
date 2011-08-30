@@ -3,18 +3,18 @@
 
 package com.threerings.msoy.game.client {
 
-import mx.containers.Canvas;
-
 import caurina.transitions.Tweener;
+
+import mx.containers.Canvas;
 
 import com.threerings.crowd.client.PlaceView;
 import com.threerings.crowd.data.PlaceObject;
 
-import com.threerings.flex.FlexWrapper;
-
 import com.threerings.orth.data.MediaDesc;
 import com.threerings.orth.data.MediaDescSize;
 import com.threerings.orth.ui.ScalingMediaDescContainer;
+
+import com.threerings.flex.FlexWrapper;
 
 /**
  * View that displays the game's splash image underneath the lobby panel itself.

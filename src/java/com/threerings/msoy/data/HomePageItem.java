@@ -4,9 +4,11 @@
 package com.threerings.msoy.data;
 
 import com.threerings.io.SimpleStreamableObject;
+
+import com.threerings.orth.data.MediaDesc;
+
 import com.threerings.msoy.badge.data.all.InProgressBadge;
 import com.threerings.msoy.data.all.NavItemData;
-import com.threerings.orth.data.MediaDesc;
 
 /**
  * A home page item is shown to the user within a flash popup in their home room. It is currently a

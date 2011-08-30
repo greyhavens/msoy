@@ -3,11 +3,11 @@
 
 package com.threerings.msoy.bureau.client {
 
-import com.threerings.bureau.client.Agent;
-import com.threerings.bureau.data.AgentObject;
-
 import com.whirled.bureau.client.WhirledBureauDirector;
 import com.whirled.bureau.data.GameAgentObject;
+
+import com.threerings.bureau.client.Agent;
+import com.threerings.bureau.data.AgentObject;
 
 import com.threerings.msoy.avrg.data.AVRGameAgentObject;
 import com.threerings.msoy.bureau.util.MsoyBureauContext;

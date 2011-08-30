@@ -11,8 +11,8 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemListQuery;
 import com.threerings.msoy.item.data.all.MsoyItemType;
-import com.threerings.msoy.item.gwt.ItemService;
 import com.threerings.msoy.item.gwt.ItemService.ItemListResult;
+import com.threerings.msoy.item.gwt.ItemService;
 import com.threerings.msoy.item.gwt.ItemServiceAsync;
 
 import client.util.MsoyServiceBackedDataModel;

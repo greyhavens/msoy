@@ -6,20 +6,15 @@ package com.threerings.msoy.client {
 import flash.events.ErrorEvent;
 import flash.events.Event;
 import flash.events.IOErrorEvent;
-import flash.events.SecurityErrorEvent;
 import flash.events.MouseEvent;
-
+import flash.events.SecurityErrorEvent;
 import flash.external.ExternalInterface;
-
 import flash.net.FileReference;
 import flash.net.URLRequest;
-
-import mx.events.FlexEvent;
 
 import mx.containers.HBox;
 import mx.containers.TabNavigator;
 import mx.containers.VBox;
-
 import mx.controls.Button;
 import mx.controls.CheckBox;
 import mx.controls.Image;
@@ -29,16 +24,18 @@ import mx.controls.RadioButtonGroup;
 import mx.controls.Text;
 import mx.controls.TextArea;
 import mx.controls.TextInput;
-
 import mx.core.UIComponent;
+import mx.events.FlexEvent;
+
+import com.threerings.io.TypedArray;
+
+import com.threerings.util.Command;
+import com.threerings.util.MailUtil;
+import com.threerings.util.Util;
 
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.CommandLinkButton;
 import com.threerings.flex.FlexUtil;
-import com.threerings.io.TypedArray;
-import com.threerings.util.Command;
-import com.threerings.util.MailUtil;
-import com.threerings.util.Util;
 
 import com.threerings.msoy.data.PlaceInfo;
 import com.threerings.msoy.ui.CopyableText;
@@ -128,10 +125,10 @@ public class ShareDialog extends FloatingPanel
         row.percentWidth = 100;
         row.setStyle("horizontalGap", 20);
 
-        row.addChild(createSocialButton("b.share_facebook", 
+        row.addChild(createSocialButton("b.share_facebook",
             "http://b.static.ak.fbcdn.net/images/share/facebook_share_icon.gif?8:26981",
             popFacebook));
-        row.addChild(createSocialButton("b.share_myspace", 
+        row.addChild(createSocialButton("b.share_myspace",
             "http://cms.myspacecdn.com/cms/post_myspace_icon.gif",
             popMyspace));
         row.addChild(createSocialButton(null,

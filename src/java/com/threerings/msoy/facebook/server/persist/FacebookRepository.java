@@ -11,6 +11,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+
 import com.samskivert.depot.DataMigration;
 import com.samskivert.depot.DatabaseException;
 import com.samskivert.depot.DepotRepository;
@@ -20,6 +21,7 @@ import com.samskivert.depot.SchemaMigration;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.expression.SQLExpression;
+
 import com.threerings.msoy.facebook.gwt.FacebookTemplate;
 import com.threerings.msoy.server.util.DropPrimaryKey;
 

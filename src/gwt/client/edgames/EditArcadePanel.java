@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Set;
 
 import com.google.common.collect.Sets;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -28,13 +27,11 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.WidgetUtil;
 
+import com.threerings.msoy.edgame.gwt.EditGameService.ArcadeEntriesResult;
 import com.threerings.msoy.edgame.gwt.EditGameService;
 import com.threerings.msoy.edgame.gwt.EditGameServiceAsync;
-import com.threerings.msoy.edgame.gwt.EditGameService.ArcadeEntriesResult;
-
 import com.threerings.msoy.game.gwt.ArcadeData;
 import com.threerings.msoy.game.gwt.GameInfo;
-
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.game.GameListPanel;

@@ -3,10 +3,7 @@
 
 package com.threerings.msoy.stuff.server;
 
-import static com.threerings.msoy.Log.log;
-
 import java.io.IOException;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
@@ -20,23 +17,16 @@ import com.google.inject.Inject;
 
 import com.samskivert.util.StringUtil;
 
-import com.threerings.web.gwt.ServiceException;
-
 import com.threerings.orth.data.MediaDesc;
+
+import com.threerings.web.gwt.ServiceException;
 
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.all.HashMediaDesc;
-
-import com.threerings.msoy.server.MediaDescFactory;
-import com.threerings.msoy.server.StatLogic;
-import com.threerings.msoy.server.persist.MemberRecord;
-import com.threerings.msoy.server.persist.TagNameRecord;
-
 import com.threerings.msoy.group.server.GroupLogic;
 import com.threerings.msoy.group.server.ThemeLogic;
 import com.threerings.msoy.group.server.persist.GroupRepository;
-
 import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Decor;
@@ -50,16 +40,19 @@ import com.threerings.msoy.item.server.ItemLogic;
 import com.threerings.msoy.item.server.persist.CloneRecord;
 import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
-
 import com.threerings.msoy.room.server.persist.MemoriesRecord;
 import com.threerings.msoy.room.server.persist.MemoryRepository;
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
-
+import com.threerings.msoy.server.MediaDescFactory;
+import com.threerings.msoy.server.StatLogic;
+import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.TagNameRecord;
+import com.threerings.msoy.stuff.gwt.StuffService;
 import com.threerings.msoy.web.gwt.ServiceCodes;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 import com.threerings.msoy.web.server.UploadUtil;
 
-import com.threerings.msoy.stuff.gwt.StuffService;
+import static com.threerings.msoy.Log.log;
 
 /**
  * Provides the server implementation of {@link StuffService}.

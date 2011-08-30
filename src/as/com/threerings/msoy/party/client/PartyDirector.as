@@ -13,20 +13,15 @@ import com.threerings.util.Log;
 import com.threerings.util.MessageBundle;
 import com.threerings.util.Util;
 
-import com.threerings.flex.CommandButton;
-import com.threerings.flex.CommandMenu;
-
 import com.threerings.presents.client.BasicDirector;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.ClientAdapter;
 import com.threerings.presents.client.ClientEvent;
 import com.threerings.presents.client.ResultAdapter;
-
 import com.threerings.presents.dobj.AttributeChangedEvent;
 import com.threerings.presents.dobj.EventAdapter;
 import com.threerings.presents.dobj.MessageEvent;
 import com.threerings.presents.dobj.ObjectAccessError;
-
 import com.threerings.presents.util.SafeSubscriber;
 
 import com.threerings.crowd.client.LocationAdapter;
@@ -36,25 +31,22 @@ import com.threerings.whirled.data.Scene;
 
 import com.threerings.orth.notify.data.Notification;
 
-import com.threerings.msoy.ui.FloatingPanel;
+import com.threerings.flex.CommandButton;
+import com.threerings.flex.CommandMenu;
 
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.Prefs;
-
 import com.threerings.msoy.data.MsoyCodes;
-
 import com.threerings.msoy.game.client.GameDirector;
-
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.PriceQuote;
-
 import com.threerings.msoy.party.data.PartyBoardMarshaller;
 import com.threerings.msoy.party.data.PartyBootstrapData;
 import com.threerings.msoy.party.data.PartyCodes;
 import com.threerings.msoy.party.data.PartyDetail;
 import com.threerings.msoy.party.data.PartyObject;
 import com.threerings.msoy.party.data.PartyPeep;
-
+import com.threerings.msoy.ui.FloatingPanel;
 import com.threerings.msoy.world.client.WorldContext;
 import com.threerings.msoy.world.client.WorldControlBar;
 
@@ -625,9 +617,9 @@ public class PartyDirector extends BasicDirector
 }
 
 import com.threerings.presents.client.InvocationAdapter;
-import com.threerings.msoy.party.client.PartyBoardService_JoinListener;
 
 import com.threerings.msoy.money.data.all.PriceQuote;
+import com.threerings.msoy.party.client.PartyBoardService_JoinListener;
 
 class JoinAdapter extends InvocationAdapter
     implements PartyBoardService_JoinListener

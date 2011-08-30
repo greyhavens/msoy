@@ -6,16 +6,15 @@ package client.util;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 
-import com.threerings.gwt.ui.SmartFileUpload;
-
 import com.threerings.orth.data.MediaDesc;
+
+import com.threerings.gwt.ui.SmartFileUpload;
 
 import com.threerings.msoy.data.all.CloudfrontMediaDesc;
 import com.threerings.msoy.data.all.HashMediaDesc;

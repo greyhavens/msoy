@@ -15,15 +15,15 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.msoy.data.all.RatingHistoryResult;
-import com.threerings.msoy.data.all.RatingResult;
-import com.threerings.msoy.data.all.RatingHistoryResult.RatingHistoryEntry;
-import com.threerings.msoy.web.gwt.Pages;
-
 import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.PagedWidget;
 import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.gwt.util.SimpleDataModel;
+
+import com.threerings.msoy.data.all.RatingHistoryResult.RatingHistoryEntry;
+import com.threerings.msoy.data.all.RatingHistoryResult;
+import com.threerings.msoy.data.all.RatingResult;
+import com.threerings.msoy.web.gwt.Pages;
 
 import client.shell.CShell;
 import client.shell.ShellMessages;

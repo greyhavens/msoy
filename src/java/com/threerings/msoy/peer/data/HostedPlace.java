@@ -4,6 +4,7 @@
 package com.threerings.msoy.peer.data;
 
 import com.threerings.io.SimpleStreamableObject;
+
 import com.threerings.presents.dobj.DSet;
 
 /**

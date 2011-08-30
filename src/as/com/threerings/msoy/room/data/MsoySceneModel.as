@@ -3,6 +3,10 @@
 
 package com.threerings.msoy.room.data {
 
+import com.threerings.io.ObjectInputStream;
+import com.threerings.io.ObjectOutputStream;
+import com.threerings.io.TypedArray;
+
 import com.threerings.util.ArrayIterator;
 import com.threerings.util.Arrays;
 import com.threerings.util.Iterator;
@@ -11,15 +15,11 @@ import com.threerings.util.Maps;
 import com.threerings.util.Name;
 import com.threerings.util.Short;
 
-import com.threerings.io.ObjectInputStream;
-import com.threerings.io.ObjectOutputStream;
-import com.threerings.io.TypedArray;
-
 import com.threerings.whirled.data.SceneModel;
-
 import com.threerings.whirled.spot.data.Portal;
 
 import com.threerings.orth.data.MediaDesc;
+
 import com.threerings.msoy.data.all.MediaMimeTypes;
 import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.DefaultItemMediaDesc;

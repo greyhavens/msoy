@@ -9,9 +9,9 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ListBox;
 
 import com.threerings.msoy.apps.gwt.AppInfo;
+import com.threerings.msoy.apps.gwt.AppService.AppData;
 import com.threerings.msoy.apps.gwt.AppService;
 import com.threerings.msoy.apps.gwt.AppServiceAsync;
-import com.threerings.msoy.apps.gwt.AppService.AppData;
 import com.threerings.msoy.web.gwt.ClientMode;
 
 import client.edutil.EditorTable;

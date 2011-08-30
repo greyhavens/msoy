@@ -4,16 +4,14 @@
 package com.threerings.msoy.party.data;
 
 import javax.annotation.Generated;
+
 import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.dobj.DSet;
 
-//import com.threerings.crowd.chat.data.SpeakMarshaller;
-//import com.threerings.crowd.chat.data.SpeakObject;
 import com.threerings.orth.data.MediaDesc;
 
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
-
 import com.threerings.msoy.group.data.all.GroupMembership.Rank;
 
 @com.threerings.util.ActionScript(omit=true)

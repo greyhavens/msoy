@@ -4,6 +4,7 @@
 package client.groups;
 
 import com.google.gwt.core.client.GWT;
+
 import com.threerings.msoy.group.gwt.GroupDetail;
 import com.threerings.msoy.group.gwt.GroupService;
 import com.threerings.msoy.group.gwt.GroupServiceAsync;

@@ -15,13 +15,14 @@ import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import com.threerings.underwire.server.GameInfoProvider;
+import com.threerings.underwire.web.data.Account;
+
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.persist.MemberWarningRecord;
 import com.threerings.msoy.underwire.gwt.MsoyAccount;
-import com.threerings.underwire.server.GameInfoProvider;
-import com.threerings.underwire.web.data.Account;
 
 /**
  * Provides game-specific info for Whirled.

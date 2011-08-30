@@ -36,7 +36,7 @@ public class ContestsPanel extends FlowPanel
             }
         });
     }
-    
+
     protected void init (List<Contest> contests)
     {
         AbsolutePanel header = MsoyUI.createAbsolutePanel("Header");
@@ -53,7 +53,7 @@ public class ContestsPanel extends FlowPanel
         FlowPanel pastContests = MsoyUI.createFlowPanel("PastContests");
         add(pastContests);
         pastContests.add(MsoyUI.createLabel(_msgs.contestsPast(), "PastTitle"));
-        
+
         for (Contest contest : contests) {
             if (contest.ends.after(new Date())) {
                 currentContests.add(new ContestBox(contest));

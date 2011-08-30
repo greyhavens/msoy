@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.samskivert.servlet.util.CookieUtil;
+
 import com.threerings.msoy.web.gwt.CookieNames;
 
 import static com.threerings.msoy.Log.log;
@@ -26,7 +27,7 @@ public class AffiliateCookie
 
     /**
      * Return the cookie from an http request. If there is no affiliate cookie, the cgi parameter
-     * of the same name is also checked. 
+     * of the same name is also checked.
      */
     public static AffiliateCookie fromWeb (HttpServletRequest req)
     {

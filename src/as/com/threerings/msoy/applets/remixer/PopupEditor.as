@@ -3,14 +3,12 @@
 
 package com.threerings.msoy.applets.remixer {
 
-import flash.events.Event;
-
 import flash.display.DisplayObject;
+import flash.events.Event;
 
 import mx.containers.Grid;
 import mx.containers.HBox;
 import mx.containers.TitleWindow;
-
 import mx.managers.PopUpManager;
 
 import com.threerings.flex.CommandButton;

@@ -6,7 +6,6 @@ package client.adminz;
 import java.util.List;
 
 import com.google.common.collect.Lists;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -15,12 +14,10 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.PagedTable;
 import com.threerings.gwt.util.DateUtil;
 
-import com.threerings.msoy.data.all.MemberName;
-
+import com.threerings.msoy.admin.gwt.AdminService.BroadcastHistoryResult;
 import com.threerings.msoy.admin.gwt.AdminService;
 import com.threerings.msoy.admin.gwt.AdminServiceAsync;
-import com.threerings.msoy.admin.gwt.AdminService.BroadcastHistoryResult;
-
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.money.gwt.BroadcastHistory;
 
 import client.ui.MsoyUI;

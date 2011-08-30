@@ -6,8 +6,9 @@ package com.threerings.msoy.item.data.all {
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
 
-import com.threerings.msoy.data.all.StaticMediaDesc;
 import com.threerings.util.ByteEnum;
+
+import com.threerings.msoy.data.all.StaticMediaDesc;
 
 /**
  * Provides an item's default media.

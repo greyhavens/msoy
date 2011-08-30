@@ -5,20 +5,18 @@ package com.threerings.msoy.chat.client {
 
 import com.threerings.util.StringUtil;
 
-import com.threerings.crowd.data.BodyObject;
-import com.threerings.crowd.util.CrowdContext;
-
 import com.threerings.crowd.chat.client.BroadcastHandler;
 import com.threerings.crowd.chat.client.SpeakService;
 import com.threerings.crowd.chat.data.ChatCodes;
+import com.threerings.crowd.data.BodyObject;
+import com.threerings.crowd.util.CrowdContext;
 
+import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.MsoyTokenRing;
-import com.threerings.msoy.client.MsoyContext;
-
-import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.game.client.GameContext;
+import com.threerings.msoy.game.data.PlayerObject;
 
 /**
  * Msoy version of broadcasting. Allow non-admins to access the command but shows a confirmation

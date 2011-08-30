@@ -6,12 +6,11 @@ package com.threerings.msoy.applets.net {
 import flash.net.URLRequest;
 import flash.net.URLRequestMethod;
 import flash.net.URLVariables;
-
 import flash.utils.ByteArray;
 
-import com.threerings.msoy.client.DeploymentConfig;
-
 import com.threerings.orth.data.MediaDesc;
+
+import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.data.all.MediaMimeTypes;
 
 public class MediaUploadUtil

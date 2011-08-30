@@ -3,9 +3,7 @@
 
 package com.threerings.msoy.client {
 
-import flash.events.MouseEvent;
 import flash.events.TimerEvent;
-import flash.display.DisplayObject;
 import flash.utils.Timer;
 
 import com.threerings.util.Log;

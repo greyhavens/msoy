@@ -9,12 +9,10 @@ import java.util.Comparator;
 import java.util.List;
 
 import com.google.common.collect.Lists;
-
 import com.google.gwt.core.client.GWT;
-
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -23,14 +21,12 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.threerings.msoy.badge.data.all.Badge;
 import com.threerings.msoy.badge.data.all.InProgressBadge;
 import com.threerings.msoy.badge.gwt.StampCategory;
-
+import com.threerings.msoy.data.all.Award.AwardType;
+import com.threerings.msoy.data.all.Award;
+import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.person.gwt.MeService;
 import com.threerings.msoy.person.gwt.MeServiceAsync;
 import com.threerings.msoy.person.gwt.PassportData;
-
-import com.threerings.msoy.data.all.Award;
-import com.threerings.msoy.data.all.GroupName;
-import com.threerings.msoy.data.all.Award.AwardType;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.shell.CShell;
@@ -40,8 +36,8 @@ import client.ui.HeaderBox;
 import client.ui.Marquee;
 import client.ui.MsoyUI;
 import client.ui.TongueBox;
-import client.util.Link;
 import client.util.InfoCallback;
+import client.util.Link;
 
 public class PassportPanel extends FlowPanel
 {

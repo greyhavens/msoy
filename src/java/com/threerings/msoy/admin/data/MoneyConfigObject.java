@@ -4,6 +4,7 @@
 package com.threerings.msoy.admin.data;
 
 import javax.annotation.Generated;
+
 import com.threerings.admin.data.ConfigObject;
 
 /**
@@ -102,7 +103,7 @@ public class MoneyConfigObject extends ConfigObject
 
     /** The amount of USD cents each bling (NOT centibling) is worth. */
     public int blingWorth = 9;
-    
+
     /** The minimum amount of bling (NOT centibling) that can be cashed out at a time. */
     public int minimumBlingCashOut = 500;
 

@@ -3,10 +3,11 @@
 
 package client.util.events;
 
-import client.util.JavaScriptUtil;
-
 import com.google.gwt.core.client.JavaScriptObject;
+
 import com.threerings.msoy.web.gwt.Pages;
+
+import client.util.JavaScriptUtil;
 
 /**
  * An event for flash to send a string command to a GWT page.
@@ -51,7 +52,7 @@ public class PageCommandEvent extends FlashEvent
     {
         return _command;
     }
-    
+
     @Override // from FlashEvent
     public String getEventName ()
     {

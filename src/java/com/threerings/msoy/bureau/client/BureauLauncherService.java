@@ -4,7 +4,6 @@
 package com.threerings.msoy.bureau.client;
 
 import com.threerings.presents.client.InvocationService;
-import com.threerings.presents.client.Client;
 
 import com.threerings.msoy.admin.gwt.BureauLauncherInfo;
 

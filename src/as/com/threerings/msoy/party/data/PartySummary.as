@@ -8,8 +8,9 @@ import com.threerings.io.SimpleStreamableObject;
 
 import com.threerings.presents.dobj.DSet_Entry;
 
-import com.threerings.msoy.data.all.GroupName;
 import com.threerings.orth.data.MediaDesc;
+
+import com.threerings.msoy.data.all.GroupName;
 
 public class PartySummary extends SimpleStreamableObject
     implements DSet_Entry

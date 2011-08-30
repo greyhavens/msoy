@@ -3,9 +3,9 @@
 
 package com.threerings.msoy.room.gwt;
 
-import com.threerings.orth.data.MediaDesc;
-
 import com.google.gwt.user.client.rpc.IsSerializable;
+
+import com.threerings.orth.data.MediaDesc;
 
 /**
  * Contains brief information on a particular room.

@@ -6,11 +6,11 @@ package com.threerings.msoy.item.server.persist;
 import java.sql.Timestamp;
 import java.util.Comparator;
 
+import com.samskivert.util.Comparators;
+
 import com.samskivert.depot.Key;
 import com.samskivert.depot.annotation.TableGenerator;
 import com.samskivert.depot.expression.ColumnExp;
-
-import com.samskivert.util.Comparators;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MsoyItemType;

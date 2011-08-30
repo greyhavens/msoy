@@ -6,28 +6,24 @@ package com.threerings.msoy.room.client.editor {
 import flash.events.Event;
 
 import mx.containers.HBox;
-
 import mx.controls.TextInput;
 import mx.controls.ToggleButtonBar;
-
 import mx.events.FlexEvent;
 import mx.events.ItemClickEvent;
-
-import com.threerings.flex.CommandButton;
 
 import com.threerings.util.Log;
 import com.threerings.util.Util;
 
-import com.threerings.msoy.client.Msgs;
+import com.threerings.flex.CommandButton;
 
+import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
-import com.threerings.msoy.world.client.WorldService;
-import com.threerings.msoy.world.client.WorldService_HomeResultListenerAdapter;
-
 import com.threerings.msoy.room.data.FurniData;
 import com.threerings.msoy.room.data.MsoyScene;
 import com.threerings.msoy.room.data.MsoySceneModel;
+import com.threerings.msoy.world.client.WorldService;
+import com.threerings.msoy.world.client.WorldService_HomeResultListenerAdapter;
 
 /**
  * Displays details about the room.

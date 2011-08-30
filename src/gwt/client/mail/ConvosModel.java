@@ -8,14 +8,14 @@ import java.util.List;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-import client.util.NonCountingDataModel;
 import com.threerings.msoy.mail.gwt.ConvMessage;
 import com.threerings.msoy.mail.gwt.Conversation;
-import com.threerings.msoy.mail.gwt.MailService;
 import com.threerings.msoy.mail.gwt.MailService.ConvosResult;
+import com.threerings.msoy.mail.gwt.MailService;
 import com.threerings.msoy.mail.gwt.MailServiceAsync;
 
 import client.shell.CShell;
+import client.util.NonCountingDataModel;
 import client.util.events.FlashEvents;
 import client.util.events.StatusChangeEvent;
 import client.util.events.StatusChangeListener;
@@ -98,7 +98,7 @@ public class ConvosModel extends NonCountingDataModel<Conversation, ConvosResult
     {
         _mailsvc.loadConversations(start, count, needCount, callback);
     }
- 
+
     @Override
     protected void setCurrentResult (MailService.ConvosResult result)
     {

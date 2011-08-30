@@ -5,11 +5,10 @@ package com.threerings.msoy.room.client {
 
 import com.threerings.util.CommandEvent;
 
-import com.threerings.msoy.ui.MsoyNameLabel;
-import com.threerings.msoy.world.client.WorldContext;
-
 import com.threerings.msoy.room.data.PetInfo;
 import com.threerings.msoy.room.data.PetName;
+import com.threerings.msoy.ui.MsoyNameLabel;
+import com.threerings.msoy.world.client.WorldContext;
 
 /**
  * Extends {@link ActorSprite} with pet-specific stuff.

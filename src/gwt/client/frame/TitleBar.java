@@ -78,7 +78,7 @@ public abstract class TitleBar
      * adds an avatars link when the user is viewing the avatars subpage).
      * @param label the text of the link
      * @param page the page to link to
-     * @param args the token to link to within the page 
+     * @param args the token to link to within the page
      * @param position the index within the existing links
      */
     public abstract void addContextLink (String label, Pages page, Args args, int position);
@@ -93,7 +93,7 @@ public abstract class TitleBar
 
     /**
      * Returns true if the layout should give the title bar more room. Exactly what is meant by
-     * more room is up to the layout. 
+     * more room is up to the layout.
      */
     public boolean isExtended ()
     {

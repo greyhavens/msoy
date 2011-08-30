@@ -3,18 +3,20 @@
 
 package com.threerings.msoy.room.server.persist;
 
+import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.sql.Timestamp;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+
+import com.samskivert.util.StringUtil;
 
 import com.samskivert.depot.CountRecord;
 import com.samskivert.depot.DataMigration;
@@ -37,17 +39,11 @@ import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.expression.FluentExp;
 import com.samskivert.depot.expression.SQLExpression;
 
-import com.samskivert.util.StringUtil;
-
 import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.whirled.data.SceneUpdate;
 
 import com.threerings.orth.data.MediaDesc;
-
-import com.threerings.msoy.server.persist.HotnessConfig;
-import com.threerings.msoy.server.persist.RatingRecord;
-import com.threerings.msoy.server.persist.RatingRepository;
 
 import com.threerings.msoy.room.data.FurniData;
 import com.threerings.msoy.room.data.FurniUpdate;
@@ -56,6 +52,9 @@ import com.threerings.msoy.room.data.MsoySceneModel;
 import com.threerings.msoy.room.data.SceneAttrsUpdate;
 import com.threerings.msoy.room.data.SceneOwnershipUpdate;
 import com.threerings.msoy.server.MediaDescFactory;
+import com.threerings.msoy.server.persist.HotnessConfig;
+import com.threerings.msoy.server.persist.RatingRecord;
+import com.threerings.msoy.server.persist.RatingRepository;
 
 import static com.threerings.msoy.Log.log;
 

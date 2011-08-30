@@ -21,8 +21,10 @@ import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.QueryClause;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.expression.ColumnExp;
-import com.threerings.msoy.group.data.all.GroupMembership.Rank;
+
 import com.threerings.presents.annotation.BlockingThread;
+
+import com.threerings.msoy.group.data.all.GroupMembership.Rank;
 
 /**
  * Manages the persistent store of themes.

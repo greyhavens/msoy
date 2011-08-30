@@ -7,7 +7,6 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -17,13 +16,16 @@ import java.util.Set;
 
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
-
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+
+import com.samskivert.util.StringUtil;
+import com.samskivert.util.Tuple;
+
+import com.samskivert.jdbc.DatabaseLiaison;
 
 import com.samskivert.depot.CountRecord;
 import com.samskivert.depot.DataMigration;
@@ -33,18 +35,14 @@ import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.DuplicateKeyException;
 import com.samskivert.depot.Exps;
 import com.samskivert.depot.Key;
-import com.samskivert.depot.SchemaMigration;
-
-import com.samskivert.depot.PersistenceContext.CacheListener;
-
 import com.samskivert.depot.Ops;
+import com.samskivert.depot.PersistenceContext.CacheListener;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
+import com.samskivert.depot.SchemaMigration;
 import com.samskivert.depot.StringFuncs;
-
 import com.samskivert.depot.annotation.Computed;
 import com.samskivert.depot.annotation.Entity;
-
 import com.samskivert.depot.clause.FieldDefinition;
 import com.samskivert.depot.clause.FieldOverride;
 import com.samskivert.depot.clause.FromOverride;
@@ -54,29 +52,23 @@ import com.samskivert.depot.clause.Limit;
 import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.QueryClause;
 import com.samskivert.depot.clause.Where;
-
 import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.expression.FluentExp;
 import com.samskivert.depot.expression.SQLExpression;
 import com.samskivert.depot.operator.FullText;
-import com.samskivert.jdbc.DatabaseLiaison;
-
-import com.samskivert.util.StringUtil;
-import com.samskivert.util.Tuple;
 
 import com.threerings.util.StreamableArrayIntSet;
+
+import com.threerings.presents.annotation.BlockingThread;
+
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.Friendship;
 import com.threerings.msoy.data.all.MemberMailUtil;
 import com.threerings.msoy.data.all.MemberName;
-
 import com.threerings.msoy.person.server.persist.ProfileRecord;
 import com.threerings.msoy.server.persist.MemberRecord.Flag;
-
 import com.threerings.msoy.web.gwt.ExternalSiteId;
 import com.threerings.msoy.web.gwt.MemberCard;
-
-import com.threerings.presents.annotation.BlockingThread;
 
 import static com.threerings.msoy.Log.log;
 

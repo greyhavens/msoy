@@ -4,7 +4,6 @@
 package com.threerings.msoy.item.server;
 
 import java.sql.Timestamp;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -28,34 +27,23 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.depot.DuplicateKeyException;
-
 import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.StringUtil;
 import com.samskivert.util.Tuple;
 
-import com.threerings.web.gwt.ServiceException;
-import com.threerings.presents.annotation.BlockingThread;
+import com.samskivert.depot.DuplicateKeyException;
 
+import com.threerings.util.MessageBundle;
+
+import com.threerings.presents.annotation.BlockingThread;
 import com.threerings.presents.dobj.RootDObjectManager;
 
 import com.threerings.underwire.web.data.Event;
-import com.threerings.util.MessageBundle;
+import com.threerings.web.gwt.ServiceException;
 
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.room.data.RoomCodes;
-import com.threerings.msoy.server.MemberNodeActions;
-import com.threerings.msoy.server.MsoyEventLogger;
-import com.threerings.msoy.server.ServerMessages;
-import com.threerings.msoy.server.persist.BatchInvoker;
-import com.threerings.msoy.server.persist.MemberRecord;
-import com.threerings.msoy.server.persist.MemberRepository;
-import com.threerings.msoy.underwire.server.SupportLogic;
-
-import com.threerings.msoy.web.gwt.ServiceCodes;
-
 import com.threerings.msoy.game.data.GameAuthName;
 import com.threerings.msoy.game.gwt.GameInfo;
 import com.threerings.msoy.game.server.GameLogic;
@@ -68,31 +56,26 @@ import com.threerings.msoy.group.server.GroupLogic;
 import com.threerings.msoy.group.server.ThemeLogic;
 import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
-import com.threerings.msoy.peer.server.MsoyPeerManager;
-
-import com.threerings.msoy.mail.server.MailLogic;
-import com.threerings.msoy.money.data.all.Currency;
-
 import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.item.data.all.Avatar.QuicklistState;
+import com.threerings.msoy.item.data.all.IdentGameItem;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemFlag;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.ItemListInfo;
 import com.threerings.msoy.item.data.all.ItemListQuery;
-import com.threerings.msoy.item.data.all.IdentGameItem;
 import com.threerings.msoy.item.data.all.Launcher;
 import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.item.gwt.CatalogListing;
 import com.threerings.msoy.item.gwt.ListingCard;
 import com.threerings.msoy.item.gwt.MemberItemInfo;
-
 import com.threerings.msoy.item.server.persist.AudioRepository;
 import com.threerings.msoy.item.server.persist.AvatarRepository;
 import com.threerings.msoy.item.server.persist.CatalogRecord;
 import com.threerings.msoy.item.server.persist.CloneRecord;
 import com.threerings.msoy.item.server.persist.DecorRepository;
 import com.threerings.msoy.item.server.persist.DocumentRepository;
+import com.threerings.msoy.item.server.persist.FavoritesRepository.FavoritedItemResultRecord;
 import com.threerings.msoy.item.server.persist.FavoritesRepository;
 import com.threerings.msoy.item.server.persist.FurnitureRepository;
 import com.threerings.msoy.item.server.persist.IdentGameItemRecord;
@@ -113,7 +96,18 @@ import com.threerings.msoy.item.server.persist.PropRepository;
 import com.threerings.msoy.item.server.persist.ToyRepository;
 import com.threerings.msoy.item.server.persist.TrophySourceRepository;
 import com.threerings.msoy.item.server.persist.VideoRepository;
-import com.threerings.msoy.item.server.persist.FavoritesRepository.FavoritedItemResultRecord;
+import com.threerings.msoy.mail.server.MailLogic;
+import com.threerings.msoy.money.data.all.Currency;
+import com.threerings.msoy.peer.server.MsoyPeerManager;
+import com.threerings.msoy.room.data.RoomCodes;
+import com.threerings.msoy.server.MemberNodeActions;
+import com.threerings.msoy.server.MsoyEventLogger;
+import com.threerings.msoy.server.ServerMessages;
+import com.threerings.msoy.server.persist.BatchInvoker;
+import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.MemberRepository;
+import com.threerings.msoy.underwire.server.SupportLogic;
+import com.threerings.msoy.web.gwt.ServiceCodes;
 
 import static com.threerings.msoy.Log.log;
 

@@ -3,9 +3,8 @@
 
 package com.threerings.msoy.money.server.persist;
 
-import java.util.Date;
-
 import java.sql.Timestamp;
+import java.util.Date;
 
 import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistentRecord;

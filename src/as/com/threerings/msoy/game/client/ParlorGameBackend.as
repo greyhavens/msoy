@@ -4,30 +4,24 @@
 package com.threerings.msoy.game.client {
 
 import flash.display.DisplayObject;
-
 import flash.geom.Point;
+
+import com.whirled.game.client.Thumbnail;
+import com.whirled.game.client.WhirledGameBackend;
+import com.whirled.game.data.GameData;
 
 import com.threerings.util.MessageBundle;
 
 import com.threerings.crowd.data.OccupantInfo;
 
-import com.whirled.game.client.Thumbnail;
-import com.whirled.game.client.WhirledGameBackend;
-import com.whirled.game.data.GameContentOwnership;
-import com.whirled.game.data.GameData;
+import com.threerings.orth.ui.ScalingMediaDescContainer;
 
 import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.data.all.VizMemberName;
-
-import com.threerings.orth.ui.ScalingMediaDescContainer;
-
-import com.threerings.msoy.item.data.all.ItemTypes;
-
-import com.threerings.msoy.party.client.PartyGameClientHelper;
-
 import com.threerings.msoy.game.data.MsoyGameCodes;
-import com.threerings.msoy.game.data.ParlorGameConfig;
 import com.threerings.msoy.game.data.ParlorGameObject;
+import com.threerings.msoy.item.data.all.ItemTypes;
+import com.threerings.msoy.party.client.PartyGameClientHelper;
 
 /**
  * Implements the various Msoy specific parts of the Whirled Game backend.

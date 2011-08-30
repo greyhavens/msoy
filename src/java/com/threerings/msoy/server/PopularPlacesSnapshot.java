@@ -27,10 +27,8 @@ import com.threerings.msoy.peer.data.MemberGame;
 import com.threerings.msoy.peer.data.MemberScene;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
-
 import com.threerings.msoy.room.data.MsoySceneModel;
-
-import com.threerings.msoy.server.persist.MemberRepository; // just for a @link
+import com.threerings.msoy.server.persist.MemberRepository;
 
 /**
  * Contains a snapshot of all of the popular places in the Whirled.

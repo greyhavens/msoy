@@ -4,6 +4,7 @@
 package client.shell;
 
 import com.threerings.gwt.util.CookieUtil;
+
 import com.threerings.msoy.web.gwt.ABTestCard;
 import com.threerings.msoy.web.gwt.CookieNames;
 

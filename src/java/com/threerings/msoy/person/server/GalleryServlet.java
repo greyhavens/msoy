@@ -10,18 +10,12 @@ import com.google.inject.Inject;
 
 import com.samskivert.util.IntIntMap;
 import com.samskivert.util.IntListUtil;
-import com.threerings.msoy.server.persist.MemberRecord;
+
+import com.threerings.web.gwt.ServiceException;
 
 import com.threerings.msoy.item.data.all.Photo;
 import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.PhotoRepository;
-
-import com.threerings.msoy.web.gwt.ServiceCodes;
-
-import com.threerings.web.gwt.ServiceException;
-
-import com.threerings.msoy.web.server.MsoyServiceServlet;
-
 import com.threerings.msoy.person.gwt.Gallery;
 import com.threerings.msoy.person.gwt.GalleryData;
 import com.threerings.msoy.person.gwt.GalleryListData;
@@ -29,6 +23,9 @@ import com.threerings.msoy.person.gwt.GalleryService;
 import com.threerings.msoy.person.gwt.ProfileCodes;
 import com.threerings.msoy.person.server.persist.GalleryRecord;
 import com.threerings.msoy.person.server.persist.GalleryRepository;
+import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.web.gwt.ServiceCodes;
+import com.threerings.msoy.web.server.MsoyServiceServlet;
 
 import static com.threerings.msoy.Log.log;
 

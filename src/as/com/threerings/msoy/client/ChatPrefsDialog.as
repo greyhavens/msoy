@@ -4,16 +4,13 @@
 package com.threerings.msoy.client {
 
 import mx.binding.utils.BindingUtils;
-
+import mx.containers.Grid;
+import mx.containers.HBox;
+import mx.containers.VBox;
 import mx.controls.ComboBox;
 import mx.controls.Label;
 import mx.controls.RadioButton;
 import mx.controls.RadioButtonGroup;
-
-import mx.containers.HBox;
-import mx.containers.Grid;
-import mx.containers.VBox;
-
 import mx.core.UIComponent;
 
 import com.threerings.util.NamedValueEvent;
@@ -146,9 +143,8 @@ import flash.text.TextFormat;
 
 import mx.controls.TextArea;
 
-import com.threerings.msoy.client.Msgs;
-
 import com.threerings.msoy.chat.client.ChatOverlay;
+import com.threerings.msoy.client.Msgs;
 
 class FontTestArea extends TextArea
 {

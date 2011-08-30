@@ -7,11 +7,12 @@ import java.io.StringWriter;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-import com.samskivert.util.StringUtil;
-import com.samskivert.velocity.VelocityUtil;
-
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
+
+import com.samskivert.util.StringUtil;
+
+import com.samskivert.velocity.VelocityUtil;
 
 import com.threerings.msoy.server.ServerConfig;
 

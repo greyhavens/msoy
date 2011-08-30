@@ -5,6 +5,8 @@ package com.threerings.msoy.facebook.server.persist;
 
 import com.google.common.collect.Maps;
 
+import com.samskivert.util.StringUtil;
+
 import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.annotation.Column;
@@ -12,10 +14,8 @@ import com.samskivert.depot.annotation.Entity;
 import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.expression.ColumnExp;
 
-import com.samskivert.util.StringUtil;
-
-import com.threerings.msoy.facebook.gwt.FacebookTemplate;
 import com.threerings.msoy.facebook.gwt.FacebookService.Gender;
+import com.threerings.msoy.facebook.gwt.FacebookTemplate;
 
 /**
  * Describes a story template entered into the Facebook template editor for use at runtime by the

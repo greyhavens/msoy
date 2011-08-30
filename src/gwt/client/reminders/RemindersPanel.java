@@ -6,7 +6,6 @@ package client.reminders;
 import java.util.List;
 
 import com.google.common.collect.Lists;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -15,17 +14,18 @@ import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.orth.data.MediaDesc;
+import com.threerings.orth.data.MediaDescSize;
+
 import com.threerings.gwt.ui.AbsoluteCSSPanel;
 import com.threerings.gwt.util.CookieUtil;
 
-import com.threerings.orth.data.MediaDesc;
-import com.threerings.orth.data.MediaDescSize;
 import com.threerings.msoy.game.data.all.Trophy;
+import com.threerings.msoy.reminders.gwt.Reminder.TrophyData;
 import com.threerings.msoy.reminders.gwt.Reminder;
 import com.threerings.msoy.reminders.gwt.ReminderType;
 import com.threerings.msoy.reminders.gwt.RemindersService;
 import com.threerings.msoy.reminders.gwt.RemindersServiceAsync;
-import com.threerings.msoy.reminders.gwt.Reminder.TrophyData;
 import com.threerings.msoy.web.gwt.CookieNames;
 
 import client.shell.CShell;

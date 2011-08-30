@@ -10,7 +10,12 @@ import flash.net.URLLoader;
 import flash.net.URLLoaderDataFormat;
 import flash.net.URLRequest;
 import flash.utils.ByteArray;
-import flash.utils.Dictionary;
+
+import com.whirled.game.client.PropertySpaceHelper;
+import com.whirled.game.client.WhirledGameMessageService;
+import com.whirled.game.data.GameData;
+import com.whirled.game.data.LevelData;
+import com.whirled.game.data.PropertySpaceObject;
 
 import com.threerings.io.TypedArray;
 
@@ -27,20 +32,10 @@ import com.threerings.presents.client.InvocationService_InvocationListener;
 import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.data.PlaceObject;
 
-import com.whirled.game.client.PropertySpaceHelper;
-import com.whirled.game.client.WhirledGameMessageService;
-
-import com.whirled.game.data.GameData;
-import com.whirled.game.data.LevelData;
-import com.whirled.game.data.PropertySpaceObject;
-
-import com.threerings.msoy.data.all.MemberName;
-
-import com.threerings.msoy.item.data.all.ItemIdent;
-
 import com.threerings.msoy.avrg.data.AVRGameObject;
 import com.threerings.msoy.avrg.data.PlayerLocation;
-
+import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.room.data.ActorInfo;
 import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.msoy.room.data.RoomObject;

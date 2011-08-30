@@ -3,15 +3,15 @@
 
 package com.threerings.msoy.data {
 
-import com.threerings.crowd.data.BodyObject;
-import com.threerings.presents.dobj.DSet;
-
-import com.threerings.crowd.data.TokenRing;
-
 import com.threerings.io.ObjectInputStream;
 
 import com.threerings.util.Comparators;
 import com.threerings.util.Name;
+
+import com.threerings.presents.dobj.DSet;
+
+import com.threerings.crowd.data.BodyObject;
+import com.threerings.crowd.data.TokenRing;
 
 import com.threerings.msoy.data.all.ContactEntry;
 import com.threerings.msoy.data.all.GroupName;
@@ -20,14 +20,11 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.PlayerEntry;
 import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.data.all.VizMemberName;
-
 import com.threerings.msoy.game.data.GameSummary;
-
 import com.threerings.msoy.group.data.all.GroupMembership;
 import com.threerings.msoy.group.data.all.GroupMembership_Rank;
-import com.threerings.msoy.room.data.Track;
-
 import com.threerings.msoy.item.data.all.Avatar;
+import com.threerings.msoy.room.data.Track;
 
 /**
  * Represents a connected msoy user.

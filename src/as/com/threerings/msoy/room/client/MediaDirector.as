@@ -13,14 +13,13 @@ import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.msoy.item.data.all.Decor;
-import com.threerings.msoy.world.client.WorldContext;
-
 import com.threerings.msoy.room.data.FurniData;
 import com.threerings.msoy.room.data.MemberInfo;
 import com.threerings.msoy.room.data.MobInfo;
 import com.threerings.msoy.room.data.ObserverInfo;
 import com.threerings.msoy.room.data.PetInfo;
 import com.threerings.msoy.room.data.RoomObject;
+import com.threerings.msoy.world.client.WorldContext;
 
 /**
  * Handles the loading of various media.

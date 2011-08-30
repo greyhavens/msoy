@@ -6,14 +6,11 @@ package com.threerings.msoy.world.client {
 import com.threerings.util.Util;
 import com.threerings.util.ValueEvent;
 
-import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyClient;
 import com.threerings.msoy.client.PageCommand;
-
 import com.threerings.msoy.data.Address;
 import com.threerings.msoy.data.Page;
-
 import com.threerings.msoy.tutorial.client.TutorialSequenceBuilder;
 
 /**
@@ -145,9 +142,9 @@ public class MePageTutorial
 }
 }
 
-import com.threerings.msoy.data.Address;
+import flash.utils.setTimeout;
 
-import flash.utils.setTimeout; // function import
+import com.threerings.msoy.data.Address;
 
 class Trigger
 {

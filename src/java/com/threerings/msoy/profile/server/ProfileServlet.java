@@ -21,38 +21,25 @@ import com.google.inject.Inject;
 
 import com.samskivert.util.Calendars;
 import com.samskivert.util.ObjectUtil;
+
 import com.threerings.parlor.rating.server.persist.RatingRecord;
 import com.threerings.parlor.rating.server.persist.RatingRepository;
 
-import com.threerings.msoy.data.MsoyAuthCodes;
-import com.threerings.msoy.data.UserAction;
-import com.threerings.msoy.data.all.Award;
-import com.threerings.msoy.data.all.CoinAwards;
-import com.threerings.msoy.data.all.DeploymentConfig;
-import com.threerings.msoy.data.all.Friendship;
-import com.threerings.msoy.data.all.Award.AwardType;
-import com.threerings.msoy.server.MemberNodeActions;
-import com.threerings.msoy.server.MemberLogic;
-import com.threerings.msoy.server.persist.MemberRecord;
-import com.threerings.msoy.server.persist.UserActionRepository;
-import com.threerings.msoy.server.persist.MemberRepository.MemberSearchRecord;
-import com.threerings.msoy.spam.server.SpamLogic;
-
-import com.threerings.msoy.web.gwt.MemberCard;
-import com.threerings.msoy.web.gwt.ServiceCodes;
-
-import com.threerings.web.gwt.ServiceException;
 import com.threerings.gwt.util.ExpanderResult;
-
-import com.threerings.msoy.web.gwt.Activity;
-import com.threerings.msoy.web.gwt.MemberCard.NotOnline;
-import com.threerings.msoy.web.server.MsoyServiceServlet;
+import com.threerings.web.gwt.ServiceException;
 
 import com.threerings.msoy.badge.data.BadgeType;
 import com.threerings.msoy.badge.data.all.Badge;
 import com.threerings.msoy.badge.data.all.EarnedBadge;
 import com.threerings.msoy.badge.server.persist.BadgeRepository;
 import com.threerings.msoy.badge.server.persist.EarnedBadgeRecord;
+import com.threerings.msoy.data.MsoyAuthCodes;
+import com.threerings.msoy.data.UserAction;
+import com.threerings.msoy.data.all.Award.AwardType;
+import com.threerings.msoy.data.all.Award;
+import com.threerings.msoy.data.all.CoinAwards;
+import com.threerings.msoy.data.all.DeploymentConfig;
+import com.threerings.msoy.data.all.Friendship;
 import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.game.gwt.GameRating;
 import com.threerings.msoy.game.server.persist.GameInfoRecord;
@@ -69,24 +56,33 @@ import com.threerings.msoy.group.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.group.server.persist.MedalRecord;
 import com.threerings.msoy.group.server.persist.MedalRepository;
-import com.threerings.msoy.notify.server.MsoyNotificationManager;
-
 import com.threerings.msoy.item.server.ItemLogic;
 import com.threerings.msoy.item.server.persist.FavoritesRepository;
 import com.threerings.msoy.money.server.MoneyLogic;
+import com.threerings.msoy.notify.server.MsoyNotificationManager;
 import com.threerings.msoy.person.gwt.FeedMessage;
-import com.threerings.msoy.person.gwt.SelfFeedMessage;
 import com.threerings.msoy.person.gwt.FeedMessageType;
 import com.threerings.msoy.person.gwt.Interest;
 import com.threerings.msoy.person.gwt.ProfileCodes;
+import com.threerings.msoy.person.gwt.SelfFeedMessage;
 import com.threerings.msoy.person.server.FeedLogic;
 import com.threerings.msoy.person.server.GalleryLogic;
 import com.threerings.msoy.person.server.persist.InterestRecord;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
 import com.threerings.msoy.person.server.persist.ProfileRepository;
-
 import com.threerings.msoy.profile.gwt.Profile;
 import com.threerings.msoy.profile.gwt.ProfileService;
+import com.threerings.msoy.server.MemberLogic;
+import com.threerings.msoy.server.MemberNodeActions;
+import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.MemberRepository.MemberSearchRecord;
+import com.threerings.msoy.server.persist.UserActionRepository;
+import com.threerings.msoy.spam.server.SpamLogic;
+import com.threerings.msoy.web.gwt.Activity;
+import com.threerings.msoy.web.gwt.MemberCard.NotOnline;
+import com.threerings.msoy.web.gwt.MemberCard;
+import com.threerings.msoy.web.gwt.ServiceCodes;
+import com.threerings.msoy.web.server.MsoyServiceServlet;
 
 import static com.threerings.msoy.Log.log;
 

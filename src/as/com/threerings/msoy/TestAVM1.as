@@ -7,12 +7,9 @@ import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 import flash.display.Loader;
 import flash.display.MovieClip;
-
 import flash.events.Event;
 import flash.events.TimerEvent;
-
 import flash.net.URLRequest;
-
 import flash.utils.Timer;
 
 public class TestAVM1

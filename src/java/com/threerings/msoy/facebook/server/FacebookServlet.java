@@ -11,33 +11,25 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.google.code.facebookapi.FacebookException;
+import com.google.code.facebookapi.FacebookJaxbRestClient;
+import com.google.code.facebookapi.ProfileField;
+import com.google.code.facebookapi.schema.User;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-
 import com.google.inject.Inject;
-
-import com.google.code.facebookapi.FacebookException;
-import com.google.code.facebookapi.FacebookJaxbRestClient;
-import com.google.code.facebookapi.ProfileField;
-import com.google.code.facebookapi.schema.User;
 
 import com.samskivert.util.CollectionUtil;
 import com.samskivert.util.Comparators;
 import com.samskivert.util.RandomUtil;
 
-import com.threerings.web.gwt.ServiceException;
 import com.threerings.parlor.rating.server.persist.RatingRecord;
 import com.threerings.parlor.rating.server.persist.RatingRepository;
 
-import com.threerings.msoy.person.server.persist.ProfileRecord;
-import com.threerings.msoy.person.server.persist.ProfileRepository;
-import com.threerings.msoy.profile.gwt.Profile;
-import com.threerings.msoy.server.persist.ExternalMapRecord;
-import com.threerings.msoy.server.persist.MemberCardRecord;
-import com.threerings.msoy.server.persist.MemberRepository;
+import com.threerings.web.gwt.ServiceException;
 
 import com.threerings.msoy.apps.server.persist.AppInfoRecord;
 import com.threerings.msoy.apps.server.persist.AppRepository;
@@ -47,14 +39,13 @@ import com.threerings.msoy.facebook.gwt.FacebookFriendInfo;
 import com.threerings.msoy.facebook.gwt.FacebookGame;
 import com.threerings.msoy.facebook.gwt.FacebookService;
 import com.threerings.msoy.facebook.server.FacebookLogic.SessionInfo;
-import com.threerings.msoy.facebook.server.KontagentLogic.TrackingId;
 import com.threerings.msoy.facebook.server.KontagentLogic.LinkType;
+import com.threerings.msoy.facebook.server.KontagentLogic.TrackingId;
 import com.threerings.msoy.facebook.server.persist.FacebookActionRecord;
 import com.threerings.msoy.facebook.server.persist.FacebookInfoRecord;
 import com.threerings.msoy.facebook.server.persist.FacebookRepository;
 import com.threerings.msoy.facebook.server.persist.FacebookTemplateRecord;
 import com.threerings.msoy.facebook.server.persist.FeedThumbnailRecord;
-
 import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.game.gwt.ArcadeData;
 import com.threerings.msoy.game.gwt.GameGenre;
@@ -64,9 +55,13 @@ import com.threerings.msoy.game.server.persist.GameInfoRecord;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 import com.threerings.msoy.game.server.persist.TrophyRecord;
 import com.threerings.msoy.game.server.persist.TrophyRepository;
-
 import com.threerings.msoy.money.server.persist.MoneyRepository;
-
+import com.threerings.msoy.person.server.persist.ProfileRecord;
+import com.threerings.msoy.person.server.persist.ProfileRepository;
+import com.threerings.msoy.profile.gwt.Profile;
+import com.threerings.msoy.server.persist.ExternalMapRecord;
+import com.threerings.msoy.server.persist.MemberCardRecord;
+import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.web.gwt.ExternalSiteId;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 

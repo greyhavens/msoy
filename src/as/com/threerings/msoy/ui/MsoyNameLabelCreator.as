@@ -3,14 +3,13 @@
 
 package com.threerings.msoy.ui {
 
-import com.threerings.util.Log;
-import com.threerings.util.Name;
-
 import com.whirled.ui.NameLabel;
 import com.whirled.ui.NameLabelCreator;
 
-import com.threerings.msoy.client.MsoyContext;
+import com.threerings.util.Log;
+import com.threerings.util.Name;
 
+import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.data.all.VizMemberName;
 
 public class MsoyNameLabelCreator
@@ -42,29 +41,26 @@ public class MsoyNameLabelCreator
 
 import flash.events.MouseEvent;
 
-import flash.text.TextFieldAutoSize;
+import com.whirled.ui.NameLabel;
+import com.whirled.ui.PlayerList;
 
 import mx.containers.HBox;
-
 import mx.core.ScrollPolicy;
 
 import com.threerings.util.Log;
 
-import com.whirled.ui.NameLabel;
-import com.whirled.ui.PlayerList;
+import com.threerings.crowd.data.OccupantInfo;
+
+import com.threerings.orth.data.MediaDescSize;
+import com.threerings.orth.ui.MediaWrapper;
 
 import com.threerings.flex.CommandMenu;
 import com.threerings.flex.FlexWrapper;
 
-import com.threerings.crowd.data.OccupantInfo;
-
 import com.threerings.msoy.client.MsoyContext;
-import com.threerings.orth.data.MediaDescSize;
 import com.threerings.msoy.data.all.VizMemberName;
-import com.threerings.orth.ui.MediaWrapper;
-import com.threerings.msoy.ui.MsoyNameLabel;
-
 import com.threerings.msoy.room.client.RoomObjectView;
+import com.threerings.msoy.ui.MsoyNameLabel;
 
 class LabelBox extends HBox
     implements NameLabel

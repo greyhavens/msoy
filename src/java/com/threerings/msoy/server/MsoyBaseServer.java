@@ -10,24 +10,25 @@ import com.google.inject.Injector;
 
 import net.sf.ehcache.CacheManager;
 
-import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.util.Invoker;
+
+import com.samskivert.jdbc.ConnectionProvider;
+
+import com.samskivert.depot.EHCacheAdapter.EHCacheConfig;
 import com.samskivert.depot.EHCacheAdapter;
 import com.samskivert.depot.PersistenceContext;
-import com.samskivert.depot.EHCacheAdapter.EHCacheConfig;
 
 import com.threerings.presents.dobj.AccessController;
 import com.threerings.presents.server.PresentsInvoker;
 import com.threerings.presents.server.ReportManager;
 
-import com.threerings.pulse.server.persist.PulseDatabase;
-
 import com.threerings.whirled.server.WhirledServer;
 
-import com.threerings.msoy.data.StatType;
-import com.threerings.msoy.server.persist.BatchInvoker;
+import com.threerings.pulse.server.persist.PulseDatabase;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;
+import com.threerings.msoy.data.StatType;
+import com.threerings.msoy.server.persist.BatchInvoker;
 
 import static com.threerings.msoy.Log.log;
 

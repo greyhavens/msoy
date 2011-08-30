@@ -22,19 +22,17 @@ import com.threerings.web.gwt.ServiceException;
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.all.Friendship;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.server.MemberManager;
-import com.threerings.msoy.server.persist.MemberCardRecord;
-import com.threerings.msoy.server.persist.MemberRecord;
-import com.threerings.msoy.server.persist.MemberRepository;
-
+import com.threerings.msoy.game.server.GameUtil;
+import com.threerings.msoy.group.gwt.GroupMemberCard;
 import com.threerings.msoy.peer.data.HostedGame;
 import com.threerings.msoy.peer.data.HostedRoom;
 import com.threerings.msoy.peer.data.MemberGame;
 import com.threerings.msoy.peer.data.MemberScene;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
-
-import com.threerings.msoy.game.server.GameUtil;
-import com.threerings.msoy.group.gwt.GroupMemberCard;
+import com.threerings.msoy.server.MemberManager;
+import com.threerings.msoy.server.persist.MemberCardRecord;
+import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.web.gwt.MemberCard;
 
 import static com.threerings.msoy.Log.log;

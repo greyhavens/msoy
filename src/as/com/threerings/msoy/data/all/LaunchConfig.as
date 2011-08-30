@@ -85,5 +85,5 @@ public class LaunchConfig
     public function writeObject (out :ObjectOutputStream) :void
     {
         throw new Error();
-    }    
+    }
 }

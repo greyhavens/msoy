@@ -10,9 +10,7 @@ import com.whirled.game.client.Thumbnail;
 import com.threerings.orth.ui.ScalingMediaDescContainer;
 
 import com.threerings.msoy.game.client.GameContext;
-
 import com.threerings.msoy.group.data.all.Group;
-
 import com.threerings.msoy.party.data.PartySummary;
 
 /**

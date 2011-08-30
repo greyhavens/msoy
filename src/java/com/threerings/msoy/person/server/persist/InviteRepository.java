@@ -4,7 +4,6 @@
 package com.threerings.msoy.person.server.persist;
 
 import java.sql.Timestamp;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;

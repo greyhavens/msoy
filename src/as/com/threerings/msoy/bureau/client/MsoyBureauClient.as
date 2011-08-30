@@ -3,15 +3,17 @@
 
 package com.threerings.msoy.bureau.client {
 
+import com.whirled.bureau.client.UserCodeLoader;
+import com.whirled.bureau.client.WhirledBureauClient;
+
 import com.threerings.bureau.client.BureauDirector;
 import com.threerings.bureau.util.BureauContext;
+
 import com.threerings.msoy.bureau.data.ThaneCodes;
 import com.threerings.msoy.bureau.data.ThaneWorldMarshaller;
 import com.threerings.msoy.bureau.util.MsoyBureauContext;
 import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.MsoyLogConfig;
-import com.whirled.bureau.client.UserCodeLoader;
-import com.whirled.bureau.client.WhirledBureauClient;
 
 /** Msoy-specific subclass. */
 public class MsoyBureauClient extends WhirledBureauClient
@@ -86,13 +88,16 @@ public class MsoyBureauClient extends WhirledBureauClient
 
 }
 
+import com.whirled.bureau.client.UserCodeLoader;
+
+import com.threerings.presents.client.Client;
+import com.threerings.presents.dobj.DObjectManager;
+
 import com.threerings.bureau.client.BureauDirector;
+
 import com.threerings.msoy.bureau.client.MsoyBureauClient;
 import com.threerings.msoy.bureau.client.WindowDirector;
 import com.threerings.msoy.bureau.util.MsoyBureauContext;
-import com.threerings.presents.client.Client;
-import com.threerings.presents.dobj.DObjectManager;
-import com.whirled.bureau.client.UserCodeLoader;
 
 class ContextImpl
     implements MsoyBureauContext

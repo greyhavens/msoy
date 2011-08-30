@@ -11,10 +11,10 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.orth.data.MediaDescSize;
+
 import com.threerings.gwt.ui.CenteredBox;
 import com.threerings.gwt.ui.InlinePanel;
-
-import com.threerings.orth.data.MediaDescSize;
 
 import com.threerings.msoy.item.data.all.Photo;
 import com.threerings.msoy.person.gwt.GalleryData;
@@ -26,9 +26,9 @@ import com.threerings.msoy.web.gwt.Pages;
 import client.shell.CShell;
 import client.ui.MsoyUI;
 import client.util.ClickCallback;
+import client.util.InfoCallback;
 import client.util.Link;
 import client.util.MediaUtil;
-import client.util.InfoCallback;
 
 /**
  * A read-only view of the photos in a gallery. Also handles profile galleries which are special

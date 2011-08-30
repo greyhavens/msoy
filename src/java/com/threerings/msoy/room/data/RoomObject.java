@@ -4,6 +4,7 @@
 package com.threerings.msoy.room.data;
 
 import javax.annotation.Generated;
+
 import com.threerings.util.Name;
 
 import com.threerings.presents.dobj.DSet;

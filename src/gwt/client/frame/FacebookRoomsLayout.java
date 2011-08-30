@@ -3,10 +3,10 @@
 
 package client.frame;
 
-import client.ui.MsoyUI;
-
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
+
+import client.ui.MsoyUI;
 
 public class FacebookRoomsLayout extends FacebookLayout
 {

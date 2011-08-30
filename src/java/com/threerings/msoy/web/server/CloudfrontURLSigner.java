@@ -3,12 +3,11 @@
 
 package com.threerings.msoy.web.server;
 
-import java.net.URL;
 import java.net.MalformedURLException;
-
+import java.net.URL;
+import java.security.GeneralSecurityException;
 import java.security.KeyFactory;
 import java.security.Signature;
-import java.security.GeneralSecurityException;
 import java.security.spec.PKCS8EncodedKeySpec;
 
 import org.apache.commons.codec.binary.Base64;

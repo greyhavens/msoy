@@ -6,7 +6,6 @@ package client.person;
 import java.util.List;
 
 import com.google.common.collect.Lists;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -16,19 +15,19 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.gwt.ui.InlinePanel;
-
 import com.threerings.orth.data.MediaDesc;
 import com.threerings.orth.data.MediaDescSize;
 
-import com.threerings.msoy.person.gwt.FeedMessage;
-import com.threerings.msoy.person.gwt.FeedItemGenerator;
-import com.threerings.msoy.person.gwt.FeedMessageType;
+import com.threerings.gwt.ui.InlinePanel;
+
 import com.threerings.msoy.person.gwt.FeedItemGenerator.Builder;
 import com.threerings.msoy.person.gwt.FeedItemGenerator.Icon;
 import com.threerings.msoy.person.gwt.FeedItemGenerator.Media;
 import com.threerings.msoy.person.gwt.FeedItemGenerator.Messages;
 import com.threerings.msoy.person.gwt.FeedItemGenerator.Plural;
+import com.threerings.msoy.person.gwt.FeedItemGenerator;
+import com.threerings.msoy.person.gwt.FeedMessage;
+import com.threerings.msoy.person.gwt.FeedMessageType;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 

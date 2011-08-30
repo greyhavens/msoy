@@ -8,20 +8,19 @@ import java.util.Set;
 
 import com.threerings.util.StreamableArrayIntSet;
 
-import com.threerings.stats.data.StatSet;
-
 import com.threerings.crowd.server.BodyLocal;
+
+import com.threerings.stats.data.StatSet;
 
 import com.threerings.orth.notify.data.Notification;
 import com.threerings.orth.notify.data.NotificationLocal;
-
-import com.threerings.msoy.data.MemberObject;
 
 import com.threerings.msoy.badge.data.BadgeType;
 import com.threerings.msoy.badge.data.EarnedBadgeSet;
 import com.threerings.msoy.badge.data.InProgressBadgeSet;
 import com.threerings.msoy.badge.data.all.EarnedBadge;
 import com.threerings.msoy.badge.data.all.InProgressBadge;
+import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.room.data.EntityMemories;
 import com.threerings.msoy.room.data.RoomObject;
 import com.threerings.msoy.room.server.RoomManager;

@@ -36,6 +36,8 @@ import com.threerings.presents.util.FutureResult;
 import com.threerings.msoy.data.MsoyAuthName;
 import com.threerings.msoy.game.data.GameAuthName;
 import com.threerings.msoy.party.data.PartyAuthName;
+import com.threerings.msoy.party.data.PartyInfo;
+import com.threerings.msoy.party.data.PartySummary;
 import com.threerings.msoy.peer.data.HostedPlace;
 import com.threerings.msoy.peer.data.MemberGame;
 import com.threerings.msoy.peer.data.MemberScene;
@@ -43,9 +45,6 @@ import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.MsoyEventLogger;
-
-import com.threerings.msoy.party.data.PartyInfo;
-import com.threerings.msoy.party.data.PartySummary;
 
 import static com.threerings.msoy.Log.log;
 

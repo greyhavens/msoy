@@ -5,6 +5,7 @@ package com.threerings.msoy.money.data.all;
 
 import java.util.EnumSet;
 import java.util.Set;
+
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 /** The format of a transaction report. */

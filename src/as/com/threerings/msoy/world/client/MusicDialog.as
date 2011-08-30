@@ -10,7 +10,6 @@ import com.threerings.util.CommandEvent;
 import com.threerings.flex.FlexWrapper;
 
 import com.threerings.msoy.client.Msgs;
-
 import com.threerings.msoy.ui.FloatingPanel;
 import com.threerings.msoy.ui.MsoyAudioDisplay;
 

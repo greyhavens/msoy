@@ -7,13 +7,13 @@ import java.sql.Date;
 
 import net.jcip.annotations.NotThreadSafe;
 
+import com.samskivert.util.Calendars;
+
 import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.annotation.Entity;
 import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.expression.ColumnExp;
-
-import com.samskivert.util.Calendars;
 
 /**
  * Contains current run-time information about the money service.  There will only ever be a single

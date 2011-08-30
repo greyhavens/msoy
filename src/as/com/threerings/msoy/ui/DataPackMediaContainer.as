@@ -3,33 +3,27 @@
 
 package com.threerings.msoy.ui {
 
+import flash.display.BitmapData;
+import flash.display.Loader;
+import flash.display.LoaderInfo;
 import flash.events.ErrorEvent;
 import flash.events.Event;
 import flash.events.IOErrorEvent;
 import flash.events.SecurityErrorEvent;
-
-import flash.display.BitmapData;
-import flash.display.Loader;
-import flash.display.LoaderInfo;
-
 import flash.geom.Matrix;
 import flash.geom.Rectangle;
-
 import flash.net.URLLoader;
 import flash.net.URLLoaderDataFormat;
 import flash.net.URLRequest;
-
 import flash.system.ApplicationDomain;
 import flash.system.LoaderContext;
 import flash.system.Security;
-
 import flash.utils.ByteArray;
 
 import com.threerings.util.StringUtil;
 import com.threerings.util.ValueEvent;
 
 import com.threerings.msoy.client.DeploymentConfig;
-import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.Snapshottable;
 import com.threerings.msoy.data.MsoyDataPack;
 import com.threerings.msoy.data.all.MediaMimeTypes;

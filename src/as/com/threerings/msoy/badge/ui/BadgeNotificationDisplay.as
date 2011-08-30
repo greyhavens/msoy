@@ -8,7 +8,6 @@ import com.threerings.util.Log;
 import com.threerings.orth.notify.data.Notification;
 
 import com.threerings.msoy.client.MsoyContext;
-
 import com.threerings.msoy.notify.data.BadgeEarnedNotification;
 
 public class BadgeNotificationDisplay

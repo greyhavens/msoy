@@ -8,22 +8,19 @@ import mx.controls.List;
 import mx.core.ClassFactory;
 import mx.core.ScrollPolicy;
 
-import com.threerings.util.Util;
-
 import com.threerings.io.TypedArray;
+
+import com.threerings.util.Util;
 
 import com.threerings.flex.CommandButton;
 
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.Prefs;
-
-import com.threerings.msoy.world.client.WorldContext;
-import com.threerings.msoy.world.client.WorldControlBar;
-
 import com.threerings.msoy.item.client.ItemService;
 import com.threerings.msoy.item.data.all.ItemIdent;
-
 import com.threerings.msoy.ui.FloatingPanel
+import com.threerings.msoy.world.client.WorldContext;
+import com.threerings.msoy.world.client.WorldControlBar;
 
 /**
  * Shows info on a bunch of sprites.
@@ -132,11 +129,7 @@ import com.threerings.flex.CommandButton;
 
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;
-
 import com.threerings.msoy.item.data.all.ItemIdent;
-
-import com.threerings.msoy.world.client.WorldContext;
-
 import com.threerings.msoy.room.client.EntitySprite;
 import com.threerings.msoy.room.client.SpriteInfoPanel;
 

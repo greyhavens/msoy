@@ -3,9 +3,9 @@
 
 package client.util;
 
-import client.shell.CShell;
-
 import com.google.gwt.user.client.rpc.AsyncCallback;
+
+import client.shell.CShell;
 
 /**
  * Noop implementation of an AsyncCallback of type Void.  Does nothing on success, and logs a

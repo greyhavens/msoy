@@ -3,12 +3,12 @@
 
 package com.threerings.msoy.game.data {
 
-import com.threerings.util.Cloneable;
-import com.threerings.util.Equalable;
-
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
 import com.threerings.io.SimpleStreamableObject;
+
+import com.threerings.util.Cloneable;
+import com.threerings.util.Equalable;
 
 import com.threerings.orth.data.MediaDesc;
 

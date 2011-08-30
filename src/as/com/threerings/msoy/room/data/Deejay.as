@@ -15,8 +15,6 @@ import com.threerings.presents.dobj.DSet_Entry;
 
 // GENERATED PREAMBLE END
 
-import com.threerings.util.Comparators;
-
 // GENERATED CLASSDECL START
 public class Deejay implements Comparable, DSet_Entry
 {

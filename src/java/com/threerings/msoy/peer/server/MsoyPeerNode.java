@@ -11,19 +11,17 @@ import com.threerings.presents.dobj.DSet;
 import com.threerings.presents.dobj.EntryAddedEvent;
 import com.threerings.presents.dobj.EntryRemovedEvent;
 import com.threerings.presents.dobj.EntryUpdatedEvent;
-import com.threerings.presents.server.net.ServerCommunicator;
-
 import com.threerings.presents.peer.server.PeerNode;
 import com.threerings.presents.peer.server.persist.NodeRecord;
+import com.threerings.presents.server.net.ServerCommunicator;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
-import com.threerings.msoy.peer.data.MemberScene;
-import com.threerings.msoy.peer.data.MsoyNodeObject;
-import com.threerings.msoy.server.ServerConfig;
-
 import com.threerings.msoy.party.data.MemberParty;
 import com.threerings.msoy.party.data.PartyInfo;
 import com.threerings.msoy.party.server.PartyRegistry;
+import com.threerings.msoy.peer.data.MemberScene;
+import com.threerings.msoy.peer.data.MsoyNodeObject;
+import com.threerings.msoy.server.ServerConfig;
 
 /**
  * Handles Whirled-specific peer bits.

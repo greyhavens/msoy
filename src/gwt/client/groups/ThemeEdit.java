@@ -9,15 +9,17 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.TextBox;
-import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.orth.data.MediaDesc;
 import com.threerings.orth.data.MediaDescSize;
+
+import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.data.all.Theme;
 import com.threerings.msoy.group.data.all.Group;
 import com.threerings.msoy.group.gwt.GroupService;
 import com.threerings.msoy.group.gwt.GroupServiceAsync;
+
 import client.edutil.EditorTable;
 import client.edutil.EditorUtil;
 import client.shell.CShell;

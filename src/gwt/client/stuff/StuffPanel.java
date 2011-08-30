@@ -7,7 +7,6 @@ import java.util.List;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -34,8 +33,8 @@ import client.shell.DynamicLookup;
 import client.ui.MsoyUI;
 import client.ui.SearchBox;
 import client.ui.StretchButton;
-import client.util.Link;
 import client.util.InfoCallback;
+import client.util.Link;
 import client.util.NaviUtil;
 
 /**

@@ -15,15 +15,16 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextBox;
 
 import com.threerings.gwt.ui.SmartTable;
+
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.gwt.WebUserService;
 import com.threerings.msoy.web.gwt.WebUserServiceAsync;
 
 import client.shell.CShell;
 import client.shell.FBLogonPanel;
+import client.shell.LogonPanel.ForgotPasswordDialog;
 import client.shell.LogonPanel;
 import client.shell.ShellMessages;
-import client.shell.LogonPanel.ForgotPasswordDialog;
 import client.ui.MsoyUI;
 import client.ui.RegisterPanel;
 

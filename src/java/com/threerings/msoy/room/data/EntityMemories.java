@@ -6,9 +6,9 @@ package com.threerings.msoy.room.data;
 import java.util.Arrays;
 import java.util.Map;
 
-import com.threerings.presents.dobj.DSet;
-
 import com.threerings.util.StreamableHashMap;
+
+import com.threerings.presents.dobj.DSet;
 
 import com.threerings.msoy.item.data.all.ItemIdent;
 

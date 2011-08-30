@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Set;
 
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 
@@ -17,40 +16,35 @@ import com.samskivert.util.Tuple;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationCodes;
+import com.threerings.presents.dobj.ObjectDeathListener;
+import com.threerings.presents.dobj.ObjectDestroyedEvent;
+import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.presents.server.ClientManager;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
 
-import com.threerings.presents.dobj.ObjectDeathListener;
-import com.threerings.presents.dobj.ObjectDestroyedEvent;
-import com.threerings.presents.dobj.RootDObjectManager;
-
-//import com.threerings.crowd.chat.server.SpeakHandler;
+import com.threerings.orth.notify.data.GenericNotification;
+import com.threerings.orth.notify.data.Notification;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.group.data.all.GroupMembership.Rank;
 import com.threerings.msoy.notify.server.MsoyNotificationManager;
-import com.threerings.msoy.party.data.PartyMarshaller;
-import com.threerings.msoy.server.MemberNodeActions;
-
-import com.threerings.msoy.peer.data.HostedGame;
-import com.threerings.msoy.peer.data.HostedRoom;
-import com.threerings.msoy.peer.data.MsoyNodeObject;
-import com.threerings.msoy.peer.server.MsoyPeerManager;
-
-import com.threerings.orth.notify.data.GenericNotification;
-import com.threerings.orth.notify.data.Notification;
-
 import com.threerings.msoy.party.data.MemberParty;
 import com.threerings.msoy.party.data.PartierObject;
 import com.threerings.msoy.party.data.PartyAuthName;
 import com.threerings.msoy.party.data.PartyCodes;
 import com.threerings.msoy.party.data.PartyDetail;
 import com.threerings.msoy.party.data.PartyInfo;
+import com.threerings.msoy.party.data.PartyMarshaller;
 import com.threerings.msoy.party.data.PartyObject;
 import com.threerings.msoy.party.data.PartyPeep;
 import com.threerings.msoy.party.data.PartySummary;
+import com.threerings.msoy.peer.data.HostedGame;
+import com.threerings.msoy.peer.data.HostedRoom;
+import com.threerings.msoy.peer.data.MsoyNodeObject;
+import com.threerings.msoy.peer.server.MsoyPeerManager;
+import com.threerings.msoy.server.MemberNodeActions;
 
 import static com.threerings.msoy.Log.log;
 

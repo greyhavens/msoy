@@ -3,8 +3,10 @@ package com.threerings.msoy.comment.data.all
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
 import com.threerings.io.SimpleStreamableObject;
-import com.threerings.msoy.item.data.all.MsoyItemType;
+
 import com.threerings.util.ByteEnum;
+
+import com.threerings.msoy.item.data.all.MsoyItemType;
 
 public class CommentType extends SimpleStreamableObject
 {

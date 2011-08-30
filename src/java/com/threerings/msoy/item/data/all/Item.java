@@ -4,16 +4,17 @@
 package com.threerings.msoy.item.data.all;
 
 import com.google.common.primitives.Doubles;
-
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.samskivert.util.ByteEnum;
 
 import com.threerings.io.Streamable;
 
-import com.threerings.orth.data.MediaDesc;
-import com.threerings.msoy.data.all.MediaMimeTypes;
 import com.threerings.presents.dobj.DSet;
+
+import com.threerings.orth.data.MediaDesc;
+
+import com.threerings.msoy.data.all.MediaMimeTypes;
 
 /**
  * The base class for all digital items in the MSOY system.

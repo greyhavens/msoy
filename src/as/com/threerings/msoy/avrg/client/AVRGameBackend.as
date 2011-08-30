@@ -4,64 +4,53 @@
 package com.threerings.msoy.avrg.client {
 
 import flash.display.DisplayObject;
-
-import flash.events.Event;
-
 import flash.geom.Point;
 import flash.geom.Rectangle;
-
 import flash.utils.ByteArray;
-import flash.utils.Dictionary;
+
+import com.whirled.avrg.UIConstants;
+import com.whirled.game.client.ContentListener;
+import com.whirled.game.data.GameData;
+import com.whirled.game.data.WhirledPlayerObject;
 
 import com.threerings.util.DelayUtil;
 import com.threerings.util.Log;
+import com.threerings.util.Map;
 import com.threerings.util.Maps;
-import com.threerings.util.Map;
-import com.threerings.util.Map;
 import com.threerings.util.MessageBundle;
 import com.threerings.util.NetUtil;
 import com.threerings.util.ObjectMarshaller;
 import com.threerings.util.StringUtil;
-
-import com.whirled.avrg.UIConstants;
-
-import com.threerings.flex.CommandButton;
 
 import com.threerings.crowd.chat.data.ChatCodes;
 import com.threerings.crowd.data.OccupantInfo;
 
 import com.threerings.whirled.data.Scene;
 
-import com.whirled.game.client.ContentListener;
-import com.whirled.game.data.GameData;
-import com.whirled.game.data.WhirledPlayerObject;
+import com.threerings.flex.CommandButton;
 
+import com.threerings.msoy.avrg.data.AVRGameObject;
 import com.threerings.msoy.client.ControlBackend;
 import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.game.client.ConsumeItemPackDialog;
+import com.threerings.msoy.game.client.GameContext;
+import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.item.data.all.ItemIdent;
-import com.threerings.msoy.world.client.WorldContext;
-import com.threerings.msoy.world.client.WorldControlBar;
-
 import com.threerings.msoy.party.client.PartyGameClientHelper;
-
 import com.threerings.msoy.room.client.MemberSprite;
 import com.threerings.msoy.room.client.MobSprite;
 import com.threerings.msoy.room.client.OccupantSprite;
 import com.threerings.msoy.room.client.RoomController;
 import com.threerings.msoy.room.client.RoomMetrics;
 import com.threerings.msoy.room.client.RoomObjectView;
-import com.threerings.msoy.room.data.ActorInfo;
 import com.threerings.msoy.room.client.RoomView;
+import com.threerings.msoy.room.data.ActorInfo;
 import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.msoy.room.data.RoomObject;
 import com.threerings.msoy.room.data.RoomPropertiesObject;
-
-import com.threerings.msoy.game.client.ConsumeItemPackDialog;
-import com.threerings.msoy.game.client.GameContext;
-import com.threerings.msoy.game.data.PlayerObject;
-
-import com.threerings.msoy.avrg.data.AVRGameObject;
+import com.threerings.msoy.world.client.WorldContext;
+import com.threerings.msoy.world.client.WorldControlBar;
 
 public class AVRGameBackend extends ControlBackend
 {

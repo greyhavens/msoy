@@ -3,18 +3,16 @@
 
 package com.threerings.msoy.world.client {
 
+import com.threerings.util.Log;
+
 import com.threerings.presents.client.BasicDirector;
 import com.threerings.presents.client.Client;
 
-import com.threerings.util.Log;
-
 import com.threerings.msoy.client.MemberService;
-
-import com.threerings.msoy.world.client.WorldContext;
-
 import com.threerings.msoy.data.MemberMarshaller;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.world.client.WorldContext;
 
 public class MemberDirector extends BasicDirector
 {

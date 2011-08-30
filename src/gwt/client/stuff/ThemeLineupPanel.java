@@ -12,15 +12,15 @@ import com.threerings.gwt.util.SimpleDataModel;
 
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.item.data.all.Avatar;
+import com.threerings.msoy.stuff.gwt.StuffService.InventoryResult;
 import com.threerings.msoy.stuff.gwt.StuffService;
 import com.threerings.msoy.stuff.gwt.StuffServiceAsync;
-import com.threerings.msoy.stuff.gwt.StuffService.InventoryResult;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.shell.DynamicLookup;
 import client.ui.MsoyUI;
-import client.util.Link;
 import client.util.InfoCallback;
+import client.util.Link;
 
 /**
  * Displays the avatars in a theme's lineup.

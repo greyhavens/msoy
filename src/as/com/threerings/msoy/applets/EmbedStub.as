@@ -17,10 +17,10 @@ import flash.system.Security;
 import flash.text.TextField;
 import flash.text.TextFormat;
 
-import com.threerings.msoy.data.UberClientModes;
-
 import com.kongregate.as3.client.KongregateAPI;
 import com.kongregate.as3.client.events.KongregateEvent;
+
+import com.threerings.msoy.data.UberClientModes;
 
 // On Kongregate, the width limit is 700, but there appears to be
 // no height limit.

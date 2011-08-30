@@ -12,11 +12,9 @@ import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.orth.data.MediaDesc;
 
 import com.threerings.msoy.item.data.all.ItemIdent;
-
-import com.threerings.msoy.world.client.WorldContext;
-
 import com.threerings.msoy.room.data.ActorInfo;
 import com.threerings.msoy.room.data.MsoyLocation;
+import com.threerings.msoy.world.client.WorldContext;
 
 /**
  * Handles sprites for actors (members and pets).

@@ -15,8 +15,10 @@ import com.google.gwt.user.client.ui.TextBox;
 
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
+
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.gwt.Pages;
+
 import client.shell.FBLogonPanel;
 import client.shell.LogonPanel;
 import client.ui.MsoyUI;

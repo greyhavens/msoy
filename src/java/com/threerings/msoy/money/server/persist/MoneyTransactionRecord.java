@@ -20,7 +20,6 @@ import com.samskivert.depot.expression.ColumnExp;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.CatalogIdent;
 import com.threerings.msoy.item.data.all.ItemIdent;
-
 import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.MoneyTransaction;

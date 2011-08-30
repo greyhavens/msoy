@@ -4,16 +4,16 @@
 package client.people;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.room.gwt.RoomInfo;
+import com.threerings.msoy.room.gwt.WebRoomService.MemberRoomsResult;
 import com.threerings.msoy.room.gwt.WebRoomService;
 import com.threerings.msoy.room.gwt.WebRoomServiceAsync;
-import com.threerings.msoy.room.gwt.WebRoomService.MemberRoomsResult;
 
 import client.room.RoomWidget;
 import client.shell.CShell;

@@ -6,7 +6,6 @@ package client.util.events;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
-
 import com.google.gwt.core.client.JavaScriptObject;
 
 import com.threerings.gwt.util.ListenerList;

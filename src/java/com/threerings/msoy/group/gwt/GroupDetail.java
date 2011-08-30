@@ -12,11 +12,9 @@ import com.threerings.io.Streamable;
 import com.threerings.orth.data.MediaDesc;
 
 import com.threerings.msoy.data.all.MemberName;
-
-import com.threerings.msoy.fora.gwt.ForumThread;
-
-import com.threerings.msoy.group.data.all.Group;
 import com.threerings.msoy.data.all.Theme;
+import com.threerings.msoy.fora.gwt.ForumThread;
+import com.threerings.msoy.group.data.all.Group;
 import com.threerings.msoy.group.data.all.GroupMembership.Rank;
 
 /**

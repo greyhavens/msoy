@@ -6,10 +6,8 @@ package com.threerings.msoy.world.client {
 import com.threerings.util.Predicates;
 import com.threerings.util.Util;
 
-import com.threerings.msoy.data.Address;
-
 import com.threerings.msoy.client.Msgs;
-
+import com.threerings.msoy.data.Address;
 import com.threerings.msoy.tutorial.client.TutorialDirector;
 
 public class GeneralTips

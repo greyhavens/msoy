@@ -69,7 +69,7 @@ public class FacebookTemplate
     /** Whether this template is considered when the client requests a random template. */
     public boolean enabled;
 
-    /** The bundle id registered with facebook used to publish an instance of the template. 
+    /** The bundle id registered with facebook used to publish an instance of the template.
      * TODO: remove, this is deprecated. */
     public long bundleId;
 

@@ -3,11 +3,11 @@
 
 package client.trophy;
 
-import com.threerings.orth.data.MediaDescSize;
-
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlexTable;
+
+import com.threerings.orth.data.MediaDescSize;
 
 import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.web.gwt.Pages;

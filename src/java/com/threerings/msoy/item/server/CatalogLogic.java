@@ -12,25 +12,23 @@ import com.google.inject.Singleton;
 
 import com.threerings.web.gwt.ServiceException;
 
-import com.threerings.msoy.item.data.all.MsoyItemType;
-import com.threerings.msoy.server.MsoyEventLogger;
-import com.threerings.msoy.server.persist.MemberRecord;
-
-import com.threerings.msoy.money.data.all.Currency;
-import com.threerings.msoy.money.server.BuyResult;
-import com.threerings.msoy.money.server.MoneyExchange;
-import com.threerings.msoy.money.server.MoneyLogic;
-import com.threerings.msoy.room.server.persist.MemoriesRecord;
-import com.threerings.msoy.room.server.persist.MemoryRepository;
-
 import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.item.gwt.CatalogListing;
 import com.threerings.msoy.item.gwt.CatalogQuery;
 import com.threerings.msoy.item.gwt.ListingCard;
 import com.threerings.msoy.item.server.persist.CatalogRecord;
 import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
+import com.threerings.msoy.money.data.all.Currency;
+import com.threerings.msoy.money.server.BuyResult;
+import com.threerings.msoy.money.server.MoneyExchange;
+import com.threerings.msoy.money.server.MoneyLogic;
+import com.threerings.msoy.room.server.persist.MemoriesRecord;
+import com.threerings.msoy.room.server.persist.MemoryRepository;
+import com.threerings.msoy.server.MsoyEventLogger;
+import com.threerings.msoy.server.persist.MemberRecord;
 
 import static com.threerings.msoy.Log.log;
 

@@ -10,6 +10,7 @@ import com.threerings.util.Joiner;
 import com.threerings.crowd.data.OccupantInfo;
 
 import com.threerings.orth.data.MediaDesc;
+
 import com.threerings.msoy.item.data.all.ItemIdent;
 
 /**

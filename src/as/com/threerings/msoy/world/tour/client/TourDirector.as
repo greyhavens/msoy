@@ -9,18 +9,14 @@ import com.threerings.util.Log;
 
 import com.threerings.presents.client.BasicDirector;
 import com.threerings.presents.client.Client;
-
 import com.threerings.presents.dobj.AttributeChangeAdapter;
 import com.threerings.presents.dobj.AttributeChangedEvent;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
-
+import com.threerings.msoy.room.client.RoomObjectView;
 import com.threerings.msoy.world.client.WorldClient;
 import com.threerings.msoy.world.client.WorldContext;
-
-import com.threerings.msoy.room.client.RoomObjectView;
-
 import com.threerings.msoy.world.tour.data.TourMarshaller;
 
 public class TourDirector extends BasicDirector

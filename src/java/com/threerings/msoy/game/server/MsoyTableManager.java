@@ -3,10 +3,9 @@
 
 package com.threerings.msoy.game.server;
 
-import com.google.inject.Inject;
-
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
+import com.google.inject.Inject;
 
 import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.dobj.RootDObjectManager;
@@ -21,13 +20,12 @@ import com.threerings.parlor.game.data.GameConfig;
 import com.threerings.parlor.game.server.GameManager;
 import com.threerings.parlor.server.TableManager;
 
-import com.threerings.msoy.peer.server.MsoyPeerManager;
-
 import com.threerings.msoy.game.data.LobbyObject;
 import com.threerings.msoy.game.data.MsoyMatchConfig;
 import com.threerings.msoy.game.data.ParlorGameConfig;
 import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.game.data.TablesWaiting;
+import com.threerings.msoy.peer.server.MsoyPeerManager;
 
 /**
  * Customizes the basic table manager with MSOY specific bits.

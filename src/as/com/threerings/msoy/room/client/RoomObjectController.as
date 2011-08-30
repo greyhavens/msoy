@@ -19,22 +19,23 @@ import com.threerings.util.ValueEvent;
 import com.threerings.presents.dobj.AttributeChangeAdapter;
 import com.threerings.presents.dobj.AttributeChangedEvent;
 
+import com.threerings.crowd.chat.client.MuteObserver;
 import com.threerings.crowd.client.PlaceView;
 import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.data.PlaceConfig;
 import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.util.CrowdContext;
 
-import com.threerings.crowd.chat.client.MuteObserver;
-
-import com.threerings.flex.CommandMenu;
-
 import com.threerings.whirled.data.SceneUpdate;
 
 import com.threerings.orth.data.MediaDescSize;
 import com.threerings.orth.notify.data.Notification;
 import com.threerings.orth.room.client.PetService;
+import com.threerings.orth.ui.MediaWrapper;
 
+import com.threerings.flex.CommandMenu;
+
+import com.threerings.msoy.chat.client.ChatOverlay;
 import com.threerings.msoy.client.BootablePlaceController;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyClient;
@@ -44,21 +45,15 @@ import com.threerings.msoy.client.UberClient;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.ui.BubblePopup;
-
 import com.threerings.msoy.item.client.ItemService;
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.Furniture;
 import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.item.data.all.Item_UsedAs;
 import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.data.all.Item_UsedAs;
 import com.threerings.msoy.item.data.all.Launcher;
 import com.threerings.msoy.item.data.all.Pet;
-
-import com.threerings.msoy.world.client.WorldControlBar;
-import com.threerings.msoy.world.client.WorldController;
-
 import com.threerings.msoy.room.client.editor.DoorTargetEditController;
 import com.threerings.msoy.room.client.editor.ItemUsedDialog;
 import com.threerings.msoy.room.client.editor.RoomEditorController;
@@ -66,7 +61,6 @@ import com.threerings.msoy.room.client.updates.FurniUpdateAction;
 import com.threerings.msoy.room.client.updates.SceneUpdateAction;
 import com.threerings.msoy.room.client.updates.UpdateAction;
 import com.threerings.msoy.room.client.updates.UpdateStack;
-
 import com.threerings.msoy.room.data.ActorInfo;
 import com.threerings.msoy.room.data.ControllableEntity;
 import com.threerings.msoy.room.data.EntityControl;
@@ -83,10 +77,9 @@ import com.threerings.msoy.room.data.PetName;
 import com.threerings.msoy.room.data.PuppetName;
 import com.threerings.msoy.room.data.RoomObject;
 import com.threerings.msoy.room.data.SceneAttrsUpdate;
-
-import com.threerings.orth.ui.MediaWrapper;
-
-import com.threerings.msoy.chat.client.ChatOverlay;
+import com.threerings.msoy.ui.BubblePopup;
+import com.threerings.msoy.world.client.WorldControlBar;
+import com.threerings.msoy.world.client.WorldController;
 
 /**
  * Manages the various interactions that take place in a room scene.

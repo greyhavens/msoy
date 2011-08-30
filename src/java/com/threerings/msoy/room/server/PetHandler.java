@@ -6,9 +6,11 @@ package com.threerings.msoy.room.server;
 import java.util.Collections;
 
 import com.google.inject.Inject;
-import com.samskivert.jdbc.WriteOnlyUnit;
-import com.samskivert.util.Invoker;
+
 import com.samskivert.text.MessageUtil;
+import com.samskivert.util.Invoker;
+
+import com.samskivert.jdbc.WriteOnlyUnit;
 
 import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.dobj.ObjectDeathListener;
@@ -16,9 +18,9 @@ import com.threerings.presents.dobj.ObjectDestroyedEvent;
 import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.presents.server.InvocationException;
 
+import com.threerings.crowd.chat.server.SpeakUtil;
 import com.threerings.crowd.server.PlaceManager;
 import com.threerings.crowd.server.PlaceRegistry;
-import com.threerings.crowd.chat.server.SpeakUtil;
 
 import com.threerings.whirled.client.SceneMoveAdapter;
 import com.threerings.whirled.data.ScenePlace;
@@ -26,17 +28,15 @@ import com.threerings.whirled.server.SceneRegistry;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
-import com.threerings.msoy.server.MemberLocator;
-
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.Pet;
 import com.threerings.msoy.item.server.persist.PetRepository;
-
 import com.threerings.msoy.room.data.EntityMemories;
 import com.threerings.msoy.room.data.PetCodes;
-import com.threerings.msoy.room.data.PetObject;
 import com.threerings.msoy.room.data.PetName;
+import com.threerings.msoy.room.data.PetObject;
 import com.threerings.msoy.room.server.persist.MemoryRepository;
+import com.threerings.msoy.server.MemberLocator;
 
 import static com.threerings.msoy.Log.log;
 

@@ -6,7 +6,6 @@ package client.issues;
 import java.util.List;
 
 import com.google.common.collect.Lists;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.Button;
@@ -31,8 +30,8 @@ import client.shell.CShell;
 import client.ui.LimitedTextArea;
 import client.ui.MsoyUI;
 import client.util.ClickCallback;
-import client.util.Link;
 import client.util.InfoCallback;
+import client.util.Link;
 import client.util.NaviUtil;
 
 /**

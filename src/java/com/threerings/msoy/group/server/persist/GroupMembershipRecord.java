@@ -6,19 +6,18 @@ package com.threerings.msoy.group.server.persist;
 import java.sql.Timestamp;
 import java.util.Map;
 
+import com.samskivert.util.StringUtil;
+
 import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistentRecord;
-import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.annotation.Entity;
 import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.annotation.Index;
-
-import com.samskivert.util.StringUtil;
+import com.samskivert.depot.expression.ColumnExp;
 
 import com.threerings.msoy.data.all.GroupName;
-
-import com.threerings.msoy.group.data.all.GroupMembership;
 import com.threerings.msoy.group.data.all.GroupMembership.Rank;
+import com.threerings.msoy.group.data.all.GroupMembership;
 import com.threerings.msoy.group.gwt.GroupMemberCard;
 
 /**

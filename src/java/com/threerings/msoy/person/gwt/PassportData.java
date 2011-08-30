@@ -11,7 +11,6 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 import com.threerings.msoy.badge.data.all.Badge;
 import com.threerings.msoy.badge.data.all.InProgressBadge;
 import com.threerings.msoy.badge.gwt.StampCategory;
-
 import com.threerings.msoy.data.all.Award;
 import com.threerings.msoy.data.all.GroupName;
 

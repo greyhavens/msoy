@@ -4,12 +4,9 @@
 package com.threerings.msoy.chat.client {
 
 import flash.display.BlendMode;
-
 import flash.filters.BevelFilter;
 import flash.filters.BitmapFilterQuality;
-
 import flash.geom.Rectangle;
-
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 import flash.text.TextFormat;

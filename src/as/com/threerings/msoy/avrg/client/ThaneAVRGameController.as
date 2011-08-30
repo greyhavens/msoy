@@ -5,52 +5,47 @@ package com.threerings.msoy.avrg.client {
 
 import flash.utils.ByteArray;
 
+import com.whirled.bureau.client.GameAgentController;
+import com.whirled.game.client.ContentListener;
+
 import com.threerings.util.Iterator;
 import com.threerings.util.Log;
 import com.threerings.util.Map;
 import com.threerings.util.Maps;
 import com.threerings.util.ResultAdapter;
 
-import com.threerings.presents.util.SafeObjectManager;
-import com.threerings.presents.util.SafeSubscriber;
-
-import com.threerings.presents.dobj.DSet_Entry;
+import com.threerings.presents.client.Client;
+import com.threerings.presents.client.ResultAdapter;
 import com.threerings.presents.dobj.AttributeChangedEvent;
 import com.threerings.presents.dobj.DEvent;
+import com.threerings.presents.dobj.DSet_Entry;
 import com.threerings.presents.dobj.EntryAddedEvent;
 import com.threerings.presents.dobj.EntryRemovedEvent;
 import com.threerings.presents.dobj.EntryUpdatedEvent;
 import com.threerings.presents.dobj.MessageEvent;
 import com.threerings.presents.dobj.ObjectAccessError;
 import com.threerings.presents.dobj.SetAdapter;
-
-import com.threerings.presents.client.Client;
-import com.threerings.presents.client.ResultAdapter;
+import com.threerings.presents.util.SafeObjectManager;
+import com.threerings.presents.util.SafeSubscriber;
 
 import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.data.PlaceObject;
 
-import com.whirled.bureau.client.GameAgentController;
-import com.whirled.game.client.ContentListener;
-
+import com.threerings.msoy.avrg.data.AVRGameAgentObject;
+import com.threerings.msoy.avrg.data.AVRGameObject;
+import com.threerings.msoy.avrg.data.PlayerLocation;
+import com.threerings.msoy.avrg.data.SceneInfo;
+import com.threerings.msoy.bureau.client.AVRGameAgent;
+import com.threerings.msoy.bureau.client.ThaneWorldService;
+import com.threerings.msoy.bureau.client.Window;
+import com.threerings.msoy.bureau.util.MsoyBureauContext;
 import com.threerings.msoy.game.data.PlayerObject;
-
 import com.threerings.msoy.room.data.MemberInfo;
 import com.threerings.msoy.room.data.MobInfo;
 import com.threerings.msoy.room.data.RoomCodes;
 import com.threerings.msoy.room.data.RoomObject;
 import com.threerings.msoy.room.data.RoomPropertiesEntry;
 import com.threerings.msoy.room.data.RoomPropertiesObject;
-
-import com.threerings.msoy.bureau.client.AVRGameAgent;
-import com.threerings.msoy.bureau.client.ThaneWorldService;
-import com.threerings.msoy.bureau.client.Window;
-import com.threerings.msoy.bureau.util.MsoyBureauContext;
-
-import com.threerings.msoy.avrg.data.AVRGameAgentObject;
-import com.threerings.msoy.avrg.data.AVRGameObject;
-import com.threerings.msoy.avrg.data.PlayerLocation;
-import com.threerings.msoy.avrg.data.SceneInfo;
 
 public class ThaneAVRGameController
     implements GameAgentController
@@ -813,27 +808,23 @@ public class ThaneAVRGameController
 
 }
 
+import com.whirled.game.client.ContentListener;
+
 import com.threerings.util.Map;
 import com.threerings.util.Maps;
 import com.threerings.util.StringUtil;
 
 import com.threerings.presents.dobj.DEvent;
 import com.threerings.presents.dobj.EventListener;
-
 import com.threerings.presents.util.SafeSubscriber;
-
-import com.whirled.game.client.ContentListener;
-
-import com.threerings.msoy.game.data.PlayerObject;
-
-import com.threerings.msoy.room.data.RoomObject;
-import com.threerings.msoy.room.data.RoomPropertiesObject;
-
-import com.threerings.msoy.bureau.client.Window;
 
 import com.threerings.msoy.avrg.client.BackendAvatarAdapter;
 import com.threerings.msoy.avrg.client.BackendNetAdapter;
 import com.threerings.msoy.avrg.client.ThaneAVRGameController;
+import com.threerings.msoy.bureau.client.Window;
+import com.threerings.msoy.game.data.PlayerObject;
+import com.threerings.msoy.room.data.RoomObject;
+import com.threerings.msoy.room.data.RoomPropertiesObject;
 
 /** Binds a scene id to its window, room and players. */
 class SceneBinding

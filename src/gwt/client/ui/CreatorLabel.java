@@ -6,10 +6,10 @@ package client.ui;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.FlowPanel;
 
+import com.threerings.gwt.ui.InlineLabel;
+
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
-
-import com.threerings.gwt.ui.InlineLabel;
 
 import client.shell.ShellMessages;
 import client.util.Link;

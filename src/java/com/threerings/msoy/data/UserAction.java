@@ -6,13 +6,13 @@ package com.threerings.msoy.data;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
-import com.threerings.io.SimpleStreamableObject;
 
-import com.threerings.msoy.badge.data.all.Badge;
+import com.threerings.io.SimpleStreamableObject;
 
 import com.threerings.util.ActionScript;
 import com.threerings.util.MessageBundle;
 
+import com.threerings.msoy.badge.data.all.Badge;
 import com.threerings.msoy.data.all.MemberName;
 
 /**

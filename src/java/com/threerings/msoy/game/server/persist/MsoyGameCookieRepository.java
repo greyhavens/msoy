@@ -9,13 +9,13 @@ import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import com.whirled.game.server.persist.GameCookieRecord;
+import com.whirled.game.server.persist.GameCookieRepository;
+
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.annotation.Computed;
 import com.samskivert.depot.annotation.Entity;
-
-import com.whirled.game.server.persist.GameCookieRecord;
-import com.whirled.game.server.persist.GameCookieRepository;
 
 /**
  * Repo providing msoy-specific game cookie operations.

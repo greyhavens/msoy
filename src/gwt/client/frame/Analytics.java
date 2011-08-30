@@ -6,7 +6,6 @@ package client.frame;
 import java.util.List;
 
 import com.google.common.collect.Lists;
-
 import com.google.gwt.user.client.Timer;
 
 import client.shell.CShell;

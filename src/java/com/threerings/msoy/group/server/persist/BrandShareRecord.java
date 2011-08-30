@@ -3,14 +3,14 @@
 
 package com.threerings.msoy.group.server.persist;
 
+import com.samskivert.util.StringUtil;
+
 import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistentRecord;
-import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.annotation.Entity;
 import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.annotation.Index;
-
-import com.samskivert.util.StringUtil;
+import com.samskivert.depot.expression.ColumnExp;
 
 /**
  * Contains the details of person's membership in a group.

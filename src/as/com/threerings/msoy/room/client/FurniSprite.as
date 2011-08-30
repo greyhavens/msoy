@@ -2,24 +2,19 @@
 // $Id$
 
 package com.threerings.msoy.room.client {
-import com.threerings.media.MediaContainer;
-import com.threerings.util.ValueEvent;
-
-import flash.display.DisplayObject;
 import flash.display.LoaderInfo;
-
 import flash.events.MouseEvent;
-
 import flash.geom.Point;
 
 import com.threerings.util.CommandEvent;
+import com.threerings.util.ValueEvent;
+
+import com.threerings.media.MediaContainer;
 
 import com.threerings.msoy.client.LoadingWatcher;
 import com.threerings.msoy.client.Msgs;
-
-import com.threerings.msoy.world.client.WorldContext;
-
 import com.threerings.msoy.room.data.FurniData;
+import com.threerings.msoy.world.client.WorldContext;
 
 public class FurniSprite extends EntitySprite
 {

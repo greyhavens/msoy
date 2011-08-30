@@ -3,12 +3,10 @@
 
 package com.threerings.msoy.tutorial.client {
 
-import com.threerings.crowd.util.CrowdContext;
-
 import com.threerings.crowd.chat.client.CommandHandler;
 import com.threerings.crowd.chat.client.SpeakService;
-
 import com.threerings.crowd.chat.data.ChatCodes;
+import com.threerings.crowd.util.CrowdContext;
 
 import com.threerings.msoy.world.client.WorldContext;
 

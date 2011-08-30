@@ -9,11 +9,9 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.IncompatibleRemoteServiceException;
 
 import com.threerings.gwt.util.Console;
-
-import com.threerings.msoy.web.gwt.ClientMode;
-
 import com.threerings.web.gwt.ServiceException;
 
+import com.threerings.msoy.web.gwt.ClientMode;
 import com.threerings.msoy.web.gwt.WebCreds;
 
 /**

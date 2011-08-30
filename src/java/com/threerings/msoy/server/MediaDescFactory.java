@@ -5,14 +5,15 @@ package com.threerings.msoy.server;
 
 import com.samskivert.util.Calendars;
 
+import com.threerings.orth.data.MediaDesc;
+
 import com.threerings.msoy.data.all.CloudfrontMediaDesc;
 import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.msoy.data.all.MediaMimeTypes;
-import com.threerings.msoy.server.util.JSONMarshaller;
 import com.threerings.msoy.server.util.JSONMarshaller.JSONMutator;
+import com.threerings.msoy.server.util.JSONMarshaller;
 import com.threerings.msoy.web.server.CloudfrontException;
 import com.threerings.msoy.web.server.CloudfrontURLSigner;
-import com.threerings.orth.data.MediaDesc;
 
 import static com.threerings.msoy.Log.log;
 

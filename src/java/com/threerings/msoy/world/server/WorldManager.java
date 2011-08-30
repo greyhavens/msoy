@@ -8,17 +8,17 @@ import java.util.List;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.jdbc.RepositoryUnit;
-import com.samskivert.jdbc.WriteOnlyUnit;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.ObjectUtil;
 import com.samskivert.util.ResultListener;
 
-import com.threerings.msoy.item.data.all.MsoyItemType;
+import com.samskivert.jdbc.RepositoryUnit;
+import com.samskivert.jdbc.WriteOnlyUnit;
+
 import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.annotation.MainInvoker;
-import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.client.InvocationService.ConfirmListener;
+import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.dobj.DSet;
@@ -30,11 +30,23 @@ import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.server.BodyManager;
 import com.threerings.crowd.server.PlaceManager;
 import com.threerings.crowd.server.PlaceRegistry;
-import com.threerings.msoy.data.MemberExperience;
+
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.MemberName;
-
+import com.threerings.msoy.group.server.ThemeLogic;
+import com.threerings.msoy.group.server.persist.GroupRepository;
+import com.threerings.msoy.group.server.persist.ThemeRepository;
+import com.threerings.msoy.item.data.ItemCodes;
+import com.threerings.msoy.item.data.all.Avatar.QuicklistState;
+import com.threerings.msoy.item.data.all.Avatar;
+import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.data.all.MsoyItemType;
+import com.threerings.msoy.item.server.ItemLogic;
+import com.threerings.msoy.item.server.ItemManager;
+import com.threerings.msoy.item.server.persist.AvatarRecord;
+import com.threerings.msoy.item.server.persist.AvatarRepository;
+import com.threerings.msoy.item.server.persist.CatalogRecord;
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.notify.server.MsoyNotificationManager;
 import com.threerings.msoy.room.data.EntityMemories;
@@ -46,7 +58,6 @@ import com.threerings.msoy.room.server.persist.MemoriesRecord;
 import com.threerings.msoy.room.server.persist.MemoryRepository;
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
 import com.threerings.msoy.room.server.persist.SceneRecord;
-
 import com.threerings.msoy.server.MemberLocal;
 import com.threerings.msoy.server.MemberLocator;
 import com.threerings.msoy.server.MemberLogic;
@@ -55,19 +66,6 @@ import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.world.client.WorldService.HomeResultListener;
 import com.threerings.msoy.world.data.WorldCodes;
-
-import com.threerings.msoy.group.server.ThemeLogic;
-import com.threerings.msoy.group.server.persist.GroupRepository;
-import com.threerings.msoy.group.server.persist.ThemeRepository;
-import com.threerings.msoy.item.data.ItemCodes;
-import com.threerings.msoy.item.data.all.Avatar;
-import com.threerings.msoy.item.data.all.ItemIdent;
-import com.threerings.msoy.item.data.all.Avatar.QuicklistState;
-import com.threerings.msoy.item.server.ItemLogic;
-import com.threerings.msoy.item.server.ItemManager;
-import com.threerings.msoy.item.server.persist.AvatarRecord;
-import com.threerings.msoy.item.server.persist.AvatarRepository;
-import com.threerings.msoy.item.server.persist.CatalogRecord;
 import com.threerings.msoy.world.data.WorldMarshaller;
 
 import static com.threerings.msoy.Log.log;

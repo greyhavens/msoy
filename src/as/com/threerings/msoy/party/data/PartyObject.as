@@ -8,10 +8,9 @@ import com.threerings.io.ObjectInputStream;
 import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.dobj.DSet;
 
-//import com.threerings.crowd.chat.data.SpeakMarshaller;
+import com.threerings.orth.data.MediaDesc;
 
 import com.threerings.msoy.data.all.GroupName;
-import com.threerings.orth.data.MediaDesc;
 
 public class PartyObject extends DObject
 {

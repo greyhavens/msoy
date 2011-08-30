@@ -8,11 +8,10 @@ import java.util.Set;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextBox;
 
@@ -22,7 +21,6 @@ import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.msoy.person.gwt.InvitationResults;
 import com.threerings.msoy.person.gwt.InviteService;
 import com.threerings.msoy.person.gwt.InviteServiceAsync;
-
 import com.threerings.msoy.web.gwt.EmailContact;
 
 import client.shell.CShell;
@@ -54,25 +52,25 @@ public class InviteUtils
         {
             addStyleName("sendInvitesResultsPopup");
             setHeaderTitle(title);
-    
+
             _contents = new SmartTable();
             _contents.setCellSpacing(3);
             ScrollPanel scroll = new ScrollPanel(_contents);
             scroll.setStyleName("ScrollPanel");
             setContents(scroll);
-    
+
             addButton(new Button(_cmsgs.close(), new ClickHandler() {
                 public void onClick (ClickEvent event) {
                     hide();
                 }
             }));
         }
-    
+
         public SmartTable getContents ()
         {
             return _contents;
         }
-    
+
         protected SmartTable _contents;
     }
 

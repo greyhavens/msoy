@@ -6,23 +6,21 @@ package client.imagechooser;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
-
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTMLTable;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.gwt.util.SimpleDataModel;
+import com.threerings.orth.data.MediaDesc;
+import com.threerings.orth.data.MediaDescSize;
 
 import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.ui.SmartTable;
-
-import com.threerings.orth.data.MediaDesc;
-import com.threerings.orth.data.MediaDescSize;
+import com.threerings.gwt.util.SimpleDataModel;
 
 import com.threerings.msoy.imagechooser.gwt.ImageChooserService;
 import com.threerings.msoy.imagechooser.gwt.ImageChooserServiceAsync;

@@ -15,50 +15,44 @@ import com.google.inject.Singleton;
 import com.samskivert.depot.DuplicateKeyException;
 import com.samskivert.depot.expression.ColumnExp;
 
-import com.threerings.web.gwt.ServiceException;
-
-import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.presents.annotation.BlockingThread;
 
-import com.threerings.msoy.data.all.GroupName;
-import com.threerings.msoy.data.all.HashMediaDesc;
-import com.threerings.msoy.data.all.MemberName;
-
-import com.threerings.msoy.server.MemberNodeActions;
-import com.threerings.msoy.server.ServerConfig;
-import com.threerings.msoy.server.StatLogic;
-import com.threerings.msoy.server.persist.MemberRecord;
-import com.threerings.msoy.server.persist.MemberRepository;
+import com.threerings.web.gwt.ServiceException;
 
 import com.threerings.msoy.admin.data.CostsConfigObject;
 import com.threerings.msoy.admin.server.RuntimeConfig;
-
+import com.threerings.msoy.data.all.GroupName;
+import com.threerings.msoy.data.all.HashMediaDesc;
+import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.group.data.all.Group.Policy;
+import com.threerings.msoy.group.data.all.Group;
+import com.threerings.msoy.group.data.all.GroupMembership.Rank;
+import com.threerings.msoy.group.data.all.GroupMembership;
+import com.threerings.msoy.group.gwt.BrandDetail.BrandShare;
+import com.threerings.msoy.group.gwt.BrandDetail;
+import com.threerings.msoy.group.gwt.GroupCard;
+import com.threerings.msoy.group.gwt.GroupCodes;
+import com.threerings.msoy.group.gwt.GroupExtras;
+import com.threerings.msoy.group.server.persist.BrandShareRecord;
+import com.threerings.msoy.group.server.persist.GroupMembershipRecord;
+import com.threerings.msoy.group.server.persist.GroupRecord;
+import com.threerings.msoy.group.server.persist.GroupRepository;
+import com.threerings.msoy.money.data.all.Currency;
+import com.threerings.msoy.money.data.all.PriceQuote;
+import com.threerings.msoy.money.data.all.PurchaseResult;
+import com.threerings.msoy.money.server.MoneyLogic;
 import com.threerings.msoy.person.gwt.FeedMessageType;
 import com.threerings.msoy.person.server.FeedLogic;
 import com.threerings.msoy.room.data.MsoySceneModel;
 import com.threerings.msoy.room.server.SceneLogic;
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
 import com.threerings.msoy.room.server.persist.SceneRecord;
-
-import com.threerings.msoy.money.data.all.Currency;
-import com.threerings.msoy.money.data.all.PriceQuote;
-import com.threerings.msoy.money.data.all.PurchaseResult;
-import com.threerings.msoy.money.server.MoneyLogic;
-
-import com.threerings.msoy.group.data.all.Group;
-import com.threerings.msoy.group.data.all.GroupMembership;
-import com.threerings.msoy.group.data.all.Group.Policy;
-import com.threerings.msoy.group.data.all.GroupMembership.Rank;
-import com.threerings.msoy.group.gwt.BrandDetail;
-import com.threerings.msoy.group.gwt.GroupCard;
-import com.threerings.msoy.group.gwt.GroupCodes;
-import com.threerings.msoy.group.gwt.GroupExtras;
-import com.threerings.msoy.group.gwt.BrandDetail.BrandShare;
-import com.threerings.msoy.group.server.persist.BrandShareRecord;
-import com.threerings.msoy.group.server.persist.GroupMembershipRecord;
-import com.threerings.msoy.group.server.persist.GroupRecord;
-import com.threerings.msoy.group.server.persist.GroupRepository;
-
+import com.threerings.msoy.server.MemberNodeActions;
+import com.threerings.msoy.server.MsoyEventLogger;
+import com.threerings.msoy.server.ServerConfig;
+import com.threerings.msoy.server.StatLogic;
+import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.web.gwt.ServiceCodes;
 
 import static com.threerings.msoy.Log.log;

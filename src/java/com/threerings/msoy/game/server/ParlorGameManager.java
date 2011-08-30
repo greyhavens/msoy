@@ -5,6 +5,12 @@ package com.threerings.msoy.game.server;
 
 import com.google.inject.Inject;
 
+import com.whirled.bureau.data.GameAgentObject;
+import com.whirled.game.data.GameContentOwnership;
+import com.whirled.game.data.GameData;
+import com.whirled.game.data.WhirledPlayerObject;
+import com.whirled.game.server.WhirledGameManager;
+
 import com.samskivert.util.Invoker;
 import com.samskivert.util.ResultListener;
 
@@ -20,24 +26,15 @@ import com.threerings.crowd.server.PlaceManagerDelegate;
 
 import com.threerings.parlor.game.data.GameConfig;
 
-import com.whirled.bureau.data.GameAgentObject;
-import com.whirled.game.data.GameContentOwnership;
-import com.whirled.game.data.GameData;
-import com.whirled.game.data.WhirledPlayerObject;
-import com.whirled.game.server.WhirledGameManager;
-
-import com.threerings.msoy.data.MsoyUserObject;
-
-import com.threerings.msoy.item.server.persist.ItemPackRepository;
-import com.threerings.msoy.item.server.persist.LevelPackRepository;
-
 import com.threerings.msoy.bureau.server.MsoyBureauClient;
+import com.threerings.msoy.data.MsoyUserObject;
 import com.threerings.msoy.game.data.MsoyGameDefinition;
 import com.threerings.msoy.game.data.ParlorGameConfig;
 import com.threerings.msoy.game.data.ParlorGameObject;
 import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.game.server.persist.TrophyRepository;
-
+import com.threerings.msoy.item.server.persist.ItemPackRepository;
+import com.threerings.msoy.item.server.persist.LevelPackRepository;
 import com.threerings.msoy.party.server.PartyRegistry;
 
 import static com.threerings.msoy.Log.log;

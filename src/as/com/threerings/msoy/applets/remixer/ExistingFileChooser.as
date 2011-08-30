@@ -4,23 +4,20 @@
 package com.threerings.msoy.applets.remixer {
 
 import flash.events.Event;
-
 import flash.utils.ByteArray;
 
-import mx.controls.ButtonBar;
+import com.whirled.remix.data.EditableDataPack;
 
 import mx.containers.Grid;
 import mx.containers.TitleWindow;
 import mx.containers.VBox;
-
+import mx.controls.ButtonBar;
 import mx.managers.PopUpManager;
 
 import com.threerings.util.ValueEvent;
 
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.GridUtil;
-
-import com.whirled.remix.data.EditableDataPack;
 
 import com.threerings.msoy.applets.image.DisplayCanvas;
 

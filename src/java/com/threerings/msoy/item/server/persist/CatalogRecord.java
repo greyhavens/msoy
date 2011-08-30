@@ -8,22 +8,21 @@ import java.util.Date;
 
 import com.google.common.base.Function;
 
+import com.samskivert.util.StringUtil;
+
 import com.samskivert.depot.PersistentRecord;
-import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.annotation.Entity;
 import com.samskivert.depot.annotation.GeneratedValue;
 import com.samskivert.depot.annotation.GenerationType;
 import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.annotation.Index;
 import com.samskivert.depot.annotation.Transient;
-
-import com.samskivert.util.StringUtil;
+import com.samskivert.depot.expression.ColumnExp;
 
 import com.threerings.io.Streamable;
 
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
-
 import com.threerings.msoy.item.gwt.CatalogListing;
 import com.threerings.msoy.item.gwt.ItemDetail;
 import com.threerings.msoy.item.gwt.ListingCard;

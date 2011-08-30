@@ -3,8 +3,8 @@
 
 package com.threerings.msoy.applets.remixer {
 
-import mx.validators.Validator;
 import mx.validators.ValidationResult;
+import mx.validators.Validator;
 
 import com.threerings.util.XmlUtil;
 

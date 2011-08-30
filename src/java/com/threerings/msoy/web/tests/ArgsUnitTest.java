@@ -7,7 +7,7 @@ import org.junit.Test;
 
 import com.threerings.msoy.web.gwt.Args;
 
-import static org.junit.Assert.*; 
+import static org.junit.Assert.*;
 
 /**
  * Unit tests for {@link Args}.

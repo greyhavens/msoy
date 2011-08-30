@@ -4,7 +4,6 @@
 package com.threerings.msoy.applets.remixer {
 
 import flash.events.Event;
-
 import flash.utils.ByteArray;
 
 import mx.controls.Label;

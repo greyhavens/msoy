@@ -5,14 +5,12 @@ package com.threerings.msoy.client {
 
 import flash.display.LoaderInfo;
 import flash.display.Sprite;
-
-import flash.events.Event;
 import flash.events.ErrorEvent;
+import flash.events.Event;
 import flash.events.IEventDispatcher;
 import flash.events.IOErrorEvent;
 import flash.events.ProgressEvent;
 import flash.events.SecurityErrorEvent;
-
 import flash.utils.Dictionary;
 
 import caurina.transitions.Tweener;

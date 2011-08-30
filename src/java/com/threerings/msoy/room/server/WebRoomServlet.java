@@ -6,51 +6,50 @@ package com.threerings.msoy.room.server;
 import java.util.Iterator;
 import java.util.List;
 
-import com.threerings.web.gwt.ServiceException;
-import com.threerings.presents.peer.server.NodeRequestsListener;
-import org.apache.commons.lang.ArrayUtils;
-
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 
-import com.samskivert.servlet.util.ServiceWaiter;
+import org.apache.commons.lang.ArrayUtils;
+
 import com.samskivert.util.ServiceWaiter.TimeoutException;
-import com.threerings.msoy.server.MemberManager;
-import com.threerings.msoy.server.PopularPlacesSnapshot;
-import com.threerings.msoy.server.ServerConfig;
-import com.threerings.msoy.server.ServerMessages;
-import com.threerings.msoy.server.PopularPlacesSnapshot.Place;
-import com.threerings.msoy.server.persist.MemberRecord;
-import com.threerings.msoy.server.persist.MemberRepository;
 
-import com.threerings.msoy.data.all.RatingResult;
+import com.samskivert.servlet.util.ServiceWaiter;
 
-import com.threerings.msoy.web.gwt.ServiceCodes;
-import com.threerings.msoy.web.server.MsoyServiceServlet;
+import com.threerings.presents.peer.server.NodeRequestsListener;
+
+import com.threerings.web.gwt.ServiceException;
+
 import com.threerings.msoy.admin.data.CostsConfigObject;
 import com.threerings.msoy.admin.server.RuntimeConfig;
-
+import com.threerings.msoy.data.all.RatingResult;
 import com.threerings.msoy.group.data.all.GroupMembership.Rank;
 import com.threerings.msoy.group.server.ThemeLogic;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.group.server.persist.ThemeHomeTemplateRecord;
 import com.threerings.msoy.group.server.persist.ThemeRepository;
 import com.threerings.msoy.item.data.ItemCodes;
-
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.PriceQuote;
 import com.threerings.msoy.money.data.all.PurchaseResult;
 import com.threerings.msoy.money.server.MoneyLogic;
-
 import com.threerings.msoy.room.data.MsoySceneModel;
 import com.threerings.msoy.room.gwt.RoomDetail;
 import com.threerings.msoy.room.gwt.RoomInfo;
 import com.threerings.msoy.room.gwt.WebRoomService;
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
 import com.threerings.msoy.room.server.persist.SceneRecord;
+import com.threerings.msoy.server.MemberManager;
+import com.threerings.msoy.server.PopularPlacesSnapshot.Place;
+import com.threerings.msoy.server.PopularPlacesSnapshot;
+import com.threerings.msoy.server.ServerConfig;
+import com.threerings.msoy.server.ServerMessages;
+import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.MemberRepository;
+import com.threerings.msoy.web.gwt.ServiceCodes;
+import com.threerings.msoy.web.server.MsoyServiceServlet;
 
 import static com.threerings.msoy.Log.log;
 

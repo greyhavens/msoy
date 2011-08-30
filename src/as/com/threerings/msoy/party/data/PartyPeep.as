@@ -3,8 +3,8 @@
 
 package com.threerings.msoy.party.data {
 
-import com.threerings.io.ObjectOutputStream;
 import com.threerings.io.ObjectInputStream;
+import com.threerings.io.ObjectOutputStream;
 
 import com.threerings.util.ComparisonChain;
 

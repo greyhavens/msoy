@@ -6,8 +6,9 @@ package com.threerings.msoy.item.server.persist;
 import java.sql.Timestamp;
 
 import com.google.common.base.Function;
+
 import com.samskivert.depot.PersistentRecord;
-import com.samskivert.depot.annotation.*; // for Depot annotations
+import com.samskivert.depot.annotation.*;
 import com.samskivert.depot.expression.ColumnExp;
 
 public abstract class MogMarkRecord extends PersistentRecord

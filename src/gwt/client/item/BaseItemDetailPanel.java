@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Set;
 
 import com.google.common.collect.Lists;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -50,15 +49,15 @@ import client.ui.CreatorLabel;
 import client.ui.HeaderBox;
 import client.ui.MsoyUI;
 import client.ui.PopupMenu;
+import client.ui.Rating.HistoryService;
+import client.ui.Rating.RateService;
 import client.ui.Rating;
 import client.ui.RoundBox;
 import client.ui.StyledTabPanel;
-import client.ui.Rating.HistoryService;
-import client.ui.Rating.RateService;
 import client.util.ClickCallback;
 import client.util.FlashClients;
-import client.util.Link;
 import client.util.InfoCallback;
+import client.util.Link;
 import client.util.NoopAsyncCallback;
 
 /**

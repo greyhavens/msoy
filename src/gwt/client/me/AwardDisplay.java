@@ -6,11 +6,11 @@ package client.me;
 import java.util.Date;
 
 import com.google.gwt.core.client.GWT;
-
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 
 import com.threerings.gwt.util.DateUtil;
+
 import com.threerings.msoy.data.all.Award;
 
 import client.ui.MsoyUI;

@@ -12,36 +12,33 @@ import com.google.inject.Singleton;
 import com.samskivert.util.StringUtil;
 import com.samskivert.util.Tuple;
 
-import com.threerings.web.gwt.ServiceException;
 import com.threerings.presents.annotation.BlockingThread;
 import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.presents.server.InvocationException;
 
+import com.threerings.web.gwt.ServiceException;
+import com.threerings.web.server.ServletWaiter;
+
 import com.threerings.msoy.data.all.LaunchConfig;
 import com.threerings.msoy.data.all.MediaMimeTypes;
 import com.threerings.msoy.edgame.gwt.GameCode;
-import com.threerings.msoy.server.ServerConfig;
-import com.threerings.msoy.server.persist.MemberRepository;
-
-import com.threerings.msoy.peer.data.HostedRoom;
-import com.threerings.msoy.peer.server.MsoyPeerManager;
-
-import com.threerings.web.server.ServletWaiter;
-
-import com.threerings.msoy.item.data.ItemCodes;
-import com.threerings.msoy.money.data.all.MemberMoney;
-import com.threerings.msoy.money.server.MoneyLogic;
-
 import com.threerings.msoy.game.client.WorldGameService;
 import com.threerings.msoy.game.data.GameAuthName;
 import com.threerings.msoy.game.data.MsoyGameDefinition;
 import com.threerings.msoy.game.data.MsoyMatchConfig;
-import com.threerings.msoy.group.server.persist.GroupRecord;
-import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.game.server.persist.GameInfoRecord;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 import com.threerings.msoy.game.xml.MsoyGameParser;
+import com.threerings.msoy.group.server.persist.GroupRecord;
+import com.threerings.msoy.group.server.persist.GroupRepository;
+import com.threerings.msoy.item.data.ItemCodes;
+import com.threerings.msoy.money.data.all.MemberMoney;
+import com.threerings.msoy.money.server.MoneyLogic;
+import com.threerings.msoy.peer.data.HostedRoom;
+import com.threerings.msoy.peer.server.MsoyPeerManager;
+import com.threerings.msoy.server.ServerConfig;
+import com.threerings.msoy.server.persist.MemberRepository;
 
 import static com.threerings.msoy.Log.log;
 

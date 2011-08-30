@@ -10,12 +10,13 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.orth.data.MediaDescSize;
+
 import com.threerings.gwt.ui.EnterClickAdapter;
 import com.threerings.gwt.ui.FloatPanel;
 import com.threerings.gwt.ui.InlinePanel;
 import com.threerings.gwt.ui.SmartTable;
 
-import com.threerings.orth.data.MediaDescSize;
 import com.threerings.msoy.group.gwt.GalaxyData;
 import com.threerings.msoy.group.gwt.GroupCard;
 import com.threerings.msoy.group.gwt.GroupService;

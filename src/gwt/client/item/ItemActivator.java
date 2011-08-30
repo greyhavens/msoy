@@ -11,13 +11,13 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.samskivert.util.ByteEnumUtil;
 
 import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.MsoyItemType;
 
 import client.ui.MsoyUI;
 import client.util.FlashClients;
 import client.util.events.FlashEvents;
 import client.util.events.ItemUsageEvent;
 import client.util.events.ItemUsageListener;
-import com.threerings.msoy.item.data.all.MsoyItemType;
 
 /**
  * Displays an interface for activating an item (wearing an avatar, adding furni to a room, etc.).

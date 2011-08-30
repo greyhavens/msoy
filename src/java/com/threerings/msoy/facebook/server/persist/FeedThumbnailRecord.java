@@ -12,8 +12,8 @@ import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.expression.ColumnExp;
 
 import com.threerings.msoy.data.all.HashMediaDesc;
-import com.threerings.msoy.server.MediaDescFactory;
 import com.threerings.msoy.facebook.gwt.FeedThumbnail;
+import com.threerings.msoy.server.MediaDescFactory;
 
 /**
  * Represents a feed thumbnail for a game or application.

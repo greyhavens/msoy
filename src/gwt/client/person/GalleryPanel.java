@@ -20,8 +20,8 @@ import com.threerings.msoy.web.gwt.Pages;
 import client.shell.CShell;
 import client.ui.ClickBox;
 import client.ui.MsoyUI;
-import client.util.Link;
 import client.util.InfoCallback;
+import client.util.Link;
 
 /**
  * Displays all of a member's galleries.

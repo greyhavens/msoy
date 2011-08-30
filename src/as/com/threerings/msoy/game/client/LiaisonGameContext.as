@@ -9,7 +9,6 @@ import com.threerings.presents.client.Client;
 import com.threerings.presents.dobj.DObjectManager;
 
 import com.threerings.crowd.chat.client.ChatDirector;
-import com.threerings.crowd.chat.client.ChatFilter;
 import com.threerings.crowd.client.LocationDirector;
 import com.threerings.crowd.client.OccupantDirector;
 import com.threerings.crowd.client.PlaceView;
@@ -20,11 +19,9 @@ import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.WorldCredentials;
 import com.threerings.msoy.data.all.MemberName;
-
-import com.threerings.msoy.world.client.WorldContext;
-
 import com.threerings.msoy.game.data.GameCredentials;
 import com.threerings.msoy.game.data.PlayerObject;
+import com.threerings.msoy.world.client.WorldContext;
 
 /**
  * Provides context for games running in the World client via a liaison.
@@ -212,7 +209,6 @@ import com.threerings.crowd.data.PlaceConfig;
 import com.threerings.crowd.util.CrowdContext;
 
 import com.threerings.msoy.client.Preloader;
-
 import com.threerings.msoy.game.client.GameContext;
 
 class GameLocationDirector extends LocationDirector

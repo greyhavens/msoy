@@ -5,9 +5,7 @@ package client.ui;
 
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
-
 import com.google.gwt.event.shared.HandlerRegistration;
-
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Widget;
 

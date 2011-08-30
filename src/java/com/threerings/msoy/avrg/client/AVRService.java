@@ -3,9 +3,9 @@
 
 package com.threerings.msoy.avrg.client;
 
-import com.threerings.msoy.avrg.data.AVRGameConfig;
-import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
+
+import com.threerings.msoy.avrg.data.AVRGameConfig;
 
 /**
  * A service for managing AVR (in-world) game life cycles.

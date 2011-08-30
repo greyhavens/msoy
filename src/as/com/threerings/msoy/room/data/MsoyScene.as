@@ -5,18 +5,16 @@ package com.threerings.msoy.room.data {
 
 import flash.errors.IllegalOperationError;
 
-import com.threerings.util.Iterator;
 import com.threerings.util.Cloneable;
+import com.threerings.util.Iterator;
 
 import com.threerings.crowd.data.PlaceConfig;
 
-import com.threerings.msoy.data.MemberObject;
-
 import com.threerings.whirled.data.SceneImpl;
-
 import com.threerings.whirled.spot.data.Portal;
 import com.threerings.whirled.spot.data.SpotScene;
 
+import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.item.data.all.Decor;
 
 public class MsoyScene extends SceneImpl

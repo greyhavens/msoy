@@ -4,7 +4,6 @@
 package com.threerings.msoy.admin.server;
 
 import com.samskivert.depot.PersistenceContext;
-// import com.samskivert.depot.Stats;
 
 import com.threerings.msoy.admin.gwt.StatsModel;
 

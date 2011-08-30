@@ -4,7 +4,6 @@
 package com.threerings.msoy.applets.image {
 
 import mx.containers.ViewStack;
-
 import mx.core.Application;
 import mx.core.UIComponent;
 

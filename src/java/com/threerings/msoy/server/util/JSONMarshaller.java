@@ -9,11 +9,11 @@ import java.lang.reflect.Modifier;
 import java.util.Iterator;
 import java.util.Map;
 
+import com.google.common.collect.Maps;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import com.google.common.collect.Maps;
 
 import com.samskivert.util.ByteEnum;
 import com.samskivert.util.ByteEnumUtil;

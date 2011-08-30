@@ -4,7 +4,6 @@
 package com.threerings.msoy.utils {
 
 import flash.external.ExternalInterface;
-
 import flash.utils.ByteArray;
 
 /**

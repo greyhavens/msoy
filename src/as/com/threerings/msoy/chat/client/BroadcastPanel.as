@@ -12,28 +12,23 @@ import mx.controls.Text;
 
 import com.threerings.util.StringUtil;
 
+import com.threerings.presents.client.ResultAdapter;
+
 import com.threerings.flex.CommandCheckBox;
 import com.threerings.flex.FlexUtil;
 
-import com.threerings.presents.client.ResultAdapter;
-
-import com.threerings.msoy.ui.FloatingPanel;
-import com.threerings.msoy.data.MsoyCodes;
-import com.threerings.msoy.data.PlaceInfo;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyClient;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.client.MsoyService;
-
+import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.data.PlaceInfo;
 import com.threerings.msoy.money.client.BuyPanel;
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.PriceQuote;
-
-import com.threerings.msoy.chat.client.MsoyChatDirector;
-
+import com.threerings.msoy.ui.FloatingPanel;
 import com.threerings.msoy.world.client.WorldContext;
-import com.threerings.msoy.world.client.WorldController;
 
 /**
  * Panel to be popped up when a user requests to broadcast a paid announcement. Retrieves the quote

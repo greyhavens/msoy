@@ -79,7 +79,7 @@ public class Stars extends FlowPanel
 
     // each half star gets a listener that knows which rating it translates to
     protected class RatingMouseHandler
-        implements MouseOutHandler, MouseMoveHandler, MouseUpHandler 
+        implements MouseOutHandler, MouseMoveHandler, MouseUpHandler
     {
         public RatingMouseHandler (int starIx)
         {

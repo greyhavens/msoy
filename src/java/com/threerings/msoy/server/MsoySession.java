@@ -5,9 +5,11 @@ package com.threerings.msoy.server;
 
 import com.google.inject.Inject;
 
-import com.samskivert.jdbc.WriteOnlyUnit;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.StringUtil;
+
+import com.samskivert.jdbc.WriteOnlyUnit;
+
 import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.dobj.AttributeChangeListener;
 import com.threerings.presents.dobj.AttributeChangedEvent;
@@ -17,24 +19,23 @@ import com.threerings.presents.server.net.PresentsConnection;
 
 import com.threerings.crowd.data.OccupantInfo;
 
+import com.threerings.whirled.server.WhirledSession;
+
 import com.threerings.stats.data.Stat;
 import com.threerings.stats.data.StatSet;
 import com.threerings.stats.server.persist.StatRepository;
 
-import com.threerings.whirled.server.WhirledSession;
-
 import com.threerings.msoy.admin.server.RuntimeConfig;
-import com.threerings.msoy.data.MemberClientObject;
-import com.threerings.msoy.room.server.persist.MemoriesRecord;
-import com.threerings.msoy.room.server.persist.MemoryRepository;
-
 import com.threerings.msoy.data.LurkerName;
+import com.threerings.msoy.data.MemberClientObject;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyBootstrapData;
 import com.threerings.msoy.data.MsoyTokenRing;
 import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.WorldCredentials;
 import com.threerings.msoy.data.all.VisitorInfo;
+import com.threerings.msoy.room.server.persist.MemoriesRecord;
+import com.threerings.msoy.room.server.persist.MemoryRepository;
 import com.threerings.msoy.server.persist.MemberRepository;
 
 import static com.threerings.msoy.Log.log;

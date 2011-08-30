@@ -2,13 +2,13 @@
 // $Id$
 
 package com.threerings.msoy.item.data.all {
-import com.threerings.util.ByteEnum;
-import com.threerings.util.Comparable;
-import com.threerings.util.Hashable;
-
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
 import com.threerings.io.Streamable;
+
+import com.threerings.util.ByteEnum;
+import com.threerings.util.Comparable;
+import com.threerings.util.Hashable;
 
 /**
  * A fully qualified item identifier (type and integer id).

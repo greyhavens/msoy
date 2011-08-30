@@ -2,8 +2,6 @@
 // $Id$
 
 package com.threerings.msoy.party.client {
-import com.threerings.orth.ui.PlayerList;
-
 import mx.containers.HBox;
 import mx.containers.VBox;
 import mx.controls.Spacer;
@@ -13,19 +11,18 @@ import mx.events.FlexEvent;
 import com.threerings.presents.dobj.AttributeChangeListener;
 import com.threerings.presents.dobj.AttributeChangedEvent;
 
+import com.threerings.orth.ui.PlayerList;
+
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.CommandCheckBox;
 import com.threerings.flex.CommandComboBox;
 
-import com.threerings.msoy.ui.FloatingPanel;
-
 import com.threerings.msoy.client.Msgs;
-
-import com.threerings.msoy.world.client.WorldContext;
-
 import com.threerings.msoy.party.data.PartyCodes;
 import com.threerings.msoy.party.data.PartyObject;
 import com.threerings.msoy.party.data.PartyPeep;
+import com.threerings.msoy.ui.FloatingPanel;
+import com.threerings.msoy.world.client.WorldContext;
 
 public class PartyPanel extends FloatingPanel
     implements AttributeChangeListener

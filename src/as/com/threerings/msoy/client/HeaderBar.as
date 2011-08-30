@@ -4,38 +4,32 @@
 package com.threerings.msoy.client {
 
 import flash.events.Event;
-
 import flash.utils.Dictionary;
 
+import mx.containers.HBox;
+import mx.controls.Image;
+import mx.controls.Label;
 import mx.core.ScrollPolicy;
 import mx.core.UIComponent;
 
-import mx.containers.HBox;
+import com.threerings.util.ValueEvent;
 
-import mx.controls.Image;
-import mx.controls.Label;
+import com.threerings.presents.client.ClientAdapter;
+import com.threerings.presents.dobj.AttributeChangeAdapter;
+import com.threerings.presents.dobj.AttributeChangedEvent;
 
 import com.threerings.text.TextFieldUtil;
-import com.threerings.util.ValueEvent;
 
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.CommandLinkButton;
 import com.threerings.flex.FlexUtil;
 
-import com.threerings.presents.client.ClientAdapter;
-
-import com.threerings.presents.dobj.AttributeChangeAdapter;
-import com.threerings.presents.dobj.AttributeChangedEvent;
-
+import com.threerings.msoy.chat.client.ChatTabBar;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
-
-import com.threerings.msoy.chat.client.ChatTabBar;
-
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.room.client.RoomView;
-import com.threerings.msoy.world.client.WorldController;
 
 public class HeaderBar extends HBox
 {

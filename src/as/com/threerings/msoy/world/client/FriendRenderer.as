@@ -7,9 +7,7 @@ import flash.events.MouseEvent;
 
 import mx.containers.HBox;
 import mx.containers.VBox;
-
 import mx.controls.Label;
-
 import mx.core.ClassFactory;
 import mx.core.IFactory;
 

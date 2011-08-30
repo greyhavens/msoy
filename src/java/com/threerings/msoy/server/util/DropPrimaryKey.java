@@ -6,8 +6,9 @@ package com.threerings.msoy.server.util;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import com.samskivert.depot.SchemaMigration;
 import com.samskivert.jdbc.DatabaseLiaison;
+
+import com.samskivert.depot.SchemaMigration;
 
 /**
  * Migration to drops the primary key for a table.

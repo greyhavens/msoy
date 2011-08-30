@@ -8,10 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.google.common.collect.Maps;
-
-import client.shell.CShell;
-import client.ui.MsoyUI;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -26,6 +22,9 @@ import com.threerings.gwt.ui.AbsoluteCSSPanel;
 import com.threerings.msoy.facebook.gwt.FacebookFriendInfo;
 import com.threerings.msoy.facebook.gwt.FacebookService;
 import com.threerings.msoy.facebook.gwt.FacebookServiceAsync;
+
+import client.shell.CShell;
+import client.ui.MsoyUI;
 
 /**
  * Displays a row of {@link FacebookFriendInfo} to be shown across the bottom of the Whirled app

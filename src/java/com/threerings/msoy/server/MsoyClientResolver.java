@@ -3,30 +3,25 @@
 
 package com.threerings.msoy.server;
 
-import static com.threerings.msoy.Log.log;
-
 import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-
 import com.google.inject.Inject;
 
 import com.samskivert.util.Tuple;
 
 import com.threerings.io.Streamable;
 
-import com.threerings.msoy.mail.server.MailLogic;
-
-import com.threerings.presents.server.ClientManager;
-import com.threerings.presents.server.ClientManager.ClientObserver;
 import com.threerings.util.StreamableArrayIntSet;
 
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.dobj.DSet;
 import com.threerings.presents.server.ClientLocal;
+import com.threerings.presents.server.ClientManager.ClientObserver;
+import com.threerings.presents.server.ClientManager;
 import com.threerings.presents.server.PresentsSession;
 
 import com.threerings.crowd.server.CrowdClientResolver;
@@ -35,20 +30,6 @@ import com.threerings.stats.data.Stat;
 import com.threerings.stats.data.StatSet;
 import com.threerings.stats.server.persist.StatRepository;
 
-import com.threerings.msoy.data.LurkerName;
-import com.threerings.msoy.data.MemberClientObject;
-import com.threerings.msoy.data.MemberObject;
-import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.data.all.VisitorInfo;
-import com.threerings.msoy.data.all.VizMemberName;
-import com.threerings.msoy.server.ResolutionQueue.Listener;
-import com.threerings.msoy.server.ResolutionQueue.Task;
-import com.threerings.msoy.server.persist.MemberRecord;
-import com.threerings.msoy.server.persist.MemberRepository;
-
-import com.threerings.msoy.peer.server.MsoyPeerManager;
-import com.threerings.msoy.web.gwt.MemberCard;
-
 import com.threerings.msoy.badge.data.EarnedBadgeSet;
 import com.threerings.msoy.badge.data.InProgressBadgeSet;
 import com.threerings.msoy.badge.server.BadgeManager;
@@ -56,19 +37,34 @@ import com.threerings.msoy.badge.server.ServerStatSet;
 import com.threerings.msoy.badge.server.persist.BadgeRepository;
 import com.threerings.msoy.badge.server.persist.EarnedBadgeRecord;
 import com.threerings.msoy.badge.server.persist.InProgressBadgeRecord;
+import com.threerings.msoy.data.LurkerName;
+import com.threerings.msoy.data.MemberClientObject;
+import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.data.all.VisitorInfo;
+import com.threerings.msoy.data.all.VizMemberName;
 import com.threerings.msoy.group.data.all.GroupMembership;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.server.ItemLogic;
 import com.threerings.msoy.item.server.ItemManager;
 import com.threerings.msoy.item.server.persist.AvatarRecord;
+import com.threerings.msoy.mail.server.MailLogic;
 import com.threerings.msoy.mail.server.persist.MailRepository;
 import com.threerings.msoy.money.data.all.MemberMoney;
 import com.threerings.msoy.money.server.MoneyLogic;
+import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
 import com.threerings.msoy.person.server.persist.ProfileRepository;
 import com.threerings.msoy.room.server.persist.MemoriesRecord;
 import com.threerings.msoy.room.server.persist.MemoryRepository;
+import com.threerings.msoy.server.ResolutionQueue.Listener;
+import com.threerings.msoy.server.ResolutionQueue.Task;
+import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.MemberRepository;
+import com.threerings.msoy.web.gwt.MemberCard;
+
+import static com.threerings.msoy.Log.log;
 
 /**
  * Used to configure msoy-specific client object data.
@@ -208,7 +204,7 @@ public class MsoyClientResolver extends CrowdClientResolver
             // it's possible we disconnected just before we got here
             return;
         }
-        
+
         // load their record
         _mrec = _memberRepo.loadMember(_username.toString());
         if (_mrec == null) {

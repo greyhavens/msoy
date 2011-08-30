@@ -28,10 +28,9 @@ import com.samskivert.depot.expression.SQLExpression;
 
 import com.threerings.presents.annotation.BlockingThread;
 
-import com.threerings.msoy.server.persist.MemberRecord;
-import com.threerings.msoy.server.persist.MemberRecord.Flag;
-
 import com.threerings.msoy.item.data.all.MsoyItemType;
+import com.threerings.msoy.server.persist.MemberRecord.Flag;
+import com.threerings.msoy.server.persist.MemberRecord;
 
 /**
  * Manages members' favorite item information.

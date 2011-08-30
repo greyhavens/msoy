@@ -6,6 +6,7 @@ package com.threerings.msoy.item.data.all;
 import java.util.Date;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
+
 import com.samskivert.util.ByteEnum;
 
 /**

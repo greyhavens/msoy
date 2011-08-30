@@ -16,12 +16,13 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
 
-import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.util.CollectionUtil;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.StringUtil;
 import com.samskivert.util.Tuple;
+
+import com.samskivert.jdbc.RepositoryUnit;
 
 import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.client.InvocationService;
@@ -45,26 +46,22 @@ import com.threerings.orth.peer.data.OrthNodeObject;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.game.data.WorldGameMarshaller;
-import com.threerings.msoy.server.ServerConfig;
-
-import com.threerings.msoy.notify.server.MsoyNotificationManager;
-
-import com.threerings.msoy.peer.data.HostedGame;
-import com.threerings.msoy.peer.data.MsoyNodeObject;
-import com.threerings.msoy.peer.server.MemberNodeAction;
-import com.threerings.msoy.peer.server.MsoyPeerManager;
-
 import com.threerings.msoy.game.client.WorldGameService;
 import com.threerings.msoy.game.data.GameAuthName;
 import com.threerings.msoy.game.data.GameCredentials;
 import com.threerings.msoy.game.data.GameSummary;
 import com.threerings.msoy.game.data.TablesWaiting;
+import com.threerings.msoy.game.data.WorldGameMarshaller;
 import com.threerings.msoy.game.server.persist.GameInfoRecord;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
-
+import com.threerings.msoy.notify.server.MsoyNotificationManager;
+import com.threerings.msoy.peer.data.HostedGame;
+import com.threerings.msoy.peer.data.MsoyNodeObject;
+import com.threerings.msoy.peer.server.MemberNodeAction;
+import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.room.data.MemberInfo;
 import com.threerings.msoy.room.server.RoomManager;
+import com.threerings.msoy.server.ServerConfig;
 
 import static com.threerings.msoy.Log.log;
 

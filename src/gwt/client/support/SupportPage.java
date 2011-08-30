@@ -6,19 +6,17 @@ package client.support;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.History;
 
 import com.threerings.gwt.util.ServiceUtil;
-
 import com.threerings.underwire.gwt.client.AccountPopup;
 import com.threerings.underwire.gwt.client.AdminPanel;
 import com.threerings.underwire.gwt.client.ClientMessages;
 import com.threerings.underwire.gwt.client.PanelCreator;
 import com.threerings.underwire.gwt.client.ServerMessages;
-import com.threerings.underwire.gwt.client.WebContext;
 import com.threerings.underwire.gwt.client.WebContext.TokenResolver;
+import com.threerings.underwire.gwt.client.WebContext;
 import com.threerings.underwire.web.client.UnderwireService;
 import com.threerings.underwire.web.client.UnderwireServiceAsync;
 import com.threerings.underwire.web.data.Account;

@@ -7,24 +7,18 @@ import flash.events.ErrorEvent;
 import flash.events.Event;
 import flash.events.IOErrorEvent;
 import flash.events.SecurityErrorEvent;
-
 import flash.external.ExternalInterface;
-
 import flash.utils.ByteArray;
 
-import mx.core.Application;
-
 import mx.containers.ViewStack;
+import mx.core.Application;
 
 import com.threerings.util.Log;
 import com.threerings.util.ParameterUtil;
 import com.threerings.util.ValueEvent;
 
-
-
 import com.threerings.msoy.applets.image.CameraSnapshotControl;
 import com.threerings.msoy.applets.image.ImageContext;
-
 import com.threerings.msoy.applets.net.Downloader;
 import com.threerings.msoy.applets.net.MediaUploader;
 

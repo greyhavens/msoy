@@ -4,20 +4,19 @@
 package com.threerings.msoy.chat.client {
 
 import flash.events.MouseEvent;
-
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 import flash.text.TextFormat;
 
 import mx.managers.PopUpManager;
 
+import com.threerings.orth.data.MediaDesc;
+import com.threerings.orth.ui.MediaWrapper;
+
 import com.threerings.flex.PopUpUtil;
 
 import com.threerings.msoy.client.UberClient;
-import com.threerings.orth.data.MediaDesc;
-
 import com.threerings.msoy.utils.TextUtil;
-import com.threerings.orth.ui.MediaWrapper;
 
 public class SubtitleGlyph extends ChatGlyph
 {

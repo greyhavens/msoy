@@ -3,11 +3,10 @@
 
 package com.threerings.msoy.room.client.layout {
 
-import flash.display.DisplayObject;
-
 import flash.geom.Point;
 
 import com.threerings.geom.Vector3;
+
 import com.threerings.msoy.room.client.ClickLocation;
 import com.threerings.msoy.room.client.RoomElement;
 import com.threerings.msoy.room.client.RoomView;

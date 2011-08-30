@@ -8,7 +8,6 @@ import java.util.Map;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
@@ -16,7 +15,6 @@ import com.google.gwt.user.client.ui.HasAlignment;
 import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.data.all.Friendship;
-
 import com.threerings.msoy.web.gwt.EmailContact;
 
 import client.ui.MsoyUI;

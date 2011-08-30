@@ -5,6 +5,7 @@ package client.landing;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+
 import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.web.gwt.Args;

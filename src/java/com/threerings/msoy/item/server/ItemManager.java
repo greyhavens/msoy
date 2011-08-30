@@ -4,6 +4,7 @@
 package com.threerings.msoy.item.server;
 
 import java.util.Collections;
+
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -26,36 +27,30 @@ import com.threerings.presents.util.ConfirmAdapter;
 import com.threerings.presents.util.ResultAdapter;
 
 import com.threerings.crowd.server.BodyManager;
+
 import com.threerings.whirled.server.SceneRegistry;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.game.data.MsoyGameCodes;
+import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.item.data.ItemMarshaller;
-import com.threerings.msoy.item.data.all.MsoyItemType;
-import com.threerings.msoy.server.MemberLocator;
-import com.threerings.msoy.server.MsoyEventLogger;
-import com.threerings.msoy.server.ServerMessages;
-import com.threerings.msoy.server.util.ServiceUnit;
-
+import com.threerings.msoy.item.data.all.Avatar.QuicklistState;
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemFlag;
 import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.item.data.all.Prize;
-import com.threerings.msoy.item.data.all.Avatar.QuicklistState;
-
-import com.threerings.msoy.item.data.ItemCodes;
-
-// we'll avoid import verbosity in this rare case
-import com.threerings.msoy.item.server.persist.*;
-
 import com.threerings.msoy.item.server.ItemLogic.MissingRepositoryException;
-
+import com.threerings.msoy.item.server.persist.*;
+import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.room.data.MemberInfo;
 import com.threerings.msoy.room.server.MsoySceneRegistry;
-
-import com.threerings.msoy.money.data.all.Currency;
+import com.threerings.msoy.server.MemberLocator;
+import com.threerings.msoy.server.MsoyEventLogger;
+import com.threerings.msoy.server.ServerMessages;
+import com.threerings.msoy.server.util.ServiceUnit;
 
 import static com.threerings.msoy.Log.log;
 

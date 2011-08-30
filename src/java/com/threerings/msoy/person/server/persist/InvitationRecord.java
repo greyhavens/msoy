@@ -5,12 +5,12 @@ package com.threerings.msoy.person.server.persist;
 
 import java.sql.Timestamp;
 
+import com.samskivert.util.StringUtil;
+
 import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistentRecord;
-import com.samskivert.depot.annotation.*; // for Depot annotations
+import com.samskivert.depot.annotation.*;
 import com.samskivert.depot.expression.ColumnExp;
-
-import com.samskivert.util.StringUtil;
 
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.gwt.Invitation;

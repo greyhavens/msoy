@@ -3,11 +3,11 @@
 
 package com.threerings.msoy.game.data {
 
+import com.whirled.game.data.WhirledGameOccupantInfo;
+
 import com.threerings.io.ObjectInputStream;
 
 import com.threerings.util.Joiner;
-
-import com.whirled.game.data.WhirledGameOccupantInfo;
 
 import com.threerings.msoy.data.MsoyUserOccupantInfo;
 import com.threerings.msoy.party.data.PartyOccupantInfo;

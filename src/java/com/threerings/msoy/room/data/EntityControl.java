@@ -4,6 +4,7 @@
 package com.threerings.msoy.room.data;
 
 import com.threerings.io.SimpleStreamableObject;
+
 import com.threerings.presents.dobj.DSet;
 
 /**

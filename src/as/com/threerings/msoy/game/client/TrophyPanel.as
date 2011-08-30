@@ -7,23 +7,24 @@ import mx.containers.Grid;
 import mx.containers.GridRow;
 import mx.containers.HBox;
 import mx.containers.VBox;
-import mx.core.ScrollPolicy;
 import mx.controls.Label;
 import mx.controls.Text;
+import mx.core.ScrollPolicy;
+
+import com.threerings.io.TypedArray;
+
+import com.threerings.orth.ui.MediaWrapper;
 
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.FlexUtil;
 import com.threerings.flex.GridUtil;
-import com.threerings.io.TypedArray;
 
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.data.MsoyCodes;
-import com.threerings.msoy.ui.FloatingPanel;
-import com.threerings.orth.ui.MediaWrapper;
-import com.threerings.msoy.ui.MsoyMediaContainer;
-
 import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.item.data.all.TrophySource;
+import com.threerings.msoy.ui.FloatingPanel;
+import com.threerings.msoy.ui.MsoyMediaContainer;
 
 /**
  * Displays all of the trophies available in a game along with info on earned trophies if the

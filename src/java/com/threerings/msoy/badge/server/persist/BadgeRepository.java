@@ -4,8 +4,8 @@
 package com.threerings.msoy.badge.server.persist;
 
 import java.util.Collection;
-import java.util.Set;
 import java.util.List;
+import java.util.Set;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;

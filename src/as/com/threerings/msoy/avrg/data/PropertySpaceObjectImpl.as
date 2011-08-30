@@ -3,13 +3,12 @@
 
 package com.threerings.msoy.avrg.data {
 
-import com.threerings.io.ObjectInputStream;
-import com.threerings.io.SimpleStreamableObject;
-
 import com.whirled.game.client.PropertySpaceHelper;
-
 import com.whirled.game.data.PropertySpaceMarshaller;
 import com.whirled.game.data.PropertySpaceObject;
+
+import com.threerings.io.ObjectInputStream;
+import com.threerings.io.SimpleStreamableObject;
 
 public class PropertySpaceObjectImpl extends SimpleStreamableObject
     implements PropertySpaceObject

@@ -12,27 +12,32 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.samskivert.io.PersistenceException;
-import com.samskivert.jdbc.RepositoryUnit;
-import com.samskivert.servlet.util.ServiceWaiter;
 import com.samskivert.util.Invoker;
 
-import com.threerings.web.gwt.ServiceException;
+import com.samskivert.servlet.util.ServiceWaiter;
 
-import com.threerings.msoy.item.data.all.MsoyItemType;
+import com.samskivert.jdbc.RepositoryUnit;
+
 import com.threerings.util.MessageBundle;
+
+import com.threerings.presents.annotation.MainInvoker;
+import com.threerings.presents.client.InvocationService.ResultListener;
+
 import com.threerings.whirled.data.SceneModel;
 import com.threerings.whirled.data.SceneUpdate;
 import com.threerings.whirled.server.persist.SceneRepository;
 import com.threerings.whirled.util.NoSuchSceneException;
 import com.threerings.whirled.util.UpdateList;
 
-import com.threerings.msoy.server.persist.MemberRepository;
+import com.threerings.web.gwt.ServiceException;
+
 import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.group.server.persist.ThemeRepository;
 import com.threerings.msoy.item.data.all.Audio;
 import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.item.server.ItemLogic;
 import com.threerings.msoy.item.server.persist.AudioRepository;
 import com.threerings.msoy.item.server.persist.CatalogRecord;
@@ -41,7 +46,6 @@ import com.threerings.msoy.item.server.persist.DecorRepository;
 import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
 import com.threerings.msoy.money.data.all.Currency;
-
 import com.threerings.msoy.room.data.FurniData;
 import com.threerings.msoy.room.data.MsoySceneModel;
 import com.threerings.msoy.room.data.RoomCodes;
@@ -49,8 +53,7 @@ import com.threerings.msoy.room.server.persist.MemoryRepository;
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
 import com.threerings.msoy.room.server.persist.SceneFurniRecord;
 import com.threerings.msoy.room.server.persist.SceneRecord;
-import com.threerings.presents.annotation.MainInvoker;
-import com.threerings.presents.client.InvocationService.ResultListener;
+import com.threerings.msoy.server.persist.MemberRepository;
 
 import static com.threerings.msoy.Log.log;
 

@@ -36,7 +36,7 @@ public class AppInfoRecord extends PersistentRecord
     public static final int SCHEMA_VERSION = 2;
 
     /**
-     * Function to {@link Lists#transform} a record to a runtime instance. 
+     * Function to {@link Lists#transform} a record to a runtime instance.
      */
     public static final Function<AppInfoRecord, AppInfo> TO_APP_INFO =
         new Function<AppInfoRecord, AppInfo> () {

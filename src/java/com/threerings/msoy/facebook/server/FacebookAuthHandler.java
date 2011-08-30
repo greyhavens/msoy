@@ -4,31 +4,28 @@
 package com.threerings.msoy.facebook.server;
 
 import java.sql.Date;
-
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Set;
-
-import com.google.common.collect.Lists;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
 
 import com.google.code.facebookapi.FacebookJaxbRestClient;
 import com.google.code.facebookapi.ProfileField;
 import com.google.code.facebookapi.schema.FriendsGetResponse;
 import com.google.code.facebookapi.schema.User;
 import com.google.code.facebookapi.schema.UsersGetInfoResponse;
+import com.google.common.collect.Lists;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
 import com.samskivert.util.StringUtil;
-
-import com.threerings.msoy.web.gwt.ExternalCreds;
-import com.threerings.msoy.web.gwt.FacebookCreds;
-import com.threerings.msoy.web.gwt.ServiceCodes;
 
 import com.threerings.web.gwt.ServiceException;
 
 import com.threerings.msoy.profile.gwt.Profile;
 import com.threerings.msoy.server.ExternalAuthHandler;
+import com.threerings.msoy.web.gwt.ExternalCreds;
+import com.threerings.msoy.web.gwt.FacebookCreds;
+import com.threerings.msoy.web.gwt.ServiceCodes;
 
 import static com.threerings.msoy.Log.log;
 

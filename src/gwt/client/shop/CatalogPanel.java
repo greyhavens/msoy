@@ -6,13 +6,12 @@ package client.shop;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
-
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
@@ -30,12 +29,12 @@ import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.item.gwt.CatalogQuery;
 import com.threerings.msoy.web.gwt.Pages;
 
-import client.shell.CShell;
-import client.shell.DynamicLookup;
-import client.shop.CatalogModels.Listings;
 import client.item.ShopUtil;
 import client.item.SideBar;
 import client.item.TagCloud;
+import client.shell.CShell;
+import client.shell.DynamicLookup;
+import client.shop.CatalogModels.Listings;
 import client.ui.Marquee;
 import client.util.Link;
 

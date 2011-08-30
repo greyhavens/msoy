@@ -5,11 +5,13 @@ package com.threerings.msoy.server.persist;
 
 import java.sql.Timestamp;
 
-import com.samskivert.jdbc.ConnectionProvider;
-import com.samskivert.jdbc.StaticConnectionProvider;
 import com.samskivert.util.Calendars;
 import com.samskivert.util.Config;
 import com.samskivert.util.StringUtil;
+
+import com.samskivert.jdbc.ConnectionProvider;
+import com.samskivert.jdbc.StaticConnectionProvider;
+
 import com.threerings.util.PostgresUtil;
 
 /**

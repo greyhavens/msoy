@@ -9,21 +9,19 @@ import mx.containers.HBox;
 import mx.containers.VBox;
 import mx.controls.Label;
 
+import com.threerings.orth.data.MediaDesc;
+import com.threerings.orth.data.MediaDescSize;
+import com.threerings.orth.ui.MediaWrapper;
+
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.FlexUtil;
 
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.data.MemberObject;
-import com.threerings.orth.data.MediaDesc;
-import com.threerings.orth.data.MediaDescSize;
-import com.threerings.orth.ui.MediaWrapper;
-
 import com.threerings.msoy.group.data.all.Group;
-
+import com.threerings.msoy.party.data.PartyBoardInfo;
 import com.threerings.msoy.world.client.WorldContext;
 import com.threerings.msoy.world.client.WorldController;
-
-import com.threerings.msoy.party.data.PartyBoardInfo;
 
 public class PartyBoardInfoRenderer extends HBox
 {

@@ -22,7 +22,6 @@ import com.threerings.msoy.badge.data.all.Badge;
 import com.threerings.msoy.badge.data.all.BadgeCodes;
 import com.threerings.msoy.badge.data.all.EarnedBadge;
 import com.threerings.msoy.badge.gwt.StampCategory;
-
 import com.threerings.msoy.data.StatType;
 
 /** Defines the various badge types. */

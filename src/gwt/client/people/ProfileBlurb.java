@@ -7,11 +7,11 @@ import java.util.Date;
 
 import com.google.common.base.Strings;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -21,24 +21,23 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.orth.data.MediaDesc;
+import com.threerings.orth.data.MediaDescSize;
+
 import com.threerings.gwt.ui.Anchor;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.util.DateUtil;
 import com.threerings.gwt.util.StringUtil;
 
-import com.threerings.orth.data.MediaDesc;
-import com.threerings.orth.data.MediaDescSize;
-
+import com.threerings.msoy.data.all.Award.AwardType;
 import com.threerings.msoy.data.all.Award;
 import com.threerings.msoy.data.all.Friendship;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.data.all.Award.AwardType;
-
 import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.person.gwt.Gallery;
 import com.threerings.msoy.profile.gwt.Profile;
-import com.threerings.msoy.profile.gwt.ProfileService;
 import com.threerings.msoy.profile.gwt.ProfileService.GreeterStatus;
+import com.threerings.msoy.profile.gwt.ProfileService;
 import com.threerings.msoy.profile.gwt.ProfileServiceAsync;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.WebCreds;
@@ -56,9 +55,9 @@ import client.ui.DateFields;
 import client.ui.MsoyUI;
 import client.ui.RowPanel;
 import client.ui.ThumbBox;
+import client.util.InfoCallback;
 import client.util.Link;
 import client.util.MediaUtil;
-import client.util.InfoCallback;
 import client.util.events.NameChangeEvent;
 import client.util.events.PageCommandEvent;
 

@@ -4,15 +4,13 @@
 package com.threerings.msoy.room.client {
 
 import flash.display.DisplayObject;
-
 import flash.media.Camera;
 import flash.media.Microphone;
 
-import com.threerings.msoy.client.ControlBackend;
-import com.threerings.msoy.client.DeploymentConfig;
-import com.threerings.msoy.room.data.MsoyLocation;
-
 import com.threerings.util.Log;
+
+import com.threerings.msoy.client.ControlBackend;
+import com.threerings.msoy.room.data.MsoyLocation;
 
 public class EntityBackend extends ControlBackend
 {

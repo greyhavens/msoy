@@ -9,14 +9,13 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
-import com.threerings.web.gwt.ServiceException;
 import com.threerings.gwt.util.PagedResult;
+import com.threerings.web.gwt.ServiceException;
 
 import com.threerings.msoy.data.all.Friendship;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VisitorInfo;
-
 import com.threerings.msoy.money.data.all.PriceQuote;
 import com.threerings.msoy.money.data.all.PurchaseResult;
 

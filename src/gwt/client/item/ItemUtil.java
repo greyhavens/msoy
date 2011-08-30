@@ -9,10 +9,11 @@ import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.HTML;
 
+import com.threerings.orth.data.MediaDesc;
+
 import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
-import com.threerings.orth.data.MediaDesc;
 import com.threerings.msoy.data.all.UberClientModes;
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Decor;

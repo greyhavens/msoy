@@ -4,9 +4,9 @@
 package com.threerings.msoy.item.data.all;
 
 import com.google.common.collect.ComparisonChain;
-import com.threerings.io.Streamable;
-
 import com.google.gwt.user.client.rpc.IsSerializable;
+
+import com.threerings.io.Streamable;
 
 /**
  * A fully qualified catalog record identifier (type and integer id).

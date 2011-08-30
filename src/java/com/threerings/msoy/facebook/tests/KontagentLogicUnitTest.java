@@ -7,8 +7,8 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
-import com.threerings.msoy.facebook.server.KontagentLogic;
 import com.threerings.msoy.facebook.server.KontagentLogic.LinkType;
+import com.threerings.msoy.facebook.server.KontagentLogic;
 
 public class KontagentLogicUnitTest
 {

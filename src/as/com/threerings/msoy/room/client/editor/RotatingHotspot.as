@@ -3,21 +3,18 @@
 
 package com.threerings.msoy.room.client.editor {
 
-import flash.display.DisplayObject;
 import flash.display.Graphics;
 import flash.display.Sprite;
 import flash.events.MouseEvent;
 import flash.geom.Point;
 
 import com.threerings.util.MathUtil;
+
 import com.threerings.geom.Vector2;
 
-import com.threerings.msoy.ui.MsoyLoadedAsset;
-
 import com.threerings.msoy.client.Msgs;
-
 import com.threerings.msoy.room.client.EntitySprite;
-
+import com.threerings.msoy.ui.MsoyLoadedAsset;
 
 /**
  * Hotspot that rotates the object.

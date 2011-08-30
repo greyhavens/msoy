@@ -4,10 +4,12 @@
 package com.threerings.msoy.bureau.data;
 
 import javax.annotation.Generated;
-import static com.threerings.msoy.Log.log;
+
+import com.whirled.bureau.data.BureauTypes;
 
 import com.threerings.presents.data.ClientObject;
-import com.whirled.bureau.data.BureauTypes;
+
+import static com.threerings.msoy.Log.log;
 
 /** Client object purely for distinguishing windows in service methods. */
 @com.threerings.util.ActionScript(omit=true)

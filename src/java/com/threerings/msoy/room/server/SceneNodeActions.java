@@ -8,8 +8,9 @@ import com.google.inject.Singleton;
 
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.peer.data.NodeObject;
-import com.threerings.presents.peer.server.PeerManager;
 import com.threerings.presents.peer.server.NodeRequestsListener;
+import com.threerings.presents.peer.server.PeerManager;
+
 import com.threerings.whirled.server.SceneRegistry;
 
 import com.threerings.msoy.peer.data.MsoyNodeObject;

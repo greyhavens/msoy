@@ -7,23 +7,21 @@ import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.Date;
 
-import org.apache.commons.fileupload.FileUploadException;
 import com.google.inject.Inject;
 
-import com.threerings.msoy.data.all.MediaMimeTypes;
-import com.threerings.msoy.person.gwt.FeedMessageType;
-import com.threerings.msoy.person.server.FeedLogic;
-import com.threerings.msoy.server.persist.MemberRecord;
+import org.apache.commons.fileupload.FileUploadException;
 
+import com.threerings.msoy.data.all.MediaMimeTypes;
 import com.threerings.msoy.group.data.all.GroupMembership;
 import com.threerings.msoy.group.server.persist.GroupRepository;
-
+import com.threerings.msoy.person.gwt.FeedMessageType;
+import com.threerings.msoy.person.server.FeedLogic;
 import com.threerings.msoy.room.data.MsoySceneModel;
 import com.threerings.msoy.room.server.AbstractSnapshotUploadServlet;
 import com.threerings.msoy.room.server.SnapshotUploadFile;
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
 import com.threerings.msoy.room.server.persist.SceneRecord;
-
+import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.web.server.UploadUtil.CanonicalSnapshotInfo;
 
 import static com.threerings.msoy.Log.log;

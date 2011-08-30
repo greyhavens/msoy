@@ -6,8 +6,8 @@ package com.threerings.msoy.avrg.client {
 import com.threerings.util.DelayUtil;
 import com.threerings.util.Util;
 
-import com.threerings.presents.dobj.SetAdapter;
 import com.threerings.presents.dobj.EntryUpdatedEvent;
+import com.threerings.presents.dobj.SetAdapter;
 
 import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.data.PlaceObject;
@@ -15,9 +15,7 @@ import com.threerings.crowd.data.PlaceObject;
 import com.threerings.whirled.spot.data.SpotSceneObject;
 
 import com.threerings.msoy.avrg.data.AVRGameObject;
-
 import com.threerings.msoy.data.all.MemberName;
-
 import com.threerings.msoy.room.data.MemberInfo;
 import com.threerings.msoy.room.data.RoomObject;
 

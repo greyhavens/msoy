@@ -3,10 +3,11 @@
 
 package com.threerings.msoy.bureau.server;
 
-import com.threerings.msoy.bureau.client.BureauLauncherDecoder;
-import com.threerings.msoy.bureau.client.BureauLauncherReceiver;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.server.InvocationSender;
+
+import com.threerings.msoy.bureau.client.BureauLauncherDecoder;
+import com.threerings.msoy.bureau.client.BureauLauncherReceiver;
 
 /**
  * Used to issue notifications to a {@link BureauLauncherReceiver} instance on a

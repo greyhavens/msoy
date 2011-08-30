@@ -3,21 +3,19 @@
 
 package client.mail;
 
-import client.util.Link;
-
 import com.google.gwt.core.client.GWT;
-
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.mail.gwt.GameInvitePayload;
-
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
+
+import client.util.Link;
 
 /**
  * Displays a game invitation.

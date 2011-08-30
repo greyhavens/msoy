@@ -3,9 +3,9 @@
 
 package com.threerings.msoy.fora.server;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Collections;
 import java.util.Set;
 
 import com.google.common.base.Function;
@@ -15,15 +15,10 @@ import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.threerings.msoy.server.persist.MemberCardRecord;
 import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.server.persist.MemberRecord;
-import com.threerings.msoy.server.persist.MemberRepository;
-import com.threerings.msoy.web.gwt.MemberCard;
-
 import com.threerings.msoy.fora.gwt.ForumMessage;
 import com.threerings.msoy.fora.gwt.ForumService;
 import com.threerings.msoy.fora.gwt.ForumThread;
@@ -33,6 +28,10 @@ import com.threerings.msoy.fora.server.persist.ForumThreadRecord;
 import com.threerings.msoy.fora.server.persist.ReadTrackingRecord;
 import com.threerings.msoy.group.server.GroupLogic;
 import com.threerings.msoy.group.server.persist.GroupRepository;
+import com.threerings.msoy.server.persist.MemberCardRecord;
+import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.MemberRepository;
+import com.threerings.msoy.web.gwt.MemberCard;
 
 /**
  * Contains forum services that are used by servlets and other blocking thread code.

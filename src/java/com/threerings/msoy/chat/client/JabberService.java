@@ -3,10 +3,9 @@
 
 package com.threerings.msoy.chat.client;
 
-import com.threerings.msoy.data.all.JabberName;
-
-import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
+
+import com.threerings.msoy.data.all.JabberName;
 
 /**
  * Defines Jabber related invocation services.

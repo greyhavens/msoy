@@ -7,9 +7,8 @@ import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.ui.Frame;
 
-import com.threerings.msoy.web.gwt.Pages;
-
 import com.threerings.msoy.data.all.DeploymentConfig;
+import com.threerings.msoy.web.gwt.Pages;
 
 import client.shell.Page;
 import client.util.events.FlashEvent;

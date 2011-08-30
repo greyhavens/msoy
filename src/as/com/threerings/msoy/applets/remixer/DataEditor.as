@@ -5,23 +5,21 @@ package com.threerings.msoy.applets.remixer {
 
 import flash.events.Event;
 
+import com.whirled.remix.data.EditableDataPack;
+
 import mx.controls.CheckBox;
 import mx.controls.ColorPicker;
 import mx.controls.ComboBox;
 import mx.controls.HSlider;
 import mx.controls.Label;
 import mx.controls.Spacer;
-
 import mx.events.ListEvent;
-
 import mx.validators.NumberValidator;
 import mx.validators.Validator;
 
 import com.threerings.util.ValueEvent;
 
 import com.threerings.flex.CommandButton;
-
-import com.whirled.remix.data.EditableDataPack;
 
 public class DataEditor extends FieldEditor
 {

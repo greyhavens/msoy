@@ -14,12 +14,12 @@ import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 
 import com.threerings.web.gwt.ServiceException;
+
 import com.threerings.msoy.apps.data.AppCodes;
 import com.threerings.msoy.apps.gwt.AppInfo;
 import com.threerings.msoy.apps.gwt.AppService;
 import com.threerings.msoy.apps.server.persist.AppInfoRecord;
 import com.threerings.msoy.apps.server.persist.AppRepository;
-
 import com.threerings.msoy.facebook.gwt.FacebookInfo;
 import com.threerings.msoy.facebook.gwt.FacebookTemplate;
 import com.threerings.msoy.facebook.gwt.FeedThumbnail;
@@ -30,7 +30,6 @@ import com.threerings.msoy.facebook.server.persist.FacebookRepository;
 import com.threerings.msoy.facebook.server.persist.FacebookTemplateRecord;
 import com.threerings.msoy.facebook.server.persist.FeedThumbnailRecord;
 import com.threerings.msoy.facebook.server.persist.KontagentInfoRecord;
-
 import com.threerings.msoy.web.gwt.ClientMode;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 

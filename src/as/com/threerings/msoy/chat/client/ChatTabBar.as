@@ -4,19 +4,14 @@
 package com.threerings.msoy.chat.client {
 
 import flash.display.MovieClip;
-
 import flash.events.Event;
 import flash.events.MouseEvent;
 import flash.events.TimerEvent;
-
 import flash.utils.Timer;
 
 import mx.containers.Canvas;
 import mx.containers.HBox;
-
 import mx.core.ScrollPolicy;
-
-import com.threerings.flex.FlexWrapper;
 
 import com.threerings.util.Arrays;
 import com.threerings.util.Log;
@@ -24,25 +19,24 @@ import com.threerings.util.MessageBundle;
 import com.threerings.util.Name;
 
 import com.threerings.presents.dobj.EntryAddedEvent;
-import com.threerings.presents.dobj.EntryUpdatedEvent;
 import com.threerings.presents.dobj.EntryRemovedEvent;
+import com.threerings.presents.dobj.EntryUpdatedEvent;
 import com.threerings.presents.dobj.SetListener;
 
-import com.threerings.crowd.chat.data.ChatMessage;
-import com.threerings.crowd.chat.data.ChatCodes;
-import com.threerings.crowd.chat.data.UserMessage;
-import com.threerings.crowd.chat.data.SystemMessage;
-
 import com.threerings.crowd.chat.client.ChatDisplay;
+import com.threerings.crowd.chat.data.ChatCodes;
+import com.threerings.crowd.chat.data.ChatMessage;
+import com.threerings.crowd.chat.data.SystemMessage;
+import com.threerings.crowd.chat.data.UserMessage;
 
 import com.threerings.orth.notify.data.Notification;
 
+import com.threerings.flex.FlexWrapper;
+
+import com.threerings.msoy.chat.data.MsoyChatChannel;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.MsoyService;
-
-import com.threerings.msoy.chat.data.MsoyChatChannel;
-
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.GroupName;

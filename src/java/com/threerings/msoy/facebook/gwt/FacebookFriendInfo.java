@@ -3,9 +3,9 @@
 
 package com.threerings.msoy.facebook.gwt;
 
-import com.threerings.orth.data.MediaDesc;
-
 import com.google.gwt.user.client.rpc.IsSerializable;
+
+import com.threerings.orth.data.MediaDesc;
 
 /**
  * Contains information to be shown in the Facebook friends bar for a single friend.

@@ -10,7 +10,6 @@ import java.util.Set;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -26,9 +25,8 @@ import com.threerings.gwt.util.StringUtil;
 import com.threerings.msoy.apps.gwt.AppInfo;
 import com.threerings.msoy.apps.gwt.AppService;
 import com.threerings.msoy.apps.gwt.AppServiceAsync;
-
-import com.threerings.msoy.facebook.gwt.FacebookTemplate;
 import com.threerings.msoy.facebook.gwt.FacebookService.Gender;
+import com.threerings.msoy.facebook.gwt.FacebookTemplate;
 
 import client.edutil.EditorTable;
 import client.edutil.EditorUtil.ConfigException;
@@ -72,7 +70,7 @@ public class FacebookTemplatesPanel extends FlowPanel
                 try {
                     long val = Long.parseLong(_bundleId.getText().trim());
                     if (val < 0) {
-                        throw new NumberFormatException();   
+                        throw new NumberFormatException();
                     }
                 } catch (NumberFormatException nfe) {
                     throw new ConfigException(_msgs.fbTemplBundleIdFormatErr());

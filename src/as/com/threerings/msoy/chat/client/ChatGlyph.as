@@ -4,17 +4,13 @@
 package com.threerings.msoy.chat.client {
 
 import flash.display.Sprite;
-
 import flash.events.Event;
 import flash.events.TimerEvent;
-
 import flash.text.AntiAliasType;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
-
 import flash.utils.Timer;
-import flash.utils.getTimer; // function import
-
+import flash.utils.getTimer;
 
 import com.threerings.text.TextFieldUtil;
 

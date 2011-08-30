@@ -6,7 +6,6 @@ package com.threerings.msoy.room.client {
 import flash.display.DisplayObject;
 
 import com.threerings.msoy.client.Snapshottable;
-
 import com.threerings.msoy.room.data.MsoyLocation;
 
 /**

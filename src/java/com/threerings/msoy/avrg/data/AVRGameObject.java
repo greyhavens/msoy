@@ -6,18 +6,11 @@ package com.threerings.msoy.avrg.data;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
+
 import javax.annotation.Generated;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-
-import com.threerings.presents.dobj.DSet;
-
-import com.threerings.crowd.data.OccupantInfo;
-import com.threerings.crowd.data.PlaceObject;
-
-import com.threerings.io.ObjectInputStream;
-import com.threerings.io.ObjectOutputStream;
 
 import com.whirled.game.data.ContentMarshaller;
 import com.whirled.game.data.GameData;
@@ -27,6 +20,14 @@ import com.whirled.game.data.PropertySpaceMarshaller;
 import com.whirled.game.data.PropertySpaceObject;
 import com.whirled.game.data.WhirledGameMessageMarshaller;
 import com.whirled.game.server.PropertySpaceHelper;
+
+import com.threerings.io.ObjectInputStream;
+import com.threerings.io.ObjectOutputStream;
+
+import com.threerings.presents.dobj.DSet;
+
+import com.threerings.crowd.data.OccupantInfo;
+import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.msoy.party.data.PartyLeader;
 import com.threerings.msoy.party.data.PartyPlaceObject;

@@ -5,7 +5,6 @@ package com.threerings.msoy.web.server;
 
 import java.io.IOException;
 import java.io.PrintStream;
-
 import java.util.Iterator;
 import java.util.List;
 
@@ -21,38 +20,31 @@ import com.samskivert.util.ByteEnumUtil;
 import com.samskivert.util.CollectionUtil;
 import com.samskivert.util.StringUtil;
 
-import com.threerings.orth.data.MediaDesc;
-import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.util.MessageBundle;
 
-import com.threerings.msoy.server.ServerMessages;
+import com.threerings.orth.data.MediaDesc;
 
-import com.threerings.msoy.web.gwt.MemberCard;
-import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.web.gwt.ServiceException;
-
-import com.threerings.msoy.server.persist.MemberRecord;
-import com.threerings.msoy.server.persist.MemberRepository;
-
-import com.threerings.msoy.item.server.ItemLogic;
-import com.threerings.msoy.item.server.persist.CatalogRecord;
 
 import com.threerings.msoy.game.gwt.GameGenre;
 import com.threerings.msoy.game.server.persist.GameInfoRecord;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
-
 import com.threerings.msoy.group.data.all.Group;
 import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
-
+import com.threerings.msoy.item.data.all.MsoyItemType;
+import com.threerings.msoy.item.server.ItemLogic;
+import com.threerings.msoy.item.server.persist.CatalogRecord;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
 import com.threerings.msoy.person.server.persist.ProfileRepository;
-
 import com.threerings.msoy.room.data.RoomCodes;
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
 import com.threerings.msoy.room.server.persist.SceneRecord;
-
-import com.threerings.orth.data.MediaDesc;
+import com.threerings.msoy.server.ServerMessages;
+import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.MemberRepository;
+import com.threerings.msoy.web.gwt.MemberCard;
+import com.threerings.msoy.web.gwt.Pages;
 
 import static com.threerings.msoy.Log.log;
 

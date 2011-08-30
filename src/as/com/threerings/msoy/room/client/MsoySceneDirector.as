@@ -4,12 +4,14 @@
 package com.threerings.msoy.room.client {
 
 import com.threerings.io.TypedArray;
+
+import com.threerings.util.Log;
+import com.threerings.util.ResultListener;
+
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.ClientEvent;
 import com.threerings.presents.dobj.MessageAdapter;
 import com.threerings.presents.dobj.MessageEvent;
-import com.threerings.util.Log;
-import com.threerings.util.ResultListener;
 
 import com.threerings.crowd.client.LocationDirector;
 import com.threerings.crowd.data.PlaceConfig;
@@ -18,19 +20,16 @@ import com.threerings.whirled.client.PendingData;
 import com.threerings.whirled.client.SceneDirector;
 import com.threerings.whirled.client.persist.SceneRepository;
 
-import com.threerings.msoy.client.NoPlaceView;
 import com.threerings.msoy.client.UberClient;
 import com.threerings.msoy.data.MsoyCodes;
-import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.data.all.MemberName;
-
-import com.threerings.msoy.world.client.WorldContext;
-import com.threerings.msoy.world.client.WorldController;
-
+import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.room.data.MsoyPortal;
 import com.threerings.msoy.room.data.MsoyScene;
 import com.threerings.msoy.room.data.MsoySceneMarshaller;
 import com.threerings.msoy.room.data.RoomCodes;
+import com.threerings.msoy.world.client.WorldContext;
+import com.threerings.msoy.world.client.WorldController;
 
 /**
  * Handles custom scene traversal and extra bits for Whirled.

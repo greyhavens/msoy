@@ -5,6 +5,7 @@ package com.threerings.msoy.server;
 
 import java.sql.Timestamp;
 import java.util.Collections;
+
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -27,6 +28,7 @@ import com.threerings.msoy.badge.server.persist.BadgeRepository;
 import com.threerings.msoy.badge.server.persist.EarnedBadgeRecord;
 import com.threerings.msoy.badge.server.persist.InProgressBadgeRecord;
 import com.threerings.msoy.data.StatType;
+
 import static com.threerings.msoy.Log.log;
 
 /**

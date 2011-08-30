@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.item.server;
 
-import static com.threerings.msoy.Log.log;
-
 import java.util.List;
 import java.util.Map;
 
@@ -13,24 +11,15 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 
+import com.threerings.util.MessageBundle;
+
+import com.threerings.web.gwt.ServiceException;
+
 import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.all.GroupName;
-import com.threerings.msoy.item.data.all.MsoyItemType;
-import com.threerings.msoy.room.data.RoomCodes;
-import com.threerings.msoy.server.MsoyEventLogger;
-import com.threerings.msoy.server.StatLogic;
-import com.threerings.msoy.server.persist.CharityRecord;
-import com.threerings.msoy.server.persist.MemberRecord;
-import com.threerings.msoy.server.persist.TagPopularityRecord;
-import com.threerings.msoy.server.persist.UserActionRepository;
-
-import com.threerings.web.gwt.ServiceException;
-
-import com.threerings.msoy.web.server.MsoyServiceServlet;
-
 import com.threerings.msoy.game.server.GameLogic;
 import com.threerings.msoy.game.server.persist.GameInfoRecord;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
@@ -40,32 +29,40 @@ import com.threerings.msoy.group.server.ThemeLogic;
 import com.threerings.msoy.group.server.persist.BrandShareRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.group.server.persist.ThemeRepository;
-import com.threerings.msoy.person.gwt.FeedMessageType;
-import com.threerings.msoy.person.server.FeedLogic;
-
-import com.threerings.msoy.money.data.all.Currency;
-import com.threerings.msoy.money.data.all.MoneyTransaction;
-import com.threerings.msoy.money.data.all.PriceQuote;
-import com.threerings.msoy.money.data.all.PurchaseResult;
-import com.threerings.msoy.money.server.BuyResult;
-import com.threerings.msoy.money.server.MoneyLogic;
-
 import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.item.data.all.CatalogIdent;
 import com.threerings.msoy.item.data.all.GameItem;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.item.gwt.CatalogListing;
 import com.threerings.msoy.item.gwt.CatalogQuery;
 import com.threerings.msoy.item.gwt.CatalogService;
 import com.threerings.msoy.item.gwt.ItemPrices;
 import com.threerings.msoy.item.gwt.ListingCard;
 import com.threerings.msoy.item.server.persist.CatalogRecord;
+import com.threerings.msoy.item.server.persist.FavoritesRepository.FavoritedItemResultRecord;
 import com.threerings.msoy.item.server.persist.FavoritesRepository;
 import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
-import com.threerings.msoy.item.server.persist.FavoritesRepository.FavoritedItemResultRecord;
-import com.threerings.util.MessageBundle;
+import com.threerings.msoy.money.data.all.Currency;
+import com.threerings.msoy.money.data.all.MoneyTransaction;
+import com.threerings.msoy.money.data.all.PriceQuote;
+import com.threerings.msoy.money.data.all.PurchaseResult;
+import com.threerings.msoy.money.server.BuyResult;
+import com.threerings.msoy.money.server.MoneyLogic;
+import com.threerings.msoy.person.gwt.FeedMessageType;
+import com.threerings.msoy.person.server.FeedLogic;
+import com.threerings.msoy.room.data.RoomCodes;
+import com.threerings.msoy.server.MsoyEventLogger;
+import com.threerings.msoy.server.StatLogic;
+import com.threerings.msoy.server.persist.CharityRecord;
+import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.TagPopularityRecord;
+import com.threerings.msoy.server.persist.UserActionRepository;
+import com.threerings.msoy.web.server.MsoyServiceServlet;
+
+import static com.threerings.msoy.Log.log;
 
 /**
  * Provides the server implementation of {@link CatalogService}.

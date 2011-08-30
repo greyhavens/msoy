@@ -7,10 +7,11 @@ import mx.containers.Canvas;
 
 import com.threerings.util.Log;
 
-import com.threerings.crowd.client.PlaceView;
-import com.threerings.crowd.data.PlaceObject;
 import com.threerings.presents.dobj.AttributeChangeListener;
 import com.threerings.presents.dobj.AttributeChangedEvent;
+
+import com.threerings.crowd.client.PlaceView;
+import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.flex.FlexWrapper;
 

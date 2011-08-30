@@ -2,14 +2,9 @@
 // $Id$
 
 package com.threerings.msoy.applets {
-import com.threerings.msoy.client.DeploymentConfig;
-
 import flash.display.Sprite;
-
 import flash.events.Event;
-
 import flash.external.ExternalInterface;
-
 import flash.system.Security;
 
 import com.threerings.util.ParameterUtil;
@@ -17,14 +12,13 @@ import com.threerings.util.ParameterUtil;
 import com.threerings.media.FlvVideoPlayer;
 import com.threerings.media.VideoPlayer;
 
+import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.Prefs;
-import com.threerings.msoy.ui.MsoyVideoDisplay;
-
-import com.threerings.orth.data.MediaDesc;
 import com.threerings.msoy.data.all.MediaMimeTypes;
 import com.threerings.msoy.item.client.ExternalMediaDisplayer;
 import com.threerings.msoy.item.client.ExternalMediaUtil;
 import com.threerings.msoy.item.client.YouTubePlayer;
+import com.threerings.msoy.ui.MsoyVideoDisplay;
 
 [SWF(width="320", height="240")]
 public class VideoPlayerApp extends Sprite

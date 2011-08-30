@@ -15,23 +15,22 @@ import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.depot.Ops;
-import com.samskivert.depot.PersistenceContext;
-import com.samskivert.depot.expression.SQLExpression;
-import com.samskivert.depot.clause.Join;
-import com.samskivert.depot.clause.Where;
-
 import com.samskivert.util.StringUtil;
 import com.samskivert.util.Tuple;
 
-import com.threerings.user.OOOUser;
-import com.threerings.user.depot.DepotUserRepository;
-import com.threerings.user.depot.OOOUserRecord;
-import com.threerings.user.depot.UserIdentRecord;
+import com.samskivert.depot.Ops;
+import com.samskivert.depot.PersistenceContext;
+import com.samskivert.depot.clause.Join;
+import com.samskivert.depot.clause.Where;
+import com.samskivert.depot.expression.SQLExpression;
 
 import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.underwire.server.persist.SupportRepository;
+import com.threerings.user.OOOUser;
+import com.threerings.user.depot.DepotUserRepository;
+import com.threerings.user.depot.OOOUserRecord;
+import com.threerings.user.depot.UserIdentRecord;
 
 import com.threerings.msoy.data.all.MemberMailUtil;
 

@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.web.server;
 
-import static com.threerings.msoy.Log.log;
-
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.Set;
@@ -14,16 +12,19 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.inject.Inject;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import com.google.inject.Inject;
 import com.samskivert.io.StreamUtil;
 
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.game.server.persist.GameInfoRecord;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 import com.threerings.msoy.group.server.persist.GroupRepository;
+
+import static com.threerings.msoy.Log.log;
 
 /**
  * Reports public information about games and whirleds as arrays of JSON objects.

@@ -4,10 +4,8 @@
 package com.threerings.msoy.room.client {
 
 import flash.events.Event;
-
 import flash.geom.Point;
 import flash.geom.Rectangle;
-
 import flash.utils.ByteArray;
 
 import com.threerings.util.ImmutableProxyObject;
@@ -16,8 +14,8 @@ import com.threerings.util.Name;
 import com.threerings.util.Predicates;
 import com.threerings.util.ValueEvent;
 
-import com.threerings.presents.dobj.AttributeChangedEvent;
 import com.threerings.presents.dobj.AttributeChangeListener;
+import com.threerings.presents.dobj.AttributeChangedEvent;
 import com.threerings.presents.dobj.EntryAddedEvent;
 import com.threerings.presents.dobj.EntryRemovedEvent;
 import com.threerings.presents.dobj.EntryUpdatedEvent;
@@ -25,47 +23,37 @@ import com.threerings.presents.dobj.MessageEvent;
 import com.threerings.presents.dobj.MessageListener;
 import com.threerings.presents.dobj.SetListener;
 
-import com.threerings.crowd.data.OccupantInfo;
-import com.threerings.crowd.data.PlaceObject;
-
 import com.threerings.crowd.chat.client.ChatDisplay;
 import com.threerings.crowd.chat.client.ChatSnooper;
 import com.threerings.crowd.chat.data.ChatMessage;
 import com.threerings.crowd.chat.data.UserMessage;
-
-import com.threerings.ui.MenuUtil;
+import com.threerings.crowd.data.OccupantInfo;
+import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.media.AudioPlayer;
 import com.threerings.media.MediaPlayerCodes;
 
-import com.threerings.whirled.data.SceneUpdate;
+import com.threerings.ui.MenuUtil;
 
-import com.threerings.whirled.spot.data.SpotSceneObject;
+import com.threerings.whirled.data.SceneUpdate;
 import com.threerings.whirled.spot.data.SceneLocation;
+import com.threerings.whirled.spot.data.SpotSceneObject;
 
 import com.threerings.msoy.avrg.client.AVRGameBackend;
-
-import com.threerings.msoy.item.data.all.Audio;
-import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.item.data.all.Item_UsedAs;
-import com.threerings.msoy.item.data.all.ItemIdent;
-
-import com.threerings.msoy.client.MsoyClient;
-import com.threerings.msoy.client.PlaceLoadingDisplay;
-import com.threerings.msoy.client.Msgs;
-import com.threerings.msoy.client.MsoyController;
-import com.threerings.msoy.client.Prefs;
-import com.threerings.msoy.client.UberClient;
-
-import com.threerings.msoy.data.MsoyCodes;
-
 import com.threerings.msoy.chat.client.ChatInfoProvider;
 import com.threerings.msoy.chat.client.ComicOverlay;
 import com.threerings.msoy.chat.data.MsoyChatChannel;
-
-import com.threerings.msoy.world.client.WorldClient;
-import com.threerings.msoy.world.client.WorldContext;
-
+import com.threerings.msoy.client.Msgs;
+import com.threerings.msoy.client.MsoyClient;
+import com.threerings.msoy.client.MsoyController;
+import com.threerings.msoy.client.PlaceLoadingDisplay;
+import com.threerings.msoy.client.Prefs;
+import com.threerings.msoy.client.UberClient;
+import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.item.data.all.Audio;
+import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.data.all.Item_UsedAs;
 import com.threerings.msoy.room.data.ControllableEntity;
 import com.threerings.msoy.room.data.EntityControl;
 import com.threerings.msoy.room.data.EntityMemories;
@@ -75,11 +63,12 @@ import com.threerings.msoy.room.data.MemoryChangedListener;
 import com.threerings.msoy.room.data.MobInfo;
 import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.msoy.room.data.MsoyScene;
-import com.threerings.msoy.room.data.MsoySceneModel;
 import com.threerings.msoy.room.data.RoomCodes;
 import com.threerings.msoy.room.data.RoomObject;
 import com.threerings.msoy.room.data.SceneAttrsUpdate;
 import com.threerings.msoy.room.data.SceneOwnershipUpdate;
+import com.threerings.msoy.world.client.WorldClient;
+import com.threerings.msoy.world.client.WorldContext;
 
 /**
  * Extends the base roomview with the ability to view a RoomObject, view chat, and edit.

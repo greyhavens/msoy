@@ -5,25 +5,17 @@ package com.threerings.msoy.item.client {
 
 import flash.display.DisplayObject;
 import flash.display.Loader;
-
 import flash.events.ErrorEvent;
 import flash.events.Event;
 import flash.events.EventDispatcher;
 import flash.events.IOErrorEvent;
-import flash.events.StatusEvent;
-
 import flash.geom.Point;
-
-import flash.net.LocalConnection;
 import flash.net.URLRequest;
-
-import flash.utils.clearInterval;
-import flash.utils.setInterval;
-
 import flash.system.ApplicationDomain;
 import flash.system.LoaderContext;
 import flash.system.Security;
-import flash.system.System;
+import flash.utils.clearInterval;
+import flash.utils.setInterval;
 
 import com.threerings.util.DelayUtil;
 import com.threerings.util.Log;
@@ -33,8 +25,6 @@ import com.threerings.display.LoaderUtil;
 
 import com.threerings.media.MediaPlayerCodes;
 import com.threerings.media.VideoPlayer;
-
-import com.threerings.msoy.client.DeploymentConfig;
 
 public class YouTubePlayer extends EventDispatcher
     implements VideoPlayer, ExternalMediaDisplayer

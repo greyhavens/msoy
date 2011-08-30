@@ -12,15 +12,14 @@ import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.depot.PersistenceContext;
+import net.sf.ehcache.CacheManager;
+
 import com.samskivert.util.Interval;
 import com.samskivert.util.Lifecycle;
 import com.samskivert.util.Tuple;
 
-import net.sf.ehcache.CacheManager;
+import com.samskivert.depot.PersistenceContext;
 
-import com.threerings.admin.server.AdminManager;
-import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.util.MessageBundle;
 
 import com.threerings.presents.annotation.AnyThread;
@@ -37,28 +36,30 @@ import com.threerings.presents.server.InvocationManager;
 import com.threerings.presents.server.PresentsServer;
 import com.threerings.presents.server.RebootManager;
 
+import com.threerings.crowd.data.OccupantInfo;
+
+import com.threerings.admin.server.AdminManager;
+
+import com.threerings.orth.notify.data.GenericNotification;
+import com.threerings.orth.notify.data.Notification;
+
 import com.threerings.pulse.server.PresentsPulseManager;
 
+import com.threerings.msoy.admin.client.PeerAdminService;
 import com.threerings.msoy.admin.data.PeerAdminMarshaller;
+import com.threerings.msoy.admin.data.ServerConfigObject;
+import com.threerings.msoy.admin.gwt.StatsModel;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.DeploymentConfig;
+import com.threerings.msoy.money.server.MoneyExchange;
+import com.threerings.msoy.peer.data.MsoyNodeObject;
+import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.server.MemberLocator;
 import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.ServerConfig;
-import com.threerings.msoy.web.server.RPCProfiler;
 import com.threerings.msoy.server.util.MailSender;
-
-import com.threerings.msoy.money.server.MoneyExchange;
-import com.threerings.msoy.peer.data.MsoyNodeObject;
-import com.threerings.msoy.peer.server.MsoyPeerManager;
-
-import com.threerings.orth.notify.data.Notification;
-import com.threerings.orth.notify.data.GenericNotification;
-
-import com.threerings.msoy.admin.client.PeerAdminService;
-import com.threerings.msoy.admin.data.ServerConfigObject;
-import com.threerings.msoy.admin.gwt.StatsModel;
+import com.threerings.msoy.web.server.RPCProfiler;
 
 import static com.threerings.msoy.Log.log;
 

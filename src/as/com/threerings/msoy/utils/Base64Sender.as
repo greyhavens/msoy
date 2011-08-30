@@ -4,9 +4,7 @@
 package com.threerings.msoy.utils {
 
 import flash.events.TimerEvent;
-
 import flash.external.ExternalInterface;
-
 import flash.utils.ByteArray;
 import flash.utils.Timer;
 

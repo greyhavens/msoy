@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.group.server.persist;
 
+import com.google.common.base.Function;
+
 import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.annotation.Column;
@@ -12,8 +14,6 @@ import com.samskivert.depot.annotation.GenerationType;
 import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.annotation.Index;
 import com.samskivert.depot.expression.ColumnExp;
-
-import com.google.common.base.Function;
 
 import com.threerings.orth.data.MediaDesc;
 

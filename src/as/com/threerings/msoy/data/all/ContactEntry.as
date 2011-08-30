@@ -3,15 +3,15 @@
 
 package com.threerings.msoy.data.all {
 
+import com.threerings.io.ObjectInputStream;
+import com.threerings.io.ObjectOutputStream;
+
 import com.threerings.util.Comparable;
 import com.threerings.util.Hashable;
 
-import com.threerings.io.ObjectOutputStream;
-import com.threerings.io.ObjectInputStream;
+import com.threerings.presents.dobj.DSet_Entry;
 
 import com.threerings.msoy.data.all.JabberName;
-
-import com.threerings.presents.dobj.DSet_Entry;
 
 /**
  * Represents a jabber contact.

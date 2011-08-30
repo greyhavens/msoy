@@ -11,14 +11,12 @@ import com.threerings.presents.server.ClientResolver;
 import com.threerings.orth.data.MediaDesc;
 
 import com.threerings.msoy.data.all.VizMemberName;
-import com.threerings.msoy.server.persist.MemberRecord;
-import com.threerings.msoy.server.persist.MemberRepository;
-
-import com.threerings.msoy.person.server.persist.ProfileRecord;
-import com.threerings.msoy.person.server.persist.ProfileRepository;
-
 import com.threerings.msoy.party.data.PartierObject;
 import com.threerings.msoy.party.data.PartyAuthName;
+import com.threerings.msoy.person.server.persist.ProfileRecord;
+import com.threerings.msoy.person.server.persist.ProfileRepository;
+import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.MemberRepository;
 
 /**
  * Handles the resolution of partier client information.

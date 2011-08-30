@@ -13,17 +13,14 @@ import com.threerings.util.Log;
 
 import com.threerings.flex.FlexUtil;
 
-import com.threerings.msoy.ui.FloatingPanel;
-
 import com.threerings.msoy.client.Msgs;
-
-import com.threerings.msoy.world.client.WorldContext;
-
 import com.threerings.msoy.room.client.RoomObjectController;
 import com.threerings.msoy.room.client.RoomObjectView;
 import com.threerings.msoy.room.client.RoomPostcardPanel;
 import com.threerings.msoy.room.client.snapshot.Snapshot;
 import com.threerings.msoy.room.data.MsoySceneModel;
+import com.threerings.msoy.ui.FloatingPanel;
+import com.threerings.msoy.world.client.WorldContext;
 
 /**
  * Asks the player if they want to publish their room.

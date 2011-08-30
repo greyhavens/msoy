@@ -335,7 +335,7 @@ img, embed, applet, object {
   height: 28px;
 }
 
-.tongueBox .THeader .Base, 
+.tongueBox .THeader .Base,
 .tongueBox .THeader .Base .BaseContents .BaseText {
   font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
   font-size: 16px;
@@ -1457,12 +1457,12 @@ img, embed, applet, object {
 	width: 20px;
 	height: 20px;
 	padding-right: 8px;
-	background: url(/images/ui/rollup-arrow-closed.png) no-repeat 7px 4px; 
+	background: url(/images/ui/rollup-arrow-closed.png) no-repeat 7px 4px;
 	margin-top: 4px;
 }
 
 .rollupBox-arrow-open {
-	background: url(/images/ui/rollup-arrow-open.png) no-repeat 4px 6px; 
+	background: url(/images/ui/rollup-arrow-open.png) no-repeat 4px 6px;
 }
 
 .rollupBox-title {

@@ -5,14 +5,13 @@ package com.threerings.msoy.applets.remixer {
 
 import flash.utils.ByteArray;
 
-import mx.containers.ViewStack;
+import com.whirled.remix.data.EditableDataPack;
 
+import mx.containers.ViewStack;
 import mx.core.Application;
 
 import com.threerings.util.MessageBundle;
 import com.threerings.util.Util;
-
-import com.whirled.remix.data.EditableDataPack;
 
 import com.threerings.msoy.applets.image.ImageContext;
 

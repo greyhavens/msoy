@@ -6,6 +6,7 @@ package com.threerings.msoy.item.data.all;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.io.Streamable;
+
 import com.threerings.presents.dobj.DSet;
 
 /**

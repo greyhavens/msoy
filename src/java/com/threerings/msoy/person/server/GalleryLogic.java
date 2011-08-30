@@ -11,11 +11,11 @@ import com.google.inject.Singleton;
 
 import com.threerings.presents.annotation.BlockingThread;
 
+import com.threerings.web.gwt.ServiceException;
+
 import com.threerings.msoy.person.gwt.Gallery;
 import com.threerings.msoy.person.server.persist.GalleryInfoRecord;
 import com.threerings.msoy.person.server.persist.GalleryRepository;
-
-import com.threerings.web.gwt.ServiceException;
 
 /**
  * Provides shared Gallery related methods.

@@ -5,7 +5,6 @@ package com.threerings.msoy.data;
 
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.game.data.PlayerObject;
-
 import com.threerings.msoy.party.data.PartySummary;
 
 /**

@@ -7,13 +7,13 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.google.common.collect.Lists;
-
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
@@ -23,7 +23,7 @@ import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
+
 import com.threerings.gwt.ui.EnterClickAdapter;
 import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.PagedWidget;
@@ -32,13 +32,12 @@ import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.gwt.util.SimpleDataModel;
 
 import com.threerings.msoy.data.all.TagCodes;
-
 import com.threerings.msoy.item.data.all.ItemFlag;
-
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.TagHistory;
 
 import client.shell.CShell;
+import client.shell.ShellMessages;
 import client.ui.BorderedDialog;
 import client.ui.BorderedPopup;
 import client.ui.ComplainPopup;
@@ -48,7 +47,6 @@ import client.ui.PromptPopup;
 import client.ui.RowPanel;
 import client.util.InfoCallback;
 import client.util.Link;
-import client.shell.ShellMessages;
 
 /**
  * Displays tagging information for a particular item.

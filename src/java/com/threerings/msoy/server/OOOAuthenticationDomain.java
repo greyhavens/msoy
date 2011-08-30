@@ -7,7 +7,6 @@ import java.util.Arrays;
 
 import com.google.inject.Inject;
 
-import com.samskivert.depot.DuplicateKeyException;
 import com.samskivert.net.MailUtil;
 import com.samskivert.util.StringUtil;
 
@@ -15,13 +14,14 @@ import com.samskivert.servlet.user.InvalidUsernameException;
 import com.samskivert.servlet.user.UserExistsException;
 import com.samskivert.servlet.user.Username;
 
-import com.threerings.web.gwt.ServiceException;
+import com.samskivert.depot.DuplicateKeyException;
+
 import com.threerings.user.OOOUser;
+import com.threerings.web.gwt.ServiceException;
 
 import com.threerings.msoy.data.MsoyAuthCodes;
-import com.threerings.msoy.underwire.server.SupportLogic;
-
 import com.threerings.msoy.server.persist.MsoyOOOUserRepository;
+import com.threerings.msoy.underwire.server.SupportLogic;
 
 import static com.threerings.msoy.Log.log;
 

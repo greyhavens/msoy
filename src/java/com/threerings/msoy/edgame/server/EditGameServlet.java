@@ -4,7 +4,6 @@
 package com.threerings.msoy.edgame.server;
 
 import java.net.URL;
-
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -21,14 +20,11 @@ import com.google.common.collect.Sets;
 import com.google.common.primitives.Ints;
 import com.google.inject.Inject;
 
-import com.threerings.web.gwt.ServiceException;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.samskivert.io.StreamUtil;
-
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.StringUtil;
 
@@ -36,19 +32,14 @@ import com.threerings.parlor.rating.server.persist.RatingRepository;
 
 import com.threerings.orth.data.MediaDesc;
 
+import com.threerings.web.gwt.ServiceException;
+
 import com.threerings.msoy.comment.data.all.CommentType;
+import com.threerings.msoy.comment.server.persist.CommentRepository;
+import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.msoy.data.all.MediaDescUtil;
 import com.threerings.msoy.data.all.MediaMimeTypes;
-import com.threerings.msoy.item.data.ItemCodes;
-import com.threerings.msoy.item.data.all.GameItem;
-import com.threerings.msoy.item.data.all.MsoyItemType;
-import com.threerings.msoy.item.server.ItemLogic;
-import com.threerings.msoy.item.server.persist.GameItemRecord;
-import com.threerings.msoy.item.server.persist.ItemRecord;
-import com.threerings.msoy.item.server.persist.ItemRepository;
-
-import com.threerings.msoy.comment.server.persist.CommentRepository;
-
 import com.threerings.msoy.edgame.gwt.EditGameService;
 import com.threerings.msoy.edgame.gwt.GameCode;
 import com.threerings.msoy.facebook.gwt.FacebookInfo;
@@ -63,20 +54,23 @@ import com.threerings.msoy.game.gwt.GameInfo;
 import com.threerings.msoy.game.gwt.GameService;
 import com.threerings.msoy.game.gwt.MochiGameInfo;
 import com.threerings.msoy.game.server.GameNodeActions;
+import com.threerings.msoy.game.server.persist.ArcadeEntryRecord;
 import com.threerings.msoy.game.server.persist.GameCodeRecord;
 import com.threerings.msoy.game.server.persist.GameInfoRecord;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
-import com.threerings.msoy.game.server.persist.ArcadeEntryRecord;
 import com.threerings.msoy.game.server.persist.TrophyRepository;
 import com.threerings.msoy.group.data.all.GroupMembership;
 import com.threerings.msoy.group.server.persist.GroupRepository;
-
-import com.threerings.msoy.data.MsoyCodes;
-import com.threerings.msoy.data.all.HashMediaDesc;
+import com.threerings.msoy.item.data.ItemCodes;
+import com.threerings.msoy.item.data.all.GameItem;
+import com.threerings.msoy.item.data.all.MsoyItemType;
+import com.threerings.msoy.item.server.ItemLogic;
+import com.threerings.msoy.item.server.persist.GameItemRecord;
+import com.threerings.msoy.item.server.persist.ItemRecord;
+import com.threerings.msoy.item.server.persist.ItemRepository;
 import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.PopularPlacesSnapshot;
 import com.threerings.msoy.server.persist.MemberRecord;
-
 import com.threerings.msoy.web.gwt.ServiceCodes;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 

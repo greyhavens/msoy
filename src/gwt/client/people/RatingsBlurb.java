@@ -12,12 +12,13 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.orth.data.MediaDescSize;
-import com.threerings.msoy.game.gwt.GameRating;
-import com.threerings.msoy.profile.gwt.ProfileService;
-import com.threerings.msoy.web.gwt.Pages;
 
 import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.util.SimpleDataModel;
+
+import com.threerings.msoy.game.gwt.GameRating;
+import com.threerings.msoy.profile.gwt.ProfileService;
+import com.threerings.msoy.web.gwt.Pages;
 
 import client.ui.MsoyUI;
 import client.util.Link;

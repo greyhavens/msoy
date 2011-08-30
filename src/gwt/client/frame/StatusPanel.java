@@ -4,11 +4,10 @@
 package client.frame;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Element;
-
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
@@ -26,13 +25,12 @@ import com.threerings.gwt.util.CookieUtil;
 
 import com.threerings.msoy.data.all.MemberMailUtil;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.money.data.all.Currency;
+import com.threerings.msoy.money.data.all.ReportType;
 import com.threerings.msoy.web.gwt.CookieNames;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.SessionData;
 import com.threerings.msoy.web.gwt.WebCreds;
-
-import com.threerings.msoy.money.data.all.Currency;
-import com.threerings.msoy.money.data.all.ReportType;
 
 import client.shell.CShell;
 import client.shell.Session;

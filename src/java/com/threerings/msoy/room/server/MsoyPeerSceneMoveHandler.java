@@ -3,20 +3,29 @@
  */
 package com.threerings.msoy.room.server;
 
-import static com.threerings.msoy.Log.log;
-
 import java.util.List;
 
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
-import com.samskivert.jdbc.RepositoryUnit;
+
 import com.samskivert.util.Invoker;
 import com.samskivert.util.ObjectUtil;
 import com.samskivert.util.RandomUtil;
 import com.samskivert.util.Tuple;
 
+import com.samskivert.jdbc.RepositoryUnit;
+
+import com.threerings.presents.annotation.MainInvoker;
+import com.threerings.presents.client.InvocationService.ConfirmListener;
+import com.threerings.presents.dobj.DSet;
+import com.threerings.presents.server.InvocationException;
+
 import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.server.LocationManager;
+
+import com.threerings.whirled.client.SceneMoveAdapter;
+import com.threerings.whirled.server.SceneManager;
+
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.group.server.ThemeLogic;
@@ -43,12 +52,8 @@ import com.threerings.msoy.room.server.MsoySceneRegistry.ThemeMoveHandler;
 import com.threerings.msoy.server.MemberLocal;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.world.server.WorldManager;
-import com.threerings.presents.annotation.MainInvoker;
-import com.threerings.presents.client.InvocationService.ConfirmListener;
-import com.threerings.presents.dobj.DSet;
-import com.threerings.presents.server.InvocationException;
-import com.threerings.whirled.client.SceneMoveAdapter;
-import com.threerings.whirled.server.SceneManager;
+
+import static com.threerings.msoy.Log.log;
 
 /**
  * Handle all the complexities that happen on Whirled when you transition from one scene

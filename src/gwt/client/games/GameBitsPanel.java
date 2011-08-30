@@ -4,6 +4,7 @@
 package client.games;
 
 import com.google.gwt.core.client.GWT;
+
 import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.game.gwt.GameDetail;

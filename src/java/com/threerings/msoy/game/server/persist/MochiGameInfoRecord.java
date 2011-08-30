@@ -5,6 +5,8 @@ package com.threerings.msoy.game.server.persist;
 
 import com.google.common.base.Function;
 
+import com.samskivert.util.StringUtil;
+
 import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.annotation.Column;
@@ -13,8 +15,6 @@ import com.samskivert.depot.annotation.GenerationType;
 import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.annotation.Index;
 import com.samskivert.depot.expression.ColumnExp;
-
-import com.samskivert.util.StringUtil;
 
 import com.threerings.msoy.game.gwt.GameInfo;
 import com.threerings.msoy.game.gwt.MochiGameInfo;

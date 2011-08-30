@@ -4,6 +4,7 @@
 package com.threerings.msoy.mail.gwt;
 
 import java.util.List;
+
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**

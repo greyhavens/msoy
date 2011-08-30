@@ -8,7 +8,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-
 import java.util.Map;
 
 import org.apache.commons.codec.binary.Base64;
@@ -23,7 +22,6 @@ import com.samskivert.depot.expression.ColumnExp;
 import com.threerings.util.StreamableHashMap;
 
 import com.threerings.msoy.item.data.all.ItemIdent;
-
 import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.room.data.EntityMemories;
 

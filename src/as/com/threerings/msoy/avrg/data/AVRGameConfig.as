@@ -3,13 +3,17 @@
 
 package com.threerings.msoy.avrg.data {
 
+import com.whirled.game.data.GameDefinition;
+
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
+
 import com.threerings.crowd.client.PlaceController;
 import com.threerings.crowd.data.PlaceConfig;
-import com.whirled.game.data.GameDefinition;
-import com.threerings.msoy.avrg.client.AVRGameController;
+
 import com.threerings.orth.data.MediaDesc;
+
+import com.threerings.msoy.avrg.client.AVRGameController;
 import com.threerings.msoy.game.data.MsoyGameConfig;
 import com.threerings.msoy.item.data.all.Game;
 

@@ -6,21 +6,21 @@ package com.threerings.msoy.money.server.persist;
 import java.io.Serializable;
 import java.sql.Date;
 import java.sql.Timestamp;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import net.jcip.annotations.NotThreadSafe;
-
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+
+import net.jcip.annotations.NotThreadSafe;
+
+import com.samskivert.util.Logger;
 
 import com.samskivert.depot.CacheInvalidator.TraverseWithFilter;
 import com.samskivert.depot.CountRecord;
@@ -38,7 +38,6 @@ import com.samskivert.depot.clause.QueryClause;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.expression.SQLExpression;
-import com.samskivert.util.Logger;
 
 import com.threerings.presents.annotation.BlockingThread;
 

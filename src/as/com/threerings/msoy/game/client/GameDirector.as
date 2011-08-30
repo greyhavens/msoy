@@ -13,40 +13,35 @@ import com.threerings.presents.client.BasicDirector;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.ClientEvent;
 
-import com.threerings.crowd.data.PlaceConfig;
 import com.threerings.crowd.client.PlaceController;
-
-import com.threerings.flex.CommandMenu;
 
 import com.threerings.parlor.game.data.UserIdentifier;
 
-import com.threerings.msoy.client.DeploymentConfig;
-import com.threerings.msoy.client.Msgs;
-import com.threerings.msoy.client.MsoyController;
-import com.threerings.msoy.data.MemberObject;
-import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.orth.data.MediaDesc;
 import com.threerings.orth.data.MediaDescSize;
 import com.threerings.orth.ui.MediaWrapper;
-import com.threerings.msoy.ui.skins.CommentButton;
-import com.threerings.msoy.utils.Args;
-import com.threerings.msoy.utils.Base64Encoder;
 
-import com.threerings.msoy.world.client.WorldContext;
+import com.threerings.flex.CommandMenu;
 
-import com.threerings.msoy.avrg.data.AVRGameConfig;
 import com.threerings.msoy.avrg.client.AVRGameBackend;
 import com.threerings.msoy.avrg.client.AVRGameController;
 import com.threerings.msoy.avrg.client.AVRGameLiaison;
-
+import com.threerings.msoy.client.DeploymentConfig;
+import com.threerings.msoy.client.Msgs;
+import com.threerings.msoy.client.MsoyController;
+import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.game.data.GameGameMarshaller;
 import com.threerings.msoy.game.data.MsoyGameCodes;
 import com.threerings.msoy.game.data.MsoyGameConfig;
+import com.threerings.msoy.game.data.MsoyGameDefinition;
 import com.threerings.msoy.game.data.MsoyUserIdentifier;
 import com.threerings.msoy.game.data.ParlorGameConfig;
-import com.threerings.msoy.game.data.MsoyGameDefinition;
 import com.threerings.msoy.game.data.WorldGameMarshaller;
 import com.threerings.msoy.game.util.GameUtil;
+import com.threerings.msoy.ui.skins.CommentButton;
+import com.threerings.msoy.utils.Args;
+import com.threerings.msoy.utils.Base64Encoder;
+import com.threerings.msoy.world.client.WorldContext;
 
 /**
  * An even dispatched when the user has entered or left any game, or entered or left any table

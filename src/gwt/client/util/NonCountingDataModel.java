@@ -40,5 +40,5 @@ public abstract class NonCountingDataModel<T, R> extends ServiceBackedDataModel<
     protected void reportFailure (Throwable caught)
     {
         MsoyUI.reportServiceFailure(caught);
-    }    
+    }
 }

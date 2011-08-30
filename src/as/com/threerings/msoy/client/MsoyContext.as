@@ -2,8 +2,6 @@
 // $Id$
 
 package com.threerings.msoy.client {
-import com.threerings.msoy.notify.client.MsoyNotificationDirector;
-
 import flash.display.Stage;
 
 import mx.core.UIComponent;
@@ -22,26 +20,24 @@ import com.threerings.presents.client.ResultAdapter;
 import com.threerings.presents.dobj.DObjectManager;
 import com.threerings.presents.net.AuthResponseData;
 
+import com.threerings.crowd.chat.client.ChatDirector;
 import com.threerings.crowd.client.LocationDirector;
 import com.threerings.crowd.client.OccupantDirector;
 import com.threerings.crowd.client.PlaceView;
 import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.util.CrowdContext;
 
-import com.threerings.crowd.chat.client.ChatDirector;
-
+import com.threerings.msoy.chat.client.CurseFilter;
+import com.threerings.msoy.chat.client.MsoyChatDirector;
+import com.threerings.msoy.chat.client.MsoyMuteDirector;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyAuthResponseData;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.MsoyCredentials;
 import com.threerings.msoy.data.MsoyTokenRing;
-
 import com.threerings.msoy.data.all.MemberMailUtil;
 import com.threerings.msoy.data.all.MemberName;
-
-import com.threerings.msoy.chat.client.CurseFilter;
-import com.threerings.msoy.chat.client.MsoyChatDirector;
-import com.threerings.msoy.chat.client.MsoyMuteDirector;
+import com.threerings.msoy.notify.client.MsoyNotificationDirector;
 
 /**
  * Provides services shared by all clients.

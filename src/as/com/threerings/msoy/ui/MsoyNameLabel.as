@@ -4,14 +4,13 @@
 package com.threerings.msoy.ui {
 
 import flash.display.Sprite;
-
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 import flash.text.TextFormat;
 
-import com.threerings.text.TextFieldUtil;
-
 import com.threerings.crowd.data.OccupantInfo;
+
+import com.threerings.text.TextFieldUtil;
 
 import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.data.MsoyUserOccupantInfo;

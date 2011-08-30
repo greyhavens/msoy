@@ -5,7 +5,9 @@ package com.threerings.msoy.item.gwt;
 
 import java.util.List;
 import java.util.Map;
+
 import com.google.gwt.user.client.rpc.AsyncCallback;
+
 import com.threerings.msoy.group.gwt.BrandDetail;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;

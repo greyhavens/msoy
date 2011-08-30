@@ -3,26 +3,19 @@
 
 package com.threerings.msoy.client {
 
+// NOTE: minimize dependancies outside of flash.*, since this is our preloader...
 import flash.display.Loader;
-import flash.display.Sprite;
 import flash.display.MovieClip;
-
+import flash.display.Sprite;
 import flash.events.Event;
 import flash.events.ProgressEvent;
-
 import flash.external.ExternalInterface;
-
 import flash.net.URLRequest;
-
-import flash.utils.getTimer;
-
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
-
-// NOTE: minimize dependancies outside of flash.*, since this is our preloader...
+import flash.utils.getTimer;
 
 import mx.events.FlexEvent;
-
 import mx.preloaders.IPreloaderDisplay
 
 import com.threerings.msoy.data.UberClientModes;

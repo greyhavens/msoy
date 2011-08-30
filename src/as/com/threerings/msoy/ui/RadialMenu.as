@@ -3,15 +3,12 @@
 
 package com.threerings.msoy.ui {
 
-import flash.events.MouseEvent;
-
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
+import flash.events.MouseEvent;
 
 import mx.containers.Canvas;
-
 import mx.core.Application;
-
 import mx.managers.PopUpManager;
 
 import com.threerings.flex.FlexWrapper;
@@ -98,9 +95,7 @@ public class RadialMenu extends Canvas
 import flash.display.DisplayObject;
 import flash.display.Graphics;
 import flash.display.Sprite;
-
 import flash.events.MouseEvent;
-
 import flash.geom.Point;
 
 import com.threerings.flex.CommandMenu;

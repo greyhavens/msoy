@@ -6,10 +6,9 @@ package client.ui;
 import java.util.ArrayList;
 
 import com.google.common.collect.Lists;
-
-import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Element;
+import com.google.gwt.user.client.ui.Widget;
 
 public class PrettyTextPanel extends Widget
 {

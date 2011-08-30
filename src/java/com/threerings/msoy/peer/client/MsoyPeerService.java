@@ -5,13 +5,11 @@ package com.threerings.msoy.peer.client;
 
 import com.threerings.io.Streamable;
 
-import com.threerings.presents.client.Client;
-import com.threerings.presents.client.InvocationService;
-
 import com.threerings.util.Name;
 
-import com.threerings.msoy.data.MemberObject;
+import com.threerings.presents.client.InvocationService;
 
+import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.item.data.all.ItemIdent;
 
 /**

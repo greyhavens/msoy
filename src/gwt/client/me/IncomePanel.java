@@ -8,9 +8,9 @@ import java.util.List;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.msoy.money.data.all.MoneyTransaction;
-
 import com.threerings.gwt.ui.WidgetUtil;
+
+import com.threerings.msoy.money.data.all.MoneyTransaction;
 
 import client.shell.CShell;
 import client.ui.MsoyUI;

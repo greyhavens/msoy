@@ -10,8 +10,8 @@ import com.google.common.base.Function;
 import com.samskivert.depot.annotation.Entity;
 import com.samskivert.depot.expression.ColumnExp;
 
-import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.IdentGameItem;
+import com.threerings.msoy.item.data.all.Item;
 
 /**
  * Contains additional fields required by sub-items.

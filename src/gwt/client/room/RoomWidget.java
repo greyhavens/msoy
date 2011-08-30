@@ -3,18 +3,18 @@
 
 package client.room;
 
-import com.threerings.orth.data.MediaDesc;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.orth.data.MediaDesc;
+
 import com.threerings.msoy.room.gwt.RoomInfo;
 import com.threerings.msoy.web.gwt.Pages;
 
-import client.util.Link;
 import client.ui.MsoyUI;
 import client.ui.Stars;
+import client.util.Link;
 
 public class RoomWidget extends FlowPanel
 {

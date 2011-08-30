@@ -6,20 +6,18 @@ package client.facebookbase;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-import com.threerings.msoy.web.gwt.ArgNames.FBParam;
-import com.threerings.msoy.web.gwt.CookieNames;
-import com.threerings.msoy.web.gwt.SharedNaviUtil;
-
+import com.threerings.msoy.facebook.gwt.FacebookService.StoryFields;
+import com.threerings.msoy.facebook.gwt.FacebookService.StoryKey;
 import com.threerings.msoy.facebook.gwt.FacebookService;
 import com.threerings.msoy.facebook.gwt.FacebookServiceAsync;
 import com.threerings.msoy.facebook.gwt.Wildcards;
-import com.threerings.msoy.facebook.gwt.FacebookService.StoryKey;
-import com.threerings.msoy.facebook.gwt.FacebookService.StoryFields;
+import com.threerings.msoy.web.gwt.ArgNames.FBParam;
+import com.threerings.msoy.web.gwt.CookieNames;
+import com.threerings.msoy.web.gwt.SharedNaviUtil;
 
 import client.facebookbase.FacebookUtil;
 import client.shell.CShell;

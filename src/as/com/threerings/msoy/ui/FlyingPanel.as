@@ -4,7 +4,6 @@
 package com.threerings.msoy.ui {
 
 import flash.events.Event;
-
 import flash.geom.Rectangle;
 
 import mx.events.ResizeEvent;

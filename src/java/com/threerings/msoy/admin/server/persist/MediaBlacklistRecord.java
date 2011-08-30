@@ -5,11 +5,12 @@ package com.threerings.msoy.admin.server.persist;
 
 import java.sql.Timestamp;
 
+import com.samskivert.util.StringUtil;
+
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.annotation.Entity;
 import com.samskivert.depot.annotation.Index;
 import com.samskivert.depot.expression.ColumnExp;
-import com.samskivert.util.StringUtil;
 
 import com.threerings.msoy.data.all.HashMediaDesc;
 

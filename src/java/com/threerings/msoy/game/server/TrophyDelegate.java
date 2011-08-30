@@ -9,7 +9,16 @@ import java.util.List;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 
+import com.whirled.game.client.PrizeService;
+import com.whirled.game.data.GameContentOwnership;
+import com.whirled.game.data.GameData;
+import com.whirled.game.data.GameDataObject;
+import com.whirled.game.data.ItemData;
+import com.whirled.game.data.LevelData;
+import com.whirled.game.data.TrophyData;
+
 import com.samskivert.util.ResultListener;
+
 import com.threerings.util.MessageBundle;
 
 import com.threerings.presents.client.InvocationService;
@@ -21,28 +30,18 @@ import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.parlor.server.PlayManagerDelegate;
 
-import com.whirled.game.client.PrizeService;
-import com.whirled.game.data.GameContentOwnership;
-import com.whirled.game.data.GameData;
-import com.whirled.game.data.GameDataObject;
-import com.whirled.game.data.ItemData;
-import com.whirled.game.data.LevelData;
-import com.whirled.game.data.TrophyData;
-
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.HashMediaDesc;
-
+import com.threerings.msoy.game.data.MsoyGameCodes;
+import com.threerings.msoy.game.data.PlayerObject;
+import com.threerings.msoy.game.data.all.Trophy;
+import com.threerings.msoy.game.server.persist.TrophyRecord;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemPack;
 import com.threerings.msoy.item.data.all.LevelPack;
 import com.threerings.msoy.item.data.all.Prize;
 import com.threerings.msoy.item.data.all.TrophySource;
 import com.threerings.msoy.item.server.ItemManager;
-
-import com.threerings.msoy.game.data.MsoyGameCodes;
-import com.threerings.msoy.game.data.PlayerObject;
-import com.threerings.msoy.game.data.all.Trophy;
-import com.threerings.msoy.game.server.persist.TrophyRecord;
 
 import static com.threerings.msoy.Log.log;
 

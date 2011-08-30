@@ -5,9 +5,10 @@ package com.threerings.msoy.badge.server;
 
 import java.util.Iterator;
 
-import com.threerings.msoy.data.MemberObject;
 import com.threerings.stats.data.Stat;
 import com.threerings.stats.data.StatSet;
+
+import com.threerings.msoy.data.MemberObject;
 
 /**
  * Stats in Whirled are often associated with badges; when such a stat is updated, ServerStatSet

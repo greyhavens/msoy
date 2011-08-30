@@ -5,13 +5,13 @@ package com.threerings.msoy.group.server.persist;
 
 import java.sql.Timestamp;
 
+import com.google.common.base.Function;
+
 import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.annotation.Entity;
 import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.expression.ColumnExp;
-
-import com.google.common.base.Function;
 
 @Entity
 public class EarnedMedalRecord extends PersistentRecord

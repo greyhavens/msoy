@@ -5,13 +5,12 @@ package com.threerings.msoy.room.client.updates {
 
 import com.threerings.whirled.data.SceneUpdate;
 
-import com.threerings.msoy.world.client.WorldContext;
-
 import com.threerings.msoy.room.data.FurniData;
 import com.threerings.msoy.room.data.FurniUpdate;
 import com.threerings.msoy.room.data.FurniUpdate_Add;
 import com.threerings.msoy.room.data.FurniUpdate_Change;
 import com.threerings.msoy.room.data.FurniUpdate_Remove;
+import com.threerings.msoy.world.client.WorldContext;
 
 /**
  * Generates a command to update a single piece of furni.

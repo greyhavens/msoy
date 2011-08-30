@@ -3,12 +3,12 @@
 
 package client.util;
 
-import client.shell.CShell;
-
-import client.util.events.StatusChangeEvent;
-
 import com.google.gwt.i18n.client.NumberFormat;
+
 import com.threerings.msoy.money.data.all.BalanceInfo;
+
+import client.shell.CShell;
+import client.util.events.StatusChangeEvent;
 
 /**
  * I can't think of a better name.

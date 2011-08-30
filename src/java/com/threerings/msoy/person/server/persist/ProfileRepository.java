@@ -23,11 +23,10 @@ import com.samskivert.depot.operator.FullText;
 
 import com.threerings.presents.annotation.BlockingThread;
 
-import com.threerings.msoy.server.persist.MemberRecord;
-import com.threerings.msoy.server.persist.MemberRepository.MemberSearchRecord;
-
 import com.threerings.msoy.person.gwt.Interest;
 import com.threerings.msoy.profile.gwt.Profile;
+import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.MemberRepository.MemberSearchRecord;
 
 /**
  * Manages the persistent store of profile profile data.

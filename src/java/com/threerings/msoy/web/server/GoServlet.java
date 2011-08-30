@@ -16,7 +16,6 @@ import com.samskivert.util.Tuple;
 
 import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.server.MemberLogic;
-
 import com.threerings.msoy.web.gwt.ArgNames;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;

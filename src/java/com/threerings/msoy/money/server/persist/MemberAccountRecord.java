@@ -11,8 +11,8 @@ import com.samskivert.depot.annotation.Entity;
 import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.expression.ColumnExp;
 
-import com.threerings.msoy.money.data.all.MemberMoney;
 import com.threerings.msoy.money.data.all.Currency;
+import com.threerings.msoy.money.data.all.MemberMoney;
 
 /**
  * Domain model for the current status of a member's account, including the amount of each money

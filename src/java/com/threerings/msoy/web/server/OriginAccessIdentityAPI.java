@@ -3,8 +3,9 @@
 
 package com.threerings.msoy.web.server;
 
-import javax.xml.stream.XMLStreamException;
 import java.util.List;
+
+import javax.xml.stream.XMLStreamException;
 
 import org.apache.commons.httpclient.methods.DeleteMethod;
 import org.apache.commons.httpclient.methods.GetMethod;

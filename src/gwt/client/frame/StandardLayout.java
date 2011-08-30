@@ -1,12 +1,12 @@
 package client.frame;
 
-import client.util.FlashClients;
-
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
+
+import client.util.FlashClients;
 
 /**
  * Standard web layout for when we have the whole browser to ourselves. Flash client in the middle,

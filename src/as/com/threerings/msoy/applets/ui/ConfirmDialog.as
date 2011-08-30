@@ -5,7 +5,6 @@ package com.threerings.msoy.applets.ui {
 
 import mx.containers.TitleWindow;
 import mx.controls.ButtonBar;
-
 import mx.managers.PopUpManager;
 
 import com.threerings.flex.CommandButton;

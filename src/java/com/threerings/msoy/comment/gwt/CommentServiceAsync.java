@@ -4,8 +4,11 @@
 package com.threerings.msoy.comment.gwt;
 
 import java.util.Collection;
+
 import com.google.gwt.user.client.rpc.AsyncCallback;
+
 import com.threerings.gwt.util.ExpanderResult;
+
 import com.threerings.msoy.comment.data.all.Comment;
 import com.threerings.msoy.comment.data.all.CommentType;
 import com.threerings.msoy.web.gwt.Activity;

@@ -6,6 +6,7 @@ package com.threerings.msoy.room.data {
 import flash.utils.ByteArray;
 
 import com.threerings.io.ObjectInputStream;
+
 import com.threerings.util.Joiner;
 import com.threerings.util.Log;
 

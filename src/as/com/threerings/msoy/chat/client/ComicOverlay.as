@@ -6,17 +6,10 @@ package com.threerings.msoy.chat.client {
 import flash.display.BlendMode;
 import flash.display.Graphics;
 import flash.display.Sprite;
-
 import flash.geom.Point;
 import flash.geom.Rectangle;
-
 import flash.text.TextFormat;
 import flash.text.TextFormatAlign;
-
-import com.threerings.crowd.chat.data.ChatCodes;
-import com.threerings.crowd.chat.data.ChatMessage;
-import com.threerings.crowd.chat.data.SystemMessage;
-import com.threerings.crowd.chat.data.UserMessage;
 
 import com.threerings.util.Arrays;
 import com.threerings.util.Log;
@@ -24,17 +17,19 @@ import com.threerings.util.Map;
 import com.threerings.util.Maps;
 import com.threerings.util.Name;
 
+import com.threerings.crowd.chat.data.ChatCodes;
+import com.threerings.crowd.chat.data.ChatMessage;
+import com.threerings.crowd.chat.data.SystemMessage;
+import com.threerings.crowd.chat.data.UserMessage;
+
 import com.threerings.display.ColorUtil;
 
 import com.threerings.msoy.chat.data.MsoyChatChannel;
-
 import com.threerings.msoy.client.LayeredContainer;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.PlaceBox;
-
-import com.threerings.msoy.world.client.WorldContext;
-
 import com.threerings.msoy.room.data.MsoyScene;
+import com.threerings.msoy.world.client.WorldContext;
 
 /**
  * Implements comic chat in the metasoy client.
@@ -586,7 +581,6 @@ public class ComicOverlay extends ChatOverlay
 }
 
 import flash.display.Sprite;
-
 import flash.geom.Point;
 import flash.geom.Rectangle;
 
@@ -594,10 +588,9 @@ import com.threerings.util.Log;
 
 import com.threerings.display.DisplayUtil;
 
-import com.threerings.msoy.client.PlaceLayer;
-
 import com.threerings.msoy.chat.client.BubbleGlyph;
 import com.threerings.msoy.chat.client.ComicOverlay;
+import com.threerings.msoy.client.PlaceLayer;
 
 /**
  * A class to keep track of the bubbles spoken by a speaker.  When the speaker moves, this class

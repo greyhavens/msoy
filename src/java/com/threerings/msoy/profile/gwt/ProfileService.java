@@ -10,17 +10,13 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
-import com.threerings.web.gwt.ServiceException;
 import com.threerings.gwt.util.ExpanderResult;
+import com.threerings.web.gwt.ServiceException;
 
+import com.threerings.msoy.badge.data.all.EarnedBadge;
 import com.threerings.msoy.data.all.Award;
 import com.threerings.msoy.data.all.Friendship;
 import com.threerings.msoy.data.all.MemberName;
-
-import com.threerings.msoy.web.gwt.Activity;
-import com.threerings.msoy.web.gwt.MemberCard;
-
-import com.threerings.msoy.badge.data.all.EarnedBadge;
 import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.game.gwt.GameRating;
 import com.threerings.msoy.group.gwt.BrandDetail;
@@ -29,6 +25,8 @@ import com.threerings.msoy.item.gwt.ListingCard;
 import com.threerings.msoy.person.gwt.FeedMessage;
 import com.threerings.msoy.person.gwt.Gallery;
 import com.threerings.msoy.person.gwt.Interest;
+import com.threerings.msoy.web.gwt.Activity;
+import com.threerings.msoy.web.gwt.MemberCard;
 
 /**
  * Defines profile-related services available to the GWT/AJAX web client.

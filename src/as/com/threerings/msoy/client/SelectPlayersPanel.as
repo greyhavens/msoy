@@ -4,7 +4,7 @@
 package com.threerings.msoy.client {
 
 import flash.events.Event;
-import flash.utils.setTimeout; // function
+import flash.utils.setTimeout;
 
 import mx.containers.Grid;
 import mx.containers.GridRow;
@@ -15,12 +15,12 @@ import mx.core.ScrollPolicy;
 
 import com.threerings.io.TypedArray;
 
-import com.threerings.flex.GridUtil;
-
 import com.threerings.orth.data.OrthName;
 
-import com.threerings.msoy.ui.FloatingPanel;
+import com.threerings.flex.GridUtil;
+
 import com.threerings.msoy.data.all.VizMemberName;
+import com.threerings.msoy.ui.FloatingPanel;
 
 /**
  * Panel showing a list of players that the user can select. Subclasses provide specific
@@ -227,9 +227,9 @@ import mx.containers.HBox;
 import mx.controls.Label;
 import mx.core.ScrollPolicy;
 
+import com.threerings.orth.data.MediaDescSize;
 import com.threerings.orth.ui.MediaWrapper;
 
-import com.threerings.orth.data.MediaDescSize;
 import com.threerings.msoy.data.all.VizMemberName;
 
 class PlayerBox extends HBox

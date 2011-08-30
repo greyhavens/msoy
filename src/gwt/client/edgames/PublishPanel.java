@@ -8,16 +8,17 @@ import java.util.Date;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
 
+import com.threerings.orth.data.MediaDesc;
+
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.util.DateUtil;
 
 import com.threerings.msoy.data.all.HashMediaDesc;
-import com.threerings.orth.data.MediaDesc;
 import com.threerings.msoy.data.all.MediaMimeTypes;
+import com.threerings.msoy.edgame.gwt.EditGameService.GameData;
 import com.threerings.msoy.edgame.gwt.EditGameService;
 import com.threerings.msoy.edgame.gwt.EditGameServiceAsync;
 import com.threerings.msoy.edgame.gwt.GameCode;
-import com.threerings.msoy.edgame.gwt.EditGameService.GameData;
 
 import client.ui.MsoyUI;
 import client.util.ClickCallback;

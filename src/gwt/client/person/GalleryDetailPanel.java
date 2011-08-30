@@ -3,19 +3,20 @@
 
 package client.person;
 
-import client.ui.CreatorLabel;
-import client.ui.MsoyUI;
-import client.util.MediaUtil;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.AbsolutePanel;
-import com.threerings.gwt.ui.CenteredBox;
-import com.threerings.gwt.ui.InlinePanel;
 
 import com.threerings.orth.data.MediaDescSize;
 
+import com.threerings.gwt.ui.CenteredBox;
+import com.threerings.gwt.ui.InlinePanel;
+
 import com.threerings.msoy.person.gwt.Gallery;
 import com.threerings.msoy.person.gwt.GalleryData;
+
+import client.ui.CreatorLabel;
+import client.ui.MsoyUI;
+import client.util.MediaUtil;
 
 /**
  * Displays the Gallery meta data: name, description, thumbnail, yada yada.

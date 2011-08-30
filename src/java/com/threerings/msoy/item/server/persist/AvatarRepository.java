@@ -15,6 +15,7 @@ import com.samskivert.depot.clause.Join;
 import com.samskivert.depot.clause.QueryClause;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.expression.ColumnExp;
+
 import com.threerings.msoy.room.server.MsoySceneRegistry;
 import com.threerings.msoy.server.persist.RatingRecord;
 import com.threerings.msoy.server.persist.RatingRepository;

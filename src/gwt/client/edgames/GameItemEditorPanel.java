@@ -11,15 +11,14 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 
+import com.threerings.orth.data.MediaDescSize;
+
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
-import com.threerings.orth.data.MediaDescSize;
-
+import com.threerings.msoy.edgame.gwt.EditGameService.GameItemEditorInfo;
 import com.threerings.msoy.edgame.gwt.EditGameService;
 import com.threerings.msoy.edgame.gwt.EditGameServiceAsync;
-import com.threerings.msoy.edgame.gwt.EditGameService.GameItemEditorInfo;
-
 import com.threerings.msoy.game.gwt.GameInfo;
 import com.threerings.msoy.item.data.all.GameItem;
 import com.threerings.msoy.item.data.all.IdentGameItem;
@@ -31,12 +30,12 @@ import com.threerings.msoy.item.data.all.TrophySource;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
+import client.item.DoListItemPopup;
+import client.shell.DynamicLookup;
 import client.ui.MsoyUI;
 import client.util.InfoCallback;
 import client.util.Link;
 import client.util.MediaUtil;
-import client.item.DoListItemPopup;
-import client.shell.DynamicLookup;
 
 /**
  * Displays a list of game subitems (trophy source, level pack, etc.).

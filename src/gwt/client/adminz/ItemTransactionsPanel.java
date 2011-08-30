@@ -6,7 +6,6 @@ package client.adminz;
 import java.util.List;
 
 import com.google.common.collect.Lists;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -19,9 +18,9 @@ import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.gwt.util.DataModel;
 import com.threerings.gwt.util.DateUtil;
 
+import com.threerings.msoy.admin.gwt.AdminService.ItemTransactionResult;
 import com.threerings.msoy.admin.gwt.AdminService;
 import com.threerings.msoy.admin.gwt.AdminServiceAsync;
-import com.threerings.msoy.admin.gwt.AdminService.ItemTransactionResult;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.gwt.ItemDetail;

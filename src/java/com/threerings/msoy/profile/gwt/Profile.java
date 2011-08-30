@@ -3,9 +3,9 @@
 
 package com.threerings.msoy.profile.gwt;
 
-import com.threerings.orth.data.MediaDesc;
-
 import com.google.gwt.user.client.rpc.IsSerializable;
+
+import com.threerings.orth.data.MediaDesc;
 
 import com.threerings.msoy.data.all.Award;
 import com.threerings.msoy.web.gwt.MemberCard;

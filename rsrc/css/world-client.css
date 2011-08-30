@@ -113,7 +113,7 @@ GameOverPanel {
   period: 2.0;
 }
 
-.controlBar, .headerBar { 
+.controlBar, .headerBar {
   horizontalGap: 0;
   verticalGap: 0;
   borderStyle: "none";
@@ -293,11 +293,11 @@ GameOverPanel {
   showTrackHighlight: true;
 }
 
-.avatarCellSelected { 
+.avatarCellSelected {
   backgroundColor: #54a9da;
 }
 
-.chatControl {  
+.chatControl {
   verticalAlign: "middle";
   backgroundAlpha: 0;
 }
@@ -369,7 +369,7 @@ ChatInput {
   paddingRight: 0;
   paddingTop: 0;
   paddingBottom: 0;
-} 
+}
 
 .plusButton {
   icon: Embed(source="../media/skins/button/roomeditor/rollout_plus.png");

@@ -10,7 +10,6 @@ import mx.containers.Canvas;
 
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.ui.FloatingPanel;
-
 import com.threerings.msoy.world.client.WorldContext;
 
 /**

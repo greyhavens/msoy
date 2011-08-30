@@ -4,6 +4,7 @@
 package com.threerings.msoy.chat.data;
 
 import com.samskivert.util.ArrayUtil;
+
 import com.threerings.crowd.chat.data.ChatCodes;
 
 @com.threerings.util.ActionScript(omit=true)

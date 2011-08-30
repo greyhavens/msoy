@@ -5,8 +5,10 @@ package com.threerings.msoy.underwire.gwt;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
-import com.threerings.msoy.underwire.gwt.MsoyAccount.SocialStatus;
+
 import com.threerings.underwire.web.client.UnderwireException;
+
+import com.threerings.msoy.underwire.gwt.MsoyAccount.SocialStatus;
 
 /**
  * Provides some extra methods for the underwire support client for msoy.

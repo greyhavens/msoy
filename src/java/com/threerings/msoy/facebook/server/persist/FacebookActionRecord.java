@@ -6,6 +6,7 @@ package com.threerings.msoy.facebook.server.persist;
 import java.sql.Timestamp;
 
 import com.google.common.base.Preconditions;
+
 import com.samskivert.util.ByteEnum;
 import com.samskivert.util.Tuple;
 

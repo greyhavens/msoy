@@ -3,12 +3,13 @@
 
 package com.threerings.msoy.group.server.persist;
 
-import java.util.Map;
-
 import java.sql.Date;
+import java.util.Map;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Maps;
+
+import com.samskivert.util.StringUtil;
 
 import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistentRecord;
@@ -21,18 +22,15 @@ import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.annotation.Index;
 import com.samskivert.depot.expression.ColumnExp;
 
-import com.samskivert.util.StringUtil;
+import com.threerings.orth.data.MediaDesc;
 
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.HashMediaDesc;
-
-import com.threerings.orth.data.MediaDesc;
-
-import com.threerings.msoy.server.MediaDescFactory;
 import com.threerings.msoy.group.data.all.Group;
 import com.threerings.msoy.group.gwt.GroupCard;
 import com.threerings.msoy.group.gwt.GroupExtras;
 import com.threerings.msoy.item.data.all.MsoyItemType;
+import com.threerings.msoy.server.MediaDescFactory;
 
 /**
  * Contains the details of a group.

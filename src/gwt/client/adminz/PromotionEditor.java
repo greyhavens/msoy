@@ -17,11 +17,11 @@ import com.google.gwt.user.client.ui.TextBox;
 
 import org.gwt.advanced.client.ui.widget.DatePicker;
 
-import com.threerings.gwt.ui.SmartTable;
-import com.threerings.gwt.util.DateUtil;
-
 import com.threerings.orth.data.MediaDesc;
 import com.threerings.orth.data.MediaDescSize;
+
+import com.threerings.gwt.ui.SmartTable;
+import com.threerings.gwt.util.DateUtil;
 
 import com.threerings.msoy.web.gwt.Promotion;
 
@@ -31,8 +31,8 @@ import client.ui.MsoyUI;
 import client.ui.PromotionBox;
 import client.ui.TongueBox;
 import client.util.ClickCallback;
-import client.util.MediaUtil;
 import client.util.InfoCallback;
+import client.util.MediaUtil;
 import client.util.TextBoxUtil;
 
 /**

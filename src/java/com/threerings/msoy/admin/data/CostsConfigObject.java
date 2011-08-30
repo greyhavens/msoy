@@ -4,6 +4,7 @@
 package com.threerings.msoy.admin.data;
 
 import javax.annotation.Generated;
+
 import com.threerings.admin.data.ConfigObject;
 
 /**

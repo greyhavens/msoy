@@ -7,13 +7,11 @@ import com.google.inject.Inject;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.UserAction;
-
 import com.threerings.msoy.game.data.PlayerObject;
-import com.threerings.msoy.peer.server.MemberPlayerNodeAction;
-import com.threerings.msoy.peer.server.MsoyPeerManager;
-
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.server.persist.MoneyTransactionRecord;
+import com.threerings.msoy.peer.server.MemberPlayerNodeAction;
+import com.threerings.msoy.peer.server.MsoyPeerManager;
 
 public class MoneyNodeActions
 {

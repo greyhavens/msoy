@@ -9,14 +9,16 @@ import com.google.inject.Singleton;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.StringUtil;
 
+import com.threerings.presents.annotation.MainInvoker;
+import com.threerings.presents.server.ClientManager;
+
 import com.threerings.web.gwt.ServiceException;
+
 import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.MsoyCredentials;
 import com.threerings.msoy.data.all.MemberMailUtil;
 import com.threerings.msoy.data.all.VisitorInfo;
-import com.threerings.presents.annotation.MainInvoker;
-import com.threerings.presents.server.ClientManager;
 
 import static com.threerings.msoy.Log.log;
 

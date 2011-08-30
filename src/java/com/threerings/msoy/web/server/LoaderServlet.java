@@ -16,17 +16,14 @@ import com.samskivert.io.StreamUtil;
 
 import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.msoy.edgame.gwt.GameCode;
-import com.threerings.msoy.server.persist.MemberRecord;
-import com.threerings.msoy.server.persist.MemberRepository;
-
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
-
+import com.threerings.msoy.item.server.persist.DecorRecord;
+import com.threerings.msoy.item.server.persist.DecorRepository;
 import com.threerings.msoy.room.data.MsoySceneModel;
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
 import com.threerings.msoy.room.server.persist.SceneRecord;
-
-import com.threerings.msoy.item.server.persist.DecorRecord;
-import com.threerings.msoy.item.server.persist.DecorRepository;
+import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.MemberRepository;
 
 import static com.threerings.msoy.Log.log;
 

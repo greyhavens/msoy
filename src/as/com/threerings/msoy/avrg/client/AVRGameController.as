@@ -3,9 +3,13 @@
 
 package com.threerings.msoy.avrg.client {
 
+import flash.utils.ByteArray;
+
+import com.whirled.game.data.WhirledGameCodes;
+
 import com.threerings.util.Arrays;
-import com.threerings.util.MessageBundle;
 import com.threerings.util.Log;
+import com.threerings.util.MessageBundle;
 import com.threerings.util.Name;
 
 import com.threerings.presents.dobj.EntryAddedEvent;
@@ -27,26 +31,18 @@ import com.threerings.crowd.data.PlaceConfig;
 import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.util.CrowdContext;
 
-import com.whirled.game.data.WhirledGameCodes;
-
+import com.threerings.msoy.avrg.data.AVRGameConfig;
+import com.threerings.msoy.avrg.data.AVRGameObject;
+import com.threerings.msoy.avrg.data.PlayerLocation;
 import com.threerings.msoy.data.all.MemberName;
-
-import com.threerings.msoy.world.client.WorldContext;
-
+import com.threerings.msoy.game.client.GameContext;
+import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.room.client.RoomObjectView;
 import com.threerings.msoy.room.data.RoomCodes;
 import com.threerings.msoy.room.data.RoomObject;
 import com.threerings.msoy.room.data.RoomPropertiesEntry;
 import com.threerings.msoy.room.data.RoomPropertiesObject;
-
-import com.threerings.msoy.game.client.GameContext;
-import com.threerings.msoy.game.data.PlayerObject;
-
-import com.threerings.msoy.avrg.data.AVRGameConfig;
-import com.threerings.msoy.avrg.data.AVRGameObject;
-import com.threerings.msoy.avrg.data.PlayerLocation;
-
-import flash.utils.ByteArray;
+import com.threerings.msoy.world.client.WorldContext;
 
 /**
  * Coordinates the client side of AVRG business.

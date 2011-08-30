@@ -1,5 +1,5 @@
 //
-// $Id: LoaderLoader.as 17792 2009-08-11 01:47:37Z ray $ 
+// $Id: LoaderLoader.as 17792 2009-08-11 01:47:37Z ray $
 
 package com.threerings.msoy.client {
 
@@ -8,19 +8,14 @@ import flash.display.LoaderInfo;
 import flash.display.Sprite;
 import flash.display.StageAlign;
 import flash.display.StageScaleMode;
-
 import flash.events.Event;
-
 import flash.net.URLLoader;
 import flash.net.URLRequest;
-import flash.net.URLStream;
 import flash.net.URLVariables;
-
 import flash.system.ApplicationDomain;
 import flash.system.LoaderContext;
 import flash.system.SecurityDomain;
-
-import flash.utils.setTimeout; // function
+import flash.utils.setTimeout;
 
 import com.threerings.display.LoaderUtil;
 

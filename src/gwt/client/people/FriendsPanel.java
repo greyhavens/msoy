@@ -9,7 +9,6 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.threerings.gwt.util.SimpleDataModel;
 
 import com.threerings.msoy.data.all.Friendship;
-
 import com.threerings.msoy.web.gwt.MemberCard;
 import com.threerings.msoy.web.gwt.WebMemberService;
 import com.threerings.msoy.web.gwt.WebMemberServiceAsync;
@@ -22,7 +21,7 @@ import client.util.InfoCallback;
 /**
  * Displays all of a member's friends. Allows a member to edit their friends list.
  * TODO: implement using a ServiceBackedDataModel so the server is not performing an unbounded
- * querying (see {@link WebMemberService#loadFriends}). 
+ * querying (see {@link WebMemberService#loadFriends}).
  */
 public class FriendsPanel extends FlowPanel
 {
@@ -57,14 +56,14 @@ public class FriendsPanel extends FlowPanel
             self ? _msgs.friendsSelfTitle() : _msgs.friendsOtherTitle(data.name.toString()));
         _friends = new MemberList(
             self ? _msgs.noFriendsSelf() : _msgs.noFriendsOther(), "FriendsPanel");
-        
+
         int numFriends = 0;
         for (MemberCard card : data.friendsAndGreeters) {
             if (card.friendship == Friendship.FRIENDS) {
                 numFriends++;
             }
         }
-        
+
         String title;
         if (numFriends == data.friendsAndGreeters.size()) { // no greeters
             title = _msgs.friendsWhoseFriends(data.name.toString());

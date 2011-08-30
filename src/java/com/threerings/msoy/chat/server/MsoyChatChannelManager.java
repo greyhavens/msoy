@@ -9,8 +9,9 @@ import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.util.Invoker;
+
+import com.samskivert.jdbc.RepositoryUnit;
 
 import com.threerings.util.Name;
 
@@ -23,14 +24,12 @@ import com.threerings.crowd.chat.data.UserMessage;
 import com.threerings.crowd.chat.server.ChatChannelManager;
 import com.threerings.crowd.data.BodyObject;
 
+import com.threerings.msoy.chat.data.MsoyChatChannel;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.server.MemberLocal;
 import com.threerings.msoy.server.MemberLocator;
-
-import com.threerings.msoy.group.server.persist.GroupRepository;
-
-import com.threerings.msoy.chat.data.MsoyChatChannel;
 
 /**
  * Customizes the Crowd chat channel services for Whirled.

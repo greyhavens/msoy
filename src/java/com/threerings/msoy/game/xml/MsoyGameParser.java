@@ -6,23 +6,23 @@ package com.threerings.msoy.game.xml;
 import java.io.IOException;
 import java.io.StringReader;
 
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
+import com.whirled.game.data.GameDefinition;
+import com.whirled.game.data.TableMatchConfig;
+import com.whirled.game.xml.WhirledGameParser;
 
 import org.apache.commons.digester.Digester;
 import org.apache.commons.digester.Rule;
 
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+
 import com.samskivert.xml.SetFieldRule;
+
+import com.threerings.parlor.game.data.GameConfig;
 
 import com.threerings.msoy.edgame.gwt.GameCode;
 import com.threerings.msoy.game.data.MsoyGameDefinition;
 import com.threerings.msoy.game.data.MsoyMatchConfig;
-
-import com.threerings.parlor.game.data.GameConfig;
-
-import com.whirled.game.data.GameDefinition;
-import com.whirled.game.data.TableMatchConfig;
-import com.whirled.game.xml.WhirledGameParser;
 
 /**
  * Parses game definitions into instances of {@link MsoyGameDefinition}.

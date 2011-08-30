@@ -7,8 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.google.common.collect.Maps;
-
-import client.util.NonCountingDataModel;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -18,13 +16,14 @@ import com.threerings.gwt.util.ListenerList;
 
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.fora.gwt.ForumMessage;
-import com.threerings.msoy.fora.gwt.ForumService;
 import com.threerings.msoy.fora.gwt.ForumService.ThreadResult;
+import com.threerings.msoy.fora.gwt.ForumService;
 import com.threerings.msoy.fora.gwt.ForumServiceAsync;
 import com.threerings.msoy.fora.gwt.ForumThread;
 
 import client.shell.CShell;
 import client.util.MsoyServiceBackedDataModel;
+import client.util.NonCountingDataModel;
 
 /**
  * Various data models used by the forum services.

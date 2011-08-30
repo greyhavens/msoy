@@ -6,11 +6,8 @@ package com.threerings.msoy.ui {
 import flash.display.BlendMode;
 import flash.display.DisplayObject;
 import flash.display.Sprite;
-
 import flash.events.MouseEvent;
-
 import flash.geom.Point;
-
 import flash.text.AntiAliasType;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
@@ -18,12 +15,10 @@ import flash.text.TextFormat;
 
 import caurina.transitions.Tweener;
 
-import com.threerings.msoy.utils.TextUtil;
-
+import com.threerings.msoy.chat.client.ChatOverlay;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.PlaceBox;
-
-import com.threerings.msoy.chat.client.ChatOverlay;
+import com.threerings.msoy.utils.TextUtil;
 
 /**
  * Simple notification bubble to draw the user's attention to something in the interface.

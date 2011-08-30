@@ -8,23 +8,23 @@ import flash.display.LoaderInfo;
 import flash.events.KeyboardEvent;
 import flash.geom.Point;
 import flash.ui.Mouse;
-import mx.containers.VBox;
-
-import com.threerings.media.MediaContainer;
-import com.threerings.flex.CommandButton;
-import com.threerings.util.MessageBundle;
-import com.threerings.util.ValueEvent;
-
-import com.threerings.crowd.data.PlaceObject;
-import com.threerings.parlor.game.data.GameConfig;
 
 import com.whirled.game.client.GamePlayerList;
 import com.whirled.game.client.WhirledGamePanel;
 
+import com.threerings.util.MessageBundle;
+import com.threerings.util.ValueEvent;
+
+import com.threerings.crowd.data.PlaceObject;
+
+import com.threerings.media.MediaContainer;
+
+import com.threerings.parlor.game.data.GameConfig;
+
+import com.threerings.orth.data.MediaDesc;
 import com.threerings.orth.notify.data.Notification;
 
-import com.threerings.msoy.ui.DataPackMediaContainer;
-import com.threerings.msoy.ui.MsoyNameLabelCreator;
+import com.threerings.flex.CommandButton;
 
 import com.threerings.msoy.client.ControlBar;
 import com.threerings.msoy.client.Msgs;
@@ -34,12 +34,12 @@ import com.threerings.msoy.client.MsoyPlaceView;
 import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.client.TopPanel;
 import com.threerings.msoy.client.Zoomable;
-import com.threerings.orth.data.MediaDesc;
-
 import com.threerings.msoy.game.data.MsoyGameDefinition;
 import com.threerings.msoy.game.data.ParlorGameConfig;
 import com.threerings.msoy.game.data.ParlorGameObject;
 import com.threerings.msoy.game.util.GameUtil;
+import com.threerings.msoy.ui.DataPackMediaContainer;
+import com.threerings.msoy.ui.MsoyNameLabelCreator;
 
 /**
  * Coordinates the view for MSOY games.

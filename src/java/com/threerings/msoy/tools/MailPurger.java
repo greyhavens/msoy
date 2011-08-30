@@ -8,11 +8,13 @@ import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 
+import com.samskivert.util.Calendars;
+
+import com.samskivert.jdbc.ConnectionProvider;
+
 import com.samskivert.depot.Ops;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.clause.Where;
-import com.samskivert.jdbc.ConnectionProvider;
-import com.samskivert.util.Calendars;
 
 import com.threerings.msoy.data.all.Friendship;
 import com.threerings.msoy.mail.server.persist.ConvMessageRecord;

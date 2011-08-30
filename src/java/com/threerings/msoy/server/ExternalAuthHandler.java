@@ -9,9 +9,8 @@ import com.samskivert.util.StringUtil;
 
 import com.threerings.web.gwt.ServiceException;
 
-import com.threerings.msoy.web.gwt.ExternalCreds;
-
 import com.threerings.msoy.person.server.persist.ProfileRecord;
+import com.threerings.msoy.web.gwt.ExternalCreds;
 
 /**
  * Handles authentication with an external authentication source.

@@ -3,9 +3,9 @@
 
 package client.util;
 
-import com.google.gwt.user.client.History;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.History;
 
 import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.money.data.all.ReportType;

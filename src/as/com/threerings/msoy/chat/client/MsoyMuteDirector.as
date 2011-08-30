@@ -3,15 +3,12 @@
 
 package com.threerings.msoy.chat.client {
 
-import com.threerings.crowd.chat.client.MuteDirector;
-
 import com.threerings.util.Name;
 
-import com.threerings.presents.client.InvocationAdapter;
+import com.threerings.crowd.chat.client.MuteDirector;
 
 import com.threerings.msoy.client.MemberService;
 import com.threerings.msoy.client.MsoyContext;
-import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.room.data.PetName;
 

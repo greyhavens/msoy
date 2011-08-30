@@ -12,13 +12,10 @@ import com.samskivert.util.ByteEnumUtil;
 import com.threerings.orth.data.MediaDesc;
 
 import com.threerings.msoy.data.all.HashMediaDesc;
-
-import com.threerings.orth.data.MediaDesc;
-
-import com.threerings.msoy.server.MediaDescFactory;
 import com.threerings.msoy.item.data.all.DefaultItemMediaDesc;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MsoyItemType;
+import com.threerings.msoy.server.MediaDescFactory;
 
 /**
  * Scene related utility methods.

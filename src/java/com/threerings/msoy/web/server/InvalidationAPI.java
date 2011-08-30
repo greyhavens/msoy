@@ -3,10 +3,11 @@
 
 package com.threerings.msoy.web.server;
 
-import javax.xml.stream.XMLStreamException;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+
+import javax.xml.stream.XMLStreamException;
 
 import com.google.common.collect.Sets;
 

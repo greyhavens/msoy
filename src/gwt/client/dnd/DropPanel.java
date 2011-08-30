@@ -12,7 +12,6 @@ import com.allen_sauer.gwt.dnd.client.drop.FlowPanelDropController;
 import com.allen_sauer.gwt.dnd.client.util.LocationWidgetComparator;
 
 import com.google.common.collect.Maps;
-
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 

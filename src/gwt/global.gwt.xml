@@ -47,7 +47,7 @@
 
 <!-- Work-around for GWT 2.0 compiler bug;
      see http://code.google.com/p/google-web-toolkit/issues/detail?id=4438 -->
-<extend-configuration-property name="rpc.blacklist" 
+<extend-configuration-property name="rpc.blacklist"
                                value="com.google.gwt.user.client.ui.*Collection"/>
 
 </module>

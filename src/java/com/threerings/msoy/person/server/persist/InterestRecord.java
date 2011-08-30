@@ -10,6 +10,7 @@ import com.samskivert.depot.annotation.Entity;
 import com.samskivert.depot.annotation.FullTextIndex;
 import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.expression.ColumnExp;
+
 import com.threerings.msoy.person.gwt.Interest;
 
 @Entity(fullTextIndices={

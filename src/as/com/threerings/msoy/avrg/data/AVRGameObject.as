@@ -3,15 +3,6 @@
 
 package com.threerings.msoy.avrg.data {
 
-import com.threerings.crowd.data.PlaceObject;
-
-import com.threerings.io.ObjectInputStream;
-import com.threerings.io.TypedArray;
-
-import com.threerings.presents.dobj.DSet;
-
-import com.threerings.msoy.avrg.data.PlayerLocation;
-
 import com.whirled.game.client.PropertySpaceHelper;
 import com.whirled.game.data.ContentMarshaller;
 import com.whirled.game.data.GameData;
@@ -20,6 +11,14 @@ import com.whirled.game.data.PropertySpaceMarshaller;
 import com.whirled.game.data.PropertySpaceObject;
 import com.whirled.game.data.WhirledGameMessageMarshaller;
 
+import com.threerings.io.ObjectInputStream;
+import com.threerings.io.TypedArray;
+
+import com.threerings.presents.dobj.DSet;
+
+import com.threerings.crowd.data.PlaceObject;
+
+import com.threerings.msoy.avrg.data.PlayerLocation;
 import com.threerings.msoy.party.data.PartyLeader;
 import com.threerings.msoy.party.data.PartyPlaceObject;
 import com.threerings.msoy.party.data.PartySummary;

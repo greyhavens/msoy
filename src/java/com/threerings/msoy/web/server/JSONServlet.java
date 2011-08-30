@@ -5,6 +5,7 @@ package com.threerings.msoy.web.server;
 
 import java.io.IOException;
 import java.io.PrintStream;
+
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -12,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.google.inject.Inject;
 
 import com.samskivert.io.StreamUtil;
+
 import com.threerings.msoy.server.FunnelByDate;
 import com.threerings.msoy.server.FunnelByVector;
 import com.threerings.msoy.server.JSONReporter;

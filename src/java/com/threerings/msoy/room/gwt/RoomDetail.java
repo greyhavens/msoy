@@ -7,8 +7,9 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.util.Name;
 
-import com.threerings.msoy.data.all.GroupName;
 import com.threerings.orth.data.MediaDesc;
+
+import com.threerings.msoy.data.all.GroupName;
 
 /**
  * Contains detailed information on a particular room.

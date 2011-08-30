@@ -10,14 +10,13 @@ import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 
 import com.threerings.web.gwt.ServiceException;
-import com.threerings.msoy.web.server.MsoyServiceServlet;
-import com.threerings.msoy.server.persist.MemberRecord;
 
+import com.threerings.msoy.imagechooser.gwt.ImageChooserService;
 import com.threerings.msoy.item.data.all.Photo;
 import com.threerings.msoy.item.server.persist.PhotoRecord;
 import com.threerings.msoy.item.server.persist.PhotoRepository;
-
-import com.threerings.msoy.imagechooser.gwt.ImageChooserService;
+import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.web.server.MsoyServiceServlet;
 
 public class ImageChooserServlet extends MsoyServiceServlet
     implements ImageChooserService

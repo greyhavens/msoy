@@ -6,8 +6,8 @@ package com.threerings.msoy.game.server;
 import com.threerings.parlor.game.server.GameManagerDelegate;
 
 import com.threerings.msoy.data.HomePageItem;
-import com.threerings.msoy.server.MemberNodeActions;
 import com.threerings.msoy.game.data.PlayerObject;
+import com.threerings.msoy.server.MemberNodeActions;
 
 /**
  * Tracks the user's experience playing a game.

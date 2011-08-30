@@ -6,7 +6,6 @@ package client.survey;
 import java.util.List;
 
 import com.google.common.collect.Lists;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -20,10 +19,10 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.util.PagedResult;
 
 import com.threerings.msoy.survey.gwt.SurveyQuestion;
-import com.threerings.msoy.survey.gwt.SurveyService;
-import com.threerings.msoy.survey.gwt.SurveyServiceAsync;
 import com.threerings.msoy.survey.gwt.SurveyService.ResponseSummary;
 import com.threerings.msoy.survey.gwt.SurveyService.SubmissionSummary;
+import com.threerings.msoy.survey.gwt.SurveyService;
+import com.threerings.msoy.survey.gwt.SurveyServiceAsync;
 
 import client.ui.MsoyUI;
 import client.util.MsoyPagedServiceDataModel;
@@ -123,7 +122,7 @@ public class ViewSurveyResultsPanel extends VerticalPanel
         public FreeFormResponseTable (int questionIndex)
         {
             super(20);
-            _questionIndex = questionIndex; 
+            _questionIndex = questionIndex;
             addStyleName("freeFormResponsesTable");
             setModel(new MsoyPagedServiceDataModel<String, PagedResult<String>>() {
                 protected void callFetchService (int start, int count, boolean needCount,

@@ -7,11 +7,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.threerings.orth.data.MediaDesc;
 
-import com.threerings.msoy.server.MediaDescFactory;
-import com.threerings.msoy.web.server.UploadUtil.MediaInfo;
-
 import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.msoy.item.server.ItemMediaUploadServlet;
+import com.threerings.msoy.server.MediaDescFactory;
+import com.threerings.msoy.web.server.UploadUtil.MediaInfo;
 
 public abstract class AbstractSnapshotUploadServlet extends ItemMediaUploadServlet
 {

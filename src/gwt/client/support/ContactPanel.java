@@ -6,7 +6,6 @@ package client.support;
 import java.util.List;
 
 import com.google.common.collect.Lists;
-
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;

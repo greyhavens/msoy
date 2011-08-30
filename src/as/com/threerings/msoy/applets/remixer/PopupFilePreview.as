@@ -4,55 +4,43 @@
 package com.threerings.msoy.applets.remixer {
 
 import flash.display.BitmapData;
-
-import flash.external.ExternalInterface;
-
 import flash.events.Event;
-
+import flash.external.ExternalInterface;
 import flash.net.FileFilter;
-
 import flash.utils.ByteArray;
 
-import mx.controls.ButtonBar;
-import mx.controls.HRule;
-import mx.controls.Label;
-import mx.controls.TextArea;
+import com.adobe.images.PNGEncoder;
 
 import mx.containers.HBox;
 import mx.containers.TitleWindow;
 import mx.containers.VBox;
-
+import mx.controls.ButtonBar;
+import mx.controls.HRule;
+import mx.controls.Label;
+import mx.controls.TextArea;
 import mx.core.UIComponent;
-
 import mx.managers.PopUpManager;
-
 import mx.validators.Validator;
-
-import com.adobe.images.PNGEncoder;
 
 import com.threerings.util.ValueEvent;
 
 import com.threerings.display.CameraSnapshotter;
 
+import com.threerings.orth.data.MediaDesc;
+
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.CommandLinkButton;
 import com.threerings.flex.PopUpUtil;
-
-import com.threerings.util.Log;
-
-import com.threerings.orth.data.MediaDesc;
-import com.threerings.msoy.data.all.MediaDescImpl;
-import com.threerings.msoy.data.all.CloudfrontMediaDesc;
-import com.threerings.msoy.data.all.HashMediaDesc;
-import com.threerings.msoy.data.all.MediaMimeTypes;
 
 import com.threerings.msoy.applets.image.CameraSnapshotControl;
 import com.threerings.msoy.applets.image.DisplayCanvas;
 import com.threerings.msoy.applets.image.NewImageDialog;
 import com.threerings.msoy.applets.image.SizeRestriction;
-
 import com.threerings.msoy.applets.net.Downloader;
 import com.threerings.msoy.applets.net.Uploader;
+import com.threerings.msoy.data.all.CloudfrontMediaDesc;
+import com.threerings.msoy.data.all.HashMediaDesc;
+import com.threerings.msoy.data.all.MediaDescImpl;
 
 public class PopupFilePreview extends TitleWindow
 {

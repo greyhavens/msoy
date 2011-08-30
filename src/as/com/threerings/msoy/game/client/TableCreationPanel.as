@@ -3,21 +3,17 @@
 
 package com.threerings.msoy.game.client {
 
-import mx.core.Container;
+import flash.events.Event;
+
+import com.whirled.game.client.WhirledGameConfigurator;
 
 import mx.containers.HBox;
 import mx.containers.VBox;
-
 import mx.controls.Label;
 import mx.controls.TextInput;
-
-import flash.events.Event;
+import mx.core.Container;
 
 import com.threerings.util.Log;
-
-import com.threerings.flex.CommandButton;
-import com.threerings.flex.CommandCheckBox;
-import com.threerings.flex.FlexUtil;
 
 import com.threerings.parlor.client.TableConfigurator;
 import com.threerings.parlor.data.RangeParameter;
@@ -25,18 +21,17 @@ import com.threerings.parlor.data.ToggleParameter;
 import com.threerings.parlor.game.client.GameConfigurator;
 import com.threerings.parlor.game.data.GameConfig;
 
-import com.whirled.game.client.WhirledGameConfigurator;
-import com.whirled.game.data.GameDefinition;
+import com.threerings.flex.CommandButton;
+import com.threerings.flex.CommandCheckBox;
+import com.threerings.flex.FlexUtil;
 
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.data.all.FriendEntry;
-import com.threerings.msoy.ui.SimpleGrid;
-
-import com.threerings.msoy.party.client.PartyDirector;
-
 import com.threerings.msoy.game.data.LobbyObject;
 import com.threerings.msoy.game.data.MsoyMatchConfig;
 import com.threerings.msoy.game.data.ParlorGameConfig;
+import com.threerings.msoy.party.client.PartyDirector;
+import com.threerings.msoy.ui.SimpleGrid;
 
 /**
  * Displays an interface for creating a new game table.
@@ -225,12 +220,12 @@ import mx.containers.VBox;
 import mx.controls.CheckBox;
 import mx.controls.Label;
 
+import com.threerings.orth.data.MediaDescSize;
+import com.threerings.orth.ui.MediaWrapper;
+
 import com.threerings.flex.FlexUtil;
 
 import com.threerings.msoy.data.all.FriendEntry;
-import com.threerings.orth.data.MediaDescSize;
-
-import com.threerings.orth.ui.MediaWrapper;
 
 class FriendCheckBox extends VBox
 {

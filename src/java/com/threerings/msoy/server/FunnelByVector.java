@@ -7,22 +7,26 @@ import java.util.Set;
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Multiset.Entry;
 import com.google.common.collect.Multiset;
 import com.google.common.collect.Multisets;
 import com.google.common.collect.Sets;
-import com.google.common.collect.Multiset.Entry;
 import com.google.gson.Gson;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.samskivert.depot.Exps;
+
 import com.samskivert.util.Calendars;
+
+import com.samskivert.depot.Exps;
+
+import com.threerings.presents.annotation.BlockingThread;
+
 import com.threerings.msoy.data.all.MemberMailUtil;
 import com.threerings.msoy.money.server.persist.MemberAccountRecord;
 import com.threerings.msoy.server.persist.EntryVectorRecord;
 import com.threerings.msoy.server.persist.FunnelByVectorRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
-import com.threerings.presents.annotation.BlockingThread;
 
 @Singleton @BlockingThread
 public class FunnelByVector implements JSONReporter

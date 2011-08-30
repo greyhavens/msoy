@@ -5,17 +5,17 @@ package com.threerings.msoy.client {
 
 import flash.events.EventDispatcher;
 
+import com.threerings.util.Log;
+
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.ClientAdapter;
 import com.threerings.presents.client.ClientEvent;
 import com.threerings.presents.client.ClientObserver;
 import com.threerings.presents.client.SessionObserver;
-import com.threerings.presents.util.SafeSubscriber;
 import com.threerings.presents.dobj.AttributeChangeListener;
 import com.threerings.presents.dobj.AttributeChangedEvent;
 import com.threerings.presents.dobj.ObjectAccessError;
-
-import com.threerings.util.Log;
+import com.threerings.presents.util.SafeSubscriber;
 
 import com.threerings.msoy.client.MsoyClient;
 import com.threerings.msoy.client.MsoyContext;

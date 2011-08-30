@@ -3,33 +3,27 @@
 
 package com.threerings.msoy.applets.remixer {
 
-import flash.events.Event;
 import flash.events.ErrorEvent;
+import flash.events.Event;
 import flash.events.IOErrorEvent;
 import flash.events.ProgressEvent;
 import flash.events.SecurityErrorEvent;
-import flash.system.Security;
-import flash.system.Security;
-
 import flash.external.ExternalInterface;
-
 import flash.net.URLVariables;
-
+import flash.system.Security;
 import flash.utils.ByteArray;
 
-import mx.core.Application;
-import mx.core.ScrollPolicy;
-import mx.core.UIComponent;
+import com.whirled.remix.data.EditableDataPack;
 
 import mx.containers.HBox;
 import mx.containers.VBox;
 import mx.containers.ViewStack;
-
 import mx.controls.Image;
 import mx.controls.Label;
 import mx.controls.SWFLoader;
-
-import com.whirled.remix.data.EditableDataPack;
+import mx.core.Application;
+import mx.core.ScrollPolicy;
+import mx.core.UIComponent;
 
 import com.threerings.util.ParameterUtil;
 
@@ -38,13 +32,9 @@ import com.threerings.flex.FlexUtil;
 
 import com.threerings.msoy.applets.net.MediaUploader;
 import com.threerings.msoy.applets.ui.ConfirmDialog;
-
 import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.MsoyLogConfig;
-
 import com.threerings.msoy.data.UberClientModes;
-import com.threerings.orth.data.MediaDesc;
-import com.threerings.msoy.data.all.MediaMimeTypes;
 import com.threerings.msoy.data.all.MediaMimeTypes;
 import com.threerings.msoy.utils.UberClientLoader;
 

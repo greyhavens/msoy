@@ -10,12 +10,10 @@ import com.threerings.util.Log;
 
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.ClientEvent;
-
 import com.threerings.presents.net.AuthResponseData
 
 import com.threerings.msoy.data.MsoyAuthResponseData;
 import com.threerings.msoy.data.MsoyCredentials;
-
 import com.threerings.msoy.data.all.MemberMailUtil;
 
 /**

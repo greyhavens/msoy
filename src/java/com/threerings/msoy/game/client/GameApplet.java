@@ -4,18 +4,15 @@
 package com.threerings.msoy.game.client;
 
 import java.lang.reflect.Method;
-
 import java.net.URL;
 import java.net.URLClassLoader;
-
 import java.security.CodeSource;
 import java.security.PermissionCollection;
 import java.security.ProtectionDomain;
 import java.security.cert.Certificate;
+import java.util.List;
 
 import javax.swing.JApplet;
-
-import java.util.List;
 
 import com.google.common.collect.Lists;
 

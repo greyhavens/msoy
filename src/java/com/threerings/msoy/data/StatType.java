@@ -4,6 +4,7 @@
 package com.threerings.msoy.data;
 
 import com.samskivert.util.StringUtil;
+
 import com.threerings.util.ActionScript;
 import com.threerings.util.MessageBundle;
 

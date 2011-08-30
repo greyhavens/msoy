@@ -6,20 +6,20 @@ package client.people;
 import java.util.Date;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.TextBox;
+
+import com.threerings.orth.data.MediaDesc;
+import com.threerings.orth.data.MediaDescSize;
 
 import com.threerings.gwt.ui.FloatPanel;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.util.DateUtil;
 
-import com.threerings.orth.data.MediaDesc;
-
-import com.threerings.orth.data.MediaDescSize;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.profile.gwt.Profile;
@@ -33,10 +33,10 @@ import client.shell.ShellMessages;
 import client.ui.MsoyUI;
 import client.ui.StretchButton;
 import client.util.ClickCallback;
+import client.util.InfoCallback;
 import client.util.Link;
 import client.util.MediaUploader;
 import client.util.MediaUtil;
-import client.util.InfoCallback;
 import client.util.TextBoxUtil;
 import client.util.events.NameChangeEvent;
 

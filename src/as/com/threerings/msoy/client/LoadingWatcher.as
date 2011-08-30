@@ -4,7 +4,6 @@
 package com.threerings.msoy.client {
 
 import flash.display.LoaderInfo;
-
 import flash.events.IEventDispatcher;
 
 public interface LoadingWatcher

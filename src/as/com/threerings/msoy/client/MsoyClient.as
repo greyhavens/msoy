@@ -2,41 +2,35 @@
 // $Id$
 
 package com.threerings.msoy.client {
-import com.threerings.crowd.data.BodyObject;
-
 import flash.display.Stage;
 import flash.display.StageDisplayState;
-import flash.ui.ContextMenu;
-
 import flash.events.ContextMenuEvent;
 import flash.events.Event;
 import flash.events.IEventDispatcher;
 import flash.external.ExternalInterface;
-import flash.system.Capabilities;
-import flash.system.Security;
-import flash.utils.getTimer;
-
 import flash.media.SoundMixer;
 import flash.media.SoundTransform;
+import flash.system.Capabilities;
+import flash.system.Security;
+import flash.ui.ContextMenu;
+import flash.utils.getTimer;
 
 import com.threerings.util.Log;
 import com.threerings.util.MessageBundle;
 import com.threerings.util.ValueEvent;
 
-import com.threerings.ui.MenuUtil;
-
 import com.threerings.presents.client.ClientAdapter;
 import com.threerings.presents.client.ClientEvent;
 import com.threerings.presents.client.InvocationService_ResultListener;
-import com.threerings.presents.client.ServerSwitcher;
 import com.threerings.presents.client.SessionObserver;
-
 import com.threerings.presents.dobj.DObjectManager;
-
-import com.threerings.presents.net.Credentials;
 import com.threerings.presents.net.BootstrapData;
+import com.threerings.presents.net.Credentials;
 
 import com.threerings.crowd.client.CrowdClient;
+import com.threerings.crowd.data.BodyObject;
+
+import com.threerings.ui.MenuUtil;
 
 import com.threerings.orth.notify.data.Notification;
 
@@ -48,11 +42,9 @@ import com.threerings.msoy.data.MsoyAuthResponseData;
 import com.threerings.msoy.data.MsoyBootstrapData;
 import com.threerings.msoy.data.MsoyMarshaller;
 import com.threerings.msoy.data.UberClientModes;
-
 import com.threerings.msoy.data.all.CloudfrontMediaDesc;
 import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.msoy.data.all.VisitorInfo;
-
 import com.threerings.msoy.item.data.all.Item_UsedAs;
 
 /**

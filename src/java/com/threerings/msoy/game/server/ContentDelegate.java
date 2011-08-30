@@ -9,6 +9,10 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.inject.Inject;
 
+import com.whirled.game.client.ContentService;
+import com.whirled.game.data.GameContentOwnership;
+import com.whirled.game.data.GameData;
+
 import com.samskivert.util.Invoker;
 
 import com.threerings.presents.annotation.MainInvoker;
@@ -18,21 +22,15 @@ import com.threerings.presents.util.PersistingUnit;
 
 import com.threerings.parlor.server.PlayManagerDelegate;
 
-import com.whirled.game.client.ContentService;
-import com.whirled.game.data.GameContentOwnership;
-import com.whirled.game.data.GameData;
-
-import com.threerings.msoy.server.persist.MemberRecord;
-import com.threerings.msoy.server.persist.MemberRepository;
-import com.threerings.msoy.server.util.ServiceUnit;
-
+import com.threerings.msoy.game.data.MsoyGameCodes;
+import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.item.data.all.ItemPack;
 import com.threerings.msoy.item.server.CatalogLogic;
 import com.threerings.msoy.item.server.persist.ItemPackRecord;
 import com.threerings.msoy.item.server.persist.ItemPackRepository;
-
-import com.threerings.msoy.game.data.MsoyGameCodes;
-import com.threerings.msoy.game.data.PlayerObject;
+import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.MemberRepository;
+import com.threerings.msoy.server.util.ServiceUnit;
 
 import static com.threerings.msoy.Log.log;
 

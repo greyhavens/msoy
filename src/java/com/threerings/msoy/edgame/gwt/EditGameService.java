@@ -10,18 +10,16 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
+import com.threerings.orth.data.MediaDesc;
+
 import com.threerings.web.gwt.ServiceException;
 
-import com.threerings.orth.data.MediaDesc;
 import com.threerings.msoy.facebook.gwt.FacebookInfo;
 import com.threerings.msoy.facebook.gwt.FeedThumbnail;
-
 import com.threerings.msoy.game.gwt.ArcadeData;
 import com.threerings.msoy.game.gwt.GameInfo;
 import com.threerings.msoy.game.gwt.MochiGameInfo;
-
 import com.threerings.msoy.item.data.all.GameItem;
-
 import com.threerings.msoy.item.data.all.MsoyItemType;
 
 /**

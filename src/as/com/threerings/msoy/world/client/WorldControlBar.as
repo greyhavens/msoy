@@ -5,25 +5,14 @@ package com.threerings.msoy.world.client {
 
 import flash.events.MouseEvent;
 
-import flash.geom.Point;
-
 import com.threerings.flex.CommandButton;
-import com.threerings.flex.FlexUtil;
-
-import com.threerings.msoy.ui.FloatingPanel;
 
 import com.threerings.msoy.client.ControlBar;
-import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.Prefs;
-import com.threerings.msoy.client.UberClient;
 import com.threerings.msoy.client.UIState;
-
-import com.threerings.msoy.room.client.PlaylistMusicDialog;
-import com.threerings.msoy.room.client.RoomStudioView;
+import com.threerings.msoy.client.UberClient;
 import com.threerings.msoy.room.client.RoomView;
-import com.threerings.msoy.room.client.snapshot.SnapshotPanel;
-import com.threerings.msoy.room.data.RoomObject;
-import com.threerings.msoy.room.data.MsoyScene;
+import com.threerings.msoy.ui.FloatingPanel;
 
 /**
  * Configures the control bar with World-specific stuff.

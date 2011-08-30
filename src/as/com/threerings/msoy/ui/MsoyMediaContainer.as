@@ -7,18 +7,17 @@ import flash.display.DisplayObject;
 
 import com.threerings.util.NamedValueEvent;
 
-import com.threerings.ui.MenuUtil;
 import com.threerings.media.VideoPlayer;
 
-import com.threerings.orth.data.MediaDesc;
+import com.threerings.ui.MenuUtil;
 
+import com.threerings.orth.data.MediaDesc;
 import com.threerings.orth.room.client.EntityMediaContainer;
 
-import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.ContextMenuProvider;
 import com.threerings.msoy.client.Msgs;
+import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.Prefs;
-
 import com.threerings.msoy.data.all.MediaMimeTypes;
 import com.threerings.msoy.item.client.ExternalMediaUtil;
 import com.threerings.msoy.item.client.YouTubePlayer;

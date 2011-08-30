@@ -6,39 +6,31 @@ package com.threerings.msoy.game.client {
 import flash.display.DisplayObjectContainer;
 import flash.display.SimpleButton;
 import flash.display.Sprite;
-
 import flash.events.Event;
 import flash.events.MouseEvent;
 import flash.events.TimerEvent;
-
 import flash.net.URLLoader;
 import flash.net.URLRequest;
-
 import flash.text.TextField;
 import flash.utils.Timer;
 
 import caurina.transitions.Tweener;
 
-import com.threerings.msoy.utils.Base64Decoder;
+import com.whirled.game.data.WhirledGameObject;
 
 import com.threerings.io.TypedArray;
-
-import com.threerings.presents.client.Client;
-import com.threerings.presents.client.ClientEvent;
-import com.threerings.presents.client.ClientObserver;
-import com.threerings.presents.client.ResultAdapter;
-
-import com.threerings.presents.dobj.MessageEvent;
-import com.threerings.presents.dobj.MessageListener;
-
-import com.threerings.crowd.client.PlaceController;
-
-import com.threerings.crowd.data.PlaceConfig;
 
 import com.threerings.util.Log;
 import com.threerings.util.MultiLoader;
 
-import com.whirled.game.data.WhirledGameObject;
+import com.threerings.presents.client.Client;
+import com.threerings.presents.client.ClientEvent;
+import com.threerings.presents.client.ClientObserver;
+import com.threerings.presents.dobj.MessageEvent;
+import com.threerings.presents.dobj.MessageListener;
+
+import com.threerings.crowd.client.PlaceController;
+import com.threerings.crowd.data.PlaceConfig;
 
 import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.DisconnectedPanel;
@@ -46,14 +38,13 @@ import com.threerings.msoy.client.GuestSessionCapture;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.PlaceBox;
 import com.threerings.msoy.data.MsoyCodes;
-
-import com.threerings.msoy.world.client.WorldContext;
-
 import com.threerings.msoy.game.data.MsoyGameCodes;
 import com.threerings.msoy.game.data.MsoyGameConfig;
 import com.threerings.msoy.game.data.PlayerObject;
-import com.threerings.msoy.game.util.GameUtil;
 import com.threerings.msoy.game.data.all.Trophy;
+import com.threerings.msoy.game.util.GameUtil;
+import com.threerings.msoy.utils.Base64Decoder;
+import com.threerings.msoy.world.client.WorldContext;
 
 /**
  * Handles all the fiddly bits relating to connecting to a separate server to match-make and play a

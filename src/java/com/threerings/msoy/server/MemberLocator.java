@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.server;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
@@ -12,10 +13,10 @@ import com.google.inject.Singleton;
 
 import com.samskivert.util.ObserverList;
 
-import com.threerings.presents.data.ClientObject;
 import com.threerings.util.Name;
 
 import com.threerings.presents.annotation.EventThread;
+import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.server.PresentsDObjectMgr;
 
 import com.threerings.crowd.data.BodyObject;
@@ -25,8 +26,6 @@ import com.threerings.msoy.bureau.data.WindowClientObject;
 import com.threerings.msoy.data.MemberClientObject;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.MemberName;
-
-import java.util.Collection;
 
 import static com.threerings.msoy.Log.log;
 

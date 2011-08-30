@@ -12,6 +12,7 @@ import mx.events.FlexEvent;
 
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.GridUtil;
+
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.room.data.FurniData;
 import com.threerings.msoy.room.data.MsoyLocation;

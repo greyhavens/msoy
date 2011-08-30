@@ -3,20 +3,19 @@
 
 package com.threerings.msoy.web.server;
 
-import java.text.SimpleDateFormat;
 import java.text.DateFormat;
-
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLEventReader;
-import javax.xml.stream.events.XMLEvent;
+import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.Characters;
 import javax.xml.stream.events.EndElement;
 import javax.xml.stream.events.StartElement;
+import javax.xml.stream.events.XMLEvent;
 
 public class CloudfrontEventReader
 {

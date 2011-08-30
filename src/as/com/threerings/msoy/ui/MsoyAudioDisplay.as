@@ -6,9 +6,7 @@ package com.threerings.msoy.ui {
 import flash.display.Graphics;
 import flash.display.Shape;
 import flash.display.Sprite;
-
 import flash.events.MouseEvent;
-
 import flash.text.TextField;
 
 import com.threerings.util.CommandEvent;
@@ -16,13 +14,14 @@ import com.threerings.util.Log;
 import com.threerings.util.StringUtil;
 import com.threerings.util.ValueEvent;
 
-import com.threerings.text.TextFieldUtil;
 import com.threerings.media.AudioPlayer;
-import com.threerings.media.Mp3AudioPlayer;
 import com.threerings.media.MediaPlayerCodes;
+import com.threerings.media.Mp3AudioPlayer;
 
+import com.threerings.text.TextFieldUtil;
 
 import com.threerings.msoy.client.MsoyController;
+
 /**
  * The msoy-skinned audio display.
  */

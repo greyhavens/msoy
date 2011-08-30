@@ -3,10 +3,11 @@
 
 package com.threerings.msoy.bureau.server;
 
-import com.threerings.msoy.room.data.RoomObject;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.server.PresentsSession;
+
+import com.threerings.msoy.room.data.RoomObject;
 
 /**
  * Represents a bureau window connection.

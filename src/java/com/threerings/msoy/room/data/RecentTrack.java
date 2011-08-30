@@ -3,10 +3,7 @@
 
 package com.threerings.msoy.room.data;
 
-import com.threerings.presents.dobj.DSet;
-
 import com.threerings.msoy.data.all.VizMemberName;
-import com.threerings.msoy.item.data.all.Audio;
 
 /**
  * A track with some extra historical data.

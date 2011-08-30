@@ -8,7 +8,6 @@ import flash.geom.Rectangle;
 import mx.collections.ICollectionView;
 import mx.collections.IViewCursor;
 import mx.controls.Menu;
-import mx.controls.listClasses.IListItemRenderer;
 import mx.core.IFlexDisplayObject;
 
 import com.threerings.msoy.client.MsoyContext;

@@ -6,6 +6,7 @@ package client.landing;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.FlowPanel;
+
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.ui.MsoyUI;

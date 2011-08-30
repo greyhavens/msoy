@@ -4,7 +4,6 @@
 package com.threerings.msoy.client {
 
 import flash.events.EventDispatcher;
-
 import flash.media.SoundMixer;
 import flash.media.SoundTransform;
 

@@ -3,16 +3,15 @@
 
 package com.threerings.msoy.game.data {
 
-import com.threerings.io.ObjectInputStream;
+import com.whirled.game.data.WhirledGameObject;
 
-import com.threerings.presents.dobj.DSet;
+import com.threerings.io.ObjectInputStream;
 
 import com.threerings.util.Name;
 
-import com.whirled.game.data.WhirledGameObject;
+import com.threerings.presents.dobj.DSet;
 
 import com.threerings.msoy.data.PrimaryPlace;
-
 import com.threerings.msoy.party.data.PartyLeader;
 import com.threerings.msoy.party.data.PartyPlaceObject;
 import com.threerings.msoy.party.data.PartySummary;

@@ -6,13 +6,15 @@ package com.threerings.msoy.underwire.server;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.depot.PersistenceContext;
 import com.samskivert.servlet.IndiscriminateSiteIdentifier;
+
+import com.samskivert.depot.PersistenceContext;
+
+import com.threerings.underwire.server.UnderContext;
+import com.threerings.underwire.server.persist.UnderwireRepository;
 
 import com.threerings.msoy.underwire.server.MsoyGameActionHandler;
 import com.threerings.msoy.underwire.server.MsoyGameInfoProvider;
-import com.threerings.underwire.server.UnderContext;
-import com.threerings.underwire.server.persist.UnderwireRepository;
 
 /**
  * Wires {@link UnderContext} up for Guice injection.

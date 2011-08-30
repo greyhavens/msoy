@@ -5,9 +5,7 @@ package com.threerings.msoy.game.client {
 
 import flash.display.Graphics;
 import flash.display.Sprite;
-
 import flash.events.Event;
-
 import flash.utils.getTimer;
 
 import com.threerings.display.ColorUtil;

@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.item.client;
 
-import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 
 import com.threerings.msoy.item.data.all.ItemFlag;

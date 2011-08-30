@@ -12,7 +12,6 @@ import com.threerings.gwt.util.ExpanderResult;
 import com.threerings.web.gwt.ServiceException;
 
 import com.threerings.msoy.badge.data.all.Badge;
-
 import com.threerings.msoy.data.all.Award.AwardType;
 import com.threerings.msoy.web.gwt.Activity;
 import com.threerings.msoy.web.gwt.Contest;

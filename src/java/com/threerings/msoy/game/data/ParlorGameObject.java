@@ -4,11 +4,12 @@
 package com.threerings.msoy.game.data;
 
 import javax.annotation.Generated;
+
+import com.whirled.game.data.WhirledGameObject;
+
 import com.threerings.presents.dobj.DSet;
 
 import com.threerings.crowd.data.OccupantInfo;
-
-import com.whirled.game.data.WhirledGameObject;
 
 import com.threerings.msoy.party.data.PartyLeader;
 import com.threerings.msoy.party.data.PartyPlaceObject;

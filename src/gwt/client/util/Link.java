@@ -7,7 +7,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 import com.google.common.collect.Sets;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -28,7 +27,6 @@ import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.shell.CShell;
-
 import client.ui.MsoyUI;
 
 /**

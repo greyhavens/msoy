@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Set;
 
 import com.google.common.collect.Lists;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -20,22 +19,20 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.ListBox;
 
+import com.threerings.orth.data.MediaDescSize;
+
 import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.Popups;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
-import com.threerings.orth.data.MediaDescSize;
-
 import com.threerings.msoy.comment.data.all.CommentType;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.RatingResult;
-
 import com.threerings.msoy.room.gwt.RoomDetail;
 import com.threerings.msoy.room.gwt.WebRoomService;
 import com.threerings.msoy.room.gwt.WebRoomServiceAsync;
-
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.WebMemberService;
 import com.threerings.msoy.web.gwt.WebMemberServiceAsync;
@@ -44,12 +41,12 @@ import client.comment.CommentsPanel;
 import client.room.SceneUtil;
 import client.shell.CShell;
 import client.ui.MsoyUI;
+import client.ui.Rating.RateService;
 import client.ui.Rating;
 import client.ui.RoundBox;
 import client.ui.StyledTabPanel;
-import client.ui.Rating.RateService;
-import client.util.Link;
 import client.util.InfoCallback;
+import client.util.Link;
 
 /**
  * Displays information about a room, allows commenting.

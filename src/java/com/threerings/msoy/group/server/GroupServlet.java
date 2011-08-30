@@ -16,57 +16,30 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-
 import com.google.inject.Inject;
 
-import com.samskivert.depot.DuplicateKeyException;
 import com.samskivert.util.Tuple;
 
-import com.threerings.web.gwt.ServiceException;
+import com.samskivert.depot.DuplicateKeyException;
+
 import com.threerings.gwt.util.PagedResult;
-
-import com.threerings.msoy.data.MsoyAuthCodes;
-import com.threerings.msoy.data.all.GroupName;
-import com.threerings.msoy.data.all.Theme;
-import com.threerings.msoy.data.all.HashMediaDesc;
-import com.threerings.msoy.data.all.VizMemberName;
-import com.threerings.msoy.server.MemberManager;
-import com.threerings.msoy.server.PopularPlacesSnapshot;
-import com.threerings.msoy.server.TagLogic;
-import com.threerings.msoy.server.persist.MemberCardRecord;
-import com.threerings.msoy.server.persist.MemberRecord;
-import com.threerings.msoy.server.persist.MemberRepository;
-import com.threerings.msoy.server.persist.TagHistoryRecord;
-import com.threerings.msoy.server.persist.TagNameRecord;
-import com.threerings.msoy.server.persist.TagRepository;
-import com.threerings.msoy.server.persist.MemberRepository.MemberSearchRecord;
-
-import com.threerings.msoy.web.gwt.MemberCard;
-import com.threerings.msoy.web.gwt.ServiceCodes;
-import com.threerings.msoy.web.gwt.TagHistory;
-import com.threerings.msoy.web.server.MsoyServiceServlet;
+import com.threerings.web.gwt.ServiceException;
 
 import com.threerings.msoy.chat.data.MsoyChatChannel;
 import com.threerings.msoy.chat.server.MsoyChatChannelManager;
-
+import com.threerings.msoy.data.MsoyAuthCodes;
+import com.threerings.msoy.data.all.GroupName;
+import com.threerings.msoy.data.all.HashMediaDesc;
+import com.threerings.msoy.data.all.Theme;
+import com.threerings.msoy.data.all.VizMemberName;
 import com.threerings.msoy.fora.server.ForumLogic;
 import com.threerings.msoy.fora.server.persist.ForumRepository;
 import com.threerings.msoy.fora.server.persist.ForumThreadRecord;
-import com.threerings.msoy.person.gwt.FeedMessageType;
-import com.threerings.msoy.person.server.FeedLogic;
-
-import com.threerings.msoy.money.data.all.Currency;
-import com.threerings.msoy.money.data.all.PriceQuote;
-import com.threerings.msoy.money.data.all.PurchaseResult;
-
-import com.threerings.msoy.room.data.MsoySceneModel;
-import com.threerings.msoy.room.server.RoomLogic;
-import com.threerings.msoy.room.server.persist.MsoySceneRepository;
-
 import com.threerings.msoy.group.data.all.Group;
-import com.threerings.msoy.group.data.all.GroupMembership;
 import com.threerings.msoy.group.data.all.GroupMembership.Rank;
+import com.threerings.msoy.group.data.all.GroupMembership;
 import com.threerings.msoy.group.data.all.Medal;
+import com.threerings.msoy.group.gwt.BrandDetail.BrandShare;
 import com.threerings.msoy.group.gwt.GalaxyData;
 import com.threerings.msoy.group.gwt.GroupCard;
 import com.threerings.msoy.group.gwt.GroupCodes;
@@ -74,7 +47,6 @@ import com.threerings.msoy.group.gwt.GroupDetail;
 import com.threerings.msoy.group.gwt.GroupExtras;
 import com.threerings.msoy.group.gwt.GroupMemberCard;
 import com.threerings.msoy.group.gwt.GroupService;
-import com.threerings.msoy.group.gwt.BrandDetail.BrandShare;
 import com.threerings.msoy.group.server.persist.EarnedMedalRecord;
 import com.threerings.msoy.group.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.group.server.persist.GroupRecord;
@@ -83,6 +55,28 @@ import com.threerings.msoy.group.server.persist.MedalRecord;
 import com.threerings.msoy.group.server.persist.MedalRepository;
 import com.threerings.msoy.group.server.persist.ThemeRepository;
 import com.threerings.msoy.item.data.ItemCodes;
+import com.threerings.msoy.money.data.all.Currency;
+import com.threerings.msoy.money.data.all.PriceQuote;
+import com.threerings.msoy.money.data.all.PurchaseResult;
+import com.threerings.msoy.person.gwt.FeedMessageType;
+import com.threerings.msoy.person.server.FeedLogic;
+import com.threerings.msoy.room.data.MsoySceneModel;
+import com.threerings.msoy.room.server.RoomLogic;
+import com.threerings.msoy.room.server.persist.MsoySceneRepository;
+import com.threerings.msoy.server.MemberManager;
+import com.threerings.msoy.server.PopularPlacesSnapshot;
+import com.threerings.msoy.server.TagLogic;
+import com.threerings.msoy.server.persist.MemberCardRecord;
+import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.MemberRepository.MemberSearchRecord;
+import com.threerings.msoy.server.persist.MemberRepository;
+import com.threerings.msoy.server.persist.TagHistoryRecord;
+import com.threerings.msoy.server.persist.TagNameRecord;
+import com.threerings.msoy.server.persist.TagRepository;
+import com.threerings.msoy.web.gwt.MemberCard;
+import com.threerings.msoy.web.gwt.ServiceCodes;
+import com.threerings.msoy.web.gwt.TagHistory;
+import com.threerings.msoy.web.server.MsoyServiceServlet;
 
 import static com.threerings.msoy.Log.log;
 

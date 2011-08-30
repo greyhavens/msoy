@@ -12,7 +12,6 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.data.all.Friendship;
-
 import com.threerings.msoy.person.gwt.InvitationResults;
 import com.threerings.msoy.person.gwt.InviteService;
 import com.threerings.msoy.person.gwt.InviteServiceAsync;

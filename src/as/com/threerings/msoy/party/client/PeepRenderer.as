@@ -7,18 +7,16 @@ import flash.events.MouseEvent;
 
 import mx.containers.VBox;
 import mx.controls.Label;
-
 import mx.core.ClassFactory;
 import mx.core.IFactory;
+
+import com.threerings.orth.data.MediaDescSize;
 
 import com.threerings.flex.FlexUtil;
 
 import com.threerings.msoy.client.PlayerRenderer;
-import com.threerings.orth.data.MediaDescSize;
-
-import com.threerings.msoy.world.client.WorldContext;
-
 import com.threerings.msoy.party.data.PartyPeep;
+import com.threerings.msoy.world.client.WorldContext;
 
 public class PeepRenderer extends PlayerRenderer
 {

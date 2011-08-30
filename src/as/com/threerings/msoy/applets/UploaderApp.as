@@ -4,7 +4,6 @@
 package com.threerings.msoy.applets {
 
 import flash.display.Sprite;
-
 import flash.events.DataEvent;
 import flash.events.ErrorEvent;
 import flash.events.Event;
@@ -13,24 +12,21 @@ import flash.events.IOErrorEvent;
 import flash.events.MouseEvent;
 import flash.events.ProgressEvent;
 import flash.events.SecurityErrorEvent;
-
 import flash.external.ExternalInterface;
-
 import flash.net.FileFilter;
 import flash.net.FileReference;
-
+import flash.system.Security;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 
-import flash.system.Security;
-
 import com.threerings.util.ParameterUtil;
 
-import com.threerings.ui.SimpleSkinButton;
 import com.threerings.text.TextFieldUtil;
 
-import com.threerings.msoy.client.DeploymentConfig;
+import com.threerings.ui.SimpleSkinButton;
+
 import com.threerings.msoy.applets.net.MediaUploadUtil;
+import com.threerings.msoy.client.DeploymentConfig;
 
 [SWF(width="200", height="40")]
 public class UploaderApp extends Sprite

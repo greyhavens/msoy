@@ -8,12 +8,9 @@ import com.threerings.msoy.data.MsoyBodyObject;
 import com.threerings.msoy.data.MsoyTokenRing;
 import com.threerings.msoy.data.MsoyUserOccupantInfo;
 import com.threerings.msoy.data.all.MemberName;
-
 import com.threerings.msoy.game.data.GameSummary;
-
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.ItemIdent;
-
 import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.party.data.PartyOccupantInfo;
 

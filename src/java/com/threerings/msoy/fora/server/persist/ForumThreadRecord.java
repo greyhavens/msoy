@@ -22,7 +22,6 @@ import com.samskivert.depot.expression.ColumnExp;
 
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
-
 import com.threerings.msoy.fora.gwt.ForumThread;
 
 /**

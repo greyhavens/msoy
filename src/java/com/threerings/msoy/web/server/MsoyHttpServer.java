@@ -22,16 +22,8 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
 
-import com.samskivert.servlet.util.CookieUtil;
-import com.threerings.msoy.data.MsoyAuthCodes;
-import com.threerings.msoy.server.persist.MemberRecord;
-import com.threerings.msoy.web.gwt.WebCreds;
-
-import com.threerings.web.gwt.ServiceException;
-
 import org.mortbay.io.Connection;
 import org.mortbay.io.nio.SelectChannelEndPoint;
-
 import org.mortbay.jetty.Connector;
 import org.mortbay.jetty.HttpConnection;
 import org.mortbay.jetty.HttpException;
@@ -44,14 +36,16 @@ import org.mortbay.jetty.nio.SelectChannelConnector;
 import org.mortbay.jetty.servlet.Context;
 
 import com.samskivert.io.StreamUtil;
-import com.samskivert.servlet.util.ParameterUtil;
 import com.samskivert.util.Lifecycle;
+
+import com.samskivert.servlet.util.CookieUtil;
+import com.samskivert.servlet.util.ParameterUtil;
+
+import com.threerings.admin.web.server.ConfigServlet;
 
 import com.threerings.pulse.jetty.server.JettyPulseHttpServer;
 import com.threerings.pulse.web.server.PulseFlotServlet;
-
-import com.threerings.admin.web.server.ConfigServlet;
-import com.threerings.msoy.server.ServerConfig;
+import com.threerings.web.gwt.ServiceException;
 
 import com.threerings.msoy.admin.gwt.AdminService;
 import com.threerings.msoy.admin.server.AdminServlet;
@@ -59,13 +53,14 @@ import com.threerings.msoy.apps.gwt.AppService;
 import com.threerings.msoy.apps.server.AppServlet;
 import com.threerings.msoy.comment.gwt.CommentService;
 import com.threerings.msoy.comment.server.CommentServlet;
+import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.edgame.gwt.EditGameService;
 import com.threerings.msoy.edgame.server.EditGameServlet;
 import com.threerings.msoy.facebook.gwt.FacebookService;
+import com.threerings.msoy.facebook.server.FacebookCallbackServlet;
 import com.threerings.msoy.facebook.server.FacebookInviteServlet;
 import com.threerings.msoy.facebook.server.FacebookServlet;
-import com.threerings.msoy.facebook.server.FacebookCallbackServlet;
 import com.threerings.msoy.fora.gwt.ForumService;
 import com.threerings.msoy.fora.gwt.IssueService;
 import com.threerings.msoy.fora.server.ForumServlet;
@@ -84,29 +79,30 @@ import com.threerings.msoy.item.server.ItemMediaUploadServlet;
 import com.threerings.msoy.item.server.ItemServlet;
 import com.threerings.msoy.mail.gwt.MailService;
 import com.threerings.msoy.mail.server.MailServlet;
-import com.threerings.msoy.person.gwt.GalleryService;
-import com.threerings.msoy.person.gwt.InviteService;
-import com.threerings.msoy.person.server.GalleryServlet;
-import com.threerings.msoy.person.server.InviteServlet;
-import com.threerings.msoy.person.gwt.MeService;
-import com.threerings.msoy.person.server.MeServlet;
 import com.threerings.msoy.money.gwt.MoneyService;
 import com.threerings.msoy.money.server.MoneyServlet;
+import com.threerings.msoy.person.gwt.GalleryService;
+import com.threerings.msoy.person.gwt.InviteService;
+import com.threerings.msoy.person.gwt.MeService;
+import com.threerings.msoy.person.server.GalleryServlet;
+import com.threerings.msoy.person.server.InviteServlet;
+import com.threerings.msoy.person.server.MeServlet;
 import com.threerings.msoy.profile.gwt.ProfileService;
 import com.threerings.msoy.profile.server.ProfileServlet;
 import com.threerings.msoy.reminders.gwt.RemindersService;
 import com.threerings.msoy.reminders.server.RemindersServlet;
+import com.threerings.msoy.room.gwt.WebRoomService;
+import com.threerings.msoy.room.server.SnapshotItemUploadServlet;
+import com.threerings.msoy.room.server.WebRoomServlet;
+import com.threerings.msoy.server.ServerConfig;
+import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.stuff.gwt.StuffService;
 import com.threerings.msoy.stuff.server.StuffServlet;
 import com.threerings.msoy.survey.gwt.SurveyService;
 import com.threerings.msoy.survey.server.SurveyServlet;
 import com.threerings.msoy.underwire.server.MsoyUnderwireServlet;
-
-import com.threerings.msoy.room.gwt.WebRoomService;
-import com.threerings.msoy.room.server.SnapshotItemUploadServlet;
-import com.threerings.msoy.room.server.WebRoomServlet;
-
 import com.threerings.msoy.web.gwt.CssUtil;
+import com.threerings.msoy.web.gwt.WebCreds;
 import com.threerings.msoy.web.gwt.WebMemberService;
 import com.threerings.msoy.web.gwt.WebUserService;
 

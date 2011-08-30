@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.web.server;
 
-import static com.threerings.msoy.Log.log;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,29 +18,27 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.samskivert.io.StreamUtil;
 import com.samskivert.util.ObjectUtil;
 import com.samskivert.util.StringUtil;
 
-import com.threerings.web.gwt.ServiceException;
+import com.threerings.presents.server.PresentsDObjectMgr;
 
 import com.threerings.user.OOOUser;
-
-import com.threerings.presents.server.PresentsDObjectMgr;
+import com.threerings.web.gwt.ServiceException;
 
 import com.threerings.msoy.admin.server.ABTestLogic;
 import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.apps.server.persist.AppInfoRecord;
 import com.threerings.msoy.apps.server.persist.AppRepository;
-
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.UserAction;
@@ -53,24 +49,6 @@ import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.msoy.data.all.LaunchConfig;
 import com.threerings.msoy.data.all.MemberMailUtil;
 import com.threerings.msoy.data.all.VisitorInfo;
-
-import com.threerings.msoy.server.AccountLogic;
-import com.threerings.msoy.server.ExternalAuthHandler;
-import com.threerings.msoy.server.ExternalAuthLogic;
-import com.threerings.msoy.server.MemberLogic;
-import com.threerings.msoy.server.MemberManager;
-import com.threerings.msoy.server.MsoyAuthenticator;
-import com.threerings.msoy.server.ServerConfig;
-import com.threerings.msoy.server.ServerMessages;
-import com.threerings.msoy.server.StatLogic;
-import com.threerings.msoy.server.PopularPlacesSnapshot.Place;
-import com.threerings.msoy.server.persist.CharityRecord;
-import com.threerings.msoy.server.persist.MemberRecord;
-import com.threerings.msoy.server.persist.MemberWarningRecord;
-import com.threerings.msoy.server.persist.MsoyOOOUserRepository;
-import com.threerings.msoy.server.util.MailSender;
-import com.threerings.msoy.server.util.MailSender.By;
-
 import com.threerings.msoy.facebook.server.FacebookLogic;
 import com.threerings.msoy.facebook.server.persist.FacebookInfoRecord;
 import com.threerings.msoy.facebook.server.persist.FacebookRepository;
@@ -88,7 +66,22 @@ import com.threerings.msoy.person.server.persist.InvitationRecord;
 import com.threerings.msoy.person.server.persist.InviteRepository;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
 import com.threerings.msoy.person.server.persist.ProfileRepository;
-
+import com.threerings.msoy.server.AccountLogic;
+import com.threerings.msoy.server.ExternalAuthHandler;
+import com.threerings.msoy.server.ExternalAuthLogic;
+import com.threerings.msoy.server.MemberLogic;
+import com.threerings.msoy.server.MemberManager;
+import com.threerings.msoy.server.MsoyAuthenticator;
+import com.threerings.msoy.server.PopularPlacesSnapshot.Place;
+import com.threerings.msoy.server.ServerConfig;
+import com.threerings.msoy.server.ServerMessages;
+import com.threerings.msoy.server.StatLogic;
+import com.threerings.msoy.server.persist.CharityRecord;
+import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.MemberWarningRecord;
+import com.threerings.msoy.server.persist.MsoyOOOUserRepository;
+import com.threerings.msoy.server.util.MailSender.By;
+import com.threerings.msoy.server.util.MailSender;
 import com.threerings.msoy.web.gwt.AccountInfo;
 import com.threerings.msoy.web.gwt.BannedException;
 import com.threerings.msoy.web.gwt.CaptchaException;
@@ -100,6 +93,8 @@ import com.threerings.msoy.web.gwt.ServiceCodes;
 import com.threerings.msoy.web.gwt.SessionData;
 import com.threerings.msoy.web.gwt.WebCreds;
 import com.threerings.msoy.web.gwt.WebUserService;
+
+import static com.threerings.msoy.Log.log;
 
 /**
  * Provides the server implementation of {@link WebUserService}.

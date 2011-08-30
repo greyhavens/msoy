@@ -3,9 +3,8 @@
 
 package com.threerings.msoy.client {
 
-import flash.events.EventDispatcher;
-
 import flash.display.LoaderInfo;
+import flash.events.EventDispatcher;
 
 import com.threerings.util.Log;
 

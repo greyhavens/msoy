@@ -5,11 +5,11 @@ package com.threerings.msoy.money.server;
 
 import java.io.Serializable;
 
+import com.google.common.base.Preconditions;
+
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
-
-import com.google.common.base.Preconditions;
 
 import com.threerings.msoy.money.data.all.PriceQuote;
 

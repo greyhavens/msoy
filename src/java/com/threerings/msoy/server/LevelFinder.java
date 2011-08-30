@@ -6,6 +6,7 @@ package com.threerings.msoy.server;
 import java.util.Arrays;
 
 import com.google.common.base.Preconditions;
+
 import com.threerings.msoy.data.all.CoinAwards;
 
 /**

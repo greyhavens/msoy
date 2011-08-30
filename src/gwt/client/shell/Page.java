@@ -35,8 +35,8 @@ import client.util.ArrayUtil;
 import client.util.Link;
 import client.util.events.FlashEvent;
 import client.util.events.FlashEvents;
-import client.util.events.PageCommandEvent;
 import client.util.events.PageCommandEvent.Listener;
+import client.util.events.PageCommandEvent;
 
 /**
  * Handles some standard services for a top-level MetaSOY page.
@@ -553,7 +553,7 @@ public abstract class Page
 
             final PageCommandEvent event = _queue;
             if (event != null) {
-                // postpone the method call so the call stack can unwind completely 
+                // postpone the method call so the call stack can unwind completely
                 new Timer() {
                     @Override public void run () {
                         if (listener.act(event) && event == _queue) {
@@ -561,7 +561,7 @@ public abstract class Page
                         }
                     }
                 }.schedule(1);
-            }            
+            }
         }
 
         public void remove (PageCommandEvent.Listener listener)

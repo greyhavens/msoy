@@ -108,7 +108,7 @@ public class ForumThread
     }
 
     /**
-     * Gets the token arguments that will link to the first unread post.     
+     * Gets the token arguments that will link to the first unread post.
      */
     public Args getFirstUnreadPostArgs ()
     {

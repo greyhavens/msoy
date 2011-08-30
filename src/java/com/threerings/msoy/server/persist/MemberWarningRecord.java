@@ -7,10 +7,8 @@ import java.sql.Timestamp;
 
 import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistentRecord;
-
 import com.samskivert.depot.annotation.Column;
 import com.samskivert.depot.annotation.Id;
-
 import com.samskivert.depot.expression.ColumnExp;
 
 /**

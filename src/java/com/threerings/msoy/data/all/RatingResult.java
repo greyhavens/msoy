@@ -24,7 +24,7 @@ public class RatingResult
         this.ratingSum = ratingSum;
         this.ratingCount = ratingCount;
     }
-    
+
     public float getRating ()
     {
         return (ratingCount > 0) ? (float) ratingSum / ratingCount : 0.0f;

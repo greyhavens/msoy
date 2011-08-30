@@ -11,14 +11,16 @@ import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import com.threerings.presents.annotation.BlockingThread;
+
+import com.threerings.web.gwt.ServiceException;
+
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.data.all.RatingHistoryResult;
 import com.threerings.msoy.data.all.RatingHistoryResult.RatingHistoryEntry;
+import com.threerings.msoy.data.all.RatingHistoryResult;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.persist.RatingRecord;
 import com.threerings.msoy.server.persist.RatingRepository;
-import com.threerings.web.gwt.ServiceException;
-import com.threerings.presents.annotation.BlockingThread;
 
 /**
  * Services for ratings and rated objects (items, rooms and games at the time of writing).

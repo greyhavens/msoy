@@ -3,11 +3,11 @@
 
 package com.threerings.msoy.room.data {
 
-import com.threerings.util.Integer;
-import com.threerings.util.Name;
-
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
+
+import com.threerings.util.Integer;
+import com.threerings.util.Name;
 
 /**
  * Uniquely identifies a pet, so that they may be muted.

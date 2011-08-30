@@ -11,15 +11,15 @@ import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.samskivert.depot.expression.ColumnExp;
 
-import com.threerings.web.gwt.ServiceException;
 import com.threerings.presents.annotation.BlockingThread;
 import com.threerings.presents.server.PresentsDObjectMgr;
+
+import com.threerings.web.gwt.ServiceException;
 
 import com.threerings.msoy.admin.data.CostsConfigObject;
 import com.threerings.msoy.admin.server.RuntimeConfig;
@@ -41,8 +41,8 @@ import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.PriceQuote;
 import com.threerings.msoy.money.data.all.PurchaseResult;
 import com.threerings.msoy.money.server.BuyResult;
-import com.threerings.msoy.money.server.MoneyLogic;
 import com.threerings.msoy.money.server.MoneyLogic.BuyOperation;
+import com.threerings.msoy.money.server.MoneyLogic;
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
 import com.threerings.msoy.room.server.persist.SceneFurniRecord;
 import com.threerings.msoy.server.persist.MemberRecord;

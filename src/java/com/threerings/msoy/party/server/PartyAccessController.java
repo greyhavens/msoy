@@ -9,10 +9,9 @@ import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.dobj.ProxySubscriber;
 import com.threerings.presents.dobj.Subscriber;
 
-import com.threerings.msoy.server.MsoyObjectAccess;
-
 import com.threerings.msoy.party.data.PartierObject;
 import com.threerings.msoy.party.data.PartyObject;
+import com.threerings.msoy.server.MsoyObjectAccess;
 
 public class PartyAccessController implements AccessController
 {

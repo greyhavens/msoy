@@ -3,15 +3,16 @@
 
 package com.threerings.msoy.avrg.data;
 
+import com.whirled.game.data.GameDefinition;
+
 import com.threerings.util.ActionScript;
 
 import com.threerings.crowd.data.PlaceConfig;
 
-import com.whirled.game.data.GameDefinition;
+import com.threerings.orth.data.MediaDesc;
 
 import com.threerings.msoy.game.data.GameSummary;
 import com.threerings.msoy.game.data.MsoyGameConfig;
-import com.threerings.orth.data.MediaDesc;
 
 /**
  * Configuration for an AVR game. This is basically BaseGameConfig + ParlorGameConfig,

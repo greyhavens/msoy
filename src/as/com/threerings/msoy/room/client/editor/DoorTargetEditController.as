@@ -8,23 +8,21 @@ import mx.core.Container;
 
 import com.threerings.util.Log;
 
-import com.threerings.flex.CommandButton;
-import com.threerings.flex.FlexUtil;
-
 import com.threerings.whirled.client.SceneDirector;
 import com.threerings.whirled.data.Scene;
 
+import com.threerings.flex.CommandButton;
+import com.threerings.flex.FlexUtil;
+
 import com.threerings.msoy.client.HeaderBar;
 import com.threerings.msoy.client.Msgs;
-
-import com.threerings.msoy.ui.FloatingPanel;
-import com.threerings.msoy.world.client.WorldContext;
-
 import com.threerings.msoy.room.client.RoomObjectController;
 import com.threerings.msoy.room.client.updates.FurniUpdateAction;
 import com.threerings.msoy.room.data.FurniData;
 import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.msoy.room.data.MsoyScene;
+import com.threerings.msoy.ui.FloatingPanel;
+import com.threerings.msoy.world.client.WorldContext;
 
 /**
  * This controller handles in-world door editing. The player picks a door to edit, then travels

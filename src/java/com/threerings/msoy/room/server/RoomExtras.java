@@ -6,7 +6,6 @@ package com.threerings.msoy.room.server;
 import java.util.List;
 
 import com.threerings.msoy.item.data.all.Audio;
-
 import com.threerings.msoy.room.server.persist.MemoriesRecord;
 
 /**

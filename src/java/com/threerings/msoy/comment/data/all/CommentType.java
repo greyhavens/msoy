@@ -3,13 +3,13 @@
 
 package com.threerings.msoy.comment.data.all;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
+
 import com.samskivert.util.ByteEnumUtil;
 
 import com.threerings.io.Streamable;
 
 import com.threerings.msoy.item.data.all.MsoyItemType;
-
-import com.google.gwt.user.client.rpc.IsSerializable;
 
 public class CommentType
     implements IsSerializable, Streamable

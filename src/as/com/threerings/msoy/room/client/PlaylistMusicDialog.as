@@ -5,10 +5,9 @@ package com.threerings.msoy.room.client {
 
 import flash.geom.Point;
 
-import mx.core.ClassFactory;
-
 import mx.containers.HBox;
 import mx.controls.HRule;
+import mx.core.ClassFactory;
 
 import com.threerings.util.Comparators;
 
@@ -17,18 +16,14 @@ import com.threerings.flex.DSetList;
 import com.threerings.flex.FlexUtil;
 
 import com.threerings.msoy.client.Msgs;
-
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
-import com.threerings.msoy.item.data.all.Audio;
-
+import com.threerings.msoy.room.data.MsoyScene;
+import com.threerings.msoy.room.data.MsoySceneModel;
+import com.threerings.msoy.room.data.RoomObject;
 import com.threerings.msoy.world.client.MusicDialog;
 import com.threerings.msoy.world.client.WorldContext;
 import com.threerings.msoy.world.client.WorldController;
-
-import com.threerings.msoy.room.data.RoomObject;
-import com.threerings.msoy.room.data.MsoyScene;
-import com.threerings.msoy.room.data.MsoySceneModel;
 
 /**
  * Extends the music dialog with playlist information.

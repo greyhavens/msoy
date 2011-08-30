@@ -3,12 +3,9 @@
 
 package com.threerings.msoy.web.server;
 
-import static com.threerings.msoy.Log.log;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -23,6 +20,8 @@ import com.samskivert.io.StreamUtil;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.msoy.data.all.MediaMimeTypes;
+
+import static com.threerings.msoy.Log.log;
 
 /**
  * Wrap various file objects and provide useful methods for dealing with uploaded file data.

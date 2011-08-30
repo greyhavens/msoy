@@ -5,11 +5,12 @@ package com.threerings.msoy.avrg.server;
 
 import java.util.Map;
 
-import com.threerings.msoy.avrg.data.AVRGameAgentObject;
-import com.threerings.parlor.server.PlayManagerDelegate;
-
 import com.whirled.game.data.PropertySpaceObject;
 import com.whirled.game.server.PropertySpaceHelper;
+
+import com.threerings.parlor.server.PlayManagerDelegate;
+
+import com.threerings.msoy.avrg.data.AVRGameAgentObject;
 
 /**
  * A delegate that initializes a {@link AVRGameAgentObject} (which should implement

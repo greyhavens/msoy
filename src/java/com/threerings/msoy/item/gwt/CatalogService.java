@@ -14,15 +14,13 @@ import com.threerings.web.gwt.ServiceException;
 
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.item.data.all.MsoyItemType;
-
-import com.threerings.msoy.money.data.all.Currency;
-import com.threerings.msoy.money.data.all.PurchaseResult;
-
 import com.threerings.msoy.group.gwt.BrandDetail;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.item.gwt.CatalogListing.DerivedItem;
+import com.threerings.msoy.money.data.all.Currency;
+import com.threerings.msoy.money.data.all.PurchaseResult;
 
 /**
  * Provides digital items related services.

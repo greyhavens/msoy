@@ -4,18 +4,14 @@
 package com.threerings.msoy.room.client {
 
 import flash.events.Event;
-
 import flash.external.ExternalInterface;
-
 import flash.geom.Rectangle;
 
 import mx.binding.utils.BindingUtils;
-
+import mx.containers.Grid;
 import mx.controls.Text;
 import mx.controls.VSlider;
-import mx.containers.Grid;
 import mx.core.UIComponent;
-
 import mx.events.CloseEvent;
 
 import com.threerings.util.Log;
@@ -27,16 +23,13 @@ import com.threerings.flex.CommandComboBox;
 import com.threerings.flex.FlexUtil;
 import com.threerings.flex.GridUtil;
 
-import com.threerings.msoy.ui.FlyingPanel;
-
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.MsoyParameters;
-
 import com.threerings.msoy.item.data.all.Decor;
-
 import com.threerings.msoy.room.data.MsoyScene;
 import com.threerings.msoy.room.data.MsoySceneModel;
+import com.threerings.msoy.ui.FlyingPanel;
 
 /**
  * Widgets used for editing a backdrop definition.

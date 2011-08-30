@@ -3,6 +3,10 @@
 
 package com.threerings.msoy.game.server.persist;
 
+import java.sql.Timestamp;
+
+import com.samskivert.util.StringUtil;
+
 import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.annotation.Column;
@@ -11,17 +15,13 @@ import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.annotation.Index;
 import com.samskivert.depot.expression.ColumnExp;
 
-import com.samskivert.util.StringUtil;
-
 import com.threerings.orth.data.MediaDesc;
-
-import com.threerings.msoy.server.MediaDescFactory;
 import com.threerings.orth.data.MediaDescSize;
+
 import com.threerings.msoy.data.all.MediaDescUtil;
 import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.item.data.all.TrophySource;
-
-import java.sql.Timestamp;
+import com.threerings.msoy.server.MediaDescFactory;
 
 /**
  * Contains persistent data on a player's trophy.
