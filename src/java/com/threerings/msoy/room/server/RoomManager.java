@@ -37,6 +37,7 @@ import com.samskivert.util.ComplainingListener;
 import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.ObjectUtil;
+import com.samskivert.util.ResultListener;
 import com.samskivert.util.StringUtil;
 import com.samskivert.util.Throttle;
 
@@ -523,10 +524,7 @@ public class RoomManager extends SpotSceneManager
         } else {
             // Don't worry about advancing to the next song
             who.removeFromTracks(key);
-
-            _itemMan.updateItemUsage(MsoyItemType.AUDIO, Item.UsedAs.BACKGROUND,
-                who.getMemberId(), _scene.getId(), audioItemId, 0,
-                new ConfirmAdapter(listener));
+            clearTrackUsage(who, audioItemId, new ConfirmAdapter(listener));
         }
     }
 
@@ -596,9 +594,7 @@ public class RoomManager extends SpotSceneManager
         log.info("Removing DJ from room", "who", who);
 
         for (Track track : who.tracks) {
-            _itemMan.updateItemUsage(MsoyItemType.AUDIO, Item.UsedAs.BACKGROUND,
-                who.getMemberId(), _scene.getId(), track.audio.itemId, 0,
-                new ComplainingListener<Void>(log, "removeDj: unable to update audio usage"));
+            clearTrackUsage(who, track.audio.itemId, null);
         }
         who.setTracks(new DSet<Track>());
         _roomObj.removeFromDjs(who.getMemberId());
@@ -606,6 +602,37 @@ public class RoomManager extends SpotSceneManager
         if (_roomObj.currentDj == who.getMemberId()) {
             playNextDj();
         }
+    }
+
+    protected void removeAllDjs ()
+    {
+        for (Deejay dj : _roomObj.djs) {
+            MemberObject member = _locator.lookupMember(dj.memberId);
+            log.info("Removing DJ", "member", member.memberName);
+            if (member != null) {
+                for (Track track : member.tracks) {
+                    log.info("Clearing track", "track", track.audio);
+                    clearTrackUsage(member, track.audio.itemId, null);
+                }
+                member.setTracks(new DSet<Track>());
+            }
+        }
+
+        _roomObj.startTransaction();
+        _roomObj.setDjs(new DSet<Deejay>());
+        _roomObj.setTrack(null);
+        _roomObj.setCurrentDj(-1);
+        _roomObj.setRecentTracks(new DSet<RecentTrack>());
+        _roomObj.commitTransaction();
+    }
+
+    protected void clearTrackUsage (MemberObject who, int audioItemId, ResultListener<Void> listener)
+    {
+        if (listener == null) {
+            listener = new ComplainingListener<Void>(log, "removeDj: unable to update audio usage");
+        }
+        _itemMan.updateItemUsage(MsoyItemType.AUDIO, Item.UsedAs.BACKGROUND,
+            who.getMemberId(), _scene.getId(), audioItemId, 0, listener);
     }
 
     protected void modifyPlaylist (
@@ -1611,7 +1638,10 @@ public class RoomManager extends SpotSceneManager
                     mScene.getOwnerType(), up.accessControl);
             }
 
-            // TODO: if playlistControl changed, remove all inappropriate songs?
+            if (up.playlistControl != mScene.getPlaylistControl()
+                    && mScene.getPlaylistControl() == MsoySceneModel.ACCESS_EVERYONE) {
+                removeAllDjs();
+            }
 
             // if decor was modified, we should mark new decor as used, and clear the old one
             Decor decor = mScene.getDecor();

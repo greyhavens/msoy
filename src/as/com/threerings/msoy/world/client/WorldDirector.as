@@ -267,10 +267,6 @@ public class WorldDirector extends BasicDirector
 }
 }
 
-import com.threerings.msoy.room.data.Track;
-import com.threerings.msoy.room.data.MsoyScene;
-import com.threerings.msoy.item.data.all.Item_UsedAs;
-import com.threerings.msoy.item.data.all.Item;
 import com.threerings.util.MessageBundle;
 
 import com.threerings.presents.dobj.AttributeChangeListener;
@@ -284,6 +280,10 @@ import com.threerings.presents.dobj.SetListener;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.Item_UsedAs;
+import com.threerings.msoy.room.data.MsoyScene;
+import com.threerings.msoy.room.data.Track;
 import com.threerings.msoy.world.client.WorldContext;
 
 class MemberNotifier
@@ -312,6 +312,15 @@ class MemberNotifier
             var followers :DSet = event.getValue() as DSet;
             if (followers.size() == 0) {
                 _wctx.displayFeedback(MsoyCodes.GENERAL_MSGS, "m.follows_cleared");
+            }
+            break;
+
+        case MemberObject.TRACKS:
+            // Assume that this update cleared the set
+            var tracks :DSet = event.getOldValue() as DSet;
+            for each (var track :Track in tracks.toArray()) {
+                _wctx.getMsoyClient().itemUsageChangedToGWT(
+                    Item.AUDIO, track.audio.itemId, Item_UsedAs.NOTHING, 0);
             }
             break;
         }
