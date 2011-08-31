@@ -4,6 +4,7 @@ package com.threerings.msoy.room.data {
 import org.osflash.signals.Signal;
 
 import com.threerings.io.ObjectInputStream;
+import com.threerings.io.ObjectOutputStream;
 
 import com.threerings.util.Iterator;
 import com.threerings.util.Name;
@@ -55,7 +56,9 @@ public class RoomObject extends SpotSceneObject
 
     public var currentSongId :int;
 
-    public var deejays :DSet; /* of */ Deejay;
+    public var djs :DSet; /* of */ Deejay;
+
+    public var currentDj :int;
 
     public var track :Track;
 
@@ -92,10 +95,11 @@ public class RoomObject extends SpotSceneObject
     public var playlistEntryRemoved :Signal = new Signal(Audio);
     public var playlistEntryUpdated :Signal = new Signal(Audio, Audio);
     public var currentSongIdChanged :Signal = new Signal(int, int);
-    public var deejaysChanged :Signal = new Signal(DSet, DSet);
-    public var deejaysEntryAdded :Signal = new Signal(Deejay);
-    public var deejaysEntryRemoved :Signal = new Signal(Deejay);
-    public var deejaysEntryUpdated :Signal = new Signal(Deejay, Deejay);
+    public var djsChanged :Signal = new Signal(DSet, DSet);
+    public var djsEntryAdded :Signal = new Signal(Deejay);
+    public var djsEntryRemoved :Signal = new Signal(Deejay);
+    public var djsEntryUpdated :Signal = new Signal(Deejay, Deejay);
+    public var currentDjChanged :Signal = new Signal(int, int);
     public var trackChanged :Signal = new Signal(Track, Track);
     public var recentTracksChanged :Signal = new Signal(DSet, DSet);
     public var recentTracksEntryAdded :Signal = new Signal(RecentTrack);
@@ -114,7 +118,8 @@ public class RoomObject extends SpotSceneObject
     public static const PARTY_LEADERS :String = "partyLeaders";
     public static const PLAYLIST :String = "playlist";
     public static const CURRENT_SONG_ID :String = "currentSongId";
-    public static const DEEJAYS :String = "deejays";
+    public static const DJS :String = "djs";
+    public static const CURRENT_DJ :String = "currentDj";
     public static const TRACK :String = "track";
     public static const RECENT_TRACKS :String = "recentTracks";
     public static const PLAY_COUNT :String = "playCount";
@@ -133,7 +138,8 @@ public class RoomObject extends SpotSceneObject
         partyLeaders = ins.readObject(DSet);
         playlist = ins.readObject(DSet);
         currentSongId = ins.readInt();
-        deejays = ins.readObject(DSet);
+        djs = ins.readObject(DSet);
+        currentDj = ins.readInt();
         track = ins.readObject(Track);
         recentTracks = ins.readObject(DSet);
         playCount = ins.readInt();
@@ -202,7 +208,11 @@ import com.threerings.presents.dobj.ElementUpdatedEvent;
 import com.threerings.presents.dobj.EntryAddedEvent;
 import com.threerings.presents.dobj.EntryRemovedEvent;
 import com.threerings.presents.dobj.EntryUpdatedEvent;
+import com.threerings.presents.dobj.MessageEvent;
+import com.threerings.presents.dobj.MessageListener;
 import com.threerings.presents.dobj.ObjectAddedEvent;
+import com.threerings.presents.dobj.ObjectDeathListener;
+import com.threerings.presents.dobj.ObjectDestroyedEvent;
 import com.threerings.presents.dobj.ObjectRemovedEvent;
 import com.threerings.presents.dobj.OidListListener;
 import com.threerings.presents.dobj.SetListener;
@@ -255,8 +265,11 @@ class Signaller
             case "currentSongId":
                 signal = _obj.currentSongIdChanged;
                 break;
-            case "deejays":
-                signal = _obj.deejaysChanged;
+            case "djs":
+                signal = _obj.djsChanged;
+                break;
+            case "currentDj":
+                signal = _obj.currentDjChanged;
                 break;
             case "track":
                 signal = _obj.trackChanged;
@@ -295,8 +308,8 @@ class Signaller
             case "playlist":
                 signal = _obj.playlistEntryAdded;
                 break;
-            case "deejays":
-                signal = _obj.deejaysEntryAdded;
+            case "djs":
+                signal = _obj.djsEntryAdded;
                 break;
             case "recentTracks":
                 signal = _obj.recentTracksEntryAdded;
@@ -329,8 +342,8 @@ class Signaller
             case "playlist":
                 signal = _obj.playlistEntryRemoved;
                 break;
-            case "deejays":
-                signal = _obj.deejaysEntryRemoved;
+            case "djs":
+                signal = _obj.djsEntryRemoved;
                 break;
             case "recentTracks":
                 signal = _obj.recentTracksEntryRemoved;
@@ -363,8 +376,8 @@ class Signaller
             case "playlist":
                 signal = _obj.playlistEntryUpdated;
                 break;
-            case "deejays":
-                signal = _obj.deejaysEntryUpdated;
+            case "djs":
+                signal = _obj.djsEntryUpdated;
                 break;
             case "recentTracks":
                 signal = _obj.recentTracksEntryUpdated;

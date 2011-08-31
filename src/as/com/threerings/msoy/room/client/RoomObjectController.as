@@ -568,12 +568,7 @@ public class RoomObjectController extends RoomController
         }
 
         if (itemType == Item.AUDIO) {
-            // no-op if it's already here
-            if (_roomObj.playlist.containsKey(new ItemIdent(itemType, itemId))) {
-                return;
-            }
-            if ((_scene.getPlaylistControl() != MsoySceneModel.ACCESS_EVERYONE) &&
-                    !canManageRoom()) {
+            if (_scene.getPlaylistControl() != MsoySceneModel.ACCESS_EVERYONE && !canManageRoom()) {
                 _wdctx.displayFeedback(MsoyCodes.WORLD_MSGS, "e.no_playlist_perm");
                 return;
             }
@@ -665,11 +660,8 @@ public class RoomObjectController extends RoomController
             }
 
         } else if (itemType == Item.AUDIO) {
-            // only send a request if it's even here
-            if (_roomObj.playlist.containsKey(new ItemIdent(itemType, itemId))) {
-                _roomObj.roomService.addOrRemoveSong(itemId, false,
-                    _wdctx.confirmListener("m.music_removed", MsoyCodes.WORLD_MSGS));
-            }
+            _roomObj.roomService.addOrRemoveSong(itemId, false,
+                _wdctx.confirmListener("m.music_removed", MsoyCodes.WORLD_MSGS));
 
         } else if (itemType == Item.DECOR) {
             var newScene :MsoyScene = _scene.clone() as MsoyScene;

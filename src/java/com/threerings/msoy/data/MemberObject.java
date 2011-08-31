@@ -42,7 +42,6 @@ import static com.threerings.msoy.Log.log;
 /**
  * Represents a connected msoy user.
  */
-@com.threerings.util.ActionScript(omit=true)
 public class MemberObject extends BodyObject
     implements MsoyUserObject, MsoyBodyObject
 {
@@ -142,6 +141,10 @@ public class MemberObject extends BodyObject
     /** The field name of the <code>experiences</code> field. */
     @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String EXPERIENCES = "experiences";
+
+    /** The field name of the <code>tracks</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
+    public static final String TRACKS = "tracks";
     // AUTO-GENERATED: FIELDS END
 
     /** A message sent by the server to denote a notification to be displayed.
@@ -170,7 +173,7 @@ public class MemberObject extends BodyObject
     public MemberName following;
 
     /** The names of members following this member. */
-    public DSet<MemberName> followers = new DSet<MemberName>();
+    public DSet<MemberName> followers = DSet.newDSet();
 
     /** The tokens defining the access controls for this user. */
     public MsoyTokenRing tokens;
@@ -188,13 +191,13 @@ public class MemberObject extends BodyObject
     public DSet<Avatar> avatarCache;
 
     /** The online friends of this player. */
-    public DSet<FriendEntry> friends = new DSet<FriendEntry>();
+    public DSet<FriendEntry> friends = DSet.newDSet();
 
     /** The IM gateways available to this player. */
-    public DSet<GatewayEntry> gateways = new DSet<GatewayEntry>();
+    public DSet<GatewayEntry> gateways = DSet.newDSet();
 
     /** The IM contacts of this player. */
-    public DSet<ContactEntry> imContacts = new DSet<ContactEntry>();
+    public DSet<ContactEntry> imContacts = DSet.newDSet();
 
     /** The groups of this player. */
     public DSet<GroupMembership> groups;
@@ -223,10 +226,10 @@ public class MemberObject extends BodyObject
     public int partyId;
 
     /** List of experiences this member has had recently. */
-    public DSet<MemberExperience> experiences = new DSet<MemberExperience>();
+    public DSet<MemberExperience> experiences = DSet.newDSet();
 
     /** If this player is DJ-ing, the tracks they have queued up. */
-    public DSet<Track> tracks;
+    public DSet<Track> tracks = DSet.newDSet();
 
     public void initWithClient (MemberClientObject mcobj)
     {
@@ -1119,6 +1122,57 @@ public class MemberObject extends BodyObject
         requestAttributeChange(EXPERIENCES, value, this.experiences);
         DSet<MemberExperience> clone = (value == null) ? null : value.clone();
         this.experiences = clone;
+    }
+
+    /**
+     * Requests that the specified entry be added to the
+     * <code>tracks</code> set. The set will not change until the event is
+     * actually propagated through the system.
+     */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
+    public void addToTracks (Track elem)
+    {
+        requestEntryAdd(TRACKS, tracks, elem);
+    }
+
+    /**
+     * Requests that the entry matching the supplied key be removed from
+     * the <code>tracks</code> set. The set will not change until the
+     * event is actually propagated through the system.
+     */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
+    public void removeFromTracks (Comparable<?> key)
+    {
+        requestEntryRemove(TRACKS, tracks, key);
+    }
+
+    /**
+     * Requests that the specified entry be updated in the
+     * <code>tracks</code> set. The set will not change until the event is
+     * actually propagated through the system.
+     */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
+    public void updateTracks (Track elem)
+    {
+        requestEntryUpdate(TRACKS, tracks, elem);
+    }
+
+    /**
+     * Requests that the <code>tracks</code> field be set to the
+     * specified value. Generally one only adds, updates and removes
+     * entries of a distributed set, but certain situations call for a
+     * complete replacement of the set value. The local value will be
+     * updated immediately and an event will be propagated through the
+     * system to notify all listeners that the attribute did
+     * change. Proxied copies of this object (on clients) will apply the
+     * value change when they received the attribute changed notification.
+     */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
+    public void setTracks (DSet<Track> value)
+    {
+        requestAttributeChange(TRACKS, value, this.tracks);
+        DSet<Track> clone = (value == null) ? null : value.clone();
+        this.tracks = clone;
     }
     // AUTO-GENERATED: METHODS END
 

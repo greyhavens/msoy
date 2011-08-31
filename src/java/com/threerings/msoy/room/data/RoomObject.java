@@ -72,9 +72,13 @@ public class RoomObject extends SpotSceneObject
     @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String CURRENT_SONG_ID = "currentSongId";
 
-    /** The field name of the <code>deejays</code> field. */
+    /** The field name of the <code>djs</code> field. */
     @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
-    public static final String DEEJAYS = "deejays";
+    public static final String DJS = "djs";
+
+    /** The field name of the <code>currentDj</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
+    public static final String CURRENT_DJ = "currentDj";
 
     /** The field name of the <code>track</code> field. */
     @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
@@ -123,7 +127,10 @@ public class RoomObject extends SpotSceneObject
     public int currentSongId;
 
     /** The DJs currently in this room, if any. */
-    public DSet<Deejay> deejays = DSet.newDSet();
+    public DSet<Deejay> djs = DSet.newDSet();
+
+    /** The member id of the DJ who's being played. */
+    public int currentDj;
 
     /** The song currently being DJed, if in DJ mode. */
     public Track track;
@@ -529,39 +536,39 @@ public class RoomObject extends SpotSceneObject
 
     /**
      * Requests that the specified entry be added to the
-     * <code>deejays</code> set. The set will not change until the event is
+     * <code>djs</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
     @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
-    public void addToDeejays (Deejay elem)
+    public void addToDjs (Deejay elem)
     {
-        requestEntryAdd(DEEJAYS, deejays, elem);
+        requestEntryAdd(DJS, djs, elem);
     }
 
     /**
      * Requests that the entry matching the supplied key be removed from
-     * the <code>deejays</code> set. The set will not change until the
+     * the <code>djs</code> set. The set will not change until the
      * event is actually propagated through the system.
      */
     @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
-    public void removeFromDeejays (Comparable<?> key)
+    public void removeFromDjs (Comparable<?> key)
     {
-        requestEntryRemove(DEEJAYS, deejays, key);
+        requestEntryRemove(DJS, djs, key);
     }
 
     /**
      * Requests that the specified entry be updated in the
-     * <code>deejays</code> set. The set will not change until the event is
+     * <code>djs</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
     @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
-    public void updateDeejays (Deejay elem)
+    public void updateDjs (Deejay elem)
     {
-        requestEntryUpdate(DEEJAYS, deejays, elem);
+        requestEntryUpdate(DJS, djs, elem);
     }
 
     /**
-     * Requests that the <code>deejays</code> field be set to the
+     * Requests that the <code>djs</code> field be set to the
      * specified value. Generally one only adds, updates and removes
      * entries of a distributed set, but certain situations call for a
      * complete replacement of the set value. The local value will be
@@ -571,11 +578,28 @@ public class RoomObject extends SpotSceneObject
      * value change when they received the attribute changed notification.
      */
     @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
-    public void setDeejays (DSet<Deejay> value)
+    public void setDjs (DSet<Deejay> value)
     {
-        requestAttributeChange(DEEJAYS, value, this.deejays);
+        requestAttributeChange(DJS, value, this.djs);
         DSet<Deejay> clone = (value == null) ? null : value.clone();
-        this.deejays = clone;
+        this.djs = clone;
+    }
+
+    /**
+     * Requests that the <code>currentDj</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
+    public void setCurrentDj (int value)
+    {
+        int ovalue = this.currentDj;
+        requestAttributeChange(
+            CURRENT_DJ, Integer.valueOf(value), Integer.valueOf(ovalue));
+        this.currentDj = value;
     }
 
     /**
@@ -731,5 +755,10 @@ public class RoomObject extends SpotSceneObject
             removeFromMemories(ident);
         }
         return mems;
+    }
+
+    public boolean inDJMode ()
+    {
+        return !djs.isEmpty();
     }
 }

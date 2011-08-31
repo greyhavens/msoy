@@ -13,6 +13,7 @@ import java.util.TreeSet;
 
 import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Ordering;
@@ -451,7 +452,160 @@ public class RoomManager extends SpotSceneManager
         throws InvocationException
     {
         MemberObject who = _locator.requireMember(caller);
-        modifyPlaylist(who, audioItemId, add, listener);
+
+        // Can anyone add to music to the room?
+        boolean unlockedPlaylist =
+            ((MsoyScene)getScene()).getPlaylistControl() == MsoySceneModel.ACCESS_EVERYONE;
+
+        // Remove songs from the saved playlist if necessary, even if we're in DJ mode
+        // TODO: Is this necessary?
+        boolean removeFromPlaylist =
+            !add && _roomObj.playlist.containsKey(new ItemIdent(MsoyItemType.AUDIO, audioItemId));
+
+        // If the room is already in DJ mode, or this player is a non-manager who can add a song
+        if (!removeFromPlaylist && _roomObj.inDJMode() || (!canManage(who) && unlockedPlaylist)) {
+            if (!who.tokens.isSubscriberPlus()) {
+                // Club Whirled gets early access to this feature
+                throw new InvocationException("e.subscriber_only");
+            }
+            modifyDJ(who, audioItemId, add, listener);
+        } else {
+            modifyPlaylist(who, audioItemId, add, listener);
+        }
+    }
+
+    protected void modifyDJ (
+        final MemberObject who, final int audioItemId, final boolean add,
+        final InvocationService.ConfirmListener listener)
+        throws InvocationException
+    {
+        log.info("Modifying DJ", "audio", audioItemId, "add", add);
+        ItemIdent key = new ItemIdent(MsoyItemType.AUDIO, audioItemId);
+
+        if (add) {
+            _itemMan.getItem(key, new IgnoreConfirmAdapter<Item>(listener) {
+                @Override public void requestCompleted (Item result) {
+                    if (result.ownerId != who.getMemberId()) {
+                        // TODO: log this?
+                        listener.requestFailed(InvocationCodes.E_ACCESS_DENIED);
+                        return;
+                    }
+
+                    boolean firstDJ = false;
+                    if (!_roomObj.djs.containsKey(who.getMemberId())) {
+                        if (_roomObj.djs.size() > 3) {
+                            listener.requestFailed("e.too_many_djs");
+                            return;
+                        }
+                        Deejay dj = new Deejay();
+                        dj.memberId = who.getMemberId();
+                        dj.startedAt = System.currentTimeMillis();
+                        _roomObj.addToDjs(dj);
+                        firstDJ = true;
+                    }
+
+                    Track track = new Track();
+                    // TODO(bruno): Assign track.order
+                    track.order = 0;
+                    track.audio = (Audio) result;
+                    who.addToTracks(track);
+
+                    if (firstDJ) {
+                        playDj(who.getMemberId(), track);
+                    }
+
+                    log.info("Added to DJ's queue", "name", result.name);
+                    _itemMan.updateItemUsage(MsoyItemType.AUDIO, Item.UsedAs.BACKGROUND,
+                        who.getMemberId(), _scene.getId(), 0, audioItemId,
+                        new ConfirmAdapter(listener));
+                }
+            });
+        } else {
+            // Don't worry about advancing to the next song
+            who.removeFromTracks(key);
+
+            _itemMan.updateItemUsage(MsoyItemType.AUDIO, Item.UsedAs.BACKGROUND,
+                who.getMemberId(), _scene.getId(), audioItemId, 0,
+                new ConfirmAdapter(listener));
+        }
+    }
+
+    protected void playNextDj ()
+    {
+        List<Deejay> djs = Lists.newArrayList(_roomObj.djs);
+        Collections.sort(djs);
+
+        // Find the currently playing DJ
+        for (int ii = 0; ii < djs.size(); ii++) {
+            if (djs.get(ii).memberId == _roomObj.currentDj) {
+                // Use the next DJ (with wrap around)
+                Deejay nextDj = djs.get((ii + 1) % djs.size());
+                playDj(nextDj.memberId, null);
+                break;
+            }
+        }
+    }
+
+    /**
+     * Advances to the next DJ.
+     * @param memberId The DJ to move to, assumes that he's already a seated DJ.
+     * @param track The track to play, or null to fetch the next track from the DJ's queue.
+     */
+    // Assumes the memberId is in the DJ list
+    protected void playDj (int memberId, Track track)
+    {
+        if (track == null) {
+            MemberObject who = _locator.lookupMember(memberId);
+            track = Collections.min(ImmutableList.copyOf(who.tracks));
+
+            // TODO(bruno): Move this track to the end of their queue
+            track.order = 0;
+            who.updateTracks(track);
+        }
+
+        _roomObj.startTransaction();
+
+        Track oldTrack = _roomObj.track;
+        if (oldTrack != null) {
+            RecentTrack recent = new RecentTrack();
+            recent.dj = _locator.lookupMember(oldTrack.audio.ownerId).memberName;
+            recent.audio = oldTrack.audio;
+            recent.rating = oldTrack.rating;
+            recent.order = _roomObj.playCount;
+            _roomObj.addToRecentTracks(recent);
+
+            // TODO(bruno): Limit the size of recentTracks
+        }
+
+        _roomObj.setCurrentDj(memberId);
+        _roomObj.setTrack(track);
+        _roomObj.commitTransaction();
+
+        log.info("Now playing", "DJ", memberId, "audio", track.audio);
+    }
+
+    /**
+     * Entirely remove the DJ from rotation.
+     */
+    protected void removeDj (MemberObject who)
+    {
+        if (who.tracks.isEmpty()) {
+            return;
+        }
+
+        log.info("Removing DJ from room", "who", who);
+
+        for (Track track : who.tracks) {
+            _itemMan.updateItemUsage(MsoyItemType.AUDIO, Item.UsedAs.BACKGROUND,
+                who.getMemberId(), _scene.getId(), track.audio.itemId, 0,
+                new ComplainingListener<Void>(log, "removeDj: unable to update audio usage"));
+        }
+        who.setTracks(new DSet<Track>());
+        _roomObj.removeFromDjs(who.getMemberId());
+
+        if (_roomObj.currentDj == who.getMemberId()) {
+            playNextDj();
+        }
     }
 
     protected void modifyPlaylist (
@@ -908,6 +1062,7 @@ public class RoomManager extends SpotSceneManager
             if (!isStrictlyManager(member)) {
                 removeVisitorSongs(member);
             }
+            removeDj(member);
 
             // possibly activate the owner puppet
             if (isOwnerMember(body)) {

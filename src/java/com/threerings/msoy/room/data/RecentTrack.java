@@ -11,7 +11,7 @@ import com.threerings.msoy.data.all.VizMemberName;
 public class RecentTrack extends Track
 {
     /** Name of the DJ who played this track, even if they've left the room. */
-    public VizMemberName deejay;
+    public VizMemberName dj;
 
     @Override
     public Comparable<?> getKey ()

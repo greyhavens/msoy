@@ -49,7 +49,7 @@ public class WorldDirector extends BasicDirector
         _wctx.getLocationDirector().addLocationObserver(
             new LocationAdapter(null, locationDidChange, null));
 
-        _followingNotifier = new FollowingNotifier(_wctx);
+        _memberNotifier = new MemberNotifier(_wctx);
     }
 
     /**
@@ -186,7 +186,7 @@ public class WorldDirector extends BasicDirector
     override protected function clientObjectUpdated (client :Client) :void
     {
         super.clientObjectUpdated(client);
-        WorldClient(client).bodyOf().addListener(_followingNotifier);
+        WorldClient(client).bodyOf().addListener(_memberNotifier);
     }
 
     // from BasicDirector
@@ -260,13 +260,17 @@ public class WorldDirector extends BasicDirector
     protected var _wsvc :WorldService;
     protected var _msvc :MemberService;
 
-    protected var _followingNotifier :FollowingNotifier;
+    protected var _memberNotifier :MemberNotifier;
 
     /** If non-null, we should call it when we change places. */
     protected var _goToGame :Function;
 }
 }
 
+import com.threerings.msoy.room.data.Track;
+import com.threerings.msoy.room.data.MsoyScene;
+import com.threerings.msoy.item.data.all.Item_UsedAs;
+import com.threerings.msoy.item.data.all.Item;
 import com.threerings.util.MessageBundle;
 
 import com.threerings.presents.dobj.AttributeChangeListener;
@@ -282,10 +286,10 @@ import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.world.client.WorldContext;
 
-class FollowingNotifier
+class MemberNotifier
     implements AttributeChangeListener, SetListener
 {
-    public function FollowingNotifier (wctx :WorldContext)
+    public function MemberNotifier (wctx :WorldContext)
     {
         _wctx = wctx;
     }
@@ -315,9 +319,20 @@ class FollowingNotifier
 
     public function entryAdded (event :EntryAddedEvent) :void
     {
-        if (MemberObject.FOLLOWERS == event.getName()) {
+        switch (event.getName()) {
+        case MemberObject.FOLLOWERS:
             _wctx.displayFeedback(MsoyCodes.GENERAL_MSGS,
                 MessageBundle.tcompose("m.new_follower", event.getEntry() as MemberName));
+            break;
+
+        case MemberObject.TRACKS:
+            var scene :MsoyScene = _wctx.getSceneDirector().getScene() as MsoyScene;
+            if (scene != null) {
+                var track :Track = event.getEntry() as Track;
+                _wctx.getMsoyClient().itemUsageChangedToGWT(
+                    Item.AUDIO, track.audio.itemId, Item_UsedAs.BACKGROUND, scene.getId());
+            }
+            break;
         }
     }
 
@@ -328,9 +343,17 @@ class FollowingNotifier
 
     public function entryRemoved (event :EntryRemovedEvent) :void
     {
-        if (MemberObject.FOLLOWERS == event.getName()) {
+        switch (event.getName()) {
+        case MemberObject.FOLLOWERS:
             _wctx.displayFeedback(MsoyCodes.GENERAL_MSGS,
                 MessageBundle.tcompose("m.follower_ditched", event.getOldEntry() as MemberName));
+            break;
+
+        case MemberObject.TRACKS:
+            var track :Track = event.getOldEntry() as Track;
+            _wctx.getMsoyClient().itemUsageChangedToGWT(
+                Item.AUDIO, track.audio.itemId, Item_UsedAs.NOTHING, 0);
+            break;
         }
     }
 
