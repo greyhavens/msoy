@@ -193,6 +193,12 @@ public class RoomObject extends SpotSceneObject
         }
         return null;
     }
+
+    public function inDjMode () :Boolean
+    {
+        return !djs.isEmpty();
+    }
+
 // GENERATED CLASSFINISH START
 }
 }

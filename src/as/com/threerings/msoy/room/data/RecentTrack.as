@@ -34,6 +34,12 @@ public class RecentTrack extends Track
     }
 
 // GENERATED STREAMING END
+
+    override public function getKey () :Object
+    {
+        return order;
+    }
+
 // GENERATED CLASSFINISH START
 }
 }

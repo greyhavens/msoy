@@ -665,7 +665,8 @@ public class RoomObjectView extends RoomView
      */
     protected function updateBackgroundAudio () :void
     {
-        var audio :Audio =
+        var audio :Audio = _roomObj.inDjMode() ?
+            _roomObj.track.audio :
             _roomObj.playlist.get(new ItemIdent(Item.AUDIO, _roomObj.currentSongId)) as Audio;
         const dispatchStopped :Boolean = (_musicPlayCount >= 0);
         const dispatchStarted :Boolean = (audio != null);

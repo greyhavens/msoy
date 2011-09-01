@@ -757,7 +757,7 @@ public class RoomObject extends SpotSceneObject
         return mems;
     }
 
-    public boolean inDJMode ()
+    public boolean inDjMode ()
     {
         return !djs.isEmpty();
     }

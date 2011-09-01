@@ -464,7 +464,7 @@ public class RoomManager extends SpotSceneManager
             !add && _roomObj.playlist.containsKey(new ItemIdent(MsoyItemType.AUDIO, audioItemId));
 
         // If the room is already in DJ mode, or this player is a non-manager who can add a song
-        if (!removeFromPlaylist && _roomObj.inDJMode() || (!canManage(who) && unlockedPlaylist)) {
+        if (!removeFromPlaylist && _roomObj.inDjMode() || (!canManage(who) && unlockedPlaylist)) {
             if (!who.tokens.isSubscriberPlus()) {
                 // Club Whirled gets early access to this feature
                 throw new InvocationException("e.subscriber_only");
@@ -484,6 +484,9 @@ public class RoomManager extends SpotSceneManager
         ItemIdent key = new ItemIdent(MsoyItemType.AUDIO, audioItemId);
 
         if (add) {
+            if (who.tracks.size() >= MAX_PLAYLIST_SIZE) {
+                throw new InvocationException("e.playlist_full");
+            }
             _itemMan.getItem(key, new IgnoreConfirmAdapter<Item>(listener) {
                 @Override public void requestCompleted (Item result) {
                     if (result.ownerId != who.getMemberId()) {
@@ -506,8 +509,7 @@ public class RoomManager extends SpotSceneManager
                     }
 
                     Track track = new Track();
-                    // TODO(bruno): Assign track.order
-                    track.order = 0;
+                    track.order = appendOrder(who.tracks);
                     track.audio = (Audio) result;
                     who.addToTracks(track);
 
@@ -522,9 +524,15 @@ public class RoomManager extends SpotSceneManager
                 }
             });
         } else {
-            // Don't worry about advancing to the next song
-            who.removeFromTracks(key);
-            clearTrackUsage(who, audioItemId, new ConfirmAdapter(listener));
+            if (who.tracks.size() > 1) {
+                // Don't worry about advancing to the next song, modifying the queue shouldn't
+                // affect the currently playing track
+                who.removeFromTracks(key);
+                clearTrackUsage(who, audioItemId, new ConfirmAdapter(listener));
+            } else {
+                // If they removed their last track, remove them from DJ-ing
+                removeDj(who);
+            }
         }
     }
 
@@ -553,11 +561,12 @@ public class RoomManager extends SpotSceneManager
     protected void playDj (int memberId, Track track)
     {
         if (track == null) {
+            // Find the next track in their queue
             MemberObject who = _locator.lookupMember(memberId);
             track = Collections.min(ImmutableList.copyOf(who.tracks));
 
-            // TODO(bruno): Move this track to the end of their queue
-            track.order = 0;
+            // Slide it to the bottom of their queue
+            track.order = appendOrder(who.tracks);
             who.updateTracks(track);
         }
 
@@ -569,17 +578,32 @@ public class RoomManager extends SpotSceneManager
             recent.dj = _locator.lookupMember(oldTrack.audio.ownerId).memberName;
             recent.audio = oldTrack.audio;
             recent.rating = oldTrack.rating;
-            recent.order = _roomObj.playCount;
+            recent.order = appendOrder(_roomObj.recentTracks);
             _roomObj.addToRecentTracks(recent);
 
-            // TODO(bruno): Limit the size of recentTracks
+            // Trim off the oldest song if necessary
+            if (_roomObj.recentTracks.size() > TRACK_HISTORY_SIZE) {
+                RecentTrack oldest = Collections.min(ImmutableList.copyOf(_roomObj.recentTracks));
+                _roomObj.removeFromRecentTracks(oldest.getKey());
+            }
         }
 
         _roomObj.setCurrentDj(memberId);
         _roomObj.setTrack(track);
+        _roomObj.setPlayCount(_roomObj.playCount + 1);
         _roomObj.commitTransaction();
 
         log.info("Now playing", "DJ", memberId, "audio", track.audio);
+    }
+
+    // Helper to calculate the order field needed to append a track to a sorted track DSet.
+    protected static int appendOrder (DSet<? extends Track> dset)
+    {
+        if (dset.isEmpty()) {
+            return 0;
+        }
+        Track max = Collections.max(ImmutableList.copyOf(dset));
+        return max.order + 1;
     }
 
     /**
@@ -591,16 +615,15 @@ public class RoomManager extends SpotSceneManager
             return;
         }
 
-        log.info("Removing DJ from room", "who", who);
-
-        for (Track track : who.tracks) {
-            clearTrackUsage(who, track.audio.itemId, null);
-        }
-        who.setTracks(new DSet<Track>());
-        _roomObj.removeFromDjs(who.getMemberId());
-
-        if (_roomObj.currentDj == who.getMemberId()) {
-            playNextDj();
+        if (_roomObj.djs.size() > 1) {
+            log.info("Removing DJ from room", "who", who);
+            for (Track track : who.tracks) {
+                clearTrackUsage(who, track.audio.itemId, null);
+            }
+            who.setTracks(new DSet<Track>());
+            _roomObj.removeFromDjs(who.getMemberId());
+        } else {
+            removeAllDjs();
         }
     }
 
@@ -621,7 +644,8 @@ public class RoomManager extends SpotSceneManager
         _roomObj.startTransaction();
         _roomObj.setDjs(new DSet<Deejay>());
         _roomObj.setTrack(null);
-        _roomObj.setCurrentDj(-1);
+        _roomObj.setCurrentDj(0);
+        _roomObj.setPlayCount(0); // Tells clients to go back to playing the regular playlist
         _roomObj.setRecentTracks(new DSet<RecentTrack>());
         _roomObj.commitTransaction();
     }
@@ -719,7 +743,11 @@ public class RoomManager extends SpotSceneManager
             return; // not applicable, another client has already set us straight
         }
 
-        playNextSong(false);
+        if (_roomObj.inDjMode()) {
+            playNextDj();
+        } else {
+            playNextSong(false);
+        }
     }
 
     // documentation inherited from RoomProvider
@@ -2371,6 +2399,9 @@ public class RoomManager extends SpotSceneManager
 
     /** The maximum number of songs in the playlist. */
     protected static final int MAX_PLAYLIST_SIZE = 99;
+
+    /** The number of DJ-ed tracks stored after being played. */
+    protected static final int TRACK_HISTORY_SIZE = 10;
 
     /** The puppet oid. Global, immutable. */
     protected static final Integer PUPPET_OID = Integer.valueOf(0);
