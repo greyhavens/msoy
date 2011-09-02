@@ -3,26 +3,28 @@
 
 package com.threerings.msoy.room.client {
 
-import com.threerings.msoy.ui.MsoyAudioDisplay;
-import com.threerings.msoy.item.data.all.ItemIdent;
-import com.threerings.util.F;
 import flash.events.Event;
+
 import mx.containers.HBox;
-import mx.core.ClassFactory;
 import mx.containers.VBox;
-import mx.events.FlexEvent;
+import mx.core.ClassFactory;
 
 import com.threerings.util.Comparators;
-import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.world.client.WorldController;
+import com.threerings.util.F;
+
 import com.threerings.flex.CommandButton;
-import com.threerings.msoy.world.client.WorldContext;
-import com.threerings.msoy.room.data.RoomObject;
 import com.threerings.flex.DSetList;
-import com.threerings.msoy.client.Msgs;
-import com.threerings.msoy.room.data.MsoySceneModel;
 import com.threerings.flex.FlexUtil;
+
+import com.threerings.msoy.client.Msgs;
+import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.room.data.MsoyScene;
+import com.threerings.msoy.room.data.MsoySceneModel;
+import com.threerings.msoy.room.data.RoomObject;
+import com.threerings.msoy.ui.MsoyAudioDisplay;
+import com.threerings.msoy.world.client.WorldContext;
+import com.threerings.msoy.world.client.WorldController;
 
 public class Playlist extends VBox
 {

@@ -26,6 +26,9 @@ public interface RoomService extends InvocationService
     function addOrRemoveSong (arg1 :int, arg2 :Boolean, arg3 :InvocationService_ConfirmListener) :void;
 
     // from Java interface RoomService
+    function bootDj (arg1 :int, arg2 :InvocationService_InvocationListener) :void;
+
+    // from Java interface RoomService
     function changeLocation (arg1 :ItemIdent, arg2 :Location) :void;
 
     // from Java interface RoomService
@@ -45,6 +48,9 @@ public interface RoomService extends InvocationService
 
     // from Java interface RoomService
     function publishRoom (arg1 :InvocationService_InvocationListener) :void;
+
+    // from Java interface RoomService
+    function quitDjing () :void;
 
     // from Java interface RoomService
     function rateRoom (arg1 :int, arg2 :InvocationService_InvocationListener) :void;

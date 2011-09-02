@@ -30,6 +30,12 @@ public interface RoomProvider extends InvocationProvider
         throws InvocationException;
 
     /**
+     * Handles a {@link RoomService#bootDj} request.
+     */
+    void bootDj (ClientObject caller, int arg1, InvocationService.InvocationListener arg2)
+        throws InvocationException;
+
+    /**
      * Handles a {@link RoomService#changeLocation} request.
      */
     void changeLocation (ClientObject caller, ItemIdent arg1, Location arg2);
@@ -68,6 +74,11 @@ public interface RoomProvider extends InvocationProvider
      */
     void publishRoom (ClientObject caller, InvocationService.InvocationListener arg1)
         throws InvocationException;
+
+    /**
+     * Handles a {@link RoomService#quitDjing} request.
+     */
+    void quitDjing (ClientObject caller);
 
     /**
      * Handles a {@link RoomService#rateRoom} request.

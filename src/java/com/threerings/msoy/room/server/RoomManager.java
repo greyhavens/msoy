@@ -740,6 +740,21 @@ public class RoomManager extends SpotSceneManager
         }
     }
 
+    public void quitDjing (ClientObject caller)
+    {
+        MemberObject who = _locator.lookupMember(caller);
+        removeDj(who);
+    }
+
+    public void bootDj (ClientObject caller, int memberId, InvocationListener listener)
+        throws InvocationException
+    {
+        requireManager(caller);
+
+        MemberObject who = _locator.lookupMember(memberId);
+        removeDj(who);
+    }
+
     // documentation inherited from RoomProvider
     public void jumpToSong (
         ClientObject caller, int songId, InvocationService.ConfirmListener listener)
@@ -854,10 +869,7 @@ public class RoomManager extends SpotSceneManager
     public void publishRoom (ClientObject caller, RoomService.InvocationListener listener)
         throws InvocationException
     {
-        MemberObject user = _locator.requireMember(caller);
-        if (!canManage(user)) {
-            throw new InvocationException(RoomCodes.E_ACCESS_DENIED);
-        }
+        requireManager(caller);
 
         _invoker.postUnit(new WriteOnlyUnit("publishRoom") {
             public void invokePersist () {

@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.avrg.client {
 
-import com.threerings.util.Float;
 import com.threerings.util.Integer;
 
 import com.threerings.presents.client.InvocationService;

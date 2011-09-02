@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.room.client {
 
-import com.threerings.msoy.room.data.Track;
 import flash.events.MouseEvent;
 
 import mx.containers.HBox;
@@ -27,6 +26,7 @@ import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.item.data.all.Audio;
 import com.threerings.msoy.room.data.MemberInfo;
 import com.threerings.msoy.room.data.RoomObject;
+import com.threerings.msoy.room.data.Track;
 import com.threerings.msoy.ui.MediaControls;
 import com.threerings.msoy.world.client.WorldContext;
 
@@ -62,7 +62,7 @@ public class PlaylistRenderer extends HBox
             _playBtn.visible = !topTrack;
 
             // TODO(bruno): Why doesn't this work?
-            //setStyle("backgroundColor", topTrack ? "#ff0000" : undefined);
+            // setStyle("backgroundColor", topTrack ? 0x54a9da : undefined);
 
         } else {
             var isPlayingNow :Boolean = (roomObj.currentSongId == audio.itemId);

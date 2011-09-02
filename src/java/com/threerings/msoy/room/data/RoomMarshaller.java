@@ -39,8 +39,21 @@ public class RoomMarshaller extends InvocationMarshaller
         });
     }
 
+    /** The method id used to dispatch {@link #bootDj} requests. */
+    public static final int BOOT_DJ = 2;
+
+    // from interface RoomService
+    public void bootDj (int arg1, InvocationService.InvocationListener arg2)
+    {
+        ListenerMarshaller listener2 = new ListenerMarshaller();
+        listener2.listener = arg2;
+        sendRequest(BOOT_DJ, new Object[] {
+            Integer.valueOf(arg1), listener2
+        });
+    }
+
     /** The method id used to dispatch {@link #changeLocation} requests. */
-    public static final int CHANGE_LOCATION = 2;
+    public static final int CHANGE_LOCATION = 3;
 
     // from interface RoomService
     public void changeLocation (ItemIdent arg1, Location arg2)
@@ -51,7 +64,7 @@ public class RoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #despawnMob} requests. */
-    public static final int DESPAWN_MOB = 3;
+    public static final int DESPAWN_MOB = 4;
 
     // from interface RoomService
     public void despawnMob (int arg1, String arg2, InvocationService.InvocationListener arg3)
@@ -64,7 +77,7 @@ public class RoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #editRoom} requests. */
-    public static final int EDIT_ROOM = 4;
+    public static final int EDIT_ROOM = 5;
 
     // from interface RoomService
     public void editRoom (InvocationService.ResultListener arg1)
@@ -77,7 +90,7 @@ public class RoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #jumpToSong} requests. */
-    public static final int JUMP_TO_SONG = 5;
+    public static final int JUMP_TO_SONG = 6;
 
     // from interface RoomService
     public void jumpToSong (int arg1, InvocationService.ConfirmListener arg2)
@@ -90,7 +103,7 @@ public class RoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #moveMob} requests. */
-    public static final int MOVE_MOB = 6;
+    public static final int MOVE_MOB = 7;
 
     // from interface RoomService
     public void moveMob (int arg1, String arg2, Location arg3, InvocationService.InvocationListener arg4)
@@ -103,7 +116,7 @@ public class RoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #promoteTrack} requests. */
-    public static final int PROMOTE_TRACK = 7;
+    public static final int PROMOTE_TRACK = 8;
 
     // from interface RoomService
     public void promoteTrack (int arg1)
@@ -114,7 +127,7 @@ public class RoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #publishRoom} requests. */
-    public static final int PUBLISH_ROOM = 8;
+    public static final int PUBLISH_ROOM = 9;
 
     // from interface RoomService
     public void publishRoom (InvocationService.InvocationListener arg1)
@@ -126,8 +139,18 @@ public class RoomMarshaller extends InvocationMarshaller
         });
     }
 
+    /** The method id used to dispatch {@link #quitDjing} requests. */
+    public static final int QUIT_DJING = 10;
+
+    // from interface RoomService
+    public void quitDjing ()
+    {
+        sendRequest(QUIT_DJING, new Object[] {
+        });
+    }
+
     /** The method id used to dispatch {@link #rateRoom} requests. */
-    public static final int RATE_ROOM = 9;
+    public static final int RATE_ROOM = 11;
 
     // from interface RoomService
     public void rateRoom (byte arg1, InvocationService.InvocationListener arg2)
@@ -140,7 +163,7 @@ public class RoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #requestControl} requests. */
-    public static final int REQUEST_CONTROL = 10;
+    public static final int REQUEST_CONTROL = 12;
 
     // from interface RoomService
     public void requestControl (ItemIdent arg1)
@@ -151,7 +174,7 @@ public class RoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #sendPostcard} requests. */
-    public static final int SEND_POSTCARD = 11;
+    public static final int SEND_POSTCARD = 13;
 
     // from interface RoomService
     public void sendPostcard (String[] arg1, String arg2, String arg3, String arg4, InvocationService.ConfirmListener arg5)
@@ -164,7 +187,7 @@ public class RoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #sendSpriteMessage} requests. */
-    public static final int SEND_SPRITE_MESSAGE = 12;
+    public static final int SEND_SPRITE_MESSAGE = 14;
 
     // from interface RoomService
     public void sendSpriteMessage (ItemIdent arg1, String arg2, byte[] arg3, boolean arg4)
@@ -175,7 +198,7 @@ public class RoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #sendSpriteSignal} requests. */
-    public static final int SEND_SPRITE_SIGNAL = 13;
+    public static final int SEND_SPRITE_SIGNAL = 15;
 
     // from interface RoomService
     public void sendSpriteSignal (String arg1, byte[] arg2)
@@ -186,7 +209,7 @@ public class RoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #setActorState} requests. */
-    public static final int SET_ACTOR_STATE = 14;
+    public static final int SET_ACTOR_STATE = 16;
 
     // from interface RoomService
     public void setActorState (ItemIdent arg1, int arg2, String arg3)
@@ -197,7 +220,7 @@ public class RoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #songEnded} requests. */
-    public static final int SONG_ENDED = 15;
+    public static final int SONG_ENDED = 17;
 
     // from interface RoomService
     public void songEnded (int arg1)
@@ -208,7 +231,7 @@ public class RoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #spawnMob} requests. */
-    public static final int SPAWN_MOB = 16;
+    public static final int SPAWN_MOB = 18;
 
     // from interface RoomService
     public void spawnMob (int arg1, String arg2, String arg3, Location arg4, InvocationService.InvocationListener arg5)
@@ -221,7 +244,7 @@ public class RoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #updateMemory} requests. */
-    public static final int UPDATE_MEMORY = 17;
+    public static final int UPDATE_MEMORY = 19;
 
     // from interface RoomService
     public void updateMemory (ItemIdent arg1, String arg2, byte[] arg3, InvocationService.ResultListener arg4)
@@ -234,7 +257,7 @@ public class RoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #updateRoom} requests. */
-    public static final int UPDATE_ROOM = 18;
+    public static final int UPDATE_ROOM = 20;
 
     // from interface RoomService
     public void updateRoom (SceneUpdate arg1, InvocationService.InvocationListener arg2)

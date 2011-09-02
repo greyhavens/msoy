@@ -61,6 +61,16 @@ public interface RoomService extends InvocationService
     void promoteTrack (int audioId);
 
     /**
+     * If the player was DJ-ing, remove them.
+     */
+    void quitDjing ();
+
+    /**
+     * Requests to remove another DJ from rotation.
+     */
+    void bootDj (int memberId, InvocationListener listener);
+
+    /**
      * For managers, request to jump to a particular song in the playlist.
      */
     void jumpToSong (int audioId, ConfirmListener listener);
