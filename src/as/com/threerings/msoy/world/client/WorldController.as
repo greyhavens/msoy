@@ -75,7 +75,7 @@ import com.threerings.msoy.item.data.ItemMarshaller;
 import com.threerings.msoy.item.data.all.Audio;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
-import com.threerings.msoy.room.client.PlaylistMusicDialog;
+import com.threerings.msoy.room.client.RoomMusicDialog;
 import com.threerings.msoy.room.client.RoomObjectController;
 import com.threerings.msoy.room.client.RoomObjectView;
 import com.threerings.msoy.room.client.RoomView;
@@ -1706,7 +1706,7 @@ public class WorldController extends MsoyController
         if (_music != null && _musicDialog == null) {
             var room :RoomObject = _wctx.getLocationDirector().getPlaceObject() as RoomObject;
             var scene :MsoyScene = _wctx.getSceneDirector().getScene() as MsoyScene;
-            _musicDialog = new PlaylistMusicDialog(
+            _musicDialog = new RoomMusicDialog(
                 _wctx, trigger.localToGlobal(new Point()), room, scene);
             _musicDialog.addCloseCallback(function () :void {
                 _musicDialog = null;
@@ -1747,7 +1747,7 @@ public class WorldController extends MsoyController
     /** Have we paused the music so that we can play some media in gwt? */
     protected var _musicPausedForGwt :Boolean;
 
-    protected var _musicDialog :PlaylistMusicDialog;
+    protected var _musicDialog :RoomMusicDialog;
 
     protected var _snapPanel :SnapshotPanel;
 

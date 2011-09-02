@@ -495,7 +495,7 @@ public class RoomManager extends SpotSceneManager
                         return;
                     }
 
-                    boolean firstDJ = false;
+                    boolean firstDj = !_roomObj.inDjMode();
                     if (!_roomObj.djs.containsKey(who.getMemberId())) {
                         if (_roomObj.djs.size() > 3) {
                             listener.requestFailed("e.too_many_djs");
@@ -505,15 +505,14 @@ public class RoomManager extends SpotSceneManager
                         dj.memberId = who.getMemberId();
                         dj.startedAt = System.currentTimeMillis();
                         _roomObj.addToDjs(dj);
-                        firstDJ = true;
                     }
 
                     Track track = new Track();
-                    track.order = appendOrder(who.tracks);
+                    track.order = prependOrder(who.tracks);
                     track.audio = (Audio) result;
                     who.addToTracks(track);
 
-                    if (firstDJ) {
+                    if (firstDj) {
                         playDj(who.getMemberId(), track);
                     }
 
@@ -606,6 +605,15 @@ public class RoomManager extends SpotSceneManager
         return max.order + 1;
     }
 
+    protected static int prependOrder (DSet<? extends Track> dset)
+    {
+        if (dset.isEmpty()) {
+            return 0;
+        }
+        Track min = Collections.min(ImmutableList.copyOf(dset));
+        return min.order - 1;
+    }
+
     /**
      * Entirely remove the DJ from rotation.
      */
@@ -622,6 +630,10 @@ public class RoomManager extends SpotSceneManager
             }
             who.setTracks(new DSet<Track>());
             _roomObj.removeFromDjs(who.getMemberId());
+
+            if (_roomObj.currentDj == who.getMemberId()) {
+                playNextDj();
+            }
         } else {
             removeAllDjs();
         }
@@ -715,6 +727,17 @@ public class RoomManager extends SpotSceneManager
                 addToPlaylist2(who, (Audio)result, listener);
             }
         });
+    }
+
+    public void promoteTrack (ClientObject caller, int audioId)
+    {
+        MemberObject who = _locator.lookupMember(caller);
+        ItemIdent key = new ItemIdent(MsoyItemType.AUDIO, audioId);
+        Track track = who.tracks.get(key);
+        if (track != null) {
+            track.order = prependOrder(who.tracks);
+            who.updateTracks(track);
+        }
     }
 
     // documentation inherited from RoomProvider

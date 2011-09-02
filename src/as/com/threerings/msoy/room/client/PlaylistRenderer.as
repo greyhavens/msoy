@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.room.client {
 
+import com.threerings.msoy.room.data.Track;
 import flash.events.MouseEvent;
 
 import mx.containers.HBox;
@@ -33,6 +34,7 @@ public class PlaylistRenderer extends HBox
 {
     public var wctx :WorldContext;
     public var roomObj :RoomObject;
+    public var djMode :Boolean;
 
     public function PlaylistRenderer ()
     {
@@ -46,30 +48,55 @@ public class PlaylistRenderer extends HBox
             return;
         }
 
-        var audio :Audio = Audio(value);
-        var isPlayingNow :Boolean = (roomObj.currentSongId == audio.itemId);
-        var isManager :Boolean = wctx.getMsoyController().canManagePlace();
-        var canRemove :Boolean = isManager || (wctx.getMyId() == audio.ownerId);
+        var audio :Audio = getAudio();
+        var canRemove :Boolean = djMode || isManager || (wctx.getMyId() == audio.ownerId);
 
-        FlexUtil.setVisible(_playBtn, isManager);
-        _playBtn.enabled = !isPlayingNow;
-        _thumbnail.setMediaDesc(audio.getThumbnailMedia());
-        updateName();
-        if (audio.used.forAnything()) {
-            _name.toolTip = Msgs.WORLD.get("i.manager_music");
+        if (djMode) {
+            var minOrder :int = int.MAX_VALUE;
+            for each (var track :Track in wctx.getMemberObject().tracks.toArray()) {
+                if (track.order < minOrder) {
+                    minOrder = track.order;
+                }
+            }
+            var topTrack :Boolean = (Track(data).order == minOrder);
+            _playBtn.visible = !topTrack;
+
+            // TODO(bruno): Why doesn't this work?
+            //setStyle("backgroundColor", topTrack ? "#ff0000" : undefined);
+
         } else {
-            var info :MemberInfo = roomObj.getMemberInfo(audio.ownerId);
-            _name.toolTip = Msgs.WORLD.get("i.visitor_music",
-                (info != null) ? info.username : Msgs.WORLD.get("m.none"));
+            var isPlayingNow :Boolean = (roomObj.currentSongId == audio.itemId);
+            var isManager :Boolean = wctx.getMsoyController().canManagePlace();
+
+            FlexUtil.setVisible(_playBtn, isManager);
+            _playBtn.enabled = !isPlayingNow;
+            if (audio.used.forAnything()) {
+                _name.toolTip = Msgs.WORLD.get("i.manager_music");
+            } else {
+                var info :MemberInfo = roomObj.getMemberInfo(audio.ownerId);
+                _name.toolTip = Msgs.WORLD.get("i.visitor_music",
+                    (info != null) ? info.username : Msgs.WORLD.get("m.none"));
+            }
+            _name.setStyle("fontWeight", isPlayingNow ? "bold" : "normal");
         }
-        _name.setStyle("fontWeight", isPlayingNow ? "bold" : "normal");
+
+        updateName();
+        _thumbnail.setMediaDesc(audio.getThumbnailMedia());
         FlexUtil.setVisible(_removeBtn, canRemove);
         _removeBtn.enabled = canRemove;
     }
 
+    protected function getAudio () :Audio
+    {
+        if (data == null) {
+            return null;
+        }
+        return djMode ? Track(data).audio : Audio(data);
+    }
+
     protected function updateName () :void
     {
-        var audio :Audio = Audio(data);
+        var audio :Audio = getAudio();
         var isBleeped :Boolean = audio.audioMedia.isBleepable() &&
             (Prefs.isGlobalBleep() || Prefs.isMediaBleeped(audio.audioMedia.getMediaId()));
         if (isBleeped) {
@@ -85,7 +112,7 @@ public class PlaylistRenderer extends HBox
     {
         super.createChildren();
 
-        _playBtn = new CommandButton("\u25B6", doPlay);
+        _playBtn = new CommandButton(djMode ? "\u2B06" : "\u25B6", doPlay);
         addChild(_playBtn);
 
         _thumbnail = MediaWrapper.createView(null, MediaDescSize.QUARTER_THUMBNAIL_SIZE);
@@ -105,20 +132,25 @@ public class PlaylistRenderer extends HBox
 
     protected function doPlay () :void
     {
-        roomObj.roomService.jumpToSong(Audio(data).itemId,
-            wctx.confirmListener(null, MsoyCodes.WORLD_MSGS, null, _playBtn));
+        var itemId :int = getAudio().itemId;
+        if (djMode) {
+            roomObj.roomService.promoteTrack(itemId);
+        } else {
+            roomObj.roomService.jumpToSong(itemId,
+                wctx.confirmListener(null, MsoyCodes.WORLD_MSGS, null, _playBtn));
+        }
     }
 
     protected function doRemove () :void
     {
-        roomObj.roomService.addOrRemoveSong(Audio(data).itemId, false,
+        roomObj.roomService.addOrRemoveSong(getAudio().itemId, false,
             wctx.confirmListener(null, MsoyCodes.WORLD_MSGS));
         _removeBtn.enabled = false;
     }
 
     protected function handleBleepChange (event :NamedValueEvent) :void
     {
-        var audio :Audio = Audio(data);
+        var audio :Audio = getAudio();
         if (audio != null && audio.audioMedia.isBleepable() &&
                 (event.name == Prefs.GLOBAL_BLEEP || event.name == audio.audioMedia.getMediaId())) {
             updateName();
@@ -127,7 +159,7 @@ public class PlaylistRenderer extends HBox
 
     protected function handleInfoClicked (event :MouseEvent) :void
     {
-        var audio :Audio = Audio(data);
+        var audio :Audio = getAudio();
         CommandEvent.dispatch(this, MsoyController.AUDIO_CLICKED,
             [ audio.audioMedia, audio.getIdent() ]);
     }

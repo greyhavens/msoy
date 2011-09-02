@@ -56,6 +56,11 @@ public interface RoomService extends InvocationService
     void addOrRemoveSong (int audioId, boolean add, ConfirmListener listener);
 
     /**
+     * Promote a DJ track to the top of a player's queue.
+     */
+    void promoteTrack (int audioId);
+
+    /**
      * For managers, request to jump to a particular song in the playlist.
      */
     void jumpToSong (int audioId, ConfirmListener listener);

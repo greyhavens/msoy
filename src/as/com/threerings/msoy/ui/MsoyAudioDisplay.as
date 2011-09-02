@@ -67,7 +67,7 @@ public class MsoyAudioDisplay extends Sprite
     }
 
     /**
-     * Stop playing our video.
+     * Stop playing our audio.
      */
     public function unload () :void
     {
