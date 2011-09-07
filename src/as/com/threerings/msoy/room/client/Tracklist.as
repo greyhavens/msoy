@@ -3,10 +3,13 @@
 
 package com.threerings.msoy.room.client {
 
+import com.threerings.msoy.room.data.Track;
 import flash.events.Event;
 
 import mx.containers.VBox;
 import mx.core.ClassFactory;
+import mx.events.DragEvent;
+import mx.events.ListEvent;
 
 import com.threerings.util.Comparators;
 import com.threerings.util.F;
@@ -36,6 +39,35 @@ public class Tracklist extends VBox
         _playlist.percentWidth = 100;
         _playlist.height = 100;
         addChild(_playlist);
+
+        // Drag and drop to reorder songs
+        var dragIndex :int = -1;
+        _playlist.selectable = true;
+        _playlist.dragEnabled = true;
+        _playlist.dragMoveEnabled = true;
+        _playlist.dropEnabled = true;
+        _playlist.addEventListener(DragEvent.DRAG_DROP, function (event :DragEvent) :void {
+            var dropIndex :int = _playlist.calculateDropIndex();
+            if (dragIndex != -1 && dragIndex != dropIndex) {
+                var audioId :int = Track(_playlist.dataProvider.getItemAt(dragIndex)).audio.itemId;
+                _roomObj.roomService.setTrackIndex(audioId, dropIndex);
+            }
+        });
+        _playlist.addEventListener(ListEvent.CHANGE, function (..._) :void {
+            // Flex dragging requires selectable=true, but selectable songs don't make sense. So,
+            // clear the list selection, but keep a copy of the index so we know where the drag
+            // started from.
+            dragIndex = _playlist.selectedIndex;
+            _playlist.selectedIndex = -1;
+        });
+
+        // Show the remove button only on mouse over
+        _playlist.addEventListener(ListEvent.ITEM_ROLL_OVER, function (event :ListEvent) :void {
+            PlaylistRenderer(event.itemRenderer).showRemoveButton(true);
+        });
+        _playlist.addEventListener(ListEvent.ITEM_ROLL_OUT, function (event :ListEvent) :void {
+            PlaylistRenderer(event.itemRenderer).showRemoveButton(false);
+        });
 
         addEventListener(Event.ADDED_TO_STAGE, function (..._) :void {
             _playlist.init(_ctx.getMemberObject(), MemberObject.TRACKS);

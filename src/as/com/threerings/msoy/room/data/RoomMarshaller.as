@@ -124,19 +124,8 @@ public class RoomMarshaller extends InvocationMarshaller
         ]);
     }
 
-    /** The method id used to dispatch <code>promoteTrack</code> requests. */
-    public static const PROMOTE_TRACK :int = 8;
-
-    // from interface RoomService
-    public function promoteTrack (arg1 :int) :void
-    {
-        sendRequest(PROMOTE_TRACK, [
-            Integer.valueOf(arg1)
-        ]);
-    }
-
     /** The method id used to dispatch <code>publishRoom</code> requests. */
-    public static const PUBLISH_ROOM :int = 9;
+    public static const PUBLISH_ROOM :int = 8;
 
     // from interface RoomService
     public function publishRoom (arg1 :InvocationService_InvocationListener) :void
@@ -149,7 +138,7 @@ public class RoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch <code>quitDjing</code> requests. */
-    public static const QUIT_DJING :int = 10;
+    public static const QUIT_DJING :int = 9;
 
     // from interface RoomService
     public function quitDjing () :void
@@ -159,7 +148,7 @@ public class RoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch <code>rateRoom</code> requests. */
-    public static const RATE_ROOM :int = 11;
+    public static const RATE_ROOM :int = 10;
 
     // from interface RoomService
     public function rateRoom (arg1 :int, arg2 :InvocationService_InvocationListener) :void
@@ -172,7 +161,7 @@ public class RoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch <code>requestControl</code> requests. */
-    public static const REQUEST_CONTROL :int = 12;
+    public static const REQUEST_CONTROL :int = 11;
 
     // from interface RoomService
     public function requestControl (arg1 :ItemIdent) :void
@@ -183,7 +172,7 @@ public class RoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch <code>sendPostcard</code> requests. */
-    public static const SEND_POSTCARD :int = 13;
+    public static const SEND_POSTCARD :int = 12;
 
     // from interface RoomService
     public function sendPostcard (arg1 :TypedArray /* of class java.lang.String */, arg2 :String, arg3 :String, arg4 :String, arg5 :InvocationService_ConfirmListener) :void
@@ -196,7 +185,7 @@ public class RoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch <code>sendSpriteMessage</code> requests. */
-    public static const SEND_SPRITE_MESSAGE :int = 14;
+    public static const SEND_SPRITE_MESSAGE :int = 13;
 
     // from interface RoomService
     public function sendSpriteMessage (arg1 :ItemIdent, arg2 :String, arg3 :ByteArray, arg4 :Boolean) :void
@@ -207,7 +196,7 @@ public class RoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch <code>sendSpriteSignal</code> requests. */
-    public static const SEND_SPRITE_SIGNAL :int = 15;
+    public static const SEND_SPRITE_SIGNAL :int = 14;
 
     // from interface RoomService
     public function sendSpriteSignal (arg1 :String, arg2 :ByteArray) :void
@@ -218,13 +207,24 @@ public class RoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch <code>setActorState</code> requests. */
-    public static const SET_ACTOR_STATE :int = 16;
+    public static const SET_ACTOR_STATE :int = 15;
 
     // from interface RoomService
     public function setActorState (arg1 :ItemIdent, arg2 :int, arg3 :String) :void
     {
         sendRequest(SET_ACTOR_STATE, [
             arg1, Integer.valueOf(arg2), arg3
+        ]);
+    }
+
+    /** The method id used to dispatch <code>setTrackIndex</code> requests. */
+    public static const SET_TRACK_INDEX :int = 16;
+
+    // from interface RoomService
+    public function setTrackIndex (arg1 :int, arg2 :int) :void
+    {
+        sendRequest(SET_TRACK_INDEX, [
+            Integer.valueOf(arg1), Integer.valueOf(arg2)
         ]);
     }
 

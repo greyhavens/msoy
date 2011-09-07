@@ -65,11 +65,6 @@ public interface RoomProvider extends InvocationProvider
         throws InvocationException;
 
     /**
-     * Handles a {@link RoomService#promoteTrack} request.
-     */
-    void promoteTrack (ClientObject caller, int arg1);
-
-    /**
      * Handles a {@link RoomService#publishRoom} request.
      */
     void publishRoom (ClientObject caller, InvocationService.InvocationListener arg1)
@@ -111,6 +106,11 @@ public interface RoomProvider extends InvocationProvider
      * Handles a {@link RoomService#setActorState} request.
      */
     void setActorState (ClientObject caller, ItemIdent arg1, int arg2, String arg3);
+
+    /**
+     * Handles a {@link RoomService#setTrackIndex} request.
+     */
+    void setTrackIndex (ClientObject caller, int arg1, int arg2);
 
     /**
      * Handles a {@link RoomService#songEnded} request.

@@ -44,9 +44,6 @@ public interface RoomService extends InvocationService
     function moveMob (arg1 :int, arg2 :String, arg3 :Location, arg4 :InvocationService_InvocationListener) :void;
 
     // from Java interface RoomService
-    function promoteTrack (arg1 :int) :void;
-
-    // from Java interface RoomService
     function publishRoom (arg1 :InvocationService_InvocationListener) :void;
 
     // from Java interface RoomService
@@ -69,6 +66,9 @@ public interface RoomService extends InvocationService
 
     // from Java interface RoomService
     function setActorState (arg1 :ItemIdent, arg2 :int, arg3 :String) :void;
+
+    // from Java interface RoomService
+    function setTrackIndex (arg1 :int, arg2 :int) :void;
 
     // from Java interface RoomService
     function songEnded (arg1 :int) :void;

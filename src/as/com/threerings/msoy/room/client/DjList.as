@@ -3,11 +3,17 @@
 
 package com.threerings.msoy.room.client {
 
+import com.threerings.msoy.client.Msgs;
+import com.threerings.msoy.world.client.WorldController;
+import com.threerings.flex.CommandButton;
+import com.threerings.msoy.item.data.all.Item;
 import flash.events.Event;
 
-import mx.containers.VBox;
+import mx.containers.HBox;
 import mx.controls.HorizontalList;
 import mx.core.ClassFactory;
+import mx.events.CollectionEvent;
+import mx.collections.ArrayCollection;
 
 import com.threerings.util.Comparators;
 import com.threerings.util.F;
@@ -18,8 +24,10 @@ import com.threerings.msoy.room.data.RoomObject;
 import com.threerings.msoy.ui.MsoyAudioDisplay;
 import com.threerings.msoy.world.client.WorldContext;
 
-public class DjList extends VBox
+public class DjList extends HBox
 {
+    public static const MAX_DJS :int = 4;
+
     public function DjList (ctx :WorldContext, roomObj :RoomObject)
     {
         _ctx = ctx;
@@ -32,8 +40,9 @@ public class DjList extends VBox
         cf.properties = { wctx: _ctx, roomObj: _roomObj };
         _list = new HorizontalList();
         _list.itemRenderer = cf;
-        _list.percentWidth = 100;
+        _list.maxWidth = MsoyAudioDisplay.WIDTH;
         _list.selectable = false;
+        _list.setStyle("borderStyle", "none");
         addChild(_list);
 
         // Steal DSetList's shiny dataProvider
@@ -46,13 +55,27 @@ public class DjList extends VBox
         });
         addEventListener(Event.REMOVED_FROM_STAGE, F.adapt(dsetList.shutdown));
 
+        addChild(_addButton = new CommandButton(Msgs.WORLD.get("b.add_music"),
+            WorldController.VIEW_STUFF, Item.AUDIO));
+        _addButton.percentWidth = 100;
+        ArrayCollection(_list.dataProvider).addEventListener(
+            CollectionEvent.COLLECTION_CHANGE, onListChange);
+
         // HACK: Can't get percentWidth working properly, fixed width for now
         this.width = MsoyAudioDisplay.WIDTH;
+    }
+
+    protected function onListChange (..._) :void
+    {
+        _addButton.visible = (_list.dataProvider.length < MAX_DJS);
+        trace("onListChange");
+        _list.validateSize();
     }
 
     protected var _ctx :WorldContext;
     protected var _roomObj :RoomObject;
     protected var _list :HorizontalList;
+    protected var _addButton :CommandButton;
 }
 }
 
@@ -72,25 +95,37 @@ import com.threerings.msoy.room.data.Deejay;
 import com.threerings.msoy.room.data.MemberInfo;
 import com.threerings.msoy.room.data.RoomObject;
 import com.threerings.msoy.ui.MsoyAudioDisplay;
+import com.threerings.msoy.room.client.DjList;
 import com.threerings.msoy.world.client.WorldContext;
 
 class DjPanel extends VBox
 {
-    public static const WIDTH :int = MsoyAudioDisplay.WIDTH / 5;
+    public static const WIDTH :int = MsoyAudioDisplay.WIDTH / DjList.MAX_DJS;
 
     public var wctx :WorldContext;
     public var roomObj :RoomObject;
+
+    public function DjPanel ()
+    {
+        var box :Canvas = new Canvas();
+        box.addChild(_headShot = MediaWrapper.createView(null, MediaDescSize.HALF_THUMBNAIL_SIZE));
+        _headShot.x = WIDTH/2 - 0.25*MediaDescSize.THUMBNAIL_WIDTH;
+
+        box.addChild(_bootBtn = new CommandButton());
+        _bootBtn.styleName = "closeButton";
+        _bootBtn.x = _headShot.x + 0.5*MediaDescSize.THUMBNAIL_WIDTH - 8;
+        _bootBtn.y = 0;
+        addChild(box);
+
+        addChild(_name = FlexUtil.createLabel("", "nameLabel"));
+        _name.width = WIDTH;
+        _name.setStyle("textAlign", "center");
+    }
 
     override public function set data (value :Object) :void
     {
         super.data = value;
         if (value == null) {
-            return;
-        }
-
-        if (_headShot == null) {
-            trace("Something broke, uhhm");
-            // Sometimes this setter is called before createChildren. WTF?
             return;
         }
 
@@ -112,25 +147,6 @@ class DjPanel extends VBox
         }
 
         setStyle("backgroundColor", (dj.memberId == roomObj.currentDj) ? 0x54a9da : undefined);
-    }
-
-    override protected function createChildren () :void
-    {
-        super.createChildren();
-
-        var box :Canvas = new Canvas();
-        box.addChild(_headShot = MediaWrapper.createView(null, MediaDescSize.HALF_THUMBNAIL_SIZE));
-        _headShot.x = WIDTH/2 - 0.25*MediaDescSize.THUMBNAIL_WIDTH;
-
-        box.addChild(_bootBtn = new CommandButton());
-        _bootBtn.styleName = "closeButton";
-        _bootBtn.x = _headShot.x + 0.5*MediaDescSize.THUMBNAIL_WIDTH - 8;
-        _bootBtn.y = 0;
-        addChild(box);
-
-        addChild(_name = FlexUtil.createLabel("", "nameLabel"));
-        _name.width = WIDTH;
-        _name.setStyle("textAlign", "center");
     }
 
     protected var _headShot :MediaWrapper;

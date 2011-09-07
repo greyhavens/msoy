@@ -497,7 +497,7 @@ public class RoomManager extends SpotSceneManager
 
                     boolean firstDj = !_roomObj.inDjMode();
                     if (!_roomObj.djs.containsKey(who.getMemberId())) {
-                        if (_roomObj.djs.size() > 3) {
+                        if (_roomObj.djs.size() > 4) {
                             listener.requestFailed("e.too_many_djs");
                             return;
                         }
@@ -729,14 +729,38 @@ public class RoomManager extends SpotSceneManager
         });
     }
 
-    public void promoteTrack (ClientObject caller, int audioId)
+    public void setTrackIndex (ClientObject caller, int audioId, int index)
     {
         MemberObject who = _locator.lookupMember(caller);
         ItemIdent key = new ItemIdent(MsoyItemType.AUDIO, audioId);
         Track track = who.tracks.get(key);
-        if (track != null) {
+        if (track == null) {
+            log.warning("Tried to reorder non-existant track?", "caller", caller);
+            return;
+        }
+
+        if (index <= 0) {
+            // Shortcut
             track.order = prependOrder(who.tracks);
             who.updateTracks(track);
+
+        } else {
+            List<Track> tracks = Lists.newArrayList(who.tracks);
+            Collections.sort(tracks);
+
+            // Move the track
+            track.order = tracks.get(index - 1).order + 1;
+            who.updateTracks(track);
+
+            // Cascade an increment to any remaining tracks
+            for (int ii = index, order = track.order; ii < tracks.size(); ++ii, ++order) {
+                Track t = tracks.get(ii);
+                if (t == track || t.order < order) {
+                    break;
+                }
+                t.order += 1;
+                who.updateTracks(t);
+            }
         }
     }
 

@@ -34,11 +34,33 @@ public class PlaylistRenderer extends HBox
 {
     public var wctx :WorldContext;
     public var roomObj :RoomObject;
-    public var djMode :Boolean;
+
+    public function get djMode () :Boolean { return _djMode; }
+    public function set djMode (djMode :Boolean) :void
+    {
+        _djMode = djMode;
+        _playBtn.label = djMode ? "\u2B06" : "\u25B6";
+    }
 
     public function PlaylistRenderer ()
     {
         Prefs.events.addEventListener(Prefs.BLEEPED_MEDIA, handleBleepChange, false, 0, true);
+
+        _playBtn = new CommandButton(null, doPlay);
+        _thumbnail = MediaWrapper.createView(null, MediaDescSize.QUARTER_THUMBNAIL_SIZE);
+        _removeBtn = new CommandButton(null, doRemove);
+        _removeBtn.styleName = "closeButton";
+        _name = FlexUtil.createLabel(null);
+
+        // 70 pix for buttons/spacing
+        // 30 pix: quarter thumbnail (20 pix) plus 10 pix of spacing.
+        _name.width = MediaControls.WIDTH - ScrollBar.THICKNESS - 70 - 30;
+        _name.addEventListener(MouseEvent.CLICK, handleInfoClicked);
+    }
+
+    public function showRemoveButton (show :Boolean) :void
+    {
+        _removeBtn.visible = show;
     }
 
     override public function set data (value :Object) :void
@@ -60,6 +82,7 @@ public class PlaylistRenderer extends HBox
             }
             var topTrack :Boolean = (Track(data).order == minOrder);
             _playBtn.visible = !topTrack;
+            showRemoveButton(false);
 
             // TODO(bruno): Why doesn't this work?
             // setStyle("backgroundColor", topTrack ? 0x54a9da : undefined);
@@ -78,12 +101,14 @@ public class PlaylistRenderer extends HBox
                     (info != null) ? info.username : Msgs.WORLD.get("m.none"));
             }
             _name.setStyle("fontWeight", isPlayingNow ? "bold" : "normal");
+
+            FlexUtil.setVisible(_removeBtn, canRemove);
         }
+
+        _removeBtn.enabled = canRemove;
 
         updateName();
         _thumbnail.setMediaDesc(audio.getThumbnailMedia());
-        FlexUtil.setVisible(_removeBtn, canRemove);
-        _removeBtn.enabled = canRemove;
     }
 
     protected function getAudio () :Audio
@@ -111,22 +136,10 @@ public class PlaylistRenderer extends HBox
     override protected function createChildren () :void
     {
         super.createChildren();
-
-        _playBtn = new CommandButton(djMode ? "\u2B06" : "\u25B6", doPlay);
         addChild(_playBtn);
-
-        _thumbnail = MediaWrapper.createView(null, MediaDescSize.QUARTER_THUMBNAIL_SIZE);
         addChild(_thumbnail);
-
-        _name = FlexUtil.createLabel(null);
-        // 70 pix for buttons/spacing
-        // 30 pix: quarter thumbnail (20 pix) plus 10 pix of spacing.
-        _name.width = MediaControls.WIDTH - ScrollBar.THICKNESS - 70 - 30;
-        _name.addEventListener(MouseEvent.CLICK, handleInfoClicked);
         addChild(_name);
 
-        _removeBtn = new CommandButton(null, doRemove);
-        _removeBtn.styleName = "closeButton";
         addChild(_removeBtn);
     }
 
@@ -134,7 +147,8 @@ public class PlaylistRenderer extends HBox
     {
         var itemId :int = getAudio().itemId;
         if (djMode) {
-            roomObj.roomService.promoteTrack(itemId);
+            // Move this track to the top of the queue
+            roomObj.roomService.setTrackIndex(itemId, 0);
         } else {
             roomObj.roomService.jumpToSong(itemId,
                 wctx.confirmListener(null, MsoyCodes.WORLD_MSGS, null, _playBtn));
@@ -168,5 +182,6 @@ public class PlaylistRenderer extends HBox
     protected var _thumbnail :MediaWrapper;
     protected var _name :Label;
     protected var _removeBtn :CommandButton;
+    protected var _djMode :Boolean;
 }
 }
