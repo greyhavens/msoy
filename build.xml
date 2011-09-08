@@ -219,6 +219,8 @@
     <artifact:dependencies filesetId="aslib.fileset">
       <remoteRepository refid="ooo.maven.depends.repo"/>
       <remoteRepository id="ooo-public" url="http://ooo-maven.googlecode.com/hg/repository"/>
+      <dependency groupId="org.osflash" artifactId="signals"
+                  version="0.8.1-ooo" type="swc"/>
       <dependency groupId="com.threerings" artifactId="toyboxlib"
                   version="1.0" type="swc"/>
       <dependency groupId="com.threerings" artifactId="whirledthanelib"
@@ -241,7 +243,7 @@
       <fileset refid="aslib.fileset"/>
       <chainedmapper>
         <mapper type="flatten"/>
-        <mapper type="regexp" from="(.+?)(-SNAPSHOT)?.swc" to="\1.swc"/>
+        <mapper type="regexp" from="(.+?)(-(SNAPSHOT|ooo))?.swc" to="\1.swc"/>
         <mapper type="regexp" from="(.*)-([^-])+.swc" to="\1.swc"/>
       </chainedmapper>
     </copy>
@@ -632,6 +634,7 @@
       <arg value="-compiler.library-path+=${deploy.dir}/lib/flexlib-bin.swc"/>
       <arg value="-compiler.library-path+=${deploy.dir}/lib/tweener.swc"/>
       <arg value="-compiler.library-path+=${deploy.dir}/lib/KongregateAPI.swc"/>
+      <arg value="-compiler.library-path+=${deploy.dir}/lib/signals.swc"/>
       <arg value="-compiler.source-path+=rsrc/{locale}/i18n"/>
       <!-- This sets the SWF size, not the app size, and we set it to
            this size for the avatar viewer's native size. -->
