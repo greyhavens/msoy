@@ -3,28 +3,30 @@
 
 package com.threerings.msoy.room.client {
 
-import com.threerings.msoy.client.Msgs;
-import com.threerings.msoy.world.client.WorldController;
-import com.threerings.flex.CommandButton;
-import com.threerings.msoy.item.data.all.Item;
 import flash.events.Event;
 
+import mx.collections.ArrayCollection;
 import mx.containers.HBox;
+import mx.containers.VBox;
 import mx.controls.HorizontalList;
 import mx.core.ClassFactory;
 import mx.events.CollectionEvent;
-import mx.collections.ArrayCollection;
 
 import com.threerings.util.Comparators;
 import com.threerings.util.F;
 
+import com.threerings.flex.CommandButton;
 import com.threerings.flex.DSetList;
+import com.threerings.flex.FlexUtil;
 
+import com.threerings.msoy.client.Msgs;
+import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.room.data.RoomObject;
 import com.threerings.msoy.ui.MsoyAudioDisplay;
 import com.threerings.msoy.world.client.WorldContext;
+import com.threerings.msoy.world.client.WorldController;
 
-public class DjList extends HBox
+public class DjList extends VBox
 {
     public static const MAX_DJS :int = 4;
 
@@ -32,10 +34,7 @@ public class DjList extends HBox
     {
         _ctx = ctx;
         _roomObj = roomObj;
-    }
 
-    override protected function createChildren () :void
-    {
         var cf :ClassFactory = new ClassFactory(DjPanel);
         cf.properties = { wctx: _ctx, roomObj: _roomObj };
         _list = new HorizontalList();
@@ -43,7 +42,6 @@ public class DjList extends HBox
         _list.maxWidth = MsoyAudioDisplay.WIDTH;
         _list.selectable = false;
         _list.setStyle("borderStyle", "none");
-        addChild(_list);
 
         // Steal DSetList's shiny dataProvider
         var dsetList :DSetList = new DSetList(null, Comparators.compareComparables);
@@ -55,11 +53,29 @@ public class DjList extends HBox
         });
         addEventListener(Event.REMOVED_FROM_STAGE, F.adapt(dsetList.shutdown));
 
-        addChild(_addButton = new CommandButton(Msgs.WORLD.get("b.add_music"),
-            WorldController.VIEW_STUFF, Item.AUDIO));
-        _addButton.percentWidth = 100;
+        var rightBox :HBox = new HBox();
+        rightBox.percentWidth = 100;
+        rightBox.setStyle("horizontalAlign", "right");
+        _addButton = new CommandButton(Msgs.WORLD.get("b.add_music"),
+            WorldController.VIEW_STUFF, Item.AUDIO);
+        rightBox.addChild(_addButton);
+        rightBox.addChild(FlexUtil.createSpacer());
+
+        _titleBox = new HBox();
+        _titleBox.percentWidth = 100;
+        _titleBox.addChild(FlexUtil.createLabel(
+            Msgs.WORLD.get("l.playlist_dj"), "playlistTitle"));
+        _titleBox.addChild(rightBox);
+        addChild(_titleBox);
+
         ArrayCollection(_list.dataProvider).addEventListener(
             CollectionEvent.COLLECTION_CHANGE, onListChange);
+    }
+
+    override protected function createChildren () :void
+    {
+        addChild(_list);
+        addChild(_titleBox);
 
         // HACK: Can't get percentWidth working properly, fixed width for now
         this.width = MsoyAudioDisplay.WIDTH;
@@ -67,15 +83,16 @@ public class DjList extends HBox
 
     protected function onListChange (..._) :void
     {
-        _addButton.visible = (_list.dataProvider.length < MAX_DJS);
-        trace("onListChange");
-        _list.validateSize();
+        var amDj :Boolean = _roomObj.djs.containsKey(_ctx.getMyId());
+        _titleBox.setStyle("paddingBottom", amDj ? 0: 8);
+        _addButton.enabled = amDj || (_list.dataProvider.length < MAX_DJS);
     }
 
     protected var _ctx :WorldContext;
     protected var _roomObj :RoomObject;
     protected var _list :HorizontalList;
     protected var _addButton :CommandButton;
+    protected var _titleBox :HBox;
 }
 }
 
@@ -91,11 +108,11 @@ import com.threerings.flex.CommandButton;
 import com.threerings.flex.FlexUtil;
 
 import com.threerings.msoy.data.all.VizMemberName;
+import com.threerings.msoy.room.client.DjList;
 import com.threerings.msoy.room.data.Deejay;
 import com.threerings.msoy.room.data.MemberInfo;
 import com.threerings.msoy.room.data.RoomObject;
 import com.threerings.msoy.ui.MsoyAudioDisplay;
-import com.threerings.msoy.room.client.DjList;
 import com.threerings.msoy.world.client.WorldContext;
 
 class DjPanel extends VBox

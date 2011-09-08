@@ -7,6 +7,7 @@ import flash.geom.Point;
 
 import mx.containers.VBox;
 import mx.controls.HRule;
+import mx.core.UIComponent;
 
 import com.threerings.msoy.room.data.MsoyScene;
 import com.threerings.msoy.room.data.RoomObject;
@@ -24,6 +25,17 @@ public class RoomMusicDialog extends MusicDialog
         super(ctx, near);
         _roomObj = roomObj;
         _scene = scene;
+
+        addOpenCallback(function () :void {
+            _roomObj.djsEntryAdded.add(invalidate);
+            _roomObj.djsEntryRemoved.add(invalidate);
+            _roomObj.djsChanged.add(invalidate);
+        });
+        addCloseCallback(function () :void {
+            _roomObj.djsEntryAdded.remove(invalidate);
+            _roomObj.djsEntryRemoved.remove(invalidate);
+            _roomObj.djsChanged.remove(invalidate);
+        });
     }
 
     override protected function createChildren () :void
@@ -41,16 +53,58 @@ public class RoomMusicDialog extends MusicDialog
         addChild(rule);
 
         addChild(_extras = new VBox());
+        invalidate();
+    }
 
-        var wctx :WorldContext = WorldContext(_ctx);
-        _extras.addChild(new Playlist(wctx, _roomObj, _scene));
-        _extras.addChild(new DjList(wctx, _roomObj));
-        _extras.addChild(new Tracklist(wctx, _roomObj, _scene));
+    protected function invalidate () :void
+    {
+        trace("Invalidate");
+        var djMode :Boolean = _roomObj.inDjMode();
+
+        if (djMode) {
+            if (_playlist != null) {
+                _extras.removeChild(_playlist);
+                _playlist = null;
+            }
+            if (_djList == null) {
+                _djList = new DjList(WorldContext(_ctx), _roomObj);
+                _extras.addChild(_djList);
+            }
+
+            var amDj :Boolean = _roomObj.djs.containsKey(_ctx.getMyId());
+            if (amDj && _tracklist == null) {
+                _tracklist = new Tracklist(WorldContext(_ctx), _roomObj);
+                _extras.addChild(_tracklist);
+
+            } else if (!amDj && _tracklist != null) {
+                _extras.removeChild(_tracklist);
+                _tracklist = null;
+            }
+
+        } else {
+            if (_djList != null) {
+                _extras.removeChild(_djList);
+                _djList = null;
+            }
+            if (_tracklist != null) {
+                _extras.removeChild(_tracklist);
+                _tracklist = null;
+            }
+            if (_playlist == null) {
+                _playlist = new Playlist(WorldContext(_ctx), _roomObj, _scene);
+                _extras.addChild(_playlist);
+            }
+        }
+
+        validateNow();
     }
 
     protected var _roomObj :RoomObject;
     protected var _scene :MsoyScene;
 
     protected var _extras :VBox;
+    protected var _playlist :UIComponent;
+    protected var _djList :UIComponent;
+    protected var _tracklist :UIComponent;
 }
 }

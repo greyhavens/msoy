@@ -504,6 +504,10 @@ ChatInput {
   fontSize: 11px;
 }
 
+.playlistTitle {
+  paddingLeft: 10px;
+}
+
 .tableSummaryStatus {
   color: #666666;
 }
