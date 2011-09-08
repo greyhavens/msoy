@@ -10,6 +10,7 @@ import mx.containers.HBox;
 import mx.containers.VBox;
 import mx.controls.HorizontalList;
 import mx.core.ClassFactory;
+import mx.core.ScrollPolicy;
 import mx.events.CollectionEvent;
 
 import com.threerings.util.Comparators;
@@ -39,6 +40,7 @@ public class DjList extends VBox
         cf.properties = { wctx: _ctx, roomObj: _roomObj };
         _list = new HorizontalList();
         _list.itemRenderer = cf;
+        _list.verticalScrollPolicy = _list.horizontalScrollPolicy = ScrollPolicy.OFF;
         _list.maxWidth = MsoyAudioDisplay.WIDTH;
         _list.selectable = false;
         _list.setStyle("borderStyle", "none");
