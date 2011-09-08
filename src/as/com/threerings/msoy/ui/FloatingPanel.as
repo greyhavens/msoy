@@ -35,6 +35,11 @@ import com.threerings.msoy.client.MsoyContext;
  */
 [Event(name="didClose", type="flash.events.Event")]
 
+/**
+ * Dispatched when this dialog is displayed.
+ */
+[Event(name="didOpen", type="flash.events.Event")]
+
 public class FloatingPanel extends TitleWindow
 {
     /**
@@ -42,6 +47,9 @@ public class FloatingPanel extends TitleWindow
      * @eventType didClose
      */
     public static const DID_CLOSE :String = "didClose";
+
+    /** @eventType didOpen */
+    public static const DID_OPEN :String = "didOpen";
 
     /** Button constants. You may define your own in a subclass,
      * start your ids at 100 to be safe (in case more are added here).
@@ -131,6 +139,15 @@ public class FloatingPanel extends TitleWindow
     public function addCloseCallback (closeCallback :Function) :void
     {
         Command.bind(this, DID_CLOSE, closeCallback);
+    }
+
+    /**
+     * Add a callback that will be called when we open.
+     * This is a convenience function for setting up a listener on DID_OPEN.
+     */
+    public function addOpenCallback (openCallback :Function) :void
+    {
+        Command.bind(this, DID_OPEN, openCallback);
     }
 
     /**
@@ -374,6 +391,7 @@ public class FloatingPanel extends TitleWindow
     protected function didOpen () :void
     {
         PopUpUtil.avoidOtherPopups(this, _ctx.getTopPanel().getPlaceViewBounds(), PADDING);
+        dispatchEvent(new Event(DID_OPEN));
     }
 
     /** Provides client services. */
