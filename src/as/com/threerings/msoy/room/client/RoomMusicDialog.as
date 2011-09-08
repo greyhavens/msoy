@@ -58,7 +58,6 @@ public class RoomMusicDialog extends MusicDialog
 
     protected function invalidate () :void
     {
-        trace("Invalidate");
         var djMode :Boolean = _roomObj.inDjMode();
 
         if (djMode) {
@@ -69,12 +68,14 @@ public class RoomMusicDialog extends MusicDialog
             if (_djList == null) {
                 _djList = new DjList(WorldContext(_ctx), _roomObj);
                 _extras.addChild(_djList);
+                _djList.validateNow();
             }
 
             var amDj :Boolean = _roomObj.djs.containsKey(_ctx.getMyId());
             if (amDj && _tracklist == null) {
                 _tracklist = new Tracklist(WorldContext(_ctx), _roomObj);
                 _extras.addChild(_tracklist);
+                _tracklist.validateNow();
 
             } else if (!amDj && _tracklist != null) {
                 _extras.removeChild(_tracklist);
@@ -93,10 +94,9 @@ public class RoomMusicDialog extends MusicDialog
             if (_playlist == null) {
                 _playlist = new Playlist(WorldContext(_ctx), _roomObj, _scene);
                 _extras.addChild(_playlist);
+                _playlist.validateNow();
             }
         }
-
-        validateNow();
     }
 
     protected var _roomObj :RoomObject;
