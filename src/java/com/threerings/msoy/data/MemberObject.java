@@ -42,6 +42,7 @@ import static com.threerings.msoy.Log.log;
 /**
  * Represents a connected msoy user.
  */
+@com.threerings.util.ActionScript(omit=true)
 public class MemberObject extends BodyObject
     implements MsoyUserObject, MsoyBodyObject
 {
