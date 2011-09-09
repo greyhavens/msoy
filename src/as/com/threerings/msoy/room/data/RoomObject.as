@@ -29,7 +29,7 @@ import com.threerings.msoy.room.data.Track;
 // GENERATED PREAMBLE END
 // GENERATED CLASSDECL START
 public class RoomObject extends SpotSceneObject
-    implements PartyPlaceObject
+    implements PrimaryPlace, PartyPlaceObject
 {
 // GENERATED CLASSDECL END
 // GENERATED STREAMING START

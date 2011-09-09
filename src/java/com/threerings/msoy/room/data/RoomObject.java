@@ -13,6 +13,7 @@ import com.threerings.crowd.data.OccupantInfo;
 
 import com.threerings.whirled.spot.data.SpotSceneObject;
 
+import com.threerings.msoy.data.PrimaryPlace;
 import com.threerings.msoy.item.data.all.Audio;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.party.data.PartyLeader;
@@ -25,7 +26,7 @@ import static com.threerings.msoy.Log.log;
  * Room stuff.
  */
 public class RoomObject extends SpotSceneObject
-    implements PartyPlaceObject
+    implements PrimaryPlace, PartyPlaceObject
 {
     // AUTO-GENERATED: FIELDS START
     /** The field name of the <code>name</code> field. */
