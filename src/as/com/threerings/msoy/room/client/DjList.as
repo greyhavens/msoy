@@ -98,9 +98,13 @@ public class DjList extends VBox
 }
 }
 
+import flash.events.MouseEvent;
+
 import mx.containers.Canvas;
 import mx.containers.VBox;
 import mx.controls.Label;
+
+import com.threerings.util.CommandEvent;
 
 import com.threerings.orth.data.MediaDesc;
 import com.threerings.orth.data.MediaDescSize;
@@ -109,6 +113,7 @@ import com.threerings.orth.ui.MediaWrapper;
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.FlexUtil;
 
+import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.data.all.VizMemberName;
 import com.threerings.msoy.room.client.DjList;
 import com.threerings.msoy.room.data.Deejay;
@@ -139,6 +144,8 @@ class DjPanel extends VBox
         addChild(_name = FlexUtil.createLabel("", "nameLabel"));
         _name.width = WIDTH;
         _name.setStyle("textAlign", "center");
+
+        addEventListener(MouseEvent.CLICK, onClick);
     }
 
     override public function set data (value :Object) :void
@@ -149,10 +156,10 @@ class DjPanel extends VBox
         }
 
         var dj :Deejay = Deejay(value);
-        var info :MemberInfo = roomObj.getMemberInfo(dj.memberId);
+        _info = roomObj.getMemberInfo(dj.memberId);
 
-        _headShot.setMediaDesc(VizMemberName(info.username).getPhoto());
-        _name.text = info.username.toString();
+        _headShot.setMediaDesc(VizMemberName(_info.username).getPhoto());
+        _name.text = _info.username.toString();
         if (dj.memberId == wctx.getMyId()) {
             _bootBtn.visible = true;
             _bootBtn.setCallback(function () :void {
@@ -168,6 +175,13 @@ class DjPanel extends VBox
         setStyle("backgroundColor", (dj.memberId == roomObj.currentDj) ? 0x54a9da : undefined);
     }
 
+    protected function onClick (..._) :void
+    {
+        CommandEvent.dispatch(this, MsoyController.POP_MEMBER_MENU,
+            [ _info.username, _info.getMemberId() ]);
+    }
+
+    protected var _info :MemberInfo;
     protected var _headShot :MediaWrapper;
     protected var _name :Label;
     protected var _bootBtn :CommandButton;
