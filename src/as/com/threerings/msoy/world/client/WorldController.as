@@ -80,6 +80,7 @@ import com.threerings.msoy.room.client.RoomObjectController;
 import com.threerings.msoy.room.client.RoomObjectView;
 import com.threerings.msoy.room.client.RoomView;
 import com.threerings.msoy.room.client.snapshot.SnapshotPanel;
+import com.threerings.msoy.room.data.MemberInfo;
 import com.threerings.msoy.room.data.MsoyScene;
 import com.threerings.msoy.room.data.MsoySceneModel;
 import com.threerings.msoy.room.data.PetName;
@@ -1556,7 +1557,15 @@ public class WorldController extends MsoyController
             if (StringUtil.isBlank(songName)) {
                 songName = "unknown";
             }
-            _wctx.getNotificationDirector().notifyMusic(songName, artist);
+            var owner :MemberName = null;
+            var room :RoomObject = _wctx.getLocationDirector().getPlaceObject() as RoomObject;
+            if (room != null && room.inDjMode()) {
+                var info :MemberInfo = room.getMemberInfo(_music.ownerId);
+                if (info != null) {
+                    owner = MemberName(info.username);
+                }
+            }
+            _wctx.getNotificationDirector().notifyMusic(owner, songName, artist);
             _musicInfoShown = true;
         }
     }

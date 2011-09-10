@@ -27,6 +27,7 @@ import com.threerings.msoy.client.MsoyService;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.FriendEntry;
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.notify.data.BadgeEarnedNotification;
@@ -65,19 +66,19 @@ public class MsoyNotificationDirector extends NotificationDirector
             _notificationDisplay = new MsoyNotificationDisplay(ctx, ndheight));
     }
 
-    override protected function getDisplay ():NotificationDisplay
+    override protected function getDisplay () :NotificationDisplay
     {
         return _notificationDisplay;
     }
 
-    override protected function dispatchDeferredNotifications ():void
+    override protected function dispatchDeferredNotifications () :void
     {
         // tell the server to go ahead and dispatch any notifications it had saved up.
         MsoyService(_ctx.getClient().requireService(MsoyService))
             .dispatchDeferredNotifications();
     }
 
-    override protected function isMuted (sender:Name):Boolean
+    override protected function isMuted (sender :Name) :Boolean
     {
         return super.isMuted(sender);
     }
@@ -85,10 +86,13 @@ public class MsoyNotificationDirector extends NotificationDirector
     /**
      * Send a generic notification about the currently playing music.
      */
-    public function notifyMusic (song :String, artist :String) :void
+    public function notifyMusic (owner :MemberName, song :String, artist :String) :void
     {
-        addGenericNotification(MessageBundle.tcompose("m.song", song, artist),
-            Notification.BUTTSCRATCHING);
+        var text :String = (owner != null) ?
+            MessageBundle.tcompose("m.song_owned", owner.toString(), owner.getId(), song, artist) :
+            MessageBundle.tcompose("m.song", song, artist);
+
+        addGenericNotification(text, Notification.BUTTSCRATCHING);
     }
 
     /**
