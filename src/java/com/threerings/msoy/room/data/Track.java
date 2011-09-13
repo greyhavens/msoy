@@ -17,9 +17,6 @@ public class Track
 {
     public Audio audio;
 
-    /** How this track has been rated by listeners. */
-    public int rating;
-
     /** Used for list sorting. */
     public int order;
 

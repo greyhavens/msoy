@@ -61,6 +61,8 @@ public class RoomObject extends SpotSceneObject
 
     public var track :Track;
 
+    public var trackRating :int;
+
     public var recentTracks :DSet; /* of */ RecentTrack;
 
     public var playCount :int;
@@ -100,6 +102,7 @@ public class RoomObject extends SpotSceneObject
     public var djsEntryUpdated :Signal = new Signal(Deejay, Deejay);
     public var currentDjChanged :Signal = new Signal(int, int);
     public var trackChanged :Signal = new Signal(Track, Track);
+    public var trackRatingChanged :Signal = new Signal(int, int);
     public var recentTracksChanged :Signal = new Signal(DSet, DSet);
     public var recentTracksEntryAdded :Signal = new Signal(RecentTrack);
     public var recentTracksEntryRemoved :Signal = new Signal(RecentTrack);
@@ -120,6 +123,7 @@ public class RoomObject extends SpotSceneObject
     public static const DJS :String = "djs";
     public static const CURRENT_DJ :String = "currentDj";
     public static const TRACK :String = "track";
+    public static const TRACK_RATING :String = "trackRating";
     public static const RECENT_TRACKS :String = "recentTracks";
     public static const PLAY_COUNT :String = "playCount";
 
@@ -140,6 +144,7 @@ public class RoomObject extends SpotSceneObject
         djs = ins.readObject(DSet);
         currentDj = ins.readInt();
         track = ins.readObject(Track);
+        trackRating = ins.readInt();
         recentTracks = ins.readObject(DSet);
         playCount = ins.readInt();
     }
@@ -274,6 +279,9 @@ class Signaller
                 break;
             case "track":
                 signal = _obj.trackChanged;
+                break;
+            case "trackRating":
+                signal = _obj.trackRatingChanged;
                 break;
             case "recentTracks":
                 signal = _obj.recentTracksChanged;

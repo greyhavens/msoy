@@ -151,8 +151,19 @@ public class RoomMarshaller extends InvocationMarshaller
         });
     }
 
+    /** The method id used to dispatch {@link #rateTrack} requests. */
+    public static final int RATE_TRACK = 11;
+
+    // from interface RoomService
+    public void rateTrack (int arg1, boolean arg2)
+    {
+        sendRequest(RATE_TRACK, new Object[] {
+            Integer.valueOf(arg1), Boolean.valueOf(arg2)
+        });
+    }
+
     /** The method id used to dispatch {@link #requestControl} requests. */
-    public static final int REQUEST_CONTROL = 11;
+    public static final int REQUEST_CONTROL = 12;
 
     // from interface RoomService
     public void requestControl (ItemIdent arg1)
@@ -163,7 +174,7 @@ public class RoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #sendPostcard} requests. */
-    public static final int SEND_POSTCARD = 12;
+    public static final int SEND_POSTCARD = 13;
 
     // from interface RoomService
     public void sendPostcard (String[] arg1, String arg2, String arg3, String arg4, InvocationService.ConfirmListener arg5)
@@ -176,7 +187,7 @@ public class RoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #sendSpriteMessage} requests. */
-    public static final int SEND_SPRITE_MESSAGE = 13;
+    public static final int SEND_SPRITE_MESSAGE = 14;
 
     // from interface RoomService
     public void sendSpriteMessage (ItemIdent arg1, String arg2, byte[] arg3, boolean arg4)
@@ -187,7 +198,7 @@ public class RoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #sendSpriteSignal} requests. */
-    public static final int SEND_SPRITE_SIGNAL = 14;
+    public static final int SEND_SPRITE_SIGNAL = 15;
 
     // from interface RoomService
     public void sendSpriteSignal (String arg1, byte[] arg2)
@@ -198,7 +209,7 @@ public class RoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #setActorState} requests. */
-    public static final int SET_ACTOR_STATE = 15;
+    public static final int SET_ACTOR_STATE = 16;
 
     // from interface RoomService
     public void setActorState (ItemIdent arg1, int arg2, String arg3)
@@ -209,7 +220,7 @@ public class RoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #setTrackIndex} requests. */
-    public static final int SET_TRACK_INDEX = 16;
+    public static final int SET_TRACK_INDEX = 17;
 
     // from interface RoomService
     public void setTrackIndex (int arg1, int arg2)
@@ -220,7 +231,7 @@ public class RoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #songEnded} requests. */
-    public static final int SONG_ENDED = 17;
+    public static final int SONG_ENDED = 18;
 
     // from interface RoomService
     public void songEnded (int arg1)
@@ -231,7 +242,7 @@ public class RoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #spawnMob} requests. */
-    public static final int SPAWN_MOB = 18;
+    public static final int SPAWN_MOB = 19;
 
     // from interface RoomService
     public void spawnMob (int arg1, String arg2, String arg3, Location arg4, InvocationService.InvocationListener arg5)
@@ -244,7 +255,7 @@ public class RoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #updateMemory} requests. */
-    public static final int UPDATE_MEMORY = 19;
+    public static final int UPDATE_MEMORY = 20;
 
     // from interface RoomService
     public void updateMemory (ItemIdent arg1, String arg2, byte[] arg3, InvocationService.ResultListener arg4)
@@ -257,7 +268,7 @@ public class RoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #updateRoom} requests. */
-    public static final int UPDATE_ROOM = 20;
+    public static final int UPDATE_ROOM = 21;
 
     // from interface RoomService
     public void updateRoom (SceneUpdate arg1, InvocationService.InvocationListener arg2)

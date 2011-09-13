@@ -53,6 +53,9 @@ public interface RoomService extends InvocationService
     function rateRoom (arg1 :int, arg2 :InvocationService_InvocationListener) :void;
 
     // from Java interface RoomService
+    function rateTrack (arg1 :int, arg2 :Boolean) :void;
+
+    // from Java interface RoomService
     function requestControl (arg1 :ItemIdent) :void;
 
     // from Java interface RoomService

@@ -8,6 +8,8 @@ import flash.geom.Point;
 import flash.geom.Rectangle;
 import flash.utils.ByteArray;
 
+import mx.managers.PopUpManager;
+
 import com.threerings.util.ImmutableProxyObject;
 import com.threerings.util.Map;
 import com.threerings.util.Name;
@@ -287,6 +289,9 @@ public class RoomObjectView extends RoomView
         if (RoomObject.PLAY_COUNT == name) {
             // when the play count changes, it's time for us to re-check the audio
             updateBackgroundAudio();
+
+        } else if (RoomObject.TRACK == name) {
+            updateTrackOverlay();
         }
     }
 
@@ -525,6 +530,11 @@ public class RoomObjectView extends RoomView
 
         // in case we were auto-scrolling, remove the event listener..
         removeEventListener(Event.ENTER_FRAME, tick);
+
+        if (_trackOverlay != null) {
+            PopUpManager.removePopUp(_trackOverlay);
+            _trackOverlay = null;
+        }
     }
 
     // from RoomView
@@ -692,6 +702,25 @@ public class RoomObjectView extends RoomView
             if (avrg != null) {
                 avrg.processMusicStartStop(true);
             }
+        }
+    }
+
+    protected function updateTrackOverlay () :void
+    {
+        if (_roomObj.inDjMode()) {
+            if (_trackOverlay == null) {
+                _trackOverlay = new TrackOverlay(_ctx, _roomObj);
+
+                // Why doesn't this work?
+                // _ctx.getTopPanel().getPlaceContainer().addOverlay(
+                //     _trackOverlay, 9999999);
+
+                PopUpManager.addPopUp(_trackOverlay, _ctx.getTopPanel());
+            }
+
+        } else if (_trackOverlay != null) {
+            // removeChild(_trackOverlay);
+            _trackOverlay = null;
         }
     }
 
@@ -864,6 +893,8 @@ public class RoomObjectView extends RoomView
 
     /** _ctrl, casted as a RoomObjectController. */
     protected var _octrl :RoomObjectController;
+
+    protected var _trackOverlay :TrackOverlay;
 
     /** The transitory properties of the current scene. */
     protected var _roomObj :RoomObject;

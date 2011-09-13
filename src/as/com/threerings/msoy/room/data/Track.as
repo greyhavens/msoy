@@ -24,21 +24,17 @@ public class Track implements DSet_Entry, Comparable
 // GENERATED STREAMING START
     public var audio :Audio;
 
-    public var rating :int;
-
     public var order :int;
 
     public function readObject (ins :ObjectInputStream) :void
     {
         audio = ins.readObject(Audio);
-        rating = ins.readInt();
         order = ins.readInt();
     }
 
     public function writeObject (out :ObjectOutputStream) :void
     {
         out.writeObject(audio);
-        out.writeInt(rating);
         out.writeInt(order);
     }
 

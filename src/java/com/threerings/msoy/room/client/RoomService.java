@@ -61,6 +61,11 @@ public interface RoomService extends InvocationService
     void setTrackIndex (int audioId, int index);
 
     /**
+     * A player's rating of the current track.
+     */
+    void rateTrack (int audioId, boolean like);
+
+    /**
      * If the player was DJ-ing, remove them.
      */
     void quitDjing ();

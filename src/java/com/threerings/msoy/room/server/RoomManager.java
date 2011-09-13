@@ -576,7 +576,7 @@ public class RoomManager extends SpotSceneManager
             RecentTrack recent = new RecentTrack();
             recent.dj = _locator.lookupMember(oldTrack.audio.ownerId).memberName;
             recent.audio = oldTrack.audio;
-            recent.rating = oldTrack.rating;
+            recent.rating = _roomObj.trackRating;
             recent.order = appendOrder(_roomObj.recentTracks);
             _roomObj.addToRecentTracks(recent);
 
@@ -590,7 +590,10 @@ public class RoomManager extends SpotSceneManager
         _roomObj.setCurrentDj(memberId);
         _roomObj.setTrack(track);
         _roomObj.setPlayCount(_roomObj.playCount + 1);
+        _roomObj.setTrackRating(0);
         _roomObj.commitTransaction();
+
+        _trackRatings.clear();
 
         log.info("Now playing", "DJ", memberId, "audio", track.audio);
     }
@@ -658,8 +661,11 @@ public class RoomManager extends SpotSceneManager
         _roomObj.setTrack(null);
         _roomObj.setCurrentDj(0);
         _roomObj.setPlayCount(0); // Tells clients to go back to playing the regular playlist
+        _roomObj.setTrackRating(0);
         _roomObj.setRecentTracks(new DSet<RecentTrack>());
         _roomObj.commitTransaction();
+
+        _trackRatings.clear();
     }
 
     protected void clearTrackUsage (MemberObject who, int audioItemId, ResultListener<Void> listener)
@@ -762,6 +768,23 @@ public class RoomManager extends SpotSceneManager
                 who.updateTracks(t);
             }
         }
+    }
+
+    public void rateTrack (ClientObject caller, int audioId, boolean like)
+    {
+        MemberObject who = _locator.requireMember(caller);
+        if (_roomObj.track == null || audioId != _roomObj.track.audio.itemId) {
+            return; // The track has changed since the client made this request
+        }
+
+        int delta = like ? +1 : -1;
+        if (_trackRatings.containsKey(who.getMemberId())) {
+            // Reverse their previous vote
+            delta += _trackRatings.get(who.getMemberId()) ? -1 : +1;
+        }
+        _trackRatings.put(who.getMemberId(), like);
+
+        _roomObj.setTrackRating(_roomObj.trackRating + delta);
     }
 
     public void quitDjing (ClientObject caller)
@@ -2489,6 +2512,9 @@ public class RoomManager extends SpotSceneManager
             return super.allowSubscribe(object, sub);
         }
     };
+
+    // A private record of who rated the current track and how
+    protected Map<Integer, Boolean> _trackRatings = Maps.newHashMap();
 
     @Inject protected @MainInvoker Invoker _invoker;
     @Inject protected ItemLogic _itemLogic;

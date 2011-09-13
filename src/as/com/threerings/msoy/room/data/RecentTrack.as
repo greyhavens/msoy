@@ -21,16 +21,20 @@ public class RecentTrack extends Track
 // GENERATED STREAMING START
     public var dj :VizMemberName;
 
+    public var rating :int;
+
     override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);
         dj = ins.readObject(VizMemberName);
+        rating = ins.readInt();
     }
 
     override public function writeObject (out :ObjectOutputStream) :void
     {
         super.writeObject(out);
         out.writeObject(dj);
+        out.writeInt(rating);
     }
 
 // GENERATED STREAMING END

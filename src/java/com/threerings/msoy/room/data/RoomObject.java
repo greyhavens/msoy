@@ -85,6 +85,10 @@ public class RoomObject extends SpotSceneObject
     @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String TRACK = "track";
 
+    /** The field name of the <code>trackRating</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
+    public static final String TRACK_RATING = "trackRating";
+
     /** The field name of the <code>recentTracks</code> field. */
     @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String RECENT_TRACKS = "recentTracks";
@@ -135,6 +139,9 @@ public class RoomObject extends SpotSceneObject
 
     /** The song currently being DJed, if in DJ mode. */
     public Track track;
+
+    /** The rating of the current track. */
+    public int trackRating;
 
     /** A list of songs that were recently DJed. */
     public DSet<RecentTrack> recentTracks = DSet.newDSet();
@@ -618,6 +625,23 @@ public class RoomObject extends SpotSceneObject
         requestAttributeChange(
             TRACK, value, ovalue);
         this.track = value;
+    }
+
+    /**
+     * Requests that the <code>trackRating</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
+    public void setTrackRating (int value)
+    {
+        int ovalue = this.trackRating;
+        requestAttributeChange(
+            TRACK_RATING, Integer.valueOf(value), Integer.valueOf(ovalue));
+        this.trackRating = value;
     }
 
     /**

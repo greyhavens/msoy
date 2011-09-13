@@ -104,6 +104,9 @@ public class WorldController extends MsoyController
     /** Command to display the room menu. */
     public static const POP_ROOM_MENU :String = "PopRoomMenu";
 
+    /** Command to display the music dialog. */
+    public static const SHOW_MUSIC :String = "ShowMusic";
+
     /** Opens up a new toolbar and a new room editor. */
     public static const ROOM_EDIT :String = "RoomEdit";
 
@@ -396,6 +399,11 @@ public class WorldController extends MsoyController
             enabled: (_music != null) }); // pop it later so that it avoids the menu itself
 
         popControlBarMenu(menuData, trigger);
+    }
+
+    public function handleShowMusic (trigger :Button) :void
+    {
+        doShowMusic(trigger);
     }
 
     /**
