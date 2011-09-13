@@ -464,7 +464,8 @@ public class RoomManager extends SpotSceneManager
             !add && _roomObj.playlist.containsKey(new ItemIdent(MsoyItemType.AUDIO, audioItemId));
 
         // If the room is already in DJ mode, or this player is a non-manager who can add a song
-        if (!removeFromPlaylist && _roomObj.inDjMode() || (!canManage(who) && unlockedPlaylist)) {
+        if (!removeFromPlaylist && _roomObj.inDjMode()
+                || (!isStrictlyManager(who) && unlockedPlaylist)) {
             if (!who.tokens.isSubscriberPlus()) {
                 // Club Whirled gets early access to this feature
                 throw new InvocationException("e.subscriber_only");
