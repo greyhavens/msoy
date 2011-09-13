@@ -391,7 +391,7 @@ public class MsoyPeerManager extends OrthPeerManager
     {
         log.debug("Hosting scene", "id", sceneId, "name", name);
         _mnobj.addToHostedScenes(new HostedRoom(
-            sceneId, name, themeId, ownerId, ownerType, accessControl));
+            sceneId, name, themeId, ownerId, ownerType, accessControl, false));
     }
 
     /**
@@ -407,10 +407,10 @@ public class MsoyPeerManager extends OrthPeerManager
      * Called by the RoomManager when information pertinent to the HostedRoom has been updated.
      */
     public void roomUpdated (int sceneId, String name, int themeId, int ownerId, byte ownerType,
-        byte accessControl)
+        byte accessControl, boolean hopping)
     {
         _mnobj.updateHostedScenes(new HostedRoom(
-            sceneId, name, themeId, ownerId, ownerType, accessControl));
+            sceneId, name, themeId, ownerId, ownerType, accessControl, hopping));
     }
 
     /**

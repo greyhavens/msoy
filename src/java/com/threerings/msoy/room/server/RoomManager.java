@@ -54,6 +54,8 @@ import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.dobj.AccessController;
+import com.threerings.presents.dobj.AttributeChangeListener;
+import com.threerings.presents.dobj.AttributeChangedEvent;
 import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.dobj.DSet;
 import com.threerings.presents.dobj.EntryAddedEvent;
@@ -498,7 +500,7 @@ public class RoomManager extends SpotSceneManager
 
                     boolean firstDj = !_roomObj.inDjMode();
                     if (!_roomObj.djs.containsKey(who.getMemberId())) {
-                        if (_roomObj.djs.size() > 4) {
+                        if (_roomObj.djs.size() >= DJ_LIMIT) {
                             listener.requestFailed("e.too_many_djs");
                             return;
                         }
@@ -533,6 +535,19 @@ public class RoomManager extends SpotSceneManager
                 // If they removed their last track, remove them from DJ-ing
                 removeDj(who);
             }
+        }
+    }
+
+    protected void invalidateHopping ()
+    {
+        boolean hopping = (_roomObj.djs.size() >= DJ_LIMIT);
+
+        if (_hopping != hopping) {
+            _hopping = hopping;
+
+            MsoyScene mscene = (MsoyScene) _scene;
+            _peerMan.roomUpdated(mscene.getId(), mscene.getName(), mscene.getThemeId(),
+                mscene.getOwnerId(), mscene.getOwnerType(), mscene.getAccessControl(), _hopping);
         }
     }
 
@@ -1749,7 +1764,7 @@ public class RoomManager extends SpotSceneManager
             if (nameChange || mScene.getAccessControl() != up.accessControl) {
                 _peerMan.roomUpdated(mScene.getId(), up.name,
                     mScene.getThemeId(), mScene.getOwnerId(),
-                    mScene.getOwnerType(), up.accessControl);
+                    mScene.getOwnerType(), up.accessControl, _hopping);
             }
 
             if (up.playlistControl != mScene.getPlaylistControl()
@@ -1780,7 +1795,7 @@ public class RoomManager extends SpotSceneManager
                 MsoySceneModel.ACCESS_OWNER_ONLY : mScene.getAccessControl();
             _peerMan.roomUpdated(
                 mScene.getId(), mScene.getName(), mScene.getThemeId(),
-                sou.ownerId, sou.ownerType, accessControl);
+                sou.ownerId, sou.ownerType, accessControl, _hopping);
 
             // update our room object
             _roomObj.setOwner(sou.ownerName);
@@ -2355,14 +2370,16 @@ public class RoomManager extends SpotSceneManager
 
     /** Listens to the room. */
     protected class RoomListener
-        implements SetListener<OccupantInfo>
+        implements SetListener<OccupantInfo>, AttributeChangeListener
     {
         // from SetListener
         public void entryAdded (EntryAddedEvent<OccupantInfo> event)
         {
             String name = event.getName();
-            if (name == PlaceObject.OCCUPANT_INFO) {
+            if (PlaceObject.OCCUPANT_INFO == name) {
                 updateAvatarIdent(null, event.getEntry());
+            } else if (RoomObject.DJS == name) {
+                invalidateHopping();
             }
         }
 
@@ -2370,7 +2387,7 @@ public class RoomManager extends SpotSceneManager
         public void entryUpdated (EntryUpdatedEvent<OccupantInfo> event)
         {
             String name = event.getName();
-            if (name == PlaceObject.OCCUPANT_INFO) {
+            if (PlaceObject.OCCUPANT_INFO == name) {
                 if (event.getEntry() instanceof MemberInfo) {
                     MemberInfo entry = (MemberInfo)event.getEntry();
                     MemberInfo oldEntry = (MemberInfo)event.getOldEntry();
@@ -2388,8 +2405,18 @@ public class RoomManager extends SpotSceneManager
         public void entryRemoved (EntryRemovedEvent<OccupantInfo> event)
         {
             String name = event.getName();
-            if (name == PlaceObject.OCCUPANT_INFO) {
+            if (PlaceObject.OCCUPANT_INFO == name) {
                 updateAvatarIdent(event.getOldEntry(), null);
+            } else if (RoomObject.DJS == name) {
+                invalidateHopping();
+            }
+        }
+
+        public void attributeChanged (AttributeChangedEvent event)
+        {
+            String name = event.getName();
+            if (RoomObject.DJS == name) {
+                invalidateHopping();
             }
         }
 
@@ -2489,6 +2516,9 @@ public class RoomManager extends SpotSceneManager
     /** The number of DJ-ed tracks stored after being played. */
     protected static final int TRACK_HISTORY_SIZE = 10;
 
+    /** The max number of DJs allowed in a room. */
+    protected static final int DJ_LIMIT = 4;
+
     /** The puppet oid. Global, immutable. */
     protected static final Integer PUPPET_OID = Integer.valueOf(0);
 
@@ -2516,6 +2546,8 @@ public class RoomManager extends SpotSceneManager
 
     // A private record of who rated the current track and how
     protected Map<Integer, Boolean> _trackRatings = Maps.newHashMap();
+
+    protected boolean _hopping;
 
     @Inject protected @MainInvoker Invoker _invoker;
     @Inject protected ItemLogic _itemLogic;

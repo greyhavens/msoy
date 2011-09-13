@@ -30,4 +30,7 @@ public class RoomInfo
 
     /** Some rooms are winners or runners-up of a contest; if so designate them here. */
     public transient String winnerRank; // assigned on the client
+
+    /** Whether this room contains hoppin' DJ action. */
+    public boolean hopping;
 }

@@ -23,6 +23,9 @@ public class HostedRoom extends HostedPlace
     /** Access control information. See {@link MsoySceneModel}. */
     public byte accessControl;
 
+    /** Whether there are good DJs here. */
+    public boolean hopping;
+
     /**
      * Empty constructor used for unserializing
      */
@@ -34,7 +37,7 @@ public class HostedRoom extends HostedPlace
      * Creates a hosted game record.
      */
     public HostedRoom (int placeId, String name, int themeId, int ownerId,
-        byte ownerType, byte accessControl)
+        byte ownerType, byte accessControl, boolean hopping)
     {
         super(placeId, name);
 
@@ -42,5 +45,6 @@ public class HostedRoom extends HostedPlace
         this.ownerId = ownerId;
         this.ownerType = ownerType;
         this.accessControl = accessControl;
+        this.hopping = hopping;
     }
 }

@@ -377,6 +377,7 @@ public class WebRoomServlet extends MsoyServiceServlet
             PopularPlacesSnapshot.Place card = _memberMan.getPPSnapshot().getScene(record.sceneId);
             if (card != null) {
                 info.population = card.population;
+                info.hopping = card.hopping;
             }
             return info;
         }

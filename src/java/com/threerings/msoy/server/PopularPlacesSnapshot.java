@@ -49,10 +49,19 @@ public class PopularPlacesSnapshot
         /** The place's population (as of the last snapshot calculation). */
         public int population;
 
+        /** Whether this is a room and there are good DJs here. */
+        public boolean hopping;
+
+        public float getWeight ()
+        {
+            // Hopping rooms are weighted higher
+            return hopping ? 1.5f * population : population;
+        }
+
         // from interface Comparable<Place>
         public int compareTo (Place other) {
-            // higher population sorts first, then sort alphabetically
-            return ComparisonChain.start().compare(other.population, population)
+            // higher weight sorts first, then sort alphabetically
+            return ComparisonChain.start().compare(other.getWeight(), getWeight())
                 .compare(name, other.name).result();
         }
     }
@@ -268,6 +277,9 @@ public class PopularPlacesSnapshot
             place = new Place();
             place.placeId = placeId;
             place.name = hp.name;
+            if (hp instanceof HostedRoom) {
+                place.hopping = ((HostedRoom) hp).hopping;
+            }
             places.put(placeId, place);
             if (plist != null) {
                 plist.add(place);
