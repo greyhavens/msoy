@@ -25,14 +25,13 @@ public class TrackOverlay extends HBox
         _roomObj = roomObj;
 
         addEventListener(Event.ADDED_TO_STAGE, function (..._) :void {
-            roomObj.trackRatingChanged.add(onRatingChanged);
-            roomObj.trackChanged.add(onTrackChanged);
+            _roomObj.trackRatingChanged.add(onRatingChanged);
+            _roomObj.trackChanged.add(onTrackChanged);
         });
         addEventListener(Event.REMOVED_FROM_STAGE, function (..._) :void {
-            roomObj.trackRatingChanged.remove(onRatingChanged);
-            roomObj.trackChanged.remove(onTrackChanged);
+            _roomObj.trackRatingChanged.remove(onRatingChanged);
+            _roomObj.trackChanged.remove(onTrackChanged);
         });
-        onTrackChanged(_roomObj.track);
 
         setStyle("bottom", 0);
         setStyle("right", 0);
@@ -66,6 +65,9 @@ public class TrackOverlay extends HBox
         showMusic.width = 32;
         showMusic.height = 32;
         addChild(showMusic);
+
+        onRatingChanged(_roomObj.trackRating);
+        onTrackChanged(_roomObj.track);
     }
 
     protected function onRatingChanged (rating :int) :void

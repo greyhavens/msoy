@@ -493,6 +493,8 @@ public class RoomObjectView extends RoomView
         if (localOccupant != null && localOccupant.isStatic()) {
             _ctx.displayInfo(MsoyCodes.GENERAL_MSGS, "m.static_avatar");
         }
+
+        updateTrackOverlay();
     }
 
     // from RoomView
@@ -719,7 +721,7 @@ public class RoomObjectView extends RoomView
             }
 
         } else if (_trackOverlay != null) {
-            // removeChild(_trackOverlay);
+            PopUpManager.removePopUp(_trackOverlay);
             _trackOverlay = null;
         }
     }
