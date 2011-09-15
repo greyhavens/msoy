@@ -3,6 +3,9 @@
 
 package com.threerings.msoy.room.client {
 
+import com.threerings.msoy.room.data.Track;
+import com.threerings.util.RandomUtil;
+import com.threerings.util.Arrays;
 import flash.events.Event;
 
 import mx.containers.HBox;
@@ -29,6 +32,7 @@ public class TrackOverlay extends HBox
             roomObj.trackRatingChanged.remove(onRatingChanged);
             roomObj.trackChanged.remove(onTrackChanged);
         });
+        onTrackChanged(_roomObj.track);
 
         setStyle("bottom", 0);
         setStyle("right", 0);
@@ -40,6 +44,8 @@ public class TrackOverlay extends HBox
 
         _ratingLabel = new Label();
         _ratingLabel.width = 50;
+        _ratingLabel.setStyle("fontSize", 24);
+        _ratingLabel.setStyle("textAlign", "right");
         addChild(_ratingLabel);
 
         // TODO(bruno): Image button
@@ -67,21 +73,91 @@ public class TrackOverlay extends HBox
         _ratingLabel.text = (rating > 0 ? "+" : "") + rating;
     }
 
-    protected function onTrackChanged () :void
+    protected function onTrackChanged (newTrack :Track, oldTrack :Track = null) :void
     {
         _myRating = 0;
+
+        if (newTrack == null) {
+            // Ok, party's over
+            playDefaultStateFrom(/\b(dj|dance)\b/i);
+
+        } else if (amDj(newTrack)) {
+            // Started DJ-ing, enter a DJ state (or dance if they don't have one)
+            playState([ /\bdj\b/i, /\bdance\b/i ]);
+
+        } else if (amDj(oldTrack)) {
+            // Stopped DJ-ing, go back to just dancing
+            playState([ /\bdance\b/i ]);
+        }
     }
 
     protected function rateTrack (like :Boolean) :void
     {
+        if (amDj(_roomObj.track)) {
+            return; // You can't rate your own track
+        }
+
         var rating :int = like ? +1 : -1;
         if (rating == _myRating) {
-            // Ignore a redundant click
-            return;
+            return; // Ignore redundant clicks
+        }
+
+        if (like) {
+            // Enter a new dance state
+            playState([ /\bdance\b/i ]);
+        } else {
+            // Stop dancing
+            playDefaultStateFrom(/\bdance\b/i);
         }
 
         _roomObj.roomService.rateTrack(_roomObj.track.audio.itemId, like);
         _myRating = rating;
+    }
+
+    protected function amDj (track :Track) :Boolean
+    {
+        return track != null && track.audio.ownerId == _ctx.getMyId();
+    }
+
+    protected function playState (patterns :Array) :void
+    {
+        var avatar :MemberSprite = RoomView(_ctx.getPlaceView()).getMyAvatar();
+        var registeredStates :Array = avatar.getAvatarStates();
+        var currentState :String = avatar.getState();
+
+        for each (var pattern :RegExp in patterns) {
+            var candidates :Array = [];
+            var hasThisState :Boolean = false;
+
+            for each (var state :String in registeredStates) {
+                if (state.match(pattern)) {
+                    hasThisState = true;
+                    if (state != currentState) {
+                        candidates.push(state);
+                    }
+                }
+            }
+            if (candidates.length > 0) {
+                avatar.setState(RandomUtil.pickRandom(candidates));
+            }
+
+            if (hasThisState) {
+                break; // Either we entered a matching state, or we were already in one
+            }
+        }
+    }
+
+    protected function playDefaultStateFrom (pattern :RegExp) :void
+    {
+        var avatar :MemberSprite = RoomView(_ctx.getPlaceView()).getMyAvatar();
+        var currentState :String = avatar.getState();
+
+        if (currentState.match(pattern)) {
+            var registeredStates :Array = avatar.getAvatarStates();
+            if (registeredStates.length > 0) {
+                avatar.setState(registeredStates[0]);
+            }
+        }
     }
 
     protected var _ctx :MsoyContext;
