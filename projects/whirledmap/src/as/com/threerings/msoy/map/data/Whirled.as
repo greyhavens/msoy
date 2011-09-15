@@ -64,7 +64,7 @@ public class Whirled
         return whirled;
     }
 
-    protected static var rnd :Random = new Random();
+    protected static var rnd :Random = Random.createRandom();
 
     protected static const DEBUG_WHIRLEDS :Array = [
         [ "Monster Rocks", "b61d047ed2172e196b3b089aa25939ee3cf6bff4" ],
