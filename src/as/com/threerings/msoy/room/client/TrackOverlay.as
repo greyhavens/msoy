@@ -74,8 +74,6 @@ public class TrackOverlay extends HBox
 
         onRatingChanged(_roomObj.trackRating);
         onTrackChanged(_roomObj.track);
-
-        onMessageReceived(RoomObject.TRACK_SKIPPED_MESSAGE, []);
     }
 
     protected function onMessageReceived (name :String, args :Array) :void
