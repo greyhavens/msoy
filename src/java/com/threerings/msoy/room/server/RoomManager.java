@@ -648,11 +648,12 @@ public class RoomManager extends SpotSceneManager
                 clearTrackUsage(who, track.audio.itemId, null);
             }
             who.setTracks(new DSet<Track>());
-            _roomObj.removeFromDjs(who.getMemberId());
 
             if (_roomObj.currentDj == who.getMemberId()) {
                 playNextDj();
             }
+            _roomObj.removeFromDjs(who.getMemberId());
+
         } else {
             removeAllDjs();
         }
