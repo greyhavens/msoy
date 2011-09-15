@@ -32,6 +32,9 @@ public class RoomObject extends SpotSceneObject
     implements PrimaryPlace, PartyPlaceObject
 {
 // GENERATED CLASSDECL END
+
+    public static const TRACK_SKIPPED_MESSAGE :String = "track_skipped";
+
 // GENERATED STREAMING START
     public var name :String;
 

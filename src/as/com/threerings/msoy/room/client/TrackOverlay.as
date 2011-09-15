@@ -3,18 +3,22 @@
 
 package com.threerings.msoy.room.client {
 
-import com.threerings.msoy.room.data.Track;
-import com.threerings.util.RandomUtil;
-import com.threerings.util.Arrays;
 import flash.events.Event;
+
+import caurina.transitions.Tweener;
 
 import mx.containers.HBox;
 import mx.controls.Label;
 
+import com.threerings.util.F;
+import com.threerings.util.RandomUtil;
+
 import com.threerings.flex.CommandButton;
 
+import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.room.data.RoomObject;
+import com.threerings.msoy.room.data.Track;
 import com.threerings.msoy.world.client.WorldController;
 
 public class TrackOverlay extends HBox
@@ -27,10 +31,12 @@ public class TrackOverlay extends HBox
         addEventListener(Event.ADDED_TO_STAGE, function (..._) :void {
             _roomObj.trackRatingChanged.add(onRatingChanged);
             _roomObj.trackChanged.add(onTrackChanged);
+            _roomObj.messageReceived.add(onMessageReceived);
         });
         addEventListener(Event.REMOVED_FROM_STAGE, function (..._) :void {
             _roomObj.trackRatingChanged.remove(onRatingChanged);
             _roomObj.trackChanged.remove(onTrackChanged);
+            _roomObj.messageReceived.remove(onMessageReceived);
         });
 
         setStyle("bottom", 0);
@@ -68,6 +74,26 @@ public class TrackOverlay extends HBox
 
         onRatingChanged(_roomObj.trackRating);
         onTrackChanged(_roomObj.track);
+
+        onMessageReceived(RoomObject.TRACK_SKIPPED_MESSAGE, []);
+    }
+
+    protected function onMessageReceived (name :String, args :Array) :void
+    {
+        switch (name) {
+        case RoomObject.TRACK_SKIPPED_MESSAGE:
+            // TODO(bruno): Get a nicer looking effect for this
+            var label :Label = new Label();
+            label.text = Msgs.GENERAL.get("m.track_skipped");
+            label.setStyle("fontSize", 24);
+            label.includeInLayout = false;
+            addChildAt(label, 0);
+
+            Tweener.addTween(label, {
+                time: 1, y: 80, onComplete: F.callback(removeChild, label)
+            });
+            break;
+        }
     }
 
     protected function onRatingChanged (rating :int) :void

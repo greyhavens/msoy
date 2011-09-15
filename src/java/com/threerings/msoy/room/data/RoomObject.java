@@ -98,6 +98,8 @@ public class RoomObject extends SpotSceneObject
     public static final String PLAY_COUNT = "playCount";
     // AUTO-GENERATED: FIELDS END
 
+    public static final String TRACK_SKIPPED_MESSAGE = "track_skipped";
+
     /** The name of this room. */
     public String name;
 
