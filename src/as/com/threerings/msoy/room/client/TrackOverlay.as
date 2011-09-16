@@ -9,6 +9,7 @@ import flash.events.Event;
 
 import caurina.transitions.Tweener;
 
+import mx.core.ScrollPolicy;
 import mx.containers.HBox;
 import mx.containers.VBox;
 import mx.controls.Label;
@@ -52,12 +53,14 @@ public class TrackOverlay extends HBox
         super.createChildren();
 
         _ratingLabel = new Label();
-        _ratingLabel.width = 40;
+        _ratingLabel.width = 50;
         _ratingLabel.setStyle("textAlign", "right");
         var vbox :VBox = new VBox();
         vbox.setStyle("verticalAlign", "middle");
         vbox.addChild(_ratingLabel);
         vbox.height = 40;
+        vbox.horizontalScrollPolicy = ScrollPolicy.OFF;
+        vbox.verticalScrollPolicy = ScrollPolicy.OFF;
         addChild(vbox);
 
         _radioGroup = new RadioButtonGroup();
@@ -91,8 +94,8 @@ public class TrackOverlay extends HBox
         showMusic.setCommand(WorldController.SHOW_MUSIC, showMusic);
         addChild(showMusic);
 
-        onRatingChanged(_roomObj.trackRating);
         onTrackChanged(_roomObj.track);
+        onRatingChanged(_roomObj.trackRating);
     }
 
     protected function onMessageReceived (name :String, args :Array) :void
@@ -117,6 +120,23 @@ public class TrackOverlay extends HBox
     {
         _ratingLabel.visible = true;
         _ratingLabel.text = (rating > 0 ? "+" : "") + rating;
+
+        var o :Object = { size: 26 };
+        var updateStyle :Function = function () :void {
+            _ratingLabel.setStyle("fontSize", o.size);
+        };
+
+        // Grow...
+        updateStyle();
+        Tweener.addTween(o, {
+            time: 0.2, size: 30, onUpdate: updateStyle,
+            onComplete: function () :void {
+                // And shrink back...
+                Tweener.addTween(o, {
+                    time: 0.2, size: 26, onUpdate: updateStyle
+                });
+            }
+        });
     }
 
     protected function onTrackChanged (newTrack :Track, oldTrack :Track = null) :void
