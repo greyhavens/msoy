@@ -3,23 +3,22 @@
 
 package com.threerings.msoy.room.client {
 
-import com.threerings.flex.FlexUtil;
-import com.threerings.msoy.ui.MsoyLoadedAsset;
 import flash.events.Event;
 
 import caurina.transitions.Tweener;
 
-import mx.core.ScrollPolicy;
 import mx.containers.HBox;
 import mx.containers.VBox;
 import mx.controls.Label;
 import mx.controls.RadioButton;
 import mx.controls.RadioButtonGroup;
+import mx.core.ScrollPolicy;
 
 import com.threerings.util.F;
 import com.threerings.util.RandomUtil;
 
 import com.threerings.flex.CommandButton;
+import com.threerings.flex.FlexUtil;
 
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;
@@ -46,6 +45,9 @@ public class TrackOverlay extends HBox
         });
 
         this.styleName = "trackOverlay";
+        this.includeInLayout = false;
+        this.setStyle("right", 0);
+        this.setStyle("bottom", 0);
     }
 
     override protected function createChildren () :void

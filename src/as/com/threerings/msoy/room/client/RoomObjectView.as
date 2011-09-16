@@ -3,9 +3,6 @@
 
 package com.threerings.msoy.room.client {
 
-import com.threerings.util.Comparators;
-import com.threerings.msoy.room.data.Deejay;
-import com.threerings.util.Arrays;
 import flash.events.Event;
 import flash.geom.Point;
 import flash.geom.Rectangle;
@@ -13,6 +10,8 @@ import flash.utils.ByteArray;
 
 import mx.managers.PopUpManager;
 
+import com.threerings.util.Arrays;
+import com.threerings.util.Comparators;
 import com.threerings.util.ImmutableProxyObject;
 import com.threerings.util.Map;
 import com.threerings.util.Name;
@@ -53,6 +52,7 @@ import com.threerings.msoy.client.MsoyClient;
 import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.client.PlaceLoadingDisplay;
 import com.threerings.msoy.client.Prefs;
+import com.threerings.msoy.client.TopPanel;
 import com.threerings.msoy.client.UberClient;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.item.data.all.Audio;
@@ -60,6 +60,7 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.Item_UsedAs;
 import com.threerings.msoy.room.data.ControllableEntity;
+import com.threerings.msoy.room.data.Deejay;
 import com.threerings.msoy.room.data.EntityControl;
 import com.threerings.msoy.room.data.EntityMemories;
 import com.threerings.msoy.room.data.FurniUpdate_Remove;
@@ -745,11 +746,18 @@ public class RoomObjectView extends RoomView
                 // _ctx.getTopPanel().getPlaceContainer().addOverlay(
                 //     _trackOverlay, 9999999);
 
-                PopUpManager.addPopUp(_trackOverlay, _ctx.getTopPanel());
+                // PopUpManager.addPopUp(_trackOverlay, _ctx.getTopPanel());
+
+                // Just slap it on the top panel and let Flex its positioning magic
+                // TODO(bruno): Make this a proper overlay
+                var top :TopPanel = _ctx.getTopPanel();
+                _trackOverlay.setStyle("bottom", top.getControlBarHeight() - 2);
+                top.addChild(_trackOverlay);
             }
 
         } else if (_trackOverlay != null) {
-            PopUpManager.removePopUp(_trackOverlay);
+            // PopUpManager.removePopUp(_trackOverlay);
+            _trackOverlay.parent.removeChild(_trackOverlay);
             _trackOverlay = null;
         }
     }

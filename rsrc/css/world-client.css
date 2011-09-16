@@ -845,9 +845,6 @@ ChatInput {
 .trackOverlay {
   backgroundColor: #ffffff;
   backgroundAlpha: 0.85;
-  borderColor: #408fd9;
-  borderStyle: "solid";
-  borderThickness: 2;
   cornerRadius: 3;
   paddingLeft: 10;
   paddingRight: 10;
@@ -857,6 +854,7 @@ ChatInput {
   fontWeight: bold;
   color: #216CA3;
   fontFamily: Arial;
+  right: 0;
 }
 
 .rateUpButton, .rateDownButton {
