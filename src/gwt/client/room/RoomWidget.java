@@ -27,9 +27,8 @@ public class RoomWidget extends FlowPanel
         if (room.winnerRank != null) {
             add(MsoyUI.createLabel(room.winnerRank, "WinnerRank"));
         }
-        // TODO(bruno): Get a proper image for this
         init(room.sceneId, room.name, room.thumbnail,
-            room.hopping ? new Image("/images/game/featured_banner.png") : null);
+            room.hopping ? new Image("/images/rooms/dj_featured.png") : null);
         add(new Stars(room.rating, true, true, null));
         if (room.population > 0) {
             add(MsoyUI.createLabel(_msgs.rwRoomPopulation(""+room.population), null));
