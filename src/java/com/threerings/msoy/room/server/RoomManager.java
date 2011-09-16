@@ -612,9 +612,9 @@ public class RoomManager extends SpotSceneManager
         }
 
         _roomObj.setCurrentDj(memberId);
+        _roomObj.setTrackRating(0);
         _roomObj.setTrack(track);
         _roomObj.setPlayCount(_roomObj.playCount + 1);
-        _roomObj.setTrackRating(0);
         _roomObj.commitTransaction();
 
         _trackRatings.clear();

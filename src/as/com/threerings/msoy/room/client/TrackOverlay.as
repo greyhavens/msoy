@@ -3,12 +3,17 @@
 
 package com.threerings.msoy.room.client {
 
+import com.threerings.flex.FlexUtil;
+import com.threerings.msoy.ui.MsoyLoadedAsset;
 import flash.events.Event;
 
 import caurina.transitions.Tweener;
 
 import mx.containers.HBox;
+import mx.containers.VBox;
 import mx.controls.Label;
+import mx.controls.RadioButton;
+import mx.controls.RadioButtonGroup;
 
 import com.threerings.util.F;
 import com.threerings.util.RandomUtil;
@@ -39,8 +44,7 @@ public class TrackOverlay extends HBox
             _roomObj.messageReceived.remove(onMessageReceived);
         });
 
-        setStyle("bottom", 0);
-        setStyle("right", 0);
+        this.styleName = "trackOverlay";
     }
 
     override protected function createChildren () :void
@@ -48,28 +52,43 @@ public class TrackOverlay extends HBox
         super.createChildren();
 
         _ratingLabel = new Label();
-        _ratingLabel.width = 50;
-        _ratingLabel.setStyle("fontSize", 24);
+        _ratingLabel.width = 40;
         _ratingLabel.setStyle("textAlign", "right");
-        addChild(_ratingLabel);
+        var vbox :VBox = new VBox();
+        vbox.setStyle("verticalAlign", "middle");
+        vbox.addChild(_ratingLabel);
+        vbox.height = 40;
+        addChild(vbox);
 
-        // TODO(bruno): Image button
-        var rateUp :CommandButton = new CommandButton("+", rateTrack, true);
-        rateUp.width = 32;
-        rateUp.height = 32;
+        _radioGroup = new RadioButtonGroup();
+        _radioGroup.addEventListener(Event.CHANGE, function (..._) :void {
+            rateTrack(_radioGroup.selectedValue);
+        });
+
+        // var rateUp :CommandButton = newButton("rateUpButton", "i.rate_up");
+        var rateUp :RadioButton = new RadioButton();
+        rateUp.toolTip = Msgs.GENERAL.get("i.rate_up");
+        rateUp.styleName = "rateUpButton";
+        rateUp.group = _radioGroup;
+        rateUp.value = true;
+        rateUp.useHandCursor = rateUp.buttonMode = true;
         addChild(rateUp);
 
-        // TODO(bruno): Image button
-        var rateDown :CommandButton = new CommandButton("-", rateTrack, false);
-        rateDown.width = 32;
-        rateDown.height = 32;
+        // var rateDown :CommandButton = newButton("rateDownButton", "i.rate_down");
+        var rateDown :RadioButton = new RadioButton();
+        rateDown.toolTip = Msgs.GENERAL.get("i.rate_down");
+        rateDown.styleName = "rateDownButton";
+        rateDown.group = _radioGroup;
+        rateDown.value = false;
+        rateDown.useHandCursor = rateDown.buttonMode = true;
         addChild(rateDown);
 
-        // TODO(bruno): Image button
-        var showMusic :CommandButton = new CommandButton("M");
+        addChild(FlexUtil.createSpacer(10));
+
+        var showMusic :CommandButton = new CommandButton();
+        showMusic.toolTip = Msgs.GENERAL.get("i.dj_music");
+        showMusic.styleName = "djMusicButton";
         showMusic.setCommand(WorldController.SHOW_MUSIC, showMusic);
-        showMusic.width = 32;
-        showMusic.height = 32;
         addChild(showMusic);
 
         onRatingChanged(_roomObj.trackRating);
@@ -96,12 +115,14 @@ public class TrackOverlay extends HBox
 
     protected function onRatingChanged (rating :int) :void
     {
+        _ratingLabel.visible = true;
         _ratingLabel.text = (rating > 0 ? "+" : "") + rating;
     }
 
     protected function onTrackChanged (newTrack :Track, oldTrack :Track = null) :void
     {
-        _myRating = 0;
+        _ratingLabel.visible = false;
+        _radioGroup.selection = null;
 
         if (newTrack == null) {
             // Ok, party's over
@@ -110,10 +131,12 @@ public class TrackOverlay extends HBox
         } else if (amDj(newTrack)) {
             // Started DJ-ing, enter a DJ state (or dance if they don't have one)
             playState([ /\bdj\b/i, /\bdance\b/i ]);
+            _radioGroup.enabled = false;
 
         } else if (amDj(oldTrack)) {
             // Stopped DJ-ing, go back to just dancing
             playState([ /\bdance\b/i ]);
+            _radioGroup.enabled = true;
         }
     }
 
@@ -121,11 +144,6 @@ public class TrackOverlay extends HBox
     {
         if (amDj(_roomObj.track)) {
             return; // You can't rate your own track
-        }
-
-        var rating :int = like ? +1 : -1;
-        if (rating == _myRating) {
-            return; // Ignore redundant clicks
         }
 
         if (like) {
@@ -137,7 +155,6 @@ public class TrackOverlay extends HBox
         }
 
         _roomObj.roomService.rateTrack(_roomObj.track.audio.itemId, like);
-        _myRating = rating;
     }
 
     protected function amDj (track :Track) :Boolean
@@ -178,7 +195,7 @@ public class TrackOverlay extends HBox
         var avatar :MemberSprite = RoomView(_ctx.getPlaceView()).getMyAvatar();
         var currentState :String = avatar.getState();
 
-        if (currentState.match(pattern)) {
+        if (currentState == null || currentState.match(pattern)) {
             var registeredStates :Array = avatar.getAvatarStates();
             if (registeredStates.length > 0) {
                 avatar.setState(registeredStates[0]);
@@ -189,7 +206,7 @@ public class TrackOverlay extends HBox
     protected var _ctx :MsoyContext;
     protected var _roomObj :RoomObject;
 
+    protected var _radioGroup :RadioButtonGroup;
     protected var _ratingLabel :Label;
-    protected var _myRating :int;
 }
 }

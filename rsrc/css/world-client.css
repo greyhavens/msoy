@@ -7,7 +7,7 @@
 /* Only encode A-Z,a-z,0-9, and period. */
 /*
 @font-face {
-  fontFamily: "Trebuchet";
+  ontFamily: "Trebuchet";
   advancedAntiAliasing: true;
   src: url("../fonts/trebuc.ttf");
   unicodeRange:
@@ -171,6 +171,7 @@ GameOverPanel {
 .controlBarPartyButton, .controlBarConfig, .notificationToggle,
 .headerBarBack, .placeZoomButton,
 .joinNowButton, .logonButton, .tourNext, .trophyFeedTrophy,
+.djMusicButton,
 .closeButton {
 
   /** clear out the CheckBox foreground icons too */
@@ -270,6 +271,10 @@ GameOverPanel {
 
 .placeZoomButton {
   image: Embed(source="../media/skins/place/zoom.png");
+}
+
+.djMusicButton {
+  image: Embed(source="../media/skins/button/music.png");
 }
 
 .tourNext {
@@ -835,4 +840,56 @@ ChatInput {
   color: #AAB5B9;
   textRollOverColor: #5a9fb9;
   textAlign: right;
+}
+
+.trackOverlay {
+  backgroundColor: #ffffff;
+  backgroundAlpha: 0.85;
+  borderColor: #408fd9;
+  borderStyle: "solid";
+  borderThickness: 2;
+  cornerRadius: 3;
+  paddingLeft: 10;
+  paddingRight: 10;
+  paddingTop: 5;
+  paddingBottom: 5;
+
+  fontSize: 20;
+  fontWeight: bold;
+  color: #216CA3;
+  fontFamily: Arial;
+}
+
+.rateUpButton, .rateDownButton {
+  icon: ClassReference(null);
+  upIcon: ClassReference(null);
+  overIcon: ClassReference(null);
+  downIcon: ClassReference(null);
+  disabledIcon: ClassReference(null);
+  selectedUpIcon: ClassReference(null);
+  selectedOverIcon: ClassReference(null);
+  selectedDownIcon: ClassReference(null);
+  selectedDisabledIcon: ClassReference(null);
+  width: 32px;
+  height: 40px;
+}
+
+.rateUpButton {
+  upSkin: Embed(source="../media/skins/button/like_up.png");
+  downSkin: Embed(source="../media/skins/button/like_down.png");
+  overSkin: Embed(source="../media/skins/button/like_down.png");
+  disabledSkin: Embed(source="../media/skins/button/like_up.png");
+  selectedUpSkin: Embed(source="../media/skins/button/like_down.png");
+  selectedDownSkin: Embed(source="../media/skins/button/like_down.png");
+  selectedOverSkin: Embed(source="../media/skins/button/like_down.png");
+}
+
+.rateDownButton {
+  upSkin: Embed(source="../media/skins/button/dislike_up.png");
+  downSkin: Embed(source="../media/skins/button/dislike_down.png");
+  overSkin: Embed(source="../media/skins/button/dislike_down.png");
+  disabledSkin: Embed(source="../media/skins/button/dislike_up.png");
+  selectedUpSkin: Embed(source="../media/skins/button/dislike_down.png");
+  selectedDownSkin: Embed(source="../media/skins/button/dislike_down.png");
+  selectedOverSkin: Embed(source="../media/skins/button/dislike_down.png");
 }
