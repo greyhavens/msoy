@@ -506,6 +506,7 @@ public class RoomManager extends SpotSceneManager
                         }
                         Deejay dj = new Deejay();
                         dj.memberId = who.getMemberId();
+                        dj.lastRating = Integer.MIN_VALUE;
                         dj.startedAt = System.currentTimeMillis();
                         _roomObj.addToDjs(dj);
                     }
@@ -600,6 +601,13 @@ public class RoomManager extends SpotSceneManager
             if (_roomObj.recentTracks.size() > TRACK_HISTORY_SIZE) {
                 RecentTrack oldest = Collections.min(ImmutableList.copyOf(_roomObj.recentTracks));
                 _roomObj.removeFromRecentTracks(oldest.getKey());
+            }
+
+            // If the old DJ is still here, update their lastRating
+            Deejay dj = _roomObj.djs.get(oldTrack.audio.ownerId);
+            if (dj != null) {
+                dj.lastRating = _roomObj.trackRating;
+                _roomObj.updateDjs(dj);
             }
         }
 

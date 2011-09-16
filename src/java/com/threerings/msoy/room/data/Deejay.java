@@ -19,6 +19,9 @@ public class Deejay
     /** A timestamp of when they started DJ-ing. Used for sorting. */
     public long startedAt;
 
+    /** The rating of their last song. */
+    public int lastRating;
+
     public int compareTo (Deejay that)
     {
         return Longs.compare(this.startedAt, that.startedAt);

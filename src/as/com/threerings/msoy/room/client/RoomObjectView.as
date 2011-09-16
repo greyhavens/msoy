@@ -3,6 +3,9 @@
 
 package com.threerings.msoy.room.client {
 
+import com.threerings.util.Comparators;
+import com.threerings.msoy.room.data.Deejay;
+import com.threerings.util.Arrays;
 import flash.events.Event;
 import flash.geom.Point;
 import flash.geom.Rectangle;
@@ -285,35 +288,43 @@ public class RoomObjectView extends RoomView
     // from interface AttributeChangedListener
     public function attributeChanged (event :AttributeChangedEvent) :void
     {
-        var name :String = event.getName();
-        if (RoomObject.PLAY_COUNT == name) {
+        switch (event.getName()) {
+        case RoomObject.PLAY_COUNT:
             // when the play count changes, it's time for us to re-check the audio
             updateBackgroundAudio();
+            break;
 
-        } else if (RoomObject.TRACK == name) {
+        case RoomObject.TRACK:
             updateTrackOverlay();
+            break;
+
+        case RoomObject.DJS:
+            updateCrownHolder();
+            break;
         }
     }
 
     // from interface SetListener
     public function entryAdded (event :EntryAddedEvent) :void
     {
-        var name :String = event.getName();
-
-        if (PlaceObject.OCCUPANT_INFO == name) {
+        switch (event.getName()) {
+        case PlaceObject.OCCUPANT_INFO:
             addBody(event.getEntry() as OccupantInfo);
+            break;
 
-        } else if (SpotSceneObject.OCCUPANT_LOCS == name) {
+        case SpotSceneObject.OCCUPANT_LOCS:
             var sceneLoc :SceneLocation = (event.getEntry() as SceneLocation);
             portalTraversed(sceneLoc.loc, true);
+            break;
 
-        } else if (RoomObject.MEMORIES == name) {
+        case RoomObject.MEMORIES:
             var entry :EntityMemories = event.getEntry() as EntityMemories;
             entry.memories.forEach(function (key :String, value :ByteArray) :void {
                 dispatchMemoryChanged(entry.ident, key, value);
             });
+            break;
 
-        } else if (RoomObject.CONTROLLERS == name) {
+        case RoomObject.CONTROLLERS:
             var ctrl :EntityControl = (event.getEntry() as EntityControl);
             if (ctrl.controllerOid == _ctx.getMemberObject().getOid()) {
                 if (ctrl.controlled is ControllableEntity) {
@@ -325,51 +336,68 @@ public class RoomObjectView extends RoomView
                         "controlled", ctrl.controlled, "controllerOid", ctrl.controllerOid);
                 }
             }
+            break;
 
-        } else if (RoomObject.PLAYLIST == name) {
+        case RoomObject.PLAYLIST:
             var audio :Audio = event.getEntry() as Audio;
             if (audio.ownerId == _ctx.getMyId()) {
                 _ctx.getMsoyClient().itemUsageChangedToGWT(
                     Item.AUDIO, audio.itemId, audio.used, audio.location);
             }
+            break;
+
+        case RoomObject.DJS:
+            updateCrownHolder();
+            break;
         }
     }
 
     // from interface SetListener
     public function entryUpdated (event :EntryUpdatedEvent) :void
     {
-        var name :String = event.getName();
-
-        if (PlaceObject.OCCUPANT_INFO == name) {
+        switch (event.getName()) {
+        case PlaceObject.OCCUPANT_INFO:
             updateBody(event.getEntry() as OccupantInfo, event.getOldEntry() as OccupantInfo);
+            break;
 
-        } else if (SpotSceneObject.OCCUPANT_LOCS == name) {
+        case SpotSceneObject.OCCUPANT_LOCS:
             moveBody((event.getEntry() as SceneLocation).bodyOid);
+            break;
 
-        } else if (RoomObject.MEMORIES == name) {
+        case RoomObject.MEMORIES:
             // TODO: this presently should not happen, but we cope and treat it like an add
             var entry :EntityMemories = event.getEntry() as EntityMemories;
             entry.memories.forEach(function (key :String, value :ByteArray) :void {
                 dispatchMemoryChanged(entry.ident, key, value);
             });
+            break;
+
+        case RoomObject.DJS:
+            updateCrownHolder();
+            break;
         }
     }
 
     // from interface SetListener
     public function entryRemoved (event :EntryRemovedEvent) :void
     {
-        var name :String = event.getName();
-
-        if (PlaceObject.OCCUPANT_INFO == name) {
+        switch (event.getName()) {
+        case PlaceObject.OCCUPANT_INFO:
             removeBody((event.getOldEntry() as OccupantInfo).getBodyOid());
+            break;
 
-        } else if (RoomObject.PLAYLIST == name) {
+        case RoomObject.PLAYLIST:
             var audio :Audio = event.getOldEntry() as Audio;
             if (audio.ownerId == _ctx.getMyId()) {
                 // always assume that if we're present to see a remove, it's unused
                 _ctx.getMsoyClient().itemUsageChangedToGWT(
                     Item.AUDIO, audio.itemId, Item_UsedAs.NOTHING, 0);
             }
+            break;
+
+        case RoomObject.DJS:
+            updateCrownHolder();
+            break;
         }
     }
 
@@ -724,6 +752,15 @@ public class RoomObjectView extends RoomView
             PopUpManager.removePopUp(_trackOverlay);
             _trackOverlay = null;
         }
+    }
+
+    // Revalidate who has the crown for being the best DJ
+    protected function updateCrownHolder () :void
+    {
+        var best :Deejay = Arrays.max(_roomObj.djs.toArray(), function (a :Deejay, b :Deejay) :int {
+            return Comparators.compareInts(a.lastRating, b.lastRating);
+        });
+        // TODO(bruno): Move the crown to this player
     }
 
     protected function addBody (occInfo :OccupantInfo) :void

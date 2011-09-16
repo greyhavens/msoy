@@ -25,16 +25,20 @@ public class Deejay implements Comparable, DSet_Entry
 
     public var startedAt :Long;
 
+    public var lastRating :int;
+
     public function readObject (ins :ObjectInputStream) :void
     {
         memberId = ins.readInt();
         startedAt = ins.readLong();
+        lastRating = ins.readInt();
     }
 
     public function writeObject (out :ObjectOutputStream) :void
     {
         out.writeInt(memberId);
         out.writeLong(startedAt);
+        out.writeInt(lastRating);
     }
 
 // GENERATED STREAMING END
