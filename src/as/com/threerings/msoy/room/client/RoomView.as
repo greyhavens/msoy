@@ -249,18 +249,22 @@ public class RoomView extends Sprite
     /**
      * Called by EntitySprite instances when they've had their location updated.
      */
-    public function locationUpdated (sprite :EntitySprite) :void
+    public function locationUpdated (element :RoomElement) :void
     {
-        _layout.updateScreenLocation(sprite, sprite.getLayoutHotSpot());
+        var sprite :EntitySprite = element as EntitySprite;
 
-        if (sprite == _bg && _scene.getSceneType() == Decor.FIXED_IMAGE) {
-            sprite.viz.x += getScrollOffset();
-        }
+        _layout.updateScreenLocation(element, (sprite != null) ? sprite.getLayoutHotSpot() : null);
 
-        // if we moved the _centerSprite, possibly update the scroll position
-        if (sprite == _centerSprite &&
-                ((sprite != _bg) || _scene.getSceneType() != Decor.FIXED_IMAGE)) {
-            scrollView();
+        if (sprite != null) {
+            if (sprite == _bg && _scene.getSceneType() == Decor.FIXED_IMAGE) {
+                sprite.viz.x += getScrollOffset();
+            }
+
+            // if we moved the _centerSprite, possibly update the scroll position
+            if (sprite == _centerSprite &&
+                    ((sprite != _bg) || _scene.getSceneType() != Decor.FIXED_IMAGE)) {
+                scrollView();
+            }
         }
     }
 

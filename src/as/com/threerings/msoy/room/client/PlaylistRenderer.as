@@ -24,7 +24,6 @@ import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.item.data.all.Audio;
-import com.threerings.msoy.room.data.MemberInfo;
 import com.threerings.msoy.room.data.RoomObject;
 import com.threerings.msoy.room.data.Track;
 import com.threerings.msoy.ui.MediaControls;

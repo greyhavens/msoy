@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.room.client {
 
+import flash.display.Sprite;
 import flash.events.Event;
 import flash.geom.Point;
 import flash.geom.Rectangle;
@@ -278,6 +279,16 @@ public class RoomObjectView extends RoomView
         return (occInfo == null) ? null : getOccupant(occInfo.bodyOid);
     }
 
+    public function getOccupantByMemberId (memberId :int) :OccupantSprite
+    {
+        if (_roomObj == null) {
+            return null;
+        }
+
+        var memInfo :MemberInfo = _roomObj.getMemberInfo(memberId);
+        return (memInfo == null) ? null : getOccupant(memInfo.bodyOid);
+    }
+
     /**
      * A convenience function to get an array of all sprites for all pets in the room.
      */
@@ -300,7 +311,11 @@ public class RoomObjectView extends RoomView
             break;
 
         case RoomObject.DJS:
-            updateCrownHolder();
+            // updateCrownHolder();
+            break;
+
+        case RoomObject.CURRENT_DJ:
+            updateCurrentDj();
             break;
         }
     }
@@ -348,7 +363,7 @@ public class RoomObjectView extends RoomView
             break;
 
         case RoomObject.DJS:
-            updateCrownHolder();
+            // updateCrownHolder();
             break;
         }
     }
@@ -374,7 +389,7 @@ public class RoomObjectView extends RoomView
             break;
 
         case RoomObject.DJS:
-            updateCrownHolder();
+            // updateCrownHolder();
             break;
         }
     }
@@ -397,7 +412,7 @@ public class RoomObjectView extends RoomView
             break;
 
         case RoomObject.DJS:
-            updateCrownHolder();
+            // updateCrownHolder();
             break;
         }
     }
@@ -771,6 +786,21 @@ public class RoomObjectView extends RoomView
         // TODO(bruno): Move the crown to this player
     }
 
+    protected function updateCurrentDj () :void
+    {
+        if (_spotlight != null) {
+            _spotlight.shutdown();
+            _spotlight = null;
+        }
+
+        if (_roomObj.currentDj != 0) {
+            var avatar :OccupantSprite = getOccupantByMemberId(_roomObj.currentDj);
+            if (avatar != null) {
+                _spotlight = new Spotlight(this, avatar);
+            }
+        }
+    }
+
     protected function addBody (occInfo :OccupantInfo) :void
     {
         if (!shouldLoadAll()) {
@@ -806,6 +836,12 @@ public class RoomObjectView extends RoomView
             if (bodyOid == _ctx.getMemberObject().getOid()) {
                 setFastCentering(true);
                 setCenterSprite(occupant);
+            }
+
+            // If they're the DJ, show their spotlight
+            if (occupant is MemberSprite
+                    && MemberInfo(occupant.getOccupantInfo()).getMemberId() == _roomObj.currentDj) {
+                updateCurrentDj();
             }
 
         } else {
@@ -951,5 +987,8 @@ public class RoomObjectView extends RoomView
 
     /** The id of the current music being played from the room's playlist. */
     protected var _musicPlayCount :int = -1; // -1 means nothing is playing
+
+    /** The currently shown spotlight effect, if any. */
+    protected var _spotlight :Spotlight;
 }
 }
