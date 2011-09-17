@@ -1572,14 +1572,18 @@ public class RoomManager extends SpotSceneManager
         // flush any modified memory records to the database
         flushMemories(_invoker, _memoryRepo, _roomObj.memories);
 
-        // Clear the item usage of any DJs in this room
-        removeAllDjs();
-
         // flush modified property spaces and destroy dobjects
         for (RoomPropertiesEntry entry : _roomObj.propertySpaces) {
             RoomPropertiesObject properties = (RoomPropertiesObject)_omgr.getObject(entry.propsOid);
             flushAVRGamePropertySpace(entry.ownerId, properties);
             _omgr.destroyObject(entry.propsOid);
+        }
+
+        try {
+            // Clear the item usage of any DJs in this room
+            removeAllDjs();
+        } catch (Exception e) {
+            log.warning("removeAllDjs barfed", e);
         }
     }
 
