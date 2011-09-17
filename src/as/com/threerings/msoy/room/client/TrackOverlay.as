@@ -46,13 +46,21 @@ public class TrackOverlay extends HBox
 
         this.styleName = "trackOverlay";
         this.includeInLayout = false;
-        this.setStyle("right", 0);
-        this.setStyle("bottom", 0);
     }
 
     override protected function createChildren () :void
     {
         super.createChildren();
+
+        _skippedLabel = new Label();
+        _skippedLabel.text = Msgs.GENERAL.get("m.track_skipped");
+        _skippedLabel.setStyle("fontSize", 24);
+        _skippedLabel.visible = false;
+        _skippedLabel.includeInLayout = false;
+        addChild(_skippedLabel);
+
+        _ratingControls = new HBox();
+        _ratingControls.percentWidth = 100;
 
         _ratingLabel = new Label();
         _ratingLabel.width = 50;
@@ -63,7 +71,7 @@ public class TrackOverlay extends HBox
         vbox.height = 40;
         vbox.horizontalScrollPolicy = ScrollPolicy.OFF;
         vbox.verticalScrollPolicy = ScrollPolicy.OFF;
-        addChild(vbox);
+        _ratingControls.addChild(vbox);
 
         _radioGroup = new RadioButtonGroup();
         _radioGroup.addEventListener(Event.CHANGE, function (..._) :void {
@@ -77,7 +85,7 @@ public class TrackOverlay extends HBox
         rateUp.group = _radioGroup;
         rateUp.value = true;
         rateUp.useHandCursor = rateUp.buttonMode = true;
-        addChild(rateUp);
+        _ratingControls.addChild(rateUp);
 
         // var rateDown :CommandButton = newButton("rateDownButton", "i.rate_down");
         var rateDown :RadioButton = new RadioButton();
@@ -86,8 +94,9 @@ public class TrackOverlay extends HBox
         rateDown.group = _radioGroup;
         rateDown.value = false;
         rateDown.useHandCursor = rateDown.buttonMode = true;
-        addChild(rateDown);
+        _ratingControls.addChild(rateDown);
 
+        addChild(_ratingControls);
         addChild(FlexUtil.createSpacer(10));
 
         var showMusic :CommandButton = new CommandButton();
@@ -104,16 +113,17 @@ public class TrackOverlay extends HBox
     {
         switch (name) {
         case RoomObject.TRACK_SKIPPED_MESSAGE:
-            // TODO(bruno): Get a nicer looking effect for this
-            var label :Label = new Label();
-            label.text = Msgs.GENERAL.get("m.track_skipped");
-            label.setStyle("fontSize", 24);
-            label.includeInLayout = false;
-            addChildAt(label, 0);
+            _skippedLabel.visible = true;
+            _ratingControls.visible = false;
 
-            Tweener.addTween(label, {
-                time: 1, y: 80, onComplete: F.callback(removeChild, label)
+            _skippedLabel.alpha = 1;
+            Tweener.addTween(_skippedLabel, {
+                time: 1, alpha: 0, onComplete: function () :void {
+                    _skippedLabel.visible = false;
+                    _ratingControls.visible = true;
+                }
             });
+
             break;
         }
     }
@@ -230,5 +240,7 @@ public class TrackOverlay extends HBox
 
     protected var _radioGroup :RadioButtonGroup;
     protected var _ratingLabel :Label;
+    protected var _skippedLabel :Label;
+    protected var _ratingControls :HBox;
 }
 }
