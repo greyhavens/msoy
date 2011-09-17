@@ -53,7 +53,7 @@ public class TrackOverlay extends HBox
         super.createChildren();
 
         _skippedLabel = new Label();
-        _skippedLabel.text = Msgs.GENERAL.get("m.track_skipped");
+        _skippedLabel.text = Msgs.WORLD.get("m.track_skipped");
         _skippedLabel.setStyle("fontSize", 24);
         _skippedLabel.visible = false;
         _skippedLabel.includeInLayout = false;
