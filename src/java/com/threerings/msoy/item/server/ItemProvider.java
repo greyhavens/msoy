@@ -5,14 +5,13 @@ package com.threerings.msoy.item.server;
 
 import javax.annotation.Generated;
 
+import com.threerings.msoy.item.client.ItemService;
+import com.threerings.msoy.item.data.all.ItemFlag;
+import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationProvider;
-
-import com.threerings.msoy.item.client.ItemService;
-import com.threerings.msoy.item.data.all.ItemFlag;
-import com.threerings.msoy.item.data.all.ItemIdent;
 
 /**
  * Defines the server-side of the {@link ItemService}.

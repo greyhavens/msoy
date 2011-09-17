@@ -3,11 +3,11 @@
 
 package com.threerings.msoy.chat.client {
 
+import com.threerings.msoy.data.all.JabberName;
+import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.client.InvocationService_InvocationListener;
 import com.threerings.presents.client.InvocationService_ResultListener;
-
-import com.threerings.msoy.data.all.JabberName;
 
 /**
  * An ActionScript version of the Java JabberService interface.

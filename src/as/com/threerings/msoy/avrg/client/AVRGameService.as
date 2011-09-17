@@ -3,14 +3,13 @@
 
 package com.threerings.msoy.avrg.client {
 
-import com.threerings.util.Integer;
-
+import com.threerings.msoy.room.data.MsoyLocation;
+import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.client.InvocationService_ConfirmListener;
 import com.threerings.presents.client.InvocationService_InvocationListener;
 import com.threerings.presents.client.InvocationService_ResultListener;
-
-import com.threerings.msoy.room.data.MsoyLocation;
+import com.threerings.util.Integer;
 
 /**
  * An ActionScript version of the Java AVRGameService interface.

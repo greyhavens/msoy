@@ -3,13 +3,12 @@
 
 package com.threerings.msoy.world.tour.data {
 
-import com.threerings.util.langBoolean;
-
+import com.threerings.msoy.world.tour.client.TourService;
+import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService_ResultListener;
 import com.threerings.presents.data.InvocationMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ResultMarshaller;
-
-import com.threerings.msoy.world.tour.client.TourService;
+import com.threerings.util.langBoolean;
 
 /**
  * Provides the implementation of the <code>TourService</code> interface
@@ -28,6 +27,7 @@ public class TourMarshaller extends InvocationMarshaller
     public function endTour () :void
     {
         sendRequest(END_TOUR, [
+            
         ]);
     }
 

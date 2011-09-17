@@ -5,11 +5,10 @@ package com.threerings.msoy.bureau.server;
 
 import javax.annotation.Generated;
 
-import com.threerings.presents.data.ClientObject;
-import com.threerings.presents.server.InvocationProvider;
-
 import com.threerings.msoy.admin.gwt.BureauLauncherInfo;
 import com.threerings.msoy.bureau.client.BureauLauncherService;
+import com.threerings.presents.data.ClientObject;
+import com.threerings.presents.server.InvocationProvider;
 
 /**
  * Defines the server-side of the {@link BureauLauncherService}.

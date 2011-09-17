@@ -5,12 +5,11 @@ package com.threerings.msoy.server;
 
 import javax.annotation.Generated;
 
+import com.threerings.msoy.client.MsoyService;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationProvider;
-
-import com.threerings.msoy.client.MsoyService;
 
 /**
  * Defines the server-side of the {@link MsoyService}.

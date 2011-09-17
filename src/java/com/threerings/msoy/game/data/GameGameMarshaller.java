@@ -5,10 +5,9 @@ package com.threerings.msoy.game.data;
 
 import javax.annotation.Generated;
 
+import com.threerings.msoy.game.client.GameGameService;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.InvocationMarshaller;
-
-import com.threerings.msoy.game.client.GameGameService;
 
 /**
  * Provides the implementation of the {@link GameGameService} interface

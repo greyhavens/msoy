@@ -3,13 +3,12 @@
 
 package com.threerings.msoy.game.data {
 
-import com.threerings.util.Integer;
-
+import com.threerings.msoy.game.client.LobbyService;
+import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService_ResultListener;
 import com.threerings.presents.data.InvocationMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ResultMarshaller;
-
-import com.threerings.msoy.game.client.LobbyService;
+import com.threerings.util.Integer;
 
 /**
  * Provides the implementation of the <code>LobbyService</code> interface

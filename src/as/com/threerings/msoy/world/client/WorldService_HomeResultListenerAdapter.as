@@ -4,7 +4,6 @@
 package com.threerings.msoy.world.client {
 
 import com.threerings.io.TypedArray;
-
 import com.threerings.presents.client.InvocationService_InvocationListener;
 
 /**

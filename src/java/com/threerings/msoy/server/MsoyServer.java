@@ -322,7 +322,6 @@ public class MsoyServer extends MsoyBaseServer
     protected class AutoRestartChecker extends Interval
     {
         public AutoRestartChecker () {
-            super(RUN_DIRECT);
             _codeModified = codeModifiedTime();
         }
 

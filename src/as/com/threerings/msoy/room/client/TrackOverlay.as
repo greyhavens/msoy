@@ -36,12 +36,12 @@ public class TrackOverlay extends HBox
         addEventListener(Event.ADDED_TO_STAGE, function (..._) :void {
             _roomObj.trackRatingChanged.add(onRatingChanged);
             _roomObj.trackChanged.add(onTrackChanged);
-            _roomObj.messageReceived.add(onMessageReceived);
+            // _roomObj.messageReceived.add(onMessageReceived);
         });
         addEventListener(Event.REMOVED_FROM_STAGE, function (..._) :void {
             _roomObj.trackRatingChanged.remove(onRatingChanged);
             _roomObj.trackChanged.remove(onTrackChanged);
-            _roomObj.messageReceived.remove(onMessageReceived);
+            // _roomObj.messageReceived.remove(onMessageReceived);
         });
 
         this.styleName = "trackOverlay";

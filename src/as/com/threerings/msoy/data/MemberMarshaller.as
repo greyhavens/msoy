@@ -4,10 +4,8 @@
 package com.threerings.msoy.data {
 
 import com.threerings.io.TypedArray;
-
-import com.threerings.util.Integer;
-import com.threerings.util.langBoolean;
-
+import com.threerings.msoy.client.MemberService;
+import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService_ConfirmListener;
 import com.threerings.presents.client.InvocationService_InvocationListener;
 import com.threerings.presents.client.InvocationService_ResultListener;
@@ -15,8 +13,8 @@ import com.threerings.presents.data.InvocationMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ConfirmMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ListenerMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ResultMarshaller;
-
-import com.threerings.msoy.client.MemberService;
+import com.threerings.util.Integer;
+import com.threerings.util.langBoolean;
 
 /**
  * Provides the implementation of the <code>MemberService</code> interface
@@ -35,6 +33,7 @@ public class MemberMarshaller extends InvocationMarshaller
     public function acknowledgeWarning () :void
     {
         sendRequest(ACKNOWLEDGE_WARNING, [
+            
         ]);
     }
 

@@ -3,11 +3,10 @@
 
 package com.threerings.msoy.avrg.data {
 
-import com.threerings.util.Integer;
-
-import com.threerings.presents.data.InvocationMarshaller;
-
 import com.threerings.msoy.avrg.client.AVRGameAgentService;
+import com.threerings.presents.client.Client;
+import com.threerings.presents.data.InvocationMarshaller;
+import com.threerings.util.Integer;
 
 /**
  * Provides the implementation of the <code>AVRGameAgentService</code> interface

@@ -4,13 +4,12 @@
 package com.threerings.msoy.item.client {
 
 import com.threerings.io.TypedArray;
-
+import com.threerings.msoy.item.data.all.ItemFlag_Kind;
+import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.client.InvocationService_ConfirmListener;
 import com.threerings.presents.client.InvocationService_ResultListener;
-
-import com.threerings.msoy.item.data.all.ItemFlag_Kind;
-import com.threerings.msoy.item.data.all.ItemIdent;
 
 /**
  * An ActionScript version of the Java ItemService interface.

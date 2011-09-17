@@ -3,9 +3,9 @@
 
 package com.threerings.msoy.world.data {
 
-import com.threerings.util.Byte;
-import com.threerings.util.Integer;
-
+import com.threerings.msoy.world.client.WorldService;
+import com.threerings.msoy.world.client.WorldService_HomeResultListener;
+import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService_ConfirmListener;
 import com.threerings.presents.client.InvocationService_InvocationListener;
 import com.threerings.presents.client.InvocationService_ResultListener;
@@ -13,9 +13,8 @@ import com.threerings.presents.data.InvocationMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ConfirmMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ListenerMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ResultMarshaller;
-
-import com.threerings.msoy.world.client.WorldService;
-import com.threerings.msoy.world.client.WorldService_HomeResultListener;
+import com.threerings.util.Byte;
+import com.threerings.util.Integer;
 
 /**
  * Provides the implementation of the <code>WorldService</code> interface

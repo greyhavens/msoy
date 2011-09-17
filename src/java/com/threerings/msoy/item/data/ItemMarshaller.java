@@ -5,12 +5,11 @@ package com.threerings.msoy.item.data;
 
 import javax.annotation.Generated;
 
-import com.threerings.presents.client.InvocationService;
-import com.threerings.presents.data.InvocationMarshaller;
-
 import com.threerings.msoy.item.client.ItemService;
 import com.threerings.msoy.item.data.all.ItemFlag;
 import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.presents.client.InvocationService;
+import com.threerings.presents.data.InvocationMarshaller;
 
 /**
  * Provides the implementation of the {@link ItemService} interface

@@ -3,15 +3,14 @@
 
 package com.threerings.msoy.party.data {
 
-import com.threerings.util.Byte;
-import com.threerings.util.Integer;
-import com.threerings.util.langBoolean;
-
+import com.threerings.msoy.party.client.PartyService;
+import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService_InvocationListener;
 import com.threerings.presents.data.InvocationMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ListenerMarshaller;
-
-import com.threerings.msoy.party.client.PartyService;
+import com.threerings.util.Byte;
+import com.threerings.util.Integer;
+import com.threerings.util.langBoolean;
 
 /**
  * Provides the implementation of the <code>PartyService</code> interface

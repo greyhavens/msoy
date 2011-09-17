@@ -3,10 +3,9 @@
 
 package com.threerings.msoy.party.data {
 
-import com.threerings.presents.data.InvocationMarshaller_ListenerMarshaller;
-
 import com.threerings.msoy.money.data.all.PriceQuote;
 import com.threerings.msoy.party.client.PartyBoardService_JoinListener;
+import com.threerings.presents.data.InvocationMarshaller_ListenerMarshaller;
 
 /**
  * Marshalls instances of the PartyBoardService_JoinMarshaller interface.

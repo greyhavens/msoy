@@ -3,17 +3,16 @@
 
 package com.threerings.msoy.party.data {
 
-import com.threerings.util.Byte;
-import com.threerings.util.Integer;
-import com.threerings.util.langBoolean;
-
-import com.threerings.presents.client.InvocationService_ResultListener;
-import com.threerings.presents.data.InvocationMarshaller;
-import com.threerings.presents.data.InvocationMarshaller_ResultMarshaller;
-
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.party.client.PartyBoardService;
 import com.threerings.msoy.party.client.PartyBoardService_JoinListener;
+import com.threerings.presents.client.Client;
+import com.threerings.presents.client.InvocationService_ResultListener;
+import com.threerings.presents.data.InvocationMarshaller;
+import com.threerings.presents.data.InvocationMarshaller_ResultMarshaller;
+import com.threerings.util.Byte;
+import com.threerings.util.Integer;
+import com.threerings.util.langBoolean;
 
 /**
  * Provides the implementation of the <code>PartyBoardService</code> interface

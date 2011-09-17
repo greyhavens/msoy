@@ -204,7 +204,7 @@ public class RoomObject extends SpotSceneObject
 
     public function inDjMode () :Boolean
     {
-        return !djs.isEmpty();
+        return djs.size() > 0;
     }
 
 // GENERATED CLASSFINISH START

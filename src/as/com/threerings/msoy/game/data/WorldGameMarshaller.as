@@ -4,15 +4,13 @@
 package com.threerings.msoy.game.data {
 
 import com.threerings.io.TypedArray;
-
-import com.threerings.util.Integer;
-
+import com.threerings.msoy.game.client.WorldGameService;
+import com.threerings.msoy.game.client.WorldGameService_LocationListener;
+import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService_ResultListener;
 import com.threerings.presents.data.InvocationMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ResultMarshaller;
-
-import com.threerings.msoy.game.client.WorldGameService;
-import com.threerings.msoy.game.client.WorldGameService_LocationListener;
+import com.threerings.util.Integer;
 
 /**
  * Provides the implementation of the <code>WorldGameService</code> interface

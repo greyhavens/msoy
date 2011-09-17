@@ -10,8 +10,8 @@ import com.samskivert.util.Invoker;
 import com.samskivert.util.Lifecycle;
 
 import com.threerings.msoy.money.data.all.Currency;
-import com.threerings.msoy.money.server.persist.MoneyRepository;
 import com.threerings.msoy.money.server.persist.MoneyTransactionRecord;
+import com.threerings.msoy.money.server.persist.MoneyRepository;
 import com.threerings.msoy.server.persist.BatchInvoker;
 
 import static com.threerings.msoy.Log.log;
@@ -34,8 +34,8 @@ public class MoneyTransactionExpirer
         cycle.addComponent(this);
 
         // note: this Interval doesn't post to the omgr: it doesn't need to.
-        _interval = Interval.create(Interval.RUN_DIRECT, new Runnable() {
-            public void run () {
+        _interval = new Interval() {
+            @Override public void expired () {
                 _batchInvoker.postUnit(new Invoker.Unit("MoneyTransactionExpirer") {
                     @Override public boolean invoke () {
                         doPurge();
@@ -46,7 +46,7 @@ public class MoneyTransactionExpirer
                     }
                 });
             }
-        });
+        };
     }
 
     // from interface Lifecycle.Component

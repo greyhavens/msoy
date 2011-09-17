@@ -4,10 +4,8 @@
 package com.threerings.msoy.world.data {
 
 import com.threerings.io.TypedArray;
-
-import com.threerings.presents.data.InvocationMarshaller_ListenerMarshaller;
-
 import com.threerings.msoy.world.client.WorldService_HomeResultListener;
+import com.threerings.presents.data.InvocationMarshaller_ListenerMarshaller;
 
 /**
  * Marshalls instances of the WorldService_HomeResultMarshaller interface.

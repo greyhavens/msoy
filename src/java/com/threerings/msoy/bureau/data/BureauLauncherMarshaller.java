@@ -5,10 +5,9 @@ package com.threerings.msoy.bureau.data;
 
 import javax.annotation.Generated;
 
-import com.threerings.presents.data.InvocationMarshaller;
-
 import com.threerings.msoy.admin.gwt.BureauLauncherInfo;
 import com.threerings.msoy.bureau.client.BureauLauncherService;
+import com.threerings.presents.data.InvocationMarshaller;
 
 /**
  * Provides the implementation of the {@link BureauLauncherService} interface

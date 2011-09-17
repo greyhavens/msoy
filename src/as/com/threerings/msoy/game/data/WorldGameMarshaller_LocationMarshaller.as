@@ -3,9 +3,8 @@
 
 package com.threerings.msoy.game.data {
 
-import com.threerings.presents.data.InvocationMarshaller_ListenerMarshaller;
-
 import com.threerings.msoy.game.client.WorldGameService_LocationListener;
+import com.threerings.presents.data.InvocationMarshaller_ListenerMarshaller;
 
 /**
  * Marshalls instances of the WorldGameService_LocationMarshaller interface.

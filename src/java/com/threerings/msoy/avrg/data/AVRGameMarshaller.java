@@ -5,11 +5,10 @@ package com.threerings.msoy.avrg.data;
 
 import javax.annotation.Generated;
 
-import com.threerings.presents.client.InvocationService;
-import com.threerings.presents.data.InvocationMarshaller;
-
 import com.threerings.msoy.avrg.client.AVRGameService;
 import com.threerings.msoy.room.data.MsoyLocation;
+import com.threerings.presents.client.InvocationService;
+import com.threerings.presents.data.InvocationMarshaller;
 
 /**
  * Provides the implementation of the {@link AVRGameService} interface

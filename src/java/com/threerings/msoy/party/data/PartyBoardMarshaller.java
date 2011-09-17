@@ -5,12 +5,12 @@ package com.threerings.msoy.party.data;
 
 import javax.annotation.Generated;
 
-import com.threerings.presents.client.InvocationService;
-import com.threerings.presents.data.InvocationMarshaller;
-
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.PriceQuote;
 import com.threerings.msoy.party.client.PartyBoardService;
+import com.threerings.presents.client.InvocationService;
+import com.threerings.presents.data.InvocationMarshaller;
+import com.threerings.presents.dobj.InvocationResponseEvent;
 
 /**
  * Provides the implementation of the {@link PartyBoardService} interface
@@ -25,7 +25,7 @@ public class PartyBoardMarshaller extends InvocationMarshaller
     implements PartyBoardService
 {
     /**
-     * Marshalls results to implementations of {@code PartyBoardService.JoinListener}.
+     * Marshalls results to implementations of {@link PartyBoardService.JoinListener}.
      */
     public static class JoinMarshaller extends ListenerMarshaller
         implements JoinListener
@@ -37,7 +37,10 @@ public class PartyBoardMarshaller extends InvocationMarshaller
         // from interface JoinMarshaller
         public void foundParty (int arg1, String arg2, int arg3)
         {
-            sendResponse(FOUND_PARTY, new Object[] { Integer.valueOf(arg1), arg2, Integer.valueOf(arg3) });
+            _invId = null;
+            omgr.postEvent(new InvocationResponseEvent(
+                               callerOid, requestId, FOUND_PARTY,
+                               new Object[] { Integer.valueOf(arg1), arg2, Integer.valueOf(arg3) }, transport));
         }
 
         /** The method id used to dispatch {@link #priceUpdated}
@@ -47,7 +50,10 @@ public class PartyBoardMarshaller extends InvocationMarshaller
         // from interface JoinMarshaller
         public void priceUpdated (PriceQuote arg1)
         {
-            sendResponse(PRICE_UPDATED, new Object[] { arg1 });
+            _invId = null;
+            omgr.postEvent(new InvocationResponseEvent(
+                               callerOid, requestId, PRICE_UPDATED,
+                               new Object[] { arg1 }, transport));
         }
 
         @Override // from InvocationMarshaller

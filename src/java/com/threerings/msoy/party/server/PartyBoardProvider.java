@@ -5,13 +5,12 @@ package com.threerings.msoy.party.server;
 
 import javax.annotation.Generated;
 
+import com.threerings.msoy.money.data.all.Currency;
+import com.threerings.msoy.party.client.PartyBoardService;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationProvider;
-
-import com.threerings.msoy.money.data.all.Currency;
-import com.threerings.msoy.party.client.PartyBoardService;
 
 /**
  * Defines the server-side of the {@link PartyBoardService}.

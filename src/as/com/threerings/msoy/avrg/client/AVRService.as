@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.avrg.client {
 
+import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.client.InvocationService_ConfirmListener;
 

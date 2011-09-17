@@ -625,7 +625,7 @@ public class RoomManager extends SpotSceneManager
     // Helper to calculate the order field needed to append a track to a sorted track DSet.
     protected static int appendOrder (DSet<? extends Track> dset)
     {
-        if (dset.isEmpty()) {
+        if (dset.size() == 0) {
             return 0;
         }
         Track max = Collections.max(ImmutableList.copyOf(dset));
@@ -634,7 +634,7 @@ public class RoomManager extends SpotSceneManager
 
     protected static int prependOrder (DSet<? extends Track> dset)
     {
-        if (dset.isEmpty()) {
+        if (dset.size() == 0) {
             return 0;
         }
         Track min = Collections.min(ImmutableList.copyOf(dset));
@@ -646,7 +646,7 @@ public class RoomManager extends SpotSceneManager
      */
     protected void removeDj (MemberObject who)
     {
-        if (who.tracks.isEmpty()) {
+        if (who.tracks.size() == 0) {
             return;
         }
 

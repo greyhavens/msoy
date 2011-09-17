@@ -5,10 +5,10 @@ package com.threerings.msoy.avrg.data;
 
 import javax.annotation.Generated;
 
+import com.threerings.msoy.avrg.client.AVRService;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.InvocationMarshaller;
-
-import com.threerings.msoy.avrg.client.AVRService;
+import com.threerings.presents.dobj.InvocationResponseEvent;
 
 /**
  * Provides the implementation of the {@link AVRService} interface
@@ -23,7 +23,7 @@ public class AVRMarshaller extends InvocationMarshaller
     implements AVRService
 {
     /**
-     * Marshalls results to implementations of {@code AVRService.AVRGameJoinListener}.
+     * Marshalls results to implementations of {@link AVRService.AVRGameJoinListener}.
      */
     public static class AVRGameJoinMarshaller extends ListenerMarshaller
         implements AVRGameJoinListener
@@ -35,7 +35,10 @@ public class AVRMarshaller extends InvocationMarshaller
         // from interface AVRGameJoinMarshaller
         public void avrgJoined (int arg1, AVRGameConfig arg2)
         {
-            sendResponse(AVRG_JOINED, new Object[] { Integer.valueOf(arg1), arg2 });
+            _invId = null;
+            omgr.postEvent(new InvocationResponseEvent(
+                               callerOid, requestId, AVRG_JOINED,
+                               new Object[] { Integer.valueOf(arg1), arg2 }, transport));
         }
 
         @Override // from InvocationMarshaller

@@ -5,10 +5,9 @@ package com.threerings.msoy.data;
 
 import javax.annotation.Generated;
 
+import com.threerings.msoy.client.MemberService;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.InvocationMarshaller;
-
-import com.threerings.msoy.client.MemberService;
 
 /**
  * Provides the implementation of the {@link MemberService} interface
