@@ -72,7 +72,7 @@ public class TrackOverlay extends HBox
 
         // var rateUp :CommandButton = newButton("rateUpButton", "i.rate_up");
         var rateUp :RadioButton = new RadioButton();
-        rateUp.toolTip = Msgs.GENERAL.get("i.rate_up");
+        rateUp.toolTip = Msgs.WORLD.get("i.rate_up");
         rateUp.styleName = "rateUpButton";
         rateUp.group = _radioGroup;
         rateUp.value = true;
@@ -81,7 +81,7 @@ public class TrackOverlay extends HBox
 
         // var rateDown :CommandButton = newButton("rateDownButton", "i.rate_down");
         var rateDown :RadioButton = new RadioButton();
-        rateDown.toolTip = Msgs.GENERAL.get("i.rate_down");
+        rateDown.toolTip = Msgs.WORLD.get("i.rate_down");
         rateDown.styleName = "rateDownButton";
         rateDown.group = _radioGroup;
         rateDown.value = false;
@@ -91,7 +91,7 @@ public class TrackOverlay extends HBox
         addChild(FlexUtil.createSpacer(10));
 
         var showMusic :CommandButton = new CommandButton();
-        showMusic.toolTip = Msgs.GENERAL.get("i.dj_music");
+        showMusic.toolTip = Msgs.WORLD.get("i.dj_music");
         showMusic.styleName = "djMusicButton";
         showMusic.setCommand(WorldController.SHOW_MUSIC, showMusic);
         addChild(showMusic);

@@ -82,6 +82,7 @@ public class PlaylistRenderer extends HBox
             }
             var topTrack :Boolean = (Track(data).order == minOrder);
             _playBtn.visible = !topTrack;
+            _playBtn.toolTip = Msgs.WORLD.get("i.move_to_top");
             showRemoveButton(false);
 
             // TODO(bruno): Why doesn't this work?
@@ -95,10 +96,6 @@ public class PlaylistRenderer extends HBox
             _playBtn.enabled = !isPlayingNow;
             if (audio.used.forAnything()) {
                 _name.toolTip = Msgs.WORLD.get("i.manager_music");
-            } else {
-                var info :MemberInfo = roomObj.getMemberInfo(audio.ownerId);
-                _name.toolTip = Msgs.WORLD.get("i.visitor_music",
-                    (info != null) ? info.username : Msgs.WORLD.get("m.none"));
             }
             _name.setStyle("fontWeight", isPlayingNow ? "bold" : "normal");
 
