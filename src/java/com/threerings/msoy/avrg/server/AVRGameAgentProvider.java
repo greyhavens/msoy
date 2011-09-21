@@ -5,9 +5,10 @@ package com.threerings.msoy.avrg.server;
 
 import javax.annotation.Generated;
 
-import com.threerings.msoy.avrg.client.AVRGameAgentService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.server.InvocationProvider;
+
+import com.threerings.msoy.avrg.client.AVRGameAgentService;
 
 /**
  * Defines the server-side of the {@link AVRGameAgentService}.

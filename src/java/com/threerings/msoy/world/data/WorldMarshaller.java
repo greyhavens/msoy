@@ -5,11 +5,11 @@ package com.threerings.msoy.world.data;
 
 import javax.annotation.Generated;
 
-import com.threerings.msoy.item.data.all.Avatar;
-import com.threerings.msoy.world.client.WorldService;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.InvocationMarshaller;
-import com.threerings.presents.dobj.InvocationResponseEvent;
+
+import com.threerings.msoy.item.data.all.Avatar;
+import com.threerings.msoy.world.client.WorldService;
 
 /**
  * Provides the implementation of the {@link WorldService} interface
@@ -24,7 +24,7 @@ public class WorldMarshaller extends InvocationMarshaller
     implements WorldService
 {
     /**
-     * Marshalls results to implementations of {@link WorldService.HomeResultListener}.
+     * Marshalls results to implementations of {@code WorldService.HomeResultListener}.
      */
     public static class HomeResultMarshaller extends ListenerMarshaller
         implements HomeResultListener
@@ -36,10 +36,7 @@ public class WorldMarshaller extends InvocationMarshaller
         // from interface HomeResultMarshaller
         public void readyToEnter (int arg1)
         {
-            _invId = null;
-            omgr.postEvent(new InvocationResponseEvent(
-                               callerOid, requestId, READY_TO_ENTER,
-                               new Object[] { Integer.valueOf(arg1) }, transport));
+            sendResponse(READY_TO_ENTER, new Object[] { Integer.valueOf(arg1) });
         }
 
         /** The method id used to dispatch {@link #selectGift}
@@ -49,10 +46,7 @@ public class WorldMarshaller extends InvocationMarshaller
         // from interface HomeResultMarshaller
         public void selectGift (Avatar[] arg1, int arg2)
         {
-            _invId = null;
-            omgr.postEvent(new InvocationResponseEvent(
-                               callerOid, requestId, SELECT_GIFT,
-                               new Object[] { arg1, Integer.valueOf(arg2) }, transport));
+            sendResponse(SELECT_GIFT, new Object[] { arg1, Integer.valueOf(arg2) });
         }
 
         @Override // from InvocationMarshaller

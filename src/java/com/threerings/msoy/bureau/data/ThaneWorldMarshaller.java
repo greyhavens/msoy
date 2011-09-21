@@ -5,9 +5,10 @@ package com.threerings.msoy.bureau.data;
 
 import javax.annotation.Generated;
 
-import com.threerings.msoy.bureau.client.ThaneWorldService;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.InvocationMarshaller;
+
+import com.threerings.msoy.bureau.client.ThaneWorldService;
 
 /**
  * Provides the implementation of the {@link ThaneWorldService} interface

@@ -3,9 +3,9 @@
 
 package com.threerings.msoy.room.client {
 
-import com.threerings.msoy.room.data.MsoyLocation;
-import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
+
+import com.threerings.msoy.room.data.MsoyLocation;
 
 /**
  * An ActionScript version of the Java MsoySceneService interface.

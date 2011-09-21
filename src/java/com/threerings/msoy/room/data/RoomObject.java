@@ -786,6 +786,6 @@ public class RoomObject extends SpotSceneObject
 
     public boolean inDjMode ()
     {
-        return djs.size() > 0;
+        return !djs.isEmpty();
     }
 }

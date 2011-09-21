@@ -26,9 +26,4 @@ public class MsoyAuthName extends AuthName
     {
         super(accountName, memberId);
     }
-
-    /** Used for unserializing. */
-    public MsoyAuthName ()
-    {
-    }
 }

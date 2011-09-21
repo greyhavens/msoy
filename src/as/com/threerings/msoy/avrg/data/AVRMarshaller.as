@@ -3,13 +3,14 @@
 
 package com.threerings.msoy.avrg.data {
 
-import com.threerings.msoy.avrg.client.AVRService;
-import com.threerings.msoy.avrg.client.AVRService_AVRGameJoinListener;
-import com.threerings.presents.client.Client;
+import com.threerings.util.Integer;
+
 import com.threerings.presents.client.InvocationService_ConfirmListener;
 import com.threerings.presents.data.InvocationMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ConfirmMarshaller;
-import com.threerings.util.Integer;
+
+import com.threerings.msoy.avrg.client.AVRService;
+import com.threerings.msoy.avrg.client.AVRService_AVRGameJoinListener;
 
 /**
  * Provides the implementation of the <code>AVRService</code> interface

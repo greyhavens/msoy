@@ -5,13 +5,15 @@ package com.threerings.msoy.room.data;
 
 import javax.annotation.Generated;
 
-import com.threerings.crowd.data.PlaceConfig;
-import com.threerings.msoy.item.data.all.Avatar;
-import com.threerings.msoy.room.client.MsoySceneService;
 import com.threerings.presents.data.InvocationMarshaller;
-import com.threerings.presents.dobj.InvocationResponseEvent;
+
+import com.threerings.crowd.data.PlaceConfig;
+
 import com.threerings.whirled.data.SceneModel;
 import com.threerings.whirled.data.SceneUpdate;
+
+import com.threerings.msoy.item.data.all.Avatar;
+import com.threerings.msoy.room.client.MsoySceneService;
 
 /**
  * Provides the implementation of the {@link MsoySceneService} interface
@@ -26,7 +28,7 @@ public class MsoySceneMarshaller extends InvocationMarshaller
     implements MsoySceneService
 {
     /**
-     * Marshalls results to implementations of {@link MsoySceneService.MsoySceneMoveListener}.
+     * Marshalls results to implementations of {@code MsoySceneService.MsoySceneMoveListener}.
      */
     public static class MsoySceneMoveMarshaller extends ListenerMarshaller
         implements MsoySceneMoveListener
@@ -38,10 +40,7 @@ public class MsoySceneMarshaller extends InvocationMarshaller
         // from interface MsoySceneMoveMarshaller
         public void moveRequiresServerSwitch (String arg1, int[] arg2)
         {
-            _invId = null;
-            omgr.postEvent(new InvocationResponseEvent(
-                               callerOid, requestId, MOVE_REQUIRES_SERVER_SWITCH,
-                               new Object[] { arg1, arg2 }, transport));
+            sendResponse(MOVE_REQUIRES_SERVER_SWITCH, new Object[] { arg1, arg2 });
         }
 
         /** The method id used to dispatch {@link #moveSucceeded}
@@ -51,10 +50,7 @@ public class MsoySceneMarshaller extends InvocationMarshaller
         // from interface MsoySceneMoveMarshaller
         public void moveSucceeded (int arg1, PlaceConfig arg2)
         {
-            _invId = null;
-            omgr.postEvent(new InvocationResponseEvent(
-                               callerOid, requestId, MOVE_SUCCEEDED,
-                               new Object[] { Integer.valueOf(arg1), arg2 }, transport));
+            sendResponse(MOVE_SUCCEEDED, new Object[] { Integer.valueOf(arg1), arg2 });
         }
 
         /** The method id used to dispatch {@link #moveSucceededWithScene}
@@ -64,10 +60,7 @@ public class MsoySceneMarshaller extends InvocationMarshaller
         // from interface MsoySceneMoveMarshaller
         public void moveSucceededWithScene (int arg1, PlaceConfig arg2, SceneModel arg3)
         {
-            _invId = null;
-            omgr.postEvent(new InvocationResponseEvent(
-                               callerOid, requestId, MOVE_SUCCEEDED_WITH_SCENE,
-                               new Object[] { Integer.valueOf(arg1), arg2, arg3 }, transport));
+            sendResponse(MOVE_SUCCEEDED_WITH_SCENE, new Object[] { Integer.valueOf(arg1), arg2, arg3 });
         }
 
         /** The method id used to dispatch {@link #moveSucceededWithUpdates}
@@ -77,10 +70,7 @@ public class MsoySceneMarshaller extends InvocationMarshaller
         // from interface MsoySceneMoveMarshaller
         public void moveSucceededWithUpdates (int arg1, PlaceConfig arg2, SceneUpdate[] arg3)
         {
-            _invId = null;
-            omgr.postEvent(new InvocationResponseEvent(
-                               callerOid, requestId, MOVE_SUCCEEDED_WITH_UPDATES,
-                               new Object[] { Integer.valueOf(arg1), arg2, arg3 }, transport));
+            sendResponse(MOVE_SUCCEEDED_WITH_UPDATES, new Object[] { Integer.valueOf(arg1), arg2, arg3 });
         }
 
         /** The method id used to dispatch {@link #moveToBeHandledByAVRG}
@@ -90,10 +80,7 @@ public class MsoySceneMarshaller extends InvocationMarshaller
         // from interface MsoySceneMoveMarshaller
         public void moveToBeHandledByAVRG (int arg1, int arg2)
         {
-            _invId = null;
-            omgr.postEvent(new InvocationResponseEvent(
-                               callerOid, requestId, MOVE_TO_BE_HANDLED_BY_AVRG,
-                               new Object[] { Integer.valueOf(arg1), Integer.valueOf(arg2) }, transport));
+            sendResponse(MOVE_TO_BE_HANDLED_BY_AVRG, new Object[] { Integer.valueOf(arg1), Integer.valueOf(arg2) });
         }
 
         /** The method id used to dispatch {@link #selectGift}
@@ -103,10 +90,7 @@ public class MsoySceneMarshaller extends InvocationMarshaller
         // from interface MsoySceneMoveMarshaller
         public void selectGift (Avatar[] arg1, String arg2)
         {
-            _invId = null;
-            omgr.postEvent(new InvocationResponseEvent(
-                               callerOid, requestId, SELECT_GIFT,
-                               new Object[] { arg1, arg2 }, transport));
+            sendResponse(SELECT_GIFT, new Object[] { arg1, arg2 });
         }
 
         @Override // from InvocationMarshaller

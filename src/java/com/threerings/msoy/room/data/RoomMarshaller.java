@@ -5,12 +5,14 @@ package com.threerings.msoy.room.data;
 
 import javax.annotation.Generated;
 
-import com.threerings.msoy.item.data.all.ItemIdent;
-import com.threerings.msoy.room.client.RoomService;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.InvocationMarshaller;
+
 import com.threerings.whirled.data.SceneUpdate;
 import com.threerings.whirled.spot.data.Location;
+
+import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.room.client.RoomService;
 
 /**
  * Provides the implementation of the {@link RoomService} interface

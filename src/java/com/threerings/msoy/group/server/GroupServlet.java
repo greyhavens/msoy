@@ -802,7 +802,7 @@ public class GroupServlet extends MsoyServiceServlet
             Iterables.transform(records, new Function<MemberCardRecord, VizMemberName>() {
             public VizMemberName apply (MemberCardRecord record) {
                 MemberCard card = record.toMemberCard();
-                return new VizMemberName(card.name, card.photo);
+                return VizMemberName.create(card.name, card.photo);
             }
         }));
     }

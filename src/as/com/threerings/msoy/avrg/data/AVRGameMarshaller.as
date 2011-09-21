@@ -3,9 +3,10 @@
 
 package com.threerings.msoy.avrg.data {
 
-import com.threerings.msoy.avrg.client.AVRGameService;
-import com.threerings.msoy.room.data.MsoyLocation;
-import com.threerings.presents.client.Client;
+import com.threerings.util.Float;
+import com.threerings.util.Integer;
+import com.threerings.util.langBoolean;
+
 import com.threerings.presents.client.InvocationService_ConfirmListener;
 import com.threerings.presents.client.InvocationService_InvocationListener;
 import com.threerings.presents.client.InvocationService_ResultListener;
@@ -13,9 +14,9 @@ import com.threerings.presents.data.InvocationMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ConfirmMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ListenerMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ResultMarshaller;
-import com.threerings.util.Float;
-import com.threerings.util.Integer;
-import com.threerings.util.langBoolean;
+
+import com.threerings.msoy.avrg.client.AVRGameService;
+import com.threerings.msoy.room.data.MsoyLocation;
 
 /**
  * Provides the implementation of the <code>AVRGameService</code> interface

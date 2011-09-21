@@ -24,9 +24,4 @@ public class GameAuthName extends AuthName
     {
         super(accountName, memberId);
     }
-
-    /** Used for unserializing. */
-    public GameAuthName ()
-    {
-    }
 }

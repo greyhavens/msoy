@@ -3,10 +3,14 @@
 
 package com.threerings.msoy.room.data {
 
+import flash.utils.ByteArray;
+
 import com.threerings.io.TypedArray;
-import com.threerings.msoy.item.data.all.ItemIdent;
-import com.threerings.msoy.room.client.RoomService;
-import com.threerings.presents.client.Client;
+
+import com.threerings.util.Byte;
+import com.threerings.util.Integer;
+import com.threerings.util.langBoolean;
+
 import com.threerings.presents.client.InvocationService_ConfirmListener;
 import com.threerings.presents.client.InvocationService_InvocationListener;
 import com.threerings.presents.client.InvocationService_ResultListener;
@@ -14,12 +18,12 @@ import com.threerings.presents.data.InvocationMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ConfirmMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ListenerMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ResultMarshaller;
-import com.threerings.util.Byte;
-import com.threerings.util.Integer;
-import com.threerings.util.langBoolean;
+
 import com.threerings.whirled.data.SceneUpdate;
 import com.threerings.whirled.spot.data.Location;
-import flash.utils.ByteArray;
+
+import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.room.client.RoomService;
 
 /**
  * Provides the implementation of the <code>RoomService</code> interface
@@ -140,7 +144,6 @@ public class RoomMarshaller extends InvocationMarshaller
     public function quitDjing () :void
     {
         sendRequest(QUIT_DJING, [
-            
         ]);
     }
 

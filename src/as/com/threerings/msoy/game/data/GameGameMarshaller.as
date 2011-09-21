@@ -3,14 +3,15 @@
 
 package com.threerings.msoy.game.data {
 
-import com.threerings.msoy.game.client.GameGameService;
-import com.threerings.presents.client.Client;
+import com.threerings.util.Integer;
+
 import com.threerings.presents.client.InvocationService_ConfirmListener;
 import com.threerings.presents.client.InvocationService_ResultListener;
 import com.threerings.presents.data.InvocationMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ConfirmMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ResultMarshaller;
-import com.threerings.util.Integer;
+
+import com.threerings.msoy.game.client.GameGameService;
 
 /**
  * Provides the implementation of the <code>GameGameService</code> interface

@@ -11,11 +11,6 @@ import com.threerings.msoy.data.all.MemberName;
 @com.threerings.util.ActionScript(omit=true)
 public class PuppetName extends MemberName
 {
-    /** Deserialization. */
-    public PuppetName ()
-    {
-    }
-
     /**
      * Standard constructor.
      */

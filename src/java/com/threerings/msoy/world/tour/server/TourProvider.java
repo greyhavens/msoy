@@ -5,11 +5,12 @@ package com.threerings.msoy.world.tour.server;
 
 import javax.annotation.Generated;
 
-import com.threerings.msoy.world.tour.client.TourService;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationProvider;
+
+import com.threerings.msoy.world.tour.client.TourService;
 
 /**
  * Defines the server-side of the {@link TourService}.

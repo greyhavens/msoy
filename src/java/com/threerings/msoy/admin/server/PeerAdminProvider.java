@@ -5,12 +5,13 @@ package com.threerings.msoy.admin.server;
 
 import javax.annotation.Generated;
 
-import com.threerings.msoy.admin.client.PeerAdminService;
-import com.threerings.msoy.admin.gwt.StatsModel;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationProvider;
+
+import com.threerings.msoy.admin.client.PeerAdminService;
+import com.threerings.msoy.admin.gwt.StatsModel;
 
 /**
  * Defines the server-side of the {@link PeerAdminService}.

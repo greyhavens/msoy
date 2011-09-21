@@ -28,9 +28,9 @@ public class VizMemberName extends MemberName
                             // we know that we're 50x60
                             MediaDesc.HALF_VERTICALLY_CONSTRAINED);
 
-    /** For unserialization. */
-    public VizMemberName ()
+    public static VizMemberName create (MemberName name, MediaDesc photo)
     {
+        return new VizMemberName(name.toString(), name.getId(), photo);
     }
 
     /**
@@ -39,12 +39,6 @@ public class VizMemberName extends MemberName
     public VizMemberName (String displayName, int memberId, MediaDesc photo)
     {
         super(displayName, memberId);
-        _photo = photo;
-    }
-
-    public VizMemberName (MemberName name, MediaDesc photo)
-    {
-        super(name.toString(), name.getId());
         _photo = photo;
     }
 

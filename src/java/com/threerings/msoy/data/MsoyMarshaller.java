@@ -5,9 +5,10 @@ package com.threerings.msoy.data;
 
 import javax.annotation.Generated;
 
-import com.threerings.msoy.client.MsoyService;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.InvocationMarshaller;
+
+import com.threerings.msoy.client.MsoyService;
 
 /**
  * Provides the implementation of the {@link MsoyService} interface

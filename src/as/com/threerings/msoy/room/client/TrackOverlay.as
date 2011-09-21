@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.room.client {
 
-import com.threerings.presents.dobj.MessageEvent;
-import com.threerings.presents.dobj.MessageListener;
 import flash.events.Event;
 
 import caurina.transitions.Tweener;
@@ -29,25 +27,21 @@ import com.threerings.msoy.room.data.Track;
 import com.threerings.msoy.world.client.WorldController;
 
 public class TrackOverlay extends HBox
-    implements MessageListener
 {
     public function TrackOverlay (ctx :MsoyContext, roomObj :RoomObject)
     {
         _ctx = ctx;
         _roomObj = roomObj;
 
-        var self :TrackOverlay = this;
         addEventListener(Event.ADDED_TO_STAGE, function (..._) :void {
-            _roomObj.addListener(self);
             _roomObj.trackRatingChanged.add(onRatingChanged);
             _roomObj.trackChanged.add(onTrackChanged);
-            // _roomObj.messageReceived.add(onMessageReceived);
+            _roomObj.messageReceived.add(onMessageReceived);
         });
         addEventListener(Event.REMOVED_FROM_STAGE, function (..._) :void {
-            _roomObj.removeListener(self);
             _roomObj.trackRatingChanged.remove(onRatingChanged);
             _roomObj.trackChanged.remove(onTrackChanged);
-            // _roomObj.messageReceived.remove(onMessageReceived);
+            _roomObj.messageReceived.remove(onMessageReceived);
         });
 
         this.styleName = "trackOverlay";
@@ -115,12 +109,6 @@ public class TrackOverlay extends HBox
         onRatingChanged(_roomObj.trackRating);
     }
 
-    // Temporary
-    public function messageReceived (event :MessageEvent) :void
-    {
-        onMessageReceived(event.getName(), event.getArgs());
-    }
-
     protected function onMessageReceived (name :String, args :Array) :void
     {
         switch (name) {
@@ -130,7 +118,6 @@ public class TrackOverlay extends HBox
 
             _skippedLabel.alpha = 1;
             Tweener.addTween(_skippedLabel, {
-                transition: "easeInExpo",
                 time: 1, alpha: 0, onComplete: function () :void {
                     _skippedLabel.visible = false;
                     _ratingControls.visible = true;

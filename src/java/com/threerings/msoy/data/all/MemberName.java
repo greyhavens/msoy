@@ -110,11 +110,6 @@ public class MemberName extends OrthName
         return memberId == 0;
     }
 
-    /** For unserialization. */
-    public MemberName ()
-    {
-    }
-
     /**
      * Create a new MemberName.
      */

@@ -6,23 +6,20 @@ package com.threerings.msoy.server;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.jdbc.WriteOnlyUnit;
 import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.StringUtil;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Lists;
+import com.samskivert.jdbc.WriteOnlyUnit;
 
-import com.threerings.crowd.chat.server.ChatChannelManager;
-import com.threerings.underwire.server.persist.EventRecord;
-import com.threerings.underwire.web.data.Event;
 import com.threerings.util.Name;
-import com.threerings.cron.server.CronLogic;
 
 import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.annotation.MainInvoker;
@@ -40,10 +37,11 @@ import com.threerings.presents.server.ReportManager;
 import com.threerings.presents.util.PersistingUnit;
 
 import com.threerings.crowd.chat.data.UserMessage;
-import com.threerings.crowd.chat.server.SpeakUtil;
-import com.threerings.crowd.chat.server.SpeakUtil.ChatHistoryEntry;
-import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.chat.server.ChatChannelManager.ChatHistoryResult;
+import com.threerings.crowd.chat.server.ChatChannelManager;
+import com.threerings.crowd.chat.server.ChatHistory;
+import com.threerings.crowd.chat.server.SpeakUtil;
+import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.server.BodyManager;
 import com.threerings.crowd.server.PlaceManager;
 import com.threerings.crowd.server.PlaceRegistry;
@@ -51,6 +49,12 @@ import com.threerings.crowd.server.PlaceRegistry;
 import com.threerings.orth.notify.data.GenericNotification;
 import com.threerings.orth.notify.data.Notification;
 
+import com.threerings.cron.server.CronLogic;
+import com.threerings.underwire.server.persist.EventRecord;
+import com.threerings.underwire.web.data.Event;
+
+import com.threerings.msoy.admin.server.MsoyAdminManager;
+import com.threerings.msoy.badge.server.BadgeManager;
 import com.threerings.msoy.chat.data.MsoyChatChannel;
 import com.threerings.msoy.chat.data.MsoyChatCodes;
 import com.threerings.msoy.data.MemberExperience;
@@ -60,22 +64,18 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.group.server.ThemeRegistry;
 import com.threerings.msoy.group.server.ThemeRegistry.ThemeEntry;
+import com.threerings.msoy.group.server.ThemeRegistry;
 import com.threerings.msoy.group.server.persist.GroupRepository;
-import com.threerings.msoy.server.persist.BatchInvoker;
-import com.threerings.msoy.server.persist.MemberRepository;
-import com.threerings.msoy.server.util.ServiceUnit;
-
-import com.threerings.msoy.peer.server.MsoyPeerManager;
-
-import com.threerings.msoy.admin.server.MsoyAdminManager;
-import com.threerings.msoy.badge.server.BadgeManager;
 import com.threerings.msoy.notify.data.LevelUpNotification;
 import com.threerings.msoy.notify.server.MsoyNotificationManager;
+import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.person.server.persist.ProfileRepository;
 import com.threerings.msoy.profile.gwt.Profile;
 import com.threerings.msoy.room.data.MemberInfo;
+import com.threerings.msoy.server.persist.BatchInvoker;
+import com.threerings.msoy.server.persist.MemberRepository;
+import com.threerings.msoy.server.util.ServiceUnit;
 import com.threerings.msoy.underwire.server.SupportLogic;
 
 import static com.threerings.msoy.Log.log;
@@ -169,7 +169,7 @@ public class MemberManager
         _greeterIdsSnapshot = _memberRepo.loadGreeterIds();
 
         // create the interval to post the unit
-        _greeterIdsInvalidator = new Interval() {
+        _greeterIdsInvalidator = new Interval(_omgr) {
             @Override public void expired() {
                 _batchInvoker.postUnit(loadGreeters);
             }
@@ -501,7 +501,7 @@ public class MemberManager
         }
         // TODO: break up the formatting by channel and remove the "mode" infix
         SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss");
-        for (ChatHistoryEntry entry : SpeakUtil.getChatHistory(complainerName)) {
+        for (ChatHistory.Entry entry : _chatHistory.get(complainerName)) {
             UserMessage umsg = (UserMessage)entry.message;
             chatHistory.append(df.format(new Date(umsg.timestamp))).append(' ');
             MsoyChatChannel channel = (MsoyChatChannel)entry.channel;
@@ -654,6 +654,7 @@ public class MemberManager
     @Inject protected BodyManager _bodyMan;
     @Inject protected ClientManager _clmgr;
     @Inject protected ChatChannelManager _chatChanMgr;
+    @Inject protected ChatHistory _chatHistory;
     @Inject protected CronLogic _cronLogic;
     @Inject protected GroupRepository _groupRepo;
     @Inject protected MemberLocator _locator;
