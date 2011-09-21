@@ -76,7 +76,6 @@
     <file name="${extlibs.dir}/commons-httpclient.jar"/>
     <file name="${extlibs.dir}/commons-io.jar"/>
     <file name="${extlibs.dir}/commons-logging.jar"/>
-    <file name="${extlibs.dir}/ehcache.jar"/>
     <file name="${extlibs.dir}/ganymed.jar"/>
     <file name="${extlibs.dir}/gson.jar"/>
     <file name="${extlibs.dir}/guice-multibindings.jar"/>
@@ -175,6 +174,7 @@
       <dependency groupId="stax" artifactId="stax" version="1.2.0"/>
       <dependency groupId="com.google.gwt" artifactId="gwt-servlet" version="2.1.0"/>
       <dependency groupId="postgresql" artifactid="postgresql" version="9.0-801.jdbc4"/>
+      <dependency groupId="net.sf.ehcache" artifactid="ehcache" version="1.6.0"/>
       <remoteRepository refid="ooo.maven.depends.repo"/>
       <dependency groupId="com.samskivert" artifactId="samskivert" version="1.5-SNAPSHOT"/>
       <dependency groupId="com.samskivert" artifactId="depot" version="1.5-SNAPSHOT"/>
