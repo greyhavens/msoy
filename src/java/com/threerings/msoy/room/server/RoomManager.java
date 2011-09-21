@@ -671,8 +671,8 @@ public class RoomManager extends SpotSceneManager
     {
         for (Deejay dj : _roomObj.djs) {
             MemberObject member = _locator.lookupMember(dj.memberId);
-            log.info("Removing DJ", "member", member.memberName);
             if (member != null) {
+                log.info("Removing DJ", "member", member.memberName);
                 for (Track track : member.tracks) {
                     log.info("Clearing track", "track", track.audio);
                     clearTrackUsage(member, track.audio.itemId, null);
@@ -681,14 +681,16 @@ public class RoomManager extends SpotSceneManager
             }
         }
 
-        _roomObj.startTransaction();
-        _roomObj.setDjs(new DSet<Deejay>());
-        _roomObj.setTrack(null);
-        _roomObj.setCurrentDj(0);
-        _roomObj.setPlayCount(0); // Tells clients to go back to playing the regular playlist
-        _roomObj.setTrackRating(0);
-        _roomObj.setRecentTracks(new DSet<RecentTrack>());
-        _roomObj.commitTransaction();
+        if (_roomObj.isActive()) {
+            _roomObj.startTransaction();
+            _roomObj.setDjs(new DSet<Deejay>());
+            _roomObj.setTrack(null);
+            _roomObj.setCurrentDj(0);
+            _roomObj.setPlayCount(0); // Tells clients to go back to playing the regular playlist
+            _roomObj.setTrackRating(0);
+            _roomObj.setRecentTracks(new DSet<RecentTrack>());
+            _roomObj.commitTransaction();
+        }
 
         _trackRatings.clear();
     }
@@ -1579,12 +1581,8 @@ public class RoomManager extends SpotSceneManager
             _omgr.destroyObject(entry.propsOid);
         }
 
-        try {
-            // Clear the item usage of any DJs in this room
-            removeAllDjs();
-        } catch (Exception e) {
-            log.warning("removeAllDjs barfed", e);
-        }
+        // Clear the item usage of any DJs in this room
+        removeAllDjs();
     }
 
     /**
