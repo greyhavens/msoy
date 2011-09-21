@@ -133,6 +133,11 @@
     <cacheManagerPeerProviderFactory
          class="com.threerings.presents.peer.server.EHCachePeerCoordinator"/>
 
+    <cacheManagerPeerListenerFactory
+         class="net.sf.ehcache.distribution.RMICacheManagerPeerListenerFactory"
+         properties="port=40001"
+         propertySeparator=","/>
+
     <!--
     (Enable for distributed operation)
 
