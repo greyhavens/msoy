@@ -68,6 +68,9 @@ public class FeedItemGenerator
         /** Creates a context-free icon for when a user listed a new item in the shop. */
         Icon createListedItemIcon (String html);
 
+        /** Creates a context-free icon for when a user creates or modifies a room. */
+        Icon createUpdatedRoomIcon (String html);
+
         /**
          * Adds a previously created media object to the feed with the given message. The passed
          * media will never be null.
@@ -190,16 +193,15 @@ public class FeedItemGenerator
     {
         String subject = buildSubject(message);
         String object = buildObject(message);
-        String text = action(message, subject, object, Plural.NONE);
         switch (message.type) {
         case FRIEND_ADDED_FRIEND:
-        case FRIEND_UPDATED_ROOM:
         case FRIEND_WON_TROPHY:
         case FRIEND_PLAYED_GAME:
         case FRIEND_WON_BADGE:
         case FRIEND_WON_MEDAL:
         case FRIEND_JOINED_GROUP:
             Media media = buildMedia(message);
+            String text = action(message, subject, object, Plural.NONE);
             addMedia(media, text);
             break;
 
@@ -210,6 +212,11 @@ public class FeedItemGenerator
 
         case FRIEND_LISTED_ITEM:
             _builder.addIcon(_builder.createListedItemIcon(
+                action(message, subject, object, Plural.NONE)));
+            break;
+
+        case FRIEND_UPDATED_ROOM:
+            _builder.addIcon(_builder.createUpdatedRoomIcon(
                 action(message, subject, object, Plural.NONE)));
             break;
 
@@ -285,14 +292,13 @@ public class FeedItemGenerator
     protected void addMultiActionsMessage (List<FeedMessage> list)
     {
         FeedMessage message = list.get(0);
+        String subject = buildSubject(message);
         switch (message.type) {
         case FRIEND_WON_BADGE:
         case FRIEND_WON_MEDAL:
         case FRIEND_ADDED_FRIEND:
-        case FRIEND_UPDATED_ROOM:
         case FRIEND_WON_TROPHY:
         case FRIEND_PLAYED_GAME:
-            String subject = buildSubject(message);
             Media[] media = buildMediaArray(list);
             String text = action(
                 message, subject, makeStringList(list, ListMode.OBJECT), Plural.OBJECT);
@@ -301,7 +307,12 @@ public class FeedItemGenerator
 
         case FRIEND_LISTED_ITEM:
             _builder.addIcon(_builder.createListedItemIcon(action(
-                message, makeStringList(list, ListMode.OBJECT), "", Plural.OBJECT)));
+                message, subject, makeStringList(list, ListMode.OBJECT), Plural.OBJECT)));
+            break;
+
+        case FRIEND_UPDATED_ROOM:
+            _builder.addIcon(_builder.createUpdatedRoomIcon(action(
+                message, subject, makeStringList(list, ListMode.OBJECT), Plural.OBJECT)));
             break;
 
         case SELF_FORUM_REPLY:
@@ -310,7 +321,7 @@ public class FeedItemGenerator
         case SELF_GAME_COMMENT:
         case SELF_PROFILE_COMMENT:
             _builder.addIcon(_builder.createCommentedIcon(action(
-                message, makeStringList(list, ListMode.OBJECT), "", Plural.OBJECT)));
+                message, subject, makeStringList(list, ListMode.OBJECT), Plural.OBJECT)));
             break;
 
         case SELF_POKE:

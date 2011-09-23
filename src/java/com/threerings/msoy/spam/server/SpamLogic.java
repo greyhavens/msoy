@@ -772,6 +772,11 @@ public class SpamLogic
             return createStaticIcon(text, "images/whirled/friend_listed_item.png");
         }
 
+        // from Builder
+        public Icon createUpdatedRoomIcon (String text) {
+            return createStaticIcon(text, "images/whirled/friend_updated_room.png");
+        }
+
         protected Icon createStaticIcon (String text, String imageSrc)
         {
             return new StringWrapper(_html.reset().open("img",
@@ -862,6 +867,11 @@ public class SpamLogic
 
         // from Builder
         public Icon createListedItemIcon (String text) {
+            return new StringWrapper(text);
+        }
+
+        // from Builder
+        public Icon createUpdatedRoomIcon (String text) {
             return new StringWrapper(text);
         }
 

@@ -104,6 +104,10 @@ public class FeedMessagePanel extends FlowPanel
                 return new WidgetWrapper(new IconWidget("friend_listed_item", message));
             }
 
+            public Icon createUpdatedRoomIcon (String message) {
+                return new WidgetWrapper(new IconWidget("friend_updated_room", message));
+            }
+
             public void addIcon (Icon icon) {
                 add(((WidgetWrapper)icon).widget);
             }
