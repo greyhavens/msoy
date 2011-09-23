@@ -15,6 +15,7 @@ import com.threerings.msoy.badge.data.all.Badge;
 import com.threerings.msoy.badge.data.all.EarnedBadge;
 import com.threerings.msoy.data.all.CloudfrontMediaDesc;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.SharedNaviUtil;
@@ -70,6 +71,9 @@ public class FeedItemGenerator
 
         /** Creates a context-free icon for when a user creates or modifies a room. */
         Icon createUpdatedRoomIcon (String html);
+
+        /** Creates a context-free icon for when a user thumbs up a song. */
+        Icon createLikedMusicIcon (String html);
 
         /**
          * Adds a previously created media object to the feed with the given message. The passed
@@ -205,6 +209,11 @@ public class FeedItemGenerator
             addMedia(media, text);
             break;
 
+        case FRIEND_LIKED_MUSIC:
+            _builder.addIcon(_builder.createLikedMusicIcon(
+                action(message, subject, object, Plural.NONE)));
+            break;
+
         case FRIEND_CREATED_GROUP:
             _builder.addIcon(_builder.createFoundedGroupIcon(
                 action(message, subject, object, Plural.NONE)));
@@ -312,6 +321,11 @@ public class FeedItemGenerator
 
         case FRIEND_UPDATED_ROOM:
             _builder.addIcon(_builder.createUpdatedRoomIcon(action(
+                message, subject, makeStringList(list, ListMode.OBJECT), Plural.OBJECT)));
+            break;
+
+        case FRIEND_LIKED_MUSIC:
+            _builder.addIcon(_builder.createLikedMusicIcon(action(
                 message, subject, makeStringList(list, ListMode.OBJECT), Plural.OBJECT)));
             break;
 
@@ -426,6 +440,10 @@ public class FeedItemGenerator
                 _messages.typeName(message.data[1]),
                     _builder.createLink(message.data[0], Pages.SHOP,
                         Args.compose("l", message.data[1], message.data[2])));
+
+        case MUSIC:
+            return _builder.createLink(message.data[0], Pages.SHOP,
+                Args.compose("l", MsoyItemType.AUDIO.toByte(), message.data[1]));
 
         case LEVELS:
             return (message.data.length > 0) ? message.data[0] : null;

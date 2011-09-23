@@ -108,6 +108,8 @@ import com.threerings.msoy.item.server.ItemManager;
 import com.threerings.msoy.item.server.persist.AvatarRecord;
 import com.threerings.msoy.party.server.PartyRegistry;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
+import com.threerings.msoy.person.gwt.FeedMessageType;
+import com.threerings.msoy.person.server.FeedLogic;
 import com.threerings.msoy.room.client.RoomService;
 import com.threerings.msoy.room.data.*;
 import com.threerings.msoy.room.server.persist.MemoriesRecord;
@@ -799,15 +801,23 @@ public class RoomManager extends SpotSceneManager
 
     public void rateTrack (ClientObject caller, int audioId, boolean like)
     {
-        MemberObject who = _locator.requireMember(caller);
+        final MemberObject who = _locator.requireMember(caller);
         if (_roomObj.track == null || audioId != _roomObj.track.audio.itemId) {
             return; // The track has changed since the client made this request
         }
 
         int delta = like ? +1 : -1;
+        final Audio audio = _roomObj.track.audio;
         if (_trackRatings.containsKey(who.getMemberId())) {
             // Reverse their previous vote
             delta += _trackRatings.get(who.getMemberId()) ? -1 : +1;
+        } else if (like && audio.catalogId > 0) {
+            _invoker.postUnit(new WriteOnlyUnit("publishFriendLikedMusic") {
+                public void invokePersist () {
+                    _feedLogic.publishMemberMessage(who.getMemberId(),
+                        FeedMessageType.FRIEND_LIKED_MUSIC, audio.name, audio.catalogId);
+                }
+            });
         }
         _trackRatings.put(who.getMemberId(), like);
 
@@ -2568,6 +2578,7 @@ public class RoomManager extends SpotSceneManager
     protected boolean _hopping;
 
     @Inject protected @MainInvoker Invoker _invoker;
+    @Inject protected FeedLogic _feedLogic;
     @Inject protected ItemLogic _itemLogic;
     @Inject protected ItemManager _itemMan;
     @Inject protected LocationManager _locmgr;

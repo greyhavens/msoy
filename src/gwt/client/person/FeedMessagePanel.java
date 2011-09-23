@@ -108,6 +108,10 @@ public class FeedMessagePanel extends FlowPanel
                 return new WidgetWrapper(new IconWidget("friend_updated_room", message));
             }
 
+            public Icon createLikedMusicIcon (String message) {
+                return new WidgetWrapper(new IconWidget("friend_liked_music", message));
+            }
+
             public void addIcon (Icon icon) {
                 add(((WidgetWrapper)icon).widget);
             }
@@ -248,6 +252,9 @@ public class FeedMessagePanel extends FlowPanel
                     case SUBJECT: return _pmsgs.friendsPlayedGame(subject, object);
                     case OBJECT: return _pmsgs.friendPlayedGames(subject, object);
                     }
+
+                case FRIEND_LIKED_MUSIC:
+                    return _pmsgs.friendLikedMusic(subject, object);
 
                 default:
                     return subject + " " + message.type + " " + object +

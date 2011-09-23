@@ -30,6 +30,7 @@ public enum FeedMessageType
     FRIEND_CREATED_GROUP(108, Category.GROUPS, 3, oneDay()),
     FRIEND_JOINED_GROUP(109, Category.GROUPS, 3, oneDay()),
     FRIEND_PLAYED_GAME(110, Category.GAMES, 3, oneDay()),
+    FRIEND_LIKED_MUSIC(111, Category.MUSIC, 3, oneDay()),
 
     // group messages
     GROUP_ANNOUNCEMENT(200, Category.ANNOUNCEMENTS, 2, oneDay()),
@@ -49,7 +50,7 @@ public enum FeedMessageType
      * for translation on the client. */
     public static enum Category {
         ANNOUNCEMENTS, COMMENTS, FRIENDINGS, LISTED_ITEMS, FORUMS, GAMES, ROOMS, BADGES,
-        MEDALS, LEVELS, GROUPS;
+        MEDALS, LEVELS, GROUPS, MUSIC;
     }
 
     /**

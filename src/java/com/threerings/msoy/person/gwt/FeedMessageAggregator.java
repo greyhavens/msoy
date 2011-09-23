@@ -132,6 +132,10 @@ public class FeedMessageAggregator
             // all level gains by all friends are displayed together
             return MessageKey.explicit(message, 0);
 
+        case FRIEND_LIKED_MUSIC:
+            // All music likes are aggregated together
+            return MessageKey.explicit(message, 0);
+
         case SELF_FORUM_REPLY:
             // group forum replies by the actor
             return MessageKey.explicit(message, ((SelfFeedMessage)message).actor.getId());
