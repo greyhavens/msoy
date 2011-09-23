@@ -622,6 +622,9 @@ public class RoomManager extends SpotSceneManager
         _trackRatings.clear();
 
         log.info("Now playing", "DJ", memberId, "audio", track.audio);
+        if (track.audio.catalogId > 0) {
+            publishLikedMusic(memberId, track.audio);
+        }
     }
 
     // Helper to calculate the order field needed to append a track to a sorted track DSet.
@@ -799,6 +802,16 @@ public class RoomManager extends SpotSceneManager
         }
     }
 
+    public void publishLikedMusic (final int memberId, final Audio audio)
+    {
+        _invoker.postUnit(new WriteOnlyUnit("publishLikedMusic") {
+            public void invokePersist () {
+                _feedLogic.publishMemberMessage(memberId, FeedMessageType.FRIEND_LIKED_MUSIC,
+                    audio.name, audio.catalogId);
+            }
+        });
+    }
+
     public void rateTrack (ClientObject caller, int audioId, boolean like)
     {
         final MemberObject who = _locator.requireMember(caller);
@@ -812,12 +825,7 @@ public class RoomManager extends SpotSceneManager
             // Reverse their previous vote
             delta += _trackRatings.get(who.getMemberId()) ? -1 : +1;
         } else if (like && audio.catalogId > 0) {
-            _invoker.postUnit(new WriteOnlyUnit("publishFriendLikedMusic") {
-                public void invokePersist () {
-                    _feedLogic.publishMemberMessage(who.getMemberId(),
-                        FeedMessageType.FRIEND_LIKED_MUSIC, audio.name, audio.catalogId);
-                }
-            });
+            publishLikedMusic(who.getMemberId(), audio);
         }
         _trackRatings.put(who.getMemberId(), like);
 
