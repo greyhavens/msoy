@@ -578,7 +578,7 @@ public class RoomObjectView extends RoomView
         removeEventListener(Event.ENTER_FRAME, tick);
 
         if (_trackOverlay != null) {
-            PopUpManager.removePopUp(_trackOverlay);
+            _trackOverlay.parent.removeChild(_trackOverlay);
             _trackOverlay = null;
         }
     }
@@ -771,7 +771,6 @@ public class RoomObjectView extends RoomView
             }
 
         } else if (_trackOverlay != null) {
-            // PopUpManager.removePopUp(_trackOverlay);
             _trackOverlay.parent.removeChild(_trackOverlay);
             _trackOverlay = null;
         }
