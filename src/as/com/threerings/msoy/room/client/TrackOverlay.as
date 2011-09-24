@@ -197,6 +197,10 @@ public class TrackOverlay extends HBox
     protected function playState (patterns :Array) :void
     {
         var avatar :MemberSprite = RoomView(_ctx.getPlaceView()).getMyAvatar();
+        if (avatar == null) {
+            return;
+        }
+
         var registeredStates :Array = avatar.getAvatarStates();
         var currentState :String = avatar.getState();
 

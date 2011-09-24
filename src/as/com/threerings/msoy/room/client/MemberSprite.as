@@ -111,6 +111,11 @@ public class MemberSprite extends ActorSprite
         return true;
     }
 
+    public function getMemberId () :int
+    {
+        return (_occInfo as MemberInfo).getMemberId();
+    }
+
     // from OccupantSprite
     override protected function isNameChangeRequired (oldInfo :OccupantInfo,
                                                       newInfo :OccupantInfo) :Boolean
@@ -254,8 +259,6 @@ import flash.geom.Rectangle;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 
-import com.threerings.util.Log;
-
 import com.threerings.text.TextFieldUtil;
 
 import com.threerings.orth.data.MediaDesc;
@@ -265,8 +268,6 @@ import com.threerings.orth.ui.ScalingMediaDescContainer;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.game.data.GameSummary;
-import com.threerings.msoy.group.data.all.Group;
-import com.threerings.msoy.party.data.PartySummary;
 import com.threerings.msoy.room.client.EntitySprite;
 import com.threerings.msoy.room.client.MemberSprite;
 import com.threerings.msoy.room.client.OccupantSprite;
@@ -347,6 +348,20 @@ class TableIcon extends GlowSprite
 
 class PartyIcon extends GlowSprite
 {
+import flash.geom.Rectangle;
+
+import com.threerings.util.Log;
+
+import com.threerings.orth.data.MediaDescSize;
+import com.threerings.orth.ui.ScalingMediaDescContainer;
+
+import com.threerings.msoy.group.data.all.Group;
+import com.threerings.msoy.party.data.PartySummary;
+import com.threerings.msoy.room.client.EntitySprite;
+import com.threerings.msoy.room.client.MemberSprite;
+import com.threerings.msoy.room.client.OccupantSprite;
+import com.threerings.msoy.world.client.WorldController;
+
     /** The party id. */
     public var id :int;
 

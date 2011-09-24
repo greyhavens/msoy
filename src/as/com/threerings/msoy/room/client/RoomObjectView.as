@@ -523,7 +523,7 @@ public class RoomObjectView extends RoomView
             comicOverlay.willEnterPlace(this);
         }
 
-        // and animate ourselves entering the room (everyone already in the (room will also have
+        // and animate ourselves entering the room (everyone already in the room will also have
         // seen it)
         portalTraversed(getMyCurrentLocation(), true);
 
@@ -580,6 +580,10 @@ public class RoomObjectView extends RoomView
         if (_trackOverlay != null) {
             _trackOverlay.parent.removeChild(_trackOverlay);
             _trackOverlay = null;
+        }
+        if (_crown != null) {
+            _crown.shutdown();
+            _crown = null;
         }
     }
 
@@ -761,6 +765,7 @@ public class RoomObjectView extends RoomView
                 // _ctx.getTopPanel().getPlaceContainer().addOverlay(
                 //     _trackOverlay, 9999999);
 
+                // Auto positioning doesn't work with addPopUp
                 // PopUpManager.addPopUp(_trackOverlay, _ctx.getTopPanel());
 
                 // Just slap it on the top panel and let Flex its positioning magic
@@ -779,16 +784,14 @@ public class RoomObjectView extends RoomView
     // Revalidate who has the crown for being the best DJ
     protected function updateCrownHolder () :void
     {
-        var best :Deejay = Arrays.max(_roomObj.djs.toArray(), function (a :Deejay, b :Deejay) :int {
-            return Comparators.compareInts(a.lastRating, b.lastRating);
-        });
+        var best :Deejay = (_roomObj == null) ? null :
+            Arrays.max(_roomObj.djs.toArray(), function (a :Deejay, b :Deejay) :int {
+                return Comparators.compareInts(a.lastRating, b.lastRating);
+            });
 
         // Possibly oust the old king
-        if (_crown != null && (best == null || best.memberId != _crown.memberId)) {
-            var prevHolder :OccupantSprite = getOccupantByMemberId(_crown.memberId);
-            if (prevHolder != null) {
-                prevHolder.removeDecoration(_crown);
-            }
+        if (_crown != null && (best == null || best.memberId != _crown.avatar.getMemberId())) {
+            _crown.shutdown();
             _crown = null;
         }
 
@@ -798,17 +801,15 @@ public class RoomObjectView extends RoomView
 
         // Possibly crown the new king
         if (_crown == null) {
-            var newHolder :OccupantSprite = getOccupantByMemberId(best.memberId);
+            var newHolder :MemberSprite = MemberSprite(getOccupantByMemberId(best.memberId));
             if (newHolder != null) {
-                _crown = new CrownSprite(best.memberId);
-                newHolder.addDecoration(_crown, {
-                    toolTip: Msgs.WORLD.get("i.best_dj", newHolder.getOccupantInfo().username),
-                    weight: 100,
-                    bounds: CrownSprite.getBounds()
-                });
+                _crown = new CrownDecoration(newHolder);
             }
         }
-        _crown.setRating(best.lastRating);
+
+        if (_crown != null) {
+            _crown.setRating(best.lastRating);
+        }
     }
 
     protected function updateCurrentDj () :void
@@ -861,12 +862,6 @@ public class RoomObjectView extends RoomView
             if (bodyOid == _ctx.getMemberObject().getOid()) {
                 setFastCentering(true);
                 setCenterSprite(occupant);
-            }
-
-            // If they're the DJ, show their spotlight
-            if (occupant is MemberSprite
-                    && MemberInfo(occupant.getOccupantInfo()).getMemberId() == _roomObj.currentDj) {
-                updateCurrentDj();
             }
 
         } else {
@@ -949,6 +944,9 @@ public class RoomObjectView extends RoomView
                 addBody(occInfo);
             }
         }
+
+        updateCurrentDj();
+        updateCrownHolder();
     }
 
     override protected function removeSprite (sprite :EntitySprite) :void
@@ -1003,7 +1001,7 @@ public class RoomObjectView extends RoomView
     protected var _octrl :RoomObjectController;
 
     protected var _trackOverlay :TrackOverlay;
-    protected var _crown :CrownSprite;
+    protected var _crown :CrownDecoration;
 
     /** The transitory properties of the current scene. */
     protected var _roomObj :RoomObject;
