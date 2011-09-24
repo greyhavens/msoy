@@ -311,7 +311,7 @@ public class RoomObjectView extends RoomView
             break;
 
         case RoomObject.DJS:
-            // updateCrownHolder();
+            updateCrownHolder();
             break;
 
         case RoomObject.CURRENT_DJ:
@@ -363,7 +363,7 @@ public class RoomObjectView extends RoomView
             break;
 
         case RoomObject.DJS:
-            // updateCrownHolder();
+            updateCrownHolder();
             break;
         }
     }
@@ -389,7 +389,7 @@ public class RoomObjectView extends RoomView
             break;
 
         case RoomObject.DJS:
-            // updateCrownHolder();
+            updateCrownHolder();
             break;
         }
     }
@@ -412,7 +412,7 @@ public class RoomObjectView extends RoomView
             break;
 
         case RoomObject.DJS:
-            // updateCrownHolder();
+            updateCrownHolder();
             break;
         }
     }
@@ -783,7 +783,33 @@ public class RoomObjectView extends RoomView
         var best :Deejay = Arrays.max(_roomObj.djs.toArray(), function (a :Deejay, b :Deejay) :int {
             return Comparators.compareInts(a.lastRating, b.lastRating);
         });
-        // TODO(bruno): Move the crown to this player
+
+        // Possibly oust the old king
+        if (_crown != null && (best == null || best.memberId != _crown.memberId)) {
+            var prevHolder :OccupantSprite = getOccupantByMemberId(_crown.memberId);
+            if (prevHolder != null) {
+                prevHolder.removeDecoration(_crown);
+            }
+            _crown = null;
+        }
+
+        if (best == null || best.lastRating == int.MIN_VALUE) {
+            return; // Don't crown players who haven't been rated
+        }
+
+        // Possibly crown the new king
+        if (_crown == null) {
+            var newHolder :OccupantSprite = getOccupantByMemberId(best.memberId);
+            if (newHolder != null) {
+                _crown = new CrownSprite(best.memberId);
+                newHolder.addDecoration(_crown, {
+                    toolTip: Msgs.WORLD.get("i.best_dj", newHolder.getOccupantInfo().username),
+                    weight: 100,
+                    bounds: CrownSprite.getBounds()
+                });
+            }
+        }
+        _crown.setRating(best.lastRating);
     }
 
     protected function updateCurrentDj () :void
@@ -978,6 +1004,7 @@ public class RoomObjectView extends RoomView
     protected var _octrl :RoomObjectController;
 
     protected var _trackOverlay :TrackOverlay;
+    protected var _crown :CrownSprite;
 
     /** The transitory properties of the current scene. */
     protected var _roomObj :RoomObject;
