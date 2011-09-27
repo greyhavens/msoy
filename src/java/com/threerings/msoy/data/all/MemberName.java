@@ -84,6 +84,13 @@ public class MemberName extends OrthName
     public static boolean isValidNonSupportName (String name)
     {
         name = name.toLowerCase();
+
+        // There have been tons of phishing attacks lately posing as Aduros, nip that in the bud
+        if (((isPossibleA(name.charAt(0)) && name.startsWith("duros", 1)))
+                || name.startsWith("cleaver")) {
+            return false;
+        }
+
         if (isPossibleA(name.charAt(0)) && (
                 name.startsWith("gent", 1) || name.startsWith("genl ", 1) ||
                 name.startsWith("gant ", 1) || name.startsWith("gint ", 1))) {
