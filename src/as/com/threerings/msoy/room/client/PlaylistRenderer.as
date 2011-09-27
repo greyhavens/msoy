@@ -70,6 +70,7 @@ public class PlaylistRenderer extends HBox
         }
 
         var audio :Audio = getAudio();
+        var isManager :Boolean = wctx.getMsoyController().canManagePlace();
         var canRemove :Boolean = djMode || isManager || (wctx.getMyId() == audio.ownerId);
 
         if (djMode) {
@@ -89,7 +90,6 @@ public class PlaylistRenderer extends HBox
 
         } else {
             var isPlayingNow :Boolean = (roomObj.currentSongId == audio.itemId);
-            var isManager :Boolean = wctx.getMsoyController().canManagePlace();
 
             FlexUtil.setVisible(_playBtn, isManager);
             _playBtn.enabled = !isPlayingNow;

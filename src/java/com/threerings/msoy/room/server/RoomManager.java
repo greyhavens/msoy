@@ -458,25 +458,25 @@ public class RoomManager extends SpotSceneManager
     {
         MemberObject who = _locator.requireMember(caller);
 
-        // Can anyone add to music to the room?
-        boolean unlockedPlaylist =
-            ((MsoyScene)getScene()).getPlaylistControl() == MsoySceneModel.ACCESS_EVERYONE;
-
         // Remove songs from the saved playlist if necessary, even if we're in DJ mode
-        // TODO: Is this necessary?
         boolean removeFromPlaylist =
             !add && _roomObj.playlist.containsKey(new ItemIdent(MsoyItemType.AUDIO, audioItemId));
 
-        // If the room is already in DJ mode, or this player is a non-manager who can add a song
-        if (!removeFromPlaylist && _roomObj.inDjMode()
-                || (!isStrictlyManager(who) && unlockedPlaylist)) {
+        // If they want to remove a song from the room playlist, or there's no DJing yet and they
+        // own this room
+        if (removeFromPlaylist || (!_roomObj.inDjMode() && isStrictlyManager(who))) {
+            modifyPlaylist(who, audioItemId, add, listener);
+
+        } else {
             if (!who.tokens.isSubscriberPlus()) {
                 // Club Whirled gets early access to this feature
                 throw new InvocationException("e.subscriber_only");
             }
+            if (((MsoyScene)getScene()).getPlaylistControl() != MsoySceneModel.ACCESS_EVERYONE) {
+                // This should never happen
+                throw new InvocationException(InvocationCodes.E_ACCESS_DENIED);
+            }
             modifyDJ(who, audioItemId, add, listener);
-        } else {
-            modifyPlaylist(who, audioItemId, add, listener);
         }
     }
 
