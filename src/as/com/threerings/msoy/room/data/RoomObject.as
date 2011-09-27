@@ -33,6 +33,9 @@ public class RoomObject extends SpotSceneObject
 {
 // GENERATED CLASSDECL END
 
+    // Force linkage
+    MemoryChangedEvent;
+
     public static const TRACK_SKIPPED_MESSAGE :String = "track_skipped";
 
 // GENERATED STREAMING START
