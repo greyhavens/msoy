@@ -574,7 +574,7 @@
     <property name="socket_policy_port" value="47623"/>
     <property name="log_levels_config" value=""/>
     <property name="xdom_url" value="${media_url}crossdomain.xml"/>
-    <property name="stub_url" value="${media_url}"/>
+    <property name="stub_url" value="${media_url}MediaStub.swf"/>
     <!-- then overwrite with values read from msoy-server.properties -->
     <copy file="${asrc.dir}/com/threerings/msoy/client/DeploymentConfig.as.tmpl"
           tofile="${asrc.dir}/com/threerings/msoy/client/DeploymentConfig.as"
