@@ -28,6 +28,11 @@ public class PetSprite extends ActorSprite
         return PetName(_occInfo.username).getOwnerId();
     }
 
+    override public function getMemberId () :int
+    {
+        return getOwnerId();
+    }
+
     public function isOwnerMuted () :Boolean
     {
         return (_occInfo != null) && _ctx.getMuteDirector() != null &&

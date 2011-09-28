@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.room.client {
 import flash.display.BitmapData;
+import flash.media.SoundTransform;
 import flash.display.DisplayObject;
 import flash.display.Loader;
 import flash.display.Sprite;
@@ -88,6 +89,19 @@ public class OccupantSprite extends EntitySprite
         }
 
         muteChanged();
+    }
+
+    public function squelch (active :Boolean = true) :void
+    {
+        _sprite.soundTransform = new SoundTransform(active ? 0 : 1);
+    }
+
+    /**
+     * Returns the memberId responsible for this occupant, or 0.
+     */
+    public function getMemberId () :int
+    {
+        return 0;
     }
 
     override public function roomScaleUpdated () :void

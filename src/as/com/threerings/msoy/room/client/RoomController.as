@@ -354,6 +354,14 @@ public class RoomController extends SceneController
     }
 
     /**
+     * Either mutes or unmutes the sounds belonging to a memberId's avatars and pets.
+     */
+    public function squelchPlayer (player :MemberName, squelch :Boolean) :void
+    {
+        // see subclasses
+    }
+
+    /**
      * Add menu items for triggering actions and changing state on our avatar.
      */
     protected function addSelfMenuItems (

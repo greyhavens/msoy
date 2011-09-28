@@ -268,6 +268,7 @@ public class WorldDirector extends BasicDirector
 }
 
 import com.threerings.util.MessageBundle;
+import com.threerings.util.Set;
 
 import com.threerings.presents.dobj.AttributeChangeListener;
 import com.threerings.presents.dobj.AttributeChangedEvent;
@@ -279,9 +280,11 @@ import com.threerings.presents.dobj.SetListener;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.Item_UsedAs;
+import com.threerings.msoy.room.client.RoomView;
 import com.threerings.msoy.room.data.MsoyScene;
 import com.threerings.msoy.room.data.Track;
 import com.threerings.msoy.world.client.WorldContext;
@@ -323,6 +326,16 @@ class MemberNotifier
                     Item.AUDIO, track.audio.itemId, Item_UsedAs.NOTHING, 0);
             }
             break;
+
+        case MemberObject.FRIENDS:
+            var roomView :RoomView = _wctx.getPlaceView() as RoomView;
+            if (roomView != null) {
+                // Unsquelch the new friends, don't bother squelching the old friends DSet value
+                for each (var friend :FriendEntry in DSet(event.getValue()).toArray()) {
+                    roomView.getRoomController().squelchPlayer(friend.name, false);
+                }
+            }
+            break;
         }
     }
 
@@ -340,6 +353,14 @@ class MemberNotifier
                 var track :Track = event.getEntry() as Track;
                 _wctx.getMsoyClient().itemUsageChangedToGWT(
                     Item.AUDIO, track.audio.itemId, Item_UsedAs.BACKGROUND, scene.getId());
+            }
+            break;
+
+        case MemberObject.FRIENDS:
+            var roomView :RoomView = _wctx.getPlaceView() as RoomView;
+            if (roomView != null) {
+                roomView.getRoomController().squelchPlayer(
+                    FriendEntry(event.getEntry()).name, false);
             }
             break;
         }
@@ -362,6 +383,14 @@ class MemberNotifier
             var track :Track = event.getOldEntry() as Track;
             _wctx.getMsoyClient().itemUsageChangedToGWT(
                 Item.AUDIO, track.audio.itemId, Item_UsedAs.NOTHING, 0);
+            break;
+
+        case MemberObject.FRIENDS:
+            var roomView :RoomView = _wctx.getPlaceView() as RoomView;
+            if (roomView != null) {
+                roomView.getRoomController().squelchPlayer(
+                    FriendEntry(event.getOldEntry()).name, true);
+            }
             break;
         }
     }

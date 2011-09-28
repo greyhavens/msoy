@@ -370,6 +370,21 @@ public class RoomObjectController extends RoomController
         }
     }
 
+    override public function squelchPlayer (player :MemberName, squelch :Boolean) :void
+    {
+        var avatar :OccupantSprite = _roomObjectView.getOccupantByName(player)
+        if (avatar != null) {
+            avatar.squelch(squelch);
+        }
+
+        // Process all their pets too
+        for each (var pet :PetSprite in _roomObjectView.getPets()) {
+            if (pet.getOwnerId() == player.getId()) {
+                pet.squelch(squelch);
+            }
+        }
+    }
+
     /**
      * Handles AVATAR_CLICKED.
      */

@@ -885,6 +885,13 @@ public class RoomObjectView extends RoomView
             (_ctx.getClient() as WorldClient).itemUsageChangedToGWT(
                 Item.PET, ident.itemId, Item_UsedAs.PET, _scene.getId());
         }
+
+        // If this occupant belongs to another player that isn't our friend, squelch it
+        var memberId :int = occupant.getMemberId();
+        if (memberId > 0 && memberId != _ctx.getMyId() &&
+                !_ctx.getMemberObject().isOnlineFriend(memberId)) {
+            occupant.squelch();
+        }
     }
 
     protected function removeBody (bodyOid :int) :void

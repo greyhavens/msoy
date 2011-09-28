@@ -111,7 +111,7 @@ public class MemberSprite extends ActorSprite
         return true;
     }
 
-    public function getMemberId () :int
+    override public function getMemberId () :int
     {
         return (_occInfo as MemberInfo).getMemberId();
     }
@@ -346,8 +346,7 @@ class TableIcon extends GlowSprite
     protected var _gameThumb :ScalingMediaDescContainer;
 }
 
-class PartyIcon extends GlowSprite
-{
+import com.threerings.msoy.ui.GlowSprite;
 import flash.geom.Rectangle;
 
 import com.threerings.util.Log;
@@ -362,6 +361,8 @@ import com.threerings.msoy.room.client.MemberSprite;
 import com.threerings.msoy.room.client.OccupantSprite;
 import com.threerings.msoy.world.client.WorldController;
 
+class PartyIcon extends GlowSprite
+{
     /** The party id. */
     public var id :int;
 
