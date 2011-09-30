@@ -213,7 +213,7 @@ public class QuestDelegate extends PlayManagerDelegate
     }
 
     /**
-     * Convenience method to calculate the current timestmap in seconds.
+     * Convenience method to calculate the current timestamp in seconds.
      */
     protected static int now ()
     {
