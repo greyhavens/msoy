@@ -21,9 +21,10 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.TextArea;
@@ -63,6 +64,9 @@ public class CommentsPanel extends ExpanderWidget<Activity>
         _expandLabel.addStyleName("CommentsExpand");
 
         addStyleName("CommentsPanel");
+
+        _loadingPanel.addStyleName("CommentsLoading");
+        _loadingPanel.add(new Image("/images/ui/dot_loader.gif"));
         // setCellAlignment(HasAlignment.ALIGN_LEFT, HasAlignment.ALIGN_MIDDLE);
 
         _rated = rated;
@@ -418,6 +422,9 @@ public class CommentsPanel extends ExpanderWidget<Activity>
         {
             super(_cmsgs.seeMoreReplies(), false);
             _expandLabel.addStyleName("RepliesExpand");
+
+            _loadingPanel.addStyleName("RepliesLoading");
+            _loadingPanel.add(new Image("/images/ui/dot_loader.gif"));
 
             _comment = comment;
             for (Comment reply : comment.replies) {

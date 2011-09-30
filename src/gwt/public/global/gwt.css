@@ -1005,7 +1005,7 @@ img, embed, applet, object {
   cursor: pointer;
 }
 
-.CommentsExpand {
+.CommentsExpand, .CommentsLoading {
   background: #d7edfb;
   margin-top: 5px;
   color: #3382AD;
