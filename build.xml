@@ -64,26 +64,17 @@
 
   <!-- declare the libraries needed by the MSOY runtime and for building -->
   <filelist dir="." id="runtime.libs">
-    <file name="${extlibs.dir}/activation.jar"/>
     <file name="${extlibs.dir}/args4j-2.0.7.jar"/>
     <file name="${extlibs.dir}/backport-util-concurrent-3.1-jdk1.6.jar"/>
     <file name="${extlibs.dir}/collectd.jar"/>
-    <file name="${extlibs.dir}/commons-beanutils.jar"/>
-    <file name="${extlibs.dir}/commons-collections.jar"/>
     <file name="${extlibs.dir}/commons-configuration.jar"/>
-    <file name="${extlibs.dir}/commons-digester.jar"/>
     <file name="${extlibs.dir}/commons-fileupload.jar"/>
     <file name="${extlibs.dir}/commons-httpclient.jar"/>
     <file name="${extlibs.dir}/commons-io.jar"/>
-    <file name="${extlibs.dir}/commons-logging.jar"/>
     <file name="${extlibs.dir}/ganymed.jar"/>
     <file name="${extlibs.dir}/gson.jar"/>
-    <file name="${extlibs.dir}/guice-multibindings.jar"/>
     <file name="${extlibs.dir}/jaxb/jaxb-api.jar"/>
     <file name="${extlibs.dir}/jcip-annotations.jar"/>
-    <file name="${extlibs.dir}/jetty6/jetty-util.jar"/>
-    <file name="${extlibs.dir}/jetty6/jetty.jar"/>
-    <file name="${extlibs.dir}/mail.jar"/>
     <file name="${extlibs.dir}/mina-core.jar"/>
     <file name="${extlibs.dir}/mina-filter-ssl.jar"/>
     <file name="${extlibs.dir}/mysql-connector-java.jar"/>
@@ -99,7 +90,6 @@
     <file name="${extlibs.dir}/svnkit-javahl.jar"/>
     <file name="${extlibs.dir}/svnkit.jar"/>
     <file name="${extlibs.dir}/swfutils-ooo.jar"/>
-    <file name="${extlibs.dir}/velocity-1.5-dev.jar"/>
     <file name="${extlibs.dir}/ws-commons-util.jar"/>
     <file name="${extlibs.dir}/xml-writer.jar"/>
     <file name="${extlibs.dir}/xmlrpc-client.jar"/>
@@ -108,7 +98,6 @@
     <file name="${extlibs.dir}/rabbitmq-client.jar"/>
 
     <!-- The following are needed for the Facebook client -->
-    <file name="${extlibs.dir}/commons-lang.jar"/>
     <file name="${extlibs.dir}/jvnet-runtime.jar"/>
     <file name="${extlibs.dir}/facebook-java-api.jar"/>
     <file name="${extlibs.dir}/facebook-java-api-schema.jar"/>
@@ -172,16 +161,16 @@
     <!-- these libraries we need for building and for the server runtime -->
     <artifact:dependencies filesetId="runtime.fileset">
       <dependency groupId="stax" artifactId="stax" version="1.2.0"/>
-      <dependency groupId="com.google.gwt" artifactId="gwt-servlet" version="2.1.0"/>
+      <dependency groupId="com.google.gwt" artifactId="gwt-servlet" version="2.4.0"/>
       <dependency groupId="postgresql" artifactid="postgresql" version="9.0-801.jdbc4"/>
       <dependency groupId="net.sf.ehcache" artifactid="ehcache" version="1.6.0"/>
       <remoteRepository refid="ooo.maven.depends.repo"/>
-      <dependency groupId="com.samskivert" artifactId="samskivert" version="1.5-SNAPSHOT"/>
-      <dependency groupId="com.samskivert" artifactId="depot" version="1.5-SNAPSHOT"/>
+      <dependency groupId="com.samskivert" artifactId="samskivert" version="1.5"/>
+      <dependency groupId="com.samskivert" artifactId="depot" version="1.5"/>
       <dependency groupId="com.threerings.panopticon" artifactId="panopticon-client"
                   version="0.0-SNAPSHOT"/>
-      <dependency groupId="com.threerings" artifactId="gwt-utils" version="1.5-SNAPSHOT"/>
-      <dependency groupId="com.threerings" artifactId="narya" version="1.9-SNAPSHOT"/>
+      <dependency groupId="com.threerings" artifactId="gwt-utils" version="1.5"/>
+      <dependency groupId="com.threerings" artifactId="narya" version="1.9"/>
       <dependency groupId="com.threerings" artifactId="vilya" version="1.1"/>
       <dependency groupId="com.threerings" artifactId="orth" version="0.9"/>
       <dependency groupId="com.threerings" artifactId="whirled-code" version="1.1-SNAPSHOT"/>
@@ -200,13 +189,13 @@
 
     <!-- these libraries we only need to build -->
     <artifact:dependencies filesetId="build.fileset">
-      <dependency groupId="com.google.gwt" artifactId="gwt-user" version="2.1.0"/>
+      <dependency groupId="com.google.gwt" artifactId="gwt-user" version="2.4.0"/>
       <dependency groupId="com.google.gwt" artifactId="gwt-incubator" version="2.0.1"/>
       <remoteRepository refid="ooo.maven.depends.repo"/>
-      <dependency groupId="com.threerings" artifactId="narya-gwt" version="1.9-SNAPSHOT"/>
+      <dependency groupId="com.threerings" artifactId="narya-gwt" version="1.9"/>
       <dependency groupId="com.threerings" artifactId="orth-gwt" version="0.9"/>
       <dependency groupId="com.threerings" artifactId="underwire-gwt" version="1.0"/>
-      <dependency groupId="com.threerings" artifactId="gwt-utils" version="1.5-SNAPSHOT"/>
+      <dependency groupId="com.threerings" artifactId="gwt-utils" version="1.5"/>
     </artifact:dependencies>
     <copy todir="${deploy.dir}/build">
       <fileset refid="build.fileset"/>
@@ -228,7 +217,7 @@
       <dependency groupId="com.threerings" artifactId="thane"
                   version="1.0" type="swc"/>
       <dependency groupId="com.threerings" artifactId="naryalib"
-                  version="1.9-SNAPSHOT" type="swc"/>
+                  version="1.9" type="swc"/>
       <dependency groupId="com.threerings" artifactId="vilyalib"
                   version="1.1" type="swc"/>
       <dependency groupId="nochump" artifactId="zip" version="1.0" type="swc"/>
@@ -237,7 +226,7 @@
       <dependency groupId="com.threerings" artifactId="whirledlib"
                   version="1.1-SNAPSHOT" type="swc"/>
       <dependency groupId="com.threerings" artifactId="aspirin"
-                  version="1.10-SNAPSHOT" type="swc"/>
+                  version="1.10" type="swc"/>
     </artifact:dependencies>
     <copy todir="${deploy.dir}/lib">
       <fileset refid="aslib.fileset"/>
