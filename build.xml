@@ -157,11 +157,12 @@
   </filelist>
 
   <!-- fetches our library dependencies -->
+  <property name="gwt.version" value="2.4.0"/>
   <target name="mavendeps" depends="prepare">
     <!-- these libraries we need for building and for the server runtime -->
     <artifact:dependencies filesetId="runtime.fileset">
       <dependency groupId="stax" artifactId="stax" version="1.2.0"/>
-      <dependency groupId="com.google.gwt" artifactId="gwt-servlet" version="2.4.0"/>
+      <dependency groupId="com.google.gwt" artifactId="gwt-servlet" version="${gwt.version}"/>
       <dependency groupId="postgresql" artifactid="postgresql" version="9.0-801.jdbc4"/>
       <dependency groupId="net.sf.ehcache" artifactid="ehcache" version="1.6.0"/>
       <remoteRepository refid="ooo.maven.depends.repo"/>
@@ -189,7 +190,7 @@
 
     <!-- these libraries we only need to build -->
     <artifact:dependencies filesetId="build.fileset">
-      <dependency groupId="com.google.gwt" artifactId="gwt-user" version="2.4.0"/>
+      <dependency groupId="com.google.gwt" artifactId="gwt-user" version="${gwt.version}"/>
       <dependency groupId="com.google.gwt" artifactId="gwt-incubator" version="2.0.1"/>
       <remoteRepository refid="ooo.maven.depends.repo"/>
       <dependency groupId="com.threerings" artifactId="narya-gwt" version="1.9"/>
@@ -471,7 +472,7 @@
 
     <!-- invoke the GWT compiler and grindy grindy grindy -->
     <artifact:dependencies pathId="gwt-dev.classpath">
-      <dependency groupId="com.google.gwt" artifactId="gwt-dev" version="2.1.0"/>
+      <dependency groupId="com.google.gwt" artifactId="gwt-dev" version="${gwt.version}"/>
     </artifact:dependencies>
     <java fork="true" maxmemory="1024M" failonerror="false" resultproperty="gwt.result"
     	classname="com.google.gwt.dev.Compiler">
@@ -479,10 +480,6 @@
         <path refid="gwt-dev.classpath"/>
         <path refid="gwt.classpath"/>
       </classpath>
-      <!-- temporary workaround to crashing problem on build server's BSD java -->
-      <jvmarg value="-XX:CompileCommand=exclude,org/eclipse/jdt/internal/compiler/lookup/ParameterizedTypeBinding,&lt;init&gt;"/>
-      <jvmarg value="-XX:CompileCommand=exclude,org/eclipse/jdt/internal/compiler/lookup/ParameterizedMethodBinding,&lt;init&gt;"/>
-      <!-- end temp -->
       <jvmarg value="-Djava.awt.headless=true"/>
       <arg value="-style"/><arg value="${gwt_style}"/>
       <arg value="-war"/>
