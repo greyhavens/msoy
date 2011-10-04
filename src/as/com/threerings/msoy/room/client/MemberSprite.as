@@ -346,7 +346,6 @@ class TableIcon extends GlowSprite
     protected var _gameThumb :ScalingMediaDescContainer;
 }
 
-import com.threerings.msoy.ui.GlowSprite;
 import flash.geom.Rectangle;
 
 import com.threerings.util.Log;
@@ -359,6 +358,7 @@ import com.threerings.msoy.party.data.PartySummary;
 import com.threerings.msoy.room.client.EntitySprite;
 import com.threerings.msoy.room.client.MemberSprite;
 import com.threerings.msoy.room.client.OccupantSprite;
+import com.threerings.msoy.ui.GlowSprite;
 import com.threerings.msoy.world.client.WorldController;
 
 class PartyIcon extends GlowSprite

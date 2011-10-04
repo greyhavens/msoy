@@ -22,6 +22,10 @@ public class MoneyConfigObject extends ConfigObject
     @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String HOURLY_AVRGAME_FLOW_RATE = "hourlyAVRGameFlowRate";
 
+    /** The field name of the <code>hourlyMusicFlowRate</code> field. */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
+    public static final String HOURLY_MUSIC_FLOW_RATE = "hourlyMusicFlowRate";
+
     /** The field name of the <code>partyGameBonusFactor</code> field. */
     @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
     public static final String PARTY_GAME_BONUS_FACTOR = "partyGameBonusFactor";
@@ -76,6 +80,9 @@ public class MoneyConfigObject extends ConfigObject
 
     /** The amount of flow per hour that an avr game can award a player. */
     public int hourlyAVRGameFlowRate = 3000;
+
+    /** The amount of flow (heh) per hour that the DJ minigame should award players. */
+    public int hourlyMusicFlowRate = 3000;
 
     /** This number is raised to the power of the party size (minus 1) to calc a payout bonus. */
     public float partyGameBonusFactor = 1.015f;
@@ -158,6 +165,23 @@ public class MoneyConfigObject extends ConfigObject
         requestAttributeChange(
             HOURLY_AVRGAME_FLOW_RATE, Integer.valueOf(value), Integer.valueOf(ovalue));
         this.hourlyAVRGameFlowRate = value;
+    }
+
+    /**
+     * Requests that the <code>hourlyMusicFlowRate</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    @Generated(value={"com.threerings.presents.tools.GenDObjectTask"})
+    public void setHourlyMusicFlowRate (int value)
+    {
+        int ovalue = this.hourlyMusicFlowRate;
+        requestAttributeChange(
+            HOURLY_MUSIC_FLOW_RATE, Integer.valueOf(value), Integer.valueOf(ovalue));
+        this.hourlyMusicFlowRate = value;
     }
 
     /**

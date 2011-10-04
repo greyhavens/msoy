@@ -87,6 +87,7 @@ import com.threerings.whirled.spot.server.SpotSceneManager;
 
 import com.threerings.orth.data.MediaDesc;
 
+import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.bureau.data.WindowClientObject;
 import com.threerings.msoy.data.HomePageItem;
 import com.threerings.msoy.data.MemberExperience;
@@ -95,6 +96,7 @@ import com.threerings.msoy.data.MsoyBodyObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.MsoyUserObject;
 import com.threerings.msoy.data.StatType;
+import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.group.server.persist.ThemeRepository;
 import com.threerings.msoy.item.data.all.Audio;
@@ -106,6 +108,7 @@ import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.item.server.ItemLogic;
 import com.threerings.msoy.item.server.ItemManager;
 import com.threerings.msoy.item.server.persist.AvatarRecord;
+import com.threerings.msoy.money.server.MoneyLogic;
 import com.threerings.msoy.party.server.PartyRegistry;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.person.gwt.FeedMessageType;
@@ -588,6 +591,9 @@ public class RoomManager extends SpotSceneManager
             who.updateTracks(track);
         }
 
+        // Pay the DJ and other participants
+        awardMusicParticipants();
+
         _roomObj.startTransaction();
 
         Track oldTrack = _roomObj.track;
@@ -620,11 +626,50 @@ public class RoomManager extends SpotSceneManager
         _roomObj.commitTransaction();
 
         _trackRatings.clear();
+        _trackStartedAt = System.currentTimeMillis();
 
         log.info("Now playing", "DJ", memberId, "audio", track.audio);
         if (track.audio.catalogId > 0) {
             publishLikedMusic(memberId, track.audio);
         }
+    }
+
+    protected int getMusicPayout (int coinsPerHour)
+    {
+        double hours = (System.currentTimeMillis() - _trackStartedAt) / (1000.0*60*60);
+        return (int) (Math.min(hours, 0.15) * coinsPerHour); // Limit songs to 9 minutes
+    }
+
+    protected void awardMusicParticipants ()
+    {
+        if (_roomObj.currentDj == 0) {
+            return;
+        }
+
+        final int currentDj = _roomObj.currentDj;
+        final int trackRating = _roomObj.trackRating;
+        final Set<Integer> raters = _trackRatings.keySet();
+
+        // TODO(bruno): Cache these payouts instead of writing after each song?
+        _invoker.postUnit(new WriteOnlyUnit("awardMusicParticipants") {
+            public void invokePersist () {
+                int hourlyRate = _runtime.money.hourlyMusicFlowRate;
+
+                // DJs can potentially make a lot more than the crowd
+                int djPayout = getMusicPayout((int) (0.5*hourlyRate + 0.4*hourlyRate*trackRating));
+                if (djPayout > 0) {
+                    _moneyLogic.awardCoins(currentDj, djPayout, true,
+                        UserAction.djedMusic(currentDj));
+                }
+
+                int raterPayout = getMusicPayout(hourlyRate);
+                for (int rater : raters) {
+                    _moneyLogic.awardCoins(rater, raterPayout, true, UserAction.ratedMusic(rater));
+                }
+
+                log.info("Payed out music awards", "dj", djPayout, "raters", raterPayout);
+            }
+        });
     }
 
     // Helper to calculate the order field needed to append a track to a sorted track DSet.
@@ -685,6 +730,8 @@ public class RoomManager extends SpotSceneManager
                 member.setTracks(new DSet<Track>());
             }
         }
+
+        awardMusicParticipants();
 
         if (_roomObj.isActive()) {
             _roomObj.startTransaction();
@@ -2583,6 +2630,10 @@ public class RoomManager extends SpotSceneManager
     // A private record of who rated the current track and how
     protected Map<Integer, Boolean> _trackRatings = Maps.newHashMap();
 
+    // Timestamp of when the current track started
+    protected long _trackStartedAt;
+
+    // True iff this room is featured on the Rooms tab
     protected boolean _hopping;
 
     @Inject protected @MainInvoker Invoker _invoker;
@@ -2595,11 +2646,13 @@ public class RoomManager extends SpotSceneManager
     @Inject protected MemberManager _memberMan;
     @Inject protected MemberRepository _memberRepo;
     @Inject protected MemoryRepository _memoryRepo;
+    @Inject protected MoneyLogic _moneyLogic;
     @Inject protected MsoyEventLogger _eventLog;
     @Inject protected MsoyPeerManager _peerMan;
     @Inject protected MsoySceneRepository _sceneRepo;
     @Inject protected PartyRegistry _partyReg;
     @Inject protected PetManager _petMan;
+    @Inject protected RuntimeConfig _runtime;
     @Inject protected SceneLogic _sceneLogic;
     @Inject protected SceneRegistry _screg;
     @Inject protected ThemeRepository _themeRepo;

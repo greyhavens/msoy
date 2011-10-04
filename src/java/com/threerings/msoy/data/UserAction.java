@@ -39,6 +39,7 @@ public class UserAction extends SimpleStreamableObject
 
         // metagame related actions
         EARNED_BADGE(40), COMPLETED_SURVEY(41), VISITED_FB_APP(42),
+        RATED_MUSIC(43), DJED_MUSIC(44),
 
         // (purely) money related actions
         BOUGHT_BARS(50), RECEIVED_PAYOUT(51), /*obsolete(52),*/ SUPPORT_ADJUST(53),
@@ -208,6 +209,16 @@ public class UserAction extends SimpleStreamableObject
     {
         String descrip = MessageBundle.tcompose("m.award_for_friend", friendId);
         return new UserAction(Type.RECEIVED_FRIEND_AWARD, memberId, descrip);
+    }
+
+    public static UserAction ratedMusic (int memberId)
+    {
+        return new UserAction(Type.RATED_MUSIC, memberId, "m.rated_music");
+    }
+
+    public static UserAction djedMusic (int memberId)
+    {
+        return new UserAction(Type.DJED_MUSIC, memberId, "m.djed_music");
     }
 
     /** Used for unserialization. */

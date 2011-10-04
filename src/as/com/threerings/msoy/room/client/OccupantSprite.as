@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.room.client {
 import flash.display.BitmapData;
-import flash.media.SoundTransform;
 import flash.display.DisplayObject;
 import flash.display.Loader;
 import flash.display.Sprite;
@@ -12,6 +11,7 @@ import flash.events.ProgressEvent;
 import flash.geom.Matrix;
 import flash.geom.Point;
 import flash.geom.Rectangle;
+import flash.media.SoundTransform;
 
 import com.threerings.util.Arrays;
 import com.threerings.util.Comparators;
