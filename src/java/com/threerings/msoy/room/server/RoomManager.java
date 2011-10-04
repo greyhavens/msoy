@@ -640,29 +640,39 @@ public class RoomManager extends SpotSceneManager
         return (int) (Math.min(hours, 0.15) * coinsPerHour); // Limit songs to 9 minutes
     }
 
+    protected boolean inAVRG (int memberId)
+    {
+        MemberObject who = _locator.lookupMember(memberId);
+        return (who != null) && (who.game != null) && who.game.avrGame;
+    }
+
     protected void awardMusicParticipants ()
     {
         if (_roomObj.currentDj == 0) {
             return;
         }
 
-        final int currentDj = _roomObj.currentDj;
-        final int trackRating = _roomObj.trackRating;
-        final Set<Integer> raters = _trackRatings.keySet();
+        int hourlyRate = _runtime.money.hourlyMusicFlowRate;
+
+        final int dj = _roomObj.currentDj;
+        // DJs can potentially make a lot more than the crowd
+        final int djPayout = inAVRG(dj) ? 0 : getMusicPayout((int)
+            (0.6*hourlyRate*_roomObj.trackRating));
+
+        final Set<Integer> raters = Sets.newHashSet();
+        final int raterPayout = getMusicPayout(hourlyRate);
+        for (int rater : _trackRatings.keySet()) {
+            if (!inAVRG(rater)) {
+                raters.add(rater);
+            }
+        }
 
         // TODO(bruno): Cache these payouts instead of writing after each song?
         _invoker.postUnit(new WriteOnlyUnit("awardMusicParticipants") {
             public void invokePersist () {
-                int hourlyRate = _runtime.money.hourlyMusicFlowRate;
-
-                // DJs can potentially make a lot more than the crowd
-                int djPayout = getMusicPayout((int) (0.5*hourlyRate + 0.4*hourlyRate*trackRating));
                 if (djPayout > 0) {
-                    _moneyLogic.awardCoins(currentDj, djPayout, true,
-                        UserAction.djedMusic(currentDj));
+                    _moneyLogic.awardCoins(dj, djPayout, true, UserAction.djedMusic(dj));
                 }
-
-                int raterPayout = getMusicPayout(hourlyRate);
                 for (int rater : raters) {
                     _moneyLogic.awardCoins(rater, raterPayout, true, UserAction.ratedMusic(rater));
                 }
