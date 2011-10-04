@@ -886,7 +886,7 @@ public class RoomManager extends SpotSceneManager
         }
         _trackRatings.put(who.getMemberId(), like);
 
-        if (!like && _trackRatings.size() >= Math.ceil(0.4*_roomObj.occupants.size())
+        if (!like && _trackRatings.size() >= Math.ceil(0.2*_roomObj.occupants.size())
                 && _roomObj.trackRating + delta <= -2) {
             // Enough people have voted and too many people say nay, skip it
             _roomObj.postMessage(RoomObject.TRACK_SKIPPED_MESSAGE);
