@@ -104,6 +104,7 @@ public class CommentRepository extends DepotRepository
 
         // Load the replies for each thread
         Set<Timestamp> postIds = Sets.newHashSet(Lists.transform(comments, TO_POSTED));
+        int sanityLimit = count; // Temporary: worst case, this loop should run 'count' times
         while (!postIds.isEmpty()) {
             // Load up a block of replies
             List<CommentRecord> replies = from(CommentRecord._R)
@@ -130,6 +131,16 @@ public class CommentRepository extends DepotRepository
 
             if (replies.size() < count*repliesPerComment) {
                 // Stop if we're definitely out of remaining replies
+                break;
+            }
+
+            // Abrupt issues started happening yesterday that leads me to wonder if some edge case
+            // prevents this loop from exiting. Probably not, but force a break and log a warning
+            // about it just in case.
+            if (--sanityLimit <= 0) {
+                log.warning("Breaking early out of loadComments()",
+                    "count", count, "repliesPerComment", repliesPerComment,
+                    "postIds", postIds.size(), "condition", condition);
                 break;
             }
         }
