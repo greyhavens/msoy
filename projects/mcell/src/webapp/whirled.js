@@ -78,7 +78,7 @@ whirled.addCharts = function () {
 //                }
                 return event[name] || 0;
             }
-            var chart = StackedBarChart(
+            return new StackedBarChart(
                 "DailyPurchases", actionNames, valueExtractor,
                 {controls:[/*actions*//*,currency*/]});
         });
