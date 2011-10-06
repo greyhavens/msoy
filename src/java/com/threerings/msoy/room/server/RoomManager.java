@@ -471,10 +471,6 @@ public class RoomManager extends SpotSceneManager
             modifyPlaylist(who, audioItemId, add, listener);
 
         } else {
-            if (!who.tokens.isSubscriberPlus()) {
-                // Club Whirled gets early access to this feature
-                throw new InvocationException("e.subscriber_only");
-            }
             if (((MsoyScene)getScene()).getPlaylistControl() != MsoySceneModel.ACCESS_EVERYONE) {
                 // This should never happen
                 throw new InvocationException(InvocationCodes.E_ACCESS_DENIED);
