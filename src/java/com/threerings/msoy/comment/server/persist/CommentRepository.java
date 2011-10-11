@@ -5,7 +5,6 @@ package com.threerings.msoy.comment.server.persist;
 
 import java.sql.Timestamp;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -154,7 +153,7 @@ public class CommentRepository extends DepotRepository
             }
 
             // We need to query another batch, first trim all threads newer than oldestReply.replyTo
-            CommentRecord oldestReply = Ordering.from(THREAD_ORDER).max(replies);
+            CommentRecord oldestReply = THREAD_ORDER.max(replies);
             postIds = postIds.tailSet(oldestReply.replyTo);
 
             // Abrupt issues started happening yesterday that leads me to wonder if some edge case
@@ -415,7 +414,7 @@ public class CommentRepository extends DepotRepository
             }
         };
 
-    public static Comparator<CommentRecord> THREAD_ORDER = new Comparator<CommentRecord> () {
+    public static Ordering<CommentRecord> THREAD_ORDER = new Ordering<CommentRecord> () {
         public int compare (CommentRecord t1, CommentRecord t2) {
             return t2.replyTo.compareTo(t1.replyTo);
         }
