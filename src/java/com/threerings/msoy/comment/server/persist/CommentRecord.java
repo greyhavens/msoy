@@ -38,7 +38,7 @@ public class CommentRecord extends PersistentRecord
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 3;
+    public static final int SCHEMA_VERSION = 4;
 
     /** The type of entity on which this comment was made (see {@link Comment}). */
     @Id
@@ -68,7 +68,7 @@ public class CommentRecord extends PersistentRecord
     public String text;
 
     /** The post date of the original comment this comment is replying to. Null if not a reply. */
-    @Column(nullable=true)
+    @Index @Column(nullable=true)
     public Timestamp replyTo;
 
     /**
