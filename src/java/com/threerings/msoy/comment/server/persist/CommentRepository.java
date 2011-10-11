@@ -6,6 +6,7 @@ package com.threerings.msoy.comment.server.persist;
 import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -127,8 +128,16 @@ public class CommentRepository extends DepotRepository
                 .descending(CommentRecord.POSTED)
                 .select();
 
-            for (CommentRecord reply : replies) {
+            Iterator<CommentRecord> it = replies.iterator();
+            while (it.hasNext()) {
+                CommentRecord reply = it.next();
                 CommentThread thread = threads.get(reply.replyTo);
+                if (thread == null) {
+                    // This can happen extremely rarely on duplicate timestamps belonging to
+                    // different entityIds
+                    it.remove();
+                    continue;
+                }
                 if (!thread.replies.contains(reply)) {
                     if (thread.replies.size() < repliesPerComment) {
                         thread.replies.add(reply);
@@ -143,7 +152,6 @@ public class CommentRepository extends DepotRepository
                 // Stop if we're definitely out of remaining replies
                 break;
             }
-
 
             // We need to query another batch, first trim all threads newer than oldestReply.replyTo
             CommentRecord oldestReply = Ordering.from(THREAD_ORDER).max(replies);
