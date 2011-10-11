@@ -5,13 +5,18 @@ package com.threerings.msoy.comment.server.persist;
 
 import java.sql.Timestamp;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Ordering;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -102,18 +107,23 @@ public class CommentRepository extends DepotRepository
             threads.put(comment.posted, new CommentThread(comment));
         }
 
+        // The set of thread timestamps we need replies for
+        SortedSet<Timestamp> postIds = Sets.newTreeSet(Ordering.natural().reverse());
+        Iterables.addAll(postIds, Iterables.transform(comments, TO_POSTED));
+
         // Load the replies for each thread
-        Set<Timestamp> postIds = Sets.newHashSet(Lists.transform(comments, TO_POSTED));
         int sanityLimit = count; // Temporary: worst case, this loop should run 'count' times
         while (!postIds.isEmpty()) {
-            // Load up a block of replies
+            int replyLimit = postIds.size()*repliesPerComment + 1;
+
+            // Load up a batch of replies
             List<CommentRecord> replies = from(CommentRecord._R)
                 .where(
                     // Missing a check for ENTITY_ID here, but this would make this code a LOT
                     // hairier and posted timestamp conflicts are incredibly rare
                     CommentRecord.ENTITY_TYPE.eq(entityType),
                     CommentRecord.REPLY_TO.in(postIds))
-                .limit(count*repliesPerComment)
+                .limit(replyLimit)
                 .descending(CommentRecord.POSTED)
                 .select();
 
@@ -129,18 +139,24 @@ public class CommentRepository extends DepotRepository
                 }
             }
 
-            if (replies.size() < count*repliesPerComment) {
+            if (replies.size() < replyLimit) {
                 // Stop if we're definitely out of remaining replies
                 break;
             }
 
+
+            // We need to query another batch, first trim all threads newer than oldestReply.replyTo
+            CommentRecord oldestReply = Ordering.from(THREAD_ORDER).max(replies);
+            postIds = postIds.tailSet(oldestReply.replyTo);
+
             // Abrupt issues started happening yesterday that leads me to wonder if some edge case
             // prevents this loop from exiting. Probably not, but force a break and log a warning
             // about it just in case.
-            if (--sanityLimit <= 0) {
+            // TODO(bruno): Safe to remove this now?
+            if (--sanityLimit < 0) {
                 log.warning("Breaking early out of loadComments()",
                     "count", count, "repliesPerComment", repliesPerComment,
-                    "postIds", postIds.size(), "condition", condition);
+                    "postIds", postIds.size(), "conditions", conditions);
                 break;
             }
         }
@@ -390,4 +406,10 @@ public class CommentRepository extends DepotRepository
                 return comment.posted;
             }
         };
+
+    public static Comparator<CommentRecord> THREAD_ORDER = new Comparator<CommentRecord> () {
+        public int compare (CommentRecord t1, CommentRecord t2) {
+            return t2.replyTo.compareTo(t1.replyTo);
+        }
+    };
 }
