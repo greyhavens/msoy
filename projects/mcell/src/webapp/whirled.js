@@ -78,9 +78,11 @@ whirled.addCharts = function () {
 //                }
                 return event[name] || 0;
             }
-            return new StackedBarChart(
+            var chart = new StackedBarChart(
                 "DailyPurchases", actionNames, valueExtractor,
                 {controls:[/*actions*//*,currency*/]});
+            chart.extractKey = function (ev) { return ev.date };
+            return chart;
         });
 
         addChart("funnel", "logins", "Daily Logins", function () {
