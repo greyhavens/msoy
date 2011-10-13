@@ -43,11 +43,12 @@ public class ThemeRecord extends PersistentRecord
     public static final ColumnExp<Integer> STATUS_LINKS_COLOR = colexp(_R, "statusLinksColor");
     public static final ColumnExp<Integer> STATUS_LEVELS_COLOR = colexp(_R, "statusLevelsColor");
     public static final ColumnExp<Integer> BACKGROUND_COLOR = colexp(_R, "backgroundColor");
+    public static final ColumnExp<Integer> TITLE_BACKGROUND_COLOR = colexp(_R, "titleBackgroundColor");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 7;
+    public static final int SCHEMA_VERSION = 9;
 
     /** Extracts the groupId of a record. */
     public static final Function<ThemeRecord, Integer> TO_GROUP_ID =
@@ -117,6 +118,10 @@ public class ThemeRecord extends PersistentRecord
     @Column(defaultValue=""+Theme.DEFAULT_BACKGROUND_COLOR)
     public int backgroundColor = Theme.DEFAULT_THEME.backgroundColor;
 
+    /** The background colour of title bar, the blue bar below the tabs. */
+    @Column(defaultValue=""+Theme.DEFAULT_TITLE_BACKGROUND_COLOR)
+    public int titleBackgroundColor = Theme.DEFAULT_THEME.titleBackgroundColor;
+
     public ThemeRecord ()
     {
     }
@@ -132,7 +137,8 @@ public class ThemeRecord extends PersistentRecord
     public Theme toTheme (GroupName group)
     {
         return new Theme(group, playOnEnter, toLogo(), toNavButton(), toNavSelButton(),
-            navColor, navSelColor, statusLinksColor, statusLevelsColor, backgroundColor);
+            navColor, navSelColor, statusLinksColor, statusLevelsColor, backgroundColor,
+            titleBackgroundColor);
     }
 
     /**

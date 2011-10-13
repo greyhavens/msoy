@@ -38,6 +38,9 @@ public class Theme extends SimpleStreamableObject
     /** The default colour of the web header background. */
     public static final int DEFAULT_BACKGROUND_COLOR = 0xffffff;
 
+    /** The default background color of the title bar. */
+    public static final int DEFAULT_TITLE_BACKGROUND_COLOR = 0x8dc5e9;
+
     /** Identifies the logo media. */
     public static final String LOGO_MEDIA = "logo";
 
@@ -80,6 +83,9 @@ public class Theme extends SimpleStreamableObject
     /** The background colour of the main Whirled UI. */
     public int backgroundColor;
 
+    /** The background color of the title bar. */
+    public int titleBackgroundColor;
+
     /**
      * An empty constructor for deserialization
      */
@@ -92,7 +98,7 @@ public class Theme extends SimpleStreamableObject
      */
     public Theme (GroupName group, boolean playOnEnter, MediaDesc logo, MediaDesc navButton,
         MediaDesc navSelButton, int navColor, int navSelColor, int statusLinksColor,
-        int statusLevelsColor, int backgroundColor)
+        int statusLevelsColor, int backgroundColor, int titleBackgroundColor)
     {
         this.group = group;
         this.playOnEnter = playOnEnter;
@@ -104,6 +110,7 @@ public class Theme extends SimpleStreamableObject
         this.statusLinksColor = statusLinksColor;
         this.statusLevelsColor = statusLevelsColor;
         this.backgroundColor = backgroundColor;
+        this.titleBackgroundColor = titleBackgroundColor;
     }
 
     /**
@@ -203,10 +210,11 @@ public class Theme extends SimpleStreamableObject
         return new Theme(null, false, getDefaultThemeLogoMedia(),
             getDefaultThemeNavButtonMedia(), getDefaultThemeNavSelButtonMedia(),
             DEFAULT_NAV_COLOR, DEFAULT_NAV_SEL_COLOR, DEFAULT_STATUS_LINKS_COLOR,
-            DEFAULT_STATUS_LEVELS_COLOR, DEFAULT_BACKGROUND_COLOR);
+            DEFAULT_STATUS_LEVELS_COLOR, DEFAULT_BACKGROUND_COLOR,
+            DEFAULT_TITLE_BACKGROUND_COLOR);
     }
 
-    /** The internal paths for various themable assets. */
+    // The internal paths for various themable assets.
     protected static final String DEFAULT_LOGO_URL = "images/header/header_logo";
     protected static final String DEFAULT_FACEBOOK_LOGO_URL = "images/facebook/logo";
     protected static final String DEFAULT_NAV_URL = "images/header/navi_button_bg";

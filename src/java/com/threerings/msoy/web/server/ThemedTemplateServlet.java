@@ -53,6 +53,7 @@ public class ThemedTemplateServlet extends DefaultServlet
             .put("statusLinksCol", cssColor(theme.statusLinksColor))
             .put("statusLevelsCol", cssColor(theme.statusLevelsColor))
             .put("backgroundColor", cssColor(theme.backgroundColor))
+            .put("titleBackgroundColor", cssColor(theme.titleBackgroundColor))
             .build();
 
         VelocityContext ctx = new VelocityContext(configuration);

@@ -205,6 +205,9 @@ public class ThemeLogic
         if (theme.backgroundColor != trec.backgroundColor) {
             updates.put(ThemeRecord.BACKGROUND_COLOR, theme.backgroundColor);
         }
+        if (theme.titleBackgroundColor != trec.titleBackgroundColor) {
+            updates.put(ThemeRecord.TITLE_BACKGROUND_COLOR, theme.titleBackgroundColor);
+        }
         if (updates.size() > 0) {
             _themeRepo.updateTheme(theme.getGroupId(), updates);
         }

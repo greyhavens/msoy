@@ -154,6 +154,16 @@ public class ThemeEdit extends FlowPanel
                 }
             });
 
+            // bits for editing the titlebar background colour
+            final TextBox titleBgColBox = MsoyUI.createTextBox(
+                hexColor(_theme.titleBackgroundColor), 6, 6);
+            addRow(_msgs.etTitleBackgroundColor(), _msgs.etTitleBgColTip(), titleBgColBox,
+                new Command() {
+                    public void execute () {
+                        _theme.titleBackgroundColor = Integer.valueOf(titleBgColBox.getText(), 16);
+                    }
+                });
+
             final CheckBox poeBox = new CheckBox();
             poeBox.setValue(_theme.playOnEnter);
             addRow(_msgs.etPlayOnEnter(), _msgs.etPoeTip(), poeBox, new Command() {
