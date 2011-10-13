@@ -353,7 +353,7 @@
   <target name="toolprep" depends="prepare">
     <artifact:dependencies pathId="tools.classpath">
       <remoteRepository refid="ooo.maven.depends.repo"/>
-      <dependency groupId="com.threerings" artifactId="narya-tools" version="1.9-SNAPSHOT"/>
+      <dependency groupId="com.threerings" artifactId="narya-tools" version="1.9"/>
     </artifact:dependencies>
     <taskdef resource="com/threerings/presents/tools.properties"
              classpathref="tools.classpath"/>
