@@ -13,9 +13,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
-import com.google.gwt.event.dom.client.KeyCodes;
-import com.google.gwt.event.dom.client.KeyPressEvent;
-import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
@@ -33,6 +30,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.orth.data.MediaDescSize;
 
+import com.threerings.gwt.ui.EnterClickAdapter;
 import com.threerings.gwt.ui.ExpanderWidget;
 import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.ui.WidgetUtil;
@@ -356,20 +354,14 @@ public class CommentsPanel extends ExpanderWidget<Activity>
             SafeHTML.fixAnchors(notice.getElement()); // doctor up the external link
             setContents(contents);
 
-            addButton(new Button(_cmsgs.cancel(), onCancel()));
-            addButton(new Button(_cmsgs.send(), new ClickHandler() {
+            ClickHandler post = new ClickHandler() {
                 public void onClick (ClickEvent event) {
                     post();
                 }
-            }));
-
-            _text.addKeyPressHandler(new KeyPressHandler() {
-                public void onKeyPress (KeyPressEvent event) {
-                    if (event.getNativeEvent().getKeyCode() == KeyCodes.KEY_ENTER) {
-                        post();
-                    }
-                }
-            });
+            };
+            addButton(new Button(_cmsgs.cancel(), onCancel()));
+            addButton(new Button(_cmsgs.send(), post));
+            EnterClickAdapter.bind(_text, post);
         }
 
         protected void post ()
