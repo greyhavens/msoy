@@ -88,7 +88,8 @@ public abstract class ComplainPopup extends BorderedDialog
             MsoyUI.info(_cmsgs.complainNeedDescription());
             return;
         }
-        if (callService() && hideOnSend()) {
+        callService(); // Ignore the return value to work around a GWT compiler bug
+        if (hideOnSend()) {
             hide();
         }
     }
