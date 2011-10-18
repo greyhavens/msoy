@@ -39,6 +39,8 @@ public abstract class MediaMimeTypes
     public static final byte COMPILED_ACTIONSCRIPT_LIBRARY = 43;
     /** The MIME type for ZIP files that have been marked "no remix". */
     public static final byte APPLICATION_ZIP_NOREMIX = 44;
+    /** MIME type for CSS. */
+    public static final byte TEXT_CSS = 45;
     /** The MIME type for youtube video. */
     public static final byte EXTERNAL_YOUTUBE = 100;
 
@@ -84,6 +86,8 @@ public abstract class MediaMimeTypes
             return COMPILED_ACTIONSCRIPT_LIBRARY;
         } else if (mimeType.equals("external/youtube")) {
             return EXTERNAL_YOUTUBE;
+        } else if (mimeType.equals("text/css")) {
+            return TEXT_CSS;
         } else {
             return INVALID_MIME_TYPE;
         }
@@ -133,6 +137,8 @@ public abstract class MediaMimeTypes
             return APPLICATION_ZIP;
         } else if ("abc".equals(ext)) {
             return COMPILED_ACTIONSCRIPT_LIBRARY;
+        } else if ("css".equals(ext)) {
+            return TEXT_CSS;
         } else if ("e00".equals(ext)) {
             return EXTERNAL_YOUTUBE;
         } else {
@@ -163,6 +169,7 @@ public abstract class MediaMimeTypes
         case APPLICATION_ZIP_NOREMIX: // fall through to ZIP
         case APPLICATION_ZIP: return ".zip";
         case COMPILED_ACTIONSCRIPT_LIBRARY: return ".abc";
+        case TEXT_CSS: return ".css";
         case EXTERNAL_YOUTUBE: return ".e00";
         default: return ".dat";
         }
@@ -191,6 +198,7 @@ public abstract class MediaMimeTypes
         case APPLICATION_ZIP: return "application/zip";
         case APPLICATION_ZIP_NOREMIX: return "application/zip-noremix";
         case COMPILED_ACTIONSCRIPT_LIBRARY: return "application/x-actionscript-bytecode";
+        case TEXT_CSS: return "text/css";
         case EXTERNAL_YOUTUBE: return "external/youtube";
         default: return "application/octet-stream";
         }

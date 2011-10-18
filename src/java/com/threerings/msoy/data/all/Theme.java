@@ -53,6 +53,9 @@ public class Theme extends SimpleStreamableObject
     /** Identifies the nav button media. */
     public static final String NAV_SEL_MEDIA = "navsel";
 
+    /** Identifies the custom CSS media. */
+    public static final String CSS = "css";
+
     /** The group of this theme. */
     public GroupName group;
 
@@ -86,6 +89,9 @@ public class Theme extends SimpleStreamableObject
     /** The background color of the title bar. */
     public int titleBackgroundColor;
 
+    /** Custom CSS. */
+    public MediaDesc cssMedia;
+
     /**
      * An empty constructor for deserialization
      */
@@ -98,7 +104,7 @@ public class Theme extends SimpleStreamableObject
      */
     public Theme (GroupName group, boolean playOnEnter, MediaDesc logo, MediaDesc navButton,
         MediaDesc navSelButton, int navColor, int navSelColor, int statusLinksColor,
-        int statusLevelsColor, int backgroundColor, int titleBackgroundColor)
+        int statusLevelsColor, int backgroundColor, int titleBackgroundColor, MediaDesc cssMedia)
     {
         this.group = group;
         this.playOnEnter = playOnEnter;
@@ -111,6 +117,7 @@ public class Theme extends SimpleStreamableObject
         this.statusLevelsColor = statusLevelsColor;
         this.backgroundColor = backgroundColor;
         this.titleBackgroundColor = titleBackgroundColor;
+        this.cssMedia = cssMedia;
     }
 
     /**
@@ -211,7 +218,7 @@ public class Theme extends SimpleStreamableObject
             getDefaultThemeNavButtonMedia(), getDefaultThemeNavSelButtonMedia(),
             DEFAULT_NAV_COLOR, DEFAULT_NAV_SEL_COLOR, DEFAULT_STATUS_LINKS_COLOR,
             DEFAULT_STATUS_LEVELS_COLOR, DEFAULT_BACKGROUND_COLOR,
-            DEFAULT_TITLE_BACKGROUND_COLOR);
+            DEFAULT_TITLE_BACKGROUND_COLOR, null);
     }
 
     // The internal paths for various themable assets.

@@ -214,5 +214,18 @@ public class EditorUtil
         return desc;
     }
 
+    /**
+     * Throws a {@link ConfigException} if the given media is null or the wrong mime type.
+     * For convenience, returns the media if all is well.
+     */
+    public static <T extends MediaDesc> T checkMimeType (T desc, byte mimeType)
+    {
+        if (desc.getMimeType() != mimeType) {
+            String suffix = MediaMimeTypes.mimeTypeToSuffix(mimeType);
+            throw new ConfigException(_msgs.errInvalidMimeType(suffix));
+        }
+        return desc;
+    }
+
     public static final EditorUtilMessages _msgs = GWT.create(EditorUtilMessages.class);
 }

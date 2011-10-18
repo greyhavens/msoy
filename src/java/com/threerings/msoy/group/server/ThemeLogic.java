@@ -190,6 +190,9 @@ public class ThemeLogic
             updates.put(ThemeRecord.NAV_SEL_MIME_TYPE, theme.navSelButton.getMimeType());
             updates.put(ThemeRecord.NAV_SEL_MEDIA_CONSTRAINT, theme.navSelButton.getConstraint());
         }
+        if (theme.cssMedia instanceof HashMediaDesc && !theme.cssMedia.equals(trec.toCssMedia())) {
+            updates.put(ThemeRecord.CSS_MEDIA_HASH, HashMediaDesc.unmakeHash(theme.cssMedia));
+        }
         if (theme.navColor != trec.navColor) {
             updates.put(ThemeRecord.NAV_COLOR, theme.navColor);
         }

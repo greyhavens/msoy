@@ -3,5 +3,6 @@
   <source path="client/frame"/>
   <public path="public/frame"/>
   <stylesheet src="/themed/css/frame.css?themeId=0"/>
+  <stylesheet src="/custom.css?themeId=0"/>
   <entry-point class="client.frame.FrameEntryPoint"/>
 </module>

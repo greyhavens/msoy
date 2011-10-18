@@ -61,6 +61,9 @@ public class MediaMimeTypes
     /** The MIME type for ZIP files that have been marked "no remix". */
     public static const APPLICATION_ZIP_NOREMIX :int = 44;
 
+    /** MIME type for CSS. */
+    public static const TEXT_CSS :int = 45;
+
     /** The MIME type for youtube video. */
     public static const EXTERNAL_YOUTUBE :int = 100;
 
@@ -104,6 +107,8 @@ public class MediaMimeTypes
             return APPLICATION_ZIP;
         } else if (mimeType == "external/youtube") {
             return EXTERNAL_YOUTUBE;
+        } else if (mimeType == "text/css") {
+            return TEXT_CSS;
         } else {
             return INVALID_MIME_TYPE;
         }
@@ -130,6 +135,7 @@ public class MediaMimeTypes
         case "swf": return APPLICATION_SHOCKWAVE_FLASH;
         case "jar": return APPLICATION_JAVA_ARCHIVE;
         case "zip": return APPLICATION_ZIP;
+        case "css": return TEXT_CSS;
         case "e00": return EXTERNAL_YOUTUBE;
         default: return INVALID_MIME_TYPE;
         }
@@ -157,6 +163,8 @@ public class MediaMimeTypes
         case APPLICATION_JAVA_ARCHIVE: return ".jar";
         case APPLICATION_ZIP_NOREMIX: // fall through to ZIP
         case APPLICATION_ZIP: return ".zip";
+        case COMPILED_ACTIONSCRIPT_LIBRARY: return ".abc";
+        case TEXT_CSS: return ".css";
         case EXTERNAL_YOUTUBE: return ".e00";
         default: return ".dat";
         }
@@ -184,6 +192,7 @@ public class MediaMimeTypes
         case APPLICATION_JAVA_ARCHIVE: return "application/java-archive";
         case APPLICATION_ZIP: return "application/zip";
         case APPLICATION_ZIP_NOREMIX: return "application/zip-noremix";
+        case TEXT_CSS: return "text/css";
         case EXTERNAL_YOUTUBE: return "external/youtube";
         default: return "application/octet-stream";
         }

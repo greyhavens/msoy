@@ -15,6 +15,7 @@ import com.samskivert.depot.expression.ColumnExp;
 import com.threerings.orth.data.MediaDesc;
 
 import com.threerings.msoy.data.all.GroupName;
+import com.threerings.msoy.data.all.MediaMimeTypes;
 import com.threerings.msoy.data.all.Theme;
 import com.threerings.msoy.server.MediaDescFactory;
 
@@ -44,11 +45,12 @@ public class ThemeRecord extends PersistentRecord
     public static final ColumnExp<Integer> STATUS_LEVELS_COLOR = colexp(_R, "statusLevelsColor");
     public static final ColumnExp<Integer> BACKGROUND_COLOR = colexp(_R, "backgroundColor");
     public static final ColumnExp<Integer> TITLE_BACKGROUND_COLOR = colexp(_R, "titleBackgroundColor");
+    public static final ColumnExp<byte[]> CSS_MEDIA_HASH = colexp(_R, "cssMediaHash");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 9;
+    public static final int SCHEMA_VERSION = 10;
 
     /** Extracts the groupId of a record. */
     public static final Function<ThemeRecord, Integer> TO_GROUP_ID =
@@ -122,6 +124,10 @@ public class ThemeRecord extends PersistentRecord
     @Column(defaultValue=""+Theme.DEFAULT_TITLE_BACKGROUND_COLOR)
     public int titleBackgroundColor = Theme.DEFAULT_THEME.titleBackgroundColor;
 
+    /** A hash of the custom CSS for advanced skinning. Mimetype is assumed to be text/css. */
+    @Column(nullable=true)
+    public byte[] cssMediaHash;
+
     public ThemeRecord ()
     {
     }
@@ -138,7 +144,7 @@ public class ThemeRecord extends PersistentRecord
     {
         return new Theme(group, playOnEnter, toLogo(), toNavButton(), toNavSelButton(),
             navColor, navSelColor, statusLinksColor, statusLevelsColor, backgroundColor,
-            titleBackgroundColor);
+            titleBackgroundColor, toCssMedia());
     }
 
     /**
@@ -173,6 +179,14 @@ public class ThemeRecord extends PersistentRecord
         }
         return MediaDescFactory
             .createMediaDesc(navSelMediaHash, navSelMimeType, navSelMediaConstraint);
+    }
+
+    public MediaDesc toCssMedia ()
+    {
+        if (cssMediaHash == null) {
+            return null;
+        }
+        return MediaDescFactory.createMediaDesc(cssMediaHash, MediaMimeTypes.TEXT_CSS);
     }
 
     // AUTO-GENERATED: METHODS START

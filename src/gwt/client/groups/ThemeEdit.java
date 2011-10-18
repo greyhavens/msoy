@@ -15,6 +15,7 @@ import com.threerings.orth.data.MediaDescSize;
 
 import com.threerings.gwt.ui.SmartTable;
 
+import com.threerings.msoy.data.all.MediaMimeTypes;
 import com.threerings.msoy.data.all.Theme;
 import com.threerings.msoy.group.data.all.Group;
 import com.threerings.msoy.group.gwt.GroupService;
@@ -163,6 +164,14 @@ public class ThemeEdit extends FlowPanel
                         _theme.titleBackgroundColor = Integer.valueOf(titleBgColBox.getText(), 16);
                     }
                 });
+
+            final CodeBox cssBox = new CodeBox("", Theme.CSS, _theme.cssMedia);
+            addRow(_msgs.etCss(), _msgs.etCssTip(), cssBox, new Command() {
+                public void execute () {
+                    _theme.cssMedia = EditorUtil.checkMimeType(
+                        cssBox.getMedia(), MediaMimeTypes.TEXT_CSS);
+                }
+            });
 
             final CheckBox poeBox = new CheckBox();
             poeBox.setValue(_theme.playOnEnter);
