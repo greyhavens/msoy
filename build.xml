@@ -1037,7 +1037,7 @@
 
   <!-- builds top-level flash applications. -->
   <target name="flashapps" depends="asprepare,mediastub,embedstub,mochistub,videoplayer,
-          audioplayer,remixer,imageeditor,camerabutton,uploader,asclient"
+          audioplayer,remixer,imageeditor,camerabutton,uploader,asclient,whirledmap"
           description="Rebuilds all of our Flash clients and applets.">
   </target>
 
