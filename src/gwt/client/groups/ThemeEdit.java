@@ -168,8 +168,10 @@ public class ThemeEdit extends FlowPanel
             final CodeBox cssBox = new CodeBox("", Theme.CSS, _theme.cssMedia);
             addRow(_msgs.etCss(), _msgs.etCssTip(), cssBox, new Command() {
                 public void execute () {
-                    _theme.cssMedia = EditorUtil.checkMimeType(
-                        cssBox.getMedia(), MediaMimeTypes.TEXT_CSS);
+                    if (cssBox.getMedia() != null) {
+                        _theme.cssMedia = EditorUtil.checkMimeType(
+                            cssBox.getMedia(), MediaMimeTypes.TEXT_CSS);
+                    }
                 }
             });
 
