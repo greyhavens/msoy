@@ -91,7 +91,8 @@ public class LandingPanel extends SmartTable
         logon.setWidget(0, 1, logemail);
         logon.setText(1, 0, _msgs.landingLogPass(), 1, "Right");
         logon.setWidget(1, 1, logpass);
-        logon.setWidget(2, 1, doLogon);
+        logon.setWidget(2, 1, LogonPanel.newForgotPassword(logemail.getText().trim()));
+        logon.setWidget(3, 1, doLogon);
         logon.getFlexCellFormatter().setHorizontalAlignment(2, 1, HasAlignment.ALIGN_RIGHT);
         for (int row = 0; row < logon.getRowCount(); row++) {
             logon.getFlexCellFormatter().setVerticalAlignment(row, 0, HasAlignment.ALIGN_MIDDLE);

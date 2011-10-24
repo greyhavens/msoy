@@ -72,6 +72,19 @@ public class LogonPanel extends SmartTable
         EnterClickAdapter.bind(password, onAction);
     }
 
+    public static Label newForgotPassword (final String email)
+    {
+        String lbl = _cmsgs.forgotPassword();
+        return MsoyUI.createActionLabel(lbl, "tipLabel", new ClickHandler() {
+            public void onClick (ClickEvent event) {
+                String forgottenTitle = "Forgot your password?";
+                ForgotPasswordDialog forgottenDialog =
+                    new ForgotPasswordDialog(email);
+                CShell.frame.showDialog(forgottenTitle, forgottenDialog);
+            }
+        });
+    }
+
     public LogonPanel (Mode mode)
     {
         this(mode, MsoyUI.createButton(MsoyUI.MEDIUM_THIN, _cmsgs.logonLogon(), null));
@@ -95,17 +108,7 @@ public class LogonPanel extends SmartTable
                 }
             });
 
-        // create the forgot password tip link
-        String lbl = _cmsgs.forgotPassword();
-        Label forgot = MsoyUI.createActionLabel(lbl, "tipLabel", new ClickHandler() {
-            public void onClick (ClickEvent event) {
-                String forgottenTitle = "Forgot your password?";
-                ForgotPasswordDialog forgottenDialog =
-                    new ForgotPasswordDialog(_email.getText().trim());
-                CShell.frame.showDialog(forgottenTitle, forgottenDialog);
-            }
-        });
-
+        Label forgot = newForgotPassword(_email.getText().trim());
         // now lay everything out
         switch (mode) {
         case HORIZ:

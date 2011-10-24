@@ -55,18 +55,8 @@ public class LandingMonsterPanel extends SimplePanel
         ButtonBase logonButton = MsoyUI.createButton(MsoyUI.SHORT_THIN, _msgs.landingLogGo(),
             null);
         LogonPanel.addLogonBehavior(emailTextBox, logpass, logonButton, null);
+        loginBox.add(LogonPanel.newForgotPassword(emailTextBox.getText().trim()));
         loginBox.add(logonButton);
-        // forgot password link
-        Label forgot = MsoyUI.createActionLabel(_msgs.monsterAveForgotTip(), "ForgotPassword",
-            new ClickHandler() {
-            public void onClick (ClickEvent event) {
-                ForgotPasswordDialog forgottenDialog =
-                    new ForgotPasswordDialog(
-                        emailTextBox.getText().trim());
-                CShell.frame.showDialog(_msgs.monsterAveForgotTitle(), forgottenDialog);
-            }
-        });
-        loginBox.add(forgot);
         FBLogonPanel fbLogon = new FBLogonPanel();
         fbLogon.setStyleName("Connect");
         loginBox.add(fbLogon);
