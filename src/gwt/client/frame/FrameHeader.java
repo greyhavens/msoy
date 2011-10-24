@@ -203,6 +203,7 @@ public class FrameHeader
         public NaviButton (Pages page, String text, ImageResource up,
                            ImageResource over, ImageResource down) {
             setStyleName("NaviButton");
+            addStyleName(page.makeToken());
             this.page = page;
 
             setWidget(MsoyUI.createActionLabel(text, new ClickHandler() {
