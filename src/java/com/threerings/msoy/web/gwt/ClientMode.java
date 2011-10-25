@@ -10,7 +10,8 @@ public enum ClientMode
 {
     UNSPECIFIED(0, ""),
     FB_GAMES(1, "g"),
-    FB_ROOMS(2, "r");
+    FB_ROOMS(2, "r"),
+    DJ_WHIRLED(3, "dj");
 
     public static ClientMode fromCode (String code)
     {

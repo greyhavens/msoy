@@ -32,6 +32,7 @@ public class LandingPage extends Page
     public static final String OLD_BLUE_LANDING = "bluelanding";
     public static final String PLAY_BLUE_LANDING = "playbluelanding";
     public static final String NEW_MONSTER_LANDING = "monsterlanding";
+    public static final String DJ_LANDING = "dj";
 
     @Override // from Page
     public void onHistoryChanged (Args args)
@@ -65,6 +66,9 @@ public class LandingPage extends Page
         // landing page with an introduction to Whirled for developers (monster avenue)
         } else if (action.equals(NEW_MONSTER_LANDING)) {
             setContent(_msgs.titleLanding(), new LandingMonsterPanel());
+
+        } else if (action.equals(DJ_LANDING)) {
+            setContent(_msgs.djTitleLanding(), new LandingDjPanel());
 
         } else {
             if (action.equals("theme")) {
