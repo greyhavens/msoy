@@ -11,6 +11,7 @@ import com.threerings.msoy.web.gwt.ExternalSiteId;
 import com.threerings.msoy.web.gwt.FacebookCreds;
 import com.threerings.msoy.web.gwt.SessionData;
 
+import client.shell.CShell;
 import client.shell.Session;
 
 /**
@@ -36,7 +37,7 @@ public class FBConnect
         creds.expires = (expstr.length() > 0) ? Integer.parseInt(expstr) : 0;
         // TODO: gah, we'll need the key & site id of the default connect app here
         creds.sig = CookieUtil.get(key);
-        creds.site = ExternalSiteId.FB_CONNECT_DEFAULT;
+        creds.site = ExternalSiteId.facebookApp(CShell.getAppId());
         return creds.haveAllFields() ? creds : null;
     }
 
