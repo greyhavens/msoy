@@ -40,7 +40,7 @@ public class MemberName extends OrthName
      */
     public static final String ILLEGAL_DISPLAY_NAME_CHARS = "\u007F" + // renders invisible in flash
         "\uFFFC\uFFFD" + // used by whirled for delimiting links in chat
-        "\u202A\u202B\u202C\u202D\u202E" + // control text direction
+        "\u202A\u202B\u202C\u202D\u202E\u200C\u200D\u200E\u200F" + // control text direction
         "\u534D\u5350\u0FCC"; // swastikas
 
     /** The maximum length for an account name (email address). */
