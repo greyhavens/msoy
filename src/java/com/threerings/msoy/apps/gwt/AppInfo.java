@@ -24,4 +24,7 @@ public class AppInfo
 
     /** The mode for the client when running this app. */
     public ClientMode clientMode;
+
+    /** The group associated with this app, if any. */
+    public int groupId;
 }

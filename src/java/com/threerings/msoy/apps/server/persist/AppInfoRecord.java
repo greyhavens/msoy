@@ -28,12 +28,13 @@ public class AppInfoRecord extends PersistentRecord
     public static final ColumnExp<Integer> APP_ID = colexp(_R, "appId");
     public static final ColumnExp<String> NAME = colexp(_R, "name");
     public static final ColumnExp<ClientMode> CLIENT_MODE = colexp(_R, "clientMode");
+    public static final ColumnExp<Integer> GROUP_ID = colexp(_R, "groupId");
     // AUTO-GENERATED: FIELDS END
 
     /**
      * Depot-inspected field regulating the update of the table's columns and migrations.
      */
-    public static final int SCHEMA_VERSION = 2;
+    public static final int SCHEMA_VERSION = 3;
 
     /**
      * Function to {@link Lists#transform} a record to a runtime instance.
@@ -56,6 +57,9 @@ public class AppInfoRecord extends PersistentRecord
     /** The mode the client should be in when accessing this application. */
     public ClientMode clientMode;
 
+    /** The Whirled group associated with this application, if any. */
+    public int groupId;
+
     /**
      * Converts this record to a new runtime instance.
      */
@@ -65,6 +69,7 @@ public class AppInfoRecord extends PersistentRecord
         appInfo.appId = appId;
         appInfo.name = name;
         appInfo.clientMode = clientMode;
+        appInfo.groupId = groupId;
         return appInfo;
     }
 
@@ -75,6 +80,7 @@ public class AppInfoRecord extends PersistentRecord
     {
         this.name = appInfo.name;
         this.clientMode = appInfo.clientMode;
+        this.groupId = appInfo.groupId;
     }
 
     // AUTO-GENERATED: METHODS START

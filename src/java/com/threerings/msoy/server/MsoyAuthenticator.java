@@ -22,14 +22,15 @@ import com.threerings.presents.server.net.AuthingConnection;
 import com.threerings.web.gwt.ServiceException;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;
+import com.threerings.msoy.apps.server.persist.AppRepository;
+import com.threerings.msoy.data.all.DeploymentConfig;
+import com.threerings.msoy.data.all.GwtAuthCodes;
+import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.data.LurkerName;
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.MsoyAuthName;
 import com.threerings.msoy.data.MsoyAuthResponseData;
 import com.threerings.msoy.data.WorldCredentials;
-import com.threerings.msoy.data.all.DeploymentConfig;
-import com.threerings.msoy.data.all.GwtAuthCodes;
-import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.person.server.persist.ProfileRepository;
 import com.threerings.msoy.server.AuthenticationDomain.Account;
@@ -99,13 +100,13 @@ public class MsoyAuthenticator extends Authenticator
     }
 
     /**
-     * Authenticates a web sesssion, verifying the supplied external credentials and loading,
+     * Authenticates a web session, verifying the supplied external credentials and loading,
      * creating (or reusing) a member record.
      *
      * @return the user's member record.
      */
     public MemberRecord authenticateSession (
-        ExternalCreds creds, VisitorInfo vinfo, AffiliateCookie affiliate)
+        ExternalCreds creds, VisitorInfo vinfo, AffiliateCookie affiliate, int appId)
         throws ServiceException
     {
         try {
@@ -146,9 +147,18 @@ public class MsoyAuthenticator extends Authenticator
             // information from the external authentication source
             ExternalAuthHandler.Info info = handler.getInfo(creds);
 
+            int themeId = 0;
+            if (appId > 0) {
+                try {
+                    themeId = _appRepo.loadAppInfo(appId).groupId;
+                } catch (Exception e) {
+                    log.warning("Failed to assign proper theme to new app user", "appId", appId, e);
+                }
+            }
+
             // create their account
             MemberRecord mrec = _accountLogic.createExternalAccount(
-                creds.getPlaceholderAddress(), info.displayName, info.profile, vinfo, 0,
+                creds.getPlaceholderAddress(), info.displayName, info.profile, vinfo, themeId,
                 affiliate, creds.getSite(), creds.getUserId());
 
             // if they have an external session key, update that here
@@ -430,6 +440,7 @@ public class MsoyAuthenticator extends Authenticator
 
     // our dependencies
     @Inject protected AccountLogic _accountLogic;
+    @Inject protected AppRepository _appRepo;
     @Inject protected AuthLogic _authLogic;
     @Inject protected ExternalAuthLogic _extLogic;
     @Inject protected MemberRepository _memberRepo;

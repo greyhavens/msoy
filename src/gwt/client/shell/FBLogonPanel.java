@@ -43,7 +43,8 @@ public class FBLogonPanel extends FlowPanel
                 // TODO: send permaguest member id here
                 _usersvc.externalLogon(
                     DeploymentConfig.version, creds, CShell.frame.getVisitorInfo(),
-                    WebUserService.SESSION_DAYS, new InfoCallback<SessionData>() {
+                    WebUserService.SESSION_DAYS, CShell.getAppId(),
+                    new InfoCallback<SessionData>() {
                     public void onSuccess (SessionData data) {
                         CShell.frame.dispatchDidLogon(data);
                     }

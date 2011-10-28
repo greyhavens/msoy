@@ -64,9 +64,11 @@ public interface WebUserService extends RemoteService
     /**
      * Requests that the client be logged on to the account associated with the supplied external
      * credentials.
+     *
+     * @param appId The internal appId that registered this member.
      */
-    SessionData externalLogon (String clientVersion, ExternalCreds creds, VisitorInfo vinfo,
-                               int expireDays)
+    SessionData externalLogon (
+        String clientVersion, ExternalCreds creds, VisitorInfo vinfo, int expireDays, int appId)
         throws ServiceException;
 
     /**

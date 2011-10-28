@@ -114,14 +114,14 @@ public class WebUserServlet extends MsoyServiceServlet
     }
 
     // from interface WebUserService
-    public SessionData externalLogon (String clientVersion, ExternalCreds creds, VisitorInfo vinfo,
-                                      int expireDays)
+    public SessionData externalLogon (
+        String clientVersion, ExternalCreds creds, VisitorInfo vinfo, int expireDays, int appId)
         throws ServiceException
     {
         // TODO: deal with joining to the permaguest account, if any
         checkClientVersion(clientVersion, creds.getPlaceholderAddress());
         AffiliateCookie affiliate = AffiliateCookie.fromWeb(getThreadLocalRequest());
-        return startSession(_author.authenticateSession(creds, vinfo, affiliate), expireDays);
+        return startSession(_author.authenticateSession(creds, vinfo, affiliate, appId), expireDays);
     }
 
     // from interface WebUserService

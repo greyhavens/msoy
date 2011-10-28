@@ -8,6 +8,8 @@ import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ListBox;
 
+import com.threerings.gwt.ui.NumberTextBox;
+
 import com.threerings.msoy.apps.gwt.AppInfo;
 import com.threerings.msoy.apps.gwt.AppService.AppData;
 import com.threerings.msoy.apps.gwt.AppService;
@@ -44,6 +46,13 @@ public class AppInfoEditorPanel extends EditorTable
             }
         });
         clientModes.setSelectedIndex(info.clientMode.ordinal());
+
+        final NumberTextBox groupId = NumberTextBox.newIntBox().withValue(info.groupId);
+        addRow(_msgs.editAppInfoGroupId(), groupId, new Command() {
+            public void execute () {
+                info.groupId = groupId.getNumber().intValue();
+            }
+        });
 
         Button save = addSaveRow();
         new ClickCallback<Void>(save) {
