@@ -148,6 +148,12 @@ public enum MsoyItemType implements EntityType<MsoyItemType>
         return false;
     }
 
+    // Whether items of this type can be used even in themes they aren't marked for
+    public boolean isUsableAnywhere ()
+    {
+        return this == AUDIO;
+    }
+
     public Class<? extends Item> getClassForType ()
     {
         return getClassForType(this);

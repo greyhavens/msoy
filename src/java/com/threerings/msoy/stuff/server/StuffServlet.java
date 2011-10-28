@@ -223,7 +223,7 @@ public class StuffServlet extends MsoyServiceServlet
         List<ItemRecord> allRecords = repo.findItems(memberId, query, 0);
 
         Set<ItemRecord> themeRecords;
-        if (memrec.themeGroupId != 0) {
+        if (memrec.themeGroupId != 0 && !type.isUsableAnywhere()) {
             themeRecords = Sets.newHashSet(repo.findItems(memberId, query, memrec.themeGroupId));
         } else {
             themeRecords = null;
@@ -238,7 +238,7 @@ public class StuffServlet extends MsoyServiceServlet
         List<Item> allItems = Lists.newArrayList(Lists.transform(
             allRecords, new ItemRecord.ToItem<Item>()));
 
-        if (memrec.themeGroupId != 0) {
+        if (themeRecords != null) {
             // for a theme query, put all the stamped stuff first
             Collections.sort(allItems, new Comparator<Item>() {
                 public int compare (Item o1, Item o2) {
@@ -358,6 +358,7 @@ public class StuffServlet extends MsoyServiceServlet
         ItemRepository<ItemRecord> repo = _itemLogic.getRepository(item.getType());
         // mark it as stamped if we're not in a theme, or if it really is stamped for the theme
         if (mrec == null || mrec.themeGroupId == 0 ||
+                item.getType().isUsableAnywhere() ||
                 repo.isThemeStamped(mrec.themeGroupId, item.itemId)) {
             item.attrs |= Item.ATTR_THEME_STAMPED;
         } else {

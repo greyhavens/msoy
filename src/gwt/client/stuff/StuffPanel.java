@@ -103,7 +103,7 @@ public class StuffPanel extends FlowPanel
                 Link.go(Pages.STUFF, ((InventoryModels.Stuff)_model).makeArgs(_memberId, page));
             }
             @Override protected Widget createWidget (Item item) {
-                return new ItemEntry(item,  !(item instanceof IdentGameItem));
+                return new ItemEntry(item, !(item instanceof IdentGameItem));
 
             }
             @Override protected String getEmptyMessage () {
@@ -159,7 +159,7 @@ public class StuffPanel extends FlowPanel
     protected boolean shouldDisplayUpload (MsoyItemType type)
     {
         // for now, if you're in a theme, there is no uploading of stuff
-        if (CShell.frame.getThemeId() != 0) {
+        if (CShell.frame.getThemeId() != 0 && !type.isUsableAnywhere()) {
             // TODO: we should have Buy but not Upload, punt!
             return false;
         }
