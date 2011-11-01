@@ -88,6 +88,10 @@ public class SceneLogic
             }
             break;
 
+        case MsoySceneModel.OWNER_TYPE_TRANSIENT:
+            // Nobody
+            break;
+
         default:
             log.warning("Unable to populate owner name, unknown ownership type", new Exception());
             break;

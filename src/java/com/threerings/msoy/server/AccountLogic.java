@@ -218,7 +218,15 @@ public class AccountLogic
             data.realName = profile.realName;
             data.location = profile.location;
         }
-        return createAccount(data);
+
+        MemberRecord member = createAccount(data);
+        // TODO(bruno): Do this for username/password logins too if we ever have them
+        if (themeId != 0) {
+            // Give them a transient home room
+            _memberLogic.assignHomeRoom(member, true);
+        }
+
+        return member;
     }
 
     /**

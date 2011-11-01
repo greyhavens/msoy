@@ -286,7 +286,7 @@ public class MemberObject extends BodyObject
     }
 
     /**
-     * Returns  our home scene id or 1 (Brave New Whirled) if we have none.
+     * Returns our home scene id or 1 (Brave New Whirled) if we have none.
      */
     public int getHomeSceneId ()
     {

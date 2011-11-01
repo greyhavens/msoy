@@ -38,6 +38,12 @@ public class MsoySceneModel extends SceneModel
     /** Constant for Group room owners **/
     public static final byte OWNER_TYPE_GROUP = 2;
 
+    /**
+     * Constant for transient rooms. Rooms with this owner type are read-only, don't belong to
+     * anyone, and may be destroyed at a later date.
+     */
+    public static final byte OWNER_TYPE_TRANSIENT = 3;
+
     /** Access control constant, denotes that anyone can enter this scene. */
     public static final byte ACCESS_EVERYONE = 0;
 

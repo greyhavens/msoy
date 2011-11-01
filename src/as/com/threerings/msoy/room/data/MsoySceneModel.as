@@ -33,6 +33,9 @@ public class MsoySceneModel extends SceneModel
     /** Constant for Group room owners **/
     public static const OWNER_TYPE_GROUP :int = 2;
 
+    /** Constant for transient rooms **/
+    public static const OWNER_TYPE_TRANSIENT :int = 3;
+
     /** Access control constant, denotes that anyone can enter this scene. */
     public static const ACCESS_EVERYONE :int = 0;
 

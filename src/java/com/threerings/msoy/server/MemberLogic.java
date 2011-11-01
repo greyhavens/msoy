@@ -123,25 +123,7 @@ public class MemberLogic
                 return null;
             }
             if (member.homeSceneId == 0) {
-                // create a blank room for them, store it
-                String name = _serverMsgs.getBundle("server").get("m.new_room_name");
-
-                int stockSceneId = SceneRecord.Stock.FIRST_MEMBER_ROOM.getSceneId();
-                boolean privileged = true;
-                if (member.themeGroupId != 0) {
-                    // this member is themed, let's see if the theme has any home room templates
-                    List<ThemeHomeTemplateRecord> templates =
-                        _themeRepo.loadHomeTemplates(member.themeGroupId);
-                    // if so, just grab first one for now
-                    if (templates.size() > 0) {
-                        stockSceneId = templates.get(0).sceneId;
-                        privileged = false;
-                    }
-                }
-                SceneRecord scene = _sceneLogic.createBlankRoom(MsoySceneModel.OWNER_TYPE_MEMBER,
-                    member.memberId, stockSceneId, privileged, member.themeGroupId, name, null);
-                member.homeSceneId = scene.sceneId;
-                _memberRepo.setHomeSceneId(member.memberId, member.homeSceneId);
+                assignHomeRoom(member, false);
             }
             return member.homeSceneId;
 
@@ -149,11 +131,37 @@ public class MemberLogic
             GroupRecord group = _groupRepo.loadGroup(ownerId);
             return (group == null) ? null : group.homeSceneId;
 
+        case MsoySceneModel.OWNER_TYPE_TRANSIENT:
         default:
             log.warning("Unknown ownerType provided to getHomeId", "ownerType", ownerType,
                         "ownerId", ownerId);
             return null;
         }
+    }
+
+    public void assignHomeRoom (MemberRecord member, boolean transience)
+    {
+        // create a blank room for them, store it
+        String name = _serverMsgs.getBundle("server").get("m.new_room_name");
+
+        int stockSceneId = SceneRecord.Stock.FIRST_MEMBER_ROOM.getSceneId();
+        boolean privileged = true;
+        if (member.themeGroupId != 0) {
+            // this member is themed, let's see if the theme has any home room templates
+            List<ThemeHomeTemplateRecord> templates =
+                _themeRepo.loadHomeTemplates(member.themeGroupId);
+            // if so, just grab first one for now
+            if (templates.size() > 0) {
+                stockSceneId = templates.get(0).sceneId;
+                privileged = false;
+            }
+        }
+        SceneRecord scene = _sceneLogic.createBlankRoom(
+            transience ? MsoySceneModel.OWNER_TYPE_TRANSIENT : MsoySceneModel.OWNER_TYPE_MEMBER,
+            transience ? 0 : member.memberId,
+            stockSceneId, privileged, member.themeGroupId, name, null);
+        member.homeSceneId = scene.sceneId;
+        _memberRepo.setHomeSceneId(member.memberId, member.homeSceneId);
     }
 
     /**
