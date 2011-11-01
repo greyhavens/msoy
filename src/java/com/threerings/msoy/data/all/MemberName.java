@@ -40,7 +40,7 @@ public class MemberName extends OrthName
      */
     public static final String ILLEGAL_DISPLAY_NAME_CHARS = "\u007F" + // renders invisible in flash
         "\uFFFC\uFFFD" + // used by whirled for delimiting links in chat
-        "\u202A\u202B\u202C\u202D\u202E\u200C\u200D\u200E\u200F" + // control text direction
+        "\u202A\u202B\u202C\u202D\u202E" + // control text direction
         "\u534D\u5350\u0FCC"; // swastikas
 
     /** The maximum length for an account name (email address). */
@@ -75,6 +75,7 @@ public class MemberName extends OrthName
         return (name != null && name.trim().equals(name) &&
                 name.length() >= MIN_DISPLAY_NAME_LENGTH &&
                 name.length() <= MAX_DISPLAY_NAME_LENGTH &&
+                containsKnownVisibleCharacter(name) &&
                 containsOnlyLegalChars(name));
     }
 
@@ -176,6 +177,20 @@ public class MemberName extends OrthName
             visible = visible || !isWhitespace(c);
         }
         return visible;
+    }
+
+    /** True if this name contains a known printable character, false if we're not sure. */
+    protected static boolean containsKnownVisibleCharacter (String name)
+    {
+        for (int ii = 0, nn = name.length(); ii < nn; ii++) {
+            char c = name.charAt(ii);
+            // Characters above this range contain a bunch of invisible characters that aren't
+            // identified as whitespace.
+            if (!isWhitespace(c) && c > '\u0000' && c < '\u2000') {
+                return true;
+            }
+        }
+        return false;
     }
 
     /** Helper for {@link #isValidNonSupportName}. */
