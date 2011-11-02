@@ -18,6 +18,7 @@ import com.threerings.msoy.web.gwt.Embedding;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.SessionData;
 
+import client.shell.CShell;
 import client.shell.Session;
 import client.shell.ShellMessages;
 import client.util.FlashClients;
@@ -76,7 +77,12 @@ public class FrameNav
             @Override public void didLogon (SessionData data) {
                 // now that we know we're a member, we can add our "open home in minimized mode"
                 // icon (which may get immediately removed if we're going directly into the world)
-                if (!isHeaderless()) {
+                if (CShell.getClientMode().isMinimal()) {
+                    if (_bar != null) {
+                        _bar.setCloseVisible(true);
+                    }
+                    _world.goHome();
+                } else if (!isHeaderless()) {
                     _layout.addNoClientIcon(data);
                 }
             }

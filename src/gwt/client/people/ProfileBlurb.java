@@ -206,10 +206,12 @@ public class ProfileBlurb extends Blurb
                     Pages.MAIL, "w", "m", ""+_name.getId());
             }
         }
-        addButton(_buttons, "/images/profile/visithome.png", _msgs.visitHome(),
-                  Pages.WORLD, "m" + _name.getId());
-        addButton(_buttons, "/images/profile/viewrooms.png", _msgs.seeRooms(),
-                  Pages.PEOPLE, "rooms", _name.getId());
+        if (!CShell.getClientMode().isMinimal()) {
+            addButton(_buttons, "/images/profile/visithome.png", _msgs.visitHome(),
+                      Pages.WORLD, "m" + _name.getId());
+            addButton(_buttons, "/images/profile/viewrooms.png", _msgs.seeRooms(),
+                      Pages.PEOPLE, "rooms", _name.getId());
+        }
         addButton(_buttons, "/images/profile/browseitems.png", _msgs.browseItems(),
                   Pages.SHOP, ShopUtil.composeArgs(MsoyItemType.AVATAR, null, null, _name.getId()));
         if (CShell.isAdmin()) {
