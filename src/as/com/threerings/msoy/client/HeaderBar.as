@@ -107,11 +107,14 @@ public class HeaderBar extends HBox
         _owner = new HBox();
         _owner.styleName = "headerBox";
         _owner.percentHeight = 100;
-        addChild(_owner);
 
         _closeBox = new HBox();
         _closeBox.styleName = "headerCloseBox";
-        addChild(_closeBox);
+
+        if (!_ctx.getMsoyClient().getEmbedding().isMinimal()) {
+            addChild(_owner);
+            addChild(_closeBox);
+        }
 
         var closeBtn :CommandButton = new CommandButton(null, MsoyController.CLOSE_PLACE_VIEW);
         closeBtn.styleName = "closeButton";

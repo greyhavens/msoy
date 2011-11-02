@@ -39,6 +39,7 @@ public class AppInfoEditorPanel extends EditorTable
             ClientMode.UNSPECIFIED.toString());
         clientModes.addItem(_msgs.editAppInfoClientModeGames(), ClientMode.FB_GAMES.toString());
         clientModes.addItem(_msgs.editAppInfoClientModeRooms(), ClientMode.FB_ROOMS.toString());
+        clientModes.addItem(_msgs.editAppInfoClientModeDj(), ClientMode.WHIRLED_DJ.toString());
         addRow(_msgs.editAppInfoClientMode(), clientModes, new Command() {
             @Override public void execute () {
                 String mode = clientModes.getValue(clientModes.getSelectedIndex());

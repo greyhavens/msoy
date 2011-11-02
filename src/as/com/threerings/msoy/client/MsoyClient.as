@@ -450,12 +450,11 @@ public /*abstract*/ class MsoyClient extends CrowdClient
                 // TODO: GWT has a ClientMode, we have an Embedding, should they be the same?
                 // TODO: we will also need the app id at some point
                 var clientMode :String = ExternalInterface.call("getClientMode");
-                if (clientMode == "FB_GAMES") {
-                    _embedding = Embedding.FACEBOOK;
-                } else if (clientMode == "FB_ROOMS") {
-                    _embedding = Embedding.FACEBOOK_ROOMS;
-                } else {
-                    _embedding = Embedding.NONE;
+                switch (clientMode) {
+                    case "FB_GAMES": _embedding = Embedding.FACEBOOK; break;
+                    case "FB_ROOMS": _embedding = Embedding.FACEBOOK_ROOMS; break;
+                    case "WHIRLED_DJ": _embedding = Embedding.WHIRLED_DJ; break;
+                    default: _embedding = Embedding.NONE; break;
                 }
             }
         } catch (err :Error) {

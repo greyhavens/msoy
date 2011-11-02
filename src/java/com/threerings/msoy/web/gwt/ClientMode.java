@@ -11,7 +11,7 @@ public enum ClientMode
     UNSPECIFIED(0, ""),
     FB_GAMES(1, "g"),
     FB_ROOMS(2, "r"),
-    DJ_WHIRLED(3, "dj");
+    WHIRLED_DJ(3, "dj");
 
     public static ClientMode fromCode (String code)
     {
@@ -63,6 +63,14 @@ public enum ClientMode
     public boolean isMonoscreen ()
     {
         return this == FB_GAMES;
+    }
+
+    /**
+     * Whether we should hide room editting features and various other things.
+     */
+    public boolean isMinimal ()
+    {
+        return this == WHIRLED_DJ;
     }
 
     ClientMode (int value, String code) {

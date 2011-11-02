@@ -59,9 +59,11 @@ public class SubNaviPanel extends FlowPanel
                 addLink(null, "Home", Pages.LANDING);
             } else {
                 addLink(null, "Me", Pages.ME);
-                addImageLink("/images/me/menu_home.png", "Home",
-                             Pages.WORLD, Args.compose("m" + memberId));
-                addLink(null, "My Rooms", Pages.PEOPLE, "rooms", memberId);
+                if (!CShell.getClientMode().isMinimal()) {
+                    addImageLink("/images/me/menu_home.png", "Home",
+                                 Pages.WORLD, Args.compose("m" + memberId));
+                    addLink(null, "My Rooms", Pages.PEOPLE, "rooms", memberId);
+                }
                 if (CShell.isRegistered()) {
                     addLink(null, "Friends", Pages.PEOPLE);
                     addLink(null, "Account", Pages.ACCOUNT, "edit");
@@ -111,7 +113,7 @@ public class SubNaviPanel extends FlowPanel
 
         case ROOMS:
             addLink(null, "Rooms", Pages.ROOMS);
-            if (CShell.isMember()) {
+            if (!CShell.getClientMode().isMinimal() && CShell.isMember()) {
                 addImageLink("/images/me/menu_home.png", "Home",
                              Pages.WORLD, Args.compose("m" + memberId));
                 addLink(null, "My Rooms", Pages.PEOPLE, "rooms", memberId);

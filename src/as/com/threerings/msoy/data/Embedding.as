@@ -31,6 +31,8 @@ public final class Embedding extends Enum
     /** Embedded on facebook for rooms app, gwt is available but there are other limits. */
     public static const FACEBOOK_ROOMS :Embedding = new Embedding("FACEBOOK_ROOMS");
 
+    public static const WHIRLED_DJ :Embedding = new Embedding("WHIRLED_DJ");
+
     finishedEnumerating(Embedding);
 
     /**
@@ -68,7 +70,7 @@ public final class Embedding extends Enum
      */
     public function hasThickHeader () :Boolean
     {
-        return this == NONE || this == FACEBOOK_ROOMS;
+        return this == NONE || this == FACEBOOK_ROOMS || this == WHIRLED_DJ;
     }
 
     /**
@@ -94,6 +96,14 @@ public final class Embedding extends Enum
     public function shouldUpsellWhirled () :Boolean
     {
         return this == OTHER;
+    }
+
+    /**
+     * Returns true if this embedding should hide room editting and other features.
+     */
+    public function isMinimal () :Boolean
+    {
+        return this == WHIRLED_DJ;
     }
 }
 }

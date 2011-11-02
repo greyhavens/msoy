@@ -317,11 +317,13 @@ public class ControlBar extends HBox
 
         // add buttons
         addButton(volBtn, true, VOLUME_PRIORITY);
-        addButton(goBtn, showGo, GLOBAL_PRIORITY);
-        addButton(fullBtn, isFullOn, GLOBAL_PRIORITY);
 
-        addButton(shareBtn, showShare);
-        addButton(gameBtn, showGame);
+        if (!_ctx.getMsoyClient().getEmbedding().isMinimal()) {
+            addButton(goBtn, showGo, GLOBAL_PRIORITY);
+            addButton(fullBtn, isFullOn, GLOBAL_PRIORITY);
+            addButton(shareBtn, showShare);
+            addButton(gameBtn, showGame);
+        }
 
         if (_notificationDisplay != null) {
             addControl(_notificationDisplay, isNotInViewer, NOTIFICATION_SECTION);

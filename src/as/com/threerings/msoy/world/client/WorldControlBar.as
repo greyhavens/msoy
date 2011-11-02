@@ -128,9 +128,11 @@ public class WorldControlBar extends ControlBar
         }
 
         addButton(friendsBtn, showFriends, GLOBAL_PRIORITY);
-        addButton(partyBtn, showParty, GLOBAL_PRIORITY + 1);
-        addButton(roomBtn, isInRoom, PLACE_PRIORITY);
-        addButton(hotZoneBtn, isInRoom, PLACE_PRIORITY);
+        if (!_ctx.getMsoyClient().getEmbedding().isMinimal()) {
+            addButton(partyBtn, showParty, GLOBAL_PRIORITY + 1);
+            addButton(roomBtn, isInRoom, PLACE_PRIORITY);
+            addButton(hotZoneBtn, isInRoom, PLACE_PRIORITY);
+        }
 
         if (foolsBtn != null && isNotInViewer()) {
             addButton(foolsBtn, isInRoom, VOLUME_PRIORITY);
