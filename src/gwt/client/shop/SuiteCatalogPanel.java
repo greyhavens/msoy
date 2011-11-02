@@ -18,6 +18,7 @@ import com.threerings.msoy.item.gwt.ListingCard;
 
 import client.item.ListingBox;
 import client.item.SideBar;
+import client.shell.CShell;
 import client.ui.Marquee;
 import client.util.InfoCallback;
 
@@ -62,7 +63,9 @@ public class SuiteCatalogPanel extends SmartTable
         // set up our sidebar and main page structure
         CatalogQuery query = new CatalogQuery();
         query.itemType = itemType;
-        setWidget(0, 0, new SideBar(new CatalogQueryLinker(query), MsoyItemType.SHOP_ITEMS, null));
+        MsoyItemType[] items = CShell.getClientMode().isMinimal() ?
+            MsoyItemType.DJ_ITEMS : MsoyItemType.SHOP_ITEMS;
+        setWidget(0, 0, new SideBar(new CatalogQueryLinker(query), items, null));
         getFlexCellFormatter().setVerticalAlignment(0, 0, HasAlignment.ALIGN_TOP);
         setWidget(0, 1, WidgetUtil.makeShim(10, 10));
         setWidget(0, 2, _listings, 1, "ListingsCell");

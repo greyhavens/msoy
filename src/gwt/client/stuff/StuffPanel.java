@@ -205,6 +205,8 @@ public class StuffPanel extends FlowPanel
             add(_search);
             HorizontalPanel row = new HorizontalPanel();
             row.setVerticalAlignment(HorizontalPanel.ALIGN_TOP);
+            MsoyItemType[] items = CShell.getClientMode().isMinimal() ?
+                MsoyItemType.DJ_ITEMS : MsoyItemType.STUFF_ITEMS;
             row.add(new SideBar(new SideBar.Linker() {
                 public boolean isSelected (MsoyItemType itemType) {
                     return itemType == _type;
@@ -212,7 +214,7 @@ public class StuffPanel extends FlowPanel
                 public Widget createLink (String name, MsoyItemType itemType) {
                     return Link.create(name, Pages.STUFF, itemType, _memberId);
                 }
-            }, MsoyItemType.STUFF_ITEMS, null));
+            }, items, null));
 
             row.add(_contents);
             add(row);

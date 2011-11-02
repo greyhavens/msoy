@@ -41,6 +41,10 @@ public enum MsoyItemType implements EntityType<MsoyItemType>
         NOT_A_TYPE, AVATAR, FURNITURE, DECOR, TOY, PET, LAUNCHER, PHOTO, AUDIO, VIDEO
     };
 
+    public static MsoyItemType[] DJ_ITEMS = {
+        AVATAR, AUDIO, PET
+    };
+
     MsoyItemType(Class<? extends Item> clazz, int num)
     {
         if (num > 0) {

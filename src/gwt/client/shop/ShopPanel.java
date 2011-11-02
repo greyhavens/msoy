@@ -28,6 +28,7 @@ import com.threerings.msoy.web.gwt.Pages;
 
 import client.item.ItemMessages;
 import client.item.SideBar;
+import client.shell.CShell;
 import client.shell.DynamicLookup;
 import client.ui.MsoyUI;
 import client.ui.SearchBox;
@@ -52,7 +53,9 @@ public class ShopPanel extends FlowPanel
         search.setVerticalAlignment(HasAlignment.ALIGN_MIDDLE);
         search.add(MsoyUI.createLabel(_msgs.shopSearch(), "SearchTitle"));
         final ListBox searchTypes = new ListBox();
-        for (MsoyItemType searchType : MsoyItemType.SHOP_ITEMS) {
+        MsoyItemType[] items = CShell.getClientMode().isMinimal() ?
+            MsoyItemType.DJ_ITEMS : MsoyItemType.SHOP_ITEMS;
+        for (MsoyItemType searchType : items) {
             searchTypes.addItem(_dmsgs.xlateItemsType(searchType), searchType.toByte() + "");
         }
         search.add(searchTypes);
@@ -81,7 +84,7 @@ public class ShopPanel extends FlowPanel
         // display a sidebar with a linker that knows which theme we're in
         CatalogQuery linkerQuery = new CatalogQuery();
         linkerQuery.themeGroupId = themeId;
-        SideBar sidebar = new SideBar(new CatalogQueryLinker(linkerQuery), MsoyItemType.SHOP_ITEMS, null);
+        SideBar sidebar = new SideBar(new CatalogQueryLinker(linkerQuery), items, null);
         sidebar.add(MsoyUI.createImage("/images/shop/shop_bag.png", "Bag"));
         row.add(sidebar);
 
