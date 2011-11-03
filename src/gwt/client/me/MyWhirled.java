@@ -58,7 +58,7 @@ public class MyWhirled extends FlowPanel
         FlowPanel titleBar = new FlowPanel();
         titleBar.addStyleName("NewsBar");
         titleBar.add(MsoyUI.createInlineLabel(_msgs.newsTitle(), "NewsTitle"));
-        if (!CShell.getEmbedding().isMinimal() && data.updatedThreads > 0) {
+        if (!CShell.getClientMode().isMinimal() && data.updatedThreads > 0) {
             titleBar.add(Link.create(
                 _msgs.unreadThreads(""+data.updatedThreads), "NewsLink", Pages.GROUPS, "unread"));
         }
