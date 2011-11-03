@@ -216,7 +216,7 @@ public class FacebookCallbackServlet extends HttpServlet
         // authenticate this member via their external FB creds (this will autocreate their
         // account if they don't already have one)
         MemberRecord mrec = _auther.authenticateSession(
-            creds, vinfo, AffiliateCookie.fromCreds(info.affiliate));
+            creds, vinfo, AffiliateCookie.fromCreds(info.affiliate), info.app.appId);
 
         // if the member has the same visitor id as the one we just made up, they were just
         // created and we need to note that this is an entry
