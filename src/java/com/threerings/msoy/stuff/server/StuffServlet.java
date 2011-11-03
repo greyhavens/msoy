@@ -85,7 +85,7 @@ public class StuffServlet extends MsoyServiceServlet
 
         // this newly created item will not be stamped for any theme, but if the user is
         // viewing it from a themeless environment we have to explicitly mark it as such
-        if (memrec.themeGroupId == 0) {
+        if (memrec.themeGroupId == 0 || item.getType().isUsableAnywhere()) {
             item.attrs |= Item.ATTR_THEME_STAMPED;
         }
 

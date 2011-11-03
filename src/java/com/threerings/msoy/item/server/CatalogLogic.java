@@ -123,10 +123,13 @@ public class CatalogLogic
         // build our word search once and share it for loadCatalog() and countListings()
         ItemRepository<ItemRecord>.WordSearch context = repo.buildWordSearch(query.search);
 
+        // If this item type is usable anywhere, ignore the theme
+        int themeId = query.itemType.isUsableAnywhere() ? 0 : query.themeId;
+
         // load the records themselves
         List<CatalogRecord> records = repo.loadCatalog(
             query.sortBy, showMature(mrec), context, query.tagId, query.creatorId, null,
-            query.themeId, query.gameId, offset, rows, _exchange.getRate());
+            themeId, query.gameId, offset, rows, _exchange.getRate());
 
         return records;
     }
