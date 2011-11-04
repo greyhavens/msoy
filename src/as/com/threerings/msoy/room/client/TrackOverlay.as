@@ -28,6 +28,8 @@ import com.threerings.msoy.world.client.WorldController;
 
 public class TrackOverlay extends HBox
 {
+    public static const HEIGHT :Number = 40;
+
     public function TrackOverlay (ctx :MsoyContext, roomObj :RoomObject)
     {
         _ctx = ctx;
@@ -68,7 +70,7 @@ public class TrackOverlay extends HBox
         var vbox :VBox = new VBox();
         vbox.setStyle("verticalAlign", "middle");
         vbox.addChild(_ratingLabel);
-        vbox.height = 40;
+        vbox.height = HEIGHT;
         vbox.horizontalScrollPolicy = ScrollPolicy.OFF;
         vbox.verticalScrollPolicy = ScrollPolicy.OFF;
         _ratingControls.addChild(vbox);

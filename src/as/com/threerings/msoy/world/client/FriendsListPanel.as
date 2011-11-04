@@ -33,9 +33,10 @@ import com.threerings.flex.FlexUtil;
 import com.threerings.msoy.client.MemberService;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;
-import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.PlayerEntry;
+import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.room.client.TrackOverlay;
 import com.threerings.msoy.ui.FlyingPanel;
 
 public class FriendsListPanel extends FlyingPanel
@@ -101,7 +102,7 @@ public class FriendsListPanel extends FlyingPanel
     {
         // auto-position ourselves
         var placeBounds :Rectangle = _wctx.getTopPanel().getPlaceViewBounds();
-        height = placeBounds.height - PADDING * 2;
+        height = placeBounds.height - PADDING * 2 - TrackOverlay.HEIGHT;
         x = placeBounds.right - width - PADDING;
         y = placeBounds.y + PADDING;
 
