@@ -83,8 +83,11 @@ public class MemberRecord extends PersistentRecord
         /** Is this user a permanent subscriber? */
         SUBSCRIBER_PERMANENT(1 << 12),
 
+        /** Whether the user wants to suppress loading the Flash client when they visit Whirled. */
+        NO_AUTO_FLASH(1 << 13),
+
         /** The next unused flag. Copy this and update the bit mask when making a new flag. */
-        UNUSED(1 << 13);
+        UNUSED(1 << 14);
 
         public int getBit () {
             return _bit;
@@ -304,7 +307,8 @@ public class MemberRecord extends PersistentRecord
     public WebCreds toCreds (String authtok)
     {
         return new WebCreds(
-            authtok, accountName, isValidated(), isNewbie(), getName(), permaName, toRole());
+            authtok, accountName, isValidated(), isNewbie(), getName(), permaName, toRole(),
+            !isSet(Flag.NO_AUTO_FLASH));
     }
 
     /**

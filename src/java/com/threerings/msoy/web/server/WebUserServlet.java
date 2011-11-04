@@ -364,7 +364,7 @@ public class WebUserServlet extends MsoyServiceServlet
     }
 
     // from interface WebUserService
-    public void updateEmailPrefs (boolean emailOnWhirledMail, boolean emailAnnouncements)
+    public void updatePrefs (boolean emailOnWhirledMail, boolean emailAnnouncements, boolean autoFlash)
         throws ServiceException
     {
         MemberRecord mrec = requireAuthedUser();
@@ -373,6 +373,7 @@ public class WebUserServlet extends MsoyServiceServlet
         int oflags = mrec.flags;
         mrec.setFlag(MemberRecord.Flag.NO_WHIRLED_MAIL_TO_EMAIL, !emailOnWhirledMail);
         mrec.setFlag(MemberRecord.Flag.NO_ANNOUNCE_EMAIL, !emailAnnouncements);
+        mrec.setFlag(MemberRecord.Flag.NO_AUTO_FLASH, !autoFlash);
         if (mrec.flags != oflags) {
             _memberRepo.storeFlags(mrec);
         }
@@ -425,6 +426,7 @@ public class WebUserServlet extends MsoyServiceServlet
         }
         ainfo.emailWhirledMail = !mrec.isSet(MemberRecord.Flag.NO_WHIRLED_MAIL_TO_EMAIL);
         ainfo.emailAnnouncements = !mrec.isSet(MemberRecord.Flag.NO_ANNOUNCE_EMAIL);
+        ainfo.autoFlash = !mrec.isSet(MemberRecord.Flag.NO_AUTO_FLASH);
         ainfo.charityMemberId = mrec.charityMemberId;
 
         // Load charities and sort by name.

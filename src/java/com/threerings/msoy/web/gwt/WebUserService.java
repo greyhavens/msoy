@@ -124,9 +124,9 @@ public interface WebUserService extends RemoteService
         throws ServiceException;
 
     /**
-     * Updates the email preferences for this account.
+     * Updates the preferences for this account.
      */
-    void updateEmailPrefs (boolean emailOnWhirledMail, boolean emailAnnouncements)
+    void updatePrefs (boolean emailOnWhirledMail, boolean emailAnnouncements, boolean autoFlash)
         throws ServiceException;
 
     /**

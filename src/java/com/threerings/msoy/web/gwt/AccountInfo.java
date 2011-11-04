@@ -42,6 +42,9 @@ public class AccountInfo implements IsSerializable
     /** A map of external site connections. */
     public Map<ExternalSiteId, String> externalSites;
 
+    /** Whether to automatically go to your room when you visit Whirled. */
+    public boolean autoFlash;
+
     /**
      * Checks if our external sites include one with the given auther.
      */

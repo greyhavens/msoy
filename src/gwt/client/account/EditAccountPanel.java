@@ -82,7 +82,7 @@ public class EditAccountPanel extends FlowPanel
         // add our myriad account configuration sections
         add(new TongueBox(null, makePermanameSection()));
         add(new TongueBox(_msgs.editEmailHeader(), makeChangeEmailSection()));
-        add(new TongueBox(_msgs.editEPrefsHeader(), makeEmailPrefsSection()));
+        add(new TongueBox(_msgs.editPrefsHeader(), makePrefsSection()));
         add(new TongueBox(_msgs.editSubscribeHeader(), makeSubscribeSection()));
         add(new TongueBox(_msgs.editRealNameHeader(), makeRealNameSection()));
         add(new TongueBox(_msgs.editPasswordHeader(), makeChangePasswordSection()));
@@ -168,7 +168,7 @@ public class EditAccountPanel extends FlowPanel
         return table;
     }
 
-    protected Widget makeEmailPrefsSection ()
+    protected Widget makePrefsSection ()
     {
         SmartTable table = new SmartTable(0, 10);
         table.setText(0, 0, _msgs.editWhirledMailEmail(), 1, "rightLabel");
@@ -182,12 +182,17 @@ public class EditAccountPanel extends FlowPanel
         _announceEmail.addStyleName("tipLabel");
         _announceEmail.setValue(_accountInfo.emailAnnouncements);
 
-        _upeprefs = new Button(_cmsgs.update(), new ClickHandler() {
+        table.setText(2, 0, _msgs.autoFlash(), 1, "rightLabel");
+        table.setWidget(2, 1, _autoFlash = new CheckBox(_msgs.autoFlashTip()), 2);
+        _autoFlash.addStyleName("tipLabel");
+        _autoFlash.setValue(_accountInfo.autoFlash);
+
+        _upprefs = new Button(_cmsgs.update(), new ClickHandler() {
             public void onClick (ClickEvent event) {
-                updateEmailPrefs();
+                updatePrefs();
             }
         });
-        table.setWidget(1, 2, _upeprefs);
+        table.setWidget(3, 1, _upprefs);
         return table;
     }
 
@@ -397,20 +402,21 @@ public class EditAccountPanel extends FlowPanel
         });
     }
 
-    protected void updateEmailPrefs ()
+    protected void updatePrefs ()
     {
-        _upeprefs.setEnabled(false);
-        _usersvc.updateEmailPrefs(
-            _whirledEmail.getValue(), _announceEmail.getValue(), new AsyncCallback<Void>() {
-            public void onSuccess (Void result) {
-                _upeprefs.setEnabled(true);
-                MsoyUI.infoNear(_msgs.eprefsUpdated(), _upeprefs);
-            }
-            public void onFailure (Throwable cause) {
-                _upeprefs.setEnabled(true);
-                MsoyUI.errorNear(CShell.serverError(cause), _upeprefs);
-            }
-        });
+        _upprefs.setEnabled(false);
+        _usersvc.updatePrefs(
+            _whirledEmail.getValue(), _announceEmail.getValue(), _autoFlash.getValue(),
+            new AsyncCallback<Void>() {
+                public void onSuccess (Void result) {
+                    _upprefs.setEnabled(true);
+                    MsoyUI.infoNear(_msgs.prefsUpdated(), _upprefs);
+                }
+                public void onFailure (Throwable cause) {
+                    _upprefs.setEnabled(true);
+                    MsoyUI.errorNear(CShell.serverError(cause), _upprefs);
+                }
+            });
     }
 
     protected void updateCharity (final int newCharityId)
@@ -540,9 +546,9 @@ public class EditAccountPanel extends FlowPanel
     protected SmartTable _perma;
 
     protected TextBox _email, _pname, _rname;
-    protected CheckBox _whirledEmail, _announceEmail, _delconf;
+    protected CheckBox _whirledEmail, _announceEmail, _delconf, _autoFlash;
     protected PasswordTextBox _password, _confirm, _delpass;
-    protected Button _upemail, _upeprefs, _uppass, _uppname, _uprname, _upcharity, _revalidate;
+    protected Button _upemail, _upprefs, _uppass, _uppname, _uprname, _upcharity, _revalidate;
 
     protected FBConnect _fbconnect = new FBConnect();
 

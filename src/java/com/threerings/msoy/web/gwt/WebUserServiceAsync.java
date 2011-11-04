@@ -63,9 +63,9 @@ public interface WebUserServiceAsync
     void updateEmail (String newEmail, AsyncCallback<Void> callback);
 
     /**
-     * The async version of {@link WebUserService#updateEmailPrefs}.
+     * The async version of {@link WebUserService#updatePrefs}.
      */
-    void updateEmailPrefs (boolean emailOnWhirledMail, boolean emailAnnouncements, AsyncCallback<Void> callback);
+    void updatePrefs (boolean emailOnWhirledMail, boolean emailAnnouncements, boolean autoFlash, AsyncCallback<Void> callback);
 
     /**
      * The async version of {@link WebUserService#updatePassword}.

@@ -77,7 +77,7 @@ public class FrameNav
             @Override public void didLogon (SessionData data) {
                 // now that we know we're a member, we can add our "open home in minimized mode"
                 // icon (which may get immediately removed if we're going directly into the world)
-                if (CShell.getClientMode().isMinimal()) {
+                if (CShell.creds.autoFlash) {
                     if (_bar != null) {
                         _bar.setCloseVisible(true);
                     }
