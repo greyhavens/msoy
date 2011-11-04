@@ -304,22 +304,12 @@ public class WorldController extends MsoyController
 
         CommandMenu.addSeparator(menuData);
 
-        // slap your friends in a menu
-        var friends :Array = [];
-        for each (var fe :FriendEntry in me.getSortedFriends()) {
-            friends.push({ label: fe.name.toString(), command: OPEN_CHANNEL, arg: fe.name });
-        }
-        if (friends.length == 0) {
-            friends.push({ label: Msgs.GENERAL.get("m.no_friends"), enabled: false });
-        }
-        menuData.push({ label: Msgs.GENERAL.get("l.friends"), children: friends });
-
         var groups :Array = (me.groups != null) ? me.getSortedGroups() : [];
         groups = groups.map(function (gm :GroupMembership, index :int, array :Array) :Object {
             return { label: gm.group.toString(), command: OPEN_CHANNEL, arg: gm.group };
         });
         if (groups.length == 0) {
-            groups.push({ label: Msgs.GENERAL.get("m.no_groups"),
+            menuData.push({ label: Msgs.GENERAL.get("m.no_groups"),
                           enabled : false });
         } else if (groups.length > 4) {
             menuData.push({ label: Msgs.GENERAL.get("l.groups"), children: groups});
