@@ -173,12 +173,14 @@ public class FrameHeader
         // TODO: remove the tab images
         col += addButton(col, Pages.STUFF, _cmsgs.menuStuff(), _images.stuff(), _images.ostuff(),
                   _images.sstuff());
-        col += addButton(col, Pages.GAMES, _cmsgs.menuGames(), _images.games(), _images.ogames(),
-                  _images.sgames());
-        col += addButton(col, Pages.ROOMS, _cmsgs.menuRooms(), _images.rooms(), _images.orooms(),
-                  _images.srooms());
-        col += addButton(col, Pages.GROUPS, _cmsgs.menuWorlds(), _images.worlds(), _images.oworlds(),
-                  _images.sworlds());
+        if (!CShell.getClientMode().isMinimal()) {
+            col += addButton(col, Pages.GAMES, _cmsgs.menuGames(), _images.games(),
+                _images.ogames(), _images.sgames());
+            col += addButton(col, Pages.ROOMS, _cmsgs.menuRooms(), _images.rooms(),
+                _images.orooms(), _images.srooms());
+            col += addButton(col, Pages.GROUPS, _cmsgs.menuWorlds(), _images.worlds(),
+                _images.oworlds(), _images.sworlds());
+        }
         col += addButton(col, Pages.SHOP, _cmsgs.menuShop(), _images.shop(), _images.oshop(),
                   _images.sshop());
 
