@@ -8,6 +8,7 @@ import flash.geom.Point;
 
 import mx.controls.Button;
 
+import com.threerings.flex.CommandButton;
 import com.threerings.util.DelayUtil;
 import com.threerings.util.Log;
 import com.threerings.util.MessageBundle;
@@ -1440,6 +1441,13 @@ public class WorldController extends MsoyController
             // we gotta go somewhere
             _wctx.getSceneDirector().moveTo(_postLogonScene);
             _postLogonScene = 0;
+        }
+
+        if (memberObj.friends.length > 0) {
+            var friendsBtn :CommandButton = _wctx.getWorldControlBar().friendsBtn;
+            if (!friendsBtn.selected) {
+                friendsBtn.activate();
+            }
         }
     }
 
