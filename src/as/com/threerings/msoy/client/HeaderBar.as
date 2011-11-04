@@ -108,25 +108,15 @@ public class HeaderBar extends HBox
         _owner.styleName = "headerBox";
         _owner.percentHeight = 100;
 
-        _closeBox = new HBox();
-        _closeBox.styleName = "headerCloseBox";
-
         if (!_ctx.getMsoyClient().getEmbedding().isMinimal()) {
             addChild(_owner);
-            addChild(_closeBox);
         }
-
-        var closeBtn :CommandButton = new CommandButton(null, MsoyController.CLOSE_PLACE_VIEW);
-        closeBtn.styleName = "closeButton";
-        _closeBox.addChild(closeBtn);
-        FlexUtil.setVisible(_closeBox, false); // start out hidden
 
         _ctx.getUIState().addEventListener(UIState.STATE_CHANGE, handleUIStateChange);
         handleUIStateChange(null);
 
         // configure some bits if we're embedded
         const embedded :Boolean = _ctx.getMsoyClient().isEmbedded();
-        setCompVisible(_closeBox, !embedded);
 
         // add a coins display
         if (embedded) {
@@ -256,8 +246,6 @@ public class HeaderBar extends HBox
     protected var _spacer :HBox;
 
     protected var _visibles :Dictionary = new Dictionary(true);
-
-    protected var _closeBox :HBox;
 
     protected var _tabs :ChatTabBar;
 
