@@ -35,8 +35,6 @@ public class AppsPage extends Page
         } else {
             setContent(_msgs.appsList(), new AppListPanel());
         }
-
-        CShell.frame.addNavLink(_msgs.appsLink(), Pages.APPS, Args.compose(), 1);
     }
 
     @Override

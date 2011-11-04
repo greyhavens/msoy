@@ -80,14 +80,13 @@ public class StuffPage extends Page
 
             // otherwise we're display a particular item's details
             ItemIdent ident = new ItemIdent(type, itemId);
-            final String title = _msgs.stuffTitle(_dmsgs.xlateItemsType(type));
             if (_detail != null && _detail.item.getIdent().equals(ident)) {
                 // update the detail with the one in our models
                 Item item = _models.findItem(type, itemId);
                 if (item != null) {
                     _detail.item = item;
                 }
-                setContent(title, new ItemDetailPanel(_models, _detail));
+                setContent(null, new ItemDetailPanel(_models, _detail));
 
             } else {
                 _stuffsvc.loadItemDetail(ident, new InfoCallback<StuffService.DetailOrIdent>() {
@@ -95,7 +94,7 @@ public class StuffPage extends Page
                         if (result.detail != null) {
                             _detail = result.detail;
                             _models.itemUpdated(_detail.item);
-                            setContent(title, new ItemDetailPanel(_models, _detail));
+                            setContent(null, new ItemDetailPanel(_models, _detail));
                         } else {
                             // We didn't have access to that specific item, but have been given
                             // the catalog id for the prototype.
@@ -151,14 +150,7 @@ public class StuffPage extends Page
             memberId = args.get(1, CShell.getMemberId());
             StuffPanel panel = getStuffPanel(memberId, type);
             panel.setArgs(args.get(2, -1), args.get(3, ""));
-            String title = _msgs.stuffTitleMain();
-            setContent(title, panel);
-        }
-
-        // add a sub-navi link for our active item type
-        if (type != MsoyItemType.NOT_A_TYPE) {
-            CShell.frame.addNavLink(_dmsgs.xlateItemsType(type), Pages.STUFF,
-                                    Args.compose(type, memberId), 1);
+            setContent(null, panel);
         }
     }
 

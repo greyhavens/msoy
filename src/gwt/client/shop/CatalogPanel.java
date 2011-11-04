@@ -176,9 +176,6 @@ public class CatalogPanel extends SmartTable
         MsoyItemType[] items = CShell.getClientMode().isMinimal() ?
             MsoyItemType.DJ_ITEMS : MsoyItemType.SHOP_ITEMS;
         setWidget(0, 0, new SideBar(new CatalogQueryLinker(_query), items, cloud));
-
-        // set up our page title
-        CShell.frame.setTitle(_dmsgs.xlateItemsType(_query.itemType));
     }
 
     // from interface TagCloud.TagListener

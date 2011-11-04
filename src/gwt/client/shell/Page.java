@@ -60,14 +60,7 @@ public abstract class Page
      */
     public static String getDefaultTitle (Tabs tab)
     {
-        if (tab == null) {
-            return null;
-        }
-        try {
-            return _dmsgs.xlate(tab.toString().toLowerCase()+ "Title");
-        } catch (Exception e) {
-            return null;
-        }
+        return ""; // No title
     }
 
     /**

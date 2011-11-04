@@ -56,7 +56,6 @@ public class ShopPage extends Page
             MsoyItemType type = getItemType(args, 1, MsoyItemType.NOT_A_TYPE);
             int catalogId = args.get(2, 0);
             setContent(new ListingDetailPanel(_models, type, catalogId));
-            addTypeNavi(type);
 
         } else if (action.equals(FAVORITES)) {
             // if no member is specified, we use the current member
@@ -69,7 +68,6 @@ public class ShopPage extends Page
             final MsoyItemType type = getItemType(args, 1, MsoyItemType.NOT_A_TYPE);
             final int catalogId = args.get(2, 0);
             setContent(new SuiteCatalogPanel(_models, type, catalogId));
-            addTypeNavi(type);
 
         } else if (action.equals(GAME)) {
             final int gameId = args.get(1, 0);
@@ -119,12 +117,6 @@ public class ShopPage extends Page
     public Pages getPageId ()
     {
         return Pages.SHOP;
-    }
-
-    protected void addTypeNavi (MsoyItemType type)
-    {
-        CShell.frame.addNavLink(
-            _dmsgs.xlateItemsType(type), Pages.SHOP, Args.compose(type), 1);
     }
 
     protected void loadShopPage (GroupName theme)

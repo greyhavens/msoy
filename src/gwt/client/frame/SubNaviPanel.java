@@ -58,7 +58,6 @@ public class SubNaviPanel extends FlowPanel
             if (CShell.isGuest()) {
                 addLink(null, "Home", Pages.LANDING);
             } else {
-                addLink(null, "Me", Pages.ME);
                 if (!CShell.getClientMode().isMinimal()) {
                     addImageLink("/images/me/menu_home.png", "Home",
                                  Pages.WORLD, Args.compose("m" + memberId));
@@ -94,13 +93,9 @@ public class SubNaviPanel extends FlowPanel
             break;
 
         case STUFF:
-            if (CShell.isMember()) {
-                addLink(null, "My Stuff", Pages.STUFF);
-            }
             break;
 
         case GAMES:
-            addLink(null, "Games", Pages.GAMES);
             if (CShell.isMember()) {
                 addLink(null, "My Trophies", Pages.GAMES, "t", memberId);
                 addLink(null, "My Games", Pages.EDGAMES, "m");
@@ -112,7 +107,6 @@ public class SubNaviPanel extends FlowPanel
             break;
 
         case ROOMS:
-            addLink(null, "Rooms", Pages.ROOMS);
             if (!CShell.getClientMode().isMinimal() && CShell.isMember()) {
                 addImageLink("/images/me/menu_home.png", "Home",
                              Pages.WORLD, Args.compose("m" + memberId));
@@ -121,7 +115,6 @@ public class SubNaviPanel extends FlowPanel
             break;
 
         case GROUPS:
-            addLink(null, "Groups", Pages.GROUPS);
             if (CShell.isRegistered()) {
                 addLink(null, "My Groups", Pages.GROUPS, "mygroups");
                 addLink(null, "My Discussions", Pages.GROUPS, "unread");
@@ -133,7 +126,6 @@ public class SubNaviPanel extends FlowPanel
             break;
 
         case SHOP:
-            addLink(null, "Shop", Pages.SHOP);
             addLink(null, "My Favorites", Pages.SHOP, "f");
             if (CShell.isRegistered()) {
                 addLink(null, "Transactions", Pages.ME, "transactions");
@@ -142,7 +134,6 @@ public class SubNaviPanel extends FlowPanel
             break;
 
         case HELP:
-            addLink(null, "Help", Pages.HELP);
             addLink(null, "Contact Us", Pages.SUPPORT);
             addLink(null, "Report Bug", Pages.GROUPS, "f", 72);
             if (CShell.isSupport()) {
