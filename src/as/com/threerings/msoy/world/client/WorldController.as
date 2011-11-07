@@ -1443,11 +1443,10 @@ public class WorldController extends MsoyController
             _postLogonScene = 0;
         }
 
-        if (memberObj.friends.size() > 0) {
-            var friendsBtn :CommandButton = _wctx.getWorldControlBar().friendsBtn;
-            if (!friendsBtn.selected) {
-                friendsBtn.activate();
-            }
+        // TODO(bruno): Don't show this on a player's first session
+        var friendsBtn :CommandButton = _wctx.getWorldControlBar().friendsBtn;
+        if (!friendsBtn.selected) {
+            friendsBtn.activate();
         }
     }
 
