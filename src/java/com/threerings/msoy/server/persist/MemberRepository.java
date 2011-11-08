@@ -1572,7 +1572,7 @@ public class MemberRepository extends DepotRepository
     protected static final long ENTRY_VECTOR_EXPIRE = FUNNEL_TOTAL_DAYS * 24*60*60*1000L;
 
     /** Period after which we expire session records. */
-    protected static final long SESSION_RECORD_EXPIRE = 30 * 24*60*60*1000L;
+    protected static final long SESSION_RECORD_EXPIRE = 6 * 30 * 24*60*60*1000L;
 
     /** A "like" pattern that matches permaguest accounts. */
     protected static final String PERMA_PATTERN = MemberMailUtil.makePermaguestEmail("%");
