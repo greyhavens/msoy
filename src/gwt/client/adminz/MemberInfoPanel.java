@@ -73,7 +73,7 @@ public class MemberInfoPanel extends AdminDataPanel<MemberAdminInfo>
 
         row = table.addText("Display name:", 1, "Label");
         final TextBox dispName = MsoyUI.createTextBox(
-            info.name.toString(), MemberName.MAX_DISPLAY_NAME_LENGTH, 30);
+            info.name.toString(), MemberName.MAX_DISPLAY_NAME_LENGTH, 20);
         Button saveName = MsoyUI.createCrUpdateButton(false, null);
         table.setWidget(row, 1, MsoyUI.createButtonPair(dispName, saveName));
         new ClickCallback<Void>(saveName) {
@@ -107,7 +107,20 @@ public class MemberInfoPanel extends AdminDataPanel<MemberAdminInfo>
         });
 
         row = table.addText("Perma name:", 1, "Label");
-        table.setText(row, 1, info.permaName == null ? "" : info.permaName);
+        final TextBox permaName = MsoyUI.createTextBox(
+            info.permaName == null ? "" : info.permaName,
+            MemberName.MAXIMUM_PERMANAME_LENGTH, 20);
+        Button savePermaName = MsoyUI.createCrUpdateButton(false, null);
+        table.setWidget(row, 1, MsoyUI.createButtonPair(permaName, savePermaName));
+        new ClickCallback<Void>(savePermaName) {
+            @Override protected boolean callService () {
+                _adminsvc.setPermaName(info.name.getId(), permaName.getText(), this);
+                return true;
+            }
+            @Override protected boolean gotResult (Void nothing) {
+                return true;
+            }
+        };
 
         final ListBox role = new ListBox();
         for (WebCreds.Role rtype : WebCreds.Role.values()) {

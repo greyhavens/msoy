@@ -117,6 +117,12 @@ public interface AdminService extends RemoteService
         throws ServiceException;
 
     /**
+     * Configures this member's perma name. Use with care.
+     */
+    void setPermaName (int memberId, String name)
+        throws ServiceException;
+
+    /**
      * Configures this member's validated flag.
      */
     void setValidated (int memberId, boolean value)

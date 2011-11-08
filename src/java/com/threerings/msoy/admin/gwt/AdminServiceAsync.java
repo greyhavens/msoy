@@ -5,9 +5,7 @@ package com.threerings.msoy.admin.gwt;
 
 import java.util.List;
 import java.util.Set;
-
 import com.google.gwt.user.client.rpc.AsyncCallback;
-
 import com.threerings.msoy.data.all.CharityInfo;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.ItemIdent;
@@ -39,6 +37,11 @@ public interface AdminServiceAsync
      * The async version of {@link AdminService#setDisplayName}.
      */
     void setDisplayName (int memberId, String name, AsyncCallback<Void> callback);
+
+    /**
+     * The async version of {@link AdminService#setPermaName}.
+     */
+    void setPermaName (int memberId, String name, AsyncCallback<Void> callback);
 
     /**
      * The async version of {@link AdminService#setValidated}.

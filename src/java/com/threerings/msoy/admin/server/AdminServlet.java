@@ -234,6 +234,23 @@ public class AdminServlet extends MsoyServiceServlet
     }
 
     // from interface AdminService
+    public void setPermaName (int memberId, String name)
+        throws ServiceException
+    {
+        final MemberRecord memrec = requireSupportUser();
+        final MemberRecord tgtrec = _memberRepo.loadMember(memberId);
+        if (tgtrec == null) {
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
+
+        tgtrec.permaName = name;
+        _memberRepo.update(tgtrec);
+        // log this as a warning so that it shows up in the nightly filtered logs
+        log.warning("Set perma name", "setter", memrec.who(), "target", tgtrec.who(),
+                    "name", name);
+    }
+
+    // from interface AdminService
     public void setValidated (int memberId, boolean value)
         throws ServiceException
     {
