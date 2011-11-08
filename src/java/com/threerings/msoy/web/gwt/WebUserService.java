@@ -25,7 +25,7 @@ public interface WebUserService extends RemoteService
     public static final String REL_PATH = "../../.." + WebUserService.ENTRY_POINT;
 
     /** The default length of a session. */
-    public static final int SESSION_DAYS = 3;
+    public static final int SESSION_DAYS = 180;
 
     /** Used by {@link #register}. */
     public static class RegisterData extends SessionData

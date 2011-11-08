@@ -344,7 +344,7 @@ public class MsoyAuthenticator extends Authenticator
         }
 
         if (needSessionToken) {
-            rdata.sessionToken = _memberRepo.startOrJoinSession(member.memberId, 1);
+            rdata.sessionToken = _memberRepo.startOrJoinSession(member.memberId);
         }
 
         // check to see whether this account has been banned or if this is a first time user

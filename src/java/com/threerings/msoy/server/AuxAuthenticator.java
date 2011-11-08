@@ -100,7 +100,7 @@ public abstract class AuxAuthenticator<T extends MsoyCredentials> extends Chaine
                 memberId = guest.memberId;
                 accountName = guest.accountName;
                 name = guest.name;
-                token = _memberRepo.startOrJoinSession(guest.memberId, 1);
+                token = _memberRepo.startOrJoinSession(guest.memberId);
 
             } else {
                 MemberRecord member = _memberRepo.loadMemberForSession(creds.sessionToken);

@@ -233,7 +233,7 @@ public class FacebookCallbackServlet extends HttpServlet
         }
 
         // activate a session for them
-        return _memberRepo.startOrJoinSession(mrec.memberId, FBAUTH_DAYS);
+        return _memberRepo.startOrJoinSession(mrec.memberId);
     }
 
     @Override // from HttpServlet
@@ -601,7 +601,6 @@ public class FacebookCallbackServlet extends HttpServlet
     @Inject protected MsoyAuthenticator _auther;
     @Inject protected MsoyGameRepository _mgameRepo;
 
-    protected static final int FBAUTH_DAYS = 2;
     protected static final String GAME_PATH = "/game/";
     protected static final String APP_PATH = "/app/";
     protected static final String PING_PATH = "/ping/";

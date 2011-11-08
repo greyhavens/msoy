@@ -69,6 +69,7 @@ import com.threerings.msoy.person.server.persist.ProfileRecord;
 import com.threerings.msoy.server.persist.MemberRecord.Flag;
 import com.threerings.msoy.web.gwt.ExternalSiteId;
 import com.threerings.msoy.web.gwt.MemberCard;
+import com.threerings.msoy.web.gwt.WebUserService;
 
 import static com.threerings.msoy.Log.log;
 
@@ -591,6 +592,11 @@ public class MemberRepository extends DepotRepository
         }
 
         return session.token;
+    }
+
+    public String startOrJoinSession (int memberId)
+    {
+        return startOrJoinSession(memberId, WebUserService.SESSION_DAYS);
     }
 
     /**
