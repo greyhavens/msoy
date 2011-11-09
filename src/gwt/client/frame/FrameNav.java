@@ -410,10 +410,14 @@ public class FrameNav
     {
         // if we're displaying content currently, don't let flash mess with the title
         if (!fromFlash || !_layout.hasContent()) {
-            Window.setTitle(title == null ? _cmsgs.bareTitle() : _cmsgs.windowTitle(title));
-            if (title != null && _bar != null) {
+            if (title == null) {
+                // If the web title is empty, override it with the flash title
+                title = _world.getTitle();
+            } else if (_bar != null) {
                 _bar.setTitle(title);
             }
+            // If that's empty too, use the standard default
+            Window.setTitle(title == null ? _cmsgs.bareTitle() : _cmsgs.windowTitle(title));
         }
         if (fromFlash) {
             _world.setTitle(title);

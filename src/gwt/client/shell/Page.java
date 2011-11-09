@@ -60,7 +60,7 @@ public abstract class Page
      */
     public static String getDefaultTitle (Tabs tab)
     {
-        return ""; // No title
+        return null; // No title
     }
 
     /**
