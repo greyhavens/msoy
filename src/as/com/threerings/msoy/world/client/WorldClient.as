@@ -10,6 +10,7 @@ import flash.events.Event;
 import flash.events.IEventDispatcher;
 import flash.external.ExternalInterface;
 import flash.geom.Point;
+import flash.net.LocalConnection;
 import flash.net.URLLoader;
 import flash.net.URLRequest;
 import flash.net.URLVariables;
@@ -115,6 +116,25 @@ public class WorldClient extends MsoyClient
         }
     }
 
+    override public function logon () :Boolean
+    {
+        var lock :LocalConnection = claimLock();
+        if (lock == null) {
+            // A client is already connected in another tab
+            var params :Object = MsoyParameters.get();
+            if ("true" == params["auto"]) {
+                // Yield to it if this client was automatically opened
+                closeClient();
+                return false;
+            }
+        } else {
+            lock.close();
+        }
+
+        // Otherwise proceed with logging on
+        return super.logon();
+    }
+
     // from Client
     override public function gotBootstrap (data :BootstrapData, omgr :DObjectManager) :void
     {
@@ -162,6 +182,26 @@ public class WorldClient extends MsoyClient
             new MePageTutorial(_wctx);
             new GeneralTips(_wctx);
         }
+
+        _clientLock = claimLock();
+    }
+
+    override protected function clientDidLogoff (event :ClientEvent) :void
+    {
+        if (_clientLock != null) {
+            _clientLock.close();
+        }
+    }
+
+    protected function claimLock () :LocalConnection
+    {
+        var lock :LocalConnection = new LocalConnection();
+        try {
+            lock.connect("com.threerings.msoy.ClientLock");
+        } catch (e :*) {
+            return null;
+        }
+        return lock;
     }
 
     /**
@@ -404,6 +444,12 @@ public class WorldClient extends MsoyClient
     }
 
     protected var _wctx :WorldContext;
+
+    /**
+     * A LocalConnection owned by exactly one client across all tabs. We use this to prevent
+     * clients opened in new tabs from disconnecting the original client.
+     */
+    protected var _clientLock :LocalConnection;
 
     private static const log :Log = Log.getLog(WorldClient);
 }

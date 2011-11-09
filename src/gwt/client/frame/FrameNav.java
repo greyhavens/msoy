@@ -81,7 +81,7 @@ public class FrameNav
                     if (_bar != null) {
                         _bar.setCloseVisible(true);
                     }
-                    _world.goHome();
+                    _world.goAutoConnect();
                 } else if (!isHeaderless()) {
                     _layout.addNoClientIcon(data);
                 }

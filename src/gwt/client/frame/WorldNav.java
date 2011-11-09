@@ -135,6 +135,14 @@ public class WorldNav
     }
 
     /**
+     * Open flash and go home, unless the player is already connected in another tab.
+     */
+    public void goAutoConnect ()
+    {
+        go(Args.compose("a").toToken());
+    }
+
+    /**
      * Reloads the widget containing the flash client so it restarts.
      */
     public void reload ()
@@ -234,6 +242,11 @@ public class WorldNav
         } else if (action.equals("h")) {
             // go to our home
             display("memberHome=" + CShell.getMemberId());
+
+        } else if (action.equals("a")) {
+            // go to our home, maybe
+            display("memberHome=" + CShell.getMemberId());
+            display("auto=true");
 
         } else if (action.equals("hplaces")) {
             // just logon and show the myplaces dialog, don't go anywhere
