@@ -227,6 +227,9 @@ public class WorldController extends MsoyController
         } catch (err :Error) {
             // oh well
         }
+
+        var params :Object = MsoyParameters.get();
+        _djTutorial = Boolean(params["djTutorial"]);
     }
 
     /**
@@ -1762,6 +1765,9 @@ public class WorldController extends MsoyController
 
     /** Recently visited scenes, ordered from most-recent to least-recent */
     protected var _recentScenes :Array = [];
+
+    /** Whether the client is in DJ tutorial mode. */
+    protected var _djTutorial :Boolean;
 
     /** The maximum number of recent scenes we track. */
     protected static const MAX_RECENT_SCENES :int = 11;

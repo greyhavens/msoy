@@ -49,6 +49,8 @@ public class WebCreds
     /** Whether to start load the Flash client. */
     public boolean autoFlash;
 
+    public boolean djTutorialComplete;
+
     /** Returns the name of the creds cookie for use by this deployment. */
     public static String credsCookie ()
     {
@@ -66,14 +68,15 @@ public class WebCreds
         return new WebCreds(
             data.next(), data.next(), Boolean.valueOf(data.next()), Boolean.valueOf(data.next()),
             new MemberName(data.next(), Integer.valueOf(data.next())), data.next(),
-            Role.valueOf(data.next()), Boolean.valueOf(data.next()));
+            Role.valueOf(data.next()), Boolean.valueOf(data.next()), Boolean.valueOf(data.next()));
     }
 
     /**
      * Creates a configured web creds instance.
      */
     public WebCreds (String token, String accountName, boolean validated, boolean isNewbie,
-                     MemberName name, String permaName, Role role, boolean autoFlash)
+                     MemberName name, String permaName, Role role, boolean autoFlash,
+                     boolean djTutorialComplete)
     {
         this.token = token;
         this.accountName = accountName;
@@ -83,6 +86,7 @@ public class WebCreds
         this.permaName = permaName;
         this.role = role;
         this.autoFlash = autoFlash;
+        this.djTutorialComplete = djTutorialComplete;
     }
 
     /**
@@ -90,7 +94,7 @@ public class WebCreds
      */
     public WebCreds ()
     {
-        this(null, null, false, false, null, null, null, false);
+        this(null, null, false, false, null, null, null, false, false);
     }
 
     /**
@@ -164,6 +168,7 @@ public class WebCreds
         data.add(permaName);
         data.add(String.valueOf(role));
         data.add(String.valueOf(autoFlash));
+        data.add(String.valueOf(djTutorialComplete));
         return data;
     }
 

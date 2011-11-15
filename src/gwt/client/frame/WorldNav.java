@@ -271,6 +271,9 @@ public class WorldNav
         if (CShell.frame.getThemeId() != 0) {
             args += "&themeId=" + CShell.frame.getThemeId();
         }
+        if (!CShell.creds.djTutorialComplete) {
+            args += "&djTutorial=true";
+        }
 
         // finally actually display the client
         displayClient(args, false);

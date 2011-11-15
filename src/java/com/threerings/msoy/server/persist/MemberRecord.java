@@ -86,8 +86,11 @@ public class MemberRecord extends PersistentRecord
         /** Whether the user wants to suppress loading the Flash client when they visit Whirled. */
         NO_AUTO_FLASH(1 << 13),
 
+        /** Whether this user has completed the DJ whirled tutorial. */
+        DJ_TUTORIAL_COMPLETE(1 << 14),
+
         /** The next unused flag. Copy this and update the bit mask when making a new flag. */
-        UNUSED(1 << 14);
+        UNUSED(1 << 15);
 
         public int getBit () {
             return _bit;
@@ -308,7 +311,7 @@ public class MemberRecord extends PersistentRecord
     {
         return new WebCreds(
             authtok, accountName, isValidated(), isNewbie(), getName(), permaName, toRole(),
-            !isSet(Flag.NO_AUTO_FLASH));
+            !isSet(Flag.NO_AUTO_FLASH), isSet(Flag.DJ_TUTORIAL_COMPLETE));
     }
 
     /**
