@@ -8,7 +8,6 @@ import flash.geom.Point;
 
 import mx.controls.Button;
 
-import com.threerings.flex.CommandButton;
 import com.threerings.util.DelayUtil;
 import com.threerings.util.Log;
 import com.threerings.util.MessageBundle;
@@ -35,6 +34,7 @@ import com.threerings.orth.data.MediaDesc;
 import com.threerings.orth.data.MediaDescSize;
 import com.threerings.orth.ui.MediaWrapper;
 
+import com.threerings.flex.CommandButton;
 import com.threerings.flex.CommandMenu;
 
 import com.threerings.msoy.avrg.client.AVRGamePanel;
@@ -59,7 +59,6 @@ import com.threerings.msoy.data.MsoyCredentials;
 import com.threerings.msoy.data.PlaceInfo;
 import com.threerings.msoy.data.WorldCredentials;
 import com.threerings.msoy.data.all.ContactEntry;
-import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.GatewayEntry;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VizMemberName;
@@ -227,9 +226,6 @@ public class WorldController extends MsoyController
         } catch (err :Error) {
             // oh well
         }
-
-        var params :Object = MsoyParameters.get();
-        _djTutorial = Boolean(params["djTutorial"]);
     }
 
     /**
@@ -1448,7 +1444,7 @@ public class WorldController extends MsoyController
 
         // TODO(bruno): Don't show this on a player's first session
         var friendsBtn :CommandButton = _wctx.getWorldControlBar().friendsBtn;
-        if (!friendsBtn.selected) {
+        if (!_wctx.getTutorialDirector().djTutorial && !friendsBtn.selected) {
             friendsBtn.activate();
         }
     }
@@ -1765,9 +1761,6 @@ public class WorldController extends MsoyController
 
     /** Recently visited scenes, ordered from most-recent to least-recent */
     protected var _recentScenes :Array = [];
-
-    /** Whether the client is in DJ tutorial mode. */
-    protected var _djTutorial :Boolean;
 
     /** The maximum number of recent scenes we track. */
     protected static const MAX_RECENT_SCENES :int = 11;

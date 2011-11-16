@@ -230,6 +230,14 @@ public /*abstract*/ class MsoyClient extends CrowdClient
     }
 
     /**
+     * Return the current page address, or null if this is a standalone embed or no GWT tab is open.
+     */
+    public function getAddress () :Address
+    {
+        return _address;
+    }
+
+    /**
      * Requests that GWT set the window title.
      */
     public function setWindowTitle (title :String) :void
@@ -492,8 +500,8 @@ public /*abstract*/ class MsoyClient extends CrowdClient
 
     protected function externalSetPage (pagePath :String, token :String) :void
     {
-        dispatchEvent(new ValueEvent(GWT_PAGE_CHANGED,
-            pagePath == null ? null : Address.fromToken(pagePath, token)));
+        _address = (pagePath == null) ? null : Address.fromToken(pagePath, token);
+        dispatchEvent(new ValueEvent(GWT_PAGE_CHANGED, _address));
     }
 
     /**
@@ -577,6 +585,7 @@ public /*abstract*/ class MsoyClient extends CrowdClient
     protected var _embedding :Embedding;
     protected var _featuredPlaceView :Boolean;
     protected var _loadedPolicies :Object = new Object();
+    protected var _address :Address;
 
     // configure log levels
     MsoyLogConfig.init();

@@ -20,9 +20,7 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.gwt.WebUserService;
 import com.threerings.msoy.web.gwt.WebUserServiceAsync;
 
-import client.shell.CShell;
 import client.shell.FBLogonPanel;
-import client.shell.LogonPanel.ForgotPasswordDialog;
 import client.shell.LogonPanel;
 import client.shell.ShellMessages;
 import client.ui.MsoyUI;

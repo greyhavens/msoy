@@ -53,6 +53,15 @@ public class TutorialSequenceBuilder
     }
 
     /**
+     * Don't store the progress of this tutorial, and show it every time.
+     */
+    public function showAlways () :TutorialSequenceBuilder
+    {
+        _sequence.persisted = false;
+        return this;
+    }
+
+    /**
      * Limit the sequence for display exclusively to new users.
      */
     public function newbie () :TutorialSequenceBuilder
@@ -78,7 +87,7 @@ public class TutorialSequenceBuilder
      * item popup is closed, the next item will popup and so on until all items are viewed. If any
      * item in a sequence is unavailable, the system will stall and recheck it periodically until
      * it is ready to be shown. This allows sequences to wait for a user action.
-     * @param dismiss if set and there is a seqeunce currently active, then that sequence will be
+     * @param dismiss if set and there is a sequence currently active, then that sequence will be
      *        deactivated, including closure of the popup panel, and this one activated instead
      */
     public function activate (dismiss :Boolean = false) :Boolean

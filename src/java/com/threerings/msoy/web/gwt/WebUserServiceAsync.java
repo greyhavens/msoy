@@ -4,6 +4,7 @@
 package com.threerings.msoy.web.gwt;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
+
 import com.threerings.msoy.data.all.LaunchConfig;
 import com.threerings.msoy.data.all.VisitorInfo;
 

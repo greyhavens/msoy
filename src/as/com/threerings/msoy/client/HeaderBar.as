@@ -20,7 +20,6 @@ import com.threerings.presents.dobj.AttributeChangedEvent;
 
 import com.threerings.text.TextFieldUtil;
 
-import com.threerings.flex.CommandButton;
 import com.threerings.flex.CommandLinkButton;
 import com.threerings.flex.FlexUtil;
 

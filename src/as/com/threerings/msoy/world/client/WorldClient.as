@@ -114,6 +114,12 @@ public class WorldClient extends MsoyClient
             _ctx.getTopPanel().getPlaceContainer().addOverlay(
                 overlay, PlaceBox.LAYER_FEATURED_PLACE);
         }
+
+        var djTutorial :Boolean = Boolean(params["djTutorial"]);
+        _wctx.getTutorialDirector().djTutorial = djTutorial;
+        if (djTutorial) {
+            new DjTutorial(_wctx);
+        }
     }
 
     override public function logon () :Boolean

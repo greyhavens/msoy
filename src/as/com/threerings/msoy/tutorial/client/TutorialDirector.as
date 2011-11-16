@@ -29,6 +29,11 @@ import com.threerings.msoy.world.client.WorldContext;
 public class TutorialDirector
 {
     /**
+     * Whether this is the player's first time on the DJ site.
+     */
+    public var djTutorial :Boolean = false;
+
+    /**
      * Creates a new director.
      */
     public function TutorialDirector (ctx :WorldContext)
@@ -109,7 +114,8 @@ public class TutorialDirector
      */
     public function activateSequence (seq :TutorialSequence, dismiss :Boolean) :Boolean
     {
-        if (!seq.isAvailable() || Prefs.getTutorialProgress(seq.id) >= seq.size()) {
+        if (!seq.isAvailable() ||
+            (seq.isPersisted() && Prefs.getTutorialProgress(seq.id) >= seq.size())) {
             return false;
         }
 
@@ -250,10 +256,22 @@ public class TutorialDirector
         }
     }
 
+    protected function onEnterFrame (event :Event) :void
+    {
+        // Continuously poll isAvailable() if the tutorial should continue to the next step
+        if (_current != null && !_current.isAvailable()) {
+            event.target.removeEventListener(Event.ENTER_FRAME, onEnterFrame);
+            _panel.handleClose();
+        }
+    }
+
     protected function update () :void
     {
         var showing :Boolean = isShowing();
         if (showing) {
+            if (_current.checkAvailable != null) {
+                _ctx.getTopPanel().addEventListener(Event.ENTER_FRAME, onEnterFrame);
+            }
             _timer.reset();
 
         } else {

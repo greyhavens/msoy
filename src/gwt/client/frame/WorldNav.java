@@ -12,6 +12,7 @@ import com.threerings.gwt.util.StringUtil;
 
 import com.threerings.msoy.data.all.LaunchConfig;
 import com.threerings.msoy.web.gwt.Args;
+import com.threerings.msoy.web.gwt.ClientMode;
 import com.threerings.msoy.web.gwt.ConnectConfig;
 import com.threerings.msoy.web.gwt.CookieNames;
 import com.threerings.msoy.web.gwt.Pages;
@@ -271,7 +272,7 @@ public class WorldNav
         if (CShell.frame.getThemeId() != 0) {
             args += "&themeId=" + CShell.frame.getThemeId();
         }
-        if (!CShell.creds.djTutorialComplete) {
+        if (CShell.getClientMode() == ClientMode.DJ_WHIRLED && !CShell.creds.djTutorialComplete) {
             args += "&djTutorial=true";
         }
 

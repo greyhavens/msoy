@@ -4,25 +4,11 @@
 package client.landing;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.ButtonBase;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.TextBox;
 
-import com.threerings.gwt.ui.SmartTable;
-
-import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.web.gwt.WebUserService;
-import com.threerings.msoy.web.gwt.WebUserServiceAsync;
-
-import client.shell.CShell;
 import client.shell.FBLogonPanel;
-import client.shell.LogonPanel.ForgotPasswordDialog;
 import client.shell.LogonPanel;
 import client.shell.ShellMessages;
 import client.ui.MsoyUI;
@@ -43,14 +29,6 @@ public class LandingDjPanel extends SimplePanel
         FBLogonPanel fbLogon = new FBLogonPanel();
         fbLogon.setStyleName("Connect");
         content.add(fbLogon);
-
-        // clickable monster ave screenshot opens registration
-        ClickHandler showRegistration = new ClickHandler() {
-            public void onClick (ClickEvent event) {
-                _registerPlaceholder.clear();
-                _registerPlaceholder.add(_register);
-            }
-        };
 
         // text and copyright
         FlowPanel footer = MsoyUI.createFlowPanel("Footer");

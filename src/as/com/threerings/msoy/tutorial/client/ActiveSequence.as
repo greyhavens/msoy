@@ -40,7 +40,9 @@ internal class ActiveSequence
             _progress = int.MAX_VALUE;
         }
         if (_sequence.singles || complete) {
-            Prefs.setTutorialProgress(_sequence.id, _progress);
+            if (_sequence.isPersisted()) {
+                Prefs.setTutorialProgress(_sequence.id, _progress);
+            }
             return false;
         }
         return true;

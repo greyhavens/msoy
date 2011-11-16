@@ -23,14 +23,14 @@ import com.threerings.web.gwt.ServiceException;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.apps.server.persist.AppRepository;
-import com.threerings.msoy.data.all.DeploymentConfig;
-import com.threerings.msoy.data.all.GwtAuthCodes;
-import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.data.LurkerName;
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.MsoyAuthName;
 import com.threerings.msoy.data.MsoyAuthResponseData;
 import com.threerings.msoy.data.WorldCredentials;
+import com.threerings.msoy.data.all.DeploymentConfig;
+import com.threerings.msoy.data.all.GwtAuthCodes;
+import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.person.server.persist.ProfileRepository;
 import com.threerings.msoy.server.AuthenticationDomain.Account;

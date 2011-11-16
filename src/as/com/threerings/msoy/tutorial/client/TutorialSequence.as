@@ -30,10 +30,20 @@ internal class TutorialSequence
         return checkAvailable == null || checkAvailable();
     }
 
+    /**
+     * Whether to store the completion of this tutorial in a flash cookie, or show it every time.
+     * True by default.
+     */
+    public function isPersisted () :Boolean
+    {
+        return persisted;
+    }
+
     internal var id :String;
     internal var items :Array = [];
     internal var checkAvailable :Function;
     internal var singles :Boolean;
+    internal var persisted :Boolean = true;
 }
 
 }
