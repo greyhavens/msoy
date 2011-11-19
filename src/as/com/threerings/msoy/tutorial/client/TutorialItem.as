@@ -48,6 +48,7 @@ internal class TutorialItem
     internal var buttonCloses :Boolean;
     internal var hideClose :Boolean;
     internal var onClick :Function;
+    internal var onShow :Function;
     internal var ignorable :Boolean = true;
     internal var popupHelper :PopupHelper;
     internal var finishText :String;

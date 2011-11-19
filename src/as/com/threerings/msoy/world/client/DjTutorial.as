@@ -3,6 +3,12 @@
 
 package com.threerings.msoy.world.client {
 
+import flash.display.Sprite;
+
+import mx.core.UIComponent;
+
+import com.threerings.flex.FlexWrapper;
+
 import com.threerings.msoy.client.MsoyClient;
 import com.threerings.msoy.data.Address;
 import com.threerings.msoy.data.Page;
@@ -22,10 +28,17 @@ public class DjTutorial
         // TODO(bruno): Finalize text
 
         waitForPage(seq.newSuggestion("1. Click the shop tab"), Page.SHOP)
+            .onShow(function () :void {
+                arrowUp(-500, 0, function (address :Address) :Boolean { return address == null });
+            })
             .queue();
 
         waitForPage(seq.newSuggestion("2. Go to the music section"),
                 Page.SHOP, MsoyItemType.AUDIO.toByte())
+            .onShow(function () :void {
+                arrowRight(-5, 300, function (address :Address) :Boolean {
+                    return address.page == Page.SHOP && address.args.length == 0 });
+            })
             .queue();
 
         waitForPage(seq.newSuggestion("3. Pick an item"),
@@ -34,7 +47,7 @@ public class DjTutorial
 
         waitForCondition(seq.newSuggestion("4. Buy and add it to the room"),
             function () :Boolean {
-                return !_ctx.getMemberObject().tracks.isEmpty()
+                return !_ctx.getMemberObject().tracks.isEmpty();
             })
             .queue();
 
@@ -42,9 +55,69 @@ public class DjTutorial
             function () :Boolean {
                 return _ctx.getMsoyClient().getAddress() == null;
             })
+            .onShow(clearArrows)
             .queue();
 
         seq.activate();
+    }
+
+    protected function arrow (x :Number, y :Number, showIf :Function, up :Boolean) :void
+    {
+        if (_arrow == null) {
+            var sprite :Sprite = new Sprite();
+            sprite.graphics.beginFill(0xff0000);
+            sprite.graphics.drawCircle(0, 0, 50);
+            _arrow = new FlexWrapper(sprite);
+
+            _ctx.getTopPanel().addChild(_arrow);
+            _ctx.getClient().addEventListener(MsoyClient.GWT_PAGE_CHANGED, invalidateArrow);
+        }
+
+        var state :ArrowState = new ArrowState(x, y, showIf, up);
+        _arrowStates.push(state);
+
+        invalidateArrow();
+    }
+
+    protected function arrowUp (x :Number, y :Number, showIf :Function = null) :void
+    {
+        arrow(x, y, showIf, true);
+    }
+
+    protected function arrowRight (x :Number, y :Number, showIf :Function = null) :void
+    {
+        arrow(x, y, showIf, false);
+    }
+
+    protected function invalidateArrow (_:*=null) :void
+    {
+        if (_arrow == null) {
+            return;
+        }
+
+        var address :Address = _ctx.getMsoyClient().getAddress();
+        var visible :Boolean = false;
+        for each (var state :ArrowState in _arrowStates) {
+            if (state.showIf == null || state.showIf(address)) {
+                _arrow.setStyle(state.pos.x < 0 ? "right" : "left", Math.abs(state.pos.x));
+                _arrow.setStyle(state.pos.y < 0 ? "bottom" : "top", Math.abs(state.pos.y));
+                visible = true;
+                break;
+            }
+        }
+        _arrow.visible = visible;
+    }
+
+    protected function clearArrows () :void
+    {
+        if (_arrow == null) {
+            return;
+        }
+
+        _arrowStates.length = 0;
+        _ctx.getClient().removeEventListener(MsoyClient.GWT_PAGE_CHANGED, invalidateArrow);
+        _arrow.parent.removeChild(_arrow);
+        _arrow = null;
     }
 
     protected function waitForPage (
@@ -84,5 +157,24 @@ public class DjTutorial
     }
 
     protected var _ctx :WorldContext;
+
+    protected var _arrow :UIComponent;
+    protected var _arrowStates :Array = []; // of ArrowState
 }
+}
+
+import flash.geom.Point;
+
+class ArrowState
+{
+    public var pos :Point;
+    public var up :Boolean;
+    public var showIf :Function;
+
+    public function ArrowState (x :Number, y :Number, showIf :Function, up :Boolean)
+    {
+        this.pos = new Point(x, y);
+        this.showIf = showIf;
+        this.up = up;
+    }
 }

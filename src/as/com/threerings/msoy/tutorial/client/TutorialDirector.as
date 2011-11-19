@@ -332,9 +332,12 @@ public class TutorialDirector
         }
 
         PopUpManager.bringToFront(_panel);
-
         _panel.setTopMargin(topPanel.getHeaderBarHeight());
         _panel.setContent(_current = item);
+        if (item.onShow != null) {
+            item.onShow();
+        }
+
         update();
     }
 

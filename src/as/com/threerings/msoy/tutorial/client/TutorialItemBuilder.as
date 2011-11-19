@@ -173,6 +173,15 @@ public class TutorialItemBuilder
     }
 
     /**
+     * Sets a function to be called when this item is shown
+     */
+    public function onShow (onShow :Function) :TutorialItemBuilder
+    {
+        _item.onShow = onShow;
+        return this;
+    }
+
+    /**
      * Queues up the item to be displayed. The builder may no longer be used after this.
      */
     public function queue () :void
