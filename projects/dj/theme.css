@@ -1,0 +1,11 @@
+.BackButton {
+    display: none;
+}
+
+.statusPanel .Spacer {
+    color: #606060 !important;
+}
+
+.statusPanel .BuyBars a {
+    color: #ffcc00 !important;
+}
