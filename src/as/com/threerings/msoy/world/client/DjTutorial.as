@@ -29,14 +29,14 @@ public class DjTutorial
 
         waitForPage(seq.newSuggestion("1. Click the shop tab"), Page.SHOP)
             .onShow(function () :void {
-                arrowUp(-500, 0, function (address :Address) :Boolean { return address == null });
+                arrowUp(-512, 0, function (address :Address) :Boolean { return address == null });
             })
             .queue();
 
         waitForPage(seq.newSuggestion("2. Go to the music section"),
                 Page.SHOP, MsoyItemType.AUDIO.toByte())
             .onShow(function () :void {
-                arrowRight(-5, 300, function (address :Address) :Boolean {
+                arrowRight(-0.01, 123, function (address :Address) :Boolean {
                     return address.page == Page.SHOP && address.args.length == 0 });
             })
             .queue();
