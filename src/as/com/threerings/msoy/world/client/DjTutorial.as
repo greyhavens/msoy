@@ -6,7 +6,9 @@ package com.threerings.msoy.world.client {
 import flash.display.Sprite;
 
 import mx.core.UIComponent;
+import mx.managers.PopUpManager;
 
+import com.threerings.display.DisplayUtil;
 import com.threerings.flex.FlexWrapper;
 
 import com.threerings.msoy.client.MsoyClient;
@@ -61,7 +63,7 @@ public class DjTutorial
         seq.activate();
     }
 
-    protected function arrow (x :Number, y :Number, showIf :Function, up :Boolean) :void
+    protected function arrow (x :Number, y :Number, showIf :Function, displayClass :Class) :void
     {
         if (_arrow == null) {
             var sprite :Sprite = new Sprite();
@@ -70,23 +72,22 @@ public class DjTutorial
             _arrow = new FlexWrapper(sprite);
 
             _ctx.getTopPanel().addChild(_arrow);
+            // PopUpManager.addPopUp(_arrow, _ctx.getTopPanel());
             _ctx.getClient().addEventListener(MsoyClient.GWT_PAGE_CHANGED, invalidateArrow);
         }
 
-        var state :ArrowState = new ArrowState(x, y, showIf, up);
-        _arrowStates.push(state);
-
+        _arrowStates.push(new ArrowState(x, y, showIf, displayClass));
         invalidateArrow();
     }
 
     protected function arrowUp (x :Number, y :Number, showIf :Function = null) :void
     {
-        arrow(x, y, showIf, true);
+        arrow(x, y, showIf, ARROW_UP);
     }
 
     protected function arrowRight (x :Number, y :Number, showIf :Function = null) :void
     {
-        arrow(x, y, showIf, false);
+        arrow(x, y, showIf, ARROW_RIGHT);
     }
 
     protected function invalidateArrow (_:*=null) :void
@@ -101,6 +102,10 @@ public class DjTutorial
             if (state.showIf == null || state.showIf(address)) {
                 _arrow.setStyle(state.pos.x < 0 ? "right" : "left", Math.abs(state.pos.x));
                 _arrow.setStyle(state.pos.y < 0 ? "bottom" : "top", Math.abs(state.pos.y));
+                DisplayUtil.removeAllChildren(_arrow);
+                _arrow.addChild(new state.displayClass());
+                PopUpManager.bringToFront(_arrow);
+                trace("Moved to front");
                 visible = true;
                 break;
             }
@@ -116,7 +121,7 @@ public class DjTutorial
 
         _arrowStates.length = 0;
         _ctx.getClient().removeEventListener(MsoyClient.GWT_PAGE_CHANGED, invalidateArrow);
-        _arrow.parent.removeChild(_arrow);
+        DisplayUtil.detach(_arrow);
         _arrow = null;
     }
 
@@ -156,6 +161,11 @@ public class DjTutorial
         return item.buttonCloses(true);
     }
 
+    [Embed(source="../../../../../../../rsrc/media/arrows.swf", symbol="arrow_up")]
+    protected static const ARROW_UP :Class;
+    [Embed(source="../../../../../../../rsrc/media/arrows.swf", symbol="arrow_right")]
+    protected static const ARROW_RIGHT :Class;
+
     protected var _ctx :WorldContext;
 
     protected var _arrow :UIComponent;
@@ -168,13 +178,13 @@ import flash.geom.Point;
 class ArrowState
 {
     public var pos :Point;
-    public var up :Boolean;
     public var showIf :Function;
+    public var displayClass :Class;
 
-    public function ArrowState (x :Number, y :Number, showIf :Function, up :Boolean)
+    public function ArrowState (x :Number, y :Number, showIf :Function, displayClass :Class)
     {
         this.pos = new Point(x, y);
         this.showIf = showIf;
-        this.up = up;
+        this.displayClass = displayClass;
     }
 }

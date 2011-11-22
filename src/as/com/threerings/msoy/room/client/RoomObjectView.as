@@ -768,7 +768,7 @@ public class RoomObjectView extends RoomView
                 // Auto positioning doesn't work with addPopUp
                 // PopUpManager.addPopUp(_trackOverlay, _ctx.getTopPanel());
 
-                // Just slap it on the top panel and let Flex its positioning magic
+                // Just slap it on the top panel and let Flex do its positioning magic
                 // TODO(bruno): Make this a proper overlay
                 var top :TopPanel = _ctx.getTopPanel();
                 _trackOverlay.setStyle("bottom", top.getControlBarHeight() - 2);
