@@ -6,7 +6,6 @@ package com.threerings.msoy.world.client {
 import flash.display.Sprite;
 
 import mx.core.UIComponent;
-import mx.managers.PopUpManager;
 
 import com.threerings.display.DisplayUtil;
 import com.threerings.flex.FlexWrapper;
@@ -72,7 +71,6 @@ public class DjTutorial
             _arrow = new FlexWrapper(sprite);
 
             _ctx.getTopPanel().addChild(_arrow);
-            // PopUpManager.addPopUp(_arrow, _ctx.getTopPanel());
             _ctx.getClient().addEventListener(MsoyClient.GWT_PAGE_CHANGED, invalidateArrow);
         }
 
@@ -104,8 +102,6 @@ public class DjTutorial
                 _arrow.setStyle(state.pos.y < 0 ? "bottom" : "top", Math.abs(state.pos.y));
                 DisplayUtil.removeAllChildren(_arrow);
                 _arrow.addChild(new state.displayClass());
-                PopUpManager.bringToFront(_arrow);
-                trace("Moved to front");
                 visible = true;
                 break;
             }

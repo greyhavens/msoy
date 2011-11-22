@@ -7,8 +7,6 @@ import flash.events.Event;
 import flash.events.TimerEvent;
 import flash.utils.Timer;
 
-import mx.managers.PopUpManager;
-
 import com.threerings.util.Arrays;
 import com.threerings.util.Map;
 import com.threerings.util.Maps;
@@ -327,11 +325,10 @@ public class TutorialDirector
     protected function popup (item :TutorialItem) :void
     {
         if (_panel.parent == null) {
-            PopUpManager.addPopUp(_panel, topPanel);
+            topPanel.addChild(_panel);
             topPanel.setTutorialPanel(_panel);
         }
 
-        PopUpManager.bringToFront(_panel);
         _panel.setTopMargin(topPanel.getHeaderBarHeight());
         _panel.setContent(_current = item);
         if (item.onShow != null) {
