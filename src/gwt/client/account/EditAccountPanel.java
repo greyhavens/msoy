@@ -171,28 +171,30 @@ public class EditAccountPanel extends FlowPanel
     protected Widget makePrefsSection ()
     {
         SmartTable table = new SmartTable(0, 10);
-        table.setText(0, 0, _msgs.editWhirledMailEmail(), 1, "rightLabel");
+        int row = 0;
+        table.setText(row, 0, _msgs.editWhirledMailEmail(), 1, "rightLabel");
         _whirledEmail = new CheckBox(_msgs.editWhirledMailEmailTip());
-        table.setWidget(0, 1, _whirledEmail, 2);
+        table.setWidget(row, 1, _whirledEmail, 2);
         _whirledEmail.addStyleName("tipLabel");
         _whirledEmail.setValue(_accountInfo.emailWhirledMail);
 
-        table.setText(1, 0, _msgs.editAnnounceEmail(), 1, "rightLabel");
-        table.setWidget(1, 1, _announceEmail = new CheckBox(_msgs.editAnnounceEmailTip()), 2);
+        table.setText(++row, 0, _msgs.editAnnounceEmail(), 1, "rightLabel");
+        table.setWidget(row, 1, _announceEmail = new CheckBox(_msgs.editAnnounceEmailTip()), 2);
         _announceEmail.addStyleName("tipLabel");
         _announceEmail.setValue(_accountInfo.emailAnnouncements);
 
-        table.setText(2, 0, _msgs.autoFlash(), 1, "rightLabel");
-        table.setWidget(2, 1, _autoFlash = new CheckBox(_msgs.autoFlashTip()), 2);
-        _autoFlash.addStyleName("tipLabel");
-        _autoFlash.setValue(_accountInfo.autoFlash);
+        // Disabled until auto flash login can be fixed
+        // table.setText(++row, 0, _msgs.autoFlash(), 1, "rightLabel");
+        // table.setWidget(++row, 1, _autoFlash = new CheckBox(_msgs.autoFlashTip()), 2);
+        // _autoFlash.addStyleName("tipLabel");
+        // _autoFlash.setValue(_accountInfo.autoFlash);
 
         _upprefs = new Button(_cmsgs.update(), new ClickHandler() {
             public void onClick (ClickEvent event) {
                 updatePrefs();
             }
         });
-        table.setWidget(3, 1, _upprefs);
+        table.setWidget(++row, 1, _upprefs);
         return table;
     }
 
@@ -406,7 +408,7 @@ public class EditAccountPanel extends FlowPanel
     {
         _upprefs.setEnabled(false);
         _usersvc.updatePrefs(
-            _whirledEmail.getValue(), _announceEmail.getValue(), _autoFlash.getValue(),
+            _whirledEmail.getValue(), _announceEmail.getValue(), _accountInfo.autoFlash,
             new AsyncCallback<Void>() {
                 public void onSuccess (Void result) {
                     _upprefs.setEnabled(true);
