@@ -1439,7 +1439,9 @@ public class WorldController extends MsoyController
 
             // TODO(bruno): Don't show this on a player's first session
             var friendsBtn :CommandButton = _wctx.getWorldControlBar().friendsBtn;
-            if (!_wctx.getTutorialDirector().djTutorial && !friendsBtn.selected) {
+            if (!UberClient.isFeaturedPlaceView() &&
+                    !_wctx.getTutorialDirector().djTutorial &&
+                    !friendsBtn.selected) {
                 friendsBtn.activate();
             }
 
