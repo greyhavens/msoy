@@ -441,7 +441,7 @@ public class EditGameServlet extends MsoyServiceServlet
         throws ServiceException
     {
         requireAdminUser();
-        _facebookLogic.testUpdateFeaturedGames();
+        // _facebookLogic.testUpdateFeaturedGames();
     }
 
     protected MochiGameInfo importMochiGame (String mochiTag)

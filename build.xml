@@ -97,11 +97,6 @@
     <file name="${extlibs.dir}/xmlrpc-server.jar"/>
     <file name="${extlibs.dir}/rabbitmq-client.jar"/>
 
-    <!-- The following are needed for the Facebook client -->
-    <file name="${extlibs.dir}/jvnet-runtime.jar"/>
-    <file name="${extlibs.dir}/facebook-java-api.jar"/>
-    <file name="${extlibs.dir}/facebook-java-api-schema.jar"/>
-
     <!-- The following are used for Panopticon -->
     <file name="${extlibs.dir}/log4j.jar"/>
     <file name="${extlibs.dir}/hessian.jar"/>
@@ -165,6 +160,7 @@
       <dependency groupId="com.google.gwt" artifactId="gwt-servlet" version="${gwt.version}"/>
       <dependency groupId="postgresql" artifactid="postgresql" version="9.0-801.jdbc4"/>
       <dependency groupId="net.sf.ehcache" artifactid="ehcache" version="1.6.0"/>
+      <dependency groupId="com.restfb" artifactid="restfb" version="1.6.9"/>
       <remoteRepository refid="ooo.maven.depends.repo"/>
       <dependency groupId="com.samskivert" artifactId="samskivert" version="1.5"/>
       <dependency groupId="com.samskivert" artifactId="depot" version="1.5"/>

@@ -48,6 +48,7 @@ import static com.threerings.msoy.Log.log;
  * Handles requests to do facebook invites, which at the moment requires some backflips to get the
  * facebook XFBML elements stuck in the top-level html document.
  */
+// FIXME(bruno): This needs to be upgraded to the Open Graph API
 public class FacebookInviteServlet extends HttpServlet
 {
     @Override // from HttpServlet
@@ -311,7 +312,7 @@ public class FacebookInviteServlet extends HttpServlet
 
     /** The javascript to initiate the facebook dynamic loading. */
     protected static final String FBLOADERCODE =
-        "http://static.ak.connect.facebook.com/js/api_lib/v0.4/FeatureLoader.js.php";
+        "http://static.ak.connect.facebook.com/js/api_lib/v0.4/xxxxxFeatureLoader.js.php";
 
     /** Our static invite script, we give it all the relevant data. */
     protected static final String INVITE_JS = "/js/fbinvite.js";

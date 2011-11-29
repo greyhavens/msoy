@@ -11,10 +11,6 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.google.code.facebookapi.FacebookException;
-import com.google.code.facebookapi.FacebookJaxbRestClient;
-import com.google.code.facebookapi.ProfileField;
-import com.google.code.facebookapi.schema.User;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -244,39 +240,6 @@ public class FacebookServlet extends MsoyServiceServlet
         } else {
             info.gameName = loadGameStoryFields(new StoryFields(), appId, game, null).name;
         }
-
-        // TODO: we don't need this at all! Bite Me successfully used <fb:name> in request text,
-        // using the facebook user id. We just need to expose said id to GWT at large.
-
-        // use the facebook name for consistency and the facebook gender in case privacy settings
-        // have changed. users will expect this
-        FacebookJaxbRestClient client = _fbLogic.getFacebookClient(
-            session.siteId, session.mapRec.sessionKey);
-        Long userId = session.fbid;
-        List<ProfileField> fields = Lists.newArrayList();
-        fields.add(ProfileField.FIRST_NAME);
-        fields.add(ProfileField.SEX);
-        try {
-            User user = client.users_getInfo(Collections.singletonList(userId), fields)
-                .getUser().get(0);
-            info.username = user.getFirstName();
-            if ("male".equalsIgnoreCase(user.getSex())) {
-                info.gender = FacebookService.Gender.MALE;
-            } else if ("female".equalsIgnoreCase(user.getSex())) {
-                info.gender = FacebookService.Gender.FEMALE;
-            } else {
-                info.gender = FacebookService.Gender.NEUTRAL;
-            }
-
-        } catch (FacebookException fe) {
-            log.warning("Could not get first name and sex, go figure!", "user", userId, fe);
-        }
-
-        // generate the tracking id for the invite
-        TrackingId trackingId = game == null ?
-            new TrackingId(LinkType.INVITE, userId) :
-            new TrackingId(LinkType.INVITE, game.getStringId(), userId);
-        info.trackingId = trackingId.flatten();
 
         return info;
     }

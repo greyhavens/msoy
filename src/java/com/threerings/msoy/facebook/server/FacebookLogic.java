@@ -17,14 +17,11 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.google.code.facebookapi.DefaultCommunicationStrategy;
-import com.google.code.facebookapi.FacebookException;
-import com.google.code.facebookapi.FacebookJaxbRestClient;
-import com.google.code.facebookapi.ProfileField;
-import com.google.code.facebookapi.schema.FriendsGetResponse;
-import com.google.code.facebookapi.schema.Location;
-import com.google.code.facebookapi.schema.User;
-import com.google.code.facebookapi.schema.UsersGetStandardInfoResponse;
+import com.restfb.Connection;
+import com.restfb.DefaultFacebookClient;
+import com.restfb.FacebookClient;
+import com.restfb.types.User;
+
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
@@ -105,7 +102,7 @@ public class FacebookLogic
         public ExternalSiteId siteId;
 
         /** The client, only if requested. */
-        public FacebookJaxbRestClient client;
+        public FacebookClient client;
     }
 
     /**
@@ -114,120 +111,6 @@ public class FacebookLogic
     public static String getCanvasUrl (String canvasName)
     {
         return "http://apps.facebook.com/" + canvasName + "/";
-    }
-
-    /**
-     * Parses a Facebook birthday, which may or may not include a year, and returns the year and
-     * date in a tuple. If the year is null, the year in the date is not valid and will just be
-     * the default given by the date format parser. If the year is not null, it will match the year
-     * in the date (using a default local calendar). The date and year may both be null if the
-     * given string could not be parsed as a date.
-     */
-    public static Tuple<Integer, Date> parseBirthday (String bday)
-    {
-        Date date = null;
-        Integer year = null;
-        if (bday != null) {
-            try {
-                date = BDAY_FMT.parse(bday);
-                year = Calendars.at(date).get(Calendar.YEAR);
-
-            } catch (Exception e) {
-                try {
-                    // this will end up with year set to 1970, but at least we'll get the
-                    // month and day
-                    date = BDAY_FMT_NO_YEAR.parse(bday);
-
-                } catch (Exception e2) {
-                    log.info("Could not parse Facebook birthday", "bday", bday);
-                }
-            }
-        }
-
-        return Tuple.newTuple(year, date);
-    }
-
-    @Inject public FacebookLogic (CronLogic cronLogic, Lifecycle lifecycle)
-    {
-        // run the demographics update between 4 and 5 am
-        cronLogic.scheduleAt(4, "FacebookLogic demographics", new Runnable() {
-            public void run () {
-                updateDemographics();
-            }
-        });
-
-        // run the featured game update between 11am and 12pm
-        cronLogic.scheduleAt(11, "FacebookLogic roll games", new Runnable() {
-            public void run () {
-                updateFeaturedGames(false);
-            }
-        });
-
-        lifecycle.addComponent(new Lifecycle.ShutdownComponent() {
-            public void shutdown () {
-                _shutdown = true;
-            }
-        });
-    }
-
-    /**
-     * Returns a Facebook client not bound to any particular user's session with the deafault read
-     * timeout.
-     */
-    public FacebookJaxbRestClient getFacebookClient (ExternalSiteId siteId)
-    {
-        return getFacebookClient(siteId, READ_TIMEOUT);
-    }
-
-    /**
-     * Returns a Facebook client not bound to any particular user's session with the given read
-     * timeout.
-     */
-    public FacebookJaxbRestClient getFacebookClient (ExternalSiteId siteId, int timeout)
-    {
-        return getFacebookClient(siteId, (String)null, timeout);
-    }
-
-    /**
-     * Returns a Facebook client bound to the supplied user's session.
-     */
-    public FacebookJaxbRestClient getFacebookClient (FacebookCreds creds)
-    {
-        return getFacebookClient(creds.getSite(), creds.sessionKey);
-    }
-
-    /**
-     * Returns a Facebook client bound to the supplied user's session.
-     */
-    public FacebookJaxbRestClient getFacebookClient (ExternalSiteId siteId, String sessionKey)
-    {
-        return getFacebookClient(siteId, sessionKey, 0);
-    }
-
-    /**
-     * Returns a Facebook client bound to the supplied user's session with the supplied read
-     * timeout.
-     */
-    public FacebookJaxbRestClient getFacebookClient (
-        ExternalSiteId siteId, String sessionKey, int timeout)
-    {
-        timeout = timeout == 0 ? READ_TIMEOUT : timeout;
-        FacebookInfoRecord fbinfo = loadSiteInfo(siteId);
-        if (StringUtil.isBlank(fbinfo.apiKey)) {
-            throw new IllegalStateException("Missing api_key for site " + siteId);
-        }
-        if (StringUtil.isBlank(fbinfo.appSecret)) {
-            throw new IllegalStateException("Missing secrect for site " + siteId);
-        }
-        return getFacebookClient(fbinfo.apiKey, fbinfo.appSecret, sessionKey, timeout);
-    }
-
-    /**
-     * Returns a Facebook client for the app represented by the supplied creds.
-     */
-    public FacebookJaxbRestClient getFacebookClient (FacebookAppCreds creds)
-    {
-        return getFacebookClient(creds.apiKey, creds.appSecret, creds.sessionKey, READ_TIMEOUT);
     }
 
     /**
@@ -304,6 +187,18 @@ public class FacebookLogic
         return null;
     }
 
+    public List<String> fetchFriends (FacebookClient client)
+    {
+        List<String> friendIds = Lists.newArrayList();
+        Connection<User> friends = client.fetchConnection("me/friends", User.class);
+        for (List<User> page : friends) {
+            for (User friend : page) {
+                friendIds.add(friend.getId());
+            }
+        }
+        return friendIds;
+    }
+
     /**
      * Loads the map records for all the given member's facebook friends. Throws an exception if
      * the session isn't valid or if the facebook friends could not be loaded.
@@ -317,15 +212,8 @@ public class FacebookLogic
 
         // get facebook friends to seed (more accurate)
         Set<String> facebookFriendIds = Sets.newHashSet();
-        try {
-            for (Long uid : sinf.client.friends_get().getUid()) {
-                facebookFriendIds.add(String.valueOf(uid));
-            }
-
-        } catch (FacebookException fe) {
-            log.warning("Unable to get facebook friends", "memberId", mrec.memberId, fe);
-            // pass along the translated text for now
-            throw new ServiceException(fe.getMessage());
+        for (String uid : fetchFriends(sinf.client)) {
+            facebookFriendIds.add(uid);
         }
 
         // filter by those hooked up to the site and tack on self if appropriate
@@ -408,11 +296,6 @@ public class FacebookLogic
         return _listRepo.getCursorItems(Arrays.asList(MOCHI_BUCKETS), MOCHI_CURSOR);
     }
 
-    public void testUpdateFeaturedGames ()
-    {
-        updateFeaturedGames(true);
-    }
-
     protected void updateURL (Map<String, String> replacements, String varName,
         MemberRecord memRec, TrackingId trackingId)
     {
@@ -425,16 +308,6 @@ public class FacebookLogic
             replacements.put(varName, url = SharedNaviUtil.buildRequest(url,
                 FBParam.TRACKING.name, trackingId.flatten()));
         }
-    }
-
-    protected FacebookJaxbRestClient getFacebookClient (
-        String apiKey, String appSecret, String sessionKey, int timeout)
-    {
-        FacebookJaxbRestClient client = new FacebookJaxbRestClient(apiKey, appSecret, sessionKey);
-        client.setServerUrl(SERVER_URL);
-        client.setCommunicationStrategy(
-            new DefaultCommunicationStrategy(CONNECT_TIMEOUT, timeout));
-        return client;
     }
 
     /**
@@ -453,149 +326,9 @@ public class FacebookLogic
         }
         sinf.fbid = Long.valueOf(sinf.mapRec.externalId);
         if (timeout > 0) {
-            sinf.client = getFacebookClient(siteId, sinf.mapRec.sessionKey, timeout);
+            sinf.client = new DefaultFacebookClient(sinf.mapRec.sessionKey);
         }
         return sinf;
-    }
-
-    protected List<Long> loadFriends (ExternalSiteId siteId, MemberRecord mrec)
-        throws ServiceException
-    {
-        SessionInfo sinf = loadSessionInfo(siteId, mrec, CONNECT_TIMEOUT);
-        try {
-            return sinf.client.friends_get().getUid();
-
-        } catch (FacebookException fe) {
-            log.warning("Unable to get facebook friends", "memberId", mrec.memberId, fe);
-            // pass along the translated text for now
-            throw new ServiceException(fe.getMessage());
-        }
-    }
-
-    protected void updateDemographics ()
-    {
-        for (AppInfoRecord appInfo : _appRepo.loadApps()) {
-            FacebookInfoRecord fbinfo = _facebookRepo.loadAppFacebookInfo(appInfo.appId);
-            if (fbinfo == null) {
-                continue;
-            }
-            final ExternalSiteId siteId = ExternalSiteId.facebookApp(appInfo.appId);
-            List<ExternalMapRecord> users = _memberRepo.loadExternalMappings(siteId);
-            log.info("Starting demographics update", "siteId", siteId, "users", users.size());
-
-            final FacebookJaxbRestClient client = getFacebookClient(siteId);
-            final int BATCH_SIZE = 200;
-            List<Integer> results = segment(users,
-                new Function<List<ExternalMapRecord>, Integer> () {
-                public Integer apply (List<ExternalMapRecord> batch) {
-                    if (_shutdown) {
-                        return 0;
-                    }
-                    return updateDemographics(siteId, client, batch);
-                }
-            }, BATCH_SIZE);
-
-            int count = 0;
-            for (int result : results) {
-                count += result;
-            }
-
-            log.info("Finished demographics update", "siteId", siteId, "count", count);
-        }
-    }
-
-    /**
-     * Gets demographic data from Facebook and sends it to Kongagent for a given segment of users.
-     * Users whose demographic data has been previously uploaded are culled.
-     */
-    protected int updateDemographics (
-        ExternalSiteId siteId, FacebookJaxbRestClient client, List<ExternalMapRecord> users)
-    {
-        int appId = siteId.getFacebookAppId();
-
-        // create mapping of member id to external record
-        Map<Integer, ExternalMapRecord> fbusers = Maps.newHashMap();
-        for (ExternalMapRecord exrec : users) {
-            fbusers.put(exrec.memberId, exrec);
-        }
-
-        // remove ones that we've done before
-        // TODO: should probably limit to records less than a certain age so that data gets
-        // refreshed from time to time... or just prune old records
-        for (FacebookActionRecord action : _facebookRepo.loadActions(appId, Lists.transform(
-            users, MAPREC_TO_MEMBER_ID), FacebookActionRecord.Type.GATHERED_DATA)) {
-            fbusers.remove(action.memberId);
-        }
-
-        if (fbusers.size() == 0) {
-            return 0;
-        }
-
-        // create mapping of facebook user id to member id
-        Map<Long, Integer> memberIds = Maps.newHashMap();
-        for (ExternalMapRecord rec : fbusers.values()) {
-            memberIds.put(MAPREC_TO_UID.apply(rec), rec.memberId);
-        }
-
-        // retrieve the data
-        Set<ProfileField> fields = EnumSet.of(
-            ProfileField.SEX, ProfileField.BIRTHDAY, ProfileField.CURRENT_LOCATION);
-        Collection<Long> uids = Collections2.transform(fbusers.values(), MAPREC_TO_UID);
-        UsersGetStandardInfoResponse uinfo;
-        try {
-            uinfo = client.users_getStandardInfo(uids, fields);
-        } catch (FacebookException ex) {
-            log.warning("Failed to getStandardInfo", "uids", uids,
-                "rawResponse", client.getRawResponse(), ex);
-            return 0;
-        }
-
-        // extract and track the data for each user
-        for (User user : uinfo.getUser()) {
-            Long uid = user.getUid();
-
-            // gender
-            String gender = user.getSex();
-
-            // location
-            String city = null, state = null, zip = null, country = null;
-            Location location = user.getCurrentLocation();
-            if (location != null) {
-                city = location.getCity();
-                state = location.getState();
-                zip = location.getZip();
-                country = location.getCountry();
-            }
-
-            // birthday
-            Integer birthYear = parseBirthday(user.getBirthday()).left;
-
-            // friend count
-            Integer friendCount = null;
-            try {
-                FriendsGetResponse finfo = client.friends_get(uid);
-                friendCount = finfo.getUid().size();
-
-            } catch (FacebookException e) {
-                log.warning("Could not retrieve friend count", "uid", uid,
-                    "rawResponse", client.getRawResponse(), e);
-            }
-
-            // send them to the tracker and note that we've done so
-            _tracker.trackUserInfo(appId, uid, birthYear, gender, city, state, zip, country,
-                friendCount);
-            _facebookRepo.recordAction(
-                FacebookActionRecord.dataGathered(appId, memberIds.get(uid)));
-        }
-
-        return uinfo.getUser().size();
-    }
-
-    protected void updateFeaturedGames (boolean test)
-    {
-        for (String bucket : MOCHI_BUCKETS) {
-            _listRepo.advanceCursor(bucket, MOCHI_CURSOR);
-        }
     }
 
     /**

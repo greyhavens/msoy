@@ -1,65 +1,74 @@
 /* Facebook Connect helper crap (mostly because GWT + Facebook Connect == Fail). */
-window.FB_WithInit = function(callback) {
-    FB_RequireFeatures(["Api", "Connect", "XFBML"], function() {
-        FB.init("$apiKey", "/fbconnect.html");
-    });
-    window.FB_WithInit = FB.Bootstrap.ensureInit;
-    FB_WithInit(function() {
-        callback();
+(function () {
+
+var lastResponse = null;
+
+// Called by the FB SDK when it finishes loading
+window.fbAsyncInit = function () {
+    FB.init({
+        appId: "$apiKey",
+        status: true,
+        oauth: true,
+        xfbml: true
     });
 };
 
+var fbRoot = document.createElement("div");
+fbRoot.id = "fb-root";
+document.body.appendChild(fbRoot);
+
+var script = document.createElement("script");
+script.id = "fbconnect";
+script.async = true;
+script.src = "//connect.facebook.net/en_US/all.js";
+document.getElementsByTagName("head")[0].appendChild(script);
+
 window.FB_GetKey = function () {
     return "$apiKey";
-}
+};
 
 window.FB_RequireSession = function() {
-    FB_WithInit(function() {
-        FB.Connect.requireSession(function() {
-            if (FB_RequireSessionCallback) {
-                FB_RequireSessionCallback(FB.Facebook.apiClient.get_session().uid);
+    var maybeProcess = function (response) {
+        if (response.authResponse != null) {
+            if (FB_RequireSessionCallback != null) {
+                lastResponse = response.authResponse;
+                FB_RequireSessionCallback(lastResponse.userID);
                 FB_RequireSessionCallback = null;
             }
-        });
+            return true;
+        }
+        return false;
+    };
+    FB.getLoginStatus(function (response) {
+        if (!maybeProcess(response)) {
+            FB.login(function (response) {
+                maybeProcess(response);
+            });
+        }
     });
 };
 
 window.FB_ShowFeedDialog = function(bundleId, data, callback) {
-    var showingFeed = false;
-    FB_WithInit(function() {
-        FB.Connect.requireSession(function() {
-            if (!showingFeed) {
-                showingFeed = true;
-                FB.Connect.showFeedDialog(bundleId, data, [], "", null,
-                    FB.RequireConnect.promptConnect, callback);
-            }
-        });
-    });
+    // Unimplemented!
 };
 
 window.FB_StreamPublish = function(attachment, links, prompt, callback) {
-    var publishing = false;
-    FB_WithInit(function() {
-        FB.Connect.requireSession(function() {
-            if (!publishing) {
-                publishing = true;
-                FB.Connect.streamPublish('', attachment, links, null, prompt, callback);
-            }
-        });
-    });
+    // Unimplemented!
+};
+
+window.FB_LastResponse = function () {
+    return lastResponse;
 };
 
 window.FB_Logout = function() {
-    FB_WithInit(function() {
-        FB.Connect.logout(null);
-    });
+    FB.logout();
 };
 
 window.FB_ParseXFBML = function (id) {
-    FB_WithInit(function() {
-        var elem = document.getElementById(id);
-        if (elem != null) {
-            FB.XFBML.Host.parseDomElement(elem);
-        }
-    });
-}
+    var elem = document.getElementById(id);
+    if (elem != null) {
+        FB.XFBML.parse(elem);
+    }
+};
+
+})();

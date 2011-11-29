@@ -17,7 +17,7 @@ import client.shell.Session;
 /**
  * Handles communication with Facebook Connect. See the following site for more information:
  *
- * http://wiki.developers.facebook.com/index.php/Facebook_Connect
+ * https://developers.facebook.com/
  */
 public class FBConnect
 {
@@ -28,16 +28,13 @@ public class FBConnect
     public static FacebookCreds readCreds ()
     {
         FacebookCreds creds = new FacebookCreds();
-        String key = getKey();
-        String prefix = key + "_";
-        creds.uid = CookieUtil.get(prefix + "user");
-        creds.sessionKey = CookieUtil.get(prefix + "session_key");
-        creds.ss = CookieUtil.get(prefix + "ss");
-        String expstr = CookieUtil.get(prefix + "expires");
-        creds.expires = (expstr.length() > 0) ? Integer.parseInt(expstr) : 0;
         // TODO: gah, we'll need the key & site id of the default connect app here
-        creds.sig = CookieUtil.get(key);
         creds.site = ExternalSiteId.facebookApp(CShell.getAppId());
+
+        creds.uid = getUserId();
+        creds.accessToken = getAccessToken();
+        creds.signedRequest = getSignedRequest();
+
         return creds.haveAllFields() ? creds : null;
     }
 
@@ -69,6 +66,18 @@ public class FBConnect
         } catch (e) {
             $wnd.console.log("FBConnect.requireSession failure " + e);
         }
+    }-*/;
+
+    protected static native String getAccessToken () /*-{
+        return $wnd.FB_LastResponse().accessToken;
+    }-*/;
+
+    protected static native String getSignedRequest () /*-{
+        return $wnd.FB_LastResponse().signedRequest;
+    }-*/;
+
+    protected static native String getUserId () /*-{
+        return $wnd.FB_LastResponse().userID;
     }-*/;
 
     protected native void logoff () /*-{

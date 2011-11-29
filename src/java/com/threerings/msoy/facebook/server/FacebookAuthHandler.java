@@ -6,13 +6,12 @@ package com.threerings.msoy.facebook.server;
 import java.sql.Date;
 import java.util.Collections;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Set;
 
-import com.google.code.facebookapi.FacebookJaxbRestClient;
-import com.google.code.facebookapi.ProfileField;
-import com.google.code.facebookapi.schema.FriendsGetResponse;
-import com.google.code.facebookapi.schema.User;
-import com.google.code.facebookapi.schema.UsersGetInfoResponse;
+import com.restfb.DefaultFacebookClient;
+import com.restfb.types.User;
+
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -54,52 +53,35 @@ public class FacebookAuthHandler extends ExternalAuthHandler
     public Info getInfo (ExternalCreds creds)
         throws ServiceException
     {
-        FacebookJaxbRestClient fbclient;
+        DefaultFacebookClient client;
         if (creds instanceof FacebookCreds) {
-            fbclient = _faceLogic.getFacebookClient((FacebookCreds)creds);
+            client = new DefaultFacebookClient(((FacebookCreds)creds).accessToken);
         } else if (creds instanceof FacebookAppCreds) {
-            fbclient = _faceLogic.getFacebookClient((FacebookAppCreds)creds);
+            throw new IllegalArgumentException("Canvas apps are unimplemented!");
         } else {
             throw new IllegalArgumentException("Invalid creds: " + creds);
         }
 
         Info info = new Info();
         try {
-            // look up information from this user's facebook profile
-            Set<Long> ids = Collections.singleton(Long.parseLong(creds.getUserId()));
-            Set<ProfileField> fields = EnumSet.of(
-                ProfileField.FIRST_NAME, ProfileField.LAST_NAME, ProfileField.SEX,
-                ProfileField.BIRTHDAY, ProfileField.CURRENT_LOCATION);
-            UsersGetInfoResponse uinfo = fbclient.users_getInfo(ids, fields);
-            if (uinfo.getUser().size() > 0) {
-                User user = uinfo.getUser().get(0);
-                info.displayName = user.getFirstName();
-                info.profile.realName = user.getFirstName() + " " + user.getLastName();
-                if (user.getCurrentLocation() != null) {
-                    info.profile.location = StringUtil.deNull(user.getCurrentLocation().getCity());
-                }
-                if ("male".equalsIgnoreCase(user.getSex())) {
-                    info.profile.sex = Profile.SEX_MALE;
-                } else if ("female".equalsIgnoreCase(user.getSex())) {
-                    info.profile.sex = Profile.SEX_FEMALE;
-                }
-                java.util.Date bday = FacebookLogic.parseBirthday(user.getBirthday()).right;
-                info.profile.birthday = bday != null ? new Date(bday.getTime()) : null;
+            // Lookup information from this user's facebook profile
+            User user = client.fetchObject("me", User.class);
+            info.displayName = user.getFirstName();
+            if ("male".equalsIgnoreCase(user.getGender())) {
+                info.profile.sex = Profile.SEX_MALE;
+            } else if ("female".equalsIgnoreCase(user.getGender())) {
+                info.profile.sex = Profile.SEX_FEMALE;
             }
+            info.profile.realName = user.getName();
+            info.profile.location = (user.getLocation() != null) ?
+                user.getLocation().getName() : "";
 
-            // TODO: we need to somehow fix this: Session key invalid or no longer valid
+            java.util.Date bday = user.getBirthdayAsDate();
+            info.profile.birthday = bday != null ? new Date(bday.getTime()) : null;
+            info.friendIds = _faceLogic.fetchFriends(client);
 
-            // look up their friends' facebook ids
-            try {
-                info.friendIds = Lists.newArrayList();
-                FriendsGetResponse finfo = fbclient.friends_get();
-                for (Long uid : finfo.getUid()) {
-                    info.friendIds.add(uid.toString());
-                }
-            } catch (Exception e) {
-                log.info("Failed to look up Facebook friends", "who", creds.getUserId(),
-                         "error", e.getMessage());
-            }
+            // TODO(bruno): Download their FB photo and make it their ProfileRecord photo
+
             return info;
 
         } catch (Exception e) {
