@@ -1436,16 +1436,17 @@ public class WorldController extends MsoyController
         if (!_didFirstLogonGo) {
             _didFirstLogonGo = true;
             goToPlace(MsoyParameters.get());
+
+            // TODO(bruno): Don't show this on a player's first session
+            var friendsBtn :CommandButton = _wctx.getWorldControlBar().friendsBtn;
+            if (!_wctx.getTutorialDirector().djTutorial && !friendsBtn.selected) {
+                friendsBtn.activate();
+            }
+
         } else if (_postLogonScene != 0) {
             // we gotta go somewhere
             _wctx.getSceneDirector().moveTo(_postLogonScene);
             _postLogonScene = 0;
-        }
-
-        // TODO(bruno): Don't show this on a player's first session
-        var friendsBtn :CommandButton = _wctx.getWorldControlBar().friendsBtn;
-        if (!_wctx.getTutorialDirector().djTutorial && !friendsBtn.selected) {
-            friendsBtn.activate();
         }
     }
 
