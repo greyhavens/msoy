@@ -243,3 +243,6 @@ local_bureaus = true
 # URL Whirled should send the user to when they need to go to billing
 
 billing_url = https://billing.dev.whirled.com/billing/
+
+# Account ID for Google Analytics
+ga_account = UA-169037-5

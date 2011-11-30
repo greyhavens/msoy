@@ -13,6 +13,21 @@
 
   <link rel="stylesheet" href="/themed/css/global.css?themeId=0" type="text/css"/>
   <link rel="shortcut icon" href="/favicon.ico" type="image/vnd.microsoft.icon"/>
+
+  <script type="text/javascript">
+      var _gaq = [];
+      _gaq.push(["_setAccount", "@GA_ACCOUNT@"]);
+      _gaq.push(["_trackPageview"]);
+
+      (function() {
+          var ga = document.createElement("script");
+          ga.type = "text/javascript";
+          ga.async = true;
+          ga.src = ("https:" == document.location.protocol ? "https://ssl" : "http://www") + ".google-analytics.com/ga.js";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(ga, s);
+      })();
+  </script>
 </head>
 
 <body>
@@ -29,8 +44,7 @@
   <div id="page"></div>
 
   <iframe id="__gwt_historyFrame" style="width:0px;height:0px;border:0px;display:none"></iframe>
-  <script language="javascript" src="/gwt/frame/frame.nocache.js"></script>
-  <script type="text/javascript" src="http://www.google-analytics.com/ga.js"></script>
+  <script type="text/javascript" src="/gwt/frame/frame.nocache.js"></script>
   <script type="text/javascript" src="/js/swfobject.js"></script>
   <script type="text/javascript" src="/js/md5.js"></script>
   <script id="fbhelper" type="text/javascript"></script>

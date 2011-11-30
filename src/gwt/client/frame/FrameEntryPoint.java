@@ -89,9 +89,6 @@ public class FrameEntryPoint
         // load up various JavaScript sources
         ScriptSources.inject(_embedding.appId);
 
-        // initialize our GA handler
-        _analytics.init();
-
         // set up the callbacks that our flash clients can call
         configureCallbacks();
 
