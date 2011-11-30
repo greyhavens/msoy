@@ -327,6 +327,7 @@
       <filterset>
         <filter token="SERVER_URL" value="${server_url}"/>
         <filter token="SERVER_URL_HOST" value="${server_url_host}"/>
+        <filter token="GA_ACCOUNT" value="${ga_account}"/>
       </filterset>
     </copy>
     <propertyregex property="server_url_host" input="${server_url}"
