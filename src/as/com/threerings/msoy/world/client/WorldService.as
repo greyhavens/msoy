@@ -17,6 +17,9 @@ public interface WorldService extends InvocationService
     function acceptAndProceed (arg1 :int, arg2 :InvocationService_ConfirmListener) :void;
 
     // from Java interface WorldService
+    function completeDjTutorial (arg1 :InvocationService_InvocationListener) :void;
+
+    // from Java interface WorldService
     function ditchFollower (arg1 :int, arg2 :InvocationService_InvocationListener) :void;
 
     // from Java interface WorldService

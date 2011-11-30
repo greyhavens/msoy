@@ -14,6 +14,7 @@ import com.threerings.msoy.client.MsoyClient;
 import com.threerings.msoy.data.Address;
 import com.threerings.msoy.data.Page;
 import com.threerings.msoy.item.data.all.MsoyItemType;
+import com.threerings.msoy.room.client.RoomView;
 import com.threerings.msoy.tutorial.client.TutorialItemBuilder;
 import com.threerings.msoy.tutorial.client.TutorialSequenceBuilder;
 
@@ -57,6 +58,13 @@ public class DjTutorial
                 return _ctx.getMsoyClient().getAddress() == null;
             })
             .onShow(clearArrows)
+            .queue();
+
+        step(seq.newSuggestion("6. You're done!"))
+            .onShow(function () :void {
+                // Tutorial complete, open the blast doors
+                _ctx.getWorldDirector().completeDjTutorial();
+            })
             .queue();
 
         seq.activate();

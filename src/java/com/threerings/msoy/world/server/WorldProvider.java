@@ -26,6 +26,12 @@ public interface WorldProvider extends InvocationProvider
         throws InvocationException;
 
     /**
+     * Handles a {@link WorldService#completeDjTutorial} request.
+     */
+    void completeDjTutorial (ClientObject caller, InvocationService.InvocationListener arg1)
+        throws InvocationException;
+
+    /**
      * Handles a {@link WorldService#ditchFollower} request.
      */
     void ditchFollower (ClientObject caller, int arg1, InvocationService.InvocationListener arg2)

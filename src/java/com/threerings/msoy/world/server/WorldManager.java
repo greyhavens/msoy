@@ -52,6 +52,7 @@ import com.threerings.msoy.notify.server.MsoyNotificationManager;
 import com.threerings.msoy.room.data.EntityMemories;
 import com.threerings.msoy.room.data.MemberInfo;
 import com.threerings.msoy.room.data.MsoySceneModel;
+import com.threerings.msoy.room.data.RoomCodes;
 import com.threerings.msoy.room.data.RoomObject;
 import com.threerings.msoy.room.server.MsoySceneRegistry;
 import com.threerings.msoy.room.server.persist.MemoriesRecord;
@@ -276,6 +277,38 @@ public class WorldManager
     {
         final MemberObject user = _locator.requireMember(caller);
         doSetAvatar(user, avatarItemId, listener);
+    }
+
+    @Override
+    public void completeDjTutorial (ClientObject caller,
+            InvocationService.InvocationListener listener)
+        throws InvocationException
+    {
+        final MemberObject user = _locator.requireMember(caller);
+
+        // Send a signal so the door to the group hall can show itself
+        PlaceManager pmgr = _placeReg.getPlaceManager(user.getPlaceOid());
+        if (pmgr != null) {
+            PlaceObject plobj = pmgr.getPlaceObject();
+            if (plobj instanceof RoomObject) {
+                plobj.postMessage(RoomCodes.SPRITE_SIGNAL, "dj_tutorial_complete", null);
+            }
+        }
+
+        // Change the player's home room to the group hall
+        if (user.theme != null) {
+            _invoker.postUnit(new PersistingUnit("updateHomeRoom", listener, "who", user.who()) {
+                int groupHome;
+                @Override public void invokePersistent () throws Exception {
+                    groupHome = _groupRepo.getHomeSceneId(user.theme.getGroupId());
+                    _memberRepo.setHomeSceneId(user.getMemberId(), groupHome);
+                }
+                @Override public void handleSuccess () {
+                    user.setHomeSceneId(groupHome);
+                    super.handleSuccess();
+                }
+            });
+        }
     }
 
     /**

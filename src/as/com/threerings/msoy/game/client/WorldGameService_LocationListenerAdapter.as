@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.game.client {
 
+import com.threerings.util.langBoolean;
+
 import com.threerings.presents.client.InvocationService_InvocationListener;
 
 /**

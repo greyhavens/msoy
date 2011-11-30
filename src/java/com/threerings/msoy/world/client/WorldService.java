@@ -78,4 +78,9 @@ public interface WorldService extends InvocationService
      * Set the avatar in use by this user.
      */
     void setAvatar (int avatarId, ConfirmListener listener);
+
+    /**
+     * Called when a new DJ player has finished the tutorial.
+     */
+    void completeDjTutorial (InvocationListener listener);
 }

@@ -108,6 +108,14 @@ public class WorldDirector extends BasicDirector
     }
 
     /**
+     * Notify the server that we've finished the tutorial.
+     */
+    public function completeDjTutorial () :void
+    {
+        _wsvc.completeDjTutorial(_wctx.listener());
+    }
+
+    /**
      * Request to go to the home of the specified entity.
      */
     protected function goToHome (ownerType :int, ownerId :int) :void

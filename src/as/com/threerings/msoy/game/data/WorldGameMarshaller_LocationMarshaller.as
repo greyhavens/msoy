@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.game.data {
 
+import com.threerings.util.langBoolean;
+
 import com.threerings.presents.data.InvocationMarshaller_ListenerMarshaller;
 
 import com.threerings.msoy.game.client.WorldGameService_LocationListener;
