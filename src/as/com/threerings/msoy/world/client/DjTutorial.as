@@ -162,7 +162,12 @@ public class DjTutorial
 
     protected function step (item :TutorialItemBuilder) :TutorialItemBuilder
     {
-        return item.buttonCloses(true);
+        var action :String = item.getId();
+        return item
+            .onShow(function () :void {
+                _ctx.getWorldController().trackEvent("tutorial", action);
+            })
+            .buttonCloses(true);
     }
 
     [Embed(source="../../../../../../../rsrc/media/arrows.swf", symbol="arrow_up")]

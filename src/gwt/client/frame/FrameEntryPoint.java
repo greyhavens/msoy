@@ -556,6 +556,11 @@ public class FrameEntryPoint
         });
     }
 
+    protected void trackEvent (String category, String action)
+    {
+        _analytics.trackEvent(category, action);
+    }
+
     protected void reportPageVisit (Pages page, Args args)
     {
         // convert the page to a url
@@ -607,10 +612,13 @@ public class FrameEntryPoint
         };
         $wnd.triggerFlashEvent = function (eventName, args) {
             entry.@client.frame.FrameEntryPoint::triggerEvent(Ljava/lang/String;Lcom/google/gwt/core/client/JavaScriptObject;)(eventName, args);
-        }
+        };
         $wnd.refreshDisplayName = function () {
             entry.@client.frame.FrameEntryPoint::refreshDisplayName()();
-        }
+        };
+        $wnd.trackEvent = function (category, action) {
+            entry.@client.frame.FrameEntryPoint::trackEvent(Ljava/lang/String;Ljava/lang/String;)(category, action);
+        };
     }-*/;
 
     /** MD5 hashes the supplied text and returns the hex encoded hash value. */

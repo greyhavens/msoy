@@ -26,4 +26,13 @@ public class Analytics
             // Om nom nom
         }
     }-*/;
+
+    // TODO(bruno): Support event values and labels
+    protected native boolean trackEvent (String category, String action) /*-{
+        try {
+            $wnd.top._gaq.push(["_trackEvent", category, action]);
+        } catch (_) {
+            // Om nom nom
+        }
+    }-*/;
 }

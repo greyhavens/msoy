@@ -1476,6 +1476,16 @@ public class WorldController extends MsoyController
         }
     }
 
+    public function trackEvent (category :String, action :String) :void
+    {
+        try {
+            if (ExternalInterface.available) {
+                ExternalInterface.call("trackEvent", category, action);
+            }
+        } catch (e :Error) {
+        }
+    }
+
     /**
      * Calls our GWT application and requests that the specified page be displayed.
      */

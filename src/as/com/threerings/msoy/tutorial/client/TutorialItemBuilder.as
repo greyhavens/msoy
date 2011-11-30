@@ -173,11 +173,15 @@ public class TutorialItemBuilder
     }
 
     /**
-     * Sets a function to be called when this item is shown
+     * Adds a function to be called when this item is shown.
      */
     public function onShow (onShow :Function) :TutorialItemBuilder
     {
-        _item.onShow = onShow;
+        var existing :Function = _item.onShow;
+        _item.onShow = (existing == null || onShow == null) ? onShow : function () :void {
+            existing();
+            onShow();
+        };
         return this;
     }
 
@@ -197,6 +201,11 @@ public class TutorialItemBuilder
         _item = null;
         _director = null;
         _sequenceBuilder = null;
+    }
+
+    public function getId () :String
+    {
+        return _item.id;
     }
 
     protected var _item :TutorialItem;
