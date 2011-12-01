@@ -695,6 +695,17 @@ public class RoomObjectView extends RoomView
      */
     protected function miniWillChange (event :ValueEvent) :void
     {
+        var minimized :Boolean = event.value;
+        if (minimized) {
+            if (_fringe == null) {
+                _fringe = new ShadowFringe();
+                _ctx.getTopPanel().getPlaceContainer().addOverlay(_fringe, 5);
+            }
+        } else if (_fringe != null) {
+            _ctx.getTopPanel().getPlaceContainer().removeOverlay(_fringe);
+            _fringe = null;
+        }
+
         relayout();
     }
 
@@ -1021,5 +1032,35 @@ public class RoomObjectView extends RoomView
 
     /** The currently shown spotlight effect, if any. */
     protected var _spotlight :Spotlight;
+
+    protected var _fringe :ShadowFringe;
 }
+}
+
+import flash.display.Bitmap;
+import flash.display.BitmapData;
+import flash.display.Shape;
+
+import com.threerings.msoy.client.PlaceLayer;
+
+class ShadowFringe extends Shape
+    implements PlaceLayer
+{
+    public function ShadowFringe ()
+    {
+        _pattern = Bitmap(new PATTERN()).bitmapData;
+    }
+
+    public function setPlaceSize (unscaledWidth :Number, unscaledHeight :Number) :void
+    {
+        graphics.clear();
+        graphics.beginBitmapFill(_pattern);
+        graphics.drawRect(unscaledWidth - _pattern.width, 0, _pattern.width, unscaledHeight);
+        graphics.endFill();
+    }
+
+    [Embed(source="../../../../../../../rsrc/media/fringe.png")]
+    protected static const PATTERN :Class;
+
+    protected var _pattern :BitmapData;
 }
