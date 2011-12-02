@@ -1009,7 +1009,7 @@ public class RoomManager extends SpotSceneManager
         if (update instanceof FurniUpdate.Add) {
             // if the scene is themed, make sure the item is OK to add
             int themeId = ((MsoyScene) _scene).getThemeId();
-            if (themeId != 0) {
+            if (themeId != 0 && !user.tokens.isSupport()) {
                 validateForTheme(themeId, _scene.getId(), ((FurniUpdate)update).data, listener, doUpdate);
                 return;
             }

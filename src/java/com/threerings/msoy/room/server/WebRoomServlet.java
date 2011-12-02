@@ -269,15 +269,20 @@ public class WebRoomServlet extends MsoyServiceServlet
             // frustrating thread bouncing.
             final ServiceWaiter<Void> waiter = new ServiceWaiter<Void>();
 
-            _sceneActions.flushUpdates(sceneId, new NodeRequestsListener<Void>() {
-                @Override public void requestsProcessed (NodeRequestsResult<Void> result) {
-                    _sceneLogic.validateAllTemplateFurni(groupId, sceneId, waiter);
-                }
-                @Override public void requestFailed (String cause) {
-                    // the flush failed, try the validation anyway
-                    _sceneLogic.validateAllTemplateFurni(groupId, sceneId, waiter);
-                }
-            });
+            if (mrec.isSupport()) {
+                // Allow support staff unrestricted template creation
+                waiter.requestCompleted(null);
+            } else {
+                _sceneActions.flushUpdates(sceneId, new NodeRequestsListener<Void>() {
+                    @Override public void requestsProcessed (NodeRequestsResult<Void> result) {
+                        _sceneLogic.validateAllTemplateFurni(groupId, sceneId, waiter);
+                    }
+                    @Override public void requestFailed (String cause) {
+                        // the flush failed, try the validation anyway
+                        _sceneLogic.validateAllTemplateFurni(groupId, sceneId, waiter);
+                    }
+                });
+            }
             try {
                 if (!waiter.waitForResponse()) {
                     throw new ServiceException(waiter.getError().getMessage());
