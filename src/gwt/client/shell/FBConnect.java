@@ -15,9 +15,8 @@ import client.shell.CShell;
 import client.shell.Session;
 
 /**
- * Handles communication with Facebook Connect. See the following site for more information:
- *
- * https://developers.facebook.com/
+ * Handles communication with Facebook Connect. WARNING: This references window.top for convenient
+ * use it inner frames, but means it will break if you try to use it in a canvas app.
  */
 public class FBConnect
 {
@@ -59,36 +58,36 @@ public class FBConnect
      */
     public native void requireSession (AsyncCallback<String> onReady) /*-{
         try {
-            $wnd.FB_RequireSessionCallback = function(uid) {
+            $wnd.top.FB_RequireSessionCallback = function (uid) {
                 onReady.@com.google.gwt.user.client.rpc.AsyncCallback::onSuccess(Ljava/lang/Object;)(uid);
             };
-            $wnd.FB_RequireSession();
+            $wnd.top.FB_RequireSession();
         } catch (e) {
             $wnd.console.log("FBConnect.requireSession failure " + e);
         }
     }-*/;
 
     protected static native String getAccessToken () /*-{
-        return $wnd.FB_LastResponse().accessToken;
+        return $wnd.top.FB_LastResponse().accessToken;
     }-*/;
 
     protected static native String getSignedRequest () /*-{
-        return $wnd.FB_LastResponse().signedRequest;
+        return $wnd.top.FB_LastResponse().signedRequest;
     }-*/;
 
     protected static native String getUserId () /*-{
-        return $wnd.FB_LastResponse().userID;
+        return $wnd.top.FB_LastResponse().userID;
     }-*/;
 
     protected native void logoff () /*-{
         try {
-            $wnd.FB_Logout();
+            $wnd.top.FB_Logout();
         } catch (e) {
             $wnd.console.log("FBConnect.logoff failure " + e);
         }
     }-*/;
 
-    protected static native String getKey () /*-{
-        return $wnd.FB_GetKey();
+    public static native String getKey () /*-{
+        return $wnd.top.FB_GetKey();
     }-*/;
 }

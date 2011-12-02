@@ -5,9 +5,11 @@ package client.landing;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Frame;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.SimplePanel;
 
+import client.shell.FBConnect;
 import client.shell.FBLogonPanel;
 import client.shell.LogonPanel;
 import client.shell.ShellMessages;
@@ -26,9 +28,19 @@ public class LandingDjPanel extends SimplePanel
         content.add(MsoyUI.createImage("/images/landing/monsterave/logo_big_white.png", "Logo"));
 
         // login box
-        FBLogonPanel fbLogon = new FBLogonPanel();
+        FBLogonPanel fbLogon = new FBLogonPanel("/images/account/fbconnect_big.png");
         fbLogon.setStyleName("Connect");
         content.add(fbLogon);
+
+        // https://developers.facebook.com/docs/reference/plugins/facepile/
+        String appId = FBConnect.getKey();
+        Frame facepile = new Frame("http://www.facebook.com/plugins/facepile.php?app_id=" + appId +
+            "&colorscheme=dark");
+        facepile.setStyleName("FacePile");
+        facepile.getElement().setAttribute("scrolling", "no");
+        facepile.getElement().setAttribute("frameborder", "0");
+        facepile.getElement().setAttribute("allowTransparency", "true");
+        content.add(facepile);
 
         // text and copyright
         FlowPanel footer = MsoyUI.createFlowPanel("Footer");

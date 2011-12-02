@@ -23,7 +23,12 @@ public class FBLogonPanel extends FlowPanel
 {
     public FBLogonPanel ()
     {
-        this.add(MsoyUI.createActionImage(FBCON_IMG, new ClickHandler() {
+        this("/images/account/fbconnect.png");
+    }
+
+    public FBLogonPanel (String img)
+    {
+        this.add(MsoyUI.createActionImage(img, new ClickHandler() {
             public void onClick (ClickEvent event) {
                 // TODO: display a little circular "pending" icon; turn off clickability
                 initiateFacebookLogon();
@@ -56,6 +61,4 @@ public class FBLogonPanel extends FlowPanel
     protected FBConnect _fbconnect = new FBConnect();
 
     protected static final WebUserServiceAsync _usersvc = GWT.create(WebUserService.class);
-
-    protected static final String FBCON_IMG = "/images/account/fbconnect.png";
 }
