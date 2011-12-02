@@ -1,0 +1,9 @@
+<datapack>  
+  <file name="_CONTENT" type="Blob" value="EnchantedDoor.swf"/>
+  <file name="DoorImage" 
+        info="Image of the door, animated swfs are ok"
+        type="DisplayObject" value="door.png"/>
+  <data name="TransitionSpeed" 
+        info="Speed which the door appears/disappears"
+        type="Number" min="5" max="50" value="10"/>
+</datapack>
