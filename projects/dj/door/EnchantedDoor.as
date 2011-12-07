@@ -187,7 +187,7 @@ public class EnchantedDoor extends Sprite
     protected var maskLayer:DisplayObject;
     protected var shadowLayer:*;
 
-    [Embed(source="door.png")]
+    [Embed(source="door.swf")]
     protected static const OPEN:Class;
     [Embed(source="mask.png")]
     protected static const MASK:Class;

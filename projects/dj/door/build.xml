@@ -1,0 +1,16 @@
+<project basedir=".">
+  <!-- defines our project name -->
+  <property name="app.name" value="EnchantedDoor"/>
+  <property name="app.type" value="toy"/>
+
+  <!-- if you wish to put your source in a subdirectory, uncomment this line -->
+  <!--<property name="app.source-dir" value="src"/>-->
+
+  <!-- if you wish to put your source in a package, uncomment this line -->
+  <!--<property name="app.package-dir" value="com.foo.bar"/>-->
+
+  <!-- Point $WHIRLED_HOME to your SDK. -->
+  <property environment="env" />
+  <property name="sdk.dir" value="${env.WHIRLED_HOME}" />
+  <import file="${sdk.dir}/etc/project-include.xml"/>
+</project>
