@@ -39,7 +39,6 @@ public class CustomCssServlet extends DefaultServlet
         if (cssMedia != null) {
             // 302 redirect to the CSS
             rsp.sendRedirect(cssMedia.getMediaPath());
-            System.out.println("======= Redirecting to: " + cssMedia.getMediaPath());
         } else {
             // Send an empty file
             rsp.getOutputStream().close();
