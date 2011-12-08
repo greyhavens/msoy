@@ -570,17 +570,25 @@ public class WebUserServlet extends MsoyServiceServlet
         throws ServiceException
     {
         String host = getThreadLocalRequest().getHeader("Host");
-        if (host != null) {
-            // Strip out the port
-            int idx = host.indexOf(':');
-            String domain = (idx >= 0) ? host.substring(0, idx) : host;
-
-            AppInfoRecord app = _appRepo.loadAppInfo(domain);
-            if (app != null) {
-                return new Embedding(app.clientMode, app.appId);
-            }
+        if (host == null) {
+            return null;
         }
-        return null;
+
+        // Strip out the port
+        int idx = host.indexOf(':');
+        String domain = (idx >= 0) ? host.substring(0, idx) : host;
+
+        // Avoid hitting the DB if this request is for the hard coded default
+        if (domain.equals(DeploymentConfig.serverHost)) {
+            return null;
+        }
+
+        AppInfoRecord app = _appRepo.loadAppInfo(domain);
+        if (app == null) {
+            return null;
+        }
+
+        return new Embedding(app.clientMode, app.appId);
     }
 
     protected void checkClientVersion (String clientVersion, String who)
