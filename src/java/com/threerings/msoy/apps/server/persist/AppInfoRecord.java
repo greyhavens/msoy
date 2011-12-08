@@ -7,11 +7,7 @@ import com.google.common.base.Function;
 
 import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistentRecord;
-import com.samskivert.depot.annotation.Column;
-import com.samskivert.depot.annotation.Entity;
-import com.samskivert.depot.annotation.GeneratedValue;
-import com.samskivert.depot.annotation.GenerationType;
-import com.samskivert.depot.annotation.Id;
+import com.samskivert.depot.annotation.*;
 import com.samskivert.depot.expression.ColumnExp;
 
 import com.threerings.msoy.apps.gwt.AppInfo;
@@ -29,12 +25,13 @@ public class AppInfoRecord extends PersistentRecord
     public static final ColumnExp<String> NAME = colexp(_R, "name");
     public static final ColumnExp<ClientMode> CLIENT_MODE = colexp(_R, "clientMode");
     public static final ColumnExp<Integer> GROUP_ID = colexp(_R, "groupId");
+    public static final ColumnExp<String> DOMAIN = colexp(_R, "domain");
     // AUTO-GENERATED: FIELDS END
 
     /**
      * Depot-inspected field regulating the update of the table's columns and migrations.
      */
-    public static final int SCHEMA_VERSION = 3;
+    public static final int SCHEMA_VERSION = 4;
 
     /**
      * Function to {@link Lists#transform} a record to a runtime instance.
@@ -60,6 +57,10 @@ public class AppInfoRecord extends PersistentRecord
     /** The Whirled group associated with this application, if any. */
     public int groupId;
 
+    /** The domain associated with this application, if any. */
+    @Index @Column(nullable=true)
+    public String domain;
+
     /**
      * Converts this record to a new runtime instance.
      */
@@ -70,6 +71,7 @@ public class AppInfoRecord extends PersistentRecord
         appInfo.name = name;
         appInfo.clientMode = clientMode;
         appInfo.groupId = groupId;
+        appInfo.domain = domain;
         return appInfo;
     }
 
@@ -81,6 +83,7 @@ public class AppInfoRecord extends PersistentRecord
         this.name = appInfo.name;
         this.clientMode = appInfo.clientMode;
         this.groupId = appInfo.groupId;
+        this.domain = (appInfo.domain.length() > 0) ? appInfo.domain : null;
     }
 
     // AUTO-GENERATED: METHODS START

@@ -4,7 +4,6 @@
 package com.threerings.msoy.web.gwt;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
-
 import com.threerings.msoy.data.all.LaunchConfig;
 import com.threerings.msoy.data.all.VisitorInfo;
 
@@ -24,14 +23,14 @@ public interface WebUserServiceAsync
     void getApp (int appId, AsyncCallback<WebUserService.AppResult> callback);
 
     /**
-     * The async version of {@link WebUserService#externalLogon}.
-     */
-    void externalLogon (String clientVersion, ExternalCreds creds, VisitorInfo vinfo, int expireDays, int appId, AsyncCallback<SessionData> callback);
-
-    /**
      * The async version of {@link WebUserService#logon}.
      */
     void logon (String clientVersion, String email, String password, int expireDays, AsyncCallback<SessionData> callback);
+
+    /**
+     * The async version of {@link WebUserService#externalLogon}.
+     */
+    void externalLogon (String clientVersion, ExternalCreds creds, VisitorInfo vinfo, int expireDays, int appId, AsyncCallback<SessionData> callback);
 
     /**
      * The async version of {@link WebUserService#validateSession}.
@@ -77,6 +76,11 @@ public interface WebUserServiceAsync
      * The async version of {@link WebUserService#resetPassword}.
      */
     void resetPassword (int memberId, String code, String newPassword, AsyncCallback<Boolean> callback);
+
+    /**
+     * The async version of {@link WebUserService#getEmbedding}.
+     */
+    void getEmbedding (AsyncCallback<Embedding> callback);
 
     /**
      * The async version of {@link WebUserService#configurePermaName}.

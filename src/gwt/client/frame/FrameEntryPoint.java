@@ -24,6 +24,7 @@ import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.facebook.gwt.FacebookService;
 import com.threerings.msoy.facebook.gwt.FacebookServiceAsync;
 import com.threerings.msoy.web.gwt.Args;
+import com.threerings.msoy.web.gwt.ClientMode;
 import com.threerings.msoy.web.gwt.CookieNames;
 import com.threerings.msoy.web.gwt.Embedding;
 import com.threerings.msoy.web.gwt.Invitation;
@@ -32,6 +33,8 @@ import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.SessionData;
 import com.threerings.msoy.web.gwt.WebMemberService;
 import com.threerings.msoy.web.gwt.WebMemberServiceAsync;
+import com.threerings.msoy.web.gwt.WebUserService;
+import com.threerings.msoy.web.gwt.WebUserServiceAsync;
 
 import client.frame.FrameNav.FrameId;
 import client.shell.CShell;
@@ -82,27 +85,20 @@ public class FrameEntryPoint
         History.addValueChangeHandler(this);
         _currentToken = History.getToken();
 
-        // assign our client mode and app id if the server gave them to us, otherwise use defaults
         _embedding = Embedding.extract(Args.fromHistory(_currentToken));
         CShell.log("Loading module", "embedding", _embedding);
 
-        // load up various JavaScript sources
-        ScriptSources.inject(_embedding.appId);
+        // Kick off the rest of the client after receiving an embedding mode from the server
+        _usersvc.getEmbedding(new InfoCallback<Embedding>() {
+            public void onSuccess (Embedding embedding) {
+                init(embedding);
+            }
+        });
 
         // set up the callbacks that our flash clients can call
         configureCallbacks();
 
         _themes = new ThemedStylesheets();
-
-        // if we're a brand new visitor, we might need to supply a entry vector since we know
-        // what the server can't know, i.e. the history token
-        Session.frameGetVisitorInfo();
-
-        // validate our session which will dispatch a didLogon or didLogoff
-        Session.validate();
-
-        // create our ...
-        _nav = new FrameNav(_embedding, this);
 
         // clear out the loading HTML so we can display a browser warning or load Whirled
         DOM.setInnerHTML(RootPanel.get(LOADING).getElement(), "");
@@ -449,6 +445,28 @@ public class FrameEntryPoint
         return _themes.getThemeId();
     }
 
+    protected void init (Embedding embedding)
+    {
+        // assign our client mode and app id if the server gave them to us, otherwise use defaults
+        if (embedding != null) {
+            CShell.log("Received new embedding", "embedding", embedding);
+            _embedding = embedding;
+        }
+
+        // load up various JavaScript sources
+        ScriptSources.inject(_embedding.appId);
+
+        // if we're a brand new visitor, we might need to supply a entry vector since we know
+        // what the server can't know, i.e. the history token
+        Session.frameGetVisitorInfo();
+
+        // validate our session which will dispatch a didLogon or didLogoff
+        Session.validate();
+
+        // create our ...
+        _nav = new FrameNav(_embedding, this);
+    }
+
     /**
      * Handles a variety of methods called by our iframed page.
      */
@@ -641,6 +659,7 @@ public class FrameEntryPoint
 
     protected static final WebMemberServiceAsync _membersvc = GWT.create(WebMemberService.class);
     protected static final FacebookServiceAsync _fbsvc = GWT.create(FacebookService.class);
+    protected static final WebUserServiceAsync _usersvc = GWT.create(WebUserService.class);
 
     // constants for our top-level elements
     protected static final String LOADING = "loading";

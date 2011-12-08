@@ -85,7 +85,9 @@ import com.threerings.msoy.server.util.MailSender;
 import com.threerings.msoy.web.gwt.AccountInfo;
 import com.threerings.msoy.web.gwt.BannedException;
 import com.threerings.msoy.web.gwt.CaptchaException;
+import com.threerings.msoy.web.gwt.ClientMode;
 import com.threerings.msoy.web.gwt.ConnectConfig;
+import com.threerings.msoy.web.gwt.Embedding;
 import com.threerings.msoy.web.gwt.ExternalCreds;
 import com.threerings.msoy.web.gwt.ExternalSiteId;
 import com.threerings.msoy.web.gwt.RegisterInfo;
@@ -561,6 +563,24 @@ public class WebUserServlet extends MsoyServiceServlet
         result.facebookAppId = fbinfo.fbUid;
         result.facebookApiKey = fbinfo.apiKey;
         return result;
+    }
+
+    @Override
+    public Embedding getEmbedding ()
+        throws ServiceException
+    {
+        String host = getThreadLocalRequest().getHeader("Host");
+        if (host != null) {
+            // Strip out the port
+            int idx = host.indexOf(':');
+            String domain = (idx >= 0) ? host.substring(0, idx) : host;
+
+            AppInfoRecord app = _appRepo.loadAppInfo(domain);
+            if (app != null) {
+                return new Embedding(app.clientMode, app.appId);
+            }
+        }
+        return null;
     }
 
     protected void checkClientVersion (String clientVersion, String who)

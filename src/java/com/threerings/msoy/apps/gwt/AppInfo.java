@@ -27,4 +27,7 @@ public class AppInfo
 
     /** The group associated with this app, if any. */
     public int groupId;
+
+    /** The domain name associated with this app, if any. */
+    public String domain;
 }

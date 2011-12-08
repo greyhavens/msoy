@@ -76,6 +76,9 @@ public class SessionData implements IsSerializable
     /** Optional data for displaying more progress information (facebook). */
     public Extra extra;
 
+    /** The optional embedding to force this client into. */
+    public Embedding embedding;
+
     /**
      * Creates and initializes an instance from supplied {@link #flatten}ed string.
      */

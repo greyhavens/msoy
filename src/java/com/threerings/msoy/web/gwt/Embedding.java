@@ -3,7 +3,10 @@
 
 package com.threerings.msoy.web.gwt;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
+
 public class Embedding
+    implements IsSerializable
 {
     /** The name of the token argument used to communicate the embedding. */
     public static final String ARG_NAME = "emb";
@@ -52,6 +55,10 @@ public class Embedding
     {
         this.mode = mode;
         this.appId = appId;
+    }
+
+    public Embedding ()
+    {
     }
 
     /**

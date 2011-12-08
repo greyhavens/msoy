@@ -7,6 +7,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.TextBox;
 
 import com.threerings.gwt.ui.NumberTextBox;
 
@@ -52,6 +53,13 @@ public class AppInfoEditorPanel extends EditorTable
         addRow(_msgs.editAppInfoGroupId(), groupId, new Command() {
             public void execute () {
                 info.groupId = groupId.getNumber().intValue();
+            }
+        });
+
+        final TextBox domain = MsoyUI.createTextBox(info.domain);
+        addRow(_msgs.editAppInfoDomain(), domain, new Command() {
+            public void execute () {
+                info.domain = domain.getValue();
             }
         });
 

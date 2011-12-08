@@ -52,17 +52,8 @@ public class MsoyPolicyServer extends PolicyServer
             }
         }
 
-        String publicHost;
-        try {
-            URL url = new URL(ServerConfig.getServerURL());
-            publicHost = url.getHost();
-        } catch (Exception e) {
-            log.warning("Failed to parse server_url " + e + ".");
-            publicHost = ServerConfig.serverHost;
-        }
-
         // call the other init (in our superclass)
-        return init(ServerConfig.socketPolicyPort, publicHost, serverPorts,
+        return init(ServerConfig.socketPolicyPort, "*", serverPorts,
             ServerConfig.gameServerPort);
     }
 

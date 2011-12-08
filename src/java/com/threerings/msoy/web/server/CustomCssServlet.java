@@ -46,5 +46,4 @@ public class CustomCssServlet extends DefaultServlet
     }
 
     @Inject protected ThemeRepository _themeRepo;
-
 }

@@ -13,6 +13,7 @@ import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.clause.OrderBy;
+import com.samskivert.depot.clause.Where;
 
 import com.threerings.presents.annotation.BlockingThread;
 
@@ -52,6 +53,14 @@ public class AppRepository extends DepotRepository
     public AppInfoRecord loadAppInfo (int appId)
     {
         return load(AppInfoRecord.getKey(appId));
+    }
+
+    /**
+     * Loads the app info for a given domain name.
+     */
+    public AppInfoRecord loadAppInfo (String domain)
+    {
+        return load(AppInfoRecord._R, new Where(AppInfoRecord.DOMAIN.eq(domain)));
     }
 
     /**

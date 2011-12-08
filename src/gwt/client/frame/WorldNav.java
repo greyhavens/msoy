@@ -272,7 +272,8 @@ public class WorldNav
         if (CShell.frame.getThemeId() != 0) {
             args += "&themeId=" + CShell.frame.getThemeId();
         }
-        if (CShell.getClientMode() == ClientMode.WHIRLED_DJ && !CShell.creds.djTutorialComplete) {
+        if (CShell.getClientMode() == ClientMode.WHIRLED_DJ &&
+                CShell.creds != null && !CShell.creds.djTutorialComplete) {
             args += "&djTutorial=true";
         }
 

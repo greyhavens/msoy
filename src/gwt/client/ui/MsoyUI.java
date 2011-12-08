@@ -268,6 +268,11 @@ public class MsoyUI
         return box;
     }
 
+    public static TextBox createTextBox (String text)
+    {
+        return createTextBox(text, -1, -1);
+    }
+
     /**
      * Creates a text area with all of the configuration that you're bound to want to do.
      */

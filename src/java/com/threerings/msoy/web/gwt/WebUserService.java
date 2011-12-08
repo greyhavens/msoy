@@ -199,4 +199,10 @@ public interface WebUserService extends RemoteService
      */
     AppResult getApp (int appId)
         throws ServiceException;
+
+    /**
+     * Get the forced embedding for this client, or null if no embedding should be forced.
+     */
+    Embedding getEmbedding ()
+        throws ServiceException;
 }
