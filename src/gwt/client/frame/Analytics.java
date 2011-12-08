@@ -13,24 +13,30 @@ import client.shell.CShell;
 /**
  * Handles communication with Google Analytics. This assumes Whirled has access to window.top and is
  * not being embedded in a 3rd party site (such as a FB canvas app).
+ *
+ * See https://code.google.com/apis/analytics/docs/gaJS/gaJSApi.html
  */
 public class Analytics
 {
-    /**
-     * Reports a page view to Google Analytics.
-     */
-    protected native boolean report (String page) /*-{
-        try {
-            $wnd.top._gaq.push(["_trackPageview", page]);
-        } catch (_) {
-            // Om nom nom
-        }
-    }-*/;
+    public void trackPageview (String page)
+    {
+        pushCommand("_trackPageview", page);
+    }
 
-    // TODO(bruno): Support event values and labels
-    protected native boolean trackEvent (String category, String action) /*-{
+    public void trackEvent (String category, String action)
+    {
+        pushCommand("_trackEvent", category, action);
+    }
+
+    public void setCustomVar (int index, String name, String value)
+    {
+        // Assume all custom vars should be visitor-level
+        pushCommand("_setCustomVar", index, name, value, 1);
+    }
+
+    protected native boolean pushCommand (Object... command) /*-{
         try {
-            $wnd.top._gaq.push(["_trackEvent", category, action]);
+            $wnd.top._gaq.push(command);
         } catch (_) {
             // Om nom nom
         }

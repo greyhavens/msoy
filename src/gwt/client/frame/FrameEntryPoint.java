@@ -453,6 +453,9 @@ public class FrameEntryPoint
             _embedding = embedding;
         }
 
+        // Allow user metrics to be segmented by app
+        _analytics.setCustomVar(1, "appId", ""+_embedding.appId);
+
         // load up various JavaScript sources
         ScriptSources.inject(_embedding.appId);
 
@@ -585,7 +588,7 @@ public class FrameEntryPoint
         String url = args.toPath(page);
 
         // report it to Google Analytics
-        _analytics.report(url);
+        _analytics.trackPageview(url);
 
         // and to Kontagent if we are in a Facebook mode
         if (_embedding.mode.isFacebook()) {
