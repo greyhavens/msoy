@@ -116,8 +116,6 @@ public class MsoyDefaultServlet extends DefaultServlet
                 log.info("Sending landing cookie", "value", cookie);
             }
         }
-
-        log.info("Hello there index.html");
     }
 
     // dependencies
