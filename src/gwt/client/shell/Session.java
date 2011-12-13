@@ -218,8 +218,8 @@ public class Session
             }
         };
 
-        _usersvc.validateSession(
-            DeploymentConfig.version, token, 1, CShell.getAppId(), onValidate);
+        _usersvc.validateSession(DeploymentConfig.version, token,
+            WebUserService.SESSION_DAYS, CShell.getAppId(), onValidate);
     }
 
     protected static VisitorInfo _visitor;
