@@ -525,9 +525,16 @@ public class WebUserServlet extends MsoyServiceServlet
         throws ServiceException
     {
         MemberRecord mrec = requireAuthedUser();
-        _mailer.sendTemplateEmail(By.HUMAN, mrec.accountName, ServerConfig.getFromAddress(),
-            "deleteAccount", "name", mrec.name, "code", generateDeleteSecret(mrec),
-            "server_url", DeploymentConfig.serverURL);
+
+        // If this is a development build, skip the confirmation email and go ahead and delete
+        if (DeploymentConfig.devDeployment) {
+            _memberLogic.deleteMembers(Collections.singletonList(mrec.memberId));
+
+        } else {
+            _mailer.sendTemplateEmail(By.HUMAN, mrec.accountName, ServerConfig.getFromAddress(),
+                "deleteAccount", "name", mrec.name, "code", generateDeleteSecret(mrec),
+                "server_url", DeploymentConfig.serverURL);
+        }
     }
 
     // from interface WebUserService

@@ -29,6 +29,7 @@ import com.threerings.gwt.ui.EnterClickAdapter;
 import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.data.all.CharityInfo;
+import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.gwt.AccountInfo;
 import com.threerings.msoy.web.gwt.ExternalSiteId;
@@ -275,7 +276,11 @@ public class EditAccountPanel extends FlowPanel
         new ClickCallback<Void>(send) {
             protected boolean callService () {
                 _usersvc.requestAccountDeletion(this);
-                MsoyUI.info(_msgs.deleteRequestSent());
+                if (DeploymentConfig.devDeployment) {
+                    CShell.frame.logoff();
+                } else {
+                    MsoyUI.info(_msgs.deleteRequestSent());
+                }
                 return true;
             }
             protected boolean gotResult (Void result) {
