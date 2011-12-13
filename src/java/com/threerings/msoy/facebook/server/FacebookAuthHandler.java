@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.facebook.server;
 
+import java.io.IOException;
 import java.sql.Date;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -18,6 +19,8 @@ import com.google.inject.Singleton;
 
 import com.samskivert.util.StringUtil;
 
+import com.threerings.orth.data.MediaDescSize;
+
 import com.threerings.web.gwt.ServiceException;
 
 import com.threerings.msoy.profile.gwt.Profile;
@@ -25,6 +28,9 @@ import com.threerings.msoy.server.ExternalAuthHandler;
 import com.threerings.msoy.web.gwt.ExternalCreds;
 import com.threerings.msoy.web.gwt.FacebookCreds;
 import com.threerings.msoy.web.gwt.ServiceCodes;
+import com.threerings.msoy.web.server.RemoteUploadFile;
+import com.threerings.msoy.web.server.UploadUtil;
+import com.threerings.msoy.web.server.UploadUtil.PublishingResult;
 
 import static com.threerings.msoy.Log.log;
 
@@ -64,7 +70,7 @@ public class FacebookAuthHandler extends ExternalAuthHandler
 
         Info info = new Info();
         try {
-            // Lookup information from this user's facebook profile
+            // Lookup information from this user's Facebook profile
             User user = client.fetchObject("me", User.class);
             info.displayName = user.getFirstName();
             if ("male".equalsIgnoreCase(user.getGender())) {
@@ -80,7 +86,14 @@ public class FacebookAuthHandler extends ExternalAuthHandler
             info.profile.birthday = bday != null ? new Date(bday.getTime()) : null;
             info.friendIds = _faceLogic.fetchFriends(client);
 
-            // TODO(bruno): Download their FB photo and make it their ProfileRecord photo
+            try {
+                PublishingResult result = UploadUtil.publishThumbnail(new RemoteUploadFile(
+                    "http://graph.facebook.com/" + user.getId() + "/picture"));
+                log.info("Got photo", "media", result.getMediaDesc());
+                info.profile.setPhoto(result.getMediaDesc());
+            } catch (IOException e) {
+                log.warning("Failed to copy profile photo from Facebook", e);
+            }
 
             return info;
 

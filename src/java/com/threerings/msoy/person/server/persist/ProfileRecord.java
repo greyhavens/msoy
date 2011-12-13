@@ -30,6 +30,8 @@ import com.threerings.msoy.server.MediaDescFactory;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.web.gwt.MemberCard;
 
+import static com.threerings.msoy.Log.log;
+
 /**
  * Contains a member's profile data.
  */

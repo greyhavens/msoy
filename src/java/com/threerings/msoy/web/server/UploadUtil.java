@@ -29,6 +29,7 @@ import org.apache.commons.io.output.ByteArrayOutputStream;
 
 import com.samskivert.util.StringUtil;
 
+import com.threerings.orth.data.MediaDesc;
 import com.threerings.orth.data.MediaDescSize;
 
 import com.threerings.s3.client.MediaType;
@@ -38,6 +39,7 @@ import com.threerings.s3.client.S3FileObject;
 import com.threerings.s3.client.S3ServerException;
 import com.threerings.s3.client.acl.AccessControlList;
 
+import com.threerings.msoy.data.all.HashMediaDesc;
 import com.threerings.msoy.data.all.MediaDescUtil;
 import com.threerings.msoy.data.all.MediaMimeTypes;
 import com.threerings.msoy.item.data.all.Item;
@@ -243,7 +245,7 @@ public class UploadUtil
      * Intermediate representation of the results of publishing an image. Used to convert the
      * results into various formats required by different consumers.
      */
-    protected static class PublishingResult
+    public static class PublishingResult
     {
         public final Integer thumbSize;
         public final Rectangle originalSize;
@@ -274,12 +276,12 @@ public class UploadUtil
          * Convert the result into a MediaInfo object.
          */
         public MediaInfo getMediaInfo () {
-            int constraintSize = thumbSize == null ?
-                MediaDescSize.PREVIEW_SIZE : thumbSize.intValue();
-            byte constraint = MediaDescUtil.computeConstraint(
-                constraintSize, originalSize.width, originalSize.height);
-            return new MediaInfo(digester.hexHash(), mimeType, constraint, finalSize.width,
+            return new MediaInfo(digester.hexHash(), mimeType, getConstraint(), finalSize.width,
                 finalSize.height);
+        }
+
+        public MediaDesc getMediaDesc () {
+            return new HashMediaDesc(digester.binaryHash(), mimeType, getConstraint());
         }
 
         /**
@@ -287,6 +289,14 @@ public class UploadUtil
          */
         public SnapshotInfo getSnapshotInfo () {
             return new SnapshotInfo(digester.binaryHash(), mimeType);
+        }
+
+        protected byte getConstraint ()
+        {
+            int constraintSize = thumbSize == null ?
+                MediaDescSize.PREVIEW_SIZE : thumbSize.intValue();
+            return MediaDescUtil.computeConstraint(
+                constraintSize, originalSize.width, originalSize.height);
         }
     }
 
@@ -501,6 +511,16 @@ public class UploadUtil
         }
 
         return publishOriginalSize(thumbSize, uploadFile, original);
+    }
+
+    /**
+     * Shortcut for uploading a thumbnail sized image, resizing if necessary.
+     */
+    public static PublishingResult publishThumbnail (UploadFile uploadFile)
+        throws IOException
+    {
+        return publishImage(MediaDescSize.THUMBNAIL_SIZE, uploadFile,
+            uploadFile.getMimeType(), THUMBNAIL_IMAGE_FORMAT);
     }
 
     /**

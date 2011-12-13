@@ -210,16 +210,8 @@ public class AccountLogic
         AccountData data = new AccountData(true, email, "", displayName, vinfo, themeId, affiliate);
         data.exSite = exSite;
         data.exAuthUserId = exAuthUserId;
-        // TODO: import more information as long as it is not a privacy violation
-        if (profile != null) {
-            if (profile.birthday != null) {
-                data.birthdayYMD = ProfileRecord.toDateVec(profile.birthday);
-            }
-            data.realName = profile.realName;
-            data.location = profile.location;
-        }
 
-        MemberRecord member = createAccount(data);
+        MemberRecord member = createAccount(data, profile);
         // TODO(bruno): Do this for username/password logins too if we ever have them
         if (themeId != 0) {
             // Give them a transient home room
@@ -383,22 +375,26 @@ public class AccountLogic
     /**
      * Creates an account and profile record, with some validation.
      */
-    protected MemberRecord createAccount (AccountData data)
+    protected MemberRecord createAccount (AccountData data, ProfileRecord prec)
         throws ServiceException
     {
         validateRegistrationInfo(data.birthdayYMD, data.email, data.displayName);
 
         // attempt to create the member record (and other bits)
-        final MemberRecord mrec = createMember(data);
+        MemberRecord mrec = createMember(data);
 
         // store the user's birthday and realname in their profile
-        ProfileRecord prec = new ProfileRecord();
+        if (prec == null) {
+            prec = new ProfileRecord();
+            prec.birthday = (data.birthdayYMD != null) ?
+                ProfileRecord.fromDateVec(data.birthdayYMD) : null;
+            prec.realName = (data.realName != null) ? data.realName : "";
+            prec.location = (data.location != null) ? data.location : "";
+        }
         prec.memberId = mrec.memberId;
-        prec.birthday = (data.birthdayYMD != null) ?
-            ProfileRecord.fromDateVec(data.birthdayYMD) : null;
-        prec.realName = (data.realName != null) ? data.realName : "";
-        prec.location = (data.location != null) ? data.location : "";
+
         try {
+            log.info("Storing profile with photo", "photo", prec.photoHash);
             _profileRepo.storeProfile(prec);
         } catch (Exception e) {
             log.warning("Failed to create initial profile", "prec", prec, e);
@@ -406,6 +402,12 @@ public class AccountLogic
         }
 
         return mrec;
+    }
+
+    protected MemberRecord createAccount (AccountData data)
+        throws ServiceException
+    {
+        return createAccount(data, null);
     }
 
     /**
