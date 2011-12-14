@@ -203,6 +203,7 @@ public class CommentPanel extends MessagePanel
         MemberCard card = new MemberCard();
         card.name = _comment.commentor;
         card.photo = _comment.photo;
+        card.role = _comment.role;
 
         if (_parent.shouldEmphasize(_comment)) {
             addStyleName("emphasized");

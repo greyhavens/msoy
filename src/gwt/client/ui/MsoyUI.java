@@ -557,14 +557,10 @@ public class MsoyUI
     {
         // subscriber is special
         if (role == WebCreds.Role.SUBSCRIBER) {
-            ClickHandler upsellHandler = Link.createHandler(Pages.BILLING, "subscribe");
-            Image star = MsoyUI.createInlineImage("/images/ui/clubwhirled.png");
-            star.addClickHandler(upsellHandler);
-            star.addStyleName("actionLabel");
             InlineLabel label = new InlineLabel(_cmsgs.roleSubscriber());
-            label.addClickHandler(upsellHandler);
+            label.addClickHandler(Link.createHandler(Pages.BILLING, "subscribe"));
             label.addStyleName("actionLabel");
-            return createFlowPanel("roleLabel", star, label);
+            return createFlowPanel("roleLabel", createRoleIcon(role), label);
         }
 
         String roleName;
@@ -584,6 +580,27 @@ public class MsoyUI
             break;
         }
         return createLabel(roleName, "roleLabel");
+    }
+
+    /**
+     * Creates an icon for the specified role, or null if we don't have one.
+     */
+    public static Widget createRoleIcon (WebCreds.Role role)
+    {
+        Image icon = null;
+        switch (role) {
+        case SUBSCRIBER:
+            icon = new Image();
+            icon.addClickHandler(Link.createHandler(Pages.BILLING, "subscribe"));
+            icon.addStyleName("clubWhirledIcon");
+            break;
+        }
+        if (icon != null) {
+            // Apply common styles
+            icon.addStyleName("roleIcon");
+            icon.addStyleName("actionLabel");
+        }
+        return icon;
     }
 
     /**

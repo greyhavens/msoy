@@ -84,6 +84,7 @@ public class CommentRecord extends PersistentRecord
         if (card != null) {
             comment.commentor = card.name;
             comment.photo = card.photo;
+            comment.role = card.role;
         }
         comment.posted = posted.getTime();
         if (replyTo != null) {

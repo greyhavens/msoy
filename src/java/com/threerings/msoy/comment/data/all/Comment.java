@@ -14,6 +14,7 @@ import com.threerings.msoy.comment.data.all.CommentType;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.gwt.Activity;
 import com.threerings.msoy.web.gwt.MemberCard;
+import com.threerings.msoy.web.gwt.WebCreds.Role;
 
 /**
  * Contains runtime data for a comment made by a member on something.
@@ -48,6 +49,9 @@ public class Comment
 
     /** The member's profile photo (or the default). */
     public MediaDesc photo = MemberCard.DEFAULT_PHOTO;
+
+    /** The member's role (subscriber status) on Whirled. */
+    public Role role;
 
     /** The entity this comment was posted to. */
     public int entityId;

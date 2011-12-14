@@ -1042,6 +1042,18 @@ img, embed, applet, object {
   text-align: center;
 }
 
+.roleIcon {
+  width: 15px;
+  height: 15px;
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 4px;
+}
+
+.clubWhirledIcon {
+  background: url(/images/ui/clubwhirled.png);
+}
+
 /** MessagePanel styles */
 .messagePanel .Photo {
   background: #EDEDED;

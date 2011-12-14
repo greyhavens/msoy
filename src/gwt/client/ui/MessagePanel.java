@@ -44,8 +44,9 @@ public class MessagePanel extends FlexTable
         }
 
         Widget box = getThumbBox(poster);
+        boolean showRoleCaption = shouldShowRoleCaption();
         if (box != null) {
-            if (shouldShowRoleCaption()) {
+            if (showRoleCaption) {
                 box = MsoyUI.createFlowPanel("roleBox", box, MsoyUI.createRoleLabel(poster.role));
             }
             setWidget(0, 0, box);
@@ -66,6 +67,13 @@ public class MessagePanel extends FlexTable
             info.add(icon);
         }
 
+        if (!showRoleCaption) {
+            // If we shouldn't show the role caption, show the icon instead!
+            Widget roleIcon = MsoyUI.createRoleIcon(poster.role);
+            if (roleIcon != null) {
+                info.add(roleIcon);
+            }
+        }
         info.add(Link.create(poster.name.toString(), "Author",
                              Pages.PEOPLE, ""+poster.name.getId()));
         addAuthorInfo(info);
