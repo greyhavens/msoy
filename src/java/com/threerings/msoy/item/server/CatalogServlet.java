@@ -397,7 +397,7 @@ public class CatalogServlet extends MsoyServiceServlet
 
         // finally convert the listing to a runtime record
         CatalogListing listing = record.toListing();
-        listing.detail.creator = _memberRepo.loadMemberName(record.item.creatorId);
+        listing.detail.creator = _memberRepo.loadMemberCard(record.item.creatorId, false);
         listing.detail.memberItemInfo = _itemLogic.getMemberItemInfo(mrec, record.item.toItem());
         if (forDisplay) {
             listing.detail.themes = _itemLogic.loadItemStamps(

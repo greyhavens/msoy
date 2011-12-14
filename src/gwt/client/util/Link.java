@@ -24,6 +24,7 @@ import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.MsoyItemType;
 import com.threerings.msoy.web.gwt.Args;
+import com.threerings.msoy.web.gwt.MemberCard;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.shell.CShell;
@@ -75,6 +76,19 @@ public class Link
     public static Widget memberView (MemberName name)
     {
         return create(name.toString(), Pages.PEOPLE, name.getId());
+    }
+
+    /**
+     * Returns link that displays the details of a given member along with their subscriber status.
+     */
+    public static Widget memberView (MemberCard card)
+    {
+        Widget name = memberView(card.name);
+        Widget icon = MsoyUI.createRoleIcon(card.role);
+        if (icon == null) {
+            return name;
+        }
+        return MsoyUI.createFlowPanel("inline", icon, name);
     }
 
     /**

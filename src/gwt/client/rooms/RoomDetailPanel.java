@@ -102,10 +102,10 @@ public class RoomDetailPanel extends SmartTable
 
         if (detail.owner instanceof MemberName) {
             MemberName name = (MemberName)detail.owner;
-            _bits.add(Link.memberView(name.toString(), name.getId()));
+            _bits.add(Link.memberView(name));
         } else if (detail.owner instanceof GroupName) {
             GroupName name = (GroupName)detail.owner;
-            _bits.add(Link.groupView(name.toString(), name.getGroupId()));
+            _bits.add(Link.groupView(name));
         }
         if (CShell.isSupport() || detail.mayManage) {
             _bits.add(_themeBit = new FlowPanel());

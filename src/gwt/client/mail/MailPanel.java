@@ -193,7 +193,7 @@ public class MailPanel extends FlowPanel
                 name = MsoyUI.createLabel("<unknown>", null);
             } else {
                 photo = convo.other.photo;
-                name = Link.memberView(convo.other.name);
+                name = Link.memberView(convo.other);
             }
 
             setWidget(0, 1, new ThumbBox(photo, MediaDescSize.HALF_THUMBNAIL_SIZE), 1, "Photo");

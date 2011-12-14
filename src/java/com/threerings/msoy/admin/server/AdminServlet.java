@@ -95,6 +95,7 @@ import com.threerings.msoy.server.persist.PromotionRepository;
 import com.threerings.msoy.server.persist.SubscriptionRepository;
 import com.threerings.msoy.underwire.server.SupportLogic;
 import com.threerings.msoy.web.gwt.Contest;
+import com.threerings.msoy.web.gwt.MemberCard;
 import com.threerings.msoy.web.gwt.Promotion;
 import com.threerings.msoy.web.gwt.ServiceCodes;
 import com.threerings.msoy.web.gwt.WebCreds;
@@ -328,7 +329,8 @@ public class AdminServlet extends MsoyServiceServlet
 
         // backfill the creator names
         for (ItemDetail detail : result.items.values()) {
-            detail.creator = result.memberNames.get(detail.item.creatorId);
+            detail.creator = new MemberCard();
+            detail.creator.name = result.memberNames.get(detail.item.creatorId);
         }
 
         return result;

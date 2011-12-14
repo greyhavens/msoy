@@ -179,7 +179,7 @@ public class ConvoPanel extends FlowPanel
             getFlexCellFormatter().setVerticalAlignment(0, 0, HasAlignment.ALIGN_TOP);
 
             FlowPanel info = new FlowPanel();
-            info.add(Link.memberView(msg.author.name));
+            info.add(Link.memberView(msg.author));
             info.add(MsoyUI.createLabel(DateUtil.formatDateTime(msg.sent), "Sent"));
             setWidget(0, 1, info);
             getFlexCellFormatter().setWidth(0, 1, "150px");

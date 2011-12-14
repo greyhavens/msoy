@@ -137,8 +137,7 @@ public class GroupDetailPanel extends FlowPanel
         established.add(new InlineLabel(_msgs.groupEst(DateUtil.formatDate(_group.creationDate)),
             false, false, true));
         established.add(new InlineLabel(_cmsgs.creatorBy(), false, false, true));
-        Widget creator = Link.memberView(_detail.creator.toString(),
-            _detail.creator.getId());
+        Widget creator = Link.memberView(_detail.creator);
         creator.addStyleName("Creator");
         established.add(creator);
         titleBox.add(established);
@@ -399,8 +398,7 @@ public class GroupDetailPanel extends FlowPanel
                     desc = "";
                 }
                 members.setHTML(ii * 2, 1, desc, 1, "Manager");
-                SimplePanel name = MsoyUI.createSimplePanel(Link.memberView(""
-                    + member.name, member.name.getId()), "Name");
+                SimplePanel name = MsoyUI.createSimplePanel(Link.memberView(member), "Name");
                 members.setWidget((ii * 2) + 1, 0, name);
             }
 

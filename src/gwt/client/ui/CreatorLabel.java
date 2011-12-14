@@ -5,11 +5,13 @@ package client.ui;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.InlineLabel;
 
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.web.gwt.MemberCard;
 
 import client.shell.ShellMessages;
 import client.util.Link;
@@ -39,16 +41,24 @@ public class CreatorLabel extends FlowPanel
 
     public void setMember (MemberName name)
     {
-        clear();
-        add(new InlineLabel(_cmsgs.creatorBy() + " "));
-        add(Link.memberView(name.toString(), name.getId()));
+        setBy(Link.memberView(name));
     }
 
-    public void setBrand (GroupName name)
+    public void setMember (MemberCard card)
+    {
+        setBy(Link.memberView(card));
+    }
+
+    public void setBrand (GroupName group)
+    {
+        setBy(Link.groupView(group));
+    }
+
+    protected void setBy (Widget link)
     {
         clear();
         add(new InlineLabel(_cmsgs.creatorBy() + " "));
-        add(Link.groupView(name.toString(), name.getGroupId()));
+        add(link);
     }
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);

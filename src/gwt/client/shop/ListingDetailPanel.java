@@ -290,7 +290,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
     protected boolean mayManage ()
     {
         if (CShell.isSupport() ||
-                (Theme.isLive() && _detail.creator.getId() == CShell.getMemberId())) {
+                (Theme.isLive() && _detail.creator.name.getId() == CShell.getMemberId())) {
             return true;
         }
         if (_listing.brand != null) {

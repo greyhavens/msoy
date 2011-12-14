@@ -560,7 +560,7 @@ public class MsoyUI
             InlineLabel label = new InlineLabel(_cmsgs.roleSubscriber());
             label.addClickHandler(Link.createHandler(Pages.BILLING, "subscribe"));
             label.addStyleName("actionLabel");
-            return createFlowPanel("roleLabel", createRoleIcon(role), label);
+            return createFlowPanel("roleLabel", label);
         }
 
         String roleName;
@@ -587,10 +587,10 @@ public class MsoyUI
      */
     public static Widget createRoleIcon (WebCreds.Role role)
     {
-        InlineLabel icon = null;
+        Label icon = null;
         switch (role) {
         case SUBSCRIBER:
-            icon = new InlineLabel();
+            icon = new Label();
             icon.addClickHandler(Link.createHandler(Pages.BILLING, "subscribe"));
             icon.addStyleName("clubWhirledIcon");
             break;

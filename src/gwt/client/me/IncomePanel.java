@@ -35,8 +35,7 @@ public class IncomePanel extends MoneyPanel
         row.add(income);
 
         if (CShell.isSupport() && entry.referenceMemberName != null) {
-            row.add(Link.memberView(entry.referenceMemberName.toString(),
-                entry.referenceMemberName.getId()));
+            row.add(Link.memberView(entry.referenceMemberName));
         }
     }
 

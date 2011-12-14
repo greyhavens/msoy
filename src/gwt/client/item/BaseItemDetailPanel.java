@@ -28,6 +28,8 @@ import com.threerings.gwt.ui.Popups;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
+import com.threerings.orth.data.MediaDescSize;
+
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.RatingHistoryResult;
 import com.threerings.msoy.data.all.RatingResult;
@@ -54,6 +56,7 @@ import client.ui.Rating.RateService;
 import client.ui.Rating;
 import client.ui.RoundBox;
 import client.ui.StyledTabPanel;
+import client.ui.ThumbBox;
 import client.util.ClickCallback;
 import client.util.FlashClients;
 import client.util.InfoCallback;
@@ -181,17 +184,21 @@ public abstract class BaseItemDetailPanel extends SmartTable
     protected void addUpperDetails ()
     {
         // set up our detail bits
-        _details.add(_creator = new CreatorLabel());
+        HorizontalPanel row = new HorizontalPanel();
+        row.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
+        row.add(ThumbBox.fromCard(_detail.creator, MediaDescSize.HALF_THUMBNAIL_SIZE));
+        row.add(_creator = new CreatorLabel());
         _creator.setMember(_detail.creator);
+        _details.add(row);
 
         // add a link to the creator's shop
         _creator.add(MsoyUI.createHTML("&nbsp;", "inline"));
         CatalogQuery query = new CatalogQuery();
         query.itemType = _detail.item.getType();
-        query.creatorId = _detail.creator.getId();
+        query.creatorId = _detail.creator.name.getId();
         Widget bshop = Link.create(_imsgs.browseCatalogFor(), Pages.SHOP,
                                    ShopUtil.composeArgs(query, 0));
-        bshop.setTitle(_imsgs.browseCatalogTip(_detail.creator.toString()));
+        bshop.setTitle(_imsgs.browseCatalogTip(_detail.creator.name.toString()));
         _creator.add(bshop);
     }
 

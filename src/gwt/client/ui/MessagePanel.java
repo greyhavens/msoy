@@ -67,15 +67,9 @@ public class MessagePanel extends FlexTable
             info.add(icon);
         }
 
-        if (!showRoleCaption) {
-            // If we shouldn't show the role caption, show the icon instead!
-            Widget roleIcon = MsoyUI.createRoleIcon(poster.role);
-            if (roleIcon != null) {
-                info.add(roleIcon);
-            }
-        }
-        info.add(Link.create(poster.name.toString(), "Author",
-                             Pages.PEOPLE, ""+poster.name.getId()));
+        Widget name = Link.memberView(poster);
+        name.addStyleName("Author");
+        info.add(name);
         addAuthorInfo(info);
 
         // TODO: switch to "XX days/minutes ago"

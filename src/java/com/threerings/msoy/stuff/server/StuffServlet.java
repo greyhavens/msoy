@@ -306,9 +306,7 @@ public class StuffServlet extends MsoyServiceServlet
         ItemDetail detail = new ItemDetail();
         detail.item = record.toItem();
         setThemeAttribute(mrec, detail.item);
-        detail.creator = ((mrec != null) && (record.creatorId == mrec.memberId)) ?
-            mrec.getName() : // shortcut for items we created
-            _memberRepo.loadMemberName(record.creatorId); // normal lookup
+        detail.creator = _memberRepo.loadMemberCard(record.creatorId, false);
 
         // fill in the themes for this item, or its master copy if it's a clone
         detail.themes = _itemLogic.loadItemStamps(

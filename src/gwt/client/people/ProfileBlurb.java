@@ -109,8 +109,18 @@ public class ProfileBlurb extends Blurb
 
         // create the info section with their name, a/s/l, etc.
         SmartTable info = new SmartTable("Info", 0, 5);
-        info.addText(_name.toString(), 1, "Name");
-        info.getFlexCellFormatter().setVerticalAlignment(0, 0, HasAlignment.ALIGN_TOP);
+        Widget icon = MsoyUI.createRoleIcon(_profile.role);
+        Widget name = MsoyUI.createInlineLabel(_name.toString(), "Name");
+        if (icon != null) {
+            HorizontalPanel hbox = new HorizontalPanel();
+            hbox.setVerticalAlignment(HasAlignment.ALIGN_MIDDLE);
+            hbox.add(icon);
+            hbox.add(name);
+            info.addWidget(hbox, 1);
+        } else {
+            info.addWidget(name, 1);
+        }
+        // info.getFlexCellFormatter().setVerticalAlignment(0, 0, HasAlignment.ALIGN_TOP);
         if (!StringUtil.isBlank(_profile.headline)) {
             info.addText(_profile.headline, 1, "Status");
         }

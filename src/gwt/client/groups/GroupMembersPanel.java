@@ -134,7 +134,7 @@ public class GroupMembersPanel extends PagedGrid<GroupMemberCard>
             int mid = name.getId();
             setWidget(0, 0, new ThumbBox(card.photo, Pages.PEOPLE, ""+mid), 1, "Photo");
             getFlexCellFormatter().setRowSpan(0, 0, 3);
-            setWidget(0, 1, Link.memberView(""+name, mid), 1, "Name");
+            setWidget(0, 1, Link.memberView(card), 1, "Name");
             String rankStr = card.rank == Rank.MANAGER ? "Manager" : "";
             setText(1, 0, rankStr, 1, "tipLabel");
             setWidget(2, 0, new MemberStatusLabel(card), 2);

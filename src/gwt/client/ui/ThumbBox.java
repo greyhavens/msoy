@@ -10,6 +10,7 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.threerings.orth.data.MediaDesc;
 import com.threerings.orth.data.MediaDescSize;
 
+import com.threerings.msoy.web.gwt.MemberCard;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.util.Link;
@@ -48,5 +49,15 @@ public class ThumbBox extends SimplePanel
         setHeight(height + "px");
         DOM.setStyleAttribute(getElement(), "overflow", "hidden");
         add(MediaUtil.createMediaView(desc, width, height, onClick));
+    }
+
+    public static ThumbBox fromCard (MemberCard card, int size)
+    {
+        return new ThumbBox(card.photo, size, Pages.PEOPLE, ""+card.name.getId());
+    }
+
+    public static ThumbBox fromCard (MemberCard card)
+    {
+        return fromCard(card, MediaDescSize.THUMBNAIL_SIZE);
     }
 }
