@@ -962,6 +962,11 @@ img, embed, applet, object {
   border-bottom: 1px solid #e0e0e0;
 }
 
+.CommentsPanel .messagePanel.subscriberMessage {
+  background: #f6f6e6;
+  border-bottom: 1px solid #e6e6a0;
+}
+
 .CommentsPanel .messagePanel .Photo {
   padding: 1px;
   background: none;
@@ -1046,7 +1051,7 @@ img, embed, applet, object {
   width: 15px;
   height: 15px;
   display: inline-block;
-  vertical-align: middle;
+  vertical-align: text-bottom;
   margin-right: 4px;
 }
 

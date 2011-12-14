@@ -587,10 +587,10 @@ public class MsoyUI
      */
     public static Widget createRoleIcon (WebCreds.Role role)
     {
-        Image icon = null;
+        InlineLabel icon = null;
         switch (role) {
         case SUBSCRIBER:
-            icon = new Image();
+            icon = new InlineLabel();
             icon.addClickHandler(Link.createHandler(Pages.BILLING, "subscribe"));
             icon.addStyleName("clubWhirledIcon");
             break;

@@ -23,6 +23,7 @@ import com.threerings.gwt.ui.InlinePanel;
 
 import com.threerings.msoy.comment.data.all.Comment;
 import com.threerings.msoy.web.gwt.MemberCard;
+import com.threerings.msoy.web.gwt.WebCreds.Role;
 
 import client.images.msgs.MsgsImages;
 import client.shell.CShell;
@@ -209,6 +210,12 @@ public class CommentPanel extends MessagePanel
             addStyleName("emphasized");
         } else {
             removeStyleName("emphasized");
+        }
+
+        if (card.role == Role.SUBSCRIBER) {
+            addStyleName("subscriberMessage");
+        } else {
+            removeStyleName("subscriberMessage");
         }
 
         if (_displayed) {
