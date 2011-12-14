@@ -28,8 +28,6 @@ import com.threerings.gwt.ui.Popups;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
-import com.threerings.orth.data.MediaDescSize;
-
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.RatingHistoryResult;
 import com.threerings.msoy.data.all.RatingResult;
@@ -56,7 +54,6 @@ import client.ui.Rating.RateService;
 import client.ui.Rating;
 import client.ui.RoundBox;
 import client.ui.StyledTabPanel;
-import client.ui.ThumbBox;
 import client.util.ClickCallback;
 import client.util.FlashClients;
 import client.util.InfoCallback;
@@ -186,7 +183,6 @@ public abstract class BaseItemDetailPanel extends SmartTable
         // set up our detail bits
         HorizontalPanel row = new HorizontalPanel();
         row.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
-        row.add(ThumbBox.fromCard(_detail.creator, MediaDescSize.HALF_THUMBNAIL_SIZE));
         row.add(_creator = new CreatorLabel());
         _creator.setMember(_detail.creator);
         _details.add(row);

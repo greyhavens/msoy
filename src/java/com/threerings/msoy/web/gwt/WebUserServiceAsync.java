@@ -78,11 +78,6 @@ public interface WebUserServiceAsync
     void resetPassword (int memberId, String code, String newPassword, AsyncCallback<Boolean> callback);
 
     /**
-     * The async version of {@link WebUserService#getEmbedding}.
-     */
-    void getEmbedding (AsyncCallback<Embedding> callback);
-
-    /**
      * The async version of {@link WebUserService#configurePermaName}.
      */
     void configurePermaName (String permaName, AsyncCallback<Void> callback);
@@ -121,4 +116,9 @@ public interface WebUserServiceAsync
      * The async version of {@link WebUserService#deleteAccount}.
      */
     void deleteAccount (String password, String code, AsyncCallback<Void> callback);
+
+    /**
+     * The async version of {@link WebUserService#getEmbedding}.
+     */
+    void getEmbedding (AsyncCallback<Embedding> callback);
 }

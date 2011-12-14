@@ -1059,6 +1059,10 @@ img, embed, applet, object {
   background: url(/images/ui/clubwhirled.png);
 }
 
+.creatorBy {
+  margin-right: 4px;
+}
+
 /** MessagePanel styles */
 .messagePanel .Photo {
   background: #EDEDED;

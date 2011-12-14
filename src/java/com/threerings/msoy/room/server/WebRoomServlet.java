@@ -72,7 +72,7 @@ public class WebRoomServlet extends MsoyServiceServlet
         RoomDetail detail = screc.toRoomDetail();
         switch (screc.ownerType) {
         case MsoySceneModel.OWNER_TYPE_MEMBER:
-            detail.owner = _memberRepo.loadMemberName(screc.ownerId);
+            detail.owner = _memberRepo.loadMemberCard(screc.ownerId, false);
             detail.mayManage = (mrec != null) && (mrec.memberId == screc.ownerId);
             break;
         case MsoySceneModel.OWNER_TYPE_GROUP:

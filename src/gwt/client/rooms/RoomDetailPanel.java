@@ -33,6 +33,7 @@ import com.threerings.msoy.data.all.RatingResult;
 import com.threerings.msoy.room.gwt.RoomDetail;
 import com.threerings.msoy.room.gwt.WebRoomService;
 import com.threerings.msoy.room.gwt.WebRoomServiceAsync;
+import com.threerings.msoy.web.gwt.MemberCard;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.WebMemberService;
 import com.threerings.msoy.web.gwt.WebMemberServiceAsync;
@@ -40,6 +41,7 @@ import com.threerings.msoy.web.gwt.WebMemberServiceAsync;
 import client.comment.CommentsPanel;
 import client.room.SceneUtil;
 import client.shell.CShell;
+import client.ui.CreatorLabel;
 import client.ui.MsoyUI;
 import client.ui.Rating.RateService;
 import client.ui.Rating;
@@ -98,15 +100,13 @@ public class RoomDetailPanel extends SmartTable
 
         _bits = new FlowPanel();
         _bits.add(MsoyUI.createLabel(detail.info.name, "Title"));
-        _bits.add(new InlineLabel(_msgs.owner(), false, false, true));
-
-        if (detail.owner instanceof MemberName) {
-            MemberName name = (MemberName)detail.owner;
-            _bits.add(Link.memberView(name));
+        CreatorLabel by = new CreatorLabel();
+        if (detail.owner instanceof MemberCard) {
+            by.setMember((MemberCard)detail.owner);
         } else if (detail.owner instanceof GroupName) {
-            GroupName name = (GroupName)detail.owner;
-            _bits.add(Link.groupView(name));
+            by.setBrand((GroupName)detail.owner);
         }
+        _bits.add(by);
         if (CShell.isSupport() || detail.mayManage) {
             _bits.add(_themeBit = new FlowPanel());
             updateTheme();
@@ -121,8 +121,8 @@ public class RoomDetailPanel extends SmartTable
             }, null));
 
         // maybe add the gifting option
-        if ((detail.owner instanceof MemberName) &&
-                CShell.getMemberId() == ((MemberName) detail.owner).getId()) {
+        if ((detail.owner instanceof MemberCard) &&
+                CShell.getMemberId() == ((MemberCard) detail.owner).name.getId()) {
             _bits.add(MsoyUI.createButton(MsoyUI.LONG_THIN, _msgs.gift(), new ClickHandler() {
                 public void onClick (ClickEvent event) {
                     _roomsvc.canGiftRoom(detail.info.sceneId, new InfoCallback<Void>() {

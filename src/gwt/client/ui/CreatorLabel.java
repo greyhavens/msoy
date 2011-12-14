@@ -6,25 +6,30 @@ package client.ui;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 
 import com.threerings.gwt.ui.InlineLabel;
+
+import com.threerings.orth.data.MediaDescSize;
 
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.gwt.MemberCard;
 
 import client.shell.ShellMessages;
+import client.ui.ThumbBox;
 import client.util.Link;
 
 /**
  * Displays a creator's name with "by Foozle" where Foozle is a link to the creator's profile page
  * if it's a player, or its group page if it's a brand.
  */
-public class CreatorLabel extends FlowPanel
+public class CreatorLabel extends HorizontalPanel
 {
     public CreatorLabel ()
     {
         addStyleName("creator");
+        setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
     }
 
     public CreatorLabel (MemberName name)
@@ -46,7 +51,8 @@ public class CreatorLabel extends FlowPanel
 
     public void setMember (MemberCard card)
     {
-        setBy(Link.memberView(card));
+        setBy(ThumbBox.fromCard(card, MediaDescSize.HALF_THUMBNAIL_SIZE));
+        add(Link.memberView(card));
     }
 
     public void setBrand (GroupName group)
@@ -57,7 +63,7 @@ public class CreatorLabel extends FlowPanel
     protected void setBy (Widget link)
     {
         clear();
-        add(new InlineLabel(_cmsgs.creatorBy() + " "));
+        add(MsoyUI.createInlineLabel("creatorBy", _cmsgs.creatorBy()));
         add(link);
     }
 

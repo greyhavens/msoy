@@ -23,8 +23,8 @@ public class RoomDetail
     /** The room's full-size snapshot. */
     public MediaDesc snapshot;
 
-    /** The owner of this room (either a MemberName or a GroupName). */
-    public Name owner;
+    /** The owner of this room (either a MemberCard or a GroupName). */
+    public IsSerializable owner;
 
     /** Whether or not this player may manage this room (i.e. the room is owned by them,
      * or it's owned by a group they manage). */
