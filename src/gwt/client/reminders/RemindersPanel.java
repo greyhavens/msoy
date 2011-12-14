@@ -156,7 +156,7 @@ public class RemindersPanel extends FlowPanel
 
     protected void clearBookmarkReminder ()
     {
-        CookieUtil.set("/", 365, CookieNames.BOOKMARKED, "t");
+        CookieUtil.set("/", 365, CookieNames.BOOKMARKED, "t", null);
     }
 
     protected PushButton easyButton (int slot, String text, ClickHandler handler)

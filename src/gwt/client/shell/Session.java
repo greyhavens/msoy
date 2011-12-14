@@ -186,7 +186,7 @@ public class Session
 
     protected static void setSessionCookie (String token)
     {
-        CookieUtil.set("/", WebUserService.SESSION_DAYS, WebCreds.credsCookie(), token);
+        CookieUtil.set("/", WebUserService.SESSION_DAYS, WebCreds.credsCookie(), token, null);
     }
 
     protected static void validate (String token)

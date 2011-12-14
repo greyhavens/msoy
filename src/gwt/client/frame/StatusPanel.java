@@ -99,7 +99,7 @@ public class StatusPanel extends SmartTable
     public void didLogon (SessionData data)
     {
         _creds = data.creds;
-        CookieUtil.set("/", MAX_WHO_AGE, CookieNames.WHO, _creds.accountName);
+        CookieUtil.set("/", MAX_WHO_AGE, CookieNames.WHO, _creds.accountName, null);
 
         boolean permaguest = MemberMailUtil.isPermaguest(_creds.accountName);
 

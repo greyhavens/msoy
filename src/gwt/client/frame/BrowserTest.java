@@ -98,7 +98,7 @@ public class BrowserTest
         }
 
         // set a cookie so they don't see this warning again
-        CookieUtil.set("/", 365, TEST_SEEN_COOKIE, "true");
+        CookieUtil.set("/", 365, TEST_SEEN_COOKIE, "true", null);
 
         return browserTestWidget;
     }

@@ -50,7 +50,7 @@ public class VisitorCookie
         String id = CookieUtil.get(CookieNames.VISITOR);
         // if the authoritative cookie is different from what we have (or we have nothing), replace
         if (id == null || !id.equals(authoritative.id)) {
-            CookieUtil.set("/", 365, CookieNames.VISITOR, authoritative.id);
+            CookieUtil.set("/", 365, CookieNames.VISITOR, authoritative.id, null);
             CShell.log("Updated to " + authoritative);
             id = authoritative.id;
         }
@@ -64,7 +64,7 @@ public class VisitorCookie
     public static void save (VisitorInfo info, boolean overwrite)
     {
         if (!exists() || overwrite) {
-            CookieUtil.set("/", 365, CookieNames.VISITOR, info.id);
+            CookieUtil.set("/", 365, CookieNames.VISITOR, info.id, null);
             CShell.log("Saved " + info);
         }
     }
