@@ -63,7 +63,7 @@ public class CreatorLabel extends HorizontalPanel
     protected void setBy (Widget link)
     {
         clear();
-        add(MsoyUI.createInlineLabel("creatorBy", _cmsgs.creatorBy()));
+        add(MsoyUI.createInlineLabel(_cmsgs.creatorBy(), "creatorBy"));
         add(link);
     }
 
