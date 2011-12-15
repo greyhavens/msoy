@@ -27,40 +27,50 @@ public class DjTutorial
         var seq :TutorialSequenceBuilder = _ctx.getTutorialDirector().newSequence("djTutorial2")
             .showAlways();
 
-        // TODO(bruno): Finalize text
+        step(seq.newSuggestion("Hello, welcome to my night club! Ok, it's not much to look at... yet."))
+            .button("Next", null)
+            .queue();
 
-        waitForPage(seq.newSuggestion("1. Click the shop tab"), Page.SHOP)
+        waitForPage(seq.newSuggestion("Help a tofu out, would you? I need someone with fine" +
+            " musical taste to pick out a song over in the shop."), Page.SHOP)
             .onShow(function () :void {
+                // Show the arrow while no tabs are open
                 arrowUp(-512, 0, function (address :Address) :Boolean { return address == null });
             })
             .queue();
 
-        waitForPage(seq.newSuggestion("2. Go to the music section"),
-                Page.SHOP, MsoyItemType.AUDIO.toByte())
+        waitForPage(seq.newSuggestion("The shop is stuffed with all sorts of useful goodies. We " +
+            " want music, so go down to the music section."), Page.SHOP, MsoyItemType.AUDIO.toByte())
             .onShow(function () :void {
                 arrowRight(-0.01, 123, function (address :Address) :Boolean {
                     return address.page == Page.SHOP && address.args.length == 0 });
             })
             .queue();
 
-        waitForPage(seq.newSuggestion("3. Pick an item"),
+        waitForPage(seq.newSuggestion(
+            "If you've got a song or genre in mind, you can search for it. Or just pick whatever" +
+            " catches your eye. You can keep it afterwards!"),
                 Page.SHOP, "l", MsoyItemType.AUDIO.toByte())
             .queue();
 
-        waitForCondition(seq.newSuggestion("4. Buy and add it to the room"),
+        waitForCondition(seq.newSuggestion("This one? I can't say it would have been my first" +
+            " choice, but it's catchy... Once you've decided, buy it then add it to the room."),
             function () :Boolean {
                 return !_ctx.getMemberObject().tracks.isEmpty();
             })
             .queue();
 
-        waitForCondition(seq.newSuggestion("5. Close GWT"),
+        waitForCondition(seq.newSuggestion("Not bad! That livens this place up a bit." +
+            " You can press that tiny X button on the very right to close the shop now."),
             function () :Boolean {
                 return _ctx.getMsoyClient().getAddress() == null;
             })
             .onShow(clearArrows)
             .queue();
 
-        step(seq.newSuggestion("6. You're done!"))
+        // TODO(bruno): Explain the music widget?
+        step(seq.newSuggestion("Maybe you can own your own club one day... try exploring," +
+            " DJ-ing with other people and building your reputation. Off you go!"))
             .onShow(function () :void {
                 // Tutorial complete, open the blast doors
                 _ctx.getWorldDirector().completeDjTutorial();
