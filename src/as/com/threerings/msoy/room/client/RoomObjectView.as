@@ -1055,8 +1055,8 @@ class ShadowFringe extends Shape
     {
         graphics.clear();
         graphics.beginBitmapFill(_pattern);
-        graphics.drawRect(unscaledWidth - _pattern.width, 0, _pattern.width, unscaledHeight);
-        graphics.endFill();
+        graphics.drawRect(0, 0, _pattern.width, unscaledHeight);
+        this.x = unscaledWidth - _pattern.width;
     }
 
     [Embed(source="../../../../../../../rsrc/media/fringe.png")]
