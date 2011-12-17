@@ -587,6 +587,10 @@ public class MsoyUI
      */
     public static Widget createRoleIcon (WebCreds.Role role)
     {
+        if (role == null) {
+            return null;
+        }
+
         Label icon = null;
         switch (role) {
         case SUBSCRIBER:
