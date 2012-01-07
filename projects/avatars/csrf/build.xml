@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Cross-site request forgery test" default="compile">
+  <!-- Point $WHIRLED_HOME to your SDK. -->
+  <property environment="env" />
+  <property name="sdk.dir" value="${env.WHIRLED_HOME}" />
+  <import file="${sdk.dir}/etc/project-include.xml"/>
+
+  <!-- defines our project name and type -->
+  <property name="app.name" value="Csrf"/>
+  <property name="app.type" value="avatar"/>
+</project>
