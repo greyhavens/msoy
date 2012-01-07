@@ -64,6 +64,7 @@ import com.threerings.msoy.server.MemberLocator;
 import com.threerings.msoy.server.MemberLogic;
 import com.threerings.msoy.server.MemberNodeActions;
 import com.threerings.msoy.server.ServerConfig;
+import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.world.client.WorldService.HomeResultListener;
 import com.threerings.msoy.world.data.WorldCodes;
@@ -295,20 +296,26 @@ public class WorldManager
             }
         }
 
-        // Change the player's home room to the group hall
-        if (user.theme != null) {
-            _invoker.postUnit(new PersistingUnit("updateHomeRoom", listener, "who", user.who()) {
-                int groupHome;
-                @Override public void invokePersistent () throws Exception {
+        // Change the player's home room to the group hall, and update their flags
+        _invoker.postUnit(new PersistingUnit("updateTutorialGraduate", listener, "who", user.who()) {
+            int groupHome;
+            @Override public void invokePersistent () throws Exception {
+                if (user.theme != null) {
                     groupHome = _groupRepo.getHomeSceneId(user.theme.getGroupId());
                     _memberRepo.setHomeSceneId(user.getMemberId(), groupHome);
                 }
-                @Override public void handleSuccess () {
-                    user.setHomeSceneId(groupHome);
-                    super.handleSuccess();
+                MemberRecord mrec = _memberRepo.loadMember(user.getMemberId());
+                if (mrec.updateFlag(MemberRecord.Flag.DJ_TUTORIAL_COMPLETE, true)) {
+                    _memberRepo.storeFlags(mrec);
                 }
-            });
-        }
+            }
+            @Override public void handleSuccess () {
+                if (groupHome != 0) {
+                    user.setHomeSceneId(groupHome);
+                }
+                super.handleSuccess();
+            }
+        });
     }
 
     /**
