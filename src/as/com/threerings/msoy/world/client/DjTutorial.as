@@ -71,7 +71,7 @@ public class DjTutorial
             .queue();
 
         waitForCondition(seq.newSuggestion("Not bad! That livens this place up a bit." +
-            " You can press that tiny X button on the very right to close the shop now."),
+            " You can press the X button on the very right to close the shop now."),
             function () :Boolean {
                 return _ctx.getMsoyClient().getAddress() == null;
             })
