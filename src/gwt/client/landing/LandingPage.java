@@ -9,6 +9,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.web.gwt.Args;
+import com.threerings.msoy.web.gwt.ClientMode;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.WebMemberService;
 import com.threerings.msoy.web.gwt.WebMemberServiceAsync;
@@ -67,7 +68,7 @@ public class LandingPage extends Page
         } else if (action.equals(NEW_MONSTER_LANDING)) {
             setContent(_msgs.titleLanding(), new LandingMonsterPanel());
 
-        } else if (action.equals(DJ_LANDING)) {
+        } else if (CShell.getClientMode() == ClientMode.WHIRLED_DJ || action.equals(DJ_LANDING)) {
             setContent(_msgs.djTitleLanding(), new LandingDjPanel());
 
         } else {
