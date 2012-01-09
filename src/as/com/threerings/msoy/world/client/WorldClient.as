@@ -114,14 +114,6 @@ public class WorldClient extends MsoyClient
             _ctx.getTopPanel().getPlaceContainer().addOverlay(
                 overlay, PlaceBox.LAYER_FEATURED_PLACE);
         }
-
-        if (_wctx.getTutorialDirector() != null) {
-            var djTutorial :Boolean = Boolean(params["djTutorial"]);
-            _wctx.getTutorialDirector().djTutorial = djTutorial;
-            if (djTutorial) {
-                new DjTutorial(_wctx);
-            }
-        }
     }
 
     override public function logon () :Boolean
@@ -189,6 +181,15 @@ public class WorldClient extends MsoyClient
         if (getEmbedding().hasGWT() && DeploymentConfig.enableTutorial) {
             new MePageTutorial(_wctx);
             new GeneralTips(_wctx);
+
+            if (!event.isSwitchingServers()) {
+                var params :Object = MsoyParameters.get();
+                var djTutorial :Boolean = Boolean(params["djTutorial"]);
+                _wctx.getTutorialDirector().djTutorial = djTutorial;
+                if (djTutorial) {
+                    new DjTutorial(_wctx);
+                }
+            }
         }
 
         _clientLock = claimLock();

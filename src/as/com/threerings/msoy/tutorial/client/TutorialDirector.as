@@ -133,6 +133,21 @@ public class TutorialDirector
     }
 
     /**
+     * Dismiss the current sequence.
+     */
+    public function dismiss () :Boolean
+    {
+        if (_sequence != null) {
+            _panel.handleClose();
+            _sequence = null;
+            return true;
+
+        } else {
+            return false;
+        }
+    }
+
+    /**
      * Gets the level of the logged in member, or -1 if the member is not logged in.
      */
     public function getMemberLevel () :int

@@ -7,6 +7,7 @@ import flash.display.Sprite;
 
 import mx.core.UIComponent;
 
+import com.threerings.crowd.client.LocationAdapter;
 import com.threerings.display.DisplayUtil;
 import com.threerings.flex.FlexWrapper;
 
@@ -24,7 +25,16 @@ public class DjTutorial
     {
         _ctx = ctx;
 
-        var seq :TutorialSequenceBuilder = _ctx.getTutorialDirector().newSequence("djTutorial2")
+        var originalHome :int = ctx.getMemberObject().homeSceneId;
+        _locObserver = new LocationAdapter(null, function (..._) :void {
+            if (_ctx.getWorldController().getCurrentSceneId() != originalHome) {
+                _ctx.getTutorialDirector().dismiss();
+                _ctx.getLocationDirector().removeLocationObserver(_locObserver);
+            }
+        });
+        _ctx.getLocationDirector().addLocationObserver(_locObserver);
+
+        var seq :TutorialSequenceBuilder = _ctx.getTutorialDirector().newSequence("djTutorial")
             .showAlways();
 
         step(seq.newSuggestion("Hello, welcome to my night club! Ok, it's not much to look at... yet."))
@@ -186,6 +196,7 @@ public class DjTutorial
     protected static const ARROW_RIGHT :Class;
 
     protected var _ctx :WorldContext;
+    protected var _locObserver :LocationAdapter;
 
     protected var _arrow :UIComponent;
     protected var _arrowStates :Array = []; // of ArrowState
