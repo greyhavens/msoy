@@ -24,12 +24,6 @@ public class ProfilePanel extends FlowPanel
         setStyleName("profile");
         add(MsoyUI.createNowLoading());
 
-        // TEMPORARY: Color this player's profile as a prize for winning a contest:
-        // http://www.whirled.com/#groups-t_92309_10_676343. Revert after one month.
-        if (memberId == 1531) {
-            DOM.setStyleAttribute(getElement(), "background", "#ffe1ec");
-        }
-
         _memberId = memberId;
         // issue a request for this member's profile page data
         _profilesvc.loadProfile(memberId, new AsyncCallback<ProfileService.ProfileResult>() {
