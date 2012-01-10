@@ -220,10 +220,6 @@ public class SceneLogic
 
             // if this is a member room with "real" furniture in it, clone the furni items
             if (furni.itemId != 0) {
-                if (ownerType != MsoySceneModel.OWNER_TYPE_MEMBER) {
-                    log.warning("Found furniture item in non-member room.");
-                    continue;
-                }
                 try {
                     // first load the actual item that's in the template scene
                     ItemRepository<ItemRecord> repo = _itemLogic.getRepository(furni.itemType);
