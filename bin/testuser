@@ -1,0 +1,24 @@
+#!/usr/bin/env python
+#
+# Creates a Facebook test account and prints the URL you can use to log into it
+
+import httplib, json
+
+appId = "171026929664997"
+appSecret = "cc70f319c337ef1837791b1a55dbfcaa"
+# appId = "244714858910438"
+# appSecret = "06f6afaf48c865eb8ef5111f736e7dfe"
+
+graph = httplib.HTTPSConnection("graph.facebook.com")
+
+graph.request("GET", "/oauth/access_token?" + \
+    "client_id=%s&client_secret=%s&grant_type=client_credentials" % (appId, appSecret))
+accessToken = graph.getresponse().read().split("=")[1]
+
+graph.request("POST", "/%s/accounts/test-users?installed=true&name=Testy&access_token=%s" % \
+    (appId, accessToken))
+
+account = json.loads(graph.getresponse().read())
+print("Login URL: " + account["login_url"])
+print("Email: " + account["email"])
+print("Password: " + account["password"])
