@@ -29,7 +29,7 @@ public class LandingDjPanel extends SimplePanel
         content.add(MsoyUI.createImage("/images/landing/monsterave/logo_big_white.png", "Logo"));
 
         // login box
-        FBLogonPanel fbLogon = new FBLogonPanel("/images/account/fbconnect_big.png");
+        FBLogonPanel fbLogon = new FBLogonPanel("/images/account/fbconnect_big.png", "/images/ui/bar_loader.gif");
         fbLogon.setStyleName("Connect");
         content.add(fbLogon);
 

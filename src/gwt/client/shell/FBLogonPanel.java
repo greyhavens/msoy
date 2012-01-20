@@ -4,6 +4,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Image;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.web.gwt.FacebookCreds;
@@ -28,12 +29,24 @@ public class FBLogonPanel extends FlowPanel
 
     public FBLogonPanel (String img)
     {
-        this.add(MsoyUI.createActionImage(img, new ClickHandler() {
+        this(img, null);
+    }
+
+    public FBLogonPanel (String img, final String spinner)
+    {
+        _button = MsoyUI.createActionImage(img, new ClickHandler() {
+            boolean clicked = false;
             public void onClick (ClickEvent event) {
-                // TODO: display a little circular "pending" icon; turn off clickability
-                initiateFacebookLogon();
+                if (!clicked) {
+                    clicked = true;
+                    if (spinner != null) {
+                        _button.setUrl(spinner);
+                    }
+                    initiateFacebookLogon();
+                }
             }
-        }));
+        });
+        add(_button);
     }
 
     protected void initiateFacebookLogon ()
@@ -59,6 +72,7 @@ public class FBLogonPanel extends FlowPanel
     }
 
     protected FBConnect _fbconnect = new FBConnect();
+    protected Image _button;
 
     protected static final WebUserServiceAsync _usersvc = GWT.create(WebUserService.class);
 }
